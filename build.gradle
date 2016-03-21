@@ -1,0 +1,64 @@
+buildscript {
+	repositories {
+		maven { url 'https://plugins.gradle.org/m2/' }
+		maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+	}
+	dependencies {
+		classpath 'org.junit:junit-gradle:5.0.0-SNAPSHOT'
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.junit.gen5.gradle'
+
+jar {
+	baseName = 'junit5-jqwik-engine'
+	version = '1.0.0-SNAPSHOT'
+}
+
+ext.junit5Version = '5.0.0-SNAPSHOT'
+ext.junit4Version = '4.12'
+ext.log4JVersion  = '2.5'
+
+junit5 {
+	version "${junit5Version}"
+	runJunit4 true
+	matchClassName '.*Tests?'
+	reportsDir file('build/test-results/junit5/') // this is the default
+	logManager 'org.apache.logging.log4j.jul.LogManager'
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+compileTestJava {
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	options.compilerArgs += '-parameters'
+}
+
+dependencies {
+	// If you also want JUnit4 tests
+	compile("org.junit:junit-engine-api:${junit5Version}")
+
+	testCompile("org.junit:junit4-runner:${junit5Version}")
+	testCompile("junit:junit:${junit4Version}")
+
+	testRuntime("org.apache.logging.log4j:log4j-core:${log4JVersion}")
+	testRuntime("org.apache.logging.log4j:log4j-jul:${log4JVersion}")
+}
+
+eclipse {
+	classpath {
+		containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+		containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+	}
+}
+
+task wrapper(type: Wrapper) {
+	distributionUrl = 'https://services.gradle.org/distributions/gradle-2.9-all.zip'
+}
