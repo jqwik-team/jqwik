@@ -16,6 +16,21 @@ class IntegerProperties {
 	}
 
 	@Property
+    boolean allAreGreaterThan1000(int aNumber) {
+	    return aNumber > 1000;
+	}
+
+	@Property
+    boolean allAreSmallerThan1000(int aNumber) {
+	    return aNumber < 1000;
+	}
+
+	@Property
+    boolean firstBiggerThanSecond(int first, int second) {
+	    return first < second;
+	}
+
+	@Property
     boolean failWithUnresolvableType(Object anObject) {
 	    return true;
 	}

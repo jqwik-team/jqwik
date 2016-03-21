@@ -17,6 +17,15 @@ public class IntegerGenerator implements Generator<Integer> {
 	}
 
 	@Override
+	public Integer shrink(Integer value) {
+		if (value < 0 || value > 0) {
+			return value / 2;
+		}
+		else
+			return value;
+	}
+
+	@Override
 	public boolean canServeType(Class<?> type) {
 		return type == Integer.class || type == int.class;
 	}

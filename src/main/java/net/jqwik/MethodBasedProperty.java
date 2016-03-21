@@ -37,10 +37,34 @@ public class MethodBasedProperty implements ExecutableProperty {
 
 			Object[] parameters = nextParameters(parameterGenerators);
 			if (!evaluate(parameters)) {
-				String message = String.format("Failed with parameters: [%s]", parameterDescription(parameters));
+				Object[] shrinkedParamaters = shrinkParameters(parameters, parameterGenerators);
+				String message = String.format("Failed with parameters: [%s]",
+					parameterDescription(shrinkedParamaters));
 				throw new AssertionFailedError(message);
 			}
 		}
+	}
+
+	private Object[] shrinkParameters(Object[] parameters, Generator[] parameterGenerators) {
+		Object[] clone = parameters.clone();
+		Object[] lastFailingSet = clone.clone();
+		for (int i = 0; i < parameters.length; i++) {
+			Object currentValue = parameters[i];
+			Generator currentGenerator = parameterGenerators[i];
+			while (!evaluate(clone)) {
+				lastFailingSet = clone.clone();
+				Object shrinkedValue = shrinkValue(currentValue, currentGenerator);
+				if (shrinkedValue == currentValue)
+					break;
+				clone[i] = shrinkedValue;
+				currentValue = shrinkedValue;
+			}
+		}
+		return lastFailingSet;
+	}
+
+	private Object shrinkValue(Object currentValue, Generator currentGenerator) {
+		return currentGenerator.shrink(currentValue);
 	}
 
 	private boolean evaluate(Object[] parameters) {
