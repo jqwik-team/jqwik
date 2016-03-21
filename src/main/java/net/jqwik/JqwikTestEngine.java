@@ -3,6 +3,9 @@ package net.jqwik;
 
 import java.lang.reflect.Method;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
+
+import org.junit.gen5.commons.util.AnnotationUtils;
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.junit.gen5.engine.EngineDiscoveryRequest;
 import org.junit.gen5.engine.ExecutionRequest;
@@ -12,11 +15,16 @@ import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.engine.support.descriptor.JavaSource;
 import org.junit.gen5.engine.support.hierarchical.HierarchicalTestEngine;
 
+import net.jqwik.api.Property;
+
 public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContext> {
+
+	private static final Logger LOG = Logger.getLogger(JqwikTestEngine.class.getName());
 
 	private static final String ENGINE_ID = "jqwik";
 
 	public static final String SEGMENT_TYPE_CLASS = "jqwik-class";
+	public static final String SEGMENT_TYPE_METHOD = "jqwik-method";
 
 	@Override
 	public String getId() {
@@ -49,20 +57,38 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 	}
 
 	private void resolveClassMethods(Class<?> testClass, JqwikClassDescriptor classDescriptor) {
-		Predicate<Method> isPropertyMethod = method -> Property.class.isAssignableFrom(method.getReturnType());
-		ReflectionUtils.findMethods(testClass, isPropertyMethod).forEach(method -> {
-			Property property = createProperty(testClass, method);
-			UniqueId uniqueId = classDescriptor.getUniqueId().append("jqwik-property", property.name());
-			classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, property, new JavaSource(method)));
+		Predicate<Method> isPropertyMethod = method -> AnnotationUtils.isAnnotated(method, Property.class);
+		ReflectionUtils.findMethods(testClass, isPropertyMethod).forEach(propertyMethod -> {
+			if (ReflectionUtils.isPrivate(propertyMethod)) {
+				LOG.warning(() -> String.format("Method '%s' cannot be property because it is private", methodDescription(propertyMethod)));
+				return;
+			}
+			if (!isAcceptedPropertyReturnType(propertyMethod.getReturnType())) {
+				LOG.warning(() -> String.format("Method '%s' cannot be property because it must return a boolean value", methodDescription(propertyMethod)));
+				return;
+			}
+
+			UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
+			ExecutableProperty property = createProperty(testClass, propertyMethod);
+			classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, property, new JavaSource(propertyMethod)));
 		});
 
 	}
 
-	private Property createProperty(Class<?> testClass, Method method) {
-		Object testInstance = null;
-		if (!ReflectionUtils.isStatic(method))
-			testInstance = ReflectionUtils.newInstance(testClass);
-		return (Property) ReflectionUtils.invokeMethod(method, testInstance);
+	private boolean isAcceptedPropertyReturnType(Class<?> propertyReturnType) {
+		return propertyReturnType.equals(boolean.class) || propertyReturnType.equals(Boolean.class);
+	}
+
+	private String methodDescription(Method method) {
+		return method.getDeclaringClass().getName() + "#" + method.getName();
+	}
+
+	private ExecutableProperty createProperty(Class<?> testClass, Method method) {
+		return new MethodBasedProperty(testClass, method);
+//		Object testInstance = null;
+//		if (!ReflectionUtils.isStatic(method))
+//			testInstance = ReflectionUtils.newInstance(testClass);
+//		return (ExecutableProperty) ReflectionUtils.invokeMethod(method, testInstance);
 	}
 
 }

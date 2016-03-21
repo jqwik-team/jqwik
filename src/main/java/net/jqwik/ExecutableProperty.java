@@ -1,6 +1,6 @@
 package net.jqwik;
 
-public interface Property {
+public interface ExecutableProperty {
 
     String name();
 

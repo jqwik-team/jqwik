@@ -8,9 +8,9 @@ import org.opentest4j.AssertionFailedError;
 
 public class JqwikPropertyDescriptor extends AbstractTestDescriptor implements Leaf<JqwikExecutionContext> {
 
-    private final Property property;
+    private final ExecutableProperty property;
 
-    public JqwikPropertyDescriptor(UniqueId uniqueId, Property property, TestSource source) {
+    public JqwikPropertyDescriptor(UniqueId uniqueId, ExecutableProperty property, TestSource source) {
         super(uniqueId);
         this.property = property;
         setSource(source);
