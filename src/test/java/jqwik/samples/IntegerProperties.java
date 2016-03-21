@@ -16,18 +16,18 @@ class IntegerProperties {
 	}
 
 	@Property
-    boolean allAreGreaterThan1000(int aNumber) {
-	    return aNumber > 1000;
+    boolean allAreGreaterThanMinus1000(int aNumber) {
+	    return aNumber > -1000;
 	}
 
 	@Property
     boolean allAreSmallerThan1000(int aNumber) {
-	    return aNumber < 1000;
+	    return aNumber <= 1000;
 	}
 
 	@Property
-    boolean firstBiggerThanSecond(int first, int second) {
-	    return first < second;
+    boolean firstAlwaysBiggerThanSecond(int first, int second) {
+	    return first > second;
 	}
 
 	@Property

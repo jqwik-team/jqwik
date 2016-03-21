@@ -3,6 +3,7 @@ package net.jqwik;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,34 +38,35 @@ public class MethodBasedProperty implements ExecutableProperty {
 
 			Object[] parameters = nextParameters(parameterGenerators);
 			if (!evaluate(parameters)) {
-				Object[] shrinkedParamaters = shrinkParameters(parameters, parameterGenerators);
+				Object[] shrinkedParameters = shrinkParameters(parameters, parameterGenerators);
 				String message = String.format("Failed with parameters: [%s]",
-					parameterDescription(shrinkedParamaters));
+					parameterDescription(shrinkedParameters));
 				throw new AssertionFailedError(message);
 			}
 		}
 	}
 
 	private Object[] shrinkParameters(Object[] parameters, Generator[] parameterGenerators) {
-		Object[] clone = parameters.clone();
-		Object[] lastFailingSet = clone.clone();
+		List<Object> lastFailingSet = Arrays.asList(parameters);
+
 		for (int i = 0; i < parameters.length; i++) {
+			final int index = i;
 			Object currentValue = parameters[i];
 			Generator currentGenerator = parameterGenerators[i];
-			while (!evaluate(clone)) {
-				lastFailingSet = clone.clone();
-				Object shrinkedValue = shrinkValue(currentValue, currentGenerator);
-				if (shrinkedValue == currentValue)
-					break;
-				clone[i] = shrinkedValue;
-				currentValue = shrinkedValue;
-			}
+			Function<Object, Boolean> evaluator = value -> {
+				List<Object> params = new ArrayList<>(lastFailingSet);
+				params.set(index, value);
+				return evaluate(params.toArray());
+			};
+			Object shrinkedValue = shrinkValue(currentValue, currentGenerator, evaluator);
+			lastFailingSet.set(i, shrinkedValue);
 		}
-		return lastFailingSet;
+
+		return lastFailingSet.toArray();
 	}
 
-	private Object shrinkValue(Object currentValue, Generator currentGenerator) {
-		return currentGenerator.shrink(currentValue);
+	private Object shrinkValue(Object currentValue, Generator currentGenerator, Function<Object, Boolean> evaluator) {
+		return new Shrinker(currentGenerator).shrink(currentValue, evaluator);
 	}
 
 	private boolean evaluate(Object[] parameters) {

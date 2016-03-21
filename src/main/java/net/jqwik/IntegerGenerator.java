@@ -1,7 +1,7 @@
 
 package net.jqwik;
 
-import java.util.Random;
+import java.util.*;
 
 public class IntegerGenerator implements Generator<Integer> {
 
@@ -17,12 +17,14 @@ public class IntegerGenerator implements Generator<Integer> {
 	}
 
 	@Override
-	public Integer shrink(Integer value) {
-		if (value < 0 || value > 0) {
-			return value / 2;
+	public List<Integer> shrink(Integer value) {
+		if (value < 0) {
+			return Arrays.asList(0, value / 2, value + 1);
+		} else if (value > 0) {
+			return Arrays.asList(0, value / 2, value - 1);
 		}
 		else
-			return value;
+			return Collections.emptyList();
 	}
 
 	@Override
