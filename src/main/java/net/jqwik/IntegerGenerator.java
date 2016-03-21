@@ -1,17 +1,23 @@
+
 package net.jqwik;
 
+import java.util.Random;
+
 public class IntegerGenerator implements Generator<Integer> {
-    @Override
-    public Integer generate() {
-        return 0;
-    }
 
-    @Override
-    public boolean canServeType(Class<?> type) {
-        return type == Integer.class || type == int.class;
-    }
+	private final Random random;
 
-    public static IntegerGenerator any() {
-        return new IntegerGenerator();
-    }
+	public IntegerGenerator(Random random) {
+		this.random = random;
+	}
+
+	@Override
+	public Integer generate() {
+		return random.nextInt();
+	}
+
+	@Override
+	public boolean canServeType(Class<?> type) {
+		return type == Integer.class || type == int.class;
+	}
 }

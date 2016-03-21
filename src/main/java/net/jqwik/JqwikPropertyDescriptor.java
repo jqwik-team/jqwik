@@ -38,8 +38,7 @@ public class JqwikPropertyDescriptor extends AbstractTestDescriptor implements L
 
     @Override
     public JqwikExecutionContext execute(JqwikExecutionContext context) throws Exception {
-        if (!property.evaluate())
-            throw new AssertionFailedError();
+        property.evaluate();
         return context;
     }
 }

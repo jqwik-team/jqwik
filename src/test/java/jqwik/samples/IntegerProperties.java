@@ -11,6 +11,11 @@ class IntegerProperties {
 	}
 
 	@Property
+    boolean allArePositive(int aNumber) {
+	    return aNumber >= 0;
+	}
+
+	@Property
     boolean failWithUnresolvableType(Object anObject) {
 	    return true;
 	}

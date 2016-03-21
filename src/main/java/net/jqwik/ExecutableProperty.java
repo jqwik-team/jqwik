@@ -4,6 +4,6 @@ public interface ExecutableProperty {
 
     String name();
 
-    boolean evaluate();
+    void evaluate();
 
 }

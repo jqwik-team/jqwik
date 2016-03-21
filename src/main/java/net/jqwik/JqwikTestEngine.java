@@ -85,10 +85,6 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	private ExecutableProperty createProperty(Class<?> testClass, Method method) {
 		return new MethodBasedProperty(testClass, method);
-//		Object testInstance = null;
-//		if (!ReflectionUtils.isStatic(method))
-//			testInstance = ReflectionUtils.newInstance(testClass);
-//		return (ExecutableProperty) ReflectionUtils.invokeMethod(method, testInstance);
 	}
 
 }
