@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 public class Shrinker<T> {
 
 	private static final Logger LOG = Logger.getLogger(Shrinker.class.getName());
+	private static final int MAX_SHRINKING_ATTEMPTS = 100;
 
 	private final Generator<T> generator;
 
@@ -25,7 +26,7 @@ public class Shrinker<T> {
 
 		int counter = 0;
 		while (true) {
-			if (counter++ > 100) //May 100 iterations for shrinking
+			if (counter++ >= MAX_SHRINKING_ATTEMPTS) //May 100 iterations for shrinking
 				break;
 
 			List<T> shrinkingOptions = generator.shrink(lastFailingValue);

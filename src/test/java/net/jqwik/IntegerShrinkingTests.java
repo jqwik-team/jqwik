@@ -9,7 +9,7 @@ import static org.junit.gen5.api.Assertions.assertEquals;
 class IntegerShrinkingTests {
 
 	IntegerGenerator generator = new IntegerGenerator(new Random());
-	Shrinker<Integer> shrinker = new Shrinker(generator);
+	Shrinker<Integer> shrinker = new Shrinker<>(generator);
 
 
 	@Test
@@ -43,5 +43,11 @@ class IntegerShrinkingTests {
 		assertEquals(-43, (int) shrinker.shrink(-44, number -> number >= -42));
 		assertEquals(-43, (int) shrinker.shrink(-90, number -> number >= -42));
 		assertEquals(-43, (int) shrinker.shrink(Integer.MIN_VALUE, number -> number >= -42));
+	}
+
+	@Test
+	void stopsShrinkingAfter100Tries() {
+		assertEquals(-1900, (int) shrinker.shrink(-2000, number -> number >= -1000));
+
 	}
 }
