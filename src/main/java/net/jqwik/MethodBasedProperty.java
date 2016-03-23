@@ -50,18 +50,18 @@ public class MethodBasedProperty implements ExecutableProperty {
 		Generator[] parameterGenerators = getParameterGenerators();
 		for (int i = 0; i < numberOfTries; i++) {
 
-
 			boolean propertyResult;
 			Object[] parameters;
 
 			int maxMisses = numberOfTries * 10;
 			int countMisses = 0;
-			while(true) {
+			while (true) {
 				parameters = nextParameters(parameterGenerators);
 				try {
 					propertyResult = !evaluate(parameters);
 					break;
-				} catch (ParameterConstraintViolation pcv) {
+				}
+				catch (ParameterConstraintViolation pcv) {
 					countMisses++;
 					if (countMisses >= maxMisses)
 						throw new TestAbortedException("Too many misses trying to create parameters.");
@@ -143,8 +143,18 @@ public class MethodBasedProperty implements ExecutableProperty {
 			return Optional.empty();
 		try {
 			Generator generator = ReflectionUtils.newInstance(generatorClass, random);
+			Arrays.stream(parameter.getDeclaredAnnotations()).forEach(annotation -> {
+				Optional<Method> method = ReflectionUtils.findMethod(generatorClass, "configure",
+					annotation.annotationType());
+				method.ifPresent(m -> {
+					ReflectionUtils.invokeMethod(m, generator, annotation);
+				});
+			});
 			return Optional.of(generator);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+
+		{
 			if (e.getClass() == NoSuchMethodException.class)
 				throw new MissingGeneratorConstructor(generatorClass);
 			throw e;
