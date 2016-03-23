@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(JUnit5.class)
 //@Packages("jqwik.samples")
-@Classes({ RequiredValuesProperties.class })
+@Classes({ ConstrainedParametersProperties.class })
 @RequireEngine("jqwik")
 public class AllJqwikTests {
 }
