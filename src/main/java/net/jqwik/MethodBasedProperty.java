@@ -23,10 +23,10 @@ public class MethodBasedProperty implements ExecutableProperty {
 	private final Set<Generator> generators = new HashSet<>();
 	private int numberOfTries = 100;
 
-	public MethodBasedProperty(Class<?> testClass, Method propertyMethod) {
+	public MethodBasedProperty(Class<?> testClass, Method propertyMethod, long randomSeed) {
 		this.testClass = testClass;
 		this.propertyMethod = propertyMethod;
-		generators.add(new IntegerGenerator(new Random()));
+		generators.add(new IntegerGenerator(new Random(randomSeed)));
 	}
 
 	@Override

@@ -2,6 +2,7 @@
 package net.jqwik;
 
 import java.lang.reflect.Method;
+import java.util.Random;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -25,6 +26,12 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	public static final String SEGMENT_TYPE_CLASS = "jqwik-class";
 	public static final String SEGMENT_TYPE_METHOD = "jqwik-method";
+	public static final String SEGMENT_TYPE_SEED = "jqwik-seed";
+
+	// Test runs should produce the same results for one instantiation of the test engine
+	private long seed = new Random().nextLong();
+
+	private Random seedGenerator;
 
 	@Override
 	public String getId() {
@@ -38,6 +45,7 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueEngineId) {
+		seedGenerator = new Random(seed);
 		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueEngineId);
 		resolveSelectors(discoveryRequest, engineDescriptor);
 		return engineDescriptor;
@@ -68,8 +76,9 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 				return;
 			}
 
-			UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
-			ExecutableProperty property = createProperty(testClass, propertyMethod);
+			long seed = seedGenerator.nextLong();
+			UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
+			ExecutableProperty property = createProperty(testClass, propertyMethod, seed);
 			classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, property, new JavaSource(propertyMethod)));
 		});
 
@@ -83,8 +92,8 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		return method.getDeclaringClass().getName() + "#" + method.getName();
 	}
 
-	private ExecutableProperty createProperty(Class<?> testClass, Method method) {
-		return new MethodBasedProperty(testClass, method);
+	private ExecutableProperty createProperty(Class<?> testClass, Method method, long seed) {
+		return new MethodBasedProperty(testClass, method, seed);
 	}
 
 }
