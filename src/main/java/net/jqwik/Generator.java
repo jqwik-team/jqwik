@@ -8,5 +8,4 @@ public interface Generator<T> {
 
     List<T> shrink(T value);
 
-    boolean canServeType(Class<?> type);
 }

@@ -1,6 +1,7 @@
 
 package jqwik.samples;
 
+import net.jqwik.api.Constraints;
 import net.jqwik.api.Property;
 
 class IntegerProperties {
@@ -33,6 +34,12 @@ class IntegerProperties {
 	@Property
     boolean failWithUnresolvableType(Object anObject) {
 	    return true;
+	}
+
+	@Property
+	boolean positiveNumbersAreGreaterThanZero(Integer aNumber) {
+		Constraints.require(aNumber > 0);
+		return aNumber >= 0;
 	}
 
 }

@@ -2,17 +2,24 @@
 package net.jqwik;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import net.jqwik.api.ParameterConstraintViolation;
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.junit.gen5.commons.util.StringUtils;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
+import net.jqwik.api.MissingGeneratorConstructor;
+import net.jqwik.api.ParameterConstraintViolation;
 
 public class MethodBasedProperty implements ExecutableProperty {
 
@@ -20,13 +27,17 @@ public class MethodBasedProperty implements ExecutableProperty {
 
 	private final Class<?> testClass;
 	private final Method propertyMethod;
-	private final Set<Generator> generators = new HashSet<>();
+	private final Map<Class<?>, Class<? extends Generator>> generatorClasses = new HashMap<>();
+	private final Random random;
+
 	private int numberOfTries = 100;
 
 	public MethodBasedProperty(Class<?> testClass, Method propertyMethod, long randomSeed) {
 		this.testClass = testClass;
 		this.propertyMethod = propertyMethod;
-		generators.add(new IntegerGenerator(new Random(randomSeed)));
+		this.random = new Random(randomSeed);
+		generatorClasses.put(Integer.class, IntegerGenerator.class);
+		generatorClasses.put(int.class, IntegerGenerator.class);
 	}
 
 	@Override
@@ -117,7 +128,7 @@ public class MethodBasedProperty implements ExecutableProperty {
 	private Generator[] getParameterGenerators() {
 		return Arrays.stream(propertyMethod.getParameters()) //
 		.map(parameter -> {
-			Generator generator = findGenerator(parameter.getType()).orElseThrow(() -> {
+			Generator generator = createGenerator(parameter).orElseThrow(() -> {
 				String message = String.format("Cannot generate values for paramters of type '%s'",
 					parameter.getType());
 				return new RuntimeException(message);
@@ -126,7 +137,17 @@ public class MethodBasedProperty implements ExecutableProperty {
 		}).collect(Collectors.toList()).toArray(new Generator[0]);
 	}
 
-	private Optional<Generator> findGenerator(Class<?> type) {
-		return generators.stream().filter(generator -> generator.canServeType(type)).findFirst();
+	private Optional<Generator> createGenerator(Parameter parameter) {
+		Class<? extends Generator> generatorClass = generatorClasses.get(parameter.getType());
+		if (generatorClass == null)
+			return Optional.empty();
+		try {
+			Generator generator = ReflectionUtils.newInstance(generatorClass, random);
+			return Optional.of(generator);
+		} catch (Exception e) {
+			if (e.getClass() == NoSuchMethodException.class)
+				throw new MissingGeneratorConstructor(generatorClass);
+			throw e;
+		}
 	}
 }

@@ -27,8 +27,4 @@ public class IntegerGenerator implements Generator<Integer> {
 			return Collections.emptyList();
 	}
 
-	@Override
-	public boolean canServeType(Class<?> type) {
-		return type == Integer.class || type == int.class;
-	}
 }
