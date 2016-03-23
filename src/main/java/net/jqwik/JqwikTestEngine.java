@@ -78,7 +78,10 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 			long seed = seedGenerator.nextLong();
 			UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
-			ExecutableProperty property = createProperty(testClass, propertyMethod, seed);
+
+			int numberOfTrials = propertyMethod.getDeclaredAnnotation(Property.class).trials();
+			ExecutableProperty property = createProperty(testClass, propertyMethod, numberOfTrials, seed);
+
 			classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, property, new JavaSource(propertyMethod)));
 		});
 
@@ -92,8 +95,8 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		return method.getDeclaringClass().getName() + "#" + method.getName();
 	}
 
-	private ExecutableProperty createProperty(Class<?> testClass, Method method, long seed) {
-		return new MethodBasedProperty(testClass, method, seed);
+	private ExecutableProperty createProperty(Class<?> testClass, Method method, int numberOfTrials, long seed) {
+		return new MethodBasedProperty(testClass, method, numberOfTrials, seed);
 	}
 
 }

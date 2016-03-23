@@ -14,7 +14,7 @@ public class IntegerGenerator implements Generator<Integer> {
 	private final Random random;
 
 	private int min = Integer.MIN_VALUE;
-	private int max = Integer.MAX_VALUE;
+	private int max = Integer.MAX_VALUE - 1;
 
 	public IntegerGenerator(Random random) {
 		this.random = random;

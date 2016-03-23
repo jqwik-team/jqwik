@@ -27,14 +27,16 @@ public class MethodBasedProperty implements ExecutableProperty {
 
 	private final Class<?> testClass;
 	private final Method propertyMethod;
-	private final Map<Class<?>, Class<? extends Generator>> generatorClasses = new HashMap<>();
+	private final int numberOfTrials;
 	private final Random random;
 
-	private int numberOfTries = 100;
+	private final Map<Class<?>, Class<? extends Generator>> generatorClasses = new HashMap<>();
 
-	public MethodBasedProperty(Class<?> testClass, Method propertyMethod, long randomSeed) {
+
+	public MethodBasedProperty(Class<?> testClass, Method propertyMethod, int numberOfTrials, long randomSeed) {
 		this.testClass = testClass;
 		this.propertyMethod = propertyMethod;
+		this.numberOfTrials = numberOfTrials;
 		this.random = new Random(randomSeed);
 		generatorClasses.put(Integer.class, IntegerGenerator.class);
 		generatorClasses.put(int.class, IntegerGenerator.class);
@@ -48,12 +50,12 @@ public class MethodBasedProperty implements ExecutableProperty {
 	@Override
 	public void evaluate() {
 		Generator[] parameterGenerators = getParameterGenerators();
-		for (int i = 0; i < numberOfTries; i++) {
+		for (int i = 0; i < numberOfTrials; i++) {
 
 			boolean propertyResult;
 			Object[] parameters;
 
-			int maxMisses = numberOfTries * 10;
+			int maxMisses = numberOfTrials * 10;
 			int countMisses = 0;
 			while (true) {
 				parameters = nextParameters(parameterGenerators);
@@ -102,7 +104,7 @@ public class MethodBasedProperty implements ExecutableProperty {
 	}
 
 	private boolean evaluate(Object[] parameters) {
-		LOG.finest(() -> String.format("Run method '%s' with parameters: [%s]", methodDescription(),
+		LOG.warning(() -> String.format("Run method '%s' with parameters: [%s]", methodDescription(),
 			parameterDescription(parameters)));
 		Object testInstance = null;
 		if (!ReflectionUtils.isStatic(propertyMethod))

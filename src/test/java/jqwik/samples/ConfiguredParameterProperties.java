@@ -12,4 +12,9 @@ class ConfiguredParameterProperties {
 	    return aNumber >= 0 && aNumber <= 20;
 	}
 
+	@Property(trials = 1000)
+    boolean allAreSmallerEqualOrBiggerThanZero(@Min(-10) @Max(0) int first, @Min(0) @Max(10) int second) {
+	    return first < second;
+	}
+
 }
