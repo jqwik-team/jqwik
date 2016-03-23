@@ -8,9 +8,11 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import net.jqwik.api.ParameterConstraintViolation;
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.junit.gen5.commons.util.StringUtils;
 import org.opentest4j.AssertionFailedError;
+import org.opentest4j.TestAbortedException;
 
 public class MethodBasedProperty implements ExecutableProperty {
 
@@ -19,6 +21,7 @@ public class MethodBasedProperty implements ExecutableProperty {
 	private final Class<?> testClass;
 	private final Method propertyMethod;
 	private final Set<Generator> generators = new HashSet<>();
+	private int numberOfTries = 100;
 
 	public MethodBasedProperty(Class<?> testClass, Method propertyMethod) {
 		this.testClass = testClass;
@@ -34,10 +37,28 @@ public class MethodBasedProperty implements ExecutableProperty {
 	@Override
 	public void evaluate() {
 		Generator[] parameterGenerators = getParameterGenerators();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < numberOfTries; i++) {
 
-			Object[] parameters = nextParameters(parameterGenerators);
-			if (!evaluate(parameters)) {
+
+			boolean propertyResult;
+			Object[] parameters;
+
+			int maxMisses = numberOfTries * 10;
+			int countMisses = 0;
+			while(true) {
+				parameters = nextParameters(parameterGenerators);
+				try {
+					propertyResult = !evaluate(parameters);
+					break;
+				} catch (ParameterConstraintViolation pcv) {
+					countMisses++;
+					if (countMisses >= maxMisses)
+						throw new TestAbortedException("Too many misses trying to create parameters.");
+					continue;
+				}
+			}
+
+			if (propertyResult) {
 				Object[] shrinkedParameters = shrinkParameters(parameters, parameterGenerators);
 				String message = String.format("Failed with parameters: [%s]",
 					parameterDescription(shrinkedParameters));
