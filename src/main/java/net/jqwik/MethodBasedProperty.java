@@ -3,23 +3,19 @@ package net.jqwik;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import net.jqwik.api.MissingGeneratorConstructor;
+import net.jqwik.api.ParameterConstraintViolation;
+
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.junit.gen5.commons.util.StringUtils;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
-import net.jqwik.api.MissingGeneratorConstructor;
-import net.jqwik.api.ParameterConstraintViolation;
 
 public class MethodBasedProperty implements ExecutableProperty {
 
@@ -31,7 +27,6 @@ public class MethodBasedProperty implements ExecutableProperty {
 	private final Random random;
 
 	private final Map<Class<?>, Class<? extends Generator>> generatorClasses = new HashMap<>();
-
 
 	public MethodBasedProperty(Class<?> testClass, Method propertyMethod, int numberOfTrials, long randomSeed) {
 		this.testClass = testClass;
@@ -49,18 +44,64 @@ public class MethodBasedProperty implements ExecutableProperty {
 
 	@Override
 	public void evaluate() {
-		Generator[] parameterGenerators = getParameterGenerators();
+		List<Generator> parameterGenerators = getParameterGenerators();
+		long finalNumberOfValues = calculateFinalNumberOfValues(parameterGenerators);
+		//		System.out.println("FNOV: " + finalNumberOfValues);
+		if (finalNumberOfValues > 0 && finalNumberOfValues <= numberOfTrials) {
+			evaluateAllValues(parameterGenerators);
+		}
+		else {
+			evaluateAllNumberOfTrials(parameterGenerators);
+		}
+	}
+
+	private void evaluateAllValues(List<Generator> parameterGenerators) {
+		Stream<Object[]> allParameterCombinations = createAllParameterCombinations(parameterGenerators);
+		allParameterCombinations.forEach(parameters -> {
+			try {
+				boolean propertyFailed = !evaluate(parameters);
+				if (propertyFailed) {
+					Object[] shrinkedParameters = shrinkParameters(parameters,
+							parameterGenerators.toArray(new Generator[0]));
+					String message = String.format("Failed with parameters: [%s]",
+							parameterDescription(shrinkedParameters));
+					AssertionFailedError assertionFailedError = new AssertionFailedError(message);
+					throw assertionFailedError;
+				}
+			}
+			catch (ParameterConstraintViolation pcv) {
+			}
+		});
+	}
+
+	private Stream<Object[]> createAllParameterCombinations(List<Generator> parameterGenerators) {
+		//Todo: Only works for one generator
+		Generator generator = parameterGenerators.get(0);
+		return generator.generateAll().map(param -> new Object[] {param});
+	}
+
+	private long calculateFinalNumberOfValues(List<Generator> parameterGenerators) {
+		long finalNumberOfValues = 1;
+		for (Generator generator : parameterGenerators) {
+			long finalNumber = (long) generator.finalNumberOfValues().orElse(0);
+			finalNumberOfValues *= finalNumber;
+		}
+
+		return finalNumberOfValues;
+	}
+
+	private void evaluateAllNumberOfTrials(List<Generator> parameterGenerators) {
 		for (int i = 0; i < numberOfTrials; i++) {
 
-			boolean propertyResult;
+			boolean propertyFailed;
 			Object[] parameters;
 
 			int maxMisses = numberOfTrials * 10;
 			int countMisses = 0;
 			while (true) {
-				parameters = nextParameters(parameterGenerators);
+				parameters = nextParameters(parameterGenerators.toArray(new Generator[0]));
 				try {
-					propertyResult = !evaluate(parameters);
+					propertyFailed = !evaluate(parameters);
 					break;
 				}
 				catch (ParameterConstraintViolation pcv) {
@@ -71,11 +112,13 @@ public class MethodBasedProperty implements ExecutableProperty {
 				}
 			}
 
-			if (propertyResult) {
-				Object[] shrinkedParameters = shrinkParameters(parameters, parameterGenerators);
+			if (propertyFailed) {
+				Object[] shrinkedParameters = shrinkParameters(parameters,
+					parameterGenerators.toArray(new Generator[0]));
 				String message = String.format("Failed with parameters: [%s]",
 					parameterDescription(shrinkedParameters));
-				throw new AssertionFailedError(message);
+				AssertionFailedError assertionFailedError = new AssertionFailedError(message);
+				throw assertionFailedError;
 			}
 		}
 	}
@@ -127,7 +170,7 @@ public class MethodBasedProperty implements ExecutableProperty {
 		.toArray();
 	}
 
-	private Generator[] getParameterGenerators() {
+	private List<Generator> getParameterGenerators() {
 		return Arrays.stream(propertyMethod.getParameters()) //
 		.map(parameter -> {
 			Generator generator = createGenerator(parameter).orElseThrow(() -> {
@@ -136,7 +179,7 @@ public class MethodBasedProperty implements ExecutableProperty {
 				return new RuntimeException(message);
 			});
 			return generator;
-		}).collect(Collectors.toList()).toArray(new Generator[0]);
+		}).collect(Collectors.toList());
 	}
 
 	private Optional<Generator> createGenerator(Parameter parameter) {
