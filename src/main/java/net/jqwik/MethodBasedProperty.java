@@ -75,6 +75,9 @@ public class MethodBasedProperty implements ExecutableProperty {
 	}
 
 	private Stream<Object[]> createAllParameterCombinations(List<Generator> parameterGenerators) {
+		if (parameterGenerators.isEmpty())
+			return Collections.singletonList(new Object[0]).stream();
+
 		//Todo: Only works for one generator
 		Generator generator = parameterGenerators.get(0);
 		return generator.generateAll().map(param -> new Object[] {param});
