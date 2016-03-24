@@ -62,9 +62,9 @@ public class MethodBasedProperty implements ExecutableProperty {
 				boolean propertyFailed = !evaluate(parameters);
 				if (propertyFailed) {
 					Object[] shrinkedParameters = shrinkParameters(parameters,
-							parameterGenerators.toArray(new Generator[0]));
+						parameterGenerators.toArray(new Generator[0]));
 					String message = String.format("Failed with parameters: [%s]",
-							parameterDescription(shrinkedParameters));
+						parameterDescription(shrinkedParameters));
 					AssertionFailedError assertionFailedError = new AssertionFailedError(message);
 					throw assertionFailedError;
 				}
@@ -78,9 +78,34 @@ public class MethodBasedProperty implements ExecutableProperty {
 		if (parameterGenerators.isEmpty())
 			return Collections.singletonList(new Object[0]).stream();
 
-		//Todo: Only works for one generator
-		Generator generator = parameterGenerators.get(0);
-		return generator.generateAll().map(param -> new Object[] {param});
+		List<List> listOfLists = parameterGenerators.stream().map(Generator::generateAll).collect(
+				Collectors.toList());
+
+		List<List<Object>> allCombinations = product(listOfLists);
+
+		return allCombinations.stream().map(List::toArray);
+
+	}
+
+	private List<List<Object>> product(List<List> lists) {
+
+		List<List<Object>> result = new ArrayList<>();
+		result.add(new ArrayList<>());
+
+		for (List e : lists) {
+			List<List<Object>> tmp1 = new ArrayList<>();
+			for (List<Object> x : result) {
+				for (Object y : e) {
+					List<Object> tmp2 = new ArrayList<>(x);
+					tmp2.add(y);
+					tmp1.add(tmp2);
+				}
+			}
+			result = tmp1;
+		}
+
+		return result;
+
 	}
 
 	private long calculateFinalNumberOfValues(List<Generator> parameterGenerators) {
@@ -150,7 +175,7 @@ public class MethodBasedProperty implements ExecutableProperty {
 	}
 
 	private boolean evaluate(Object[] parameters) {
-		LOG.warning(() -> String.format("Run method '%s' with parameters: [%s]", methodDescription(),
+		LOG.finest(() -> String.format("Run method '%s' with parameters: [%s]", methodDescription(),
 			parameterDescription(parameters)));
 		Object testInstance = null;
 		if (!ReflectionUtils.isStatic(propertyMethod))

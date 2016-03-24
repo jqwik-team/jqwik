@@ -27,8 +27,14 @@ public class IntegerGenerator implements Generator<Integer> {
 	}
 
 	@Override
-	public Stream<Integer> generateAll() {
-		return Stream.iterate(min, n -> n + 1).limit(numberOfValues());
+	public List<Integer> generateAll() {
+		List<Integer> result = new ArrayList<Integer>();
+		int start = min;
+		while(start <= max) {
+			result.add(start);
+			start++;
+		}
+		return result;
 	}
 
 	@Override

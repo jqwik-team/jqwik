@@ -8,25 +8,29 @@ import net.jqwik.api.Property;
 
 class ConfiguredParameterProperties {
 
-//	@Property
+	@Property
     boolean allAreSmallerEqualOrBiggerThanZero(@Min(0) @Max(20) int aNumber) {
 	    return aNumber >= 0 && aNumber <= 20;
 	}
 
-//	@Property(trials = 1000)
+	@Property(trials = 1000)
     boolean allAreSmallerEqualOrBiggerThanZero(@Min(-10) @Max(0) int first, @Min(0) @Max(10) int second) {
 	    return first < second;
 	}
 
-	@Property(trials = 25)
+	@Property()
 	boolean shouldExecuteAllPossibilities(@Min(-10) @Max(10) int aNumber) {
 		return true;
 	}
 
-	@Property(trials = 25)
+	@Property()
 	boolean shouldExecuteAllConstrainedPossibilities(@Min(-10) @Max(10) int aNumber) {
 		Constraints.require(aNumber >= 0);
-		System.out.println(aNumber);
+		return true;
+	}
+
+	@Property()
+	boolean shouldExecuteAllCombinations(@Min(-1) @Max(1) int first, @Min(-1) @Max(1) int second) {
 		return true;
 	}
 
