@@ -17,4 +17,9 @@ class MixedProperties {
 		return true;
 	}
 
+	@Property
+    boolean booleansAreShrinkedToTrue(boolean b1, Boolean b2, int number) {
+		return number >= 0;
+	}
+
 }

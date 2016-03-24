@@ -17,16 +17,18 @@ public class BooleanGenerator implements Generator<Boolean> {
 
 	@Override
 	public List<Boolean> shrink(Boolean value) {
-		return null;
+		if (value)
+			return new ArrayList<>();
+		return Arrays.asList(true);
 	}
 
 	@Override
 	public Optional<Long> finalNumberOfValues() {
-		return Optional.of(2l);
+		return Optional.of(2L);
 	}
 
 	@Override
 	public List<Boolean> generateAll() {
-		return Arrays.asList(new Boolean[] {true, false});
+		return Arrays.asList(true, false);
 	}
 }
