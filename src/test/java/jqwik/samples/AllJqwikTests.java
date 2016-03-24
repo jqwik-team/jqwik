@@ -10,7 +10,8 @@ import org.junit.runner.RunWith;
 //@Classes({ SimpleProperties.class })
 //@Classes({ ConstrainedParametersProperties.class })
 //@Classes({ IntegerProperties.class })
-@Classes({ ConfiguredParameterProperties.class })
+//@Classes({ ConfiguredParameterProperties.class })
+@Classes({ MixedProperties.class })
 @RequireEngine("jqwik")
 public class AllJqwikTests {
 }

@@ -33,8 +33,14 @@ public class MethodBasedProperty implements ExecutableProperty {
 		this.propertyMethod = propertyMethod;
 		this.numberOfTrials = numberOfTrials;
 		this.random = new Random(randomSeed);
+		registerGenerators();
+	}
+
+	private void registerGenerators() {
 		generatorClasses.put(Integer.class, IntegerGenerator.class);
 		generatorClasses.put(int.class, IntegerGenerator.class);
+		generatorClasses.put(Boolean.class, BooleanGenerator.class);
+		generatorClasses.put(boolean.class, BooleanGenerator.class);
 	}
 
 	@Override
@@ -111,7 +117,7 @@ public class MethodBasedProperty implements ExecutableProperty {
 	private long calculateFinalNumberOfValues(List<Generator> parameterGenerators) {
 		long finalNumberOfValues = 1;
 		for (Generator generator : parameterGenerators) {
-			long finalNumber = (long) generator.finalNumberOfValues().orElse(0);
+			long finalNumber = (long) generator.finalNumberOfValues().orElse(0l);
 			finalNumberOfValues *= finalNumber;
 		}
 
