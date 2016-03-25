@@ -8,22 +8,26 @@ import org.opentest4j.AssertionFailedError;
 
 public class JqwikPropertyDescriptor extends AbstractTestDescriptor implements Leaf<JqwikExecutionContext> {
 
-    private final ExecutableProperty property;
+    private final UniqueId uniqueId;
+    private final String name;
+    private final TestSource source;
 
-    public JqwikPropertyDescriptor(UniqueId uniqueId, ExecutableProperty property, TestSource source) {
+    public JqwikPropertyDescriptor(UniqueId uniqueId, String name, TestSource source) {
         super(uniqueId);
-        this.property = property;
+        this.uniqueId = uniqueId;
+        this.name = name;
+        this.source = source;
         setSource(source);
     }
 
     @Override
     public String getName() {
-        return property.name();
+        return name;
     }
 
     @Override
     public String getDisplayName() {
-        return property.name();
+        return name;
     }
 
     @Override
@@ -38,7 +42,6 @@ public class JqwikPropertyDescriptor extends AbstractTestDescriptor implements L
 
     @Override
     public JqwikExecutionContext execute(JqwikExecutionContext context) throws Exception {
-        property.evaluate();
         return context;
     }
 }
