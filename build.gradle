@@ -19,6 +19,7 @@ jar {
 }
 
 ext.junit5Version = '5.0.0-SNAPSHOT'
+ext.junitQuickcheckVersion = '0.6'
 ext.junit4Version = '4.12'
 ext.log4JVersion  = '2.5'
 
@@ -42,10 +43,13 @@ compileTestJava {
 }
 
 dependencies {
-	// If you also want JUnit4 tests
+	compile("com.pholser:junit-quickcheck-core:${junitQuickcheckVersion}")
 	compile("org.junit:junit-engine-api:${junit5Version}")
 
 	testCompile("org.junit:junit4-runner:${junit5Version}")
+	compile("com.pholser:junit-quickcheck-generators:${junitQuickcheckVersion}")
+
+	// If you also want JUnit4 tests
 	testCompile("junit:junit:${junit4Version}")
 
 	testRuntime("org.apache.logging.log4j:log4j-core:${log4JVersion}")
