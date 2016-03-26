@@ -6,6 +6,10 @@ import java.util.Random;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import com.pholser.junit.quickcheck.Property;
+import com.pholser.junit.quickcheck.internal.GeometricDistribution;
+import com.pholser.junit.quickcheck.internal.generator.GeneratorRepository;
+import com.pholser.junit.quickcheck.internal.generator.ServiceLoaderGeneratorSource;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
 import org.junit.gen5.commons.util.AnnotationUtils;
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.junit.gen5.engine.EngineDiscoveryRequest;
@@ -15,6 +19,7 @@ import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.engine.support.descriptor.JavaSource;
 import org.junit.gen5.engine.support.hierarchical.HierarchicalTestEngine;
+import org.slf4j.LoggerFactory;
 
 public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContext> {
 
@@ -26,10 +31,20 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 	public static final String SEGMENT_TYPE_METHOD = "jqwik-method";
 	public static final String SEGMENT_TYPE_SEED = "jqwik-seed";
 
+	private final GeneratorRepository repo;
+	private final GeometricDistribution distro;
+	private final org.slf4j.Logger seedLog;
+
 	// Test runs should produce the same results for one instantiation of the test engine
 	private long seed = new Random().nextLong();
 
-	private Random seedGenerator;
+	public JqwikTestEngine() {
+		SourceOfRandomness random = new SourceOfRandomness(new Random(seed));
+		repo = new GeneratorRepository(random).register(new ServiceLoaderGeneratorSource());
+		distro = new GeometricDistribution();
+		seedLog = LoggerFactory.getLogger("junit-quickcheck.seed-reporting");
+
+	}
 
 	@Override
 	public String getId() {
@@ -43,7 +58,6 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueEngineId) {
-		seedGenerator = new Random(seed);
 		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueEngineId);
 		resolveSelectors(discoveryRequest, engineDescriptor);
 		return engineDescriptor;
@@ -66,20 +80,26 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		Predicate<Method> isPropertyMethod = method -> AnnotationUtils.isAnnotated(method, Property.class);
 		ReflectionUtils.findMethods(testClass, isPropertyMethod).forEach(propertyMethod -> {
 			if (ReflectionUtils.isPrivate(propertyMethod)) {
-				LOG.warning(() -> String.format("Method '%s' cannot be property because it is private", methodDescription(propertyMethod)));
+				LOG.warning(() -> String.format("Method '%s' cannot be property because it is private",
+					methodDescription(propertyMethod)));
 				return;
 			}
 			if (!isAcceptedPropertyReturnType(propertyMethod.getReturnType())) {
-				LOG.warning(() -> String.format("Method '%s' cannot be property because it must return a boolean value", methodDescription(propertyMethod)));
+				LOG.warning(() -> String.format("Method '%s' cannot be property because it must return a boolean value",
+					methodDescription(propertyMethod)));
 				return;
 			}
 
-			long seed = seedGenerator.nextLong();
-			UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
+			// UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
+			UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
 
 			int numberOfTrials = propertyMethod.getDeclaredAnnotation(Property.class).trials();
 
-			classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, propertyMethod.getName(), new JavaSource(propertyMethod)));
+			PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, testClass, repo, distro,
+				seedLog);
+
+			classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, propertyMethod.getName(), propertyStatement,
+				new JavaSource(propertyMethod)));
 		});
 
 	}

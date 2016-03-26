@@ -1,22 +1,20 @@
 package net.jqwik;
 
+import org.junit.gen5.commons.util.ExceptionUtils;
 import org.junit.gen5.engine.TestSource;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.gen5.engine.support.hierarchical.Leaf;
-import org.opentest4j.AssertionFailedError;
 
 public class JqwikPropertyDescriptor extends AbstractTestDescriptor implements Leaf<JqwikExecutionContext> {
 
-    private final UniqueId uniqueId;
     private final String name;
-    private final TestSource source;
+	private final PropertyStatement propertyStatement;
 
-    public JqwikPropertyDescriptor(UniqueId uniqueId, String name, TestSource source) {
+    public JqwikPropertyDescriptor(UniqueId uniqueId, String name, PropertyStatement propertyStatement, TestSource source) {
         super(uniqueId);
-        this.uniqueId = uniqueId;
         this.name = name;
-        this.source = source;
+		this.propertyStatement = propertyStatement;
         setSource(source);
     }
 
@@ -42,6 +40,11 @@ public class JqwikPropertyDescriptor extends AbstractTestDescriptor implements L
 
     @Override
     public JqwikExecutionContext execute(JqwikExecutionContext context) throws Exception {
-        return context;
+		try {
+			propertyStatement.evaluate();
+		} catch (Throwable throwable) {
+			ExceptionUtils.throwAsUncheckedException(throwable);
+		}
+		return context;
     }
 }

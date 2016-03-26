@@ -31,6 +31,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.junit.gen5.commons.util.ReflectionUtils;
+import org.opentest4j.AssertionFailedError;
 import net.jqwik.api.AssumptionViolatedException;
 
 class PropertyVerifier  { //extends BlockJUnit4ClassRunner {
@@ -63,12 +65,15 @@ class PropertyVerifier  { //extends BlockJUnit4ClassRunner {
     }
 
     private Statement methodBlock() {
-//        Statement statement = super.methodBlock(method);
         return new Statement() {
             @Override public void evaluate() throws Throwable {
                 try {
-//                    statement.evaluate();
-                    onSuccess.accept(null);
+					Object instance = ReflectionUtils.newInstance(testClass);
+					boolean success = (boolean) ReflectionUtils.invokeMethod(method, instance, args);
+					if (success)
+	                    onSuccess.accept(null);
+					else
+						onFailure.accept(new AssertionFailedError("XXXXXX."));
                 } catch (AssumptionViolatedException e) {
                     onAssumptionViolated.accept(e);
                 } catch (AssertionError e) {

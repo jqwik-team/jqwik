@@ -7,7 +7,8 @@ class SimpleProperties {
 
 	@Property
     boolean succeedingProperty() {
-	    return true;
+		System.out.println("XXXXXXXXXX I AM HERE. I AM HERE. I AM HERE. I AM HERE. I AM HERE. XXXXXXXXXXXX");
+		return true;
 	}
 
 	@Property
