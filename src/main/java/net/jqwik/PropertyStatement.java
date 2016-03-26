@@ -92,7 +92,15 @@ class PropertyStatement implements Statement {
         }
     }
 
-    private void verifyProperty(
+	public boolean hasAcceptedReturnType() {
+		return isAcceptedPropertyReturnType(method.getReturnType());
+	}
+
+	private boolean isAcceptedPropertyReturnType(Class<?> propertyReturnType) {
+		return propertyReturnType.equals(boolean.class) || propertyReturnType.equals(Boolean.class);
+	}
+
+	private void verifyProperty(
         List<PropertyParameterGenerationContext> params,
         ShrinkControl shrinkControl)
         throws Throwable {

@@ -80,12 +80,7 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		Predicate<Method> isPropertyMethod = method -> AnnotationUtils.isAnnotated(method, Property.class);
 		ReflectionUtils.findMethods(testClass, isPropertyMethod).forEach(propertyMethod -> {
 			if (ReflectionUtils.isPrivate(propertyMethod)) {
-				LOG.warning(() -> String.format("Method '%s' cannot be property because it is private",
-					methodDescription(propertyMethod)));
-				return;
-			}
-			if (!isAcceptedPropertyReturnType(propertyMethod.getReturnType())) {
-				LOG.warning(() -> String.format("Method '%s' cannot be property because it must return a boolean value",
+				LOG.warning(() -> String.format("Method '%s' not a property because it is private",
 					methodDescription(propertyMethod)));
 				return;
 			}
@@ -102,10 +97,6 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 				new JavaSource(propertyMethod)));
 		});
 
-	}
-
-	private boolean isAcceptedPropertyReturnType(Class<?> propertyReturnType) {
-		return propertyReturnType.equals(boolean.class) || propertyReturnType.equals(Boolean.class);
 	}
 
 	private String methodDescription(Method method) {
