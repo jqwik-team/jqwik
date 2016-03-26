@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
-
+import com.pholser.junit.quickcheck.Property;
 import org.junit.gen5.commons.util.AnnotationUtils;
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.junit.gen5.engine.EngineDiscoveryRequest;
@@ -15,8 +15,6 @@ import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.engine.support.descriptor.JavaSource;
 import org.junit.gen5.engine.support.hierarchical.HierarchicalTestEngine;
-
-import net.jqwik.api.Property;
 
 public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContext> {
 

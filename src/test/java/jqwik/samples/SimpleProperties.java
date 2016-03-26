@@ -1,7 +1,7 @@
 
 package jqwik.samples;
 
-import net.jqwik.api.Property;
+import com.pholser.junit.quickcheck.Property;
 
 class SimpleProperties {
 
