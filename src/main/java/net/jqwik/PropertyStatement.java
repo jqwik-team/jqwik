@@ -44,9 +44,9 @@ import com.pholser.junit.quickcheck.internal.ShrinkControl;
 import com.pholser.junit.quickcheck.internal.generator.GeneratorRepository;
 import com.pholser.junit.quickcheck.internal.generator.PropertyParameterGenerationContext;
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
-import org.opentest4j.AssertionFailedError;
+import org.opentest4j.TestAbortedException;
 import org.slf4j.Logger;
-import net.jqwik.api.AssumptionViolatedException;
+import net.jqwik.api.AssumptionViolation;
 import ru.vyarus.java.generics.resolver.GenericsResolver;
 
 class PropertyStatement {
@@ -55,7 +55,7 @@ class PropertyStatement {
 	private final GeneratorRepository repo;
 	private final GeometricDistribution distro;
 	private final Logger seedLog;
-	private final List<AssumptionViolatedException> assumptionViolations = new ArrayList<>();
+	private final List<AssumptionViolation> assumptionViolations = new ArrayList<>();
 	private int successes;
 
 	PropertyStatement(Method method, Class<?> testClass, GeneratorRepository repo, GeometricDistribution distro,
@@ -81,7 +81,7 @@ class PropertyStatement {
 			verifyProperty(params, shrinkControl);
 
 		if (successes == 0 && !assumptionViolations.isEmpty()) {
-			throw new AssertionFailedError(
+			throw new TestAbortedException(
 				"No values satisfied property assumptions. Violated assumptions: " + assumptionViolations);
 		}
 	}

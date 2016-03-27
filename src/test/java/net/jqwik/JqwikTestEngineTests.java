@@ -12,6 +12,7 @@ import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
 import org.opentest4j.AssertionFailedError;
+import net.jqwik.api.Assumptions;
 
 class JqwikTestEngineTests {
 
@@ -28,13 +29,14 @@ class JqwikTestEngineTests {
 			ClassSelector.forClass(NoParamsProperties.class)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
 
-		Assertions.assertEquals(7, engineDescriptor.allDescendants().size());
+		Assertions.assertEquals(8, engineDescriptor.allDescendants().size());
 
 		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
 
-		Assertions.assertEquals(5, engineListener.countPropertiesStarted(), "Started");
+		Assertions.assertEquals(6, engineListener.countPropertiesStarted(), "Started");
 		Assertions.assertEquals(3, engineListener.countPropertiesSuccessful(), "Successful");
 		Assertions.assertEquals(2, engineListener.countPropertiesFailed(), "Failed");
+		Assertions.assertEquals(1, engineListener.countPropertiesAborted(), "Aborted");
 		Assertions.assertEquals(1, engineListener.countPropertiesSkipped(), "Skipped");
 	}
 
@@ -73,6 +75,11 @@ class JqwikTestEngineTests {
 		@Property
 		static void succeedingStatic() {
 
+		}
+
+		@Property
+		void shouldBeSkipped() {
+			Assumptions.assume(false);
 		}
 	}
 }

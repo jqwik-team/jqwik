@@ -31,18 +31,18 @@ import java.lang.reflect.Method;
 import java.util.function.Consumer;
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.opentest4j.AssertionFailedError;
-import net.jqwik.api.AssumptionViolatedException;
+import net.jqwik.api.AssumptionViolation;
 
 class PropertyVerifier {
 	private final Method method;
 	private final Object[] args;
 	private final Consumer<Void> onSuccess;
-	private final Consumer<AssumptionViolatedException> onAssumptionViolated;
+	private final Consumer<AssumptionViolation> onAssumptionViolated;
 	private final Consumer<AssertionError> onFailure;
 	private final Class<?> testClass;
 
 	PropertyVerifier(Class<?> clazz, Method method, Object[] args, Consumer<Void> onSuccess,
-			Consumer<AssumptionViolatedException> onAssumptionViolated, Consumer<AssertionError> onFailure) {
+					 Consumer<AssumptionViolation> onAssumptionViolated, Consumer<AssertionError> onFailure) {
 
 		this.testClass = clazz;
 		this.method = method;
@@ -69,7 +69,7 @@ class PropertyVerifier {
 				onSuccess.accept(null);
 			}
 		}
-		catch (AssumptionViolatedException e) {
+		catch (AssumptionViolation e) {
 			onAssumptionViolated.accept(e);
 		}
 		catch (AssertionError e) {

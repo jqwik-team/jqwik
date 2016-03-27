@@ -36,6 +36,9 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 			case FAILED:
 				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Failed));
 				break;
+			case ABORTED:
+				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Aborted));
+				break;
 			default:
 				;
 		}
@@ -59,8 +62,11 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 	}
 
 	public long countPropertiesSkipped() {
-		ExecutionEventType eventType = ExecutionEventType.Skipped;
-		return countPropertiesEvent(eventType);
+		return countPropertiesEvent(ExecutionEventType.Skipped);
+	}
+
+	public long countPropertiesAborted() {
+		return countPropertiesEvent(ExecutionEventType.Aborted);
 	}
 
 	private long countPropertiesEvent(ExecutionEventType eventType) {
@@ -82,6 +88,6 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 	}
 
 	public enum ExecutionEventType {
-		Skipped, Started, Successful, Failed
+		Skipped, Started, Successful, Aborted, Failed
 	}
 }
