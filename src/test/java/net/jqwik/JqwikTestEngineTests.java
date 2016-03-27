@@ -1,6 +1,7 @@
 
 package net.jqwik;
 
+import java.lang.reflect.Method;
 import com.pholser.junit.quickcheck.Property;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.BeforeEach;
@@ -55,6 +56,38 @@ class JqwikTestEngineTests {
 		Assertions.assertEquals(1, engineListener.countPropertiesSkipped(), "Skipped");
 	}
 
+	@Test
+	void propertiesWithOneParam() {
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+			ClassSelector.forClass(OneParamProperties.class)).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		Assertions.assertEquals(3, engineDescriptor.allDescendants().size());
+
+		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
+
+		Assertions.assertEquals(2, engineListener.countPropertiesStarted(), "Started");
+		Assertions.assertEquals(1, engineListener.countPropertiesSuccessful(), "Successful");
+		Assertions.assertEquals(1, engineListener.countPropertiesFailed(), "Failed");
+	}
+
+	@Test
+	void checkForPropertyVerificationFailure() throws NoSuchMethodException {
+		Method failingMethod = OneParamProperties.class.getDeclaredMethod("failing", new Class[] { int.class });
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+			MethodSelector.forMethod(OneParamProperties.class, failingMethod)).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
+
+		RecordingExecutionListener.ExecutionEvent failingEvent = engineListener.filterEvents(
+			event -> event.type == RecordingExecutionListener.ExecutionEventType.Failed).findFirst().get();
+
+		Assertions.assertEquals("failing", failingEvent.descriptor.getName());
+		PropertyVerificationFailure verificationFailure = (PropertyVerificationFailure) failingEvent.exception;
+		Assertions.assertEquals(0, verificationFailure.getArgs()[0], "Shrinked value");
+	}
+
 	private RecordingExecutionListener executeEngine(TestDescriptor engineDescriptor) {
 		RecordingExecutionListener engineListener = new RecordingExecutionListener();
 		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, engineListener);
@@ -95,6 +128,18 @@ class JqwikTestEngineTests {
 		@Property
 		void shouldBeSkipped() {
 			Assumptions.assume(false);
+		}
+	}
+
+	static class OneParamProperties {
+		@Property
+		boolean succeeding(int aNumber) {
+			return true;
+		}
+
+		@Property
+		boolean failing(int aNumber) {
+			return aNumber > 0;
 		}
 	}
 }

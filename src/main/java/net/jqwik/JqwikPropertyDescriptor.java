@@ -9,25 +9,23 @@ import org.junit.gen5.engine.support.hierarchical.Leaf;
 
 public class JqwikPropertyDescriptor extends AbstractTestDescriptor implements Leaf<JqwikExecutionContext> {
 
-	private final String name;
 	private final PropertyStatement propertyStatement;
 
-	public JqwikPropertyDescriptor(UniqueId uniqueId, String name, PropertyStatement propertyStatement,
-			TestSource source) {
+	public JqwikPropertyDescriptor(UniqueId uniqueId, PropertyStatement propertyStatement,
+								   TestSource source) {
 		super(uniqueId);
-		this.name = name;
 		this.propertyStatement = propertyStatement;
 		setSource(source);
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		return propertyStatement.getDisplayName();
 	}
 
 	@Override
 	public String getDisplayName() {
-		return name;
+		return propertyStatement.getDisplayName();
 	}
 
 	@Override

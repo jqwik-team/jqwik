@@ -63,7 +63,7 @@ class PropertyVerifier {
 				if ((boolean) result)
 					onSuccess.accept(null);
 				else
-					onFailure.accept(new AssertionFailedError("message is ignored"));
+					onFailure.accept(new AssertionFailedError());
 			}
 			else {
 				onSuccess.accept(null);

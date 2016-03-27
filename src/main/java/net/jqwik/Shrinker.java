@@ -34,7 +34,7 @@ import com.pholser.junit.quickcheck.internal.generator.PropertyParameterGenerati
 class Shrinker {
     private final Method method;
     private final Class<?> testClass;
-    private final AssertionError failure;
+    private final PropertyVerificationFailure failure;
     private final int maxShrinks;
     private final int maxShrinkDepth;
     private final int maxShrinkTime;
@@ -44,7 +44,7 @@ class Shrinker {
     Shrinker(
         Method method,
         Class<?> testClass,
-        AssertionError failure,
+        PropertyVerificationFailure failure,
         int maxShrinks,
         int maxShrinkDepth,
         int maxShrinkTime) {

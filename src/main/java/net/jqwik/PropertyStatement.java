@@ -52,17 +52,19 @@ import ru.vyarus.java.generics.resolver.GenericsResolver;
 class PropertyStatement {
 	private final Method method;
 	private final Class<?> testClass;
+	private final String displayName;
 	private final GeneratorRepository repo;
 	private final GeometricDistribution distro;
 	private final Logger seedLog;
 	private final List<AssumptionViolation> assumptionViolations = new ArrayList<>();
 	private int successes;
 
-	PropertyStatement(Method method, Class<?> testClass, GeneratorRepository repo, GeometricDistribution distro,
-			Logger seedLog) {
+	PropertyStatement(Method method, Class<?> testClass, String displayName, GeneratorRepository repo, GeometricDistribution distro,
+					  Logger seedLog) {
 
 		this.method = method;
 		this.testClass = testClass;
+		this.displayName = displayName;
 		this.repo = repo;
 		this.distro = distro;
 		this.seedLog = seedLog;
@@ -106,11 +108,14 @@ class PropertyStatement {
 			ShrinkControl shrinkControl) {
 
 		return new PropertyVerifier(testClass, method, args, s -> ++successes, assumptionViolations::add, e -> {
-			if (!shrinkControl.shouldShrink())
-				throw e;
+			PropertyVerificationFailure verificationFailure = new PropertyVerificationFailure(method.getName(), args, e);
+
+			if (!shrinkControl.shouldShrink()) {
+				throw verificationFailure;
+			}
 
 			try {
-				shrink(params, args, shrinkControl, e);
+				shrink(params, args, shrinkControl, verificationFailure);
 			}
 			catch (AssertionError ex) {
 				throw ex;
@@ -122,9 +127,9 @@ class PropertyStatement {
 	}
 
 	private void shrink(List<PropertyParameterGenerationContext> params, Object[] args, ShrinkControl shrinkControl,
-			AssertionError failure) throws Throwable {
+			PropertyVerificationFailure originalFailure) throws Throwable {
 
-		new Shrinker(method, testClass, failure, shrinkControl.maxShrinks(), shrinkControl.maxShrinkDepth(),
+		new Shrinker(method, testClass, originalFailure, shrinkControl.maxShrinks(), shrinkControl.maxShrinkDepth(),
 			shrinkControl.maxShrinkTime()).shrink(params, args);
 	}
 
@@ -150,5 +155,9 @@ class PropertyStatement {
 
 	private Object[] argumentsFor(List<PropertyParameterGenerationContext> params) {
 		return params.stream().map(PropertyParameterGenerationContext::generate).collect(toList()).toArray();
+	}
+
+	public String getDisplayName() {
+		return displayName;
 	}
 }

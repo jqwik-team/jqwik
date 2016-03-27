@@ -3,6 +3,7 @@ package net.jqwik;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.junit.gen5.engine.EngineExecutionListener;
 import org.junit.gen5.engine.TestDescriptor;
@@ -34,13 +35,11 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Successful));
 				break;
 			case FAILED:
-				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Failed));
+				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Failed, testExecutionResult.getThrowable().get()));
 				break;
 			case ABORTED:
-				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Aborted));
+				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Aborted, testExecutionResult.getThrowable().get()));
 				break;
-			default:
-				;
 		}
 	}
 
@@ -74,16 +73,26 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 	}
 
 	private Stream<ExecutionEvent> propertiesEventStream() {
-		return events.stream().filter(event -> event.descriptor instanceof JqwikPropertyDescriptor);
+		return filterEvents(event -> event.descriptor instanceof JqwikPropertyDescriptor);
+	}
+
+	public Stream<ExecutionEvent> filterEvents(Predicate<? super ExecutionEvent> filter) {
+		return events.stream().filter(filter);
 	}
 
 	public class ExecutionEvent {
 		final TestDescriptor descriptor;
 		final ExecutionEventType type;
+		final Throwable exception;
 
 		public ExecutionEvent(TestDescriptor descriptor, ExecutionEventType type) {
+			this(descriptor, type, null);
+		}
+
+		public ExecutionEvent(TestDescriptor descriptor, ExecutionEventType type, Throwable exception) {
 			this.descriptor = descriptor;
 			this.type = type;
+			this.exception = exception;
 		}
 	}
 

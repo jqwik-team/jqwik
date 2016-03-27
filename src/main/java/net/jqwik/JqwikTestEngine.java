@@ -72,7 +72,8 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 	}
 
 	private void resolveMethod(MethodSelector methodSelector, JqwikEngineDescriptor engineDescriptor) {
-		JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(methodSelector.getTestClass(), engineDescriptor);
+		JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(methodSelector.getTestClass(),
+			engineDescriptor);
 		resolveMethodForClass(methodSelector.getTestMethod(), classDescriptor);
 	}
 
@@ -82,7 +83,8 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		resolveClassMethods(testClass, classDescriptor);
 	}
 
-	private JqwikClassDescriptor resolveClassWithoutChildren(Class<?> testClass, JqwikEngineDescriptor engineDescriptor) {
+	private JqwikClassDescriptor resolveClassWithoutChildren(Class<?> testClass,
+			JqwikEngineDescriptor engineDescriptor) {
 		UniqueId uniqueId = engineDescriptor.getUniqueId().append(SEGMENT_TYPE_CLASS, testClass.getName());
 		JqwikClassDescriptor classDescriptor = new JqwikClassDescriptor(uniqueId, testClass);
 		engineDescriptor.addChild(classDescriptor);
@@ -109,11 +111,11 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 		int numberOfTrials = propertyMethod.getDeclaredAnnotation(Property.class).trials();
 
-		PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, classDescriptor.getTestClass(), repo, distro,
-			seedLog);
+		PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, classDescriptor.getTestClass(),
+			propertyMethod.getName(), repo, distro, seedLog);
 
-		classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, propertyMethod.getName(), propertyStatement,
-			new JavaSource(propertyMethod)));
+		classDescriptor.addChild(
+			new JqwikPropertyDescriptor(uniqueId, propertyStatement, new JavaSource(propertyMethod)));
 	}
 
 	private String methodDescription(Method method) {
