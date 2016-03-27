@@ -17,6 +17,7 @@ import org.junit.gen5.engine.ExecutionRequest;
 import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
+import org.junit.gen5.engine.discovery.MethodSelector;
 import org.junit.gen5.engine.support.descriptor.JavaSource;
 import org.junit.gen5.engine.support.hierarchical.HierarchicalTestEngine;
 import org.slf4j.LoggerFactory;
@@ -66,37 +67,53 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 	private void resolveSelectors(EngineDiscoveryRequest discoveryRequest, JqwikEngineDescriptor engineDescriptor) {
 		discoveryRequest.getSelectorsByType(ClassSelector.class).forEach(
 			classSelector -> resolveClass(classSelector, engineDescriptor));
+		discoveryRequest.getSelectorsByType(MethodSelector.class).forEach(
+			methodSelector -> resolveMethod(methodSelector, engineDescriptor));
+	}
+
+	private void resolveMethod(MethodSelector methodSelector, JqwikEngineDescriptor engineDescriptor) {
+		JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(methodSelector.getTestClass(), engineDescriptor);
+		resolveMethodForClass(methodSelector.getTestMethod(), classDescriptor);
 	}
 
 	private void resolveClass(ClassSelector classSelector, JqwikEngineDescriptor engineDescriptor) {
 		Class<?> testClass = classSelector.getTestClass();
+		JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(testClass, engineDescriptor);
+		resolveClassMethods(testClass, classDescriptor);
+	}
+
+	private JqwikClassDescriptor resolveClassWithoutChildren(Class<?> testClass, JqwikEngineDescriptor engineDescriptor) {
 		UniqueId uniqueId = engineDescriptor.getUniqueId().append(SEGMENT_TYPE_CLASS, testClass.getName());
 		JqwikClassDescriptor classDescriptor = new JqwikClassDescriptor(uniqueId, testClass);
-		resolveClassMethods(testClass, classDescriptor);
 		engineDescriptor.addChild(classDescriptor);
+		return classDescriptor;
 	}
 
 	private void resolveClassMethods(Class<?> testClass, JqwikClassDescriptor classDescriptor) {
 		Predicate<Method> isPropertyMethod = method -> AnnotationUtils.isAnnotated(method, Property.class);
 		ReflectionUtils.findMethods(testClass, isPropertyMethod).forEach(propertyMethod -> {
-			if (ReflectionUtils.isPrivate(propertyMethod)) {
-				LOG.warning(() -> String.format("Method '%s' not a property because it is private",
-					methodDescription(propertyMethod)));
-				return;
-			}
-
-			// UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
-			UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
-
-			int numberOfTrials = propertyMethod.getDeclaredAnnotation(Property.class).trials();
-
-			PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, testClass, repo, distro,
-				seedLog);
-
-			classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, propertyMethod.getName(), propertyStatement,
-				new JavaSource(propertyMethod)));
+			resolveMethodForClass(propertyMethod, classDescriptor);
 		});
 
+	}
+
+	private void resolveMethodForClass(Method propertyMethod, JqwikClassDescriptor classDescriptor) {
+		if (ReflectionUtils.isPrivate(propertyMethod)) {
+			LOG.warning(() -> String.format("Method '%s' not a property because it is private",
+				methodDescription(propertyMethod)));
+			return;
+		}
+
+		// UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
+		UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
+
+		int numberOfTrials = propertyMethod.getDeclaredAnnotation(Property.class).trials();
+
+		PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, classDescriptor.getTestClass(), repo, distro,
+			seedLog);
+
+		classDescriptor.addChild(new JqwikPropertyDescriptor(uniqueId, propertyMethod.getName(), propertyStatement,
+			new JavaSource(propertyMethod)));
 	}
 
 	private String methodDescription(Method method) {

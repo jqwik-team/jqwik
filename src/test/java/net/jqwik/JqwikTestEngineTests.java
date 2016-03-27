@@ -10,6 +10,7 @@ import org.junit.gen5.engine.ExecutionRequest;
 import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
+import org.junit.gen5.engine.discovery.MethodSelector;
 import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
 import org.opentest4j.AssertionFailedError;
 import net.jqwik.api.Assumptions;
@@ -21,6 +22,20 @@ class JqwikTestEngineTests {
 	@BeforeEach
 	void canCreateEngine() {
 		engine = new JqwikTestEngine();
+	}
+
+	@Test
+	void executeSingleProperty() {
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+			MethodSelector.forMethod(NoParamsProperties.class, "succeedingProperty")).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		Assertions.assertEquals(2, engineDescriptor.allDescendants().size());
+
+		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
+
+		Assertions.assertEquals(1, engineListener.countPropertiesStarted(), "Started");
+		Assertions.assertEquals(1, engineListener.countPropertiesSuccessful(), "Successful");
 	}
 
 	@Test

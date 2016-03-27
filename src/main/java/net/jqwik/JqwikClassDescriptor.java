@@ -8,7 +8,7 @@ import org.junit.gen5.engine.support.hierarchical.Container;
 public class JqwikClassDescriptor extends AbstractTestDescriptor implements Container<JqwikExecutionContext> {
 
 
-    private final Class<?> testClass;
+	private final Class<?> testClass;
 
     public JqwikClassDescriptor(UniqueId uniqueId, Class<?> testClass) {
         super(uniqueId);
@@ -35,4 +35,9 @@ public class JqwikClassDescriptor extends AbstractTestDescriptor implements Cont
     public boolean isContainer() {
         return true;
     }
+
+	public Class<?> getTestClass() {
+		return testClass;
+	}
+
 }
