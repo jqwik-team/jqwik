@@ -2,12 +2,12 @@
 package jqwik.samples;
 
 import com.pholser.junit.quickcheck.Property;
+import org.opentest4j.AssertionFailedError;
 
 class SimpleProperties {
 
 	@Property
     boolean succeedingProperty() {
-		System.out.println("XXXXXXXXXX I AM HERE. I AM HERE. I AM HERE. I AM HERE. I AM HERE. XXXXXXXXXXXX");
 		return true;
 	}
 
@@ -32,7 +32,12 @@ class SimpleProperties {
 	}
 
 	@Property
-	void notAPropertyBecauseVoid() {
+	void succeedingVoidProperty() {
+	}
+
+	@Property
+	void failingVoidProperty() {
+		throw new AssertionFailedError();
 	}
 
 	@Property

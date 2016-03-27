@@ -11,6 +11,7 @@ import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
+import org.opentest4j.AssertionFailedError;
 
 class JqwikTestEngineTests {
 
@@ -27,12 +28,14 @@ class JqwikTestEngineTests {
 			ClassSelector.forClass(NoParamsProperties.class)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
 
+		Assertions.assertEquals(7, engineDescriptor.allDescendants().size());
+
 		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
 
-		Assertions.assertEquals(2, engineListener.countPropertiesStarted());
-		Assertions.assertEquals(1, engineListener.countPropertiesSuccessful());
-		Assertions.assertEquals(1, engineListener.countPropertiesFailed());
-		Assertions.assertEquals(1, engineListener.countPropertiesSkipped());
+		Assertions.assertEquals(5, engineListener.countPropertiesStarted(), "Started");
+		Assertions.assertEquals(3, engineListener.countPropertiesSuccessful(), "Successful");
+		Assertions.assertEquals(2, engineListener.countPropertiesFailed(), "Failed");
+		Assertions.assertEquals(1, engineListener.countPropertiesSkipped(), "Skipped");
 	}
 
 	private RecordingExecutionListener executeEngine(TestDescriptor engineDescriptor) {
@@ -44,7 +47,8 @@ class JqwikTestEngineTests {
 
 	static class NoParamsProperties {
 		@Property
-		void skipBecauseItDoesNotReturnBooleas() {
+		String skipBecauseItDoesNotReturnBoolean() {
+			return "a string";
 		}
 
 		@Property
@@ -55,6 +59,20 @@ class JqwikTestEngineTests {
 		@Property
 		boolean failingProperty() {
 			return false;
+		}
+
+		@Property
+		void succeedingVoid() {
+		}
+
+		@Property
+		void failingVoid() {
+			throw new AssertionFailedError("failing property");
+		}
+
+		@Property
+		static void succeedingStatic() {
+
 		}
 	}
 }

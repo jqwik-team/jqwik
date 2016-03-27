@@ -68,12 +68,19 @@ class PropertyVerifier  { //extends BlockJUnit4ClassRunner {
         return new Statement() {
             @Override public void evaluate() throws Throwable {
                 try {
-					Object instance = ReflectionUtils.newInstance(testClass);
-					boolean success = (boolean) ReflectionUtils.invokeMethod(method, instance, args);
-					if (success)
-	                    onSuccess.accept(null);
-					else
-						onFailure.accept(new AssertionFailedError("XXXXXX."));
+					Object instance = null;
+					if (!ReflectionUtils.isStatic(method))
+						instance = ReflectionUtils.newInstance(testClass);
+					Object result = ReflectionUtils.invokeMethod(method, instance, args);
+					Class<?> returnType = method.getReturnType();
+					if (returnType.equals(Boolean.class) || returnType.equals(boolean.class)) {
+						if ((boolean) result)
+							onSuccess.accept(null);
+						else
+							onFailure.accept(new AssertionFailedError("XXXXXX."));
+					} else {
+						onSuccess.accept(null);
+					}
                 } catch (AssumptionViolatedException e) {
                     onAssumptionViolated.accept(e);
                 } catch (AssertionError e) {
