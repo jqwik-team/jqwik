@@ -27,14 +27,19 @@ class JqwikTestEngineTests {
 			ClassSelector.forClass(NoParamsProperties.class)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
 
+		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
+
+		Assertions.assertEquals(2, engineListener.countPropertiesStarted());
+		Assertions.assertEquals(1, engineListener.countPropertiesSuccessful());
+		Assertions.assertEquals(1, engineListener.countPropertiesFailed());
+		Assertions.assertEquals(1, engineListener.countPropertiesSkipped());
+	}
+
+	private RecordingExecutionListener executeEngine(TestDescriptor engineDescriptor) {
 		RecordingExecutionListener engineListener = new RecordingExecutionListener();
 		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, engineListener);
 		engine.execute(executionRequest);
-
-		Assertions.assertEquals(2, engineListener.propertiesStarted);
-		Assertions.assertEquals(1, engineListener.propertiesSuccessful);
-		Assertions.assertEquals(1, engineListener.propertiesFailed);
-		Assertions.assertEquals(1, engineListener.propertiesSkipped);
+		return engineListener;
 	}
 
 	static class NoParamsProperties {

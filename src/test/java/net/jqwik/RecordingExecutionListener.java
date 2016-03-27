@@ -1,15 +1,16 @@
+
 package net.jqwik;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.gen5.engine.EngineExecutionListener;
 import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.TestExecutionResult;
 import org.junit.gen5.engine.reporting.ReportEntry;
 
 public class RecordingExecutionListener implements EngineExecutionListener {
-	public long propertiesStarted = 0;
-	public long propertiesSuccessful = 0;
-	public long propertiesFailed = 0;
-	public long propertiesSkipped = 0;
+	private final List<ExecutionEvent> events = new ArrayList<>();
 
 	@Override
 	public void dynamicTestRegistered(TestDescriptor testDescriptor) {
@@ -18,35 +19,69 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 
 	@Override
 	public void executionSkipped(TestDescriptor testDescriptor, String reason) {
-		if (!(testDescriptor instanceof JqwikPropertyDescriptor))
-			return;
-		propertiesSkipped++;
+		events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Skipped));
 	}
 
 	@Override
 	public void executionStarted(TestDescriptor testDescriptor) {
-		if (!(testDescriptor instanceof JqwikPropertyDescriptor))
-			return;
-		propertiesStarted++;
+		events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Started));
 	}
 
 	@Override
 	public void executionFinished(TestDescriptor testDescriptor, TestExecutionResult testExecutionResult) {
-		if (!(testDescriptor instanceof JqwikPropertyDescriptor))
-			return;
 		switch (testExecutionResult.getStatus()) {
 			case SUCCESSFUL:
-				propertiesSuccessful++;
+				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Successful));
 				break;
 			case FAILED:
-				propertiesFailed++;
+				events.add(new ExecutionEvent(testDescriptor, ExecutionEventType.Failed));
 				break;
-			default:;
+			default:
+				;
 		}
 	}
 
 	@Override
 	public void reportingEntryPublished(TestDescriptor testDescriptor, ReportEntry entry) {
 
+	}
+
+	public long countPropertiesStarted() {
+		return countPropertiesEvent(ExecutionEventType.Started);
+	}
+
+	public long countPropertiesSuccessful() {
+		return countPropertiesEvent(ExecutionEventType.Successful);
+	}
+
+	public long countPropertiesFailed() {
+		return countPropertiesEvent(ExecutionEventType.Failed);
+	}
+
+	public long countPropertiesSkipped() {
+		ExecutionEventType eventType = ExecutionEventType.Skipped;
+		return countPropertiesEvent(eventType);
+	}
+
+	private long countPropertiesEvent(ExecutionEventType eventType) {
+		return propertiesEventStream().filter(event -> event.type == eventType).count();
+	}
+
+	private Stream<ExecutionEvent> propertiesEventStream() {
+		return events.stream().filter(event -> event.descriptor instanceof JqwikPropertyDescriptor);
+	}
+
+	public class ExecutionEvent {
+		final TestDescriptor descriptor;
+		final ExecutionEventType type;
+
+		public ExecutionEvent(TestDescriptor descriptor, ExecutionEventType type) {
+			this.descriptor = descriptor;
+			this.type = type;
+		}
+	}
+
+	public enum ExecutionEventType {
+		Skipped, Started, Successful, Failed
 	}
 }
