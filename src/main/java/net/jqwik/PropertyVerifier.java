@@ -28,93 +28,60 @@ package net.jqwik;
 import static java.util.Arrays.asList;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.function.Consumer;
-
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.opentest4j.AssertionFailedError;
 import net.jqwik.api.AssumptionViolatedException;
 
-class PropertyVerifier  { //extends BlockJUnit4ClassRunner {
-    private final Method method;
-    private final Object[] args;
-    private final Consumer<Void> onSuccess;
-    private final Consumer<AssumptionViolatedException> onAssumptionViolated;
-    private final Consumer<AssertionError> onFailure;
+class PropertyVerifier {
+	private final Method method;
+	private final Object[] args;
+	private final Consumer<Void> onSuccess;
+	private final Consumer<AssumptionViolatedException> onAssumptionViolated;
+	private final Consumer<AssertionError> onFailure;
 	private final Class<?> testClass;
 
-	PropertyVerifier(
-        Class<?> clazz,
-        Method method,
-        Object[] args,
-        Consumer<Void> onSuccess,
-        Consumer<AssumptionViolatedException> onAssumptionViolated,
-        Consumer<AssertionError> onFailure) {
+	PropertyVerifier(Class<?> clazz, Method method, Object[] args, Consumer<Void> onSuccess,
+			Consumer<AssumptionViolatedException> onAssumptionViolated, Consumer<AssertionError> onFailure) {
 
-        //super(clazz.getJavaClass());
 		this.testClass = clazz;
-        this.method = method;
-        this.args = args;
-        this.onSuccess = onSuccess;
-        this.onAssumptionViolated = onAssumptionViolated;
-        this.onFailure = onFailure;
-    }
+		this.method = method;
+		this.args = args;
+		this.onSuccess = onSuccess;
+		this.onAssumptionViolated = onAssumptionViolated;
+		this.onFailure = onFailure;
+	}
 
-    void verify() throws Throwable {
-        methodBlock().evaluate();
-    }
+	void verify() throws Throwable {
+		try {
+			Object instance = null;
+			if (!ReflectionUtils.isStatic(method))
+				instance = ReflectionUtils.newInstance(testClass);
+			Object result = ReflectionUtils.invokeMethod(method, instance, args);
+			Class<?> returnType = method.getReturnType();
+			if (returnType.equals(Boolean.class) || returnType.equals(boolean.class)) {
+				if ((boolean) result)
+					onSuccess.accept(null);
+				else
+					onFailure.accept(new AssertionFailedError("message is ignored"));
+			}
+			else {
+				onSuccess.accept(null);
+			}
+		}
+		catch (AssumptionViolatedException e) {
+			onAssumptionViolated.accept(e);
+		}
+		catch (AssertionError e) {
+			onFailure.accept(e);
+		}
+		catch (Throwable e) {
+			reportErrorWithArguments(e);
+		}
+	}
 
-    private Statement methodBlock() {
-        return new Statement() {
-            @Override public void evaluate() throws Throwable {
-                try {
-					Object instance = null;
-					if (!ReflectionUtils.isStatic(method))
-						instance = ReflectionUtils.newInstance(testClass);
-					Object result = ReflectionUtils.invokeMethod(method, instance, args);
-					Class<?> returnType = method.getReturnType();
-					if (returnType.equals(Boolean.class) || returnType.equals(boolean.class)) {
-						if ((boolean) result)
-							onSuccess.accept(null);
-						else
-							onFailure.accept(new AssertionFailedError("XXXXXX."));
-					} else {
-						onSuccess.accept(null);
-					}
-                } catch (AssumptionViolatedException e) {
-                    onAssumptionViolated.accept(e);
-                } catch (AssertionError e) {
-                    onFailure.accept(e);
-                } catch (Throwable e) {
-                    reportErrorWithArguments(e);
-                }
-            }
-        };
-    }
-
-//    @Override
-	protected void collectInitializationErrors(List<Throwable> errors) {
-        // do nothing
-    }
-
-//    @Override
-	protected Statement methodInvoker(
-        Method frameworkMethod,
-        Object test) {
-
-        return new Statement() {
-            @Override public void evaluate() throws Throwable {
-//                frameworkMethod.invokeExplosively(test, args);
-            }
-        };
-    }
-
-    private void reportErrorWithArguments(Throwable e) {
-        throw new AssertionError(
-            String.format(
-                "Unexpected error in property %s with args %s",
-                method.getName(),
-                asList(args)),
-            e);
-    }
+	private void reportErrorWithArguments(Throwable e) {
+		throw new AssertionFailedError(
+			String.format("Unexpected error in property %s with args %s", method.getName(), asList(args)), e);
+	}
 }

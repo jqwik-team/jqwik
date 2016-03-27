@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import net.jqwik.api.AssumptionViolatedException;
 import ru.vyarus.java.generics.resolver.GenericsResolver;
 
-class PropertyStatement implements Statement {
+class PropertyStatement {
 	private final Method method;
 	private final Class<?> testClass;
 	private final GeneratorRepository repo;
@@ -68,7 +68,6 @@ class PropertyStatement implements Statement {
 		this.seedLog = seedLog;
 	}
 
-	@Override
 	public void evaluate() throws Throwable {
 		Property marker = method.getAnnotation(Property.class);
 		int trials = marker.trials();
@@ -77,7 +76,8 @@ class PropertyStatement implements Statement {
 
 		List<PropertyParameterGenerationContext> params = parameters(trials);
 
-		for (int i = 0; i < trials; ++i)
+		int actualNumberOfTrials = params.size() > 0 ? trials : 1; //Without params one trial is enough
+		for (int i = 0; i < actualNumberOfTrials; ++i)
 			verifyProperty(params, shrinkControl);
 
 		if (successes == 0 && !assumptionViolations.isEmpty()) {
