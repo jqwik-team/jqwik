@@ -109,8 +109,6 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		// UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
 		UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
 
-		int numberOfTrials = propertyMethod.getDeclaredAnnotation(Property.class).trials();
-
 		PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, classDescriptor.getTestClass(),
 			propertyMethod.getName(), repo, distro, seedLog);
 
