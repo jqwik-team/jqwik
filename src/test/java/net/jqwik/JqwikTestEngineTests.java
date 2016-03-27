@@ -57,25 +57,24 @@ class JqwikTestEngineTests {
 	}
 
 	@Test
-	void propertiesWithOneParam() {
+	void propertiesWithUnmodifiedParams() {
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
-			ClassSelector.forClass(OneParamProperties.class)).build();
+			ClassSelector.forClass(UnmodifiedParamsProperties.class)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
-
-		Assertions.assertEquals(3, engineDescriptor.allDescendants().size());
+		Assertions.assertEquals(6, engineDescriptor.allDescendants().size());
 
 		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
 
-		Assertions.assertEquals(2, engineListener.countPropertiesStarted(), "Started");
-		Assertions.assertEquals(1, engineListener.countPropertiesSuccessful(), "Successful");
-		Assertions.assertEquals(1, engineListener.countPropertiesFailed(), "Failed");
+		Assertions.assertEquals(5, engineListener.countPropertiesStarted(), "Started");
+		Assertions.assertEquals(2, engineListener.countPropertiesSuccessful(), "Successful");
+		Assertions.assertEquals(3, engineListener.countPropertiesFailed(), "Failed");
 	}
 
 	@Test
 	void checkForPropertyVerificationFailure() throws NoSuchMethodException {
-		Method failingMethod = OneParamProperties.class.getDeclaredMethod("failing", new Class[] { int.class });
+		Method failingMethod = UnmodifiedParamsProperties.class.getDeclaredMethod("shrinking", new Class[] { int.class });
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
-			MethodSelector.forMethod(OneParamProperties.class, failingMethod)).build();
+			MethodSelector.forMethod(UnmodifiedParamsProperties.class, failingMethod)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
 
 		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
@@ -83,7 +82,7 @@ class JqwikTestEngineTests {
 		RecordingExecutionListener.ExecutionEvent failingEvent = engineListener.filterEvents(
 			event -> event.type == RecordingExecutionListener.ExecutionEventType.Failed).findFirst().get();
 
-		Assertions.assertEquals("failing", failingEvent.descriptor.getName());
+		Assertions.assertEquals("shrinking", failingEvent.descriptor.getName());
 		PropertyVerificationFailure verificationFailure = (PropertyVerificationFailure) failingEvent.exception;
 		Assertions.assertEquals(0, verificationFailure.getArgs()[0], "Shrinked value");
 	}
@@ -131,15 +130,31 @@ class JqwikTestEngineTests {
 		}
 	}
 
-	static class OneParamProperties {
+	static class UnmodifiedParamsProperties {
 		@Property
 		boolean succeeding(int aNumber) {
 			return true;
 		}
 
 		@Property
-		boolean failing(int aNumber) {
+		boolean failingWithTwo(int first, int second) {
+			return first > second;
+		}
+
+		@Property
+		boolean succeedingWithTwo(int first, int second) {
+			Assumptions.assume(first > second);
+			return first > second;
+		}
+
+		@Property
+		boolean shrinking(int aNumber) {
 			return aNumber > 0;
+		}
+
+		@Property
+		void failingWithVoid(int first, int second) {
+			throw new AssertionFailedError();
 		}
 	}
 }
