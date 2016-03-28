@@ -1,8 +1,21 @@
 
 package net.jqwik;
 
+import static java.lang.annotation.ElementType.*;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.List;
+import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.generator.GeneratorConfiguration;
+import com.pholser.junit.quickcheck.generator.InRange;
+import com.pholser.junit.quickcheck.generator.Size;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.BeforeEach;
 import org.junit.gen5.api.Test;
@@ -72,7 +85,8 @@ class JqwikTestEngineTests {
 
 	@Test
 	void checkForPropertyVerificationFailure() throws NoSuchMethodException {
-		Method failingMethod = UnmodifiedParamsProperties.class.getDeclaredMethod("shrinking", new Class[] { int.class });
+		Method failingMethod = UnmodifiedParamsProperties.class.getDeclaredMethod("shrinking",
+			new Class[] { int.class });
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
 			MethodSelector.forMethod(UnmodifiedParamsProperties.class, failingMethod)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
@@ -85,6 +99,19 @@ class JqwikTestEngineTests {
 		Assertions.assertEquals("shrinking", failingEvent.descriptor.getName());
 		PropertyVerificationFailure verificationFailure = (PropertyVerificationFailure) failingEvent.exception;
 		Assertions.assertEquals(0, verificationFailure.getArgs()[0], "Shrinked value");
+	}
+
+	@Test
+	void diverseParameterTypes() {
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+			ClassSelector.forClass(DiversTypesProperties.class)).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
+
+		Assertions.assertEquals(2, engineListener.countPropertiesStarted(), "Started");
+		Assertions.assertEquals(2, engineListener.countPropertiesSuccessful(), "Successful");
+		Assertions.assertEquals(0, engineListener.countPropertiesFailed(), "Failed");
 	}
 
 	private RecordingExecutionListener executeEngine(TestDescriptor engineDescriptor) {
@@ -155,6 +182,42 @@ class JqwikTestEngineTests {
 		@Property
 		void failingWithVoid(int first, int second) {
 			throw new AssertionFailedError();
+		}
+	}
+
+	static class DiversTypesProperties {
+		@Property(trials = 10)
+		public void positiveIntegers(@From(IntegralGenerator.class) @Positive int i) {
+		}
+
+		@Property(trials = 10)
+		public void restrictedListOfIntegers(@Size(max = 5) List<@InRange(min = "0", max = "9") Integer> digits) {
+		}
+	}
+
+	@Target({ PARAMETER, FIELD, ANNOTATION_TYPE, TYPE_USE })
+	@Retention(RUNTIME)
+	@GeneratorConfiguration
+	public @interface Positive {
+		// ...
+	}
+
+	public static class IntegralGenerator extends Generator<Integer> {
+		private Positive positive;
+
+		public IntegralGenerator() {
+			super(Integer.class);
+		}
+
+		@Override
+		public Integer generate(SourceOfRandomness random, GenerationStatus status) {
+
+			int value = random.nextInt();
+			return positive != null ? Math.abs(value) : value;
+		}
+
+		public void configure(Positive positive) {
+			this.positive = positive;
 		}
 	}
 }
