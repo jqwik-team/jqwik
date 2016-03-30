@@ -55,18 +55,20 @@ class PropertyStatement {
 	private final String displayName;
 	private final GeneratorRepository repo;
 	private final GeometricDistribution distro;
+	private final long propertySeed;
 	private final Logger seedLog;
 	private final List<AssumptionViolation> assumptionViolations = new ArrayList<>();
 	private int successes;
 
-	PropertyStatement(Method method, Class<?> testClass, String displayName, GeneratorRepository repo, GeometricDistribution distro,
-					  Logger seedLog) {
+	PropertyStatement(Method method, Class<?> testClass, String displayName, GeneratorRepository repo,
+			GeometricDistribution distro, long propertySeed, Logger seedLog) {
 
 		this.method = method;
 		this.testClass = testClass;
 		this.displayName = displayName;
 		this.repo = repo;
 		this.distro = distro;
+		this.propertySeed = propertySeed;
 		this.seedLog = seedLog;
 	}
 
@@ -76,7 +78,8 @@ class PropertyStatement {
 		ShrinkControl shrinkControl = new ShrinkControl(marker.shrink(), marker.maxShrinks(), marker.maxShrinkDepth(),
 			marker.maxShrinkTime());
 
-		List<PropertyParameterGenerationContext> params = parameters(trials);
+		Random random = new Random(propertySeed);
+		List<PropertyParameterGenerationContext> params = parameters(trials, random);
 
 		int actualNumberOfTrials = params.size() > 0 ? trials : 1; //Without params one trial is enough
 		for (int i = 0; i < actualNumberOfTrials; ++i)
@@ -108,7 +111,8 @@ class PropertyStatement {
 			ShrinkControl shrinkControl) {
 
 		return new PropertyVerifier(testClass, method, args, s -> ++successes, assumptionViolations::add, e -> {
-			PropertyVerificationFailure verificationFailure = new PropertyVerificationFailure(method.getName(), args, e);
+			PropertyVerificationFailure verificationFailure = new PropertyVerificationFailure(method.getName(), args,
+				e);
 
 			if (!shrinkControl.shouldShrink()) {
 				throw verificationFailure;
@@ -133,11 +137,11 @@ class PropertyStatement {
 			shrinkControl.maxShrinkTime()).shrink(params, args);
 	}
 
-	private List<PropertyParameterGenerationContext> parameters(int trials) {
+	private List<PropertyParameterGenerationContext> parameters(int trials, Random random) {
 		Map<String, Type> typeVariables = GenericsResolver.resolve(testClass).method(method).genericsMap();
 
 		return Arrays.stream(method.getParameters()).map(p -> parameterContextFor(p, trials, typeVariables)).map(
-			p -> new PropertyParameterGenerationContext(p, repo, distro, new SourceOfRandomness(new Random()),
+			p -> new PropertyParameterGenerationContext(p, repo, distro, new SourceOfRandomness(random),
 				seedLog)).collect(toList());
 	}
 

@@ -38,13 +38,13 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	// Test runs should produce the same results for one instantiation of the test engine
 	private long seed = new Random().nextLong();
+	private final SourceOfRandomness generatorRepositoryRandom;
 
 	public JqwikTestEngine() {
-		SourceOfRandomness random = new SourceOfRandomness(new Random(seed));
-		repo = new GeneratorRepository(random).register(new ServiceLoaderGeneratorSource());
+		generatorRepositoryRandom = new SourceOfRandomness(new Random());
+		repo = new GeneratorRepository(generatorRepositoryRandom).register(new ServiceLoaderGeneratorSource());
 		distro = new GeometricDistribution();
 		seedLog = LoggerFactory.getLogger("junit-quickcheck.seed-reporting");
-
 	}
 
 	@Override
@@ -54,33 +54,36 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	@Override
 	protected JqwikExecutionContext createExecutionContext(ExecutionRequest request) {
+		// Generators should have same "random" behaviour on each test run of same engine
+		generatorRepositoryRandom.setSeed(seed);
 		return new JqwikExecutionContext();
 	}
 
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueEngineId) {
 		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueEngineId);
-		resolveSelectors(discoveryRequest, engineDescriptor);
+		resolveSelectors(discoveryRequest, engineDescriptor, new Random(seed));
 		return engineDescriptor;
 	}
 
-	private void resolveSelectors(EngineDiscoveryRequest discoveryRequest, JqwikEngineDescriptor engineDescriptor) {
+	private void resolveSelectors(EngineDiscoveryRequest discoveryRequest, JqwikEngineDescriptor engineDescriptor,
+			Random random) {
 		discoveryRequest.getSelectorsByType(ClassSelector.class).forEach(
-			classSelector -> resolveClass(classSelector, engineDescriptor));
+			classSelector -> resolveClass(classSelector, engineDescriptor, random));
 		discoveryRequest.getSelectorsByType(MethodSelector.class).forEach(
-			methodSelector -> resolveMethod(methodSelector, engineDescriptor));
+			methodSelector -> resolveMethod(methodSelector, engineDescriptor, random));
 	}
 
-	private void resolveMethod(MethodSelector methodSelector, JqwikEngineDescriptor engineDescriptor) {
+	private void resolveMethod(MethodSelector methodSelector, JqwikEngineDescriptor engineDescriptor, Random random) {
 		JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(methodSelector.getTestClass(),
 			engineDescriptor);
-		resolveMethodForClass(methodSelector.getTestMethod(), classDescriptor);
+		resolveMethodForClass(methodSelector.getTestMethod(), classDescriptor, random);
 	}
 
-	private void resolveClass(ClassSelector classSelector, JqwikEngineDescriptor engineDescriptor) {
+	private void resolveClass(ClassSelector classSelector, JqwikEngineDescriptor engineDescriptor, Random random) {
 		Class<?> testClass = classSelector.getTestClass();
 		JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(testClass, engineDescriptor);
-		resolveClassMethods(testClass, classDescriptor);
+		resolveClassMethods(testClass, classDescriptor, random);
 	}
 
 	private JqwikClassDescriptor resolveClassWithoutChildren(Class<?> testClass,
@@ -91,26 +94,27 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		return classDescriptor;
 	}
 
-	private void resolveClassMethods(Class<?> testClass, JqwikClassDescriptor classDescriptor) {
+	private void resolveClassMethods(Class<?> testClass, JqwikClassDescriptor classDescriptor, Random random) {
 		Predicate<Method> isPropertyMethod = method -> AnnotationUtils.isAnnotated(method, Property.class);
 		ReflectionUtils.findMethods(testClass, isPropertyMethod).forEach(propertyMethod -> {
-			resolveMethodForClass(propertyMethod, classDescriptor);
+			resolveMethodForClass(propertyMethod, classDescriptor, random);
 		});
 
 	}
 
-	private void resolveMethodForClass(Method propertyMethod, JqwikClassDescriptor classDescriptor) {
+	private void resolveMethodForClass(Method propertyMethod, JqwikClassDescriptor classDescriptor, Random random) {
 		if (ReflectionUtils.isPrivate(propertyMethod)) {
 			LOG.warning(() -> String.format("Method '%s' not a property because it is private",
 				methodDescription(propertyMethod)));
 			return;
 		}
 
+		long propertySeed = random.nextLong();
 		// UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
 		UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
 
 		PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, classDescriptor.getTestClass(),
-			propertyMethod.getName(), repo, distro, seedLog);
+			propertyMethod.getName(), repo, distro, propertySeed, seedLog);
 
 		classDescriptor.addChild(
 			new JqwikPropertyDescriptor(uniqueId, propertyStatement, new JavaSource(propertyMethod)));
