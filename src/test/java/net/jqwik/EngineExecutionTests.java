@@ -12,13 +12,16 @@ import java.util.List;
 import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
 import com.pholser.junit.quickcheck.When;
-import com.pholser.junit.quickcheck.generator.*;
+import com.pholser.junit.quickcheck.generator.GenerationStatus;
+import com.pholser.junit.quickcheck.generator.Generator;
+import com.pholser.junit.quickcheck.generator.GeneratorConfiguration;
+import com.pholser.junit.quickcheck.generator.InRange;
+import com.pholser.junit.quickcheck.generator.Size;
+import com.pholser.junit.quickcheck.generator.ValuesOf;
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
 import org.junit.gen5.api.Assertions;
-import org.junit.gen5.api.BeforeEach;
 import org.junit.gen5.api.Test;
 import org.junit.gen5.engine.EngineDiscoveryRequest;
-import org.junit.gen5.engine.ExecutionRequest;
 import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
@@ -27,22 +30,13 @@ import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
 import org.opentest4j.AssertionFailedError;
 import net.jqwik.api.Assumptions;
 
-class JqwikTestEngineTests {
-
-	private JqwikTestEngine engine;
-
-	@BeforeEach
-	void canCreateEngine() {
-		engine = new JqwikTestEngine();
-	}
+class EngineExecutionTests extends AbstractEngineTests{
 
 	@Test
 	void executeSingleProperty() {
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
 			MethodSelector.forMethod(NoParamsProperties.class, "succeedingProperty")).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
-
-		Assertions.assertEquals(2, engineDescriptor.allDescendants().size());
 
 		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
 
@@ -110,13 +104,6 @@ class JqwikTestEngineTests {
 		Assertions.assertEquals(5, engineListener.countPropertiesStarted(), "Started");
 		Assertions.assertEquals(4, engineListener.countPropertiesSuccessful(), "Successful");
 		Assertions.assertEquals(1, engineListener.countPropertiesFailed(), "Failed");
-	}
-
-	private RecordingExecutionListener executeEngine(TestDescriptor engineDescriptor) {
-		RecordingExecutionListener engineListener = new RecordingExecutionListener();
-		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, engineListener);
-		engine.execute(executionRequest);
-		return engineListener;
 	}
 
 	static class NoParamsProperties {

@@ -9,21 +9,18 @@ import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.BeforeEach;
 import org.junit.gen5.api.Test;
 import org.junit.gen5.engine.EngineDiscoveryRequest;
-import org.junit.gen5.engine.ExecutionRequest;
 import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
 
-class EngineDeterminismTests {
+class EngineDeterminismTests extends AbstractEngineTests {
 
-	private JqwikTestEngine engine;
 	private static List<List<Object>> parameterCalls = new ArrayList<>();
 
 	@BeforeEach
 	void initialize() {
 		parameterCalls.clear();
-		engine = new JqwikTestEngine();
 	}
 
 	@Test
@@ -46,6 +43,7 @@ class EngineDeterminismTests {
 		EngineDiscoveryRequest discoveryRequest1 = TestDiscoveryRequestBuilder.request().select(
 				ClassSelector.forClass(MyProperties.class)).build();
 		TestDescriptor engineDescriptor1 = engine.discover(discoveryRequest1, UniqueId.forEngine(engine.getId()));
+		engineDescriptor1.allDescendants().forEach(d -> System.out.println(d));
 
 		executeEngine(engineDescriptor1);
 		List<List<Object>> paramsFirstRun = new ArrayList<>(parameterCalls);
@@ -55,15 +53,10 @@ class EngineDeterminismTests {
 		EngineDiscoveryRequest discoveryRequest2 = TestDiscoveryRequestBuilder.request().select(
 				ClassSelector.forClass(MyProperties.class)).build();
 		TestDescriptor engineDescriptor2 = engine.discover(discoveryRequest1, UniqueId.forEngine(engine.getId()));
+		engineDescriptor2.allDescendants().forEach(d -> System.out.println(d));
+
 		executeEngine(engineDescriptor2);
 		Assertions.assertEquals(paramsFirstRun, parameterCalls);
-	}
-
-	private RecordingExecutionListener executeEngine(TestDescriptor engineDescriptor) {
-		RecordingExecutionListener engineListener = new RecordingExecutionListener();
-		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, engineListener);
-		engine.execute(executionRequest);
-		return engineListener;
 	}
 
 	static class MyProperties {

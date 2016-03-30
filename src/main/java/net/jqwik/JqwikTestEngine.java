@@ -110,8 +110,8 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		}
 
 		long propertySeed = random.nextLong();
-		// UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(SEGMENT_TYPE_SEED, Long.toString(seed));
-		UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName());
+		UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(
+			SEGMENT_TYPE_SEED, Long.toString(propertySeed));
 
 		PropertyStatement propertyStatement = new PropertyStatement(propertyMethod, classDescriptor.getTestClass(),
 			propertyMethod.getName(), repo, distro, propertySeed, seedLog);
