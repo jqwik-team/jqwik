@@ -12,6 +12,7 @@ import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.engine.discovery.MethodSelector;
+import org.junit.gen5.engine.discovery.UniqueIdSelector;
 import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
 
 class EngineDiscoveryTests extends AbstractEngineTests {
@@ -27,6 +28,23 @@ class EngineDiscoveryTests extends AbstractEngineTests {
 		assertEquals(4, uniqueIds.size());
 		Class<MyProperties> myPropertiesClass = MyProperties.class;
 		assertTrue(uniqueIds.contains(uniqueIdForClass(myPropertiesClass)));
+		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "booleanProperty"));
+		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "voidProperty"));
+		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "staticProperty"));
+	}
+
+	@Test
+	void discoverClassByUniqueId() {
+		UniqueId classUniqueId = uniqueIdForClass(MyProperties.class);
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+				UniqueIdSelector.forUniqueId(classUniqueId)).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		List<UniqueId> uniqueIds = getUniqueIds(engineDescriptor);
+
+		assertEquals(4, uniqueIds.size());
+		Class<MyProperties> myPropertiesClass = MyProperties.class;
+		assertTrue(uniqueIds.contains(classUniqueId));
 		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "booleanProperty"));
 		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "voidProperty"));
 		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "staticProperty"));

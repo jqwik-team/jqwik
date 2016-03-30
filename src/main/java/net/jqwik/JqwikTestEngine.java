@@ -2,6 +2,8 @@
 package net.jqwik;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -18,6 +20,7 @@ import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
 import org.junit.gen5.engine.discovery.MethodSelector;
+import org.junit.gen5.engine.discovery.UniqueIdSelector;
 import org.junit.gen5.engine.support.descriptor.JavaSource;
 import org.junit.gen5.engine.support.hierarchical.HierarchicalTestEngine;
 import org.slf4j.LoggerFactory;
@@ -72,6 +75,38 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 			classSelector -> resolveClass(classSelector, engineDescriptor, random));
 		discoveryRequest.getSelectorsByType(MethodSelector.class).forEach(
 			methodSelector -> resolveMethod(methodSelector, engineDescriptor, random));
+		discoveryRequest.getSelectorsByType(UniqueIdSelector.class).forEach(
+			uniqueIdSelector -> resolveUniqueId(uniqueIdSelector, engineDescriptor, random));
+	}
+
+	private void resolveUniqueId(UniqueIdSelector uniqueIdSelector, JqwikEngineDescriptor engineDescriptor,
+			Random random) {
+		UniqueId uniqueId = UniqueId.parse(uniqueIdSelector.getUniqueId());
+		List<UniqueId.Segment> segments = uniqueId.getSegments();
+		segments.remove(0); // Drop engine segment
+
+		resolveUniqueIdRest(segments, engineDescriptor, random);
+	}
+
+	private void resolveUniqueIdRest(List<UniqueId.Segment> rest, TestDescriptor parent, Random random) {
+		if (rest.isEmpty())
+			return;
+
+		UniqueId.Segment head = rest.remove(0);
+		if (head.getType().equals(SEGMENT_TYPE_CLASS)) {
+			Optional<Class<?>> containerClass = ReflectionUtils.loadClass(head.getValue());
+			if (containerClass.isPresent()) {
+				Class<?> testClass = containerClass.get();
+				JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(testClass, parent);
+				if (rest.isEmpty())
+					resolveClassMethods(testClass, classDescriptor, random);
+				else
+					resolveUniqueIdRest(rest, classDescriptor, random);
+			}
+			else {
+				return;
+			}
+		}
 	}
 
 	private void resolveMethod(MethodSelector methodSelector, JqwikEngineDescriptor engineDescriptor, Random random) {
@@ -86,8 +121,7 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 		resolveClassMethods(testClass, classDescriptor, random);
 	}
 
-	private JqwikClassDescriptor resolveClassWithoutChildren(Class<?> testClass,
-			JqwikEngineDescriptor engineDescriptor) {
+	private JqwikClassDescriptor resolveClassWithoutChildren(Class<?> testClass, TestDescriptor engineDescriptor) {
 		UniqueId uniqueId = engineDescriptor.getUniqueId().append(SEGMENT_TYPE_CLASS, testClass.getName());
 		JqwikClassDescriptor classDescriptor = new JqwikClassDescriptor(uniqueId, testClass);
 		engineDescriptor.addChild(classDescriptor);
