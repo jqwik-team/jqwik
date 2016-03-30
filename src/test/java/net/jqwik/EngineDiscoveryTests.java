@@ -35,16 +35,15 @@ class EngineDiscoveryTests extends AbstractEngineTests {
 
 	@Test
 	void discoverClassByUniqueId() {
-		UniqueId classUniqueId = uniqueIdForClass(MyProperties.class);
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
-				UniqueIdSelector.forUniqueId(classUniqueId)).build();
+				UniqueIdSelector.forUniqueId(uniqueIdForClass(MyProperties.class))).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
 
 		List<UniqueId> uniqueIds = getUniqueIds(engineDescriptor);
 
 		assertEquals(4, uniqueIds.size());
 		Class<MyProperties> myPropertiesClass = MyProperties.class;
-		assertTrue(uniqueIds.contains(classUniqueId));
+		assertTrue(uniqueIds.contains(uniqueIdForClass(MyProperties.class)));
 		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "booleanProperty"));
 		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "voidProperty"));
 		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "staticProperty"));
@@ -52,6 +51,20 @@ class EngineDiscoveryTests extends AbstractEngineTests {
 
 	@Test
 	void discoverMethod() {
+		UniqueId classUniqueId = uniqueIdForMethod(MyProperties.class, "booleanProperty");
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+				UniqueIdSelector.forUniqueId(classUniqueId)).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		List<UniqueId> uniqueIds = getUniqueIds(engineDescriptor);
+
+		assertEquals(2, uniqueIds.size());
+		assertTrue(uniqueIds.contains(uniqueIdForClass(MyProperties.class)));
+		containsMatchingId(uniqueIds, uniqueIdForMethod(MyProperties.class, "booleanProperty"));
+	}
+
+	@Test
+	void discoverMethodByUniqueWithoutSeed() {
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
 			MethodSelector.forMethod(MyProperties.class, "booleanProperty")).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));

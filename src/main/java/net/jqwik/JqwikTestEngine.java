@@ -106,6 +106,12 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 			else {
 				return;
 			}
+		} else if (head.getType().equals(SEGMENT_TYPE_METHOD)) {
+			JqwikClassDescriptor classDescriptor = (JqwikClassDescriptor) parent;
+			Class<?> testClass = classDescriptor.getTestClass();
+			String methodName = head.getValue();
+			Method propertyMethod = ReflectionUtils.findMethods(testClass, m -> m.getName().equals(methodName)).get(0);
+			resolveMethodForClass(propertyMethod, classDescriptor, random);
 		}
 	}
 
@@ -137,13 +143,16 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 	}
 
 	private void resolveMethodForClass(Method propertyMethod, JqwikClassDescriptor classDescriptor, Random random) {
+		resolveMethodForClass(propertyMethod, classDescriptor, random.nextLong());
+	}
+
+	private void resolveMethodForClass(Method propertyMethod, JqwikClassDescriptor classDescriptor, long propertySeed) {
 		if (ReflectionUtils.isPrivate(propertyMethod)) {
 			LOG.warning(() -> String.format("Method '%s' not a property because it is private",
 				methodDescription(propertyMethod)));
 			return;
 		}
 
-		long propertySeed = random.nextLong();
 		UniqueId uniqueId = classDescriptor.getUniqueId().append(SEGMENT_TYPE_METHOD, propertyMethod.getName()).append(
 			SEGMENT_TYPE_SEED, Long.toString(propertySeed));
 
