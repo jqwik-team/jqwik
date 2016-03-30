@@ -7,14 +7,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.List;
 import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
-import com.pholser.junit.quickcheck.generator.GenerationStatus;
-import com.pholser.junit.quickcheck.generator.Generator;
-import com.pholser.junit.quickcheck.generator.GeneratorConfiguration;
-import com.pholser.junit.quickcheck.generator.InRange;
-import com.pholser.junit.quickcheck.generator.Size;
+import com.pholser.junit.quickcheck.When;
+import com.pholser.junit.quickcheck.generator.*;
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
 import org.junit.gen5.api.Assertions;
 import org.junit.gen5.api.BeforeEach;
@@ -104,14 +102,14 @@ class JqwikTestEngineTests {
 	@Test
 	void diverseParameterTypes() {
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
-			ClassSelector.forClass(DiversTypesProperties.class)).build();
+			ClassSelector.forClass(DiverseProperties.class)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
 
 		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
 
-		Assertions.assertEquals(2, engineListener.countPropertiesStarted(), "Started");
-		Assertions.assertEquals(2, engineListener.countPropertiesSuccessful(), "Successful");
-		Assertions.assertEquals(0, engineListener.countPropertiesFailed(), "Failed");
+		Assertions.assertEquals(5, engineListener.countPropertiesStarted(), "Started");
+		Assertions.assertEquals(4, engineListener.countPropertiesSuccessful(), "Successful");
+		Assertions.assertEquals(1, engineListener.countPropertiesFailed(), "Failed");
 	}
 
 	private RecordingExecutionListener executeEngine(TestDescriptor engineDescriptor) {
@@ -185,13 +183,28 @@ class JqwikTestEngineTests {
 		}
 	}
 
-	static class DiversTypesProperties {
+	static class DiverseProperties {
 		@Property(trials = 10)
-		public void positiveIntegers(@From(IntegralGenerator.class) @Positive int i) {
+		void positiveIntegers(@From(IntegralGenerator.class) @Positive int i) {
 		}
 
 		@Property(trials = 10)
-		public void restrictedListOfIntegers(@Size(max = 5) List<@InRange(min = "0", max = "9") Integer> digits) {
+		void restrictedListOfIntegers(@Size(max = 5) List<@InRange(min = "0", max = "9") Integer> digits) {
+		}
+
+		@Property(trials = 10)
+		static boolean allBinaryValues(@ValuesOf boolean aBoolean) {
+			return true;
+		}
+
+		@Property(shrink = false)
+		boolean doNotShrink(BigDecimal aNumber) {
+			return aNumber.compareTo(BigDecimal.ONE) == 1;
+		}
+
+		@Property(trials = 1, shrink = false)
+		boolean withFixedSeed(@When(seed = 42L) long aNumber) {
+			return aNumber == 4631121966219677515L;
 		}
 	}
 
