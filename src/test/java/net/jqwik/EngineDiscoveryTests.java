@@ -79,7 +79,7 @@ class EngineDiscoveryTests extends AbstractEngineTests {
 
 	@Test
 	void discoverMethodByUniqueWithSeed() {
-		UniqueId uniqueIdWithSeed = uniqueIdForMethod(MyProperties.class, "booleanProperty").append("jqwik-seed", "1");
+		UniqueId uniqueIdWithSeed = uniqueIdForMethodAndSeed(MyProperties.class, "booleanProperty", "1");
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
 				UniqueIdSelector.forUniqueId(uniqueIdWithSeed)).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
