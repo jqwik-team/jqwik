@@ -43,7 +43,6 @@ class EngineDeterminismTests extends AbstractEngineTests {
 		EngineDiscoveryRequest discoveryRequest1 = TestDiscoveryRequestBuilder.request().select(
 				ClassSelector.forClass(MyProperties.class)).build();
 		TestDescriptor engineDescriptor1 = engine.discover(discoveryRequest1, UniqueId.forEngine(engine.getId()));
-		engineDescriptor1.allDescendants().forEach(d -> System.out.println(d));
 
 		executeEngine(engineDescriptor1);
 		List<List<Object>> paramsFirstRun = new ArrayList<>(parameterCalls);
@@ -53,7 +52,6 @@ class EngineDeterminismTests extends AbstractEngineTests {
 		EngineDiscoveryRequest discoveryRequest2 = TestDiscoveryRequestBuilder.request().select(
 				ClassSelector.forClass(MyProperties.class)).build();
 		TestDescriptor engineDescriptor2 = engine.discover(discoveryRequest1, UniqueId.forEngine(engine.getId()));
-		engineDescriptor2.allDescendants().forEach(d -> System.out.println(d));
 
 		executeEngine(engineDescriptor2);
 		Assertions.assertEquals(paramsFirstRun, parameterCalls);
