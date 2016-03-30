@@ -96,14 +96,6 @@ class EngineDiscoveryTests extends AbstractEngineTests {
 		assertTrue(uniqueIds.stream().anyMatch(id -> id.getUniqueString().startsWith(uniqueId.getUniqueString())));
 	}
 
-	private UniqueId uniqueIdForClass(Class<MyProperties> myPropertiesClass) {
-		return UniqueId.forEngine("jqwik").append("jqwik-class", myPropertiesClass.getName());
-	}
-
-	private UniqueId uniqueIdForMethod(Class<MyProperties> myPropertiesClass, String methodName) {
-		return uniqueIdForClass(myPropertiesClass).append("jqwik-method", methodName);
-	}
-
 	private List<UniqueId> getUniqueIds(TestDescriptor engineDescriptor) {
 		return engineDescriptor.allDescendants().stream().map(d -> d.getUniqueId()).collect(Collectors.toList());
 	}

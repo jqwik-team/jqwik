@@ -12,6 +12,7 @@ import org.junit.gen5.engine.EngineDiscoveryRequest;
 import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
 import org.junit.gen5.engine.discovery.ClassSelector;
+import org.junit.gen5.engine.discovery.UniqueIdSelector;
 import org.junit.gen5.launcher.main.TestDiscoveryRequestBuilder;
 
 class EngineDeterminismTests extends AbstractEngineTests {
@@ -36,6 +37,42 @@ class EngineDeterminismTests extends AbstractEngineTests {
 		parameterCalls.clear();
 		executeEngine(engineDescriptor);
 		Assertions.assertEquals(paramsFirstRun, parameterCalls);
+	}
+
+	@Test
+	void executingMethodWithSameSeedGeneratesSameParameters() {
+		UniqueId uniqueIdWithSeed = uniqueIdForMethodAndSeed(MyProperties.class, "oneNumber", "1");
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+				UniqueIdSelector.forUniqueId(uniqueIdWithSeed)).build();
+
+
+		executeRequest(discoveryRequest);
+
+		List<List<Object>> paramsFirstRun = new ArrayList<>(parameterCalls);
+
+		parameterCalls.clear();
+		executeRequest(discoveryRequest);
+		Assertions.assertEquals(paramsFirstRun, parameterCalls);
+	}
+
+	@Test
+	void executingMethodWithDifferentSeedGeneratesDifferentParameters() {
+		EngineDiscoveryRequest discoveryRequest1 = TestDiscoveryRequestBuilder.request().select(
+				UniqueIdSelector.forUniqueId(uniqueIdForMethodAndSeed(MyProperties.class, "oneNumber", "3"))).build();
+		executeRequest(discoveryRequest1);
+		List<List<Object>> paramsFirstRun = new ArrayList<>(parameterCalls);
+
+		parameterCalls.clear();
+		EngineDiscoveryRequest discoveryRequest2 = TestDiscoveryRequestBuilder.request().select(
+				UniqueIdSelector.forUniqueId(uniqueIdForMethodAndSeed(MyProperties.class, "oneNumber", "4"))).build();
+		executeRequest(discoveryRequest2);
+		Assertions.assertNotEquals(paramsFirstRun, parameterCalls);
+	}
+
+	private TestDescriptor executeRequest(EngineDiscoveryRequest discoveryRequest) {
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+		RecordingExecutionListener engineListener = executeEngine(engineDescriptor);
+		return engineDescriptor;
 	}
 
 	@Test
