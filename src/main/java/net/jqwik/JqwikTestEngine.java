@@ -111,7 +111,15 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 			Class<?> testClass = classDescriptor.getTestClass();
 			String methodName = head.getValue();
 			Method propertyMethod = ReflectionUtils.findMethods(testClass, m -> m.getName().equals(methodName)).get(0);
-			resolveMethodForClass(propertyMethod, classDescriptor, random);
+			if (rest.isEmpty())
+				resolveMethodForClass(propertyMethod, classDescriptor, random);
+			else {
+				head = rest.remove(0);
+				if (head.getType().equals(SEGMENT_TYPE_SEED)) {
+					long propertySeed = Long.parseLong(head.getValue());
+					resolveMethodForClass(propertyMethod, classDescriptor, propertySeed);
+				}
+			}
 		}
 	}
 

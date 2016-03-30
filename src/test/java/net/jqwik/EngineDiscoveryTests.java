@@ -51,20 +51,6 @@ class EngineDiscoveryTests extends AbstractEngineTests {
 
 	@Test
 	void discoverMethod() {
-		UniqueId classUniqueId = uniqueIdForMethod(MyProperties.class, "booleanProperty");
-		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
-				UniqueIdSelector.forUniqueId(classUniqueId)).build();
-		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
-
-		List<UniqueId> uniqueIds = getUniqueIds(engineDescriptor);
-
-		assertEquals(2, uniqueIds.size());
-		assertTrue(uniqueIds.contains(uniqueIdForClass(MyProperties.class)));
-		containsMatchingId(uniqueIds, uniqueIdForMethod(MyProperties.class, "booleanProperty"));
-	}
-
-	@Test
-	void discoverMethodByUniqueWithoutSeed() {
 		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
 			MethodSelector.forMethod(MyProperties.class, "booleanProperty")).build();
 		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
@@ -75,6 +61,35 @@ class EngineDiscoveryTests extends AbstractEngineTests {
 		Class<MyProperties> myPropertiesClass = MyProperties.class;
 		assertTrue(uniqueIds.contains(uniqueIdForClass(myPropertiesClass)));
 		containsMatchingId(uniqueIds, uniqueIdForMethod(myPropertiesClass, "booleanProperty"));
+	}
+
+	@Test
+	void discoverMethodByUniqueWithoutSeed() {
+		UniqueId methodUniqueId = uniqueIdForMethod(MyProperties.class, "booleanProperty");
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+				UniqueIdSelector.forUniqueId(methodUniqueId)).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		List<UniqueId> uniqueIds = getUniqueIds(engineDescriptor);
+
+		assertEquals(2, uniqueIds.size());
+		assertTrue(uniqueIds.contains(uniqueIdForClass(MyProperties.class)));
+		containsMatchingId(uniqueIds, methodUniqueId);
+	}
+
+	@Test
+	void discoverMethodByUniqueWithSeed() {
+		UniqueId uniqueIdWithSeed = uniqueIdForMethod(MyProperties.class, "booleanProperty").append("jqwik-seed", "1");
+		EngineDiscoveryRequest discoveryRequest = TestDiscoveryRequestBuilder.request().select(
+				UniqueIdSelector.forUniqueId(uniqueIdWithSeed)).build();
+		TestDescriptor engineDescriptor = engine.discover(discoveryRequest, UniqueId.forEngine(engine.getId()));
+
+		List<UniqueId> uniqueIds = getUniqueIds(engineDescriptor);
+
+		assertEquals(2, uniqueIds.size());
+		Class<MyProperties> myPropertiesClass = MyProperties.class;
+		assertTrue(uniqueIds.contains(uniqueIdForClass(myPropertiesClass)));
+		assertTrue(uniqueIds.contains(uniqueIdWithSeed));
 	}
 
 	private void containsMatchingId(List<UniqueId> uniqueIds, UniqueId uniqueId) {
