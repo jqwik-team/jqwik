@@ -1,29 +1,33 @@
 
 package net.jqwik;
 
+import static org.junit.gen5.commons.util.ReflectionUtils.findAllClassesInClasspathRoot;
+import static org.junit.gen5.commons.util.ReflectionUtils.findAllClassesInPackage;
+
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
-import com.pholser.junit.quickcheck.Property;
-import com.pholser.junit.quickcheck.internal.GeometricDistribution;
-import com.pholser.junit.quickcheck.internal.generator.GeneratorRepository;
-import com.pholser.junit.quickcheck.internal.generator.ServiceLoaderGeneratorSource;
-import com.pholser.junit.quickcheck.random.SourceOfRandomness;
+
 import org.junit.gen5.commons.util.AnnotationUtils;
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.junit.gen5.engine.EngineDiscoveryRequest;
 import org.junit.gen5.engine.ExecutionRequest;
 import org.junit.gen5.engine.TestDescriptor;
 import org.junit.gen5.engine.UniqueId;
-import org.junit.gen5.engine.discovery.ClassSelector;
-import org.junit.gen5.engine.discovery.MethodSelector;
-import org.junit.gen5.engine.discovery.UniqueIdSelector;
+import org.junit.gen5.engine.discovery.*;
 import org.junit.gen5.engine.support.descriptor.JavaSource;
 import org.junit.gen5.engine.support.hierarchical.HierarchicalTestEngine;
 import org.slf4j.LoggerFactory;
+
+import com.pholser.junit.quickcheck.Property;
+import com.pholser.junit.quickcheck.internal.GeometricDistribution;
+import com.pholser.junit.quickcheck.internal.generator.GeneratorRepository;
+import com.pholser.junit.quickcheck.internal.generator.ServiceLoaderGeneratorSource;
+import com.pholser.junit.quickcheck.random.SourceOfRandomness;
 
 public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContext> {
 
@@ -71,6 +75,19 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	private void resolveSelectors(EngineDiscoveryRequest discoveryRequest, JqwikEngineDescriptor engineDescriptor,
 			Random random) {
+		Predicate<Class<?>> isScannableTestClass = new IsScannableContainer();
+
+		discoveryRequest.getSelectorsByType(ClasspathSelector.class).forEach(selector -> {
+			File rootDirectory = selector.getClasspathRoot();
+			findAllClassesInClasspathRoot(rootDirectory, isScannableTestClass).stream().forEach(
+				clazz -> resolveClassWithChildren(clazz, engineDescriptor, random));
+		});
+		discoveryRequest.getSelectorsByType(PackageSelector.class).forEach(selector -> {
+			String packageName = selector.getPackageName();
+			findAllClassesInPackage(packageName, isScannableTestClass).stream().forEach(
+				clazz -> resolveClassWithChildren(clazz, engineDescriptor, random));
+		});
+
 		discoveryRequest.getSelectorsByType(ClassSelector.class).forEach(
 			classSelector -> resolveClass(classSelector, engineDescriptor, random));
 		discoveryRequest.getSelectorsByType(MethodSelector.class).forEach(
@@ -106,7 +123,8 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 			else {
 				return;
 			}
-		} else if (head.getType().equals(SEGMENT_TYPE_METHOD)) {
+		}
+		else if (head.getType().equals(SEGMENT_TYPE_METHOD)) {
 			JqwikClassDescriptor classDescriptor = (JqwikClassDescriptor) parent;
 			Class<?> testClass = classDescriptor.getTestClass();
 			String methodName = head.getValue();
@@ -131,6 +149,10 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 
 	private void resolveClass(ClassSelector classSelector, JqwikEngineDescriptor engineDescriptor, Random random) {
 		Class<?> testClass = classSelector.getTestClass();
+		resolveClassWithChildren(testClass, engineDescriptor, random);
+	}
+
+	private void resolveClassWithChildren(Class<?> testClass, JqwikEngineDescriptor engineDescriptor, Random random) {
 		JqwikClassDescriptor classDescriptor = resolveClassWithoutChildren(testClass, engineDescriptor);
 		resolveClassMethods(testClass, classDescriptor, random);
 	}
