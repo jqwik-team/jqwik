@@ -106,7 +106,7 @@ class EngineExecutionTests extends AbstractEngineTests{
 		Assertions.assertEquals(1, engineListener.countPropertiesFailed(), "Failed");
 	}
 
-	static class NoParamsProperties {
+	private static class NoParamsProperties {
 		@Property
 		String skipBecauseItDoesNotReturnBoolean() {
 			return "a string";
@@ -142,7 +142,7 @@ class EngineExecutionTests extends AbstractEngineTests{
 		}
 	}
 
-	static class UnmodifiedParamsProperties {
+	private static class UnmodifiedParamsProperties {
 		@Property
 		boolean succeeding(int aNumber) {
 			return true;
@@ -170,7 +170,7 @@ class EngineExecutionTests extends AbstractEngineTests{
 		}
 	}
 
-	static class DiverseProperties {
+	private static class DiverseProperties {
 		@Property(trials = 10)
 		void positiveIntegers(@From(IntegralGenerator.class) @Positive int i) {
 		}
@@ -198,7 +198,7 @@ class EngineExecutionTests extends AbstractEngineTests{
 	@Target({ PARAMETER, FIELD, ANNOTATION_TYPE, TYPE_USE })
 	@Retention(RUNTIME)
 	@GeneratorConfiguration
-	public @interface Positive {
+	@interface Positive {
 		// ...
 	}
 

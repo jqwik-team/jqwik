@@ -31,11 +31,13 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
+
+import org.opentest4j.TestAbortedException;
+import org.slf4j.Logger;
+
+import ru.vyarus.java.generics.resolver.GenericsResolver;
+
 import com.pholser.junit.quickcheck.Property;
 import com.pholser.junit.quickcheck.internal.GeometricDistribution;
 import com.pholser.junit.quickcheck.internal.ParameterTypeContext;
@@ -44,10 +46,6 @@ import com.pholser.junit.quickcheck.internal.ShrinkControl;
 import com.pholser.junit.quickcheck.internal.generator.GeneratorRepository;
 import com.pholser.junit.quickcheck.internal.generator.PropertyParameterGenerationContext;
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
-import org.opentest4j.TestAbortedException;
-import org.slf4j.Logger;
-import net.jqwik.api.AssumptionViolation;
-import ru.vyarus.java.generics.resolver.GenericsResolver;
 
 class PropertyStatement {
 	private final Method method;
@@ -57,7 +55,7 @@ class PropertyStatement {
 	private final GeometricDistribution distro;
 	private final long propertySeed;
 	private final Logger seedLog;
-	private final List<AssumptionViolation> assumptionViolations = new ArrayList<>();
+	private final List<TestAbortedException> assumptionViolations = new ArrayList<>();
 	private int successes;
 
 	PropertyStatement(Method method, Class<?> testClass, String displayName, GeneratorRepository repo,

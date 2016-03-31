@@ -29,20 +29,21 @@ import static java.util.Arrays.asList;
 
 import java.lang.reflect.Method;
 import java.util.function.Consumer;
+
 import org.junit.gen5.commons.util.ReflectionUtils;
 import org.opentest4j.AssertionFailedError;
-import net.jqwik.api.AssumptionViolation;
+import org.opentest4j.TestAbortedException;
 
 class PropertyVerifier {
 	private final Method method;
 	private final Object[] args;
 	private final Consumer<Void> onSuccess;
-	private final Consumer<AssumptionViolation> onAssumptionViolated;
+	private final Consumer<TestAbortedException> onAssumptionViolated;
 	private final Consumer<AssertionError> onFailure;
 	private final Class<?> testClass;
 
 	PropertyVerifier(Class<?> clazz, Method method, Object[] args, Consumer<Void> onSuccess,
-					 Consumer<AssumptionViolation> onAssumptionViolated, Consumer<AssertionError> onFailure) {
+			Consumer<TestAbortedException> onAssumptionViolated, Consumer<AssertionError> onFailure) {
 
 		this.testClass = clazz;
 		this.method = method;
@@ -72,7 +73,7 @@ class PropertyVerifier {
 				onSuccess.accept(null);
 			}
 		}
-		catch (AssumptionViolation e) {
+		catch (TestAbortedException e) {
 			onAssumptionViolated.accept(e);
 		}
 		catch (AssertionError e) {
