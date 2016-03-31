@@ -94,6 +94,8 @@ public class JqwikTestEngine extends HierarchicalTestEngine<JqwikExecutionContex
 			methodSelector -> resolveMethod(methodSelector, engineDescriptor, random));
 		discoveryRequest.getSelectorsByType(UniqueIdSelector.class).forEach(
 			uniqueIdSelector -> resolveUniqueId(uniqueIdSelector, engineDescriptor, random));
+
+		new DiscoveryFilterApplier().applyAllFilters(discoveryRequest, engineDescriptor);
 	}
 
 	private void resolveUniqueId(UniqueIdSelector uniqueIdSelector, JqwikEngineDescriptor engineDescriptor,
