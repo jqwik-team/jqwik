@@ -62,8 +62,11 @@ class PropertyVerifier {
 			if (returnType.equals(Boolean.class) || returnType.equals(boolean.class)) {
 				if ((boolean) result)
 					onSuccess.accept(null);
-				else
-					onFailure.accept(new AssertionFailedError());
+				else {
+					String methodDescription = testClass.getName() + "#" + method.getName();
+					String message = String.format("Method %s returned false", methodDescription);
+					onFailure.accept(new AssertionFailedError(message));
+				}
 			}
 			else {
 				onSuccess.accept(null);

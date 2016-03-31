@@ -10,10 +10,6 @@ public class PropertyVerificationFailure extends AssertionFailedError {
 	private final String displayName;
 	private final Object[] args;
 
-	public PropertyVerificationFailure(String displayName, Object[] args) {
-		this(displayName, args, null);
-	}
-
 	public PropertyVerificationFailure(String displayName, Object[] args, Throwable cause) {
 		super(null, cause);
 		this.displayName = displayName;
@@ -22,7 +18,17 @@ public class PropertyVerificationFailure extends AssertionFailedError {
 
 	@Override
 	public String getMessage() {
-		return String.format("Property '%s' falsified for args %s", displayName, asList(args));
+		String baseMessage = String.format("Property '%s' falsified for args %s", displayName, asList(args));
+		if (getCause() == null)
+			return baseMessage;
+
+		return baseMessage + System.lineSeparator() + "\t" + getBaseCause(getCause()).getMessage();
+	}
+
+	private Throwable getBaseCause(Throwable failure) {
+		if (failure.getCause() == null)
+			return failure;
+		return getBaseCause(failure.getCause());
 	}
 
 	public Object[] getArgs() {

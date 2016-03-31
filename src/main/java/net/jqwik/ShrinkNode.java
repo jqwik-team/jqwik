@@ -78,7 +78,7 @@ final class ShrinkNode {
 
 	PropertyVerificationFailure fail(PropertyVerificationFailure originalFailure) {
 		PropertyVerificationFailure minimumFailure = new PropertyVerificationFailure(originalFailure.getDisplayName(),
-			args);
+			args, originalFailure);
 		minimumFailure.setStackTrace(originalFailure.getStackTrace());
 		throw minimumFailure;
 	}
