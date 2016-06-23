@@ -1,10 +1,11 @@
 package jqwik.experiments;
 
-public class SpecWithLifecycle {
+@Spec
+public class SpecWithFixtureClasses {
 
 	private final String aString;
 
-	public SpecWithLifecycle() {
+	public SpecWithFixtureClasses() {
 		aString = "a new string";
 	}
 
@@ -17,7 +18,7 @@ public class SpecWithLifecycle {
 	class Connection implements ForEachLifeCycle {
 		private final String url;
 
-		public Connection() {
+		public Connection(@DependsOn OtherFixture other) {
 			url = "http://somewhere.net";
 		}
 
@@ -31,7 +32,7 @@ public class SpecWithLifecycle {
 			System.out.println("after each");
 		}
 
-		@RequireFixture
+		@DependsOn
 		OtherFixture other;
 	}
 

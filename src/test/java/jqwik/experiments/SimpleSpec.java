@@ -1,9 +1,17 @@
 package jqwik.experiments;
 
-import java.util.Arrays;
-import java.util.stream.Stream;
+@Spec("A simple Specification")
+public class SimpleSpec implements ForEachLifeCycle {
 
-public class SimpleSpec {
+	@Override
+	public void beforeEach() {
+		System.out.println("before each");
+	}
+
+	@Override
+	public void afterEach() {
+		System.out.println("after each");
+	}
 
 	@Fact("A String is a String")
 	boolean aStringIsAString() {
@@ -11,23 +19,18 @@ public class SimpleSpec {
 	}
 
 	@Fact
-	boolean aNameIsAString(Object aName) {
+	boolean aNameIsAString(Object aName, Object other) {
 		return aName instanceof String;
 	}
 
-	@Data
+	@Fixture
 	Object aName() {
 		return "Johannes";
 	}
 
-	@Data(referBy = "aName")
+	@Fixture(referBy = "other")
 	Object otherName() {
 		return "Marcus";
-	}
-
-	@DataSample(referBy = "aName")
-	Stream<Object>  manyNames() {
-		return Arrays.stream(new String[] {"Frank", "John"});
 	}
 
 }
