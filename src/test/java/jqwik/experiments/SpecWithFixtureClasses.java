@@ -1,7 +1,8 @@
+
 package jqwik.experiments;
 
 @Spec
-public class SpecWithFixtureClasses {
+public class SpecWithFixtureClasses implements ForAllLifeCycle {
 
 	private final String aString;
 
@@ -50,16 +51,13 @@ public class SpecWithFixtureClasses {
 
 	}
 
-	@Fixture
-	static class AStaticFixture implements ForAllLifeCycle {
-		@Override
-		public void beforeAll() {
-			System.out.println("before all");
-		}
+	@Override
+	public void beforeAll() {
+		System.out.println("before all");
+	}
 
-		@Override
-		public void afterAll() {
-			System.out.println("after all");
-		}
+	@Override
+	public void afterAll() {
+		System.out.println("after all");
 	}
 }

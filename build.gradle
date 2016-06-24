@@ -25,10 +25,10 @@ ext.log4JVersion  = '2.5'
 
 junit5 {
 	version "${junit5Version}"
-	runJunit4 true
-	matchClassName '.*Tests?'
-	reportsDir file('build/test-results/junit5/') // this is the default
-	logManager 'org.apache.logging.log4j.jul.LogManager'
+//	runJunit4 true
+//	matchClassName '.*Tests?'
+//	reportsDir file('build/test-results/junit5/') // this is the default
+//	logManager 'org.apache.logging.log4j.jul.LogManager'
 }
 
 repositories {
@@ -51,6 +51,8 @@ dependencies {
 
 	// If you also want JUnit4 tests
 	testCompile("junit:junit:${junit4Version}")
+
+	testCompile 'org.assertj:assertj-core:3.4.1'
 
 	testRuntime("org.apache.logging.log4j:log4j-core:${log4JVersion}")
 	testRuntime("org.apache.logging.log4j:log4j-jul:${log4JVersion}")
