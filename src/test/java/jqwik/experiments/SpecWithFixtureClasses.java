@@ -15,11 +15,11 @@ public class SpecWithFixtureClasses implements ForAllLifeCycle {
 		return aString.equalsIgnoreCase("A NEW STRING") && aConnection.url.startsWith("http:");
 	}
 
-	@Fixture
+	@Fixture(dependsOn = OtherFixture.class)
 	class Connection implements ForEachLifeCycle {
 		private final String url;
 
-		public Connection(@DependsOn OtherFixture other) {
+		public Connection(OtherFixture other) {
 			url = "http://somewhere.net";
 		}
 
@@ -33,8 +33,6 @@ public class SpecWithFixtureClasses implements ForAllLifeCycle {
 			System.out.println("after each");
 		}
 
-		@DependsOn
-		OtherFixture other;
 	}
 
 	@Fixture
