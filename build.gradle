@@ -1,34 +1,45 @@
 buildscript {
 	repositories {
-		maven { url 'https://plugins.gradle.org/m2/' }
+		mavenCentral()
 		maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 	}
 	dependencies {
-		classpath 'org.junit:junit-gradle:5.0.0-SNAPSHOT'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-SNAPSHOT'
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
-apply plugin: 'org.junit.gen5.gradle'
+apply plugin: 'org.junit.platform.gradle.plugin'
 
 jar {
 	baseName = 'junit5-jqwik-engine'
 	version = '1.0.0-SNAPSHOT'
 }
 
-ext.junit5Version = '5.0.0-SNAPSHOT'
+ext.junit4Version        = '4.12'
+ext.junitVintageVersion  = '4.12.0-M1'
+ext.junitPlatformVersion = '1.0.0-M1'
+ext.junitJupiterVersion  = '5.0.0-M1'
+
 ext.junitQuickcheckVersion = '0.6'
-ext.junit4Version = '4.12'
 ext.log4JVersion  = '2.5'
 
-junit5 {
-	version "${junit5Version}"
-//	runJunit4 true
-//	matchClassName '.*Tests?'
-//	reportsDir file('build/test-results/junit5/') // this is the default
-//	logManager 'org.apache.logging.log4j.jul.LogManager'
+junitPlatform {
+	platformVersion "${junitPlatformVersion}"
+	engines {
+		include 'junit-jupiter' //, 'junit-vintage'
+		// exclude 'custom-engine'
+	}
+	tags {
+		// include 'fast'
+		exclude 'slow'
+	}
+	includeClassNamePattern '.*Tests?'
+	// enableStandardTestTask true
+	// reportsDir "build/test-results/junit-platform" // this is the default
+	logManager 'org.apache.logging.log4j.jul.LogManager'
 }
 
 repositories {
@@ -44,13 +55,16 @@ compileTestJava {
 
 dependencies {
 	compile("com.pholser:junit-quickcheck-core:${junitQuickcheckVersion}")
-	compile("org.junit:junit-engine-api:${junit5Version}")
-
-	testCompile("org.junit:junit4-runner:${junit5Version}")
 	compile("com.pholser:junit-quickcheck-generators:${junitQuickcheckVersion}")
 
+	compile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+
+	compile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
 	// If you also want JUnit4 tests
+	testCompile("org.junit.platform:junit-platform-runner:${junitPlatformVersion}")
 	testCompile("junit:junit:${junit4Version}")
+	testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
 
 	testCompile 'org.assertj:assertj-core:3.4.1'
 
