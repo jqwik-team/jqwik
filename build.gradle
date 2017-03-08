@@ -46,6 +46,7 @@ junitPlatform {
 dependencies {
 	compile("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
 	compile("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
+	compile("io.javaslang:javaslang-test:2.1.0-alpha")
 
 	// Only necessary to enable IntelliJ support
 	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT")
