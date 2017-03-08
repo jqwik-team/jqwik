@@ -64,7 +64,7 @@ dependencies {
 	// If you also want JUnit4 tests
 	testCompile("org.junit.platform:junit-platform-runner:${junitPlatformVersion}")
 	testCompile("junit:junit:${junit4Version}")
-	testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
+	//testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
 
 	testCompile 'org.assertj:assertj-core:3.4.1'
 
