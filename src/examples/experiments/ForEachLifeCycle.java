@@ -1,5 +1,5 @@
 
-package jqwik.experiments;
+package experiments;
 
 public interface ForEachLifeCycle {
 

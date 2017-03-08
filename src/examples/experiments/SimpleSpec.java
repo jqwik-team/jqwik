@@ -1,4 +1,4 @@
-package jqwik.experiments;
+package experiments;
 
 @Spec("A simple Specification")
 public class SimpleSpec implements ForEachLifeCycle {

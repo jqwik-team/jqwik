@@ -1,4 +1,4 @@
-package jqwik.experiments;
+package experiments;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

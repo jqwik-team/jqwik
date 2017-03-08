@@ -8,43 +8,19 @@ buildscript {
 	}
 }
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'org.junit.platform.gradle.plugin'
-
-jar {
-	baseName = 'junit5-jqwik-engine'
-	version = '1.0.0-SNAPSHOT'
-}
-
-ext.junit4Version        = '4.12'
-ext.junitVintageVersion  = '4.12.0-M1'
-ext.junitPlatformVersion = '1.0.0-M1'
-ext.junitJupiterVersion  = '5.0.0-M1'
-
-ext.junitQuickcheckVersion = '0.6'
-ext.log4JVersion  = '2.5'
-
-junitPlatform {
-	platformVersion "${junitPlatformVersion}"
-	engines {
-		include 'junit-jupiter' //, 'junit-vintage'
-		// exclude 'custom-engine'
-	}
-	tags {
-		// include 'fast'
-		exclude 'slow'
-	}
-	includeClassNamePattern '.*Tests?'
-	// enableStandardTestTask true
-	// reportsDir "build/test-results/junit-platform" // this is the default
-	logManager 'org.apache.logging.log4j.jul.LogManager'
-}
-
 repositories {
 	mavenCentral()
 	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+ext.junitPlatformVersion = '1.0.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+jar {
+	baseName = 'jqwik'
+	version = '0.1.0-SNAPSHOT'
 }
 
 compileTestJava {
@@ -53,32 +29,26 @@ compileTestJava {
 	options.compilerArgs += '-parameters'
 }
 
-dependencies {
-	compile("com.pholser:junit-quickcheck-core:${junitQuickcheckVersion}")
-	compile("com.pholser:junit-quickcheck-generators:${junitQuickcheckVersion}")
-
-	compile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
-
-	compile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-
-	// If you also want JUnit4 tests
-	testCompile("org.junit.platform:junit-platform-runner:${junitPlatformVersion}")
-	testCompile("junit:junit:${junit4Version}")
-	//testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
-
-	testCompile 'org.assertj:assertj-core:3.4.1'
-
-	testRuntime("org.apache.logging.log4j:log4j-core:${log4JVersion}")
-	testRuntime("org.apache.logging.log4j:log4j-jul:${log4JVersion}")
+junitPlatform {
+	// platformVersion '1.0.0-M3'
+	filters {
+		engines {
+			exclude "junit-jupiter"
+		}
+		// includeClassNamePattern '.*Test'
+	}
+	enableStandardTestTask true
 }
 
-eclipse {
-	classpath {
-		containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-		containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-	}
+dependencies {
+	compile("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
+	compile("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
+
+	// Only necessary to enable IntelliJ support
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT")
 }
 
 task wrapper(type: Wrapper) {
-	distributionUrl = 'https://services.gradle.org/distributions/gradle-2.9-all.zip'
+	description = 'Generates gradlew[.bat] scripts'
+	gradleVersion = '3.4'
 }

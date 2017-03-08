@@ -1,4 +1,4 @@
-package jqwik.experiments;
+package experiments;
 
 public interface ForAllLifeCycle {
 

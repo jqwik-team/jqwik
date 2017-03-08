@@ -1,5 +1,5 @@
 
-package jqwik.experiments;
+package experiments;
 
 @Spec
 public class SpecWithFixtureClasses implements ForAllLifeCycle {
