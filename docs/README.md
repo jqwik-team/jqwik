@@ -1,6 +1,6 @@
-# jqwik - The Simpler Test Engine
+## A Simpler JUnit Test Engine
 
-## Why you might want to use an alternative to Jupiter
+### Why you might want to use an alternative to Jupiter
 
 ### How to get involved and contribute
 
