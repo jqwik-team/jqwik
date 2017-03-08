@@ -1,8 +1,8 @@
-# Title
+# jqwik - The Simpler Test Engine
 
-## Header 1
+## Why you might want to use an alternative to Jupiter
 
-### Header 2
+### How to get involved and contribute
 
 A List:
 - item 1

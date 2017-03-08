@@ -1,3 +1,3 @@
 # jqwik
 
-A property-based test enginge for JUnit 5 using junit-quickcheck under the hood
+An alternative test enginge for the JUnit 5 platform
