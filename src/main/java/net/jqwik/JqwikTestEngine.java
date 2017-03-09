@@ -1,8 +1,10 @@
 package net.jqwik;
 
-import org.junit.platform.commons.util.Preconditions;
+import net.jqwik.execution.JqwikExecutor;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.PackageSelector;
+import org.junit.platform.engine.support.descriptor.EngineDescriptor;
+
+import net.jqwik.discovery.JqwikDiscoverer;
 
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
@@ -13,21 +15,16 @@ public class JqwikTestEngine implements TestEngine {
 	}
 
 	@Override
-	public TestDescriptor discover(EngineDiscoveryRequest discoveryRequest, UniqueId uniqueId) {
-		Preconditions.notNull(discoveryRequest, "discovery request must not be null");
-		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
-		discoveryRequest.getSelectorsByType(PackageSelector.class).forEach(packageSelector -> {
-			if (!packageSelector.getPackageName().startsWith("net.jqwik"))
-				engineDescriptor.addChild(new ExampleTestDescriptor(uniqueId));
-		});
+	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
+		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
+		new JqwikDiscoverer().discover(request, engineDescriptor);
 		return engineDescriptor;
 	}
 
 	@Override
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
-		request.getEngineExecutionListener().executionStarted(root);
-		request.getEngineExecutionListener().executionFinished(root, TestExecutionResult.successful());
+		new JqwikExecutor().execute(request, root);
 	}
 
 }
