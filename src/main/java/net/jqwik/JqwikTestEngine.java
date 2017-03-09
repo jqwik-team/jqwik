@@ -1,12 +1,8 @@
 package net.jqwik;
 
-import java.util.Optional;
-
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.PackageSelector;
-import org.junit.platform.engine.support.hierarchical.EngineExecutionContext;
-import org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine;
 
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
@@ -21,7 +17,7 @@ public class JqwikTestEngine implements TestEngine {
 		Preconditions.notNull(discoveryRequest, "discovery request must not be null");
 		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
 		discoveryRequest.getSelectorsByType(PackageSelector.class).forEach(packageSelector -> {
-			if (packageSelector.getPackageName().contains("examples"))
+			if (!packageSelector.getPackageName().startsWith("net.jqwik"))
 				engineDescriptor.addChild(new ExampleTestDescriptor(uniqueId));
 		});
 		return engineDescriptor;
