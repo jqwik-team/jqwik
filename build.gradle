@@ -26,6 +26,20 @@ jar {
 	version = '0.1.0-SNAPSHOT'
 }
 
+sourceSets {
+	// Note that just declaring this sourceset creates two configurations.
+	examples {
+		java {
+			compileClasspath += main.output
+			runtimeClasspath += main.output
+		}
+	}
+}
+
+configurations {
+	examples.extendsFrom runtime
+}
+
 compileTestJava {
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
@@ -36,7 +50,11 @@ junitPlatform {
 	// platformVersion '1.0.0-M3'
 	filters {
 		engines {
-			exclude "junit-jupiter"
+			// exclude "junit-jupiter"
+			exclude "jqwik"
+		}
+		packages {
+			exclude 'p1'
 		}
 		// includeClassNamePattern '.*Test'
 	}
@@ -48,8 +66,14 @@ dependencies {
 	compile("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	compile("io.javaslang:javaslang-test:2.1.0-alpha")
 
+	testCompile("org.mockito:mockito-all:2.0.2-beta")
+	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 	// Only necessary to enable IntelliJ support
+	testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-SNAPSHOT")
 	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT")
+
+	examplesRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT")
+
 }
 
 task wrapper(type: Wrapper) {

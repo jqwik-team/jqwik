@@ -8,5 +8,5 @@ import org.junit.platform.commons.annotation.Testable;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable
-public @interface Fact {
+public @interface Example {
 }
