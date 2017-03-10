@@ -1,5 +1,6 @@
 package net.jqwik.execution;
 
+import net.jqwik.JqwikException;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -8,6 +9,7 @@ import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import net.jqwik.discovery.JqwikClassTestDescriptor;
 import net.jqwik.discovery.JqwikExampleTestDescriptor;
+import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
 
 public class JqwikExecutor {
 
@@ -33,29 +35,27 @@ public class JqwikExecutor {
 		} catch (Throwable throwable) {
 			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
 					methodTestDescriptor.gerContainerClass());
-			return TestExecutionResult.failed(new RuntimeException(message, throwable));
+			return TestExecutionResult.failed(new JqwikException(message, throwable));
 		}
 		return invokeTestMethod(methodTestDescriptor, testInstance);
 	}
 
 	private TestExecutionResult invokeTestMethod(JqwikExampleTestDescriptor methodTestDescriptor, Object testInstance) {
-		try {
-			ReflectionUtils.invokeMethod(methodTestDescriptor.getExampleMethod(), testInstance);
-			return TestExecutionResult.successful();
-		} catch (Throwable throwable) {
-			return TestExecutionResult.failed(throwable);
-		}
+		return executeSafely(() -> ReflectionUtils.invokeMethod(methodTestDescriptor.getExampleMethod(), testInstance));
 	}
 
 	private void executeContainer(ExecutionRequest request, TestDescriptor containerDescriptor) {
 		request.getEngineExecutionListener().executionStarted(containerDescriptor);
-		try {
+		TestExecutionResult result = executeSafely(() -> {
 			for (TestDescriptor descriptor : containerDescriptor.getChildren()) {
 				execute(request, descriptor);
 			}
-			request.getEngineExecutionListener().executionFinished(containerDescriptor, TestExecutionResult.successful());
-		} catch (Throwable throwable) {
-			request.getEngineExecutionListener().executionFinished(containerDescriptor, TestExecutionResult.failed(throwable));
-		}
+		});
+		request.getEngineExecutionListener().executionFinished(containerDescriptor, result);
 	}
+
+	private TestExecutionResult executeSafely(SingleTestExecutor.Executable executable) {
+		return new SingleTestExecutor().executeSafely(executable);
+	}
+
 }
