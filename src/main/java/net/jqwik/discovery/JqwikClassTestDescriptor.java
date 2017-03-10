@@ -27,4 +27,8 @@ public class JqwikClassTestDescriptor extends AbstractTestDescriptor {
 	public boolean isTest() {
 		return false;
 	}
+
+	public Class<?> getContainerClass() {
+		return containerClass;
+	}
 }
