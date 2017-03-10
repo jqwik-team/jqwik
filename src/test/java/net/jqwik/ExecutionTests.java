@@ -1,34 +1,27 @@
 package net.jqwik;
 
+import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
-import net.jqwik.discovery.JqwikClassTestDescriptor;
-import net.jqwik.discovery.JqwikExampleTestDescriptor;
-import net.jqwik.execution.JqwikExecutor;
-import org.junit.platform.commons.support.ReflectionSupport;
-import org.junit.platform.engine.*;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
+import org.junit.platform.engine.EngineExecutionListener;
+import org.junit.platform.engine.ExecutionRequest;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.TestExecutionResult;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import examples.packageWithSingleContainer.SimpleExampleTests;
 import net.jqwik.api.Example;
-
-import java.lang.reflect.Method;
+import net.jqwik.execution.JqwikExecutor;
 
 class ExecutionTests {
 
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();
 	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
-	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
 
 	@Example
 	void executeEmptyEngine() {
-		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(engineId);
+		TestDescriptor engineDescriptor = forEngine(testEngine).build();
 
 		executeTests(engineDescriptor);
 
@@ -38,39 +31,34 @@ class ExecutionTests {
 	}
 
 	@Example
-	void executeEmptyClassWithingEngine() {
-		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(engineId);
-		JqwikClassTestDescriptor containerDescriptor = new JqwikClassTestDescriptor(ContainerClass.class, engineDescriptor);
-		engineDescriptor.addChild(containerDescriptor);
+	void executeEngineWithEmptyClass() {
+		TestDescriptor engineDescriptor = forEngine(testEngine).with(ContainerClass.class).build();
 
 		executeTests(engineDescriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(engineDescriptor);
-		events.verify(eventRecorder).executionStarted(containerDescriptor);
-		events.verify(eventRecorder).executionFinished(containerDescriptor, TestExecutionResult.successful());
+		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(ContainerClass.class));
+		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(ContainerClass.class), isSuccessful());
 		events.verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
 	@Example
-	void executeClassWithSingleTestWithinEngine() throws NoSuchMethodException {
-		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(engineId);
-
-		JqwikClassTestDescriptor containerDescriptor = new JqwikClassTestDescriptor(ContainerClass.class, engineDescriptor);
-		engineDescriptor.addChild(containerDescriptor);
-
-		Method succeedingMethod = ContainerClass.class.getDeclaredMethod("succeeding");
-		JqwikExampleTestDescriptor succeedingDescriptor = new JqwikExampleTestDescriptor(succeedingMethod, ContainerClass.class, containerDescriptor);
-		containerDescriptor.addChild(succeedingDescriptor);
+	void executeEngineWithClassWithTests() throws NoSuchMethodException {
+		TestDescriptor engineDescriptor = forEngine(testEngine).with(
+				forClass(ContainerClass.class, "succeeding", "failing")
+		).build();
 
 		executeTests(engineDescriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(engineDescriptor);
-		events.verify(eventRecorder).executionStarted(containerDescriptor);
-		events.verify(eventRecorder).executionStarted(succeedingDescriptor);
-		events.verify(eventRecorder).executionFinished(succeedingDescriptor, TestExecutionResult.successful());
-		events.verify(eventRecorder).executionFinished(containerDescriptor, TestExecutionResult.successful());
+		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(ContainerClass.class));
+		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "succeeding"));
+		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "succeeding"), isSuccessful());
+		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "failing"));
+		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "failing"), isFailed("expected fail"));
+		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(ContainerClass.class), isSuccessful());
 		events.verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
@@ -81,11 +69,12 @@ class ExecutionTests {
 
 	private static class ContainerClass {
 		@Example
-		public void succeeding() {}
+		public void succeeding() {
+		}
 
 		@Example
 		public void failing() {
-			fail("failing");
+			fail("expected fail");
 		}
 	}
 }

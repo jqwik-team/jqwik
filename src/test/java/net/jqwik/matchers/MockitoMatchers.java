@@ -27,8 +27,12 @@ public class MockitoMatchers {
 		return eq(TestExecutionResult.successful());
 	}
 
+	public static TestExecutionResult isFailed(String message) {
+		return argThat(new IsTestResultFailure(message));
+	}
+
 	public static TestExecutionResult isFailed() {
-		return argThat(new IsTestResultFailure());
+		return isFailed(null);
 	}
 
 }
