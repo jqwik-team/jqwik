@@ -5,10 +5,12 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
 public class ContainerClassDescriptor extends AbstractTestDescriptor {
+	public static final String SEGMENT_TYPE = "class";
+
 	private final Class<?> containerClass;
 
 	public ContainerClassDescriptor(Class<?> containerClass, TestDescriptor parent) {
-		super(parent.getUniqueId().append("class", containerClass.getName()), determineDisplayName(containerClass));
+		super(parent.getUniqueId().append(SEGMENT_TYPE, containerClass.getName()), determineDisplayName(containerClass));
 		this.containerClass = containerClass;
 		setParent(parent);
 		setSource(new ClassSource(containerClass));

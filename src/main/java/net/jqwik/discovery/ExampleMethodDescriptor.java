@@ -8,11 +8,14 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
 public class ExampleMethodDescriptor extends AbstractTestDescriptor implements ExampleDescriptor {
-    private final Method exampleMethod;
+	public static final String SEGMENT_TYPE = "example";
+	public static final String SEGMENT_TYPE_OVERLOADED = "overloaded-example";
+
+	private final Method exampleMethod;
     private final Class containerClass;
 
     public ExampleMethodDescriptor(ExampleMethodDescriptor toClone, int id, TestDescriptor parent) {
-        super(parent.getUniqueId().append("overloaded-method", toClone.getExampleMethod().getName() + "-" + id), determineDisplayName(toClone.getExampleMethod()));
+        super(parent.getUniqueId().append(SEGMENT_TYPE_OVERLOADED, toClone.getExampleMethod().getName() + "-" + id), determineDisplayName(toClone.getExampleMethod()));
         this.exampleMethod = toClone.getExampleMethod();
 		this.containerClass = toClone.gerContainerClass();
 		setParent(parent);
@@ -20,7 +23,7 @@ public class ExampleMethodDescriptor extends AbstractTestDescriptor implements E
     }
 
     public ExampleMethodDescriptor(Method exampleMethod, Class containerClass, TestDescriptor parent) {
-        super(parent.getUniqueId().append("method", exampleMethod.getName()), determineDisplayName(exampleMethod));
+        super(parent.getUniqueId().append(SEGMENT_TYPE, exampleMethod.getName()), determineDisplayName(exampleMethod));
         this.exampleMethod = exampleMethod;
 		this.containerClass = containerClass;
 		setParent(parent);
