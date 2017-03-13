@@ -2,11 +2,12 @@ package net.jqwik.discovery;
 
 import java.lang.reflect.Method;
 
+import net.jqwik.api.ExampleDescriptor;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
-public class ExampleMethodDescriptor extends AbstractTestDescriptor {
+public class ExampleMethodDescriptor extends AbstractTestDescriptor implements ExampleDescriptor {
     private final Method exampleMethod;
     private final Class containerClass;
 
@@ -30,7 +31,12 @@ public class ExampleMethodDescriptor extends AbstractTestDescriptor {
     	return containerClass;
 	}
 
-    @Override
+	@Override
+	public String getLabel() {
+		return getDisplayName();
+	}
+
+	@Override
     public boolean isContainer() {
         return false;
     }

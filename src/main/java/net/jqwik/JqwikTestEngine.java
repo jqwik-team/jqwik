@@ -1,13 +1,15 @@
 package net.jqwik;
 
-import net.jqwik.execution.JqwikExecutor;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
 import net.jqwik.discovery.JqwikDiscoverer;
+import net.jqwik.execution.JqwikExecutor;
+import net.jqwik.execution.LifecycleRegistry;
 
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
+
+	private final LifecycleRegistry registry = new LifecycleRegistry();
 
 	@Override
 	public String getId() {
@@ -24,7 +26,7 @@ public class JqwikTestEngine implements TestEngine {
 	@Override
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
-		new JqwikExecutor().execute(request, root);
+		new JqwikExecutor(registry).execute(request, root);
 	}
 
 }

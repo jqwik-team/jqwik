@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.execution.AutoCloseableLifecycle;
 import net.jqwik.execution.ExampleExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.mockito.InOrder;
@@ -75,7 +76,7 @@ class ExamplesExecutionTests {
 	}
 
 	private void executeTests(ExampleMethodDescriptor engineDescriptor) {
-		executor.execute(eventRecorder, engineDescriptor);
+		executor.execute(engineDescriptor, eventRecorder, new AutoCloseableLifecycle());
 	}
 
 	private static class ContainerClass implements AutoCloseable {

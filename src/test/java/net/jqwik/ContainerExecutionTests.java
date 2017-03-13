@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jqwik.execution.LifecycleRegistry;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -92,7 +93,7 @@ class ContainerExecutionTests {
 
 	private void executeTests(TestDescriptor engineDescriptor) {
 		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, eventRecorder, null);
-		new JqwikExecutor().execute(executionRequest, engineDescriptor);
+		new JqwikExecutor(new LifecycleRegistry()).execute(executionRequest, engineDescriptor);
 	}
 
 	private static class ContainerClass {
