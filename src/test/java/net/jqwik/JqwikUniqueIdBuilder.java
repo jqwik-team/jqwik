@@ -11,8 +11,8 @@ public class JqwikUniqueIdBuilder {
 		return engineId().append(ContainerClassDescriptor.SEGMENT_TYPE, clazz.getName());
 	}
 
-	public static UniqueId uniqueIdForExampleMethod(Class<?> clazz, String methodPart) {
-		return uniqueIdForClassContainer(clazz).append(ExampleMethodDescriptor.SEGMENT_TYPE, methodPart);
+	public static UniqueId uniqueIdForExampleMethod(Class<?> clazz, String methodName) {
+		return uniqueIdForClassContainer(clazz).append(ExampleMethodDescriptor.SEGMENT_TYPE, methodName);
 	}
 
 	public static UniqueId engineId() {
