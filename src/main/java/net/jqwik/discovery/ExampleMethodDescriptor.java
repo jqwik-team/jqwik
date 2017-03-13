@@ -6,11 +6,11 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
-public class JqwikExampleTestDescriptor extends AbstractTestDescriptor {
+public class ExampleMethodDescriptor extends AbstractTestDescriptor {
     private final Method exampleMethod;
     private final Class containerClass;
 
-    public JqwikExampleTestDescriptor(Method exampleMethod, Class containerClass, TestDescriptor parent) {
+    public ExampleMethodDescriptor(Method exampleMethod, Class containerClass, TestDescriptor parent) {
         super(parent.getUniqueId().append("method", exampleMethod.getName()), determineDisplayName(exampleMethod));
         this.exampleMethod = exampleMethod;
 		this.containerClass = containerClass;

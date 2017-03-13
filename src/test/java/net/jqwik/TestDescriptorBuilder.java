@@ -1,9 +1,10 @@
 package net.jqwik;
 
-import net.jqwik.discovery.JqwikClassTestDescriptor;
-import net.jqwik.discovery.JqwikExampleTestDescriptor;
+import net.jqwik.discovery.ContainerClassDescriptor;
+import net.jqwik.discovery.ExampleMethodDescriptor;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -51,7 +52,17 @@ public class TestDescriptorBuilder {
 	}
 
 	public TestDescriptor build() {
-		return build(null);
+		return build(new AbstractTestDescriptor(UniqueId.root("test", "root"), "test root") {
+			@Override
+			public boolean isContainer() {
+				return true;
+			}
+
+			@Override
+			public boolean isTest() {
+				return false;
+			}
+		});
 	}
 
 	public TestDescriptor build(TestDescriptor parent) {
@@ -66,9 +77,11 @@ public class TestDescriptorBuilder {
 		if (element instanceof JqwikTestEngine)
 			return new JqwikEngineDescriptor(UniqueId.forEngine(((JqwikTestEngine) element).getId()));
 		if (element instanceof Class)
-			return new JqwikClassTestDescriptor((Class) element, parent);
-		if (element instanceof Method)
-			return new JqwikExampleTestDescriptor((Method) element, ((JqwikClassTestDescriptor) parent).getContainerClass(), parent);
+			return new ContainerClassDescriptor((Class) element, parent);
+		if (element instanceof Method) {
+			Method exampleMethod = (Method) this.element;
+			return new ExampleMethodDescriptor(exampleMethod, exampleMethod.getDeclaringClass(), parent);
+		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());
 	}
 }

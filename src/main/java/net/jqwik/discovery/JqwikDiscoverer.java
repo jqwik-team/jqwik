@@ -61,8 +61,8 @@ public class JqwikDiscoverer {
 
 	private void appendTestFromMethod(Method javaMethod, Class<?> javaClass, TestDescriptor engineDescriptor) {
 		if (IS_EXAMPLE_METHOD.test(javaMethod)) {
-			JqwikClassTestDescriptor classDescriptor = createClassDescriptor(javaClass, engineDescriptor, false);
-			classDescriptor.addChild(new JqwikExampleTestDescriptor(javaMethod, javaClass, classDescriptor));
+			ContainerClassDescriptor classDescriptor = createClassDescriptor(javaClass, engineDescriptor, false);
+			classDescriptor.addChild(new ExampleMethodDescriptor(javaMethod, javaClass, classDescriptor));
 			engineDescriptor.addChild(classDescriptor);
 		}
 	}
@@ -79,8 +79,8 @@ public class JqwikDiscoverer {
 				.forEach(engineDescriptor::addChild);
 	}
 
-	private JqwikClassTestDescriptor createClassDescriptor(Class<?> javaClass, TestDescriptor engineDescriptor, boolean withChildren) {
-		JqwikClassTestDescriptor classTestDescriptor = new JqwikClassTestDescriptor(javaClass, engineDescriptor);
+	private ContainerClassDescriptor createClassDescriptor(Class<?> javaClass, TestDescriptor engineDescriptor, boolean withChildren) {
+		ContainerClassDescriptor classTestDescriptor = new ContainerClassDescriptor(javaClass, engineDescriptor);
 		if (withChildren) {
 			appendExamplesInContainerClass(javaClass, classTestDescriptor);
 		}
@@ -90,7 +90,7 @@ public class JqwikDiscoverer {
 	private void appendExamplesInContainerClass(Class<?> containerClass, TestDescriptor classTestDescriptor) {
 		ReflectionSupport.findMethods(containerClass, IS_EXAMPLE_METHOD, MethodSortOrder.HierarchyDown)
 				.stream()
-				.map(aMethod -> new JqwikExampleTestDescriptor(aMethod, containerClass, classTestDescriptor))
+				.map(aMethod -> new ExampleMethodDescriptor(aMethod, containerClass, classTestDescriptor))
 				.forEach(classTestDescriptor::addChild);
 	}
 

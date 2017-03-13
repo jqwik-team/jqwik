@@ -3,9 +3,9 @@ package net.jqwik.matchers;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import net.jqwik.discovery.JqwikClassTestDescriptor;
+import net.jqwik.discovery.ContainerClassDescriptor;
 
-class IsClassDescriptorFor extends ArgumentMatcher<JqwikClassTestDescriptor> {
+class IsClassDescriptorFor extends ArgumentMatcher<ContainerClassDescriptor> {
 
 	private final Class<?> containerClass;
 
@@ -15,9 +15,9 @@ class IsClassDescriptorFor extends ArgumentMatcher<JqwikClassTestDescriptor> {
 
 	@Override
 	public boolean matches(Object argument) {
-		if (argument.getClass() != JqwikClassTestDescriptor.class)
+		if (argument.getClass() != ContainerClassDescriptor.class)
 			return false;
-		JqwikClassTestDescriptor descriptor = (JqwikClassTestDescriptor) argument;
+		ContainerClassDescriptor descriptor = (ContainerClassDescriptor) argument;
 		return descriptor.getContainerClass() == containerClass;
 	}
 

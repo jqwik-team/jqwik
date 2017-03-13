@@ -7,8 +7,8 @@ import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.r
 import examples.packageWithInheritance.AbstractContainer;
 import examples.packageWithInheritance.ContainerWithInheritance;
 import examples.packageWithInheritance.InterfaceTests;
-import net.jqwik.discovery.JqwikClassTestDescriptor;
-import net.jqwik.discovery.JqwikExampleTestDescriptor;
+import net.jqwik.discovery.ContainerClassDescriptor;
+import net.jqwik.discovery.ExampleMethodDescriptor;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -26,8 +26,8 @@ class DiscoveryTests {
 	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
 
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
-	private final Predicate<TestDescriptor> isClassDescriptor = d -> d instanceof JqwikClassTestDescriptor;
-	private final Predicate<TestDescriptor> isExampleDescriptor = d -> d instanceof JqwikExampleTestDescriptor;
+	private final Predicate<TestDescriptor> isClassDescriptor = d -> d instanceof ContainerClassDescriptor;
+	private final Predicate<TestDescriptor> isExampleDescriptor = d -> d instanceof ExampleMethodDescriptor;
 
 	@Example
 	void discoverFromPackage() {
@@ -69,7 +69,7 @@ class DiscoveryTests {
 		return descriptor -> {
 			if (!isExampleDescriptor.test(descriptor))
 				return false;
-			JqwikExampleTestDescriptor exampleDescriptor = (JqwikExampleTestDescriptor) descriptor;
+			ExampleMethodDescriptor exampleDescriptor = (ExampleMethodDescriptor) descriptor;
 			return exampleDescriptor.getExampleMethod().getName().equals(methodName)
 					&& exampleDescriptor.getExampleMethod().getDeclaringClass().equals(implementationClass);
 		};

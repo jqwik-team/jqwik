@@ -4,10 +4,10 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
-public class JqwikClassTestDescriptor extends AbstractTestDescriptor {
+public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	private final Class<?> containerClass;
 
-	public JqwikClassTestDescriptor(Class<?> containerClass, TestDescriptor parent) {
+	public ContainerClassDescriptor(Class<?> containerClass, TestDescriptor parent) {
 		super(parent.getUniqueId().append("class", containerClass.getName()), determineDisplayName(containerClass));
 		this.containerClass = containerClass;
 		setParent(parent);

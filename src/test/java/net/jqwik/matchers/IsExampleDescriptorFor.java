@@ -5,10 +5,9 @@ import java.lang.reflect.Method;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import net.jqwik.discovery.JqwikExampleTestDescriptor;
-import org.mockito.internal.util.Decamelizer;
+import net.jqwik.discovery.ExampleMethodDescriptor;
 
-class IsExampleDescriptorFor extends ArgumentMatcher<JqwikExampleTestDescriptor> {
+class IsExampleDescriptorFor extends ArgumentMatcher<ExampleMethodDescriptor> {
 
 	private final Method exampleMethod;
 
@@ -18,9 +17,9 @@ class IsExampleDescriptorFor extends ArgumentMatcher<JqwikExampleTestDescriptor>
 
 	@Override
 	public boolean matches(Object argument) {
-		if (argument.getClass() != JqwikExampleTestDescriptor.class)
+		if (argument.getClass() != ExampleMethodDescriptor.class)
 			return false;
-		JqwikExampleTestDescriptor descriptor = (JqwikExampleTestDescriptor) argument;
+		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) argument;
 		return descriptor.getExampleMethod().equals(exampleMethod);
 	}
 
