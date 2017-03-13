@@ -13,11 +13,14 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.buildClassNamePredicate;
 
 public class JqwikDiscoverer {
+
+	private static final Logger LOG = Logger.getLogger(JqwikDiscoverer.class.getName());
 
 	private static final Predicate<Class<?>> IS_JQWIK_CONTAINER_CLASS = classCandidate -> {
 		if (ReflectionUtils.isAbstract(classCandidate))
@@ -104,7 +107,8 @@ public class JqwikDiscoverer {
 	private TestDescriptor descriptorOrError(Map.Entry<String, List<ExampleMethodDescriptor>> entry, Class<?> containerClass, TestDescriptor classTestDescriptor) {
 		String methodName = entry.getKey();
 		List<ExampleMethodDescriptor> examples = entry.getValue();
-		if (examples.size() != 1) {
+		if (examples.size() > 1) {
+			LOG.warning(() -> String.format("There is more than one @Example for '%s::%s'. Ignoring all.", containerClass.getName(), methodName ));
 			return new OverloadedExamplesError(examples, methodName, containerClass, classTestDescriptor);
 		}
 		return examples.get(0);
