@@ -10,7 +10,10 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.discovery.*;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.buildClassNamePredicate;
 
@@ -88,10 +91,23 @@ public class JqwikDiscoverer {
 	}
 
 	private void appendExamplesInContainerClass(Class<?> containerClass, TestDescriptor classTestDescriptor) {
-		ReflectionSupport.findMethods(containerClass, IS_EXAMPLE_METHOD, MethodSortOrder.HierarchyDown)
+		Map<String, List<ExampleMethodDescriptor>> exampleDescriptorsByMethodName = ReflectionSupport.findMethods(containerClass, IS_EXAMPLE_METHOD, MethodSortOrder.HierarchyDown)
 				.stream()
-				.map(aMethod -> new ExampleMethodDescriptor(aMethod, containerClass, classTestDescriptor))
+				.map(method -> new ExampleMethodDescriptor(method, containerClass, classTestDescriptor))
+				.collect(Collectors.groupingBy(exampleDescriptor -> exampleDescriptor.getExampleMethod().getName()));
+		exampleDescriptorsByMethodName.entrySet()
+				.stream()
+				.map(entry -> descriptorOrError(entry, containerClass, classTestDescriptor))
 				.forEach(classTestDescriptor::addChild);
+	}
+
+	private TestDescriptor descriptorOrError(Map.Entry<String, List<ExampleMethodDescriptor>> entry, Class<?> containerClass, TestDescriptor classTestDescriptor) {
+		String methodName = entry.getKey();
+		List<ExampleMethodDescriptor> examples = entry.getValue();
+		if (examples.size() != 1) {
+			return new OverloadedExamplesError(examples, methodName, containerClass, classTestDescriptor);
+		}
+		return examples.get(0);
 	}
 
 }

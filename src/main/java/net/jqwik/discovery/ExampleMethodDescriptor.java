@@ -11,6 +11,14 @@ public class ExampleMethodDescriptor extends AbstractTestDescriptor implements E
     private final Method exampleMethod;
     private final Class containerClass;
 
+    public ExampleMethodDescriptor(ExampleMethodDescriptor toClone, int id, TestDescriptor parent) {
+        super(parent.getUniqueId().append("overloaded-method", toClone.getExampleMethod().getName() + "-" + id), determineDisplayName(toClone.getExampleMethod()));
+        this.exampleMethod = toClone.getExampleMethod();
+		this.containerClass = toClone.gerContainerClass();
+		setParent(parent);
+		setSource(new MethodSource(this.exampleMethod));
+    }
+
     public ExampleMethodDescriptor(Method exampleMethod, Class containerClass, TestDescriptor parent) {
         super(parent.getUniqueId().append("method", exampleMethod.getName()), determineDisplayName(exampleMethod));
         this.exampleMethod = exampleMethod;

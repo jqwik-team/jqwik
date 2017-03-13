@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
+import examples.packageWithErrors.ContainerWithOverloadedExamples;
 import examples.packageWithInheritance.AbstractContainer;
 import examples.packageWithInheritance.ContainerWithInheritance;
 import examples.packageWithInheritance.InterfaceTests;
 import net.jqwik.discovery.ContainerClassDescriptor;
+import net.jqwik.discovery.OverloadedExamplesError;
 import net.jqwik.discovery.ExampleMethodDescriptor;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
@@ -28,6 +30,7 @@ class DiscoveryTests {
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
 	private final Predicate<TestDescriptor> isClassDescriptor = d -> d instanceof ContainerClassDescriptor;
 	private final Predicate<TestDescriptor> isExampleDescriptor = d -> d instanceof ExampleMethodDescriptor;
+	private final Predicate<TestDescriptor> isErrorDescriptor = d -> d instanceof OverloadedExamplesError;
 
 	@Example
 	void discoverFromPackage() {
@@ -55,14 +58,35 @@ class DiscoveryTests {
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(5);
 
-		assertThat(count(engineDescriptor, isExample(AbstractContainer.class,"exampleToInherit"))).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class,"exampleToOverride"))).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExample(InterfaceTests.class,"exampleToInheritFromInterface"))).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class,"exampleToOverrideFromInterface"))).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class,"example"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExample(AbstractContainer.class, "exampleToInherit"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class, "exampleToOverride"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExample(InterfaceTests.class, "exampleToInheritFromInterface"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class, "exampleToOverrideFromInterface"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class, "example"))).isEqualTo(1);
 
-		assertThat(count(engineDescriptor, isExample(AbstractContainer.class,"exampleToDisable"))).isEqualTo(0);
-		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class,"exampleToDisable"))).isEqualTo(0);
+		assertThat(count(engineDescriptor, isExample(AbstractContainer.class, "exampleToDisable"))).isEqualTo(0);
+		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class, "exampleToDisable"))).isEqualTo(0);
+	}
+
+	@Example
+	void discoverClassWithOverloadedExamples() {
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(ContainerWithOverloadedExamples.class)).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(4);
+		assertThat(count(engineDescriptor, isErrorDescriptor)).isEqualTo(1);
+
+		assertThat(count(engineDescriptor, isExample(ContainerWithOverloadedExamples.class, "succeeding"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isOverloadedError(ContainerWithOverloadedExamples.class, "overloadedExample"))).isEqualTo(1);
+		assertThat(count(engineDescriptor, isChildOf(isOverloadedError(ContainerWithOverloadedExamples.class, "overloadedExample"))))
+				.isEqualTo(3);
+	}
+
+	private Predicate<TestDescriptor> isChildOf(Predicate<TestDescriptor> parentPredicate) {
+		return descriptor -> {
+			return descriptor.getParent().map(parentPredicate::test).orElse(false);
+		};
 	}
 
 	private Predicate<TestDescriptor> isExample(Class<?> implementationClass, String methodName) {
@@ -72,6 +96,16 @@ class DiscoveryTests {
 			ExampleMethodDescriptor exampleDescriptor = (ExampleMethodDescriptor) descriptor;
 			return exampleDescriptor.getExampleMethod().getName().equals(methodName)
 					&& exampleDescriptor.getExampleMethod().getDeclaringClass().equals(implementationClass);
+		};
+	}
+
+	private Predicate<TestDescriptor> isOverloadedError(Class<?> implementationClass, String methodName) {
+		return descriptor -> {
+			if (!isErrorDescriptor.test(descriptor))
+				return false;
+			OverloadedExamplesError errorDescriptor = (OverloadedExamplesError) descriptor;
+			return errorDescriptor.getOverloadedMethodName().equals(methodName)
+					&& errorDescriptor.getContainerClass().equals(implementationClass);
 		};
 	}
 

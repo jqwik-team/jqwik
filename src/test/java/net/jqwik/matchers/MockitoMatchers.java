@@ -2,6 +2,7 @@ package net.jqwik.matchers;
 
 import net.jqwik.discovery.ContainerClassDescriptor;
 import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.discovery.OverloadedExamplesError;
 import org.junit.platform.commons.support.MethodSortOrder;
 import org.junit.platform.commons.support.ReflectionSupport;
 import org.junit.platform.engine.TestExecutionResult;
@@ -21,6 +22,10 @@ public class MockitoMatchers {
 	public static ExampleMethodDescriptor isExampleDescriptorFor(Class<?> containerClass, String methodName) {
 		List<Method> methods = ReflectionSupport.findMethods(containerClass, m -> m.getName().equals(methodName), MethodSortOrder.HierarchyUp);
 		return argThat(new IsExampleDescriptorFor(methods.get(0)));
+	}
+
+	public static OverloadedExamplesError isOverloadedExamplesErrorFor(Class<?> containerClass, String overloadedMethodName) {
+		return argThat(new IsOverloadedExamplesErrorFor(containerClass, overloadedMethodName));
 	}
 
 	public static TestExecutionResult isSuccessful() {

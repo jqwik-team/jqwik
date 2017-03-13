@@ -1,0 +1,49 @@
+package net.jqwik.discovery;
+
+import java.util.List;
+
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
+import org.junit.platform.engine.support.descriptor.ClassSource;
+
+public class OverloadedExamplesError extends AbstractTestDescriptor {
+
+	private final String overloadedMethodName;
+	private final Class<?> containerClass;
+
+	OverloadedExamplesError(List<ExampleMethodDescriptor> examples, String overloadedMethodName, Class<?> containerClass, TestDescriptor parent) {
+		super(parent.getUniqueId().append("error", overloadedMethodName), determineDisplayName(overloadedMethodName));
+		this.overloadedMethodName = overloadedMethodName;
+		this.containerClass = containerClass;
+		setParent(parent);
+		setSource(new ClassSource(containerClass));
+
+		for (int i = 0; i < examples.size(); i++) {
+			ExampleMethodDescriptor example = examples.get(i);
+			ExampleMethodDescriptor child = new ExampleMethodDescriptor(example, i, this);
+			this.addChild(child);
+		}
+	}
+
+	private static String determineDisplayName(String methodName) {
+		return String.format("%s: Overloaded methods not allowed", methodName);
+	}
+
+	@Override
+	public boolean isContainer() {
+		return false;
+	}
+
+	@Override
+	public boolean isTest() {
+		return true;
+	}
+
+	public Class<?> getContainerClass() {
+		return containerClass;
+	}
+
+	public String getOverloadedMethodName() {
+		return overloadedMethodName;
+	}
+}

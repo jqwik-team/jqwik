@@ -1,6 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.ExampleLifecycle;
+import net.jqwik.discovery.OverloadedExamplesError;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
@@ -26,6 +27,13 @@ public class JqwikExecutor {
 			executeContainer(request, descriptor);
 		if (descriptor instanceof ExampleMethodDescriptor)
 			executeExample(request, (ExampleMethodDescriptor) descriptor);
+		if (descriptor instanceof OverloadedExamplesError)
+			skipError(request, (OverloadedExamplesError) descriptor);
+	}
+
+	private void skipError(ExecutionRequest request, OverloadedExamplesError descriptor) {
+		String reason = String.format("%s is overloaded", descriptor.getOverloadedMethodName());
+		request.getEngineExecutionListener().executionSkipped(descriptor, reason);
 	}
 
 	private void executeExample(ExecutionRequest request, ExampleMethodDescriptor exampleMethodDescriptor) {
