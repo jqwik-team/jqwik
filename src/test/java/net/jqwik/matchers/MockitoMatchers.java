@@ -1,17 +1,17 @@
 package net.jqwik.matchers;
 
-import net.jqwik.discovery.ContainerClassDescriptor;
-import net.jqwik.discovery.ExampleMethodDescriptor;
-import net.jqwik.discovery.OverloadedExamplesError;
-import org.junit.platform.commons.support.MethodSortOrder;
-import org.junit.platform.commons.support.ReflectionSupport;
-import org.junit.platform.engine.TestExecutionResult;
+import static org.mockito.Matchers.*;
 
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import org.junit.platform.commons.support.HierarchyTraversalMode;
+import org.junit.platform.commons.support.ReflectionSupport;
+import org.junit.platform.engine.TestExecutionResult;
+
+import net.jqwik.discovery.ContainerClassDescriptor;
+import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.discovery.OverloadedExamplesError;
 
 public class MockitoMatchers {
 
@@ -20,7 +20,7 @@ public class MockitoMatchers {
 	}
 
 	public static ExampleMethodDescriptor isExampleDescriptorFor(Class<?> containerClass, String methodName) {
-		List<Method> methods = ReflectionSupport.findMethods(containerClass, m -> m.getName().equals(methodName), MethodSortOrder.HierarchyUp);
+		List<Method> methods = ReflectionSupport.findMethods(containerClass, m -> m.getName().equals(methodName), HierarchyTraversalMode.BOTTOM_UP);
 		return argThat(new IsExampleDescriptorFor(methods.get(0)));
 	}
 

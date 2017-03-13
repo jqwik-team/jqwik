@@ -1,13 +1,6 @@
 package net.jqwik.discovery;
 
-import net.jqwik.api.Example;
-import org.junit.platform.commons.support.AnnotationSupport;
-import org.junit.platform.commons.support.MethodSortOrder;
-import org.junit.platform.commons.support.ReflectionSupport;
-import org.junit.platform.commons.util.ReflectionUtils;
-import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.discovery.*;
+import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.buildClassNamePredicate;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -16,7 +9,17 @@ import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.buildClassNamePredicate;
+import org.junit.platform.commons.support.AnnotationSupport;
+import org.junit.platform.commons.support.HierarchyTraversalMode;
+import org.junit.platform.commons.support.ReflectionSupport;
+import org.junit.platform.commons.util.ReflectionUtils;
+import org.junit.platform.engine.EngineDiscoveryRequest;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.discovery.PackageSelector;
+
+import net.jqwik.api.Example;
 
 public class JqwikDiscoverer {
 
@@ -39,7 +42,7 @@ public class JqwikDiscoverer {
 	};
 
 	private static boolean hasExamples(Class<?> classCandidate) {
-		return !ReflectionSupport.findMethods(classCandidate, IS_EXAMPLE_METHOD, MethodSortOrder.HierarchyDown).isEmpty();
+		return !ReflectionSupport.findMethods(classCandidate, IS_EXAMPLE_METHOD, HierarchyTraversalMode.TOP_DOWN).isEmpty();
 	}
 
 	public void discover(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
@@ -94,10 +97,12 @@ public class JqwikDiscoverer {
 	}
 
 	private void appendExamplesInContainerClass(Class<?> containerClass, TestDescriptor classTestDescriptor) {
-		Map<String, List<ExampleMethodDescriptor>> exampleDescriptorsByMethodName = ReflectionSupport.findMethods(containerClass, IS_EXAMPLE_METHOD, MethodSortOrder.HierarchyDown)
+		Map<String, List<ExampleMethodDescriptor>> exampleDescriptorsByMethodName =
+				ReflectionSupport.findMethods(containerClass, IS_EXAMPLE_METHOD,HierarchyTraversalMode.TOP_DOWN)
 				.stream()
 				.map(method -> new ExampleMethodDescriptor(method, containerClass, classTestDescriptor))
 				.collect(Collectors.groupingBy(exampleDescriptor -> exampleDescriptor.getExampleMethod().getName()));
+
 		exampleDescriptorsByMethodName.entrySet()
 				.stream()
 				.map(entry -> descriptorOrError(entry, containerClass, classTestDescriptor))
