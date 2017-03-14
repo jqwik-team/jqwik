@@ -135,6 +135,17 @@ class DiscoveryTests {
 	}
 
 	@Example
+	void discoverOverloadedExamples() {
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(ContainerWithOverloadedExamples.class)).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(6);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isErrorDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isOverloadedDescriptor())).isEqualTo(3);
+	}
+
+	@Example
 	void discoverExampleByOverloadedIdShouldOnlyReturnExampleDescriptor() {
 		UniqueId uniqueId = uniqueIdForOverloadedExampleMethod(SimpleExampleTests.class, "succeeding", 1);
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
