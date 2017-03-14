@@ -58,7 +58,6 @@ public class JqwikDiscoverer {
 	}
 
 	public void discover(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
-		// TODO: Use in classpath scanning
 		Predicate<String> classNamePredicate = buildClassNamePredicate(request);
 
 		request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
@@ -194,7 +193,13 @@ public class JqwikDiscoverer {
 			return examples.stream();
 		LOG.warning(
 				() -> String.format("There is more than one @Example for '%s::%s'. Ignoring all.", containerClass.getName(), methodName));
-		return IntStream.range(0, examples.size()).mapToObj(i -> new OverloadedExampleMethodDescriptor(examples.get(i), i));
+		return IntStream.range(0, examples.size()).mapToObj(i -> createOverloadedExampleMethodDescriptor(examples, i));
+	}
+
+	private OverloadedExampleMethodDescriptor createOverloadedExampleMethodDescriptor(List<ExampleMethodDescriptor> examples, int index) {
+		ExampleMethodDescriptor toOverload = examples.get(index);
+		UniqueId uniqueId = toOverload.getUniqueId().append(JqwikDiscoverer.OVERLOADED_SEGMENT_TYPE, String.valueOf(index));
+		return new OverloadedExampleMethodDescriptor(uniqueId, toOverload, index);
 	}
 
 }

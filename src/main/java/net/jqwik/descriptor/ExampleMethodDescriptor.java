@@ -14,7 +14,11 @@ public class ExampleMethodDescriptor extends AbstractTestDescriptor implements E
     private final Class containerClass;
 
     public ExampleMethodDescriptor(UniqueId uniqueId, Method exampleMethod, Class containerClass) {
-        super(uniqueId, determineDisplayName(exampleMethod));
+        this(uniqueId, exampleMethod, containerClass, determineDisplayName(exampleMethod));
+    }
+
+    protected ExampleMethodDescriptor(UniqueId uniqueId, Method exampleMethod, Class containerClass, String displayName) {
+        super(uniqueId, displayName);
         this.exampleMethod = exampleMethod;
 		this.containerClass = containerClass;
 		setSource(new MethodSource(this.exampleMethod));

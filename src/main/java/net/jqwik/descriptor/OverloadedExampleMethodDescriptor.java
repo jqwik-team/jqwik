@@ -1,16 +1,15 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.discovery.JqwikDiscoverer;
 import org.junit.platform.engine.UniqueId;
 
 public class OverloadedExampleMethodDescriptor extends ExampleMethodDescriptor {
 
-    public OverloadedExampleMethodDescriptor(ExampleMethodDescriptor toOverload, int id) {
-        this(toOverload.getUniqueId().append(JqwikDiscoverer.OVERLOADED_SEGMENT_TYPE, String.valueOf(id)), toOverload, id);
+    public OverloadedExampleMethodDescriptor(UniqueId uniqueId, ExampleMethodDescriptor toOverload, int id) {
+        super(uniqueId, toOverload.getExampleMethod(), toOverload.gerContainerClass(), displayName(toOverload));
     }
 
-    public OverloadedExampleMethodDescriptor(UniqueId uniqueId, ExampleMethodDescriptor toOverload, int id) {
-        super(uniqueId, toOverload.getExampleMethod(), toOverload.gerContainerClass());
-    }
+	private static String displayName(ExampleMethodDescriptor exampleMethodDescriptor) {
+		return String.format("Overloaded %s: %s", exampleMethodDescriptor.getLabel(), exampleMethodDescriptor.getExampleMethod().toString());
+	}
 
 }

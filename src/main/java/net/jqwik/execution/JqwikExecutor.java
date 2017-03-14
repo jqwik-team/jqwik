@@ -1,6 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.ExampleLifecycle;
+import net.jqwik.descriptor.JqwikEngineDescriptor;
 import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
@@ -21,13 +22,13 @@ public class JqwikExecutor {
 	}
 
 	public void execute(ExecutionRequest request, TestDescriptor descriptor) {
-		if (descriptor instanceof EngineDescriptor)
+		if (descriptor.getClass().equals(JqwikEngineDescriptor.class))
 			executeContainer(request, descriptor);
-		if (descriptor instanceof ContainerClassDescriptor)
+		if (descriptor.getClass().equals(ContainerClassDescriptor.class))
 			executeContainer(request, descriptor);
-		if (descriptor instanceof ExampleMethodDescriptor)
+		if (descriptor.getClass().equals(ExampleMethodDescriptor.class))
 			executeExample(request, (ExampleMethodDescriptor) descriptor);
-		if (descriptor instanceof OverloadedExampleMethodDescriptor)
+		if (descriptor.getClass().equals(OverloadedExampleMethodDescriptor.class))
 			executeOverloadedExample(request, (OverloadedExampleMethodDescriptor) descriptor);
 	}
 
