@@ -1,4 +1,4 @@
-package net.jqwik.discovery;
+package net.jqwik.descriptor;
 
 import java.util.List;
 
@@ -7,12 +7,12 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
-public class OverloadedExamplesError extends AbstractTestDescriptor {
+public class OverloadedMethodsErrorDescriptor extends AbstractTestDescriptor {
 
 	private final String overloadedMethodName;
 	private final Class<?> containerClass;
 
-	OverloadedExamplesError(List<ExampleMethodDescriptor> examples, String overloadedMethodName, Class<?> containerClass, TestDescriptor parent) {
+	public OverloadedMethodsErrorDescriptor(List<ExampleMethodDescriptor> examples, String overloadedMethodName, Class<?> containerClass, TestDescriptor parent) {
 		super(parent.getUniqueId().append("error", overloadedMethodName), determineDisplayName(overloadedMethodName));
 		this.overloadedMethodName = overloadedMethodName;
 		this.containerClass = containerClass;

@@ -3,9 +3,9 @@ package net.jqwik.matchers;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import net.jqwik.discovery.OverloadedExamplesError;
+import net.jqwik.descriptor.OverloadedMethodsErrorDescriptor;
 
-public class IsOverloadedExamplesErrorFor extends ArgumentMatcher<OverloadedExamplesError> {
+public class IsOverloadedExamplesErrorFor extends ArgumentMatcher<OverloadedMethodsErrorDescriptor> {
 
 	private final Class<?> containerClass;
 	private final String overloadedMethodName;
@@ -17,9 +17,9 @@ public class IsOverloadedExamplesErrorFor extends ArgumentMatcher<OverloadedExam
 
 	@Override
 	public boolean matches(Object argument) {
-		if (argument.getClass() != OverloadedExamplesError.class)
+		if (argument.getClass() != OverloadedMethodsErrorDescriptor.class)
 			return false;
-		OverloadedExamplesError descriptor = (OverloadedExamplesError) argument;
+		OverloadedMethodsErrorDescriptor descriptor = (OverloadedMethodsErrorDescriptor) argument;
 		return descriptor.getContainerClass() == containerClass && descriptor.getOverloadedMethodName().equals(overloadedMethodName);
 	}
 

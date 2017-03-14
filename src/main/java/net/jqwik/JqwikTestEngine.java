@@ -1,6 +1,7 @@
 package net.jqwik;
 
 import net.jqwik.descriptor.JqwikEngineDescriptor;
+import net.jqwik.discovery2.DiscoverySelectorResolver;
 import org.junit.platform.engine.*;
 
 import net.jqwik.discovery.JqwikDiscoverer;
@@ -20,6 +21,7 @@ public class JqwikTestEngine implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
+//		new DiscoverySelectorResolver().resolveSelectors(request, engineDescriptor);
 		new JqwikDiscoverer().discover(request, engineDescriptor);
 		return engineDescriptor;
 	}

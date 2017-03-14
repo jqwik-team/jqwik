@@ -10,7 +10,7 @@ import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.descriptor.JqwikEngineDescriptor;
 import net.jqwik.discovery.JqwikDiscoverer;
-import net.jqwik.discovery.OverloadedExamplesError;
+import net.jqwik.descriptor.OverloadedMethodsErrorDescriptor;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassNameFilter;
@@ -33,7 +33,7 @@ class DiscoveryTests {
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
 	private final Predicate<TestDescriptor> isClassDescriptor = d -> d instanceof ContainerClassDescriptor;
 	private final Predicate<TestDescriptor> isExampleDescriptor = d -> d instanceof ExampleMethodDescriptor;
-	private final Predicate<TestDescriptor> isErrorDescriptor = d -> d instanceof OverloadedExamplesError;
+	private final Predicate<TestDescriptor> isErrorDescriptor = d -> d instanceof OverloadedMethodsErrorDescriptor;
 
 	@Example
 	void discoverFromPackage() {
@@ -175,7 +175,7 @@ class DiscoveryTests {
 		return descriptor -> {
 			if (!isErrorDescriptor.test(descriptor))
 				return false;
-			OverloadedExamplesError errorDescriptor = (OverloadedExamplesError) descriptor;
+			OverloadedMethodsErrorDescriptor errorDescriptor = (OverloadedMethodsErrorDescriptor) descriptor;
 			return errorDescriptor.getOverloadedMethodName().equals(methodName)
 					&& errorDescriptor.getContainerClass().equals(implementationClass);
 		};

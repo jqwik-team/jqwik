@@ -3,6 +3,7 @@ package net.jqwik.discovery;
 import net.jqwik.api.Example;
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.OverloadedMethodsErrorDescriptor;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -30,6 +31,7 @@ public class JqwikDiscoverer {
 	public static final String CONTAINER_SEGMENT_TYPE = "class";
 	public static final String EXAMPLE_SEGMENT_TYPE = "example";
 	public static final String OVERLOADED_SEGMENT_TYPE = "overloaded";
+	public static final String OVERLOADED_ERROR_SEGMENT_TYPE = "error";
 
 	private static final Logger LOG = Logger.getLogger(JqwikDiscoverer.class.getName());
 
@@ -190,7 +192,7 @@ public class JqwikDiscoverer {
 		List<ExampleMethodDescriptor> examples = entry.getValue();
 		if (examples.size() > 1) {
 			LOG.warning(() -> String.format("There is more than one @Example for '%s::%s'. Ignoring all.", containerClass.getName(), methodName));
-			return new OverloadedExamplesError(examples, methodName, containerClass, classTestDescriptor);
+			return new OverloadedMethodsErrorDescriptor(examples, methodName, containerClass, classTestDescriptor);
 		}
 		return examples.get(0);
 	}

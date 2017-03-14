@@ -11,7 +11,7 @@ import org.junit.platform.engine.TestExecutionResult;
 
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.discovery.OverloadedExamplesError;
+import net.jqwik.descriptor.OverloadedMethodsErrorDescriptor;
 
 public class MockitoMatchers {
 
@@ -24,7 +24,7 @@ public class MockitoMatchers {
 		return argThat(new IsExampleDescriptorFor(methods.get(0)));
 	}
 
-	public static OverloadedExamplesError isOverloadedExamplesErrorFor(Class<?> containerClass, String overloadedMethodName) {
+	public static OverloadedMethodsErrorDescriptor isOverloadedExamplesErrorFor(Class<?> containerClass, String overloadedMethodName) {
 		return argThat(new IsOverloadedExamplesErrorFor(containerClass, overloadedMethodName));
 	}
 
