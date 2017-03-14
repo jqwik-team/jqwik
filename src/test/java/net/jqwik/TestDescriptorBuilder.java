@@ -1,7 +1,9 @@
 package net.jqwik;
 
-import net.jqwik.discovery.ContainerClassDescriptor;
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.JqwikEngineDescriptor;
+import net.jqwik.discovery.JqwikDiscoverer;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -9,6 +11,9 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
+import static net.jqwik.JqwikUniqueIdBuilder.engineId;
+import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForClassContainer;
 
 public class TestDescriptorBuilder {
 
@@ -52,7 +57,7 @@ public class TestDescriptorBuilder {
 	}
 
 	public TestDescriptor build() {
-		return build(new AbstractTestDescriptor(UniqueId.root("test", "root"), "test root") {
+		return build(new AbstractTestDescriptor(UniqueId.root("root", "test"), "test root") {
 			@Override
 			public boolean isContainer() {
 				return true;
@@ -75,12 +80,15 @@ public class TestDescriptorBuilder {
 
 	private TestDescriptor createDescriptor(TestDescriptor parent) {
 		if (element instanceof JqwikTestEngine)
-			return new JqwikEngineDescriptor(UniqueId.forEngine(((JqwikTestEngine) element).getId()));
-		if (element instanceof Class)
-			return new ContainerClassDescriptor((Class) element, parent);
+			return new JqwikEngineDescriptor(engineId());
+		if (element instanceof Class) {
+			Class<?> containerClass = (Class<?>) this.element;
+			return new ContainerClassDescriptor(uniqueIdForClassContainer(containerClass), containerClass);
+		}
 		if (element instanceof Method) {
 			Method exampleMethod = (Method) this.element;
-			return new ExampleMethodDescriptor(exampleMethod, exampleMethod.getDeclaringClass(), parent);
+			UniqueId uniqueId = parent.getUniqueId().append(JqwikDiscoverer.EXAMPLE_SEGMENT_TYPE, exampleMethod.getName());
+			return new ExampleMethodDescriptor(uniqueId, exampleMethod, exampleMethod.getDeclaringClass());
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());
 	}

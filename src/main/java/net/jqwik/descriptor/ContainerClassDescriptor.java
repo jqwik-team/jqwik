@@ -1,18 +1,17 @@
-package net.jqwik.discovery;
+package net.jqwik.descriptor;
 
-import org.junit.platform.engine.TestDescriptor;
+import net.jqwik.discovery.JqwikDiscoverer;
+import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 
 public class ContainerClassDescriptor extends AbstractTestDescriptor {
-	public static final String SEGMENT_TYPE = "class";
 
 	private final Class<?> containerClass;
 
-	public ContainerClassDescriptor(Class<?> containerClass, TestDescriptor parent) {
-		super(parent.getUniqueId().append(SEGMENT_TYPE, containerClass.getName()), determineDisplayName(containerClass));
+	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass) {
+		super(uniqueId, determineDisplayName(containerClass));
 		this.containerClass = containerClass;
-		setParent(parent);
 		setSource(new ClassSource(containerClass));
 	}
 

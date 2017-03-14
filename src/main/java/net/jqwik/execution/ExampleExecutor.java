@@ -7,7 +7,7 @@ import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
 
 import net.jqwik.JqwikException;
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 
 public class ExampleExecutor {
 

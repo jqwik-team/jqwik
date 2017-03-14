@@ -1,5 +1,6 @@
 package net.jqwik;
 
+import net.jqwik.descriptor.JqwikEngineDescriptor;
 import org.junit.platform.engine.*;
 
 import net.jqwik.discovery.JqwikDiscoverer;

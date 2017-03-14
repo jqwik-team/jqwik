@@ -6,8 +6,9 @@ import examples.packageWithInheritance.ContainerWithInheritance;
 import examples.packageWithInheritance.InterfaceTests;
 import examples.packageWithSingleContainer.SimpleExampleTests;
 import net.jqwik.api.Example;
-import net.jqwik.discovery.ContainerClassDescriptor;
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.JqwikEngineDescriptor;
 import net.jqwik.discovery.JqwikDiscoverer;
 import net.jqwik.discovery.OverloadedExamplesError;
 import org.junit.platform.engine.TestDescriptor;
@@ -19,6 +20,7 @@ import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
+import static net.jqwik.JqwikUniqueIdBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
@@ -45,10 +47,8 @@ class DiscoveryTests {
 
 	@Example
 	void discoverWithPackageNameFilter() {
-		LauncherDiscoveryRequest discoveryRequest = request()
-				.selectors(selectPackage("examples"))
-				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
-				.build();
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples"))
+				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer")).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
@@ -58,10 +58,8 @@ class DiscoveryTests {
 
 	@Example
 	void discoverWithClassNameFilter() {
-		LauncherDiscoveryRequest discoveryRequest = request()
-				.selectors(selectPackage("examples"))
-				.filters(ClassNameFilter.includeClassNamePatterns(".+" + SimpleExampleTests.class.getSimpleName()))
-				.build();
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples"))
+				.filters(ClassNameFilter.includeClassNamePatterns(".+" + SimpleExampleTests.class.getSimpleName())).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
@@ -120,8 +118,8 @@ class DiscoveryTests {
 
 	@Example
 	void discoverClassById() {
-		UniqueId classId = JqwikUniqueIdBuilder.uniqueIdForClassContainer(SimpleExampleTests.class);
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(classId)).build();
+		UniqueId uniqueId = uniqueIdForClassContainer(SimpleExampleTests.class);
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(3);
@@ -129,17 +127,37 @@ class DiscoveryTests {
 
 	@Example
 	void discoverExampleById() {
-		UniqueId classId = JqwikUniqueIdBuilder.uniqueIdForExampleMethod(SimpleExampleTests.class, "succeeding");
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(classId)).build();
+		UniqueId uniqueId = uniqueIdForExampleMethod(SimpleExampleTests.class, "succeeding");
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
+	}
 
+	@Example
+	void discoverExampleByOverloadedIdShouldOnlyReturnExampleDescriptor() {
+		UniqueId uniqueId = uniqueIdForOverloadedExampleMethod(SimpleExampleTests.class, "succeeding", 1);
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isOverloadedDescriptor())).isEqualTo(0);
 	}
 
 	private Predicate<TestDescriptor> isChildOf(Predicate<TestDescriptor> parentPredicate) {
 		return descriptor -> {
 			return descriptor.getParent().map(parentPredicate::test).orElse(false);
+		};
+	}
+
+	private Predicate<TestDescriptor> isOverloadedDescriptor() {
+		return descriptor -> {
+			if (!isExampleDescriptor.test(descriptor))
+				return false;
+			ExampleMethodDescriptor exampleDescriptor = (ExampleMethodDescriptor) descriptor;
+			return exampleDescriptor.getUniqueId().getSegments().stream()
+					.anyMatch(segment -> segment.getType().equals(JqwikDiscoverer.OVERLOADED_SEGMENT_TYPE));
 		};
 	}
 

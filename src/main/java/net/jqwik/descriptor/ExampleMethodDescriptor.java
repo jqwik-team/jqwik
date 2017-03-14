@@ -1,32 +1,26 @@
-package net.jqwik.discovery;
+package net.jqwik.descriptor;
 
 import java.lang.reflect.Method;
 
 import net.jqwik.api.ExampleDescriptor;
-import org.junit.platform.engine.TestDescriptor;
+import net.jqwik.discovery.JqwikDiscoverer;
+import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 
 public class ExampleMethodDescriptor extends AbstractTestDescriptor implements ExampleDescriptor {
-	public static final String SEGMENT_TYPE = "example";
-	public static final String SEGMENT_TYPE_OVERLOADED = "overloaded-example";
 
 	private final Method exampleMethod;
     private final Class containerClass;
 
-    public ExampleMethodDescriptor(ExampleMethodDescriptor toClone, int id, TestDescriptor parent) {
-        super(parent.getUniqueId().append(SEGMENT_TYPE_OVERLOADED, toClone.getExampleMethod().getName() + "-" + id), determineDisplayName(toClone.getExampleMethod()));
-        this.exampleMethod = toClone.getExampleMethod();
-		this.containerClass = toClone.gerContainerClass();
-		setParent(parent);
-		setSource(new MethodSource(this.exampleMethod));
+    public ExampleMethodDescriptor(ExampleMethodDescriptor toOverload, int id) {
+        this(toOverload.getUniqueId().append(JqwikDiscoverer.OVERLOADED_SEGMENT_TYPE, String.valueOf(id)), toOverload.getExampleMethod(), toOverload.gerContainerClass());
     }
 
-    public ExampleMethodDescriptor(Method exampleMethod, Class containerClass, TestDescriptor parent) {
-        super(parent.getUniqueId().append(SEGMENT_TYPE, exampleMethod.getName()), determineDisplayName(exampleMethod));
+    public ExampleMethodDescriptor(UniqueId uniqueId, Method exampleMethod, Class containerClass) {
+        super(uniqueId, determineDisplayName(exampleMethod));
         this.exampleMethod = exampleMethod;
 		this.containerClass = containerClass;
-		setParent(parent);
 		setSource(new MethodSource(this.exampleMethod));
     }
 

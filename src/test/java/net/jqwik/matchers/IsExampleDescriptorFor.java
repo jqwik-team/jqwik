@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 
 class IsExampleDescriptorFor extends ArgumentMatcher<ExampleMethodDescriptor> {
 

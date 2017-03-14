@@ -7,8 +7,8 @@ import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;
 
-import net.jqwik.discovery.ContainerClassDescriptor;
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
 
 public class JqwikExecutor {

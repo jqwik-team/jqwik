@@ -1,4 +1,4 @@
-package net.jqwik;
+package net.jqwik.descriptor;
 
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.EngineDescriptor;

@@ -2,6 +2,7 @@ package net.jqwik.discovery;
 
 import java.util.List;
 
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
@@ -20,7 +21,7 @@ public class OverloadedExamplesError extends AbstractTestDescriptor {
 
 		for (int i = 0; i < examples.size(); i++) {
 			ExampleMethodDescriptor example = examples.get(i);
-			ExampleMethodDescriptor child = new ExampleMethodDescriptor(example, i, this);
+			ExampleMethodDescriptor child = new ExampleMethodDescriptor(example, i);
 			this.addChild(child);
 		}
 	}

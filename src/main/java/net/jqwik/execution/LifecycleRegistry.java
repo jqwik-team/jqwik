@@ -1,7 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.ExampleLifecycle;
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 
 public class LifecycleRegistry {
 	public ExampleLifecycle lifecycleFor(ExampleMethodDescriptor exampleMethodDescriptor) {

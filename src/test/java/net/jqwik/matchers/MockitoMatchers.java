@@ -9,8 +9,8 @@ import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
 import org.junit.platform.engine.TestExecutionResult;
 
-import net.jqwik.discovery.ContainerClassDescriptor;
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.discovery.OverloadedExamplesError;
 
 public class MockitoMatchers {

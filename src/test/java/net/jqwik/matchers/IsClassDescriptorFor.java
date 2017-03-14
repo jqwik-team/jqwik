@@ -3,7 +3,7 @@ package net.jqwik.matchers;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import net.jqwik.discovery.ContainerClassDescriptor;
+import net.jqwik.descriptor.ContainerClassDescriptor;
 
 class IsClassDescriptorFor extends ArgumentMatcher<ContainerClassDescriptor> {
 

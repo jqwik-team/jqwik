@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.jqwik.discovery.ExampleMethodDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.execution.AutoCloseableLifecycle;
 import net.jqwik.execution.ExampleExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
