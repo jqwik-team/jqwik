@@ -3,7 +3,7 @@ package net.jqwik;
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.descriptor.JqwikEngineDescriptor;
-import net.jqwik.discovery.JqwikDiscoverer;
+import net.jqwik.discovery.JqwikUniqueIDs;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -15,6 +15,9 @@ import java.util.List;
 import static net.jqwik.JqwikUniqueIdBuilder.engineId;
 import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForClassContainer;
 
+/**
+ * For testing purposes
+ */
 public class TestDescriptorBuilder {
 
 	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName) throws NoSuchMethodException {
@@ -87,7 +90,7 @@ public class TestDescriptorBuilder {
 		}
 		if (element instanceof Method) {
 			Method exampleMethod = (Method) this.element;
-			UniqueId uniqueId = parent.getUniqueId().append(JqwikDiscoverer.EXAMPLE_SEGMENT_TYPE, exampleMethod.getName());
+			UniqueId uniqueId = JqwikUniqueIDs.appendExample(parent.getUniqueId(), exampleMethod);
 			return new ExampleMethodDescriptor(uniqueId, exampleMethod, exampleMethod.getDeclaringClass());
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());

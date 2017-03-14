@@ -1,18 +1,19 @@
 package net.jqwik.matchers;
 
-import java.lang.reflect.Method;
-
+import net.jqwik.descriptor.ExampleMethodDescriptor;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 
 class IsExampleDescriptorFor extends ArgumentMatcher<ExampleMethodDescriptor> {
 
-	private final Method exampleMethod;
+	private final Class<?> containerClass;
+	private final String methodName;
 
-	IsExampleDescriptorFor(Method exampleMethod) {
-		this.exampleMethod = exampleMethod;
+	IsExampleDescriptorFor(Class<?> containerClass, String methodName) {
+		this.containerClass = containerClass;
+		this.methodName = methodName;
 	}
 
 	@Override
@@ -20,11 +21,11 @@ class IsExampleDescriptorFor extends ArgumentMatcher<ExampleMethodDescriptor> {
 		if (argument.getClass() != ExampleMethodDescriptor.class)
 			return false;
 		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) argument;
-		return descriptor.getExampleMethod().equals(exampleMethod);
+		return descriptor.gerContainerClass().equals(containerClass) && descriptor.getExampleMethod().getName().equals(methodName);
 	}
 
 	@Override
 	public void describeTo(Description description) {
-		description.appendText("is ExampleMethodDescriptor for " + exampleMethod.toString());
+		description.appendText(String.format("is ExampleMethodDescriptor for %s::%s", containerClass, methodName));
 	}
 }

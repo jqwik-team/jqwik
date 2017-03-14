@@ -8,7 +8,7 @@ import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.r
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-import net.jqwik.descriptor.*;
+import net.jqwik.discovery.JqwikDiscoverer;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.discovery.ClassNameFilter;
@@ -21,7 +21,10 @@ import examples.packageWithInheritance.ContainerWithInheritance;
 import examples.packageWithInheritance.InterfaceTests;
 import examples.packageWithSingleContainer.SimpleExampleTests;
 import net.jqwik.api.Example;
-import net.jqwik.discovery.JqwikDiscoverer;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.JqwikEngineDescriptor;
+import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 
 class DiscoveryTests {
 
@@ -99,8 +102,7 @@ class DiscoveryTests {
 
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(5);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isOverloadedExampleDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(4);
 
 		assertThat(count(engineDescriptor, isExample(ContainerWithOverloadedExamples.class, "succeeding"))).isEqualTo(1);
 	}

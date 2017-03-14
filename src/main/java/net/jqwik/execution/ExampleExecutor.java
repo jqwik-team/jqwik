@@ -1,7 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.ExampleLifecycle;
-import org.junit.platform.commons.util.ReflectionUtils;
+import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
@@ -20,7 +20,7 @@ public class ExampleExecutor {
 	private TestExecutionResult executeExample(ExampleMethodDescriptor methodTestDescriptor, ExampleLifecycle lifecycle) {
 		Object testInstance = null;
 		try {
-			testInstance = ReflectionUtils.newInstance(methodTestDescriptor.gerContainerClass());
+			testInstance = JqwikReflectionSupport.newInstance(methodTestDescriptor.gerContainerClass());
 		} catch (Throwable throwable) {
 			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
 					methodTestDescriptor.gerContainerClass());
@@ -32,7 +32,7 @@ public class ExampleExecutor {
 	private TestExecutionResult invokeExampleMethod(ExampleMethodDescriptor exampleMethodDescriptor, Object testInstance, ExampleLifecycle lifecycle) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		try {
-			testExecutionResult = executeSafely(() -> ReflectionUtils.invokeMethod(exampleMethodDescriptor.getExampleMethod(), testInstance));
+			testExecutionResult = executeSafely(() -> JqwikReflectionSupport.invokeMethod(exampleMethodDescriptor.getExampleMethod(), testInstance));
 		} finally {
 			try {
 				lifecycle.doFinally(exampleMethodDescriptor, testInstance);

@@ -1,16 +1,14 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.ExampleLifecycle;
-import net.jqwik.descriptor.JqwikEngineDescriptor;
-import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
+import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
 
+import net.jqwik.api.ExampleLifecycle;
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
-import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
+import net.jqwik.descriptor.JqwikEngineDescriptor;
 
 public class JqwikExecutor {
 
@@ -28,13 +26,6 @@ public class JqwikExecutor {
 			executeContainer(request, descriptor);
 		if (descriptor.getClass().equals(ExampleMethodDescriptor.class))
 			executeExample(request, (ExampleMethodDescriptor) descriptor);
-		if (descriptor.getClass().equals(OverloadedExampleMethodDescriptor.class))
-			executeOverloadedExample(request, (OverloadedExampleMethodDescriptor) descriptor);
-	}
-
-	private void executeOverloadedExample(ExecutionRequest request, OverloadedExampleMethodDescriptor exampleMethodDescriptor) {
-		String reason = String.format("%s is overloaded", exampleMethodDescriptor.getExampleMethod().getName());
-		request.getEngineExecutionListener().executionSkipped(exampleMethodDescriptor, reason);
 	}
 
 	private void executeExample(ExecutionRequest request, ExampleMethodDescriptor exampleMethodDescriptor) {

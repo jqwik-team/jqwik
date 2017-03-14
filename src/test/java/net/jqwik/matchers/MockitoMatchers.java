@@ -2,16 +2,11 @@ package net.jqwik.matchers;
 
 import static org.mockito.Matchers.*;
 
-import java.lang.reflect.Method;
-import java.util.List;
-
-import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
-import org.junit.platform.commons.support.HierarchyTraversalMode;
-import org.junit.platform.commons.support.ReflectionSupport;
 import org.junit.platform.engine.TestExecutionResult;
 
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 
 public class MockitoMatchers {
 
@@ -20,12 +15,7 @@ public class MockitoMatchers {
 	}
 
 	public static ExampleMethodDescriptor isExampleDescriptorFor(Class<?> containerClass, String methodName) {
-		List<Method> methods = ReflectionSupport.findMethods(containerClass, m -> m.getName().equals(methodName), HierarchyTraversalMode.BOTTOM_UP);
-		return argThat(new IsExampleDescriptorFor(methods.get(0)));
-	}
-
-	public static OverloadedExampleMethodDescriptor isOverloadedExampleDescriptorFor(Class<?> containerClass, String methodName) {
-		return argThat(new IsOverloadedExampleDescriptorFor(containerClass, methodName));
+		return argThat(new IsExampleDescriptorFor(containerClass, methodName));
 	}
 
 	public static TestExecutionResult isSuccessful() {

@@ -1,6 +1,5 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.discovery.JqwikDiscoverer;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;

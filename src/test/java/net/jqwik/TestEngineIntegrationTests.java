@@ -77,11 +77,14 @@ class TestEngineIntegrationTests {
 		verify(eventRecorder).executionStarted(engineDescriptor);
 		verify(eventRecorder).executionStarted(isClassDescriptorFor(ContainerWithOverloadedExamples.class));
 		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "succeeding"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "succeeding"), isSuccessful());
-		verify(eventRecorder, times(3)).executionSkipped(
-				isOverloadedExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"),
-				contains("overloadedExample")
-		);
+		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "succeeding"),
+				isSuccessful());
+		verify(eventRecorder, times(3))
+				.executionStarted(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"));
+		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"),
+				isSuccessful());
+		verify(eventRecorder, times(2))
+				.executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"), isFailed());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(ContainerWithOverloadedExamples.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
