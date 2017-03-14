@@ -3,8 +3,7 @@ package net.jqwik;
 import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
-import static org.mockito.Matchers.contains;
-import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -79,12 +78,11 @@ class TestEngineIntegrationTests {
 		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "succeeding"));
 		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "succeeding"),
 				isSuccessful());
-		verify(eventRecorder, times(3))
-				.executionStarted(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"));
+		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"));
 		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"),
 				isSuccessful());
-		verify(eventRecorder, times(2))
-				.executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"), isFailed());
+		verify(eventRecorder, times(2)).executionSkipped(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"),
+				anyString());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(ContainerWithOverloadedExamples.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
