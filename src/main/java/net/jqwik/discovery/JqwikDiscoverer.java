@@ -52,7 +52,7 @@ public class JqwikDiscoverer {
 		Predicate<String> classNamePredicate = buildClassNamePredicate(request);
 
 		request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
-			appendTestsInPackage(selector.getPackageName(), engineDescriptor);
+			appendTestsInPackage(selector.getPackageName(), engineDescriptor, classNamePredicate);
 		});
 
 		request.getSelectorsByType(ClassSelector.class).forEach(selector -> {
@@ -112,7 +112,19 @@ public class JqwikDiscoverer {
 			case ExampleMethodDescriptor.SEGMENT_TYPE:
 				String methodName = next.getValue();
 				Class<?> containerClass = ((ContainerClassDescriptor)parent).getContainerClass();
-				//Todo: Find method by name and append ExampleMethodDescriptor
+				Predicate<Method> isNamedExample = m -> IS_EXAMPLE_METHOD.test(m) && m.getName().equals(methodName);
+				List<Method> exampleMethods = ReflectionSupport.findMethods(containerClass, isNamedExample, HierarchyTraversalMode.TOP_DOWN);
+				if (exampleMethods.size() == 1) {
+					ExampleMethodDescriptor descriptor = new ExampleMethodDescriptor(exampleMethods.get(0), containerClass, parent);
+					parent.addChild(descriptor);
+					resolveUniqueIdSegments(segments, descriptor);
+				} else if (exampleMethods.size() == 0) {
+					LOG.warning(() -> String.format("Cannot resolve example '%s' from unique ID.", methodName));
+					return;
+				} else {
+					LOG.warning(() -> String.format("Method name '%s' from unique ID is ambiguous.", methodName));
+					return;
+				}
 				break;
 			default:
 				LOG.warning(() -> String.format("Cannot resolve unique ID segement '%s'.", next));
@@ -132,8 +144,8 @@ public class JqwikDiscoverer {
 			engineDescriptor.addChild(createClassDescriptor(javaClass, engineDescriptor, true));
 	}
 
-	private void appendTestsInPackage(String packageName, TestDescriptor engineDescriptor) {
-		ReflectionSupport.findAllClassesInPackage(packageName, IS_JQWIK_CONTAINER_CLASS, name -> true)
+	private void appendTestsInPackage(String packageName, TestDescriptor engineDescriptor, Predicate<String> classNamePredicate) {
+		ReflectionSupport.findAllClassesInPackage(packageName, IS_JQWIK_CONTAINER_CLASS, classNamePredicate)
 				.stream()
 				.map(aClass -> createClassDescriptor(aClass, engineDescriptor, true))
 				.forEach(engineDescriptor::addChild);

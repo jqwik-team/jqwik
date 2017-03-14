@@ -12,6 +12,8 @@ import net.jqwik.discovery.JqwikDiscoverer;
 import net.jqwik.discovery.OverloadedExamplesError;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.ClassNameFilter;
+import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,6 +36,32 @@ class DiscoveryTests {
 	@Example
 	void discoverFromPackage() {
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples.packageWithSingleContainer")).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(2);
+	}
+
+	@Example
+	void discoverWithPackageNameFilter() {
+		LauncherDiscoveryRequest discoveryRequest = request()
+				.selectors(selectPackage("examples"))
+				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
+				.build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(2);
+	}
+
+	@Example
+	void discoverWithClassNameFilter() {
+		LauncherDiscoveryRequest discoveryRequest = request()
+				.selectors(selectPackage("examples"))
+				.filters(ClassNameFilter.includeClassNamePatterns(".+" + SimpleExampleTests.class.getSimpleName()))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
