@@ -25,6 +25,6 @@ class IsExampleDescriptorFor extends ArgumentMatcher<ExampleMethodDescriptor> {
 
 	@Override
 	public void describeTo(Description description) {
-		description.appendText("is JqwikExampleTestDescriptor for " + exampleMethod.toString());
+		description.appendText("is ExampleMethodDescriptor for " + exampleMethod.toString());
 	}
 }

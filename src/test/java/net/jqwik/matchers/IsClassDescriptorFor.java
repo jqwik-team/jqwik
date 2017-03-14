@@ -23,7 +23,7 @@ class IsClassDescriptorFor extends ArgumentMatcher<ContainerClassDescriptor> {
 
 	@Override
 	public void describeTo(Description description) {
-		description.appendText("is JqwikClassTestDescriptor for " + containerClass.toString());
+		description.appendText("is ContainerClassDescriptor for " + containerClass.toString());
 	}
 
 }

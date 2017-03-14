@@ -3,7 +3,7 @@ package net.jqwik.discovery;
 import net.jqwik.api.Example;
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.descriptor.OverloadedMethodsErrorDescriptor;
+import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -23,6 +23,8 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.buildClassNamePredicate;
 
@@ -104,39 +106,39 @@ public class JqwikDiscoverer {
 			return;
 		UniqueId.Segment next = segments.remove(0);
 		switch (next.getType()) {
-			case CONTAINER_SEGMENT_TYPE:
-				boolean withChildren = segments.isEmpty();
-				String className = next.getValue();
-				Optional<Class<?>> optionalContainerClass = ReflectionUtils.loadClass(className);
-				if (optionalContainerClass.isPresent()) {
-					ContainerClassDescriptor descriptor = createClassDescriptor(optionalContainerClass.get(), parent, withChildren);
-					parent.addChild(descriptor);
-					resolveUniqueIdSegments(segments, descriptor);
-				} else {
-					LOG.warning(() -> String.format("Cannot resolve class '%s' from unique ID.", className));
-					return;
-				}
-				break;
-			case EXAMPLE_SEGMENT_TYPE:
-				String methodName = next.getValue();
-				Class<?> containerClass = ((ContainerClassDescriptor)parent).getContainerClass();
-				Predicate<Method> isNamedExample = m -> IS_EXAMPLE_METHOD.test(m) && m.getName().equals(methodName);
-				List<Method> exampleMethods = ReflectionSupport.findMethods(containerClass, isNamedExample, HierarchyTraversalMode.TOP_DOWN);
-				if (exampleMethods.size() == 1) {
-					Method exampleMethod = exampleMethods.get(0);
-					ExampleMethodDescriptor descriptor = createExampleMethodDescriptor(parent.getUniqueId(), exampleMethod, containerClass);
-					parent.addChild(descriptor);
-					resolveUniqueIdSegments(segments, descriptor);
-				} else if (exampleMethods.size() == 0) {
-					LOG.warning(() -> String.format("Cannot resolve example '%s' from unique ID.", methodName));
-					return;
-				} else {
-					LOG.warning(() -> String.format("Method name '%s' from unique ID is ambiguous.", methodName));
-					return;
-				}
-				break;
-			default:
-				LOG.warning(() -> String.format("Cannot resolve unique ID segement '%s'.", next));
+		case CONTAINER_SEGMENT_TYPE:
+			boolean withChildren = segments.isEmpty();
+			String className = next.getValue();
+			Optional<Class<?>> optionalContainerClass = ReflectionUtils.loadClass(className);
+			if (optionalContainerClass.isPresent()) {
+				ContainerClassDescriptor descriptor = createClassDescriptor(optionalContainerClass.get(), parent, withChildren);
+				parent.addChild(descriptor);
+				resolveUniqueIdSegments(segments, descriptor);
+			} else {
+				LOG.warning(() -> String.format("Cannot resolve class '%s' from unique ID.", className));
+				return;
+			}
+			break;
+		case EXAMPLE_SEGMENT_TYPE:
+			String methodName = next.getValue();
+			Class<?> containerClass = ((ContainerClassDescriptor) parent).getContainerClass();
+			Predicate<Method> isNamedExample = m -> IS_EXAMPLE_METHOD.test(m) && m.getName().equals(methodName);
+			List<Method> exampleMethods = ReflectionSupport.findMethods(containerClass, isNamedExample, HierarchyTraversalMode.TOP_DOWN);
+			if (exampleMethods.size() == 1) {
+				Method exampleMethod = exampleMethods.get(0);
+				ExampleMethodDescriptor descriptor = createExampleMethodDescriptor(parent.getUniqueId(), exampleMethod, containerClass);
+				parent.addChild(descriptor);
+				resolveUniqueIdSegments(segments, descriptor);
+			} else if (exampleMethods.size() == 0) {
+				LOG.warning(() -> String.format("Cannot resolve example '%s' from unique ID.", methodName));
+				return;
+			} else {
+				LOG.warning(() -> String.format("Method name '%s' from unique ID is ambiguous.", methodName));
+				return;
+			}
+			break;
+		default:
+			LOG.warning(() -> String.format("Cannot resolve unique ID segement '%s'.", next));
 		}
 	}
 
@@ -159,15 +161,13 @@ public class JqwikDiscoverer {
 	}
 
 	private void appendTestsInPackage(String packageName, TestDescriptor engineDescriptor, Predicate<String> classNamePredicate) {
-		ReflectionSupport.findAllClassesInPackage(packageName, IS_JQWIK_CONTAINER_CLASS, classNamePredicate)
-				.stream()
-				.map(aClass -> createClassDescriptor(aClass, engineDescriptor, true))
-				.forEach(engineDescriptor::addChild);
+		ReflectionSupport.findAllClassesInPackage(packageName, IS_JQWIK_CONTAINER_CLASS, classNamePredicate).stream()
+				.map(aClass -> createClassDescriptor(aClass, engineDescriptor, true)).forEach(engineDescriptor::addChild);
 	}
 
 	private ContainerClassDescriptor createClassDescriptor(Class<?> javaClass, TestDescriptor engineDescriptor, boolean withChildren) {
 		UniqueId uniqueId = engineDescriptor.getUniqueId().append(CONTAINER_SEGMENT_TYPE, javaClass.getName());
-		ContainerClassDescriptor classTestDescriptor = new ContainerClassDescriptor(uniqueId,javaClass);
+		ContainerClassDescriptor classTestDescriptor = new ContainerClassDescriptor(uniqueId, javaClass);
 		if (withChildren) {
 			appendExamplesInContainerClass(javaClass, classTestDescriptor);
 		}
@@ -175,26 +175,26 @@ public class JqwikDiscoverer {
 	}
 
 	private void appendExamplesInContainerClass(Class<?> containerClass, TestDescriptor classTestDescriptor) {
-		Map<String, List<ExampleMethodDescriptor>> exampleDescriptorsByMethodName =
-				ReflectionSupport.findMethods(containerClass, IS_EXAMPLE_METHOD, HierarchyTraversalMode.TOP_DOWN)
-						.stream()
-						.map(method -> createExampleMethodDescriptor(classTestDescriptor.getUniqueId(), method, containerClass))
-						.collect(Collectors.groupingBy(exampleDescriptor -> exampleDescriptor.getExampleMethod().getName()));
+		Map<String, List<ExampleMethodDescriptor>> exampleDescriptorsByMethodName = ReflectionSupport
+				.findMethods(containerClass, IS_EXAMPLE_METHOD, HierarchyTraversalMode.TOP_DOWN).stream()
+				.map(method -> createExampleMethodDescriptor(classTestDescriptor.getUniqueId(), method, containerClass))
+				.collect(Collectors.groupingBy(exampleDescriptor -> exampleDescriptor.getExampleMethod().getName()));
 
 		exampleDescriptorsByMethodName.entrySet()
 				.stream()
-				.map(entry -> descriptorOrError(entry, containerClass, classTestDescriptor))
+				.flatMap(entry -> exampleDescriptors(entry, containerClass))
 				.forEach(classTestDescriptor::addChild);
 	}
 
-	private TestDescriptor descriptorOrError(Map.Entry<String, List<ExampleMethodDescriptor>> entry, Class<?> containerClass, TestDescriptor classTestDescriptor) {
+	private Stream<? extends TestDescriptor> exampleDescriptors(Map.Entry<String, List<ExampleMethodDescriptor>> entry,
+																Class<?> containerClass) {
 		String methodName = entry.getKey();
 		List<ExampleMethodDescriptor> examples = entry.getValue();
-		if (examples.size() > 1) {
-			LOG.warning(() -> String.format("There is more than one @Example for '%s::%s'. Ignoring all.", containerClass.getName(), methodName));
-			return new OverloadedMethodsErrorDescriptor(examples, methodName, containerClass, classTestDescriptor);
-		}
-		return examples.get(0);
+		if (examples.size() == 1)
+			return examples.stream();
+		LOG.warning(
+				() -> String.format("There is more than one @Example for '%s::%s'. Ignoring all.", containerClass.getName(), methodName));
+		return IntStream.range(0, examples.size()).mapToObj(i -> new OverloadedExampleMethodDescriptor(examples.get(i), i));
 	}
 
 }

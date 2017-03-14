@@ -5,13 +5,13 @@ import static org.mockito.Matchers.*;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
 import org.junit.platform.engine.TestExecutionResult;
 
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.descriptor.OverloadedMethodsErrorDescriptor;
 
 public class MockitoMatchers {
 
@@ -24,8 +24,8 @@ public class MockitoMatchers {
 		return argThat(new IsExampleDescriptorFor(methods.get(0)));
 	}
 
-	public static OverloadedMethodsErrorDescriptor isOverloadedExamplesErrorFor(Class<?> containerClass, String overloadedMethodName) {
-		return argThat(new IsOverloadedExamplesErrorFor(containerClass, overloadedMethodName));
+	public static OverloadedExampleMethodDescriptor isOverloadedExampleDescriptorFor(Class<?> containerClass, String methodName) {
+		return argThat(new IsOverloadedExampleDescriptorFor(containerClass, methodName));
 	}
 
 	public static TestExecutionResult isSuccessful() {
