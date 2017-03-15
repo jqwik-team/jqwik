@@ -7,8 +7,10 @@ import org.junit.platform.commons.util.ReflectionUtils;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.Set;
 
 public class JqwikReflectionSupport {
 
@@ -20,12 +22,20 @@ public class JqwikReflectionSupport {
 		return ReflectionUtils.findMethod(clazz, methodName, parameterTypeNames);
 	}
 
+	public static Optional<Method> findMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+		return ReflectionUtils.findMethod(clazz, methodName, parameterTypes);
+	}
+
 	public static <T> T newInstance(Class<T> clazz, Object... args) {
 		return ReflectionUtils.newInstance(clazz, args);
 	}
 
 	public static Object invokeMethod(Method method, Object target, Object... args) {
 		return ReflectionUtils.invokeMethod(method, target, args);
+	}
+
+	public static Set<Path> getAllClasspathRootDirectories() {
+		return ReflectionUtils.getAllClasspathRootDirectories();
 	}
 
 	public static boolean isPublic(Class<?> clazz) {

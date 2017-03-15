@@ -4,6 +4,8 @@ import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.descriptor.JqwikEngineDescriptor;
 import net.jqwik.discovery.JqwikUniqueIDs;
+import net.jqwik.support.JqwikReflectionSupport;
+import net.jqwik.support.JqwikStringSupport;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -11,6 +13,7 @@ import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static net.jqwik.JqwikUniqueIdBuilder.engineId;
 import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForClassContainer;
@@ -20,9 +23,13 @@ import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForClassContainer;
  */
 public class TestDescriptorBuilder {
 
-	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName) throws NoSuchMethodException {
-		Method method = containerClass.getDeclaredMethod(methodName);
-		return new TestDescriptorBuilder(method);
+	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes)
+			throws NoSuchMethodException {
+		Optional<Method> optionalMethod = JqwikReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
+		if (!optionalMethod.isPresent())
+			throw new JqwikException(String.format("Class [%s] has no method with name [%s] and parameters [%s]", containerClass,
+					methodName, JqwikStringSupport.nullSafeToString(parameterTypes)));
+		return new TestDescriptorBuilder(optionalMethod.get());
 	}
 
 	public static TestDescriptorBuilder forEngine(JqwikTestEngine engine) {

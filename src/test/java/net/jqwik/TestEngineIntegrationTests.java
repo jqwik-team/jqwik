@@ -3,15 +3,14 @@ package net.jqwik;
 import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.mockito.Mockito;
 
-import examples.packageWithErrors.ContainerWithOverloadedExamples;
 import examples.packageWithSingleContainer.SimpleExampleTests;
 import net.jqwik.api.Example;
 
@@ -20,6 +19,25 @@ class TestEngineIntegrationTests {
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();
 	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
 	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
+
+	@Example
+	void runTestsFromRootDir() {
+		LauncherDiscoveryRequest discoveryRequest = request()
+				.selectors(selectClasspathRoots(JqwikReflectionSupport.getAllClasspathRootDirectories()))
+				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
+				.build();
+
+		TestDescriptor engineDescriptor = runTests(discoveryRequest);
+
+		verify(eventRecorder).executionStarted(engineDescriptor);
+		verify(eventRecorder).executionStarted(isClassDescriptorFor(SimpleExampleTests.class));
+		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "failing"));
+		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "failing"), isFailed());
+		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
+		verify(eventRecorder).executionFinished(isClassDescriptorFor(SimpleExampleTests.class), isSuccessful());
+		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
+	}
 
 	@Example
 	void runTestsFromPackage() {
@@ -64,26 +82,6 @@ class TestEngineIntegrationTests {
 		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"));
 		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(SimpleExampleTests.class), isSuccessful());
-		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
-	}
-
-	@Example
-	void runOverloadedExamples() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(ContainerWithOverloadedExamples.class)).build();
-
-		TestDescriptor engineDescriptor = runTests(discoveryRequest);
-
-		verify(eventRecorder).executionStarted(engineDescriptor);
-		verify(eventRecorder).executionStarted(isClassDescriptorFor(ContainerWithOverloadedExamples.class));
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "succeeding"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "succeeding"),
-				isSuccessful());
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"),
-				isSuccessful());
-		verify(eventRecorder, times(2)).executionSkipped(isExampleDescriptorFor(ContainerWithOverloadedExamples.class, "overloadedExample"),
-				anyString());
-		verify(eventRecorder).executionFinished(isClassDescriptorFor(ContainerWithOverloadedExamples.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 

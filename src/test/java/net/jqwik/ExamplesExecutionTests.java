@@ -3,6 +3,7 @@ package net.jqwik;
 import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Matchers.anyString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,18 @@ class ExamplesExecutionTests {
 		assertThat(executions).containsExactly("failingTwice", "close");
 	}
 
+	@Example
+	void exampleWithParameterIsSkipped() throws NoSuchMethodException {
+		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class).build();
+
+		executeTests(descriptor);
+
+		InOrder events = Mockito.inOrder(eventRecorder);
+		events.verify(eventRecorder).executionSkipped(isExampleDescriptorFor(ContainerClass.class, "withParameter"), anyString());
+		assertThat(executions).isEmpty();
+	}
+
+
 	private void executeTests(ExampleMethodDescriptor engineDescriptor) {
 		executor.execute(engineDescriptor, eventRecorder, new AutoCloseableLifecycle());
 	}
@@ -86,6 +99,11 @@ class ExamplesExecutionTests {
 		@Example
 		public void succeeding() {
 			executions.add("succeeding");
+		}
+
+		@Example
+		public void withParameter(int aNumber) {
+			executions.add("withParameter");
 		}
 
 		@Example
@@ -114,4 +132,5 @@ class ExamplesExecutionTests {
 				throw new RuntimeException("failing close");
 		}
 	}
+
 }
