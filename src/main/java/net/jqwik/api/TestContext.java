@@ -2,7 +2,7 @@ package net.jqwik.api;
 
 import java.lang.reflect.Method;
 
-public interface TestDescriptor {
+public interface TestContext {
 
 	Method getTargetMethod();
 
