@@ -11,7 +11,7 @@ import net.jqwik.descriptor.ExampleMethodDescriptor;
 public class ExampleExecutor {
 
 	public void execute(ExampleMethodDescriptor methodTestDescriptor, EngineExecutionListener listener, ExampleLifecycle lifecycle) {
-		if (methodTestDescriptor.getExampleMethod().getParameterTypes().length > 0) {
+		if (methodTestDescriptor.getTargetMethod().getParameterTypes().length > 0) {
 			listener.executionSkipped(methodTestDescriptor, "Cannot run examples with parameters - yet.");
 			return;
 		}
@@ -35,7 +35,7 @@ public class ExampleExecutor {
 	private TestExecutionResult invokeExampleMethod(ExampleMethodDescriptor exampleMethodDescriptor, Object testInstance, ExampleLifecycle lifecycle) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		try {
-			SingleMethodExecutor.Executable executable = () -> JqwikReflectionSupport.invokeMethod(exampleMethodDescriptor.getExampleMethod(), testInstance);
+			SingleMethodExecutor.Executable executable = () -> JqwikReflectionSupport.invokeMethod(exampleMethodDescriptor.getTargetMethod(), testInstance);
 			testExecutionResult = new SingleMethodExecutor().executeSafely(executable);
 		} finally {
 			try {

@@ -2,6 +2,7 @@ package net.jqwik.matchers;
 
 import static org.mockito.Matchers.*;
 
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 import org.junit.platform.engine.TestExecutionResult;
 
 import net.jqwik.descriptor.ContainerClassDescriptor;
@@ -16,6 +17,10 @@ public class MockitoMatchers {
 
 	public static ExampleMethodDescriptor isExampleDescriptorFor(Class<?> containerClass, String methodName) {
 		return argThat(new IsExampleDescriptorFor(containerClass, methodName));
+	}
+
+	public static PropertyMethodDescriptor isPropertyDescriptorFor(Class<?> containerClass, String methodName) {
+		return argThat(new IsPropertyDescriptorFor(containerClass, methodName));
 	}
 
 	public static TestExecutionResult isSuccessful() {

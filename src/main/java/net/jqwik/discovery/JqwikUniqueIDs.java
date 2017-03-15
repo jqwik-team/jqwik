@@ -15,6 +15,7 @@ public class JqwikUniqueIDs {
 
 	public static final String CONTAINER_SEGMENT_TYPE = "class";
 	public static final String EXAMPLE_SEGMENT_TYPE = "example";
+	public static final String PROPERTY_SEGMENT_TYPE = "property";
 
 	private static final Pattern METHOD_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 
@@ -22,6 +23,10 @@ public class JqwikUniqueIDs {
 
 	public static UniqueId appendExample(UniqueId uniqueId, Method method) {
 		return appendMethodSegment(uniqueId, method, EXAMPLE_SEGMENT_TYPE);
+	}
+
+	public static UniqueId appendProperty(UniqueId uniqueId, Method method) {
+		return appendMethodSegment(uniqueId, method, PROPERTY_SEGMENT_TYPE);
 	}
 
 	public static UniqueId appendContainer(UniqueId uniqueId, Class<?> containerClass) {

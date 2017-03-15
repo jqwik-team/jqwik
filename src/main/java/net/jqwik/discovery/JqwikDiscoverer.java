@@ -44,6 +44,7 @@ public class JqwikDiscoverer {
 		Set<ElementResolver> resolvers = new HashSet<>();
 		resolvers.add(new ContainerClassResolver());
 		resolvers.add(new ExampleMethodResolver());
+		resolvers.add(new PropertyMethodResolver());
 		return new HierarchicalJavaResolver(engineDescriptor, resolvers);
 	}
 

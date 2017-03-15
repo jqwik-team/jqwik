@@ -5,6 +5,9 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 import static org.mockito.Mockito.verify;
 
+import examples.packageWithSeveralContainers.ExampleTests;
+import examples.packageWithSeveralContainers.MixedTests;
+import examples.packageWithSeveralContainers.PropertyTests;
 import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.PackageNameFilter;
@@ -84,6 +87,42 @@ class TestEngineIntegrationTests {
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(SimpleExampleTests.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
+
+	@Example
+	void runMixedExamples() {
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples.packageWithSeveralContainers")).build();
+
+		TestDescriptor engineDescriptor = runTests(discoveryRequest);
+
+		verify(eventRecorder).executionStarted(engineDescriptor);
+
+		// ExampleTests
+		verify(eventRecorder).executionStarted(isClassDescriptorFor(ExampleTests.class));
+		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ExampleTests.class, "failing"));
+		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ExampleTests.class, "failing"), isFailed());
+		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ExampleTests.class, "succeeding"), isSuccessful());
+		verify(eventRecorder).executionFinished(isClassDescriptorFor(ExampleTests.class), isSuccessful());
+
+		// PropertyTests
+		verify(eventRecorder).executionStarted(isClassDescriptorFor(PropertyTests.class));
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(PropertyTests.class, "isFalse"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(PropertyTests.class, "isFalse"), isFailed());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(PropertyTests.class, "isTrue"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(PropertyTests.class, "isTrue"), isSuccessful());
+		verify(eventRecorder).executionFinished(isClassDescriptorFor(PropertyTests.class), isSuccessful());
+
+		// MixedTests
+		verify(eventRecorder).executionStarted(isClassDescriptorFor(MixedTests.class));
+		verify(eventRecorder).executionStarted(isExampleDescriptorFor(MixedTests.class, "anExample"));
+		verify(eventRecorder).executionFinished(isExampleDescriptorFor(MixedTests.class, "anExample"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(MixedTests.class, "aProperty"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(MixedTests.class, "aProperty"), isSuccessful());
+		verify(eventRecorder).executionFinished(isClassDescriptorFor(MixedTests.class), isSuccessful());
+
+		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
+	}
+
 
 	private TestDescriptor runTests(LauncherDiscoveryRequest discoveryRequest) {
 		TestDescriptor engineDescriptor = testEngine.discover(discoveryRequest, engineId);

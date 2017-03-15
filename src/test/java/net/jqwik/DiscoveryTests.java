@@ -144,8 +144,8 @@ class DiscoveryTests {
 			if (!isExampleDescriptor.test(descriptor))
 				return false;
 			ExampleMethodDescriptor exampleDescriptor = (ExampleMethodDescriptor) descriptor;
-			return exampleDescriptor.getExampleMethod().getName().equals(methodName)
-					&& exampleDescriptor.getExampleMethod().getDeclaringClass().equals(implementationClass);
+			return exampleDescriptor.getTargetMethod().getName().equals(methodName)
+					&& exampleDescriptor.getTargetMethod().getDeclaringClass().equals(implementationClass);
 		};
 	}
 
