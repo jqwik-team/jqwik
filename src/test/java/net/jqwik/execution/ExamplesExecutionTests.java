@@ -1,4 +1,4 @@
-package net.jqwik;
+package net.jqwik.execution;
 
 import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
@@ -88,8 +88,8 @@ class ExamplesExecutionTests {
 	}
 
 
-	private void executeTests(ExampleMethodDescriptor engineDescriptor) {
-		executor.execute(engineDescriptor, eventRecorder, new AutoCloseableLifecycle());
+	private void executeTests(ExampleMethodDescriptor exampleMethodDescriptor) {
+		executor.execute(exampleMethodDescriptor, eventRecorder, new AutoCloseableLifecycle());
 	}
 
 	private static class ContainerClass implements AutoCloseable {

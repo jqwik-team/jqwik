@@ -1,11 +1,15 @@
 package net.jqwik;
 
+import net.jqwik.api.Example;
+import net.jqwik.api.Property;
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.descriptor.JqwikEngineDescriptor;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.discovery.JqwikUniqueIDs;
 import net.jqwik.support.JqwikReflectionSupport;
 import net.jqwik.support.JqwikStringSupport;
+import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
@@ -96,9 +100,15 @@ public class TestDescriptorBuilder {
 			return new ContainerClassDescriptor(uniqueIdForClassContainer(containerClass), containerClass);
 		}
 		if (element instanceof Method) {
-			Method exampleMethod = (Method) this.element;
-			UniqueId uniqueId = JqwikUniqueIDs.appendExample(parent.getUniqueId(), exampleMethod);
-			return new ExampleMethodDescriptor(uniqueId, exampleMethod, exampleMethod.getDeclaringClass());
+			Method targetMethod = (Method) this.element;
+			if (AnnotationSupport.isAnnotated(targetMethod, Example.class)) {
+				UniqueId uniqueId = JqwikUniqueIDs.appendExample(parent.getUniqueId(), targetMethod);
+				return new ExampleMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass());
+			}
+			if (AnnotationSupport.isAnnotated(targetMethod, Property.class)) {
+				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
+				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass());
+			}
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());
 	}

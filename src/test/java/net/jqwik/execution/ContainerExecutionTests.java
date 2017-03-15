@@ -1,4 +1,4 @@
-package net.jqwik;
+package net.jqwik.execution;
 
 import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;

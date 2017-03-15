@@ -65,7 +65,7 @@ public class PropertyExecutor {
 			if (success)
 				return successful();
 			else {
-				String propertyFailedMessage = String.format("Property [%s] failed.", methodDescriptor.getLabel());
+				String propertyFailedMessage = String.format("Property [%s] failed", methodDescriptor.getLabel());
 				return failed(new AssertionFailedError(propertyFailedMessage));
 			}
 		}
