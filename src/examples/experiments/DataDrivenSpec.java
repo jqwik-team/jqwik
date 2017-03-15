@@ -1,17 +1,20 @@
 package experiments;
 
+import experiments.Sampling.Param;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Spec("An Adder")
 @UsePlugIn(Sampling.class)
 public class DataDrivenSpec {
 
 	@Fact("can add two numbers")
-	@Sampling.UseSample("validValues")
-	boolean addingTwoNumbers(Adder anAdder, int number1, int number2, int sum) {
+	@Sampling.Use("validValues")
+	boolean addingTwoNumbers(Adder anAdder, @Param int number1, @Param int number2, @Param int sum) {
 		return anAdder.add(number1, number2) == sum;
 	}
 
@@ -21,14 +24,12 @@ public class DataDrivenSpec {
 	}
 
 	@Sampling.Sample()
-	List<Object[]> validValues() {
-		return Arrays.asList(new Object[][]{
-				{1, 1, 2},
-				{2, 2, 4},
-				{8, 2, 10},
-				{4, 5, 9},
-				{5, 5, 10}
-		});	}
+	List<Tuple3<Integer, Integer, Integer>> validValues() {
+		return Tuple3.list(
+				Tuple3.of(1, 2, 3),
+				Tuple3.of(4, 5, 9)
+		);
+	}
 }
 
 class Adder {
@@ -37,16 +38,39 @@ class Adder {
 	}
 }
 
+class Tuple3<T1, T2, T3> {
+
+	static <T1, T2, T3> Tuple3<T1, T2, T3> of(T1 v1, T2 v2, T3 v3) {
+		return new Tuple3(v1, v2, v3);
+	}
+
+	static <T1, T2, T3> List<Tuple3<T1, T2, T3>> list(Tuple3... tuples) {
+		return Arrays.asList(tuples);
+	}
+
+	static <T1, T2, T3> Stream<Tuple3<T1, T2, T3> > stream(Tuple3... tuples) {
+		return Arrays.stream(tuples);
+	}
+
+	Tuple3(T1 v1, T2 v2, T3 v3) {
+
+	}
+}
+
 class Sampling implements SpecPlugin {
 
-	//Not clear yet how to provide plugin capabilities
+	// Not clear yet how to provide plugin capabilities
 
 	public @interface Sample {
 		String value() default "";
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
-	public @interface UseSample {
+	public @interface Use {
 		String value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface Param {
 	}
 }
