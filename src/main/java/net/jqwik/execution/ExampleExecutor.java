@@ -4,7 +4,6 @@ import net.jqwik.api.ExampleLifecycle;
 import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.TestExecutionResult;
-import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
 
 import net.jqwik.JqwikException;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
@@ -36,7 +35,8 @@ public class ExampleExecutor {
 	private TestExecutionResult invokeExampleMethod(ExampleMethodDescriptor exampleMethodDescriptor, Object testInstance, ExampleLifecycle lifecycle) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		try {
-			testExecutionResult = executeSafely(() -> JqwikReflectionSupport.invokeMethod(exampleMethodDescriptor.getExampleMethod(), testInstance));
+			SingleMethodExecutor.Executable executable = () -> JqwikReflectionSupport.invokeMethod(exampleMethodDescriptor.getExampleMethod(), testInstance);
+			testExecutionResult = new SingleMethodExecutor().executeSafely(executable);
 		} finally {
 			try {
 				lifecycle.doFinally(exampleMethodDescriptor, testInstance);
@@ -46,11 +46,6 @@ public class ExampleExecutor {
 			}
 		}
 		return testExecutionResult;
-	}
-
-
-	private TestExecutionResult executeSafely(SingleTestExecutor.Executable executable) {
-		return new SingleTestExecutor().executeSafely(executable);
 	}
 
 }
