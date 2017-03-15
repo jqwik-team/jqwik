@@ -1,6 +1,7 @@
 package examples.packageWithErrors;
 
 import net.jqwik.api.Example;
+import net.jqwik.api.Property;
 
 public class ContainerWithOverloadedExamples extends AbstractContainerForOverloadedExamples{
 
@@ -15,5 +16,15 @@ public class ContainerWithOverloadedExamples extends AbstractContainerForOverloa
 
 	@Example
 	void overloadedExample(int aNumber) {
+	}
+
+	@Property
+	boolean overloadedProperty(int aNumber) {
+		return true;
+	}
+
+	@Property
+	boolean overloadedProperty(String aString) {
+		return true;
 	}
 }

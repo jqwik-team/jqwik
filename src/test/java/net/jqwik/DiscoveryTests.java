@@ -8,6 +8,8 @@ import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.r
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
+import examples.packageWithSeveralContainers.MixedTests;
+import net.jqwik.descriptor.*;
 import net.jqwik.discovery.JqwikDiscoverer;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
@@ -21,10 +23,6 @@ import examples.packageWithInheritance.ContainerWithInheritance;
 import examples.packageWithInheritance.InterfaceTests;
 import examples.packageWithSingleContainer.SimpleExampleTests;
 import net.jqwik.api.Example;
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.descriptor.JqwikEngineDescriptor;
-import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 
 class DiscoveryTests {
 
@@ -34,43 +32,46 @@ class DiscoveryTests {
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
 	private final Predicate<TestDescriptor> isClassDescriptor = d -> d instanceof ContainerClassDescriptor;
 	private final Predicate<TestDescriptor> isExampleDescriptor = d -> d.getClass().equals(ExampleMethodDescriptor.class);
-	private final Predicate<TestDescriptor> isOverloadedExampleDescriptor = d -> d.getClass().equals(OverloadedExampleMethodDescriptor.class);
+	private final Predicate<TestDescriptor> isPropertyDescriptor = d -> d.getClass().equals(PropertyMethodDescriptor.class);
 
 	@Example
 	void discoverFromPackage() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples.packageWithSingleContainer")).build();
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples.packageWithSeveralContainers")).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(2);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(3);
 	}
 
 	@Example
 	void discoverWithPackageNameFilter() {
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples"))
-				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer")).build();
+				.filters(PackageNameFilter.includePackageNames("examples.packageWithSeveralContainers")).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(2);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(3);
 	}
 
 	@Example
 	void discoverWithClassNameFilter() {
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples"))
-				.filters(ClassNameFilter.includeClassNamePatterns(".+" + SimpleExampleTests.class.getSimpleName())).build();
+				.filters(ClassNameFilter.includeClassNamePatterns(".+" + MixedTests.class.getSimpleName())).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(2);
+		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(1);
 	}
 
 	@Example
 	void discoverFromClass() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(SimpleExampleTests.class)).build();
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(MixedTests.class)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(3);
@@ -100,9 +101,10 @@ class DiscoveryTests {
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 
-		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(5);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(7);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(4);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(2);
 
 		assertThat(count(engineDescriptor, isExample(ContainerWithOverloadedExamples.class, "succeeding"))).isEqualTo(1);
 	}

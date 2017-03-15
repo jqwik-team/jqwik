@@ -29,7 +29,7 @@ class ExamplesExecutionTests {
 	}
 
 	@Example
-	void succeedingExample() throws NoSuchMethodException {
+	void succeeding() throws NoSuchMethodException {
 		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) forMethod(ContainerClass.class, "succeeding").build();
 
 		executeTests(descriptor);
@@ -41,7 +41,7 @@ class ExamplesExecutionTests {
 	}
 
 	@Example
-	void failingExample() throws NoSuchMethodException {
+	void failing() throws NoSuchMethodException {
 		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) forMethod(ContainerClass.class, "failing").build();
 
 		executeTests(descriptor);
@@ -65,7 +65,7 @@ class ExamplesExecutionTests {
 	}
 
 	@Example
-	void failingTwiceInExampleAndInClose() throws NoSuchMethodException {
+	void failingTwiceInTargetAndInClose() throws NoSuchMethodException {
 		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) forMethod(ContainerClass.class, "failingTwice").build();
 
 		executeTests(descriptor);
@@ -77,7 +77,7 @@ class ExamplesExecutionTests {
 	}
 
 	@Example
-	void exampleWithParameterIsSkipped() throws NoSuchMethodException {
+	void methodWithParameterIsSkipped() throws NoSuchMethodException {
 		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class).build();
 
 		executeTests(descriptor);

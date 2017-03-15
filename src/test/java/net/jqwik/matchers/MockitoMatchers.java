@@ -7,7 +7,6 @@ import org.junit.platform.engine.TestExecutionResult;
 
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.descriptor.OverloadedExampleMethodDescriptor;
 
 public class MockitoMatchers {
 
