@@ -23,9 +23,9 @@ class CheckedPropertyTests {
 		propertyExample("prop3", params -> params.length == 3, SUCCESSFUL);
 		propertyExample("prop4", params -> params.length == 4, SUCCESSFUL);
 		propertyExample("prop5", params -> params.length == 5, SUCCESSFUL);
-//		propertyExample("prop6", params -> params.length == 6, SUCCESSFUL);
-//		propertyExample("prop7", params -> params.length == 7, SUCCESSFUL);
-//		propertyExample("prop8", params -> params.length == 8, SUCCESSFUL);
+		propertyExample("prop6", params -> params.length == 6, SUCCESSFUL);
+		propertyExample("prop7", params -> params.length == 7, SUCCESSFUL);
+		propertyExample("prop8", params -> params.length == 8, SUCCESSFUL);
 	}
 
 	@Example
@@ -35,9 +35,9 @@ class CheckedPropertyTests {
 		propertyExample("prop3", params -> false, FAILED);
 		propertyExample("prop4", params -> false, FAILED);
 		propertyExample("prop5", params -> false, FAILED);
-//		propertyExample("prop6", params -> false, FAILED);
-//		propertyExample("prop7", params -> false, FAILED);
-//		propertyExample("prop8", params -> false, FAILED);
+		propertyExample("prop6", params -> false, FAILED);
+		propertyExample("prop7", params -> false, FAILED);
+		propertyExample("prop8", params -> false, FAILED);
 	}
 
 	private void propertyExample(String methodName, CheckedFunction checkedFunction, TestExecutionResult.Status successful) {

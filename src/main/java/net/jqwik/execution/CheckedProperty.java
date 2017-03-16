@@ -58,6 +58,15 @@ public class CheckedProperty {
 		if (forAllParameters.size() == 5) {
 			return createProperty5();
 		}
+		if (forAllParameters.size() == 6) {
+			return createProperty6();
+		}
+		if (forAllParameters.size() == 7) {
+			return createProperty7();
+		}
+		if (forAllParameters.size() == 8) {
+			return createProperty8();
+		}
 		return erroneousCheckable();
 	}
 
@@ -112,13 +121,61 @@ public class CheckedProperty {
 		Arbitrary<Object> a2 = findArbitrary(forAllParameters.get(1));
 		Arbitrary<Object> a3 = findArbitrary(forAllParameters.get(2));
 		Arbitrary<Object> a4 = findArbitrary(forAllParameters.get(3));
-		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(3));
+		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(4));
 		CheckedFunction5<Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction5();
 		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5).suchThat(function);
 	}
 
 	private CheckedFunction5<Object, Object, Object, Object, Object, Boolean> createCheckedFunction5() {
 		return (p1, p2, p3, p4, p5) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5 });
+	}
+
+	private Checkable createProperty6() {
+		Arbitrary<Object> a1 = findArbitrary(forAllParameters.get(0));
+		Arbitrary<Object> a2 = findArbitrary(forAllParameters.get(1));
+		Arbitrary<Object> a3 = findArbitrary(forAllParameters.get(2));
+		Arbitrary<Object> a4 = findArbitrary(forAllParameters.get(3));
+		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(4));
+		Arbitrary<Object> a6 = findArbitrary(forAllParameters.get(5));
+		CheckedFunction6<Object, Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction6();
+		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6).suchThat(function);
+	}
+
+	private CheckedFunction6<Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction6() {
+		return (p1, p2, p3, p4, p5, p6) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5, p6 });
+	}
+
+	private Checkable createProperty7() {
+		Arbitrary<Object> a1 = findArbitrary(forAllParameters.get(0));
+		Arbitrary<Object> a2 = findArbitrary(forAllParameters.get(1));
+		Arbitrary<Object> a3 = findArbitrary(forAllParameters.get(2));
+		Arbitrary<Object> a4 = findArbitrary(forAllParameters.get(3));
+		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(4));
+		Arbitrary<Object> a6 = findArbitrary(forAllParameters.get(5));
+		Arbitrary<Object> a7 = findArbitrary(forAllParameters.get(6));
+		CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction7();
+		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7).suchThat(function);
+	}
+
+	private CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction7() {
+		return (p1, p2, p3, p4, p5, p6, p7) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7 });
+	}
+
+	private Checkable createProperty8() {
+		Arbitrary<Object> a1 = findArbitrary(forAllParameters.get(0));
+		Arbitrary<Object> a2 = findArbitrary(forAllParameters.get(1));
+		Arbitrary<Object> a3 = findArbitrary(forAllParameters.get(2));
+		Arbitrary<Object> a4 = findArbitrary(forAllParameters.get(3));
+		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(4));
+		Arbitrary<Object> a6 = findArbitrary(forAllParameters.get(5));
+		Arbitrary<Object> a7 = findArbitrary(forAllParameters.get(6));
+		Arbitrary<Object> a8 = findArbitrary(forAllParameters.get(7));
+		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction8();
+		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7, a8).suchThat(function);
+	}
+
+	private CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction8() {
+		return (p1, p2, p3, p4, p5, p6, p7, p8) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7, p8 });
 	}
 
 	private Checkable erroneousCheckable() {
