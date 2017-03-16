@@ -60,7 +60,7 @@ public class PropertyExecutor extends AbstractMethodExecutor {
 	}
 
 	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		// Todo: Fill in all params that are not @ForAll
+		// Todo: Bind all non @ForAll params first
 		return params -> (boolean) JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, params);
 	}
 
