@@ -1,6 +1,7 @@
 package net.jqwik.discovery;
 
 import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.discovery.predicates.IsContainerInGroup;
 import net.jqwik.discovery.predicates.IsTestContainer;
 import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.commons.util.ReflectionUtils;
@@ -24,6 +25,8 @@ class HierarchicalJavaResolver {
 
 	private final TestDescriptor engineDescriptor;
 	private final Set<ElementResolver> resolvers;
+
+	private final IsContainerInGroup isContainerInGroup = new IsContainerInGroup();
 
 	HierarchicalJavaResolver(TestDescriptor engineDescriptor, Set<ElementResolver> resolvers) {
 		this.engineDescriptor = engineDescriptor;
@@ -49,7 +52,7 @@ class HierarchicalJavaResolver {
 	}
 
 	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
-		Set<TestDescriptor> potentialParents = testClass.isMemberClass() ?
+		Set<TestDescriptor> potentialParents = isContainerInGroup.test(testClass) ?
 				resolveContainerWithParents(testClass.getDeclaringClass()) :
 				Collections.singleton(engineDescriptor);
 		return resolveForAllParents(testClass, potentialParents);
