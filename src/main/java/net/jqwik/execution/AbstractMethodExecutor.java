@@ -37,7 +37,7 @@ abstract class AbstractMethodExecutor {
 		} catch (Throwable throwable) {
 			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
 					methodDescriptor.getContainerClass());
-			return TestExecutionResult.failed(new JqwikException(message, throwable));
+			return TestExecutionResult.aborted(new JqwikException(message, throwable));
 		}
 		return invokeExampleMethod(methodDescriptor, testInstance, lifecycle);
 	}

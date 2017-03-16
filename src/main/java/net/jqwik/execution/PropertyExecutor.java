@@ -13,8 +13,6 @@ import org.junit.platform.engine.TestExecutionResult;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
 
-import javaslang.CheckedFunction1;
-import javaslang.test.*;
 import net.jqwik.JqwikException;
 import net.jqwik.api.ForAll;
 import net.jqwik.descriptor.AbstractMethodDescriptor;
@@ -23,10 +21,17 @@ import net.jqwik.support.JqwikReflectionSupport;
 
 public class PropertyExecutor extends AbstractMethodExecutor {
 
+	private static List<Class<?>> COMPATIBLE_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
+
 	@Override
 	protected TestExecutionResult execute(AbstractMethodDescriptor methodDescriptor, Object testInstance) {
 		try {
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) methodDescriptor;
+			if (hasIncompatibleReturnType(propertyMethodDescriptor.getTargetMethod())) {
+				String errorMessage = String.format("Property method [%s] must return boolean value",
+						propertyMethodDescriptor.getTargetMethod());
+				return aborted(new JqwikException(errorMessage));
+			}
 			if (hasForAllParameters(methodDescriptor.getTargetMethod())) {
 				return executeProperty(propertyMethodDescriptor, testInstance);
 			} else {
@@ -40,37 +45,27 @@ public class PropertyExecutor extends AbstractMethodExecutor {
 		}
 	}
 
+	private boolean hasIncompatibleReturnType(Method targetMethod) {
+		return !COMPATIBLE_RETURN_TYPES.contains(targetMethod.getReturnType());
+	}
+
 	private TestExecutionResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		CheckResult result = createJavaSlangProperty(propertyMethodDescriptor, testInstance).check();
 
-		if (result.isSatisfied())
-			return successful();
-		else {
-			String propertyFailedMessage = String.format("Property [%s] failed: %s", propertyMethodDescriptor.getLabel(),
-					result.toString());
-			return failed(new AssertionFailedError(propertyFailedMessage));
-		}
+		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
+		CheckedProperty property = new CheckedProperty(propertyMethodDescriptor.getLabel(), forAllFunction,
+				extractForAllParameters(propertyMethodDescriptor.getTargetMethod()));
+
+		return property.check();
+
 	}
 
-	private Checkable createJavaSlangProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		Class<?> paramType1 = int.class;
-
-		Arbitrary<Object> arbitrary = new GenericWrapper(Arbitrary.integer());
-		CheckedFunction1<Object, Boolean> function1 = createCheckedFunction(propertyMethodDescriptor, testInstance);
-		return Property.def(propertyMethodDescriptor.getLabel()).forAll(arbitrary).suchThat(function1);
-	}
-
-	private CheckedFunction1<Object, Boolean> createCheckedFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		return o -> (boolean) JqwikReflectionSupport
-				.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, o);
+	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+		// Todo: Fill in all params that are not @ForAll
+		return params -> (boolean) JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, params);
 	}
 
 	private TestExecutionResult executePropertyWithoutForAllParameters(PropertyMethodDescriptor methodDescriptor, Object testInstance) {
-		Object result = JqwikReflectionSupport.invokeMethod(methodDescriptor.getTargetMethod(), testInstance);
-		if (!result.getClass().equals(Boolean.class)) {
-			throw new JqwikException(String.format("Property method [%s] must return boolean value", methodDescriptor.getTargetMethod()));
-		}
-		boolean success = (boolean) result;
+		boolean success = (boolean) JqwikReflectionSupport.invokeMethod(methodDescriptor.getTargetMethod(), testInstance);
 
 		if (success)
 			return successful();
@@ -89,17 +84,4 @@ public class PropertyExecutor extends AbstractMethodExecutor {
 				.collect(Collectors.toList());
 	}
 
-	private static class GenericWrapper implements Arbitrary<Object> {
-
-		private final Arbitrary<?> wrapped;
-
-		GenericWrapper(Arbitrary<?> wrapped) {
-			this.wrapped = wrapped;
-		}
-
-		@Override
-		public Gen<Object> apply(int size) {
-			return (Gen<Object>) wrapped.apply(size);
-		}
-	}
 }

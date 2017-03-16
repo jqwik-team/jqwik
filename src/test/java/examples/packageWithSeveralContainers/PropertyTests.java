@@ -10,7 +10,17 @@ public class PropertyTests {
 	}
 
 	@Property
+	Boolean isAlsoTrue() {
+		return Boolean.TRUE;
+	}
+
+	@Property
 	boolean isFalse() {
 		return false;
+	}
+
+	@Property
+	String incompatibleReturnType() {
+		return "aString";
 	}
 }

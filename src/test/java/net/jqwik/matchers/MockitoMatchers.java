@@ -34,4 +34,8 @@ public class MockitoMatchers {
 		return isFailed(null);
 	}
 
+	public static TestExecutionResult isAborted() {
+		return argThat(new IsTestResultAbortion(null));
+	}
+
 }

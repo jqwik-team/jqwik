@@ -41,6 +41,18 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
+	void succeedingWithBoxedBoolean() throws NoSuchMethodException {
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "alsoSucceeding").build();
+
+		executeTests(descriptor);
+
+		InOrder events = Mockito.inOrder(eventRecorder);
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "alsoSucceeding"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "alsoSucceeding"), isSuccessful());
+		assertThat(executions).containsExactly("alsoSucceeding", "close");
+	}
+
+	@Example
 	void failing() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failing").build();
 
@@ -87,6 +99,18 @@ class SimplePropertiesExecutionTests {
 		assertThat(executions).isEmpty();
 	}
 
+	@Example
+	void methodWithIncompatibleReturnTypeIsAborted() throws NoSuchMethodException {
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "returnsString").build();
+
+		executeTests(descriptor);
+
+		InOrder events = Mockito.inOrder(eventRecorder);
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "returnsString"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "returnsString"), isAborted());
+		assertThat(executions).containsExactly("close");
+	}
+
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		executor.execute(propertyMethodDescriptor, eventRecorder, new AutoCloseableLifecycle());
 	}
@@ -99,6 +123,18 @@ class SimplePropertiesExecutionTests {
 		public boolean succeeding() {
 			executions.add("succeeding");
 			return true;
+		}
+
+		@Property
+		public Boolean alsoSucceeding() {
+			executions.add("alsoSucceeding");
+			return Boolean.TRUE;
+		}
+
+		@Property
+		public String returnsString() {
+			executions.add("returnsString");
+			return "aString";
 		}
 
 		@Property

@@ -19,7 +19,8 @@ class CheckedPropertiesExecutionTests {
 
 	@Example
 	void failWithSingleNumber() throws NoSuchMethodException {
-		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failWithANumber", int.class).build();
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failWithANumber", int.class)
+				.build();
 
 		executeTests(descriptor);
 
@@ -30,7 +31,8 @@ class CheckedPropertiesExecutionTests {
 
 	@Example
 	void succeedWithSingleNumber() throws NoSuchMethodException {
-		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithANumber", int.class).build();
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithANumber", int.class)
+				.build();
 
 		executeTests(descriptor);
 
@@ -39,6 +41,11 @@ class CheckedPropertiesExecutionTests {
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"), isSuccessful());
 	}
 
+	private void hallo(Object... args) {
+		for (Object o : args) {
+			System.out.println(o.toString());
+		}
+	}
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		executor.execute(propertyMethodDescriptor, eventRecorder, new AutoCloseableLifecycle());
