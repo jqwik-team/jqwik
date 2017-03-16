@@ -7,10 +7,12 @@ import org.junit.platform.engine.support.descriptor.ClassSource;
 public class ContainerClassDescriptor extends AbstractTestDescriptor {
 
 	private final Class<?> containerClass;
+	private final boolean isGroup;
 
-	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass) {
+	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
 		super(uniqueId, determineDisplayName(containerClass));
 		this.containerClass = containerClass;
+		this.isGroup = isGroup;
 		setSource(new ClassSource(containerClass));
 	}
 
@@ -30,5 +32,9 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 
 	public Class<?> getContainerClass() {
 		return containerClass;
+	}
+
+	public boolean isGroup() {
+		return isGroup;
 	}
 }

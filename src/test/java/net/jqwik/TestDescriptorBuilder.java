@@ -97,7 +97,7 @@ public class TestDescriptorBuilder {
 			return new JqwikEngineDescriptor(engineId());
 		if (element instanceof Class) {
 			Class<?> containerClass = (Class<?>) this.element;
-			return new ContainerClassDescriptor(uniqueIdForClassContainer(containerClass), containerClass);
+			return new ContainerClassDescriptor(uniqueIdForClassContainer(containerClass), containerClass, false);
 		}
 		if (element instanceof Method) {
 			Method targetMethod = (Method) this.element;

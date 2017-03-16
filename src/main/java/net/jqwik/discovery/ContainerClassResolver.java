@@ -1,16 +1,18 @@
 package net.jqwik.discovery;
 
+import net.jqwik.api.Group;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.discovery.predicates.IsPotentialTestContainer;
+import net.jqwik.support.JqwikReflectionSupport;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId;
+
 import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.discovery.predicates.IsPotentialTestContainer;
-import net.jqwik.support.JqwikReflectionSupport;
+import static org.junit.platform.commons.support.AnnotationSupport.isAnnotated;
 
 class ContainerClassResolver implements ElementResolver {
 
@@ -65,7 +67,8 @@ class ContainerClassResolver implements ElementResolver {
 	}
 
 	protected TestDescriptor resolveClass(Class<?> testClass, UniqueId uniqueId) {
-		return new ContainerClassDescriptor(uniqueId, testClass);
+		boolean isGroup = isAnnotated(testClass, Group.class);
+		return new ContainerClassDescriptor(uniqueId, testClass, isGroup);
 	}
 
 }

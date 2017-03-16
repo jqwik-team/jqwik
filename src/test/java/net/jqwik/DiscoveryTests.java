@@ -1,15 +1,17 @@
 package net.jqwik;
 
-import static net.jqwik.JqwikUniqueIdBuilder.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-
+import examples.packageWithErrors.ContainerWithOverloadedExamples;
+import examples.packageWithInheritance.AbstractContainer;
+import examples.packageWithInheritance.ContainerWithInheritance;
+import examples.packageWithInheritance.InterfaceTests;
+import examples.packageWithNestedContainers.TopLevelContainer;
 import examples.packageWithSeveralContainers.MixedTests;
-import net.jqwik.descriptor.*;
+import examples.packageWithSingleContainer.SimpleExampleTests;
+import net.jqwik.api.Example;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.JqwikEngineDescriptor;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.discovery.JqwikDiscoverer;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
@@ -17,12 +19,14 @@ import org.junit.platform.engine.discovery.ClassNameFilter;
 import org.junit.platform.engine.discovery.PackageNameFilter;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
-import examples.packageWithErrors.ContainerWithOverloadedExamples;
-import examples.packageWithInheritance.AbstractContainer;
-import examples.packageWithInheritance.ContainerWithInheritance;
-import examples.packageWithInheritance.InterfaceTests;
-import examples.packageWithSingleContainer.SimpleExampleTests;
-import net.jqwik.api.Example;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
+import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForClassContainer;
+import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForExampleMethod;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
 class DiscoveryTests {
 
@@ -76,6 +80,42 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(3);
 	}
+
+	@Example
+	void discoverNestedContainers() {
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainer.class)).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(9);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(5);
+	}
+
+	@Example
+	void discoverInnerContainerFromClass() {
+		LauncherDiscoveryRequest discoveryRequest =
+				request().selectors(selectClass(TopLevelContainer.InnerGroup.InnerInnerContainer.class)).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(4);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(1);
+	}
+
+	@Example
+	void discoverInnerContainerFromUniqueId() {
+		UniqueId uniqueId = uniqueIdForClassContainer(
+				TopLevelContainer.class,
+				TopLevelContainer.InnerGroup.class,
+				TopLevelContainer.InnerGroup.InnerInnerContainer.class
+		);
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(4);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(1);
+	}
+
 
 	@Example
 	void discoverClassWithInheritance() {

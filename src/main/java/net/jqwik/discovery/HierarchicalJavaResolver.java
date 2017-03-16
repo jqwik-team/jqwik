@@ -1,20 +1,22 @@
 package net.jqwik.discovery;
 
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toSet;
-import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
-import static org.junit.platform.commons.support.ReflectionSupport.findMethods;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.discovery.predicates.IsTestContainer;
+import net.jqwik.support.JqwikReflectionSupport;
+import org.junit.platform.commons.util.ReflectionUtils;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.support.JqwikReflectionSupport;
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toSet;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
+import static org.junit.platform.commons.support.ReflectionSupport.findMethods;
 
 class HierarchicalJavaResolver {
 
@@ -47,7 +49,10 @@ class HierarchicalJavaResolver {
 	}
 
 	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
-		return resolveForAllParents(testClass, Collections.singleton(engineDescriptor));
+		Set<TestDescriptor> potentialParents = testClass.isMemberClass() ?
+				resolveContainerWithParents(testClass.getDeclaringClass()) :
+				Collections.singleton(engineDescriptor);
+		return resolveForAllParents(testClass, potentialParents);
 	}
 
 	void resolveUniqueId(UniqueId uniqueId) {
@@ -99,9 +104,20 @@ class HierarchicalJavaResolver {
 
 	private void resolveChildren(TestDescriptor descriptor) {
 		if (descriptor instanceof ContainerClassDescriptor) {
-			Class<?> testClass = ((ContainerClassDescriptor) descriptor).getContainerClass();
-			resolveContainedMethods(descriptor, testClass);
+			ContainerClassDescriptor containerClassDescriptor = (ContainerClassDescriptor) descriptor;
+			Class<?> containerClass = containerClassDescriptor.getContainerClass();
+			resolveContainedMethods(descriptor, containerClass);
+
+			if (containerClassDescriptor.isGroup()) {
+				resolveContainedContainers(containerClassDescriptor, containerClass);
+			}
 		}
+	}
+
+	private void resolveContainedContainers(ContainerClassDescriptor containerClassDescriptor, Class<?> containerClass) {
+		Predicate<Class<?>> isContainer = new IsTestContainer();
+		List<Class<?>> containedContainersCandidates = ReflectionUtils.findNestedClasses(containerClass, isContainer);
+		containedContainersCandidates.forEach(nestedClass -> resolveContainerWithChildren(nestedClass, Collections.singleton(containerClassDescriptor)));
 	}
 
 	private void resolveContainedMethods(TestDescriptor containerDescriptor, Class<?> testClass) {
