@@ -1,5 +1,6 @@
 package examples.packageWithSeveralContainers;
 
+import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 
 public class PropertyTests {
@@ -17,6 +18,11 @@ public class PropertyTests {
 	@Property
 	boolean isFalse() {
 		return false;
+	}
+
+	@Property
+	boolean allNumbersAreZero(@ForAll int aNumber) {
+		return aNumber == 0;
 	}
 
 	@Property
