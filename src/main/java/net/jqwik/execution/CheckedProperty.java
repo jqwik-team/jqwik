@@ -60,7 +60,7 @@ public class CheckedProperty {
 	}
 
 	private CheckedFunction1<Object, Boolean> createCheckedFunction1() {
-		return p1 -> forAllFunction.apply(new Object[] {p1});
+		return p1 -> forAllFunction.apply(new Object[] { p1 });
 	}
 
 	private Checkable createProperty2() {
@@ -71,7 +71,7 @@ public class CheckedProperty {
 	}
 
 	private CheckedFunction2<Object, Object, Boolean> createCheckedFunction2() {
-		return (p1, p2) -> forAllFunction.apply(new Object[] {p1, p2});
+		return (p1, p2) -> forAllFunction.apply(new Object[] { p1, p2 });
 	}
 
 	private Checkable createProperty3() {
@@ -83,62 +83,16 @@ public class CheckedProperty {
 	}
 
 	private CheckedFunction3<Object, Object, Object, Boolean> createCheckedFunction3() {
-		return (p1, p2, p3) -> forAllFunction.apply(new Object[] {p1, p2, p3});
+		return (p1, p2, p3) -> forAllFunction.apply(new Object[] { p1, p2, p3 });
 	}
 
-
 	private GenericWrapper findArbitrary(Parameter parameter) {
-		//Todo: Find correct arbitrary for type
+		// Todo: Find correct arbitrary for type
 		return new GenericWrapper(Arbitrary.integer());
 	}
 
 	private Checkable erroneousCheckable() {
-		return (randomNumberGenerator, size, tries) -> new CheckResult() {
-			@Override
-			public boolean isSatisfied() {
-				return false;
-			}
-
-			@Override
-			public boolean isFalsified() {
-				return false;
-			}
-
-			@Override
-			public boolean isErroneous() {
-				return true;
-			}
-
-			@Override
-			public boolean isExhausted() {
-				return false;
-			}
-
-			@Override
-			public String propertyName() {
-				return propertyName;
-			}
-
-			@Override
-			public int count() {
-				return 0;
-			}
-
-			@Override
-			public Option<Tuple> sample() {
-				return null;
-			}
-
-			@Override
-			public Option<Error> error() {
-				return null;
-			}
-
-			@Override
-			public String toString() {
-				return "Too many @ForAll parameters. Max is 8.";
-			}
-		};
+		return (randomNumberGenerator, size, tries) -> new ErroneousCheckResult("Too many @ForAll parameters. Max is 8.");
 	}
 
 	private static class GenericWrapper implements Arbitrary<Object> {
@@ -153,5 +107,59 @@ public class CheckedProperty {
 		public Gen<Object> apply(int size) {
 			return (Gen<Object>) wrapped.apply(size);
 		}
+	}
+
+	private class ErroneousCheckResult implements CheckResult {
+		private final String errorMessage;
+
+		ErroneousCheckResult(String errorMessage) {
+			this.errorMessage = errorMessage;
+		}
+
+		@Override
+		public boolean isSatisfied() {
+			return false;
+		}
+
+		@Override
+		public boolean isFalsified() {
+			return false;
+		}
+
+		@Override
+		public boolean isErroneous() {
+			return true;
+		}
+
+		@Override
+		public boolean isExhausted() {
+			return false;
+		}
+
+		@Override
+		public String propertyName() {
+			return propertyName;
+		}
+
+		@Override
+		public int count() {
+			return 0;
+		}
+
+		@Override
+		public Option<Tuple> sample() {
+			return null;
+		}
+
+		@Override
+		public Option<Error> error() {
+			return null;
+		}
+
+		@Override
+		public String toString() {
+			return errorMessage;
+		}
+
 	}
 }
