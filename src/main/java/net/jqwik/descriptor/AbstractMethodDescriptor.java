@@ -26,7 +26,7 @@ public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor im
     	return targetMethod;
 	}
 
-	public Class gerContainerClass() {
+	public Class getContainerClass() {
     	return containerClass;
 	}
 

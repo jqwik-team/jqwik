@@ -6,7 +6,7 @@ public interface TestContext {
 
 	Method getTargetMethod();
 
-	Class gerContainerClass();
+	Class getContainerClass();
 
 	String getLabel();
 

@@ -2,29 +2,29 @@ package net.jqwik.execution;
 
 import static net.jqwik.TestDescriptorBuilder.forMethod;
 import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.jqwik.api.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import net.jqwik.api.Example;
-import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.api.ForAll;
+import net.jqwik.api.Property;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 
-class PropertiesExecutionTests {
+class SimplePropertiesExecutionTests {
 
 	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
 	private final PropertyExecutor executor = new PropertyExecutor();
 
 	private static List<String> executions = new ArrayList<>();
 
-	PropertiesExecutionTests() {
+	SimplePropertiesExecutionTests() {
 		executions.clear();
 	}
 
@@ -77,7 +77,7 @@ class PropertiesExecutionTests {
 	}
 
 	@Example
-	void methodWithParameterIsSkipped() throws NoSuchMethodException {
+	void methodWithUnboundParameterIsSkipped() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class).build();
 
 		executeTests(descriptor);
@@ -86,7 +86,6 @@ class PropertiesExecutionTests {
 		events.verify(eventRecorder).executionSkipped(isPropertyDescriptorFor(ContainerClass.class, "withParameter"), anyString());
 		assertThat(executions).isEmpty();
 	}
-
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		executor.execute(propertyMethodDescriptor, eventRecorder, new AutoCloseableLifecycle());

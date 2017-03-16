@@ -4,8 +4,6 @@ import net.jqwik.descriptor.PropertyMethodDescriptor;
 import org.hamcrest.Description;
 import org.mockito.ArgumentMatcher;
 
-import net.jqwik.descriptor.ExampleMethodDescriptor;
-
 class IsPropertyDescriptorFor extends ArgumentMatcher<PropertyMethodDescriptor> {
 
 	private final Class<?> containerClass;
@@ -21,7 +19,7 @@ class IsPropertyDescriptorFor extends ArgumentMatcher<PropertyMethodDescriptor> 
 		if (argument.getClass() != PropertyMethodDescriptor.class)
 			return false;
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) argument;
-		return descriptor.gerContainerClass().equals(containerClass) && descriptor.getTargetMethod().getName().equals(methodName);
+		return descriptor.getContainerClass().equals(containerClass) && descriptor.getTargetMethod().getName().equals(methodName);
 	}
 
 	@Override

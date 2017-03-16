@@ -19,7 +19,7 @@ class IsExampleDescriptorFor extends ArgumentMatcher<ExampleMethodDescriptor> {
 		if (argument.getClass() != ExampleMethodDescriptor.class)
 			return false;
 		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) argument;
-		return descriptor.gerContainerClass().equals(containerClass) && descriptor.getTargetMethod().getName().equals(methodName);
+		return descriptor.getContainerClass().equals(containerClass) && descriptor.getTargetMethod().getName().equals(methodName);
 	}
 
 	@Override
