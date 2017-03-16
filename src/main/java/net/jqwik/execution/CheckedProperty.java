@@ -5,13 +5,10 @@ import static org.junit.platform.engine.TestExecutionResult.*;
 import java.lang.reflect.Parameter;
 import java.util.List;
 
-import javaslang.CheckedFunction2;
-import javaslang.CheckedFunction3;
+import javaslang.*;
 import org.junit.platform.engine.TestExecutionResult;
 import org.opentest4j.AssertionFailedError;
 
-import javaslang.CheckedFunction1;
-import javaslang.Tuple;
 import javaslang.control.Option;
 import javaslang.test.*;
 
@@ -86,6 +83,19 @@ public class CheckedProperty {
 		return (p1, p2, p3) -> forAllFunction.apply(new Object[] { p1, p2, p3 });
 	}
 
+	private Checkable createProperty4() {
+		Arbitrary<Object> arbitrary1 = findArbitrary(forAllParameters.get(0));
+		Arbitrary<Object> arbitrary2 = findArbitrary(forAllParameters.get(1));
+		Arbitrary<Object> arbitrary3 = findArbitrary(forAllParameters.get(2));
+		Arbitrary<Object> arbitrary4 = findArbitrary(forAllParameters.get(3));
+		CheckedFunction4<Object, Object, Object, Object, Boolean> function = createCheckedFunction4();
+		return Property.def(propertyName).forAll(arbitrary1, arbitrary2, arbitrary3, arbitrary4).suchThat(function);
+	}
+
+	private CheckedFunction4<Object, Object, Object, Object, Boolean> createCheckedFunction4() {
+		return (p1, p2, p3, p4) -> forAllFunction.apply(new Object[] { p1, p2, p3 });
+	}
+
 	private GenericWrapper findArbitrary(Parameter parameter) {
 		// Todo: Find correct arbitrary for type
 		return new GenericWrapper(Arbitrary.integer());
@@ -93,20 +103,6 @@ public class CheckedProperty {
 
 	private Checkable erroneousCheckable() {
 		return (randomNumberGenerator, size, tries) -> new ErroneousCheckResult("Too many @ForAll parameters. Max is 8.");
-	}
-
-	private static class GenericWrapper implements Arbitrary<Object> {
-
-		private final Arbitrary<?> wrapped;
-
-		GenericWrapper(Arbitrary<?> wrapped) {
-			this.wrapped = wrapped;
-		}
-
-		@Override
-		public Gen<Object> apply(int size) {
-			return (Gen<Object>) wrapped.apply(size);
-		}
 	}
 
 	private class ErroneousCheckResult implements CheckResult {
@@ -163,3 +159,19 @@ public class CheckedProperty {
 
 	}
 }
+
+class GenericWrapper implements Arbitrary<Object> {
+
+	private final Arbitrary<?> wrapped;
+
+	GenericWrapper(Arbitrary<?> wrapped) {
+		this.wrapped = wrapped;
+	}
+
+	@Override
+	public Gen<Object> apply(int size) {
+		return (Gen<Object>) wrapped.apply(size);
+	}
+}
+
+
