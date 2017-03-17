@@ -68,18 +68,46 @@ public class PropertyMethodArbitraryProviderTests {
 	static class ProvidedArbitraries {
 
 		@Example
-		void stringArbitrary() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithProviders.class, "string", String.class);
-			Parameter parameter = getParameter(WithProviders.class, "string");
+		void unnamedStringGenerator() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithUnnamedGenerator.class, "string", String.class);
+			Parameter parameter = getParameter(WithUnnamedGenerator.class, "string");
 			Object actual = generateObject(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
 		}
 
-		private static class WithProviders {
+		private static class WithUnnamedGenerator {
 			@Property
 			boolean string(@ForAll String aString) { return true; }
 
 			@Generate
+			Arbitrary<String> aString() {
+				return Arbitrary.string(Gen.choose('a', 'z'));
+			}
+		}
+
+		@Example
+		void namedStringGenerator() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "string", String.class);
+			Parameter parameter = getParameter(WithNamedProviders.class, "string");
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(String.class);
+		}
+
+		@Example
+		void namedStringGeneratorNotFound() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "otherString", String.class);
+			Parameter parameter = getParameter(WithNamedProviders.class, "otherString");
+			assertThat(provider.forParameter(parameter)).isEmpty();
+		}
+
+		private static class WithNamedProviders {
+			@Property
+			boolean string(@ForAll("aString") String aString) { return true; }
+
+			@Property
+			boolean otherString(@ForAll("otherString") String aString) { return true; }
+
+			@Generate("aString")
 			Arbitrary<String> aString() {
 				return Arbitrary.string(Gen.choose('a', 'z'));
 			}

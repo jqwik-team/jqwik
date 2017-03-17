@@ -1,6 +1,7 @@
 package net.jqwik.execution.properties;
 
 import javaslang.test.Arbitrary;
+import net.jqwik.api.ForAll;
 import net.jqwik.api.Generate;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
@@ -26,17 +27,25 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Optional<Arbitrary<Object>> forParameter(Parameter parameter) {
+		ForAll forAllAnnotation = parameter.getDeclaredAnnotation(ForAll.class);
 		GenericType genericType = new GenericType(parameter.getParameterizedType());
-
-		Optional<Method> optionalCreator = findArbitraryCreator(genericType);
+		Optional<Method> optionalCreator = findArbitraryCreator(genericType, forAllAnnotation.value());
 		if (optionalCreator.isPresent())
 			return Optional.of((Arbitrary<Object>) invokeMethod(optionalCreator.get(), testInstance));
 		return Optional.ofNullable(defaultArbitrary(genericType));
 	}
 
-	private Optional<Method> findArbitraryCreator(GenericType genericType) {
+	private Optional<Method> findArbitraryCreator(GenericType genericType, String generatorName) {
 		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType), HierarchyTraversalMode.BOTTOM_UP);
-		return creators.stream().findFirst();
+		return creators
+				.stream()
+				.filter(method -> {
+					if (generatorName.isEmpty())
+						return true;
+					Generate generateAnnotation = method.getDeclaredAnnotation(Generate.class);
+					return generateAnnotation.value().equals(generatorName);
+				})
+				.findFirst();
 	}
 
 	private Predicate<Method> isCreatorForType(GenericType genericType) {
