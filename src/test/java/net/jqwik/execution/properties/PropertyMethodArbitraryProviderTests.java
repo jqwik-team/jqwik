@@ -1,82 +1,114 @@
 package net.jqwik.execution.properties;
 
-import net.jqwik.api.Example;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
+import javaslang.test.Arbitrary;
+import javaslang.test.Gen;
+import net.jqwik.api.*;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
-import org.assertj.core.api.Assertions;
+import net.jqwik.support.JqwikReflectionSupport;
 
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Random;
 
 import static net.jqwik.TestDescriptorBuilder.forMethod;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@Group
 public class PropertyMethodArbitraryProviderTests {
 
-	@Example
-	void defaults() throws NoSuchMethodException {
-		assertGenerated(Integer.class, "intParam", int.class);
-		assertGenerated(Integer.class, "integerParam", Integer.class);
+	@Group
+	static class Defaults {
+
+		@Example
+		void defaults() throws Exception {
+			assertGenerated(Integer.class, "intParam", int.class);
+			assertGenerated(Integer.class, "integerParam", Integer.class);
+		}
+
+		@Example
+		void noDefaultForString() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "stringParam", String.class);
+			Parameter parameter = getParameter(DefaultParams.class, "stringParam");
+			assertThat(provider.forParameter(parameter)).isEmpty();
+		}
+
+		private static Object assertGenerated(Class<?> expectedType, String methodName, Class... paramTypes) throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, methodName, paramTypes);
+			Parameter parameter = getParameter(DefaultParams.class, methodName);
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(expectedType);
+			return actual;
+		}
+
+		private static class DefaultParams {
+			@Property
+			boolean intParam(@ForAll int anInt) {
+				return true;
+			}
+
+			@Property
+			boolean integerParam(@ForAll Integer anInt) {
+				return true;
+			}
+
+			@Property
+			boolean stringParam(@ForAll String aString) {
+				return true;
+			}
+
+			@Property
+			boolean integerList(@ForAll List<Integer> aList) {
+				return true;
+			}
+		}
+
 	}
 
-	@Example
-	void noDefaultForString() throws NoSuchMethodException {
-		PropertyMethodArbitraryProvider provider = getProvider("stringParam", String.class);
-		Parameter parameter = getParameter("stringParam");
-		Assertions.assertThat(provider.forParameter(parameter)).isEmpty();
+	@Group
+	static class ProvidedArbitraries {
+
+		@Example
+		void stringArbitrary() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithProviders.class, "string", String.class);
+			Parameter parameter = getParameter(WithProviders.class, "string");
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(String.class);
+		}
+
+		private static class WithProviders {
+			@Property
+			boolean string(@ForAll String aString) { return true; }
+
+			@Generate
+			Arbitrary<String> aString() {
+				return Arbitrary.string(Gen.choose('a', 'z'));
+			}
+		}
+
 	}
 
 	//	@Example
-	void listOfKnownType() throws NoSuchMethodException {
-		List<Integer> actual = (List<Integer>) assertGenerated(List.class, "integerList", List.class);
+	//	void listOfKnownType() throws NoSuchMethodException {
+	//		List<Integer> actual = (List<Integer>) assertGenerated(List.class, "integerList", List.class);
+	//	}
 
-	}
 
-	private Object assertGenerated(Class<?> expectedType, String methodName, Class... paramTypes) throws NoSuchMethodException {
-		PropertyMethodArbitraryProvider provider = getProvider(methodName, paramTypes);
-		Parameter parameter = getParameter(methodName);
-		Object actual = generateObject(provider, parameter);
-		Assertions.assertThat(actual).isInstanceOf(expectedType);
-		return actual;
-	}
-
-	private Object generateObject(PropertyMethodArbitraryProvider provider, Parameter parameter) {
+	private static Object generateObject(PropertyMethodArbitraryProvider provider, Parameter parameter) {
 		return provider.forParameter(parameter).get().apply(1).apply(new Random());
 	}
 
-	private PropertyMethodArbitraryProvider getProvider(String methodName, Class<?>... paramterTypes) throws NoSuchMethodException {
-		PropertyMethodDescriptor descriptor = getDescriptor(methodName, paramterTypes);
-		return new PropertyMethodArbitraryProvider(descriptor, this);
+	private static PropertyMethodArbitraryProvider getProvider(Class container, String methodName,
+															   Class<?>... parameterTypes) throws NoSuchMethodException, IllegalAccessException, InstantiationException {
+		PropertyMethodDescriptor descriptor = getDescriptor(container, methodName, parameterTypes);
+		return new PropertyMethodArbitraryProvider(descriptor, JqwikReflectionSupport.newInstance(container));
 	}
 
-	private PropertyMethodDescriptor getDescriptor(String methodName, Class... parameterTypes) throws NoSuchMethodException {
-		return (PropertyMethodDescriptor) forMethod(PropertyParams.class, methodName, parameterTypes).build();
+	private static PropertyMethodDescriptor getDescriptor(Class container, String methodName, Class... parameterTypes) throws NoSuchMethodException {
+		return (PropertyMethodDescriptor) forMethod(container, methodName, parameterTypes).build();
 	}
 
-	private Parameter getParameter(String methodName) {
-		return ParameterHelper.getParametersFor(PropertyParams.class, methodName).get(0);
+	private static Parameter getParameter(Class container, String methodName) {
+		return ParameterHelper.getParametersFor(container, methodName).get(0);
 	}
 
-	private static class PropertyParams {
-		@Property
-		boolean intParam(@ForAll int anInt) {
-			return true;
-		}
-
-		@Property
-		boolean integerParam(@ForAll Integer anInt) {
-			return true;
-		}
-
-		@Property
-		boolean stringParam(@ForAll String aString) {
-			return true;
-		}
-
-		@Property
-		boolean integerList(@ForAll List<Integer> aList) {
-			return true;
-		}
-	}
 }

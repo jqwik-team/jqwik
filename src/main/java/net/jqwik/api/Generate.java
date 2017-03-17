@@ -4,10 +4,10 @@ import org.junit.platform.commons.annotation.Testable;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.PARAMETER})
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable
-public @interface ForAll {
+public @interface Generate {
 	String value() default "";
 }
