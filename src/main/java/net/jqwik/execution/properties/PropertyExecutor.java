@@ -1,4 +1,4 @@
-package net.jqwik.execution;
+package net.jqwik.execution.properties;
 
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 import static org.junit.platform.engine.TestExecutionResult.*;
@@ -17,6 +17,7 @@ import net.jqwik.JqwikException;
 import net.jqwik.api.ForAll;
 import net.jqwik.descriptor.AbstractMethodDescriptor;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.execution.AbstractMethodExecutor;
 import net.jqwik.support.JqwikReflectionSupport;
 
 public class PropertyExecutor extends AbstractMethodExecutor {
@@ -51,12 +52,13 @@ public class PropertyExecutor extends AbstractMethodExecutor {
 
 	private TestExecutionResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 
+		String propertyName = propertyMethodDescriptor.getLabel();
 		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
-		CheckedProperty property = new CheckedProperty(propertyMethodDescriptor.getLabel(), forAllFunction,
-				extractForAllParameters(propertyMethodDescriptor.getTargetMethod()));
+		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
+		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
 
+		CheckedProperty property = new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider);
 		return property.check();
-
 	}
 
 	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

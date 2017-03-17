@@ -2,11 +2,10 @@ package net.jqwik.execution;
 
 import java.util.logging.Logger;
 
+import net.jqwik.execution.properties.PropertyExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.TestExecutionResult;
-import org.junit.platform.engine.support.hierarchical.SingleTestExecutor;
 
 import net.jqwik.api.ExampleLifecycle;
 import net.jqwik.api.PropertyLifecycle;

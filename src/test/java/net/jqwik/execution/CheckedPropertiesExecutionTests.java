@@ -3,6 +3,7 @@ package net.jqwik.execution;
 import static net.jqwik.TestDescriptorBuilder.forMethod;
 import static net.jqwik.matchers.MockitoMatchers.*;
 
+import net.jqwik.execution.properties.PropertyExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.mockito.InOrder;
 import org.mockito.Mockito;

@@ -8,12 +8,12 @@ import static org.mockito.Matchers.anyString;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.jqwik.execution.properties.PropertyExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import net.jqwik.api.Example;
-import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 

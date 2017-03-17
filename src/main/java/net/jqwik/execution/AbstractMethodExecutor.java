@@ -13,7 +13,7 @@ import sun.reflect.annotation.AnnotationSupport;
 
 import java.util.Arrays;
 
-abstract class AbstractMethodExecutor {
+abstract public class AbstractMethodExecutor {
 
 	public void execute(AbstractMethodDescriptor methodDescriptor, EngineExecutionListener listener, TestLifecycle lifecycle) {
 		if (hasUnspecifiedParameters(methodDescriptor)) {

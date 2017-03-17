@@ -1,16 +1,20 @@
-package net.jqwik.execution;
+package net.jqwik.execution.properties;
 
-import javaslang.*;
-import javaslang.control.Option;
-import javaslang.test.*;
-import org.junit.platform.engine.TestExecutionResult;
-import org.opentest4j.AssertionFailedError;
+import static org.junit.platform.engine.TestExecutionResult.*;
 
 import java.lang.reflect.Parameter;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.platform.engine.TestExecutionResult.failed;
-import static org.junit.platform.engine.TestExecutionResult.successful;
+import org.junit.platform.engine.TestExecutionResult;
+import org.opentest4j.AssertionFailedError;
+
+import javaslang.*;
+import javaslang.control.Option;
+import javaslang.test.Arbitrary;
+import javaslang.test.CheckResult;
+import javaslang.test.Checkable;
+import javaslang.test.Property;
 
 /**
  * Wraps javaslang's property checking
@@ -20,26 +24,35 @@ public class CheckedProperty {
 	private final String propertyName;
 	private final CheckedFunction forAllFunction;
 	private final List<Parameter> forAllParameters;
+	private final ArbitraryProvider arbitraryProvider;
 
-	public CheckedProperty(String propertyName, CheckedFunction forAllFunction, List<Parameter> forAllParameters) {
+	public CheckedProperty(String propertyName, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
+			ArbitraryProvider arbitraryProvider) {
 		this.propertyName = propertyName;
 		this.forAllFunction = forAllFunction;
 		this.forAllParameters = forAllParameters;
+		this.arbitraryProvider = arbitraryProvider;
 	}
 
 	public TestExecutionResult check() {
-		CheckResult result = createJavaSlangProperty().check();
-		if (result.isSatisfied())
-			return successful();
-		else {
-			String propertyFailedMessage = String.format("Property [%s] failed: %s", propertyName, result.toString());
-			return failed(new AssertionFailedError(propertyFailedMessage));
+		try {
+			CheckResult result = createJavaSlangProperty().check();
+			if (result.isSatisfied())
+				return successful();
+			else {
+				String propertyFailedMessage = String.format("Property [%s] failed: %s", propertyName, result.toString());
+				return failed(new AssertionFailedError(propertyFailedMessage));
+			}
+		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
+			return aborted(cannotFindArbitraryException);
 		}
 	}
 
-	private GenericWrapper findArbitrary(Parameter parameter) {
-		// Todo: Find correct arbitrary for type
-		return new GenericWrapper(Arbitrary.integer());
+	private Arbitrary<Object> findArbitrary(Parameter parameter) {
+		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
+		if (!arbitraryOptional.isPresent())
+			throw new CannotFindArbitraryException(parameter);
+		return arbitraryOptional.get();
 	}
 
 	private Checkable createJavaSlangProperty() {
@@ -236,19 +249,3 @@ public class CheckedProperty {
 
 	}
 }
-
-class GenericWrapper implements Arbitrary<Object> {
-
-	private final Arbitrary<?> wrapped;
-
-	GenericWrapper(Arbitrary<?> wrapped) {
-		this.wrapped = wrapped;
-	}
-
-	@Override
-	public Gen<Object> apply(int size) {
-		return (Gen<Object>) wrapped.apply(size);
-	}
-}
-
-
