@@ -1,19 +1,19 @@
 package net.jqwik.discovery.predicates;
 
-import net.jqwik.api.Group;
-import org.junit.platform.commons.support.HierarchyTraversalMode;
-import org.junit.platform.commons.support.ReflectionSupport;
-
 import java.lang.reflect.Method;
 import java.util.function.Predicate;
 
-import static org.junit.platform.commons.support.AnnotationSupport.isAnnotated;
+import org.junit.platform.commons.support.HierarchyTraversalMode;
+import org.junit.platform.commons.support.ReflectionSupport;
+
+import net.jqwik.support.JqwikReflectionSupport;
 
 public class IsTestContainer implements Predicate<Class<?>> {
 
 	private static final IsExampleMethod isExampleMethod = new IsExampleMethod();
 	private static final IsPropertyMethod isPropertyMethod = new IsPropertyMethod();
 	private static final Predicate<Method> isAnyTestMethod = isExampleMethod.or(isPropertyMethod);
+	private static final IsContainerAGroup isGroup = new IsContainerAGroup();
 
 	private static final IsPotentialTestContainer isPotentialTestContainer = new IsPotentialTestContainer();
 
@@ -22,15 +22,15 @@ public class IsTestContainer implements Predicate<Class<?>> {
 		if (!isPotentialTestContainer.test(candidate)) {
 			return false;
 		}
-		return hasTests(candidate) || isGroup(candidate);
+		return hasTests(candidate) || hasGroups(candidate);
 	}
 
 	private boolean hasTests(Class<?> candidate) {
 		return !ReflectionSupport.findMethods(candidate, isAnyTestMethod, HierarchyTraversalMode.TOP_DOWN).isEmpty();
 	}
 
-	private boolean isGroup(Class<?> candidate) {
-		return isAnnotated(candidate, Group.class);
+	private boolean hasGroups(Class<?> candidate) {
+		return !JqwikReflectionSupport.findNestedClasses(candidate, isGroup).isEmpty();
 	}
 
 }

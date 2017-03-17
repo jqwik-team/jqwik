@@ -2,7 +2,7 @@ package examples.packageWithNestedContainers;
 
 import net.jqwik.api.Example;
 
-public class TopLevelContainer {
+public class TopLevelContainerWithNoGroups {
 
 	@Example
 	void example1() {

@@ -1,6 +1,6 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.discovery.predicates.IsContainerInGroup;
+import net.jqwik.discovery.predicates.IsContainerAGroup;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.ClassSource;
@@ -10,7 +10,7 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	private final Class<?> containerClass;
 	private final boolean isGroup;
 
-	private final static IsContainerInGroup isInGroup = new IsContainerInGroup();
+	private final static IsContainerAGroup isInGroup = new IsContainerAGroup();
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
 		super(uniqueId, determineDisplayName(containerClass));

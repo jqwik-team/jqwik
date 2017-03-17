@@ -4,15 +4,16 @@ import net.jqwik.api.Group;
 import net.jqwik.api.Example;
 import net.jqwik.api.Property;
 
-@Group
-public class TopLevelGroup {
+public class TopLevelContainerWithGroups {
 
+	@Group
 	static class InnerContainer {
 		@Example
 		void innerExample() {
 		}
 	}
 
+	@Group
 	static class AnotherInnerContainer {
 		@Property
 		boolean innerProperty() {
@@ -23,7 +24,8 @@ public class TopLevelGroup {
 	@Group
 	public static class InnerGroup {
 
-		public static class InnerInnerContainer {
+		@Group
+		public static class InnerInnerGroup {
 			@Property
 			boolean innerInnerProperty() {
 				return true;

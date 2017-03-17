@@ -18,8 +18,8 @@ import examples.packageWithErrors.ContainerWithOverloadedExamples;
 import examples.packageWithInheritance.AbstractContainer;
 import examples.packageWithInheritance.ContainerWithInheritance;
 import examples.packageWithInheritance.InterfaceTests;
-import examples.packageWithNestedContainers.TopLevelContainer;
-import examples.packageWithNestedContainers.TopLevelGroup;
+import examples.packageWithNestedContainers.TopLevelContainerWithNoGroups;
+import examples.packageWithNestedContainers.TopLevelContainerWithGroups;
 import examples.packageWithSeveralContainers.MixedTests;
 import examples.packageWithSingleContainer.SimpleExampleTests;
 import net.jqwik.api.Example;
@@ -84,7 +84,7 @@ class DiscoveryTests {
 
 	@Example
 	void discoverContainersWithinGroup() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelGroup.class)).build();
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithGroups.class)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(9);
@@ -93,7 +93,7 @@ class DiscoveryTests {
 
 	@Example
 	void discoverNestedContainerNotInGroup() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainer.NestedContainer.class)).build();
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithNoGroups.NestedContainer.class)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
@@ -102,7 +102,7 @@ class DiscoveryTests {
 
 	@Example
 	void discoverInnerContainerFromClass() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelGroup.InnerGroup.InnerInnerContainer.class))
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class))
 				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
@@ -113,8 +113,8 @@ class DiscoveryTests {
 
 	@Example
 	void discoverInnerContainerFromUniqueId() {
-		UniqueId uniqueId = uniqueIdForClassContainer(TopLevelGroup.class, TopLevelGroup.InnerGroup.class,
-				TopLevelGroup.InnerGroup.InnerInnerContainer.class);
+		UniqueId uniqueId = uniqueIdForClassContainer(TopLevelContainerWithGroups.class, TopLevelContainerWithGroups.InnerGroup.class,
+				TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class);
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);

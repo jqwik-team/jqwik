@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 
 import net.jqwik.api.Group;
 
-public class IsContainerInGroup implements Predicate<Class<?>> {
+public class IsContainerAGroup implements Predicate<Class<?>> {
 
 
 	@Override
@@ -14,7 +14,7 @@ public class IsContainerInGroup implements Predicate<Class<?>> {
 		if (!candidate.isMemberClass()) {
 			return false;
 		}
-		return isGroup(candidate.getDeclaringClass());
+		return isGroup(candidate) && candidate.getDeclaringClass() != null;
 	}
 
 	private boolean isGroup(Class<?> candidate) {

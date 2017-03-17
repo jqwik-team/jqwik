@@ -9,8 +9,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class JqwikReflectionSupport {
 
@@ -32,6 +34,10 @@ public class JqwikReflectionSupport {
 
 	public static Object invokeMethod(Method method, Object target, Object... args) {
 		return ReflectionUtils.invokeMethod(method, target, args);
+	}
+
+	public static List<Class<?>> findNestedClasses(Class<?> clazz, Predicate<Class<?>> predicate) {
+		return ReflectionUtils.findNestedClasses(clazz, predicate);
 	}
 
 	public static Set<Path> getAllClasspathRootDirectories() {
