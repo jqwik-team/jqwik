@@ -6,11 +6,11 @@ import static org.junit.platform.engine.TestExecutionResult.*;
 import org.junit.platform.engine.TestExecutionResult;
 import org.opentest4j.TestAbortedException;
 
-public class SingleMethodExecutor {
+public class SafeExecutor {
 
 	public interface Executable {
 
-		void execute() throws TestAbortedException, Throwable;
+		void execute() throws Throwable;
 
 	}
 
