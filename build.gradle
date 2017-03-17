@@ -58,7 +58,6 @@ dependencies {
 
 	// Only necessary to enable IntelliJ support
 	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT")
-	// testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-SNAPSHOT")
 }
 
 task wrapper(type: Wrapper) {

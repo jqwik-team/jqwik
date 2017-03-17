@@ -14,8 +14,20 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Optional<Arbitrary<Object>> forParameter(Parameter parameter) {
-		// Todo: Find correct arbitrary for type
-		return Optional.of(new GenericArbitrary(Arbitrary.integer()));
+//		switch (parameter.getType()) {
+//			case Integer.class:
+//			case int.class:
+//				return
+//		}
+		return Optional.ofNullable(defaultArbitrary(parameter.getType()));
 
+	}
+
+	private Arbitrary<Object> defaultArbitrary(Class<?> type) {
+		if (type == Integer.class)
+			return new GenericArbitrary(Arbitrary.integer());
+		if (type == int.class)
+			return new GenericArbitrary(Arbitrary.integer());
+		return null;
 	}
 }

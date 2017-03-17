@@ -1,5 +1,6 @@
 package net.jqwik.execution.properties;
 
+import static net.jqwik.execution.properties.ParameterHelper.getParametersFor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.TestExecutionResult.Status.*;
 
@@ -70,15 +71,7 @@ class CheckedPropertyTests {
 	}
 
 	private List<Parameter> getParametersForMethod(String methodName) {
-		return getParameters(getMethod(methodName));
-	}
-
-	private List<Parameter> getParameters(Method method) {
-		return Arrays.stream(method.getParameters()).collect(Collectors.toList());
-	}
-
-	private Method getMethod(String methodName) {
-		return Arrays.stream(Examples.class.getMethods()).filter(m -> m.getName().equals(methodName)).findFirst().get();
+		return getParametersFor(Examples.class, methodName);
 	}
 
 	private static class Examples {
