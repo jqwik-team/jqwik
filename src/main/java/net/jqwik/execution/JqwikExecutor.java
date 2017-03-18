@@ -8,7 +8,7 @@ import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 
 import net.jqwik.api.ExampleLifecycle;
-import net.jqwik.api.PropertyLifecycle;
+import net.jqwik.api.properties.PropertyLifecycle;
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.descriptor.JqwikEngineDescriptor;

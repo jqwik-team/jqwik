@@ -1,7 +1,7 @@
 package examples.packageWithErrors;
 
 import net.jqwik.api.Example;
-import net.jqwik.api.Property;
+import net.jqwik.api.properties.Property;
 
 public class ContainerWithOverloadedExamples extends AbstractContainerForOverloadedExamples{
 

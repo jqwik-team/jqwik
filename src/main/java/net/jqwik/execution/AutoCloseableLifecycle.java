@@ -1,6 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.*;
+import net.jqwik.api.properties.PropertyLifecycle;
 
 public class AutoCloseableLifecycle implements ExampleLifecycle, PropertyLifecycle {
 	@Override

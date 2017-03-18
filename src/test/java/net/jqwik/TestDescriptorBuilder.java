@@ -1,7 +1,7 @@
 package net.jqwik;
 
 import net.jqwik.api.Example;
-import net.jqwik.api.Property;
+import net.jqwik.api.properties.Property;
 import net.jqwik.descriptor.ContainerClassDescriptor;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.descriptor.JqwikEngineDescriptor;

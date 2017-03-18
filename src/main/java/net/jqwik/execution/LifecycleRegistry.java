@@ -1,7 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.ExampleLifecycle;
-import net.jqwik.api.PropertyLifecycle;
+import net.jqwik.api.properties.PropertyLifecycle;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 

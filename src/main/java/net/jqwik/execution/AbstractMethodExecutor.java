@@ -1,7 +1,6 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.ForAll;
-import org.junit.platform.commons.util.StringUtils;
+import net.jqwik.api.properties.ForAll;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.TestExecutionResult;
 
@@ -9,7 +8,6 @@ import net.jqwik.JqwikException;
 import net.jqwik.api.TestLifecycle;
 import net.jqwik.descriptor.AbstractMethodDescriptor;
 import net.jqwik.support.JqwikReflectionSupport;
-import sun.reflect.annotation.AnnotationSupport;
 
 import java.util.Arrays;
 

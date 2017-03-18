@@ -4,18 +4,15 @@ import static net.jqwik.execution.properties.ParameterHelper.getParametersFor;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.TestExecutionResult.Status.*;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.junit.platform.engine.TestExecutionResult;
 
 import javaslang.test.Arbitrary;
 import net.jqwik.api.Example;
-import net.jqwik.api.ForAll;
+import net.jqwik.api.properties.ForAll;
 
 class CheckedPropertyTests {
 

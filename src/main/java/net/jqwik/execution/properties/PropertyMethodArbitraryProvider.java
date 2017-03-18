@@ -1,8 +1,8 @@
 package net.jqwik.execution.properties;
 
 import javaslang.test.Arbitrary;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Generate;
+import net.jqwik.api.properties.ForAll;
+import net.jqwik.api.properties.Generate;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;

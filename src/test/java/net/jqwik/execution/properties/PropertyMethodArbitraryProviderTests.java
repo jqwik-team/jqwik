@@ -3,6 +3,10 @@ package net.jqwik.execution.properties;
 import javaslang.test.Arbitrary;
 import javaslang.test.Gen;
 import net.jqwik.api.*;
+import net.jqwik.api.properties.ForAll;
+import net.jqwik.api.properties.Generate;
+import net.jqwik.api.properties.Generator;
+import net.jqwik.api.properties.Property;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.support.JqwikReflectionSupport;
 
@@ -77,7 +81,9 @@ public class PropertyMethodArbitraryProviderTests {
 
 		private static class WithUnnamedGenerator {
 			@Property
-			boolean string(@ForAll String aString) { return true; }
+			boolean string(@ForAll String aString) {
+				return true;
+			}
 
 			@Generate
 			Arbitrary<String> aString() {
@@ -110,45 +116,51 @@ public class PropertyMethodArbitraryProviderTests {
 
 		private static class WithNamedProviders {
 			@Property
-			boolean string(@ForAll("aString") String aString) { return true; }
+			boolean string(@ForAll("aString") String aString) {
+				return true;
+			}
 
 			@Generate("aString")
 			Arbitrary<String> aString() {
-				return Arbitrary.string(Gen.choose('a', 'z'));
+				return Generator.string('a', 'z');
 			}
 
 			@Property
-			boolean otherString(@ForAll("otherString") String aString) { return true; }
+			boolean otherString(@ForAll("otherString") String aString) {
+				return true;
+			}
 
 			@Property
-			boolean stringByMethodName(@ForAll("byMethodName") String aString) { return true; }
+			boolean stringByMethodName(@ForAll("byMethodName") String aString) {
+				return true;
+			}
 
 			@Generate()
 			Arbitrary<String> byMethodName() {
-				return Arbitrary.string(Gen.choose('x', 'y'));
+				return Generator.string('x', 'y');
 			}
 
 		}
 
 	}
 
-	//	@Example
-	//	void listOfKnownType() throws NoSuchMethodException {
-	//		List<Integer> actual = (List<Integer>) assertGenerated(List.class, "integerList", List.class);
-	//	}
-
+	// @Example
+	// void listOfKnownType() throws NoSuchMethodException {
+	// List<Integer> actual = (List<Integer>) assertGenerated(List.class, "integerList", List.class);
+	// }
 
 	private static Object generateObject(PropertyMethodArbitraryProvider provider, Parameter parameter) {
 		return provider.forParameter(parameter).get().apply(1).apply(new Random());
 	}
 
-	private static PropertyMethodArbitraryProvider getProvider(Class container, String methodName,
-															   Class<?>... parameterTypes) throws NoSuchMethodException, IllegalAccessException, InstantiationException {
+	private static PropertyMethodArbitraryProvider getProvider(Class container, String methodName, Class<?>... parameterTypes)
+			throws NoSuchMethodException, IllegalAccessException, InstantiationException {
 		PropertyMethodDescriptor descriptor = getDescriptor(container, methodName, parameterTypes);
 		return new PropertyMethodArbitraryProvider(descriptor, JqwikReflectionSupport.newInstance(container));
 	}
 
-	private static PropertyMethodDescriptor getDescriptor(Class container, String methodName, Class... parameterTypes) throws NoSuchMethodException {
+	private static PropertyMethodDescriptor getDescriptor(Class container, String methodName, Class... parameterTypes)
+			throws NoSuchMethodException {
 		return (PropertyMethodDescriptor) forMethod(container, methodName, parameterTypes).build();
 	}
 

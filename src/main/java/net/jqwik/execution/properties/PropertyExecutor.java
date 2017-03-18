@@ -14,7 +14,7 @@ import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
 
 import net.jqwik.JqwikException;
-import net.jqwik.api.ForAll;
+import net.jqwik.api.properties.ForAll;
 import net.jqwik.descriptor.AbstractMethodDescriptor;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.execution.AbstractMethodExecutor;

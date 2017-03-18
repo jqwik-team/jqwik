@@ -14,7 +14,7 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import net.jqwik.api.Example;
-import net.jqwik.api.Property;
+import net.jqwik.api.properties.Property;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 
 class SimplePropertiesExecutionTests {

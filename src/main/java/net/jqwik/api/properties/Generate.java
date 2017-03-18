@@ -1,4 +1,4 @@
-package net.jqwik.api;
+package net.jqwik.api.properties;
 
 import org.junit.platform.commons.annotation.Testable;
 
