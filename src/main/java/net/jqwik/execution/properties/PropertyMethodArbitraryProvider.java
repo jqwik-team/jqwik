@@ -35,15 +35,19 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		return Optional.ofNullable(defaultArbitrary(genericType));
 	}
 
-	private Optional<Method> findArbitraryCreator(GenericType genericType, String generatorName) {
+	private Optional<Method> findArbitraryCreator(GenericType genericType, String generatorToFind) {
 		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType), HierarchyTraversalMode.BOTTOM_UP);
 		return creators
 				.stream()
-				.filter(method -> {
-					if (generatorName.isEmpty())
+				.filter(generatorMethod -> {
+					Generate generateAnnotation = generatorMethod.getDeclaredAnnotation(Generate.class);
+					String generatorName = generateAnnotation.value();
+					if (generatorToFind.isEmpty() && generatorName.isEmpty()) {
 						return true;
-					Generate generateAnnotation = method.getDeclaredAnnotation(Generate.class);
-					return generateAnnotation.value().equals(generatorName);
+					}
+					if (generatorName.isEmpty())
+						generatorName = generatorMethod.getName();
+					return generatorName.equals(generatorToFind);
 				})
 				.findFirst();
 	}

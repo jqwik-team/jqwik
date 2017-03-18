@@ -86,9 +86,17 @@ public class PropertyMethodArbitraryProviderTests {
 		}
 
 		@Example
-		void namedStringGenerator() throws Exception {
+		void findStringGeneratorByName() throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "string", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "string");
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(String.class);
+		}
+
+		@Example
+		void findStringGeneratorByMethodName() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "stringByMethodName", String.class);
+			Parameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
 			Object actual = generateObject(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
 		}
@@ -104,13 +112,22 @@ public class PropertyMethodArbitraryProviderTests {
 			@Property
 			boolean string(@ForAll("aString") String aString) { return true; }
 
-			@Property
-			boolean otherString(@ForAll("otherString") String aString) { return true; }
-
 			@Generate("aString")
 			Arbitrary<String> aString() {
 				return Arbitrary.string(Gen.choose('a', 'z'));
 			}
+
+			@Property
+			boolean otherString(@ForAll("otherString") String aString) { return true; }
+
+			@Property
+			boolean stringByMethodName(@ForAll("byMethodName") String aString) { return true; }
+
+			@Generate()
+			Arbitrary<String> byMethodName() {
+				return Arbitrary.string(Gen.choose('x', 'y'));
+			}
+
 		}
 
 	}
