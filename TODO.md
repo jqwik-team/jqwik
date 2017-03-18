@@ -6,6 +6,7 @@
 
 ### Properties
 
+- Tests for size and tries parameters
 - Handle error if more than one generator applies
 - Default Generators for
   - Enums
