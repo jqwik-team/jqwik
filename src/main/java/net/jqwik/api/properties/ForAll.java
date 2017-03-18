@@ -10,4 +10,5 @@ import java.lang.annotation.*;
 @Testable
 public @interface ForAll {
 	String value() default "";
+	int size() default 0;
 }

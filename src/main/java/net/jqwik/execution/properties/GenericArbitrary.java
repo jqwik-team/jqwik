@@ -6,14 +6,17 @@ import javaslang.test.Gen;
 class GenericArbitrary implements Arbitrary<Object> {
 
 	private final Arbitrary<?> wrapped;
+	private final int sizePerArbitrary;
 
-	GenericArbitrary(Arbitrary<?> wrapped) {
+	GenericArbitrary(Arbitrary<?> wrapped, int sizePerArbitrary) {
 		this.wrapped = wrapped;
+		this.sizePerArbitrary = sizePerArbitrary;
 	}
 
 	@Override
 	public Gen<Object> apply(int size) {
-		return (Gen<Object>) wrapped.apply(size);
+		int effectiveSize = sizePerArbitrary == 0 ? size :sizePerArbitrary;
+		return (Gen<Object>) wrapped.apply(effectiveSize);
 	}
 
 }

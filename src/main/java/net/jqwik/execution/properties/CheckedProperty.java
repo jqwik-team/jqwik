@@ -25,18 +25,20 @@ public class CheckedProperty {
 	private final CheckedFunction forAllFunction;
 	private final List<Parameter> forAllParameters;
 	private final ArbitraryProvider arbitraryProvider;
+	private final int tries;
 
 	public CheckedProperty(String propertyName, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
-			ArbitraryProvider arbitraryProvider) {
+						   ArbitraryProvider arbitraryProvider, int tries) {
 		this.propertyName = propertyName;
 		this.forAllFunction = forAllFunction;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryProvider = arbitraryProvider;
+		this.tries = tries;
 	}
 
 	public TestExecutionResult check() {
 		try {
-			CheckResult result = createJavaSlangProperty().check();
+			CheckResult result = createJavaSlangProperty().check(Checkable.DEFAULT_SIZE, tries);
 			if (result.isSatisfied())
 				return successful();
 			else {

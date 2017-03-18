@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import net.jqwik.api.properties.Property;
 import org.junit.platform.engine.TestExecutionResult;
 import org.opentest4j.AssertionFailedError;
 import org.opentest4j.TestAbortedException;
@@ -57,7 +58,8 @@ public class PropertyExecutor extends AbstractMethodExecutor {
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
 		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
 
-		CheckedProperty property = new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider);
+		int tries = propertyMethodDescriptor.getTargetMethod().getDeclaredAnnotation(Property.class).tries();
+		CheckedProperty property = new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries);
 		return property.check();
 	}
 

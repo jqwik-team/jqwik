@@ -8,6 +8,7 @@ import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Optional;
 
+import javaslang.test.Checkable;
 import org.junit.platform.engine.TestExecutionResult;
 
 import javaslang.test.Arbitrary;
@@ -47,8 +48,8 @@ class CheckedPropertyTests {
 				"stringProp",
 				params -> false, //never gets theree
 				parameters,
-				p -> Optional.empty()
-		);
+				p -> Optional.empty(),
+				100);
 
 		TestExecutionResult check = checkedProperty.check();
 		assertThat(check.getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
@@ -61,8 +62,8 @@ class CheckedPropertyTests {
 				methodName,
 				checkedFunction,
 				getParametersForMethod(methodName),
-				p -> Optional.of(new GenericArbitrary(Arbitrary.integer()))
-		);
+				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)),
+				100);
 		TestExecutionResult check = checkedProperty.check();
 		assertThat(check.getStatus()).isEqualTo(successful);
 	}

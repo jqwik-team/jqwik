@@ -1,6 +1,7 @@
 package net.jqwik.execution.properties;
 
 import javaslang.test.Arbitrary;
+import javaslang.test.Checkable;
 import net.jqwik.api.properties.ForAll;
 import net.jqwik.api.properties.Generate;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
@@ -30,9 +31,12 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		ForAll forAllAnnotation = parameter.getDeclaredAnnotation(ForAll.class);
 		GenericType genericType = new GenericType(parameter.getParameterizedType());
 		Optional<Method> optionalCreator = findArbitraryCreator(genericType, forAllAnnotation.value());
-		if (optionalCreator.isPresent())
-			return Optional.of((Arbitrary<Object>) invokeMethod(optionalCreator.get(), testInstance));
-		return Optional.ofNullable(defaultArbitrary(genericType));
+		if (optionalCreator.isPresent()) {
+			Arbitrary<?> arbitrary = (Arbitrary<?>) invokeMethod(optionalCreator.get(), testInstance);
+			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary, forAllAnnotation.size());
+			return Optional.of(genericArbitrary);
+		}
+		return Optional.ofNullable(defaultArbitrary(genericType, forAllAnnotation.size()));
 	}
 
 	private Optional<Method> findArbitraryCreator(GenericType genericType, String generatorToFind) {
@@ -65,11 +69,11 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		};
 	}
 
-	private Arbitrary<Object> defaultArbitrary(GenericType forAllParameter) {
+	private Arbitrary<Object> defaultArbitrary(GenericType forAllParameter, int size) {
 		if (forAllParameter.getRawType() == Integer.class)
-			return new GenericArbitrary(Arbitrary.integer());
+			return new GenericArbitrary(Arbitrary.integer(), size);
 		if (forAllParameter.getRawType() == int.class)
-			return new GenericArbitrary(Arbitrary.integer());
+			return new GenericArbitrary(Arbitrary.integer(), size);
 		return null;
 	}
 }
