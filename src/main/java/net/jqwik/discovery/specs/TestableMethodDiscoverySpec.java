@@ -1,4 +1,6 @@
-package net.jqwik.discovery.predicates;
+package net.jqwik.discovery.specs;
+
+import net.jqwik.discovery.predicates.IsDiscoverableTestMethod;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;

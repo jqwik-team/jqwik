@@ -1,12 +1,14 @@
 package net.jqwik.discovery.predicates;
 
+import java.util.function.Predicate;
+
 import static net.jqwik.support.JqwikReflectionSupport.isAbstract;
 import static net.jqwik.support.JqwikReflectionSupport.isPrivate;
 
-public class PotentialContainerDiscoverySpec implements DiscoverySpec<Class<?>> {
+public class IsPotentialTestContainer implements Predicate<Class<?>> {
 
 	@Override
-	public boolean shouldBeDiscovered(Class<?> candidate) {
+	public boolean test(Class<?> candidate) {
 		if (isAbstract(candidate))
 			return false;
 		if (isPrivate(candidate))
@@ -18,13 +20,4 @@ public class PotentialContainerDiscoverySpec implements DiscoverySpec<Class<?>> 
 		return true;
 	}
 
-	@Override
-	public boolean butSkippedOnExecution(Class<?> candidate) {
-		return false;
-	}
-
-	@Override
-	public String skippingReason(Class<?> candidate) {
-		return null;
-	}
 }

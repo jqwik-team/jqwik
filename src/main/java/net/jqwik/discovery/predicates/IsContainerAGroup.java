@@ -1,20 +1,18 @@
 package net.jqwik.discovery.predicates;
 
-import static org.junit.platform.commons.support.AnnotationSupport.isAnnotated;
+import net.jqwik.api.Group;
 
 import java.util.function.Predicate;
 
-import net.jqwik.api.Group;
+import static org.junit.platform.commons.support.AnnotationSupport.isAnnotated;
 
 public class IsContainerAGroup implements Predicate<Class<?>> {
 
+	private final static Predicate<Class<?>> isTopLevelClass = new IsTopLevelClass();
 
 	@Override
 	public boolean test(Class<?> candidate) {
-		if (!candidate.isMemberClass()) {
-			return false;
-		}
-		return isGroup(candidate) && candidate.getDeclaringClass() != null;
+		return isGroup(candidate) && !isTopLevelClass.test(candidate);
 	}
 
 	private boolean isGroup(Class<?> candidate) {

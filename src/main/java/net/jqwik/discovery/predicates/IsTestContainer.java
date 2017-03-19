@@ -1,5 +1,7 @@
 package net.jqwik.discovery.predicates;
 
+import net.jqwik.discovery.specs.ExampleDiscoverySpec;
+import net.jqwik.discovery.specs.PropertyDiscoverySpec;
 import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -11,13 +13,13 @@ public class IsTestContainer implements Predicate<Class<?>> {
 
 	private static final ExampleDiscoverySpec exampleSpec = new ExampleDiscoverySpec();
 	private static final PropertyDiscoverySpec propertySpec = new PropertyDiscoverySpec();
-	private static final PotentialContainerDiscoverySpec potentialContainerSpec = new PotentialContainerDiscoverySpec();
 
-	private static final IsContainerAGroup isGroup = new IsContainerAGroup();
+	private static final Predicate<Class<?>> isPotentialTestContainer = new IsPotentialTestContainer();
+	private static final Predicate<Class<?>> isGroup = new IsContainerAGroup();
 
 	@Override
 	public boolean test(Class<?> candidate) {
-		if (!potentialContainerSpec.shouldBeDiscovered(candidate)) {
+		if (!isPotentialTestContainer.test(candidate)) {
 			return false;
 		}
 		return hasTests(candidate) || hasGroups(candidate);

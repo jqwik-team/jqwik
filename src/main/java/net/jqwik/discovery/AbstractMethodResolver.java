@@ -2,7 +2,7 @@ package net.jqwik.discovery;
 
 import net.jqwik.descriptor.SkipExecutionDecorator;
 import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.discovery.predicates.TestableMethodDiscoverySpec;
+import net.jqwik.discovery.specs.TestableMethodDiscoverySpec;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 

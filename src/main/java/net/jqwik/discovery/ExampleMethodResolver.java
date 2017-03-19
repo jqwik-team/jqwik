@@ -1,7 +1,7 @@
 package net.jqwik.discovery;
 
 import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.discovery.predicates.ExampleDiscoverySpec;
+import net.jqwik.discovery.specs.ExampleDiscoverySpec;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 

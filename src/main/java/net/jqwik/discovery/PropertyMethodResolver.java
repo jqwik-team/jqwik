@@ -1,7 +1,7 @@
 package net.jqwik.discovery;
 
 import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.discovery.predicates.PropertyDiscoverySpec;
+import net.jqwik.discovery.specs.PropertyDiscoverySpec;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 

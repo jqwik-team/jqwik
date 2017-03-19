@@ -1,6 +1,5 @@
 ### General
 
-- Use DiscoverySpec for container discovery
 - Switch to non static nested classes for @Group
 - Allow Fixture parameters to examples and properties
 

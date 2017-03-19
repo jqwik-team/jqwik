@@ -1,4 +1,4 @@
-package net.jqwik.discovery.predicates;
+package net.jqwik.discovery.specs;
 
 import net.jqwik.api.Example;
 

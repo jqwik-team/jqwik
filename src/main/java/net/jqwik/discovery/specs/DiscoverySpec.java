@@ -1,4 +1,4 @@
-package net.jqwik.discovery.predicates;
+package net.jqwik.discovery.specs;
 
 import java.lang.reflect.AnnotatedElement;
 
