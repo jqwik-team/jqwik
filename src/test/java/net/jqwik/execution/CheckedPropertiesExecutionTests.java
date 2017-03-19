@@ -1,17 +1,16 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.forMethod;
-import static net.jqwik.matchers.MockitoMatchers.*;
-
+import net.jqwik.api.Example;
+import net.jqwik.api.properties.ForAll;
+import net.jqwik.api.properties.Property;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.execution.properties.PropertyExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import net.jqwik.api.Example;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import static net.jqwik.TestDescriptorBuilder.forMethod;
+import static net.jqwik.matchers.MockitoMatchers.*;
 
 class CheckedPropertiesExecutionTests {
 
@@ -61,8 +60,8 @@ class CheckedPropertiesExecutionTests {
 	private static class ContainerClass {
 
 		@Property
-		public boolean failWithANumber(@ForAll int aNumber) {
-			return aNumber != 0;
+		public boolean failWithANumber(@ForAll int anyNumber) {
+			return anyNumber == 0;
 		}
 
 		@Property
