@@ -1,29 +1,27 @@
 package net.jqwik.execution.properties;
 
-import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
-import static org.junit.platform.engine.TestExecutionResult.*;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import net.jqwik.api.properties.Property;
-import org.junit.platform.engine.TestExecutionResult;
-import org.opentest4j.AssertionFailedError;
-import org.opentest4j.TestAbortedException;
-
 import net.jqwik.JqwikException;
 import net.jqwik.api.properties.ForAll;
 import net.jqwik.descriptor.AbstractMethodDescriptor;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.execution.AbstractMethodExecutor;
 import net.jqwik.support.JqwikReflectionSupport;
+import org.junit.platform.engine.TestExecutionResult;
+import org.opentest4j.AssertionFailedError;
+import org.opentest4j.TestAbortedException;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
+import static org.junit.platform.engine.TestExecutionResult.*;
 
 public class PropertyExecutor extends AbstractMethodExecutor {
 
 	private static List<Class<?>> COMPATIBLE_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
+
+	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
 
 	@Override
 	protected TestExecutionResult execute(AbstractMethodDescriptor methodDescriptor, Object testInstance) {
@@ -52,20 +50,8 @@ public class PropertyExecutor extends AbstractMethodExecutor {
 	}
 
 	private TestExecutionResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-
-		String propertyName = propertyMethodDescriptor.getLabel();
-		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
-		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
-		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
-
-		int tries = propertyMethodDescriptor.getTargetMethod().getDeclaredAnnotation(Property.class).tries();
-		CheckedProperty property = new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries);
+		CheckedProperty property = checkedPropertyFactory.fromDescriptor(propertyMethodDescriptor, testInstance);
 		return property.check();
-	}
-
-	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		// Todo: Bind all non @ForAll params first
-		return params -> (boolean) JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, params);
 	}
 
 	private TestExecutionResult executePropertyWithoutForAllParameters(PropertyMethodDescriptor methodDescriptor, Object testInstance) {
@@ -80,12 +66,7 @@ public class PropertyExecutor extends AbstractMethodExecutor {
 	}
 
 	private boolean hasForAllParameters(Method targetMethod) {
-		return extractForAllParameters(targetMethod).size() > 0;
-	}
-
-	private List<Parameter> extractForAllParameters(Method targetMethod) {
-		return Arrays.stream(targetMethod.getParameters()).filter(parameter -> parameter.isAnnotationPresent(ForAll.class))
-				.collect(Collectors.toList());
+		return Arrays.stream(targetMethod.getParameters()).anyMatch(parameter -> parameter.isAnnotationPresent(ForAll.class));
 	}
 
 }

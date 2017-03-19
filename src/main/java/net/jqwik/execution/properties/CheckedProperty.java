@@ -1,20 +1,19 @@
 package net.jqwik.execution.properties;
 
-import static org.junit.platform.engine.TestExecutionResult.*;
-
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.platform.engine.TestExecutionResult;
-import org.opentest4j.AssertionFailedError;
-
 import javaslang.*;
 import javaslang.control.Option;
 import javaslang.test.Arbitrary;
 import javaslang.test.CheckResult;
 import javaslang.test.Checkable;
 import javaslang.test.Property;
+import org.junit.platform.engine.TestExecutionResult;
+import org.opentest4j.AssertionFailedError;
+
+import java.lang.reflect.Parameter;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.platform.engine.TestExecutionResult.*;
 
 /**
  * Wraps javaslang's property checking
@@ -195,6 +194,10 @@ public class CheckedProperty {
 
 	private Checkable erroneousCheckable() {
 		return (randomNumberGenerator, size, tries) -> new ErroneousCheckResult("Too many @ForAll parameters. Max is 8.");
+	}
+
+	public int getTries() {
+		return tries;
 	}
 
 	private class ErroneousCheckResult implements CheckResult {

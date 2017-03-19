@@ -1,21 +1,46 @@
 package net.jqwik.execution.properties;
 
-import static net.jqwik.execution.properties.ParameterHelper.getParametersFor;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.platform.engine.TestExecutionResult.Status.*;
+import javaslang.test.Arbitrary;
+import javaslang.test.Checkable;
+import net.jqwik.TestDescriptorBuilder;
+import net.jqwik.api.Example;
+import net.jqwik.api.Group;
+import net.jqwik.api.properties.ForAll;
+import net.jqwik.api.properties.Property;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
+import org.junit.platform.engine.TestExecutionResult;
 
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Optional;
 
-import javaslang.test.Checkable;
-import org.junit.platform.engine.TestExecutionResult;
-
-import javaslang.test.Arbitrary;
-import net.jqwik.api.Example;
-import net.jqwik.api.properties.ForAll;
+import static net.jqwik.execution.properties.ParameterHelper.getParametersFor;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.platform.engine.TestExecutionResult.Status.FAILED;
+import static org.junit.platform.engine.TestExecutionResult.Status.SUCCESSFUL;
 
 class CheckedPropertyTests {
+
+	@Group
+	static class CheckedPropertyCreation {
+		@Example
+		void createCheckedPropertyWithoutTriesParameter() throws NoSuchMethodException {
+			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(Examples.class, "propertyWithoutTries", int.class).build();
+			CheckedPropertyFactory factory = new CheckedPropertyFactory();
+			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
+
+			assertThat(checkedProperty.getTries()).isEqualTo(Checkable.DEFAULT_TRIES);
+		}
+
+		@Example
+		void createCheckedPropertyWithTriesParameter() throws NoSuchMethodException {
+			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(Examples.class, "propertyWith42Tries", int.class).build();
+			CheckedPropertyFactory factory = new CheckedPropertyFactory();
+			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
+
+			assertThat(checkedProperty.getTries()).isEqualTo(42);
+		}
+	}
 
 	@Example
 	void intParametersSuccess() {
@@ -73,6 +98,16 @@ class CheckedPropertyTests {
 	}
 
 	private static class Examples {
+
+		@Property
+		public boolean propertyWithoutTries(@ForAll int anyNumber) {
+			return true;
+		}
+
+		@Property(tries = 42)
+		public boolean propertyWith42Tries(@ForAll int anyNumber) {
+			return true;
+		}
 
 		public boolean stringProp(@ForAll String aString) {
 			return true;
