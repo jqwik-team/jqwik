@@ -1,9 +1,11 @@
 package net.jqwik.discovery;
 
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toSet;
-import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
-import static org.junit.platform.commons.support.ReflectionSupport.findMethods;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.discovery.predicates.IsContainerAGroup;
+import net.jqwik.discovery.predicates.IsDiscoverableTestMethod;
+import net.jqwik.support.JqwikReflectionSupport;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
@@ -11,22 +13,20 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.discovery.predicates.IsContainerAGroup;
-import net.jqwik.discovery.predicates.IsTestContainer;
-import net.jqwik.support.JqwikReflectionSupport;
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toSet;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
+import static org.junit.platform.commons.support.ReflectionSupport.findMethods;
 
 class HierarchicalJavaResolver {
 
 	private static final Logger LOG = Logger.getLogger(HierarchicalJavaResolver.class.getName());
 
+	private final static IsContainerAGroup isContainerAGroup = new IsContainerAGroup();
+	private final static IsDiscoverableTestMethod isDiscoverableTestMethod = new IsDiscoverableTestMethod();
+
 	private final TestDescriptor engineDescriptor;
 	private final Set<ElementResolver> resolvers;
-
-	private final IsContainerAGroup isContainerAGroup = new IsContainerAGroup();
 
 	HierarchicalJavaResolver(TestDescriptor engineDescriptor, Set<ElementResolver> resolvers) {
 		this.engineDescriptor = engineDescriptor;
@@ -122,7 +122,7 @@ class HierarchicalJavaResolver {
 	}
 
 	private void resolveContainedMethods(TestDescriptor containerDescriptor, Class<?> testClass) {
-		List<Method> testMethodCandidates = findMethods(testClass, method -> !JqwikReflectionSupport.isPrivate(method), TOP_DOWN);
+		List<Method> testMethodCandidates = findMethods(testClass, isDiscoverableTestMethod, TOP_DOWN);
 		testMethodCandidates.forEach(method -> resolve(method, containerDescriptor));
 	}
 
