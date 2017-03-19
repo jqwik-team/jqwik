@@ -1,17 +1,16 @@
 package net.jqwik.discovery;
 
-import java.lang.reflect.Method;
-
 import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.discovery.predicates.ExampleDiscoverySpec;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 
-import net.jqwik.discovery.predicates.IsExampleMethod;
+import java.lang.reflect.Method;
 
 class ExampleMethodResolver extends AbstractMethodResolver {
 
 	ExampleMethodResolver() {
-		super(new IsExampleMethod());
+		super(new ExampleDiscoverySpec());
 	}
 
 	@Override

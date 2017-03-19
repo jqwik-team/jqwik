@@ -1,18 +1,14 @@
 package net.jqwik.execution;
 
-import java.util.logging.Logger;
-
+import net.jqwik.api.ExampleLifecycle;
+import net.jqwik.api.properties.PropertyLifecycle;
+import net.jqwik.descriptor.*;
 import net.jqwik.execution.properties.PropertyExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 
-import net.jqwik.api.ExampleLifecycle;
-import net.jqwik.api.properties.PropertyLifecycle;
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.descriptor.JqwikEngineDescriptor;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import java.util.logging.Logger;
 
 public class JqwikExecutor {
 
@@ -49,7 +45,15 @@ public class JqwikExecutor {
 			executeProperty((PropertyMethodDescriptor) descriptor, listener);
 			return;
 		}
+		if (descriptor.getClass().equals(SkipExecutionDecorator.class)) {
+			executeSkipping((SkipExecutionDecorator) descriptor, listener);
+			return;
+		}
 		LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor));
+	}
+
+	private void executeSkipping(SkipExecutionDecorator descriptor, EngineExecutionListener listener) {
+		listener.executionSkipped(descriptor, descriptor.getSkippingReason());
 	}
 
 	private void executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener) {

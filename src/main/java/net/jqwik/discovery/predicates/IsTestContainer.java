@@ -1,18 +1,16 @@
 package net.jqwik.discovery.predicates;
 
-import java.lang.reflect.Method;
-import java.util.function.Predicate;
-
+import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
 
-import net.jqwik.support.JqwikReflectionSupport;
+import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
 public class IsTestContainer implements Predicate<Class<?>> {
 
-	private static final IsExampleMethod isExampleMethod = new IsExampleMethod();
-	private static final IsPropertyMethod isPropertyMethod = new IsPropertyMethod();
-	private static final Predicate<Method> isAnyTestMethod = isExampleMethod.or(isPropertyMethod);
+	private static final ExampleDiscoverySpec exampleSpec = new ExampleDiscoverySpec();
+	private static final PropertyDiscoverySpec propertySpec = new PropertyDiscoverySpec();
 	private static final IsContainerAGroup isGroup = new IsContainerAGroup();
 
 	private static final IsPotentialTestContainer isPotentialTestContainer = new IsPotentialTestContainer();
@@ -26,7 +24,8 @@ public class IsTestContainer implements Predicate<Class<?>> {
 	}
 
 	private boolean hasTests(Class<?> candidate) {
-		return !ReflectionSupport.findMethods(candidate, isAnyTestMethod, HierarchyTraversalMode.TOP_DOWN).isEmpty();
+		Predicate<Method> hasATestMethod = method -> exampleSpec.discover(method) || propertySpec.discover(method);
+		return !ReflectionSupport.findMethods(candidate, hasATestMethod, HierarchyTraversalMode.TOP_DOWN).isEmpty();
 	}
 
 	private boolean hasGroups(Class<?> candidate) {

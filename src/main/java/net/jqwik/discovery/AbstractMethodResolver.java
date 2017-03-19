@@ -1,23 +1,23 @@
 package net.jqwik.discovery;
 
+import net.jqwik.descriptor.SkipExecutionDecorator;
+import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.discovery.predicates.TestableMethodDiscoverySpec;
+import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.UniqueId;
+
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-
-import net.jqwik.descriptor.ContainerClassDescriptor;
 
 abstract class AbstractMethodResolver implements ElementResolver {
 
-	private final Predicate<Method> methodPredicate;
+	private final TestableMethodDiscoverySpec methodSpec;
 
-	AbstractMethodResolver(Predicate<Method> methodPredicate) {
-		this.methodPredicate = methodPredicate;
+	AbstractMethodResolver(TestableMethodDiscoverySpec methodSpec) {
+		this.methodSpec = methodSpec;
 	}
 
 	@Override
@@ -55,7 +55,7 @@ abstract class AbstractMethodResolver implements ElementResolver {
 	}
 
 	private boolean isRelevantMethod(Method candidate) {
-		return methodPredicate.test(candidate);
+		return methodSpec.discover(candidate);
 	}
 
 	private Optional<Method> findMethod(UniqueId.Segment segment, ContainerClassDescriptor parent) {
@@ -65,7 +65,12 @@ abstract class AbstractMethodResolver implements ElementResolver {
 	private TestDescriptor createTestDescriptor(TestDescriptor parent, Method method) {
 		UniqueId uniqueId = createUniqueId(method, parent);
 		Class<?> testClass = ((ContainerClassDescriptor) parent).getContainerClass();
-		return createTestDescriptor(uniqueId, testClass, method);
+		TestDescriptor newDescriptor = createTestDescriptor(uniqueId, testClass, method);
+		if (methodSpec.butSkip(method)) {
+			return new SkipExecutionDecorator(newDescriptor, methodSpec.skippingReason(method));
+		} else {
+			return newDescriptor;
+		}
 	}
 
 	protected abstract String getSegmentType();
