@@ -5,17 +5,21 @@ import net.jqwik.api.properties.ForAll;
 import net.jqwik.api.properties.Property;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.execution.properties.PropertyExecutor;
+import org.assertj.core.api.Assertions;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import static net.jqwik.TestDescriptorBuilder.forMethod;
 import static net.jqwik.matchers.MockitoMatchers.*;
+import static org.mockito.Mockito.verify;
 
 class CheckedPropertiesExecutionTests {
 
 	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
 	private final PropertyExecutor executor = new PropertyExecutor();
+
+	private static int countTries = 0;
 
 	@Example
 	void failWithSingleNumber() throws NoSuchMethodException {
@@ -42,7 +46,7 @@ class CheckedPropertiesExecutionTests {
 	}
 
 	@Example
-	void succeedWithThreeNumber() throws NoSuchMethodException {
+	void succeedWithThreeNumbers() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithThreeNumbers", int.class, int.class, int.class)
 				.build();
 
@@ -51,6 +55,17 @@ class CheckedPropertiesExecutionTests {
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeedWithThreeNumbers"));
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithThreeNumbers"), isSuccessful());
+	}
+
+	@Example
+	void triesParameterIsRespected() throws NoSuchMethodException {
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedIn11Tries", int.class)
+				.build();
+
+		countTries = 0;
+		executeTests(descriptor);
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedIn11Tries"), isSuccessful());
+		Assertions.assertThat(countTries).isEqualTo(11);
 	}
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
@@ -72,6 +87,12 @@ class CheckedPropertiesExecutionTests {
 		@Property
 		public boolean succeedWithThreeNumbers(@ForAll int n1, @ForAll int n2, @ForAll int n3) {
 			return n1 + n2 + n3 == n3 + n2 + n1;
+		}
+
+		@Property(tries = 11)
+		public boolean succeedIn11Tries(@ForAll int aNumber) {
+			countTries++;
+			return true;
 		}
 	}
 
