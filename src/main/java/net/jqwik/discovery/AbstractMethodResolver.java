@@ -55,7 +55,7 @@ abstract class AbstractMethodResolver implements ElementResolver {
 	}
 
 	private boolean isRelevantMethod(Method candidate) {
-		return methodSpec.discover(candidate);
+		return methodSpec.shouldBeDiscovered(candidate);
 	}
 
 	private Optional<Method> findMethod(UniqueId.Segment segment, ContainerClassDescriptor parent) {
@@ -66,7 +66,7 @@ abstract class AbstractMethodResolver implements ElementResolver {
 		UniqueId uniqueId = createUniqueId(method, parent);
 		Class<?> testClass = ((ContainerClassDescriptor) parent).getContainerClass();
 		TestDescriptor newDescriptor = createTestDescriptor(uniqueId, testClass, method);
-		if (methodSpec.butSkip(method)) {
+		if (methodSpec.butSkippedOnExecution(method)) {
 			return new SkipExecutionDecorator(newDescriptor, methodSpec.skippingReason(method));
 		} else {
 			return newDescriptor;

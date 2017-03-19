@@ -1,8 +1,10 @@
 package net.jqwik.discovery;
 
-import net.jqwik.api.Group;
 import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.discovery.predicates.IsPotentialTestContainer;
+import net.jqwik.descriptor.SkipExecutionDecorator;
+import net.jqwik.discovery.predicates.GroupDiscoverySpec;
+import net.jqwik.discovery.predicates.PotentialContainerDiscoverySpec;
+import net.jqwik.discovery.predicates.TopLevelContainerDiscoverySpec;
 import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
@@ -12,11 +14,11 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.platform.commons.support.AnnotationSupport.isAnnotated;
-
 class ContainerClassResolver implements ElementResolver {
 
-	private static final IsPotentialTestContainer isPotentialTestContainer = new IsPotentialTestContainer();
+	private static final PotentialContainerDiscoverySpec potentialContainerSpec = new PotentialContainerDiscoverySpec();
+	private static final TopLevelContainerDiscoverySpec topLevelContainerSpec = new TopLevelContainerDiscoverySpec();
+	private static final GroupDiscoverySpec groupSpec = new GroupDiscoverySpec();
 
 	@Override
 	public Set<TestDescriptor> resolveElement(AnnotatedElement element, TestDescriptor parent) {
@@ -59,7 +61,7 @@ class ContainerClassResolver implements ElementResolver {
 	}
 
 	protected boolean isPotentialCandidate(Class<?> element) {
-		return isPotentialTestContainer.test(element);
+		return potentialContainerSpec.shouldBeDiscovered(element);
 	}
 
 	protected UniqueId createUniqueId(Class<?> testClass, TestDescriptor parent) {
@@ -67,8 +69,15 @@ class ContainerClassResolver implements ElementResolver {
 	}
 
 	protected TestDescriptor resolveClass(Class<?> testClass, UniqueId uniqueId) {
-		boolean isGroup = isAnnotated(testClass, Group.class);
-		return new ContainerClassDescriptor(uniqueId, testClass, isGroup);
+		boolean isGroup = groupSpec.shouldBeDiscovered(testClass);
+		ContainerClassDescriptor newContainerDescriptor = new ContainerClassDescriptor(uniqueId, testClass, isGroup);
+		if (isGroup && groupSpec.butSkippedOnExecution(testClass)) {
+			return new SkipExecutionDecorator(newContainerDescriptor, groupSpec.skippingReason(testClass));
+		}
+		if (!isGroup && topLevelContainerSpec.butSkippedOnExecution(testClass)) {
+			return new SkipExecutionDecorator(newContainerDescriptor, topLevelContainerSpec.skippingReason(testClass));
+		}
+		return newContainerDescriptor;
 	}
 
 }

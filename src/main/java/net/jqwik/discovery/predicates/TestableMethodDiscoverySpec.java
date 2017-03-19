@@ -17,12 +17,12 @@ abstract public class TestableMethodDiscoverySpec implements DiscoverySpec<Metho
 	}
 
 	@Override
-	public boolean discover(Method candidate) {
+	public boolean shouldBeDiscovered(Method candidate) {
 		return isDiscoverableTestMethod.test(candidate) && isAnnotated(candidate, annotationType);
 	}
 
 	@Override
-	public boolean butSkip(Method candidate) {
+	public boolean butSkippedOnExecution(Method candidate) {
 		return isStatic(candidate);
 	}
 
