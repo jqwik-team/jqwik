@@ -3,16 +3,18 @@ package net.jqwik.support;
 import net.jqwik.discovery.predicates.IsTopLevelClass;
 import org.junit.platform.commons.util.ReflectionUtils;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class JqwikReflectionSupport {
+
+	private final static IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
 
 	public static Optional<Class<?>> loadClass(String name) {
 		return ReflectionUtils.loadClass(name);
@@ -38,12 +40,47 @@ public class JqwikReflectionSupport {
 		return ReflectionUtils.findNestedClasses(clazz, predicate);
 	}
 
+	public static Stream<Object> streamAllInstances(Object inner) {
+		return addInstances(inner, new ArrayList<>()).stream();
+	}
+
+	private static List<Object> addInstances(Object inner, List<Object> instances) {
+		instances.add(inner);
+		Optional<Object> outer = getOuterInstance(inner);
+		outer.ifPresent(o -> addInstances(o, instances));
+		return instances;
+	}
+
+	private static Optional<Object> getOuterInstance(Object inner) {
+		// This is risky since it depends on the name of the field which is nowhere guaranteed
+		// but has been stable so far in all JDKs
+
+		// @formatter:off
+		return Arrays.stream(inner.getClass().getDeclaredFields())
+				.filter(field -> field.getName().startsWith("this$"))
+				.findFirst()
+				.map(field -> {
+					try {
+						return makeAccessible(field).get(inner);
+					}
+					catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+						return Optional.empty();
+					}
+				});
+		// @formatter:on
+	}
+
+	private static <T extends AccessibleObject> T makeAccessible(T object) {
+		if (!object.isAccessible()) {
+			object.setAccessible(true);
+		}
+		return object;
+	}
+
 	/**
 	 * Create instance of a class that can potentially be a non static inner class
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
-		IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
-
 		if (isTopLevelClass.test(clazz) || JqwikReflectionSupport.isStatic(clazz))
 			return JqwikReflectionSupport.newInstance(clazz);
 		else  {
