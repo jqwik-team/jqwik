@@ -1,21 +1,22 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Matchers.anyString;
+import experiments.Group;
+import net.jqwik.api.Example;
+import net.jqwik.descriptor.ExampleMethodDescriptor;
+import org.junit.platform.engine.EngineExecutionListener;
+import org.junit.platform.engine.TestDescriptor;
+import org.mockito.InOrder;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.execution.AutoCloseableLifecycle;
-import net.jqwik.execution.ExampleExecutor;
-import org.junit.platform.engine.EngineExecutionListener;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
-
-import net.jqwik.api.Example;
+import static net.jqwik.TestDescriptorBuilder.forClass;
+import static net.jqwik.TestDescriptorBuilder.forMethod;
+import static net.jqwik.matchers.MockitoMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.mockito.Matchers.anyString;
 
 class ExamplesExecutionTests {
 
@@ -38,6 +39,24 @@ class ExamplesExecutionTests {
 		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "succeeding"));
 		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "succeeding"), isSuccessful());
 		assertThat(executions).containsExactly("succeeding", "close");
+	}
+
+	@Example
+	void succeedingInInnerGroup() throws NoSuchMethodException {
+		TestDescriptor classDescriptor = forClass(ContainerClass.class).with(
+			forClass(ContainerClass.Inner.class, "innerSucceeding")
+		).build();
+
+		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) classDescriptor
+				.getChildren().stream().findFirst().get().
+						getChildren().stream().findFirst().get();
+
+		executeTests(descriptor);
+
+		InOrder events = Mockito.inOrder(eventRecorder);
+		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.Inner.class, "innerSucceeding"));
+		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.Inner.class, "innerSucceeding"), isSuccessful());
+		assertThat(executions).containsExactly("inner succeeding", "inner close", "close");
 	}
 
 	@Example
@@ -130,6 +149,20 @@ class ExamplesExecutionTests {
 			executions.add("close");
 			if (closeShouldFail)
 				throw new RuntimeException("failing close");
+		}
+
+		@Group
+		public class Inner implements AutoCloseable {
+
+			@Example
+			void innerSucceeding() {
+				executions.add("inner succeeding");
+			}
+
+			@Override
+			public void close() throws Exception {
+				executions.add("inner close");
+			}
 		}
 	}
 

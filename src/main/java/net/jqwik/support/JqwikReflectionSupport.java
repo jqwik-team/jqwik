@@ -1,14 +1,12 @@
 package net.jqwik.support;
 
-import org.junit.platform.commons.util.ExceptionUtils;
-import org.junit.platform.commons.util.Preconditions;
+import net.jqwik.discovery.predicates.IsTopLevelClass;
 import org.junit.platform.commons.util.ReflectionUtils;
 
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,6 +37,22 @@ public class JqwikReflectionSupport {
 	public static List<Class<?>> findNestedClasses(Class<?> clazz, Predicate<Class<?>> predicate) {
 		return ReflectionUtils.findNestedClasses(clazz, predicate);
 	}
+
+	/**
+	 * Create instance of a class that can potentially be a non static inner class
+	 */
+	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
+		IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
+
+		if (isTopLevelClass.test(clazz) || JqwikReflectionSupport.isStatic(clazz))
+			return JqwikReflectionSupport.newInstance(clazz);
+		else  {
+			Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
+			return JqwikReflectionSupport.newInstance(clazz, parentInstance);
+		}
+	}
+
+
 
 	public static Set<Path> getAllClasspathRootDirectories() {
 		return ReflectionUtils.getAllClasspathRootDirectories();

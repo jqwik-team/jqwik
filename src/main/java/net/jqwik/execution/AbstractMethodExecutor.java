@@ -1,13 +1,12 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.properties.ForAll;
-import org.junit.platform.engine.EngineExecutionListener;
-import org.junit.platform.engine.TestExecutionResult;
-
 import net.jqwik.JqwikException;
 import net.jqwik.api.TestLifecycle;
+import net.jqwik.api.properties.ForAll;
 import net.jqwik.descriptor.AbstractMethodDescriptor;
 import net.jqwik.support.JqwikReflectionSupport;
+import org.junit.platform.engine.EngineExecutionListener;
+import org.junit.platform.engine.TestExecutionResult;
 
 import java.util.Arrays;
 
@@ -31,13 +30,17 @@ abstract public class AbstractMethodExecutor {
 	private TestExecutionResult executeExample(AbstractMethodDescriptor methodDescriptor, TestLifecycle lifecycle) {
 		Object testInstance = null;
 		try {
-			testInstance = JqwikReflectionSupport.newInstance(methodDescriptor.getContainerClass());
+			testInstance = createTestInstance(methodDescriptor);
 		} catch (Throwable throwable) {
 			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
 					methodDescriptor.getContainerClass());
-			return TestExecutionResult.aborted(new JqwikException(message, throwable));
+			return TestExecutionResult.failed(new JqwikException(message, throwable));
 		}
 		return invokeExampleMethod(methodDescriptor, testInstance, lifecycle);
+	}
+
+	private Object createTestInstance(AbstractMethodDescriptor methodDescriptor) {
+		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
 	}
 
 	private TestExecutionResult invokeExampleMethod(AbstractMethodDescriptor methodDescriptor, Object testInstance,

@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PropertyMethodArbitraryProviderTests {
 
 	@Group
-	static class Defaults {
+	class Defaults {
 
 		@Example
 		void defaults() throws Exception {
@@ -36,7 +36,7 @@ public class PropertyMethodArbitraryProviderTests {
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
-		private static Object assertGenerated(Class<?> expectedType, String methodName, Class... paramTypes) throws Exception {
+		private Object assertGenerated(Class<?> expectedType, String methodName, Class... paramTypes) throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, methodName, paramTypes);
 			Parameter parameter = getParameter(DefaultParams.class, methodName);
 			Object actual = generateObject(provider, parameter);
@@ -44,7 +44,7 @@ public class PropertyMethodArbitraryProviderTests {
 			return actual;
 		}
 
-		private static class DefaultParams {
+		private class DefaultParams {
 			@Property
 			boolean intParam(@ForAll int anInt) {
 				return true;
@@ -69,7 +69,7 @@ public class PropertyMethodArbitraryProviderTests {
 	}
 
 	@Group
-	static class ProvidedArbitraries {
+	class ProvidedArbitraries {
 
 		@Example
 		void unnamedStringGenerator() throws Exception {
@@ -79,7 +79,7 @@ public class PropertyMethodArbitraryProviderTests {
 			assertThat(actual).isInstanceOf(String.class);
 		}
 
-		private static class WithUnnamedGenerator {
+		private class WithUnnamedGenerator {
 			@Property
 			boolean string(@ForAll String aString) {
 				return true;
@@ -114,7 +114,7 @@ public class PropertyMethodArbitraryProviderTests {
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
-		private static class WithNamedProviders {
+		private class WithNamedProviders {
 			@Property
 			boolean string(@ForAll("aString") String aString) {
 				return true;
@@ -156,7 +156,7 @@ public class PropertyMethodArbitraryProviderTests {
 	private static PropertyMethodArbitraryProvider getProvider(Class container, String methodName, Class<?>... parameterTypes)
 			throws NoSuchMethodException, IllegalAccessException, InstantiationException {
 		PropertyMethodDescriptor descriptor = getDescriptor(container, methodName, parameterTypes);
-		return new PropertyMethodArbitraryProvider(descriptor, JqwikReflectionSupport.newInstance(container));
+		return new PropertyMethodArbitraryProvider(descriptor, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
 	}
 
 	private static PropertyMethodDescriptor getDescriptor(Class container, String methodName, Class... parameterTypes)

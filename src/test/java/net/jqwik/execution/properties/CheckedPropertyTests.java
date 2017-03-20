@@ -22,7 +22,7 @@ import static org.junit.platform.engine.TestExecutionResult.Status.SUCCESSFUL;
 class CheckedPropertyTests {
 
 	@Group
-	static class CheckedPropertyCreation {
+	class CheckedPropertyCreation {
 		@Example
 		void createCheckedPropertyWithoutTriesParameter() throws NoSuchMethodException {
 			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(Examples.class, "propertyWithoutTries", int.class).build();

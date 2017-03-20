@@ -24,11 +24,11 @@ public class GroupDiscoverySpec implements DiscoverySpec<Class<?>> {
 
 	@Override
 	public boolean butSkippedOnExecution(Class<?> candidate) {
-		return !isStatic(candidate);
+		return isStatic(candidate);
 	}
 
 	@Override
 	public String skippingReason(Class<?> candidate) {
-		return "@Group classes must be static";
+		return "@Group classes must not be static";
 	}
 }
