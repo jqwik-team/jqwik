@@ -9,25 +9,26 @@ import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.TestExecutionResult;
 
 import java.util.Arrays;
+import java.util.function.Function;
 
-abstract public class AbstractMethodExecutor {
+abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor, U extends TestLifecycle> {
 
-	public void execute(AbstractMethodDescriptor methodDescriptor, EngineExecutionListener listener, TestLifecycle lifecycle) {
+	public void execute(T methodDescriptor, EngineExecutionListener listener, Function<Object, U> lifecycleSupplier) {
 		if (hasUnspecifiedParameters(methodDescriptor)) {
 			listener.executionSkipped(methodDescriptor, "Cannot run methods with unbound parameters - yet.");
 			return;
 		}
 		listener.executionStarted(methodDescriptor);
-		TestExecutionResult executionResult = executeExample(methodDescriptor, lifecycle);
+		TestExecutionResult executionResult = executeTestMethod(methodDescriptor, lifecycleSupplier);
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 
-	private boolean hasUnspecifiedParameters(AbstractMethodDescriptor methodDescriptor) {
+	private boolean hasUnspecifiedParameters(T methodDescriptor) {
 		return Arrays.stream(methodDescriptor.getTargetMethod().getParameters())
 				.anyMatch(parameter -> !parameter.isAnnotationPresent(ForAll.class));
 	}
 
-	private TestExecutionResult executeExample(AbstractMethodDescriptor methodDescriptor, TestLifecycle lifecycle) {
+	private TestExecutionResult executeTestMethod(T methodDescriptor, Function<Object, U> lifecycleSupplier) {
 		Object testInstance = null;
 		try {
 			testInstance = createTestInstance(methodDescriptor);
@@ -36,20 +37,21 @@ abstract public class AbstractMethodExecutor {
 					methodDescriptor.getContainerClass());
 			return TestExecutionResult.failed(new JqwikException(message, throwable));
 		}
-		return invokeExampleMethod(methodDescriptor, testInstance, lifecycle);
+		return invokeTestMethod(methodDescriptor, testInstance, lifecycleSupplier);
 	}
 
-	private Object createTestInstance(AbstractMethodDescriptor methodDescriptor) {
+	private Object createTestInstance(T methodDescriptor) {
 		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
 	}
 
-	private TestExecutionResult invokeExampleMethod(AbstractMethodDescriptor methodDescriptor, Object testInstance,
-			TestLifecycle lifecycle) {
+	private TestExecutionResult invokeTestMethod(T methodDescriptor, Object testInstance,
+												 Function<Object, U> lifecycleSupplier) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		try {
 			testExecutionResult = execute(methodDescriptor, testInstance);
 		} finally {
 			try {
+				U lifecycle = lifecycleSupplier.apply(testInstance);
 				lifecycle.doFinally(methodDescriptor, testInstance);
 			} catch (Throwable ex) {
 				if (testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL)
@@ -59,6 +61,6 @@ abstract public class AbstractMethodExecutor {
 		return testExecutionResult;
 	}
 
-	protected abstract TestExecutionResult execute(AbstractMethodDescriptor methodDescriptor, Object testInstance);
+	protected abstract TestExecutionResult execute(T methodDescriptor, Object testInstance);
 
 }

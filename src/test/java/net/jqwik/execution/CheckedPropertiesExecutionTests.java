@@ -69,7 +69,7 @@ class CheckedPropertiesExecutionTests {
 	}
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
-		executor.execute(propertyMethodDescriptor, eventRecorder, new AutoCloseableLifecycle());
+		executor.execute(propertyMethodDescriptor, eventRecorder, (testInstance) -> new AutoCloseableLifecycle());
 	}
 
 	private static class ContainerClass {

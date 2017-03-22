@@ -8,6 +8,8 @@ import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public class JqwikExecutor {
@@ -57,13 +59,13 @@ public class JqwikExecutor {
 	}
 
 	private void executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener) {
-		PropertyLifecycle lifecycle = registry.lifecycleFor(propertyMethodDescriptor);
-		propertyExecutor.execute(propertyMethodDescriptor, listener, lifecycle);
+		Function<Object, PropertyLifecycle> lifecycleSupplier = registry.supplierFor(propertyMethodDescriptor);
+		propertyExecutor.execute(propertyMethodDescriptor, listener, lifecycleSupplier);
 	}
 
 	private void executeExample(ExampleMethodDescriptor exampleMethodDescriptor, EngineExecutionListener listener) {
-		ExampleLifecycle lifecycle = registry.lifecycleFor(exampleMethodDescriptor);
-		exampleExecutor.execute(exampleMethodDescriptor, listener, lifecycle);
+		Function<Object, ExampleLifecycle> lifecycleSupplier = registry.supplierFor(exampleMethodDescriptor);
+		exampleExecutor.execute(exampleMethodDescriptor, listener, lifecycleSupplier);
 	}
 
 	private void executeContainer(TestDescriptor containerDescriptor, EngineExecutionListener listener) {

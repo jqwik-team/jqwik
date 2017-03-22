@@ -2,7 +2,7 @@ package net.jqwik.execution.properties;
 
 import net.jqwik.JqwikException;
 import net.jqwik.api.properties.ForAll;
-import net.jqwik.descriptor.AbstractMethodDescriptor;
+import net.jqwik.api.properties.PropertyLifecycle;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.execution.AbstractMethodExecutor;
 import net.jqwik.support.JqwikReflectionSupport;
@@ -17,22 +17,21 @@ import java.util.List;
 import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
 import static org.junit.platform.engine.TestExecutionResult.*;
 
-public class PropertyExecutor extends AbstractMethodExecutor {
+public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescriptor, PropertyLifecycle> {
 
 	private static List<Class<?>> COMPATIBLE_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
 
 	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
 
 	@Override
-	protected TestExecutionResult execute(AbstractMethodDescriptor methodDescriptor, Object testInstance) {
+	protected TestExecutionResult execute(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		try {
-			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) methodDescriptor;
 			if (hasIncompatibleReturnType(propertyMethodDescriptor.getTargetMethod())) {
 				String errorMessage = String.format("Property method [%s] must return boolean value",
 						propertyMethodDescriptor.getTargetMethod());
 				return aborted(new JqwikException(errorMessage));
 			}
-			if (hasForAllParameters(methodDescriptor.getTargetMethod())) {
+			if (hasForAllParameters(propertyMethodDescriptor.getTargetMethod())) {
 				return executeProperty(propertyMethodDescriptor, testInstance);
 			} else {
 				return executePropertyWithoutForAllParameters(propertyMethodDescriptor, testInstance);

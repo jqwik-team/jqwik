@@ -108,7 +108,7 @@ class ExamplesExecutionTests {
 
 
 	private void executeTests(ExampleMethodDescriptor exampleMethodDescriptor) {
-		executor.execute(exampleMethodDescriptor, eventRecorder, new AutoCloseableLifecycle());
+		executor.execute(exampleMethodDescriptor, eventRecorder, (testInstance) -> new AutoCloseableLifecycle());
 	}
 
 	private static class ContainerClass implements AutoCloseable {

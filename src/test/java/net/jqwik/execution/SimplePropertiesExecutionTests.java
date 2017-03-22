@@ -1,21 +1,20 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.forMethod;
-import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import net.jqwik.api.Example;
+import net.jqwik.api.properties.Property;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.execution.properties.PropertyExecutor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import net.jqwik.api.Example;
-import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import java.util.ArrayList;
+import java.util.List;
+
+import static net.jqwik.TestDescriptorBuilder.forMethod;
+import static net.jqwik.matchers.MockitoMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 
 class SimplePropertiesExecutionTests {
 
@@ -112,7 +111,7 @@ class SimplePropertiesExecutionTests {
 	}
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
-		executor.execute(propertyMethodDescriptor, eventRecorder, new AutoCloseableLifecycle());
+		executor.execute(propertyMethodDescriptor, eventRecorder, (testInstance) -> new AutoCloseableLifecycle());
 	}
 
 	private static class ContainerClass implements AutoCloseable {
