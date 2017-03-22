@@ -8,7 +8,9 @@ import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.TestExecutionResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor, U extends TestLifecycle> {
@@ -50,15 +52,27 @@ abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor,
 		try {
 			testExecutionResult = execute(methodDescriptor, testInstance);
 		} finally {
-			try {
-				U lifecycle = lifecycleSupplier.apply(testInstance);
-				lifecycle.doFinally(methodDescriptor, testInstance);
-			} catch (Throwable ex) {
-				if (testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL)
-					testExecutionResult = TestExecutionResult.failed(ex);
+			List<Throwable> throwableCollector = new ArrayList<>();
+			lifecycleDoFinally(methodDescriptor, testInstance, lifecycleSupplier, throwableCollector);
+			if (!throwableCollector.isEmpty() && testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
+				// TODO: Use MultiException for reporting all exceptions
+				testExecutionResult = TestExecutionResult.failed(throwableCollector.get(0));
 			}
 		}
 		return testExecutionResult;
+	}
+
+	private void lifecycleDoFinally(T methodDescriptor, Object testInstance, Function<Object, U> lifecycleSupplier, List<Throwable> throwableCollector) {
+
+		JqwikReflectionSupport.streamInnerInstances(testInstance)
+				.forEach(innerInstance -> {
+					try {
+						U lifecycle = lifecycleSupplier.apply(innerInstance);
+						lifecycle.doFinally(methodDescriptor, innerInstance);
+					} catch (Throwable throwable) {
+						throwableCollector.add(throwable);
+					}
+				});
 	}
 
 	protected abstract TestExecutionResult execute(T methodDescriptor, Object testInstance);

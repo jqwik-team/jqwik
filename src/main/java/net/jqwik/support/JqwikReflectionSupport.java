@@ -40,7 +40,7 @@ public class JqwikReflectionSupport {
 		return ReflectionUtils.findNestedClasses(clazz, predicate);
 	}
 
-	public static Stream<Object> streamAllInstances(Object inner) {
+	public static Stream<Object> streamInnerInstances(Object inner) {
 		return addInstances(inner, new ArrayList<>()).stream();
 	}
 
