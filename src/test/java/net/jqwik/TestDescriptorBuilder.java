@@ -73,13 +73,8 @@ public class TestDescriptorBuilder {
 	public TestDescriptor build() {
 		return build(new AbstractTestDescriptor(UniqueId.root("root", "test"), "test root") {
 			@Override
-			public boolean isContainer() {
-				return true;
-			}
-
-			@Override
-			public boolean isTest() {
-				return false;
+			public Type getType() {
+				return Type.CONTAINER;
 			}
 		});
 	}

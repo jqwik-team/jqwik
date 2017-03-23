@@ -1,6 +1,7 @@
 package net.jqwik.descriptor;
 
 import net.jqwik.api.TestContext;
+import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 import org.junit.platform.engine.support.descriptor.MethodSource;
@@ -35,12 +36,8 @@ public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor im
 	}
 
 	@Override
-    public boolean isContainer() {
-        return false;
-    }
+	public Type getType() {
+		return Type.TEST;
+	}
 
-	@Override
-    public boolean isTest() {
-        return true;
-    }
 }

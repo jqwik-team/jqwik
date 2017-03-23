@@ -69,13 +69,8 @@ public class SkipExecutionDecorator implements TestDescriptor {
 	}
 
 	@Override
-	public boolean isContainer() {
-		return wrapped.isContainer();
-	}
-
-	@Override
-	public boolean isTest() {
-		return wrapped.isTest();
+	public Type getType() {
+		return wrapped.getType();
 	}
 
 	@Override
