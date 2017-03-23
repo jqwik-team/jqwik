@@ -36,8 +36,17 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void noDefaultForString() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "stringParam", String.class);
-			Parameter parameter = getParameter(DefaultParams.class, "stringParam");
+			assertNoArbitraryProvided(DefaultParams.class, "stringParam", String.class);
+		}
+
+		@Example
+		void doNotUseDefaultIfForAllHasValue() throws Exception {
+			assertNoArbitraryProvided(DefaultParams.class, "enumParamWithForAllValue", Count.class);
+		}
+
+		private void assertNoArbitraryProvided(Class<DefaultParams> containerClass, String methodName, Class<?> ... paramTypes) throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(containerClass, methodName, paramTypes);
+			Parameter parameter = getParameter(containerClass, methodName);
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
@@ -57,6 +66,11 @@ public class PropertyMethodArbitraryProviderTests {
 
 			@Property
 			boolean enumParam(@ForAll Count oneTwoThree) {
+				return true;
+			}
+
+			@Property
+			boolean enumParamWithForAllValue(@ForAll("aValue") Count count) {
 				return true;
 			}
 

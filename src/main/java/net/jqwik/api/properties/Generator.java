@@ -12,4 +12,10 @@ public interface Generator {
 	static Arbitrary<String> string(char[] chars) {
 		return Arbitrary.string(Gen.choose(chars));
 	}
+
+
+	static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
+		return Arbitrary.of(enumClass.getEnumConstants());
+	}
+
 }

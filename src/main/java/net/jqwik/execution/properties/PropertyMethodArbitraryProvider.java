@@ -4,6 +4,7 @@ import javaslang.test.Arbitrary;
 import javaslang.test.Checkable;
 import net.jqwik.api.properties.ForAll;
 import net.jqwik.api.properties.Generate;
+import net.jqwik.api.properties.Generator;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -35,6 +36,9 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 			Arbitrary<?> arbitrary = (Arbitrary<?>) invokeMethod(optionalCreator.get(), testInstance);
 			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary, forAllAnnotation.size());
 			return Optional.of(genericArbitrary);
+		}
+		if (!forAllAnnotation.value().isEmpty()) {
+			return Optional.empty();
 		}
 		return Optional.ofNullable(defaultArbitrary(genericType, forAllAnnotation.size()));
 	}
@@ -71,8 +75,7 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
 	private Arbitrary<Object> defaultArbitrary(GenericType parameterType, int size) {
 		if (parameterType.isEnum()) {
-			Object[] values = parameterType.getRawType().getEnumConstants();
-			return new GenericArbitrary(Arbitrary.of(values), size);
+			return new GenericArbitrary(Generator.of(parameterType.getRawType()), size);
 		}
 		if (parameterType.getRawType() == Integer.class)
 			return new GenericArbitrary(Arbitrary.integer(), size);

@@ -1,6 +1,9 @@
 package examples.packageWithProperties;
 
+import javaslang.test.Arbitrary;
 import net.jqwik.api.properties.ForAll;
+import net.jqwik.api.properties.Generate;
+import net.jqwik.api.properties.Generator;
 import net.jqwik.api.properties.Property;
 
 public class PropertiesTriesCounting implements AutoCloseable {
@@ -24,6 +27,18 @@ public class PropertiesTriesCounting implements AutoCloseable {
 		count++;
 		return true;
 	}
+
+	@Property
+	boolean twoEnumParams(@ForAll("notFragile") Triade t1, @ForAll("notFragile") Triade t2) {
+		count++;
+		return true;
+	}
+
+	@Generate
+	Arbitrary<Triade> notFragile() {
+		return Generator.of(Triade.class).filter(t -> t != Triade.Fragile);
+	}
+
 
 	@Override
 	public void close() throws Exception {
