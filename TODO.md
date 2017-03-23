@@ -5,7 +5,7 @@
 
 ### Properties
 
-- Introduce Combinator(s) for Arbitraries
+- Tests for Combinators
 - Introduce Assumptions/Implications (PropertyX.implies)
 - Tests for @ForAll effectiveSize parameter
 - Handle error if more than one generator applies
