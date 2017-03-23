@@ -26,28 +26,20 @@ public class GeneratorsExamples {
 
 	@Property(tries = 20)
 	boolean aPersonIsNeverYoungerThan0(@ForAll Person aPerson) {
+		System.out.println(aPerson);
 		return aPerson.getAge() > 0;
 	}
 
 	@Generate
 	Arbitrary<Person> aValidPerson() {
 		Arbitrary<Integer> age = Arbitrary.integer().filter(a -> a >= 0 && a <= 100);
-		Arbitrary<String> first = Generator.string('a', 'z');
-		Arbitrary<String> last = Generator.string('a', 'z');
+		Arbitrary<String> first = Generator.string('a', 'z', 10).filter(f -> !f.isEmpty());
+		Arbitrary<String> last = Generator.string('a', 'z', 15).filter(f -> !f.isEmpty());
 
-		// TODO: Introduce combinator
-		//		return Generator.combine(age, first, last).as((a, f, l) -> {
-		//			String name = f + " " + l;
-		//			return new Person(name, a);
-		//		});
-
-		return size -> random -> {
-			int a = age.apply(size).apply(random);
-			String f = first.apply(size).apply(random);
-			String l = last.apply(size).apply(random);
+		return Generator.combine(age, first, last).as((a, f, l) -> {
 			String name = f + " " + l;
 			return new Person(name, a);
-		};
+		});
 	}
 
 	static class Person {

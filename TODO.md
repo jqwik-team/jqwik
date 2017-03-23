@@ -7,7 +7,7 @@
 
 - Introduce Combinator(s) for Arbitraries
 - Introduce Assumptions/Implications (PropertyX.implies)
-- Tests for @ForAll size parameter
+- Tests for @ForAll effectiveSize parameter
 - Handle error if more than one generator applies
 - Default Generators for
   - Lists, Sets
