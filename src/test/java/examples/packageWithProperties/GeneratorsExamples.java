@@ -23,4 +23,53 @@ public class GeneratorsExamples {
 	Arbitrary<String> digitsOnly() {
 		return Generator.string('0', '9');
 	}
+
+	@Property(tries = 20)
+	boolean aPersonIsNeverYoungerThan0(@ForAll Person aPerson) {
+		return aPerson.getAge() > 0;
+	}
+
+	@Generate
+	Arbitrary<Person> aValidPerson() {
+		Arbitrary<Integer> age = Arbitrary.integer().filter(a -> a >= 0 && a <= 100);
+		Arbitrary<String> first = Generator.string('a', 'z');
+		Arbitrary<String> last = Generator.string('a', 'z');
+
+		// TODO: Introduce combinator
+		//		return Generator.combine(age, first, last).as((a, f, l) -> {
+		//			String name = f + " " + l;
+		//			return new Person(name, a);
+		//		});
+
+		return size -> random -> {
+			int a = age.apply(size).apply(random);
+			String f = first.apply(size).apply(random);
+			String l = last.apply(size).apply(random);
+			String name = f + " " + l;
+			return new Person(name, a);
+		};
+	}
+
+	static class Person {
+		private final String name;
+		private final int age;
+
+		Person(String name, int age) {
+			this.name = name;
+			this.age = age;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public int getAge() {
+			return age;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("Person(%s, %s)", name, age);
+		}
+	}
 }
