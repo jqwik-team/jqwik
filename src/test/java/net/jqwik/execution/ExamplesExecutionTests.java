@@ -1,7 +1,7 @@
 package net.jqwik.execution;
 
-import experiments.Group;
 import net.jqwik.api.Example;
+import net.jqwik.api.Group;
 import net.jqwik.descriptor.ExampleMethodDescriptor;
 import org.junit.platform.engine.EngineExecutionListener;
 import org.junit.platform.engine.TestDescriptor;

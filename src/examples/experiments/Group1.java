@@ -1,5 +1,5 @@
 package experiments;
 
-public @interface Group {
+public @interface Group1 {
 	String value() default "";
 }

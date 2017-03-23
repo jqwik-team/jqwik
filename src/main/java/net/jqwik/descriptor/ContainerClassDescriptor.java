@@ -26,7 +26,13 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	private static String determineDisplayName(Class<?> containerClass) {
 		if (isTopLevelClass.test(containerClass) || isContainerAGroup.test(containerClass))
 			return containerClass.getSimpleName();
-		return containerClass.getTypeName();
+		return getCanonicalNameWithoutPackage(containerClass);
+	}
+
+	private static String getCanonicalNameWithoutPackage(Class<?> containerClass) {
+		String packageName = containerClass.getPackage().getName();
+		String canonicalName = containerClass.getCanonicalName();
+		return canonicalName.substring(packageName.length() + 1);
 	}
 
 	@Override

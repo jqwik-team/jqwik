@@ -2,7 +2,6 @@
 package experiments;
 
 
-import java.util.EmptyStackException;
 import java.util.Stack;
 
 @Spec("A Stack")
@@ -16,7 +15,7 @@ public class StackSpec {
 //			assertThat(new Stack()).isInstanceOf(Stack.class);
 	}
 
-	@Group("when it is new")
+	@Group1("when it is new")
 	class NewStack {
 
 		@Fixture

@@ -1,7 +1,7 @@
 package examples.packageWithNestedContainers;
 
-import experiments.Group;
 import net.jqwik.api.Example;
+import net.jqwik.api.Group;
 
 @Group // TopLevel Group annotation is being ignored
 public class TopLevelContainerWithNoGroups {
