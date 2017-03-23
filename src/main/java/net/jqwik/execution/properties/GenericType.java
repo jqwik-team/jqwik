@@ -12,11 +12,11 @@ public class GenericType {
 		this.parameterizedType = parameterizedType;
 	}
 
-	public Type getRawType() {
+	public Class getRawType() {
 		if (parameterizedType instanceof  Class) {
-			return  parameterizedType;
+			return (Class) parameterizedType;
 		}
-		return ((ParameterizedType) parameterizedType).getRawType();
+		return (Class) ((ParameterizedType) parameterizedType).getRawType();
 	}
 
 	public Type[] getTypeArguments() {
@@ -30,4 +30,7 @@ public class GenericType {
 		return (parameterizedType instanceof ParameterizedType);
 	}
 
+	public boolean isEnum() {
+		return getRawType().isEnum();
+	}
 }

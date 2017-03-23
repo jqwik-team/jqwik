@@ -81,7 +81,7 @@ public class CheckedProperty {
 		if (forAllParameters.size() == 8) {
 			return createProperty8();
 		}
-		return erroneousCheckable();
+		return erroneousCheckable(forAllParameters.size());
 	}
 
 	private Checkable createProperty1() {
@@ -192,8 +192,11 @@ public class CheckedProperty {
 		return (p1, p2, p3, p4, p5, p6, p7, p8) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7, p8 });
 	}
 
-	private Checkable erroneousCheckable() {
-		return (randomNumberGenerator, size, tries) -> new ErroneousCheckResult("Too many @ForAll parameters. Max is 8.");
+	private Checkable erroneousCheckable(int paramsCount) {
+		return (randomNumberGenerator, size, tries) -> {
+			String errorMessage = String.format("%s @ForAll parameters is too many. Max is 8.", paramsCount);
+			return new ErroneousCheckResult(errorMessage);
+		};
 	}
 
 	public int getTries() {

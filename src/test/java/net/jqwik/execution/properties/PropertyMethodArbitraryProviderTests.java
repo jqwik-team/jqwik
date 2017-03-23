@@ -20,6 +20,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Group
 public class PropertyMethodArbitraryProviderTests {
 
+	private enum Count {
+		One, Two, Three
+	}
+
 	@Group
 	class Defaults {
 
@@ -27,6 +31,7 @@ public class PropertyMethodArbitraryProviderTests {
 		void defaults() throws Exception {
 			assertGenerated(Integer.class, "intParam", int.class);
 			assertGenerated(Integer.class, "integerParam", Integer.class);
+			assertGenerated(Count.class, "enumParam", Count.class);
 		}
 
 		@Example
@@ -47,6 +52,11 @@ public class PropertyMethodArbitraryProviderTests {
 		private class DefaultParams {
 			@Property
 			boolean intParam(@ForAll int anInt) {
+				return true;
+			}
+
+			@Property
+			boolean enumParam(@ForAll Count oneTwoThree) {
 				return true;
 			}
 

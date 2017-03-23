@@ -9,9 +9,9 @@
 - Tests for @ForAll size parameter
 - Handle error if more than one generator applies
 - Default Generators for
-  - Enums
   - Lists, Sets
   - All kinds of Numbers
   - Strings
+- Constrain tries to max possible number of values (e.g. Enum.values().length)
 - Encapsulate Generators into jqwik-owned interface(s) 
   and factory methods

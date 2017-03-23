@@ -69,10 +69,14 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		};
 	}
 
-	private Arbitrary<Object> defaultArbitrary(GenericType forAllParameter, int size) {
-		if (forAllParameter.getRawType() == Integer.class)
+	private Arbitrary<Object> defaultArbitrary(GenericType parameterType, int size) {
+		if (parameterType.isEnum()) {
+			Object[] values = parameterType.getRawType().getEnumConstants();
+			return new GenericArbitrary(Arbitrary.of(values), size);
+		}
+		if (parameterType.getRawType() == Integer.class)
 			return new GenericArbitrary(Arbitrary.integer(), size);
-		if (forAllParameter.getRawType() == int.class)
+		if (parameterType.getRawType() == int.class)
 			return new GenericArbitrary(Arbitrary.integer(), size);
 		return null;
 	}

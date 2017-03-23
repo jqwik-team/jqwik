@@ -9,7 +9,7 @@ public class CannotFindArbitraryException extends JqwikException {
 	private final Parameter parameter;
 
 	CannotFindArbitraryException(Parameter parameter) {
-		super(String.format("Cannot find an Arbitrary for Parameter [%s]", parameter));
+		super(String.format("Cannot find an Arbitrary for Parameter [%s] of type [%s]", parameter.getName(), parameter.getType()));
 		this.parameter = parameter;
 	}
 
