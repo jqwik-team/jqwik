@@ -1,11 +1,7 @@
 
 package experiments;
 
-
-import java.util.Stack;
-import java.util.function.Consumer;
-
-import static experiments.Grouping.group;
+import static experiments.Grouping.*;
 
 @Spec("A Stack")
 public class UnnestedStackSpec {

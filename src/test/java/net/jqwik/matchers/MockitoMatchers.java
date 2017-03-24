@@ -2,11 +2,9 @@ package net.jqwik.matchers;
 
 import static org.mockito.Matchers.*;
 
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.*;
 
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.descriptor.ExampleMethodDescriptor;
+import net.jqwik.descriptor.*;
 
 public class MockitoMatchers {
 

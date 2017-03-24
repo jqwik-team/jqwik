@@ -1,17 +1,15 @@
 package net.jqwik.discovery;
 
-import net.jqwik.discovery.predicates.IsScannableContainerClass;
-import org.junit.platform.engine.EngineDiscoveryRequest;
-import org.junit.platform.engine.TestDescriptor;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
+import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
+
+import java.util.*;
+import java.util.function.*;
+
+import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.function.Predicate;
-
-import static org.junit.platform.commons.support.ReflectionSupport.findAllClassesInClasspathRoot;
-import static org.junit.platform.commons.support.ReflectionSupport.findAllClassesInPackage;
-import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.buildClassNamePredicate;
+import net.jqwik.discovery.predicates.*;
 
 public class JqwikDiscoverer {
 

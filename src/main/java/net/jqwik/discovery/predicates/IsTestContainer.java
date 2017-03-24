@@ -1,13 +1,12 @@
 package net.jqwik.discovery.predicates;
 
-import net.jqwik.discovery.specs.ExampleDiscoverySpec;
-import net.jqwik.discovery.specs.PropertyDiscoverySpec;
-import net.jqwik.support.JqwikReflectionSupport;
-import org.junit.platform.commons.support.HierarchyTraversalMode;
-import org.junit.platform.commons.support.ReflectionSupport;
+import java.lang.reflect.*;
+import java.util.function.*;
 
-import java.lang.reflect.Method;
-import java.util.function.Predicate;
+import org.junit.platform.commons.support.*;
+
+import net.jqwik.discovery.specs.*;
+import net.jqwik.support.*;
 
 public class IsTestContainer implements Predicate<Class<?>> {
 

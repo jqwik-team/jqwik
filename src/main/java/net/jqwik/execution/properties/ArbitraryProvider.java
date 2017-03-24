@@ -1,9 +1,9 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.Arbitrary;
+import java.lang.reflect.*;
+import java.util.*;
 
-import java.lang.reflect.Parameter;
-import java.util.Optional;
+import javaslang.test.*;
 
 public interface ArbitraryProvider {
 	Optional<Arbitrary<Object>> forParameter(Parameter parameter);

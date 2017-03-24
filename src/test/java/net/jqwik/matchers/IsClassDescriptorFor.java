@@ -1,9 +1,9 @@
 package net.jqwik.matchers;
 
-import org.hamcrest.Description;
-import org.mockito.ArgumentMatcher;
+import org.hamcrest.*;
+import org.mockito.*;
 
-import net.jqwik.descriptor.ContainerClassDescriptor;
+import net.jqwik.descriptor.*;
 
 class IsClassDescriptorFor extends ArgumentMatcher<ContainerClassDescriptor> {
 

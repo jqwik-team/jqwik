@@ -1,7 +1,6 @@
 package net.jqwik.execution;
 
-import org.junit.platform.engine.EngineExecutionListener;
-import org.junit.platform.engine.TestDescriptor;
+import org.junit.platform.engine.*;
 
 @FunctionalInterface
 public interface TestDescriptorExecutor {

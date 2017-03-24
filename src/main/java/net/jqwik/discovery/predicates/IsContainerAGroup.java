@@ -1,10 +1,10 @@
 package net.jqwik.discovery.predicates;
 
-import net.jqwik.api.Group;
+import static org.junit.platform.commons.support.AnnotationSupport.*;
 
-import java.util.function.Predicate;
+import java.util.function.*;
 
-import static org.junit.platform.commons.support.AnnotationSupport.isAnnotated;
+import net.jqwik.api.*;
 
 public class IsContainerAGroup implements Predicate<Class<?>> {
 

@@ -1,19 +1,16 @@
 package net.jqwik.execution.properties;
 
-import javaslang.*;
-import javaslang.control.Option;
-import javaslang.test.Arbitrary;
-import javaslang.test.CheckResult;
-import javaslang.test.Checkable;
-import javaslang.test.Property;
-import org.junit.platform.engine.TestExecutionResult;
-import org.opentest4j.AssertionFailedError;
-
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Optional;
-
 import static org.junit.platform.engine.TestExecutionResult.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.junit.platform.engine.*;
+import org.opentest4j.*;
+
+import javaslang.*;
+import javaslang.control.*;
+import javaslang.test.*;
 
 /**
  * Wraps javaslang's property checking

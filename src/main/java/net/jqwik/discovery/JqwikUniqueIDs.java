@@ -1,15 +1,13 @@
 package net.jqwik.discovery;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.logging.*;
+import java.util.regex.*;
 
-import net.jqwik.support.JqwikStringSupport;
-import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.*;
 
-import net.jqwik.support.JqwikReflectionSupport;
+import net.jqwik.support.*;
 
 public class JqwikUniqueIDs {
 

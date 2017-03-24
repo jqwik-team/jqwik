@@ -1,18 +1,17 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.Example;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.execution.properties.PropertyExecutor;
-import org.assertj.core.api.Assertions;
-import org.junit.platform.engine.EngineExecutionListener;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
-
-import static net.jqwik.TestDescriptorBuilder.forMethod;
+import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+
+import org.assertj.core.api.*;
+import org.junit.platform.engine.*;
+import org.mockito.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.properties.*;
 
 class CheckedPropertiesExecutionTests {
 

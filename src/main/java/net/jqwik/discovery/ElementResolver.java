@@ -1,11 +1,9 @@
 package net.jqwik.discovery;
 
-import java.lang.reflect.AnnotatedElement;
-import java.util.Optional;
-import java.util.Set;
+import java.lang.reflect.*;
+import java.util.*;
 
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.*;
 
 interface ElementResolver {
 

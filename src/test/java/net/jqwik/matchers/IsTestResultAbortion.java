@@ -1,8 +1,8 @@
 package net.jqwik.matchers;
 
-import org.hamcrest.Description;
-import org.junit.platform.engine.TestExecutionResult;
-import org.mockito.ArgumentMatcher;
+import org.hamcrest.*;
+import org.junit.platform.engine.*;
+import org.mockito.*;
 
 class IsTestResultAbortion extends ArgumentMatcher<TestExecutionResult> {
 	private final String message;

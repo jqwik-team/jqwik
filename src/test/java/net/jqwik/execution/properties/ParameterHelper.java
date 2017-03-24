@@ -1,10 +1,8 @@
 package net.jqwik.execution.properties;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.*;
 
 public class ParameterHelper {
 	public static List<Parameter> getParametersFor(Class<?> aClass, String methodName) {

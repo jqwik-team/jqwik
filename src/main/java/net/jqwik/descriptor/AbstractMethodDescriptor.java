@@ -1,12 +1,11 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.api.TestContext;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
-import org.junit.platform.engine.support.descriptor.MethodSource;
+import java.lang.reflect.*;
 
-import java.lang.reflect.Method;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.descriptor.*;
+
+import net.jqwik.api.*;
 
 public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements TestContext {
 	private final Method targetMethod;

@@ -1,6 +1,6 @@
 package examples.packageWithInheritance;
 
-import net.jqwik.api.Example;
+import net.jqwik.api.*;
 
 public abstract class AbstractContainer {
 

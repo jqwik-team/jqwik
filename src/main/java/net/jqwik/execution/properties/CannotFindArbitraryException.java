@@ -1,9 +1,9 @@
 package net.jqwik.execution.properties;
 
-import net.jqwik.JqwikException;
-import net.jqwik.api.properties.ForAll;
+import java.lang.reflect.*;
 
-import java.lang.reflect.Parameter;
+import net.jqwik.*;
+import net.jqwik.api.properties.*;
 
 public class CannotFindArbitraryException extends JqwikException {
 

@@ -1,23 +1,20 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.Arbitrary;
-import javaslang.test.Checkable;
-import net.jqwik.TestDescriptorBuilder;
-import net.jqwik.api.Example;
-import net.jqwik.api.Group;
-import net.jqwik.api.properties.ForAll;
+import static net.jqwik.execution.properties.ParameterHelper.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.platform.engine.TestExecutionResult.Status.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.junit.platform.engine.*;
+
+import javaslang.test.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
 import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import org.junit.platform.engine.TestExecutionResult;
-
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Optional;
-
-import static net.jqwik.execution.properties.ParameterHelper.getParametersFor;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.platform.engine.TestExecutionResult.Status.FAILED;
-import static org.junit.platform.engine.TestExecutionResult.Status.SUCCESSFUL;
+import net.jqwik.descriptor.*;
 
 class CheckedPropertyTests {
 

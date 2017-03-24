@@ -1,12 +1,8 @@
 package net.jqwik.api.properties;
 
-import javaslang.test.Arbitrary;
-import javaslang.test.Gen;
-import net.jqwik.execution.properties.Combinators;
-import net.jqwik.execution.properties.Combinators.Combinator2;
-import net.jqwik.execution.properties.Combinators.Combinator3;
-import net.jqwik.execution.properties.Combinators.Combinator4;
-import net.jqwik.execution.properties.SizedArbitrary;
+import javaslang.test.*;
+import net.jqwik.execution.properties.*;
+import net.jqwik.execution.properties.Combinators.*;
 
 public interface Generator {
 

@@ -1,12 +1,12 @@
 package net.jqwik.discovery.specs;
 
-import net.jqwik.discovery.predicates.IsDiscoverableTestMethod;
+import static net.jqwik.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.AnnotationSupport.*;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.lang.annotation.*;
+import java.lang.reflect.*;
 
-import static net.jqwik.support.JqwikReflectionSupport.isStatic;
-import static org.junit.platform.commons.support.AnnotationSupport.isAnnotated;
+import net.jqwik.discovery.predicates.*;
 
 abstract public class TestableMethodDiscoverySpec implements DiscoverySpec<Method> {
 

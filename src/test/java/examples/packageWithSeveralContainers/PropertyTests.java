@@ -1,7 +1,6 @@
 package examples.packageWithSeveralContainers;
 
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Property;
+import net.jqwik.api.properties.*;
 
 public class PropertyTests {
 

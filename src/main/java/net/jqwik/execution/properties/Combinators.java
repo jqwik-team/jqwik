@@ -1,9 +1,7 @@
 package net.jqwik.execution.properties;
 
-import javaslang.Function2;
-import javaslang.Function3;
-import javaslang.Function4;
-import javaslang.test.Arbitrary;
+import javaslang.*;
+import javaslang.test.*;
 
 public class Combinators {
 

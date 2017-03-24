@@ -1,12 +1,11 @@
 package net.jqwik.discovery.specs;
 
-import net.jqwik.api.Group;
-import net.jqwik.discovery.predicates.IsPotentialTestContainer;
-import net.jqwik.discovery.predicates.IsTopLevelClass;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
-import java.util.function.Predicate;
+import java.util.function.*;
 
-import static net.jqwik.support.JqwikReflectionSupport.isStatic;
+import net.jqwik.api.*;
+import net.jqwik.discovery.predicates.*;
 
 public class TopLevelContainerDiscoverySpec implements DiscoverySpec<Class<?>> {
 

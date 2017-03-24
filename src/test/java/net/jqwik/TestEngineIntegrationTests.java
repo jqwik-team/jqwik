@@ -2,20 +2,18 @@ package net.jqwik;
 
 import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
-import static org.mockito.Mockito.verify;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
+import static org.mockito.Mockito.*;
 
-import examples.packageWithSeveralContainers.ExampleTests;
-import examples.packageWithSeveralContainers.MixedTests;
-import examples.packageWithSeveralContainers.PropertyTests;
-import net.jqwik.support.JqwikReflectionSupport;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.PackageNameFilter;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
-import org.mockito.Mockito;
+import org.junit.platform.engine.discovery.*;
+import org.junit.platform.launcher.*;
+import org.mockito.*;
 
-import examples.packageWithSingleContainer.SimpleExampleTests;
-import net.jqwik.api.Example;
+import examples.packageWithSeveralContainers.*;
+import examples.packageWithSingleContainer.*;
+import net.jqwik.api.*;
+import net.jqwik.support.*;
 
 class TestEngineIntegrationTests {
 

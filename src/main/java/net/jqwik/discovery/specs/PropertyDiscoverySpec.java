@@ -1,8 +1,8 @@
 package net.jqwik.discovery.specs;
 
-import net.jqwik.api.properties.Property;
+import java.lang.reflect.*;
 
-import java.lang.reflect.Method;
+import net.jqwik.api.properties.*;
 
 public class PropertyDiscoverySpec extends TestableMethodDiscoverySpec {
 	public PropertyDiscoverySpec() {

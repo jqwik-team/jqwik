@@ -1,6 +1,6 @@
 package examples.packageWithErrors;
 
-import net.jqwik.api.Example;
+import net.jqwik.api.*;
 
 public abstract class AbstractContainerForOverloadedExamples {
 

@@ -1,9 +1,6 @@
 
 package experiments;
 
-
-import java.util.Stack;
-
 @Spec("A Stack")
 public class StackSpec {
 

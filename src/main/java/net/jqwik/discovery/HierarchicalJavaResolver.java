@@ -1,22 +1,20 @@
 package net.jqwik.discovery;
 
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.discovery.predicates.IsContainerAGroup;
-import net.jqwik.discovery.predicates.IsDiscoverableTestMethod;
-import net.jqwik.support.JqwikReflectionSupport;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
+import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.*;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.logging.Logger;
+import java.util.function.*;
+import java.util.logging.*;
 
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toSet;
-import static org.junit.platform.commons.support.HierarchyTraversalMode.TOP_DOWN;
-import static org.junit.platform.commons.support.ReflectionSupport.findMethods;
+import org.junit.platform.engine.*;
+
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.predicates.*;
+import net.jqwik.support.*;
 
 class HierarchicalJavaResolver {
 

@@ -1,16 +1,12 @@
 package net.jqwik.discovery;
 
-import net.jqwik.descriptor.SkipExecutionDecorator;
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.discovery.specs.TestableMethodDiscoverySpec;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
+import java.lang.reflect.*;
+import java.util.*;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import org.junit.platform.engine.*;
+
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.specs.*;
 
 abstract class AbstractMethodResolver implements ElementResolver {
 

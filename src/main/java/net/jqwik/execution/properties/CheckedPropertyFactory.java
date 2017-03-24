@@ -1,15 +1,12 @@
 package net.jqwik.execution.properties;
 
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.support.JqwikReflectionSupport;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.*;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
 
 public class CheckedPropertyFactory {
 

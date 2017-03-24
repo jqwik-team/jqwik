@@ -1,16 +1,14 @@
 package net.jqwik.support;
 
-import net.jqwik.discovery.predicates.IsTopLevelClass;
-import org.junit.platform.commons.util.ReflectionUtils;
-
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Member;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.nio.file.Path;
+import java.lang.reflect.*;
+import java.nio.file.*;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.function.*;
+import java.util.stream.*;
+
+import org.junit.platform.commons.util.*;
+
+import net.jqwik.discovery.predicates.*;
 
 public class JqwikReflectionSupport {
 

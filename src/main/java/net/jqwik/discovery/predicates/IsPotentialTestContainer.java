@@ -1,9 +1,8 @@
 package net.jqwik.discovery.predicates;
 
-import java.util.function.Predicate;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
-import static net.jqwik.support.JqwikReflectionSupport.isAbstract;
-import static net.jqwik.support.JqwikReflectionSupport.isPrivate;
+import java.util.function.*;
 
 public class IsPotentialTestContainer implements Predicate<Class<?>> {
 
@@ -15,9 +14,7 @@ public class IsPotentialTestContainer implements Predicate<Class<?>> {
 			return false;
 		if (candidate.isLocalClass())
 			return false;
-		if (candidate.isAnonymousClass())
-			return false;
-		return true;
+		return !candidate.isAnonymousClass();
 	}
 
 }

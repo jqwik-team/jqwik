@@ -1,21 +1,19 @@
 package net.jqwik.execution.properties;
 
-import net.jqwik.JqwikException;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.PropertyLifecycle;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.execution.AbstractMethodExecutor;
-import net.jqwik.support.JqwikReflectionSupport;
-import org.junit.platform.engine.TestExecutionResult;
-import org.opentest4j.AssertionFailedError;
-import org.opentest4j.TestAbortedException;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.platform.commons.util.BlacklistedExceptions.rethrowIfBlacklisted;
+import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.junit.platform.engine.*;
+import org.opentest4j.*;
+
+import net.jqwik.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.*;
+import net.jqwik.support.*;
 
 public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescriptor, PropertyLifecycle> {
 

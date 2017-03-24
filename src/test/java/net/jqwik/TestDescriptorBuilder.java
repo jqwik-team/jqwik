@@ -1,26 +1,19 @@
 package net.jqwik;
 
-import net.jqwik.api.Example;
-import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.descriptor.JqwikEngineDescriptor;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.discovery.JqwikUniqueIDs;
-import net.jqwik.support.JqwikReflectionSupport;
-import net.jqwik.support.JqwikStringSupport;
-import org.junit.platform.commons.support.AnnotationSupport;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
+import static net.jqwik.JqwikUniqueIdBuilder.*;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.*;
+import java.util.*;
 
-import static net.jqwik.JqwikUniqueIdBuilder.engineId;
-import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForClassContainer;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.descriptor.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.*;
+import net.jqwik.support.*;
 
 /**
  * For testing purposes

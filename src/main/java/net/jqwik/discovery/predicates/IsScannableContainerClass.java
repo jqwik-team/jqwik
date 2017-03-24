@@ -1,8 +1,8 @@
 package net.jqwik.discovery.predicates;
 
-import static net.jqwik.support.JqwikReflectionSupport.isPrivate;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
-import java.util.function.Predicate;
+import java.util.function.*;
 
 public class IsScannableContainerClass implements Predicate<Class<?>> {
 

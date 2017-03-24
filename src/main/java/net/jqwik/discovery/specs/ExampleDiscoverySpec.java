@@ -1,8 +1,8 @@
 package net.jqwik.discovery.specs;
 
-import net.jqwik.api.Example;
+import java.lang.reflect.*;
 
-import java.lang.reflect.Method;
+import net.jqwik.api.*;
 
 public class ExampleDiscoverySpec extends TestableMethodDiscoverySpec {
 	public ExampleDiscoverySpec() {

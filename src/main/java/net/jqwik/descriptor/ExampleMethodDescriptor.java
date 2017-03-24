@@ -1,10 +1,10 @@
 package net.jqwik.descriptor;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
-import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.*;
 
-import net.jqwik.api.ExampleContext;
+import net.jqwik.api.*;
 
 public class ExampleMethodDescriptor extends AbstractMethodDescriptor implements ExampleContext {
 

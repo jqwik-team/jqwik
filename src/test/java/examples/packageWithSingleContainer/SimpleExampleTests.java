@@ -1,8 +1,8 @@
 package examples.packageWithSingleContainer;
 
-import net.jqwik.api.Example;
+import static org.assertj.core.api.Assertions.*;
 
-import static org.assertj.core.api.Assertions.fail;
+import net.jqwik.api.*;
 
 public class SimpleExampleTests {
 

@@ -1,9 +1,7 @@
 package examples.packageWithProperties;
 
-import javaslang.test.Arbitrary;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Generate;
-import net.jqwik.api.properties.Generator;
+import javaslang.test.*;
+import net.jqwik.api.properties.*;
 import net.jqwik.api.properties.Property;
 
 public class GeneratorsExamples {

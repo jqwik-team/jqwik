@@ -1,11 +1,10 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.ExampleLifecycle;
-import net.jqwik.api.properties.PropertyLifecycle;
-import net.jqwik.descriptor.ExampleMethodDescriptor;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import java.util.function.*;
 
-import java.util.function.Function;
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
 
 public class LifecycleRegistry {
 	public Function<Object, ExampleLifecycle> supplierFor(ExampleMethodDescriptor exampleMethodDescriptor) {

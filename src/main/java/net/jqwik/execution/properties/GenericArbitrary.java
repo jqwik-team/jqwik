@@ -1,7 +1,6 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.Arbitrary;
-import javaslang.test.Gen;
+import javaslang.test.*;
 
 class GenericArbitrary implements Arbitrary<Object> {
 

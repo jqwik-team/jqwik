@@ -1,8 +1,9 @@
 package net.jqwik.matchers;
 
-import net.jqwik.descriptor.ExampleMethodDescriptor;
-import org.hamcrest.Description;
-import org.mockito.ArgumentMatcher;
+import org.hamcrest.*;
+import org.mockito.*;
+
+import net.jqwik.descriptor.*;
 
 class IsExampleDescriptorFor extends ArgumentMatcher<ExampleMethodDescriptor> {
 

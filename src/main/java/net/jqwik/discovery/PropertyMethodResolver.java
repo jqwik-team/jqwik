@@ -1,11 +1,11 @@
 package net.jqwik.discovery;
 
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.discovery.specs.PropertyDiscoverySpec;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
+import java.lang.reflect.*;
 
-import java.lang.reflect.Method;
+import org.junit.platform.engine.*;
+
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.specs.*;
 
 class PropertyMethodResolver extends AbstractMethodResolver {
 

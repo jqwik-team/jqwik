@@ -1,7 +1,7 @@
 package net.jqwik.descriptor;
 
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.support.descriptor.EngineDescriptor;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.descriptor.*;
 
 public class JqwikEngineDescriptor extends EngineDescriptor {
 	private static final String DISPLAY_NAME = "JQwik Test Engine";

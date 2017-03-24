@@ -1,8 +1,7 @@
 package examples.packageWithNestedContainers;
 
-import net.jqwik.api.Group;
-import net.jqwik.api.Example;
-import net.jqwik.api.properties.Property;
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
 
 public class TopLevelContainerWithGroups {
 

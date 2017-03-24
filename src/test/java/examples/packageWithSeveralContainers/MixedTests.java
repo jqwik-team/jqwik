@@ -1,7 +1,7 @@
 package examples.packageWithSeveralContainers;
 
-import net.jqwik.api.Example;
-import net.jqwik.api.properties.Property;
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
 
 public class MixedTests {
 

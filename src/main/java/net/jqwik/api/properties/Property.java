@@ -2,8 +2,9 @@ package net.jqwik.api.properties;
 
 import java.lang.annotation.*;
 
-import javaslang.test.Checkable;
-import org.junit.platform.commons.annotation.Testable;
+import org.junit.platform.commons.annotation.*;
+
+import javaslang.test.*;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

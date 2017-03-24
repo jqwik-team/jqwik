@@ -1,30 +1,25 @@
 package net.jqwik;
 
-import examples.packageWithErrors.ContainerWithOverloadedExamples;
-import examples.packageWithInheritance.AbstractContainer;
-import examples.packageWithInheritance.ContainerWithInheritance;
-import examples.packageWithInheritance.InterfaceTests;
-import examples.packageWithNestedContainers.TopLevelContainerWithGroups;
-import examples.packageWithNestedContainers.TopLevelContainerWithNoGroups;
-import examples.packageWithSeveralContainers.MixedTests;
-import examples.packageWithSingleContainer.SimpleExampleTests;
-import net.jqwik.api.Example;
-import net.jqwik.descriptor.*;
-import net.jqwik.discovery.JqwikDiscoverer;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
-import org.junit.platform.engine.discovery.ClassNameFilter;
-import org.junit.platform.engine.discovery.PackageNameFilter;
-import org.junit.platform.launcher.LauncherDiscoveryRequest;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-
-import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForClassContainer;
-import static net.jqwik.JqwikUniqueIdBuilder.uniqueIdForExampleMethod;
-import static org.assertj.core.api.Assertions.assertThat;
+import static net.jqwik.JqwikUniqueIdBuilder.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
+
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.*;
+import org.junit.platform.launcher.*;
+
+import examples.packageWithErrors.*;
+import examples.packageWithInheritance.*;
+import examples.packageWithNestedContainers.*;
+import examples.packageWithSeveralContainers.*;
+import examples.packageWithSingleContainer.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.*;
 
 class DiscoveryTests {
 

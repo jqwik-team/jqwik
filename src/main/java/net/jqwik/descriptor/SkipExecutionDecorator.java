@@ -1,12 +1,8 @@
 package net.jqwik.descriptor;
 
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.TestSource;
-import org.junit.platform.engine.TestTag;
-import org.junit.platform.engine.UniqueId;
+import java.util.*;
 
-import java.util.Optional;
-import java.util.Set;
+import org.junit.platform.engine.*;
 
 public class SkipExecutionDecorator implements TestDescriptor {
 

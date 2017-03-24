@@ -1,12 +1,11 @@
 
 package net.jqwik;
 
-import net.jqwik.discovery.JqwikUniqueIDs;
-import org.junit.platform.engine.UniqueId;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import org.junit.platform.engine.*;
+
+import net.jqwik.discovery.*;
 
 /**
  * For testing purposes

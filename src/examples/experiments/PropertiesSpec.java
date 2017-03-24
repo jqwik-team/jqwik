@@ -1,8 +1,5 @@
 package experiments;
 
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Property;
-
 public class PropertiesSpec {
 
 	@Property

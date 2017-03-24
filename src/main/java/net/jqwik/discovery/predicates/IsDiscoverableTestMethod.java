@@ -1,10 +1,9 @@
 package net.jqwik.discovery.predicates;
 
-import java.lang.reflect.Method;
-import java.util.function.Predicate;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
-import static net.jqwik.support.JqwikReflectionSupport.isAbstract;
-import static net.jqwik.support.JqwikReflectionSupport.isPrivate;
+import java.lang.reflect.*;
+import java.util.function.*;
 
 public class IsDiscoverableTestMethod implements Predicate<Method> {
 

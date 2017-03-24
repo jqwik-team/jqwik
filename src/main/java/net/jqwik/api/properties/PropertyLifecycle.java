@@ -1,6 +1,6 @@
 package net.jqwik.api.properties;
 
-import net.jqwik.api.TestLifecycle;
+import net.jqwik.api.*;
 
 public interface PropertyLifecycle extends TestLifecycle {
 

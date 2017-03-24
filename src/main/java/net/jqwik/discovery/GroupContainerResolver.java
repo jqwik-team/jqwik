@@ -1,10 +1,9 @@
 package net.jqwik.discovery;
 
-import net.jqwik.descriptor.ContainerClassDescriptor;
-import net.jqwik.discovery.specs.DiscoverySpec;
-import net.jqwik.discovery.specs.GroupDiscoverySpec;
-import org.junit.platform.engine.TestDescriptor;
-import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.*;
+
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.specs.*;
 
 class GroupContainerResolver extends AbstractClassResolver {
 

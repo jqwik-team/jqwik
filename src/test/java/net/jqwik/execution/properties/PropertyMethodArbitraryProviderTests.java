@@ -1,21 +1,17 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.Arbitrary;
-import javaslang.test.Gen;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static org.assertj.core.api.Assertions.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+
+import javaslang.test.*;
 import net.jqwik.api.*;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Generate;
-import net.jqwik.api.properties.Generator;
+import net.jqwik.api.properties.*;
 import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.support.JqwikReflectionSupport;
-
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Random;
-
-import static net.jqwik.TestDescriptorBuilder.forMethod;
-import static org.assertj.core.api.Assertions.assertThat;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
 
 @Group
 public class PropertyMethodArbitraryProviderTests {

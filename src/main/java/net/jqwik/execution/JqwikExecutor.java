@@ -1,16 +1,14 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.ExampleLifecycle;
-import net.jqwik.api.properties.PropertyLifecycle;
-import net.jqwik.descriptor.*;
-import net.jqwik.execution.properties.PropertyExecutor;
-import org.junit.platform.engine.EngineExecutionListener;
-import org.junit.platform.engine.ExecutionRequest;
-import org.junit.platform.engine.TestDescriptor;
+import java.util.function.*;
+import java.util.logging.*;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.logging.Logger;
+import org.junit.platform.engine.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.properties.*;
 
 public class JqwikExecutor {
 

@@ -1,11 +1,10 @@
 package net.jqwik;
 
-import net.jqwik.descriptor.JqwikEngineDescriptor;
-import net.jqwik.discovery.JqwikDiscoverer;
 import org.junit.platform.engine.*;
 
-import net.jqwik.execution.JqwikExecutor;
-import net.jqwik.execution.LifecycleRegistry;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.*;
+import net.jqwik.execution.*;
 
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";

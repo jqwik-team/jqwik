@@ -1,6 +1,6 @@
 package net.jqwik.discovery.specs;
 
-import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.*;
 
 public interface DiscoverySpec<T extends AnnotatedElement> {
 

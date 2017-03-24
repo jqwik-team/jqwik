@@ -1,6 +1,6 @@
 package net.jqwik.api;
 
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 
 public interface TestContext {
 

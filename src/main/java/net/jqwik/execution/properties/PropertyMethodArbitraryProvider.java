@@ -1,21 +1,16 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.Arbitrary;
-import javaslang.test.Checkable;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Generate;
-import net.jqwik.api.properties.Generator;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import org.junit.platform.commons.support.HierarchyTraversalMode;
-import org.junit.platform.commons.support.ReflectionSupport;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
 
-import static net.jqwik.support.JqwikReflectionSupport.invokeMethod;
+import org.junit.platform.commons.support.*;
+
+import javaslang.test.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
 
 public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
