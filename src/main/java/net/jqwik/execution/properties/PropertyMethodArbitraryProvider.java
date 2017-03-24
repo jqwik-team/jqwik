@@ -97,10 +97,17 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 			//noinspection unchecked
 			return new GenericArbitrary(Generator.of((Class<Enum>) parameterType.getRawType()), size);
 		}
+
 		if (parameterType.getRawType() == Integer.class)
 			return new GenericArbitrary(Arbitrary.integer(), size);
 		if (parameterType.getRawType() == int.class)
 			return new GenericArbitrary(Arbitrary.integer(), size);
+
+		if (parameterType.getRawType() == Boolean.class)
+			return new GenericArbitrary(Arbitrary.of(true, false), size);
+		if (parameterType.getRawType() == boolean.class)
+			return new GenericArbitrary(Arbitrary.of(true, false), size);
+
 		return null;
 	}
 }

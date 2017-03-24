@@ -10,7 +10,7 @@
 - Tests for @ForAll effectiveSize parameter
 - Handle error if more than one generator applies
 - Default Generators for
-  - boolean, chars, floats and Big*
+  - chars, floats and Big*
   - Lists, Sets
   - All kinds of Numbers
   - Strings

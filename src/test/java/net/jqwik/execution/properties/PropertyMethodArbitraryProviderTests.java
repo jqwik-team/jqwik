@@ -16,7 +16,7 @@ import net.jqwik.support.*;
 @Group
 public class PropertyMethodArbitraryProviderTests {
 
-	private enum Count {
+	private enum AnEnum {
 		One,
 		Two,
 		Three
@@ -29,7 +29,11 @@ public class PropertyMethodArbitraryProviderTests {
 		void defaults() throws Exception {
 			assertGenerated(Integer.class, "intParam", int.class);
 			assertGenerated(Integer.class, "integerParam", Integer.class);
-			assertGenerated(Count.class, "enumParam", Count.class);
+
+			assertGenerated(Boolean.class, "booleanParam", boolean.class);
+			assertGenerated(Boolean.class, "boxedBooleanParam", Boolean.class);
+
+			assertGenerated(AnEnum.class, "enumParam", AnEnum.class);
 		}
 
 		@Example
@@ -39,7 +43,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void doNotUseDefaultIfForAllHasValue() throws Exception {
-			assertNoArbitraryProvided(DefaultParams.class, "enumParamWithForAllValue", Count.class);
+			assertNoArbitraryProvided(DefaultParams.class, "enumParamWithForAllValue", AnEnum.class);
 		}
 
 		private void assertNoArbitraryProvided(Class<DefaultParams> containerClass, String methodName, Class<?>... paramTypes)
@@ -64,17 +68,27 @@ public class PropertyMethodArbitraryProviderTests {
 			}
 
 			@Property
-			boolean enumParam(@ForAll Count oneTwoThree) {
-				return true;
-			}
-
-			@Property
-			boolean enumParamWithForAllValue(@ForAll("aValue") Count count) {
-				return true;
-			}
-
-			@Property
 			boolean integerParam(@ForAll Integer anInt) {
+				return true;
+			}
+
+			@Property
+			boolean booleanParam(@ForAll boolean aBoolean) {
+				return true;
+			}
+
+			@Property
+			boolean boxedBooleanParam(@ForAll Boolean aBoolean) {
+				return true;
+			}
+
+			@Property
+			boolean enumParam(@ForAll AnEnum oneTwoThree) {
+				return true;
+			}
+
+			@Property
+			boolean enumParamWithForAllValue(@ForAll("aValue") AnEnum count) {
 				return true;
 			}
 
