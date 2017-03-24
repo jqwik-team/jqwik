@@ -1,28 +1,31 @@
 package net.jqwik.execution.properties;
 
 import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.*;
 
 public class GenericType {
 
 	private final Type parameterizedType;
 
 	public GenericType(Type parameterizedType) {
-
 		this.parameterizedType = parameterizedType;
 	}
 
-	public Class getRawType() {
+	public Class<?> getRawType() {
 		if (parameterizedType instanceof Class) {
 			return (Class) parameterizedType;
 		}
 		return (Class) ((ParameterizedType) parameterizedType).getRawType();
 	}
 
-	public Type[] getTypeArguments() {
+	public GenericType[] getTypeArguments() {
 		if (parameterizedType instanceof Class) {
-			return new Type[0];
+			return new GenericType[0];
 		}
-		return ((ParameterizedType) parameterizedType).getActualTypeArguments();
+		List<GenericType> typeArgs = Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments())
+										   .map(type -> new GenericType(type)).collect(Collectors.toList());
+		return typeArgs.toArray(new GenericType[typeArgs.size()]);
 	}
 
 	public boolean isGeneric() {

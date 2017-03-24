@@ -6,6 +6,14 @@ import net.jqwik.execution.properties.Combinators.*;
 
 public interface Generator {
 
+	static Arbitrary<Integer> integer(int min, int max) {
+		return size -> random -> Gen.choose(min, max).apply(random);
+	}
+
+	static Arbitrary<Long> integer(long min, long max) {
+		return size -> random -> Gen.choose(min, max).apply(random);
+	}
+
 	static Arbitrary<String> string(char from, char to) {
 		return Arbitrary.string(Gen.choose(from, to));
 	}

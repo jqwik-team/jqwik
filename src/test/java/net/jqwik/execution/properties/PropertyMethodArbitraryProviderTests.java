@@ -115,6 +115,14 @@ public class PropertyMethodArbitraryProviderTests {
 		}
 
 		@Example
+		void findBoxedTypeGenerator() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "longFromBoxedType", long.class);
+			Parameter parameter = getParameter(WithNamedProviders.class, "longFromBoxedType");
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(Long.class);
+		}
+
+		@Example
 		void findStringGeneratorByName() throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "string", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "string");
@@ -158,9 +166,17 @@ public class PropertyMethodArbitraryProviderTests {
 				return true;
 			}
 
-			@Generate()
+			@Generate
 			Arbitrary<String> byMethodName() {
 				return Generator.string('x', 'y');
+			}
+
+			@Property
+			boolean longFromBoxedType(@ForAll("longBetween1and10") long aLong) { return true; }
+
+			@Generate
+			Arbitrary<Long> longBetween1and10() {
+				return Generator.integer(1L, 10L);
 			}
 
 		}

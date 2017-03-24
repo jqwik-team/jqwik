@@ -30,7 +30,7 @@ public class GeneratorsExamples {
 
 	@Generate
 	Arbitrary<Person> aValidPerson() {
-		Arbitrary<Integer> age = Arbitrary.integer().filter(a -> a >= 0 && a <= 100);
+		Arbitrary<Integer> age = Generator.integer(0, 100);
 		Arbitrary<String> first = Generator.string('a', 'z', 10).filter(f -> !f.isEmpty());
 		Arbitrary<String> last = Generator.string('a', 'z', 15).filter(f -> !f.isEmpty());
 
@@ -38,6 +38,23 @@ public class GeneratorsExamples {
 			String name = f + " " + l;
 			return new Person(name, a);
 		});
+	}
+
+	@Property(tries = 100)
+	boolean plusMinusSameNumberIsZero(@ForAll(size = 10) int aNumber) {
+		System.out.println(aNumber);
+		return aNumber - aNumber == 0;
+	}
+
+	@Property(tries = 100)
+	boolean numbersBetween1and100(@ForAll("between1and100") long aNumber) {
+		System.out.println(aNumber);
+		return aNumber - aNumber == 0;
+	}
+
+	@Generate
+	Arbitrary<Long> between1and100() {
+		return Generator.integer(1L, 100L);
 	}
 
 	static class Person {

@@ -64,13 +64,38 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 				return false;
 			if (!genericReturnType.getRawType().equals(Arbitrary.class))
 				return false;
-			return genericReturnType.getTypeArguments()[0] == genericType.getRawType();
+			return typesMatch(genericReturnType.getTypeArguments()[0], genericType);
 		};
+	}
+
+	private boolean typesMatch(GenericType providedType, GenericType targetType) {
+		if (boxedTypeMatches(providedType.getRawType(), targetType.getRawType()))
+			return true;
+		return targetType.getRawType().isAssignableFrom(providedType.getRawType());
+	}
+
+	private boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {
+		if (providedType.equals(Long.class) && targetType.equals(long.class))
+			return true;
+		if (providedType.equals(Integer.class) && targetType.equals(int.class))
+			return true;
+		if (providedType.equals(Short.class) && targetType.equals(short.class))
+			return true;
+		if (providedType.equals(Byte.class) && targetType.equals(byte.class))
+			return true;
+		if (providedType.equals(Character.class) && targetType.equals(char.class))
+			return true;
+		if (providedType.equals(Double.class) && targetType.equals(double.class))
+			return true;
+		if (providedType.equals(Float.class) && targetType.equals(float.class))
+			return true;
+		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
 	private Arbitrary<Object> defaultArbitrary(GenericType parameterType, int size) {
 		if (parameterType.isEnum()) {
-			return new GenericArbitrary(Generator.of(parameterType.getRawType()), size);
+			//noinspection unchecked
+			return new GenericArbitrary(Generator.of((Class<Enum>) parameterType.getRawType()), size);
 		}
 		if (parameterType.getRawType() == Integer.class)
 			return new GenericArbitrary(Arbitrary.integer(), size);

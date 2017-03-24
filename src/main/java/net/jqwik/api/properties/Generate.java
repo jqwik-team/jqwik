@@ -7,7 +7,6 @@ import org.junit.platform.commons.annotation.*;
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Testable
 public @interface Generate {
 	String value() default "";
 }
