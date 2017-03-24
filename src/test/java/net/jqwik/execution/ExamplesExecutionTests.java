@@ -38,19 +38,18 @@ class ExamplesExecutionTests {
 
 	@Example
 	void succeedingInInnerGroup() throws NoSuchMethodException {
-		TestDescriptor classDescriptor = forClass(ContainerClass.class).with(
-			forClass(ContainerClass.Inner.class, "innerSucceeding")
-		).build();
+		TestDescriptor classDescriptor = forClass(ContainerClass.class).with(forClass(ContainerClass.Inner.class, "innerSucceeding"))
+				.build();
 
-		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) classDescriptor
-				.getChildren().stream().findFirst().get().
-						getChildren().stream().findFirst().get();
+		ExampleMethodDescriptor descriptor = (ExampleMethodDescriptor) classDescriptor.getChildren().stream().findFirst().get()
+				.getChildren().stream().findFirst().get();
 
 		executeTests(descriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.Inner.class, "innerSucceeding"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.Inner.class, "innerSucceeding"), isSuccessful());
+		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.Inner.class, "innerSucceeding"),
+				isSuccessful());
 		assertThat(executions).containsExactly("inner succeeding", "inner close", "close");
 	}
 
@@ -74,7 +73,8 @@ class ExamplesExecutionTests {
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "failingInClose"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "failingInClose"), isFailed("failing close"));
+		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "failingInClose"),
+				isFailed("failing close"));
 		assertThat(executions).containsExactly("failingInClose", "close");
 	}
 
@@ -86,7 +86,8 @@ class ExamplesExecutionTests {
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "failingTwice"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "failingTwice"), isFailed("expected fail"));
+		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "failingTwice"),
+				isFailed("expected fail"));
 		assertThat(executions).containsExactly("failingTwice", "close");
 	}
 
@@ -100,7 +101,6 @@ class ExamplesExecutionTests {
 		events.verify(eventRecorder).executionSkipped(isExampleDescriptorFor(ContainerClass.class, "withParameter"), anyString());
 		assertThat(executions).isEmpty();
 	}
-
 
 	private void executeTests(ExampleMethodDescriptor exampleMethodDescriptor) {
 		executor.execute(exampleMethodDescriptor, eventRecorder, (testInstance) -> new AutoCloseableLifecycle());

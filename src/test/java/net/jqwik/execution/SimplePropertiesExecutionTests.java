@@ -82,13 +82,15 @@ class SimplePropertiesExecutionTests {
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "failingTwice"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failingTwice"), isFailed("Property [failingTwice] failed"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failingTwice"),
+				isFailed("Property [failingTwice] failed"));
 		assertThat(executions).containsExactly("failingTwice", "close");
 	}
 
 	@Example
 	void methodWithUnboundParameterIsSkipped() throws NoSuchMethodException {
-		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class).build();
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class)
+				.build();
 
 		executeTests(descriptor);
 

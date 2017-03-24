@@ -23,11 +23,11 @@ public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor im
 	}
 
 	public Method getTargetMethod() {
-    	return targetMethod;
+		return targetMethod;
 	}
 
 	public Class getContainerClass() {
-    	return containerClass;
+		return containerClass;
 	}
 
 	public String getLabel() {

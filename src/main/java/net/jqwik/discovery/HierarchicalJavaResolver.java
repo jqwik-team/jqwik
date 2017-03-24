@@ -50,9 +50,8 @@ class HierarchicalJavaResolver {
 	}
 
 	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
-		Set<TestDescriptor> potentialParents = isContainerAGroup.test(testClass) ?
-				resolveContainerWithParents(testClass.getDeclaringClass()) :
-				Collections.singleton(engineDescriptor);
+		Set<TestDescriptor> potentialParents = isContainerAGroup.test(testClass)
+				? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections.singleton(engineDescriptor);
 		return resolveForAllParents(testClass, potentialParents);
 	}
 
@@ -116,7 +115,8 @@ class HierarchicalJavaResolver {
 	private void resolveContainedGroups(ContainerClassDescriptor containerClassDescriptor, Class<?> containerClass) {
 		Predicate<Class<?>> isGroup = new IsContainerAGroup();
 		List<Class<?>> containedContainersCandidates = JqwikReflectionSupport.findNestedClasses(containerClass, isGroup);
-		containedContainersCandidates.forEach(nestedClass -> resolveContainerWithChildren(nestedClass, Collections.singleton(containerClassDescriptor)));
+		containedContainersCandidates
+				.forEach(nestedClass -> resolveContainerWithChildren(nestedClass, Collections.singleton(containerClassDescriptor)));
 	}
 
 	private void resolveContainedMethods(TestDescriptor containerDescriptor, Class<?> testClass) {

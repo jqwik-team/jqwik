@@ -28,5 +28,4 @@ class PropertyMethodResolver extends AbstractMethodResolver {
 		return JqwikUniqueIDs.appendProperty(parent.getUniqueId(), method);
 	}
 
-
 }

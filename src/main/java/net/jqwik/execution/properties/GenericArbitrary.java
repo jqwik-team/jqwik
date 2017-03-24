@@ -14,7 +14,7 @@ class GenericArbitrary implements Arbitrary<Object> {
 
 	@Override
 	public Gen<Object> apply(int size) {
-		int effectiveSize = sizePerArbitrary == 0 ? size :sizePerArbitrary;
+		int effectiveSize = sizePerArbitrary == 0 ? size : sizePerArbitrary;
 		return (Gen<Object>) wrapped.apply(effectiveSize);
 	}
 

@@ -28,5 +28,4 @@ class ExampleMethodResolver extends AbstractMethodResolver {
 		return JqwikUniqueIDs.appendExample(parent.getUniqueId(), method);
 	}
 
-
 }

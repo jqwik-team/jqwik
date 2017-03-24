@@ -36,7 +36,8 @@ public class JqwikUniqueIDs {
 		Matcher matcher = METHOD_PATTERN.matcher(methodId);
 
 		if (!matcher.matches()) {
-			LOG.warning(() -> String.format("Method id [%s] must follow '<method-name>([<list-of-parameter-types>])'", methodId, METHOD_PATTERN));
+			LOG.warning(() -> String.format("Method id [%s] must follow '<method-name>([<list-of-parameter-types>])'", methodId,
+					METHOD_PATTERN));
 			return Optional.empty();
 		}
 
@@ -49,6 +50,5 @@ public class JqwikUniqueIDs {
 		String methodId = String.format("%s(%s)", method.getName(), JqwikStringSupport.nullSafeToString(method.getParameterTypes()));
 		return uniqueId.append(segmentType, methodId);
 	}
-
 
 }

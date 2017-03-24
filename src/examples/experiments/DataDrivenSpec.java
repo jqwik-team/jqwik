@@ -42,7 +42,7 @@ class Tuple3<T1, T2, T3> {
 		return Arrays.asList(tuples);
 	}
 
-	static <T1, T2, T3> Stream<Tuple3<T1, T2, T3> > stream(Tuple3... tuples) {
+	static <T1, T2, T3> Stream<Tuple3<T1, T2, T3>> stream(Tuple3... tuples) {
 		return Arrays.stream(tuples);
 	}
 

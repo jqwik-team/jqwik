@@ -2,8 +2,10 @@ package experiments;
 
 public interface ForAllLifeCycle {
 
-	default void beforeAll() {}
+	default void beforeAll() {
+	}
 
-	default void afterAll() {}
+	default void afterAll() {
+	}
 
 }

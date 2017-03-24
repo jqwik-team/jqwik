@@ -17,7 +17,9 @@ import net.jqwik.support.*;
 public class PropertyMethodArbitraryProviderTests {
 
 	private enum Count {
-		One, Two, Three
+		One,
+		Two,
+		Three
 	}
 
 	@Group
@@ -40,7 +42,8 @@ public class PropertyMethodArbitraryProviderTests {
 			assertNoArbitraryProvided(DefaultParams.class, "enumParamWithForAllValue", Count.class);
 		}
 
-		private void assertNoArbitraryProvided(Class<DefaultParams> containerClass, String methodName, Class<?> ... paramTypes) throws Exception {
+		private void assertNoArbitraryProvided(Class<DefaultParams> containerClass, String methodName, Class<?>... paramTypes)
+				throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(containerClass, methodName, paramTypes);
 			Parameter parameter = getParameter(containerClass, methodName);
 			assertThat(provider.forParameter(parameter)).isEmpty();

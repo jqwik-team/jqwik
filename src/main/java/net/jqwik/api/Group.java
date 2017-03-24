@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 import org.junit.platform.commons.annotation.*;
 
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable

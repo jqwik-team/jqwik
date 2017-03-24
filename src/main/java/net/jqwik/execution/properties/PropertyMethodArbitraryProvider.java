@@ -79,5 +79,3 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		return null;
 	}
 }
-
-

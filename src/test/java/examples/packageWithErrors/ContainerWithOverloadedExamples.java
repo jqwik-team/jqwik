@@ -3,7 +3,7 @@ package examples.packageWithErrors;
 import net.jqwik.api.*;
 import net.jqwik.api.properties.*;
 
-public class ContainerWithOverloadedExamples extends AbstractContainerForOverloadedExamples{
+public class ContainerWithOverloadedExamples extends AbstractContainerForOverloadedExamples {
 
 	@Example
 	void succeeding() {
@@ -12,7 +12,6 @@ public class ContainerWithOverloadedExamples extends AbstractContainerForOverloa
 	@Example
 	void overloadedExample() {
 	}
-
 
 	@Example
 	void overloadedExample(int aNumber) {

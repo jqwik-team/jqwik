@@ -20,12 +20,12 @@ public class JqwikDiscoverer {
 		Predicate<String> classNamePredicate = buildClassNamePredicate(request);
 
 		request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
-			findAllClassesInClasspathRoot(selector.getClasspathRoot(), isScannableTestClass,
-				classNamePredicate).forEach(javaElementsResolver::resolveClass);
+			findAllClassesInClasspathRoot(selector.getClasspathRoot(), isScannableTestClass, classNamePredicate)
+					.forEach(javaElementsResolver::resolveClass);
 		});
 		request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
-			findAllClassesInPackage(selector.getPackageName(), isScannableTestClass, classNamePredicate).forEach(
-				javaElementsResolver::resolveClass);
+			findAllClassesInPackage(selector.getPackageName(), isScannableTestClass, classNamePredicate)
+					.forEach(javaElementsResolver::resolveClass);
 		});
 		request.getSelectorsByType(ClassSelector.class).forEach(selector -> {
 			javaElementsResolver.resolveClass(selector.getJavaClass());

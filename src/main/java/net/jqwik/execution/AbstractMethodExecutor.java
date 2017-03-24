@@ -44,8 +44,7 @@ abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor,
 		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
 	}
 
-	private TestExecutionResult invokeTestMethod(T methodDescriptor, Object testInstance,
-												 Function<Object, U> lifecycleSupplier) {
+	private TestExecutionResult invokeTestMethod(T methodDescriptor, Object testInstance, Function<Object, U> lifecycleSupplier) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		try {
 			testExecutionResult = execute(methodDescriptor, testInstance);
@@ -60,17 +59,17 @@ abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor,
 		return testExecutionResult;
 	}
 
-	private void lifecycleDoFinally(T methodDescriptor, Object testInstance, Function<Object, U> lifecycleSupplier, List<Throwable> throwableCollector) {
+	private void lifecycleDoFinally(T methodDescriptor, Object testInstance, Function<Object, U> lifecycleSupplier,
+			List<Throwable> throwableCollector) {
 
-		JqwikReflectionSupport.streamInnerInstances(testInstance)
-				.forEach(innerInstance -> {
-					try {
-						U lifecycle = lifecycleSupplier.apply(innerInstance);
-						lifecycle.doFinally(methodDescriptor, innerInstance);
-					} catch (Throwable throwable) {
-						throwableCollector.add(throwable);
-					}
-				});
+		JqwikReflectionSupport.streamInnerInstances(testInstance).forEach(innerInstance -> {
+			try {
+				U lifecycle = lifecycleSupplier.apply(innerInstance);
+				lifecycle.doFinally(methodDescriptor, innerInstance);
+			} catch (Throwable throwable) {
+				throwableCollector.add(throwable);
+			}
+		});
 	}
 
 	protected abstract TestExecutionResult execute(T methodDescriptor, Object testInstance);

@@ -86,7 +86,8 @@ class DiscoveryTests {
 
 	@Example
 	void discoverNestedContainerNotInGroup() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithNoGroups.NestedContainer.class)).build();
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithNoGroups.NestedContainer.class))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
@@ -95,8 +96,8 @@ class DiscoveryTests {
 
 	@Example
 	void discoverInnerContainerFromClass() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class))
-				.build();
+		LauncherDiscoveryRequest discoveryRequest = request()
+				.selectors(selectClass(TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(4);

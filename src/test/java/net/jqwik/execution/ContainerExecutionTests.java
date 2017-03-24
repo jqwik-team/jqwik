@@ -80,14 +80,10 @@ class ContainerExecutionTests {
 
 	@Example
 	void engineWithNestedGroups() throws NoSuchMethodException {
-		TestDescriptor engineDescriptor = forEngine(testEngine).with(
-				forClass(TopLevelContainer.class, "topLevelSuccess").with(
-						forClass(TopLevelContainer.InnerGroup.class, "innerGroupSuccess").with(
-								forClass(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess")
-						),
-						forClass(TopLevelContainer.AnotherGroup.class)
-				)
-		).build();
+		TestDescriptor engineDescriptor = forEngine(testEngine).with(forClass(TopLevelContainer.class, "topLevelSuccess").with(
+				forClass(TopLevelContainer.InnerGroup.class, "innerGroupSuccess")
+						.with(forClass(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess")),
+				forClass(TopLevelContainer.AnotherGroup.class))).build();
 
 		executeTests(engineDescriptor);
 
@@ -99,12 +95,16 @@ class ContainerExecutionTests {
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.class));
 		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"), isSuccessful());
+		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"),
+				isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class));
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"), isSuccessful());
-		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class), isSuccessful());
+		events.verify(eventRecorder)
+				.executionStarted(isExampleDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"));
+		events.verify(eventRecorder).executionFinished(
+				isExampleDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"), isSuccessful());
+		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class),
+				isSuccessful());
 
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.class), isSuccessful());
 

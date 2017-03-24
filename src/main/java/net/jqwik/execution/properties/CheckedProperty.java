@@ -24,7 +24,7 @@ public class CheckedProperty {
 	private final int tries;
 
 	public CheckedProperty(String propertyName, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
-						   ArbitraryProvider arbitraryProvider, int tries) {
+			ArbitraryProvider arbitraryProvider, int tries) {
 		this.propertyName = propertyName;
 		this.forAllFunction = forAllFunction;
 		this.forAllParameters = forAllParameters;

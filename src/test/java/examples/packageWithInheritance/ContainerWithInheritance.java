@@ -5,17 +5,21 @@ import net.jqwik.api.*;
 public class ContainerWithInheritance extends AbstractContainer implements InterfaceTests {
 
 	@Example
-	void example() {}
+	void example() {
+	}
 
 	@Example
 	@Override
-	void exampleToOverride() { }
+	void exampleToOverride() {
+	}
 
 	@Example
 	@Override
-	public void exampleToOverrideFromInterface() { }
+	public void exampleToOverrideFromInterface() {
+	}
 
 	@Override
-	void exampleToDisable() { }
+	void exampleToDisable() {
+	}
 
 }

@@ -5,11 +5,14 @@ import net.jqwik.api.*;
 public abstract class AbstractContainer {
 
 	@Example
-	void exampleToInherit() { }
+	void exampleToInherit() {
+	}
 
 	@Example
-	void exampleToOverride() { }
+	void exampleToOverride() {
+	}
 
 	@Example
-	void exampleToDisable() { }
+	void exampleToDisable() {
+	}
 }

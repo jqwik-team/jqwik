@@ -25,8 +25,7 @@ class TestEngineIntegrationTests {
 	void runTestsFromRootDir() {
 		LauncherDiscoveryRequest discoveryRequest = request()
 				.selectors(selectClasspathRoots(JqwikReflectionSupport.getAllClasspathRootDirectories()))
-				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
-				.build();
+				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer")).build();
 
 		TestDescriptor engineDescriptor = runTests(discoveryRequest);
 
@@ -120,7 +119,6 @@ class TestEngineIntegrationTests {
 
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
-
 
 	private TestDescriptor runTests(LauncherDiscoveryRequest discoveryRequest) {
 		TestDescriptor engineDescriptor = testEngine.discover(discoveryRequest, engineId);

@@ -9,6 +9,6 @@ import net.jqwik.api.properties.*;
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
 
 	public PropertyMethodDescriptor(UniqueId uniqueId, Method exampleMethod, Class containerClass) {
-        super(uniqueId, containerClass, exampleMethod);
-    }
+		super(uniqueId, containerClass, exampleMethod);
+	}
 }

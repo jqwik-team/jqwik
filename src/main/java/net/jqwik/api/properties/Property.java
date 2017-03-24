@@ -6,7 +6,7 @@ import org.junit.platform.commons.annotation.*;
 
 import javaslang.test.*;
 
-@Target({ElementType.METHOD})
+@Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable

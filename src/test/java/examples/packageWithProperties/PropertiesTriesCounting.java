@@ -37,13 +37,14 @@ public class PropertiesTriesCounting implements AutoCloseable {
 		return Generator.of(Triade.class).filter(t -> t != Triade.Fragile);
 	}
 
-
 	@Override
 	public void close() throws Exception {
 		System.out.println("COUNTING: " + count);
 	}
 
 	enum Triade {
-		Fragile, Robust, AntiFragile
+		Fragile,
+		Robust,
+		AntiFragile
 	}
 }

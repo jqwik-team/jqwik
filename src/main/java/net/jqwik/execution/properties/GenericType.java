@@ -12,15 +12,15 @@ public class GenericType {
 	}
 
 	public Class getRawType() {
-		if (parameterizedType instanceof  Class) {
+		if (parameterizedType instanceof Class) {
 			return (Class) parameterizedType;
 		}
 		return (Class) ((ParameterizedType) parameterizedType).getRawType();
 	}
 
 	public Type[] getTypeArguments() {
-		if (parameterizedType instanceof  Class) {
-			return  new Type[0];
+		if (parameterizedType instanceof Class) {
+			return new Type[0];
 		}
 		return ((ParameterizedType) parameterizedType).getActualTypeArguments();
 	}

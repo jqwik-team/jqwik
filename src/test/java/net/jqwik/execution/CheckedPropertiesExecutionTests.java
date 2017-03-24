@@ -46,14 +46,15 @@ class CheckedPropertiesExecutionTests {
 
 	@Example
 	void succeedWithThreeNumbers() throws NoSuchMethodException {
-		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithThreeNumbers", int.class, int.class, int.class)
-				.build();
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithThreeNumbers",
+				int.class, int.class, int.class).build();
 
 		executeTests(descriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeedWithThreeNumbers"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithThreeNumbers"), isSuccessful());
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithThreeNumbers"),
+				isSuccessful());
 	}
 
 	@Example

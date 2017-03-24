@@ -7,9 +7,9 @@ public class StackSpec {
 	@Fact("can be created with constructor")
 	void canBeCreatedWithNew() {
 
-//		assertAll:
-//			assertThat(new Stack()).isInstanceOf(Stack.class);
-//			assertThat(new Stack()).isInstanceOf(Stack.class);
+		// assertAll:
+		// assertThat(new Stack()).isInstanceOf(Stack.class);
+		// assertThat(new Stack()).isInstanceOf(Stack.class);
 	}
 
 	@Group1("when it is new")
@@ -27,13 +27,14 @@ public class StackSpec {
 
 		@Fact
 		void poppingThrowsException(Stack aNewStack) {
-//			assertThatExceptionOfType(EmptyStackException.class).isThrownBy(()-> aNewStack.pop());
+			// assertThatExceptionOfType(EmptyStackException.class).isThrownBy(()-> aNewStack.pop());
 		}
+
 		@Fact
 		void twoThingsHappen(Stack aNewStack) {
-//			all:
-//				assertThat(aNewStack).isEmpty();
-//				assertThatExceptionOfType(EmptyStackException.class).isThrownBy(()-> aNewStack.pop());
+			// all:
+			// assertThat(aNewStack).isEmpty();
+			// assertThatExceptionOfType(EmptyStackException.class).isThrownBy(()-> aNewStack.pop());
 		}
 
 	}

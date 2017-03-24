@@ -54,14 +54,11 @@ public class JqwikReflectionSupport {
 		// but has been stable so far in all JDKs
 
 		// @formatter:off
-		return Arrays.stream(inner.getClass().getDeclaredFields())
-				.filter(field -> field.getName().startsWith("this$"))
-				.findFirst()
+		return Arrays.stream(inner.getClass().getDeclaredFields()).filter(field -> field.getName().startsWith("this$")).findFirst()
 				.map(field -> {
 					try {
 						return makeAccessible(field).get(inner);
-					}
-					catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+					} catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
 						return Optional.empty();
 					}
 				});
@@ -81,13 +78,11 @@ public class JqwikReflectionSupport {
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
 		if (isTopLevelClass.test(clazz) || JqwikReflectionSupport.isStatic(clazz))
 			return JqwikReflectionSupport.newInstance(clazz);
-		else  {
+		else {
 			Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
 			return JqwikReflectionSupport.newInstance(clazz, parentInstance);
 		}
 	}
-
-
 
 	public static Set<Path> getAllClasspathRootDirectories() {
 		return ReflectionUtils.getAllClasspathRootDirectories();
@@ -124,6 +119,5 @@ public class JqwikReflectionSupport {
 	public static boolean isStatic(Member member) {
 		return Modifier.isStatic(member.getModifiers());
 	}
-
 
 }

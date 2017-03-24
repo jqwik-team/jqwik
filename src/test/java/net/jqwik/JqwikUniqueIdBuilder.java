@@ -12,7 +12,7 @@ import net.jqwik.discovery.*;
  */
 public class JqwikUniqueIdBuilder {
 
-	public static UniqueId uniqueIdForClassContainer(Class<?> ... containerClasses) {
+	public static UniqueId uniqueIdForClassContainer(Class<?>... containerClasses) {
 		return uniqueIdForClasses(engineId(), new ArrayList<>(Arrays.asList(containerClasses)));
 	}
 

@@ -22,7 +22,8 @@ class CheckedPropertyTests {
 	class CheckedPropertyCreation {
 		@Example
 		void createCheckedPropertyWithoutTriesParameter() throws NoSuchMethodException {
-			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(Examples.class, "propertyWithoutTries", int.class).build();
+			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
+					.forMethod(Examples.class, "propertyWithoutTries", int.class).build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
@@ -31,7 +32,8 @@ class CheckedPropertyTests {
 
 		@Example
 		void createCheckedPropertyWithTriesParameter() throws NoSuchMethodException {
-			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(Examples.class, "propertyWith42Tries", int.class).build();
+			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
+					.forMethod(Examples.class, "propertyWith42Tries", int.class).build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
@@ -66,12 +68,8 @@ class CheckedPropertyTests {
 	@Example
 	void abortIfNoArbitraryForParameterCanBeFound() {
 		List<Parameter> parameters = getParametersForMethod("stringProp");
-		CheckedProperty checkedProperty = new CheckedProperty(
-				"stringProp",
-				params -> false, //never gets theree
-				parameters,
-				p -> Optional.empty(),
-				100);
+		CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, // never gets theree
+				parameters, p -> Optional.empty(), 100);
 
 		TestExecutionResult check = checkedProperty.check();
 		assertThat(check.getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
@@ -80,12 +78,8 @@ class CheckedPropertyTests {
 	}
 
 	private void intOnlyExample(String methodName, CheckedFunction checkedFunction, TestExecutionResult.Status successful) {
-		CheckedProperty checkedProperty = new CheckedProperty(
-				methodName,
-				checkedFunction,
-				getParametersForMethod(methodName),
-				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)),
-				100);
+		CheckedProperty checkedProperty = new CheckedProperty(methodName, checkedFunction, getParametersForMethod(methodName),
+				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 100);
 		TestExecutionResult check = checkedProperty.check();
 		assertThat(check.getStatus()).isEqualTo(successful);
 	}
@@ -134,11 +128,13 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		public boolean prop7(@ForAll int n1, @ForAll int n2, @ForAll int n3, @ForAll int n4, @ForAll int n5, @ForAll int n6, @ForAll int n7) {
+		public boolean prop7(@ForAll int n1, @ForAll int n2, @ForAll int n3, @ForAll int n4, @ForAll int n5, @ForAll int n6,
+				@ForAll int n7) {
 			return true;
 		}
 
-		public boolean prop8(@ForAll int n1, @ForAll int n2, @ForAll int n3, @ForAll int n4, @ForAll int n5, @ForAll int n6, @ForAll int n7, @ForAll int n8) {
+		public boolean prop8(@ForAll int n1, @ForAll int n2, @ForAll int n3, @ForAll int n4, @ForAll int n5, @ForAll int n6, @ForAll int n7,
+				@ForAll int n8) {
 			return true;
 		}
 	}

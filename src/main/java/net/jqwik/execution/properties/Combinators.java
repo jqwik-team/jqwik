@@ -18,7 +18,7 @@ public class Combinators {
 			this.a2 = a2;
 		}
 
-		public <R> Arbitrary<R> as(Function2<T1,T2, R> combinator) {
+		public <R> Arbitrary<R> as(Function2<T1, T2, R> combinator) {
 			return size -> random -> {
 				T1 t1 = a1.apply(size).apply(random);
 				T2 t2 = a2.apply(size).apply(random);
@@ -42,7 +42,7 @@ public class Combinators {
 			this.a3 = a3;
 		}
 
-		public <R> Arbitrary<R> as(Function3<T1,T2, T3, R> combinator) {
+		public <R> Arbitrary<R> as(Function3<T1, T2, T3, R> combinator) {
 			return size -> random -> {
 				T1 t1 = a1.apply(size).apply(random);
 				T2 t2 = a2.apply(size).apply(random);
@@ -52,7 +52,8 @@ public class Combinators {
 		}
 	}
 
-	public static <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4) {
+	public static <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
+			Arbitrary<T4> a4) {
 		return new Combinator4<T1, T2, T3, T4>(a1, a2, a3, a4);
 	}
 
@@ -69,7 +70,7 @@ public class Combinators {
 			this.a4 = a4;
 		}
 
-		public <R> Arbitrary<R> as(Function4<T1,T2, T3, T4, R> combinator) {
+		public <R> Arbitrary<R> as(Function4<T1, T2, T3, T4, R> combinator) {
 			return size -> random -> {
 				T1 t1 = a1.apply(size).apply(random);
 				T2 t2 = a2.apply(size).apply(random);

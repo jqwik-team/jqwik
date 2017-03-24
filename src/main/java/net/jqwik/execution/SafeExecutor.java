@@ -18,11 +18,9 @@ public class SafeExecutor {
 		try {
 			executable.execute();
 			return successful();
-		}
-		catch (TestAbortedException e) {
+		} catch (TestAbortedException e) {
 			return aborted(e);
-		}
-		catch (Throwable t) {
+		} catch (Throwable t) {
 			rethrowIfBlacklisted(t);
 			return failed(t);
 		}

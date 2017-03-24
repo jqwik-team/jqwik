@@ -4,8 +4,10 @@ import net.jqwik.api.*;
 
 public interface InterfaceTests {
 	@Example
-	default void exampleToInheritFromInterface() {}
+	default void exampleToInheritFromInterface() {
+	}
 
 	@Example
-	default void exampleToOverrideFromInterface() {}
+	default void exampleToOverrideFromInterface() {
+	}
 }
