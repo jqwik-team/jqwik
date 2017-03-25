@@ -30,16 +30,28 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 	public Optional<Arbitrary<Object>> forParameter(Parameter parameter) {
 		ForAll forAllAnnotation = parameter.getDeclaredAnnotation(ForAll.class);
 		GenericType genericType = new GenericType(parameter.getParameterizedType());
-		Optional<Method> optionalCreator = findArbitraryCreator(genericType, forAllAnnotation.value());
-		if (optionalCreator.isPresent()) {
-			Arbitrary<?> arbitrary = (Arbitrary<?>) invokeMethod(optionalCreator.get(), testInstance);
-			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary, forAllAnnotation.size());
+		String generatorName = forAllAnnotation.value();
+
+		Arbitrary<?> arbitrary = forType(genericType, generatorName);
+
+		if (arbitrary == null)
+			return Optional.empty();
+		else {
+			int generatorSize = forAllAnnotation.size();
+			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary, generatorSize);
 			return Optional.of(genericArbitrary);
 		}
-		if (!forAllAnnotation.value().isEmpty()) {
-			return Optional.empty();
+	}
+
+	private Arbitrary<?> forType(GenericType genericType, String generatorName) {
+		Optional<Method> optionalCreator = findArbitraryCreator(genericType, generatorName);
+		if (optionalCreator.isPresent()) {
+			return (Arbitrary<?>) invokeMethod(optionalCreator.get(), testInstance);
+		} else if (!generatorName.isEmpty()) {
+			return null;
+		} else {
+			return defaultArbitrary(genericType);
 		}
-		return Optional.ofNullable(defaultArbitrary(genericType, forAllAnnotation.size()));
 	}
 
 	private Optional<Method> findArbitraryCreator(GenericType genericType, String generatorToFind) {
@@ -72,17 +84,17 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		};
 	}
 
-	private Arbitrary<Object> defaultArbitrary(GenericType parameterType, int size) {
+	private Arbitrary<?> defaultArbitrary(GenericType parameterType) {
 		if (parameterType.isEnum()) {
 			//noinspection unchecked
-			return new GenericArbitrary(Generator.of((Class<Enum>) parameterType.getRawType()), size);
+			return Generator.of((Class<Enum>) parameterType.getRawType());
 		}
 
 		if (parameterType.isAssignableFrom(Integer.class))
-			return new GenericArbitrary(Arbitrary.integer(), size);
+			return Arbitrary.integer();
 
 		if (parameterType.isAssignableFrom(Boolean.class))
-			return new GenericArbitrary(Arbitrary.of(true, false), size);
+			return Arbitrary.of(true, false);
 
 		return null;
 	}
