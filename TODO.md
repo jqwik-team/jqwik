@@ -1,6 +1,5 @@
 ### General
 
-- Switch to non static nested classes for @Group
 - Allow Fixture parameters to examples and properties
 
 ### Properties
@@ -11,7 +10,8 @@
 - Handle error if more than one generator applies
 - Default Generators for
   - chars, floats and Big*
-  - Lists, Sets
+  - Sets, Streams
+  - javaslang lists and streams
   - All kinds of Numbers
   - Strings
 - Constrain tries to max possible number of values (e.g. Enum.values().length)

@@ -6,30 +6,44 @@ import java.util.stream.*;
 
 public class GenericType {
 
-	private final Type parameterizedType;
+	private final Class<?> rawType;
+	private final GenericType[] typeArguments;
 
-	public GenericType(Type parameterizedType) {
-		this.parameterizedType = parameterizedType;
+	public GenericType(Class<?> rawType, GenericType... typeArguments) {
+		this.rawType = rawType;
+		this.typeArguments = typeArguments;
 	}
 
-	public Class<?> getRawType() {
+	public GenericType(Type parameterizedType) {
+		this(extractRawType(parameterizedType), extractTypeArguments(parameterizedType));
+	}
+
+	private static Class<?> extractRawType(Type parameterizedType) {
 		if (parameterizedType instanceof Class) {
 			return (Class) parameterizedType;
 		}
 		return (Class) ((ParameterizedType) parameterizedType).getRawType();
 	}
 
-	public GenericType[] getTypeArguments() {
+	private static GenericType[] extractTypeArguments(Type parameterizedType) {
 		if (parameterizedType instanceof Class) {
 			return new GenericType[0];
 		}
 		List<GenericType> typeArgs = Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments())
-										   .map(type -> new GenericType(type)).collect(Collectors.toList());
+			.map(type -> new GenericType(type)).collect(Collectors.toList());
 		return typeArgs.toArray(new GenericType[typeArgs.size()]);
 	}
 
+	public Class<?> getRawType() {
+		return rawType;
+	}
+
+	public GenericType[] getTypeArguments() {
+		return typeArguments;
+	}
+
 	public boolean isGeneric() {
-		return (parameterizedType instanceof ParameterizedType);
+		return typeArguments.length > 0;
 	}
 
 	public boolean isEnum() {
@@ -39,7 +53,21 @@ public class GenericType {
 	public boolean isAssignableFrom(GenericType providedType) {
 		if (boxedTypeMatches(providedType.getRawType(), this.getRawType()))
 			return true;
-		return this.getRawType().isAssignableFrom(providedType.getRawType());
+		if (!this.getRawType().isAssignableFrom(providedType.getRawType()))
+			return false;
+		return allTypeArgumentsAreAssignable(typeArguments, providedType.getTypeArguments());
+	}
+
+	private boolean allTypeArgumentsAreAssignable(GenericType[] targetTypeArguments, GenericType[] providedTypeArguments) {
+		if (targetTypeArguments.length != providedTypeArguments.length)
+			return false;
+		for (int i = 0; i < targetTypeArguments.length; i++) {
+			GenericType targetTypeArgument = targetTypeArguments[i];
+			GenericType providedTypeArgument = providedTypeArguments[i];
+			if (!targetTypeArgument.isAssignableFrom(providedTypeArgument))
+				return false;
+		}
+		return true;
 	}
 
 	public boolean isAssignableFrom(Class providedClass) {

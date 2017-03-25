@@ -65,6 +65,12 @@ public class GeneratorsExamples {
 		return true;
 	}
 
+	@Property(tries = 10)
+	boolean aPeopleList(@ForAll(size = 5) List<Person> people) {
+		System.out.println(people);
+		return people != null;
+	}
+
 	@Generate
 	Arbitrary<List<Integer>> aList() {
 		return Generator.list(Generator.integer(0, 10));

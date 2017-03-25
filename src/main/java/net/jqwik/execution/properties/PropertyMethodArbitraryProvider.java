@@ -47,10 +47,8 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		Optional<Method> optionalCreator = findArbitraryCreator(genericType, generatorName);
 		if (optionalCreator.isPresent()) {
 			return (Arbitrary<?>) invokeMethod(optionalCreator.get(), testInstance);
-		} else if (!generatorName.isEmpty()) {
-			return null;
-		} else {
-			return defaultArbitrary(genericType);
+		} else  {
+			return defaultArbitrary(genericType, generatorName);
 		}
 	}
 
@@ -84,17 +82,24 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		};
 	}
 
-	private Arbitrary<?> defaultArbitrary(GenericType parameterType) {
-		if (parameterType.isEnum()) {
-			//noinspection unchecked
-			return Generator.of((Class<Enum>) parameterType.getRawType());
+	private Arbitrary<?> defaultArbitrary(GenericType parameterType, String generatorName) {
+		if (generatorName.isEmpty()) {
+			if (parameterType.isEnum()) {
+				//noinspection unchecked
+				return Generator.of((Class<Enum>) parameterType.getRawType());
+			}
+			if (parameterType.isAssignableFrom(Integer.class))
+				return Arbitrary.integer();
+			if (parameterType.isAssignableFrom(Boolean.class))
+				return Arbitrary.of(true, false);
 		}
 
-		if (parameterType.isAssignableFrom(Integer.class))
-			return Arbitrary.integer();
-
-		if (parameterType.isAssignableFrom(Boolean.class))
-			return Arbitrary.of(true, false);
+		if (parameterType.isAssignableFrom(List.class) && parameterType.isGeneric()) {
+			GenericType innerType = parameterType.getTypeArguments()[0];
+			Arbitrary<?> innerArbitrary = forType(innerType, generatorName);
+			if (innerArbitrary != null)
+				return Generator.list(innerArbitrary);
+		}
 
 		return null;
 	}
