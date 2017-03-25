@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static net.jqwik.support.JqwikReflectionSupport.invokeMethod;
@@ -94,11 +95,10 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 				return Arbitrary.of(true, false);
 		}
 
-		if (parameterType.isAssignableFrom(List.class) && parameterType.isGeneric()) {
-			GenericType innerType = parameterType.getTypeArguments()[0];
-			Arbitrary<?> innerArbitrary = forType(innerType, generatorName);
-			if (innerArbitrary != null)
-				return Generator.list(innerArbitrary);
+		Function<GenericType, Arbitrary<?>> supplier = subtype -> forType(subtype, generatorName);
+		ListArbitraryProvider listArbitraryProvider = new ListArbitraryProvider();
+		if (listArbitraryProvider.canProvideFor(parameterType)) {
+			return listArbitraryProvider.provideFor(parameterType, supplier);
 		}
 
 		return null;
