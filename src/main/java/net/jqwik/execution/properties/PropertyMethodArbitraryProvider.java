@@ -3,8 +3,9 @@ package net.jqwik.execution.properties;
 import javaslang.test.Arbitrary;
 import net.jqwik.api.properties.ForAll;
 import net.jqwik.api.properties.Generate;
-import net.jqwik.api.properties.Generator;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.execution.properties.providers.EnumArbitraryProvider;
+import net.jqwik.execution.properties.providers.ListArbitraryProvider;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
 
@@ -84,21 +85,25 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 	}
 
 	private Arbitrary<?> defaultArbitrary(GenericType parameterType, String generatorName) {
+		Function<GenericType, Arbitrary<?>> subtypeProvider = subtype -> forType(subtype, generatorName);
 		if (generatorName.isEmpty()) {
-			if (parameterType.isEnum()) {
-				//noinspection unchecked
-				return Generator.of((Class<Enum>) parameterType.getRawType());
+			EnumArbitraryProvider enumArbitraryProvider = new EnumArbitraryProvider();
+			if (enumArbitraryProvider.canProvideFor(parameterType)) {
+				return enumArbitraryProvider.provideFor(parameterType, subtypeProvider);
 			}
-			if (parameterType.isAssignableFrom(Integer.class))
+
+			if (parameterType.isAssignableFrom(Integer.class)) {
 				return Arbitrary.integer();
-			if (parameterType.isAssignableFrom(Boolean.class))
+			}
+			if (parameterType.isAssignableFrom(Boolean.class)) {
 				return Arbitrary.of(true, false);
+			}
 		}
 
-		Function<GenericType, Arbitrary<?>> supplier = subtype -> forType(subtype, generatorName);
+
 		ListArbitraryProvider listArbitraryProvider = new ListArbitraryProvider();
 		if (listArbitraryProvider.canProvideFor(parameterType)) {
-			return listArbitraryProvider.provideFor(parameterType, supplier);
+			return listArbitraryProvider.provideFor(parameterType, subtypeProvider);
 		}
 
 		return null;
