@@ -4,7 +4,9 @@ import javaslang.test.Arbitrary;
 import net.jqwik.api.properties.ForAll;
 import net.jqwik.api.properties.Generate;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.execution.properties.providers.BooleanArbitraryProvider;
 import net.jqwik.execution.properties.providers.EnumArbitraryProvider;
+import net.jqwik.execution.properties.providers.IntegerArbitraryProvider;
 import net.jqwik.execution.properties.providers.ListArbitraryProvider;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
@@ -85,24 +87,26 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 	}
 
 	private Arbitrary<?> defaultArbitrary(GenericType parameterType, String generatorName) {
+		boolean hasGeneratorName = !generatorName.isEmpty();
 		Function<GenericType, Arbitrary<?>> subtypeProvider = subtype -> forType(subtype, generatorName);
-		if (generatorName.isEmpty()) {
-			EnumArbitraryProvider enumArbitraryProvider = new EnumArbitraryProvider();
-			if (enumArbitraryProvider.canProvideFor(parameterType)) {
-				return enumArbitraryProvider.provideFor(parameterType, subtypeProvider);
-			}
 
-			if (parameterType.isAssignableFrom(Integer.class)) {
-				return Arbitrary.integer();
-			}
-			if (parameterType.isAssignableFrom(Boolean.class)) {
-				return Arbitrary.of(true, false);
-			}
+		BooleanArbitraryProvider booleanArbitraryProvider = new BooleanArbitraryProvider();
+		if (booleanArbitraryProvider.canProvideFor(parameterType, hasGeneratorName)) {
+			return booleanArbitraryProvider.provideFor(parameterType, subtypeProvider);
 		}
 
+		IntegerArbitraryProvider integerArbitraryProvider = new IntegerArbitraryProvider();
+		if (integerArbitraryProvider.canProvideFor(parameterType, hasGeneratorName)) {
+			return integerArbitraryProvider.provideFor(parameterType, subtypeProvider);
+		}
+
+		EnumArbitraryProvider enumArbitraryProvider = new EnumArbitraryProvider();
+		if (enumArbitraryProvider.canProvideFor(parameterType, hasGeneratorName)) {
+			return enumArbitraryProvider.provideFor(parameterType, subtypeProvider);
+		}
 
 		ListArbitraryProvider listArbitraryProvider = new ListArbitraryProvider();
-		if (listArbitraryProvider.canProvideFor(parameterType)) {
+		if (listArbitraryProvider.canProvideFor(parameterType, hasGeneratorName)) {
 			return listArbitraryProvider.provideFor(parameterType, subtypeProvider);
 		}
 

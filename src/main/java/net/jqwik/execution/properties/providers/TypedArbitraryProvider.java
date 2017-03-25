@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 public interface TypedArbitraryProvider {
 
-	boolean canProvideFor(GenericType targetType);
+	boolean canProvideFor(GenericType targetType, boolean withName);
 
 	Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider);
 }

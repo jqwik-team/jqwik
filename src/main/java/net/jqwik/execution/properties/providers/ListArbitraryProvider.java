@@ -10,7 +10,7 @@ import java.util.function.Function;
 public class ListArbitraryProvider implements TypedArbitraryProvider {
 
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(GenericType targetType, boolean withName) {
 		return targetType.isAssignableFrom(List.class) && targetType.isGeneric();
 	}
 
