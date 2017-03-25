@@ -4,6 +4,8 @@ import javaslang.test.*;
 import net.jqwik.api.properties.*;
 import net.jqwik.api.properties.Property;
 
+import java.util.List;
+
 public class GeneratorsExamples {
 
 	@Property(tries = 5)
@@ -55,6 +57,17 @@ public class GeneratorsExamples {
 	@Generate
 	Arbitrary<Long> between1and100() {
 		return Generator.integer(1L, 100L);
+	}
+
+	@Property(tries = 10)
+	boolean aListOfInts(@ForAll(size = 5) List<Integer> anIntList) {
+		System.out.println(anIntList.toString());
+		return true;
+	}
+
+	@Generate
+	Arbitrary<List<Integer>> aList() {
+		return Generator.list(Generator.integer(0, 10));
 	}
 
 	static class Person {
