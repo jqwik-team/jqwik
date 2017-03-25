@@ -35,4 +35,36 @@ public class GenericType {
 	public boolean isEnum() {
 		return getRawType().isEnum();
 	}
+
+	public boolean isAssignableFrom(GenericType providedType) {
+		if (boxedTypeMatches(providedType.getRawType(), this.getRawType()))
+			return true;
+		return this.getRawType().isAssignableFrom(providedType.getRawType());
+	}
+
+	public boolean isAssignableFrom(Class providedClass) {
+		if (this.getRawType().isAssignableFrom(providedClass))
+			return true;
+		return boxedTypeMatches(providedClass, this.getRawType());
+	}
+
+	private boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {
+		if (providedType.equals(Long.class) && targetType.equals(long.class))
+			return true;
+		if (providedType.equals(Integer.class) && targetType.equals(int.class))
+			return true;
+		if (providedType.equals(Short.class) && targetType.equals(short.class))
+			return true;
+		if (providedType.equals(Byte.class) && targetType.equals(byte.class))
+			return true;
+		if (providedType.equals(Character.class) && targetType.equals(char.class))
+			return true;
+		if (providedType.equals(Double.class) && targetType.equals(double.class))
+			return true;
+		if (providedType.equals(Float.class) && targetType.equals(float.class))
+			return true;
+		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
+	}
+
+
 }

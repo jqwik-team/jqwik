@@ -1,16 +1,20 @@
 package net.jqwik.execution.properties;
 
-import static net.jqwik.support.JqwikReflectionSupport.*;
+import javaslang.test.Arbitrary;
+import net.jqwik.api.properties.ForAll;
+import net.jqwik.api.properties.Generate;
+import net.jqwik.api.properties.Generator;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
+import org.junit.platform.commons.support.HierarchyTraversalMode;
+import org.junit.platform.commons.support.ReflectionSupport;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
-import org.junit.platform.commons.support.*;
-
-import javaslang.test.*;
-import net.jqwik.api.properties.*;
-import net.jqwik.descriptor.*;
+import static net.jqwik.support.JqwikReflectionSupport.invokeMethod;
 
 public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
@@ -59,37 +63,13 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		return method -> {
 			if (!method.isAnnotationPresent(Generate.class))
 				return false;
-			GenericType genericReturnType = new GenericType(method.getAnnotatedReturnType().getType());
-			if (!genericReturnType.isGeneric())
+			GenericType arbitraryReturnType = new GenericType(method.getAnnotatedReturnType().getType());
+			if (!arbitraryReturnType.getRawType().equals(Arbitrary.class))
 				return false;
-			if (!genericReturnType.getRawType().equals(Arbitrary.class))
+			if (!arbitraryReturnType.isGeneric())
 				return false;
-			return typesMatch(genericReturnType.getTypeArguments()[0], genericType);
+			return genericType.isAssignableFrom(arbitraryReturnType.getTypeArguments()[0]);
 		};
-	}
-
-	private boolean typesMatch(GenericType providedType, GenericType targetType) {
-		if (boxedTypeMatches(providedType.getRawType(), targetType.getRawType()))
-			return true;
-		return targetType.getRawType().isAssignableFrom(providedType.getRawType());
-	}
-
-	private boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {
-		if (providedType.equals(Long.class) && targetType.equals(long.class))
-			return true;
-		if (providedType.equals(Integer.class) && targetType.equals(int.class))
-			return true;
-		if (providedType.equals(Short.class) && targetType.equals(short.class))
-			return true;
-		if (providedType.equals(Byte.class) && targetType.equals(byte.class))
-			return true;
-		if (providedType.equals(Character.class) && targetType.equals(char.class))
-			return true;
-		if (providedType.equals(Double.class) && targetType.equals(double.class))
-			return true;
-		if (providedType.equals(Float.class) && targetType.equals(float.class))
-			return true;
-		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
 	private Arbitrary<Object> defaultArbitrary(GenericType parameterType, int size) {
@@ -98,14 +78,10 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 			return new GenericArbitrary(Generator.of((Class<Enum>) parameterType.getRawType()), size);
 		}
 
-		if (parameterType.getRawType() == Integer.class)
-			return new GenericArbitrary(Arbitrary.integer(), size);
-		if (parameterType.getRawType() == int.class)
+		if (parameterType.isAssignableFrom(Integer.class))
 			return new GenericArbitrary(Arbitrary.integer(), size);
 
-		if (parameterType.getRawType() == Boolean.class)
-			return new GenericArbitrary(Arbitrary.of(true, false), size);
-		if (parameterType.getRawType() == boolean.class)
+		if (parameterType.isAssignableFrom(Boolean.class))
 			return new GenericArbitrary(Arbitrary.of(true, false), size);
 
 		return null;
