@@ -20,6 +20,34 @@ The idea is to evolve a test engine from first principles:
 
 Jqwik allows you to write Example-based tests and Property tests.
 
+#### Gradle Dependencies
+
+Add the following stuff to your `build.gradle` file. 
+Maven users can sure figure the corresponding lines on their own :).
+
+```
+repositories {
+    ...
+	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+	maven { url "https://jitpack.io" }
+}
+
+ext.junitPlatformVersion = '1.0.0-SNAPSHOT'
+ext.junitJupiterVersion = '5.0.0-SNAPSHOT'
+ext.jqwikVersion = '0.2.3'
+
+dependencies {
+    ...
+
+	// Falsely required by IDEA's Junit 5 support
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+	// jqwik dependency
+	testCompile "com.github.jlink:jqwik:${jqwikVersion}"
+}
+
+```
+
 #### Example Based Testing
 
 ```java
@@ -61,13 +89,35 @@ important ingredient of  up-to-date testing approaches.
 
 Jqwik tries to make it as easy as possible
 for Java programmers to use it; it currently builds on [Javaslang](http://www.javaslang.io/)
-and it's testing lib to enable this feature.
+and its testing lib to enable this feature.
 
 ```java
-class FizzBuzzTests {
-	// TODO: Property tests to add
-}
+import javaslang.test.*;
+import net.jqwik.api.properties.*;
 
+public class FizzBuzzTests {
+
+	@Property
+	boolean every_third_element_starts_with_Fizz(@ForAll("divisibleBy3") int i) {
+		return fizzBuzz().get(i - 1).startsWith("Fizz");
+	}
+
+	@Generate
+	Arbitrary<Integer> divisibleBy3() {
+		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
+	}
+
+	private Stream<String> fizzBuzz() {
+		return Stream.from(1).map(i -> {
+			boolean divBy3 = i % 3 == 0;
+			boolean divBy5 = i % 5 == 0;
+
+			return divBy3 && divBy5 ? "FizzBuzz" :
+				divBy3 ? "Fizz" :
+					divBy5 ? "Buzz" : i.toString();
+		});
+	}
+}
 ```
 
 Read [this article](https://www.sitepoint.com/property-based-testing-with-javaslang/) 
