@@ -1,15 +1,17 @@
 package net.jqwik.discovery;
 
-import static org.junit.platform.commons.support.ReflectionSupport.*;
-import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
-
-import java.util.*;
-import java.util.function.*;
-
+import net.jqwik.discovery.predicates.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 
-import net.jqwik.discovery.predicates.*;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+
+import static org.junit.platform.commons.support.ReflectionSupport.*;
+import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
 
 public class JqwikDiscoverer {
 
@@ -21,17 +23,30 @@ public class JqwikDiscoverer {
 
 		request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
 			findAllClassesInClasspathRoot(selector.getClasspathRoot(), isScannableTestClass, classNamePredicate)
-					.forEach(javaElementsResolver::resolveClass);
+				.forEach(javaElementsResolver::resolveClass);
 		});
 		request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
 			findAllClassesInPackage(selector.getPackageName(), isScannableTestClass, classNamePredicate)
-					.forEach(javaElementsResolver::resolveClass);
+				.forEach(javaElementsResolver::resolveClass);
 		});
 		request.getSelectorsByType(ClassSelector.class).forEach(selector -> {
 			javaElementsResolver.resolveClass(selector.getJavaClass());
 		});
 		request.getSelectorsByType(MethodSelector.class).forEach(selector -> {
-			javaElementsResolver.resolveMethod(selector.getJavaClass(), selector.getJavaMethod());
+			Method testMethod;
+			try {
+				testMethod = selector.getJavaMethod();
+			} catch (PreconditionViolationException methodNotFound) {
+				// Hack: Work around bug in IDEA's Junit platform integration
+				// Currently doesn't work due to an error in DefaultLauncher
+				// TODO: Remove as soon as IDEA's fix has been released
+				Predicate<Method> hasCorrectName = method -> method.getName().equals(selector.getMethodName());
+				List<Method> methodWithFittingName = ReflectionSupport.findMethods(selector.getJavaClass(), hasCorrectName, HierarchyTraversalMode.BOTTOM_UP);
+				if (methodWithFittingName.isEmpty())
+					return;
+				testMethod = methodWithFittingName.get(0);
+			}
+			javaElementsResolver.resolveMethod(selector.getJavaClass(), testMethod);
 		});
 		request.getSelectorsByType(UniqueIdSelector.class).forEach(selector -> {
 			javaElementsResolver.resolveUniqueId(selector.getUniqueId());
