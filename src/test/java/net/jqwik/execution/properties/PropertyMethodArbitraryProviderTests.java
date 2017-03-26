@@ -1,22 +1,17 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.Arbitrary;
-import javaslang.test.Gen;
-import net.jqwik.api.Example;
-import net.jqwik.api.Group;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Generate;
-import net.jqwik.api.properties.Generator;
+import javaslang.test.*;
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
 import net.jqwik.api.properties.Property;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.support.JqwikReflectionSupport;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
 
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.Random;
+import java.lang.reflect.*;
+import java.util.*;
 
-import static net.jqwik.TestDescriptorBuilder.forMethod;
-import static org.assertj.core.api.Assertions.assertThat;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 public class PropertyMethodArbitraryProviderTests {
@@ -45,8 +40,16 @@ public class PropertyMethodArbitraryProviderTests {
 		void listDefaults() throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerList", List.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerList");
-			List actualList = generateList(provider, parameter);
+			List actualList = generateCollection(provider, parameter);
 			assertThat(actualList.get(0)).isInstanceOf(Integer.class);
+		}
+
+		@Example
+		void setDefaults() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerSet", Set.class);
+			Parameter parameter = getParameter(DefaultParams.class, "integerSet");
+			Set actualSet = generateCollection(provider, parameter);
+			assertThat(actualSet.iterator().next()).isInstanceOf(Integer.class);
 		}
 
 		@Example
@@ -114,6 +117,11 @@ public class PropertyMethodArbitraryProviderTests {
 			boolean integerList(@ForAll List<Integer> aList) {
 				return true;
 			}
+			@Property
+
+			boolean integerSet(@ForAll Set<Integer> aSet) {
+				return true;
+			}
 		}
 
 	}
@@ -176,7 +184,7 @@ public class PropertyMethodArbitraryProviderTests {
 		void findListOfProvidedStrings() throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "listOfGeneratedStrings", List.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "listOfGeneratedStrings");
-			List actualList = generateList(provider, parameter);
+			List actualList = generateCollection(provider, parameter);
 			assertThat(actualList.get(0)).isInstanceOf(String.class);
 			assertThat(((String) actualList.get(0)).length()).isBetween(3, 10);
 		}
@@ -227,12 +235,11 @@ public class PropertyMethodArbitraryProviderTests {
 
 	}
 
-	private List generateList(PropertyMethodArbitraryProvider provider, Parameter parameter) {
+	private <T extends Collection> T generateCollection(PropertyMethodArbitraryProvider provider, Parameter parameter) {
 		Object actual = generateObject(provider, parameter);
-		assertThat(actual).isInstanceOf(List.class);
-		List actualList = (List) actual;
+		T actualList = (T) actual;
 		while (actualList.isEmpty()) {
-			actualList = (List) generateObject(provider, parameter);
+			actualList = (T) generateObject(provider, parameter);
 		}
 		return actualList;
 	}

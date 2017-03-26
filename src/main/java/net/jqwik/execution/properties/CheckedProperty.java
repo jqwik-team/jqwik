@@ -1,16 +1,15 @@
 package net.jqwik.execution.properties;
 
-import static org.junit.platform.engine.TestExecutionResult.*;
+import javaslang.*;
+import javaslang.control.*;
+import javaslang.test.*;
+import org.junit.platform.engine.*;
+import org.opentest4j.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 
-import org.junit.platform.engine.*;
-import org.opentest4j.*;
-
-import javaslang.*;
-import javaslang.control.*;
-import javaslang.test.*;
+import static org.junit.platform.engine.TestExecutionResult.*;
 
 /**
  * Wraps javaslang's property checking

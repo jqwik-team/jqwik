@@ -5,15 +5,15 @@ import net.jqwik.api.properties.*;
 
 import java.util.*;
 
-public class ListArbitraryProvider extends AbstractCollectionArbitraryProvider {
+public class SetArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
 	@Override
 	protected Class<?> getProvidedType() {
-		return List.class;
+		return Set.class;
 	}
 
 	@Override
 	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Generator.list(innerArbitrary);
+		return Generator.set(innerArbitrary);
 	}
 }

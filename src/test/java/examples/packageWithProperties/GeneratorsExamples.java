@@ -4,7 +4,7 @@ import javaslang.test.*;
 import net.jqwik.api.properties.*;
 import net.jqwik.api.properties.Property;
 
-import java.util.List;
+import java.util.*;
 
 public class GeneratorsExamples {
 
@@ -67,6 +67,12 @@ public class GeneratorsExamples {
 
 	@Property(tries = 10)
 	boolean aPeopleList(@ForAll(size = 5) List<Person> people) {
+		System.out.println(people);
+		return people != null;
+	}
+
+	@Property(tries = 100)
+	boolean aPeopleSet(@ForAll(size = 5) Set<Person> people) {
 		System.out.println(people);
 		return people != null;
 	}

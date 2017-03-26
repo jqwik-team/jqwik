@@ -1,15 +1,11 @@
 package net.jqwik.api.properties;
 
-import javaslang.test.Arbitrary;
-import javaslang.test.Gen;
-import net.jqwik.execution.properties.Combinators;
-import net.jqwik.execution.properties.Combinators.Combinator2;
-import net.jqwik.execution.properties.Combinators.Combinator3;
-import net.jqwik.execution.properties.Combinators.Combinator4;
-import net.jqwik.execution.properties.SizedArbitrary;
+import javaslang.test.*;
+import net.jqwik.execution.properties.*;
+import net.jqwik.execution.properties.Combinators.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.*;
 
 public interface Generator {
 
@@ -41,11 +37,19 @@ public interface Generator {
 		return Arbitrary.of(enumClass.getEnumConstants());
 	}
 
+	static <T> Arbitrary<Set<T>> set(Arbitrary<T> arbitraryT) {
+		return collection(arbitraryT, () -> new HashSet<T>(), (set, element) -> set.add(element));
+	}
+
 	static <T> Arbitrary<List<T>> list(Arbitrary<T> arbitraryT) {
+		return collection(arbitraryT, () -> new ArrayList<T>(), (list, element) -> list.add(element));
+	}
+
+	static <E, C extends Collection<E>> Arbitrary<C> collection(Arbitrary<E> arbitraryT, Supplier<C> creator, BiConsumer<C, E> adder) {
 		return Arbitrary.list(arbitraryT).map(jsList -> {
-			List<T> list = new ArrayList<T>();
-			jsList.forEach(element -> list.add(element));
-			return list;
+			C set = creator.get();
+			jsList.forEach(element -> adder.accept(set, element));
+			return set;
 		});
 	}
 

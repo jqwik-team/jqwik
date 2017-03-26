@@ -10,7 +10,7 @@
 - Handle error if more than one generator applies
 - Default Generators for
   - chars, floats and Big*
-  - Sets, Streams
+  - Streams
   - javaslang lists and streams
   - All kinds of Numbers
   - Strings
