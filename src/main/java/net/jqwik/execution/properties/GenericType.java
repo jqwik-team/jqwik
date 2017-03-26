@@ -94,5 +94,15 @@ public class GenericType {
 		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
-
+	@Override
+	public String toString() {
+		String representation = getRawType().getSimpleName();
+		if (isGeneric()) {
+			String typeArgsRepresentation = Arrays.stream(typeArguments)
+				.map(genericType -> genericType.toString())
+				.collect(Collectors.joining(", "));
+			representation = String.format("%s<%s>", representation, typeArgsRepresentation);
+		}
+		return representation;
+	}
 }
