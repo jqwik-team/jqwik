@@ -6,6 +6,7 @@
 
 - Tests for Combinators
 - Introduce Assumptions/Implications (PropertyX.implies)
+  - Wait till assumptions work as expected in javaslang
 - Tests for @ForAll effectiveSize parameter
 - Handle error if more than one generator applies
 - Default Generators for
@@ -19,6 +20,7 @@
 ### Change requests to javaslang test:
 
 - Get rid of size parameter for Arbitraries. Maybe introduce generic config object.
+- Replace implies with assume (or add it): A failing assumption will trigger the creation of new set of values 
 - Shrinking!
 - Expose Random seed, so that a subsequent test run can exactly reproduce a previous one
 - Introduce a before-each-hook to clean up after single property check
