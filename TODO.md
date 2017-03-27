@@ -1,5 +1,6 @@
 ### General
 
+- Allow custom names for containers and test methods
 - Allow Fixture parameters to examples and properties
 
 ### Properties
