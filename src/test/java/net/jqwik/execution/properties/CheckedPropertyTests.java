@@ -69,7 +69,7 @@ class CheckedPropertyTests {
 	void abortIfNoArbitraryForParameterCanBeFound() {
 		List<Parameter> parameters = getParametersForMethod("stringProp");
 		CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, // never gets theree
-				parameters, p -> Optional.empty(), 100);
+				parameters, p -> Optional.empty(), 100, 1000L);
 
 		TestExecutionResult check = checkedProperty.check();
 		assertThat(check.getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
@@ -77,9 +77,21 @@ class CheckedPropertyTests {
 		assertThat(cannotFindeArbitraryException.getParameter()).isSameAs(parameters.get(0));
 	}
 
+	@Example
+	void usingASeedWillAlwaysProvideSameArbitraryValues() {
+		List<Integer> allGeneratedInts = new ArrayList<>();
+		CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params[0]);
+		CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
+				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 10, 42);
+
+		TestExecutionResult check = checkedProperty.check();
+		assertThat(check.getStatus()).isEqualTo(SUCCESSFUL);
+		assertThat(allGeneratedInts).containsExactly(-59, 20, -10, 1, -88, -87, 100, 40, 96, 82);
+	}
+
 	private void intOnlyExample(String methodName, CheckedFunction checkedFunction, TestExecutionResult.Status successful) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, checkedFunction, getParametersForMethod(methodName),
-				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 100);
+				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 100, 1000L);
 		TestExecutionResult check = checkedProperty.check();
 		assertThat(check.getStatus()).isEqualTo(successful);
 	}

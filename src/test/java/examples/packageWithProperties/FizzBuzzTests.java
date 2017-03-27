@@ -3,12 +3,12 @@ package examples.packageWithProperties;
 import javaslang.*;
 import javaslang.collection.*;
 import javaslang.test.*;
+import net.jqwik.api.*;
 import net.jqwik.api.properties.*;
-import org.junit.jupiter.api.*;
 
 public class FizzBuzzTests {
 
-	@Test
+	@Example
 	void every_third_element_starts_with_Fizz() {
 		Arbitrary<Integer> multiplesOf3 = Arbitrary.integer()
 			.filter(i -> i > 0)

@@ -10,6 +10,7 @@
   - Wait till assumptions work as expected in javaslang
 - Tests for @ForAll effectiveSize parameter
 - Handle error if more than one generator applies
+- Create child test with previous seed if property fails so that it can be run from runner with a click
 - Default Generators for
   - chars, floats and All kinds of Numbers
   - javaslang lists and streams
@@ -24,7 +25,7 @@
 - Shrinking!
 - Allow Arbitraries to fail/timeout, e.g. if they cannot generate additional values or if they are wrongly configured
   - See: Arbitrary.distinct can hang forever.
-- Expose Random seed, so that a subsequent test run can exactly reproduce a previous one
+- Expose Random seed in CheckResult, so that a subsequent test run can exactly reproduce a previous one
 - Introduce a before-each-hook to clean up after single property check
 - Introduce full data creation if possible (e.g. all combinations of an enum and a ranged number)
   - with and without random order

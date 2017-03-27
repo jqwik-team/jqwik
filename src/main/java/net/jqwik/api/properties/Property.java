@@ -12,4 +12,5 @@ import javaslang.test.*;
 @Testable
 public @interface Property {
 	int tries() default Checkable.DEFAULT_TRIES;
+	long seed() default Long.MIN_VALUE;
 }

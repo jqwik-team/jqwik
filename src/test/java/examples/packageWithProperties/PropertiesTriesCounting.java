@@ -26,7 +26,7 @@ public class PropertiesTriesCounting implements AutoCloseable {
 		return true;
 	}
 
-	@Property
+	@Property(seed = 53)
 	boolean twoEnumParams(@ForAll("notFragile") Triade t1, @ForAll("notFragile") Triade t2) {
 		count++;
 		return true;

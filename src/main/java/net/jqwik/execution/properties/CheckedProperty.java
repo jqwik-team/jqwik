@@ -21,19 +21,23 @@ public class CheckedProperty {
 	private final List<Parameter> forAllParameters;
 	private final ArbitraryProvider arbitraryProvider;
 	private final int tries;
+	private final long randomSeed;
 
 	public CheckedProperty(String propertyName, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
-			ArbitraryProvider arbitraryProvider, int tries) {
+			ArbitraryProvider arbitraryProvider, int tries, long randomSeed) {
 		this.propertyName = propertyName;
 		this.forAllFunction = forAllFunction;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryProvider = arbitraryProvider;
 		this.tries = tries;
+		this.randomSeed = randomSeed;
 	}
 
 	public TestExecutionResult check() {
 		try {
-			CheckResult result = createJavaSlangProperty().check(Checkable.DEFAULT_SIZE, tries);
+			// Long.MIN_VALUE is the default for Property.seed() annotation property
+			Random random = randomSeed == Long.MIN_VALUE ? Checkable.RNG.get() : new Random(randomSeed);
+			CheckResult result = createJavaSlangProperty().check(random, Checkable.DEFAULT_SIZE, tries);
 			if (result.isSatisfied())
 				return successful();
 			else {
