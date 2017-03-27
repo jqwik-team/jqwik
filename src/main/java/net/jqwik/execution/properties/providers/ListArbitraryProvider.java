@@ -14,6 +14,6 @@ public class ListArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
 	@Override
 	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Generator.list(innerArbitrary);
+		return Generator.listOf(innerArbitrary);
 	}
 }

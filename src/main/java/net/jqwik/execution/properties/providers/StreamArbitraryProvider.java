@@ -1,19 +1,20 @@
 package net.jqwik.execution.properties.providers;
 
+import java.util.*;
+import java.util.stream.*;
+
 import javaslang.test.*;
 import net.jqwik.api.properties.*;
 
-import java.util.*;
-
-public class SetArbitraryProvider extends AbstractCollectionArbitraryProvider {
+public class StreamArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
 	@Override
 	protected Class<?> getProvidedType() {
-		return Set.class;
+		return Stream.class;
 	}
 
 	@Override
 	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Generator.setOf(innerArbitrary);
+		return Generator.streamOf(innerArbitrary);
 	}
 }

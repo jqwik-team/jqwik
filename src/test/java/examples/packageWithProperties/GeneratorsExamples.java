@@ -5,6 +5,7 @@ import net.jqwik.api.properties.*;
 import net.jqwik.api.properties.Property;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class GeneratorsExamples {
 
@@ -65,6 +66,11 @@ public class GeneratorsExamples {
 		return true;
 	}
 
+	@Generate
+	Arbitrary<List<Integer>> aList() {
+		return Generator.listOf(Generator.integer(0, 10));
+	}
+
 	@Property(tries = 10)
 	boolean aPeopleList(@ForAll(size = 5) List<Person> people) {
 		System.out.println(people);
@@ -77,9 +83,9 @@ public class GeneratorsExamples {
 		return people != null;
 	}
 
-	@Generate
-	Arbitrary<List<Integer>> aList() {
-		return Generator.list(Generator.integer(0, 10));
+	@Property(tries = 10)
+	boolean aPeopleStream(@ForAll(size = 5) Stream<Person> people) {
+		return people.peek(p -> System.out.println(p)).allMatch(person -> person.getAge() >= 0);
 	}
 
 	static class Person {

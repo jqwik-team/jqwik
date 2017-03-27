@@ -9,6 +9,7 @@ import net.jqwik.support.*;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 import static net.jqwik.TestDescriptorBuilder.*;
 import static org.assertj.core.api.Assertions.*;
@@ -50,6 +51,14 @@ public class PropertyMethodArbitraryProviderTests {
 			Parameter parameter = getParameter(DefaultParams.class, "integerSet");
 			Set actualSet = generateCollection(provider, parameter);
 			assertThat(actualSet.iterator().next()).isInstanceOf(Integer.class);
+		}
+
+		@Example
+		void streamDefaults() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerStream", Stream.class);
+			Parameter parameter = getParameter(DefaultParams.class, "integerStream");
+			Stream actualStream = (Stream) generateObject(provider, parameter);
+			actualStream.forEach(o -> assertThat(o).isInstanceOf(Integer.class));
 		}
 
 		@Example
@@ -117,11 +126,17 @@ public class PropertyMethodArbitraryProviderTests {
 			boolean integerList(@ForAll List<Integer> aList) {
 				return true;
 			}
-			@Property
 
+			@Property
 			boolean integerSet(@ForAll Set<Integer> aSet) {
 				return true;
 			}
+
+			@Property
+			boolean integerStream(@ForAll Stream<Integer> aSet) {
+				return true;
+			}
+
 		}
 
 	}
@@ -237,11 +252,11 @@ public class PropertyMethodArbitraryProviderTests {
 
 	private <T extends Collection> T generateCollection(PropertyMethodArbitraryProvider provider, Parameter parameter) {
 		Object actual = generateObject(provider, parameter);
-		T actualList = (T) actual;
-		while (actualList.isEmpty()) {
-			actualList = (T) generateObject(provider, parameter);
+		T actualCollection = (T) actual;
+		while (actualCollection.isEmpty()) {
+			actualCollection = (T) generateObject(provider, parameter);
 		}
-		return actualList;
+		return actualCollection;
 	}
 
 	private static Object generateObject(PropertyMethodArbitraryProvider provider, Parameter parameter) {

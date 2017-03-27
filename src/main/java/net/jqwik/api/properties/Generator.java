@@ -6,6 +6,7 @@ import net.jqwik.execution.properties.Combinators.*;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 public interface Generator {
 
@@ -37,20 +38,24 @@ public interface Generator {
 		return Arbitrary.of(enumClass.getEnumConstants());
 	}
 
-	static <T> Arbitrary<Set<T>> set(Arbitrary<T> arbitraryT) {
-		return collection(arbitraryT, () -> new HashSet<T>(), (set, element) -> set.add(element));
+	static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> arbitraryT) {
+		return collectionOf(arbitraryT, () -> new HashSet<T>(), (set, element) -> set.add(element));
 	}
 
-	static <T> Arbitrary<List<T>> list(Arbitrary<T> arbitraryT) {
-		return collection(arbitraryT, () -> new ArrayList<T>(), (list, element) -> list.add(element));
+	static <T> Arbitrary<List<T>> listOf(Arbitrary<T> arbitraryT) {
+		return collectionOf(arbitraryT, () -> new ArrayList<T>(), (list, element) -> list.add(element));
 	}
 
-	static <E, C extends Collection<E>> Arbitrary<C> collection(Arbitrary<E> arbitraryT, Supplier<C> creator, BiConsumer<C, E> adder) {
+	static <E, C extends Collection<E>> Arbitrary<C> collectionOf(Arbitrary<E> arbitraryT, Supplier<C> creator, BiConsumer<C, E> adder) {
 		return Arbitrary.list(arbitraryT).map(jsList -> {
 			C set = creator.get();
 			jsList.forEach(element -> adder.accept(set, element));
 			return set;
 		});
+	}
+
+	static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> arbitraryT) {
+		return listOf(arbitraryT).map(Collection::stream);
 	}
 
 	static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
