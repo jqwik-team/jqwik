@@ -33,19 +33,20 @@ public class CheckedProperty {
 		this.randomSeed = randomSeed;
 	}
 
-	public TestExecutionResult check() {
+	public PropertyExecutionResult check() {
+		// Long.MIN_VALUE is the default for Property.seed() annotation property
+		long effectiveSeed = randomSeed == Long.MIN_VALUE ? Checkable.RNG.get().nextLong() : randomSeed;
 		try {
-			// Long.MIN_VALUE is the default for Property.seed() annotation property
-			Random random = randomSeed == Long.MIN_VALUE ? Checkable.RNG.get() : new Random(randomSeed);
+			Random random = new Random(effectiveSeed);
 			CheckResult result = createJavaSlangProperty().check(random, Checkable.DEFAULT_SIZE, tries);
 			if (result.isSatisfied())
-				return successful();
+				return PropertyExecutionResult.successful(effectiveSeed);
 			else {
 				String propertyFailedMessage = String.format("Property [%s] failed: %s", propertyName, result.toString());
-				return failed(new AssertionFailedError(propertyFailedMessage));
+				return PropertyExecutionResult.failed(propertyFailedMessage, effectiveSeed);
 			}
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
-			return aborted(cannotFindArbitraryException);
+			return PropertyExecutionResult.aborted(cannotFindArbitraryException, effectiveSeed);
 		}
 	}
 

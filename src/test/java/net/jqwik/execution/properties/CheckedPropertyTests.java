@@ -71,7 +71,7 @@ class CheckedPropertyTests {
 		CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, // never gets theree
 				parameters, p -> Optional.empty(), 100, 1000L);
 
-		TestExecutionResult check = checkedProperty.check();
+		TestExecutionResult check = checkedProperty.check().getTestExecutionResult();
 		assertThat(check.getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
 		CannotFindArbitraryException cannotFindeArbitraryException = (CannotFindArbitraryException) check.getThrowable().get();
 		assertThat(cannotFindeArbitraryException.getParameter()).isSameAs(parameters.get(0));
@@ -82,9 +82,12 @@ class CheckedPropertyTests {
 		List<Integer> allGeneratedInts = new ArrayList<>();
 		CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params[0]);
 		CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 10, 42);
+				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 10, 42L);
 
-		TestExecutionResult check = checkedProperty.check();
+		PropertyExecutionResult executionResult = checkedProperty.check();
+		assertThat(executionResult.getSeed()).isEqualTo(42L);
+
+		TestExecutionResult check = executionResult.getTestExecutionResult();
 		assertThat(check.getStatus()).isEqualTo(SUCCESSFUL);
 		assertThat(allGeneratedInts).containsExactly(-59, 20, -10, 1, -88, -87, 100, 40, 96, 82);
 	}
@@ -92,7 +95,7 @@ class CheckedPropertyTests {
 	private void intOnlyExample(String methodName, CheckedFunction checkedFunction, TestExecutionResult.Status successful) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, checkedFunction, getParametersForMethod(methodName),
 				p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 100, 1000L);
-		TestExecutionResult check = checkedProperty.check();
+		TestExecutionResult check = checkedProperty.check().getTestExecutionResult();
 		assertThat(check.getStatus()).isEqualTo(successful);
 	}
 

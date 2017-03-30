@@ -30,7 +30,7 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 				return aborted(new JqwikException(errorMessage));
 			}
 			if (hasForAllParameters(propertyMethodDescriptor.getTargetMethod())) {
-				return executeProperty(propertyMethodDescriptor, testInstance);
+				return executeProperty(propertyMethodDescriptor, testInstance).getTestExecutionResult();
 			} else {
 				return executePropertyWithoutForAllParameters(propertyMethodDescriptor, testInstance);
 			}
@@ -46,7 +46,7 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 		return !COMPATIBLE_RETURN_TYPES.contains(targetMethod.getReturnType());
 	}
 
-	private TestExecutionResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+	private PropertyExecutionResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(propertyMethodDescriptor, testInstance);
 		return property.check();
 	}
