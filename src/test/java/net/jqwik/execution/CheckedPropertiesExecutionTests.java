@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.reporting.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
@@ -17,6 +18,7 @@ class CheckedPropertiesExecutionTests {
 
 	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
 	private final PropertyExecutor executor = new PropertyExecutor();
+	private final ArgumentCaptor<ReportEntry> reportEntryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
 
 	private static int countTries = 0;
 
@@ -29,7 +31,11 @@ class CheckedPropertiesExecutionTests {
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"));
+		events.verify(eventRecorder).reportingEntryPublished(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"),
+				reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"), isFailed());
+
+		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("seed");
 	}
 
 	@Example
@@ -41,7 +47,11 @@ class CheckedPropertiesExecutionTests {
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"));
+		events.verify(eventRecorder).reportingEntryPublished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"),
+															 reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"), isSuccessful());
+
+		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("seed");
 	}
 
 	@Example

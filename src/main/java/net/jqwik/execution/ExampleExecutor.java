@@ -9,7 +9,7 @@ import net.jqwik.support.*;
 public class ExampleExecutor extends AbstractMethodExecutor<ExampleMethodDescriptor, ExampleLifecycle> {
 
 	@Override
-	protected TestExecutionResult execute(ExampleMethodDescriptor methodDescriptor, Object testInstance) {
+	protected TestExecutionResult executeMethod(ExampleMethodDescriptor methodDescriptor, Object testInstance, EngineExecutionListener listener) {
 		SafeExecutor.Executable executable = () -> JqwikReflectionSupport.invokeMethod(methodDescriptor.getTargetMethod(), testInstance);
 		return new SafeExecutor().executeSafely(executable);
 	}

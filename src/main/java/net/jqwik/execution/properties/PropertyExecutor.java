@@ -7,6 +7,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
 import net.jqwik.*;
@@ -22,7 +23,7 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
 
 	@Override
-	protected TestExecutionResult execute(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+	protected TestExecutionResult executeMethod(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance, EngineExecutionListener listener) {
 		try {
 			if (hasIncompatibleReturnType(propertyMethodDescriptor.getTargetMethod())) {
 				String errorMessage = String.format("Property method [%s] must return boolean value",
@@ -30,7 +31,9 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 				return aborted(new JqwikException(errorMessage));
 			}
 			if (hasForAllParameters(propertyMethodDescriptor.getTargetMethod())) {
-				return executeProperty(propertyMethodDescriptor, testInstance).getTestExecutionResult();
+				PropertyExecutionResult propertyExecutionResult = executeProperty(propertyMethodDescriptor, testInstance);
+				listener.reportingEntryPublished(propertyMethodDescriptor, ReportEntry.from("seed", Long.toString(propertyExecutionResult.getSeed())));
+				return propertyExecutionResult.getTestExecutionResult();
 			} else {
 				return executePropertyWithoutForAllParameters(propertyMethodDescriptor, testInstance);
 			}

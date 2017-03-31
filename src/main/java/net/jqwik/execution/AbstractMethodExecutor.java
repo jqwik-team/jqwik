@@ -19,7 +19,7 @@ abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor,
 			return;
 		}
 		listener.executionStarted(methodDescriptor);
-		TestExecutionResult executionResult = executeTestMethod(methodDescriptor, lifecycleSupplier);
+		TestExecutionResult executionResult = executeTestMethod(methodDescriptor, lifecycleSupplier, listener);
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 
@@ -28,7 +28,8 @@ abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor,
 				.anyMatch(parameter -> !parameter.isAnnotationPresent(ForAll.class));
 	}
 
-	private TestExecutionResult executeTestMethod(T methodDescriptor, Function<Object, U> lifecycleSupplier) {
+	private TestExecutionResult executeTestMethod(T methodDescriptor, Function<Object, U> lifecycleSupplier,
+			EngineExecutionListener listener) {
 		Object testInstance = null;
 		try {
 			testInstance = createTestInstance(methodDescriptor);
@@ -37,17 +38,18 @@ abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor,
 					methodDescriptor.getContainerClass());
 			return TestExecutionResult.failed(new JqwikException(message, throwable));
 		}
-		return invokeTestMethod(methodDescriptor, testInstance, lifecycleSupplier);
+		return invokeTestMethod(methodDescriptor, testInstance, lifecycleSupplier, listener);
 	}
 
 	private Object createTestInstance(T methodDescriptor) {
 		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
 	}
 
-	private TestExecutionResult invokeTestMethod(T methodDescriptor, Object testInstance, Function<Object, U> lifecycleSupplier) {
+	private TestExecutionResult invokeTestMethod(T methodDescriptor, Object testInstance, Function<Object, U> lifecycleSupplier,
+			EngineExecutionListener listener) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		try {
-			testExecutionResult = execute(methodDescriptor, testInstance);
+			testExecutionResult = executeMethod(methodDescriptor, testInstance, listener);
 		} finally {
 			List<Throwable> throwableCollector = new ArrayList<>();
 			lifecycleDoFinally(methodDescriptor, testInstance, lifecycleSupplier, throwableCollector);
@@ -72,6 +74,6 @@ abstract public class AbstractMethodExecutor<T extends AbstractMethodDescriptor,
 		});
 	}
 
-	protected abstract TestExecutionResult execute(T methodDescriptor, Object testInstance);
+	protected abstract TestExecutionResult executeMethod(T methodDescriptor, Object testInstance, EngineExecutionListener listener);
 
 }
