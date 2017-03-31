@@ -5,9 +5,8 @@
 
 ### Properties
 
-- Log random seed for every property
-- Tests for Combinators
 - Introduce Assumptions/Implications (PropertyX.implies)
+- Tests for Combinators
 - Tests for @ForAll effectiveSize parameter
 - Handle error if more than one generator applies
 - Create child test with previous seed if property fails so that it can be run from runner with a click

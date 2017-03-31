@@ -23,7 +23,7 @@ public class PropertiesTriesCounting implements AutoCloseable {
 	@Property
 	boolean oneEnumParam(@ForAll Triade t) {
 		count++;
-		return true;
+		return false;
 	}
 
 	@Property(seed = 53)

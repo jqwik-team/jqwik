@@ -14,9 +14,9 @@ public class JqwikUniqueIDs {
 	public static final String CONTAINER_SEGMENT_TYPE = "class";
 	public static final String EXAMPLE_SEGMENT_TYPE = "example";
 	public static final String PROPERTY_SEGMENT_TYPE = "property";
+	public static final String SEED_SEGMENT_TYPE = "seed";
 
 	private static final Pattern METHOD_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
-
 	private static final Logger LOG = Logger.getLogger(JqwikUniqueIDs.class.getName());
 
 	public static UniqueId appendExample(UniqueId uniqueId, Method method) {
@@ -51,4 +51,7 @@ public class JqwikUniqueIDs {
 		return uniqueId.append(segmentType, methodId);
 	}
 
+	public static UniqueId appendSeed(UniqueId uniqueId, long seed) {
+		return uniqueId.append(SEED_SEGMENT_TYPE, Long.toString(seed));
+	}
 }
