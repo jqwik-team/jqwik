@@ -2,9 +2,22 @@ package examples.packageWithProperties;
 
 import javaslang.*;
 import javaslang.test.*;
+import javaslang.test.Property;
 import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
 
 public class PropertiesWithImplies {
+
+	@net.jqwik.api.properties.Property
+	@Assume("sumDivisibleBy2")
+	boolean mustStartWithFizz(@ForAll int i, @ForAll int j) {
+		return (i * j) % 6 == 0;
+	}
+
+	@net.jqwik.api.properties.Property
+	boolean someProp(@ForAll("poops") int i, @ForAll int j) {
+		return (i * j) % 6 == 0;
+	}
 
 	@Example
 	void javaslangHasImplies() {

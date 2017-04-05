@@ -12,18 +12,27 @@ public class CheckedPropertyFactory {
 
 	public CheckedProperty fromDescriptor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		String propertyName = propertyMethodDescriptor.getLabel();
-		CheckedFunction assumeFunction = createAssumeFunction(propertyMethodDescriptor, testInstance);
-		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
-		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
-		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
 
 		Property property = propertyMethodDescriptor.getTargetMethod().getDeclaredAnnotation(Property.class);
 		int tries = property.tries();
 		long randomSeed = property.seed();
-		return new CheckedProperty(propertyName, assumeFunction, forAllFunction, forAllParameters, arbitraryProvider, tries, randomSeed);
+
+		CheckedFunction assumeFunction = createAssumeFunction(propertyMethodDescriptor, testInstance);
+		if (assumeFunction == null) {
+			return new FailingCheckedProperty(new CannotFindAssumptionException(propertyMethodDescriptor.getTargetMethod()), randomSeed);
+		}
+
+		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
+		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
+		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
+
+		return new DefaultCheckedProperty(propertyName, assumeFunction, forAllFunction, forAllParameters, arbitraryProvider, tries, randomSeed);
 	}
 
 	private CheckedFunction createAssumeFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+		if (propertyMethodDescriptor.getTargetMethod().isAnnotationPresent(Assume.class))
+			return null;
+
 		// Todo: Use @Assume annotation to retrieve method and convert it to CheckedFunction
 		return params -> true;
 	}

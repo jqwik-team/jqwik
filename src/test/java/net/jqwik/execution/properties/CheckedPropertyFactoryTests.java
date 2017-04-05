@@ -18,7 +18,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void simple() {
 		PropertyMethodDescriptor descriptor = createDescriptor("prop");
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.propertyName).isEqualTo("prop");
 
@@ -26,10 +26,10 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
 		assertThat(property.forAllParameters.get(1).getType()).isEqualTo(String.class);
 
-		Object[] args = {1, "test"};
+		Object[] args = { 1, "test" };
 		assertThat(property.assumeFunction.apply(args)).isTrue();
 		assertThat(property.forAllFunction.apply(args)).isTrue();
-		assertThat(property.forAllFunction.apply(new Object[]{2, "test"})).isFalse();
+		assertThat(property.forAllFunction.apply(new Object[] { 2, "test" })).isFalse();
 
 		assertThat(property.randomSeed).isEqualTo(Long.MIN_VALUE);
 		assertThat(property.tries).isEqualTo(Checkable.DEFAULT_TRIES);
@@ -38,7 +38,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withUnboundParams() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams");
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
 		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
@@ -50,15 +50,32 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withTries() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithTries");
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 		assertThat(property.tries).isEqualTo(42);
 	}
 
 	@Example
 	void withSeed() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithSeed");
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 		assertThat(property.randomSeed).isEqualTo(4242);
+	}
+
+	@Example
+	void withUnknownAssumption() {
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnknownAssumption");
+		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+
+		assertThat(property.check().getTestExecutionResult().getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
+	}
+
+	@Example
+	void withAssumptionByMethodName() {
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithAssumption");
+		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+
+		assertThat(property.assumeFunction.apply(new Object[] { 4, "test" })).isTrue();
+		assertThat(property.assumeFunction.apply(new Object[] { 5, "test" })).isFalse();
 	}
 
 	private PropertyMethodDescriptor createDescriptor(String methodName) {
@@ -87,6 +104,23 @@ public class CheckedPropertyFactoryTests {
 		@Property(seed = 4242L)
 		boolean propWithSeed(@ForAll int anInt, @ForAll String aString) {
 			return true;
+		}
+
+		@Property
+		@Assume("unknownAssumption")
+		boolean propWithUnknownAssumption(@ForAll int length, @ForAll String aString) {
+			return true;
+		}
+
+		@Property
+		@Assume("lengthOfString")
+		boolean propWithAssumption(@ForAll int length, @ForAll String aString) {
+			return true;
+		}
+
+		@Assumption
+		boolean lengthOfString(int length, String aString) {
+			return aString.length() == length;
 		}
 	}
 }

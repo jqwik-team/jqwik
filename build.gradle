@@ -4,7 +4,7 @@ buildscript {
 		maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 	}
 	dependencies {
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-SNAPSHOT'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4'
 	}
 }
 
@@ -13,7 +13,7 @@ repositories {
 	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
-ext.junitPlatformVersion = '1.0.0-SNAPSHOT'
+ext.junitPlatformVersion = '1.0.0-M4'
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
@@ -57,7 +57,7 @@ dependencies {
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
 	// Only necessary to enable IntelliJ support
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-SNAPSHOT")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
 }
 
 task wrapper(type: Wrapper) {
