@@ -1,17 +1,18 @@
 package net.jqwik.execution.properties;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.properties.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.support.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.*;
 
 public class CheckedPropertyFactory {
 
 	public CheckedProperty fromDescriptor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		String propertyName = propertyMethodDescriptor.getLabel();
+		CheckedFunction assumeFunction = createAssumeFunction(propertyMethodDescriptor, testInstance);
 		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
 		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
@@ -19,7 +20,12 @@ public class CheckedPropertyFactory {
 		Property property = propertyMethodDescriptor.getTargetMethod().getDeclaredAnnotation(Property.class);
 		int tries = property.tries();
 		long randomSeed = property.seed();
-		return new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries, randomSeed);
+		return new CheckedProperty(propertyName, assumeFunction, forAllFunction, forAllParameters, arbitraryProvider, tries, randomSeed);
+	}
+
+	private CheckedFunction createAssumeFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+		// Todo: Use @Assume annotation to retrieve method and convert it to CheckedFunction
+		return params -> true;
 	}
 
 	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

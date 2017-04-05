@@ -3,13 +3,9 @@ package net.jqwik.execution.properties;
 import javaslang.*;
 import javaslang.control.*;
 import javaslang.test.*;
-import org.junit.platform.engine.*;
-import org.opentest4j.*;
 
 import java.lang.reflect.*;
 import java.util.*;
-
-import static org.junit.platform.engine.TestExecutionResult.*;
 
 /**
  * Wraps javaslang's property checking
@@ -17,15 +13,17 @@ import static org.junit.platform.engine.TestExecutionResult.*;
 public class CheckedProperty {
 
 	private final String propertyName;
+	private final CheckedFunction assumeFunction;
 	private final CheckedFunction forAllFunction;
 	private final List<Parameter> forAllParameters;
 	private final ArbitraryProvider arbitraryProvider;
 	private final int tries;
 	private final long randomSeed;
 
-	public CheckedProperty(String propertyName, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
+	public CheckedProperty(String propertyName, CheckedFunction assumeFunction, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
 			ArbitraryProvider arbitraryProvider, int tries, long randomSeed) {
 		this.propertyName = propertyName;
+		this.assumeFunction = assumeFunction;
 		this.forAllFunction = forAllFunction;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryProvider = arbitraryProvider;
@@ -87,35 +85,38 @@ public class CheckedProperty {
 
 	private Checkable createProperty1() {
 		Arbitrary<Object> a1 = findArbitrary(forAllParameters.get(0));
-		CheckedFunction1<Object, Boolean> function = createCheckedFunction1();
-		return Property.def(propertyName).forAll(a1).suchThat(function);
+		CheckedFunction1<Object, Boolean> assume = createCheckedFunction1(assumeFunction);
+		CheckedFunction1<Object, Boolean> implies = createCheckedFunction1(forAllFunction);
+		return Property.def(propertyName).forAll(a1).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction1<Object, Boolean> createCheckedFunction1() {
-		return p1 -> forAllFunction.apply(new Object[] { p1 });
+	private CheckedFunction1<Object, Boolean> createCheckedFunction1(CheckedFunction function) {
+		return p1 -> function.apply(new Object[] { p1 });
 	}
 
 	private Checkable createProperty2() {
 		Arbitrary<Object> a1 = findArbitrary(forAllParameters.get(0));
 		Arbitrary<Object> a2 = findArbitrary(forAllParameters.get(1));
-		CheckedFunction2<Object, Object, Boolean> function = createCheckedFunction2();
-		return Property.def(propertyName).forAll(a1, a2).suchThat(function);
+		CheckedFunction2<Object, Object, Boolean> assume = createCheckedFunction2(assumeFunction);
+		CheckedFunction2<Object, Object, Boolean> implies = createCheckedFunction2(forAllFunction);
+		return Property.def(propertyName).forAll(a1, a2).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction2<Object, Object, Boolean> createCheckedFunction2() {
-		return (p1, p2) -> forAllFunction.apply(new Object[] { p1, p2 });
+	private CheckedFunction2<Object, Object, Boolean> createCheckedFunction2(CheckedFunction function) {
+		return (p1, p2) -> function.apply(new Object[] { p1, p2 });
 	}
 
 	private Checkable createProperty3() {
 		Arbitrary<Object> a1 = findArbitrary(forAllParameters.get(0));
 		Arbitrary<Object> a2 = findArbitrary(forAllParameters.get(1));
 		Arbitrary<Object> a3 = findArbitrary(forAllParameters.get(2));
-		CheckedFunction3<Object, Object, Object, Boolean> function = createCheckedFunction3();
-		return Property.def(propertyName).forAll(a1, a2, a3).suchThat(function);
+		CheckedFunction3<Object, Object, Object, Boolean> assume = createCheckedFunction3(assumeFunction);
+		CheckedFunction3<Object, Object, Object, Boolean> implies = createCheckedFunction3(forAllFunction);
+		return Property.def(propertyName).forAll(a1, a2, a3).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction3<Object, Object, Object, Boolean> createCheckedFunction3() {
-		return (p1, p2, p3) -> forAllFunction.apply(new Object[] { p1, p2, p3 });
+	private CheckedFunction3<Object, Object, Object, Boolean> createCheckedFunction3(CheckedFunction function) {
+		return (p1, p2, p3) -> function.apply(new Object[] { p1, p2, p3 });
 	}
 
 	private Checkable createProperty4() {
@@ -123,12 +124,13 @@ public class CheckedProperty {
 		Arbitrary<Object> a2 = findArbitrary(forAllParameters.get(1));
 		Arbitrary<Object> a3 = findArbitrary(forAllParameters.get(2));
 		Arbitrary<Object> a4 = findArbitrary(forAllParameters.get(3));
-		CheckedFunction4<Object, Object, Object, Object, Boolean> function = createCheckedFunction4();
-		return Property.def(propertyName).forAll(a1, a2, a3, a4).suchThat(function);
+		CheckedFunction4<Object, Object, Object, Object, Boolean> assume = createCheckedFunction4(assumeFunction);
+		CheckedFunction4<Object, Object, Object, Object, Boolean> implies = createCheckedFunction4(forAllFunction);
+		return Property.def(propertyName).forAll(a1, a2, a3, a4).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction4<Object, Object, Object, Object, Boolean> createCheckedFunction4() {
-		return (p1, p2, p3, p4) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4 });
+	private CheckedFunction4<Object, Object, Object, Object, Boolean> createCheckedFunction4(CheckedFunction function) {
+		return (p1, p2, p3, p4) -> function.apply(new Object[] { p1, p2, p3, p4 });
 	}
 
 	private Checkable createProperty5() {
@@ -137,12 +139,13 @@ public class CheckedProperty {
 		Arbitrary<Object> a3 = findArbitrary(forAllParameters.get(2));
 		Arbitrary<Object> a4 = findArbitrary(forAllParameters.get(3));
 		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(4));
-		CheckedFunction5<Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction5();
-		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5).suchThat(function);
+		CheckedFunction5<Object, Object, Object, Object, Object, Boolean> assume = createCheckedFunction5(assumeFunction);
+		CheckedFunction5<Object, Object, Object, Object, Object, Boolean> implies = createCheckedFunction5(forAllFunction);
+		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction5<Object, Object, Object, Object, Object, Boolean> createCheckedFunction5() {
-		return (p1, p2, p3, p4, p5) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5 });
+	private CheckedFunction5<Object, Object, Object, Object, Object, Boolean> createCheckedFunction5(CheckedFunction function) {
+		return (p1, p2, p3, p4, p5) -> function.apply(new Object[] { p1, p2, p3, p4, p5 });
 	}
 
 	private Checkable createProperty6() {
@@ -152,12 +155,13 @@ public class CheckedProperty {
 		Arbitrary<Object> a4 = findArbitrary(forAllParameters.get(3));
 		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(4));
 		Arbitrary<Object> a6 = findArbitrary(forAllParameters.get(5));
-		CheckedFunction6<Object, Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction6();
-		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6).suchThat(function);
+		CheckedFunction6<Object, Object, Object, Object, Object, Object, Boolean> assume = createCheckedFunction6(assumeFunction);
+		CheckedFunction6<Object, Object, Object, Object, Object, Object, Boolean> implies = createCheckedFunction6(forAllFunction);
+		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction6<Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction6() {
-		return (p1, p2, p3, p4, p5, p6) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5, p6 });
+	private CheckedFunction6<Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction6(CheckedFunction function) {
+		return (p1, p2, p3, p4, p5, p6) -> function.apply(new Object[] { p1, p2, p3, p4, p5, p6 });
 	}
 
 	private Checkable createProperty7() {
@@ -168,12 +172,13 @@ public class CheckedProperty {
 		Arbitrary<Object> a5 = findArbitrary(forAllParameters.get(4));
 		Arbitrary<Object> a6 = findArbitrary(forAllParameters.get(5));
 		Arbitrary<Object> a7 = findArbitrary(forAllParameters.get(6));
-		CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction7();
-		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7).suchThat(function);
+		CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> assume = createCheckedFunction7(assumeFunction);
+		CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> implies = createCheckedFunction7(forAllFunction);
+		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction7() {
-		return (p1, p2, p3, p4, p5, p6, p7) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7 });
+	private CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction7(CheckedFunction function) {
+		return (p1, p2, p3, p4, p5, p6, p7) -> function.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7 });
 	}
 
 	private Checkable createProperty8() {
@@ -185,12 +190,13 @@ public class CheckedProperty {
 		Arbitrary<Object> a6 = findArbitrary(forAllParameters.get(5));
 		Arbitrary<Object> a7 = findArbitrary(forAllParameters.get(6));
 		Arbitrary<Object> a8 = findArbitrary(forAllParameters.get(7));
-		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> function = createCheckedFunction8();
-		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7, a8).suchThat(function);
+		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> assume = createCheckedFunction8(assumeFunction);
+		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> implies = createCheckedFunction8(forAllFunction);
+		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7, a8).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction8() {
-		return (p1, p2, p3, p4, p5, p6, p7, p8) -> forAllFunction.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7, p8 });
+	private CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction8(CheckedFunction function) {
+		return (p1, p2, p3, p4, p5, p6, p7, p8) -> function.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7, p8 });
 	}
 
 	private Checkable erroneousCheckable(int paramsCount) {
