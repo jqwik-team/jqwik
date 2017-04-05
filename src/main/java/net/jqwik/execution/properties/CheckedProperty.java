@@ -12,13 +12,13 @@ import java.util.*;
  */
 public class CheckedProperty {
 
-	private final String propertyName;
-	private final CheckedFunction assumeFunction;
-	private final CheckedFunction forAllFunction;
-	private final List<Parameter> forAllParameters;
-	private final ArbitraryProvider arbitraryProvider;
-	private final int tries;
-	private final long randomSeed;
+	public final String propertyName;
+	public final CheckedFunction assumeFunction;
+	public final CheckedFunction forAllFunction;
+	public final List<Parameter> forAllParameters;
+	public final ArbitraryProvider arbitraryProvider;
+	public final int tries;
+	public final long randomSeed;
 
 	public CheckedProperty(String propertyName, CheckedFunction assumeFunction, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
 			ArbitraryProvider arbitraryProvider, int tries, long randomSeed) {

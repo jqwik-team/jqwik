@@ -13,7 +13,7 @@ public class ParameterHelper {
 		return Arrays.stream(method.getParameters()).collect(Collectors.toList());
 	}
 
-	private static Method getMethod(Class<?> aClass, String methodName) {
+	public static Method getMethod(Class<?> aClass, String methodName) {
 		return Arrays.stream(aClass.getDeclaredMethods()).filter(m -> m.getName().equals(methodName)).findFirst().get();
 	}
 
