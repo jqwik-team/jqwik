@@ -1,51 +1,32 @@
 package examples.packageWithProperties;
 
-import javaslang.*;
 import javaslang.test.*;
-import javaslang.test.Property;
-import net.jqwik.api.*;
 import net.jqwik.api.properties.*;
+import net.jqwik.api.properties.Property;
 
 public class PropertiesWithImplies {
 
-	@net.jqwik.api.properties.Property
+	@Property(tries = 10)
 	@Assume("sumDivisibleBy2")
-	boolean mustStartWithFizz(@ForAll int i, @ForAll int j) {
+	boolean sixMustBeDivisor(@ForAll("multipleOf3") int i, @ForAll("multipleOf2") Integer j) {
 		return (i * j) % 6 == 0;
 	}
 
-	@net.jqwik.api.properties.Property
-	boolean someProp(@ForAll("poops") int i, @ForAll int j) {
-		return (i * j) % 6 == 0;
+	@Assumption
+	boolean sumDivisibleBy2(int i, int j) {
+		boolean condition = (i + j) % 2 == 0;
+		System.out.println(i + ":" + j + " = " + condition);
+		return condition;
 	}
 
-	@Example
-	void javaslangHasImplies() {
-		Arbitrary<Integer> multiplesOf3 = Arbitrary.integer()
-												   .filter(i -> i > 0)
-												   .filter(i -> i % 3 == 0);
-		Arbitrary<Integer> multiplesOf2 = Arbitrary.integer()
-												   .filter(i -> i > 0)
-												   .filter(i -> i % 2 == 0);
-
-		CheckedFunction2<Integer, Integer, Boolean> precondition = (i, j) -> {
-			return (i + j) % 2 == 0;
-		};
-
-		CheckedFunction2<Integer, Integer, Boolean> mustStartWithFizz = (i, j) -> {
-			System.out.println(String.format("%s:%s", i, j));
-			return (i * j) % 6 == 0;
-		};
-
-		// I'd prefer assume() instead of implies() which would trigger a new set of generated values
-		CheckResult result = javaslang.test.Property
-			.def("multiplicator divisibility")
-			.forAll(multiplesOf3, multiplesOf2)
-			.suchThat(precondition)
-			.implies(mustStartWithFizz)
-			.check(100, 10);
-
-		result.assertIsSatisfied();
-
+	@Generate
+	Arbitrary<Integer> multipleOf3() {
+		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
 	}
+
+	@Generate
+	Arbitrary<Integer> multipleOf2() {
+		return Generator.integer(1, 1000).filter(i -> i % 2 == 0);
+	}
+
 }

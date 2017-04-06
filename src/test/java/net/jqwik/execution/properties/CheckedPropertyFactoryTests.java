@@ -61,21 +61,51 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.randomSeed).isEqualTo(4242);
 	}
 
-	@Example
-	void withUnknownAssumption() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnknownAssumption");
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+	@Group
+	class Assumptions {
 
-		assertThat(property.check().getTestExecutionResult().getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
-	}
+		@Example
+		void unknown() {
+			PropertyMethodDescriptor descriptor = createDescriptor("propWithUnknownAssumption");
+			CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
-	@Example
-	void withAssumptionByMethodName() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithAssumption");
-		ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+			assertThat(property.check().getTestExecutionResult().getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
+		}
 
-		assertThat(property.assumeFunction.apply(new Object[] { 4, "test" })).isTrue();
-		assertThat(property.assumeFunction.apply(new Object[] { 5, "test" })).isFalse();
+		@Example
+		void findByMethodName() {
+			PropertyMethodDescriptor descriptor = createDescriptor("propWithAssumption");
+			ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+
+			assertThat(property.assumeFunction.apply(new Object[] { 4, "test" })).isTrue();
+			assertThat(property.assumeFunction.apply(new Object[] { 5, "test" })).isFalse();
+		}
+
+		@Example
+		void findByValue() {
+			PropertyMethodDescriptor descriptor = createDescriptor("propWithNamedAssumption");
+			ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+
+			assertThat(property.assumeFunction.apply(new Object[] { 4, 5 })).isTrue();
+			assertThat(property.assumeFunction.apply(new Object[] { 5, 4 })).isFalse();
+		}
+
+		@Example
+		void wrongNumberOfArguments() {
+			PropertyMethodDescriptor descriptor = createDescriptor("propWithWrongNumberOfArguments");
+			CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+
+			assertThat(property.check().getTestExecutionResult().getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
+		}
+
+		@Example
+		void nonAssignableArguments() {
+			PropertyMethodDescriptor descriptor = createDescriptor("propWithNonAssignableArguments");
+			CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+
+			assertThat(property.check().getTestExecutionResult().getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
+		}
+
 	}
 
 	private PropertyMethodDescriptor createDescriptor(String methodName) {
@@ -121,6 +151,39 @@ public class CheckedPropertyFactoryTests {
 		@Assumption
 		boolean lengthOfString(int length, String aString) {
 			return aString.length() == length;
+		}
+
+		@Property
+		@Assume("secondIsHigher")
+		boolean propWithNamedAssumption(@ForAll int first, @ForAll int second) {
+			return true;
+		}
+
+		@Assumption("secondIsHigher")
+		boolean anyName(int first, int second) {
+			return first < second;
+		}
+
+		@Property
+		@Assume("wrongNumberOfArguments")
+		boolean propWithWrongNumberOfArguments(@ForAll int first, @ForAll int second) {
+			return true;
+		}
+
+		@Assumption
+		boolean wrongNumberOfArguments(int first, int second, int third) {
+			return true;
+		}
+
+		@Property
+		@Assume("otherArguments")
+		boolean propWithNonAssignableArguments(@ForAll int first, @ForAll int second) {
+			return true;
+		}
+
+		@Assumption
+		boolean otherArguments(int first, String second) {
+			return true;
 		}
 	}
 }

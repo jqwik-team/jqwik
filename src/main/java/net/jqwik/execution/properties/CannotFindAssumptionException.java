@@ -13,7 +13,7 @@ public class CannotFindAssumptionException extends JqwikException {
 
 	private static String createMessage(Method method) {
 		String assumeValue = method.getDeclaredAnnotation(Assume.class).value();
-		return String.format("Cannot find an Assumption [%s] for Method [%s]", assumeValue, method);
+		return String.format("Cannot find assumption [%s] for property method [%s]", assumeValue, method);
 	}
 
 }

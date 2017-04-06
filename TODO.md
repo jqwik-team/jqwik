@@ -5,7 +5,6 @@
 
 ### Properties
 
-- Introduce Assumptions/Implications (PropertyX.implies)
 - Tests for Combinators
 - Tests for @ForAll effectiveSize parameter
 - Handle error 
@@ -28,6 +27,8 @@
 
 - Get rid of size parameter for Arbitraries. Maybe introduce generic config object.
 - Replace implies with assume (or add it): A failing assumption will trigger the creation of new set of values 
+  - Reporting is false IMO: Report only number of runs with precondition is true
+  - Report property failure if precondition never holds
 - Shrinking!
 - Allow Arbitraries to fail/timeout, e.g. if they cannot generate additional values or if they are wrongly configured
   - See: Arbitrary.distinct can hang forever.
