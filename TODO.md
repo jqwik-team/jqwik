@@ -5,10 +5,11 @@
 
 ### Properties
 
-- Tests for Combinators
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type
+  - if assumption doesn't return a boolean
+  - if more than one assumption applies
 - Default Generators for
   - Optional
   - chars, floats and All kinds of Numbers
@@ -29,6 +30,7 @@
 - Replace implies with assume (or add it): A failing assumption will trigger the creation of new set of values 
   - Reporting is false IMO: Report only number of runs with precondition is true
   - Report property failure if precondition never holds
+- Allow switching off of print to System.out ("OK...", "Falsified...") 
 - Shrinking!
 - Allow Arbitraries to fail/timeout, e.g. if they cannot generate additional values or if they are wrongly configured
   - See: Arbitrary.distinct can hang forever.

@@ -38,6 +38,11 @@ public interface Generator {
 		return Arbitrary.of(enumClass.getEnumConstants());
 	}
 
+	@SafeVarargs
+	static <U> Arbitrary<U> of(U... values) {
+		return Arbitrary.of(values);
+	}
+
 	static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> arbitraryT) {
 		return collectionOf(arbitraryT, () -> new HashSet<T>(), (set, element) -> set.add(element));
 	}
