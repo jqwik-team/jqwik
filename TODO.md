@@ -9,7 +9,6 @@
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type
-- Create child test with previous seed if property fails so that it can be run from runner with a click
 - Default Generators for
   - Optional
   - chars, floats and All kinds of Numbers
@@ -20,6 +19,8 @@
   - Deterministic generators for finite set of values
 - Constrain tries to max possible number of values (e.g. Enum.values().length)
   - Can that be done without change in javaslang?
+- Create child test with previous seed if property fails so that it can be run from runner with a click:
+  _Code is commented out because missing support from IDEA and bug in JUnit5 platform_
 
 
 ### Change requests to javaslang test:
