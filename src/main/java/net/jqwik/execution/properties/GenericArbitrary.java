@@ -18,4 +18,8 @@ class GenericArbitrary implements Arbitrary<Object> {
 		return (Gen<Object>) wrapped.apply(effectiveSize);
 	}
 
+	public int size() {
+		return sizePerArbitrary;
+	}
+
 }

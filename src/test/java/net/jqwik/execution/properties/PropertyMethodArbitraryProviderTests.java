@@ -38,6 +38,22 @@ public class PropertyMethodArbitraryProviderTests {
 		}
 
 		@Example
+		void defaultSizeOfForAllParameter() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "intParam", int.class);
+			Parameter parameter = getParameter(DefaultParams.class, "intParam");
+			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
+			assertThat(arbitrary.size()).isEqualTo(0);
+		}
+
+		@Example
+		void explicitSizeOfForAllParameter() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "intParamWithSize", int.class);
+			Parameter parameter = getParameter(DefaultParams.class, "intParamWithSize");
+			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
+			assertThat(arbitrary.size()).isEqualTo(42);
+		}
+
+		@Example
 		void listDefaults() throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerList", List.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerList");
@@ -89,6 +105,11 @@ public class PropertyMethodArbitraryProviderTests {
 		private class DefaultParams {
 			@Property
 			boolean intParam(@ForAll int anInt) {
+				return true;
+			}
+
+			@Property
+			boolean intParamWithSize(@ForAll(size = 42) int anInt) {
 				return true;
 			}
 
