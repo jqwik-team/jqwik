@@ -33,7 +33,7 @@ compileTestJava {
 }
 
 junitPlatform {
-	// platformVersion '1.0.0-M3'
+	//	platformVersion "${junitPlatformVersion}"
 	filters {
 		engines {
 			// exclude "junit-jupiter"
