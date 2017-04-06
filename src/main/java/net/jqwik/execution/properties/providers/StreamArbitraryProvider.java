@@ -1,6 +1,5 @@
 package net.jqwik.execution.properties.providers;
 
-import java.util.*;
 import java.util.stream.*;
 
 import javaslang.test.*;

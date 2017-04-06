@@ -18,7 +18,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void simple() {
 		PropertyMethodDescriptor descriptor = createDescriptor("prop");
-		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.propertyName).isEqualTo("prop");
 
@@ -38,7 +38,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withUnboundParams() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams");
-		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
 		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
@@ -50,14 +50,14 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withTries() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithTries");
-		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 		assertThat(property.tries).isEqualTo(42);
 	}
 
 	@Example
 	void withSeed() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithSeed");
-		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 		assertThat(property.randomSeed).isEqualTo(4242);
 	}
 
@@ -72,7 +72,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withAssumptionByMethodName() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithAssumption");
-		DefaultCheckedProperty property = (DefaultCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		ExecutingCheckedProperty property = (ExecutingCheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.assumeFunction.apply(new Object[] { 4, "test" })).isTrue();
 		assertThat(property.assumeFunction.apply(new Object[] { 5, "test" })).isFalse();

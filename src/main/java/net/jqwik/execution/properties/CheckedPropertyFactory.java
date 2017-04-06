@@ -1,12 +1,12 @@
 package net.jqwik.execution.properties;
 
-import net.jqwik.api.properties.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.support.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
 
 public class CheckedPropertyFactory {
 
@@ -17,21 +17,21 @@ public class CheckedPropertyFactory {
 		int tries = property.tries();
 		long randomSeed = property.seed();
 
-		CheckedFunction assumeFunction = createAssumeFunction(propertyMethodDescriptor, testInstance);
-		if (assumeFunction == null) {
-			return new FailingCheckedProperty(new CannotFindAssumptionException(propertyMethodDescriptor.getTargetMethod()), randomSeed);
+		try {
+			CheckedFunction assumeFunction = createAssumeFunction(propertyMethodDescriptor, testInstance);
+			CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
+			List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
+			PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
+			return new ExecutingCheckedProperty(propertyName, assumeFunction, forAllFunction, forAllParameters, arbitraryProvider, tries,
+					randomSeed);
+		} catch (CannotFindAssumptionException cfae) {
+			return new AbortingCheckedProperty(cfae, randomSeed);
 		}
-
-		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
-		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
-		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
-
-		return new DefaultCheckedProperty(propertyName, assumeFunction, forAllFunction, forAllParameters, arbitraryProvider, tries, randomSeed);
 	}
 
 	private CheckedFunction createAssumeFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		if (propertyMethodDescriptor.getTargetMethod().isAnnotationPresent(Assume.class))
-			return null;
+			throw new CannotFindAssumptionException(propertyMethodDescriptor.getTargetMethod());
 
 		// Todo: Use @Assume annotation to retrieve method and convert it to CheckedFunction
 		return params -> true;

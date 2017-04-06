@@ -6,7 +6,6 @@ import static org.junit.platform.engine.TestExecutionResult.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-import net.jqwik.discovery.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
@@ -14,6 +13,7 @@ import org.opentest4j.*;
 import net.jqwik.*;
 import net.jqwik.api.properties.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.discovery.*;
 import net.jqwik.execution.*;
 import net.jqwik.support.*;
 

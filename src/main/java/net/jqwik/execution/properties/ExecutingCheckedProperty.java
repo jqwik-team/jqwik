@@ -1,16 +1,16 @@
 package net.jqwik.execution.properties;
 
+import java.lang.reflect.*;
+import java.util.*;
+
 import javaslang.*;
 import javaslang.control.*;
 import javaslang.test.*;
 
-import java.lang.reflect.*;
-import java.util.*;
-
 /**
  * Wraps javaslang's property checking
  */
-public class DefaultCheckedProperty implements CheckedProperty {
+public class ExecutingCheckedProperty implements CheckedProperty {
 
 	public final String propertyName;
 	public final CheckedFunction assumeFunction;
@@ -20,8 +20,8 @@ public class DefaultCheckedProperty implements CheckedProperty {
 	public final int tries;
 	public final long randomSeed;
 
-	public DefaultCheckedProperty(String propertyName, CheckedFunction assumeFunction, CheckedFunction forAllFunction, List<Parameter> forAllParameters,
-								  ArbitraryProvider arbitraryProvider, int tries, long randomSeed) {
+	public ExecutingCheckedProperty(String propertyName, CheckedFunction assumeFunction, CheckedFunction forAllFunction,
+			List<Parameter> forAllParameters, ArbitraryProvider arbitraryProvider, int tries, long randomSeed) {
 		this.propertyName = propertyName;
 		this.assumeFunction = assumeFunction;
 		this.forAllFunction = forAllFunction;
@@ -178,7 +178,8 @@ public class DefaultCheckedProperty implements CheckedProperty {
 		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction7(CheckedFunction function) {
+	private CheckedFunction7<Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction7(
+			CheckedFunction function) {
 		return (p1, p2, p3, p4, p5, p6, p7) -> function.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7 });
 	}
 
@@ -191,12 +192,15 @@ public class DefaultCheckedProperty implements CheckedProperty {
 		Arbitrary<Object> a6 = findArbitrary(forAllParameters.get(5));
 		Arbitrary<Object> a7 = findArbitrary(forAllParameters.get(6));
 		Arbitrary<Object> a8 = findArbitrary(forAllParameters.get(7));
-		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> assume = createCheckedFunction8(assumeFunction);
-		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> implies = createCheckedFunction8(forAllFunction);
+		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> assume = createCheckedFunction8(
+				assumeFunction);
+		CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> implies = createCheckedFunction8(
+				forAllFunction);
 		return Property.def(propertyName).forAll(a1, a2, a3, a4, a5, a6, a7, a8).suchThat(assume).implies(implies);
 	}
 
-	private CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction8(CheckedFunction function) {
+	private CheckedFunction8<Object, Object, Object, Object, Object, Object, Object, Object, Boolean> createCheckedFunction8(
+			CheckedFunction function) {
 		return (p1, p2, p3, p4, p5, p6, p7, p8) -> function.apply(new Object[] { p1, p2, p3, p4, p5, p6, p7, p8 });
 	}
 

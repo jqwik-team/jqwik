@@ -1,11 +1,11 @@
 package net.jqwik.execution.properties;
 
-public class FailingCheckedProperty implements CheckedProperty {
+public class AbortingCheckedProperty implements CheckedProperty {
 
 	private final Throwable toThrow;
 	private final long randomSeed;
 
-	FailingCheckedProperty(Throwable toThrow, long randomSeed) {
+	AbortingCheckedProperty(Throwable toThrow, long randomSeed) {
 		this.toThrow = toThrow;
 		this.randomSeed = randomSeed;
 	}

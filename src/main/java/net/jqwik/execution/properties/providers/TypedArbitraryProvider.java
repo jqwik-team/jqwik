@@ -1,9 +1,9 @@
 package net.jqwik.execution.properties.providers;
 
-import javaslang.test.Arbitrary;
-import net.jqwik.execution.properties.GenericType;
+import java.util.function.*;
 
-import java.util.function.Function;
+import javaslang.test.*;
+import net.jqwik.execution.properties.*;
 
 public interface TypedArbitraryProvider {
 

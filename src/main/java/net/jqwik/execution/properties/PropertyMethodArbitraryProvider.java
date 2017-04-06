@@ -1,22 +1,17 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.Arbitrary;
-import net.jqwik.api.properties.ForAll;
-import net.jqwik.api.properties.Generate;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import static net.jqwik.support.JqwikReflectionSupport.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+
+import org.junit.platform.commons.support.*;
+
+import javaslang.test.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
 import net.jqwik.execution.properties.providers.*;
-import org.junit.platform.commons.support.HierarchyTraversalMode;
-import org.junit.platform.commons.support.ReflectionSupport;
-
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.function.Predicate;
-
-import static net.jqwik.support.JqwikReflectionSupport.invokeMethod;
 
 public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
@@ -66,20 +61,18 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 	}
 
 	private Optional<Method> findArbitraryCreator(GenericType genericType, String generatorToFind) {
-		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType), HierarchyTraversalMode.BOTTOM_UP);
-		return creators
-			.stream()
-			.filter(generatorMethod -> {
-				Generate generateAnnotation = generatorMethod.getDeclaredAnnotation(Generate.class);
-				String generatorName = generateAnnotation.value();
-				if (generatorToFind.isEmpty() && generatorName.isEmpty()) {
-					return true;
-				}
-				if (generatorName.isEmpty())
-					generatorName = generatorMethod.getName();
-				return generatorName.equals(generatorToFind);
-			})
-			.findFirst();
+		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType),
+				HierarchyTraversalMode.BOTTOM_UP);
+		return creators.stream().filter(generatorMethod -> {
+			Generate generateAnnotation = generatorMethod.getDeclaredAnnotation(Generate.class);
+			String generatorName = generateAnnotation.value();
+			if (generatorToFind.isEmpty() && generatorName.isEmpty()) {
+				return true;
+			}
+			if (generatorName.isEmpty())
+				generatorName = generatorMethod.getName();
+			return generatorName.equals(generatorToFind);
+		}).findFirst();
 	}
 
 	private Predicate<Method> isCreatorForType(GenericType genericType) {

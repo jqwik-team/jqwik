@@ -1,9 +1,9 @@
 package net.jqwik.execution.properties.providers;
 
+import java.util.*;
+
 import javaslang.test.*;
 import net.jqwik.api.properties.*;
-
-import java.util.*;
 
 public class ListArbitraryProvider extends AbstractCollectionArbitraryProvider {
 

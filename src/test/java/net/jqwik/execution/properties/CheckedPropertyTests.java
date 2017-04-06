@@ -79,8 +79,8 @@ class CheckedPropertyTests {
 	@Example
 	void abortIfNoArbitraryForParameterCanBeFound() {
 		List<Parameter> parameters = getParametersForMethod("stringProp");
-		CheckedProperty checkedProperty = new DefaultCheckedProperty("stringProp", params -> true, params -> false,
-																	 parameters, p -> Optional.empty(), 100, 1000L);
+		CheckedProperty checkedProperty = new ExecutingCheckedProperty("stringProp", params -> true, params -> false,
+																	   parameters, p -> Optional.empty(), 100, 1000L);
 
 		TestExecutionResult check = checkedProperty.check().getTestExecutionResult();
 		assertThat(check.getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
@@ -92,7 +92,7 @@ class CheckedPropertyTests {
 	void usingASeedWillAlwaysProvideSameArbitraryValues() {
 		List<Integer> allGeneratedInts = new ArrayList<>();
 		CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params[0]);
-		CheckedProperty checkedProperty = new DefaultCheckedProperty("prop1", params -> true, addIntToList, getParametersForMethod("prop1"),
+		CheckedProperty checkedProperty = new ExecutingCheckedProperty("prop1", params -> true, addIntToList, getParametersForMethod("prop1"),
 			p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 10, 42L);
 
 		PropertyExecutionResult executionResult = checkedProperty.check();
@@ -104,7 +104,7 @@ class CheckedPropertyTests {
 	}
 
 	private void intOnlyExample(String methodName, CheckedFunction assumeFunction, CheckedFunction forAllFunction, TestExecutionResult.Status successful) {
-		CheckedProperty checkedProperty = new DefaultCheckedProperty(methodName, assumeFunction, forAllFunction, getParametersForMethod(methodName),
+		CheckedProperty checkedProperty = new ExecutingCheckedProperty(methodName, assumeFunction, forAllFunction, getParametersForMethod(methodName),
 			p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 100, 1000L);
 		TestExecutionResult check = checkedProperty.check().getTestExecutionResult();
 		assertThat(check.getStatus()).isEqualTo(successful);

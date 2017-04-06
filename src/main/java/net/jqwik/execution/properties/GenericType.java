@@ -30,7 +30,7 @@ public class GenericType {
 			return new GenericType[0];
 		}
 		List<GenericType> typeArgs = Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments())
-			.map(type -> new GenericType(type)).collect(Collectors.toList());
+				.map(type -> new GenericType(type)).collect(Collectors.toList());
 		return typeArgs.toArray(new GenericType[typeArgs.size()]);
 	}
 
@@ -98,9 +98,8 @@ public class GenericType {
 	public String toString() {
 		String representation = getRawType().getSimpleName();
 		if (isGeneric()) {
-			String typeArgsRepresentation = Arrays.stream(typeArguments)
-				.map(genericType -> genericType.toString())
-				.collect(Collectors.joining(", "));
+			String typeArgsRepresentation = Arrays.stream(typeArguments).map(genericType -> genericType.toString())
+					.collect(Collectors.joining(", "));
 			representation = String.format("%s<%s>", representation, typeArgsRepresentation);
 		}
 		return representation;
