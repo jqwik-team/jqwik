@@ -40,7 +40,7 @@ class DiscoveryTests {
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
 		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(6);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(7);
 	}
 
 	@Example
@@ -52,7 +52,7 @@ class DiscoveryTests {
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
 		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(6);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(7);
 	}
 
 	@Example

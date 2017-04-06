@@ -107,6 +107,10 @@ class TestEngineIntegrationTests {
 		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(PropertyTests.class, "isFalse"), isFailed());
 		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(PropertyTests.class, "isTrue"));
 		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(PropertyTests.class, "isTrue"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(PropertyTests.class, "allNumbersAreZero"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(PropertyTests.class, "allNumbersAreZero"), isFailed());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(PropertyTests.class, "withEverything"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(PropertyTests.class, "withEverything"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(PropertyTests.class), isSuccessful());
 
 		// MixedTests
