@@ -11,11 +11,11 @@
   - if assumption doesn't return a boolean
   - if more than one assumption applies
 - Default Generators for
-  - Optional
   - chars, floats and All kinds of Numbers
   - javaslang lists and streams
 - Generators/Arbitraries
   - Configure option: provideNull
+    - Requires deterministic Arbitraries
   - Enrich with fixed examples
   - Deterministic generators for finite set of values
 - Constrain tries to max possible number of values (e.g. Enum.values().length)

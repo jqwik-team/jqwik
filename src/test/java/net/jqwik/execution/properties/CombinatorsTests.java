@@ -7,26 +7,35 @@ import org.assertj.core.api.*;
 
 import java.util.*;
 
+import static net.jqwik.execution.properties.TestHelper.generate;
+
 class CombinatorsTests {
+
+	@Example
+	void singleArbitraryCanBeWrapped() {
+		Arbitrary<Optional<Integer>> combine = Combinators.combine(one()).as(a -> Optional.of(a));
+		Optional<Integer> value = generate(combine);
+		Assertions.assertThat(value.get()).isEqualTo(1);
+	}
 
 	@Example
 	void twoArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine2 = Combinators.combine(one(), two()).as((a, b) -> a + b);
-		int value = combine2.apply(1).apply(new Random());
+		int value = generate(combine2);
 		Assertions.assertThat(value).isEqualTo(3);
 	}
 
 	@Example
 	void threeArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine3 = Combinators.combine(one(), two(), three()).as((a, b, c) -> a + b + c);
-		int value = combine3.apply(1).apply(new Random());
+		int value = generate(combine3);
 		Assertions.assertThat(value).isEqualTo(6);
 	}
 
 	@Example
 	void fourArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine4 = Combinators.combine(one(), two(), three(), four()).as((a, b, c, d) -> a + b + c + d);
-		int value = combine4.apply(1).apply(new Random());
+		int value = generate(combine4);
 		Assertions.assertThat(value).isEqualTo(10);
 	}
 

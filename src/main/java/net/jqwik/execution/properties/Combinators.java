@@ -5,6 +5,25 @@ import javaslang.test.*;
 
 public class Combinators {
 
+	public static <T1> Combinator1<T1> combine(Arbitrary<T1> a1) {
+		return new Combinator1<T1>(a1);
+	}
+
+	public static class Combinator1<T1> {
+		private final Arbitrary<T1> a1;
+
+		private Combinator1(Arbitrary<T1> a1) {
+			this.a1 = a1;
+		}
+
+		public <R> Arbitrary<R> as(Function1<T1, R> combinator) {
+			return size -> random -> {
+				T1 t1 = a1.apply(size).apply(random);
+				return combinator.apply(t1);
+			};
+		}
+	}
+
 	public static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
 		return new Combinator2<T1, T2>(a1, a2);
 	}

@@ -32,6 +32,7 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		defaultProviders.add(new ListArbitraryProvider());
 		defaultProviders.add(new SetArbitraryProvider());
 		defaultProviders.add(new StreamArbitraryProvider());
+		defaultProviders.add(new OptionalArbitraryProvider());
 	}
 
 	@Override

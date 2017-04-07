@@ -63,6 +63,10 @@ public interface Generator {
 		return listOf(arbitraryT).map(Collection::stream);
 	}
 
+	static <T1> Combinator1<T1> combine(Arbitrary<T1> a1) {
+		return Combinators.combine(a1);
+	}
+
 	static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
 		return Combinators.combine(a1, a2);
 	}
@@ -75,4 +79,7 @@ public interface Generator {
 		return Combinators.combine(a1, a2, a3, a4);
 	}
 
+	static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> a1) {
+		return combine(a1).as(a -> Optional.of(a));
+	}
 }

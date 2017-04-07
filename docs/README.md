@@ -34,7 +34,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.0.0-SNAPSHOT'
 ext.junitJupiterVersion = '5.0.0-SNAPSHOT'
-ext.jqwikVersion = '0.2.4'
+ext.jqwikVersion = '0.2.5'
 
 dependencies {
     ...

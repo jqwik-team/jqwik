@@ -110,7 +110,7 @@ public class CheckedPropertyFactoryTests {
 
 	private PropertyMethodDescriptor createDescriptor(String methodName) {
 		UniqueId uniqueId = UniqueId.root("test", "test");
-		Method method = ParameterHelper.getMethod(PropertyExamples.class, methodName);
+		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
 		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class);
 	}
 

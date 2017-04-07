@@ -78,6 +78,14 @@ public class PropertyMethodArbitraryProviderTests {
 		}
 
 		@Example
+		void optionalDefaults() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
+			Parameter parameter = getParameter(DefaultParams.class, "integerOptional");
+			Optional actualOptional = (Optional) generateObject(provider, parameter);
+			assertThat(actualOptional.get()).isInstanceOf(Integer.class);
+		}
+
+		@Example
 		void noDefaultForString() throws Exception {
 			assertNoArbitraryProvided(DefaultParams.class, "stringParam", String.class);
 		}
@@ -154,7 +162,12 @@ public class PropertyMethodArbitraryProviderTests {
 			}
 
 			@Property
-			boolean integerStream(@ForAll Stream<Integer> aSet) {
+			boolean integerStream(@ForAll Stream<Integer> aStream) {
+				return true;
+			}
+
+			@Property
+			boolean integerOptional(@ForAll Optional<Integer> anOptional) {
 				return true;
 			}
 
@@ -281,7 +294,7 @@ public class PropertyMethodArbitraryProviderTests {
 	}
 
 	private static Object generateObject(PropertyMethodArbitraryProvider provider, Parameter parameter) {
-		return provider.forParameter(parameter).get().apply(1).apply(new Random());
+		return TestHelper.generate(provider.forParameter(parameter).get());
 	}
 
 	private static PropertyMethodArbitraryProvider getProvider(Class container, String methodName, Class<?>... parameterTypes)
@@ -296,7 +309,7 @@ public class PropertyMethodArbitraryProviderTests {
 	}
 
 	private static Parameter getParameter(Class container, String methodName) {
-		return ParameterHelper.getParametersFor(container, methodName).get(0);
+		return TestHelper.getParametersFor(container, methodName).get(0);
 	}
 
 }

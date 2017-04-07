@@ -11,7 +11,7 @@ import org.junit.platform.engine.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-import static net.jqwik.execution.properties.ParameterHelper.*;
+import static net.jqwik.execution.properties.TestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.platform.engine.TestExecutionResult.Status.*;
 
