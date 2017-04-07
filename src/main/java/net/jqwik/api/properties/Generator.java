@@ -80,6 +80,15 @@ public interface Generator {
 	}
 
 	static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> a1) {
-		return combine(a1).as(a -> Optional.of(a));
+		Arbitrary<T> withNull = withNull(a1, 0.1);
+		return combine(withNull).as(a -> Optional.ofNullable(a));
+	}
+
+	static <T> Arbitrary<T> withNull(Arbitrary<T> a1, double nullProbability) {
+		return size -> random -> {
+			if (random.nextDouble() <= nullProbability)
+				return null;
+			return a1.apply(size).apply(random);
+		};
 	}
 }

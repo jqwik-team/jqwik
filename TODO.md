@@ -15,8 +15,7 @@
   - javaslang lists and streams
 - Generators/Arbitraries
   - Configure option: provideNull
-    - Requires deterministic Arbitraries
-  - Enrich with fixed examples
+  - Enrich with fixed examples: Requires deterministic arbitrary
   - Deterministic generators for finite set of values
 - Constrain tries to max possible number of values (e.g. Enum.values().length)
   - Can that be done without change in javaslang?

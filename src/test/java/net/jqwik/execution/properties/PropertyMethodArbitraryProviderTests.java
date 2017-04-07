@@ -82,7 +82,7 @@ public class PropertyMethodArbitraryProviderTests {
 			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerOptional");
 			Optional actualOptional = (Optional) generateObject(provider, parameter);
-			assertThat(actualOptional.get()).isInstanceOf(Integer.class);
+			assertThat(actualOptional.orElseGet(() -> Integer.MAX_VALUE)).isInstanceOf(Integer.class);
 		}
 
 		@Example
