@@ -1,20 +1,37 @@
 ## A Simpler JUnit Test Engine
 
-An alternative test engine for the 
+An alternative test engine for the
 [JUnit 5 platform](http://junit.org/junit5/docs/current/api/org/junit/platform/engine/TestEngine.html)
 
 ### Why you might want to use an alternative test engine
 
-[Jupiter](http://junit.org/junit5/docs/current/user-guide/) is JUnit 5's approach for a new test engine. 
-It has a very elaborate [programming](http://junit.org/junit5/docs/current/user-guide/#writing-tests) 
+[Jupiter](http://junit.org/junit5/docs/current/user-guide/) is JUnit 5's approach for a new test engine.
+It has a very elaborate [programming](http://junit.org/junit5/docs/current/user-guide/#writing-tests)
 and [extension](http://junit.org/junit5/docs/current/user-guide/#extensions) model.
 
 Let's see if we can get away with less complexity?
 
-The idea is to evolve a test engine from first principles:
-1. Only add features that solve a real testing problem
-2. Add extension possibilities only if you have at least two working examples 
-   that can be generalized.
+The idea is to evolve a test engine from a few principles:
+
+- Every additional feature must solve a _real testing problem_ that cannot be
+  tackled by existing mechanism in a reasonably simple way.
+- Keeping the design simpler - and thereby more maintainable - is a feature
+  itself and will often prevail over adding another feature of unprove or rather
+  esoteric value.
+- Microtesting (see [video by Mike Hill](https://www.youtube.com/watch?v=H3LOyuqhaJA))
+  is the foundation of all Agile test automation approaches. When in doubt,
+  I'll rank features that simplify micro tests over those that are intended
+  to facilitate or enable integrated testing.
+
+### Contribute
+
+Please, please, please add your suggestion, ideas and bug reports using the project's
+[issue tracker on github](https://github.com/jlink/jqwik/issues).
+
+Of course, you can also send in pull requests. Be prepared, though, that
+I'll be very strict with what I accept, since I consider
+the first months of a project to be crucial for shaping and preparing the design core
+for the mid and long-term future.
 
 ### Current Features
 
@@ -22,7 +39,7 @@ Jqwik allows you to write Example-based tests and Property tests.
 
 #### Gradle Dependencies
 
-Add the following stuff to your `build.gradle` file. 
+Add the following stuff to your `build.gradle` file.
 Maven users can sure figure the corresponding lines on their own :).
 
 ```
@@ -44,6 +61,10 @@ dependencies {
 
 	// jqwik dependency
 	testCompile "com.github.jlink:jqwik:${jqwikVersion}"
+
+  // For examples you probably need some assertions
+  testCompile("org.assertj:assertj-core:3.6.2")
+
 }
 
 ```
@@ -63,10 +84,10 @@ public class SimpleExampleTests implements AutoCloseable {
 	void failing() {
 		fail("failing");
 	}
-	
+
 	// Executed after each test case
 	void close() { }
-	
+
 	@Group
 	class AGroupOfCoherentTests {
 		@Example
@@ -83,9 +104,9 @@ third-party assertion libs, e.g. Hamcrest or AssertJ.
 
 #### Property Based Testing
 
-Driven by the common hype about functional programming, 
-property-based testing with tools like Quickcheck is recognized as an 
-important ingredient of  up-to-date testing approaches. 
+Driven by the common hype about functional programming,
+property-based testing with tools like Quickcheck is recognized as an
+important ingredient of  up-to-date testing approaches.
 
 Jqwik tries to make it as easy as possible
 for Java programmers to use it; it currently builds on [Javaslang](http://www.javaslang.io/)
@@ -120,5 +141,5 @@ public class FizzBuzzTests {
 }
 ```
 
-Read [this article](https://www.sitepoint.com/property-based-testing-with-javaslang/) 
+Read [this article](https://www.sitepoint.com/property-based-testing-with-javaslang/)
 to see how this test looks when using Javaslang with JUnit 4.
