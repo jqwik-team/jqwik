@@ -8,20 +8,23 @@ An alternative test engine for the
 [Jupiter](http://junit.org/junit5/docs/current/user-guide/) is JUnit 5's approach for a new test engine.
 It has a very elaborate [programming](http://junit.org/junit5/docs/current/user-guide/#writing-tests)
 and [extension](http://junit.org/junit5/docs/current/user-guide/#extensions) model.
+Maybe we can get away with less complexity?
 
-Let's see if we can get away with less complexity?
+And sure enough, competition stimulates business, they say.
 
-The idea is to evolve a test engine from a few principles:
+### Principles
+
+The Jqwik test engine will be developed from a few basic principles:
 
 - Every additional feature must solve a _real testing problem_ that cannot be
   tackled by existing mechanism in a reasonably simple way.
 - Keeping the design simpler - and thereby more maintainable - is a feature
   itself and will often prevail over adding another feature of unprove or rather
   esoteric value.
-- Microtesting (see [video by Mike Hill](https://www.youtube.com/watch?v=H3LOyuqhaJA))
-  is the foundation of all Agile test automation approaches. When in doubt,
-  I'll rank features that simplify micro tests over those that are intended
-  to facilitate or enable integrated testing.
+- [Microtests](https://www.industriallogic.com/blog/history-microtests/)
+  are the foundation of scalable and maintainable Agile test automation.
+  When in doubt, I'll rank features that simplify microtesting over those that
+  are intended to facilitate or enable integrated testing.
 
 ### Contribute
 
@@ -35,7 +38,11 @@ for the mid and long-term future.
 
 ### Current Features
 
-Jqwik allows you to write Example-based tests and Property tests.
+Jqwik allows you to specify _example-based_ scanarios and _property-based_ tests
+à la [Quickcheck](https://en.wikipedia.org/wiki/QuickCheck).
+
+Features are supposed to be documented withing Jqwik's
+[github Wiki](https://github.com/jlink/jqwik/wiki).
 
 #### Gradle Dependencies
 
@@ -44,25 +51,28 @@ Maven users can sure figure the corresponding lines on their own :).
 
 ```
 repositories {
-    ...
-	maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+	mavenCentral()
 	maven { url "https://jitpack.io" }
+  ...
 }
 
-ext.junitPlatformVersion = '1.0.0-SNAPSHOT'
-ext.junitJupiterVersion = '5.0.0-SNAPSHOT'
+ext.junitPlatformVersion = '1.0.0-M4'
+ext.junitJupiterVersion = '5.0.0-M4'
 ext.jqwikVersion = '0.2.5'
 
 dependencies {
     ...
 
-	// Falsely required by IDEA's Junit 5 support
+  // to enable the platform to run tests at all
+  testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
+  // Falsely required by IDEA's Junit 5 support
 	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
 	// jqwik dependency
 	testCompile "com.github.jlink:jqwik:${jqwikVersion}"
 
-  // For examples you probably need some assertions
+  // You'll probably need some assertions
   testCompile("org.assertj:assertj-core:3.6.2")
 
 }
