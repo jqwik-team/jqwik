@@ -12,30 +12,17 @@ class GenericPropertyTests {
 
 	@Example
 	void satisfiedWithOneParameter() {
-		AtomicInteger countTries = new AtomicInteger(0);
-		Function<List<?>, Boolean> forAllFunction = args -> {
-			assertThat(args).hasSize(1);
-			assertThat(args.get(0)).isInstanceOf(Integer.class);
-			countTries.incrementAndGet();
-			return true;
-		};
+		Function<List<?>, Boolean> exactlyOneIntegerArgument = args -> args.size() == 1 && args.get(0) instanceof Integer;
+		ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneIntegerArgument);
 
-		List<Arbitrary> arbitraries =  new ArrayList<>();
-
-		AtomicInteger countNext = new AtomicInteger(0);
-		Generator<Integer> countingGenerator = () -> countNext.incrementAndGet();
-		Arbitrary<Integer> arbitrary = Arbitraries.fromGenerator(countingGenerator);
-
-		arbitraries.add(arbitrary);
+		CountingArbitrary arbitrary = new CountingArbitrary();
+		List<Arbitrary> arbitraries =  arbitraries(arbitrary);
 
 		GenericProperty property = new GenericProperty("my property", arbitraries, forAllFunction);
+		PropertyCheckResult result = property.check(2, 42L);
 
-		long seed = 42L;
-		int tries = 2;
-		PropertyCheckResult result = property.check(tries, seed);
-
-		assertThat(countTries.get()).isEqualTo(2);
-		assertThat(countNext.get()).isEqualTo(2);
+		assertThat(forAllFunction.countCalls()).isEqualTo(2);
+		assertThat(arbitrary.count()).isEqualTo(2);
 
 		assertThat(result.propertyName()).isEqualTo("my property");
 		assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
@@ -43,6 +30,10 @@ class GenericPropertyTests {
 		assertThat(result.randomSeed()).isEqualTo(42L);
 		assertThat(result.sample()).isNotPresent();
 		assertThat(result.throwable()).isNotPresent();
+	}
+
+	private List<Arbitrary> arbitraries(Arbitrary ... arbitraries) {
+		return Arrays.asList(arbitraries);
 	}
 
 }
