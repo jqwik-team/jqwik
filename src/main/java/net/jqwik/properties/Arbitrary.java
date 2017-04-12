@@ -1,4 +1,12 @@
 package net.jqwik.properties;
 
-public interface Arbitrary {
+import java.util.*;
+
+public interface Arbitrary<T> {
+
+	Generator<T> generator(long seed);
+
+	default List<T> shrink(T value) {
+		return Collections.emptyList();
+	}
 }
