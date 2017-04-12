@@ -3,7 +3,6 @@ package net.jqwik.properties;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -16,7 +15,7 @@ class GenericPropertyTests {
 		ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneIntegerArgument);
 
 		CountingArbitrary arbitrary = new CountingArbitrary();
-		List<Arbitrary> arbitraries =  arbitraries(arbitrary);
+		List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 		GenericProperty property = new GenericProperty("my property", arbitraries, forAllFunction);
 		PropertyCheckResult result = property.check(2, 42L);
@@ -32,7 +31,7 @@ class GenericPropertyTests {
 		assertThat(result.throwable()).isNotPresent();
 	}
 
-	private List<Arbitrary> arbitraries(Arbitrary ... arbitraries) {
+	private List<Arbitrary> arbitraries(Arbitrary... arbitraries) {
 		return Arrays.asList(arbitraries);
 	}
 

@@ -1,10 +1,10 @@
 package net.jqwik.properties;
 
-import org.assertj.core.api.*;
-
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+
+import org.assertj.core.api.*;
 
 public class ForAllSpy implements Function<List<?>, Boolean> {
 
