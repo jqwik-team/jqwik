@@ -54,4 +54,38 @@ public interface PropertyCheckResult {
 		};
 	}
 
+	static PropertyCheckResult falsified(String propertyName, int tries, long randomSeed, List<Object> sample) {
+		return new PropertyCheckResult() {
+			@Override
+			public Status status() {
+				return Status.FALSIFIED;
+			}
+
+			@Override
+			public String propertyName() {
+				return propertyName;
+			}
+
+			@Override
+			public int tries() {
+				return tries;
+			}
+
+			@Override
+			public long randomSeed() {
+				return randomSeed;
+			}
+
+			@Override
+			public Optional<List<Object>> sample() {
+				return Optional.of(sample);
+			}
+
+			@Override
+			public Optional<Throwable> throwable() {
+				return Optional.empty();
+			}
+		};
+	}
+
 }

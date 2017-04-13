@@ -18,12 +18,20 @@ public class GenericProperty {
 	public PropertyCheckResult check(int tries, long seed) {
 		Arbitrary<?> a1 = arbitraries.get(0);
 		Generator<?> g1 = a1.generator(seed, tries);
-		for (int trie = 0; trie < tries; trie++) {
-			Object p1 = g1.next();
-			List<Object> params = new ArrayList<>();
-			params.add(p1);
+		for (int currentTry = 1; currentTry <= tries; currentTry++) {
+			List<Object> params = generateParameters(g1);
 			boolean check = forAllFunction.apply(params);
+			if (!check) {
+				return PropertyCheckResult.falsified(name, currentTry, seed, params);
+			}
 		}
 		return PropertyCheckResult.satisfied(name, tries, seed);
+	}
+
+	protected List<Object> generateParameters(Generator<?> g1) {
+		Object p1 = g1.next();
+		List<Object> params = new ArrayList<>();
+		params.add(p1);
+		return params;
 	}
 }

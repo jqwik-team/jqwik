@@ -17,18 +17,44 @@ class GenericPropertyTests {
 		CountingArbitrary arbitrary = new CountingArbitrary();
 		List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
-		GenericProperty property = new GenericProperty("my property", arbitraries, forAllFunction);
+		GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
 		PropertyCheckResult result = property.check(2, 42L);
 
 		assertThat(forAllFunction.countCalls()).isEqualTo(2);
 		assertThat(arbitrary.count()).isEqualTo(2);
 
-		assertThat(result.propertyName()).isEqualTo("my property");
+		assertThat(result.propertyName()).isEqualTo("satisfied property");
 		assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
 		assertThat(result.tries()).isEqualTo(2);
 		assertThat(result.randomSeed()).isEqualTo(42L);
-		assertThat(result.sample()).isNotPresent();
 		assertThat(result.throwable()).isNotPresent();
+		assertThat(result.sample()).isNotPresent();
+	}
+
+	@Example
+	void falsifiedWithOneParameter() {
+		int failingTry = 5;
+
+		Function<List<?>, Boolean> exactlyOneIntegerArgument = args -> args.size() == 1 && args.get(0) instanceof Integer;
+		ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneIntegerArgument);
+
+		CountingArbitrary arbitrary = new CountingArbitrary();
+		List<Arbitrary> arbitraries = arbitraries(arbitrary);
+
+		GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
+		PropertyCheckResult result = property.check(10, 41L);
+
+		assertThat(forAllFunction.countCalls()).isEqualTo(failingTry);
+		assertThat(arbitrary.count()).isEqualTo(failingTry);
+
+		assertThat(result.propertyName()).isEqualTo("falsified property");
+		assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+		assertThat(result.tries()).isEqualTo(failingTry);
+		assertThat(result.randomSeed()).isEqualTo(41L);
+		assertThat(result.throwable()).isNotPresent();
+
+		assertThat(result.sample()).isPresent();
+		assertThat(result.sample().get()).containsExactly(failingTry);
 	}
 
 	private List<Arbitrary> arbitraries(Arbitrary... arbitraries) {
