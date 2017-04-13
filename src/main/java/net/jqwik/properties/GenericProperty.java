@@ -2,6 +2,7 @@ package net.jqwik.properties;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 import org.junit.platform.commons.util.*;
@@ -20,11 +21,13 @@ public class GenericProperty {
 	}
 
 	public PropertyCheckResult check(int tries, long seed) {
-		Arbitrary<?> a1 = arbitraries.get(0);
-		Generator<?> g1 = a1.generator(seed, tries);
+		List<Generator> generators = arbitraries.stream()
+												.map(a1 -> a1.generator(seed, tries))
+												.collect(Collectors.toList());
+		int maxTries = generators.isEmpty() ? 1 : tries;
 		int countChecks = 0;
-		for (int countTries = 1; countTries <= tries; countTries++) {
-			List<Object> params = generateParameters(g1);
+		for (int countTries = 1; countTries <= maxTries; countTries++) {
+			List<Object> params = generateParameters(generators);
 			try {
 				boolean check = forAllFunction.apply(params);
 				countChecks++;
@@ -40,14 +43,11 @@ public class GenericProperty {
 			}
 		}
 		if (countChecks == 0)
-			return PropertyCheckResult.exhausted(name, tries, seed);
-		return PropertyCheckResult.satisfied(name, tries, countChecks, seed);
+			return PropertyCheckResult.exhausted(name, maxTries, seed);
+		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	protected List<Object> generateParameters(Generator<?> g1) {
-		Object p1 = g1.next();
-		List<Object> params = new ArrayList<>();
-		params.add(p1);
-		return params;
+	private List<Object> generateParameters(List<Generator> generators) {
+		return generators.stream().map(Generator::next).collect(Collectors.toList());
 	}
 }

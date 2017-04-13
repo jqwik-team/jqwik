@@ -9,10 +9,10 @@ import net.jqwik.api.*;
 
 class GenericPropertyTests {
 
-	private final Function<List<Object>, Boolean> exactlyOneInteger = args -> args.size() == 1 && args.get(0) instanceof Integer;
-
 	@Group
 	class OneParameter {
+
+		private final Function<List<Object>, Boolean> exactlyOneInteger = args -> args.size() == 1 && args.get(0) instanceof Integer;
 
 		@Example
 		void satisfied() {
@@ -144,7 +144,72 @@ class GenericPropertyTests {
 			assertThat(result.sample()).isPresent();
 			assertThat(result.sample().get()).containsExactly(erroneousTry);
 		}
+	}
 
+	@Group
+	class NoParameter {
+		@Example
+		void checkPropertyOnlyOnce() {
+			Function<List<Object>, Boolean> forAllFunction = args -> {
+				assertThat(args).isEmpty();
+				return true;
+			};
+
+			GenericProperty property = new GenericProperty("satisfied property", arbitraries(), forAllFunction);
+			PropertyCheckResult result = property.check(2, 42L);
+
+			assertThat(result.propertyName()).isEqualTo("satisfied property");
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+			assertThat(result.countTries()).isEqualTo(1);
+			assertThat(result.countChecks()).isEqualTo(1);
+			assertThat(result.randomSeed()).isEqualTo(42L);
+			assertThat(result.throwable()).isNotPresent();
+			assertThat(result.sample()).isNotPresent();
+		}
+
+		@Example
+		void evenIfItFails() {
+			Function<List<Object>, Boolean> forAllFunction = args -> {
+				assertThat(args).isEmpty();
+				return false;
+			};
+
+			GenericProperty property = new GenericProperty("failing property", arbitraries(), forAllFunction);
+			PropertyCheckResult result = property.check(2, 42L);
+
+			assertThat(result.propertyName()).isEqualTo("failing property");
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.countTries()).isEqualTo(1);
+			assertThat(result.countChecks()).isEqualTo(1);
+			assertThat(result.randomSeed()).isEqualTo(42L);
+			assertThat(result.throwable()).isNotPresent();
+
+			assertThat(result.sample()).isPresent();
+			assertThat(result.sample().get()).isEmpty();
+		}
+
+		@Example
+		void evenIfItThrowsException() {
+			Function<List<Object>, Boolean> forAllFunction = args -> {
+				assertThat(args).isEmpty();
+				throw new RuntimeException();
+			};
+
+			GenericProperty property = new GenericProperty("failing property", arbitraries(), forAllFunction);
+			PropertyCheckResult result = property.check(2, 42L);
+
+			assertThat(result.propertyName()).isEqualTo("failing property");
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
+			assertThat(result.countTries()).isEqualTo(1);
+			assertThat(result.countChecks()).isEqualTo(1);
+			assertThat(result.randomSeed()).isEqualTo(42L);
+
+			assertThat(result.throwable()).isPresent();
+			assertThat(result.throwable().get()).isInstanceOf(RuntimeException.class);
+
+			assertThat(result.sample()).isPresent();
+			assertThat(result.sample().get()).isEmpty();
+		}
 
 	}
 
