@@ -1,9 +1,9 @@
 package net.jqwik.properties;
 
-import org.opentest4j.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import org.opentest4j.*;
 
 public class GenericProperty {
 
@@ -33,6 +33,8 @@ public class GenericProperty {
 				continue;
 			}
 		}
+		if (countChecks == 0)
+			return PropertyCheckResult.exhausted(name, tries, seed);
 		return PropertyCheckResult.satisfied(name, tries, countChecks, seed);
 	}
 

@@ -108,4 +108,44 @@ public interface PropertyCheckResult {
 		};
 	}
 
+	static PropertyCheckResult exhausted(String propertyName, int tries, long randomSeed) {
+		return new PropertyCheckResult() {
+			@Override
+			public Status status() {
+				return Status.EXHAUSTED;
+			}
+
+			@Override
+			public String propertyName() {
+				return propertyName;
+			}
+
+			@Override
+			public int countTries() {
+				return tries;
+			}
+
+			@Override
+			public int countChecks() {
+				return 0;
+			}
+
+			@Override
+			public long randomSeed() {
+				return randomSeed;
+			}
+
+			@Override
+			public Optional<List<Object>> sample() {
+				return Optional.empty();
+			}
+
+			@Override
+			public Optional<Throwable> throwable() {
+				return Optional.empty();
+			}
+		};
+	}
+
+
 }
