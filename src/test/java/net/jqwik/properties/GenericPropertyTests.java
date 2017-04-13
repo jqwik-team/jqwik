@@ -113,6 +113,39 @@ class GenericPropertyTests {
 			assertThat(result.sample()).isNotPresent();
 		}
 
+		@Example
+		void exceptionInForAllFunctionMakesPropertyErroneous() {
+			int erroneousTry = 5;
+			RuntimeException thrownException = new RuntimeException("thrown in test");
+
+			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
+				if (aTry == erroneousTry)
+					throw thrownException;
+				return true;
+			}, exactlyOneInteger);
+
+			CountingArbitrary arbitrary = new CountingArbitrary();
+			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+
+			GenericProperty property = new GenericProperty("erroneous property", arbitraries, forAllFunction);
+			PropertyCheckResult result = property.check(10, 42L);
+
+			assertThat(forAllFunction.countCalls()).isEqualTo(erroneousTry);
+			assertThat(arbitrary.count()).isEqualTo(erroneousTry);
+
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
+			assertThat(result.countTries()).isEqualTo(erroneousTry);
+			assertThat(result.countChecks()).isEqualTo(erroneousTry);
+			assertThat(result.randomSeed()).isEqualTo(42L);
+
+			assertThat(result.throwable()).isPresent();
+			assertThat(result.throwable().get()).isSameAs(thrownException);
+
+			assertThat(result.sample()).isPresent();
+			assertThat(result.sample().get()).containsExactly(erroneousTry);
+		}
+
+
 	}
 
 	private List<Arbitrary> arbitraries(Arbitrary... arbitraries) {

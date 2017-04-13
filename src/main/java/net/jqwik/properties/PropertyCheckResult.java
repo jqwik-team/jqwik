@@ -108,6 +108,45 @@ public interface PropertyCheckResult {
 		};
 	}
 
+	static PropertyCheckResult erroneous(String propertyName, int tries, int checks, long randomSeed, List<Object> sample, Throwable throwable) {
+		return new PropertyCheckResult() {
+			@Override
+			public Status status() {
+				return Status.ERRONEOUS;
+			}
+
+			@Override
+			public String propertyName() {
+				return propertyName;
+			}
+
+			@Override
+			public int countTries() {
+				return tries;
+			}
+
+			@Override
+			public int countChecks() {
+				return checks;
+			}
+
+			@Override
+			public long randomSeed() {
+				return randomSeed;
+			}
+
+			@Override
+			public Optional<List<Object>> sample() {
+				return Optional.ofNullable(sample);
+			}
+
+			@Override
+			public Optional<Throwable> throwable() {
+				return Optional.of(throwable);
+			}
+		};
+	}
+
 	static PropertyCheckResult exhausted(String propertyName, int tries, long randomSeed) {
 		return new PropertyCheckResult() {
 			@Override

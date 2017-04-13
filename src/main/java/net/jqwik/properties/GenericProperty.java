@@ -3,6 +3,8 @@ package net.jqwik.properties;
 import java.util.*;
 import java.util.function.*;
 
+import org.junit.platform.commons.support.*;
+import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
 
 public class GenericProperty {
@@ -31,6 +33,10 @@ public class GenericProperty {
 				}
 			} catch (TestAbortedException tae) {
 				continue;
+			} catch (Throwable throwable) {
+				countChecks++;
+				BlacklistedExceptions.rethrowIfBlacklisted(throwable);
+				return PropertyCheckResult.erroneous(name, countTries, countChecks, seed, params, throwable);
 			}
 		}
 		if (countChecks == 0)
