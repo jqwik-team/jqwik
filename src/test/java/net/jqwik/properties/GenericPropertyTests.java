@@ -9,10 +9,11 @@ import net.jqwik.api.*;
 
 class GenericPropertyTests {
 
+	private final Function<List<Object>, Boolean> exactlyOneInteger = args -> args.size() == 1 && args.get(0) instanceof Integer;
+
 	@Example
 	void satisfiedWithOneParameter() {
-		Function<List<?>, Boolean> exactlyOneIntegerArgument = args -> args.size() == 1 && args.get(0) instanceof Integer;
-		ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneIntegerArgument);
+		ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
 
 		CountingArbitrary arbitrary = new CountingArbitrary();
 		List<Arbitrary> arbitraries = arbitraries(arbitrary);
@@ -36,8 +37,7 @@ class GenericPropertyTests {
 	void falsifiedWithOneParameter() {
 		int failingTry = 5;
 
-		Function<List<?>, Boolean> exactlyOneIntegerArgument = args -> args.size() == 1 && args.get(0) instanceof Integer;
-		ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneIntegerArgument);
+		ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
 
 		CountingArbitrary arbitrary = new CountingArbitrary();
 		List<Arbitrary> arbitraries = arbitraries(arbitrary);
@@ -57,6 +57,34 @@ class GenericPropertyTests {
 
 		assertThat(result.sample()).isPresent();
 		assertThat(result.sample().get()).containsExactly(failingTry);
+	}
+
+	@Example
+	void satisfiedWithRejectedAssumption() {
+		IntPredicate isEven = aNumber -> aNumber % 2 == 0;
+
+		ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
+			Assume.that(isEven.test(aTry));
+			assertThat(isEven.test(aTry));
+			return true;
+		}, exactlyOneInteger);
+
+		CountingArbitrary arbitrary = new CountingArbitrary();
+		List<Arbitrary> arbitraries = arbitraries(arbitrary);
+
+		GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
+		PropertyCheckResult result = property.check(10, 42L);
+
+		assertThat(forAllFunction.countCalls()).isEqualTo(10);
+		assertThat(arbitrary.count()).isEqualTo(10);
+
+		assertThat(result.propertyName()).isEqualTo("satisfied property");
+		assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+		assertThat(result.countTries()).isEqualTo(10);
+		assertThat(result.countChecks()).isEqualTo(5);
+		assertThat(result.randomSeed()).isEqualTo(42L);
+		assertThat(result.throwable()).isNotPresent();
+		assertThat(result.sample()).isNotPresent();
 	}
 
 	private List<Arbitrary> arbitraries(Arbitrary... arbitraries) {
