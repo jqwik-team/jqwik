@@ -25,7 +25,8 @@ class GenericPropertyTests {
 
 		assertThat(result.propertyName()).isEqualTo("satisfied property");
 		assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
-		assertThat(result.tries()).isEqualTo(2);
+		assertThat(result.countTries()).isEqualTo(2);
+		assertThat(result.countChecks()).isEqualTo(2);
 		assertThat(result.randomSeed()).isEqualTo(42L);
 		assertThat(result.throwable()).isNotPresent();
 		assertThat(result.sample()).isNotPresent();
@@ -49,7 +50,8 @@ class GenericPropertyTests {
 
 		assertThat(result.propertyName()).isEqualTo("falsified property");
 		assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
-		assertThat(result.tries()).isEqualTo(failingTry);
+		assertThat(result.countTries()).isEqualTo(failingTry);
+		assertThat(result.countChecks()).isEqualTo(failingTry);
 		assertThat(result.randomSeed()).isEqualTo(41L);
 		assertThat(result.throwable()).isNotPresent();
 

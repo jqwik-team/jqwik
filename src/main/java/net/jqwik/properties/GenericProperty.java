@@ -22,10 +22,10 @@ public class GenericProperty {
 			List<Object> params = generateParameters(g1);
 			boolean check = forAllFunction.apply(params);
 			if (!check) {
-				return PropertyCheckResult.falsified(name, currentTry, seed, params);
+				return PropertyCheckResult.falsified(name, currentTry, currentTry, seed, params);
 			}
 		}
-		return PropertyCheckResult.satisfied(name, tries, seed);
+		return PropertyCheckResult.satisfied(name, tries, tries, seed);
 	}
 
 	protected List<Object> generateParameters(Generator<?> g1) {

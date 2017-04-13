@@ -12,7 +12,17 @@ public interface PropertyCheckResult {
 
 	String propertyName();
 
-	int tries();
+	/**
+	 * The number of times a property has been tried including all tries
+	 * rejected by a precondition aka assumption
+	 */
+	int countTries();
+
+	/**
+	 * The number of times a property has been actually been evaluated
+	 * not counting the tries that were rejected by a precondition aka assumption
+	 */
+	int countChecks();
 
 	long randomSeed();
 
@@ -20,7 +30,7 @@ public interface PropertyCheckResult {
 
 	Optional<Throwable> throwable();
 
-	static PropertyCheckResult satisfied(String propertyName, int tries, long randomSeed) {
+	static PropertyCheckResult satisfied(String propertyName, int tries, int checks, long randomSeed) {
 		return new PropertyCheckResult() {
 			@Override
 			public Status status() {
@@ -33,8 +43,13 @@ public interface PropertyCheckResult {
 			}
 
 			@Override
-			public int tries() {
+			public int countTries() {
 				return tries;
+			}
+
+			@Override
+			public int countChecks() {
+				return checks;
 			}
 
 			@Override
@@ -54,7 +69,7 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(String propertyName, int tries, long randomSeed, List<Object> sample) {
+	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample) {
 		return new PropertyCheckResult() {
 			@Override
 			public Status status() {
@@ -67,8 +82,13 @@ public interface PropertyCheckResult {
 			}
 
 			@Override
-			public int tries() {
+			public int countTries() {
 				return tries;
+			}
+
+			@Override
+			public int countChecks() {
+				return checks;
 			}
 
 			@Override
