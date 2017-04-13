@@ -16,6 +16,6 @@ public class ArbitraryTests {
 		Assertions.assertThat(generator.next()).isEqualTo(2);
 		Assertions.assertThat(generator.next()).isEqualTo(4);
 		Assertions.assertThat(generator.next()).isEqualTo(6);
-		Assertions.assertThat(generator.next()).isEqualTo(7);
+		Assertions.assertThat(generator.next()).isEqualTo(8);
 	}
 }

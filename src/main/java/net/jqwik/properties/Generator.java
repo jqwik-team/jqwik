@@ -8,10 +8,9 @@ public interface Generator<T> {
 	T next();
 
 	default Generator<T> filter(Predicate<? super T> predicate) {
-		Generator<T> original = this;
 		return () -> {
 			while(true) {
-				T value = original.next();
+				T value = Generator.this.next();
 				if (predicate.test(value))
 					return value;
 			}

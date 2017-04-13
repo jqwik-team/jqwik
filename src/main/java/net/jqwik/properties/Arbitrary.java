@@ -16,13 +16,9 @@ public interface Arbitrary<T> {
 
 			@Override
 			public Generator<T> generator(long seed, int tries) {
-				return this.generator(seed, tries).filter(predicate);
+				return Arbitrary.this.generator(seed, tries).filter(predicate);
 			}
 
-			@Override
-			public List<T> shrink(T value) {
-				return this.shrink(value);
-			}
 		};
 	}
 
