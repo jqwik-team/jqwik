@@ -67,7 +67,7 @@ public class ArbitrariesTests {
 
 	@Example
 	void stringFromCharset() {
-		char[] validChars = new char[] {'a', 'b', 'c', 'd'};
+		char[] validChars = new char[]{'a', 'b', 'c', 'd'};
 		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
 
@@ -114,6 +114,16 @@ public class ArbitrariesTests {
 		}
 
 		@Example
+		void set() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 5);
+
+			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1L, 1);
+
+			assertGeneratedSet(generator.next(random));
+		}
+
+		@Example
 		void optional() {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
 			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(stringArbitrary);
@@ -138,6 +148,11 @@ public class ArbitrariesTests {
 			Assertions.fail("Optional with null should have been created");
 		}
 
+	}
+
+	private void assertGeneratedSet(Set<Integer> set) {
+		assertThat(set.size()).isBetween(0, 5);
+		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}
 
 	private void assertOptionalString(Optional<String> optional) {

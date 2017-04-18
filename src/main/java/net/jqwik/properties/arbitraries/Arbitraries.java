@@ -24,16 +24,6 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
-	public static <T> Arbitrary<List<T>> list(Arbitrary<T> elementArbitrary) {
-		return new Arbitrary<List<T>>() {
-			@Override
-			public RandomGenerator<List<T>> generator(long seed, int tries) {
-				int maxSize = defaultMaxFromTries(tries);
-				return createListGenerator(elementArbitrary, seed, tries, maxSize);
-			}
-		};
-	}
-
 	private static int defaultMaxFromTries(int tries) {
 		return Math.max(tries / 2 - 3, 1);
 	}
@@ -90,7 +80,26 @@ public class Arbitraries {
 		};
 	}
 
+	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
+		return new Arbitrary<List<T>>() {
+			@Override
+			public RandomGenerator<List<T>> generator(long seed, int tries) {
+				int maxSize = defaultMaxFromTries(tries);
+				return createListGenerator(elementArbitrary, seed, tries, maxSize);
+			}
+		};
+	}
+
+	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int maxSize) {
+		return listOf(elementArbitrary, maxSize).map(list -> new HashSet<>(list));
+	}
+
+	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
+		return listOf(elementArbitrary).map(list -> new HashSet<>(list));
+	}
+
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
 		return elementArbitrary.injectNull(0.1).map(element -> Optional.ofNullable(element));
 	}
+
 }
