@@ -1,10 +1,10 @@
 package net.jqwik.properties;
 
+import java.util.*;
+
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-
-import java.util.*;
 
 public class ArbitraryTests {
 
@@ -34,4 +34,21 @@ public class ArbitraryTests {
 		Assertions.assertThat(generator.next(random)).isEqualTo("i=2");
 		Assertions.assertThat(generator.next(random)).isEqualTo("i=3");
 	}
+
+	@Example
+	void withNullInjectsNullValues() {
+		Arbitrary<Integer> count = new CountingArbitrary();
+		Arbitrary<Integer> withNull = count.injectNull(0.5);
+
+		RandomGenerator<Integer> generator = withNull.generator(1L, 1);
+		for (int i = 0; i < 1000; i++) {
+			Integer value = generator.next(random);
+			if (value == null)
+				return;
+		}
+
+		Assertions.fail("Null should have been generated");
+	}
+
+
 }

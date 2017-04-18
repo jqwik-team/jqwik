@@ -8,6 +8,10 @@ import java.util.*;
 
 public class ArbitrariesTests {
 
+	enum MyEnum {
+		Yes, No, Maybe
+	}
+
 	private Random random = new Random();
 
 	@Example
@@ -32,6 +36,17 @@ public class ArbitrariesTests {
 		Assertions.assertThat(generator.next(random)).isIn("1", "hallo", "test");
 		Assertions.assertThat(generator.next(random)).isIn("1", "hallo", "test");
 		Assertions.assertThat(generator.next(random)).isIn("1", "hallo", "test");
+	}
+
+	@Example
+	void ofEnum() {
+		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
+
+		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1L, 1);
+
+		Assertions.assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
+		Assertions.assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
+		Assertions.assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
 	}
 
 	private void assertIntStringLessThan10(String next) {

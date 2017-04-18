@@ -22,4 +22,8 @@ public interface Arbitrary<T> {
 		return (seed, tries) -> Arbitrary.this.generator(seed, tries).map(mapper);
 	}
 
+	default Arbitrary<T> injectNull(double nullProbability) {
+		return (seed, tries) -> Arbitrary.this.generator(seed, tries).injectNull(nullProbability);
+	}
+
 }

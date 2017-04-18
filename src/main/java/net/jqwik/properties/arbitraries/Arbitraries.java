@@ -17,4 +17,8 @@ public class Arbitraries {
 	public static <U> Arbitrary<U> of(U... values) {
 		return fromGenerator(RandomGenerators.choose(values));
 	}
+
+	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
+		return fromGenerator(RandomGenerators.choose(enumClass));
+	}
 }

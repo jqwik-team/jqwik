@@ -1,6 +1,9 @@
 package net.jqwik.properties.arbitraries;
 
+import javaslang.test.*;
 import net.jqwik.properties.*;
+
+import java.util.*;
 
 public class RandomGenerators {
 
@@ -19,9 +22,27 @@ public class RandomGenerators {
 		} else {
 			final int _min = Math.min(min, max);
 			final int _max = Math.max(min, max);
-			return rng -> rng.nextInt(Math.abs(_max - _min) + 1) + _min;
+			return random -> random.nextInt(Math.abs(_max - _min) + 1) + _min;
 		}
 	}
+
+	public static RandomGenerator<Long> choose(long min, long max) {
+		if (min == max) {
+			return ignored -> min;
+		} else {
+			return random -> {
+				final double d = random.nextDouble();
+				final long _min = Math.min(min, max);
+				final long _max = Math.max(min, max);
+				return (long) ((d * _max) + ((1.0 - d) * _min) + d);
+			};
+		}
+	}
+
+	static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {
+		return random -> choose(enumClass.getEnumConstants()).next(random);
+	}
+
 
 	public static <T> RandomGenerator<T> fail(String message) {
 		return ignored -> {
