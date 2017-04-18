@@ -1,10 +1,8 @@
 package net.jqwik.properties.arbitraries;
 
-import javaslang.test.*;
-import net.jqwik.properties.*;
-import net.jqwik.properties.Arbitrary;
-
 import java.util.*;
+
+import net.jqwik.properties.*;
 
 public class RandomGenerators {
 
@@ -44,7 +42,6 @@ public class RandomGenerators {
 		return random -> choose(enumClass.getEnumConstants()).next(random);
 	}
 
-
 	public static <T> RandomGenerator<T> fail(String message) {
 		return ignored -> {
 			throw new RuntimeException(message);
@@ -60,4 +57,37 @@ public class RandomGenerators {
 			return list;
 		}).next(random);
 	}
+
+	public static RandomGenerator<String> string(char[] characters, int maxLength) {
+		Character[] validCharacters = new Character[characters.length];
+		for (int i = 0; i < characters.length; i++) {
+			validCharacters[i] = characters[i];
+		}
+		RandomGenerator<Character> charGenerator = choose(validCharacters);
+		return string(charGenerator, maxLength);
+	}
+
+	public static RandomGenerator<String> string(char from, char to, int maxLength) {
+		RandomGenerator<Character> charGenerator = choose(from, to);
+		return string(charGenerator, maxLength);
+	}
+
+	private static RandomGenerator<String> string(RandomGenerator<Character> charGenerator, int maxLength) {
+		return random -> choose(0, maxLength).map(i -> {
+			final char[] chars = new char[i];
+			for (int j = 0; j < i; j++) {
+				chars[j] = charGenerator.next(random);
+			}
+			return new String(chars);
+		}).next(random);
+	}
+
+	static RandomGenerator<Character> choose(char min, char max) {
+		if (min == max) {
+			return ignored -> min;
+		} else {
+			return random -> (char) (int) choose((int) min, (int) max).next(random);
+		}
+	}
+
 }

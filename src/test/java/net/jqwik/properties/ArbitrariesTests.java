@@ -1,15 +1,19 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
+import java.util.*;
+import java.util.stream.*;
+
 import org.assertj.core.api.*;
 
-import java.util.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
 
 public class ArbitrariesTests {
 
 	enum MyEnum {
-		Yes, No, Maybe
+		Yes,
+		No,
+		Maybe
 	}
 
 	private Random random = new Random();
@@ -60,6 +64,35 @@ public class ArbitrariesTests {
 		assertGeneratedList(generator.next(random));
 		assertGeneratedList(generator.next(random));
 		assertGeneratedList(generator.next(random));
+	}
+
+	@Example
+	void string() {
+		Arbitrary<String> stringArbitrary = Arbitraries.string('a', 'd', 5);
+		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
+
+		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator.next(random));
+	}
+
+	@Example
+	void stringFromCharset() {
+		char[] validChars = new char[] {'a', 'b', 'c', 'd'};
+		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 5);
+		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
+
+		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator.next(random));
+	}
+
+	private void assertGeneratedString(String value) {
+		Assertions.assertThat(value.length()).isBetween(0, 5);
+		Set<Character> characterSet = value.chars().mapToObj(e -> (char) e).collect(Collectors.toSet());
+		Assertions.assertThat(characterSet).isSubsetOf('a', 'b', 'c', 'd');
 	}
 
 	private void assertGeneratedList(List<String> list) {

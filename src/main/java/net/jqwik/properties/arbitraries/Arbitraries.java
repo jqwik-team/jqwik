@@ -28,10 +28,14 @@ public class Arbitraries {
 		return new Arbitrary<List<T>>() {
 			@Override
 			public RandomGenerator<List<T>> generator(long seed, int tries) {
-				int maxSize = Math.max(tries / 2 - 3, 1);
+				int maxSize = defaultMaxFromTries(tries);
 				return createListGenerator(elementArbitrary, seed, tries, maxSize);
 			}
 		};
+	}
+
+	private static int defaultMaxFromTries(int tries) {
+		return Math.max(tries / 2 - 3, 1);
 	}
 
 	public static <T> Arbitrary<List<T>> list(Arbitrary<T> elementArbitrary, int maxSize) {
@@ -49,5 +53,43 @@ public class Arbitraries {
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(seed, elementTries);
 		RandomGenerator<List<T>> generator = RandomGenerators.list(elementGenerator, maxSize);
 		return generator;
+	}
+
+	public static Arbitrary<String> string(char[] validChars, int maxLength) {
+		return new Arbitrary<String>() {
+			@Override
+			public RandomGenerator<String> generator(long seed, int tries) {
+				return RandomGenerators.string(validChars, maxLength);
+			}
+		};
+	}
+
+	public static Arbitrary<String> string(char[] validChars) {
+		return new Arbitrary<String>() {
+			@Override
+			public RandomGenerator<String> generator(long seed, int tries) {
+				int maxLength = defaultMaxFromTries(tries);
+				return RandomGenerators.string(validChars, maxLength);
+			}
+		};
+	}
+
+	public static Arbitrary<String> string(char from, char to, int maxLength) {
+		return new Arbitrary<String>() {
+			@Override
+			public RandomGenerator<String> generator(long seed, int tries) {
+				return RandomGenerators.string(from, to, maxLength);
+			}
+		};
+	}
+
+	public static Arbitrary<String> string(char from, char to) {
+		return new Arbitrary<String>() {
+			@Override
+			public RandomGenerator<String> generator(long seed, int tries) {
+				int maxLength = defaultMaxFromTries(tries);
+				return RandomGenerators.string(from, to, maxLength);
+			}
+		};
 	}
 }
