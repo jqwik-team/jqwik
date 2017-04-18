@@ -89,6 +89,26 @@ public class ArbitrariesTests {
 		assertGeneratedString(generator.next(random));
 	}
 
+	@Example
+	void integersInt() {
+		Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
+		RandomGenerator<Integer> generator = intArbitrary.generator(1L, 1);
+
+		for (int i = 0; i < 100; i++) {
+			Assertions.assertThat(generator.next(random)).isBetween(-10, 10);
+		}
+	}
+
+	@Example
+	void integersLong() {
+		Arbitrary<Long> longArbitrary = Arbitraries.integer(-10L, 10L);
+		RandomGenerator<Long> generator = longArbitrary.generator(1L, 1);
+
+		for (int i = 0; i < 100; i++) {
+			Assertions.assertThat(generator.next(random)).isBetween(-10L, 10L);
+		}
+	}
+
 	private void assertGeneratedString(String value) {
 		Assertions.assertThat(value.length()).isBetween(0, 5);
 		Set<Character> characterSet = value.chars().mapToObj(e -> (char) e).collect(Collectors.toSet());
