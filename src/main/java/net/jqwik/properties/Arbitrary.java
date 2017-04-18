@@ -7,6 +7,7 @@ public interface Arbitrary<T> {
 
 	RandomGenerator<T> generator(long seed, int tries);
 
+	// Not being used yet
 	default List<T> shrink(T value) {
 		return Collections.emptyList();
 	}

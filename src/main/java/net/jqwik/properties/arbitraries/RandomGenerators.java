@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import javaslang.test.*;
 import net.jqwik.properties.*;
+import net.jqwik.properties.Arbitrary;
 
 import java.util.*;
 
@@ -48,5 +49,15 @@ public class RandomGenerators {
 		return ignored -> {
 			throw new RuntimeException(message);
 		};
+	}
+
+	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int maxSize) {
+		return random -> choose(0, maxSize).map(i -> {
+			List<T> list = new ArrayList<>();
+			for (int j = 0; j < i; j++) {
+				list.add(elementGenerator.next(random));
+			}
+			return list;
+		}).next(random);
 	}
 }

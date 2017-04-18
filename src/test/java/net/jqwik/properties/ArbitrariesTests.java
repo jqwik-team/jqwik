@@ -49,6 +49,24 @@ public class ArbitrariesTests {
 		Assertions.assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
 	}
 
+	@Example
+	void list() {
+		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
+		Arbitrary<List<String>> listArbitrary = Arbitraries.list(stringArbitrary, 5);
+
+		RandomGenerator<List<String>> generator = listArbitrary.generator(1L, 1);
+
+		assertGeneratedList(generator.next(random));
+		assertGeneratedList(generator.next(random));
+		assertGeneratedList(generator.next(random));
+		assertGeneratedList(generator.next(random));
+	}
+
+	private void assertGeneratedList(List<String> list) {
+		Assertions.assertThat(list.size()).isBetween(0, 5);
+		Assertions.assertThat(list).isSubsetOf("1", "hallo", "test");
+	}
+
 	private void assertIntStringLessThan10(String next) {
 		Assertions.assertThat(next).isInstanceOf(String.class);
 		Assertions.assertThat(Integer.parseInt(next)).isLessThan(10);
