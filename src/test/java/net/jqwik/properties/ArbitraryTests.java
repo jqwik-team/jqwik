@@ -22,4 +22,16 @@ public class ArbitraryTests {
 		Assertions.assertThat(generator.next(random)).isEqualTo(6);
 		Assertions.assertThat(generator.next(random)).isEqualTo(8);
 	}
+
+	@Example
+	void mapping() {
+		Arbitrary<Integer> count = new CountingArbitrary();
+		Arbitrary<String> countStrings = count.map(i -> "i=" + i);
+
+		RandomGenerator<String> generator = countStrings.generator(1L, 1);
+
+		Assertions.assertThat(generator.next(random)).isEqualTo("i=1");
+		Assertions.assertThat(generator.next(random)).isEqualTo("i=2");
+		Assertions.assertThat(generator.next(random)).isEqualTo("i=3");
+	}
 }

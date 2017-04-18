@@ -16,4 +16,8 @@ public interface RandomGenerator<T> {
 			}
 		};
 	};
+
+	default <U> RandomGenerator<U> map(Function<? super T, ? extends U> mapper) {
+		return random -> mapper.apply(RandomGenerator.this.next(random));
+	}
 }

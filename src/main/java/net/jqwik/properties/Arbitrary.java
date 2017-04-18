@@ -12,14 +12,14 @@ public interface Arbitrary<T> {
 	}
 
 	default Arbitrary<T> filter(Predicate<? super T> predicate) {
-		return new Arbitrary<T>() {
+		return (seed, tries) -> Arbitrary.this.generator(seed, tries).filter(predicate);
+	}
 
-			@Override
-			public RandomGenerator<T> generator(long seed, int tries) {
-				return Arbitrary.this.generator(seed, tries).filter(predicate);
-			}
-
-		};
+	/**
+	 * Maps arbitrary objects T to arbitrary object U.
+	 */
+	default <U> Arbitrary<U> map(Function<? super T, ? extends U> mapper) {
+		return (seed, tries) -> Arbitrary.this.generator(seed, tries).map(mapper);
 	}
 
 }
