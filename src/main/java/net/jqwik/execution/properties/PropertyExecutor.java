@@ -32,18 +32,14 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 						propertyMethodDescriptor.getTargetMethod());
 				return aborted(new JqwikException(errorMessage));
 			}
-			if (hasForAllParameters(propertyMethodDescriptor.getTargetMethod())) {
-				PropertyExecutionResult propertyExecutionResult = executeProperty(propertyMethodDescriptor, testInstance);
-				long seed = propertyExecutionResult.getSeed();
-				reportSeed(propertyMethodDescriptor, listener, seed);
-				TestExecutionResult testExecutionResult = propertyExecutionResult.getTestExecutionResult();
-				// Disabled until JUnit5 gets along with descriptors being both container and test
-				// if (testExecutionResult.getStatus() == Status.FAILED)
-				// addFailedPropertyChild(propertyMethodDescriptor, listener, seed);
-				return testExecutionResult;
-			} else {
-				return executePropertyWithoutForAllParameters(propertyMethodDescriptor, testInstance);
-			}
+			PropertyExecutionResult propertyExecutionResult = executeProperty(propertyMethodDescriptor, testInstance);
+			long seed = propertyExecutionResult.getSeed();
+			reportSeed(propertyMethodDescriptor, listener, seed);
+			TestExecutionResult testExecutionResult = propertyExecutionResult.getTestExecutionResult();
+			// Disabled until JUnit5 gets along with descriptors being both container and test
+			// if (testExecutionResult.getStatus() == Status.FAILED)
+			// addFailedPropertyChild(propertyMethodDescriptor, listener, seed);
+			return testExecutionResult;
 		} catch (TestAbortedException e) {
 			return aborted(e);
 		} catch (Throwable t) {
@@ -75,20 +71,4 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(propertyMethodDescriptor, testInstance);
 		return property.check();
 	}
-
-	private TestExecutionResult executePropertyWithoutForAllParameters(PropertyMethodDescriptor methodDescriptor, Object testInstance) {
-		boolean success = (boolean) JqwikReflectionSupport.invokeMethod(methodDescriptor.getTargetMethod(), testInstance);
-
-		if (success)
-			return successful();
-		else {
-			String propertyFailedMessage = String.format("Property [%s] failed", methodDescriptor.getLabel());
-			return failed(new AssertionFailedError(propertyFailedMessage));
-		}
-	}
-
-	private boolean hasForAllParameters(Method targetMethod) {
-		return Arrays.stream(targetMethod.getParameters()).anyMatch(parameter -> parameter.isAnnotationPresent(ForAll.class));
-	}
-
 }

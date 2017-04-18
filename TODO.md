@@ -4,7 +4,6 @@
 
 - Replace examples with special case of Property
   - Properties can have other than boolean return
-  - Properties can have no parameter
 
 - Allow custom names for containers and test methods
 - Allow Fixture parameters to examples and properties
@@ -12,6 +11,7 @@
 
 ### Properties
 
+- Report data from PropertyCheckResult
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type

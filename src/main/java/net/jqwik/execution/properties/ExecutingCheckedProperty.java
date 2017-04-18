@@ -38,7 +38,7 @@ public class ExecutingCheckedProperty implements CheckedProperty {
 			if (result.status() == PropertyCheckResult.Status.SATISFIED)
 				return PropertyExecutionResult.successful(effectiveSeed);
 			else {
-				String propertyFailedMessage = String.format("Property [%s] failed: %s", propertyName, result.toString());
+				String propertyFailedMessage = result.toString();
 				return PropertyExecutionResult.failed(propertyFailedMessage, effectiveSeed);
 			}
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {

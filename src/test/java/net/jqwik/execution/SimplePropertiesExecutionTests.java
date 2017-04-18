@@ -82,8 +82,7 @@ class SimplePropertiesExecutionTests {
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "failingTwice"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failingTwice"),
-				isFailed("Property [failingTwice] failed"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failingTwice"), isFailed());
 		assertThat(executions).containsExactly("failingTwice", "close");
 	}
 

@@ -32,112 +32,85 @@ public interface PropertyCheckResult {
 
 	Optional<Throwable> throwable();
 
+	abstract class ResultBase implements PropertyCheckResult {
+
+		protected final Status status;
+		protected final String propertyName;
+		protected final int tries;
+		protected final int checks;
+		protected final long randomSeed;
+
+		ResultBase(Status status, String propertyName, int tries, int checks, long randomSeed) {
+			this.status = status;
+			this.propertyName = propertyName;
+			this.tries = tries;
+			this.checks = checks;
+			this.randomSeed = randomSeed;
+		}
+
+		@Override
+		public String propertyName() {
+			return propertyName;
+		}
+
+		@Override
+		public Status status() {
+			return status;
+		}
+
+		@Override
+		public int countChecks() {
+			return checks;
+		}
+
+		@Override
+		public int countTries() {
+			return tries;
+		}
+
+		@Override
+		public long randomSeed() {
+			return randomSeed;
+		}
+
+		@Override
+		public Optional<List<Object>> sample() {
+			return Optional.empty();
+		}
+
+		@Override
+		public Optional<Throwable> throwable() {
+			return Optional.empty();
+		}
+
+	}
+
 	static PropertyCheckResult satisfied(String propertyName, int tries, int checks, long randomSeed) {
-		return new PropertyCheckResult() {
+		return new ResultBase(Status.SATISFIED, propertyName, tries, checks, randomSeed) {
 			@Override
-			public Status status() {
-				return Status.SATISFIED;
-			}
-
-			@Override
-			public String propertyName() {
-				return propertyName;
-			}
-
-			@Override
-			public int countTries() {
-				return tries;
-			}
-
-			@Override
-			public int countChecks() {
-				return checks;
-			}
-
-			@Override
-			public long randomSeed() {
-				return randomSeed;
-			}
-
-			@Override
-			public Optional<List<Object>> sample() {
-				return Optional.empty();
-			}
-
-			@Override
-			public Optional<Throwable> throwable() {
-				return Optional.empty();
+			public String toString() {
+				return String.format("Property [%s] satisfied", propertyName);
 			}
 		};
 	}
 
 	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample) {
-		return new PropertyCheckResult() {
-			@Override
-			public Status status() {
-				return Status.FALSIFIED;
-			}
-
-			@Override
-			public String propertyName() {
-				return propertyName;
-			}
-
-			@Override
-			public int countTries() {
-				return tries;
-			}
-
-			@Override
-			public int countChecks() {
-				return checks;
-			}
-
-			@Override
-			public long randomSeed() {
-				return randomSeed;
-			}
-
+		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public Optional<List<Object>> sample() {
 				return Optional.of(sample);
 			}
 
 			@Override
-			public Optional<Throwable> throwable() {
-				return Optional.empty();
+			public String toString() {
+				return String.format("Property [%s] falsified with sample %s", propertyName, sample);
 			}
 		};
 	}
 
 	static PropertyCheckResult erroneous(String propertyName, int tries, int checks, long randomSeed, List<Object> sample,
 			Throwable throwable) {
-		return new PropertyCheckResult() {
-			@Override
-			public Status status() {
-				return Status.ERRONEOUS;
-			}
-
-			@Override
-			public String propertyName() {
-				return propertyName;
-			}
-
-			@Override
-			public int countTries() {
-				return tries;
-			}
-
-			@Override
-			public int countChecks() {
-				return checks;
-			}
-
-			@Override
-			public long randomSeed() {
-				return randomSeed;
-			}
-
+		return new ResultBase(Status.ERRONEOUS, propertyName, tries, checks, randomSeed) {
 			@Override
 			public Optional<List<Object>> sample() {
 				return Optional.ofNullable(sample);
@@ -147,44 +120,19 @@ public interface PropertyCheckResult {
 			public Optional<Throwable> throwable() {
 				return Optional.of(throwable);
 			}
+
+			@Override
+			public String toString() {
+				return String.format("Property [%s] erroneous with sample %s and exception [%s]", propertyName, sample, throwable);
+			}
 		};
 	}
 
 	static PropertyCheckResult exhausted(String propertyName, int tries, long randomSeed) {
-		return new PropertyCheckResult() {
+		return new ResultBase(Status.EXHAUSTED, propertyName, tries, 0, randomSeed) {
 			@Override
-			public Status status() {
-				return Status.EXHAUSTED;
-			}
-
-			@Override
-			public String propertyName() {
-				return propertyName;
-			}
-
-			@Override
-			public int countTries() {
-				return tries;
-			}
-
-			@Override
-			public int countChecks() {
-				return 0;
-			}
-
-			@Override
-			public long randomSeed() {
-				return randomSeed;
-			}
-
-			@Override
-			public Optional<List<Object>> sample() {
-				return Optional.empty();
-			}
-
-			@Override
-			public Optional<Throwable> throwable() {
-				return Optional.empty();
+			public String toString() {
+				return String.format("Property [%s] exhausted after [%d] tries", propertyName, tries);
 			}
 		};
 	}
