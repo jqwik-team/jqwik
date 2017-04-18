@@ -124,6 +124,19 @@ public class ArbitrariesTests {
 		}
 
 		@Example
+		void stream() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 5);
+
+			RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1L, 1);
+
+			assertGeneratedStream(generator.next(random));
+			assertGeneratedStream(generator.next(random));
+			assertGeneratedStream(generator.next(random));
+			assertGeneratedStream(generator.next(random));
+		}
+
+		@Example
 		void optional() {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
 			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(stringArbitrary);
@@ -148,6 +161,12 @@ public class ArbitrariesTests {
 			Assertions.fail("Optional with null should have been created");
 		}
 
+	}
+
+	private void assertGeneratedStream(Stream<Integer> stream) {
+		Set<Integer> set = stream.collect(Collectors.toSet());
+		assertThat(set.size()).isBetween(0, 5);
+		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}
 
 	private void assertGeneratedSet(Set<Integer> set) {

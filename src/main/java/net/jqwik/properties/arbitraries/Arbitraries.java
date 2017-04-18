@@ -3,6 +3,7 @@ package net.jqwik.properties.arbitraries;
 import net.jqwik.properties.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class Arbitraries {
 
@@ -100,6 +101,14 @@ public class Arbitraries {
 
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
 		return elementArbitrary.injectNull(0.1).map(element -> Optional.ofNullable(element));
+	}
+
+	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int maxSize) {
+		return listOf(elementArbitrary, maxSize).map(Collection::stream);
+	}
+
+	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
+		return listOf(elementArbitrary).map(Collection::stream);
 	}
 
 }
