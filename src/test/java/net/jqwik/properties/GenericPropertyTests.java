@@ -1,11 +1,11 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 class GenericPropertyTests {
 
@@ -67,7 +67,7 @@ class GenericPropertyTests {
 			IntPredicate isEven = aNumber -> aNumber % 2 == 0;
 
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
-				Assume.that(isEven.test(aTry));
+				Assumptions.assumeThat(isEven.test(aTry));
 				assertThat(isEven.test(aTry));
 				return true;
 			}, exactlyOneInteger);
@@ -92,7 +92,7 @@ class GenericPropertyTests {
 		@Example
 		void exhausted() {
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
-				Assume.that(false);
+				Assumptions.assumeThat(false);
 				return true;
 			}, exactlyOneInteger);
 
@@ -150,7 +150,7 @@ class GenericPropertyTests {
 	class NoParameter {
 		@Example
 		void checkPropertyOnlyOnce() {
-			Function<List<Object>, Boolean> forAllFunction = args -> {
+			CheckedFunction forAllFunction = args -> {
 				assertThat(args).isEmpty();
 				return true;
 			};
@@ -169,7 +169,7 @@ class GenericPropertyTests {
 
 		@Example
 		void evenIfItFails() {
-			Function<List<Object>, Boolean> forAllFunction = args -> {
+			CheckedFunction forAllFunction = args -> {
 				assertThat(args).isEmpty();
 				return false;
 			};
@@ -190,7 +190,7 @@ class GenericPropertyTests {
 
 		@Example
 		void evenIfItThrowsException() {
-			Function<List<Object>, Boolean> forAllFunction = args -> {
+			CheckedFunction forAllFunction = args -> {
 				assertThat(args).isEmpty();
 				throw new RuntimeException();
 			};
@@ -219,7 +219,7 @@ class GenericPropertyTests {
 
 		@Example
 		void twoParametersSatisfied() {
-			Function<List<Object>, Boolean> forAllFunction = args -> {
+			CheckedFunction forAllFunction = args -> {
 				assertThat(args).size().isEqualTo(2);
 				assertThat(args.get(0)).isInstanceOf(Integer.class);
 				assertThat(args.get(1)).isInstanceOf(Integer.class);
@@ -249,7 +249,7 @@ class GenericPropertyTests {
 		void fourParametersFalsified() {
 			int failingTry = 5;
 
-			Function<List<Object>, Boolean> forAllFunction = args -> {
+			CheckedFunction forAllFunction = args -> {
 				assertThat(args).size().isEqualTo(4);
 				return ((int) args.get(0)) < failingTry;
 			};

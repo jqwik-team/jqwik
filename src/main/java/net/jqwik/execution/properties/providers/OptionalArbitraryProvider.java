@@ -1,11 +1,11 @@
 package net.jqwik.execution.properties.providers;
 
+import net.jqwik.execution.properties.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+
 import java.util.*;
 import java.util.function.*;
-
-import javaslang.test.*;
-import net.jqwik.api.properties.*;
-import net.jqwik.execution.properties.*;
 
 public class OptionalArbitraryProvider implements TypedArbitraryProvider {
 	@Override
@@ -19,7 +19,7 @@ public class OptionalArbitraryProvider implements TypedArbitraryProvider {
 		GenericType innerType = targetType.getTypeArguments()[0];
 		Arbitrary<?> innerArbitrary = subtypeSupplier.apply(innerType);
 		if (innerArbitrary != null)
-			return Generator.optionalOf(innerArbitrary);
+			return Arbitraries.optionalOf(innerArbitrary);
 		return null;
 	}
 }

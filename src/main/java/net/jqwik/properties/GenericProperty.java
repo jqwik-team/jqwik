@@ -1,11 +1,11 @@
 package net.jqwik.properties;
 
+import org.junit.platform.commons.util.*;
+import org.opentest4j.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import org.junit.platform.commons.util.*;
-import org.opentest4j.*;
 
 public class GenericProperty {
 
@@ -13,7 +13,7 @@ public class GenericProperty {
 	private final List<Arbitrary> arbitraries;
 	private final Function<List<Object>, Boolean> forAllFunction;
 
-	public GenericProperty(String name, List<Arbitrary> arbitraries, Function<List<Object>, Boolean> forAllFunction) {
+	public GenericProperty(String name, List<Arbitrary> arbitraries, CheckedFunction forAllFunction) {
 		this.name = name;
 		this.arbitraries = arbitraries;
 		this.forAllFunction = forAllFunction;

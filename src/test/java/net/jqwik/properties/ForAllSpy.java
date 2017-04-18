@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
+import org.assertj.core.api.*;
+
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-import org.assertj.core.api.*;
-
-public class ForAllSpy implements Function<List<Object>, Boolean> {
+public class ForAllSpy implements CheckedFunction {
 
 	private final Function<Integer, Boolean> returnFunc;
 	private final Function<List<Object>, Boolean> argumentsVerifier;

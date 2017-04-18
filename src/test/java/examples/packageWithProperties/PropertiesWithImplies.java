@@ -1,22 +1,14 @@
 package examples.packageWithProperties;
 
-import javaslang.test.*;
 import net.jqwik.api.properties.*;
-import net.jqwik.api.properties.Property;
+import net.jqwik.properties.*;
 
 public class PropertiesWithImplies {
 
 	@Property(tries = 10)
-	@Assume("sumDivisibleBy2")
 	boolean sixMustBeDivisor(@ForAll("multipleOf3") int i, @ForAll("multipleOf2") Integer j) {
+		Assume.that((i + j) % 2 == 0);
 		return (i * j) % 6 == 0;
-	}
-
-	@Assumption
-	boolean sumDivisibleBy2(int i, int j) {
-		boolean condition = (i + j) % 2 == 0;
-		System.out.println(i + ":" + j + " = " + condition);
-		return condition;
 	}
 
 	@Generate

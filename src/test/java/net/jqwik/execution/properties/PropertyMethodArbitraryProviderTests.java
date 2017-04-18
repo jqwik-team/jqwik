@@ -1,10 +1,10 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.*;
 import net.jqwik.api.*;
 import net.jqwik.api.properties.*;
-import net.jqwik.api.properties.Property;
 import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 
 import java.lang.reflect.*;
@@ -42,7 +42,6 @@ public class PropertyMethodArbitraryProviderTests {
 			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "intParam", int.class);
 			Parameter parameter = getParameter(DefaultParams.class, "intParam");
 			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
-			assertThat(arbitrary.size()).isEqualTo(0);
 		}
 
 		@Example
@@ -50,7 +49,6 @@ public class PropertyMethodArbitraryProviderTests {
 			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "intParamWithSize", int.class);
 			Parameter parameter = getParameter(DefaultParams.class, "intParamWithSize");
 			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
-			assertThat(arbitrary.size()).isEqualTo(42);
 		}
 
 		@Example
@@ -194,7 +192,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 			@Generate
 			Arbitrary<String> aString() {
-				return Arbitrary.string(Gen.choose('a', 'z'));
+				return Arbitraries.string('a', 'z');
 			}
 		}
 
@@ -246,7 +244,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 			@Generate("aString")
 			Arbitrary<String> aString() {
-				return Generator.string('a', 'z');
+				return Arbitraries.string('a', 'z');
 			}
 
 			@Property
@@ -261,7 +259,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 			@Generate
 			Arbitrary<String> byMethodName() {
-				return Generator.string('x', 'y');
+				return Arbitraries.string('x', 'y');
 			}
 
 			@Property
@@ -269,7 +267,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 			@Generate
 			Arbitrary<Long> longBetween1and10() {
-				return Generator.integer(1L, 10L);
+				return Arbitraries.integer(1L, 10L);
 			}
 
 			@Property
@@ -277,7 +275,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 			@Generate("aName")
 			Arbitrary<String> aNameForList() {
-				return Generator.string('a', 'b', 10).filter(name -> name.length() > 2);
+				return Arbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
 			}
 
 		}

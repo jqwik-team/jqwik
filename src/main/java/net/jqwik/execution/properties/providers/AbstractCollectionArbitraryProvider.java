@@ -1,9 +1,9 @@
 package net.jqwik.execution.properties.providers;
 
-import java.util.function.*;
-
-import javaslang.test.*;
 import net.jqwik.execution.properties.*;
+import net.jqwik.properties.*;
+
+import java.util.function.*;
 
 abstract class AbstractCollectionArbitraryProvider implements TypedArbitraryProvider {
 
