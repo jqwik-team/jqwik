@@ -21,8 +21,8 @@ public class CheckedPropertyFactory {
 		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
 		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
-		return new ExecutingCheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries,
-			randomSeed);
+		return new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries,
+								   randomSeed);
 	}
 
 	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
