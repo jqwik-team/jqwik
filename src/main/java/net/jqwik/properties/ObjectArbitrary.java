@@ -6,7 +6,7 @@ public class ObjectArbitrary implements Arbitrary<Object> {
 		return random -> new Object() {
 			@Override
 			public String toString() {
-				return String.format("Arbitrary Object [seed: %d]", seed);
+				return String.format("Arbitrary Object [seed: %d, value: %d]", seed, random.nextLong());
 			}
 		};
 	}
