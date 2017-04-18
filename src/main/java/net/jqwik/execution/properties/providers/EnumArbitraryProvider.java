@@ -1,10 +1,10 @@
 package net.jqwik.execution.properties.providers;
 
-import java.util.function.*;
-
-import javaslang.test.*;
-import net.jqwik.api.properties.*;
 import net.jqwik.execution.properties.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+
+import java.util.function.*;
 
 public class EnumArbitraryProvider implements TypedArbitraryProvider {
 	@Override
@@ -15,6 +15,6 @@ public class EnumArbitraryProvider implements TypedArbitraryProvider {
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
 		// noinspection unchecked
-		return Generator.of((Class<Enum>) targetType.getRawType());
+		return Arbitraries.of((Class<Enum>) targetType.getRawType());
 	}
 }

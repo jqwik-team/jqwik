@@ -1,11 +1,11 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.*;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.properties.*;
-import net.jqwik.api.properties.Property;
 import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 import org.junit.platform.engine.*;
 
 import java.lang.reflect.*;
@@ -26,7 +26,7 @@ class CheckedPropertyTests {
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
-			assertThat(checkedProperty.getTries()).isEqualTo(Checkable.DEFAULT_TRIES);
+			assertThat(checkedProperty.getTries()).isEqualTo(1000);
 		}
 
 		@Example
@@ -41,46 +41,34 @@ class CheckedPropertyTests {
 	}
 
 	@Example
-	void assumptionFailureIsASuccessOfProperty() {
-		intOnlyExample("prop1", params -> false, params -> false, SUCCESSFUL);
-		intOnlyExample("prop2", params -> false, params -> false, SUCCESSFUL);
-		intOnlyExample("prop3", params -> false, params -> false, SUCCESSFUL);
-		intOnlyExample("prop4", params -> false, params -> false, SUCCESSFUL);
-		intOnlyExample("prop5", params -> false, params -> false, SUCCESSFUL);
-		intOnlyExample("prop6", params -> false, params -> false, SUCCESSFUL);
-		intOnlyExample("prop7", params -> false, params -> false, SUCCESSFUL);
-		intOnlyExample("prop8", params -> false, params -> false, SUCCESSFUL);
-	}
-
-	@Example
 	void intParametersSuccess() {
-		intOnlyExample("prop1", params -> true, params -> params.length == 1, SUCCESSFUL);
-		intOnlyExample("prop2", params -> true, params -> params.length == 2, SUCCESSFUL);
-		intOnlyExample("prop3", params -> true, params -> params.length == 3, SUCCESSFUL);
-		intOnlyExample("prop4", params -> true, params -> params.length == 4, SUCCESSFUL);
-		intOnlyExample("prop5", params -> true, params -> params.length == 5, SUCCESSFUL);
-		intOnlyExample("prop6", params -> true, params -> params.length == 6, SUCCESSFUL);
-		intOnlyExample("prop7", params -> true, params -> params.length == 7, SUCCESSFUL);
-		intOnlyExample("prop8", params -> true, params -> params.length == 8, SUCCESSFUL);
+		intOnlyExample("prop1", params -> params.size() == 1, SUCCESSFUL);
+		intOnlyExample("prop2", params -> params.size() == 2, SUCCESSFUL);
+		intOnlyExample("prop3", params -> params.size() == 3, SUCCESSFUL);
+		intOnlyExample("prop4", params -> params.size() == 4, SUCCESSFUL);
+		intOnlyExample("prop5", params -> params.size() == 5, SUCCESSFUL);
+		intOnlyExample("prop6", params -> params.size() == 6, SUCCESSFUL);
+		intOnlyExample("prop7", params -> params.size() == 7, SUCCESSFUL);
+		intOnlyExample("prop8", params -> params.size() == 8, SUCCESSFUL);
 	}
 
 	@Example
 	void intParametersFailure() {
-		intOnlyExample("prop1", params -> true, params -> false, FAILED);
-		intOnlyExample("prop2", params -> true, params -> false, FAILED);
-		intOnlyExample("prop3", params -> true, params -> false, FAILED);
-		intOnlyExample("prop4", params -> true, params -> false, FAILED);
-		intOnlyExample("prop5", params -> true, params -> false, FAILED);
-		intOnlyExample("prop6", params -> true, params -> false, FAILED);
-		intOnlyExample("prop7", params -> true, params -> false, FAILED);
-		intOnlyExample("prop8", params -> true, params -> false, FAILED);
+		intOnlyExample("prop1", params -> false, FAILED);
+		intOnlyExample("prop2", params -> false, FAILED);
+		intOnlyExample("prop3", params -> false, FAILED);
+		intOnlyExample("prop4", params -> false, FAILED);
+		intOnlyExample("prop5", params -> false, FAILED);
+		intOnlyExample("prop6", params -> false, FAILED);
+		intOnlyExample("prop7", params -> false, FAILED);
+		intOnlyExample("prop8", params -> false, FAILED);
 	}
 
 	@Example
 	void abortIfNoArbitraryForParameterCanBeFound() {
 		List<Parameter> parameters = getParametersForMethod("stringProp");
-		CheckedProperty checkedProperty = new ExecutingCheckedProperty("stringProp", params -> true, params -> false,
-																	   parameters, p -> Optional.empty(), 100, 1000L);
+		CheckedProperty checkedProperty = new ExecutingCheckedProperty("stringProp", params -> false,
+			parameters, p -> Optional.empty(), 100, 1000L);
 
 		TestExecutionResult check = checkedProperty.check().getTestExecutionResult();
 		assertThat(check.getStatus()).isEqualTo(TestExecutionResult.Status.ABORTED);
@@ -91,9 +79,9 @@ class CheckedPropertyTests {
 	@Example
 	void usingASeedWillAlwaysProvideSameArbitraryValues() {
 		List<Integer> allGeneratedInts = new ArrayList<>();
-		CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params[0]);
-		CheckedProperty checkedProperty = new ExecutingCheckedProperty("prop1", params -> true, addIntToList, getParametersForMethod("prop1"),
-			p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 10, 42L);
+		CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
+		CheckedProperty checkedProperty = new ExecutingCheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
+			p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 10, 42L);
 
 		PropertyExecutionResult executionResult = checkedProperty.check();
 		assertThat(executionResult.getSeed()).isEqualTo(42L);
@@ -103,9 +91,9 @@ class CheckedPropertyTests {
 		assertThat(allGeneratedInts).containsExactly(-59, 20, -10, 1, -88, -87, 100, 40, 96, 82);
 	}
 
-	private void intOnlyExample(String methodName, CheckedFunction assumeFunction, CheckedFunction forAllFunction, TestExecutionResult.Status successful) {
-		CheckedProperty checkedProperty = new ExecutingCheckedProperty(methodName, assumeFunction, forAllFunction, getParametersForMethod(methodName),
-			p -> Optional.of(new GenericArbitrary(Arbitrary.integer(), Checkable.DEFAULT_SIZE)), 100, 1000L);
+	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, TestExecutionResult.Status successful) {
+		CheckedProperty checkedProperty = new ExecutingCheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
+			p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 1000L);
 		TestExecutionResult check = checkedProperty.check().getTestExecutionResult();
 		assertThat(check.getStatus()).isEqualTo(successful);
 	}

@@ -1,16 +1,15 @@
 package net.jqwik.api.properties;
 
-import java.lang.annotation.*;
-
 import org.junit.platform.commons.annotation.*;
 
-import javaslang.test.*;
+import java.lang.annotation.*;
 
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable
 public @interface Property {
-	int tries() default Checkable.DEFAULT_TRIES;
+	// TODO: Extract default tries to a better place
+	int tries() default 1000;
 	long seed() default Long.MIN_VALUE;
 }

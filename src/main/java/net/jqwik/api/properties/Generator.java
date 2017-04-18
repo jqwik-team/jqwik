@@ -1,70 +1,57 @@
 package net.jqwik.api.properties;
 
-import javaslang.test.*;
-import net.jqwik.execution.properties.*;
-import net.jqwik.execution.properties.Combinators.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.arbitraries.Combinators.*;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 public interface Generator {
 
 	static Arbitrary<Integer> integer(int min, int max) {
-		return size -> random -> Gen.choose(min, max).apply(random);
+		return Arbitraries.integer(min, max);
 	}
 
 	static Arbitrary<Long> integer(long min, long max) {
-		return size -> random -> Gen.choose(min, max).apply(random);
+		return Arbitraries.integer(min, max);
 	}
 
 	static Arbitrary<String> string(char from, char to) {
-		return Arbitrary.string(Gen.choose(from, to));
+		return Arbitraries.string(from, to);
 	}
 
 	static Arbitrary<String> string(char from, char to, int maxLength) {
-		return new SizedArbitrary<>(string(from, to), maxLength);
+		return Arbitraries.string(from, to, maxLength);
 	}
 
 	static Arbitrary<String> string(char[] chars) {
-		return Arbitrary.string(Gen.choose(chars));
+		return Arbitraries.string(chars);
 	}
 
 	static Arbitrary<String> string(char[] chars, int maxLength) {
-		return new SizedArbitrary<>(string(chars), maxLength);
+		return Arbitraries.string(chars, maxLength);
 	}
 
 	static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
-		return Arbitrary.of(enumClass.getEnumConstants());
+		return Arbitraries.of(enumClass);
 	}
 
 	@SafeVarargs
 	static <U> Arbitrary<U> of(U... values) {
-		return Arbitrary.of(values);
+		return Arbitraries.of(values);
 	}
 
 	static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> arbitraryT) {
-		return collectionOf(arbitraryT, () -> new HashSet<T>(), (set, element) -> set.add(element));
+		return Arbitraries.setOf(arbitraryT);
 	}
 
 	static <T> Arbitrary<List<T>> listOf(Arbitrary<T> arbitraryT) {
-		return collectionOf(arbitraryT, () -> new ArrayList<T>(), (list, element) -> list.add(element));
-	}
-
-	static <E, C extends Collection<E>> Arbitrary<C> collectionOf(Arbitrary<E> arbitraryT, Supplier<C> creator, BiConsumer<C, E> adder) {
-		return Arbitrary.list(arbitraryT).map(jsList -> {
-			C set = creator.get();
-			jsList.forEach(element -> adder.accept(set, element));
-			return set;
-		});
+		return Arbitraries.listOf(arbitraryT);
 	}
 
 	static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> arbitraryT) {
-		return listOf(arbitraryT).map(Collection::stream);
-	}
-
-	static <T1> Combinator1<T1> combine(Arbitrary<T1> a1) {
-		return Combinators.combine(a1);
+		return Arbitraries.streamOf(arbitraryT);
 	}
 
 	static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
@@ -80,15 +67,6 @@ public interface Generator {
 	}
 
 	static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> a1) {
-		Arbitrary<T> withNull = withNull(a1, 0.1);
-		return combine(withNull).as(a -> Optional.ofNullable(a));
-	}
-
-	static <T> Arbitrary<T> withNull(Arbitrary<T> a1, double nullProbability) {
-		return size -> random -> {
-			if (random.nextDouble() <= nullProbability)
-				return null;
-			return a1.apply(size).apply(random);
-		};
+		return Arbitraries.optionalOf(a1);
 	}
 }

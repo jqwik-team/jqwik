@@ -1,6 +1,6 @@
 package net.jqwik.execution.properties;
 
-import javaslang.test.*;
+import net.jqwik.properties.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -20,7 +20,7 @@ public class TestHelper {
 	}
 
 	public static <T> T generate(Arbitrary<T> arbitrary) {
-		return arbitrary.apply(1).apply(new Random());
+		return arbitrary.generator(1).next(new Random());
 	}
 
 }

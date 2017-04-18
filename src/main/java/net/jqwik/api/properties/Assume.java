@@ -1,13 +1,15 @@
 package net.jqwik.api.properties;
 
-import java.lang.annotation.*;
+import net.jqwik.properties.*;
 
-import org.junit.platform.commons.annotation.*;
+import java.util.function.*;
 
-@Target({ ElementType.METHOD })
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Testable
-public @interface Assume {
-	String value();
+public class Assume {
+	public static void that(boolean condition) {
+		Assumptions.assumeThat(condition);
+	}
+
+	public static void that(Supplier<Boolean> booleanSupplier) {
+		Assumptions.assumeThat(booleanSupplier);
+	}
 }

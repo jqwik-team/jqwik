@@ -1,17 +1,16 @@
 package net.jqwik.execution.properties;
 
-import static net.jqwik.support.JqwikReflectionSupport.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.properties.providers.*;
+import net.jqwik.properties.*;
+import org.junit.platform.commons.support.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import org.junit.platform.commons.support.*;
-
-import javaslang.test.*;
-import net.jqwik.api.properties.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.execution.properties.providers.*;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
@@ -46,8 +45,7 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		if (arbitrary == null)
 			return Optional.empty();
 		else {
-			int generatorSize = forAllAnnotation.size();
-			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary, generatorSize);
+			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary);
 			return Optional.of(genericArbitrary);
 		}
 	}

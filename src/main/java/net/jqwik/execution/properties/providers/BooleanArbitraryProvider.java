@@ -1,9 +1,10 @@
 package net.jqwik.execution.properties.providers;
 
-import java.util.function.*;
-
-import javaslang.test.*;
 import net.jqwik.execution.properties.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+
+import java.util.function.*;
 
 public class BooleanArbitraryProvider implements TypedArbitraryProvider {
 	@Override
@@ -13,6 +14,6 @@ public class BooleanArbitraryProvider implements TypedArbitraryProvider {
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
-		return Arbitrary.of(true, false);
+		return Arbitraries.of(true, false);
 	}
 }

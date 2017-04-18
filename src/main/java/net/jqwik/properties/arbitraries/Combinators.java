@@ -1,28 +1,9 @@
-package net.jqwik.execution.properties;
+package net.jqwik.properties.arbitraries;
 
 import javaslang.*;
-import javaslang.test.*;
+import net.jqwik.properties.*;
 
 public class Combinators {
-
-	public static <T1> Combinator1<T1> combine(Arbitrary<T1> a1) {
-		return new Combinator1<T1>(a1);
-	}
-
-	public static class Combinator1<T1> {
-		private final Arbitrary<T1> a1;
-
-		private Combinator1(Arbitrary<T1> a1) {
-			this.a1 = a1;
-		}
-
-		public <R> Arbitrary<R> as(Function1<T1, R> combinator) {
-			return size -> random -> {
-				T1 t1 = a1.apply(size).apply(random);
-				return combinator.apply(t1);
-			};
-		}
-	}
 
 	public static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
 		return new Combinator2<T1, T2>(a1, a2);
@@ -38,10 +19,14 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> as(Function2<T1, T2, R> combinator) {
-			return size -> random -> {
-				T1 t1 = a1.apply(size).apply(random);
-				T2 t2 = a2.apply(size).apply(random);
-				return combinator.apply(t1, t2);
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				return random -> {
+					T1 t1 = g1.next(random);
+					T2 t2 = g2.next(random);
+					return combinator.apply(t1, t2);
+				};
 			};
 		}
 	}
@@ -62,11 +47,16 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> as(Function3<T1, T2, T3, R> combinator) {
-			return size -> random -> {
-				T1 t1 = a1.apply(size).apply(random);
-				T2 t2 = a2.apply(size).apply(random);
-				T3 t3 = a3.apply(size).apply(random);
-				return combinator.apply(t1, t2, t3);
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
+				return random -> {
+					T1 t1 = g1.next(random);
+					T2 t2 = g2.next(random);
+					T3 t3 = g3.next(random);
+					return combinator.apply(t1, t2, t3);
+				};
 			};
 		}
 	}
@@ -90,12 +80,18 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> as(Function4<T1, T2, T3, T4, R> combinator) {
-			return size -> random -> {
-				T1 t1 = a1.apply(size).apply(random);
-				T2 t2 = a2.apply(size).apply(random);
-				T3 t3 = a3.apply(size).apply(random);
-				T4 t4 = a4.apply(size).apply(random);
-				return combinator.apply(t1, t2, t3, t4);
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
+				RandomGenerator<T4> g4 = a4.generator(tries);
+				return random -> {
+					T1 t1 = g1.next(random);
+					T2 t2 = g2.next(random);
+					T3 t3 = g3.next(random);
+					T4 t4 = g4.next(random);
+					return combinator.apply(t1, t2, t3, t4);
+				};
 			};
 		}
 	}

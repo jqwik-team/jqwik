@@ -1,28 +1,25 @@
-package net.jqwik.execution.properties;
+package net.jqwik.properties;
 
-import javaslang.test.*;
-import net.jqwik.api.*;
-import net.jqwik.api.properties.*;
+import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.api.*;
+
+import net.jqwik.api.*;
 
 import java.util.*;
 
-import static net.jqwik.execution.properties.TestHelper.generate;
-
 class CombinatorsTests {
 
-	@Example
-	void singleArbitraryCanBeWrapped() {
-		Arbitrary<Optional<Integer>> combine = Combinators.combine(one()).as(a -> Optional.of(a));
-		Optional<Integer> value = generate(combine);
-		Assertions.assertThat(value.get()).isEqualTo(1);
-	}
+	private Random random = new Random();
 
 	@Example
 	void twoArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine2 = Combinators.combine(one(), two()).as((a, b) -> a + b);
 		int value = generate(combine2);
 		Assertions.assertThat(value).isEqualTo(3);
+	}
+
+	private int generate(Arbitrary<Integer> integerArbitrary) {
+		return integerArbitrary.generator(1).next(random);
 	}
 
 	@Example
@@ -40,15 +37,15 @@ class CombinatorsTests {
 	}
 
 	Arbitrary<Integer> one() {
-		return Generator.of(1);
+		return Arbitraries.of(1);
 	}
 	Arbitrary<Integer> two() {
-		return Generator.of(2);
+		return Arbitraries.of(2);
 	}
 	Arbitrary<Integer> three() {
-		return Generator.of(3);
+		return Arbitraries.of(3);
 	}
 	Arbitrary<Integer> four() {
-		return Generator.of(4);
+		return Arbitraries.of(4);
 	}
 }
