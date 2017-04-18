@@ -1,5 +1,7 @@
 ### General
 
+- Get rid of javaslang (Function2,3,4)
+
 - Replace examples with special case of Property
   - Properties can have other than boolean return
   - Properties can have no parameter
