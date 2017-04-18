@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.commons.support.*;
 import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
 
@@ -21,13 +20,12 @@ public class GenericProperty {
 	}
 
 	public PropertyCheckResult check(int tries, long seed) {
-		List<Generator> generators = arbitraries.stream()
-												.map(a1 -> a1.generator(seed, tries))
-												.collect(Collectors.toList());
+		Random random = new Random(seed);
+		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(seed, tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
 		int countChecks = 0;
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<Object> params = generateParameters(generators);
+			List<Object> params = generateParameters(generators, random);
 			try {
 				boolean check = forAllFunction.apply(params);
 				countChecks++;
@@ -47,7 +45,7 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	private List<Object> generateParameters(List<Generator> generators) {
-		return generators.stream().map(Generator::next).collect(Collectors.toList());
+	private List<Object> generateParameters(List<RandomGenerator> generators, Random random) {
+		return generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
 	}
 }

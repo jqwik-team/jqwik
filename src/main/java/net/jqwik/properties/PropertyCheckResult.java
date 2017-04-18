@@ -5,7 +5,10 @@ import java.util.*;
 public interface PropertyCheckResult {
 
 	enum Status {
-		SATISFIED, FALSIFIED, ERRONEOUS, EXHAUSTED
+		SATISFIED,
+		FALSIFIED,
+		ERRONEOUS,
+		EXHAUSTED
 	}
 
 	Status status();
@@ -13,14 +16,13 @@ public interface PropertyCheckResult {
 	String propertyName();
 
 	/**
-	 * The number of times a property has been tried including all tries
-	 * rejected by a precondition aka assumption
+	 * The number of times a property has been tried including all tries rejected by a precondition aka assumption
 	 */
 	int countTries();
 
 	/**
-	 * The number of times a property has been actually been evaluated
-	 * not counting the tries that were rejected by a precondition aka assumption
+	 * The number of times a property has been actually been evaluated not counting the tries that were rejected by a
+	 * precondition aka assumption
 	 */
 	int countChecks();
 
@@ -108,7 +110,8 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult erroneous(String propertyName, int tries, int checks, long randomSeed, List<Object> sample, Throwable throwable) {
+	static PropertyCheckResult erroneous(String propertyName, int tries, int checks, long randomSeed, List<Object> sample,
+			Throwable throwable) {
 		return new PropertyCheckResult() {
 			@Override
 			public Status status() {
@@ -185,6 +188,5 @@ public interface PropertyCheckResult {
 			}
 		};
 	}
-
 
 }

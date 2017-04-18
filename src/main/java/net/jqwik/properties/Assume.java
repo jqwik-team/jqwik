@@ -1,8 +1,8 @@
 package net.jqwik.properties;
 
-import org.opentest4j.*;
-
 import java.util.function.*;
+
+import org.opentest4j.*;
 
 public class Assume {
 	public static void that(boolean condition) {

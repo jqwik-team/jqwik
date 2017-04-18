@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.*;
 public class CountingArbitrary implements Arbitrary<Integer> {
 
 	private final AtomicInteger count = new AtomicInteger(0);
-	private final Generator<Integer> countingGenerator = () -> count.incrementAndGet();
+	private final RandomGenerator<Integer> countingGenerator = random -> count.incrementAndGet();
 
 	@Override
-	public Generator<Integer> generator(long seed, int tries) {
+	public RandomGenerator<Integer> generator(long seed, int tries) {
 		return countingGenerator;
 	}
 

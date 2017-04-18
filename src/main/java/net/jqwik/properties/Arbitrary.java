@@ -5,7 +5,7 @@ import java.util.function.*;
 
 public interface Arbitrary<T> {
 
-	Generator<T> generator(long seed, int tries);
+	RandomGenerator<T> generator(long seed, int tries);
 
 	default List<T> shrink(T value) {
 		return Collections.emptyList();
@@ -15,7 +15,7 @@ public interface Arbitrary<T> {
 		return new Arbitrary<T>() {
 
 			@Override
-			public Generator<T> generator(long seed, int tries) {
+			public RandomGenerator<T> generator(long seed, int tries) {
 				return Arbitrary.this.generator(seed, tries).filter(predicate);
 			}
 
