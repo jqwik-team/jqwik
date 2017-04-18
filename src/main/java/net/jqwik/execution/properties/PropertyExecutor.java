@@ -1,5 +1,6 @@
 package net.jqwik.execution.properties;
 
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
 
@@ -15,6 +16,7 @@ import net.jqwik.api.properties.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.*;
 import net.jqwik.execution.*;
+import net.jqwik.properties.*;
 
 public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescriptor, PropertyLifecycle> {
 
@@ -31,10 +33,9 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 						propertyMethodDescriptor.getTargetMethod());
 				return aborted(new JqwikException(errorMessage));
 			}
-			PropertyExecutionResult propertyExecutionResult = executeProperty(propertyMethodDescriptor, testInstance);
-			long seed = propertyExecutionResult.getSeed();
-			reportSeed(propertyMethodDescriptor, listener, seed);
-			TestExecutionResult testExecutionResult = propertyExecutionResult.getTestExecutionResult();
+			PropertyCheckResult propertyExecutionResult = executeProperty(propertyMethodDescriptor, testInstance);
+			reportSeed(propertyMethodDescriptor, listener, propertyExecutionResult.randomSeed());
+			TestExecutionResult testExecutionResult = createTestExecutionResult(propertyExecutionResult);
 			// Disabled until JUnit5 gets along with descriptors being both container and test
 			// if (testExecutionResult.getStatus() == Status.FAILED)
 			// addFailedPropertyChild(propertyMethodDescriptor, listener, seed);
@@ -45,6 +46,14 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 			rethrowIfBlacklisted(t);
 			return failed(t);
 		}
+	}
+
+	private TestExecutionResult createTestExecutionResult(PropertyCheckResult checkResult) {
+		if (checkResult.status() == SATISFIED)
+			return TestExecutionResult.successful();
+		if (checkResult.status() == FALSIFIED)
+			return TestExecutionResult.failed(new AssertionFailedError(checkResult.toString()));
+		return TestExecutionResult.failed(checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString())));
 	}
 
 	private void addFailedPropertyChild(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener, long seed) {
@@ -66,7 +75,7 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 		return !COMPATIBLE_RETURN_TYPES.contains(targetMethod.getReturnType());
 	}
 
-	private PropertyExecutionResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+	private PropertyCheckResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(propertyMethodDescriptor, testInstance);
 		return property.check();
 	}

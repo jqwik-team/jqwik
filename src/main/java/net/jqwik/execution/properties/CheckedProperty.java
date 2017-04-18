@@ -10,7 +10,7 @@ import java.util.stream.*;
 
 public class CheckedProperty {
 
-	static Supplier<Random> RNG = ThreadLocalRandom::current;
+	private static Supplier<Random> RNG = ThreadLocalRandom::current;
 
 	public final String propertyName;
 	public final CheckedFunction forAllFunction;
@@ -29,19 +29,13 @@ public class CheckedProperty {
 		this.randomSeed = randomSeed;
 	}
 
-	public PropertyExecutionResult check() {
+	public PropertyCheckResult check() {
 		// Long.MIN_VALUE is the default for Property.seed() annotation property
 		long effectiveSeed = randomSeed == Long.MIN_VALUE ? RNG.get().nextLong() : randomSeed;
 		try {
-			PropertyCheckResult result = createGenericProperty().check(tries, effectiveSeed);
-			if (result.status() == PropertyCheckResult.Status.SATISFIED)
-				return PropertyExecutionResult.successful(effectiveSeed);
-			else {
-				String propertyFailedMessage = result.toString();
-				return PropertyExecutionResult.failed(propertyFailedMessage, effectiveSeed);
-			}
+			return createGenericProperty().check(tries, effectiveSeed);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
-			return PropertyExecutionResult.aborted(cannotFindArbitraryException, effectiveSeed);
+			return PropertyCheckResult.erroneous(propertyName, 0, 0, effectiveSeed, Collections.emptyList(), cannotFindArbitraryException);
 		}
 	}
 
