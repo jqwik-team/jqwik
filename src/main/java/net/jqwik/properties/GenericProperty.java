@@ -21,7 +21,7 @@ public class GenericProperty {
 
 	public PropertyCheckResult check(int tries, long seed) {
 		Random random = new Random(seed);
-		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(seed, tries)).collect(Collectors.toList());
+		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
 		int countChecks = 0;
 		for (int countTries = 1; countTries <= maxTries; countTries++) {

@@ -15,7 +15,7 @@ public class ArbitraryTests {
 		Arbitrary<Integer> count = new CountingArbitrary();
 		Arbitrary<Integer> countEven = count.filter(i -> i % 2 == 0);
 
-		RandomGenerator<Integer> generator = countEven.generator(1L, 1);
+		RandomGenerator<Integer> generator = countEven.generator(1);
 
 		Assertions.assertThat(generator.next(random)).isEqualTo(2);
 		Assertions.assertThat(generator.next(random)).isEqualTo(4);
@@ -28,7 +28,7 @@ public class ArbitraryTests {
 		Arbitrary<Integer> count = new CountingArbitrary();
 		Arbitrary<String> countStrings = count.map(i -> "i=" + i);
 
-		RandomGenerator<String> generator = countStrings.generator(1L, 1);
+		RandomGenerator<String> generator = countStrings.generator(1);
 
 		Assertions.assertThat(generator.next(random)).isEqualTo("i=1");
 		Assertions.assertThat(generator.next(random)).isEqualTo("i=2");
@@ -40,7 +40,7 @@ public class ArbitraryTests {
 		Arbitrary<Integer> count = new CountingArbitrary();
 		Arbitrary<Integer> withNull = count.injectNull(0.5);
 
-		RandomGenerator<Integer> generator = withNull.generator(1L, 1);
+		RandomGenerator<Integer> generator = withNull.generator(1);
 		for (int i = 0; i < 1000; i++) {
 			Integer value = generator.next(random);
 			if (value == null)

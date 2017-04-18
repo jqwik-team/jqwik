@@ -5,7 +5,7 @@ import java.util.function.*;
 
 public interface Arbitrary<T> {
 
-	RandomGenerator<T> generator(long seed, int tries);
+	RandomGenerator<T> generator(int tries);
 
 	// Not being used yet
 	default List<T> shrink(T value) {
@@ -13,18 +13,18 @@ public interface Arbitrary<T> {
 	}
 
 	default Arbitrary<T> filter(Predicate<? super T> predicate) {
-		return (seed, tries) -> Arbitrary.this.generator(seed, tries).filter(predicate);
+		return (tries) -> Arbitrary.this.generator(tries).filter(predicate);
 	}
 
 	/**
 	 * Maps arbitrary objects T to arbitrary object U.
 	 */
 	default <U> Arbitrary<U> map(Function<? super T, ? extends U> mapper) {
-		return (seed, tries) -> Arbitrary.this.generator(seed, tries).map(mapper);
+		return (tries) -> Arbitrary.this.generator(tries).map(mapper);
 	}
 
 	default Arbitrary<T> injectNull(double nullProbability) {
-		return (seed, tries) -> Arbitrary.this.generator(seed, tries).injectNull(nullProbability);
+		return (tries) -> Arbitrary.this.generator(tries).injectNull(nullProbability);
 	}
 
 }

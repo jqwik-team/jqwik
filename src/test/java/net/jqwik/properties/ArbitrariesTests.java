@@ -23,7 +23,7 @@ public class ArbitrariesTests {
 	void fromGenerator() {
 		Arbitrary<String> stringArbitrary = Arbitraries.fromGenerator(random -> Integer.toString(random.nextInt(10)));
 
-		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 
 		assertIntStringLessThan10(generator.next(random));
 		assertIntStringLessThan10(generator.next(random));
@@ -35,7 +35,7 @@ public class ArbitrariesTests {
 	void ofValues() {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 
-		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 
 		assertThat(generator.next(random)).isIn("1", "hallo", "test");
 		assertThat(generator.next(random)).isIn("1", "hallo", "test");
@@ -47,7 +47,7 @@ public class ArbitrariesTests {
 	void ofEnum() {
 		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
 
-		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1L, 1);
+		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
 
 		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
 		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
@@ -57,7 +57,7 @@ public class ArbitrariesTests {
 	@Example
 	void string() {
 		Arbitrary<String> stringArbitrary = Arbitraries.string('a', 'd', 5);
-		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 
 		assertGeneratedString(generator.next(random));
 		assertGeneratedString(generator.next(random));
@@ -69,7 +69,7 @@ public class ArbitrariesTests {
 	void stringFromCharset() {
 		char[] validChars = new char[]{'a', 'b', 'c', 'd'};
 		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 5);
-		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 
 		assertGeneratedString(generator.next(random));
 		assertGeneratedString(generator.next(random));
@@ -80,7 +80,7 @@ public class ArbitrariesTests {
 	@Example
 	void integersInt() {
 		Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
-		RandomGenerator<Integer> generator = intArbitrary.generator(1L, 1);
+		RandomGenerator<Integer> generator = intArbitrary.generator(1);
 
 		for (int i = 0; i < 100; i++) {
 			assertThat(generator.next(random)).isBetween(-10, 10);
@@ -90,7 +90,7 @@ public class ArbitrariesTests {
 	@Example
 	void integersLong() {
 		Arbitrary<Long> longArbitrary = Arbitraries.integer(-10L, 10L);
-		RandomGenerator<Long> generator = longArbitrary.generator(1L, 1);
+		RandomGenerator<Long> generator = longArbitrary.generator(1);
 
 		for (int i = 0; i < 100; i++) {
 			assertThat(generator.next(random)).isBetween(-10L, 10L);
@@ -105,7 +105,7 @@ public class ArbitrariesTests {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 			Arbitrary<List<String>> listArbitrary = Arbitraries.listOf(stringArbitrary, 5);
 
-			RandomGenerator<List<String>> generator = listArbitrary.generator(1L, 1);
+			RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 
 			assertGeneratedList(generator.next(random));
 			assertGeneratedList(generator.next(random));
@@ -118,7 +118,7 @@ public class ArbitrariesTests {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
 			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 5);
 
-			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1L, 1);
+			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1);
 
 			assertGeneratedSet(generator.next(random));
 		}
@@ -128,7 +128,7 @@ public class ArbitrariesTests {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
 			Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 5);
 
-			RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1L, 1);
+			RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
 
 			assertGeneratedStream(generator.next(random));
 			assertGeneratedStream(generator.next(random));
@@ -141,7 +141,7 @@ public class ArbitrariesTests {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
 			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(stringArbitrary);
 
-			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1L, 1);
+			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
 			assertOptionalString(generator.next(random));
 			assertOptionalString(generator.next(random));
@@ -152,7 +152,7 @@ public class ArbitrariesTests {
 		@Example
 		void optionalAlsoGeneratesNulls() {
 			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(Arbitraries.of("one"));
-			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1L, 1);
+			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
 			for (int i = 0; i < 100; i++) {
 				if (!generator.next(random).isPresent())

@@ -19,9 +19,9 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> as(Function2<T1, T2, R> combinator) {
-			return (seed, tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(seed, tries);
-				RandomGenerator<T2> g2 = a2.generator(seed, tries);
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
 				return random -> {
 					T1 t1 = g1.next(random);
 					T2 t2 = g2.next(random);
@@ -47,10 +47,10 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> as(Function3<T1, T2, T3, R> combinator) {
-			return (seed, tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(seed, tries);
-				RandomGenerator<T2> g2 = a2.generator(seed, tries);
-				RandomGenerator<T3> g3 = a3.generator(seed, tries);
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
 				return random -> {
 					T1 t1 = g1.next(random);
 					T2 t2 = g2.next(random);
@@ -80,11 +80,11 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> as(Function4<T1, T2, T3, T4, R> combinator) {
-			return (seed, tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(seed, tries);
-				RandomGenerator<T2> g2 = a2.generator(seed, tries);
-				RandomGenerator<T3> g3 = a3.generator(seed, tries);
-				RandomGenerator<T4> g4 = a4.generator(seed, tries);
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
+				RandomGenerator<T4> g4 = a4.generator(tries);
 				return random -> {
 					T1 t1 = g1.next(random);
 					T2 t2 = g2.next(random);

@@ -8,7 +8,7 @@ public class CountingArbitrary implements Arbitrary<Integer> {
 	private final RandomGenerator<Integer> countingGenerator = random -> count.incrementAndGet();
 
 	@Override
-	public RandomGenerator<Integer> generator(long seed, int tries) {
+	public RandomGenerator<Integer> generator(int tries) {
 		return countingGenerator;
 	}
 

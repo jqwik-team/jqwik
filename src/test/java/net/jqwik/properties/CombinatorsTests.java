@@ -19,7 +19,7 @@ class CombinatorsTests {
 	}
 
 	private int generate(Arbitrary<Integer> integerArbitrary) {
-		return integerArbitrary.generator(1L, 1).next(random);
+		return integerArbitrary.generator(1).next(random);
 	}
 
 	@Example
