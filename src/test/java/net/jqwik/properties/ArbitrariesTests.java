@@ -1,12 +1,13 @@
 package net.jqwik.properties;
 
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
+import org.assertj.core.api.*;
+
 import java.util.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
-
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class ArbitrariesTests {
 
@@ -36,10 +37,10 @@ public class ArbitrariesTests {
 
 		RandomGenerator<String> generator = stringArbitrary.generator(1L, 1);
 
-		Assertions.assertThat(generator.next(random)).isIn("1", "hallo", "test");
-		Assertions.assertThat(generator.next(random)).isIn("1", "hallo", "test");
-		Assertions.assertThat(generator.next(random)).isIn("1", "hallo", "test");
-		Assertions.assertThat(generator.next(random)).isIn("1", "hallo", "test");
+		assertThat(generator.next(random)).isIn("1", "hallo", "test");
+		assertThat(generator.next(random)).isIn("1", "hallo", "test");
+		assertThat(generator.next(random)).isIn("1", "hallo", "test");
+		assertThat(generator.next(random)).isIn("1", "hallo", "test");
 	}
 
 	@Example
@@ -48,22 +49,9 @@ public class ArbitrariesTests {
 
 		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1L, 1);
 
-		Assertions.assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
-		Assertions.assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
-		Assertions.assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
-	}
-
-	@Example
-	void list() {
-		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
-		Arbitrary<List<String>> listArbitrary = Arbitraries.list(stringArbitrary, 5);
-
-		RandomGenerator<List<String>> generator = listArbitrary.generator(1L, 1);
-
-		assertGeneratedList(generator.next(random));
-		assertGeneratedList(generator.next(random));
-		assertGeneratedList(generator.next(random));
-		assertGeneratedList(generator.next(random));
+		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
+		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
+		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
 	}
 
 	@Example
@@ -95,7 +83,7 @@ public class ArbitrariesTests {
 		RandomGenerator<Integer> generator = intArbitrary.generator(1L, 1);
 
 		for (int i = 0; i < 100; i++) {
-			Assertions.assertThat(generator.next(random)).isBetween(-10, 10);
+			assertThat(generator.next(random)).isBetween(-10, 10);
 		}
 	}
 
@@ -105,23 +93,72 @@ public class ArbitrariesTests {
 		RandomGenerator<Long> generator = longArbitrary.generator(1L, 1);
 
 		for (int i = 0; i < 100; i++) {
-			Assertions.assertThat(generator.next(random)).isBetween(-10L, 10L);
+			assertThat(generator.next(random)).isBetween(-10L, 10L);
 		}
 	}
 
+	@Group
+	class GenericTypes {
+
+		@Example
+		void list() {
+			Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
+			Arbitrary<List<String>> listArbitrary = Arbitraries.listOf(stringArbitrary, 5);
+
+			RandomGenerator<List<String>> generator = listArbitrary.generator(1L, 1);
+
+			assertGeneratedList(generator.next(random));
+			assertGeneratedList(generator.next(random));
+			assertGeneratedList(generator.next(random));
+			assertGeneratedList(generator.next(random));
+		}
+
+		@Example
+		void optional() {
+			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
+			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(stringArbitrary);
+
+			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1L, 1);
+
+			assertOptionalString(generator.next(random));
+			assertOptionalString(generator.next(random));
+			assertOptionalString(generator.next(random));
+			assertOptionalString(generator.next(random));
+		}
+
+		@Example
+		void optionalAlsoGeneratesNulls() {
+			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(Arbitraries.of("one"));
+			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1L, 1);
+
+			for (int i = 0; i < 100; i++) {
+				if (!generator.next(random).isPresent())
+					return;
+			}
+			Assertions.fail("Optional with null should have been created");
+		}
+
+	}
+
+	private void assertOptionalString(Optional<String> optional) {
+		assertThat(optional).isInstanceOf(Optional.class);
+		if (optional.isPresent())
+			assertThat(optional.get()).isIn("one", "two");
+	}
+
 	private void assertGeneratedString(String value) {
-		Assertions.assertThat(value.length()).isBetween(0, 5);
+		assertThat(value.length()).isBetween(0, 5);
 		Set<Character> characterSet = value.chars().mapToObj(e -> (char) e).collect(Collectors.toSet());
-		Assertions.assertThat(characterSet).isSubsetOf('a', 'b', 'c', 'd');
+		assertThat(characterSet).isSubsetOf('a', 'b', 'c', 'd');
 	}
 
 	private void assertGeneratedList(List<String> list) {
-		Assertions.assertThat(list.size()).isBetween(0, 5);
-		Assertions.assertThat(list).isSubsetOf("1", "hallo", "test");
+		assertThat(list.size()).isBetween(0, 5);
+		assertThat(list).isSubsetOf("1", "hallo", "test");
 	}
 
 	private void assertIntStringLessThan10(String next) {
-		Assertions.assertThat(next).isInstanceOf(String.class);
-		Assertions.assertThat(Integer.parseInt(next)).isLessThan(10);
+		assertThat(next).isInstanceOf(String.class);
+		assertThat(Integer.parseInt(next)).isLessThan(10);
 	}
 }

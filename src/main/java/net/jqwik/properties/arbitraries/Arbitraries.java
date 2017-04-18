@@ -38,15 +38,6 @@ public class Arbitraries {
 		return Math.max(tries / 2 - 3, 1);
 	}
 
-	public static <T> Arbitrary<List<T>> list(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new Arbitrary<List<T>>() {
-			@Override
-			public RandomGenerator<List<T>> generator(long seed, int tries) {
-				return createListGenerator(elementArbitrary, seed, tries, maxSize);
-			}
-		};
-	}
-
 	private static<T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, long seed, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(seed, elementTries);
@@ -88,5 +79,18 @@ public class Arbitraries {
 
 	public static Arbitrary<Long> integer(long min, long max) {
 		return fromGenerator(RandomGenerators.choose(min, max));
+	}
+
+	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int maxSize) {
+		return new Arbitrary<List<T>>() {
+			@Override
+			public RandomGenerator<List<T>> generator(long seed, int tries) {
+				return createListGenerator(elementArbitrary, seed, tries, maxSize);
+			}
+		};
+	}
+
+	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
+		return elementArbitrary.injectNull(0.1).map(element -> Optional.ofNullable(element));
 	}
 }
