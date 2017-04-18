@@ -49,9 +49,9 @@ public class ArbitrariesTests {
 
 		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
 
-		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
-		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
-		assertThat(generator.next(random)).isIn(MyEnum.class.getEnumConstants());
+		assertThat(generator.next(random)).isIn((Object[]) MyEnum.class.getEnumConstants());
+		assertThat(generator.next(random)).isIn((Object[]) MyEnum.class.getEnumConstants());
+		assertThat(generator.next(random)).isIn((Object[]) MyEnum.class.getEnumConstants());
 	}
 
 	@Example
