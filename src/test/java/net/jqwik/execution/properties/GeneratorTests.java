@@ -26,7 +26,7 @@ public class GeneratorTests {
 	@Example
 	void withNullInjectsNullValues() {
 		Arbitrary<Integer> anInt = Generator.integer(1, 10);
-		Arbitrary<Integer> anIntWithNull = Generator.withNull(anInt, 0.5);
+		Arbitrary<Integer> anIntWithNull = Generator.injectNull(anInt, 0.5);
 
 		for (int i = 0; i < 1000; i++) {
 			Integer value = generate(anIntWithNull);
