@@ -24,14 +24,30 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
+	public static <T> Arbitrary<List<T>> list(Arbitrary<T> elementArbitrary) {
+		return new Arbitrary<List<T>>() {
+			@Override
+			public RandomGenerator<List<T>> generator(long seed, int tries) {
+				int maxSize = Math.max(tries / 2 - 3, 1);
+				return createListGenerator(elementArbitrary, seed, tries, maxSize);
+			}
+		};
+	}
+
 	public static <T> Arbitrary<List<T>> list(Arbitrary<T> elementArbitrary, int maxSize) {
 		return new Arbitrary<List<T>>() {
 			@Override
 			public RandomGenerator<List<T>> generator(long seed, int tries) {
-				RandomGenerator<T> elementGenerator = elementArbitrary.generator(seed, tries);
-				RandomGenerator<List<T>> generator = RandomGenerators.list(elementGenerator, maxSize);
-				return generator;
+				return createListGenerator(elementArbitrary, seed, tries, maxSize);
 			}
 		};
+	}
+
+
+	private static<T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, long seed, int tries, int maxSize) {
+		int elementTries = Math.max(maxSize / 2, 1) * tries;
+		RandomGenerator<T> elementGenerator = elementArbitrary.generator(seed, elementTries);
+		RandomGenerator<List<T>> generator = RandomGenerators.list(elementGenerator, maxSize);
+		return generator;
 	}
 }
