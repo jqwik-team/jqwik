@@ -1,8 +1,7 @@
 package net.jqwik.api;
 
 import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.properties.arbitraries.Combinators.*;
+import net.jqwik.properties.Combinators.*;
 
 import java.util.*;
 import java.util.stream.*;

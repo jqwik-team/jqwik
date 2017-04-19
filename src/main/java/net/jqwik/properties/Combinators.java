@@ -1,7 +1,6 @@
-package net.jqwik.properties.arbitraries;
+package net.jqwik.properties;
 
 import javaslang.*;
-import net.jqwik.properties.*;
 
 public class Combinators {
 

@@ -1,6 +1,5 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;

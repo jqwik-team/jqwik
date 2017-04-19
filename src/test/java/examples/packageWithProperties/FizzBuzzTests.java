@@ -3,7 +3,6 @@ package examples.packageWithProperties;
 import javaslang.collection.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
 
 public class FizzBuzzTests {
 

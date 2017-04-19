@@ -4,7 +4,6 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
 import org.opentest4j.*;
 
 import java.lang.reflect.*;

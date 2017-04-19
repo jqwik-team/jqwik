@@ -1,6 +1,4 @@
-package net.jqwik.properties.arbitraries;
-
-import net.jqwik.properties.*;
+package net.jqwik.properties;
 
 import java.util.*;
 import java.util.stream.*;

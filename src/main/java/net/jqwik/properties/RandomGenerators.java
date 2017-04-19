@@ -1,8 +1,6 @@
-package net.jqwik.properties.arbitraries;
+package net.jqwik.properties;
 
 import java.util.*;
-
-import net.jqwik.properties.*;
 
 public class RandomGenerators {
 
