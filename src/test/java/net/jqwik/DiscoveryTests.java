@@ -1,17 +1,5 @@
 package net.jqwik;
 
-import static net.jqwik.JqwikUniqueIdBuilder.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
-
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
-
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.*;
-import org.junit.platform.launcher.*;
-
 import examples.packageWithErrors.*;
 import examples.packageWithInheritance.*;
 import examples.packageWithNestedContainers.*;
@@ -20,6 +8,17 @@ import examples.packageWithSingleContainer.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.*;
+import org.junit.platform.launcher.*;
+
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+
+import static net.jqwik.JqwikUniqueIdBuilder.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
 
 class DiscoveryTests {
 
@@ -40,7 +39,7 @@ class DiscoveryTests {
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
 		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(7);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(9);
 	}
 
 	@Example
@@ -52,7 +51,7 @@ class DiscoveryTests {
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
 		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(7);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(9);
 	}
 
 	@Example
@@ -64,7 +63,7 @@ class DiscoveryTests {
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(1);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(3);
 	}
 
 	@Example
@@ -72,7 +71,7 @@ class DiscoveryTests {
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(MixedTests.class)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
-		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(3);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(5);
 	}
 
 	@Example

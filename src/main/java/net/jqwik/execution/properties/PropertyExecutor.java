@@ -1,26 +1,19 @@
 package net.jqwik.execution.properties;
 
-import static net.jqwik.properties.PropertyCheckResult.Status.*;
-import static org.junit.platform.commons.util.BlacklistedExceptions.*;
-import static org.junit.platform.engine.TestExecutionResult.*;
-
-import java.lang.reflect.*;
-import java.util.*;
-
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.reporting.*;
-import org.opentest4j.*;
-
-import net.jqwik.*;
 import net.jqwik.api.properties.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.*;
 import net.jqwik.execution.*;
 import net.jqwik.properties.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
+
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
+import static org.junit.platform.commons.util.BlacklistedExceptions.*;
+import static org.junit.platform.engine.TestExecutionResult.*;
 
 public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescriptor, PropertyLifecycle> {
-
-	private static List<Class<?>> COMPATIBLE_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
 
 	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
 
@@ -28,11 +21,6 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 	protected TestExecutionResult executeMethod(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance,
 			EngineExecutionListener listener) {
 		try {
-			if (hasIncompatibleReturnType(propertyMethodDescriptor.getTargetMethod())) {
-				String errorMessage = String.format("Property method [%s] must return boolean value",
-						propertyMethodDescriptor.getTargetMethod());
-				return aborted(new JqwikException(errorMessage));
-			}
 			PropertyCheckResult propertyExecutionResult = executeProperty(propertyMethodDescriptor, testInstance);
 			reportSeed(propertyMethodDescriptor, listener, propertyExecutionResult.randomSeed());
 			TestExecutionResult testExecutionResult = createTestExecutionResult(propertyExecutionResult);
@@ -51,9 +39,8 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 	private TestExecutionResult createTestExecutionResult(PropertyCheckResult checkResult) {
 		if (checkResult.status() == SATISFIED)
 			return TestExecutionResult.successful();
-		if (checkResult.status() == FALSIFIED)
-			return TestExecutionResult.failed(new AssertionFailedError(checkResult.toString()));
-		return TestExecutionResult.failed(checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString())));
+		Throwable throwable = checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString()));
+		return TestExecutionResult.failed(throwable);
 	}
 
 	private void addFailedPropertyChild(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener, long seed) {
@@ -69,10 +56,6 @@ public class PropertyExecutor extends AbstractMethodExecutor<PropertyMethodDescr
 
 	private void reportSeed(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener, long seed) {
 		listener.reportingEntryPublished(propertyMethodDescriptor, ReportEntry.from("seed", Long.toString(seed)));
-	}
-
-	private boolean hasIncompatibleReturnType(Method targetMethod) {
-		return !COMPATIBLE_RETURN_TYPES.contains(targetMethod.getReturnType());
 	}
 
 	private PropertyCheckResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

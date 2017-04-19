@@ -81,6 +81,17 @@ class CheckedPropertyTests {
 		}
 
 		@Example
+		void assertionErrorMakesCheckFalsified() {
+			AssertionError toThrow = new AssertionError("test");
+			intOnlyExample("prop0", params -> {
+				throw toThrow;
+			}, FALSIFIED);
+			intOnlyExample("prop8", params -> {
+				throw toThrow;
+			}, FALSIFIED);
+		}
+
+		@Example
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
 			List<Parameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false,

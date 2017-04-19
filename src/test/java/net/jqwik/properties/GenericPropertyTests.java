@@ -63,6 +63,35 @@ class GenericPropertyTests {
 		}
 
 		@Example
+		void falsifiedThroughAssertionError() {
+			AssertionError assertionError = new AssertionError("test");
+			ForAllSpy forAllFunction = new ForAllSpy(trie -> {
+				throw assertionError;
+			}, exactlyOneInteger);
+
+			CountingArbitrary arbitrary = new CountingArbitrary();
+			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+
+			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
+			PropertyCheckResult result = property.check(10, 41L);
+
+			assertThat(forAllFunction.countCalls()).isEqualTo(1);
+			assertThat(arbitrary.count()).isEqualTo(1);
+
+			assertThat(result.propertyName()).isEqualTo("falsified property");
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.countTries()).isEqualTo(1);
+			assertThat(result.countChecks()).isEqualTo(1);
+			assertThat(result.randomSeed()).isEqualTo(41L);
+
+			assertThat(result.throwable()).isPresent();
+			assertThat(result.throwable().get()).isSameAs(assertionError);
+
+			assertThat(result.sample()).isPresent();
+			assertThat(result.sample().get()).containsExactly(1);
+		}
+
+		@Example
 		void satisfiedWithRejectedAssumptions() {
 			IntPredicate isEven = aNumber -> aNumber % 2 == 0;
 

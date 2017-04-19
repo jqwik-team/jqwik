@@ -30,8 +30,11 @@ public class GenericProperty {
 				boolean check = forAllFunction.apply(params);
 				countChecks++;
 				if (!check) {
-					return PropertyCheckResult.falsified(name, countTries, countChecks, seed, params);
+					return PropertyCheckResult.falsified(name, countTries, countChecks, seed, params, null);
 				}
+			} catch (AssertionError ae) {
+				countChecks++;
+				return PropertyCheckResult.falsified(name, countTries, countChecks, seed, params, ae);
 			} catch (TestAbortedException tae) {
 				continue;
 			} catch (Throwable throwable) {

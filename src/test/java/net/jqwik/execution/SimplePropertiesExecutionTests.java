@@ -1,19 +1,18 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Matchers.*;
-
-import java.util.*;
-
-import org.junit.platform.engine.*;
-import org.mockito.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.properties.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.properties.*;
+import org.junit.platform.engine.*;
+import org.mockito.*;
+
+import java.util.*;
+
+import static net.jqwik.TestDescriptorBuilder.*;
+import static net.jqwik.matchers.MockitoMatchers.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Matchers.*;
 
 class SimplePropertiesExecutionTests {
 
@@ -37,6 +36,20 @@ class SimplePropertiesExecutionTests {
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeeding"), isSuccessful());
 		assertThat(executions).containsExactly("succeeding", "close");
 	}
+
+	@Example
+	void succeedWithVoid() throws NoSuchMethodException {
+		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedingWithVoid").build();
+
+		executeTests(descriptor);
+
+		InOrder events = Mockito.inOrder(eventRecorder);
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeedingWithVoid"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedingWithVoid"), isSuccessful());
+		assertThat(executions).containsExactly("succeedingWithVoid", "close");
+	}
+
+
 
 	@Example
 	void succeedingWithBoxedBoolean() throws NoSuchMethodException {
@@ -98,18 +111,6 @@ class SimplePropertiesExecutionTests {
 		assertThat(executions).isEmpty();
 	}
 
-	@Example
-	void methodWithIncompatibleReturnTypeIsAborted() throws NoSuchMethodException {
-		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "returnsString").build();
-
-		executeTests(descriptor);
-
-		InOrder events = Mockito.inOrder(eventRecorder);
-		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "returnsString"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "returnsString"), isAborted());
-		assertThat(executions).containsExactly("close");
-	}
-
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		executor.execute(propertyMethodDescriptor, eventRecorder, (testInstance) -> new AutoCloseableLifecycle());
 	}
@@ -122,6 +123,11 @@ class SimplePropertiesExecutionTests {
 		public boolean succeeding() {
 			executions.add("succeeding");
 			return true;
+		}
+
+		@Property
+		public void succeedingWithVoid() {
+			executions.add("succeedingWithVoid");
 		}
 
 		@Property

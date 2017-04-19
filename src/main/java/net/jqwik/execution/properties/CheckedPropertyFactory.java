@@ -7,9 +7,12 @@ import net.jqwik.support.*;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 public class CheckedPropertyFactory {
+
+	private static List<Class<?>> BOOLEAN_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
 
 	public CheckedProperty fromDescriptor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		String propertyName = propertyMethodDescriptor.getLabel();
@@ -22,12 +25,20 @@ public class CheckedPropertyFactory {
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
 		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
 		return new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries,
-								   randomSeed);
+			randomSeed);
 	}
 
 	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		// Todo: Bind all non @ForAll params first
-		return params -> (boolean) JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, params.toArray());
+		Class<?> returnType = propertyMethodDescriptor.getTargetMethod().getReturnType();
+		Function<List, Object> function = params -> JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, params.toArray());
+		if (BOOLEAN_RETURN_TYPES.contains(returnType))
+			return params -> (boolean) function.apply(params);
+		else
+			return params -> {
+				function.apply(params);
+				return true;
+			};
 	}
 
 	private List<Parameter> extractForAllParameters(Method targetMethod) {

@@ -17,7 +17,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void simple() {
 		PropertyMethodDescriptor descriptor = createDescriptor("prop");
-		CheckedProperty property = (CheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.propertyName).isEqualTo("prop");
 
@@ -37,7 +37,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withUnboundParams() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams");
-		CheckedProperty property = (CheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
 		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
@@ -49,14 +49,25 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withTries() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithTries");
-		CheckedProperty property = (CheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 		assertThat(property.tries).isEqualTo(42);
+	}
+
+	@Example
+	void withNoParamsAndVoidResult() {
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult");
+		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+
+		assertThat(property.forAllParameters).size().isEqualTo(0);
+
+		List<Object> noArgs = Arrays.asList();
+		assertThat(property.forAllFunction.apply(noArgs)).isTrue();
 	}
 
 	@Example
 	void withSeed() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithSeed");
-		CheckedProperty property = (CheckedProperty) factory.fromDescriptor(descriptor, new PropertyExamples());
+		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 		assertThat(property.randomSeed).isEqualTo(4242);
 	}
 
@@ -87,6 +98,9 @@ public class CheckedPropertyFactoryTests {
 		boolean propWithSeed(@ForAll int anInt, @ForAll String aString) {
 			return true;
 		}
+
+		@Property
+		void propWithVoidResult() {}
 
 	}
 }

@@ -1,18 +1,17 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.mockito.Mockito.*;
-
+import net.jqwik.api.*;
+import net.jqwik.api.properties.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.properties.*;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 import org.mockito.*;
 
-import net.jqwik.api.*;
-import net.jqwik.api.properties.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.execution.properties.*;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static net.jqwik.matchers.MockitoMatchers.*;
+import static org.mockito.Mockito.*;
 
 class CheckedPropertiesExecutionTests {
 
@@ -25,14 +24,14 @@ class CheckedPropertiesExecutionTests {
 	@Example
 	void failWithSingleNumber() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failWithANumber", int.class)
-				.build();
+			.build();
 
 		executeTests(descriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"));
 		events.verify(eventRecorder).reportingEntryPublished(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"),
-				reportEntryCaptor.capture());
+			reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"), isFailed());
 
 		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("seed");
@@ -41,14 +40,14 @@ class CheckedPropertiesExecutionTests {
 	@Example
 	void succeedWithSingleNumber() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithANumber", int.class)
-				.build();
+			.build();
 
 		executeTests(descriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"));
 		events.verify(eventRecorder).reportingEntryPublished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"),
-															 reportEntryCaptor.capture());
+			reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"), isSuccessful());
 
 		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("seed");
@@ -57,20 +56,20 @@ class CheckedPropertiesExecutionTests {
 	@Example
 	void succeedWithThreeNumbers() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithThreeNumbers",
-				int.class, int.class, int.class).build();
+			int.class, int.class, int.class).build();
 
 		executeTests(descriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeedWithThreeNumbers"));
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithThreeNumbers"),
-				isSuccessful());
+			isSuccessful());
 	}
 
 	@Example
 	void triesParameterIsRespected() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedIn11Tries", int.class)
-				.build();
+			.build();
 
 		countTries = 0;
 		executeTests(descriptor);

@@ -94,7 +94,7 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample) {
+	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample, Throwable throwable) {
 		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public Optional<List<Object>> sample() {
@@ -105,6 +105,12 @@ public interface PropertyCheckResult {
 			public String toString() {
 				return String.format("Property [%s] falsified with sample %s", propertyName, sample);
 			}
+
+			@Override
+			public Optional<Throwable> throwable() {
+				return Optional.ofNullable(throwable);
+			}
+
 		};
 	}
 
