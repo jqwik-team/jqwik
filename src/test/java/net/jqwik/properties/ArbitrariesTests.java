@@ -1,12 +1,14 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import org.assertj.core.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
-import static org.assertj.core.api.Assertions.*;
+import org.assertj.core.api.*;
+
+import net.jqwik.api.*;
 
 public class ArbitrariesTests {
 
@@ -66,7 +68,7 @@ public class ArbitrariesTests {
 
 	@Example
 	void stringFromCharset() {
-		char[] validChars = new char[]{'a', 'b', 'c', 'd'};
+		char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
 		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 
@@ -81,19 +83,25 @@ public class ArbitrariesTests {
 		Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
 		RandomGenerator<Integer> generator = intArbitrary.generator(1);
 
-		for (int i = 0; i < 100; i++) {
-			assertThat(generator.next(random)).isBetween(-10, 10);
-		}
+		assertAtLeastOneGenerated(generator, value -> ((int) value) < -5);
+		assertAtLeastOneGenerated(generator, value -> ((int) value) > 5);
+		assertAllGenerated(generator, value -> {
+			int intValue = (int) value;
+			return intValue >= -10 && intValue <= 10;
+		});
 	}
 
 	@Example
 	void integersLong() {
-		Arbitrary<Long> longArbitrary = Arbitraries.integer(-10L, 10L);
+		Arbitrary<Long> longArbitrary = Arbitraries.integer(-100L, 100L);
 		RandomGenerator<Long> generator = longArbitrary.generator(1);
 
-		for (int i = 0; i < 100; i++) {
-			assertThat(generator.next(random)).isBetween(-10L, 10L);
-		}
+		assertAtLeastOneGenerated(generator, value -> ((long) value) < -50);
+		assertAtLeastOneGenerated(generator, value -> ((long) value) > 50);
+		assertAllGenerated(generator, value -> {
+			long intValue = (long) value;
+			return intValue >= -100L && intValue <= 100L;
+		});
 	}
 
 	@Group
@@ -161,6 +169,24 @@ public class ArbitrariesTests {
 		}
 
 	}
+
+	private void assertAtLeastOneGenerated(RandomGenerator generator, Function<Object, Boolean> checker) {
+		for (int i = 0; i < 100; i++) {
+			Object value = generator.next(random);
+			if (checker.apply(value))
+				return;
+		}
+		fail("Failed to generate at least one");
+	}
+
+	private void assertAllGenerated(RandomGenerator generator, Function<Object, Boolean> checker) {
+		for (int i = 0; i < 100; i++) {
+			Object value = generator.next(random);
+			if (!checker.apply(value))
+				fail(String.format("Value [%s] failed to fullfil condition.", value.toString()));
+		}
+	}
+
 
 	private void assertGeneratedStream(Stream<Integer> stream) {
 		Set<Integer> set = stream.collect(Collectors.toSet());

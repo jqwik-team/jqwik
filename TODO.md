@@ -1,7 +1,5 @@
 ### Bugs
 
-- Arbitraries.integer(min, max) does not generate negative numbers
-
 ### General
 
 - Get rid of javaslang (Function2,3,4)
