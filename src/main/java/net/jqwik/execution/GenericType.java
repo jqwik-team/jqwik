@@ -1,4 +1,4 @@
-package net.jqwik.execution.properties;
+package net.jqwik.execution;
 
 import java.lang.reflect.*;
 import java.util.*;

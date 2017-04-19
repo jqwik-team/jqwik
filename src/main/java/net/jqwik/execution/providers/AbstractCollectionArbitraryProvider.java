@@ -1,6 +1,6 @@
-package net.jqwik.execution.properties.providers;
+package net.jqwik.execution.providers;
 
-import net.jqwik.execution.properties.*;
+import net.jqwik.execution.*;
 import net.jqwik.properties.*;
 
 import java.util.function.*;

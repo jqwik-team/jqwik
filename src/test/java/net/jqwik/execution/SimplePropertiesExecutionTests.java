@@ -2,7 +2,6 @@ package net.jqwik.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.execution.properties.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
@@ -47,7 +46,6 @@ class SimplePropertiesExecutionTests {
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedingWithVoid"), isSuccessful());
 		assertThat(executions).containsExactly("succeedingWithVoid", "close");
 	}
-
 
 
 	@Example
@@ -101,7 +99,7 @@ class SimplePropertiesExecutionTests {
 	@Example
 	void methodWithUnboundParameterIsSkipped() throws NoSuchMethodException {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class)
-				.build();
+			.build();
 
 		executeTests(descriptor);
 

@@ -1,4 +1,4 @@
-package net.jqwik.execution.properties;
+package net.jqwik.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
@@ -99,7 +99,8 @@ public class CheckedPropertyFactoryTests {
 		}
 
 		@Property
-		void propWithVoidResult() {}
+		void propWithVoidResult() {
+		}
 
 	}
 }

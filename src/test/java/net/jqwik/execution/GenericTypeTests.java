@@ -1,10 +1,9 @@
-package net.jqwik.execution.properties;
+package net.jqwik.execution;
 
-import net.jqwik.api.Example;
-import org.assertj.core.api.Assertions;
+import net.jqwik.api.*;
+import org.assertj.core.api.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class GenericTypeTests {
 

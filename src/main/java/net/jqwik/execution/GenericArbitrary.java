@@ -1,4 +1,4 @@
-package net.jqwik.execution.properties;
+package net.jqwik.execution;
 
 
 import net.jqwik.properties.*;

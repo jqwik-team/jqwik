@@ -1,19 +1,19 @@
-package net.jqwik.execution.properties.providers;
+package net.jqwik.execution.providers;
 
 import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
 
-public class ListArbitraryProvider extends AbstractCollectionArbitraryProvider {
+public class SetArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
 	@Override
 	protected Class<?> getProvidedType() {
-		return List.class;
+		return Set.class;
 	}
 
 	@Override
 	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Arbitraries.listOf(innerArbitrary);
+		return Arbitraries.setOf(innerArbitrary);
 	}
 }

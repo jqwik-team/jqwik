@@ -1,4 +1,4 @@
-package net.jqwik.execution.properties;
+package net.jqwik.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
@@ -93,7 +93,7 @@ public class PropertyMethodArbitraryProviderTests {
 		}
 
 		private void assertNoArbitraryProvided(Class<DefaultParams> containerClass, String methodName, Class<?>... paramTypes)
-				throws Exception {
+			throws Exception {
 			PropertyMethodArbitraryProvider provider = getProvider(containerClass, methodName, paramTypes);
 			Parameter parameter = getParameter(containerClass, methodName);
 			assertThat(provider.forParameter(parameter)).isEmpty();
@@ -262,7 +262,9 @@ public class PropertyMethodArbitraryProviderTests {
 			}
 
 			@Property
-			boolean longFromBoxedType(@ForAll("longBetween1and10") long aLong) { return true; }
+			boolean longFromBoxedType(@ForAll("longBetween1and10") long aLong) {
+				return true;
+			}
 
 			@Generate
 			Arbitrary<Long> longBetween1and10() {
@@ -270,7 +272,9 @@ public class PropertyMethodArbitraryProviderTests {
 			}
 
 			@Property
-			boolean listOfGeneratedStrings(@ForAll("aName") List<String> nameList) {  return true; }
+			boolean listOfGeneratedStrings(@ForAll("aName") List<String> nameList) {
+				return true;
+			}
 
 			@Generate("aName")
 			Arbitrary<String> aNameForList() {
@@ -295,13 +299,13 @@ public class PropertyMethodArbitraryProviderTests {
 	}
 
 	private static PropertyMethodArbitraryProvider getProvider(Class container, String methodName, Class<?>... parameterTypes)
-			throws NoSuchMethodException, IllegalAccessException, InstantiationException {
+		throws NoSuchMethodException, IllegalAccessException, InstantiationException {
 		PropertyMethodDescriptor descriptor = getDescriptor(container, methodName, parameterTypes);
 		return new PropertyMethodArbitraryProvider(descriptor, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
 	}
 
 	private static PropertyMethodDescriptor getDescriptor(Class container, String methodName, Class... parameterTypes)
-			throws NoSuchMethodException {
+		throws NoSuchMethodException {
 		return (PropertyMethodDescriptor) forMethod(container, methodName, parameterTypes).build();
 	}
 

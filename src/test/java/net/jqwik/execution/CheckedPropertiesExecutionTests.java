@@ -2,7 +2,6 @@ package net.jqwik.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.execution.properties.*;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
