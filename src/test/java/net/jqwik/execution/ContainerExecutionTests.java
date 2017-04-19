@@ -1,14 +1,13 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.assertj.core.api.Assertions.*;
-
+import net.jqwik.*;
+import net.jqwik.api.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static net.jqwik.matchers.MockitoMatchers.*;
+import static org.assertj.core.api.Assertions.*;
 
 class ContainerExecutionTests {
 
@@ -48,10 +47,10 @@ class ContainerExecutionTests {
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(engineDescriptor);
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(ContainerClass.class));
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "succeeding"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "succeeding"), isSuccessful());
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "failing"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "failing"), isFailed("expected fail"));
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeeding"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeeding"), isSuccessful());
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "failing"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failing"), isFailed("expected fail"));
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(ContainerClass.class), isSuccessful());
 		events.verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
@@ -66,14 +65,14 @@ class ContainerExecutionTests {
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(engineDescriptor);
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(ContainerClass.class));
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "succeeding"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "succeeding"), isSuccessful());
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(ContainerClass.class, "failing"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(ContainerClass.class, "failing"), isFailed("expected fail"));
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "succeeding"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeeding"), isSuccessful());
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ContainerClass.class, "failing"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failing"), isFailed("expected fail"));
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(ContainerClass.class), isSuccessful());
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(SecondContainerClass.class));
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(SecondContainerClass.class, "succeeding"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(SecondContainerClass.class, "succeeding"), isSuccessful());
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SecondContainerClass.class, "succeeding"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SecondContainerClass.class, "succeeding"), isSuccessful());
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(SecondContainerClass.class), isSuccessful());
 		events.verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
@@ -90,19 +89,19 @@ class ContainerExecutionTests {
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(engineDescriptor);
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.class));
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(TopLevelContainer.class, "topLevelSuccess"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(TopLevelContainer.class, "topLevelSuccess"), isSuccessful());
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"), isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.class));
-		events.verify(eventRecorder).executionStarted(isExampleDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"));
-		events.verify(eventRecorder).executionFinished(isExampleDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"),
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"),
 				isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class));
 		events.verify(eventRecorder)
-				.executionStarted(isExampleDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"));
+				.executionStarted(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"));
 		events.verify(eventRecorder).executionFinished(
-				isExampleDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"), isSuccessful());
+			isPropertyDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess"), isSuccessful());
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class),
 				isSuccessful());
 

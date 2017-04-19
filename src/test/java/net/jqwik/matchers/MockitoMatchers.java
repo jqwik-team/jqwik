@@ -1,19 +1,14 @@
 package net.jqwik.matchers;
 
-import static org.mockito.Matchers.*;
-
+import net.jqwik.descriptor.*;
 import org.junit.platform.engine.*;
 
-import net.jqwik.descriptor.*;
+import static org.mockito.Matchers.*;
 
 public class MockitoMatchers {
 
 	public static ContainerClassDescriptor isClassDescriptorFor(Class<?> containerClass) {
 		return argThat(new IsClassDescriptorFor(containerClass));
-	}
-
-	public static ExampleMethodDescriptor isExampleDescriptorFor(Class<?> containerClass, String methodName) {
-		return argThat(new IsExampleDescriptorFor(containerClass, methodName));
 	}
 
 	public static PropertyMethodDescriptor isPropertyDescriptorFor(Class<?> containerClass, String methodName) {

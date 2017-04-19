@@ -31,10 +31,10 @@ class TestEngineIntegrationTests {
 
 		verify(eventRecorder).executionStarted(engineDescriptor);
 		verify(eventRecorder).executionStarted(isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "failing"), isFailed());
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SimpleExampleTests.class, "failing"), isFailed());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(SimpleExampleTests.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
@@ -47,10 +47,10 @@ class TestEngineIntegrationTests {
 
 		verify(eventRecorder).executionStarted(engineDescriptor);
 		verify(eventRecorder).executionStarted(isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "failing"), isFailed());
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SimpleExampleTests.class, "failing"), isFailed());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(SimpleExampleTests.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
@@ -63,10 +63,10 @@ class TestEngineIntegrationTests {
 
 		verify(eventRecorder).executionStarted(engineDescriptor);
 		verify(eventRecorder).executionStarted(isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "failing"), isFailed());
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SimpleExampleTests.class, "failing"), isFailed());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(SimpleExampleTests.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
@@ -79,8 +79,8 @@ class TestEngineIntegrationTests {
 
 		verify(eventRecorder).executionStarted(engineDescriptor);
 		verify(eventRecorder).executionStarted(isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(SimpleExampleTests.class), isSuccessful());
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
@@ -95,10 +95,10 @@ class TestEngineIntegrationTests {
 
 		// ExampleTests
 		verify(eventRecorder).executionStarted(isClassDescriptorFor(ExampleTests.class));
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ExampleTests.class, "failing"), isFailed());
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(ExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(ExampleTests.class, "succeeding"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ExampleTests.class, "failing"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ExampleTests.class, "failing"), isFailed());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(ExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ExampleTests.class, "succeeding"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(ExampleTests.class), isSuccessful());
 
 		// PropertyTests
@@ -115,8 +115,8 @@ class TestEngineIntegrationTests {
 
 		// MixedTests
 		verify(eventRecorder).executionStarted(isClassDescriptorFor(MixedTests.class));
-		verify(eventRecorder).executionStarted(isExampleDescriptorFor(MixedTests.class, "anExample"));
-		verify(eventRecorder).executionFinished(isExampleDescriptorFor(MixedTests.class, "anExample"), isSuccessful());
+		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(MixedTests.class, "anExample"));
+		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(MixedTests.class, "anExample"), isSuccessful());
 		verify(eventRecorder).executionStarted(isPropertyDescriptorFor(MixedTests.class, "aProperty"));
 		verify(eventRecorder).executionFinished(isPropertyDescriptorFor(MixedTests.class, "aProperty"), isSuccessful());
 		verify(eventRecorder).executionFinished(isClassDescriptorFor(MixedTests.class), isSuccessful());

@@ -1,11 +1,10 @@
 
 package net.jqwik;
 
-import java.util.*;
-
+import net.jqwik.discovery.*;
 import org.junit.platform.engine.*;
 
-import net.jqwik.discovery.*;
+import java.util.*;
 
 /**
  * For testing purposes
@@ -24,8 +23,8 @@ public class JqwikUniqueIdBuilder {
 		return uniqueIdForClasses(nextContainerId, containerClasses);
 	}
 
-	public static UniqueId uniqueIdForExampleMethod(Class<?> containerClass, String methodName) {
-		return uniqueIdForClassContainer(containerClass).append(JqwikUniqueIDs.EXAMPLE_SEGMENT_TYPE, methodName + "()");
+	public static UniqueId uniqueIdForPropertyMethod(Class<?> containerClass, String methodName) {
+		return uniqueIdForClassContainer(containerClass).append(JqwikUniqueIDs.PROPERTY_SEGMENT_TYPE, methodName + "()");
 	}
 
 	public static UniqueId engineId() {

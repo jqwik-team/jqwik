@@ -27,7 +27,6 @@ class DiscoveryTests {
 
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
 	private final Predicate<TestDescriptor> isClassDescriptor = d -> d instanceof ContainerClassDescriptor;
-	private final Predicate<TestDescriptor> isExampleDescriptor = d -> d.getClass().equals(ExampleMethodDescriptor.class);
 	private final Predicate<TestDescriptor> isPropertyDescriptor = d -> d.getClass().equals(PropertyMethodDescriptor.class);
 	private final Predicate<TestDescriptor> isSkipDecorator = d -> d.getClass().equals(SkipExecutionDecorator.class);
 
@@ -38,8 +37,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(9);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(12);
 	}
 
 	@Example
@@ -50,8 +48,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(9);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(12);
 	}
 
 	@Example
@@ -62,8 +59,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(3);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(4);
 	}
 
 	@Example
@@ -122,7 +118,7 @@ class DiscoveryTests {
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(5);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(5);
 
 		assertThat(count(engineDescriptor, isExample(AbstractContainer.class, "exampleToInherit"))).isEqualTo(1);
 		assertThat(count(engineDescriptor, isExample(ContainerWithInheritance.class, "exampleToOverride"))).isEqualTo(1);
@@ -142,8 +138,7 @@ class DiscoveryTests {
 
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(7);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isExampleDescriptor)).isEqualTo(4);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(2);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(6);
 
 		assertThat(count(engineDescriptor, isExample(ContainerWithOverloadedExamples.class, "succeeding"))).isEqualTo(1);
 	}
@@ -175,8 +170,8 @@ class DiscoveryTests {
 	}
 
 	@Example
-	void discoverExampleById() {
-		UniqueId uniqueId = uniqueIdForExampleMethod(SimpleExampleTests.class, "succeeding");
+	void discoverPropertyById() {
+		UniqueId uniqueId = uniqueIdForPropertyMethod(SimpleExampleTests.class, "succeeding");
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
@@ -191,9 +186,9 @@ class DiscoveryTests {
 
 	private Predicate<TestDescriptor> isExample(Class<?> implementationClass, String methodName) {
 		return descriptor -> {
-			if (!isExampleDescriptor.test(descriptor))
+			if (!isPropertyDescriptor.test(descriptor))
 				return false;
-			ExampleMethodDescriptor exampleDescriptor = (ExampleMethodDescriptor) descriptor;
+			PropertyMethodDescriptor exampleDescriptor = (PropertyMethodDescriptor) descriptor;
 			return exampleDescriptor.getTargetMethod().getName().equals(methodName)
 					&& exampleDescriptor.getTargetMethod().getDeclaringClass().equals(implementationClass);
 		};

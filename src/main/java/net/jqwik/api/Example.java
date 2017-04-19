@@ -1,12 +1,12 @@
 package net.jqwik.api;
 
-import java.lang.annotation.*;
+import net.jqwik.api.properties.*;
 
-import org.junit.platform.commons.annotation.*;
+import java.lang.annotation.*;
 
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Testable
+@Property
 public @interface Example {
 }

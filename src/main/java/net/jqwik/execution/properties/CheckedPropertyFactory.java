@@ -1,9 +1,11 @@
 package net.jqwik.execution.properties;
 
+import net.jqwik.*;
 import net.jqwik.api.properties.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -17,12 +19,17 @@ public class CheckedPropertyFactory {
 	public CheckedProperty fromDescriptor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		String propertyName = propertyMethodDescriptor.getLabel();
 
-		Property property = propertyMethodDescriptor.getTargetMethod().getDeclaredAnnotation(Property.class);
+		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
+		Property property = AnnotationSupport.findAnnotation(propertyMethod, Property.class).orElseThrow(() -> {
+			String message = String.format("Method [%s] is not annotated with @Property", propertyMethod);
+			return new JqwikException(message);
+		});
+
 		int tries = property.tries();
 		long randomSeed = property.seed();
 
 		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
-		List<Parameter> forAllParameters = extractForAllParameters(propertyMethodDescriptor.getTargetMethod());
+		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
 		return new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries,
 			randomSeed);
