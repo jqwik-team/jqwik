@@ -3,7 +3,6 @@
 - Get rid of javaslang (Function2,3,4)
 
 - Replace examples with special case of Property
-  - Properties can have other than boolean return
 
 - Allow custom names for containers and test methods
 - Allow Fixture parameters to examples and properties
