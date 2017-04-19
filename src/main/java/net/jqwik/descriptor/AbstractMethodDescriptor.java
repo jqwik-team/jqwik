@@ -1,6 +1,6 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.api.properties.*;
+import net.jqwik.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 

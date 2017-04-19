@@ -1,6 +1,6 @@
 package examples.packageWithProperties;
 
-import net.jqwik.api.properties.*;
+import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
 import java.util.*;

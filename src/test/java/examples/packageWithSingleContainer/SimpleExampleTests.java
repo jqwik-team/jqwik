@@ -1,6 +1,6 @@
 package examples.packageWithSingleContainer;
 
-import net.jqwik.api.properties.*;
+import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 

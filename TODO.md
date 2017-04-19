@@ -2,15 +2,12 @@
 
 - Get rid of javaslang (Function2,3,4)
 
-- Replace examples with special case of Property
-
 - Allow custom names for containers and test methods
 - Allow Fixture parameters to examples and properties
 
-
 ### Properties
 
-- Report data from PropertyCheckResult
+- Report all data from PropertyCheckResult (seed, countChecks, countTries, sample)
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type

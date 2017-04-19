@@ -1,6 +1,6 @@
 package net.jqwik.discovery.specs;
 
-import net.jqwik.api.properties.*;
+import net.jqwik.api.*;
 import net.jqwik.discovery.predicates.*;
 
 import java.lang.reflect.*;

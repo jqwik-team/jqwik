@@ -1,6 +1,6 @@
 package net.jqwik;
 
-import net.jqwik.api.properties.*;
+import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.*;
 import net.jqwik.support.*;

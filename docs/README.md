@@ -118,13 +118,10 @@ Driven by the common hype about functional programming,
 property-based testing with tools like Quickcheck is recognized as an
 important ingredient of  up-to-date testing approaches.
 
-Jqwik tries to make it as easy as possible
-for Java programmers to use it; it currently builds on [Javaslang](http://www.javaslang.io/)
-and its testing lib to enable this feature.
+Jqwik tries to make this as easy as possible for Java programmers to use.
 
 ```java
-import javaslang.test.*;
-import net.jqwik.api.properties.*;
+import net.jqwik.api.*;
 
 public class FizzBuzzTests {
 
@@ -150,6 +147,3 @@ public class FizzBuzzTests {
 	}
 }
 ```
-
-Read [this article](https://www.sitepoint.com/property-based-testing-with-javaslang/)
-to see how this test looks when using Javaslang with JUnit 4.
