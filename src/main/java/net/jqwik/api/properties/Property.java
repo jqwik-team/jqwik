@@ -4,12 +4,13 @@ import org.junit.platform.commons.annotation.*;
 
 import java.lang.annotation.*;
 
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable
 public @interface Property {
 	// TODO: Extract default tries to a better place
 	int tries() default 1000;
+
 	long seed() default Long.MIN_VALUE;
 }

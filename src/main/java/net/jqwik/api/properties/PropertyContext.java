@@ -1,6 +1,13 @@
 package net.jqwik.api.properties;
 
-import net.jqwik.api.*;
+import java.lang.reflect.*;
 
-public interface PropertyContext extends TestContext {
+public interface PropertyContext {
+
+	Method getTargetMethod();
+
+	Class getContainerClass();
+
+	String getLabel();
+
 }

@@ -1,7 +1,5 @@
 package net.jqwik.api.properties;
 
-import net.jqwik.api.*;
-
-public interface PropertyLifecycle extends TestLifecycle {
-
+public interface PropertyLifecycle {
+	void doFinally(PropertyContext propertyDescriptor, Object testInstance) throws Throwable;
 }

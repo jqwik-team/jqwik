@@ -1,13 +1,12 @@
 package net.jqwik.descriptor;
 
-import java.lang.reflect.*;
-
+import net.jqwik.api.properties.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
-import net.jqwik.api.*;
+import java.lang.reflect.*;
 
-public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements TestContext {
+public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements PropertyContext {
 	private final Method targetMethod;
 	private final Class containerClass;
 

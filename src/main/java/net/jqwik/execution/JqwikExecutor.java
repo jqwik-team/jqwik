@@ -1,19 +1,16 @@
 package net.jqwik.execution;
 
-import java.util.function.*;
-import java.util.logging.*;
-
-import org.junit.platform.engine.*;
-
-import net.jqwik.api.*;
 import net.jqwik.api.properties.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.properties.*;
+import org.junit.platform.engine.*;
+
+import java.util.function.*;
+import java.util.logging.*;
 
 public class JqwikExecutor {
 
 	private final LifecycleRegistry registry;
-	private final ExampleExecutor exampleExecutor = new ExampleExecutor();
 	private final PropertyExecutor propertyExecutor = new PropertyExecutor();
 	private final ContainerExecutor containerExecutor = new ContainerExecutor();
 	private final TestDescriptorExecutor childExecutor = this::execute;
@@ -37,10 +34,6 @@ public class JqwikExecutor {
 			executeContainer(descriptor, listener);
 			return;
 		}
-		if (descriptor.getClass().equals(ExampleMethodDescriptor.class)) {
-			executeExample((ExampleMethodDescriptor) descriptor, listener);
-			return;
-		}
 		if (descriptor.getClass().equals(PropertyMethodDescriptor.class)) {
 			executeProperty((PropertyMethodDescriptor) descriptor, listener);
 			return;
@@ -59,11 +52,6 @@ public class JqwikExecutor {
 	private void executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener) {
 		Function<Object, PropertyLifecycle> lifecycleSupplier = registry.supplierFor(propertyMethodDescriptor);
 		propertyExecutor.execute(propertyMethodDescriptor, listener, lifecycleSupplier);
-	}
-
-	private void executeExample(ExampleMethodDescriptor exampleMethodDescriptor, EngineExecutionListener listener) {
-		Function<Object, ExampleLifecycle> lifecycleSupplier = registry.supplierFor(exampleMethodDescriptor);
-		exampleExecutor.execute(exampleMethodDescriptor, listener, lifecycleSupplier);
 	}
 
 	private void executeContainer(TestDescriptor containerDescriptor, EngineExecutionListener listener) {
