@@ -1,8 +1,8 @@
 package examples.packageWithSeveralContainers;
 
-import static org.assertj.core.api.Assertions.*;
-
 import net.jqwik.api.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class ExampleTests {
 

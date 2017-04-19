@@ -1,12 +1,24 @@
 package net.jqwik.discovery.specs;
 
+import net.jqwik.api.properties.*;
+import net.jqwik.discovery.predicates.*;
+
 import java.lang.reflect.*;
 
-import net.jqwik.api.properties.*;
+import static net.jqwik.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.AnnotationSupport.*;
 
-public class PropertyDiscoverySpec extends TestableMethodDiscoverySpec {
-	public PropertyDiscoverySpec() {
-		super(Property.class);
+public class PropertyDiscoverySpec implements DiscoverySpec<Method> {
+	private final static IsDiscoverableTestMethod isDiscoverableTestMethod = new IsDiscoverableTestMethod();
+
+	@Override
+	public boolean shouldBeDiscovered(Method candidate) {
+		return isDiscoverableTestMethod.test(candidate) && isAnnotated(candidate, Property.class);
+	}
+
+	@Override
+	public boolean butSkippedOnExecution(Method candidate) {
+		return isStatic(candidate);
 	}
 
 	@Override

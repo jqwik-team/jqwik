@@ -1,11 +1,11 @@
 package net.jqwik.discovery.specs;
 
-import static net.jqwik.support.JqwikReflectionSupport.*;
+import net.jqwik.api.*;
+import net.jqwik.discovery.predicates.*;
 
 import java.util.function.*;
 
-import net.jqwik.api.*;
-import net.jqwik.discovery.predicates.*;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
 public class TopLevelContainerDiscoverySpec implements DiscoverySpec<Class<?>> {
 
@@ -17,8 +17,8 @@ public class TopLevelContainerDiscoverySpec implements DiscoverySpec<Class<?>> {
 	@Override
 	public boolean shouldBeDiscovered(Class<?> candidate) {
 		return isPotentialTestContainer
-				.and(isTopLevelClass.or(isStaticNonGroupMember))
-				.test(candidate);
+			.and(isTopLevelClass.or(isStaticNonGroupMember))
+			.test(candidate);
 	}
 
 	@Override

@@ -1,13 +1,12 @@
 package net.jqwik.discovery;
 
-import java.lang.reflect.*;
-import java.util.*;
-
-import org.junit.platform.engine.*;
-
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.specs.*;
 import net.jqwik.support.*;
+import org.junit.platform.engine.*;
+
+import java.lang.reflect.*;
+import java.util.*;
 
 public abstract class AbstractClassResolver implements ElementResolver {
 	@Override

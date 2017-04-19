@@ -1,20 +1,20 @@
 package examples.packageWithSingleContainer;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.properties.*;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class SimpleExampleTests {
 
-	@Example
+	@Property
 	void succeeding() {
 	}
 
-	@Example
+	@Property
 	static void staticExample() {
 	}
 
-	@Example
+	@Property
 	void failing() {
 		fail("failing");
 	}

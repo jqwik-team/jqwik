@@ -1,20 +1,19 @@
 package net.jqwik.discovery;
 
-import static java.lang.String.*;
-import static java.util.stream.Collectors.*;
-import static org.junit.platform.commons.support.HierarchyTraversalMode.*;
-import static org.junit.platform.commons.support.ReflectionSupport.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.predicates.*;
+import net.jqwik.support.*;
+import org.junit.platform.engine.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
-import org.junit.platform.engine.*;
-
-import net.jqwik.descriptor.*;
-import net.jqwik.discovery.predicates.*;
-import net.jqwik.support.*;
+import static java.lang.String.*;
+import static java.util.stream.Collectors.*;
+import static org.junit.platform.commons.support.HierarchyTraversalMode.*;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 class HierarchicalJavaResolver {
 
@@ -51,7 +50,7 @@ class HierarchicalJavaResolver {
 
 	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
 		Set<TestDescriptor> potentialParents = isContainerAGroup.test(testClass)
-				? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections.singleton(engineDescriptor);
+			? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections.singleton(engineDescriptor);
 		return resolveForAllParents(testClass, potentialParents);
 	}
 
@@ -116,7 +115,7 @@ class HierarchicalJavaResolver {
 		Predicate<Class<?>> isGroup = new IsContainerAGroup();
 		List<Class<?>> containedContainersCandidates = JqwikReflectionSupport.findNestedClasses(containerClass, isGroup);
 		containedContainersCandidates
-				.forEach(nestedClass -> resolveContainerWithChildren(nestedClass, Collections.singleton(containerClassDescriptor)));
+			.forEach(nestedClass -> resolveContainerWithChildren(nestedClass, Collections.singleton(containerClassDescriptor)));
 	}
 
 	private void resolveContainedMethods(TestDescriptor containerDescriptor, Class<?> testClass) {
@@ -126,10 +125,10 @@ class HierarchicalJavaResolver {
 
 	private Set<TestDescriptor> resolve(AnnotatedElement element, TestDescriptor parent) {
 		return this.resolvers.stream() //
-				.map(resolver -> tryToResolveWithResolver(element, parent, resolver)) //
-				.filter(testDescriptors -> !testDescriptors.isEmpty()) //
-				.flatMap(Collection::stream) //
-				.collect(toSet());
+			.map(resolver -> tryToResolveWithResolver(element, parent, resolver)) //
+			.filter(testDescriptors -> !testDescriptors.isEmpty()) //
+			.flatMap(Collection::stream) //
+			.collect(toSet());
 	}
 
 	private Set<TestDescriptor> tryToResolveWithResolver(AnnotatedElement element, TestDescriptor parent, ElementResolver resolver) {

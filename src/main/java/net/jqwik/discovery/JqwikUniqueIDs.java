@@ -1,27 +1,21 @@
 package net.jqwik.discovery;
 
+import net.jqwik.support.*;
+import org.junit.platform.engine.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
 
-import org.junit.platform.engine.*;
-
-import net.jqwik.support.*;
-
 public class JqwikUniqueIDs {
 
 	public static final String CONTAINER_SEGMENT_TYPE = "class";
-	public static final String EXAMPLE_SEGMENT_TYPE = "example";
 	public static final String PROPERTY_SEGMENT_TYPE = "property";
 	public static final String SEED_SEGMENT_TYPE = "seed";
 
 	private static final Pattern METHOD_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 	private static final Logger LOG = Logger.getLogger(JqwikUniqueIDs.class.getName());
-
-	public static UniqueId appendExample(UniqueId uniqueId, Method method) {
-		return appendMethodSegment(uniqueId, method, EXAMPLE_SEGMENT_TYPE);
-	}
 
 	public static UniqueId appendProperty(UniqueId uniqueId, Method method) {
 		return appendMethodSegment(uniqueId, method, PROPERTY_SEGMENT_TYPE);
@@ -37,7 +31,7 @@ public class JqwikUniqueIDs {
 
 		if (!matcher.matches()) {
 			LOG.warning(() -> String.format("Method id [%s] must follow '<method-name>([<list-of-parameter-types>])'", methodId,
-					METHOD_PATTERN));
+				METHOD_PATTERN));
 			return Optional.empty();
 		}
 

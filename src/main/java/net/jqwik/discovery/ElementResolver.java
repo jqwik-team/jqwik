@@ -1,9 +1,9 @@
 package net.jqwik.discovery;
 
+import org.junit.platform.engine.*;
+
 import java.lang.reflect.*;
 import java.util.*;
-
-import org.junit.platform.engine.*;
 
 interface ElementResolver {
 
