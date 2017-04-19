@@ -14,6 +14,10 @@ public class GenericType {
 		this.typeArguments = typeArguments;
 	}
 
+	public GenericType(Parameter parameter) {
+		this(parameter.getParameterizedType());
+	}
+
 	public GenericType(Type parameterizedType) {
 		this(extractRawType(parameterizedType), extractTypeArguments(parameterizedType));
 	}

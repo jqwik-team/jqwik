@@ -36,12 +36,13 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Optional<Arbitrary<Object>> forParameter(Parameter parameter) {
-		ForAll forAllAnnotation = parameter.getDeclaredAnnotation(ForAll.class);
-		GenericType genericType = new GenericType(parameter.getParameterizedType());
-		String generatorName = forAllAnnotation.value();
+		Optional<ForAll> forAllAnnotation = AnnotationSupport.findAnnotation(parameter, ForAll.class);
+		if (!forAllAnnotation.isPresent())
+			return Optional.empty();
 
+		String generatorName = forAllAnnotation.get().value();
+		GenericType genericType = new GenericType(parameter);
 		Arbitrary<?> arbitrary = forType(genericType, generatorName);
-
 		if (arbitrary == null)
 			return Optional.empty();
 		else {

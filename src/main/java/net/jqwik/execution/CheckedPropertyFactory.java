@@ -1,16 +1,17 @@
 package net.jqwik.execution;
 
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
+import org.junit.platform.commons.support.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
-import org.junit.platform.commons.support.*;
-
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 public class CheckedPropertyFactory {
 
@@ -31,14 +32,14 @@ public class CheckedPropertyFactory {
 		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryProvider arbitraryProvider = new PropertyMethodArbitraryProvider(propertyMethodDescriptor, testInstance);
-		return new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries,
-			randomSeed);
+		return new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries, randomSeed);
 	}
 
 	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		// Todo: Bind all non @ForAll params first
 		Class<?> returnType = propertyMethodDescriptor.getTargetMethod().getReturnType();
-		Function<List, Object> function = params -> JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, params.toArray());
+		Function<List, Object> function = params -> JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(),
+				testInstance, params.toArray());
 		if (BOOLEAN_RETURN_TYPES.contains(returnType))
 			return params -> (boolean) function.apply(params);
 		else
@@ -49,8 +50,14 @@ public class CheckedPropertyFactory {
 	}
 
 	private List<Parameter> extractForAllParameters(Method targetMethod) {
-		return Arrays.stream(targetMethod.getParameters()).filter(parameter -> parameter.isAnnotationPresent(ForAll.class))
-			.collect(Collectors.toList());
+		return Arrays //
+				.stream(targetMethod.getParameters()) //
+				.filter(parameter -> isForAllPresent(parameter)) //
+				.collect(Collectors.toList());
+	}
+
+	private boolean isForAllPresent(Parameter parameter) {
+		return AnnotationSupport.isAnnotated(parameter, ForAll.class);
 	}
 
 }
