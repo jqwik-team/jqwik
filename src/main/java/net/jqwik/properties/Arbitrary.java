@@ -1,7 +1,6 @@
 package net.jqwik.properties;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 public interface Arbitrary<T> {
@@ -32,14 +31,7 @@ public interface Arbitrary<T> {
 		return new ArbitraryWrapper<T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {
-				RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
-				RandomGenerator<T> generator = super.generator(tries);
-				AtomicInteger tryCount = new AtomicInteger(0);
-				return random -> {
-					if (tryCount.getAndIncrement() < samples.length)
-						return samplesGenerator.next(random);
-					return generator.next(random);
-				};
+				return Arbitrary.this.generator(tries).withSamples(samples);
 			}
 		};
 	};

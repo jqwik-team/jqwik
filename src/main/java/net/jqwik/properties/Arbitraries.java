@@ -58,7 +58,7 @@ public class Arbitraries {
 	}
 
 	public static Arbitrary<Integer> integer() {
-		return new IntegerArbitrary().withSamples(0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		return new IntegerArbitrary();
 	}
 
 	public static Arbitrary<Integer> integer(int min, int max) {

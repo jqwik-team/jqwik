@@ -1,6 +1,7 @@
 package net.jqwik.properties;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 public interface RandomGenerator<T> {
@@ -28,4 +29,15 @@ public interface RandomGenerator<T> {
 			return RandomGenerator.this.next(random);
 		};
 	};
+
+	default RandomGenerator<T> withSamples(T...samples) {
+		RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
+		RandomGenerator<T> generator = this;
+		AtomicInteger tryCount = new AtomicInteger(0);
+		return random -> {
+			if (tryCount.getAndIncrement() < samples.length)
+				return samplesGenerator.next(random);
+			return generator.next(random);
+		};
+	}
 }

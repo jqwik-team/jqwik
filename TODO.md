@@ -11,7 +11,7 @@
 
 - Report all data from PropertyCheckResult (seed, countChecks, countTries, sample)
 - Generators/Arbitraries
-  - Configurations: MaxSize, Range
+  - Configurations: MaxSize
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type
