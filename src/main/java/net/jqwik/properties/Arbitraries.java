@@ -119,4 +119,7 @@ public class Arbitraries {
 		return listOf(elementArbitrary).map(Collection::stream);
 	}
 
+	public static<T> Arbitrary<T> samples(T... samples) {
+		return fromGenerator(RandomGenerators.samples(samples));
+	}
 }

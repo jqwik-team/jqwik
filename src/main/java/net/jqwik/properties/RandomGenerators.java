@@ -1,6 +1,7 @@
 package net.jqwik.properties;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 public class RandomGenerators {
 
@@ -46,6 +47,15 @@ public class RandomGenerators {
 		};
 	}
 
+	public static <T> RandomGenerator<T> samples(T... samples) {
+		AtomicInteger position = new AtomicInteger(0);
+		return ignored -> {
+			if (position.get() >= samples.length)
+				position.set(0);
+			return samples[position.getAndIncrement()];
+		};
+	}
+
 	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int maxSize) {
 		return random -> choose(0, maxSize).map(i -> {
 			List<T> list = new ArrayList<>();
@@ -80,7 +90,7 @@ public class RandomGenerators {
 		}).next(random);
 	}
 
-	static RandomGenerator<Character> choose(char min, char max) {
+	public static RandomGenerator<Character> choose(char min, char max) {
 		if (min == max) {
 			return ignored -> min;
 		} else {

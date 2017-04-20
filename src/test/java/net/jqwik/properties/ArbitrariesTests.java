@@ -1,12 +1,10 @@
 package net.jqwik.properties;
 
+import static net.jqwik.properties.ArbitraryTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
-
-import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 
@@ -23,13 +21,8 @@ public class ArbitrariesTests {
 	@Example
 	void fromGenerator() {
 		Arbitrary<String> stringArbitrary = Arbitraries.fromGenerator(random -> Integer.toString(random.nextInt(10)));
-
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-
-		assertIntStringLessThan10(generator.next(random));
-		assertIntStringLessThan10(generator.next(random));
-		assertIntStringLessThan10(generator.next(random));
-		assertIntStringLessThan10(generator.next(random));
+		assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
 
 	@Example
@@ -37,11 +30,7 @@ public class ArbitrariesTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-
-		assertThat(generator.next(random)).isIn("1", "hallo", "test");
-		assertThat(generator.next(random)).isIn("1", "hallo", "test");
-		assertThat(generator.next(random)).isIn("1", "hallo", "test");
-		assertThat(generator.next(random)).isIn("1", "hallo", "test");
+		assertAllGenerated(generator, value -> Arrays.asList("1", "hallo", "test").contains(value));
 	}
 
 	@Example
@@ -49,21 +38,14 @@ public class ArbitrariesTests {
 		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
 
 		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
-
-		assertThat(generator.next(random)).isIn((Object[]) MyEnum.class.getEnumConstants());
-		assertThat(generator.next(random)).isIn((Object[]) MyEnum.class.getEnumConstants());
-		assertThat(generator.next(random)).isIn((Object[]) MyEnum.class.getEnumConstants());
+		assertAllGenerated(generator, value -> Arrays.asList(MyEnum.class.getEnumConstants()).contains(value));
 	}
 
 	@Example
 	void string() {
 		Arbitrary<String> stringArbitrary = Arbitraries.string('a', 'd', 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-
-		assertGeneratedString(generator.next(random));
-		assertGeneratedString(generator.next(random));
-		assertGeneratedString(generator.next(random));
-		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator);
 	}
 
 	@Example
@@ -71,11 +53,7 @@ public class ArbitrariesTests {
 		char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
 		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-
-		assertGeneratedString(generator.next(random));
-		assertGeneratedString(generator.next(random));
-		assertGeneratedString(generator.next(random));
-		assertGeneratedString(generator.next(random));
+		assertGeneratedString(generator);
 	}
 
 	@Example
@@ -85,10 +63,7 @@ public class ArbitrariesTests {
 
 		assertAtLeastOneGenerated(generator, value -> ((int) value) < -5);
 		assertAtLeastOneGenerated(generator, value -> ((int) value) > 5);
-		assertAllGenerated(generator, value -> {
-			int intValue = (int) value;
-			return intValue >= -10 && intValue <= 10;
-		});
+		assertAllGenerated(generator, value -> value >= -10 && value <= 10);
 	}
 
 	@Example
@@ -104,6 +79,13 @@ public class ArbitrariesTests {
 		});
 	}
 
+	@Example
+	void samplesAreGeneratedDeterministicallyInRoundRobin() {
+		Arbitrary<Integer> integerArbitrary = Arbitraries.samples(-5, 0, 3);
+		RandomGenerator<Integer> generator = integerArbitrary.generator(1);
+		assertGenerated(generator, -5, 0, 3, -5, 0, 3);
+	}
+
 	@Group
 	class GenericTypes {
 
@@ -113,11 +95,7 @@ public class ArbitrariesTests {
 			Arbitrary<List<String>> listArbitrary = Arbitraries.listOf(stringArbitrary, 5);
 
 			RandomGenerator<List<String>> generator = listArbitrary.generator(1);
-
-			assertGeneratedList(generator.next(random));
-			assertGeneratedList(generator.next(random));
-			assertGeneratedList(generator.next(random));
-			assertGeneratedList(generator.next(random));
+			assertGeneratedLists(generator);
 		}
 
 		@Example
@@ -150,43 +128,12 @@ public class ArbitrariesTests {
 
 			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
-			assertOptionalString(generator.next(random));
-			assertOptionalString(generator.next(random));
-			assertOptionalString(generator.next(random));
-			assertOptionalString(generator.next(random));
-		}
-
-		@Example
-		void optionalAlsoGeneratesNulls() {
-			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(Arbitraries.of("one"));
-			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
-
-			for (int i = 0; i < 100; i++) {
-				if (!generator.next(random).isPresent())
-					return;
-			}
-			Assertions.fail("Optional with null should have been created");
+			assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
+			assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
+			assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
 		}
 
 	}
-
-	private void assertAtLeastOneGenerated(RandomGenerator generator, Function<Object, Boolean> checker) {
-		for (int i = 0; i < 100; i++) {
-			Object value = generator.next(random);
-			if (checker.apply(value))
-				return;
-		}
-		fail("Failed to generate at least one");
-	}
-
-	private void assertAllGenerated(RandomGenerator generator, Function<Object, Boolean> checker) {
-		for (int i = 0; i < 100; i++) {
-			Object value = generator.next(random);
-			if (!checker.apply(value))
-				fail(String.format("Value [%s] failed to fullfil condition.", value.toString()));
-		}
-	}
-
 
 	private void assertGeneratedStream(Stream<Integer> stream) {
 		Set<Integer> set = stream.collect(Collectors.toSet());
@@ -199,25 +146,16 @@ public class ArbitrariesTests {
 		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}
 
-	private void assertOptionalString(Optional<String> optional) {
-		assertThat(optional).isInstanceOf(Optional.class);
-		if (optional.isPresent())
-			assertThat(optional.get()).isIn("one", "two");
+	private void assertGeneratedString(RandomGenerator<String> generator) {
+		assertAllGenerated(generator, value -> value.length() >= 0 && value.length() <= 5);
+		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
+		assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
 	}
 
-	private void assertGeneratedString(String value) {
-		assertThat(value.length()).isBetween(0, 5);
-		Set<Character> characterSet = value.chars().mapToObj(e -> (char) e).collect(Collectors.toSet());
-		assertThat(characterSet).isSubsetOf('a', 'b', 'c', 'd');
+	private void assertGeneratedLists(RandomGenerator<List<String>> generator) {
+		assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
+		List<String> allowedStrings = Arrays.asList("1", "hallo", "test");
+		assertAllGenerated(generator, aString -> aString.stream().allMatch(i -> allowedStrings.contains(i)));
 	}
 
-	private void assertGeneratedList(List<String> list) {
-		assertThat(list.size()).isBetween(0, 5);
-		assertThat(list).isSubsetOf("1", "hallo", "test");
-	}
-
-	private void assertIntStringLessThan10(String next) {
-		assertThat(next).isInstanceOf(String.class);
-		assertThat(Integer.parseInt(next)).isLessThan(10);
-	}
 }
