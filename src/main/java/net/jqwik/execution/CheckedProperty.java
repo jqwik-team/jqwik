@@ -14,6 +14,8 @@ public class CheckedProperty {
 
 	private static Supplier<Random> RNG = ThreadLocalRandom::current;
 
+	private final static String CONFIG_METHOD_NAME = "configure";
+
 	public final String propertyName;
 	public final CheckedFunction forAllFunction;
 	public final List<Parameter> forAllParameters;
@@ -50,7 +52,11 @@ public class CheckedProperty {
 
 	private void configureArbitrary(Arbitrary<Object> objectArbitrary, Parameter parameter) {
 		Arrays.stream(parameter.getDeclaredAnnotations()).forEach(annotation -> {
-			objectArbitrary.configure(annotation);
+			try {
+				Method configureMethod = objectArbitrary.inner().getClass().getMethod(CONFIG_METHOD_NAME, annotation.annotationType());
+				JqwikReflectionSupport.invokeMethod(configureMethod, objectArbitrary.inner(), annotation);
+			} catch (NoSuchMethodException ignore) {
+			}
 		});
 	}
 

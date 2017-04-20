@@ -16,7 +16,7 @@ public abstract class ArbitraryWrapper<T> implements Arbitrary<T> {
 	}
 
 	@Override
-	public void configure(Annotation configAnnotation) {
-		wrapped.configure(configAnnotation);
+	public Arbitrary<T> inner() {
+		return wrapped.inner();
 	}
 }

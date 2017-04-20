@@ -1,7 +1,5 @@
 package net.jqwik.properties;
 
-import java.lang.annotation.*;
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -46,7 +44,8 @@ public interface Arbitrary<T> {
 		};
 	};
 
-	default void configure(Annotation configAnnotation) {
+	default Arbitrary<T> inner() {
+		return this;
 	}
 
 	static int defaultMaxFromTries(int tries) {

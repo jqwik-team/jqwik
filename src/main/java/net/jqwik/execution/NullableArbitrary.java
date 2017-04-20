@@ -3,8 +3,6 @@ package net.jqwik.execution;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-import java.lang.annotation.*;
-
 public abstract class NullableArbitrary<T> implements Arbitrary<T> {
 
 	private final Class targetClass;
@@ -23,13 +21,8 @@ public abstract class NullableArbitrary<T> implements Arbitrary<T> {
 
 	protected abstract RandomGenerator<T> baseGenerator(int tries);
 
-	@Override
-	public void configure(Annotation configAnnotation) {
-		if (configAnnotation instanceof WithNull)
-			configure((WithNull) configAnnotation);
-	}
 
-	private void configure(WithNull withNull) {
+	public void configure(WithNull withNull) {
 		if (withNull.target().isAssignableFrom(targetClass))
 			nullProbability = withNull.value();
 	}
