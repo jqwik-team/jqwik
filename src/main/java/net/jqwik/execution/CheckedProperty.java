@@ -1,6 +1,8 @@
 package net.jqwik.execution;
 
 import net.jqwik.properties.*;
+import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -41,9 +43,15 @@ public class CheckedProperty {
 
 	private Arbitrary<Object> findArbitrary(Parameter parameter) {
 		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
-		if (!arbitraryOptional.isPresent())
-			throw new CannotFindArbitraryException(parameter);
-		return arbitraryOptional.get();
+		Arbitrary<Object> arbitrary = arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
+		configureArbitrary(arbitrary, parameter);
+		return arbitrary;
+	}
+
+	private void configureArbitrary(Arbitrary<Object> objectArbitrary, Parameter parameter) {
+		Arrays.stream(parameter.getDeclaredAnnotations()).forEach(annotation -> {
+			objectArbitrary.configure(annotation);
+		});
 	}
 
 	private GenericProperty createGenericProperty() {

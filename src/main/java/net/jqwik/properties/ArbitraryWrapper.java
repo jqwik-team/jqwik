@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import java.lang.annotation.*;
+
 public abstract class ArbitraryWrapper<T> implements Arbitrary<T> {
 
 	protected final Arbitrary<T> wrapped;
@@ -13,4 +15,8 @@ public abstract class ArbitraryWrapper<T> implements Arbitrary<T> {
 		return wrapped.generator(tries);
 	}
 
+	@Override
+	public void configure(Annotation configAnnotation) {
+		wrapped.configure(configAnnotation);
+	}
 }

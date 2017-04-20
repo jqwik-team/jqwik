@@ -113,7 +113,7 @@ public class PropertyMethodArbitraryProviderTests {
 			}
 
 			@Property
-			boolean intParamWithSize(@ForAll(size = 42) int anInt) {
+			boolean intParamWithSize(@ForAll int anInt) {
 				return true;
 			}
 

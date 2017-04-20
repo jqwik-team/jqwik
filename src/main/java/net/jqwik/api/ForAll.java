@@ -9,8 +9,4 @@ import java.lang.annotation.*;
 @Documented
 public @interface ForAll {
 	String value() default "";
-
-	// TODO: Replace with config params
-	@Deprecated
-	int size() default 0;
 }

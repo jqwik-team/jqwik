@@ -9,7 +9,7 @@ import java.util.stream.*;
 public class GeneratorsExamples {
 
 	@Property(tries = 5)
-	boolean aString(@ForAll(size = 10) String aString, @ForAll(value = "digitsOnly", size = 10) String anotherString) {
+	boolean aString(@ForAll String aString, @ForAll(value = "digitsOnly") String anotherString) {
 		System.out.println(String.format("#%s# #%s#", aString, anotherString));
 		return true;
 	}
@@ -43,7 +43,7 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 100)
-	boolean plusMinusSameNumberIsZero(@ForAll(size = 10) int aNumber) {
+	boolean plusMinusSameNumberIsZero(@ForAll int aNumber) {
 		System.out.println(aNumber);
 		return aNumber - aNumber == 0;
 	}
@@ -60,7 +60,7 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 10)
-	boolean aListOfInts(@ForAll(size = 5) List<Integer> anIntList) {
+	boolean aListOfInts(@ForAll List<Integer> anIntList) {
 		System.out.println(anIntList.toString());
 		return true;
 	}
@@ -71,19 +71,19 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 10)
-	boolean aPeopleList(@ForAll(size = 5) List<Person> people) {
+	boolean aPeopleList(@ForAll List<Person> people) {
 		System.out.println(people);
 		return people != null;
 	}
 
 	@Property(tries = 100)
-	boolean aPeopleSet(@ForAll(size = 5) Set<Person> people) {
+	boolean aPeopleSet(@ForAll Set<Person> people) {
 		System.out.println(people);
 		return people != null;
 	}
 
 	@Property(tries = 10)
-	boolean aPeopleStream(@ForAll(size = 5) Stream<Person> people) {
+	boolean aPeopleStream(@ForAll Stream<Person> people) {
 		return people.peek(p -> System.out.println(p)).allMatch(person -> person.getAge() >= 0);
 	}
 

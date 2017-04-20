@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import java.lang.annotation.*;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -28,18 +30,24 @@ public interface Arbitrary<T> {
 		return (tries) -> Arbitrary.this.generator(tries).injectNull(nullProbability);
 	}
 
-	default Arbitrary<T> withSamples(T...samples) {
-		return tries -> {
-			RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
-			RandomGenerator<T> generator = Arbitrary.this.generator(tries);
-			AtomicInteger tryCount = new AtomicInteger(0);
-			return random -> {
-				if (tryCount.getAndIncrement() < samples.length)
-					return samplesGenerator.next(random);
-				return generator.next(random);
-			};
+	default Arbitrary<T> withSamples(T... samples) {
+		return new ArbitraryWrapper<T>(this) {
+			@Override
+			public RandomGenerator<T> generator(int tries) {
+				RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
+				RandomGenerator<T> generator = super.generator(tries);
+				AtomicInteger tryCount = new AtomicInteger(0);
+				return random -> {
+					if (tryCount.getAndIncrement() < samples.length)
+						return samplesGenerator.next(random);
+					return generator.next(random);
+				};
+			}
 		};
 	};
+
+	default void configure(Annotation configAnnotation) {
+	}
 
 	static int defaultMaxFromTries(int tries) {
 		return Math.max(tries / 2 - 3, 1);
