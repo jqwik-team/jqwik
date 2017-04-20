@@ -40,4 +40,8 @@ public interface Arbitrary<T> {
 			};
 		};
 	};
+
+	static int defaultMaxFromTries(int tries) {
+		return Math.max(tries / 2 - 3, 1);
+	}
 }

@@ -23,15 +23,10 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
-	private static int defaultMaxFromTries(int tries) {
-		return Math.max(tries / 2 - 3, 1);
-	}
-
 	private static <T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
-		RandomGenerator<List<T>> generator = RandomGenerators.list(elementGenerator, maxSize);
-		return generator;
+		return RandomGenerators.list(elementGenerator, maxSize);
 	}
 
 	public static Arbitrary<String> string(char[] validChars, int maxLength) {
@@ -42,7 +37,7 @@ public class Arbitraries {
 		return new Arbitrary<String>() {
 			@Override
 			public RandomGenerator<String> generator(int tries) {
-				int maxLength = defaultMaxFromTries(tries);
+				int maxLength = Arbitrary.defaultMaxFromTries(tries);
 				return RandomGenerators.string(validChars, maxLength);
 			}
 		};
@@ -56,24 +51,18 @@ public class Arbitraries {
 		return new Arbitrary<String>() {
 			@Override
 			public RandomGenerator<String> generator(int tries) {
-				int maxLength = defaultMaxFromTries(tries);
+				int maxLength = Arbitrary.defaultMaxFromTries(tries);
 				return RandomGenerators.string(from, to, maxLength);
 			}
 		};
 	}
 
 	public static Arbitrary<Integer> integer() {
-		return new Arbitrary<Integer>() {
-			@Override
-			public RandomGenerator<Integer> generator(int tries) {
-				Integer max = defaultMaxFromTries(tries);
-				return RandomGenerators.choose(-max, max);
-			}
-		}.withSamples(0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+		return new IntegerArbitrary().withSamples(0, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
 	public static Arbitrary<Integer> integer(int min, int max) {
-		return fromGenerator(RandomGenerators.choose(min, max));
+		return new IntegerArbitrary(min, max);
 	}
 
 	public static Arbitrary<Long> integer(long min, long max) {
@@ -93,22 +82,22 @@ public class Arbitraries {
 		return new Arbitrary<List<T>>() {
 			@Override
 			public RandomGenerator<List<T>> generator(int tries) {
-				int maxSize = defaultMaxFromTries(tries);
+				int maxSize = Arbitrary.defaultMaxFromTries(tries);
 				return createListGenerator(elementArbitrary, tries, maxSize);
 			}
 		};
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return listOf(elementArbitrary, maxSize).map(list -> new HashSet<>(list));
+		return listOf(elementArbitrary, maxSize).map(HashSet::new);
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
-		return listOf(elementArbitrary).map(list -> new HashSet<>(list));
+		return listOf(elementArbitrary).map(HashSet::new);
 	}
 
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
-		return elementArbitrary.injectNull(0.1).map(element -> Optional.ofNullable(element));
+		return elementArbitrary.injectNull(0.1).map(Optional::ofNullable);
 	}
 
 	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int maxSize) {
@@ -119,6 +108,7 @@ public class Arbitraries {
 		return listOf(elementArbitrary).map(Collection::stream);
 	}
 
+	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
 		return fromGenerator(RandomGenerators.samples(samples));
 	}

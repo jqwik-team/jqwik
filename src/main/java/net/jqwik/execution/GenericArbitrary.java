@@ -3,16 +3,14 @@ package net.jqwik.execution;
 
 import net.jqwik.properties.*;
 
-class GenericArbitrary implements Arbitrary<Object> {
+class GenericArbitrary extends ArbitraryWrapper<Object> {
 
-	private final Arbitrary<?> wrapped;
-
-	GenericArbitrary(Arbitrary<?> wrapped) {
-		this.wrapped = wrapped;
+	GenericArbitrary(Arbitrary wrapped) {
+		super(wrapped);
 	}
 
 	@Override
 	public RandomGenerator<Object> generator(int tries) {
-		return (RandomGenerator<Object>) wrapped.generator(tries);
+		return wrapped.generator(tries);
 	}
 }
