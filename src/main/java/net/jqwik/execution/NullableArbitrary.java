@@ -27,4 +27,7 @@ public abstract class NullableArbitrary<T> implements Arbitrary<T> {
 			nullProbability = withNull.value();
 	}
 
+	public double getNullProbability() {
+		return nullProbability;
+	}
 }

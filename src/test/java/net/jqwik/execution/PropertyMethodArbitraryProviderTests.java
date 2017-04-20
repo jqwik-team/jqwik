@@ -4,6 +4,7 @@ import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
+import org.assertj.core.data.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -280,6 +281,59 @@ public class PropertyMethodArbitraryProviderTests {
 				return Arbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
 			}
 
+		}
+
+	}
+
+	static double nullProbability = 0.0;
+
+	static class MockArbitrary implements Arbitrary<Object> {
+
+		@Override
+		public RandomGenerator<Object> generator(int tries) {
+			return null;
+		}
+
+		public void configure(WithNull withNull) {
+			nullProbability = withNull.value();
+		}
+	}
+
+	@Group
+	class Configuration {
+
+		@Example
+		void configureIsCalledOnDefaultArbitrary() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithConfiguration.class, "aNullableInteger", Integer.class);
+			Parameter parameter = getParameter(WithConfiguration.class, "aNullableInteger");
+			IntegerArbitrary integerArbitrary = (IntegerArbitrary) provider.forParameter(parameter).get().inner();
+
+			assertThat(integerArbitrary.getNullProbability()).isCloseTo(0.42, Offset.offset(0.01));
+		}
+
+		@Example
+		void configureIsCalledOnProvidedArbitrary() throws Exception {
+			PropertyMethodArbitraryProvider provider = getProvider(WithConfiguration.class, "aNullableMock", Object.class);
+			Parameter parameter = getParameter(WithConfiguration.class, "aNullableMock");
+			Optional<Arbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
+
+			assertThat(arbitraryOptional).isPresent();
+			assertThat(nullProbability).isCloseTo(0.41, Offset.offset(0.01));
+		}
+
+		private class WithConfiguration {
+			@Property
+			void aNullableInteger(@ForAll @WithNull(0.42) Integer anInt) {
+			}
+
+			@Property
+			void aNullableMock(@ForAll("mockObject") @WithNull(0.41) Object anObject) {
+			}
+
+			@Generate
+			Arbitrary<Object> mockObject() {
+				return new MockArbitrary();
+			}
 		}
 
 	}

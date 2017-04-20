@@ -44,7 +44,7 @@ public interface Arbitrary<T> {
 		};
 	};
 
-	default Arbitrary<T> inner() {
+	default Arbitrary<?> inner() {
 		return this;
 	}
 

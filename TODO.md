@@ -10,13 +10,13 @@
 ### Properties
 
 - Report all data from PropertyCheckResult (seed, countChecks, countTries, sample)
+- Generators/Arbitraries
+  - Configurations: MaxSize, Range
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type
 - Default Generators for
   - chars, floats and All kinds of Numbers
-- Generators/Arbitraries
-  - Configure option: provideNull
 - Create child test with previous seed if property fails so that it can be run from runner with a click:
   _Code is commented out because missing support from IDEA and bug in JUnit5 platform_
 

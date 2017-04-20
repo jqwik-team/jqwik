@@ -1,7 +1,5 @@
 package net.jqwik.properties;
 
-import java.lang.annotation.*;
-
 public abstract class ArbitraryWrapper<T> implements Arbitrary<T> {
 
 	protected final Arbitrary<T> wrapped;
@@ -16,7 +14,7 @@ public abstract class ArbitraryWrapper<T> implements Arbitrary<T> {
 	}
 
 	@Override
-	public Arbitrary<T> inner() {
+	public Arbitrary<?> inner() {
 		return wrapped.inner();
 	}
 }

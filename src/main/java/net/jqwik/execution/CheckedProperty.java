@@ -1,8 +1,6 @@
 package net.jqwik.execution;
 
 import net.jqwik.properties.*;
-import net.jqwik.support.*;
-import org.junit.platform.commons.support.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -13,8 +11,6 @@ import java.util.stream.*;
 public class CheckedProperty {
 
 	private static Supplier<Random> RNG = ThreadLocalRandom::current;
-
-	private final static String CONFIG_METHOD_NAME = "configure";
 
 	public final String propertyName;
 	public final CheckedFunction forAllFunction;
@@ -45,19 +41,7 @@ public class CheckedProperty {
 
 	private Arbitrary<Object> findArbitrary(Parameter parameter) {
 		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
-		Arbitrary<Object> arbitrary = arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
-		configureArbitrary(arbitrary, parameter);
-		return arbitrary;
-	}
-
-	private void configureArbitrary(Arbitrary<Object> objectArbitrary, Parameter parameter) {
-		Arrays.stream(parameter.getDeclaredAnnotations()).forEach(annotation -> {
-			try {
-				Method configureMethod = objectArbitrary.inner().getClass().getMethod(CONFIG_METHOD_NAME, annotation.annotationType());
-				JqwikReflectionSupport.invokeMethod(configureMethod, objectArbitrary.inner(), annotation);
-			} catch (NoSuchMethodException ignore) {
-			}
-		});
+		return arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
 	}
 
 	private GenericProperty createGenericProperty() {

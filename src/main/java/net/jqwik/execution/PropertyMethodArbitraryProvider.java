@@ -4,8 +4,10 @@ import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.providers.*;
 import net.jqwik.properties.*;
+import net.jqwik.support.*;
 import org.junit.platform.commons.support.*;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
@@ -13,6 +15,8 @@ import java.util.function.*;
 import static net.jqwik.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
+
+	private final static String CONFIG_METHOD_NAME = "configure";
 
 	private final PropertyMethodDescriptor descriptor;
 	private final Object testInstance;
@@ -42,7 +46,7 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 
 		String generatorName = forAllAnnotation.get().value();
 		GenericType genericType = new GenericType(parameter);
-		Arbitrary<?> arbitrary = forType(genericType, generatorName);
+		Arbitrary<?> arbitrary = forType(genericType, generatorName, parameter.getDeclaredAnnotations());
 		if (arbitrary == null)
 			return Optional.empty();
 		else {
@@ -51,12 +55,31 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		}
 	}
 
-	private Arbitrary<?> forType(GenericType genericType, String generatorName) {
+	private void configureArbitrary(Arbitrary<?> objectArbitrary, Annotation[] annotations) {
+		Arrays.stream(annotations).forEach(annotation -> {
+			try {
+				Method configureMethod = objectArbitrary.inner().getClass().getMethod(CONFIG_METHOD_NAME, annotation.annotationType());
+				JqwikReflectionSupport.invokeMethod(configureMethod, objectArbitrary.inner(), annotation);
+			} catch (NoSuchMethodException ignore) {
+			}
+		});
+	}
+
+
+
+	private Arbitrary<?> forType(GenericType genericType, String generatorName, Annotation[] annotations) {
+		Arbitrary<?> arbitrary = createForType(genericType, generatorName, annotations);
+		if (arbitrary != null)
+			configureArbitrary(arbitrary, annotations);
+		return arbitrary;
+	}
+
+	private Arbitrary<?> createForType(GenericType genericType, String generatorName, Annotation[] annotations) {
 		Optional<Method> optionalCreator = findArbitraryCreator(genericType, generatorName);
 		if (optionalCreator.isPresent()) {
 			return (Arbitrary<?>) invokeMethod(optionalCreator.get(), testInstance);
 		} else {
-			return defaultArbitrary(genericType, generatorName);
+			return defaultArbitrary(genericType, generatorName, annotations);
 		}
 	}
 
@@ -88,9 +111,9 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 		};
 	}
 
-	private Arbitrary<?> defaultArbitrary(GenericType parameterType, String generatorName) {
+	private Arbitrary<?> defaultArbitrary(GenericType parameterType, String generatorName, Annotation[] annotations) {
 		boolean hasGeneratorName = !generatorName.isEmpty();
-		Function<GenericType, Arbitrary<?>> subtypeProvider = subtype -> forType(subtype, generatorName);
+		Function<GenericType, Arbitrary<?>> subtypeProvider = subtype -> forType(subtype, generatorName, annotations);
 
 		for (TypedArbitraryProvider provider : defaultProviders) {
 			if (provider.canProvideFor(parameterType, hasGeneratorName)) {
