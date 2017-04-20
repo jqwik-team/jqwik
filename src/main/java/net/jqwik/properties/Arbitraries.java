@@ -27,7 +27,7 @@ public class Arbitraries {
 		return Math.max(tries / 2 - 3, 1);
 	}
 
-	private static<T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
+	private static <T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
 		RandomGenerator<List<T>> generator = RandomGenerators.list(elementGenerator, maxSize);
@@ -58,6 +58,16 @@ public class Arbitraries {
 			public RandomGenerator<String> generator(int tries) {
 				int maxLength = defaultMaxFromTries(tries);
 				return RandomGenerators.string(from, to, maxLength);
+			}
+		};
+	}
+
+	public static Arbitrary<Integer> integer() {
+		return new Arbitrary<Integer>() {
+			@Override
+			public RandomGenerator<Integer> generator(int tries) {
+				Integer max = defaultMaxFromTries(tries);
+				return RandomGenerators.choose(-max, max);
 			}
 		};
 	}
