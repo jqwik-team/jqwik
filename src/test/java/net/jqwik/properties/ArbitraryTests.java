@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import static net.jqwik.properties.ArbitraryTestHelper.*;
+
 import java.util.*;
 
 import org.assertj.core.api.*;
@@ -16,11 +18,7 @@ public class ArbitraryTests {
 		Arbitrary<Integer> countEven = count.filter(i -> i % 2 == 0);
 
 		RandomGenerator<Integer> generator = countEven.generator(1);
-
-		Assertions.assertThat(generator.next(random)).isEqualTo(2);
-		Assertions.assertThat(generator.next(random)).isEqualTo(4);
-		Assertions.assertThat(generator.next(random)).isEqualTo(6);
-		Assertions.assertThat(generator.next(random)).isEqualTo(8);
+		assertGenerated(generator, 2, 4, 6, 8);
 	}
 
 	@Example
@@ -29,10 +27,7 @@ public class ArbitraryTests {
 		Arbitrary<String> countStrings = count.map(i -> "i=" + i);
 
 		RandomGenerator<String> generator = countStrings.generator(1);
-
-		Assertions.assertThat(generator.next(random)).isEqualTo("i=1");
-		Assertions.assertThat(generator.next(random)).isEqualTo("i=2");
-		Assertions.assertThat(generator.next(random)).isEqualTo("i=3");
+		assertGenerated(generator, "i=1", "i=2", "i=3");
 	}
 
 	@Example
@@ -41,14 +36,14 @@ public class ArbitraryTests {
 		Arbitrary<Integer> withNull = count.injectNull(0.5);
 
 		RandomGenerator<Integer> generator = withNull.generator(1);
-		for (int i = 0; i < 1000; i++) {
-			Integer value = generator.next(random);
-			if (value == null)
-				return;
-		}
-
-		Assertions.fail("Null should have been generated");
+		assertAtLeastOneGenerated(generator, Objects::isNull);
 	}
 
+	@Example
+	void withSamplesGeneratesSamplesFirst() {
+		Arbitrary<Integer> count = new CountingArbitrary();
+		Arbitrary<Integer> countWithSamples = count.withSamples(10, 9, 8);
+		assertGenerated(countWithSamples.generator(1), 10, 9, 8, 1, 2, 3);
+	}
 
 }

@@ -48,11 +48,11 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<T> samples(T... samples) {
-		AtomicInteger position = new AtomicInteger(0);
+		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {
-			if (position.get() >= samples.length)
-				position.set(0);
-			return samples[position.getAndIncrement()];
+			if (tryCount.get() >= samples.length)
+				tryCount.set(0);
+			return samples[tryCount.getAndIncrement()];
 		};
 	}
 
