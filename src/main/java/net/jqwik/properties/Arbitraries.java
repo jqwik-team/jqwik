@@ -69,7 +69,7 @@ public class Arbitraries {
 				Integer max = defaultMaxFromTries(tries);
 				return RandomGenerators.choose(-max, max);
 			}
-		};
+		}.withSamples(0, Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
 	public static Arbitrary<Integer> integer(int min, int max) {
@@ -119,7 +119,7 @@ public class Arbitraries {
 		return listOf(elementArbitrary).map(Collection::stream);
 	}
 
-	public static<T> Arbitrary<T> samples(T... samples) {
+	public static <T> Arbitrary<T> samples(T... samples) {
 		return fromGenerator(RandomGenerators.samples(samples));
 	}
 }
