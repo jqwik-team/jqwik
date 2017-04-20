@@ -24,3 +24,10 @@
   latest seed
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
+
+- Introduce registration mechanism for custom/domain-specific arbitrary providers
+
+### Contracts
+
+- Allow specification of consumer and provider contract in test class
+- Allow spec annotations in domain classes a la clojure-spec
