@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
-import static net.jqwik.properties.ArbitraryTestHelper.*;
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
+import static net.jqwik.properties.ArbitraryTestHelper.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class ArbitrariesTests {
 
@@ -68,7 +68,7 @@ public class ArbitrariesTests {
 
 	@Example
 	void integersLong() {
-		Arbitrary<Long> longArbitrary = Arbitraries.integer(-100L, 100L);
+		Arbitrary<Long> longArbitrary = Arbitraries.longInteger(-100L, 100L);
 		RandomGenerator<Long> generator = longArbitrary.generator(1);
 
 		assertAtLeastOneGenerated(generator, value -> ((long) value) < -50);

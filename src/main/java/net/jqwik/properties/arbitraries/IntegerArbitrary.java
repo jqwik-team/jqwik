@@ -1,20 +1,20 @@
-package net.jqwik.properties;
+package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
-import net.jqwik.execution.*;
+import net.jqwik.properties.*;
 
 public class IntegerArbitrary extends NullableArbitrary<Integer> {
 
 	private int min;
 	private int max;
 
-	protected IntegerArbitrary(int min, int max) {
+	public IntegerArbitrary(int min, int max) {
 		super(Integer.class);
 		this.min = min;
 		this.max = max;
 	}
 
-	protected IntegerArbitrary() {
+	public IntegerArbitrary() {
 		this(0, 0);
 	}
 

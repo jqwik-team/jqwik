@@ -1,4 +1,4 @@
-package net.jqwik.execution;
+package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.*;

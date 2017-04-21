@@ -3,6 +3,7 @@ package net.jqwik.execution;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 import org.assertj.core.data.*;
 
@@ -268,7 +269,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Generate
 			Arbitrary<Long> longBetween1and10() {
-				return Arbitraries.integer(1L, 10L);
+				return Arbitraries.longInteger(1L, 10L);
 			}
 
 			@Property

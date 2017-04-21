@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import net.jqwik.properties.arbitraries.*;
+
 import java.util.*;
 import java.util.stream.*;
 
@@ -65,9 +67,14 @@ public class Arbitraries {
 		return new IntegerArbitrary(min, max);
 	}
 
-	public static Arbitrary<Long> integer(long min, long max) {
-		return fromGenerator(RandomGenerators.choose(min, max));
+	public static Arbitrary<Long> longInteger(long min, long max) {
+		return new LongArbitrary();
 	}
+
+	public static Arbitrary<Long> longInteger() {
+		return new LongArbitrary();
+	}
+
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int maxSize) {
 		return new Arbitrary<List<T>>() {

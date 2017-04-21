@@ -13,7 +13,7 @@ public interface Generator {
 	}
 
 	static Arbitrary<Long> integer(long min, long max) {
-		return Arbitraries.integer(min, max);
+		return Arbitraries.longInteger(min, max);
 	}
 
 	static Arbitrary<String> string(char from, char to) {
