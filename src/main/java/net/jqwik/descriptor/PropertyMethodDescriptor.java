@@ -12,8 +12,9 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 	}
 
 	@Override
+	//TODO: Change to CONTAINER_AND_TEST as soon as https://github.com/junit-team/junit5/issues/756 has been fixed
 	public Type getType() {
-		return Type.CONTAINER_AND_TEST;
+		return Type.TEST;
 	}
 
 	@Override
