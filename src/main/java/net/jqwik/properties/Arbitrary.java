@@ -13,7 +13,12 @@ public interface Arbitrary<T> {
 	}
 
 	default Arbitrary<T> filter(Predicate<? super T> predicate) {
-		return (tries) -> Arbitrary.this.generator(tries).filter(predicate);
+		return new ArbitraryWrapper<T>(this) {
+			@Override
+			public RandomGenerator<T> generator(int tries) {
+				return Arbitrary.this.generator(tries).filter(predicate);
+			}
+		};
 	}
 
 	/**
@@ -24,7 +29,12 @@ public interface Arbitrary<T> {
 	}
 
 	default Arbitrary<T> injectNull(double nullProbability) {
-		return (tries) -> Arbitrary.this.generator(tries).injectNull(nullProbability);
+		return new ArbitraryWrapper<T>(this) {
+			@Override
+			public RandomGenerator<T> generator(int tries) {
+				return Arbitrary.this.generator(tries).injectNull(nullProbability);
+			}
+		};
 	}
 
 	default Arbitrary<T> withSamples(T... samples) {
