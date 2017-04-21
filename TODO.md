@@ -2,8 +2,6 @@
 
 ### General
 
-- Get rid of javaslang (Function2,3,4)
-
 - Allow custom names for containers and test methods
 - Allow Fixture parameters to examples and properties
 

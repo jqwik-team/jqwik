@@ -1,6 +1,6 @@
 package net.jqwik.properties;
 
-import javaslang.*;
+import net.jqwik.functional.*;
 
 public class Combinators {
 

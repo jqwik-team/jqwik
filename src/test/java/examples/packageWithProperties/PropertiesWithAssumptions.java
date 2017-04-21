@@ -3,7 +3,7 @@ package examples.packageWithProperties;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public class PropertiesWithImplies {
+public class PropertiesWithAssumptions {
 
 	@Property(tries = 10)
 	boolean sixMustBeDivisor(@ForAll("multipleOf3") int i, @ForAll("multipleOf2") Integer j) {
