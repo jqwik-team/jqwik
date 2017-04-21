@@ -31,24 +31,15 @@ public class PropertyMethodArbitraryResolverTests {
 			assertGenerated(Integer.class, "intParam", int.class);
 			assertGenerated(Integer.class, "integerParam", Integer.class);
 
+			assertGenerated(Long.class, "longParam", long.class);
+			assertGenerated(Long.class, "longerParam", Long.class);
+
 			assertGenerated(Boolean.class, "booleanParam", boolean.class);
 			assertGenerated(Boolean.class, "boxedBooleanParam", Boolean.class);
 
 			assertGenerated(AnEnum.class, "enumParam", AnEnum.class);
-		}
 
-		@Example
-		void defaultSizeOfForAllParameter() throws Exception {
-			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "intParam", int.class);
-			Parameter parameter = getParameter(DefaultParams.class, "intParam");
-			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
-		}
-
-		@Example
-		void explicitSizeOfForAllParameter() throws Exception {
-			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "intParamWithSize", int.class);
-			Parameter parameter = getParameter(DefaultParams.class, "intParamWithSize");
-			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
+			assertGenerated(String.class, "stringParam", String.class);
 		}
 
 		@Example
@@ -84,11 +75,6 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void noDefaultForString() throws Exception {
-			assertNoArbitraryProvided(DefaultParams.class, "stringParam", String.class);
-		}
-
-		@Example
 		void doNotUseDefaultIfForAllHasValue() throws Exception {
 			assertNoArbitraryProvided(DefaultParams.class, "enumParamWithForAllValue", AnEnum.class);
 		}
@@ -115,12 +101,17 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Property
-			boolean intParamWithSize(@ForAll int anInt) {
+			boolean integerParam(@ForAll Integer anInt) {
 				return true;
 			}
 
 			@Property
-			boolean integerParam(@ForAll Integer anInt) {
+			boolean longParam(@ForAll long anInt) {
+				return true;
+			}
+
+			@Property
+			boolean longerParam(@ForAll Long anInt) {
 				return true;
 			}
 

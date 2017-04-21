@@ -22,6 +22,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		register(BooleanArbitraryProvider.class);
 		register(IntegerArbitraryProvider.class);
 		register(LongArbitraryProvider.class);
+		register(StringArbitraryProvider.class);
 		register(ListArbitraryProvider.class);
 		register(SetArbitraryProvider.class);
 		register(StreamArbitraryProvider.class);
@@ -65,8 +66,6 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		});
 	}
 
-
-
 	private Arbitrary<?> forType(GenericType genericType, String generatorName, Annotation[] annotations) {
 		Arbitrary<?> arbitrary = createForType(genericType, generatorName, annotations);
 		if (arbitrary != null)
@@ -84,6 +83,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Optional<Method> findArbitraryCreator(GenericType genericType, String generatorToFind) {
+		if (generatorToFind.isEmpty())
+			return Optional.empty();
 		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType),
 				HierarchyTraversalMode.BOTTOM_UP);
 		return creators.stream().filter(generatorMethod -> {

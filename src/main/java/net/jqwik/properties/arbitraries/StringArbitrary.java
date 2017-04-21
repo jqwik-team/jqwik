@@ -1,11 +1,23 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
 public class StringArbitrary extends NullableArbitrary<String> {
 
+	private static char[] defaultChars =
+		{'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@'};
+
 	private RandomGenerator<Character> characterGenerator;
 	private int maxSize;
+
+	public StringArbitrary() {
+		this(defaultGenerator(), 0);
+	}
+
+	private static RandomGenerator<Character> defaultGenerator() {
+		return RandomGenerators.choose(defaultChars);
+	}
 
 	public StringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
 		super(String.class);
@@ -45,10 +57,9 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.string(characterGenerator, effectiveMaxSize);
 	}
 
-//	public void configure(IntRange intRange) {
-//		min = intRange.min();
-//		max = intRange.max();
-//	}
+	public void configure(MaxSize maxSize) {
+		this.maxSize = maxSize.value();
+	}
 
 
 }

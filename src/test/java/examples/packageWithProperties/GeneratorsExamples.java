@@ -71,6 +71,11 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 10)
+	void defaultStrings(@ForAll @MaxSize(13) String aRandomString) {
+		System.out.println(String.format("[%s]", aRandomString));
+	}
+
+	@Property(tries = 10)
 	boolean aPeopleList(@ForAll List<Person> people) {
 		System.out.println(people);
 		return people != null;

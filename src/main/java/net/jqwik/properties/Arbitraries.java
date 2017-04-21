@@ -31,6 +31,10 @@ public class Arbitraries {
 		return RandomGenerators.list(elementGenerator, maxSize);
 	}
 
+	public static Arbitrary<?> string() {
+		return new StringArbitrary();
+	}
+
 	public static Arbitrary<String> string(char[] validChars, int maxSize) {
 		return new StringArbitrary(validChars, maxSize);
 	}
@@ -107,4 +111,5 @@ public class Arbitraries {
 	public static <T> Arbitrary<T> samples(T... samples) {
 		return fromGenerator(RandomGenerators.samples(samples));
 	}
+
 }
