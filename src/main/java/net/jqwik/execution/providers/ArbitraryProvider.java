@@ -1,11 +1,11 @@
 package net.jqwik.execution.providers;
 
+import java.util.function.*;
+
 import net.jqwik.execution.*;
 import net.jqwik.properties.*;
 
-import java.util.function.*;
-
-public interface TypedArbitraryProvider {
+public interface ArbitraryProvider {
 
 	boolean canProvideFor(GenericType targetType);
 

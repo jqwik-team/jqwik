@@ -12,30 +12,29 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
+import static net.jqwik.execution.providers.DefaultArbitraryProviders.register;
 import static net.jqwik.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
+
+	static {
+		register(EnumArbitraryProvider.class);
+		register(BooleanArbitraryProvider.class);
+		register(IntegerArbitraryProvider.class);
+		register(ListArbitraryProvider.class);
+		register(SetArbitraryProvider.class);
+		register(StreamArbitraryProvider.class);
+		register(OptionalArbitraryProvider.class);
+	}
 
 	private final static String CONFIG_METHOD_NAME = "configure";
 
 	private final PropertyMethodDescriptor descriptor;
 	private final Object testInstance;
-	private final List<TypedArbitraryProvider> defaultProviders = new ArrayList<>();
 
 	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance) {
 		this.descriptor = descriptor;
 		this.testInstance = testInstance;
-		populateDefaultProviders();
-	}
-
-	private void populateDefaultProviders() {
-		defaultProviders.add(new EnumArbitraryProvider());
-		defaultProviders.add(new BooleanArbitraryProvider());
-		defaultProviders.add(new IntegerArbitraryProvider());
-		defaultProviders.add(new ListArbitraryProvider());
-		defaultProviders.add(new SetArbitraryProvider());
-		defaultProviders.add(new StreamArbitraryProvider());
-		defaultProviders.add(new OptionalArbitraryProvider());
 	}
 
 	@Override
@@ -114,7 +113,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private Arbitrary<?> defaultArbitrary(GenericType parameterType, String generatorName, Annotation[] annotations) {
 		Function<GenericType, Arbitrary<?>> subtypeProvider = subtype -> forType(subtype, generatorName, annotations);
 
-		for (TypedArbitraryProvider provider : defaultProviders) {
+		for (ArbitraryProvider provider : DefaultArbitraryProviders.getProviders()) {
 			boolean generatorNameSpecified = !generatorName.isEmpty();
 			if (generatorNameSpecified && !provider.isGenericallyTyped())
 				continue;

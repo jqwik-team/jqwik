@@ -5,7 +5,7 @@ import java.util.function.*;
 import net.jqwik.execution.*;
 import net.jqwik.properties.*;
 
-public interface SimpleArbitraryProvider extends TypedArbitraryProvider {
+public interface SimpleArbitraryProvider extends ArbitraryProvider {
 
 	default boolean isGenericallyTyped() {
 		return false;
