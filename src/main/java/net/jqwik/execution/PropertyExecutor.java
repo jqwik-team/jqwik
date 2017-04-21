@@ -73,7 +73,7 @@ public class PropertyExecutor {
 											  EngineExecutionListener listener) {
 		try {
 			PropertyCheckResult propertyExecutionResult = executeProperty(propertyMethodDescriptor, testInstance);
-			reportSeed(propertyMethodDescriptor, listener, propertyExecutionResult.randomSeed());
+			reportSeed(propertyMethodDescriptor, listener, propertyExecutionResult);
 			TestExecutionResult testExecutionResult = createTestExecutionResult(propertyExecutionResult);
 			// Disabled until JUnit5 gets along with descriptors being both container and test
 			// if (testExecutionResult.getStatus() == Status.FAILED)
@@ -118,8 +118,19 @@ public class PropertyExecutor {
 		listener.executionFinished(failedPropertyDescriptor, TestExecutionResult.failed(new AssertionFailedError(message)));
 	}
 
-	private void reportSeed(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener, long seed) {
-		listener.reportingEntryPublished(propertyMethodDescriptor, ReportEntry.from("seed", Long.toString(seed)));
+	private void reportSeed(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener, PropertyCheckResult checkResult) {
+		if (checkResult.countTries() > 1 || checkResult.status() != SATISFIED)
+			listener.reportingEntryPublished(propertyMethodDescriptor, createReportEntry(checkResult));
+	}
+
+	private ReportEntry createReportEntry(PropertyCheckResult checkResult) {
+		Map<String, String> entries = new HashMap<>();
+		entries.put("seed", Long.toString(checkResult.randomSeed()));
+		entries.put("tries", Integer.toString(checkResult.countTries()));
+		entries.put("checks", Integer.toString(checkResult.countChecks()));
+		checkResult.sample().ifPresent( sample -> entries.put("sample", sample.toString()));
+		checkResult.throwable().ifPresent( throwable -> entries.put("throwable", throwable.toString()));
+		return ReportEntry.from(entries);
 	}
 
 	private PropertyCheckResult executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

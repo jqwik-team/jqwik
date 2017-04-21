@@ -7,7 +7,6 @@
 
 ### Properties
 
-- Report all data from PropertyCheckResult (seed, countChecks, countTries, sample)
 - Generators/Arbitraries
   - Configurations: MaxSize
 - Handle error 
