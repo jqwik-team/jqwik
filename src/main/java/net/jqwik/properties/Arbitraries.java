@@ -31,32 +31,20 @@ public class Arbitraries {
 		return RandomGenerators.list(elementGenerator, maxSize);
 	}
 
-	public static Arbitrary<String> string(char[] validChars, int maxLength) {
-		return fromGenerator(RandomGenerators.string(validChars, maxLength));
+	public static Arbitrary<String> string(char[] validChars, int maxSize) {
+		return new StringArbitrary(validChars, maxSize);
 	}
 
 	public static Arbitrary<String> string(char[] validChars) {
-		return new Arbitrary<String>() {
-			@Override
-			public RandomGenerator<String> generator(int tries) {
-				int maxLength = Arbitrary.defaultMaxFromTries(tries);
-				return RandomGenerators.string(validChars, maxLength);
-			}
-		};
+		return new StringArbitrary(validChars);
 	}
 
-	public static Arbitrary<String> string(char from, char to, int maxLength) {
-		return fromGenerator(RandomGenerators.string(from, to, maxLength));
+	public static Arbitrary<String> string(char from, char to, int maxSize) {
+		return new StringArbitrary(from, to, maxSize);
 	}
 
 	public static Arbitrary<String> string(char from, char to) {
-		return new Arbitrary<String>() {
-			@Override
-			public RandomGenerator<String> generator(int tries) {
-				int maxLength = Arbitrary.defaultMaxFromTries(tries);
-				return RandomGenerators.string(from, to, maxLength);
-			}
-		};
+		return new StringArbitrary(from, to);
 	}
 
 	public static Arbitrary<Integer> integer() {

@@ -66,21 +66,15 @@ public class RandomGenerators {
 		}).next(random);
 	}
 
-	public static RandomGenerator<String> string(char[] characters, int maxLength) {
+	public static RandomGenerator<Character> choose(char[] characters) {
 		Character[] validCharacters = new Character[characters.length];
 		for (int i = 0; i < characters.length; i++) {
 			validCharacters[i] = characters[i];
 		}
-		RandomGenerator<Character> charGenerator = choose(validCharacters);
-		return string(charGenerator, maxLength);
+		return choose(validCharacters);
 	}
 
-	public static RandomGenerator<String> string(char from, char to, int maxLength) {
-		RandomGenerator<Character> charGenerator = choose(from, to);
-		return string(charGenerator, maxLength);
-	}
-
-	private static RandomGenerator<String> string(RandomGenerator<Character> charGenerator, int maxLength) {
+	public static RandomGenerator<String> string(RandomGenerator<Character> charGenerator, int maxLength) {
 		return random -> choose(0, maxLength).map(i -> {
 			final char[] chars = new char[i];
 			for (int j = 0; j < i; j++) {
