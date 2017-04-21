@@ -1,18 +1,18 @@
 package net.jqwik.execution.providers;
 
+import java.util.function.*;
+
 import net.jqwik.execution.*;
 import net.jqwik.properties.*;
 
-import java.util.function.*;
-
-public class BooleanArbitraryProvider implements TypedArbitraryProvider {
+public class BooleanArbitraryProvider implements SimpleArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType, boolean withName) {
-		return !withName && targetType.isAssignableFrom(Boolean.class);
+	public boolean canProvideFor(GenericType targetType) {
+		return targetType.isAssignableFrom(Boolean.class);
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
+	public Arbitrary<?> provideFor(GenericType targetType) {
 		return Arbitraries.of(true, false);
 	}
 }

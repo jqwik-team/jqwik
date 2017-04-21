@@ -14,7 +14,7 @@ import static net.jqwik.TestDescriptorBuilder.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
-public class PropertyMethodArbitraryProviderTests {
+public class PropertyMethodArbitraryResolverTests {
 
 	private enum AnEnum {
 		One,
@@ -38,21 +38,21 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void defaultSizeOfForAllParameter() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "intParam", int.class);
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "intParam", int.class);
 			Parameter parameter = getParameter(DefaultParams.class, "intParam");
 			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
 		}
 
 		@Example
 		void explicitSizeOfForAllParameter() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "intParamWithSize", int.class);
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "intParamWithSize", int.class);
 			Parameter parameter = getParameter(DefaultParams.class, "intParamWithSize");
 			GenericArbitrary arbitrary = (GenericArbitrary) provider.forParameter(parameter).get();
 		}
 
 		@Example
 		void listDefaults() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerList", List.class);
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerList", List.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerList");
 			List actualList = generateCollection(provider, parameter);
 			assertThat(actualList.get(0)).isInstanceOf(Integer.class);
@@ -60,7 +60,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void setDefaults() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerSet", Set.class);
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerSet", Set.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerSet");
 			Set actualSet = generateCollection(provider, parameter);
 			assertThat(actualSet.iterator().next()).isInstanceOf(Integer.class);
@@ -68,7 +68,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void streamDefaults() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerStream", Stream.class);
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerStream", Stream.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerStream");
 			Stream actualStream = (Stream) generateObject(provider, parameter);
 			actualStream.forEach(o -> assertThat(o).isInstanceOf(Integer.class));
@@ -76,7 +76,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void optionalDefaults() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerOptional");
 			Optional actualOptional = (Optional) generateObject(provider, parameter);
 			assertThat(actualOptional.orElseGet(() -> Integer.MAX_VALUE)).isInstanceOf(Integer.class);
@@ -94,13 +94,13 @@ public class PropertyMethodArbitraryProviderTests {
 
 		private void assertNoArbitraryProvided(Class<DefaultParams> containerClass, String methodName, Class<?>... paramTypes)
 			throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(containerClass, methodName, paramTypes);
+			PropertyMethodArbitraryResolver provider = getProvider(containerClass, methodName, paramTypes);
 			Parameter parameter = getParameter(containerClass, methodName);
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
 		private Object assertGenerated(Class<?> expectedType, String methodName, Class... paramTypes) throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(DefaultParams.class, methodName, paramTypes);
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, methodName, paramTypes);
 			Parameter parameter = getParameter(DefaultParams.class, methodName);
 			Object actual = generateObject(provider, parameter);
 			assertThat(actual).isInstanceOf(expectedType);
@@ -177,7 +177,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void unnamedStringGenerator() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithUnnamedGenerator.class, "string", String.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithUnnamedGenerator.class, "string", String.class);
 			Parameter parameter = getParameter(WithUnnamedGenerator.class, "string");
 			Object actual = generateObject(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -197,7 +197,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void findBoxedTypeGenerator() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "longFromBoxedType", long.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "longFromBoxedType", long.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "longFromBoxedType");
 			Object actual = generateObject(provider, parameter);
 			assertThat(actual).isInstanceOf(Long.class);
@@ -205,7 +205,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void findStringGeneratorByName() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "string", String.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "string", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "string");
 			Object actual = generateObject(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -213,7 +213,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void findStringGeneratorByMethodName() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "stringByMethodName", String.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "stringByMethodName", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
 			Object actual = generateObject(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -221,14 +221,14 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void namedStringGeneratorNotFound() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "otherString", String.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "otherString", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "otherString");
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
 		@Example
 		void findListOfProvidedStrings() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithNamedProviders.class, "listOfGeneratedStrings", List.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "listOfGeneratedStrings", List.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "listOfGeneratedStrings");
 			List actualList = generateCollection(provider, parameter);
 			assertThat(actualList.get(0)).isInstanceOf(String.class);
@@ -304,7 +304,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void configureIsCalledOnDefaultArbitrary() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithConfiguration.class, "aNullableInteger", Integer.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithConfiguration.class, "aNullableInteger", Integer.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableInteger");
 			IntegerArbitrary integerArbitrary = (IntegerArbitrary) provider.forParameter(parameter).get().inner();
 
@@ -313,7 +313,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 		@Example
 		void configureIsCalledOnProvidedArbitrary() throws Exception {
-			PropertyMethodArbitraryProvider provider = getProvider(WithConfiguration.class, "aNullableMock", Object.class);
+			PropertyMethodArbitraryResolver provider = getProvider(WithConfiguration.class, "aNullableMock", Object.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableMock");
 			Optional<Arbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
 
@@ -338,7 +338,7 @@ public class PropertyMethodArbitraryProviderTests {
 
 	}
 
-	private <T extends Collection> T generateCollection(PropertyMethodArbitraryProvider provider, Parameter parameter) {
+	private <T extends Collection> T generateCollection(PropertyMethodArbitraryResolver provider, Parameter parameter) {
 		Object actual = generateObject(provider, parameter);
 		T actualCollection = (T) actual;
 		while (actualCollection.isEmpty()) {
@@ -347,14 +347,14 @@ public class PropertyMethodArbitraryProviderTests {
 		return actualCollection;
 	}
 
-	private static Object generateObject(PropertyMethodArbitraryProvider provider, Parameter parameter) {
+	private static Object generateObject(PropertyMethodArbitraryResolver provider, Parameter parameter) {
 		return TestHelper.generate(provider.forParameter(parameter).get());
 	}
 
-	private static PropertyMethodArbitraryProvider getProvider(Class container, String methodName, Class<?>... parameterTypes)
+	private static PropertyMethodArbitraryResolver getProvider(Class container, String methodName, Class<?>... parameterTypes)
 		throws NoSuchMethodException, IllegalAccessException, InstantiationException {
 		PropertyMethodDescriptor descriptor = getDescriptor(container, methodName, parameterTypes);
-		return new PropertyMethodArbitraryProvider(descriptor, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
+		return new PropertyMethodArbitraryResolver(descriptor, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
 	}
 
 	private static PropertyMethodDescriptor getDescriptor(Class container, String methodName, Class... parameterTypes)

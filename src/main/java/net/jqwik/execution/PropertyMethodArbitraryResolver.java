@@ -14,7 +14,7 @@ import java.util.function.*;
 
 import static net.jqwik.support.JqwikReflectionSupport.*;
 
-public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
+public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	private final static String CONFIG_METHOD_NAME = "configure";
 
@@ -22,7 +22,7 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 	private final Object testInstance;
 	private final List<TypedArbitraryProvider> defaultProviders = new ArrayList<>();
 
-	public PropertyMethodArbitraryProvider(PropertyMethodDescriptor descriptor, Object testInstance) {
+	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance) {
 		this.descriptor = descriptor;
 		this.testInstance = testInstance;
 		populateDefaultProviders();
@@ -112,11 +112,15 @@ public class PropertyMethodArbitraryProvider implements ArbitraryProvider {
 	}
 
 	private Arbitrary<?> defaultArbitrary(GenericType parameterType, String generatorName, Annotation[] annotations) {
-		boolean hasGeneratorName = !generatorName.isEmpty();
 		Function<GenericType, Arbitrary<?>> subtypeProvider = subtype -> forType(subtype, generatorName, annotations);
 
 		for (TypedArbitraryProvider provider : defaultProviders) {
-			if (provider.canProvideFor(parameterType, hasGeneratorName)) {
+			boolean generatorNameSpecified = !generatorName.isEmpty();
+			if (generatorNameSpecified && !provider.isGenericallyTyped())
+				continue;
+			if (provider.isGenericallyTyped() && !parameterType.isGeneric())
+				continue;
+			if (provider.canProvideFor(parameterType)) {
 				return provider.provideFor(parameterType, subtypeProvider);
 			}
 		}

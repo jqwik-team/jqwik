@@ -6,15 +6,14 @@ import net.jqwik.properties.*;
 import java.util.*;
 import java.util.function.*;
 
-public class OptionalArbitraryProvider implements TypedArbitraryProvider {
+public class OptionalArbitraryProvider implements GenericArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType, boolean withName) {
-		return targetType.isAssignableFrom(Optional.class) && targetType.isGeneric();
+	public boolean canProvideFor(GenericType targetType) {
+		return targetType.isAssignableFrom(Optional.class);
 	}
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
-		// TODO: Should also generate null values within Optional
 		GenericType innerType = targetType.getTypeArguments()[0];
 		Arbitrary<?> innerArbitrary = subtypeSupplier.apply(innerType);
 		if (innerArbitrary != null)

@@ -5,6 +5,6 @@ import net.jqwik.properties.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-public interface ArbitraryProvider {
+public interface ArbitraryResolver {
 	Optional<Arbitrary<Object>> forParameter(Parameter parameter);
 }

@@ -5,11 +5,11 @@ import net.jqwik.properties.*;
 
 import java.util.function.*;
 
-abstract class AbstractCollectionArbitraryProvider implements TypedArbitraryProvider {
+abstract class AbstractCollectionArbitraryProvider implements GenericArbitraryProvider {
 
 	@Override
-	public boolean canProvideFor(GenericType targetType, boolean withName) {
-		return targetType.isAssignableFrom(getProvidedType()) && targetType.isGeneric();
+	public boolean canProvideFor(GenericType targetType) {
+		return targetType.isAssignableFrom(getProvidedType());
 	}
 
 	protected abstract Class<?> getProvidedType();

@@ -15,12 +15,12 @@ public class CheckedProperty {
 	public final String propertyName;
 	public final CheckedFunction forAllFunction;
 	public final List<Parameter> forAllParameters;
-	public final ArbitraryProvider arbitraryProvider;
+	public final ArbitraryResolver arbitraryProvider;
 	public final int tries;
 	public final long randomSeed;
 
 	public CheckedProperty(String propertyName, CheckedFunction forAllFunction,
-						   List<Parameter> forAllParameters, ArbitraryProvider arbitraryProvider, int tries, long randomSeed) {
+						   List<Parameter> forAllParameters, ArbitraryResolver arbitraryProvider, int tries, long randomSeed) {
 		this.propertyName = propertyName;
 		this.forAllFunction = forAllFunction;
 		this.forAllParameters = forAllParameters;
