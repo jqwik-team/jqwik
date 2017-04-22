@@ -4,6 +4,10 @@
 
 - Allow custom names for containers and test methods
 - Allow Fixture parameters to examples and properties
+- LifeCycles:
+  - PerClassLifeCycle
+  - PerMethodLifeCycle
+  - PerCheckLifeCycle
 
 ### Properties
 
