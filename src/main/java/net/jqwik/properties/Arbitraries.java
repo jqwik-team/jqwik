@@ -25,12 +25,6 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
-	private static <T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
-		int elementTries = Math.max(maxSize / 2, 1) * tries;
-		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
-		return RandomGenerators.list(elementGenerator, maxSize);
-	}
-
 	public static Arbitrary<?> string() {
 		return new StringArbitrary();
 	}
@@ -69,22 +63,11 @@ public class Arbitraries {
 
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new Arbitrary<List<T>>() {
-			@Override
-			public RandomGenerator<List<T>> generator(int tries) {
-				return createListGenerator(elementArbitrary, tries, maxSize);
-			}
-		};
+		return new ListArbitrary<T>(elementArbitrary, maxSize);
 	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
-		return new Arbitrary<List<T>>() {
-			@Override
-			public RandomGenerator<List<T>> generator(int tries) {
-				int maxSize = Arbitrary.defaultMaxFromTries(tries);
-				return createListGenerator(elementArbitrary, tries, maxSize);
-			}
-		};
+		return new ListArbitrary<T>(elementArbitrary);
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int maxSize) {

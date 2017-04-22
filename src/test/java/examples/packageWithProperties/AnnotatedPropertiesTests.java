@@ -22,7 +22,7 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 10)
-	void defaultStrings(@ForAll @MaxSize(13) String aRandomString) {
+	void defaultStrings(@ForAll @MaxStringLength(13) String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
@@ -41,4 +41,8 @@ public class AnnotatedPropertiesTests {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
+	@Property(tries = 10)
+	void aListWithMaxSize(@ForAll @MaxSize(15) @MaxStringLength(4) @ValidChars({'x', 'y', 'z'}) List<String> listOfStrings) {
+		System.out.println(String.format("%s", listOfStrings));
+	}
 }
