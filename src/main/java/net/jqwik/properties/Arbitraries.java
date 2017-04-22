@@ -71,23 +71,23 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return listOf(elementArbitrary, maxSize).map(HashSet::new);
+		return new SetArbitrary(elementArbitrary, maxSize);
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
-		return listOf(elementArbitrary).map(HashSet::new);
+		return new SetArbitrary(elementArbitrary);
+	}
+
+	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int maxSize) {
+		return new StreamArbitrary(elementArbitrary, maxSize);
+	}
+
+	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
+		return new StreamArbitrary(elementArbitrary);
 	}
 
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
 		return elementArbitrary.injectNull(0.1).map(Optional::ofNullable);
-	}
-
-	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return listOf(elementArbitrary, maxSize).map(Collection::stream);
-	}
-
-	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
-		return listOf(elementArbitrary).map(Collection::stream);
 	}
 
 	@SafeVarargs

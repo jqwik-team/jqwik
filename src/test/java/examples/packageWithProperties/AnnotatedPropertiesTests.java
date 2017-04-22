@@ -45,4 +45,9 @@ public class AnnotatedPropertiesTests {
 	void aListWithMaxSize(@ForAll @MaxSize(15) @MaxStringLength(4) @ValidChars({'x', 'y', 'z'}) List<String> listOfStrings) {
 		System.out.println(String.format("%s", listOfStrings));
 	}
+
+	@Property(tries = 10)
+	void aSetWithMaxSize(@ForAll @MaxSize(15) @IntRange(min = 1, max = 41) Set<Integer> setOfIntegers) {
+		System.out.println(String.format("%s", setOfIntegers));
+	}
 }
