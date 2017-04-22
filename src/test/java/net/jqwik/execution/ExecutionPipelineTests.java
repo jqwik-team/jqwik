@@ -1,7 +1,9 @@
 package net.jqwik.execution;
 
+import java.util.*;
 import java.util.concurrent.*;
 
+import net.jqwik.execution.ExecutionPipeline.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
@@ -21,5 +23,10 @@ public class ExecutionPipelineTests {
 	@Example
 	boolean aPipelineNotRunningWillTimeoutOnShutdownAndWait() {
 		return !pipeline.shutdownAndWait(100, TimeUnit.MILLISECONDS);
+	}
+
+	@Property
+	boolean tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("tasksWithoutPredecessors") List<ExecutionTask> tasks) {
+		return false;
 	}
 }
