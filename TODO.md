@@ -2,25 +2,32 @@
 
 ### General
 
-- Allow custom names for containers and test methods
+- Allow custom names for containers and test methods: @Label
+
 - Allow Fixture parameters to examples and properties
-- LifeCycles:
+
+- LifeCycles
   - PerClassLifeCycle
   - PerMethodLifeCycle
   - PerCheckLifeCycle
 
 ### Properties
 
+- Save last state in local database and run all failing properties with 
+  latest seed
+
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type
-- Default Arbitraries for
-  - chars, floats and All kinds of Numbers
+
+- Default Arbitraries and Generators for
+  - BigInteger
+  - chars, short, byte
+  - float, double, BigDecimal
+  - arrays
+  
 - Create child test with previous seed if property fails so that it can be run from runner with a click:
   _Code is commented out because missing support from IDEA and bug in JUnit5 platform_
-
-- Save last state in local database and run all failing properties with 
-  latest seed
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
