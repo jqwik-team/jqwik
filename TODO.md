@@ -11,7 +11,7 @@
   - if more than one generator applies
   - if generic type is a bounded type
 - Default Arbitraries for
-  - Strings, chars, floats and All kinds of Numbers
+  - chars, floats and All kinds of Numbers
 - Create child test with previous seed if property fails so that it can be run from runner with a click:
   _Code is commented out because missing support from IDEA and bug in JUnit5 platform_
 
