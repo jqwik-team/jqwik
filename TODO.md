@@ -8,7 +8,7 @@
 ### Properties
 
 - Generators/Arbitraries
-  - Configurations: ValidChars, MaxSize for collections 
+  - Configurations: MaxSize for collections 
 - Handle error 
   - if more than one generator applies
   - if generic type is a bounded type

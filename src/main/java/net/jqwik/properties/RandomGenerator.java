@@ -40,4 +40,8 @@ public interface RandomGenerator<T> {
 			return generator.next(random);
 		};
 	}
+
+	default RandomGenerator<T> mixIn(RandomGenerator<T> otherGenerator, double mixInProbability) {
+		return random -> random.nextDouble() <= mixInProbability ? otherGenerator.next(random) : next(random) ;
+	};
 }

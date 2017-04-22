@@ -1,12 +1,13 @@
 package net.jqwik.properties.arbitraries;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
 public class StringArbitrary extends NullableArbitrary<String> {
 
-	private static char[] defaultChars =
-		{'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@'};
+	private final static char[] defaultChars = { 'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@' };
 
 	private RandomGenerator<Character> characterGenerator;
 	private int maxSize;
@@ -61,5 +62,50 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		this.maxSize = maxSize.value();
 	}
 
+	public void configure(ValidChars validChars) {
+		Optional<RandomGenerator<Character>> charsGenerator = createCharsGenerator(validChars);
+		Optional<RandomGenerator<Character>> fromToGenerator = createFromToGenerator(validChars);
+
+		double mixInProbability = calculateMixInProbability(validChars);
+		Optional<RandomGenerator<Character>> generator = mix(charsGenerator, fromToGenerator, mixInProbability);
+		generator.ifPresent(gen -> characterGenerator = gen);
+	}
+
+	private double calculateMixInProbability(ValidChars validChars) {
+		double sizeChars = validChars.value().length;
+		double sizeFromTo = validChars.to() - validChars.from();
+		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo)  : 1.0;
+	}
+
+	private Optional<RandomGenerator<Character>> mix( //
+			Optional<RandomGenerator<Character>> charsGenerator, //
+			Optional<RandomGenerator<Character>> fromToGenerator, //
+			double mixInProbability) {
+
+		if (charsGenerator.isPresent()) {
+			return fromToGenerator //
+					.map(fromTo -> Optional.of(charsGenerator.get().mixIn(fromTo, mixInProbability))) //
+					.orElse(charsGenerator);
+		}
+		return fromToGenerator;
+	}
+
+	private Optional<RandomGenerator<Character>> createFromToGenerator(ValidChars validChars) {
+		RandomGenerator<Character> fromToGenerator = null;
+		if (validChars.from() > 0 && validChars.to() > 0) {
+			fromToGenerator = RandomGenerators.choose(validChars.from(), validChars.to());
+			characterGenerator = fromToGenerator;
+		}
+		return Optional.ofNullable(fromToGenerator);
+	}
+
+	private Optional<RandomGenerator<Character>> createCharsGenerator(ValidChars validChars) {
+		RandomGenerator<Character> charsGenerator = null;
+		if (validChars.value().length > 0) {
+			charsGenerator = RandomGenerators.choose(validChars.value());
+			characterGenerator = charsGenerator;
+		}
+		return Optional.ofNullable(charsGenerator);
+	}
 
 }
