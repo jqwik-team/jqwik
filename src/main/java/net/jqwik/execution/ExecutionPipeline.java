@@ -2,7 +2,11 @@ package net.jqwik.execution;
 
 import org.junit.platform.engine.*;
 
+import java.util.concurrent.*;
+
 public class ExecutionPipeline {
+
+
 
 	interface ExecutionTask {
 		ExecutionTask predecessor();
@@ -25,8 +29,8 @@ public class ExecutionPipeline {
 	void run() {
 	}
 
-	boolean awaitTermination() {
-		return true;
+	boolean awaitTermination(long timeoutMsecs) {
+		return false;
 	}
 
 }

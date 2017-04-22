@@ -12,6 +12,11 @@ public class ExecutionPipelineTests {
 	@Example
 	boolean withNoTasksPipelineTerminatesAtOnce() {
 		pipeline.run();
-		return pipeline.awaitTermination();
+		return pipeline.awaitTermination(100);
+	}
+
+	@Example
+	boolean aPipelineNotRunWillTimeoutOnAwaitTermination() {
+		return pipeline.awaitTermination(100) == false;
 	}
 }
