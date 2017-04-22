@@ -1,7 +1,5 @@
 package net.jqwik.properties;
 
-import net.jqwik.functional.*;
-
 public class Combinators {
 
 	public static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
@@ -17,7 +15,7 @@ public class Combinators {
 			this.a2 = a2;
 		}
 
-		public <R> Arbitrary<R> as(Function2<T1, T2, R> combinator) {
+		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
 			return (tries) -> {
 				RandomGenerator<T1> g1 = a1.generator(tries);
 				RandomGenerator<T2> g2 = a2.generator(tries);
@@ -45,7 +43,7 @@ public class Combinators {
 			this.a3 = a3;
 		}
 
-		public <R> Arbitrary<R> as(Function3<T1, T2, T3, R> combinator) {
+		public <R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator) {
 			return (tries) -> {
 				RandomGenerator<T1> g1 = a1.generator(tries);
 				RandomGenerator<T2> g2 = a2.generator(tries);
@@ -78,7 +76,7 @@ public class Combinators {
 			this.a4 = a4;
 		}
 
-		public <R> Arbitrary<R> as(Function4<T1, T2, T3, T4, R> combinator) {
+		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator) {
 			return (tries) -> {
 				RandomGenerator<T1> g1 = a1.generator(tries);
 				RandomGenerator<T2> g2 = a2.generator(tries);
@@ -93,5 +91,20 @@ public class Combinators {
 				};
 			};
 		}
+	}
+
+	@FunctionalInterface
+	public interface F2<T1, T2, R> {
+		R apply(T1 t1, T2 t2);
+	}
+
+	@FunctionalInterface
+	public interface F3<T1, T2, T3, R> {
+		R apply(T1 t1, T2 t2, T3 t3);
+	}
+
+	@FunctionalInterface
+	public interface F4<T1, T2, T3, T4, R> {
+		R apply(T1 t1, T2 t2, T3 t3, T4 t4);
 	}
 }
