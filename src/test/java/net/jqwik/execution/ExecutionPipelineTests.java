@@ -1,8 +1,11 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
+import java.util.concurrent.*;
+
 import org.junit.platform.engine.*;
 import org.mockito.*;
+
+import net.jqwik.api.*;
 
 public class ExecutionPipelineTests {
 
@@ -12,11 +15,11 @@ public class ExecutionPipelineTests {
 	@Example
 	boolean withNoTasksPipelineTerminatesAtOnce() {
 		pipeline.run();
-		return pipeline.awaitTermination(100);
+		return pipeline.shutdownAndWait(100, TimeUnit.MILLISECONDS);
 	}
 
 	@Example
-	boolean aPipelineNotRunWillTimeoutOnAwaitTermination() {
-		return pipeline.awaitTermination(100) == false;
+	boolean aPipelineNotRunningWillTimeoutOnShutdownAndWait() {
+		return !pipeline.shutdownAndWait(100, TimeUnit.MILLISECONDS);
 	}
 }
