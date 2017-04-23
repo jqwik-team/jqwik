@@ -133,6 +133,31 @@ public class ArbitrariesTests {
 			assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
 		}
 
+		@Example
+		void array() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<Integer[]> arrayArbitrary = Arbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
+
+			RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1);
+
+			Integer[] array = generator.next(random);
+			assertThat(array.length).isBetween(0, 5);
+			assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		}
+
+		@Example
+		void arrayOfPrimitiveType() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<int[]> arrayArbitrary = Arbitraries.arrayOf(int[].class, integerArbitrary, 5);
+
+			RandomGenerator<int[]> generator = arrayArbitrary.generator(1);
+
+			int[] array = generator.next(random);
+			assertThat(array.length).isBetween(0, 5);
+			List<Integer> actual = IntStream.of(array).mapToObj(Integer::valueOf).collect(Collectors.toList());
+			assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		}
+
 	}
 
 	private void assertGeneratedStream(Stream<Integer> stream) {

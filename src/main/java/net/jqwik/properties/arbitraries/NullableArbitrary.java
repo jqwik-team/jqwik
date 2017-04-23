@@ -5,7 +5,7 @@ import net.jqwik.properties.*;
 
 public abstract class NullableArbitrary<T> implements Arbitrary<T> {
 
-	private final Class targetClass;
+	protected final Class targetClass;
 	private double nullProbability = 0.0;
 
 	protected NullableArbitrary(Class<?> targetClass) {
