@@ -29,8 +29,6 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 
 	private A toArray(List<T> from) {
 		A array = (A) java.lang.reflect.Array.newInstance(targetClass.getComponentType(), from.size());
-		System.out.println("ARRAY CLASS: " + array.getClass());
-//		System.out.println("LIST CLASS: " + from.get(0).getClass());
 		for (int i = 0; i < from.size(); i++) {
 			Array.set(array, i, from.get(i));
 		}

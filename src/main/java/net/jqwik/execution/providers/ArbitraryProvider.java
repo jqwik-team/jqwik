@@ -1,9 +1,9 @@
 package net.jqwik.execution.providers;
 
-import java.util.function.*;
-
 import net.jqwik.execution.*;
 import net.jqwik.properties.*;
+
+import java.util.function.*;
 
 public interface ArbitraryProvider {
 
@@ -12,7 +12,7 @@ public interface ArbitraryProvider {
 	/**
 	 * @return true if the provider produces arbitraries for a generic type with type arguments
 	 */
-	boolean isGenericallyTyped();
+	boolean needsSubtypeProvider();
 
 	Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider);
 }

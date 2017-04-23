@@ -2,7 +2,7 @@ package net.jqwik.execution.providers;
 
 public interface GenericArbitraryProvider extends ArbitraryProvider {
 
-	default boolean isGenericallyTyped() {
+	default boolean needsSubtypeProvider() {
 		return true;
 	}
 }

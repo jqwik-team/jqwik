@@ -7,7 +7,7 @@ import net.jqwik.properties.*;
 
 public interface SimpleArbitraryProvider extends ArbitraryProvider {
 
-	default boolean isGenericallyTyped() {
+	default boolean needsSubtypeProvider() {
 		return false;
 	}
 

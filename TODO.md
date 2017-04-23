@@ -24,7 +24,6 @@
   - BigInteger
   - chars, short, byte
   - float, double, BigDecimal
-  - arrays
   
 - Create child test with previous seed if property fails so that it can be run from runner with a click:
   _Code is commented out because missing support from IDEA and bug in JUnit5 platform_

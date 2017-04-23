@@ -71,6 +71,17 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 10)
+	void anArrayOfInteger(@ForAll Integer[] array) {
+		System.out.println(Arrays.asList(array));
+	}
+
+	@Property(tries = 10)
+	void anArrayOfPrimitiveInts(@ForAll @MaxSize(10) @IntRange(min = 1, max = 5) int[] array) {
+		List<Integer> asList = IntStream.of(array).mapToObj(Integer::valueOf).collect(Collectors.toList());
+		System.out.println(asList);
+	}
+
+	@Property(tries = 10)
 	boolean aPeopleList(@ForAll List<Person> people) {
 		System.out.println(people);
 		return people != null;

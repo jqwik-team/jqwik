@@ -67,6 +67,14 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void arrayDefaults() throws Exception {
+			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerArray", Integer[].class);
+			Parameter parameter = getParameter(DefaultParams.class, "integerArray");
+			Integer[] actualArray = (Integer[]) generateObject(provider, parameter);
+			Arrays.stream(actualArray).forEach(o -> assertThat(o).isInstanceOf(Integer.class));
+		}
+
+		@Example
 		void optionalDefaults() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerOptional");
@@ -142,6 +150,11 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Property
 			boolean integerList(@ForAll List<Integer> aList) {
+				return true;
+			}
+
+			@Property
+			boolean integerArray(@ForAll Integer[] anArray) {
 				return true;
 			}
 

@@ -27,6 +27,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		register(SetArbitraryProvider.class);
 		register(StreamArbitraryProvider.class);
 		register(OptionalArbitraryProvider.class);
+		register(ArrayArbitraryProvider.class);
 	}
 
 	private final static String CONFIG_METHOD_NAME = "configure";
@@ -117,9 +118,9 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 		for (ArbitraryProvider provider : DefaultArbitraryProviders.getProviders()) {
 			boolean generatorNameSpecified = !generatorName.isEmpty();
-			if (generatorNameSpecified && !provider.isGenericallyTyped())
+			if (generatorNameSpecified && !provider.needsSubtypeProvider())
 				continue;
-			if (provider.isGenericallyTyped() && !parameterType.isGeneric())
+			if (provider.needsSubtypeProvider() && !(parameterType.isGeneric() || parameterType.isArray()))
 				continue;
 			if (provider.canProvideFor(parameterType)) {
 				return provider.provideFor(parameterType, subtypeProvider);

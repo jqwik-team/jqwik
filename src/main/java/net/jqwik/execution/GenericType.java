@@ -54,6 +54,10 @@ public class GenericType {
 		return getRawType().isEnum();
 	}
 
+	public boolean isArray() {
+		return getRawType().isArray();
+	}
+
 	public boolean isAssignableFrom(GenericType providedType) {
 		if (boxedTypeMatches(providedType.getRawType(), this.getRawType()))
 			return true;
@@ -98,6 +102,13 @@ public class GenericType {
 		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
+	public GenericType getComponentType() {
+		Class<?> componentType = rawType.getComponentType();
+		if (componentType != null)
+			return new GenericType(componentType);
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		String representation = getRawType().getSimpleName();
@@ -106,6 +117,10 @@ public class GenericType {
 					.collect(Collectors.joining(", "));
 			representation = String.format("%s<%s>", representation, typeArgsRepresentation);
 		}
+		if (isArray()) {
+			representation = String.format("%s[]", getComponentType().toString());
+		}
 		return representation;
 	}
+
 }
