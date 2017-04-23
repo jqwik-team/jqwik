@@ -1,12 +1,10 @@
 package net.jqwik.execution;
 
-import net.jqwik.execution.pipeline.ExecutionPipeline.*;
+import net.jqwik.execution.pipeline.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
-import java.util.*;
-
-public class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask {
+public class MockExecutionTask extends AbstractTestDescriptor implements Pipeline.ExecutionTask {
 
 	public MockExecutionTask(String name) {
 		super(UniqueId.root("test", name), name);

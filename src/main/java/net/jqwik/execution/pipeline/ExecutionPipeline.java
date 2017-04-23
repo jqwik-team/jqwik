@@ -1,15 +1,11 @@
 package net.jqwik.execution.pipeline;
 
-import org.junit.platform.engine.*;
-
 import java.util.*;
 import java.util.stream.*;
 
-public class ExecutionPipeline {
+import org.junit.platform.engine.*;
 
-	public interface ExecutionTask {
-		void execute(EngineExecutionListener listener);
-	}
+public class ExecutionPipeline implements Pipeline {
 
 	private final List<ExecutionTask> tasks = new ArrayList<>();
 	private final Map<ExecutionTask, Boolean> taskFinished = new IdentityHashMap<>();
@@ -20,7 +16,8 @@ public class ExecutionPipeline {
 		this.executionListener = executionListener;
 	}
 
-	public void submit(ExecutionTask task, ExecutionTask...predecessors) {
+	@Override
+	public void submit(ExecutionTask task, ExecutionTask... predecessors) {
 		if (taskFinished.containsKey(task))
 			throw new DuplicateExecutionTaskException(task);
 		else {
@@ -68,8 +65,8 @@ public class ExecutionPipeline {
 
 	private boolean movedPredecessorsToTopOfQueue(ExecutionTask head) {
 		List<ExecutionTask> unfinishedPredecessors = Arrays.stream(taskPredecessors.get(head)) //
-			.filter(predecessor -> !taskFinished.get(predecessor)) //
-			.collect(Collectors.toList());
+				.filter(predecessor -> !taskFinished.get(predecessor)) //
+				.collect(Collectors.toList());
 		executeFirst(unfinishedPredecessors);
 		return !unfinishedPredecessors.isEmpty();
 	}

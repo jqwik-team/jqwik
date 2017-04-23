@@ -2,7 +2,6 @@ package net.jqwik.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.execution.pipeline.*;
-import net.jqwik.execution.pipeline.ExecutionPipeline.*;
 import net.jqwik.properties.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
@@ -22,7 +21,7 @@ public class ExecutionPipelineTests {
 	}
 
 	@Property(tries = 10)
-	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("task") List<ExecutionTask> tasks) {
+	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("task") List<Pipeline.ExecutionTask> tasks) {
 		tasks.forEach(t -> pipeline.submit(t));
 		pipeline.waitForTermination();
 		InOrder events = Mockito.inOrder(listener);
@@ -30,7 +29,7 @@ public class ExecutionPipelineTests {
 	}
 
 	@Property(tries = 10)
-	void addingATaskTwiceThrowsException(@ForAll("task") ExecutionTask task) {
+	void addingATaskTwiceThrowsException(@ForAll("task") Pipeline.ExecutionTask task) {
 		pipeline.submit(task);
 		assertThatThrownBy(() -> pipeline.submit(task)).isInstanceOf(DuplicateExecutionTaskException.class);
 	}
