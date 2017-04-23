@@ -8,101 +8,67 @@ import java.util.stream.*;
 public class ExecutionPipeline {
 
 	public interface ExecutionTask {
-		UniqueId uniqueId();
-
-		Set<UniqueId> predecessors();
-
 		void execute(EngineExecutionListener listener);
 	}
 
 	private final List<ExecutionTask> tasks = new ArrayList<>();
-	private final Map<UniqueId, Boolean> taskFinished = new HashMap<>();
+	private final Map<ExecutionTask, Boolean> taskFinished = new IdentityHashMap<>();
+	private final Map<ExecutionTask, ExecutionTask[]> taskPredecessors = new IdentityHashMap<>();
 	private final EngineExecutionListener executionListener;
 
 	public ExecutionPipeline(EngineExecutionListener executionListener) {
 		this.executionListener = executionListener;
 	}
 
-	public void submit(ExecutionTask... tasks) {
-		for (ExecutionTask task : tasks) {
-			submitTask(task);
-		}
-	}
-
-	private void submitTask(ExecutionTask task) {
-		if (taskFinished.containsKey(task.uniqueId()))
+	public void submit(ExecutionTask task, ExecutionTask...predecessors) {
+		if (taskFinished.containsKey(task))
 			throw new DuplicateExecutionTaskException(task);
 		else {
-			assertNoCircularDependency(task.uniqueId(), task.predecessors());
-			taskFinished.put(task.uniqueId(), false);
+			ensurePredecessorsSubmitted(task, predecessors);
+			taskFinished.put(task, false);
+			taskPredecessors.put(task, predecessors);
 		}
 		tasks.add(task);
 	}
 
-	private void assertNoCircularDependency(UniqueId uniqueId, Set<UniqueId> predecessors) {
-		if (predecessors.isEmpty())
-			return;
-		if (predecessors.contains(uniqueId))
-			throw new CircularTaskDependencyException(uniqueId);
-		Set<UniqueId> predecessorsOfPredecessors = predecessors.stream() //
-			.flatMap(this::predecessorIDs) //
-			.collect(Collectors.toSet());
-		assertNoCircularDependency(uniqueId, predecessorsOfPredecessors);
-	}
-
-	private Stream<? extends UniqueId> predecessorIDs(UniqueId predecessorId) {
-		int predecessorIndex = indexOf(predecessorId);
-		if (predecessorIndex < 0)
-			return Stream.empty();
-		ExecutionTask predecessor = tasks.get(predecessorIndex);
-		return predecessor.predecessors().stream();
-	}
-
-	private int predecessorIndex(UniqueId predecessorId) {
-		return indexOf(predecessorId);
-	}
-
-	public void executeFirst(UniqueId... uniqueIds) {
-		executeFirst(Arrays.asList(uniqueIds));
-	}
-
-	public void executeFirst(List<UniqueId> uniqueIdList) {
-		for (int i = uniqueIdList.size() - 1; i >= 0; i--) {
-			moveToTopOfQueue(uniqueIdList.get(i));
+	private void ensurePredecessorsSubmitted(ExecutionTask task, ExecutionTask[] predecessors) {
+		for (ExecutionTask predecessor : predecessors) {
+			if (!taskFinished.containsKey(predecessor))
+				throw new PredecessorNotSubmittedException(task, predecessor);
 		}
 	}
 
-	private void moveToTopOfQueue(UniqueId uniqueId) {
-		int index = predecessorIndex(uniqueId);
-		if (index > 0) {
-			ExecutionTask task = tasks.remove(index);
+	public void executeFirst(ExecutionTask... executionTasks) {
+		executeFirst(Arrays.asList(executionTasks));
+	}
+
+	public void executeFirst(List<ExecutionTask> executionTaskList) {
+		for (int i = executionTaskList.size() - 1; i >= 0; i--) {
+			moveToTopOfQueue(executionTaskList.get(i));
+		}
+	}
+
+	private void moveToTopOfQueue(ExecutionTask task) {
+		if (tasks.contains(task)) {
+			tasks.remove(task);
 			tasks.add(0, task);
 		}
 	}
 
-	private int indexOf(UniqueId uniqueId) {
-		for (int i = 0; i < tasks.size(); i++) {
-			if (tasks.get(i).uniqueId().equals(uniqueId))
-				return i;
-		}
-		return -1;
-	}
-
-	public void run() {
+	public void waitForTermination() {
 		while (!tasks.isEmpty()) {
 			ExecutionTask head = tasks.get(0);
 			if (movedPredecessorsToTopOfQueue(head))
 				continue;
 			head.execute(executionListener);
-			taskFinished.put(head.uniqueId(), true);
+			taskFinished.put(head, true);
 			tasks.remove(0);
 		}
 	}
 
 	private boolean movedPredecessorsToTopOfQueue(ExecutionTask head) {
-		List<UniqueId> unfinishedPredecessors = head.predecessors() //
-			.stream() //
-			.filter(predecessorId -> !taskFinished.get(predecessorId)) //
+		List<ExecutionTask> unfinishedPredecessors = Arrays.stream(taskPredecessors.get(head)) //
+			.filter(predecessor -> !taskFinished.get(predecessor)) //
 			.collect(Collectors.toList());
 		executeFirst(unfinishedPredecessors);
 		return !unfinishedPredecessors.isEmpty();

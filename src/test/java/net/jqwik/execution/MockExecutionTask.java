@@ -8,21 +8,8 @@ import java.util.*;
 
 public class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask {
 
-	private final Set<UniqueId> predecessors;
-
-	public MockExecutionTask(UniqueId id, UniqueId... predecessors) {
-		super(id, id.toString());
-		this.predecessors = new HashSet<>(Arrays.asList(predecessors));;
-	}
-
-	@Override
-	public UniqueId uniqueId() {
-		return getUniqueId();
-	}
-
-	@Override
-	public Set<UniqueId> predecessors() {
-		return predecessors;
+	public MockExecutionTask(String name) {
+		super(UniqueId.root("test", name), name);
 	}
 
 	@Override

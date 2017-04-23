@@ -18,39 +18,38 @@ public class ExecutionPipelineTests {
 
 	@Example
 	void withNoTasksPipelineTerminatesAtOnce() {
-		pipeline.run();
+		pipeline.waitForTermination();
 	}
 
 	@Property(tries = 10)
-	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("taskWithoutPredecessors") List<ExecutionTask> tasks) {
+	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("task") List<ExecutionTask> tasks) {
 		tasks.forEach(t -> pipeline.submit(t));
-		pipeline.run();
+		pipeline.waitForTermination();
 		InOrder events = Mockito.inOrder(listener);
 		tasks.forEach(t -> events.verify(listener).executionStarted((MockExecutionTask) t));
 	}
 
 	@Property(tries = 10)
-	void addingATaskTwiceThrowsException(@ForAll("taskWithoutPredecessors") ExecutionTask task) {
+	void addingATaskTwiceThrowsException(@ForAll("task") ExecutionTask task) {
 		pipeline.submit(task);
 		assertThatThrownBy(() -> pipeline.submit(task)).isInstanceOf(DuplicateExecutionTaskException.class);
 	}
 
 	@Generate
-	Arbitrary<MockExecutionTask> taskWithoutPredecessors() {
-		return new CountingArbitrary().map(i -> {
-			UniqueId id = UniqueId.root("test", Integer.toString(i));
-			return new MockExecutionTask(id);
-		});
+	Arbitrary<MockExecutionTask> task() {
+		return new CountingArbitrary().map(i -> new MockExecutionTask(Integer.toString(i)));
 	}
 
 	@Example
 	void tasksPutInFrontAreExecutedFirst() {
-		MockExecutionTask task1 = new MockExecutionTask(UniqueId.root("test", "1"));
-		MockExecutionTask task2 = new MockExecutionTask(UniqueId.root("test", "2"));
-		MockExecutionTask task3 = new MockExecutionTask(UniqueId.root("test", "3"));
-		pipeline.submit(task1, task2, task3);
-		pipeline.executeFirst(task2.uniqueId(), task3.uniqueId());
-		pipeline.run();
+		MockExecutionTask task1 = new MockExecutionTask("1");
+		MockExecutionTask task2 = new MockExecutionTask("2");
+		MockExecutionTask task3 = new MockExecutionTask("3");
+		pipeline.submit(task1);
+		pipeline.submit(task2);
+		pipeline.submit(task3);
+		pipeline.executeFirst(task2, task3);
+		pipeline.waitForTermination();
 
 		InOrder events = Mockito.inOrder(listener);
 		events.verify(listener).executionStarted(task2);
@@ -60,11 +59,14 @@ public class ExecutionPipelineTests {
 
 	@Example
 	void predecessorsOfTasksAreExecutedFirst() {
-		MockExecutionTask task1 = new MockExecutionTask(UniqueId.root("test", "1"));
-		MockExecutionTask task2 = new MockExecutionTask(UniqueId.root("test", "2"), task1.uniqueId());
-		MockExecutionTask task3 = new MockExecutionTask(UniqueId.root("test", "3"), task2.uniqueId());
-		pipeline.submit(task3, task2, task1);
-		pipeline.run();
+		MockExecutionTask task1 = new MockExecutionTask("1");
+		MockExecutionTask task2 = new MockExecutionTask("2");
+		MockExecutionTask task3 = new MockExecutionTask("3");
+		pipeline.submit(task1);
+		pipeline.submit(task2, task1);
+		pipeline.submit(task3, task2);
+		pipeline.executeFirst(task3, task2);
+		pipeline.waitForTermination();
 
 		InOrder events = Mockito.inOrder(listener);
 		events.verify(listener).executionStarted(task1);
@@ -73,16 +75,10 @@ public class ExecutionPipelineTests {
 	}
 
 	@Example
-	void circularDependencyInPredecessorsIsRecognized() {
-		UniqueId id3 = UniqueId.root("test", "3");
-		MockExecutionTask task1 = new MockExecutionTask(UniqueId.root("test", "1"), id3);
-		MockExecutionTask task2 = new MockExecutionTask(UniqueId.root("test", "2"), task1.uniqueId());
-		MockExecutionTask task3 = new MockExecutionTask(id3, task2.uniqueId());
-
-		pipeline.submit(task3, task2);
-
-		assertThatThrownBy(() -> pipeline.submit(task1)).isInstanceOf(CircularTaskDependencyException.class);
-
+	void predecessorsMustBeSubmittedFirst() {
+		MockExecutionTask task1 = new MockExecutionTask("1");
+		MockExecutionTask task2 = new MockExecutionTask("2");
+		assertThatThrownBy(() -> pipeline.submit(task1, task2)).isInstanceOf(PredecessorNotSubmittedException.class);
 	}
 
 }
