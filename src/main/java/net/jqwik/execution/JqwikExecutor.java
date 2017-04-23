@@ -1,11 +1,14 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import org.junit.platform.engine.*;
-
 import java.util.function.*;
 import java.util.logging.*;
+
+import org.junit.platform.engine.*;
+
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.pipeline.*;
+import net.jqwik.execution.pipeline.Pipeline.*;
 
 public class JqwikExecutor {
 
@@ -21,40 +24,42 @@ public class JqwikExecutor {
 	}
 
 	public void execute(ExecutionRequest request, TestDescriptor descriptor) {
-		execute(descriptor, request.getEngineExecutionListener());
+		ExecutionPipeline pipeline = new ExecutionPipeline(request.getEngineExecutionListener());
+		execute(descriptor, pipeline);
+		pipeline.waitForTermination();
 	}
 
-	private void execute(TestDescriptor descriptor, EngineExecutionListener listener) {
+	private void execute(TestDescriptor descriptor, Pipeline pipeline, ExecutionTask... predecessors) {
 		if (descriptor.getClass().equals(JqwikEngineDescriptor.class)) {
-			executeContainer(descriptor, listener);
+			executeContainer(descriptor, pipeline, predecessors);
 			return;
 		}
 		if (descriptor.getClass().equals(ContainerClassDescriptor.class)) {
-			executeContainer(descriptor, listener);
+			executeContainer(descriptor, pipeline, predecessors);
 			return;
 		}
 		if (descriptor.getClass().equals(PropertyMethodDescriptor.class)) {
-			executeProperty((PropertyMethodDescriptor) descriptor, listener);
+			executeProperty((PropertyMethodDescriptor) descriptor, pipeline, predecessors);
 			return;
 		}
 		if (descriptor.getClass().equals(SkipExecutionDecorator.class)) {
-			executeSkipping((SkipExecutionDecorator) descriptor, listener);
+			executeSkipping((SkipExecutionDecorator) descriptor, pipeline, predecessors);
 			return;
 		}
 		LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor));
 	}
 
-	private void executeSkipping(SkipExecutionDecorator descriptor, EngineExecutionListener listener) {
-		listener.executionSkipped(descriptor, descriptor.getSkippingReason());
+	private void executeSkipping(SkipExecutionDecorator descriptor, Pipeline pipeline, ExecutionTask[] predecessors) {
+		pipeline.submit(listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()), predecessors);
 	}
 
-	private void executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, EngineExecutionListener listener) {
-		Function<Object, PropertyLifecycle> lifecycleSupplier = registry.supplierFor(propertyMethodDescriptor);
-		propertyExecutor.execute(propertyMethodDescriptor, listener, lifecycleSupplier);
+	private void executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Pipeline pipeline, ExecutionTask[] predecessors) {
+//		Function<Object, PropertyLifecycle> lifecycleSupplier = registry.supplierFor(propertyMethodDescriptor);
+//		propertyExecutor.execute(propertyMethodDescriptor, pipeline, lifecycleSupplier);
 	}
 
-	private void executeContainer(TestDescriptor containerDescriptor, EngineExecutionListener listener) {
-		containerExecutor.execute(containerDescriptor, listener, childExecutor);
+	private void executeContainer(TestDescriptor containerDescriptor, Pipeline pipeline, ExecutionTask[] predecessors) {
+		containerExecutor.execute(containerDescriptor, childExecutor, pipeline, predecessors);
 	}
 
 }
