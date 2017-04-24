@@ -23,6 +23,10 @@ public class PropertyMethodArbitraryResolverTests {
 		Three
 	}
 
+	private static class Thing {
+
+	}
+
 	@Group
 	class Defaults {
 
@@ -240,6 +244,14 @@ public class PropertyMethodArbitraryResolverTests {
 			assertThat(((String) actualList.get(0)).length()).isBetween(3, 10);
 		}
 
+		@Example
+		void findFirstFitIfNoNameIsGiven() throws Exception {
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "listOfThingWithoutName", List.class);
+			Parameter parameter = getParameter(WithNamedProviders.class, "listOfThingWithoutName");
+			List actualList = generateCollection(provider, parameter);
+			assertThat(actualList.get(0)).isInstanceOf(Thing.class);
+		}
+
 		private class WithNamedProviders {
 			@Property
 			boolean string(@ForAll("aString") String aString) {
@@ -284,6 +296,16 @@ public class PropertyMethodArbitraryResolverTests {
 			@Generate("aName")
 			Arbitrary<String> aNameForList() {
 				return Arbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
+			}
+
+			@Property
+			boolean listOfThingWithoutName(@ForAll List<Thing> thingList) {
+				return true;
+			}
+
+			@Generate()
+			Arbitrary<Thing> aThing() {
+				return Arbitraries.of(new Thing());
 			}
 
 		}
