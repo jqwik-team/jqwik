@@ -20,12 +20,10 @@ public class ExecutionPipeline implements Pipeline {
 	public void submit(ExecutionTask task, ExecutionTask... predecessors) {
 		if (taskFinished.containsKey(task))
 			throw new DuplicateExecutionTaskException(task);
-		else {
-			ensurePredecessorsSubmitted(task, predecessors);
-			taskFinished.put(task, false);
-			taskPredecessors.put(task, predecessors);
-		}
-		tasks.add(task);
+		taskFinished.putIfAbsent(task, false);
+		taskPredecessors.put(task, predecessors);
+		if (!taskFinished.get(task))
+			tasks.add(task);
 	}
 
 	private void ensurePredecessorsSubmitted(ExecutionTask task, ExecutionTask[] predecessors) {
@@ -52,7 +50,7 @@ public class ExecutionPipeline implements Pipeline {
 		}
 	}
 
-	public void waitForTermination() {
+	public void runToTermination() {
 		while (!tasks.isEmpty()) {
 			ExecutionTask head = tasks.get(0);
 			if (movedPredecessorsToTopOfQueue(head))
@@ -64,7 +62,9 @@ public class ExecutionPipeline implements Pipeline {
 	}
 
 	private boolean movedPredecessorsToTopOfQueue(ExecutionTask head) {
-		List<ExecutionTask> unfinishedPredecessors = Arrays.stream(taskPredecessors.get(head)) //
+		ExecutionTask[] predecessors = taskPredecessors.get(head);
+		ensurePredecessorsSubmitted(head, predecessors);
+		List<ExecutionTask> unfinishedPredecessors = Arrays.stream(predecessors) //
 				.filter(predecessor -> !taskFinished.get(predecessor)) //
 				.collect(Collectors.toList());
 		executeFirst(unfinishedPredecessors);

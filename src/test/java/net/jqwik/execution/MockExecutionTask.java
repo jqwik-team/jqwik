@@ -4,7 +4,7 @@ import net.jqwik.execution.pipeline.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
-public class MockExecutionTask extends AbstractTestDescriptor implements Pipeline.ExecutionTask {
+public class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask {
 
 	public MockExecutionTask(String name) {
 		super(UniqueId.root("test", name), name);

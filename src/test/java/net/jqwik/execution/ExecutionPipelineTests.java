@@ -17,19 +17,19 @@ public class ExecutionPipelineTests {
 
 	@Example
 	void withNoTasksPipelineTerminatesAtOnce() {
-		pipeline.waitForTermination();
+		pipeline.runToTermination();
 	}
 
 	@Property(tries = 10)
-	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("task") List<Pipeline.ExecutionTask> tasks) {
+	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("task") List<ExecutionTask> tasks) {
 		tasks.forEach(t -> pipeline.submit(t));
-		pipeline.waitForTermination();
+		pipeline.runToTermination();
 		InOrder events = Mockito.inOrder(listener);
 		tasks.forEach(t -> events.verify(listener).executionStarted((MockExecutionTask) t));
 	}
 
 	@Property(tries = 10)
-	void addingATaskTwiceThrowsException(@ForAll("task") Pipeline.ExecutionTask task) {
+	void addingATaskTwiceThrowsException(@ForAll("task") ExecutionTask task) {
 		pipeline.submit(task);
 		assertThatThrownBy(() -> pipeline.submit(task)).isInstanceOf(DuplicateExecutionTaskException.class);
 	}
@@ -48,7 +48,7 @@ public class ExecutionPipelineTests {
 		pipeline.submit(task2);
 		pipeline.submit(task3);
 		pipeline.executeFirst(task2, task3);
-		pipeline.waitForTermination();
+		pipeline.runToTermination();
 
 		InOrder events = Mockito.inOrder(listener);
 		events.verify(listener).executionStarted(task2);
@@ -65,7 +65,7 @@ public class ExecutionPipelineTests {
 		pipeline.submit(task2, task1);
 		pipeline.submit(task3, task2);
 		pipeline.executeFirst(task3, task2);
-		pipeline.waitForTermination();
+		pipeline.runToTermination();
 
 		InOrder events = Mockito.inOrder(listener);
 		events.verify(listener).executionStarted(task1);
@@ -74,10 +74,12 @@ public class ExecutionPipelineTests {
 	}
 
 	@Example
-	void predecessorsMustBeSubmittedFirst() {
+	void predecessorsMustBeSubmittedBeforeATaskCanRun() {
 		MockExecutionTask task1 = new MockExecutionTask("1");
 		MockExecutionTask task2 = new MockExecutionTask("2");
-		assertThatThrownBy(() -> pipeline.submit(task1, task2)).isInstanceOf(PredecessorNotSubmittedException.class);
+		pipeline.submit(task1, task2);
+
+		assertThatThrownBy(() -> pipeline.runToTermination()).isInstanceOf(PredecessorNotSubmittedException.class);
 	}
 
 }

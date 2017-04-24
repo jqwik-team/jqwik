@@ -89,13 +89,8 @@ class ContainerExecutionTests {
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(engineDescriptor);
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.class));
-		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"), isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.class));
-		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"),
-			isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class));
 		events.verify(eventRecorder)
@@ -105,10 +100,17 @@ class ContainerExecutionTests {
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class),
 			isSuccessful());
 
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"),
+													   isSuccessful());
+
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.class), isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.AnotherGroup.class));
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.AnotherGroup.class), isSuccessful());
+
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"), isSuccessful());
 
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.class), isSuccessful());
 		events.verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());

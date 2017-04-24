@@ -8,14 +8,13 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
-import net.jqwik.execution.pipeline.Pipeline.*;
 
 public class JqwikExecutor {
 
 	private final LifecycleRegistry registry;
-	private final PropertyExecutor propertyExecutor = new PropertyExecutor();
-	private final ContainerExecutor containerExecutor = new ContainerExecutor();
-	private final TestDescriptorExecutor childExecutor = this::execute;
+	private final PropertyTaskCreator propertyTaskCreator = new PropertyTaskCreator();
+	private final ContainerTaskCreator containerTaskCreator = new ContainerTaskCreator();
+	private final ExecutionTaskCreator childTaskCreator = this::createTask;
 
 	private static final Logger LOG = Logger.getLogger(JqwikExecutor.class.getName());
 
@@ -25,41 +24,39 @@ public class JqwikExecutor {
 
 	public void execute(ExecutionRequest request, TestDescriptor descriptor) {
 		ExecutionPipeline pipeline = new ExecutionPipeline(request.getEngineExecutionListener());
-		execute(descriptor, pipeline);
-		pipeline.waitForTermination();
+		ExecutionTask mainTask = createTask(descriptor, pipeline);
+		pipeline.submit(mainTask);
+		pipeline.runToTermination();
 	}
 
-	private void execute(TestDescriptor descriptor, Pipeline pipeline, ExecutionTask... predecessors) {
+	private ExecutionTask createTask(TestDescriptor descriptor, Pipeline pipeline) {
 		if (descriptor.getClass().equals(JqwikEngineDescriptor.class)) {
-			executeContainer(descriptor, pipeline, predecessors);
-			return;
+			return createContainerTask(descriptor, pipeline);
 		}
 		if (descriptor.getClass().equals(ContainerClassDescriptor.class)) {
-			executeContainer(descriptor, pipeline, predecessors);
-			return;
+			return createContainerTask(descriptor, pipeline);
 		}
 		if (descriptor.getClass().equals(PropertyMethodDescriptor.class)) {
-			executeProperty((PropertyMethodDescriptor) descriptor, pipeline, predecessors);
-			return;
+			return createPropertyTask((PropertyMethodDescriptor) descriptor, pipeline);
 		}
 		if (descriptor.getClass().equals(SkipExecutionDecorator.class)) {
-			executeSkipping((SkipExecutionDecorator) descriptor, pipeline, predecessors);
-			return;
+			return createSkippingTask((SkipExecutionDecorator) descriptor, pipeline);
 		}
-		LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor));
+		return listener -> LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor));
 	}
 
-	private void executeSkipping(SkipExecutionDecorator descriptor, Pipeline pipeline, ExecutionTask[] predecessors) {
-		pipeline.submit(listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()), predecessors);
+	private ExecutionTask createSkippingTask(SkipExecutionDecorator descriptor, Pipeline pipeline) {
+		String taskDescription = String.format("Skipping [%s] due to: %s", descriptor.getDisplayName(), descriptor.getSkippingReason());
+		return ExecutionTask.from(listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()), taskDescription);
 	}
 
-	private void executeProperty(PropertyMethodDescriptor propertyMethodDescriptor, Pipeline pipeline, ExecutionTask[] predecessors) {
-//		Function<Object, PropertyLifecycle> lifecycleSupplier = registry.supplierFor(propertyMethodDescriptor);
-//		propertyExecutor.execute(propertyMethodDescriptor, pipeline, lifecycleSupplier);
+	private ExecutionTask createPropertyTask(PropertyMethodDescriptor propertyMethodDescriptor, Pipeline pipeline) {
+		Function<Object, PropertyLifecycle> lifecycleSupplier = registry.supplierFor(propertyMethodDescriptor);
+		return propertyTaskCreator.createTask(propertyMethodDescriptor, lifecycleSupplier);
 	}
 
-	private void executeContainer(TestDescriptor containerDescriptor, Pipeline pipeline, ExecutionTask[] predecessors) {
-		containerExecutor.execute(containerDescriptor, childExecutor, pipeline, predecessors);
+	private ExecutionTask createContainerTask(TestDescriptor containerDescriptor, Pipeline pipeline) {
+		return containerTaskCreator.createTask(containerDescriptor, childTaskCreator, pipeline);
 	}
 
 }
