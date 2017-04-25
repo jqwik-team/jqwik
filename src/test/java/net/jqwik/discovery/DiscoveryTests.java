@@ -1,10 +1,11 @@
-package net.jqwik;
+package net.jqwik.discovery;
 
 import examples.packageWithErrors.*;
 import examples.packageWithInheritance.*;
 import examples.packageWithNestedContainers.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.*;
@@ -23,6 +24,7 @@ import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*
 class DiscoveryTests {
 
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();
+	private final TestRunData testRunData = new TestRunData();
 	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
 
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
@@ -205,7 +207,7 @@ class DiscoveryTests {
 
 	private TestDescriptor discoverTests(LauncherDiscoveryRequest discoveryRequest) {
 		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(engineId);
-		new JqwikDiscoverer().discover(discoveryRequest, engineDescriptor);
+		new JqwikDiscoverer(testRunData).discover(discoveryRequest, engineDescriptor);
 		return engineDescriptor;
 	}
 }

@@ -21,13 +21,8 @@ public class CheckedPropertyFactory {
 		String propertyName = propertyMethodDescriptor.getLabel();
 
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
-		Property property = AnnotationSupport.findAnnotation(propertyMethod, Property.class).orElseThrow(() -> {
-			String message = String.format("Method [%s] is not annotated with @Property", propertyMethod);
-			return new JqwikException(message);
-		});
-
-		int tries = property.tries();
-		long randomSeed = property.seed();
+		int tries = propertyMethodDescriptor.getTries();
+		long randomSeed = propertyMethodDescriptor.getSeed();
 
 		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);

@@ -10,6 +10,7 @@ public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
 
 	private final LifecycleRegistry registry = new LifecycleRegistry();
+	private final TestRunData testRunDatabase = new TestRunData();
 
 	@Override
 	public String getId() {
@@ -19,7 +20,7 @@ public class JqwikTestEngine implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
-		new JqwikDiscoverer().discover(request, engineDescriptor);
+		new JqwikDiscoverer(testRunDatabase).discover(request, engineDescriptor);
 		return engineDescriptor;
 	}
 

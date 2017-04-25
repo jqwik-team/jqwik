@@ -9,7 +9,7 @@ import org.opentest4j.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-import static net.jqwik.execution.TestHelper.*;
+import static net.jqwik.TestHelper.*;
 import static net.jqwik.properties.PropertyCheckResult.Status.*;
 import static org.assertj.core.api.Assertions.*;
 

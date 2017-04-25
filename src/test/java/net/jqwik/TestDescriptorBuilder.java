@@ -1,17 +1,18 @@
 package net.jqwik;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.discovery.*;
-import net.jqwik.support.*;
-import org.junit.platform.commons.support.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.descriptor.*;
+import static net.jqwik.JqwikUniqueIdBuilder.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 
-import static net.jqwik.JqwikUniqueIdBuilder.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.descriptor.*;
+
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.*;
+import net.jqwik.support.*;
 
 /**
  * For testing purposes
@@ -87,9 +88,11 @@ public class TestDescriptorBuilder {
 		}
 		if (element instanceof Method) {
 			Method targetMethod = (Method) this.element;
-			if (AnnotationSupport.isAnnotated(targetMethod, Property.class)) {
+			Optional<Property> property = AnnotationSupport.findAnnotation(targetMethod, Property.class);
+			if (property.isPresent()) {
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
-				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass());
+				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), property.get().seed(),
+						property.get().tries());
 			}
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());
