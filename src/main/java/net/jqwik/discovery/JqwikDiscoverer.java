@@ -7,7 +7,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.*;
+import net.jqwik.recording.*;
 import org.junit.platform.commons.support.*;
 import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.*;

@@ -1,5 +1,6 @@
 package net.jqwik;
 
+import net.jqwik.recording.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.descriptor.*;
@@ -10,7 +11,8 @@ public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
 
 	private final LifecycleRegistry registry = new LifecycleRegistry();
-	private final TestRunData testRunDatabase = new TestRunData();
+	private final TestRunData testRunData = new TestRunData();
+	private final TestRunRecorder recorder = TestRunRecorder.NULL;
 
 	@Override
 	public String getId() {
@@ -20,14 +22,14 @@ public class JqwikTestEngine implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
-		new JqwikDiscoverer(testRunDatabase).discover(request, engineDescriptor);
+		new JqwikDiscoverer(testRunData).discover(request, engineDescriptor);
 		return engineDescriptor;
 	}
 
 	@Override
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
-		new JqwikExecutor(registry).execute(request, root);
+		new JqwikExecutor(registry, recorder).execute(request, root);
 	}
 
 }

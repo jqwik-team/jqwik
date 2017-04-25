@@ -2,6 +2,7 @@ package net.jqwik.execution;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.recording.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
@@ -118,7 +119,7 @@ class ContainerExecutionTests {
 
 	private void executeTests(TestDescriptor engineDescriptor) {
 		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, eventRecorder, null);
-		new JqwikExecutor(new LifecycleRegistry()).execute(executionRequest, engineDescriptor);
+		new JqwikExecutor(new LifecycleRegistry(), TestRunRecorder.NULL).execute(executionRequest, engineDescriptor);
 	}
 
 	private static class ContainerClass {

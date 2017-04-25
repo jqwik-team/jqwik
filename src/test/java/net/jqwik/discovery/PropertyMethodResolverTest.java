@@ -3,12 +3,12 @@ package net.jqwik.discovery;
 import java.lang.reflect.*;
 import java.util.*;
 
+import net.jqwik.recording.*;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
 import net.jqwik.*;
-import net.jqwik.TestRunData.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 

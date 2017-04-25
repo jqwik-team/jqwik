@@ -8,7 +8,7 @@ import examples.packageWithSingleContainer.*;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.discovery.*;
+import net.jqwik.recording.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.launcher.*;

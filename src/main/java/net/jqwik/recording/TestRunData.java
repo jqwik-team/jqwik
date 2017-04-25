@@ -1,6 +1,5 @@
-package net.jqwik;
+package net.jqwik.recording;
 
-import java.io.*;
 import java.util.*;
 
 import org.junit.platform.engine.*;
@@ -19,30 +18,6 @@ public class TestRunData {
 
 	public void add(TestRun testRun) {
 		data.add(testRun);
-	}
-
-	public static class TestRun implements Serializable {
-		private final UniqueId uniqueId;
-		private final TestExecutionResult.Status status;
-		private final long randomSeed;
-
-		public TestRun(UniqueId uniqueId, TestExecutionResult.Status status, long randomSeed) {
-			this.uniqueId = uniqueId;
-			this.status = status;
-			this.randomSeed = randomSeed;
-		}
-		public UniqueId getUniqueId() {
-			return uniqueId;
-		}
-
-		public TestExecutionResult.Status getStatus() {
-			return status;
-		}
-
-		public long getRandomSeed() {
-			return randomSeed;
-		}
-
 	}
 
 	public Optional<TestRun> byUniqueId(UniqueId uniqueId) {
