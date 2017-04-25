@@ -63,7 +63,7 @@ public class ExecutionPipelineTests {
 		MockExecutionTask task3 = new MockExecutionTask("3");
 		pipeline.submit(task1);
 		pipeline.submit(task2, task1);
-		pipeline.submit(task3, task2);
+		pipeline.submit(task3, task2, task1);
 		pipeline.executeFirst(task3, task2);
 		pipeline.runToTermination();
 
@@ -80,6 +80,31 @@ public class ExecutionPipelineTests {
 		pipeline.submit(task1, task2);
 
 		assertThatThrownBy(() -> pipeline.runToTermination()).isInstanceOf(PredecessorNotSubmittedException.class);
+	}
+
+	@Example
+	void executeFirstByUniqueId() {
+		MockExecutionTask task1 = new MockExecutionTask("1");
+		MockExecutionTask task2 = new MockExecutionTask("1");
+		pipeline.submit(task1, task2);
+		pipeline.submit(task2);
+
+		UniqueId ownerId = UniqueId.root("owner", "2");
+		MockExecutionTask owned1 = new MockExecutionTask(ownerId, "1");
+		MockExecutionTask owned2 = new MockExecutionTask(ownerId, "2");
+		pipeline.submit(owned1);
+		pipeline.submit(owned2, owned1);
+
+		pipeline.executeFirst(ownerId);
+
+		pipeline.runToTermination();
+
+		InOrder events = Mockito.inOrder(listener);
+		events.verify(listener).executionStarted(owned1);
+		events.verify(listener).executionStarted(owned2);
+		events.verify(listener).executionStarted(task2);
+		events.verify(listener).executionStarted(task1);
+
 	}
 
 }

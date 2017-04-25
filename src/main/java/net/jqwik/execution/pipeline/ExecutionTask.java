@@ -1,16 +1,22 @@
 package net.jqwik.execution.pipeline;
 
-import java.util.function.*;
-
 import org.junit.platform.engine.*;
 
-@FunctionalInterface
+import java.util.function.*;
+
 public interface ExecutionTask {
+
+	UniqueId ownerId();
 
 	void execute(EngineExecutionListener listener);
 
-	static ExecutionTask from(Consumer<EngineExecutionListener> consumer, String description) {
+	static ExecutionTask from(Consumer<EngineExecutionListener> consumer, UniqueId ownerId, String description) {
 		return new ExecutionTask() {
+			@Override
+			public UniqueId ownerId() {
+				return ownerId;
+			}
+
 			@Override
 			public void execute(EngineExecutionListener listener) {
 				consumer.accept(listener);
@@ -23,8 +29,8 @@ public interface ExecutionTask {
 		};
 	}
 
-	static ExecutionTask doNothing() {
+	static ExecutionTask doNothing(UniqueId ownerId) {
 		return from(listener -> {
-		}, "doNothing");
+		}, ownerId, "doNothing");
 	}
 }

@@ -1,13 +1,12 @@
 package net.jqwik.execution;
 
-import java.util.function.*;
-import java.util.logging.*;
-
-import org.junit.platform.engine.*;
-
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
+import org.junit.platform.engine.*;
+
+import java.util.function.*;
+import java.util.logging.*;
 
 public class JqwikExecutor {
 
@@ -42,12 +41,17 @@ public class JqwikExecutor {
 		if (descriptor.getClass().equals(SkipExecutionDecorator.class)) {
 			return createSkippingTask((SkipExecutionDecorator) descriptor, pipeline);
 		}
-		return listener -> LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor));
+		return ExecutionTask.from(
+			listener -> LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor)),
+			descriptor.getUniqueId(), "log warning");
 	}
 
 	private ExecutionTask createSkippingTask(SkipExecutionDecorator descriptor, Pipeline pipeline) {
 		String taskDescription = String.format("Skipping [%s] due to: %s", descriptor.getDisplayName(), descriptor.getSkippingReason());
-		return ExecutionTask.from(listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()), taskDescription);
+		return ExecutionTask.from(
+			listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()),
+			descriptor.getUniqueId(),
+			taskDescription);
 	}
 
 	private ExecutionTask createPropertyTask(PropertyMethodDescriptor propertyMethodDescriptor, Pipeline pipeline) {

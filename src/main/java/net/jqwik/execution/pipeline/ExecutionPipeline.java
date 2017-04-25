@@ -1,9 +1,9 @@
 package net.jqwik.execution.pipeline;
 
+import org.junit.platform.engine.*;
+
 import java.util.*;
 import java.util.stream.*;
-
-import org.junit.platform.engine.*;
 
 public class ExecutionPipeline implements Pipeline {
 
@@ -35,6 +35,27 @@ public class ExecutionPipeline implements Pipeline {
 
 	public void executeFirst(ExecutionTask... executionTasks) {
 		executeFirst(Arrays.asList(executionTasks));
+	}
+
+	public void executeFirst(UniqueId ownerId) {
+		List<ExecutionTask> tasks = activeTasksOwnedBy(ownerId);
+		executeFirst(tasks);
+	}
+
+	private List<ExecutionTask> activeTasksOwnedBy(UniqueId ownerId) {
+		return tasks.stream().filter(task -> isSameOrOwner(ownerId, task.ownerId())).collect(Collectors.toList());
+	}
+
+	private boolean isSameOrOwner(UniqueId ownerId, UniqueId taskId) {
+		List<UniqueId.Segment> ownerSegments = ownerId.getSegments();
+		List<UniqueId.Segment> taskSegments = taskId.getSegments();
+		if (ownerSegments.size() > taskSegments.size())
+			return false;
+		for (int i = 0; i < ownerSegments.size(); i++) {
+			if (!ownerSegments.get(i).equals(taskSegments.get(i)))
+				return false;
+		}
+		return true;
 	}
 
 	public void executeFirst(List<ExecutionTask> executionTaskList) {
