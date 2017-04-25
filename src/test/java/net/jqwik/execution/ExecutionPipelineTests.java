@@ -85,7 +85,7 @@ public class ExecutionPipelineTests {
 	@Example
 	void executeFirstByUniqueId() {
 		MockExecutionTask task1 = new MockExecutionTask("1");
-		MockExecutionTask task2 = new MockExecutionTask("1");
+		MockExecutionTask task2 = new MockExecutionTask("2");
 		pipeline.submit(task1, task2);
 		pipeline.submit(task2);
 
