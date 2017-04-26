@@ -85,9 +85,9 @@ class PropertyMethodResolver implements ElementResolver {
 
 	private long determineSeed(UniqueId uniqueId, long seedFromProperty) {
 		return testRunData.byUniqueId(uniqueId) //
-				.filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
-				.map(testRun -> testRun.getRandomSeed()) //
-				.orElse(seedFromProperty);
+						  .filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
+						  .map(testRun -> testRun.getRandomSeed()) //
+						  .orElse(seedFromProperty);
 	}
 
 	private String getSegmentType() {

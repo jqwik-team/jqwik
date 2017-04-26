@@ -1,29 +1,32 @@
 package net.jqwik.recording;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestExecutionResult.*;
 
-import java.io.*;
-
-public class TestRun implements Serializable {
-	private final UniqueId uniqueId;
-	private final TestExecutionResult.Status status;
+public class TestRun {
+	private final String uniqueIdString;
+	private final int statusOrdinal;
 	private final long randomSeed;
 
-	public TestRun(UniqueId uniqueId, TestExecutionResult.Status status, long randomSeed) {
-		this.uniqueId = uniqueId;
-		this.status = status;
+	public TestRun(UniqueId uniqueId, Status status, long randomSeed) {
+		this.uniqueIdString = uniqueId.toString();
+		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
 	}
 	public UniqueId getUniqueId() {
-		return uniqueId;
+		return UniqueId.parse(uniqueIdString);
 	}
 
-	public TestExecutionResult.Status getStatus() {
-		return status;
+	public Status getStatus() {
+		return Status.values()[statusOrdinal];
 	}
 
 	public long getRandomSeed() {
 		return randomSeed;
 	}
 
+	@Override
+	public String toString() {
+		return String.format("TestRun[%s:%s:%d]", uniqueIdString, getStatus(), randomSeed);
+	}
 }

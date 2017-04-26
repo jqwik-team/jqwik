@@ -26,7 +26,8 @@ public class JqwikExecutor {
 	}
 
 	public void execute(ExecutionRequest request, TestDescriptor descriptor) {
-		ExecutionPipeline pipeline = new ExecutionPipeline(request.getEngineExecutionListener());
+		EngineExecutionListener recordingListener = new RecordingExecutionListener(recorder, request.getEngineExecutionListener());
+		ExecutionPipeline pipeline = new ExecutionPipeline(recordingListener);
 		ExecutionTask mainTask = createTask(descriptor, pipeline);
 		pipeline.submit(mainTask);
 		pipeline.runToTermination();

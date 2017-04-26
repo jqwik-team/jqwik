@@ -64,9 +64,6 @@ public class PropertyMethodExecutor {
 			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance);
 			reportSeed(listener, propertyExecutionResult);
 			TestExecutionResult testExecutionResult = createTestExecutionResult(propertyExecutionResult);
-			// Disabled until JUnit5 gets along with descriptors being both container and test
-			// if (testExecutionResult.getStatus() == Status.FAILED)
-			// addFailedPropertyChild(propertyMethodDescriptor, listener, seed);
 			return testExecutionResult;
 		} catch (TestAbortedException e) {
 			return aborted(e);
@@ -96,30 +93,9 @@ public class PropertyMethodExecutor {
 		return TestExecutionResult.failed(throwable);
 	}
 
-	private void addFailedPropertyChild(EngineExecutionListener listener, long seed) {
-		UniqueId childId = JqwikUniqueIDs.appendSeed(methodDescriptor.getUniqueId(), seed);
-		SeededFailedPropertyDescriptor failedPropertyDescriptor = new SeededFailedPropertyDescriptor(childId, seed);
-		methodDescriptor.addChild(failedPropertyDescriptor);
-
-		listener.dynamicTestRegistered(failedPropertyDescriptor);
-		listener.executionStarted(failedPropertyDescriptor);
-		String message = String.format("Property [%s] failed with seed [%s]", methodDescriptor.getLabel(), seed);
-		listener.executionFinished(failedPropertyDescriptor, TestExecutionResult.failed(new AssertionFailedError(message)));
-	}
-
 	private void reportSeed(EngineExecutionListener listener, PropertyCheckResult checkResult) {
 		if (checkResult.countTries() > 1 || checkResult.status() != SATISFIED)
-			listener.reportingEntryPublished(methodDescriptor, createReportEntry(checkResult));
-	}
-
-	private ReportEntry createReportEntry(PropertyCheckResult checkResult) {
-		Map<String, String> entries = new HashMap<>();
-		entries.put("seed", Long.toString(checkResult.randomSeed()));
-		entries.put("tries", Integer.toString(checkResult.countTries()));
-		entries.put("checks", Integer.toString(checkResult.countChecks()));
-		checkResult.sample().ifPresent(sample -> entries.put("sample", sample.toString()));
-		checkResult.throwable().ifPresent(throwable -> entries.put("throwable", throwable.toString()));
-		return ReportEntry.from(entries);
+			listener.reportingEntryPublished(methodDescriptor, CheckResultReportEntry.from(checkResult));
 	}
 
 	private PropertyCheckResult executeProperty(Object testInstance) {

@@ -13,6 +13,12 @@ public class JqwikTestEngine implements TestEngine {
 	private final LifecycleRegistry registry = new LifecycleRegistry();
 	private final TestRunData testRunData = new TestRunData();
 	private final TestRunRecorder recorder = TestRunRecorder.NULL;
+	//	private final TestRunRecorder recorder = new TestRunRecorder() {
+	//	@Override
+	//	public void record(TestRun testRun) {
+	//		System.out.println(testRun.toString());
+	//	}
+	//};
 
 	@Override
 	public String getId() {
