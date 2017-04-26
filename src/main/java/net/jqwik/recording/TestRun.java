@@ -3,7 +3,9 @@ package net.jqwik.recording;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
-public class TestRun {
+import java.io.*;
+
+public class TestRun implements Serializable {
 	private final String uniqueIdString;
 	private final int statusOrdinal;
 	private final long randomSeed;
