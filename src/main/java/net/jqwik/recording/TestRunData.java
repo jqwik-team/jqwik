@@ -1,8 +1,8 @@
 package net.jqwik.recording;
 
-import java.util.*;
-
 import org.junit.platform.engine.*;
+
+import java.util.*;
 
 public class TestRunData {
 
@@ -21,8 +21,6 @@ public class TestRunData {
 	}
 
 	public Optional<TestRun> byUniqueId(UniqueId uniqueId) {
-		if (uniqueId.toString().contains("FizzBuzz"))
-			return Optional.of(new TestRun(uniqueId, TestExecutionResult.Status.FAILED, 42L));
 		return data.stream().filter(testRun -> testRun.getUniqueId().equals(uniqueId)).findFirst();
 	}
 }

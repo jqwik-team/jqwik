@@ -13,8 +13,7 @@
 
 ### Properties
 
-- Save last state in local database and run all failing properties with 
-  latest seed
+- Run failing tests first in next test run
 
 - Handle error 
   - if more than one generator applies
@@ -25,9 +24,6 @@
   - chars, short, byte
   - float, double, BigDecimal
   
-- Create child test with previous seed if property fails so that it can be run from runner with a click:
-  _Code is commented out because missing support from IDEA and bug in JUnit5 platform_
-
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
 ### Contracts
