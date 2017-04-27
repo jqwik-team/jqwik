@@ -1,5 +1,13 @@
 ### Bugs
 
+- Make robust against bugs during database reading and a missing database
+
+### Missing Tests
+
+- Tests for TestRunDatabase
+- JqwikExecutor: test that failed tests from previous run are executed first
+- TestRunData
+
 ### General
 
 - Allow custom names for containers and test methods: @Label
@@ -10,6 +18,8 @@
   - PerClassLifeCycle
   - PerMethodLifeCycle
   - PerCheckLifeCycle
+
+- Parallel test execution
 
 ### Properties
 
