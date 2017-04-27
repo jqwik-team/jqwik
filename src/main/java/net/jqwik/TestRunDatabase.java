@@ -29,20 +29,33 @@ public class TestRunDatabase {
 			return new TestRunData();
 
 		try (ObjectInputStream ois = createObjectInputStream()) {
-			List<TestRun> data = new ArrayList<>();
-			while (true) {
-				try {
-					TestRun testRun = (TestRun) ois.readObject();
-					data.add(testRun);
-				} catch (EOFException eof) {
-					break;
-				}
-			}
+			List<TestRun> data = readAllTestRuns(ois);
 			return new TestRunData(data);
 		} catch (Exception e) {
-			LOG.severe(e.toString());
+			logException(e);
+			try {
+				Files.delete(databasePath);
+			} catch (IOException ignore) {
+			}
 			return new TestRunData();
 		}
+	}
+
+	private List<TestRun> readAllTestRuns(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+		List<TestRun> testRuns = new ArrayList<>();
+		while (true) {
+			try {
+				TestRun testRun = (TestRun) ois.readObject();
+				testRuns.add(testRun);
+			} catch (EOFException eof) {
+				break;
+			}
+		}
+		return testRuns;
+	}
+
+	private void logException(Exception e) {
+		LOG.log(Level.SEVERE, e.getMessage(), e);
 	}
 
 	private ObjectOutputStream createObjectOutputStream() {
@@ -50,19 +63,13 @@ public class TestRunDatabase {
 			return new ObjectOutputStream(Files.newOutputStream(databasePath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 		} catch (IOException e) {
 			stopRecording = true;
-			LOG.severe(e.toString());
+			logException(e);
 			return null;
 		}
 	}
 
-	private ObjectInputStream createObjectInputStream() {
-		try {
-			return new ObjectInputStream(Files.newInputStream(databasePath, StandardOpenOption.CREATE));
-		} catch (IOException e) {
-			stopRecording = true;
-			LOG.severe(e.toString());
-			return null;
-		}
+	private ObjectInputStream createObjectInputStream() throws IOException {
+		return new ObjectInputStream(Files.newInputStream(databasePath, StandardOpenOption.CREATE));
 	}
 
 	private class Recorder implements TestRunRecorder {
@@ -81,7 +88,7 @@ public class TestRunDatabase {
 				objectOutputStream.writeObject(testRun);
 			} catch (IOException e) {
 				stopRecording = true;
-				LOG.severe(e.toString());
+				logException(e);
 			}
 		}
 
@@ -90,7 +97,7 @@ public class TestRunDatabase {
 			try {
 				objectOutputStream.close();
 			} catch (IOException e) {
-				LOG.severe(e.toString());
+				logException(e);
 			}
 		}
 

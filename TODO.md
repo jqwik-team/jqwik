@@ -1,7 +1,5 @@
 ### Bugs
 
-- Make robust against bugs during database reading and a missing database
-
 ### Missing Tests
 
 - Tests for TestRunDatabase

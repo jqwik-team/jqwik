@@ -1,5 +1,6 @@
 package net.jqwik.recording;
 
+import net.jqwik.discovery.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
@@ -11,12 +12,12 @@ public class TestRun implements Serializable {
 	private final long randomSeed;
 
 	public TestRun(UniqueId uniqueId, Status status, long randomSeed) {
-		this.uniqueIdString = uniqueId.toString();
+		this.uniqueIdString = JqwikUniqueIDs.toString(uniqueId);
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
 	}
 	public UniqueId getUniqueId() {
-		return UniqueId.parse(uniqueIdString);
+		return JqwikUniqueIDs.parse(uniqueIdString);
 	}
 
 	public Status getStatus() {
