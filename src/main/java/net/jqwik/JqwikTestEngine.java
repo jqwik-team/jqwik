@@ -10,7 +10,15 @@ public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
 
 	private final LifecycleRegistry registry = new LifecycleRegistry();
-	private final TestRunDatabase database = new TestRunDatabase();
+	private final TestRunDatabase database;
+
+	public JqwikTestEngine() {
+		this(new TestRunDatabase());
+	}
+
+	public JqwikTestEngine(TestRunDatabase database) {
+		this.database = database;
+	}
 
 	@Override
 	public String getId() {

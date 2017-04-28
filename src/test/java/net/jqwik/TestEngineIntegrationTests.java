@@ -1,25 +1,42 @@
 package net.jqwik;
 
-import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
-import static org.mockito.Mockito.*;
-
+import examples.packageWithSeveralContainers.*;
+import examples.packageWithSingleContainer.*;
+import net.jqwik.api.*;
+import net.jqwik.support.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.launcher.*;
 import org.mockito.*;
 
-import examples.packageWithSeveralContainers.*;
-import examples.packageWithSingleContainer.*;
-import net.jqwik.api.*;
-import net.jqwik.support.*;
+import java.io.*;
+import java.nio.file.*;
 
-class TestEngineIntegrationTests {
+import static net.jqwik.matchers.MockitoMatchers.*;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
+import static org.mockito.Mockito.*;
 
-	private final JqwikTestEngine testEngine = new JqwikTestEngine();
-	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
-	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
+class TestEngineIntegrationTests implements AutoCloseable {
+
+	private Path databaseFile;
+	private TestRunDatabase database;
+	private JqwikTestEngine testEngine;
+	private EngineExecutionListener eventRecorder;
+	private UniqueId engineId;
+
+	private TestEngineIntegrationTests() throws IOException {
+		databaseFile = Paths.get(".jqwik-database.test");
+		database = new TestRunDatabase(databaseFile);
+		testEngine = new JqwikTestEngine(database);
+		eventRecorder = Mockito.mock(EngineExecutionListener.class);
+		engineId = UniqueId.forEngine(testEngine.getId());
+	}
+
+	@Override
+	public void close() throws Exception {
+		Files.delete(databaseFile);
+	}
 
 	@Example
 	void runTestsFromRootDir() {
