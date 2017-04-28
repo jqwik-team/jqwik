@@ -28,7 +28,7 @@ public class JqwikTestEngine implements TestEngine {
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
 		try(TestRunRecorder recorder = database.recorder()) {
-			new JqwikExecutor(registry, recorder).execute(request, root);
+			new JqwikExecutor(registry, recorder, database.previousRun()).execute(request, root);
 		}
 	}
 

@@ -1,28 +1,29 @@
 package net.jqwik.execution;
 
-import java.util.function.*;
-import java.util.logging.*;
-
-import org.junit.platform.engine.*;
-
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
 import net.jqwik.recording.*;
+import org.junit.platform.engine.*;
+
+import java.util.function.*;
+import java.util.logging.*;
 
 public class JqwikExecutor {
 
 	private final LifecycleRegistry registry;
 	private final TestRunRecorder recorder;
+	private final TestRunData previousRun;
 	private final PropertyTaskCreator propertyTaskCreator = new PropertyTaskCreator();
 	private final ContainerTaskCreator containerTaskCreator = new ContainerTaskCreator();
 	private final ExecutionTaskCreator childTaskCreator = this::createTask;
 
 	private static final Logger LOG = Logger.getLogger(JqwikExecutor.class.getName());
 
-	public JqwikExecutor(LifecycleRegistry registry, TestRunRecorder recorder) {
+	public JqwikExecutor(LifecycleRegistry registry, TestRunRecorder recorder, TestRunData previousRun) {
 		this.registry = registry;
 		this.recorder = recorder;
+		this.previousRun = previousRun;
 	}
 
 	public void execute(ExecutionRequest request, TestDescriptor descriptor) {
@@ -30,7 +31,12 @@ public class JqwikExecutor {
 		ExecutionPipeline pipeline = new ExecutionPipeline(recordingListener);
 		ExecutionTask mainTask = createTask(descriptor, pipeline);
 		pipeline.submit(mainTask);
+		letNonSuccessfulTestsExecuteFirst(pipeline);
 		pipeline.runToTermination();
+	}
+
+	public void letNonSuccessfulTestsExecuteFirst(ExecutionPipeline pipeline) {
+		previousRun.allNonSuccessfulTests().forEach(testRun -> pipeline.executeFirst(testRun.getUniqueId()));
 	}
 
 	private ExecutionTask createTask(TestDescriptor descriptor, Pipeline pipeline) {

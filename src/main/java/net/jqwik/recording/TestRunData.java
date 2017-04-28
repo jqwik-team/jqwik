@@ -1,8 +1,10 @@
 package net.jqwik.recording;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestExecutionResult.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class TestRunData {
 
@@ -22,5 +24,9 @@ public class TestRunData {
 
 	public Optional<TestRun> byUniqueId(UniqueId uniqueId) {
 		return data.stream().filter(testRun -> testRun.getUniqueId().equals(uniqueId)).findFirst();
+	}
+
+	public Stream<TestRun> allNonSuccessfulTests() {
+		return data.stream().filter(testRun -> testRun.getStatus() != Status.SUCCESSFUL);
 	}
 }
