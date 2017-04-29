@@ -2,6 +2,7 @@ package net.jqwik.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.execution.pipeline.*;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.*;
 class CheckedPropertiesExecutionTests {
 
 	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
-	private final PropertyExecutor executor = new PropertyExecutor();
+	private final PropertyTaskCreator executor = new PropertyTaskCreator();
 	private final ArgumentCaptor<ReportEntry> reportEntryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
 
 	private static int countTries = 0;
@@ -76,7 +77,10 @@ class CheckedPropertiesExecutionTests {
 	}
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
-		executor.execute(propertyMethodDescriptor, eventRecorder, (testInstance) -> new AutoCloseableLifecycle());
+		MockPipeline pipeline = new MockPipeline();
+		ExecutionTask task = executor.createTask(propertyMethodDescriptor, (testInstance) -> new AutoCloseableLifecycle());
+		pipeline.submit(task);
+		pipeline.runWith(eventRecorder);
 	}
 
 	private static class ContainerClass {

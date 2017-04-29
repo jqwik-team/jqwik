@@ -2,6 +2,7 @@ package net.jqwik.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.execution.pipeline.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
@@ -15,7 +16,7 @@ import static org.mockito.Matchers.*;
 class SimplePropertiesExecutionTests {
 
 	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
-	private final PropertyExecutor executor = new PropertyExecutor();
+	private final PropertyTaskCreator executor = new PropertyTaskCreator();
 
 	private static List<String> executions = new ArrayList<>();
 
@@ -109,7 +110,10 @@ class SimplePropertiesExecutionTests {
 	}
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
-		executor.execute(propertyMethodDescriptor, eventRecorder, (testInstance) -> new AutoCloseableLifecycle());
+		MockPipeline pipeline = new MockPipeline();
+		ExecutionTask task = executor.createTask(propertyMethodDescriptor, (testInstance) -> new AutoCloseableLifecycle());
+		pipeline.submit(task);
+		pipeline.runWith(eventRecorder);
 	}
 
 	private static class ContainerClass implements AutoCloseable {

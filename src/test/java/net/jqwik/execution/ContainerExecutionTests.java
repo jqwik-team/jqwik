@@ -2,8 +2,11 @@ package net.jqwik.execution;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.recording.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
+
+import java.util.*;
 
 import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
@@ -89,13 +92,8 @@ class ContainerExecutionTests {
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionStarted(engineDescriptor);
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.class));
-		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"), isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.class));
-		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"));
-		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"),
-			isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class));
 		events.verify(eventRecorder)
@@ -105,10 +103,17 @@ class ContainerExecutionTests {
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.InnerInnerGroup.class),
 			isSuccessful());
 
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.InnerGroup.class, "innerGroupSuccess"),
+													   isSuccessful());
+
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.InnerGroup.class), isSuccessful());
 
 		events.verify(eventRecorder).executionStarted(isClassDescriptorFor(TopLevelContainer.AnotherGroup.class));
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.AnotherGroup.class), isSuccessful());
+
+		events.verify(eventRecorder).executionStarted(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"));
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(TopLevelContainer.class, "topLevelSuccess"), isSuccessful());
 
 		events.verify(eventRecorder).executionFinished(isClassDescriptorFor(TopLevelContainer.class), isSuccessful());
 		events.verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
@@ -116,7 +121,7 @@ class ContainerExecutionTests {
 
 	private void executeTests(TestDescriptor engineDescriptor) {
 		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, eventRecorder, null);
-		new JqwikExecutor(new LifecycleRegistry()).execute(executionRequest, engineDescriptor);
+		new JqwikExecutor(new LifecycleRegistry(), TestRunRecorder.NULL, Collections.emptySet()).execute(executionRequest, engineDescriptor);
 	}
 
 	private static class ContainerClass {

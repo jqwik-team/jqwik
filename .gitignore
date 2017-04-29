@@ -1,3 +1,6 @@
+# Jqwik
+.jqwik-*
+
 # Gradle
 .gradle
 build/

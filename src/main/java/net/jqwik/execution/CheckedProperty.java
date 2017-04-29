@@ -1,5 +1,6 @@
 package net.jqwik.execution;
 
+import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
 import java.lang.reflect.*;
@@ -30,8 +31,7 @@ public class CheckedProperty {
 	}
 
 	public PropertyCheckResult check() {
-		// Long.MIN_VALUE is the default for Property.seed() annotation property
-		long effectiveSeed = randomSeed == Long.MIN_VALUE ? RNG.get().nextLong() : randomSeed;
+		long effectiveSeed = randomSeed == Property.DEFAULT_SEED ? RNG.get().nextLong() : randomSeed;
 		try {
 			return createGenericProperty().check(tries, effectiveSeed);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {

@@ -1,18 +1,21 @@
 package net.jqwik.discovery;
 
 import net.jqwik.support.*;
+import org.junit.platform.commons.*;
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.UniqueId.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.logging.*;
 import java.util.regex.*;
 
+import static java.util.stream.Collectors.*;
+
 public class JqwikUniqueIDs {
 
 	public static final String CONTAINER_SEGMENT_TYPE = "class";
 	public static final String PROPERTY_SEGMENT_TYPE = "property";
-	public static final String SEED_SEGMENT_TYPE = "seed";
 
 	private static final Pattern METHOD_PATTERN = Pattern.compile("(.+)\\((.*)\\)");
 	private static final Logger LOG = Logger.getLogger(JqwikUniqueIDs.class.getName());
@@ -25,7 +28,7 @@ public class JqwikUniqueIDs {
 		return uniqueId.append(CONTAINER_SEGMENT_TYPE, containerClass.getName());
 	}
 
-	public static Optional<Method> findMethodBySegment(UniqueId.Segment segment, Class<?> clazz) {
+	public static Optional<Method> findMethodBySegment(Segment segment, Class<?> clazz) {
 		String methodId = segment.getValue();
 		Matcher matcher = METHOD_PATTERN.matcher(methodId);
 
@@ -45,7 +48,38 @@ public class JqwikUniqueIDs {
 		return uniqueId.append(segmentType, methodId);
 	}
 
-	public static UniqueId appendSeed(UniqueId uniqueId, long seed) {
-		return uniqueId.append(SEED_SEGMENT_TYPE, Long.toString(seed));
+	/**
+	 * UniqueId.toString/parse cannot handle representation of Array types in method string.
+	 * TODO: Remove if bug is fixed in JUnit5 platform
+	 */
+	public static String toString(UniqueId uniqueId) {
+		return uniqueId.getSegments().stream() //
+			.map(segment -> describe(segment)) //
+			.collect(joining(String.valueOf('/')));
 	}
+
+	private static String describe(Segment segment) {
+		return String.format("[%s:%s]", segment.getType(), segment.getValue().replace('[', '{'));
+	}
+
+	/**
+	 * UniqueId.toString/parse cannot handle representation of Array types in method string
+	 * TODO: Remove if bug is fixed in JUnit5 platform
+	 */
+	public static UniqueId parse(String source) throws JUnitException {
+		UniqueId parsedId = UniqueId.parse(source);
+		List<Segment> segments = parsedId.getSegments();
+		Segment root = segments.remove(0);
+		UniqueId id = UniqueId.root(root.getType(), root.getValue());
+		return appendToId(id, segments);
+	}
+
+	private static UniqueId appendToId(UniqueId id, List<Segment> segments) {
+		if (segments.isEmpty())
+			return id;
+		Segment head = segments.remove(0);
+		UniqueId appendedId = id.append(head.getType(), head.getValue().replace('{', '['));
+		return appendToId(appendedId, segments);
+	}
+
 }

@@ -1,8 +1,8 @@
 package examples.packageWithProperties;
 
-import java.util.*;
-
 import net.jqwik.api.*;
+
+import java.util.*;
 
 public class AnnotatedPropertiesTests {
 
@@ -12,7 +12,7 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 10)
-	boolean aListWithNullIntegers(@ForAll @WithNull(value = 0.5) List<Integer> aList) {
+	boolean aListWithNullIntegers(@ForAll @WithNull(value = 0.5, target = Integer.class) List<Integer> aList) {
 		return aList.stream().allMatch(anInt -> anInt != null);
 	}
 

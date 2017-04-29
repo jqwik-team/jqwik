@@ -5,6 +5,10 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
 import static org.mockito.Mockito.*;
 
+import java.io.*;
+import java.util.*;
+import java.util.stream.*;
+
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.launcher.*;
@@ -13,13 +17,37 @@ import org.mockito.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
 import net.jqwik.api.*;
+import net.jqwik.recording.*;
 import net.jqwik.support.*;
 
 class TestEngineIntegrationTests {
 
-	private final JqwikTestEngine testEngine = new JqwikTestEngine();
-	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
-	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
+	private JqwikTestEngine testEngine;
+	private EngineExecutionListener eventRecorder;
+	private UniqueId engineId;
+
+	private TestEngineIntegrationTests() throws IOException {
+		testEngine = new JqwikTestEngine(new TestEngineConfiguration() {
+			@Override
+			public TestRunRecorder recorder() {
+				return testRun -> {
+				};
+			}
+
+			@Override
+			public TestRunData previousRun() {
+				return new TestRunData();
+			}
+
+			@Override
+			public Set<UniqueId> previousFailures() {
+				return Collections.emptySet();
+			}
+
+		});
+		eventRecorder = Mockito.mock(EngineExecutionListener.class);
+		engineId = UniqueId.forEngine(testEngine.getId());
+	}
 
 	@Example
 	void runTestsFromRootDir() {

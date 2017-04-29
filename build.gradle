@@ -40,6 +40,7 @@ junitPlatform {
 			// exclude "jqwik"
 		}
 		packages {
+			// include 'examples.packageWithFailings'
 			exclude 'examples'
 		}
 		// includeClassNamePattern '.*Test'

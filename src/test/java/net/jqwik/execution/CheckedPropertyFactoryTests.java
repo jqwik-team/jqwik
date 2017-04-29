@@ -1,5 +1,6 @@
 package net.jqwik.execution;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import org.junit.platform.engine.*;
@@ -15,7 +16,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void simple() {
-		PropertyMethodDescriptor descriptor = createDescriptor("prop");
+		PropertyMethodDescriptor descriptor = createDescriptor("prop", 42L, 11);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.propertyName).isEqualTo("prop");
@@ -29,13 +30,13 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllFunction.apply(argsTrue)).isTrue();
 		assertThat(property.forAllFunction.apply(argsFalse)).isFalse();
 
-		assertThat(property.randomSeed).isEqualTo(Long.MIN_VALUE);
-		assertThat(property.tries).isEqualTo(1000);
+		assertThat(property.randomSeed).isEqualTo(42);
+		assertThat(property.tries).isEqualTo(11);
 	}
 
 	@Example
 	void withUnboundParams() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams");
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", 42L, 11);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
@@ -46,15 +47,8 @@ public class CheckedPropertyFactoryTests {
 	}
 
 	@Example
-	void withTries() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithTries");
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
-		assertThat(property.tries).isEqualTo(42);
-	}
-
-	@Example
 	void withNoParamsAndVoidResult() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult");
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", 42L, 11);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(0);
@@ -63,17 +57,10 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllFunction.apply(noArgs)).isTrue();
 	}
 
-	@Example
-	void withSeed() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithSeed");
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
-		assertThat(property.randomSeed).isEqualTo(4242);
-	}
-
-	private PropertyMethodDescriptor createDescriptor(String methodName) {
-		UniqueId uniqueId = UniqueId.root("test", "test");
+	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries) {
+		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class);
+		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries);
 	}
 
 	private static class PropertyExamples {

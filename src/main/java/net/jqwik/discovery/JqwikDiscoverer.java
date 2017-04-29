@@ -1,21 +1,29 @@
 package net.jqwik.discovery;
 
-import net.jqwik.discovery.predicates.*;
-import org.junit.platform.commons.support.*;
-import org.junit.platform.commons.util.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.*;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
+import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import static org.junit.platform.commons.support.ReflectionSupport.*;
-import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
+import net.jqwik.recording.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.commons.util.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.*;
+
+import net.jqwik.discovery.predicates.*;
 
 public class JqwikDiscoverer {
 
 	private static final IsScannableContainerClass isScannableTestClass = new IsScannableContainerClass();
+
+	private final TestRunData testRunData;
+
+	public JqwikDiscoverer(TestRunData testRunData) {
+		this.testRunData = testRunData;
+	}
 
 	public void discover(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
 		HierarchicalJavaResolver javaElementsResolver = createHierarchicalResolver(engineDescriptor);
@@ -23,11 +31,11 @@ public class JqwikDiscoverer {
 
 		request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
 			findAllClassesInClasspathRoot(selector.getClasspathRoot(), isScannableTestClass, classNamePredicate)
-				.forEach(javaElementsResolver::resolveClass);
+					.forEach(javaElementsResolver::resolveClass);
 		});
 		request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
 			findAllClassesInPackage(selector.getPackageName(), isScannableTestClass, classNamePredicate)
-				.forEach(javaElementsResolver::resolveClass);
+					.forEach(javaElementsResolver::resolveClass);
 		});
 		request.getSelectorsByType(ClassSelector.class).forEach(selector -> {
 			javaElementsResolver.resolveClass(selector.getJavaClass());
@@ -41,7 +49,8 @@ public class JqwikDiscoverer {
 				// Currently doesn't work due to an error in DefaultLauncher
 				// TODO: Remove as soon as IDEA's fix has been released
 				Predicate<Method> hasCorrectName = method -> method.getName().equals(selector.getMethodName());
-				List<Method> methodWithFittingName = ReflectionSupport.findMethods(selector.getJavaClass(), hasCorrectName, HierarchyTraversalMode.BOTTOM_UP);
+				List<Method> methodWithFittingName = ReflectionSupport.findMethods(selector.getJavaClass(), hasCorrectName,
+						HierarchyTraversalMode.BOTTOM_UP);
 				if (methodWithFittingName.isEmpty())
 					return;
 				testMethod = methodWithFittingName.get(0);
@@ -57,7 +66,7 @@ public class JqwikDiscoverer {
 		Set<ElementResolver> resolvers = new HashSet<>();
 		resolvers.add(new TopLevelContainerResolver());
 		resolvers.add(new GroupContainerResolver());
-		resolvers.add(new PropertyMethodResolver());
+		resolvers.add(new PropertyMethodResolver(testRunData));
 		return new HierarchicalJavaResolver(engineDescriptor, resolvers);
 	}
 

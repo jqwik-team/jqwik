@@ -9,8 +9,10 @@ import java.lang.annotation.*;
 @Documented
 @Testable
 public @interface Property {
-	// TODO: Extract default tries to a better place
-	int tries() default 1000;
+	int DEFAULT_TRIES = 1000;
+	long DEFAULT_SEED = 0L;
 
-	long seed() default Long.MIN_VALUE;
+	int tries() default DEFAULT_TRIES;
+
+	long seed() default DEFAULT_SEED;
 }

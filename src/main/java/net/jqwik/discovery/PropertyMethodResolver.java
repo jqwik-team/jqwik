@@ -1,15 +1,25 @@
 package net.jqwik.discovery;
 
-import net.jqwik.descriptor.*;
-import net.jqwik.discovery.specs.*;
-import org.junit.platform.engine.*;
-
 import java.lang.reflect.*;
 import java.util.*;
+
+import net.jqwik.recording.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.specs.*;
 
 class PropertyMethodResolver implements ElementResolver {
 
 	private final PropertyDiscoverySpec methodSpec = new PropertyDiscoverySpec();
+	private final TestRunData testRunData;
+
+	public PropertyMethodResolver(TestRunData testRunData) {
+		this.testRunData = testRunData;
+	}
 
 	@Override
 	public Set<TestDescriptor> resolveElement(AnnotatedElement element, TestDescriptor parent) {
@@ -65,7 +75,19 @@ class PropertyMethodResolver implements ElementResolver {
 	}
 
 	private TestDescriptor createTestDescriptor(UniqueId uniqueId, Class<?> testClass, Method method) {
-		return new PropertyMethodDescriptor(uniqueId, method, testClass);
+		Property property = AnnotationSupport.findAnnotation(method, Property.class).orElseThrow(() -> {
+			String message = String.format("Method [%s] is not annotated with @Property", method);
+			return new JqwikException(message);
+		});
+		long seed = determineSeed(uniqueId, property.seed());
+		return new PropertyMethodDescriptor(uniqueId, method, testClass, seed, property.tries());
+	}
+
+	private long determineSeed(UniqueId uniqueId, long seedFromProperty) {
+		return testRunData.byUniqueId(uniqueId) //
+						  .filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
+						  .map(testRun -> testRun.getRandomSeed()) //
+						  .orElse(seedFromProperty);
 	}
 
 	private String getSegmentType() {
