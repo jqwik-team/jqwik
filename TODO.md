@@ -17,11 +17,13 @@
   - PerMethodLifeCycle
   - PerCheckLifeCycle
 
-- Parallel test execution
+- Parallel test execution: Does it make sense with non working IntelliJ support?
 
 ### Properties
 
-- Run failing tests first in next test run
+- Shrinking
+  - simple approach first to check mechanism
+  - Internal Shrinking for all Arbitrary classes
 
 - Handle error 
   - if more than one generator applies
