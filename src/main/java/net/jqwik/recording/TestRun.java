@@ -1,12 +1,15 @@
 package net.jqwik.recording;
 
-import net.jqwik.discovery.*;
+import java.io.*;
+
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
-import java.io.*;
+import net.jqwik.discovery.*;
 
 public class TestRun implements Serializable {
+	public static final TestRun NULL = new TestRun(UniqueId.root("no", "value"), Status.FAILED, 0L);
+
 	private final String uniqueIdString;
 	private final int statusOrdinal;
 	private final long randomSeed;

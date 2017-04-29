@@ -1,6 +1,4 @@
-package net.jqwik;
-
-import net.jqwik.recording.*;
+package net.jqwik.recording;
 
 import java.io.*;
 import java.nio.file.*;

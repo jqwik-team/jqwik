@@ -3,13 +3,11 @@
 ### Missing Tests
 
 - Tests for TestRunDatabase
+- Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
 - JqwikExecutor: test that failed tests from previous run are executed first
-- TestRunData
 
 ### General
-
-- Make preempted running of failed tests configurable
 
 - Allow custom names for containers and test methods: @Label
 

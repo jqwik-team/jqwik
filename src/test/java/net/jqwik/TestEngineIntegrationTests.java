@@ -1,41 +1,52 @@
 package net.jqwik;
 
-import examples.packageWithSeveralContainers.*;
-import examples.packageWithSingleContainer.*;
-import net.jqwik.api.*;
-import net.jqwik.support.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.*;
-import org.junit.platform.launcher.*;
-import org.mockito.*;
-
-import java.io.*;
-import java.nio.file.*;
-
 import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
 import static org.mockito.Mockito.*;
 
-class TestEngineIntegrationTests implements AutoCloseable {
+import java.io.*;
+import java.util.*;
+import java.util.stream.*;
 
-	private Path databaseFile;
-	private TestRunDatabase database;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.*;
+import org.junit.platform.launcher.*;
+import org.mockito.*;
+
+import examples.packageWithSeveralContainers.*;
+import examples.packageWithSingleContainer.*;
+import net.jqwik.api.*;
+import net.jqwik.recording.*;
+import net.jqwik.support.*;
+
+class TestEngineIntegrationTests {
+
 	private JqwikTestEngine testEngine;
 	private EngineExecutionListener eventRecorder;
 	private UniqueId engineId;
 
 	private TestEngineIntegrationTests() throws IOException {
-		databaseFile = Paths.get(".jqwik-database.test");
-		database = new TestRunDatabase(databaseFile);
-		testEngine = new JqwikTestEngine(database);
+		testEngine = new JqwikTestEngine(new TestEngineConfiguration() {
+			@Override
+			public TestRunRecorder recorder() {
+				return testRun -> {
+				};
+			}
+
+			@Override
+			public TestRunData previousRun() {
+				return new TestRunData();
+			}
+
+			@Override
+			public Set<UniqueId> previousFailures() {
+				return Collections.emptySet();
+			}
+
+		});
 		eventRecorder = Mockito.mock(EngineExecutionListener.class);
 		engineId = UniqueId.forEngine(testEngine.getId());
-	}
-
-	@Override
-	public void close() throws Exception {
-		Files.delete(databaseFile);
 	}
 
 	@Example

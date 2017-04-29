@@ -6,6 +6,8 @@ import net.jqwik.recording.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
+import java.util.*;
+
 import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.assertj.core.api.Assertions.*;
@@ -119,7 +121,7 @@ class ContainerExecutionTests {
 
 	private void executeTests(TestDescriptor engineDescriptor) {
 		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, eventRecorder, null);
-		new JqwikExecutor(new LifecycleRegistry(), TestRunRecorder.NULL, new TestRunData()).execute(executionRequest, engineDescriptor);
+		new JqwikExecutor(new LifecycleRegistry(), TestRunRecorder.NULL, Collections.emptySet()).execute(executionRequest, engineDescriptor);
 	}
 
 	private static class ContainerClass {
