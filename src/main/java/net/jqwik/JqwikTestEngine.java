@@ -6,6 +6,8 @@ import net.jqwik.execution.*;
 import net.jqwik.recording.*;
 import org.junit.platform.engine.*;
 
+import java.nio.file.*;
+
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
 
@@ -13,7 +15,12 @@ public class JqwikTestEngine implements TestEngine {
 	private final TestRunDatabase database;
 
 	public JqwikTestEngine() {
-		this(new TestRunDatabase());
+		this(createTestRunDatabase());
+	}
+
+	private static TestRunDatabase createTestRunDatabase() {
+		JqwikProperties properties = new JqwikProperties();
+		return new TestRunDatabase(properties.getDatabasePath());
 	}
 
 	public JqwikTestEngine(TestRunDatabase database) {

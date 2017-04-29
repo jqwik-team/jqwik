@@ -15,10 +15,6 @@ public class TestRunDatabase {
 	private final TestRunData previousRunData;
 	private boolean stopRecording = false;
 
-	public TestRunDatabase() {
-		this(Paths.get(".jqwik-database"));
-	}
-
 	public TestRunDatabase(Path databasePath) {
 		this.databasePath = databasePath;
 		this.previousRunData = loadExistingRunData();
