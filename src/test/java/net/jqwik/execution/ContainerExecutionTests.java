@@ -120,8 +120,7 @@ class ContainerExecutionTests {
 	}
 
 	private void executeTests(TestDescriptor engineDescriptor) {
-		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, eventRecorder, null);
-		new JqwikExecutor(new LifecycleRegistry(), TestRunRecorder.NULL, Collections.emptySet()).execute(executionRequest, engineDescriptor);
+		new JqwikExecutor(new LifecycleRegistry(), TestRunRecorder.NULL, Collections.emptySet()).execute(engineDescriptor, eventRecorder);
 	}
 
 	private static class ContainerClass {

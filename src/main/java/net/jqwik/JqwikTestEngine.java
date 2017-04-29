@@ -22,7 +22,7 @@ public class JqwikTestEngine implements TestEngine {
 		return properties.testEngineConfiguration();
 	}
 
-	public JqwikTestEngine(TestEngineConfiguration configuration) {
+	JqwikTestEngine(TestEngineConfiguration configuration) {
 		this.configuration = configuration;
 	}
 
@@ -42,7 +42,7 @@ public class JqwikTestEngine implements TestEngine {
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
 		try (TestRunRecorder recorder = configuration.recorder()) {
-			new JqwikExecutor(registry, recorder, configuration.previousFailures()).execute(request, root);
+			new JqwikExecutor(registry, recorder, configuration.previousFailures()).execute(root, request.getEngineExecutionListener());
 		}
 	}
 

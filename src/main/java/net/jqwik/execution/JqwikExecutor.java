@@ -28,8 +28,8 @@ public class JqwikExecutor {
 		this.previousFailedTests = previousFailedTests;
 	}
 
-	public void execute(ExecutionRequest request, TestDescriptor descriptor) {
-		EngineExecutionListener recordingListener = new RecordingExecutionListener(recorder, request.getEngineExecutionListener());
+	public void execute(TestDescriptor descriptor, EngineExecutionListener engineExecutionListener) {
+		EngineExecutionListener recordingListener = new RecordingExecutionListener(recorder, engineExecutionListener);
 		ExecutionPipeline pipeline = new ExecutionPipeline(recordingListener);
 		ExecutionTask mainTask = createTask(descriptor, pipeline);
 		pipeline.submit(mainTask);

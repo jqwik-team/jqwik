@@ -5,7 +5,6 @@
 - Tests for TestRunDatabase
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
-- JqwikExecutor: test that failed tests from previous run are executed first
 
 ### General
 
