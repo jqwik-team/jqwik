@@ -1,6 +1,7 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
+import org.opentest4j.*;
 
 import java.util.*;
 import java.util.function.*;

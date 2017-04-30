@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import net.jqwik.properties.shrinking.*;
+
 import java.util.*;
 import java.util.function.*;
 
@@ -8,8 +10,8 @@ public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int tries);
 
 	// Not being used yet
-	default List<T> shrink(T value) {
-		return Collections.emptyList();
+	default ShrinkTree<T> shrink(T value) {
+		return ShrinkTree.empty();
 	}
 
 	default Arbitrary<T> filter(Predicate<? super T> predicate) {

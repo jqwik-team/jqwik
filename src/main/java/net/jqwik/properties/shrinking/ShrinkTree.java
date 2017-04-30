@@ -5,6 +5,10 @@ import java.util.stream.*;
 
 public class ShrinkTree<T> implements Iterable<ShrinkValue<T>> {
 
+	public static <T> ShrinkTree<T> empty() {
+		return new ShrinkTree<>();
+	}
+
 	private final List<ShrinkValue<T>> nodes = new ArrayList<>();
 
 	@Override
@@ -19,4 +23,5 @@ public class ShrinkTree<T> implements Iterable<ShrinkValue<T>> {
 	public void add(ShrinkValue<T> shrinkNode) {
 		nodes.add(shrinkNode);
 	}
+
 }
