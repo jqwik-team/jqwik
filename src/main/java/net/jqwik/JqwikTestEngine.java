@@ -18,8 +18,8 @@ public class JqwikTestEngine implements TestEngine {
 	}
 
 	private static TestEngineConfiguration createTestEngineConfiguration() {
-		JqwikProperties properties = new JqwikProperties();
-		return properties.testEngineConfiguration();
+		JqwikConfiguration configuration = new JqwikConfiguration();
+		return configuration.testEngineConfiguration();
 	}
 
 	JqwikTestEngine(TestEngineConfiguration configuration) {

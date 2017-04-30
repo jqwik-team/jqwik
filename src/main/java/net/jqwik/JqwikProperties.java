@@ -1,14 +1,8 @@
 package net.jqwik;
 
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 import java.util.logging.*;
-import java.util.stream.*;
-
-import org.junit.platform.engine.*;
-
-import net.jqwik.recording.*;
 
 public class JqwikProperties {
 
@@ -18,6 +12,19 @@ public class JqwikProperties {
 
 	private String databasePath;
 	private boolean rerunFailuresWithSameSeed;
+
+	public String getDatabasePath() {
+		return databasePath;
+	}
+
+	public boolean rerunFailuresWithSameSeed() {
+		return rerunFailuresWithSameSeed;
+	}
+
+	public boolean runFailuresFirst() {
+		return runFailuresFirst;
+	}
+
 	private boolean runFailuresFirst;
 
 	JqwikProperties() {
@@ -26,34 +33,6 @@ public class JqwikProperties {
 
 	JqwikProperties(String fileName) {
 		loadProperties(fileName);
-	}
-
-	public TestEngineConfiguration testEngineConfiguration() {
-		TestRunDatabase database = new TestRunDatabase(Paths.get(databasePath));
-		TestRunData previousRun = database.previousRun();
-		return new TestEngineConfiguration() {
-			@Override
-			public TestRunRecorder recorder() {
-				if (rerunFailuresWithSameSeed || runFailuresFirst)
-					return database.recorder();
-				return testRun -> {
-				};
-			}
-
-			@Override
-			public TestRunData previousRun() {
-				if (!rerunFailuresWithSameSeed)
-					return new TestRunData();
-				return database.previousRun();
-			}
-
-			@Override
-			public Set<UniqueId> previousFailures() {
-				if (!runFailuresFirst)
-					return Collections.emptySet();
-				return previousRun.allNonSuccessfulTests().map(testRun -> testRun.getUniqueId()).collect(Collectors.toSet());
-			}
-		};
 	}
 
 	private final void loadProperties(String propertiesFileName) {
