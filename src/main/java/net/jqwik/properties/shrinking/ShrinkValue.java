@@ -2,25 +2,25 @@ package net.jqwik.properties.shrinking;
 
 import java.util.*;
 
-public class ShrinkValue<T> implements ShrinkNode<T> {
-	public static <T> ShrinkValue<T> of(T value, int diffFromTarget) {
-		return new ShrinkValue<>(value, diffFromTarget);
+public class ShrinkValue<T> {
+	public static <T> ShrinkValue<T> of(T value, int distanceToTarget) {
+		return new ShrinkValue<>(value, distanceToTarget);
 	}
 
 	private final T value;
-	private final int distancePercentage;
+	private final int distanceToTarget;
 
-	private ShrinkValue(T value, int distancePercentage) {
+	private ShrinkValue(T value, int distanceToTarget) {
 		this.value = value;
-		this.distancePercentage = distancePercentage;
+		this.distanceToTarget = distanceToTarget;
 	}
 
 	public T value() {
 		return value;
 	}
 
-	public int distancePercentage() {
-		return distancePercentage;
+	public int distanceToTarget() {
+		return distanceToTarget;
 	}
 
 	@Override
@@ -28,38 +28,18 @@ public class ShrinkValue<T> implements ShrinkNode<T> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		ShrinkValue<?> that = (ShrinkValue<?>) o;
-		return distancePercentage == that.distancePercentage &&
+		return distanceToTarget == that.distanceToTarget &&
 			Objects.equals(value, that.value);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("ShrinkValue[%s:%d]", value, distancePercentage);
+		return String.format("ShrinkValue[%s:%d]", value, distanceToTarget);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(value, distancePercentage);
+		return Objects.hash(value, distanceToTarget);
 	}
 
-	@Override
-	public Iterator<ShrinkValue<T>> iterator() {
-		return new Iterator<ShrinkValue<T>>() {
-
-			private boolean done = false;
-
-			@Override
-			public boolean hasNext() {
-				return !done;
-			}
-
-			@Override
-			public ShrinkValue<T> next() {
-				if (done)
-					throw new NoSuchElementException();
-				done = true;
-				return ShrinkValue.this;
-			}
-		};
-	}
 }

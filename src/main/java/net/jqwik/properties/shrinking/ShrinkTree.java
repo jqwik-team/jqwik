@@ -3,7 +3,7 @@ package net.jqwik.properties.shrinking;
 import java.util.*;
 import java.util.stream.*;
 
-public class ShrinkTree<T> implements ShrinkNode<T> {
+public class ShrinkTree<T> implements Iterable<ShrinkValue<T>> {
 
 	private final List<ShrinkValue<T>> nodes = new ArrayList<>();
 

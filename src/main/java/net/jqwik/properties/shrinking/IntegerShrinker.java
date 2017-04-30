@@ -15,49 +15,53 @@ public class IntegerShrinker implements Shrinker<Integer> {
 	@Override
 	public ShrinkTree<Integer> shrink(Integer value) {
 		ShrinkTree<Integer> tree = new ShrinkTree<>();
-		addZeroNode(tree);
-		addTowardsMax(value, tree);
-		addTowardsMin(value, tree);
+		Range range = Range.of(min, max);
+		if (!range.includes(value)) {
+			return tree;
+		}
+		if (range.includes(0))
+			addTowardsZero(value, tree);
+		if (!Range.of(value, max).includes(0))
+			addTowardsMax(value, tree);
+		if (!Range.of(value, min).includes(0))
+			addTowardsMin(value, tree);
 		return tree;
 	}
 
 	private void addTowardsMax(Integer value, ShrinkTree<Integer> tree) {
-		IntegerShrinker.shrinkTowardsMax(value, max).forEach(shrinkValue -> tree.add(shrinkValue));
+		shrinkTowards(value, max, tree);
 	}
 
 	private void addTowardsMin(Integer value, ShrinkTree<Integer> tree) {
-		IntegerShrinker.shrinkTowardsMin(value, min).forEach(shrinkValue -> tree.add(shrinkValue));
+		shrinkTowards(value, min, tree);
 	}
 
-	private void addZeroNode(ShrinkTree<Integer> tree) {
-		tree.add(ShrinkValue.of(0, 0));
+	private void addTowardsZero(Integer value, ShrinkTree<Integer> tree) {
+		shrinkTowards(value, 0, tree);
 	}
 
-	private static List<ShrinkValue<Integer>> shrinkTowardsMax(int value, int target) {
+	private void shrinkTowards(Integer value, int target, ShrinkTree<Integer> tree) {
+		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> tree.add(shrinkValue));
+	}
+
+	private static List<ShrinkValue<Integer>> shrinkTowards(int value, int target) {
 		List<ShrinkValue<Integer>> shrinkValues = new ArrayList<>();
 		int current = value;
 		while (Math.abs(current - target) > 1) {
-			// TODO: Get rid of difference with shrinkTowardsMin
-			int delta = (int) Math.ceil((target - current) / 2.0);
-			current = current + delta;
-			int distance = (int) Math.round(Math.abs(((target - current) * 1.0 / (target - value)) * 100.0));
+			current = current + calculateDelta(target, current);
+			int distance = Math.abs(target - current);
 			ShrinkValue<Integer> shrinkValue = ShrinkValue.of(current, distance);
 			shrinkValues.add(shrinkValue);
 		}
+		shrinkValues.add(ShrinkValue.of(target, 0));
 		return shrinkValues;
 	}
 
-	private static List<ShrinkValue<Integer>> shrinkTowardsMin(int value, int target) {
-		List<ShrinkValue<Integer>> shrinkValues = new ArrayList<>();
-		int current = value;
-		while (Math.abs(current - target) > 1) {
-			// TODO: Get rid of difference with shrinkTowardsMax
-			int delta = (int) Math.floor((target - current) / 2.0);
-			current = current + delta;
-			int distance = (int) Math.round(Math.abs(((target - current) * 1.0 / (target - value)) * 100.0));
-			ShrinkValue<Integer> shrinkValue = ShrinkValue.of(current, distance);
-			shrinkValues.add(shrinkValue);
-		}
-		return shrinkValues;
+	private static int calculateDelta(int target, int current) {
+		if (target > current)
+			return (int) Math.ceil((target - current) / 2.0);
+		else
+			return (int) Math.floor((target - current) / 2.0);
 	}
+
 }
