@@ -17,6 +17,8 @@
   - PerMethodLifeCycle
   - PerCheckLifeCycle
 
+- Warn if jqwik tests are annotated with Jupiter/JUnit4 annotations
+
 - Parallel test execution: Does it make sense with non working IntelliJ support?
 
 ### Properties
