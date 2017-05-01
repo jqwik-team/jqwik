@@ -24,6 +24,7 @@
 ### Properties
 
 - Shrinking
+  - Multi parameter shrinking
   - Shrinker for Collections
   - Shrinker for Longs
   - Shrinker for Strings
