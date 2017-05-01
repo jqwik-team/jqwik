@@ -2,7 +2,7 @@ package net.jqwik.properties.shrinking;
 
 import java.util.*;
 
-public class ShrinkResult<T> {
+public class ShrinkResult<T> implements Comparable<ShrinkResult> {
 
 	private final ShrinkValue<T> shrinkValue;
 	private final AssertionError assertionError;
@@ -40,5 +40,15 @@ public class ShrinkResult<T> {
 	@Override
 	public int hashCode() {
 		return Objects.hash(shrinkValue, assertionError);
+	}
+
+	@Override
+	public int compareTo(ShrinkResult other) {
+		return Integer.compare(distanceToTarget(), other.distanceToTarget());
+	}
+
+	@Override
+	public String toString() {
+		return String.format("ShrinkResult[%s:%d:%s]", value(), distanceToTarget(), assertionError);
 	}
 }
