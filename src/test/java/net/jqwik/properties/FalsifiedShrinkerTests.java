@@ -10,7 +10,7 @@ import java.util.function.*;
 
 import static java.util.Arrays.asList;
 
-public class FalsifiedShrinkerTests {
+class FalsifiedShrinkerTests {
 
 	private FalsifiedShrinker shrinker;
 
@@ -25,8 +25,9 @@ public class FalsifiedShrinkerTests {
 		Function<List<Object>, Boolean> alwaysFail = params -> false;
 		shrinker = new FalsifiedShrinker(arbitraries, alwaysFail);
 
-		List<Object> shrinkedParams = shrinker.shrink(asList(42, 43));
+		FalsifiedShrinker.Result shrinkingResult = shrinker.shrink(asList(42, 43), null);
 
-		Assertions.assertThat(shrinkedParams).containsExactly(42, 43);
+		Assertions.assertThat(shrinkingResult.params()).containsExactly(42, 43);
+		Assertions.assertThat(shrinkingResult.error()).isNull();
 	}
 }

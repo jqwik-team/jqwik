@@ -24,8 +24,15 @@
 ### Properties
 
 - Shrinking
-  - simple approach first to check mechanism
-  - Internal Shrinking for all Arbitrary classes
+  - Shrinker for Collections
+  - Shrinker for Longs
+  - Shrinker for Strings
+  - Shrinker for Filters
+  - Shrinker for Maps
+  - Shrinker for Combinators
+  - Shrinker for Arrays
+
+- @ForAll can take `providerClass` parameter (with or without value param)
 
 - Handle error 
   - if more than one generator applies

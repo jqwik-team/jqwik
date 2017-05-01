@@ -30,10 +30,10 @@ public class GenericProperty {
 				countChecks++;
 				boolean check = forAllFunction.apply(params);
 				if (!check) {
-					return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrink(params), null);
+					return shrinkAndCreateCheckResult(seed, countChecks, countTries, params, null);
 				}
 			} catch (AssertionError ae) {
-				return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrink(params), ae);
+				return shrinkAndCreateCheckResult(seed, countChecks, countTries, params, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
@@ -47,9 +47,10 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	private List<Object> shrink(List<Object> params) {
+	public PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Object> params, AssertionError error) {
 		FalsifiedShrinker falsifiedShrinker = new FalsifiedShrinker(arbitraries, forAllFunction);
-		return falsifiedShrinker.shrink(params);
+		FalsifiedShrinker.Result shrinkingResult = falsifiedShrinker.shrink(params, error);
+		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrinkingResult.params(), shrinkingResult.error());
 	}
 
 	private List<Object> generateParameters(List<RandomGenerator> generators, Random random) {

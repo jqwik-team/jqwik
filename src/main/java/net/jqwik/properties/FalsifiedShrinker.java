@@ -13,8 +13,32 @@ public class FalsifiedShrinker {
 		this.forAllFunction = forAllFunction;
 	}
 
-	// TODO: Really shrink the params
-	public List<Object> shrink(List<Object> originalParams) {
-		return originalParams;
+	// TODO: Really shrink the params using arbitraries' shrink method
+	public Result shrink(List<Object> originalParams, AssertionError originalError) {
+		return Result.of(originalParams, originalError);
+	}
+
+	public static class Result {
+
+		public static Result of(List<Object> params, AssertionError assertionError) {
+			return new Result(params, assertionError);
+		}
+
+		private final List<Object> params;
+		private final AssertionError assertionError;
+
+		private Result(List<Object> params, AssertionError assertionError) {
+			this.params = params;
+			this.assertionError = assertionError;
+		}
+
+		public List<Object> params() {
+			return params;
+		}
+
+		public AssertionError error() {
+			return assertionError;
+		}
+
 	}
 }
