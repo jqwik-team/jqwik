@@ -1,27 +1,20 @@
 package net.jqwik.properties.shrinking;
 
 import java.util.*;
-import java.util.stream.*;
 
-public class ShrinkTree<T> implements Iterable<ShrinkValue<T>> {
+public class ShrinkTree<T> {
 
 	public static <T> ShrinkTree<T> empty() {
 		return new ShrinkTree<>();
 	}
 
-	private final List<ShrinkValue<T>> nodes = new ArrayList<>();
+	private final List<List<ShrinkValue<T>>> routes = new ArrayList<>();
 
-	@Override
-	public Iterator<ShrinkValue<T>> iterator() {
-		return nodes.iterator();
+	public void addRoute(List<ShrinkValue<T>> route) {
+		routes.add(route);
 	}
 
-	public Stream<ShrinkValue<T>> stream() {
-		return StreamSupport.stream(this.spliterator(), false);
+	public List<List<ShrinkValue<T>>> shrinkingRoutes() {
+		return routes;
 	}
-
-	public void add(ShrinkValue<T> shrinkNode) {
-		nodes.add(shrinkNode);
-	}
-
 }

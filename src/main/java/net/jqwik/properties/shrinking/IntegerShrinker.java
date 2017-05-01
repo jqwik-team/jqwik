@@ -19,7 +19,7 @@ public class IntegerShrinker implements Shrinker<Integer> {
 		if (!range.includes(value)) {
 			return tree;
 		}
-		if (range.includes(0))
+		if (range.includes(0) && value != 0)
 			addTowardsZero(value, tree);
 		if (!Range.of(value, max).includes(0))
 			addTowardsMax(value, tree);
@@ -29,19 +29,21 @@ public class IntegerShrinker implements Shrinker<Integer> {
 	}
 
 	private void addTowardsMax(Integer value, ShrinkTree<Integer> tree) {
-		shrinkTowards(value, max, tree);
+		tree.addRoute(routeTowards(value, max));
 	}
 
 	private void addTowardsMin(Integer value, ShrinkTree<Integer> tree) {
-		shrinkTowards(value, min, tree);
+		tree.addRoute(routeTowards(value, min));
 	}
 
 	private void addTowardsZero(Integer value, ShrinkTree<Integer> tree) {
-		shrinkTowards(value, 0, tree);
+		tree.addRoute(routeTowards(value, 0));
 	}
 
-	private void shrinkTowards(Integer value, int target, ShrinkTree<Integer> tree) {
-		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> tree.add(shrinkValue));
+	private List<ShrinkValue<Integer>> routeTowards(Integer value, int target) {
+		List<ShrinkValue<Integer>> route = new ArrayList<>();
+		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> route.add(shrinkValue));
+		return route;
 	}
 
 	private static List<ShrinkValue<Integer>> shrinkTowards(int value, int target) {
