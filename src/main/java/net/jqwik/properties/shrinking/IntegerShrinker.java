@@ -40,8 +40,8 @@ public class IntegerShrinker implements Shrinker<Integer> {
 		tree.addRoute(routeTowards(value, 0));
 	}
 
-	private List<ShrinkValue<Integer>> routeTowards(Integer value, int target) {
-		List<ShrinkValue<Integer>> route = new ArrayList<>();
+	private List<Falsifiable<Integer>> routeTowards(Integer value, int target) {
+		List<Falsifiable<Integer>> route = new ArrayList<>();
 		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> route.add(shrinkValue));
 		return route;
 	}

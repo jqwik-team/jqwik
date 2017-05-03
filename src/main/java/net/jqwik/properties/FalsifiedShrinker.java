@@ -32,14 +32,11 @@ public class FalsifiedShrinker {
 		Object currentParam = lastFalsifiedParams.get(position);
 		Predicate<Object> falsifier = createFalsifierForPosition(position, lastFalsifiedParams);
 		ShrinkTree<Object> shrinkTree = currentArbitrary.shrink(currentParam);
-		List<ShrinkResult<Object>> shrinkResults = shrinkTree.falsify(falsifier);
-		shrinkResults.stream() //
-			.sorted(Comparator.naturalOrder()) //
-			.findFirst() //
-			.ifPresent(shrinkResult -> {
-				lastFalsifiedParams.set(position, shrinkResult.value());
-				shrinkResult.error().ifPresent(ae -> lastFalsifiedError[0] = ae);
-			});
+		Optional<ShrinkResult<Object>> shrinkResults = shrinkTree.falsify(falsifier);
+		shrinkResults.ifPresent(shrinkResult -> {
+			lastFalsifiedParams.set(position, shrinkResult.value());
+			shrinkResult.error().ifPresent(ae -> lastFalsifiedError[0] = ae);
+		});
 	}
 
 	private Predicate<Object> createFalsifierForPosition(int position, List<Object> lastFalsifiedParams) {

@@ -1,8 +1,9 @@
 package net.jqwik.properties.shrinking;
 
 import java.util.*;
+import java.util.function.*;
 
-public class ShrinkValue<T> {
+public class ShrinkValue<T> implements Falsifiable<T> {
 	public static <T> ShrinkValue<T> of(T value, int distanceToTarget) {
 		return new ShrinkValue<>(value, distanceToTarget);
 	}
@@ -42,4 +43,16 @@ public class ShrinkValue<T> {
 		return Objects.hash(value, distanceToTarget);
 	}
 
+	@Override
+	public Optional<ShrinkResult<T>> falsify(Predicate<T> falsifier) {
+		try {
+			if (falsifier.test(value()))
+				return Optional.empty();
+			return Optional.of(ShrinkResult.of(this, null));
+		} catch (AssertionError assertionError) {
+			return Optional.of(ShrinkResult.of(this, assertionError));
+		} catch (Throwable any) {
+			return Optional.empty();
+		}
+	}
 }

@@ -107,9 +107,9 @@ class FalsifiedShrinkerTests {
 		};
 	}
 
-	private ShrinkTree<Integer> aShrinkTree(List<ShrinkValue<Integer>>... routes) {
+	private ShrinkTree<Integer> aShrinkTree(List<Falsifiable<Integer>>... routes) {
 		ShrinkTree<Integer> tree = new ShrinkTree<>();
-		for (List<ShrinkValue<Integer>> route : routes) {
+		for (List<Falsifiable<Integer>> route : routes) {
 			tree.addRoute(route);
 		}
 		return tree;

@@ -2,54 +2,43 @@ package net.jqwik.properties.shrinking;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
-public class ShrinkTree<T> {
+public class ShrinkTree<T> implements Falsifiable<T> {
 
 	public static <T> ShrinkTree<T> empty() {
 		return new ShrinkTree<>();
 	}
 
-	private final List<List<ShrinkValue<T>>> routes = new ArrayList<>();
+	private final List<List<Falsifiable<T>>> routes = new ArrayList<>();
 
-	public void addRoute(List<ShrinkValue<T>> route) {
+	public void addRoute(List<Falsifiable<T>> route) {
 		routes.add(route);
 	}
 
-	public List<List<ShrinkValue<T>>> shrinkingRoutes() {
+	public List<List<Falsifiable<T>>> shrinkingRoutes() {
 		return routes;
 	}
 
-	public List<ShrinkResult<T>> falsify(Predicate<T> falsifier) {
+	public Optional<ShrinkResult<T>> falsify(Predicate<T> falsifier) {
 		return routes.stream() //
 			.map(route -> shrinkRoute(route, falsifier)) //
 			.filter(Optional::isPresent) //
 			.map(Optional::get) //
-			.collect(Collectors.toList());
+			.sorted(Comparator.naturalOrder()) //
+			.findFirst();
 	}
 
-	public Optional<ShrinkResult<T>> shrinkRoute(List<ShrinkValue<T>> route, Predicate<T> falsifier) {
-		ShrinkResult<T> lastFalsified = null;
-		for (ShrinkValue<T> shrinkValue : route) {
-			ShrinkResult<T> shrinkResult = falsify(shrinkValue, falsifier);
-			if (shrinkResult != null) {
+	private Optional<ShrinkResult<T>> shrinkRoute(List<Falsifiable<T>> route, Predicate<T> falsifier) {
+		Optional<ShrinkResult<T>> lastFalsified = Optional.empty();
+		for (Falsifiable<T> shrinkValue : route) {
+			Optional<ShrinkResult<T>> shrinkResult = shrinkValue.falsify(falsifier);
+			if (shrinkResult.isPresent()) {
 				lastFalsified = shrinkResult;
 			} else {
 				break;
 			}
 		}
-		return Optional.ofNullable(lastFalsified);
+		return lastFalsified;
 	}
 
-	private ShrinkResult<T> falsify(ShrinkValue<T> shrinkValue, Predicate<T> falsifier) {
-		try {
-			if (falsifier.test(shrinkValue.value()))
-				return null;
-			return ShrinkResult.of(shrinkValue, null);
-		} catch (AssertionError assertionError) {
-			return ShrinkResult.of(shrinkValue, assertionError);
-		} catch (Throwable any) {
-			return null;
-		}
-	}
 }

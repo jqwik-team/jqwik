@@ -13,11 +13,11 @@ class ShrinkTreeTests {
 
 	@Example
 	void addingRoutes() {
-		List<ShrinkValue<String>> route1 = route(
+		List<Falsifiable<String>> route1 = route(
 			ShrinkValue.of("aa", 2),
 			ShrinkValue.of("a", 0)
 		);
-		List<ShrinkValue<String>> route2 = route(
+		List<Falsifiable<String>> route2 = route(
 			ShrinkValue.of("", 0)
 		);
 
@@ -44,7 +44,7 @@ class ShrinkTreeTests {
 			ShrinkValue.of("a", 1),
 			ShrinkValue.of("", 0)
 		));
-		assertThat(shrinkTree.falsify(falsifier)).containsExactly(
+		assertThat(shrinkTree.falsify(falsifier).get()).isEqualTo(
 			ShrinkResult.of(ShrinkValue.of("a", 1), null)
 		);
 	}
@@ -63,7 +63,7 @@ class ShrinkTreeTests {
 			ShrinkValue.of("a", 1),
 			ShrinkValue.of("", 0)
 		));
-		assertThat(shrinkTree.falsify(falsifier)).containsExactly(
+		assertThat(shrinkTree.falsify(falsifier).get()).isEqualTo(
 			ShrinkResult.of(ShrinkValue.of("a", 1), assertionError)
 		);
 	}
@@ -87,9 +87,8 @@ class ShrinkTreeTests {
 			ShrinkValue.of("", 0)
 		));
 
-		assertThat(shrinkTree.falsify(falsifier)).containsExactly(
-			ShrinkResult.of(ShrinkValue.of("a", 1), null),
-			ShrinkResult.of(ShrinkValue.of("b", 1), null)
+		assertThat(shrinkTree.falsify(falsifier).get()).isEqualTo(
+			ShrinkResult.of(ShrinkValue.of("a", 1), null)
 		);
 	}
 
@@ -107,7 +106,7 @@ class ShrinkTreeTests {
 		assertThat(shrinkTree.falsify(falsifier)).isEmpty();
 	}
 
-	private List<ShrinkValue<String>> route(ShrinkValue<String>... values) {
+	private List<Falsifiable<String>> route(Falsifiable<String>... values) {
 		return Arrays.asList(values);
 	}
 }
