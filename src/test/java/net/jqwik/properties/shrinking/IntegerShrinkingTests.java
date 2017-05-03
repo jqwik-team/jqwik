@@ -118,5 +118,47 @@ class IntegerShrinkingTests {
 		);
 	}
 
+	@Example
+	void unconstrainedMaxShrinksOnlyTowards0() {
+
+		Shrinker<Integer> shrinker = Shrinkers.range(0, Integer.MAX_VALUE);
+		ShrinkTree<Integer> positiveShrinkTree = shrinker.shrink(150);
+
+		List<List<ShrinkValue<Integer>>> routes = positiveShrinkTree.shrinkingRoutes();
+		assertThat(routes).hasSize(1);
+		assertThat(routes.get(0)).containsExactly(
+			ShrinkValue.of(75, 75),
+			ShrinkValue.of(37, 37),
+			ShrinkValue.of(18, 18),
+			ShrinkValue.of(9, 9),
+			ShrinkValue.of(4, 4),
+			ShrinkValue.of(2, 2),
+			ShrinkValue.of(1, 1),
+			ShrinkValue.of(0, 0)
+		);
+	}
+
+	@Example
+	void unconstrainedMinShrinksOnlyTowards0() {
+
+		Shrinker<Integer> shrinker = Shrinkers.range(Integer.MIN_VALUE, 0);
+		ShrinkTree<Integer> positiveShrinkTree = shrinker.shrink(-150);
+
+		List<List<ShrinkValue<Integer>>> routes = positiveShrinkTree.shrinkingRoutes();
+		assertThat(routes).hasSize(1);
+		assertThat(routes.get(0)).containsExactly(
+			ShrinkValue.of(-75, 75),
+			ShrinkValue.of(-37, 37),
+			ShrinkValue.of(-18, 18),
+			ShrinkValue.of(-9, 9),
+			ShrinkValue.of(-4, 4),
+			ShrinkValue.of(-2, 2),
+			ShrinkValue.of(-1, 1),
+			ShrinkValue.of(0, 0)
+		);
+	}
+
+
+
 
 }

@@ -21,9 +21,9 @@ public class IntegerShrinker implements Shrinker<Integer> {
 		}
 		if (range.includes(0) && value != 0)
 			addTowardsZero(value, tree);
-		if (!Range.of(value, max).includes(0))
+		if (!Range.of(value, max).includes(0) && max != Integer.MAX_VALUE)
 			addTowardsMax(value, tree);
-		if (!Range.of(value, min).includes(0))
+		if (!Range.of(value, min).includes(0) && min != Integer.MIN_VALUE)
 			addTowardsMin(value, tree);
 		return tree;
 	}
