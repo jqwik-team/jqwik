@@ -30,7 +30,9 @@ public class IntegerArbitrary extends NullableArbitrary<Integer> {
 
 	@Override
 	public Shrinkable<Integer> shrinkableFor(Integer value) {
-		return new IntegerShrinker(min, max).shrink(value);
+		int shrinkingMin = this.min != 0 ? this.min : Integer.MIN_VALUE;
+		int shrinkingMax = this.max != 0 ? this.min : Integer.MAX_VALUE;
+		return new IntegerShrinker(shrinkingMin, shrinkingMax).shrink(value);
 	}
 
 	public void configure(IntRange intRange) {

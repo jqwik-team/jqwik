@@ -5,8 +5,8 @@ import net.jqwik.api.*;
 public class ShrinkingExamples {
 
 	@Property
-	boolean shrinkSingleIntegerTo99(@ForAll @IntRange(min = 1, max = 100) int anInt) {
-		return anInt < 98;
+	boolean shrinkSingleIntegerTo1(@ForAll int anInt) {
+		return anInt <= 0;
 	}
 
 	@Property
