@@ -18,9 +18,9 @@ class FalsifiedShrinkerTests {
 	@Example
 	void ifShrinkerDoesntProvideAnythingOriginalParametersAreReturned() {
 		Arbitrary<Integer> a1 = Mockito.mock(Arbitrary.class);
-		Mockito.when(a1.shrinkableFor(1111)).thenReturn(ShrinkTree.empty());
+		Mockito.when(a1.shrinkableFor(1111)).thenReturn(ShrinkableChoice.empty());
 		Arbitrary<Integer> a2 = Mockito.mock(Arbitrary.class);
-		Mockito.when(a2.shrinkableFor(2222)).thenReturn(ShrinkTree.empty());
+		Mockito.when(a2.shrinkableFor(2222)).thenReturn(ShrinkableChoice.empty());
 		List<Arbitrary> arbitraries = asList(a1, a2);
 
 		shrinker = new FalsifiedShrinker(arbitraries, params -> false);
@@ -33,12 +33,12 @@ class FalsifiedShrinkerTests {
 	@Example
 	void shrinkingSingleParameterWillChooseValueWithLowestDistanceToTarget() {
 		Arbitrary<Integer> integerArbitrary = Mockito.mock(Arbitrary.class);
-		ShrinkTree<Integer> shrinkTree = aShrinkTree(asList(
-			ShrinkValue.of(2, 2),
-			ShrinkValue.of(1, 1),
-			ShrinkValue.of(0, 0)
+		ShrinkableChoice<Integer> shrinkTree = aShrinkTree(asList(
+			ShrinkableValue.of(2, 2),
+			ShrinkableValue.of(1, 1),
+			ShrinkableValue.of(0, 0)
 		), asList(
-			ShrinkValue.of(100, 2)
+			ShrinkableValue.of(100, 2)
 		));
 		Mockito.when(integerArbitrary.shrinkableFor(42)).thenReturn(shrinkTree);
 
@@ -56,8 +56,8 @@ class FalsifiedShrinkerTests {
 	@Example
 	void assertionErrorDuringShrinkingIsPresentInResult() {
 		Arbitrary<Integer> integerArbitrary = Mockito.mock(Arbitrary.class);
-		ShrinkTree<Integer> shrinkTree = aShrinkTree(asList(
-			ShrinkValue.of(99, 0)
+		ShrinkableChoice<Integer> shrinkTree = aShrinkTree(asList(
+			ShrinkableValue.of(99, 0)
 		));
 		Mockito.when(integerArbitrary.shrinkableFor(42)).thenReturn(shrinkTree);
 
@@ -78,15 +78,15 @@ class FalsifiedShrinkerTests {
 	void severalParametersWillBeShrinkedFirstToLast() {
 		Arbitrary<Integer> a1 = Mockito.mock(Arbitrary.class);
 		Mockito.when(a1.shrinkableFor(1111)).thenReturn(aShrinkTree(asList(
-			ShrinkValue.of(2, 2),
-			ShrinkValue.of(1, 1),
-			ShrinkValue.of(0, 0)
+			ShrinkableValue.of(2, 2),
+			ShrinkableValue.of(1, 1),
+			ShrinkableValue.of(0, 0)
 		)));
 		Arbitrary<Integer> a2 = Mockito.mock(Arbitrary.class);
 		Mockito.when(a2.shrinkableFor(2222)).thenReturn(aShrinkTree(asList(
-			ShrinkValue.of(2, 2),
-			ShrinkValue.of(1, 1),
-			ShrinkValue.of(0, 0)
+			ShrinkableValue.of(2, 2),
+			ShrinkableValue.of(1, 1),
+			ShrinkableValue.of(0, 0)
 		)));
 		List<Arbitrary> arbitraries = asList(a1, a2);
 
@@ -107,10 +107,10 @@ class FalsifiedShrinkerTests {
 		};
 	}
 
-	private ShrinkTree<Integer> aShrinkTree(List<Shrinkable<Integer>>... routes) {
-		ShrinkTree<Integer> tree = new ShrinkTree<>();
+	private ShrinkableChoice<Integer> aShrinkTree(List<Shrinkable<Integer>>... routes) {
+		ShrinkableChoice<Integer> tree = new ShrinkableChoice<>();
 		for (List<Shrinkable<Integer>> route : routes) {
-			tree.addRoute(route);
+			tree.addChoice(route);
 		}
 		return tree;
 	}

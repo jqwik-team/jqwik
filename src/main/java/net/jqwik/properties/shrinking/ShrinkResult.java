@@ -4,14 +4,14 @@ import java.util.*;
 
 public class ShrinkResult<T> implements Comparable<ShrinkResult> {
 
-	private final ShrinkValue<T> shrinkValue;
+	private final ShrinkableValue<T> shrinkValue;
 	private final AssertionError assertionError;
 
-	public static<T> ShrinkResult<T> of(ShrinkValue<T> shrinkValue, AssertionError assertionError) {
+	public static<T> ShrinkResult<T> of(ShrinkableValue<T> shrinkValue, AssertionError assertionError) {
 		return new ShrinkResult<T>(shrinkValue, assertionError);
 	}
 
-	private ShrinkResult(ShrinkValue<T> shrinkValue, AssertionError assertionError) {
+	private ShrinkResult(ShrinkableValue<T> shrinkValue, AssertionError assertionError) {
 		this.shrinkValue = shrinkValue;
 		this.assertionError = assertionError;
 	}

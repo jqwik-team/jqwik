@@ -14,7 +14,7 @@ public class IntegerShrinker implements Shrinker<Integer> {
 
 	@Override
 	public Shrinkable<Integer> shrink(Integer value) {
-		ShrinkTree<Integer> tree = new ShrinkTree<>();
+		ShrinkableChoice<Integer> tree = new ShrinkableChoice<>();
 		Range range = Range.of(min, max);
 		if (!range.includes(value)) {
 			return tree;
@@ -28,16 +28,16 @@ public class IntegerShrinker implements Shrinker<Integer> {
 		return tree;
 	}
 
-	private void addTowardsMax(Integer value, ShrinkTree<Integer> tree) {
-		tree.addRoute(routeTowards(value, max));
+	private void addTowardsMax(Integer value, ShrinkableChoice<Integer> tree) {
+		tree.addChoice(routeTowards(value, max));
 	}
 
-	private void addTowardsMin(Integer value, ShrinkTree<Integer> tree) {
-		tree.addRoute(routeTowards(value, min));
+	private void addTowardsMin(Integer value, ShrinkableChoice<Integer> tree) {
+		tree.addChoice(routeTowards(value, min));
 	}
 
-	private void addTowardsZero(Integer value, ShrinkTree<Integer> tree) {
-		tree.addRoute(routeTowards(value, 0));
+	private void addTowardsZero(Integer value, ShrinkableChoice<Integer> tree) {
+		tree.addChoice(routeTowards(value, 0));
 	}
 
 	private List<Shrinkable<Integer>> routeTowards(Integer value, int target) {
@@ -46,16 +46,16 @@ public class IntegerShrinker implements Shrinker<Integer> {
 		return route;
 	}
 
-	private static List<ShrinkValue<Integer>> shrinkTowards(int value, int target) {
-		List<ShrinkValue<Integer>> shrinkValues = new ArrayList<>();
+	private static List<ShrinkableValue<Integer>> shrinkTowards(int value, int target) {
+		List<ShrinkableValue<Integer>> shrinkValues = new ArrayList<>();
 		int current = value;
 		while (Math.abs(current - target) > 1) {
 			current = current + calculateDelta(target, current);
 			int distance = Math.abs(target - current);
-			ShrinkValue<Integer> shrinkValue = ShrinkValue.of(current, distance);
+			ShrinkableValue<Integer> shrinkValue = ShrinkableValue.of(current, distance);
 			shrinkValues.add(shrinkValue);
 		}
-		shrinkValues.add(ShrinkValue.of(target, 0));
+		shrinkValues.add(ShrinkableValue.of(target, 0));
 		return shrinkValues;
 	}
 

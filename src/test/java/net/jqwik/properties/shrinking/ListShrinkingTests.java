@@ -11,9 +11,9 @@ public class ListShrinkingTests {
 	@Example
 	void shrinkFromEmptyListReturnsNothing() {
 		Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerShrinker(-5, 5));
-		ShrinkTree<List<Integer>> shrinkTree = (ShrinkTree<List<Integer>>) shrinker.shrink(Collections.emptyList());
+		ShrinkableChoice<List<Integer>> shrinkTree = (ShrinkableChoice<List<Integer>>) shrinker.shrink(Collections.emptyList());
 
-		assertThat(shrinkTree.shrinkingRoutes()).hasSize(0);
+		assertThat(shrinkTree.routes()).hasSize(0);
 	}
 
 //	@Example

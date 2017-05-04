@@ -9,24 +9,24 @@ import static org.assertj.core.api.Assertions.*;
 
 class ShrinkTreeTests {
 
-	private ShrinkTree<String> shrinkTree = new ShrinkTree<>();
+	private ShrinkableChoice<String> shrinkTree = new ShrinkableChoice<>();
 
 	@Example
 	void addingRoutes() {
 		List<Shrinkable<String>> route1 = route(
-			ShrinkValue.of("aa", 2),
-			ShrinkValue.of("a", 0)
+			ShrinkableValue.of("aa", 2),
+			ShrinkableValue.of("a", 0)
 		);
 		List<Shrinkable<String>> route2 = route(
-			ShrinkValue.of("", 0)
+			ShrinkableValue.of("", 0)
 		);
 
-		shrinkTree.addRoute(route1);
-		shrinkTree.addRoute(route2);
+		shrinkTree.addChoice(route1);
+		shrinkTree.addChoice(route2);
 
-		assertThat(shrinkTree.shrinkingRoutes()).hasSize(2);
-		assertThat(shrinkTree.shrinkingRoutes().get(0)).hasSize(2);
-		assertThat(shrinkTree.shrinkingRoutes().get(1)).hasSize(1);
+		assertThat(shrinkTree.routes()).hasSize(2);
+		assertThat(shrinkTree.routes().get(0)).hasSize(2);
+		assertThat(shrinkTree.routes().get(1)).hasSize(1);
 	}
 
 	@Example
@@ -38,14 +38,14 @@ class ShrinkTreeTests {
 	@Example
 	void treeWithSingleRouteFalsifiesToLastValueThatEvaluatesToFalse() {
 		Predicate<String> falsifier = value -> value.isEmpty();
-		shrinkTree.addRoute(route(
-			ShrinkValue.of("aaa", 3),
-			ShrinkValue.of("aa", 2),
-			ShrinkValue.of("a", 1),
-			ShrinkValue.of("", 0)
+		shrinkTree.addChoice(route(
+			ShrinkableValue.of("aaa", 3),
+			ShrinkableValue.of("aa", 2),
+			ShrinkableValue.of("a", 1),
+			ShrinkableValue.of("", 0)
 		));
 		assertThat(shrinkTree.shrink(falsifier).get()).isEqualTo(
-			ShrinkResult.of(ShrinkValue.of("a", 1), null)
+			ShrinkResult.of(ShrinkableValue.of("a", 1), null)
 		);
 	}
 
@@ -57,38 +57,38 @@ class ShrinkTreeTests {
 				throw assertionError;
 			return true;
 		};
-		shrinkTree.addRoute(route(
-			ShrinkValue.of("aaa", 3),
-			ShrinkValue.of("aa", 2),
-			ShrinkValue.of("a", 1),
-			ShrinkValue.of("", 0)
+		shrinkTree.addChoice(route(
+			ShrinkableValue.of("aaa", 3),
+			ShrinkableValue.of("aa", 2),
+			ShrinkableValue.of("a", 1),
+			ShrinkableValue.of("", 0)
 		));
 		assertThat(shrinkTree.shrink(falsifier).get()).isEqualTo(
-			ShrinkResult.of(ShrinkValue.of("a", 1), assertionError)
+			ShrinkResult.of(ShrinkableValue.of("a", 1), assertionError)
 		);
 	}
 
 	@Example
 	void treeWithSeveralRouteFalsifiesToAllFalsifyingLastValues() {
 		Predicate<String> falsifier = value -> value.isEmpty();
-		shrinkTree.addRoute(route(
-			ShrinkValue.of("aaa", 3),
-			ShrinkValue.of("aa", 2),
-			ShrinkValue.of("a", 1),
-			ShrinkValue.of("", 0)
+		shrinkTree.addChoice(route(
+			ShrinkableValue.of("aaa", 3),
+			ShrinkableValue.of("aa", 2),
+			ShrinkableValue.of("a", 1),
+			ShrinkableValue.of("", 0)
 		));
-		shrinkTree.addRoute(route(
-			ShrinkValue.of("bbb", 3),
-			ShrinkValue.of("bb", 2),
-			ShrinkValue.of("b", 1),
-			ShrinkValue.of("", 0)
+		shrinkTree.addChoice(route(
+			ShrinkableValue.of("bbb", 3),
+			ShrinkableValue.of("bb", 2),
+			ShrinkableValue.of("b", 1),
+			ShrinkableValue.of("", 0)
 		));
-		shrinkTree.addRoute(route(
-			ShrinkValue.of("", 0)
+		shrinkTree.addChoice(route(
+			ShrinkableValue.of("", 0)
 		));
 
 		assertThat(shrinkTree.shrink(falsifier).get()).isEqualTo(
-			ShrinkResult.of(ShrinkValue.of("a", 1), null)
+			ShrinkResult.of(ShrinkableValue.of("a", 1), null)
 		);
 	}
 
@@ -97,11 +97,11 @@ class ShrinkTreeTests {
 		Predicate<String> falsifier = value -> {
 			throw new RuntimeException();
 		};
-		shrinkTree.addRoute(route(
-			ShrinkValue.of("aaa", 3),
-			ShrinkValue.of("aa", 2),
-			ShrinkValue.of("a", 1),
-			ShrinkValue.of("", 0)
+		shrinkTree.addChoice(route(
+			ShrinkableValue.of("aaa", 3),
+			ShrinkableValue.of("aa", 2),
+			ShrinkableValue.of("a", 1),
+			ShrinkableValue.of("", 0)
 		));
 		assertThat(shrinkTree.shrink(falsifier)).isEmpty();
 	}

@@ -3,15 +3,15 @@ package net.jqwik.properties.shrinking;
 import java.util.*;
 import java.util.function.*;
 
-public class ShrinkValue<T> implements Shrinkable<T> {
-	public static <T> ShrinkValue<T> of(T value, int distanceToTarget) {
-		return new ShrinkValue<>(value, distanceToTarget);
+public class ShrinkableValue<T> implements Shrinkable<T> {
+	public static <T> ShrinkableValue<T> of(T value, int distanceToTarget) {
+		return new ShrinkableValue<>(value, distanceToTarget);
 	}
 
 	private final T value;
 	private final int distanceToTarget;
 
-	private ShrinkValue(T value, int distanceToTarget) {
+	private ShrinkableValue(T value, int distanceToTarget) {
 		this.value = value;
 		this.distanceToTarget = distanceToTarget;
 	}
@@ -28,7 +28,7 @@ public class ShrinkValue<T> implements Shrinkable<T> {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		ShrinkValue<?> that = (ShrinkValue<?>) o;
+		ShrinkableValue<?> that = (ShrinkableValue<?>) o;
 		return distanceToTarget == that.distanceToTarget &&
 			Objects.equals(value, that.value);
 	}
