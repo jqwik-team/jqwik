@@ -9,7 +9,7 @@ public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int tries);
 
 	default Shrinkable<T> shrinkableFor(T value) {
-		return ShrinkableChoice.empty();
+		return Shrinkable.empty();
 	}
 
 	default Arbitrary<T> filter(Predicate<? super T> predicate) {
