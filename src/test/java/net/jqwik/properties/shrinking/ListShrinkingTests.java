@@ -13,7 +13,7 @@ public class ListShrinkingTests {
 		Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerShrinker(-5, 5));
 		ShrinkableChoice<List<Integer>> shrinkTree = (ShrinkableChoice<List<Integer>>) shrinker.shrink(Collections.emptyList());
 
-		assertThat(shrinkTree.routes()).hasSize(0);
+		assertThat(shrinkTree.choices()).hasSize(0);
 	}
 
 //	@Example

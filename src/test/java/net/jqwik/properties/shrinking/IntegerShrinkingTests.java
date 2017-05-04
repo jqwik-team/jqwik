@@ -13,7 +13,7 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(-10, 10);
 		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(0);
 
-		assertThat(shrinkTree.routes()).hasSize(0);
+		assertThat(shrinkTree.choices()).hasSize(0);
 	}
 
 	@Example
@@ -21,7 +21,7 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(-10, 10);
 		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(20);
 
-		assertThat(shrinkTree.routes()).hasSize(0);
+		assertThat(shrinkTree.choices()).hasSize(0);
 	}
 
 	@Example
@@ -30,14 +30,14 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(0, 20);
 		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(5);
 
-		List<List<Shrinkable<Integer>>> routes = shrinkTree.routes();
-		assertThat(routes).hasSize(2);
-		assertThat(routes.get(0)).containsExactly(
+		List<Shrinkable<Integer>> choices = shrinkTree.choices();
+		assertThat(choices).hasSize(2);
+		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
 			ShrinkableValue.of(2, 2),
 			ShrinkableValue.of(1, 1),
 			ShrinkableValue.of(0, 0)
 		);
-		assertThat(routes.get(1)).containsExactly(
+		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
 			ShrinkableValue.of(13, 7),
 			ShrinkableValue.of(17, 3),
 			ShrinkableValue.of(19, 1),
@@ -51,14 +51,14 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(-20, 0);
 		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(-5);
 
-		List<List<Shrinkable<Integer>>> routes = shrinkTree.routes();
-		assertThat(routes).hasSize(2);
-		assertThat(routes.get(0)).containsExactly(
+		List<Shrinkable<Integer>> choices = shrinkTree.choices();
+		assertThat(choices).hasSize(2);
+		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
 			ShrinkableValue.of(-2, 2),
 			ShrinkableValue.of(-1, 1),
 			ShrinkableValue.of(0, 0)
 		);
-		assertThat(routes.get(1)).containsExactly(
+		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
 			ShrinkableValue.of(-13, 7),
 			ShrinkableValue.of(-17, 3),
 			ShrinkableValue.of(-19, 1),
@@ -72,9 +72,9 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(-200, -100);
 		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(-150);
 
-		List<List<Shrinkable<Integer>>> routes = shrinkTree.routes();
-		assertThat(routes).hasSize(2);
-		assertThat(routes.get(0)).containsExactly(
+		List<Shrinkable<Integer>> choices = shrinkTree.choices();
+		assertThat(choices).hasSize(2);
+		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
 			ShrinkableValue.of(-125, 25),
 			ShrinkableValue.of(-112, 12),
 			ShrinkableValue.of(-106, 6),
@@ -82,7 +82,7 @@ class IntegerShrinkingTests {
 			ShrinkableValue.of(-101, 1),
 			ShrinkableValue.of(-100, 0)
 		);
-		assertThat(routes.get(1)).containsExactly(
+		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
 			ShrinkableValue.of(-175, 25),
 			ShrinkableValue.of(-188, 12),
 			ShrinkableValue.of(-194, 6),
@@ -98,9 +98,9 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(100, 200);
 		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(150);
 
-		List<List<Shrinkable<Integer>>> routes = shrinkTree.routes();
-		assertThat(routes).hasSize(2);
-		assertThat(routes.get(0)).containsExactly(
+		List<Shrinkable<Integer>> choices = shrinkTree.choices();
+		assertThat(choices).hasSize(2);
+		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
 			ShrinkableValue.of(175, 25),
 			ShrinkableValue.of(188, 12),
 			ShrinkableValue.of(194, 6),
@@ -108,7 +108,7 @@ class IntegerShrinkingTests {
 			ShrinkableValue.of(199, 1),
 			ShrinkableValue.of(200, 0)
 		);
-		assertThat(routes.get(1)).containsExactly(
+		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
 			ShrinkableValue.of(125, 25),
 			ShrinkableValue.of(112, 12),
 			ShrinkableValue.of(106, 6),
@@ -124,9 +124,9 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(0, Integer.MAX_VALUE);
 		ShrinkableChoice<Integer> positiveShrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(150);
 
-		List<List<Shrinkable<Integer>>> routes = positiveShrinkTree.routes();
-		assertThat(routes).hasSize(1);
-		assertThat(routes.get(0)).containsExactly(
+		List<Shrinkable<Integer>> choices = positiveShrinkTree.choices();
+		assertThat(choices).hasSize(1);
+		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
 			ShrinkableValue.of(75, 75),
 			ShrinkableValue.of(37, 37),
 			ShrinkableValue.of(18, 18),
@@ -144,9 +144,9 @@ class IntegerShrinkingTests {
 		Shrinker<Integer> shrinker = Shrinkers.range(Integer.MIN_VALUE, 0);
 		ShrinkableChoice<Integer> positiveShrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(-150);
 
-		List<List<Shrinkable<Integer>>> routes = positiveShrinkTree.routes();
-		assertThat(routes).hasSize(1);
-		assertThat(routes.get(0)).containsExactly(
+		List<Shrinkable<Integer>> choices = positiveShrinkTree.choices();
+		assertThat(choices).hasSize(1);
+		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
 			ShrinkableValue.of(-75, 75),
 			ShrinkableValue.of(-37, 37),
 			ShrinkableValue.of(-18, 18),

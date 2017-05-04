@@ -9,24 +9,16 @@ public class ShrinkableChoice<T> implements Shrinkable<T> {
 		return new ShrinkableChoice<>();
 	}
 
-	private final List<List<Shrinkable<T>>> routes = new ArrayList<>();
-
 	private final List<Shrinkable<T>> choices = new ArrayList<>();
 
 	@Deprecated
 	public void addChoice(List<Shrinkable<T>> route) {
-		routes.add(route);
 		ShrinkableSequence<T> sequence = new ShrinkableSequence<>(route);
 		addChoice(sequence);
 	}
 
 	public void addChoice(Shrinkable<T> sequence) {
 		choices.add(sequence);
-	}
-
-	@Deprecated
-	public List<List<Shrinkable<T>>> routes() {
-		return routes;
 	}
 
 	public List<Shrinkable<T>> choices() {

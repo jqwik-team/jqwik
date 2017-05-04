@@ -7,26 +7,18 @@ import java.util.function.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class ShrinkTreeTests {
+class ShrinkableChoiceTests {
 
 	private ShrinkableChoice<String> shrinkTree = new ShrinkableChoice<>();
 
 	@Example
 	void addingRoutes() {
-		List<Shrinkable<String>> route1 = route(
-			ShrinkableValue.of("aa", 2),
-			ShrinkableValue.of("a", 0)
-		);
-		List<Shrinkable<String>> route2 = route(
-			ShrinkableValue.of("", 0)
-		);
+		shrinkTree.addChoice(ShrinkableValue.of("1", 1));
+		shrinkTree.addChoice(ShrinkableValue.of("2", 2));
 
-		shrinkTree.addChoice(route1);
-		shrinkTree.addChoice(route2);
-
-		assertThat(shrinkTree.routes()).hasSize(2);
-		assertThat(shrinkTree.routes().get(0)).hasSize(2);
-		assertThat(shrinkTree.routes().get(1)).hasSize(1);
+		assertThat(shrinkTree.choices()).hasSize(2);
+		assertThat(shrinkTree.choices().get(0)).isEqualTo(ShrinkableValue.of("1", 1));
+		assertThat(shrinkTree.choices().get(1)).isEqualTo(ShrinkableValue.of("2", 2));
 	}
 
 	@Example

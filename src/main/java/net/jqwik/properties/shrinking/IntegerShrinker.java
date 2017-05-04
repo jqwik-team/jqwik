@@ -46,6 +46,12 @@ public class IntegerShrinker implements Shrinker<Integer> {
 		return route;
 	}
 
+	private ShrinkableSequence<Integer> towards(Integer value, int target) {
+		List<Shrinkable<Integer>> route = new ArrayList<>();
+		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> route.add(shrinkValue));
+		return new ShrinkableSequence<Integer>(route);
+	}
+
 	private static List<ShrinkableValue<Integer>> shrinkTowards(int value, int target) {
 		List<ShrinkableValue<Integer>> shrinkValues = new ArrayList<>();
 		int current = value;
