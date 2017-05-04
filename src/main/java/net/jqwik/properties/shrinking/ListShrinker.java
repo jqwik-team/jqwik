@@ -7,7 +7,8 @@ public class ListShrinker<T> implements Shrinker<List<T>> {
 	}
 
 	@Override
-	public ShrinkableChoice<List<T>> shrink(List<T> list) {
-		return ShrinkableChoice.empty();
+	public Shrinkable<List<T>> shrink(List<T> list) {
+		ShrinkableList<T> tShrinkableList = new ShrinkableList<>();
+		return tShrinkableList;
 	}
 }
