@@ -13,7 +13,7 @@ public class IntegerShrinker implements Shrinker<Integer> {
 	}
 
 	@Override
-	public ShrinkTree<Integer> shrink(Integer value) {
+	public Shrinkable<Integer> shrink(Integer value) {
 		ShrinkTree<Integer> tree = new ShrinkTree<>();
 		Range range = Range.of(min, max);
 		if (!range.includes(value)) {
@@ -40,8 +40,8 @@ public class IntegerShrinker implements Shrinker<Integer> {
 		tree.addRoute(routeTowards(value, 0));
 	}
 
-	private List<Falsifiable<Integer>> routeTowards(Integer value, int target) {
-		List<Falsifiable<Integer>> route = new ArrayList<>();
+	private List<Shrinkable<Integer>> routeTowards(Integer value, int target) {
+		List<Shrinkable<Integer>> route = new ArrayList<>();
 		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> route.add(shrinkValue));
 		return route;
 	}

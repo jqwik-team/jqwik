@@ -1,9 +1,9 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.shrinking.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.properties.shrinking.*;
 
 public class FalsifiedShrinker {
 
@@ -27,12 +27,12 @@ public class FalsifiedShrinker {
 		return Result.of(lastFalsifiedParams, lastFalsifiedError[0]);
 	}
 
-	public void shrinkPosition(int position, List<Object> lastFalsifiedParams, AssertionError[] lastFalsifiedError) {
+	private void shrinkPosition(int position, List<Object> lastFalsifiedParams, AssertionError[] lastFalsifiedError) {
 		Arbitrary currentArbitrary = arbitraries.get(position);
 		Object currentParam = lastFalsifiedParams.get(position);
 		Predicate<Object> falsifier = createFalsifierForPosition(position, lastFalsifiedParams);
-		ShrinkTree<Object> shrinkTree = currentArbitrary.shrink(currentParam);
-		Optional<ShrinkResult<Object>> shrinkResults = shrinkTree.falsify(falsifier);
+		Shrinkable<Object> shrinkTree = currentArbitrary.shrinkableFor(currentParam);
+		Optional<ShrinkResult<Object>> shrinkResults = shrinkTree.shrink(falsifier);
 		shrinkResults.ifPresent(shrinkResult -> {
 			lastFalsifiedParams.set(position, shrinkResult.value());
 			shrinkResult.error().ifPresent(ae -> lastFalsifiedError[0] = ae);

@@ -1,11 +1,11 @@
 package net.jqwik.properties;
 
-import org.junit.platform.commons.util.*;
-import org.opentest4j.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import org.junit.platform.commons.util.*;
+import org.opentest4j.*;
 
 public class GenericProperty {
 
@@ -47,7 +47,8 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	public PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Object> params, AssertionError error) {
+	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Object> params,
+			AssertionError error) {
 		FalsifiedShrinker falsifiedShrinker = new FalsifiedShrinker(arbitraries, forAllFunction);
 		FalsifiedShrinker.Result shrinkingResult = falsifiedShrinker.shrink(params, error);
 		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrinkingResult.params(), shrinkingResult.error());

@@ -11,7 +11,7 @@ class IntegerShrinkingTests {
 	@Example
 	void shrinkFrom0ReturnsNothing() {
 		Shrinker<Integer> shrinker = Shrinkers.range(-10, 10);
-		ShrinkTree<Integer> shrinkTree = shrinker.shrink(0);
+		ShrinkTree<Integer> shrinkTree = (ShrinkTree<Integer>) shrinker.shrink(0);
 
 		assertThat(shrinkTree.shrinkingRoutes()).hasSize(0);
 	}
@@ -19,7 +19,7 @@ class IntegerShrinkingTests {
 	@Example
 	void shrinkFromValueOutsideRangeReturnsNothing() {
 		Shrinker<Integer> shrinker = Shrinkers.range(-10, 10);
-		ShrinkTree<Integer> shrinkTree = shrinker.shrink(20);
+		ShrinkTree<Integer> shrinkTree = (ShrinkTree<Integer>) shrinker.shrink(20);
 
 		assertThat(shrinkTree.shrinkingRoutes()).hasSize(0);
 	}
@@ -28,9 +28,9 @@ class IntegerShrinkingTests {
 	void shrinkIntRangeWithMin0() {
 
 		Shrinker<Integer> shrinker = Shrinkers.range(0, 20);
-		ShrinkTree<Integer> shrinkTree = shrinker.shrink(5);
+		ShrinkTree<Integer> shrinkTree = (ShrinkTree<Integer>) shrinker.shrink(5);
 
-		List<List<Falsifiable<Integer>>> routes = shrinkTree.shrinkingRoutes();
+		List<List<Shrinkable<Integer>>> routes = shrinkTree.shrinkingRoutes();
 		assertThat(routes).hasSize(2);
 		assertThat(routes.get(0)).containsExactly(
 			ShrinkValue.of(2, 2),
@@ -49,9 +49,9 @@ class IntegerShrinkingTests {
 	void shrinkAsymmetricIntRangeWithMax0() {
 
 		Shrinker<Integer> shrinker = Shrinkers.range(-20, 0);
-		ShrinkTree<Integer> shrinkTree = shrinker.shrink(-5);
+		ShrinkTree<Integer> shrinkTree = (ShrinkTree<Integer>) shrinker.shrink(-5);
 
-		List<List<Falsifiable<Integer>>> routes = shrinkTree.shrinkingRoutes();
+		List<List<Shrinkable<Integer>>> routes = shrinkTree.shrinkingRoutes();
 		assertThat(routes).hasSize(2);
 		assertThat(routes.get(0)).containsExactly(
 			ShrinkValue.of(-2, 2),
@@ -70,9 +70,9 @@ class IntegerShrinkingTests {
 	void shrinkAsymmetricIntRangeBelow0() {
 
 		Shrinker<Integer> shrinker = Shrinkers.range(-200, -100);
-		ShrinkTree<Integer> shrinkTree = shrinker.shrink(-150);
+		ShrinkTree<Integer> shrinkTree = (ShrinkTree<Integer>) shrinker.shrink(-150);
 
-		List<List<Falsifiable<Integer>>> routes = shrinkTree.shrinkingRoutes();
+		List<List<Shrinkable<Integer>>> routes = shrinkTree.shrinkingRoutes();
 		assertThat(routes).hasSize(2);
 		assertThat(routes.get(0)).containsExactly(
 			ShrinkValue.of(-125, 25),
@@ -96,9 +96,9 @@ class IntegerShrinkingTests {
 	void shrinkAsymmetricIntRangeAbove0() {
 
 		Shrinker<Integer> shrinker = Shrinkers.range(100, 200);
-		ShrinkTree<Integer> shrinkTree = shrinker.shrink(150);
+		ShrinkTree<Integer> shrinkTree = (ShrinkTree<Integer>) shrinker.shrink(150);
 
-		List<List<Falsifiable<Integer>>> routes = shrinkTree.shrinkingRoutes();
+		List<List<Shrinkable<Integer>>> routes = shrinkTree.shrinkingRoutes();
 		assertThat(routes).hasSize(2);
 		assertThat(routes.get(0)).containsExactly(
 			ShrinkValue.of(175, 25),
@@ -122,9 +122,9 @@ class IntegerShrinkingTests {
 	void unconstrainedMaxShrinksOnlyTowards0() {
 
 		Shrinker<Integer> shrinker = Shrinkers.range(0, Integer.MAX_VALUE);
-		ShrinkTree<Integer> positiveShrinkTree = shrinker.shrink(150);
+		ShrinkTree<Integer> positiveShrinkTree = (ShrinkTree<Integer>) shrinker.shrink(150);
 
-		List<List<Falsifiable<Integer>>> routes = positiveShrinkTree.shrinkingRoutes();
+		List<List<Shrinkable<Integer>>> routes = positiveShrinkTree.shrinkingRoutes();
 		assertThat(routes).hasSize(1);
 		assertThat(routes.get(0)).containsExactly(
 			ShrinkValue.of(75, 75),
@@ -142,9 +142,9 @@ class IntegerShrinkingTests {
 	void unconstrainedMinShrinksOnlyTowards0() {
 
 		Shrinker<Integer> shrinker = Shrinkers.range(Integer.MIN_VALUE, 0);
-		ShrinkTree<Integer> positiveShrinkTree = shrinker.shrink(-150);
+		ShrinkTree<Integer> positiveShrinkTree = (ShrinkTree<Integer>) shrinker.shrink(-150);
 
-		List<List<Falsifiable<Integer>>> routes = positiveShrinkTree.shrinkingRoutes();
+		List<List<Shrinkable<Integer>>> routes = positiveShrinkTree.shrinkingRoutes();
 		assertThat(routes).hasSize(1);
 		assertThat(routes.get(0)).containsExactly(
 			ShrinkValue.of(-75, 75),

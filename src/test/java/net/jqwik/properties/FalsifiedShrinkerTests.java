@@ -18,9 +18,9 @@ class FalsifiedShrinkerTests {
 	@Example
 	void ifShrinkerDoesntProvideAnythingOriginalParametersAreReturned() {
 		Arbitrary<Integer> a1 = Mockito.mock(Arbitrary.class);
-		Mockito.when(a1.shrink(1111)).thenReturn(ShrinkTree.empty());
+		Mockito.when(a1.shrinkableFor(1111)).thenReturn(ShrinkTree.empty());
 		Arbitrary<Integer> a2 = Mockito.mock(Arbitrary.class);
-		Mockito.when(a2.shrink(2222)).thenReturn(ShrinkTree.empty());
+		Mockito.when(a2.shrinkableFor(2222)).thenReturn(ShrinkTree.empty());
 		List<Arbitrary> arbitraries = asList(a1, a2);
 
 		shrinker = new FalsifiedShrinker(arbitraries, params -> false);
@@ -40,7 +40,7 @@ class FalsifiedShrinkerTests {
 		), asList(
 			ShrinkValue.of(100, 2)
 		));
-		Mockito.when(integerArbitrary.shrink(42)).thenReturn(shrinkTree);
+		Mockito.when(integerArbitrary.shrinkableFor(42)).thenReturn(shrinkTree);
 
 		List<Arbitrary> arbitraries = asList(integerArbitrary);
 
@@ -59,7 +59,7 @@ class FalsifiedShrinkerTests {
 		ShrinkTree<Integer> shrinkTree = aShrinkTree(asList(
 			ShrinkValue.of(99, 0)
 		));
-		Mockito.when(integerArbitrary.shrink(42)).thenReturn(shrinkTree);
+		Mockito.when(integerArbitrary.shrinkableFor(42)).thenReturn(shrinkTree);
 
 		List<Arbitrary> arbitraries = asList(integerArbitrary);
 
@@ -77,13 +77,13 @@ class FalsifiedShrinkerTests {
 	@Example
 	void severalParametersWillBeShrinkedFirstToLast() {
 		Arbitrary<Integer> a1 = Mockito.mock(Arbitrary.class);
-		Mockito.when(a1.shrink(1111)).thenReturn(aShrinkTree(asList(
+		Mockito.when(a1.shrinkableFor(1111)).thenReturn(aShrinkTree(asList(
 			ShrinkValue.of(2, 2),
 			ShrinkValue.of(1, 1),
 			ShrinkValue.of(0, 0)
 		)));
 		Arbitrary<Integer> a2 = Mockito.mock(Arbitrary.class);
-		Mockito.when(a2.shrink(2222)).thenReturn(aShrinkTree(asList(
+		Mockito.when(a2.shrinkableFor(2222)).thenReturn(aShrinkTree(asList(
 			ShrinkValue.of(2, 2),
 			ShrinkValue.of(1, 1),
 			ShrinkValue.of(0, 0)
@@ -107,9 +107,9 @@ class FalsifiedShrinkerTests {
 		};
 	}
 
-	private ShrinkTree<Integer> aShrinkTree(List<Falsifiable<Integer>>... routes) {
+	private ShrinkTree<Integer> aShrinkTree(List<Shrinkable<Integer>>... routes) {
 		ShrinkTree<Integer> tree = new ShrinkTree<>();
-		for (List<Falsifiable<Integer>> route : routes) {
+		for (List<Shrinkable<Integer>> route : routes) {
 			tree.addRoute(route);
 		}
 		return tree;

@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
+import net.jqwik.properties.shrinking.*;
 
 public class IntegerArbitrary extends NullableArbitrary<Integer> {
 
@@ -25,6 +26,11 @@ public class IntegerArbitrary extends NullableArbitrary<Integer> {
 			return RandomGenerators.choose(-max, max).withSamples(0, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		}
 		return RandomGenerators.choose(min, max);
+	}
+
+	@Override
+	public Shrinkable<Integer> shrinkableFor(Integer value) {
+		return new IntegerShrinker(min, max).shrink(value);
 	}
 
 	public void configure(IntRange intRange) {

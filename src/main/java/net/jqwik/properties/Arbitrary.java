@@ -9,8 +9,7 @@ public interface Arbitrary<T> {
 
 	RandomGenerator<T> generator(int tries);
 
-	// Not being used yet
-	default ShrinkTree<T> shrink(T value) {
+	default Shrinkable<T> shrinkableFor(T value) {
 		return ShrinkTree.empty();
 	}
 
