@@ -7,7 +7,7 @@ import net.jqwik.properties.*;
 
 abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 
-	private final Arbitrary<T> elementArbitrary;
+	protected final Arbitrary<T> elementArbitrary;
 	private int maxSize;
 
 	public CollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary, int maxSize) {

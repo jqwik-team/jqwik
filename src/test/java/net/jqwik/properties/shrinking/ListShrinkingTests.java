@@ -1,38 +1,42 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
 
 public class ListShrinkingTests {
 
 	@Example
 	void shrinkFromEmptyListReturnsNothing() {
-		Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerShrinker(-5, 5));
-		ShrinkableChoice<List<Integer>> shrinkableChoice = (ShrinkableChoice<List<Integer>>) shrinker.shrink(Collections.emptyList());
+		Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerArbitrary(-5, 5));
+		ShrinkableList<Integer> shrinkableChoice = (ShrinkableList<Integer>) shrinker.shrink(Collections.emptyList());
 
-		assertThat(shrinkableChoice.choices()).hasSize(0);
+		assertThat(shrinkableChoice.steps()).hasSize(0);
 	}
 
 	@Example
 	void shrinkingSizeOfListFirst() {
-		Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerShrinker(-5, 5));
+		Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerArbitrary(-5, 5));
 		List<Integer> listOf6 = Arrays.asList(1, 2, 3, 4, 5, 6);
 		ShrinkableList<Integer> shrinkableChoice = (ShrinkableList<Integer>) shrinker.shrink(listOf6);
 
-		assertThat(shrinkableChoice.choices()).hasSize(4);
-		assertThat(shrinkableChoice.choices()).containsExactly(
-			shrinkableValueOfList(1,2,3,4,5,6),
-			shrinkableValueOfList(1, 2, 3),
-			shrinkableValueOfList(1),
-			shrinkableValueOfList(0)
+		assertThat(shrinkableChoice.steps()).hasSize(7);
+		assertThat(shrinkableChoice.steps()).containsExactly( //
+				shrinkableValueOfList(1, 2, 3, 4, 5, 6), //
+				shrinkableValueOfList(1, 2, 3, 4, 5), //
+				shrinkableValueOfList(1, 2, 3, 4), //
+				shrinkableValueOfList(1, 2, 3), //
+				shrinkableValueOfList(1, 2), //
+				shrinkableValueOfList(1), //
+				shrinkableValueOfList() //
 		);
 	}
 
 	private ShrinkableValue<List<Integer>> shrinkableValueOfList(int ... values) {
-		return ShrinkableValue.of(new ArrayList<Integer>(), 0);
+		return ShrinkableValue.of(new ArrayList<Integer>(), values.length);
 	}
 
 }

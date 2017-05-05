@@ -1,5 +1,7 @@
 package net.jqwik.properties.shrinking;
 
+import net.jqwik.properties.*;
+
 import java.util.*;
 
 public class Shrinkers {
@@ -7,7 +9,7 @@ public class Shrinkers {
 		return new IntegerShrinker(min, max);
 	}
 
-	public static <T> Shrinker<List<T>> list(Shrinker<T> elementShrinker) {
-		return new ListShrinker(elementShrinker);
+	public static <T> Shrinker<List<T>> list(Arbitrary<T> elementArbitrary) {
+		return new ListShrinker<>(elementArbitrary);
 	}
 }

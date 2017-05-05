@@ -3,6 +3,7 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 
 import net.jqwik.properties.*;
+import net.jqwik.properties.shrinking.*;
 
 public class ListArbitrary<T> extends CollectionArbitrary<T, List<T>> {
 
@@ -19,4 +20,8 @@ public class ListArbitrary<T> extends CollectionArbitrary<T, List<T>> {
 		return listGenerator(tries);
 	}
 
+	@Override
+	public Shrinkable<List<T>> shrinkableFor(List<T> value) {
+		return new ListShrinker<T>(elementArbitrary).shrink(value);
+	}
 }
