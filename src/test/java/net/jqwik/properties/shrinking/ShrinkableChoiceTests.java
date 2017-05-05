@@ -1,11 +1,11 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 class ShrinkableChoiceTests {
 
@@ -30,7 +30,8 @@ class ShrinkableChoiceTests {
 	@Example
 	void treeWithSingleRouteFalsifiesToLastValueThatEvaluatesToFalse() {
 		Predicate<String> falsifier = value -> value.isEmpty();
-		shrinkTree.addChoice(route(
+		shrinkTree.addChoice(
+				sequence(
 			ShrinkableValue.of("aaa", 3),
 			ShrinkableValue.of("aa", 2),
 			ShrinkableValue.of("a", 1),
@@ -49,7 +50,8 @@ class ShrinkableChoiceTests {
 				throw assertionError;
 			return true;
 		};
-		shrinkTree.addChoice(route(
+		shrinkTree.addChoice(
+				sequence(
 			ShrinkableValue.of("aaa", 3),
 			ShrinkableValue.of("aa", 2),
 			ShrinkableValue.of("a", 1),
@@ -63,19 +65,21 @@ class ShrinkableChoiceTests {
 	@Example
 	void treeWithSeveralRouteFalsifiesToAllFalsifyingLastValues() {
 		Predicate<String> falsifier = value -> value.isEmpty();
-		shrinkTree.addChoice(route(
+		shrinkTree.addChoice(
+				sequence(
 			ShrinkableValue.of("aaa", 3),
 			ShrinkableValue.of("aa", 2),
 			ShrinkableValue.of("a", 1),
 			ShrinkableValue.of("", 0)
 		));
-		shrinkTree.addChoice(route(
+		shrinkTree.addChoice(
+				sequence(
 			ShrinkableValue.of("bbb", 3),
 			ShrinkableValue.of("bb", 2),
 			ShrinkableValue.of("b", 1),
 			ShrinkableValue.of("", 0)
 		));
-		shrinkTree.addChoice(route(
+		shrinkTree.addChoice(sequence(
 			ShrinkableValue.of("", 0)
 		));
 
@@ -89,7 +93,8 @@ class ShrinkableChoiceTests {
 		Predicate<String> falsifier = value -> {
 			throw new RuntimeException();
 		};
-		shrinkTree.addChoice(route(
+		shrinkTree.addChoice(
+				sequence(
 			ShrinkableValue.of("aaa", 3),
 			ShrinkableValue.of("aa", 2),
 			ShrinkableValue.of("a", 1),
@@ -98,7 +103,7 @@ class ShrinkableChoiceTests {
 		assertThat(shrinkTree.shrink(falsifier)).isEmpty();
 	}
 
-	private List<Shrinkable<String>> route(Shrinkable<String>... values) {
-		return Arrays.asList(values);
+	private ShrinkableSequence<String> sequence(Shrinkable<String>... values) {
+		return new ShrinkableSequence<>(Arrays.asList(values));
 	}
 }

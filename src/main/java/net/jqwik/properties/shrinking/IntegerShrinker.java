@@ -29,21 +29,15 @@ public class IntegerShrinker implements Shrinker<Integer> {
 	}
 
 	private void addTowardsMax(Integer value, ShrinkableChoice<Integer> tree) {
-		tree.addChoice(routeTowards(value, max));
+		tree.addChoice(towards(value, max));
 	}
 
 	private void addTowardsMin(Integer value, ShrinkableChoice<Integer> tree) {
-		tree.addChoice(routeTowards(value, min));
+		tree.addChoice(towards(value, min));
 	}
 
 	private void addTowardsZero(Integer value, ShrinkableChoice<Integer> tree) {
-		tree.addChoice(routeTowards(value, 0));
-	}
-
-	private List<Shrinkable<Integer>> routeTowards(Integer value, int target) {
-		List<Shrinkable<Integer>> route = new ArrayList<>();
-		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> route.add(shrinkValue));
-		return route;
+		tree.addChoice(towards(value, 0));
 	}
 
 	private ShrinkableSequence<Integer> towards(Integer value, int target) {

@@ -2,8 +2,9 @@
 
 - Explicit Property.seed value should overwrite previous seed even after failure
 
-### Missing Tests
+### Tests
 
+- Add / rework tests for all Shrinkables 
 - Tests for TestRunDatabase
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
