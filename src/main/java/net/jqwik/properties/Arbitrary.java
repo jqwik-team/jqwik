@@ -53,4 +53,8 @@ public interface Arbitrary<T> {
 	static int defaultMaxFromTries(int tries) {
 		return Math.max(tries / 2 - 3, 3);
 	}
+
+	static int defaultCollectionSizeFromTries(int tries) {
+		return (int) Math.max(Math.round(Math.sqrt(tries)), 3);
+	}
 }

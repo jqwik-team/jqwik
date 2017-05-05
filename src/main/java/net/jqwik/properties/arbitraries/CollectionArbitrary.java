@@ -19,7 +19,7 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 	protected RandomGenerator<List<T>> listGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
 		if (effectiveMaxSize <= 0)
-			effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
+			effectiveMaxSize = Arbitrary.defaultCollectionSizeFromTries(tries);
 		return createListGenerator(elementArbitrary, tries, effectiveMaxSize);
 	}
 

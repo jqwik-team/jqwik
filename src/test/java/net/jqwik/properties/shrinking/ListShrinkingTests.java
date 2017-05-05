@@ -35,8 +35,8 @@ public class ListShrinkingTests {
 		);
 	}
 
-	private ShrinkableValue<List<Integer>> shrinkableValueOfList(int ... values) {
-		return ShrinkableValue.of(new ArrayList<Integer>(), values.length);
+	private ShrinkableValue<List<Integer>> shrinkableValueOfList(Integer ... values) {
+		return ShrinkableValue.of(new ArrayList<Integer>(Arrays.asList(values)), values.length);
 	}
 
 }
