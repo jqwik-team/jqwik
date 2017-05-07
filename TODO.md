@@ -11,6 +11,8 @@
 
 ### General
 
+- Extract Duplication from FalsifiedShrinker.shrink and ShrinkableList.shrinkElements
+
 - Allow custom names for containers and test methods: @Label
 
 - Allow Fixture parameters to examples and properties

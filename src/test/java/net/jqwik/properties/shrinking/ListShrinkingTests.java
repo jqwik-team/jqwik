@@ -4,13 +4,14 @@ import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 public class ListShrinkingTests {
 
-	private final Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerArbitrary(-5, 5));
+	private final Shrinker<List<Integer>> shrinker = Shrinkers.list(new IntegerArbitrary(-10, 10));
 
 	@Example
 	void shrinkFromEmptyListShrinksToEmptyList() {
@@ -52,5 +53,22 @@ public class ListShrinkingTests {
 			asList(6) //
 		);
 	}
+
+	@Example
+	void shrinkElementsIndividuallyAfterList() {
+		List<Integer> listOf6 = asList(1, 2, 3, 4, 5, 6);
+		ShrinkableList<Integer> shrinkable = (ShrinkableList<Integer>) shrinker.shrink(listOf6);
+
+		Predicate<List<Integer>> anyValueLowerThan2 =  l -> l.stream().anyMatch(i -> i < 2);
+		MockFalsifier<List<Integer>> falsifier = MockFalsifier.falsifyWhen(l -> {
+			return l.size() < 2 || anyValueLowerThan2.test(l);
+		});
+
+		Optional<ShrinkResult<List<Integer>>> result = shrinkable.shrink(falsifier);
+
+		assertThat(result).isPresent();
+		assertThat(result.get().value()).isEqualTo(asList(2, 2));
+	}
+
 
 }

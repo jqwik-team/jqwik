@@ -50,9 +50,9 @@ public class IntegerShrinker implements Shrinker<Integer> {
 
 	private static int calculateDelta(int target, int current) {
 		if (target > current)
-			return (int) Math.ceil((target - current) / 2.0);
+			return (int) Math.max(Math.floor((target - current) / 2.0), 1);
 		else
-			return (int) Math.floor((target - current) / 2.0);
+			return (int) Math.min(Math.ceil((target - current) / 2.0), -1);
 	}
 
 }

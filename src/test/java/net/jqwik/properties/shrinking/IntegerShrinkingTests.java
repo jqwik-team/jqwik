@@ -36,6 +36,7 @@ class IntegerShrinkingTests {
 
 		assertThat(shrinkable.steps()).containsExactly(
 			ShrinkableValue.of(5, 5),
+			ShrinkableValue.of(3, 3),
 			ShrinkableValue.of(2, 2),
 			ShrinkableValue.of(1, 1),
 			ShrinkableValue.of(0, 0)
@@ -44,7 +45,7 @@ class IntegerShrinkingTests {
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyAll();
 		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifier);
 		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(0, 0), null));
-		assertThat(falsifier.visited()).containsExactly(5, 2, 1, 0);
+		assertThat(falsifier.visited()).containsExactly(5, 3, 2, 1, 0);
 	}
 
 	@Example
@@ -55,6 +56,7 @@ class IntegerShrinkingTests {
 
 		assertThat(shrinkable.steps()).containsExactly(
 			ShrinkableValue.of(-5, 5),
+			ShrinkableValue.of(-3, 3),
 			ShrinkableValue.of(-2, 2),
 			ShrinkableValue.of(-1, 1),
 			ShrinkableValue.of(0, 0)
@@ -63,7 +65,7 @@ class IntegerShrinkingTests {
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyAll();
 		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifier);
 		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(0, 0), null));
-		assertThat(falsifier.visited()).containsExactly(-5, -2, -1, 0);
+		assertThat(falsifier.visited()).containsExactly(-5, -3, -2, -1, 0);
 	}
 
 	@Example
@@ -74,6 +76,7 @@ class IntegerShrinkingTests {
 
 		assertThat(shrinkable.steps()).containsExactly(
 			ShrinkableValue.of(-10, 5),
+			ShrinkableValue.of(-8, 3),
 			ShrinkableValue.of(-7, 2),
 			ShrinkableValue.of(-6, 1),
 			ShrinkableValue.of(-5, 0)
@@ -82,7 +85,7 @@ class IntegerShrinkingTests {
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyAll();
 		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifier);
 		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(-5, 0), null));
-		assertThat(falsifier.visited()).containsExactly(-10, -7, -6, -5);
+		assertThat(falsifier.visited()).containsExactly(-10, -8, -7, -6, -5);
 	}
 
 	@Example
@@ -93,6 +96,7 @@ class IntegerShrinkingTests {
 
 		assertThat(shrinkable.steps()).containsExactly(
 			ShrinkableValue.of(10, 5),
+			ShrinkableValue.of(8, 3),
 			ShrinkableValue.of(7, 2),
 			ShrinkableValue.of(6, 1),
 			ShrinkableValue.of(5, 0)
@@ -101,7 +105,7 @@ class IntegerShrinkingTests {
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyAll();
 		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifier);
 		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(5, 0), null));
-		assertThat(falsifier.visited()).containsExactly(10, 7, 6, 5);
+		assertThat(falsifier.visited()).containsExactly(10, 8, 7, 6, 5);
 	}
 
 }
