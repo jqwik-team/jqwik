@@ -14,46 +14,35 @@ public class IntegerShrinker implements Shrinker<Integer> {
 
 	@Override
 	public Shrinkable<Integer> shrink(Integer value) {
-		ShrinkableChoice<Integer> tree = new ShrinkableChoice<>();
 		Range range = Range.of(min, max);
 		if (!range.includes(value)) {
-			return tree;
+			return Shrinkable.empty();
 		}
-		if (range.includes(0) && value != 0)
-			addTowardsZero(value, tree);
-		if (!Range.of(value, max).includes(0) && max != Integer.MAX_VALUE)
-			addTowardsMax(value, tree);
-		if (!Range.of(value, min).includes(0) && min != Integer.MIN_VALUE)
-			addTowardsMin(value, tree);
-		return tree;
-	}
-
-	private void addTowardsMax(Integer value, ShrinkableChoice<Integer> tree) {
-		tree.addChoice(towards(value, max));
-	}
-
-	private void addTowardsMin(Integer value, ShrinkableChoice<Integer> tree) {
-		tree.addChoice(towards(value, min));
-	}
-
-	private void addTowardsZero(Integer value, ShrinkableChoice<Integer> tree) {
-		tree.addChoice(towards(value, 0));
+		if (range.includes(0))
+			return towards(value, 0);
+		else {
+			if (value < 0)
+				return towards(value, max);
+			if (value > 0)
+				return towards(value, min);
+		}
+		return Shrinkable.empty(); // Should never get here
 	}
 
 	private ShrinkableSequence<Integer> towards(Integer value, int target) {
-		List<Shrinkable<Integer>> route = new ArrayList<>();
-		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> route.add(shrinkValue));
-		return new ShrinkableSequence<Integer>(route);
+		ShrinkableSequence<Integer> sequence = new ShrinkableSequence<>();
+		IntegerShrinker.shrinkTowards(value, target).forEach(shrinkValue -> sequence.addStep(shrinkValue));
+		return sequence;
 	}
 
 	private static List<ShrinkableValue<Integer>> shrinkTowards(int value, int target) {
 		List<ShrinkableValue<Integer>> shrinkValues = new ArrayList<>();
 		int current = value;
-		while (Math.abs(current - target) > 1) {
-			current = current + calculateDelta(target, current);
+		while (Math.abs(current - target) > 0) {
 			int distance = Math.abs(target - current);
 			ShrinkableValue<Integer> shrinkValue = ShrinkableValue.of(current, distance);
 			shrinkValues.add(shrinkValue);
+			current = current + calculateDelta(target, current);
 		}
 		shrinkValues.add(ShrinkableValue.of(target, 0));
 		return shrinkValues;

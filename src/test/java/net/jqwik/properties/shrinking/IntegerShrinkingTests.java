@@ -3,162 +3,109 @@ package net.jqwik.properties.shrinking;
 import net.jqwik.api.*;
 
 import java.util.*;
+import java.util.function.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 class IntegerShrinkingTests {
 
-	@Example
-	void shrinkFrom0ReturnsNothing() {
-		Shrinker<Integer> shrinker = Shrinkers.range(-10, 10);
-		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(0);
+	private List<Integer> visited = new ArrayList<>();
 
-		assertThat(shrinkTree.choices()).hasSize(0);
+	@Example
+	void shrinkFrom0ShrinksTo0Only() {
+		Shrinker<Integer> shrinker = Shrinkers.range(-10, 10);
+		Shrinkable<Integer> shrinkable = shrinker.shrink(0);
+
+		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifyAll());
+		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(0, 0), null));
+		assertThat(visited).containsExactly(0);
+	}
+
+	private Predicate<Integer> falsifyAll() {
+		return value -> {
+				visited.add(value);
+				return false;
+			};
 	}
 
 	@Example
 	void shrinkFromValueOutsideRangeReturnsNothing() {
 		Shrinker<Integer> shrinker = Shrinkers.range(-10, 10);
-		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(20);
+		Shrinkable<Integer> shrinkable = shrinker.shrink(20);
 
-		assertThat(shrinkTree.choices()).hasSize(0);
+		assertThat(shrinkable.shrink(falsifyAll())).isNotPresent();
 	}
 
 	@Example
-	void shrinkIntRangeWithMin0() {
+	void shrinkPositiveValueTowards0If0isInRange() {
 
-		Shrinker<Integer> shrinker = Shrinkers.range(0, 20);
-		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(5);
+		Shrinker<Integer> shrinker = Shrinkers.range(-10, 20);
+		ShrinkableSequence<Integer> shrinkable = (ShrinkableSequence<Integer>) shrinker.shrink(5);
 
-		List<Shrinkable<Integer>> choices = shrinkTree.choices();
-		assertThat(choices).hasSize(2);
-		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
+		assertThat(shrinkable.steps()).containsExactly(
+			ShrinkableValue.of(5, 5),
 			ShrinkableValue.of(2, 2),
 			ShrinkableValue.of(1, 1),
 			ShrinkableValue.of(0, 0)
 		);
-		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
-			ShrinkableValue.of(13, 7),
-			ShrinkableValue.of(17, 3),
-			ShrinkableValue.of(19, 1),
-			ShrinkableValue.of(20, 0)
-		);
+
+		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifyAll());
+		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(0, 0), null));
+		assertThat(visited).containsExactly(5, 2, 1, 0);
 	}
 
 	@Example
-	void shrinkAsymmetricIntRangeWithMax0() {
+	void shrinkNegativeValueTowards0If0isInRange() {
 
-		Shrinker<Integer> shrinker = Shrinkers.range(-20, 0);
-		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(-5);
+		Shrinker<Integer> shrinker = Shrinkers.range(-10, 20);
+		ShrinkableSequence<Integer> shrinkable = (ShrinkableSequence<Integer>) shrinker.shrink(-5);
 
-		List<Shrinkable<Integer>> choices = shrinkTree.choices();
-		assertThat(choices).hasSize(2);
-		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
+		assertThat(shrinkable.steps()).containsExactly(
+			ShrinkableValue.of(-5, 5),
 			ShrinkableValue.of(-2, 2),
 			ShrinkableValue.of(-1, 1),
 			ShrinkableValue.of(0, 0)
 		);
-		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
-			ShrinkableValue.of(-13, 7),
-			ShrinkableValue.of(-17, 3),
-			ShrinkableValue.of(-19, 1),
-			ShrinkableValue.of(-20, 0)
-		);
+
+		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifyAll());
+		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(0, 0), null));
+		assertThat(visited).containsExactly(-5, -2, -1, 0);
 	}
 
 	@Example
-	void shrinkAsymmetricIntRangeBelow0() {
+	void shrinkNegativeValueTowardMaxIf0IsOutsideRange() {
 
-		Shrinker<Integer> shrinker = Shrinkers.range(-200, -100);
-		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(-150);
+		Shrinker<Integer> shrinker = Shrinkers.range(-20, -5);
+		ShrinkableSequence<Integer> shrinkable = (ShrinkableSequence<Integer>) shrinker.shrink(-10);
 
-		List<Shrinkable<Integer>> choices = shrinkTree.choices();
-		assertThat(choices).hasSize(2);
-		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
-			ShrinkableValue.of(-125, 25),
-			ShrinkableValue.of(-112, 12),
-			ShrinkableValue.of(-106, 6),
-			ShrinkableValue.of(-103, 3),
-			ShrinkableValue.of(-101, 1),
-			ShrinkableValue.of(-100, 0)
+		assertThat(shrinkable.steps()).containsExactly(
+			ShrinkableValue.of(-10, 5),
+			ShrinkableValue.of(-7, 2),
+			ShrinkableValue.of(-6, 1),
+			ShrinkableValue.of(-5, 0)
 		);
-		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
-			ShrinkableValue.of(-175, 25),
-			ShrinkableValue.of(-188, 12),
-			ShrinkableValue.of(-194, 6),
-			ShrinkableValue.of(-197, 3),
-			ShrinkableValue.of(-199, 1),
-			ShrinkableValue.of(-200, 0)
-		);
+
+		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifyAll());
+		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(-5, 0), null));
+		assertThat(visited).containsExactly(-10, -7, -6, -5);
 	}
 
 	@Example
-	void shrinkAsymmetricIntRangeAbove0() {
+	void shrinkPositiveValueTowardMinIf0IsOutsideRange() {
 
-		Shrinker<Integer> shrinker = Shrinkers.range(100, 200);
-		ShrinkableChoice<Integer> shrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(150);
+		Shrinker<Integer> shrinker = Shrinkers.range(5, 20);
+		ShrinkableSequence<Integer> shrinkable = (ShrinkableSequence<Integer>) shrinker.shrink(10);
 
-		List<Shrinkable<Integer>> choices = shrinkTree.choices();
-		assertThat(choices).hasSize(2);
-		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
-			ShrinkableValue.of(175, 25),
-			ShrinkableValue.of(188, 12),
-			ShrinkableValue.of(194, 6),
-			ShrinkableValue.of(197, 3),
-			ShrinkableValue.of(199, 1),
-			ShrinkableValue.of(200, 0)
+		assertThat(shrinkable.steps()).containsExactly(
+			ShrinkableValue.of(10, 5),
+			ShrinkableValue.of(7, 2),
+			ShrinkableValue.of(6, 1),
+			ShrinkableValue.of(5, 0)
 		);
-		assertThat(((ShrinkableSequence) choices.get(1)).steps()).containsExactly(
-			ShrinkableValue.of(125, 25),
-			ShrinkableValue.of(112, 12),
-			ShrinkableValue.of(106, 6),
-			ShrinkableValue.of(103, 3),
-			ShrinkableValue.of(101, 1),
-			ShrinkableValue.of(100, 0)
-		);
+
+		Optional<ShrinkResult<Integer>> shrinkResult = shrinkable.shrink(falsifyAll());
+		assertThat(shrinkResult.get()).isEqualTo(ShrinkResult.of(ShrinkableValue.of(5, 0), null));
+		assertThat(visited).containsExactly(10, 7, 6, 5);
 	}
-
-	@Example
-	void unconstrainedMaxShrinksOnlyTowards0() {
-
-		Shrinker<Integer> shrinker = Shrinkers.range(0, Integer.MAX_VALUE);
-		ShrinkableChoice<Integer> positiveShrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(150);
-
-		List<Shrinkable<Integer>> choices = positiveShrinkTree.choices();
-		assertThat(choices).hasSize(1);
-		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
-			ShrinkableValue.of(75, 75),
-			ShrinkableValue.of(37, 37),
-			ShrinkableValue.of(18, 18),
-			ShrinkableValue.of(9, 9),
-			ShrinkableValue.of(4, 4),
-			ShrinkableValue.of(2, 2),
-			ShrinkableValue.of(1, 1),
-			ShrinkableValue.of(0, 0)
-		);
-	}
-
-	@Example
-	void unconstrainedMinShrinksOnlyTowards0() {
-
-		Shrinker<Integer> shrinker = Shrinkers.range(Integer.MIN_VALUE, 0);
-		ShrinkableChoice<Integer> positiveShrinkTree = (ShrinkableChoice<Integer>) shrinker.shrink(-150);
-
-		List<Shrinkable<Integer>> choices = positiveShrinkTree.choices();
-		assertThat(choices).hasSize(1);
-		assertThat(((ShrinkableSequence) choices.get(0)).steps()).containsExactly(
-			ShrinkableValue.of(-75, 75),
-			ShrinkableValue.of(-37, 37),
-			ShrinkableValue.of(-18, 18),
-			ShrinkableValue.of(-9, 9),
-			ShrinkableValue.of(-4, 4),
-			ShrinkableValue.of(-2, 2),
-			ShrinkableValue.of(-1, 1),
-			ShrinkableValue.of(0, 0)
-		);
-	}
-
-
-
 
 }

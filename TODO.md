@@ -27,7 +27,7 @@
 ### Properties
 
 - Shrinking
-  - Multi parameter shrinking
+  - Make it configurable (default on/off)
   - Shrinker for Collections
   - Shrinker for Longs
   - Shrinker for Strings

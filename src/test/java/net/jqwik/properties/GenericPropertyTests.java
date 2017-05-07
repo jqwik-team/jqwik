@@ -49,7 +49,7 @@ class GenericPropertyTests {
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 41L);
 
-			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry);
+			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry + 1); // Shrinking adds one call
 			assertThat(arbitrary.count()).isEqualTo(failingTry);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
@@ -76,7 +76,7 @@ class GenericPropertyTests {
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 41L);
 
-			assertThat(forAllFunction.countCalls()).isEqualTo(1);
+			assertThat(forAllFunction.countCalls()).isEqualTo(2); // Shrinking adds one call
 			assertThat(arbitrary.count()).isEqualTo(1);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");

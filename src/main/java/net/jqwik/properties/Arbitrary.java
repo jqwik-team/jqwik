@@ -8,8 +8,12 @@ public interface Arbitrary<T> {
 
 	RandomGenerator<T> generator(int tries);
 
+	/**
+	 * A shrinkable should at least falsify value,
+	 * given that value could be falsified in the first place.
+	 */
 	default Shrinkable<T> shrinkableFor(T value) {
-		return Shrinkable.empty();
+		return ShrinkableValue.of(value, 0);
 	}
 
 	default Arbitrary<T> filter(Predicate<? super T> predicate) {
