@@ -1,11 +1,11 @@
 package net.jqwik.properties.shrinking;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 class ShrinkableChoiceTests {
 
@@ -104,6 +104,10 @@ class ShrinkableChoiceTests {
 	}
 
 	private ShrinkableSequence<String> sequence(Shrinkable<String>... values) {
+		ShrinkableSequence<String> sequence = new ShrinkableSequence<>();
+		for (Shrinkable<String> step : values) {
+			sequence.addStep(step);
+		}
 		return new ShrinkableSequence<>(Arrays.asList(values));
 	}
 }
