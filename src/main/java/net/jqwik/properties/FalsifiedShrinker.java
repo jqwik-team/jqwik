@@ -8,19 +8,18 @@ import net.jqwik.properties.shrinking.*;
 public class FalsifiedShrinker {
 
 	private final List<Arbitrary> arbitraries;
-	private final Function<List<Object>, Boolean> forAllFunction;
+	private final Predicate<List<Object>> forAllPredicate;
 
-	public FalsifiedShrinker(List<Arbitrary> arbitraries, Function<List<Object>, Boolean> forAllFunction) {
+	public FalsifiedShrinker(List<Arbitrary> arbitraries, Predicate<List<Object>> forAllPredicate) {
 		this.arbitraries = arbitraries;
-		this.forAllFunction = forAllFunction;
+		this.forAllPredicate = forAllPredicate;
 	}
 
 	public ShrinkResult<List<Object>> shrink(List<Object> originalParams, AssertionError originalError) {
-		Predicate<List<Object>> forAllFalsifier = forAllFunction::apply;
-		ParameterListShrinker<Object> parameterListShrinker = new ParameterListShrinker<>(forAllFalsifier,
+		ParameterListShrinker<Object> parameterListShrinker = new ParameterListShrinker<>(forAllPredicate,
 				position -> arbitraries.get(position));
 
-		return parameterListShrinker.shrinkListElements(originalParams, Optional.ofNullable(originalError), 0);
+		return parameterListShrinker.shrinkListElements(originalParams, originalError);
 	}
 
 }

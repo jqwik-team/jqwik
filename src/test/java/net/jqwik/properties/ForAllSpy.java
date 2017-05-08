@@ -18,7 +18,7 @@ public class ForAllSpy implements CheckedFunction {
 	}
 
 	@Override
-	public Boolean apply(List<Object> args) {
+	public boolean test(List<Object> args) {
 		count.incrementAndGet();
 		Assertions.assertThat(argumentsVerifier.apply(args)).isTrue().describedAs("Arguments don't match expectation.");
 		return returnFunc.apply(count.get());

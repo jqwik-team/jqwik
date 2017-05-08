@@ -15,15 +15,15 @@ public class ParameterListShrinker<T> {
 		this.arbitraryProvider = arbitraryProvider;
 	}
 
-	public ShrinkResult<List<T>> shrinkListElements(List<T> originalParams, Optional<AssertionError> originalError, int originalDistance) {
+	public ShrinkResult<List<T>> shrinkListElements(List<T> originalParams, AssertionError originalError) {
 
-		AssertionError[] lastFalsifiedError = { originalError.orElse(null) };
+		AssertionError[] lastFalsifiedError = { originalError };
 		List<T> lastFalsifiedParams = new ArrayList<>(originalParams);
 		for (int i = 0; i < originalParams.size(); i++) {
 			shrinkPosition(i, lastFalsifiedParams, lastFalsifiedError);
 		}
 
-		ShrinkableValue<List<T>> last = ShrinkableValue.of(lastFalsifiedParams, originalDistance);
+		ShrinkableValue<List<T>> last = ShrinkableValue.of(lastFalsifiedParams, originalParams.size());
 		return ShrinkResult.of(last, lastFalsifiedError[0]);
 	}
 

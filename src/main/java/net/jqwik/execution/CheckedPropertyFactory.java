@@ -7,7 +7,6 @@ import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
@@ -24,13 +23,13 @@ public class CheckedPropertyFactory {
 		int tries = propertyMethodDescriptor.getTries();
 		long randomSeed = propertyMethodDescriptor.getSeed();
 
-		CheckedFunction forAllFunction = createForAllFunction(propertyMethodDescriptor, testInstance);
+		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
-		return new CheckedProperty(propertyName, forAllFunction, forAllParameters, arbitraryProvider, tries, randomSeed);
+		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, randomSeed);
 	}
 
-	private CheckedFunction createForAllFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+	private CheckedFunction createForAllPredicate(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		// Todo: Bind all non @ForAll params first
 		Class<?> returnType = propertyMethodDescriptor.getTargetMethod().getReturnType();
 		Function<List, Object> function = params -> JqwikReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(),
@@ -47,7 +46,7 @@ public class CheckedPropertyFactory {
 	private List<Parameter> extractForAllParameters(Method targetMethod) {
 		return Arrays //
 				.stream(targetMethod.getParameters()) //
-				.filter(parameter -> isForAllPresent(parameter)) //
+				.filter(this::isForAllPresent) //
 				.collect(Collectors.toList());
 	}
 

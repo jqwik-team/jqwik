@@ -17,7 +17,7 @@ public class ShrinkableList<T> implements Shrinkable<List<T>> {
 
 	@Override
 	public Optional<ShrinkResult<List<T>>> shrink(Predicate<List<T>> falsifier) {
-		return underlying().shrink(falsifier).map(shrinkResult -> shrinkElements(shrinkResult, falsifier));
+		return underlying.shrink(falsifier).map(shrinkResult -> shrinkElements(shrinkResult, falsifier));
 	}
 
 	public Shrinkable<List<T>> underlying() {
@@ -26,7 +26,10 @@ public class ShrinkableList<T> implements Shrinkable<List<T>> {
 
 	private ShrinkResult<List<T>> shrinkElements(ShrinkResult<List<T>> shrinkResult, Predicate<List<T>> falsifier) {
 		ParameterListShrinker<T> parameterListShrinker = new ParameterListShrinker<>(falsifier, ignore -> elementArbitrary);
-		return parameterListShrinker.shrinkListElements(shrinkResult.value(), shrinkResult.error(), shrinkResult.distanceToTarget());
+		return parameterListShrinker.shrinkListElements( //
+				shrinkResult.value(), //
+				shrinkResult.error().orElse(null) //
+		);
 	}
 
 

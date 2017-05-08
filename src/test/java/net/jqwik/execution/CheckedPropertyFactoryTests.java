@@ -27,8 +27,8 @@ public class CheckedPropertyFactoryTests {
 
 		List<Object> argsTrue = Arrays.asList(1, "test");
 		List<Object> argsFalse = Arrays.asList(2, "test");
-		assertThat(property.forAllFunction.apply(argsTrue)).isTrue();
-		assertThat(property.forAllFunction.apply(argsFalse)).isFalse();
+		assertThat(property.forAllPredicate.test(argsTrue)).isTrue();
+		assertThat(property.forAllPredicate.test(argsFalse)).isFalse();
 
 		assertThat(property.randomSeed).isEqualTo(42);
 		assertThat(property.tries).isEqualTo(11);
@@ -54,7 +54,7 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllParameters).size().isEqualTo(0);
 
 		List<Object> noArgs = Arrays.asList();
-		assertThat(property.forAllFunction.apply(noArgs)).isTrue();
+		assertThat(property.forAllPredicate.test(noArgs)).isTrue();
 	}
 
 	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries) {

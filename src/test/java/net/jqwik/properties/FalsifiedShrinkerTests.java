@@ -43,7 +43,7 @@ class FalsifiedShrinkerTests {
 		List<Arbitrary> arbitraries = asList(integerArbitrary);
 
 		Function<List<Object>, Boolean> failIfLargerThanZero = intParams(params -> params[0] == 0);
-		shrinker = new FalsifiedShrinker(arbitraries, failIfLargerThanZero);
+		shrinker = new FalsifiedShrinker(arbitraries, failIfLargerThanZero::apply);
 
 		ShrinkResult<List<Object>> shrinkingResult = shrinker.shrink(asList(42), null);
 
@@ -61,8 +61,8 @@ class FalsifiedShrinkerTests {
 
 		AssertionError assertionError = new AssertionError();
 		shrinker = new FalsifiedShrinker(arbitraries, ignore -> {
-			throw assertionError;
-		});
+					throw assertionError;
+				});
 
 		ShrinkResult<List<Object>> shrinkingResult = shrinker.shrink(asList(42), null);
 
@@ -87,7 +87,7 @@ class FalsifiedShrinkerTests {
 		List<Arbitrary> arbitraries = asList(a1, a2);
 
 		Function<List<Object>, Boolean> failIf1stSmallerThan2nd = intParams(params -> params[0] >= params[1]);
-		shrinker = new FalsifiedShrinker(arbitraries, failIf1stSmallerThan2nd);
+		shrinker = new FalsifiedShrinker(arbitraries, failIf1stSmallerThan2nd::apply);
 
 		ShrinkResult<List<Object>> shrinkingResult = shrinker.shrink(asList(1111, 2222), null);
 

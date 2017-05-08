@@ -4,20 +4,21 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.properties.shrinking.*;
 import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
+
+import net.jqwik.properties.shrinking.*;
 
 public class GenericProperty {
 
 	private final String name;
 	private final List<Arbitrary> arbitraries;
-	private final Function<List<Object>, Boolean> forAllFunction;
+	private final Predicate<List<Object>> forAllPredicate;
 
-	public GenericProperty(String name, List<Arbitrary> arbitraries, CheckedFunction forAllFunction) {
+	public GenericProperty(String name, List<Arbitrary> arbitraries, CheckedFunction forAllPredicate) {
 		this.name = name;
 		this.arbitraries = arbitraries;
-		this.forAllFunction = forAllFunction;
+		this.forAllPredicate = forAllPredicate;
 	}
 
 	public PropertyCheckResult check(int tries, long seed) {
@@ -29,7 +30,7 @@ public class GenericProperty {
 			List<Object> params = generateParameters(generators, random);
 			try {
 				countChecks++;
-				boolean check = forAllFunction.apply(params);
+				boolean check = forAllPredicate.test(params);
 				if (!check) {
 					return shrinkAndCreateCheckResult(seed, countChecks, countTries, params, null);
 				}
@@ -50,7 +51,7 @@ public class GenericProperty {
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Object> params,
 			AssertionError error) {
-		FalsifiedShrinker falsifiedShrinker = new FalsifiedShrinker(arbitraries, forAllFunction);
+		FalsifiedShrinker falsifiedShrinker = new FalsifiedShrinker(arbitraries, forAllPredicate);
 		ShrinkResult<List<Object>> shrinkingResult = falsifiedShrinker.shrink(params, error);
 		AssertionError throwable = shrinkingResult.error().orElse(null);
 		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrinkingResult.value(), throwable);

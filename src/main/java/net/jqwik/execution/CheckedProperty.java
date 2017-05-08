@@ -1,29 +1,29 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
+import net.jqwik.properties.*;
+
 public class CheckedProperty {
 
 	private static Supplier<Random> RNG = ThreadLocalRandom::current;
 
 	public final String propertyName;
-	public final CheckedFunction forAllFunction;
+	public final CheckedFunction forAllPredicate;
 	public final List<Parameter> forAllParameters;
 	public final ArbitraryResolver arbitraryProvider;
 	public final int tries;
 	public final long randomSeed;
 
-	public CheckedProperty(String propertyName, CheckedFunction forAllFunction,
+	public CheckedProperty(String propertyName, CheckedFunction forAllPredicate,
 						   List<Parameter> forAllParameters, ArbitraryResolver arbitraryProvider, int tries, long randomSeed) {
 		this.propertyName = propertyName;
-		this.forAllFunction = forAllFunction;
+		this.forAllPredicate = forAllPredicate;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryProvider = arbitraryProvider;
 		this.tries = tries;
@@ -46,7 +46,7 @@ public class CheckedProperty {
 
 	private GenericProperty createGenericProperty() {
 		List<Arbitrary> arbitraries = forAllParameters.stream().map(this::findArbitrary).collect(Collectors.toList());
-		return new GenericProperty(propertyName, arbitraries, forAllFunction);
+		return new GenericProperty(propertyName, arbitraries, forAllPredicate);
 	}
 
 	public int getTries() {
