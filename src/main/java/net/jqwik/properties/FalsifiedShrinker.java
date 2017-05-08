@@ -19,32 +19,12 @@ public class FalsifiedShrinker {
 		if (originalParams.isEmpty())
 			return Result.of(originalParams, originalError);
 
-		AssertionError[] lastFalsifiedError = {originalError};
-		List<Object> lastFalsifiedParams = new ArrayList<>(originalParams);
-		for (int i = 0; i < originalParams.size(); i++) {
-			shrinkPosition(i, lastFalsifiedParams, lastFalsifiedError);
-		}
-		return Result.of(lastFalsifiedParams, lastFalsifiedError[0]);
-	}
+		Predicate<List<Object>> forAllFalsifier = forAllFunction::apply;
+		ParameterListShrinker<Object> parameterListShrinker = new ParameterListShrinker<Object>(forAllFalsifier, position -> arbitraries.get(position));
 
-	private void shrinkPosition(int position, List<Object> lastFalsifiedParams, AssertionError[] lastFalsifiedError) {
-		Arbitrary currentArbitrary = arbitraries.get(position);
-		Object currentParam = lastFalsifiedParams.get(position);
-		Predicate<Object> falsifier = createFalsifierForPosition(position, lastFalsifiedParams);
-		Shrinkable<Object> shrinkTree = currentArbitrary.shrinkableFor(currentParam);
-		Optional<ShrinkResult<Object>> shrinkResults = shrinkTree.shrink(falsifier);
-		shrinkResults.ifPresent(shrinkResult -> {
-			lastFalsifiedParams.set(position, shrinkResult.value());
-			shrinkResult.error().ifPresent(ae -> lastFalsifiedError[0] = ae);
-		});
-	}
+		ShrinkResult<List<Object>> shrinkResult = parameterListShrinker.shrinkListElements(originalParams, Optional.ofNullable(originalError), 0);
 
-	private Predicate<Object> createFalsifierForPosition(int position, List<Object> lastFalsifiedParams) {
-		return param -> {
-			List<Object> effectiveParams = new ArrayList<>(lastFalsifiedParams);
-			effectiveParams.set(position, param);
-			return forAllFunction.apply(effectiveParams);
-		};
+		return Result.of(shrinkResult.value(), shrinkResult.error().orElse(null));
 	}
 
 	public static class Result {
