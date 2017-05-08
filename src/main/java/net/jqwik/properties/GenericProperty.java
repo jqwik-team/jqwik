@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.properties.shrinking.*;
 import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
 
@@ -50,8 +51,9 @@ public class GenericProperty {
 	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Object> params,
 			AssertionError error) {
 		FalsifiedShrinker falsifiedShrinker = new FalsifiedShrinker(arbitraries, forAllFunction);
-		FalsifiedShrinker.Result shrinkingResult = falsifiedShrinker.shrink(params, error);
-		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrinkingResult.params(), shrinkingResult.error());
+		ShrinkResult<List<Object>> shrinkingResult = falsifiedShrinker.shrink(params, error);
+		AssertionError throwable = shrinkingResult.error().orElse(null);
+		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrinkingResult.value(), throwable);
 	}
 
 	private List<Object> generateParameters(List<RandomGenerator> generators, Random random) {

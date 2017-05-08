@@ -15,39 +15,12 @@ public class FalsifiedShrinker {
 		this.forAllFunction = forAllFunction;
 	}
 
-	public Result shrink(List<Object> originalParams, AssertionError originalError) {
-		if (originalParams.isEmpty())
-			return Result.of(originalParams, originalError);
-
+	public ShrinkResult<List<Object>> shrink(List<Object> originalParams, AssertionError originalError) {
 		Predicate<List<Object>> forAllFalsifier = forAllFunction::apply;
-		ParameterListShrinker<Object> parameterListShrinker = new ParameterListShrinker<Object>(forAllFalsifier, position -> arbitraries.get(position));
+		ParameterListShrinker<Object> parameterListShrinker = new ParameterListShrinker<>(forAllFalsifier,
+				position -> arbitraries.get(position));
 
-		ShrinkResult<List<Object>> shrinkResult = parameterListShrinker.shrinkListElements(originalParams, Optional.ofNullable(originalError), 0);
-
-		return Result.of(shrinkResult.value(), shrinkResult.error().orElse(null));
+		return parameterListShrinker.shrinkListElements(originalParams, Optional.ofNullable(originalError), 0);
 	}
 
-	public static class Result {
-
-		public static Result of(List<Object> params, AssertionError assertionError) {
-			return new Result(params, assertionError);
-		}
-
-		private final List<Object> params;
-		private final AssertionError assertionError;
-
-		private Result(List<Object> params, AssertionError assertionError) {
-			this.params = params;
-			this.assertionError = assertionError;
-		}
-
-		public List<Object> params() {
-			return params;
-		}
-
-		public AssertionError error() {
-			return assertionError;
-		}
-
-	}
 }

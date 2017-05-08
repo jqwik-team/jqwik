@@ -25,10 +25,10 @@ class FalsifiedShrinkerTests {
 		List<Arbitrary> arbitraries = asList(a1, a2);
 
 		shrinker = new FalsifiedShrinker(arbitraries, params -> false);
-		FalsifiedShrinker.Result shrinkingResult = shrinker.shrink(asList(1111, 2222), null);
+		ShrinkResult<List<Object>> shrinkingResult = shrinker.shrink(asList(1111, 2222), null);
 
-		Assertions.assertThat(shrinkingResult.params()).containsExactly(1111, 2222);
-		Assertions.assertThat(shrinkingResult.error()).isNull();
+		Assertions.assertThat(shrinkingResult.value()).containsExactly(1111, 2222);
+		Assertions.assertThat(shrinkingResult.error()).isNotPresent();
 	}
 
 	@Example
@@ -45,10 +45,10 @@ class FalsifiedShrinkerTests {
 		Function<List<Object>, Boolean> failIfLargerThanZero = intParams(params -> params[0] == 0);
 		shrinker = new FalsifiedShrinker(arbitraries, failIfLargerThanZero);
 
-		FalsifiedShrinker.Result shrinkingResult = shrinker.shrink(asList(42), null);
+		ShrinkResult<List<Object>> shrinkingResult = shrinker.shrink(asList(42), null);
 
-		Assertions.assertThat(shrinkingResult.params()).containsExactly(1);
-		Assertions.assertThat(shrinkingResult.error()).isNull();
+		Assertions.assertThat(shrinkingResult.value()).containsExactly(1);
+		Assertions.assertThat(shrinkingResult.error()).isNotPresent();
 	}
 
 	@Example
@@ -64,10 +64,10 @@ class FalsifiedShrinkerTests {
 			throw assertionError;
 		});
 
-		FalsifiedShrinker.Result shrinkingResult = shrinker.shrink(asList(42), null);
+		ShrinkResult<List<Object>> shrinkingResult = shrinker.shrink(asList(42), null);
 
-		Assertions.assertThat(shrinkingResult.params()).containsExactly(99);
-		Assertions.assertThat(shrinkingResult.error()).isSameAs(assertionError);
+		Assertions.assertThat(shrinkingResult.value()).containsExactly(99);
+		Assertions.assertThat(shrinkingResult.error().get()).isSameAs(assertionError);
 	}
 
 	@Example
@@ -89,10 +89,10 @@ class FalsifiedShrinkerTests {
 		Function<List<Object>, Boolean> failIf1stSmallerThan2nd = intParams(params -> params[0] >= params[1]);
 		shrinker = new FalsifiedShrinker(arbitraries, failIf1stSmallerThan2nd);
 
-		FalsifiedShrinker.Result shrinkingResult = shrinker.shrink(asList(1111, 2222), null);
+		ShrinkResult<List<Object>> shrinkingResult = shrinker.shrink(asList(1111, 2222), null);
 
-		Assertions.assertThat(shrinkingResult.params()).containsExactly(0, 1);
-		Assertions.assertThat(shrinkingResult.error()).isNull();
+		Assertions.assertThat(shrinkingResult.value()).containsExactly(0, 1);
+		Assertions.assertThat(shrinkingResult.error()).isNotPresent();
 	}
 
 	private Function<List<Object>, Boolean> intParams(Function<Integer[], Boolean> falsifier) {
