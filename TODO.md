@@ -1,7 +1,5 @@
 ### Bugs
 
-- Explicit Property.seed value should overwrite previous seed even after failure
-
 ### Tests
 
 - Add / rework tests for all Shrinkables 
@@ -16,11 +14,12 @@
 - Allow Fixture parameters to examples and properties
 
 - LifeCycles
+  - PerTestRunLifeCycle
   - PerClassLifeCycle
   - PerMethodLifeCycle
   - PerCheckLifeCycle
 
-- Warn if jqwik tests are annotated with Jupiter/JUnit4 annotations
+- Warn (or skip? or fail?) if jqwik tests are annotated with Jupiter/JUnit4 annotations
 
 - Parallel test execution: Does it make sense with non working IntelliJ support?
 

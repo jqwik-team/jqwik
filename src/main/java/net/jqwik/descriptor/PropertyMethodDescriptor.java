@@ -1,18 +1,17 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.api.*;
+import java.lang.reflect.*;
+
 import org.junit.platform.engine.*;
 
-import java.lang.reflect.*;
+import net.jqwik.api.*;
 
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
 
 	private final long seed;
 	private final int tries;
 
-	public PropertyMethodDescriptor(
-		UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries
-	) {
+	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries) {
 		super(uniqueId, propertyMethod, containerClass);
 		this.seed = seed;
 		this.tries = tries;

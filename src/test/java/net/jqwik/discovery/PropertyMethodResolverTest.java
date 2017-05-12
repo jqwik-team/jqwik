@@ -12,6 +12,7 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 
+@Group
 class PropertyMethodResolverTest {
 
 	private TestRunData testRunData = new TestRunData();
@@ -61,6 +62,19 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(4243L);
 		}
 
+		@Example
+		void explicitSeedOverwritesSeedFromPreviouslyFailedTestRun() throws NoSuchMethodException {
+			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(TestContainer.class)
+					.build();
+			Method method = TestHelper.getMethod(TestContainer.class, "withSeed41");
+			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
+			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, 9999L));
+			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
+
+			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(41L);
+		}
+
 	}
 
 	@Group
@@ -90,6 +104,10 @@ class PropertyMethodResolverTest {
 
 		@Property
 		void previouslyFailed() {
+		}
+
+		@Property(seed = 41L)
+		void withSeed41() {
 		}
 
 		@Property(seed = 42L, tries = 99)
