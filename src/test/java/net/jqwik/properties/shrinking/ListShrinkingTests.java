@@ -1,13 +1,13 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
+import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static java.util.Arrays.*;
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
 
 public class ListShrinkingTests {
 
@@ -60,9 +60,7 @@ public class ListShrinkingTests {
 		ShrinkableList<Integer> shrinkable = (ShrinkableList<Integer>) shrinker.shrink(listOf6);
 
 		Predicate<List<Integer>> anyValueLowerThan2 =  l -> l.stream().anyMatch(i -> i < 2);
-		MockFalsifier<List<Integer>> falsifier = MockFalsifier.falsifyWhen(l -> {
-			return l.size() < 2 || anyValueLowerThan2.test(l);
-		});
+		MockFalsifier<List<Integer>> falsifier = MockFalsifier.falsifyWhen(l -> l.size() < 2 || anyValueLowerThan2.test(l));
 
 		Optional<ShrinkResult<List<Integer>>> result = shrinkable.shrink(falsifier);
 

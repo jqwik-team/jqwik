@@ -5,7 +5,6 @@
 ### Tests
 
 - Add / rework tests for all Shrinkables 
-- Tests for ParameterListShrinker
 - Tests for TestRunDatabase
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine

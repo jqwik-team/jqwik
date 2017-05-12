@@ -24,7 +24,7 @@ public class ForAllSpy implements CheckedFunction {
 		return returnFunc.apply(count.get());
 	}
 
-	public int countCalls() {
+	int countCalls() {
 		return count.get();
 	}
 }
