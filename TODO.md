@@ -26,14 +26,14 @@
 ### Properties
 
 - Shrinking
+  - Shrinker for Filters
+  - Shrinker for Combinators
   - Make it configurable (default on/off)
   - Shrinker for Collections
   - Shrinker for Longs
   - Shrinker for Strings
-  - Shrinker for Filters
-  - Shrinker for Maps
-  - Shrinker for Combinators
   - Shrinker for Arrays
+  - Shrinker for Maps: Filter by target type only
 
 - @ForAll can take `providerClass` parameter (with or without value param)
 

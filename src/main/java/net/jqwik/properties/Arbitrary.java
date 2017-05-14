@@ -16,11 +16,16 @@ public interface Arbitrary<T> {
 		return ShrinkableValue.of(value, 0);
 	}
 
-	default Arbitrary<T> filter(Predicate<? super T> predicate) {
+	default Arbitrary<T> filter(Predicate<T> predicate) {
 		return new ArbitraryWrapper<T>(this) {
 			@Override
+			public Shrinkable<T> shrinkableFor(T value) {
+				return super.shrinkableFor(value).filter(predicate);
+			}
+
+			@Override
 			public RandomGenerator<T> generator(int tries) {
-				return Arbitrary.this.generator(tries).filter(predicate);
+				return super.generator(tries).filter(predicate);
 			}
 		};
 	}
@@ -36,7 +41,7 @@ public interface Arbitrary<T> {
 		return new ArbitraryWrapper<T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {
-				return Arbitrary.this.generator(tries).injectNull(nullProbability);
+				return super.generator(tries).injectNull(nullProbability);
 			}
 		};
 	}
@@ -45,7 +50,7 @@ public interface Arbitrary<T> {
 		return new ArbitraryWrapper<T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {
-				return Arbitrary.this.generator(tries).withSamples(samples);
+				return super.generator(tries).withSamples(samples);
 			}
 		};
 	};

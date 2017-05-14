@@ -49,17 +49,28 @@ class ArbitraryTests {
 	@Group
 	class Shrinking {
 
-		private MockFalsifier<String> falsifier = MockFalsifier.falsifyAll();
-
 		@Example
 		void shrinkingMappedArbitraryCanOnlyShrinkToOriginalValue() {
 			Arbitrary<String> mappedArbitrary = Arbitraries.integer(0, 100).map(i -> "i:" + i);
 			Shrinkable<String> mappedShrinkable = mappedArbitrary.shrinkableFor("i:10");
 
+			MockFalsifier<String> falsifier = MockFalsifier.falsifyAll();
 			Optional<ShrinkResult<String>> shrinkResult = mappedShrinkable.shrink(falsifier);
 			assertThat(shrinkResult).isPresent();
 			assertThat(shrinkResult.get().value()).isEqualTo("i:10");
 			assertThat(falsifier.visited()).containsExactly("i:10");
+
+		}
+		@Example
+		void shrinkingFilteredArbitrary() {
+			Arbitrary<Integer> filteredArbitrary = Arbitraries.integer(0, 100).filter(i -> i % 2 == 0);
+			Shrinkable<Integer> mappedShrinkable = filteredArbitrary.shrinkableFor(10);
+
+			MockFalsifier<Integer> falsifier = MockFalsifier.falsifyAll();
+			Optional<ShrinkResult<Integer>> shrinkResult = mappedShrinkable.shrink(falsifier);
+			assertThat(shrinkResult).isPresent();
+			assertThat(shrinkResult.get().value()).isEqualTo(0);
+			assertThat(falsifier.visited()).containsExactly(10, 2, 0);
 		}
 	}
 

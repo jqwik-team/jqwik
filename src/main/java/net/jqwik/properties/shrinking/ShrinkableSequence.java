@@ -10,10 +10,6 @@ public class ShrinkableSequence<T> implements Shrinkable<T> {
 	public ShrinkableSequence() {
 	}
 
-	public ShrinkableSequence(List<Shrinkable<T>> steps) {
-		steps.forEach(this::addStep);
-	}
-
 	public void addStep(Shrinkable<T> step) {
 		steps.add(step);
 	}
@@ -35,5 +31,4 @@ public class ShrinkableSequence<T> implements Shrinkable<T> {
 		}
 		return lastFalsified;
 	}
-
 }

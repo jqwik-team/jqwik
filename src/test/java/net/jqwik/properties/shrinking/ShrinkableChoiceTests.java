@@ -108,6 +108,6 @@ class ShrinkableChoiceTests {
 		for (Shrinkable<String> step : values) {
 			sequence.addStep(step);
 		}
-		return new ShrinkableSequence<>(Arrays.asList(values));
+		return sequence;
 	}
 }
