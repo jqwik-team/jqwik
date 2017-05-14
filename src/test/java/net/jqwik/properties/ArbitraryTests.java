@@ -1,14 +1,14 @@
 package net.jqwik.properties;
 
 import static net.jqwik.properties.ArbitraryTestHelper.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
-public class ArbitraryTests {
+class ArbitraryTests {
 
 	private Random random = new Random();
 
@@ -44,6 +44,23 @@ public class ArbitraryTests {
 		Arbitrary<Integer> count = new CountingArbitrary();
 		Arbitrary<Integer> countWithSamples = count.withSamples(10, 9, 8);
 		assertGenerated(countWithSamples.generator(1), 10, 9, 8, 1, 2, 3);
+	}
+
+	@Group
+	class Shrinking {
+
+		private MockFalsifier<String> falsifier = MockFalsifier.falsifyAll();
+
+		@Example
+		void shrinkingMappedArbitraryCanOnlyShrinkToOriginalValue() {
+			Arbitrary<String> mappedArbitrary = Arbitraries.integer(0, 100).map(i -> "i:" + i);
+			Shrinkable<String> mappedShrinkable = mappedArbitrary.shrinkableFor("i:10");
+
+			Optional<ShrinkResult<String>> shrinkResult = mappedShrinkable.shrink(falsifier);
+			assertThat(shrinkResult).isPresent();
+			assertThat(shrinkResult.get().value()).isEqualTo("i:10");
+			assertThat(falsifier.visited()).containsExactly("i:10");
+		}
 	}
 
 }
