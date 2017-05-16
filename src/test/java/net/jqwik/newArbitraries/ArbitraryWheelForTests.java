@@ -3,10 +3,10 @@ package net.jqwik.newArbitraries;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-public class NArbitraryWheel<T> implements NArbitrary<T> {
+public class ArbitraryWheelForTests<T> implements NArbitrary<T> {
 	private final T[] values;
 
-	public NArbitraryWheel(T... values) {
+	public ArbitraryWheelForTests(T... values) {
 		this.values = values;
 	}
 
@@ -19,8 +19,7 @@ public class NArbitraryWheel<T> implements NArbitrary<T> {
 				if (index.get() < values.length) {
 					T value = values[index.getAndIncrement()];
 					NShrinker<T> shrinker = new WheelShrinker(value);
-					NShrinkableValue<T> shrinkable = new NShrinkableValue<>(value, Integer.MAX_VALUE, shrinker);
-					return shrinkable;
+					return new NShrinkableValue<>(value, Integer.MAX_VALUE, shrinker);
 				} else {
 					index.set(0);
 					return next(random);

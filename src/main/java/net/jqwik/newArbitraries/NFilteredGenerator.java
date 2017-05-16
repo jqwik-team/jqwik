@@ -16,7 +16,7 @@ public class NFilteredGenerator<T> implements NShrinkableGenerator<T> {
 		while(true) {
 			NShrinkable<T> next = toFilter.next(random);
 			if (filterPredicate.test(next.value()))
-				return next;
+				return new NFilteredShrinkable<>(next, filterPredicate);
 		}
 	}
 }
