@@ -6,7 +6,9 @@ import java.util.concurrent.atomic.*;
 public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 	private final int size;
 
-	public ListArbitraryForTests(int maxSize) {this.size = maxSize;}
+	public ListArbitraryForTests(int maxSize) {
+		this.size = maxSize;
+	}
 
 	@Override
 	public NShrinkableGenerator<List<Integer>> generator(int tries) {
@@ -21,7 +23,7 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 					}
 					index.incrementAndGet();
 					NShrinker<List<Integer>> shrinker = new ListShrinker(value);
-					return new NShrinkableValue<>(value, Integer.MAX_VALUE, shrinker);
+					return new NShrinkableValue<>(value, value.size(), shrinker);
 				} else {
 					index.set(0);
 					return next(random);
@@ -47,7 +49,7 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 			}
 			Set<NShrinkable<List<Integer>>> shrinkables = new HashSet<>();
 			ArrayList<Integer> rightCut = new ArrayList<>(toShrink);
-			rightCut.remove(rightCut.size() -1);
+			rightCut.remove(rightCut.size() - 1);
 			shrinkables.add(new NShrinkableValue<>(rightCut, rightCut.size(), new ListShrinker(rightCut)));
 			ArrayList<Integer> leftCut = new ArrayList<>(toShrink);
 			leftCut.remove(0);

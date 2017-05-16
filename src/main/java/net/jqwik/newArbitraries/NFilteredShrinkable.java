@@ -7,7 +7,8 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	private final NShrinkable<T> toFilter;
 	private final Predicate<T> filterPredicate;
 
-	public NFilteredShrinkable(NShrinkable<T> toFilter, Predicate<T> filterPredicate) {this.toFilter = toFilter;
+	public NFilteredShrinkable(NShrinkable<T> toFilter, Predicate<T> filterPredicate) {
+		this.toFilter = toFilter;
 		this.filterPredicate = filterPredicate;
 	}
 
@@ -30,7 +31,6 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	public int distance() {
 		return toFilter.distance();
 	}
-
 
 	private Set<NShrinkable<T>> firstFitPerBranch(Set<NShrinkable<T>> branches, Predicate<T> filterPredicate) {
 		Set<NShrinkable<T>> fits = new HashSet<>();

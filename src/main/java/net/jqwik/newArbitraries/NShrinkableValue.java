@@ -42,11 +42,12 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		NShrinkableValue<?> that = (NShrinkableValue<?>) o;
-		return distance == that.distance &&
-			Objects.equals(value, that.value);
+		return distance == that.distance && Objects.equals(value, that.value);
 	}
 
 	@Override

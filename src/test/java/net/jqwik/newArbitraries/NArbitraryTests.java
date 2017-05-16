@@ -36,7 +36,7 @@ class NArbitraryTests {
 
 		NShrinkable<Integer> shrunkValue = shrunkValues.iterator().next();
 		assertThat(shrunkValue.value()).isEqualTo(4);
-		assertThat(shrunkValue.distance()).isEqualTo(4);
+		assertThat(shrunkValue.distance()).isEqualTo(3);
 	}
 
 	@Example
@@ -97,7 +97,7 @@ class NArbitraryTests {
 
 			NShrinkable<Integer> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.value()).isEqualTo(3);
-			assertThat(shrunkValue.distance()).isEqualTo(3);
+			assertThat(shrunkValue.distance()).isEqualTo(2);
 		}
 
 		@Example
@@ -161,7 +161,7 @@ class NArbitraryTests {
 
 			NShrinkable<String> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.value()).isEqualTo("value=4");
-			assertThat(shrunkValue.distance()).isEqualTo(4);
+			assertThat(shrunkValue.distance()).isEqualTo(3);
 		}
 
 		@Example
@@ -178,9 +178,43 @@ class NArbitraryTests {
 
 			NShrinkable<String> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.value()).isEqualTo("value=3");
-			assertThat(shrunkValue.distance()).isEqualTo(3);
+			assertThat(shrunkValue.distance()).isEqualTo(2);
+		}
+	}
+
+	@Group
+	class Combination {
+
+		@Example
+		void generateCombination() {
+			NArbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
+			NArbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
+			NArbitrary<String> combined = NCombinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
+			NShrinkableGenerator<String> generator = combined.generator(10);
+
+			assertThat(generator.next(random).value()).isEqualTo("1:4");
+			assertThat(generator.next(random).value()).isEqualTo("2:5");
+			assertThat(generator.next(random).value()).isEqualTo("3:6");
+			assertThat(generator.next(random).value()).isEqualTo("1:4");
 		}
 
+		@Example
+		void shrinkCombination() {
+			NArbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
+			NArbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
+			NArbitrary<String> combined = NCombinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
+			NShrinkableGenerator<String> generator = combined.generator(10);
+
+			NShrinkable<String> value3to6 = generateNth(generator, 3);
+			assertThat(value3to6.value()).isEqualTo("3:6");
+
+			Set<NShrinkable<String>> shrunkValues = value3to6.shrink();
+			assertThat(shrunkValues).hasSize(2); // 2:6 3:5
+			shrunkValues.forEach(shrunkValue -> {
+				assertThat(shrunkValue.value()).isIn("2:6", "3:5");
+				assertThat(shrunkValue.distance()).isEqualTo(3); // sum of single distances
+			});
+		}
 	}
 
 	private <T> NShrinkable<T> generateNth(NShrinkableGenerator<T> generator, int n) {
