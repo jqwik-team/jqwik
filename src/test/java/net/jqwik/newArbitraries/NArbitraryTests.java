@@ -215,6 +215,26 @@ class NArbitraryTests {
 				assertThat(shrunkValue.distance()).isEqualTo(3); // sum of single distances
 			});
 		}
+
+		@Example
+		void shrinkListCombinedWithInteger() {
+			NArbitrary<List<Integer>> lists = new ListArbitraryForTests(2);
+			NArbitrary<Integer> integers = new ArbitraryWheelForTests<>(0, 1, 2);
+			NArbitrary<String> combined = NCombinators.combine(lists, integers).as((l, i) -> l.toString() + ":" + i);
+
+			NShrinkableGenerator<String> generator = combined.generator(10);
+
+			NShrinkable<String> combinedString = generateNth(generator, 3);
+			assertThat(combinedString.value()).isEqualTo("[1, 2]:2");
+
+			Set<NShrinkable<String>> shrunkValues = combinedString.shrink();
+			assertThat(shrunkValues).hasSize(3);
+			shrunkValues.forEach(shrunkValue -> {
+				assertThat(shrunkValue.value()).isIn("[1]:2", "[2]:2", "[1, 2]:1");
+				assertThat(shrunkValue.distance()).isEqualTo(3); // sum of single distances
+			});
+		}
+
 	}
 
 	private <T> NShrinkable<T> generateNth(NShrinkableGenerator<T> generator, int n) {
