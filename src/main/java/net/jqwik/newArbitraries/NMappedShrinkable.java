@@ -2,9 +2,10 @@ package net.jqwik.newArbitraries;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 public class NMappedShrinkable<T, U> implements NShrinkable<U> {
-	
+
 	private final NShrinkable<T> toMap;
 	private final Function<T, U> mapper;
 	private final U value;
@@ -17,7 +18,10 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 
 	@Override
 	public Set<NShrinkable<U>> shrink() {
-		return null;
+		return toMap.shrink() //
+				.stream() //
+				.map(shrinkableToMap -> new NMappedShrinkable<>(shrinkableToMap, mapper)) //
+				.collect(Collectors.toSet());
 	}
 
 	@Override

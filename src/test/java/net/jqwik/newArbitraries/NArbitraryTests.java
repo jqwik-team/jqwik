@@ -164,6 +164,23 @@ class NArbitraryTests {
 			assertThat(shrunkValue.distance()).isEqualTo(4);
 		}
 
+		@Example
+		void shrinkFilteredIntegerMappedToString() {
+			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			NArbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
+			NArbitrary<String> mapped = filtered.map(anInt -> "value=" + anInt);
+			NShrinkableGenerator<String> generator = mapped.generator(10);
+
+			NShrinkable<String> value5 = generateNth(generator, 3);
+			assertThat(value5.value()).isEqualTo("value=5");
+			Set<NShrinkable<String>> shrunkValues = value5.shrink();
+			assertThat(shrunkValues).hasSize(1);
+
+			NShrinkable<String> shrunkValue = shrunkValues.iterator().next();
+			assertThat(shrunkValue.value()).isEqualTo("value=3");
+			assertThat(shrunkValue.distance()).isEqualTo(3);
+		}
+
 	}
 
 	private <T> NShrinkable<T> generateNth(NShrinkableGenerator<T> generator, int n) {
