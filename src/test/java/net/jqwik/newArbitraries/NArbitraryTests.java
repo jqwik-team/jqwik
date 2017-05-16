@@ -46,11 +46,11 @@ class NArbitraryTests {
 		generator.next(random);
 
 		NShrinkable<Integer> value5 = generator.next(random);
-//		value5.shrink()
-//		assertThat(shrunkValues).hasSize(1);
-//
-//		NShrunkValue<Integer> shrunkValue = shrunkValues.iterator().next();
-//		assertThat(shrunkValue.value()).isEqualTo(4);
-//		assertThat(shrunkValue.distance()).isEqualTo(4);
+		Set<NShrinkable<Integer>> shrunkValues = value5.shrink();
+		assertThat(shrunkValues).hasSize(1);
+
+		NShrinkable<Integer> shrunkValue = shrunkValues.iterator().next();
+		assertThat(shrunkValue.value()).isEqualTo(4);
+		assertThat(shrunkValue.distance()).isEqualTo(4);
 	}
 }
