@@ -2,7 +2,7 @@ package net.jqwik.properties.shrinking;
 
 public class Range<T extends Comparable> {
 
-	public static <T extends Comparable> Range of(T left, T right) {
+	public static <T extends Comparable> Range<T> of(T left, T right) {
 		if (left.compareTo(right) > 0)
 			return new Range<>(right, left);
 		else

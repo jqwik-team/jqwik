@@ -6,11 +6,11 @@ import java.util.stream.*;
 
 public class NCombinedShrinkable<T> implements NShrinkable<T> {
 
-	private final List<NShrinkable<?>> shrinkables;
-	private final Function<List<?>, T> combineFunction;
+	private final List<NShrinkable<Object>> shrinkables;
+	private final Function<List<Object>, T> combineFunction;
 	private final T value;
 
-	public NCombinedShrinkable(List<NShrinkable<?>> shrinkables, Function<List<?>, T> combineFunction) {
+	public NCombinedShrinkable(List<NShrinkable<Object>> shrinkables, Function<List<Object>, T> combineFunction) {
 		this.shrinkables = shrinkables;
 		this.combineFunction = combineFunction;
 		this.value = combine(shrinkables);
@@ -20,11 +20,11 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 	public Set<NShrinkable<T>> shrink() {
 		Set<NShrinkable<T>> shrunkSet = new HashSet<>();
 		for (int i = 0; i < shrinkables.size(); i++) {
-			Set<? extends NShrinkable<?>> singleSet = shrinkables.get(i).shrink();
-			for (NShrinkable<?> shrunk : singleSet) {
-				List<NShrinkable<?>> newShrinkables = new ArrayList<>(shrinkables);
+			Set<NShrinkable<Object>> singleSet = shrinkables.get(i).shrink();
+			for (NShrinkable<Object> shrunk : singleSet) {
+				List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
 				newShrinkables.set(i, shrunk);
-				shrunkSet.add(new NCombinedShrinkable<>(newShrinkables, combineFunction));
+				shrunkSet.add(new NCombinedShrinkable<T>(newShrinkables, combineFunction));
 			}
 		}
 		return shrunkSet;
@@ -45,8 +45,8 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 		return shrinkables.stream().mapToInt(NShrinkable::distance).sum();
 	}
 
-	private T combine(List<NShrinkable<?>> shrinkables) {
-		List<?> params = shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
+	private T combine(List<NShrinkable<Object>> shrinkables) {
+		List<Object> params = shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
 		return combineFunction.apply(params);
 	}
 

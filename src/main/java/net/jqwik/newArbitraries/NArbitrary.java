@@ -10,9 +10,6 @@ public interface NArbitrary<T> {
 	}
 
 	default <U> NArbitrary<U> map(Function<T, U> mapper) {
-		return tries -> {
-			NShrinkableGenerator<T> generator = this.generator(tries);
-			return random -> new NMappedShrinkable<>(generator.next(random), mapper);
-		};
+		return tries -> this.generator(tries).map(mapper);
 	}
 }
