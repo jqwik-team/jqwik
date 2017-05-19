@@ -23,4 +23,13 @@ public class NArbitraries {
 		return new NIntegerArbitrary(min, max);
 	}
 
+	public static NArbitrary<Long> longInteger(long min, long max) {
+		return new NLongArbitrary();
+	}
+
+	public static NArbitrary<Long> longInteger() {
+		return new NLongArbitrary();
+	}
+
+
 }

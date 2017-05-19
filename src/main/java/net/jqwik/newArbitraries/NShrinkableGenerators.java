@@ -26,6 +26,20 @@ public class NShrinkableGenerators {
 		}
 	}
 
+	public static NShrinkableGenerator<Long> choose(long min, long max) {
+		if (min == max) {
+			return ignored -> new NShrinkableValue<>(min, 0, () -> Collections.emptySet());
+		} else {
+			final long _min = Math.min(min, max);
+			final long _max = Math.max(min, max);
+			return random -> {
+				final double d = random.nextDouble();
+				long value = (long) ((d * _max) + ((1.0 - d) * _min) + d);
+				return new NShrinkableLong(value, min, max);
+			};
+		}
+	}
+
 	public static <T extends Enum<T>> NShrinkableGenerator<T> choose(Class<T> enumClass) {
 		return random -> choose(enumClass.getEnumConstants()).next(random);
 	}

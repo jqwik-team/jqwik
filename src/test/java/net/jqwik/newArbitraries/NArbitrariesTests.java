@@ -48,19 +48,15 @@ public class NArbitrariesTests {
 		assertAllGenerated(generator, value -> value >= -10 && value <= 10);
 	}
 
-	// @Example
-	// void integersLong() {
-	// NArbitrary<Long> longArbitrary = NArbitraries.longInteger(-100L, 100L);
-	// NShrinkableGenerator<Long> generator = longArbitrary.generator(1);
-	//
-	// assertAtLeastOneGenerated(generator, value -> ((long) value) < -50);
-	// assertAtLeastOneGenerated(generator, value -> ((long) value) > 50);
-	// assertAllGenerated(generator, value -> {
-	// long intValue = (long) value;
-	// return intValue >= -100L && intValue <= 100L;
-	// });
-	// }
-	//
+	@Example
+	void integersLong() {
+		NArbitrary<Long> longArbitrary = NArbitraries.longInteger(-100L, 100L);
+		NShrinkableGenerator<Long> generator = longArbitrary.generator(1);
+
+		assertAtLeastOneGenerated(generator, value -> value < -50);
+		assertAtLeastOneGenerated(generator, value -> value > 50);
+		assertAllGenerated(generator, value -> value >= -100L && value <= 100L);
+	}
 
 	// @Example
 	// void string() {
