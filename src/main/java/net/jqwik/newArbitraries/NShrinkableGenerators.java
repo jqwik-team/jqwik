@@ -1,6 +1,7 @@
 package net.jqwik.newArbitraries;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 public class NShrinkableGenerators {
 
@@ -8,8 +9,7 @@ public class NShrinkableGenerators {
 		if (values.length == 0) {
 			return fail("empty set of values");
 		} else {
-			return random -> NShrinkableGenerators.choose(0, values.length - 1) //
-				.map(i -> values[i]).next(random);
+			return random -> choose(0, values.length - 1).map(i -> values[i]).next(random);
 		}
 	}
 
@@ -26,12 +26,23 @@ public class NShrinkableGenerators {
 		}
 	}
 
+	public static <T extends Enum<T>> NShrinkableGenerator<T> choose(Class<T> enumClass) {
+		return random -> choose(enumClass.getEnumConstants()).next(random);
+	}
+
+	public static <T> NShrinkableGenerator<T> samples(T... samples) {
+		AtomicInteger tryCount = new AtomicInteger(0);
+		return ignored -> {
+			if (tryCount.get() >= samples.length)
+				tryCount.set(0);
+			return NShrinkableValue.unshrinkable(samples[tryCount.getAndIncrement()]);
+		};
+	}
 
 	public static <T> NShrinkableGenerator<T> fail(String message) {
 		return ignored -> {
 			throw new RuntimeException(message);
 		};
 	}
-
 
 }

@@ -5,6 +5,10 @@ import java.util.function.*;
 
 public class NShrinkableValue<T> implements NShrinkable<T> {
 
+	public static <T> NShrinkableValue<T> unshrinkable(T value) {
+		return new NShrinkableValue<>(value, 0, () -> Collections.emptySet());
+	}
+
 	private final T value;
 	private final int distance;
 	private final NShrinker<T> shrinker;
