@@ -1,11 +1,11 @@
 package net.jqwik.newArbitraries;
 
-import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 
-import net.jqwik.api.*;
+import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
+import static org.assertj.core.api.Assertions.*;
 
 class NIntegralShrinkingTests {
 
@@ -93,20 +93,33 @@ class NIntegralShrinkingTests {
 		void longsAreShrunkEvenAboveIntMax() {
 			NShrinker<Long> shrinker = new NLongShrinker(Long.MIN_VALUE, Long.MAX_VALUE);
 			assertThat(shrinker.shrink(128_000_000_000L)).containsExactly(64_000_000_000L);
-//			List<Long> allShrunkValues = shrinkToEnd(shrinker, 128_000_000_000L);
-//			assertThat(allShrunkValues).startsWith( //
-//					64_000_000_000L, //
-//					32_000_000_000L, //
-//					16_000_000_000L, //
-//					8_000_000_000L, //
-//					4_000_000_000L, //
-//					2_000_000_000L, //
-//					1_000_000_000L, //
-//					500_000_000L, //
-//					250_000_000L, //
-//					125_000_000L //
-//			);
-//
+			List<Long> allShrunkValues = shrinkToEnd(shrinker, 128_000_000_000L);
+			assertThat(allShrunkValues).startsWith( //
+					64_000_000_000L, //
+					32_000_000_000L, //
+					16_000_000_000L, //
+					8_000_000_000L, //
+					4_000_000_000L, //
+					2_000_000_000L, //
+					1_000_000_000L //
+			);
+			assertThat(allShrunkValues).endsWith(15L, 8L, 4L, 2L, 1L, 0L);
+		}
+
+		@Example
+		void longsAreShrunkEvenBelowIntMin() {
+			NShrinker<Long> shrinker = new NLongShrinker(Long.MIN_VALUE, Long.MAX_VALUE);
+			List<Long> allShrunkValues = shrinkToEnd(shrinker, -128_000_000_000L);
+			assertThat(allShrunkValues).startsWith( //
+					-64_000_000_000L, //
+					-32_000_000_000L, //
+					-16_000_000_000L, //
+					-8_000_000_000L, //
+					-4_000_000_000L, //
+					-2_000_000_000L, //
+					-1_000_000_000L //
+			);
+			assertThat(allShrunkValues).endsWith(-15L, -8L, -4L, -2L, -1L, 0L);
 		}
 
 	}

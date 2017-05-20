@@ -35,9 +35,9 @@ abstract class NIntegralShrinker<T extends Number> implements NShrinker<T> {
 
 	private static long calculateDelta(long current, long target) {
 		if (target > current)
-			return (int) Math.max(Math.floor((target - current) / 2L), 1);
+			return Math.max((target - current) / 2L, 1);
 		if (target < current)
-			return (int) Math.min(Math.ceil((target - current) / 2L), -1);
+			return Math.min((target - current) / 2L, -1);
 		return 0;
 	}
 
