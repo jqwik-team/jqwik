@@ -14,7 +14,10 @@ abstract class NIntegralShrinker<T extends Number> implements NShrinker<T> {
 
 	@Override
 	public Set<T> shrink(T value) {
-		return Collections.singleton(shrinkTowardsTarget(value));
+		T shrunkValue = shrinkTowardsTarget(value);
+		if (value.equals(shrunkValue))
+			return Collections.emptySet();
+		return Collections.singleton(shrunkValue);
 	}
 
 	protected abstract T shrinkTowardsTarget(T value);
@@ -32,9 +35,10 @@ abstract class NIntegralShrinker<T extends Number> implements NShrinker<T> {
 
 	private static long calculateDelta(long current, long target) {
 		if (target > current)
-			return (int) Math.max(Math.floor((target - current) / 2.0), 1);
-		else
-			return (int) Math.min(Math.ceil((target - current) / 2.0), -1);
+			return (int) Math.max(Math.floor((target - current) / 2L), 1);
+		if (target < current)
+			return (int) Math.min(Math.ceil((target - current) / 2L), -1);
+		return 0;
 	}
 
 	private long determineTarget(long value) {

@@ -28,6 +28,19 @@ public class NArbitraryTestHelper {
 		}
 	}
 
+	public static<T> List<T> shrinkToEnd(NShrinker<T> shrinker, T toShrink) {
+		ArrayList<T> shrinks = new ArrayList<>();
+		collectShrinkResults(shrinker, toShrink, shrinks);
+		return shrinks;
+	}
+
+	private static<T> void collectShrinkResults(NShrinker<T> shrinker, T toShrink, List<T> collector) {
+		Set<T> shrink = shrinker.shrink(toShrink);
+		collector.addAll(shrink);
+		shrink.forEach(next -> collectShrinkResults(shrinker, next, collector));
+	}
+
+
 //	public static <T> void assertGenerated(RandomGenerator<T> generator, T... expectedValues) {
 //		Random random = new Random();
 //
