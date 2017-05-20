@@ -1,11 +1,9 @@
 package net.jqwik.newArbitraries;
 
-import static org.assertj.core.api.Assertions.*;
-
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.properties.*;
+import static org.assertj.core.api.Assertions.*;
 
 public class NArbitraryTestHelper {
 
@@ -41,15 +39,15 @@ public class NArbitraryTestHelper {
 	}
 
 
-//	public static <T> void assertGenerated(RandomGenerator<T> generator, T... expectedValues) {
-//		Random random = new Random();
-//
-//		for (int i = 0; i < expectedValues.length; i++) {
-//			T actual = generator.next(random);
-//			T expected = expectedValues[i];
-//			if (!actual.equals(expected))
-//				fail(String.format("Generated value [%s] not equals to expected value [%s].", actual.toString(), expected.toString()));
-//		}
-//	}
+	public static <T> void assertGenerated(NShrinkableGenerator<T> generator, T... expectedValues) {
+		Random random = new Random();
+
+		for (int i = 0; i < expectedValues.length; i++) {
+			NShrinkable<T> actual = generator.next(random);
+			T expected = expectedValues[i];
+			if (!actual.value().equals(expected))
+				fail(String.format("Generated value [%s] not equals to expected value [%s].", actual.toString(), expected.toString()));
+		}
+	}
 
 }

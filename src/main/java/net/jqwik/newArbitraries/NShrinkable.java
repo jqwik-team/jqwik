@@ -12,4 +12,8 @@ public interface NShrinkable<T> {
 	T value();
 
 	int distance();
+
+	default <U> NShrinkable<U> map(Function<T, U> mapper) {
+		return new NMappedShrinkable<>(this, mapper);
+	}
 }

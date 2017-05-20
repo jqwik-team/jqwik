@@ -12,4 +12,12 @@ public interface NArbitrary<T> {
 	default <U> NArbitrary<U> map(Function<T, U> mapper) {
 		return tries -> this.generator(tries).map(mapper);
 	}
+
+	static int defaultMaxFromTries(int tries) {
+		return Math.max(tries / 2 - 3, 3);
+	}
+
+	static int defaultCollectionSizeFromTries(int tries) {
+		return (int) Math.max(Math.round(Math.sqrt(tries)), 3);
+	}
 }

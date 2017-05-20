@@ -31,5 +31,29 @@ public class NArbitraries {
 		return new NLongArbitrary();
 	}
 
+	public static NArbitrary<String> string() {
+		return new NStringArbitrary();
+	}
+
+	public static NArbitrary<String> string(char[] validChars, int maxSize) {
+		return new NStringArbitrary(validChars, maxSize);
+	}
+
+	public static NArbitrary<String> string(char[] validChars) {
+		return new NStringArbitrary(validChars);
+	}
+
+	public static NArbitrary<String> string(char from, char to, int maxSize) {
+		return new NStringArbitrary(from, to, maxSize);
+	}
+
+	public static NArbitrary<String> string(char from, char to) {
+		return new NStringArbitrary(from, to);
+	}
+
+	@SafeVarargs
+	public static <T> NArbitrary<T> samples(T... samples) {
+		return fromGenerator(NShrinkableGenerators.samples(samples));
+	}
 
 }

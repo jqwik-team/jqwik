@@ -1,10 +1,10 @@
 package net.jqwik.newArbitraries;
 
-import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 
-import net.jqwik.api.*;
+import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
 
 public class NArbitrariesTests {
 
@@ -58,28 +58,34 @@ public class NArbitrariesTests {
 		assertAllGenerated(generator, value -> value >= -100L && value <= 100L);
 	}
 
-	// @Example
-	// void string() {
-	// NArbitrary<String> stringArbitrary = NArbitraries.string('a', 'd', 5);
-	// NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
-	// assertGeneratedString(generator);
-	// }
-	//
-	// @Example
-	// void stringFromCharset() {
-	// char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
-	// NArbitrary<String> stringArbitrary = NArbitraries.string(validChars, 5);
-	// NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
-	// assertGeneratedString(generator);
-	// }
-	//
-	// @Example
-	// void samplesAreGeneratedDeterministicallyInRoundRobin() {
-	// NArbitrary<Integer> integerArbitrary = NArbitraries.samples(-5, 0, 3);
-	// NShrinkableGenerator<Integer> generator = integerArbitrary.generator(1);
-	// assertGenerated(generator, -5, 0, 3, -5, 0, 3);
-	// }
-	//
+	@Example
+	void string() {
+		NArbitrary<String> stringArbitrary = NArbitraries.string('a', 'd', 5);
+		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
+		assertGeneratedString(generator);
+	}
+
+	@Example
+	void stringFromCharset() {
+		char[] validChars = new char[]{'a', 'b', 'c', 'd'};
+		NArbitrary<String> stringArbitrary = NArbitraries.string(validChars, 5);
+		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
+		assertGeneratedString(generator);
+	}
+
+	private void assertGeneratedString(NShrinkableGenerator<String> generator) {
+		assertAllGenerated(generator, value -> value.length() >= 0 && value.length() <= 5);
+		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
+		assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
+	}
+
+	@Example
+	void samplesAreGeneratedDeterministicallyInRoundRobin() {
+		NArbitrary<Integer> integerArbitrary = NArbitraries.samples(-5, 0, 3);
+		NShrinkableGenerator<Integer> generator = integerArbitrary.generator(1);
+		assertGenerated(generator, -5, 0, 3, -5, 0, 3);
+	}
+
 	// @Group
 	// class GenericTypes {
 	//
@@ -163,13 +169,6 @@ public class NArbitrariesTests {
 	// private void assertGeneratedSet(Set<Integer> set) {
 	// assertThat(set.size()).isBetween(0, 5);
 	// assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	// }
-	//
-	// private void assertGeneratedString(NShrinkableGenerator<String> generator) {
-	// assertAllGenerated(generator, value -> value.length() >= 0 && value.length() <= 5);
-	// List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-	// assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char)
-	// i))));
 	// }
 	//
 	// private void assertGeneratedLists(NShrinkableGenerator<List<String>> generator) {

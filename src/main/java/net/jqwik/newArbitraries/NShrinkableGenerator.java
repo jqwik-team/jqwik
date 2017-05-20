@@ -8,7 +8,7 @@ public interface NShrinkableGenerator<T> {
 	NShrinkable<T> next(Random random);
 
 	default <U> NShrinkableGenerator<U> map(Function<T, U> mapper) {
-		return random -> new NMappedShrinkable<>(this.next(random), mapper);
+		return random -> this.next(random).map(mapper);
 	}
 
 	default NShrinkableGenerator<T> filter(Predicate<T> filterPredicate) {
@@ -33,6 +33,11 @@ public interface NShrinkableGenerator<T> {
 			return generator.next(random);
 		};
 	}
+
+	default NShrinkableGenerator<T> mixIn(NShrinkableGenerator<T> otherGenerator, double mixInProbability) {
+		return random -> random.nextDouble() <= mixInProbability ? otherGenerator.next(random) : next(random) ;
+	};
+
 
 
 }
