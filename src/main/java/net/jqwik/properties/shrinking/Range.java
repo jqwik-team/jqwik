@@ -9,8 +9,8 @@ public class Range<T extends Comparable> {
 			return new Range<>(left, right);
 	}
 
-	private final T min;
-	private final T max;
+	public final T min;
+	public final T max;
 
 	private Range(T min, T max) {
 		this.min = min;
