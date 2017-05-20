@@ -21,7 +21,7 @@ public class NShrinkableGenerators {
 			final int _max = Math.max(min, max);
 			return random -> {
 				int value = random.nextInt(Math.abs(_max - _min) + 1) + _min;
-				return new NShrinkableInteger(value, min, max);
+				return new NShrinkableValue<>(value, new NIntegerShrinker(min, max));
 			};
 		}
 	}
@@ -35,7 +35,7 @@ public class NShrinkableGenerators {
 			return random -> {
 				final double d = random.nextDouble();
 				long value = (long) ((d * _max) + ((1.0 - d) * _min) + d);
-				return new NShrinkableLong(value, min, max);
+				return new NShrinkableValue<>(value, new NLongShrinker(min, max));
 			};
 		}
 	}
