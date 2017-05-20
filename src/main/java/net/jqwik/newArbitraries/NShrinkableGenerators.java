@@ -15,7 +15,7 @@ public class NShrinkableGenerators {
 
 	public static NShrinkableGenerator<Integer> choose(int min, int max) {
 		if (min == max) {
-			return ignored -> new NShrinkableValue<>(min, 0, () -> Collections.emptySet());
+			return ignored -> new NShrinkableValue<>(min, ignore -> Collections.emptySet());
 		} else {
 			final int _min = Math.min(min, max);
 			final int _max = Math.max(min, max);
@@ -28,7 +28,7 @@ public class NShrinkableGenerators {
 
 	public static NShrinkableGenerator<Long> choose(long min, long max) {
 		if (min == max) {
-			return ignored -> new NShrinkableValue<>(min, 0, () -> Collections.emptySet());
+			return ignored -> new NShrinkableValue<>(min, ignore -> Collections.emptySet());
 		} else {
 			final long _min = Math.min(min, max);
 			final long _max = Math.max(min, max);

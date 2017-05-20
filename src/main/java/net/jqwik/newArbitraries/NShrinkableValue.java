@@ -2,26 +2,28 @@ package net.jqwik.newArbitraries;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 public class NShrinkableValue<T> implements NShrinkable<T> {
 
 	public static <T> NShrinkableValue<T> unshrinkable(T value) {
-		return new NShrinkableValue<>(value, 0, () -> Collections.emptySet());
+		return new NShrinkableValue<>(value, ignore -> Collections.emptySet());
 	}
 
 	private final T value;
-	private final int distance;
 	private final NShrinker<T> shrinker;
 
-	public NShrinkableValue(T value, int distance, NShrinker<T> shrinker) {
+	public NShrinkableValue(T value, NShrinker<T> shrinker) {
 		this.value = value;
-		this.distance = distance;
 		this.shrinker = shrinker;
 	}
 
 	@Override
 	public Set<NShrinkable<T>> shrink() {
-		return shrinker.shrink();
+		return shrinker.shrink(value) //
+				.stream() //
+				.map(newValue -> new NShrinkableValue<T>(newValue, shrinker)) //
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -36,7 +38,7 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 
 	@Override
 	public int distance() {
-		return distance;
+		return shrinker.distance(value);
 	}
 
 	@Override
@@ -51,11 +53,11 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 		if (o == null || getClass() != o.getClass())
 			return false;
 		NShrinkableValue<?> that = (NShrinkableValue<?>) o;
-		return distance == that.distance && Objects.equals(value, that.value);
+		return distance() == that.distance() && Objects.equals(value, that.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(value, distance);
+		return Objects.hash(value);
 	}
 }

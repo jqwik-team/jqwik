@@ -22,8 +22,8 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 						value.add(i);
 					}
 					index.incrementAndGet();
-					NShrinker<List<Integer>> shrinker = new ListShrinker(value);
-					return new NShrinkableValue<>(value, value.size(), shrinker);
+					NShrinker<List<Integer>> shrinker = new ListShrinker();
+					return new NShrinkableValue<>(value, shrinker);
 				} else {
 					index.set(0);
 					return next(random);
@@ -33,28 +33,28 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 	}
 
 	private static class ListShrinker implements NShrinker<List<Integer>> {
-		private final List<Integer> toShrink;
-
-		private ListShrinker(List<Integer> toShrink) {
-			this.toShrink = toShrink;
-		}
 
 		@Override
-		public Set<NShrinkable<List<Integer>>> shrink() {
+		public Set<List<Integer>> shrink(List<Integer> toShrink) {
 			if (toShrink.isEmpty())
 				return Collections.emptySet();
 			if (toShrink.size() == 1) {
 				List<Integer> shrunk = Collections.emptyList();
-				return Collections.singleton(new NShrinkableValue<>(shrunk, 0, new ListShrinker(shrunk)));
+				return Collections.singleton(shrunk);
 			}
-			Set<NShrinkable<List<Integer>>> shrinkables = new HashSet<>();
+			Set<List<Integer>> shrinkables = new HashSet<>();
 			ArrayList<Integer> rightCut = new ArrayList<>(toShrink);
 			rightCut.remove(rightCut.size() - 1);
-			shrinkables.add(new NShrinkableValue<>(rightCut, rightCut.size(), new ListShrinker(rightCut)));
+			shrinkables.add(rightCut);
 			ArrayList<Integer> leftCut = new ArrayList<>(toShrink);
 			leftCut.remove(0);
-			shrinkables.add(new NShrinkableValue<>(leftCut, leftCut.size(), new ListShrinker(leftCut)));
+			shrinkables.add(leftCut);
 			return shrinkables;
+		}
+
+		@Override
+		public int distance(List<Integer> value) {
+			return value.size();
 		}
 	}
 }

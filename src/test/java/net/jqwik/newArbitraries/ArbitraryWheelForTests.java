@@ -19,8 +19,8 @@ public class ArbitraryWheelForTests<T> implements NArbitrary<T> {
 				if (index.get() < values.length) {
 					int current = index.getAndIncrement();
 					T value = values[current];
-					NShrinker<T> shrinker = new WheelShrinker(value);
-					return new NShrinkableValue<>(value, current, shrinker);
+					NShrinker<T> shrinker = new WheelShrinker();
+					return new NShrinkableValue<>(value, shrinker);
 				} else {
 					index.set(0);
 					return next(random);
@@ -30,21 +30,19 @@ public class ArbitraryWheelForTests<T> implements NArbitrary<T> {
 	}
 
 	private class WheelShrinker implements NShrinker<T> {
-		private final T valueToShrink;
-
-		private WheelShrinker(T valueToShrink) {
-			this.valueToShrink = valueToShrink;
-		}
 
 		@Override
-		public Set<NShrinkable<T>> shrink() {
-			int index = Arrays.asList(values).indexOf(valueToShrink);
+		public Set<T> shrink(T value) {
+			int index = Arrays.asList(values).indexOf(value);
 			if (index <= 0)
 				return Collections.emptySet();
 			T shrunkValue = values[index - 1];
-			NShrinker<T> shrinker = new WheelShrinker(shrunkValue);
-			NShrinkableValue<T> shrinkableValue = new NShrinkableValue<>(shrunkValue, index - 1, shrinker);
-			return Collections.singleton(shrinkableValue);
+			return Collections.singleton(shrunkValue);
+		}
+
+		@Override
+		public int distance(T value) {
+			return Math.max(Arrays.asList(values).indexOf(value), 0);
 		}
 	}
 }

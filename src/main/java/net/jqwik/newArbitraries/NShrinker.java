@@ -4,5 +4,9 @@ import java.util.*;
 
 public interface NShrinker<T> {
 
-	Set<NShrinkable<T>> shrink();
+	Set<T> shrink(T value);
+
+	default int distance(T value) {
+		return 0;
+	}
 }
