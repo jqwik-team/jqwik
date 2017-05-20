@@ -5,8 +5,12 @@ import java.util.function.*;
 
 public class NCombinators {
 
-	public static <T1, T2> Combinator2<T1, T2> combine(NArbitrary<T1> a1, NArbitrary<T2> a2) {
-		return new Combinator2<T1, T2>(a1, a2);
+	public static <T1, T2> ACombinator2<T1, T2> combine(NArbitrary<T1> a1, NArbitrary<T2> a2) {
+		return new ACombinator2<T1, T2>(a1, a2);
+	}
+
+	public static <T1, T2> GCombinator2<T1, T2> combine(NShrinkableGenerator<T1> g1, NShrinkableGenerator<T2> g2) {
+		return new GCombinator2<T1, T2>(g1, g2);
 	}
 
 	public static <T1, T2, T3> Combinator3<T1, T2, T3> combine(NArbitrary<T1> a1, NArbitrary<T2> a2, NArbitrary<T3> a3) {
@@ -17,28 +21,37 @@ public class NCombinators {
 		return new Combinator4<T1, T2, T3, T4>(a1, a2, a3, a4);
 	}
 
-	public static class Combinator2<T1, T2> {
+	public static class ACombinator2<T1, T2> {
 		private final NArbitrary<T1> a1;
 		private final NArbitrary<T2> a2;
 
-		private Combinator2(NArbitrary<T1> a1, NArbitrary<T2> a2) {
+		private ACombinator2(NArbitrary<T1> a1, NArbitrary<T2> a2) {
 			this.a1 = a1;
 			this.a2 = a2;
 		}
 
-		@SuppressWarnings("unchecked")
 		public <R> NArbitrary<R> as(F2<T1, T2, R> combinator) {
-			return (tries) -> {
-				NShrinkableGenerator<T1> g1 = a1.generator(tries);
-				NShrinkableGenerator<T2> g2 = a2.generator(tries);
-				return random -> {
-					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((NShrinkable<Object>) g1.next(random));
-					shrinkables.add((NShrinkable<Object>) g2.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
+			return (tries) -> combine(a1.generator(tries), a2.generator(tries)).as(combinator);
+		}
+	}
 
-					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
-				};
+	public static class GCombinator2<T1, T2> {
+		private final NShrinkableGenerator<T1> g1;
+		private final NShrinkableGenerator<T2> g2;
+
+		private GCombinator2(NShrinkableGenerator<T1> g1, NShrinkableGenerator<T2> g2) {
+			this.g1 = g1;
+			this.g2 = g2;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <R> NShrinkableGenerator<R> as(F2<T1, T2, R> combinator) {
+			return random -> {
+				List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+				shrinkables.add((NShrinkable<Object>) g1.next(random));
+				shrinkables.add((NShrinkable<Object>) g2.next(random));
+				Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
+				return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 			};
 		}
 	}
