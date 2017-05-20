@@ -51,6 +51,14 @@ public class NArbitraries {
 		return new NStringArbitrary(from, to);
 	}
 
+//	public static <T> NArbitrary<List<T>> listOf(NArbitrary<T> elementArbitrary, int maxSize) {
+//		return new NListArbitrary<T>(elementArbitrary, maxSize);
+//	}
+//
+//	public static <T> NArbitrary<List<T>> listOf(NArbitrary<T> elementArbitrary) {
+//		return new NListArbitrary<T>(elementArbitrary);
+//	}
+
 	@SafeVarargs
 	public static <T> NArbitrary<T> samples(T... samples) {
 		return fromGenerator(NShrinkableGenerators.samples(samples));

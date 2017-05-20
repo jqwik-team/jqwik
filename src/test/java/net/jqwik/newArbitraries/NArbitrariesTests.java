@@ -9,17 +9,14 @@ import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
 public class NArbitrariesTests {
 
 	enum MyEnum {
-		Yes,
-		No,
-		Maybe
+		Yes, No, Maybe
 	}
 
 	private Random random = new Random();
 
 	@Example
 	void fromGenerator() {
-		NArbitrary<String> stringArbitrary = NArbitraries
-				.fromGenerator(random -> NShrinkableValue.unshrinkable(Integer.toString(random.nextInt(10))));
+		NArbitrary<String> stringArbitrary = NArbitraries.fromGenerator(random -> NShrinkableValue.unshrinkable(Integer.toString(random.nextInt(10))));
 		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
@@ -86,79 +83,79 @@ public class NArbitrariesTests {
 		assertGenerated(generator, -5, 0, 3, -5, 0, 3);
 	}
 
-	// @Group
-	// class GenericTypes {
-	//
-	// @Example
-	// void list() {
-	// NArbitrary<String> stringArbitrary = NArbitraries.of("1", "hallo", "test");
-	// NArbitrary<List<String>> listArbitrary = NArbitraries.listOf(stringArbitrary, 5);
-	//
-	// NShrinkableGenerator<List<String>> generator = listArbitrary.generator(1);
-	// assertGeneratedLists(generator);
-	// }
-	//
-	// @Example
-	// void set() {
-	// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-	// NArbitrary<Set<Integer>> listArbitrary = NArbitraries.setOf(integerArbitrary, 5);
-	//
-	// NShrinkableGenerator<Set<Integer>> generator = listArbitrary.generator(1);
-	//
-	// assertGeneratedSet(generator.next(random));
-	// }
-	//
-	// @Example
-	// void stream() {
-	// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-	// NArbitrary<Stream<Integer>> streamArbitrary = NArbitraries.streamOf(integerArbitrary, 5);
-	//
-	// NShrinkableGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
-	//
-	// assertGeneratedStream(generator.next(random));
-	// assertGeneratedStream(generator.next(random));
-	// assertGeneratedStream(generator.next(random));
-	// assertGeneratedStream(generator.next(random));
-	// }
-	//
-	// @Example
-	// void optional() {
-	// NArbitrary<String> stringArbitrary = NArbitraries.of("one", "two");
-	// NArbitrary<Optional<String>> optionalArbitrary = NArbitraries.optionalOf(stringArbitrary);
-	//
-	// NShrinkableGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
-	//
-	// assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
-	// assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
-	// assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
-	// }
-	//
-	// @Example
-	// void array() {
-	// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-	// NArbitrary<Integer[]> arrayArbitrary = NArbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
-	//
-	// NShrinkableGenerator<Integer[]> generator = arrayArbitrary.generator(1);
-	//
-	// Integer[] array = generator.next(random);
-	// assertThat(array.length).isBetween(0, 5);
-	// assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	// }
-	//
-	// @Example
-	// void arrayOfPrimitiveType() {
-	// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-	// NArbitrary<int[]> arrayArbitrary = NArbitraries.arrayOf(int[].class, integerArbitrary, 5);
-	//
-	// NShrinkableGenerator<int[]> generator = arrayArbitrary.generator(1);
-	//
-	// int[] array = generator.next(random);
-	// assertThat(array.length).isBetween(0, 5);
-	// List<Integer> actual = IntStream.of(array).mapToObj(Integer::valueOf).collect(Collectors.toList());
-	// assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	// }
-	//
-	// }
+	@Group
+	class GenericTypes {
+
+		//		@Example
+		//		void list() {
+		//			NArbitrary<String> stringArbitrary = NArbitraries.of("1", "hallo", "test");
+		//			NArbitrary<List<String>> listArbitrary = NArbitraries.listOf(stringArbitrary, 5);
+		//
+		//			NShrinkableGenerator<List<String>> generator = listArbitrary.generator(1);
+		//			assertGeneratedLists(generator);
+		//		}
+
+		// @Example
+		// void set() {
+		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+		// NArbitrary<Set<Integer>> listArbitrary = NArbitraries.setOf(integerArbitrary, 5);
+		//
+		// NShrinkableGenerator<Set<Integer>> generator = listArbitrary.generator(1);
+		//
+		// assertGeneratedSet(generator.next(random));
+		// }
+		//
+		// @Example
+		// void stream() {
+		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+		// NArbitrary<Stream<Integer>> streamArbitrary = NArbitraries.streamOf(integerArbitrary, 5);
+		//
+		// NShrinkableGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
+		//
+		// assertGeneratedStream(generator.next(random));
+		// assertGeneratedStream(generator.next(random));
+		// assertGeneratedStream(generator.next(random));
+		// assertGeneratedStream(generator.next(random));
+		// }
+		//
+		// @Example
+		// void optional() {
+		// NArbitrary<String> stringArbitrary = NArbitraries.of("one", "two");
+		// NArbitrary<Optional<String>> optionalArbitrary = NArbitraries.optionalOf(stringArbitrary);
+		//
+		// NShrinkableGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
+		//
+		// assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
+		// assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
+		// assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
+		// }
+		//
+		// @Example
+		// void array() {
+		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+		// NArbitrary<Integer[]> arrayArbitrary = NArbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
+		//
+		// NShrinkableGenerator<Integer[]> generator = arrayArbitrary.generator(1);
+		//
+		// Integer[] array = generator.next(random);
+		// assertThat(array.length).isBetween(0, 5);
+		// assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		// }
+		//
+		// @Example
+		// void arrayOfPrimitiveType() {
+		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+		// NArbitrary<int[]> arrayArbitrary = NArbitraries.arrayOf(int[].class, integerArbitrary, 5);
+		//
+		// NShrinkableGenerator<int[]> generator = arrayArbitrary.generator(1);
+		//
+		// int[] array = generator.next(random);
+		// assertThat(array.length).isBetween(0, 5);
+		// List<Integer> actual = IntStream.of(array).mapToObj(Integer::valueOf).collect(Collectors.toList());
+		// assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		// }
+
+	}
 
 	// private void assertGeneratedStream(Stream<Integer> stream) {
 	// Set<Integer> set = stream.collect(Collectors.toSet());
@@ -170,11 +167,11 @@ public class NArbitrariesTests {
 	// assertThat(set.size()).isBetween(0, 5);
 	// assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	// }
-	//
-	// private void assertGeneratedLists(NShrinkableGenerator<List<String>> generator) {
-	// assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
-	// List<String> allowedStrings = Arrays.asList("1", "hallo", "test");
-	// assertAllGenerated(generator, aString -> aString.stream().allMatch(i -> allowedStrings.contains(i)));
-	// }
+
+	private void assertGeneratedLists(NShrinkableGenerator<List<String>> generator) {
+		assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
+		List<String> allowedStrings = Arrays.asList("1", "hallo", "test");
+		assertAllGenerated(generator, aString -> aString.stream().allMatch(allowedStrings::contains));
+	}
 
 }
