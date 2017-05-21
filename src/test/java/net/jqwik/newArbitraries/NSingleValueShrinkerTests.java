@@ -16,7 +16,8 @@ public class NSingleValueShrinkerTests {
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyAll();
 		NSingleValueShrinker<String> singleValueShrinker = new NSingleValueShrinker<>(unshrinkable);
 
-		Assertions.assertThat(singleValueShrinker.shrink(falsifier)).isEqualTo("hello");
+		NShrinkable<String> shrinkResult = singleValueShrinker.shrink(falsifier);
+		Assertions.assertThat(shrinkResult.value()).isEqualTo("hello");
 	}
 
 	@Example
@@ -35,7 +36,8 @@ public class NSingleValueShrinkerTests {
 		NShrinkable<Integer> shrinkable = new NShrinkableValue<Integer>(10, integerNShrinker);
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyWhen(anInt -> anInt < 3);
 		NSingleValueShrinker<Integer> singleValueShrinker = new NSingleValueShrinker<>(shrinkable);
-		Assertions.assertThat(singleValueShrinker.shrink(falsifier)).isEqualTo(3);
+		NShrinkable<Integer> shrinkResult = singleValueShrinker.shrink(falsifier);
+		Assertions.assertThat(shrinkResult.value()).isEqualTo(3);
 	}
 
 	@Example
@@ -48,6 +50,7 @@ public class NSingleValueShrinkerTests {
 		NShrinkable<String> shrinkable = NContainerShrinkable.stringOf(chars);
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
 		NSingleValueShrinker<String> singleValueShrinker = new NSingleValueShrinker<>(shrinkable);
-		Assertions.assertThat(singleValueShrinker.shrink(falsifier)).isEqualTo("hel");
+		NShrinkable<String> shrinkResult = singleValueShrinker.shrink(falsifier);
+		Assertions.assertThat(shrinkResult.value()).isEqualTo("hel");
 	}
 }

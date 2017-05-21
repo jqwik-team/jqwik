@@ -10,11 +10,12 @@ public class NSingleValueShrinker<T> {
 		this.shrinkable = shrinkable;
 	}
 
-	public T shrink(Predicate<T> falsifier) {
+	//TODO: Return ShrinkResult to also transport assertion error
+	public NShrinkable<T> shrink(Predicate<T> falsifier) {
 		Set<NShrinkable<T>> allFalsified = collectAllFalsified(shrinkable.shrink(), new HashSet<>(), falsifier);
 		return allFalsified.stream() //
 			.sorted(Comparator.comparingInt(NShrinkable::distance)) //
-			.findFirst().orElse(shrinkable).value();
+			.findFirst().orElse(shrinkable);
 	}
 
 	private Set<NShrinkable<T>> collectAllFalsified(Set<NShrinkable<T>> toTry, Set<NShrinkable<T>> allFalsified, Predicate<T> falsifier) {
