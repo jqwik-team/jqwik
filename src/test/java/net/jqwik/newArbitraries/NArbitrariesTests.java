@@ -86,14 +86,14 @@ public class NArbitrariesTests {
 	@Group
 	class GenericTypes {
 
-		//		@Example
-		//		void list() {
-		//			NArbitrary<String> stringArbitrary = NArbitraries.of("1", "hallo", "test");
-		//			NArbitrary<List<String>> listArbitrary = NArbitraries.listOf(stringArbitrary, 5);
-		//
-		//			NShrinkableGenerator<List<String>> generator = listArbitrary.generator(1);
-		//			assertGeneratedLists(generator);
-		//		}
+		@Example
+		void list() {
+			NArbitrary<String> stringArbitrary = NArbitraries.of("1", "hallo", "test");
+			NArbitrary<List<String>> listArbitrary = NArbitraries.listOf(stringArbitrary, 5);
+
+			NShrinkableGenerator<List<String>> generator = listArbitrary.generator(1);
+			assertGeneratedLists(generator);
+		}
 
 		// @Example
 		// void set() {

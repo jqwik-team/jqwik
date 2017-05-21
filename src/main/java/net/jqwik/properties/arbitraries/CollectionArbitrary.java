@@ -1,9 +1,9 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
+
+import java.util.*;
 
 abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 
@@ -23,7 +23,7 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 		return createListGenerator(elementArbitrary, tries, effectiveMaxSize);
 	}
 
-	private <T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
+	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
 		return RandomGenerators.list(elementGenerator, maxSize);

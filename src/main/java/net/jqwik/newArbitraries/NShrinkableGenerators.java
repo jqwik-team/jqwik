@@ -52,6 +52,20 @@ public class NShrinkableGenerators {
 		return choose(validCharacters);
 	}
 
+	public static <T> NShrinkableGenerator<List<T>> list(NShrinkableGenerator<T> elementGenerator, int maxSize) {
+		NShrinkableGenerator<Integer> lengthGenerator = choose(0, maxSize);
+		return random -> {
+			int listSize = lengthGenerator.next(random).value();
+			List<T> list = new ArrayList<>();
+			for (int j = 0; j < listSize; j++) {
+				list.add(elementGenerator.next(random).value());
+			}
+			// TODO: Make lists shrinkable
+			return new NShrinkableValue<>(list, ignore -> Collections.emptySet());
+		};
+	}
+
+
 	public static NShrinkableGenerator<String> string(NShrinkableGenerator<Character> charGenerator, int maxLength) {
 		NShrinkableGenerator<Integer> lengthGenerator = choose(0, maxLength);
 		return random -> {

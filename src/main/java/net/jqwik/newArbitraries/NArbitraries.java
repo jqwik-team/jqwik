@@ -1,5 +1,7 @@
 package net.jqwik.newArbitraries;
 
+import java.util.*;
+
 public class NArbitraries {
 
 	public static <T> NArbitrary<T> fromGenerator(NShrinkableGenerator<T> generator) {
@@ -51,13 +53,13 @@ public class NArbitraries {
 		return new NStringArbitrary(from, to);
 	}
 
-//	public static <T> NArbitrary<List<T>> listOf(NArbitrary<T> elementArbitrary, int maxSize) {
-//		return new NListArbitrary<T>(elementArbitrary, maxSize);
-//	}
-//
-//	public static <T> NArbitrary<List<T>> listOf(NArbitrary<T> elementArbitrary) {
-//		return new NListArbitrary<T>(elementArbitrary);
-//	}
+	public static <T> NArbitrary<List<T>> listOf(NArbitrary<T> elementArbitrary, int maxSize) {
+		return new NListArbitrary<T>(elementArbitrary, maxSize);
+	}
+
+	public static <T> NArbitrary<List<T>> listOf(NArbitrary<T> elementArbitrary) {
+		return new NListArbitrary<T>(elementArbitrary);
+	}
 
 	@SafeVarargs
 	public static <T> NArbitrary<T> samples(T... samples) {
