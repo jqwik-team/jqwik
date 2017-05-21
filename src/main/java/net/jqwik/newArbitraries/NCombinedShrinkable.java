@@ -31,11 +31,6 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public boolean falsifies(Predicate<T> falsifier) {
-		return falsifier.negate().test(value);
-	}
-
-	@Override
 	public T value() {
 		return value;
 	}

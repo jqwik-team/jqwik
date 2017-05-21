@@ -18,11 +18,6 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public boolean falsifies(Predicate<T> falsifier) {
-		return toFilter.falsifies(falsifier);
-	}
-
-	@Override
 	public T value() {
 		return toFilter.value();
 	}

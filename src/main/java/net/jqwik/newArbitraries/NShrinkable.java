@@ -7,7 +7,9 @@ public interface NShrinkable<T> {
 
 	Set<NShrinkable<T>> shrink();
 
-	boolean falsifies(Predicate<T> falsifier);
+	default boolean falsifies(Predicate<T> falsifier) {
+		return falsifier.negate().test(value());
+	}
 
 	T value();
 

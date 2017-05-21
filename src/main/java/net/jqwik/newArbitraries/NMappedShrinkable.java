@@ -25,11 +25,6 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 	}
 
 	@Override
-	public boolean falsifies(Predicate<U> falsifier) {
-		return falsifier.negate().test(value);
-	}
-
-	@Override
 	public U value() {
 		return value;
 	}

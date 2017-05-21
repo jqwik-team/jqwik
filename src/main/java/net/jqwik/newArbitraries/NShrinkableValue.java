@@ -1,7 +1,6 @@
 package net.jqwik.newArbitraries;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 public class NShrinkableValue<T> implements NShrinkable<T> {
@@ -24,11 +23,6 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 				.stream() //
 				.map(newValue -> new NShrinkableValue<T>(newValue, shrinker)) //
 				.collect(Collectors.toSet());
-	}
-
-	@Override
-	public boolean falsifies(Predicate<T> falsifier) {
-		return falsifier.negate().test(value);
 	}
 
 	@Override
