@@ -65,16 +65,15 @@ public class NShrinkableGenerators {
 		};
 	}
 
-
 	public static NShrinkableGenerator<String> string(NShrinkableGenerator<Character> charGenerator, int maxLength) {
 		NShrinkableGenerator<Integer> lengthGenerator = choose(0, maxLength);
 		return random -> {
 			int stringLength = lengthGenerator.next(random).value();
-			final char[] chars = new char[stringLength];
+			final List<NShrinkable<Character>> chars = new ArrayList<>();
 			for (int j = 0; j < stringLength; j++) {
-				chars[j] = charGenerator.next(random).value();
+				chars.add(charGenerator.next(random));
 			}
-			return new NShrinkableValue<>(new String(chars), new NStringShrinker());
+			return NContainerShrinkable.stringFromChars(chars);
 		};
 	}
 

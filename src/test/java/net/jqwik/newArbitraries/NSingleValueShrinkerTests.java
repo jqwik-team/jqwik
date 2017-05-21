@@ -5,6 +5,7 @@ import net.jqwik.properties.shrinking.*;
 import org.assertj.core.api.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class NSingleValueShrinkerTests {
 
@@ -39,9 +40,12 @@ public class NSingleValueShrinkerTests {
 
 	@Example
 	void shrinkMultiShrinkSetToFalsifiedValueWithLowestDistance() {
-		NShrinker<String> stringShrinker = new NStringShrinker();
+		List<NShrinkable<Character>> chars = "hello this is a longer sentence." //
+			.chars() //
+			.mapToObj(e -> NShrinkableValue.unshrinkable((char) e)) //
+			.collect(Collectors.toList());
 
-		NShrinkable<String> shrinkable = new NShrinkableValue<String>("hello this is a longer sentence.", stringShrinker);
+		NShrinkable<String> shrinkable = NContainerShrinkable.stringFromChars(chars);
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
 		NSingleValueShrinker<String> singleValueShrinker = new NSingleValueShrinker<>(shrinkable);
 		Assertions.assertThat(singleValueShrinker.shrink(falsifier)).isEqualTo("hel");
