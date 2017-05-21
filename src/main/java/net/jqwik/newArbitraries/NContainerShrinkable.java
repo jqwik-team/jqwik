@@ -6,10 +6,12 @@ import java.util.stream.*;
 
 public class NContainerShrinkable<T, U, C extends Collection<NShrinkable<U>>> implements NShrinkable<T> {
 
-	public static NShrinkable<String> stringFromChars(List<NShrinkable<Character>> chars) {
-		Function<Collection<Character>, String> containerFunction = //
-			list -> list.stream().map(c -> Character.toString(c)).collect(Collectors.joining());
-		return new NContainerShrinkable<>(chars, containerFunction, new NListShrinker<>());
+	public static final Function<Collection<Character>, String> CREATE_STRING = list -> list.stream() //
+			.map(c -> Character.toString(c)) //
+			.collect(Collectors.joining());
+
+	public static NShrinkable<String> stringOf(List<NShrinkable<Character>> chars) {
+		return new NContainerShrinkable<>(chars, CREATE_STRING, new NListShrinker<>());
 	}
 
 	private final C elements;
@@ -28,9 +30,9 @@ public class NContainerShrinkable<T, U, C extends Collection<NShrinkable<U>>> im
 	public Set<NShrinkable<T>> shrink() {
 		// TODO: After shrinking container, shrink the elements
 		return containerShrinker.shrink(elements) //
-			.stream() //
-			.map(shrinkables -> new NContainerShrinkable<>(shrinkables, containerFunction, containerShrinker)) //
-			.collect(Collectors.toSet());
+				.stream() //
+				.map(shrinkables -> new NContainerShrinkable<>(shrinkables, containerFunction, containerShrinker)) //
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -40,8 +42,8 @@ public class NContainerShrinkable<T, U, C extends Collection<NShrinkable<U>>> im
 
 	private T createContainer(Collection<NShrinkable<U>> shrinkables) {
 		List<U> values = shrinkables.stream() //
-			.map(NShrinkable::value) //
-			.collect(Collectors.toList());
+				.map(NShrinkable::value) //
+				.collect(Collectors.toList());
 		return containerFunction.apply(values);
 	}
 

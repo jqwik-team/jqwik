@@ -45,7 +45,7 @@ public class NSingleValueShrinkerTests {
 			.mapToObj(e -> NShrinkableValue.unshrinkable((char) e)) //
 			.collect(Collectors.toList());
 
-		NShrinkable<String> shrinkable = NContainerShrinkable.stringFromChars(chars);
+		NShrinkable<String> shrinkable = NContainerShrinkable.stringOf(chars);
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
 		NSingleValueShrinker<String> singleValueShrinker = new NSingleValueShrinker<>(shrinkable);
 		Assertions.assertThat(singleValueShrinker.shrink(falsifier)).isEqualTo("hel");

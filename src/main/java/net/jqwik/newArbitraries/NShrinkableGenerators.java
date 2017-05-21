@@ -2,6 +2,7 @@ package net.jqwik.newArbitraries;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 public class NShrinkableGenerators {
 
@@ -52,29 +53,27 @@ public class NShrinkableGenerators {
 		return choose(validCharacters);
 	}
 
-	public static <T> NShrinkableGenerator<List<T>> list(NShrinkableGenerator<T> elementGenerator, int maxSize) {
+	private static <T, C> NShrinkableGenerator<C> container( //
+			NShrinkableGenerator<T> elementGenerator, //
+			Function<Collection<T>, C> containerFunction, //
+			int maxSize) {
 		NShrinkableGenerator<Integer> lengthGenerator = choose(0, maxSize);
 		return random -> {
 			int listSize = lengthGenerator.next(random).value();
-			List<T> list = new ArrayList<>();
+			List<NShrinkable<T>> list = new ArrayList<>();
 			for (int j = 0; j < listSize; j++) {
-				list.add(elementGenerator.next(random).value());
+				list.add(elementGenerator.next(random));
 			}
-			// TODO: Make lists shrinkable
-			return new NShrinkableValue<>(list, ignore -> Collections.emptySet());
+			return new NContainerShrinkable<>(list, containerFunction, new NListShrinker<>());
 		};
 	}
 
-	public static NShrinkableGenerator<String> string(NShrinkableGenerator<Character> charGenerator, int maxLength) {
-		NShrinkableGenerator<Integer> lengthGenerator = choose(0, maxLength);
-		return random -> {
-			int stringLength = lengthGenerator.next(random).value();
-			final List<NShrinkable<Character>> chars = new ArrayList<>();
-			for (int j = 0; j < stringLength; j++) {
-				chars.add(charGenerator.next(random));
-			}
-			return NContainerShrinkable.stringFromChars(chars);
-		};
+	public static <T> NShrinkableGenerator<List<T>> list(NShrinkableGenerator<T> elementGenerator, int maxSize) {
+		return container(elementGenerator, ArrayList::new, maxSize);
+	}
+
+	public static NShrinkableGenerator<String> string(NShrinkableGenerator<Character> elementGenerator, int maxSize) {
+		return container(elementGenerator, NContainerShrinkable.CREATE_STRING, maxSize);
 	}
 
 	public static NShrinkableGenerator<Character> choose(char min, char max) {
