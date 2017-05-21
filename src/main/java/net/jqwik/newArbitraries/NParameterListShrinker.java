@@ -4,9 +4,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.properties.*;
-import net.jqwik.properties.shrinking.*;
-
 public class NParameterListShrinker<T> {
 
 	private final Predicate<List<T>> forAllFalsifier;
@@ -29,11 +26,10 @@ public class NParameterListShrinker<T> {
 	private void shrinkPosition(int position, List<NShrinkable<T>> lastFalsifiedShrinkables, AssertionError[] lastFalsifiedError) {
 		NShrinkable<T> currentShrinkable = lastFalsifiedShrinkables.get(position);
 		Predicate<T> elementFalsifier = createFalsifierForPosition(position, lastFalsifiedShrinkables);
-		NShrinkable<T> shrinkResult = new NSingleValueShrinker<>(currentShrinkable).shrink(elementFalsifier);
+		NShrinkResult<NShrinkable<T>> shrinkResult = new NSingleValueShrinker<>(currentShrinkable, null).shrink(elementFalsifier);
 
-		lastFalsifiedShrinkables.set(position, shrinkResult);
-
-		//TODO: Get assertion error from SingleValueShrinker
+		lastFalsifiedShrinkables.set(position, shrinkResult.value());
+		shrinkResult.error().ifPresent(error -> lastFalsifiedError[0] = error);
 	}
 
 	private Predicate<T> createFalsifierForPosition(int position, List<NShrinkable<T>> lastFalsifiedParams) {
