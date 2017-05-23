@@ -35,13 +35,6 @@ public class NContainerShrinkable<T, U, C extends Collection<NShrinkable<U>>> im
 	}
 
 	@Override
-	public NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
-		// TODO: 1. shrink list, 2. shrink individual elements
-
-		return null;
-	}
-
-	@Override
 	public T value() {
 		return value;
 	}
