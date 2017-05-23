@@ -35,7 +35,7 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 	private static class ListShrinker implements NShrinker<List<Integer>> {
 
 		@Override
-		public Set<List<Integer>> shrink(List<Integer> toShrink) {
+		public Set<List<Integer>> nextShrinkingCandidates(List<Integer> toShrink) {
 			if (toShrink.isEmpty())
 				return Collections.emptySet();
 			if (toShrink.size() == 1) {

@@ -13,7 +13,7 @@ abstract class NIntegralShrinker<T extends Number> implements NShrinker<T> {
 	}
 
 	@Override
-	public Set<T> shrink(T value) {
+	public Set<T> nextShrinkingCandidates(T value) {
 		T shrunkValue = shrinkTowardsTarget(value);
 		if (value.equals(shrunkValue))
 			return Collections.emptySet();

@@ -17,8 +17,8 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 	}
 
 	@Override
-	public Set<NShrinkable<U>> shrinkingCandidates() {
-		return toMap.shrinkingCandidates() //
+	public Set<NShrinkable<U>> nextShrinkingCandidates() {
+		return toMap.nextShrinkingCandidates() //
 					.stream() //
 					.map(shrinkableToMap -> new NMappedShrinkable<>(shrinkableToMap, mapper)) //
 					.collect(Collectors.toSet());

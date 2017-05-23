@@ -27,12 +27,18 @@ public class NContainerShrinkable<T, U, C extends Collection<NShrinkable<U>>> im
 	}
 
 	@Override
-	public Set<NShrinkable<T>> shrinkingCandidates() {
-		// TODO: After shrinking container, shrink the elements
-		return containerShrinker.shrink(elements) //
-				.stream() //
-				.map(shrinkables -> new NContainerShrinkable<>(shrinkables, containerFunction, containerShrinker)) //
-				.collect(Collectors.toSet());
+	public Set<NShrinkable<T>> nextShrinkingCandidates() {
+		return containerShrinker.nextShrinkingCandidates(elements) //
+								.stream() //
+								.map(shrinkables -> new NContainerShrinkable<>(shrinkables, containerFunction, containerShrinker)) //
+								.collect(Collectors.toSet());
+	}
+
+	@Override
+	public NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
+		// TODO: 1. shrink list, 2. shrink individual elements
+
+		return null;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class NSingleValueShrinker<T> {
 	}
 
 	public NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier) {
-		Set<NShrinkResult<NShrinkable<T>>> allFalsified = collectAllFalsified(shrinkable.shrinkingCandidates(), new HashSet<>(), falsifier);
+		Set<NShrinkResult<NShrinkable<T>>> allFalsified = collectAllFalsified(shrinkable.nextShrinkingCandidates(), new HashSet<>(), falsifier);
 		return allFalsified.stream() //
 			.sorted(Comparator.comparingInt(result -> result.value().distance())) //
 			.findFirst().orElse(NShrinkResult.of(shrinkable, originalError));
@@ -26,11 +26,11 @@ public class NSingleValueShrinker<T> {
 			try {
 				if (shrinkable.falsifies(falsifier)) {
 					allFalsified.add(NShrinkResult.of(shrinkable, null));
-					toTryNext.addAll(shrinkable.shrinkingCandidates());
+					toTryNext.addAll(shrinkable.nextShrinkingCandidates());
 				}
 			} catch (AssertionError assertionError) {
 				allFalsified.add(NShrinkResult.of(shrinkable, assertionError));
-				toTryNext.addAll(shrinkable.shrinkingCandidates());
+				toTryNext.addAll(shrinkable.nextShrinkingCandidates());
 			}
 		});
 		return collectAllFalsified(toTryNext, allFalsified, falsifier);

@@ -32,7 +32,7 @@ public class ArbitraryWheelForTests<T> implements NArbitrary<T> {
 	private class WheelShrinker implements NShrinker<T> {
 
 		@Override
-		public Set<T> shrink(T value) {
+		public Set<T> nextShrinkingCandidates(T value) {
 			int index = Arrays.asList(values).indexOf(value);
 			if (index <= 0)
 				return Collections.emptySet();

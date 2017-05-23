@@ -25,17 +25,17 @@ class NListShrinkerTests {
 
 	@Example
 	void emptyListIsNotShrunk() {
-		assertThat(shrinker.shrink(new ArrayList<>())).isEmpty();
+		assertThat(shrinker.nextShrinkingCandidates(new ArrayList<>())).isEmpty();
 	}
 
 	@Example
 	void stringOfLength1IsShrunkToEmpty() {
-		assertThat(shrinker.shrink(NArbitraryTestHelper.listOfShrinkableIntegers(1))).containsExactly(Collections.emptyList());
+		assertThat(shrinker.nextShrinkingCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1))).containsExactly(Collections.emptyList());
 	}
 
 	@Example
 	void longerStringsAreShrunkFromBothSides() {
-		assertThat(shrinker.shrink(NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3, 4))).containsExactly(
+		assertThat(shrinker.nextShrinkingCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3, 4))).containsExactly(
 			NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3),
 			NArbitraryTestHelper.listOfShrinkableIntegers(2, 3, 4)
 		);

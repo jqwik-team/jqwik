@@ -29,7 +29,7 @@ public class NSingleValueShrinkerTests {
 	void shrinkSingletonShrinkSetToFalsifiedValueWithLowestDistance() {
 		NShrinker<Integer> integerNShrinker = new NShrinker<Integer>() {
 			@Override
-			public Set<Integer> shrink(Integer value) {
+			public Set<Integer> nextShrinkingCandidates(Integer value) {
 				return Collections.singleton(value - 1);
 			}
 
@@ -65,7 +65,7 @@ public class NSingleValueShrinkerTests {
 	void shrinkWithAssertionError() {
 		NShrinker<Integer> integerNShrinker = new NShrinker<Integer>() {
 			@Override
-			public Set<Integer> shrink(Integer value) {
+			public Set<Integer> nextShrinkingCandidates(Integer value) {
 				if (value > 0)
 					return Collections.singleton(value - 1);
 				else

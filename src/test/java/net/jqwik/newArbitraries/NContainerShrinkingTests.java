@@ -8,7 +8,7 @@ import java.util.*;
 class NContainerShrinkingTests {
 
 	@Example
-	void shrinkFirstNumberOfElementsThenIndividualElements() {
+	void shrinkNumberOfElementsThenIndividualElements() {
 		NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
 
 		NShrinkResult<NShrinkable<List<Integer>>> shrinkResult = list.shrink(listToShrink -> {

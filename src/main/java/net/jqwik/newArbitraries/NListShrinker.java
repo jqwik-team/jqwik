@@ -5,7 +5,7 @@ import java.util.*;
 public class NListShrinker<T> implements NShrinker<List<NShrinkable<T>>> {
 
 	@Override
-	public Set<List<NShrinkable<T>>> shrink(List<NShrinkable<T>> toShrink) {
+	public Set<List<NShrinkable<T>>> nextShrinkingCandidates(List<NShrinkable<T>> toShrink) {
 		if (toShrink.isEmpty()) return Collections.emptySet();
 		Set<List<NShrinkable<T>>> lists = new HashSet<>();
 		List<NShrinkable<T>> rightCut = new ArrayList<>(toShrink);
