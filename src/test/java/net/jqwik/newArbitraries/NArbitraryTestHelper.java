@@ -1,9 +1,10 @@
 package net.jqwik.newArbitraries;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.util.*;
 import java.util.function.*;
-
-import static org.assertj.core.api.Assertions.*;
+import java.util.stream.*;
 
 public class NArbitraryTestHelper {
 
@@ -26,18 +27,17 @@ public class NArbitraryTestHelper {
 		}
 	}
 
-	public static<T> List<T> shrinkToEnd(NShrinker<T> shrinker, T toShrink) {
+	public static <T> List<T> shrinkToEnd(NShrinker<T> shrinker, T toShrink) {
 		ArrayList<T> shrinks = new ArrayList<>();
 		collectShrinkResults(shrinker, toShrink, shrinks);
 		return shrinks;
 	}
 
-	private static<T> void collectShrinkResults(NShrinker<T> shrinker, T toShrink, List<T> collector) {
+	private static <T> void collectShrinkResults(NShrinker<T> shrinker, T toShrink, List<T> collector) {
 		Set<T> shrink = shrinker.shrink(toShrink);
 		collector.addAll(shrink);
 		shrink.forEach(next -> collectShrinkResults(shrinker, next, collector));
 	}
-
 
 	public static <T> void assertGenerated(NShrinkableGenerator<T> generator, T... expectedValues) {
 		Random random = new Random();
@@ -50,4 +50,27 @@ public class NArbitraryTestHelper {
 		}
 	}
 
+	public static NShrinkable<List<Integer>> shrinkableListOfIntegers(int... numbers) {
+		return new NContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new, new NListShrinker<>());
+	}
+
+	public static List<NShrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
+		return Arrays.stream(numbers) //
+				.mapToObj(anInt -> new NShrinkableValue<>(anInt, new SimpleIntegerShrinker())) //
+				.collect(Collectors.toList());
+	}
+
+	private static class SimpleIntegerShrinker implements NShrinker<Integer> {
+		@Override
+		public Set<Integer> shrink(Integer value) {
+			if (value == 0)
+				return Collections.emptySet();
+			return Collections.singleton(value - 1);
+		}
+
+		@Override
+		public int distance(Integer value) {
+			return value;
+		}
+	}
 }
