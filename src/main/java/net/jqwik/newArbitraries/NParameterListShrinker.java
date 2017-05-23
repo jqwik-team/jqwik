@@ -23,13 +23,13 @@ public class NParameterListShrinker<T> {
 		return NShrinkResult.of(lastFalsifiedParams, lastFalsifiedError[0]);
 	}
 
-	private void shrinkPosition(int position, List<NShrinkable<T>> lastFalsifiedShrinkables, AssertionError[] lastFalsifiedError) {
+	private void shrinkPosition(int position, List<NShrinkable<T>> lastFalsifiedShrinkables, Throwable[] lastFalsifiedThrowable) {
 		NShrinkable<T> currentShrinkable = lastFalsifiedShrinkables.get(position);
 		Predicate<T> elementFalsifier = createFalsifierForPosition(position, lastFalsifiedShrinkables);
 		NShrinkResult<NShrinkable<T>> shrinkResult = new NSingleValueShrinker<>(currentShrinkable, null).shrink(elementFalsifier);
 
 		lastFalsifiedShrinkables.set(position, shrinkResult.value());
-		shrinkResult.error().ifPresent(error -> lastFalsifiedError[0] = error);
+		shrinkResult.throwable().ifPresent(error -> lastFalsifiedThrowable[0] = error);
 	}
 
 	private Predicate<T> createFalsifierForPosition(int position, List<NShrinkable<T>> lastFalsifiedParams) {
