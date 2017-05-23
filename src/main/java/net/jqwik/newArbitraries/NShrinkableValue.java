@@ -18,7 +18,7 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> shrink() {
+	public Set<NShrinkable<T>> shrinkingCandidates() {
 		return shrinker.shrink(value) //
 				.stream() //
 				.map(newValue -> new NShrinkableValue<T>(newValue, shrinker)) //

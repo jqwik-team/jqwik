@@ -17,10 +17,10 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> shrink() {
+	public Set<NShrinkable<T>> shrinkingCandidates() {
 		Set<NShrinkable<T>> shrunkSet = new HashSet<>();
 		for (int i = 0; i < shrinkables.size(); i++) {
-			Set<NShrinkable<Object>> singleSet = shrinkables.get(i).shrink();
+			Set<NShrinkable<Object>> singleSet = shrinkables.get(i).shrinkingCandidates();
 			for (NShrinkable<Object> shrunk : singleSet) {
 				List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
 				newShrinkables.set(i, shrunk);

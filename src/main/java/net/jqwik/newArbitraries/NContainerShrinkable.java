@@ -27,7 +27,7 @@ public class NContainerShrinkable<T, U, C extends Collection<NShrinkable<U>>> im
 	}
 
 	@Override
-	public Set<NShrinkable<T>> shrink() {
+	public Set<NShrinkable<T>> shrinkingCandidates() {
 		// TODO: After shrinking container, shrink the elements
 		return containerShrinker.shrink(elements) //
 				.stream() //

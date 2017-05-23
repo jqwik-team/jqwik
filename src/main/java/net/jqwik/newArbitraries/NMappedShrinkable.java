@@ -17,11 +17,11 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 	}
 
 	@Override
-	public Set<NShrinkable<U>> shrink() {
-		return toMap.shrink() //
-				.stream() //
-				.map(shrinkableToMap -> new NMappedShrinkable<>(shrinkableToMap, mapper)) //
-				.collect(Collectors.toSet());
+	public Set<NShrinkable<U>> shrinkingCandidates() {
+		return toMap.shrinkingCandidates() //
+					.stream() //
+					.map(shrinkableToMap -> new NMappedShrinkable<>(shrinkableToMap, mapper)) //
+					.collect(Collectors.toSet());
 	}
 
 	@Override

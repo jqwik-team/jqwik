@@ -7,7 +7,7 @@ import java.util.stream.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class NListShrinkingTests {
+class NListShrinkerTests {
 
 	private NListShrinker<Integer> shrinker = new NListShrinker<>();
 

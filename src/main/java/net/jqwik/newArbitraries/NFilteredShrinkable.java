@@ -13,8 +13,8 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> shrink() {
-		return firstFitPerBranch(toFilter.shrink(), filterPredicate);
+	public Set<NShrinkable<T>> shrinkingCandidates() {
+		return firstFitPerBranch(toFilter.shrinkingCandidates(), filterPredicate);
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 			if (filterPredicate.test(branch.value()))
 				fits.add(branch);
 			else
-				fits.addAll(firstFitPerBranch(branch.shrink(), filterPredicate));
+				fits.addAll(firstFitPerBranch(branch.shrinkingCandidates(), filterPredicate));
 		}
 		return fits;
 	}

@@ -31,7 +31,7 @@ class NArbitraryTests {
 
 		NShrinkable<Integer> value5 = generateNth(generator, 5);
 		assertThat(value5.value()).isEqualTo(5);
-		Set<NShrinkable<Integer>> shrunkValues = value5.shrink();
+		Set<NShrinkable<Integer>> shrunkValues = value5.shrinkingCandidates();
 		assertThat(shrunkValues).hasSize(1);
 
 		NShrinkable<Integer> shrunkValue = shrunkValues.iterator().next();
@@ -62,7 +62,7 @@ class NArbitraryTests {
 		NShrinkable<List<Integer>> value5 = generateNth(generator, 6);
 		assertThat(value5.value()).containsExactly(1, 2, 3, 4, 5);
 
-		Set<NShrinkable<List<Integer>>> shrunkValues = value5.shrink();
+		Set<NShrinkable<List<Integer>>> shrunkValues = value5.shrinkingCandidates();
 		assertThat(shrunkValues).hasSize(2);
 		shrunkValues.forEach(shrunkValue -> {
 			assertThat(shrunkValue.value()).hasSize(4);
@@ -92,7 +92,7 @@ class NArbitraryTests {
 
 			NShrinkable<Integer> value5 = generateNth(generator, 3);
 			assertThat(value5.value()).isEqualTo(5);
-			Set<NShrinkable<Integer>> shrunkValues = value5.shrink();
+			Set<NShrinkable<Integer>> shrunkValues = value5.shrinkingCandidates();
 			assertThat(shrunkValues).hasSize(1);
 
 			NShrinkable<Integer> shrunkValue = shrunkValues.iterator().next();
@@ -121,7 +121,7 @@ class NArbitraryTests {
 			NShrinkable<List<Integer>> value5 = generateNth(generator, 3);
 			assertThat(value5.value()).containsExactly(1, 2, 3, 4, 5);
 
-			Set<NShrinkable<List<Integer>>> shrunkValues = value5.shrink();
+			Set<NShrinkable<List<Integer>>> shrunkValues = value5.shrinkingCandidates();
 			assertThat(shrunkValues).hasSize(3); // [1,2,3] [2,3,4] [3,4,5]
 			shrunkValues.forEach(shrunkValue -> {
 				assertThat(shrunkValue.value()).hasSize(3);
@@ -156,7 +156,7 @@ class NArbitraryTests {
 
 			NShrinkable<String> value5 = generateNth(generator, 5);
 			assertThat(value5.value()).isEqualTo("value=5");
-			Set<NShrinkable<String>> shrunkValues = value5.shrink();
+			Set<NShrinkable<String>> shrunkValues = value5.shrinkingCandidates();
 			assertThat(shrunkValues).hasSize(1);
 
 			NShrinkable<String> shrunkValue = shrunkValues.iterator().next();
@@ -173,7 +173,7 @@ class NArbitraryTests {
 
 			NShrinkable<String> value5 = generateNth(generator, 3);
 			assertThat(value5.value()).isEqualTo("value=5");
-			Set<NShrinkable<String>> shrunkValues = value5.shrink();
+			Set<NShrinkable<String>> shrunkValues = value5.shrinkingCandidates();
 			assertThat(shrunkValues).hasSize(1);
 
 			NShrinkable<String> shrunkValue = shrunkValues.iterator().next();
@@ -208,7 +208,7 @@ class NArbitraryTests {
 			NShrinkable<String> value3to6 = generateNth(generator, 3);
 			assertThat(value3to6.value()).isEqualTo("3:6");
 
-			Set<NShrinkable<String>> shrunkValues = value3to6.shrink();
+			Set<NShrinkable<String>> shrunkValues = value3to6.shrinkingCandidates();
 			assertThat(shrunkValues).hasSize(2); // 2:6 3:5
 			shrunkValues.forEach(shrunkValue -> {
 				assertThat(shrunkValue.value()).isIn("2:6", "3:5");
@@ -227,7 +227,7 @@ class NArbitraryTests {
 			NShrinkable<String> combinedString = generateNth(generator, 3);
 			assertThat(combinedString.value()).isEqualTo("[1, 2]:2");
 
-			Set<NShrinkable<String>> shrunkValues = combinedString.shrink();
+			Set<NShrinkable<String>> shrunkValues = combinedString.shrinkingCandidates();
 			assertThat(shrunkValues).hasSize(3);
 			shrunkValues.forEach(shrunkValue -> {
 				assertThat(shrunkValue.value()).isIn("[1]:2", "[2]:2", "[1, 2]:1");
