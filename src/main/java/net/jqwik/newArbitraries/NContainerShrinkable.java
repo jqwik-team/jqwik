@@ -35,6 +35,12 @@ public class NContainerShrinkable<T, U, C extends Collection<NShrinkable<U>>> im
 	}
 
 	@Override
+	public NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
+//		containerShrinker.nextShrinkingCandidates(elements).stream()
+		return new NSingleValueShrinker<>(this, originalError).shrink(falsifier);
+	}
+
+	@Override
 	public T value() {
 		return value;
 	}

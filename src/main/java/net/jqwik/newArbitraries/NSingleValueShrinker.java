@@ -23,15 +23,11 @@ public class NSingleValueShrinker<T> {
 		if (toTry.isEmpty()) return allFalsified;
 		Set<NShrinkable<T>> toTryNext = new HashSet<>();
 		toTry.forEach(shrinkable -> {
-			try {
-				if (shrinkable.falsifies(falsifier)) {
-					allFalsified.add(NShrinkResult.of(shrinkable, null));
-					toTryNext.addAll(shrinkable.nextShrinkingCandidates());
-				}
-			} catch (AssertionError assertionError) {
-				allFalsified.add(NShrinkResult.of(shrinkable, assertionError));
+			Optional<NShrinkResult<NShrinkable<T>>> falsifyResult = NSafeFalsifier.falsify(falsifier, shrinkable);
+			falsifyResult.ifPresent(result -> {
+				allFalsified.add(result);
 				toTryNext.addAll(shrinkable.nextShrinkingCandidates());
-			}
+			});
 		});
 		return collectAllFalsified(toTryNext, allFalsified, falsifier);
 	}
