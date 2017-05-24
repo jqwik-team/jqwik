@@ -4,36 +4,33 @@ import java.util.*;
 import java.util.function.*;
 
 public class NListShrinker<T> {
-	private final List<NShrinkable<T>> shrinkables;
+	private final List<NShrinkable<T>> toShrink;
 	private final Throwable originalError;
+	private final NListShrinkCandidates<T> shrinkCandidates = new NListShrinkCandidates<>();
 
-	public NListShrinker(List<NShrinkable<T>> shrinkables, Throwable originalError) {
-		this.shrinkables = shrinkables;
+	public NListShrinker(List<NShrinkable<T>> toShrink, Throwable originalError) {
+		this.toShrink = toShrink;
 		this.originalError = originalError;
 	}
 
 	public NShrinkResult<List<NShrinkable<T>>> shrink(Predicate<List<NShrinkable<T>>> falsifier) {
-		Set<NShrinkResult<List<NShrinkable<T>>>> allFalsified = nextShrink(Collections.singleton(shrinkables), falsifier);
+		Set<List<NShrinkable<T>>> candidates = shrinkCandidates.nextCandidates(toShrink);
+		Set<NShrinkResult<List<NShrinkable<T>>>> allFalsified = collectAllFalsified(candidates, new HashSet<>(), falsifier);
 		return allFalsified.stream() //
-				.sorted(Comparator.comparingInt(result -> result.value().size())) //
-				.findFirst().orElse(NShrinkResult.of(shrinkables, originalError));
+				.sorted(Comparator.comparingInt(result -> shrinkCandidates.distance(result.value()))) //
+				.findFirst().orElse(NShrinkResult.of(toShrink, originalError));
 	}
 
-	private Set<NShrinkResult<List<NShrinkable<T>>>> nextShrink(Set<List<NShrinkable<T>>> listsToShrink,
-			Predicate<List<NShrinkable<T>>> falsifier) {
-		return Collections.emptySet();
-	}
-
-	private Set<NShrinkResult<NShrinkable<T>>> collectAllFalsified(Set<NShrinkable<T>> toTry,
-			Set<NShrinkResult<NShrinkable<T>>> allFalsified, Predicate<T> falsifier) {
+	private Set<NShrinkResult<List<NShrinkable<T>>>> collectAllFalsified(Set<List<NShrinkable<T>>> toTry,
+			Set<NShrinkResult<List<NShrinkable<T>>>> allFalsified, Predicate<List<NShrinkable<T>>> falsifier) {
 		if (toTry.isEmpty())
 			return allFalsified;
-		Set<NShrinkable<T>> toTryNext = new HashSet<>();
-		toTry.forEach(shrinkable -> {
-			Optional<NShrinkResult<NShrinkable<T>>> falsifyResult = NSafeFalsifier.falsify(falsifier, shrinkable);
+		Set<List<NShrinkable<T>>> toTryNext = new HashSet<>();
+		toTry.forEach(listOfShrinkable -> {
+			Optional<NShrinkResult<List<NShrinkable<T>>>> falsifyResult = NSafeFalsifier.falsify(falsifier, listOfShrinkable);
 			falsifyResult.ifPresent(result -> {
 				allFalsified.add(result);
-				toTryNext.addAll(shrinkable.nextShrinkingCandidates());
+				toTryNext.addAll(shrinkCandidates.nextCandidates(listOfShrinkable));
 			});
 		});
 		return collectAllFalsified(toTryNext, allFalsified, falsifier);

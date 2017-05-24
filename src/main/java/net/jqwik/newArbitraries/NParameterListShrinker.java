@@ -12,9 +12,9 @@ public class NParameterListShrinker<T> {
 		this.forAllFalsifier = forAllFalsifier;
 	}
 
-	public NShrinkResult<List<NShrinkable<T>>> shrinkListElements(List<NShrinkable<T>> originalParams, AssertionError originalError) {
+	public NShrinkResult<List<NShrinkable<T>>> shrinkListElements(List<NShrinkable<T>> originalParams, Throwable originalError) {
 
-		AssertionError[] lastFalsifiedError = { originalError };
+		Throwable[] lastFalsifiedError = { originalError };
 		List<NShrinkable<T>> lastFalsifiedParams = new ArrayList<>(originalParams);
 		for (int i = 0; i < originalParams.size(); i++) {
 			shrinkPosition(i, lastFalsifiedParams, lastFalsifiedError);
@@ -23,13 +23,13 @@ public class NParameterListShrinker<T> {
 		return NShrinkResult.of(lastFalsifiedParams, lastFalsifiedError[0]);
 	}
 
-	private void shrinkPosition(int position, List<NShrinkable<T>> lastFalsifiedShrinkables, Throwable[] lastFalsifiedThrowable) {
+	private void shrinkPosition(int position, List<NShrinkable<T>> lastFalsifiedShrinkables, Throwable[] lastFalsifiedError) {
 		NShrinkable<T> currentShrinkable = lastFalsifiedShrinkables.get(position);
 		Predicate<T> elementFalsifier = createFalsifierForPosition(position, lastFalsifiedShrinkables);
 		NShrinkResult<NShrinkable<T>> shrinkResult = new NSingleValueShrinker<>(currentShrinkable, null).shrink(elementFalsifier);
 
 		lastFalsifiedShrinkables.set(position, shrinkResult.value());
-		shrinkResult.throwable().ifPresent(error -> lastFalsifiedThrowable[0] = error);
+		shrinkResult.throwable().ifPresent(error -> lastFalsifiedError[0] = error);
 	}
 
 	private Predicate<T> createFalsifierForPosition(int position, List<NShrinkable<T>> lastFalsifiedParams) {

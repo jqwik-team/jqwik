@@ -60,6 +60,37 @@ public class NArbitraryTestHelper {
 				.collect(Collectors.toList());
 	}
 
+	public static NShrinkable<String> shrinkableString(String aString) {
+		return shrinkableString(aString.toCharArray());
+	}
+
+	public static NShrinkable<String> shrinkableString(char... chars) {
+		return NContainerShrinkable.stringOf(listOfShrinkableChars(chars));
+	}
+
+	private static List<NShrinkable<Character>> listOfShrinkableChars(char[] chars) {
+		List<NShrinkable<Character>> shrinkableChars = new ArrayList<>();
+		for (char aChar : chars) {
+			shrinkableChars.add(new NShrinkableValue<>(aChar, new SimpleCharacterShrinker()));
+		}
+		return shrinkableChars;
+	}
+
+	private static class SimpleCharacterShrinker implements NShrinkCandidates<Character> {
+
+		@Override
+		public Set<Character> nextCandidates(Character value) {
+			if (value == 'a')
+				return Collections.emptySet();
+			return Collections.singleton((char) (value - 1));
+		}
+
+		@Override
+		public int distance(Character value) {
+			return value - 'a';
+		}
+	}
+
 	private static class SimpleIntegerShrinker implements NShrinkCandidates<Integer> {
 		@Override
 		public Set<Integer> nextCandidates(Integer value) {

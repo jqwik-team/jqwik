@@ -6,12 +6,17 @@ import java.util.function.*;
 public class NSafeFalsifier {
 
 	public static <T> Optional<NShrinkResult<NShrinkable<T>>> falsify(Predicate<T> falsifier, NShrinkable<T> shrinkable) {
+		Predicate<NShrinkable<T>> shrinkableFalsifier = s -> falsifier.test(s.value());
+		return falsify(shrinkableFalsifier, shrinkable);
+	}
+
+	public static <T> Optional<NShrinkResult<T>> falsify(Predicate<T> falsifier, T value) {
 		try {
-			if (shrinkable.falsifies(falsifier)) {
-				return Optional.of(NShrinkResult.of(shrinkable, null));
+			if (falsifier.negate().test(value)) {
+				return Optional.of(NShrinkResult.of(value, null));
 			}
 		} catch (Throwable error) {
-			return  Optional.of(NShrinkResult.of(shrinkable, error));
+			return Optional.of(NShrinkResult.of(value, error));
 		}
 		return Optional.empty();
 	}
