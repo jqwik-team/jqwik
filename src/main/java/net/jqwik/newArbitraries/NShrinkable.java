@@ -11,10 +11,6 @@ public interface NShrinkable<T> {
 		return new NSingleValueShrinker<>(this, originalError).shrink(falsifier);
 	}
 
-	default boolean falsifies(Predicate<T> falsifier) {
-		return falsifier.negate().test(value());
-	}
-
 	T value();
 
 	int distance();
