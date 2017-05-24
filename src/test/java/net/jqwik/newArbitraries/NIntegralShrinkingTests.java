@@ -14,20 +14,20 @@ class NIntegralShrinkingTests {
 
 		@Example
 		void shrinkFrom0DoesNotShrink() {
-			NShrinker<Integer> shrinker = new NIntegerShrinker(-10, 10);
+			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-10, 10);
 			assertThat(shrinker.distance(0)).isEqualTo(0);
-			assertThat(shrinker.nextShrinkingCandidates(0)).isEmpty();
+			assertThat(shrinker.nextCandidates(0)).isEmpty();
 		}
 
 		@Example
 		void shrinkFromValueOutsideRangeReturnsNothing() {
-			NShrinker<Integer> shrinker = new NIntegerShrinker(-10, 10);
-			assertThat(shrinker.nextShrinkingCandidates(20)).isEmpty();
+			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-10, 10);
+			assertThat(shrinker.nextCandidates(20)).isEmpty();
 		}
 
 		@Example
 		void if0isInRangeDistanceIsAbsoluteNumber() {
-			NShrinker<Integer> shrinker = new NIntegerShrinker(-10000, 10000);
+			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-10000, 10000);
 			assertThat(shrinker.distance(10000)).isEqualTo(10000);
 			assertThat(shrinker.distance(10)).isEqualTo(10);
 			assertThat(shrinker.distance(1)).isEqualTo(1);
@@ -38,39 +38,39 @@ class NIntegralShrinkingTests {
 
 		@Example
 		void if0isOutsideRangeDistanceIsDistanceToShrinkTarget() {
-			NShrinker<Integer> shrinkerAboveZero = new NIntegerShrinker(10, 100);
+			NShrinkCandidates<Integer> shrinkerAboveZero = new NIntegerShrinkCandidates(10, 100);
 			assertThat(shrinkerAboveZero.distance(20)).isEqualTo(10);
 			assertThat(shrinkerAboveZero.distance(10)).isEqualTo(0);
 
-			NShrinker<Integer> shrinkerBelowZero = new NIntegerShrinker(-100, -10);
+			NShrinkCandidates<Integer> shrinkerBelowZero = new NIntegerShrinkCandidates(-100, -10);
 			assertThat(shrinkerBelowZero.distance(-20)).isEqualTo(10);
 			assertThat(shrinkerBelowZero.distance(-10)).isEqualTo(0);
 		}
 
 		@Example
 		void shrinkPositiveValueTowards0If0isInRange() {
-			NShrinker<Integer> shrinker = new NIntegerShrinker(-10, 20);
+			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-10, 20);
 			List<Integer> allShrunkValues = shrinkToEnd(shrinker, 10);
 			assertThat(allShrunkValues).containsExactly(5, 3, 2, 1, 0);
 		}
 
 		@Example
 		void shrinkNegativeValueTowards0If0isInRange() {
-			NShrinker<Integer> shrinker = new NIntegerShrinker(-10, 20);
+			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-10, 20);
 			List<Integer> allShrunkValues = shrinkToEnd(shrinker, -10);
 			assertThat(allShrunkValues).containsExactly(-5, -3, -2, -1, 0);
 		}
 
 		@Example
 		void shrinkNegativeValueTowardMaxIf0IsOutsideRange() {
-			NShrinker<Integer> shrinker = new NIntegerShrinker(-20, -5);
+			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-20, -5);
 			List<Integer> allShrunkValues = shrinkToEnd(shrinker, -10);
 			assertThat(allShrunkValues).containsExactly(-8, -7, -6, -5);
 		}
 
 		@Example
 		void shrinkPositiveValueTowardMinIf0IsOutsideRange() {
-			NShrinker<Integer> shrinker = new NIntegerShrinker(5, 20);
+			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(5, 20);
 			List<Integer> allShrunkValues = shrinkToEnd(shrinker, 10);
 			assertThat(allShrunkValues).containsExactly(8, 7, 6, 5);
 		}
@@ -82,7 +82,7 @@ class NIntegralShrinkingTests {
 
 		@Example
 		void distanceOfLongIsIntMaxIfLongLargerThanIntMax() {
-			NShrinker<Long> shrinker = new NLongShrinker(Long.MIN_VALUE, Long.MAX_VALUE);
+			NShrinkCandidates<Long> shrinker = new NLongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
 			assertThat(shrinker.distance(10000L)).isEqualTo(10000);
 			assertThat(shrinker.distance(-10000L)).isEqualTo(10000);
 			assertThat(shrinker.distance(100_000_000_000L)).isEqualTo(Integer.MAX_VALUE);
@@ -91,8 +91,8 @@ class NIntegralShrinkingTests {
 
 		@Example
 		void longsAreShrunkEvenAboveIntMax() {
-			NShrinker<Long> shrinker = new NLongShrinker(Long.MIN_VALUE, Long.MAX_VALUE);
-			assertThat(shrinker.nextShrinkingCandidates(128_000_000_000L)).containsExactly(64_000_000_000L);
+			NShrinkCandidates<Long> shrinker = new NLongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
+			assertThat(shrinker.nextCandidates(128_000_000_000L)).containsExactly(64_000_000_000L);
 			List<Long> allShrunkValues = shrinkToEnd(shrinker, 128_000_000_000L);
 			assertThat(allShrunkValues).startsWith( //
 					64_000_000_000L, //
@@ -108,7 +108,7 @@ class NIntegralShrinkingTests {
 
 		@Example
 		void longsAreShrunkEvenBelowIntMin() {
-			NShrinker<Long> shrinker = new NLongShrinker(Long.MIN_VALUE, Long.MAX_VALUE);
+			NShrinkCandidates<Long> shrinker = new NLongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
 			List<Long> allShrunkValues = shrinkToEnd(shrinker, -128_000_000_000L);
 			assertThat(allShrunkValues).startsWith( //
 					-64_000_000_000L, //

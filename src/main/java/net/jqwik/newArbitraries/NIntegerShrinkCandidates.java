@@ -1,8 +1,8 @@
 package net.jqwik.newArbitraries;
 
-public class NIntegerShrinker extends NIntegralShrinker<Integer> {
+public class NIntegerShrinkCandidates extends NIntegralShrinkCandidates<Integer> {
 
-	protected NIntegerShrinker(long min, long max) {
+	protected NIntegerShrinkCandidates(long min, long max) {
 		super(min, max);
 	}
 

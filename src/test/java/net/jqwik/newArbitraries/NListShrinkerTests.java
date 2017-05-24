@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class NListShrinkerTests {
 
-	private NListShrinker<Integer> shrinker = new NListShrinker<>();
+	private NListShrinkCandidates<Integer> shrinker = new NListShrinkCandidates<>();
 
 	@Example
 	void distanceIsLengthPlusDistanceOfElements() {
@@ -25,17 +25,17 @@ class NListShrinkerTests {
 
 	@Example
 	void emptyListIsNotShrunk() {
-		assertThat(shrinker.nextShrinkingCandidates(new ArrayList<>())).isEmpty();
+		assertThat(shrinker.nextCandidates(new ArrayList<>())).isEmpty();
 	}
 
 	@Example
 	void stringOfLength1IsShrunkToEmpty() {
-		assertThat(shrinker.nextShrinkingCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1))).containsExactly(Collections.emptyList());
+		assertThat(shrinker.nextCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1))).containsExactly(Collections.emptyList());
 	}
 
 	@Example
 	void longerStringsAreShrunkFromBothSides() {
-		assertThat(shrinker.nextShrinkingCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3, 4))).containsExactly(
+		assertThat(shrinker.nextCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3, 4))).containsExactly(
 			NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3),
 			NArbitraryTestHelper.listOfShrinkableIntegers(2, 3, 4)
 		);

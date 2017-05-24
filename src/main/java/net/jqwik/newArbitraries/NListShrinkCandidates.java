@@ -2,10 +2,10 @@ package net.jqwik.newArbitraries;
 
 import java.util.*;
 
-public class NListShrinker<T> implements NShrinker<List<NShrinkable<T>>> {
+public class NListShrinkCandidates<T> implements NShrinkCandidates<List<NShrinkable<T>>> {
 
 	@Override
-	public Set<List<NShrinkable<T>>> nextShrinkingCandidates(List<NShrinkable<T>> toShrink) {
+	public Set<List<NShrinkable<T>>> nextCandidates(List<NShrinkable<T>> toShrink) {
 		if (toShrink.isEmpty()) return Collections.emptySet();
 		Set<List<NShrinkable<T>>> lists = new HashSet<>();
 		appendRightCut(toShrink, lists);

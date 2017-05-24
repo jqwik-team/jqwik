@@ -22,7 +22,7 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 						value.add(i);
 					}
 					index.incrementAndGet();
-					NShrinker<List<Integer>> shrinker = new ListShrinker();
+					NShrinkCandidates<List<Integer>> shrinker = new ListShrinker();
 					return new NShrinkableValue<>(value, shrinker);
 				} else {
 					index.set(0);
@@ -32,10 +32,10 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 		};
 	}
 
-	private static class ListShrinker implements NShrinker<List<Integer>> {
+	private static class ListShrinker implements NShrinkCandidates<List<Integer>> {
 
 		@Override
-		public Set<List<Integer>> nextShrinkingCandidates(List<Integer> toShrink) {
+		public Set<List<Integer>> nextCandidates(List<Integer> toShrink) {
 			if (toShrink.isEmpty())
 				return Collections.emptySet();
 			if (toShrink.size() == 1) {

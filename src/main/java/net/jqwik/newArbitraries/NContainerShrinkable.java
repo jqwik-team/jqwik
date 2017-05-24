@@ -14,7 +14,7 @@ public class NContainerShrinkable<T, E> implements NShrinkable<T> {
 		return new NContainerShrinkable<>(chars, CREATE_STRING);
 	}
 
-	private final NListShrinker<E> listShrinker = new NListShrinker<>();
+	private final NListShrinkCandidates<E> listShrinker = new NListShrinkCandidates<>();
 
 	private final List<NShrinkable<E>> elements;
 	private final Function<List<E>, T> containerCreator;
@@ -28,7 +28,7 @@ public class NContainerShrinkable<T, E> implements NShrinkable<T> {
 
 	@Override
 	public Set<NShrinkable<T>> nextShrinkingCandidates() {
-		return listShrinker.nextShrinkingCandidates(elements) //
+		return listShrinker.nextCandidates(elements) //
 						   .stream() //
 						   .map(shrinkables -> new NContainerShrinkable<>(shrinkables, containerCreator)) //
 						   .collect(Collectors.toSet());

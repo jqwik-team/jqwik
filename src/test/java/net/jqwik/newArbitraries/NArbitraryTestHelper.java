@@ -27,14 +27,14 @@ public class NArbitraryTestHelper {
 		}
 	}
 
-	public static <T> List<T> shrinkToEnd(NShrinker<T> shrinker, T toShrink) {
+	public static <T> List<T> shrinkToEnd(NShrinkCandidates<T> shrinker, T toShrink) {
 		ArrayList<T> shrinks = new ArrayList<>();
 		collectShrinkResults(shrinker, toShrink, shrinks);
 		return shrinks;
 	}
 
-	private static <T> void collectShrinkResults(NShrinker<T> shrinker, T toShrink, List<T> collector) {
-		Set<T> shrink = shrinker.nextShrinkingCandidates(toShrink);
+	private static <T> void collectShrinkResults(NShrinkCandidates<T> shrinker, T toShrink, List<T> collector) {
+		Set<T> shrink = shrinker.nextCandidates(toShrink);
 		collector.addAll(shrink);
 		shrink.forEach(next -> collectShrinkResults(shrinker, next, collector));
 	}
@@ -60,9 +60,9 @@ public class NArbitraryTestHelper {
 				.collect(Collectors.toList());
 	}
 
-	private static class SimpleIntegerShrinker implements NShrinker<Integer> {
+	private static class SimpleIntegerShrinker implements NShrinkCandidates<Integer> {
 		@Override
-		public Set<Integer> nextShrinkingCandidates(Integer value) {
+		public Set<Integer> nextCandidates(Integer value) {
 			if (value == 0)
 				return Collections.emptySet();
 			return Collections.singleton(value - 1);

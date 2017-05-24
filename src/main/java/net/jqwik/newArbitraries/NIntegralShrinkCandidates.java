@@ -4,16 +4,16 @@ import net.jqwik.properties.shrinking.*;
 
 import java.util.*;
 
-abstract class NIntegralShrinker<T extends Number> implements NShrinker<T> {
+abstract class NIntegralShrinkCandidates<T extends Number> implements NShrinkCandidates<T> {
 
 	private final Range<Long> range;
 
-	protected NIntegralShrinker(long min, long max) {
+	protected NIntegralShrinkCandidates(long min, long max) {
 		this.range = Range.of(min, max);
 	}
 
 	@Override
-	public Set<T> nextShrinkingCandidates(T value) {
+	public Set<T> nextCandidates(T value) {
 		T shrunkValue = shrinkTowardsTarget(value);
 		if (value.equals(shrunkValue))
 			return Collections.emptySet();

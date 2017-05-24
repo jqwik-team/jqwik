@@ -10,16 +10,16 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 	}
 
 	private final T value;
-	private final NShrinker<T> shrinker;
+	private final NShrinkCandidates<T> shrinker;
 
-	public NShrinkableValue(T value, NShrinker<T> shrinker) {
+	public NShrinkableValue(T value, NShrinkCandidates<T> shrinker) {
 		this.value = value;
 		this.shrinker = shrinker;
 	}
 
 	@Override
 	public Set<NShrinkable<T>> nextShrinkingCandidates() {
-		return shrinker.nextShrinkingCandidates(value) //
+		return shrinker.nextCandidates(value) //
 					   .stream() //
 					   .map(newValue -> new NShrinkableValue<T>(newValue, shrinker)) //
 					   .collect(Collectors.toSet());

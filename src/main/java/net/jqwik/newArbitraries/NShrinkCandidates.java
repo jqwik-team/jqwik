@@ -2,9 +2,9 @@ package net.jqwik.newArbitraries;
 
 import java.util.*;
 
-public interface NShrinker<T> {
+public interface NShrinkCandidates<T> {
 
-	Set<T> nextShrinkingCandidates(T value);
+	Set<T> nextCandidates(T value);
 
 	default int distance(T value) {
 		return 0;
