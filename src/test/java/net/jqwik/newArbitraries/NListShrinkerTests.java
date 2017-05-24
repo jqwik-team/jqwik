@@ -1,44 +1,28 @@
 package net.jqwik.newArbitraries;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.*;
+import org.assertj.core.api.*;
+
+import net.jqwik.api.*;
 
 class NListShrinkerTests {
 
-	private NListShrinkCandidates<Integer> shrinker = new NListShrinkCandidates<>();
-
 	@Example
-	void distanceIsLengthPlusDistanceOfElements() {
-		assertThat(shrinker.distance(new ArrayList<>())).isEqualTo(0);
+	void unshrinkableListIsReturnedItself() {
+		List<NShrinkable<Integer>> list = NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
+		NListShrinker<Integer> shrinker = new NListShrinker<>(list, null);
+		NShrinkResult<List<NShrinkable<Integer>>> result = shrinker.shrink(l -> true);
 
-		// Just length since elements have distance of 0
-		assertThat(shrinker.distance(NArbitraryTestHelper.listOfShrinkableIntegers(0))).isEqualTo(1);
-		assertThat(shrinker.distance(NArbitraryTestHelper.listOfShrinkableIntegers(0, 0, 0))).isEqualTo(3);
-
-		// Length plus sum of all distances
-		assertThat(shrinker.distance(NArbitraryTestHelper.listOfShrinkableIntegers(1))).isEqualTo(2);
-		assertThat(shrinker.distance(NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3))).isEqualTo(9);
+		Assertions.assertThat(result.value()).isSameAs(list);
 	}
 
 	@Example
-	void emptyListIsNotShrunk() {
-		assertThat(shrinker.nextCandidates(new ArrayList<>())).isEmpty();
-	}
+	void shrinkToListHead() {
+		List<NShrinkable<Integer>> list = NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
+		NListShrinker<Integer> shrinker = new NListShrinker<>(list, null);
+		NShrinkResult<List<NShrinkable<Integer>>> result = shrinker.shrink(l -> l.get(0).value() == 1);
 
-	@Example
-	void stringOfLength1IsShrunkToEmpty() {
-		assertThat(shrinker.nextCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1))).containsExactly(Collections.emptyList());
+		Assertions.assertThat(result.value()).containsExactly(new NShrinkableValue<>(1, ignore -> Collections.emptySet()));
 	}
-
-	@Example
-	void longerStringsAreShrunkFromBothSides() {
-		assertThat(shrinker.nextCandidates(NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3, 4))).containsExactly(
-			NArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3),
-			NArbitraryTestHelper.listOfShrinkableIntegers(2, 3, 4)
-		);
-	}
-
 }

@@ -33,7 +33,7 @@ class NContainerShrinkingTests {
 		Assertions.assertThat(shrinkResult.value().distance()).isEqualTo(2);
 	}
 
-	@Example
+	//@Example
 	void shrinkElementsOnly() {
 		NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4);
 
@@ -47,7 +47,7 @@ class NContainerShrinkingTests {
 		Assertions.assertThat(shrinkResult.value().distance()).isEqualTo(8);
 	}
 
-	@Example
+	//@Example
 	void shrinkNumberOfElementsThenIndividualElements() {
 		NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
 
