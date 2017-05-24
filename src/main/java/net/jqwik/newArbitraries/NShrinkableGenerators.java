@@ -55,7 +55,7 @@ public class NShrinkableGenerators {
 
 	private static <T, C> NShrinkableGenerator<C> container( //
 			NShrinkableGenerator<T> elementGenerator, //
-			Function<Collection<T>, C> containerFunction, //
+			Function<List<T>, C> containerFunction, //
 			int maxSize) {
 		NShrinkableGenerator<Integer> lengthGenerator = choose(0, maxSize);
 		return random -> {
@@ -64,7 +64,7 @@ public class NShrinkableGenerators {
 			for (int j = 0; j < listSize; j++) {
 				list.add(elementGenerator.next(random));
 			}
-			return new NContainerShrinkable<>(list, containerFunction, new NListShrinker<>());
+			return new NContainerShrinkable<>(list, containerFunction);
 		};
 	}
 

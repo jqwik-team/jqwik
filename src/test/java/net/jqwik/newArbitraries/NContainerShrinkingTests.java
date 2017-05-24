@@ -10,13 +10,13 @@ class NContainerShrinkingTests {
 
 	@Example
 	void dontShrinkEmptyList() {
-		NContainerShrinkable<List<Integer>, Integer, List<NShrinkable<Integer>>> list = emptyShrinkableIntegerList();
+		NContainerShrinkable<List<Integer>, Integer> list = emptyShrinkableIntegerList();
 		NShrinkResult<NShrinkable<List<Integer>>> shrinkResult = list.shrink(MockFalsifier.falsifyAll(), null);
 		Assertions.assertThat(shrinkResult.value().value()).isEmpty();
 	}
 
-	private NContainerShrinkable<List<Integer>, Integer, List<NShrinkable<Integer>>> emptyShrinkableIntegerList() {
-		return new NContainerShrinkable<>(new ArrayList<>(), ArrayList::new, new NListShrinker<>());
+	private NContainerShrinkable<List<Integer>, Integer> emptyShrinkableIntegerList() {
+		return new NContainerShrinkable<>(new ArrayList<>(), ArrayList::new);
 	}
 
 	@Example

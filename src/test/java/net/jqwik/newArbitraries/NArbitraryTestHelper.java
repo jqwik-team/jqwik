@@ -51,7 +51,7 @@ public class NArbitraryTestHelper {
 	}
 
 	public static NShrinkable<List<Integer>> shrinkableListOfIntegers(int... numbers) {
-		return new NContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new, new NListShrinker<>());
+		return new NContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new);
 	}
 
 	public static List<NShrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
