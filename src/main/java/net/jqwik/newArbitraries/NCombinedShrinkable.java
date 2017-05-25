@@ -17,14 +17,23 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> nextShrinkingCandidates() {
-		Set<NShrinkable<T>> shrunkSet = new HashSet<>();
+	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
+		Set<NShrinkResult<NShrinkable<T>>> shrunkSet = new HashSet<>();
 		for (int i = 0; i < shrinkables.size(); i++) {
-			Set<NShrinkable<Object>> singleSet = shrinkables.get(i).nextShrinkingCandidates();
-			for (NShrinkable<Object> shrunk : singleSet) {
+			final int j = i;
+			Predicate<Object> shrinkableFalsifier = s -> {
 				List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
-				newShrinkables.set(i, shrunk);
-				shrunkSet.add(new NCombinedShrinkable<T>(newShrinkables, combineFunction));
+				newShrinkables.set(j, null);
+				return falsifier.test(combine(newShrinkables));
+			};
+			Set<NShrinkResult<NShrinkable<Object>>> singleSet = shrinkables.get(i).shrinkNext(shrinkableFalsifier);
+			for (NShrinkResult<NShrinkable<Object>> shrinkResult : singleSet) {
+				NShrinkResult<NShrinkable<T>> mappedShrinkResult = shrinkResult.map(shrunkValue -> {
+					List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
+					newShrinkables.set(j, shrunkValue);
+					return new NCombinedShrinkable<>(newShrinkables, combineFunction);
+				});
+				shrunkSet.add(mappedShrinkResult);
 			}
 		}
 		return shrunkSet;

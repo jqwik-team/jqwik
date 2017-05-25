@@ -16,7 +16,7 @@ class NContainerShrinkingTests {
 		void dontShrinkEmptyList() {
 			NContainerShrinkable<List<Integer>, Integer> list = emptyShrinkableIntegerList();
 			NShrinkResult<NShrinkable<List<Integer>>> shrinkResult = list.shrink(MockFalsifier.falsifyAll(), null);
-			Assertions.assertThat(shrinkResult.value().value()).isEmpty();
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEmpty();
 		}
 
 		private NContainerShrinkable<List<Integer>, Integer> emptyShrinkableIntegerList() {
@@ -34,8 +34,8 @@ class NContainerShrinkingTests {
 
 			}, null);
 
-			Assertions.assertThat(shrinkResult.value().value()).containsExactly(0, 0);
-			Assertions.assertThat(shrinkResult.value().distance()).isEqualTo(2);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).containsExactly(0, 0);
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(2);
 		}
 
 		@Example
@@ -49,7 +49,7 @@ class NContainerShrinkingTests {
 				throw error;
 			}, null);
 
-			Assertions.assertThat(shrinkResult.value().value()).containsExactly(0, 0);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).containsExactly(0, 0);
 			Assertions.assertThat(shrinkResult.throwable()).isPresent();
 			Assertions.assertThat(shrinkResult.throwable().get()).isSameAs(error);
 		}
@@ -65,8 +65,8 @@ class NContainerShrinkingTests {
 
 			}, null);
 
-			Assertions.assertThat(shrinkResult.value().value()).containsExactly(1, 1, 1, 1);
-			Assertions.assertThat(shrinkResult.value().distance()).isEqualTo(8);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).containsExactly(1, 1, 1, 1);
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(8);
 		}
 
 		@Example
@@ -79,8 +79,8 @@ class NContainerShrinkingTests {
 				return false;
 			}, null);
 
-			Assertions.assertThat(shrinkResult.value().value()).containsExactly(0, 0, 0);
-			Assertions.assertThat(shrinkResult.value().distance()).isEqualTo(3);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).containsExactly(0, 0, 0);
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(3);
 		}
 	}
 
@@ -90,15 +90,15 @@ class NContainerShrinkingTests {
 		void dontShrinkEmptyString() {
 			NShrinkable<String> string = NArbitraryTestHelper.shrinkableString();
 			NShrinkResult<NShrinkable<String>> shrinkResult = string.shrink(MockFalsifier.falsifyAll(), null);
-			Assertions.assertThat(shrinkResult.value().value()).isEmpty();
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEmpty();
 		}
 
 		@Example
 		void shrinkStringToOnlyAs() {
 			NShrinkable<String> list = NArbitraryTestHelper.shrinkableString("xyzxzy");
 			NShrinkResult<NShrinkable<String>> shrinkResult = list.shrink(MockFalsifier.falsifyWhen(string -> string.length() < 3), null);
-			Assertions.assertThat(shrinkResult.value().value()).isEqualTo("aaa");
-			Assertions.assertThat(shrinkResult.value().distance()).isEqualTo(3);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("aaa");
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(3);
 		}
 	}
 

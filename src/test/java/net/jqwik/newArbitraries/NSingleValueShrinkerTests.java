@@ -21,7 +21,7 @@ public class NSingleValueShrinkerTests {
 		NSingleValueShrinker<String> singleValueShrinker = new NSingleValueShrinker<>(unshrinkable, originalError);
 
 		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier);
-		assertThat(shrinkResult.value()).isSameAs(unshrinkable);
+		assertThat(shrinkResult.shrunkValue()).isSameAs(unshrinkable);
 		assertThat(shrinkResult.throwable().get()).isSameAs(originalError);
 	}
 
@@ -42,7 +42,7 @@ public class NSingleValueShrinkerTests {
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyWhen(anInt -> anInt < 3);
 		NSingleValueShrinker<Integer> singleValueShrinker = new NSingleValueShrinker<>(shrinkable, null);
 		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier);
-		assertThat(shrinkResult.value().value()).isEqualTo(3);
+		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(3);
 		assertThat(shrinkResult.throwable()).isNotPresent();
 	}
 
@@ -57,7 +57,7 @@ public class NSingleValueShrinkerTests {
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
 		NSingleValueShrinker<String> singleValueShrinker = new NSingleValueShrinker<>(shrinkable, null);
 		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier);
-		assertThat(shrinkResult.value().value()).isEqualTo("hel");
+		assertThat(shrinkResult.shrunkValue().value()).isEqualTo("hel");
 		assertThat(shrinkResult.throwable()).isNotPresent();
 	}
 
@@ -84,7 +84,7 @@ public class NSingleValueShrinkerTests {
 		};
 		NSingleValueShrinker<Integer> singleValueShrinker = new NSingleValueShrinker<>(shrinkable, null);
 		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier);
-		assertThat(shrinkResult.value().value()).isEqualTo(1);
+		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(1);
 		assertThat(shrinkResult.throwable()).isPresent();
 		assertThat(shrinkResult.throwable().get()).isInstanceOf(AssertionError.class);
 	}

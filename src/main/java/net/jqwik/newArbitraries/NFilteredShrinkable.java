@@ -13,8 +13,23 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> nextShrinkingCandidates() {
-		return firstFitPerBranch(toFilter.nextShrinkingCandidates(), filterPredicate);
+	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
+		Set<NShrinkResult<NShrinkable<T>>> branches = toFilter.shrinkNext(falsifier);
+		return firstFalsifiedFitPerBranch(branches, falsifier);
+	}
+
+	private Set<NShrinkResult<NShrinkable<T>>> firstFalsifiedFitPerBranch(Set<NShrinkResult<NShrinkable<T>>> branches,
+			Predicate<T> falsifier) {
+		Set<NShrinkResult<NShrinkable<T>>> fits = new HashSet<>();
+		for (NShrinkResult<NShrinkable<T>> branch : branches) {
+			if (filterPredicate.test(branch.shrunkValue().value()))
+				fits.add(branch);
+			else {
+				Set<NShrinkResult<NShrinkable<T>>> newBranches = branch.shrunkValue().shrinkNext(falsifier);
+				fits.addAll(firstFalsifiedFitPerBranch(newBranches, falsifier));
+			}
+		}
+		return fits;
 	}
 
 	@Override
@@ -25,17 +40,6 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	@Override
 	public int distance() {
 		return toFilter.distance();
-	}
-
-	private Set<NShrinkable<T>> firstFitPerBranch(Set<NShrinkable<T>> branches, Predicate<T> filterPredicate) {
-		Set<NShrinkable<T>> fits = new HashSet<>();
-		for (NShrinkable<T> branch : branches) {
-			if (filterPredicate.test(branch.value()))
-				fits.add(branch);
-			else
-				fits.addAll(firstFitPerBranch(branch.nextShrinkingCandidates(), filterPredicate));
-		}
-		return fits;
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.function.*;
 
 public interface NShrinkable<T> {
 
-	Set<NShrinkable<T>> nextShrinkingCandidates();
+	Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier);
 
 	default NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
 		return new NSingleValueShrinker<>(this, originalError).shrink(falsifier);

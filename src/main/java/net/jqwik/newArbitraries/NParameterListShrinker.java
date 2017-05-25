@@ -12,7 +12,15 @@ public class NParameterListShrinker<T> {
 		this.forAllFalsifier = forAllFalsifier;
 	}
 
-	public NShrinkResult<List<NShrinkable<T>>> shrinkListElements(List<NShrinkable<T>> originalParams, Throwable originalError) {
+	public Set<NShrinkResult<List<NShrinkable<T>>>> shrinkNext(List<NShrinkable<T>> originalParams) {
+		// TODO: Only return the next shrinking step, not the full shrinking. Important for filtering!
+		NShrinkResult<List<NShrinkable<T>>> shrinkResult = shrinkListElements(originalParams, null);
+		if (originalParams.equals(shrinkResult.shrunkValue()))
+			return Collections.emptySet();
+		return Collections.singleton(shrinkResult);
+	}
+
+	private NShrinkResult<List<NShrinkable<T>>> shrinkListElements(List<NShrinkable<T>> originalParams, Throwable originalError) {
 
 		Throwable[] lastFalsifiedError = { originalError };
 		List<NShrinkable<T>> lastFalsifiedParams = new ArrayList<>(originalParams);
@@ -28,7 +36,7 @@ public class NParameterListShrinker<T> {
 		Predicate<T> elementFalsifier = createFalsifierForPosition(position, lastFalsifiedShrinkables);
 		NShrinkResult<NShrinkable<T>> shrinkResult = new NSingleValueShrinker<>(currentShrinkable, null).shrink(elementFalsifier);
 
-		lastFalsifiedShrinkables.set(position, shrinkResult.value());
+		lastFalsifiedShrinkables.set(position, shrinkResult.shrunkValue());
 		shrinkResult.throwable().ifPresent(error -> lastFalsifiedError[0] = error);
 	}
 

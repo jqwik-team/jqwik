@@ -1,6 +1,7 @@
 package net.jqwik.newArbitraries;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 public class NShrinkableValue<T> implements NShrinkable<T> {
@@ -18,11 +19,12 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> nextShrinkingCandidates() {
-		return shrinker.nextCandidates(value) //
-					   .stream() //
-					   .map(newValue -> new NShrinkableValue<T>(newValue, shrinker)) //
-					   .collect(Collectors.toSet());
+	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
+		return shrinker.nextCandidates(value).stream() //
+				.map(shrunkValue -> NSafeFalsifier.falsify(falsifier, new NShrinkableValue<T>(shrunkValue, shrinker))) //
+				.filter(Optional::isPresent) //
+				.map(Optional::get) //
+				.collect(Collectors.toSet());
 	}
 
 	@Override
