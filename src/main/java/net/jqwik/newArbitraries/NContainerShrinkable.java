@@ -48,8 +48,8 @@ public class NContainerShrinkable<T, E> implements NShrinkable<T> {
 			T container = containerCreator.apply(list);
 			return falsifier.test(container);
 		};
-		NParameterListShrinker<E> listElementShrinker = new NParameterListShrinker<>(valuesFalsifier);
-		Set<NShrinkResult<List<NShrinkable<E>>>> shrunkElements = listElementShrinker.shrinkNext(elements);
+		NParameterListShrinker<E> listElementShrinker = new NParameterListShrinker<>(elements);
+		Set<NShrinkResult<List<NShrinkable<E>>>> shrunkElements = listElementShrinker.shrinkNext(valuesFalsifier);
 		return shrunkElements.stream();
 	}
 

@@ -6,43 +6,38 @@ import java.util.stream.*;
 
 public class NParameterListShrinker<T> {
 
-	private final Predicate<List<T>> forAllFalsifier;
+	private final List<NShrinkable<T>> parametersToShrink;
 
-	public NParameterListShrinker(Predicate<List<T>> forAllFalsifier) {
-		this.forAllFalsifier = forAllFalsifier;
+	public NParameterListShrinker(List<NShrinkable<T>> parametersToShrink) {
+		this.parametersToShrink = parametersToShrink;
 	}
 
-	public Set<NShrinkResult<List<NShrinkable<T>>>> shrinkNext(List<NShrinkable<T>> originalParams) {
-		// TODO: Only return the next shrinking step, not the full shrinking. Important for filtering!
-		NShrinkResult<List<NShrinkable<T>>> shrinkResult = shrinkListElements(originalParams, null);
-		if (originalParams.equals(shrinkResult.shrunkValue()))
-			return Collections.emptySet();
-		return Collections.singleton(shrinkResult);
-	}
-
-	private NShrinkResult<List<NShrinkable<T>>> shrinkListElements(List<NShrinkable<T>> originalParams, Throwable originalError) {
-
-		Throwable[] lastFalsifiedError = { originalError };
-		List<NShrinkable<T>> lastFalsifiedParams = new ArrayList<>(originalParams);
-		for (int i = 0; i < originalParams.size(); i++) {
-			shrinkPosition(i, lastFalsifiedParams, lastFalsifiedError);
+	public Set<NShrinkResult<List<NShrinkable<T>>>> shrinkNext(Predicate<List<T>> forAllFalsifier) {
+		for (int i = 0; i < parametersToShrink.size(); i++) {
+			Set<NShrinkResult<List<NShrinkable<T>>>> shrinkResults = shrinkPosition(i, forAllFalsifier);
+			if (!shrinkResults.isEmpty())
+				return shrinkResults;
 		}
-
-		return NShrinkResult.of(lastFalsifiedParams, lastFalsifiedError[0]);
+		return Collections.emptySet();
 	}
 
-	private void shrinkPosition(int position, List<NShrinkable<T>> lastFalsifiedShrinkables, Throwable[] lastFalsifiedError) {
-		NShrinkable<T> currentShrinkable = lastFalsifiedShrinkables.get(position);
-		Predicate<T> elementFalsifier = createFalsifierForPosition(position, lastFalsifiedShrinkables);
-		NShrinkResult<NShrinkable<T>> shrinkResult = new NSingleValueShrinker<>(currentShrinkable, null).shrink(elementFalsifier);
-
-		lastFalsifiedShrinkables.set(position, shrinkResult.shrunkValue());
-		shrinkResult.throwable().ifPresent(error -> lastFalsifiedError[0] = error);
+	private Set<NShrinkResult<List<NShrinkable<T>>>> shrinkPosition(int position, Predicate<List<T>> forAllFalsifier) {
+		NShrinkable<T> currentShrinkable = parametersToShrink.get(position);
+		Predicate<T> elementFalsifier = createFalsifierForPosition(position, forAllFalsifier);
+		Set<NShrinkResult<NShrinkable<T>>> shrinkParameterResults = currentShrinkable.shrinkNext(elementFalsifier);
+		return shrinkParameterResults.stream() //
+				.map(shrinkParameterResult -> shrinkParameterResult //
+						.map(shrinkable -> {
+							List<NShrinkable<T>> newParameters = new ArrayList<>(parametersToShrink);
+							newParameters.set(position, shrinkable);
+							return newParameters;
+						})) //
+				.collect(Collectors.toSet());
 	}
 
-	private Predicate<T> createFalsifierForPosition(int position, List<NShrinkable<T>> lastFalsifiedParams) {
+	private Predicate<T> createFalsifierForPosition(int position, Predicate<List<T>> forAllFalsifier) {
 		return param -> {
-			List<T> effectiveParams = lastFalsifiedParams.stream().map(NShrinkable::value).collect(Collectors.toList());
+			List<T> effectiveParams = parametersToShrink.stream().map(NShrinkable::value).collect(Collectors.toList());
 			effectiveParams.set(position, param);
 			return forAllFalsifier.test(effectiveParams);
 		};
