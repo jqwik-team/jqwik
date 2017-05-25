@@ -2,6 +2,7 @@ package net.jqwik.newArbitraries;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	private final NShrinkable<T> toFilter;
@@ -14,7 +15,11 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 
 	@Override
 	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
-		Set<NShrinkResult<NShrinkable<T>>> branches = toFilter.shrinkNext(falsifier);
+		Set<NShrinkResult<NShrinkable<T>>> branches = toFilter.shrinkNext(falsifier) //
+				.stream() //
+				.map(shrinkResult -> shrinkResult //
+						.map(shrinkable -> (NShrinkable<T>) new NFilteredShrinkable<>(shrinkable, filterPredicate))) //
+				.collect(Collectors.toSet());
 		return firstFalsifiedFitPerBranch(branches, falsifier);
 	}
 
@@ -42,4 +47,23 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 		return toFilter.distance();
 	}
 
+	@Override
+	public String toString() {
+		return String.format("FilteredShrinkable[%s:%d]", value(), distance());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		NFilteredShrinkable<?> that = (NFilteredShrinkable<?>) o;
+		return Objects.equals(toFilter, that.toFilter);
+	}
+
+	@Override
+	public int hashCode() {
+		return toFilter.hashCode();
+	}
 }

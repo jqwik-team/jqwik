@@ -30,8 +30,7 @@ public class NShrinkResult<T> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		NShrinkResult<?> that = (NShrinkResult<?>) o;
-		return Objects.equals(shrunkValue, that.shrunkValue) &&
-			Objects.equals(throwable, that.throwable);
+		return Objects.equals(shrunkValue, that.shrunkValue);
 	}
 
 	public <U> NShrinkResult<U> map(Function<T, U> mapper) {
@@ -40,7 +39,7 @@ public class NShrinkResult<T> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(shrunkValue, throwable);
+		return Objects.hash(shrunkValue);
 	}
 
 	@Override

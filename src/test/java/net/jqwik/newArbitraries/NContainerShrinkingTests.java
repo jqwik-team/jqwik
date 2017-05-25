@@ -1,6 +1,8 @@
 package net.jqwik.newArbitraries;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import org.assertj.core.api.*;
 
@@ -82,6 +84,7 @@ class NContainerShrinkingTests {
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).containsExactly(0, 0, 0);
 			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(3);
 		}
+
 	}
 
 	@Group
@@ -95,10 +98,57 @@ class NContainerShrinkingTests {
 
 		@Example
 		void shrinkStringToOnlyAs() {
-			NShrinkable<String> list = NArbitraryTestHelper.shrinkableString("xyzxzy");
-			NShrinkResult<NShrinkable<String>> shrinkResult = list.shrink(MockFalsifier.falsifyWhen(string -> string.length() < 3), null);
+			NShrinkable<String> string = NArbitraryTestHelper.shrinkableString("xyzxzy");
+			NShrinkResult<NShrinkable<String>> shrinkResult = string.shrink(MockFalsifier.falsifyWhen(aString -> aString.length() < 3),
+					null);
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("aaa");
 			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(3);
+		}
+
+		@Example
+		void shrinkFilteredString() {
+			NShrinkable<String> string = NArbitraryTestHelper.shrinkableString("xyzxzb");
+			NShrinkable<String> filteredString = new NFilteredShrinkable<>(string, aString -> aString.endsWith("b"));
+			NShrinkResult<NShrinkable<String>> shrinkResult = filteredString
+					.shrink(MockFalsifier.falsifyWhen(aString -> aString.length() < 3), null);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("aab");
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(4);
+		}
+
+		@Example
+		void shrinkIntegerListMappedToString() {
+			NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
+			NShrinkable<String> string = list.map(aList -> aList.stream() //
+					.map(anInt -> Integer.toString(anInt)) //
+					.collect(Collectors.joining("")));
+
+			NShrinkResult<NShrinkable<String>> shrinkResult = string.shrink(aString -> {
+				if (aString.length() < 3)
+					return true;
+				return false;
+			}, null);
+
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("000");
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(3);
+		}
+
+		@Example
+		void shrinkTwoStringsCombined() {
+			NArbitrary<String> a1 = NArbitraries.string('a', 'c');
+			NArbitrary<String> a2 = NArbitraries.string('d', 'f');
+
+			NArbitrary<String> combined = NCombinators.combine(a1, a2).as((s1, s2) -> s1 + s2);
+
+			NShrinkable<String> stringShrinkable = combined.generator(10).next(new Random());
+
+			NShrinkResult<NShrinkable<String>> shrinkResult = stringShrinkable.shrink(aString -> {
+				if (aString.length() < 2)
+					return true;
+				return false;
+			}, null);
+
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("xx");
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(2);
 		}
 	}
 

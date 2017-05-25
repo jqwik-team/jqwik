@@ -69,4 +69,22 @@ public class NContainerShrinkable<T, E> implements NShrinkable<T> {
 	public int distance() {
 		return listShrinker.distance(elements);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("ContainerShrinkable[%s:%d]", value(), distance());
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		NContainerShrinkable<?, ?> that = (NContainerShrinkable<?, ?>) o;
+		return Objects.equals(value, that.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
+	}
 }
