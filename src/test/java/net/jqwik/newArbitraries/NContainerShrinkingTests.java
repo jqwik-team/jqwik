@@ -1,7 +1,6 @@
 package net.jqwik.newArbitraries;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import org.assertj.core.api.*;
@@ -133,13 +132,14 @@ class NContainerShrinkingTests {
 		}
 
 		@Example
-		void shrinkTwoStringsCombined() {
-			NArbitrary<String> a1 = NArbitraries.string('a', 'c');
-			NArbitrary<String> a2 = NArbitraries.string('d', 'f');
+		void shrinkTwoIntegersCombinedToString() {
+			NArbitrary<Integer> a1 = NArbitraries.integer(0, 5);
+			NArbitrary<Integer> a2 = NArbitraries.integer(5, 9);
 
-			NArbitrary<String> combined = NCombinators.combine(a1, a2).as((s1, s2) -> s1 + s2);
+			NArbitrary<String> combined = NCombinators.combine(a1, a2) //
+					.as((i1, i2) -> Integer.toString(i1) + Integer.toString(i2));
 
-			NShrinkable<String> stringShrinkable = combined.generator(10).next(new Random());
+			NShrinkable<String> stringShrinkable = combined.generator(10).next(new Random(42L));
 
 			NShrinkResult<NShrinkable<String>> shrinkResult = stringShrinkable.shrink(aString -> {
 				if (aString.length() < 2)
@@ -147,8 +147,8 @@ class NContainerShrinkingTests {
 				return false;
 			}, null);
 
-			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("xx");
-			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(2);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("05");
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(0);
 		}
 	}
 

@@ -18,25 +18,31 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 
 	@Override
 	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
-		Set<NShrinkResult<NShrinkable<T>>> shrunkSet = new HashSet<>();
+		Set<NShrinkResult<NShrinkable<T>>> shrinkResults = new HashSet<>();
 		for (int i = 0; i < shrinkables.size(); i++) {
-			final int j = i;
-			Predicate<Object> shrinkableFalsifier = s -> {
-				List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
-				newShrinkables.set(j, null);
-				return falsifier.test(combine(newShrinkables));
-			};
-			Set<NShrinkResult<NShrinkable<Object>>> singleSet = shrinkables.get(i).shrinkNext(shrinkableFalsifier);
-			for (NShrinkResult<NShrinkable<Object>> shrinkResult : singleSet) {
-				NShrinkResult<NShrinkable<T>> mappedShrinkResult = shrinkResult.map(shrunkValue -> {
-					List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
-					newShrinkables.set(j, shrunkValue);
-					return new NCombinedShrinkable<>(newShrinkables, combineFunction);
-				});
-				shrunkSet.add(mappedShrinkResult);
-			}
+			Predicate<Object> shrinkableFalsifier = falsifierForPosition(falsifier, i);
+			Set<NShrinkResult<NShrinkable<Object>>> singleShrinkableShrinkResults = shrinkables.get(i).shrinkNext(shrinkableFalsifier);
+			shrinkResults.addAll(toSetOfCombinedShrinkables(singleShrinkableShrinkResults, i));
 		}
-		return shrunkSet;
+		return shrinkResults;
+	}
+
+	private Set<NShrinkResult<NShrinkable<T>>> toSetOfCombinedShrinkables(Set<NShrinkResult<NShrinkable<Object>>> singleSet, int position) {
+		return singleSet.stream() //
+				.map(shrinkResult -> shrinkResult.map(shrunkValue -> {
+					List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
+					newShrinkables.set(position, shrunkValue);
+					return (NShrinkable<T>) new NCombinedShrinkable<>(newShrinkables, combineFunction);
+				})) //
+				.collect(Collectors.toSet());
+	}
+
+	private Predicate<Object> falsifierForPosition(Predicate<T> falsifier, int position) {
+		return s -> {
+			List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
+			newShrinkables.set(position, NShrinkableValue.unshrinkable(s));
+			return falsifier.test(combine(newShrinkables));
+		};
 	}
 
 	@Override
