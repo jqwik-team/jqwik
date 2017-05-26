@@ -15,10 +15,6 @@ public interface NShrinkable<T> {
 
 	int distance();
 
-	default NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
-		return new NValueShrinker<>(this, originalError).shrink(falsifier);
-	}
-
 	default <U> NShrinkable<U> map(Function<T, U> mapper) {
 		return new NMappedShrinkable<>(this, mapper);
 	}
@@ -32,7 +28,7 @@ public interface NShrinkable<T> {
 		}
 
 		@Override
-		public Set<NShrinkResult<NShrinkable>> shrinkNext(Predicate falsifier) {
+		public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate falsifier) {
 			return Collections.emptySet();
 		}
 
