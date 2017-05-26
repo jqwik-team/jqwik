@@ -1,12 +1,12 @@
 package net.jqwik.newArbitraries;
 
 import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
-import org.assertj.core.api.*;
 
 public class NArbitrariesTests {
 
@@ -107,19 +107,19 @@ public class NArbitrariesTests {
 			assertGeneratedSet(generator.next(random));
 		}
 
-		// @Example
-		// void stream() {
-		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-		// NArbitrary<Stream<Integer>> streamArbitrary = NArbitraries.streamOf(integerArbitrary, 5);
-		//
-		// NShrinkableGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
-		//
-		// assertGeneratedStream(generator.next(random));
-		// assertGeneratedStream(generator.next(random));
-		// assertGeneratedStream(generator.next(random));
-		// assertGeneratedStream(generator.next(random));
-		// }
-		//
+		 @Example
+		 void stream() {
+		 NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+		 NArbitrary<Stream<Integer>> streamArbitrary = NArbitraries.streamOf(integerArbitrary, 5);
+
+		 NShrinkableGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
+
+		 assertGeneratedStream(generator.next(random));
+		 assertGeneratedStream(generator.next(random));
+		 assertGeneratedStream(generator.next(random));
+		 assertGeneratedStream(generator.next(random));
+		 }
+
 		// @Example
 		// void optional() {
 		// NArbitrary<String> stringArbitrary = NArbitraries.of("one", "two");
@@ -159,11 +159,11 @@ public class NArbitrariesTests {
 
 	}
 
-	// private void assertGeneratedStream(Stream<Integer> stream) {
-	// Set<Integer> set = stream.collect(Collectors.toSet());
-	// assertThat(set.size()).isBetween(0, 5);
-	// assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	// }
+	private void assertGeneratedStream(NShrinkable<Stream<Integer>> stream) {
+		Set<Integer> set = stream.value().collect(Collectors.toSet());
+		assertThat(set.size()).isBetween(0, 5);
+		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	}
 
 	private void assertGeneratedSet(NShrinkable<Set<Integer>> set) {
 		assertThat(set.value().size()).isBetween(0, 5);

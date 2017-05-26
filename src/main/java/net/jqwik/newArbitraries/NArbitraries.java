@@ -1,6 +1,7 @@
 package net.jqwik.newArbitraries;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class NArbitraries {
 
@@ -67,6 +68,14 @@ public class NArbitraries {
 
 	public static <T> NArbitrary<Set<T>> setOf(NArbitrary<T> elementArbitrary) {
 		return new NSetArbitrary(elementArbitrary);
+	}
+
+	public static <T> NArbitrary<Stream<T>> streamOf(NArbitrary<T> elementArbitrary, int maxSize) {
+		return new NStreamArbitrary(elementArbitrary, maxSize);
+	}
+
+	public static <T> NArbitrary<Stream<T>> streamOf(NArbitrary<T> elementArbitrary) {
+		return new NStreamArbitrary(elementArbitrary);
 	}
 
 
