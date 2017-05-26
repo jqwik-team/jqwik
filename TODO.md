@@ -26,11 +26,8 @@
 ### Properties
 
 - Shrinking
-  - Strings: Also individual characters are shrinked
-  - Shrinker for Filters
-  - Shrinker for Combinators
+  - Report original sample
   - Make it configurable (default on/off)
-  - Shrinker for Collections
   - Shrinker for Longs
   - Shrinker for Arrays
   - Shrinker for Maps: Filter by target type only
