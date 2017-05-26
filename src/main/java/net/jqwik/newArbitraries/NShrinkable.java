@@ -8,7 +8,7 @@ public interface NShrinkable<T> {
 	Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier);
 
 	default NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
-		return new NSingleValueShrinker<>(this, originalError).shrink(falsifier);
+		return new NValueShrinker<>(this, originalError).shrink(falsifier);
 	}
 
 	T value();

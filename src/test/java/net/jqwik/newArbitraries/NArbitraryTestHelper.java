@@ -56,8 +56,12 @@ public class NArbitraryTestHelper {
 
 	public static List<NShrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
 		return Arrays.stream(numbers) //
-				.mapToObj(anInt -> new NShrinkableValue<>(anInt, new SimpleIntegerShrinker())) //
-				.collect(Collectors.toList());
+					 .mapToObj(NArbitraryTestHelper::shrinkableInteger) //
+					 .collect(Collectors.toList());
+	}
+
+	public static NShrinkable<Integer> shrinkableInteger(int anInt) {
+		return new NShrinkableValue<>(anInt, new SimpleIntegerShrinker());
 	}
 
 	public static NShrinkable<String> shrinkableString(String aString) {
