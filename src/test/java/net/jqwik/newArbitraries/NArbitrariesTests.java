@@ -132,30 +132,30 @@ public class NArbitrariesTests {
 			assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
 		}
 
-		// @Example
-		// void array() {
-		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-		// NArbitrary<Integer[]> arrayArbitrary = NArbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
-		//
-		// NShrinkableGenerator<Integer[]> generator = arrayArbitrary.generator(1);
-		//
-		// Integer[] array = generator.next(random);
-		// assertThat(array.length).isBetween(0, 5);
-		// assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		// }
-		//
-		// @Example
-		// void arrayOfPrimitiveType() {
-		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-		// NArbitrary<int[]> arrayArbitrary = NArbitraries.arrayOf(int[].class, integerArbitrary, 5);
-		//
-		// NShrinkableGenerator<int[]> generator = arrayArbitrary.generator(1);
-		//
-		// int[] array = generator.next(random);
-		// assertThat(array.length).isBetween(0, 5);
-		// List<Integer> actual = IntStream.of(array).mapToObj(Integer::valueOf).collect(Collectors.toList());
-		// assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-		// }
+		@Example
+		void array() {
+			NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+			NArbitrary<Integer[]> arrayArbitrary = NArbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
+
+			NShrinkableGenerator<Integer[]> generator = arrayArbitrary.generator(1);
+
+			NShrinkable<Integer[]> array = generator.next(random);
+			assertThat(array.value().length).isBetween(0, 5);
+			assertThat(array.value()).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		}
+
+		@Example
+		void arrayOfPrimitiveType() {
+			NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+			NArbitrary<int[]> arrayArbitrary = NArbitraries.arrayOf(int[].class, integerArbitrary, 5);
+
+			NShrinkableGenerator<int[]> generator = arrayArbitrary.generator(1);
+
+			NShrinkable<int[]> array = generator.next(random);
+			assertThat(array.value().length).isBetween(0, 5);
+			List<Integer> actual = IntStream.of(array.value()).boxed().collect(Collectors.toList());
+			assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		}
 
 	}
 

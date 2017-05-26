@@ -63,24 +63,33 @@ public class NArbitraries {
 	}
 
 	public static <T> NArbitrary<Set<T>> setOf(NArbitrary<T> elementArbitrary, int maxSize) {
-		return new NSetArbitrary(elementArbitrary, maxSize);
+		return new NSetArbitrary<>(elementArbitrary, maxSize);
 	}
 
 	public static <T> NArbitrary<Set<T>> setOf(NArbitrary<T> elementArbitrary) {
-		return new NSetArbitrary(elementArbitrary);
+		return new NSetArbitrary<>(elementArbitrary);
 	}
 
 	public static <T> NArbitrary<Stream<T>> streamOf(NArbitrary<T> elementArbitrary, int maxSize) {
-		return new NStreamArbitrary(elementArbitrary, maxSize);
+		return new NStreamArbitrary<>(elementArbitrary, maxSize);
 	}
 
 	public static <T> NArbitrary<Stream<T>> streamOf(NArbitrary<T> elementArbitrary) {
-		return new NStreamArbitrary(elementArbitrary);
+		return new NStreamArbitrary<>(elementArbitrary);
 	}
 
 	public static <T> NArbitrary<Optional<T>> optionalOf(NArbitrary<T> elementArbitrary) {
 		return elementArbitrary.injectNull(0.1).map(Optional::ofNullable);
 	}
+
+	public static <A, T> NArbitrary<A> arrayOf(Class<A> arrayClass, NArbitrary<T> elementArbitrary, int maxSize) {
+		return new NArrayArbitrary(arrayClass, elementArbitrary, maxSize);
+	}
+
+	public static <A, T> NArbitrary<A> arrayOf(Class<A> arrayClass, NArbitrary<T> elementArbitrary) {
+		return new NArrayArbitrary(arrayClass, elementArbitrary);
+	}
+
 
 	@SafeVarargs
 	public static <T> NArbitrary<T> samples(T... samples) {
