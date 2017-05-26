@@ -1,10 +1,12 @@
 package net.jqwik.newArbitraries;
 
-import net.jqwik.api.*;
+import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.*;
 
-import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
+import net.jqwik.api.*;
+import org.assertj.core.api.*;
 
 public class NArbitrariesTests {
 
@@ -95,16 +97,16 @@ public class NArbitrariesTests {
 			assertGeneratedLists(generator);
 		}
 
-		// @Example
-		// void set() {
-		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-		// NArbitrary<Set<Integer>> listArbitrary = NArbitraries.setOf(integerArbitrary, 5);
-		//
-		// NShrinkableGenerator<Set<Integer>> generator = listArbitrary.generator(1);
-		//
-		// assertGeneratedSet(generator.next(random));
-		// }
-		//
+		@Example
+		void set() {
+			NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
+			NArbitrary<Set<Integer>> listArbitrary = NArbitraries.setOf(integerArbitrary, 5);
+
+			NShrinkableGenerator<Set<Integer>> generator = listArbitrary.generator(1);
+
+			assertGeneratedSet(generator.next(random));
+		}
+
 		// @Example
 		// void stream() {
 		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
@@ -162,11 +164,11 @@ public class NArbitrariesTests {
 	// assertThat(set.size()).isBetween(0, 5);
 	// assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	// }
-	//
-	// private void assertGeneratedSet(Set<Integer> set) {
-	// assertThat(set.size()).isBetween(0, 5);
-	// assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-	// }
+
+	private void assertGeneratedSet(NShrinkable<Set<Integer>> set) {
+		assertThat(set.value().size()).isBetween(0, 5);
+		assertThat(set.value()).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	}
 
 	private void assertGeneratedLists(NShrinkableGenerator<List<String>> generator) {
 		assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
