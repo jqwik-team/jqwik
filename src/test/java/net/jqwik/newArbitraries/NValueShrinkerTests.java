@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.function.*;
 
+import net.jqwik.properties.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
@@ -63,7 +64,7 @@ public class NValueShrinkerTests {
 	void shrinkResultsOutsideAssumptionsAreNotConsidered() {
 		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
 		Predicate<Integer> falsifier = anInt -> {
-			Assume.that(anInt % 2 == 0);
+			Assumptions.assumeThat(anInt % 2 == 0);
 			return anInt < 3;
 		};
 		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable, null);
