@@ -1,14 +1,14 @@
 package net.jqwik.newArbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
+import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.function.*;
+
 import org.assertj.core.api.*;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 public class NValueShrinkerTests {
 
@@ -27,18 +27,7 @@ public class NValueShrinkerTests {
 
 	@Example
 	void shrinkSingletonShrinkSetToFalsifiedValueWithLowestDistance() {
-		NShrinkCandidates<Integer> integerNShrinker = new NShrinkCandidates<Integer>() {
-			@Override
-			public Set<Integer> nextCandidates(Integer value) {
-				return Collections.singleton(value - 1);
-			}
-
-			@Override
-			public int distance(Integer value) {
-				return value;
-			}
-		};
-		NShrinkable<Integer> shrinkable = new NShrinkableValue<Integer>(10, integerNShrinker);
+		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyWhen(anInt -> anInt < 3);
 		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable, null);
 		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier);
@@ -48,22 +37,17 @@ public class NValueShrinkerTests {
 
 	@Example
 	void shrinkMultiShrinkSetToFalsifiedValueWithLowestDistance() {
-		List<NShrinkable<Character>> chars = "hello this is a longer sentence." //
-			.chars() //
-			.mapToObj(e -> NShrinkableValue.unshrinkable((char) e)) //
-			.collect(Collectors.toList());
-
-		NShrinkable<String> shrinkable = NContainerShrinkable.stringOf(chars);
+		NShrinkable<String> shrinkable = shrinkableString("hello this is a longer sentence.");
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
 		NValueShrinker<String> singleValueShrinker = new NValueShrinker<>(shrinkable, null);
 		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier);
-		assertThat(shrinkResult.shrunkValue().value()).isEqualTo("hel");
+		assertThat(shrinkResult.shrunkValue().value()).isEqualTo("haa");
 		assertThat(shrinkResult.throwable()).isNotPresent();
 	}
 
 	@Example
 	void shrinkWithAssertionError() {
-		NShrinkable<Integer> shrinkable = NArbitraryTestHelper.shrinkableInteger(10);
+		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
 		Predicate<Integer> falsifier = anInt -> {
 			Assertions.assertThat(anInt).isEqualTo(0);
 			return true;
@@ -77,7 +61,7 @@ public class NValueShrinkerTests {
 
 	@Example
 	void shrinkResultsOutsideAssumptionsAreNotConsidered() {
-		NShrinkable<Integer> shrinkable = NArbitraryTestHelper.shrinkableInteger(10);
+		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
 		Predicate<Integer> falsifier = anInt -> {
 			Assume.that(anInt % 2 == 0);
 			return anInt < 3;

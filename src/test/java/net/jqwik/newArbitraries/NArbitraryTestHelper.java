@@ -84,14 +84,14 @@ public class NArbitraryTestHelper {
 
 		@Override
 		public Set<Character> nextCandidates(Character value) {
-			if (value == 'a')
+			if (value <= 'a')
 				return Collections.emptySet();
 			return Collections.singleton((char) (value - 1));
 		}
 
 		@Override
 		public int distance(Character value) {
-			return value - 'a';
+			return Math.abs(value - 'a');
 		}
 	}
 
