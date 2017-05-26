@@ -40,7 +40,7 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 	private Predicate<Object> falsifierForPosition(Predicate<T> falsifier, int position) {
 		return s -> {
 			List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
-			newShrinkables.set(position, NShrinkableValue.unshrinkable(s));
+			newShrinkables.set(position, NShrinkable.unshrinkable(s));
 			return falsifier.test(combine(newShrinkables));
 		};
 	}
@@ -68,9 +68,10 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		NCombinedShrinkable<?> that = (NCombinedShrinkable<?>) o;
-		return Objects.equals(value, that.value);
+		if (o == null || !(o instanceof NShrinkable))
+			return false;
+		NShrinkable<?> that = (NShrinkable<?>) o;
+		return Objects.equals(value, that.value());
 	}
 
 	@Override

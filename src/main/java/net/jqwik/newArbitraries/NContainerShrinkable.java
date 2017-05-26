@@ -78,9 +78,10 @@ public class NContainerShrinkable<T, E> implements NShrinkable<T> {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		NContainerShrinkable<?, ?> that = (NContainerShrinkable<?, ?>) o;
-		return Objects.equals(value, that.value);
+		if (o == null || !(o instanceof NShrinkable))
+			return false;
+		NShrinkable<?> that = (NShrinkable<?>) o;
+		return Objects.equals(value, that.value());
 	}
 
 	@Override

@@ -13,6 +13,10 @@ public interface NArbitrary<T> {
 		return tries -> this.generator(tries).map(mapper);
 	}
 
+	default NArbitrary<T> injectNull(double nullProbability) {
+		return tries -> this.generator(tries).injectNull(nullProbability);
+	}
+
 	static int defaultMaxFromTries(int tries) {
 		return Math.max(tries / 2 - 3, 3);
 	}

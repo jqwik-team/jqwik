@@ -18,7 +18,7 @@ public interface NShrinkableGenerator<T> {
 	default NShrinkableGenerator<T> injectNull(double nullProbability) {
 		return random -> {
 			if (random.nextDouble() <= nullProbability)
-				return null;
+				return NShrinkable.unshrinkable(null);
 			return NShrinkableGenerator.this.next(random);
 		};
 	};

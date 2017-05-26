@@ -56,10 +56,10 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if (o == null || !(o instanceof NShrinkable))
 			return false;
-		NFilteredShrinkable<?> that = (NFilteredShrinkable<?>) o;
-		return Objects.equals(toFilter, that.toFilter);
+		NShrinkable<?> that = (NShrinkable<?>) o;
+		return Objects.equals(value(), that.value());
 	}
 
 	@Override

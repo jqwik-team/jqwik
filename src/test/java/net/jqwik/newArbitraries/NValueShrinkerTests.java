@@ -14,7 +14,7 @@ public class NValueShrinkerTests {
 
 	@Example
 	void unshrinkableValueIsShrinkedToItself() {
-		NShrinkable<String> unshrinkable = NShrinkableValue.unshrinkable("hello");
+		NShrinkable<String> unshrinkable = NShrinkable.unshrinkable("hello");
 
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyAll();
 		AssertionError originalError = new AssertionError();

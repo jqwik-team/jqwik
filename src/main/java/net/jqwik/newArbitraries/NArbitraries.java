@@ -78,7 +78,9 @@ public class NArbitraries {
 		return new NStreamArbitrary(elementArbitrary);
 	}
 
-
+	public static <T> NArbitrary<Optional<T>> optionalOf(NArbitrary<T> elementArbitrary) {
+		return elementArbitrary.injectNull(0.1).map(Optional::ofNullable);
+	}
 
 	@SafeVarargs
 	public static <T> NArbitrary<T> samples(T... samples) {

@@ -13,9 +13,10 @@ public class NParameterListShrinkerTests {
 	@Example
 	void noNextShrinkIfNoParameterCanBeShrunk() {
 		List<NShrinkable<Integer>> unshrinkableValues = Arrays.asList( //
-				NShrinkableValue.unshrinkable(1), //
-				NShrinkableValue.unshrinkable(2), //
-				NShrinkableValue.unshrinkable(3));
+																	   NShrinkable.unshrinkable(1), //
+																	   NShrinkable.unshrinkable(2), //
+																	   NShrinkable.unshrinkable(3)
+		);
 		NParameterListShrinker<Integer> listShrinker = new NParameterListShrinker<>(unshrinkableValues);
 
 		Set<NShrinkResult<List<NShrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());

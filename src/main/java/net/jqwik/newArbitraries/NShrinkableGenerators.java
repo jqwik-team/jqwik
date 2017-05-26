@@ -29,7 +29,7 @@ public class NShrinkableGenerators {
 
 	public static NShrinkableGenerator<Long> choose(long min, long max) {
 		if (min == max) {
-			return ignored -> NShrinkableValue.unshrinkable(min);
+			return ignored -> NShrinkable.unshrinkable(min);
 		} else {
 			final long _min = Math.min(min, max);
 			final long _max = Math.max(min, max);
@@ -78,7 +78,7 @@ public class NShrinkableGenerators {
 
 	public static NShrinkableGenerator<Character> choose(char min, char max) {
 		if (min == max) {
-			return ignored -> NShrinkableValue.unshrinkable(min);
+			return ignored -> NShrinkable.unshrinkable(min);
 		} else {
 			return random -> {
 				NShrinkable<Integer> shrinkableInt = choose((int) min, (int) max).next(random);
@@ -92,7 +92,7 @@ public class NShrinkableGenerators {
 		return ignored -> {
 			if (tryCount.get() >= samples.length)
 				tryCount.set(0);
-			return NShrinkableValue.unshrinkable(samples[tryCount.getAndIncrement()]);
+			return NShrinkable.unshrinkable(samples[tryCount.getAndIncrement()]);
 		};
 	}
 

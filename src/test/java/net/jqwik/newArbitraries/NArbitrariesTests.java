@@ -18,7 +18,7 @@ public class NArbitrariesTests {
 
 	@Example
 	void fromGenerator() {
-		NArbitrary<String> stringArbitrary = NArbitraries.fromGenerator(random -> NShrinkableValue.unshrinkable(Integer.toString(random.nextInt(10))));
+		NArbitrary<String> stringArbitrary = NArbitraries.fromGenerator(random -> NShrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
 		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
@@ -120,18 +120,18 @@ public class NArbitrariesTests {
 		 assertGeneratedStream(generator.next(random));
 		 }
 
-		// @Example
-		// void optional() {
-		// NArbitrary<String> stringArbitrary = NArbitraries.of("one", "two");
-		// NArbitrary<Optional<String>> optionalArbitrary = NArbitraries.optionalOf(stringArbitrary);
-		//
-		// NShrinkableGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
-		//
-		// assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
-		// assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
-		// assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
-		// }
-		//
+		@Example
+		void optional() {
+			NArbitrary<String> stringArbitrary = NArbitraries.of("one", "two");
+			NArbitrary<Optional<String>> optionalArbitrary = NArbitraries.optionalOf(stringArbitrary);
+
+			NShrinkableGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
+
+			assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
+			assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
+			assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
+		}
+
 		// @Example
 		// void array() {
 		// NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);

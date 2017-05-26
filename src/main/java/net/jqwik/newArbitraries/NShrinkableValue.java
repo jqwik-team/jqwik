@@ -6,10 +6,6 @@ import java.util.stream.*;
 
 public class NShrinkableValue<T> implements NShrinkable<T> {
 
-	public static <T> NShrinkableValue<T> unshrinkable(T value) {
-		return new NShrinkableValue<>(value, ignore -> Collections.emptySet());
-	}
-
 	private final T value;
 	private final NShrinkCandidates<T> shrinker;
 
@@ -42,14 +38,15 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 		return String.format("ShrinkableValue[%s:%d]", value(), distance());
 	}
 
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if (o == null || !(o instanceof NShrinkable))
 			return false;
-		NShrinkableValue<?> that = (NShrinkableValue<?>) o;
-		return distance() == that.distance() && Objects.equals(value, that.value);
+		NShrinkable<?> that = (NShrinkable<?>) o;
+		return Objects.equals(value, that.value());
 	}
 
 	@Override
