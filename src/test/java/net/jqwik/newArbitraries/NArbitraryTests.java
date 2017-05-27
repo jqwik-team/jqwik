@@ -71,6 +71,20 @@ class NArbitraryTests {
 		});
 	}
 
+	@Example
+	void samplesArePrependedToGeneration() {
+		NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2);
+		NArbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
+		NShrinkableGenerator<Integer> generator = arbitraryWithSamples.generator(10);
+
+		assertThat(generator.next(random).value()).isEqualTo(-1);
+		assertThat(generator.next(random).value()).isEqualTo(-2);
+		assertThat(generator.next(random).value()).isEqualTo(1);
+		assertThat(generator.next(random).value()).isEqualTo(2);
+		assertThat(generator.next(random).value()).isEqualTo(1);
+	}
+
+
 	@Group
 	class Filtering {
 		@Example
