@@ -30,12 +30,12 @@ public interface RandomGenerator<T> {
 		};
 	};
 
-	default RandomGenerator<T> withSamples(T...samples) {
+	default RandomGenerator<T> withSamples(List<Shrinkable<T>> samples) {
 		RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
 		RandomGenerator<T> generator = this;
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return random -> {
-			if (tryCount.getAndIncrement() < samples.length)
+			if (tryCount.getAndIncrement() < samples.size())
 				return samplesGenerator.next(random);
 			return generator.next(random);
 		};

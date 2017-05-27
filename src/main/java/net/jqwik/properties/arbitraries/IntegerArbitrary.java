@@ -3,6 +3,9 @@ package net.jqwik.properties.arbitraries;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
+import java.util.*;
+import java.util.stream.*;
+
 public class IntegerArbitrary extends NullableArbitrary<Integer> {
 
 	private int min;
@@ -22,7 +25,11 @@ public class IntegerArbitrary extends NullableArbitrary<Integer> {
 	protected RandomGenerator<Integer> baseGenerator(int tries) {
 		if (min == 0 && max == 0) {
 			int max = Arbitrary.defaultMaxFromTries(tries);
-			return RandomGenerators.choose(-max, max).withSamples(0, Integer.MIN_VALUE, Integer.MAX_VALUE);
+			IntegerShrinkCandidates integerShrinkCandidates = new IntegerShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
+			List<Shrinkable<Integer>> samples = Arrays.stream(new int[] { 0, Integer.MIN_VALUE, Integer.MAX_VALUE }) //
+												   .mapToObj(anInt -> new ShrinkableValue<>(anInt, integerShrinkCandidates)) //
+												   .collect(Collectors.toList());
+			return RandomGenerators.choose(-max, max).withSamples(samples);
 		}
 		return RandomGenerators.choose(min, max);
 	}

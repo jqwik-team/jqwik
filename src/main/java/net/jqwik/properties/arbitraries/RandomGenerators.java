@@ -89,13 +89,19 @@ public class RandomGenerators {
 		}
 	}
 
-	public static <T> RandomGenerator<T> samples(T... samples) {
+	@SuppressWarnings("unchecked")
+	public static <T> RandomGenerator<T> samples(List<Shrinkable<T>> samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {
-			if (tryCount.get() >= samples.length)
+			if (tryCount.get() >= samples.size())
 				tryCount.set(0);
-			return Shrinkable.unshrinkable(samples[tryCount.getAndIncrement()]);
+			return samples.get(tryCount.getAndIncrement());
 		};
+	}
+
+	@SafeVarargs
+	public static <T> RandomGenerator<T> samples(Shrinkable<T>... samples) {
+		return samples(Arrays.asList(samples));
 	}
 
 	public static <T> RandomGenerator<T> fail(String message) {
