@@ -1,7 +1,5 @@
 package net.jqwik.execution.providers;
 
-import java.util.function.*;
-
 import net.jqwik.execution.*;
 import net.jqwik.properties.*;
 

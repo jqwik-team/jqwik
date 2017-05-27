@@ -53,7 +53,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		if (arbitrary == null)
 			return Optional.empty();
 		else {
-			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary);
+			Arbitrary<Object> genericArbitrary = new GenericArbitrary((Arbitrary<Object>) arbitrary);
 			return Optional.of(genericArbitrary);
 		}
 	}

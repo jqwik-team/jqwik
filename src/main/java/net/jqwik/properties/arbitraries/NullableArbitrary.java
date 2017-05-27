@@ -21,7 +21,6 @@ public abstract class NullableArbitrary<T> implements Arbitrary<T> {
 
 	protected abstract RandomGenerator<T> baseGenerator(int tries);
 
-
 	public void configure(WithNull withNull) {
 		if (withNull.target().isAssignableFrom(targetClass))
 			nullProbability = withNull.value();

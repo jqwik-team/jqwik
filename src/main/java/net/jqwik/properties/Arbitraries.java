@@ -1,19 +1,14 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.arbitraries.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 
 	public static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
-		return new Arbitrary<T>() {
-			@Override
-			public RandomGenerator<T> generator(int tries) {
-				return generator;
-			}
-		};
+		return tries -> generator;
 	}
 
 	@SafeVarargs
@@ -23,26 +18,6 @@ public class Arbitraries {
 
 	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
 		return fromGenerator(RandomGenerators.choose(enumClass));
-	}
-
-	public static Arbitrary<?> string() {
-		return new StringArbitrary();
-	}
-
-	public static Arbitrary<String> string(char[] validChars, int maxSize) {
-		return new StringArbitrary(validChars, maxSize);
-	}
-
-	public static Arbitrary<String> string(char[] validChars) {
-		return new StringArbitrary(validChars);
-	}
-
-	public static Arbitrary<String> string(char from, char to, int maxSize) {
-		return new StringArbitrary(from, to, maxSize);
-	}
-
-	public static Arbitrary<String> string(char from, char to) {
-		return new StringArbitrary(from, to);
 	}
 
 	public static Arbitrary<Integer> integer() {
@@ -61,6 +36,25 @@ public class Arbitraries {
 		return new LongArbitrary();
 	}
 
+	public static Arbitrary<String> string() {
+		return new NStringArbitrary();
+	}
+
+	public static Arbitrary<String> string(char[] validChars, int maxSize) {
+		return new NStringArbitrary(validChars, maxSize);
+	}
+
+	public static Arbitrary<String> string(char[] validChars) {
+		return new NStringArbitrary(validChars);
+	}
+
+	public static Arbitrary<String> string(char from, char to, int maxSize) {
+		return new NStringArbitrary(from, to, maxSize);
+	}
+
+	public static Arbitrary<String> string(char from, char to) {
+		return new NStringArbitrary(from, to);
+	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int maxSize) {
 		return new ListArbitrary<T>(elementArbitrary, maxSize);
@@ -71,19 +65,19 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new SetArbitrary(elementArbitrary, maxSize);
+		return new SetArbitrary<>(elementArbitrary, maxSize);
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
-		return new SetArbitrary(elementArbitrary);
+		return new SetArbitrary<>(elementArbitrary);
 	}
 
 	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new StreamArbitrary(elementArbitrary, maxSize);
+		return new StreamArbitrary<>(elementArbitrary, maxSize);
 	}
 
 	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
-		return new StreamArbitrary(elementArbitrary);
+		return new StreamArbitrary<>(elementArbitrary);
 	}
 
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
@@ -98,9 +92,13 @@ public class Arbitraries {
 		return new ArrayArbitrary(arrayClass, elementArbitrary);
 	}
 
+
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
-		return fromGenerator(RandomGenerators.samples(samples));
+		List<Shrinkable<T>> shrinkables = Arrays.stream(samples)
+											.map(sample -> Shrinkable.unshrinkable(sample))
+											.collect(Collectors.toList());
+		return fromGenerator(RandomGenerators.samples(shrinkables));
 	}
 
 }

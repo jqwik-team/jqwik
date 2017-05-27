@@ -7,8 +7,6 @@ import java.util.stream.*;
 import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
 
-import net.jqwik.properties.shrinking.*;
-
 public class GenericProperty {
 
 	private final String name;
@@ -27,21 +25,21 @@ public class GenericProperty {
 		int maxTries = generators.isEmpty() ? 1 : tries;
 		int countChecks = 0;
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<Object> params = generateParameters(generators, random);
+			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
-				boolean check = forAllPredicate.test(params);
+				boolean check = forAllPredicate.test(extractParams(shrinkableParams));
 				if (!check) {
-					return shrinkAndCreateCheckResult(seed, countChecks, countTries, params, null);
+					return shrinkAndCreateCheckResult(seed, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(seed, countChecks, countTries, params, ae);
+				return shrinkAndCreateCheckResult(seed, countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
 			} catch (Throwable throwable) {
 				BlacklistedExceptions.rethrowIfBlacklisted(throwable);
-				return PropertyCheckResult.erroneous(name, countTries, countChecks, seed, params, throwable);
+				return PropertyCheckResult.erroneous(name, countTries, countChecks, seed, extractParams(shrinkableParams), throwable);
 			}
 		}
 		if (countChecks == 0)
@@ -49,15 +47,21 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Object> params,
-			AssertionError error) {
-		FalsifiedShrinker falsifiedShrinker = new FalsifiedShrinker(arbitraries, forAllPredicate);
-		ShrinkResult<List<Object>> shrinkingResult = falsifiedShrinker.shrink(params, error);
-		AssertionError throwable = shrinkingResult.error().orElse(null);
-		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrinkingResult.value(), throwable);
+	private List<Object> extractParams(List<Shrinkable> shrinkableParams) {
+		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
-	private List<Object> generateParameters(List<RandomGenerator> generators, Random random) {
+	@SuppressWarnings("unchecked")
+	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Shrinkable> shrinkables,
+			AssertionError error) {
+		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables);
+		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
+		List params = extractParams(shrinkResult.shrunkValue());
+		Throwable throwable = shrinkResult.throwable().orElse(null);
+		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, params, throwable);
+	}
+
+	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
 		return generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
 	}
 }

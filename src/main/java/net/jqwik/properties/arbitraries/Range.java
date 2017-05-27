@@ -1,16 +1,16 @@
-package net.jqwik.properties.shrinking;
+package net.jqwik.properties.arbitraries;
 
 public class Range<T extends Comparable> {
 
-	public static <T extends Comparable> Range of(T left, T right) {
+	public static <T extends Comparable> Range<T> of(T left, T right) {
 		if (left.compareTo(right) > 0)
 			return new Range<>(right, left);
 		else
 			return new Range<>(left, right);
 	}
 
-	private final T min;
-	private final T max;
+	public final T min;
+	public final T max;
 
 	private Range(T min, T max) {
 		this.min = min;

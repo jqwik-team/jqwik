@@ -1,10 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
-
 import java.lang.reflect.*;
 import java.util.*;
+
+import net.jqwik.api.*;
+import net.jqwik.properties.*;
 
 public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 
@@ -28,7 +28,7 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 	}
 
 	private A toArray(List<T> from) {
-		A array = (A) java.lang.reflect.Array.newInstance(targetClass.getComponentType(), from.size());
+		A array = (A) Array.newInstance(targetClass.getComponentType(), from.size());
 		for (int i = 0; i < from.size(); i++) {
 			Array.set(array, i, from.get(i));
 		}

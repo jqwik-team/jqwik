@@ -1,4 +1,4 @@
-package net.jqwik.properties.shrinking;
+package net.jqwik.properties;
 
 import java.util.*;
 import java.util.function.*;

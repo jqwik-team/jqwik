@@ -26,12 +26,13 @@
 ### Properties
 
 - Shrinking
-  - Shrinker for Filters
-  - Shrinker for Combinators
+  - Can be switched off in @Properties annotation. For objects that take long to shrink.
+  - Configurable time limit (100ms default?)
+  - Reporting:
+    - original sample
+    - collected statistics (similar to ScalaCheck's collect-feature)
   - Make it configurable (default on/off)
-  - Shrinker for Collections
   - Shrinker for Longs
-  - Shrinker for Strings
   - Shrinker for Arrays
   - Shrinker for Maps: Filter by target type only
 
@@ -46,9 +47,13 @@
   - chars, short, byte
   - float, double, BigDecimal
   
+- Arbitrary.chain(..) to use result of one generator for creating next arbitrary
+
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
-### Contracts
+- Group properties, e.g. @Property for classes and individual methods with preconditions
+
+### Contracts / Specifications
 
 - Allow specification of consumer and provider contract in test class
 - Allow spec annotations in domain classes a la clojure-spec

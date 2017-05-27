@@ -1,19 +1,20 @@
 package net.jqwik.execution;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.support.*;
-import org.assertj.core.data.*;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+import org.assertj.core.data.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
 
 @Group
 public class PropertyMethodArbitraryResolverTests {

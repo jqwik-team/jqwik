@@ -1,10 +1,10 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.*;
-import net.jqwik.properties.Combinators.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.properties.*;
+import net.jqwik.properties.Combinators.*;
 
 public interface Generator {
 
@@ -53,7 +53,7 @@ public interface Generator {
 		return Arbitraries.streamOf(arbitraryT);
 	}
 
-	static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
+	static <T1, T2> ACombinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
 		return Combinators.combine(a1, a2);
 	}
 
@@ -61,7 +61,8 @@ public interface Generator {
 		return Combinators.combine(a1, a2, a3);
 	}
 
-	static <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4) {
+	static <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
+																Arbitrary<T4> a4) {
 		return Combinators.combine(a1, a2, a3, a4);
 	}
 

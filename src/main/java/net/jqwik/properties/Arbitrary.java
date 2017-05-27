@@ -1,63 +1,55 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.shrinking.*;
-
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
+
+import net.jqwik.properties.arbitraries.*;
 
 public interface Arbitrary<T> {
-
 	RandomGenerator<T> generator(int tries);
-
-	/**
-	 * A shrinkable should at least falsify value,
-	 * given that value could be falsified in the first place.
-	 */
-	default Shrinkable<T> shrinkableFor(T value) {
-		return ShrinkableValue.of(value, 0);
-	}
-
-	default Arbitrary<T> filter(Predicate<T> predicate) {
-		return new ArbitraryWrapper<T>(this) {
-			@Override
-			public Shrinkable<T> shrinkableFor(T value) {
-				return super.shrinkableFor(value).filter(predicate);
-			}
-
-			@Override
-			public RandomGenerator<T> generator(int tries) {
-				return super.generator(tries).filter(predicate);
-			}
-		};
-	}
-
-	/**
-	 * Maps arbitrary objects T to arbitrary object U.
-	 */
-	default <U> Arbitrary<U> map(Function<? super T, ? extends U> mapper) {
-		return (tries) -> Arbitrary.this.generator(tries).map(mapper);
-	}
-
-	default Arbitrary<T> injectNull(double nullProbability) {
-		return new ArbitraryWrapper<T>(this) {
-			@Override
-			public RandomGenerator<T> generator(int tries) {
-				return super.generator(tries).injectNull(nullProbability);
-			}
-		};
-	}
-
-	default Arbitrary<T> withSamples(T... samples) {
-		return new ArbitraryWrapper<T>(this) {
-			@Override
-			public RandomGenerator<T> generator(int tries) {
-				return super.generator(tries).withSamples(samples);
-			}
-		};
-	};
 
 	default Arbitrary<?> inner() {
 		return this;
 	}
+
+	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
+		return new ArbitraryWrapper<T, T>(this) {
+			@Override
+			public RandomGenerator<T> generator(int tries) {
+				return new FilteredGenerator<T>(wrapped.generator(tries), filterPredicate);
+			}
+		};
+	}
+
+	default <U> Arbitrary<U> map(Function<T, U> mapper) {
+		return new ArbitraryWrapper<T, U>(this) {
+			@Override
+			public RandomGenerator<U> generator(int tries) {
+				return wrapped.generator(tries).map(mapper);
+			}
+		};
+	}
+
+	default Arbitrary<T> injectNull(double nullProbability) {
+		return new ArbitraryWrapper<T, T>(this) {
+			@Override
+			public RandomGenerator<T> generator(int tries) {
+				return wrapped.generator(tries).injectNull(nullProbability);
+			}
+		};
+	}
+
+	@SuppressWarnings("unchecked")
+	default Arbitrary<T> withSamples(T... samples) {
+		List<Shrinkable<T>> shrinkables = Arrays.stream(samples).map(Shrinkable::unshrinkable).collect(Collectors.toList());
+		return new ArbitraryWrapper<T, T>(this) {
+			@Override
+			public RandomGenerator<T> generator(int tries) {
+				return wrapped.generator(tries).withSamples(shrinkables);
+			}
+		};
+	};
 
 	static int defaultMaxFromTries(int tries) {
 		return Math.max(tries / 2 - 3, 3);

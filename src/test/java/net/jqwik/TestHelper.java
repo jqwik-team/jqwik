@@ -20,7 +20,7 @@ public class TestHelper {
 	}
 
 	public static <T> T generate(Arbitrary<T> arbitrary) {
-		return arbitrary.generator(1).next(new Random());
+		return arbitrary.generator(1).next(new Random()).value();
 	}
 
 }

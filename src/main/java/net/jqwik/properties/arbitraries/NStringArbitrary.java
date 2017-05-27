@@ -5,14 +5,14 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public class StringArbitrary extends NullableArbitrary<String> {
+public class NStringArbitrary extends NullableArbitrary<String> {
 
-	private final static char[] defaultChars = { 'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@' };
+	private final static char[] defaultChars = {'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@'};
 
 	private RandomGenerator<Character> characterGenerator;
 	private int maxSize;
 
-	public StringArbitrary() {
+	public NStringArbitrary() {
 		this(defaultGenerator(), 0);
 	}
 
@@ -20,17 +20,17 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.choose(defaultChars);
 	}
 
-	public StringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
+	public NStringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
 		super(String.class);
 		this.characterGenerator = characterGenerator;
 		this.maxSize = maxSize;
 	}
 
-	public StringArbitrary(char[] characters, int maxSize) {
+	public NStringArbitrary(char[] characters, int maxSize) {
 		this(createGenerator(characters), maxSize);
 	}
 
-	public StringArbitrary(char[] characters) {
+	public NStringArbitrary(char[] characters) {
 		this(characters, 0);
 	}
 
@@ -38,11 +38,11 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.choose(characters);
 	}
 
-	public StringArbitrary(char from, char to, int maxLength) {
+	public NStringArbitrary(char from, char to, int maxLength) {
 		this(createGenerator(from, to), maxLength);
 	}
 
-	public StringArbitrary(char from, char to) {
+	public NStringArbitrary(char from, char to) {
 		this(from, to, 0);
 	}
 
@@ -53,8 +53,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 	@Override
 	protected RandomGenerator<String> baseGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
-		if (effectiveMaxSize <= 0)
-			effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
+		if (effectiveMaxSize <= 0) effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
 		return RandomGenerators.string(characterGenerator, effectiveMaxSize);
 	}
 
@@ -74,18 +73,18 @@ public class StringArbitrary extends NullableArbitrary<String> {
 	private double calculateMixInProbability(ValidChars validChars) {
 		double sizeChars = validChars.value().length;
 		double sizeFromTo = validChars.to() - validChars.from();
-		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo)  : 1.0;
+		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo) : 1.0;
 	}
 
 	private Optional<RandomGenerator<Character>> mix( //
-			Optional<RandomGenerator<Character>> charsGenerator, //
-			Optional<RandomGenerator<Character>> fromToGenerator, //
-			double mixInProbability) {
+													  Optional<RandomGenerator<Character>> charsGenerator, //
+													  Optional<RandomGenerator<Character>> fromToGenerator, //
+													  double mixInProbability) {
 
 		if (charsGenerator.isPresent()) {
 			return fromToGenerator //
-					.map(fromTo -> Optional.of(charsGenerator.get().mixIn(fromTo, mixInProbability))) //
-					.orElse(charsGenerator);
+				.map(fromTo -> Optional.of(charsGenerator.get().mixIn(fromTo, mixInProbability))) //
+				.orElse(charsGenerator);
 		}
 		return fromToGenerator;
 	}

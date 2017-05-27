@@ -1,8 +1,8 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.properties.*;
-
 import java.util.*;
+
+import net.jqwik.properties.*;
 
 public class SetArbitrary<T> extends CollectionArbitrary<T, Set<T>> {
 

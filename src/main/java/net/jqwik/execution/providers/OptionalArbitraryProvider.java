@@ -1,10 +1,10 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.execution.*;
+import net.jqwik.properties.*;
 
 public class OptionalArbitraryProvider implements GenericArbitraryProvider {
 	@Override
