@@ -26,7 +26,9 @@
 ### Properties
 
 - Shrinking
-  - Report original sample
+  - Reporting:
+    - original sample
+    - collected statistics (similar to ScalaCheck's collect-feature)
   - Make it configurable (default on/off)
   - Shrinker for Longs
   - Shrinker for Arrays
@@ -44,6 +46,8 @@
   - float, double, BigDecimal
   
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
+
+- Group properties, e.g. @Property for classes and individual methods with preconditions
 
 ### Contracts
 
