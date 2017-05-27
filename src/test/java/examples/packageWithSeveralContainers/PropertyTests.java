@@ -1,7 +1,7 @@
 package examples.packageWithSeveralContainers;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
+import net.jqwik.newArbitraries.*;
 
 public class PropertyTests {
 
@@ -37,12 +37,12 @@ public class PropertyTests {
 	}
 
 	@Generate
-	Arbitrary<Integer> lessThan5() {
+	NArbitrary<Integer> lessThan5() {
 		return Generator.integer(0, 4);
 	}
 
 	@Generate
-	Arbitrary<String> shorterThan5() {
+	NArbitrary<String> shorterThan5() {
 		return Generator.string(new char[]{'a', 'b', 'c'}, 4);
 	}
 

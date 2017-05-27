@@ -1,6 +1,7 @@
 package examples.packageWithProperties;
 
 import net.jqwik.api.*;
+import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 
 import java.util.*;
@@ -15,12 +16,12 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	Arbitrary<String> stringArbitrary() {
+	NArbitrary<String> stringArbitrary() {
 		return Generator.string('a', 'z');
 	}
 
 	@Generate
-	Arbitrary<String> digitsOnly() {
+	NArbitrary<String> digitsOnly() {
 		return Generator.string('0', '9');
 	}
 
@@ -31,10 +32,10 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	Arbitrary<Person> aValidPerson() {
-		Arbitrary<Integer> age = Generator.integer(0, 100);
-		Arbitrary<String> first = Generator.string('a', 'z', 10).filter(f -> !f.isEmpty());
-		Arbitrary<String> last = Generator.string('a', 'z', 15).filter(f -> !f.isEmpty());
+	NArbitrary<Person> aValidPerson() {
+		NArbitrary<Integer> age = Generator.integer(0, 100);
+		NArbitrary<String> first = Generator.string('a', 'z', 10).filter(f -> !f.isEmpty());
+		NArbitrary<String> last = Generator.string('a', 'z', 15).filter(f -> !f.isEmpty());
 
 		return Generator.combine(age, first, last).as((a, f, l) -> {
 			String name = f + " " + l;
@@ -55,7 +56,7 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	Arbitrary<Long> between1and100() {
+	NArbitrary<Long> between1and100() {
 		return Generator.integer(1L, 100L);
 	}
 
@@ -66,7 +67,7 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	Arbitrary<List<Integer>> aList() {
+	NArbitrary<List<Integer>> aList() {
 		return Generator.listOf(Generator.integer(0, 10));
 	}
 

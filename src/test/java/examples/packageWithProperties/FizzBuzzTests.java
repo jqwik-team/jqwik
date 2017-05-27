@@ -3,7 +3,7 @@ package examples.packageWithProperties;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
+import net.jqwik.newArbitraries.*;
 
 public class FizzBuzzTests {
 
@@ -14,8 +14,8 @@ public class FizzBuzzTests {
 	}
 
 	@Generate
-	Arbitrary<Integer> divisibleBy3() {
-		return Arbitraries.integer(1, 1000).filter(i -> i % 3 == 0);
+	NArbitrary<Integer> divisibleBy3() {
+		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
 	}
 
 	@Property
@@ -25,8 +25,8 @@ public class FizzBuzzTests {
 	}
 
 	@Generate
-	Arbitrary<Integer> divisibleBy5() {
-		return Arbitraries.integer(1, 1000).filter(i -> i % 5 == 0);
+	NArbitrary<Integer> divisibleBy5() {
+		return Generator.integer(1, 1000).filter(i -> i % 5 == 0);
 	}
 
 	@Property
@@ -36,8 +36,8 @@ public class FizzBuzzTests {
 	}
 
 	@Generate
-	Arbitrary<Integer> notDivisibleBy3or5() {
-		return Arbitraries.integer(1, 1000) //
+	NArbitrary<Integer> notDivisibleBy3or5() {
+		return Generator.integer(1, 1000) //
 				.filter(i -> i % 5 != 0) //
 				.filter(i -> i % 3 != 0);
 	}

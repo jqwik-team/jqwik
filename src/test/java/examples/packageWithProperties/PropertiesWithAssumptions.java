@@ -1,7 +1,7 @@
 package examples.packageWithProperties;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
+import net.jqwik.newArbitraries.*;
 
 public class PropertiesWithAssumptions {
 
@@ -12,12 +12,12 @@ public class PropertiesWithAssumptions {
 	}
 
 	@Generate
-	Arbitrary<Integer> multipleOf3() {
+	NArbitrary<Integer> multipleOf3() {
 		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
 	}
 
 	@Generate
-	Arbitrary<Integer> multipleOf2() {
+	NArbitrary<Integer> multipleOf2() {
 		return Generator.integer(1, 1000).filter(i -> i % 2 == 0);
 	}
 

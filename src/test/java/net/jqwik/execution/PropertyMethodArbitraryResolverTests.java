@@ -1,20 +1,19 @@
 package net.jqwik.execution;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.newArbitraries.*;
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.support.*;
-import org.assertj.core.data.*;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static org.assertj.core.api.Assertions.*;
+import org.assertj.core.data.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.newArbitraries.*;
+import net.jqwik.support.*;
 
 @Group
 public class PropertyMethodArbitraryResolverTests {
@@ -201,8 +200,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			Arbitrary<String> aString() {
-				return Arbitraries.string('a', 'z');
+			NArbitrary<String> aString() {
+				return NArbitraries.string('a', 'z');
 			}
 		}
 
@@ -261,8 +260,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate("aString")
-			Arbitrary<String> aString() {
-				return Arbitraries.string('a', 'z');
+			NArbitrary<String> aString() {
+				return NArbitraries.string('a', 'z');
 			}
 
 			@Property
@@ -276,8 +275,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			Arbitrary<String> byMethodName() {
-				return Arbitraries.string('x', 'y');
+			NArbitrary<String> byMethodName() {
+				return NArbitraries.string('x', 'y');
 			}
 
 			@Property
@@ -286,8 +285,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			Arbitrary<Long> longBetween1and10() {
-				return Arbitraries.longInteger(1L, 10L);
+			NArbitrary<Long> longBetween1and10() {
+				return NArbitraries.longInteger(1L, 10L);
 			}
 
 			@Property
@@ -296,8 +295,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate("aName")
-			Arbitrary<String> aNameForList() {
-				return Arbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
+			NArbitrary<String> aNameForList() {
+				return NArbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
 			}
 
 			@Property
@@ -306,8 +305,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate()
-			Arbitrary<Thing> aThing() {
-				return Arbitraries.of(new Thing());
+			NArbitrary<Thing> aThing() {
+				return NArbitraries.of(new Thing());
 			}
 
 		}
@@ -316,10 +315,10 @@ public class PropertyMethodArbitraryResolverTests {
 
 	static double nullProbability = 0.0;
 
-	static class MockArbitrary implements Arbitrary<Object> {
+	static class MockArbitrary implements NArbitrary<Object> {
 
 		@Override
-		public RandomGenerator<Object> generator(int tries) {
+		public NShrinkableGenerator<Object> generator(int tries) {
 			return null;
 		}
 
@@ -335,7 +334,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void configureIsCalledOnDefaultArbitrary() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithConfiguration.class, "aNullableInteger", Integer.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableInteger");
-			IntegerArbitrary integerArbitrary = (IntegerArbitrary) provider.forParameter(parameter).get().inner();
+			NIntegerArbitrary integerArbitrary = (NIntegerArbitrary) provider.forParameter(parameter).get().inner();
 
 			assertThat(integerArbitrary.getNullProbability()).isCloseTo(0.42, Offset.offset(0.01));
 		}
@@ -360,7 +359,7 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			Arbitrary<Object> mockObject() {
+			NArbitrary<Object> mockObject() {
 				return new MockArbitrary();
 			}
 		}

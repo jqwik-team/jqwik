@@ -1,7 +1,6 @@
 package net.jqwik.newArbitraries;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 public class NLongArbitrary extends NNullableArbitrary<Long> {
 
@@ -21,7 +20,7 @@ public class NLongArbitrary extends NNullableArbitrary<Long> {
 	@Override
 	protected NShrinkableGenerator<Long> baseGenerator(int tries) {
 		if (min == 0 && max == 0) {
-			long max = Arbitrary.defaultMaxFromTries(tries);
+			long max = NArbitrary.defaultMaxFromTries(tries);
 			return NShrinkableGenerators.choose(-max, max).withSamples(0L, Long.MIN_VALUE, Long.MAX_VALUE);
 		}
 		return NShrinkableGenerators.choose(min, max);
