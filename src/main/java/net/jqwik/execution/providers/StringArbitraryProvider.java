@@ -1,6 +1,7 @@
 package net.jqwik.execution.providers;
 
 import net.jqwik.execution.*;
+import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 
 public class StringArbitraryProvider implements SimpleArbitraryProvider {
@@ -10,7 +11,7 @@ public class StringArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType) {
-		return Arbitraries.string();
+	public NArbitrary<?> provideFor(GenericType targetType) {
+		return NArbitraries.string();
 	}
 }

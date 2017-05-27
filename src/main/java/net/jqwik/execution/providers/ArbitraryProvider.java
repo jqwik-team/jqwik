@@ -1,9 +1,9 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
-
 import java.util.function.*;
+
+import net.jqwik.execution.*;
+import net.jqwik.newArbitraries.*;
 
 public interface ArbitraryProvider {
 
@@ -14,5 +14,5 @@ public interface ArbitraryProvider {
 	 */
 	boolean needsSubtypeProvider();
 
-	Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider);
+	NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeProvider);
 }

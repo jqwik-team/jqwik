@@ -3,6 +3,7 @@ package net.jqwik.execution;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
@@ -343,7 +344,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void configureIsCalledOnProvidedArbitrary() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithConfiguration.class, "aNullableMock", Object.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableMock");
-			Optional<Arbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
+			Optional<NArbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
 
 			assertThat(arbitraryOptional).isPresent();
 			assertThat(nullProbability).isCloseTo(0.41, Offset.offset(0.01));

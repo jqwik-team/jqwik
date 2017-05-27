@@ -1,9 +1,7 @@
 package net.jqwik.execution.providers;
 
-import java.util.function.*;
-
 import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import net.jqwik.newArbitraries.*;
 
 public class BooleanArbitraryProvider implements SimpleArbitraryProvider {
 	@Override
@@ -12,7 +10,7 @@ public class BooleanArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType) {
-		return Arbitraries.of(true, false);
+	public NArbitrary<?> provideFor(GenericType targetType) {
+		return NArbitraries.of(true, false);
 	}
 }

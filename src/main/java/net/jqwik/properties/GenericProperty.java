@@ -7,15 +7,15 @@ import java.util.stream.*;
 import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
 
-import net.jqwik.properties.shrinking.*;
+import net.jqwik.newArbitraries.*;
 
 public class GenericProperty {
 
 	private final String name;
-	private final List<Arbitrary> arbitraries;
+	private final List<NArbitrary> arbitraries;
 	private final Predicate<List<Object>> forAllPredicate;
 
-	public GenericProperty(String name, List<Arbitrary> arbitraries, CheckedFunction forAllPredicate) {
+	public GenericProperty(String name, List<NArbitrary> arbitraries, CheckedFunction forAllPredicate) {
 		this.name = name;
 		this.arbitraries = arbitraries;
 		this.forAllPredicate = forAllPredicate;
@@ -23,25 +23,25 @@ public class GenericProperty {
 
 	public PropertyCheckResult check(int tries, long seed) {
 		Random random = new Random(seed);
-		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
+		List<NShrinkableGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
 		int countChecks = 0;
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<Object> params = generateParameters(generators, random);
+			List<NShrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
-				boolean check = forAllPredicate.test(params);
+				boolean check = forAllPredicate.test(extractParams(shrinkableParams));
 				if (!check) {
-					return shrinkAndCreateCheckResult(seed, countChecks, countTries, params, null);
+					return shrinkAndCreateCheckResult(seed, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(seed, countChecks, countTries, params, ae);
+				return shrinkAndCreateCheckResult(seed, countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
 			} catch (Throwable throwable) {
 				BlacklistedExceptions.rethrowIfBlacklisted(throwable);
-				return PropertyCheckResult.erroneous(name, countTries, countChecks, seed, params, throwable);
+				return PropertyCheckResult.erroneous(name, countTries, countChecks, seed, extractParams(shrinkableParams), throwable);
 			}
 		}
 		if (countChecks == 0)
@@ -49,15 +49,21 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Object> params,
-			AssertionError error) {
-		FalsifiedShrinker falsifiedShrinker = new FalsifiedShrinker(arbitraries, forAllPredicate);
-		ShrinkResult<List<Object>> shrinkingResult = falsifiedShrinker.shrink(params, error);
-		AssertionError throwable = shrinkingResult.error().orElse(null);
-		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrinkingResult.value(), throwable);
+	private List<Object> extractParams(List<NShrinkable> shrinkableParams) {
+		return shrinkableParams.stream().map(NShrinkable::value).collect(Collectors.toList());
 	}
 
-	private List<Object> generateParameters(List<RandomGenerator> generators, Random random) {
+	@SuppressWarnings("unchecked")
+	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<NShrinkable> shrinkables,
+			AssertionError error) {
+		NParameterListShrinker shrinker = new NParameterListShrinker(shrinkables);
+		NShrinkResult<List<NShrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
+		List params = extractParams(shrinkResult.shrunkValue());
+		Throwable throwable = shrinkResult.throwable().orElse(null);
+		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, params, throwable);
+	}
+
+	private List<NShrinkable> generateParameters(List<NShrinkableGenerator> generators, Random random) {
 		return generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
 	}
 }

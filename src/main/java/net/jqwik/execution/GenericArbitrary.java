@@ -1,16 +1,15 @@
 package net.jqwik.execution;
 
+import net.jqwik.newArbitraries.*;
 
-import net.jqwik.properties.*;
+class GenericArbitrary extends NArbitraryWrapper<Object, Object> {
 
-class GenericArbitrary extends ArbitraryWrapper<Object> {
-
-	GenericArbitrary(Arbitrary wrapped) {
+	GenericArbitrary(NArbitrary wrapped) {
 		super(wrapped);
 	}
 
 	@Override
-	public RandomGenerator<Object> generator(int tries) {
+	public NShrinkableGenerator<Object> generator(int tries) {
 		return wrapped.generator(tries);
 	}
 }

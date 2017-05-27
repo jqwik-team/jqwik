@@ -1,8 +1,8 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.properties.*;
-
 import java.util.*;
+
+import net.jqwik.newArbitraries.*;
 
 public class SetArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
@@ -12,7 +12,7 @@ public class SetArbitraryProvider extends AbstractCollectionArbitraryProvider {
 	}
 
 	@Override
-	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Arbitraries.setOf(innerArbitrary);
+	protected NArbitrary<?> create(NArbitrary<?> innerArbitrary) {
+		return NArbitraries.setOf(innerArbitrary);
 	}
 }

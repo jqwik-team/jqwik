@@ -1,8 +1,8 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.properties.*;
-
 import java.util.stream.*;
+
+import net.jqwik.newArbitraries.*;
 
 public class StreamArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
@@ -12,7 +12,7 @@ public class StreamArbitraryProvider extends AbstractCollectionArbitraryProvider
 	}
 
 	@Override
-	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Arbitraries.streamOf(innerArbitrary);
+	protected NArbitrary<?> create(NArbitrary<?> innerArbitrary) {
+		return NArbitraries.streamOf(innerArbitrary);
 	}
 }

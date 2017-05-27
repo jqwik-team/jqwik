@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import org.opentest4j.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.newArbitraries.*;
 
 class GenericPropertyTests {
 
@@ -19,14 +19,13 @@ class GenericPropertyTests {
 		void satisfied() {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
 
-			CountingArbitrary arbitrary = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(2, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(2);
-			assertThat(arbitrary.count()).isEqualTo(2);
 
 			assertThat(result.propertyName()).isEqualTo("satisfied property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
@@ -43,14 +42,13 @@ class GenericPropertyTests {
 
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
 
-			CountingArbitrary arbitrary = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 41L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry + 1); // Shrinking adds one call
-			assertThat(arbitrary.count()).isEqualTo(failingTry);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
@@ -70,14 +68,13 @@ class GenericPropertyTests {
 				throw assertionError;
 			}, exactlyOneInteger);
 
-			CountingArbitrary arbitrary = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 41L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(2); // Shrinking adds one call
-			assertThat(arbitrary.count()).isEqualTo(1);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
@@ -102,14 +99,13 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			CountingArbitrary arbitrary = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
-			assertThat(arbitrary.count()).isEqualTo(10);
 
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
 			assertThat(result.countTries()).isEqualTo(10);
@@ -126,14 +122,13 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			CountingArbitrary arbitrary = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
-			assertThat(arbitrary.count()).isEqualTo(10);
 
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.EXHAUSTED);
 			assertThat(result.countTries()).isEqualTo(10);
@@ -154,14 +149,13 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			CountingArbitrary arbitrary = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("erroneous property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(erroneousTry);
-			assertThat(arbitrary.count()).isEqualTo(erroneousTry);
 
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
 			assertThat(result.countTries()).isEqualTo(erroneousTry);
@@ -256,15 +250,12 @@ class GenericPropertyTests {
 				return true;
 			};
 
-			CountingArbitrary arbitrary1 = new CountingArbitrary();
-			CountingArbitrary arbitrary2 = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary1, arbitrary2);
+			NArbitrary<Integer> arbitrary1 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			NArbitrary<Integer> arbitrary2 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary1, arbitrary2);
 
 			GenericProperty property = new GenericProperty("property with 2", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(5, 4242L);
-
-			assertThat(arbitrary1.count()).isEqualTo(5);
-			assertThat(arbitrary2.count()).isEqualTo(5);
 
 			assertThat(result.propertyName()).isEqualTo("property with 2");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
@@ -284,13 +275,14 @@ class GenericPropertyTests {
 				return ((int) args.get(0)) < failingTry;
 			};
 
-			CountingArbitrary arbitrary = new CountingArbitrary();
-			List<Arbitrary> arbitraries = arbitraries(arbitrary, new CountingArbitrary(), new CountingArbitrary(), new CountingArbitrary());
+			NArbitrary<Integer> arbitrary1 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			NArbitrary<Integer> arbitrary2 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			NArbitrary<Integer> arbitrary3 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			NArbitrary<Integer> arbitrary4 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<NArbitrary> arbitraries = arbitraries(arbitrary1, arbitrary2, arbitrary3, arbitrary4);
 
 			GenericProperty property = new GenericProperty( "property with 4", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 4141L);
-
-			assertThat(arbitrary.count()).isEqualTo(failingTry);
 
 			assertThat(result.propertyName()).isEqualTo("property with 4");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
@@ -306,7 +298,7 @@ class GenericPropertyTests {
 
 	}
 
-	private List<Arbitrary> arbitraries(Arbitrary... arbitraries) {
+	private List<NArbitrary> arbitraries(NArbitrary... arbitraries) {
 		return Arrays.asList(arbitraries);
 	}
 

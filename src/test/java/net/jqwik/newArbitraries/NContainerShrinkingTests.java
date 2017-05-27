@@ -154,6 +154,6 @@ class NContainerShrinkingTests {
 	}
 
 	private <T> NShrinkResult<NShrinkable<T>> shrink(NShrinkable<T> toShrink, Predicate<T> falsifier, Throwable originalError) {
-		return new NValueShrinker<T>(toShrink, originalError).shrink(falsifier);
+		return new NValueShrinker<T>(toShrink).shrink(falsifier, originalError);
 	}
 }

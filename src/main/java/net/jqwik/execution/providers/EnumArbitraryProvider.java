@@ -1,7 +1,7 @@
 package net.jqwik.execution.providers;
 
 import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import net.jqwik.newArbitraries.*;
 
 public class EnumArbitraryProvider implements SimpleArbitraryProvider {
 
@@ -11,8 +11,8 @@ public class EnumArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType) {
+	public NArbitrary<?> provideFor(GenericType targetType) {
 		// noinspection unchecked
-		return Arbitraries.of((Class<Enum>) targetType.getRawType());
+		return NArbitraries.of((Class<Enum>) targetType.getRawType());
 	}
 }

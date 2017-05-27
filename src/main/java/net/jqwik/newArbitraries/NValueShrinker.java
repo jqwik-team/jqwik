@@ -7,14 +7,12 @@ import org.opentest4j.*;
 
 public class NValueShrinker<T> {
 	private final NShrinkable<T> shrinkable;
-	private final Throwable originalError;
 
-	public NValueShrinker(NShrinkable<T> shrinkable, Throwable originalError) {
+	public NValueShrinker(NShrinkable<T> shrinkable) {
 		this.shrinkable = shrinkable;
-		this.originalError = originalError;
 	}
 
-	public NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier) {
+	public NShrinkResult<NShrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
 		Set<NShrinkResult<NShrinkable<T>>> allFalsified = collectAllFalsified(shrinkable.shrinkNext(falsifier), new HashSet<>(), falsifier);
 		return allFalsified.stream() //
 				.filter(shrinkResult -> !isViolatedAssumption(shrinkResult)) //

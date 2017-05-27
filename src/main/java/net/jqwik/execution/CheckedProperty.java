@@ -7,6 +7,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 
 public class CheckedProperty {
@@ -39,13 +40,13 @@ public class CheckedProperty {
 		}
 	}
 
-	private Arbitrary<Object> findArbitrary(Parameter parameter) {
-		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
+	private NArbitrary<Object> findArbitrary(Parameter parameter) {
+		Optional<NArbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
 		return arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
 	}
 
 	private GenericProperty createGenericProperty() {
-		List<Arbitrary> arbitraries = forAllParameters.stream().map(this::findArbitrary).collect(Collectors.toList());
+		List<NArbitrary> arbitraries = forAllParameters.stream().map(this::findArbitrary).collect(Collectors.toList());
 		return new GenericProperty(propertyName, arbitraries, forAllPredicate);
 	}
 

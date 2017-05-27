@@ -1,9 +1,9 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
-
 import java.util.function.*;
+
+import net.jqwik.execution.*;
+import net.jqwik.newArbitraries.*;
 
 abstract class AbstractCollectionArbitraryProvider implements GenericArbitraryProvider {
 
@@ -15,13 +15,13 @@ abstract class AbstractCollectionArbitraryProvider implements GenericArbitraryPr
 	protected abstract Class<?> getProvidedType();
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider) {
+	public NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeProvider) {
 		GenericType innerType = targetType.getTypeArguments()[0];
-		Arbitrary<?> innerArbitrary = subtypeProvider.apply(innerType);
+		NArbitrary<?> innerArbitrary = subtypeProvider.apply(innerType);
 		if (innerArbitrary != null)
 			return create(innerArbitrary);
 		return null;
 	}
 
-	protected abstract Arbitrary<?> create(Arbitrary<?> innerArbitrary);
+	protected abstract NArbitrary<?> create(NArbitrary<?> innerArbitrary);
 }

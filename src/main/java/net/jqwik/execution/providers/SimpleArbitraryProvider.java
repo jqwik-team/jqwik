@@ -3,7 +3,7 @@ package net.jqwik.execution.providers;
 import java.util.function.*;
 
 import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import net.jqwik.newArbitraries.*;
 
 public interface SimpleArbitraryProvider extends ArbitraryProvider {
 
@@ -12,10 +12,10 @@ public interface SimpleArbitraryProvider extends ArbitraryProvider {
 	}
 
 	@Override
-	default Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
+	default NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeSupplier) {
 		return provideFor(targetType);
 	}
 
-	Arbitrary<?> provideFor(GenericType targetType);
+	NArbitrary<?> provideFor(GenericType targetType);
 
 }

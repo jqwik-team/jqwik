@@ -1,7 +1,7 @@
 package net.jqwik.execution.providers;
 
 import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import net.jqwik.newArbitraries.*;
 
 public class LongArbitraryProvider implements SimpleArbitraryProvider {
 	@Override
@@ -10,7 +10,7 @@ public class LongArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType) {
-		return Arbitraries.longInteger();
+	public NArbitrary<?> provideFor(GenericType targetType) {
+		return NArbitraries.longInteger();
 	}
 }

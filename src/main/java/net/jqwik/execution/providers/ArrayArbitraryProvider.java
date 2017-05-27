@@ -1,9 +1,9 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
-
 import java.util.function.*;
+
+import net.jqwik.execution.*;
+import net.jqwik.newArbitraries.*;
 
 public class ArrayArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -17,7 +17,7 @@ public class ArrayArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider) {
-		return Arbitraries.arrayOf(targetType.getRawType(), subtypeProvider.apply(targetType.getComponentType()));
+	public NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeProvider) {
+		return NArbitraries.arrayOf(targetType.getRawType(), subtypeProvider.apply(targetType.getComponentType()));
 	}
 }

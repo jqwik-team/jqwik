@@ -19,9 +19,9 @@ public class NValueShrinkerTests {
 
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyAll();
 		AssertionError originalError = new AssertionError();
-		NValueShrinker<String> singleValueShrinker = new NValueShrinker<>(unshrinkable, originalError);
+		NValueShrinker<String> singleValueShrinker = new NValueShrinker<>(unshrinkable);
 
-		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier);
+		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier, originalError);
 		assertThat(shrinkResult.shrunkValue()).isSameAs(unshrinkable);
 		assertThat(shrinkResult.throwable().get()).isSameAs(originalError);
 	}
@@ -30,8 +30,8 @@ public class NValueShrinkerTests {
 	void shrinkSingletonShrinkSetToFalsifiedValueWithLowestDistance() {
 		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyWhen(anInt -> anInt < 3);
-		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable, null);
-		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier);
+		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable);
+		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(3);
 		assertThat(shrinkResult.throwable()).isNotPresent();
 	}
@@ -40,8 +40,8 @@ public class NValueShrinkerTests {
 	void shrinkMultiShrinkSetToFalsifiedValueWithLowestDistance() {
 		NShrinkable<String> shrinkable = shrinkableString("hello this is a longer sentence.");
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
-		NValueShrinker<String> singleValueShrinker = new NValueShrinker<>(shrinkable, null);
-		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier);
+		NValueShrinker<String> singleValueShrinker = new NValueShrinker<>(shrinkable);
+		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo("haa");
 		assertThat(shrinkResult.throwable()).isNotPresent();
 	}
@@ -53,8 +53,8 @@ public class NValueShrinkerTests {
 			Assertions.assertThat(anInt).isEqualTo(0);
 			return true;
 		};
-		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable, null);
-		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier);
+		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable);
+		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(1);
 		assertThat(shrinkResult.throwable()).isPresent();
 		assertThat(shrinkResult.throwable().get()).isInstanceOf(AssertionError.class);
@@ -67,8 +67,8 @@ public class NValueShrinkerTests {
 			Assumptions.assumeThat(anInt % 2 == 0);
 			return anInt < 3;
 		};
-		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable, null);
-		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier);
+		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable);
+		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(4);
 		assertThat(shrinkResult.throwable()).isNotPresent();
 	}

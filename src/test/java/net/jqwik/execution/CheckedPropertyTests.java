@@ -3,6 +3,7 @@ package net.jqwik.execution;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 import org.opentest4j.*;
 
@@ -106,7 +107,7 @@ class CheckedPropertyTests {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 10, 42L);
+				p -> Optional.of(new GenericArbitrary(NArbitraries.integer(-100, 100))), 10, 42L);
 
 			PropertyCheckResult check = checkedProperty.check();
 			assertThat(check.randomSeed()).isEqualTo(42L);
@@ -120,7 +121,7 @@ class CheckedPropertyTests {
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
-			p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 1000L);
+			p -> Optional.of(new GenericArbitrary(NArbitraries.integer(-50, 50))), 100, 1000L);
 		PropertyCheckResult check = checkedProperty.check();
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}

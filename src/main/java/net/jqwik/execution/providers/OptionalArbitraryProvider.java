@@ -1,10 +1,10 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.execution.*;
+import net.jqwik.newArbitraries.*;
 
 public class OptionalArbitraryProvider implements GenericArbitraryProvider {
 	@Override
@@ -13,11 +13,11 @@ public class OptionalArbitraryProvider implements GenericArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
+	public NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeSupplier) {
 		GenericType innerType = targetType.getTypeArguments()[0];
-		Arbitrary<?> innerArbitrary = subtypeSupplier.apply(innerType);
+		NArbitrary<?> innerArbitrary = subtypeSupplier.apply(innerType);
 		if (innerArbitrary != null)
-			return Arbitraries.optionalOf(innerArbitrary);
+			return NArbitraries.optionalOf(innerArbitrary);
 		return null;
 	}
 }

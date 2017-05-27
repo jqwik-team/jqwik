@@ -1,5 +1,6 @@
 package net.jqwik;
 
+import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 
 import java.lang.reflect.*;
@@ -19,8 +20,8 @@ public class TestHelper {
 		return Arrays.stream(aClass.getDeclaredMethods()).filter(m -> m.getName().equals(methodName)).findFirst().get();
 	}
 
-	public static <T> T generate(Arbitrary<T> arbitrary) {
-		return arbitrary.generator(1).next(new Random());
+	public static <T> T generate(NArbitrary<T> arbitrary) {
+		return arbitrary.generator(1).next(new Random()).value();
 	}
 
 }
