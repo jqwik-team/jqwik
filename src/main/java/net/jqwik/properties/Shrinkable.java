@@ -18,7 +18,7 @@ public interface Shrinkable<T> {
 	int distance();
 
 	default <U> Shrinkable<U> map(Function<T, U> mapper) {
-		return new NMappedShrinkable<>(this, mapper);
+		return new MappedShrinkable<>(this, mapper);
 	}
 
 	class Unshrinkable<T> implements Shrinkable<T> {

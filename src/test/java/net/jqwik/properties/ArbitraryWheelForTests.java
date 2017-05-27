@@ -21,8 +21,8 @@ public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 				if (index.get() < values.length) {
 					int current = index.getAndIncrement();
 					T value = values[current];
-					NShrinkCandidates<T> shrinker = new WheelShrinker();
-					return new NShrinkableValue<>(value, shrinker);
+					ShrinkCandidates<T> shrinker = new WheelShrinker();
+					return new ShrinkableValue<>(value, shrinker);
 				} else {
 					index.set(0);
 					return next(random);
@@ -31,7 +31,7 @@ public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 		};
 	}
 
-	private class WheelShrinker implements NShrinkCandidates<T> {
+	private class WheelShrinker implements ShrinkCandidates<T> {
 
 		@Override
 		public Set<T> nextCandidates(T value) {

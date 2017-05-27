@@ -6,23 +6,23 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NContainerShrinkable<T, E> implements Shrinkable<T> {
+public class ContainerShrinkable<T, E> implements Shrinkable<T> {
 
 	public static final Function<List<Character>, String> CREATE_STRING = list -> list.stream() //
 			.map(c -> Character.toString(c)) //
 			.collect(Collectors.joining());
 
 	public static Shrinkable<String> stringOf(List<Shrinkable<Character>> chars) {
-		return new NContainerShrinkable<>(chars, CREATE_STRING);
+		return new ContainerShrinkable<>(chars, CREATE_STRING);
 	}
 
-	private final NListShrinkCandidates<E> listShrinker = new NListShrinkCandidates<>();
+	private final ListShrinkCandidates<E> listShrinker = new ListShrinkCandidates<>();
 
 	private final List<Shrinkable<E>> elements;
 	private final Function<List<E>, T> containerCreator;
 	private final T value;
 
-	public NContainerShrinkable(List<Shrinkable<E>> elements, Function<List<E>, T> containerCreator) {
+	public ContainerShrinkable(List<Shrinkable<E>> elements, Function<List<E>, T> containerCreator) {
 		this.elements = elements;
 		this.containerCreator = containerCreator;
 		this.value = createContainer(elements); // premature optimization?
@@ -31,7 +31,7 @@ public class NContainerShrinkable<T, E> implements Shrinkable<T> {
 	@Override
 	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
 		Set<ShrinkResult<Shrinkable<T>>> shrunkList = listShrinker.nextCandidates(elements).stream() //
-																  .map(shrunkValue -> SafeFalsifier.falsify(falsifier, new NContainerShrinkable<>(shrunkValue, containerCreator))) //
+																  .map(shrunkValue -> SafeFalsifier.falsify(falsifier, new ContainerShrinkable<>(shrunkValue, containerCreator))) //
 																  .filter(optional -> optional.isPresent()) //
 																  .map(optional -> optional.get()) //
 																  .collect(Collectors.toSet());
@@ -41,7 +41,7 @@ public class NContainerShrinkable<T, E> implements Shrinkable<T> {
 
 		return nextShrinkElements(falsifier) //
 											 .map(shrinkResult -> shrinkResult
-						.map(shrunkValue -> (Shrinkable<T>) new NContainerShrinkable<>(shrunkValue, containerCreator))) //
+						.map(shrunkValue -> (Shrinkable<T>) new ContainerShrinkable<>(shrunkValue, containerCreator))) //
 											 .collect(Collectors.toSet());
 	}
 

@@ -29,13 +29,13 @@ class ArbitraryTestHelper {
 		}
 	}
 
-	public static <T> List<T> shrinkToEnd(NShrinkCandidates<T> shrinker, T toShrink) {
+	public static <T> List<T> shrinkToEnd(ShrinkCandidates<T> shrinker, T toShrink) {
 		ArrayList<T> shrinks = new ArrayList<>();
 		collectShrinkResults(shrinker, toShrink, shrinks);
 		return shrinks;
 	}
 
-	private static <T> void collectShrinkResults(NShrinkCandidates<T> shrinker, T toShrink, List<T> collector) {
+	private static <T> void collectShrinkResults(ShrinkCandidates<T> shrinker, T toShrink, List<T> collector) {
 		Set<T> shrink = shrinker.nextCandidates(toShrink);
 		collector.addAll(shrink);
 		shrink.forEach(next -> collectShrinkResults(shrinker, next, collector));
@@ -53,7 +53,7 @@ class ArbitraryTestHelper {
 	}
 
 	public static Shrinkable<List<Integer>> shrinkableListOfIntegers(int... numbers) {
-		return new NContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new);
+		return new ContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new);
 	}
 
 	public static List<Shrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
@@ -63,7 +63,7 @@ class ArbitraryTestHelper {
 	}
 
 	public static Shrinkable<Integer> shrinkableInteger(int anInt) {
-		return new NShrinkableValue<>(anInt, new SimpleIntegerShrinker());
+		return new ShrinkableValue<>(anInt, new SimpleIntegerShrinker());
 	}
 
 	public static Shrinkable<String> shrinkableString(String aString) {
@@ -71,18 +71,18 @@ class ArbitraryTestHelper {
 	}
 
 	public static Shrinkable<String> shrinkableString(char... chars) {
-		return NContainerShrinkable.stringOf(listOfShrinkableChars(chars));
+		return ContainerShrinkable.stringOf(listOfShrinkableChars(chars));
 	}
 
 	private static List<Shrinkable<Character>> listOfShrinkableChars(char[] chars) {
 		List<Shrinkable<Character>> shrinkableChars = new ArrayList<>();
 		for (char aChar : chars) {
-			shrinkableChars.add(new NShrinkableValue<>(aChar, new SimpleCharacterShrinker()));
+			shrinkableChars.add(new ShrinkableValue<>(aChar, new SimpleCharacterShrinker()));
 		}
 		return shrinkableChars;
 	}
 
-	private static class SimpleCharacterShrinker implements NShrinkCandidates<Character> {
+	private static class SimpleCharacterShrinker implements ShrinkCandidates<Character> {
 
 		@Override
 		public Set<Character> nextCandidates(Character value) {
@@ -97,7 +97,7 @@ class ArbitraryTestHelper {
 		}
 	}
 
-	private static class SimpleIntegerShrinker implements NShrinkCandidates<Integer> {
+	private static class SimpleIntegerShrinker implements ShrinkCandidates<Integer> {
 		@Override
 		public Set<Integer> nextCandidates(Integer value) {
 			if (value == 0)

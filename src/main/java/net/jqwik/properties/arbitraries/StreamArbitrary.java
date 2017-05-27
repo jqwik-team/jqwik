@@ -5,13 +5,13 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NStreamArbitrary<T> extends NCollectionArbitrary<T, Stream<T>> {
+public class StreamArbitrary<T> extends CollectionArbitrary<T, Stream<T>> {
 
-	public NStreamArbitrary(Arbitrary<T> elementArbitrary) {
+	public StreamArbitrary(Arbitrary<T> elementArbitrary) {
 		this(elementArbitrary, 0);
 	}
 
-	public NStreamArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
+	public StreamArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
 		super(Set.class, elementArbitrary, maxSize);
 	}
 

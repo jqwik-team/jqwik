@@ -6,13 +6,13 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NMappedShrinkable<T, U> implements Shrinkable<U> {
+public class MappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private final Shrinkable<T> toMap;
 	private final Function<T, U> mapper;
 	private final U value;
 
-	public NMappedShrinkable(Shrinkable<T> toMap, Function<T, U> mapper) {
+	public MappedShrinkable(Shrinkable<T> toMap, Function<T, U> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
 		this.value = mapper.apply(toMap.value());
@@ -22,7 +22,7 @@ public class NMappedShrinkable<T, U> implements Shrinkable<U> {
 	public Set<ShrinkResult<Shrinkable<U>>> shrinkNext(Predicate<U> falsifier) {
 		Predicate<T> toMapPredicate = aT -> falsifier.test(mapper.apply(aT));
 		return toMap.shrinkNext(toMapPredicate).stream() //
-					.map(shrinkResult -> shrinkResult.map(shrunkValue -> (Shrinkable<U>) new NMappedShrinkable<>(shrunkValue, mapper))) //
+					.map(shrinkResult -> shrinkResult.map(shrunkValue -> (Shrinkable<U>) new MappedShrinkable<>(shrunkValue, mapper))) //
 					.collect(Collectors.toSet());
 	}
 

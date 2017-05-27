@@ -2,11 +2,11 @@ package net.jqwik.properties.arbitraries;
 
 import java.util.*;
 
-abstract class NIntegralShrinkCandidates<T extends Number> implements NShrinkCandidates<T> {
+abstract class IntegralShrinkCandidates<T extends Number> implements ShrinkCandidates<T> {
 
 	private final Range<Long> range;
 
-	protected NIntegralShrinkCandidates(long min, long max) {
+	protected IntegralShrinkCandidates(long min, long max) {
 		this.range = Range.of(min, max);
 	}
 

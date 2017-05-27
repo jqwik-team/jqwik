@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public class NStringArbitrary extends NNullableArbitrary<String> {
+public class NStringArbitrary extends NullableArbitrary<String> {
 
 	private final static char[] defaultChars = {'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@'};
 
@@ -17,7 +17,7 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 	}
 
 	private static RandomGenerator<Character> defaultGenerator() {
-		return NShrinkableGenerators.choose(defaultChars);
+		return RandomGenerators.choose(defaultChars);
 	}
 
 	public NStringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
@@ -35,7 +35,7 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 	}
 
 	private static RandomGenerator<Character> createGenerator(char[] characters) {
-		return NShrinkableGenerators.choose(characters);
+		return RandomGenerators.choose(characters);
 	}
 
 	public NStringArbitrary(char from, char to, int maxLength) {
@@ -47,14 +47,14 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 	}
 
 	private static RandomGenerator<Character> createGenerator(char from, char to) {
-		return NShrinkableGenerators.choose(from, to);
+		return RandomGenerators.choose(from, to);
 	}
 
 	@Override
 	protected RandomGenerator<String> baseGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
 		if (effectiveMaxSize <= 0) effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
-		return NShrinkableGenerators.string(characterGenerator, effectiveMaxSize);
+		return RandomGenerators.string(characterGenerator, effectiveMaxSize);
 	}
 
 	public void configure(MaxStringLength maxStringLength) {
@@ -92,7 +92,7 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 	private Optional<RandomGenerator<Character>> createFromToGenerator(ValidChars validChars) {
 		RandomGenerator<Character> fromToGenerator = null;
 		if (validChars.from() > 0 && validChars.to() > 0) {
-			fromToGenerator = NShrinkableGenerators.choose(validChars.from(), validChars.to());
+			fromToGenerator = RandomGenerators.choose(validChars.from(), validChars.to());
 			characterGenerator = fromToGenerator;
 		}
 		return Optional.ofNullable(fromToGenerator);
@@ -101,7 +101,7 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 	private Optional<RandomGenerator<Character>> createCharsGenerator(ValidChars validChars) {
 		RandomGenerator<Character> charsGenerator = null;
 		if (validChars.value().length > 0) {
-			charsGenerator = NShrinkableGenerators.choose(validChars.value());
+			charsGenerator = RandomGenerators.choose(validChars.value());
 			characterGenerator = charsGenerator;
 		}
 		return Optional.ofNullable(charsGenerator);

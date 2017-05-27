@@ -6,12 +6,12 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NShrinkableValue<T> implements Shrinkable<T> {
+public class ShrinkableValue<T> implements Shrinkable<T> {
 
 	private final T value;
-	private final NShrinkCandidates<T> shrinker;
+	private final ShrinkCandidates<T> shrinker;
 
-	public NShrinkableValue(T value, NShrinkCandidates<T> shrinker) {
+	public ShrinkableValue(T value, ShrinkCandidates<T> shrinker) {
 		this.value = value;
 		this.shrinker = shrinker;
 	}
@@ -19,7 +19,7 @@ public class NShrinkableValue<T> implements Shrinkable<T> {
 	@Override
 	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
 		return shrinker.nextCandidates(value).stream() //
-					   .map(shrunkValue -> SafeFalsifier.falsify(falsifier, new NShrinkableValue<T>(shrunkValue, shrinker))) //
+					   .map(shrunkValue -> SafeFalsifier.falsify(falsifier, new ShrinkableValue<T>(shrunkValue, shrinker))) //
 					   .filter(Optional::isPresent) //
 					   .map(Optional::get) //
 					   .collect(Collectors.toSet());

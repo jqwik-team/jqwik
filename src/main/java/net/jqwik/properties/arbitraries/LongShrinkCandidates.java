@@ -1,8 +1,8 @@
 package net.jqwik.properties.arbitraries;
 
-public class NLongShrinkCandidates extends NIntegralShrinkCandidates<Long> {
+public class LongShrinkCandidates extends IntegralShrinkCandidates<Long> {
 
-	public NLongShrinkCandidates(long min, long max) {
+	public LongShrinkCandidates(long min, long max) {
 		super(min, max);
 	}
 

@@ -6,7 +6,7 @@ import java.util.function.*;
 
 import net.jqwik.properties.*;
 
-public class NShrinkableGenerators {
+public class RandomGenerators {
 
 	public static <U> RandomGenerator<U> choose(U[] values) {
 		if (values.length == 0) {
@@ -18,13 +18,13 @@ public class NShrinkableGenerators {
 
 	public static RandomGenerator<Integer> choose(int min, int max) {
 		if (min == max) {
-			return ignored -> new NShrinkableValue<>(min, ignore -> Collections.emptySet());
+			return ignored -> new ShrinkableValue<>(min, ignore -> Collections.emptySet());
 		} else {
 			final int _min = Math.min(min, max);
 			final int _max = Math.max(min, max);
 			return random -> {
 				int value = random.nextInt(Math.abs(_max - _min) + 1) + _min;
-				return new NShrinkableValue<>(value, new NIntegerShrinkCandidates(min, max));
+				return new ShrinkableValue<>(value, new IntegerShrinkCandidates(min, max));
 			};
 		}
 	}
@@ -38,7 +38,7 @@ public class NShrinkableGenerators {
 			return random -> {
 				final double d = random.nextDouble();
 				long value = (long) ((d * _max) + ((1.0 - d) * _min) + d);
-				return new NShrinkableValue<>(value, new NLongShrinkCandidates(min, max));
+				return new ShrinkableValue<>(value, new LongShrinkCandidates(min, max));
 			};
 		}
 	}
@@ -66,7 +66,7 @@ public class NShrinkableGenerators {
 			for (int j = 0; j < listSize; j++) {
 				list.add(elementGenerator.next(random));
 			}
-			return new NContainerShrinkable<>(list, containerFunction);
+			return new ContainerShrinkable<>(list, containerFunction);
 		};
 	}
 
@@ -75,7 +75,7 @@ public class NShrinkableGenerators {
 	}
 
 	public static RandomGenerator<String> string(RandomGenerator<Character> elementGenerator, int maxSize) {
-		return container(elementGenerator, NContainerShrinkable.CREATE_STRING, maxSize);
+		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, maxSize);
 	}
 
 	public static RandomGenerator<Character> choose(char min, char max) {

@@ -14,7 +14,7 @@ public interface RandomGenerator<T> {
 	}
 
 	default RandomGenerator<T> filter(Predicate<T> filterPredicate) {
-		return new NFilteredGenerator<>(this, filterPredicate);
+		return new FilteredGenerator<>(this, filterPredicate);
 	}
 
 	default RandomGenerator<T> injectNull(double nullProbability) {
@@ -26,7 +26,7 @@ public interface RandomGenerator<T> {
 	};
 
 	default RandomGenerator<T> withSamples(T...samples) {
-		RandomGenerator<T> samplesGenerator = NShrinkableGenerators.samples(samples);
+		RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
 		RandomGenerator<T> generator = this;
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return random -> {

@@ -6,13 +6,13 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NCombinedShrinkable<T> implements Shrinkable<T> {
+public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 	private final List<Shrinkable<Object>> shrinkables;
 	private final Function<List<Object>, T> combineFunction;
 	private final T value;
 
-	public NCombinedShrinkable(List<Shrinkable<Object>> shrinkables, Function<List<Object>, T> combineFunction) {
+	public CombinedShrinkable(List<Shrinkable<Object>> shrinkables, Function<List<Object>, T> combineFunction) {
 		this.shrinkables = shrinkables;
 		this.combineFunction = combineFunction;
 		this.value = combine(shrinkables);
@@ -34,7 +34,7 @@ public class NCombinedShrinkable<T> implements Shrinkable<T> {
 				.map(shrinkResult -> shrinkResult.map(shrunkValue -> {
 					List<Shrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
 					newShrinkables.set(position, shrunkValue);
-					return (Shrinkable<T>) new NCombinedShrinkable<>(newShrinkables, combineFunction);
+					return (Shrinkable<T>) new CombinedShrinkable<>(newShrinkables, combineFunction);
 				})) //
 				.collect(Collectors.toSet());
 	}

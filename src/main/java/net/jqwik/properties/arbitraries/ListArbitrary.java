@@ -4,13 +4,13 @@ import java.util.*;
 
 import net.jqwik.properties.*;
 
-public class NListArbitrary<T> extends NCollectionArbitrary<T, List<T>> {
+public class ListArbitrary<T> extends CollectionArbitrary<T, List<T>> {
 
-	public NListArbitrary(Arbitrary<T> elementArbitrary) {
+	public ListArbitrary(Arbitrary<T> elementArbitrary) {
 		this(elementArbitrary, 0);
 	}
 
-	public NListArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
+	public ListArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
 		super(List.class, elementArbitrary, maxSize);
 	}
 

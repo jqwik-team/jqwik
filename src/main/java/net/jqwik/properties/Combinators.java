@@ -53,7 +53,7 @@ public class Combinators {
 				shrinkables.add((Shrinkable<Object>) g1.next(random));
 				shrinkables.add((Shrinkable<Object>) g2.next(random));
 				Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
-				return new NCombinedShrinkable<R>(shrinkables, combineFunction);
+				return new CombinedShrinkable<R>(shrinkables, combineFunction);
 			};
 		}
 	}
@@ -82,7 +82,7 @@ public class Combinators {
 					shrinkables.add((Shrinkable<Object>) g3.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
 
-					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -116,7 +116,7 @@ public class Combinators {
 					shrinkables.add((Shrinkable<Object>) g4.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2), (T4) params.get(3));
 
-					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}

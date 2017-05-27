@@ -6,11 +6,11 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NFilteredShrinkable<T> implements Shrinkable<T> {
+public class FilteredShrinkable<T> implements Shrinkable<T> {
 	private final Shrinkable<T> toFilter;
 	private final Predicate<T> filterPredicate;
 
-	public NFilteredShrinkable(Shrinkable<T> toFilter, Predicate<T> filterPredicate) {
+	public FilteredShrinkable(Shrinkable<T> toFilter, Predicate<T> filterPredicate) {
 		this.toFilter = toFilter;
 		this.filterPredicate = filterPredicate;
 	}
@@ -20,7 +20,7 @@ public class NFilteredShrinkable<T> implements Shrinkable<T> {
 		Set<ShrinkResult<Shrinkable<T>>> branches = toFilter.shrinkNext(falsifier) //
 															.stream() //
 															.map(shrinkResult -> shrinkResult //
-						.map(shrinkable -> (Shrinkable<T>) new NFilteredShrinkable<>(shrinkable, filterPredicate))) //
+						.map(shrinkable -> (Shrinkable<T>) new FilteredShrinkable<>(shrinkable, filterPredicate))) //
 															.collect(Collectors.toSet());
 		return firstFalsifiedFitPerBranch(branches, falsifier);
 	}

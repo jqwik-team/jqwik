@@ -16,13 +16,13 @@ class ContainerShrinkingTests {
 	class Lists {
 		@Example
 		void dontShrinkEmptyList() {
-			NContainerShrinkable<List<Integer>, Integer> list = emptyShrinkableIntegerList();
+			ContainerShrinkable<List<Integer>, Integer> list = emptyShrinkableIntegerList();
 			ShrinkResult<Shrinkable<List<Integer>>> shrinkResult = shrink(list, MockFalsifier.falsifyAll(), null);
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEmpty();
 		}
 
-		private NContainerShrinkable<List<Integer>, Integer> emptyShrinkableIntegerList() {
-			return new NContainerShrinkable<>(new ArrayList<>(), ArrayList::new);
+		private ContainerShrinkable<List<Integer>, Integer> emptyShrinkableIntegerList() {
+			return new ContainerShrinkable<>(new ArrayList<>(), ArrayList::new);
 		}
 
 		@Example
@@ -108,7 +108,7 @@ class ContainerShrinkingTests {
 		@Example
 		void shrinkFilteredString() {
 			Shrinkable<String> string = ArbitraryTestHelper.shrinkableString("xyzxzb");
-			Shrinkable<String> filteredString = new NFilteredShrinkable<>(string, aString -> aString.endsWith("b"));
+			Shrinkable<String> filteredString = new FilteredShrinkable<>(string, aString -> aString.endsWith("b"));
 			ShrinkResult<Shrinkable<String>> shrinkResult = shrink(filteredString,
 																   MockFalsifier.falsifyWhen(aString -> aString.length() < 3), null);
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("aab");

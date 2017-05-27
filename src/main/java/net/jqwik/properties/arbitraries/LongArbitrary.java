@@ -3,18 +3,18 @@ package net.jqwik.properties.arbitraries;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public class NLongArbitrary extends NNullableArbitrary<Long> {
+public class LongArbitrary extends NullableArbitrary<Long> {
 
 	private long min;
 	private long max;
 
-	public NLongArbitrary(long min, long max) {
+	public LongArbitrary(long min, long max) {
 		super(Long.class);
 		this.min = min;
 		this.max = max;
 	}
 
-	public NLongArbitrary() {
+	public LongArbitrary() {
 		this(0, 0);
 	}
 
@@ -22,9 +22,9 @@ public class NLongArbitrary extends NNullableArbitrary<Long> {
 	protected RandomGenerator<Long> baseGenerator(int tries) {
 		if (min == 0 && max == 0) {
 			long max = Arbitrary.defaultMaxFromTries(tries);
-			return NShrinkableGenerators.choose(-max, max).withSamples(0L, Long.MIN_VALUE, Long.MAX_VALUE);
+			return RandomGenerators.choose(-max, max).withSamples(0L, Long.MIN_VALUE, Long.MAX_VALUE);
 		}
-		return NShrinkableGenerators.choose(min, max);
+		return RandomGenerators.choose(min, max);
 	}
 
 	public void configure(LongRange longRange) {

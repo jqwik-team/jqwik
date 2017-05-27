@@ -24,8 +24,8 @@ public class ListArbitraryForTests implements Arbitrary<List<Integer>> {
 						value.add(i);
 					}
 					index.incrementAndGet();
-					NShrinkCandidates<List<Integer>> shrinker = new ListShrinker();
-					return new NShrinkableValue<>(value, shrinker);
+					ShrinkCandidates<List<Integer>> shrinker = new ListShrinker();
+					return new ShrinkableValue<>(value, shrinker);
 				} else {
 					index.set(0);
 					return next(random);
@@ -34,7 +34,7 @@ public class ListArbitraryForTests implements Arbitrary<List<Integer>> {
 		};
 	}
 
-	private static class ListShrinker implements NShrinkCandidates<List<Integer>> {
+	private static class ListShrinker implements ShrinkCandidates<List<Integer>> {
 
 		@Override
 		public Set<List<Integer>> nextCandidates(List<Integer> toShrink) {

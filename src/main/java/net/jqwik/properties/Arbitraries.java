@@ -13,27 +13,27 @@ public class Arbitraries {
 
 	@SafeVarargs
 	public static <U> Arbitrary<U> of(U... values) {
-		return fromGenerator(NShrinkableGenerators.choose(values));
+		return fromGenerator(RandomGenerators.choose(values));
 	}
 
 	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
-		return fromGenerator(NShrinkableGenerators.choose(enumClass));
+		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
 	public static Arbitrary<Integer> integer() {
-		return new NIntegerArbitrary();
+		return new IntegerArbitrary();
 	}
 
 	public static Arbitrary<Integer> integer(int min, int max) {
-		return new NIntegerArbitrary(min, max);
+		return new IntegerArbitrary(min, max);
 	}
 
 	public static Arbitrary<Long> longInteger(long min, long max) {
-		return new NLongArbitrary();
+		return new LongArbitrary();
 	}
 
 	public static Arbitrary<Long> longInteger() {
-		return new NLongArbitrary();
+		return new LongArbitrary();
 	}
 
 	public static Arbitrary<String> string() {
@@ -57,27 +57,27 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new NListArbitrary<T>(elementArbitrary, maxSize);
+		return new ListArbitrary<T>(elementArbitrary, maxSize);
 	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
-		return new NListArbitrary<T>(elementArbitrary);
+		return new ListArbitrary<T>(elementArbitrary);
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new NSetArbitrary<>(elementArbitrary, maxSize);
+		return new SetArbitrary<>(elementArbitrary, maxSize);
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
-		return new NSetArbitrary<>(elementArbitrary);
+		return new SetArbitrary<>(elementArbitrary);
 	}
 
 	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new NStreamArbitrary<>(elementArbitrary, maxSize);
+		return new StreamArbitrary<>(elementArbitrary, maxSize);
 	}
 
 	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
-		return new NStreamArbitrary<>(elementArbitrary);
+		return new StreamArbitrary<>(elementArbitrary);
 	}
 
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
@@ -85,17 +85,17 @@ public class Arbitraries {
 	}
 
 	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int maxSize) {
-		return new NArrayArbitrary(arrayClass, elementArbitrary, maxSize);
+		return new ArrayArbitrary(arrayClass, elementArbitrary, maxSize);
 	}
 
 	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
-		return new NArrayArbitrary(arrayClass, elementArbitrary);
+		return new ArrayArbitrary(arrayClass, elementArbitrary);
 	}
 
 
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
-		return fromGenerator(NShrinkableGenerators.samples(samples));
+		return fromGenerator(RandomGenerators.samples(samples));
 	}
 
 }

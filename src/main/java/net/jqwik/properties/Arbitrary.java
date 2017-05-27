@@ -12,16 +12,16 @@ public interface Arbitrary<T> {
 	}
 
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
-		return new NArbitraryWrapper<T, T>(this) {
+		return new ArbitraryWrapper<T, T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {
-				return new NFilteredGenerator<T>(wrapped.generator(tries), filterPredicate);
+				return new FilteredGenerator<T>(wrapped.generator(tries), filterPredicate);
 			}
 		};
 	}
 
 	default <U> Arbitrary<U> map(Function<T, U> mapper) {
-		return new NArbitraryWrapper<T, U>(this) {
+		return new ArbitraryWrapper<T, U>(this) {
 			@Override
 			public RandomGenerator<U> generator(int tries) {
 				return wrapped.generator(tries).map(mapper);
@@ -30,7 +30,7 @@ public interface Arbitrary<T> {
 	}
 
 	default Arbitrary<T> injectNull(double nullProbability) {
-		return new NArbitraryWrapper<T, T>(this) {
+		return new ArbitraryWrapper<T, T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {
 				return wrapped.generator(tries).injectNull(nullProbability);
@@ -40,7 +40,7 @@ public interface Arbitrary<T> {
 
 	@SuppressWarnings("unchecked")
 	default Arbitrary<T> withSamples(T... samples) {
-		return new NArbitraryWrapper<T, T>(this) {
+		return new ArbitraryWrapper<T, T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {
 				return wrapped.generator(tries).withSamples(samples);

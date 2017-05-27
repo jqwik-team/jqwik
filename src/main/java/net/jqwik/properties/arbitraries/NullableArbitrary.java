@@ -3,12 +3,12 @@ package net.jqwik.properties.arbitraries;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public abstract class NNullableArbitrary<T> implements Arbitrary<T> {
+public abstract class NullableArbitrary<T> implements Arbitrary<T> {
 
 	protected final Class targetClass;
 	private double nullProbability = 0.0;
 
-	protected NNullableArbitrary(Class<?> targetClass) {
+	protected NullableArbitrary(Class<?> targetClass) {
 		this.targetClass = targetClass;
 	}
 

@@ -2,7 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import java.util.*;
 
-public interface NShrinkCandidates<T> {
+public interface ShrinkCandidates<T> {
 
 	Set<T> nextCandidates(T value);
 

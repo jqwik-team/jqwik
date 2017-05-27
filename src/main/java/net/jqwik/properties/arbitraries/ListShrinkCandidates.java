@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.jqwik.properties.*;
 
-public class NListShrinkCandidates<T> implements NShrinkCandidates<List<Shrinkable<T>>> {
+public class ListShrinkCandidates<T> implements ShrinkCandidates<List<Shrinkable<T>>> {
 
 	@Override
 	public Set<List<Shrinkable<T>>> nextCandidates(List<Shrinkable<T>> toShrink) {

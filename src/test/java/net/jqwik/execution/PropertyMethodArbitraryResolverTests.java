@@ -335,7 +335,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void configureIsCalledOnDefaultArbitrary() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithConfiguration.class, "aNullableInteger", Integer.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableInteger");
-			NIntegerArbitrary integerArbitrary = (NIntegerArbitrary) provider.forParameter(parameter).get().inner();
+			IntegerArbitrary integerArbitrary = (IntegerArbitrary) provider.forParameter(parameter).get().inner();
 
 			assertThat(integerArbitrary.getNullProbability()).isCloseTo(0.42, Offset.offset(0.01));
 		}

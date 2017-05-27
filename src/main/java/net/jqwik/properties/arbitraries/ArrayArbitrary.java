@@ -6,17 +6,17 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public class NArrayArbitrary<A, T> extends NNullableArbitrary<A> {
+public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 
 	private final Arbitrary<T> elementArbitrary;
 	private int maxSize;
 
 
-	public NArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
+	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
 		this(arrayClass, elementArbitrary, 0);
 	}
 
-	public NArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int maxSize) {
+	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int maxSize) {
 		super(arrayClass);
 		this.elementArbitrary = elementArbitrary;
 		this.maxSize = maxSize;
@@ -44,7 +44,7 @@ public class NArrayArbitrary<A, T> extends NNullableArbitrary<A> {
 	private <T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
-		return NShrinkableGenerators.list(elementGenerator, maxSize);
+		return RandomGenerators.list(elementGenerator, maxSize);
 	}
 
 	public void configure(MaxSize maxSize) {

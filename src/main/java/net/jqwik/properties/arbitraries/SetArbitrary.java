@@ -4,13 +4,13 @@ import java.util.*;
 
 import net.jqwik.properties.*;
 
-public class NSetArbitrary<T> extends NCollectionArbitrary<T, Set<T>> {
+public class SetArbitrary<T> extends CollectionArbitrary<T, Set<T>> {
 
-	public NSetArbitrary(Arbitrary<T> elementArbitrary) {
+	public SetArbitrary(Arbitrary<T> elementArbitrary) {
 		this(elementArbitrary, 0);
 	}
 
-	public NSetArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
+	public SetArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
 		super(Set.class, elementArbitrary, maxSize);
 	}
 

@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class ListShrinkCandidatesTests {
 
-	private NListShrinkCandidates<Integer> shrinker = new NListShrinkCandidates<>();
+	private ListShrinkCandidates<Integer> shrinker = new ListShrinkCandidates<>();
 
 	@Example
 	void distanceIsLengthPlusDistanceOfElements() {
