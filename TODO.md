@@ -45,11 +45,13 @@
   - chars, short, byte
   - float, double, BigDecimal
   
+- Arbitrary.chain(..) to use result of one generator for creating next arbitrary
+
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
 - Group properties, e.g. @Property for classes and individual methods with preconditions
 
-### Contracts
+### Contracts / Specifications
 
 - Allow specification of consumer and provider contract in test class
 - Allow spec annotations in domain classes a la clojure-spec
