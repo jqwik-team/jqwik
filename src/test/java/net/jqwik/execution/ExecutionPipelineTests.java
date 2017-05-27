@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
-import net.jqwik.properties.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.execution.pipeline.*;
+import net.jqwik.properties.*;
 
 public class ExecutionPipelineTests {
 
@@ -37,7 +37,7 @@ public class ExecutionPipelineTests {
 
 	@Generate
 	Arbitrary<MockExecutionTask> task() {
-		return new ArbitraryWheelForTests<>(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
+		return Arbitraries.samples(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
 	}
 
 	@Example

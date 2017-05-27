@@ -18,7 +18,7 @@ public class ParameterListShrinker<T> {
 		Throwable[] lastFalsifiedError = new Throwable[] { originalError };
 		for (int position = 0; position < parametersToShrink.size(); position++) {
 			ShrinkResult<Shrinkable<T>> shrunkPositionResult = shrinkPosition(position, forAllFalsifier);
-			lastFalsifiedError[0] = shrunkPositionResult.throwable().orElse(null);
+			shrunkPositionResult.throwable().ifPresent(throwable -> lastFalsifiedError[0] = throwable);
 			resultShrinkables.set(position, shrunkPositionResult.shrunkValue());
 		}
 		return ShrinkResult.of(resultShrinkables, lastFalsifiedError[0]);
