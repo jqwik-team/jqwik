@@ -7,8 +7,6 @@ import java.util.stream.*;
 import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
 
-import net.jqwik.newArbitraries.*;
-
 public class GenericProperty {
 
 	private final String name;

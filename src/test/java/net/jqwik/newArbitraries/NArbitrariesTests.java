@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.*;
 
 public class NArbitrariesTests {
 

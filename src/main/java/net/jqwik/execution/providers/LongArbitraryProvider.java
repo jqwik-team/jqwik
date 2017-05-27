@@ -1,7 +1,7 @@
 package net.jqwik.execution.providers;
 
 import net.jqwik.execution.*;
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public class LongArbitraryProvider implements SimpleArbitraryProvider {
 	@Override

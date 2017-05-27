@@ -1,6 +1,7 @@
 package net.jqwik.newArbitraries;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.*;
 
 import java.util.*;
 

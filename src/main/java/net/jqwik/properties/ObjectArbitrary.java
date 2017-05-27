@@ -1,7 +1,5 @@
 package net.jqwik.properties;
 
-import net.jqwik.newArbitraries.*;
-
 public class ObjectArbitrary implements NArbitrary<Object> {
 	@Override
 	public NShrinkableGenerator<Object> generator(int tries) {

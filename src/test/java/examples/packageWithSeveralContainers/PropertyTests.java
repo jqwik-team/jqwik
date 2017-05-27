@@ -1,7 +1,7 @@
 package examples.packageWithSeveralContainers;
 
 import net.jqwik.api.*;
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public class PropertyTests {
 

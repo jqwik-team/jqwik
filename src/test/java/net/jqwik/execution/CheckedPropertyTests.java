@@ -3,7 +3,6 @@ package net.jqwik.execution;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 import org.opentest4j.*;
 

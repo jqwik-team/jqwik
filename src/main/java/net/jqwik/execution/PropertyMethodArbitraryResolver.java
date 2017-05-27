@@ -13,7 +13,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.providers.*;
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 import net.jqwik.support.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {

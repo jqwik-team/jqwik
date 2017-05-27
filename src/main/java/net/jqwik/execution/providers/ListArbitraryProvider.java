@@ -2,7 +2,7 @@ package net.jqwik.execution.providers;
 
 import java.util.*;
 
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public class ListArbitraryProvider extends AbstractCollectionArbitraryProvider {
 

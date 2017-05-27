@@ -1,7 +1,7 @@
 package examples.packageWithProperties;
 
 import net.jqwik.api.*;
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public class PropertiesTriesCounting implements AutoCloseable {
 

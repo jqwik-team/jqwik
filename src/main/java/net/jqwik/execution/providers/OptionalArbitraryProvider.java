@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.execution.*;
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public class OptionalArbitraryProvider implements GenericArbitraryProvider {
 	@Override

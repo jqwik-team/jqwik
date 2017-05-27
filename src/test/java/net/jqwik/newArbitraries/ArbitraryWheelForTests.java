@@ -1,5 +1,8 @@
 package net.jqwik.newArbitraries;
 
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+
 import java.util.*;
 import java.util.concurrent.atomic.*;
 

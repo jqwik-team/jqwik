@@ -7,12 +7,13 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.data.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.newArbitraries.*;
 import net.jqwik.support.*;
 
 @Group

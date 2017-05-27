@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
+import net.jqwik.properties.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 

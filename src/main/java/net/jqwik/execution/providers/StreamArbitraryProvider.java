@@ -2,7 +2,7 @@ package net.jqwik.execution.providers;
 
 import java.util.stream.*;
 
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public class StreamArbitraryProvider extends AbstractCollectionArbitraryProvider {
 

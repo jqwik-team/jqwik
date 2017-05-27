@@ -7,7 +7,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
+import net.jqwik.properties.*;
 
 public class NParameterListShrinkerTests {
 

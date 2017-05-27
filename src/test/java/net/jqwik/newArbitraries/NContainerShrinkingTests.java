@@ -4,10 +4,11 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
 
 @Group
 class NContainerShrinkingTests {

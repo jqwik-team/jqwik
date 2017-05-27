@@ -1,6 +1,7 @@
 package net.jqwik.execution;
 
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 
 class GenericArbitrary extends NArbitraryWrapper<Object, Object> {
 

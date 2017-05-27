@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
+import net.jqwik.properties.*;
 
 @Group
 class NArbitraryTests {

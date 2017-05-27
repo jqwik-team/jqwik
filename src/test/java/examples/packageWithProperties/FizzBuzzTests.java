@@ -3,7 +3,7 @@ package examples.packageWithProperties;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public class FizzBuzzTests {
 

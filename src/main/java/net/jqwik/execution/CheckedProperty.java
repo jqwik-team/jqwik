@@ -7,7 +7,6 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.newArbitraries.*;
 import net.jqwik.properties.*;
 
 public class CheckedProperty {

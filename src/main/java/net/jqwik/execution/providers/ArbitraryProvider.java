@@ -3,7 +3,7 @@ package net.jqwik.execution.providers;
 import java.util.function.*;
 
 import net.jqwik.execution.*;
-import net.jqwik.newArbitraries.*;
+import net.jqwik.properties.*;
 
 public interface ArbitraryProvider {
 

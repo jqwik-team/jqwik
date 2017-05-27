@@ -9,7 +9,6 @@ import net.jqwik.properties.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
 
 public class NValueShrinkerTests {
 

@@ -3,8 +3,8 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.newArbitraries.*;
-import net.jqwik.newArbitraries.NCombinators.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.NCombinators.*;
 
 public interface Generator {
 
