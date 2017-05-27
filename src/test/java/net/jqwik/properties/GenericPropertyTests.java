@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.newArbitraries.*;
 
 class GenericPropertyTests {
 

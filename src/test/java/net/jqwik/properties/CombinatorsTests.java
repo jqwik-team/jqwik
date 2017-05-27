@@ -1,4 +1,4 @@
-package net.jqwik.newArbitraries;
+package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
@@ -7,7 +7,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class NCombinatorsTests {
+class CombinatorsTests {
 
 	private Random random = new Random();
 

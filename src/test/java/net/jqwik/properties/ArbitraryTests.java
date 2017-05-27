@@ -1,14 +1,13 @@
-package net.jqwik.newArbitraries;
+package net.jqwik.properties;
 
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 @Group
-class NArbitraryTests {
+class ArbitraryTests {
 
 	private Random random = new Random();
 

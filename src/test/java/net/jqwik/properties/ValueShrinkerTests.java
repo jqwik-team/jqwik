@@ -1,16 +1,14 @@
-package net.jqwik.newArbitraries;
+package net.jqwik.properties;
 
-import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.function.*;
 
-import net.jqwik.properties.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 
-public class NValueShrinkerTests {
+class ValueShrinkerTests {
 
 	@Example
 	void unshrinkableValueIsShrinkedToItself() {
@@ -27,7 +25,7 @@ public class NValueShrinkerTests {
 
 	@Example
 	void shrinkSingletonShrinkSetToFalsifiedValueWithLowestDistance() {
-		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
+		NShrinkable<Integer> shrinkable = ArbitraryTestHelper.shrinkableInteger(10);
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyWhen(anInt -> anInt < 3);
 		NValueShrinker<Integer> singleValueShrinker = new NValueShrinker<>(shrinkable);
 		NShrinkResult<NShrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
@@ -37,7 +35,7 @@ public class NValueShrinkerTests {
 
 	@Example
 	void shrinkMultiShrinkSetToFalsifiedValueWithLowestDistance() {
-		NShrinkable<String> shrinkable = shrinkableString("hello this is a longer sentence.");
+		NShrinkable<String> shrinkable = ArbitraryTestHelper.shrinkableString("hello this is a longer sentence.");
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
 		NValueShrinker<String> singleValueShrinker = new NValueShrinker<>(shrinkable);
 		NShrinkResult<NShrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
@@ -47,7 +45,7 @@ public class NValueShrinkerTests {
 
 	@Example
 	void shrinkWithAssertionError() {
-		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
+		NShrinkable<Integer> shrinkable = ArbitraryTestHelper.shrinkableInteger(10);
 		Predicate<Integer> falsifier = anInt -> {
 			Assertions.assertThat(anInt).isEqualTo(0);
 			return true;
@@ -61,7 +59,7 @@ public class NValueShrinkerTests {
 
 	@Example
 	void shrinkResultsOutsideAssumptionsAreNotConsidered() {
-		NShrinkable<Integer> shrinkable = shrinkableInteger(10);
+		NShrinkable<Integer> shrinkable = ArbitraryTestHelper.shrinkableInteger(10);
 		Predicate<Integer> falsifier = anInt -> {
 			Assumptions.assumeThat(anInt % 2 == 0);
 			return anInt < 3;

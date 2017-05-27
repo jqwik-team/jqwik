@@ -1,17 +1,16 @@
-package net.jqwik.newArbitraries;
+package net.jqwik.properties;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 
 @Group
-class NContainerShrinkingTests {
+class ContainerShrinkingTests {
 
 	@Group
 	class Lists {
@@ -28,7 +27,7 @@ class NContainerShrinkingTests {
 
 		@Example
 		void shrinkListSizeOnly() {
-			NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(0, 0, 0, 0);
+			NShrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(0, 0, 0, 0);
 
 			NShrinkResult<NShrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> {
 				if (listToShrink.size() < 2)
@@ -43,7 +42,7 @@ class NContainerShrinkingTests {
 
 		@Example
 		void captureCorrectErrorWhenShrinking() {
-			NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4);
+			NShrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4);
 
 			AssertionError error = new AssertionError("error");
 			NShrinkResult<NShrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> {
@@ -59,7 +58,7 @@ class NContainerShrinkingTests {
 
 		@Example
 		void shrinkElementsOnly() {
-			NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4);
+			NShrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4);
 
 			NShrinkResult<NShrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> {
 				if (listToShrink.size() != 4)
@@ -74,7 +73,7 @@ class NContainerShrinkingTests {
 
 		@Example
 		void shrinkNumberOfElementsThenIndividualElements() {
-			NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
+			NShrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
 
 			NShrinkResult<NShrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> {
 				if (listToShrink.size() < 3)
@@ -92,14 +91,14 @@ class NContainerShrinkingTests {
 	class Strings {
 		@Example
 		void dontShrinkEmptyString() {
-			NShrinkable<String> string = NArbitraryTestHelper.shrinkableString();
+			NShrinkable<String> string = ArbitraryTestHelper.shrinkableString();
 			NShrinkResult<NShrinkable<String>> shrinkResult = shrink(string, MockFalsifier.falsifyAll(), null);
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEmpty();
 		}
 
 		@Example
 		void shrinkStringToOnlyAs() {
-			NShrinkable<String> string = NArbitraryTestHelper.shrinkableString("xyzxzy");
+			NShrinkable<String> string = ArbitraryTestHelper.shrinkableString("xyzxzy");
 			NShrinkResult<NShrinkable<String>> shrinkResult = shrink(string, MockFalsifier.falsifyWhen(aString -> aString.length() < 3),
 					null);
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("aaa");
@@ -108,7 +107,7 @@ class NContainerShrinkingTests {
 
 		@Example
 		void shrinkFilteredString() {
-			NShrinkable<String> string = NArbitraryTestHelper.shrinkableString("xyzxzb");
+			NShrinkable<String> string = ArbitraryTestHelper.shrinkableString("xyzxzb");
 			NShrinkable<String> filteredString = new NFilteredShrinkable<>(string, aString -> aString.endsWith("b"));
 			NShrinkResult<NShrinkable<String>> shrinkResult = shrink(filteredString,
 					MockFalsifier.falsifyWhen(aString -> aString.length() < 3), null);
@@ -118,7 +117,7 @@ class NContainerShrinkingTests {
 
 		@Example
 		void shrinkIntegerListMappedToString() {
-			NShrinkable<List<Integer>> list = NArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
+			NShrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
 			NShrinkable<String> string = list.map(aList -> aList.stream() //
 					.map(anInt -> Integer.toString(anInt)) //
 					.collect(Collectors.joining("")));

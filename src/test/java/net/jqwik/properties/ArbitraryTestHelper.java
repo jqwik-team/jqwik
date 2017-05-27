@@ -1,6 +1,5 @@
-package net.jqwik.newArbitraries;
+package net.jqwik.properties;
 
-import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -9,7 +8,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class NArbitraryTestHelper {
+class ArbitraryTestHelper {
 
 	public static <T> void assertAtLeastOneGenerated(NShrinkableGenerator<T> generator, Function<T, Boolean> checker) {
 		Random random = new Random();
@@ -59,7 +58,7 @@ public class NArbitraryTestHelper {
 
 	public static List<NShrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
 		return Arrays.stream(numbers) //
-					 .mapToObj(NArbitraryTestHelper::shrinkableInteger) //
+					 .mapToObj(ArbitraryTestHelper::shrinkableInteger) //
 					 .collect(Collectors.toList());
 	}
 

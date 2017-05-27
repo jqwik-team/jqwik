@@ -1,15 +1,13 @@
-package net.jqwik.newArbitraries;
+package net.jqwik.properties;
 
-import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
-public class NArbitrariesTests {
+class ArbitrariesTests {
 
 	enum MyEnum {
 		Yes, No, Maybe
@@ -21,21 +19,21 @@ public class NArbitrariesTests {
 	void fromGenerator() {
 		NArbitrary<String> stringArbitrary = NArbitraries.fromGenerator(random -> NShrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
 		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
 
 	@Example
 	void ofValues() {
 		NArbitrary<String> stringArbitrary = NArbitraries.of("1", "hallo", "test");
 		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
-		assertAllGenerated(generator, value -> Arrays.asList("1", "hallo", "test").contains(value));
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> Arrays.asList("1", "hallo", "test").contains(value));
 	}
 
 	@Example
 	void ofEnum() {
 		NArbitrary<MyEnum> enumArbitrary = NArbitraries.of(MyEnum.class);
 		NShrinkableGenerator<MyEnum> generator = enumArbitrary.generator(1);
-		assertAllGenerated(generator, value -> Arrays.asList(MyEnum.class.getEnumConstants()).contains(value));
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> Arrays.asList(MyEnum.class.getEnumConstants()).contains(value));
 	}
 
 	@Example
@@ -43,9 +41,9 @@ public class NArbitrariesTests {
 		NArbitrary<Integer> intArbitrary = NArbitraries.integer(-10, 10);
 		NShrinkableGenerator<Integer> generator = intArbitrary.generator(1);
 
-		assertAtLeastOneGenerated(generator, value -> value < -5);
-		assertAtLeastOneGenerated(generator, value -> value > 5);
-		assertAllGenerated(generator, value -> value >= -10 && value <= 10);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -5);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 5);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
 	}
 
 	@Example
@@ -53,9 +51,9 @@ public class NArbitrariesTests {
 		NArbitrary<Long> longArbitrary = NArbitraries.longInteger(-100L, 100L);
 		NShrinkableGenerator<Long> generator = longArbitrary.generator(1);
 
-		assertAtLeastOneGenerated(generator, value -> value < -50);
-		assertAtLeastOneGenerated(generator, value -> value > 50);
-		assertAllGenerated(generator, value -> value >= -100L && value <= 100L);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -50);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 50);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -100L && value <= 100L);
 	}
 
 	@Example
@@ -74,16 +72,16 @@ public class NArbitrariesTests {
 	}
 
 	private void assertGeneratedString(NShrinkableGenerator<String> generator) {
-		assertAllGenerated(generator, value -> value.length() >= 0 && value.length() <= 5);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= 0 && value.length() <= 5);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-		assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
 	}
 
 	@Example
 	void samplesAreGeneratedDeterministicallyInRoundRobin() {
 		NArbitrary<Integer> integerArbitrary = NArbitraries.samples(-5, 0, 3);
 		NShrinkableGenerator<Integer> generator = integerArbitrary.generator(1);
-		assertGenerated(generator, -5, 0, 3, -5, 0, 3);
+		ArbitraryTestHelper.assertGenerated(generator, -5, 0, 3, -5, 0, 3);
 	}
 
 	@Group
@@ -128,9 +126,9 @@ public class NArbitrariesTests {
 
 			NShrinkableGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
-			assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
-			assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
-			assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, optional -> !optional.isPresent());
 		}
 
 		@Example
@@ -172,9 +170,9 @@ public class NArbitrariesTests {
 	}
 
 	private void assertGeneratedLists(NShrinkableGenerator<List<String>> generator) {
-		assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
+		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
 		List<String> allowedStrings = Arrays.asList("1", "hallo", "test");
-		assertAllGenerated(generator, aString -> aString.stream().allMatch(allowedStrings::contains));
+		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.stream().allMatch(allowedStrings::contains));
 	}
 
 }

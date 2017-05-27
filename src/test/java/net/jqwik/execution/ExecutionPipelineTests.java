@@ -10,7 +10,6 @@ import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.execution.pipeline.*;
-import net.jqwik.newArbitraries.*;
 
 public class ExecutionPipelineTests {
 

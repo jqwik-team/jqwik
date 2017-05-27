@@ -1,14 +1,13 @@
-package net.jqwik.newArbitraries;
+package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
 
-import static net.jqwik.newArbitraries.NArbitraryTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
-class NIntegralShrinkingTests {
+class IntegralShrinkingTests {
 
 	@Group
 	class Integers {
@@ -51,28 +50,28 @@ class NIntegralShrinkingTests {
 		@Example
 		void shrinkPositiveValueTowards0If0isInRange() {
 			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-10, 20);
-			List<Integer> allShrunkValues = shrinkToEnd(shrinker, 10);
+			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, 10);
 			assertThat(allShrunkValues).containsExactly(5, 3, 2, 1, 0);
 		}
 
 		@Example
 		void shrinkNegativeValueTowards0If0isInRange() {
 			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-10, 20);
-			List<Integer> allShrunkValues = shrinkToEnd(shrinker, -10);
+			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, -10);
 			assertThat(allShrunkValues).containsExactly(-5, -3, -2, -1, 0);
 		}
 
 		@Example
 		void shrinkNegativeValueTowardMaxIf0IsOutsideRange() {
 			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(-20, -5);
-			List<Integer> allShrunkValues = shrinkToEnd(shrinker, -10);
+			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, -10);
 			assertThat(allShrunkValues).containsExactly(-8, -7, -6, -5);
 		}
 
 		@Example
 		void shrinkPositiveValueTowardMinIf0IsOutsideRange() {
 			NShrinkCandidates<Integer> shrinker = new NIntegerShrinkCandidates(5, 20);
-			List<Integer> allShrunkValues = shrinkToEnd(shrinker, 10);
+			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, 10);
 			assertThat(allShrunkValues).containsExactly(8, 7, 6, 5);
 		}
 
@@ -94,7 +93,7 @@ class NIntegralShrinkingTests {
 		void longsAreShrunkEvenAboveIntMax() {
 			NShrinkCandidates<Long> shrinker = new NLongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
 			assertThat(shrinker.nextCandidates(128_000_000_000L)).containsExactly(64_000_000_000L);
-			List<Long> allShrunkValues = shrinkToEnd(shrinker, 128_000_000_000L);
+			List<Long> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, 128_000_000_000L);
 			assertThat(allShrunkValues).startsWith( //
 					64_000_000_000L, //
 					32_000_000_000L, //
@@ -110,7 +109,7 @@ class NIntegralShrinkingTests {
 		@Example
 		void longsAreShrunkEvenBelowIntMin() {
 			NShrinkCandidates<Long> shrinker = new NLongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
-			List<Long> allShrunkValues = shrinkToEnd(shrinker, -128_000_000_000L);
+			List<Long> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, -128_000_000_000L);
 			assertThat(allShrunkValues).startsWith( //
 					-64_000_000_000L, //
 					-32_000_000_000L, //
