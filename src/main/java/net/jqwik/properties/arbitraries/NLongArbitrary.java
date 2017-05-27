@@ -19,9 +19,9 @@ public class NLongArbitrary extends NNullableArbitrary<Long> {
 	}
 
 	@Override
-	protected NShrinkableGenerator<Long> baseGenerator(int tries) {
+	protected RandomGenerator<Long> baseGenerator(int tries) {
 		if (min == 0 && max == 0) {
-			long max = NArbitrary.defaultMaxFromTries(tries);
+			long max = Arbitrary.defaultMaxFromTries(tries);
 			return NShrinkableGenerators.choose(-max, max).withSamples(0L, Long.MIN_VALUE, Long.MAX_VALUE);
 		}
 		return NShrinkableGenerators.choose(min, max);

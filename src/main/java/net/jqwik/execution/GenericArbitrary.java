@@ -5,12 +5,12 @@ import net.jqwik.properties.arbitraries.*;
 
 class GenericArbitrary extends NArbitraryWrapper<Object, Object> {
 
-	GenericArbitrary(NArbitrary wrapped) {
+	GenericArbitrary(Arbitrary wrapped) {
 		super(wrapped);
 	}
 
 	@Override
-	public NShrinkableGenerator<Object> generator(int tries) {
+	public RandomGenerator<Object> generator(int tries) {
 		return wrapped.generator(tries);
 	}
 }

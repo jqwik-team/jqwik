@@ -6,5 +6,5 @@ import java.util.*;
 import net.jqwik.properties.*;
 
 public interface ArbitraryResolver {
-	Optional<NArbitrary<Object>> forParameter(Parameter parameter);
+	Optional<Arbitrary<Object>> forParameter(Parameter parameter);
 }

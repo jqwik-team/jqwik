@@ -12,10 +12,10 @@ public interface SimpleArbitraryProvider extends ArbitraryProvider {
 	}
 
 	@Override
-	default NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeSupplier) {
+	default Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
 		return provideFor(targetType);
 	}
 
-	NArbitrary<?> provideFor(GenericType targetType);
+	Arbitrary<?> provideFor(GenericType targetType);
 
 }

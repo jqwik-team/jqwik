@@ -10,7 +10,7 @@ public class StringArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType) {
-		return NArbitraries.string();
+	public Arbitrary<?> provideFor(GenericType targetType) {
+		return Arbitraries.string();
 	}
 }

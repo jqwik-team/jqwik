@@ -19,9 +19,9 @@ public class NIntegerArbitrary extends NNullableArbitrary<Integer> {
 	}
 
 	@Override
-	protected NShrinkableGenerator<Integer> baseGenerator(int tries) {
+	protected RandomGenerator<Integer> baseGenerator(int tries) {
 		if (min == 0 && max == 0) {
-			int max = NArbitrary.defaultMaxFromTries(tries);
+			int max = Arbitrary.defaultMaxFromTries(tries);
 			return NShrinkableGenerators.choose(-max, max).withSamples(0, Integer.MIN_VALUE, Integer.MAX_VALUE);
 		}
 		return NShrinkableGenerators.choose(min, max);

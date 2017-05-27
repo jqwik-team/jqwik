@@ -17,29 +17,29 @@ class ArbitrariesTests {
 
 	@Example
 	void fromGenerator() {
-		NArbitrary<String> stringArbitrary = NArbitraries.fromGenerator(random -> NShrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
-		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
+		Arbitrary<String> stringArbitrary = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
 
 	@Example
 	void ofValues() {
-		NArbitrary<String> stringArbitrary = NArbitraries.of("1", "hallo", "test");
-		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
+		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> Arrays.asList("1", "hallo", "test").contains(value));
 	}
 
 	@Example
 	void ofEnum() {
-		NArbitrary<MyEnum> enumArbitrary = NArbitraries.of(MyEnum.class);
-		NShrinkableGenerator<MyEnum> generator = enumArbitrary.generator(1);
+		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
+		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> Arrays.asList(MyEnum.class.getEnumConstants()).contains(value));
 	}
 
 	@Example
 	void integersInt() {
-		NArbitrary<Integer> intArbitrary = NArbitraries.integer(-10, 10);
-		NShrinkableGenerator<Integer> generator = intArbitrary.generator(1);
+		Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
+		RandomGenerator<Integer> generator = intArbitrary.generator(1);
 
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -5);
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 5);
@@ -48,8 +48,8 @@ class ArbitrariesTests {
 
 	@Example
 	void integersLong() {
-		NArbitrary<Long> longArbitrary = NArbitraries.longInteger(-100L, 100L);
-		NShrinkableGenerator<Long> generator = longArbitrary.generator(1);
+		Arbitrary<Long> longArbitrary = Arbitraries.longInteger(-100L, 100L);
+		RandomGenerator<Long> generator = longArbitrary.generator(1);
 
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -50);
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 50);
@@ -58,20 +58,20 @@ class ArbitrariesTests {
 
 	@Example
 	void string() {
-		NArbitrary<String> stringArbitrary = NArbitraries.string('a', 'd', 5);
-		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
+		Arbitrary<String> stringArbitrary = Arbitraries.string('a', 'd', 5);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertGeneratedString(generator);
 	}
 
 	@Example
 	void stringFromCharset() {
 		char[] validChars = new char[]{'a', 'b', 'c', 'd'};
-		NArbitrary<String> stringArbitrary = NArbitraries.string(validChars, 5);
-		NShrinkableGenerator<String> generator = stringArbitrary.generator(1);
+		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 5);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertGeneratedString(generator);
 	}
 
-	private void assertGeneratedString(NShrinkableGenerator<String> generator) {
+	private void assertGeneratedString(RandomGenerator<String> generator) {
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= 0 && value.length() <= 5);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
@@ -79,8 +79,8 @@ class ArbitrariesTests {
 
 	@Example
 	void samplesAreGeneratedDeterministicallyInRoundRobin() {
-		NArbitrary<Integer> integerArbitrary = NArbitraries.samples(-5, 0, 3);
-		NShrinkableGenerator<Integer> generator = integerArbitrary.generator(1);
+		Arbitrary<Integer> integerArbitrary = Arbitraries.samples(-5, 0, 3);
+		RandomGenerator<Integer> generator = integerArbitrary.generator(1);
 		ArbitraryTestHelper.assertGenerated(generator, -5, 0, 3, -5, 0, 3);
 	}
 
@@ -89,29 +89,29 @@ class ArbitrariesTests {
 
 		@Example
 		void list() {
-			NArbitrary<String> stringArbitrary = NArbitraries.of("1", "hallo", "test");
-			NArbitrary<List<String>> listArbitrary = NArbitraries.listOf(stringArbitrary, 5);
+			Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
+			Arbitrary<List<String>> listArbitrary = Arbitraries.listOf(stringArbitrary, 5);
 
-			NShrinkableGenerator<List<String>> generator = listArbitrary.generator(1);
+			RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 			assertGeneratedLists(generator);
 		}
 
 		@Example
 		void set() {
-			NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-			NArbitrary<Set<Integer>> listArbitrary = NArbitraries.setOf(integerArbitrary, 5);
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 5);
 
-			NShrinkableGenerator<Set<Integer>> generator = listArbitrary.generator(1);
+			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1);
 
 			assertGeneratedSet(generator.next(random));
 		}
 
 		 @Example
 		 void stream() {
-		 NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-		 NArbitrary<Stream<Integer>> streamArbitrary = NArbitraries.streamOf(integerArbitrary, 5);
+		 Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+		 Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 5);
 
-		 NShrinkableGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
+		 RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
 
 		 assertGeneratedStream(generator.next(random));
 		 assertGeneratedStream(generator.next(random));
@@ -121,10 +121,10 @@ class ArbitrariesTests {
 
 		@Example
 		void optional() {
-			NArbitrary<String> stringArbitrary = NArbitraries.of("one", "two");
-			NArbitrary<Optional<String>> optionalArbitrary = NArbitraries.optionalOf(stringArbitrary);
+			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
+			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(stringArbitrary);
 
-			NShrinkableGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
+			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("one"));
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, optional -> optional.orElse("").equals("two"));
@@ -133,24 +133,24 @@ class ArbitrariesTests {
 
 		@Example
 		void array() {
-			NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-			NArbitrary<Integer[]> arrayArbitrary = NArbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<Integer[]> arrayArbitrary = Arbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
 
-			NShrinkableGenerator<Integer[]> generator = arrayArbitrary.generator(1);
+			RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1);
 
-			NShrinkable<Integer[]> array = generator.next(random);
+			Shrinkable<Integer[]> array = generator.next(random);
 			assertThat(array.value().length).isBetween(0, 5);
 			assertThat(array.value()).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 		}
 
 		@Example
 		void arrayOfPrimitiveType() {
-			NArbitrary<Integer> integerArbitrary = NArbitraries.integer(1, 10);
-			NArbitrary<int[]> arrayArbitrary = NArbitraries.arrayOf(int[].class, integerArbitrary, 5);
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<int[]> arrayArbitrary = Arbitraries.arrayOf(int[].class, integerArbitrary, 5);
 
-			NShrinkableGenerator<int[]> generator = arrayArbitrary.generator(1);
+			RandomGenerator<int[]> generator = arrayArbitrary.generator(1);
 
-			NShrinkable<int[]> array = generator.next(random);
+			Shrinkable<int[]> array = generator.next(random);
 			assertThat(array.value().length).isBetween(0, 5);
 			List<Integer> actual = IntStream.of(array.value()).boxed().collect(Collectors.toList());
 			assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -158,18 +158,18 @@ class ArbitrariesTests {
 
 	}
 
-	private void assertGeneratedStream(NShrinkable<Stream<Integer>> stream) {
+	private void assertGeneratedStream(Shrinkable<Stream<Integer>> stream) {
 		Set<Integer> set = stream.value().collect(Collectors.toSet());
 		assertThat(set.size()).isBetween(0, 5);
 		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}
 
-	private void assertGeneratedSet(NShrinkable<Set<Integer>> set) {
+	private void assertGeneratedSet(Shrinkable<Set<Integer>> set) {
 		assertThat(set.value().size()).isBetween(0, 5);
 		assertThat(set.value()).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}
 
-	private void assertGeneratedLists(NShrinkableGenerator<List<String>> generator) {
+	private void assertGeneratedLists(RandomGenerator<List<String>> generator) {
 		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
 		List<String> allowedStrings = Arrays.asList("1", "hallo", "test");
 		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.stream().allMatch(allowedStrings::contains));

@@ -10,10 +10,10 @@ import org.opentest4j.*;
 public class GenericProperty {
 
 	private final String name;
-	private final List<NArbitrary> arbitraries;
+	private final List<Arbitrary> arbitraries;
 	private final Predicate<List<Object>> forAllPredicate;
 
-	public GenericProperty(String name, List<NArbitrary> arbitraries, CheckedFunction forAllPredicate) {
+	public GenericProperty(String name, List<Arbitrary> arbitraries, CheckedFunction forAllPredicate) {
 		this.name = name;
 		this.arbitraries = arbitraries;
 		this.forAllPredicate = forAllPredicate;
@@ -21,11 +21,11 @@ public class GenericProperty {
 
 	public PropertyCheckResult check(int tries, long seed) {
 		Random random = new Random(seed);
-		List<NShrinkableGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
+		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
 		int countChecks = 0;
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<NShrinkable> shrinkableParams = generateParameters(generators, random);
+			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
 				boolean check = forAllPredicate.test(extractParams(shrinkableParams));
@@ -47,21 +47,21 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	private List<Object> extractParams(List<NShrinkable> shrinkableParams) {
-		return shrinkableParams.stream().map(NShrinkable::value).collect(Collectors.toList());
+	private List<Object> extractParams(List<Shrinkable> shrinkableParams) {
+		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
-	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<NShrinkable> shrinkables,
+	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Shrinkable> shrinkables,
 			AssertionError error) {
-		NParameterListShrinker shrinker = new NParameterListShrinker(shrinkables);
-		NShrinkResult<List<NShrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
+		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables);
+		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
 		List params = extractParams(shrinkResult.shrunkValue());
 		Throwable throwable = shrinkResult.throwable().orElse(null);
 		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, params, throwable);
 	}
 
-	private List<NShrinkable> generateParameters(List<NShrinkableGenerator> generators, Random random) {
+	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
 		return generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
 	}
 }

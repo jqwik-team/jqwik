@@ -39,13 +39,13 @@ public class CheckedProperty {
 		}
 	}
 
-	private NArbitrary<Object> findArbitrary(Parameter parameter) {
-		Optional<NArbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
+	private Arbitrary<Object> findArbitrary(Parameter parameter) {
+		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
 		return arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
 	}
 
 	private GenericProperty createGenericProperty() {
-		List<NArbitrary> arbitraries = forAllParameters.stream().map(this::findArbitrary).collect(Collectors.toList());
+		List<Arbitrary> arbitraries = forAllParameters.stream().map(this::findArbitrary).collect(Collectors.toList());
 		return new GenericProperty(propertyName, arbitraries, forAllPredicate);
 	}
 

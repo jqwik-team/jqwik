@@ -37,12 +37,12 @@ public class PropertyTests {
 	}
 
 	@Generate
-	NArbitrary<Integer> lessThan5() {
+	Arbitrary<Integer> lessThan5() {
 		return Generator.integer(0, 4);
 	}
 
 	@Generate
-	NArbitrary<String> shorterThan5() {
+	Arbitrary<String> shorterThan5() {
 		return Generator.string(new char[]{'a', 'b', 'c'}, 4);
 	}
 

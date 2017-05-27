@@ -10,7 +10,7 @@ public class BooleanArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType) {
-		return NArbitraries.of(true, false);
+	public Arbitrary<?> provideFor(GenericType targetType) {
+		return Arbitraries.of(true, false);
 	}
 }

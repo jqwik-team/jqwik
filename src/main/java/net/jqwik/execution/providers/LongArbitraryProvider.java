@@ -10,7 +10,7 @@ public class LongArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType) {
-		return NArbitraries.longInteger();
+	public Arbitrary<?> provideFor(GenericType targetType) {
+		return Arbitraries.longInteger();
 	}
 }

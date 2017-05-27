@@ -9,18 +9,18 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 
 	private final static char[] defaultChars = {'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@'};
 
-	private NShrinkableGenerator<Character> characterGenerator;
+	private RandomGenerator<Character> characterGenerator;
 	private int maxSize;
 
 	public NStringArbitrary() {
 		this(defaultGenerator(), 0);
 	}
 
-	private static NShrinkableGenerator<Character> defaultGenerator() {
+	private static RandomGenerator<Character> defaultGenerator() {
 		return NShrinkableGenerators.choose(defaultChars);
 	}
 
-	public NStringArbitrary(NShrinkableGenerator<Character> characterGenerator, int maxSize) {
+	public NStringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
 		super(String.class);
 		this.characterGenerator = characterGenerator;
 		this.maxSize = maxSize;
@@ -34,7 +34,7 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 		this(characters, 0);
 	}
 
-	private static NShrinkableGenerator<Character> createGenerator(char[] characters) {
+	private static RandomGenerator<Character> createGenerator(char[] characters) {
 		return NShrinkableGenerators.choose(characters);
 	}
 
@@ -46,14 +46,14 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 		this(from, to, 0);
 	}
 
-	private static NShrinkableGenerator<Character> createGenerator(char from, char to) {
+	private static RandomGenerator<Character> createGenerator(char from, char to) {
 		return NShrinkableGenerators.choose(from, to);
 	}
 
 	@Override
-	protected NShrinkableGenerator<String> baseGenerator(int tries) {
+	protected RandomGenerator<String> baseGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
-		if (effectiveMaxSize <= 0) effectiveMaxSize = NArbitrary.defaultMaxFromTries(tries);
+		if (effectiveMaxSize <= 0) effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
 		return NShrinkableGenerators.string(characterGenerator, effectiveMaxSize);
 	}
 
@@ -62,11 +62,11 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 	}
 
 	public void configure(ValidChars validChars) {
-		Optional<NShrinkableGenerator<Character>> charsGenerator = createCharsGenerator(validChars);
-		Optional<NShrinkableGenerator<Character>> fromToGenerator = createFromToGenerator(validChars);
+		Optional<RandomGenerator<Character>> charsGenerator = createCharsGenerator(validChars);
+		Optional<RandomGenerator<Character>> fromToGenerator = createFromToGenerator(validChars);
 
 		double mixInProbability = calculateMixInProbability(validChars);
-		Optional<NShrinkableGenerator<Character>> generator = mix(charsGenerator, fromToGenerator, mixInProbability);
+		Optional<RandomGenerator<Character>> generator = mix(charsGenerator, fromToGenerator, mixInProbability);
 		generator.ifPresent(gen -> characterGenerator = gen);
 	}
 
@@ -76,9 +76,9 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo) : 1.0;
 	}
 
-	private Optional<NShrinkableGenerator<Character>> mix( //
-													  Optional<NShrinkableGenerator<Character>> charsGenerator, //
-													  Optional<NShrinkableGenerator<Character>> fromToGenerator, //
+	private Optional<RandomGenerator<Character>> mix( //
+													  Optional<RandomGenerator<Character>> charsGenerator, //
+													  Optional<RandomGenerator<Character>> fromToGenerator, //
 													  double mixInProbability) {
 
 		if (charsGenerator.isPresent()) {
@@ -89,8 +89,8 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 		return fromToGenerator;
 	}
 
-	private Optional<NShrinkableGenerator<Character>> createFromToGenerator(ValidChars validChars) {
-		NShrinkableGenerator<Character> fromToGenerator = null;
+	private Optional<RandomGenerator<Character>> createFromToGenerator(ValidChars validChars) {
+		RandomGenerator<Character> fromToGenerator = null;
 		if (validChars.from() > 0 && validChars.to() > 0) {
 			fromToGenerator = NShrinkableGenerators.choose(validChars.from(), validChars.to());
 			characterGenerator = fromToGenerator;
@@ -98,8 +98,8 @@ public class NStringArbitrary extends NNullableArbitrary<String> {
 		return Optional.ofNullable(fromToGenerator);
 	}
 
-	private Optional<NShrinkableGenerator<Character>> createCharsGenerator(ValidChars validChars) {
-		NShrinkableGenerator<Character> charsGenerator = null;
+	private Optional<RandomGenerator<Character>> createCharsGenerator(ValidChars validChars) {
+		RandomGenerator<Character> charsGenerator = null;
 		if (validChars.value().length > 0) {
 			charsGenerator = NShrinkableGenerators.choose(validChars.value());
 			characterGenerator = charsGenerator;

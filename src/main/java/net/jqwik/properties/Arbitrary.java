@@ -4,45 +4,45 @@ import java.util.function.*;
 
 import net.jqwik.properties.arbitraries.*;
 
-public interface NArbitrary<T> {
-	NShrinkableGenerator<T> generator(int tries);
+public interface Arbitrary<T> {
+	RandomGenerator<T> generator(int tries);
 
-	default NArbitrary<?> inner() {
+	default Arbitrary<?> inner() {
 		return this;
 	}
 
-	default NArbitrary<T> filter(Predicate<T> filterPredicate) {
+	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
 		return new NArbitraryWrapper<T, T>(this) {
 			@Override
-			public NShrinkableGenerator<T> generator(int tries) {
+			public RandomGenerator<T> generator(int tries) {
 				return new NFilteredGenerator<T>(wrapped.generator(tries), filterPredicate);
 			}
 		};
 	}
 
-	default <U> NArbitrary<U> map(Function<T, U> mapper) {
+	default <U> Arbitrary<U> map(Function<T, U> mapper) {
 		return new NArbitraryWrapper<T, U>(this) {
 			@Override
-			public NShrinkableGenerator<U> generator(int tries) {
+			public RandomGenerator<U> generator(int tries) {
 				return wrapped.generator(tries).map(mapper);
 			}
 		};
 	}
 
-	default NArbitrary<T> injectNull(double nullProbability) {
+	default Arbitrary<T> injectNull(double nullProbability) {
 		return new NArbitraryWrapper<T, T>(this) {
 			@Override
-			public NShrinkableGenerator<T> generator(int tries) {
+			public RandomGenerator<T> generator(int tries) {
 				return wrapped.generator(tries).injectNull(nullProbability);
 			}
 		};
 	}
 
 	@SuppressWarnings("unchecked")
-	default NArbitrary<T> withSamples(T... samples) {
+	default Arbitrary<T> withSamples(T... samples) {
 		return new NArbitraryWrapper<T, T>(this) {
 			@Override
-			public NShrinkableGenerator<T> generator(int tries) {
+			public RandomGenerator<T> generator(int tries) {
 				return wrapped.generator(tries).withSamples(samples);
 			}
 		};

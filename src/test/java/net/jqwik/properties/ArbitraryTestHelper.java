@@ -10,20 +10,20 @@ import java.util.stream.*;
 
 class ArbitraryTestHelper {
 
-	public static <T> void assertAtLeastOneGenerated(NShrinkableGenerator<T> generator, Function<T, Boolean> checker) {
+	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {
-			NShrinkable<T> value = generator.next(random);
+			Shrinkable<T> value = generator.next(random);
 			if (checker.apply(value.value()))
 				return;
 		}
 		fail("Failed to generate at least one");
 	}
 
-	public static <T> void assertAllGenerated(NShrinkableGenerator<T> generator, Function<T, Boolean> checker) {
+	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {
-			NShrinkable<T> value = generator.next(random);
+			Shrinkable<T> value = generator.next(random);
 			if (!checker.apply(value.value()))
 				fail(String.format("Value [%s] failed to fulfill condition.", value.toString()));
 		}
@@ -41,41 +41,41 @@ class ArbitraryTestHelper {
 		shrink.forEach(next -> collectShrinkResults(shrinker, next, collector));
 	}
 
-	public static <T> void assertGenerated(NShrinkableGenerator<T> generator, T... expectedValues) {
+	public static <T> void assertGenerated(RandomGenerator<T> generator, T... expectedValues) {
 		Random random = new Random();
 
 		for (int i = 0; i < expectedValues.length; i++) {
-			NShrinkable<T> actual = generator.next(random);
+			Shrinkable<T> actual = generator.next(random);
 			T expected = expectedValues[i];
 			if (!actual.value().equals(expected))
 				fail(String.format("Generated value [%s] not equals to expected value [%s].", actual.toString(), expected.toString()));
 		}
 	}
 
-	public static NShrinkable<List<Integer>> shrinkableListOfIntegers(int... numbers) {
+	public static Shrinkable<List<Integer>> shrinkableListOfIntegers(int... numbers) {
 		return new NContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new);
 	}
 
-	public static List<NShrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
+	public static List<Shrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
 		return Arrays.stream(numbers) //
 					 .mapToObj(ArbitraryTestHelper::shrinkableInteger) //
 					 .collect(Collectors.toList());
 	}
 
-	public static NShrinkable<Integer> shrinkableInteger(int anInt) {
+	public static Shrinkable<Integer> shrinkableInteger(int anInt) {
 		return new NShrinkableValue<>(anInt, new SimpleIntegerShrinker());
 	}
 
-	public static NShrinkable<String> shrinkableString(String aString) {
+	public static Shrinkable<String> shrinkableString(String aString) {
 		return shrinkableString(aString.toCharArray());
 	}
 
-	public static NShrinkable<String> shrinkableString(char... chars) {
+	public static Shrinkable<String> shrinkableString(char... chars) {
 		return NContainerShrinkable.stringOf(listOfShrinkableChars(chars));
 	}
 
-	private static List<NShrinkable<Character>> listOfShrinkableChars(char[] chars) {
-		List<NShrinkable<Character>> shrinkableChars = new ArrayList<>();
+	private static List<Shrinkable<Character>> listOfShrinkableChars(char[] chars) {
+		List<Shrinkable<Character>> shrinkableChars = new ArrayList<>();
 		for (char aChar : chars) {
 			shrinkableChars.add(new NShrinkableValue<>(aChar, new SimpleCharacterShrinker()));
 		}

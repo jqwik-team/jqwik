@@ -12,7 +12,7 @@ public class SetArbitraryProvider extends AbstractCollectionArbitraryProvider {
 	}
 
 	@Override
-	protected NArbitrary<?> create(NArbitrary<?> innerArbitrary) {
-		return NArbitraries.setOf(innerArbitrary);
+	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
+		return Arbitraries.setOf(innerArbitrary);
 	}
 }

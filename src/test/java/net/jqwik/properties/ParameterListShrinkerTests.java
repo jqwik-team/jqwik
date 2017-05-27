@@ -14,11 +14,11 @@ class ParameterListShrinkerTests {
 	class Shrink {
 		@Example
 		void shrinkToEnd() {
-			List<NShrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
-			NParameterListShrinker<Integer> listShrinker = new NParameterListShrinker<>(shrinkableValues);
+			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
 
 			Predicate<List<Integer>> falsifier = params -> false;
-			NShrinkResult<List<NShrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
+			ShrinkResult<List<Shrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
 
 			assertThat(extractParams(shrinkResult)).containsExactly(0, 0, 0);
 			assertThat(shrinkResult.throwable()).isNotPresent();
@@ -26,14 +26,14 @@ class ParameterListShrinkerTests {
 
 		@Example
 		void keepLastErrorWhenShrinking() {
-			List<NShrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
-			NParameterListShrinker<Integer> listShrinker = new NParameterListShrinker<>(shrinkableValues);
+			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
 
 			AssertionError error = new AssertionError("test");
 			Predicate<List<Integer>> falsifier = params -> {
 				throw error;
 			};
-			NShrinkResult<List<NShrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
+			ShrinkResult<List<Shrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
 
 			assertThat(extractParams(shrinkResult)).containsExactly(0, 0, 0);
 			assertThat(shrinkResult.throwable()).isPresent();
@@ -42,18 +42,18 @@ class ParameterListShrinkerTests {
 
 		@Example
 		void shrinkPartially() {
-			List<NShrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
-			NParameterListShrinker<Integer> listShrinker = new NParameterListShrinker<>(shrinkableValues);
+			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
 
 			Predicate<List<Integer>> falsifier = params -> params.stream().anyMatch(anInt -> anInt == 0);
-			NShrinkResult<List<NShrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
+			ShrinkResult<List<Shrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
 
 			assertThat(extractParams(shrinkResult)).containsExactly(1, 1, 1);
 			assertThat(shrinkResult.throwable()).isNotPresent();
 		}
 
-		private List<Integer> extractParams(NShrinkResult<List<NShrinkable<Integer>>> shrinkResult) {
-			return shrinkResult.shrunkValue().stream().map(NShrinkable::value).collect(Collectors.toList());
+		private List<Integer> extractParams(ShrinkResult<List<Shrinkable<Integer>>> shrinkResult) {
+			return shrinkResult.shrunkValue().stream().map(Shrinkable::value).collect(Collectors.toList());
 		}
 	}
 
@@ -61,22 +61,22 @@ class ParameterListShrinkerTests {
 	class ShrinkNext {
 		@Example
 		void noNextShrinkIfNoParameterCanBeShrunk() {
-			List<NShrinkable<Integer>> unshrinkableValues = Arrays.asList( //
-					NShrinkable.unshrinkable(1), //
-					NShrinkable.unshrinkable(2), //
-					NShrinkable.unshrinkable(3));
-			NParameterListShrinker<Integer> listShrinker = new NParameterListShrinker<>(unshrinkableValues);
+			List<Shrinkable<Integer>> unshrinkableValues = Arrays.asList( //
+																		  Shrinkable.unshrinkable(1), //
+																		  Shrinkable.unshrinkable(2), //
+																		  Shrinkable.unshrinkable(3));
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(unshrinkableValues);
 
-			Set<NShrinkResult<List<NShrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<List<Shrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrinkResults).isEmpty();
 		}
 
 		@Example
 		void singleShrinkableElementIsShrunkOnlyOneStep() {
-			List<NShrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(2, 0, 0);
-			NParameterListShrinker<Integer> listShrinker = new NParameterListShrinker<>(shrinkableValues);
+			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(2, 0, 0);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
 
-			Set<NShrinkResult<List<NShrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<List<Shrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
 			Set<List<Integer>> results = extractResults(shrinkResults);
 
 			assertThat(results).hasSize(1);
@@ -85,10 +85,10 @@ class ParameterListShrinkerTests {
 
 		@Example
 		void onlyFirstShrinkableElementIsShrunk() {
-			List<NShrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(0, 2, 2);
-			NParameterListShrinker<Integer> listShrinker = new NParameterListShrinker<>(shrinkableValues);
+			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(0, 2, 2);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
 
-			Set<NShrinkResult<List<NShrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<List<Shrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
 			Set<List<Integer>> results = extractResults(shrinkResults);
 
 			assertThat(results).hasSize(1);
@@ -97,12 +97,12 @@ class ParameterListShrinkerTests {
 
 	}
 
-	private Set<List<Integer>> extractResults(Set<NShrinkResult<List<NShrinkable<Integer>>>> shrinkResults) {
+	private Set<List<Integer>> extractResults(Set<ShrinkResult<List<Shrinkable<Integer>>>> shrinkResults) {
 		return shrinkResults.stream() //
 				.map(shrinkResult -> shrinkResult.shrunkValue() //
-						.stream() //
-						.map(NShrinkable::value) //
-						.collect(Collectors.toList())) //
+												 .stream() //
+												 .map(Shrinkable::value) //
+												 .collect(Collectors.toList())) //
 				.collect(Collectors.toSet());
 	}
 }

@@ -14,7 +14,7 @@ public class FizzBuzzTests {
 	}
 
 	@Generate
-	NArbitrary<Integer> divisibleBy3() {
+	Arbitrary<Integer> divisibleBy3() {
 		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
 	}
 
@@ -25,7 +25,7 @@ public class FizzBuzzTests {
 	}
 
 	@Generate
-	NArbitrary<Integer> divisibleBy5() {
+	Arbitrary<Integer> divisibleBy5() {
 		return Generator.integer(1, 1000).filter(i -> i % 5 == 0);
 	}
 
@@ -36,7 +36,7 @@ public class FizzBuzzTests {
 	}
 
 	@Generate
-	NArbitrary<Integer> notDivisibleBy3or5() {
+	Arbitrary<Integer> notDivisibleBy3or5() {
 		return Generator.integer(1, 1000) //
 				.filter(i -> i % 5 != 0) //
 				.filter(i -> i % 3 != 0);

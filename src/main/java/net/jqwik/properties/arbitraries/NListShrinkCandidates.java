@@ -4,32 +4,32 @@ import java.util.*;
 
 import net.jqwik.properties.*;
 
-public class NListShrinkCandidates<T> implements NShrinkCandidates<List<NShrinkable<T>>> {
+public class NListShrinkCandidates<T> implements NShrinkCandidates<List<Shrinkable<T>>> {
 
 	@Override
-	public Set<List<NShrinkable<T>>> nextCandidates(List<NShrinkable<T>> toShrink) {
+	public Set<List<Shrinkable<T>>> nextCandidates(List<Shrinkable<T>> toShrink) {
 		if (toShrink.isEmpty()) return Collections.emptySet();
-		Set<List<NShrinkable<T>>> lists = new HashSet<>();
+		Set<List<Shrinkable<T>>> lists = new HashSet<>();
 		appendRightCut(toShrink, lists);
 		appendLeftCut(toShrink, lists);
 		return lists;
 	}
 
-	private void appendLeftCut(List<NShrinkable<T>> toShrink, Set<List<NShrinkable<T>>> lists) {
-		List<NShrinkable<T>> leftCut = new ArrayList<>(toShrink);
+	private void appendLeftCut(List<Shrinkable<T>> toShrink, Set<List<Shrinkable<T>>> lists) {
+		List<Shrinkable<T>> leftCut = new ArrayList<>(toShrink);
 		leftCut.remove(0);
 		lists.add(leftCut);
 	}
 
-	private void appendRightCut(List<NShrinkable<T>> toShrink, Set<List<NShrinkable<T>>> lists) {
-		List<NShrinkable<T>> rightCut = new ArrayList<>(toShrink);
+	private void appendRightCut(List<Shrinkable<T>> toShrink, Set<List<Shrinkable<T>>> lists) {
+		List<Shrinkable<T>> rightCut = new ArrayList<>(toShrink);
 		rightCut.remove(rightCut.size() - 1);
 		lists.add(rightCut);
 	}
 
 	@Override
-	public int distance(List<NShrinkable<T>> value) {
-		int sumOfDistances = value.stream().mapToInt(NShrinkable::distance).sum();
+	public int distance(List<Shrinkable<T>> value) {
+		int sumOfDistances = value.stream().mapToInt(Shrinkable::distance).sum();
 		return value.size() + sumOfDistances;
 	}
 }

@@ -10,7 +10,7 @@ public class IntegerArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType) {
-		return NArbitraries.integer();
+	public Arbitrary<?> provideFor(GenericType targetType) {
+		return Arbitraries.integer();
 	}
 }

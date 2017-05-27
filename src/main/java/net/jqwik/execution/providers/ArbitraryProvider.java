@@ -14,5 +14,5 @@ public interface ArbitraryProvider {
 	 */
 	boolean needsSubtypeProvider();
 
-	NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeProvider);
+	Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider);
 }

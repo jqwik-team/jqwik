@@ -32,7 +32,7 @@ public class PropertiesTriesCounting implements AutoCloseable {
 	}
 
 	@Generate
-	NArbitrary<Triade> notFragile() {
+	Arbitrary<Triade> notFragile() {
 		return Generator.of(Triade.class).filter(t -> t != Triade.Fragile);
 	}
 

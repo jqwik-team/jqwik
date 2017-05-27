@@ -15,12 +15,12 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	NArbitrary<String> stringArbitrary() {
+	Arbitrary<String> stringArbitrary() {
 		return Generator.string('a', 'z');
 	}
 
 	@Generate
-	NArbitrary<String> digitsOnly() {
+	Arbitrary<String> digitsOnly() {
 		return Generator.string('0', '9');
 	}
 
@@ -31,10 +31,10 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	NArbitrary<Person> aValidPerson() {
-		NArbitrary<Integer> age = Generator.integer(0, 100);
-		NArbitrary<String> first = Generator.string('a', 'z', 10).filter(f -> !f.isEmpty());
-		NArbitrary<String> last = Generator.string('a', 'z', 15).filter(f -> !f.isEmpty());
+	Arbitrary<Person> aValidPerson() {
+		Arbitrary<Integer> age = Generator.integer(0, 100);
+		Arbitrary<String> first = Generator.string('a', 'z', 10).filter(f -> !f.isEmpty());
+		Arbitrary<String> last = Generator.string('a', 'z', 15).filter(f -> !f.isEmpty());
 
 		return Generator.combine(age, first, last).as((a, f, l) -> {
 			String name = f + " " + l;
@@ -55,7 +55,7 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	NArbitrary<Long> between1and100() {
+	Arbitrary<Long> between1and100() {
 		return Generator.integer(1L, 100L);
 	}
 
@@ -66,7 +66,7 @@ public class GeneratorsExamples {
 	}
 
 	@Generate
-	NArbitrary<List<Integer>> aList() {
+	Arbitrary<List<Integer>> aList() {
 		return Generator.listOf(Generator.integer(0, 10));
 	}
 

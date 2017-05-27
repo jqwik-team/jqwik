@@ -12,12 +12,12 @@ public class PropertiesWithAssumptions {
 	}
 
 	@Generate
-	NArbitrary<Integer> multipleOf3() {
+	Arbitrary<Integer> multipleOf3() {
 		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
 	}
 
 	@Generate
-	NArbitrary<Integer> multipleOf2() {
+	Arbitrary<Integer> multipleOf2() {
 		return Generator.integer(1, 1000).filter(i -> i % 2 == 0);
 	}
 

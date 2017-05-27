@@ -12,7 +12,7 @@ public class ListArbitraryProvider extends AbstractCollectionArbitraryProvider {
 	}
 
 	@Override
-	protected NArbitrary<?> create(NArbitrary<?> innerArbitrary) {
-		return NArbitraries.listOf(innerArbitrary);
+	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
+		return Arbitraries.listOf(innerArbitrary);
 	}
 }

@@ -6,28 +6,28 @@ import java.util.function.*;
 
 import net.jqwik.properties.arbitraries.*;
 
-public interface NShrinkableGenerator<T> {
-	NShrinkable<T> next(Random random);
+public interface RandomGenerator<T> {
+	Shrinkable<T> next(Random random);
 
-	default <U> NShrinkableGenerator<U> map(Function<T, U> mapper) {
+	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
 		return random -> this.next(random).map(mapper);
 	}
 
-	default NShrinkableGenerator<T> filter(Predicate<T> filterPredicate) {
+	default RandomGenerator<T> filter(Predicate<T> filterPredicate) {
 		return new NFilteredGenerator<>(this, filterPredicate);
 	}
 
-	default NShrinkableGenerator<T> injectNull(double nullProbability) {
+	default RandomGenerator<T> injectNull(double nullProbability) {
 		return random -> {
 			if (random.nextDouble() <= nullProbability)
-				return NShrinkable.unshrinkable(null);
-			return NShrinkableGenerator.this.next(random);
+				return Shrinkable.unshrinkable(null);
+			return RandomGenerator.this.next(random);
 		};
 	};
 
-	default NShrinkableGenerator<T> withSamples(T...samples) {
-		NShrinkableGenerator<T> samplesGenerator = NShrinkableGenerators.samples(samples);
-		NShrinkableGenerator<T> generator = this;
+	default RandomGenerator<T> withSamples(T...samples) {
+		RandomGenerator<T> samplesGenerator = NShrinkableGenerators.samples(samples);
+		RandomGenerator<T> generator = this;
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return random -> {
 			if (tryCount.getAndIncrement() < samples.length)
@@ -36,7 +36,7 @@ public interface NShrinkableGenerator<T> {
 		};
 	}
 
-	default NShrinkableGenerator<T> mixIn(NShrinkableGenerator<T> otherGenerator, double mixInProbability) {
+	default RandomGenerator<T> mixIn(RandomGenerator<T> otherGenerator, double mixInProbability) {
 		return random -> random.nextDouble() <= mixInProbability ? otherGenerator.next(random) : next(random) ;
 	};
 

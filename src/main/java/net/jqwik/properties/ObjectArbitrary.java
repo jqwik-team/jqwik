@@ -1,8 +1,8 @@
 package net.jqwik.properties;
 
-public class ObjectArbitrary implements NArbitrary<Object> {
+public class ObjectArbitrary implements Arbitrary<Object> {
 	@Override
-	public NShrinkableGenerator<Object> generator(int tries) {
+	public RandomGenerator<Object> generator(int tries) {
 		return random -> {
 			Object randomObject = new Object() {
 				@Override
@@ -10,7 +10,7 @@ public class ObjectArbitrary implements NArbitrary<Object> {
 					return String.format("Arbitrary Object [%d]", random.nextLong());
 				}
 			};
-			return NShrinkable.unshrinkable(randomObject);
+			return Shrinkable.unshrinkable(randomObject);
 		};
 	}
 }

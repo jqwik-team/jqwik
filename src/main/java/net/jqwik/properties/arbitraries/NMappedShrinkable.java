@@ -6,24 +6,24 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NMappedShrinkable<T, U> implements NShrinkable<U> {
+public class NMappedShrinkable<T, U> implements Shrinkable<U> {
 
-	private final NShrinkable<T> toMap;
+	private final Shrinkable<T> toMap;
 	private final Function<T, U> mapper;
 	private final U value;
 
-	public NMappedShrinkable(NShrinkable<T> toMap, Function<T, U> mapper) {
+	public NMappedShrinkable(Shrinkable<T> toMap, Function<T, U> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
 		this.value = mapper.apply(toMap.value());
 	}
 
 	@Override
-	public Set<NShrinkResult<NShrinkable<U>>> shrinkNext(Predicate<U> falsifier) {
+	public Set<ShrinkResult<Shrinkable<U>>> shrinkNext(Predicate<U> falsifier) {
 		Predicate<T> toMapPredicate = aT -> falsifier.test(mapper.apply(aT));
 		return toMap.shrinkNext(toMapPredicate).stream() //
-				.map(shrinkResult -> shrinkResult.map(shrunkValue -> (NShrinkable<U>) new NMappedShrinkable<>(shrunkValue, mapper))) //
-				.collect(Collectors.toSet());
+					.map(shrinkResult -> shrinkResult.map(shrunkValue -> (Shrinkable<U>) new NMappedShrinkable<>(shrunkValue, mapper))) //
+					.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -40,9 +40,9 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (o == null || !(o instanceof NShrinkable))
+		if (o == null || !(o instanceof Shrinkable))
 			return false;
-		NShrinkable<?> that = (NShrinkable<?>) o;
+		Shrinkable<?> that = (Shrinkable<?>) o;
 		return Objects.equals(value, that.value());
 	}
 

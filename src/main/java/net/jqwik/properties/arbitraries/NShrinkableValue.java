@@ -6,7 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NShrinkableValue<T> implements NShrinkable<T> {
+public class NShrinkableValue<T> implements Shrinkable<T> {
 
 	private final T value;
 	private final NShrinkCandidates<T> shrinker;
@@ -17,12 +17,12 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
+	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
 		return shrinker.nextCandidates(value).stream() //
-				.map(shrunkValue -> NSafeFalsifier.falsify(falsifier, new NShrinkableValue<T>(shrunkValue, shrinker))) //
-				.filter(Optional::isPresent) //
-				.map(Optional::get) //
-				.collect(Collectors.toSet());
+					   .map(shrunkValue -> SafeFalsifier.falsify(falsifier, new NShrinkableValue<T>(shrunkValue, shrinker))) //
+					   .filter(Optional::isPresent) //
+					   .map(Optional::get) //
+					   .collect(Collectors.toSet());
 	}
 
 	@Override
@@ -45,9 +45,9 @@ public class NShrinkableValue<T> implements NShrinkable<T> {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (o == null || !(o instanceof NShrinkable))
+		if (o == null || !(o instanceof Shrinkable))
 			return false;
-		NShrinkable<?> that = (NShrinkable<?>) o;
+		Shrinkable<?> that = (Shrinkable<?>) o;
 		return Objects.equals(value, that.value());
 	}
 

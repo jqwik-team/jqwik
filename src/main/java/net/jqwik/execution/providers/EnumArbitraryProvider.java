@@ -11,8 +11,8 @@ public class EnumArbitraryProvider implements SimpleArbitraryProvider {
 	}
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType) {
+	public Arbitrary<?> provideFor(GenericType targetType) {
 		// noinspection unchecked
-		return NArbitraries.of((Class<Enum>) targetType.getRawType());
+		return Arbitraries.of((Class<Enum>) targetType.getRawType());
 	}
 }

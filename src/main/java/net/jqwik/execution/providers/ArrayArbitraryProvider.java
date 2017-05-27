@@ -17,7 +17,7 @@ public class ArrayArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeProvider) {
-		return NArbitraries.arrayOf(targetType.getRawType(), subtypeProvider.apply(targetType.getComponentType()));
+	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider) {
+		return Arbitraries.arrayOf(targetType.getRawType(), subtypeProvider.apply(targetType.getComponentType()));
 	}
 }

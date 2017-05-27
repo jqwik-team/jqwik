@@ -19,7 +19,7 @@ public class TestHelper {
 		return Arrays.stream(aClass.getDeclaredMethods()).filter(m -> m.getName().equals(methodName)).findFirst().get();
 	}
 
-	public static <T> T generate(NArbitrary<T> arbitrary) {
+	public static <T> T generate(Arbitrary<T> arbitrary) {
 		return arbitrary.generator(1).next(new Random()).value();
 	}
 

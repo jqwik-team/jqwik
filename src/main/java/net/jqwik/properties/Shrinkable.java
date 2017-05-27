@@ -5,23 +5,23 @@ import java.util.function.*;
 
 import net.jqwik.properties.arbitraries.*;
 
-public interface NShrinkable<T> {
+public interface Shrinkable<T> {
 
-	static <T> NShrinkable<T> unshrinkable(T value) {
+	static <T> Shrinkable<T> unshrinkable(T value) {
 		return new Unshrinkable<>(value);
 	}
 
-	Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier);
+	Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier);
 
 	T value();
 
 	int distance();
 
-	default <U> NShrinkable<U> map(Function<T, U> mapper) {
+	default <U> Shrinkable<U> map(Function<T, U> mapper) {
 		return new NMappedShrinkable<>(this, mapper);
 	}
 
-	class Unshrinkable<T> implements NShrinkable<T> {
+	class Unshrinkable<T> implements Shrinkable<T> {
 
 		private final T value;
 
@@ -30,7 +30,7 @@ public interface NShrinkable<T> {
 		}
 
 		@Override
-		public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate falsifier) {
+		public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate falsifier) {
 			return Collections.emptySet();
 		}
 
@@ -53,9 +53,9 @@ public interface NShrinkable<T> {
 		public boolean equals(Object o) {
 			if (this == o)
 				return true;
-			if (o == null || !(o instanceof NShrinkable))
+			if (o == null || !(o instanceof Shrinkable))
 				return false;
-			NShrinkable<?> that = (NShrinkable<?>) o;
+			Shrinkable<?> that = (Shrinkable<?>) o;
 			return Objects.equals(value, that.value());
 		}
 

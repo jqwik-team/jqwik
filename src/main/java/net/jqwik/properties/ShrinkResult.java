@@ -3,16 +3,16 @@ package net.jqwik.properties;
 import java.util.*;
 import java.util.function.*;
 
-public class NShrinkResult<T> {
+public class ShrinkResult<T> {
 
 	private final T shrunkValue;
 	private final Throwable throwable;
 
-	public static<T> NShrinkResult<T> of(T shrinkValue, Throwable assertionError) {
-		return new NShrinkResult<T>(shrinkValue, assertionError);
+	public static<T> ShrinkResult<T> of(T shrinkValue, Throwable assertionError) {
+		return new ShrinkResult<T>(shrinkValue, assertionError);
 	}
 
-	private NShrinkResult(T shrunkValue, Throwable throwable) {
+	private ShrinkResult(T shrunkValue, Throwable throwable) {
 		this.shrunkValue = shrunkValue;
 		this.throwable = throwable;
 	}
@@ -29,12 +29,12 @@ public class NShrinkResult<T> {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		NShrinkResult<?> that = (NShrinkResult<?>) o;
+		ShrinkResult<?> that = (ShrinkResult<?>) o;
 		return Objects.equals(shrunkValue, that.shrunkValue);
 	}
 
-	public <U> NShrinkResult<U> map(Function<T, U> mapper) {
-		return new NShrinkResult<>(mapper.apply(shrunkValue), throwable);
+	public <U> ShrinkResult<U> map(Function<T, U> mapper) {
+		return new ShrinkResult<>(mapper.apply(shrunkValue), throwable);
 	}
 
 	@Override
@@ -44,6 +44,6 @@ public class NShrinkResult<T> {
 
 	@Override
 	public String toString() {
-		return String.format("NShrinkResult[%s:%s]", shrunkValue(), throwable);
+		return String.format("ShrinkResult[%s:%s]", shrunkValue(), throwable);
 	}
 }

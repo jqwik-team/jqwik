@@ -15,13 +15,13 @@ abstract class AbstractCollectionArbitraryProvider implements GenericArbitraryPr
 	protected abstract Class<?> getProvidedType();
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeProvider) {
+	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeProvider) {
 		GenericType innerType = targetType.getTypeArguments()[0];
-		NArbitrary<?> innerArbitrary = subtypeProvider.apply(innerType);
+		Arbitrary<?> innerArbitrary = subtypeProvider.apply(innerType);
 		if (innerArbitrary != null)
 			return create(innerArbitrary);
 		return null;
 	}
 
-	protected abstract NArbitrary<?> create(NArbitrary<?> innerArbitrary);
+	protected abstract Arbitrary<?> create(Arbitrary<?> innerArbitrary);
 }

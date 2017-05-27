@@ -201,8 +201,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			NArbitrary<String> aString() {
-				return NArbitraries.string('a', 'z');
+			Arbitrary<String> aString() {
+				return Arbitraries.string('a', 'z');
 			}
 		}
 
@@ -261,8 +261,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate("aString")
-			NArbitrary<String> aString() {
-				return NArbitraries.string('a', 'z');
+			Arbitrary<String> aString() {
+				return Arbitraries.string('a', 'z');
 			}
 
 			@Property
@@ -276,8 +276,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			NArbitrary<String> byMethodName() {
-				return NArbitraries.string('x', 'y');
+			Arbitrary<String> byMethodName() {
+				return Arbitraries.string('x', 'y');
 			}
 
 			@Property
@@ -286,8 +286,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			NArbitrary<Long> longBetween1and10() {
-				return NArbitraries.longInteger(1L, 10L);
+			Arbitrary<Long> longBetween1and10() {
+				return Arbitraries.longInteger(1L, 10L);
 			}
 
 			@Property
@@ -296,8 +296,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate("aName")
-			NArbitrary<String> aNameForList() {
-				return NArbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
+			Arbitrary<String> aNameForList() {
+				return Arbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
 			}
 
 			@Property
@@ -306,8 +306,8 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate()
-			NArbitrary<Thing> aThing() {
-				return NArbitraries.of(new Thing());
+			Arbitrary<Thing> aThing() {
+				return Arbitraries.of(new Thing());
 			}
 
 		}
@@ -316,10 +316,10 @@ public class PropertyMethodArbitraryResolverTests {
 
 	static double nullProbability = 0.0;
 
-	static class MockArbitrary implements NArbitrary<Object> {
+	static class MockArbitrary implements Arbitrary<Object> {
 
 		@Override
-		public NShrinkableGenerator<Object> generator(int tries) {
+		public RandomGenerator<Object> generator(int tries) {
 			return null;
 		}
 
@@ -344,7 +344,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void configureIsCalledOnProvidedArbitrary() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithConfiguration.class, "aNullableMock", Object.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableMock");
-			Optional<NArbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
+			Optional<Arbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
 
 			assertThat(arbitraryOptional).isPresent();
 			assertThat(nullProbability).isCloseTo(0.41, Offset.offset(0.01));
@@ -360,7 +360,7 @@ public class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Generate
-			NArbitrary<Object> mockObject() {
+			Arbitrary<Object> mockObject() {
 				return new MockArbitrary();
 			}
 		}

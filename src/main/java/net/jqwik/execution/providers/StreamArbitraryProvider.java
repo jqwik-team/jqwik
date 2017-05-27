@@ -12,7 +12,7 @@ public class StreamArbitraryProvider extends AbstractCollectionArbitraryProvider
 	}
 
 	@Override
-	protected NArbitrary<?> create(NArbitrary<?> innerArbitrary) {
-		return NArbitraries.streamOf(innerArbitrary);
+	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
+		return Arbitraries.streamOf(innerArbitrary);
 	}
 }

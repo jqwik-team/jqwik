@@ -36,7 +36,7 @@ public class ExecutionPipelineTests {
 	}
 
 	@Generate
-	NArbitrary<MockExecutionTask> task() {
+	Arbitrary<MockExecutionTask> task() {
 		return new ArbitraryWheelForTests<>(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
 	}
 

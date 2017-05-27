@@ -13,8 +13,8 @@ class ArbitraryTests {
 
 	@Example
 	void generateInteger() {
-		NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-		NShrinkableGenerator<Integer> generator = arbitrary.generator(10);
+		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+		RandomGenerator<Integer> generator = arbitrary.generator(10);
 
 		assertThat(generator.next(random).value()).isEqualTo(1);
 		assertThat(generator.next(random).value()).isEqualTo(2);
@@ -26,23 +26,23 @@ class ArbitraryTests {
 
 	@Example
 	void shrinkInteger() {
-		NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-		NShrinkableGenerator<Integer> generator = arbitrary.generator(10);
+		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+		RandomGenerator<Integer> generator = arbitrary.generator(10);
 
-		NShrinkable<Integer> value5 = generateNth(generator, 5);
+		Shrinkable<Integer> value5 = generateNth(generator, 5);
 		assertThat(value5.value()).isEqualTo(5);
 
-		Set<NShrinkResult<NShrinkable<Integer>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+		Set<ShrinkResult<Shrinkable<Integer>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
 		assertThat(shrunkValues).hasSize(1);
-		NShrinkResult<NShrinkable<Integer>> shrunkValue = shrunkValues.iterator().next();
+		ShrinkResult<Shrinkable<Integer>> shrunkValue = shrunkValues.iterator().next();
 		assertThat(shrunkValue.shrunkValue().value()).isEqualTo(4);
 		assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3);
 	}
 
 	@Example
 	void generateList() {
-		NArbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
-		NShrinkableGenerator<List<Integer>> generator = arbitrary.generator(10);
+		Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
+		RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
 
 		assertThat(generator.next(random).value()).isEmpty();
 		assertThat(generator.next(random).value()).containsExactly(1);
@@ -56,13 +56,13 @@ class ArbitraryTests {
 
 	@Example
 	void shrinkList() {
-		NArbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
-		NShrinkableGenerator<List<Integer>> generator = arbitrary.generator(10);
+		Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
+		RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
 
-		NShrinkable<List<Integer>> value5 = generateNth(generator, 6);
+		Shrinkable<List<Integer>> value5 = generateNth(generator, 6);
 		assertThat(value5.value()).containsExactly(1, 2, 3, 4, 5);
 
-		Set<NShrinkResult<NShrinkable<List<Integer>>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+		Set<ShrinkResult<Shrinkable<List<Integer>>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
 		assertThat(shrunkValues).hasSize(2);
 		shrunkValues.forEach(shrunkValue -> {
 			assertThat(shrunkValue.shrunkValue().value()).hasSize(4);
@@ -72,9 +72,9 @@ class ArbitraryTests {
 
 	@Example
 	void samplesArePrependedToGeneration() {
-		NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2);
-		NArbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
-		NShrinkableGenerator<Integer> generator = arbitraryWithSamples.generator(10);
+		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2);
+		Arbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
+		RandomGenerator<Integer> generator = arbitraryWithSamples.generator(10);
 
 		assertThat(generator.next(random).value()).isEqualTo(-1);
 		assertThat(generator.next(random).value()).isEqualTo(-2);
@@ -88,9 +88,9 @@ class ArbitraryTests {
 	class Filtering {
 		@Example
 		void filterInteger() {
-			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			NArbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
-			NShrinkableGenerator<Integer> generator = filtered.generator(10);
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
+			RandomGenerator<Integer> generator = filtered.generator(10);
 
 			assertThat(generator.next(random).value()).isEqualTo(1);
 			assertThat(generator.next(random).value()).isEqualTo(3);
@@ -100,25 +100,25 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkFilteredInteger() {
-			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			NArbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
-			NShrinkableGenerator<Integer> generator = filtered.generator(10);
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
+			RandomGenerator<Integer> generator = filtered.generator(10);
 
-			NShrinkable<Integer> value5 = generateNth(generator, 3);
+			Shrinkable<Integer> value5 = generateNth(generator, 3);
 			assertThat(value5.value()).isEqualTo(5);
-			Set<NShrinkResult<NShrinkable<Integer>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<Shrinkable<Integer>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrunkValues).hasSize(1);
 
-			NShrinkResult<NShrinkable<Integer>> shrunkValue = shrunkValues.iterator().next();
+			ShrinkResult<Shrinkable<Integer>> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.shrunkValue().value()).isEqualTo(3);
 			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(2);
 		}
 
 		@Example
 		void filterList() {
-			NArbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
-			NArbitrary<List<Integer>> filtered = arbitrary.filter(aList -> aList.size() % 2 != 0);
-			NShrinkableGenerator<List<Integer>> generator = filtered.generator(10);
+			Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
+			Arbitrary<List<Integer>> filtered = arbitrary.filter(aList -> aList.size() % 2 != 0);
+			RandomGenerator<List<Integer>> generator = filtered.generator(10);
 
 			assertThat(generator.next(random).value()).containsExactly(1);
 			assertThat(generator.next(random).value()).containsExactly(1, 2, 3);
@@ -128,14 +128,14 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkFilteredList() {
-			NArbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
-			NArbitrary<List<Integer>> filtered = arbitrary.filter(aList -> aList.size() % 2 != 0);
-			NShrinkableGenerator<List<Integer>> generator = filtered.generator(10);
+			Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
+			Arbitrary<List<Integer>> filtered = arbitrary.filter(aList -> aList.size() % 2 != 0);
+			RandomGenerator<List<Integer>> generator = filtered.generator(10);
 
-			NShrinkable<List<Integer>> value5 = generateNth(generator, 3);
+			Shrinkable<List<Integer>> value5 = generateNth(generator, 3);
 			assertThat(value5.value()).containsExactly(1, 2, 3, 4, 5);
 
-			Set<NShrinkResult<NShrinkable<List<Integer>>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<Shrinkable<List<Integer>>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrunkValues).hasSize(3); // [1,2,3] [2,3,4] [3,4,5]
 			shrunkValues.forEach(shrunkValue -> {
 				assertThat(shrunkValue.shrunkValue().value()).hasSize(3);
@@ -150,9 +150,9 @@ class ArbitraryTests {
 
 		@Example
 		void mapIntegerToString() {
-			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			NArbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
-			NShrinkableGenerator<String> generator = mapped.generator(10);
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
+			RandomGenerator<String> generator = mapped.generator(10);
 
 			assertThat(generator.next(random).value()).isEqualTo("value=1");
 			assertThat(generator.next(random).value()).isEqualTo("value=2");
@@ -164,33 +164,33 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkIntegerMappedToString() {
-			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			NArbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
-			NShrinkableGenerator<String> generator = mapped.generator(10);
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
+			RandomGenerator<String> generator = mapped.generator(10);
 
-			NShrinkable<String> value5 = generateNth(generator, 5);
+			Shrinkable<String> value5 = generateNth(generator, 5);
 			assertThat(value5.value()).isEqualTo("value=5");
-			Set<NShrinkResult<NShrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<Shrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrunkValues).hasSize(1);
 
-			NShrinkResult<NShrinkable<String>> shrunkValue = shrunkValues.iterator().next();
+			ShrinkResult<Shrinkable<String>> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("value=4");
 			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3);
 		}
 
 		@Example
 		void shrinkFilteredIntegerMappedToString() {
-			NArbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			NArbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
-			NArbitrary<String> mapped = filtered.map(anInt -> "value=" + anInt);
-			NShrinkableGenerator<String> generator = mapped.generator(10);
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
+			Arbitrary<String> mapped = filtered.map(anInt -> "value=" + anInt);
+			RandomGenerator<String> generator = mapped.generator(10);
 
-			NShrinkable<String> value5 = generateNth(generator, 3);
+			Shrinkable<String> value5 = generateNth(generator, 3);
 			assertThat(value5.value()).isEqualTo("value=5");
-			Set<NShrinkResult<NShrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<Shrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrunkValues).hasSize(1);
 
-			NShrinkResult<NShrinkable<String>> shrunkValue = shrunkValues.iterator().next();
+			ShrinkResult<Shrinkable<String>> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("value=3");
 			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(2);
 		}
@@ -201,10 +201,10 @@ class ArbitraryTests {
 
 		@Example
 		void generateCombination() {
-			NArbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
-			NArbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
-			NArbitrary<String> combined = NCombinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
-			NShrinkableGenerator<String> generator = combined.generator(10);
+			Arbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
+			Arbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
+			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
+			RandomGenerator<String> generator = combined.generator(10);
 
 			assertThat(generator.next(random).value()).isEqualTo("1:4");
 			assertThat(generator.next(random).value()).isEqualTo("2:5");
@@ -214,15 +214,15 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkCombination() {
-			NArbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
-			NArbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
-			NArbitrary<String> combined = NCombinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
-			NShrinkableGenerator<String> generator = combined.generator(10);
+			Arbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
+			Arbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
+			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
+			RandomGenerator<String> generator = combined.generator(10);
 
-			NShrinkable<String> value3to6 = generateNth(generator, 3);
+			Shrinkable<String> value3to6 = generateNth(generator, 3);
 			assertThat(value3to6.value()).isEqualTo("3:6");
 
-			Set<NShrinkResult<NShrinkable<String>>> shrunkValues = value3to6.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<Shrinkable<String>>> shrunkValues = value3to6.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrunkValues).hasSize(2); // 2:6 3:5
 			shrunkValues.forEach(shrunkValue -> {
 				assertThat(shrunkValue.shrunkValue().value()).isIn("2:6", "3:5");
@@ -232,16 +232,16 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkListCombinedWithInteger() {
-			NArbitrary<List<Integer>> lists = new ListArbitraryForTests(2);
-			NArbitrary<Integer> integers = new ArbitraryWheelForTests<>(0, 1, 2);
-			NArbitrary<String> combined = NCombinators.combine(lists, integers).as((l, i) -> l.toString() + ":" + i);
+			Arbitrary<List<Integer>> lists = new ListArbitraryForTests(2);
+			Arbitrary<Integer> integers = new ArbitraryWheelForTests<>(0, 1, 2);
+			Arbitrary<String> combined = Combinators.combine(lists, integers).as((l, i) -> l.toString() + ":" + i);
 
-			NShrinkableGenerator<String> generator = combined.generator(10);
+			RandomGenerator<String> generator = combined.generator(10);
 
-			NShrinkable<String> combinedString = generateNth(generator, 3);
+			Shrinkable<String> combinedString = generateNth(generator, 3);
 			assertThat(combinedString.value()).isEqualTo("[1, 2]:2");
 
-			Set<NShrinkResult<NShrinkable<String>>> shrunkValues = combinedString.shrinkNext(MockFalsifier.falsifyAll());
+			Set<ShrinkResult<Shrinkable<String>>> shrunkValues = combinedString.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrunkValues).hasSize(3);
 			shrunkValues.forEach(shrunkValue -> {
 				assertThat(shrunkValue.shrunkValue().value()).isIn("[1]:2", "[2]:2", "[1, 2]:1");
@@ -251,8 +251,8 @@ class ArbitraryTests {
 
 	}
 
-	private <T> NShrinkable<T> generateNth(NShrinkableGenerator<T> generator, int n) {
-		NShrinkable<T> generated = null;
+	private <T> Shrinkable<T> generateNth(RandomGenerator<T> generator, int n) {
+		Shrinkable<T> generated = null;
 		for (int i = 0; i < n; i++) {
 			generated = generator.next(random);
 		}

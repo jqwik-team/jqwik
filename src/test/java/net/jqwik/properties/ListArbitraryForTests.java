@@ -1,12 +1,11 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
+public class ListArbitraryForTests implements Arbitrary<List<Integer>> {
 	private final int size;
 
 	public ListArbitraryForTests(int maxSize) {
@@ -14,11 +13,11 @@ public class ListArbitraryForTests implements NArbitrary<List<Integer>> {
 	}
 
 	@Override
-	public NShrinkableGenerator<List<Integer>> generator(int tries) {
+	public RandomGenerator<List<Integer>> generator(int tries) {
 		AtomicInteger index = new AtomicInteger(0);
-		return new NShrinkableGenerator<List<Integer>>() {
+		return new RandomGenerator<List<Integer>>() {
 			@Override
-			public NShrinkable<List<Integer>> next(Random random) {
+			public Shrinkable<List<Integer>> next(Random random) {
 				if (index.get() <= size) {
 					List<Integer> value = new ArrayList<>();
 					for (int i = 1; i <= index.get(); i++) {

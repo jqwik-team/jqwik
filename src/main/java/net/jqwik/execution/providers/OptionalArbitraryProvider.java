@@ -13,11 +13,11 @@ public class OptionalArbitraryProvider implements GenericArbitraryProvider {
 	}
 
 	@Override
-	public NArbitrary<?> provideFor(GenericType targetType, Function<GenericType, NArbitrary<?>> subtypeSupplier) {
+	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Arbitrary<?>> subtypeSupplier) {
 		GenericType innerType = targetType.getTypeArguments()[0];
-		NArbitrary<?> innerArbitrary = subtypeSupplier.apply(innerType);
+		Arbitrary<?> innerArbitrary = subtypeSupplier.apply(innerType);
 		if (innerArbitrary != null)
-			return NArbitraries.optionalOf(innerArbitrary);
+			return Arbitraries.optionalOf(innerArbitrary);
 		return null;
 	}
 }

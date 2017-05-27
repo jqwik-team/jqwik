@@ -6,52 +6,52 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NContainerShrinkable<T, E> implements NShrinkable<T> {
+public class NContainerShrinkable<T, E> implements Shrinkable<T> {
 
 	public static final Function<List<Character>, String> CREATE_STRING = list -> list.stream() //
 			.map(c -> Character.toString(c)) //
 			.collect(Collectors.joining());
 
-	public static NShrinkable<String> stringOf(List<NShrinkable<Character>> chars) {
+	public static Shrinkable<String> stringOf(List<Shrinkable<Character>> chars) {
 		return new NContainerShrinkable<>(chars, CREATE_STRING);
 	}
 
 	private final NListShrinkCandidates<E> listShrinker = new NListShrinkCandidates<>();
 
-	private final List<NShrinkable<E>> elements;
+	private final List<Shrinkable<E>> elements;
 	private final Function<List<E>, T> containerCreator;
 	private final T value;
 
-	public NContainerShrinkable(List<NShrinkable<E>> elements, Function<List<E>, T> containerCreator) {
+	public NContainerShrinkable(List<Shrinkable<E>> elements, Function<List<E>, T> containerCreator) {
 		this.elements = elements;
 		this.containerCreator = containerCreator;
 		this.value = createContainer(elements); // premature optimization?
 	}
 
 	@Override
-	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
-		Set<NShrinkResult<NShrinkable<T>>> shrunkList = listShrinker.nextCandidates(elements).stream() //
-				.map(shrunkValue -> NSafeFalsifier.falsify(falsifier, new NContainerShrinkable<>(shrunkValue, containerCreator))) //
-				.filter(optional -> optional.isPresent()) //
-				.map(optional -> optional.get()) //
-				.collect(Collectors.toSet());
+	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
+		Set<ShrinkResult<Shrinkable<T>>> shrunkList = listShrinker.nextCandidates(elements).stream() //
+																  .map(shrunkValue -> SafeFalsifier.falsify(falsifier, new NContainerShrinkable<>(shrunkValue, containerCreator))) //
+																  .filter(optional -> optional.isPresent()) //
+																  .map(optional -> optional.get()) //
+																  .collect(Collectors.toSet());
 		if (!shrunkList.isEmpty()) {
 			return shrunkList;
 		}
 
 		return nextShrinkElements(falsifier) //
-				.map(shrinkResult -> shrinkResult
-						.map(shrunkValue -> (NShrinkable<T>) new NContainerShrinkable<>(shrunkValue, containerCreator))) //
-				.collect(Collectors.toSet());
+											 .map(shrinkResult -> shrinkResult
+						.map(shrunkValue -> (Shrinkable<T>) new NContainerShrinkable<>(shrunkValue, containerCreator))) //
+											 .collect(Collectors.toSet());
 	}
 
-	private Stream<NShrinkResult<List<NShrinkable<E>>>> nextShrinkElements(Predicate<T> falsifier) {
+	private Stream<ShrinkResult<List<Shrinkable<E>>>> nextShrinkElements(Predicate<T> falsifier) {
 		Predicate<List<E>> valuesFalsifier = list -> {
 			T container = containerCreator.apply(list);
 			return falsifier.test(container);
 		};
-		NParameterListShrinker<E> listElementShrinker = new NParameterListShrinker<>(elements);
-		Set<NShrinkResult<List<NShrinkable<E>>>> shrunkElements = listElementShrinker.shrinkNext(valuesFalsifier);
+		ParameterListShrinker<E> listElementShrinker = new ParameterListShrinker<>(elements);
+		Set<ShrinkResult<List<Shrinkable<E>>>> shrunkElements = listElementShrinker.shrinkNext(valuesFalsifier);
 		return shrunkElements.stream();
 	}
 
@@ -60,10 +60,10 @@ public class NContainerShrinkable<T, E> implements NShrinkable<T> {
 		return value;
 	}
 
-	private T createContainer(List<NShrinkable<E>> shrinkables) {
+	private T createContainer(List<Shrinkable<E>> shrinkables) {
 		List<E> values = shrinkables.stream() //
-				.map(NShrinkable::value) //
-				.collect(Collectors.toList());
+									.map(Shrinkable::value) //
+									.collect(Collectors.toList());
 		return containerCreator.apply(values);
 	}
 
@@ -80,9 +80,9 @@ public class NContainerShrinkable<T, E> implements NShrinkable<T> {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || !(o instanceof NShrinkable))
+		if (o == null || !(o instanceof Shrinkable))
 			return false;
-		NShrinkable<?> that = (NShrinkable<?>) o;
+		Shrinkable<?> that = (Shrinkable<?>) o;
 		return Objects.equals(value, that.value());
 	}
 

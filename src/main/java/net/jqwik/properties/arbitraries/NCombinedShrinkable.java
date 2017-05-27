@@ -6,43 +6,43 @@ import java.util.stream.*;
 
 import net.jqwik.properties.*;
 
-public class NCombinedShrinkable<T> implements NShrinkable<T> {
+public class NCombinedShrinkable<T> implements Shrinkable<T> {
 
-	private final List<NShrinkable<Object>> shrinkables;
+	private final List<Shrinkable<Object>> shrinkables;
 	private final Function<List<Object>, T> combineFunction;
 	private final T value;
 
-	public NCombinedShrinkable(List<NShrinkable<Object>> shrinkables, Function<List<Object>, T> combineFunction) {
+	public NCombinedShrinkable(List<Shrinkable<Object>> shrinkables, Function<List<Object>, T> combineFunction) {
 		this.shrinkables = shrinkables;
 		this.combineFunction = combineFunction;
 		this.value = combine(shrinkables);
 	}
 
 	@Override
-	public Set<NShrinkResult<NShrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
-		Set<NShrinkResult<NShrinkable<T>>> shrinkResults = new HashSet<>();
+	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
+		Set<ShrinkResult<Shrinkable<T>>> shrinkResults = new HashSet<>();
 		for (int i = 0; i < shrinkables.size(); i++) {
 			Predicate<Object> shrinkableFalsifier = falsifierForPosition(falsifier, i);
-			Set<NShrinkResult<NShrinkable<Object>>> singleShrinkableShrinkResults = shrinkables.get(i).shrinkNext(shrinkableFalsifier);
+			Set<ShrinkResult<Shrinkable<Object>>> singleShrinkableShrinkResults = shrinkables.get(i).shrinkNext(shrinkableFalsifier);
 			shrinkResults.addAll(toSetOfCombinedShrinkables(singleShrinkableShrinkResults, i));
 		}
 		return shrinkResults;
 	}
 
-	private Set<NShrinkResult<NShrinkable<T>>> toSetOfCombinedShrinkables(Set<NShrinkResult<NShrinkable<Object>>> singleSet, int position) {
+	private Set<ShrinkResult<Shrinkable<T>>> toSetOfCombinedShrinkables(Set<ShrinkResult<Shrinkable<Object>>> singleSet, int position) {
 		return singleSet.stream() //
 				.map(shrinkResult -> shrinkResult.map(shrunkValue -> {
-					List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
+					List<Shrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
 					newShrinkables.set(position, shrunkValue);
-					return (NShrinkable<T>) new NCombinedShrinkable<>(newShrinkables, combineFunction);
+					return (Shrinkable<T>) new NCombinedShrinkable<>(newShrinkables, combineFunction);
 				})) //
 				.collect(Collectors.toSet());
 	}
 
 	private Predicate<Object> falsifierForPosition(Predicate<T> falsifier, int position) {
 		return s -> {
-			List<NShrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
-			newShrinkables.set(position, NShrinkable.unshrinkable(s));
+			List<Shrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
+			newShrinkables.set(position, Shrinkable.unshrinkable(s));
 			return falsifier.test(combine(newShrinkables));
 		};
 	}
@@ -54,11 +54,11 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 
 	@Override
 	public int distance() {
-		return shrinkables.stream().mapToInt(NShrinkable::distance).sum();
+		return shrinkables.stream().mapToInt(Shrinkable::distance).sum();
 	}
 
-	private T combine(List<NShrinkable<Object>> shrinkables) {
-		List<Object> params = shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
+	private T combine(List<Shrinkable<Object>> shrinkables) {
+		List<Object> params = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 		return combineFunction.apply(params);
 	}
 
@@ -70,9 +70,9 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || !(o instanceof NShrinkable))
+		if (o == null || !(o instanceof Shrinkable))
 			return false;
-		NShrinkable<?> that = (NShrinkable<?>) o;
+		Shrinkable<?> that = (Shrinkable<?>) o;
 		return Objects.equals(value, that.value());
 	}
 

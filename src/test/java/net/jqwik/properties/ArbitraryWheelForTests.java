@@ -1,12 +1,11 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
-public class ArbitraryWheelForTests<T> implements NArbitrary<T> {
+public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 	private final T[] values;
 
 	public ArbitraryWheelForTests(T... values) {
@@ -14,11 +13,11 @@ public class ArbitraryWheelForTests<T> implements NArbitrary<T> {
 	}
 
 	@Override
-	public NShrinkableGenerator<T> generator(int tries) {
+	public RandomGenerator<T> generator(int tries) {
 		AtomicInteger index = new AtomicInteger(0);
-		return new NShrinkableGenerator<T>() {
+		return new RandomGenerator<T>() {
 			@Override
-			public NShrinkable<T> next(Random random) {
+			public Shrinkable<T> next(Random random) {
 				if (index.get() < values.length) {
 					int current = index.getAndIncrement();
 					T value = values[current];

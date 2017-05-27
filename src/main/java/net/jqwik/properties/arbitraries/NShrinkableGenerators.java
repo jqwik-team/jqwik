@@ -8,7 +8,7 @@ import net.jqwik.properties.*;
 
 public class NShrinkableGenerators {
 
-	public static <U> NShrinkableGenerator<U> choose(U[] values) {
+	public static <U> RandomGenerator<U> choose(U[] values) {
 		if (values.length == 0) {
 			return fail("empty set of values");
 		} else {
@@ -16,7 +16,7 @@ public class NShrinkableGenerators {
 		}
 	}
 
-	public static NShrinkableGenerator<Integer> choose(int min, int max) {
+	public static RandomGenerator<Integer> choose(int min, int max) {
 		if (min == max) {
 			return ignored -> new NShrinkableValue<>(min, ignore -> Collections.emptySet());
 		} else {
@@ -29,9 +29,9 @@ public class NShrinkableGenerators {
 		}
 	}
 
-	public static NShrinkableGenerator<Long> choose(long min, long max) {
+	public static RandomGenerator<Long> choose(long min, long max) {
 		if (min == max) {
-			return ignored -> NShrinkable.unshrinkable(min);
+			return ignored -> Shrinkable.unshrinkable(min);
 		} else {
 			final long _min = Math.min(min, max);
 			final long _max = Math.max(min, max);
@@ -43,11 +43,11 @@ public class NShrinkableGenerators {
 		}
 	}
 
-	public static <T extends Enum<T>> NShrinkableGenerator<T> choose(Class<T> enumClass) {
+	public static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {
 		return random -> choose(enumClass.getEnumConstants()).next(random);
 	}
 
-	public static NShrinkableGenerator<Character> choose(char[] characters) {
+	public static RandomGenerator<Character> choose(char[] characters) {
 		Character[] validCharacters = new Character[characters.length];
 		for (int i = 0; i < characters.length; i++) {
 			validCharacters[i] = characters[i];
@@ -55,14 +55,14 @@ public class NShrinkableGenerators {
 		return choose(validCharacters);
 	}
 
-	private static <T, C> NShrinkableGenerator<C> container( //
-			NShrinkableGenerator<T> elementGenerator, //
-			Function<List<T>, C> containerFunction, //
-			int maxSize) {
-		NShrinkableGenerator<Integer> lengthGenerator = choose(0, maxSize);
+	private static <T, C> RandomGenerator<C> container( //
+														RandomGenerator<T> elementGenerator, //
+														Function<List<T>, C> containerFunction, //
+														int maxSize) {
+		RandomGenerator<Integer> lengthGenerator = choose(0, maxSize);
 		return random -> {
 			int listSize = lengthGenerator.next(random).value();
-			List<NShrinkable<T>> list = new ArrayList<>();
+			List<Shrinkable<T>> list = new ArrayList<>();
 			for (int j = 0; j < listSize; j++) {
 				list.add(elementGenerator.next(random));
 			}
@@ -70,35 +70,35 @@ public class NShrinkableGenerators {
 		};
 	}
 
-	public static <T> NShrinkableGenerator<List<T>> list(NShrinkableGenerator<T> elementGenerator, int maxSize) {
+	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int maxSize) {
 		return container(elementGenerator, ArrayList::new, maxSize);
 	}
 
-	public static NShrinkableGenerator<String> string(NShrinkableGenerator<Character> elementGenerator, int maxSize) {
+	public static RandomGenerator<String> string(RandomGenerator<Character> elementGenerator, int maxSize) {
 		return container(elementGenerator, NContainerShrinkable.CREATE_STRING, maxSize);
 	}
 
-	public static NShrinkableGenerator<Character> choose(char min, char max) {
+	public static RandomGenerator<Character> choose(char min, char max) {
 		if (min == max) {
-			return ignored -> NShrinkable.unshrinkable(min);
+			return ignored -> Shrinkable.unshrinkable(min);
 		} else {
 			return random -> {
-				NShrinkable<Integer> shrinkableInt = choose((int) min, (int) max).next(random);
+				Shrinkable<Integer> shrinkableInt = choose((int) min, (int) max).next(random);
 				return shrinkableInt.map(anInt -> (char) anInt.intValue());
 			};
 		}
 	}
 
-	public static <T> NShrinkableGenerator<T> samples(T... samples) {
+	public static <T> RandomGenerator<T> samples(T... samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {
 			if (tryCount.get() >= samples.length)
 				tryCount.set(0);
-			return NShrinkable.unshrinkable(samples[tryCount.getAndIncrement()]);
+			return Shrinkable.unshrinkable(samples[tryCount.getAndIncrement()]);
 		};
 	}
 
-	public static <T> NShrinkableGenerator<T> fail(String message) {
+	public static <T> RandomGenerator<T> fail(String message) {
 		return ignored -> {
 			throw new RuntimeException(message);
 		};
