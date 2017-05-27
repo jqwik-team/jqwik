@@ -41,7 +41,7 @@ class GenericPropertyTests {
 
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
 
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8, 9);
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
@@ -167,6 +167,23 @@ class GenericPropertyTests {
 			assertThat(result.sample()).isPresent();
 			assertThat(result.sample().get()).containsExactly(erroneousTry);
 		}
+
+		@Example
+		void falsifiedAndShrunk() {
+			Arbitrary<Integer> arbitrary = Arbitraries.integer(1, 100);
+			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+			CheckedFunction checkedFunction = params -> ((int) params.get(0)) < 5;
+
+			GenericProperty property = new GenericProperty("falsified property", arbitraries, checkedFunction);
+			PropertyCheckResult result = property.check(10, 41L);
+
+			assertThat(result.propertyName()).isEqualTo("falsified property");
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+
+			assertThat(result.sample()).isPresent();
+			assertThat(result.sample().get()).containsExactly(5);
+		}
+
 	}
 
 	@Group

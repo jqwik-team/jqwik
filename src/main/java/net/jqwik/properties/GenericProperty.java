@@ -19,7 +19,8 @@ public class GenericProperty {
 		this.forAllPredicate = forAllPredicate;
 	}
 
-	public PropertyCheckResult check(int tries, long seed) {
+	public PropertyCheckResult
+	check(int tries, long seed) {
 		Random random = new Random(seed);
 		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;

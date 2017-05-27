@@ -7,6 +7,11 @@ import java.util.function.*;
 import net.jqwik.properties.arbitraries.*;
 
 public interface RandomGenerator<T> {
+
+	/**
+		This method generates the next random value wrapped within the Shrinkable interface.
+	    The method must ALWAYS return a next value.
+	 */
 	Shrinkable<T> next(Random random);
 
 	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
@@ -39,7 +44,5 @@ public interface RandomGenerator<T> {
 	default RandomGenerator<T> mixIn(RandomGenerator<T> otherGenerator, double mixInProbability) {
 		return random -> random.nextDouble() <= mixInProbability ? otherGenerator.next(random) : next(random) ;
 	};
-
-
 
 }

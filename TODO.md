@@ -26,6 +26,7 @@
 ### Properties
 
 - Shrinking
+  - Configurable time limit (100ms default?)
   - Reporting:
     - original sample
     - collected statistics (similar to ScalaCheck's collect-feature)
