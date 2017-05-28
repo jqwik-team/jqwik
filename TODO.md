@@ -42,6 +42,14 @@
   - if more than one generator applies
   - if generic type is a bounded type
 
+- Arbitraries and Generators
+  - const
+  - frequency: pairs of generator and frequency weight
+  - oneOf: randomly select one of two generators
+  - posNum, negNum
+  - alpha[Upper|Lower|Num]Char
+  - numStr, alphaStr, identifier
+
 - Default Arbitraries and Generators for
   - BigInteger
   - chars, short, byte
