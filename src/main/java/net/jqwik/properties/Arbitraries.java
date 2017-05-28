@@ -37,23 +37,23 @@ public class Arbitraries {
 	}
 
 	public static Arbitrary<String> string() {
-		return new NStringArbitrary();
+		return new StringArbitrary();
 	}
 
 	public static Arbitrary<String> string(char[] validChars, int maxSize) {
-		return new NStringArbitrary(validChars, maxSize);
+		return new StringArbitrary(validChars, maxSize);
 	}
 
 	public static Arbitrary<String> string(char[] validChars) {
-		return new NStringArbitrary(validChars);
+		return new StringArbitrary(validChars);
 	}
 
 	public static Arbitrary<String> string(char from, char to, int maxSize) {
-		return new NStringArbitrary(from, to, maxSize);
+		return new StringArbitrary(from, to, maxSize);
 	}
 
 	public static Arbitrary<String> string(char from, char to) {
-		return new NStringArbitrary(from, to);
+		return new StringArbitrary(from, to);
 	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int maxSize) {

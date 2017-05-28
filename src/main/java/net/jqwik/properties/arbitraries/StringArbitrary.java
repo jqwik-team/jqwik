@@ -1,18 +1,18 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public class NStringArbitrary extends NullableArbitrary<String> {
+import java.util.*;
+
+public class StringArbitrary extends NullableArbitrary<String> {
 
 	private final static char[] defaultChars = {'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@'};
 
 	private RandomGenerator<Character> characterGenerator;
 	private int maxSize;
 
-	public NStringArbitrary() {
+	public StringArbitrary() {
 		this(defaultGenerator(), 0);
 	}
 
@@ -20,17 +20,17 @@ public class NStringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.choose(defaultChars);
 	}
 
-	public NStringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
+	public StringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
 		super(String.class);
 		this.characterGenerator = characterGenerator;
 		this.maxSize = maxSize;
 	}
 
-	public NStringArbitrary(char[] characters, int maxSize) {
+	public StringArbitrary(char[] characters, int maxSize) {
 		this(createGenerator(characters), maxSize);
 	}
 
-	public NStringArbitrary(char[] characters) {
+	public StringArbitrary(char[] characters) {
 		this(characters, 0);
 	}
 
@@ -38,11 +38,11 @@ public class NStringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.choose(characters);
 	}
 
-	public NStringArbitrary(char from, char to, int maxLength) {
+	public StringArbitrary(char from, char to, int maxLength) {
 		this(createGenerator(from, to), maxLength);
 	}
 
-	public NStringArbitrary(char from, char to) {
+	public StringArbitrary(char from, char to) {
 		this(from, to, 0);
 	}
 
