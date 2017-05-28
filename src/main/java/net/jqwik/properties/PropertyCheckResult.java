@@ -30,6 +30,8 @@ public interface PropertyCheckResult {
 
 	Optional<List<Object>> sample();
 
+	Optional<List<Object>> originalSample();
+
 	Optional<Throwable> throwable();
 
 	abstract class ResultBase implements PropertyCheckResult {
@@ -79,6 +81,11 @@ public interface PropertyCheckResult {
 		}
 
 		@Override
+		public Optional<List<Object>> originalSample() {
+			return Optional.empty();
+		}
+
+		@Override
 		public Optional<Throwable> throwable() {
 			return Optional.empty();
 		}
@@ -94,11 +101,16 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample, Throwable throwable) {
+	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample, List<Object> originalSample, Throwable throwable) {
 		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public Optional<List<Object>> sample() {
 				return Optional.of(sample);
+			}
+
+			@Override
+			public Optional<List<Object>> originalSample() {
+				return Optional.of(originalSample);
 			}
 
 			@Override

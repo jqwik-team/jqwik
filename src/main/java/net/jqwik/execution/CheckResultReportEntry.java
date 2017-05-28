@@ -1,10 +1,9 @@
 package net.jqwik.execution;
 
-import java.util.*;
-
+import net.jqwik.properties.*;
 import org.junit.platform.engine.reporting.*;
 
-import net.jqwik.properties.*;
+import java.util.*;
 
 public class CheckResultReportEntry {
 
@@ -12,6 +11,7 @@ public class CheckResultReportEntry {
 	public static final String TRIES_REPORT_KEY = "tries";
 	public static final String CHECKS_REPORT_KEY = "checks";
 	public static final String SAMPLE_REPORT_KEY = "sample";
+	public static final String ORIGINAL_SAMPLE_REPORT_KEY = "originalSample";
 
 	public static ReportEntry from(PropertyCheckResult checkResult) {
 		Map<String, String> entries = new HashMap<>();
@@ -21,6 +21,10 @@ public class CheckResultReportEntry {
 		checkResult.sample().ifPresent(sample -> {
 			if (!sample.isEmpty())
 				entries.put(SAMPLE_REPORT_KEY, sample.toString());
+		});
+		checkResult.originalSample().ifPresent(sample -> {
+			if (!sample.isEmpty())
+				entries.put(ORIGINAL_SAMPLE_REPORT_KEY, sample.toString());
 		});
 		return ReportEntry.from(entries);
 	}

@@ -29,7 +29,6 @@
   - Can be switched off in @Properties annotation. For objects that take long to shrink.
   - Configurable time limit (100ms default?)
   - Reporting:
-    - original sample
     - collected statistics (similar to ScalaCheck's collect-feature)
   - Make it configurable (default on/off)
   - Shrinker for Longs

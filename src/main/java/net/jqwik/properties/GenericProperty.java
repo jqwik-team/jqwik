@@ -1,11 +1,11 @@
 package net.jqwik.properties;
 
+import org.junit.platform.commons.util.*;
+import org.opentest4j.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import org.junit.platform.commons.util.*;
-import org.opentest4j.*;
 
 public class GenericProperty {
 
@@ -56,9 +56,10 @@ public class GenericProperty {
 			AssertionError error) {
 		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables);
 		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
-		List params = extractParams(shrinkResult.shrunkValue());
+		List<Object> shrunkParams = extractParams(shrinkResult.shrunkValue());
+		List<Object> originalParams = extractParams(shrinkables);
 		Throwable throwable = shrinkResult.throwable().orElse(null);
-		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, params, throwable);
+		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrunkParams, originalParams, throwable);
 	}
 
 	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
