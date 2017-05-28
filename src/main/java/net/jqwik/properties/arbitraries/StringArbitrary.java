@@ -50,11 +50,12 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.choose(from, to);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected RandomGenerator<String> baseGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
 		if (effectiveMaxSize <= 0) effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
-		return RandomGenerators.string(characterGenerator, effectiveMaxSize);
+		return RandomGenerators.string(characterGenerator, effectiveMaxSize).withSamples(Shrinkable.unshrinkable(""));
 	}
 
 	public void configure(MaxStringLength maxStringLength) {
@@ -76,10 +77,11 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo) : 1.0;
 	}
 
-	private Optional<RandomGenerator<Character>> mix( //
-													  Optional<RandomGenerator<Character>> charsGenerator, //
-													  Optional<RandomGenerator<Character>> fromToGenerator, //
-													  double mixInProbability) {
+	private Optional<RandomGenerator<Character>> mix(
+		Optional<RandomGenerator<Character>> charsGenerator, //
+		Optional<RandomGenerator<Character>> fromToGenerator, //
+		double mixInProbability
+	) {
 
 		if (charsGenerator.isPresent()) {
 			return fromToGenerator //
