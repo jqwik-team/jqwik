@@ -17,14 +17,38 @@ public class ListShrinkCandidates<T> implements ShrinkCandidates<List<Shrinkable
 
 	private void appendLeftCut(List<Shrinkable<T>> toShrink, Set<List<Shrinkable<T>>> lists) {
 		List<Shrinkable<T>> leftCut = new ArrayList<>(toShrink);
-		leftCut.remove(0);
+		int elementsToCut = calculateElementsToCut(toShrink.size());
+		cutFromLeft(leftCut, elementsToCut);
 		lists.add(leftCut);
+	}
+
+	private int calculateElementsToCut(int listSize) {
+		if (listSize <= 10)
+			return 1;
+		if (listSize < 20)
+			return listSize - 9;
+		return listSize / 2;
+	}
+
+	private void cutFromLeft(List<Shrinkable<T>> leftCut, int elementsToCut) {
+		if (elementsToCut == 0)
+			return;
+		leftCut.remove(0);
+		cutFromLeft(leftCut, --elementsToCut);
 	}
 
 	private void appendRightCut(List<Shrinkable<T>> toShrink, Set<List<Shrinkable<T>>> lists) {
 		List<Shrinkable<T>> rightCut = new ArrayList<>(toShrink);
-		rightCut.remove(rightCut.size() - 1);
+		int elementsToCut = calculateElementsToCut(toShrink.size());
+		cutFromRight(rightCut, elementsToCut);
 		lists.add(rightCut);
+	}
+
+	private void cutFromRight(List<Shrinkable<T>> rightCut, int elementsToCut) {
+		if (elementsToCut == 0)
+			return;
+		rightCut.remove(rightCut.size() - 1);
+		cutFromRight(rightCut, --elementsToCut);
 	}
 
 	@Override

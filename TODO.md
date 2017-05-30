@@ -1,6 +1,5 @@
 ### Bugs
 
-- Shrinking of Arrays/List with big sizes (e.g. 50) never finishes
 - Display of Arrays as sample is unreadable e.g. "[[Ljava.lang.Integer;@58d75e99]"
 
 ### Tests
