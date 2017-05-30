@@ -2,6 +2,7 @@ package net.jqwik.properties;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -54,6 +55,18 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -50);
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 50);
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -100L && value <= 100L);
+	}
+
+	@Example
+	void bigIntegers() {
+		Arbitrary<BigInteger> longArbitrary = Arbitraries.bigInteger(-100L, 100L);
+		RandomGenerator<BigInteger> generator = longArbitrary.generator(1);
+
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) < 0);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) > 0);
+		ArbitraryTestHelper.assertAllGenerated(generator, //
+				value -> value.compareTo(BigInteger.valueOf(-100L)) >= 0 //
+						&& value.compareTo(BigInteger.valueOf(100L)) <= 0);
 	}
 
 	@Example

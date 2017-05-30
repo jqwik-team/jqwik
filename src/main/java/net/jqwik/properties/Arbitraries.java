@@ -1,5 +1,6 @@
 package net.jqwik.properties;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -34,6 +35,14 @@ public class Arbitraries {
 
 	public static Arbitrary<Long> longInteger() {
 		return new LongArbitrary();
+	}
+
+	public static Arbitrary<BigInteger> bigInteger(long min, long max) {
+		return new LongArbitrary(min, max).map(aLong -> BigInteger.valueOf(aLong));
+	}
+
+	public static Arbitrary<BigInteger> bigInteger() {
+		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
 	}
 
 	public static Arbitrary<String> string() {

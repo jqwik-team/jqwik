@@ -1,5 +1,8 @@
 ### Bugs
 
+- Shrinking of Arrays/List with big sizes (e.g. 50) never finishes
+- Display of Arrays as sample is unreadable e.g. "[[Ljava.lang.Integer;@58d75e99]"
+
 ### Tests
 
 - Add / rework tests for all Shrinkables 
@@ -31,9 +34,6 @@
   - Reporting:
     - collected statistics (similar to ScalaCheck's collect-feature)
   - Make it configurable (default on/off)
-  - Shrinker for Longs
-  - Shrinker for Arrays
-  - Shrinker for Maps: Filter by target type only
 
 - @ForAll can take `providerClass` parameter (with or without value param)
 
@@ -50,9 +50,9 @@
   - numStr, alphaStr, identifier
 
 - Default Arbitraries and Generators for
-  - BigInteger
-  - chars, short, byte
   - float, double, BigDecimal
+  - char, short, byte
+  - Map
   
 - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
 

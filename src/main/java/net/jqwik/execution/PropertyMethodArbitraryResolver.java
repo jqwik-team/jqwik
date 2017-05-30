@@ -23,6 +23,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		register(BooleanArbitraryProvider.class);
 		register(IntegerArbitraryProvider.class);
 		register(LongArbitraryProvider.class);
+		register(BigIntegerArbitraryProvider.class);
 		register(StringArbitraryProvider.class);
 		register(ListArbitraryProvider.class);
 		register(SetArbitraryProvider.class);
@@ -53,7 +54,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		if (arbitrary == null)
 			return Optional.empty();
 		else {
-			Arbitrary<Object> genericArbitrary = new GenericArbitrary((Arbitrary<Object>) arbitrary);
+			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary);
 			return Optional.of(genericArbitrary);
 		}
 	}

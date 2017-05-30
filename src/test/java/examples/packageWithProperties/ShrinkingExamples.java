@@ -2,6 +2,7 @@ package examples.packageWithProperties;
 
 import net.jqwik.api.*;
 
+import java.math.*;
 import java.util.*;
 
 public class ShrinkingExamples {
@@ -21,5 +22,20 @@ public class ShrinkingExamples {
 	@Property
 	boolean shrinkAListToSize2(@ForAll @MaxSize(10) @IntRange(min = -5, max = 5) List<Integer> aList) {
 		return aList.size() <= 1;
+	}
+
+	@Property
+	boolean shrinkBigIntegerTo2(@ForAll BigInteger big) {
+		return big.compareTo(new BigInteger("2")) < 0;
+	}
+
+	@Property
+	boolean shrinkLongTo2(@ForAll Long aLong) {
+		return aLong < 2;
+	}
+
+	@Property
+	boolean shrinkArrayToLength2(@ForAll @MaxSize(50) Integer[] anIntArray) {
+		return anIntArray.length < 2;
 	}
 }

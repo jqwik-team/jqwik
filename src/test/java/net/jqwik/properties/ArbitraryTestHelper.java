@@ -25,7 +25,7 @@ class ArbitraryTestHelper {
 		for (int i = 0; i < 100; i++) {
 			Shrinkable<T> value = generator.next(random);
 			if (!checker.apply(value.value()))
-				fail(String.format("Value [%s] failed to fulfill condition.", value.toString()));
+				fail(String.format("Value [%s] failed to fulfill condition.", value.value().toString()));
 		}
 	}
 

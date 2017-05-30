@@ -4,6 +4,7 @@ import static net.jqwik.TestDescriptorBuilder.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.*;
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -46,6 +47,11 @@ public class PropertyMethodArbitraryResolverTests {
 			assertGenerated(AnEnum.class, "enumParam", AnEnum.class);
 
 			assertGenerated(String.class, "stringParam", String.class);
+		}
+
+		@Example
+		void bigDefaults() throws Exception {
+			assertGenerated(BigInteger.class, "bigIntegerParam", BigInteger.class);
 		}
 
 		@Example
@@ -146,6 +152,11 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Property
 			boolean enumParamWithForAllValue(@ForAll("aValue") AnEnum count) {
+				return true;
+			}
+
+			@Property
+			boolean bigIntegerParam(@ForAll BigInteger anInt) {
 				return true;
 			}
 
