@@ -1,7 +1,5 @@
 ### Bugs
 
-- Display of Arrays as sample is unreadable e.g. "[[Ljava.lang.Integer;@58d75e99]"
-
 ### Tests
 
 - Add / rework tests for all Shrinkables 

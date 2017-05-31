@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import net.jqwik.support.*;
+
 import java.util.*;
 
 public interface PropertyCheckResult {
@@ -115,7 +117,7 @@ public interface PropertyCheckResult {
 
 			@Override
 			public String toString() {
-				return String.format("Property [%s] falsified with sample %s", propertyName, sample);
+				return String.format("Property [%s] falsified with sample %s", propertyName, JqwikStringSupport.displayString(sample));
 			}
 
 			@Override

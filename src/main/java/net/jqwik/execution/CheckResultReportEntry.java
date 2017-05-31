@@ -1,6 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.properties.*;
+import net.jqwik.support.*;
 import org.junit.platform.engine.reporting.*;
 
 import java.util.*;
@@ -20,11 +21,11 @@ public class CheckResultReportEntry {
 		entries.put(CHECKS_REPORT_KEY, Integer.toString(checkResult.countChecks()));
 		checkResult.sample().ifPresent(sample -> {
 			if (!sample.isEmpty())
-				entries.put(SAMPLE_REPORT_KEY, sample.toString());
+				entries.put(SAMPLE_REPORT_KEY, JqwikStringSupport.displayString(sample));
 		});
 		checkResult.originalSample().ifPresent(sample -> {
 			if (!sample.isEmpty())
-				entries.put(ORIGINAL_SAMPLE_REPORT_KEY, sample.toString());
+				entries.put(ORIGINAL_SAMPLE_REPORT_KEY, JqwikStringSupport.displayString(sample));
 		});
 		return ReportEntry.from(entries);
 	}
