@@ -2,7 +2,7 @@
 
 ### Tests
 
-- Add / rework tests for all Shrinkables 
+- Add / rework tests for all Shrinkables
 - Tests for TestRunDatabase
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
@@ -25,6 +25,14 @@
 
 ### Properties
 
+- Evaluate properties in parallel (max tries worker thread per property)
+
+- Make default tries configurable
+- Introduce maxDiscardRatio: How many failed assumptions are allowed per check
+  - Default: 5
+  - Make it configurable
+  - Make it configurable in @Property
+
 - Shrinking
   - Can be switched off in @Properties annotation. For objects that take long to shrink.
   - Configurable time limit (100ms default?)
@@ -34,7 +42,7 @@
 
 - @ForAll can take `providerClass` parameter (with or without value param)
 
-- Handle error 
+- Handle error
   - if more than one generator applies
   - if generic type is a bounded type
 
@@ -50,7 +58,7 @@
   - float, double, BigDecimal
   - char, short, byte
   - Map
-  
+
 - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
