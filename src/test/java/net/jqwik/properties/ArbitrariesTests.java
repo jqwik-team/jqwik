@@ -97,6 +97,16 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertGenerated(generator, -5, 0, 3, -5, 0, 3);
 	}
 
+	@Example
+	void doubles() {
+		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-10.0, 10.0, 2);
+		RandomGenerator<Double> generator = doubleArbitrary.generator(1);
+
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -5.0);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 5.0);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10.0 && value <= 10.0);
+	}
+
 	@Group
 	class GenericTypes {
 

@@ -39,5 +39,4 @@ public class IntegerArbitrary extends NullableArbitrary<Integer> {
 		max = intRange.max();
 	}
 
-
 }

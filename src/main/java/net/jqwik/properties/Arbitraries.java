@@ -45,6 +45,15 @@ public class Arbitraries {
 		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
 	}
 
+
+	public static Arbitrary<Double> doubles() {
+		return new DoubleArbitrary();
+	}
+
+	public static Arbitrary<Double> doubles(double min, double max, int precision) {
+		return new DoubleArbitrary(min, max, precision);
+	}
+
 	public static Arbitrary<String> string() {
 		return new StringArbitrary();
 	}
@@ -109,5 +118,4 @@ public class Arbitraries {
 											.collect(Collectors.toList());
 		return fromGenerator(RandomGenerators.samples(shrinkables));
 	}
-
 }

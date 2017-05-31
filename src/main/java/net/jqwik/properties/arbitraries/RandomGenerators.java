@@ -43,6 +43,10 @@ public class RandomGenerators {
 		}
 	}
 
+	public static RandomGenerator<Double> doubles(double min, double max) {
+		return fail("Cannot create doubles yet!");
+	}
+
 	public static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {
 		return random -> choose(enumClass.getEnumConstants()).next(random);
 	}

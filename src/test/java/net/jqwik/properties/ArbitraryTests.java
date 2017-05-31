@@ -11,76 +11,80 @@ class ArbitraryTests {
 
 	private Random random = new Random();
 
-	@Example
-	void generateInteger() {
-		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-		RandomGenerator<Integer> generator = arbitrary.generator(10);
+	@Group
+	class GeneratingAndShrinking {
+		@Example
+		void generateInteger() {
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			RandomGenerator<Integer> generator = arbitrary.generator(10);
 
-		assertThat(generator.next(random).value()).isEqualTo(1);
-		assertThat(generator.next(random).value()).isEqualTo(2);
-		assertThat(generator.next(random).value()).isEqualTo(3);
-		assertThat(generator.next(random).value()).isEqualTo(4);
-		assertThat(generator.next(random).value()).isEqualTo(5);
-		assertThat(generator.next(random).value()).isEqualTo(1);
-	}
+			assertThat(generator.next(random).value()).isEqualTo(1);
+			assertThat(generator.next(random).value()).isEqualTo(2);
+			assertThat(generator.next(random).value()).isEqualTo(3);
+			assertThat(generator.next(random).value()).isEqualTo(4);
+			assertThat(generator.next(random).value()).isEqualTo(5);
+			assertThat(generator.next(random).value()).isEqualTo(1);
+		}
 
-	@Example
-	void shrinkInteger() {
-		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-		RandomGenerator<Integer> generator = arbitrary.generator(10);
+		@Example
+		void shrinkInteger() {
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			RandomGenerator<Integer> generator = arbitrary.generator(10);
 
-		Shrinkable<Integer> value5 = generateNth(generator, 5);
-		assertThat(value5.value()).isEqualTo(5);
+			Shrinkable<Integer> value5 = generateNth(generator, 5);
+			assertThat(value5.value()).isEqualTo(5);
 
-		Set<ShrinkResult<Shrinkable<Integer>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
-		assertThat(shrunkValues).hasSize(1);
-		ShrinkResult<Shrinkable<Integer>> shrunkValue = shrunkValues.iterator().next();
-		assertThat(shrunkValue.shrunkValue().value()).isEqualTo(4);
-		assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3);
-	}
+			Set<ShrinkResult<Shrinkable<Integer>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+			assertThat(shrunkValues).hasSize(1);
+			ShrinkResult<Shrinkable<Integer>> shrunkValue = shrunkValues.iterator().next();
+			assertThat(shrunkValue.shrunkValue().value()).isEqualTo(4);
+			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3);
+		}
 
-	@Example
-	void generateList() {
-		Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
-		RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
+		@Example
+		void generateList() {
+			Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
+			RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
 
-		assertThat(generator.next(random).value()).isEmpty();
-		assertThat(generator.next(random).value()).containsExactly(1);
-		assertThat(generator.next(random).value()).containsExactly(1, 2);
-		assertThat(generator.next(random).value()).containsExactly(1, 2, 3);
-		assertThat(generator.next(random).value()).containsExactly(1, 2, 3, 4);
-		assertThat(generator.next(random).value()).containsExactly(1, 2, 3, 4, 5);
-		assertThat(generator.next(random).value()).isEmpty();
-		assertThat(generator.next(random).value()).containsExactly(1);
-	}
+			assertThat(generator.next(random).value()).isEmpty();
+			assertThat(generator.next(random).value()).containsExactly(1);
+			assertThat(generator.next(random).value()).containsExactly(1, 2);
+			assertThat(generator.next(random).value()).containsExactly(1, 2, 3);
+			assertThat(generator.next(random).value()).containsExactly(1, 2, 3, 4);
+			assertThat(generator.next(random).value()).containsExactly(1, 2, 3, 4, 5);
+			assertThat(generator.next(random).value()).isEmpty();
+			assertThat(generator.next(random).value()).containsExactly(1);
+		}
 
-	@Example
-	void shrinkList() {
-		Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
-		RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
+		@Example
+		void shrinkList() {
+			Arbitrary<List<Integer>> arbitrary = new ListArbitraryForTests(5);
+			RandomGenerator<List<Integer>> generator = arbitrary.generator(10);
 
-		Shrinkable<List<Integer>> value5 = generateNth(generator, 6);
-		assertThat(value5.value()).containsExactly(1, 2, 3, 4, 5);
+			Shrinkable<List<Integer>> value5 = generateNth(generator, 6);
+			assertThat(value5.value()).containsExactly(1, 2, 3, 4, 5);
 
-		Set<ShrinkResult<Shrinkable<List<Integer>>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
-		assertThat(shrunkValues).hasSize(2);
-		shrunkValues.forEach(shrunkValue -> {
-			assertThat(shrunkValue.shrunkValue().value()).hasSize(4);
-			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(4);
-		});
-	}
+			Set<ShrinkResult<Shrinkable<List<Integer>>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+			assertThat(shrunkValues).hasSize(2);
+			shrunkValues.forEach(shrunkValue -> {
+				assertThat(shrunkValue.shrunkValue().value()).hasSize(4);
+				assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(4);
+			});
+		}
 
-	@Example
-	void samplesArePrependedToGeneration() {
-		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2);
-		Arbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
-		RandomGenerator<Integer> generator = arbitraryWithSamples.generator(10);
+		@Example
+		void samplesArePrependedToGeneration() {
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2);
+			Arbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
+			RandomGenerator<Integer> generator = arbitraryWithSamples.generator(10);
 
-		assertThat(generator.next(random).value()).isEqualTo(-1);
-		assertThat(generator.next(random).value()).isEqualTo(-2);
-		assertThat(generator.next(random).value()).isEqualTo(1);
-		assertThat(generator.next(random).value()).isEqualTo(2);
-		assertThat(generator.next(random).value()).isEqualTo(1);
+			assertThat(generator.next(random).value()).isEqualTo(-1);
+			assertThat(generator.next(random).value()).isEqualTo(-2);
+			assertThat(generator.next(random).value()).isEqualTo(1);
+			assertThat(generator.next(random).value()).isEqualTo(2);
+			assertThat(generator.next(random).value()).isEqualTo(1);
+		}
+
 	}
 
 
