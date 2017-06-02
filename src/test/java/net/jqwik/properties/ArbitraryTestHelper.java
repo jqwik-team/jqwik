@@ -2,11 +2,11 @@ package net.jqwik.properties;
 
 import net.jqwik.properties.arbitraries.*;
 
-import static org.assertj.core.api.Assertions.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 class ArbitraryTestHelper {
 

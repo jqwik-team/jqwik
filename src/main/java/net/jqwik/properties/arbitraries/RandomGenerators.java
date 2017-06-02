@@ -1,10 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.properties.*;
+
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
-
-import net.jqwik.properties.*;
 
 public class RandomGenerators {
 
@@ -43,8 +43,26 @@ public class RandomGenerators {
 		}
 	}
 
-	public static RandomGenerator<Double> doubles(double min, double max) {
-		return fail("Cannot create doubles yet!");
+	public static RandomGenerator<Double> doubles(double min, double max, int precision) {
+		return random ->  {
+			double randomDouble = randomDouble(random, min, max);
+			return new ShrinkableValue<>(randomDouble, new DoubleShrinkCandidates(min, max, precision));
+		};
+	}
+
+	public static double randomDouble(Random random, double min, double max) {
+		double localMin = min;
+		double localMax = max;
+		while (true) {
+			if (Double.valueOf(localMax - localMin).isInfinite()) {
+				localMin = localMin / 2.0;
+				localMax = localMax / 2.0;
+				continue;
+			}
+			break;
+		}
+		double range = localMax - localMin;
+		return random.nextDouble() * range + localMin;
 	}
 
 	public static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {

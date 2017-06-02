@@ -1,10 +1,10 @@
 package examples.packageWithProperties;
 
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
+
+import java.util.*;
+import java.util.stream.*;
 
 public class GeneratorsExamples {
 
@@ -53,6 +53,12 @@ public class GeneratorsExamples {
 	boolean numbersBetween1and100(@ForAll("between1and100") long aNumber) {
 		System.out.println(aNumber);
 		return aNumber - aNumber == 0;
+	}
+
+	@Property(tries = 10)
+	boolean aDouble(@ForAll @DoubleRange(min = Double.MIN_VALUE, max = Double.MAX_VALUE) double aDouble) {
+		System.out.println(aDouble);
+		return true;
 	}
 
 	@Generate

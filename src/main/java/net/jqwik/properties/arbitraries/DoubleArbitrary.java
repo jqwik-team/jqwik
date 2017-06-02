@@ -27,19 +27,23 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 	protected RandomGenerator<Double> baseGenerator(int tries) {
 		if (min == 0.0 && max == 0.0) {
 			double max = Arbitrary.defaultMaxFromTries(tries);
-//			DoubleShrinkCandidates integerShrinkCandidates = new DoubleShrinkCandidates(Double.MIN_VALUE, Double.MAX_VALUE, precision);
-//			List<Shrinkable<Integer>> samples = Arrays.stream(new int[] { 0, Integer.MIN_VALUE, Integer.MAX_VALUE }) //
-//													  .mapToObj(anInt -> new ShrinkableValue<>(anInt, integerShrinkCandidates)) //
-//													  .collect(Collectors.toList());
-			return RandomGenerators.doubles(-max, max); //.withSamples(samples);
+			return doubleGenerator(-max, max, precision); //.withSamples(samples);
 		}
-		return RandomGenerators.doubles(min, max);
+		return doubleGenerator(min, max, precision);
 	}
 
-	public void configure(DoubleRange doubeRange) {
-		min = doubeRange.min();
-		max = doubeRange.max();
-		precision = doubeRange.precision();
+	private RandomGenerator<Double> doubleGenerator(double min, double max, int precision) {
+		DoubleShrinkCandidates doubleShrinkCandidates = new DoubleShrinkCandidates(min, max, precision);
+		List<Shrinkable<Double>> samples = Arrays.stream(new Double[]{0.0, min, max}) //
+			.map(value -> new ShrinkableValue<>(value, doubleShrinkCandidates)) //
+			.collect(Collectors.toList());
+		return RandomGenerators.doubles(min, max, precision).withSamples(samples);
+	}
+
+	public void configure(DoubleRange doubleRange) {
+		min = doubleRange.min();
+		max = doubleRange.max();
+		precision = doubleRange.precision();
 	}
 
 
