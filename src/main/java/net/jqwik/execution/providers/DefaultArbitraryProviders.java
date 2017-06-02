@@ -1,10 +1,11 @@
 package net.jqwik.execution.providers;
 
-import java.util.*;
-
 import net.jqwik.support.*;
 
+import java.util.*;
+
 public class DefaultArbitraryProviders {
+
 
 	private final static List<ArbitraryProvider> defaultProviders = new ArrayList<>();
 

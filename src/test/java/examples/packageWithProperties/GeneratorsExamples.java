@@ -56,7 +56,7 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 10)
-	boolean aDouble(@ForAll @DoubleRange(min = Double.MIN_VALUE, max = Double.MAX_VALUE) double aDouble) {
+	boolean aDouble(@ForAll @Precision(value = 4) double aDouble) {
 		System.out.println(aDouble);
 		return true;
 	}

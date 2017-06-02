@@ -34,6 +34,7 @@
   - Make it configurable in @Property
 
 - Shrinking
+  - Double
   - Can be switched off in @Properties annotation. For objects that take long to shrink.
   - Configurable time limit (100ms default?)
   - Reporting:
@@ -55,7 +56,7 @@
   - numStr, alphaStr, identifier
 
 - Default Arbitraries and Generators for
-  - float, double, BigDecimal
+  - float, BigDecimal
   - char, short, byte
   - Map
 

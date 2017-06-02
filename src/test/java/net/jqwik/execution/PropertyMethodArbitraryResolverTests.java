@@ -1,21 +1,20 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.support.*;
+import org.assertj.core.data.*;
 
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-import org.assertj.core.data.*;
-
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.support.*;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 public class PropertyMethodArbitraryResolverTests {
@@ -40,6 +39,9 @@ public class PropertyMethodArbitraryResolverTests {
 
 			assertGenerated(Long.class, "longParam", long.class);
 			assertGenerated(Long.class, "longerParam", Long.class);
+
+			assertGenerated(Double.class, "doubleParam", double.class);
+			assertGenerated(Double.class, "doublerParam", Double.class);
 
 			assertGenerated(Boolean.class, "booleanParam", boolean.class);
 			assertGenerated(Boolean.class, "boxedBooleanParam", Boolean.class);
@@ -132,6 +134,16 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Property
 			boolean longerParam(@ForAll Long anInt) {
+				return true;
+			}
+
+			@Property
+			boolean doubleParam(@ForAll double anInt) {
+				return true;
+			}
+
+			@Property
+			boolean doublerParam(@ForAll Double anInt) {
 				return true;
 			}
 

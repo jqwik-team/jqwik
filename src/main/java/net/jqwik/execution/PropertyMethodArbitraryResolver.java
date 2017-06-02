@@ -1,20 +1,19 @@
 package net.jqwik.execution;
 
-import static net.jqwik.execution.providers.DefaultArbitraryProviders.*;
-import static net.jqwik.support.JqwikReflectionSupport.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.providers.*;
+import net.jqwik.properties.*;
+import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import org.junit.platform.commons.support.*;
-
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.execution.providers.*;
-import net.jqwik.properties.*;
-import net.jqwik.support.*;
+import static net.jqwik.execution.providers.DefaultArbitraryProviders.*;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
@@ -23,6 +22,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		register(BooleanArbitraryProvider.class);
 		register(IntegerArbitraryProvider.class);
 		register(LongArbitraryProvider.class);
+		register(DoubleArbitraryProvider.class);
 		register(BigIntegerArbitraryProvider.class);
 		register(StringArbitraryProvider.class);
 		register(ListArbitraryProvider.class);

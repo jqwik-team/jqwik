@@ -44,7 +44,10 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 	public void configure(DoubleRange doubleRange) {
 		min = doubleRange.min();
 		max = doubleRange.max();
-		precision = doubleRange.precision();
+	}
+
+	public void configure(Precision precision) {
+		this.precision = precision.value();
 	}
 
 
