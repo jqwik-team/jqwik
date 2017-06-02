@@ -14,6 +14,7 @@ class ArbitraryTestHelper {
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {
 			Shrinkable<T> value = generator.next(random);
+			System.out.println("MMMMMM: " + value.value());
 			if (checker.apply(value.value()))
 				return;
 		}

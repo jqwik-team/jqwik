@@ -43,8 +43,8 @@ class ArbitrariesTests {
 		Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
 		RandomGenerator<Integer> generator = intArbitrary.generator(1);
 
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -5);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 5);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0  && value > -5);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
 	}
 

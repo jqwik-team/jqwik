@@ -27,17 +27,15 @@ public class IntegerArbitrary extends NullableArbitrary<Integer> {
 			int max = Arbitrary.defaultMaxFromTries(tries);
 			return integerGenerator(-max, max);
 		}
-		// Use next line
-		//		return integerGenerator(min, max);
-		return RandomGenerators.choose(min, max);
+		return integerGenerator(min, max);
 	}
 
 	private RandomGenerator<Integer> integerGenerator(int min, int max) {
 		IntegerShrinkCandidates integerShrinkCandidates = new IntegerShrinkCandidates(min, max);
-		// Don't use zero example if it's outside range
 		List<Shrinkable<Integer>> samples = Arrays.stream(new int[] { 0, min, max }) //
-											   .mapToObj(anInt -> new ShrinkableValue<>(anInt, integerShrinkCandidates)) //
-											   .collect(Collectors.toList());
+			.filter(anInt -> anInt >= min && anInt <= max) //
+			.mapToObj(anInt -> new ShrinkableValue<>(anInt, integerShrinkCandidates)) //
+			.collect(Collectors.toList());
 		return RandomGenerators.choose(min, max).withSamples(samples);
 	}
 

@@ -1,10 +1,10 @@
 package net.jqwik.properties;
 
+import net.jqwik.properties.arbitraries.*;
+
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
-
-import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 
@@ -30,7 +30,7 @@ public class Arbitraries {
 	}
 
 	public static Arbitrary<Long> longInteger(long min, long max) {
-		return new LongArbitrary();
+		return new LongArbitrary(min, max);
 	}
 
 	public static Arbitrary<Long> longInteger() {
