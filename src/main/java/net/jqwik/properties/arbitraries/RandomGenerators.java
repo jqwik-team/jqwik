@@ -45,7 +45,8 @@ public class RandomGenerators {
 
 	public static RandomGenerator<Double> doubles(double min, double max, int precision) {
 		return random ->  {
-			double randomDouble = randomDouble(random, min, max);
+			double factor = Math.pow(10, precision);
+			double randomDouble = Math.round(randomDouble(random, min, max) * factor) / factor;
 			return new ShrinkableValue<>(randomDouble, new DoubleShrinkCandidates(min, max, precision));
 		};
 	}

@@ -1,7 +1,6 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
-import org.assertj.core.api.*;
 
 import java.math.*;
 import java.util.*;
@@ -106,11 +105,13 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1.0 && value > -9.0);
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 1.0 && value < 9.0);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10.0 && value <= 10.0);
-		Assertions.fail("check for correct cut off due to specified precision");
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> {
+			double rounded = Math.round(value * 100) / 100.0;
+			return value >= -10.0 && value <= 10.0 && value == rounded;
+		});
 	}
 
-	//double generation does not really create good double for very big min/max values
+	//TODO: double generation does not really create good double for very big min/max values
 	//@Example
 	void doublesWithMaximumRange() {
 		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(Double.MIN_VALUE, Double.MAX_VALUE, 2);
