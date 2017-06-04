@@ -34,7 +34,6 @@
   - Make it configurable in @Property
 
 - Shrinking
-  - Double
   - Can be switched off in @Properties annotation. For objects that take long to shrink.
   - Configurable time limit (100ms default?)
   - Reporting:

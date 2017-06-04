@@ -35,6 +35,11 @@ public class ShrinkingExamples {
 	}
 
 	@Property
+	boolean shrinkDoubleTo2(@ForAll double aDouble) {
+		return aDouble < 1.9;
+	}
+
+	@Property
 	boolean shrinkArrayToLength2(@ForAll @MaxSize(100) Integer[] anIntArray) {
 		return anIntArray.length < 2;
 	}
