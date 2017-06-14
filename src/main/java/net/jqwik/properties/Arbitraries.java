@@ -53,6 +53,14 @@ public class Arbitraries {
 		return new DoubleArbitrary(min, max, precision);
 	}
 
+	public static Arbitrary<Float> floats() {
+		return new FloatArbitrary();
+	}
+
+	public static Arbitrary<Float> floats(Float min, Float max, int precision) {
+		return new FloatArbitrary(min, max, precision);
+	}
+
 	public static Arbitrary<String> string() {
 		return new StringArbitrary();
 	}

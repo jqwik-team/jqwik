@@ -61,6 +61,12 @@ public class GeneratorsExamples {
 		return true;
 	}
 
+	@Property(tries = 10)
+	boolean aFloat(@ForAll @Precision(value = 4) float aFloat) {
+		System.out.println(aFloat);
+		return true;
+	}
+
 	@Generate
 	Arbitrary<Long> between1and100() {
 		return Generator.integer(1L, 100L);

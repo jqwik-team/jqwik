@@ -40,6 +40,11 @@ public class ShrinkingExamples {
 	}
 
 	@Property
+	boolean shrinkFloatTo2(@ForAll float aFloat) {
+		return aFloat < 1.9;
+	}
+
+	@Property
 	boolean shrinkArrayToLength2(@ForAll @MaxSize(100) Integer[] anIntArray) {
 		return anIntArray.length < 2;
 	}

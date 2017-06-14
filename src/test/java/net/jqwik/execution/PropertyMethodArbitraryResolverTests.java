@@ -43,6 +43,9 @@ public class PropertyMethodArbitraryResolverTests {
 			assertGenerated(Double.class, "doubleParam", double.class);
 			assertGenerated(Double.class, "doublerParam", Double.class);
 
+			assertGenerated(Float.class, "floatParam", float.class);
+			assertGenerated(Float.class, "floaterParam", Float.class);
+
 			assertGenerated(Boolean.class, "booleanParam", boolean.class);
 			assertGenerated(Boolean.class, "boxedBooleanParam", Boolean.class);
 
@@ -144,6 +147,16 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Property
 			boolean doublerParam(@ForAll Double anInt) {
+				return true;
+			}
+
+			@Property
+			boolean floatParam(@ForAll float anInt) {
+				return true;
+			}
+
+			@Property
+			boolean floaterParam(@ForAll Float anInt) {
 				return true;
 			}
 

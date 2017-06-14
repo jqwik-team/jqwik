@@ -51,6 +51,14 @@ public class RandomGenerators {
 		};
 	}
 
+	public static RandomGenerator<Float> floats(float min, float max, int precision) {
+		return random ->  {
+			double factor = Math.pow(10, precision);
+			float randomDouble = (float) (Math.round(randomDouble(random, min, max) * factor) / factor);
+			return new ShrinkableValue<>(randomDouble, new FloatShrinkCandidates(min, max, precision));
+		};
+	}
+
 	public static double randomDouble(Random random, double min, double max) {
 		double localMin = min;
 		double localMax = max;

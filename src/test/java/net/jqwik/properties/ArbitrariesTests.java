@@ -38,38 +38,6 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void integersInt() {
-		Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
-		RandomGenerator<Integer> generator = intArbitrary.generator(1);
-
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0  && value > -5);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
-	}
-
-	@Example
-	void integersLong() {
-		Arbitrary<Long> longArbitrary = Arbitraries.longInteger(-100L, 100L);
-		RandomGenerator<Long> generator = longArbitrary.generator(1);
-
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -50);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 50);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -100L && value <= 100L);
-	}
-
-	@Example
-	void bigIntegers() {
-		Arbitrary<BigInteger> longArbitrary = Arbitraries.bigInteger(-100L, 100L);
-		RandomGenerator<BigInteger> generator = longArbitrary.generator(1);
-
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) < 0);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) > 0);
-		ArbitraryTestHelper.assertAllGenerated(generator, //
-				value -> value.compareTo(BigInteger.valueOf(-100L)) >= 0 //
-						&& value.compareTo(BigInteger.valueOf(100L)) <= 0);
-	}
-
-	@Example
 	void string() {
 		Arbitrary<String> stringArbitrary = Arbitraries.string('a', 'd', 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
@@ -97,28 +65,79 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertGenerated(generator, -5, 0, 3, -5, 0, 3);
 	}
 
-	@Example
-	void doubles() {
-		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-10.0, 10.0, 2);
-		RandomGenerator<Double> generator = doubleArbitrary.generator(1);
+	@Group
+	class Numbers {
 
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1.0 && value > -9.0);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 1.0 && value < 9.0);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> {
-			double rounded = Math.round(value * 100) / 100.0;
-			return value >= -10.0 && value <= 10.0 && value == rounded;
-		});
-	}
+		@Example
+		void integersInt() {
+			Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
+			RandomGenerator<Integer> generator = intArbitrary.generator(1);
 
-	@Example
-	void doublesWithMaximumRange() {
-		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-Double.MAX_VALUE, Double.MAX_VALUE, 2);
-		RandomGenerator<Double> generator = doubleArbitrary.generator(1);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0  && value > -5);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
+		}
 
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1000.0);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 1000.0);
+		@Example
+		void integersLong() {
+			Arbitrary<Long> longArbitrary = Arbitraries.longInteger(-100L, 100L);
+			RandomGenerator<Long> generator = longArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -50);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 50);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -100L && value <= 100L);
+		}
+
+		@Example
+		void bigIntegers() {
+			Arbitrary<BigInteger> longArbitrary = Arbitraries.bigInteger(-100L, 100L);
+			RandomGenerator<BigInteger> generator = longArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) < 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) > 0);
+			ArbitraryTestHelper.assertAllGenerated(generator, //
+												   value -> value.compareTo(BigInteger.valueOf(-100L)) >= 0 //
+													   && value.compareTo(BigInteger.valueOf(100L)) <= 0);
+		}
+
+		@Example
+		void doubles() {
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-10.0, 10.0, 2);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1.0 && value > -9.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 1.0 && value < 9.0);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> {
+				double rounded = Math.round(value * 100) / 100.0;
+				return value >= -10.0 && value <= 10.0 && value == rounded;
+			});
+		}
+
+		@Example
+		void doublesWithMaximumRange() {
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-Double.MAX_VALUE, Double.MAX_VALUE, 2);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1000.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 1000.0);
+		}
+
+		@Example
+		void floats() {
+			Arbitrary<Float> doubleArbitrary = Arbitraries.floats(-10.0f, 10.0f, 2);
+			RandomGenerator<Float> generator = doubleArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1.0 && value > -9.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 1.0 && value < 9.0);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> {
+				float rounded = (float) (Math.round(value * 100) / 100.0);
+				return value >= -10.0 && value <= 10.0 && value == rounded;
+			});
+		}
+
 	}
 
 	@Group

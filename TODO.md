@@ -58,7 +58,7 @@
   - numStr, alphaStr, identifier
 
 - Default Arbitraries and Generators for
-  - float, BigDecimal
+  - BigDecimal
   - char, short, byte
 
 
