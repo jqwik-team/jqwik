@@ -9,6 +9,8 @@
 
 ### General
 
+- Add documentation
+
 - Allow custom names for containers and test methods: @Label
 
 - Allow Fixture parameters to examples and properties
@@ -57,7 +59,6 @@
 - Default Arbitraries and Generators for
   - float, BigDecimal
   - char, short, byte
-  - Map
 
 - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
 
