@@ -25,3 +25,7 @@ out/
 # Misc
 *.log
 *.graphml
+
+# Jekyll
+/docs/_site
+/docs/Gemfile.lock
