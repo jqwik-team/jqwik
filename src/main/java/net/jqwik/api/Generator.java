@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -8,12 +9,56 @@ import net.jqwik.properties.Combinators.*;
 
 public interface Generator {
 
+	static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
+		return Arbitraries.fromGenerator(generator);
+	}
+
 	static Arbitrary<Integer> integer(int min, int max) {
 		return Arbitraries.integer(min, max);
 	}
 
-	static Arbitrary<Long> integer(long min, long max) {
+	static Arbitrary<Integer> integer() {
+		return Arbitraries.integer();
+	}
+
+	static Arbitrary<Long> longInteger(long min, long max) {
 		return Arbitraries.longInteger(min, max);
+	}
+
+	static Arbitrary<Long> longInteger() {
+		return Arbitraries.longInteger();
+	}
+
+	static Arbitrary<BigInteger> bigInteger(long min, long max) {
+		return Arbitraries.bigInteger(min, max);
+	}
+
+	static Arbitrary<BigInteger> bigInteger() {
+		return Arbitraries.bigInteger();
+	}
+
+	static Arbitrary<Float> floats() {
+		return Arbitraries.floats();
+	}
+
+	static Arbitrary<Float> floats(Float min, Float max, int scale) {
+		return Arbitraries.floats(min, max, scale);
+	}
+
+	static Arbitrary<BigDecimal> bigDecimal(double min, double max, int scale) {
+		return Arbitraries.bigDecimal(min, max, scale);
+	}
+
+	static Arbitrary<BigDecimal> bigDecimal() {
+		return Arbitraries.bigDecimal();
+	}
+
+	public static Arbitrary<Double> doubles() {
+		return Arbitraries.doubles();
+	}
+
+	public static Arbitrary<Double> doubles(double min, double max, int scale) {
+		return Arbitraries.doubles(min, max, scale);
 	}
 
 	static Arbitrary<String> string(char from, char to) {
@@ -68,5 +113,10 @@ public interface Generator {
 
 	static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> a1) {
 		return Arbitraries.optionalOf(a1);
+	}
+
+	@SafeVarargs
+	static <T> Arbitrary<T> samples(T... samples) {
+		return Arbitraries.samples(samples);
 	}
 }

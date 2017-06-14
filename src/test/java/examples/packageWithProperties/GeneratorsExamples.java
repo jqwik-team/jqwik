@@ -76,7 +76,7 @@ public class GeneratorsExamples {
 
 	@Generate
 	Arbitrary<Long> between1and100() {
-		return Generator.integer(1L, 100L);
+		return Generator.longInteger(1L, 100L);
 	}
 
 	@Property(tries = 10)
