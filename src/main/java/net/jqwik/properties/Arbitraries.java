@@ -45,7 +45,6 @@ public class Arbitraries {
 		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
 	}
 
-
 	public static Arbitrary<Double> doubles() {
 		return new DoubleArbitrary();
 	}

@@ -52,6 +52,7 @@
   - const
   - frequency: pairs of generator and frequency weight
   - oneOf: randomly select one of two generators
+  - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
   - posNum, negNum
   - alpha[Upper|Lower|Num]Char
   - numStr, alphaStr, identifier
@@ -60,7 +61,6 @@
   - float, BigDecimal
   - char, short, byte
 
-- Arbitrary.chain(..) to use result of one generator for creating next arbitrary
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 

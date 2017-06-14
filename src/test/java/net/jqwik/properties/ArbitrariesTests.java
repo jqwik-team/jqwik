@@ -111,10 +111,9 @@ class ArbitrariesTests {
 		});
 	}
 
-	//TODO: double generation does not really create good double for very big min/max values
-	//@Example
+	@Example
 	void doublesWithMaximumRange() {
-		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(Double.MIN_VALUE, Double.MAX_VALUE, 2);
+		Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-Double.MAX_VALUE, Double.MAX_VALUE, 2);
 		RandomGenerator<Double> generator = doubleArbitrary.generator(1);
 
 		ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
