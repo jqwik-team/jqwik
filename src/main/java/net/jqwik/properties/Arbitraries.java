@@ -45,20 +45,28 @@ public class Arbitraries {
 		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
 	}
 
-	public static Arbitrary<Double> doubles() {
-		return new DoubleArbitrary();
-	}
-
-	public static Arbitrary<Double> doubles(double min, double max, int precision) {
-		return new DoubleArbitrary(min, max, precision);
-	}
-
 	public static Arbitrary<Float> floats() {
 		return new FloatArbitrary();
 	}
 
-	public static Arbitrary<Float> floats(Float min, Float max, int precision) {
-		return new FloatArbitrary(min, max, precision);
+	public static Arbitrary<Float> floats(Float min, Float max, int scale) {
+		return new FloatArbitrary(min, max, scale);
+	}
+
+	public static Arbitrary<BigDecimal> bigDecimal(double min, double max, int scale) {
+		return new DoubleArbitrary(min, max, scale).map(aDouble -> BigDecimal.valueOf(aDouble));
+	}
+
+	public static Arbitrary<BigDecimal> bigDecimal() {
+		return new DoubleArbitrary().map(aDouble -> BigDecimal.valueOf(aDouble));
+	}
+
+	public static Arbitrary<Double> doubles() {
+		return new DoubleArbitrary();
+	}
+
+	public static Arbitrary<Double> doubles(double min, double max, int scale) {
+		return new DoubleArbitrary(min, max, scale);
 	}
 
 	public static Arbitrary<String> string() {

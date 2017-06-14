@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 class ArbitrariesTests {
 
@@ -136,6 +136,17 @@ class ArbitrariesTests {
 				float rounded = (float) (Math.round(value * 100) / 100.0);
 				return value >= -10.0 && value <= 10.0 && value == rounded;
 			});
+		}
+
+		@Example
+		void bigDecimals() {
+			Arbitrary<BigDecimal> doubleArbitrary = Arbitraries.bigDecimal(-10.0, 10.0, 2);
+			RandomGenerator<BigDecimal> generator = doubleArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() == 0.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() < -1.0 && value.doubleValue() > -9.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() > 1.0 && value.doubleValue() < 9.0);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value.scale() <= 2);
 		}
 
 	}

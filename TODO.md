@@ -57,10 +57,8 @@
   - alpha[Upper|Lower|Num]Char
   - numStr, alphaStr, identifier
 
-- Default Arbitraries and Generators for
-  - BigDecimal
+- Default Arbitraries, Generators and Shrinking for
   - char, short, byte
-
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 

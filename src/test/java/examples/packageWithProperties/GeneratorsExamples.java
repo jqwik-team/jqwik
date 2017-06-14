@@ -3,6 +3,7 @@ package examples.packageWithProperties;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -56,14 +57,20 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 10)
-	boolean aDouble(@ForAll @Precision(value = 4) double aDouble) {
+	boolean aDouble(@ForAll @Scale(value = 4) double aDouble) {
 		System.out.println(aDouble);
 		return true;
 	}
 
 	@Property(tries = 10)
-	boolean aFloat(@ForAll @Precision(value = 4) float aFloat) {
+	boolean aFloat(@ForAll @Scale(value = 4) float aFloat) {
 		System.out.println(aFloat);
+		return true;
+	}
+
+	@Property(tries = 10)
+	boolean aBigDecimal(@ForAll @DoubleRange(max = 100.0) @Scale(value = 4) BigDecimal aBigDecimal) {
+		System.out.println(aBigDecimal);
 		return true;
 	}
 

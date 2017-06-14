@@ -25,6 +25,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		register(DoubleArbitraryProvider.class);
 		register(FloatArbitraryProvider.class);
 		register(BigIntegerArbitraryProvider.class);
+		register(BigDecimalArbitraryProvider.class);
 		register(StringArbitraryProvider.class);
 		register(ListArbitraryProvider.class);
 		register(SetArbitraryProvider.class);

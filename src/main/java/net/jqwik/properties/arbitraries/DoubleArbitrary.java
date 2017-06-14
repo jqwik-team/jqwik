@@ -10,13 +10,13 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 
 	private double min;
 	private double max;
-	private int precision;
+	private int scale;
 
-	public DoubleArbitrary(double min, double max, int precision) {
+	public DoubleArbitrary(double min, double max, int scale) {
 		super(Double.class);
 		this.min = min;
 		this.max = max;
-		this.precision = precision;
+		this.scale = scale;
 	}
 
 	public DoubleArbitrary() {
@@ -27,18 +27,18 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 	protected RandomGenerator<Double> baseGenerator(int tries) {
 		if (min == 0.0 && max == 0.0) {
 			double max = Arbitrary.defaultMaxFromTries(tries);
-			return doubleGenerator(-max, max, precision); //.withSamples(samples);
+			return doubleGenerator(-max, max, scale); //.withSamples(samples);
 		}
-		return doubleGenerator(min, max, precision);
+		return doubleGenerator(min, max, scale);
 	}
 
-	private RandomGenerator<Double> doubleGenerator(double min, double max, int precision) {
-		DoubleShrinkCandidates doubleShrinkCandidates = new DoubleShrinkCandidates(min, max, precision);
+	private RandomGenerator<Double> doubleGenerator(double min, double max, int scale) {
+		DoubleShrinkCandidates doubleShrinkCandidates = new DoubleShrinkCandidates(min, max, scale);
 		List<Shrinkable<Double>> samples = Arrays.stream(new Double[]{0.0, min, max}) //
 			.filter(aDouble -> aDouble >= min && aDouble <= max) //
 			.map(value -> new ShrinkableValue<>(value, doubleShrinkCandidates)) //
 			.collect(Collectors.toList());
-		return RandomGenerators.doubles(min, max, precision).withSamples(samples);
+		return RandomGenerators.doubles(min, max, scale).withSamples(samples);
 	}
 
 	public void configure(DoubleRange doubleRange) {
@@ -46,8 +46,8 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 		max = doubleRange.max();
 	}
 
-	public void configure(Precision precision) {
-		this.precision = precision.value();
+	public void configure(Scale scale) {
+		this.scale = scale.value();
 	}
 
 

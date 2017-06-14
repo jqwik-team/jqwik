@@ -45,6 +45,11 @@ public class ShrinkingExamples {
 	}
 
 	@Property
+	boolean shrinkBigDecimal(@ForAll BigDecimal aBigDecimal) {
+		return aBigDecimal.compareTo(BigDecimal.valueOf(1.9)) < 0;
+	}
+
+	@Property
 	boolean shrinkArrayToLength2(@ForAll @MaxSize(100) Integer[] anIntArray) {
 		return anIntArray.length < 2;
 	}

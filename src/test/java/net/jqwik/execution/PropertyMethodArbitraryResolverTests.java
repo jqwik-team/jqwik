@@ -33,7 +33,7 @@ public class PropertyMethodArbitraryResolverTests {
 	class Defaults {
 
 		@Example
-		void simpleDefaults() throws Exception {
+		void primitives() throws Exception {
 			assertGenerated(Integer.class, "intParam", int.class);
 			assertGenerated(Integer.class, "integerParam", Integer.class);
 
@@ -55,12 +55,27 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void bigDefaults() throws Exception {
+		void strings() throws Exception {
+			assertGenerated(String.class, "stringParam", String.class);
+		}
+
+		@Example
+		void enums() throws Exception {
+			assertGenerated(AnEnum.class, "enumParam", AnEnum.class);
+		}
+
+		@Example
+		void bigIntegers() throws Exception {
 			assertGenerated(BigInteger.class, "bigIntegerParam", BigInteger.class);
 		}
 
 		@Example
-		void listDefaults() throws Exception {
+		void bigDecimals() throws Exception {
+			assertGenerated(BigDecimal.class, "bigDecimalParam", BigDecimal.class);
+		}
+
+		@Example
+		void lists() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerList", List.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerList");
 			List actualList = generateCollection(provider, parameter);
@@ -68,7 +83,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void setDefaults() throws Exception {
+		void sets() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerSet", Set.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerSet");
 			Set actualSet = generateCollection(provider, parameter);
@@ -76,7 +91,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void streamDefaults() throws Exception {
+		void streams() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerStream", Stream.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerStream");
 			Stream actualStream = (Stream) generateObject(provider, parameter);
@@ -84,7 +99,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void arrayDefaults() throws Exception {
+		void arrays() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerArray", Integer[].class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerArray");
 			Integer[] actualArray = (Integer[]) generateObject(provider, parameter);
@@ -92,7 +107,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void optionalDefaults() throws Exception {
+		void optionals() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerOptional");
 			Optional actualOptional = (Optional) generateObject(provider, parameter);
@@ -121,97 +136,102 @@ public class PropertyMethodArbitraryResolverTests {
 
 		private class DefaultParams {
 			@Property
-			boolean intParam(@ForAll int anInt) {
+			boolean intParam(@ForAll int aValue) {
 				return true;
 			}
 
 			@Property
-			boolean integerParam(@ForAll Integer anInt) {
+			boolean integerParam(@ForAll Integer aValue) {
 				return true;
 			}
 
 			@Property
-			boolean longParam(@ForAll long anInt) {
+			boolean longParam(@ForAll long aValue) {
 				return true;
 			}
 
 			@Property
-			boolean longerParam(@ForAll Long anInt) {
+			boolean longerParam(@ForAll Long aValue) {
 				return true;
 			}
 
 			@Property
-			boolean doubleParam(@ForAll double anInt) {
+			boolean doubleParam(@ForAll double aValue) {
 				return true;
 			}
 
 			@Property
-			boolean doublerParam(@ForAll Double anInt) {
+			boolean doublerParam(@ForAll Double aValue) {
 				return true;
 			}
 
 			@Property
-			boolean floatParam(@ForAll float anInt) {
+			boolean floatParam(@ForAll float aValue) {
 				return true;
 			}
 
 			@Property
-			boolean floaterParam(@ForAll Float anInt) {
+			boolean floaterParam(@ForAll Float aValue) {
 				return true;
 			}
 
 			@Property
-			boolean booleanParam(@ForAll boolean aBoolean) {
+			boolean booleanParam(@ForAll boolean aValue) {
 				return true;
 			}
 
 			@Property
-			boolean boxedBooleanParam(@ForAll Boolean aBoolean) {
+			boolean boxedBooleanParam(@ForAll Boolean aValue) {
 				return true;
 			}
 
 			@Property
-			boolean enumParam(@ForAll AnEnum oneTwoThree) {
+			boolean enumParam(@ForAll AnEnum aValue) {
 				return true;
 			}
 
 			@Property
-			boolean enumParamWithForAllValue(@ForAll("aValue") AnEnum count) {
+			boolean enumParamWithForAllValue(@ForAll("aValue") AnEnum aValue) {
 				return true;
 			}
 
 			@Property
-			boolean bigIntegerParam(@ForAll BigInteger anInt) {
+			boolean bigIntegerParam(@ForAll BigInteger aValue) {
 				return true;
 			}
 
 			@Property
-			boolean stringParam(@ForAll String aString) {
+			boolean bigDecimalParam(@ForAll BigDecimal aValue) {
 				return true;
 			}
 
 			@Property
-			boolean integerList(@ForAll List<Integer> aList) {
+			boolean stringParam(@ForAll String aValue) {
 				return true;
 			}
 
 			@Property
-			boolean integerArray(@ForAll Integer[] anArray) {
+			boolean integerList(@ForAll List<Integer> aValue) {
 				return true;
 			}
 
 			@Property
-			boolean integerSet(@ForAll Set<Integer> aSet) {
+			boolean integerArray(@ForAll Integer[] aValue) {
 				return true;
 			}
 
 			@Property
-			boolean integerStream(@ForAll Stream<Integer> aStream) {
+			boolean integerSet(@ForAll Set<Integer> aValue) {
 				return true;
 			}
 
 			@Property
-			boolean integerOptional(@ForAll Optional<Integer> anOptional) {
+			boolean integerStream(@ForAll Stream<Integer> aValue) {
+				return true;
+			}
+
+			@Property
+			boolean integerOptional(@ForAll Optional<Integer> aValue) {
 				return true;
 			}
 
