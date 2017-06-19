@@ -49,6 +49,7 @@
   - if generic type is a bounded type
 
 - Arbitraries and Generators
+  - Dates and times (Date, Calendar, etc.)
   - const
   - frequency: pairs of generator and frequency weight
   - oneOf: randomly select one of two generators
