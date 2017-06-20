@@ -51,6 +51,7 @@
 - Arbitraries and Generators
   - Dates and times (Date, Calendar, etc.)
   - const
+  - functions/methods (whose output parameter can be generated)
   - frequency: pairs of generator and frequency weight
   - oneOf: randomly select one of two generators
   - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
