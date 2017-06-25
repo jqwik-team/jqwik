@@ -58,7 +58,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.0.0-M4'
 ext.junitJupiterVersion = '5.0.0-M4'
-ext.jqwikVersion = '0.4.2'
+ext.jqwikVersion = '0.4.3'
 
 dependencies {
     ...
@@ -69,8 +69,8 @@ dependencies {
   // Falsely required by IDEA's Junit 5 support
 	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
-	// jqwik dependency
-	testCompile "com.github.jlink:jqwik:${jqwikVersion}"
+  // jqwik dependency
+  testCompile "com.github.jlink:jqwik:${jqwikVersion}"
 
   // You'll probably need some assertions
   testCompile("org.assertj:assertj-core:3.6.2")
