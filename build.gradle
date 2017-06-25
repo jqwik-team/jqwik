@@ -19,11 +19,11 @@ apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'maven'
 
-group = 'net.jqwik'
+group = 'com.github.jlink'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.1.0-SNAPSHOT'
+	version = '0.4.2'
 }
 
 compileTestJava {
