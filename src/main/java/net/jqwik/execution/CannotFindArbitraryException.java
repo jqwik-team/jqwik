@@ -20,7 +20,7 @@ public class CannotFindArbitraryException extends JqwikException {
 		if (forAllValue.isEmpty())
 			return String.format("Cannot find an Arbitrary for Parameter of type [%s]", genericType);
 		else
-			return String.format("Cannot find an NArbitrary [%s] for Parameter of type [%s]", forAllValue, genericType);
+			return String.format("Cannot find an Arbitrary [%s] for Parameter of type [%s]", forAllValue, genericType);
 	}
 
 	public Parameter getParameter() {
