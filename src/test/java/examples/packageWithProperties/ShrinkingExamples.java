@@ -1,6 +1,7 @@
 package examples.packageWithProperties;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.*;
 
 import java.math.*;
 import java.util.*;
@@ -53,4 +54,15 @@ public class ShrinkingExamples {
 	boolean shrinkArrayToLength2(@ForAll @MaxSize(100) Integer[] anIntArray) {
 		return anIntArray.length < 2;
 	}
+
+	@Property
+	boolean shrinkFilteredStringToB(@ForAll("charsFromAToZ") String aString) {
+		return aString.startsWith("a");
+	}
+
+	@Generate
+	Arbitrary<String> charsFromAToZ() {
+		return Generator.string('a', 'z', 1).filter(s -> !s.isEmpty());
+	}
+
 }

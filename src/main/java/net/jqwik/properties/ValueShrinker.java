@@ -30,7 +30,10 @@ public class ValueShrinker<T> {
 		if (toTry.isEmpty())
 			return allFalsified;
 		Set<ShrinkResult<Shrinkable<T>>> toTryNext = new HashSet<>();
-		toTry.forEach(shrinkResult -> {
+		int minDistance = minDistance(toTry);
+		toTry.stream() //
+				.filter(shrinkResult -> shrinkResult.shrunkValue().distance() == minDistance) //
+				.forEach(shrinkResult -> {
 			Optional<ShrinkResult<Shrinkable<T>>> falsifyResult = SafeFalsifier.falsify(falsifier, shrinkResult.shrunkValue());
 			falsifyResult.ifPresent(result -> {
 				allFalsified.add(result);
@@ -38,6 +41,16 @@ public class ValueShrinker<T> {
 			});
 		});
 		return collectAllFalsified(toTryNext, allFalsified, falsifier);
+	}
+
+	private int minDistance(Set<ShrinkResult<Shrinkable<T>>> toTry) {
+		int minDistance = Integer.MAX_VALUE;
+		for (ShrinkResult<Shrinkable<T>> shrinkResult : toTry) {
+			int distance = shrinkResult.shrunkValue().distance();
+			if (distance < minDistance)
+				minDistance = distance;
+		}
+		return minDistance;
 	}
 
 }

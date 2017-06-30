@@ -35,14 +35,11 @@ public class ContainerShrinkable<T, E> implements Shrinkable<T> {
 																  .filter(optional -> optional.isPresent()) //
 																  .map(optional -> optional.get()) //
 																  .collect(Collectors.toSet());
-		if (!shrunkList.isEmpty()) {
-			return shrunkList;
-		}
-
-		return nextShrinkElements(falsifier) //
-											 .map(shrinkResult -> shrinkResult
+		nextShrinkElements(falsifier) //
+				.map(shrinkResult -> shrinkResult
 						.map(shrunkValue -> (Shrinkable<T>) new ContainerShrinkable<>(shrunkValue, containerCreator))) //
-											 .collect(Collectors.toSet());
+				.forEach(shrunkList::add);
+		return shrunkList;
 	}
 
 	private Stream<ShrinkResult<List<Shrinkable<E>>>> nextShrinkElements(Predicate<T> falsifier) {

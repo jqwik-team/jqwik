@@ -57,7 +57,7 @@ class ContainerShrinkingTests {
 		}
 
 		@Example
-		void shrinkElementsOnly() {
+		void ifSizeCannotBeShrunkShrinkElements() {
 			Shrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4);
 
 			ShrinkResult<Shrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> {
@@ -113,6 +113,16 @@ class ContainerShrinkingTests {
 																   MockFalsifier.falsifyWhen(aString -> aString.length() < 3), null);
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("aab");
 			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(4);
+		}
+
+		@Example
+		void shrinkElementOfFilteredStringAlsoIfSizeCouldBeShrinkedInUnfilteredString() {
+			Shrinkable<String> string = ArbitraryTestHelper.shrinkableString("x");
+			Shrinkable<String> filteredString = new FilteredShrinkable<>(string, aString -> !aString.isEmpty());
+			ShrinkResult<Shrinkable<String>> shrinkResult = shrink(filteredString,
+																   MockFalsifier.falsifyWhen(aString -> aString.startsWith("a")), null);
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("b");
+			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(2);
 		}
 
 		@Example
