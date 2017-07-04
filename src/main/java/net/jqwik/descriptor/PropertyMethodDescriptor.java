@@ -1,20 +1,21 @@
 package net.jqwik.descriptor;
 
-import java.lang.reflect.*;
-
+import net.jqwik.api.*;
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.*;
+import java.lang.reflect.*;
 
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
 
 	private final long seed;
 	private final int tries;
+	private final int maxDiscardRatio;
 
-	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries) {
+	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries, int maxDiscardRatio) {
 		super(uniqueId, propertyMethod, containerClass);
 		this.seed = seed;
 		this.tries = tries;
+		this.maxDiscardRatio = maxDiscardRatio;
 	}
 
 	@Override
@@ -35,5 +36,9 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 
 	public int getTries() {
 		return tries;
+	}
+
+	public int getMaxDiscardRatio() {
+		return maxDiscardRatio;
 	}
 }

@@ -27,20 +27,19 @@
 
 ### Properties
 
-- Evaluate properties in parallel (max tries worker thread per property)
-
-- Make default tries configurable
-- Introduce maxDiscardRatio: How many failed assumptions are allowed per check
-  - Default: 5
-  - Make it configurable
-  - Make it configurable in @Property
-
 - Shrinking
-  - Can be switched off in @Properties annotation. For objects that take long to shrink.
-  - Configurable time limit (100ms default?)
+  - Can be switched off in @Properties annotation. For properties that take very long to shrink.
+  - Time limit (100ms default?) for shrinking
+    - Make it configurable
   - Reporting:
     - collected statistics (similar to ScalaCheck's collect-feature)
   - Make it configurable (default on/off)
+
+- Evaluate properties in parallel (max tries worker thread per property)
+
+- Make maxDiscardRatio configurable
+
+- Make default tries configurable
 
 - @ForAll can take `providerClass` parameter (with or without value param)
 

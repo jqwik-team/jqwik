@@ -1,18 +1,17 @@
 package net.jqwik;
 
-import static net.jqwik.JqwikUniqueIdBuilder.*;
-
-import java.lang.reflect.*;
-import java.util.*;
-
-import org.junit.platform.commons.support.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.descriptor.*;
-
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.*;
 import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.descriptor.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+
+import static net.jqwik.JqwikUniqueIdBuilder.*;
 
 /**
  * For testing purposes
@@ -92,7 +91,7 @@ public class TestDescriptorBuilder {
 			if (property.isPresent()) {
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), property.get().seed(),
-						property.get().tries());
+						property.get().tries(), property.get().maxDiscardRatio());
 			}
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());

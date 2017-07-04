@@ -1,16 +1,15 @@
 package net.jqwik.discovery;
 
-import java.lang.reflect.*;
-import java.util.*;
-
-import org.junit.platform.commons.support.*;
-import org.junit.platform.engine.*;
-
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.specs.*;
 import net.jqwik.recording.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
+
+import java.lang.reflect.*;
+import java.util.*;
 
 class PropertyMethodResolver implements ElementResolver {
 
@@ -80,7 +79,7 @@ class PropertyMethodResolver implements ElementResolver {
 			return new JqwikException(message);
 		});
 		long seed = determineSeed(uniqueId, property.seed());
-		return new PropertyMethodDescriptor(uniqueId, method, testClass, seed, property.tries());
+		return new PropertyMethodDescriptor(uniqueId, method, testClass, seed, property.tries(), property.maxDiscardRatio());
 	}
 
 	private long determineSeed(UniqueId uniqueId, long seedFromProperty) {

@@ -19,7 +19,7 @@ public class GenericProperty {
 		this.forAllPredicate = forAllPredicate;
 	}
 
-	public PropertyCheckResult check(int tries, long seed) {
+	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed) {
 		Random random = new Random(seed);
 		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
@@ -42,9 +42,14 @@ public class GenericProperty {
 				return PropertyCheckResult.erroneous(name, countTries, countChecks, seed, extractParams(shrinkableParams), throwable);
 			}
 		}
-		if (countChecks == 0)
-			return PropertyCheckResult.exhausted(name, maxTries, seed);
+		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, maxTries, maxDiscardRatio))
+			return PropertyCheckResult.exhausted(name, maxTries, countChecks, seed);
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
+	}
+
+	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {
+		int actualDiscardRatio = (countTries - countChecks) / countChecks;
+		return actualDiscardRatio > maxDiscardRatio;
 	}
 
 	private List<Object> extractParams(List<Shrinkable> shrinkableParams) {

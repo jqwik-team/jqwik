@@ -1,16 +1,15 @@
 package net.jqwik.execution;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-
-import org.junit.platform.commons.support.*;
-
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 public class CheckedPropertyFactory {
 
@@ -21,12 +20,13 @@ public class CheckedPropertyFactory {
 
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		int tries = propertyMethodDescriptor.getTries();
+		int maxDiscardRatio = propertyMethodDescriptor.getMaxDiscardRatio();
 		long randomSeed = propertyMethodDescriptor.getSeed();
 
 		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
-		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, randomSeed);
+		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed);
 	}
 
 	private CheckedFunction createForAllPredicate(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

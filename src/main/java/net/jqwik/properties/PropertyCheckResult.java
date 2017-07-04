@@ -23,7 +23,7 @@ public interface PropertyCheckResult {
 	int countTries();
 
 	/**
-	 * The number of times a property has been actually been evaluated not counting the tries that were rejected by a
+	 * The number of times a property has actually been evaluated not counting the tries that were rejected by a
 	 * precondition aka assumption
 	 */
 	int countChecks();
@@ -148,11 +148,12 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult exhausted(String propertyName, int tries, long randomSeed) {
-		return new ResultBase(Status.EXHAUSTED, propertyName, tries, 0, randomSeed) {
+	static PropertyCheckResult exhausted(String propertyName, int tries, int checks, long randomSeed) {
+		return new ResultBase(Status.EXHAUSTED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public String toString() {
-				return String.format("Property [%s] exhausted after [%d] tries", propertyName, tries);
+				int rejections = tries - checks;
+				return String.format("Property [%s] exhausted after [%d] tries and [%d] rejections", propertyName, tries, rejections);
 			}
 		};
 	}

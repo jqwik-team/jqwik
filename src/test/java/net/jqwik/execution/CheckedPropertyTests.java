@@ -18,23 +18,25 @@ class CheckedPropertyTests {
 	@Group
 	class CheckedPropertyCreation {
 		@Example
-		void createCheckedPropertyWithoutTriesParameter() throws NoSuchMethodException {
+		void createCheckedPropertyWithoutParameters() throws NoSuchMethodException {
 			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
-				.forMethod(BooleanReturningExamples.class, "propertyWithoutTries", int.class).build();
+				.forMethod(BooleanReturningExamples.class, "propertyWithoutParameters", int.class).build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
-			assertThat(checkedProperty.getTries()).isEqualTo(1000);
+			assertThat(checkedProperty.tries).isEqualTo(Property.DEFAULT_TRIES);
+			assertThat(checkedProperty.maxDiscardRatio).isEqualTo(Property.DEFAULT_MAX_DISCARD_RATIO);
 		}
 
 		@Example
 		void createCheckedPropertyWithTriesParameter() throws NoSuchMethodException {
 			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
-				.forMethod(BooleanReturningExamples.class, "propertyWith42Tries", int.class).build();
+				.forMethod(BooleanReturningExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class).build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
-			assertThat(checkedProperty.getTries()).isEqualTo(42);
+			assertThat(checkedProperty.tries).isEqualTo(42);
+			assertThat(checkedProperty.maxDiscardRatio).isEqualTo(2);
 		}
 	}
 
@@ -93,7 +95,7 @@ class CheckedPropertyTests {
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
 			List<Parameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false,
-				parameters, p -> Optional.empty(), 100, 1000L);
+				parameters, p -> Optional.empty(), 100, 5, 1000L);
 
 			PropertyCheckResult check = checkedProperty.check();
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -106,7 +108,7 @@ class CheckedPropertyTests {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 10, 42L);
+				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 10, 5, 42L);
 
 			PropertyCheckResult check = checkedProperty.check();
 			assertThat(check.randomSeed()).isEqualTo(42L);
@@ -120,7 +122,7 @@ class CheckedPropertyTests {
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
-			p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 1000L);
+			p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 5, 1000L);
 		PropertyCheckResult check = checkedProperty.check();
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
@@ -132,12 +134,12 @@ class CheckedPropertyTests {
 	private static class BooleanReturningExamples {
 
 		@Property
-		public boolean propertyWithoutTries(@ForAll int anyNumber) {
+		public boolean propertyWithoutParameters(@ForAll int anyNumber) {
 			return true;
 		}
 
-		@Property(tries = 42)
-		public boolean propertyWith42Tries(@ForAll int anyNumber) {
+		@Property(tries = 42, maxDiscardRatio = 2)
+		public boolean propertyWith42TriesAndMaxDiscardRatio2(@ForAll int anyNumber) {
 			return true;
 		}
 

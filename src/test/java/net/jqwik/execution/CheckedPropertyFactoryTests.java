@@ -16,7 +16,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void simple() {
-		PropertyMethodDescriptor descriptor = createDescriptor("prop", 42L, 11);
+		PropertyMethodDescriptor descriptor = createDescriptor("prop", 42L, 11, 4);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.propertyName).isEqualTo("prop");
@@ -32,11 +32,12 @@ public class CheckedPropertyFactoryTests {
 
 		assertThat(property.randomSeed).isEqualTo(42);
 		assertThat(property.tries).isEqualTo(11);
+		assertThat(property.maxDiscardRatio).isEqualTo(4);
 	}
 
 	@Example
 	void withUnboundParams() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", 42L, 11);
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", 42L, 11, 5);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
@@ -48,7 +49,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void withNoParamsAndVoidResult() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", 42L, 11);
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", 42L, 11, 5);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(0);
@@ -57,10 +58,10 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(noArgs)).isTrue();
 	}
 
-	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries) {
+	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries, int maxDiscardRatio) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries);
+		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio);
 	}
 
 	private static class PropertyExamples {

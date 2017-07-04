@@ -1,12 +1,14 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
-import java.util.function.*;
-
 import net.jqwik.api.*;
 
+import java.util.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+@Group
 class GenericPropertyTests {
 
 	@Group
@@ -22,7 +24,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(2, 42L);
+			PropertyCheckResult result = property.check(2, 5, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(2);
 
@@ -45,7 +47,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(10, 41L);
+			PropertyCheckResult result = property.check(10, 5, 41L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry); // Shrinking adds one call
 
@@ -71,7 +73,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(10, 41L);
+			PropertyCheckResult result = property.check(10, 5, 41L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(1);
 
@@ -102,7 +104,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(10, 42L);
+			PropertyCheckResult result = property.check(10, 5, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
 
@@ -115,7 +117,7 @@ class GenericPropertyTests {
 		}
 
 		@Example
-		void exhausted() {
+		void exhaustedWithAllTriesDiscarded() {
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
 				Assumptions.assumeThat(false);
 				return true;
@@ -125,7 +127,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(10, 42L);
+			PropertyCheckResult result = property.check(10, 5, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
 
@@ -135,6 +137,27 @@ class GenericPropertyTests {
 			assertThat(result.randomSeed()).isEqualTo(42L);
 			assertThat(result.throwable()).isNotPresent();
 			assertThat(result.sample()).isNotPresent();
+		}
+
+		@Example
+		void exhaustedWithMaxDiscardRatioExceeded() {
+			int maxDiscardRatio = 2; // Max 2 discards per 1 non-discard
+			final AtomicInteger counter = new AtomicInteger(0);
+			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
+				if (counter.incrementAndGet() % 4 != 0) // 3 of 4 are discarded
+					Assumptions.assumeThat(false);
+				return true;
+			}, exactlyOneInteger);
+
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			List<Arbitrary> arbitraries = arbitraries(arbitrary);
+
+			GenericProperty property = new GenericProperty("exhausted property", arbitraries, forAllFunction);
+			PropertyCheckResult result = property.check(20, maxDiscardRatio, 42L);
+
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.EXHAUSTED);
+			assertThat(result.countTries()).isEqualTo(20);
+			assertThat(result.countChecks()).isEqualTo(5);
 		}
 
 		@Example
@@ -152,7 +175,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("erroneous property", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(10, 42L);
+			PropertyCheckResult result = property.check(10, 5, 42L);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(erroneousTry);
 
@@ -175,7 +198,7 @@ class GenericPropertyTests {
 			CheckedFunction checkedFunction = params -> ((int) params.get(0)) < 5;
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, checkedFunction);
-			PropertyCheckResult result = property.check(10, 41L);
+			PropertyCheckResult result = property.check(10, 5, 41L);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
@@ -196,7 +219,7 @@ class GenericPropertyTests {
 			};
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries(), forAllFunction);
-			PropertyCheckResult result = property.check(2, 42L);
+			PropertyCheckResult result = property.check(2, 5, 42L);
 
 			assertThat(result.propertyName()).isEqualTo("satisfied property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
@@ -215,7 +238,7 @@ class GenericPropertyTests {
 			};
 
 			GenericProperty property = new GenericProperty("failing property", arbitraries(), forAllFunction);
-			PropertyCheckResult result = property.check(2, 42L);
+			PropertyCheckResult result = property.check(2, 5, 42L);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
@@ -236,7 +259,7 @@ class GenericPropertyTests {
 			};
 
 			GenericProperty property = new GenericProperty("failing property", arbitraries(), forAllFunction);
-			PropertyCheckResult result = property.check(2, 42L);
+			PropertyCheckResult result = property.check(2, 5, 42L);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -271,7 +294,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary1, arbitrary2);
 
 			GenericProperty property = new GenericProperty("property with 2", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(5, 4242L);
+			PropertyCheckResult result = property.check(5, 5, 4242L);
 
 			assertThat(result.propertyName()).isEqualTo("property with 2");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
@@ -298,7 +321,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary1, arbitrary2, arbitrary3, arbitrary4);
 
 			GenericProperty property = new GenericProperty( "property with 4", arbitraries, forAllFunction);
-			PropertyCheckResult result = property.check(10, 4141L);
+			PropertyCheckResult result = property.check(10, 5, 4141L);
 
 			assertThat(result.propertyName()).isEqualTo("property with 4");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
