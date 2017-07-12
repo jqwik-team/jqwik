@@ -13,18 +13,18 @@ repositories {
 	//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
-ext.junitPlatformVersion = '1.0.0-M4'
+ext.junitPlatformVersion = '1.0.0-M5'
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'maven'
 
 group = 'com.github.jlink'
-version = '0.4.3'
+version = '0.5.0'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.4.3'
+	version = '0.5.0'
 }
 
 compileTestJava {
@@ -37,8 +37,7 @@ junitPlatform {
 	//	platformVersion "${junitPlatformVersion}"
 	filters {
 		engines {
-			// exclude "junit-jupiter"
-			// exclude "jqwik"
+			exclude "junit-jupiter"
 		}
 		packages {
 			// include 'examples.packageWithFailings'
@@ -58,7 +57,7 @@ dependencies {
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
 	// Only necessary to enable IntelliJ support
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M5")
 }
 
 task wrapper(type: Wrapper) {

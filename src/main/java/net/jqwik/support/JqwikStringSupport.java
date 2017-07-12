@@ -1,13 +1,13 @@
 package net.jqwik.support;
 
-import org.junit.platform.commons.util.*;
-
 import java.util.*;
 import java.util.stream.*;
 
+import org.junit.platform.commons.util.*;
+
 public class JqwikStringSupport {
-	public static String nullSafeToString(Class<?>... classes) {
-		return StringUtils.nullSafeToString(classes);
+	public static String parameterTypesToString(Class<?>... classes) {
+		return ClassUtils.nullSafeToString(classes);
 	}
 
 	public static String displayString(Object object) {

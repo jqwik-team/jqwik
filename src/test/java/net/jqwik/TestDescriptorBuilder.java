@@ -23,7 +23,7 @@ public class TestDescriptorBuilder {
 		Optional<Method> optionalMethod = JqwikReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
 		if (!optionalMethod.isPresent())
 			throw new JqwikException(String.format("Class [%s] has no method with name [%s] and parameters [%s]", containerClass,
-					methodName, JqwikStringSupport.nullSafeToString(parameterTypes)));
+					methodName, JqwikStringSupport.parameterTypesToString(parameterTypes)));
 		return new TestDescriptorBuilder(optionalMethod.get());
 	}
 

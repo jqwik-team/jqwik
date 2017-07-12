@@ -5,8 +5,6 @@ import java.io.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
-import net.jqwik.discovery.*;
-
 public class TestRun implements Serializable {
 	public static final TestRun NULL = new TestRun(UniqueId.root("no", "value"), Status.FAILED, 0L);
 
@@ -15,12 +13,12 @@ public class TestRun implements Serializable {
 	private final long randomSeed;
 
 	public TestRun(UniqueId uniqueId, Status status, long randomSeed) {
-		this.uniqueIdString = JqwikUniqueIDs.toString(uniqueId);
+		this.uniqueIdString = uniqueId.toString();
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
 	}
 	public UniqueId getUniqueId() {
-		return JqwikUniqueIDs.parse(uniqueIdString);
+		return UniqueId.parse(uniqueIdString);
 	}
 
 	public Status getStatus() {

@@ -3,7 +3,6 @@ package net.jqwik.discovery;
 import java.lang.reflect.*;
 import java.util.*;
 
-import net.jqwik.recording.*;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
@@ -11,6 +10,7 @@ import org.junit.platform.engine.TestExecutionResult.*;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.recording.*;
 
 @Group
 class PropertyMethodResolverTest {
@@ -22,19 +22,32 @@ class PropertyMethodResolverTest {
 	class ResolveElement {
 		@Example
 		void plainProperty() throws NoSuchMethodException {
-			String methodName = "plainProperty";
 			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(TestContainer.class)
 					.build();
-			Method method = TestHelper.getMethod(TestContainer.class, methodName);
+			Method method = TestHelper.getMethod(TestContainer.class, "plainProperty");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			Assertions.assertThat(descriptors).hasSize(1);
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
 			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(Property.DEFAULT_SEED);
 			Assertions.assertThat(propertyMethodDescriptor.getTries()).isEqualTo(Property.DEFAULT_TRIES);
-			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo(methodName);
+			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
 			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
 					.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
+		}
+
+		@Example
+		void propertyWithParams() throws NoSuchMethodException {
+			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(TestContainer.class)
+					.build();
+			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithParams");
+			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
+
+			Assertions.assertThat(descriptors).hasSize(1);
+			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("propertyWithParams");
+			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
+					.isEqualTo(classDescriptor.getUniqueId().append("property","propertyWithParams(int, java.lang.String)"));
 		}
 
 		@Example
@@ -95,11 +108,29 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
 		}
 
+		@Example
+		void propertyWithParams() throws NoSuchMethodException {
+			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithParams");
+			UniqueId uniqueId = JqwikUniqueIDs.appendProperty(UniqueId.forEngine(JqwikTestEngine.ENGINE_ID), method);
+			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(TestContainer.class)
+					.build();
+
+			Optional<TestDescriptor> descriptor = resolver.resolveUniqueId(uniqueId.getSegments().get(1), classDescriptor);
+
+			Assertions.assertThat(descriptor).isPresent();
+			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptor.get();
+			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("propertyWithParams");
+		}
+
 	}
 
 	private static class TestContainer {
 		@Property
 		void plainProperty() {
+		}
+
+		@Property
+		void propertyWithParams(int anInt, String aString) {
 		}
 
 		@Property

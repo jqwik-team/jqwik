@@ -24,12 +24,6 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 		return Type.TEST;
 	}
 
-	@Override
-	//TODO: Remove as soon as https://github.com/junit-team/junit5/issues/756 has been fixed
-	public boolean hasTests() {
-		return true;
-	}
-
 	public long getSeed() {
 		return seed;
 	}

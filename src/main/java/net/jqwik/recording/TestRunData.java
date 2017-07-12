@@ -1,10 +1,11 @@
 package net.jqwik.recording;
 
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestExecutionResult.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import org.junit.platform.commons.util.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestExecutionResult.*;
 
 public class TestRunData {
 
@@ -23,7 +24,17 @@ public class TestRunData {
 	}
 
 	public Optional<TestRun> byUniqueId(UniqueId uniqueId) {
-		return data.stream().filter(testRun -> testRun.getUniqueId().equals(uniqueId)).findFirst();
+		try {
+			return data.stream() //
+					.filter(testRun -> testRun.getUniqueId().equals(uniqueId)) //
+					.findFirst();
+		} catch (Throwable t) {
+			// An exception during test run data read should not stop the test run.
+			// Most of the time it's an error due to format change which will go away
+			// after one test run where the test run data has been written anew.
+			BlacklistedExceptions.rethrowIfBlacklisted(t);
+			return Optional.empty();
+		}
 	}
 
 	public Stream<TestRun> allNonSuccessfulTests() {
