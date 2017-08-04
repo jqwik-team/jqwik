@@ -26,7 +26,6 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 20)
-	// Shrinking will take a long time here
 	boolean aPersonIsNeverYoungerThan1(@ForAll Person aPerson) {
 		System.out.println(aPerson);
 		return aPerson.getAge() > 0;
