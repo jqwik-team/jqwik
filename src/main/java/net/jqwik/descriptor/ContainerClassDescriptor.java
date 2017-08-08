@@ -1,11 +1,10 @@
 package net.jqwik.descriptor;
 
-import java.util.function.*;
-
+import net.jqwik.discovery.predicates.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
-import net.jqwik.discovery.predicates.*;
+import java.util.function.*;
 
 public class ContainerClassDescriptor extends AbstractTestDescriptor {
 
@@ -16,10 +15,9 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	private final boolean isGroup;
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
-		super(uniqueId, determineDisplayName(containerClass));
+		super(uniqueId, determineDisplayName(containerClass), new ClassSource(containerClass));
 		this.containerClass = containerClass;
 		this.isGroup = isGroup;
-		setSource(new ClassSource(containerClass));
 	}
 
 	private static String determineDisplayName(Class<?> containerClass) {

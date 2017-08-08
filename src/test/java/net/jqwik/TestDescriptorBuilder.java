@@ -20,7 +20,7 @@ public class TestDescriptorBuilder {
 
 	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes)
 			throws NoSuchMethodException {
-		Optional<Method> optionalMethod = JqwikReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
+		Optional<Method> optionalMethod = ReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
 		if (!optionalMethod.isPresent())
 			throw new JqwikException(String.format("Class [%s] has no method with name [%s] and parameters [%s]", containerClass,
 					methodName, JqwikStringSupport.parameterTypesToString(parameterTypes)));
@@ -48,9 +48,7 @@ public class TestDescriptorBuilder {
 	}
 
 	public TestDescriptorBuilder with(TestDescriptorBuilder... children) {
-		for (TestDescriptorBuilder child : children) {
-			this.children.add(child);
-		}
+		Collections.addAll(this.children, children);
 		return this;
 	}
 

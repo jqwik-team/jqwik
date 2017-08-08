@@ -1,6 +1,7 @@
 package net.jqwik.discovery;
 
 import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.UniqueId.*;
 
@@ -37,7 +38,7 @@ public class JqwikUniqueIDs {
 
 		String methodName = matcher.group(1);
 		String parameterTypeNames = matcher.group(2);
-		return JqwikReflectionSupport.findMethod(clazz, methodName, parameterTypeNames);
+		return ReflectionSupport.findMethod(clazz, methodName, parameterTypeNames);
 	}
 
 	private static UniqueId appendMethodSegment(UniqueId uniqueId, Method method, String segmentType) {

@@ -4,7 +4,6 @@ import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.providers.*;
 import net.jqwik.properties.*;
-import net.jqwik.support.*;
 import org.junit.platform.commons.support.*;
 
 import java.lang.annotation.*;
@@ -13,7 +12,7 @@ import java.util.*;
 import java.util.function.*;
 
 import static net.jqwik.execution.providers.DefaultArbitraryProviders.*;
-import static net.jqwik.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
@@ -47,15 +46,16 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	@Override
 	public Optional<Arbitrary<Object>> forParameter(Parameter parameter) {
 		Optional<ForAll> forAllAnnotation = AnnotationSupport.findAnnotation(parameter, ForAll.class);
-		if (!forAllAnnotation.isPresent())
+		if (!forAllAnnotation.isPresent()) {
 			return Optional.empty();
+		}
 
 		String generatorName = forAllAnnotation.get().value();
 		GenericType genericType = new GenericType(parameter);
 		Arbitrary<?> arbitrary = forType(genericType, generatorName, parameter.getDeclaredAnnotations());
-		if (arbitrary == null)
+		if (arbitrary == null) {
 			return Optional.empty();
-		else {
+		} else {
 			Arbitrary<Object> genericArbitrary = new GenericArbitrary(arbitrary);
 			return Optional.of(genericArbitrary);
 		}
@@ -65,7 +65,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		Arrays.stream(annotations).forEach(annotation -> {
 			try {
 				Method configureMethod = objectArbitrary.inner().getClass().getMethod(CONFIG_METHOD_NAME, annotation.annotationType());
-				JqwikReflectionSupport.invokeMethod(configureMethod, objectArbitrary.inner(), annotation);
+				invokeMethod(configureMethod, objectArbitrary.inner(), annotation);
 			} catch (NoSuchMethodException ignore) {
 			}
 		});
@@ -73,8 +73,9 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	private Arbitrary<?> forType(GenericType genericType, String generatorName, Annotation[] annotations) {
 		Arbitrary<?> arbitrary = createForType(genericType, generatorName, annotations);
-		if (arbitrary != null)
+		if (arbitrary != null) {
 			configureArbitrary(arbitrary, annotations);
+		}
 		return arbitrary;
 	}
 
@@ -85,54 +86,58 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		}
 
 		Arbitrary<?> defaultArbitrary = findDefaultArbitrary(genericType, generatorName, annotations);
-		if (defaultArbitrary != null)
+		if (defaultArbitrary != null) {
 			return defaultArbitrary;
-
-		if (!generatorName.isEmpty())
+		}
+		if (!generatorName.isEmpty()) {
 			return null;
+		}
 
 		return findFirstFitArbitrary(genericType);
 	}
 
 	private Optional<Method> findArbitraryCreatorByName(GenericType genericType, String generatorToFind) {
-		if (generatorToFind.isEmpty())
-			return Optional.empty();
-		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType),
-				HierarchyTraversalMode.BOTTOM_UP);
+		if (generatorToFind.isEmpty()) return Optional.empty();
+		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType), HierarchyTraversalMode.BOTTOM_UP);
 		return creators.stream().filter(generatorMethod -> {
 			Generate generateAnnotation = generatorMethod.getDeclaredAnnotation(Generate.class);
 			String generatorName = generateAnnotation.value();
-			if (generatorName.isEmpty())
+			if (generatorName.isEmpty()) {
 				generatorName = generatorMethod.getName();
+			}
 			return generatorName.equals(generatorToFind);
 		}).findFirst();
 	}
 
 	private Arbitrary<?> findFirstFitArbitrary(GenericType genericType) {
 		Optional<Method> optionalCreator = findArbitraryCreator(genericType);
-		if (optionalCreator.isPresent())
+		if (optionalCreator.isPresent()) {
 			return (Arbitrary<?>) invokeMethod(optionalCreator.get(), testInstance);
-		else
+		} else {
 			return null;
+		}
 	}
 
 	private Optional<Method> findArbitraryCreator(GenericType genericType) {
-		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType),
-				HierarchyTraversalMode.BOTTOM_UP);
-		if (creators.size() > 1)
+		List<Method> creators = ReflectionSupport.findMethods(descriptor.getContainerClass(), isCreatorForType(genericType), HierarchyTraversalMode.BOTTOM_UP);
+		if (creators.size() > 1) {
 			throw new AmbiguousArbitraryException(genericType, creators);
+		}
 		return creators.stream().findFirst();
 	}
 
 	private Predicate<Method> isCreatorForType(GenericType genericType) {
 		return method -> {
-			if (!method.isAnnotationPresent(Generate.class))
+			if (!method.isAnnotationPresent(Generate.class)) {
 				return false;
+			}
 			GenericType arbitraryReturnType = new GenericType(method.getAnnotatedReturnType().getType());
-			if (!arbitraryReturnType.getRawType().equals(Arbitrary.class))
+			if (!arbitraryReturnType.getRawType().equals(Arbitrary.class)) {
 				return false;
-			if (!arbitraryReturnType.isGeneric())
+			}
+			if (!arbitraryReturnType.isGeneric()) {
 				return false;
+			}
 			return genericType.isAssignableFrom(arbitraryReturnType.getTypeArguments()[0]);
 		};
 	}
@@ -142,10 +147,12 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 		for (ArbitraryProvider provider : DefaultArbitraryProviders.getProviders()) {
 			boolean generatorNameSpecified = !generatorName.isEmpty();
-			if (generatorNameSpecified && !provider.needsSubtypeProvider())
+			if (generatorNameSpecified && !provider.needsSubtypeProvider()) {
 				continue;
-			if (provider.needsSubtypeProvider() && !(parameterType.isGeneric() || parameterType.isArray()))
+			}
+			if (provider.needsSubtypeProvider() && !(parameterType.isGeneric() || parameterType.isArray())) {
 				continue;
+			}
 			if (provider.canProvideFor(parameterType)) {
 				return provider.provideFor(parameterType, subtypeProvider);
 			}

@@ -1,7 +1,6 @@
 package net.jqwik.discovery.predicates;
 
 import net.jqwik.discovery.specs.*;
-import net.jqwik.support.*;
 import org.junit.platform.commons.support.*;
 
 import java.lang.reflect.*;
@@ -28,7 +27,7 @@ public class IsTestContainer implements Predicate<Class<?>> {
 	}
 
 	private boolean hasGroups(Class<?> candidate) {
-		return !JqwikReflectionSupport.findNestedClasses(candidate, isGroup).isEmpty();
+		return !ReflectionSupport.findNestedClasses(candidate, isGroup).isEmpty();
 	}
 
 }

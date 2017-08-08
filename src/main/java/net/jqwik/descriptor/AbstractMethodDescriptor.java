@@ -11,10 +11,9 @@ public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor im
 	private final Class containerClass;
 
 	public AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class containerClass) {
-		super(uniqueId, determineDisplayName(targetMethod));
+		super(uniqueId, determineDisplayName(targetMethod), new MethodSource(targetMethod));
 		this.containerClass = containerClass;
 		this.targetMethod = targetMethod;
-		setSource(new MethodSource(this.targetMethod));
 	}
 
 	protected static String determineDisplayName(Method targetMethod) {

@@ -2,7 +2,7 @@ package net.jqwik.discovery;
 
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.specs.*;
-import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 
 import java.lang.reflect.*;
@@ -33,7 +33,7 @@ public abstract class AbstractClassResolver implements ElementResolver {
 
 		String className = segment.getValue();
 
-		Optional<Class<?>> optionalContainerClass = JqwikReflectionSupport.loadClass(className);
+		Optional<Class<?>> optionalContainerClass = ReflectionSupport.loadClass(className);
 		if (!optionalContainerClass.isPresent())
 			return Optional.empty();
 

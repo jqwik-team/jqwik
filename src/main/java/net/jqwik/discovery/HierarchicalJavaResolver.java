@@ -2,7 +2,6 @@ package net.jqwik.discovery;
 
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.predicates.*;
-import net.jqwik.support.*;
 import org.junit.platform.engine.*;
 
 import java.lang.reflect.*;
@@ -55,7 +54,7 @@ class HierarchicalJavaResolver {
 	}
 
 	void resolveUniqueId(UniqueId uniqueId) {
-		List<UniqueId.Segment> segments = uniqueId.getSegments();
+		List<UniqueId.Segment> segments = new ArrayList<>(uniqueId.getSegments());
 		segments.remove(0); // Ignore engine unique ID
 
 		if (!resolveUniqueId(this.engineDescriptor, segments)) {
@@ -113,7 +112,7 @@ class HierarchicalJavaResolver {
 
 	private void resolveContainedGroups(ContainerClassDescriptor containerClassDescriptor, Class<?> containerClass) {
 		Predicate<Class<?>> isGroup = new IsContainerAGroup();
-		List<Class<?>> containedContainersCandidates = JqwikReflectionSupport.findNestedClasses(containerClass, isGroup);
+		List<Class<?>> containedContainersCandidates = findNestedClasses(containerClass, isGroup);
 		containedContainersCandidates
 			.forEach(nestedClass -> resolveContainerWithChildren(nestedClass, Collections.singleton(containerClassDescriptor)));
 	}

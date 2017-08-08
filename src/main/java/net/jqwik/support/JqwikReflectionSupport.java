@@ -1,42 +1,17 @@
 package net.jqwik.support;
 
+import net.jqwik.discovery.predicates.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.commons.util.*;
+
 import java.lang.reflect.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
-
-import org.junit.platform.commons.util.*;
-
-import net.jqwik.discovery.predicates.*;
 
 public class JqwikReflectionSupport {
 
 	private final static IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
-
-	public static Optional<Class<?>> loadClass(String name) {
-		return ReflectionUtils.loadClass(name);
-	}
-
-	public static Optional<Method> findMethod(Class<?> clazz, String methodName, String parameterTypeNames) {
-		return ReflectionUtils.findMethod(clazz, methodName, parameterTypeNames);
-	}
-
-	public static Optional<Method> findMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
-		return ReflectionUtils.findMethod(clazz, methodName, parameterTypes);
-	}
-
-	public static <T> T newInstance(Class<T> clazz, Object... args) {
-		return ReflectionUtils.newInstance(clazz, args);
-	}
-
-	public static Object invokeMethod(Method method, Object target, Object... args) {
-		return ReflectionUtils.invokeMethod(method, target, args);
-	}
-
-	public static List<Class<?>> findNestedClasses(Class<?> clazz, Predicate<Class<?>> predicate) {
-		return ReflectionUtils.findNestedClasses(clazz, predicate);
-	}
 
 	public static Stream<Object> streamInnerInstances(Object inner) {
 		return addInstances(inner, new ArrayList<>()).stream();
@@ -77,10 +52,10 @@ public class JqwikReflectionSupport {
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
 		if (isTopLevelClass.test(clazz) || JqwikReflectionSupport.isStatic(clazz))
-			return JqwikReflectionSupport.newInstance(clazz);
+			return ReflectionSupport.newInstance(clazz);
 		else {
 			Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
-			return JqwikReflectionSupport.newInstance(clazz, parentInstance);
+			return ReflectionSupport.newInstance(clazz, parentInstance);
 		}
 	}
 

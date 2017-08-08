@@ -1,6 +1,6 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 
 import java.util.*;
 
@@ -14,8 +14,9 @@ public class DefaultArbitraryProviders {
 	}
 
 	public static void register(Class<? extends ArbitraryProvider> providerClass) {
-		if (noSuchProviderYet(providerClass))
-			defaultProviders.add(0, JqwikReflectionSupport.newInstance(providerClass));
+		if (noSuchProviderYet(providerClass)) {
+			defaultProviders.add(0, ReflectionSupport.newInstance(providerClass));
+		}
 	}
 
 	private static boolean noSuchProviderYet(Class<? extends ArbitraryProvider> providerClass) {
