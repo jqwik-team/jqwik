@@ -56,9 +56,9 @@ repositories {
   ...
 }
 
-ext.junitPlatformVersion = '1.0.0-M4'
-ext.junitJupiterVersion = '5.0.0-M4'
-ext.jqwikVersion = '0.4.3'
+ext.junitPlatformVersion = '1.0.0-RC2'
+ext.junitJupiterVersion = '5.0.0-RC2'
+ext.jqwikVersion = '0.4.4'
 
 dependencies {
     ...
@@ -67,7 +67,7 @@ dependencies {
   testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
   // Falsely required by IDEA's Junit 5 support
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+  testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
   // jqwik dependency
   testCompile "com.github.jlink:jqwik:${jqwikVersion}"
