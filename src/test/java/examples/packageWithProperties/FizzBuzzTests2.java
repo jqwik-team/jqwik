@@ -5,7 +5,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
-public class FizzBuzzTests {
+public class FizzBuzzTests2 {
 
 	@Property
 	boolean every_third_element_starts_with_Fizz(@ForAll("divisibleBy3") int i) {

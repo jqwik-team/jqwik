@@ -11,7 +11,7 @@ import java.util.*;
 import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 
 class SimplePropertiesExecutionTests {
 

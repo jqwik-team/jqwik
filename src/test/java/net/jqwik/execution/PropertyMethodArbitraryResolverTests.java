@@ -1,20 +1,21 @@
 package net.jqwik.execution;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.support.*;
-import org.assertj.core.data.*;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static org.assertj.core.api.Assertions.*;
+import org.assertj.core.data.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.support.*;
 
 @Group
 public class PropertyMethodArbitraryResolverTests {
@@ -94,7 +95,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void streams() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerStream", Stream.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerStream");
-			Stream actualStream = (Stream) generateObject(provider, parameter);
+			Stream<?> actualStream = (Stream<?>) generateObject(provider, parameter);
 			actualStream.forEach(o -> assertThat(o).isInstanceOf(Integer.class));
 		}
 
@@ -110,8 +111,9 @@ public class PropertyMethodArbitraryResolverTests {
 		void optionals() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerOptional");
-			Optional actualOptional = (Optional) generateObject(provider, parameter);
-			assertThat(actualOptional.orElseGet(() -> Integer.MAX_VALUE)).isInstanceOf(Integer.class);
+			@SuppressWarnings("unchecked")
+			Optional<Object> actualOptional = (Optional<Object>) generateObject(provider, parameter);
+			assertThat(actualOptional.orElse(Integer.MAX_VALUE)).isInstanceOf(Integer.class);
 		}
 
 		@Example
@@ -423,6 +425,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends Collection> T generateCollection(PropertyMethodArbitraryResolver provider, Parameter parameter) {
 		Object actual = generateObject(provider, parameter);
 		T actualCollection = (T) actual;
@@ -436,7 +439,7 @@ public class PropertyMethodArbitraryResolverTests {
 		return TestHelper.generate(provider.forParameter(parameter).get());
 	}
 
-	private static PropertyMethodArbitraryResolver getProvider(Class container, String methodName, Class<?>... parameterTypes)
+	private static PropertyMethodArbitraryResolver getProvider(Class<?> container, String methodName, Class<?>... parameterTypes)
 		throws NoSuchMethodException, IllegalAccessException, InstantiationException {
 		PropertyMethodDescriptor descriptor = getDescriptor(container, methodName, parameterTypes);
 		return new PropertyMethodArbitraryResolver(descriptor, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));

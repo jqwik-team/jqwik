@@ -1,10 +1,10 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.arbitraries.*;
-
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+
+import net.jqwik.properties.arbitraries.*;
 
 public interface RandomGenerator<T> {
 
@@ -30,6 +30,7 @@ public interface RandomGenerator<T> {
 		};
 	};
 
+	@SuppressWarnings("unchecked")
 	default RandomGenerator<T> withSamples(Shrinkable<T>... samples) {
 		return withSamples(Arrays.asList(samples));
 	}

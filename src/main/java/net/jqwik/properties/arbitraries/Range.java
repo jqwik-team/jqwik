@@ -1,5 +1,6 @@
 package net.jqwik.properties.arbitraries;
 
+@SuppressWarnings("unchecked")
 public class Range<T extends Comparable> {
 
 	public static <T extends Comparable> Range<T> of(T left, T right) {

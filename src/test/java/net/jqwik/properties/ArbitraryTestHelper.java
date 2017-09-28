@@ -41,6 +41,7 @@ class ArbitraryTestHelper {
 		shrink.forEach(next -> collectShrinkResults(shrinker, next, collector));
 	}
 
+	@SafeVarargs
 	public static <T> void assertGenerated(RandomGenerator<T> generator, T... expectedValues) {
 		Random random = new Random();
 

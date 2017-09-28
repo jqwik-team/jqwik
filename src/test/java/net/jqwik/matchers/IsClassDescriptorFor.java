@@ -1,11 +1,10 @@
 package net.jqwik.matchers;
 
-import org.hamcrest.*;
 import org.mockito.*;
 
 import net.jqwik.descriptor.*;
 
-class IsClassDescriptorFor extends ArgumentMatcher<ContainerClassDescriptor> {
+class IsClassDescriptorFor implements ArgumentMatcher<ContainerClassDescriptor> {
 
 	private final Class<?> containerClass;
 
@@ -14,16 +13,8 @@ class IsClassDescriptorFor extends ArgumentMatcher<ContainerClassDescriptor> {
 	}
 
 	@Override
-	public boolean matches(Object argument) {
-		if (argument.getClass() != ContainerClassDescriptor.class)
-			return false;
-		ContainerClassDescriptor descriptor = (ContainerClassDescriptor) argument;
+	public boolean matches(ContainerClassDescriptor descriptor) {
 		return descriptor.getContainerClass() == containerClass;
-	}
-
-	@Override
-	public void describeTo(Description description) {
-		description.appendText("is ContainerClassDescriptor for " + containerClass.toString());
 	}
 
 }

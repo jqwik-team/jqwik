@@ -27,6 +27,7 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 		return listGenerator(tries).map(this::toArray);
 	}
 
+	@SuppressWarnings("unchecked")
 	private A toArray(List<T> from) {
 		A array = (A) Array.newInstance(targetClass.getComponentType(), from.size());
 		for (int i = 0; i < from.size(); i++) {
@@ -34,14 +35,15 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 		}
 		return array;
 	}
-	protected RandomGenerator<List<T>> listGenerator(int tries) {
+
+	private RandomGenerator<List<T>> listGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
 		if (effectiveMaxSize <= 0)
 			effectiveMaxSize = Arbitrary.defaultCollectionSizeFromTries(tries);
 		return createListGenerator(elementArbitrary, tries, effectiveMaxSize);
 	}
 
-	private <T> RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
+	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
 		return RandomGenerators.list(elementGenerator, maxSize);

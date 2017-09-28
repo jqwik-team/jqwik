@@ -15,7 +15,7 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	private final boolean isGroup;
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
-		super(uniqueId, determineDisplayName(containerClass), new ClassSource(containerClass));
+		super(uniqueId, determineDisplayName(containerClass), ClassSource.from(containerClass));
 		this.containerClass = containerClass;
 		this.isGroup = isGroup;
 	}

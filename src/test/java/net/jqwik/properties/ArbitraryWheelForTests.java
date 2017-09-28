@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.*;
 public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 	private final T[] values;
 
+	@SafeVarargs
 	public ArbitraryWheelForTests(T... values) {
 		this.values = values;
 	}

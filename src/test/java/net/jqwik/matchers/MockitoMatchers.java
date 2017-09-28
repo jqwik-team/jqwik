@@ -3,7 +3,7 @@ package net.jqwik.matchers;
 import net.jqwik.descriptor.*;
 import org.junit.platform.engine.*;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.ArgumentMatchers.*;
 
 public class MockitoMatchers {
 
