@@ -9,6 +9,11 @@
 
 ### General
 
+- Update to JUnit 5.0.0
+
+- Use JUnit-Config-Params for configuration:
+  http://junit.org/junit5/docs/5.0.0/user-guide/#running-tests-config-params
+
 - Add documentation
 
 - Allow custom names for containers and test methods: @Label
