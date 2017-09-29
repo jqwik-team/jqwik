@@ -1,74 +1,115 @@
-## A Test Engine for Property-Based Testing in Java
-
-The main purpose of Jqwik is to bring [Property-Based Testing](https://en.wikipedia.org/wiki/Property_testing) 
+The main purpose of __jqwik__ is to bring [Property-Based Testing](https://en.wikipedia.org/wiki/Property_testing) 
 to the JVM. _Property-Based Testing_ tries to combine the intuitiveness of 
 [Microtests](https://www.industriallogic.com/blog/history-microtests/) with the
 effectiveness of randomized, generated test data.
 
-Jqwik is an alternative test engine for the
+__jqwik__ is an alternative test engine for the
 [JUnit 5 platform](http://junit.org/junit5/docs/current/api/org/junit/platform/engine/TestEngine.html).
 That means that you can combine it with any other JUnit 5 engine, e.g. 
-[Jupiter](http://junit.org/junit5/docs/current/user-guide/) and 
-[Vintage](http://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage)
- (the JUnit 4 engine).
+[Jupiter (the standard engine)](http://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-jupiter) or 
+[Vintage (aka JUnit 4)](http://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage).
 
-### Contribute
+## How to Use
 
-Please, please, please add your suggestion, ideas and bug reports using the project's
-[issue tracker on github](https://github.com/jlink/jqwik/issues).
+__jqwik__ is currently _not_ deployed to Maven Central but [JitPack](https://jitpack.io/) is 
+being used to provide [the latest release(s)](https://github.com/jlink/jqwik/releases). 
+That's why you have to add the JitPack-Repository to your list of maven repositories.
 
-Of course, you are also invited to send in pull requests. Be prepared, though, that
-I'll be very strict about what I accept, since I consider
-the initial phase of a project to be crucial for shaping the mid and long-term
-future of a project's design and architecture.
+### Gradle
 
-### How to use
-
-#### Gradle
-
-Add the following stuff to your `build.gradle` file.
+Add the following stuff to your `build.gradle` file:
 
 ```
 repositories {
-	mavenCentral()
-	maven { url "https://jitpack.io" }
-  ...
+    ...
+    mavenCentral()
+    maven { url "https://jitpack.io" }
 }
 
 ext.junitPlatformVersion = '1.0.0'
 ext.junitJupiterVersion = '5.0.0'
 ext.jqwikVersion = '0.5.0'
 
+junitPlatform {
+	filters {
+		includeClassNamePattern '.*Test'
+		includeClassNamePattern '.*Tests'
+		includeClassNamePattern '.*Properties'
+	}
+	enableStandardTestTask true
+}
+
 dependencies {
     ...
 
-  // to enable the platform to run tests at all
-  testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-
-  // Falsely required by IDEA's Junit 5 support
-  testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-
-  // jqwik dependency
-  testCompile "com.github.jlink:jqwik:${jqwikVersion}"
-
-  // You'll probably need some assertions
-  testCompile("org.assertj:assertj-core:3.8.0")
+    // to enable the platform to run tests at all
+    testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+    
+    // Falsely required by IDEA's Junit 5 support
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    
+    // jqwik dependency
+    testCompile "com.github.jlink:jqwik:${jqwikVersion}"
+    
+    // You'll probably need some assertions
+    testCompile("org.assertj:assertj-core:3.8.0")
 
 }
 
 ```
-#### Maven
 
-Maven users can sure figure the corresponding lines on their own :).
+See [the Gradle section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
+for more details on how to configure test execution.
 
-### Feature Overview
+### Maven
 
-Jqwik allows you to specify both [_example-based_ scenarios](#example-based-testing) and 
+Add the following repository to your `pom.xml` file:
+
+```
+<repositories>
+    ...
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    ...
+    <dependency>
+        <groupId>com.github.jlink</groupId>
+        <artifactId>jqwik</artifactId>
+        <version>0.5.0</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+
+```
+
+See [the Maven section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
+for details on how to configure the surefire plugin and other dependencies.
+
+## How to Contribute
+
+Please, please, please add your suggestion, ideas and bug reports using the project's
+[issue tracker on github](https://github.com/jlink/jqwik/issues).
+
+Of course, you are also invited to send in pull requests. Be prepared, though, that
+I'll be picky about what I accept, since the initial phase of a project 
+is crucial for shaping the mid and long-term
+future of a project's design and architecture.
+
+If you want to become a long-term supporter, maintainer or committer for __jqwik__
+please [get in touch](mailto:business@johanneslink.net).
+
+## Feature Overview
+
+__jqwik__ allows you to specify both [_example-based_ scenarios](#example-based-testing) and 
 [_property-based_ test cases](#property-based-testing)
 à la [Quickcheck](https://en.wikipedia.org/wiki/QuickCheck).
 
 
-#### Example Based Testing
+### Example Based Testing
 
 Examples are just a fancy name for the usual unit tests that directly specify the
 data being used to drive and check the behaviour of your code. 
@@ -103,18 +144,18 @@ class SimpleExampleTests implements AutoCloseable {
 This looks like standard Jupiter tests and works basically the same but without
 the complicated lifecycle of Before's and After's.
 
-Jqwik does not come with any assertions, so you have to use one of the
+__jqwik__ does not come with any assertions, so you have to use one of the
 third-party assertion libs, e.g. [Hamcrest](http://hamcrest.org/) or 
 [AssertJ](http://joel-costigliola.github.io/assertj/).
 
 
-#### Property Based Testing
+### Property Based Testing
 
 Driven by the common hype about functional programming,
 property-based testing with tools like Quickcheck is recognized as an
 important ingredient of up-to-date testing approaches.
 
-Jqwik tries to make this as easy as possible for Java programmers to use. 
+__jqwik__ tries to make this as easy as possible for Java programmers to use. 
 Here's an example that checks the correctness of the (in)famous 
 [Fizz Buzz Kata](http://codingdojo.org/kata/FizzBuzz/) for all numbers divisible by 3:
 
@@ -150,24 +191,26 @@ class FizzBuzzTests {
 }
 ```
 
-### Documentation
+## User Guide
 
-_The documentation is yet to be written. Any volunteers?_
+_The user guide has yet to be written_
 
-#### Creating a Test Case
+### Creating a Test Case
 
-#### Grouping Tests
+### Grouping Tests
 
-#### Lifecycle
+### Lifecycle
 
-#### Automatic Parameter Generation
+### Automatic Parameter Generation
 
-#### Result Shrinking
+### Result Shrinking
 
-#### Customized Parameter Generation
+### Customized Parameter Generation
 
-#### Build your own Arbitraries
+### Build your own Arbitraries
 
-#### Register default Generators and Arbitraries
+### Register default Generators and Arbitraries
 
-#### Running and Configuration
+### Running and Configuration
+
+### Self-Made Annotations

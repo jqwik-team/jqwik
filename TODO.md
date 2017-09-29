@@ -18,6 +18,8 @@
 
 - Allow Fixture parameters to examples and properties
 
+- Use apiguardian annotations
+
 - LifeCycles
   - PerTestRunLifeCycle
   - PerClassLifeCycle
@@ -50,8 +52,13 @@
   - if more than one generator applies
   - if generic type is a bounded type
 
+- Default Arbitraries, Generators and Shrinking for
+  - char, short, byte
+  - Dates and times (LocalDateTime, Date, Calendar, etc.)
+  - Arrays of Arrays
+
 - Arbitraries and Generators
-  - Dates and times (Date, Calendar, etc.)
+  - Generators.defaultFor(Class<?> targetType)
   - const
   - functions/methods (whose output parameter can be generated)
   - frequency: pairs of generator and frequency weight
@@ -60,9 +67,6 @@
   - posNum, negNum
   - alpha[Upper|Lower|Num]Char
   - numStr, alphaStr, identifier
-
-- Default Arbitraries, Generators and Shrinking for
-  - char, short, byte
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
