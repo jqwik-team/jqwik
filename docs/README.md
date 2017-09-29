@@ -9,6 +9,31 @@ That means that you can combine it with any other JUnit 5 engine, e.g.
 [Jupiter (the standard engine)](http://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-jupiter) or 
 [Vintage (aka JUnit 4)](http://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage).
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  
+
+- [How to Use](#how-to-use)
+  - [Gradle](#gradle)
+  - [Maven](#maven)
+- [How to Contribute](#how-to-contribute)
+- [Feature Overview](#feature-overview)
+  - [Example Based Testing](#example-based-testing)
+  - [Property Based Testing](#property-based-testing)
+- [User Guide](#user-guide)
+  - [Creating a Test Case](#creating-a-test-case)
+  - [Grouping Tests](#grouping-tests)
+  - [Lifecycle](#lifecycle)
+  - [Automatic Parameter Generation](#automatic-parameter-generation)
+  - [Result Shrinking](#result-shrinking)
+  - [Customized Parameter Generation](#customized-parameter-generation)
+  - [Build your own Arbitraries](#build-your-own-arbitraries)
+  - [Register default Generators and Arbitraries](#register-default-generators-and-arbitraries)
+  - [Running and Configuration](#running-and-configuration)
+  - [Self-Made Annotations](#self-made-annotations)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## How to Use
 
 __jqwik__ is currently _not_ deployed to Maven Central but [JitPack](https://jitpack.io/) is 
