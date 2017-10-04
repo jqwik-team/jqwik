@@ -17,7 +17,10 @@
 
 - Add documentation
 
-- Allow custom names for containers and test methods: @Label
+- Allow custom stereotype for test methods, e.g. @Example has stereotype "Example" 
+  so that Failure message is "Example [xyz123] was falsified..."
+
+- Allow custom names for containers and test methods: @Label?
 
 - Allow Fixture parameters to examples and properties
 
@@ -69,6 +72,7 @@
   - frequency: pairs of generator and frequency weight
   - oneOf: randomly select one of two generators
   - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
+  - flatMap of Arbitraries. Is same as chain()?
   - posNum, negNum
   - alpha[Upper|Lower|Num]Char
   - numStr, alphaStr, identifier
