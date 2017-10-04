@@ -12,6 +12,9 @@
 - Use JUnit-Config-Params for configuration:
   http://junit.org/junit5/docs/5.0.0/user-guide/#running-tests-config-params
 
+- Switch to gradle library plugin: 
+  https://docs.gradle.org/current/userguide/java_library_plugin.html
+
 - Add documentation
 
 - Allow custom names for containers and test methods: @Label
