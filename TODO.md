@@ -1,5 +1,8 @@
 ### Bugs
 
+- Combining two Arbitraries of Character to Array of Character
+  throws NullPointerException.
+  
 ### Tests
 
 - Add / rework tests for all Shrinkables
@@ -37,6 +40,8 @@
 - Parallel test execution: Does it make sense with non working IntelliJ support?
 
 ### Properties
+
+- @MinSize for collections and arrays
 
 - Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
