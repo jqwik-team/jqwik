@@ -289,6 +289,30 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void findGeneratorByMethodNameOutsideGroup() throws Exception {
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName", String.class);
+			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName");
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(String.class);
+		}
+
+		@Example
+		void findGeneratorByNameOutsideGroup() throws Exception {
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.NestedWithNamedProviders.class, "nestedString", String.class);
+			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedString");
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(String.class);
+		}
+
+		@Example
+		void findFirstFitIfNoNameIsGivenInOutsideGroup() throws Exception {
+			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing", Thing.class);
+			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing");
+			Object actual = generateObject(provider, parameter);
+			assertThat(actual).isInstanceOf(Thing.class);
+		}
+
+		@Example
 		void namedStringGeneratorNotFound() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "otherString", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "otherString");
@@ -368,6 +392,24 @@ public class PropertyMethodArbitraryResolverTests {
 				return Arbitraries.of(new Thing());
 			}
 
+			@Group
+			class NestedWithNamedProviders {
+				@Property
+				boolean nestedStringByMethodName(@ForAll("byMethodName") String aString) {
+					return true;
+				}
+
+				@Property
+				boolean nestedString(@ForAll("aString") String aString) {
+					return true;
+				}
+
+				@Property
+				boolean nestedThing(@ForAll Thing aThing) {
+					return true;
+				}
+
+			}
 		}
 
 	}

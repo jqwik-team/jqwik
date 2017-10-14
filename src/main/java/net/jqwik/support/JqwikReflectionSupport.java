@@ -1,13 +1,15 @@
 package net.jqwik.support;
 
-import net.jqwik.discovery.predicates.*;
-import org.junit.platform.commons.support.*;
-import org.junit.platform.commons.util.*;
-
 import java.lang.reflect.*;
-import java.nio.file.*;
+import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import org.junit.platform.commons.support.*;
+import org.junit.platform.commons.util.ReflectionUtils;
+
+import net.jqwik.discovery.predicates.IsTopLevelClass;
 
 public class JqwikReflectionSupport {
 
@@ -56,6 +58,41 @@ public class JqwikReflectionSupport {
 		else {
 			Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
 			return ReflectionSupport.newInstance(clazz, parentInstance);
+		}
+	}
+
+	/**
+	 * Find all {@linkplain Method methods} as in ReflectionSupport.findMethods(..) but also use outer classes to look for
+	 * methods.
+	 */
+	public static List<Method> findMethodsPotentiallyOuter(Class<?> clazz, Predicate<Method> predicate,
+			HierarchyTraversalMode traversalMode) {
+
+		List<Method> foundMethods = new ArrayList<>();
+		foundMethods.addAll(ReflectionSupport.findMethods(clazz, predicate, traversalMode));
+		Class<?> searchClass = clazz;
+		while (searchClass.getDeclaringClass() != null) {
+			searchClass = searchClass.getDeclaringClass();
+			foundMethods.addAll(ReflectionSupport.findMethods(searchClass, predicate, traversalMode));
+		}
+		return foundMethods;
+	}
+
+	/**
+	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use the outer instance if the
+	 * method belongs to the outer instance of an object.
+	 */
+	public static Object invokeMethodPotentiallyOuter(Method method, Object target, Object... args) {
+		if (method.getDeclaringClass().isAssignableFrom(target.getClass())) {
+			return ReflectionSupport.invokeMethod(method, target, args);
+		} else {
+			if (target.getClass().getDeclaringClass() != null) {
+				Optional<Object> newTarget = getOuterInstance(target);
+				if (newTarget.isPresent()) {
+					return invokeMethodPotentiallyOuter(method, newTarget.get(), args);
+				}
+			}
+			throw new IllegalArgumentException(String.format("Method [%s] cannot be invoked on target [%s].", method, target));
 		}
 	}
 
