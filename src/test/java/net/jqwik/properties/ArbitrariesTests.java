@@ -69,6 +69,13 @@ class ArbitrariesTests {
 	class Numbers {
 
 		@Example
+		void integerMinsAndMaxes() {
+			RandomGenerator<Integer> generator = Arbitraries.integer().generator(1);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Integer.MIN_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Integer.MAX_VALUE);
+		}
+
+		@Example
 		void integersInt() {
 			Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
 			RandomGenerator<Integer> generator = intArbitrary.generator(1);
@@ -76,6 +83,13 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0  && value > -5);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);
 			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
+		}
+
+		@Example
+		void longMinsAndMaxes() {
+			RandomGenerator<Long> generator = Arbitraries.longInteger().generator(1);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Long.MIN_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Long.MAX_VALUE);
 		}
 
 		@Example
@@ -101,6 +115,13 @@ class ArbitrariesTests {
 		}
 
 		@Example
+		void doubleMinsAndMaxes() {
+			RandomGenerator<Double> generator = Arbitraries.doubles().generator(1);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Double.MIN_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Double.MAX_VALUE);
+		}
+
+		@Example
 		void doubles() {
 			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-10.0, 10.0, 2);
 			RandomGenerator<Double> generator = doubleArbitrary.generator(1);
@@ -122,6 +143,13 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1000.0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 1000.0);
+		}
+
+		@Example
+		void floatMinsAndMaxes() {
+			RandomGenerator<Float> generator = Arbitraries.floats().generator(1);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Float.MIN_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Float.MAX_VALUE);
 		}
 
 		@Example

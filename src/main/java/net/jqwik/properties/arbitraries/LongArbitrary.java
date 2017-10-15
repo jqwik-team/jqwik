@@ -8,6 +8,9 @@ import java.util.stream.*;
 
 public class LongArbitrary extends NullableArbitrary<Long> {
 
+	private static final long DEFAULT_MIN = Long.MIN_VALUE;
+	private static final long DEFAULT_MAX = Long.MAX_VALUE;
+
 	private long min;
 	private long max;
 
@@ -18,25 +21,25 @@ public class LongArbitrary extends NullableArbitrary<Long> {
 	}
 
 	public LongArbitrary() {
-		this(0, 0);
+		this(DEFAULT_MIN, DEFAULT_MAX);
 	}
 
 	@Override
 	protected RandomGenerator<Long> baseGenerator(int tries) {
-		if (min == 0 && max == 0) {
+		if (min == DEFAULT_MIN && max == DEFAULT_MAX) {
 			long max = Arbitrary.defaultMaxFromTries(tries);
 			return longGenerator(-max, max);
 		}
 		return longGenerator(min, max);
 	}
 
-	private RandomGenerator<Long> longGenerator(long min, long max) {
-		LongShrinkCandidates shrinkCandidates = new LongShrinkCandidates(min, max);
-		List<Shrinkable<Long>> samples = Arrays.stream(new long[] { 0, min, max }) //
+	private RandomGenerator<Long> longGenerator(long minGenerate, long maxGenerate) {
+		LongShrinkCandidates shrinkCandidates = new LongShrinkCandidates(minGenerate, maxGenerate);
+		List<Shrinkable<Long>> samples = Arrays.stream(new long[] { 0, Long.MIN_VALUE, Long.MAX_VALUE, minGenerate, maxGenerate }) //
 			.filter(anInt -> anInt >= min && anInt <= max) //
 			.mapToObj(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
 			.collect(Collectors.toList());
-		return RandomGenerators.choose(min, max).withSamples(samples);
+		return RandomGenerators.choose(minGenerate, maxGenerate).withSamples(samples);
 	}
 
 

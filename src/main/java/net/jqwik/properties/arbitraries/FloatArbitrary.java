@@ -8,6 +8,9 @@ import net.jqwik.properties.*;
 
 public class FloatArbitrary extends NullableArbitrary<Float> {
 
+	private static final float DEFAULT_MIN = Float.MIN_VALUE;
+	private static final float DEFAULT_MAX = Float.MAX_VALUE;
+
 	private float min;
 	private float max;
 	private int scale;
@@ -20,25 +23,25 @@ public class FloatArbitrary extends NullableArbitrary<Float> {
 	}
 
 	public FloatArbitrary() {
-		this(0,0,2);
+		this(DEFAULT_MIN,DEFAULT_MAX,2);
 	}
 
 	@Override
 	protected RandomGenerator<Float> baseGenerator(int tries) {
-		if (min == 0.0 && max == 0.0) {
+		if (min == DEFAULT_MIN && max == DEFAULT_MAX) {
 			float max = Arbitrary.defaultMaxFromTries(tries);
 			return floatGenerator(-max, max, scale); //.withSamples(samples);
 		}
 		return floatGenerator(min, max, scale);
 	}
 
-	private RandomGenerator<Float> floatGenerator(float min, float max, int scale) {
-		FloatShrinkCandidates doubleShrinkCandidates = new FloatShrinkCandidates(min, max, scale);
-		List<Shrinkable<Float>> samples = Arrays.stream(new Float[]{0.0f, min, max}) //
+	private RandomGenerator<Float> floatGenerator(float minGenerate, float maxGenerate, int scale) {
+		FloatShrinkCandidates doubleShrinkCandidates = new FloatShrinkCandidates(minGenerate, maxGenerate, scale);
+		List<Shrinkable<Float>> samples = Arrays.stream(new Float[]{0.0f, Float.MIN_VALUE, Float.MAX_VALUE, minGenerate, maxGenerate}) //
 			.filter(aFloat -> aFloat >= min && aFloat <= max) //
 			.map(value -> new ShrinkableValue<>(value, doubleShrinkCandidates)) //
 			.collect(Collectors.toList());
-		return RandomGenerators.floats(min, max, scale).withSamples(samples);
+		return RandomGenerators.floats(minGenerate, maxGenerate, scale).withSamples(samples);
 	}
 
 	public void configure(FloatRange doubleRange) {
