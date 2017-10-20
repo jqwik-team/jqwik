@@ -47,7 +47,6 @@
 - Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
 - Shrinking
-  - Can be switched off in @Properties annotation. For properties that take very long to shrink.
   - Time limit (100ms default?) for shrinking
     - Make it configurable
   - Reporting:

@@ -1,5 +1,6 @@
 package net.jqwik.properties;
 
+import net.jqwik.api.ShrinkingMode;
 import org.junit.platform.commons.util.*;
 import org.opentest4j.*;
 
@@ -19,7 +20,7 @@ public class GenericProperty {
 		this.forAllPredicate = forAllPredicate;
 	}
 
-	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed) {
+	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode) {
 		Random random = new Random(seed);
 		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
@@ -30,10 +31,10 @@ public class GenericProperty {
 				countChecks++;
 				boolean check = forAllPredicate.test(extractParams(shrinkableParams));
 				if (!check) {
-					return shrinkAndCreateCheckResult(seed, countChecks, countTries, shrinkableParams, null);
+					return shrinkAndCreateCheckResult(shrinkingMode, seed, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(seed, countChecks, countTries, shrinkableParams, ae);
+				return shrinkAndCreateCheckResult(shrinkingMode, seed, countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
@@ -57,12 +58,15 @@ public class GenericProperty {
 	}
 
 	@SuppressWarnings("unchecked")
-	private PropertyCheckResult shrinkAndCreateCheckResult(long seed, int countChecks, int countTries, List<Shrinkable> shrinkables,
+	private PropertyCheckResult shrinkAndCreateCheckResult(ShrinkingMode shrinkingMode, long seed, int countChecks, int countTries, List<Shrinkable> shrinkables,
 			AssertionError error) {
+		List<Object> originalParams = extractParams(shrinkables);
+		if (shrinkingMode == ShrinkingMode.OFF) {
+			return PropertyCheckResult.falsified(name, countTries, countChecks, seed, originalParams, originalParams, error);
+		}
 		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables);
 		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
 		List<Object> shrunkParams = extractParams(shrinkResult.shrunkValue());
-		List<Object> originalParams = extractParams(shrinkables);
 		Throwable throwable = shrinkResult.throwable().orElse(null);
 		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrunkParams, originalParams, throwable);
 	}

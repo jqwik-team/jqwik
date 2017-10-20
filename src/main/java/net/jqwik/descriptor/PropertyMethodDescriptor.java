@@ -10,12 +10,14 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 	private final long seed;
 	private final int tries;
 	private final int maxDiscardRatio;
+	private final ShrinkingMode shrinkingMode;
 
-	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries, int maxDiscardRatio) {
+	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries, int maxDiscardRatio, ShrinkingMode shrinkingMode) {
 		super(uniqueId, propertyMethod, containerClass);
 		this.seed = seed;
 		this.tries = tries;
 		this.maxDiscardRatio = maxDiscardRatio;
+		this.shrinkingMode = shrinkingMode;
 	}
 
 	@Override
@@ -34,5 +36,9 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 
 	public int getMaxDiscardRatio() {
 		return maxDiscardRatio;
+	}
+
+	public ShrinkingMode getShrinkingMode() {
+		return shrinkingMode;
 	}
 }

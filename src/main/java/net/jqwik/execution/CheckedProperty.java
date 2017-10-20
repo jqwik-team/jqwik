@@ -20,9 +20,10 @@ public class CheckedProperty {
 	public final int maxDiscardRatio;
 	public final int tries;
 	public final long randomSeed;
+	private final ShrinkingMode shrinkingMode;
 
 	public CheckedProperty(
-		String propertyName, CheckedFunction forAllPredicate, List<Parameter> forAllParameters, ArbitraryResolver arbitraryProvider, int tries,  int maxDiscardRatio, long randomSeed
+		String propertyName, CheckedFunction forAllPredicate, List<Parameter> forAllParameters, ArbitraryResolver arbitraryProvider, int tries, int maxDiscardRatio, long randomSeed, ShrinkingMode shrinkingMode
 	) {
 		this.propertyName = propertyName;
 		this.forAllPredicate = forAllPredicate;
@@ -31,12 +32,13 @@ public class CheckedProperty {
 		this.maxDiscardRatio = maxDiscardRatio;
 		this.tries = tries;
 		this.randomSeed = randomSeed;
+		this.shrinkingMode = shrinkingMode;
 	}
 
 	public PropertyCheckResult check() {
 		long effectiveSeed = randomSeed == Property.DEFAULT_SEED ? RNG.get().nextLong() : randomSeed;
 		try {
-			return createGenericProperty().check(tries, maxDiscardRatio, effectiveSeed);
+			return createGenericProperty().check(tries, maxDiscardRatio, effectiveSeed, shrinkingMode);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.erroneous(propertyName, 0, 0, effectiveSeed, Collections.emptyList(), cannotFindArbitraryException);
 		}

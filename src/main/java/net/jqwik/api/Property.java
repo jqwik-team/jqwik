@@ -16,4 +16,5 @@ public @interface Property {
 	int tries() default DEFAULT_TRIES;
 	int maxDiscardRatio() default DEFAULT_MAX_DISCARD_RATIO;
 	long seed() default DEFAULT_SEED;
+	ShrinkingMode shrinking() default ShrinkingMode.ON;
 }

@@ -95,7 +95,7 @@ class CheckedPropertyTests {
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
 			List<Parameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false,
-				parameters, p -> Optional.empty(), 100, 5, 1000L);
+				parameters, p -> Optional.empty(), 100, 5, 1000L, ShrinkingMode.ON);
 
 			PropertyCheckResult check = checkedProperty.check();
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -108,7 +108,7 @@ class CheckedPropertyTests {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 10, 5, 42L);
+				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 10, 5, 42L, ShrinkingMode.ON);
 
 			PropertyCheckResult check = checkedProperty.check();
 			assertThat(check.randomSeed()).isEqualTo(42L);
@@ -122,7 +122,7 @@ class CheckedPropertyTests {
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
-			p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 5, 1000L);
+			p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 5, 1000L, ShrinkingMode.ON);
 		PropertyCheckResult check = checkedProperty.check();
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}

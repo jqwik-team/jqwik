@@ -25,7 +25,7 @@ public class CheckedPropertyFactory {
 		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
-		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed);
+		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed, ShrinkingMode.ON);
 	}
 
 	private CheckedFunction createForAllPredicate(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

@@ -16,7 +16,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void simple() {
-		PropertyMethodDescriptor descriptor = createDescriptor("prop", 42L, 11, 4);
+		PropertyMethodDescriptor descriptor = createDescriptor("prop", 42L, 11, 4, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.propertyName).isEqualTo("prop");
@@ -37,7 +37,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void withUnboundParams() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", 42L, 11, 5);
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", 42L, 11, 5, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
@@ -49,7 +49,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void withNoParamsAndVoidResult() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", 42L, 11, 5);
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", 42L, 11, 5, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(0);
@@ -58,10 +58,10 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(noArgs)).isTrue();
 	}
 
-	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries, int maxDiscardRatio) {
+	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries, int maxDiscardRatio, ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio);
+		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio, shrinking);
 	}
 
 	private static class PropertyExamples {

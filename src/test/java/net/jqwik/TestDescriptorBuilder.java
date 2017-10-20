@@ -89,7 +89,7 @@ public class TestDescriptorBuilder {
 			if (property.isPresent()) {
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), property.get().seed(),
-						property.get().tries(), property.get().maxDiscardRatio());
+						property.get().tries(), property.get().maxDiscardRatio(), property.get().shrinking());
 			}
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());
