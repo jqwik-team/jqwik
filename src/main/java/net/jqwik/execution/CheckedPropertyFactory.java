@@ -21,11 +21,12 @@ public class CheckedPropertyFactory {
 		int tries = propertyMethodDescriptor.getTries();
 		int maxDiscardRatio = propertyMethodDescriptor.getMaxDiscardRatio();
 		long randomSeed = propertyMethodDescriptor.getSeed();
+		ShrinkingMode shrinkingMode = propertyMethodDescriptor.getShrinkingMode();
 
 		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
-		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed, ShrinkingMode.ON);
+		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed, shrinkingMode);
 	}
 
 	private CheckedFunction createForAllPredicate(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

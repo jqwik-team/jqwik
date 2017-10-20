@@ -1,16 +1,17 @@
 package examples.bugs;
 
-import org.assertj.core.api.Assertions;
-import org.assertj.core.data.Percentage;
-
 import net.jqwik.api.*;
+import org.assertj.core.api.*;
+
+import static org.assertj.core.data.Percentage.*;
 
 public class ShrinkingStackOverflow {
 
 	// Bug: Will run to stack overflow
-	@Property
+	@Property()
 	void squareOfRootIsOriginalValue(@ForAll double aNumber) {
 		double sqrt = Math.sqrt(aNumber);
-		Assertions.assertThat(sqrt * sqrt).isCloseTo(aNumber, Percentage.withPercentage(10));
+		Assertions.assertThat(sqrt * sqrt).isCloseTo(aNumber, withPercentage(1));
 	}
+
 }
