@@ -1,5 +1,6 @@
 ### Bugs
 
+- Shrinking of Double can result in stack overflow -> bugs.ShrinkingStackOverflow
 - Combining two Arbitraries of Character to Array of Character
   throws NullPointerException.
   
