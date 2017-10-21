@@ -33,6 +33,11 @@ public class DoubleShrinkCandidates implements ShrinkCandidates<Double> {
 		Set<Double> shrunkDecimals = new HashSet<>();
 		shrunkDecimals.add(roundOneDigitDown(value));
 		shrunkDecimals.add(roundOneDigitUp(value));
+		if (shrunkDecimals.contains(value)) { // Only a single decimal left
+			shrunkDecimals.remove(value);
+			shrunkDecimals.add(Math.floor(value));
+			shrunkDecimals.add(Math.ceil(value));
+		}
 		return shrunkDecimals;
 	}
 

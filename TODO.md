@@ -1,11 +1,13 @@
 ### Bugs
 
-- Shrinking of Double can result in stack overflow -> bugs.ShrinkingStackOverflow
+- Generating random high floats generates the same float all the time :-( 
 - Combining two Arbitraries of Character to Array of Character
   throws NullPointerException.
   
 ### Tests
 
+- Add tests for RandomGenerators
+  - Especially high floats
 - Add / rework tests for all Shrinkables
 - Tests for TestRunDatabase
 - Tests for TestRunData
@@ -41,6 +43,8 @@
 - Parallel test execution: Does it make sense with non working IntelliJ support?
 
 ### Properties
+
+- @ForAll(report = ReportMode.DEFAULT|ALL|ALL_FALSIFIED): Report generated values to different extent
 
 - @MinSize for collections and arrays
 

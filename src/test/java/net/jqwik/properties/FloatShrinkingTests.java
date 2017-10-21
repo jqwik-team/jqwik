@@ -1,11 +1,12 @@
 package net.jqwik.properties;
 
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.Set;
+
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
-
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.assertj.core.data.Offset;
 
 class FloatShrinkingTests {
 
@@ -32,9 +33,17 @@ class FloatShrinkingTests {
 		}
 
 		@Example
+		void shrinkByRemovingLastDecimal() {
+			ShrinkCandidates<Double> shrinker = new DoubleShrinkCandidates(-10.0, 10.0, 2);
+			Set<Double> candidates = shrinker.nextCandidates(2.1);
+
+			assertThat(candidates).containsOnly(2.0, 3.0);
+		}
+
+		@Example
 		void shrinkNegativeByRemovingDecimalsFirst() {
 			ShrinkCandidates<Double> shrinker = new DoubleShrinkCandidates(-10.0, 10.0, 2);
-			Set<Double> candidates = shrinker.nextCandidates(- 3.99);
+			Set<Double> candidates = shrinker.nextCandidates(-3.99);
 
 			assertThat(candidates).containsOnly(-3.9, -4.0);
 		}
@@ -72,6 +81,28 @@ class FloatShrinkingTests {
 			assertThat(shrinkerBelowZero.distance(-10.0)).isEqualTo(0);
 		}
 
+		@Property(tries = 10000)
+		void aValueIsNeverShrunkToItself(@ForAll
+										 @DoubleRange(min = -100000, max = 100000)
+										 @Scale(4)
+											 double aValue) {
+			ShrinkCandidates<Double> shrinker = new DoubleShrinkCandidates(Double.MIN_VALUE + 1, Double.MAX_VALUE - 1, 4);
+			Set<Double> candidates = shrinker.nextCandidates(aValue);
+			assertThat(candidates).doesNotContain(aValue);
+		}
+
+		@Property(tries = 10000)
+		void shrinkingWillAlwaysConvergeToZero(@ForAll
+										 @DoubleRange(min = -100, max = 100)
+										 @Scale(15)
+											 double aValue) {
+			System.out.println(aValue);
+			ShrinkCandidates<Double> shrinker = new DoubleShrinkCandidates(-100.0, 100.0, 15);
+			ShrinkableValue<Double> shrinkableValue = new ShrinkableValue<>(aValue, shrinker);
+			ValueShrinker<Double> valueShrinker = new ValueShrinker<>(shrinkableValue);
+			double shrunkValue = valueShrinker.shrink(MockFalsifier.falsifyAll(), null).shrunkValue().value();
+			assertThat(shrunkValue).isCloseTo(0.0, Offset.offset(0.0)); // can be + or - 0.0
+		}
 
 	}
 }
