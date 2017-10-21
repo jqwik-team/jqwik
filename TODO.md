@@ -48,6 +48,10 @@
 
 - @MinSize for collections and arrays
 
+- Filter out duplicates in generated sets
+
+- Generator/Arbitrary for sequences of method/function calls 
+
 - Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
 - Shrinking
