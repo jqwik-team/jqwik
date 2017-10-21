@@ -38,7 +38,7 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 	private RandomGenerator<Double> doubleGenerator(double minGenerate, double maxGenerate, int scale) {
 		DoubleShrinkCandidates doubleShrinkCandidates = new DoubleShrinkCandidates(minGenerate, maxGenerate, scale);
 		List<Shrinkable<Double>> samples = Arrays
-				.stream(new Double[] { 0.0, DEFAULT_MIN, Double.MIN_VALUE, DEFAULT_MAX, minGenerate, maxGenerate }) //
+				.stream(new Double[] { 0.0, 1.0, -1.0, Double.MIN_VALUE, DEFAULT_MAX, DEFAULT_MIN, minGenerate, maxGenerate }) //
 				.filter(aDouble -> aDouble >= min && aDouble <= max) //
 				.map(value -> new ShrinkableValue<>(value, doubleShrinkCandidates)) //
 				.collect(Collectors.toList());
