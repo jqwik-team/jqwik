@@ -96,7 +96,6 @@ class FloatShrinkingTests {
 										 @DoubleRange(min = -100, max = 100)
 										 @Scale(15)
 											 double aValue) {
-			System.out.println(aValue);
 			ShrinkCandidates<Double> shrinker = new DoubleShrinkCandidates(-100.0, 100.0, 15);
 			ShrinkableValue<Double> shrinkableValue = new ShrinkableValue<>(aValue, shrinker);
 			ValueShrinker<Double> valueShrinker = new ValueShrinker<>(shrinkableValue);
