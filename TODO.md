@@ -1,5 +1,6 @@
 ### Bugs
 
+- Shrinking list elements not sufficiently. See bugs.ShrinkingListElementsNotEnough
 - Generating random high floats generates the same float all the time :-( 
 - Combining two Arbitraries of Character to Array of Character
   throws NullPointerException.
