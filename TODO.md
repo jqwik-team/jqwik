@@ -1,5 +1,7 @@
 ### Bugs
 
+- ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
+  - Alternative: change distance to be of type BigInteger!
 - Generating random high floats generates the same float all the time :-( 
 - Combining two Arbitraries of Character to Array of Character
   throws NullPointerException.
