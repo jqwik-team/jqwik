@@ -53,7 +53,15 @@ public class ListShrinkCandidates<T> implements ShrinkCandidates<List<Shrinkable
 
 	@Override
 	public int distance(List<Shrinkable<T>> value) {
-		int sumOfDistances = value.stream().mapToInt(Shrinkable::distance).sum();
+		// The algorithm is more involved because the distance may never never never overflow
+		int sumOfDistances = 0;
+		for (Shrinkable<T> tShrinkable : value) {
+			int distance = tShrinkable.distance();
+			long newDistance = (long) sumOfDistances + (long) distance;
+			if (newDistance >= Integer.MAX_VALUE)
+				return	Integer.MAX_VALUE;
+			sumOfDistances = (int) newDistance;
+		}
 		return value.size() + sumOfDistances;
 	}
 }

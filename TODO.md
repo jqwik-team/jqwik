@@ -1,6 +1,5 @@
 ### Bugs
 
-- Shrinking list elements not sufficiently. See bugs.ShrinkingListElementsNotEnough
 - Generating random high floats generates the same float all the time :-( 
 - Combining two Arbitraries of Character to Array of Character
   throws NullPointerException.
@@ -10,6 +9,7 @@
 - Add tests for RandomGenerators
   - Especially high floats
 - Add / rework tests for all Shrinkables
+- Tests for distance of Shrinkables -> They must not overflow! E.g. ListShrinkCandidates.distance()
 - Tests for TestRunDatabase
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
