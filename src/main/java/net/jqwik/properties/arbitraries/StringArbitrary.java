@@ -55,7 +55,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 	protected RandomGenerator<String> baseGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
 		if (effectiveMaxSize <= 0) effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
-		return RandomGenerators.string(characterGenerator, effectiveMaxSize).withSamples(Shrinkable.unshrinkable(""));
+		return RandomGenerators.string(characterGenerator, effectiveMaxSize).withSamples("");
 	}
 
 	public void configure(MaxStringLength maxStringLength) {

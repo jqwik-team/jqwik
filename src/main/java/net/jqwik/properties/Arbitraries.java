@@ -128,9 +128,7 @@ public class Arbitraries {
 
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
-		List<Shrinkable<T>> shrinkables = Arrays.stream(samples)
-											.map(sample -> Shrinkable.unshrinkable(sample))
-											.collect(Collectors.toList());
+		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
 		return fromGenerator(RandomGenerators.samples(shrinkables));
 	}
 }

@@ -34,12 +34,12 @@ public class IntegerArbitrary extends NullableArbitrary<Integer> {
 	}
 
 	private RandomGenerator<Integer> integerGenerator(int minGenerate, int maxGenerate) {
-		IntegerShrinkCandidates integerShrinkCandidates = new IntegerShrinkCandidates(minGenerate, maxGenerate);
-		List<Shrinkable<Integer>> samples = Arrays.stream(new int[] { 0, Integer.MIN_VALUE, Integer. MAX_VALUE, minGenerate, maxGenerate }) //
+		IntegerShrinkCandidates integerShrinkCandidates = new IntegerShrinkCandidates(min, max);
+		List<Shrinkable<Integer>> samples = Arrays.stream(new int[] { 0, 1, -1, Integer.MIN_VALUE, Integer. MAX_VALUE, minGenerate, maxGenerate }) //
 			.filter(anInt -> anInt >= min && anInt <= max) //
 			.mapToObj(anInt -> new ShrinkableValue<>(anInt, integerShrinkCandidates)) //
 			.collect(Collectors.toList());
-		return RandomGenerators.choose(minGenerate, maxGenerate).withSamples(samples);
+		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 
 	public void configure(IntRange intRange) {

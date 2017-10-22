@@ -30,12 +30,7 @@ public interface RandomGenerator<T> {
 		};
 	};
 
-	@SuppressWarnings("unchecked")
-	default RandomGenerator<T> withSamples(Shrinkable<T>... samples) {
-		return withSamples(Arrays.asList(samples));
-	}
-
-	default RandomGenerator<T> withSamples(List<Shrinkable<T>> samples) {
+	default RandomGenerator<T> withShrinkableSamples(List<Shrinkable<T>> samples) {
 		RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
 		RandomGenerator<T> generator = this;
 		AtomicInteger tryCount = new AtomicInteger(0);
@@ -44,6 +39,11 @@ public interface RandomGenerator<T> {
 				return samplesGenerator.next(random);
 			return generator.next(random);
 		};
+	}
+
+	default RandomGenerator<T> withSamples(T ... samples) {
+		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
+		return withShrinkableSamples(shrinkables);
 	}
 
 	default RandomGenerator<T> mixIn(RandomGenerator<T> otherGenerator, double mixInProbability) {

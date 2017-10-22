@@ -108,13 +108,13 @@ class CheckedPropertyTests {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 10, 5, 42L, ShrinkingMode.ON);
+				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 12, 5, 42L, ShrinkingMode.ON);
 
 			PropertyCheckResult check = checkedProperty.check();
 			assertThat(check.randomSeed()).isEqualTo(42L);
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
-			assertThat(allGeneratedInts).containsExactly(0, -100, 100, -59, 20, -10, 1, -88, -87, 100);
+			assertThat(allGeneratedInts).containsExactly(0, 1, -1, -100, 100, -59, 20, -10, 1, -88, -87, 100);
 		}
 
 	}

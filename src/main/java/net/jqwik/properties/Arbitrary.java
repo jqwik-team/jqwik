@@ -1,8 +1,6 @@
 package net.jqwik.properties;
 
-import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.properties.arbitraries.*;
 
@@ -42,11 +40,10 @@ public interface Arbitrary<T> {
 
 	@SuppressWarnings("unchecked")
 	default Arbitrary<T> withSamples(T... samples) {
-		List<Shrinkable<T>> shrinkables = Arrays.stream(samples).map(Shrinkable::unshrinkable).collect(Collectors.toList());
 		return new ArbitraryWrapper<T, T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {
-				return wrapped.generator(tries).withSamples(shrinkables);
+				return wrapped.generator(tries).withSamples(samples);
 			}
 		};
 	};

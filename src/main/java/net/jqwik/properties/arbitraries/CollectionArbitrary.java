@@ -26,7 +26,7 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
-		return RandomGenerators.list(elementGenerator, maxSize).withSamples(Collections.emptyList());
+		return RandomGenerators.list(elementGenerator, maxSize).withShrinkableSamples(Collections.emptyList());
 	}
 
 	public void configure(MaxSize maxSize) {

@@ -41,7 +41,7 @@ class GenericPropertyTests {
 		void falsified() {
 			int failingTry = 5;
 
-			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
+			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie != failingTry, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8, 9);
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
@@ -49,7 +49,7 @@ class GenericPropertyTests {
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
 			PropertyCheckResult result = property.check(10, 5, 41L, ShrinkingMode.ON);
 
-			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry);
+			assertThat(forAllFunction.countCalls()).isEqualTo(6);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
