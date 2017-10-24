@@ -224,8 +224,8 @@ _The user guide has yet to be written_
 
 ### Creating an Example-based Test
 
-Just annotate a public or package-scoped method with `@Example`.
-Examples are just like simple JUnit-style test cases and
+Just annotate a `public`, `protected` or package-scoped method with `@Example`.
+Examples work just like plain JUnit-style test cases and
 (usually) don't take any parameters.
 
 A test case method will either
