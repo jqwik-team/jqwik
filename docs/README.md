@@ -258,6 +258,59 @@ class ExampleBasedTests {
 
 ### Creating a Property
 
+You create a property by annotating a `public`, `protected` 
+or package-scoped method with `@Property`. In contrast to
+examples a property method is supposed to have one or
+more parameters, all of which must be annotated with `@ForAll`.
+
+At property runtime the exact parameter values will be filled
+in by _jqwik_.
+
+Just like an example test a property method will either
+- return a `boolean` value that signifies success (`true`)
+  or failure (`false`) of this property.
+- return nothing (`void`) in which case you might probably
+  use an _assertion_ or two in the method's body.
+
+If not specified differently, _jqwik_ will run 1000 _tries_, 
+i.e. a 1000 different sets of parameter values and execute
+the property method with each of those parameter sets. 
+The first failed execution will stop value generation 
+and be reported as failure - usually followed by an attempt to 
+[shrink](#result-shrinking) the falsified parameter set.
+
+Here are a two properties the failure of which might surprise you:
+
+```java
+import net.jqwik.api.*;
+import org.assertj.core.api.*;
+
+class PropertyBasedTests {
+
+	@Property
+	boolean absoluteValueOfAllNumbersIsPositive(@ForAll int anInteger) {
+		return Math.abs(anInteger) >= 0;
+	}
+
+	@Property
+	void lengthOfConcatenatedStringIsGreaterThanLengthOfEach(
+		@ForAll String string1, @ForAll String string2
+	) {
+		String conc = string1 + string2;
+		Assertions.assertThat(conc.length()).isGreaterThan(string1.length());
+		Assertions.assertThat(conc.length()).isGreaterThan(string2.length());
+	}
+}
+```
+
+Currently _jqwik_ cannot deal with parameters that are not
+annotated with '@ForAll'. However, this might change
+in future versions.
+
+#### Optional `@Property` Parameters
+
+#### Optional `@ForAll` Parameters
+
 ### Grouping Tests
 
 ### Lifecycle
