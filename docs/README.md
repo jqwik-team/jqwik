@@ -22,7 +22,10 @@ That means that you can combine it with any other JUnit 5 engine, e.g.
   - [Property Based Testing](#property-based-testing)
 - [More about Property-Based Testing](#more-about-property-based-testing)
 - [User Guide](#user-guide)
-  - [Creating a Test Case](#creating-a-test-case)
+  - [Creating an Example-based Test](#creating-an-example-based-test)
+  - [Creating a Property](#creating-a-property)
+    - [Optional `@Property` Parameters](#optional-property-parameters)
+    - [Optional `@ForAll` Parameters](#optional-forall-parameters)
   - [Grouping Tests](#grouping-tests)
   - [Lifecycle](#lifecycle)
   - [Automatic Parameter Generation](#automatic-parameter-generation)
@@ -220,7 +223,8 @@ class FizzBuzzTests {
 
 ## User Guide
 
-_The user guide has yet to be written_
+_The user guide is still very rough. 
+Volunteers for polishing and extending it are welcome._
 
 ### Creating an Example-based Test
 
