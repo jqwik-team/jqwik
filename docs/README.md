@@ -222,7 +222,41 @@ class FizzBuzzTests {
 
 _The user guide has yet to be written_
 
-### Creating a Test Case
+### Creating an Example-based Test
+
+Just annotate a public or package-scoped method with `@Example`.
+Examples are just like simple JUnit-style test cases and
+(usually) don't take any parameters.
+
+A test case method will either
+- return a `boolean` value that signifies success (`true`)
+  or failure (`false`) of this test case.
+- return nothing (`void`) in which case you might probably
+  use an _assertion_ or two in the method's body.
+  
+Here is a test class with two example-based tests:
+
+```java
+import static org.assertj.core.api.Assertions.*;
+
+import net.jqwik.api.*;
+import org.assertj.core.data.*;
+
+class ExampleBasedTests {
+	
+	@Example
+	void squareRootOf16is4() { 
+		assertThat(Math.sqrt(16)).isCloseTo(4.0, Offset.offset(0.01));
+	}
+
+	@Example
+	boolean add1plu3is4() {
+		return (1 + 3) == 4;
+	}
+}
+```
+
+### Creating a Property
 
 ### Grouping Tests
 
