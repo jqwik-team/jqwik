@@ -26,12 +26,14 @@ That means that you can combine it with any other JUnit 5 engine, e.g.
   - [Creating a Property](#creating-a-property)
     - [Optional `@Property` Parameters](#optional-property-parameters)
     - [Optional `@ForAll` Parameters](#optional-forall-parameters)
+  - [Assertions](#assertions)
   - [Grouping Tests](#grouping-tests)
   - [Lifecycle](#lifecycle)
   - [Automatic Parameter Generation](#automatic-parameter-generation)
   - [Result Shrinking](#result-shrinking)
   - [Customized Parameter Generation](#customized-parameter-generation)
   - [Build your own Arbitraries](#build-your-own-arbitraries)
+  - [Assumptions](#assumptions)
   - [Register default Generators and Arbitraries](#register-default-generators-and-arbitraries)
   - [Running and Configuration](#running-and-configuration)
   - [Self-Made Annotations](#self-made-annotations)
@@ -92,7 +94,7 @@ for more details on how to configure test execution.
 
 ### Maven
 
-Add the following repository to your `pom.xml` file:
+Add the following repository and dependency to your `pom.xml` file:
 
 ```
 <repositories>
@@ -173,11 +175,6 @@ class SimpleExampleTests implements AutoCloseable {
 This looks like standard Jupiter tests and works basically the same but without
 the complicated lifecycle of Before's and After's.
 
-__jqwik__ does not come with any assertions, so you have to use one of the
-third-party assertion libs, e.g. [Hamcrest](http://hamcrest.org/) or 
-[AssertJ](http://joel-costigliola.github.io/assertj/).
-
-
 ### Property Based Testing
 
 Driven by the common hype about functional programming,
@@ -229,14 +226,14 @@ Volunteers for polishing and extending it are welcome._
 ### Creating an Example-based Test
 
 Just annotate a `public`, `protected` or package-scoped method with `@Example`.
-Examples work just like plain JUnit-style test cases and
-(usually) don't take any parameters.
+Example-based tests work just like plain JUnit-style test cases and
+are not supposed to take any parameters.
 
-A test case method will either
-- return a `boolean` value that signifies success (`true`)
+A test case method must
+- either return a `boolean` value that signifies success (`true`)
   or failure (`false`) of this test case.
-- return nothing (`void`) in which case you might probably
-  use an _assertion_ or two in the method's body.
+- or return nothing (`void`) in which case you will probably
+  use [assertions](#assertions) in order to verify the test condition.
   
 Here is a test class with two example-based tests:
 
@@ -262,28 +259,28 @@ class ExampleBasedTests {
 
 ### Creating a Property
 
-You create a property by annotating a `public`, `protected` 
+You create a _Property_ by annotating a `public`, `protected` 
 or package-scoped method with `@Property`. In contrast to
 examples a property method is supposed to have one or
 more parameters, all of which must be annotated with `@ForAll`.
 
-At property runtime the exact parameter values will be filled
-in by _jqwik_.
+At test runtime the exact parameter values of the property method
+will be filled in by _jqwik_.
 
-Just like an example test a property method will either
-- return a `boolean` value that signifies success (`true`)
+Just like an example test a property method has to 
+- either return a `boolean` value that signifies success (`true`)
   or failure (`false`) of this property.
-- return nothing (`void`) in which case you might probably
-  use an _assertion_ or two in the method's body.
+- or return nothing (`void`). In that case you will probably
+  use [assertions](#assertions) to check the property's invariant.
 
-If not specified differently, _jqwik_ will run 1000 _tries_, 
-i.e. a 1000 different sets of parameter values and execute
-the property method with each of those parameter sets. 
+If not [specified differently](#optional-property-parameters), 
+_jqwik_ will run 1000 _tries_, i.e. a 1000 different sets of 
+parameter values and execute the property method with each of those parameter sets. 
 The first failed execution will stop value generation 
 and be reported as failure - usually followed by an attempt to 
 [shrink](#result-shrinking) the falsified parameter set.
 
-Here are a two properties the failure of which might surprise you:
+Here are two properties whose failures might surprise you:
 
 ```java
 import net.jqwik.api.*;
@@ -313,7 +310,29 @@ in future versions.
 
 #### Optional `@Property` Parameters
 
+The `@Property` annotation has a few optional values:
+
+- `int tries`: The number of times _jqwik_ tries to generate paramter values for this method.
+  Default is `1000`.
+- `long seed`: The _random seed_ to use for generating values. If you do not specify a values
+  _jqwik_ will use a random _random seed_. The actual seed used is being reported by 
+  each run property.
+- `int maxDiscardRatio`: The maximal number of tried versus actually checked property runs
+  in case you are using [Assumptions](#assumptions). If the ratio is exceeded _jqwik_ will
+  report this property as a failure. Default is `5`.
+- `ShrinkingMode shrinking`: You can switch off parameter shrinking by using `ShrinkingMode.OFF`.
+  Default is `ShrinkingMode.ON`
+
 #### Optional `@ForAll` Parameters
+
+### Assertions
+
+__jqwik__ does not come with any assertions, so you have to use one of the
+third-party assertion libraries, e.g. [Hamcrest](http://hamcrest.org/) or 
+[AssertJ](http://joel-costigliola.github.io/assertj/). 
+
+If you have Jupiter in your test dependencies anyway, you can also use the
+static methods in `org.junit.jupiter.api.Assertions`.
 
 ### Grouping Tests
 
@@ -326,6 +345,8 @@ in future versions.
 ### Customized Parameter Generation
 
 ### Build your own Arbitraries
+
+### Assumptions
 
 ### Register default Generators and Arbitraries
 
