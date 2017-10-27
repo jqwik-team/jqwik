@@ -11,6 +11,8 @@
     <link rel="stylesheet" type="text/css" media="screen"
           href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
 
+    <link rel="stylesheet" type="text/css" media="screen" href="jqwik.css">
+
     <title>{{ site.title | default: site.github.repository_name }}</title>
 </head>
 
@@ -32,6 +34,15 @@
         {% endif %}
     </header>
 </div>
+
+<!-- NAVIGATION -->
+<nav class="inner">
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/user-guide.html">User Guide</a></li>
+        <li><a href="/property-based-testing.html">Property-Based Testing</a></li>
+    </ul>
+</nav>
 
 <!-- MAIN CONTENT -->
 <div id="main_content_wrap" class="outer">

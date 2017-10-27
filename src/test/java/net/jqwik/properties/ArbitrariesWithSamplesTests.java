@@ -29,9 +29,9 @@ class ArbitrariesWithSamplesTests {
 			assertGeneratedSequence(generator, 1, 2, 3, 5, 5, 5);
 		}
 
-		private <T> void assertGeneratedSequence(RandomGenerator<T> generator, T... sequence) {
-			for (int i = 0; i < sequence.length; i++) {
-				T expected = sequence[i];
+		@SafeVarargs
+		private final <T> void assertGeneratedSequence(RandomGenerator<T> generator, T... sequence) {
+			for (T expected : sequence) {
 				Assertions.assertThat(generator.next(random).value()).isEqualTo(expected);
 			}
 		}

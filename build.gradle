@@ -13,18 +13,23 @@ repositories {
 	//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
+ext.version = '0.5.9'
 ext.junitPlatformVersion = '1.0.0'
+ext.moduleName = 'net.jqwik'
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'maven'
 
 group = 'com.github.jlink'
-version = '0.5.0'
+version = version
 
 jar {
 	baseName = 'jqwik'
-	version = '0.5.0'
+	version = version
+	manifest {
+		attributes('Automatic-Module-Name': moduleName)
+	}
 }
 
 compileTestJava {

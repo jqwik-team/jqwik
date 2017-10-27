@@ -6,3 +6,43 @@
 h1 a {
     color: white;
 }
+
+header.inner {
+    max-width: 800px;
+}
+
+section.inner {
+    max-width: 800px;
+}
+
+footer.inner {
+    max-width: 800px;
+}
+
+nav.inner {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+nav {
+
+    ul {
+        padding: 0;
+        margin: 0;
+        li {
+            font-size: larger;
+            display: inline;
+            padding-right: 0.7em;
+        }
+    }
+}
+
+pre.highlight {
+    background-color: white;
+}
+
+div {
+    font-size: large;
+}
