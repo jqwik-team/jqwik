@@ -1,9 +1,9 @@
 package net.jqwik.execution.providers;
 
-import java.util.function.*;
+import java.util.function.Function;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.execution.GenericType;
 
 public interface SimpleArbitraryProvider extends ArbitraryProvider {
 

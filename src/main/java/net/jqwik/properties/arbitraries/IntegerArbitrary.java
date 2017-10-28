@@ -1,10 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
-
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Collectors;
+
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.constraints.IntRange;
+import net.jqwik.properties.*;
 
 public class IntegerArbitrary extends NullableArbitrary<Integer> {
 

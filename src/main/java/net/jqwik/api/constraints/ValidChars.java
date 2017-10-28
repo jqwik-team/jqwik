@@ -1,4 +1,4 @@
-package net.jqwik.api;
+package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
 

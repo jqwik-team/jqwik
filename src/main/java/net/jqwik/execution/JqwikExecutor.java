@@ -1,15 +1,14 @@
 package net.jqwik.execution;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.logging.*;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.logging.Logger;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
-import net.jqwik.recording.*;
+import net.jqwik.recording.TestRunRecorder;
 
 public class JqwikExecutor {
 

@@ -1,11 +1,11 @@
 package examples.packageWithProperties;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
-
-import java.math.*;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 public class GeneratorsExamples {
 
@@ -15,14 +15,14 @@ public class GeneratorsExamples {
 		return true;
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<String> stringArbitrary() {
-		return Generator.string('a', 'z');
+		return Arbitraries.string('a', 'z');
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<String> digitsOnly() {
-		return Generator.string('0', '9');
+		return Arbitraries.string('0', '9');
 	}
 
 	@Property(tries = 20)
@@ -31,13 +31,13 @@ public class GeneratorsExamples {
 		return aPerson.getAge() > 0;
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Person> aValidPerson() {
-		Arbitrary<Integer> age = Generator.integer(0, 100);
-		Arbitrary<String> first = Generator.string('a', 'z', 10).filter(f -> !f.isEmpty());
-		Arbitrary<String> last = Generator.string('a', 'z', 15).filter(f -> !f.isEmpty());
+		Arbitrary<Integer> age = Arbitraries.integer(0, 100);
+		Arbitrary<String> first = Arbitraries.string('a', 'z', 10).filter(f -> !f.isEmpty());
+		Arbitrary<String> last = Arbitraries.string('a', 'z', 15).filter(f -> !f.isEmpty());
 
-		return Generator.combine(age, first, last).as((a, f, l) -> {
+		return Combinators.combine(age, first, last).as((a, f, l) -> {
 			String name = f + " " + l;
 			return new Person(name, a);
 		});
@@ -73,9 +73,9 @@ public class GeneratorsExamples {
 		return true;
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Long> between1and100() {
-		return Generator.longInteger(1L, 100L);
+		return Arbitraries.longInteger(1L, 100L);
 	}
 
 	@Property(tries = 10)
@@ -84,9 +84,9 @@ public class GeneratorsExamples {
 		return true;
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<List<Integer>> aList() {
-		return Generator.listOf(Generator.integer(0, 10));
+		return Arbitraries.listOf(Arbitraries.integer(0, 10));
 	}
 
 	@Property(tries = 10)

@@ -1,7 +1,7 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import net.jqwik.api.*;
+import net.jqwik.execution.GenericType;
 
 public class EnumArbitraryProvider implements SimpleArbitraryProvider {
 

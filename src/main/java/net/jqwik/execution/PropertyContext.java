@@ -1,6 +1,6 @@
-package net.jqwik.api;
+package net.jqwik.execution;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 
 public interface PropertyContext {
 

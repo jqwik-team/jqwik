@@ -1,7 +1,6 @@
 package examples.packageWithProperties;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 public class PropertiesWithAssumptions {
 
@@ -11,14 +10,14 @@ public class PropertiesWithAssumptions {
 		return (i * j) % 6 == 0;
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> multipleOf3() {
-		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
+		return Arbitraries.integer(1, 1000).filter(i -> i % 3 == 0);
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> multipleOf2() {
-		return Generator.integer(1, 1000).filter(i -> i % 2 == 0);
+		return Arbitraries.integer(1, 1000).filter(i -> i % 2 == 0);
 	}
 
 }

@@ -1,7 +1,8 @@
-package net.jqwik.properties;
+package net.jqwik.api;
 
 import java.util.function.*;
 
+import net.jqwik.properties.RandomGenerator;
 import net.jqwik.properties.arbitraries.*;
 
 public interface Arbitrary<T> {

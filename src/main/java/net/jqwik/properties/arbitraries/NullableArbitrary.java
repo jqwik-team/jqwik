@@ -1,7 +1,8 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.constraints.WithNull;
+import net.jqwik.properties.RandomGenerator;
 
 public abstract class NullableArbitrary<T> implements Arbitrary<T> {
 

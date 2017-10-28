@@ -1,9 +1,8 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
+import java.util.function.Function;
 
-import java.util.function.*;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 
 public class LifecycleRegistry {
 

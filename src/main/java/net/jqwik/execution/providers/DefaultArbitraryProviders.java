@@ -1,8 +1,8 @@
 package net.jqwik.execution.providers;
 
-import org.junit.platform.commons.support.*;
-
 import java.util.*;
+
+import org.junit.platform.commons.support.ReflectionSupport;
 
 public class DefaultArbitraryProviders {
 

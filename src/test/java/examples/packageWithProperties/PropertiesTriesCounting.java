@@ -1,7 +1,6 @@
 package examples.packageWithProperties;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 public class PropertiesTriesCounting implements AutoCloseable {
 
@@ -31,9 +30,9 @@ public class PropertiesTriesCounting implements AutoCloseable {
 		return true;
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Triade> notFragile() {
-		return Generator.of(Triade.class).filter(t -> t != Triade.Fragile);
+		return Arbitraries.of(Triade.class).filter(t -> t != Triade.Fragile);
 	}
 
 	@Override

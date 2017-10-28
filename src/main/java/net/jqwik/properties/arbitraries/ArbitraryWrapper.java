@@ -1,6 +1,6 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.properties.*;
+import net.jqwik.api.Arbitrary;
 
 public abstract class ArbitraryWrapper<W, T> implements Arbitrary<T> {
 

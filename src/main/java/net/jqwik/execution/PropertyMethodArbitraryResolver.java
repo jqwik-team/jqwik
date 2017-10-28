@@ -1,8 +1,8 @@
 package net.jqwik.execution;
 
-import static net.jqwik.execution.providers.DefaultArbitraryProviders.register;
+import static net.jqwik.execution.providers.DefaultArbitraryProviders.*;
 import static net.jqwik.support.JqwikReflectionSupport.*;
-import static org.junit.platform.commons.support.ReflectionSupport.invokeMethod;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
@@ -14,7 +14,6 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 import net.jqwik.execution.providers.*;
-import net.jqwik.properties.Arbitrary;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
@@ -105,7 +104,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 				isCreatorForType(genericType), //
 				HierarchyTraversalMode.BOTTOM_UP);
 		return creators.stream().filter(generatorMethod -> {
-			Generate generateAnnotation = generatorMethod.getDeclaredAnnotation(Generate.class);
+			Provide generateAnnotation = generatorMethod.getDeclaredAnnotation(Provide.class);
 			String generatorName = generateAnnotation.value();
 			if (generatorName.isEmpty()) {
 				generatorName = generatorMethod.getName();
@@ -134,7 +133,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	private Predicate<Method> isCreatorForType(GenericType genericType) {
 		return method -> {
-			if (!method.isAnnotationPresent(Generate.class)) {
+			if (!method.isAnnotationPresent(Provide.class)) {
 				return false;
 			}
 			GenericType arbitraryReturnType = new GenericType(method.getAnnotatedReturnType().getType());

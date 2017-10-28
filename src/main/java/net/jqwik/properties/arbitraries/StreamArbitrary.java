@@ -1,9 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Stream;
 
-import net.jqwik.properties.*;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.properties.RandomGenerator;
 
 public class StreamArbitrary<T> extends CollectionArbitrary<T, Stream<T>> {
 

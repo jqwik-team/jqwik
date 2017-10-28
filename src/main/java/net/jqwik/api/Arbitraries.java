@@ -1,10 +1,11 @@
-package net.jqwik.properties;
-
-import net.jqwik.properties.arbitraries.*;
+package net.jqwik.api;
 
 import java.math.*;
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Stream;
+
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 
@@ -124,7 +125,6 @@ public class Arbitraries {
 	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
 		return new ArrayArbitrary(arrayClass, elementArbitrary);
 	}
-
 
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {

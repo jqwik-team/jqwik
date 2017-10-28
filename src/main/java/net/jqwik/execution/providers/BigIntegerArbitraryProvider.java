@@ -1,9 +1,9 @@
 package net.jqwik.execution.providers;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import java.math.BigInteger;
 
-import java.math.*;
+import net.jqwik.api.*;
+import net.jqwik.execution.GenericType;
 
 public class BigIntegerArbitraryProvider implements SimpleArbitraryProvider {
 	@Override

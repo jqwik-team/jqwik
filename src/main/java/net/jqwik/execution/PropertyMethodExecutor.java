@@ -5,18 +5,15 @@ import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Function;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.discovery.*;
-import net.jqwik.properties.*;
-import net.jqwik.support.*;
+import net.jqwik.JqwikException;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.properties.PropertyCheckResult;
+import net.jqwik.support.JqwikReflectionSupport;
 
 public class PropertyMethodExecutor {
 

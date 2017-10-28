@@ -19,7 +19,6 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 class FizzBuzzTests {
 	@Property
@@ -27,9 +26,9 @@ class FizzBuzzTests {
 		return fizzBuzz().get(i - 1).startsWith("Fizz");
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> divisibleBy3() {
-		return Generator.integer(1, 100).filter(i -> i % 3 == 0);
+		return Arbitraries.integer(1, 100).filter(i -> i % 3 == 0);
 	}
 
 	private List<String> fizzBuzz() {

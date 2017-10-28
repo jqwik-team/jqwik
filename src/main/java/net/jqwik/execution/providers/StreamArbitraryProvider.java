@@ -1,8 +1,8 @@
 package net.jqwik.execution.providers;
 
-import java.util.stream.*;
+import java.util.stream.Stream;
 
-import net.jqwik.properties.*;
+import net.jqwik.api.*;
 
 public class StreamArbitraryProvider extends AbstractCollectionArbitraryProvider {
 

@@ -1,10 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Array;
+import java.util.List;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.constraints.MaxSize;
+import net.jqwik.properties.RandomGenerator;
 
 public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 

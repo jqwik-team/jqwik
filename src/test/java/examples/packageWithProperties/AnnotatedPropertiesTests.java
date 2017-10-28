@@ -1,8 +1,9 @@
 package examples.packageWithProperties;
 
-import net.jqwik.api.*;
-
 import java.util.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 public class AnnotatedPropertiesTests {
 

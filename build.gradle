@@ -4,7 +4,7 @@ buildscript {
 		//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 	}
 	dependencies {
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
 	}
 }
 
@@ -13,8 +13,7 @@ repositories {
 	//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
-ext.version = '0.5.9'
-ext.junitPlatformVersion = '1.0.0'
+ext.junitPlatformVersion = '1.0.1'
 ext.moduleName = 'net.jqwik'
 
 apply plugin: 'java'
@@ -22,11 +21,11 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'maven'
 
 group = 'com.github.jlink'
-version = version
+version = '0.6.0'
 
 jar {
 	baseName = 'jqwik'
-	version = version
+	version = '0.6.0'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
@@ -42,7 +41,7 @@ junitPlatform {
 	//	platformVersion "${junitPlatformVersion}"
 	filters {
 		engines {
-			exclude "junit-jupiter"
+			include "jqwik"
 		}
 		packages {
 			// include 'examples.packageWithFailings'
@@ -56,13 +55,14 @@ junitPlatform {
 dependencies {
 	compile("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
 	compile("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
+	provided("org.apiguardian:apiguardian:1.0.0")
 
 	testCompile("org.mockito:mockito-core:2.10.0")
 	testCompile("org.assertj:assertj-core:3.8.0")
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
 	// Only necessary to enable IntelliJ support
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.1")
 }
 
 task wrapper(type: Wrapper) {

@@ -1,7 +1,6 @@
 package examples.packageWithSeveralContainers;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 public class PropertyTests {
 
@@ -36,14 +35,14 @@ public class PropertyTests {
 		return aString.length() == aNumber;
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> lessThan5() {
-		return Generator.integer(0, 4);
+		return Arbitraries.integer(0, 4);
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<String> shorterThan5() {
-		return Generator.string(new char[]{'a', 'b', 'c'}, 4);
+		return Arbitraries.string(new char[]{'a', 'b', 'c'}, 4);
 	}
 
 }

@@ -1,9 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
+import java.util.Optional;
 
-import java.util.*;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.constraints.*;
+import net.jqwik.properties.RandomGenerator;
 
 public class StringArbitrary extends NullableArbitrary<String> {
 

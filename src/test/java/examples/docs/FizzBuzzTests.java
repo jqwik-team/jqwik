@@ -1,10 +1,9 @@
 package examples.docs;
 
-import java.util.*;
+import java.util.List;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 class FizzBuzzTests {
 	@Property
@@ -12,9 +11,9 @@ class FizzBuzzTests {
 		return fizzBuzz().get(i - 1).startsWith("Fizz");
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> divisibleBy3() {
-		return Generator.integer(1, 100).filter(i -> i % 3 == 0);
+		return Arbitraries.integer(1, 100).filter(i -> i % 3 == 0);
 	}
 
 	private List<String> fizzBuzz() {
@@ -22,10 +21,7 @@ class FizzBuzzTests {
 			boolean divBy3 = i % 3 == 0;
 			boolean divBy5 = i % 5 == 0;
 
-			return divBy3 && divBy5 ? "FizzBuzz"
-				: divBy3 ? "Fizz"
-				: divBy5 ? "Buzz"
-				: String.valueOf(i);
+			return divBy3 && divBy5 ? "FizzBuzz" : divBy3 ? "Fizz" : divBy5 ? "Buzz" : String.valueOf(i);
 		}).collect(Collectors.toList());
 	}
 }

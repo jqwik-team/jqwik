@@ -1,9 +1,11 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.api.*;
-import org.junit.platform.engine.*;
+import java.lang.reflect.Method;
 
-import java.lang.reflect.*;
+import org.junit.platform.engine.UniqueId;
+
+import net.jqwik.api.ShrinkingMode;
+import net.jqwik.execution.PropertyContext;
 
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
 

@@ -2,8 +2,9 @@ package net.jqwik.properties.arbitraries;
 
 import java.util.*;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
+import net.jqwik.api.Arbitrary;
+import net.jqwik.api.constraints.MaxSize;
+import net.jqwik.properties.RandomGenerator;
 
 abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 

@@ -1,9 +1,10 @@
-package net.jqwik.properties;
+package net.jqwik.api;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.function.Function;
 
-import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.CombinedShrinkable;
 
 public class Combinators {
 

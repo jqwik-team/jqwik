@@ -1,9 +1,10 @@
 package net.jqwik.properties;
 
-import net.jqwik.properties.arbitraries.*;
-
 import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import net.jqwik.api.Arbitrary;
+import net.jqwik.properties.arbitraries.*;
 
 public class ListArbitraryForTests implements Arbitrary<List<Integer>> {
 	private final int size;

@@ -3,7 +3,6 @@ package examples.packageWithProperties;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 public class FizzBuzzTests2 {
 
@@ -13,9 +12,9 @@ public class FizzBuzzTests2 {
 		return nthCount.startsWith("Fizz");
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> divisibleBy3() {
-		return Generator.integer(1, 1000).filter(i -> i % 3 == 0);
+		return Arbitraries.integer(1, 1000).filter(i -> i % 3 == 0);
 	}
 
 	@Property
@@ -24,9 +23,9 @@ public class FizzBuzzTests2 {
 		return nthCount.endsWith("Buzz");
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> divisibleBy5() {
-		return Generator.integer(1, 1000).filter(i -> i % 5 == 0);
+		return Arbitraries.integer(1, 1000).filter(i -> i % 5 == 0);
 	}
 
 	@Property
@@ -35,9 +34,9 @@ public class FizzBuzzTests2 {
 		return nthCount.equals(Integer.toString(i));
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<Integer> notDivisibleBy3or5() {
-		return Generator.integer(1, 1000) //
+		return Arbitraries.integer(1, 1000) //
 				.filter(i -> i % 5 != 0) //
 				.filter(i -> i % 3 != 0);
 	}

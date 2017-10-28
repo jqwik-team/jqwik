@@ -1,10 +1,10 @@
 package examples.packageWithProperties;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
-
 import java.math.*;
-import java.util.*;
+import java.util.List;
+
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 public class ShrinkingExamples {
 
@@ -60,9 +60,9 @@ public class ShrinkingExamples {
 		return aString.startsWith("a");
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<String> charsFromAToZ() {
-		return Generator.string('a', 'z', 1).filter(s -> !s.isEmpty());
+		return Arbitraries.string('a', 'z', 1).filter(s -> !s.isEmpty());
 	}
 
 }

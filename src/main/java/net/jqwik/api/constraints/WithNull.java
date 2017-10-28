@@ -1,8 +1,6 @@
-package net.jqwik.api;
+package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
-
-import org.junit.platform.commons.annotation.*;
 
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

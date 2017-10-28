@@ -1,12 +1,13 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.ShrinkingMode;
-import org.junit.platform.commons.util.*;
-import org.opentest4j.*;
-
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import org.junit.platform.commons.util.BlacklistedExceptions;
+import org.opentest4j.TestAbortedException;
+
+import net.jqwik.api.*;
 
 public class GenericProperty {
 

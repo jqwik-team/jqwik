@@ -1,10 +1,10 @@
 package net.jqwik;
 
-import net.jqwik.properties.*;
-
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Collectors;
+
+import net.jqwik.api.Arbitrary;
 
 public class TestHelper {
 	public static List<Parameter> getParametersFor(Class<?> aClass, String methodName) {

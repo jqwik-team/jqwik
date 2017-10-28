@@ -3,19 +3,20 @@ package net.jqwik.execution;
 import static net.jqwik.TestDescriptorBuilder.*;
 import static org.assertj.core.api.Assertions.*;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Parameter;
 import java.math.*;
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Stream;
 
-import org.assertj.core.data.*;
+import org.assertj.core.data.Offset;
 
-import net.jqwik.*;
+import net.jqwik.TestHelper;
 import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.support.*;
+import net.jqwik.api.constraints.WithNull;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.properties.RandomGenerator;
+import net.jqwik.properties.arbitraries.IntegerArbitrary;
+import net.jqwik.support.JqwikReflectionSupport;
 
 @Group
 public class PropertyMethodArbitraryResolverTests {
@@ -258,7 +259,7 @@ public class PropertyMethodArbitraryResolverTests {
 				return true;
 			}
 
-			@Generate
+			@Provide
 			Arbitrary<String> aString() {
 				return Arbitraries.string('a', 'z');
 			}
@@ -342,7 +343,7 @@ public class PropertyMethodArbitraryResolverTests {
 				return true;
 			}
 
-			@Generate("aString")
+			@Provide("aString")
 			Arbitrary<String> aString() {
 				return Arbitraries.string('a', 'z');
 			}
@@ -357,7 +358,7 @@ public class PropertyMethodArbitraryResolverTests {
 				return true;
 			}
 
-			@Generate
+			@Provide
 			Arbitrary<String> byMethodName() {
 				return Arbitraries.string('x', 'y');
 			}
@@ -367,7 +368,7 @@ public class PropertyMethodArbitraryResolverTests {
 				return true;
 			}
 
-			@Generate
+			@Provide
 			Arbitrary<Long> longBetween1and10() {
 				return Arbitraries.longInteger(1L, 10L);
 			}
@@ -377,7 +378,7 @@ public class PropertyMethodArbitraryResolverTests {
 				return true;
 			}
 
-			@Generate("aName")
+			@Provide("aName")
 			Arbitrary<String> aNameForList() {
 				return Arbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
 			}
@@ -387,7 +388,7 @@ public class PropertyMethodArbitraryResolverTests {
 				return true;
 			}
 
-			@Generate()
+			@Provide()
 			Arbitrary<Thing> aThing() {
 				return Arbitraries.of(new Thing());
 			}
@@ -459,7 +460,7 @@ public class PropertyMethodArbitraryResolverTests {
 			void aNullableMock(@ForAll("mockObject") @WithNull(0.41) Object anObject) {
 			}
 
-			@Generate
+			@Provide
 			Arbitrary<Object> mockObject() {
 				return new MockArbitrary();
 			}

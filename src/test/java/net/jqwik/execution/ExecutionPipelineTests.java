@@ -2,14 +2,13 @@ package net.jqwik.execution;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.*;
+import java.util.List;
 
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.execution.pipeline.*;
-import net.jqwik.properties.*;
 
 public class ExecutionPipelineTests {
 
@@ -35,7 +34,7 @@ public class ExecutionPipelineTests {
 		assertThatThrownBy(() -> pipeline.submit(task)).isInstanceOf(DuplicateExecutionTaskException.class);
 	}
 
-	@Generate
+	@Provide
 	Arbitrary<MockExecutionTask> task() {
 		return Arbitraries.samples(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
 	}

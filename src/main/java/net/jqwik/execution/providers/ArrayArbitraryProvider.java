@@ -1,9 +1,9 @@
 package net.jqwik.execution.providers;
 
-import java.util.function.*;
+import java.util.function.Function;
 
-import net.jqwik.execution.*;
-import net.jqwik.properties.*;
+import net.jqwik.api.*;
+import net.jqwik.execution.GenericType;
 
 public class ArrayArbitraryProvider implements ArbitraryProvider {
 	@Override

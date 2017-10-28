@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Set;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.data.Offset;
+
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.properties.arbitraries.*;
 
 class FloatShrinkingTests {
 
