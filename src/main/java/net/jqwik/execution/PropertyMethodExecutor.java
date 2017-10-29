@@ -5,9 +5,10 @@ import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.*;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.reporting.ReportEntry;
 import org.opentest4j.*;
 
 import net.jqwik.JqwikException;
@@ -58,8 +59,9 @@ public class PropertyMethodExecutor {
 
 	private TestExecutionResult executeMethod(Object testInstance, EngineExecutionListener listener) {
 		try {
-			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance);
-			reportSeed(listener, propertyExecutionResult);
+			Consumer<ReportEntry> publisher = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
+			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, publisher);
+			reportSeed(publisher, propertyExecutionResult);
 			TestExecutionResult testExecutionResult = createTestExecutionResult(propertyExecutionResult);
 			return testExecutionResult;
 		} catch (TestAbortedException e) {
@@ -90,14 +92,14 @@ public class PropertyMethodExecutor {
 		return TestExecutionResult.failed(throwable);
 	}
 
-	private void reportSeed(EngineExecutionListener listener, PropertyCheckResult checkResult) {
+	private void reportSeed(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult) {
 		if (checkResult.countTries() > 1 || checkResult.status() != SATISFIED)
-			listener.reportingEntryPublished(methodDescriptor, CheckResultReportEntry.from(checkResult));
+			publisher.accept(CheckResultReportEntry.from(checkResult));
 	}
 
-	private PropertyCheckResult executeProperty(Object testInstance) {
+	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, testInstance);
-		return property.check();
+		return property.check(publisher);
 	}
 
 }

@@ -6,7 +6,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.lang.reflect.Parameter;
 import java.util.*;
+import java.util.function.Consumer;
 
+import org.junit.platform.engine.reporting.ReportEntry;
 import org.opentest4j.TestAbortedException;
 
 import net.jqwik.TestDescriptorBuilder;
@@ -16,6 +18,9 @@ import net.jqwik.properties.*;
 
 @Group
 class CheckedPropertyTests {
+
+	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> {
+	};
 
 	@Group
 	class CheckedPropertyCreation {
@@ -103,7 +108,7 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, p -> Optional.empty(), 100, 5,
 					1000L, ShrinkingMode.ON, ReportingMode.MINIMAL);
 
-			PropertyCheckResult check = checkedProperty.check();
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
 			CannotFindArbitraryException cannotFindeArbitraryException = (CannotFindArbitraryException) check.throwable().get();
 			assertThat(cannotFindeArbitraryException.getParameter()).isSameAs(parameters.get(0));
@@ -117,7 +122,7 @@ class CheckedPropertyTests {
 					p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 12, 5, 42L, ShrinkingMode.ON,
 					ReportingMode.MINIMAL);
 
-			PropertyCheckResult check = checkedProperty.check();
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.randomSeed()).isEqualTo(42L);
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
@@ -130,7 +135,7 @@ class CheckedPropertyTests {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
 				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 5, 1000L, ShrinkingMode.ON,
 				ReportingMode.MINIMAL);
-		PropertyCheckResult check = checkedProperty.check();
+		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
 

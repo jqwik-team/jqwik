@@ -9,9 +9,8 @@ import net.jqwik.api.constraints.*;
 
 public class GeneratorsExamples {
 
-	@Property(tries = 5)
+	@Property(tries = 50, reporting = ReportingMode.GENERATED)
 	boolean aString(@ForAll String aString, @ForAll(value = "digitsOnly") String anotherString) {
-		System.out.println(String.format("#%s# #%s#", aString, anotherString));
 		return true;
 	}
 

@@ -1,14 +1,15 @@
 package net.jqwik.properties;
 
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
-import net.jqwik.support.JqwikStringSupport;
 import org.junit.platform.commons.util.BlacklistedExceptions;
+import org.junit.platform.engine.reporting.ReportEntry;
 import org.opentest4j.TestAbortedException;
 
 import net.jqwik.api.*;
+import net.jqwik.support.JqwikStringSupport;
 
 public class GenericProperty {
 
@@ -22,7 +23,8 @@ public class GenericProperty {
 		this.forAllPredicate = forAllPredicate;
 	}
 
-	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode, ReportingMode reportingMode) {
+	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode, ReportingMode reportingMode,
+			Consumer<ReportEntry> publisher) {
 		Random random = new Random(seed);
 		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
@@ -31,7 +33,7 @@ public class GenericProperty {
 			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
-				if (!testPredicate(shrinkableParams, reportingMode)) {
+				if (!testPredicate(shrinkableParams, reportingMode, publisher)) {
 					return shrinkAndCreateCheckResult(shrinkingMode, seed, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
@@ -49,11 +51,10 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode) {
+	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode, Consumer<ReportEntry> publisher) {
 		List<Object> plainParams = extractParams(shrinkableParams);
 		if (reportingMode == ReportingMode.GENERATED) {
-			// TODO: Use junit platform listener.publishEntry
-			System.out.println("generated = " + JqwikStringSupport.displayString(plainParams));
+			publisher.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
 		}
 		return forAllPredicate.test(plainParams);
 	}
@@ -68,8 +69,8 @@ public class GenericProperty {
 	}
 
 	@SuppressWarnings("unchecked")
-	private PropertyCheckResult shrinkAndCreateCheckResult(ShrinkingMode shrinkingMode, long seed, int countChecks, int countTries, List<Shrinkable> shrinkables,
-			AssertionError error) {
+	private PropertyCheckResult shrinkAndCreateCheckResult(ShrinkingMode shrinkingMode, long seed, int countChecks, int countTries,
+			List<Shrinkable> shrinkables, AssertionError error) {
 		List<Object> originalParams = extractParams(shrinkables);
 		if (shrinkingMode == ShrinkingMode.OFF) {
 			return PropertyCheckResult.falsified(name, countTries, countChecks, seed, originalParams, originalParams, error);

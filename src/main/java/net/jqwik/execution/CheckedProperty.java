@@ -3,11 +3,12 @@ package net.jqwik.execution;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
+import org.junit.platform.engine.reporting.ReportEntry;
 
 public class CheckedProperty {
 
@@ -38,10 +39,10 @@ public class CheckedProperty {
 		this.reportingMode = reportingMode;
 	}
 
-	public PropertyCheckResult check() {
+	public PropertyCheckResult check(Consumer<ReportEntry> publisher) {
 		long effectiveSeed = randomSeed == Property.DEFAULT_SEED ? RNG.get().nextLong() : randomSeed;
 		try {
-			return createGenericProperty().check(tries, maxDiscardRatio, effectiveSeed, shrinkingMode, reportingMode);
+			return createGenericProperty().check(tries, maxDiscardRatio, effectiveSeed, shrinkingMode, reportingMode, publisher);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.erroneous(propertyName, 0, 0, effectiveSeed, Collections.emptyList(), cannotFindArbitraryException);
 		}
