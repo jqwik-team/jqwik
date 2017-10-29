@@ -1,15 +1,16 @@
 package net.jqwik.discovery;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.discovery.specs.*;
-import net.jqwik.recording.*;
-import org.junit.platform.commons.support.*;
-import org.junit.platform.engine.*;
-
 import java.lang.reflect.*;
 import java.util.*;
+
+import org.junit.platform.commons.support.AnnotationSupport;
+import org.junit.platform.engine.*;
+
+import net.jqwik.JqwikException;
+import net.jqwik.api.Property;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.specs.PropertyDiscoverySpec;
+import net.jqwik.recording.*;
 
 class PropertyMethodResolver implements ElementResolver {
 
@@ -79,15 +80,16 @@ class PropertyMethodResolver implements ElementResolver {
 			return new JqwikException(message);
 		});
 		long seed = determineSeed(uniqueId, property.seed());
-		return new PropertyMethodDescriptor(uniqueId, method, testClass, seed, property.tries(), property.maxDiscardRatio(), property.shrinking());
+		return new PropertyMethodDescriptor(uniqueId, method, testClass, seed, property.tries(), property.maxDiscardRatio(),
+				property.shrinking(), property.reporting());
 	}
 
 	private long determineSeed(UniqueId uniqueId, long seedFromProperty) {
 		return testRunData.byUniqueId(uniqueId) //
-						  .filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
-						  .map(TestRun::getRandomSeed) //
-						  .map(seedFromFailedRun -> seedFromProperty != Property.DEFAULT_SEED ? seedFromProperty : seedFromFailedRun) //
-						  .orElse(seedFromProperty);
+				.filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
+				.map(TestRun::getRandomSeed) //
+				.map(seedFromFailedRun -> seedFromProperty != Property.DEFAULT_SEED ? seedFromProperty : seedFromFailedRun) //
+				.orElse(seedFromProperty);
 	}
 
 	private String getSegmentType() {

@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 
 import org.junit.platform.engine.UniqueId;
 
-import net.jqwik.api.ShrinkingMode;
+import net.jqwik.api.*;
 import net.jqwik.execution.PropertyContext;
 
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
@@ -13,19 +13,21 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 	private final int tries;
 	private final int maxDiscardRatio;
 	private final ShrinkingMode shrinkingMode;
+	private final ReportingMode reportingMode;
 
-	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries, int maxDiscardRatio, ShrinkingMode shrinkingMode) {
+	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries,
+			int maxDiscardRatio, ShrinkingMode shrinkingMode, ReportingMode reportingMode) {
 		super(uniqueId, propertyMethod, containerClass);
 		this.seed = seed;
 		this.tries = tries;
 		this.maxDiscardRatio = maxDiscardRatio;
 		this.shrinkingMode = shrinkingMode;
+		this.reportingMode = reportingMode;
 	}
 
 	@Override
-	//TODO: Change to CONTAINER_AND_TEST as soon as https://github.com/junit-team/junit5/issues/756 has been fixed
 	public Type getType() {
-		return Type.TEST;
+		return Type.CONTAINER_AND_TEST;
 	}
 
 	public long getSeed() {
@@ -42,5 +44,9 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 
 	public ShrinkingMode getShrinkingMode() {
 		return shrinkingMode;
+	}
+
+	public ReportingMode getReportingMode() {
+		return reportingMode;
 	}
 }

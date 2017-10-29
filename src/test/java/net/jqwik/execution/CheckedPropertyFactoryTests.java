@@ -61,7 +61,7 @@ public class CheckedPropertyFactoryTests {
 	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries, int maxDiscardRatio, ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio, shrinking);
+		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio, shrinking, ReportingMode.DEFAULT);
 	}
 
 	private static class PropertyExamples {

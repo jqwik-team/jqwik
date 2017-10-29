@@ -47,7 +47,7 @@
 
 ### Properties
 
-- @ForAll(report = ReportMode.DEFAULT|ALL|ALL_FALSIFIED): Report generated values to different extent
+- Add ReportingMode.ALL_FALSIFIED: Report only falsified values, also during shrinking
 
 - @MinSize for collections and arrays
 
@@ -60,7 +60,7 @@
 - Shrinking
   - Time limit (100ms default?) for shrinking
     - Make it configurable
-  - Reporting:
+  - Statistics:
     - collected statistics (similar to ScalaCheck's collect-feature)
   - Make it configurable (default on/off)
 
