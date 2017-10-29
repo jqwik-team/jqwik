@@ -47,7 +47,7 @@
 
 ### Properties
 
-- Add ReportingMode.ALL_FALSIFIED: Report only falsified values, also during shrinking
+- Add ReportingMode.FALSIFIED, GENERATED_AND_FALSIFIED: Report only, also falsified values, also during shrinking
 
 - @MinSize for collections and arrays
 

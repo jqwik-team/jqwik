@@ -1,14 +1,15 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
-import org.junit.platform.commons.support.*;
-
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.junit.platform.commons.support.*;
+
+import net.jqwik.api.*;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.properties.CheckedFunction;
 
 public class CheckedPropertyFactory {
 
@@ -22,17 +23,20 @@ public class CheckedPropertyFactory {
 		int maxDiscardRatio = propertyMethodDescriptor.getMaxDiscardRatio();
 		long randomSeed = propertyMethodDescriptor.getSeed();
 		ShrinkingMode shrinkingMode = propertyMethodDescriptor.getShrinkingMode();
+		ReportingMode reportingMode = propertyMethodDescriptor.getReportingMode();
 
 		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
-		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed, shrinkingMode);
+		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed,
+				shrinkingMode, reportingMode);
 	}
 
 	private CheckedFunction createForAllPredicate(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		// Todo: Bind all non @ForAll params first
 		Class<?> returnType = propertyMethodDescriptor.getTargetMethod().getReturnType();
-		Function<List, Object> function = params -> ReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance, params.toArray());
+		Function<List, Object> function = params -> ReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance,
+				params.toArray());
 		if (BOOLEAN_RETURN_TYPES.contains(returnType))
 			return params -> (boolean) function.apply(params);
 		else

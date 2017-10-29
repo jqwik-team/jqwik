@@ -32,7 +32,7 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(Property.DEFAULT_SEED);
 			Assertions.assertThat(propertyMethodDescriptor.getTries()).isEqualTo(Property.DEFAULT_TRIES);
 			Assertions.assertThat(propertyMethodDescriptor.getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
-			Assertions.assertThat(propertyMethodDescriptor.getReportingMode()).isEqualTo(ReportingMode.DEFAULT);
+			Assertions.assertThat(propertyMethodDescriptor.getReportingMode()).isEqualTo(ReportingMode.MINIMAL);
 			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
 			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
 					.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
@@ -63,7 +63,7 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(42);
 			Assertions.assertThat(propertyMethodDescriptor.getTries()).isEqualTo(99);
 			Assertions.assertThat(propertyMethodDescriptor.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
-			Assertions.assertThat(propertyMethodDescriptor.getReportingMode()).isEqualTo(ReportingMode.ALL);
+			Assertions.assertThat(propertyMethodDescriptor.getReportingMode()).isEqualTo(ReportingMode.GENERATED);
 		}
 
 		@Example
@@ -145,7 +145,7 @@ class PropertyMethodResolverTest {
 		void withSeed41() {
 		}
 
-		@Property(seed = 42L, tries = 99, shrinking = ShrinkingMode.OFF, reporting = ReportingMode.ALL)
+		@Property(seed = 42L, tries = 99, shrinking = ShrinkingMode.OFF, reporting = ReportingMode.GENERATED)
 		void withPropertyParams() {
 		}
 	}

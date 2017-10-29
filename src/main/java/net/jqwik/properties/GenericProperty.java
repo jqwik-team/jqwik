@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.jqwik.support.JqwikStringSupport;
 import org.junit.platform.commons.util.BlacklistedExceptions;
 import org.opentest4j.TestAbortedException;
 
@@ -21,7 +22,7 @@ public class GenericProperty {
 		this.forAllPredicate = forAllPredicate;
 	}
 
-	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode) {
+	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode, ReportingMode reportingMode) {
 		Random random = new Random(seed);
 		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
@@ -30,8 +31,7 @@ public class GenericProperty {
 			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
-				boolean check = forAllPredicate.test(extractParams(shrinkableParams));
-				if (!check) {
+				if (!testPredicate(shrinkableParams, reportingMode)) {
 					return shrinkAndCreateCheckResult(shrinkingMode, seed, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
@@ -47,6 +47,15 @@ public class GenericProperty {
 		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, maxTries, maxDiscardRatio))
 			return PropertyCheckResult.exhausted(name, maxTries, countChecks, seed);
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
+	}
+
+	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode) {
+		List<Object> plainParams = extractParams(shrinkableParams);
+		if (reportingMode == ReportingMode.GENERATED) {
+			// TODO: Use junit platform listener.publishEntry
+			System.out.println("generated = " + JqwikStringSupport.displayString(plainParams));
+		}
+		return forAllPredicate.test(plainParams);
 	}
 
 	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {

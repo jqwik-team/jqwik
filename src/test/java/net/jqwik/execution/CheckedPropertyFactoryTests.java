@@ -1,14 +1,15 @@
 package net.jqwik.execution;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import org.junit.platform.engine.*;
+import static org.assertj.core.api.Assertions.*;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.*;
+import org.junit.platform.engine.UniqueId;
+
+import net.jqwik.TestHelper;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.PropertyMethodDescriptor;
 
 public class CheckedPropertyFactoryTests {
 
@@ -58,10 +59,12 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(noArgs)).isTrue();
 	}
 
-	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries, int maxDiscardRatio, ShrinkingMode shrinking) {
+	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries, int maxDiscardRatio,
+			ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio, shrinking, ReportingMode.DEFAULT);
+		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio, shrinking,
+				ReportingMode.MINIMAL);
 	}
 
 	private static class PropertyExamples {
