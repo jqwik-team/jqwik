@@ -228,6 +228,9 @@ The `@Property` annotation has a few optional values:
   report this property as a failure. Default is `5`.
 - `ShrinkingMode shrinking`: You can switch off parameter shrinking by using `ShrinkingMode.OFF`.
   Default is `ShrinkingMode.ON`
+- `ReportingMode reporting`: You can switch to more verbose reporting. 
+  `ReportingMode.GENERATED` will report each generated set of parameters.
+  Default is `ReportingMode.MINIMAL`
 
 ### Optional `@ForAll` Parameters
 
