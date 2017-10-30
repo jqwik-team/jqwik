@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.List;
 
 import net.jqwik.api.Arbitrary;
-import net.jqwik.api.constraints.MaxSize;
+import net.jqwik.api.constraints.Size;
 import net.jqwik.properties.RandomGenerator;
 
 public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
@@ -50,8 +50,8 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 		return RandomGenerators.list(elementGenerator, maxSize);
 	}
 
-	public void configure(MaxSize maxSize) {
-		this.maxSize = maxSize.value();
+	public void configure(Size maxSize) {
+		this.maxSize = maxSize.max();
 	}
 
 

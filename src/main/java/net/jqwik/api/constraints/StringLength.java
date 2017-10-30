@@ -2,9 +2,13 @@ package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
 
+/**
+ * Configure the length of generated Strings
+ */
 @Target({ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface MaxSize {
-	int value() default 0;
+public @interface StringLength {
+	int min() default 0;
+	int max();
 }

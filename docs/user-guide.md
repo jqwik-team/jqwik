@@ -16,12 +16,12 @@ Volunteers for polishing and extending it are more than welcome._
 - [Assertions](#assertions)
 - [Lifecycle](#lifecycle)
 - [Grouping Tests](#grouping-tests)
-- [Automatic Parameter Generation](#automatic-parameter-generation)
+- [Default Parameter Generation](#default-parameter-generation)
   - [Optional `@ForAll` Parameters](#optional-forall-parameters)
-- [Result Shrinking](#result-shrinking)
 - [Customized Parameter Generation](#customized-parameter-generation)
-- [Build your own Arbitraries](#build-your-own-arbitraries)
+- [Result Shrinking](#result-shrinking)
 - [Assumptions](#assumptions)
+- [Build your own Generators and Arbitraries](#build-your-own-generators-and-arbitraries)
 - [Register default Generators and Arbitraries](#register-default-generators-and-arbitraries)
 - [Running and Configuration](#running-and-configuration)
 - [Self-Made Annotations](#self-made-annotations)
@@ -306,17 +306,71 @@ class TestsWithGroups {
 }
 ```
 
-## Automatic Parameter Generation
+## Default Parameter Generation
+
+_jqwik_ tries to generate values for those property method parameters that are
+annotated with `@ForAll`. If the annotation does not have a `value` parameter,
+jqwik will use default generation for the following types:
+
+- `String`
+- Integral types `Integer`, `int`, `Long`, `long` and `BigInteger`
+- Floating types  `Float`, `float`, `Double`, `double` and `BigDecimal`
+- `Boolean` and `boolean`
+- All `enum` types
+- Collection types `List<T>`, `Set<T>` and `Stream<T>` 
+  as long as `T` can also be provided by default generation.
+- `Optional<T>` of types that are provided by default.
+- Array `T[]` of types that are provided by default.
+
+If you use `@ForAll` with a value, e.g. `@ForAll("aMethodName")`, the method
+referenced by `"aMethodName"` will be called to provide an Arbitrary of the 
+required type (see [Customized Parameter Generation](#customized-parameter-generation)). 
 
 ### Optional `@ForAll` Parameters
 
-## Result Shrinking
+Default parameter generation can be influenced and constrained by additional annotations, depending
+on the requested parameter type.
+
+All types:
+
+- `@WithNull(double value = 0.1)`: Also generate `null` values with the probability of `value`. 
+
+Strings:
+
+- `@ValidChars(chars[] value = {}, char from = 0, char to = 0)`
+- `@StringLength(int min = 0, int max)`
+
+List, Set, Stream and Arrays:
+
+- `@Size(int min = 0, int max)`
+
+Integer and int:
+
+- `@IntRange(int min = 0, int max)`
+
+Long, long and BigInteger:
+
+- `@LongRange(long min = 0L, long max)`
+
+Float and float:
+
+- `@FloatRange(float min = 0.0f, float max)`
+
+Double, double and BigDecimal:
+
+- `@DoubleRange(double min = 0.0, double max)`
+
+All floating types:
+
+- `@Scale(int value)`
 
 ## Customized Parameter Generation
 
-## Build your own Arbitraries
+## Result Shrinking
 
 ## Assumptions
+
+## Build your own Generators and Arbitraries
 
 ## Register default Generators and Arbitraries
 

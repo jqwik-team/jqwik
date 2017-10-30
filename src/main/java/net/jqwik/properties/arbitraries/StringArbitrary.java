@@ -59,8 +59,8 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.string(characterGenerator, effectiveMaxSize).withSamples("");
 	}
 
-	public void configure(MaxStringLength maxStringLength) {
-		this.maxSize = maxStringLength.value();
+	public void configure(StringLength maxStringLength) {
+		this.maxSize = maxStringLength.max();
 	}
 
 	public void configure(ValidChars validChars) {

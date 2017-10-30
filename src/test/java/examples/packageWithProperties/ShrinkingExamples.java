@@ -21,7 +21,7 @@ public class ShrinkingExamples {
 	}
 
 	@Property
-	boolean shrinkAListToSize2(@ForAll @MaxSize(1000) @IntRange(min = -5, max = 5) List<Integer> aList) {
+	boolean shrinkAListToSize2(@ForAll @Size(max = 1000) @IntRange(min = -5, max = 5) List<Integer> aList) {
 		return aList.size() <= 1;
 	}
 
@@ -51,7 +51,7 @@ public class ShrinkingExamples {
 	}
 
 	@Property
-	boolean shrinkArrayToLength2(@ForAll @MaxSize(100) Integer[] anIntArray) {
+	boolean shrinkArrayToLength2(@ForAll @Size(max = 100) Integer[] anIntArray) {
 		return anIntArray.length < 2;
 	}
 

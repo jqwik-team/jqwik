@@ -3,7 +3,7 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 
 import net.jqwik.api.Arbitrary;
-import net.jqwik.api.constraints.MaxSize;
+import net.jqwik.api.constraints.Size;
 import net.jqwik.properties.RandomGenerator;
 
 abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
@@ -30,8 +30,8 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 		return RandomGenerators.list(elementGenerator, maxSize).withShrinkableSamples(Collections.emptyList());
 	}
 
-	public void configure(MaxSize maxSize) {
-		this.maxSize = maxSize.value();
+	public void configure(Size maxSize) {
+		this.maxSize = maxSize.max();
 	}
 
 }
