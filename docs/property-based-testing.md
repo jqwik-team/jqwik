@@ -24,5 +24,7 @@ There are a few alternatives to _jqwik_ if you want to do PBT on the JVM:
   [property-based testing module](https://github.com/vavr-io/vavr/tree/master/vavr-test).
 - [ScalaCheck](http://www.scalacheck.org/): A mature property based testing system with shrinking and all, 
   iff you prefer Scala over Java.
+- [test.check for Clojure](https://github.com/clojure/test.check): Inspired by QuickCheck. Since Clojure
+  does not have static types generators must always be declared explicitly.
   
 Please let me know if you learn about any other _maintained_ library or tool.
