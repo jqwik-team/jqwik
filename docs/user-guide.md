@@ -13,11 +13,11 @@ Volunteers for polishing and extending it are more than welcome._
 - [Creating an Example-based Test](#creating-an-example-based-test)
 - [Creating a Property](#creating-a-property)
   - [Optional `@Property` Parameters](#optional-property-parameters)
-  - [Optional `@ForAll` Parameters](#optional-forall-parameters)
 - [Assertions](#assertions)
-- [Grouping Tests](#grouping-tests)
 - [Lifecycle](#lifecycle)
+- [Grouping Tests](#grouping-tests)
 - [Automatic Parameter Generation](#automatic-parameter-generation)
+  - [Optional `@ForAll` Parameters](#optional-forall-parameters)
 - [Result Shrinking](#result-shrinking)
 - [Customized Parameter Generation](#customized-parameter-generation)
 - [Build your own Arbitraries](#build-your-own-arbitraries)
@@ -217,8 +217,6 @@ The `@Property` annotation has a few optional values:
   `ReportingMode.GENERATED` will report each generated set of parameters.
   Default is `ReportingMode.MINIMAL`
 
-### Optional `@ForAll` Parameters
-
 ## Assertions
 
 __jqwik__ does not come with any assertions, so you have to use one of the
@@ -228,11 +226,49 @@ third-party assertion libraries, e.g. [Hamcrest](http://hamcrest.org/) or
 If you have Jupiter in your test dependencies anyway, you can also use the
 static methods in `org.junit.jupiter.api.Assertions`.
 
-## Grouping Tests
-
 ## Lifecycle
 
+The current lifecycle of jqwik test methods is rather simple:
+
+- For every test method, annotated with `@Property` or `@Example`, 
+  a new instance of the containing test class is created
+  in order to keep the individual tests isolated from each other.
+- If you have preparatory work to do for _each_ test method, 
+  create a constructor without parameters and do the work there.
+- If you have cleanup work to do for _each_ test method, 
+  the containing test class can implement `java.lang.AutoCloseable`.
+  The `close`-Method will be called after each test method execution.
+  
+```java
+import net.jqwik.api.*;
+
+class TestsWithLifecycle implements AutoCloseable {
+
+	TestsWithLifecycle() {
+		System.out.println("Before each");
+	}
+
+	@Example void anExample() {
+		System.out.println("anExample");
+	}
+
+	@Property(tries = 5)
+	void aProperty(@ForAll String aString) {
+		System.out.println("anProperty: " + aString);
+	}
+
+	@Override
+	public void close() throws Exception {
+		System.out.println("After each");
+	}
+}
+```
+
+## Grouping Tests
+
 ## Automatic Parameter Generation
+
+### Optional `@ForAll` Parameters
 
 ## Result Shrinking
 
@@ -243,6 +279,8 @@ static methods in `org.junit.jupiter.api.Assertions`.
 ## Assumptions
 
 ## Register default Generators and Arbitraries
+
+The API for providing Arbitraries and Generators by default is not public yet.
 
 ## Running and Configuration
 
