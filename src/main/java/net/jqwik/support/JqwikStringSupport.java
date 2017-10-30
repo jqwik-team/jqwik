@@ -23,6 +23,9 @@ public class JqwikStringSupport {
 			String elements = Arrays.stream(array).map(o -> displayString(o)).collect(Collectors.joining(", "));
 			return String.format("%s{%s}", object.getClass().getSimpleName(), elements);
 		}
+		if (String.class.isAssignableFrom(object.getClass())) {
+			return String.format("\"%s\"", object.toString());
+		}
 		return object.toString();
 	}
 
