@@ -4,19 +4,19 @@ import net.jqwik.api.*;
 
 class TestsWithGroups {
 
-	@Property(tries = 5)
+	@Property
 	void outer(@ForAll String aString) {
 	}
 
 	@Group
 	class Group1 {
-		@Property(tries = 5)
+		@Property
 		void group1Property(@ForAll String aString) {
 		}
 
 		@Group
 		class Subgroup {
-			@Property(tries = 5)
+			@Property
 			void subgroupProperty(@ForAll String aString) {
 			}
 		}
@@ -24,7 +24,7 @@ class TestsWithGroups {
 
 	@Group
 	class Group2 {
-		@Property(tries = 5)
+		@Property
 		void group2Property(@ForAll String aString) {
 		}
 	}
