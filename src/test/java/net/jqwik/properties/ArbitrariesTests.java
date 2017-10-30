@@ -187,16 +187,16 @@ class ArbitrariesTests {
 		@Example
 		void list() {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
-			Arbitrary<List<String>> listArbitrary = Arbitraries.listOf(stringArbitrary, 5);
+			Arbitrary<List<String>> listArbitrary = Arbitraries.listOf(stringArbitrary, 2, 5);
 
 			RandomGenerator<List<String>> generator = listArbitrary.generator(1);
-			assertGeneratedLists(generator);
+			assertGeneratedLists(generator, 2, 5);
 		}
 
 		@Example
 		void set() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
-			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 5);
+			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 0, 5);
 
 			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1);
 
@@ -206,7 +206,7 @@ class ArbitrariesTests {
 		 @Example
 		 void stream() {
 		 Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
-		 Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 5);
+		 Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 0, 5);
 
 		 RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
 
@@ -266,8 +266,8 @@ class ArbitrariesTests {
 		assertThat(set.value()).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}
 
-	private void assertGeneratedLists(RandomGenerator<List<String>> generator) {
-		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.size() >= 0 && aString.size() <= 5);
+	private void assertGeneratedLists(RandomGenerator<List<String>> generator, int minSize, int maxSize) {
+		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.size() >= minSize && aString.size() <= maxSize);
 		List<String> allowedStrings = Arrays.asList("1", "hallo", "test");
 		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.stream().allMatch(allowedStrings::contains));
 	}

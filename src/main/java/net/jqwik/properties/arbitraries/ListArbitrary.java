@@ -8,11 +8,11 @@ import net.jqwik.properties.RandomGenerator;
 public class ListArbitrary<T> extends CollectionArbitrary<T, List<T>> {
 
 	public ListArbitrary(Arbitrary<T> elementArbitrary) {
-		this(elementArbitrary, 0);
+		this(elementArbitrary, 0, 0);
 	}
 
-	public ListArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
-		super(List.class, elementArbitrary, maxSize);
+	public ListArbitrary(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		super(List.class, elementArbitrary, minSize, maxSize);
 	}
 
 	@Override

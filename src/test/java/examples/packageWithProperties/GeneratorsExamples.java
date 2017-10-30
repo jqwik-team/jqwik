@@ -99,9 +99,8 @@ public class GeneratorsExamples {
 		System.out.println(asList);
 	}
 
-	@Property(tries = 10)
-	boolean aPeopleList(@ForAll List<Person> people) {
-		System.out.println(people);
+	@Property(tries = 10, reporting = ReportingMode.GENERATED)
+	boolean aPeopleList(@ForAll @Size(min = 2, max = 5) List<Person> people) {
 		return people != null;
 	}
 

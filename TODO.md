@@ -1,5 +1,6 @@
 ### Bugs
 
+- Set generation hangs!!
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative: change distance to be of type BigInteger!
 - Generating random high floats generates the same float all the time :-( 
@@ -47,13 +48,11 @@
 
 ### Properties
 
-- Implement @Size.min
+- Implement @Size.min for Arrays
 
 - Add ReportingMode.FALSIFIED, GENERATED_AND_FALSIFIED: Report only, also falsified values, also during shrinking
 
 - Report the samples in the state BEFORE execution of property method
-
-- @MinSize for collections and arrays
 
 - Filter out duplicates in generated sets
 

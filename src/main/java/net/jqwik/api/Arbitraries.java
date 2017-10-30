@@ -90,24 +90,24 @@ public class Arbitraries {
 		return new StringArbitrary(from, to);
 	}
 
-	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new ListArbitrary<T>(elementArbitrary, maxSize);
+	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return new ListArbitrary<T>(elementArbitrary, minSize, maxSize);
 	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
 		return new ListArbitrary<T>(elementArbitrary);
 	}
 
-	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new SetArbitrary<>(elementArbitrary, maxSize);
+	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return new SetArbitrary<>(elementArbitrary, minSize, maxSize);
 	}
 
 	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
 		return new SetArbitrary<>(elementArbitrary);
 	}
 
-	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int maxSize) {
-		return new StreamArbitrary<>(elementArbitrary, maxSize);
+	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return new StreamArbitrary<>(elementArbitrary, minSize, maxSize);
 	}
 
 	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {

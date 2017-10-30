@@ -9,11 +9,11 @@ import net.jqwik.properties.RandomGenerator;
 public class StreamArbitrary<T> extends CollectionArbitrary<T, Stream<T>> {
 
 	public StreamArbitrary(Arbitrary<T> elementArbitrary) {
-		this(elementArbitrary, 0);
+		this(elementArbitrary, 0, 0);
 	}
 
-	public StreamArbitrary(Arbitrary<T> elementArbitrary, int maxSize) {
-		super(Set.class, elementArbitrary, maxSize);
+	public StreamArbitrary(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		super(Set.class, elementArbitrary, minSize, maxSize);
 	}
 
 	@Override
