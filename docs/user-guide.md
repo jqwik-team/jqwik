@@ -17,7 +17,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Lifecycle](#lifecycle)
 - [Grouping Tests](#grouping-tests)
 - [Default Parameter Generation](#default-parameter-generation)
-  - [Optional `@ForAll` Parameters](#optional-forall-parameters)
+  - [Constraining Default Generation](#constraining-default-generation)
 - [Customized Parameter Generation](#customized-parameter-generation)
 - [Result Shrinking](#result-shrinking)
 - [Assumptions](#assumptions)
@@ -326,14 +326,14 @@ If you use `@ForAll` with a value, e.g. `@ForAll("aMethodName")`, the method
 referenced by `"aMethodName"` will be called to provide an Arbitrary of the 
 required type (see [Customized Parameter Generation](#customized-parameter-generation)). 
 
-### Optional `@ForAll` Parameters
+### Constraining Default Generation
 
 Default parameter generation can be influenced and constrained by additional annotations, depending
 on the requested parameter type.
 
 All types:
 
-- `@WithNull(double value = 0.1)`: Also generate `null` values with the probability of `value`. 
+- `@WithNull(double value = 0.1)`: Also generate `null` values with a probability of `value`. 
 
 Strings:
 
@@ -363,6 +363,16 @@ Double, double and BigDecimal:
 All floating types:
 
 - `@Scale(int value)`
+
+In case of collections, arrays and `Optional` the constraining annotations are also applied to the
+contained type, e.g.:
+
+```java
+@Property
+void aProperty(@ForAll @StringLength(max=10) List<String> listOfStrings) {
+}
+```
+will generate lists of Strings that have 10 characters max.
 
 ## Customized Parameter Generation
 
