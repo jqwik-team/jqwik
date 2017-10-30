@@ -266,6 +266,46 @@ class TestsWithLifecycle implements AutoCloseable {
 
 ## Grouping Tests
 
+Within a containing test class you can group other containers by embedding
+another non-static and non-private inner class and annotating it with `@Group`.
+Grouping examples and properties is a means to improve the organization and 
+maintainability of your tests.
+
+Groups can be nested and there lifecycle is also nested, that means that
+the lifecycle of a test class is also applied to inner groups of that container.
+
+```java
+import net.jqwik.api.*;
+
+class TestsWithGroups {
+
+	@Property(tries = 5)
+	void outer(@ForAll String aString) {
+	}
+
+	@Group
+	class Group1 {
+		@Property(tries = 5)
+		void group1Property(@ForAll String aString) {
+		}
+
+		@Group
+		class Subgroup {
+			@Property(tries = 5)
+			void subgroupProperty(@ForAll String aString) {
+			}
+		}
+	}
+
+	@Group
+	class Group2 {
+		@Property(tries = 5)
+		void group2Property(@ForAll String aString) {
+		}
+	}
+}
+```
+
 ## Automatic Parameter Generation
 
 ### Optional `@ForAll` Parameters
