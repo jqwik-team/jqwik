@@ -10,7 +10,6 @@ Volunteers for polishing and extending it are more than welcome._
 - [How to Use](#how-to-use)
   - [Gradle](#gradle)
   - [Maven](#maven)
-- [How to Contribute](#how-to-contribute)
 - [Creating an Example-based Test](#creating-an-example-based-test)
 - [Creating a Property](#creating-a-property)
   - [Optional `@Property` Parameters](#optional-property-parameters)
@@ -114,20 +113,6 @@ Add the following repository and dependency to your `pom.xml` file:
 
 See [the Maven section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
 for details on how to configure the surefire plugin and other dependencies.
-
-## How to Contribute
-
-Please, please, please add your suggestion, ideas and bug reports using the project's
-[issue tracker on github](https://github.com/jlink/jqwik/issues).
-
-Of course, you are also invited to send in pull requests. Be prepared, though, that
-I'll be picky about what I accept, since the initial phase of a project 
-is crucial for shaping the mid and long-term
-future of a project's design and architecture.
-
-If you want to become a long-term supporter, maintainer or committer for __jqwik__
-please [get in touch](mailto:business@johanneslink.net).
-
 
 ## Creating an Example-based Test
 
