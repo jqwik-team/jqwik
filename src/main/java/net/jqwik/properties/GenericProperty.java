@@ -11,6 +11,8 @@ import org.opentest4j.TestAbortedException;
 import net.jqwik.api.*;
 import net.jqwik.support.JqwikStringSupport;
 
+import static net.jqwik.properties.PropertyCheckResult.Status.SATISFIED;
+
 public class GenericProperty {
 
 	private final String name;
@@ -24,16 +26,27 @@ public class GenericProperty {
 	}
 
 	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode, ReportingMode reportingMode,
-			Consumer<ReportEntry> publisher) {
-		Random random = new Random(seed);
+			Consumer<ReportEntry> reporter) {
+		PropertyCheckResult checkResult = checkWithoutReporting(tries, maxDiscardRatio, seed, shrinkingMode, reportingMode, reporter);
+		reportResult(reporter, checkResult);
+		return checkResult;
+	}
+
+	private void reportResult(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult) {
+		if (checkResult.countTries() > 1 || checkResult.status() != SATISFIED)
+			publisher.accept(CheckResultReportEntry.from(checkResult));
+	}
+
+	private PropertyCheckResult checkWithoutReporting(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode, ReportingMode reportingMode, Consumer<ReportEntry> reporter) {
 		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : tries;
 		int countChecks = 0;
+		Random random = new Random(seed);
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
 			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
-				if (!testPredicate(shrinkableParams, reportingMode, publisher)) {
+				if (!testPredicate(shrinkableParams, reportingMode, reporter)) {
 					return shrinkAndCreateCheckResult(shrinkingMode, seed, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
@@ -51,10 +64,10 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
 	}
 
-	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode, Consumer<ReportEntry> publisher) {
+	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode, Consumer<ReportEntry> reporter) {
 		List<Object> plainParams = extractParams(shrinkableParams);
 		if (reportingMode == ReportingMode.GENERATED) {
-			publisher.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
+			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
 		}
 		return forAllPredicate.test(plainParams);
 	}

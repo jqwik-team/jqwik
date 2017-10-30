@@ -1,10 +1,10 @@
-package net.jqwik.execution;
-
-import net.jqwik.properties.*;
-import net.jqwik.support.*;
-import org.junit.platform.engine.reporting.*;
+package net.jqwik.properties;
 
 import java.util.*;
+
+import org.junit.platform.engine.reporting.ReportEntry;
+
+import net.jqwik.support.JqwikStringSupport;
 
 public class CheckResultReportEntry {
 

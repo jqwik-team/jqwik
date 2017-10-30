@@ -2,6 +2,7 @@ package net.jqwik.execution;
 
 import java.util.*;
 
+import net.jqwik.properties.CheckResultReportEntry;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 

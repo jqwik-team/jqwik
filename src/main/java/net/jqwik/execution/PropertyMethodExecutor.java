@@ -59,9 +59,8 @@ public class PropertyMethodExecutor {
 
 	private TestExecutionResult executeMethod(Object testInstance, EngineExecutionListener listener) {
 		try {
-			Consumer<ReportEntry> publisher = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
-			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, publisher);
-			reportSeed(publisher, propertyExecutionResult);
+			Consumer<ReportEntry> reporter = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
+			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, reporter);
 			TestExecutionResult testExecutionResult = createTestExecutionResult(propertyExecutionResult);
 			return testExecutionResult;
 		} catch (TestAbortedException e) {
@@ -90,11 +89,6 @@ public class PropertyMethodExecutor {
 			return TestExecutionResult.successful();
 		Throwable throwable = checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString()));
 		return TestExecutionResult.failed(throwable);
-	}
-
-	private void reportSeed(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult) {
-		if (checkResult.countTries() > 1 || checkResult.status() != SATISFIED)
-			publisher.accept(CheckResultReportEntry.from(checkResult));
 	}
 
 	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {

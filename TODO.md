@@ -49,6 +49,8 @@
 
 - Add ReportingMode.FALSIFIED, GENERATED_AND_FALSIFIED: Report only, also falsified values, also during shrinking
 
+- Report the samples in the state BEFORE execution of property method
+
 - @MinSize for collections and arrays
 
 - Filter out duplicates in generated sets
