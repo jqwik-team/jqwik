@@ -47,7 +47,7 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
-		return RandomGenerators.list(elementGenerator, maxSize);
+		return RandomGenerators.list(elementGenerator, 0, maxSize);
 	}
 
 	public void configure(Size maxSize) {

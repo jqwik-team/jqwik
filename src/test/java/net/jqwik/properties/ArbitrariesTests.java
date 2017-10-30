@@ -39,21 +39,21 @@ class ArbitrariesTests {
 
 	@Example
 	void string() {
-		Arbitrary<String> stringArbitrary = Arbitraries.string('a', 'd', 5);
+		Arbitrary<String> stringArbitrary = Arbitraries.string('a', 'd', 0, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertGeneratedString(generator);
+		assertGeneratedString(generator, 0, 5);
 	}
 
 	@Example
 	void stringFromCharset() {
 		char[] validChars = new char[]{'a', 'b', 'c', 'd'};
-		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 5);
+		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars,2, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertGeneratedString(generator);
+		assertGeneratedString(generator, 2, 5);
 	}
 
-	private void assertGeneratedString(RandomGenerator<String> generator) {
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= 0 && value.length() <= 5);
+	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
 	}

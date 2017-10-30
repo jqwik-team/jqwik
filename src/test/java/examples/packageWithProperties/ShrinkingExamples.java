@@ -62,7 +62,7 @@ public class ShrinkingExamples {
 
 	@Provide
 	Arbitrary<String> charsFromAToZ() {
-		return Arbitraries.string('a', 'z', 1).filter(s -> !s.isEmpty());
+		return Arbitraries.string('a', 'z', 0, 1).filter(s -> !s.isEmpty());
 	}
 
 }

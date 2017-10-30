@@ -89,8 +89,9 @@ public class RandomGenerators {
 	private static <T, C> RandomGenerator<C> container( //
 														RandomGenerator<T> elementGenerator, //
 														Function<List<T>, C> containerFunction, //
-														int maxSize) {
-		RandomGenerator<Integer> lengthGenerator = choose(0, maxSize);
+														int minSize, int maxSize
+	) {
+		RandomGenerator<Integer> lengthGenerator = choose(minSize, maxSize);
 		return random -> {
 			int listSize = lengthGenerator.next(random).value();
 			List<Shrinkable<T>> list = new ArrayList<>();
@@ -101,12 +102,12 @@ public class RandomGenerators {
 		};
 	}
 
-	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int maxSize) {
-		return container(elementGenerator, ArrayList::new, maxSize);
+	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
+		return container(elementGenerator, ArrayList::new, minSize, maxSize);
 	}
 
-	public static RandomGenerator<String> string(RandomGenerator<Character> elementGenerator, int maxSize) {
-		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, maxSize);
+	public static RandomGenerator<String> string(RandomGenerator<Character> elementGenerator, int minLength, int maxLength) {
+		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength);
 	}
 
 	public static RandomGenerator<Character> choose(char min, char max) {

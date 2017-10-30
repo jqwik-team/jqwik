@@ -74,16 +74,16 @@ public class Arbitraries {
 		return new StringArbitrary();
 	}
 
-	public static Arbitrary<String> string(char[] validChars, int maxSize) {
-		return new StringArbitrary(validChars, maxSize);
+	public static Arbitrary<String> string(char[] validChars, int minLength, int maxLength) {
+		return new StringArbitrary(validChars, minLength, maxLength);
 	}
 
 	public static Arbitrary<String> string(char[] validChars) {
 		return new StringArbitrary(validChars);
 	}
 
-	public static Arbitrary<String> string(char from, char to, int maxSize) {
-		return new StringArbitrary(from, to, maxSize);
+	public static Arbitrary<String> string(char from, char to, int minLength, int maxLength) {
+		return new StringArbitrary(from, to, minLength, maxLength);
 	}
 
 	public static Arbitrary<String> string(char from, char to) {

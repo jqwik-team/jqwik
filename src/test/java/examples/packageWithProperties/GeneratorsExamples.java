@@ -10,7 +10,7 @@ import net.jqwik.api.constraints.*;
 public class GeneratorsExamples {
 
 	@Property(tries = 50, reporting = ReportingMode.GENERATED)
-	boolean aString(@ForAll String aString, @ForAll(value = "digitsOnly") String anotherString) {
+	boolean aString(@ForAll @StringLength(min = 2, max = 33) String aString, @ForAll(value = "digitsOnly") String anotherString) {
 		return true;
 	}
 
@@ -33,8 +33,8 @@ public class GeneratorsExamples {
 	@Provide
 	Arbitrary<Person> aValidPerson() {
 		Arbitrary<Integer> age = Arbitraries.integer(0, 100);
-		Arbitrary<String> first = Arbitraries.string('a', 'z', 10).filter(f -> !f.isEmpty());
-		Arbitrary<String> last = Arbitraries.string('a', 'z', 15).filter(f -> !f.isEmpty());
+		Arbitrary<String> first = Arbitraries.string('a', 'z', 0,10).filter(f -> !f.isEmpty());
+		Arbitrary<String> last = Arbitraries.string('a', 'z', 1, 15);
 
 		return Combinators.combine(age, first, last).as((a, f, l) -> {
 			String name = f + " " + l;

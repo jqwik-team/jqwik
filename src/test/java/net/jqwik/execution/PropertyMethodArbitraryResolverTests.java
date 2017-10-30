@@ -380,7 +380,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide("aName")
 			Arbitrary<String> aNameForList() {
-				return Arbitraries.string('a', 'b', 10).filter(name -> name.length() > 2);
+				return Arbitraries.string('a', 'b',0, 10).filter(name -> name.length() > 2);
 			}
 
 			@Property

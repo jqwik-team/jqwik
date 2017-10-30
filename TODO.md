@@ -47,7 +47,7 @@
 
 ### Properties
 
-- Implement @Size.min and @StringLength.min
+- Implement @Size.min
 
 - Add ReportingMode.FALSIFIED, GENERATED_AND_FALSIFIED: Report only, also falsified values, also during shrinking
 

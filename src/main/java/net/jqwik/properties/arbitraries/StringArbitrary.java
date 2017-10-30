@@ -1,50 +1,53 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.constraints.*;
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.properties.*;
 
 public class StringArbitrary extends NullableArbitrary<String> {
 
-	private final static char[] defaultChars = {'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@'};
+	private final static char[] defaultChars = { 'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@' };
 
 	private RandomGenerator<Character> characterGenerator;
-	private int maxSize;
+	private int minLength;
+	private int maxLength;
 
 	public StringArbitrary() {
-		this(defaultGenerator(), 0);
+		this(defaultGenerator(), 0, 0);
 	}
 
 	private static RandomGenerator<Character> defaultGenerator() {
 		return RandomGenerators.choose(defaultChars);
 	}
 
-	public StringArbitrary(RandomGenerator<Character> characterGenerator, int maxSize) {
+	public StringArbitrary(RandomGenerator<Character> characterGenerator, int minLength, int maxLength) {
 		super(String.class);
 		this.characterGenerator = characterGenerator;
-		this.maxSize = maxSize;
+		this.minLength = minLength;
+		this.maxLength = maxLength;
 	}
 
-	public StringArbitrary(char[] characters, int maxSize) {
-		this(createGenerator(characters), maxSize);
+	public StringArbitrary(char[] characters, int minLength, int maxLength) {
+		this(createGenerator(characters), minLength, maxLength);
 	}
 
 	public StringArbitrary(char[] characters) {
-		this(characters, 0);
+		this(characters, 0, 0);
 	}
 
 	private static RandomGenerator<Character> createGenerator(char[] characters) {
 		return RandomGenerators.choose(characters);
 	}
 
-	public StringArbitrary(char from, char to, int maxLength) {
-		this(createGenerator(from, to), maxLength);
+	public StringArbitrary(char from, char to, int minSize, int maxLength) {
+		this(createGenerator(from, to), minSize, maxLength);
 	}
 
 	public StringArbitrary(char from, char to) {
-		this(from, to, 0);
+		this(from, to, 0, 0);
 	}
 
 	private static RandomGenerator<Character> createGenerator(char from, char to) {
@@ -54,13 +57,16 @@ public class StringArbitrary extends NullableArbitrary<String> {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected RandomGenerator<String> baseGenerator(int tries) {
-		int effectiveMaxSize = maxSize;
-		if (effectiveMaxSize <= 0) effectiveMaxSize = Arbitrary.defaultMaxFromTries(tries);
-		return RandomGenerators.string(characterGenerator, effectiveMaxSize).withSamples("");
+		final int effectiveMaxLength = maxLength <= 0 ? Arbitrary.defaultMaxFromTries(tries) : maxLength;
+		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
+				.filter(s -> s.length() >= minLength && s.length() <= effectiveMaxLength).map(s -> Shrinkable.unshrinkable(s))
+				.collect(Collectors.toList());
+		return RandomGenerators.string(characterGenerator, minLength, effectiveMaxLength).withShrinkableSamples(samples);
 	}
 
-	public void configure(StringLength maxStringLength) {
-		this.maxSize = maxStringLength.max();
+	public void configure(StringLength stringLength) {
+		this.minLength = stringLength.min();
+		this.maxLength = stringLength.max();
 	}
 
 	public void configure(ValidChars validChars) {
@@ -78,16 +84,14 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo) : 1.0;
 	}
 
-	private Optional<RandomGenerator<Character>> mix(
-		Optional<RandomGenerator<Character>> charsGenerator, //
-		Optional<RandomGenerator<Character>> fromToGenerator, //
-		double mixInProbability
-	) {
+	private Optional<RandomGenerator<Character>> mix(Optional<RandomGenerator<Character>> charsGenerator, //
+			Optional<RandomGenerator<Character>> fromToGenerator, //
+			double mixInProbability) {
 
 		if (charsGenerator.isPresent()) {
 			return fromToGenerator //
-				.map(fromTo -> Optional.of(charsGenerator.get().mixIn(fromTo, mixInProbability))) //
-				.orElse(charsGenerator);
+					.map(fromTo -> Optional.of(charsGenerator.get().mixIn(fromTo, mixInProbability))) //
+					.orElse(charsGenerator);
 		}
 		return fromToGenerator;
 	}
