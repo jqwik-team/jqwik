@@ -95,7 +95,7 @@ public class RandomGenerators {
 		return random -> {
 			int listSize = lengthGenerator.next(random).value();
 			List<Shrinkable<T>> list = new ArrayList<>();
-			for (int j = 0; j < listSize; j++) {
+			while (list.size() < listSize) {
 				list.add(elementGenerator.next(random));
 			}
 			return new ContainerShrinkable<>(list, containerFunction);
@@ -108,6 +108,24 @@ public class RandomGenerators {
 
 	public static RandomGenerator<String> string(RandomGenerator<Character> elementGenerator, int minLength, int maxLength) {
 		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength);
+	}
+
+	// TODO: Get rid of duplication with container(...)
+	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator,  int minSize, int maxSize) {
+		RandomGenerator<Integer> lengthGenerator = choose(minSize, maxSize);
+		return random -> {
+			int listSize = lengthGenerator.next(random).value();
+			List<Shrinkable<T>> list = new ArrayList<>();
+			Set<T> elements = new HashSet<>();
+			while (list.size() < listSize) {
+				Shrinkable<T> next = elementGenerator.next(random);
+				if (elements.contains(next.value()))
+					continue;
+				list.add(next);
+				elements.add(next.value());
+			}
+			return new ContainerShrinkable<>(list, HashSet::new);
+		};
 	}
 
 	public static RandomGenerator<Character> choose(char min, char max) {

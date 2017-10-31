@@ -10,8 +10,8 @@ import net.jqwik.properties.*;
 abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 
 	protected final Arbitrary<T> elementArbitrary;
-	private int minSize;
-	private int maxSize;
+	protected int minSize;
+	protected int maxSize;
 
 	protected CollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
 		super(collectionClass);
@@ -21,22 +21,33 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 	}
 
 	protected RandomGenerator<List<T>> listGenerator(int tries) {
-		int effectiveMaxSize = maxSize;
-		if (effectiveMaxSize <= 0)
-			effectiveMaxSize = Arbitrary.defaultCollectionSizeFromTries(tries);
+		int effectiveMaxSize = effectiveMaxSize(tries);
 		return createListGenerator(elementArbitrary, tries, effectiveMaxSize);
 	}
 
+	protected int effectiveMaxSize(int tries) {
+		int effectiveMaxSize = maxSize;
+		if (effectiveMaxSize <= 0)
+			effectiveMaxSize = Arbitrary.defaultCollectionSizeFromTries(tries);
+		return effectiveMaxSize;
+	}
+
 	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int effectiveMaxSize) {
-		int elementTries = Math.max(effectiveMaxSize / 2, 1) * tries;
-		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
-		List<T> emptyList = Collections.emptyList();
-		List<Shrinkable<List<T>>> samples = Stream.of(emptyList)
+		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries, effectiveMaxSize);
+		List<Shrinkable<List<T>>> samples = samplesList(effectiveMaxSize, Collections.emptyList());
+		return RandomGenerators.list(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
+	}
+
+	protected <C extends Collection> List<Shrinkable<C>> samplesList(int effectiveMaxSize, C sample) {
+		return Stream.of(sample)
 			.filter(l -> l.size() >= minSize && l.size() <= effectiveMaxSize)
 			.map(Shrinkable::unshrinkable)
 			.collect(Collectors.toList());
+	}
 
-		return RandomGenerators.list(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
+	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int tries, int effectiveMaxSize) {
+		int elementTries = Math.max(effectiveMaxSize / 2, 1) * tries;
+		return elementArbitrary.generator(elementTries);
 	}
 
 	public void configure(Size size) {
