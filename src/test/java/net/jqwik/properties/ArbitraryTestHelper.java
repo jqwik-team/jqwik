@@ -29,6 +29,18 @@ class ArbitraryTestHelper {
 		}
 	}
 
+	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Consumer<T> assertions) {
+		Function<T, Boolean> checker = value -> {
+			try {
+				assertions.accept(value);
+				return true;
+			} catch (Throwable any) {
+				return false;
+			}
+		};
+		assertAllGenerated(generator, checker);
+	}
+
 	public static <T> List<T> shrinkToEnd(ShrinkCandidates<T> shrinker, T toShrink) {
 		ArrayList<T> shrinks = new ArrayList<>();
 		collectShrinkResults(shrinker, toShrink, shrinks);

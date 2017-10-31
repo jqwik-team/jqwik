@@ -1,6 +1,6 @@
 ### Bugs
 
-- Set generation hangs!!
+- Set generation can produce sets with less than specified values due to duplicates in underlying list!
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative: change distance to be of type BigInteger!
 - Generating random high floats generates the same float all the time :-( 

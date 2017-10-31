@@ -11,14 +11,17 @@ import net.jqwik.api.*;
 class ArbitrariesTests {
 
 	enum MyEnum {
-		Yes, No, Maybe
+		Yes,
+		No,
+		Maybe
 	}
 
 	private Random random = new Random();
 
 	@Example
 	void fromGenerator() {
-		Arbitrary<String> stringArbitrary = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
+		Arbitrary<String> stringArbitrary = Arbitraries
+				.fromGenerator(random -> Shrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
@@ -27,14 +30,14 @@ class ArbitrariesTests {
 	void ofValues() {
 		Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> Arrays.asList("1", "hallo", "test").contains(value));
+		ArbitraryTestHelper.assertAllGenerated(generator, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
 	}
 
 	@Example
 	void ofEnum() {
 		Arbitrary<MyEnum> enumArbitrary = Arbitraries.of(MyEnum.class);
 		RandomGenerator<MyEnum> generator = enumArbitrary.generator(1);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> Arrays.asList(MyEnum.class.getEnumConstants()).contains(value));
+		ArbitraryTestHelper.assertAllGenerated(generator, (MyEnum value) -> Arrays.asList(MyEnum.class.getEnumConstants()).contains(value));
 	}
 
 	@Example
@@ -46,8 +49,8 @@ class ArbitrariesTests {
 
 	@Example
 	void stringFromCharset() {
-		char[] validChars = new char[]{'a', 'b', 'c', 'd'};
-		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars,2, 5);
+		char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
+		Arbitrary<String> stringArbitrary = Arbitraries.string(validChars, 2, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertGeneratedString(generator, 2, 5);
 	}
@@ -55,7 +58,8 @@ class ArbitrariesTests {
 	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
+		ArbitraryTestHelper.assertAllGenerated(generator,
+				(String value) -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
 	}
 
 	@Example
@@ -80,7 +84,7 @@ class ArbitrariesTests {
 			Arbitrary<Integer> intArbitrary = Arbitraries.integer(-10, 10);
 			RandomGenerator<Integer> generator = intArbitrary.generator(10);
 
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0  && value > -5);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0 && value > -5);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);
 			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
 		}
@@ -110,8 +114,8 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) < 0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) > 0);
 			ArbitraryTestHelper.assertAllGenerated(generator, //
-												   value -> value.compareTo(BigInteger.valueOf(-100L)) >= 0 //
-													   && value.compareTo(BigInteger.valueOf(100L)) <= 0);
+					value -> value.compareTo(BigInteger.valueOf(-100L)) >= 0 //
+							&& value.compareTo(BigInteger.valueOf(100L)) <= 0);
 		}
 
 		@Example
@@ -196,25 +200,25 @@ class ArbitrariesTests {
 		@Example
 		void set() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
-			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 0, 5);
+			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 2, 7);
 
 			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1);
 
-			assertGeneratedSet(generator.next(random));
+			assertGeneratedSet(generator, 2, 7);
 		}
 
-		 @Example
-		 void stream() {
-		 Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
-		 Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 0, 5);
+		@Example
+		void stream() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
+			Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 0, 5);
 
-		 RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
+			RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
 
-		 assertGeneratedStream(generator.next(random));
-		 assertGeneratedStream(generator.next(random));
-		 assertGeneratedStream(generator.next(random));
-		 assertGeneratedStream(generator.next(random));
-		 }
+			assertGeneratedStream(generator.next(random));
+			assertGeneratedStream(generator.next(random));
+			assertGeneratedStream(generator.next(random));
+			assertGeneratedStream(generator.next(random));
+		}
 
 		@Example
 		void optional() {
@@ -261,15 +265,18 @@ class ArbitrariesTests {
 		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 	}
 
-	private void assertGeneratedSet(Shrinkable<Set<Integer>> set) {
-		assertThat(set.value().size()).isBetween(0, 5);
-		assertThat(set.value()).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	private void assertGeneratedSet(RandomGenerator<Set<Integer>> generator, int minSize, int maxSize) {
+		ArbitraryTestHelper.assertAllGenerated(generator, set -> {
+			assertThat(set.size()).isBetween(minSize, maxSize);
+			assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+		});
 	}
 
 	private void assertGeneratedLists(RandomGenerator<List<String>> generator, int minSize, int maxSize) {
-		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.size() >= minSize && aString.size() <= maxSize);
-		List<String> allowedStrings = Arrays.asList("1", "hallo", "test");
-		ArbitraryTestHelper.assertAllGenerated(generator, aString -> aString.stream().allMatch(allowedStrings::contains));
+		ArbitraryTestHelper.assertAllGenerated(generator, list -> {
+			assertThat(list.size()).isBetween(minSize, maxSize);
+			assertThat(list).isSubsetOf("1", "hallo", "test");
+		});
 	}
 
 }
