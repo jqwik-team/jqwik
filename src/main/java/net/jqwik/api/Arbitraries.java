@@ -118,8 +118,8 @@ public class Arbitraries {
 		return elementArbitrary.injectNull(0.1).map(Optional::ofNullable);
 	}
 
-	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int maxSize) {
-		return new ArrayArbitrary(arrayClass, elementArbitrary, maxSize);
+	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return new ArrayArbitrary(arrayClass, elementArbitrary, minSize, maxSize);
 	}
 
 	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {

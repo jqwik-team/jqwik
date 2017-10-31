@@ -1,25 +1,28 @@
 package net.jqwik.properties.arbitraries;
 
 import java.lang.reflect.Array;
-import java.util.List;
+import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.constraints.Size;
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.properties.*;
 
 public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 
 	private final Arbitrary<T> elementArbitrary;
 	private int maxSize;
+	private int minSize;
 
 
 	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
-		this(arrayClass, elementArbitrary, 0);
+		this(arrayClass, elementArbitrary, 0,0);
 	}
 
-	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int maxSize) {
+	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
 		super(arrayClass);
 		this.elementArbitrary = elementArbitrary;
+		this.minSize = minSize;
 		this.maxSize = maxSize;
 	}
 
@@ -47,11 +50,18 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
 		int elementTries = Math.max(maxSize / 2, 1) * tries;
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
-		return RandomGenerators.list(elementGenerator, 0, maxSize);
+		List<T> emptyList = Collections.emptyList();
+		List<Shrinkable<List<T>>> samples = Stream.of(emptyList)
+			.filter(l -> l.size() >= minSize)
+			.filter(l -> maxSize == 0 || l.size() <= maxSize)
+			.map(Shrinkable::unshrinkable)
+			.collect(Collectors.toList());
+		return RandomGenerators.list(elementGenerator, minSize, maxSize).withShrinkableSamples(samples);
 	}
 
-	public void configure(Size maxSize) {
-		this.maxSize = maxSize.max();
+	public void configure(Size size) {
+		this.maxSize = size.max();
+		this.minSize = size.min();
 	}
 
 

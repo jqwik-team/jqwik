@@ -40,7 +40,8 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 
 	protected <C extends Collection> List<Shrinkable<C>> samplesList(int effectiveMaxSize, C sample) {
 		return Stream.of(sample)
-			.filter(l -> l.size() >= minSize && l.size() <= effectiveMaxSize)
+			.filter(l -> l.size() >= minSize)
+			.filter(l -> maxSize == 0 || l.size() <= maxSize)
 			.map(Shrinkable::unshrinkable)
 			.collect(Collectors.toList());
 	}

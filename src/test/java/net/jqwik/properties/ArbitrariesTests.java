@@ -235,19 +235,20 @@ class ArbitrariesTests {
 		@Example
 		void array() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
-			Arbitrary<Integer[]> arrayArbitrary = Arbitraries.arrayOf(Integer[].class, integerArbitrary, 5);
+			Arbitrary<Integer[]> arrayArbitrary = Arbitraries.arrayOf(Integer[].class, integerArbitrary, 2,5);
 
 			RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1);
 
-			Shrinkable<Integer[]> array = generator.next(random);
-			assertThat(array.value().length).isBetween(0, 5);
-			assertThat(array.value()).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+			ArbitraryTestHelper.assertAllGenerated(generator, array -> {
+				assertThat(array.length).isBetween(2, 5);
+				assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+			});
 		}
 
 		@Example
 		void arrayOfPrimitiveType() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integer(1, 10);
-			Arbitrary<int[]> arrayArbitrary = Arbitraries.arrayOf(int[].class, integerArbitrary, 5);
+			Arbitrary<int[]> arrayArbitrary = Arbitraries.arrayOf(int[].class, integerArbitrary, 0, 5);
 
 			RandomGenerator<int[]> generator = arrayArbitrary.generator(1);
 
