@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.lang.reflect.Parameter;
 import java.math.*;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.assertj.core.data.Offset;
@@ -96,7 +97,9 @@ public class PropertyMethodArbitraryResolverTests {
 		void streams() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerStream", Stream.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerStream");
-			Stream<?> actualStream = (Stream<?>) generateObject(provider, parameter);
+			RandomGenerator<Object> generator = getGenerator(provider, parameter);
+			TestHelper.generateNext(generator); // Skip empty stream
+			Stream<?> actualStream = (Stream<?>) TestHelper.generateNext(generator);
 			actualStream.forEach(o -> assertThat(o).isInstanceOf(Integer.class));
 		}
 
@@ -104,7 +107,9 @@ public class PropertyMethodArbitraryResolverTests {
 		void arrays() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerArray", Integer[].class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerArray");
-			Integer[] actualArray = (Integer[]) generateObject(provider, parameter);
+			RandomGenerator<Object> generator = getGenerator(provider, parameter);
+			TestHelper.generateNext(generator); // Skip empty array
+			Integer[] actualArray = (Integer[]) generateFirst(provider, parameter);
 			Arrays.stream(actualArray).forEach(o -> assertThat(o).isInstanceOf(Integer.class));
 		}
 
@@ -113,7 +118,7 @@ public class PropertyMethodArbitraryResolverTests {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, "integerOptional", Optional.class);
 			Parameter parameter = getParameter(DefaultParams.class, "integerOptional");
 			@SuppressWarnings("unchecked")
-			Optional<Object> actualOptional = (Optional<Object>) generateObject(provider, parameter);
+			Optional<Object> actualOptional = (Optional<Object>) generateFirst(provider, parameter);
 			assertThat(actualOptional.orElse(Integer.MAX_VALUE)).isInstanceOf(Integer.class);
 		}
 
@@ -132,7 +137,7 @@ public class PropertyMethodArbitraryResolverTests {
 		private Object assertGenerated(Class<?> expectedType, String methodName, Class... paramTypes) throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(DefaultParams.class, methodName, paramTypes);
 			Parameter parameter = getParameter(DefaultParams.class, methodName);
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(expectedType);
 			return actual;
 		}
@@ -249,7 +254,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void unnamedStringGenerator() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithUnnamedGenerator.class, "string", String.class);
 			Parameter parameter = getParameter(WithUnnamedGenerator.class, "string");
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
 		}
 
@@ -269,7 +274,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void findBoxedTypeGenerator() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "longFromBoxedType", long.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "longFromBoxedType");
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(Long.class);
 		}
 
@@ -277,7 +282,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void findStringGeneratorByName() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "string", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "string");
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
 		}
 
@@ -285,7 +290,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void findStringGeneratorByMethodName() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "stringByMethodName", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
 		}
 
@@ -293,7 +298,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void findGeneratorByMethodNameOutsideGroup() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName");
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
 		}
 
@@ -301,7 +306,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void findGeneratorByNameOutsideGroup() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.NestedWithNamedProviders.class, "nestedString", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedString");
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
 		}
 
@@ -309,7 +314,7 @@ public class PropertyMethodArbitraryResolverTests {
 		void findFirstFitIfNoNameIsGivenInOutsideGroup() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing", Thing.class);
 			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing");
-			Object actual = generateObject(provider, parameter);
+			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(Thing.class);
 		}
 
@@ -468,18 +473,26 @@ public class PropertyMethodArbitraryResolverTests {
 
 	}
 
-	@SuppressWarnings("unchecked")
-	private <T extends Collection> T generateCollection(PropertyMethodArbitraryResolver provider, Parameter parameter) {
-		Object actual = generateObject(provider, parameter);
-		T actualCollection = (T) actual;
-		while (actualCollection.isEmpty()) {
-			actualCollection = (T) generateObject(provider, parameter);
-		}
-		return actualCollection;
+	private static RandomGenerator<Object> getGenerator(PropertyMethodArbitraryResolver provider, Parameter parameter) {
+		return provider.forParameter(parameter).get().generator(1);
 	}
 
-	private static Object generateObject(PropertyMethodArbitraryResolver provider, Parameter parameter) {
-		return TestHelper.generate(provider.forParameter(parameter).get());
+	@SuppressWarnings("unchecked")
+	private <T extends Collection> T generateCollection(PropertyMethodArbitraryResolver provider, Parameter parameter) {
+		RandomGenerator<Object> generator = getGenerator(provider, parameter);
+		return (T) TestHelper.generateUntil(generator, o -> {
+			T c = (T) o;
+			return !c.isEmpty();
+		});
+	}
+
+	private static Object generateUntil(PropertyMethodArbitraryResolver provider, Parameter parameter, Predicate<Object> untilCondition) {
+		RandomGenerator<Object> generator = getGenerator(provider, parameter);
+		return TestHelper.generateUntil(generator, untilCondition);
+	}
+
+	private static Object generateFirst(PropertyMethodArbitraryResolver provider, Parameter parameter) {
+		return TestHelper.generateFirst(provider.forParameter(parameter).get());
 	}
 
 	private static PropertyMethodArbitraryResolver getProvider(Class<?> container, String methodName, Class<?>... parameterTypes)
