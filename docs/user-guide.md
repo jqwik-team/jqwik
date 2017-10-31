@@ -53,7 +53,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.0.0'
 ext.junitJupiterVersion = '5.0.0'
-ext.jqwikVersion = '0.6.1'
+ext.jqwikVersion = '0.6.2'
 
 junitPlatform {
 	filters {
@@ -104,7 +104,7 @@ Add the following repository and dependency to your `pom.xml` file:
     <dependency>
         <groupId>com.github.jlink</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.6.1</version>
+        <version>0.6.2</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -337,7 +337,7 @@ All types:
 
 Strings:
 
-- `@ValidChars(chars[] value = {}, char from = 0, char to = 0)`
+- `@Chars(chars[] value = {}, char from = 0, char to = 0)`
 - `@StringLength(int min = 0, int max)`
 
 List, Set, Stream and Arrays:

@@ -28,22 +28,22 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
-	void stringsByChars(@ForAll @ValidChars({ 'a', 'b', ' ' }) String aRandomString) {
+	void stringsByChars(@ForAll @Chars({ 'a', 'b', ' ' }) String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 50)
-	void stringsByFromTo(@ForAll @ValidChars(from = 'a', to = 'Z') String aRandomString) {
+	void stringsByFromTo(@ForAll @Chars(from = 'a', to = 'Z') String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 50)
-	void stringsCombined(@ForAll @ValidChars(from = '0', to = '9', value = {'a', 'b'}) String aRandomString) {
+	void stringsCombined(@ForAll @Chars(from = '0', to = '9', value = {'a', 'b'}) String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 10)
-	void aListWithMaxSize(@ForAll @Size(max = 15) @StringLength(max = 4) @ValidChars({'x', 'y', 'z'}) List<String> listOfStrings) {
+	void aListWithMaxSize(@ForAll @Size(max = 15) @StringLength(max = 4) @Chars({'x', 'y', 'z'}) List<String> listOfStrings) {
 		System.out.println(String.format("%s", listOfStrings));
 	}
 

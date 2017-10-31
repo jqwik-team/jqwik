@@ -69,7 +69,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		this.maxLength = stringLength.max();
 	}
 
-	public void configure(ValidChars validChars) {
+	public void configure(Chars validChars) {
 		Optional<RandomGenerator<Character>> charsGenerator = createCharsGenerator(validChars);
 		Optional<RandomGenerator<Character>> fromToGenerator = createFromToGenerator(validChars);
 
@@ -78,7 +78,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		generator.ifPresent(gen -> characterGenerator = gen);
 	}
 
-	private double calculateMixInProbability(ValidChars validChars) {
+	private double calculateMixInProbability(Chars validChars) {
 		double sizeChars = validChars.value().length;
 		double sizeFromTo = validChars.to() - validChars.from();
 		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo) : 1.0;
@@ -96,7 +96,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return fromToGenerator;
 	}
 
-	private Optional<RandomGenerator<Character>> createFromToGenerator(ValidChars validChars) {
+	private Optional<RandomGenerator<Character>> createFromToGenerator(Chars validChars) {
 		RandomGenerator<Character> fromToGenerator = null;
 		if (validChars.from() > 0 && validChars.to() > 0) {
 			fromToGenerator = RandomGenerators.choose(validChars.from(), validChars.to());
@@ -105,7 +105,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return Optional.ofNullable(fromToGenerator);
 	}
 
-	private Optional<RandomGenerator<Character>> createCharsGenerator(ValidChars validChars) {
+	private Optional<RandomGenerator<Character>> createCharsGenerator(Chars validChars) {
 		RandomGenerator<Character> charsGenerator = null;
 		if (validChars.value().length > 0) {
 			charsGenerator = RandomGenerators.choose(validChars.value());
