@@ -410,7 +410,6 @@ a few basic parameters:
 ```
 database = .jqwik-database
 rerunFailuresWithSameSeed = true
-runFailuresFirst = false
 ```
 
 This type of configuration is preliminary and will be replaced by 

@@ -5,6 +5,7 @@
 - Generating random high floats generates the same float all the time :-( 
 - Combining two Arbitraries of Character to Array of Character
   throws NullPointerException.
+- Rerunning failures first does not work in all cases, e.g. try in pbt-java project
   
 ### Tests
 
