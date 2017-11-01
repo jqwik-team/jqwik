@@ -21,10 +21,12 @@ Volunteers for polishing and extending it are more than welcome._
 - [Customized Parameter Generation](#customized-parameter-generation)
 - [Result Shrinking](#result-shrinking)
 - [Assumptions](#assumptions)
-- [Build your own Generators and Arbitraries](#build-your-own-generators-and-arbitraries)
+- [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Register default Generators and Arbitraries](#register-default-generators-and-arbitraries)
 - [Running and Configuration](#running-and-configuration)
+  - [jqwik Configuration](#jqwik-configuration)
 - [Self-Made Annotations](#self-made-annotations)
+- [Glossary](#glossary)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -51,8 +53,8 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 
-ext.junitPlatformVersion = '1.0.0'
-ext.junitJupiterVersion = '5.0.0'
+ext.junitPlatformVersion = '1.0.1'
+ext.junitJupiterVersion = '5.0.1'
 ext.jqwikVersion = '0.6.4'
 
 junitPlatform {
@@ -203,7 +205,7 @@ in future versions.
 
 The `@Property` annotation has a few optional values:
 
-- `int tries`: The number of times _jqwik_ tries to generate paramter values for this method.
+- `int tries`: The number of times _jqwik_ tries to generate parameter values for this method.
   Default is `1000`.
 - `long seed`: The _random seed_ to use for generating values. If you do not specify a values
   _jqwik_ will use a random _random seed_. The actual seed used is being reported by 
@@ -230,12 +232,12 @@ static methods in `org.junit.jupiter.api.Assertions`.
 
 The current lifecycle of jqwik test methods is rather simple:
 
-- For every test method, annotated with `@Property` or `@Example`, 
+- For [each try](#try), annotated with `@Property` or `@Example`, 
   a new instance of the containing test class is created
   in order to keep the individual tests isolated from each other.
-- If you have preparatory work to do for _each_ test method, 
+- If you have preparatory work to do for _each_ [each try](#try), 
   create a constructor without parameters and do the work there.
-- If you have cleanup work to do for _each_ test method, 
+- If you have cleanup work to do for _each_ [each try](#try), 
   the containing test class can implement `java.lang.AutoCloseable`.
   The `close`-Method will be called after each test method execution.
   
@@ -263,6 +265,9 @@ class TestsWithLifecycle implements AutoCloseable {
 	}
 }
 ```
+
+In this example both the constructor and `close()` will be called 6 times: 
+Once for `anExample()` and 5 times for `aProperty(...)`.
 
 ## Grouping Tests
 
@@ -380,7 +385,9 @@ will generate lists of Strings that have 10 characters max.
 
 ## Assumptions
 
-## Build your own Generators and Arbitraries
+## Program your own Generators and Arbitraries
+
+This topic will probably need a page of its own.
 
 ## Register default Generators and Arbitraries
 
@@ -388,4 +395,56 @@ The API for providing Arbitraries and Generators by default is not public yet.
 
 ## Running and Configuration
 
+When running _jqwik_ tests (through your IDE or your build tool) you might notice 
+that - once a [property](#property) has been falsified - it will always be tried
+with the same seed to enhance the reproducibility of a bug. This requires
+that _jqwik_ will persist some runtime data across test runs.
+
+You can configure this and other default behaviour in [jqwik's configuration](#jqwik_configuration).
+
+### jqwik Configuration
+
+_jqwik_ will look for a file `jqwik.properties` in your classpath in which you can configure
+a few basic parameters:
+
+```
+database = .jqwik-database
+rerunFailuresWithSameSeed = true
+runFailuresFirst = false
+```
+
+This type of configuration is preliminary and will be replaced by 
+[JUnit 5's platform configuration](http://junit.org/junit5/docs/5.0.0/user-guide/#running-tests-config-params)
+mechanism soon. Moreover, there will probably be many more default parameters to change.
+
 ## Self-Made Annotations
+
+You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests-meta-annotations)
+instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using `@Property`
+as "meta"-annotation.
+
+
+
+
+ 
+
+## Glossary
+
+#### Arbitrary
+
+#### Property
+
+A _property_ is a [test method](#test-method) that has one or more
+parameters annotated with `@ForAll`. 
+
+#### RandomGenerator
+
+#### Test Method
+
+A _test method_ is a a `public`, `protected` or package-scoped method, 
+annotated with `@Example` or `@Property`.
+
+#### Try
+
+A _try_ is the attempt at running a [test method](#test-method) 
+a single time with a specific set of parameters.
