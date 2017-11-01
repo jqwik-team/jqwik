@@ -33,7 +33,7 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
-	void stringsWithSeveralChars(@ForAll @Chars({ 'a', 'b', ' ' }) @Chars(from = '1', to = '0') String aRandomString) {
+	void stringsWithSeveralChars(@ForAll @Chars({ 'a', 'b', ' ' }) @Chars(from = '0', to = '9') String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 

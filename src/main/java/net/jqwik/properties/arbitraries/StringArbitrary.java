@@ -11,48 +11,38 @@ public class StringArbitrary extends NullableArbitrary<String> {
 
 	private final static char[] defaultChars = { 'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@' };
 
-	private RandomGenerator<Character> characterGenerator;
+	private Set<Character> allowedChars = new HashSet<>();
 	private int minLength;
 	private int maxLength;
 
 	public StringArbitrary() {
-		this(defaultGenerator(), 0, 0);
-	}
-
-	private static RandomGenerator<Character> defaultGenerator() {
-		return RandomGenerators.choose(defaultChars);
-	}
-
-	public StringArbitrary(RandomGenerator<Character> characterGenerator, int minLength, int maxLength) {
-		super(String.class);
-		this.characterGenerator = characterGenerator;
-		this.minLength = minLength;
-		this.maxLength = maxLength;
+		this(0, 0);
 	}
 
 	public StringArbitrary(char[] characters, int minLength, int maxLength) {
-		this(createGenerator(characters), minLength, maxLength);
+		this(minLength, maxLength);
+		addAllowedChars(characters);
 	}
 
 	public StringArbitrary(char[] characters) {
 		this(characters, 0, 0);
 	}
 
-	private static RandomGenerator<Character> createGenerator(char[] characters) {
-		return RandomGenerators.choose(characters);
-	}
-
-	public StringArbitrary(char from, char to, int minSize, int maxLength) {
-		this(createGenerator(from, to), minSize, maxLength);
+	public StringArbitrary(char from, char to, int minLength, int maxLength) {
+		this(minLength, maxLength);
+		addAllowedChars(from, to);
 	}
 
 	public StringArbitrary(char from, char to) {
 		this(from, to, 0, 0);
 	}
 
-	private static RandomGenerator<Character> createGenerator(char from, char to) {
-		return RandomGenerators.choose(from, to);
+	public StringArbitrary(int minLength, int maxLength) {
+		super(String.class);
+		this.minLength = minLength;
+		this.maxLength = maxLength;
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -61,7 +51,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
 				.filter(s -> s.length() >= minLength && s.length() <= effectiveMaxLength).map(s -> Shrinkable.unshrinkable(s))
 				.collect(Collectors.toList());
-		return RandomGenerators.string(characterGenerator, minLength, effectiveMaxLength).withShrinkableSamples(samples);
+		return RandomGenerators.string(createCharacterGenerator(), minLength, effectiveMaxLength).withShrinkableSamples(samples);
 	}
 
 	public void configure(StringLength stringLength) {
@@ -69,53 +59,35 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		this.maxLength = stringLength.max();
 	}
 
-	public void configure(Chars validChars) {
-		Optional<RandomGenerator<Character>> charsGenerator = createCharsGenerator(validChars);
-		Optional<RandomGenerator<Character>> fromToGenerator = createFromToGenerator(validChars);
-
-		double mixInProbability = calculateMixInProbability(validChars);
-		Optional<RandomGenerator<Character>> generator = mix(charsGenerator, fromToGenerator, mixInProbability);
-		generator.ifPresent(gen -> characterGenerator = gen);
+	public void configure(Chars chars) {
+		addAllowedChars(chars.value());
+		addAllowedChars(chars.from(), chars.to());
 	}
 
-	public void configure(CharsList validChars) {
-		System.out.println(validChars.value());
-	}
-
-	private double calculateMixInProbability(Chars validChars) {
-		double sizeChars = validChars.value().length;
-		double sizeFromTo = validChars.to() - validChars.from();
-		return sizeFromTo != 0.0 ? sizeFromTo / (sizeChars + sizeFromTo) : 1.0;
-	}
-
-	private Optional<RandomGenerator<Character>> mix(Optional<RandomGenerator<Character>> charsGenerator, //
-			Optional<RandomGenerator<Character>> fromToGenerator, //
-			double mixInProbability) {
-
-		if (charsGenerator.isPresent()) {
-			return fromToGenerator //
-					.map(fromTo -> Optional.of(charsGenerator.get().mixIn(fromTo, mixInProbability))) //
-					.orElse(charsGenerator);
+	private void addAllowedChars(char from, char to) {
+		if (to > from) {
+			for (char c = from; c <= to; c++) {
+				allowedChars.add(c);
+			}
 		}
-		return fromToGenerator;
 	}
 
-	private Optional<RandomGenerator<Character>> createFromToGenerator(Chars validChars) {
-		RandomGenerator<Character> fromToGenerator = null;
-		if (validChars.from() > 0 && validChars.to() > 0) {
-			fromToGenerator = RandomGenerators.choose(validChars.from(), validChars.to());
-			characterGenerator = fromToGenerator;
+	private void addAllowedChars(char[] chars) {
+		for (char c : chars) {
+			allowedChars.add(c);
 		}
-		return Optional.ofNullable(fromToGenerator);
 	}
 
-	private Optional<RandomGenerator<Character>> createCharsGenerator(Chars validChars) {
-		RandomGenerator<Character> charsGenerator = null;
-		if (validChars.value().length > 0) {
-			charsGenerator = RandomGenerators.choose(validChars.value());
-			characterGenerator = charsGenerator;
+	public void configure(CharsList charsList) {
+		for (Chars chars : charsList.value()) {
+			configure(chars);
 		}
-		return Optional.ofNullable(charsGenerator);
+	}
+
+	private RandomGenerator<Character> createCharacterGenerator() {
+		if (allowedChars.isEmpty())
+			return RandomGenerators.choose(defaultChars);
+		return RandomGenerators.choose(allowedChars.toArray(new Character[allowedChars.size()]));
 	}
 
 }

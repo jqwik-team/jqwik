@@ -1,7 +1,8 @@
 package net.jqwik.support;
 
-import java.lang.annotation.Annotation;
+import java.lang.annotation.*;
 import java.lang.reflect.AnnotatedElement;
+import java.util.*;
 
 public class JqwikAnnotationSupport {
 
@@ -10,8 +11,18 @@ public class JqwikAnnotationSupport {
 	 *
 	 * @param element
 	 */
-	public static Annotation[] getAllAnnotations(AnnotatedElement element) {
+	public static List<Annotation> findAllAnnotations(AnnotatedElement element) {
 
-		return element.getDeclaredAnnotations();
+		List<Annotation> annotations = new ArrayList<>();
+		List<Annotation> presentAnnotations = Arrays.asList(element.getAnnotations());
+		annotations.addAll(presentAnnotations);
+//		presentAnnotations.stream() //
+//				.map(annotation -> annotation.annotationType().getAnnotation(Repeatable.class)) //
+//				.filter(repeatable -> repeatable != null) //
+//				.forEach(repeatable -> {
+//					Class<? extends Annotation> repeating = repeatable.value();
+//					annotations.addAll(Arrays.asList(element.getAnnotationsByType(repeating)));
+//				});
+		return annotations;
 	}
 }
