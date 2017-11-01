@@ -1,6 +1,6 @@
 package net.jqwik.support;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.util.*;
 
@@ -16,13 +16,25 @@ public class JqwikAnnotationSupport {
 		List<Annotation> annotations = new ArrayList<>();
 		List<Annotation> presentAnnotations = Arrays.asList(element.getAnnotations());
 		annotations.addAll(presentAnnotations);
-//		presentAnnotations.stream() //
-//				.map(annotation -> annotation.annotationType().getAnnotation(Repeatable.class)) //
-//				.filter(repeatable -> repeatable != null) //
-//				.forEach(repeatable -> {
-//					Class<? extends Annotation> repeating = repeatable.value();
-//					annotations.addAll(Arrays.asList(element.getAnnotationsByType(repeating)));
-//				});
+		presentAnnotations.forEach(annotation -> {
+			appendMetaAnnotations(annotation, annotations);
+		});
 		return annotations;
 	}
+
+	private static void appendMetaAnnotations(Annotation annotation, List<Annotation> collector) {
+		Annotation[] metaAnnotationCandidates = annotation.annotationType().getDeclaredAnnotations();
+		Arrays.stream(metaAnnotationCandidates) //
+				.filter(candidate -> !isInJavaLangAnnotationPackage(candidate.annotationType())) //
+				.filter(candidate -> !collector.contains(candidate)) //
+				.forEach(metaAnnotation -> {
+					collector.add(metaAnnotation);
+					appendMetaAnnotations(metaAnnotation, collector);
+				});
+	}
+
+	private static boolean isInJavaLangAnnotationPackage(Class<? extends Annotation> annotationType) {
+		return (annotationType != null && annotationType.getName().startsWith("java.lang.annotation"));
+	}
+
 }

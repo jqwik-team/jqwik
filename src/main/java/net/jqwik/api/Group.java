@@ -1,10 +1,10 @@
 package net.jqwik.api;
 
-import org.junit.platform.commons.annotation.*;
-
 import java.lang.annotation.*;
 
-@Target({ElementType.TYPE})
+import org.junit.platform.commons.annotation.Testable;
+
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable
