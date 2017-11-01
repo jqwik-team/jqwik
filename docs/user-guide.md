@@ -336,36 +336,43 @@ required type (see [Customized Parameter Generation](#customized-parameter-gener
 Default parameter generation can be influenced and constrained by additional annotations, depending
 on the requested parameter type.
 
-All types:
+#### All types:
 
 - `@WithNull(double value = 0.1)`: Also generate `null` values with a probability of `value`. 
 
-Strings:
+#### Strings:
 
-- `@Chars(chars[] value = {}, char from = 0, char to = 0)`
+If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
+
 - `@StringLength(int min = 0, int max)`
+- `@Chars(chars[] value = {}, char from = 0, char to = 0)`: Specify a set of characters
+  or a start and end character. This annotation can be repeated which will add up all allowed chars.
+- `@Digits`
+- `@LowerChars`
+- `@UpperChars`
+- `@AlphaChars`
 
-List, Set, Stream and Arrays:
+#### List, Set, Stream and Arrays:
 
 - `@Size(int min = 0, int max)`
 
-Integer and int:
+#### Integer and int:
 
 - `@IntRange(int min = 0, int max)`
 
-Long, long and BigInteger:
+#### Long, long and BigInteger:
 
 - `@LongRange(long min = 0L, long max)`
 
-Float and float:
+#### Float and float:
 
 - `@FloatRange(float min = 0.0f, float max)`
 
-Double, double and BigDecimal:
+#### Double, double and BigDecimal:
 
 - `@DoubleRange(double min = 0.0, double max)`
 
-All floating types:
+#### All floating types:
 
 - `@Scale(int value)`
 

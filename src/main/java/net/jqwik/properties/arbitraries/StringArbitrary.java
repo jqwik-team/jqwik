@@ -9,8 +9,6 @@ import net.jqwik.properties.*;
 
 public class StringArbitrary extends NullableArbitrary<String> {
 
-	private final static char[] defaultChars = { 'a', 'b', 'y', 'z', 'A', 'B', 'Y', 'Z', '0', '9', ' ', ',', '.', '!', '@' };
-
 	private Set<Character> allowedChars = new HashSet<>();
 	private int minLength;
 	private int maxLength;
@@ -85,9 +83,17 @@ public class StringArbitrary extends NullableArbitrary<String> {
 	}
 
 	private RandomGenerator<Character> createCharacterGenerator() {
-		if (allowedChars.isEmpty())
-			return RandomGenerators.choose(defaultChars);
+		if (allowedChars.isEmpty()) {
+			addDefaultChars();
+		}
 		return RandomGenerators.choose(allowedChars.toArray(new Character[allowedChars.size()]));
+	}
+
+	private void addDefaultChars() {
+		addAllowedChars('a', 'z');
+		addAllowedChars('A', 'Z');
+		addAllowedChars('0', '9');
+		addAllowedChars(new char[] {' ', '@', ',', '.', ':', '-', '_'});
 	}
 
 }

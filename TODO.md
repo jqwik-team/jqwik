@@ -91,8 +91,8 @@
   - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
   - flatMap of Arbitraries. Is same as chain()?
   - posNum, negNum
-  - alpha[Upper|Lower|Num]Char
-  - numStr, alphaStr, identifier
+  - @Regex(RegularExpression value)
+  - @AllChars(String charset)
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 

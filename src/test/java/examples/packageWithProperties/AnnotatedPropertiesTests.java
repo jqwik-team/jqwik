@@ -38,6 +38,16 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
+	void numericStrings(@ForAll @Digits String aRandomString) {
+		System.out.println(String.format("[%s]", aRandomString));
+	}
+
+	@Property(tries = 50)
+	void alphaNumericStrings(@ForAll @Digits @AlphaChars String aRandomString) {
+		System.out.println(String.format("[%s]", aRandomString));
+	}
+
+	@Property(tries = 50)
 	void stringsByFromTo(@ForAll @Chars(from = 'a', to = 'Z') String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
