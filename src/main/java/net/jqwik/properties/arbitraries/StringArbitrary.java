@@ -78,6 +78,10 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		generator.ifPresent(gen -> characterGenerator = gen);
 	}
 
+	public void configure(CharsList validChars) {
+		System.out.println(validChars.value());
+	}
+
 	private double calculateMixInProbability(Chars validChars) {
 		double sizeChars = validChars.value().length;
 		double sizeFromTo = validChars.to() - validChars.from();

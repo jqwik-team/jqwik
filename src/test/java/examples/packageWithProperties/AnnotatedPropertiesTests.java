@@ -33,6 +33,11 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
+	void stringsWithSeveralChars(@ForAll @Chars({ 'a', 'b', ' ' }) @Chars(from = '1', to = '0') String aRandomString) {
+		System.out.println(String.format("[%s]", aRandomString));
+	}
+
+	@Property(tries = 50)
 	void stringsByFromTo(@ForAll @Chars(from = 'a', to = 'Z') String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}

@@ -412,7 +412,7 @@ database = .jqwik-database
 rerunFailuresWithSameSeed = true
 ```
 
-This type of configuration is preliminary and will be replaced by 
+This type of configuration is preliminary and will likely be replaced by 
 [JUnit 5's platform configuration](http://junit.org/junit5/docs/5.0.0/user-guide/#running-tests-config-params)
 mechanism soon. Moreover, there will probably be many more default parameters to change.
 
@@ -422,10 +422,8 @@ You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guid
 instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using `@Property`
 as "meta"-annotation.
 
-
-
-
- 
+The drawback of self-made annotations is that they do not forward their parameters to meta-annotations,
+which constrains their applicability to simple cases.
 
 ## Glossary
 

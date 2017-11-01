@@ -9,6 +9,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.support.JqwikAnnotationSupport;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
@@ -53,7 +54,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 		String generatorName = forAllAnnotation.get().value();
 		GenericType genericType = new GenericType(parameter);
-		Arbitrary<?> arbitrary = forType(genericType, generatorName, parameter.getDeclaredAnnotations());
+		Annotation[] configurationAnnotations = JqwikAnnotationSupport.getAllAnnotations(parameter);
+		Arbitrary<?> arbitrary = forType(genericType, generatorName, configurationAnnotations);
 		if (arbitrary == null) {
 			return Optional.empty();
 		} else {
