@@ -37,17 +37,16 @@ public class LongArbitrary extends NullableArbitrary<Long> {
 	private RandomGenerator<Long> longGenerator(long minGenerate, long maxGenerate) {
 		LongShrinkCandidates shrinkCandidates = new LongShrinkCandidates(min, max);
 		List<Shrinkable<Long>> samples = Arrays.stream(new long[] { 0, 1, -1, Long.MIN_VALUE, Long.MAX_VALUE, minGenerate, maxGenerate }) //
-			.filter(anInt -> anInt >= min && anInt <= max) //
-			.mapToObj(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
-			.collect(Collectors.toList());
+				.distinct() //
+				.filter(anInt -> anInt >= min && anInt <= max) //
+				.mapToObj(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
+				.collect(Collectors.toList());
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
-
 
 	public void configure(LongRange longRange) {
 		min = longRange.min();
 		max = longRange.max();
 	}
-
 
 }

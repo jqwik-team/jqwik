@@ -40,6 +40,7 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 		DoubleShrinkCandidates doubleShrinkCandidates = new DoubleShrinkCandidates(min, max, scale);
 		List<Shrinkable<Double>> samples = Arrays
 				.stream(new Double[] { 0.0, 1.0, -1.0, Double.MIN_VALUE, DEFAULT_MAX, DEFAULT_MIN, minGenerate, maxGenerate }) //
+				.distinct() //
 				.filter(aDouble -> aDouble >= min && aDouble <= max) //
 				.map(value -> new ShrinkableValue<>(value, doubleShrinkCandidates)) //
 				.collect(Collectors.toList());
