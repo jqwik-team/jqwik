@@ -1,7 +1,5 @@
 ### Bugs
 
-- Generating random high floats generates the same float all the time :-( 
-  see: bugs.GeneratingHighDoubles
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative: change distance to be of type BigInteger!
 - Combining two Arbitraries of Character to Array of Character
@@ -48,6 +46,8 @@
 - Parallel test execution: Does it make sense with non working IntelliJ support?
 
 ### Properties
+
+- Make a real BigDecimalArbitrary without using Arbitraries.doubles()
 
 - Add ReportingMode.FALSIFIED, GENERATED_AND_FALSIFIED: Report only, also falsified values, also during shrinking
 

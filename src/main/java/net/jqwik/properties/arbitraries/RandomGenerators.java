@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import net.jqwik.properties.*;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -45,33 +46,43 @@ public class RandomGenerators {
 
 	public static RandomGenerator<Double> doubles(double min, double max, int precision) {
 		return random ->  {
-			double factor = Math.pow(10, precision);
-			double randomDouble = Math.round(randomDouble(random, min, max) * factor) / factor;
+			double randomDouble = randomDecimal(random, new BigDecimal(min), new BigDecimal(max), precision).doubleValue();
 			return new ShrinkableValue<>(randomDouble, new DoubleShrinkCandidates(min, max, precision));
 		};
 	}
 
 	public static RandomGenerator<Float> floats(float min, float max, int precision) {
 		return random ->  {
-			double factor = Math.pow(10, precision);
-			float randomDouble = (float) (Math.round(randomDouble(random, min, max) * factor) / factor);
+			float randomDouble = randomDecimal(random, new BigDecimal(min), new BigDecimal(max), precision).floatValue();
 			return new ShrinkableValue<>(randomDouble, new FloatShrinkCandidates(min, max, precision));
 		};
 	}
 
-	public static double randomDouble(Random random, double min, double max) {
-		double localMin = min;
-		double localMax = max;
-		while (true) {
-			if (Double.valueOf(localMax - localMin).isInfinite()) {
-				localMin = localMin / 2.0;
-				localMax = localMax / 2.0;
-				continue;
-			}
-			break;
-		}
-		double range = localMax - localMin;
-		return random.nextDouble() * range + localMin;
+	public static RandomGenerator<BigDecimal> decimals(BigDecimal min, BigDecimal max, int precision) {
+		return random -> {
+			BigDecimal randomDecimal = randomDecimal(random, min, max, precision);
+			// TODO: Make BigDecimal shrinkable
+			return Shrinkable.unshrinkable(randomDecimal);
+		};
+	}
+
+	/**
+	 * Random decimal are not equally distributed but randomly scaled down towards 0.
+	 * Thus random decimals are more likely to be closer to 0 than
+	 *
+	 * @param random
+	 * @param min
+	 * @param max
+	 * @param precision The number of decimals to the right of decimal point
+	 */
+	public static BigDecimal randomDecimal(Random random, BigDecimal min, BigDecimal max, int precision) {
+		BigDecimal range = max.subtract(min);
+		BigDecimal randomFactor = new BigDecimal(random.nextDouble());
+		BigDecimal unscaledRandom = randomFactor.multiply(range).add(min);
+		int digits = Math.max(1, unscaledRandom.precision() - unscaledRandom.scale());
+		int randomScaleDown = random.nextInt(digits);
+		BigDecimal scaledRandom = unscaledRandom.movePointLeft(randomScaleDown);
+		return scaledRandom.setScale(precision, BigDecimal.ROUND_DOWN);
 	}
 
 	public static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {
@@ -159,5 +170,4 @@ public class RandomGenerators {
 			throw new RuntimeException(message);
 		};
 	}
-
 }
