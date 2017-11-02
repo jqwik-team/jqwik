@@ -55,7 +55,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.0.1'
 ext.junitJupiterVersion = '5.0.1'
-ext.jqwikVersion = '0.6.4'
+ext.jqwikVersion = '0.6.5'
 
 junitPlatform {
 	filters {
@@ -345,12 +345,15 @@ on the requested parameter type.
 If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
 
 - `@StringLength(int min = 0, int max)`
+
+The following constraints can be combined with each other:
+
 - `@Chars(chars[] value = {}, char from = 0, char to = 0)`: Specify a set of characters
   or a start and end character. This annotation can be repeated which will add up all allowed chars.
-- `@Digits`
-- `@LowerChars`
-- `@UpperChars`
-- `@AlphaChars`
+- `@Digits`: Use only digits `0` through `9`
+- `@LowerChars`: Use only lower case chars `a` through `z`
+- `@UpperChars`: Use only upper case chars `A` through `Z`
+- `@AlphaChars`: Lower and upper case chars are allowed.
 
 #### List, Set, Stream and Arrays:
 
@@ -359,22 +362,30 @@ If Strings are not constrained a standard set of alphanumeric characters and a f
 #### Integer and int:
 
 - `@IntRange(int min = 0, int max)`
+- `@Positive`: Numbers equal to or larger than `0`.
+- `@Negative`: Numbers lower than or equals to `-0`.
 
 #### Long, long and BigInteger:
 
 - `@LongRange(long min = 0L, long max)`
+- `@Positive`: Numbers equal to or larger than `0L`.
+- `@Negative`: Numbers lower than or equals to `-0L`.
 
 #### Float and float:
 
 - `@FloatRange(float min = 0.0f, float max)`
+- `@Positive`: Numbers equal to or larger than `0f`.
+- `@Negative`: Numbers lower than or equals to `-0f`.
+- `@Scale(int value)`
 
 #### Double, double and BigDecimal:
 
 - `@DoubleRange(double min = 0.0, double max)`
-
-#### All floating types:
-
+- `@Positive`: Numbers equal to or larger than `0.0`.
+- `@Negative`: Numbers lower than or equals to `-0.0`.
 - `@Scale(int value)`
+
+#### Constraining contained types
 
 In case of collections, arrays and `Optional` the constraining annotations are also applied to the
 contained type, e.g.:
@@ -385,6 +396,16 @@ void aProperty(@ForAll @StringLength(max=10) List<String> listOfStrings) {
 }
 ```
 will generate lists of Strings that have 10 characters max.
+
+In future versions constraints for contained types might have to be added to the type itself, like: 
+
+```java
+@Property
+void aProperty(@ForAll List<@StringLength(max=10) String> listOfStrings) {
+}
+```
+
+Currently, though, not all Java 8 implementations support annotations of type parameters.
 
 ## Customized Parameter Generation
 

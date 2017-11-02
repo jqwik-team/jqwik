@@ -87,10 +87,9 @@
   - const
   - functions/methods (whose output parameter can be generated)
   - frequency: pairs of generator and frequency weight
-  - oneOf: randomly select one of two generators
+  - oneOf: randomly select one of many generators and sample from one
   - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
   - flatMap of Arbitraries. Is same as chain()?
-  - posNum, negNum
   - @Regex(RegularExpression value)
   - @AllChars(String charset)
 
