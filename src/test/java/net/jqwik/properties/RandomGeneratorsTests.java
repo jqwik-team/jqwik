@@ -26,7 +26,7 @@ class RandomGeneratorsTests {
 		void smallBigDecimals() {
 			BigDecimal min = new BigDecimal(-10);
 			BigDecimal max = new BigDecimal(10);
-			RandomGenerator<BigDecimal> generator = RandomGenerators.decimals(min, max, 2);
+			RandomGenerator<BigDecimal> generator = RandomGenerators.bigDecimals(min, max, 2);
 			ArbitraryTestHelper.assertAllGenerated(generator, //
 					decimal -> decimal.compareTo(min) >= 0 && decimal.compareTo(max) <= 0 && decimal.scale() == 2);
 		}
@@ -35,7 +35,7 @@ class RandomGeneratorsTests {
 		void bigBigDecimals() {
 			BigDecimal min = new BigDecimal(-Double.MAX_VALUE);
 			BigDecimal max = new BigDecimal(Double.MAX_VALUE);
-			RandomGenerator<BigDecimal> generator = RandomGenerators.decimals(min, max, 0);
+			RandomGenerator<BigDecimal> generator = RandomGenerators.bigDecimals(min, max, 0);
 			ArbitraryTestHelper.assertAllGenerated(generator, decimal -> {
 				System.out.println(decimal.doubleValue());
 				assertThat(decimal).isBetween(min, max);

@@ -58,11 +58,10 @@ public class RandomGenerators {
 		};
 	}
 
-	public static RandomGenerator<BigDecimal> decimals(BigDecimal min, BigDecimal max, int scale) {
+	public static RandomGenerator<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale) {
 		return random -> {
 			BigDecimal randomDecimal = randomDecimal(random, min, max, scale);
-			// TODO: Make BigDecimal shrinkable
-			return Shrinkable.unshrinkable(randomDecimal);
+			return new ShrinkableValue<>(randomDecimal, new BigDecimalShrinkCandidates(min, max, scale));
 		};
 	}
 
@@ -73,16 +72,16 @@ public class RandomGenerators {
 	 * @param random
 	 * @param min
 	 * @param max
-	 * @param scale The number of decimals to the right of decimal point
+	 * @param precision The number of decimals to the right of decimal point
 	 */
-	public static BigDecimal randomDecimal(Random random, BigDecimal min, BigDecimal max, int scale) {
+	public static BigDecimal randomDecimal(Random random, BigDecimal min, BigDecimal max, int precision) {
 		BigDecimal range = max.subtract(min);
 		BigDecimal randomFactor = new BigDecimal(random.nextDouble());
 		BigDecimal unscaledRandom = randomFactor.multiply(range).add(min);
 		int digits = Math.max(1, unscaledRandom.precision() - unscaledRandom.scale());
 		int randomScaleDown = random.nextInt(digits);
 		BigDecimal scaledRandom = unscaledRandom.movePointLeft(randomScaleDown);
-		return scaledRandom.setScale(scale, BigDecimal.ROUND_DOWN);
+		return scaledRandom.setScale(precision, BigDecimal.ROUND_DOWN);
 	}
 
 	public static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {

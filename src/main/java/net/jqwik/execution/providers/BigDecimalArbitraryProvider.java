@@ -13,6 +13,6 @@ public class BigDecimalArbitraryProvider implements SimpleArbitraryProvider {
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType) {
-		return Arbitraries.bigDecimal();
+		return Arbitraries.bigDecimals();
 	}
 }

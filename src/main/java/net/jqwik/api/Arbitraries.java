@@ -59,14 +59,12 @@ public class Arbitraries {
 		return new FloatArbitrary(min, max, scale);
 	}
 
-	// TODO: Make a real BigDecimalArbitrary
-	public static Arbitrary<BigDecimal> bigDecimal(double min, double max, int scale) {
-		return new DoubleArbitrary(min, max, scale).map(aDouble -> BigDecimal.valueOf(aDouble));
+	public static Arbitrary<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale) {
+		return new BigDecimalArbitrary(min, max, scale);
 	}
 
-	// TODO: Make a real BigDecimalArbitrary
-	public static Arbitrary<BigDecimal> bigDecimal() {
-		return new DoubleArbitrary().map(aDouble -> BigDecimal.valueOf(aDouble));
+	public static Arbitrary<BigDecimal> bigDecimals() {
+		return new BigDecimalArbitrary();
 	}
 
 	public static Arbitrary<Double> doubles() {

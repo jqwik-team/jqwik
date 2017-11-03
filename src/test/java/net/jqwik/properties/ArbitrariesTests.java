@@ -183,10 +183,12 @@ class ArbitrariesTests {
 
 		@Example
 		void bigDecimals() {
-			Arbitrary<BigDecimal> doubleArbitrary = Arbitraries.bigDecimal(-10.0, 10.0, 2);
-			RandomGenerator<BigDecimal> generator = doubleArbitrary.generator(1);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
 
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() == 0.0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ZERO) == 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE) == 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() < -1.0 && value.doubleValue() > -9.0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() > 1.0 && value.doubleValue() < 9.0);
 			ArbitraryTestHelper.assertAllGenerated(generator, value -> value.scale() <= 2);
