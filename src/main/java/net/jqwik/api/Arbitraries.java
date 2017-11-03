@@ -2,12 +2,17 @@ package net.jqwik.api;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
+
+	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
+		return tries -> random -> Shrinkable.unshrinkable(generator.apply(random));
+	}
 
 	public static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
 		return tries -> generator;

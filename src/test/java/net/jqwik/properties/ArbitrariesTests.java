@@ -19,6 +19,13 @@ class ArbitrariesTests {
 	private Random random = new Random();
 
 	@Example
+	void randomValues() {
+		Arbitrary<String> stringArbitrary = Arbitraries.randomValue(random -> Integer.toString(random.nextInt(10)));
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
+	}
+
+	@Example
 	void fromGenerator() {
 		Arbitrary<String> stringArbitrary = Arbitraries
 				.fromGenerator(random -> Shrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
