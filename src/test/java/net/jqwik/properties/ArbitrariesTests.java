@@ -128,7 +128,8 @@ class ArbitrariesTests {
 		@Example
 		void doubleMinsAndMaxes() {
 			RandomGenerator<Double> generator = Arbitraries.doubles().generator(1);
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Double.MIN_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.01);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -0.01);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Double.MAX_VALUE);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -Double.MAX_VALUE);
 		}
@@ -160,7 +161,8 @@ class ArbitrariesTests {
 		@Example
 		void floatMinsAndMaxes() {
 			RandomGenerator<Float> generator = Arbitraries.floats().generator(1);
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Float.MIN_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.01f);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -0.01f);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Float.MAX_VALUE);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -Float.MAX_VALUE);
 		}

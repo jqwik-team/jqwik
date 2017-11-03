@@ -37,12 +37,13 @@ public class FloatArbitrary extends NullableArbitrary<Float> {
 	}
 
 	private RandomGenerator<Float> floatGenerator(float minGenerate, float maxGenerate, int scale) {
-		FloatShrinkCandidates doubleShrinkCandidates = new FloatShrinkCandidates(min, max, scale);
+		FloatShrinkCandidates floatShrinkCandidates = new FloatShrinkCandidates(min, max, scale);
+		float smallest = (float) (1.0 / Math.pow(10, scale));
 		List<Shrinkable<Float>> samples = Arrays
-				.stream(new Float[] { 0.0f, 1.0f, -1.0f, Float.MIN_VALUE, DEFAULT_MAX, DEFAULT_MIN, minGenerate, maxGenerate }) //
+				.stream(new Float[] { 0.0f, 1.0f, -1.0f, smallest, -smallest, DEFAULT_MAX, DEFAULT_MIN, minGenerate, maxGenerate }) //
 				.distinct() //
 				.filter(aFloat -> aFloat >= min && aFloat <= max) //
-				.map(value -> new ShrinkableValue<>(value, doubleShrinkCandidates)) //
+				.map(value -> new ShrinkableValue<>(value, floatShrinkCandidates)) //
 				.collect(Collectors.toList());
 		return RandomGenerators.floats(minGenerate, maxGenerate, scale).withShrinkableSamples(samples);
 	}
