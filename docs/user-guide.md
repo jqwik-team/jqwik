@@ -19,6 +19,10 @@ Volunteers for polishing and extending it are more than welcome._
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
 - [Customized Parameter Generation](#customized-parameter-generation)
+  - [Static `Arbitraries` methods](#static-arbitraries-methods)
+  - [Filtering](#filtering)
+  - [Mapping](#mapping)
+  - [Combining Arbitraries](#combining-arbitraries)
 - [Result Shrinking](#result-shrinking)
 - [Assumptions](#assumptions)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
@@ -408,6 +412,59 @@ void aProperty(@ForAll List<@StringLength(max=10) String> listOfStrings) {
 Currently, though, not all Java 8 implementations support annotations of type parameters.
 
 ## Customized Parameter Generation
+
+Sometimes the possibilities of adjusting default parameter generation
+through annotations is not enough. In that case you can delegate parameter
+provision to another method. Look at the following example:
+
+```java
+@Property
+boolean concatenatingStringWithInt(
+    @ForAll("shortStrings") String aShortString,
+    @ForAll("10 to 99") int aNumber
+) {
+    String concatenated = aShortString + aNumber;
+    return concatenated.length() > 2 && concatenated.length() < 11;
+}
+
+@Provide
+Arbitrary<String> shortStrings() {
+    return Arbitraries.string('a', 'z', 1, 8);
+}
+
+@Provide("10 to 99")
+Arbitrary<Integer> numbers() {
+    return Arbitraries.integer(10, 99);
+}
+```
+
+The String value of the `@ForAll` annotation serves as a reference to a 
+method within the same class (or one of its superclasses or owning classes).
+This reference refers to either the method's name or the String value
+of the method's `@Provide` annotation.
+
+The providing method has to return an object of type `@Arbitrary<T>` where
+`T` is the static type of the parameter to be provided. 
+
+Parameter provision usually starts with a 
+[static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
+by one or more [filtering](#filtering), [mapping](#mapping) or 
+[combining](#combining-arbitraries) actions.
+
+For types that have no default generation at all, _jqwik_ will use
+any provider method returning the correct type even if there is no
+explicit reference value in `@ForAll`. If provision is ambiguous
+_jqwik_ will complain and throw an exception at runtime. 
+
+
+### Static `Arbitraries` methods 
+
+### Filtering
+
+### Mapping
+
+### Combining Arbitraries
+
 
 ## Result Shrinking
 
