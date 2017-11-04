@@ -119,7 +119,7 @@ class CheckedPropertyTests {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-					p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-100, 100))), 12, 5, 42L, ShrinkingMode.ON,
+					p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-100, 100))), 12, 5, 42L, ShrinkingMode.ON,
 					ReportingMode.MINIMAL);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
@@ -133,7 +133,7 @@ class CheckedPropertyTests {
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
-				p -> Optional.of(new GenericArbitrary(Arbitraries.integer(-50, 50))), 100, 5, 1000L, ShrinkingMode.ON,
+				p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-50, 50))), 100, 5, 1000L, ShrinkingMode.ON,
 				ReportingMode.MINIMAL);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);

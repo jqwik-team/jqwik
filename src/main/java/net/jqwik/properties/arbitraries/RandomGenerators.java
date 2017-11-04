@@ -116,7 +116,7 @@ public class RandomGenerators {
 		return container(elementGenerator, ArrayList::new, minSize, maxSize);
 	}
 
-	public static RandomGenerator<String> string(RandomGenerator<Character> elementGenerator, int minLength, int maxLength) {
+	public static RandomGenerator<String> strings(RandomGenerator<Character> elementGenerator, int minLength, int maxLength) {
 		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength);
 	}
 
@@ -149,7 +149,6 @@ public class RandomGenerators {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T> RandomGenerator<T> samples(List<Shrinkable<T>> samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {

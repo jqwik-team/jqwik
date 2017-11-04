@@ -11,6 +11,6 @@ public class IntegerArbitraryProvider implements SimpleArbitraryProvider {
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType) {
-		return Arbitraries.integer();
+		return Arbitraries.integers();
 	}
 }

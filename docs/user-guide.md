@@ -59,7 +59,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.0.1'
 ext.junitJupiterVersion = '5.0.1'
-ext.jqwikVersion = '0.6.6'
+ext.jqwikVersion = '0.7.0'
 
 junitPlatform {
 	filters {
@@ -110,7 +110,7 @@ Add the following repository and dependency to your `pom.xml` file:
     <dependency>
         <groupId>com.github.jlink</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.6.6</version>
+        <version>0.7.0</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -471,12 +471,12 @@ boolean concatenatingStringWithInt(
 
 @Provide
 Arbitrary<String> shortStrings() {
-    return Arbitraries.string('a', 'z', 1, 8);
+    return Arbitraries.strings('a', 'z', 1, 8);
 }
 
 @Provide("10 to 99")
 Arbitrary<Integer> numbers() {
-    return Arbitraries.integer(10, 99);
+    return Arbitraries.integers(10, 99);
 }
 ```
 
@@ -549,12 +549,20 @@ The API for providing Arbitraries and Generators by default is not public yet.
 
 #### Arbitrary
 
+The fundamental type that is used to generate values. The name was first chosen by QuickCheck
+and later adopted by most property-based-testing libraries.
+
+Under the hood, most instances of type `Arbitrary` use [`RandomGenerator`s](#randomgenerator)
+to do the actual generation for them.
+
 #### Property
 
 A _property_ is a [test method](#test-method) that has one or more
 parameters annotated with `@ForAll`. 
 
 #### RandomGenerator
+
+Instances of type `RandomGenerator` take care of actually generating a specific parameter instance.
 
 #### Test Method
 

@@ -13,6 +13,6 @@ public class BigIntegerArbitraryProvider implements SimpleArbitraryProvider {
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType) {
-		return Arbitraries.bigInteger();
+		return Arbitraries.bigIntegers();
 	}
 }

@@ -49,7 +49,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
 				.filter(s -> s.length() >= minLength && s.length() <= effectiveMaxLength).map(s -> Shrinkable.unshrinkable(s))
 				.collect(Collectors.toList());
-		return RandomGenerators.string(createCharacterGenerator(), minLength, effectiveMaxLength).withShrinkableSamples(samples);
+		return RandomGenerators.strings(createCharacterGenerator(), minLength, effectiveMaxLength).withShrinkableSamples(samples);
 	}
 
 	public void configure(StringLength stringLength) {

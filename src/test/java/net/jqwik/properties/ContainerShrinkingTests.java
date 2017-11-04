@@ -144,8 +144,8 @@ class ContainerShrinkingTests {
 
 		@Example
 		void shrinkTwoIntegersCombinedToString() {
-			Arbitrary<Integer> a1 = Arbitraries.integer(0, 5);
-			Arbitrary<Integer> a2 = Arbitraries.integer(5, 9);
+			Arbitrary<Integer> a1 = Arbitraries.integers(0, 5);
+			Arbitrary<Integer> a2 = Arbitraries.integers(5, 9);
 
 			Arbitrary<String> combined = Combinators.combine(a1, a2) //
 													.as((i1, i2) -> Integer.toString(i1) + Integer.toString(i2));

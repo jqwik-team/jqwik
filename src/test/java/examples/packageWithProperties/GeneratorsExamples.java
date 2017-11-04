@@ -16,12 +16,12 @@ public class GeneratorsExamples {
 
 	@Provide
 	Arbitrary<String> stringArbitrary() {
-		return Arbitraries.string('a', 'z');
+		return Arbitraries.strings('a', 'z');
 	}
 
 	@Provide
 	Arbitrary<String> digitsOnly() {
-		return Arbitraries.string('0', '9');
+		return Arbitraries.strings('0', '9');
 	}
 
 	@Property(tries = 20)
@@ -32,9 +32,9 @@ public class GeneratorsExamples {
 
 	@Provide
 	Arbitrary<Person> aValidPerson() {
-		Arbitrary<Integer> age = Arbitraries.integer(0, 100);
-		Arbitrary<String> first = Arbitraries.string('a', 'z', 0,10).filter(f -> !f.isEmpty());
-		Arbitrary<String> last = Arbitraries.string('a', 'z', 1, 15);
+		Arbitrary<Integer> age = Arbitraries.integers(0, 100);
+		Arbitrary<String> first = Arbitraries.strings('a', 'z', 0,10).filter(f -> !f.isEmpty());
+		Arbitrary<String> last = Arbitraries.strings('a', 'z', 1, 15);
 
 		return Combinators.combine(age, first, last).as((a, f, l) -> {
 			String name = f + " " + l;
@@ -79,7 +79,7 @@ public class GeneratorsExamples {
 
 	@Provide
 	Arbitrary<Long> between1and100() {
-		return Arbitraries.longInteger(1L, 100L);
+		return Arbitraries.longs(1L, 100L);
 	}
 
 	@Property(tries = 10)
@@ -90,7 +90,7 @@ public class GeneratorsExamples {
 
 	@Provide
 	Arbitrary<List<Integer>> aList() {
-		return Arbitraries.listOf(Arbitraries.integer(0, 10));
+		return Arbitraries.listOf(Arbitraries.integers(0, 10));
 	}
 
 	@Property(tries = 10)

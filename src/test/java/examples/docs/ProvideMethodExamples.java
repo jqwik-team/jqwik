@@ -15,11 +15,11 @@ class ProvideMethodExamples {
 
 	@Provide
 	Arbitrary<String> shortStrings() {
-		return Arbitraries.string('a', 'z', 1, 8);
+		return Arbitraries.strings('a', 'z', 1, 8);
 	}
 
 	@Provide("10 to 99")
 	Arbitrary<Integer> numbers() {
-		return Arbitraries.integer(10, 99);
+		return Arbitraries.integers(10, 99);
 	}
 }

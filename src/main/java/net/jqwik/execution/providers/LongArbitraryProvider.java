@@ -11,6 +11,6 @@ public class LongArbitraryProvider implements SimpleArbitraryProvider {
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType) {
-		return Arbitraries.longInteger();
+		return Arbitraries.longs();
 	}
 }

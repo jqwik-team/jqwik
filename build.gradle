@@ -21,11 +21,11 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'maven'
 
 group = 'com.github.jlink'
-version = '0.6.6'
+version = '0.7.0'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.6.6'
+	version = '0.7.0'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}

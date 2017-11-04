@@ -279,7 +279,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<String> aString() {
-				return Arbitraries.string('a', 'z');
+				return Arbitraries.strings('a', 'z');
 			}
 		}
 
@@ -363,7 +363,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide("aString")
 			Arbitrary<String> aString() {
-				return Arbitraries.string('a', 'z');
+				return Arbitraries.strings('a', 'z');
 			}
 
 			@Property
@@ -378,7 +378,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<String> byMethodName() {
-				return Arbitraries.string('x', 'y');
+				return Arbitraries.strings('x', 'y');
 			}
 
 			@Property
@@ -388,7 +388,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<Long> longBetween1and10() {
-				return Arbitraries.longInteger(1L, 10L);
+				return Arbitraries.longs(1L, 10L);
 			}
 
 			@Property
@@ -398,7 +398,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide("aName")
 			Arbitrary<String> aNameForList() {
-				return Arbitraries.string('a', 'b',0, 10).filter(name -> name.length() > 2);
+				return Arbitraries.strings('a', 'b',0, 10).filter(name -> name.length() > 2);
 			}
 
 			@Property

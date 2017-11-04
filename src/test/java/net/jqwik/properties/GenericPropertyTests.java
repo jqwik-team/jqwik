@@ -214,7 +214,7 @@ class GenericPropertyTests {
 
 		@Example
 		void falsifiedAndShrunk() {
-			Arbitrary<Integer> arbitrary = Arbitraries.integer(1, 100);
+			Arbitrary<Integer> arbitrary = Arbitraries.integers(1, 100);
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 			CheckedFunction checkedFunction = params -> ((int) params.get(0)) < 5;
 

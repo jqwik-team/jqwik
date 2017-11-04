@@ -10,12 +10,12 @@ import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 
-	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
-		return tries -> random -> Shrinkable.unshrinkable(generator.apply(random));
-	}
-
 	public static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
 		return tries -> generator;
+	}
+
+	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
+		return fromGenerator(random -> Shrinkable.unshrinkable(generator.apply(random)));
 	}
 
 	@SafeVarargs
@@ -27,27 +27,27 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
-	public static Arbitrary<Integer> integer() {
+	public static Arbitrary<Integer> integers() {
 		return new IntegerArbitrary();
 	}
 
-	public static Arbitrary<Integer> integer(int min, int max) {
+	public static Arbitrary<Integer> integers(int min, int max) {
 		return new IntegerArbitrary(min, max);
 	}
 
-	public static Arbitrary<Long> longInteger(long min, long max) {
+	public static Arbitrary<Long> longs(long min, long max) {
 		return new LongArbitrary(min, max);
 	}
 
-	public static Arbitrary<Long> longInteger() {
+	public static Arbitrary<Long> longs() {
 		return new LongArbitrary();
 	}
 
-	public static Arbitrary<BigInteger> bigInteger(long min, long max) {
+	public static Arbitrary<BigInteger> bigIntegers(long min, long max) {
 		return new LongArbitrary(min, max).map(aLong -> BigInteger.valueOf(aLong));
 	}
 
-	public static Arbitrary<BigInteger> bigInteger() {
+	public static Arbitrary<BigInteger> bigIntegers() {
 		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
 	}
 
@@ -75,23 +75,23 @@ public class Arbitraries {
 		return new DoubleArbitrary(min, max, scale);
 	}
 
-	public static Arbitrary<String> string() {
+	public static Arbitrary<String> strings() {
 		return new StringArbitrary();
 	}
 
-	public static Arbitrary<String> string(char[] validChars, int minLength, int maxLength) {
+	public static Arbitrary<String> strings(char[] validChars, int minLength, int maxLength) {
 		return new StringArbitrary(validChars, minLength, maxLength);
 	}
 
-	public static Arbitrary<String> string(char[] validChars) {
+	public static Arbitrary<String> strings(char[] validChars) {
 		return new StringArbitrary(validChars);
 	}
 
-	public static Arbitrary<String> string(char from, char to, int minLength, int maxLength) {
+	public static Arbitrary<String> strings(char from, char to, int minLength, int maxLength) {
 		return new StringArbitrary(from, to, minLength, maxLength);
 	}
 
-	public static Arbitrary<String> string(char from, char to) {
+	public static Arbitrary<String> strings(char from, char to) {
 		return new StringArbitrary(from, to);
 	}
 

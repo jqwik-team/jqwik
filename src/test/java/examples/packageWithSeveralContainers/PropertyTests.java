@@ -37,12 +37,12 @@ public class PropertyTests {
 
 	@Provide
 	Arbitrary<Integer> lessThan5() {
-		return Arbitraries.integer(0, 4);
+		return Arbitraries.integers(0, 4);
 	}
 
 	@Provide
 	Arbitrary<String> shorterThan5() {
-		return Arbitraries.string(new char[]{'a', 'b', 'c'}, 0, 4);
+		return Arbitraries.strings(new char[]{'a', 'b', 'c'}, 0, 4);
 	}
 
 }
