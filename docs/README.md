@@ -8,11 +8,15 @@ PBT has meanwhile been recognized as an important ingredient of any up-to-date t
 ### Properties
 
 A property is supposed to describe a _generic invariant or post condition_ of your code, given some
-_precondition_. The following property deals with a partial implementation for the (in)famous 
+_precondition_. The testing library - _jqwik_ - will then try to 
+**generate many value sets that fulfill the precondition** hoping that one of the generated sets
+can falsify a wrong assumption.
+
+The following property deals with a partial implementation for the (in)famous 
 [Fizz Buzz Kata](http://codingdojo.org/kata/FizzBuzz/):
 
-- Precondition: Consider numbers between 1 and 100 that are divisible by 3
-- Postcondition: The string returned by `fizzBuzz()` contains the word `Fizz` 
+- _Precondition_: Consider numbers between 1 and 100 that are divisible by 3
+- _Postcondition_: The string returned by `fizzBuzz()` contains the word `Fizz` 
 
 ```java
 import java.util.*;

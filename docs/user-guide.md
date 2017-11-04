@@ -171,7 +171,7 @@ Just like an example test a property method has to
   use [assertions](#assertions) to check the property's invariant.
 
 If not [specified differently](#optional-property-parameters), 
-_jqwik_ will run 1000 _tries_, i.e. a 1000 different sets of 
+_jqwik_ __will run 1000 tries__, i.e. a 1000 different sets of 
 parameter values and execute the property method with each of those parameter sets. 
 The first failed execution will stop value generation 
 and be reported as failure - usually followed by an attempt to 
