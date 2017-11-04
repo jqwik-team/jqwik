@@ -521,6 +521,23 @@ You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guid
 instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using `@Property`
 as "meta"-annotation.
 
+The following example provides an annotation to constrain String or Character generation to German letters only:
+
+```java
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+@Digits
+@AlphaChars
+@Chars({'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß'})
+@Chars({' ', '.', ',', ';', '?', '!'})
+@StringLength(min = 10, max = 100)
+public @interface GermanText { }
+
+@Property(tries = 10, reporting = ReportingMode.GENERATED)
+void aGermanText(@ForAll @GermanText String aText) {}
+
+```
+
 The drawback of self-made annotations is that they do not forward their parameters to meta-annotations,
 which constrains their applicability to simple cases.
 
