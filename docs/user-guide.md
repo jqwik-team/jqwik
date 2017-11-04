@@ -18,18 +18,18 @@ Volunteers for polishing and extending it are more than welcome._
 - [Grouping Tests](#grouping-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
+- [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
   - [Combining Arbitraries](#combining-arbitraries)
-- [Result Shrinking](#result-shrinking)
 - [Assumptions](#assumptions)
-- [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
-- [Register default Generators and Arbitraries](#register-default-generators-and-arbitraries)
+- [Result Shrinking](#result-shrinking)
 - [Running and Configuration](#running-and-configuration)
   - [jqwik Configuration](#jqwik-configuration)
-- [Self-Made Annotations](#self-made-annotations)
+- [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
+- [Register default Generators and Arbitraries](#register-default-generators-and-arbitraries)
 - [Glossary](#glossary)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -425,6 +425,34 @@ Currently, though, not all Java&nbsp;8 implementations support the retrieval of
 type parameter annotations through reflection.
 </div>
 
+
+## Self-Made Annotations
+
+You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests-meta-annotations)
+instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using `@Property`
+as "meta"-annotation.
+
+The following example provides an annotation to constrain String or Character generation to German letters only:
+
+```java
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Retention(RetentionPolicy.RUNTIME)
+@Digits
+@AlphaChars
+@Chars({'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß'})
+@Chars({' ', '.', ',', ';', '?', '!'})
+@StringLength(min = 10, max = 100)
+public @interface GermanText { }
+
+@Property(tries = 10, reporting = ReportingMode.GENERATED)
+void aGermanText(@ForAll @GermanText String aText) {}
+
+```
+
+The drawback of self-made annotations is that they do not forward their parameters to meta-annotations,
+which constrains their applicability to simple cases.
+
+
 ## Customized Parameter Generation
 
 Sometimes the possibilities of adjusting default parameter generation
@@ -480,17 +508,9 @@ _jqwik_ will complain and throw an exception at runtime.
 ### Combining Arbitraries
 
 
-## Result Shrinking
-
 ## Assumptions
 
-## Program your own Generators and Arbitraries
-
-This topic will probably need a page of its own.
-
-## Register default Generators and Arbitraries
-
-The API for providing Arbitraries and Generators by default is not public yet.
+## Result Shrinking
 
 ## Running and Configuration
 
@@ -515,31 +535,15 @@ This type of configuration is preliminary and will likely be replaced by
 [JUnit 5's platform configuration](http://junit.org/junit5/docs/5.0.0/user-guide/#running-tests-config-params)
 mechanism soon. Moreover, there will probably be many more default parameters to change.
 
-## Self-Made Annotations
+## Program your own Generators and Arbitraries
 
-You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests-meta-annotations)
-instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using `@Property`
-as "meta"-annotation.
+This topic will probably need a page of its own.
 
-The following example provides an annotation to constrain String or Character generation to German letters only:
 
-```java
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
-@Retention(RetentionPolicy.RUNTIME)
-@Digits
-@AlphaChars
-@Chars({'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß'})
-@Chars({' ', '.', ',', ';', '?', '!'})
-@StringLength(min = 10, max = 100)
-public @interface GermanText { }
+## Register default Generators and Arbitraries
 
-@Property(tries = 10, reporting = ReportingMode.GENERATED)
-void aGermanText(@ForAll @GermanText String aText) {}
+The API for providing Arbitraries and Generators by default is not public yet.
 
-```
-
-The drawback of self-made annotations is that they do not forward their parameters to meta-annotations,
-which constrains their applicability to simple cases.
 
 ## Glossary
 
