@@ -3,6 +3,10 @@
 
 @import "{{ site.theme }}";
 
+h2 {
+    padding-top: 30px;
+}
+
 h1 a {
     color: white;
 }

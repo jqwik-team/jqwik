@@ -26,6 +26,8 @@ Volunteers for polishing and extending it are more than welcome._
   - [Combining Arbitraries](#combining-arbitraries)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
+  - [Integrated Shrinking](#integrated-shrinking)
+  - [Switch Shrinking Off](#switch-shrinking-off)
 - [Running and Configuration](#running-and-configuration)
   - [jqwik Configuration](#jqwik-configuration)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
@@ -511,6 +513,86 @@ _jqwik_ will complain and throw an exception at runtime.
 ## Assumptions
 
 ## Result Shrinking
+
+If a property could be falsified with a generated set of values, _jqwik_ will
+try to "shrink" this sample in order to find a "smaller" sample that also falsifies the property.
+
+Try this property:
+
+```java
+@Property
+boolean stringShouldBeShrunkToAA(@ForAll @AlphaChars String aString) {
+    return aString.length() > 5 || aString.length() < 2;
+}
+```
+
+The test run result should look something like:
+```
+timestamp = 2017-11-04T16:42:25.859, 
+    seed = -633877439388930932, 
+    tries = 38, 
+    checks = 38, 
+    originalSample = ["LVtyB"], 
+    sample = ["AA"]
+
+AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample ["AA"]
+```
+
+In this case the _originalSample_ could be any string between 2 and 5 chars, whereas the final _sample_
+should be exactly `AA` since this is the shortest failing string and `A` has the lowest numeric value
+of all allowed characters.
+
+### Integrated Shrinking
+
+_jqwik_'s shrinking approach is called _integrated shrinking_, as opposed to _type-based shrinking_
+which most property-based testing tools use.
+The general idea and its advantages are explained 
+[here](http://hypothesis.works/articles/integrated-shrinking/).
+
+Consider a somewhat more complicated examples:
+
+```java
+@Property
+boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") String second) {
+    String aString = first + second;
+    return aString.length() > 5 || aString.length() < 2;
+}
+
+@Provide
+Arbitrary<String> first() {
+    return Arbitraries.strings('a', 'z', 1, 10).filter(string -> string.endsWith("h"));
+}
+
+@Provide
+Arbitrary<String> second() {
+    return Arbitraries.strings('0', '9', 0, 10).filter(string -> string.length() >= 1);
+}
+```
+
+Shrinking works, although there's quite a bit of filtering and string concatenation happening:
+```
+timestamp = 2017-11-04T16:58:45.431, 
+    seed = -5596810132893895291, 
+    checks = 20, 
+    tries = 20, 
+    originalSample = ["gh", "774"], 
+    sample = ["h", "0"]
+
+AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h", "0"]
+```
+
+### Switch Shrinking Off
+
+Sometimes shrinking takes a really long time or won't finish at all (usually a _jqwik_ bug!). 
+In those cases you can switch shrinking off for an individual property:
+
+```java
+@Property(shrinking = ShrinkingMode.OFF)
+void aPropertyWithLongShrinkingTimes(
+	@ForAll List<Set<String>> list1, 
+	@ForAll List<Set<String>> list2
+) {	... }
+```
 
 ## Running and Configuration
 
