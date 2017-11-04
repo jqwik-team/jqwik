@@ -503,6 +503,89 @@ _jqwik_ will complain and throw an exception at runtime.
 
 ### Static `Arbitraries` methods 
 
+The starting point for generation usually is a static method call on class `Arbitraries`. 
+
+#### Generate values yourself
+
+- `Arbitrary<T> randomValue(Function<Random, T> generator)`: 
+  Take a `random` instance and create an object from it.
+  Those values cannot be shrinked, though.
+  
+  Generating prime numbers might look like that:
+  ```java
+  @Provide
+  Arbitrary<Integer> primesGenerated() {
+      return Arbitraries.randomValue(random -> generatePrime(random));
+  }
+
+  private Integer generatePrime(Random random) {
+      int candidate;
+      do {
+          candidate = random.nextInt(10000) + 2;
+      } while (!isPrime(candidate));
+      return candidate;
+  }
+  ```
+
+- `Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`:
+  If the number of _tries_ influences value generation or if you want to allow for shrinking you have
+  to provide your own `RandomGenerator` implementation. 
+  
+#### Select values randomly
+
+- `Arbitrary<U> of(U... values)`:
+  Choose randomly from a list of values. Shrink towards the first one.
+  
+- `Arbitrary<T> samples(T... samples)`:
+  Go through samples from first to last. Shrink towards the first sample.
+  
+- `Arbitrary<T> of(Class<T  extends Enum> enumClass)`:
+  Choose randomly from all values of an `enum`. Shrink towards first enum value.
+
+#### Integers
+
+- `Arbitrary<Integer> integers()`
+- `Arbitrary<Integer> integers(int min, int max)`
+- `Arbitrary<Long> longs(long min, long max)`
+- `Arbitrary<Long> longs()`
+- `Arbitrary<BigInteger> bigIntegers(long min, long max)`
+- `Arbitrary<BigInteger> bigIntegers()`
+
+#### Decimals
+
+- `Arbitrary<Float> floats()`
+- `Arbitrary<Float> floats(Float min, Float max, int scale)`
+- `Arbitrary<Double> doubles()`
+- `Arbitrary<Double> doubles(double min, double max, int scale)`
+- `Arbitrary<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale)`
+- `Arbitrary<BigDecimal> bigDecimals()`
+
+#### Characters and Strings
+
+- `Arbitrary<String> strings()`
+- `Arbitrary<String> strings(char[] validChars, int minLength, int maxLength)`
+- `Arbitrary<String> strings(char[] validChars)`
+- `Arbitrary<String> strings(char from, char to, int minLength, int maxLength)`
+- `Arbitrary<String> strings(char from, char to)`
+- `Arbitrary<Character> chars()`
+- `Arbitrary<Character> chars(char from, char to)`
+- `Arbitrary<Character> chars(char[] validChars)`
+
+#### Collections, Streams, Arrays and Optional
+
+Generating types who have generic type parameters, requires to hand in 
+an `Arbitrary` instance for the generic types.
+
+- `Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
+- `Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary)`
+- `Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
+- `Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary)`
+- `Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
+- `Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary)`
+- `Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
+- `Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary)`
+- `Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary)`
+
 ### Filtering
 
 ### Mapping
