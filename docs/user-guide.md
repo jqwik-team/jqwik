@@ -325,6 +325,7 @@ jqwik will use default generation for the following types:
 - Integral types `Integer`, `int`, `Long`, `long` and `BigInteger`
 - Floating types  `Float`, `float`, `Double`, `double` and `BigDecimal`
 - `Boolean` and `boolean`
+- `Character` and `char
 - All `enum` types
 - Collection types `List<T>`, `Set<T>` and `Stream<T>` 
   as long as `T` can also be provided by default generation.
@@ -349,6 +350,19 @@ on the requested parameter type.
 If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
 
 - `@StringLength(int min = 0, int max)`
+
+The following constraints can be combined with each other:
+
+- `@Chars(chars[] value = {}, char from = 0, char to = 0)`: Specify a set of characters
+  or a start and end character. This annotation can be repeated which will add up all allowed chars.
+- `@Digits`: Use only digits `0` through `9`
+- `@LowerChars`: Use only lower case chars `a` through `z`
+- `@UpperChars`: Use only upper case chars `A` through `Z`
+- `@AlphaChars`: Lower and upper case chars are allowed.
+
+#### Characters:
+
+If Characters are not constrained any char between `'\u0000'` and `'\uffff'` might be created.
 
 The following constraints can be combined with each other:
 
@@ -401,15 +415,15 @@ void aProperty(@ForAll @StringLength(max=10) List<String> listOfStrings) {
 ```
 will generate lists of Strings that have 10 characters max.
 
-In future versions constraints for contained types might have to be added to the type itself, like: 
-
-```java
-@Property
-void aProperty(@ForAll List<@StringLength(max=10) String> listOfStrings) {
-}
-```
-
-Currently, though, not all Java 8 implementations support annotations of type parameters.
+<div style="border:1px solid black; padding: 1em; width:auto; text-size: smaller">
+<h4>Side Note</h4>
+In future versions of <em>jqwik</em> constraints for contained types might have to be added to the type itself, like: 
+    <code>
+    @ForAll List<@StringLength(max=10) String> listOfStrings
+    </code>.
+Currently, though, not all Java&nbsp;8 implementations support the retrieval of 
+type parameter annotations through reflection.
+</div>
 
 ## Customized Parameter Generation
 

@@ -20,6 +20,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	static {
 		register(EnumArbitraryProvider.class);
+		register(CharacterArbitraryProvider.class);
 		register(BooleanArbitraryProvider.class);
 		register(IntegerArbitraryProvider.class);
 		register(LongArbitraryProvider.class);

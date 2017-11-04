@@ -99,6 +99,18 @@ public class Arbitraries {
 		return new ListArbitrary<T>(elementArbitrary, minSize, maxSize);
 	}
 
+	public static Arbitrary<Character> chars() {
+		return new CharacterArbitrary();
+	}
+
+	public static Arbitrary<Character> chars(char from, char to) {
+		return new CharacterArbitrary(from, to);
+	}
+
+	public static Arbitrary<Character> chars(char[] validChars) {
+		return new CharacterArbitrary(validChars);
+	}
+
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
 		return new ListArbitrary<T>(elementArbitrary);
 	}
@@ -136,4 +148,5 @@ public class Arbitraries {
 		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
 		return fromGenerator(RandomGenerators.samples(shrinkables));
 	}
+
 }

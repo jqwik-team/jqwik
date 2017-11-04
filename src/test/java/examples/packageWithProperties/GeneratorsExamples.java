@@ -72,6 +72,11 @@ public class GeneratorsExamples {
 		return true;
 	}
 
+	@Property(tries = 10, reporting = ReportingMode.GENERATED)
+	boolean aChar(@ForAll @AlphaChars char aChar, @ForAll char unconstrained) {
+		return true;
+	}
+
 	@Provide
 	Arbitrary<Long> between1and100() {
 		return Arbitraries.longInteger(1L, 100L);

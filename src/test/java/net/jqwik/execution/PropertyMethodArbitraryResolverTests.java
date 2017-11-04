@@ -52,6 +52,9 @@ public class PropertyMethodArbitraryResolverTests {
 			assertGenerated(Boolean.class, "booleanParam", boolean.class);
 			assertGenerated(Boolean.class, "boxedBooleanParam", Boolean.class);
 
+			assertGenerated(Character.class, "charParam", char.class);
+			assertGenerated(Character.class, "boxedCharacterParam", Character.class);
+
 			assertGenerated(AnEnum.class, "enumParam", AnEnum.class);
 
 			assertGenerated(String.class, "stringParam", String.class);
@@ -190,6 +193,16 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Property
 			boolean boxedBooleanParam(@ForAll Boolean aValue) {
+				return true;
+			}
+
+			@Property
+			boolean charParam(@ForAll char aValue) {
+				return true;
+			}
+
+			@Property
+			boolean boxedCharacterParam(@ForAll Character aValue) {
 				return true;
 			}
 

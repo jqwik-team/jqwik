@@ -77,8 +77,9 @@
   - if generic type is a bounded type
 
 - Default Arbitraries, Generators and Shrinking for
-  - char, short, byte
+  - short, byte
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
+  - Files, Paths etc.
   - Arrays of Arrays
 
 - Arbitraries and Generators
