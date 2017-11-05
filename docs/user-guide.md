@@ -754,7 +754,7 @@ Arbitrary<String> second() {
 }
 ```
 
-Shrinking works, although there's quite a bit of filtering and string concatenation happening:
+Shrinking still works, although there's quite a bit of filtering and string concatenation happening:
 ```
 timestamp = 2017-11-04T16:58:45.431, 
     seed = -5596810132893895291, 
