@@ -21,6 +21,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
+  - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
   - [Combining Arbitraries](#combining-arbitraries)
@@ -539,6 +540,19 @@ The starting point for generation usually is a static method call on class `Arbi
 - `Arbitrary<T> samples(T... samples)`:
   Go through samples from first to last. Shrink towards the first sample.
   
+  If instead you want to _add_ samples to an existing arbitrary you'd rather call 
+  `withSamples(T... samples)` on this arbitrary object. The following arbitrary:
+  
+  ```java
+  @Provide 
+  Arbitrary<Integer> integersWithPrimes() {
+	  return Arbitraries.integers(- 1000, 1000).withSamples(2,3,5,7,11,13,17);
+  }
+  ```
+  
+  will first generate the 7 enumerated prime numbers and only then generate random 
+  integers between -1000 and +1000.
+  
 - `Arbitrary<T> of(Class<T  extends Enum> enumClass)`:
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
 
@@ -585,6 +599,21 @@ an `Arbitrary` instance for the generic types.
 - `Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
 - `Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary)`
 - `Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary)`
+
+
+### Generate `null` values
+
+Predefined generators will never create `null` values. If you want to allow that,
+call `injectNull(double probability)` on an existing arbitrary. The following
+provider method creates an arbitrary that will return a `null` String 
+in about 1 of 20 generated values.
+
+```java
+@Provide 
+Arbitrary<String> stringsWithNull() {
+  return Arbitraries.strings(0, 10).injectNull(0.05);
+}
+```
 
 ### Filtering
 
