@@ -1,13 +1,15 @@
 package net.jqwik.support;
 
+import static java.util.stream.Collectors.*;
+
+import java.io.File;
 import java.lang.reflect.*;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.junit.platform.commons.support.*;
-import org.junit.platform.commons.util.ReflectionUtils;
 
 import net.jqwik.discovery.predicates.IsTopLevelClass;
 
@@ -79,8 +81,8 @@ public class JqwikReflectionSupport {
 	}
 
 	/**
-	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use the outer instance if the
-	 * method belongs to the outer instance of an object.
+	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use the outer
+	 * instance if the method belongs to the outer instance of an object.
 	 */
 	public static Object invokeMethodPotentiallyOuter(Method method, Object target, Object... args) {
 		if (method.getDeclaringClass().isAssignableFrom(target.getClass())) {
@@ -97,7 +99,12 @@ public class JqwikReflectionSupport {
 	}
 
 	public static Set<Path> getAllClasspathRootDirectories() {
-		return ReflectionUtils.getAllClasspathRootDirectories();
+		// TODO: This is quite a hack, since sometimes the classpath is quite different.
+		// Especially under Java 9's module system this will probably no longer work.
+		String classpath = System.getProperty("java.class.path");
+		return Arrays.stream(classpath.split(File.pathSeparator)) //
+				.map(Paths::get).filter(Files::isDirectory) //
+				.collect(toSet());
 	}
 
 	public static boolean isPublic(Class<?> clazz) {
