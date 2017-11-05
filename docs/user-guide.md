@@ -653,6 +653,47 @@ will move towards the lowest allowed number, that is `10000`.
 
 ### Combining Arbitraries
 
+Sometimes just mapping a single stream of generated values is not enough to generate
+a more complicated domain object. In those cases you can combine several arbitraries to
+a single result arbitrary using `Combinators.combine()` with up to four arbitraries. 
+[Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than four. 
+
+The following example generates `Person` instances from three arbitraries as inputs.
+
+```java
+@Provide
+Arbitrary<String> fiveDigitStrings() {
+    return Arbitraries.integers(10000, 99999).map(aNumber -> String.valueOf(aNumber));
+}
+
+@Property
+void validPeopleHaveIDs(@ForAll Person aPerson) {
+    Assertions.assertThat(aPerson.getID()).contains("-");
+    Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
+}
+
+class Person {
+    private final String name;
+    private final int age;
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getID() {
+        return name + "-" + age;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s:%s", name, age);
+    }
+}
+```
+
+The property should fail, thereby shrinking the falsified Person instance to
+`[Aaaaaaaaaaaaaaaaaaaaa:100]`.
 
 ## Assumptions
 

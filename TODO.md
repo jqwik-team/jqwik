@@ -1,5 +1,7 @@
 ### Bugs
 
+- Some combinator shrinking does not work as expected. 
+  See examples.docs.MappingAndCombinatorExamples.validPeopleHaveIDs()
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative: change distance to be of type BigInteger!
