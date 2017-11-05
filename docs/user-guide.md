@@ -510,7 +510,7 @@ The starting point for generation usually is a static method call on class `Arbi
 
 - `Arbitrary<T> randomValue(Function<Random, T> generator)`: 
   Take a `random` instance and create an object from it.
-  Those values cannot be shrinked, though.
+  Those values cannot be [shrunk](#result-shrinking), though.
   
   Generating prime numbers might look like that:
   ```java
@@ -529,8 +529,9 @@ The starting point for generation usually is a static method call on class `Arbi
   ```
 
 - `Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`:
-  If the number of _tries_ influences value generation or if you want to allow for shrinking you have
-  to provide your own `RandomGenerator` implementation. 
+  If the number of _tries_ influences value generation or if you want 
+  to allow for [shrinking](#result-shrinking) you have to provide 
+  your own `RandomGenerator` implementation. 
   
 #### Select values randomly
 
@@ -633,6 +634,22 @@ Otherwise the generation of suitable values might take very long or even never s
 resulting in an endless loop.
 
 ### Mapping
+
+Sometimes it's easier to start with an existing arbitrary and use its generated values to
+build other objects from them. In that case, use `Arbitrary.map(Function<T, U> mapper)`.
+The following example uses generated integers to create numerical Strings: 
+
+```java
+@Provide 
+Arbitrary<String> fiveDigitStrings() {
+  return Arbitraries.integers(10000, 99999).map(aNumber -> String.valueOf(aNumber));
+}
+```
+
+You could generate the same kind of values by constraining and filtering a generated String.
+However, the [shrinking](#result-shrinking) target would probably be different. In the example above, shrinking
+will move towards the lowest allowed number, that is `10000`.
+
 
 ### Combining Arbitraries
 
