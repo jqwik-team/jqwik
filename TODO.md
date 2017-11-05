@@ -1,5 +1,6 @@
 ### Bugs
 
+- Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative: change distance to be of type BigInteger!
 - Combining two Arbitraries of Character to Array of Character
