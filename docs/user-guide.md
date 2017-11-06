@@ -709,6 +709,81 @@ The property should fail, thereby shrinking the falsified Person instance to
 
 ## Assumptions
 
+If you want to constrain the set of generated values in a way that embraces
+more than one parameter, [filtering](#filtering) does not work. What you
+can do instead is putting one or more assumptions at the beginning of your property.
+
+The following property works only on strings that are not equal:
+
+```java
+@Property
+boolean comparingUnequalStrings( //
+        @ForAll @StringLength(min = 1, max = 10) String string1, //
+        @ForAll @StringLength(min = 1, max = 10) String string2 //
+) {
+    Assume.that(!string1.equals(string2));
+
+    return string1.compareTo(string2) != 0;
+}
+```
+
+This is a reasonable use of `Assume.that(boolean condition)` because most generated
+value sets will pass through.
+
+Have a look at a seemingly similar example:
+
+```java
+@Property
+boolean findingContainedStrings( //
+        @ForAll @StringLength(min = 1, max = 10) String container, //
+        @ForAll @StringLength(min = 1, max = 5) String contained //
+) {
+    Assume.that(container.contains(contained));
+
+    return container.indexOf(contained) >= 0;
+}
+```
+
+Despite the fact that the property condition itself is correct, the property will most likely
+fail with the following message:
+
+```
+timestamp = 2017-11-06T14:36:15.134, 
+    seed = 1066117555581106850
+    tries = 1000, 
+    checks = 20, 
+
+org.opentest4j.AssertionFailedError: 
+    Property [findingContainedStrings] exhausted after [1000] tries and [980] rejections
+```
+
+The problem is that - given a random generation of two strings - only in very few cases
+one string will be contained in the other. _jqwik_ will report a property as `exhausted`
+if the ratio between generated and accepted parameters is higher than 5. You can change
+the maximum discard ratio by specifying a parameter `maxDiscardRatio` in the `@Property` annotation.
+That's why changing to `@Property(maxDiscardRatio = 100)` in the previous example 
+will probably result in a successful property run, even though only a handful 
+cases - of 1000 generated - will actually be checked.
+
+In many cases turning up the accepted discard ration is a bad idea. With some creativity
+we can often avoid the problem by generating out test data a bit differently. 
+Look at this variant of the above property, which also uses `Assume.that()` but with
+a much lower discard ratio:
+
+```java
+@Property
+boolean findingContainedStrings_variant( //
+        @ForAll @StringLength(min = 5, max = 10) String container, //
+        @ForAll @IntRange(min = 1, max = 5) int length, //
+        @ForAll @IntRange(min = 0, max = 9) int startIndex //
+) {
+    Assume.that((length + startIndex) <= container.length());
+
+    String contained = container.substring(startIndex, startIndex + length);
+    return container.indexOf(contained) >= 0;
+}
+```
+
 ## Result Shrinking
 
 If a property could be falsified with a generated set of values, _jqwik_ will
