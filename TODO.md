@@ -1,5 +1,6 @@
 ### Bugs
 
+- Lifecycle is not followed per check. See examples.bugs.PropertyLifecyclePerCheck
 - Some combinator shrinking does not work as expected. 
   See examples.docs.MappingAndCombinatorExamples.validPeopleHaveIDs()
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
