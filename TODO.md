@@ -91,6 +91,7 @@
   - functions/methods (whose output parameter can be generated)
   - frequency: pairs of generator and frequency weight
   - oneOf: randomly select one of many generators and sample from one
+  - mutate: like map, but with a random parameter added, see mutate in QuickTheories
   - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
   - flatMap of Arbitraries. Is same as chain()?
   - @Regex(RegularExpression value)
