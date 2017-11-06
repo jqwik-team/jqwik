@@ -5,6 +5,6 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Property
+@Property(tries = 1)
 public @interface Example {
 }

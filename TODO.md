@@ -1,6 +1,5 @@
 ### Bugs
 
-- Lifecycle is not followed per check. See examples.bugs.PropertyLifecyclePerCheck
 - Some combinator shrinking does not work as expected. 
   See examples.docs.MappingAndCombinatorExamples.validPeopleHaveIDs()
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
@@ -43,7 +42,7 @@
   - PerTestRunLifeCycle
   - PerClassLifeCycle
   - PerMethodLifeCycle
-  - PerCheckLifeCycle
+  - PerTryLifeCycle
 
 - Warn (or skip? or fail?) if jqwik tests are annotated with Jupiter/JUnit4 annotations
 

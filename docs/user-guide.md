@@ -15,6 +15,8 @@ Volunteers for polishing and extending it are more than welcome._
   - [Optional `@Property` Parameters](#optional-property-parameters)
 - [Assertions](#assertions)
 - [Lifecycle](#lifecycle)
+  - [Method Lifecycle](#method-lifecycle)
+  - [Other Lifecycles](#other-lifecycles)
 - [Grouping Tests](#grouping-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
@@ -237,14 +239,16 @@ static methods in `org.junit.jupiter.api.Assertions`.
 
 ## Lifecycle
 
+### Method Lifecycle
+
 The current lifecycle of jqwik test methods is rather simple:
 
-- For [each try](#try), annotated with `@Property` or `@Example`, 
+- For each method, annotated with `@Property` or `@Example`, 
   a new instance of the containing test class is created
   in order to keep the individual tests isolated from each other.
-- If you have preparatory work to do for _each_ [each try](#try), 
+- If you have preparatory work to do for each method, 
   create a constructor without parameters and do the work there.
-- If you have cleanup work to do for _each_ [each try](#try), 
+- If you have cleanup work to do for each method, 
   the containing test class can implement `java.lang.AutoCloseable`.
   The `close`-Method will be called after each test method execution.
   
@@ -275,6 +279,14 @@ class TestsWithLifecycle implements AutoCloseable {
 
 In this example both the constructor and `close()` will be called 6 times: 
 Once for `anExample()` and 5 times for `aProperty(...)`.
+
+### Other Lifecycles
+
+Currently _jqwik_ does not have special support for a lifecycle per test container,
+[test try](#try) or even package. Later versions of _jqwik_ might possible bring
+more features in that field. 
+[Create an issue on github](https://github.com/jlink/jqwik/issues) with your concrete needs.
+
 
 ## Grouping Tests
 
