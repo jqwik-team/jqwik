@@ -16,7 +16,7 @@ class MappingAndCombinatorExamples {
 		return Arbitraries.integers(10000, 99999).map(aNumber -> String.valueOf(aNumber));
 	}
 
-	@Property(tries = 100, reporting = ReportingMode.GENERATED)
+	@Property
 	void validPeopleHaveIDs(@ForAll Person aPerson) {
 		Assertions.assertThat(aPerson.getID()).contains("-");
 		Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);

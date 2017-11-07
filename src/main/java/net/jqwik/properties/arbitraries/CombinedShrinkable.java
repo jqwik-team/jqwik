@@ -1,10 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.properties.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import net.jqwik.properties.*;
 
 public class CombinedShrinkable<T> implements Shrinkable<T> {
 
@@ -31,12 +31,13 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 	private Set<ShrinkResult<Shrinkable<T>>> toSetOfCombinedShrinkables(Set<ShrinkResult<Shrinkable<Object>>> singleSet, int position) {
 		return singleSet.stream() //
-				.map(shrinkResult -> shrinkResult.map(shrunkValue -> {
-					List<Shrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
-					newShrinkables.set(position, shrunkValue);
-					return (Shrinkable<T>) new CombinedShrinkable<>(newShrinkables, combineFunction);
-				})) //
-				.collect(Collectors.toSet());
+			.map(shrinkResult -> shrinkResult.map(shrunkValue -> {
+				List<Shrinkable<Object>> newShrinkables = new ArrayList<>(shrinkables);
+				newShrinkables.set(position, shrunkValue);
+				return (Shrinkable<T>) new CombinedShrinkable<>(newShrinkables, combineFunction);
+			})) //
+			.filter(shrinkResult -> shrinkResult.shrunkValue().distance() < distance()) //
+			.collect(Collectors.toSet());
 	}
 
 	private Predicate<Object> falsifierForPosition(Predicate<T> falsifier, int position) {
@@ -70,8 +71,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || !(o instanceof Shrinkable))
-			return false;
+		if (o == null || !(o instanceof Shrinkable)) return false;
 		Shrinkable<?> that = (Shrinkable<?>) o;
 		return Objects.equals(value, that.value());
 	}

@@ -12,6 +12,11 @@ public class LongShrinkCandidates extends IntegralShrinkCandidates<Long> {
 	}
 
 	@Override
+	protected Long shrinkOneTowardsTarget(Long value) {
+		return nextShrinkOne(value);
+	}
+
+	@Override
 	public int distance(Long value) {
 		return distanceFromLong(value);
 	}

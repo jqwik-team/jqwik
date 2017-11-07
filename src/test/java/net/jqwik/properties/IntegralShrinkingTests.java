@@ -7,6 +7,7 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@Group
 class IntegralShrinkingTests {
 
 	@Group
@@ -50,29 +51,29 @@ class IntegralShrinkingTests {
 		@Example
 		void shrinkPositiveValueTowards0If0isInRange() {
 			ShrinkCandidates<Integer> shrinker = new IntegerShrinkCandidates(-10, 20);
-			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, 10);
-			assertThat(allShrunkValues).containsExactly(5, 3, 2, 1, 0);
+			Set<Integer> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, 10);
+			assertThat(allShrunkValues).containsExactlyInAnyOrder(5, 4, 3, 2, 1, 0);
 		}
 
 		@Example
 		void shrinkNegativeValueTowards0If0isInRange() {
 			ShrinkCandidates<Integer> shrinker = new IntegerShrinkCandidates(-10, 20);
-			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, -10);
-			assertThat(allShrunkValues).containsExactly(-5, -3, -2, -1, 0);
+			Set<Integer> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, -10);
+			assertThat(allShrunkValues).containsExactlyInAnyOrder(-5, -4, -3, -2, -1, 0);
 		}
 
 		@Example
 		void shrinkNegativeValueTowardMaxIf0IsOutsideRange() {
 			ShrinkCandidates<Integer> shrinker = new IntegerShrinkCandidates(-20, -5);
-			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, -10);
-			assertThat(allShrunkValues).containsExactly(-8, -7, -6, -5);
+			Set<Integer> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, -10);
+			assertThat(allShrunkValues).containsExactlyInAnyOrder(-8, -7, -6, -5);
 		}
 
 		@Example
 		void shrinkPositiveValueTowardMinIf0IsOutsideRange() {
 			ShrinkCandidates<Integer> shrinker = new IntegerShrinkCandidates(5, 20);
-			List<Integer> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, 10);
-			assertThat(allShrunkValues).containsExactly(8, 7, 6, 5);
+			Set<Integer> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, 10);
+			assertThat(allShrunkValues).containsExactlyInAnyOrder(8, 7, 6, 5);
 		}
 
 	}
@@ -91,35 +92,24 @@ class IntegralShrinkingTests {
 
 		@Example
 		void longsAreShrunkEvenAboveIntMax() {
-			ShrinkCandidates<Long> shrinker = new LongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
-			assertThat(shrinker.nextCandidates(128_000_000_000L)).containsExactly(64_000_000_000L);
-			List<Long> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, 128_000_000_000L);
-			assertThat(allShrunkValues).startsWith( //
-					64_000_000_000L, //
-					32_000_000_000L, //
-					16_000_000_000L, //
-					8_000_000_000L, //
-					4_000_000_000L, //
-					2_000_000_000L, //
-					1_000_000_000L //
-			);
-			assertThat(allShrunkValues).endsWith(15L, 8L, 4L, 2L, 1L, 0L);
+			ShrinkCandidates<Long> shrinkCandidates = new LongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
+
+			assertThat(shrinkCandidates.nextCandidates(128_000_000_000L)).contains(64_000_000_000L, 127_999_999_999L);
+
+			Shrinkable<Long> shrinkable = new ShrinkableValue<>(128_000_000_000L, shrinkCandidates);
+			ValueShrinker<Long> shrinker = new ValueShrinker<>(shrinkable);
+			ShrinkResult<Shrinkable<Long>> shrunkValue = shrinker.shrink(l -> false, null);
+			assertThat(shrunkValue.shrunkValue().value()).isEqualTo(0L);
+
 		}
 
 		@Example
 		void longsAreShrunkEvenBelowIntMin() {
-			ShrinkCandidates<Long> shrinker = new LongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
-			List<Long> allShrunkValues = ArbitraryTestHelper.shrinkToEnd(shrinker, -128_000_000_000L);
-			assertThat(allShrunkValues).startsWith( //
-					-64_000_000_000L, //
-					-32_000_000_000L, //
-					-16_000_000_000L, //
-					-8_000_000_000L, //
-					-4_000_000_000L, //
-					-2_000_000_000L, //
-					-1_000_000_000L //
-			);
-			assertThat(allShrunkValues).endsWith(-15L, -8L, -4L, -2L, -1L, 0L);
+			ShrinkCandidates<Long> shrinkCandidates = new LongShrinkCandidates(Long.MIN_VALUE, Long.MAX_VALUE);
+			Shrinkable<Long> shrinkable = new ShrinkableValue<>(-128_000_000_000L, shrinkCandidates);
+			ValueShrinker<Long> shrinker = new ValueShrinker<>(shrinkable);
+			ShrinkResult<Shrinkable<Long>> shrunkValue = shrinker.shrink(l -> false, null);
+			assertThat(shrunkValue.shrunkValue().value()).isEqualTo(0L);
 		}
 
 	}

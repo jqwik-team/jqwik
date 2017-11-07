@@ -1,15 +1,14 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.math.BigDecimal;
-import java.util.Set;
-
-import org.assertj.core.data.Offset;
-
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.properties.arbitraries.*;
+import org.assertj.core.data.*;
+
+import java.math.*;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class DecimalsShrinkingTests {
@@ -57,7 +56,7 @@ class DecimalsShrinkingTests {
 			ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 			Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal(5.0));
 
-			assertThat(candidates).containsOnly(new BigDecimal(3.0));
+			assertThat(candidates).containsExactlyInAnyOrder(new BigDecimal(3.0), new BigDecimal(4.0));
 		}
 
 		@Example
@@ -148,7 +147,7 @@ class DecimalsShrinkingTests {
 			ShrinkCandidates<Double> shrinker = new DoubleShrinkCandidates(-10.0, 10.0, 2);
 			Set<Double> candidates = shrinker.nextCandidates(5.0);
 
-			assertThat(candidates).containsOnly(3.0);
+			assertThat(candidates).containsExactlyInAnyOrder(3.0, 4.0);
 		}
 
 		@Example

@@ -12,6 +12,11 @@ public class IntegerShrinkCandidates extends IntegralShrinkCandidates<Integer> {
 	}
 
 	@Override
+	protected Integer shrinkOneTowardsTarget(Integer value) {
+		return Math.toIntExact(nextShrinkOne(value));
+	}
+
+	@Override
 	public int distance(Integer value) {
 		return distanceFromLong(Math.toIntExact(value));
 	}

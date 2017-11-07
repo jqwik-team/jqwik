@@ -59,13 +59,6 @@
 - Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
 - Shrinking
-  - Integral shrinking does not always work as expected: 
-    If the boundary condition for a failure is not close to shrinking target. The shrunk value is probably somewhat
-    away from the boundary condition. 
-    See examples.docs.MappingAndCombinatorExamples.validPeopleHaveIDs()
-    Idea: ShrinkingCandidates for Integrals always add +/-1 shrinking step, but then the search strategy must be 
-         configurable because otherwise searching will take forever.
-         
   - Time limit (100ms default?) for shrinking
     - Make it configurable
   - Statistics:

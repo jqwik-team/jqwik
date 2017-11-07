@@ -1,11 +1,10 @@
 package net.jqwik.descriptor;
 
-import java.lang.reflect.Method;
-
-import org.junit.platform.engine.UniqueId;
-
 import net.jqwik.api.*;
-import net.jqwik.execution.PropertyContext;
+import net.jqwik.execution.*;
+import org.junit.platform.engine.*;
+
+import java.lang.reflect.*;
 
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
 
@@ -27,7 +26,9 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 
 	@Override
 	public Type getType() {
-		return Type.CONTAINER_AND_TEST;
+		// TODO: Should be Type.CONTAINER_AND_TEST but then
+		// IntelliJ does not display failures correctly in Test-Runner
+		return Type.TEST;
 	}
 
 	public long getSeed() {

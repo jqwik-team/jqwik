@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.math.BigDecimal;
-import java.util.Set;
-
 import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.RandomGenerators;
+import net.jqwik.properties.arbitraries.*;
+
+import java.math.*;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 class RandomGeneratorsTests {
 
@@ -37,7 +37,6 @@ class RandomGeneratorsTests {
 			BigDecimal max = new BigDecimal(Double.MAX_VALUE);
 			RandomGenerator<BigDecimal> generator = RandomGenerators.bigDecimals(min, max, 0);
 			ArbitraryTestHelper.assertAllGenerated(generator, decimal -> {
-				System.out.println(decimal.doubleValue());
 				assertThat(decimal).isBetween(min, max);
 				assertThat(decimal.scale()).isEqualTo(0);
 			});
