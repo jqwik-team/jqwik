@@ -1,9 +1,17 @@
 package net.jqwik.api;
 
+import org.junit.platform.commons.annotation.*;
+
 import java.lang.annotation.*;
 
-import org.junit.platform.commons.annotation.Testable;
-
+/**
+ * Use {@code @Property} to mark methods that serve as properties.
+ * Those methods usually have or more parameters annotated with {@linkplain ForAll}.
+ *
+ * Just like methods annotated with {@linkplain Example} example, annotated methods
+ * must not be private. They can either return {@code Boolean}, {@code boolean}
+ * or {@code void}.
+ */
 @Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
