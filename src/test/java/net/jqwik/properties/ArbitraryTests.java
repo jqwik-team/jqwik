@@ -1,10 +1,10 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class ArbitraryTests {
@@ -198,6 +198,58 @@ class ArbitraryTests {
 			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("value=3");
 			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(2);
 		}
+	}
+
+	@Group
+	class FlatMapping {
+
+		@Example
+		void flatMapIntegerToString() {
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<String> mapped = arbitrary.flatMap(anInt ->
+				Arbitraries.strings('a', 'z', anInt, anInt));
+
+			RandomGenerator<String> generator = mapped.generator(10);
+
+			assertThat(generator.next(random).value()).hasSize(1);
+			assertThat(generator.next(random).value()).hasSize(2);
+			assertThat(generator.next(random).value()).hasSize(3);
+			assertThat(generator.next(random).value()).hasSize(4);
+			assertThat(generator.next(random).value()).hasSize(5);
+		}
+
+//		@Example
+//		void shrinkIntegerMappedToString() {
+//			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+//			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
+//			RandomGenerator<String> generator = mapped.generator(10);
+//
+//			Shrinkable<String> value5 = generateNth(generator, 5);
+//			assertThat(value5.value()).isEqualTo("value=5");
+//			Set<ShrinkResult<Shrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+//			assertThat(shrunkValues).hasSize(1);
+//
+//			ShrinkResult<Shrinkable<String>> shrunkValue = shrunkValues.iterator().next();
+//			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("value=4");
+//			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3);
+//		}
+//
+//		@Example
+//		void shrinkFilteredIntegerMappedToString() {
+//			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+//			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
+//			Arbitrary<String> mapped = filtered.map(anInt -> "value=" + anInt);
+//			RandomGenerator<String> generator = mapped.generator(10);
+//
+//			Shrinkable<String> value5 = generateNth(generator, 3);
+//			assertThat(value5.value()).isEqualTo("value=5");
+//			Set<ShrinkResult<Shrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
+//			assertThat(shrunkValues).hasSize(1);
+//
+//			ShrinkResult<Shrinkable<String>> shrunkValue = shrunkValues.iterator().next();
+//			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("value=3");
+//			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(2);
+//		}
 	}
 
 	@Group

@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 class ArbitrariesTests {
 
@@ -52,6 +52,13 @@ class ArbitrariesTests {
 		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'd', 0, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertGeneratedString(generator, 0, 5);
+	}
+
+	@Example
+	void stringWithFixedLength() {
+		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'd', 5, 5);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
+		assertGeneratedString(generator, 5, 5);
 	}
 
 	@Example

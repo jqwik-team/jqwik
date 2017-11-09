@@ -1,9 +1,9 @@
 package net.jqwik.api;
 
-import java.util.function.*;
-
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
+
+import java.util.function.*;
 
 public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int tries);
@@ -30,6 +30,15 @@ public interface Arbitrary<T> {
 		};
 	}
 
+	default <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
+		return new ArbitraryWrapper<T, U>(this) {
+			@Override
+			public RandomGenerator<U> generator(int tries) {
+				return wrapped.generator(tries).flatMap(mapper, tries);
+			}
+		};
+	}
+
 	default Arbitrary<T> injectNull(double nullProbability) {
 		return new ArbitraryWrapper<T, T>(this) {
 			@Override
@@ -47,7 +56,7 @@ public interface Arbitrary<T> {
 				return wrapped.generator(tries).withSamples(samples);
 			}
 		};
-	};
+	}
 
 	static int defaultMaxFromTries(int tries) {
 		return Math.max(tries / 2 - 3, 3);
