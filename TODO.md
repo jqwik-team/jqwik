@@ -59,6 +59,7 @@
 - Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
 - Shrinking
+  - Shrinking flatMapped Arbitraries should also shrink the resulting Arbitrary
   - Time limit (100ms default?) for shrinking
     - Make it configurable
   - Statistics:
@@ -90,8 +91,6 @@
   - frequency: pairs of generator and frequency weight
   - oneOf: randomly select one of many generators and sample from one
   - mutate: like map, but with a random parameter added, see mutate in QuickTheories
-  - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
-  - flatMap of Arbitraries. Is same as chain()?
   - Recursive generators, like in 
     http://propertesting.com/book_custom_generators.html#_recursive_generators
   - @Regex(RegularExpression value)

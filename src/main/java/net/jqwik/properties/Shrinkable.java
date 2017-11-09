@@ -1,9 +1,9 @@
 package net.jqwik.properties;
 
+import net.jqwik.properties.arbitraries.*;
+
 import java.util.*;
 import java.util.function.*;
-
-import net.jqwik.properties.arbitraries.*;
 
 public interface Shrinkable<T> {
 

@@ -22,8 +22,7 @@ public interface RandomGenerator<T> {
 	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int tries) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = this.next(random);
-			RandomGenerator<U> generator = mapper.apply(wrappedShrinkable.value()).generator(tries);
-			return generator.next(random);
+			return new FlatMappedShrinkable<>(wrappedShrinkable, mapper, tries, random.nextLong());
 		};
 	}
 
