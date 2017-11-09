@@ -92,6 +92,8 @@
   - mutate: like map, but with a random parameter added, see mutate in QuickTheories
   - Arbitrary.chain(..) to use result of one generator for creating next arbitrary
   - flatMap of Arbitraries. Is same as chain()?
+  - Recursive generators, like in 
+    http://propertesting.com/book_custom_generators.html#_recursive_generators
   - @Regex(RegularExpression value)
   - @AllChars(String charset)
 
