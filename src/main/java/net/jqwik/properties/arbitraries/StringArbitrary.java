@@ -1,11 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.properties.*;
+
+import java.util.*;
+import java.util.stream.*;
 
 public class StringArbitrary extends NullableArbitrary<String> {
 
@@ -63,7 +63,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 	}
 
 	private void addAllowedChars(char from, char to) {
-		if (to > from) {
+		if (to >= from) {
 			for (char c = from; c <= to; c++) {
 				allowedChars.add(c);
 			}

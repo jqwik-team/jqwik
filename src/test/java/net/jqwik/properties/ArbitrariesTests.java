@@ -56,9 +56,11 @@ class ArbitrariesTests {
 
 	@Example
 	void stringWithFixedLength() {
-		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'd', 5, 5);
+		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'a', 5, 5);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertGeneratedString(generator, 5, 5);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= 5 && value.length() <= 5);
+		ArbitraryTestHelper.assertAllGenerated(generator,
+				(String value) -> value.chars().allMatch(i -> i == 'a'));
 	}
 
 	@Example
