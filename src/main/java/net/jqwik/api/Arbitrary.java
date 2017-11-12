@@ -1,9 +1,9 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-
 import java.util.function.*;
+
+import net.jqwik.properties.RandomGenerator;
+import net.jqwik.properties.arbitraries.*;
 
 public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int tries);

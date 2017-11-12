@@ -25,12 +25,19 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private Shrinkable<U> generateShrinkable(T value) {
 		RandomGenerator<U> generator = mapper.apply(value).generator(tries);
-		return generator.next(new Random(randomSeed));
+		return generator.any(randomSeed);
 	}
 
 	@Override
 	public Set<ShrinkResult<Shrinkable<U>>> shrinkNext(Predicate<U> falsifier) {
 		Predicate<T> toMapPredicate = aT -> falsifier.test(generateShrinkable(aT).value());
+		Set<ShrinkResult<Shrinkable<U>>> shrinkToMapResults = shrinkToMap(toMapPredicate);
+		if (shrinkToMapResults.isEmpty())
+			return shrinkable.shrinkNext(falsifier);
+		return shrinkToMapResults;
+	}
+
+	private Set<ShrinkResult<Shrinkable<U>>> shrinkToMap(Predicate<T> toMapPredicate) {
 		return toMap.shrinkNext(toMapPredicate).stream() //
 			.map(shrinkResult -> shrinkResult //
 				.map(shrunkValue -> (Shrinkable<U>) new FlatMappedShrinkable(shrunkValue, mapper, tries, randomSeed))) //
@@ -44,7 +51,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public int distance() {
-		return toMap.distance();
+		return toMap.distance() * 100 + shrinkable.distance();
 	}
 
 	@Override

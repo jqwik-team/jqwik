@@ -15,6 +15,19 @@ public interface RandomGenerator<T> {
 	 */
 	Shrinkable<T> next(Random random);
 
+	default Shrinkable<T> any(long randomSeed) {
+		Random random = new Random(randomSeed);
+
+		// 20 is random but should be significantly higher than the number of fixed examples in default generators
+		int spitOutIndex = random.nextInt(20);
+
+		Shrinkable<T> value = this.next(random);
+		for (int i = 0; i < spitOutIndex; i++) {
+			value = this.next(random);
+		}
+		return value;
+	}
+
 	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
 		return random -> this.next(random).map(mapper);
 	}

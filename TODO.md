@@ -1,8 +1,11 @@
 ### Bugs
 
+- Generating Strings of fixed size does not work, see examples.docs.FlatMappingExamples
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
-  - Alternative: change distance to be of type BigInteger!
+  - Alternative 1: change distance to be of type BigInteger!
+  - Alternative 2: Make distance a structured value object with higher position compared first, 
+    e.g. [distanceOfList, distanceOfListValues] or [distanceOfToFlatMap, distanceOfEmbedded]
 - Combining two Arbitraries of Character to Array of Character
   throws NullPointerException.
 - Rerunning failures first does not work in all cases, e.g. try in pbt-java project
@@ -59,7 +62,6 @@
 - Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
 - Shrinking
-  - Shrinking flatMapped Arbitraries should also shrink the resulting Arbitrary
   - Time limit (100ms default?) for shrinking
     - Make it configurable
   - Statistics:
@@ -85,6 +87,7 @@
   - Arrays of Arrays
 
 - Arbitraries and Generators
+  - Introduce Tuples to allow return of mapped and flatMapped values!
   - Generators.defaultFor(Class<?> targetType)
   - const
   - functions/methods (whose output parameter can be generated)

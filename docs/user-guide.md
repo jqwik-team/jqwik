@@ -26,6 +26,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
+  - [Using generated values to create another Arbitrary](#using-generated-values-to-create-another-arbitrary)
   - [Combining Arbitraries](#combining-arbitraries)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
@@ -662,6 +663,30 @@ You could generate the same kind of values by constraining and filtering a gener
 However, the [shrinking](#result-shrinking) target would probably be different. In the example above, shrinking
 will move towards the lowest allowed number, that is `10000`.
 
+
+### Using generated values to create another Arbitrary
+
+Similar as in the case of `Arbitrary.map(..)` there are situations in which you want to use
+a generated value in order to create another Arbitrary from it. Sounds complicated?
+Have a look at the following example:
+
+```java
+@Property
+boolean fixedSizedStrings(@ForAll("listsOfEqualSizedStrings")List<String> lists) {
+    return lists.stream().distinct().count() == 1;
+}
+
+@Provide
+Arbitrary<List<String>> listsOfEqualSizedStrings() {
+    Arbitrary<Integer> integers2to5 = Arbitraries.integers(2, 5);
+    return integers2to5.flatMap(stringSize -> {
+        Arbitrary<String> strings = Arbitraries.strings('a', 'z', stringSize, stringSize);
+        return Arbitraries.listOf(strings);
+    });
+}
+```
+The provider method will create random lists of strings, but in each list the size of the contained strings
+will always be the same - between 2 and 5.
 
 ### Combining Arbitraries
 

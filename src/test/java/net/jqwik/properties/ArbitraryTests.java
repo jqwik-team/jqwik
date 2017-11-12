@@ -1,6 +1,7 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.RandomGenerators;
 
 import java.util.*;
 
@@ -232,7 +233,23 @@ class ArbitraryTests {
 
 			ShrinkResult<Shrinkable<String>> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("aaaaaaaa");
-			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3);
+			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3 * 100 + 8); // distance of underlying * 100 + distance of embedded
+		}
+
+		@Example
+		void shrinkAlsoEmbeddedValueWhenFlatMapped() {
+			Arbitrary<Integer> inner = random -> RandomGenerators.choose(1, 10);
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> mapped = arbitrary.flatMap(anInt -> inner.map(i -> i * anInt));
+			RandomGenerator<Integer> generator = mapped.generator(1);
+
+			Shrinkable<Integer> value5 = generateNth(generator, 5);
+			assertThat(value5.value()).isGreaterThanOrEqualTo(5);
+			assertThat(value5.value()).isLessThanOrEqualTo(100);
+
+			ShrinkResult<Shrinkable<Integer>> result = new ValueShrinker<>(value5).shrink(MockFalsifier.falsifyAll(), null);
+			assertThat(result.shrunkValue().value()).isEqualTo(1);
+
 		}
 
 	}
