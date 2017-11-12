@@ -1,6 +1,7 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.IntRange;
 
 import java.math.*;
 import java.util.*;
@@ -54,11 +55,11 @@ class ArbitrariesTests {
 		assertGeneratedString(generator, 0, 5);
 	}
 
-	@Example
-	void stringWithFixedLength() {
-		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'a', 5, 5);
+	@Property
+	void stringWithFixedLength(@ForAll @IntRange(min = 1, max = 10) int size) {
+		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'a', size, size);
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= 5 && value.length() <= 5);
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() == size);
 		ArbitraryTestHelper.assertAllGenerated(generator,
 				(String value) -> value.chars().allMatch(i -> i == 'a'));
 	}
