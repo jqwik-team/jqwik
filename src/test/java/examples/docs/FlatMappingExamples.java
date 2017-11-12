@@ -7,8 +7,9 @@ import net.jqwik.api.*;
 class FlatMappingExamples {
 
 	@Property(reporting = ReportingMode.GENERATED)
-	boolean fixedSizedStrings(@ForAll("listsOfEqualSizedStrings")List<String> lists) {
-		return lists.stream().distinct().count() == 1;
+	boolean fixedSizedStrings(@ForAll("listsOfEqualSizedStrings")List<String> strings) {
+		Assume.that(!strings.isEmpty());
+		return strings.stream().map(String::length).distinct().count() == 1;
 	}
 
 	@Provide
