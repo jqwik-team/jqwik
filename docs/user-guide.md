@@ -709,7 +709,8 @@ Arbitrary<Person> validPeople() {
     Arbitrary<Character> initials = Arbitraries.chars('A', 'Z');
     Arbitrary<String> names = Arbitraries.strings('a', 'z', 2, 20);
     Arbitrary<Integer> ages = Arbitraries.integers(0, 130);
-    return Combinators.combine(initials, names, ages).as((initial, name, age) -> new Person(initial + name, age));
+    return Combinators.combine(initials, names, ages)
+        .as((initial, name, age) -> new Person(initial + name, age));
 }
 
 class Person {
