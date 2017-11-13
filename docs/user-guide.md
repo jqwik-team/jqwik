@@ -698,15 +698,18 @@ a single result arbitrary using `Combinators.combine()` with up to four arbitrar
 The following example generates `Person` instances from three arbitraries as inputs.
 
 ```java
-@Provide
-Arbitrary<String> fiveDigitStrings() {
-    return Arbitraries.integers(10000, 99999).map(aNumber -> String.valueOf(aNumber));
-}
-
 @Property
 void validPeopleHaveIDs(@ForAll Person aPerson) {
     Assertions.assertThat(aPerson.getID()).contains("-");
     Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
+}
+
+@Provide
+Arbitrary<Person> validPeople() {
+    Arbitrary<Character> initials = Arbitraries.chars('A', 'Z');
+    Arbitrary<String> names = Arbitraries.strings('a', 'z', 2, 20);
+    Arbitrary<Integer> ages = Arbitraries.integers(0, 130);
+    return Combinators.combine(initials, names, ages).as((initial, name, age) -> new Person(initial + name, age));
 }
 
 class Person {
