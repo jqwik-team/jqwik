@@ -42,4 +42,10 @@ class ListShrinkCandidatesTests {
 		);
 	}
 
+	@Example
+	void listsAreNeverShrunkBeyondTheirMinimumSize() {
+		shrinker = new ListShrinkCandidates<>(4);
+		assertThat(shrinker.nextCandidates(ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3, 4))).isEmpty();
+	}
+
 }

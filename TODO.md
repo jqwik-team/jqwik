@@ -1,6 +1,5 @@
 ### Bugs
 
-- FlatMappedShrinkable: shrinking of embedded shrinkable does not consider original condition
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative 1: change distance to be of type BigInteger!
@@ -13,8 +12,8 @@
 ### Tests
 
 - Add tests for RandomGenerators
-  - Especially high floats
-- Add / rework tests for all Shrinkables
+- Add / rework tests for all Shrinkables 
+  - especially Sets
 - Tests for distance of Shrinkables -> They must not overflow! E.g. ListShrinkCandidates.distance()
 - Tests for TestRunDatabase
 - Tests for TestRunData

@@ -108,7 +108,7 @@ public class RandomGenerators {
 			while (list.size() < listSize) {
 				list.add(elementGenerator.next(random));
 			}
-			return new ContainerShrinkable<>(list, containerFunction);
+			return new ContainerShrinkable<>(list, containerFunction, minSize);
 		};
 	}
 
@@ -134,7 +134,7 @@ public class RandomGenerators {
 				list.add(next);
 				elements.add(next.value());
 			}
-			return new ContainerShrinkable<>(list, HashSet::new);
+			return new ContainerShrinkable<>(list, HashSet::new, minSize);
 		};
 	}
 

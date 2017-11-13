@@ -65,7 +65,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.0.1'
 ext.junitJupiterVersion = '5.0.1'
-ext.jqwikVersion = '0.7.1'
+ext.jqwikVersion = '0.7.2'
 
 junitPlatform {
 	filters {
@@ -116,7 +116,7 @@ Add the following repository and dependency to your `pom.xml` file:
     <dependency>
         <groupId>com.github.jlink</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.7.1</version>
+        <version>0.7.2</version>
         <scope>test</scope>
     </dependency>
 </dependencies>

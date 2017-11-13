@@ -49,30 +49,6 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void string() {
-		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'd', 0, 5);
-		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertGeneratedString(generator, 0, 5);
-	}
-
-	@Property
-	void stringWithFixedLength(@ForAll @IntRange(min = 1, max = 10) int size) {
-		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'a', size, size);
-		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() == size);
-		ArbitraryTestHelper.assertAllGenerated(generator,
-				(String value) -> value.chars().allMatch(i -> i == 'a'));
-	}
-
-	@Example
-	void stringFromCharset() {
-		char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
-		Arbitrary<String> stringArbitrary = Arbitraries.strings(validChars, 2, 5);
-		RandomGenerator<String> generator = stringArbitrary.generator(1);
-		assertGeneratedString(generator, 2, 5);
-	}
-
-	@Example
 	void charsDefault() {
 		Arbitrary<Character> arbitrary = Arbitraries.chars();
 		RandomGenerator<Character> generator = arbitrary.generator(1);
@@ -95,18 +71,39 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> String.valueOf(validChars).contains(String.valueOf(value)));
 	}
 
-	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
-		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= minLength && value.length() <= maxLength);
-		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-		ArbitraryTestHelper.assertAllGenerated(generator,
-				(String value) -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
-	}
-
 	@Example
 	void samplesAreGeneratedDeterministicallyInRoundRobin() {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.samples(-5, 0, 3);
 		RandomGenerator<Integer> generator = integerArbitrary.generator(1);
 		ArbitraryTestHelper.assertGenerated(generator, -5, 0, 3, -5, 0, 3);
+	}
+
+	@Group
+	class Strings {
+		@Example
+		void string() {
+			Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'd', 0, 5);
+			RandomGenerator<String> generator = stringArbitrary.generator(1);
+			assertGeneratedString(generator, 0, 5);
+		}
+
+		@Property
+		void stringWithFixedLength(@ForAll @IntRange(min = 1, max = 10) int size) {
+			Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'a', size, size);
+			RandomGenerator<String> generator = stringArbitrary.generator(1);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() == size);
+			ArbitraryTestHelper.assertAllGenerated(generator,
+				(String value) -> value.chars().allMatch(i -> i == 'a'));
+		}
+
+		@Example
+		void stringFromCharset() {
+			char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
+			Arbitrary<String> stringArbitrary = Arbitraries.strings(validChars, 2, 5);
+			RandomGenerator<String> generator = stringArbitrary.generator(1);
+			assertGeneratedString(generator, 2, 5);
+		}
+
 	}
 
 	@Group
@@ -302,6 +299,13 @@ class ArbitrariesTests {
 			assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 		}
 
+	}
+
+	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
+		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= minLength && value.length() <= maxLength);
+		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
+		ArbitraryTestHelper.assertAllGenerated(generator,
+			(String value) -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
 	}
 
 	private void assertGeneratedStream(Shrinkable<Stream<Integer>> stream) {

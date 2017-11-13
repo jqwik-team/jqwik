@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.constraints.IntRange;
 import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.api.*;
 
@@ -22,7 +23,7 @@ class ContainerShrinkingTests {
 		}
 
 		private ContainerShrinkable<List<Integer>, Integer> emptyShrinkableIntegerList() {
-			return new ContainerShrinkable<>(new ArrayList<>(), ArrayList::new);
+			return new ContainerShrinkable<>(new ArrayList<>(), ArrayList::new, 0);
 		}
 
 		@Example
@@ -83,6 +84,18 @@ class ContainerShrinkingTests {
 
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).containsExactly(0, 0, 0);
 			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(3);
+		}
+
+		@Property(tries = 100)
+		void dontShrinkBelowMinSize(@ForAll @IntRange(min = 1, max = 100) int minSize) {
+			RandomGenerator<Integer> integers = RandomGenerators.choose(1, 100);
+			RandomGenerator<List<Integer>> lists = RandomGenerators.list(integers, minSize, minSize + 10);
+
+			Shrinkable<List<Integer>> list = lists.any(42L);
+
+			ShrinkResult<Shrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> false, null);
+
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).hasSize(minSize);
 		}
 
 	}
@@ -161,6 +174,19 @@ class ContainerShrinkingTests {
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("05");
 			Assertions.assertThat(shrinkResult.shrunkValue().distance()).isEqualTo(0);
 		}
+
+		@Property(tries = 100)
+		void dontShrinkBelowMinSize(@ForAll @IntRange(min = 1, max = 100) int minSize) {
+			RandomGenerator<Character> characters = RandomGenerators.choose('a', 'b');
+			RandomGenerator<String> strings = RandomGenerators.strings(characters, minSize, minSize + 100);
+
+			Shrinkable<String> string = strings.any(42L);
+
+			ShrinkResult<Shrinkable<String>> shrinkResult = shrink(string, listToShrink -> false, null);
+
+			Assertions.assertThat(shrinkResult.shrunkValue().value()).hasSize(minSize);
+		}
+
 	}
 
 	private <T> ShrinkResult<Shrinkable<T>> shrink(Shrinkable<T> toShrink, Predicate<T> falsifier, Throwable originalError) {

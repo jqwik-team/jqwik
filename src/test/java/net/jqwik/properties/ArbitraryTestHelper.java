@@ -79,7 +79,7 @@ class ArbitraryTestHelper {
 	}
 
 	public static Shrinkable<List<Integer>> shrinkableListOfIntegers(int... numbers) {
-		return new ContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new);
+		return new ContainerShrinkable<>(listOfShrinkableIntegers(numbers), ArrayList::new, 0);
 	}
 
 	public static List<Shrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
@@ -97,7 +97,7 @@ class ArbitraryTestHelper {
 	}
 
 	public static Shrinkable<String> shrinkableString(char... chars) {
-		return ContainerShrinkable.stringOf(listOfShrinkableChars(chars));
+		return ContainerShrinkable.stringOf(listOfShrinkableChars(chars), 0);
 	}
 
 	private static List<Shrinkable<Character>> listOfShrinkableChars(char[] chars) {

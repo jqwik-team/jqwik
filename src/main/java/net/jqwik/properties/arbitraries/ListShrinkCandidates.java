@@ -2,13 +2,24 @@ package net.jqwik.properties.arbitraries;
 
 import java.util.*;
 
-import net.jqwik.properties.*;
+import net.jqwik.properties.Shrinkable;
 
 public class ListShrinkCandidates<T> implements ShrinkCandidates<List<Shrinkable<T>>> {
 
+	private final int minSize;
+
+	public ListShrinkCandidates() {
+		this(0);
+	}
+
+	public ListShrinkCandidates(int minSize) {
+		this.minSize = minSize;
+	}
+
 	@Override
 	public Set<List<Shrinkable<T>>> nextCandidates(List<Shrinkable<T>> toShrink) {
-		if (toShrink.isEmpty()) return Collections.emptySet();
+		if (toShrink.size() <= minSize)
+			return Collections.emptySet();
 		Set<List<Shrinkable<T>>> lists = new HashSet<>();
 		appendRightCut(toShrink, lists);
 		appendLeftCut(toShrink, lists);
@@ -23,6 +34,13 @@ public class ListShrinkCandidates<T> implements ShrinkCandidates<List<Shrinkable
 	}
 
 	private int calculateElementsToCut(int listSize) {
+		int toCut = rawElementsToCut(listSize);
+		return Math.min(toCut, listSize - minSize);
+	}
+
+	private int rawElementsToCut(int listSize) {
+		// TODO: Improve cut size. Those values are purely guesses.
+		// Maybe use integer shrinking to determine target size.
 		if (listSize <= 10)
 			return 1;
 		if (listSize < 20)
@@ -59,7 +77,7 @@ public class ListShrinkCandidates<T> implements ShrinkCandidates<List<Shrinkable
 			int distance = tShrinkable.distance();
 			long newDistance = (long) sumOfDistances + (long) distance;
 			if (newDistance >= Integer.MAX_VALUE)
-				return	Integer.MAX_VALUE;
+				return Integer.MAX_VALUE;
 			sumOfDistances = (int) newDistance;
 		}
 		return value.size() + sumOfDistances;
