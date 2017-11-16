@@ -10,6 +10,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [How to Use](#how-to-use)
   - [Gradle](#gradle)
   - [Maven](#maven)
+  - [Project without Build Tool](#project-without-build-tool)
 - [Creating an Example-based Test](#creating-an-example-based-test)
 - [Creating a Property](#creating-a-property)
   - [Optional `@Property` Parameters](#optional-property-parameters)
@@ -137,6 +138,18 @@ Add the following repository and dependency to your `pom.xml` file:
 
 See [the Maven section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
 for details on how to configure the surefire plugin and other dependencies.
+
+
+### Project without Build Tool
+
+I never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
+You will have to add _at least_ the following jars:
+
+- `jqwik-0.7.2.jar`
+- `junit-platform-engine-1.0.2.jar`
+- `junit-platform-commons-1.0.2.jar`
+- `opentest4j-1.0.0.jar`
+- `assertj-core-3.8.x.jar` in case you need assertion support
 
 ## Creating an Example-based Test
 
