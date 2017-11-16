@@ -47,6 +47,8 @@ __jqwik__ is an alternative test engine for the
 That means that you can use it either stand-alone or combine it with any other JUnit 5 engine, e.g. 
 [Jupiter (the standard engine)](http://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-jupiter) or 
 [Vintage (aka JUnit 4)](http://junit.org/junit5/docs/current/user-guide/#dependency-metadata-junit-vintage).
+All you have to do is add all needed engines to your `testCompile` dependencies as shown in the
+[gradle file](#gradle) below.
 
 __jqwik__ is currently _not_ deployed to Maven Central but [JitPack](https://jitpack.io/) is 
 being used to provide [the latest release(s)](https://github.com/jlink/jqwik/releases). 
@@ -57,14 +59,23 @@ That's why you have to add the JitPack-Repository to your list of maven reposito
 Add the following stuff to your `build.gradle` file:
 
 ```
+buildscript {
+	dependencies {
+	    ...
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+	}
+}
+
+apply plugin: 'org.junit.platform.gradle.plugin'
+
 repositories {
     ...
     mavenCentral()
     maven { url "https://jitpack.io" }
 }
 
-ext.junitPlatformVersion = '1.0.1'
-ext.junitJupiterVersion = '5.0.1'
+ext.junitPlatformVersion = '1.0.2'
+ext.junitJupiterVersion = '5.0.2'
 ext.jqwikVersion = '0.7.2'
 
 junitPlatform {
@@ -79,14 +90,15 @@ junitPlatform {
 dependencies {
     ...
 
-    // to enable the platform to run tests at all
+    // Needed to enable the platform to run tests at all
     testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-    
-    // Falsely required by IDEA's Junit 5 support
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
     
     // jqwik dependency
     testCompile "com.github.jlink:jqwik:${jqwikVersion}"
+    
+    // Add if you want to also use the Jupiter engine
+    // Also add if you use IntelliJ 2017.2 or older to enable JUnit-5 support
+    testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
     
     // You'll probably need some assertions
     testCompile("org.assertj:assertj-core:3.8.0")

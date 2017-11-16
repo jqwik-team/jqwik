@@ -4,7 +4,7 @@ buildscript {
 		//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 	}
 	dependencies {
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
 	}
 }
 
@@ -13,7 +13,7 @@ repositories {
 	//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
-ext.junitPlatformVersion = '1.0.1'
+ext.junitPlatformVersion = '1.0.2'
 ext.moduleName = 'net.jqwik'
 
 apply plugin: 'java'
@@ -67,10 +67,10 @@ dependencies {
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
 	// Only necessary to enable IntelliJ support
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.1")
+	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
 }
 
 task wrapper(type: Wrapper) {
 	description = 'Generates gradlew[.bat] scripts'
-	gradleVersion = '3.4'
+	gradleVersion = '3.5.1'
 }
