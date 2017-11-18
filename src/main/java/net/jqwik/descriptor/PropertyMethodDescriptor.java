@@ -4,7 +4,6 @@ import java.lang.reflect.Method;
 
 import org.junit.platform.engine.UniqueId;
 
-import net.jqwik.api.*;
 import net.jqwik.execution.PropertyContext;
 
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
@@ -27,23 +26,4 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 		return configuration;
 	}
 
-	public long getSeed() {
-		return getConfiguration().getSeed();
-	}
-
-	public int getTries() {
-		return getConfiguration().getTries();
-	}
-
-	public int getMaxDiscardRatio() {
-		return getConfiguration().getMaxDiscardRatio();
-	}
-
-	public ShrinkingMode getShrinkingMode() {
-		return getConfiguration().getShrinkingMode();
-	}
-
-	public ReportingMode getReportingMode() {
-		return getConfiguration().getReportingMode();
-	}
 }

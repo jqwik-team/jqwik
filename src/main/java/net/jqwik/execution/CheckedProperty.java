@@ -33,11 +33,11 @@ public class CheckedProperty {
 
 	public PropertyCheckResult check(Consumer<ReportEntry> publisher) {
 		long effectiveSeed = configuration.getSeed() == Property.DEFAULT_SEED ? RNG.get().nextLong() : configuration.getSeed();
+		PropertyConfiguration effectiveConfiguration = configuration.withSeed(effectiveSeed);
 		try {
-			return createGenericProperty().check(configuration.getTries(), configuration.getMaxDiscardRatio(), effectiveSeed,
-					configuration.getShrinkingMode(), configuration.getReportingMode(), publisher);
+			return createGenericProperty().check(effectiveConfiguration, publisher);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
-			return PropertyCheckResult.erroneous(propertyName, 0, 0, effectiveSeed, Collections.emptyList(), cannotFindArbitraryException);
+			return PropertyCheckResult.erroneous(propertyName, 0, 0, effectiveConfiguration.getSeed(), Collections.emptyList(), cannotFindArbitraryException);
 		}
 	}
 

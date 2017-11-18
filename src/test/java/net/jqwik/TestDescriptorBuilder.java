@@ -86,11 +86,12 @@ public class TestDescriptorBuilder {
 		}
 		if (element instanceof Method) {
 			Method targetMethod = (Method) this.element;
-			Optional<Property> property = AnnotationSupport.findAnnotation(targetMethod, Property.class);
-			if (property.isPresent()) {
+			Optional<Property> optionalProperty = AnnotationSupport.findAnnotation(targetMethod, Property.class);
+			if (optionalProperty.isPresent()) {
+				Property property = optionalProperty.get();
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
-				PropertyConfiguration propertyConfig = new PropertyConfiguration(property.get().seed(), property.get().tries(),
-						property.get().maxDiscardRatio(), property.get().shrinking(), property.get().reporting());
+				PropertyConfiguration propertyConfig = new PropertyConfiguration(property.seed(), property.tries(),
+						property.maxDiscardRatio(), property.shrinking(), property.reporting());
 
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), propertyConfig);
 			}

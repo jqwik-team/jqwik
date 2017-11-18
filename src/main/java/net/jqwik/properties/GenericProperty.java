@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -9,9 +11,8 @@ import org.junit.platform.engine.reporting.ReportEntry;
 import org.opentest4j.TestAbortedException;
 
 import net.jqwik.api.*;
+import net.jqwik.descriptor.PropertyConfiguration;
 import net.jqwik.support.JqwikStringSupport;
-
-import static net.jqwik.properties.PropertyCheckResult.Status.SATISFIED;
 
 public class GenericProperty {
 
@@ -25,9 +26,8 @@ public class GenericProperty {
 		this.forAllPredicate = forAllPredicate;
 	}
 
-	public PropertyCheckResult check(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode, ReportingMode reportingMode,
-			Consumer<ReportEntry> reporter) {
-		PropertyCheckResult checkResult = checkWithoutReporting(tries, maxDiscardRatio, seed, shrinkingMode, reportingMode, reporter);
+	public PropertyCheckResult check(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
+		PropertyCheckResult checkResult = checkWithoutReporting(configuration, reporter);
 		reportResult(reporter, checkResult);
 		return checkResult;
 	}
@@ -37,31 +37,35 @@ public class GenericProperty {
 			publisher.accept(CheckResultReportEntry.from(checkResult));
 	}
 
-	private PropertyCheckResult checkWithoutReporting(int tries, int maxDiscardRatio, long seed, ShrinkingMode shrinkingMode, ReportingMode reportingMode, Consumer<ReportEntry> reporter) {
-		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(tries)).collect(Collectors.toList());
-		int maxTries = generators.isEmpty() ? 1 : tries;
+	private PropertyCheckResult checkWithoutReporting(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
+		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(configuration.getTries()))
+				.collect(Collectors.toList());
+		int maxTries = generators.isEmpty() ? 1 : configuration.getTries();
 		int countChecks = 0;
-		Random random = new Random(seed);
+		Random random = new Random(configuration.getSeed());
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
 			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
-				if (!testPredicate(shrinkableParams, reportingMode, reporter)) {
-					return shrinkAndCreateCheckResult(shrinkingMode, seed, countChecks, countTries, shrinkableParams, null);
+				if (!testPredicate(shrinkableParams, configuration.getReportingMode(), reporter)) {
+					return shrinkAndCreateCheckResult(configuration.getShrinkingMode(), configuration.getSeed(), countChecks, countTries,
+							shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(shrinkingMode, seed, countChecks, countTries, shrinkableParams, ae);
+				return shrinkAndCreateCheckResult(configuration.getShrinkingMode(), configuration.getSeed(), countChecks, countTries,
+						shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
 			} catch (Throwable throwable) {
 				BlacklistedExceptions.rethrowIfBlacklisted(throwable);
-				return PropertyCheckResult.erroneous(name, countTries, countChecks, seed, extractParams(shrinkableParams), throwable);
+				return PropertyCheckResult.erroneous(name, countTries, countChecks, configuration.getSeed(),
+						extractParams(shrinkableParams), throwable);
 			}
 		}
-		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, maxTries, maxDiscardRatio))
-			return PropertyCheckResult.exhausted(name, maxTries, countChecks, seed);
-		return PropertyCheckResult.satisfied(name, maxTries, countChecks, seed);
+		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, maxTries, configuration.getMaxDiscardRatio()))
+			return PropertyCheckResult.exhausted(name, maxTries, countChecks, configuration.getSeed());
+		return PropertyCheckResult.satisfied(name, maxTries, countChecks, configuration.getSeed());
 	}
 
 	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode, Consumer<ReportEntry> reporter) {

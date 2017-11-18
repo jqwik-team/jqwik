@@ -4,6 +4,11 @@ import net.jqwik.api.*;
 
 public class PropertyConfiguration {
 
+	public static PropertyConfiguration from(Property property) {
+		return new PropertyConfiguration(property.seed(), property.tries(), property.maxDiscardRatio(), property.shrinking(),
+				property.reporting());
+	}
+
 	private final long seed;
 	private final int tries;
 	private final int maxDiscardRatio;
@@ -26,6 +31,10 @@ public class PropertyConfiguration {
 
 	public long getSeed() {
 		return seed;
+	}
+
+	public PropertyConfiguration withSeed(long changedSeed) {
+		return new PropertyConfiguration(changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.reportingMode);
 	}
 
 	public int getTries() {

@@ -1,11 +1,11 @@
 package net.jqwik.discovery;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
 import java.util.*;
 
-import org.assertj.core.api.*;
+import org.assertj.core.api.Assertions;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestExecutionResult.*;
+import org.junit.platform.engine.TestExecutionResult.Status;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
@@ -29,10 +29,10 @@ class PropertyMethodResolverTest {
 
 			Assertions.assertThat(descriptors).hasSize(1);
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(Property.DEFAULT_SEED);
-			Assertions.assertThat(propertyMethodDescriptor.getTries()).isEqualTo(Property.DEFAULT_TRIES);
-			Assertions.assertThat(propertyMethodDescriptor.getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
-			Assertions.assertThat(propertyMethodDescriptor.getReportingMode()).isEqualTo(ReportingMode.MINIMAL);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(Property.DEFAULT_SEED);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(Property.DEFAULT_TRIES);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReportingMode()).isEqualTo(ReportingMode.MINIMAL);
 			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
 			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
 					.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
@@ -49,7 +49,7 @@ class PropertyMethodResolverTest {
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
 			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("propertyWithParams");
 			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
-					.isEqualTo(classDescriptor.getUniqueId().append("property","propertyWithParams(int, java.lang.String)"));
+					.isEqualTo(classDescriptor.getUniqueId().append("property", "propertyWithParams(int, java.lang.String)"));
 		}
 
 		@Example
@@ -60,10 +60,10 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(42);
-			Assertions.assertThat(propertyMethodDescriptor.getTries()).isEqualTo(99);
-			Assertions.assertThat(propertyMethodDescriptor.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
-			Assertions.assertThat(propertyMethodDescriptor.getReportingMode()).isEqualTo(ReportingMode.GENERATED);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(42);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(99);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReportingMode()).isEqualTo(ReportingMode.GENERATED);
 		}
 
 		@Example
@@ -76,7 +76,7 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(4243L);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(4243L);
 		}
 
 		@Example
@@ -89,7 +89,7 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(41L);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(41L);
 		}
 
 	}
@@ -107,8 +107,8 @@ class PropertyMethodResolverTest {
 
 			Assertions.assertThat(descriptor).isPresent();
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptor.get();
-			Assertions.assertThat(propertyMethodDescriptor.getSeed()).isEqualTo(Property.DEFAULT_SEED);
-			Assertions.assertThat(propertyMethodDescriptor.getTries()).isEqualTo(Property.DEFAULT_TRIES);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(Property.DEFAULT_SEED);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(Property.DEFAULT_TRIES);
 			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
 		}
 
