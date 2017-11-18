@@ -80,8 +80,9 @@ class PropertyMethodResolver implements ElementResolver {
 			return new JqwikException(message);
 		});
 		long seed = determineSeed(uniqueId, property.seed());
-		return new PropertyMethodDescriptor(uniqueId, method, testClass, seed, property.tries(), property.maxDiscardRatio(),
+		PropertyConfiguration propertyConfig = new PropertyConfiguration(seed, property.tries(), property.maxDiscardRatio(),
 				property.shrinking(), property.reporting());
+		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
 
 	private long determineSeed(UniqueId uniqueId, long seedFromProperty) {

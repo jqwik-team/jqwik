@@ -13,7 +13,7 @@ import org.opentest4j.TestAbortedException;
 
 import net.jqwik.TestDescriptorBuilder;
 import net.jqwik.api.*;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
 
 @Group
@@ -31,10 +31,10 @@ class CheckedPropertyTests {
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
-			assertThat(checkedProperty.tries).isEqualTo(Property.DEFAULT_TRIES);
-			assertThat(checkedProperty.maxDiscardRatio).isEqualTo(Property.DEFAULT_MAX_DISCARD_RATIO);
-			assertThat(checkedProperty.shrinkingMode).isEqualTo(ShrinkingMode.ON);
-			assertThat(checkedProperty.reportingMode).isEqualTo(ReportingMode.MINIMAL);
+			assertThat(checkedProperty.configuration.getTries()).isEqualTo(Property.DEFAULT_TRIES);
+			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(Property.DEFAULT_MAX_DISCARD_RATIO);
+			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
+			assertThat(checkedProperty.configuration.getReportingMode()).isEqualTo(ReportingMode.MINIMAL);
 		}
 
 		@Example
@@ -44,10 +44,10 @@ class CheckedPropertyTests {
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
-			assertThat(checkedProperty.tries).isEqualTo(42);
-			assertThat(checkedProperty.maxDiscardRatio).isEqualTo(2);
-			assertThat(checkedProperty.shrinkingMode).isEqualTo(ShrinkingMode.OFF);
-			assertThat(checkedProperty.reportingMode).isEqualTo(ReportingMode.GENERATED);
+			assertThat(checkedProperty.configuration.getTries()).isEqualTo(42);
+			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(2);
+			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
+			assertThat(checkedProperty.configuration.getReportingMode()).isEqualTo(ReportingMode.GENERATED);
 		}
 	}
 
@@ -105,8 +105,9 @@ class CheckedPropertyTests {
 		@Example
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
 			List<Parameter> parameters = getParametersForMethod("stringProp");
-			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, p -> Optional.empty(), 100, 5,
-					1000L, ShrinkingMode.ON, ReportingMode.MINIMAL);
+			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
+					p -> Optional.empty(), //
+					new PropertyConfiguration(1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -119,8 +120,8 @@ class CheckedPropertyTests {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-					p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-100, 100))), 12, 5, 42L, ShrinkingMode.ON,
-					ReportingMode.MINIMAL);
+					p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-100, 100))),
+					new PropertyConfiguration(42L, 12, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.randomSeed()).isEqualTo(42L);
@@ -133,8 +134,8 @@ class CheckedPropertyTests {
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
-				p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-50, 50))), 100, 5, 1000L, ShrinkingMode.ON,
-				ReportingMode.MINIMAL);
+				p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-50, 50))), //
+				new PropertyConfiguration(1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}

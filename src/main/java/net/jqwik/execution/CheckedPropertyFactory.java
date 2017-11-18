@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import org.junit.platform.commons.support.*;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.api.ForAll;
+import net.jqwik.descriptor.*;
 import net.jqwik.properties.CheckedFunction;
 
 public class CheckedPropertyFactory {
@@ -19,17 +19,12 @@ public class CheckedPropertyFactory {
 		String propertyName = propertyMethodDescriptor.getLabel();
 
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
-		int tries = propertyMethodDescriptor.getTries();
-		int maxDiscardRatio = propertyMethodDescriptor.getMaxDiscardRatio();
-		long randomSeed = propertyMethodDescriptor.getSeed();
-		ShrinkingMode shrinkingMode = propertyMethodDescriptor.getShrinkingMode();
-		ReportingMode reportingMode = propertyMethodDescriptor.getReportingMode();
+		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
 		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
 		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
-		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, tries, maxDiscardRatio, randomSeed,
-				shrinkingMode, reportingMode);
+		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, configuration);
 	}
 
 	private CheckedFunction createForAllPredicate(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

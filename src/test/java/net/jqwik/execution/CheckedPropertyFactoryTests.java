@@ -9,7 +9,7 @@ import org.junit.platform.engine.UniqueId;
 
 import net.jqwik.TestHelper;
 import net.jqwik.api.*;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.descriptor.*;
 
 public class CheckedPropertyFactoryTests {
 
@@ -31,9 +31,9 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(argsTrue)).isTrue();
 		assertThat(property.forAllPredicate.test(argsFalse)).isFalse();
 
-		assertThat(property.randomSeed).isEqualTo(42);
-		assertThat(property.tries).isEqualTo(11);
-		assertThat(property.maxDiscardRatio).isEqualTo(4);
+		assertThat(property.configuration.getSeed()).isEqualTo(42);
+		assertThat(property.configuration.getTries()).isEqualTo(11);
+		assertThat(property.configuration.getMaxDiscardRatio()).isEqualTo(4);
 	}
 
 	@Example
@@ -63,8 +63,8 @@ public class CheckedPropertyFactoryTests {
 			ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, seed, tries, maxDiscardRatio, shrinking,
-				ReportingMode.MINIMAL);
+		PropertyConfiguration propertyConfig = new PropertyConfiguration(seed, tries, maxDiscardRatio, shrinking, ReportingMode.MINIMAL);
+		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, propertyConfig);
 	}
 
 	private static class PropertyExamples {

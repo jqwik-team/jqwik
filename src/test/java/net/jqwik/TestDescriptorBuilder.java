@@ -9,7 +9,7 @@ import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
 
-import net.jqwik.api.*;
+import net.jqwik.api.Property;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.JqwikUniqueIDs;
 import net.jqwik.support.JqwikStringSupport;
@@ -89,8 +89,10 @@ public class TestDescriptorBuilder {
 			Optional<Property> property = AnnotationSupport.findAnnotation(targetMethod, Property.class);
 			if (property.isPresent()) {
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
-				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), property.get().seed(),
-						property.get().tries(), property.get().maxDiscardRatio(), property.get().shrinking(), property.get().reporting());
+				PropertyConfiguration propertyConfig = new PropertyConfiguration(property.get().seed(), property.get().tries(),
+						property.get().maxDiscardRatio(), property.get().shrinking(), property.get().reporting());
+
+				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), propertyConfig);
 			}
 		}
 		throw new JqwikException("Cannot build descriptor for " + element.toString());

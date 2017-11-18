@@ -6,9 +6,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.*;
 import java.util.stream.Collectors;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
 import org.junit.platform.engine.reporting.ReportEntry;
+
+import net.jqwik.api.*;
+import net.jqwik.descriptor.PropertyConfiguration;
+import net.jqwik.properties.*;
 
 public class CheckedProperty {
 
@@ -18,31 +20,22 @@ public class CheckedProperty {
 	public final CheckedFunction forAllPredicate;
 	public final List<Parameter> forAllParameters;
 	public final ArbitraryResolver arbitraryProvider;
-
-	public final int maxDiscardRatio;
-	public final int tries;
-	public final long randomSeed;
-	public final ShrinkingMode shrinkingMode;
-	public final ReportingMode reportingMode;
+	public final PropertyConfiguration configuration;
 
 	public CheckedProperty(String propertyName, CheckedFunction forAllPredicate, List<Parameter> forAllParameters,
-			ArbitraryResolver arbitraryProvider, int tries, int maxDiscardRatio, long randomSeed, ShrinkingMode shrinkingMode,
-			ReportingMode reportingMode) {
+			ArbitraryResolver arbitraryProvider, PropertyConfiguration configuration) {
 		this.propertyName = propertyName;
 		this.forAllPredicate = forAllPredicate;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryProvider = arbitraryProvider;
-		this.maxDiscardRatio = maxDiscardRatio;
-		this.tries = tries;
-		this.randomSeed = randomSeed;
-		this.shrinkingMode = shrinkingMode;
-		this.reportingMode = reportingMode;
+		this.configuration = configuration;
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> publisher) {
-		long effectiveSeed = randomSeed == Property.DEFAULT_SEED ? RNG.get().nextLong() : randomSeed;
+		long effectiveSeed = configuration.getSeed() == Property.DEFAULT_SEED ? RNG.get().nextLong() : configuration.getSeed();
 		try {
-			return createGenericProperty().check(tries, maxDiscardRatio, effectiveSeed, shrinkingMode, reportingMode, publisher);
+			return createGenericProperty().check(configuration.getTries(), configuration.getMaxDiscardRatio(), effectiveSeed,
+					configuration.getShrinkingMode(), configuration.getReportingMode(), publisher);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.erroneous(propertyName, 0, 0, effectiveSeed, Collections.emptyList(), cannotFindArbitraryException);
 		}

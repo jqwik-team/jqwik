@@ -1,27 +1,19 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.api.*;
-import net.jqwik.execution.*;
-import org.junit.platform.engine.*;
+import java.lang.reflect.Method;
 
-import java.lang.reflect.*;
+import org.junit.platform.engine.UniqueId;
+
+import net.jqwik.api.*;
+import net.jqwik.execution.PropertyContext;
 
 public class PropertyMethodDescriptor extends AbstractMethodDescriptor implements PropertyContext {
 
-	private final long seed;
-	private final int tries;
-	private final int maxDiscardRatio;
-	private final ShrinkingMode shrinkingMode;
-	private final ReportingMode reportingMode;
+	private final PropertyConfiguration configuration;
 
-	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, long seed, int tries,
-			int maxDiscardRatio, ShrinkingMode shrinkingMode, ReportingMode reportingMode) {
+	public PropertyMethodDescriptor(UniqueId uniqueId, Method propertyMethod, Class containerClass, PropertyConfiguration configuration) {
 		super(uniqueId, propertyMethod, containerClass);
-		this.seed = seed;
-		this.tries = tries;
-		this.maxDiscardRatio = maxDiscardRatio;
-		this.shrinkingMode = shrinkingMode;
-		this.reportingMode = reportingMode;
+		this.configuration = configuration;
 	}
 
 	@Override
@@ -31,23 +23,27 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor implement
 		return Type.TEST;
 	}
 
+	public PropertyConfiguration getConfiguration() {
+		return configuration;
+	}
+
 	public long getSeed() {
-		return seed;
+		return getConfiguration().getSeed();
 	}
 
 	public int getTries() {
-		return tries;
+		return getConfiguration().getTries();
 	}
 
 	public int getMaxDiscardRatio() {
-		return maxDiscardRatio;
+		return getConfiguration().getMaxDiscardRatio();
 	}
 
 	public ShrinkingMode getShrinkingMode() {
-		return shrinkingMode;
+		return getConfiguration().getShrinkingMode();
 	}
 
 	public ReportingMode getReportingMode() {
-		return reportingMode;
+		return getConfiguration().getReportingMode();
 	}
 }
