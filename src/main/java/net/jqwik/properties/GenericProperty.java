@@ -1,18 +1,17 @@
 package net.jqwik.properties;
 
-import static net.jqwik.properties.PropertyCheckResult.Status.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
+import org.junit.platform.commons.util.*;
+import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
-import org.junit.platform.commons.util.BlacklistedExceptions;
-import org.junit.platform.engine.reporting.ReportEntry;
-import org.opentest4j.TestAbortedException;
-
-import net.jqwik.api.*;
-import net.jqwik.descriptor.PropertyConfiguration;
-import net.jqwik.support.JqwikStringSupport;
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
 
 public class GenericProperty {
 
@@ -27,9 +26,15 @@ public class GenericProperty {
 	}
 
 	public PropertyCheckResult check(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
+		StatisticsCollector.clearAll();
 		PropertyCheckResult checkResult = checkWithoutReporting(configuration, reporter);
 		reportResult(reporter, checkResult);
+		reportStatistics(reporter);
 		return checkResult;
+	}
+
+	private void reportStatistics(Consumer<ReportEntry> reporter) {
+		StatisticsCollector.report(reporter);
 	}
 
 	private void reportResult(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult) {

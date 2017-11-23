@@ -1,21 +1,42 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import org.junit.platform.engine.reporting.*;
+import org.mockito.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-import org.junit.platform.engine.reporting.ReportEntry;
-
-import net.jqwik.api.*;
-import net.jqwik.descriptor.PropertyConfiguration;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @Group
 class GenericPropertyTests {
 
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> {
 	};
+
+	@Example
+	void collectStatistics() {
+		ForAllSpy forAllFunction = new ForAllSpy(value -> {
+			Statistics.collect(value);
+			return true;
+		}, value -> true);
+
+		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1);
+		List<Arbitrary> arbitraries = arbitraries(arbitrary);
+
+		GenericProperty property = new GenericProperty("simple", arbitraries, forAllFunction);
+		PropertyConfiguration configuration = new PropertyConfiguration(42L, 10, 5, ShrinkingMode.ON, ReportingMode.MINIMAL);
+		Consumer<ReportEntry> mockPublisher = mock(Consumer.class);
+
+		PropertyCheckResult result = property.check(configuration, mockPublisher);
+
+		ArgumentCaptor<ReportEntry> reportEntryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
+		verify(mockPublisher, atLeast(2)).accept(reportEntryCaptor.capture());
+	}
 
 	@Group
 	class OneParameter {
@@ -181,8 +202,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration(42L, 20, maxDiscardRatio, ShrinkingMode.ON,
-					ReportingMode.MINIMAL);
+			PropertyConfiguration configuration = new PropertyConfiguration(42L, 20, maxDiscardRatio, ShrinkingMode.ON, ReportingMode.MINIMAL);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.EXHAUSTED);
@@ -196,8 +216,7 @@ class GenericPropertyTests {
 			RuntimeException thrownException = new RuntimeException("thrown in test");
 
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
-				if (aTry == erroneousTry)
-					throw thrownException;
+				if (aTry == erroneousTry) throw thrownException;
 				return true;
 			}, exactlyOneInteger);
 
