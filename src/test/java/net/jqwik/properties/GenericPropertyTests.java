@@ -45,6 +45,9 @@ class GenericPropertyTests {
 				.collect(Collectors.toSet());
 
 		Assertions.assertThat(keys).contains("statistics");
+
+		// Remove statistics from this test from ThreadLocal<Collector>:
+		StatisticsCollector.clearAll();
 	}
 
 	@Group

@@ -26,7 +26,7 @@ class PositiveProperties {
 	void positiveBigDecimals(@ForAll @Positive BigDecimal aBigDecimal) {
 	}
 
-	@Property(reporting = ReportingMode.GENERATED)
+	@Property
 	void positiveBigIntegers(@ForAll @Positive BigInteger aBigInteger) {
 	}
 }

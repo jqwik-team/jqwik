@@ -2,6 +2,7 @@ package net.jqwik.properties;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.junit.platform.engine.reporting.*;
 
@@ -25,27 +26,44 @@ public class StatisticsCollector {
 		reporter.accept(collector.createReportEntry());
 	}
 
-	private final Map<Object, Long> counts = new HashMap<>();
+	private final Map<List<Object>, Integer> counts = new HashMap<>();
 
 	private boolean isEmpty() {
 		return counts.isEmpty();
 	}
 
+	public Map<List<Object>, Integer> getCounts() {
+		return counts;
+	}
+
 	public ReportEntry createReportEntry() {
 		StringBuilder statistics = new StringBuilder();
-		int maxKeyLength = counts.keySet().stream().mapToInt(k -> k.toString().length()).max().orElse(0);
-		long sum = counts.values().stream().mapToLong(aLong -> aLong).sum();
+		int maxKeyLength = counts.keySet().stream().mapToInt(k -> displayKey(k).length()).max().orElse(0);
+		int sum = counts.values().stream().mapToInt(aCount -> aCount).sum();
 		counts.entrySet().stream() //
 				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) //
 				.forEach(entry -> {
-					int percentage = Math.round((entry.getValue() * 100) / sum);
-					statistics.append(String.format("%n     %1$-" + maxKeyLength + "s : %2$s %%", entry.getKey().toString(), percentage));
+					double percentage = entry.getValue() * 100.0 / sum;
+					statistics.append(String.format("%n     %1$-" + maxKeyLength + "s : %2$s %%", //
+							displayKey(entry.getKey()), //
+							displayPercentage(percentage)));
 				});
 		return ReportEntry.from(KEY_STATISTICS, statistics.toString());
 	}
 
-	public void collect(Object value) {
-		Long count = counts.computeIfAbsent(value, key -> 0L);
-		counts.put(value, ++count);
+	private String displayPercentage(double percentage) {
+		if (percentage >= 1)
+			return String.valueOf(Math.round(percentage));
+		return String.valueOf(Math.round(percentage * 100.0) / 100.0);
+	}
+
+	private String displayKey(List<Object> key) {
+		return key.stream().map(Object::toString).collect(Collectors.joining(" "));
+	}
+
+	public void collect(Object... values) {
+		List<Object> key = Arrays.asList(values);
+		int count = counts.computeIfAbsent(key, any -> 0);
+		counts.put(key, ++count);
 	}
 }

@@ -11,4 +11,14 @@ public class CollectingStatisticsExamples {
 		Statistics.collect(range);
 	}
 
+
+	@Property(tries = 10000)
+	void statisticsForTwoParams(
+		@ForAll @StringLength(max = 10) String aString,
+		@ForAll @IntRange(max = 10) int aLength
+	) {
+		String range = aString.length() == 0 ? "empty" : (aString.length() < 8 ? "normal" : "big");
+		String length = aString.length() == aLength ? "exact" : (aString.length() > aLength ? "smaller" : "larger");
+		Statistics.collect(range, length);
+	}
 }
