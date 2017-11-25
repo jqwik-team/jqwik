@@ -24,7 +24,8 @@ public class RandomGenerators {
 			final int _min = Math.min(min, max);
 			final int _max = Math.max(min, max);
 			return random -> {
-				int value = random.nextInt(Math.abs(_max - _min) + 1) + _min;
+				int bound = Math.abs(_max - _min) + 1;
+				int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min;
 				return new ShrinkableValue<>(value, new IntegerShrinkCandidates(min, max));
 			};
 		}

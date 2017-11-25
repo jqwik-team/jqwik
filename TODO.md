@@ -1,6 +1,5 @@
 ### Bugs
 
-- Exception when generating Ints with @Positive -> bugs.PositiveIntegersGenerationBug
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative 1: change distance to be of type BigInteger!
@@ -98,6 +97,8 @@
     http://propertesting.com/book_custom_generators.html#_recursive_generators
   - @Regex(RegularExpression value)
   - @AllChars(String charset)
+  - BigIntegers: Should also generate numbers beyond Long.MAX. @Positive should also exceed Long.MAX
+  - Integrals of all kind: With upper limit, change distribution towards smaller numbers according to tries
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
