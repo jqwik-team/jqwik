@@ -1,12 +1,13 @@
 package net.jqwik.properties;
 
-import org.junit.platform.engine.reporting.*;
-
 import java.util.*;
 import java.util.function.*;
 
+import org.junit.platform.engine.reporting.*;
+
 public class StatisticsCollector {
 
+	public static final String KEY_STATISTICS = "statistics";
 	private static ThreadLocal<StatisticsCollector> collector = ThreadLocal.withInitial(StatisticsCollector::new);
 
 	public static void clearAll() {
@@ -31,13 +32,16 @@ public class StatisticsCollector {
 	}
 
 	public ReportEntry createReportEntry() {
-		Map<String, String> values = new HashMap<>();
+		StringBuilder statistics = new StringBuilder();
+		int maxKeyLength = counts.keySet().stream().mapToInt(k -> k.toString().length()).max().orElse(0);
 		long sum = counts.values().stream().mapToLong(aLong -> aLong).sum();
-		counts.forEach((key, value) -> {
-			int percentage = Math.round((value * 100) / sum);
-			values.put(key.toString(), percentage + " %");
-		});
-		return ReportEntry.from(values);
+		counts.entrySet().stream() //
+				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) //
+				.forEach(entry -> {
+					int percentage = Math.round((entry.getValue() * 100) / sum);
+					statistics.append(String.format("%n     %1$-" + maxKeyLength + "s : %2$s %%", entry.getKey().toString(), percentage));
+				});
+		return ReportEntry.from(KEY_STATISTICS, statistics.toString());
 	}
 
 	public void collect(Object value) {

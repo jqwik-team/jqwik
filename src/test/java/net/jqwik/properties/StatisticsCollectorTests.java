@@ -1,10 +1,12 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
+import java.util.*;
+import java.util.stream.*;
+
 import org.assertj.core.api.*;
 import org.junit.platform.engine.reporting.*;
 
-import java.util.*;
+import net.jqwik.api.*;
 
 class StatisticsCollectorTests {
 
@@ -25,10 +27,17 @@ class StatisticsCollectorTests {
 
 		ReportEntry entry = collector.createReportEntry();
 
-		Map<String, String> counts = entry.getKeyValuePairs();
-		Assertions.assertThat(counts.get("one")).isEqualTo("10 %");
-		Assertions.assertThat(counts.get("two")).isEqualTo("20 %");
-		Assertions.assertThat(counts.get("three")).isEqualTo("30 %");
-		Assertions.assertThat(counts.get("four")).isEqualTo("40 %");
+		List<String> stats = Arrays
+				.stream(entry.getKeyValuePairs().get(StatisticsCollector.KEY_STATISTICS).split(System.getProperty("line.separator"))) //
+				.map(String::trim) //
+				.filter(s -> !s.isEmpty()) //
+				.collect(Collectors.toList());
+
+		Assertions.assertThat(stats).containsExactlyInAnyOrder( //
+				"one   : 10 %", //
+				"two   : 20 %", //
+				"three : 30 %", //
+				"four  : 40 %" //
+		);
 	}
 }
