@@ -1,19 +1,18 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import org.assertj.core.api.*;
+import org.junit.platform.engine.reporting.*;
+import org.mockito.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
-import org.junit.platform.engine.reporting.*;
-import org.mockito.*;
-
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @Group
 class GenericPropertyTests {
@@ -41,10 +40,10 @@ class GenericPropertyTests {
 		verify(mockPublisher, atLeast(2)).accept(reportEntryCaptor.capture());
 
 		Set<String> keys = reportEntryCaptor.getAllValues().stream() //
-				.flatMap(entry -> entry.getKeyValuePairs().keySet().stream()) //
-				.collect(Collectors.toSet());
+			.flatMap(entry -> entry.getKeyValuePairs().keySet().stream()) //
+			.collect(Collectors.toSet());
 
-		Assertions.assertThat(keys).contains("statistics");
+		Assertions.assertThat(keys).contains("collected statistics");
 
 		// Remove statistics from this test from ThreadLocal<Collector>:
 		StatisticsCollector.clearAll();
@@ -214,8 +213,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration(42L, 20, maxDiscardRatio, ShrinkingMode.ON,
-					ReportingMode.MINIMAL);
+			PropertyConfiguration configuration = new PropertyConfiguration(42L, 20, maxDiscardRatio, ShrinkingMode.ON, ReportingMode.MINIMAL);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.EXHAUSTED);
@@ -229,8 +227,7 @@ class GenericPropertyTests {
 			RuntimeException thrownException = new RuntimeException("thrown in test");
 
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
-				if (aTry == erroneousTry)
-					throw thrownException;
+				if (aTry == erroneousTry) throw thrownException;
 				return true;
 			}, exactlyOneInteger);
 

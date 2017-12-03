@@ -1,14 +1,14 @@
 package net.jqwik.properties;
 
+import org.junit.platform.engine.reporting.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.engine.reporting.*;
-
 public class StatisticsCollector {
 
-	public static final String KEY_STATISTICS = "statistics";
+	public static final String KEY_STATISTICS = "collected statistics";
 	private static ThreadLocal<StatisticsCollector> collector = ThreadLocal.withInitial(StatisticsCollector::new);
 
 	public static void clearAll() {
@@ -44,6 +44,7 @@ public class StatisticsCollector {
 				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) //
 				.forEach(entry -> {
 					double percentage = entry.getValue() * 100.0 / sum;
+					if (entry.getKey().equals(Collections.emptyList())) return;
 					statistics.append(String.format("%n     %1$-" + maxKeyLength + "s : %2$s %%", //
 							displayKey(entry.getKey()), //
 							displayPercentage(percentage)));
@@ -62,7 +63,13 @@ public class StatisticsCollector {
 	}
 
 	public void collect(Object... values) {
-		List<Object> key = Arrays.asList(values);
+		List<Object> key = Collections.emptyList();
+		if (values != null) {
+			key = Arrays.stream(values) //
+				.filter(Objects::nonNull) //
+				.collect(Collectors.toList());
+		}
+
 		int count = counts.computeIfAbsent(key, any -> 0);
 		counts.put(key, ++count);
 	}

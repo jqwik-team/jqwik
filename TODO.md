@@ -63,8 +63,6 @@
 - Shrinking
   - Time limit (100ms default?) for shrinking
     - Make it configurable
-  - Statistics:
-    - collected statistics (similar to ScalaCheck's collect-feature)
   - Make it configurable (default on/off)
 
 - Evaluate properties in parallel (max tries worker thread per property)

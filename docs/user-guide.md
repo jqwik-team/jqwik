@@ -33,6 +33,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Result Shrinking](#result-shrinking)
   - [Integrated Shrinking](#integrated-shrinking)
   - [Switch Shrinking Off](#switch-shrinking-off)
+- [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
 - [Running and Configuration](#running-and-configuration)
   - [jqwik Configuration](#jqwik-configuration)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
@@ -77,7 +78,7 @@ repositories {
 
 ext.junitPlatformVersion = '1.0.2'
 ext.junitJupiterVersion = '5.0.2'
-ext.jqwikVersion = '0.7.2'
+ext.jqwikVersion = '0.7.3'
 
 junitPlatform {
 	filters {
@@ -129,7 +130,7 @@ Add the following repository and dependency to your `pom.xml` file:
     <dependency>
         <groupId>com.github.jlink</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.7.2</version>
+        <version>0.7.3</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -145,7 +146,7 @@ for details on how to configure the surefire plugin and other dependencies.
 I never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars:
 
-- `jqwik-0.7.2.jar`
+- `jqwik-0.7.3.jar`
 - `junit-platform-engine-1.0.2.jar`
 - `junit-platform-commons-1.0.2.jar`
 - `opentest4j-1.0.0.jar`
@@ -919,6 +920,99 @@ void aPropertyWithLongShrinkingTimes(
 	@ForAll List<Set<String>> list2
 ) {	... }
 ```
+
+## Collecting and Reporting Statistics
+
+In many situations you'd like to know if _jqwik_ will really generate
+the kind of values you expect and if the frequency and distribution of
+certain value classes meets your testing needs. 
+`Statistics.collect()` is made for this exact purpose.
+
+In the most simple case you'd like to know how often a certain value
+is being generated:
+
+```java
+@Property
+void simpleStats(@ForAll RoundingMode mode) {
+    Statistics.collect(mode);
+}
+```
+
+will create an output similar to that:
+
+```
+collected statistics = 
+     UNNECESSARY : 15 %
+     DOWN        : 14 %
+     FLOOR       : 13 %
+     UP          : 13 %
+     HALF_DOWN   : 13 %
+     HALF_EVEN   : 12 %
+     CEILING     : 11 %
+     HALF_UP     : 11 %
+```
+
+More typical is the case in which you'll classify generated values
+into two or more groups:
+
+```java
+@Property
+void integerStats(@ForAll int anInt) {
+    Statistics.collect(anInt > 0 ? "positive" : "negative");
+}
+```
+
+```
+collected statistics = 
+     negative : 52 %
+     positive : 48 %
+```
+
+You can also collect the distribution in more than one category
+and combine those categories:
+
+```java
+@Property
+void combinedIntegerStats(@ForAll int anInt) {
+    String posOrNeg = anInt > 0 ? "positive" : "negative";
+    String evenOrOdd = anInt % 2 == 0 ? "even" : "odd";
+    String bigOrSmall = Math.abs(anInt) > 50 ? "big" : "small";
+    Statistics.collect(posOrNeg, evenOrOdd, bigOrSmall);
+}
+```
+
+```
+collected statistics = 
+     positive odd big    : 23 %
+     negative even big   : 22 %
+     positive even big   : 22 %
+     negative odd big    : 21 %
+     positive odd small  : 4 %
+     negative odd small  : 3 %
+     negative even small : 3 %
+     positive even small : 2 %
+```
+
+And, of course, you can combine different generated parameters into
+one statistical group:
+
+```java
+@Property
+void twoParameterStats(
+    @ForAll @Size(min = 1, max = 10) List<Integer> aList, //
+    @ForAll @IntRange(min = 0, max = 10) int index //
+) {
+    Statistics.collect(aList.size() > index ? "index within size" : null);
+}
+```
+
+```
+collected statistics = 
+     index within size : 48 %
+```
+
+As you can see, collected `null` values are not being reported.
+
 
 ## Running and Configuration
 

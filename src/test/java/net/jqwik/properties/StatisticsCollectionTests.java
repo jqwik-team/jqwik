@@ -1,14 +1,13 @@
 package net.jqwik.properties;
 
-import java.util.*;
-import java.util.stream.*;
-
+import net.jqwik.api.*;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.reporting.*;
 
-import net.jqwik.api.*;
+import java.util.*;
+import java.util.stream.*;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 
 class StatisticsCollectionTests {
 
@@ -65,18 +64,37 @@ class StatisticsCollectionTests {
 
 		ReportEntry entry = collector.createReportEntry();
 
-		List<String> stats = Arrays
-				.stream(entry.getKeyValuePairs().get(StatisticsCollector.KEY_STATISTICS).split(System.getProperty("line.separator"))) //
-				.map(String::trim) //
-				.filter(s -> !s.isEmpty()) //
-				.collect(Collectors.toList());
-
+		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactly( //
 				"four  : 40 %", //
 				"three : 30 %", //
 				"two   : 20 %", //
 				"one   : 10 %" //
 		);
+	}
+
+	@Example
+	void nullKeysAreNotReported() {
+		StatisticsCollector collector = new StatisticsCollector();
+
+		collector.collect("aKey");
+		collector.collect(null);
+		collector.collect("aKey");
+		collector.collect(null);
+
+		ReportEntry entry = collector.createReportEntry();
+
+		List<String> stats = parseStatistics(entry);
+		Assertions.assertThat(stats).containsExactly( //
+			"aKey : 50 %" //
+		);
+	}
+
+	private List<String> parseStatistics(ReportEntry entry) {
+		return Arrays.stream(entry.getKeyValuePairs().get(StatisticsCollector.KEY_STATISTICS).split(System.getProperty("line.separator"))) //
+			.map(String::trim) //
+			.filter(s -> !s.isEmpty()) //
+			.collect(Collectors.toList());
 	}
 
 	@Example
@@ -90,12 +108,7 @@ class StatisticsCollectionTests {
 
 		ReportEntry entry = collector.createReportEntry();
 
-		List<String> stats = Arrays
-				.stream(entry.getKeyValuePairs().get(StatisticsCollector.KEY_STATISTICS).split(System.getProperty("line.separator"))) //
-				.map(String::trim) //
-				.filter(s -> !s.isEmpty()) //
-				.collect(Collectors.toList());
-
+		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactlyInAnyOrder( //
 				"two 2   : 25 %", //
 				"three 2 : 25 %", //
