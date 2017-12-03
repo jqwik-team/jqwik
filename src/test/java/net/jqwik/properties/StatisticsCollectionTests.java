@@ -78,9 +78,9 @@ class StatisticsCollectionTests {
 		StatisticsCollector collector = new StatisticsCollector();
 
 		collector.collect("aKey");
-		collector.collect(null);
+		collector.collect((Object) null);
 		collector.collect("aKey");
-		collector.collect(null);
+		collector.collect((Object) null);
 
 		ReportEntry entry = collector.createReportEntry();
 

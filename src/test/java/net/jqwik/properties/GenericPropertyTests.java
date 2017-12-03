@@ -20,6 +20,7 @@ class GenericPropertyTests {
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> {
 	};
 
+	@SuppressWarnings("unchecked")
 	@Example
 	void collectStatistics() {
 		ForAllSpy forAllFunction = new ForAllSpy(value -> {
@@ -49,6 +50,7 @@ class GenericPropertyTests {
 		StatisticsCollector.clearAll();
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Group
 	class OneParameter {
 
@@ -271,6 +273,7 @@ class GenericPropertyTests {
 
 	}
 
+	@SuppressWarnings("ConstantConditions")
 	@Group
 	class NoParameter {
 		@Example
@@ -344,7 +347,6 @@ class GenericPropertyTests {
 
 	@Group
 	class ManyParameters {
-		private final Function<List<Object>, Boolean> exactlyOneInteger = args -> args.size() == 1 && args.get(0) instanceof Integer;
 
 		@Example
 		void twoParametersSatisfied() {
