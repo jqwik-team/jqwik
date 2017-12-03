@@ -1,12 +1,15 @@
 package net.jqwik.api;
 
-import java.util.*;
-import java.util.function.Function;
-
 import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.CombinedShrinkable;
+import net.jqwik.properties.arbitraries.*;
+
+import java.util.*;
+import java.util.function.*;
 
 public class Combinators {
+
+	private Combinators() {
+	}
 
 	public static <T1, T2> ACombinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
 		return new ACombinator2<T1, T2>(a1, a2);

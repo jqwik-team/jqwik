@@ -1,14 +1,17 @@
 package net.jqwik.api;
 
-import java.math.*;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 
+import java.math.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
 public class Arbitraries {
+
+	private Arbitraries() {
+	}
 
 	public static <T> Arbitrary<T> fromGenerator(RandomGenerator<T> generator) {
 		return tries -> generator;
