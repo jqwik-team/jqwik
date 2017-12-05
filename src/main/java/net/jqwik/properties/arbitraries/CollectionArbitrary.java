@@ -1,11 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.properties.*;
+
 import java.util.*;
 import java.util.stream.*;
-
-import net.jqwik.api.Arbitrary;
-import net.jqwik.api.constraints.Size;
-import net.jqwik.properties.*;
 
 abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 
@@ -33,7 +33,7 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 	}
 
 	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int effectiveMaxSize) {
-		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries, effectiveMaxSize);
+		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
 		List<Shrinkable<List<T>>> samples = samplesList(effectiveMaxSize, Collections.emptyList());
 		return RandomGenerators.list(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
 	}
@@ -46,8 +46,8 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 			.collect(Collectors.toList());
 	}
 
-	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int tries, int effectiveMaxSize) {
-		int elementTries = Math.max(tries / 2, 1) * tries;
+	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int tries) {
+		int elementTries = Math.max(tries / 2, 1);
 		return elementArbitrary.generator(elementTries);
 	}
 

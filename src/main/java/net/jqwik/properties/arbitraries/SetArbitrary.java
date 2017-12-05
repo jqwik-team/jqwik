@@ -1,9 +1,9 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.*;
-
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 import net.jqwik.properties.*;
+
+import java.util.*;
 
 public class SetArbitrary<T> extends CollectionArbitrary<T, Set<T>> {
 
@@ -18,7 +18,7 @@ public class SetArbitrary<T> extends CollectionArbitrary<T, Set<T>> {
 	@Override
 	protected RandomGenerator<Set<T>> baseGenerator(int tries) {
 		int effectiveMaxSize = effectiveMaxSize(tries);
-		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries, effectiveMaxSize);
+		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
 		List<Shrinkable<Set<T>>> samples = samplesList(effectiveMaxSize, Collections.emptySet());
 		return RandomGenerators.set(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
 	}
