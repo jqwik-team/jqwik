@@ -1,23 +1,22 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestDescriptorBuilder.*;
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.support.*;
+import org.assertj.core.data.*;
 
-import java.lang.reflect.Parameter;
+import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.function.*;
+import java.util.stream.*;
 
-import org.assertj.core.data.Offset;
-
-import net.jqwik.TestHelper;
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.WithNull;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.properties.RandomGenerator;
-import net.jqwik.properties.arbitraries.IntegerArbitrary;
-import net.jqwik.support.JqwikReflectionSupport;
+import static net.jqwik.TestDescriptorBuilder.*;
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 public class PropertyMethodArbitraryResolverTests {
@@ -339,15 +338,6 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findListOfProvidedStrings() throws Exception {
-			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "listOfGeneratedStrings", List.class);
-			Parameter parameter = getParameter(WithNamedProviders.class, "listOfGeneratedStrings");
-			List actualList = generateCollection(provider, parameter);
-			assertThat(actualList.get(0)).isInstanceOf(String.class);
-			assertThat(((String) actualList.get(0)).length()).isBetween(3, 10);
-		}
-
-		@Example
 		void findFirstFitIfNoNameIsGiven() throws Exception {
 			PropertyMethodArbitraryResolver provider = getProvider(WithNamedProviders.class, "listOfThingWithoutName", List.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "listOfThingWithoutName");
@@ -389,16 +379,6 @@ public class PropertyMethodArbitraryResolverTests {
 			@Provide
 			Arbitrary<Long> longBetween1and10() {
 				return Arbitraries.longs(1L, 10L);
-			}
-
-			@Property
-			boolean listOfGeneratedStrings(@ForAll("aName") List<String> nameList) {
-				return true;
-			}
-
-			@Provide("aName")
-			Arbitrary<String> aNameForList() {
-				return Arbitraries.strings('a', 'b',0, 10).filter(name -> name.length() > 2);
 			}
 
 			@Property

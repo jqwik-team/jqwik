@@ -1,20 +1,19 @@
 package net.jqwik.execution;
 
-import static net.jqwik.execution.providers.DefaultArbitraryProviders.*;
-import static net.jqwik.support.JqwikReflectionSupport.*;
-import static org.junit.platform.commons.support.ReflectionSupport.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.providers.*;
+import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 
-import java.lang.annotation.Annotation;
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.support.JqwikAnnotationSupport;
-import org.junit.platform.commons.support.*;
-
-import net.jqwik.api.*;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.execution.providers.*;
+import static net.jqwik.execution.providers.DefaultArbitraryProviders.*;
+import static net.jqwik.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
@@ -89,12 +88,13 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 			return (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
 		}
 
+		if (!generatorName.isEmpty()) {
+			return null;
+		}
+
 		Arbitrary<?> defaultArbitrary = findDefaultArbitrary(genericType, generatorName, annotations);
 		if (defaultArbitrary != null) {
 			return defaultArbitrary;
-		}
-		if (!generatorName.isEmpty()) {
-			return null;
 		}
 
 		return findFirstFitArbitrary(genericType);

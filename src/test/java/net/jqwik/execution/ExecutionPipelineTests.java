@@ -1,14 +1,13 @@
 package net.jqwik.execution;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.List;
-
+import net.jqwik.api.*;
+import net.jqwik.execution.pipeline.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
-import net.jqwik.api.*;
-import net.jqwik.execution.pipeline.*;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class ExecutionPipelineTests {
 
@@ -21,7 +20,7 @@ public class ExecutionPipelineTests {
 	}
 
 	@Property(tries = 10)
-	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("task") List<ExecutionTask> tasks) {
+	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("taskList") List<ExecutionTask> tasks) {
 		tasks.forEach(t -> pipeline.submit(t));
 		pipeline.runToTermination();
 		InOrder events = Mockito.inOrder(listener);
@@ -35,7 +34,12 @@ public class ExecutionPipelineTests {
 	}
 
 	@Provide
-	Arbitrary<MockExecutionTask> task() {
+	Arbitrary<List<ExecutionTask>> taskList() {
+		return Arbitraries.listOf(task());
+	}
+
+	@Provide
+	Arbitrary<ExecutionTask> task() {
 		return Arbitraries.samples(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
 	}
 

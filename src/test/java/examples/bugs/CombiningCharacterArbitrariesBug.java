@@ -14,7 +14,7 @@ class CombiningCharacterArbitrariesBug {
 	}
 
 	@Property(reporting = ReportingMode.GENERATED)
-	void characterArrayFromProvider(@ForAll("combined") char[] chars) {
+	void nonMatchingArrayTypeFromProvider(@ForAll("combined") char[] chars) {
 
 	}
 

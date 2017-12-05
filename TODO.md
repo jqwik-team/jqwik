@@ -1,7 +1,5 @@
 ### Bugs
 
-- Combining two Arbitraries of Character to Array of Character throws NullPointerException. 
-  See examples.bugs.CombiningCharacterArbitrariesBug
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative 1: change distance to be of type BigInteger!
