@@ -82,6 +82,7 @@
   - Arrays of Arrays
 
 - Arbitraries and Generators
+  - Find syntax to use provider methods for subtypes, e.g. @ForAll List<@ProvidedBy("myString") String> aList
   - Introduce Tuples to allow return of mapped and flatMapped values!
   - Generators.defaultFor(Class<?> targetType)
   - const
