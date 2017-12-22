@@ -4,7 +4,7 @@ import java.lang.annotation.*;
 
 /**
  * Used to annotate methods that can provide values for property method parameters. Those methods must return an
- * instance of {@linkplain Arbitrary&lt;T&gt;}.
+ * instance of {@linkplain Arbitrary}.
  *
  * {@code value} is used as reference name. If it is not specified, the method's name is used instead.
  */
