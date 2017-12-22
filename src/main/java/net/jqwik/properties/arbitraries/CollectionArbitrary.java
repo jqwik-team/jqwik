@@ -47,7 +47,8 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 	}
 
 	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int tries) {
-		int elementTries = Math.max(tries / 2, 1);
+		// Stepping down into element generators will half the number of tries, but never go below 10
+		int elementTries = Math.max(tries / 2, 10);
 		return elementArbitrary.generator(elementTries);
 	}
 
