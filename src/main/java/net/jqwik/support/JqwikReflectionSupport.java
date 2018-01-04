@@ -2,16 +2,16 @@ package net.jqwik.support;
 
 import static java.util.stream.Collectors.*;
 
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.function.*;
+import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 
-import net.jqwik.discovery.predicates.IsTopLevelClass;
+import net.jqwik.discovery.predicates.*;
 
 public class JqwikReflectionSupport {
 
@@ -53,6 +53,13 @@ public class JqwikReflectionSupport {
 
 	/**
 	 * Create instance of a class that can potentially be a non static inner class
+	 *
+	 * @param <T>
+	 *            The type of the instance to create
+	 * @param clazz
+	 *            The class to instantiate
+	 *
+	 * @return the instance
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
 		if (isTopLevelClass.test(clazz) || JqwikReflectionSupport.isStatic(clazz))
@@ -66,6 +73,15 @@ public class JqwikReflectionSupport {
 	/**
 	 * Find all {@linkplain Method methods} as in ReflectionSupport.findMethods(..) but also use outer classes to look for
 	 * methods.
+	 *
+	 * @param clazz
+	 *            The class in which you start the search
+	 * @param predicate
+	 *            The condition to check for all candidate methods
+	 * @param traversalMode
+	 *            Traverse hierarchy up or down. Determines the order in resulting list.
+	 *
+	 * @return List of found methods
 	 */
 	public static List<Method> findMethodsPotentiallyOuter(Class<?> clazz, Predicate<Method> predicate,
 			HierarchyTraversalMode traversalMode) {
@@ -83,6 +99,15 @@ public class JqwikReflectionSupport {
 	/**
 	 * Invoke the supplied {@linkplain Method method} as in ReflectionSupport.invokeMethod(..) but potentially use the outer
 	 * instance if the method belongs to the outer instance of an object.
+	 *
+	 * @param method
+	 *            The method to invoke
+	 * @param target
+	 *            The object to invoke the method on
+	 * @param args
+	 *            The arguments of the method invocation
+	 *
+	 * @return Result of method invocation if there is one, otherwise null
 	 */
 	public static Object invokeMethodPotentiallyOuter(Method method, Object target, Object... args) {
 		if (method.getDeclaringClass().isAssignableFrom(target.getClass())) {

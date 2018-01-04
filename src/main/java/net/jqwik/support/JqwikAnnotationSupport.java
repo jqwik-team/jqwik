@@ -7,9 +7,10 @@ import java.util.*;
 public class JqwikAnnotationSupport {
 
 	/**
-	 * Find all annotations, even if they are repeatable or only present through meta-annotations
+	 * Find all annotations in an element, even if they are repeatable or only present through meta-annotations
 	 *
-	 * @param element
+	 * @param element the element to check for present annotations
+	 * @return a list of all found annotations
 	 */
 	public static List<Annotation> findAllAnnotations(AnnotatedElement element) {
 

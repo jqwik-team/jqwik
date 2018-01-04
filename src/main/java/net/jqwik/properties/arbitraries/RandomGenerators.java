@@ -1,11 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.properties.*;
-
-import java.math.BigDecimal;
+import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+
+import net.jqwik.properties.*;
 
 public class RandomGenerators {
 
@@ -46,14 +46,14 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Double> doubles(double min, double max, int scale) {
-		return random ->  {
+		return random -> {
 			double randomDouble = randomDecimal(random, new BigDecimal(min), new BigDecimal(max), scale).doubleValue();
 			return new ShrinkableValue<>(randomDouble, new DoubleShrinkCandidates(min, max, scale));
 		};
 	}
 
 	public static RandomGenerator<Float> floats(float min, float max, int scale) {
-		return random ->  {
+		return random -> {
 			float randomDouble = randomDecimal(random, new BigDecimal(min), new BigDecimal(max), scale).floatValue();
 			return new ShrinkableValue<>(randomDouble, new FloatShrinkCandidates(min, max, scale));
 		};
@@ -67,13 +67,19 @@ public class RandomGenerators {
 	}
 
 	/**
-	 * Random decimal are not equally distributed but randomly scaled down towards 0.
-	 * Thus random decimals are more likely to be closer to 0 than
+	 * Random decimal are not equally distributed but randomly scaled down towards 0. Thus random decimals are more likely
+	 * to be closer to 0 than
 	 *
 	 * @param random
+	 *            source of randomness
 	 * @param min
+	 *            lower bound (included) of value to generate
 	 * @param max
-	 * @param precision The number of decimals to the right of decimal point
+	 *            upper bound (included) of value to generate
+	 * @param precision
+	 *            The number of decimals to the right of decimal point
+	 *
+	 * @return a generated instance of BigDecimal
 	 */
 	public static BigDecimal randomDecimal(Random random, BigDecimal min, BigDecimal max, int precision) {
 		BigDecimal range = max.subtract(min);
@@ -98,10 +104,9 @@ public class RandomGenerators {
 	}
 
 	private static <T, C> RandomGenerator<C> container( //
-														RandomGenerator<T> elementGenerator, //
-														Function<List<T>, C> containerFunction, //
-														int minSize, int maxSize
-	) {
+			RandomGenerator<T> elementGenerator, //
+			Function<List<T>, C> containerFunction, //
+			int minSize, int maxSize) {
 		RandomGenerator<Integer> lengthGenerator = choose(minSize, maxSize);
 		return random -> {
 			int listSize = lengthGenerator.next(random).value();
@@ -122,7 +127,7 @@ public class RandomGenerators {
 	}
 
 	// TODO: Get rid of duplication with container(...)
-	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator,  int minSize, int maxSize) {
+	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
 		RandomGenerator<Integer> lengthGenerator = choose(minSize, maxSize);
 		return random -> {
 			int listSize = lengthGenerator.next(random).value();

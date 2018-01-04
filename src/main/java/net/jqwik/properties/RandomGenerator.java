@@ -1,17 +1,18 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
-
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
+
 public interface RandomGenerator<T> {
 
 	/**
-	 * This method generates the next random value wrapped within the Shrinkable interface.
-	 * The method must ALWAYS return a next value.
+	 * @param random the source of randomness. Injected by jqwik itself.
+	 *
+	 * @return the next random value wrapped within the Shrinkable interface. The method must ALWAYS return a next value.
 	 */
 	Shrinkable<T> next(Random random);
 
@@ -45,7 +46,8 @@ public interface RandomGenerator<T> {
 
 	default RandomGenerator<T> injectNull(double nullProbability) {
 		return random -> {
-			if (random.nextDouble() <= nullProbability) return Shrinkable.unshrinkable(null);
+			if (random.nextDouble() <= nullProbability)
+				return Shrinkable.unshrinkable(null);
 			return RandomGenerator.this.next(random);
 		};
 	}
@@ -55,7 +57,8 @@ public interface RandomGenerator<T> {
 		RandomGenerator<T> generator = this;
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return random -> {
-			if (tryCount.getAndIncrement() < samples.size()) return samplesGenerator.next(random);
+			if (tryCount.getAndIncrement() < samples.size())
+				return samplesGenerator.next(random);
 			return generator.next(random);
 		};
 	}

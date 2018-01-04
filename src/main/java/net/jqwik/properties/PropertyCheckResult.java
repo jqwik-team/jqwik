@@ -1,8 +1,8 @@
 package net.jqwik.properties;
 
-import net.jqwik.support.*;
-
 import java.util.*;
+
+import net.jqwik.support.*;
 
 public interface PropertyCheckResult {
 
@@ -18,13 +18,13 @@ public interface PropertyCheckResult {
 	String propertyName();
 
 	/**
-	 * The number of times a property has been tried including all tries rejected by a precondition aka assumption
+	 * @return The number of times a property has been tried including all tries rejected by a precondition aka assumption
 	 */
 	int countTries();
 
 	/**
-	 * The number of times a property has actually been evaluated not counting the tries that were rejected by a
-	 * precondition aka assumption
+	 * @return The number of times a property has actually been evaluated not counting the tries that were rejected by a
+	 *         precondition aka assumption
 	 */
 	int countChecks();
 
@@ -103,7 +103,8 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample, List<Object> originalSample, Throwable throwable) {
+	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample,
+			List<Object> originalSample, Throwable throwable) {
 		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public Optional<List<Object>> sample() {
