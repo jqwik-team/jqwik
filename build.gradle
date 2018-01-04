@@ -143,9 +143,6 @@ dependencies {
 	testCompile("org.mockito:mockito-core:2.10.0")
 	testCompile("org.assertj:assertj-core:3.8.0")
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-
-	// Only necessary to enable IntelliJ support. Disable before releases!
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
 }
 
 task wrapper(type: Wrapper) {

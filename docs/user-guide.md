@@ -52,13 +52,11 @@ That means that you can use it either stand-alone or combine it with any other J
 All you have to do is add all needed engines to your `testCompile` dependencies as shown in the
 [gradle file](#gradle) below.
 
-__jqwik__ is currently _not_ deployed to Maven Central but [JitPack](https://jitpack.io/) is 
-being used to provide [the latest release(s)](https://github.com/jlink/jqwik/releases). 
-That's why you have to add the JitPack-Repository to your list of maven repositories.
+The latest release of __jqwik__ is deployed to [Maven Central](https://mvnrepository.com/).
 
 ### Gradle
 
-Add the following stuff to your `build.gradle` file:
+To use __jqwik__ in a gradle-based project add the following stuff to your `build.gradle` file:
 
 ```
 buildscript {
@@ -73,12 +71,11 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 repositories {
     ...
     mavenCentral()
-    maven { url "https://jitpack.io" }
 }
 
 ext.junitPlatformVersion = '1.0.2'
 ext.junitJupiterVersion = '5.0.2'
-ext.jqwikVersion = '0.7.3'
+ext.jqwikVersion = '0.8.0'
 
 junitPlatform {
 	filters {
@@ -86,7 +83,8 @@ junitPlatform {
 		includeClassNamePattern '.*Tests'
 		includeClassNamePattern '.*Properties'
 	}
-	enableStandardTestTask true
+	// Only enable if you also want to run tests outside the junit platform runner:
+	enableStandardTestTask false
 }
 
 dependencies {
@@ -96,7 +94,7 @@ dependencies {
     testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
     
     // jqwik dependency
-    testCompile "com.github.jlink:jqwik:${jqwikVersion}"
+    testCompile "net.jqwik:jqwik:${jqwikVersion}"
     
     // Add if you want to also use the Jupiter engine
     // Also add if you use IntelliJ 2017.2 or older to enable JUnit-5 support
@@ -114,31 +112,22 @@ for more details on how to configure test execution.
 
 ### Maven
 
-Add the following repository and dependency to your `pom.xml` file:
+Configure the surefire plugin as described in 
+[the Maven section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
+and add the following dependency to your `pom.xml` file:
 
 ```
-<repositories>
-    ...
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-
 <dependencies>
     ...
     <dependency>
-        <groupId>com.github.jlink</groupId>
+        <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.7.3</version>
+        <version>0.8.0</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
 
 ```
-
-See [the Maven section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
-for details on how to configure the surefire plugin and other dependencies.
 
 
 ### Project without Build Tool
@@ -146,7 +135,7 @@ for details on how to configure the surefire plugin and other dependencies.
 I never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars:
 
-- `jqwik-0.7.3.jar`
+- `jqwik-0.8.0.jar`
 - `junit-platform-engine-1.0.2.jar`
 - `junit-platform-commons-1.0.2.jar`
 - `opentest4j-1.0.0.jar`
