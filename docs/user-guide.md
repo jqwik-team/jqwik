@@ -1044,10 +1044,6 @@ defaultTries = 1000
 defaultMaxDiscardRatio = 5
 ```
 
-This type of configuration is preliminary and will likely be replaced by 
-[JUnit 5's platform configuration](http://junit.org/junit5/docs/5.0.0/user-guide/#running-tests-config-params)
-mechanism soon. Moreover, there will probably be many more default parameters to change.
-
 ## Program your own Generators and Arbitraries
 
 This topic will probably need a page of its own.
