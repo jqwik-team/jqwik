@@ -19,21 +19,98 @@ ext.moduleName = 'net.jqwik'
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 group = 'net.jqwik'
-version = '0.7.3'
+version = '0.8.0-SNAPSHOT'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.7.3'
+	version = '0.8.0-SNAPSHOT'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
 }
 
-javadoc {
+task javadocApi(type: Javadoc) {
+	source = file('./src/main/java')
+	failOnError = false
 	destinationDir = file('./docs/javadoc')
 	include '**/api/**'
+}
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+
+signing {
+	sign configurations.archives
+}
+
+def isSnapshot = project.version.contains('SNAPSHOT')
+def signArtifacts = !isSnapshot
+
+uploadArchives {
+
+	dependsOn check
+
+	repositories {
+		mavenDeployer {
+
+			if (signArtifacts) {
+				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+			}
+
+			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
+			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
+
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			pom.project {
+				name 'jqwik'
+				packaging 'jar'
+				description 'jqwik - Property-based testing for the JVM'
+				url 'http://jqwik.net'
+
+				scm {
+					connection 'scm:git:git://github.com/jlink/jqwik.git'
+					developerConnection 'scm:git:git://github.com/jlink/jqwik.git'
+					url 'https://github.com/jlink/jqwik'
+				}
+
+				licenses {
+					license {
+						name 'Eclipse Public License - v 1.0'
+						url 'http://www.eclipse.org/legal/epl-v10.html'
+					}
+				}
+
+				developers {
+					developer {
+						id 'jlink'
+						name 'Johannes Link'
+						email 'business@johanneslink.net'
+					}
+				}
+			}
+		}
+	}
 }
 
 compileTestJava {
@@ -54,7 +131,8 @@ junitPlatform {
 		}
 		// includeClassNamePattern '.*Test'
 	}
-	enableStandardTestTask true
+	// Only use platform tests
+	enableStandardTestTask false
 }
 
 dependencies {
