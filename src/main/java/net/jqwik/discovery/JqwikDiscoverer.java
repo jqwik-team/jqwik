@@ -44,19 +44,6 @@ public class JqwikDiscoverer {
 			javaElementsResolver.resolveClass(selector.getJavaClass());
 		});
 		request.getSelectorsByType(MethodSelector.class).forEach(selector -> {
-			Method testMethod;
-			try {
-				testMethod = selector.getJavaMethod();
-			} catch (PreconditionViolationException methodNotFound) {
-				// Hack: Work around bug in IDEA's Junit platform integration
-				// TODO: Remove as soon as IDEA's fix has been released
-				Predicate<Method> hasCorrectName = method -> method.getName().equals(selector.getMethodName());
-				List<Method> methodWithFittingName = ReflectionSupport.findMethods(selector.getJavaClass(), hasCorrectName,
-						HierarchyTraversalMode.BOTTOM_UP);
-				if (methodWithFittingName.isEmpty())
-					return;
-				testMethod = methodWithFittingName.get(0);
-			}
 			javaElementsResolver.resolveMethod(selector.getJavaClass(), selector.getJavaMethod());
 		});
 		request.getSelectorsByType(UniqueIdSelector.class).forEach(selector -> {
