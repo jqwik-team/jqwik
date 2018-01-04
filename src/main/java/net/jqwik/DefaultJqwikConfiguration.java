@@ -45,7 +45,7 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 	}
 
 	private TestEngineConfiguration createTestEngineConfiguration() {
-		TestRunDatabase database = new TestRunDatabase(Paths.get(properties.getDatabasePath()));
+		TestRunDatabase database = new TestRunDatabase(Paths.get(properties.databasePath()));
 		TestRunData previousRun = database.previousRun();
 		return new TestEngineConfiguration() {
 			@Override
