@@ -19,8 +19,10 @@ import net.jqwik.support.JqwikStringSupport;
  */
 public class TestDescriptorBuilder {
 
-	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes)
-			throws NoSuchMethodException {
+	public static final int TRIES = 1000;
+	public static final int MAX_DISCARD_RATIO = 5;
+
+	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes) {
 		Optional<Method> optionalMethod = ReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
 		if (!optionalMethod.isPresent())
 			throw new JqwikException(String.format("Class [%s] has no method with name [%s] and parameters [%s]", containerClass,
@@ -90,8 +92,7 @@ public class TestDescriptorBuilder {
 			if (optionalProperty.isPresent()) {
 				Property property = optionalProperty.get();
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
-				PropertyConfiguration propertyConfig = new PropertyConfiguration(property.seed(), property.tries(),
-						property.maxDiscardRatio(), property.shrinking(), property.reporting());
+				PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO));
 
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), propertyConfig);
 			}

@@ -12,6 +12,9 @@ public class JqwikProperties {
 
 	private String databasePath;
 	private boolean rerunFailuresWithSameSeed;
+	private boolean runFailuresFirst;
+	private int defaultTries;
+	private int defaultMaxDiscardRatio;
 
 	public String getDatabasePath() {
 		return databasePath;
@@ -25,7 +28,13 @@ public class JqwikProperties {
 		return runFailuresFirst;
 	}
 
-	private boolean runFailuresFirst;
+	public int defaultTries() {
+		return defaultTries;
+	}
+
+	public int defaultMaxDiscardRatio() {
+		return defaultMaxDiscardRatio;
+	}
 
 	JqwikProperties() {
 		this(DEFAULT_PROPERTIES_FILE);
@@ -48,6 +57,8 @@ public class JqwikProperties {
 			databasePath = properties.getProperty("database", JQWIK_DEFAULT_DATABASE);
 			rerunFailuresWithSameSeed = Boolean.parseBoolean(properties.getProperty("rerunFailuresWithSameSeed"));
 			runFailuresFirst = Boolean.parseBoolean(properties.getProperty("runFailuresFirst"));
+			defaultTries = Integer.parseInt(properties.getProperty("defaultTries"));
+			defaultTries = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio"));
 		} catch (IOException ioe) {
 			LOG.log(Level.WARNING, String.format("Error while reading properties file [%s] found.", propertiesFileName), ioe);
 		}

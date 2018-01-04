@@ -32,7 +32,7 @@ public class CheckedProperty {
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> publisher) {
-		long effectiveSeed = configuration.getSeed() == Property.DEFAULT_SEED ? RNG.get().nextLong() : configuration.getSeed();
+		long effectiveSeed = configuration.getSeed() == Property.SEED_NOT_SET ? RNG.get().nextLong() : configuration.getSeed();
 		PropertyConfiguration effectiveConfiguration = configuration.withSeed(effectiveSeed);
 		try {
 			return createGenericProperty().check(effectiveConfiguration, publisher);

@@ -11,18 +11,13 @@ public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
 
 	private final LifecycleRegistry registry = new LifecycleRegistry();
-	private final TestEngineConfiguration configuration;
+	private final JqwikConfiguration configuration;
 
 	public JqwikTestEngine() {
-		this(createTestEngineConfiguration());
+		this(new DefaultJqwikConfiguration());
 	}
 
-	private static TestEngineConfiguration createTestEngineConfiguration() {
-		JqwikConfiguration configuration = new JqwikConfiguration();
-		return configuration.testEngineConfiguration();
-	}
-
-	JqwikTestEngine(TestEngineConfiguration configuration) {
+	JqwikTestEngine(JqwikConfiguration configuration) {
 		this.configuration = configuration;
 	}
 
@@ -34,15 +29,17 @@ public class JqwikTestEngine implements TestEngine {
 	@Override
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
-		new JqwikDiscoverer(configuration.previousRun()).discover(request, engineDescriptor);
+		new JqwikDiscoverer(configuration.testEngineConfiguration().previousRun(), configuration.propertyDefaultValues()) //
+			.discover(request, engineDescriptor);
 		return engineDescriptor;
 	}
 
 	@Override
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
-		try (TestRunRecorder recorder = configuration.recorder()) {
-			new JqwikExecutor(registry, recorder, configuration.previousFailures()).execute(root, request.getEngineExecutionListener());
+		try (TestRunRecorder recorder = configuration.testEngineConfiguration().recorder()) {
+			new JqwikExecutor(registry, recorder, configuration.testEngineConfiguration().previousFailures()) //
+					.execute(root, request.getEngineExecutionListener());
 		}
 	}
 

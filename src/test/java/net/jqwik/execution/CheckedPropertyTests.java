@@ -31,8 +31,8 @@ class CheckedPropertyTests {
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
-			assertThat(checkedProperty.configuration.getTries()).isEqualTo(Property.DEFAULT_TRIES);
-			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(Property.DEFAULT_MAX_DISCARD_RATIO);
+			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
+			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
 			assertThat(checkedProperty.configuration.getReportingMode()).isEqualTo(ReportingMode.MINIMAL);
 		}

@@ -7,22 +7,25 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.recording.*;
 import org.junit.platform.commons.support.*;
 import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 
+import net.jqwik.*;
 import net.jqwik.discovery.predicates.*;
+import net.jqwik.recording.*;
 
 public class JqwikDiscoverer {
 
 	private static final IsScannableContainerClass isScannableTestClass = new IsScannableContainerClass();
 
 	private final TestRunData testRunData;
+	private final PropertyDefaultValues propertyDefaultValues;
 
-	public JqwikDiscoverer(TestRunData testRunData) {
+	public JqwikDiscoverer(TestRunData testRunData, PropertyDefaultValues propertyDefaultValues) {
 		this.testRunData = testRunData;
+		this.propertyDefaultValues = propertyDefaultValues;
 	}
 
 	public void discover(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
@@ -46,7 +49,6 @@ public class JqwikDiscoverer {
 				testMethod = selector.getJavaMethod();
 			} catch (PreconditionViolationException methodNotFound) {
 				// Hack: Work around bug in IDEA's Junit platform integration
-				// Currently doesn't work due to an error in DefaultLauncher
 				// TODO: Remove as soon as IDEA's fix has been released
 				Predicate<Method> hasCorrectName = method -> method.getName().equals(selector.getMethodName());
 				List<Method> methodWithFittingName = ReflectionSupport.findMethods(selector.getJavaClass(), hasCorrectName,
@@ -55,7 +57,7 @@ public class JqwikDiscoverer {
 					return;
 				testMethod = methodWithFittingName.get(0);
 			}
-			javaElementsResolver.resolveMethod(selector.getJavaClass(), testMethod);
+			javaElementsResolver.resolveMethod(selector.getJavaClass(), selector.getJavaMethod());
 		});
 		request.getSelectorsByType(UniqueIdSelector.class).forEach(selector -> {
 			javaElementsResolver.resolveUniqueId(selector.getUniqueId());
@@ -66,7 +68,7 @@ public class JqwikDiscoverer {
 		Set<ElementResolver> resolvers = new HashSet<>();
 		resolvers.add(new TopLevelContainerResolver());
 		resolvers.add(new GroupContainerResolver());
-		resolvers.add(new PropertyMethodResolver(testRunData));
+		resolvers.add(new PropertyMethodResolver(testRunData, propertyDefaultValues));
 		return new HierarchicalJavaResolver(engineDescriptor, resolvers);
 	}
 

@@ -1,5 +1,2 @@
-- Make default tries configurable
-- Make maxDiscardRatio configurable
 - Default Arbitrary for short
 - Default Arbitrary for byte
-- Deploy to Maven-Central

@@ -17,15 +17,15 @@ import java.lang.annotation.*;
 @Documented
 @Testable
 public @interface Property {
-	int DEFAULT_TRIES = 1000;
-	int DEFAULT_MAX_DISCARD_RATIO = 5;
-	long DEFAULT_SEED = 0L;
+	int TRIES_NOT_SET = 0;
+	int MAX_DISCARD_RATIO_NOT_SET = 0;
+	long SEED_NOT_SET = 0L;
 
-	int tries() default DEFAULT_TRIES;
+	int tries() default TRIES_NOT_SET;
 
-	int maxDiscardRatio() default DEFAULT_MAX_DISCARD_RATIO;
+	int maxDiscardRatio() default MAX_DISCARD_RATIO_NOT_SET;
 
-	long seed() default DEFAULT_SEED;
+	long seed() default SEED_NOT_SET;
 
 	ShrinkingMode shrinking() default ShrinkingMode.ON;
 

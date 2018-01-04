@@ -27,26 +27,40 @@ class TestEngineIntegrationTests {
 	private UniqueId engineId;
 
 	private TestEngineIntegrationTests() throws IOException {
-		testEngine = new JqwikTestEngine(new TestEngineConfiguration() {
-			@Override
-			public TestRunRecorder recorder() {
-				return testRun -> {
-				};
-			}
-
-			@Override
-			public TestRunData previousRun() {
-				return new TestRunData();
-			}
-
-			@Override
-			public Set<UniqueId> previousFailures() {
-				return Collections.emptySet();
-			}
-
-		});
+		testEngine = new JqwikTestEngine(configuration());
 		eventRecorder = Mockito.mock(EngineExecutionListener.class);
 		engineId = UniqueId.forEngine(testEngine.getId());
+	}
+
+	private JqwikConfiguration configuration() {
+		return new JqwikConfiguration() {
+			@Override
+			public PropertyDefaultValues propertyDefaultValues() {
+				return PropertyDefaultValues.with(1000, 5);
+			}
+
+			@Override
+			public TestEngineConfiguration testEngineConfiguration() {
+				return new TestEngineConfiguration() {
+					@Override
+					public TestRunRecorder recorder() {
+						return testRun -> {
+						};
+					}
+
+					@Override
+					public TestRunData previousRun() {
+						return new TestRunData();
+					}
+
+					@Override
+					public Set<UniqueId> previousFailures() {
+						return Collections.emptySet();
+					}
+
+				};
+			}
+		};
 	}
 
 	@Example

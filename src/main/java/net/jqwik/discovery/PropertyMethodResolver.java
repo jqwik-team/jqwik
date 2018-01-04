@@ -3,10 +3,10 @@ package net.jqwik.discovery;
 import java.lang.reflect.*;
 import java.util.*;
 
+import net.jqwik.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.junit.platform.engine.*;
 
-import net.jqwik.JqwikException;
 import net.jqwik.api.Property;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.specs.PropertyDiscoverySpec;
@@ -16,9 +16,11 @@ class PropertyMethodResolver implements ElementResolver {
 
 	private final PropertyDiscoverySpec methodSpec = new PropertyDiscoverySpec();
 	private final TestRunData testRunData;
+	private final PropertyDefaultValues propertyDefaultValues;
 
-	PropertyMethodResolver(TestRunData testRunData) {
+	PropertyMethodResolver(TestRunData testRunData, PropertyDefaultValues propertyDefaultValues) {
 		this.testRunData = testRunData;
+		this.propertyDefaultValues = propertyDefaultValues;
 	}
 
 	@Override
@@ -80,16 +82,16 @@ class PropertyMethodResolver implements ElementResolver {
 			return new JqwikException(message);
 		});
 		long seed = determineSeed(uniqueId, property.seed());
-		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property).withSeed(seed);
+		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues).withSeed(seed);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
 
 	private long determineSeed(UniqueId uniqueId, long seedFromProperty) {
 		return testRunData.byUniqueId(uniqueId) //
-				.filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
-				.map(TestRun::getRandomSeed) //
-				.map(seedFromFailedRun -> seedFromProperty != Property.DEFAULT_SEED ? seedFromProperty : seedFromFailedRun) //
-				.orElse(seedFromProperty);
+						  .filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
+						  .map(TestRun::getRandomSeed) //
+						  .map(seedFromFailedRun -> seedFromProperty != Property.SEED_NOT_SET ? seedFromProperty : seedFromFailedRun) //
+						  .orElse(seedFromProperty);
 	}
 
 	private String getSegmentType() {

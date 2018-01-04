@@ -42,7 +42,7 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 	}
 
 	private void recordTestRun(TestDescriptor testDescriptor, TestExecutionResult testExecutionResult) {
-		long seed = seeds.computeIfAbsent(testDescriptor, ignore -> Property.DEFAULT_SEED);
+		long seed = seeds.computeIfAbsent(testDescriptor, ignore -> Property.SEED_NOT_SET);
 		TestRun run = new TestRun(testDescriptor.getUniqueId(), testExecutionResult.getStatus(), seed);
 		recorder.record(run);
 	}
@@ -62,7 +62,7 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 	}
 
 	private long getReportedSeed(Map<String, String> entries) {
-		long reportedSeed = Property.DEFAULT_SEED;
+		long reportedSeed = Property.SEED_NOT_SET;
 		try {
 			reportedSeed = Long.parseLong(entries.get(CheckResultReportEntry.SEED_REPORT_KEY));
 		} catch (NumberFormatException ignore) {

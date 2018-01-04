@@ -25,6 +25,7 @@ class DiscoveryTests {
 
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();
 	private final TestRunData testRunData = new TestRunData();
+	private final PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(1000, 5);
 	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
 
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
@@ -207,7 +208,7 @@ class DiscoveryTests {
 
 	private TestDescriptor discoverTests(LauncherDiscoveryRequest discoveryRequest) {
 		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(engineId);
-		new JqwikDiscoverer(testRunData).discover(discoveryRequest, engineDescriptor);
+		new JqwikDiscoverer(testRunData, propertyDefaultValues).discover(discoveryRequest, engineDescriptor);
 		return engineDescriptor;
 	}
 }
