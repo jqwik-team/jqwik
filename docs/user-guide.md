@@ -242,18 +242,27 @@ in future versions.
 The `@Property` annotation has a few optional values:
 
 - `int tries`: The number of times _jqwik_ tries to generate parameter values for this method.
-  Default is `1000`.
+  
+  The default is `1000` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
+
 - `long seed`: The _random seed_ to use for generating values. If you do not specify a values
   _jqwik_ will use a random _random seed_. The actual seed used is being reported by 
   each run property.
+
 - `int maxDiscardRatio`: The maximal number of tried versus actually checked property runs
   in case you are using [Assumptions](#assumptions). If the ratio is exceeded _jqwik_ will
-  report this property as a failure. Default is `5`.
+  report this property as a failure. 
+  
+  The default is `5` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
+
 - `ShrinkingMode shrinking`: You can switch off parameter shrinking by using `ShrinkingMode.OFF`.
-  Default is `ShrinkingMode.ON`
+  
+  The default is `ShrinkingMode.ON`
+
 - `ReportingMode reporting`: You can switch to more verbose reporting. 
   `ReportingMode.GENERATED` will report each generated set of parameters.
-  Default is `ReportingMode.MINIMAL`
+  
+  The default is `ReportingMode.MINIMAL`
 
 ## Assertions
 
@@ -1031,6 +1040,8 @@ a few basic parameters:
 ```
 database = .jqwik-database
 rerunFailuresWithSameSeed = true
+defaultTries = 1000
+defaultMaxDiscardRatio = 5
 ```
 
 This type of configuration is preliminary and will likely be replaced by 
