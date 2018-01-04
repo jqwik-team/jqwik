@@ -22,11 +22,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'net.jqwik'
-version = '0.8.0-SNAPSHOT'
+version = '0.8.1-SNAPSHOT'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.8.0-SNAPSHOT'
+	version = '0.8.1-SNAPSHOT'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
@@ -144,7 +144,7 @@ dependencies {
 	testCompile("org.assertj:assertj-core:3.8.0")
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
-	// Only necessary to enable IntelliJ support
+	// Only necessary to enable IntelliJ support. Disable before releases!
 	testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.2")
 }
 
