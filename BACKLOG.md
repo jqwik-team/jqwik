@@ -22,9 +22,6 @@
 - Switch to gradle library plugin: 
   https://docs.gradle.org/current/userguide/java_library_plugin.html
 
-- Allow custom stereotype for test methods, e.g. @Example has stereotype "Example" 
-  so that Failure message is "Example [xyz123] was falsified..."
-
 - Allow custom names for containers and test methods: @Label?
 
 - Allow Fixture parameters to examples and properties
