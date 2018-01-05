@@ -1,14 +1,14 @@
 package net.jqwik.support;
 
+import static org.assertj.core.api.Assertions.*;
+
 import java.lang.annotation.*;
-import java.lang.reflect.Parameter;
-import java.util.List;
-import java.util.stream.Stream;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class JqwikAnnotationSupportTests {
 
@@ -61,42 +61,62 @@ class JqwikAnnotationSupportTests {
 	}
 
 	static class AClass {
-		void singleAnnotation(@ForAll String param) {}
-		void twoAnnotations(@ForAll @StringLength(max = 10) String param) {}
-		void repeatableAnnotations(@Chars({'a'}) @Chars({'b'}) String param) {}
-		void mixedAnnotations(@ForAll @Chars({'a'}) @Chars({'b'}) String param) {}
-		void simpleMetaAnnotations(@ForAny String param) {}
-		void repeatedMetaAnnotations(@AlphaNumeric String param) {}
-		void nestedMetaAnnotations(@Nested String param) {}
-		void circularMetaAnnotations(@One String param) {}
+		void singleAnnotation(@ForAll String param) {
+		}
+
+		void twoAnnotations(@ForAll @StringLength(max = 10) String param) {
+		}
+
+		void repeatableAnnotations(@Chars({ 'a' }) @Chars({ 'b' }) String param) {
+		}
+
+		void mixedAnnotations(@ForAll @Chars({ 'a' }) @Chars({ 'b' }) String param) {
+		}
+
+		void simpleMetaAnnotations(@ForAny String param) {
+		}
+
+		void repeatedMetaAnnotations(@AlphaNumeric String param) {
+		}
+
+		void nestedMetaAnnotations(@Nested String param) {
+		}
+
+		void circularMetaAnnotations(@One String param) {
+		}
 	}
 
 	@Target({ ElementType.PARAMETER })
 	@Retention(RetentionPolicy.RUNTIME)
 	@ForAll
-	@interface ForAny { }
+	@interface ForAny {
+	}
 
 	@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 	@Retention(RetentionPolicy.RUNTIME)
-	@Chars({'a'})
-	@Chars({'1'})
+	@Chars({ 'a' })
+	@Chars({ '1' })
 	@StringLength(max = 100)
-	@interface AlphaNumeric { }
+	@interface AlphaNumeric {
+	}
 
 	@Target({ ElementType.PARAMETER })
 	@Retention(RetentionPolicy.RUNTIME)
 	@AlphaNumeric
-	@interface Nested { }
+	@interface Nested {
+	}
 
 	@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 	@Retention(RetentionPolicy.RUNTIME)
 	@Two
-	@interface One { }
+	@interface One {
+	}
 
 	@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 	@Retention(RetentionPolicy.RUNTIME)
 	@One
-	@interface Two { }
+	@interface Two {
+	}
 
 	private List<Annotation> annotationsFromMethod(String methodName) throws NoSuchMethodException {
 		Parameter param = parameterFromMethod(methodName);
