@@ -1,17 +1,18 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.support.*;
-import org.junit.platform.commons.util.*;
-import org.junit.platform.engine.reporting.*;
-import org.opentest4j.*;
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static net.jqwik.properties.PropertyCheckResult.Status.*;
+import org.junit.platform.commons.util.*;
+import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
+
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
 
 public class GenericProperty {
 
@@ -53,24 +54,24 @@ public class GenericProperty {
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, configuration.getReportingMode(), reporter)) {
-					return shrinkAndCreateCheckResult(configuration.getShrinkingMode(), configuration.getSeed(), countChecks, countTries,
-							shrinkableParams, null);
+					return shrinkAndCreateCheckResult(configuration.getStereotype(), configuration.getShrinkingMode(),
+							configuration.getSeed(), countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(configuration.getShrinkingMode(), configuration.getSeed(), countChecks, countTries,
-						shrinkableParams, ae);
+				return shrinkAndCreateCheckResult(configuration.getStereotype(), configuration.getShrinkingMode(), configuration.getSeed(),
+						countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
 			} catch (Throwable throwable) {
 				BlacklistedExceptions.rethrowIfBlacklisted(throwable);
-				return PropertyCheckResult.erroneous(name, countTries, countChecks, configuration.getSeed(),
+				return PropertyCheckResult.erroneous(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
 						extractParams(shrinkableParams), throwable);
 			}
 		}
 		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, maxTries, configuration.getMaxDiscardRatio()))
-			return PropertyCheckResult.exhausted(name, maxTries, countChecks, configuration.getSeed());
-		return PropertyCheckResult.satisfied(name, maxTries, countChecks, configuration.getSeed());
+			return PropertyCheckResult.exhausted(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
+		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
 	}
 
 	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode, Consumer<ReportEntry> reporter) {
@@ -91,17 +92,17 @@ public class GenericProperty {
 	}
 
 	@SuppressWarnings("unchecked")
-	private PropertyCheckResult shrinkAndCreateCheckResult(ShrinkingMode shrinkingMode, long seed, int countChecks, int countTries,
-			List<Shrinkable> shrinkables, AssertionError error) {
+	private PropertyCheckResult shrinkAndCreateCheckResult(String stereotype, ShrinkingMode shrinkingMode, long seed, int countChecks,
+			int countTries, List<Shrinkable> shrinkables, AssertionError error) {
 		List<Object> originalParams = extractParams(shrinkables);
 		if (shrinkingMode == ShrinkingMode.OFF) {
-			return PropertyCheckResult.falsified(name, countTries, countChecks, seed, originalParams, originalParams, error);
+			return PropertyCheckResult.falsified(stereotype, name, countTries, countChecks, seed, originalParams, originalParams, error);
 		}
 		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables);
 		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
 		List<Object> shrunkParams = extractParams(shrinkResult.shrunkValue());
 		Throwable throwable = shrinkResult.throwable().orElse(null);
-		return PropertyCheckResult.falsified(name, countTries, countChecks, seed, shrunkParams, originalParams, throwable);
+		return PropertyCheckResult.falsified(stereotype, name, countTries, countChecks, seed, shrunkParams, originalParams, throwable);
 	}
 
 	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {

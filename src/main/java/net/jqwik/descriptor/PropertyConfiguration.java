@@ -12,9 +12,10 @@ public class PropertyConfiguration {
 		int maxDiscardRatio = property.maxDiscardRatio() == Property.MAX_DISCARD_RATIO_NOT_SET //
 				? propertyDefaultValues.maxDiscardRatio()
 				: property.maxDiscardRatio();
-		return new PropertyConfiguration(property.seed(), tries, maxDiscardRatio, property.shrinking(), property.reporting());
+		return new PropertyConfiguration(property.stereotype(), property.seed(), tries, maxDiscardRatio, property.shrinking(), property.reporting());
 	}
 
+	private final String stereotype;
 	private final long seed;
 	private final int tries;
 	private final int maxDiscardRatio;
@@ -22,12 +23,14 @@ public class PropertyConfiguration {
 	private final ReportingMode reportingMode;
 
 	public PropertyConfiguration( //
+			String stereotype, //
 			long seed, //
 			int tries, //
 			int maxDiscardRatio, //
 			ShrinkingMode shrinkingMode, //
 			ReportingMode reportingMode //
 	) {
+		this.stereotype = stereotype;
 		this.seed = seed;
 		this.tries = tries;
 		this.maxDiscardRatio = maxDiscardRatio;
@@ -40,7 +43,11 @@ public class PropertyConfiguration {
 	}
 
 	public PropertyConfiguration withSeed(long changedSeed) {
-		return new PropertyConfiguration(changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.reportingMode);
+		return new PropertyConfiguration(this.stereotype, changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.reportingMode);
+	}
+
+	public String getStereotype() {
+		return stereotype;
 	}
 
 	public int getTries() {

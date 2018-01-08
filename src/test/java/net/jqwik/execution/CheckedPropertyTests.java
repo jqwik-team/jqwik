@@ -31,6 +31,7 @@ class CheckedPropertyTests {
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
+			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(Property.DEFAULT_STEREOTYPE);
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
@@ -44,6 +45,7 @@ class CheckedPropertyTests {
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
+			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo("OtherStereotype");
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(42);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(2);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
@@ -107,7 +109,7 @@ class CheckedPropertyTests {
 			List<Parameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
 					p -> Optional.empty(), //
-					new PropertyConfiguration(1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
+					new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -121,7 +123,7 @@ class CheckedPropertyTests {
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
 					p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-100, 100))),
-					new PropertyConfiguration(42L, 12, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
+					new PropertyConfiguration("Property", 42L, 12, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.randomSeed()).isEqualTo(42L);
@@ -135,7 +137,7 @@ class CheckedPropertyTests {
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
 				p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-50, 50))), //
-				new PropertyConfiguration(1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
+				new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
@@ -151,7 +153,7 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		@Property(tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF, reporting = ReportingMode.GENERATED)
+		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF, reporting = ReportingMode.GENERATED)
 		public boolean propertyWith42TriesAndMaxDiscardRatio2(@ForAll int anyNumber) {
 			return true;
 		}

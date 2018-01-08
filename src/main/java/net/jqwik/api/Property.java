@@ -20,6 +20,7 @@ public @interface Property {
 	int TRIES_NOT_SET = 0;
 	int MAX_DISCARD_RATIO_NOT_SET = 0;
 	long SEED_NOT_SET = 0L;
+	String DEFAULT_STEREOTYPE = "Property";
 
 	int tries() default TRIES_NOT_SET;
 
@@ -30,4 +31,6 @@ public @interface Property {
 	ShrinkingMode shrinking() default ShrinkingMode.ON;
 
 	ReportingMode reporting() default ReportingMode.MINIMAL;
+
+	String stereotype() default DEFAULT_STEREOTYPE;
 }

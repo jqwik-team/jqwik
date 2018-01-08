@@ -94,16 +94,16 @@ public interface PropertyCheckResult {
 
 	}
 
-	static PropertyCheckResult satisfied(String propertyName, int tries, int checks, long randomSeed) {
+	static PropertyCheckResult satisfied(String stereotype, String propertyName, int tries, int checks, long randomSeed) {
 		return new ResultBase(Status.SATISFIED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public String toString() {
-				return String.format("Property [%s] satisfied", propertyName);
+				return String.format("%s [%s] satisfied", stereotype, propertyName);
 			}
 		};
 	}
 
-	static PropertyCheckResult falsified(String propertyName, int tries, int checks, long randomSeed, List<Object> sample,
+	static PropertyCheckResult falsified(String stereotype, String propertyName, int tries, int checks, long randomSeed, List<Object> sample,
 			List<Object> originalSample, Throwable throwable) {
 		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed) {
 			@Override
@@ -118,7 +118,8 @@ public interface PropertyCheckResult {
 
 			@Override
 			public String toString() {
-				return String.format("Property [%s] falsified with sample %s", propertyName, JqwikStringSupport.displayString(sample));
+				String sampleString = sample.isEmpty() ? "" : String.format(" with sample %s", JqwikStringSupport.displayString(sample));
+				return String.format("%s [%s] falsified%s", stereotype, propertyName, sampleString);
 			}
 
 			@Override
@@ -129,8 +130,8 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult erroneous(String propertyName, int tries, int checks, long randomSeed, List<Object> sample,
-			Throwable throwable) {
+	static PropertyCheckResult erroneous(String stereotype, String propertyName, int tries, int checks, long randomSeed,
+			List<Object> sample, Throwable throwable) {
 		return new ResultBase(Status.ERRONEOUS, propertyName, tries, checks, randomSeed) {
 			@Override
 			public Optional<List<Object>> sample() {
@@ -144,17 +145,17 @@ public interface PropertyCheckResult {
 
 			@Override
 			public String toString() {
-				return String.format("Property [%s] erroneous with sample %s and exception [%s]", propertyName, sample, throwable);
+				return String.format("%s [%s] erroneous with sample %s and exception [%s]", stereotype, propertyName, sample, throwable);
 			}
 		};
 	}
 
-	static PropertyCheckResult exhausted(String propertyName, int tries, int checks, long randomSeed) {
+	static PropertyCheckResult exhausted(String stereotype, String propertyName, int tries, int checks, long randomSeed) {
 		return new ResultBase(Status.EXHAUSTED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public String toString() {
 				int rejections = tries - checks;
-				return String.format("Property [%s] exhausted after [%d] tries and [%d] rejections", propertyName, tries, rejections);
+				return String.format("%s [%s] exhausted after [%d] tries and [%d] rejections", stereotype, propertyName, tries, rejections);
 			}
 		};
 	}

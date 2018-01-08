@@ -24,4 +24,9 @@ public class MixedTests {
 	@Example
 	void anExample() {
 	}
+
+	@Example
+	boolean failingExample() {
+		return false;
+	}
 }

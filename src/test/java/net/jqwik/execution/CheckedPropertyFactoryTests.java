@@ -31,6 +31,7 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(argsTrue)).isTrue();
 		assertThat(property.forAllPredicate.test(argsFalse)).isFalse();
 
+		assertThat(property.configuration.getStereotype()).isEqualTo("Property");
 		assertThat(property.configuration.getSeed()).isEqualTo(42);
 		assertThat(property.configuration.getTries()).isEqualTo(11);
 		assertThat(property.configuration.getMaxDiscardRatio()).isEqualTo(4);
@@ -63,7 +64,7 @@ public class CheckedPropertyFactoryTests {
 			ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		PropertyConfiguration propertyConfig = new PropertyConfiguration(seed, tries, maxDiscardRatio, shrinking, ReportingMode.MINIMAL);
+		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, ReportingMode.MINIMAL);
 		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, propertyConfig);
 	}
 

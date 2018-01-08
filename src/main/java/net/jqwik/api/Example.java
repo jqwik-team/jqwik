@@ -13,6 +13,6 @@ import java.lang.annotation.*;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Property(tries = 1, shrinking = ShrinkingMode.OFF)
+@Property(tries = 1, shrinking = ShrinkingMode.OFF, stereotype = "Example")
 public @interface Example {
 }

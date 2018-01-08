@@ -40,7 +40,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(12);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(13);
 	}
 
 	@Example
@@ -51,7 +51,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(12);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(13);
 	}
 
 	@Example
@@ -62,7 +62,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(4);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(5);
 	}
 
 	@Example
@@ -70,7 +70,7 @@ class DiscoveryTests {
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(MixedTests.class)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
-		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(5);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(6);
 	}
 
 	@Example
