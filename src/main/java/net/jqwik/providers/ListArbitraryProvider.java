@@ -1,4 +1,4 @@
-package net.jqwik.execution.providers;
+package net.jqwik.providers;
 
 import java.util.List;
 

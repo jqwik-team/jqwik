@@ -1,7 +1,6 @@
-package net.jqwik.execution.providers;
+package net.jqwik.api.providers;
 
 import net.jqwik.api.*;
-import net.jqwik.execution.*;
 
 import java.util.*;
 import java.util.function.*;

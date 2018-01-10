@@ -1,19 +1,19 @@
-package net.jqwik.execution.providers;
+package net.jqwik.providers;
 
 import net.jqwik.api.*;
-import net.jqwik.execution.*;
+import net.jqwik.api.providers.*;
 
 import java.util.*;
 import java.util.function.*;
 
-public class IntegerArbitraryProvider implements ArbitraryProvider {
+public class LongArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(Integer.class);
+		return targetType.isAssignableFrom(Long.class);
 	}
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
-		return Arbitraries.integers();
+		return Arbitraries.longs();
 	}
 }

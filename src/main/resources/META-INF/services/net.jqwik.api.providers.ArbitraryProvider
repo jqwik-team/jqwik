@@ -1,0 +1,15 @@
+net.jqwik.providers.EnumArbitraryProvider
+net.jqwik.providers.CharacterArbitraryProvider
+net.jqwik.providers.BooleanArbitraryProvider
+net.jqwik.providers.IntegerArbitraryProvider
+net.jqwik.providers.LongArbitraryProvider
+net.jqwik.providers.DoubleArbitraryProvider
+net.jqwik.providers.FloatArbitraryProvider
+net.jqwik.providers.BigIntegerArbitraryProvider
+net.jqwik.providers.BigDecimalArbitraryProvider
+net.jqwik.providers.StringArbitraryProvider
+net.jqwik.providers.ListArbitraryProvider
+net.jqwik.providers.SetArbitraryProvider
+net.jqwik.providers.StreamArbitraryProvider
+net.jqwik.providers.OptionalArbitraryProvider
+net.jqwik.providers.ArrayArbitraryProvider

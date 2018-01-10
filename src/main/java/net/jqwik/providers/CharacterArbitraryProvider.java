@@ -1,21 +1,19 @@
-package net.jqwik.execution.providers;
+package net.jqwik.providers;
 
 import net.jqwik.api.*;
-import net.jqwik.execution.*;
+import net.jqwik.api.providers.*;
 
 import java.util.*;
 import java.util.function.*;
 
-public class EnumArbitraryProvider implements ArbitraryProvider {
-
+public class CharacterArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isEnum();
+		return targetType.isAssignableFrom(Character.class);
 	}
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
-		// noinspection unchecked
-		return Arbitraries.of((Class<Enum>) targetType.getRawType());
+		return Arbitraries.chars();
 	}
 }

@@ -1,7 +1,9 @@
-- Use Service Provider mechanism to register default providers
-  - Document it
+- Tests for default provider loading
+- Document ArbitraryProvider registration
 - Handle case when more than one default arbitrary provider can provide
-  - Add priority to provider registration 
+- Add priority to provider registration 
+- Document self-made Arbitrary classes
+  - document configuration via configure methods
+- Document @WithNull.target
 - Default Arbitrary for short
 - Default Arbitrary for byte
-- Document @WithNull.target

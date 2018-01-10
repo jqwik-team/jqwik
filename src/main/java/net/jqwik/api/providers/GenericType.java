@@ -1,4 +1,4 @@
-package net.jqwik.execution;
+package net.jqwik.api.providers;
 
 import java.lang.reflect.*;
 import java.util.*;

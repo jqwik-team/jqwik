@@ -1,8 +1,9 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.execution.providers.*;
+import net.jqwik.providers.*;
 import net.jqwik.support.*;
 import org.junit.platform.commons.support.*;
 
@@ -11,29 +12,10 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import static net.jqwik.execution.providers.DefaultArbitraryProviders.*;
 import static net.jqwik.support.JqwikReflectionSupport.*;
 import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
-
-	static {
-		register(EnumArbitraryProvider.class);
-		register(CharacterArbitraryProvider.class);
-		register(BooleanArbitraryProvider.class);
-		register(IntegerArbitraryProvider.class);
-		register(LongArbitraryProvider.class);
-		register(DoubleArbitraryProvider.class);
-		register(FloatArbitraryProvider.class);
-		register(BigIntegerArbitraryProvider.class);
-		register(BigDecimalArbitraryProvider.class);
-		register(StringArbitraryProvider.class);
-		register(ListArbitraryProvider.class);
-		register(SetArbitraryProvider.class);
-		register(StreamArbitraryProvider.class);
-		register(OptionalArbitraryProvider.class);
-		register(ArrayArbitraryProvider.class);
-	}
 
 	private final static String CONFIG_METHOD_NAME = "configure";
 

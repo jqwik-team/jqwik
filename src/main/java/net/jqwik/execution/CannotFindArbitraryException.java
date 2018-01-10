@@ -2,6 +2,7 @@ package net.jqwik.execution;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 
 import java.lang.reflect.*;
 

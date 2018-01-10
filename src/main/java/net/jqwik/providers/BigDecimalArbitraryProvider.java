@@ -1,20 +1,20 @@
-package net.jqwik.execution.providers;
+package net.jqwik.providers;
 
 import net.jqwik.api.*;
-import net.jqwik.execution.*;
+import net.jqwik.api.providers.*;
 
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
-public class BigIntegerArbitraryProvider implements ArbitraryProvider {
+public class BigDecimalArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(BigInteger.class);
+		return targetType.isAssignableFrom(BigDecimal.class);
 	}
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
-		return Arbitraries.bigIntegers();
+		return Arbitraries.bigDecimals();
 	}
 }

@@ -1,11 +1,11 @@
-package net.jqwik.execution;
+package net.jqwik.api.providers;
 
 import net.jqwik.api.*;
 import org.assertj.core.api.*;
 
 import java.util.*;
 
-public class GenericTypeTests {
+class GenericTypeTests {
 
 	@Example
 	void nonGenericTypesAssignability() {
