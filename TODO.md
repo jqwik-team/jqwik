@@ -1,2 +1,7 @@
+- Use Service Provider mechanism to register default providers
+  - Document it
+- Handle case when more than one default arbitrary provider can provide
+  - Add priority to provider registration 
 - Default Arbitrary for short
 - Default Arbitrary for byte
+- Document @WithNull.target

@@ -1,16 +1,19 @@
 package net.jqwik.execution.providers;
 
 import net.jqwik.api.*;
-import net.jqwik.execution.GenericType;
+import net.jqwik.execution.*;
 
-public class DoubleArbitraryProvider implements SimpleArbitraryProvider {
+import java.util.*;
+import java.util.function.*;
+
+public class DoubleArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
 		return targetType.isAssignableFrom(Double.class);
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType) {
+	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
 		return Arbitraries.doubles();
 	}
 }
