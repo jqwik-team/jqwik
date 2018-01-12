@@ -1,6 +1,4 @@
-- Tests for default provider loading
 - Document ArbitraryProvider registration
-- Handle case when more than one default arbitrary provider can provide
 - Add priority to provider registration 
 - Document self-made Arbitrary classes
   - document configuration via configure methods

@@ -21,10 +21,16 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	private final PropertyMethodDescriptor descriptor;
 	private final Object testInstance;
+	private final List<ArbitraryProvider> defaultProviders;
 
 	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance) {
+		this(descriptor, testInstance, DefaultArbitraryProviders.getProviders());
+	}
+
+	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance, List<ArbitraryProvider> defaultProviders) {
 		this.descriptor = descriptor;
 		this.testInstance = testInstance;
+		this.defaultProviders = defaultProviders;
 	}
 
 	@Override
@@ -125,7 +131,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private Optional<Arbitrary<?>> findDefaultArbitrary(GenericType parameterType, String generatorName, List<Annotation> annotations) {
 		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> forType(subtype, generatorName, annotations);
 
-		for (ArbitraryProvider provider : DefaultArbitraryProviders.getProviders()) {
+		for (ArbitraryProvider provider : defaultProviders) {
 			boolean generatorNameSpecified = !generatorName.isEmpty();
 			if (generatorNameSpecified && !parameterType.isGeneric()) {
 				continue;
