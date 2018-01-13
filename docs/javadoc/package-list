@@ -1,2 +1,3 @@
 net.jqwik.api
 net.jqwik.api.constraints
+net.jqwik.api.providers
