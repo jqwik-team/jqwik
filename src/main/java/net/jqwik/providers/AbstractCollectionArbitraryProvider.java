@@ -10,7 +10,7 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(getProvidedType());
+		return targetType.isOfType(getProvidedType());
 	}
 
 	protected abstract Class<?> getProvidedType();

@@ -46,6 +46,10 @@ public class GenericType {
 		return typeArguments;
 	}
 
+	public boolean isOfType(Class<?> aRawType) {
+		return rawType == aRawType;
+	}
+
 	public boolean isGeneric() {
 		return typeArguments.length > 0;
 	}

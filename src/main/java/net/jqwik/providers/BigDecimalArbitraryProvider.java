@@ -10,7 +10,7 @@ import java.util.function.*;
 public class BigDecimalArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(BigDecimal.class);
+		return targetType.isOfType(BigDecimal.class);
 	}
 
 	@Override

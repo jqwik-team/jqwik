@@ -9,7 +9,7 @@ import java.util.function.*;
 public class StringArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(String.class);
+		return targetType.isOfType(String.class);
 	}
 
 	@Override

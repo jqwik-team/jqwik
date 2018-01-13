@@ -10,7 +10,7 @@ import java.util.function.*;
 public class BigIntegerArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(BigInteger.class);
+		return targetType.isOfType(BigInteger.class);
 	}
 
 	@Override
