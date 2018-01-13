@@ -1,11 +1,10 @@
 package net.jqwik.providers;
 
-import net.jqwik.api.providers.*;
-
 import java.util.*;
 
-public class DefaultArbitraryProviders {
+import net.jqwik.api.providers.*;
 
+public class DefaultArbitraryProviders {
 
 	private static List<ArbitraryProvider> defaultProviders;
 
@@ -13,18 +12,34 @@ public class DefaultArbitraryProviders {
 		if (null == defaultProviders) {
 			loadArbitraryProviders();
 		}
-		return Collections.unmodifiableList(defaultProviders);
+		return Collections.unmodifiableList(new ArrayList<>(defaultProviders));
 	}
 
 	private static void loadArbitraryProviders() {
 		defaultProviders = new ArrayList<>();
 		Iterable<ArbitraryProvider> providers = ServiceLoader.load(ArbitraryProvider.class);
 		for (ArbitraryProvider provider : providers) {
-			if (defaultProviders.contains(provider)) {
-				continue;
-			}
-			defaultProviders.add(provider);
+			register(provider);
 		}
+	}
+
+	public static void register(ArbitraryProvider provider) {
+		if (getProviders().contains(provider)) {
+			return;
+		}
+		defaultProviders.add(0, provider);
+	}
+
+	public static void unregister(ArbitraryProvider providerToDelete) {
+		getProviders().stream() //
+				.filter(provider -> provider == providerToDelete) //
+				.forEach(provider -> defaultProviders.remove(provider));
+	}
+
+	public static void unregister(Class<? extends ArbitraryProvider> providerClass) {
+		getProviders().stream() //
+				.filter(provider -> provider.getClass() == providerClass) //
+				.forEach(provider -> defaultProviders.remove(provider));
 	}
 
 }

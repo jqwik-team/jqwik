@@ -2,16 +2,22 @@ package net.jqwik.api.providers;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.providers.*;
 
-class DefaultProvidersTests {
+class DefaultArbitraryProvidersTests {
 
 	private enum AnEnum {
 		One,
 		Two,
 		Three
+	}
+
+	private static class Person {
+
 	}
 
 	@Property
@@ -119,4 +125,51 @@ class DefaultProvidersTests {
 		return aValue != null;
 	}
 
+	@Group
+	class Registration implements AutoCloseable {
+
+		final ArbitraryProvider personProvider;
+
+		Registration() {
+			personProvider = new ArbitraryProvider() {
+				@Override
+				public boolean canProvideFor(GenericType targetType) {
+					return targetType.isAssignableFrom(Person.class);
+				}
+
+				@Override
+				public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+					return Arbitraries.of(new Person());
+				}
+			};
+			DefaultArbitraryProviders.register(personProvider);
+		}
+
+		@Property
+		boolean personCanBeGenerated(@ForAll Person aPerson) {
+			return aPerson != null;
+		}
+
+		@Example
+		boolean manuallyRegisteredProviderIsPartOfDefaultProviders() {
+			return DefaultArbitraryProviders.getProviders().contains(personProvider);
+		}
+
+		@Example
+		boolean manuallyRegisteredProviderCanBeUnregistered() {
+			DefaultArbitraryProviders.unregister(personProvider);
+			return !DefaultArbitraryProviders.getProviders().contains(personProvider);
+		}
+
+		@Example
+		boolean manuallyRegisteredProviderCanBeUnregisteredByClass() {
+			DefaultArbitraryProviders.unregister(personProvider.getClass());
+			return !DefaultArbitraryProviders.getProviders().contains(personProvider);
+		}
+
+		@Override
+		public void close() throws Exception {
+			DefaultArbitraryProviders.unregister(personProvider);
+		}
+	}
 }
