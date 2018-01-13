@@ -1037,22 +1037,23 @@ defaultMaxDiscardRatio = 5
 
 ## Providing Default Arbitraries
 
-Sometimes you might not want to use a default `Arbitrary` for one of your own domain
-classes in all of your properties without having to add a `@Provide` annotated method
-to all classes. _jqwik_ enables this feature by using 
+Sometimes you want to use a certain, self-made `Arbitrary` for one of your own domain
+classes, in all of your properties, and without having to add `@Provide` method
+to all test classes. _jqwik_ enables this feature by using 
 Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
-- Implement the interface `net.jqwik.api.providers.ArbitraryProvider`
+- Implement the interface `net.jqwik.api.providers.ArbitraryProvider`. The implementing
+  class _must_ have a default constructor without parameters.
 - Register the implementation class in file `META-INF/services/net.jqwik.api.providers.ArbitraryProvider`
 
-_jqwik_ will then instantiate and load an instance of your arbitrary provider into the list of
+_jqwik_ will then add an instance of your arbitrary provider into the list of
 its default providers. Those default providers are considered for every test parameter annotated 
 with `@ForAll` that has no explicit `value`. By using this mechanism you can also replace
 the default providers packaged into _jqwik_.
 
 ### Simple Arbitrary Providers
 
-A simple provider is one that can provide arbitraries for types without type variables.
+A simple provider is one that delivers arbitraries for types without type variables.
 Consider the class `Money`:
 
 ```java
@@ -1101,7 +1102,7 @@ in file `META-INF/services/net.jqwik.api.providers.ArbitraryProvider` with such 
 my.own.provider.MoneyArbitraryProvider
 ```
 
-The following property will run without further ado:
+The following property will run without further ado - regardless the class you put it in:
 
 ```java
 @Property
