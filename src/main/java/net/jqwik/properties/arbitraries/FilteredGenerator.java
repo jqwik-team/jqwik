@@ -3,7 +3,7 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.properties.*;
+import net.jqwik.api.*;
 
 public class FilteredGenerator<T> implements RandomGenerator<T> {
 	private final RandomGenerator<T> toFilter;

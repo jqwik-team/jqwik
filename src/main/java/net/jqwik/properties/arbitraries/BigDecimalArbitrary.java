@@ -4,9 +4,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.properties.*;
 
 public class BigDecimalArbitrary extends NullableArbitrary<BigDecimal> {
 
@@ -43,10 +42,10 @@ public class BigDecimalArbitrary extends NullableArbitrary<BigDecimal> {
 		BigDecimal[] sampleValues = { BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ONE.negate(), smallest, smallest.negate(), DEFAULT_MAX,
 				DEFAULT_MIN, minGenerate, maxGenerate };
 		List<Shrinkable<BigDecimal>> samples = Arrays.stream(sampleValues) //
-				.distinct() //
-				.filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
-				.map(value -> new ShrinkableValue<>(value, decimalShrinkCandidates)) //
-				.collect(Collectors.toList());
+													 .distinct() //
+													 .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
+													 .map(value -> new ShrinkableValue<>(value, decimalShrinkCandidates)) //
+													 .collect(Collectors.toList());
 		return RandomGenerators.bigDecimals(minGenerate, maxGenerate, scale).withShrinkableSamples(samples);
 	}
 

@@ -3,9 +3,8 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 import net.jqwik.api.constraints.LongRange;
-import net.jqwik.properties.*;
 
 public class LongArbitrary extends NullableArbitrary<Long> {
 
@@ -37,10 +36,10 @@ public class LongArbitrary extends NullableArbitrary<Long> {
 	private RandomGenerator<Long> longGenerator(long minGenerate, long maxGenerate) {
 		LongShrinkCandidates shrinkCandidates = new LongShrinkCandidates(min, max);
 		List<Shrinkable<Long>> samples = Arrays.stream(new long[] { 0, 1, -1, Long.MIN_VALUE, Long.MAX_VALUE, minGenerate, maxGenerate }) //
-				.distinct() //
-				.filter(anInt -> anInt >= min && anInt <= max) //
-				.mapToObj(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
-				.collect(Collectors.toList());
+											   .distinct() //
+											   .filter(anInt -> anInt >= min && anInt <= max) //
+											   .mapToObj(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
+											   .collect(Collectors.toList());
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 

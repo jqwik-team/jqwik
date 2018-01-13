@@ -4,9 +4,8 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 import net.jqwik.api.constraints.Size;
-import net.jqwik.properties.*;
 
 public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 
@@ -52,10 +51,10 @@ public class ArrayArbitrary<A, T> extends NullableArbitrary<A> {
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
 		List<T> emptyList = Collections.emptyList();
 		List<Shrinkable<List<T>>> samples = Stream.of(emptyList)
-			.filter(l -> l.size() >= minSize)
-			.filter(l -> maxSize == 0 || l.size() <= maxSize)
-			.map(Shrinkable::unshrinkable)
-			.collect(Collectors.toList());
+												  .filter(l -> l.size() >= minSize)
+												  .filter(l -> maxSize == 0 || l.size() <= maxSize)
+												  .map(Shrinkable::unshrinkable)
+												  .collect(Collectors.toList());
 		return RandomGenerators.list(elementGenerator, minSize, maxSize).withShrinkableSamples(samples);
 	}
 

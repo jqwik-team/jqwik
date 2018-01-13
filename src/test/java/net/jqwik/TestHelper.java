@@ -6,7 +6,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import net.jqwik.api.Arbitrary;
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.api.RandomGenerator;
 
 public class TestHelper {
 	public static List<Parameter> getParametersFor(Class<?> aClass, String methodName) {

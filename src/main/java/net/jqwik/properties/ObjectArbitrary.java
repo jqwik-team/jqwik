@@ -1,6 +1,6 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 
 public class ObjectArbitrary implements Arbitrary<Object> {
 	@Override

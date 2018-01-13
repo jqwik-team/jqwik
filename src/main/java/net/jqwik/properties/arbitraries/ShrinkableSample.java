@@ -3,6 +3,7 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 import java.util.function.Predicate;
 
+import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
 public class ShrinkableSample<T> implements Shrinkable<T> {

@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-import net.jqwik.properties.*;
+import net.jqwik.api.*;
 
 public class RandomGenerators {
 

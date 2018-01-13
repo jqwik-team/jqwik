@@ -1,13 +1,15 @@
 package net.jqwik.properties;
 
+import net.jqwik.api.*;
+
 import java.util.*;
 import java.util.function.*;
 
-class Unshrinkable<T> implements Shrinkable<T> {
+public class Unshrinkable<T> implements Shrinkable<T> {
 
 	private final T value;
 
-	Unshrinkable(T value) {
+	public Unshrinkable(T value) {
 		this.value = value;
 	}
 

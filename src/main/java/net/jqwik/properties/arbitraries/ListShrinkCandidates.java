@@ -2,7 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import java.util.*;
 
-import net.jqwik.properties.Shrinkable;
+import net.jqwik.api.Shrinkable;
 
 public class ListShrinkCandidates<T> implements ShrinkCandidates<List<Shrinkable<T>>> {
 

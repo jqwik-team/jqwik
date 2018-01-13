@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
 import net.jqwik.properties.*;
 
 public class MappedShrinkable<T, U> implements Shrinkable<U> {

@@ -146,7 +146,7 @@ class DefaultArbitraryProvidersTests {
 		}
 
 		@Property
-		boolean personCanBeGenerated(@ForAll Person aPerson) {
+		boolean registeredProviderIsUsedInProperty(@ForAll Person aPerson) {
 			return aPerson != null;
 		}
 

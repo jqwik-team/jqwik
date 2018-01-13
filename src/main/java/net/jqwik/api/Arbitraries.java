@@ -1,12 +1,11 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 

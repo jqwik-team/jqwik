@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import net.jqwik.api.*;
+
 import java.util.*;
 import java.util.function.*;
 

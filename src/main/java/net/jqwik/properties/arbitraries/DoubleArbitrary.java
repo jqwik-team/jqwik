@@ -3,9 +3,8 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.properties.*;
 
 public class DoubleArbitrary extends NullableArbitrary<Double> {
 

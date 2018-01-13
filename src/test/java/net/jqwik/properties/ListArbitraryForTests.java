@@ -3,7 +3,7 @@ package net.jqwik.properties;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.jqwik.api.Arbitrary;
+import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 
 public class ListArbitraryForTests implements Arbitrary<List<Integer>> {

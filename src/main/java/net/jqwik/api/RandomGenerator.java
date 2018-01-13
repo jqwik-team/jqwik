@@ -1,10 +1,9 @@
-package net.jqwik.properties;
+package net.jqwik.api;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 
 public interface RandomGenerator<T> {

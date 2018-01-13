@@ -1,7 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.Arbitrary;
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.api.RandomGenerator;
 import net.jqwik.properties.arbitraries.ArbitraryWrapper;
 
 class GenericArbitrary extends ArbitraryWrapper<Object, Object> {

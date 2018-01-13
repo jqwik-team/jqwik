@@ -3,7 +3,7 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 
 import net.jqwik.api.constraints.*;
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.api.RandomGenerator;
 
 public class CharacterArbitrary extends NullableArbitrary<Character> {
 

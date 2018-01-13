@@ -14,7 +14,6 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 

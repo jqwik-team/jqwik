@@ -1,5 +1,6 @@
 package net.jqwik.properties;
 
+import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;

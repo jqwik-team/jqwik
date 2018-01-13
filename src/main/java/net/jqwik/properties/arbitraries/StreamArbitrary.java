@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import net.jqwik.api.Arbitrary;
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.api.RandomGenerator;
 
 public class StreamArbitrary<T> extends CollectionArbitrary<T, Stream<T>> {
 

@@ -3,7 +3,7 @@ package net.jqwik.properties.arbitraries;
 import java.util.List;
 
 import net.jqwik.api.Arbitrary;
-import net.jqwik.properties.RandomGenerator;
+import net.jqwik.api.RandomGenerator;
 
 public class ListArbitrary<T> extends CollectionArbitrary<T, List<T>> {
 
