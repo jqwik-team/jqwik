@@ -1,6 +1,6 @@
 # The jqwik User Guide
 
-_The user guide is still rough and incomplete. 
+_The user guide is still a bit rough and incomplete in some areas. 
 Volunteers for polishing and extending it are more than welcome._
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -36,8 +36,10 @@ Volunteers for polishing and extending it are more than welcome._
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
 - [Running and Configuration](#running-and-configuration)
   - [jqwik Configuration](#jqwik-configuration)
+- [Providing Default Arbitraries](#providing-default-arbitraries)
+  - [Simple Arbitrary Providers](#simple-arbitrary-providers)
+  - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
-- [Register default Generators and Arbitraries](#register-default-generators-and-arbitraries)
 - [Glossary](#glossary)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -1033,14 +1035,113 @@ defaultTries = 1000
 defaultMaxDiscardRatio = 5
 ```
 
+## Providing Default Arbitraries
+
+Sometimes you might not want to use a default `Arbitrary` for one of your own domain
+classes in all of your properties without having to add a `@Provide` annotated method
+to all classes. _jqwik_ enables this feature by using 
+Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
+
+- Implement the interface `net.jqwik.api.providers.ArbitraryProvider`
+- Register the implementation class in file `META-INF/services/net.jqwik.api.providers.ArbitraryProvider`
+
+_jqwik_ will then instantiate and load an instance of your arbitrary provider into the list of
+its default providers. Those default providers are considered for every test parameter annotated 
+with `@ForAll` that has no explicit `value`. By using this mechanism you can also replace
+the default providers packaged into _jqwik_.
+
+### Simple Arbitrary Providers
+
+A simple provider is one that can provide arbitraries for types without type variables.
+Consider the class `Money`:
+
+```java
+public class Money {
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public Money(BigDecimal amount, String currency) {
+		this.amount = amount;
+		this.currency = currency;
+	}
+
+	public Money times(int factor) {
+		return new Money(amount.multiply(new BigDecimal(factor)), currency);
+	}
+}
+``` 
+
+If you register the following `MoneyArbitraryProvider` class:
+
+```java
+package my.own.provider;
+public class MoneyArbitraryProvider implements ArbitraryProvider {
+	@Override
+	public boolean canProvideFor(GenericType targetType) {
+		return targetType.isOfType(Money.class);
+	}
+
+	@Override
+	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals(BigDecimal.ZERO, new BigDecimal(1_000_000_000), 2);
+		Arbitrary<String> currency = Arbitraries.of("EUR", "USD", "CHF");
+		return Combinators.combine(amount, currency).as((a, c) -> new Money(a, c));
+	}
+}
+```
+
+in file `META-INF/services/net.jqwik.api.providers.ArbitraryProvider` with such an entry:
+
+```
+my.own.provider.MoneyArbitraryProvider
+```
+
+The following property will run without further ado:
+
+```java
+@Property
+void moneyCanBeMultiplied(@ForAll Money money) {
+    Money times2 = money.times(2);
+    Assertions.assertThat(times2.getCurrency()).isEqualTo(money.getCurrency());
+    Assertions.assertThat(times2.getAmount())
+        .isEqualTo(money.getAmount().multiply(new BigDecimal(2)));
+}
+```
+
+### Generic Arbitrary Providers 
+
+Providing arbitraries for generic types requires a little bit more effort
+since you have to create arbitraries for the "inner" types as well. 
+Let's have a look at the default provider for `java.util.Optional<T>`:
+
+```java
+public class OptionalArbitraryProvider implements ArbitraryProvider {
+	@Override
+	public boolean canProvideFor(GenericType targetType) {
+		return targetType.isOfType(Optional.class);
+	}
+
+	@Override
+	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeSupplier) {
+		GenericType innerType = targetType.getTypeArguments()[0];
+		return subtypeSupplier.apply(innerType) //
+			.map(Arbitraries::optionalOf) //
+			.orElse(null);
+	}
+}
+```
+
+Not too difficult, is it?
+
 ## Program your own Generators and Arbitraries
 
 This topic will probably need a page of its own.
 
-
-## Register default Generators and Arbitraries
-
-The API for providing Arbitraries and Generators by default is not public yet.
 
 
 ## Glossary

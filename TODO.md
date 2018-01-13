@@ -1,4 +1,3 @@
-- Document ArbitraryProvider registration
 - Add priority to provider registration 
 - Document self-made Arbitrary classes
   - document configuration via configure methods
