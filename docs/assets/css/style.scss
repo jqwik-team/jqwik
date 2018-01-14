@@ -3,6 +3,11 @@
 
 @import "{{ site.theme }}";
 
+a:hover {
+    text-decoration: none;
+    color: orange;
+}
+
 h2 {
     padding-top: 30px;
 }
@@ -43,6 +48,7 @@ nav {
             font-size: larger;
             display: inline;
             padding-right: 0.7em;
+
         }
     }
 }
@@ -54,3 +60,4 @@ pre.highlight {
 div {
     font-size: large;
 }
+

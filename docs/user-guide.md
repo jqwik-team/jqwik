@@ -77,11 +77,17 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 repositories {
     ...
     mavenCentral()
+    
+    # For snapshot releases only:
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+
 }
 
 ext.junitPlatformVersion = '1.0.2'
 ext.junitJupiterVersion = '5.0.2'
+
 ext.jqwikVersion = '0.8.0'
+#ext.jqwikVersion = '0.8.1-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -140,6 +146,7 @@ and add the following dependency to your `pom.xml` file:
 
 Snapshot releases are available through Sonatype's 
 [snapshot repositories](#https://oss.sonatype.org/content/repositories/snapshots).
+
 Adding `https://oss.sonatype.org/content/repositories/snapshots` as a maven repository
 will allow you to use _jqwik_'s snapshot release which contains all the latest features.
 
