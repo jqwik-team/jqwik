@@ -3,6 +3,7 @@
 _The user guide is still a bit rough and incomplete in some areas. 
 Volunteers for polishing and extending it are more than welcome._
 
+<!-- use `doctoc --maxlevel 3 user-guide.md` to recreate the TOC -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
@@ -10,6 +11,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [How to Use](#how-to-use)
   - [Gradle](#gradle)
   - [Maven](#maven)
+  - [Snapshot Releases](#snapshot-releases)
   - [Project without Build Tool](#project-without-build-tool)
 - [Creating an Example-based Test](#creating-an-example-based-test)
 - [Creating a Property](#creating-a-property)
@@ -40,7 +42,9 @@ Volunteers for polishing and extending it are more than welcome._
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
-- [Glossary](#glossary)
+- [Release Notes](#release-notes)
+  - [0.8.1-SNAPSHOT](#081-snapshot)
+  - [0.8.0](#080)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -132,10 +136,17 @@ and add the following dependency to your `pom.xml` file:
 ```
 
 
+### Snapshot Releases
+
+Snapshot releases are available through Sonatype's 
+[snapshot repositories](#https://oss.sonatype.org/content/repositories/snapshots).
+Adding `https://oss.sonatype.org/content/repositories/snapshots` as a maven repository
+will allow you to use _jqwik_'s snapshot release which contains all the latest features.
+
 ### Project without Build Tool
 
-I never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
-You will have to add _at least_ the following jars:
+I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
+You will have to add _at least_ the following jars to your classpath:
 
 - `jqwik-0.8.0.jar`
 - `junit-platform-engine-1.0.2.jar`
@@ -178,6 +189,8 @@ class ExampleBasedTests {
 ```
 
 ## Creating a Property
+
+_Properties_ are the core concept of [property-based testing](/#properties).
 
 You create a _Property_ by annotating a `public`, `protected` 
 or package-scoped method with `@Property`. In contrast to
@@ -310,7 +323,7 @@ Once for `anExample()` and 5 times for `aProperty(...)`.
 ### Other Lifecycles
 
 Currently _jqwik_ does not have special support for a lifecycle per test container,
-[test try](#try) or even package. Later versions of _jqwik_ might possible bring
+per test try or even package. Later versions of _jqwik_ might possible bring
 more features in that field. 
 [Create an issue on github](https://github.com/jlink/jqwik/issues) with your concrete needs.
 
@@ -1017,7 +1030,7 @@ As you can see, collected `null` values are not being reported.
 ## Running and Configuration
 
 When running _jqwik_ tests (through your IDE or your build tool) you might notice 
-that - once a [property](#property) has been falsified - it will always be tried
+that - once a property has been falsified - it will always be tried
 with the same seed to enhance the reproducibility of a bug. This requires
 that _jqwik_ will persist some runtime data across test runs.
 
@@ -1145,31 +1158,12 @@ This topic will probably need a page of its own.
 
 
 
-## Glossary
+## Release Notes
 
-#### Arbitrary
+### 0.8.1-SNAPSHOT
 
-The fundamental type that is used to generate values. The name was first chosen by QuickCheck
-and later adopted by most property-based-testing libraries.
+- Added support for [default arbitrary providers](#providing-default-arbitraries).
 
-Under the hood, most instances of type `Arbitrary` use [`RandomGenerator`s](#randomgenerator)
-to do the actual generation for them.
+### 0.8.0
 
-#### Property
-
-A _property_ is a [test method](#test-method) that has one or more
-parameters annotated with `@ForAll`. 
-
-#### RandomGenerator
-
-Instances of type `RandomGenerator` take care of actually generating a specific parameter instance.
-
-#### Test Method
-
-A _test method_ is a a `public`, `protected` or package-scoped method, 
-annotated with `@Example` or `@Property`.
-
-#### Try
-
-A _try_ is the attempt at running a [test method](#test-method) 
-a single time with a specific set of parameters.
+The first release published on maven central.
