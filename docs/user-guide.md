@@ -1062,9 +1062,10 @@ classes, in all of your properties, and without having to add `@Provide` method
 to all test classes. _jqwik_ enables this feature by using 
 Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
-- Implement the interface `net.jqwik.api.providers.ArbitraryProvider`. The implementing
-  class _must_ have a default constructor without parameters.
-- Register the implementation class in file `META-INF/services/net.jqwik.api.providers.ArbitraryProvider`
+- Implement the interface `net.jqwik.api.providers.ArbitraryProvider`.<br/> 
+  The implementing class _must_ have a default constructor without parameters.
+- Register the implementation class in file <br/>
+  `META-INF/services/net.jqwik.api.providers.ArbitraryProvider`
 
 _jqwik_ will then add an instance of your arbitrary provider into the list of
 its default providers. Those default providers are considered for every test parameter annotated 
