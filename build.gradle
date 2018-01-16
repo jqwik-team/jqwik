@@ -13,8 +13,8 @@ repositories {
 	//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
-ext.junitPlatformVersion = '1.0.2'
-ext.junitJupiterVersion = '5.0.2'
+ext.junitPlatformVersion = '1.0.3'
+ext.junitJupiterVersion = '5.0.3'
 ext.moduleName = 'net.jqwik'
 
 apply plugin: 'java'
