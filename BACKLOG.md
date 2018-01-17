@@ -40,6 +40,9 @@
 
 ### Properties
 
+- ArbitraryProvider: Add priority to provider registration to allow more specific providers.
+  Currently the order of registration is decisive - last registered provider wins.
+
 - Add ReportingMode.FALSIFIED, GENERATED_AND_FALSIFIED: Report only, also falsified values, also during shrinking
 
 - Report the samples in the state BEFORE execution of property method

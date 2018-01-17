@@ -1,6 +1,4 @@
-- Add priority to provider registration 
 - Document self-made Arbitrary classes
   - document configuration via configure methods
-- Document @WithNull.target
 - Default Arbitrary for short
 - Default Arbitrary for byte

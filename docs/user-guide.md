@@ -405,7 +405,11 @@ on the requested parameter type.
 
 #### All types:
 
-- `@WithNull(double value = 0.1)`: Also generate `null` values with a probability of `value`. 
+- `@WithNull(double value = 0.1, target = Object.class)`: 
+   Also generate `null` values with a probability of `value`. 
+   
+   If you annotate a generic parameter with `@WithNull`, only parameter types that
+   can be assigned to `target` are considered for `null`. 
 
 #### Strings:
 
