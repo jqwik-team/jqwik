@@ -49,33 +49,36 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void charsDefault() {
-		Arbitrary<Character> arbitrary = Arbitraries.chars();
-		RandomGenerator<Character> generator = arbitrary.generator(1);
-		ArbitraryTestHelper.assertAllGenerated(generator, Objects::nonNull);
-	}
-
-	@Example
-	void chars() {
-		Arbitrary<Character> arbitrary = Arbitraries.chars('a', 'd');
-		RandomGenerator<Character> generator = arbitrary.generator(1);
-		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-		ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> allowedChars.contains(value));
-	}
-
-	@Example
-	void charsFromCharset() {
-		char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
-		Arbitrary<Character> stringArbitrary = Arbitraries.chars(validChars);
-		RandomGenerator<Character> generator = stringArbitrary.generator(1);
-		ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> String.valueOf(validChars).contains(String.valueOf(value)));
-	}
-
-	@Example
 	void samplesAreGeneratedDeterministicallyInRoundRobin() {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.samples(-5, 0, 3);
 		RandomGenerator<Integer> generator = integerArbitrary.generator(1);
 		ArbitraryTestHelper.assertGenerated(generator, -5, 0, 3, -5, 0, 3);
+	}
+
+	@Group
+	class Chars {
+		@Example
+		void charsDefault() {
+			Arbitrary<Character> arbitrary = Arbitraries.chars();
+			RandomGenerator<Character> generator = arbitrary.generator(1);
+			ArbitraryTestHelper.assertAllGenerated(generator, Objects::nonNull);
+		}
+
+		@Example
+		void chars() {
+			Arbitrary<Character> arbitrary = Arbitraries.chars('a', 'd');
+			RandomGenerator<Character> generator = arbitrary.generator(1);
+			List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
+			ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> allowedChars.contains(value));
+		}
+
+		@Example
+		void charsFromCharset() {
+			char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
+			Arbitrary<Character> stringArbitrary = Arbitraries.chars(validChars);
+			RandomGenerator<Character> generator = stringArbitrary.generator(1);
+			ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> String.valueOf(validChars).contains(String.valueOf(value)));
+		}
 	}
 
 	@Group
