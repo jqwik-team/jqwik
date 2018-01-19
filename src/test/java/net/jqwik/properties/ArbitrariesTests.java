@@ -2,6 +2,7 @@ package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.IntRange;
+import org.assertj.core.api.*;
 
 import java.math.*;
 import java.util.*;
@@ -111,6 +112,21 @@ class ArbitrariesTests {
 
 	@Group
 	class Numbers {
+
+		@Example
+		void bytes() {
+			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes();
+			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
+			ArbitraryTestHelper.assertAllGenerated(generator, (Byte value) -> value >= 0 && value <= 255);
+		}
+
+
+		@Example
+		void bytesMinsAndMaxes() {
+			Assertions.fail("Not yet implemented");
+		}
+
+
 
 		@Example
 		void integerMinsAndMaxes() {

@@ -77,6 +77,10 @@ public class Arbitraries {
 		return new DoubleArbitrary(min, max, scale);
 	}
 
+	public static Arbitrary<Byte> bytes() {
+		return new ByteArbitrary();
+	}
+
 	public static Arbitrary<String> strings() {
 		return new StringArbitrary();
 	}
@@ -150,5 +154,4 @@ public class Arbitraries {
 		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
 		return fromGenerator(RandomGenerators.samples(shrinkables));
 	}
-
 }
