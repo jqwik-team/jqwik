@@ -1,4 +1,3 @@
 - Document self-made Arbitrary classes
   - document configuration via configure methods
 - Default Arbitrary for short
-- Default Arbitrary for byte

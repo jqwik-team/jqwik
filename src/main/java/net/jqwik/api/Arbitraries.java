@@ -81,6 +81,10 @@ public class Arbitraries {
 		return new ByteArbitrary();
 	}
 
+	public static Arbitrary<Byte> bytes(byte min, byte max) {
+		return new ByteArbitrary(min, max);
+	}
+
 	public static Arbitrary<String> strings() {
 		return new StringArbitrary();
 	}

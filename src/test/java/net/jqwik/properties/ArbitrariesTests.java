@@ -1,14 +1,13 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.IntRange;
-import org.assertj.core.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 class ArbitrariesTests {
 
@@ -78,7 +77,8 @@ class ArbitrariesTests {
 			char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
 			Arbitrary<Character> stringArbitrary = Arbitraries.chars(validChars);
 			RandomGenerator<Character> generator = stringArbitrary.generator(1);
-			ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> String.valueOf(validChars).contains(String.valueOf(value)));
+			ArbitraryTestHelper.assertAllGenerated(generator,
+					(Character value) -> String.valueOf(validChars).contains(String.valueOf(value)));
 		}
 	}
 
@@ -96,8 +96,7 @@ class ArbitrariesTests {
 			Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'a', size, size);
 			RandomGenerator<String> generator = stringArbitrary.generator(1);
 			ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() == size);
-			ArbitraryTestHelper.assertAllGenerated(generator,
-				(String value) -> value.chars().allMatch(i -> i == 'a'));
+			ArbitraryTestHelper.assertAllGenerated(generator, (String value) -> value.chars().allMatch(i -> i == 'a'));
 		}
 
 		@Example
@@ -117,16 +116,18 @@ class ArbitrariesTests {
 		void bytes() {
 			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes();
 			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
-			ArbitraryTestHelper.assertAllGenerated(generator, (Byte value) -> value >= 0 && value <= 255);
+			ArbitraryTestHelper.assertAllGenerated(generator, (Byte value) -> value >= -128 && value <= 127);
 		}
-
 
 		@Example
 		void bytesMinsAndMaxes() {
-			Assertions.fail("Not yet implemented");
+			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes((byte) -10, (byte) 10);
+			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0 && value > -5);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
 		}
-
-
 
 		@Example
 		void integerMinsAndMaxes() {
@@ -295,7 +296,7 @@ class ArbitrariesTests {
 		@Example
 		void array() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers(1, 10);
-			Arbitrary<Integer[]> arrayArbitrary = Arbitraries.arrayOf(Integer[].class, integerArbitrary, 2,5);
+			Arbitrary<Integer[]> arrayArbitrary = Arbitraries.arrayOf(Integer[].class, integerArbitrary, 2, 5);
 
 			RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1);
 
@@ -324,7 +325,7 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 		ArbitraryTestHelper.assertAllGenerated(generator,
-			(String value) -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
+				(String value) -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
 	}
 
 	private void assertGeneratedStream(Shrinkable<Stream<Integer>> stream) {

@@ -18,23 +18,22 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Byte> choose(byte min, byte max) {
-//		if (min == max) {
-//			return ignored -> new ShrinkableValue<>(min, ignore -> Collections.emptySet());
-//		} else {
-//			final int _min = Math.min(min, max);
-//			final int _max = Math.max(min, max);
-//			return random -> {
-//				int bound = Math.abs(_max - _min) + 1;
-//				int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min;
-//				return new ShrinkableValue<>(value, new ByteShrinkCandidates(min, max));
-//			};
-//		}
-		return null;
+		if (min == max) {
+			return ignored -> Shrinkable.unshrinkable(min);
+		} else {
+			final int _min = Math.min(min, max);
+			final int _max = Math.max(min, max);
+			return random -> {
+				int bound = Math.abs(_max - _min) + 1;
+				byte value = (byte) (random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min);
+				return new ShrinkableValue<>(value, new ByteShrinkCandidates(min, max));
+			};
+		}
 	}
 
 	public static RandomGenerator<Integer> choose(int min, int max) {
 		if (min == max) {
-			return ignored -> new ShrinkableValue<>(min, ignore -> Collections.emptySet());
+			return ignored -> Shrinkable.unshrinkable(min);
 		} else {
 			final int _min = Math.min(min, max);
 			final int _max = Math.max(min, max);

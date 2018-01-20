@@ -40,9 +40,9 @@ public class ByteArbitrary extends NullableArbitrary<Byte> {
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 
-//	public void configure(IntRange intRange) {
-//		min = intRange.min();
-//		max = intRange.max();
-//	}
+	public void configure(ByteRange byteRange) {
+		min = byteRange.min();
+		max = byteRange.max();
+	}
 
 }
