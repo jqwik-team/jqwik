@@ -445,7 +445,7 @@ The following constraints can be combined with each other:
 
 #### Byte and byte:
 
-- `@ByteRange(int min = 0, int max)`
+- `@ByteRange(byte min = 0, byte max)`
 - `@Positive`: Numbers equal to or larger than `0`.
 - `@Negative`: Numbers lower than or equal to `-0`.
 
@@ -722,7 +722,7 @@ will move towards the lowest allowed number, that is `10000`.
 
 ### Using generated values to create another Arbitrary
 
-Similar as in the case of `Arbitrary.map(..)` there are situations in which you want to use
+Similar as in the case of `Arbitrary.map(..)` there are situaRtions in which you want to use
 a generated value in order to create another Arbitrary from it. Sounds complicated?
 Have a look at the following example:
 
