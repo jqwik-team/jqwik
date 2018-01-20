@@ -384,7 +384,7 @@ annotated with `@ForAll`. If the annotation does not have a `value` parameter,
 jqwik will use default generation for the following types:
 
 - `String`
-- Integral types `Integer`, `int`, `Long`, `long` and `BigInteger`
+- Integral types `Byte`, `byte`, `Integer`, `int`, `Long`, `long` and `BigInteger`
 - Floating types  `Float`, `float`, `Double`, `double` and `BigDecimal`
 - `Boolean` and `boolean`
 - `Character` and `char
@@ -442,6 +442,12 @@ The following constraints can be combined with each other:
 #### List, Set, Stream and Arrays:
 
 - `@Size(int min = 0, int max)`
+
+#### Byte and byte:
+
+- `@ByteRange(int min = 0, int max)`
+- `@Positive`: Numbers equal to or larger than `0`.
+- `@Negative`: Numbers lower than or equals to `-0`.
 
 #### Integer and int:
 
