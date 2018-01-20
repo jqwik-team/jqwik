@@ -2,7 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 public class ByteShrinkCandidates extends IntegralShrinkCandidates<Byte> {
 
-	public ByteShrinkCandidates(long min, long max) {
+	public ByteShrinkCandidates(byte min, byte max) {
 		super(min, max);
 	}
 
