@@ -447,32 +447,32 @@ The following constraints can be combined with each other:
 
 - `@ByteRange(int min = 0, int max)`
 - `@Positive`: Numbers equal to or larger than `0`.
-- `@Negative`: Numbers lower than or equals to `-0`.
+- `@Negative`: Numbers lower than or equal to `-0`.
 
 #### Integer and int:
 
 - `@IntRange(int min = 0, int max)`
 - `@Positive`: Numbers equal to or larger than `0`.
-- `@Negative`: Numbers lower than or equals to `-0`.
+- `@Negative`: Numbers lower than or equal to `-0`.
 
 #### Long, long and BigInteger:
 
 - `@LongRange(long min = 0L, long max)`
 - `@Positive`: Numbers equal to or larger than `0L`.
-- `@Negative`: Numbers lower than or equals to `-0L`.
+- `@Negative`: Numbers lower than or equal to `-0L`.
 
 #### Float and float:
 
 - `@FloatRange(float min = 0.0f, float max)`
 - `@Positive`: Numbers equal to or larger than `0f`.
-- `@Negative`: Numbers lower than or equals to `-0f`.
+- `@Negative`: Numbers lower than or equal to `-0f`.
 - `@Scale(int value)`
 
 #### Double, double and BigDecimal:
 
 - `@DoubleRange(double min = 0.0, double max)`
 - `@Positive`: Numbers equal to or larger than `0.0`.
-- `@Negative`: Numbers lower than or equals to `-0.0`.
+- `@Negative`: Numbers lower than or equal to `-0.0`.
 - `@Scale(int value)`
 
 #### Constraining contained types
