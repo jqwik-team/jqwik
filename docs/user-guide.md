@@ -43,7 +43,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Release Notes](#release-notes)
-  - [0.8.1-SNAPSHOT](#081-snapshot)
+  - [0.8.1](#081)
   - [0.8.0](#080)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
