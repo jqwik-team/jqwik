@@ -4,6 +4,7 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
+@ShortRange(min = 0, max = Short.MAX_VALUE)
 @ByteRange(min = 0, max = Byte.MAX_VALUE)
 @IntRange(min = 0, max = Integer.MAX_VALUE)
 @LongRange(min = 0L, max = Long.MAX_VALUE)

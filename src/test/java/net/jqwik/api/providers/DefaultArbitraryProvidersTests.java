@@ -21,6 +21,21 @@ class DefaultArbitraryProvidersTests {
 	}
 
 	@Property
+	boolean shortParam(@ForAll short aValue) {
+		return true;
+	}
+
+	@Property
+	boolean shorterParam(@ForAll Short aValue) {
+		return aValue != null;
+	}
+
+	@Property
+	boolean byteParam(@ForAll byte aValue) {
+		return true;
+	}
+
+	@Property
 	boolean intParam(@ForAll int aValue) {
 		return true;
 	}
@@ -28,11 +43,6 @@ class DefaultArbitraryProvidersTests {
 	@Property
 	boolean byterParam(@ForAll Byte aValue) {
 		return aValue != null;
-	}
-
-	@Property
-	boolean byteParam(@ForAll byte aValue) {
-		return true;
 	}
 
 	@Property

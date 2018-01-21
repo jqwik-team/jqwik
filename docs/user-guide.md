@@ -86,8 +86,8 @@ repositories {
 ext.junitPlatformVersion = '1.0.2'
 ext.junitJupiterVersion = '5.0.2'
 
-ext.jqwikVersion = '0.8.0'
-#ext.jqwikVersion = '0.8.1-SNAPSHOT'
+ext.jqwikVersion = '0.8.1'
+#ext.jqwikVersion = '0.8.2-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -134,7 +134,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.0</version>
+        <version>0.8.1</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -155,7 +155,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.0.jar`
+- `jqwik-0.8.1.jar`
 - `junit-platform-engine-1.0.2.jar`
 - `junit-platform-commons-1.0.2.jar`
 - `opentest4j-1.0.0.jar`
@@ -384,10 +384,10 @@ annotated with `@ForAll`. If the annotation does not have a `value` parameter,
 jqwik will use default generation for the following types:
 
 - `String`
-- Integral types `Byte`, `byte`, `Integer`, `int`, `Long`, `long` and `BigInteger`
+- Integral types `Byte`, `byte`, `Short`, `short` `Integer`, `int`, `Long`, `long` and `BigInteger`
 - Floating types  `Float`, `float`, `Double`, `double` and `BigDecimal`
 - `Boolean` and `boolean`
-- `Character` and `char
+- `Character` and `char`
 - All `enum` types
 - Collection types `List<T>`, `Set<T>` and `Stream<T>` 
   as long as `T` can also be provided by default generation.
@@ -446,6 +446,12 @@ The following constraints can be combined with each other:
 #### Byte and byte:
 
 - `@ByteRange(byte min = 0, byte max)`
+- `@Positive`: Numbers equal to or larger than `0`.
+- `@Negative`: Numbers lower than or equal to `-0`.
+
+#### Short and short:
+
+- `@ShortRange(short min = 0, short max)`
 - `@Positive`: Numbers equal to or larger than `0`.
 - `@Negative`: Numbers lower than or equal to `-0`.
 
@@ -1178,9 +1184,11 @@ This topic will probably need a page of its own.
 
 ## Release Notes
 
-### 0.8.1-SNAPSHOT
+### 0.8.1
 
 - Added support for [default arbitrary providers](#providing-default-arbitraries).
+- Added support for `byte` and `Byte` generation.
+- Added support for `short` and `Short` generation.
 
 ### 0.8.0
 

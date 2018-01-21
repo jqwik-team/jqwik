@@ -85,6 +85,14 @@ public class Arbitraries {
 		return new ByteArbitrary(min, max);
 	}
 
+	public static Arbitrary<Short> shorts() {
+		return new ShortArbitrary();
+	}
+
+	public static Arbitrary<Short> shorts(short min, short max) {
+		return new ShortArbitrary(min, max);
+	}
+
 	public static Arbitrary<String> strings() {
 		return new StringArbitrary();
 	}

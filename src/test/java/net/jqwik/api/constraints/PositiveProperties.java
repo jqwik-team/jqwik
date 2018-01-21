@@ -7,26 +7,42 @@ import net.jqwik.api.*;
 class PositiveProperties {
 
 	@Property
-	void positiveIntegers(@ForAll @Positive int anInt) {
+	boolean positiveBytes(@ForAll @Positive byte value) {
+		return value >= 0;
 	}
 
 	@Property
-	void positiveLongs(@ForAll @Positive long aLong) {
+	boolean positiveShorts(@ForAll @Positive short value) {
+		return value >= 0;
 	}
 
 	@Property
-	void positiveFloats(@ForAll @Positive float aFloat) {
+	boolean positiveIntegers(@ForAll @Positive int value) {
+		return value >= 0;
 	}
 
 	@Property
-	void positiveDoubles(@ForAll @Positive double aDouble) {
+	boolean positiveLongs(@ForAll @Positive long value) {
+		return value >= 0;
 	}
 
 	@Property
-	void positiveBigDecimals(@ForAll @Positive BigDecimal aBigDecimal) {
+	boolean positiveFloats(@ForAll @Positive float value) {
+		return value >= 0;
 	}
 
 	@Property
-	void positiveBigIntegers(@ForAll @Positive BigInteger aBigInteger) {
+	boolean positiveDoubles(@ForAll @Positive double value) {
+		return value >= 0;
+	}
+
+	@Property
+	boolean positiveBigDecimals(@ForAll @Positive BigDecimal value) {
+		return value.compareTo(BigDecimal.ZERO) >= 0;
+	}
+
+	@Property
+	boolean positiveBigIntegers(@ForAll @Positive BigInteger value) {
+		return value.compareTo(BigInteger.ZERO) >= 0;
 	}
 }

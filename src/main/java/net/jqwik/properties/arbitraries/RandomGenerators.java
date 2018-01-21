@@ -31,6 +31,20 @@ public class RandomGenerators {
 		}
 	}
 
+	public static RandomGenerator<Short> choose(short min, short max) {
+		if (min == max) {
+			return ignored -> Shrinkable.unshrinkable(min);
+		} else {
+			final int _min = Math.min(min, max);
+			final int _max = Math.max(min, max);
+			return random -> {
+				int bound = Math.abs(_max - _min) + 1;
+				short value = (short) (random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min);
+				return new ShrinkableValue<>(value, new ShortShrinkCandidates(min, max));
+			};
+		}
+	}
+
 	public static RandomGenerator<Integer> choose(int min, int max) {
 		if (min == max) {
 			return ignored -> Shrinkable.unshrinkable(min);

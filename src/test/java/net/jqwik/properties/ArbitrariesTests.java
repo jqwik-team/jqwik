@@ -113,10 +113,27 @@ class ArbitrariesTests {
 	class Numbers {
 
 		@Example
+		void shorts() {
+			Arbitrary<Short> enumArbitrary = Arbitraries.shorts();
+			RandomGenerator<Short> generator = enumArbitrary.generator(1);
+			ArbitraryTestHelper.assertAllGenerated(generator, (Short value) -> value >= Short.MIN_VALUE && value <= Short.MAX_VALUE);
+		}
+
+		@Example
+		void shortsMinsAndMaxes() {
+			Arbitrary<Short> enumArbitrary = Arbitraries.shorts((short) -10, (short) 10);
+			RandomGenerator<Short> generator = enumArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0 && value > -5);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= -10 && value <= 10);
+		}
+
+		@Example
 		void bytes() {
 			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes();
 			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
-			ArbitraryTestHelper.assertAllGenerated(generator, (Byte value) -> value >= -128 && value <= 127);
+			ArbitraryTestHelper.assertAllGenerated(generator, (Byte value) -> value >= Byte.MIN_VALUE && value <= Byte.MAX_VALUE);
 		}
 
 		@Example

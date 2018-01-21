@@ -3,6 +3,7 @@ net.jqwik.providers.CharacterArbitraryProvider
 net.jqwik.providers.BooleanArbitraryProvider
 net.jqwik.providers.IntegerArbitraryProvider
 net.jqwik.providers.ByteArbitraryProvider
+net.jqwik.providers.ShortArbitraryProvider
 net.jqwik.providers.LongArbitraryProvider
 net.jqwik.providers.DoubleArbitraryProvider
 net.jqwik.providers.FloatArbitraryProvider
