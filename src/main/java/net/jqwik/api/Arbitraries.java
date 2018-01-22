@@ -21,7 +21,7 @@ public class Arbitraries {
 	}
 
 	public static Arbitrary<Random> randoms() {
-		return randomValue(random -> random);
+		return randomValue(random -> new Random(random.nextLong()));
 	}
 
 	@SafeVarargs
