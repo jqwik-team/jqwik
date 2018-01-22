@@ -43,15 +43,11 @@
 - ArbitraryProvider: Add priority to provider registration to allow more specific providers.
   Currently the order of registration is decisive - last registered provider wins.
 
-- Add ReportingMode.FALSIFIED, GENERATED_AND_FALSIFIED: Report only, also falsified values, also during shrinking
-
 - Report the samples in the state BEFORE execution of property method
 
 - Filter out duplicates in generated sets
 
 - Generator/Arbitrary for sequences of method/function calls 
-
-- Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
 - Shrinking
   - Time limit (100ms default?) for shrinking
@@ -60,10 +56,6 @@
 
 - Evaluate properties in parallel (max tries worker thread per property)
 
-- Make maxDiscardRatio configurable
-
-- Make default tries configurable
-
 - @ForAll can take `providerClass` parameter (with or without value param)
 
 - Handle error
@@ -71,7 +63,6 @@
   - if generic type is a bounded type
 
 - Default Arbitraries, Generators and Shrinking for
-  - short, byte
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
   - Files, Paths etc.
   - Arrays of Arrays
@@ -88,7 +79,7 @@
   - Recursive generators, like in 
     http://propertesting.com/book_custom_generators.html#_recursive_generators
   - @Regex(RegularExpression value)
-  - Contstrain charset for String and Char generation through @Charset(String charset) constraint
+  - Constrain charset for String and Char generation through @Charset(String charset) constraint
   - BigIntegers: Should also generate numbers beyond Long.MAX. @Positive should also exceed Long.MAX
   - Integrals of all kind: With upper limit, change distribution towards smaller numbers according to tries
 
