@@ -42,13 +42,4 @@ public class ValueShrinker<T> {
 		return collectAllFalsified(toTryNext, allFalsified, falsifier);
 	}
 
-	private int minDistance(Set<ShrinkResult<Shrinkable<T>>> toTry) {
-		int minDistance = Integer.MAX_VALUE;
-		for (ShrinkResult<Shrinkable<T>> shrinkResult : toTry) {
-			int distance = shrinkResult.shrunkValue().distance();
-			if (distance < minDistance) minDistance = distance;
-		}
-		return minDistance;
-	}
-
 }

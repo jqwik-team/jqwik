@@ -15,3 +15,4 @@ net.jqwik.providers.SetArbitraryProvider
 net.jqwik.providers.StreamArbitraryProvider
 net.jqwik.providers.OptionalArbitraryProvider
 net.jqwik.providers.ArrayArbitraryProvider
+net.jqwik.providers.RandomArbitraryProvider

@@ -1,12 +1,12 @@
 package net.jqwik.api.providers;
 
+import net.jqwik.api.*;
+import net.jqwik.providers.*;
+
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import net.jqwik.api.*;
-import net.jqwik.providers.*;
 
 class DefaultArbitraryProvidersTests {
 
@@ -145,6 +145,11 @@ class DefaultArbitraryProvidersTests {
 		return aValue != null;
 	}
 
+	@Property
+	boolean random(@ForAll Random aValue) {
+		return aValue != null;
+	}
+
 	@Group
 	class Registration implements AutoCloseable {
 
@@ -188,7 +193,7 @@ class DefaultArbitraryProvidersTests {
 		}
 
 		@Override
-		public void close() throws Exception {
+		public void close() {
 			DefaultArbitraryProviders.unregister(personProvider);
 		}
 	}

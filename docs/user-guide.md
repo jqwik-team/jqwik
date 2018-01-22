@@ -393,6 +393,7 @@ jqwik will use default generation for the following types:
   as long as `T` can also be provided by default generation.
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
+- `java.util.Random`
 
 If you use `@ForAll` with a value, e.g. `@ForAll("aMethodName")`, the method
 referenced by `"aMethodName"` will be called to provide an Arbitrary of the 
@@ -634,6 +635,10 @@ The starting point for generation usually is a static method call on class `Arbi
 
 #### Integers
 
+- `Arbitrary<Integer> bytes()`
+- `Arbitrary<Integer> bytes(byte min, byte max)`
+- `Arbitrary<Integer> shorts()`
+- `Arbitrary<Integer> shorts(short min, short max)`
 - `Arbitrary<Integer> integers()`
 - `Arbitrary<Integer> integers(int min, int max)`
 - `Arbitrary<Long> longs(long min, long max)`
@@ -660,6 +665,10 @@ The starting point for generation usually is a static method call on class `Arbi
 - `Arbitrary<Character> chars()`
 - `Arbitrary<Character> chars(char from, char to)`
 - `Arbitrary<Character> chars(char[] validChars)`
+
+#### java.util.Random
+
+- `Arbitrary<Random> randoms()`: Random instances will never be shrunk
 
 #### Collections, Streams, Arrays and Optional
 
@@ -1183,6 +1192,10 @@ This topic will probably need a page of its own.
 
 
 ## Release Notes
+
+### 0.8.2-SNAPSHOT
+
+- Added support for `java.util.Random` generation.
 
 ### 0.8.1
 

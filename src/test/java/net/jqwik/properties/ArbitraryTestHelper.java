@@ -44,17 +44,17 @@ class ArbitraryTestHelper {
 
 	public static <T> Set<T> allShrunkValues(ShrinkCandidates<T> shrinker, T toShrink) {
 		Set<T> shrinks = new HashSet<>();
-		collectShrunkValuesWithMininumDistance(shrinker, toShrink, shrinks);
+		collectShrunkValuesWithMinimumDistance(shrinker, toShrink, shrinks);
 		return shrinks;
 	}
 
-	private static <T> void collectShrunkValuesWithMininumDistance(ShrinkCandidates<T> shrinker, T toShrink, Set<T> collector) {
+	private static <T> void collectShrunkValuesWithMinimumDistance(ShrinkCandidates<T> shrinker, T toShrink, Set<T> collector) {
 		Set<T> shrinkCandidates = shrinker.nextCandidates(toShrink);
 		int minDistance = minDistance(shrinkCandidates, shrinker);
 		shrinkCandidates.stream()
 			.filter(candidate -> shrinker.distance(candidate) == minDistance)
 			.forEach(collector::add);
-		shrinkCandidates.forEach(next -> collectShrunkValuesWithMininumDistance(shrinker, next, collector));
+		shrinkCandidates.forEach(next -> collectShrunkValuesWithMinimumDistance(shrinker, next, collector));
 	}
 
 	private static <T> int minDistance(Set<T> candidates, ShrinkCandidates<T> shrinker) {
