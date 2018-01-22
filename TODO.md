@@ -1,5 +1,7 @@
 - Test shrinking with combined arbitraries, especially Arbitrary.withSamples(...)
 
+- Report the samples in the state BEFORE execution of property method
+
 - Change Property.reporting to take array of:
     Reporting.FALSIFIED: Report falsified values
     Reporting.GENERATED: Report all generated values
