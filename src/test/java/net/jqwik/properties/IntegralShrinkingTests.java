@@ -114,4 +114,33 @@ class IntegralShrinkingTests {
 
 	}
 
+	@Example
+	void shrinkShortTowards0() {
+		ShrinkCandidates<Short> shrinker = new ShortShrinkCandidates((short) -10, (short) 20);
+		Set<Short> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, (short) 10);
+		assertThat(allShrunkValues).containsExactlyInAnyOrder( //
+			(short) 5, //
+			(short) 4, //
+			(short) 3, //
+			(short) 2, //
+			(short) 1, //
+			(short) 0 //
+		);
+	}
+
+	@Example
+	void shrinkByteTowards0() {
+		ShrinkCandidates<Byte> shrinker = new ByteShrinkCandidates((byte) -10, (byte) 20);
+		Set<Byte> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, (byte) 10);
+		assertThat(allShrunkValues).containsExactlyInAnyOrder( //
+			(byte) 5, //
+			(byte) 4, //
+			(byte) 3, //
+			(byte) 2, //
+			(byte) 1, //
+			(byte) 0 //
+		);
+	}
+
+
 }
