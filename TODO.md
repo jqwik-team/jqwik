@@ -1,5 +1,7 @@
 - Introduce Tuples.Tuple2/3/4 to use in flatMap
 
+- Arbitrary.list(), set(), array()
+
 - Report the samples in the state BEFORE execution of property method
 
 - Change Property.reporting to take array of:
