@@ -61,13 +61,14 @@
   - if generic type is a bounded type
 
 - Default Arbitraries, Generators and Shrinking for
+  - Map
+  - Function and SAM types
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
   - Files, Paths etc.
   - Arrays of Arrays
 
 - Arbitraries and Generators
   - Find syntax to use provider methods for subtypes, e.g. @ForAll List<@ProvidedBy("myString") String> aList
-  - Introduce Tuples to allow return of mapped and flatMapped values!
   - Arbitraries.defaultFor(Class<?> targetType)
   - Arbitraries.const(aConstant)
   - functions/methods (whose output parameter can be generated)
