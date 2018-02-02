@@ -1,10 +1,10 @@
 package examples.docs;
 
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-
 import java.math.*;
 import java.util.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 class StatisticsExamples {
 
@@ -27,10 +27,19 @@ class StatisticsExamples {
 	}
 
 	@Property
-	void twoParameterStats(
-		@ForAll @Size(min = 1, max = 10) List<Integer> aList, //
-		@ForAll @IntRange(min = 0, max = 10) int index //
+	void twoParameterStats(@ForAll @Size(min = 1, max = 10) List<Integer> aList, //
+			@ForAll @IntRange(min = 0, max = 10) int index //
 	) {
 		Statistics.collect(aList.size() > index ? "index within size" : null);
 	}
+
+	@Property
+	void statsWithRoundedNumbers(@ForAll @IntRange(max = 100000) int anInt) {
+		String classifier = anInt < 10 ? "smallest" //
+				: anInt < 1000 ? "small" //
+						: anInt < 80000 ? "normal" //
+								: "big";
+		Statistics.collect(classifier);
+	}
+
 }

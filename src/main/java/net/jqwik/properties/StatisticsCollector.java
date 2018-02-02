@@ -1,10 +1,10 @@
 package net.jqwik.properties;
 
-import org.junit.platform.engine.reporting.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import org.junit.platform.engine.reporting.*;
 
 public class StatisticsCollector {
 
@@ -38,22 +38,26 @@ public class StatisticsCollector {
 
 	public ReportEntry createReportEntry() {
 		StringBuilder statistics = new StringBuilder();
-		int maxKeyLength = counts.keySet().stream().mapToInt(k -> displayKey(k).length()).max().orElse(0);
 		int sum = counts.values().stream().mapToInt(aCount -> aCount).sum();
-		counts.entrySet().stream() //
+		List<StatisticsEntry> statisticsEntries = counts.entrySet().stream() //
 				.sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue())) //
-				.forEach(entry -> {
-					double percentage = entry.getValue() * 100.0 / sum;
-					if (entry.getKey().equals(Collections.emptyList())) return;
-					statistics.append(String.format("%n     %1$-" + maxKeyLength + "s : %2$s %%", //
-							displayKey(entry.getKey()), //
-							displayPercentage(percentage)));
+				.filter(entry -> !entry.getKey().equals(Collections.emptyList())) //
+				.map(entry -> new StatisticsEntry(displayKey(entry.getKey()), entry.getValue() * 100.0 / sum)) //
+				.collect(Collectors.toList());
+		int maxKeyLength = statisticsEntries.stream().mapToInt(entry -> entry.name.length()).max().orElse(0);
+		boolean fullNumbersOnly = !statisticsEntries.stream().anyMatch(entry -> entry.percentage < 1);
+
+		statisticsEntries.stream() //
+				.forEach(statsEntry -> {
+					statistics.append(String.format("%n    %1$-" + maxKeyLength + "s : %2$s %%", //
+							statsEntry.name, //
+							displayPercentage(statsEntry.percentage, fullNumbersOnly)));
 				});
 		return ReportEntry.from(KEY_STATISTICS, statistics.toString());
 	}
 
-	private String displayPercentage(double percentage) {
-		if (percentage >= 1)
+	private String displayPercentage(double percentage, boolean fullNumbersOnly) {
+		if (fullNumbersOnly)
 			return String.valueOf(Math.round(percentage));
 		return String.valueOf(Math.round(percentage * 100.0) / 100.0);
 	}
@@ -66,11 +70,21 @@ public class StatisticsCollector {
 		List<Object> key = Collections.emptyList();
 		if (values != null) {
 			key = Arrays.stream(values) //
-				.filter(Objects::nonNull) //
-				.collect(Collectors.toList());
+					.filter(Objects::nonNull) //
+					.collect(Collectors.toList());
 		}
 
 		int count = counts.computeIfAbsent(key, any -> 0);
 		counts.put(key, ++count);
+	}
+
+	static class StatisticsEntry {
+		private final String name;
+		private final double percentage;
+
+		StatisticsEntry(String name, double percentage) {
+			this.name = name;
+			this.percentage = percentage;
+		}
 	}
 }
