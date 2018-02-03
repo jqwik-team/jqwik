@@ -1,10 +1,8 @@
-package net.jqwik.properties;
-
-import net.jqwik.api.*;
-
-import java.util.*;
+package net.jqwik.api;
 
 import static org.assertj.core.api.Assertions.*;
+
+import java.util.*;
 
 class CombinatorsTests {
 
