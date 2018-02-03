@@ -67,7 +67,14 @@
   - Files, Paths etc.
   - Arrays of Arrays
 
+- Report the samples in the state BEFORE execution of property method
+
+- Rethink dependencies and work distribution between ArbitraryProvider and Arbitrary classes
+  - Maybe configure(A extends Annotation) should be placed in ArbitraryProvider?
+  - Document creation of Arbitrary classes and how to configure them
+
 - Arbitraries and Generators
+  - Add Arbitrary.describe() to optionally describe elements in sample output
   - Find syntax to use provider methods for subtypes, e.g. @ForAll List<@ProvidedBy("myString") String> aList
   - Arbitraries.defaultFor(Class<?> targetType)
   - Arbitraries.const(aConstant)
