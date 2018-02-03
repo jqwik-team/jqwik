@@ -1,9 +1,10 @@
 package examples.docs;
 
-import java.util.List;
-
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
+import org.assertj.core.api.*;
+
+import java.util.*;
 
 class FlatMappingExamples {
 
@@ -23,16 +24,20 @@ class FlatMappingExamples {
 	}
 
 	@Property(reporting = ReportingMode.GENERATED)
-	boolean aStringWithItsMaxLength(@ForAll("stringWithMaxLength")Tuple2<Integer, String> lengthAndString) {
-		int maxLength = lengthAndString.get1();
-		String aString = lengthAndString.get2();
-		return aString.length() <= maxLength;
+	void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringFromTo) {
+		String aString = stringFromTo.get1();
+		int begin = stringFromTo.get2();
+		int end = stringFromTo.get3();
+		Assertions.assertThat(aString.substring(begin, end).length()) //
+			.isEqualTo(end - begin);
 	}
 
 	@Provide
-	Arbitrary<Tuple2<Integer, String>> stringWithMaxLength() {
-		Arbitrary<Integer> integers2to5 = Arbitraries.integers(2, 15);
-		return integers2to5.flatMap(stringSize -> Arbitraries.strings('a', 'z', 0, stringSize)
-															 .map(string -> Tuple.of(stringSize, string)));
+	Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
+		Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'z', 2, 20);
+		return stringArbitrary //
+			.flatMap(aString -> Arbitraries.integers(0, aString.length()) //
+				.flatMap(end -> Arbitraries.integers(0, end) //
+					.map(begin -> Tuple.of(aString, begin, end))));
 	}
 }

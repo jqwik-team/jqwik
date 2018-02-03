@@ -29,7 +29,8 @@ Volunteers for polishing and extending it are more than welcome._
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
-  - [Using generated values to create another Arbitrary](#using-generated-values-to-create-another-arbitrary)
+  - [Flat Mapping](#flat-mapping)
+  - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
   - [Combining Arbitraries](#combining-arbitraries)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
@@ -43,6 +44,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Release Notes](#release-notes)
+  - [0.8.2-SNAPSHOT](#082-snapshot)
   - [0.8.1](#081)
   - [0.8.0](#080)
 
@@ -735,9 +737,9 @@ However, the [shrinking](#result-shrinking) target would probably be different. 
 will move towards the lowest allowed number, that is `10000`.
 
 
-### Using generated values to create another Arbitrary
+### Flat Mapping
 
-Similar as in the case of `Arbitrary.map(..)` there are situaRtions in which you want to use
+Similar as in the case of `Arbitrary.map(..)` there are situations in which you want to use
 a generated value in order to create another Arbitrary from it. Sounds complicated?
 Have a look at the following example:
 
@@ -758,6 +760,42 @@ Arbitrary<List<String>> listsOfEqualSizedStrings() {
 ```
 The provider method will create random lists of strings, but in each list the size of the contained strings
 will always be the same - between 2 and 5.
+
+### Flat Mapping with Tuple Types
+
+In the example above you used a generated value in order to create another arbitrary.
+In those situations you often want to also provide the original values to your property test.
+
+Imagine, for instance, that you'd like to test properties of `String.substring(begin, end)`.
+To randomize the method call, you not only need a string but also the `begin` and `end` indices.
+However, both have dependencies:
+- `end` must not be larger than the string size
+- `begin` must not be larger than `end`
+You can make _jqwik_ create all three values by using `flatMap` combined with a
+tuple type:
+
+```java
+@Property(reporting = ReportingMode.GENERATED)
+void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringFromTo) {
+    String aString = stringFromTo.get1();
+    int begin = stringFromTo.get2();
+    int end = stringFromTo.get3();
+    Assertions.assertThat(aString.substring(begin, end).length())
+        .isEqualTo(end - begin);
+}
+
+@Provide
+Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
+    Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'z', 2, 20);
+    return stringArbitrary //
+        .flatMap(aString -> Arbitraries.integers(0, aString.length()) //
+            .flatMap(end -> Arbitraries.integers(0, end) //
+                .map(begin -> Tuple.of(aString, begin, end))));
+}
+```
+Mind the nesting of flat mapping, which is an aesthetic nuisance, but nevertheless
+very useful. 
+
 
 ### Combining Arbitraries
 
@@ -1196,6 +1234,8 @@ This topic will probably need a page of its own.
 ### 0.8.2-SNAPSHOT
 
 - Added support for `java.util.Random` generation.
+- Added [Tuple types](#flat-mapping-with-tuple-types) 
+  (`Tuple2`, `Tuple3`, `Tuple4`) to use in `Arbitrary.flatMap()`.
 
 ### 0.8.1
 
