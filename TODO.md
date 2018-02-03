@@ -1,5 +1,3 @@
-- Add Arbitrary providers vor Tuples.Tuple2/3/4
-
 - Arbitrary.list(), set(), array(), stream(), optional()
   - Remove Arbitraries.list etc methods?
 

@@ -61,6 +61,7 @@
   - if generic type is a bounded type
 
 - Default Arbitraries, Generators and Shrinking for
+  - Tuples.Tuple2/3/4
   - Map
   - Function and SAM types
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
