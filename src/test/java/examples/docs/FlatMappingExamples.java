@@ -8,8 +8,21 @@ import java.util.*;
 
 class FlatMappingExamples {
 
+	@Property
+	boolean arbitrarySizedStrings(@ForAll("arbitraryString") String aString) {
+		int length = aString.length();
+		// Should fail and shrink to ["aaa"]
+		return length > 6 || length < 3;
+	}
+
+	@Provide
+	Arbitrary<String> arbitraryString() {
+		return Arbitraries.integers(1, 10)
+			.flatMap(size -> Arbitraries.strings('a', 'z', size, size));
+	}
+
 	@Property(reporting = ReportingMode.GENERATED)
-	boolean fixedSizedStrings(@ForAll("listsOfEqualSizedStrings")List<String> strings) {
+	boolean fixedSizedStringLists(@ForAll("listsOfEqualSizedStrings")List<String> strings) {
 		Assume.that(!strings.isEmpty());
 		return strings.stream().map(String::length).distinct().count() == 1;
 	}
