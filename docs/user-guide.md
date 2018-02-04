@@ -776,10 +776,10 @@ tuple type:
 
 ```java
 @Property(reporting = ReportingMode.GENERATED)
-void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringFromTo) {
-    String aString = stringFromTo.get1();
-    int begin = stringFromTo.get2();
-    int end = stringFromTo.get3();
+void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringBeginEnd) {
+    String aString = stringBeginEnd.get1();
+    int begin = stringBeginEnd.get2();
+    int end = stringBeginEnd.get3();
     Assertions.assertThat(aString.substring(begin, end).length())
         .isEqualTo(end - begin);
 }
@@ -790,10 +790,10 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
     return stringArbitrary //
         .flatMap(aString -> Arbitraries.integers(0, aString.length()) //
             .flatMap(end -> Arbitraries.integers(0, end) //
-                .map(begin -> Tuple.of(aString, begin, end))));
+                .map(begin -> Tuples.tuple(aString, begin, end))));
 }
 ```
-Mind the nesting of flat mapping, which is an aesthetic nuisance, but nevertheless
+Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful. 
 
 

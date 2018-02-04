@@ -3,26 +3,29 @@ package net.jqwik.api;
 import java.io.*;
 import java.util.*;
 
-public interface Tuple<T extends Tuple> extends Serializable, Cloneable {
-	int size();
+public class Tuples {
 
-	static <T1, T2> Tuple2<T1, T2> of(T1 v1, T2 v2) {
+	public interface Tuple extends Serializable, Cloneable {
+		int size();
+	}
+
+	public static <T1, T2> Tuple2<T1, T2> tuple(T1 v1, T2 v2) {
 		return new Tuple2<>(v1, v2);
 	}
 
-	static <T1, T2, T3> Tuple3<T1, T2, T3> of(T1 v1, T2 v2, T3 v3) {
+	public static <T1, T2, T3> Tuple3<T1, T2, T3> tuple(T1 v1, T2 v2, T3 v3) {
 		return new Tuple3<>(v1, v2, v3);
 	}
 
-	static <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> of(T1 v1, T2 v2, T3 v3, T4 v4) {
+	public static <T1, T2, T3, T4> Tuple4<T1, T2, T3, T4> tuple(T1 v1, T2 v2, T3 v3, T4 v4) {
 		return new Tuple4<>(v1, v2, v3, v4);
 	}
 
-	class Tuple2<T1, T2> implements Tuple<Tuple2> {
-		private final T1 v1;
-		private final T2 v2;
+	static class Tuple2<T1, T2> implements Tuple {
+		protected final T1 v1;
+		protected final T2 v2;
 
-		public Tuple2(T1 v1, T2 v2) {
+		private Tuple2(T1 v1, T2 v2) {
 			this.v1 = v1;
 			this.v2 = v2;
 		}
@@ -60,28 +63,17 @@ public interface Tuple<T extends Tuple> extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple3<T1, T2, T3> implements Tuple<Tuple3> {
-		private final T1 v1;
-		private final T2 v2;
-		private final T3 v3;
+	public static class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
+		protected final T3 v3;
 
-		public Tuple3(T1 v1, T2 v2, T3 v3) {
-			this.v1 = v1;
-			this.v2 = v2;
+		private Tuple3(T1 v1, T2 v2, T3 v3) {
+			super(v1, v2);
 			this.v3 = v3;
 		}
 
 		@Override
 		public int size() {
 			return 3;
-		}
-
-		public T1 get1() {
-			return v1;
-		}
-
-		public T2 get2() {
-			return v2;
 		}
 
 		public T3 get3() {
@@ -109,16 +101,11 @@ public interface Tuple<T extends Tuple> extends Serializable, Cloneable {
 		}
 	}
 
-	class Tuple4<T1, T2, T3, T4> implements Tuple<Tuple4> {
-		private final T1 v1;
-		private final T2 v2;
-		private final T3 v3;
-		private final T4 v4;
+	static class Tuple4<T1, T2, T3, T4> extends Tuple3<T1, T2, T3> {
+		protected final T4 v4;
 
-		public Tuple4(T1 v1, T2 v2, T3 v3, T4 v4) {
-			this.v1 = v1;
-			this.v2 = v2;
-			this.v3 = v3;
+		private Tuple4(T1 v1, T2 v2, T3 v3, T4 v4) {
+			super(v1, v2, v3);
 			this.v4 = v4;
 		}
 

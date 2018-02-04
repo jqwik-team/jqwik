@@ -5,3 +5,4 @@
     Reporting.FALSIFIED: Report falsified values
     Reporting.GENERATED: Report all generated values
 
+- Improve shrinking of FlatMappedShrinkable
