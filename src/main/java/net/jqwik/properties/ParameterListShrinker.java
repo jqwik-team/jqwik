@@ -1,6 +1,8 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
+import net.jqwik.support.*;
+import org.junit.platform.engine.reporting.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -10,9 +12,13 @@ import java.util.stream.*;
 public class ParameterListShrinker<T> {
 
 	private final List<Shrinkable<T>> parametersToShrink;
+	private final Consumer<ReportEntry> reporter;
+	private final Reporting[] reporting;
 
-	public ParameterListShrinker(List<Shrinkable<T>> parametersToShrink) {
+	public ParameterListShrinker(List<Shrinkable<T>> parametersToShrink, Consumer<ReportEntry> reporter, Reporting[] reporting) {
 		this.parametersToShrink = parametersToShrink;
+		this.reporter = reporter;
+		this.reporting = reporting;
 	}
 
 	public ShrinkResult<List<Shrinkable<T>>> shrink(Predicate<List<T>> forAllFalsifier, Throwable originalError) {
@@ -61,7 +67,11 @@ public class ParameterListShrinker<T> {
 		return param -> {
 			List<T> effectiveParams = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 			effectiveParams.set(position, param);
-			return forAllFalsifier.test(effectiveParams);
+			boolean verified = forAllFalsifier.test(effectiveParams);
+			if (!verified && Reporting.FALSIFIED.containedIn(reporting)) {
+				reporter.accept(ReportEntry.from("falsified", JqwikStringSupport.displayString(effectiveParams)));
+			}
+			return verified;
 		};
 	}
 

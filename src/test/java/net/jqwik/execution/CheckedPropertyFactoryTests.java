@@ -1,15 +1,14 @@
 package net.jqwik.execution;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.lang.reflect.Method;
-import java.util.*;
-
-import org.junit.platform.engine.UniqueId;
-
-import net.jqwik.TestHelper;
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
+import org.junit.platform.engine.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class CheckedPropertyFactoryTests {
 
@@ -64,7 +63,7 @@ public class CheckedPropertyFactoryTests {
 			ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, ReportingMode.MINIMAL);
+		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, new Reporting[0]);
 		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, propertyConfig);
 	}
 

@@ -1,11 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.api.*;
+import net.jqwik.properties.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 public class ContainerShrinkable<T, E> implements Shrinkable<T> {
 
@@ -51,7 +51,7 @@ public class ContainerShrinkable<T, E> implements Shrinkable<T> {
 			T container = containerCreator.apply(list);
 			return falsifier.test(container);
 		};
-		ParameterListShrinker<E> listElementShrinker = new ParameterListShrinker<>(elements);
+		ParameterListShrinker<E> listElementShrinker = new ParameterListShrinker<>(elements, e -> {}, new Reporting[0]);
 		Set<ShrinkResult<List<Shrinkable<E>>>> shrunkElements = listElementShrinker.shrinkNext(valuesFalsifier);
 		return shrunkElements.stream();
 	}

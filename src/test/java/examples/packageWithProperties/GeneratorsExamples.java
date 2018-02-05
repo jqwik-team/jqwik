@@ -1,15 +1,15 @@
 package examples.packageWithProperties;
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
+import java.math.*;
+import java.util.*;
+import java.util.stream.*;
+
 public class GeneratorsExamples {
 
-	@Property(tries = 50, reporting = ReportingMode.GENERATED)
+	@Property(tries = 50, reporting = Reporting.GENERATED)
 	boolean aString(@ForAll @StringLength(min = 2, max = 33) String aString, @ForAll(value = "digitsOnly") String anotherString) {
 		return true;
 	}
@@ -72,7 +72,7 @@ public class GeneratorsExamples {
 		return true;
 	}
 
-	@Property(tries = 10, reporting = ReportingMode.GENERATED)
+	@Property(tries = 10, reporting = Reporting.GENERATED)
 	boolean aChar(@ForAll @AlphaChars char aChar, @ForAll char unconstrained) {
 		return true;
 	}
@@ -104,7 +104,7 @@ public class GeneratorsExamples {
 		System.out.println(asList);
 	}
 
-	@Property(tries = 10, reporting = ReportingMode.GENERATED)
+	@Property(tries = 10, reporting = Reporting.GENERATED)
 	boolean aPeopleList(@ForAll @Size(min = 2, max = 5) List<Person> people) {
 		return people != null;
 	}

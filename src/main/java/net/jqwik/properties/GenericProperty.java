@@ -1,18 +1,17 @@
 package net.jqwik.properties;
 
-import static net.jqwik.properties.PropertyCheckResult.Status.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
+import org.junit.platform.commons.util.*;
+import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.commons.util.*;
-import org.junit.platform.engine.reporting.*;
-import org.opentest4j.*;
-
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.support.*;
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
 
 public class GenericProperty {
 
@@ -53,12 +52,11 @@ public class GenericProperty {
 			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
-				if (!testPredicate(shrinkableParams, configuration.getReportingMode(), reporter)) {
-					return shrinkAndCreateCheckResult(configuration.getStereotype(), configuration.getShrinkingMode(),
-							configuration.getSeed(), countChecks, countTries, shrinkableParams, null);
+				if (!testPredicate(shrinkableParams, configuration.getReporting(), reporter)) {
+					return shrinkAndCreateCheckResult(configuration, reporter, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(configuration.getStereotype(), configuration.getShrinkingMode(), configuration.getSeed(),
+				return shrinkAndCreateCheckResult(configuration, reporter,
 						countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
@@ -74,9 +72,9 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
 	}
 
-	private boolean testPredicate(List<Shrinkable> shrinkableParams, ReportingMode reportingMode, Consumer<ReportEntry> reporter) {
+	private boolean testPredicate(List<Shrinkable> shrinkableParams, Reporting[] reporting, Consumer<ReportEntry> reporter) {
 		List<Object> plainParams = extractParams(shrinkableParams);
-		if (reportingMode == ReportingMode.GENERATED) {
+		if (Reporting.GENERATED.containedIn(reporting)) {
 			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
 		}
 		return forAllPredicate.test(plainParams);
@@ -92,17 +90,17 @@ public class GenericProperty {
 	}
 
 	@SuppressWarnings("unchecked")
-	private PropertyCheckResult shrinkAndCreateCheckResult(String stereotype, ShrinkingMode shrinkingMode, long seed, int countChecks,
+	private PropertyCheckResult shrinkAndCreateCheckResult(PropertyConfiguration configuration, Consumer<ReportEntry> reporter, int countChecks,
 			int countTries, List<Shrinkable> shrinkables, AssertionError error) {
 		List<Object> originalParams = extractParams(shrinkables);
-		if (shrinkingMode == ShrinkingMode.OFF) {
-			return PropertyCheckResult.falsified(stereotype, name, countTries, countChecks, seed, originalParams, originalParams, error);
+		if (configuration.getShrinkingMode() == ShrinkingMode.OFF) {
+			return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), originalParams, originalParams, error);
 		}
-		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables);
+		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables, reporter, configuration.getReporting());
 		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
 		List<Object> shrunkParams = extractParams(shrinkResult.shrunkValue());
 		Throwable throwable = shrinkResult.throwable().orElse(null);
-		return PropertyCheckResult.falsified(stereotype, name, countTries, countChecks, seed, shrunkParams, originalParams, throwable);
+		return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), shrunkParams, originalParams, throwable);
 	}
 
 	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {

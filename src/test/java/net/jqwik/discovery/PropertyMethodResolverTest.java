@@ -1,16 +1,15 @@
 package net.jqwik.discovery;
 
-import java.lang.reflect.*;
-import java.util.*;
-
-import org.assertj.core.api.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestExecutionResult.*;
-
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.recording.*;
+import org.assertj.core.api.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.TestExecutionResult.*;
+
+import java.lang.reflect.*;
+import java.util.*;
 
 @Group
 class PropertyMethodResolverTest {
@@ -66,7 +65,7 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(99);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(6);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReportingMode()).isEqualTo(ReportingMode.GENERATED);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReporting()).containsExactly(Reporting.GENERATED, Reporting.FALSIFIED);
 		}
 
 		@Example
@@ -134,7 +133,7 @@ class PropertyMethodResolverTest {
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(DEFAULT_TRIES);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReportingMode()).isEqualTo(ReportingMode.MINIMAL);
+		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReporting()).isEmpty();
 	}
 
 	private static class TestContainer {
@@ -154,7 +153,13 @@ class PropertyMethodResolverTest {
 		void withSeed41() {
 		}
 
-		@Property(seed = 42L, tries = 99, maxDiscardRatio = 6, shrinking = ShrinkingMode.OFF, reporting = ReportingMode.GENERATED)
+		@Property( //
+			seed = 42L, //
+			tries = 99, //
+			maxDiscardRatio = 6, //
+			shrinking = ShrinkingMode.OFF, //
+			reporting = {Reporting.GENERATED, Reporting.FALSIFIED} //
+		)
 		void withPropertyParams() {
 		}
 	}

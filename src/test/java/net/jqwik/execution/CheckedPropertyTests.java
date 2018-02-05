@@ -1,20 +1,19 @@
 package net.jqwik.execution;
 
-import static net.jqwik.TestHelper.*;
-import static net.jqwik.properties.PropertyCheckResult.Status.*;
-import static org.assertj.core.api.Assertions.*;
-
-import java.lang.reflect.Parameter;
-import java.util.*;
-import java.util.function.Consumer;
-
-import org.junit.platform.engine.reporting.ReportEntry;
-import org.opentest4j.TestAbortedException;
-
-import net.jqwik.TestDescriptorBuilder;
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
+import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+
+import static net.jqwik.TestHelper.*;
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class CheckedPropertyTests {
@@ -25,7 +24,7 @@ class CheckedPropertyTests {
 	@Group
 	class CheckedPropertyCreation {
 		@Example
-		void createCheckedPropertyWithoutParameters() throws NoSuchMethodException {
+		void createCheckedPropertyWithoutParameters() {
 			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
 					.forMethod(BooleanReturningExamples.class, "propertyWithoutParameters", int.class).build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
@@ -35,11 +34,11 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.ON);
-			assertThat(checkedProperty.configuration.getReportingMode()).isEqualTo(ReportingMode.MINIMAL);
+			assertThat(checkedProperty.configuration.getReporting()).isEqualTo(new Reporting[0]);
 		}
 
 		@Example
-		void createCheckedPropertyWithTriesParameter() throws NoSuchMethodException {
+		void createCheckedPropertyWithTriesParameter() {
 			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
 					.forMethod(BooleanReturningExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class).build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
@@ -49,7 +48,7 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(42);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(2);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
-			assertThat(checkedProperty.configuration.getReportingMode()).isEqualTo(ReportingMode.GENERATED);
+			assertThat(checkedProperty.configuration.getReporting()).containsExactly(Reporting.GENERATED);
 		}
 	}
 
@@ -109,7 +108,7 @@ class CheckedPropertyTests {
 			List<Parameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
 					p -> Optional.empty(), //
-					new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
+					new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -123,7 +122,7 @@ class CheckedPropertyTests {
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
 					p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-100, 100))),
-					new PropertyConfiguration("Property", 42L, 12, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
+					new PropertyConfiguration("Property", 42L, 12, 5, ShrinkingMode.ON, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.randomSeed()).isEqualTo(42L);
@@ -137,7 +136,7 @@ class CheckedPropertyTests {
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
 				p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-50, 50))), //
-				new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, ReportingMode.MINIMAL));
+				new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, new Reporting[0]));
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
@@ -153,7 +152,7 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF, reporting = ReportingMode.GENERATED)
+		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF, reporting = Reporting.GENERATED)
 		public boolean propertyWith42TriesAndMaxDiscardRatio2(@ForAll int anyNumber) {
 			return true;
 		}

@@ -30,7 +30,7 @@ public @interface Property {
 
 	ShrinkingMode shrinking() default ShrinkingMode.ON;
 
-	ReportingMode reporting() default ReportingMode.MINIMAL;
+	Reporting[] reporting() default {};
 
 	String stereotype() default DEFAULT_STEREOTYPE;
 }

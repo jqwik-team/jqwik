@@ -5,7 +5,7 @@ import net.jqwik.api.constraints.Positive;
 
 class GeneratingHighDoubles {
 
-	@Property(tries = 100, reporting = ReportingMode.GENERATED)
+	@Property(tries = 100, reporting = Reporting.GENERATED)
 	void shouldGenerateEquallyDistributedValues(@ForAll @Positive double aDouble) {
 	}
 }

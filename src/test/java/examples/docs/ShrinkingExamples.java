@@ -1,17 +1,16 @@
 package examples.docs;
 
-import java.util.*;
-
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.AlphaChars;
+import net.jqwik.api.constraints.*;
+
+import java.util.*;
 
 class ShrinkingExamples {
 
-	@Property
+	@Property(reporting = Reporting.FALSIFIED)
 	boolean stringShouldBeShrunkToAA(@ForAll @AlphaChars String aString) {
 		return aString.length() > 5 || aString.length() < 2;
 	}
-
 
 	@Property
 	boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") String second) {

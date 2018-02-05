@@ -6,7 +6,7 @@ import java.util.*;
 
 class StringListGenerationBug {
 
-	@Property(reporting = ReportingMode.GENERATED)
+	@Property(reporting = Reporting.GENERATED)
 	void runsForever(@ForAll List<String> aList) {
 	}
 }

@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
+import static org.assertj.core.api.Assertions.*;
 
 class ParameterListShrinkerTests {
 
@@ -15,7 +15,7 @@ class ParameterListShrinkerTests {
 		@Example
 		void shrinkToEnd() {
 			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
-			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues, e -> {}, new Reporting[0]);
 
 			Predicate<List<Integer>> falsifier = params -> false;
 			ShrinkResult<List<Shrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
@@ -27,7 +27,7 @@ class ParameterListShrinkerTests {
 		@Example
 		void keepLastErrorWhenShrinking() {
 			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
-			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues, e -> {}, new Reporting[0]);
 
 			AssertionError error = new AssertionError("test");
 			Predicate<List<Integer>> falsifier = params -> {
@@ -43,7 +43,7 @@ class ParameterListShrinkerTests {
 		@Example
 		void shrinkPartially() {
 			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(1, 2, 3);
-			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues, e -> {}, new Reporting[0]);
 
 			Predicate<List<Integer>> falsifier = params -> params.stream().anyMatch(anInt -> anInt == 0);
 			ShrinkResult<List<Shrinkable<Integer>>> shrinkResult = listShrinker.shrink(falsifier, null);
@@ -65,7 +65,7 @@ class ParameterListShrinkerTests {
 																		  Shrinkable.unshrinkable(1), //
 																		  Shrinkable.unshrinkable(2), //
 																		  Shrinkable.unshrinkable(3));
-			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(unshrinkableValues);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(unshrinkableValues, e -> {}, new Reporting[0]);
 
 			Set<ShrinkResult<List<Shrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrinkResults).isEmpty();
@@ -74,7 +74,7 @@ class ParameterListShrinkerTests {
 		@Example
 		void singleShrinkableElementIsShrunkOnlyOneStep() {
 			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(2, 0, 0);
-			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues, e -> {}, new Reporting[0]);
 
 			Set<ShrinkResult<List<Shrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
 			Set<List<Integer>> results = extractResults(shrinkResults);
@@ -86,7 +86,7 @@ class ParameterListShrinkerTests {
 		@Example
 		void onlyFirstShrinkableElementIsShrunk() {
 			List<Shrinkable<Integer>> shrinkableValues = ArbitraryTestHelper.listOfShrinkableIntegers(0, 2, 2);
-			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues);
+			ParameterListShrinker<Integer> listShrinker = new ParameterListShrinker<>(shrinkableValues, e -> {}, new Reporting[0]);
 
 			Set<ShrinkResult<List<Shrinkable<Integer>>>> shrinkResults = listShrinker.shrinkNext(MockFalsifier.falsifyAll());
 			Set<List<Integer>> results = extractResults(shrinkResults);

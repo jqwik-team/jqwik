@@ -272,10 +272,13 @@ The `@Property` annotation has a few optional values:
   
   The default is `ShrinkingMode.ON`
 
-- `ReportingMode reporting`: You can switch to more verbose reporting. 
-  `ReportingMode.GENERATED` will report each generated set of parameters.
+- `Reporting[] reporting`: You can switch on additional reporting aspects. 
+  by specifying one or more of the following `Reporting` values:
+  - `Reporting.GENERATED` will report each generated set of parameters.
+  - `Reporting.FALSIFIED` will report each falsified set of parameters 
+  during shrinking.
   
-  The default is `ReportingMode.MINIMAL`
+  The default is _no_ additional reporting aspects are switched on.
 
 ## Assertions
 
@@ -1236,6 +1239,9 @@ This topic will probably need a page of its own.
 - Added support for `java.util.Random` generation.
 - Added [Tuple types](#flat-mapping-with-tuple-types) 
   (`Tuple2`, `Tuple3`, `Tuple4`) to use in `Arbitrary.flatMap()`.
+- Renamed `ReportingMode` to `Reporting` and removed `Reporting.MINIMAL`.
+  _This is an incompatible API change!_
+- Added `Reporting.FALSIFIED`. See [section on optional property parameters](#optional-property-parameters)
 
 ### 0.8.1
 
