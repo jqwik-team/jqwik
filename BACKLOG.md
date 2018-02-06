@@ -43,6 +43,14 @@
 - ArbitraryProvider: Add priority to provider registration to allow more specific providers.
   Currently the order of registration is decisive - last registered provider wins.
 
+- Provider methods can take params e.g.
+  - @Provided(value="otherProviderMethod") Arbitrary<String> aString
+
+- Fluent interface for arbitrary creation
+  - Arbitrary.list(), set(), array(), stream(), optional()
+  - Remove Arbitraries.list etc methods?
+  - Special interfaces like Integer/FloatArbitrary etc. ?
+
 - Filter out duplicates in generated sets
 
 - Generator/Arbitrary for sequences of method/function calls 
@@ -69,10 +77,6 @@
   - Arrays of Arrays
 
 - Report the samples in the state BEFORE execution of property method
-
-- Rethink dependencies and work distribution between ArbitraryProvider and Arbitrary classes
-  - Maybe configure(A extends Annotation) should be placed in ArbitraryProvider?
-  - Document creation of Arbitrary classes and how to configure them
 
 - Arbitraries and Generators
   - Add Arbitrary.describe() to optionally describe elements in sample output
