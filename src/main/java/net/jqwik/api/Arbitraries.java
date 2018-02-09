@@ -98,24 +98,24 @@ public class Arbitraries {
 		return new ShortArbitrary(min, max);
 	}
 
-	public static Arbitrary<String> strings() {
-		return new StringArbitrary();
+	public static StringArbitrary strings() {
+		return new DefaultStringArbitrary();
 	}
 
-	public static Arbitrary<String> strings(char[] validChars, int minLength, int maxLength) {
-		return new StringArbitrary(validChars, minLength, maxLength);
+	public static StringArbitrary strings(char[] validChars, int minLength, int maxLength) {
+		return strings().withChars(validChars).withLength(minLength, maxLength);
 	}
 
-	public static Arbitrary<String> strings(char[] validChars) {
-		return new StringArbitrary(validChars);
+	public static StringArbitrary strings(char[] validChars) {
+		return strings().withChars(validChars);
 	}
 
-	public static Arbitrary<String> strings(char from, char to, int minLength, int maxLength) {
-		return new StringArbitrary(from, to, minLength, maxLength);
+	public static StringArbitrary strings(char from, char to, int minLength, int maxLength) {
+		return strings().withChars(from, to).withLength(minLength, maxLength);
 	}
 
-	public static Arbitrary<String> strings(char from, char to) {
-		return new StringArbitrary(from, to);
+	public static StringArbitrary strings(char from, char to) {
+		return strings().withChars(from, to);
 	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
