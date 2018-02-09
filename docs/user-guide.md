@@ -44,7 +44,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Release Notes](#release-notes)
-  - [0.8.2-SNAPSHOT](#082-snapshot)
+  - [0.8.2](#082)
   - [0.8.1](#081)
   - [0.8.0](#080)
 
@@ -70,7 +70,7 @@ To use __jqwik__ in a gradle-based project add the following stuff to your `buil
 buildscript {
 	dependencies {
 	    ...
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
 	}
 }
 
@@ -85,11 +85,11 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.0.2'
-ext.junitJupiterVersion = '5.0.2'
+ext.junitPlatformVersion = '1.0.3'
+ext.junitJupiterVersion = '5.0.3'
 
-ext.jqwikVersion = '0.8.1'
-#ext.jqwikVersion = '0.8.2-SNAPSHOT'
+ext.jqwikVersion = '0.8.2'
+#ext.jqwikVersion = '0.8.3-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -115,7 +115,7 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
     
     // You'll probably need some assertions
-    testCompile("org.assertj:assertj-core:3.8.0")
+    testCompile("org.assertj:assertj-core:3.9.0")
 
 }
 
@@ -136,7 +136,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.1</version>
+        <version>0.8.2</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -157,11 +157,11 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.1.jar`
-- `junit-platform-engine-1.0.2.jar`
-- `junit-platform-commons-1.0.2.jar`
+- `jqwik-0.8.2.jar`
+- `junit-platform-engine-1.0.3.jar`
+- `junit-platform-commons-1.0.3.jar`
 - `opentest4j-1.0.0.jar`
-- `assertj-core-3.8.x.jar` in case you need assertion support
+- `assertj-core-3.9.x.jar` in case you need assertion support
 
 ## Creating an Example-based Test
 
@@ -1234,7 +1234,7 @@ This topic will probably need a page of its own.
 
 ## Release Notes
 
-### 0.8.2-SNAPSHOT
+### 0.8.2
 
 - Added support for `java.util.Random` generation.
 - Added [Tuple types](#flat-mapping-with-tuple-types) 
