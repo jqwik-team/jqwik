@@ -38,6 +38,12 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
+	void charsByChars(@ForAll @Chars(value = { 'a', 'b', ' ' }, from = '1', to = '3') char aChar) {
+		System.out.println(String.format("[%s]", Character.toString(aChar)));
+	}
+
+
+	@Property(tries = 50)
 	void numericStrings(@ForAll @Digits String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}

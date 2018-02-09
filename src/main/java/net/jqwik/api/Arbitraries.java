@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.math.*;
@@ -121,16 +122,16 @@ public class Arbitraries {
 		return new ListArbitrary<T>(elementArbitrary, minSize, maxSize);
 	}
 
-	public static Arbitrary<Character> chars() {
-		return new CharacterArbitrary();
+	public static CharacterArbitrary chars() {
+		return new DefaultCharacterArbitrary();
 	}
 
-	public static Arbitrary<Character> chars(char from, char to) {
-		return new CharacterArbitrary(from, to);
+	public static CharacterArbitrary chars(char from, char to) {
+		return chars().withChars(from, to);
 	}
 
-	public static Arbitrary<Character> chars(char[] validChars) {
-		return new CharacterArbitrary(validChars);
+	public static CharacterArbitrary chars(char[] validChars) {
+		return chars().withChars(validChars);
 	}
 
 	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
