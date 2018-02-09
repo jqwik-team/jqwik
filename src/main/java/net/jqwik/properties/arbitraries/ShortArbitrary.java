@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class ShortArbitrary extends NullableArbitrary<Short> {
+public class ShortArbitrary extends AbstractArbitraryBase<Short> {
 
 	private static final short DEFAULT_MIN = Short.MIN_VALUE;
 	private static final short DEFAULT_MAX = Short.MAX_VALUE;

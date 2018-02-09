@@ -1,13 +1,13 @@
 package net.jqwik.properties.arbitraries;
 
-import java.math.BigDecimal;
+import java.math.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class BigDecimalArbitrary extends NullableArbitrary<BigDecimal> {
+public class BigDecimalArbitrary extends AbstractArbitraryBase<BigDecimal> {
 
 	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-1_000_000_000);
 	private static final BigDecimal DEFAULT_MAX = new BigDecimal(1_000_000_000);
@@ -42,10 +42,10 @@ public class BigDecimalArbitrary extends NullableArbitrary<BigDecimal> {
 		BigDecimal[] sampleValues = { BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ONE.negate(), smallest, smallest.negate(), DEFAULT_MAX,
 				DEFAULT_MIN, minGenerate, maxGenerate };
 		List<Shrinkable<BigDecimal>> samples = Arrays.stream(sampleValues) //
-													 .distinct() //
-													 .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
-													 .map(value -> new ShrinkableValue<>(value, decimalShrinkCandidates)) //
-													 .collect(Collectors.toList());
+				.distinct() //
+				.filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
+				.map(value -> new ShrinkableValue<>(value, decimalShrinkCandidates)) //
+				.collect(Collectors.toList());
 		return RandomGenerators.bigDecimals(minGenerate, maxGenerate, scale).withShrinkableSamples(samples);
 	}
 

@@ -1,12 +1,12 @@
 package net.jqwik.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.LongRange;
+import net.jqwik.api.constraints.*;
 
-public class LongArbitrary extends NullableArbitrary<Long> {
+public class LongArbitrary extends AbstractArbitraryBase<Long> {
 
 	private static final long DEFAULT_MIN = Long.MIN_VALUE;
 	private static final long DEFAULT_MAX = Long.MAX_VALUE;
@@ -36,10 +36,10 @@ public class LongArbitrary extends NullableArbitrary<Long> {
 	private RandomGenerator<Long> longGenerator(long minGenerate, long maxGenerate) {
 		LongShrinkCandidates shrinkCandidates = new LongShrinkCandidates(min, max);
 		List<Shrinkable<Long>> samples = Arrays.stream(new long[] { 0, 1, -1, Long.MIN_VALUE, Long.MAX_VALUE, minGenerate, maxGenerate }) //
-											   .distinct() //
-											   .filter(anInt -> anInt >= min && anInt <= max) //
-											   .mapToObj(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
-											   .collect(Collectors.toList());
+				.distinct() //
+				.filter(anInt -> anInt >= min && anInt <= max) //
+				.mapToObj(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
+				.collect(Collectors.toList());
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 

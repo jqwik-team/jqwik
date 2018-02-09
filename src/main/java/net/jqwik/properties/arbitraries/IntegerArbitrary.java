@@ -1,12 +1,12 @@
 package net.jqwik.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.IntRange;
+import net.jqwik.api.constraints.*;
 
-public class IntegerArbitrary extends NullableArbitrary<Integer> {
+public class IntegerArbitrary extends AbstractArbitraryBase<Integer> {
 
 	private static final int DEFAULT_MIN = Integer.MIN_VALUE;
 	private static final int DEFAULT_MAX = Integer.MAX_VALUE;

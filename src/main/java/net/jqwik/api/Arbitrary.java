@@ -39,6 +39,9 @@ public interface Arbitrary<T> {
 	}
 
 	default Arbitrary<T> injectNull(double nullProbability) {
+		if (nullProbability <= 0.0) {
+			return this;
+		}
 		return new ArbitraryWrapper<T, T>(this) {
 			@Override
 			public RandomGenerator<T> generator(int tries) {

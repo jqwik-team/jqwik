@@ -1,12 +1,12 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-
 import java.util.*;
 import java.util.stream.*;
 
-public class StringArbitrary extends NullableArbitrary<String> {
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+
+public class StringArbitrary extends AbstractArbitraryBase<String> {
 
 	private Set<Character> allowedChars = new HashSet<>();
 	private int minLength;
@@ -39,7 +39,6 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		this.minLength = minLength;
 		this.maxLength = maxLength;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -92,7 +91,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		addAllowedChars('a', 'z');
 		addAllowedChars('A', 'Z');
 		addAllowedChars('0', '9');
-		addAllowedChars(new char[] {' ', '@', ',', '.', ':', '-', '_'});
+		addAllowedChars(new char[] { ' ', '@', ',', '.', ':', '-', '_' });
 	}
 
 }

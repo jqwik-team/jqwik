@@ -38,10 +38,18 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
-	void charsByChars(@ForAll @Chars(value = { 'a', 'b', ' ' }, from = '1', to = '3') char aChar) {
+	void charsByChars(@ForAll @WithNull(value = 0.1, target = Character.class) @Chars(value = { 'a', 'b', ' ' }, from = '1', to = '3') Character aChar) {
+		if (aChar == null) {
+			System.out.println("[null]");
+			return;
+		}
 		System.out.println(String.format("[%s]", Character.toString(aChar)));
 	}
 
+	@Property(tries = 50)
+	void charsWithSeveralChars(@ForAll @Chars({ 'a', 'b', ' ' }) @Chars(from = '0', to = '9') char aChar) {
+		System.out.println(String.format("[%s]", aChar));
+	}
 
 	@Property(tries = 50)
 	void numericStrings(@ForAll @Digits String aRandomString) {
@@ -59,12 +67,12 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
-	void stringsCombined(@ForAll @Chars(from = '0', to = '9', value = {'a', 'b'}) String aRandomString) {
+	void stringsCombined(@ForAll @Chars(from = '0', to = '9', value = { 'a', 'b' }) String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 10)
-	void aListWithMaxSize(@ForAll @Size(max = 15) @StringLength(max = 4) @Chars({'x', 'y', 'z'}) List<String> listOfStrings) {
+	void aListWithMaxSize(@ForAll @Size(max = 15) @StringLength(max = 4) @Chars({ 'x', 'y', 'z' }) List<String> listOfStrings) {
 		System.out.println(String.format("%s", listOfStrings));
 	}
 

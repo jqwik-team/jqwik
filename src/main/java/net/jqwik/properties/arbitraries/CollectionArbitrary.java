@@ -6,7 +6,7 @@ import net.jqwik.api.constraints.*;
 import java.util.*;
 import java.util.stream.*;
 
-abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
+abstract class CollectionArbitrary<T, U> extends AbstractArbitraryBase<U> {
 
 	protected final Arbitrary<T> elementArbitrary;
 	protected int minSize;

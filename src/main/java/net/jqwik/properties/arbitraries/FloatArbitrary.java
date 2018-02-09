@@ -1,12 +1,12 @@
 package net.jqwik.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class FloatArbitrary extends NullableArbitrary<Float> {
+public class FloatArbitrary extends AbstractArbitraryBase<Float> {
 
 	private static final float DEFAULT_MIN = -Float.MAX_VALUE;
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;

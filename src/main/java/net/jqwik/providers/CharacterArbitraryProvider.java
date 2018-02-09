@@ -1,12 +1,12 @@
 package net.jqwik.providers;
 
+import java.util.*;
+import java.util.function.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
-
-import java.util.*;
-import java.util.function.*;
 
 public class CharacterArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -21,6 +21,13 @@ public class CharacterArbitraryProvider implements ArbitraryProvider {
 
 	public CharacterArbitrary configure(CharacterArbitrary arbitrary, Chars chars) {
 		return arbitrary.withChars(chars.value()).withChars(chars.from(), chars.to());
+	}
+
+	public CharacterArbitrary configure(CharacterArbitrary arbitrary, CharsList charsList) {
+		for (Chars chars : charsList.value()) {
+			arbitrary = configure(arbitrary, chars);
+		}
+		return arbitrary;
 	}
 
 }
