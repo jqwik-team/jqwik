@@ -1,12 +1,12 @@
 package net.jqwik.api;
 
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.properties.arbitraries.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 
@@ -102,18 +102,22 @@ public class Arbitraries {
 		return new DefaultStringArbitrary();
 	}
 
+	@Deprecated
 	public static StringArbitrary strings(char[] validChars, int minLength, int maxLength) {
 		return strings().withChars(validChars).withLength(minLength, maxLength);
 	}
 
+	@Deprecated
 	public static StringArbitrary strings(char[] validChars) {
 		return strings().withChars(validChars);
 	}
 
+	@Deprecated
 	public static StringArbitrary strings(char from, char to, int minLength, int maxLength) {
 		return strings().withChars(from, to).withLength(minLength, maxLength);
 	}
 
+	@Deprecated
 	public static StringArbitrary strings(char from, char to) {
 		return strings().withChars(from, to);
 	}
@@ -126,10 +130,12 @@ public class Arbitraries {
 		return new DefaultCharacterArbitrary();
 	}
 
+	@Deprecated
 	public static CharacterArbitrary chars(char from, char to) {
 		return chars().withChars(from, to);
 	}
 
+	@Deprecated
 	public static CharacterArbitrary chars(char[] validChars) {
 		return chars().withChars(validChars);
 	}
