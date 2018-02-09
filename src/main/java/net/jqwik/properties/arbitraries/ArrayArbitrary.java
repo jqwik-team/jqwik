@@ -31,7 +31,7 @@ public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> {
 
 	@SuppressWarnings("unchecked")
 	private A toArray(List<T> from) {
-		A array = (A) Array.newInstance(targetClass.getComponentType(), from.size());
+		A array = (A) Array.newInstance(getTargetClass().getComponentType(), from.size());
 		for (int i = 0; i < from.size(); i++) {
 			Array.set(array, i, from.get(i));
 		}

@@ -1,13 +1,13 @@
 package net.jqwik.providers;
 
-import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
-public class BigIntegerArbitraryProvider implements ArbitraryProvider {
+import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
+
+public class BigIntegerArbitraryProvider extends NullableArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
 		return targetType.isOfType(BigInteger.class);

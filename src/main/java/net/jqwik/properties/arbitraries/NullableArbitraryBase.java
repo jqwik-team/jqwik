@@ -3,11 +3,11 @@ package net.jqwik.properties.arbitraries;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
 
 public abstract class NullableArbitraryBase<T> implements NullableArbitrary<T>, Cloneable {
 
-	protected final Class targetClass;
+	private final Class targetClass;
+
 	private double nullProbability = 0.0;
 
 	protected NullableArbitraryBase(Class<?> targetClass) {
@@ -28,6 +28,10 @@ public abstract class NullableArbitraryBase<T> implements NullableArbitrary<T>, 
 
 	protected abstract RandomGenerator<T> baseGenerator(int tries);
 
+	public double getNullProbability() {
+		return nullProbability;
+	}
+
 	@SuppressWarnings("unchecked")
 	protected <A extends Arbitrary> A typedClone() {
 		try {
@@ -43,14 +47,4 @@ public abstract class NullableArbitraryBase<T> implements NullableArbitrary<T>, 
 		return clone;
 	}
 
-	// TODO: Remove if all arbitrary providers extend from NullableArbitraryProvider
-	public void configure(WithNull withNull) {
-		if (withNull.target().isAssignableFrom(targetClass))
-			nullProbability = withNull.value();
-	}
-
-	// TODO: Remove if all arbitrary providers extend from NullableArbitraryProvider
-	public double getNullProbability() {
-		return nullProbability;
-	}
 }

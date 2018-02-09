@@ -7,7 +7,7 @@ import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
-public class BigDecimalArbitraryProvider implements ArbitraryProvider {
+public class BigDecimalArbitraryProvider extends NullableArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
 		return targetType.isOfType(BigDecimal.class);
