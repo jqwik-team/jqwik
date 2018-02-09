@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultCharacterArbitrary extends AbstractArbitraryBase<Character> implements CharacterArbitrary {
+public class DefaultCharacterArbitrary extends NullableArbitraryBase<Character> implements CharacterArbitrary {
 
 	private Set<Character> allowedChars = new HashSet<>();
 

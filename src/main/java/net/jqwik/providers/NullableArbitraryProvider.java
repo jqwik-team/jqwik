@@ -7,9 +7,9 @@ import net.jqwik.api.providers.*;
 
 abstract class NullableArbitraryProvider implements ArbitraryProvider {
 
-	public Arbitrary<?> configure(TargetableArbitrary<?> arbitrary, WithNull withNull) {
+	public Arbitrary<?> configure(NullableArbitrary<?> arbitrary, WithNull withNull) {
 		if (withNull.target().isAssignableFrom(arbitrary.getTargetClass())) {
-			return arbitrary.injectNull(withNull.value());
+			return arbitrary.withNull(withNull.value());
 		}
 		return arbitrary;
 	}

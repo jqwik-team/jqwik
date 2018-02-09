@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class LongArbitrary extends AbstractArbitraryBase<Long> {
+public class LongArbitrary extends NullableArbitraryBase<Long> {
 
 	private static final long DEFAULT_MIN = Long.MIN_VALUE;
 	private static final long DEFAULT_MAX = Long.MAX_VALUE;

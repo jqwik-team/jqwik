@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class DoubleArbitrary extends AbstractArbitraryBase<Double> {
+public class DoubleArbitrary extends NullableArbitraryBase<Double> {
 
 	private static final double DEFAULT_MIN = -Double.MAX_VALUE;
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;

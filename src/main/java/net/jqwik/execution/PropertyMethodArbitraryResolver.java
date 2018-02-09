@@ -156,10 +156,10 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private Arbitrary<?> configureArbitraryInProvider(Arbitrary<?> arbitrary, ArbitraryProvider provider, List<Annotation> annotations) {
 		for (Annotation annotation : annotations) {
 			Class<? extends Arbitrary> arbitraryClass = arbitrary.getClass();
-			List<Method> configurationMethods = ReflectionSupport.findMethods(provider.getClass(),
+			Optional<Method> configurationMethod = JqwikReflectionSupport.findMethod(provider.getClass(),
 					method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP);
-			if (configurationMethods.size() >= 1) {
-				return (Arbitrary<?>) invokeMethod(configurationMethods.get(0), provider, arbitrary, annotation);
+			if (configurationMethod.isPresent()) {
+				arbitrary = (Arbitrary<?>) invokeMethod(configurationMethod.get(), provider, arbitrary, annotation);
 			}
 		}
 		return arbitrary;

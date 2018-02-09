@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class StringArbitrary extends AbstractArbitraryBase<String> {
+public class StringArbitrary extends NullableArbitraryBase<String> {
 
 	private Set<Character> allowedChars = new HashSet<>();
 	private int minLength;

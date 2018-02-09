@@ -7,7 +7,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class BigDecimalArbitrary extends AbstractArbitraryBase<BigDecimal> {
+public class BigDecimalArbitrary extends NullableArbitraryBase<BigDecimal> {
 
 	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-1_000_000_000);
 	private static final BigDecimal DEFAULT_MAX = new BigDecimal(1_000_000_000);

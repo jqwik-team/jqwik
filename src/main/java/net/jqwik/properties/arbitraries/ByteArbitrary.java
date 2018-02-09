@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class ByteArbitrary extends AbstractArbitraryBase<Byte> {
+public class ByteArbitrary extends NullableArbitraryBase<Byte> {
 
 	private static final byte DEFAULT_MIN = Byte.MIN_VALUE;
 	private static final byte DEFAULT_MAX = Byte.MAX_VALUE;

@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class IntegerArbitrary extends AbstractArbitraryBase<Integer> {
+public class IntegerArbitrary extends NullableArbitraryBase<Integer> {
 
 	private static final int DEFAULT_MIN = Integer.MIN_VALUE;
 	private static final int DEFAULT_MAX = Integer.MAX_VALUE;

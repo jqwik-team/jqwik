@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class FloatArbitrary extends AbstractArbitraryBase<Float> {
+public class FloatArbitrary extends NullableArbitraryBase<Float> {
 
 	private static final float DEFAULT_MIN = -Float.MAX_VALUE;
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;

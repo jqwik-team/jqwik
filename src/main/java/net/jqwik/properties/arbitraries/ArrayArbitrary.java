@@ -7,7 +7,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-public class ArrayArbitrary<A, T> extends AbstractArbitraryBase<A> {
+public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> {
 
 	private final Arbitrary<T> elementArbitrary;
 	private int maxSize;
