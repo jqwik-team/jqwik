@@ -4,7 +4,7 @@ import net.jqwik.api.*;
 
 import java.util.*;
 
-public class SetArbitrary<T> extends CollectionArbitrary<T, Set<T>> {
+public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 
 	public SetArbitrary(Arbitrary<T> elementArbitrary) {
 		this(elementArbitrary, 0, 0);

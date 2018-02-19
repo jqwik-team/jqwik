@@ -5,9 +5,9 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
-public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> {
+public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> implements CollectionArbitrary<A> {
 
 	private final Arbitrary<T> elementArbitrary;
 	private int maxSize;
@@ -54,9 +54,17 @@ public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> {
 		return RandomGenerators.list(elementGenerator, minSize, maxSize).withShrinkableSamples(samples);
 	}
 
-	public void configure(Size size) {
-		this.maxSize = size.max();
-		this.minSize = size.min();
+	@Override
+	public CollectionArbitrary<A> withMinSize(int minSize) {
+		ArrayArbitrary<A, T> clone = typedClone();
+		clone.minSize = minSize;
+		return clone;
 	}
 
+	@Override
+	public CollectionArbitrary<A> withMaxSize(int maxSize) {
+		ArrayArbitrary<A, T> clone = typedClone();
+		clone.maxSize = maxSize;
+		return clone;
+	}
 }

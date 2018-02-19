@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
 public class ArrayArbitraryProvider extends NullableArbitraryProvider {
@@ -18,4 +20,9 @@ public class ArrayArbitraryProvider extends NullableArbitraryProvider {
 				.map(elementArbitrary -> Arbitraries.arrayOf(targetType.getRawType(), elementArbitrary)) //
 				.orElse(null);
 	}
+
+	public CollectionArbitrary<?> configure(CollectionArbitrary<?> arbitrary, Size size) {
+		return arbitrary.withMinSize(size.min()).withMaxSize(size.max());
+	}
+
 }

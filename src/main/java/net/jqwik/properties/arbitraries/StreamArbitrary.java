@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.RandomGenerator;
 
-public class StreamArbitrary<T> extends CollectionArbitrary<T, Stream<T>> {
+public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>> {
 
 	public StreamArbitrary(Arbitrary<T> elementArbitrary) {
 		this(elementArbitrary, 0, 0);

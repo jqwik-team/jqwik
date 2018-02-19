@@ -5,7 +5,7 @@ import java.util.List;
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.RandomGenerator;
 
-public class ListArbitrary<T> extends CollectionArbitrary<T, List<T>> {
+public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 
 	public ListArbitrary(Arbitrary<T> elementArbitrary) {
 		this(elementArbitrary, 0, 0);
