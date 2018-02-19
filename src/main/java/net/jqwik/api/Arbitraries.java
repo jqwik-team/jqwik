@@ -67,12 +67,13 @@ public class Arbitraries {
 		return floats().withMin(min).withMax(max).withScale(scale);
 	}
 
-	public static Arbitrary<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale) {
-		return new BigDecimalArbitrary(min, max, scale);
+	public static BigDecimalArbitrary bigDecimals() {
+		return new DefaultBigDecimalArbitrary();
 	}
 
-	public static Arbitrary<BigDecimal> bigDecimals() {
-		return new BigDecimalArbitrary();
+	@Deprecated
+	public static BigDecimalArbitrary bigDecimals(BigDecimal min, BigDecimal max, int scale) {
+		return bigDecimals().withMin(min).withMax(max).withScale(scale);
 	}
 
 	public static DoubleArbitrary doubles() {

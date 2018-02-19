@@ -5,26 +5,20 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
-public class BigDecimalArbitrary extends NullableArbitraryBase<BigDecimal> {
+public class DefaultBigDecimalArbitrary extends NullableArbitraryBase<BigDecimal> implements BigDecimalArbitrary {
 
 	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-1_000_000_000);
 	private static final BigDecimal DEFAULT_MAX = new BigDecimal(1_000_000_000);
+	private static final int DEFAULT_SCALE = 2;
 
-	private BigDecimal min;
-	private BigDecimal max;
-	private int scale;
+	private BigDecimal min = DEFAULT_MIN;
+	private BigDecimal max = DEFAULT_MAX;
+	private int scale = DEFAULT_SCALE;
 
-	public BigDecimalArbitrary(BigDecimal min, BigDecimal max, int scale) {
+	public DefaultBigDecimalArbitrary() {
 		super(BigDecimal.class);
-		this.min = min;
-		this.max = max;
-		this.scale = scale;
-	}
-
-	public BigDecimalArbitrary() {
-		this(DEFAULT_MIN, DEFAULT_MAX, 2);
 	}
 
 	@Override
@@ -49,13 +43,25 @@ public class BigDecimalArbitrary extends NullableArbitraryBase<BigDecimal> {
 		return RandomGenerators.bigDecimals(minGenerate, maxGenerate, scale).withShrinkableSamples(samples);
 	}
 
-	public void configure(DoubleRange doubleRange) {
-		min = new BigDecimal(doubleRange.min());
-		max = new BigDecimal(doubleRange.max());
+	@Override
+	public BigDecimalArbitrary withMin(BigDecimal min) {
+		DefaultBigDecimalArbitrary clone = typedClone();
+		clone.min = min;
+		return clone;
 	}
 
-	public void configure(Scale scale) {
-		this.scale = scale.value();
+	@Override
+	public BigDecimalArbitrary withMax(BigDecimal max) {
+		DefaultBigDecimalArbitrary clone = typedClone();
+		clone.max = max;
+		return clone;
+	}
+
+	@Override
+	public BigDecimalArbitrary withScale(int scale) {
+		DefaultBigDecimalArbitrary clone = typedClone();
+		clone.scale = scale;
+		return clone;
 	}
 
 }
