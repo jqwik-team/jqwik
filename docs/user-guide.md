@@ -23,6 +23,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Grouping Tests](#grouping-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
+  - [Providing variable types](#providing-variable-types)
 - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
@@ -389,6 +390,7 @@ _jqwik_ tries to generate values for those property method parameters that are
 annotated with `@ForAll`. If the annotation does not have a `value` parameter,
 jqwik will use default generation for the following types:
 
+- `Object`
 - `String`
 - Integral types `Byte`, `byte`, `Short`, `short` `Integer`, `int`, `Long`, `long` and `BigInteger`
 - Floating types  `Float`, `float`, `Double`, `double` and `BigDecimal`
@@ -490,7 +492,7 @@ The following constraints can be combined with each other:
 
 #### Constraining contained types
 
-In case of collections, arrays and `Optional` the constraining annotations are also applied to the
+In case of collections, arrays, streams and `Optional` the constraining annotations are also applied to the
 contained type, e.g.:
 
 ```java
@@ -510,6 +512,36 @@ Currently, though, not all Java&nbsp;8 implementations support the retrieval of
 type parameter annotations through reflection.
 </div>
 
+
+### Providing variable types
+
+While checking properties of generically typed classes or functions, you often don't care
+about the exact type of variables and therefore want to express them with type variables.
+_jqwik_ can handle unbound type variables and wildcard types, but will refuse to provide
+variables with bound types. Consider the following examples:
+
+```java
+class VariableTypedPropertyExamples {
+
+	@Property
+	<T> boolean unboundedGenericTypesAreResolved(@ForAll List<T> items, @ForAll T newItem) {
+		items.add(newItem);
+		return items.contains(newItem);
+	}
+
+	@Property
+	void wildcardTypesAreResolved(@ForAll List<? extends Serializable> items) {
+	}
+
+	@Property
+	<T extends Serializable> void boundedGenericTypesCannotBeResolved(@ForAll List<T> items) {
+	}
+
+}
+```
+
+Whereas the first two properties will run - creating instances of type Object under the hood -
+the last one will fail with `CannotFindArbitraryException`.
 
 ## Self-Made Annotations
 
@@ -1239,6 +1271,7 @@ This topic will probably need a page of its own.
 
 - Bugfix: Injected empty list samples are now mutable
 - Bugfix: Injected empty set samples are now mutable
+- Unbound type variables in properties [can now be provided](#providing-variable-types)
 
 ### 0.8.2
 

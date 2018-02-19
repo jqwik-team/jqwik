@@ -9,7 +9,7 @@ import java.util.function.*;
 public class FloatArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(Float.class);
+		return targetType.isCompatibleWith(Float.class);
 	}
 
 	@Override

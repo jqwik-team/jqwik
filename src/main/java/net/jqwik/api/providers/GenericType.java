@@ -8,10 +8,18 @@ public class GenericType {
 
 	private final Class<?> rawType;
 	private final GenericType[] typeArguments;
+	private final String typeVariable;
+	private final GenericType[] bounds;
+
+	public GenericType(Class<?> rawType, String typeVariable, GenericType[] bounds, GenericType[] typeArguments) {
+		this.rawType = rawType;
+		this.typeVariable = typeVariable;
+		this.bounds = bounds;
+		this.typeArguments = typeArguments;
+	}
 
 	public GenericType(Class<?> rawType, GenericType... typeArguments) {
-		this.rawType = rawType;
-		this.typeArguments = typeArguments;
+		this(rawType, null, new GenericType[0], typeArguments);
 	}
 
 	public GenericType(Parameter parameter) {
@@ -19,27 +27,54 @@ public class GenericType {
 	}
 
 	public GenericType(Type parameterizedType) {
-		this(extractRawType(parameterizedType), extractTypeArguments(parameterizedType));
+		this(extractRawType(parameterizedType), extractTypeVariable(parameterizedType), extractBounds(parameterizedType),
+				extractTypeArguments(parameterizedType));
+	}
+
+	private static String extractTypeVariable(Type parameterizedType) {
+		if (parameterizedType instanceof TypeVariable) {
+			return ((TypeVariable) parameterizedType).getName();
+		}
+		return null;
+	}
+
+	private static GenericType[] extractBounds(Type parameterizedType) {
+		if (parameterizedType instanceof TypeVariable) {
+			return Arrays.stream(((TypeVariable) parameterizedType).getBounds()) //
+					.filter(type -> type != Object.class) //
+					.map(GenericType::new) //
+					.toArray(GenericType[]::new);
+		}
+		return new GenericType[0];
 	}
 
 	private static Class<?> extractRawType(Type parameterizedType) {
 		if (parameterizedType instanceof Class) {
 			return (Class) parameterizedType;
 		}
-		return (Class) ((ParameterizedType) parameterizedType).getRawType();
+		if (parameterizedType instanceof ParameterizedType) {
+			return (Class) ((ParameterizedType) parameterizedType).getRawType();
+		}
+		// Now we have a type variable (java.lang.reflect.TypeVariable)
+		return Object.class;
 	}
 
 	private static GenericType[] extractTypeArguments(Type parameterizedType) {
-		if (parameterizedType instanceof Class) {
-			return new GenericType[0];
+		if (parameterizedType instanceof ParameterizedType) {
+			return Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments()) //
+					.map(GenericType::new) //
+					.toArray(GenericType[]::new);
 		}
-		List<GenericType> typeArgs = Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments())
-				.map(type -> new GenericType(type)).collect(Collectors.toList());
-		return typeArgs.toArray(new GenericType[typeArgs.size()]);
+		// Now it's either not a generic type or it has type variables
+		return new GenericType[0];
 	}
 
 	public Class<?> getRawType() {
 		return rawType;
+	}
+
+	public boolean hasBounds() {
+		return bounds.length > 0;
 	}
 
 	public GenericType[] getTypeArguments() {
@@ -62,31 +97,31 @@ public class GenericType {
 		return getRawType().isArray();
 	}
 
-	public boolean isAssignableFrom(GenericType providedType) {
-		if (boxedTypeMatches(providedType.getRawType(), this.getRawType()))
-			return true;
-		if (!this.getRawType().isAssignableFrom(providedType.getRawType()))
-			return false;
-		return allTypeArgumentsAreAssignable(typeArguments, providedType.getTypeArguments());
-	}
-
-	private boolean allTypeArgumentsAreAssignable(GenericType[] targetTypeArguments, GenericType[] providedTypeArguments) {
+	private boolean allTypeArgumentsAreCompatible(GenericType[] targetTypeArguments, GenericType[] providedTypeArguments) {
 		if (targetTypeArguments.length != providedTypeArguments.length)
 			return false;
 		for (int i = 0; i < targetTypeArguments.length; i++) {
 			GenericType targetTypeArgument = targetTypeArguments[i];
 			GenericType providedTypeArgument = providedTypeArguments[i];
-			if (!targetTypeArgument.isAssignableFrom(providedTypeArgument))
+			if (!targetTypeArgument.isCompatibleWith(providedTypeArgument))
 				return false;
 		}
 		return true;
 	}
 
-	public boolean isAssignableFrom(Class providedClass) {
-		if (this.getRawType().isAssignableFrom(providedClass))
+	public boolean isCompatibleWith(Class<?> providedClass) {
+		if (isOfType(providedClass))
 			return true;
 		return boxedTypeMatches(providedClass, this.getRawType());
 	}
+
+	public boolean isCompatibleWith(GenericType providedType) {
+		if (!this.isCompatibleWith(providedType.getRawType()))
+			return false;
+		return allTypeArgumentsAreCompatible(typeArguments, providedType.getTypeArguments());
+	}
+
+
 
 	private boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {
 		if (providedType.equals(Long.class) && targetType.equals(long.class))
@@ -117,12 +152,22 @@ public class GenericType {
 	public String toString() {
 		String representation = getRawType().getSimpleName();
 		if (isGeneric()) {
-			String typeArgsRepresentation = Arrays.stream(typeArguments).map(genericType -> genericType.toString())
+			String typeArgsRepresentation = Arrays.stream(typeArguments) //
+					.map(GenericType::toString) //
 					.collect(Collectors.joining(", "));
 			representation = String.format("%s<%s>", representation, typeArgsRepresentation);
 		}
 		if (isArray()) {
 			representation = String.format("%s[]", getComponentType().toString());
+		}
+		if (typeVariable != null) {
+			representation = typeVariable;
+			if (hasBounds()) {
+				String boundsRepresentation = Arrays.stream(bounds) //
+													  .map(GenericType::toString) //
+													  .collect(Collectors.joining(" & "));
+				representation += String.format(" extends %s", boundsRepresentation);
+			}
 		}
 		return representation;
 	}

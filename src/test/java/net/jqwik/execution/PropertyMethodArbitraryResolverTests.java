@@ -28,7 +28,7 @@ public class PropertyMethodArbitraryResolverTests {
 	class Defaults {
 
 		@Example
-		void defaultProvidersAreUsedIfNothingIsProvided() throws Exception {
+		void defaultProvidersAreUsedIfNothingIsProvided() {
 			PropertyMethodArbitraryResolver provider = getResolver(DefaultParams.class, "intParam", int.class);
 			Parameter parameter = getParameter(DefaultParams.class, "intParam");
 			Object actual = generateFirst(provider, parameter);
@@ -36,14 +36,14 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void doNotUseDefaultIfForAllHasValue() throws Exception {
+		void doNotUseDefaultIfForAllHasValue() {
 			PropertyMethodArbitraryResolver resolver = getResolver(DefaultParams.class, "intParamWithForAllValue", int.class);
 			Parameter parameter = getParameter(DefaultParams.class, "intParamWithForAllValue");
 			assertThat(resolver.forParameter(parameter)).isEmpty();
 		}
 
 		@Example
-		void useNextDefaultProviderIfFirstDoesNotProvideAnArbitrary() throws Exception {
+		void useNextDefaultProviderIfFirstDoesNotProvideAnArbitrary() {
 			PropertyMethodDescriptor descriptor = getDescriptor(DefaultParams.class, "aString", String.class);
 			List<ArbitraryProvider> defaultProviders = Arrays.asList(
 				createProvider(String.class, null),
@@ -64,7 +64,7 @@ public class PropertyMethodArbitraryResolverTests {
 			return new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(GenericType targetType) {
-					return targetType.isAssignableFrom(targetClass);
+					return targetType.isCompatibleWith(targetClass);
 				}
 
 				@Override
@@ -100,7 +100,7 @@ public class PropertyMethodArbitraryResolverTests {
 	class ProvidedArbitraries {
 
 		@Example
-		void unnamedStringGenerator() throws Exception {
+		void unnamedStringGenerator() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithUnnamedGenerator.class, "string", String.class);
 			Parameter parameter = getParameter(WithUnnamedGenerator.class, "string");
 			Object actual = generateFirst(provider, parameter);
@@ -120,7 +120,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findBoxedTypeGenerator() throws Exception {
+		void findBoxedTypeGenerator() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "longFromBoxedType", long.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "longFromBoxedType");
 			Object actual = generateFirst(provider, parameter);
@@ -128,7 +128,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findStringGeneratorByName() throws Exception {
+		void findStringGeneratorByName() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "string", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "string");
 			Object actual = generateFirst(provider, parameter);
@@ -136,7 +136,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findStringGeneratorByMethodName() throws Exception {
+		void findStringGeneratorByMethodName() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "stringByMethodName", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
 			Object actual = generateFirst(provider, parameter);
@@ -144,7 +144,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findGeneratorByMethodNameOutsideGroup() throws Exception {
+		void findGeneratorByMethodNameOutsideGroup() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class,
 					"nestedStringByMethodName", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName");
@@ -153,7 +153,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findGeneratorByNameOutsideGroup() throws Exception {
+		void findGeneratorByNameOutsideGroup() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class, "nestedString",
 					String.class);
 			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedString");
@@ -162,7 +162,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findFirstFitIfNoNameIsGivenInOutsideGroup() throws Exception {
+		void findFirstFitIfNoNameIsGivenInOutsideGroup() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing",
 					Thing.class);
 			Parameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing");
@@ -171,14 +171,14 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void namedStringGeneratorNotFound() throws Exception {
+		void namedStringGeneratorNotFound() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "otherString", String.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "otherString");
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
 		@Example
-		void findFirstFitIfNoNameIsGiven() throws Exception {
+		void findFirstFitIfNoNameIsGiven() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "listOfThingWithoutName", List.class);
 			Parameter parameter = getParameter(WithNamedProviders.class, "listOfThingWithoutName");
 			List actualList = generateCollection(provider, parameter);
@@ -271,7 +271,7 @@ public class PropertyMethodArbitraryResolverTests {
 	class Configuration {
 
 		@Example
-		void configureIsCalledOnDefaultArbitrary() throws Exception {
+		void configureIsCalledOnDefaultArbitrary() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithConfiguration.class, "aNullableInteger", Integer.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableInteger");
 			IntegerArbitrary integerArbitrary = (IntegerArbitrary) provider.forParameter(parameter).get().inner();
@@ -280,7 +280,7 @@ public class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void configureIsCalledOnProvidedArbitrary() throws Exception {
+		void configureIsCalledOnProvidedArbitrary() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithConfiguration.class, "aNullableMock", Object.class);
 			Parameter parameter = getParameter(WithConfiguration.class, "aNullableMock");
 			Optional<Arbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);

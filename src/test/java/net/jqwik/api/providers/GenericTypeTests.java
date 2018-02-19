@@ -8,41 +8,39 @@ import java.util.*;
 class GenericTypeTests {
 
 	@Example
-	void nonGenericTypesAssignability() {
-		assertAssignable(new GenericType(int.class), new GenericType(Integer.class));
-		assertAssignable(new GenericType(double.class), new GenericType(Integer.class));
-		assertAssignable(new GenericType(List.class), new GenericType(List.class));
-		assertAssignable(new GenericType(List.class), new GenericType(ArrayList.class));
-		assertNotAssignable(new GenericType(ArrayList.class), new GenericType(List.class));
+	void primitiveTypes() {
+		Assertions.assertThat(new GenericType(int.class).isCompatibleWith(Integer.class)).isTrue();
+		Assertions.assertThat(new GenericType(int.class).isCompatibleWith(int.class)).isTrue();
+		Assertions.assertThat(new GenericType(Integer.class).isCompatibleWith(Integer.class)).isTrue();
+
+		Assertions.assertThat(new GenericType(Integer.class).isCompatibleWith(int.class)).isFalse();
+		Assertions.assertThat(new GenericType(int.class).isCompatibleWith(float.class)).isFalse();
 	}
 
 	@Example
-	void identicalGenericTypesAreAssignable() {
+	void rawTypes() {
+		Assertions.assertThat(new GenericType(Object.class).isCompatibleWith(Object.class)).isTrue();
+		Assertions.assertThat(new GenericType(Object.class).isCompatibleWith(String.class)).isFalse();
+	}
+
+	@Example
+	void genericTypesToRawTypes() {
+		GenericType target = new GenericType(List.class, new GenericType(String.class));
+
+		Assertions.assertThat(target.isCompatibleWith(List.class)).isTrue();
+		Assertions.assertThat(target.isCompatibleWith(Collection.class)).isFalse();
+		Assertions.assertThat(target.isCompatibleWith(Set.class)).isFalse();
+	}
+
+	@Example
+	void genericTypesAmongEachOther() {
 		GenericType target = new GenericType(List.class, new GenericType(String.class));
 		GenericType provided = new GenericType(List.class, new GenericType(String.class));
-		assertAssignable(target, provided);
-	}
 
-	@Example
-	void genericTypeIsAssignableFromRawType() {
-		GenericType target = new GenericType(List.class, new GenericType(String.class));
-		GenericType provided = new GenericType(List.class);
-		assertAssignable(target, provided);
-	}
+		Assertions.assertThat(target.isCompatibleWith(provided)).isTrue();
 
-	@Example
-	void genericTypeIsNotAssignableFromSameRawTypeWithOtherTypeArgument() {
-		GenericType target = new GenericType(List.class, new GenericType(String.class));
-		GenericType provided = new GenericType(List.class, new GenericType(Integer.class));
-		assertNotAssignable(target, provided);
-	}
-
-	private void assertAssignable(GenericType target, GenericType provided) {
-		Assertions.assertThat(target.isAssignableFrom(provided));
-	}
-
-	private void assertNotAssignable(GenericType target, GenericType provided) {
-		Assertions.assertThat(target.isAssignableFrom(provided)).isFalse();
+		Assertions.assertThat(target.isCompatibleWith(new GenericType(List.class, new GenericType(Object.class)))).isFalse();
+		Assertions.assertThat(new GenericType(List.class, new GenericType(Object.class)).isCompatibleWith(provided)).isFalse();
 	}
 
 }

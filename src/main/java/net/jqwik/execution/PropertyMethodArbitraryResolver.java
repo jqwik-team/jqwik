@@ -124,7 +124,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 			if (!arbitraryReturnType.isGeneric()) {
 				return false;
 			}
-			return genericType.isAssignableFrom(arbitraryReturnType.getTypeArguments()[0]);
+			return genericType.isCompatibleWith(arbitraryReturnType.getTypeArguments()[0]);
 		};
 	}
 

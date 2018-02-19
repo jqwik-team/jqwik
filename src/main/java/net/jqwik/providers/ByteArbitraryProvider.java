@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 public class ByteArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(Byte.class);
+		return targetType.isCompatibleWith(Byte.class);
 	}
 
 	@Override

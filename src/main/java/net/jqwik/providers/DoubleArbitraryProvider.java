@@ -9,7 +9,7 @@ import java.util.function.*;
 public class DoubleArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isAssignableFrom(Double.class);
+		return targetType.isCompatibleWith(Double.class);
 	}
 
 	@Override

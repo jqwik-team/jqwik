@@ -21,6 +21,16 @@ class DefaultArbitraryProvidersTests {
 	}
 
 	@Property
+	boolean objects(@ForAll Object aValue) {
+		return aValue != null;
+	}
+
+	@Property
+	<T> boolean unboundTypeVariable(@ForAll T aValue) {
+		return aValue != null;
+	}
+
+	@Property
 	boolean shortParam(@ForAll short aValue) {
 		return true;
 	}
@@ -169,7 +179,7 @@ class DefaultArbitraryProvidersTests {
 			personProvider = new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(GenericType targetType) {
-					return targetType.isAssignableFrom(Person.class);
+					return targetType.isCompatibleWith(Person.class);
 				}
 
 				@Override
