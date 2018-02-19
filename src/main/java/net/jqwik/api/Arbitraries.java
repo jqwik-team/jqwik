@@ -58,12 +58,13 @@ public class Arbitraries {
 		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
 	}
 
-	public static Arbitrary<Float> floats() {
-		return new FloatArbitrary();
+	public static FloatArbitrary floats() {
+		return new DefaultFloatArbitrary();
 	}
 
-	public static Arbitrary<Float> floats(Float min, Float max, int scale) {
-		return new FloatArbitrary(min, max, scale);
+	@Deprecated
+	public static FloatArbitrary floats(Float min, Float max, int scale) {
+		return floats().withMin(min).withMax(max).withScale(scale);
 	}
 
 	public static Arbitrary<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale) {

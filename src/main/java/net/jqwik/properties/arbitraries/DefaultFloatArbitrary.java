@@ -4,26 +4,20 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
-public class FloatArbitrary extends NullableArbitraryBase<Float> {
+public class DefaultFloatArbitrary extends NullableArbitraryBase<Float> implements FloatArbitrary {
 
 	private static final float DEFAULT_MIN = -Float.MAX_VALUE;
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;
+	private static final int DEFAULT_SCALE = 2;
 
-	private float min;
-	private float max;
-	private int scale;
+	private float min = DEFAULT_MIN;
+	private float max = DEFAULT_MAX;
+	private int scale = DEFAULT_SCALE;
 
-	public FloatArbitrary(float min, float max, int scale) {
+	public DefaultFloatArbitrary() {
 		super(Float.class);
-		this.min = min;
-		this.max = max;
-		this.scale = scale;
-	}
-
-	public FloatArbitrary() {
-		this(DEFAULT_MIN, DEFAULT_MAX, 2);
 	}
 
 	@Override
@@ -47,13 +41,25 @@ public class FloatArbitrary extends NullableArbitraryBase<Float> {
 		return RandomGenerators.floats(minGenerate, maxGenerate, scale).withShrinkableSamples(samples);
 	}
 
-	public void configure(FloatRange doubleRange) {
-		min = doubleRange.min();
-		max = doubleRange.max();
+	@Override
+	public FloatArbitrary withMin(float min) {
+		DefaultFloatArbitrary clone = typedClone();
+		clone.min = min;
+		return clone;
 	}
 
-	public void configure(Scale scale) {
-		this.scale = scale.value();
+	@Override
+	public FloatArbitrary withMax(float max) {
+		DefaultFloatArbitrary clone = typedClone();
+		clone.max = max;
+		return clone;
+	}
+
+	@Override
+	public FloatArbitrary withScale(int scale) {
+		DefaultFloatArbitrary clone = typedClone();
+		clone.scale = scale;
+		return clone;
 	}
 
 }
