@@ -5,7 +5,6 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
 
 public class DefaultStringArbitrary extends NullableArbitraryBase<String> implements StringArbitrary {
 
@@ -28,10 +27,16 @@ public class DefaultStringArbitrary extends NullableArbitraryBase<String> implem
 	}
 
 	@Override
-	public StringArbitrary withLength(int min, int max) {
+	public StringArbitrary withMinLength(int minLength) {
 		DefaultStringArbitrary clone = typedClone();
-		clone.minLength = min;
-		clone.maxLength = max;
+		clone.minLength = minLength;
+		return clone;
+	}
+
+	@Override
+	public StringArbitrary withMaxLength(int maxLength) {
+		DefaultStringArbitrary clone = typedClone();
+		clone.maxLength = maxLength;
 		return clone;
 	}
 

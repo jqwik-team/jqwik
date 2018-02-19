@@ -104,7 +104,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static StringArbitrary strings(char[] validChars, int minLength, int maxLength) {
-		return strings().withChars(validChars).withLength(minLength, maxLength);
+		return strings().withChars(validChars).withMinLength(minLength).withMaxLength(maxLength);
 	}
 
 	@Deprecated
@@ -114,7 +114,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static StringArbitrary strings(char from, char to, int minLength, int maxLength) {
-		return strings().withChars(from, to).withLength(minLength, maxLength);
+		return strings().withChars(from, to).withMinLength(minLength).withMaxLength(maxLength);
 	}
 
 	@Deprecated

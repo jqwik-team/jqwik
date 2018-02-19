@@ -20,7 +20,7 @@ public class StringArbitraryProvider extends NullableArbitraryProvider {
 	}
 
 	public StringArbitrary configure(StringArbitrary arbitrary, StringLength stringLength) {
-		return arbitrary.withLength(stringLength.min(), stringLength.max());
+		return arbitrary.withMinLength(stringLength.min()).withMaxLength(stringLength.max());
 	}
 
 	public StringArbitrary configure(StringArbitrary arbitrary, Chars chars) {
