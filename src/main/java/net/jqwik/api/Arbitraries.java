@@ -75,12 +75,13 @@ public class Arbitraries {
 		return new BigDecimalArbitrary();
 	}
 
-	public static Arbitrary<Double> doubles() {
-		return new DoubleArbitrary();
+	public static DoubleArbitrary doubles() {
+		return new DefaultDoubleArbitrary();
 	}
 
-	public static Arbitrary<Double> doubles(double min, double max, int scale) {
-		return new DoubleArbitrary(min, max, scale);
+	@Deprecated
+	public static DoubleArbitrary doubles(double min, double max, int scale) {
+		return doubles().withMin(min).withMax(max).withScale(scale);
 	}
 
 	public static Arbitrary<Byte> bytes() {
