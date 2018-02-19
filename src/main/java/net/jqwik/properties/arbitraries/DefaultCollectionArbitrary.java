@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U> implements CollectionArbitrary<U> {
+abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U> implements SizableArbitrary<U> {
 
 	protected final Arbitrary<T> elementArbitrary;
 	protected int minSize;
@@ -49,14 +49,14 @@ abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U>
 	}
 
 	@Override
-	public CollectionArbitrary<U> withMinSize(int minSize) {
+	public SizableArbitrary<U> withMinSize(int minSize) {
 		DefaultCollectionArbitrary<T, U> clone = typedClone();
 		clone.minSize = minSize;
 		return clone;
 	}
 
 	@Override
-	public CollectionArbitrary<U> withMaxSize(int maxSize) {
+	public SizableArbitrary<U> withMaxSize(int maxSize) {
 		DefaultCollectionArbitrary<T, U> clone = typedClone();
 		clone.maxSize = maxSize;
 		return clone;

@@ -122,10 +122,6 @@ public class Arbitraries {
 		return strings().withChars(from, to);
 	}
 
-	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new ListArbitrary<T>(elementArbitrary, minSize, maxSize);
-	}
-
 	public static CharacterArbitrary chars() {
 		return new DefaultCharacterArbitrary();
 	}
@@ -140,36 +136,44 @@ public class Arbitraries {
 		return chars().withChars(validChars);
 	}
 
-	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
+	public static <T> SizableArbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
 		return new ListArbitrary<T>(elementArbitrary);
 	}
 
-	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new SetArbitrary<>(elementArbitrary, minSize, maxSize);
+	@Deprecated
+	public static <T> SizableArbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return listOf(elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
-	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
+	public static <T> SizableArbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
 		return new SetArbitrary<>(elementArbitrary);
 	}
 
-	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new StreamArbitrary<>(elementArbitrary, minSize, maxSize);
+	@Deprecated
+	public static <T> SizableArbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return setOf(elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
-	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
+	public static <T> SizableArbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
 		return new StreamArbitrary<>(elementArbitrary);
+	}
+
+	@Deprecated
+	public static <T> SizableArbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return streamOf(elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
 		return elementArbitrary.injectNull(0.1).map(Optional::ofNullable);
 	}
 
-	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new ArrayArbitrary(arrayClass, elementArbitrary, minSize, maxSize);
+	public static <A, T> SizableArbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
+		return new ArrayArbitrary<>(arrayClass, elementArbitrary);
 	}
 
-	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
-		return new ArrayArbitrary(arrayClass, elementArbitrary);
+	@Deprecated
+	public static <A, T> SizableArbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return arrayOf(arrayClass, elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
 	@SafeVarargs

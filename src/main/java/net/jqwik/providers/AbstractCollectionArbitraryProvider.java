@@ -27,7 +27,7 @@ abstract class AbstractCollectionArbitraryProvider extends NullableArbitraryProv
 
 	protected abstract Arbitrary<?> create(Arbitrary<?> innerArbitrary);
 
-	public CollectionArbitrary<?> configure(CollectionArbitrary<?> arbitrary, Size size) {
+	public SizableArbitrary<?> configure(SizableArbitrary<?> arbitrary, Size size) {
 		return arbitrary.withMinSize(size.min()).withMaxSize(size.max());
 	}
 

@@ -21,7 +21,7 @@ public class ArrayArbitraryProvider extends NullableArbitraryProvider {
 				.orElse(null);
 	}
 
-	public CollectionArbitrary<?> configure(CollectionArbitrary<?> arbitrary, Size size) {
+	public SizableArbitrary<?> configure(SizableArbitrary<?> arbitrary, Size size) {
 		return arbitrary.withMinSize(size.min()).withMaxSize(size.max());
 	}
 
