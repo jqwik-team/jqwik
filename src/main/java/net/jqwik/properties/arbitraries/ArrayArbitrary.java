@@ -1,27 +1,21 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-
 public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> implements SizableArbitrary<A> {
 
 	private final Arbitrary<T> elementArbitrary;
-	private int maxSize;
-	private int minSize;
+	private int maxSize = 0;
+	private int minSize = 0;
 
 	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
-		this(arrayClass, elementArbitrary, 0, 0);
-	}
-
-	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
 		super(arrayClass);
 		this.elementArbitrary = elementArbitrary;
-		this.minSize = minSize;
-		this.maxSize = maxSize;
 	}
 
 	@Override

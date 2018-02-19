@@ -7,11 +7,7 @@ import java.util.*;
 public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 
 	public SetArbitrary(Arbitrary<T> elementArbitrary) {
-		this(elementArbitrary, 0, 0);
-	}
-
-	public SetArbitrary(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		super(Set.class, elementArbitrary, minSize, maxSize);
+		super(Set.class, elementArbitrary);
 	}
 
 	@Override

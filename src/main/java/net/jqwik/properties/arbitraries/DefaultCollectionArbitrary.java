@@ -1,22 +1,20 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+
+import java.util.*;
+import java.util.stream.*;
 
 abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U> implements SizableArbitrary<U> {
 
 	protected final Arbitrary<T> elementArbitrary;
-	protected int minSize;
-	protected int maxSize;
+	protected int minSize = 0;
+	protected int maxSize = 0;
 
-	protected DefaultCollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+	protected DefaultCollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary) {
 		super(collectionClass);
 		this.elementArbitrary = elementArbitrary;
-		this.minSize = minSize;
-		this.maxSize = maxSize;
 	}
 
 	protected RandomGenerator<List<T>> listGenerator(int tries) {
