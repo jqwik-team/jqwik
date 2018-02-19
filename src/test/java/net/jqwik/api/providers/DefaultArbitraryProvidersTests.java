@@ -126,6 +126,11 @@ class DefaultArbitraryProvidersTests {
 	}
 
 	@Property
+	void listsAreMutable(@ForAll List<Integer> aValue) {
+		aValue.add(41);
+	}
+
+	@Property
 	boolean integerArray(@ForAll Integer[] aValue) {
 		return aValue != null;
 	}
@@ -133,6 +138,11 @@ class DefaultArbitraryProvidersTests {
 	@Property
 	boolean integerSet(@ForAll Set<Integer> aValue) {
 		return aValue != null;
+	}
+
+	@Property
+	void setsAreMutable(@ForAll Set<Integer> aValue) {
+		aValue.add(42);
 	}
 
 	@Property

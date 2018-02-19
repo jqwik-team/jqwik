@@ -18,7 +18,7 @@ public class SetArbitrary<T> extends CollectionArbitrary<T, Set<T>> {
 	protected RandomGenerator<Set<T>> baseGenerator(int tries) {
 		int effectiveMaxSize = effectiveMaxSize(tries);
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
-		List<Shrinkable<Set<T>>> samples = samplesList(effectiveMaxSize, Collections.emptySet());
+		List<Shrinkable<Set<T>>> samples = samplesList(effectiveMaxSize, new HashSet<>());
 		return RandomGenerators.set(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
 	}
 }

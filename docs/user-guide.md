@@ -1237,6 +1237,9 @@ This topic will probably need a page of its own.
 
 ### 0.8.3-SNAPSHOT
 
+- Bugfix: Injected empty list samples are now mutable
+- Bugfix: Injected empty set samples are now mutable
+
 ### 0.8.2
 
 - Added support for `java.util.Random` generation.

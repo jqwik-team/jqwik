@@ -33,7 +33,7 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 
 	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int effectiveMaxSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
-		List<Shrinkable<List<T>>> samples = samplesList(effectiveMaxSize, Collections.emptyList());
+		List<Shrinkable<List<T>>> samples = samplesList(effectiveMaxSize, new ArrayList<>());
 		return RandomGenerators.list(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
 	}
 
