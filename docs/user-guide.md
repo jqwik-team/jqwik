@@ -90,8 +90,8 @@ repositories {
 ext.junitPlatformVersion = '1.0.3'
 ext.junitJupiterVersion = '5.0.3'
 
-ext.jqwikVersion = '0.8.2'
-#ext.jqwikVersion = '0.8.3-SNAPSHOT'
+ext.jqwikVersion = '0.8.3'
+#ext.jqwikVersion = '0.8.4-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -138,7 +138,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.2</version>
+        <version>0.8.3</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -159,7 +159,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.2.jar`
+- `jqwik-0.8.3.jar`
 - `junit-platform-engine-1.0.3.jar`
 - `junit-platform-commons-1.0.3.jar`
 - `opentest4j-1.0.0.jar`
@@ -1267,7 +1267,7 @@ This topic will probably need a page of its own.
 
 ## Release Notes
 
-### 0.8.3-SNAPSHOT
+### 0.8.3
 
 - Bugfix: Injected empty list samples are now mutable
 - Bugfix: Injected empty set samples are now mutable
