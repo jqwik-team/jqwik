@@ -20,10 +20,6 @@ public class BigDecimalArbitraryProvider implements ArbitraryProvider {
 		return Arbitraries.bigDecimals();
 	}
 
-	public BigDecimalArbitrary configure(BigDecimalArbitrary arbitrary, Scale scale) {
-		return arbitrary.withScale(scale.value());
-	}
-
 	public BigDecimalArbitrary configure(BigDecimalArbitrary arbitrary, DoubleRange range) {
 		return arbitrary.withMin(new BigDecimal(range.min())).withMax(new BigDecimal(range.max()));
 	}

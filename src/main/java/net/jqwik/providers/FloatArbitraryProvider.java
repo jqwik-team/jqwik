@@ -19,10 +19,6 @@ public class FloatArbitraryProvider implements ArbitraryProvider {
 		return Arbitraries.floats();
 	}
 
-	public FloatArbitrary configure(FloatArbitrary arbitrary, Scale scale) {
-		return arbitrary.withScale(scale.value());
-	}
-
 	public FloatArbitrary configure(FloatArbitrary arbitrary, FloatRange range) {
 		return arbitrary.withMin(range.min()).withMax(range.max());
 	}

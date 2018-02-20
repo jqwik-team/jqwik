@@ -19,10 +19,6 @@ public class DoubleArbitraryProvider implements ArbitraryProvider {
 		return Arbitraries.doubles();
 	}
 
-	public DoubleArbitrary configure(DoubleArbitrary arbitrary, Scale scale) {
-		return arbitrary.withScale(scale.value());
-	}
-
 	public DoubleArbitrary configure(DoubleArbitrary arbitrary, DoubleRange range) {
 		return arbitrary.withMin(range.min()).withMax(range.max());
 	}

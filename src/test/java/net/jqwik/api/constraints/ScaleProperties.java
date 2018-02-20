@@ -8,17 +8,17 @@ import org.assertj.core.data.*;
 
 class ScaleProperties {
 	@Property
-	void floatsWithScale(@ForAll @FloatRange(max = 1000.0f) @Scale(2) float value) {
-		Assertions.assertThat(value * 100).isCloseTo(Math.round(value * 100.0), Offset.offset(0.005f));
+	void floatsWithScale(@ForAll @FloatRange(max = 1000.0f) @Scale(1) float value) {
+		Assertions.assertThat(value * 10).isCloseTo(Math.round(value * 10.0), Offset.offset(0.05f));
 	}
 
 	@Property
-	void doublesWithScale(@ForAll @DoubleRange(max = 1000.0) @Scale(2) double value) {
-		Assertions.assertThat(value * 100).isCloseTo(Math.round(value * 100.0), Offset.offset(0.005));
+	void doublesWithScale(@ForAll @DoubleRange(max = 1000.0) @Scale(1) double value) {
+		Assertions.assertThat(value * 10).isCloseTo(Math.round(value * 10.0), Offset.offset(0.05));
 	}
 
 	@Property
-	boolean bigDecimalsWithScale(@ForAll @FloatRange(max = 1000) @Scale(2) BigDecimal value) {
-		return value.scale() <= 2;
+	boolean bigDecimalsWithScale(@ForAll @FloatRange(max = 1000) @Scale(1) BigDecimal value) {
+		return value.scale() <= 1;
 	}
 }
