@@ -32,4 +32,13 @@ class WithNullProperties {
 		return aValue == null;
 	}
 
+	//@Property //TODO: Find a way to make WithNull work for provided values
+	boolean providedArbitrary(@ForAll("provided") @WithNull(1.0) String aValue) {
+		return aValue == null;
+	}
+
+	@Provide
+	Arbitrary<String> provided() {
+		return Arbitraries.strings().map(String::toUpperCase);
+	}
 }

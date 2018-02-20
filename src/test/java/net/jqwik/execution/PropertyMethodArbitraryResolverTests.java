@@ -253,59 +253,6 @@ public class PropertyMethodArbitraryResolverTests {
 
 	}
 
-	static double nullProbability = 0.0;
-
-	static class MockArbitrary implements Arbitrary<Object> {
-
-		@Override
-		public RandomGenerator<Object> generator(int tries) {
-			return null;
-		}
-
-		public void configure(WithNull withNull) {
-			nullProbability = withNull.value();
-		}
-	}
-
-	@Group
-	class Configuration {
-
-		@Example
-		void configureIsCalledOnDefaultArbitrary() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithConfiguration.class, "aNullableInteger", Integer.class);
-			Parameter parameter = getParameter(WithConfiguration.class, "aNullableInteger");
-			DefaultIntegerArbitrary integerArbitrary = (DefaultIntegerArbitrary) provider.forParameter(parameter).get().inner();
-
-			assertThat(integerArbitrary.getNullProbability()).isCloseTo(0.42, Offset.offset(0.01));
-		}
-
-		@Example
-		void configureIsCalledOnProvidedArbitrary() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithConfiguration.class, "aNullableMock", Object.class);
-			Parameter parameter = getParameter(WithConfiguration.class, "aNullableMock");
-			Optional<Arbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
-
-			assertThat(arbitraryOptional).isPresent();
-			assertThat(nullProbability).isCloseTo(0.41, Offset.offset(0.01));
-		}
-
-		private class WithConfiguration {
-			@Property
-			void aNullableInteger(@ForAll @WithNull(0.42) Integer anInt) {
-			}
-
-			@Property
-			void aNullableMock(@ForAll("mockObject") @WithNull(0.41) Object anObject) {
-			}
-
-			@Provide
-			Arbitrary<Object> mockObject() {
-				return new MockArbitrary();
-			}
-		}
-
-	}
-
 	private static RandomGenerator<Object> getGenerator(PropertyMethodArbitraryResolver provider, Parameter parameter) {
 		return provider.forParameter(parameter).get().generator(1);
 	}

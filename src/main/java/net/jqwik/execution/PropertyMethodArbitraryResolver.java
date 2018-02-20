@@ -48,21 +48,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	}
 
-	private void configureArbitrary(Arbitrary<?> objectArbitrary, List<Annotation> annotations) {
-		annotations.forEach(annotation -> {
-			try {
-				Method configureMethod = objectArbitrary.inner().getClass().getMethod(CONFIG_METHOD_NAME, annotation.annotationType());
-				invokeMethod(configureMethod, objectArbitrary.inner(), annotation);
-			} catch (NoSuchMethodException ignore) {
-			}
-		});
-	}
-
 	private Optional<Arbitrary<?>> forType(GenericType genericType, String generatorName, List<Annotation> annotations) {
 		Arbitrary<?> arbitrary = createForType(genericType, generatorName, annotations);
-		if (arbitrary != null) {
-			configureArbitrary(arbitrary, annotations);
-		}
 		return Optional.ofNullable(arbitrary);
 	}
 
