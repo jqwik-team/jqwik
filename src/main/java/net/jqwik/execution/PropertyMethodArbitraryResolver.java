@@ -7,6 +7,7 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 
@@ -42,33 +43,28 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		return forAllAnnotation.flatMap(annotation -> {
 			String generatorName = forAllAnnotation.get().value();
 			GenericType genericType = new GenericType(parameter);
-			List<Annotation> configurationAnnotations = JqwikAnnotationSupport.findAllAnnotations(parameter);
-			return forType(genericType, generatorName, configurationAnnotations);
+			List<Annotation> configurationAnnotations = JqwikAnnotationSupport.findAllAnnotations(parameter) //
+					.stream() //
+					.filter(parameterAnnotation -> !parameterAnnotation.annotationType().equals(ForAll.class)) //
+					.collect(Collectors.toList());
+			return createForType(genericType, generatorName, configurationAnnotations);
 		}).map(GenericArbitrary::new);
 
 	}
 
-	private Optional<Arbitrary<?>> forType(GenericType genericType, String generatorName, List<Annotation> annotations) {
-		Arbitrary<?> arbitrary = createForType(genericType, generatorName, annotations);
-		return Optional.ofNullable(arbitrary);
-	}
+	private Optional<Arbitrary<?>> createForType(GenericType genericType, String generatorName, List<Annotation> annotations) {
+		Arbitrary<?> createdArbitrary = null;
 
-	// TODO: Refactor method so that it returns an Optional<Arbitrary>
-	// It's not as easy as it looks, at least the code does not look nice then.
-	private Arbitrary<?> createForType(GenericType genericType, String generatorName, List<Annotation> annotations) {
 		Optional<Method> optionalCreator = findArbitraryCreatorByName(genericType, generatorName);
 		if (optionalCreator.isPresent()) {
-			return (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
+			createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
+		} else if (generatorName.isEmpty()) {
+			createdArbitrary = findDefaultArbitrary(genericType, generatorName, annotations) //
+					.orElseGet(() -> findFirstFitArbitrary(genericType) //
+							.orElse(null));
 		}
 
-		if (!generatorName.isEmpty()) {
-			return null;
-		}
-
-		Optional<Arbitrary<?>> defaultArbitrary = findDefaultArbitrary(genericType, generatorName, annotations);
-		return defaultArbitrary //
-				.orElseGet(() -> findFirstFitArbitrary(genericType) //
-						.orElse(null));
+		return Optional.ofNullable(createdArbitrary);
 	}
 
 	private Optional<Method> findArbitraryCreatorByName(GenericType genericType, String generatorToFind) {
@@ -120,7 +116,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	@SuppressWarnings("unchecked")
 	private Optional<Arbitrary<?>> findDefaultArbitrary(GenericType parameterType, String generatorName, List<Annotation> annotations) {
-		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> forType(subtype, generatorName, annotations);
+		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> createForType(subtype, generatorName, annotations);
 
 		for (ArbitraryProvider provider : defaultProviders) {
 			boolean generatorNameSpecified = !generatorName.isEmpty();
