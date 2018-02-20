@@ -42,20 +42,22 @@ public class Arbitraries {
 		return new IntegerArbitrary(min, max);
 	}
 
-	public static Arbitrary<Long> longs(long min, long max) {
-		return new LongArbitrary(min, max);
+	public static LongArbitrary longs() {
+		return new DefaultLongArbitrary();
 	}
 
-	public static Arbitrary<Long> longs() {
-		return new LongArbitrary();
+	@Deprecated
+	public static LongArbitrary longs(long min, long max) {
+		return longs().withMin(min).withMax(max);
 	}
 
-	public static Arbitrary<BigInteger> bigIntegers(long min, long max) {
-		return new LongArbitrary(min, max).map(aLong -> BigInteger.valueOf(aLong));
+	public static BigIntegerArbitrary bigIntegers() {
+		return new DefaultBigIntegerArbitrary();
 	}
 
-	public static Arbitrary<BigInteger> bigIntegers() {
-		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
+	@Deprecated
+	public static BigIntegerArbitrary bigIntegers(long min, long max) {
+		return bigIntegers().withMin(BigInteger.valueOf(min)).withMax(BigInteger.valueOf(max));
 	}
 
 	public static FloatArbitrary floats() {

@@ -4,24 +4,18 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
-public class LongArbitrary extends NullableArbitraryBase<Long> {
+public class DefaultLongArbitrary extends NullableArbitraryBase<Long> implements LongArbitrary {
 
 	private static final long DEFAULT_MIN = Long.MIN_VALUE;
 	private static final long DEFAULT_MAX = Long.MAX_VALUE;
 
-	private long min;
-	private long max;
+	private long min = DEFAULT_MIN;
+	private long max = DEFAULT_MAX;
 
-	public LongArbitrary(long min, long max) {
+	public DefaultLongArbitrary() {
 		super(Long.class);
-		this.min = min;
-		this.max = max;
-	}
-
-	public LongArbitrary() {
-		this(DEFAULT_MIN, DEFAULT_MAX);
 	}
 
 	@Override
@@ -43,9 +37,18 @@ public class LongArbitrary extends NullableArbitraryBase<Long> {
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 
-	public void configure(LongRange longRange) {
-		min = longRange.min();
-		max = longRange.max();
+	@Override
+	public LongArbitrary withMin(long min) {
+		DefaultLongArbitrary clone = typedClone();
+		clone.min = min;
+		return clone;
+	}
+
+	@Override
+	public LongArbitrary withMax(long max) {
+		DefaultLongArbitrary clone = typedClone();
+		clone.max = max;
+		return clone;
 	}
 
 }
