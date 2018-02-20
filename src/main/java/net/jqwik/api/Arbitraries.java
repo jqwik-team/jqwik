@@ -40,7 +40,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static Arbitrary<Integer> integers(int min, int max) {
-		return integers().withMin(min).withMax(max);
+		return integers().withRange(min, max);
 	}
 
 	public static LongArbitrary longs() {
@@ -49,7 +49,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static LongArbitrary longs(long min, long max) {
-		return longs().withMin(min).withMax(max);
+		return longs().withRange(min, max);
 	}
 
 	public static BigIntegerArbitrary bigIntegers() {
@@ -58,7 +58,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static BigIntegerArbitrary bigIntegers(long min, long max) {
-		return bigIntegers().withMin(BigInteger.valueOf(min)).withMax(BigInteger.valueOf(max));
+		return bigIntegers().withRange(BigInteger.valueOf(min), BigInteger.valueOf(max));
 	}
 
 	public static FloatArbitrary floats() {
@@ -67,7 +67,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static FloatArbitrary floats(Float min, Float max, int scale) {
-		return floats().withMin(min).withMax(max).withScale(scale);
+		return floats().withRange(min, max).withScale(scale);
 	}
 
 	public static BigDecimalArbitrary bigDecimals() {
@@ -76,7 +76,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static BigDecimalArbitrary bigDecimals(BigDecimal min, BigDecimal max, int scale) {
-		return bigDecimals().withMin(min).withMax(max).withScale(scale);
+		return bigDecimals().withRange(min, max).withScale(scale);
 	}
 
 	public static DoubleArbitrary doubles() {
@@ -85,7 +85,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static DoubleArbitrary doubles(double min, double max, int scale) {
-		return doubles().withMin(min).withMax(max).withScale(scale);
+		return doubles().withRange(min, max).withScale(scale);
 	}
 
 	public static ByteArbitrary bytes() {
@@ -94,7 +94,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static ByteArbitrary bytes(byte min, byte max) {
-		return bytes().withMin(min).withMax(max);
+		return bytes().withRange(min, max);
 	}
 
 	public static ShortArbitrary shorts() {
@@ -103,7 +103,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static ShortArbitrary shorts(short min, short max) {
-		return shorts().withMin(min).withMax(max);
+		return shorts().withRange(min, max);
 	}
 
 	public static StringArbitrary strings() {
