@@ -1,7 +1,10 @@
 package net.jqwik.api;
 
+import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.properties.arbitraries.*;
 
 public interface Arbitrary<T> {
@@ -29,6 +32,26 @@ public interface Arbitrary<T> {
 	@SuppressWarnings("unchecked")
 	default Arbitrary<T> withSamples(T... samples) {
 		return tries -> Arbitrary.this.generator(tries).withSamples(samples);
+	}
+
+	default SizableArbitrary<List<T>> list() {
+		return new ListArbitrary<T>(this);
+	}
+
+	default SizableArbitrary<Set<T>> set() {
+		return new SetArbitrary<>(this);
+	}
+
+	default SizableArbitrary<Stream<T>> stream() {
+		return new StreamArbitrary<>(this);
+	}
+
+	default <A> SizableArbitrary<A> array(Class<A> arrayClass) {
+		return new ArrayArbitrary<A, T>(arrayClass, this);
+	}
+
+	default Arbitrary<Optional<T>> optional() {
+		return this.injectNull(0.05).map(Optional::ofNullable);
 	}
 
 	static int defaultMaxFromTries(int tries) {

@@ -13,6 +13,6 @@ public class SetArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
 	@Override
 	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Arbitraries.setOf(innerArbitrary);
+		return innerArbitrary.set();
 	}
 }

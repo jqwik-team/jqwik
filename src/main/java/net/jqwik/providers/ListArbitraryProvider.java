@@ -13,6 +13,6 @@ public class ListArbitraryProvider extends AbstractCollectionArbitraryProvider {
 
 	@Override
 	protected Arbitrary<?> create(Arbitrary<?> innerArbitrary) {
-		return Arbitraries.listOf(innerArbitrary);
+		return innerArbitrary.list();
 	}
 }

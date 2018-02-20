@@ -1282,6 +1282,8 @@ _TBD_
 
 - Introduced fluent configuration interfaces
 
+- Introduced Arbitrary.list/set/stream/optional/array
+
 ### 0.8.3
 
 - Bugfix: Injected empty list samples are now mutable
