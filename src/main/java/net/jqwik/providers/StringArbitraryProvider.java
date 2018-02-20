@@ -8,7 +8,7 @@ import net.jqwik.api.providers.*;
 import java.util.*;
 import java.util.function.*;
 
-public class StringArbitraryProvider extends NullableArbitraryProvider {
+public class StringArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
 		return targetType.isOfType(String.class);

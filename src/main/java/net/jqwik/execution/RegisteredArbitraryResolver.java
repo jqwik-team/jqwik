@@ -13,14 +13,14 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.support.*;
 
-class DefaultArbitraryResolver {
+class RegisteredArbitraryResolver {
 
 	private final static String CONFIG_METHOD_NAME = "configure";
 
-	private final List<ArbitraryProvider> defaultProviders;
+	private final List<ArbitraryProvider> registeredProviders;
 
-	DefaultArbitraryResolver(List<ArbitraryProvider> defaultProviders) {
-		this.defaultProviders = defaultProviders;
+	RegisteredArbitraryResolver(List<ArbitraryProvider> registeredProviders) {
+		this.registeredProviders = registeredProviders;
 	}
 
 	Optional<Arbitrary<?>> resolve( //
@@ -28,7 +28,7 @@ class DefaultArbitraryResolver {
 			List<Annotation> annotations, //
 			Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider //
 	) {
-		for (ArbitraryProvider provider : defaultProviders) {
+		for (ArbitraryProvider provider : registeredProviders) {
 			if (provider.canProvideFor(targetType)) {
 				Arbitrary<?> arbitrary = provider.provideFor(targetType, subtypeProvider);
 				if (arbitrary == null) {

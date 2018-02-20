@@ -7,14 +7,10 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.providers.*;
-import org.assertj.core.data.*;
-
 import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 
 @Group
@@ -45,11 +41,10 @@ public class PropertyMethodArbitraryResolverTests {
 		@Example
 		void useNextDefaultProviderIfFirstDoesNotProvideAnArbitrary() {
 			PropertyMethodDescriptor descriptor = getDescriptor(DefaultParams.class, "aString", String.class);
-			List<ArbitraryProvider> defaultProviders = Arrays.asList(
-				createProvider(String.class, null),
-				createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string"))
-			);
-			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(), new DefaultArbitraryResolver(defaultProviders));
+			List<ArbitraryProvider> defaultProviders = Arrays.asList(createProvider(String.class, null),
+					createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string")));
+			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(),
+					new RegisteredArbitraryResolver(defaultProviders), Collections.emptyList());
 			Parameter parameter = getParameter(DefaultParams.class, "aString");
 			Object actual = generateFirst(resolver, parameter);
 			assertThat(actual).isEqualTo("an arbitrary string");
@@ -63,9 +58,7 @@ public class PropertyMethodArbitraryResolverTests {
 				}
 
 				@Override
-				public Arbitrary<?> provideFor(
-					GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider
-				) {
+				public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
 					return arbitrary;
 				}
 			};

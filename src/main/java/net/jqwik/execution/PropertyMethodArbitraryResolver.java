@@ -12,6 +12,7 @@ import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.configurators.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.providers.*;
 import net.jqwik.support.*;
@@ -20,17 +21,20 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	private final PropertyMethodDescriptor descriptor;
 	private final Object testInstance;
-	private final DefaultArbitraryResolver defaultArbitraryResolver;
+	private final RegisteredArbitraryResolver registeredArbitraryResolver;
+	private final List<ArbitraryConfigurator> registeredArbitraryConfigurators;
 
 	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance) {
-		this(descriptor, testInstance, new DefaultArbitraryResolver(DefaultArbitraryProviders.getProviders()));
+		this(descriptor, testInstance, new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders()),
+				RegisteredArbitraryConfigurators.getConfigurators());
 	}
 
 	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance,
-			DefaultArbitraryResolver defaultArbitraryResolver) {
+			RegisteredArbitraryResolver registeredArbitraryResolver, List<ArbitraryConfigurator> registeredArbitraryConfigurators) {
 		this.descriptor = descriptor;
 		this.testInstance = testInstance;
-		this.defaultArbitraryResolver = defaultArbitraryResolver;
+		this.registeredArbitraryResolver = registeredArbitraryResolver;
+		this.registeredArbitraryConfigurators = registeredArbitraryConfigurators;
 	}
 
 	@Override
@@ -61,7 +65,18 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 							.orElse(null));
 		}
 
+		createdArbitrary = configure(createdArbitrary, annotations);
+
 		return Optional.ofNullable(createdArbitrary);
+	}
+
+	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, List<Annotation> annotations) {
+		if (!annotations.isEmpty()) {
+			for (ArbitraryConfigurator arbitraryConfigurator : registeredArbitraryConfigurators) {
+				createdArbitrary = arbitraryConfigurator.configure(createdArbitrary, annotations);
+			}
+		}
+		return createdArbitrary;
 	}
 
 	private Optional<Method> findArbitraryCreatorByName(GenericType genericType, String generatorToFind) {
@@ -119,7 +134,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> createForType(subtype, generatorName, annotations);
 
-		return defaultArbitraryResolver.resolve(parameterType, annotations, subtypeProvider);
+		return registeredArbitraryResolver.resolve(parameterType, annotations, subtypeProvider);
 	}
 
 }

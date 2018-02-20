@@ -6,7 +6,7 @@ import net.jqwik.api.providers.*;
 import java.util.*;
 import java.util.function.*;
 
-public class BooleanArbitraryProvider extends NullableArbitraryProvider {
+public class BooleanArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
 		return targetType.isCompatibleWith(Boolean.class);

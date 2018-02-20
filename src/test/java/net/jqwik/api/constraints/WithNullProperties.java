@@ -32,7 +32,7 @@ class WithNullProperties {
 		return aValue == null;
 	}
 
-	//@Property //TODO: Find a way to make WithNull work for provided values
+	@Property
 	boolean providedArbitrary(@ForAll("provided") @WithNull(1.0) String aValue) {
 		return aValue == null;
 	}

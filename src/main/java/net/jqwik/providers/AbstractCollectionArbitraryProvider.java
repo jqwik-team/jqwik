@@ -8,7 +8,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
-abstract class AbstractCollectionArbitraryProvider extends NullableArbitraryProvider {
+abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public boolean canProvideFor(GenericType targetType) {

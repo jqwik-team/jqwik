@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-class DefaultArbitraryProvidersTests {
+class RegisteredArbitraryProvidersTests {
 
 	private enum AnEnum {
 		One,
@@ -187,7 +187,7 @@ class DefaultArbitraryProvidersTests {
 					return Arbitraries.of(new Person());
 				}
 			};
-			DefaultArbitraryProviders.register(personProvider);
+			RegisteredArbitraryProviders.register(personProvider);
 		}
 
 		@Property
@@ -197,24 +197,24 @@ class DefaultArbitraryProvidersTests {
 
 		@Example
 		boolean manuallyRegisteredProviderIsPartOfDefaultProviders() {
-			return DefaultArbitraryProviders.getProviders().contains(personProvider);
+			return RegisteredArbitraryProviders.getProviders().contains(personProvider);
 		}
 
 		@Example
 		boolean manuallyRegisteredProviderCanBeUnregistered() {
-			DefaultArbitraryProviders.unregister(personProvider);
-			return !DefaultArbitraryProviders.getProviders().contains(personProvider);
+			RegisteredArbitraryProviders.unregister(personProvider);
+			return !RegisteredArbitraryProviders.getProviders().contains(personProvider);
 		}
 
 		@Example
 		boolean manuallyRegisteredProviderCanBeUnregisteredByClass() {
-			DefaultArbitraryProviders.unregister(personProvider.getClass());
-			return !DefaultArbitraryProviders.getProviders().contains(personProvider);
+			RegisteredArbitraryProviders.unregister(personProvider.getClass());
+			return !RegisteredArbitraryProviders.getProviders().contains(personProvider);
 		}
 
 		@Override
 		public void close() {
-			DefaultArbitraryProviders.unregister(personProvider);
+			RegisteredArbitraryProviders.unregister(personProvider);
 		}
 	}
 }

@@ -6,7 +6,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
-public class RandomArbitraryProvider extends NullableArbitraryProvider {
+public class RandomArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
 		return targetType.isOfType(Random.class);
