@@ -1,8 +1,6 @@
 package net.jqwik.api.arbitraries;
 
-import net.jqwik.api.*;
-
-public interface CharacterArbitrary extends Arbitrary<Character> {
+public interface CharacterArbitrary extends NullableArbitrary<Character> {
 
 	CharacterArbitrary withChars(char[] allowedChars);
 

@@ -1,8 +1,6 @@
 package net.jqwik.api.arbitraries;
 
-import net.jqwik.api.*;
-
-public interface LongArbitrary extends Arbitrary<Long> {
+public interface LongArbitrary extends NullableArbitrary<Long> {
 	LongArbitrary withMin(long min);
 
 	LongArbitrary withMax(long max);

@@ -1,8 +1,6 @@
 package net.jqwik.api.arbitraries;
 
-import net.jqwik.api.*;
-
-public interface DoubleArbitrary extends Arbitrary<Double> {
+public interface DoubleArbitrary extends NullableArbitrary<Double> {
 
 	DoubleArbitrary withMin(double min);
 

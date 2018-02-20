@@ -1,8 +1,6 @@
 package net.jqwik.api.arbitraries;
 
-import net.jqwik.api.*;
-
-public interface StringArbitrary extends Arbitrary<String> {
+public interface StringArbitrary extends NullableArbitrary<String> {
 	StringArbitrary withMaxLength(int maxLength);
 
 	StringArbitrary withMinLength(int minLength);

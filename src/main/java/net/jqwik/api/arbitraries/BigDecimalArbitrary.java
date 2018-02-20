@@ -2,9 +2,7 @@ package net.jqwik.api.arbitraries;
 
 import java.math.*;
 
-import net.jqwik.api.*;
-
-public interface BigDecimalArbitrary extends Arbitrary<BigDecimal> {
+public interface BigDecimalArbitrary extends NullableArbitrary<BigDecimal> {
 	BigDecimalArbitrary withMin(BigDecimal min);
 
 	BigDecimalArbitrary withMax(BigDecimal max);

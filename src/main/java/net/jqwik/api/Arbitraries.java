@@ -34,12 +34,13 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
-	public static Arbitrary<Integer> integers() {
-		return new IntegerArbitrary();
+	public static IntegerArbitrary integers() {
+		return new DefaultIntegerArbitrary();
 	}
 
+	@Deprecated
 	public static Arbitrary<Integer> integers(int min, int max) {
-		return new IntegerArbitrary(min, max);
+		return integers().withMin(min).withMax(max);
 	}
 
 	public static LongArbitrary longs() {
