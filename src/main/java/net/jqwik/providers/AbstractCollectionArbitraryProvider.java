@@ -4,8 +4,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
 abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider {
@@ -26,9 +24,5 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 	}
 
 	protected abstract Arbitrary<?> create(Arbitrary<?> innerArbitrary);
-
-	public SizableArbitrary<?> configure(SizableArbitrary<?> arbitrary, Size size) {
-		return arbitrary.withMinSize(size.min()).withMaxSize(size.max());
-	}
 
 }

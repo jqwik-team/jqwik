@@ -1,2 +1,3 @@
 net.jqwik.configurators.WithNullConfigurator
 net.jqwik.configurators.ScaleConfigurator
+net.jqwik.configurators.SizeConfigurator

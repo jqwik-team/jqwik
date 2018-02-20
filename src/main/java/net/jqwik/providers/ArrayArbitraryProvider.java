@@ -4,8 +4,6 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
 public class ArrayArbitraryProvider implements ArbitraryProvider {
@@ -19,10 +17,6 @@ public class ArrayArbitraryProvider implements ArbitraryProvider {
 		return subtypeProvider.apply(targetType.getComponentType()) //
 				.map(elementArbitrary -> Arbitraries.arrayOf(targetType.getRawType(), elementArbitrary)) //
 				.orElse(null);
-	}
-
-	public SizableArbitrary<?> configure(SizableArbitrary<?> arbitrary, Size size) {
-		return arbitrary.withMinSize(size.min()).withMaxSize(size.max());
 	}
 
 }
