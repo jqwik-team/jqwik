@@ -1,7 +1,6 @@
 package net.jqwik.execution;
 
 import static net.jqwik.support.JqwikReflectionSupport.*;
-import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -19,21 +18,19 @@ import net.jqwik.support.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
-	private final static String CONFIG_METHOD_NAME = "configure";
-
 	private final PropertyMethodDescriptor descriptor;
 	private final Object testInstance;
-	private final List<ArbitraryProvider> defaultProviders;
+	private final DefaultArbitraryResolver defaultArbitraryResolver;
 
 	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance) {
-		this(descriptor, testInstance, DefaultArbitraryProviders.getProviders());
+		this(descriptor, testInstance, new DefaultArbitraryResolver(DefaultArbitraryProviders.getProviders()));
 	}
 
 	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance,
-			List<ArbitraryProvider> defaultProviders) {
+			DefaultArbitraryResolver defaultArbitraryResolver) {
 		this.descriptor = descriptor;
 		this.testInstance = testInstance;
-		this.defaultProviders = defaultProviders;
+		this.defaultArbitraryResolver = defaultArbitraryResolver;
 	}
 
 	@Override
@@ -59,7 +56,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		if (optionalCreator.isPresent()) {
 			createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
 		} else if (generatorName.isEmpty()) {
-			createdArbitrary = findDefaultArbitrary(genericType, generatorName, annotations) //
+			createdArbitrary = resolveDefaultArbitrary(genericType, generatorName, annotations) //
 					.orElseGet(() -> findFirstFitArbitrary(genericType) //
 							.orElse(null));
 		}
@@ -114,56 +111,15 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		};
 	}
 
-	@SuppressWarnings("unchecked")
-	private Optional<Arbitrary<?>> findDefaultArbitrary(GenericType parameterType, String generatorName, List<Annotation> annotations) {
+	private Optional<Arbitrary<?>> resolveDefaultArbitrary(GenericType parameterType, String generatorName, List<Annotation> annotations) {
+		boolean generatorNameSpecified = !generatorName.isEmpty();
+		if (generatorNameSpecified && !parameterType.isGeneric()) {
+			return Optional.empty();
+		}
+
 		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> createForType(subtype, generatorName, annotations);
 
-		for (ArbitraryProvider provider : defaultProviders) {
-			boolean generatorNameSpecified = !generatorName.isEmpty();
-			if (generatorNameSpecified && !parameterType.isGeneric()) {
-				continue;
-			}
-			if (provider.canProvideFor(parameterType)) {
-				Arbitrary<?> arbitrary = provider.provideFor(parameterType, subtypeProvider);
-				if (arbitrary == null) {
-					continue;
-				}
-				arbitrary = configureArbitraryInProvider(arbitrary, provider, annotations);
-				return Optional.of(arbitrary);
-			}
-		}
-
-		return Optional.empty();
-	}
-
-	private Arbitrary<?> configureArbitraryInProvider(Arbitrary<?> arbitrary, ArbitraryProvider provider, List<Annotation> annotations) {
-		for (Annotation annotation : annotations) {
-			Class<? extends Arbitrary> arbitraryClass = arbitrary.getClass();
-			Optional<Method> configurationMethod = JqwikReflectionSupport.findMethod(provider.getClass(),
-					method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP);
-			if (configurationMethod.isPresent()) {
-				arbitrary = (Arbitrary<?>) invokeMethod(configurationMethod.get(), provider, arbitrary, annotation);
-			}
-		}
-		return arbitrary;
-	}
-
-	private static boolean hasCompatibleConfigurationSignature(Method candidate, Class<? extends Arbitrary> arbitraryClass,
-			Annotation annotation) {
-		if (!CONFIG_METHOD_NAME.equals(candidate.getName())) {
-			return false;
-		}
-		if (!Arbitrary.class.isAssignableFrom(candidate.getReturnType())) {
-			return false;
-		}
-		if (candidate.getParameterCount() != 2) {
-			return false;
-		}
-		if (candidate.getParameterTypes()[1] != annotation.annotationType()) {
-			return false;
-		}
-		Class<?> upperArbitraryType = candidate.getParameterTypes()[0];
-		return upperArbitraryType.isAssignableFrom(arbitraryClass);
+		return defaultArbitraryResolver.resolve(parameterType, annotations, subtypeProvider);
 	}
 
 }

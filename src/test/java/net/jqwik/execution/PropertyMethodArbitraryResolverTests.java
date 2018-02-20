@@ -47,14 +47,9 @@ public class PropertyMethodArbitraryResolverTests {
 			PropertyMethodDescriptor descriptor = getDescriptor(DefaultParams.class, "aString", String.class);
 			List<ArbitraryProvider> defaultProviders = Arrays.asList(
 				createProvider(String.class, null),
-				createProvider(String.class, new Arbitrary<String>() {
-					@Override
-					public RandomGenerator<String> generator(int tries) {
-						return random -> Shrinkable.unshrinkable("an arbitrary string");
-					}
-				})
+				createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string"))
 			);
-			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(), defaultProviders);
+			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(), new DefaultArbitraryResolver(defaultProviders));
 			Parameter parameter = getParameter(DefaultParams.class, "aString");
 			Object actual = generateFirst(resolver, parameter);
 			assertThat(actual).isEqualTo("an arbitrary string");
