@@ -88,20 +88,22 @@ public class Arbitraries {
 		return doubles().withMin(min).withMax(max).withScale(scale);
 	}
 
-	public static Arbitrary<Byte> bytes() {
-		return new ByteArbitrary();
+	public static ByteArbitrary bytes() {
+		return new DefaultByteArbitrary();
 	}
 
-	public static Arbitrary<Byte> bytes(byte min, byte max) {
-		return new ByteArbitrary(min, max);
+	@Deprecated
+	public static ByteArbitrary bytes(byte min, byte max) {
+		return bytes().withMin(min).withMax(max);
 	}
 
-	public static Arbitrary<Short> shorts() {
-		return new ShortArbitrary();
+	public static ShortArbitrary shorts() {
+		return new DefaultShortArbitrary();
 	}
 
-	public static Arbitrary<Short> shorts(short min, short max) {
-		return new ShortArbitrary(min, max);
+	@Deprecated
+	public static ShortArbitrary shorts(short min, short max) {
+		return shorts().withMin(min).withMax(max);
 	}
 
 	public static StringArbitrary strings() {

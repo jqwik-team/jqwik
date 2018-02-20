@@ -4,24 +4,18 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
-public class ShortArbitrary extends NullableArbitraryBase<Short> {
+public class DefaultShortArbitrary extends NullableArbitraryBase<Short> implements ShortArbitrary {
 
 	private static final short DEFAULT_MIN = Short.MIN_VALUE;
 	private static final short DEFAULT_MAX = Short.MAX_VALUE;
 
-	private short min;
-	private short max;
+	private short min = DEFAULT_MIN;
+	private short max = DEFAULT_MAX;
 
-	public ShortArbitrary(short min, short max) {
+	public DefaultShortArbitrary() {
 		super(Short.class);
-		this.min = min;
-		this.max = max;
-	}
-
-	public ShortArbitrary() {
-		this(DEFAULT_MIN, DEFAULT_MAX);
 	}
 
 	@Override
@@ -40,9 +34,18 @@ public class ShortArbitrary extends NullableArbitraryBase<Short> {
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 
-	public void configure(ShortRange shortRange) {
-		min = shortRange.min();
-		max = shortRange.max();
+	@Override
+	public ShortArbitrary withMin(short min) {
+		DefaultShortArbitrary clone = typedClone();
+		clone.min = min;
+		return clone;
+	}
+
+	@Override
+	public ShortArbitrary withMax(short max) {
+		DefaultShortArbitrary clone = typedClone();
+		clone.max = max;
+		return clone;
 	}
 
 }

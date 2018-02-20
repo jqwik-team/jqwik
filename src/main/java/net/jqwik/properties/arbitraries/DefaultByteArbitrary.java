@@ -4,24 +4,18 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
-public class ByteArbitrary extends NullableArbitraryBase<Byte> {
+public class DefaultByteArbitrary extends NullableArbitraryBase<Byte> implements ByteArbitrary {
 
 	private static final byte DEFAULT_MIN = Byte.MIN_VALUE;
 	private static final byte DEFAULT_MAX = Byte.MAX_VALUE;
 
-	private byte min;
-	private byte max;
+	private byte min = DEFAULT_MIN;
+	private byte max = DEFAULT_MAX;
 
-	public ByteArbitrary(byte min, byte max) {
+	public DefaultByteArbitrary() {
 		super(Byte.class);
-		this.min = min;
-		this.max = max;
-	}
-
-	public ByteArbitrary() {
-		this(DEFAULT_MIN, DEFAULT_MAX);
 	}
 
 	@Override
@@ -39,9 +33,18 @@ public class ByteArbitrary extends NullableArbitraryBase<Byte> {
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 
-	public void configure(ByteRange byteRange) {
-		min = byteRange.min();
-		max = byteRange.max();
+	@Override
+	public ByteArbitrary withMin(byte min) {
+		DefaultByteArbitrary clone = typedClone();
+		clone.min = min;
+		return clone;
+	}
+
+	@Override
+	public ByteArbitrary withMax(byte max) {
+		DefaultByteArbitrary clone = typedClone();
+		clone.max = max;
+		return clone;
 	}
 
 }
