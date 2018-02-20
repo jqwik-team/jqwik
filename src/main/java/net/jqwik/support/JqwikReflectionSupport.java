@@ -71,21 +71,6 @@ public class JqwikReflectionSupport {
 	}
 
 	/**
-	 * Find first method that fulfills the predicate
-	 *
-	 * @param clazz
-	 *            The class to search in
-	 * @param predicate
-	 *            The predicate to check
-	 * @param traversalMode
-	 *            The direction of search
-	 * @return
-	 */
-	public static Optional<Method> findMethod(Class<?> clazz, Predicate<Method> predicate, HierarchyTraversalMode traversalMode) {
-		return ReflectionSupport.findMethods(clazz, predicate, traversalMode).stream().findFirst();
-	}
-
-	/**
 	 * Find all {@linkplain Method methods} as in ReflectionSupport.findMethods(..) but also use outer classes to look for
 	 * methods.
 	 *
