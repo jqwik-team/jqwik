@@ -1,4 +1,4 @@
-package net.jqwik.api.providers;
+package net.jqwik.api.configurators;
 
 import java.lang.annotation.*;
 import java.util.*;

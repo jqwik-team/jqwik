@@ -3,6 +3,8 @@
   - Deprecate Arbitraries.list etc methods?
   - Document fluent interfaces
   
+- Javadoc api.constraints
+  
 - Document configurators
 
 - Arbitrary provider for @Functional interfaces

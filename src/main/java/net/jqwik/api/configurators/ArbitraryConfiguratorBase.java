@@ -1,4 +1,4 @@
-package net.jqwik.api.providers;
+package net.jqwik.api.configurators;
 
 import static org.junit.platform.commons.support.ReflectionSupport.*;
 

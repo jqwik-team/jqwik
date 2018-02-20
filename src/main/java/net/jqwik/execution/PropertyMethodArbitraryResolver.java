@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.configurators.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;

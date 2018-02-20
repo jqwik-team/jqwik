@@ -2,7 +2,7 @@ package net.jqwik.configurators;
 
 import java.util.*;
 
-import net.jqwik.api.providers.*;
+import net.jqwik.api.configurators.*;
 
 public class RegisteredArbitraryConfigurators {
 

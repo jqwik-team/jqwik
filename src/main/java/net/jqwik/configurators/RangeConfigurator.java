@@ -1,8 +1,8 @@
 package net.jqwik.configurators;
 
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.providers.*;
 
 import java.math.*;
 
