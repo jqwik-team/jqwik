@@ -1,12 +1,11 @@
 package net.jqwik.providers;
 
-import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.api.providers.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.providers.*;
 
 public class StringArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -17,10 +16,6 @@ public class StringArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public StringArbitrary provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
 		return Arbitraries.strings();
-	}
-
-	public StringArbitrary configure(StringArbitrary arbitrary, StringLength stringLength) {
-		return arbitrary.withMinLength(stringLength.min()).withMaxLength(stringLength.max());
 	}
 
 }
