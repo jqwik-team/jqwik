@@ -1,12 +1,10 @@
 package net.jqwik.providers;
 
-import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.api.providers.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 
 public class FloatArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -18,9 +16,4 @@ public class FloatArbitraryProvider implements ArbitraryProvider {
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
 		return Arbitraries.floats();
 	}
-
-	public FloatArbitrary configure(FloatArbitrary arbitrary, FloatRange range) {
-		return arbitrary.withMin(range.min()).withMax(range.max());
-	}
-
 }

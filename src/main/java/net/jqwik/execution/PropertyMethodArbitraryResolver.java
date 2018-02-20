@@ -134,7 +134,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> createForType(subtype, generatorName, annotations);
 
-		return registeredArbitraryResolver.resolve(parameterType, annotations, subtypeProvider);
+		return registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
 	}
 
 }
