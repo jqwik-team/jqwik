@@ -44,7 +44,9 @@ Volunteers for polishing and extending it are more than welcome._
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
+- [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
 - [Release Notes](#release-notes)
+  - [0.8.4-SNAPSHOT](#084-snapshot)
   - [0.8.3](#083)
   - [0.8.2](#082)
   - [0.8.1](#081)
@@ -418,7 +420,9 @@ on the requested parameter type.
    Also generate `null` values with a probability of `value`. 
    
    If you annotate a generic parameter with `@WithNull`, only parameter types that
-   can be assigned to `target` are considered for `null`. 
+   can be assigned to `target` are considered for `null`.
+   
+   `@WithNull` also works for [customized parameter generation](#customized-parameter-generation).
 
 #### Strings:
 
@@ -1259,13 +1263,24 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 
 Not too difficult, is it?
 
+
 ## Program your own Generators and Arbitraries
 
-This topic will probably need a page of its own.
+_TBD_
 
+
+## Create your own Annotations for Arbitrary Configuration
+
+_TBD_
 
 
 ## Release Notes
+
+### 0.8.4-SNAPSHOT
+
+- Completely rebuild the annotation-based configuration of registered arbitrary providers
+
+- Introduced fluent configuration interfaces
 
 ### 0.8.3
 

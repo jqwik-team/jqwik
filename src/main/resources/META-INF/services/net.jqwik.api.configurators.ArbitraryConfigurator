@@ -1,0 +1,6 @@
+net.jqwik.configurators.WithNullConfigurator
+net.jqwik.configurators.ScaleConfigurator
+net.jqwik.configurators.SizeConfigurator
+net.jqwik.configurators.CharsConfigurator
+net.jqwik.configurators.StringLengthConfigurator
+net.jqwik.configurators.RangeConfigurator

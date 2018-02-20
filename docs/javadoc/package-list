@@ -1,3 +1,5 @@
 net.jqwik.api
+net.jqwik.api.arbitraries
+net.jqwik.api.configurators
 net.jqwik.api.constraints
 net.jqwik.api.providers

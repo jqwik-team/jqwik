@@ -1,22 +1,20 @@
 package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
 import java.util.*;
 import java.util.stream.*;
 
-abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
+abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U> implements SizableArbitrary<U> {
 
 	protected final Arbitrary<T> elementArbitrary;
-	protected int minSize;
-	protected int maxSize;
+	protected int minSize = 0;
+	protected int maxSize = 0;
 
-	protected CollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+	protected DefaultCollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary) {
 		super(collectionClass);
 		this.elementArbitrary = elementArbitrary;
-		this.minSize = minSize;
-		this.maxSize = maxSize;
 	}
 
 	protected RandomGenerator<List<T>> listGenerator(int tries) {
@@ -38,11 +36,8 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 	}
 
 	protected <C extends Collection> List<Shrinkable<C>> samplesList(int effectiveMaxSize, C sample) {
-		return Stream.of(sample)
-			.filter(l -> l.size() >= minSize)
-			.filter(l -> maxSize == 0 || l.size() <= maxSize)
-			.map(Shrinkable::unshrinkable)
-			.collect(Collectors.toList());
+		return Stream.of(sample).filter(l -> l.size() >= minSize).filter(l -> maxSize == 0 || l.size() <= maxSize)
+				.map(Shrinkable::unshrinkable).collect(Collectors.toList());
 	}
 
 	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int tries) {
@@ -51,9 +46,17 @@ abstract class CollectionArbitrary<T, U> extends NullableArbitrary<U> {
 		return elementArbitrary.generator(elementTries);
 	}
 
-	public void configure(Size size) {
-		this.maxSize = size.max();
-		this.minSize = size.min();
+	@Override
+	public SizableArbitrary<U> withMinSize(int minSize) {
+		DefaultCollectionArbitrary<T, U> clone = typedClone();
+		clone.minSize = minSize;
+		return clone;
 	}
 
+	@Override
+	public SizableArbitrary<U> withMaxSize(int maxSize) {
+		DefaultCollectionArbitrary<T, U> clone = typedClone();
+		clone.maxSize = maxSize;
+		return clone;
+	}
 }

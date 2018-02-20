@@ -1,45 +1,20 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-
 import java.util.*;
 import java.util.stream.*;
 
-public class StringArbitrary extends NullableArbitrary<String> {
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+
+public class DefaultStringArbitrary extends NullableArbitraryBase<String> implements StringArbitrary {
 
 	private Set<Character> allowedChars = new HashSet<>();
-	private int minLength;
-	private int maxLength;
+	private int minLength = 0;
+	private int maxLength = 0;
 
-	public StringArbitrary() {
-		this(0, 0);
-	}
-
-	public StringArbitrary(char[] characters, int minLength, int maxLength) {
-		this(minLength, maxLength);
-		addAllowedChars(characters);
-	}
-
-	public StringArbitrary(char[] characters) {
-		this(characters, 0, 0);
-	}
-
-	public StringArbitrary(char from, char to, int minLength, int maxLength) {
-		this(minLength, maxLength);
-		addAllowedChars(from, to);
-	}
-
-	public StringArbitrary(char from, char to) {
-		this(from, to, 0, 0);
-	}
-
-	public StringArbitrary(int minLength, int maxLength) {
+	public DefaultStringArbitrary() {
 		super(String.class);
-		this.minLength = minLength;
-		this.maxLength = maxLength;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -51,14 +26,35 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		return RandomGenerators.strings(createCharacterGenerator(), minLength, effectiveMaxLength).withShrinkableSamples(samples);
 	}
 
-	public void configure(StringLength stringLength) {
-		this.minLength = stringLength.min();
-		this.maxLength = stringLength.max();
+	@Override
+	public StringArbitrary withMinLength(int minLength) {
+		DefaultStringArbitrary clone = typedClone();
+		clone.minLength = minLength;
+		return clone;
 	}
 
-	public void configure(Chars chars) {
-		addAllowedChars(chars.value());
-		addAllowedChars(chars.from(), chars.to());
+	@Override
+	public StringArbitrary withMaxLength(int maxLength) {
+		DefaultStringArbitrary clone = typedClone();
+		clone.maxLength = maxLength;
+		return clone;
+	}
+
+	@Override
+	public StringArbitrary withChars(char[] chars) {
+		DefaultStringArbitrary clone = typedClone();
+		clone.addAllowedChars(chars);
+		return clone;
+	}
+
+	@Override
+	public StringArbitrary withChars(char from, char to) {
+		if (from == 0 && to == 0) {
+			return this;
+		}
+		DefaultStringArbitrary clone = typedClone();
+		clone.addAllowedChars(from, to);
+		return clone;
 	}
 
 	private void addAllowedChars(char from, char to) {
@@ -75,12 +71,6 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		}
 	}
 
-	public void configure(CharsList charsList) {
-		for (Chars chars : charsList.value()) {
-			configure(chars);
-		}
-	}
-
 	private RandomGenerator<Character> createCharacterGenerator() {
 		if (allowedChars.isEmpty()) {
 			addDefaultChars();
@@ -92,7 +82,7 @@ public class StringArbitrary extends NullableArbitrary<String> {
 		addAllowedChars('a', 'z');
 		addAllowedChars('A', 'Z');
 		addAllowedChars('0', '9');
-		addAllowedChars(new char[] {' ', '@', ',', '.', ':', '-', '_'});
+		addAllowedChars(new char[] { ' ', '@', ',', '.', ':', '-', '_' });
 	}
 
 }

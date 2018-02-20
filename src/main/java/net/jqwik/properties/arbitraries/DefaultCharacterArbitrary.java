@@ -2,25 +2,15 @@ package net.jqwik.properties.arbitraries;
 
 import java.util.*;
 
-import net.jqwik.api.constraints.*;
-import net.jqwik.api.RandomGenerator;
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 
-public class CharacterArbitrary extends NullableArbitrary<Character> {
+public class DefaultCharacterArbitrary extends NullableArbitraryBase<Character> implements CharacterArbitrary {
 
 	private Set<Character> allowedChars = new HashSet<>();
 
-	public CharacterArbitrary() {
-		this(new char[0]);
-	}
-
-	public CharacterArbitrary(char[] characters) {
+	public DefaultCharacterArbitrary() {
 		super(Character.class);
-		addAllowedChars(characters);
-	}
-
-	public CharacterArbitrary(char from, char to) {
-		super(Character.class);
-		addAllowedChars(from, to);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -36,9 +26,18 @@ public class CharacterArbitrary extends NullableArbitrary<Character> {
 		return allowedChars.toArray(new Character[allowedChars.size()]);
 	}
 
-	public void configure(Chars chars) {
-		addAllowedChars(chars.value());
-		addAllowedChars(chars.from(), chars.to());
+	@Override
+	public CharacterArbitrary withChars(char[] allowedChars) {
+		DefaultCharacterArbitrary clone = typedClone();
+		clone.addAllowedChars(allowedChars);
+		return clone;
+	}
+
+	@Override
+	public CharacterArbitrary withChars(char from, char to) {
+		DefaultCharacterArbitrary clone = typedClone();
+		clone.addAllowedChars(from, to);
+		return clone;
 	}
 
 	private void addAllowedChars(char from, char to) {
@@ -52,12 +51,6 @@ public class CharacterArbitrary extends NullableArbitrary<Character> {
 	private void addAllowedChars(char[] chars) {
 		for (char c : chars) {
 			allowedChars.add(c);
-		}
-	}
-
-	public void configure(CharsList charsList) {
-		for (Chars chars : charsList.value()) {
-			configure(chars);
 		}
 	}
 

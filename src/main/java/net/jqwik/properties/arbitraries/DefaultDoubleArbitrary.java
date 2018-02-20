@@ -1,29 +1,23 @@
 package net.jqwik.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.arbitraries.*;
 
-public class DoubleArbitrary extends NullableArbitrary<Double> {
+public class DefaultDoubleArbitrary extends NullableArbitraryBase<Double> implements DoubleArbitrary {
 
 	private static final double DEFAULT_MIN = -Double.MAX_VALUE;
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;
+	private static final int DEFAULT_SCALE = 2;
 
-	private double min;
-	private double max;
-	private int scale;
+	private double min = DEFAULT_MIN;
+	private double max = DEFAULT_MAX;
+	private int scale = DEFAULT_SCALE;
 
-	public DoubleArbitrary(double min, double max, int scale) {
+	public DefaultDoubleArbitrary() {
 		super(Double.class);
-		this.min = min;
-		this.max = max;
-		this.scale = scale;
-	}
-
-	public DoubleArbitrary() {
-		this(DEFAULT_MIN, DEFAULT_MAX, 2);
 	}
 
 	@Override
@@ -47,13 +41,25 @@ public class DoubleArbitrary extends NullableArbitrary<Double> {
 		return RandomGenerators.doubles(minGenerate, maxGenerate, scale).withShrinkableSamples(samples);
 	}
 
-	public void configure(DoubleRange doubleRange) {
-		min = doubleRange.min();
-		max = doubleRange.max();
+	@Override
+	public DoubleArbitrary withMin(double min) {
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.min = min;
+		return clone;
 	}
 
-	public void configure(Scale scale) {
-		this.scale = scale.value();
+	@Override
+	public DoubleArbitrary withMax(double max) {
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.max = max;
+		return clone;
+	}
+
+	@Override
+	public DoubleArbitrary withScale(int scale) {
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.scale = scale;
+		return clone;
 	}
 
 }

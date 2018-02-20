@@ -1,19 +1,14 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.api.*;
+
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
-import net.jqwik.api.Arbitrary;
-import net.jqwik.api.RandomGenerator;
-
-public class StreamArbitrary<T> extends CollectionArbitrary<T, Stream<T>> {
+public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>> {
 
 	public StreamArbitrary(Arbitrary<T> elementArbitrary) {
-		this(elementArbitrary, 0, 0);
-	}
-
-	public StreamArbitrary(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		super(Set.class, elementArbitrary, minSize, maxSize);
+		super(Set.class, elementArbitrary);
 	}
 
 	@Override

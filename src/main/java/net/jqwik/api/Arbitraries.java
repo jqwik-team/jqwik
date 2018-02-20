@@ -1,11 +1,12 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.arbitraries.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 
@@ -33,136 +34,154 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
-	public static Arbitrary<Integer> integers() {
-		return new IntegerArbitrary();
+	public static IntegerArbitrary integers() {
+		return new DefaultIntegerArbitrary();
 	}
 
+	@Deprecated
 	public static Arbitrary<Integer> integers(int min, int max) {
-		return new IntegerArbitrary(min, max);
+		return integers().withRange(min, max);
 	}
 
-	public static Arbitrary<Long> longs(long min, long max) {
-		return new LongArbitrary(min, max);
+	public static LongArbitrary longs() {
+		return new DefaultLongArbitrary();
 	}
 
-	public static Arbitrary<Long> longs() {
-		return new LongArbitrary();
+	@Deprecated
+	public static LongArbitrary longs(long min, long max) {
+		return longs().withRange(min, max);
 	}
 
-	public static Arbitrary<BigInteger> bigIntegers(long min, long max) {
-		return new LongArbitrary(min, max).map(aLong -> BigInteger.valueOf(aLong));
+	public static BigIntegerArbitrary bigIntegers() {
+		return new DefaultBigIntegerArbitrary();
 	}
 
-	public static Arbitrary<BigInteger> bigIntegers() {
-		return new LongArbitrary().map(aLong -> BigInteger.valueOf(aLong));
+	@Deprecated
+	public static BigIntegerArbitrary bigIntegers(long min, long max) {
+		return bigIntegers().withRange(BigInteger.valueOf(min), BigInteger.valueOf(max));
 	}
 
-	public static Arbitrary<Float> floats() {
-		return new FloatArbitrary();
+	public static FloatArbitrary floats() {
+		return new DefaultFloatArbitrary();
 	}
 
-	public static Arbitrary<Float> floats(Float min, Float max, int scale) {
-		return new FloatArbitrary(min, max, scale);
+	@Deprecated
+	public static FloatArbitrary floats(Float min, Float max, int scale) {
+		return floats().withRange(min, max).withScale(scale);
 	}
 
-	public static Arbitrary<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale) {
-		return new BigDecimalArbitrary(min, max, scale);
+	public static BigDecimalArbitrary bigDecimals() {
+		return new DefaultBigDecimalArbitrary();
 	}
 
-	public static Arbitrary<BigDecimal> bigDecimals() {
-		return new BigDecimalArbitrary();
+	@Deprecated
+	public static BigDecimalArbitrary bigDecimals(BigDecimal min, BigDecimal max, int scale) {
+		return bigDecimals().withRange(min, max).withScale(scale);
 	}
 
-	public static Arbitrary<Double> doubles() {
-		return new DoubleArbitrary();
+	public static DoubleArbitrary doubles() {
+		return new DefaultDoubleArbitrary();
 	}
 
-	public static Arbitrary<Double> doubles(double min, double max, int scale) {
-		return new DoubleArbitrary(min, max, scale);
+	@Deprecated
+	public static DoubleArbitrary doubles(double min, double max, int scale) {
+		return doubles().withRange(min, max).withScale(scale);
 	}
 
-	public static Arbitrary<Byte> bytes() {
-		return new ByteArbitrary();
+	public static ByteArbitrary bytes() {
+		return new DefaultByteArbitrary();
 	}
 
-	public static Arbitrary<Byte> bytes(byte min, byte max) {
-		return new ByteArbitrary(min, max);
+	@Deprecated
+	public static ByteArbitrary bytes(byte min, byte max) {
+		return bytes().withRange(min, max);
 	}
 
-	public static Arbitrary<Short> shorts() {
-		return new ShortArbitrary();
+	public static ShortArbitrary shorts() {
+		return new DefaultShortArbitrary();
 	}
 
-	public static Arbitrary<Short> shorts(short min, short max) {
-		return new ShortArbitrary(min, max);
+	@Deprecated
+	public static ShortArbitrary shorts(short min, short max) {
+		return shorts().withRange(min, max);
 	}
 
-	public static Arbitrary<String> strings() {
-		return new StringArbitrary();
+	public static StringArbitrary strings() {
+		return new DefaultStringArbitrary();
 	}
 
-	public static Arbitrary<String> strings(char[] validChars, int minLength, int maxLength) {
-		return new StringArbitrary(validChars, minLength, maxLength);
+	@Deprecated
+	public static StringArbitrary strings(char[] validChars, int minLength, int maxLength) {
+		return strings().withChars(validChars).withMinLength(minLength).withMaxLength(maxLength);
 	}
 
-	public static Arbitrary<String> strings(char[] validChars) {
-		return new StringArbitrary(validChars);
+	@Deprecated
+	public static StringArbitrary strings(char[] validChars) {
+		return strings().withChars(validChars);
 	}
 
-	public static Arbitrary<String> strings(char from, char to, int minLength, int maxLength) {
-		return new StringArbitrary(from, to, minLength, maxLength);
+	@Deprecated
+	public static StringArbitrary strings(char from, char to, int minLength, int maxLength) {
+		return strings().withChars(from, to).withMinLength(minLength).withMaxLength(maxLength);
 	}
 
-	public static Arbitrary<String> strings(char from, char to) {
-		return new StringArbitrary(from, to);
+	@Deprecated
+	public static StringArbitrary strings(char from, char to) {
+		return strings().withChars(from, to);
 	}
 
-	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new ListArbitrary<T>(elementArbitrary, minSize, maxSize);
+	public static CharacterArbitrary chars() {
+		return new DefaultCharacterArbitrary();
 	}
 
-	public static Arbitrary<Character> chars() {
-		return new CharacterArbitrary();
+	@Deprecated
+	public static CharacterArbitrary chars(char from, char to) {
+		return chars().withChars(from, to);
 	}
 
-	public static Arbitrary<Character> chars(char from, char to) {
-		return new CharacterArbitrary(from, to);
+	@Deprecated
+	public static CharacterArbitrary chars(char[] validChars) {
+		return chars().withChars(validChars);
 	}
 
-	public static Arbitrary<Character> chars(char[] validChars) {
-		return new CharacterArbitrary(validChars);
-	}
-
-	public static <T> Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
+	public static <T> SizableArbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary) {
 		return new ListArbitrary<T>(elementArbitrary);
 	}
 
-	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new SetArbitrary<>(elementArbitrary, minSize, maxSize);
+	@Deprecated
+	public static <T> SizableArbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return listOf(elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
-	public static <T> Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
+	public static <T> SizableArbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary) {
 		return new SetArbitrary<>(elementArbitrary);
 	}
 
-	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new StreamArbitrary<>(elementArbitrary, minSize, maxSize);
+	@Deprecated
+	public static <T> SizableArbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return setOf(elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
-	public static <T> Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
+	public static <T> SizableArbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary) {
 		return new StreamArbitrary<>(elementArbitrary);
+	}
+
+	@Deprecated
+	public static <T> SizableArbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return streamOf(elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
 	public static <T> Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary) {
 		return elementArbitrary.injectNull(0.1).map(Optional::ofNullable);
 	}
 
-	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return new ArrayArbitrary(arrayClass, elementArbitrary, minSize, maxSize);
+	public static <A, T> SizableArbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
+		return new ArrayArbitrary<>(arrayClass, elementArbitrary);
 	}
 
-	public static <A, T> Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
-		return new ArrayArbitrary(arrayClass, elementArbitrary);
+	@Deprecated
+	public static <A, T> SizableArbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
+		return arrayOf(arrayClass, elementArbitrary).withMinSize(minSize).withMaxSize(maxSize);
 	}
 
 	@SafeVarargs

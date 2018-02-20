@@ -1,27 +1,21 @@
 package net.jqwik.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.IntRange;
+import net.jqwik.api.arbitraries.*;
 
-public class IntegerArbitrary extends NullableArbitrary<Integer> {
+public class DefaultIntegerArbitrary extends NullableArbitraryBase<Integer> implements IntegerArbitrary {
 
 	private static final int DEFAULT_MIN = Integer.MIN_VALUE;
 	private static final int DEFAULT_MAX = Integer.MAX_VALUE;
 
-	private int min;
-	private int max;
+	private int min = DEFAULT_MIN;
+	private int max = DEFAULT_MAX;
 
-	public IntegerArbitrary(int min, int max) {
+	public DefaultIntegerArbitrary() {
 		super(Integer.class);
-		this.min = min;
-		this.max = max;
-	}
-
-	public IntegerArbitrary() {
-		this(DEFAULT_MIN, DEFAULT_MAX);
 	}
 
 	@Override
@@ -44,9 +38,18 @@ public class IntegerArbitrary extends NullableArbitrary<Integer> {
 		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 
-	public void configure(IntRange intRange) {
-		min = intRange.min();
-		max = intRange.max();
+	@Override
+	public IntegerArbitrary withMin(int min) {
+		DefaultIntegerArbitrary clone = typedClone();
+		clone.min = min;
+		return clone;
+	}
+
+	@Override
+	public IntegerArbitrary withMax(int max) {
+		DefaultIntegerArbitrary clone = typedClone();
+		clone.max = max;
+		return clone;
 	}
 
 }

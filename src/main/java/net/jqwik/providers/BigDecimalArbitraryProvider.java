@@ -1,11 +1,11 @@
 package net.jqwik.providers;
 
-import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 
 public class BigDecimalArbitraryProvider implements ArbitraryProvider {
 	@Override

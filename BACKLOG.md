@@ -1,5 +1,6 @@
 ### Bugs
 
+- Shrinking floats in decimal places sometimes keeps iterating over same value
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative 1: change distance to be of type BigInteger!
@@ -45,11 +46,6 @@
 
 - Provider methods can take params e.g.
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
-
-- Fluent interface for arbitrary creation
-  - Arbitrary.list(), set(), array(), stream(), optional()
-  - Remove Arbitraries.list etc methods?
-  - Special interfaces like Integer/FloatArbitrary etc. ?
 
 - Filter out duplicates in generated sets
 

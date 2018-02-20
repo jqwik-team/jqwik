@@ -1,10 +1,10 @@
 package net.jqwik.providers;
 
-import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 
 abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider {
 
@@ -19,9 +19,10 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
 		GenericType innerType = targetType.getTypeArguments()[0];
 		return subtypeProvider.apply(innerType) //
-			.map(this::create) //
-			.orElse(null);
+				.map(this::create) //
+				.orElse(null);
 	}
 
 	protected abstract Arbitrary<?> create(Arbitrary<?> innerArbitrary);
+
 }

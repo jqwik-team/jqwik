@@ -1,15 +1,16 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.Arbitrary;
-import net.jqwik.api.RandomGenerator;
-import net.jqwik.properties.arbitraries.ArbitraryWrapper;
+import net.jqwik.api.*;
 
-class GenericArbitrary extends ArbitraryWrapper<Object, Object> {
+class GenericArbitrary implements Arbitrary<Object> {
 
-	GenericArbitrary(Arbitrary wrapped) {
-		super(wrapped);
+	private final Arbitrary wrapped;
+
+	GenericArbitrary(Arbitrary<?> wrapped) {
+		this.wrapped = wrapped;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public RandomGenerator<Object> generator(int tries) {
 		return wrapped.generator(tries);

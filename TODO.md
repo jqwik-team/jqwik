@@ -1,5 +1,10 @@
-- Rethink dependencies and work distribution between ArbitraryProvider and Arbitrary classes
-  - Maybe configure(A extends Annotation) should be placed in ArbitraryProvider?
-  - Document creation of Arbitrary classes and how to configure them
+- Fluent interface for arbitrary creation
+  - Arbitrary.list(), set(), array(), stream(), optional()
+  - Deprecate Arbitraries.list etc methods?
+  - Document fluent interfaces
+  
+- Javadoc api.constraints
+  
+- Document configurators
 
 - Arbitrary provider for @Functional interfaces

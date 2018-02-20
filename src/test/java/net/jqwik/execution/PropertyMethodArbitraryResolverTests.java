@@ -7,14 +7,10 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.providers.*;
-import org.assertj.core.data.*;
-
 import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 
 @Group
@@ -45,16 +41,10 @@ public class PropertyMethodArbitraryResolverTests {
 		@Example
 		void useNextDefaultProviderIfFirstDoesNotProvideAnArbitrary() {
 			PropertyMethodDescriptor descriptor = getDescriptor(DefaultParams.class, "aString", String.class);
-			List<ArbitraryProvider> defaultProviders = Arrays.asList(
-				createProvider(String.class, null),
-				createProvider(String.class, new Arbitrary<String>() {
-					@Override
-					public RandomGenerator<String> generator(int tries) {
-						return random -> Shrinkable.unshrinkable("an arbitrary string");
-					}
-				})
-			);
-			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(), defaultProviders);
+			List<ArbitraryProvider> defaultProviders = Arrays.asList(createProvider(String.class, null),
+					createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string")));
+			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(),
+					new RegisteredArbitraryResolver(defaultProviders), Collections.emptyList());
 			Parameter parameter = getParameter(DefaultParams.class, "aString");
 			Object actual = generateFirst(resolver, parameter);
 			assertThat(actual).isEqualTo("an arbitrary string");
@@ -68,9 +58,7 @@ public class PropertyMethodArbitraryResolverTests {
 				}
 
 				@Override
-				public Arbitrary<?> provideFor(
-					GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider
-				) {
+				public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
 					return arbitrary;
 				}
 			};
@@ -248,59 +236,6 @@ public class PropertyMethodArbitraryResolverTests {
 					return true;
 				}
 
-			}
-		}
-
-	}
-
-	static double nullProbability = 0.0;
-
-	static class MockArbitrary implements Arbitrary<Object> {
-
-		@Override
-		public RandomGenerator<Object> generator(int tries) {
-			return null;
-		}
-
-		public void configure(WithNull withNull) {
-			nullProbability = withNull.value();
-		}
-	}
-
-	@Group
-	class Configuration {
-
-		@Example
-		void configureIsCalledOnDefaultArbitrary() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithConfiguration.class, "aNullableInteger", Integer.class);
-			Parameter parameter = getParameter(WithConfiguration.class, "aNullableInteger");
-			IntegerArbitrary integerArbitrary = (IntegerArbitrary) provider.forParameter(parameter).get().inner();
-
-			assertThat(integerArbitrary.getNullProbability()).isCloseTo(0.42, Offset.offset(0.01));
-		}
-
-		@Example
-		void configureIsCalledOnProvidedArbitrary() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithConfiguration.class, "aNullableMock", Object.class);
-			Parameter parameter = getParameter(WithConfiguration.class, "aNullableMock");
-			Optional<Arbitrary<Object>> arbitraryOptional = provider.forParameter(parameter);
-
-			assertThat(arbitraryOptional).isPresent();
-			assertThat(nullProbability).isCloseTo(0.41, Offset.offset(0.01));
-		}
-
-		private class WithConfiguration {
-			@Property
-			void aNullableInteger(@ForAll @WithNull(0.42) Integer anInt) {
-			}
-
-			@Property
-			void aNullableMock(@ForAll("mockObject") @WithNull(0.41) Object anObject) {
-			}
-
-			@Provide
-			Arbitrary<Object> mockObject() {
-				return new MockArbitrary();
 			}
 		}
 
