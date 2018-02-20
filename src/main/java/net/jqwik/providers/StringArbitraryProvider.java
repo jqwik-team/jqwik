@@ -23,15 +23,4 @@ public class StringArbitraryProvider implements ArbitraryProvider {
 		return arbitrary.withMinLength(stringLength.min()).withMaxLength(stringLength.max());
 	}
 
-	public StringArbitrary configure(StringArbitrary arbitrary, Chars chars) {
-		return arbitrary.withChars(chars.value()).withChars(chars.from(), chars.to());
-	}
-
-	public StringArbitrary configure(StringArbitrary arbitrary, CharsList charsList) {
-		for (Chars chars : charsList.value()) {
-			arbitrary = configure(arbitrary, chars);
-		}
-		return arbitrary;
-	}
-
 }
