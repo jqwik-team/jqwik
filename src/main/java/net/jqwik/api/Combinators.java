@@ -23,6 +23,26 @@ public class Combinators {
 		return new Combinator4<T1, T2, T3, T4>(a1, a2, a3, a4);
 	}
 
+	public static <T1, T2, T3, T4, T5> Combinator5<T1, T2, T3, T4, T5> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
+			Arbitrary<T4> a4, Arbitrary<T5> a5) {
+		return new Combinator5<T1, T2, T3, T4, T5>(a1, a2, a3, a4, a5);
+	}
+
+	public static <T1, T2, T3, T4, T5, T6> Combinator6<T1, T2, T3, T4, T5, T6> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
+			Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6) {
+		return new Combinator6<T1, T2, T3, T4, T5, T6>(a1, a2, a3, a4, a5, a6);
+	}
+
+	public static <T1, T2, T3, T4, T5, T6, T7> Combinator7<T1, T2, T3, T4, T5, T6, T7> combine(Arbitrary<T1> a1, Arbitrary<T2> a2,
+			Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7) {
+		return new Combinator7<T1, T2, T3, T4, T5, T6, T7>(a1, a2, a3, a4, a5, a6, a7);
+	}
+
+	public static <T1, T2, T3, T4, T5, T6, T7, T8> Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> combine(Arbitrary<T1> a1, Arbitrary<T2> a2,
+			Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7, Arbitrary<T8> a8) {
+		return new Combinator8<T1, T2, T3, T4, T5, T6, T7, T8>(a1, a2, a3, a4, a5, a6, a7, a8);
+	}
+
 	public static class Combinator2<T1, T2> {
 		private final Arbitrary<T1> a1;
 		private final Arbitrary<T2> a2;
@@ -115,6 +135,188 @@ public class Combinators {
 		}
 	}
 
+	public static class Combinator5<T1, T2, T3, T4, T5> {
+		private final Arbitrary<T1> a1;
+		private final Arbitrary<T2> a2;
+		private final Arbitrary<T3> a3;
+		private final Arbitrary<T4> a4;
+		private final Arbitrary<T5> a5;
+
+		private Combinator5(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5) {
+			this.a1 = a1;
+			this.a2 = a2;
+			this.a3 = a3;
+			this.a4 = a4;
+			this.a5 = a5;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator) {
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
+				RandomGenerator<T4> g4 = a4.generator(tries);
+				RandomGenerator<T5> g5 = a5.generator(tries);
+				return random -> {
+					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((Shrinkable<Object>) g1.next(random));
+					shrinkables.add((Shrinkable<Object>) g2.next(random));
+					shrinkables.add((Shrinkable<Object>) g3.next(random));
+					shrinkables.add((Shrinkable<Object>) g4.next(random));
+					shrinkables.add((Shrinkable<Object>) g5.next(random));
+					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4));
+
+					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+				};
+			};
+		}
+	}
+
+	public static class Combinator6<T1, T2, T3, T4, T5, T6> {
+		private final Arbitrary<T1> a1;
+		private final Arbitrary<T2> a2;
+		private final Arbitrary<T3> a3;
+		private final Arbitrary<T4> a4;
+		private final Arbitrary<T5> a5;
+		private final Arbitrary<T6> a6;
+
+		private Combinator6(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6) {
+			this.a1 = a1;
+			this.a2 = a2;
+			this.a3 = a3;
+			this.a4 = a4;
+			this.a5 = a5;
+			this.a6 = a6;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator) {
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
+				RandomGenerator<T4> g4 = a4.generator(tries);
+				RandomGenerator<T5> g5 = a5.generator(tries);
+				RandomGenerator<T6> g6 = a6.generator(tries);
+				return random -> {
+					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((Shrinkable<Object>) g1.next(random));
+					shrinkables.add((Shrinkable<Object>) g2.next(random));
+					shrinkables.add((Shrinkable<Object>) g3.next(random));
+					shrinkables.add((Shrinkable<Object>) g4.next(random));
+					shrinkables.add((Shrinkable<Object>) g5.next(random));
+					shrinkables.add((Shrinkable<Object>) g6.next(random));
+					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5));
+
+					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+				};
+			};
+		}
+	}
+
+	public static class Combinator7<T1, T2, T3, T4, T5, T6, T7> {
+		private final Arbitrary<T1> a1;
+		private final Arbitrary<T2> a2;
+		private final Arbitrary<T3> a3;
+		private final Arbitrary<T4> a4;
+		private final Arbitrary<T5> a5;
+		private final Arbitrary<T6> a6;
+		private final Arbitrary<T7> a7;
+
+		private Combinator7(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6,
+				Arbitrary<T7> a7) {
+			this.a1 = a1;
+			this.a2 = a2;
+			this.a3 = a3;
+			this.a4 = a4;
+			this.a5 = a5;
+			this.a6 = a6;
+			this.a7 = a7;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
+				RandomGenerator<T4> g4 = a4.generator(tries);
+				RandomGenerator<T5> g5 = a5.generator(tries);
+				RandomGenerator<T6> g6 = a6.generator(tries);
+				RandomGenerator<T7> g7 = a7.generator(tries);
+				return random -> {
+					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((Shrinkable<Object>) g1.next(random));
+					shrinkables.add((Shrinkable<Object>) g2.next(random));
+					shrinkables.add((Shrinkable<Object>) g3.next(random));
+					shrinkables.add((Shrinkable<Object>) g4.next(random));
+					shrinkables.add((Shrinkable<Object>) g5.next(random));
+					shrinkables.add((Shrinkable<Object>) g6.next(random));
+					shrinkables.add((Shrinkable<Object>) g7.next(random));
+					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6));
+
+					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+				};
+			};
+		}
+	}
+
+	public static class Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> {
+		private final Arbitrary<T1> a1;
+		private final Arbitrary<T2> a2;
+		private final Arbitrary<T3> a3;
+		private final Arbitrary<T4> a4;
+		private final Arbitrary<T5> a5;
+		private final Arbitrary<T6> a6;
+		private final Arbitrary<T7> a7;
+		private final Arbitrary<T8> a8;
+
+		private Combinator8(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6,
+				Arbitrary<T7> a7, Arbitrary<T8> a8) {
+			this.a1 = a1;
+			this.a2 = a2;
+			this.a3 = a3;
+			this.a4 = a4;
+			this.a5 = a5;
+			this.a6 = a6;
+			this.a7 = a7;
+			this.a8 = a8;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator) {
+			return (tries) -> {
+				RandomGenerator<T1> g1 = a1.generator(tries);
+				RandomGenerator<T2> g2 = a2.generator(tries);
+				RandomGenerator<T3> g3 = a3.generator(tries);
+				RandomGenerator<T4> g4 = a4.generator(tries);
+				RandomGenerator<T5> g5 = a5.generator(tries);
+				RandomGenerator<T6> g6 = a6.generator(tries);
+				RandomGenerator<T7> g7 = a7.generator(tries);
+				RandomGenerator<T8> g8 = a8.generator(tries);
+				return random -> {
+					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((Shrinkable<Object>) g1.next(random));
+					shrinkables.add((Shrinkable<Object>) g2.next(random));
+					shrinkables.add((Shrinkable<Object>) g3.next(random));
+					shrinkables.add((Shrinkable<Object>) g4.next(random));
+					shrinkables.add((Shrinkable<Object>) g5.next(random));
+					shrinkables.add((Shrinkable<Object>) g6.next(random));
+					shrinkables.add((Shrinkable<Object>) g7.next(random));
+					shrinkables.add((Shrinkable<Object>) g8.next(random));
+					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6), (T8) params.get(7));
+
+					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+				};
+			};
+		}
+	}
+
 	@FunctionalInterface
 	public interface F2<T1, T2, R> {
 		R apply(T1 t1, T2 t2);
@@ -128,6 +330,26 @@ public class Combinators {
 	@FunctionalInterface
 	public interface F4<T1, T2, T3, T4, R> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4);
+	}
+
+	@FunctionalInterface
+	public interface F5<T1, T2, T3, T4, T5, R> {
+		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5);
+	}
+
+	@FunctionalInterface
+	public interface F6<T1, T2, T3, T4, T5, T6, R> {
+		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6);
+	}
+
+	@FunctionalInterface
+	public interface F7<T1, T2, T3, T4, T5, T6, T7, R> {
+		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7);
+	}
+
+	@FunctionalInterface
+	public interface F8<T1, T2, T3, T4, T5, T6, T7, T8, R> {
+		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8);
 	}
 
 }

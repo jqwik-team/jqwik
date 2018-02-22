@@ -1279,10 +1279,9 @@ _TBD_
 ### 0.8.4-SNAPSHOT
 
 - Completely rebuild the annotation-based configuration of registered arbitrary providers
-
 - Introduced fluent configuration interfaces
-
 - Introduced Arbitrary.list/set/stream/optional/array
+- Combinators.combine() now allows up to 8 parameters
 
 ### 0.8.3
 
