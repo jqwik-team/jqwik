@@ -9,12 +9,16 @@ import net.jqwik.api.*;
 
 public class RandomGenerators {
 
-	public static <U> RandomGenerator<U> choose(U[] values) {
-		if (values.length == 0) {
+	public static <U> RandomGenerator<U> choose(List<U> values) {
+		if (values.size() == 0) {
 			return fail("empty set of values");
 		} else {
-			return random -> choose(0, values.length - 1).map(i -> values[i]).next(random);
+			return random -> choose(0, values.size() - 1).map(values::get).next(random);
 		}
+	}
+
+	public static <U> RandomGenerator<U> choose(U[] values) {
+		return choose(Arrays.asList(values));
 	}
 
 	public static RandomGenerator<Byte> choose(byte min, byte max) {

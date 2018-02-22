@@ -34,6 +34,16 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
 
+	@SafeVarargs
+	public static <T> Arbitrary<T> oneOf(Arbitrary<T> first, Arbitrary<T>... rest) {
+		if (rest.length == 0) {
+			return first;
+		}
+		List<Arbitrary<T>> all = new ArrayList<>(Arrays.asList(rest));
+		all.add(first);
+		return fromGenerator(RandomGenerators.choose(all)).flatMap(arbitrary -> arbitrary);
+	}
+
 	public static IntegerArbitrary integers() {
 		return new DefaultIntegerArbitrary();
 	}
@@ -189,5 +199,4 @@ public class Arbitraries {
 		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
 		return fromGenerator(RandomGenerators.samples(shrinkables));
 	}
-
 }

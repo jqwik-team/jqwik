@@ -32,6 +32,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Mapping](#mapping)
   - [Flat Mapping](#flat-mapping)
   - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
+  - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
@@ -834,6 +835,35 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful. 
 
+### Randomly Choosing among Arbitraries
+
+If you have several arbitraries of the same type, you can create a new arbitrary of
+the same type which will choose randomly one of those arbitraries before generating
+a value:
+
+```java
+@Property
+boolean intsAreCreatedFromOneOfThreeArbitraries(@ForAll("oneOfThree") int anInt) {
+    String classifier = anInt < -1000 ? "below" : anInt > 1000 ? "above" : "one";
+    Statistics.collect(classifier);
+    
+    return anInt < -1000 //
+            || Math.abs(anInt) == 1 //
+            || anInt > 1000;
+}
+
+@Provide
+Arbitrary<Integer> oneOfThree() {
+    IntegerArbitrary below1000 = Arbitraries.integers().between(-2000, -1001);
+    IntegerArbitrary above1000 = Arbitraries.integers().between(1001, 2000);
+    Arbitrary<Integer> oneOrMinusOne = Arbitraries.samples(-1, 1);
+    
+    return Arbitraries.oneOf(below1000, above1000, oneOrMinusOne);
+}
+```
+
+In this example the statistics should also give you an equal distribution between
+the three types of integers.
 
 ### Combining Arbitraries
 
@@ -1282,6 +1312,7 @@ _TBD_
 - Combinators.combine() now allows up to 8 parameters
 - Character creation does no longer support `@Chars` but only '@CharRange'
 - 'Arbitraries.chars(char[] validChars)' does no longer exist
+- Added [`Arbitraries.oneOf`](#randomly-choosing-among-arbitraries)
 
 ### 0.8.3
 

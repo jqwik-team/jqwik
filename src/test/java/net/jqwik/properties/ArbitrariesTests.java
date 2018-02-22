@@ -2,6 +2,7 @@ package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import org.assertj.core.api.*;
 
 import java.math.*;
 import java.util.*;
@@ -60,6 +61,21 @@ class ArbitrariesTests {
 		Arbitrary<Random> randomArbitrary = Arbitraries.randoms();
 		RandomGenerator<Random> generator = randomArbitrary.generator(1);
 		ArbitraryTestHelper.assertAllGenerated(generator, (Random value) -> value.nextInt(100) < 100);
+	}
+
+	@Example
+	void oneOf() {
+		Arbitrary<Integer> one = Arbitraries.of(1);
+		Arbitrary<Integer> two = Arbitraries.of(2);
+		Arbitrary<Integer> three = Arbitraries.of(3);
+
+		Arbitrary<Integer> oneOfArbitrary = Arbitraries.oneOf(one, two, three);
+		ArbitraryTestHelper.assertAllGenerated(oneOfArbitrary.generator(1000), value -> {
+			Assertions.assertThat(value).isIn(1, 2, 3);
+		});
+		ArbitraryTestHelper.assertAtLeastOneGenerated(oneOfArbitrary.generator(1000), value -> value == 1);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(oneOfArbitrary.generator(1000), value -> value == 2);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(oneOfArbitrary.generator(1000), value -> value == 3);
 	}
 
 	@Group
