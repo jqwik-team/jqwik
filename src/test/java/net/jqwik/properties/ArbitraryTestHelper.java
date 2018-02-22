@@ -9,7 +9,7 @@ import java.util.stream.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class ArbitraryTestHelper {
+public class ArbitraryTestHelper {
 
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
 		Random random = new Random();

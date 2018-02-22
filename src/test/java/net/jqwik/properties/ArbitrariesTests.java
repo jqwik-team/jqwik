@@ -78,15 +78,6 @@ class ArbitrariesTests {
 			List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 			ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> allowedChars.contains(value));
 		}
-
-		@Example
-		void charsFromCharset() {
-			char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
-			Arbitrary<Character> stringArbitrary = Arbitraries.chars(validChars);
-			RandomGenerator<Character> generator = stringArbitrary.generator(1);
-			ArbitraryTestHelper.assertAllGenerated(generator,
-					(Character value) -> String.valueOf(validChars).contains(String.valueOf(value)));
-		}
 	}
 
 	@Group

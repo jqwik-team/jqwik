@@ -1,57 +1,45 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 public class DefaultCharacterArbitrary extends NullableArbitraryBase<Character> implements CharacterArbitrary {
 
-	private Set<Character> allowedChars = new HashSet<>();
+	private static final int MAX_ASCII_CODEPOINT = 0x007F;
+
+	private char min = 0;
+	private char max = 0;
 
 	public DefaultCharacterArbitrary() {
 		super(Character.class);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	protected RandomGenerator<Character> baseGenerator(int tries) {
-		if (allowedChars.isEmpty()) {
-			return RandomGenerators.choose(Character.MIN_VALUE, Character.MAX_VALUE);
-		}
-		return RandomGenerators.choose(charsArray());
-	}
-
-	private Character[] charsArray() {
-		return allowedChars.toArray(new Character[allowedChars.size()]);
+		return RandomGenerators.choose(min, max).withSamples(min, max);
 	}
 
 	@Override
-	public CharacterArbitrary withChars(char[] allowedChars) {
+	public CharacterArbitrary between(char min, char max) {
 		DefaultCharacterArbitrary clone = typedClone();
-		clone.addAllowedChars(allowedChars);
+		clone.min = min;
+		clone.max = max;
 		return clone;
 	}
 
 	@Override
-	public CharacterArbitrary withChars(char from, char to) {
-		DefaultCharacterArbitrary clone = typedClone();
-		clone.addAllowedChars(from, to);
-		return clone;
+	public CharacterArbitrary ascii() {
+		return between((char) Character.MIN_CODE_POINT, (char) MAX_ASCII_CODEPOINT);
 	}
 
-	private void addAllowedChars(char from, char to) {
-		if (to > from) {
-			for (char c = from; c <= to; c++) {
-				allowedChars.add(c);
-			}
-		}
+	@Override
+	public CharacterArbitrary all() {
+		return between(Character.MIN_VALUE, Character.MAX_VALUE);
 	}
 
-	private void addAllowedChars(char[] chars) {
-		for (char c : chars) {
-			allowedChars.add(c);
-		}
+	@Override
+	public CharacterArbitrary digit() {
+		return between('0', '9');
 	}
 
 }

@@ -2,7 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import java.util.*;
 
-abstract class IntegralShrinkCandidates<T extends Number> implements ShrinkCandidates<T> {
+abstract class IntegralShrinkCandidates<T> implements ShrinkCandidates<T> {
 
 	private final Range<Long> range;
 

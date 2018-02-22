@@ -131,17 +131,12 @@ public class Arbitraries {
 	}
 
 	public static CharacterArbitrary chars() {
-		return new DefaultCharacterArbitrary();
+		return new DefaultCharacterArbitrary().all();
 	}
 
 	@Deprecated
 	public static CharacterArbitrary chars(char from, char to) {
-		return chars().withChars(from, to);
-	}
-
-	@Deprecated
-	public static CharacterArbitrary chars(char[] validChars) {
-		return chars().withChars(validChars);
+		return chars().between(from, to);
 	}
 
 	@Deprecated

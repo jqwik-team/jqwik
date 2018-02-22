@@ -443,14 +443,13 @@ The following constraints can be combined with each other:
 
 If Characters are not constrained any char between `'\u0000'` and `'\uffff'` might be created.
 
-The following constraints can be combined with each other:
+Only one of the following constraints can be used:
 
-- `@Chars(chars[] value = {}, char from = 0, char to = 0)`: Specify a set of characters
+- `@CharRange(char min = 0, char max)`: Specify a set of characters
   or a start and end character. This annotation can be repeated which will add up all allowed chars.
 - `@Digits`: Use only digits `0` through `9`
 - `@LowerChars`: Use only lower case chars `a` through `z`
 - `@UpperChars`: Use only upper case chars `A` through `Z`
-- `@AlphaChars`: Lower and upper case chars are allowed.
 
 #### List, Set, Stream and Arrays:
 
@@ -706,7 +705,6 @@ The starting point for generation usually is a static method call on class `Arbi
 - `Arbitrary<String> strings(char from, char to)`
 - `Arbitrary<Character> chars()`
 - `Arbitrary<Character> chars(char from, char to)`
-- `Arbitrary<Character> chars(char[] validChars)`
 
 #### java.util.Random
 
@@ -1282,6 +1280,8 @@ _TBD_
 - Introduced fluent configuration interfaces
 - Introduced Arbitrary.list/set/stream/optional/array
 - Combinators.combine() now allows up to 8 parameters
+- Character creation does no longer support `@Chars` but only '@CharRange'
+- 'Arbitraries.chars(char[] validChars)' does no longer exist
 
 ### 0.8.3
 
