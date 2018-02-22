@@ -38,14 +38,14 @@ public class DefaultLongArbitrary extends NullableArbitraryBase<Long> implements
 	}
 
 	@Override
-	public LongArbitrary withMin(long min) {
+	public LongArbitrary greaterOrEqual(long min) {
 		DefaultLongArbitrary clone = typedClone();
 		clone.min = min;
 		return clone;
 	}
 
 	@Override
-	public LongArbitrary withMax(long max) {
+	public LongArbitrary lessOrEqual(long max) {
 		DefaultLongArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;

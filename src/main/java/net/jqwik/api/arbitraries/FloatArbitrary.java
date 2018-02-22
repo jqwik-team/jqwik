@@ -2,13 +2,13 @@ package net.jqwik.api.arbitraries;
 
 public interface FloatArbitrary extends NullableArbitrary<Float> {
 
-	default FloatArbitrary withRange(float min, float max) {
-		return withMin(min).withMax(max);
+	default FloatArbitrary between(float min, float max) {
+		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
-	FloatArbitrary withMin(float min);
+	FloatArbitrary greaterOrEqual(float min);
 
-	FloatArbitrary withMax(float max);
+	FloatArbitrary lessOrEqual(float max);
 
-	FloatArbitrary withScale(int scale);
+	FloatArbitrary ofScale(int scale);
 }

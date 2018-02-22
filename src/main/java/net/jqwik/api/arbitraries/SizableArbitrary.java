@@ -1,7 +1,11 @@
 package net.jqwik.api.arbitraries;
 
 public interface SizableArbitrary<U> extends NullableArbitrary<U> {
-	SizableArbitrary<U> withMinSize(int minSize);
+	default SizableArbitrary<U> ofSize(int size) {
+		return ofMinSize(size).ofMaxSize(size);
+	}
 
-	SizableArbitrary<U> withMaxSize(int maxSize);
+	SizableArbitrary<U> ofMinSize(int minSize);
+
+	SizableArbitrary<U> ofMaxSize(int maxSize);
 }

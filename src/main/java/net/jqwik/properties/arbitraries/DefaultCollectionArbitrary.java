@@ -47,14 +47,14 @@ abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U>
 	}
 
 	@Override
-	public SizableArbitrary<U> withMinSize(int minSize) {
+	public SizableArbitrary<U> ofMinSize(int minSize) {
 		DefaultCollectionArbitrary<T, U> clone = typedClone();
 		clone.minSize = minSize;
 		return clone;
 	}
 
 	@Override
-	public SizableArbitrary<U> withMaxSize(int maxSize) {
+	public SizableArbitrary<U> ofMaxSize(int maxSize) {
 		DefaultCollectionArbitrary<T, U> clone = typedClone();
 		clone.maxSize = maxSize;
 		return clone;

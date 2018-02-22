@@ -2,11 +2,11 @@ package net.jqwik.api.arbitraries;
 
 public interface ShortArbitrary extends NullableArbitrary<Short> {
 
-	default ShortArbitrary withRange(short min, short max) {
-		return withMin(min).withMax(max);
+	default ShortArbitrary between(short min, short max) {
+		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
-	ShortArbitrary withMin(short min);
+	ShortArbitrary greaterOrEqual(short min);
 
-	ShortArbitrary withMax(short max);
+	ShortArbitrary lessOrEqual(short max);
 }

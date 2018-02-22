@@ -49,14 +49,14 @@ public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> implements Si
 	}
 
 	@Override
-	public SizableArbitrary<A> withMinSize(int minSize) {
+	public SizableArbitrary<A> ofMinSize(int minSize) {
 		ArrayArbitrary<A, T> clone = typedClone();
 		clone.minSize = minSize;
 		return clone;
 	}
 
 	@Override
-	public SizableArbitrary<A> withMaxSize(int maxSize) {
+	public SizableArbitrary<A> ofMaxSize(int maxSize) {
 		ArrayArbitrary<A, T> clone = typedClone();
 		clone.maxSize = maxSize;
 		return clone;

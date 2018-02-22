@@ -44,21 +44,21 @@ public class DefaultBigDecimalArbitrary extends NullableArbitraryBase<BigDecimal
 	}
 
 	@Override
-	public BigDecimalArbitrary withMin(BigDecimal min) {
+	public BigDecimalArbitrary greaterOrEqual(BigDecimal min) {
 		DefaultBigDecimalArbitrary clone = typedClone();
 		clone.min = min;
 		return clone;
 	}
 
 	@Override
-	public BigDecimalArbitrary withMax(BigDecimal max) {
+	public BigDecimalArbitrary lessOrEqual(BigDecimal max) {
 		DefaultBigDecimalArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;
 	}
 
 	@Override
-	public BigDecimalArbitrary withScale(int scale) {
+	public BigDecimalArbitrary ofScale(int scale) {
 		DefaultBigDecimalArbitrary clone = typedClone();
 		clone.scale = scale;
 		return clone;

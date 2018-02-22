@@ -39,14 +39,14 @@ public class DefaultIntegerArbitrary extends NullableArbitraryBase<Integer> impl
 	}
 
 	@Override
-	public IntegerArbitrary withMin(int min) {
+	public IntegerArbitrary greaterOrEqual(int min) {
 		DefaultIntegerArbitrary clone = typedClone();
 		clone.min = min;
 		return clone;
 	}
 
 	@Override
-	public IntegerArbitrary withMax(int max) {
+	public IntegerArbitrary lessOrEqual(int max) {
 		DefaultIntegerArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;

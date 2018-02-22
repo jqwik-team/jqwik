@@ -4,13 +4,13 @@ import java.math.*;
 
 public interface BigDecimalArbitrary extends NullableArbitrary<BigDecimal> {
 
-	default BigDecimalArbitrary withRange(BigDecimal min, BigDecimal max) {
-		return withMin(min).withMax(max);
+	default BigDecimalArbitrary between(BigDecimal min, BigDecimal max) {
+		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
-	BigDecimalArbitrary withMin(BigDecimal min);
+	BigDecimalArbitrary greaterOrEqual(BigDecimal min);
 
-	BigDecimalArbitrary withMax(BigDecimal max);
+	BigDecimalArbitrary lessOrEqual(BigDecimal max);
 
-	BigDecimalArbitrary withScale(int scale);
+	BigDecimalArbitrary ofScale(int scale);
 }

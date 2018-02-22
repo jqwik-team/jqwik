@@ -42,21 +42,21 @@ public class DefaultFloatArbitrary extends NullableArbitraryBase<Float> implemen
 	}
 
 	@Override
-	public FloatArbitrary withMin(float min) {
+	public FloatArbitrary greaterOrEqual(float min) {
 		DefaultFloatArbitrary clone = typedClone();
 		clone.min = min;
 		return clone;
 	}
 
 	@Override
-	public FloatArbitrary withMax(float max) {
+	public FloatArbitrary lessOrEqual(float max) {
 		DefaultFloatArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;
 	}
 
 	@Override
-	public FloatArbitrary withScale(int scale) {
+	public FloatArbitrary ofScale(int scale) {
 		DefaultFloatArbitrary clone = typedClone();
 		clone.scale = scale;
 		return clone;

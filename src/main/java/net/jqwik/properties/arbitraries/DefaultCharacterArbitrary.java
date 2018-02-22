@@ -5,7 +5,7 @@ import net.jqwik.api.arbitraries.*;
 
 public class DefaultCharacterArbitrary extends NullableArbitraryBase<Character> implements CharacterArbitrary {
 
-	private static final int MAX_ASCII_CODEPOINT = 0x007F;
+	public static final int MAX_ASCII_CODEPOINT = 0x007F;
 
 	private char min = 0;
 	private char max = 0;

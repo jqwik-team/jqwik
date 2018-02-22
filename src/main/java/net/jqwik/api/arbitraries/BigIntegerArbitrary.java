@@ -4,11 +4,11 @@ import java.math.*;
 
 public interface BigIntegerArbitrary extends NullableArbitrary<BigInteger> {
 
-	default BigIntegerArbitrary withRange(BigInteger min, BigInteger max) {
-		return withMin(min).withMax(max);
+	default BigIntegerArbitrary between(BigInteger min, BigInteger max) {
+		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
-	BigIntegerArbitrary withMin(BigInteger min);
+	BigIntegerArbitrary greaterOrEqual(BigInteger min);
 
-	BigIntegerArbitrary withMax(BigInteger max);
+	BigIntegerArbitrary lessOrEqual(BigInteger max);
 }

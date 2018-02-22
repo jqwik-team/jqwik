@@ -2,11 +2,11 @@ package net.jqwik.api.arbitraries;
 
 public interface LongArbitrary extends NullableArbitrary<Long> {
 
-	default LongArbitrary withRange(long min, long max) {
-		return withMin(min).withMax(max);
+	default LongArbitrary between(long min, long max) {
+		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
-	LongArbitrary withMin(long min);
+	LongArbitrary greaterOrEqual(long min);
 
-	LongArbitrary withMax(long max);
+	LongArbitrary lessOrEqual(long max);
 }

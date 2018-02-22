@@ -81,7 +81,6 @@
   - Arbitraries.const(aConstant)
   - functions/methods (whose output parameter can be generated)
   - frequency: pairs of generator and frequency weight
-  - oneOf: randomly select one of many generators and sample from one
   - mutate: like map, but with a random parameter added, see mutate in QuickTheories
   - Recursive generators, like in 
     http://propertesting.com/book_custom_generators.html#_recursive_generators

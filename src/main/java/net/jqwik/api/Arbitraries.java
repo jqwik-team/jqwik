@@ -40,7 +40,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static Arbitrary<Integer> integers(int min, int max) {
-		return integers().withRange(min, max);
+		return integers().between(min, max);
 	}
 
 	public static LongArbitrary longs() {
@@ -49,7 +49,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static LongArbitrary longs(long min, long max) {
-		return longs().withRange(min, max);
+		return longs().between(min, max);
 	}
 
 	public static BigIntegerArbitrary bigIntegers() {
@@ -58,7 +58,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static BigIntegerArbitrary bigIntegers(long min, long max) {
-		return bigIntegers().withRange(BigInteger.valueOf(min), BigInteger.valueOf(max));
+		return bigIntegers().between(BigInteger.valueOf(min), BigInteger.valueOf(max));
 	}
 
 	public static FloatArbitrary floats() {
@@ -67,7 +67,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static FloatArbitrary floats(Float min, Float max, int scale) {
-		return floats().withRange(min, max).withScale(scale);
+		return floats().between(min, max).ofScale(scale);
 	}
 
 	public static BigDecimalArbitrary bigDecimals() {
@@ -76,7 +76,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static BigDecimalArbitrary bigDecimals(BigDecimal min, BigDecimal max, int scale) {
-		return bigDecimals().withRange(min, max).withScale(scale);
+		return bigDecimals().between(min, max).ofScale(scale);
 	}
 
 	public static DoubleArbitrary doubles() {
@@ -85,7 +85,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static DoubleArbitrary doubles(double min, double max, int scale) {
-		return doubles().withRange(min, max).withScale(scale);
+		return doubles().between(min, max).ofScale(scale);
 	}
 
 	public static ByteArbitrary bytes() {
@@ -94,7 +94,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static ByteArbitrary bytes(byte min, byte max) {
-		return bytes().withRange(min, max);
+		return bytes().between(min, max);
 	}
 
 	public static ShortArbitrary shorts() {
@@ -103,7 +103,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static ShortArbitrary shorts(short min, short max) {
-		return shorts().withRange(min, max);
+		return shorts().between(min, max);
 	}
 
 	public static StringArbitrary strings() {
@@ -112,7 +112,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static StringArbitrary strings(char[] validChars, int minLength, int maxLength) {
-		return strings().withChars(validChars).withMinLength(minLength).withMaxLength(maxLength);
+		return strings().withChars(validChars).ofMinLength(minLength).ofMaxLength(maxLength);
 	}
 
 	@Deprecated
@@ -122,7 +122,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static StringArbitrary strings(char from, char to, int minLength, int maxLength) {
-		return strings().withChars(from, to).withMinLength(minLength).withMaxLength(maxLength);
+		return strings().withChars(from, to).ofMinLength(minLength).ofMaxLength(maxLength);
 	}
 
 	@Deprecated
@@ -146,7 +146,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static <T> SizableArbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return elementArbitrary.list().withMinSize(minSize).withMaxSize(maxSize);
+		return elementArbitrary.list().ofMinSize(minSize).ofMaxSize(maxSize);
 	}
 
 	@Deprecated
@@ -156,7 +156,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static <T> SizableArbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return elementArbitrary.set().withMinSize(minSize).withMaxSize(maxSize);
+		return elementArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize);
 	}
 
 	@Deprecated
@@ -166,7 +166,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static <T> SizableArbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return elementArbitrary.stream().withMinSize(minSize).withMaxSize(maxSize);
+		return elementArbitrary.stream().ofMinSize(minSize).ofMaxSize(maxSize);
 	}
 
 	@Deprecated
@@ -181,7 +181,7 @@ public class Arbitraries {
 
 	@Deprecated
 	public static <A, T> SizableArbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
-		return elementArbitrary.array(arrayClass).withMinSize(minSize).withMaxSize(maxSize);
+		return elementArbitrary.array(arrayClass).ofMinSize(minSize).ofMaxSize(maxSize);
 	}
 
 	@SafeVarargs

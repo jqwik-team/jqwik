@@ -34,14 +34,14 @@ public class DefaultByteArbitrary extends NullableArbitraryBase<Byte> implements
 	}
 
 	@Override
-	public ByteArbitrary withMin(byte min) {
+	public ByteArbitrary greaterOrEqual(byte min) {
 		DefaultByteArbitrary clone = typedClone();
 		clone.min = min;
 		return clone;
 	}
 
 	@Override
-	public ByteArbitrary withMax(byte max) {
+	public ByteArbitrary lessOrEqual(byte max) {
 		DefaultByteArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;

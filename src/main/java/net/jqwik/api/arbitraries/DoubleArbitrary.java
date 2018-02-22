@@ -2,14 +2,14 @@ package net.jqwik.api.arbitraries;
 
 public interface DoubleArbitrary extends NullableArbitrary<Double> {
 
-	default DoubleArbitrary withRange(double min, double max) {
-		return withMin(min).withMax(max);
+	default DoubleArbitrary between(double min, double max) {
+		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
-	DoubleArbitrary withMin(double min);
+	DoubleArbitrary greaterOrEqual(double min);
 
-	DoubleArbitrary withMax(double max);
+	DoubleArbitrary lessOrEqual(double max);
 
-	DoubleArbitrary withScale(int scale);
+	DoubleArbitrary ofScale(int scale);
 
 }

@@ -7,7 +7,7 @@ import net.jqwik.api.constraints.*;
 public class StringLengthConfigurator extends ArbitraryConfiguratorBase {
 
 	public StringArbitrary configure(StringArbitrary arbitrary, StringLength stringLength) {
-		return arbitrary.withMinLength(stringLength.min()).withMaxLength(stringLength.max());
+		return arbitrary.ofMinLength(stringLength.min()).ofMaxLength(stringLength.max());
 	}
 
 }

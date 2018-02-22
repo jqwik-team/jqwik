@@ -42,21 +42,21 @@ public class DefaultDoubleArbitrary extends NullableArbitraryBase<Double> implem
 	}
 
 	@Override
-	public DoubleArbitrary withMin(double min) {
+	public DoubleArbitrary greaterOrEqual(double min) {
 		DefaultDoubleArbitrary clone = typedClone();
 		clone.min = min;
 		return clone;
 	}
 
 	@Override
-	public DoubleArbitrary withMax(double max) {
+	public DoubleArbitrary lessOrEqual(double max) {
 		DefaultDoubleArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;
 	}
 
 	@Override
-	public DoubleArbitrary withScale(int scale) {
+	public DoubleArbitrary ofScale(int scale) {
 		DefaultDoubleArbitrary clone = typedClone();
 		clone.scale = scale;
 		return clone;

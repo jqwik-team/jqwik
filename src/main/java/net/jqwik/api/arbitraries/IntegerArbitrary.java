@@ -2,11 +2,11 @@ package net.jqwik.api.arbitraries;
 
 public interface IntegerArbitrary extends NullableArbitrary<Integer> {
 
-	default IntegerArbitrary withRange(int min, int max) {
-		return withMin(min).withMax(max);
+	default IntegerArbitrary between(int min, int max) {
+		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
-	IntegerArbitrary withMin(int min);
+	IntegerArbitrary greaterOrEqual(int min);
 
-	IntegerArbitrary withMax(int max);
+	IntegerArbitrary lessOrEqual(int max);
 }

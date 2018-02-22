@@ -35,14 +35,14 @@ public class DefaultShortArbitrary extends NullableArbitraryBase<Short> implemen
 	}
 
 	@Override
-	public ShortArbitrary withMin(short min) {
+	public ShortArbitrary greaterOrEqual(short min) {
 		DefaultShortArbitrary clone = typedClone();
 		clone.min = min;
 		return clone;
 	}
 
 	@Override
-	public ShortArbitrary withMax(short max) {
+	public ShortArbitrary lessOrEqual(short max) {
 		DefaultShortArbitrary clone = typedClone();
 		clone.max = max;
 		return clone;

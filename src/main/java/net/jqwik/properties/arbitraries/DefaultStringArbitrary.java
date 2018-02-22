@@ -27,14 +27,14 @@ public class DefaultStringArbitrary extends NullableArbitraryBase<String> implem
 	}
 
 	@Override
-	public StringArbitrary withMinLength(int minLength) {
+	public StringArbitrary ofMinLength(int minLength) {
 		DefaultStringArbitrary clone = typedClone();
 		clone.minLength = minLength;
 		return clone;
 	}
 
 	@Override
-	public StringArbitrary withMaxLength(int maxLength) {
+	public StringArbitrary ofMaxLength(int maxLength) {
 		DefaultStringArbitrary clone = typedClone();
 		clone.maxLength = maxLength;
 		return clone;
