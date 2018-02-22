@@ -33,41 +33,32 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
-	void stringsWithSeveralChars(@ForAll @Chars({ 'a', 'b', ' ' }) @Chars(from = '0', to = '9') String aRandomString) {
+	void stringsWithSeveralChars(@ForAll @Chars({ 'a', 'b', ' ' }) @CharRange(from = '0', to = '9') String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 50)
-	void charsByChars(@ForAll @WithNull(value = 0.1, target = Character.class) @Chars(value = { 'a', 'b', ' ' }, from = '1', to = '3') Character aChar) {
-		if (aChar == null) {
-			System.out.println("[null]");
-			return;
-		}
-		System.out.println(String.format("[%s]", Character.toString(aChar)));
-	}
-
-	@Property(tries = 50)
-	void charsWithSeveralChars(@ForAll @Chars({ 'a', 'b', ' ' }) @Chars(from = '0', to = '9') char aChar) {
+	void charsWithRange(@ForAll @CharRange(from = 'f', to = 'q') char aChar) {
 		System.out.println(String.format("[%s]", aChar));
 	}
 
 	@Property(tries = 50)
-	void numericStrings(@ForAll @Digits String aRandomString) {
+	void numericStrings(@ForAll @Numeric String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 50)
-	void alphaNumericStrings(@ForAll @Digits @AlphaChars String aRandomString) {
+	void alphaNumericStrings(@ForAll @Numeric @AlphaChars String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 50)
-	void stringsByFromTo(@ForAll @Chars(from = 'a', to = 'Z') String aRandomString) {
+	void stringsByFromTo(@ForAll @CharRange(from = 'a', to = 'Z') String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 50)
-	void stringsCombined(@ForAll @Chars(from = '0', to = '9', value = { 'a', 'b' }) String aRandomString) {
+	void stringsCombined(@ForAll @CharRange(from = '0', to = '9') @Chars({ 'a', 'b' }) String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 

@@ -433,11 +433,13 @@ If Strings are not constrained a standard set of alphanumeric characters and a f
 
 The following constraints can be combined with each other:
 
-- `@Chars(chars[] value = {}, char from = 0, char to = 0)`: Specify a set of characters
-  or a start and end character. This annotation can be repeated which will add up all allowed chars.
-- `@Digits`: Use only digits `0` through `9`
-- `@LowerChars`: Use only lower case chars `a` through `z`
-- `@UpperChars`: Use only upper case chars `A` through `Z`
+- `@Chars(chars[] value = {})`: Specify a set of characters.
+  This annotation can be repeated which will add up all allowed chars.
+- `@CharRange(char from = 0, char to = 0)`: Specify a start and end character. 
+  This annotation can be repeated which will add up all allowed chars.
+- `@Numeric`: Use digits `0` through `9`
+- `@LowerChars`: Use lower case chars `a` through `z`
+- `@UpperChars`: Use upper case chars `A` through `Z`
 - `@AlphaChars`: Lower and upper case chars are allowed.
 
 #### Characters:
@@ -448,7 +450,7 @@ Only one of the following constraints can be used:
 
 - `@CharRange(char min = 0, char max)`: Specify a set of characters
   or a start and end character. This annotation can be repeated which will add up all allowed chars.
-- `@Digits`: Use only digits `0` through `9`
+- `@Numeric`: Use only digits `0` through `9`
 - `@LowerChars`: Use only lower case chars `a` through `z`
 - `@UpperChars`: Use only upper case chars `A` through `Z`
 
@@ -1310,9 +1312,12 @@ _TBD_
 - Introduced fluent configuration interfaces
 - Introduced Arbitrary.list/set/stream/optional/array
 - Combinators.combine() now allows up to 8 parameters
-- Character creation does no longer support `@Chars` but only '@CharRange'
+- Character creation does no longer support `@Chars` but only `@CharRange`
 - 'Arbitraries.chars(char[] validChars)' does no longer exist
 - Added [`Arbitraries.oneOf`](#randomly-choosing-among-arbitraries)
+- `@Char` cannot take `from` and `to` any longer. Replaced by `@CharRange`
+- Deprecated many methods in `Arbitraries` class. Replaced by fluent interface methods.
+- Deprecated `@Digits` constraint. Replaced by `@Numeric`.
 
 ### 0.8.3
 

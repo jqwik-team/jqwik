@@ -7,11 +7,6 @@ import net.jqwik.api.*;
 class RangeProperties {
 
 	@Property
-	boolean chars(@ForAll @CharRange(min = 'a', max = 'z') char value) {
-		return value >= 'a' && value <= 'z';
-	}
-
-	@Property
 	boolean bytes(@ForAll @ByteRange(min = 2, max = 7) byte value) {
 		return value >= 2 && value <= 7;
 	}

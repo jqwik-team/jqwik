@@ -30,6 +30,10 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(values));
 	}
 
+	public static Arbitrary<Character> of(char[] values) {
+		return fromGenerator(RandomGenerators.choose(values));
+	}
+
 	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
@@ -132,12 +136,12 @@ public class Arbitraries {
 
 	@Deprecated
 	public static StringArbitrary strings(char from, char to, int minLength, int maxLength) {
-		return strings().withChars(from, to).ofMinLength(minLength).ofMaxLength(maxLength);
+		return strings().withCharRange(from, to).ofMinLength(minLength).ofMaxLength(maxLength);
 	}
 
 	@Deprecated
 	public static StringArbitrary strings(char from, char to) {
-		return strings().withChars(from, to);
+		return strings().withCharRange(from, to);
 	}
 
 	public static CharacterArbitrary chars() {

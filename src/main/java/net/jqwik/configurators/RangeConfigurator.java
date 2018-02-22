@@ -40,8 +40,4 @@ public class RangeConfigurator extends ArbitraryConfiguratorBase {
 		return arbitrary.greaterOrEqual(range.min()).lessOrEqual(range.max());
 	}
 
-	public CharacterArbitrary configure(CharacterArbitrary arbitrary, CharRange range) {
-		return arbitrary.between(range.min(), range.max());
-	}
-
 }

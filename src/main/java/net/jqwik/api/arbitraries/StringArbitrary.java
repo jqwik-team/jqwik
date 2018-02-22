@@ -11,5 +11,11 @@ public interface StringArbitrary extends NullableArbitrary<String> {
 
 	StringArbitrary withChars(char[] chars);
 
-	StringArbitrary withChars(char from, char to);
+	StringArbitrary withCharRange(char from, char to);
+
+	StringArbitrary ascii();
+
+	StringArbitrary alpha();
+
+	StringArbitrary numeric();
 }

@@ -4,9 +4,10 @@ import java.lang.annotation.*;
 
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
+@Repeatable(CharRangeList.class)
 @Documented
 public @interface CharRange {
-	char min() default 0;
+	char from() default 0;
 
-	char max();
+	char to();
 }

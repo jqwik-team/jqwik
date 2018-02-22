@@ -6,6 +6,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @CharRange(from = '0', to = '9')
 @Documented
-@Deprecated
-public @interface Digits {
+public @interface Numeric {
 }

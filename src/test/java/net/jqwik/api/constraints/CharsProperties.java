@@ -6,8 +6,13 @@ import net.jqwik.api.*;
 class CharsProperties {
 
 	@Property
-	boolean fromTo(@ForAll @Chars(from = 'a', to = 'z') String aString) {
+	boolean stringWithCharRange(@ForAll @CharRange(from = 'a', to = 'z') String aString) {
 		return aString.chars().allMatch(aChar -> aChar >= 'a' && aChar <= 'z');
+	}
+
+	@Property
+	boolean charsWithRange(@ForAll @CharRange(from = 'a', to = 'z') char value) {
+		return value >= 'a' && value <= 'z';
 	}
 
 	@Property
@@ -16,9 +21,9 @@ class CharsProperties {
 	}
 
 	@Property
-	boolean listOfChars(@ForAll @Chars({ '1', '2', '3' }) @Chars(from = 'a', to = 'z') String aString) {
+	boolean listOfChars(@ForAll @Chars({ '1', '2', '3' }) @Chars({ 'a', 'b', 'c' }) String aString) {
 		return aString.chars().allMatch(aChar -> //
 		(aChar >= '1' && aChar <= '3') //
-				|| (aChar >= 'a' && aChar <= 'z'));
+				|| (aChar >= 'a' && aChar <= 'c'));
 	}
 }

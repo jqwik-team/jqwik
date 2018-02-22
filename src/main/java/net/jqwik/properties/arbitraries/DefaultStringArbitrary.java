@@ -8,12 +8,17 @@ import net.jqwik.api.arbitraries.*;
 
 public class DefaultStringArbitrary extends NullableArbitraryBase<String> implements StringArbitrary {
 
-	private Set<Character> allowedChars = new HashSet<>();
+	private List<Arbitrary<Character>> characterArbitraries = new ArrayList<>();
+
 	private int minLength = 0;
 	private int maxLength = 0;
 
 	public DefaultStringArbitrary() {
 		super(String.class);
+	}
+
+	private CharacterArbitrary defaultCharacterArbitrary() {
+		return Arbitraries.chars().ascii();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -43,46 +48,59 @@ public class DefaultStringArbitrary extends NullableArbitraryBase<String> implem
 	@Override
 	public StringArbitrary withChars(char[] chars) {
 		DefaultStringArbitrary clone = typedClone();
-		clone.addAllowedChars(chars);
+		clone.addChars(chars);
 		return clone;
 	}
 
 	@Override
-	public StringArbitrary withChars(char from, char to) {
+	public StringArbitrary withCharRange(char from, char to) {
 		if (from == 0 && to == 0) {
 			return this;
 		}
 		DefaultStringArbitrary clone = typedClone();
-		clone.addAllowedChars(from, to);
+		clone.addCharRange(from, to);
 		return clone;
 	}
 
-	private void addAllowedChars(char from, char to) {
-		if (to >= from) {
-			for (char c = from; c <= to; c++) {
-				allowedChars.add(c);
-			}
-		}
+	@Override
+	public StringArbitrary ascii() {
+		DefaultStringArbitrary clone = typedClone();
+		clone.characterArbitraries.add(Arbitraries.chars().ascii());
+		return clone;
 	}
 
-	private void addAllowedChars(char[] chars) {
-		for (char c : chars) {
-			allowedChars.add(c);
-		}
+	@Override
+	public StringArbitrary alpha() {
+		DefaultStringArbitrary clone = typedClone();
+		clone.addCharRange('a', 'z');
+		clone.addCharRange('A', 'Z');
+		return clone;
+	}
+
+	@Override
+	public StringArbitrary numeric() {
+		DefaultStringArbitrary clone = typedClone();
+		clone.addCharRange('0', '9');
+		return clone;
+	}
+
+	private void addCharRange(char from, char to) {
+		characterArbitraries.add(Arbitraries.chars().between(from, to));
+	}
+
+	private void addChars(char[] chars) {
+		characterArbitraries.add(Arbitraries.of(chars));
 	}
 
 	private RandomGenerator<Character> createCharacterGenerator() {
-		if (allowedChars.isEmpty()) {
-			addDefaultChars();
+		if (characterArbitraries.isEmpty()) {
+			return defaultCharacterArbitrary().generator(1);
 		}
-		return RandomGenerators.choose(allowedChars.toArray(new Character[allowedChars.size()]));
-	}
+		Arbitrary<Character> first = characterArbitraries.get(0);
+		Arbitrary<Character>[] rest = characterArbitraries.subList(1, characterArbitraries.size()).toArray(new Arbitrary[characterArbitraries.size() - 1]);
 
-	private void addDefaultChars() {
-		addAllowedChars('a', 'z');
-		addAllowedChars('A', 'Z');
-		addAllowedChars('0', '9');
-		addAllowedChars(new char[] { ' ', '@', ',', '.', ':', '-', '_' });
+		Arbitrary<Character> allValidCharacters = Arbitraries.oneOf(first, rest);
+		return allValidCharacters.generator(1);
 	}
 
 }
