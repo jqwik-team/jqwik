@@ -14,7 +14,7 @@ import net.jqwik.descriptor.*;
 import net.jqwik.support.*;
 
 @Group
-public class PropertyMethodArbitraryResolverTests {
+class PropertyMethodArbitraryResolverTests {
 
 	private static class Thing {
 
@@ -181,7 +181,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide("aString")
 			Arbitrary<String> aString() {
-				return Arbitraries.strings('a', 'z');
+				return Arbitraries.strings().withCharRange('a', 'z');
 			}
 
 			@Property
@@ -196,7 +196,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<String> byMethodName() {
-				return Arbitraries.strings('x', 'y');
+				return Arbitraries.strings().withCharRange('x', 'y');
 			}
 
 			@Property
@@ -206,7 +206,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<Long> longBetween1and10() {
-				return Arbitraries.longs(1L, 10L);
+				return Arbitraries.longs().between(1L, 10L);
 			}
 
 			@Property
