@@ -27,6 +27,8 @@ Volunteers for polishing and extending it are more than welcome._
 - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
+  - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
+  - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
@@ -47,7 +49,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
 - [Release Notes](#release-notes)
-  - [0.8.4-SNAPSHOT](#084-snapshot)
+  - [0.8.4](#084)
   - [0.8.3](#083)
   - [0.8.2](#082)
   - [0.8.1](#081)
@@ -93,8 +95,8 @@ repositories {
 ext.junitPlatformVersion = '1.0.3'
 ext.junitJupiterVersion = '5.0.3'
 
-ext.jqwikVersion = '0.8.3'
-#ext.jqwikVersion = '0.8.4-SNAPSHOT'
+ext.jqwikVersion = '0.8.4'
+#ext.jqwikVersion = '0.8.5-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -141,7 +143,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.3</version>
+        <version>0.8.4</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -162,7 +164,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.3.jar`
+- `jqwik-0.8.4.jar`
 - `junit-platform-engine-1.0.3.jar`
 - `junit-platform-commons-1.0.3.jar`
 - `opentest4j-1.0.0.jar`
@@ -679,54 +681,70 @@ The starting point for generation usually is a static method call on class `Arbi
 
 #### Integers
 
-- `Arbitrary<Integer> bytes()`
-- `Arbitrary<Integer> bytes(byte min, byte max)`
-- `Arbitrary<Integer> shorts()`
-- `Arbitrary<Integer> shorts(short min, short max)`
-- `Arbitrary<Integer> integers()`
-- `Arbitrary<Integer> integers(int min, int max)`
-- `Arbitrary<Long> longs(long min, long max)`
-- `Arbitrary<Long> longs()`
-- `Arbitrary<BigInteger> bigIntegers(long min, long max)`
-- `Arbitrary<BigInteger> bigIntegers()`
+- `ByteArbitrary bytes()`
+- `ShortArbitrary shorts()`
+- `IntegerArbitrary integers()`
+- `LongArbitrary longs()`
+- `BigIntegerArbitrary bigIntegers()`
 
 #### Decimals
 
-- `Arbitrary<Float> floats()`
-- `Arbitrary<Float> floats(Float min, Float max, int scale)`
-- `Arbitrary<Double> doubles()`
-- `Arbitrary<Double> doubles(double min, double max, int scale)`
-- `Arbitrary<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale)`
-- `Arbitrary<BigDecimal> bigDecimals()`
+- `FloatArbitrary floats()`
+- `DoubleArbitrary doubles()`
+- `BigDecimalArbitrary bigDecimals()`
 
 #### Characters and Strings
 
-- `Arbitrary<String> strings()`
-- `Arbitrary<String> strings(char[] validChars, int minLength, int maxLength)`
-- `Arbitrary<String> strings(char[] validChars)`
-- `Arbitrary<String> strings(char from, char to, int minLength, int maxLength)`
-- `Arbitrary<String> strings(char from, char to)`
-- `Arbitrary<Character> chars()`
-- `Arbitrary<Character> chars(char from, char to)`
+- `StringArbitrary strings()`
+- `CharacterArbitrary chars()`
 
 #### java.util.Random
 
 - `Arbitrary<Random> randoms()`: Random instances will never be shrunk
 
-#### Collections, Streams, Arrays and Optional
+### Collections, Streams, Arrays and Optional
 
-Generating types who have generic type parameters, requires to hand in 
-an `Arbitrary` instance for the generic types.
+Generating types who have generic type parameters, requires to start with 
+an `Arbitrary` instance for the generic type. You can create the corresponding collection arbitrary from there:
 
-- `Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
-- `Arbitrary<List<T>> listOf(Arbitrary<T> elementArbitrary)`
-- `Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
-- `Arbitrary<Set<T>> setOf(Arbitrary<T> elementArbitrary)`
-- `Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
-- `Arbitrary<Stream<T>> streamOf(Arbitrary<T> elementArbitrary)`
-- `Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary, int minSize, int maxSize)`
-- `Arbitrary<A> arrayOf(Class<A> arrayClass, Arbitrary<T> elementArbitrary)`
-- `Arbitrary<Optional<T>> optionalOf(Arbitrary<T> elementArbitrary)`
+- `Arbitrary.list()`
+- `Arbitrary.set()`
+- `Arbitrary.streamOf()`
+- `Arbitrary.array(Class<A> arrayClass)`
+- `Arbitrary.optional()`
+
+### Fluent Configuration Interfaces
+
+Most specialized arbitrary interfaces provide special methods to configure things
+like size, length, boundaries etc. Have a look at the Java doc for the following types:
+
+- [BigDecimalArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/BigDecimalArbitrary.html)
+- [BigIntegerArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/BigIntegerArbitrary.html)
+- [ByteArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/ByteArbitrary.html)
+- [CharacterArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/CharacterArbitrary.html)
+- [DoubleArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/DoubleArbitrary.html)
+- [FloatArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/FloatArbitrary.html)
+- [IntegerArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/IntegerArbitrary.html)
+- [LongArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
+- [NullableArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/NullableArbitrary.html)
+- [ShortArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
+- [SizableArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
+- [StringArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
+
+
+Here are a two examples to give you a hint of what you can do:
+
+```java
+@Provide
+Arbitrary<String> alphaNumericStringsWithMinLength5() {
+    return Arbitraries.strings().ofMinLength(5).alpha().numeric();
+}
+
+@Provide
+Arbitrary<List<Integer>> fixedSizedListOfPositiveIntegers() {
+    return Arbitraries.integers().greaterOrEqual(0).list().ofSize(17);
+}
+```
 
 
 ### Generate `null` values
@@ -734,12 +752,12 @@ an `Arbitrary` instance for the generic types.
 Predefined generators will never create `null` values. If you want to allow that,
 call `Arbitrary.injectNull(double probability)`. The following
 provider method creates an arbitrary that will return a `null` String 
-in about 1 of 20 generated values.
+in about 1 of 100 generated values.
 
 ```java
 @Provide 
 Arbitrary<String> stringsWithNull() {
-  return Arbitraries.strings(0, 10).injectNull(0.05);
+  return Arbitraries.strings(0, 10).injectNull(0.01);
 }
 ```
 
@@ -1306,14 +1324,16 @@ _TBD_
 
 ## Release Notes
 
-### 0.8.4-SNAPSHOT
+### 0.8.4
 
 - Completely rebuild the annotation-based configuration of registered arbitrary providers
-- Introduced fluent configuration interfaces
-- Introduced Arbitrary.list/set/stream/optional/array
+- Introduced [fluent configuration interfaces](#fluent-configuration-interfaces)
+- Introduced [Arbitrary.list/set/stream/optional/array](#collections-streams-arrays-and-optional)
 - Combinators.combine() now allows up to 8 parameters
 - Character creation does no longer support `@Chars` but only `@CharRange`
+  _This is an incompatible API change!_
 - 'Arbitraries.chars(char[] validChars)' does no longer exist
+  _This is an incompatible API change!_
 - Added [`Arbitraries.oneOf`](#randomly-choosing-among-arbitraries)
 - `@Char` cannot take `from` and `to` any longer. Replaced by `@CharRange`
 - Deprecated many methods in `Arbitraries` class. Replaced by fluent interface methods.
