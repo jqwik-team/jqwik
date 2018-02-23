@@ -43,12 +43,12 @@ public class AnnotatedPropertiesTests {
 	}
 
 	@Property(tries = 50)
-	void numericStrings(@ForAll @Numeric String aRandomString) {
+	void numericStrings(@ForAll @NumericChars String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 
 	@Property(tries = 50)
-	void alphaNumericStrings(@ForAll @Numeric @AlphaChars String aRandomString) {
+	void alphaNumericStrings(@ForAll @NumericChars @AlphaChars String aRandomString) {
 		System.out.println(String.format("[%s]", aRandomString));
 	}
 

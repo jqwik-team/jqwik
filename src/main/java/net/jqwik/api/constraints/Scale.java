@@ -3,9 +3,14 @@ package net.jqwik.api.constraints;
 import java.lang.annotation.*;
 
 /**
- * Use to constrain the maximum number of decimal places when generating decimal numbers,
- * i.e. Floats, Doubles and BigDecimals
+ * Use to constrain the maximum number of decimal places when generating decimal numbers.
+ * If not specified the scale is 2 by default.
+ *
+ * Applies to Float, Double and BigDecimal parameters which are also annotated with {@code @ForAll}.
+ *
+ * @see net.jqwik.api.ForAll
  */
+
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

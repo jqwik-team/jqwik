@@ -3,7 +3,11 @@ package net.jqwik.api.constraints;
 import java.lang.annotation.*;
 
 /**
- * Configure the size of generated collection types, i.e. List, Set, Stream, and arrays.
+ * Constrain the size of generated "sizable" types.
+ *
+ * Applies to List, Set, Stream, and arrays which are also annotated with {@code @ForAll}.
+ *
+ * @see net.jqwik.api.ForAll
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

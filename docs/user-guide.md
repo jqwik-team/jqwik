@@ -437,7 +437,7 @@ The following constraints can be combined with each other:
   This annotation can be repeated which will add up all allowed chars.
 - `@CharRange(char from = 0, char to = 0)`: Specify a start and end character. 
   This annotation can be repeated which will add up all allowed chars.
-- `@Numeric`: Use digits `0` through `9`
+- `@NumericChars`: Use digits `0` through `9`
 - `@LowerChars`: Use lower case chars `a` through `z`
 - `@UpperChars`: Use upper case chars `A` through `Z`
 - `@AlphaChars`: Lower and upper case chars are allowed.
@@ -450,7 +450,7 @@ Only one of the following constraints can be used:
 
 - `@CharRange(char min = 0, char max)`: Specify a set of characters
   or a start and end character. This annotation can be repeated which will add up all allowed chars.
-- `@Numeric`: Use only digits `0` through `9`
+- `@NumericChars`: Use only digits `0` through `9`
 - `@LowerChars`: Use only lower case chars `a` through `z`
 - `@UpperChars`: Use only upper case chars `A` through `Z`
 
@@ -1317,7 +1317,7 @@ _TBD_
 - Added [`Arbitraries.oneOf`](#randomly-choosing-among-arbitraries)
 - `@Char` cannot take `from` and `to` any longer. Replaced by `@CharRange`
 - Deprecated many methods in `Arbitraries` class. Replaced by fluent interface methods.
-- Deprecated `@Digits` constraint. Replaced by `@Numeric`.
+- Deprecated `@Digits` constraint. Replaced by `@NumericChars`.
 
 ### 0.8.3
 

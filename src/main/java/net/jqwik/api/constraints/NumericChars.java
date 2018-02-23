@@ -3,7 +3,7 @@ package net.jqwik.api.constraints;
 import java.lang.annotation.*;
 
 /**
- * Constrain the chars used to generate Strings or Characters to upper and lower case chars.
+ * Constrain the chars used to generate Strings or Characters to digits.
  *
  * Applies to String or Character parameters which are also annotated with {@code @ForAll}.
  *
@@ -11,12 +11,11 @@ import java.lang.annotation.*;
  * In that case the set of possible characters is expanded by each annotation.
  *
  * @see net.jqwik.api.ForAll
- * @see LowerChars
  * @see AlphaChars
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@CharRange(from = 'A', to = 'Z')
+@CharRange(from = '0', to = '9')
 @Documented
-public @interface UpperChars {
+public @interface NumericChars {
 }

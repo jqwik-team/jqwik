@@ -2,6 +2,14 @@ package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
 
+/**
+ * Constrain the range of a generated number to be 0 or greater.
+ *
+ * Applies to numeric parameters which are also annotated with {@code @ForAll}.
+ *
+ * @see net.jqwik.api.ForAll
+ * @see Negative
+ */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @ShortRange(min = 0, max = Short.MAX_VALUE)
