@@ -77,7 +77,7 @@ To use __jqwik__ in a gradle-based project add the following stuff to your `buil
 buildscript {
 	dependencies {
 	    ...
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
 	}
 }
 
@@ -92,8 +92,8 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.0.3'
-ext.junitJupiterVersion = '5.0.3'
+ext.junitPlatformVersion = '1.1.0'
+ext.junitJupiterVersion = '5.1.0'
 
 ext.jqwikVersion = '0.8.4'
 #ext.jqwikVersion = '0.8.5-SNAPSHOT'
@@ -165,8 +165,8 @@ I've never tried it but using jqwik without gradle or some other tool to manage 
 You will have to add _at least_ the following jars to your classpath:
 
 - `jqwik-0.8.4.jar`
-- `junit-platform-engine-1.0.3.jar`
-- `junit-platform-commons-1.0.3.jar`
+- `junit-platform-engine-1.1.0.jar`
+- `junit-platform-commons-1.1.0.jar`
 - `opentest4j-1.0.0.jar`
 - `assertj-core-3.9.x.jar` in case you need assertion support
 
@@ -1353,6 +1353,7 @@ _TBD_
 - `@Char` cannot take `from` and `to` any longer. Replaced by `@CharRange`
 - Deprecated many methods in `Arbitraries` class. Replaced by fluent interface methods.
 - Deprecated `@Digits` constraint. Replaced by `@NumericChars`.
+- Upgrade to JUnit 5.1.0
 
 ### 0.8.3
 
