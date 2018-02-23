@@ -7,7 +7,7 @@ public class Statistics {
 	private Statistics() {
 	}
 
-	public static void collect(Object ... values) {
+	public static void collect(Object... values) {
 		StatisticsCollector.get().collect(values);
 	}
 
