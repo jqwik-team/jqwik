@@ -1,9 +1,9 @@
 package examples.docs;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-
-import java.util.*;
 
 class ShrinkingExamples {
 
@@ -20,12 +20,16 @@ class ShrinkingExamples {
 
 	@Provide
 	Arbitrary<String> first() {
-		return Arbitraries.strings('a', 'z', 1, 10).filter(string -> string.endsWith("h"));
+		return Arbitraries.strings() //
+				.withCharRange('a', 'z') //
+				.ofMinLength(1) //
+				.ofMaxLength(10) //
+				.filter(string -> string.endsWith("h"));
 	}
 
 	@Provide
 	Arbitrary<String> second() {
-		return Arbitraries.strings('0', '9', 0, 10).filter(string -> string.length() >= 1);
+		return Arbitraries.strings().withCharRange('0', '9').ofMinLength(0).ofMaxLength(10).filter(string -> string.length() >= 1);
 	}
 
 	@Property(shrinking = ShrinkingMode.OFF)

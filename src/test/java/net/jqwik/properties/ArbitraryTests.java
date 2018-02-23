@@ -1,11 +1,11 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.RandomGenerators;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
 
 @Group
 class ArbitraryTests {
@@ -87,7 +87,6 @@ class ArbitraryTests {
 		}
 
 	}
-
 
 	@Group
 	class Filtering {
@@ -207,7 +206,9 @@ class ArbitraryTests {
 		@Example
 		void flatMapIntegerToString() {
 			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings('a', 'z', anInt, anInt));
+			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings() //
+					.withCharRange('a', 'z') //
+					.ofMinLength(anInt).ofMaxLength(anInt));
 
 			RandomGenerator<String> generator = mapped.generator(10);
 
@@ -221,8 +222,8 @@ class ArbitraryTests {
 		@Example
 		void shrinkIntegerFlatMappedToString() {
 			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> //
-				Arbitraries.strings('a', 'a', anInt * 2, anInt * 2));
+			Arbitrary<String> mapped = arbitrary
+					.flatMap(anInt -> Arbitraries.strings().withCharRange('a', 'a').ofMinLength(anInt * 2).ofMaxLength(anInt * 2));
 			RandomGenerator<String> generator = mapped.generator(10);
 
 			Shrinkable<String> value5 = generateNth(generator, 5);

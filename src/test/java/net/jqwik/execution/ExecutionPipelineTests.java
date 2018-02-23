@@ -35,7 +35,7 @@ public class ExecutionPipelineTests {
 
 	@Provide
 	Arbitrary<List<ExecutionTask>> taskList() {
-		return Arbitraries.listOf(task());
+		return task().list();
 	}
 
 	@Provide

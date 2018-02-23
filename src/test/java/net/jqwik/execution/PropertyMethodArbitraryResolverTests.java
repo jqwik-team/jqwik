@@ -103,7 +103,7 @@ public class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<String> aString() {
-				return Arbitraries.strings('a', 'z');
+				return Arbitraries.strings().withCharRange('a', 'z');
 			}
 		}
 

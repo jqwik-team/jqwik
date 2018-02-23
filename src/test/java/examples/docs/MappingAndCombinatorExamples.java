@@ -13,7 +13,7 @@ class MappingAndCombinatorExamples {
 
 	@Provide
 	Arbitrary<String> fiveDigitStrings() {
-		return Arbitraries.integers(10000, 99999).map(aNumber -> String.valueOf(aNumber));
+		return Arbitraries.integers().between(10000, 99999).map(aNumber -> String.valueOf(aNumber));
 	}
 
 	@Property
@@ -24,9 +24,9 @@ class MappingAndCombinatorExamples {
 
 	@Provide
 	Arbitrary<Person> validPeople() {
-		Arbitrary<Character> initials = Arbitraries.chars('A', 'Z');
-		Arbitrary<String> names = Arbitraries.strings('a', 'z', 2, 20);
-		Arbitrary<Integer> ages = Arbitraries.integers(0, 130);
+		Arbitrary<Character> initials = Arbitraries.chars().between('A', 'Z');
+		Arbitrary<String> names = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(20);
+		Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
 		return Combinators.combine(initials, names, ages).as((initial, name, age) -> new Person(initial + name, age));
 	}
 

@@ -4,7 +4,7 @@ buildscript {
 		//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 	}
 	dependencies {
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.3'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.0'
 	}
 }
 
@@ -13,8 +13,8 @@ repositories {
 	//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 }
 
-ext.junitPlatformVersion = '1.0.3'
-ext.junitJupiterVersion = '5.0.3'
+ext.junitPlatformVersion = '1.1.0'
+ext.junitJupiterVersion = '5.1.0'
 ext.moduleName = 'net.jqwik'
 
 apply plugin: 'java'
@@ -23,11 +23,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'net.jqwik'
-version = '0.8.4-SNAPSHOT'
+version = '0.8.4'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.8.4-SNAPSHOT'
+	version = '0.8.4'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}

@@ -14,7 +14,7 @@ public class FizzBuzzTests2 {
 
 	@Provide
 	Arbitrary<Integer> divisibleBy3() {
-		return Arbitraries.integers(1, 1000).filter(i -> i % 3 == 0);
+		return Arbitraries.integers().between(1, 1000).filter(i -> i % 3 == 0);
 	}
 
 	@Property
@@ -25,7 +25,7 @@ public class FizzBuzzTests2 {
 
 	@Provide
 	Arbitrary<Integer> divisibleBy5() {
-		return Arbitraries.integers(1, 1000).filter(i -> i % 5 == 0);
+		return Arbitraries.integers().between(1, 1000).filter(i -> i % 5 == 0);
 	}
 
 	@Property
@@ -36,7 +36,7 @@ public class FizzBuzzTests2 {
 
 	@Provide
 	Arbitrary<Integer> notDivisibleBy3or5() {
-		return Arbitraries.integers(1, 1000) //
+		return Arbitraries.integers().between(1, 1000) //
 				.filter(i -> i % 5 != 0) //
 				.filter(i -> i % 3 != 0);
 	}

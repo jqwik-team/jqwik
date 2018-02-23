@@ -32,7 +32,7 @@ class FizzBuzzTests {
 
 	@Provide
 	Arbitrary<Integer> divisibleBy3() {
-		return Arbitraries.integers(1, 100).filter(i -> i % 3 == 0);
+		return Arbitraries.integers().between(1, 100).filter(i -> i % 3 == 0);
 	}
 
 	private List<String> fizzBuzz() {

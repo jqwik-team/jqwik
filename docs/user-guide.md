@@ -596,12 +596,13 @@ boolean concatenatingStringWithInt(
 
 @Provide
 Arbitrary<String> shortStrings() {
-    return Arbitraries.strings('a', 'z', 1, 8);
+    return Arbitraries.strings().withCharRange('a', 'z')
+        .ofMinLength(1).ofMaxLength(8);
 }
 
 @Provide("10 to 99")
 Arbitrary<Integer> numbers() {
-    return Arbitraries.integers(10, 99);
+    return Arbitraries.integers().between(10, 99);
 }
 ```
 
@@ -810,10 +811,12 @@ boolean fixedSizedStrings(@ForAll("listsOfEqualSizedStrings")List<String> lists)
 
 @Provide
 Arbitrary<List<String>> listsOfEqualSizedStrings() {
-    Arbitrary<Integer> integers2to5 = Arbitraries.integers(2, 5);
+    Arbitrary<Integer> integers2to5 = Arbitraries.integers().between(2, 5);
     return integers2to5.flatMap(stringSize -> {
-        Arbitrary<String> strings = Arbitraries.strings('a', 'z', stringSize, stringSize);
-        return Arbitraries.listOf(strings);
+        Arbitrary<String> strings = Arbitraries.strings() //
+                .withCharRange('a', 'z') //
+                .ofMinLength(stringSize).ofMaxLength(stringSize);
+        return strings.list();
     });
 }
 ```
@@ -845,13 +848,16 @@ void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integ
 
 @Provide
 Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
-    Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'z', 2, 20);
+    Arbitrary<String> stringArbitrary = Arbitraries.strings() //
+            .withCharRange('a', 'z') //
+            .ofMinLength(2).ofMaxLength(20);
     return stringArbitrary //
-        .flatMap(aString -> Arbitraries.integers(0, aString.length()) //
-            .flatMap(end -> Arbitraries.integers(0, end) //
-                .map(begin -> Tuples.tuple(aString, begin, end))));
+            .flatMap(aString -> Arbitraries.integers().between(0, aString.length()) //
+                    .flatMap(end -> Arbitraries.integers().between(0, end) //
+                            .map(begin -> Tuples.tuple(aString, begin, end))));
 }
 ```
+
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful. 
 
@@ -904,8 +910,9 @@ void validPeopleHaveIDs(@ForAll Person aPerson) {
 @Provide
 Arbitrary<Person> validPeople() {
     Arbitrary<Character> initials = Arbitraries.chars('A', 'Z');
-    Arbitrary<String> names = Arbitraries.strings('a', 'z', 2, 20);
-    Arbitrary<Integer> ages = Arbitraries.integers(0, 130);
+    Arbitrary<String> names = Arbitraries.strings().withCharRange('a', 'z')
+        .ofMinLength(2).ofMaxLength(20);
+    Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
     return Combinators.combine(initials, names, ages)
         .as((initial, name, age) -> new Person(initial + name, age));
 }
@@ -1058,12 +1065,18 @@ boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") St
 
 @Provide
 Arbitrary<String> first() {
-    return Arbitraries.strings('a', 'z', 1, 10).filter(string -> string.endsWith("h"));
+    return Arbitraries.strings()
+        .withCharRange('a', 'z')
+        .ofMinLength(1).ofMaxLength(10)
+        .filter(string -> string.endsWith("h"));
 }
 
 @Provide
 Arbitrary<String> second() {
-    return Arbitraries.strings('0', '9', 0, 10).filter(string -> string.length() >= 1);
+    return Arbitraries.strings()
+        .withCharRange('0', '9')
+        .ofMinLength(0).ofMaxLength(10)
+        .filter(string -> string.length() >= 1);
 }
 ```
 
@@ -1261,7 +1274,9 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
-		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals(BigDecimal.ZERO, new BigDecimal(1_000_000_000), 2);
+		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
+				.between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
+				.ofScale(2);
 		Arbitrary<String> currency = Arbitraries.of("EUR", "USD", "CHF");
 		return Combinators.combine(amount, currency).as((a, c) -> new Money(a, c));
 	}

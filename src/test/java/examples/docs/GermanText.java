@@ -6,7 +6,7 @@ import net.jqwik.api.constraints.*;
 
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Digits
+@NumericChars
 @AlphaChars
 @Chars({'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß'})
 @Chars({' ', '.', ',', ';', '?', '!'})

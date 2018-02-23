@@ -12,12 +12,12 @@ public class PropertiesWithAssumptions {
 
 	@Provide
 	Arbitrary<Integer> multipleOf3() {
-		return Arbitraries.integers(1, 1000).filter(i -> i % 3 == 0);
+		return Arbitraries.integers().between(1, 1000).filter(i -> i % 3 == 0);
 	}
 
 	@Provide
 	Arbitrary<Integer> multipleOf2() {
-		return Arbitraries.integers(1, 1000).filter(i -> i % 2 == 0);
+		return Arbitraries.integers().between(1, 1000).filter(i -> i % 2 == 0);
 	}
 
 }
