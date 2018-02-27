@@ -1,11 +1,12 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.*;
+import net.jqwik.api.*;
+
 import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
-
-import net.jqwik.api.*;
 
 public class RandomGenerators {
 
@@ -22,6 +23,7 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Byte> choose(byte min, byte max) {
+//		return choose(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::byteValueExact);
 		if (min == max) {
 			return ignored -> Shrinkable.unshrinkable(min);
 		} else {
@@ -36,6 +38,7 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Short> choose(short min, short max) {
+//		return choose(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::shortValueExact);
 		if (min == max) {
 			return ignored -> Shrinkable.unshrinkable(min);
 		} else {
@@ -50,6 +53,7 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Integer> choose(int min, int max) {
+//		return choose(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::intValueExact);
 		if (min == max) {
 			return ignored -> Shrinkable.unshrinkable(min);
 		} else {
@@ -64,15 +68,38 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Long> choose(long min, long max) {
-		if (min == max) {
+		return choose(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::longValueExact);
+	}
+
+	// TODO: Create BigIntegers even if outside Long range
+	public static RandomGenerator<BigInteger> choose(BigInteger min, BigInteger max) {
+		if (min.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0)
+			throw new JqwikException("Cannot create numbers < Long.MIN_VALUE");
+		if (min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
+			throw new JqwikException("Cannot create numbers > Long.MAX_VALUE");
+
+		if (min.equals(max)) {
 			return ignored -> Shrinkable.unshrinkable(min);
+		}
+
+		if (min.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) >= 0
+			&& max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0) {
+
+			final int _min = Math.min(min.intValue(), max.intValue());
+			final int _max = Math.max(min.intValue(), max.intValue());
+			return random -> {
+				int bound = Math.abs(_max - _min) + 1;
+				int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min;
+				return new ShrinkableValue<>(BigInteger.valueOf(value), new BigIntegerShrinkCandidates(min, max));
+			};
+
 		} else {
-			final long _min = Math.min(min, max);
-			final long _max = Math.max(min, max);
+			final long _min = Math.min(min.longValue(), max.longValue());
+			final long _max = Math.max(min.longValue(), max.longValue());
 			return random -> {
 				final double d = random.nextDouble();
 				long value = (long) ((d * _max) + ((1.0 - d) * _min) + d);
-				return new ShrinkableValue<>(value, new LongShrinkCandidates(min, max));
+				return new ShrinkableValue<>(BigInteger.valueOf(value), new BigIntegerShrinkCandidates(min, max));
 			};
 		}
 	}
