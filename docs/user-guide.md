@@ -1339,6 +1339,10 @@ _TBD_
 
 ## Release Notes
 
+### 0.8.5-SNAPSHOT
+
+- All decimal generation (float, double, BigDecimal) now uses BigDecimal under the hood
+
 ### 0.8.4
 
 - Completely rebuild the annotation-based configuration of registered arbitrary providers

@@ -1,6 +1,5 @@
 ### Bugs
 
-- Shrinking floats in decimal places sometimes keeps iterating over same value
 - Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative 1: change distance to be of type BigInteger!

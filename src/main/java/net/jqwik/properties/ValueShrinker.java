@@ -29,6 +29,7 @@ public class ValueShrinker<T> {
 		Set<ShrinkResult<Shrinkable<T>>> toTry, Set<ShrinkResult<Shrinkable<T>>> allFalsified, Predicate<T> falsifier
 	) {
 		if (toTry.isEmpty()) return allFalsified;
+		toTry.removeAll(allFalsified);
 		Set<ShrinkResult<Shrinkable<T>>> toTryNext = new HashSet<>();
 		ShrinkingHelper.minDistanceStream(toTry) //
 			.limit(10) // This is a more or less random value to constrain the number of options considered

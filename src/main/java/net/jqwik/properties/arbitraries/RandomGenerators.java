@@ -78,17 +78,11 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Double> doubles(double min, double max, int scale) {
-		return random -> {
-			double randomDouble = randomDecimal(random, new BigDecimal(min), new BigDecimal(max), scale).doubleValue();
-			return new ShrinkableValue<>(randomDouble, new DoubleShrinkCandidates(min, max, scale));
-		};
+		return bigDecimals(BigDecimal.valueOf(min), BigDecimal.valueOf(max), scale).map(BigDecimal::doubleValue);
 	}
 
 	public static RandomGenerator<Float> floats(float min, float max, int scale) {
-		return random -> {
-			float randomDouble = randomDecimal(random, new BigDecimal(min), new BigDecimal(max), scale).floatValue();
-			return new ShrinkableValue<>(randomDouble, new FloatShrinkCandidates(min, max, scale));
-		};
+		return bigDecimals(BigDecimal.valueOf((double) min), BigDecimal.valueOf((double) max), scale).map(BigDecimal::floatValue);
 	}
 
 	public static RandomGenerator<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale) {
