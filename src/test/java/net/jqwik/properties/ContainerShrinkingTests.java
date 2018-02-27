@@ -1,14 +1,13 @@
 package net.jqwik.properties;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-
-import net.jqwik.api.constraints.IntRange;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.api.*;
 
-import net.jqwik.api.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 @Group
 class ContainerShrinkingTests {
@@ -31,9 +30,7 @@ class ContainerShrinkingTests {
 			Shrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(0, 0, 0, 0);
 
 			ShrinkResult<Shrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> {
-				if (listToShrink.size() < 2)
-					return true;
-				return false;
+				return listToShrink.size() < 2;
 
 			}, null);
 
@@ -77,9 +74,7 @@ class ContainerShrinkingTests {
 			Shrinkable<List<Integer>> list = ArbitraryTestHelper.shrinkableListOfIntegers(1, 2, 3, 4, 5);
 
 			ShrinkResult<Shrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> {
-				if (listToShrink.size() < 3)
-					return true;
-				return false;
+				return listToShrink.size() < 3;
 			}, null);
 
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).containsExactly(0, 0, 0);
@@ -146,9 +141,7 @@ class ContainerShrinkingTests {
 															   .collect(Collectors.joining("")));
 
 			ShrinkResult<Shrinkable<String>> shrinkResult = shrink(string, aString -> {
-				if (aString.length() < 3)
-					return true;
-				return false;
+				return aString.length() < 3;
 			}, null);
 
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("000");
@@ -157,8 +150,8 @@ class ContainerShrinkingTests {
 
 		@Example
 		void shrinkTwoIntegersCombinedToString() {
-			Arbitrary<Integer> a1 = Arbitraries.integers(0, 5);
-			Arbitrary<Integer> a2 = Arbitraries.integers(5, 9);
+			Arbitrary<Integer> a1 = Arbitraries.integers().between(0, 5);
+			Arbitrary<Integer> a2 = Arbitraries.integers().between(5, 9);
 
 			Arbitrary<String> combined = Combinators.combine(a1, a2) //
 													.as((i1, i2) -> Integer.toString(i1) + Integer.toString(i2));
@@ -166,9 +159,7 @@ class ContainerShrinkingTests {
 			Shrinkable<String> stringShrinkable = combined.generator(10).next(new Random(42L));
 
 			ShrinkResult<Shrinkable<String>> shrinkResult = shrink(stringShrinkable, aString -> {
-				if (aString.length() < 2)
-					return true;
-				return false;
+				return aString.length() < 2;
 			}, null);
 
 			Assertions.assertThat(shrinkResult.shrunkValue().value()).isEqualTo("05");

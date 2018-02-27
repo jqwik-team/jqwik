@@ -16,12 +16,12 @@ public class GeneratorsExamples {
 
 	@Provide
 	Arbitrary<String> stringArbitrary() {
-		return Arbitraries.strings('a', 'z');
+		return Arbitraries.strings().withCharRange('a', 'z');
 	}
 
 	@Provide
 	Arbitrary<String> digitsOnly() {
-		return Arbitraries.strings('0', '9');
+		return Arbitraries.strings().withCharRange('0', '9');
 	}
 
 	@Property(tries = 20)
@@ -32,11 +32,18 @@ public class GeneratorsExamples {
 
 	@Provide
 	Arbitrary<Person> aValidPerson() {
-		Arbitrary<Integer> age = Arbitraries.integers(0, 100);
-		Arbitrary<String> first = Arbitraries.strings('a', 'z', 0,10).filter(f -> !f.isEmpty());
-		Arbitrary<String> last = Arbitraries.strings('a', 'z', 1, 15);
+		Arbitrary<Integer> age = Arbitraries.integers().between(0, 100);
 
-		return Combinators.combine(age, first, last).as((a, f, l) -> {
+		Arbitrary<String> firstName = Arbitraries.strings() //
+												 .withCharRange('a', 'z') //
+												 .ofMinLength(0).ofMaxLength(10) //
+												 .filter(f -> !f.isEmpty());
+
+		Arbitrary<String> lastName = Arbitraries.strings() //
+												.withCharRange('a', 'z') //
+												.ofMinLength(1).ofMaxLength(15);
+
+		return Combinators.combine(age, firstName, lastName).as((a, f, l) -> {
 			String name = f + " " + l;
 			return new Person(name, a);
 		});
@@ -79,18 +86,17 @@ public class GeneratorsExamples {
 
 	@Provide
 	Arbitrary<Long> between1and100() {
-		return Arbitraries.longs(1L, 100L);
+		return Arbitraries.longs().between(1L, 100L);
 	}
 
-	@Property(tries = 10)
+	@Property(tries = 10, reporting = Reporting.GENERATED)
 	boolean aListOfInts(@ForAll List<Integer> anIntList) {
-		System.out.println(anIntList.toString());
 		return true;
 	}
 
 	@Provide
 	Arbitrary<List<Integer>> aList() {
-		return Arbitraries.listOf(Arbitraries.integers(0, 10));
+		return Arbitraries.integers().between(0, 10).list();
 	}
 
 	@Property(tries = 10)
@@ -98,10 +104,8 @@ public class GeneratorsExamples {
 		System.out.println(Arrays.asList(array));
 	}
 
-	@Property(tries = 10)
+	@Property(tries = 10, reporting = Reporting.GENERATED)
 	void anArrayOfPrimitiveInts(@ForAll @Size(max = 10) @IntRange(min = 1, max = 5) int[] array) {
-		List<Integer> asList = IntStream.of(array).mapToObj(Integer::valueOf).collect(Collectors.toList());
-		System.out.println(asList);
 	}
 
 	@Property(tries = 10, reporting = Reporting.GENERATED)
@@ -109,15 +113,14 @@ public class GeneratorsExamples {
 		return people != null;
 	}
 
-	@Property(tries = 100)
+	@Property(tries = 100, reporting = Reporting.GENERATED)
 	boolean aPeopleSet(@ForAll Set<Person> people) {
-		System.out.println(people);
 		return people != null;
 	}
 
 	@Property(tries = 10)
 	boolean aPeopleStream(@ForAll Stream<Person> people) {
-		return people.peek(p -> System.out.println(p)).allMatch(person -> person.getAge() >= 0);
+		return people.allMatch(person -> person.getAge() >= 0);
 	}
 
 	static class Person {

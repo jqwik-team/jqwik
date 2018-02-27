@@ -121,8 +121,9 @@ class CheckedPropertyTests {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
-					p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-100, 100))),
-					new PropertyConfiguration("Property", 42L, 12, 5, ShrinkingMode.ON, new Reporting[0]));
+																  p -> Optional.of(new GenericArbitrary(Arbitraries.integers()
+																												   .between(-100, 100))),
+																  new PropertyConfiguration("Property", 42L, 12, 5, ShrinkingMode.ON, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.randomSeed()).isEqualTo(42L);
@@ -135,8 +136,9 @@ class CheckedPropertyTests {
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
-				p -> Optional.of(new GenericArbitrary(Arbitraries.integers(-50, 50))), //
-				new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, new Reporting[0]));
+															  p -> Optional.of(new GenericArbitrary(Arbitraries.integers()
+																											   .between(-50, 50))), //
+															  new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, new Reporting[0]));
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}

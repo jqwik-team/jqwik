@@ -89,7 +89,7 @@ class ArbitrariesTests {
 
 		@Example
 		void chars() {
-			Arbitrary<Character> arbitrary = Arbitraries.chars('a', 'd');
+			Arbitrary<Character> arbitrary = Arbitraries.chars().between('a', 'd');
 			RandomGenerator<Character> generator = arbitrary.generator(1);
 			List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 			ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> allowedChars.contains(value));
@@ -100,14 +100,18 @@ class ArbitrariesTests {
 	class Strings {
 		@Example
 		void string() {
-			Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'd', 0, 5);
+			Arbitrary<String> stringArbitrary = Arbitraries.strings() //
+														   .withCharRange('a', 'd') //
+														   .ofMinLength(0).ofMaxLength(5);
 			RandomGenerator<String> generator = stringArbitrary.generator(1);
 			assertGeneratedString(generator, 0, 5);
 		}
 
 		@Property
 		void stringWithFixedLength(@ForAll @IntRange(min = 1, max = 10) int size) {
-			Arbitrary<String> stringArbitrary = Arbitraries.strings('a', 'a', size, size);
+			Arbitrary<String> stringArbitrary = Arbitraries.strings() //
+														   .withCharRange('a', 'a') //
+														   .ofMinLength(size).ofMaxLength(size);
 			RandomGenerator<String> generator = stringArbitrary.generator(1);
 			ArbitraryTestHelper.assertAllGenerated(generator, value -> value.length() == size);
 			ArbitraryTestHelper.assertAllGenerated(generator, (String value) -> value.chars().allMatch(i -> i == 'a'));
@@ -116,7 +120,9 @@ class ArbitrariesTests {
 		@Example
 		void stringFromCharset() {
 			char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
-			Arbitrary<String> stringArbitrary = Arbitraries.strings(validChars, 2, 5);
+			Arbitrary<String> stringArbitrary = Arbitraries.strings() //
+														   .withChars(validChars) //
+														   .ofMinLength(2).ofMaxLength(5);
 			RandomGenerator<String> generator = stringArbitrary.generator(1);
 			assertGeneratedString(generator, 2, 5);
 		}
@@ -135,7 +141,7 @@ class ArbitrariesTests {
 
 		@Example
 		void shortsMinsAndMaxes() {
-			Arbitrary<Short> enumArbitrary = Arbitraries.shorts((short) -10, (short) 10);
+			Arbitrary<Short> enumArbitrary = Arbitraries.shorts().between((short) -10, (short) 10);
 			RandomGenerator<Short> generator = enumArbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0 && value > -5);
@@ -152,7 +158,7 @@ class ArbitrariesTests {
 
 		@Example
 		void bytesMinsAndMaxes() {
-			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes((byte) -10, (byte) 10);
+			Arbitrary<Byte> enumArbitrary = Arbitraries.bytes().between((byte) -10, (byte) 10);
 			RandomGenerator<Byte> generator = enumArbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0 && value > -5);
@@ -169,7 +175,7 @@ class ArbitrariesTests {
 
 		@Example
 		void integersInt() {
-			Arbitrary<Integer> intArbitrary = Arbitraries.integers(-10, 10);
+			Arbitrary<Integer> intArbitrary = Arbitraries.integers().between(-10, 10);
 			RandomGenerator<Integer> generator = intArbitrary.generator(10);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0 && value > -5);
@@ -186,7 +192,7 @@ class ArbitrariesTests {
 
 		@Example
 		void integersLong() {
-			Arbitrary<Long> longArbitrary = Arbitraries.longs(-100L, 100L);
+			Arbitrary<Long> longArbitrary = Arbitraries.longs().between(-100L, 100L);
 			RandomGenerator<Long> generator = longArbitrary.generator(1000);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -50);
@@ -196,7 +202,8 @@ class ArbitrariesTests {
 
 		@Example
 		void bigIntegers() {
-			Arbitrary<BigInteger> longArbitrary = Arbitraries.bigIntegers(-100L, 100L);
+			Arbitrary<BigInteger> longArbitrary = Arbitraries.bigIntegers() //
+															 .between(BigInteger.valueOf(-100L), BigInteger.valueOf(100L));
 			RandomGenerator<BigInteger> generator = longArbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) < 0);
@@ -217,7 +224,7 @@ class ArbitrariesTests {
 
 		@Example
 		void doubles() {
-			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-10.0, 10.0, 2);
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(-10.0, 10.0).ofScale(2);
 			RandomGenerator<Double> generator = doubleArbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
@@ -231,7 +238,8 @@ class ArbitrariesTests {
 
 		@Example
 		void doublesWithMaximumRange() {
-			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles(-Double.MAX_VALUE, Double.MAX_VALUE, 2);
+			double min = -Double.MAX_VALUE;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, Double.MAX_VALUE).ofScale(2);
 			RandomGenerator<Double> generator = doubleArbitrary.generator(10000);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
@@ -250,7 +258,7 @@ class ArbitrariesTests {
 
 		@Example
 		void floats() {
-			Arbitrary<Float> doubleArbitrary = Arbitraries.floats(-10.0f, 10.0f, 2);
+			Arbitrary<Float> doubleArbitrary = Arbitraries.floats().between(-10.0f, 10.0f).ofScale(2);
 			RandomGenerator<Float> generator = doubleArbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.0);
@@ -264,7 +272,9 @@ class ArbitrariesTests {
 
 		@Example
 		void bigDecimals() {
-			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals() //
+														 .between(new BigDecimal(-10.0), new BigDecimal(10.0)) //
+														 .ofScale(2);
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ZERO) == 0);
@@ -283,7 +293,7 @@ class ArbitrariesTests {
 		@Example
 		void list() {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("1", "hallo", "test");
-			Arbitrary<List<String>> listArbitrary = Arbitraries.listOf(stringArbitrary, 2, 5);
+			Arbitrary<List<String>> listArbitrary = stringArbitrary.list().ofMinSize(2).ofMaxSize(5);
 
 			RandomGenerator<List<String>> generator = listArbitrary.generator(1);
 			assertGeneratedLists(generator, 2, 5);
@@ -291,8 +301,8 @@ class ArbitrariesTests {
 
 		@Example
 		void set() {
-			Arbitrary<Integer> integerArbitrary = Arbitraries.integers(1, 10);
-			Arbitrary<Set<Integer>> listArbitrary = Arbitraries.setOf(integerArbitrary, 2, 7);
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<Set<Integer>> listArbitrary = integerArbitrary.set().ofMinSize(2).ofMaxSize(7);
 
 			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1);
 
@@ -301,8 +311,8 @@ class ArbitrariesTests {
 
 		@Example
 		void stream() {
-			Arbitrary<Integer> integerArbitrary = Arbitraries.integers(1, 10);
-			Arbitrary<Stream<Integer>> streamArbitrary = Arbitraries.streamOf(integerArbitrary, 0, 5);
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<Stream<Integer>> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);
 
 			RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
 
@@ -315,7 +325,7 @@ class ArbitrariesTests {
 		@Example
 		void optional() {
 			Arbitrary<String> stringArbitrary = Arbitraries.of("one", "two");
-			Arbitrary<Optional<String>> optionalArbitrary = Arbitraries.optionalOf(stringArbitrary);
+			Arbitrary<Optional<String>> optionalArbitrary = stringArbitrary.optional();
 
 			RandomGenerator<Optional<String>> generator = optionalArbitrary.generator(1);
 
@@ -326,8 +336,8 @@ class ArbitrariesTests {
 
 		@Example
 		void array() {
-			Arbitrary<Integer> integerArbitrary = Arbitraries.integers(1, 10);
-			Arbitrary<Integer[]> arrayArbitrary = Arbitraries.arrayOf(Integer[].class, integerArbitrary, 2, 5);
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<Integer[]> arrayArbitrary = integerArbitrary.array(Integer[].class).ofMinSize(2).ofMaxSize(5);
 
 			RandomGenerator<Integer[]> generator = arrayArbitrary.generator(1);
 
@@ -339,8 +349,8 @@ class ArbitrariesTests {
 
 		@Example
 		void arrayOfPrimitiveType() {
-			Arbitrary<Integer> integerArbitrary = Arbitraries.integers(1, 10);
-			Arbitrary<int[]> arrayArbitrary = Arbitraries.arrayOf(int[].class, integerArbitrary, 0, 5);
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<int[]> arrayArbitrary = integerArbitrary.array(int[].class).ofMinSize(0).ofMaxSize(5);
 
 			RandomGenerator<int[]> generator = arrayArbitrary.generator(1);
 
