@@ -13,8 +13,20 @@ public class RandomGenerators {
 		if (values.size() == 0) {
 			return fail("empty set of values");
 		} else {
-			return random -> integers(0, values.size() - 1).map(values::get).next(random);
+			return choose(values.size()).map(values::get);
 		}
+	}
+
+	public static RandomGenerator<Integer> choose(int upperSizeExcluded) {
+		if (upperSizeExcluded == 0) {
+			return fail("empty set of values");
+		} else {
+			return random -> {
+				int value = random.nextInt(upperSizeExcluded);
+				return new ShrinkableValue<>(value, new SizeShrinkCandidates());
+			};
+		}
+
 	}
 
 	public static <U> RandomGenerator<U> choose(U[] values) {
@@ -22,7 +34,7 @@ public class RandomGenerators {
 	}
 
 	public static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {
-		return random -> choose(enumClass.getEnumConstants()).next(random);
+		return choose(enumClass.getEnumConstants());
 	}
 
 	public static RandomGenerator<Character> choose(char[] characters) {
