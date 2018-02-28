@@ -24,13 +24,14 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	@Override
 	public RandomGenerator<BigInteger> generator(int tries) {
 		if (min.equals(defaultMin) && max.equals(defaultMax)) {
-			BigInteger max = BigInteger.valueOf(Arbitrary.defaultMaxFromTries(tries));
-			return longGenerator(max, max);
+			BigInteger maxGenerate = BigInteger.valueOf(Arbitrary.defaultMaxFromTries(tries)).min(defaultMax);
+			BigInteger minGenerate = BigInteger.valueOf(Arbitrary.defaultMaxFromTries(tries)).negate().max(defaultMin);
+			return createGenerator(minGenerate, maxGenerate);
 		}
-		return longGenerator(min, max);
+		return createGenerator(min, max);
 	}
 
-	private RandomGenerator<BigInteger> longGenerator(BigInteger minGenerate, BigInteger maxGenerate) {
+	private RandomGenerator<BigInteger> createGenerator(BigInteger minGenerate, BigInteger maxGenerate) {
 		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(min, max);
 		List<Shrinkable<BigInteger>> samples =
 			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), defaultMin, defaultMax, minGenerate, maxGenerate}) //
@@ -38,7 +39,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
 				  .map(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
 				  .collect(Collectors.toList());
-		return RandomGenerators.choose(minGenerate, maxGenerate).withShrinkableSamples(samples);
+		return RandomGenerators.bigIntegers(minGenerate, maxGenerate).withShrinkableSamples(samples);
 	}
 
 }

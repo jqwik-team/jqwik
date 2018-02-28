@@ -83,7 +83,7 @@ class ContainerShrinkingTests {
 
 		@Property(tries = 100)
 		void dontShrinkBelowMinSize(@ForAll @IntRange(min = 1, max = 100) int minSize, @ForAll long seed) {
-			RandomGenerator<Integer> integers = RandomGenerators.choose(1, 100);
+			RandomGenerator<Integer> integers = RandomGenerators.integers(1, 100);
 			RandomGenerator<List<Integer>> lists = RandomGenerators.list(integers, minSize, minSize + 10);
 
 			Shrinkable<List<Integer>> list = lists.any(seed);
@@ -168,7 +168,7 @@ class ContainerShrinkingTests {
 
 		@Property(tries = 100)
 		void dontShrinkBelowMinSize(@ForAll @IntRange(min = 1, max = 100) int minSize, @ForAll long seed) {
-			RandomGenerator<Character> characters = RandomGenerators.choose('a', 'b');
+			RandomGenerator<Character> characters = RandomGenerators.chars('a', 'b');
 			RandomGenerator<String> strings = RandomGenerators.strings(characters, minSize, minSize + 100);
 
 			Shrinkable<String> string = strings.any(seed);

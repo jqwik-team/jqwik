@@ -1342,6 +1342,7 @@ _TBD_
 ### 0.8.5-SNAPSHOT
 
 - All decimal generation (float, double, BigDecimal) now uses BigDecimal under the hood
+- All integral generation (int, short, byte, long, BigInteger) now uses BigInteger under the hood
 
 ### 0.8.4
 

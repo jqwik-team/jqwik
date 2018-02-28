@@ -1,18 +1,18 @@
 package net.jqwik.properties.arbitraries;
 
-import java.math.BigDecimal;
+import java.math.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 public class BigDecimalShrinkCandidates implements ShrinkCandidates<BigDecimal> {
 	private final Range<BigDecimal> range;
 	private final int scale;
-	private final LongShrinkCandidates integralShrinkCandidates;
+	private final BigIntegerShrinkCandidates integralShrinkCandidates;
 
 	public BigDecimalShrinkCandidates(BigDecimal min, BigDecimal max, int scale) {
 		range = Range.of(min, max);
 		this.scale = scale;
-		this.integralShrinkCandidates = new LongShrinkCandidates(min.longValue(), max.longValue());
+		this.integralShrinkCandidates = new BigIntegerShrinkCandidates(min.toBigInteger(), max.toBigInteger());
 	}
 
 	@Override
@@ -47,10 +47,10 @@ public class BigDecimalShrinkCandidates implements ShrinkCandidates<BigDecimal> 
 	}
 
 	private Set<BigDecimal> shrinkIntegral(BigDecimal value) {
-		return integralShrinkCandidates.nextCandidates(value.longValue()) //
-				.stream() //
-				.map(aLong -> new BigDecimal(aLong)) //
-				.collect(Collectors.toSet());
+		return integralShrinkCandidates.nextCandidates(value.toBigInteger()) //
+									   .stream() //
+									   .map(aLong -> new BigDecimal(aLong)) //
+									   .collect(Collectors.toSet());
 	}
 
 	private boolean hasDecimals(BigDecimal value) {

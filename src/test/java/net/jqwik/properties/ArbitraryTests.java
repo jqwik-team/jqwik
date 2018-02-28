@@ -239,7 +239,7 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkAlsoEmbeddedValueWhenFlatMapped() {
-			Arbitrary<Integer> inner = random -> RandomGenerators.choose(1, 10);
+			Arbitrary<Integer> inner = random -> RandomGenerators.integers(1, 10);
 			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
 			Arbitrary<Integer> mapped = arbitrary.flatMap(anInt -> inner.map(i -> i * anInt));
 			RandomGenerator<Integer> generator = mapped.generator(1);

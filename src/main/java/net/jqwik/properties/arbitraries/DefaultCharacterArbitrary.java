@@ -16,7 +16,7 @@ public class DefaultCharacterArbitrary extends NullableArbitraryBase<Character> 
 
 	@Override
 	protected RandomGenerator<Character> baseGenerator(int tries) {
-		return RandomGenerators.choose(min, max).withSamples(min, max);
+		return RandomGenerators.chars(min, max).withSamples(min, max);
 	}
 
 	@Override

@@ -7,7 +7,7 @@ public class BigIntegerShrinkCandidates implements ShrinkCandidates<BigInteger> 
 
 	private final Range<BigInteger> range;
 
-	BigIntegerShrinkCandidates(BigInteger min, BigInteger max) {
+	public BigIntegerShrinkCandidates(BigInteger min, BigInteger max) {
 		this.range = Range.of(min, max);
 	}
 
@@ -24,7 +24,7 @@ public class BigIntegerShrinkCandidates implements ShrinkCandidates<BigInteger> 
 
 	@Override
 	public int distance(BigInteger value) {
-		BigInteger diff = determineTarget(value).subtract(value);
+		BigInteger diff = determineTarget(value).subtract(value).abs();
 		if (diff.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0)
 			return diff.intValue();
 		return Integer.MAX_VALUE;

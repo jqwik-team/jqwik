@@ -14,7 +14,7 @@ class RandomGeneratorsTests {
 
 	@Example
 	void setsAreGeneratedWithCorrectMinAndMaxSize() {
-		RandomGenerator<Integer> integerGenerator = RandomGenerators.choose(1, 10);
+		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
 		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 2, 5);
 		ArbitraryTestHelper.assertAllGenerated(generator, set -> set.size() >= 2 && set.size() <= 5);
 	}
