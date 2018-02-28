@@ -34,6 +34,7 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(values));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
 		return fromGenerator(RandomGenerators.choose(enumClass));
 	}
