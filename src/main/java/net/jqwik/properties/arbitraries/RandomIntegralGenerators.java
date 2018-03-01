@@ -6,7 +6,8 @@ import net.jqwik.api.*;
 import java.math.*;
 import java.util.*;
 
-class RandomNumberGenerators {
+// TODO: Remove duplication with RandomDecimalGenerators
+class RandomIntegralGenerators {
 
 	// TODO: Create BigIntegers even if outside Long range
 	static RandomGenerator<BigInteger> bigIntegers(BigInteger min, BigInteger max, BigInteger[] partitionPoints) {
@@ -84,31 +85,6 @@ class RandomNumberGenerators {
 	private static boolean isWithinIntegerRange(BigInteger min, BigInteger max) {
 		return min.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) >= 0
 			&& max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0;
-	}
-
-	/**
-	 * Random decimal are not equally distributed but randomly scaled down towards 0. Thus random decimals are more likely
-	 * to be closer to 0 than
-	 *
-	 * @param random
-	 *            source of randomness
-	 * @param min
-	 *            lower bound (included) of value to generate
-	 * @param max
-	 *            upper bound (included) of value to generate
-	 * @param precision
-	 *            The number of decimals to the right of decimal point
-	 *
-	 * @return a generated instance of BigDecimal
-	 */
-	static BigDecimal randomDecimal(Random random, BigDecimal min, BigDecimal max, int precision) {
-		BigDecimal range = max.subtract(min);
-		BigDecimal randomFactor = new BigDecimal(random.nextDouble());
-		BigDecimal unscaledRandom = randomFactor.multiply(range).add(min);
-		int digits = Math.max(1, unscaledRandom.precision() - unscaledRandom.scale());
-		int randomScaleDown = random.nextInt(digits);
-		BigDecimal scaledRandom = unscaledRandom.movePointLeft(randomScaleDown);
-		return scaledRandom.setScale(precision, BigDecimal.ROUND_DOWN);
 	}
 
 	// TODO: This could be way more sophisticated

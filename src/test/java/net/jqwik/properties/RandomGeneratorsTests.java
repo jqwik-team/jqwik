@@ -54,7 +54,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max, partitionPoints);
 
 			assertAllWithinRange(generator, min, max);
-			assertAllPartitionsAreCovered(min, generator, max, partitionPoints);
+			assertAllPartitionsAreCovered(generator, min, max, partitionPoints);
 		}
 
 		@Example
@@ -65,36 +65,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max, partitionPoints);
 
 			assertAllWithinRange(generator, min, max);
-			assertAllPartitionsAreCovered(min, generator, max, partitionPoints);
-		}
-
-		private void assertAllPartitionsAreCovered(
-			BigInteger min, RandomGenerator<BigInteger> generator, BigInteger max, BigInteger[] partitionPoints
-		) {
-			Arrays.sort(partitionPoints);
-			BigInteger lower = min;
-			for (BigInteger partitionPoint : partitionPoints) {
-				BigInteger l = lower;
-				ArbitraryTestHelper.assertAtLeastOneGenerated(
-					generator, //
-					integral -> integral.compareTo(l) >= 0 && integral.compareTo(partitionPoint) < 0,
-					String.format("No value created between %s and %s", l, partitionPoint)
-				);
-				lower = partitionPoint;
-			}
-			BigInteger l = lower;
-			ArbitraryTestHelper.assertAtLeastOneGenerated(
-				generator, //
-				integral -> integral.compareTo(l) >= 0 && integral.compareTo(max) < 0,
-				String.format("No value created between %s and %s", l, max)
-			);
-		}
-
-		private void assertAllWithinRange(RandomGenerator<BigInteger> generator, BigInteger min, BigInteger max) {
-			ArbitraryTestHelper.assertAllGenerated(
-				generator, //
-				integral -> integral.compareTo(min) >= 0 && integral.compareTo(max) <= 0
-			);
+			assertAllPartitionsAreCovered(generator, min, max, partitionPoints);
 		}
 
 	}
@@ -157,5 +128,66 @@ class RandomGeneratorsTests {
 				assertThat(decimal).isBetween(min, max);
 			});
 		}
+
+		@Example
+		void smallRangeWithPartitions() {
+			BigDecimal min = BigDecimal.valueOf(-100);
+			BigDecimal max = BigDecimal.valueOf(100000);
+			BigDecimal[] partitionPoints = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.valueOf(100), BigDecimal.valueOf(1000)};
+			RandomGenerator<BigInteger> generator = RandomGenerators.bigDecimals(min, max, 0, partitionPoints)
+																	.map(BigDecimal::toBigInteger);
+
+			assertAllWithinRange(generator, min.toBigInteger(), max.toBigInteger());
+			assertAllPartitionsAreCovered(generator, min.toBigInteger(), max.toBigInteger(), //
+										  new BigInteger[]{BigInteger.ZERO, BigInteger.valueOf(100), BigInteger.valueOf(1000)} //
+			);
+		}
+
+		@Example
+		void greaterRangeWithPartitions() {
+			BigDecimal min = BigDecimal.valueOf(Long.MIN_VALUE);
+			BigDecimal max = BigDecimal.valueOf(Long.MAX_VALUE);
+			BigDecimal[] partitionPoints = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.valueOf(-10000), BigDecimal.valueOf(10000)};
+			RandomGenerator<BigInteger> generator = RandomGenerators.bigDecimals(min, max, 0, partitionPoints)
+																	.map(BigDecimal::toBigInteger);
+
+			assertAllWithinRange(generator, min.toBigInteger(), max.toBigInteger());
+			assertAllPartitionsAreCovered(generator, min.toBigInteger(), max.toBigInteger(), //
+										  new BigInteger[]{BigInteger.ZERO, BigInteger.valueOf(-10000), BigInteger.valueOf(10000)} //
+			);
+		}
+
 	}
+
+	private void assertAllPartitionsAreCovered(
+		RandomGenerator<BigInteger> generator, BigInteger min, BigInteger max,
+		BigInteger[] partitionPoints
+	) {
+		Arrays.sort(partitionPoints);
+		BigInteger lower = min;
+		for (BigInteger partitionPoint : partitionPoints) {
+			BigInteger l = lower;
+			ArbitraryTestHelper.assertAtLeastOneGenerated(
+				generator, //
+				integral -> integral.compareTo(l) >= 0 && integral.compareTo(partitionPoint) < 0,
+				String.format("No value created between %s and %s", l, partitionPoint)
+			);
+			lower = partitionPoint;
+		}
+		BigInteger l = lower;
+		ArbitraryTestHelper.assertAtLeastOneGenerated(
+			generator, //
+			integral -> integral.compareTo(l) >= 0 && integral.compareTo(max) < 0,
+			String.format("No value created between %s and %s", l, max)
+		);
+	}
+
+	private void assertAllWithinRange(RandomGenerator<BigInteger> generator, BigInteger min, BigInteger max) {
+		ArbitraryTestHelper.assertAllGenerated(
+			generator, //
+			integral -> integral.compareTo(min) >= 0 && integral.compareTo(max) <= 0
+		);
+	}
+
+
 }

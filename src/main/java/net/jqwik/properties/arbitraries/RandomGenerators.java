@@ -68,7 +68,7 @@ public class RandomGenerators {
 	public static RandomGenerator<BigInteger> bigIntegers(
 		BigInteger min, BigInteger max, BigInteger... partitionPoints
 	) {
-		return RandomNumberGenerators.bigIntegers(min, max, partitionPoints);
+		return RandomIntegralGenerators.bigIntegers(min, max, partitionPoints);
 	}
 
 	public static RandomGenerator<Double> doubles(double min, double max, int scale) {
@@ -79,11 +79,8 @@ public class RandomGenerators {
 		return bigDecimals(BigDecimal.valueOf((double) min), BigDecimal.valueOf((double) max), scale).map(BigDecimal::floatValue);
 	}
 
-	public static RandomGenerator<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale) {
-		return random -> {
-			BigDecimal randomDecimal = RandomNumberGenerators.randomDecimal(random, min, max, scale);
-			return new ShrinkableValue<>(randomDecimal, new BigDecimalShrinkCandidates(min, max, scale));
-		};
+	public static RandomGenerator<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale, BigDecimal... partitionPoints) {
+		return RandomDecimalGenerators.bigDecimals(min, max, scale, partitionPoints);
 	}
 
 	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
