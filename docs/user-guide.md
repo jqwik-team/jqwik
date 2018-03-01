@@ -1346,6 +1346,7 @@ _TBD_
 - Numbers are now generated within their full domain (min, max)
 - Decimal shrinking improved
 - Fixed bug: Reporting.FALSIFIED now also works for falsification through exception
+- Added support for running all tests in a module (Java 9 only). I HAVE NOT TESTED IT! 
 
 ### 0.8.4
 

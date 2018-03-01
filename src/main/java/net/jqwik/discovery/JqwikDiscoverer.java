@@ -1,20 +1,17 @@
 package net.jqwik.discovery;
 
-import static org.junit.platform.commons.support.ReflectionSupport.*;
-import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
-
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-
-import org.junit.platform.commons.support.*;
-import org.junit.platform.commons.util.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.*;
-
 import net.jqwik.*;
 import net.jqwik.discovery.predicates.*;
 import net.jqwik.recording.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.discovery.*;
+
+import java.util.*;
+import java.util.function.*;
+
+import static net.jqwik.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.ReflectionSupport.*;
+import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
 
 public class JqwikDiscoverer {
 
@@ -32,6 +29,11 @@ public class JqwikDiscoverer {
 		HierarchicalJavaResolver javaElementsResolver = createHierarchicalResolver(engineDescriptor);
 		Predicate<String> classNamePredicate = buildClassNamePredicate(request);
 
+		// TODO: Test with Java 9 or above
+		request.getSelectorsByType(ModuleSelector.class).forEach(selector -> {
+			findAllClassesInModule(selector.getModuleName(), isScannableTestClass, classNamePredicate)
+				.forEach(javaElementsResolver::resolveClass);
+		});
 		request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
 			findAllClassesInClasspathRoot(selector.getClasspathRoot(), isScannableTestClass, classNamePredicate)
 					.forEach(javaElementsResolver::resolveClass);
