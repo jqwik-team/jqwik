@@ -65,8 +65,10 @@ public class RandomGenerators {
 		return bigIntegers(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::longValueExact);
 	}
 
-	public static RandomGenerator<BigInteger> bigIntegers(BigInteger min, BigInteger max) {
-		return RandomNumberGenerators.bigIntegers(min, max);
+	public static RandomGenerator<BigInteger> bigIntegers(
+		BigInteger min, BigInteger max, BigInteger... partitionPoints
+	) {
+		return RandomNumberGenerators.bigIntegers(min, max, partitionPoints);
 	}
 
 	public static RandomGenerator<Double> doubles(double min, double max, int scale) {

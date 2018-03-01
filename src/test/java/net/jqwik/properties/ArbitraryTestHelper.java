@@ -12,13 +12,17 @@ import static org.assertj.core.api.Assertions.*;
 public class ArbitraryTestHelper {
 
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
+		assertAtLeastOneGenerated(generator, checker, "Failed to generate at least one");
+	}
+
+	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
 		Random random = new Random();
 		for (int i = 0; i < 100; i++) {
 			Shrinkable<T> value = generator.next(random);
 			if (checker.apply(value.value()))
 				return;
 		}
-		fail("Failed to generate at least one");
+		fail(failureMessage);
 	}
 
 	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {

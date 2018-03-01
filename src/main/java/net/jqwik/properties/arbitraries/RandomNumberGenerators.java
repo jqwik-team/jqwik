@@ -9,7 +9,7 @@ import java.util.*;
 class RandomNumberGenerators {
 
 	// TODO: Create BigIntegers even if outside Long range
-	static RandomGenerator<BigInteger> bigIntegers(BigInteger min, BigInteger max) {
+	static RandomGenerator<BigInteger> bigIntegers(BigInteger min, BigInteger max, BigInteger[] partitionPoints) {
 		if (min.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0)
 			throw new JqwikException("Cannot create numbers < Long.MIN_VALUE");
 		if (min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
@@ -19,6 +19,41 @@ class RandomNumberGenerators {
 			return ignored -> Shrinkable.unshrinkable(min);
 		}
 
+		return partitionedGenerator(min, max, partitionPoints);
+	}
+
+	private static RandomGenerator<BigInteger> partitionedGenerator(
+		BigInteger min, BigInteger max, BigInteger[] partitionPoints
+	) {
+		List<RandomGenerator<BigInteger>> generators = createPartitions(min, max, partitionPoints);
+		if (generators.size() == 1) {
+			return generators.get(0);
+		}
+		return random -> generators.get(random.nextInt(generators.size())).next(random);
+	}
+
+	private static List<RandomGenerator<BigInteger>> createPartitions(
+		BigInteger min, BigInteger max, BigInteger[] partitionPoints
+	) {
+		List<RandomGenerator<BigInteger>> partitions = new ArrayList<>();
+		Arrays.sort(partitionPoints);
+		BigInteger lower = min;
+		for (BigInteger partitionPoint : partitionPoints) {
+			BigInteger upper = partitionPoint;
+			if (upper.compareTo(lower) <= 0) {
+				continue;
+			}
+			if (upper.compareTo(max) >= 0) {
+				break;
+			}
+			partitions.add(createBaseGenerator(lower, upper.subtract(BigInteger.ONE)));
+			lower = upper;
+		}
+		partitions.add(createBaseGenerator(lower, max));
+		return partitions;
+	}
+
+	private static RandomGenerator<BigInteger> createBaseGenerator(BigInteger min, BigInteger max) {
 		if (isWithinIntegerRange(min, max)) {
 			return createIntegerGenerator(min, max);
 		} else {

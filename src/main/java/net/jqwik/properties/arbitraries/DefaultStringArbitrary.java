@@ -24,7 +24,7 @@ public class DefaultStringArbitrary extends NullableArbitraryBase<String> implem
 	@SuppressWarnings("unchecked")
 	@Override
 	protected RandomGenerator<String> baseGenerator(int tries) {
-		final int effectiveMaxLength = maxLength <= 0 ? Arbitrary.defaultMaxFromTries(tries) : maxLength;
+		final int effectiveMaxLength = maxLength <= 0 ? Arbitrary.defaultCollectionSizeFromTries(tries) : maxLength;
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
 				.filter(s -> s.length() >= minLength && s.length() <= maxLength).map(s -> Shrinkable.unshrinkable(s))
 				.collect(Collectors.toList());
