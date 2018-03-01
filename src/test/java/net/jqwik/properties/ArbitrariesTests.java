@@ -135,14 +135,14 @@ class ArbitrariesTests {
 		@Example
 		void shorts() {
 			Arbitrary<Short> enumArbitrary = Arbitraries.shorts();
-			RandomGenerator<Short> generator = enumArbitrary.generator(1);
+			RandomGenerator<Short> generator = enumArbitrary.generator(100);
 			ArbitraryTestHelper.assertAllGenerated(generator, (Short value) -> value >= Short.MIN_VALUE && value <= Short.MAX_VALUE);
 		}
 
 		@Example
 		void shortsMinsAndMaxes() {
 			Arbitrary<Short> enumArbitrary = Arbitraries.shorts().between((short) -10, (short) 10);
-			RandomGenerator<Short> generator = enumArbitrary.generator(1);
+			RandomGenerator<Short> generator = enumArbitrary.generator(100);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < 0 && value > -5);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value > 0 && value < 5);

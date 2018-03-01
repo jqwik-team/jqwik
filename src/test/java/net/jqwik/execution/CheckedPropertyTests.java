@@ -129,7 +129,7 @@ class CheckedPropertyTests {
 			assertThat(check.randomSeed()).isEqualTo(42L);
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
-			assertThat(allGeneratedInts).containsExactly(0, 1, -1, -100, 100, -59, 20, -10, 1, -88, -87, 100);
+			assertThat(allGeneratedInts).containsExactly(0, 1, -1, -100, 100, 43, -56, -75, 13, 3, 49, -28);
 		}
 
 	}

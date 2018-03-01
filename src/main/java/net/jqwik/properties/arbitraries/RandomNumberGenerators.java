@@ -110,4 +110,12 @@ class RandomNumberGenerators {
 		BigDecimal scaledRandom = unscaledRandom.movePointLeft(randomScaleDown);
 		return scaledRandom.setScale(precision, BigDecimal.ROUND_DOWN);
 	}
+
+	// TODO: This could be way more sophisticated
+	static BigInteger[] calculateDefaultPartitionPoints(int tries, BigInteger min, BigInteger max) {
+		int partitionPoint = Math.max(tries / 2, 10);
+		BigInteger upperPartitionPoint = BigInteger.valueOf(partitionPoint).min(max);
+		BigInteger lowerPartitionPoint = BigInteger.valueOf(partitionPoint).negate().max(min);
+		return new BigInteger[]{lowerPartitionPoint, upperPartitionPoint};
+	}
 }
