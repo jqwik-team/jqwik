@@ -29,4 +29,13 @@ public class NumberCoverageExamples {
 			.is(EVEN)
 			.is(SMALL);
 	}
+
+	@Provide
+	Arbitrary<Float> evenFloats() {
+		return Arbitraries.floats().filter(f -> f.longValue() % 2 == 0);
+	}
+
+	@Property(reporting = Reporting.GENERATED)
+	void floatsAreSmall(@ForAll("evenFloats") float evenNumber) {
+	}
 }
