@@ -218,8 +218,8 @@ class ArbitrariesTests {
 			RandomGenerator<Double> generator = Arbitraries.doubles().generator(1);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.01);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -0.01);
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Double.MAX_VALUE);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -Double.MAX_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Double.MAX_VALUE);
 		}
 
 		@Example
@@ -252,8 +252,8 @@ class ArbitrariesTests {
 			RandomGenerator<Float> generator = Arbitraries.floats().generator(1);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == 0.01f);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -0.01f);
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Float.MAX_VALUE);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == -Float.MAX_VALUE);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value == Float.MAX_VALUE);
 		}
 
 		@Example

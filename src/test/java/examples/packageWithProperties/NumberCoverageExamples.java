@@ -35,7 +35,7 @@ public class NumberCoverageExamples {
 		return Arbitraries.floats().filter(f -> f.longValue() % 2 == 0);
 	}
 
-	@Property
+	@Property(reporting = Reporting.FALSIFIED)
 	void floatsAreSmall(@ForAll("evenFloats") float evenNumber) {
 		assertThat((long) evenNumber).is(SMALL);
 	}

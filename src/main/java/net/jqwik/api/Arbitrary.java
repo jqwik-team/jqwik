@@ -104,10 +104,6 @@ public interface Arbitrary<T> {
 		return this.injectNull(0.05).map(Optional::ofNullable);
 	}
 
-	static int defaultMaxFromTries(int tries) {
-		return Math.max(tries / 2 - 3, 3);
-	}
-
 	static int defaultCollectionSizeFromTries(int tries) {
 		return (int) Math.max(Math.round(Math.sqrt(tries)), 3);
 	}

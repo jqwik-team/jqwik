@@ -1,4 +1,5 @@
-- Documenting the range in which random number values are generated
+- DecimalShrinking sometimes does not work. 
+  See examples.packageWithProperties.NumberCoverageExamples.floatsAreSmall
 
 - Arbitrary providers/configurators: Provide annotations as additional parameter for providers?
 

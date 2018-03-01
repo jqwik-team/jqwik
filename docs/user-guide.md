@@ -1343,6 +1343,7 @@ _TBD_
 
 - All decimal generation (float, double, BigDecimal) now uses BigDecimal under the hood
 - All integral generation (int, short, byte, long, BigInteger) now uses BigInteger under the hood
+- Numbers are now generated within their full domain (min, max)
 
 ### 0.8.4
 
