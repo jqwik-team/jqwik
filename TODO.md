@@ -1,6 +1,3 @@
-- DecimalShrinking sometimes does not work. 
-  See examples.packageWithProperties.NumberCoverageExamples.floatsAreSmall
-
 - Arbitrary providers/configurators: Provide annotations as additional parameter for providers?
 
 - Document configurators

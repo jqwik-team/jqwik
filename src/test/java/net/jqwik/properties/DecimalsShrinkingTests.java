@@ -1,15 +1,14 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.properties.arbitraries.*;
+import org.assertj.core.data.*;
 
 import java.math.*;
 import java.util.*;
 
-import org.assertj.core.data.*;
-
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.properties.arbitraries.*;
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class DecimalsShrinkingTests {
@@ -27,11 +26,11 @@ class DecimalsShrinkingTests {
 	}
 
 	@Example
-	void shrinkByRemovingDecimalsFirst() {
+	void shrinkByRemovingDecimalsAndShrinkingIntegralPart() {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.15"));
 
-		assertThat(candidates).containsOnly(new BigDecimal("2.1"), new BigDecimal("2.2"));
+		assertThat(candidates).containsOnly(new BigDecimal("1"), new BigDecimal("2.1"), new BigDecimal("2.2"));
 	}
 
 	@Example
@@ -39,15 +38,15 @@ class DecimalsShrinkingTests {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.1"));
 
-		assertThat(candidates).containsOnly(new BigDecimal("2"), new BigDecimal("3"));
+		assertThat(candidates).contains(new BigDecimal("2"), new BigDecimal("3"));
 	}
 
 	@Example
-	void shrinkNegativeByRemovingDecimalsFirst() {
+	void shrinkNegativeByRemovingDecimalsAndShrinkingIntegral() {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("-3.99"));
 
-		assertThat(candidates).containsOnly(new BigDecimal("-3.9"), new BigDecimal("-4.0"));
+		assertThat(candidates).containsOnly(new BigDecimal("-2"), new BigDecimal("-3.9"), new BigDecimal("-4.0"));
 	}
 
 	@Example

@@ -23,12 +23,13 @@ public class BigDecimalShrinkCandidates implements ShrinkCandidates<BigDecimal> 
 
 	@Override
 	public Set<BigDecimal> nextCandidates(BigDecimal value) {
+		Set<BigDecimal> candidates = new HashSet<>();
 		if (!range.includes(value))
-			return Collections.emptySet();
+			return candidates;
 		if (hasDecimals(value))
-			return shrinkDecimals(value);
-		else
-			return shrinkIntegral(value);
+			candidates.addAll(shrinkDecimals(value));
+		candidates.addAll(shrinkIntegral(value));
+		return candidates;
 	}
 
 	private Set<BigDecimal> shrinkDecimals(BigDecimal value) {
