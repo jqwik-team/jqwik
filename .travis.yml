@@ -1,1 +1,5 @@
 language: java
+
+install: ./gradlew compileJava
+
+script: install: ./gradlew check
