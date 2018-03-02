@@ -8,6 +8,6 @@ that focuses on Property-Based Testing.
 
 | CI Server | OS      | Status | Description |
 | --------- | ------- | ------ | ----------- |
-| Travis CI | Linux   | [![Travis CI build status](https://travis-ci.org/jlink/jqwik.svg?branch=master)](https://travis-ci.org/junit-team/junit5) | Latest Build Status |
+| Travis CI | Linux   | [![Travis CI build status](https://travis-ci.org/jlink/jqwik.svg?branch=master)](https://travis-ci.org/jlink/jqwik.svg?branch=master) | Latest Build Status |
 
 ## See the [Jqwik website](http://jqwik.net) for further details.
