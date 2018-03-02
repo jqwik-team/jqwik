@@ -1,4 +1,4 @@
-- BigIntegers: Should also generate numbers beyond Long.MAX. @Positive should also exceed Long.MAX
+- Improve BigDecimal generation by using BigInteger generation
 
 - Arbitraries.const(aConstant)
 

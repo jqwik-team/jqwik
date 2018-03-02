@@ -7,6 +7,7 @@ import net.jqwik.properties.arbitraries.*;
 import java.math.*;
 import java.util.*;
 
+import static net.jqwik.properties.ArbitraryTestHelper.assertAtLeastOneGenerated;
 import static org.assertj.core.api.Assertions.*;
 
 class RandomGeneratorsTests {
@@ -68,6 +69,19 @@ class RandomGeneratorsTests {
 			assertAllWithinRange(generator, min, max);
 			assertAllPartitionsAreCovered(generator, min, max, partitionPoints);
 		}
+
+		@Example
+		void outsideLongRange() {
+			BigInteger min = new BigInteger("-10000000000000000000");
+			BigInteger max = new BigInteger("10000000000000000000");
+			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max);
+			assertAllWithinRange(generator, min, max);
+			assertAtLeastOneGenerated(generator,
+				bigInteger -> bigInteger.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0);
+			assertAtLeastOneGenerated(generator,
+				bigInteger -> bigInteger.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0);
+		}
+
 
 		@Example
 		void minGreaterThanMaxFails() {
@@ -182,7 +196,7 @@ class RandomGeneratorsTests {
 		BigInteger lower = min;
 		for (BigInteger partitionPoint : partitionPoints) {
 			BigInteger l = lower;
-			ArbitraryTestHelper.assertAtLeastOneGenerated(
+			assertAtLeastOneGenerated(
 				generator, //
 				integral -> integral.compareTo(l) >= 0 && integral.compareTo(partitionPoint) < 0,
 				String.format("No value created between %s and %s", l, partitionPoint)
@@ -190,7 +204,7 @@ class RandomGeneratorsTests {
 			lower = partitionPoint;
 		}
 		BigInteger l = lower;
-		ArbitraryTestHelper.assertAtLeastOneGenerated(
+		assertAtLeastOneGenerated(
 			generator, //
 			integral -> integral.compareTo(l) >= 0 && integral.compareTo(max) < 0,
 			String.format("No value created between %s and %s", l, max)

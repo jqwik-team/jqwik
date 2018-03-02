@@ -1356,11 +1356,11 @@ _TBD_
 
 ### 0.8.6-SNAPSHOT
 
-- BigInteger creation does no longer support `@LongRange` but only `@BigRange`
+- BigInteger generation does no longer support `@LongRange` but only `@BigRange`
   _This is an incompatible API change!_
-- BigDecimal creation does no longer support `@DoubleRange` but only `@BigRange`
+- BigDecimal generation does no longer support `@DoubleRange` but only `@BigRange`
   _This is an incompatible API change!_
-
+- BigInteger generation now supports numbers outside long range
 
 ### 0.8.5
 

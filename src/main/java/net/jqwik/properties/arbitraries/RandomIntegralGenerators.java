@@ -9,13 +9,7 @@ import java.util.*;
 // TODO: Remove duplication with RandomDecimalGenerators
 class RandomIntegralGenerators {
 
-	// TODO: Create BigIntegers even if outside Long range
 	static RandomGenerator<BigInteger> bigIntegers(BigInteger min, BigInteger max, BigInteger[] partitionPoints) {
-		if (min.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0)
-			throw new JqwikException("Cannot create numbers < Long.MIN_VALUE");
-		if (min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
-			throw new JqwikException("Cannot create numbers > Long.MAX_VALUE");
-
 		if (min.compareTo(max) == 0) {
 			return ignored -> Shrinkable.unshrinkable(min);
 		}
@@ -67,22 +61,28 @@ class RandomIntegralGenerators {
 	}
 
 	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger min, BigInteger max) {
-		final long _min = Math.min(min.longValue(), max.longValue());
-		final long _max = Math.max(min.longValue(), max.longValue());
+		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(min, max);
+		BigInteger range = max.subtract(min);
+		int bits = range.bitLength();
 		return random -> {
-			final double d = random.nextDouble();
-			long value = (long) ((d * _max) + ((1.0 - d) * _min) + d);
-			return new ShrinkableValue<>(BigInteger.valueOf(value), new BigIntegerShrinkCandidates(min, max));
+			while (true) {
+				BigInteger rawValue = new BigInteger(bits, random);
+				BigInteger value = rawValue.add(min);
+				if (value.compareTo(min) >= 0 && value.compareTo(max) <= 0) {
+					return new ShrinkableValue<>(value, shrinkCandidates);
+				}
+			}
 		};
 	}
 
 	private static RandomGenerator<BigInteger> createIntegerGenerator(BigInteger min, BigInteger max) {
+		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(min, max);
 		final int _min = Math.min(min.intValue(), max.intValue());
 		final int _max = Math.max(min.intValue(), max.intValue());
 		return random -> {
 			int bound = Math.abs(_max - _min) + 1;
 			int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min;
-			return new ShrinkableValue<>(BigInteger.valueOf(value), new BigIntegerShrinkCandidates(min, max));
+			return new ShrinkableValue<>(BigInteger.valueOf(value), shrinkCandidates);
 		};
 	}
 

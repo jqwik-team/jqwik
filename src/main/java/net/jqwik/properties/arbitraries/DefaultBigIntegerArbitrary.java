@@ -1,6 +1,5 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
@@ -20,33 +19,20 @@ public class DefaultBigIntegerArbitrary extends NullableArbitraryBase<BigInteger
 
 	@Override
 	public BigIntegerArbitrary greaterOrEqual(BigInteger min) {
-		min = (min != null ? min : DEFAULT_MIN);
-		checkBoundaries(min);
 		DefaultBigIntegerArbitrary clone = typedClone();
-		clone.generatingArbitrary.min = min;
+		clone.generatingArbitrary.min = (min == null ? DEFAULT_MIN : min);
 		return clone;
 	}
 
 	@Override
 	public BigIntegerArbitrary lessOrEqual(BigInteger max) {
-		max = (max != null ? max : DEFAULT_MAX);
-		checkBoundaries(max);
 		DefaultBigIntegerArbitrary clone = typedClone();
-		clone.generatingArbitrary.max = max;
+		clone.generatingArbitrary.max = (max == null ? DEFAULT_MAX : max);
 		return clone;
 	}
 
 	@Override
 	protected RandomGenerator<BigInteger> baseGenerator(int tries) {
 		return generatingArbitrary.generator(tries);
-	}
-
-	private void checkBoundaries(BigInteger min) {
-		if (min.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0) {
-			throw new JqwikException("Min  and max values must not be smaller than Long.MIN_VALUE");
-		}
-		if (min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
-			throw new JqwikException("Min  and max values must not be larger than Long.MAX_VALUE");
-		}
 	}
 }
