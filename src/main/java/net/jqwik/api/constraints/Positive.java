@@ -18,6 +18,7 @@ import java.lang.annotation.*;
 @LongRange(min = 0L, max = Long.MAX_VALUE)
 @FloatRange(min = 0f, max = Float.MAX_VALUE)
 @DoubleRange(min = 0, max = Double.MAX_VALUE)
+@BigRange(min = "0")
 @Documented
 public @interface Positive {
 }

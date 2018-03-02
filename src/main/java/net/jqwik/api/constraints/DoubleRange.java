@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 /**
  * Constrain the range of a generated double or Double parameters.
  *
- * Applies to double, Double or BigDecimal parameters which are also annotated with {@code @ForAll}.
+ * Applies to double or Double parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see ByteRange
@@ -13,6 +13,7 @@ import java.lang.annotation.*;
  * @see IntRange
  * @see LongRange
  * @see FloatRange
+ * @see BigRange
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

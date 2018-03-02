@@ -37,13 +37,13 @@ class RangeProperties {
 	}
 
 	@Property
-	boolean bigDecimals(@ForAll @DoubleRange(min = 2, max = 7) BigDecimal value) {
-		return value.compareTo(new BigDecimal(2)) >= 0 //
-			&& value.compareTo(new BigDecimal(7)) <= 0;
+	boolean bigDecimals(@ForAll @BigRange(min = "2.1", max = "7.77") BigDecimal value) {
+		return value.compareTo(new BigDecimal("2.1")) >= 0 //
+			&& value.compareTo(new BigDecimal("7.77")) <= 0;
 	}
 
 	@Property
-	boolean bigIntegers(@ForAll @LongRange(min = 2, max = 7) BigInteger value) {
+	boolean bigIntegers(@ForAll @BigRange(min = "2.0", max = "7") BigInteger value) {
 		return value.compareTo(new BigInteger("2")) >= 0 //
 			&& value.compareTo(new BigInteger("7")) <= 0;
 	}

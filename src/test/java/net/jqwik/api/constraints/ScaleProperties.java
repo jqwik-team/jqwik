@@ -18,7 +18,7 @@ class ScaleProperties {
 	}
 
 	@Property
-	boolean bigDecimalsWithScale(@ForAll @FloatRange(max = 1000) @Scale(1) BigDecimal value) {
+	boolean bigDecimalsWithScale(@ForAll @BigRange(max = "1000") @Scale(1) BigDecimal value) {
 		return value.scale() <= 1;
 	}
 }

@@ -11,7 +11,7 @@ class RandomDecimalGenerators {
 	static RandomGenerator<BigDecimal> bigDecimals(
 		BigDecimal min, BigDecimal max, int scale, BigDecimal[] partitionPoints
 	) {
-		if (min.equals(max)) {
+		if (min.compareTo(max) >= 0) {
 			return ignored -> Shrinkable.unshrinkable(min);
 		}
 		return partitionedGenerator(min, max, scale, partitionPoints);

@@ -5,7 +5,7 @@ import java.lang.annotation.*;
 /**
  * Constrain the range of a generated long or BigInteger parameters.
  *
- * Applies to long, Long or BigInteger parameters which are also annotated with {@code @ForAll}.
+ * Applies to long or Long parameters which are also annotated with {@code @ForAll}.
  *
  * @see net.jqwik.api.ForAll
  * @see ByteRange
@@ -13,6 +13,7 @@ import java.lang.annotation.*;
  * @see IntRange
  * @see FloatRange
  * @see DoubleRange
+ * @see BigRange
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)

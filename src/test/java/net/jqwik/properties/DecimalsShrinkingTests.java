@@ -83,7 +83,7 @@ class DecimalsShrinkingTests {
 	}
 
 	@Property(tries = 10000)
-	void aValueIsNeverShrunkToItself(@ForAll @DoubleRange(min = -100000, max = 100000) @Scale(4) BigDecimal aValue) {
+	void aValueIsNeverShrunkToItself(@ForAll @BigRange(min = "-100000", max = "100000") @Scale(4) BigDecimal aValue) {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-Double.MAX_VALUE + 1),
 				new BigDecimal(Double.MAX_VALUE - 1), 4);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(aValue);
@@ -91,7 +91,7 @@ class DecimalsShrinkingTests {
 	}
 
 	@Property(tries = 10000)
-	void shrinkingWillAlwaysConvergeToZero(@ForAll @DoubleRange(min = -100, max = 100) @Scale(15) BigDecimal aValue) {
+	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-100", max = "100") @Scale(15) BigDecimal aValue) {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-100.0), new BigDecimal(100.0), 15);
 		ShrinkableValue<BigDecimal> shrinkableValue = new ShrinkableValue<>(aValue, shrinker);
 		ValueShrinker<BigDecimal> valueShrinker = new ValueShrinker<>(shrinkableValue);

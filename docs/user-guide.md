@@ -49,6 +49,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
 - [Release Notes](#release-notes)
+  - [0.8.6-SNAPSHOT](#086-snapshot)
   - [0.8.5](#085)
   - [0.8.4](#084)
   - [0.8.3](#083)
@@ -479,9 +480,15 @@ Only one of the following constraints can be used:
 - `@Positive`: Numbers equal to or larger than `0`.
 - `@Negative`: Numbers lower than or equal to `-0`.
 
-#### Long, long and BigInteger:
+#### Long, long:
 
 - `@LongRange(long min = 0L, long max)`
+- `@Positive`: Numbers equal to or larger than `0L`.
+- `@Negative`: Numbers lower than or equal to `-0L`.
+
+#### BigInteger:
+
+- `@BigRange(String min = "", String max = "")`
 - `@Positive`: Numbers equal to or larger than `0L`.
 - `@Negative`: Numbers lower than or equal to `-0L`.
 
@@ -492,9 +499,16 @@ Only one of the following constraints can be used:
 - `@Negative`: Numbers lower than or equal to `-0f`.
 - `@Scale(int value)`
 
-#### Double, double and BigDecimal:
+#### Double, double:
 
 - `@DoubleRange(double min = 0.0, double max)`
+- `@Positive`: Numbers equal to or larger than `0.0`.
+- `@Negative`: Numbers lower than or equal to `-0.0`.
+- `@Scale(int value)`
+
+#### BigDecimal:
+
+- `@BigRange(String min = "", String max = "")`
 - `@Positive`: Numbers equal to or larger than `0.0`.
 - `@Negative`: Numbers lower than or equal to `-0.0`.
 - `@Scale(int value)`
@@ -1339,6 +1353,14 @@ _TBD_
 
 
 ## Release Notes
+
+### 0.8.6-SNAPSHOT
+
+- BigInteger creation does no longer support `@LongRange` but only `@BigRange`
+  _This is an incompatible API change!_
+- BigDecimal creation does no longer support `@DoubleRange` but only `@BigRange`
+  _This is an incompatible API change!_
+
 
 ### 0.8.5
 

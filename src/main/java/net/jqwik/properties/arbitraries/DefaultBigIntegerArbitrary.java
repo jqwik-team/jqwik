@@ -20,6 +20,7 @@ public class DefaultBigIntegerArbitrary extends NullableArbitraryBase<BigInteger
 
 	@Override
 	public BigIntegerArbitrary greaterOrEqual(BigInteger min) {
+		min = (min != null ? min : DEFAULT_MIN);
 		checkBoundaries(min);
 		DefaultBigIntegerArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = min;
@@ -28,6 +29,7 @@ public class DefaultBigIntegerArbitrary extends NullableArbitraryBase<BigInteger
 
 	@Override
 	public BigIntegerArbitrary lessOrEqual(BigInteger max) {
+		max = (max != null ? max : DEFAULT_MAX);
 		checkBoundaries(max);
 		DefaultBigIntegerArbitrary clone = typedClone();
 		clone.generatingArbitrary.max = max;

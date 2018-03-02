@@ -28,14 +28,14 @@ public class DefaultBigDecimalArbitrary extends NullableArbitraryBase<BigDecimal
 	@Override
 	public BigDecimalArbitrary greaterOrEqual(BigDecimal min) {
 		DefaultBigDecimalArbitrary clone = typedClone();
-		clone.generatingArbitrary.min = min;
+		clone.generatingArbitrary.min = (min != null ? min : DEFAULT_MIN);
 		return clone;
 	}
 
 	@Override
 	public BigDecimalArbitrary lessOrEqual(BigDecimal max) {
 		DefaultBigDecimalArbitrary clone = typedClone();
-		clone.generatingArbitrary.max = max;
+		clone.generatingArbitrary.max = (max != null ? max : DEFAULT_MAX);
 		return clone;
 	}
 

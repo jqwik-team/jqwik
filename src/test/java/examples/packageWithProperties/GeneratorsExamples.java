@@ -74,7 +74,7 @@ public class GeneratorsExamples {
 	}
 
 	@Property(tries = 10)
-	boolean aBigDecimal(@ForAll @DoubleRange(max = 100.0) @Scale(value = 4) BigDecimal aBigDecimal) {
+	boolean aBigDecimal(@ForAll @BigRange(max = "100.0") @Scale(value = 4) BigDecimal aBigDecimal) {
 		System.out.println(aBigDecimal);
 		return true;
 	}
