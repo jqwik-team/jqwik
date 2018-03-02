@@ -1,7 +1,9 @@
-- Arbitrary providers/configurators: Provide annotations as additional parameter for providers?
+- BigIntegers: Should also generate numbers beyond Long.MAX. @Positive should also exceed Long.MAX
+
+- Arbitraries.const(aConstant)
+
+- Arbitraries.defaultFor(Class<?> targetType)
 
 - Document configurators
-
-- Introduce OptionalArbitrary to allow configuration of probability for Optional.empty()
 
 - Arbitrary provider for @Functional interfaces

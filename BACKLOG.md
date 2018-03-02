@@ -76,8 +76,6 @@
 - Arbitraries and Generators
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - Find syntax to use provider methods for subtypes, e.g. @ForAll List<@ProvidedBy("myString") String> aList
-  - Arbitraries.defaultFor(Class<?> targetType)
-  - Arbitraries.const(aConstant)
   - functions/methods (whose output parameter can be generated)
   - frequency: pairs of generator and frequency weight
   - mutate: like map, but with a random parameter added, see mutate in QuickTheories
@@ -85,8 +83,6 @@
     http://propertesting.com/book_custom_generators.html#_recursive_generators
   - @Regex(RegularExpression value)
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
-  - BigIntegers: Should also generate numbers beyond Long.MAX. @Positive should also exceed Long.MAX
-  - Integrals of all kind: With upper limit, change distribution towards smaller numbers according to tries
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
