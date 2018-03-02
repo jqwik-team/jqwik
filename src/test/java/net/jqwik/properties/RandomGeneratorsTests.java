@@ -1,5 +1,6 @@
 package net.jqwik.properties;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 
@@ -66,6 +67,12 @@ class RandomGeneratorsTests {
 
 			assertAllWithinRange(generator, min, max);
 			assertAllPartitionsAreCovered(generator, min, max, partitionPoints);
+		}
+
+		@Example
+		void minGreaterThanMaxFails() {
+			assertThatThrownBy(() -> RandomGenerators.bigIntegers(BigInteger.valueOf(1), BigInteger.valueOf(-1)))
+				.isInstanceOf(JqwikException.class);
 		}
 
 	}
@@ -156,6 +163,14 @@ class RandomGeneratorsTests {
 										  new BigInteger[]{BigInteger.ZERO, BigInteger.valueOf(-10000), BigInteger.valueOf(10000)} //
 			);
 		}
+
+		@Example
+		void minGreaterThanMaxFails() {
+			assertThatThrownBy(() -> RandomGenerators.bigDecimals(BigDecimal.valueOf(1), BigDecimal.valueOf(-1), 2))
+				.isInstanceOf(JqwikException.class);
+		}
+
+
 
 	}
 

@@ -16,8 +16,12 @@ class RandomIntegralGenerators {
 		if (min.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0)
 			throw new JqwikException("Cannot create numbers > Long.MAX_VALUE");
 
-		if (min.compareTo(max) >= 0) {
+		if (min.compareTo(max) == 0) {
 			return ignored -> Shrinkable.unshrinkable(min);
+		}
+
+		if (min.compareTo(max) > 0) {
+			throw new JqwikException(String.format("Min value [%s] must not be greater that max value [%s].", min, max));
 		}
 
 		return partitionedGenerator(min, max, partitionPoints);

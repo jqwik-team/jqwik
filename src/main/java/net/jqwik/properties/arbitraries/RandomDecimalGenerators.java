@@ -1,5 +1,6 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 
 import java.math.*;
@@ -11,9 +12,14 @@ class RandomDecimalGenerators {
 	static RandomGenerator<BigDecimal> bigDecimals(
 		BigDecimal min, BigDecimal max, int scale, BigDecimal[] partitionPoints
 	) {
-		if (min.compareTo(max) >= 0) {
+		if (min.compareTo(max) == 0) {
 			return ignored -> Shrinkable.unshrinkable(min);
 		}
+
+		if (min.compareTo(max) > 0) {
+			throw new JqwikException(String.format("Min value [%s] must not be greater that max value [%s].", min, max));
+		}
+
 		return partitionedGenerator(min, max, scale, partitionPoints);
 	}
 
