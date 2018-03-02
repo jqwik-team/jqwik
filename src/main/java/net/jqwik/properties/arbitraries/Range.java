@@ -1,5 +1,7 @@
 package net.jqwik.properties.arbitraries;
 
+import java.util.function.*;
+
 @SuppressWarnings("unchecked")
 public class Range<T extends Comparable> {
 
@@ -20,6 +22,12 @@ public class Range<T extends Comparable> {
 
 	public boolean includes(T value) {
 		return value.compareTo(min) >= 0 && value.compareTo(max) <= 0;
+	}
+
+	public void ifIncluded(T value, Consumer<T> consumer) {
+		if (includes(value)) {
+			consumer.accept(value);
+		}
 	}
 
 	@Override

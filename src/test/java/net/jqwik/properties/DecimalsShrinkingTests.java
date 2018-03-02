@@ -34,6 +34,14 @@ class DecimalsShrinkingTests {
 	}
 
 	@Example
+	void shrinkWillNotShrinkToDecimalsOutsideRange() {
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal("2.11"), new BigDecimal("10"), 2);
+		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.15"));
+
+		assertThat(candidates).containsOnly(new BigDecimal("2.2"));
+	}
+
+	@Example
 	void shrinkByRemovingLastDecimal() {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.1"));

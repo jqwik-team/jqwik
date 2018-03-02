@@ -34,8 +34,8 @@ public class BigDecimalShrinkCandidates implements ShrinkCandidates<BigDecimal> 
 
 	private Set<BigDecimal> shrinkDecimals(BigDecimal value) {
 		Set<BigDecimal> shrunkDecimals = new HashSet<>();
-		shrunkDecimals.add(roundOneDigitDown(value));
-		shrunkDecimals.add(roundOneDigitUp(value));
+		range.ifIncluded(roundOneDigitDown(value), shrunkDecimals::add);
+		range.ifIncluded(roundOneDigitUp(value), shrunkDecimals::add);
 		return shrunkDecimals;
 	}
 
