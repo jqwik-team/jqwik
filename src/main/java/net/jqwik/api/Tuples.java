@@ -21,7 +21,7 @@ public class Tuples {
 		return new Tuple4<>(v1, v2, v3, v4);
 	}
 
-	static class Tuple2<T1, T2> implements Tuple {
+	public static class Tuple2<T1, T2> implements Tuple {
 		protected final T1 v1;
 		protected final T2 v2;
 
