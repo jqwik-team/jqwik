@@ -45,7 +45,7 @@ public class GenericProperty {
 	private PropertyCheckResult checkWithoutReporting(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
 		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(configuration.getTries()))
 				.collect(Collectors.toList());
-		int maxTries = generators.isEmpty() ? 1 : configuration.getTries();
+		int maxTries = configuration.getTries();
 		int countChecks = 0;
 		Random random = SourceOfRandomness.create(configuration.getSeed());
 		for (int countTries = 1; countTries <= maxTries; countTries++) {

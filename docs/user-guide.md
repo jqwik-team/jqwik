@@ -1363,6 +1363,8 @@ _TBD_
 - BigInteger generation now supports numbers outside long range
 - Property.seed is now of type String
   <p/>_This is an incompatible API change!_
+- Property methods without @ForAll parameters are now also tried as many times as 
+  specified by `tries` parameter.
   
 ### 0.8.5
 

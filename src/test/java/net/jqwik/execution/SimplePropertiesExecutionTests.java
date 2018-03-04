@@ -120,49 +120,49 @@ class SimplePropertiesExecutionTests {
 
 		private boolean closeShouldFail = false;
 
-		@Property
+		@Property(tries = 1)
 		public boolean succeeding() {
 			executions.add("succeeding");
 			return true;
 		}
 
-		@Property
+		@Property(tries = 1)
 		public void succeedingWithVoid() {
 			executions.add("succeedingWithVoid");
 		}
 
-		@Property
+		@Property(tries = 1)
 		public Boolean alsoSucceeding() {
 			executions.add("alsoSucceeding");
 			return Boolean.TRUE;
 		}
 
-		@Property
+		@Property(tries = 1)
 		public String returnsString() {
 			executions.add("returnsString");
 			return "aString";
 		}
 
-		@Property
+		@Property(tries = 1)
 		public boolean withParameter(int aNumber) {
 			executions.add("withParameter");
 			return true;
 		}
 
-		@Property
+		@Property(tries = 1)
 		public boolean failing() {
 			executions.add("failing");
 			return false;
 		}
 
-		@Property
+		@Property(tries = 1)
 		public boolean failingInClose() {
 			executions.add("failingInClose");
 			closeShouldFail = true;
 			return true;
 		}
 
-		@Property
+		@Property(tries = 1)
 		public boolean failingTwice() {
 			executions.add("failingTwice");
 			closeShouldFail = true;

@@ -277,7 +277,7 @@ class GenericPropertyTests {
 	@Group
 	class NoParameter {
 		@Example
-		void checkPropertyOnlyOnce() {
+		void checkPropertyWithoutForAllParametersAreAlsoTriedSeveralTimes() {
 			CheckedFunction forAllFunction = args -> {
 				assertThat(args).isEmpty();
 				return true;
@@ -290,8 +290,8 @@ class GenericPropertyTests {
 
 			assertThat(result.propertyName()).isEqualTo("satisfied property");
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
-			assertThat(result.countTries()).isEqualTo(1);
-			assertThat(result.countChecks()).isEqualTo(1);
+			assertThat(result.countTries()).isEqualTo(2);
+			assertThat(result.countChecks()).isEqualTo(2);
 			assertThat(result.randomSeed()).isEqualTo("42");
 			assertThat(result.throwable()).isNotPresent();
 			assertThat(result.sample()).isNotPresent();
