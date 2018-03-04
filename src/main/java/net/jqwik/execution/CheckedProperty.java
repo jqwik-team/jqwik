@@ -1,20 +1,16 @@
 package net.jqwik.execution;
 
-import java.lang.reflect.Parameter;
-import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.*;
-import java.util.stream.Collectors;
-
-import org.junit.platform.engine.reporting.ReportEntry;
-
 import net.jqwik.api.*;
-import net.jqwik.descriptor.PropertyConfiguration;
+import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
+import org.junit.platform.engine.reporting.*;
+
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 public class CheckedProperty {
-
-	private static Supplier<Random> RNG = ThreadLocalRandom::current;
 
 	public final String propertyName;
 	public final CheckedFunction forAllPredicate;
@@ -32,7 +28,9 @@ public class CheckedProperty {
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> publisher) {
-		long effectiveSeed = configuration.getSeed() == Property.SEED_NOT_SET ? RNG.get().nextLong() : configuration.getSeed();
+		String effectiveSeed = configuration.getSeed()
+											.equals(Property.SEED_NOT_SET) ? SourceOfRandomness.createRandomSeed() : configuration
+			.getSeed();
 		PropertyConfiguration effectiveConfiguration = configuration.withSeed(effectiveSeed);
 		try {
 			return createGenericProperty().check(effectiveConfiguration, publisher);

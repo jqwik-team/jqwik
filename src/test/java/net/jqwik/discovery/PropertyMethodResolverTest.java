@@ -61,7 +61,7 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(42);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("42");
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(99);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(6);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
@@ -74,11 +74,11 @@ class PropertyMethodResolverTest {
 					.build();
 			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
-			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, 4243L));
+			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, "4243"));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(4243L);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("4243");
 		}
 
 		@Example
@@ -87,11 +87,11 @@ class PropertyMethodResolverTest {
 					.build();
 			Method method = TestHelper.getMethod(TestContainer.class, "withSeed41");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
-			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, 9999L));
+			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, "9999"));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(41L);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("41");
 		}
 
 	}
@@ -149,12 +149,12 @@ class PropertyMethodResolverTest {
 		void previouslyFailed() {
 		}
 
-		@Property(seed = 41L)
+		@Property(seed = "41")
 		void withSeed41() {
 		}
 
 		@Property( //
-			seed = 42L, //
+			seed = "42", //
 			tries = 99, //
 			maxDiscardRatio = 6, //
 			shrinking = ShrinkingMode.OFF, //

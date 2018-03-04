@@ -267,7 +267,7 @@ The `@Property` annotation has a few optional values:
   
   The default is `1000` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
 
-- `long seed`: The _random seed_ to use for generating values. If you do not specify a values
+- `String seed`: The _random seed_ to use for generating values. If you do not specify a values
   _jqwik_ will use a random _random seed_. The actual seed used is being reported by 
   each run property.
 
@@ -1361,7 +1361,9 @@ _TBD_
 - BigDecimal generation does no longer support `@DoubleRange` but only `@BigRange`
   <p/>_This is an incompatible API change!_
 - BigInteger generation now supports numbers outside long range
-
+- Property.seed is now of type String
+  <p/>_This is an incompatible API change!_
+  
 ### 0.8.5
 
 - All decimal generation (float, double, BigDecimal) now uses BigDecimal under the hood

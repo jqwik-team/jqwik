@@ -81,16 +81,16 @@ class PropertyMethodResolver implements ElementResolver {
 			String message = String.format("Method [%s] is not annotated with @Property", method);
 			return new JqwikException(message);
 		});
-		long seed = determineSeed(uniqueId, property.seed());
+		String seed = determineSeed(uniqueId, property.seed());
 		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues).withSeed(seed);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
 
-	private long determineSeed(UniqueId uniqueId, long seedFromProperty) {
+	private String determineSeed(UniqueId uniqueId, String seedFromProperty) {
 		return testRunData.byUniqueId(uniqueId) //
 						  .filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
 						  .map(TestRun::getRandomSeed) //
-						  .map(seedFromFailedRun -> seedFromProperty != Property.SEED_NOT_SET ? seedFromProperty : seedFromFailedRun) //
+						  .map(seedFromFailedRun -> !seedFromProperty.equals(Property.SEED_NOT_SET) ? seedFromProperty : seedFromFailedRun) //
 						  .orElse(seedFromProperty);
 	}
 

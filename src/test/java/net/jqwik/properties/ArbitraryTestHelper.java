@@ -16,7 +16,7 @@ public class ArbitraryTestHelper {
 	}
 
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
-		Random random = new Random();
+		Random random = SourceOfRandomness.current();
 		for (int i = 0; i < 100; i++) {
 			Shrinkable<T> value = generator.next(random);
 			if (checker.apply(value.value()))
@@ -26,7 +26,7 @@ public class ArbitraryTestHelper {
 	}
 
 	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
-		Random random = new Random();
+		Random random = SourceOfRandomness.current();
 		for (int i = 0; i < 100; i++) {
 			Shrinkable<T> value = generator.next(random);
 			if (!checker.apply(value.value()))
@@ -73,7 +73,7 @@ public class ArbitraryTestHelper {
 
 	@SafeVarargs
 	public static <T> void assertGenerated(RandomGenerator<T> generator, T... expectedValues) {
-		Random random = new Random();
+		Random random = SourceOfRandomness.current();
 
 		for (int i = 0; i < expectedValues.length; i++) {
 			Shrinkable<T> actual = generator.next(random);

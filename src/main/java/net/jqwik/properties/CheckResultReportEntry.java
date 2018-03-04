@@ -16,7 +16,7 @@ public class CheckResultReportEntry {
 
 	public static ReportEntry from(PropertyCheckResult checkResult) {
 		Map<String, String> entries = new HashMap<>();
-		entries.put(SEED_REPORT_KEY, Long.toString(checkResult.randomSeed()));
+		entries.put(SEED_REPORT_KEY, checkResult.randomSeed());
 		entries.put(TRIES_REPORT_KEY, Integer.toString(checkResult.countTries()));
 		entries.put(CHECKS_REPORT_KEY, Integer.toString(checkResult.countChecks()));
 		checkResult.sample().ifPresent(sample -> {

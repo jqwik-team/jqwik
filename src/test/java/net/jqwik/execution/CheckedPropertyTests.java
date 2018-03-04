@@ -108,7 +108,7 @@ class CheckedPropertyTests {
 			List<Parameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
 					p -> Optional.empty(), //
-					new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, new Reporting[0]));
+					new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.ON, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -123,10 +123,10 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
 																  p -> Optional.of(new GenericArbitrary(Arbitraries.integers()
 																												   .between(-100, 100))),
-																  new PropertyConfiguration("Property", 42L, 12, 5, ShrinkingMode.ON, new Reporting[0]));
+																  new PropertyConfiguration("Property", "42", 12, 5, ShrinkingMode.ON, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
-			assertThat(check.randomSeed()).isEqualTo(42L);
+			assertThat(check.randomSeed()).isEqualTo("42");
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
 			assertThat(allGeneratedInts).containsExactly(0, 1, -1, -100, 100, 43, -56, -75, 13, 3, 49, -28);
@@ -138,7 +138,7 @@ class CheckedPropertyTests {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
 															  p -> Optional.of(new GenericArbitrary(Arbitraries.integers()
 																											   .between(-50, 50))), //
-															  new PropertyConfiguration("Property", 1000L, 100, 5, ShrinkingMode.ON, new Reporting[0]));
+															  new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.ON, new Reporting[0]));
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}

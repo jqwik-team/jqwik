@@ -16,7 +16,7 @@ public class PropertyConfiguration {
 	}
 
 	private final String stereotype;
-	private final long seed;
+	private final String seed;
 	private final int tries;
 	private final int maxDiscardRatio;
 	private final ShrinkingMode shrinkingMode;
@@ -24,7 +24,7 @@ public class PropertyConfiguration {
 
 	public PropertyConfiguration( //
 								  String stereotype, //
-								  long seed, //
+								  String seed, //
 								  int tries, //
 								  int maxDiscardRatio, //
 								  ShrinkingMode shrinkingMode, //
@@ -38,11 +38,11 @@ public class PropertyConfiguration {
 		this.reporting = reporting;
 	}
 
-	public long getSeed() {
+	public String getSeed() {
 		return seed;
 	}
 
-	public PropertyConfiguration withSeed(long changedSeed) {
+	public PropertyConfiguration withSeed(String changedSeed) {
 		return new PropertyConfiguration(this.stereotype, changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.reporting);
 	}
 

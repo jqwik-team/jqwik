@@ -28,7 +28,7 @@ public interface PropertyCheckResult {
 	 */
 	int countChecks();
 
-	long randomSeed();
+	String randomSeed();
 
 	Optional<List<Object>> sample();
 
@@ -42,9 +42,9 @@ public interface PropertyCheckResult {
 		protected final String propertyName;
 		protected final int tries;
 		protected final int checks;
-		protected final long randomSeed;
+		protected final String randomSeed;
 
-		ResultBase(Status status, String propertyName, int tries, int checks, long randomSeed) {
+		ResultBase(Status status, String propertyName, int tries, int checks, String randomSeed) {
 			this.status = status;
 			this.propertyName = propertyName;
 			this.tries = tries;
@@ -73,7 +73,7 @@ public interface PropertyCheckResult {
 		}
 
 		@Override
-		public long randomSeed() {
+		public String randomSeed() {
 			return randomSeed;
 		}
 
@@ -94,7 +94,7 @@ public interface PropertyCheckResult {
 
 	}
 
-	static PropertyCheckResult satisfied(String stereotype, String propertyName, int tries, int checks, long randomSeed) {
+	static PropertyCheckResult satisfied(String stereotype, String propertyName, int tries, int checks, String randomSeed) {
 		return new ResultBase(Status.SATISFIED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public String toString() {
@@ -103,7 +103,7 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(String stereotype, String propertyName, int tries, int checks, long randomSeed, List<Object> sample,
+	static PropertyCheckResult falsified(String stereotype, String propertyName, int tries, int checks, String randomSeed, List<Object> sample,
 			List<Object> originalSample, Throwable throwable) {
 		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed) {
 			@Override
@@ -130,7 +130,7 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult erroneous(String stereotype, String propertyName, int tries, int checks, long randomSeed,
+	static PropertyCheckResult erroneous(String stereotype, String propertyName, int tries, int checks, String randomSeed,
 			List<Object> sample, Throwable throwable) {
 		return new ResultBase(Status.ERRONEOUS, propertyName, tries, checks, randomSeed) {
 			@Override
@@ -150,7 +150,7 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult exhausted(String stereotype, String propertyName, int tries, int checks, long randomSeed) {
+	static PropertyCheckResult exhausted(String stereotype, String propertyName, int tries, int checks, String randomSeed) {
 		return new ResultBase(Status.EXHAUSTED, propertyName, tries, checks, randomSeed) {
 			@Override
 			public String toString() {

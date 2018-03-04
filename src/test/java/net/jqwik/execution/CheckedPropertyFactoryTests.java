@@ -16,7 +16,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void simple() {
-		PropertyMethodDescriptor descriptor = createDescriptor("prop", 42L, 11, 4, ShrinkingMode.OFF);
+		PropertyMethodDescriptor descriptor = createDescriptor("prop", "42", 11, 4, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.propertyName).isEqualTo("prop");
@@ -31,14 +31,14 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(argsFalse)).isFalse();
 
 		assertThat(property.configuration.getStereotype()).isEqualTo("Property");
-		assertThat(property.configuration.getSeed()).isEqualTo(42);
+		assertThat(property.configuration.getSeed()).isEqualTo("42");
 		assertThat(property.configuration.getTries()).isEqualTo(11);
 		assertThat(property.configuration.getMaxDiscardRatio()).isEqualTo(4);
 	}
 
 	@Example
 	void withUnboundParams() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", 42L, 11, 5, ShrinkingMode.OFF);
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", "42", 11, 5, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
@@ -50,7 +50,7 @@ public class CheckedPropertyFactoryTests {
 
 	@Example
 	void withNoParamsAndVoidResult() {
-		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", 42L, 11, 5, ShrinkingMode.OFF);
+		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", "42", 11, 5, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
 
 		assertThat(property.forAllParameters).size().isEqualTo(0);
@@ -59,7 +59,7 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(noArgs)).isTrue();
 	}
 
-	private PropertyMethodDescriptor createDescriptor(String methodName, long seed, int tries, int maxDiscardRatio,
+	private PropertyMethodDescriptor createDescriptor(String methodName, String seed, int tries, int maxDiscardRatio,
 			ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
@@ -84,7 +84,7 @@ public class CheckedPropertyFactoryTests {
 			return true;
 		}
 
-		@Property(seed = 4242L)
+		@Property(seed = "4242")
 		boolean propWithSeed(@ForAll int anInt, @ForAll String aString) {
 			return true;
 		}

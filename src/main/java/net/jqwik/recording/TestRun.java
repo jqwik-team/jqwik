@@ -1,18 +1,16 @@
 package net.jqwik.recording;
 
+import org.junit.platform.engine.TestExecutionResult.*;
+import org.junit.platform.engine.*;
+
 import java.io.*;
 
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestExecutionResult.*;
-
 public class TestRun implements Serializable {
-	public static final TestRun NULL = new TestRun(UniqueId.root("no", "value"), Status.FAILED, 0L);
-
 	private final String uniqueIdString;
 	private final int statusOrdinal;
-	private final long randomSeed;
+	private final String randomSeed;
 
-	public TestRun(UniqueId uniqueId, Status status, long randomSeed) {
+	public TestRun(UniqueId uniqueId, Status status, String randomSeed) {
 		this.uniqueIdString = uniqueId.toString();
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
@@ -25,7 +23,7 @@ public class TestRun implements Serializable {
 		return Status.values()[statusOrdinal];
 	}
 
-	public long getRandomSeed() {
+	public String getRandomSeed() {
 		return randomSeed;
 	}
 

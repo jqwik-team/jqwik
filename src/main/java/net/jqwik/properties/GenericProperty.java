@@ -47,7 +47,7 @@ public class GenericProperty {
 				.collect(Collectors.toList());
 		int maxTries = generators.isEmpty() ? 1 : configuration.getTries();
 		int countChecks = 0;
-		Random random = new Random(configuration.getSeed());
+		Random random = SourceOfRandomness.create(configuration.getSeed());
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
 			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {

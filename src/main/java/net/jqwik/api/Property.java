@@ -19,14 +19,14 @@ import java.lang.annotation.*;
 public @interface Property {
 	int TRIES_NOT_SET = 0;
 	int MAX_DISCARD_RATIO_NOT_SET = 0;
-	long SEED_NOT_SET = 0L;
+	String SEED_NOT_SET = "";
 	String DEFAULT_STEREOTYPE = "Property";
 
 	int tries() default TRIES_NOT_SET;
 
 	int maxDiscardRatio() default MAX_DISCARD_RATIO_NOT_SET;
 
-	long seed() default SEED_NOT_SET;
+	String seed() default SEED_NOT_SET;
 
 	ShrinkingMode shrinking() default ShrinkingMode.ON;
 
