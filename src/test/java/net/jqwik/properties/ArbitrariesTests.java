@@ -64,6 +64,14 @@ class ArbitrariesTests {
 	}
 
 	@Example
+	void constant() {
+		Arbitrary<String> constant = Arbitraries.constant("hello");
+		ArbitraryTestHelper.assertAllGenerated(constant.generator(1000), value -> {
+			Assertions.assertThat(value).isEqualTo("hello");
+		});
+	}
+
+	@Example
 	void oneOf() {
 		Arbitrary<Integer> one = Arbitraries.of(1);
 		Arbitrary<Integer> two = Arbitraries.of(2);

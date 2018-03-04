@@ -718,6 +718,10 @@ The starting point for generation usually is a static method call on class `Arbi
 
 - `Arbitrary<Random> randoms()`: Random instances will never be shrunk
 
+#### Constants
+
+- `Arbitrary<T> constant(T value)`: Always return an unshrinkable `value` of type `T`.
+
 ### Collections, Streams, Arrays and Optional
 
 Generating types who have generic type parameters, requires to start with 
@@ -1365,6 +1369,7 @@ _TBD_
   <p/>_This is an incompatible API change!_
 - Property methods without @ForAll parameters are now also tried as many times as 
   specified by `tries` parameter.
+- Added new method `Arbitraries.constant()`
   
 ### 0.8.5
 

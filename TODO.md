@@ -1,5 +1,3 @@
-- Arbitraries.const(aConstant)
-
 - Arbitraries.defaultFor(Class<?> targetType)
 
 - Document configurators

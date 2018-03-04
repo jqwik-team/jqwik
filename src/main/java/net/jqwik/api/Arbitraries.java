@@ -270,4 +270,8 @@ public class Arbitraries {
 		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
 		return fromGenerator(RandomGenerators.samples(shrinkables));
 	}
+
+	public static <T> Arbitrary<T> constant(T value) {
+		return fromGenerator(random -> Shrinkable.unshrinkable(value));
+	}
 }

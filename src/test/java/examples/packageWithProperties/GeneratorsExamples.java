@@ -108,6 +108,16 @@ public class GeneratorsExamples {
 	void anArrayOfPrimitiveInts(@ForAll @Size(max = 10) @IntRange(min = 1, max = 5) int[] array) {
 	}
 
+	@Property
+	boolean aConstantString(@ForAll("constantHello") String aString) {
+		return aString.equals("hello");
+	}
+
+	@Provide
+	Arbitrary<String> constantHello() {
+		return Arbitraries.constant("hello");
+	}
+
 	@Property(tries = 10, reporting = Reporting.GENERATED)
 	boolean aPeopleList(@ForAll @Size(min = 2, max = 5) List<Person> people) {
 		return people != null;
