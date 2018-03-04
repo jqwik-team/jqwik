@@ -1357,9 +1357,9 @@ _TBD_
 ### 0.8.6-SNAPSHOT
 
 - BigInteger generation does no longer support `@LongRange` but only `@BigRange`
-  _This is an incompatible API change!_
+  <p/>_This is an incompatible API change!_
 - BigDecimal generation does no longer support `@DoubleRange` but only `@BigRange`
-  _This is an incompatible API change!_
+  <p/>_This is an incompatible API change!_
 - BigInteger generation now supports numbers outside long range
 
 ### 0.8.5
@@ -1378,9 +1378,9 @@ _TBD_
 - Introduced [Arbitrary.list/set/stream/optional/array](#collections-streams-arrays-and-optional)
 - Combinators.combine() now allows up to 8 parameters
 - Character creation does no longer support `@Chars` but only `@CharRange`
-  _This is an incompatible API change!_
+  <p/>_This is an incompatible API change!_
 - 'Arbitraries.chars(char[] validChars)' does no longer exist
-  _This is an incompatible API change!_
+  <p/>_This is an incompatible API change!_
 - Added [`Arbitraries.oneOf`](#randomly-choosing-among-arbitraries)
 - `@Char` cannot take `from` and `to` any longer. Replaced by `@CharRange`
 - Deprecated many methods in `Arbitraries` class. Replaced by fluent interface methods.
@@ -1399,7 +1399,8 @@ _TBD_
 - Added [Tuple types](#flat-mapping-with-tuple-types) 
   (`Tuple2`, `Tuple3`, `Tuple4`) to use in `Arbitrary.flatMap()`.
 - Renamed `ReportingMode` to `Reporting` and removed `Reporting.MINIMAL`.
-  _This is an incompatible API change!_
+  <p/>_This is an incompatible API change!_
+
 - Added `Reporting.FALSIFIED`. See [section on optional property parameters](#optional-property-parameters)
 
 ### 0.8.1
