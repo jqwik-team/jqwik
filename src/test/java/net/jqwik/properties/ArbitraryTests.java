@@ -1,16 +1,16 @@
 package net.jqwik.properties;
 
-import static org.assertj.core.api.Assertions.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class ArbitraryTests {
 
-	private Random random = new Random();
+	private Random random = SourceOfRandomness.current();
 
 	@Group
 	class GeneratingAndShrinking {
@@ -219,7 +219,7 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).hasSize(5);
 		}
 
-		@Example
+		@Property(tries = 50)
 		void shrinkIntegerFlatMappedToString() {
 			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary
@@ -234,7 +234,9 @@ class ArbitraryTests {
 
 			ShrinkResult<Shrinkable<String>> shrunkValue = shrunkValues.iterator().next();
 			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("aaaaaaaa");
-			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3 * 100 + 8); // distance of underlying * 100 + distance of embedded
+
+			// distance of underlying * 100 + distance of embedded
+			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3 * 100 + 8);
 		}
 
 		@Example
