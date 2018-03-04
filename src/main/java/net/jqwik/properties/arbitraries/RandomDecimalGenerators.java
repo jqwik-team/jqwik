@@ -12,6 +12,10 @@ class RandomDecimalGenerators {
 	static RandomGenerator<BigDecimal> bigDecimals(
 		BigDecimal min, BigDecimal max, int scale, BigDecimal[] partitionPoints
 	) {
+		if (scale < 0) {
+			throw new JqwikException(String.format("Scale [%s] must be positive.", scale));
+		}
+
 		if (min.compareTo(max) == 0) {
 			return ignored -> Shrinkable.unshrinkable(min);
 		}
@@ -55,35 +59,25 @@ class RandomDecimalGenerators {
 	}
 
 	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal min, BigDecimal max, int scale) {
+		BigInteger scaledMin = min.scaleByPowerOfTen(scale).toBigInteger();
+		BigInteger scaledMax = max.scaleByPowerOfTen(scale).toBigInteger();
 		return random -> {
-			BigDecimal randomDecimal = RandomDecimalGenerators.randomDecimal(random, min, max, scale);
+			BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
+			BigDecimal randomDecimal = new BigDecimal(randomIntegral, scale);
 			return new ShrinkableValue<>(randomDecimal, new BigDecimalShrinkCandidates(min, max, scale));
 		};
 	}
 
-	/**
-	 * Random decimal are not equally distributed but randomly scaled down towards 0. Thus random decimals are more likely
-	 * to be closer to 0 than
-	 *
-	 * @param random
-	 *            source of randomness
-	 * @param min
-	 *            lower bound (included) of value to generate
-	 * @param max
-	 *            upper bound (included) of value to generate
-	 * @param precision
-	 *            The number of decimals to the right of decimal point
-	 *
-	 * @return a generated instance of BigDecimal
-	 */
-	private static BigDecimal randomDecimal(Random random, BigDecimal min, BigDecimal max, int precision) {
-		BigDecimal range = max.subtract(min);
-		BigDecimal randomFactor = new BigDecimal(random.nextDouble());
-		BigDecimal unscaledRandom = randomFactor.multiply(range).add(min);
-		int digits = Math.max(1, unscaledRandom.precision() - unscaledRandom.scale());
-		int randomScaleDown = random.nextInt(digits);
-		BigDecimal scaledRandom = unscaledRandom.movePointLeft(randomScaleDown);
-		return scaledRandom.setScale(precision, BigDecimal.ROUND_DOWN);
+	private static BigInteger randomIntegral(Random random, BigInteger min, BigInteger max) {
+		BigInteger range = max.subtract(min);
+		int bits = range.bitLength();
+		while (true) {
+			BigInteger rawValue = new BigInteger(bits, random);
+			BigInteger value = rawValue.add(min);
+			if (value.compareTo(min) >= 0 && value.compareTo(max) <= 0) {
+				return value;
+			}
+		}
 	}
 
 	// TODO: This could be way more sophisticated

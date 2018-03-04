@@ -1,16 +1,14 @@
 package net.jqwik.properties.arbitraries;
 
-import java.math.*;
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
+import java.math.*;
+
 public class DefaultBigDecimalArbitrary extends NullableArbitraryBase<BigDecimal> implements BigDecimalArbitrary {
 
-	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-1_000_000_000);
-	private static final BigDecimal DEFAULT_MAX = new BigDecimal(1_000_000_000);
+	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-Double.MAX_VALUE);
+	private static final BigDecimal DEFAULT_MAX = new BigDecimal(Double.MAX_VALUE);
 
 
 	private final DecimalGeneratingArbitrary generatingArbitrary;

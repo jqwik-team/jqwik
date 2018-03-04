@@ -3,7 +3,9 @@ package examples.packageWithProperties;
 import net.jqwik.api.*;
 import org.assertj.core.api.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.math.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 public class NumberCoverageExamples {
 
@@ -38,5 +40,20 @@ public class NumberCoverageExamples {
 	@Property
 	void floatsAreSmall(@ForAll("evenFloats") float evenNumber) {
 		assertThat((long) evenNumber).is(SMALL);
+	}
+
+	@Property
+	void bigDecimalDistribution(@ForAll BigDecimal bigDecimal) {
+		String hasDecimals = bigDecimal.remainder(BigDecimal.ONE)
+									   .compareTo(BigDecimal.ZERO) != 0 ? "decimals" : "no decimals";
+		String aboveMillion = bigDecimal.compareTo(BigDecimal.valueOf(1000000L)) > 0 ? ">1M" : "<=1M";
+		Statistics.collect(hasDecimals, aboveMillion);
+	}
+
+	@Property(reporting = Reporting.GENERATED)
+	void bigIntegerDistribution(@ForAll BigInteger bigInteger) {
+		String ranges = bigInteger.compareTo(BigInteger.valueOf(100)) < 0 ? "<100"
+			: bigInteger.compareTo(BigInteger.valueOf(1000000)) < 0 ? "<1M" : ">1M";
+		Statistics.collect(ranges);
 	}
 }

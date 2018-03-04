@@ -2,8 +2,6 @@
 
 - Introduce SourceOfRandomness and use in ExampleTest that need a Random
 
-- Improve BigDecimal generation by using BigInteger generation
-
 - Arbitraries.const(aConstant)
 
 - Arbitraries.defaultFor(Class<?> targetType)
