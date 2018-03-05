@@ -17,6 +17,10 @@
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
 
+### Refactoring
+
+- Introduce PropertyExecutionListener and build all reporting/results on top of it
+
 ### General
 
 - Switch to gradle library plugin: 
@@ -77,7 +81,6 @@
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - Find syntax to use provider methods for subtypes, e.g. @ForAll List<@ProvidedBy("myString") String> aList
   - functions/methods (whose output parameter can be generated)
-  - frequency: pairs of generator and frequency weight
   - mutate: like map, but with a random parameter added, see mutate in QuickTheories
   - Recursive generators, like in 
     http://propertesting.com/book_custom_generators.html#_recursive_generators
