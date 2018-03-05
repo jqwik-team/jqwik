@@ -87,6 +87,31 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	class DefaultFor {
+		@Example
+		void simpleType() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.defaultFor(Integer.class);
+			ArbitraryTestHelper.assertAllGenerated(integerArbitrary.generator(1000), Objects::nonNull);
+		}
+
+		@Example
+		void parameterizedType() {
+			Arbitrary<List> list = Arbitraries.defaultFor(List.class, String.class);
+			ArbitraryTestHelper.assertAllGenerated(list.generator(1000), List.class::isInstance);
+		}
+
+		@Property
+		boolean defaultForParameterizedType(@ForAll("stringLists") List<?> stringList) {
+			return stringList.isEmpty() || stringList.get(0) instanceof String;
+		}
+
+		@Provide
+		Arbitrary<List> stringLists() {
+			return Arbitraries.defaultFor(List.class, String.class);
+		}
+	}
+
+	@Group
 	class Chars {
 		@Example
 		void charsDefault() {

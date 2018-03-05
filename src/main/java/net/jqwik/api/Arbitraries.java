@@ -1,12 +1,16 @@
 package net.jqwik.api;
 
+import net.jqwik.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.providers.*;
+import net.jqwik.execution.*;
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.providers.*;
+
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.properties.arbitraries.*;
 
 public class Arbitraries {
 
@@ -273,5 +277,27 @@ public class Arbitraries {
 
 	public static <T> Arbitrary<T> constant(T value) {
 		return fromGenerator(random -> Shrinkable.unshrinkable(value));
+	}
+
+	public static <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>... typeParameters) {
+		GenericType[] genericTypeParameters =
+			Arrays.stream(typeParameters)
+				  .map(GenericType::of)
+				  .toArray(GenericType[]::new);
+		return defaultFor(GenericType.of(type, genericTypeParameters));
+	}
+
+	private static <T> Arbitrary<T> defaultFor(GenericType genericType) {
+		RegisteredArbitraryResolver defaultArbitraryResolver =
+			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
+		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> Optional.of(defaultFor(subtype));
+		Optional<Arbitrary<?>> optionalArbitrary = defaultArbitraryResolver.resolve(genericType, subtypeProvider);
+
+		if (optionalArbitrary.isPresent()) {
+			//noinspection unchecked
+			return (Arbitrary<T>) optionalArbitrary.get();
+		} else {
+			throw new JqwikException(String.format("No default arbitrary for type [%s]", genericType));
+		}
 	}
 }

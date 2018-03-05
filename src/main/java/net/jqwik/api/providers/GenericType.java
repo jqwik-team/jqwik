@@ -10,7 +10,7 @@ import java.util.stream.*;
 public class GenericType {
 
 	public static GenericType of(Class<?> type, GenericType... typeParameters) {
-		if (typeParameters.length != type.getTypeParameters().length) {
+		if (typeParameters.length > 0 && typeParameters.length != type.getTypeParameters().length) {
 			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
 			throw new JqwikException(String.format("Type [%s] cannot have type parameters [%s]", type, typeArgumentsString));
 		}
@@ -117,6 +117,10 @@ public class GenericType {
 	}
 
 	private boolean allTypeArgumentsAreCompatible(GenericType[] targetTypeArguments, GenericType[] providedTypeArguments) {
+		if (providedTypeArguments.length == 0) {
+			return Arrays.stream(targetTypeArguments)
+				.allMatch(targetType -> targetType.isOfType(Object.class) && !targetType.hasBounds());
+		}
 		if (targetTypeArguments.length != providedTypeArguments.length)
 			return false;
 		for (int i = 0; i < targetTypeArguments.length; i++) {

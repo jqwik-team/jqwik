@@ -722,6 +722,28 @@ The starting point for generation usually is a static method call on class `Arbi
 
 - `Arbitrary<T> constant(T value)`: Always return an unshrinkable `value` of type `T`.
 
+#### Default Types
+
+- `Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`: 
+  Return the default arbitrary available for type `type` [if one is provided](#providing-default-arbitraries)
+  by default. For parameterized types you can also specify the parameter types. 
+  
+  Keep in mind, though, that the parameter types are lost in the type signature and therefore
+  cannot be used in the respective `@ForAll` property method parameter. Raw types and wildcards, 
+  however, match; thus the following example will work:
+  
+  ````java
+  @Property
+  boolean listWithWildcard(@ForAll("stringLists") List<?> stringList) {
+      return stringList.isEmpty() || stringList.get(0) instanceof String;
+  }
+   
+  @Provide
+  Arbitrary<List> stringLists() {
+      return Arbitraries.defaultFor(List.class, String.class);
+  }
+  ````
+
 ### Collections, Streams, Arrays and Optional
 
 Generating types who have generic type parameters, requires to start with 
@@ -1370,6 +1392,7 @@ _TBD_
 - Property methods without @ForAll parameters are now also tried as many times as 
   specified by `tries` parameter.
 - Added new method `Arbitraries.constant()`
+- Added new method `Arbitraries.defaultFor()`
   
 ### 0.8.5
 

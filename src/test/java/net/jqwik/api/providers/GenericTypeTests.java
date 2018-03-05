@@ -38,7 +38,7 @@ class GenericTypeTests {
 	}
 
 	@Example
-	void forParameter() throws NoSuchMethodException {
+	void forGenericParameter() throws NoSuchMethodException {
 		class LocalClass {
 			@SuppressWarnings("WeakerAccess")
 			public void withParameter(Tuple2<String, Integer> tuple) {}
@@ -95,6 +95,21 @@ class GenericTypeTests {
 			assertThat(target.isCompatibleWith(List.class)).isTrue();
 			assertThat(target.isCompatibleWith(Collection.class)).isFalse();
 			assertThat(target.isCompatibleWith(Set.class)).isFalse();
+		}
+
+		@Example
+		void plainTypeToWildcardType() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withParameter(List<?> list) {}
+			}
+
+			Parameter parameter = LocalClass.class.getMethod("withParameter", List.class).getParameters()[0];
+
+			GenericType target = forParameter(parameter);
+			GenericType provided = of(List.class);
+
+			assertThat(target.isCompatibleWith(provided)).isTrue();
 		}
 
 		@Example
