@@ -1,32 +1,51 @@
 package net.jqwik.api.providers;
 
+import net.jqwik.*;
+import net.jqwik.support.*;
+
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
 public class GenericType {
 
+	public static GenericType of(Class<?> type, GenericType... typeParameters) {
+		if (typeParameters.length != type.getTypeParameters().length) {
+			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
+			throw new JqwikException(String.format("Type [%s] cannot have type parameters [%s]", type, typeArgumentsString));
+		}
+		return new GenericType(type, typeParameters);
+	}
+
+	public static GenericType forParameter(Parameter parameter) {
+		return new GenericType(parameter);
+	}
+
+	public static GenericType forType(Type type) {
+		return new GenericType(type);
+	}
+
 	private final Class<?> rawType;
 	private final GenericType[] typeArguments;
 	private final String typeVariable;
 	private final GenericType[] bounds;
 
-	public GenericType(Class<?> rawType, String typeVariable, GenericType[] bounds, GenericType[] typeArguments) {
+	private GenericType(Class<?> rawType, String typeVariable, GenericType[] bounds, GenericType[] typeArguments) {
 		this.rawType = rawType;
 		this.typeVariable = typeVariable;
 		this.bounds = bounds;
 		this.typeArguments = typeArguments;
 	}
 
-	public GenericType(Class<?> rawType, GenericType... typeArguments) {
+	private GenericType(Class<?> rawType, GenericType... typeArguments) {
 		this(rawType, null, new GenericType[0], typeArguments);
 	}
 
-	public GenericType(Parameter parameter) {
+	private GenericType(Parameter parameter) {
 		this(parameter.getParameterizedType());
 	}
 
-	public GenericType(Type parameterizedType) {
+	private GenericType(Type parameterizedType) {
 		this(extractRawType(parameterizedType), extractTypeVariable(parameterizedType), extractBounds(parameterizedType),
 				extractTypeArguments(parameterizedType));
 	}
@@ -42,7 +61,7 @@ public class GenericType {
 		if (parameterizedType instanceof TypeVariable) {
 			return Arrays.stream(((TypeVariable) parameterizedType).getBounds()) //
 					.filter(type -> type != Object.class) //
-					.map(GenericType::new) //
+					.map(GenericType::forType) //
 					.toArray(GenericType[]::new);
 		}
 		return new GenericType[0];
@@ -62,7 +81,7 @@ public class GenericType {
 	private static GenericType[] extractTypeArguments(Type parameterizedType) {
 		if (parameterizedType instanceof ParameterizedType) {
 			return Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments()) //
-					.map(GenericType::new) //
+					.map(GenericType::forType) //
 					.toArray(GenericType[]::new);
 		}
 		// Now it's either not a generic type or it has type variables
@@ -144,7 +163,7 @@ public class GenericType {
 	public GenericType getComponentType() {
 		Class<?> componentType = rawType.getComponentType();
 		if (componentType != null)
-			return new GenericType(componentType);
+			return GenericType.of(componentType);
 		return null;
 	}
 
