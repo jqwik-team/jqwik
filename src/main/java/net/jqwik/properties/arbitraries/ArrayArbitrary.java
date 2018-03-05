@@ -35,7 +35,7 @@ public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> implements Si
 	private RandomGenerator<List<T>> listGenerator(int tries) {
 		int effectiveMaxSize = maxSize;
 		if (effectiveMaxSize <= 0)
-			effectiveMaxSize = Arbitrary.defaultCollectionSizeFromTries(tries);
+			effectiveMaxSize = Arbitrary.defaultMaxCollectionSizeFromTries(tries);
 		return createListGenerator(elementArbitrary, tries, effectiveMaxSize);
 	}
 

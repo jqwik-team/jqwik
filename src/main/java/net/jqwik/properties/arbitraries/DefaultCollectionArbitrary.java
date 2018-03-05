@@ -25,25 +25,23 @@ abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U>
 	protected int effectiveMaxSize(int tries) {
 		int effectiveMaxSize = maxSize;
 		if (effectiveMaxSize <= 0)
-			effectiveMaxSize = Arbitrary.defaultCollectionSizeFromTries(tries);
+			effectiveMaxSize = Arbitrary.defaultMaxCollectionSizeFromTries(tries);
 		return effectiveMaxSize;
 	}
 
 	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int effectiveMaxSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
-		List<Shrinkable<List<T>>> samples = samplesList(effectiveMaxSize, new ArrayList<>());
+		List<Shrinkable<List<T>>> samples = samplesList(new ArrayList<>());
 		return RandomGenerators.list(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
 	}
 
-	protected <C extends Collection> List<Shrinkable<C>> samplesList(int effectiveMaxSize, C sample) {
+	protected <C extends Collection> List<Shrinkable<C>> samplesList(C sample) {
 		return Stream.of(sample).filter(l -> l.size() >= minSize).filter(l -> maxSize == 0 || l.size() <= maxSize)
 				.map(Shrinkable::unshrinkable).collect(Collectors.toList());
 	}
 
 	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int tries) {
-		// Stepping down into element generators will half the number of tries, but never go below 10
-		int elementTries = Math.max(tries / 2, 10);
-		return elementArbitrary.generator(elementTries);
+		return elementArbitrary.generator(tries);
 	}
 
 	@Override
