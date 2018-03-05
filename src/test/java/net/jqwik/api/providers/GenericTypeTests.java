@@ -3,6 +3,7 @@ package net.jqwik.api.providers;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuples.*;
+import net.jqwik.api.constraints.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -38,14 +39,14 @@ class GenericTypeTests {
 	}
 
 	@Example
-	void forGenericParameter() throws NoSuchMethodException {
+	void forType() throws NoSuchMethodException {
 		class LocalClass {
 			@SuppressWarnings("WeakerAccess")
-			public void withParameter(Tuple2<String, Integer> tuple) {}
+			public Tuple2<String, Integer> withReturn() { return null; }
 		}
 
-		Parameter parameter = LocalClass.class.getMethod("withParameter", Tuple2.class).getParameters()[0];
-		GenericType tupleType = GenericType.forParameter(parameter);
+		Type type = LocalClass.class.getMethod("withReturn").getAnnotatedReturnType().getType();
+		GenericType tupleType = GenericType.forType(type);
 		assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 		assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 		assertThat(tupleType.isGeneric()).isTrue();
@@ -53,20 +54,52 @@ class GenericTypeTests {
 		assertThat(tupleType.isEnum()).isFalse();
 	}
 
-	@Example
-	void forType() throws NoSuchMethodException {
-		class LocalClass {
-			@SuppressWarnings("WeakerAccess")
-			public Tuple2<String, Integer> withReturn() { return null; }
+	@Group
+	class ForParameter {
+		@Example
+		void genericParameter() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withParameter(Tuple2<String, Integer> tuple) {}
+			}
+
+			Parameter parameter = LocalClass.class.getMethod("withParameter", Tuple2.class).getParameters()[0];
+			GenericType tupleType = GenericType.forParameter(parameter);
+			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
+			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
+			assertThat(tupleType.isGeneric()).isTrue();
+			assertThat(tupleType.isArray()).isFalse();
+			assertThat(tupleType.isEnum()).isFalse();
 		}
 
-		Type type  = LocalClass.class.getMethod("withReturn").getAnnotatedReturnType().getType();
-		GenericType tupleType = GenericType.forType(type);
-		assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
-		assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
-		assertThat(tupleType.isGeneric()).isTrue();
-		assertThat(tupleType.isArray()).isFalse();
-		assertThat(tupleType.isEnum()).isFalse();
+		@Example
+		void annotations() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withList(@Size(max = 2) List list) {}
+			}
+
+			Parameter parameter = LocalClass.class.getMethod("withList", List.class).getParameters()[0];
+			GenericType parameterType = GenericType.forParameter(parameter);
+			assertThat(parameterType.getRawType()).isEqualTo(List.class);
+			assertThat(parameterType.getAnnotations().get(0)).isInstanceOf(Size.class);
+		}
+
+		@Example
+		void annotatedTypeParameters() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withList(List<@StringLength(max = 2) String> list) {}
+			}
+
+			AnnotatedParameterizedType parameter = (AnnotatedParameterizedType) LocalClass.class.getMethod("withList", List.class)
+																								.getAnnotatedParameterTypes()[0];
+			GenericType parameterType = GenericType.forParameter(parameter);
+			GenericType stringType = parameterType.getTypeArguments()[0];
+			assertThat(stringType.isOfType(String.class)).isTrue();
+			assertThat(stringType.getAnnotations().get(0)).isInstanceOf(StringLength.class);
+		}
+
 	}
 
 	@Group

@@ -3,6 +3,7 @@ package net.jqwik.api.providers;
 import net.jqwik.*;
 import net.jqwik.support.*;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
@@ -17,7 +18,12 @@ public class GenericType {
 		return new GenericType(type, typeParameters);
 	}
 
+	@Deprecated
 	public static GenericType forParameter(Parameter parameter) {
+		return new GenericType(parameter);
+	}
+
+	public static GenericType forParameter(AnnotatedType parameter) {
 		return new GenericType(parameter);
 	}
 
@@ -26,11 +32,14 @@ public class GenericType {
 	}
 
 	private final Class<?> rawType;
+	private List<Annotation> annotations = new ArrayList<>();
 	private final GenericType[] typeArguments;
 	private final String typeVariable;
 	private final GenericType[] bounds;
 
-	private GenericType(Class<?> rawType, String typeVariable, GenericType[] bounds, GenericType[] typeArguments) {
+	private GenericType(
+		Class<?> rawType, String typeVariable, GenericType[] bounds, GenericType[] typeArguments
+	) {
 		this.rawType = rawType;
 		this.typeVariable = typeVariable;
 		this.bounds = bounds;
@@ -41,13 +50,33 @@ public class GenericType {
 		this(rawType, null, new GenericType[0], typeArguments);
 	}
 
+	private GenericType(AnnotatedType parameter) {
+		this.rawType = extractRawType(parameter.getType());
+		this.typeVariable = extractTypeVariable(parameter.getType());
+		this.bounds = extractBounds(parameter.getType());
+		this.typeArguments = extractTypeArguments(parameter);
+		this.annotations = extractAnnotations(parameter);
+	}
+
 	private GenericType(Parameter parameter) {
-		this(parameter.getParameterizedType());
+		this.rawType = parameter.getType();
+		this.typeVariable = extractTypeVariable(parameter.getParameterizedType());
+		this.bounds = extractBounds(parameter.getParameterizedType());
+		this.typeArguments = extractTypeArguments(parameter.getParameterizedType());
+		this.annotations = extractAnnotations(parameter);
 	}
 
 	private GenericType(Type parameterizedType) {
-		this(extractRawType(parameterizedType), extractTypeVariable(parameterizedType), extractBounds(parameterizedType),
-				extractTypeArguments(parameterizedType));
+		this.rawType = extractRawType(parameterizedType);
+		this.typeVariable = extractTypeVariable(parameterizedType);
+		this.bounds = extractBounds(parameterizedType);
+		this.typeArguments = extractTypeArguments(parameterizedType);
+	}
+
+	private static List<Annotation> extractAnnotations(Object parameterizedType) {
+		if (parameterizedType instanceof AnnotatedElement)
+			return JqwikAnnotationSupport.findAllAnnotations((AnnotatedElement) parameterizedType);
+		return Collections.emptyList();
 	}
 
 	private static String extractTypeVariable(Type parameterizedType) {
@@ -78,7 +107,12 @@ public class GenericType {
 		return Object.class;
 	}
 
-	private static GenericType[] extractTypeArguments(Type parameterizedType) {
+	private static GenericType[] extractTypeArguments(Object parameterizedType) {
+		if (parameterizedType instanceof AnnotatedParameterizedType) {
+			return Arrays.stream(((AnnotatedParameterizedType) parameterizedType).getAnnotatedActualTypeArguments()) //
+					 .map(GenericType::forParameter) //
+					 .toArray(GenericType[]::new);
+		}
 		if (parameterizedType instanceof ParameterizedType) {
 			return Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments()) //
 					.map(GenericType::forType) //
@@ -116,10 +150,16 @@ public class GenericType {
 		return getRawType().isArray();
 	}
 
-	private boolean allTypeArgumentsAreCompatible(GenericType[] targetTypeArguments, GenericType[] providedTypeArguments) {
+	public List<Annotation> getAnnotations() {
+		return annotations;
+	}
+
+	private boolean allTypeArgumentsAreCompatible(
+		GenericType[] targetTypeArguments, GenericType[] providedTypeArguments
+	) {
 		if (providedTypeArguments.length == 0) {
 			return Arrays.stream(targetTypeArguments)
-				.allMatch(targetType -> targetType.isOfType(Object.class) && !targetType.hasBounds());
+						 .allMatch(targetType -> targetType.isOfType(Object.class) && !targetType.hasBounds());
 		}
 		if (targetTypeArguments.length != providedTypeArguments.length)
 			return false;

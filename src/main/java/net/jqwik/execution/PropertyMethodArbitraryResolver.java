@@ -45,7 +45,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		return forAllAnnotation.flatMap(annotation -> {
 			String generatorName = forAllAnnotation.get().value();
 			GenericType genericType = GenericType.forParameter(parameter);
-			List<Annotation> configurationAnnotations = JqwikAnnotationSupport.findAllAnnotations(parameter) //
+			List<Annotation> configurationAnnotations = genericType.getAnnotations() //
 					.stream() //
 					.filter(parameterAnnotation -> !parameterAnnotation.annotationType().equals(ForAll.class)) //
 					.collect(Collectors.toList());
