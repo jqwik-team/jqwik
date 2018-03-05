@@ -3,9 +3,9 @@ package net.jqwik.execution;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
+import net.jqwik.support.*;
 import org.junit.platform.engine.reporting.*;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -14,11 +14,11 @@ public class CheckedProperty {
 
 	public final String propertyName;
 	public final CheckedFunction forAllPredicate;
-	public final List<Parameter> forAllParameters;
+	public final List<MethodParameter> forAllParameters;
 	public final ArbitraryResolver arbitraryProvider;
 	public final PropertyConfiguration configuration;
 
-	public CheckedProperty(String propertyName, CheckedFunction forAllPredicate, List<Parameter> forAllParameters,
+	public CheckedProperty(String propertyName, CheckedFunction forAllPredicate, List<MethodParameter> forAllParameters,
 			ArbitraryResolver arbitraryProvider, PropertyConfiguration configuration) {
 		this.propertyName = propertyName;
 		this.forAllPredicate = forAllPredicate;
@@ -39,7 +39,7 @@ public class CheckedProperty {
 		}
 	}
 
-	private Arbitrary<Object> findArbitrary(Parameter parameter) {
+	private Arbitrary<Object> findArbitrary(MethodParameter parameter) {
 		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
 		return arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
 	}

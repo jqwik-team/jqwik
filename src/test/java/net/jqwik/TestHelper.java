@@ -1,21 +1,21 @@
 package net.jqwik;
 
+import net.jqwik.api.*;
+import net.jqwik.properties.*;
+import net.jqwik.support.*;
+
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import net.jqwik.api.Arbitrary;
-import net.jqwik.api.RandomGenerator;
-import net.jqwik.properties.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 public class TestHelper {
-	public static List<Parameter> getParametersFor(Class<?> aClass, String methodName) {
+	public static List<MethodParameter> getParametersFor(Class<?> aClass, String methodName) {
 		return getParameters(getMethod(aClass, methodName));
 	}
 
-	private static List<Parameter> getParameters(Method method) {
-		return Arrays.stream(method.getParameters()).collect(Collectors.toList());
+	private static List<MethodParameter> getParameters(Method method) {
+		return Arrays.stream(JqwikReflectionSupport.getMethodParameters(method)).collect(Collectors.toList());
 	}
 
 	public static Method getMethod(Class<?> aClass, String methodName) {

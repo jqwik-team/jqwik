@@ -1,10 +1,10 @@
 package net.jqwik.execution;
 
-import java.lang.reflect.Parameter;
-import java.util.Optional;
+import net.jqwik.api.*;
+import net.jqwik.support.*;
 
-import net.jqwik.api.Arbitrary;
+import java.util.*;
 
 public interface ArbitraryResolver {
-	Optional<Arbitrary<Object>> forParameter(Parameter parameter);
+	Optional<Arbitrary<Object>> forParameter(MethodParameter parameter);
 }

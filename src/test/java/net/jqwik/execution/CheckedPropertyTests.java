@@ -4,10 +4,10 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
+import net.jqwik.support.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -105,7 +105,7 @@ class CheckedPropertyTests {
 
 		@Example
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
-			List<Parameter> parameters = getParametersForMethod("stringProp");
+			List<MethodParameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
 					p -> Optional.empty(), //
 					new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.ON, new Reporting[0]));
@@ -143,7 +143,7 @@ class CheckedPropertyTests {
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
 
-	private List<Parameter> getParametersForMethod(String methodName) {
+	private List<MethodParameter> getParametersForMethod(String methodName) {
 		return getParametersFor(BooleanReturningExamples.class, methodName);
 	}
 

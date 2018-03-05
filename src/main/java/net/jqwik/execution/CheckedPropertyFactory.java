@@ -1,15 +1,15 @@
 package net.jqwik.execution;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.support.*;
 import org.junit.platform.commons.support.*;
 
-import net.jqwik.api.ForAll;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.CheckedFunction;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 public class CheckedPropertyFactory {
 
@@ -22,7 +22,7 @@ public class CheckedPropertyFactory {
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
 		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
-		List<Parameter> forAllParameters = extractForAllParameters(propertyMethod);
+		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod);
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
 		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, configuration);
 	}
@@ -41,15 +41,15 @@ public class CheckedPropertyFactory {
 			};
 	}
 
-	private List<Parameter> extractForAllParameters(Method targetMethod) {
+	private List<MethodParameter> extractForAllParameters(Method targetMethod) {
 		return Arrays //
-				.stream(targetMethod.getParameters()) //
+				.stream(JqwikReflectionSupport.getMethodParameters(targetMethod)) //
 				.filter(this::isForAllPresent) //
 				.collect(Collectors.toList());
 	}
 
-	private boolean isForAllPresent(Parameter parameter) {
-		return AnnotationSupport.isAnnotated(parameter, ForAll.class);
+	private boolean isForAllPresent(MethodParameter parameter) {
+		return parameter.isAnnotated(ForAll.class);
 	}
 
 }

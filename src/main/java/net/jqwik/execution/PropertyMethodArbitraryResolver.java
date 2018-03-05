@@ -1,6 +1,13 @@
 package net.jqwik.execution;
 
-import static net.jqwik.support.JqwikReflectionSupport.*;
+import net.jqwik.api.*;
+import net.jqwik.api.configurators.*;
+import net.jqwik.api.providers.*;
+import net.jqwik.configurators.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.providers.*;
+import net.jqwik.support.*;
+import org.junit.platform.commons.support.*;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -8,15 +15,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.api.configurators.*;
-import org.junit.platform.commons.support.*;
-
-import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
-import net.jqwik.configurators.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.providers.*;
-import net.jqwik.support.*;
+import static net.jqwik.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
@@ -39,12 +38,12 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	@Override
-	public Optional<Arbitrary<Object>> forParameter(Parameter parameter) {
-		Optional<ForAll> forAllAnnotation = AnnotationSupport.findAnnotation(parameter, ForAll.class);
+	public Optional<Arbitrary<Object>> forParameter(MethodParameter parameter) {
+		Optional<ForAll> forAllAnnotation = AnnotationSupport.findAnnotation(parameter.getNativeParameter(), ForAll.class);
 
 		return forAllAnnotation.flatMap(annotation -> {
 			String generatorName = forAllAnnotation.get().value();
-			GenericType genericType = GenericType.forParameter(parameter);
+			GenericType genericType = GenericType.forParameter(parameter.getNativeParameter());
 			List<Annotation> configurationAnnotations = genericType.getAnnotations() //
 					.stream() //
 					.filter(parameterAnnotation -> !parameterAnnotation.annotationType().equals(ForAll.class)) //

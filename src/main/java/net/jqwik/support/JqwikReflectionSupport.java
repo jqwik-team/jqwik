@@ -141,6 +141,12 @@ public class JqwikReflectionSupport {
 				.collect(toSet());
 	}
 
+	public static MethodParameter[] getMethodParameters(Method method) {
+		return Arrays.stream(method.getParameters())
+			.map(MethodParameter::new)
+			.toArray(MethodParameter[]::new);
+	}
+
 	public static boolean isPublic(Class<?> clazz) {
 		return Modifier.isPublic(clazz.getModifiers());
 	}
