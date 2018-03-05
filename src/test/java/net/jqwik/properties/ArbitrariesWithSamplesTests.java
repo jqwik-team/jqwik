@@ -10,7 +10,7 @@ import net.jqwik.api.*;
 @Group
 class ArbitrariesWithSamplesTests {
 
-	Random random = new Random();
+	Random random = SourceOfRandomness.current();
 
 	@Group
 	class Generation {

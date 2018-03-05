@@ -18,7 +18,7 @@ class ArbitrariesTests {
 		Maybe
 	}
 
-	private Random random = new Random();
+	private Random random = SourceOfRandomness.current();
 
 	@Example
 	void randomValues() {

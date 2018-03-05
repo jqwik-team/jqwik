@@ -1,12 +1,14 @@
 package net.jqwik.api;
 
+import net.jqwik.properties.*;
+
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.*;
 
 class CombinatorsTests {
 
-	private Random random = new Random();
+	private Random random = SourceOfRandomness.current();
 
 	@Example
 	void twoArbitrariesCanBeCombined() {

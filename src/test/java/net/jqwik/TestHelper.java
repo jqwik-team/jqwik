@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import net.jqwik.api.Arbitrary;
 import net.jqwik.api.RandomGenerator;
+import net.jqwik.properties.*;
 
 public class TestHelper {
 	public static List<Parameter> getParametersFor(Class<?> aClass, String methodName) {
@@ -27,7 +28,7 @@ public class TestHelper {
 	}
 
 	public static <T> T generateNext(RandomGenerator<T> generator) {
-		return generator.next(new Random()).value();
+		return generator.next(SourceOfRandomness.current()).value();
 	}
 
 	public static <T> T generateUntil(RandomGenerator<T> generator, Predicate<T> untilCondition) {

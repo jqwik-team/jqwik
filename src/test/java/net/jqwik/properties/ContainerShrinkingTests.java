@@ -156,7 +156,7 @@ class ContainerShrinkingTests {
 			Arbitrary<String> combined = Combinators.combine(a1, a2) //
 													.as((i1, i2) -> Integer.toString(i1) + Integer.toString(i2));
 
-			Shrinkable<String> stringShrinkable = combined.generator(10).next(new Random(42L));
+			Shrinkable<String> stringShrinkable = combined.generator(10).next(SourceOfRandomness.current());
 
 			ShrinkResult<Shrinkable<String>> shrinkResult = shrink(stringShrinkable, aString -> {
 				return aString.length() < 2;
