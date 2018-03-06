@@ -456,7 +456,8 @@ Only one of the following constraints can be used:
 
 #### List, Set, Stream and Arrays:
 
-- `@Size(int min = 0, int max)`
+- `@Size(int value = 0, int min = 0, int max = 0)`: 
+  Set either fixed size through `value` or configure the size range between `min` and `max`.
 
 #### Byte and byte:
 
@@ -1380,6 +1381,7 @@ _TBD_
 - `@WithNull.target()` has been removed
   <p/>_This is an incompatible API change!_
 - Parameterized types [can now be annotated directly](#constraining-parameter-types)
+- Added `@Size.value()` for fixed size collections
 
 ### 0.8.5
 

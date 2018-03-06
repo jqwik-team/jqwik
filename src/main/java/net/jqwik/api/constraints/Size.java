@@ -15,5 +15,7 @@ import java.lang.annotation.*;
 public @interface Size {
 	int min() default 0;
 
-	int max();
+	int max() default 0;
+
+	int value() default 0;
 }

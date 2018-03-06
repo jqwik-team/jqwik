@@ -13,6 +13,11 @@ class SizeProperties {
 	}
 
 	@Property
+	boolean fixedSize(@ForAll @Size(5) List<?> aValue) {
+		return aValue.size() == 5;
+	}
+
+	@Property
 	boolean sets(@ForAll @Size(min = 2, max = 7) Set<?> aValue) {
 		return aValue.size() >= 2 && aValue.size() <= 7;
 	}
