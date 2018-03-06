@@ -242,4 +242,10 @@ public class GenericType {
 		return representation;
 	}
 
+	public <A extends Annotation> Optional<A> getAnnotation(Class<A> annotationType) {
+		return annotations.stream()
+						  .filter(annotation -> annotation.annotationType().equals(annotationType))
+						  .map(annotationType::cast)
+						  .findFirst();
+	}
 }
