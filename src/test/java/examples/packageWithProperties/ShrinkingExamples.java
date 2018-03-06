@@ -65,4 +65,14 @@ public class ShrinkingExamples {
 		return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(0).ofMaxLength(1).filter(s -> !s.isEmpty());
 	}
 
+	@Property(reporting = Reporting.FALSIFIED)
+	boolean allAreKlein(@ForAll("kleinOrGross") String oddOrEven) {
+		return oddOrEven.equals("klein");
+	}
+
+	@Provide
+	Arbitrary<String> kleinOrGross() {
+		return Arbitraries.integers().between(1, 1000).map(s -> s > 50 && s < 990 ? "gross" : "klein");
+	}
+
 }
