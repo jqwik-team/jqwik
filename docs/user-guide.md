@@ -429,7 +429,9 @@ on the requested parameter type.
 
 If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
 
-- `@StringLength(int min = 0, int max)`
+- `@StringLength(int value = 0, int min = 0, int max = 0)`
+  Set either fixed length through `value` or configure the length range between `min` and `max`.
+
 
 The following constraints can be combined with each other:
 
@@ -1382,6 +1384,7 @@ _TBD_
   <p/>_This is an incompatible API change!_
 - Parameterized types [can now be annotated directly](#constraining-parameter-types)
 - Added `@Size.value()` for fixed size collections
+- Added `@StringLength.value()` for fixed size Strings
 
 ### 0.8.5
 

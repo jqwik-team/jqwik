@@ -13,7 +13,7 @@ class AnnotatedParameterTypesProperties {
 
 	@Property(tries = 20, reporting = Reporting.GENERATED)
 	boolean fixedSizedListWithFixedLengthString(
-		@ForAll @Size(3) List<@StringLength(min = 5, max = 5) @Chars({'a', 'b', 'c'}) String> aStringList
+		@ForAll @Size(3) List<@StringLength(5) @Chars({'a', 'b', 'c'}) String> aStringList
 	) {
 		return aStringList.size() == 3
 			&& aStringList.stream().allMatch(s -> s.length() == 5);

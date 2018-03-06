@@ -13,7 +13,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface StringLength {
+	int value() default 0;
+
 	int min() default 0;
 
-	int max();
+	int max() default 0;
 }

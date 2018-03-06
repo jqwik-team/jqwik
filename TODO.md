@@ -1,5 +1,3 @@
-- Add value attribute to @Size @StringLength
-
 - @ForAll or something like that in parameter types to call provider methods
 
 - Arbitraries.frequency: pairs of (frequency, value)

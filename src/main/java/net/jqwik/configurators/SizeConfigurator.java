@@ -18,7 +18,7 @@ public class SizeConfigurator extends ArbitraryConfiguratorBase {
 
 	private void checkSize(Size size) {
 		if (size.value() == 0) {
-			if (size.min() >= size.max())
+			if (size.min() > size.max())
 				reportError(size);
 		} else {
 			if (size.min() != 0 || size.max() != 0)
