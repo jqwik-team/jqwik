@@ -44,24 +44,26 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		return forAllAnnotation.flatMap(annotation -> {
 			String generatorName = forAllAnnotation.get().value();
 			GenericType genericType = GenericType.forParameter(parameter);
-			List<Annotation> configurationAnnotations = genericType.getAnnotations() //
-					.stream() //
-					.filter(parameterAnnotation -> !parameterAnnotation.annotationType().equals(ForAll.class)) //
-					.collect(Collectors.toList());
-			return createForType(genericType, generatorName, configurationAnnotations);
+			return createForType(genericType, generatorName);
 		}).map(GenericArbitrary::new);
 
 	}
 
-	private Optional<Arbitrary<?>> createForType(GenericType genericType, String generatorName, List<Annotation> annotations) {
+	private Optional<Arbitrary<?>> createForType(GenericType genericType, String generatorName) {
+		List<Annotation> annotations =
+			genericType.getAnnotations() //
+					   .stream() //
+					   .filter(annotation -> !annotation.annotationType().equals(ForAll.class)) //
+					   .collect(Collectors.toList());
+
 		Arbitrary<?> createdArbitrary = null;
 
 		Optional<Method> optionalCreator = findArbitraryCreatorByName(genericType, generatorName);
 		if (optionalCreator.isPresent()) {
 			createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
 		} else if (generatorName.isEmpty()) {
-			createdArbitrary = resolveDefaultArbitrary(genericType, generatorName, annotations) //
-					.orElseGet(() -> findFirstFitArbitrary(genericType) //
+			createdArbitrary = resolveDefaultArbitrary(genericType, generatorName) //
+					   .orElseGet(() -> findFirstFitArbitrary(genericType) //
 							.orElse(null));
 		}
 
@@ -126,13 +128,13 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		};
 	}
 
-	private Optional<Arbitrary<?>> resolveDefaultArbitrary(GenericType parameterType, String generatorName, List<Annotation> annotations) {
+	private Optional<Arbitrary<?>> resolveDefaultArbitrary(GenericType parameterType, String generatorName) {
 		boolean generatorNameSpecified = !generatorName.isEmpty();
 		if (generatorNameSpecified && !parameterType.isGeneric()) {
 			return Optional.empty();
 		}
 
-		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> createForType(subtype, generatorName, annotations);
+		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> createForType(subtype, generatorName);
 
 		return registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
 	}

@@ -79,7 +79,6 @@
 
 - Arbitraries and Generators
   - Add Arbitrary.describe() to optionally describe elements in sample output
-  - Find syntax to use provider methods for subtypes, e.g. @ForAll List<@ProvidedBy("myString") String> aList
   - functions/methods (whose output parameter can be generated)
   - mutate: like map, but with a random parameter added, see mutate in QuickTheories
   - Recursive generators, like in 

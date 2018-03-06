@@ -19,5 +19,5 @@ import java.lang.annotation.*;
 @Repeatable(CharsList.class)
 @Documented
 public @interface Chars {
-	char[] value() default { };
+	char[] value();
 }

@@ -23,6 +23,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Grouping Tests](#grouping-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
+  - [Constraining parameter types](#constraining-parameter-types)
   - [Providing variable types](#providing-variable-types)
 - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
@@ -508,28 +509,17 @@ Only one of the following constraints can be used:
 - `@Negative`: Numbers lower than or equal to `-0.0`.
 - `@Scale(int value)`
 
-#### Constraining contained types
+### Constraining parameter types
 
-In case of collections, arrays, streams and `Optional` the constraining annotations are also applied to the
-contained type, e.g.:
+When you want to constrain the generation of contained parameter types you can annotate 
+the parameter type directly, e.g.:
 
 ```java
 @Property
-void aProperty(@ForAll @StringLength(max=10) List<String> listOfStrings) {
+void aProperty(@ForAll @Size(min= 1) <@StringLength(max=10) String> listOfStrings) {
 }
 ```
-will generate lists of Strings that have 10 characters max.
-
-<div style="border:1px solid black; padding: 1em; width:auto; text-size: smaller">
-<h4>Side Note</h4>
-In future versions of <em>jqwik</em> constraints for contained types might have to be added to the type itself, like: 
-    <code>
-    @ForAll List<@StringLength(max=10) String> listOfStrings
-    </code>.
-Currently, though, not all Java&nbsp;8 implementations support the retrieval of 
-type parameter annotations through reflection.
-</div>
-
+will generate lists with a minimum size of 1 filled with Strings that have 10 characters max.
 
 ### Providing variable types
 
@@ -1389,8 +1379,8 @@ _TBD_
 - Added new method `Arbitraries.defaultFor()`
 - `@WithNull.target()` has been removed
   <p/>_This is an incompatible API change!_
+- Parameterized types [can now be annotated directly](#constraining-parameter-types)
 
-  
 ### 0.8.5
 
 - All decimal generation (float, double, BigDecimal) now uses BigDecimal under the hood

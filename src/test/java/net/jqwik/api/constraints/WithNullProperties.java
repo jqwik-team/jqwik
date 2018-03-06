@@ -17,11 +17,6 @@ class WithNullProperties {
 		return aValue == null;
 	}
 
-	//@Property TODO: Enable as soon as annotations in parameter types are used
-	boolean parameterValue(@ForAll List<@WithNull(1.0) String> aValue) {
-		return aValue.stream().allMatch(Objects::isNull);
-	}
-
 	@Property
 	boolean sets(@ForAll @WithNull(1.0) Set<String> aValue) {
 		return aValue == null;
