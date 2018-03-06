@@ -50,7 +50,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
 - [Release Notes](#release-notes)
-  - [0.8.6-SNAPSHOT](#086-snapshot)
+  - [0.8.6](#086)
   - [0.8.5](#085)
   - [0.8.4](#084)
   - [0.8.3](#083)
@@ -98,8 +98,8 @@ repositories {
 ext.junitPlatformVersion = '1.1.0'
 ext.junitJupiterVersion = '5.1.0'
 
-ext.jqwikVersion = '0.8.5'
-#ext.jqwikVersion = '0.8.6-SNAPSHOT'
+ext.jqwikVersion = '0.8.6'
+#ext.jqwikVersion = '0.8.7-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -146,7 +146,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.5</version>
+        <version>0.8.6</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -167,7 +167,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.5.jar`
+- `jqwik-0.8.6.jar`
 - `junit-platform-engine-1.1.0.jar`
 - `junit-platform-commons-1.1.0.jar`
 - `opentest4j-1.0.0.jar`
@@ -1294,6 +1294,7 @@ If you register the following `MoneyArbitraryProvider` class:
 
 ```java
 package my.own.provider;
+
 public class MoneyArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
@@ -1367,7 +1368,7 @@ _TBD_
 
 ## Release Notes
 
-### 0.8.6-SNAPSHOT
+### 0.8.6
 
 - BigInteger generation does no longer support `@LongRange` but only `@BigRange`
   <p/>_This is an incompatible API change!_
