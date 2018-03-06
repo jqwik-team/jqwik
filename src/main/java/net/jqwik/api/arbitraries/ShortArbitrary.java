@@ -1,9 +1,11 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 /**
  * Fluent interface to configure the generation of Short and short values.
  */
-public interface ShortArbitrary extends NullableArbitrary<Short> {
+public interface ShortArbitrary extends Arbitrary<Short> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

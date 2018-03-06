@@ -6,14 +6,13 @@ import net.jqwik.api.arbitraries.*;
 import java.util.*;
 import java.util.stream.*;
 
-abstract class DefaultCollectionArbitrary<T, U> extends NullableArbitraryBase<U> implements SizableArbitrary<U> {
+abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase implements SizableArbitrary<U> {
 
 	protected final Arbitrary<T> elementArbitrary;
 	protected int minSize = 0;
 	protected int maxSize = 0;
 
 	protected DefaultCollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary) {
-		super(collectionClass);
 		this.elementArbitrary = elementArbitrary;
 	}
 

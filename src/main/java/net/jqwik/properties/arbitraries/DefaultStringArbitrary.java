@@ -6,27 +6,22 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultStringArbitrary extends NullableArbitraryBase<String> implements StringArbitrary {
+public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
 
 	private List<Arbitrary<Character>> characterArbitraries = new ArrayList<>();
 
 	private int minLength = 0;
 	private int maxLength = 0;
 
-	public DefaultStringArbitrary() {
-		super(String.class);
-	}
-
 	private CharacterArbitrary defaultCharacterArbitrary() {
 		return Arbitraries.chars().ascii();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	protected RandomGenerator<String> baseGenerator(int tries) {
+	public RandomGenerator<String> generator(int tries) {
 		final int effectiveMaxLength = maxLength <= 0 ? Arbitrary.defaultMaxCollectionSizeFromTries(tries) : maxLength;
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
-				.filter(s -> s.length() >= minLength && s.length() <= maxLength).map(s -> Shrinkable.unshrinkable(s))
+				.filter(s -> s.length() >= minLength && s.length() <= maxLength).map(Shrinkable::unshrinkable)
 				.collect(Collectors.toList());
 		return RandomGenerators.strings(createCharacterGenerator(), minLength, effectiveMaxLength).withShrinkableSamples(samples);
 	}
@@ -97,6 +92,7 @@ public class DefaultStringArbitrary extends NullableArbitraryBase<String> implem
 			return defaultCharacterArbitrary().generator(1);
 		}
 		Arbitrary<Character> first = characterArbitraries.get(0);
+		@SuppressWarnings("unchecked")
 		Arbitrary<Character>[] rest = characterArbitraries.subList(1, characterArbitraries.size()).toArray(new Arbitrary[characterArbitraries.size() - 1]);
 
 		Arbitrary<Character> allValidCharacters = Arbitraries.oneOf(first, rest);

@@ -1,13 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
-import java.math.*;
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultDoubleArbitrary extends NullableArbitraryBase<Double> implements DoubleArbitrary {
+import java.math.*;
+
+public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements DoubleArbitrary {
 
 	private static final double DEFAULT_MIN = -Double.MAX_VALUE;
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;
@@ -16,12 +14,11 @@ public class DefaultDoubleArbitrary extends NullableArbitraryBase<Double> implem
 	private final DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultDoubleArbitrary() {
-		super(Double.class);
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX));
 	}
 
 	@Override
-	protected RandomGenerator<Double> baseGenerator(int tries) {
+	public RandomGenerator<Double> generator(int tries) {
 		return generatingArbitrary.generator(tries).map(BigDecimal::doubleValue);
 	}
 

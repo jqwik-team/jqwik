@@ -5,7 +5,7 @@ import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
 
-public class DefaultIntegerArbitrary extends NullableArbitraryBase<Integer> implements IntegerArbitrary {
+public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements IntegerArbitrary {
 
 	private static final int DEFAULT_MIN = Integer.MIN_VALUE;
 	private static final int DEFAULT_MAX = Integer.MAX_VALUE;
@@ -13,12 +13,11 @@ public class DefaultIntegerArbitrary extends NullableArbitraryBase<Integer> impl
 	private final IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultIntegerArbitrary() {
-		super(Integer.class);
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.valueOf(DEFAULT_MIN), BigInteger.valueOf(DEFAULT_MAX));
 	}
 
 	@Override
-	protected RandomGenerator<Integer> baseGenerator(int tries) {
+	public RandomGenerator<Integer> generator(int tries) {
 		return generatingArbitrary.generator(tries).map(BigInteger::intValueExact);
 	}
 

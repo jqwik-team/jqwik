@@ -1,9 +1,11 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 /**
  * Fluent interface to configure arbitraries that generate String values.
  */
-public interface StringArbitrary extends NullableArbitrary<String> {
+public interface StringArbitrary extends Arbitrary<String> {
 
 	/**
 	 * Set the maximum allowed length {@code maxLength} (included) of generated strings.

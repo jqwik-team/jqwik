@@ -5,7 +5,7 @@ import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
 
-public class DefaultByteArbitrary extends NullableArbitraryBase<Byte> implements ByteArbitrary {
+public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteArbitrary {
 
 	private static final byte DEFAULT_MIN = Byte.MIN_VALUE;
 	private static final byte DEFAULT_MAX = Byte.MAX_VALUE;
@@ -13,12 +13,11 @@ public class DefaultByteArbitrary extends NullableArbitraryBase<Byte> implements
 	private final IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultByteArbitrary() {
-		super(Byte.class);
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.valueOf(DEFAULT_MIN), BigInteger.valueOf(DEFAULT_MAX));
 	}
 
 	@Override
-	protected RandomGenerator<Byte> baseGenerator(int tries) {
+	public RandomGenerator<Byte> generator(int tries) {
 		return generatingArbitrary.generator(tries).map(BigInteger::byteValueExact);
 	}
 

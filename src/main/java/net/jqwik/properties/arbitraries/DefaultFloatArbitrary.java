@@ -1,13 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
-import java.math.*;
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-public class DefaultFloatArbitrary extends NullableArbitraryBase<Float> implements FloatArbitrary {
+import java.math.*;
+
+public class DefaultFloatArbitrary extends AbstractArbitraryBase implements FloatArbitrary {
 
 	private static final float DEFAULT_MIN = -Float.MAX_VALUE;
 	private static final float DEFAULT_MAX = Float.MAX_VALUE;
@@ -15,12 +13,11 @@ public class DefaultFloatArbitrary extends NullableArbitraryBase<Float> implemen
 	private final DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultFloatArbitrary() {
-		super(Float.class);
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX));
 	}
 
 	@Override
-	protected RandomGenerator<Float> baseGenerator(int tries) {
+	public RandomGenerator<Float> generator(int tries) {
 		return generatingArbitrary.generator(tries).map(BigDecimal::floatValue);
 	}
 

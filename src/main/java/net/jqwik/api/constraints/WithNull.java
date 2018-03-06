@@ -9,8 +9,6 @@ import java.lang.annotation.*;
  *
  * {@code value} specifies the probability between 0 and 1.0 to use for injecting null values.
  *
- * When {@code target} is specified, only values of that class will be candidates for null values.
- *
  * @see net.jqwik.api.ForAll
  */
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
@@ -18,6 +16,4 @@ import java.lang.annotation.*;
 @Documented
 public @interface WithNull {
 	double value() default 0.1;
-
-	Class<?> target() default Object.class;
 }

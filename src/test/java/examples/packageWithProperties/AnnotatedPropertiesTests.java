@@ -8,12 +8,12 @@ import net.jqwik.api.constraints.*;
 public class AnnotatedPropertiesTests {
 
 	@Property
-	boolean allIntegersAndNulls(@ForAll @WithNull(target = Integer.class) Integer anInt) {
+	boolean allIntegersAndNulls(@ForAll @WithNull Integer anInt) {
 		return anInt != null;
 	}
 
 	@Property(tries = 10)
-	boolean aListWithNullIntegers(@ForAll @WithNull(value = 0.5, target = Integer.class) List<Integer> aList) {
+	boolean aListWithNullIntegers(@ForAll List<@WithNull(value = 0.5) Integer> aList) {
 		return aList.stream().allMatch(anInt -> anInt != null);
 	}
 

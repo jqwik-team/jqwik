@@ -1,9 +1,11 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 /**
  * Fluent interface to configure the generation of Integer and int values.
  */
-public interface IntegerArbitrary extends NullableArbitrary<Integer> {
+public interface IntegerArbitrary extends Arbitrary<Integer> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

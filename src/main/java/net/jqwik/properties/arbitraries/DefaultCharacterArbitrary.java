@@ -5,19 +5,18 @@ import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
 
-public class DefaultCharacterArbitrary extends NullableArbitraryBase<Character> implements CharacterArbitrary {
+public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements CharacterArbitrary {
 
 	public static final int MAX_ASCII_CODEPOINT = 0x007F;
 
 	private final IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultCharacterArbitrary() {
-		super(Character.class);
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.ZERO, BigInteger.ZERO);
 	}
 
 	@Override
-	protected RandomGenerator<Character> baseGenerator(int tries) {
+	public RandomGenerator<Character> generator(int tries) {
 		return this.generatingArbitrary.generator(tries).map(bigInteger -> (char) bigInteger.intValueExact());
 	}
 

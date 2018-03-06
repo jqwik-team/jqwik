@@ -11,7 +11,7 @@ public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 	}
 
 	@Override
-	protected RandomGenerator<List<T>> baseGenerator(int tries) {
+	public RandomGenerator<List<T>> generator(int tries) {
 		return listGenerator(tries);
 	}
 

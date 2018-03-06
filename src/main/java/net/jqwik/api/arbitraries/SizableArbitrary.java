@@ -1,9 +1,11 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 /**
  * Fluent interface to configure arbitraries that have size constraints for generated values, e.g. collections and arrays.
  */
-public interface SizableArbitrary<U> extends NullableArbitrary<U> {
+public interface SizableArbitrary<U> extends Arbitrary<U> {
 
 	/**
 	 * Fix the size to {@code size}.

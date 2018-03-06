@@ -1,9 +1,11 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 /**
  * Fluent interface to configure the generation of Long and long values.
  */
-public interface LongArbitrary extends NullableArbitrary<Long> {
+public interface LongArbitrary extends Arbitrary<Long> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

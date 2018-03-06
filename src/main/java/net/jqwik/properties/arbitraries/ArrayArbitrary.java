@@ -7,25 +7,26 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-public class ArrayArbitrary<A, T> extends NullableArbitraryBase<A> implements SizableArbitrary<A> {
+public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A> {
 
+	private final Class<A> arrayClass;
 	private final Arbitrary<T> elementArbitrary;
 	private int maxSize = 0;
 	private int minSize = 0;
 
 	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
-		super(arrayClass);
+		this.arrayClass = arrayClass;
 		this.elementArbitrary = elementArbitrary;
 	}
 
 	@Override
-	protected RandomGenerator<A> baseGenerator(int tries) {
+	public RandomGenerator<A> generator(int tries) {
 		return listGenerator(tries).map(this::toArray);
 	}
 
 	@SuppressWarnings("unchecked")
 	private A toArray(List<T> from) {
-		A array = (A) Array.newInstance(getTargetClass().getComponentType(), from.size());
+		A array = (A) Array.newInstance(arrayClass.getComponentType(), from.size());
 		for (int i = 0; i < from.size(); i++) {
 			Array.set(array, i, from.get(i));
 		}

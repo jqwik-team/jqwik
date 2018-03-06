@@ -11,7 +11,7 @@ public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 	}
 
 	@Override
-	protected RandomGenerator<Set<T>> baseGenerator(int tries) {
+	public RandomGenerator<Set<T>> generator(int tries) {
 		int effectiveMaxSize = effectiveMaxSize(tries);
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
 		List<Shrinkable<Set<T>>> samples = samplesList(new HashSet<>());

@@ -421,14 +421,9 @@ on the requested parameter type.
 
 #### All types:
 
-- `@WithNull(double value = 0.1, target = Object.class)`: 
-   Also generate `null` values with a probability of `value`. 
+- `@WithNull(double value = 0.1)`: 
+   Inject `null` into generated values with a probability of `value`. 
    
-   If you annotate a generic parameter with `@WithNull`, only parameter types that
-   can be assigned to `target` are considered for `null`.
-   
-   `@WithNull` also works for [customized parameter generation](#customized-parameter-generation).
-
 #### Strings:
 
 If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
@@ -768,7 +763,6 @@ like size, length, boundaries etc. Have a look at the Java doc for the following
 - [FloatArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/FloatArbitrary.html)
 - [IntegerArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/IntegerArbitrary.html)
 - [LongArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
-- [NullableArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/NullableArbitrary.html)
 - [ShortArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
 - [SizableArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
 - [StringArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
@@ -1393,6 +1387,9 @@ _TBD_
   specified by `tries` parameter.
 - Added new method `Arbitraries.constant()`
 - Added new method `Arbitraries.defaultFor()`
+- `@WithNull.target()` has been removed
+  <p/>_This is an incompatible API change!_
+
   
 ### 0.8.5
 

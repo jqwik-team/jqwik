@@ -1,9 +1,11 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 /**
  * Fluent interface to configure the generation of Float and float values.
  */
-public interface FloatArbitrary extends NullableArbitrary<Float> {
+public interface FloatArbitrary extends Arbitrary<Float> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

@@ -5,7 +5,7 @@ import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
 
-public class DefaultBigDecimalArbitrary extends NullableArbitraryBase<BigDecimal> implements BigDecimalArbitrary {
+public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements BigDecimalArbitrary {
 
 	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-Double.MAX_VALUE);
 	private static final BigDecimal DEFAULT_MAX = new BigDecimal(Double.MAX_VALUE);
@@ -14,12 +14,11 @@ public class DefaultBigDecimalArbitrary extends NullableArbitraryBase<BigDecimal
 	private final DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultBigDecimalArbitrary() {
-		super(BigDecimal.class);
 		this.generatingArbitrary = new DecimalGeneratingArbitrary(DEFAULT_MIN, DEFAULT_MAX);
 	}
 
 	@Override
-	protected RandomGenerator<BigDecimal> baseGenerator(int tries) {
+	public RandomGenerator<BigDecimal> generator(int tries) {
 		return generatingArbitrary.generator(tries);
 	}
 

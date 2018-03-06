@@ -1,11 +1,13 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 import java.math.*;
 
 /**
  * Fluent interface to configure the generation of BigInteger values.
  */
-public interface BigIntegerArbitrary extends NullableArbitrary<BigInteger> {
+public interface BigIntegerArbitrary extends Arbitrary<BigInteger> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

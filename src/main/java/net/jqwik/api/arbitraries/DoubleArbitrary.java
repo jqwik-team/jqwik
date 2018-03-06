@@ -1,9 +1,11 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 /**
  * Fluent interface to configure the generation of Double and double values.
  */
-public interface DoubleArbitrary extends NullableArbitrary<Double> {
+public interface DoubleArbitrary extends Arbitrary<Double> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

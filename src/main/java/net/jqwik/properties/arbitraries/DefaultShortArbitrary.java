@@ -5,7 +5,7 @@ import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
 
-public class DefaultShortArbitrary extends NullableArbitraryBase<Short> implements ShortArbitrary {
+public class DefaultShortArbitrary extends AbstractArbitraryBase implements ShortArbitrary {
 
 	private static final short DEFAULT_MIN = Short.MIN_VALUE;
 	private static final short DEFAULT_MAX = Short.MAX_VALUE;
@@ -13,12 +13,11 @@ public class DefaultShortArbitrary extends NullableArbitraryBase<Short> implemen
 	private final IntegralGeneratingArbitrary generatingArbitrary;
 
 	public DefaultShortArbitrary() {
-		super(Short.class);
 		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.valueOf(DEFAULT_MIN), BigInteger.valueOf(DEFAULT_MAX));
 	}
 
 	@Override
-	protected RandomGenerator<Short> baseGenerator(int tries) {
+	public RandomGenerator<Short> generator(int tries) {
 		return generatingArbitrary.generator(tries).map(BigInteger::shortValueExact);
 	}
 

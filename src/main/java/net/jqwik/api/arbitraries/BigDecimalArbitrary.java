@@ -1,11 +1,13 @@
 package net.jqwik.api.arbitraries;
 
+import net.jqwik.api.*;
+
 import java.math.*;
 
 /**
  * Fluent interface to configure the generation of BigDecimal values.
  */
-public interface BigDecimalArbitrary extends NullableArbitrary<BigDecimal> {
+public interface BigDecimalArbitrary extends Arbitrary<BigDecimal> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.
