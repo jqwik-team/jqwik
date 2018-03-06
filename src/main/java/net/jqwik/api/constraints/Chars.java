@@ -14,7 +14,7 @@ import java.lang.annotation.*;
  * @see net.jqwik.api.ForAll
  * @see CharRange
  */
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(CharsList.class)
 @Documented

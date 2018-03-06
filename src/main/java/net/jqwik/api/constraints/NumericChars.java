@@ -13,7 +13,7 @@ import java.lang.annotation.*;
  * @see net.jqwik.api.ForAll
  * @see AlphaChars
  */
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 @CharRange(from = '0', to = '9')
 @Documented

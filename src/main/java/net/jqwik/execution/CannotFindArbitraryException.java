@@ -15,8 +15,8 @@ public class CannotFindArbitraryException extends JqwikException {
 	}
 
 	private static String createMessage(MethodParameter parameter) {
-		String forAllValue = parameter.getDeclaredAnnotation(ForAll.class).value();
-		GenericType genericType = GenericType.forParameter(parameter.getNativeParameter());
+		String forAllValue = parameter.getAnnotation(ForAll.class).value();
+		GenericType genericType = GenericType.forParameter(parameter);
 		if (forAllValue.isEmpty())
 			return String.format("Cannot find an Arbitrary for Parameter of type [%s]", genericType);
 		else

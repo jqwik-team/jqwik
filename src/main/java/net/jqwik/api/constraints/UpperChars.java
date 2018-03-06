@@ -14,7 +14,7 @@ import java.lang.annotation.*;
  * @see LowerChars
  * @see AlphaChars
  */
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 @CharRange(from = 'A', to = 'Z')
 @Documented

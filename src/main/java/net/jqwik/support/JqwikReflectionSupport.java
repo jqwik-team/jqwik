@@ -142,9 +142,17 @@ public class JqwikReflectionSupport {
 	}
 
 	public static MethodParameter[] getMethodParameters(Method method) {
-		return Arrays.stream(method.getParameters())
-			.map(MethodParameter::new)
-			.toArray(MethodParameter[]::new);
+		List<MethodParameter> list = new ArrayList<>();
+		Parameter[] parameters = method.getParameters();
+		AnnotatedType[] annotatedTypes = method.getAnnotatedParameterTypes();
+
+		for (int i = 0; i < parameters.length; i++) {
+			Parameter parameter = parameters[i];
+			AnnotatedType annotatedType = annotatedTypes[i];
+			MethodParameter methodParameter = new MethodParameter(parameter, annotatedType);
+			list.add(methodParameter);
+		}
+		return list.toArray(new MethodParameter[parameters.length]);
 	}
 
 	public static boolean isPublic(Class<?> clazz) {

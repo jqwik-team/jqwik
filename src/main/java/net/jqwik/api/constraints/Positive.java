@@ -10,7 +10,7 @@ import java.lang.annotation.*;
  * @see net.jqwik.api.ForAll
  * @see Negative
  */
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
 @Retention(RetentionPolicy.RUNTIME)
 @ShortRange(min = 0, max = Short.MAX_VALUE)
 @ByteRange(min = 0, max = Byte.MAX_VALUE)

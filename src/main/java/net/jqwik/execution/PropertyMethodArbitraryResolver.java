@@ -39,11 +39,11 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	@Override
 	public Optional<Arbitrary<Object>> forParameter(MethodParameter parameter) {
-		Optional<ForAll> forAllAnnotation = AnnotationSupport.findAnnotation(parameter.getNativeParameter(), ForAll.class);
+		Optional<ForAll> forAllAnnotation = parameter.findAnnotation(ForAll.class);
 
 		return forAllAnnotation.flatMap(annotation -> {
 			String generatorName = forAllAnnotation.get().value();
-			GenericType genericType = GenericType.forParameter(parameter.getNativeParameter());
+			GenericType genericType = GenericType.forParameter(parameter);
 			List<Annotation> configurationAnnotations = genericType.getAnnotations() //
 					.stream() //
 					.filter(parameterAnnotation -> !parameterAnnotation.annotationType().equals(ForAll.class)) //
@@ -116,13 +116,13 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 				return false;
 			}
 			GenericType arbitraryReturnType = GenericType.forType(method.getAnnotatedReturnType().getType());
-			if (!arbitraryReturnType.getRawType().equals(Arbitrary.class)) {
+			if (!arbitraryReturnType.isOfType(Arbitrary.class)) {
 				return false;
 			}
 			if (!arbitraryReturnType.isGeneric()) {
 				return false;
 			}
-			return genericType.isCompatibleWith(arbitraryReturnType.getTypeArguments()[0]);
+			return genericType.isCompatibleWith(arbitraryReturnType.getTypeArguments().get(0));
 		};
 	}
 

@@ -17,7 +17,7 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
-		GenericType innerType = targetType.getTypeArguments()[0];
+		GenericType innerType = targetType.getTypeArguments().get(0);
 		return subtypeProvider.apply(innerType) //
 				.map(this::create) //
 				.orElse(null);

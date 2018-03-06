@@ -43,9 +43,9 @@ public class CheckedPropertyFactoryTests {
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
 		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
-		assertThat(property.forAllParameters.get(0).getDeclaredAnnotation(ForAll.class)).isNotNull();
+		assertThat(property.forAllParameters.get(0).getAnnotation(ForAll.class)).isNotNull();
 		assertThat(property.forAllParameters.get(1).getType()).isEqualTo(String.class);
-		assertThat(property.forAllParameters.get(1).getDeclaredAnnotation(ForAll.class)).isNotNull();
+		assertThat(property.forAllParameters.get(1).getAnnotation(ForAll.class)).isNotNull();
 	}
 
 	@Example

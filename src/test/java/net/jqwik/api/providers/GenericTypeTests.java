@@ -4,6 +4,7 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuples.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.support.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -63,7 +64,8 @@ class GenericTypeTests {
 				public void withParameter(Tuple2<String, Integer> tuple) {}
 			}
 
-			Parameter parameter = LocalClass.class.getMethod("withParameter", Tuple2.class).getParameters()[0];
+			Method method = LocalClass.class.getMethod("withParameter", Tuple2.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
 			GenericType tupleType = GenericType.forParameter(parameter);
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
@@ -79,7 +81,8 @@ class GenericTypeTests {
 				public void withList(@Size(max = 2) List list) {}
 			}
 
-			Parameter parameter = LocalClass.class.getMethod("withList", List.class).getParameters()[0];
+			Method method = LocalClass.class.getMethod("withList", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
 			GenericType parameterType = GenericType.forParameter(parameter);
 			assertThat(parameterType.getRawType()).isEqualTo(List.class);
 			assertThat(parameterType.getAnnotations().get(0)).isInstanceOf(Size.class);
@@ -89,15 +92,22 @@ class GenericTypeTests {
 		void annotatedTypeParameters() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public void withList(List<@StringLength(max = 2) String> list) {}
+				public void withList(
+					@Size(max = 5) List<
+						@StringLength(max = 2)
+						@CharRange(from = 'a', to = 'z') String
+						> list
+				) {}
 			}
 
-			AnnotatedParameterizedType parameter = (AnnotatedParameterizedType) LocalClass.class.getMethod("withList", List.class)
-																								.getAnnotatedParameterTypes()[0];
-			GenericType parameterType = GenericType.forParameter(parameter);
-			GenericType stringType = parameterType.getTypeArguments()[0];
+			Method method = LocalClass.class.getMethod("withList", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
+			GenericType listType = GenericType.forParameter(parameter);
+			assertThat(listType.getAnnotations().get(0)).isInstanceOf(Size.class);
+			GenericType stringType = listType.getTypeArguments().get(0);
 			assertThat(stringType.isOfType(String.class)).isTrue();
 			assertThat(stringType.getAnnotations().get(0)).isInstanceOf(StringLength.class);
+			assertThat(stringType.getAnnotations().get(1)).isInstanceOf(CharRange.class);
 		}
 
 	}
@@ -137,7 +147,8 @@ class GenericTypeTests {
 				public void withParameter(List<?> list) {}
 			}
 
-			Parameter parameter = LocalClass.class.getMethod("withParameter", List.class).getParameters()[0];
+			Method method = LocalClass.class.getMethod("withParameter", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
 
 			GenericType target = forParameter(parameter);
 			GenericType provided = of(List.class);
