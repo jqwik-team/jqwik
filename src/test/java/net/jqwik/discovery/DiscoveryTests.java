@@ -155,21 +155,12 @@ class DiscoveryTests {
 	}
 
 	@Example
-	void discoverFromStaticMethod() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectMethod(SimpleExampleTests.class, "staticExample")).build();
-
-		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
-		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
-		assertThat(count(engineDescriptor, isSkipDecorator)).isEqualTo(1);
-	}
-
-	@Example
 	void discoverClassById() {
 		UniqueId uniqueId = uniqueIdForClassContainer(SimpleExampleTests.class);
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
-		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(4);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(5);
 	}
 
 	@Example
@@ -179,6 +170,29 @@ class DiscoveryTests {
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
+	}
+
+	@Group
+	class Skipping {
+		@Example
+		void staticMethodIsSkipped() {
+			LauncherDiscoveryRequest discoveryRequest = request().selectors(selectMethod(SimpleExampleTests.class, "staticExample"))
+																 .build();
+
+			TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+			assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
+			assertThat(count(engineDescriptor, isSkipDecorator)).isEqualTo(1);
+		}
+
+		@Example
+		void methodWithJupiterAnnotationIsSkipped() {
+			LauncherDiscoveryRequest discoveryRequest = request().selectors(selectMethod(SimpleExampleTests.class, "withJupiterAnnotation"))
+																 .build();
+
+			TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+			assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
+			assertThat(count(engineDescriptor, isSkipDecorator)).isEqualTo(1);
+		}
 	}
 
 	private Predicate<TestDescriptor> isChildOf(Predicate<TestDescriptor> parentPredicate) {

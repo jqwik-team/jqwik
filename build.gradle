@@ -147,8 +147,8 @@ dependencies {
 	testCompile("org.assertj:assertj-core:3.9.0")
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
-	// Only necessary to some IntelliJ support bugs
-	testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+	// Only needed to check interferences between Jupiter and jqwik
+	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
 }
 
