@@ -40,6 +40,22 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
+		void propertyWithLabel() throws NoSuchMethodException {
+			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(TestContainer.class)
+					.build();
+			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithLabel");
+			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
+
+			Assertions.assertThat(descriptors).hasSize(1);
+			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("my label");
+			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
+					.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
+
+			assertDefaultConfigurationProperties(propertyMethodDescriptor);
+		}
+
+		@Example
 		void propertyWithParams() throws NoSuchMethodException {
 			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) TestDescriptorBuilder.forClass(TestContainer.class)
 					.build();
@@ -139,6 +155,11 @@ class PropertyMethodResolverTest {
 	private static class TestContainer {
 		@Property
 		void plainProperty() {
+		}
+
+		@Property
+		@Label("my label")
+		void propertyWithLabel() {
 		}
 
 		@Property

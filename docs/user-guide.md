@@ -21,6 +21,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Method Lifecycle](#method-lifecycle)
   - [Other Lifecycles](#other-lifecycles)
 - [Grouping Tests](#grouping-tests)
+- [Labeling Tests](#labeling-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
   - [Constraining parameter types](#constraining-parameter-types)
@@ -392,6 +393,34 @@ class TestsWithGroups {
 	}
 }
 ```
+
+## Labeling Tests
+
+Test container classes, groups, example methods and property methods can be labeled
+using the annotation `@Label("a label")`. This label will be used to display the element
+in test reports or within the IDE. In the following example, every test relevant element
+has been labeled:
+
+```java
+@Label("Labeling")
+class LabelingExamples {
+
+	@Property
+	@Label("a property")
+	void aPropertyWithALabel() { }
+
+	@Group
+	@Label("A Group")
+	class GroupWithLabel {
+		@Example
+		@Label("an example with äöüÄÖÜ")
+		void anExampleWithALabel() { }
+	}
+}
+```
+
+Labels can consist of any characters and don't have to be unique - but you probably want them 
+to be unique within their container.
 
 ## Default Parameter Generation
 
@@ -1372,6 +1401,7 @@ _TBD_
 ### 0.8.7-SNAPSHOT
 
 - Property methods that also have Jupiter annotations are skipped
+- Added `@Label` to allow the [labeling of examples, properties and containers](#labeling-tests)
 
 ### 0.8.6
 

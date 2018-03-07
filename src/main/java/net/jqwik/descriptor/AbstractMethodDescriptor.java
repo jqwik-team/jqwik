@@ -1,11 +1,13 @@
 package net.jqwik.descriptor;
 
-import java.lang.reflect.Method;
-
-import org.junit.platform.engine.UniqueId;
+import net.jqwik.api.*;
+import net.jqwik.execution.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
-import net.jqwik.execution.PropertyContext;
+import java.lang.reflect.*;
+import java.util.*;
 
 public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements PropertyContext {
 	private final Method targetMethod;
@@ -18,7 +20,11 @@ public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor im
 	}
 
 	protected static String determineDisplayName(Method targetMethod) {
-		return targetMethod.getName();
+		Optional<Label> label = AnnotationSupport.findAnnotation(targetMethod, Label.class);
+		return label
+			.map(Label::value)
+			.filter(displayName -> !displayName.trim().isEmpty())
+			.orElse(targetMethod.getName());
 	}
 
 	public Method getTargetMethod() {

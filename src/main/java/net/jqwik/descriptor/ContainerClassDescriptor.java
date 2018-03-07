@@ -1,9 +1,12 @@
 package net.jqwik.descriptor;
 
+import net.jqwik.api.*;
 import net.jqwik.discovery.predicates.*;
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
+import java.util.*;
 import java.util.function.*;
 
 public class ContainerClassDescriptor extends AbstractTestDescriptor {
@@ -21,6 +24,14 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	}
 
 	private static String determineDisplayName(Class<?> containerClass) {
+		Optional<Label> label = AnnotationSupport.findAnnotation(containerClass, Label.class);
+		return label
+			.map(Label::value)
+			.filter(displayName -> !displayName.trim().isEmpty())
+			.orElse(getDefaultDisplayName(containerClass));
+	}
+
+	private static String getDefaultDisplayName(Class<?> containerClass) {
 		if (isTopLevelClass.test(containerClass) || isContainerAGroup.test(containerClass))
 			return containerClass.getSimpleName();
 		return getCanonicalNameWithoutPackage(containerClass);
