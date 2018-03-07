@@ -50,6 +50,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
 - [Release Notes](#release-notes)
+  - [0.8.7-SNAPSHOT](#087-snapshot)
   - [0.8.6](#086)
   - [0.8.5](#085)
   - [0.8.4](#084)
@@ -1367,6 +1368,10 @@ _TBD_
 
 
 ## Release Notes
+
+### 0.8.7-SNAPSHOT
+
+- Property methods that also have Jupiter annotations are skipped
 
 ### 0.8.6
 
