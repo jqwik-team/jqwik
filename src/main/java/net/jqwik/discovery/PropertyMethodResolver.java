@@ -1,16 +1,16 @@
 package net.jqwik.discovery;
 
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.discovery.specs.*;
+import net.jqwik.recording.*;
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.hierarchical.Node.*;
+
 import java.lang.reflect.*;
 import java.util.*;
-
-import net.jqwik.*;
-import org.junit.platform.commons.support.AnnotationSupport;
-import org.junit.platform.engine.*;
-
-import net.jqwik.api.Property;
-import net.jqwik.descriptor.*;
-import net.jqwik.discovery.specs.PropertyDiscoverySpec;
-import net.jqwik.recording.*;
 
 class PropertyMethodResolver implements ElementResolver {
 
@@ -69,8 +69,9 @@ class PropertyMethodResolver implements ElementResolver {
 		UniqueId uniqueId = createUniqueId(method, parent);
 		Class<?> testClass = ((ContainerClassDescriptor) parent).getContainerClass();
 		TestDescriptor newDescriptor = createTestDescriptor(uniqueId, testClass, method);
-		if (methodSpec.butSkippedOnExecution(method)) {
-			return new SkipExecutionDecorator(newDescriptor, methodSpec.skippingReason(method));
+		SkipResult shouldBeSkipped = methodSpec.shouldBeSkipped(method);
+		if (shouldBeSkipped.isSkipped()) {
+			return new SkipExecutionDecorator(newDescriptor, shouldBeSkipped.getReason().orElse(""));
 		} else {
 			return newDescriptor;
 		}

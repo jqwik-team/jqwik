@@ -2,6 +2,7 @@ package net.jqwik.discovery.specs;
 
 import net.jqwik.api.*;
 import net.jqwik.discovery.predicates.*;
+import org.junit.platform.engine.support.hierarchical.Node.*;
 
 import java.util.function.*;
 
@@ -22,12 +23,7 @@ public class TopLevelContainerDiscoverySpec implements DiscoverySpec<Class<?>> {
 	}
 
 	@Override
-	public boolean butSkippedOnExecution(Class<?> candidate) {
-		return false;
-	}
-
-	@Override
-	public String skippingReason(Class<?> candidate) {
-		return null;
+	public SkipResult shouldBeSkipped(Class<?> candidate) {
+		return SkipResult.doNotSkip();
 	}
 }

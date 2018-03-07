@@ -2,6 +2,7 @@ package net.jqwik.discovery.specs;
 
 import net.jqwik.api.*;
 import net.jqwik.discovery.predicates.*;
+import org.junit.platform.engine.support.hierarchical.Node.*;
 
 import java.util.function.*;
 
@@ -20,14 +21,10 @@ public class GroupDiscoverySpec implements DiscoverySpec<Class<?>> {
 			.and(hasGroupAnnotation)
 			.test(candidate);
 	}
-
 	@Override
-	public boolean butSkippedOnExecution(Class<?> candidate) {
-		return isStatic(candidate);
-	}
-
-	@Override
-	public String skippingReason(Class<?> candidate) {
-		return "@Group classes must not be static";
+	public SkipResult shouldBeSkipped(Class<?> candidate) {
+		if (isStatic(candidate))
+			return SkipResult.skip("@Group classes must not be static");
+		return SkipResult.doNotSkip();
 	}
 }

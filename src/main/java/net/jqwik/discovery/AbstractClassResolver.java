@@ -4,6 +4,7 @@ import net.jqwik.descriptor.*;
 import net.jqwik.discovery.specs.*;
 import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.hierarchical.Node.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -51,8 +52,9 @@ public abstract class AbstractClassResolver implements ElementResolver {
 
 	private TestDescriptor resolveClass(Class<?> testClass, UniqueId uniqueId) {
 		ContainerClassDescriptor newContainerDescriptor = createContainerDescriptor(testClass, uniqueId);
-		if (getDiscoverySpec().butSkippedOnExecution(testClass)) {
-			return new SkipExecutionDecorator(newContainerDescriptor, getDiscoverySpec().skippingReason(testClass));
+		SkipResult shouldBeSkipped = getDiscoverySpec().shouldBeSkipped(testClass);
+		if (shouldBeSkipped.isSkipped()) {
+			return new SkipExecutionDecorator(newContainerDescriptor, shouldBeSkipped.getReason().orElse(""));
 		}
 		return newContainerDescriptor;
 	}

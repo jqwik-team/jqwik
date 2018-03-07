@@ -2,6 +2,7 @@ package net.jqwik.discovery.specs;
 
 import net.jqwik.api.*;
 import net.jqwik.discovery.predicates.*;
+import org.junit.platform.engine.support.hierarchical.Node.*;
 
 import java.lang.reflect.*;
 
@@ -17,12 +18,10 @@ public class PropertyDiscoverySpec implements DiscoverySpec<Method> {
 	}
 
 	@Override
-	public boolean butSkippedOnExecution(Method candidate) {
-		return isStatic(candidate);
+	public SkipResult shouldBeSkipped(Method candidate) {
+		if (isStatic(candidate))
+			return SkipResult.skip("A @Property method must not be static");
+		return SkipResult.doNotSkip();
 	}
 
-	@Override
-	public String skippingReason(Method candidate) {
-		return "A @Property method must not be static";
-	}
 }
