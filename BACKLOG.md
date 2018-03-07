@@ -1,6 +1,5 @@
 ### Bugs
 
-- Arbitrary.filter can result in endless loop if the filter criterion never matches.
 - ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
   - Alternative 1: change distance to be of type BigInteger!
   - Alternative 2: Make distance a structured value object with higher position compared first, 
@@ -26,7 +25,8 @@
 - Switch to gradle library plugin: 
   https://docs.gradle.org/current/userguide/java_library_plugin.html
 
-- Allow custom names for containers and test methods: @Label?
+- Allow tags for containers and test methods: @Tag
+  - Issue error when jupiter's @Tag is being used instead
 
 - Allow Fixture parameters to examples and properties
 
@@ -38,8 +38,6 @@
   - PerMethodLifeCycle
   - PerTryLifeCycle
 
-- Warn (or skip? or fail?) if jqwik tests are annotated with Jupiter/JUnit4 annotations
-
 - Parallel test execution: Does it make sense with non working IntelliJ support?
 
 ### Properties
@@ -50,8 +48,6 @@
 - Provider methods can take params e.g.
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
 
-- Filter out duplicates in generated sets
-
 - Generator/Arbitrary for sequences of method/function calls 
 
 - Shrinking
@@ -61,7 +57,9 @@
 
 - Evaluate properties in parallel (max tries worker thread per property)
 
-- @ForAll can take `providerClass` parameter (with or without value param)
+- @ForAll 
+  - can be used in parameter types to choose provider method
+  - can take `providerClass` parameter (with or without value param)
 
 - Handle error
   - if more than one generator applies
@@ -80,11 +78,12 @@
 - Arbitraries and Generators
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - functions/methods (whose output parameter can be generated)
-  - mutate: like map, but with a random parameter added, see mutate in QuickTheories
   - Recursive generators, like in 
     http://propertesting.com/book_custom_generators.html#_recursive_generators
   - @Regex(RegularExpression value)
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
+  - mutate: like map, but with a random parameter added, see mutate in QuickTheories
+    Maybe not needed, flatMap with returning tuple does the same.
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 
