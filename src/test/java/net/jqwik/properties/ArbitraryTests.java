@@ -1,5 +1,6 @@
 package net.jqwik.properties;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 
@@ -146,6 +147,16 @@ class ArbitraryTests {
 				assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3);
 			});
 		}
+
+		@Example
+		void failIfFilterWillDiscard10000ValuesInARow() {
+			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
+			RandomGenerator<Integer> generator = filtered.generator(10);
+
+			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
+		}
+
 
 	}
 

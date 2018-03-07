@@ -1,11 +1,13 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.*;
+import net.jqwik.api.*;
+
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.*;
-
 public class FilteredGenerator<T> implements RandomGenerator<T> {
+	private static final long MAX_MISSES = 10000;
 	private final RandomGenerator<T> toFilter;
 	private final Predicate<T> filterPredicate;
 
@@ -16,10 +18,22 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 
 	@Override
 	public Shrinkable<T> next(Random random) {
+		long count = 0;
 		while (true) {
 			Shrinkable<T> next = toFilter.next(random);
-			if (filterPredicate.test(next.value()))
+			if (filterPredicate.test(next.value())) {
 				return new FilteredShrinkable<>(next, filterPredicate);
+			} else {
+				if (++count > MAX_MISSES) {
+					throw new JqwikException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));
+				}
+			}
+
 		}
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Filtering [%s]", toFilter);
 	}
 }

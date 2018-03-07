@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
+import net.jqwik.support.*;
 
 public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 	private final T[] values;
@@ -29,6 +30,11 @@ public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 					index.set(0);
 					return next(random);
 				}
+			}
+
+			@Override
+			public String toString() {
+				return String.format("Wheel: %s", JqwikStringSupport.displayString(values));
 			}
 		};
 	}
