@@ -300,4 +300,11 @@ public class Arbitraries {
 			throw new JqwikException(String.format("No default arbitrary for type [%s]", genericType));
 		}
 	}
+
+	@SafeVarargs
+	public static <T> Arbitrary<T> frequency(Tuples.Tuple2<Integer, T> ... frequencies) {
+		if (frequencies.length == 0)
+			throw new JqwikException("No frequency specified.");
+		return constant(frequencies[0].v2);
+	}
 }

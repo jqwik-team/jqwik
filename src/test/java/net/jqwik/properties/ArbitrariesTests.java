@@ -87,6 +87,23 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	class Frequency {
+
+		@Example
+		void onePair() {
+			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"));
+			ArbitraryTestHelper.assertAllGenerated(one.generator(1000), value -> {return value.equals("a");});
+		}
+
+		//@Property(tries = 10)
+		void twoPairs() {
+			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(1, "b"));
+			Assertions.fail("not specified yet");
+			//ArbitraryTestHelper.assertAtLeastOneGenerated(one.generator(1000), value -> value.equals("a"));
+		}
+	}
+
+	@Group
 	class DefaultFor {
 		@Example
 		void simpleType() {

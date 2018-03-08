@@ -25,17 +25,17 @@ public class ArbitraryTestHelper {
 		fail(failureMessage);
 	}
 
-	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
+	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Predicate<T> checker) {
 		Random random = SourceOfRandomness.current();
 		for (int i = 0; i < 100; i++) {
 			Shrinkable<T> value = generator.next(random);
-			if (!checker.apply(value.value()))
+			if (!checker.test(value.value()))
 				fail(String.format("Value [%s] failed to fulfill condition.", value.value().toString()));
 		}
 	}
 
 	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Consumer<T> assertions) {
-		Function<T, Boolean> checker = value -> {
+		Predicate<T> checker = value -> {
 			try {
 				assertions.accept(value);
 				return true;

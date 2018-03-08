@@ -1,5 +1,6 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 
 import java.math.*;
@@ -142,7 +143,7 @@ public class RandomGenerators {
 
 	public static <T> RandomGenerator<T> fail(String message) {
 		return ignored -> {
-			throw new RuntimeException(message);
+			throw new JqwikException(message);
 		};
 	}
 }
