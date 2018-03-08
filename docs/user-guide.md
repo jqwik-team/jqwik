@@ -901,7 +901,7 @@ will move towards the lowest allowed number, that is `10000`.
 Similar as in the case of `Arbitrary.map(..)` there are situations in which you want to use
 a generated value in order to create another Arbitrary from it. Sounds complicated?
 Have a look at the 
-[following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/FlatMappingExamples.java):
+[following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/FlatMappingExamples.java#L26):
 
 ```java
 @Property
