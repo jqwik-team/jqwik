@@ -1402,6 +1402,7 @@ _TBD_
 
 - Property methods that also have Jupiter annotations are skipped
 - Added `@Label` to allow the [labeling of examples, properties and containers](#labeling-tests)
+- Changed license from EPL 1.0 to EPL 2.0
 
 ### 0.8.6
 
