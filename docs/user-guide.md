@@ -187,7 +187,8 @@ A test case method must
 - or return nothing (`void`) in which case you will probably
   use [assertions](#assertions) in order to verify the test condition.
   
-Here is a test class with two example-based tests:
+[Here](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/ExampleBasedTests.java) 
+is a test class with two example-based tests:
 
 ```java
 import static org.assertj.core.api.Assertions.*;
@@ -234,7 +235,8 @@ The first failed execution will stop value generation
 and be reported as failure - usually followed by an attempt to 
 [shrink](#result-shrinking) the falsified parameter set.
 
-Here are two properties whose failures might surprise you:
+[Here](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/PropertyBasedTests.java) 
+are two properties whose failures might surprise you:
 
 ```java
 import net.jqwik.api.*;
@@ -341,8 +343,9 @@ class TestsWithLifecycle implements AutoCloseable {
 }
 ```
 
-In this example both the constructor and `close()` will be called 6 times: 
-Once for `anExample()` and 5 times for `aProperty(...)`.
+[In this example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/TestsWithLifecycle.java)
+both the constructor and `close()` will be called twice times: 
+Once for `anExample()` and once for `aProperty(...)`.
 
 ### Other Lifecycles
 
@@ -361,6 +364,7 @@ maintainability of your tests.
 
 Groups can be nested and there lifecycle is also nested, that means that
 the lifecycle of a test class is also applied to inner groups of that container.
+Have a look at [this example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/TestsWithGroups.java):
 
 ```java
 import net.jqwik.api.*;
@@ -398,8 +402,9 @@ class TestsWithGroups {
 
 Test container classes, groups, example methods and property methods can be labeled
 using the annotation `@Label("a label")`. This label will be used to display the element
-in test reports or within the IDE. In the following example, every test relevant element
-has been labeled:
+in test reports or within the IDE. 
+[In the following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/LabelingExamples.java), 
+every test relevant element has been labeled:
 
 ```java
 @Label("Labeling")
@@ -432,7 +437,9 @@ Those tag can be used to filter the set of tests
 [the build tool](https://docs.gradle.org/4.6/release-notes.html#junit-5-support).
 Tags are handed down from container (class or group) to its children (test methods or groups).
 
-Have a look at the following example. Including the tag `integration-test` will include
+Have a look at 
+[the following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/TaggingExamples.java). 
+Including the tag `integration-test` will include
 all tests of the class.
 
 ```java
@@ -589,7 +596,8 @@ will generate lists with a minimum size of 1 filled with Strings that have 10 ch
 While checking properties of generically typed classes or functions, you often don't care
 about the exact type of variables and therefore want to express them with type variables.
 _jqwik_ can handle unbound type variables and wildcard types, but will refuse to provide
-variables with bound types. Consider the following examples:
+variables with bound types. Consider 
+[the following examples](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/VariableTypedPropertyExamples.java):
 
 ```java
 class VariableTypedPropertyExamples {
@@ -645,7 +653,8 @@ which constrains their applicability to simple cases.
 
 Sometimes the possibilities of adjusting default parameter generation
 through annotations is not enough. In that case you can delegate parameter
-provision to another method. Look at the following example:
+provision to another method. Look at the 
+[following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/ProvideMethodExamples.java):
 
 ```java
 @Property
@@ -821,7 +830,9 @@ like size, length, boundaries etc. Have a look at the Java doc for the following
 - [StringArbitrary](http://jqwik.net/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 
 
-Here are a two examples to give you a hint of what you can do:
+Here are a 
+[two examples](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/FluentConfigurationExamples.java) 
+to give you a hint of what you can do:
 
 ```java
 @Provide
@@ -889,7 +900,8 @@ will move towards the lowest allowed number, that is `10000`.
 
 Similar as in the case of `Arbitrary.map(..)` there are situations in which you want to use
 a generated value in order to create another Arbitrary from it. Sounds complicated?
-Have a look at the following example:
+Have a look at the 
+[following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/FlatMappingExamples.java):
 
 ```java
 @Property
@@ -922,7 +934,9 @@ However, both have dependencies:
 - `end` must not be larger than the string size
 - `begin` must not be larger than `end`
 You can make _jqwik_ create all three values by using `flatMap` combined with a
-tuple type:
+tuple type 
+[like this](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/FlatMappingExamples.java#L32):
+
 
 ```java
 @Property(reporting = ReportingMode.GENERATED)
@@ -976,7 +990,8 @@ Arbitrary<Integer> oneOfThree() {
 }
 ```
 
-In this example the statistics should also give you an equal distribution between
+[In this example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/OneOfExamples.java)
+the statistics should also give you an equal distribution between
 the three types of integers.
 
 ### Combining Arbitraries
@@ -986,7 +1001,8 @@ a more complicated domain object. In those cases you can combine several arbitra
 a single result arbitrary using `Combinators.combine()` with up to four arbitraries. 
 [Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than four. 
 
-The following example generates `Person` instances from three arbitraries as inputs.
+[The following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/MappingAndCombinatorExamples.java#L25) 
+generates `Person` instances from three arbitraries as inputs.
 
 ```java
 @Property
@@ -1034,7 +1050,8 @@ If you want to constrain the set of generated values in a way that embraces
 more than one parameter, [filtering](#filtering) does not work. What you
 can do instead is putting one or more assumptions at the beginning of your property.
 
-The following property works only on strings that are not equal:
+[The following property](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/AssumptionExamples.java) 
+works only on strings that are not equal:
 
 ```java
 @Property
@@ -1142,7 +1159,8 @@ which most property-based testing tools use.
 The general idea and its advantages are explained 
 [here](http://hypothesis.works/articles/integrated-shrinking/).
 
-Consider a somewhat more complicated examples:
+Consider a somewhat 
+[more complicated example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/ShrinkingExamples.java#L15):
 
 ```java
 @Property
@@ -1285,6 +1303,8 @@ collected statistics =
 
 As you can see, collected `null` values are not being reported.
 
+[Here](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/StatisticsExamples.java)
+are a couple of examples to try out.
 
 ## Running and Configuration
 
@@ -1327,7 +1347,7 @@ the default providers packaged into _jqwik_.
 ### Simple Arbitrary Providers
 
 A simple provider is one that delivers arbitraries for types without type variables.
-Consider the class `Money`:
+Consider the class [`Money`](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/defaultprovider/Money.java):
 
 ```java
 public class Money {
@@ -1350,7 +1370,8 @@ public class Money {
 }
 ``` 
 
-If you register the following `MoneyArbitraryProvider` class:
+If you register the following class
+[`MoneyArbitraryProvider`](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/defaultprovider/MoneyArbitraryProvider.java):
 
 ```java
 package my.own.provider;
@@ -1372,13 +1393,17 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 }
 ```
 
-in file `META-INF/services/net.jqwik.api.providers.ArbitraryProvider` with such an entry:
+in file 
+[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider) 
+with such an entry:
 
 ```
 my.own.provider.MoneyArbitraryProvider
 ```
 
-The following property will run without further ado - regardless the class you put it in:
+The 
+[following property](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/defaultprovider/MoneyProperties.java)
+will run without further ado - regardless the class you put it in:
 
 ```java
 @Property
@@ -1407,7 +1432,7 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeSupplier) {
 		GenericType innerType = targetType.getTypeArguments()[0];
 		return subtypeSupplier.apply(innerType) //
-			.map(Arbitraries::optionalOf) //
+			.map(Arbitrary::optional) //
 			.orElse(null);
 	}
 }
@@ -1434,7 +1459,7 @@ _TBD_
 - Added `@Label` to allow the [labeling of examples, properties and containers](#labeling-tests)
 - Changed license from EPL 1.0 to EPL 2.0
 - Added `@Tag` to allow the [tagging of examples, properties and containers](#tagging-tests)
-
+- User guide: Added links to example sources on github
 
 ### 0.8.6
 

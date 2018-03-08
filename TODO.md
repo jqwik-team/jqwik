@@ -2,7 +2,6 @@
   see https://github.com/rickynils/scalacheck/blob/master/doc/UserGuide.md#generators
   
 - Documentation:
-  - Link to examples on github 
   - Link to Javadoc
   - Fill section on Arbitrary configurators
 
