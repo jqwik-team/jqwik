@@ -1,30 +1,30 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.api.*;
 import net.jqwik.execution.*;
-import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 
-public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements PropertyContext {
+abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements PropertyContext {
 	private final Method targetMethod;
 	private final Class containerClass;
+	private final Set<TestTag> tags;
 
-	public AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class containerClass) {
+	AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class containerClass) {
 		super(uniqueId, determineDisplayName(targetMethod), MethodSource.from(targetMethod));
+		this.tags = determineTags(targetMethod);
 		this.containerClass = containerClass;
 		this.targetMethod = targetMethod;
 	}
 
-	protected static String determineDisplayName(Method targetMethod) {
-		Optional<Label> label = AnnotationSupport.findAnnotation(targetMethod, Label.class);
-		return label
-			.map(Label::value)
-			.filter(displayName -> !displayName.trim().isEmpty())
-			.orElse(targetMethod.getName());
+	private Set<TestTag> determineTags(Method targetMethod) {
+		return DiscoverySupport.findTestTags(targetMethod);
+	}
+
+	private static String determineDisplayName(Method targetMethod) {
+		return DiscoverySupport.determineLabel(targetMethod, targetMethod::getName);
 	}
 
 	public Method getTargetMethod() {
@@ -37,6 +37,11 @@ public abstract class AbstractMethodDescriptor extends AbstractTestDescriptor im
 
 	public String getLabel() {
 		return getDisplayName();
+	}
+
+	@Override
+	public Set<TestTag> getTags() {
+		return tags;
 	}
 
 	@Override

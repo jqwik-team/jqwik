@@ -422,6 +422,36 @@ class LabelingExamples {
 Labels can consist of any characters and don't have to be unique - but you probably want them 
 to be unique within their container.
 
+## Tagging Tests
+
+Test container classes, groups, example methods and property methods can be tagged
+using the annotation `@Tag("a-tag")`. You can have many tags on the same element.
+
+Those tag can be used to filter the set of tests 
+[run by the IDE](https://blog.jetbrains.com/idea/2018/01/intellij-idea-starts-2018-1-early-access-program/) or 
+[the build tool](https://docs.gradle.org/4.6/release-notes.html#junit-5-support).
+Tags are handed down from container (class or group) to its children (test methods or groups).
+
+Have a look at the following example. Including the tag `integration-test` will include
+all tests of the class.
+
+```java
+@Tag("integration-test")
+class TaggingExamples {
+
+	@Property
+	@Tag("fast")
+	void aFastProperty() { }
+
+	@Example
+	@Tag("slow") @Tag("involved")
+	void aSlowTest() { }
+}
+```
+
+Tags must follow certain rules as described 
+[here](http://jqwik.net/javadoc/net/jqwik/api/Tag.html)
+
 ## Default Parameter Generation
 
 _jqwik_ tries to generate values for those property method parameters that are
@@ -1403,6 +1433,8 @@ _TBD_
 - Property methods that also have Jupiter annotations are skipped
 - Added `@Label` to allow the [labeling of examples, properties and containers](#labeling-tests)
 - Changed license from EPL 1.0 to EPL 2.0
+- Added `@Tag` to allow the [tagging of examples, properties and containers](#tagging-tests)
+
 
 ### 0.8.6
 

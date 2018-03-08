@@ -5,7 +5,8 @@ import org.junit.platform.commons.annotation.*;
 import java.lang.annotation.*;
 
 /**
- * Use {@code @Label} to give test classes, groups and methods a more readable label aka display name.
+ * Use {@code @Label("a descriptive name")} to give test classes, groups and methods
+ * a more readable label (aka display name).
  *
  * @see Property
  * @see Group

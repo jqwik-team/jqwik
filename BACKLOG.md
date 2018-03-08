@@ -25,9 +25,6 @@
 - Switch to gradle library plugin: 
   https://docs.gradle.org/current/userguide/java_library_plugin.html
 
-- Allow tags for containers and test methods: @Tag
-  - Issue error when jupiter's @Tag is being used instead
-
 - Allow Fixture parameters to examples and properties
 
 - Use apiguardian annotations

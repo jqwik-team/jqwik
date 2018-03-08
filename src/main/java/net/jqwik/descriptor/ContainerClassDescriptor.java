@@ -1,8 +1,6 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.api.*;
 import net.jqwik.discovery.predicates.*;
-import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
@@ -16,19 +14,21 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 
 	private final Class<?> containerClass;
 	private final boolean isGroup;
+	private final Set<TestTag> tags;
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
 		super(uniqueId, determineDisplayName(containerClass), ClassSource.from(containerClass));
+		this.tags = determineTags(containerClass);
 		this.containerClass = containerClass;
 		this.isGroup = isGroup;
 	}
 
+	private Set<TestTag> determineTags(Class<?> containerClass) {
+		return DiscoverySupport.findTestTags(containerClass);
+	}
+
 	private static String determineDisplayName(Class<?> containerClass) {
-		Optional<Label> label = AnnotationSupport.findAnnotation(containerClass, Label.class);
-		return label
-			.map(Label::value)
-			.filter(displayName -> !displayName.trim().isEmpty())
-			.orElse(getDefaultDisplayName(containerClass));
+		return DiscoverySupport.determineLabel(containerClass, () -> getDefaultDisplayName(containerClass));
 	}
 
 	private static String getDefaultDisplayName(Class<?> containerClass) {
@@ -41,6 +41,11 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 		String packageName = containerClass.getPackage().getName();
 		String canonicalName = containerClass.getCanonicalName();
 		return canonicalName.substring(packageName.length() + 1);
+	}
+
+	@Override
+	public Set<TestTag> getTags() {
+		return tags;
 	}
 
 	@Override

@@ -19,7 +19,8 @@ class ContainerResolverTest {
 		private TopLevelContainerResolver resolver = new TopLevelContainerResolver();
 
 		@Example
-		void resolveTopLevelContainerWithoutLabel() {
+		@Label("without label")
+		void withoutLabel() {
 
 			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithoutLabel.class, engineDescriptor);
 
@@ -30,7 +31,8 @@ class ContainerResolverTest {
 		}
 
 		@Example
-		void resolveTopLevelContainerWithLabel() {
+		@Label("with label")
+		void withLabel() {
 
 			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithLabel.class, engineDescriptor);
 
@@ -38,6 +40,18 @@ class ContainerResolverTest {
 			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
 			Assertions.assertThat(classTestDescriptor.getDisplayName())
 					  .isEqualTo("container with label");
+		}
+
+		@Example
+		@Label("with tags")
+		void withTags() {
+
+			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithTags.class, engineDescriptor);
+
+			Assertions.assertThat(descriptors).hasSize(1);
+			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(classTestDescriptor.getTags())
+					  .containsExactly(TestTag.create("container-tag-1"), TestTag.create("container-tag-2"));
 		}
 
 	}
@@ -48,7 +62,8 @@ class ContainerResolverTest {
 		private GroupContainerResolver resolver = new GroupContainerResolver();
 
 		@Example
-		void resolveGroupContainerWithoutLabel() {
+		@Label("without label")
+		void withoutLabel() {
 
 			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithoutLabel.GroupWithoutLabel.class, engineDescriptor);
 
@@ -58,13 +73,25 @@ class ContainerResolverTest {
 		}
 
 		@Example
-		void resolveGroupContainerWithLabel() {
+		@Label("with label")
+		void withLabel() {
 
 			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithLabel.GroupWithLabel.class, engineDescriptor);
 
 			Assertions.assertThat(descriptors).hasSize(1);
 			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
 			Assertions.assertThat(classTestDescriptor.getDisplayName()).isEqualTo("group with label");
+		}
+
+		@Example
+		@Label("with tag")
+		void withTag() {
+
+			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithTags.GroupWithTag.class, engineDescriptor);
+
+			Assertions.assertThat(descriptors).hasSize(1);
+			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(classTestDescriptor.getTags()).containsExactly(TestTag.create("group-tag"));
 		}
 
 	}
@@ -80,6 +107,15 @@ class ContainerResolverTest {
 		@Group
 		@Label("group with label")
 		class GroupWithLabel {
+		}
+	}
+
+	@Tag("container-tag-1")
+	@Tag("container-tag-2")
+	static class ContainerWithTags {
+		@Group
+		@Tag("group-tag")
+		class GroupWithTag {
 		}
 	}
 
