@@ -13,21 +13,13 @@ public class RandomGenerators {
 	public static <U> RandomGenerator<U> choose(List<U> values) {
 		if (values.size() == 0) {
 			return fail("empty set of values");
-		} else {
-			return choose(values.size()).map(values::get);
 		}
-	}
-
-	public static RandomGenerator<Integer> choose(int upperSizeExcluded) {
-		if (upperSizeExcluded == 0) {
-			return fail("empty set of values");
-		} else {
-			return random -> {
-				int value = random.nextInt(upperSizeExcluded);
-				return new ShrinkableValue<>(value, new SizeShrinkCandidates());
-			};
-		}
-
+		ValuesShrinkCandidates<U> shrinkingCandidates = new ValuesShrinkCandidates<>(values);
+		return random -> {
+			int index = random.nextInt(values.size());
+			U value = values.get(index);
+			return new ShrinkableValue<>(value, shrinkingCandidates);
+		};
 	}
 
 	public static <U> RandomGenerator<U> choose(U[] values) {

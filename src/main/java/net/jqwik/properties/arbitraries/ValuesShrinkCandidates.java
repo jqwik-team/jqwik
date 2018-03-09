@@ -16,7 +16,7 @@ class ValuesShrinkCandidates<T> implements ShrinkCandidates<T> {
 		if (index == 0) {
 			return Collections.emptySet();
 		}
-		return new HashSet<>(values.subList(0, index - 1));
+		return new HashSet<>(values.subList(0, index));
 	}
 
 	@Override
