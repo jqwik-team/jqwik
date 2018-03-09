@@ -35,7 +35,9 @@
   - PerMethodLifeCycle
   - PerTryLifeCycle
 
-- Parallel test execution: Does it make sense with non working IntelliJ support?
+- Parallel test execution:
+  - Across single property with annotation @Parallel 
+  - Across Properties: Does it make sense with non working IntelliJ support?
 
 ### Properties
 
