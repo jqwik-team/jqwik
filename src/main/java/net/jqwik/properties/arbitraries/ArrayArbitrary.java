@@ -9,9 +9,11 @@ import java.util.stream.*;
 
 public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A> {
 
+	private static final int DEFAULT_MAX_SIZE = Short.MAX_VALUE;
+
 	private final Class<A> arrayClass;
 	private final Arbitrary<T> elementArbitrary;
-	private int maxSize = 0;
+	private int maxSize = DEFAULT_MAX_SIZE;
 	private int minSize = 0;
 
 	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
@@ -34,19 +36,20 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 	}
 
 	private RandomGenerator<List<T>> listGenerator(int tries) {
-		int effectiveMaxSize = maxSize;
-		if (effectiveMaxSize <= 0)
-			effectiveMaxSize = Arbitrary.defaultMaxCollectionSizeFromTries(tries);
-		return createListGenerator(elementArbitrary, tries, effectiveMaxSize);
-	}
-
-	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int maxSize) {
-		int elementTries = Math.max(maxSize / 2, 1) * tries;
-		RandomGenerator<T> elementGenerator = elementArbitrary.generator(elementTries);
+		int cutoffSize = RandomGenerators.defaultCutoffSize(minSize, maxSize, tries);
+		RandomGenerator<T> elementGenerator = elementArbitrary.generator(tries);
 		List<T> emptyList = Collections.emptyList();
 		List<Shrinkable<List<T>>> samples = Stream.of(emptyList).filter(l -> l.size() >= minSize)
 				.filter(l -> maxSize == 0 || l.size() <= maxSize).map(Shrinkable::unshrinkable).collect(Collectors.toList());
-		return RandomGenerators.list(elementGenerator, minSize, maxSize).withShrinkableSamples(samples);
+		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize).withShrinkableSamples(samples);
+	}
+
+	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int cutoffSize) {
+		RandomGenerator<T> elementGenerator = elementArbitrary.generator(tries);
+		List<T> emptyList = Collections.emptyList();
+		List<Shrinkable<List<T>>> samples = Stream.of(emptyList).filter(l -> l.size() >= minSize)
+				.filter(l -> maxSize == 0 || l.size() <= maxSize).map(Shrinkable::unshrinkable).collect(Collectors.toList());
+		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize).withShrinkableSamples(samples);
 	}
 
 	@Override

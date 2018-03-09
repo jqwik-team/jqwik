@@ -1,6 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.execution.pipeline.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
@@ -20,7 +21,7 @@ public class ExecutionPipelineTests {
 	}
 
 	@Property(tries = 10)
-	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("taskList") List<ExecutionTask> tasks) {
+	void tasksWithoutPredecessorsAreExecutedInOrderOfSubmission(@ForAll("taskList") @Size(max = 50) List<ExecutionTask> tasks) {
 		tasks.forEach(t -> pipeline.submit(t));
 		pipeline.runToTermination();
 		InOrder events = Mockito.inOrder(listener);

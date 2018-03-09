@@ -8,30 +8,28 @@ import java.util.stream.*;
 
 abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase implements SizableArbitrary<U> {
 
+	private static final int DEFAULT_COLLECTION_SIZE = Short.MAX_VALUE;
+
 	protected final Arbitrary<T> elementArbitrary;
 	protected int minSize = 0;
-	protected int maxSize = 0;
+	protected int maxSize = DEFAULT_COLLECTION_SIZE;
 
-	protected DefaultCollectionArbitrary(Class<?> collectionClass, Arbitrary<T> elementArbitrary) {
+	protected DefaultCollectionArbitrary(Arbitrary<T> elementArbitrary) {
 		this.elementArbitrary = elementArbitrary;
 	}
 
 	protected RandomGenerator<List<T>> listGenerator(int tries) {
-		int effectiveMaxSize = effectiveMaxSize(tries);
-		return createListGenerator(elementArbitrary, tries, effectiveMaxSize);
+		return createListGenerator(elementArbitrary, tries, cutoffSize(tries));
 	}
 
-	protected int effectiveMaxSize(int tries) {
-		int effectiveMaxSize = maxSize;
-		if (effectiveMaxSize <= 0)
-			effectiveMaxSize = Arbitrary.defaultMaxCollectionSizeFromTries(tries);
-		return effectiveMaxSize;
+	protected int cutoffSize(int tries) {
+		return RandomGenerators.defaultCutoffSize(minSize, maxSize, tries);
 	}
 
-	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int effectiveMaxSize) {
+	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int cutoffPoint) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
 		List<Shrinkable<List<T>>> samples = samplesList(new ArrayList<>());
-		return RandomGenerators.list(elementGenerator, minSize, effectiveMaxSize).withShrinkableSamples(samples);
+		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffPoint).withShrinkableSamples(samples);
 	}
 
 	protected <C extends Collection> List<Shrinkable<C>> samplesList(C sample) {

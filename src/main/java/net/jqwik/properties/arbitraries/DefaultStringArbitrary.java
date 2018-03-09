@@ -8,10 +8,12 @@ import net.jqwik.api.arbitraries.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
 
+	private static final int DEFAULT_MAX_LENGTH = 255;
+
 	private List<Arbitrary<Character>> characterArbitraries = new ArrayList<>();
 
 	private int minLength = 0;
-	private int maxLength = 0;
+	private int maxLength = DEFAULT_MAX_LENGTH;
 
 	private CharacterArbitrary defaultCharacterArbitrary() {
 		return Arbitraries.chars().ascii();
@@ -19,11 +21,11 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 
 	@Override
 	public RandomGenerator<String> generator(int tries) {
-		final int effectiveMaxLength = maxLength <= 0 ? Arbitrary.defaultMaxCollectionSizeFromTries(tries) : maxLength;
+		final int cutoffLength = RandomGenerators.defaultCutoffSize(minLength, maxLength, tries);
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
 				.filter(s -> s.length() >= minLength && s.length() <= maxLength).map(Shrinkable::unshrinkable)
 				.collect(Collectors.toList());
-		return RandomGenerators.strings(createCharacterGenerator(), minLength, effectiveMaxLength).withShrinkableSamples(samples);
+		return RandomGenerators.strings(createCharacterGenerator(), minLength, maxLength, cutoffLength).withShrinkableSamples(samples);
 	}
 
 	@Override

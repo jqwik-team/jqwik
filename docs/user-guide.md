@@ -1512,6 +1512,7 @@ _TBD_
 - User guide: Added links to example sources on github
 - Added `Arbitraries.frequency()` to enable 
   [choosing values with weighted probabilities](#choosing-with-weights)
+- Collection and String generation now explores a wider range of sizes and lengths
 
 ### 0.8.6
 

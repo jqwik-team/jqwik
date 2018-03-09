@@ -150,7 +150,7 @@ class ArbitrariesTests {
 		}
 
 		@Property
-		boolean defaultForParameterizedType(@ForAll("stringLists") List<?> stringList) {
+		boolean defaultForParameterizedType(@ForAll("stringLists") @Size(max = 50) List<?> stringList) {
 			return stringList.isEmpty() || stringList.get(0) instanceof String;
 		}
 

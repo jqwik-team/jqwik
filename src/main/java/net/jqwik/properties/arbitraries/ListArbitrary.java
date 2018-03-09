@@ -7,7 +7,7 @@ import java.util.*;
 public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 
 	public ListArbitrary(Arbitrary<T> elementArbitrary) {
-		super(List.class, elementArbitrary);
+		super(elementArbitrary);
 	}
 
 	@Override

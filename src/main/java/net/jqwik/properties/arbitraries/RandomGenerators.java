@@ -77,22 +77,45 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
-		return container(elementGenerator, ArrayList::new, minSize, maxSize);
+		int defaultCutoff = defaultCutoffSize(minSize, maxSize);
+		return list(elementGenerator, minSize, maxSize, defaultCutoff);
+	}
+
+	public static <T> RandomGenerator<List<T>> list(
+		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
+	) {
+		return container(elementGenerator, ArrayList::new, minSize, maxSize, cutoffSize);
+	}
+
+	public static RandomGenerator<String> strings(
+		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
+	) {
+		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength, cutoffLength);
 	}
 
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength
 	) {
-		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength);
+		int defaultCutoff = defaultCutoffSize(minLength, maxLength);
+		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength, defaultCutoff);
+	}
+
+	private static int defaultCutoffSize(int minSize, int maxSize) {
+		int range = maxSize - minSize;
+		int offset = (int) Math.max(Math.round(Math.sqrt(100)), 10);
+		if (range <= offset)
+			return maxSize;
+		return Math.min(offset + minSize, maxSize);
 	}
 
 	private static <T, C> RandomGenerator<C> container( //
-			RandomGenerator<T> elementGenerator, //
-			Function<List<T>, C> containerFunction, //
-			int minSize, int maxSize) {
-		RandomGenerator<Integer> lengthGenerator = integers(minSize, maxSize);
+														RandomGenerator<T> elementGenerator, //
+														Function<List<T>, C> containerFunction, //
+														int minSize, int maxSize, int cutoffSize
+	) {
+		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
 		return random -> {
-			int listSize = lengthGenerator.next(random).value();
+			int listSize = sizeGenerator.apply(random);
 			List<Shrinkable<T>> list = new ArrayList<>();
 			while (list.size() < listSize) {
 				list.add(elementGenerator.next(random));
@@ -101,11 +124,34 @@ public class RandomGenerators {
 		};
 	}
 
-	// TODO: Get rid of duplication with container(...)
-	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
-		RandomGenerator<Integer> lengthGenerator = integers(minSize, maxSize);
+	private static Function<Random, Integer> sizeGenerator(int minSize, int maxSize, int cutoffSize) {
+		if (cutoffSize >= maxSize)
+			return random -> randomSize(random, minSize, maxSize);
+		// Choose size below cutoffSize with probability of 0.9
 		return random -> {
-			int listSize = lengthGenerator.next(random).value();
+			if (random.nextDouble() > 0.1)
+				return randomSize(random, minSize, cutoffSize);
+			else
+				return randomSize(random, cutoffSize + 1, maxSize);
+		};
+	}
+
+	private static int randomSize(Random random, int minSize, int maxSize) {
+		int range = maxSize - minSize;
+		return random.nextInt(range + 1) + minSize;
+	}
+
+	public static <T> RandomGenerator<Set<T>> set(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
+		int defaultCutoffSize = defaultCutoffSize(minSize, maxSize);
+		return set(elementGenerator, minSize, maxSize, defaultCutoffSize);
+	}
+
+	public static <T> RandomGenerator<Set<T>> set(
+		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
+	) {
+		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
+		return random -> {
+			int listSize = sizeGenerator.apply(random);
 			List<Shrinkable<T>> list = new ArrayList<>();
 			Set<T> elements = new HashSet<>();
 			while (list.size() < listSize) {
@@ -134,8 +180,7 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<T> frequency(Tuples.Tuple2<Integer, T>[] frequencies) {
-		FrequencyGenerator<T> frequencyGenerator = new FrequencyGenerator<>(frequencies);
-		return frequencyGenerator;
+		return new FrequencyGenerator<>(frequencies);
 	}
 
 
@@ -143,5 +188,13 @@ public class RandomGenerators {
 		return ignored -> {
 			throw new JqwikException(message);
 		};
+	}
+
+	static int defaultCutoffSize(int minSize, int maxSize, int tries) {
+		int range = maxSize - minSize;
+		int offset = (int) Math.max(Math.round(Math.sqrt(tries)), 10);
+		if (range <= offset)
+			return maxSize;
+		return Math.min(offset + minSize, maxSize);
 	}
 }

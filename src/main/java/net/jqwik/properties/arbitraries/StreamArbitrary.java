@@ -8,7 +8,7 @@ import java.util.stream.*;
 public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>> {
 
 	public StreamArbitrary(Arbitrary<T> elementArbitrary) {
-		super(Set.class, elementArbitrary);
+		super(elementArbitrary);
 	}
 
 	@Override

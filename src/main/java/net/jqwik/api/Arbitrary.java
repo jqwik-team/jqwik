@@ -1,11 +1,11 @@
 package net.jqwik.api;
 
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.properties.arbitraries.*;
 
 /**
  * The main interface for representing objects that can be generated and shrunk.
@@ -104,7 +104,4 @@ public interface Arbitrary<T> {
 		return this.injectNull(0.05).map(Optional::ofNullable);
 	}
 
-	static int defaultMaxCollectionSizeFromTries(int tries) {
-		return (int) Math.max(Math.round(Math.sqrt(tries)), 10);
-	}
 }
