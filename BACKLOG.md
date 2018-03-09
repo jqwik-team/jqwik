@@ -22,6 +22,8 @@
 
 ### General
 
+- Allow reporting to be configured to also go to stdtout
+
 - Switch to gradle library plugin: 
   https://docs.gradle.org/current/userguide/java_library_plugin.html
 
