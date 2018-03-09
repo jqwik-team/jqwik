@@ -22,6 +22,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Other Lifecycles](#other-lifecycles)
 - [Grouping Tests](#grouping-tests)
 - [Labeling Tests](#labeling-tests)
+- [Tagging Tests](#tagging-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
   - [Constraining parameter types](#constraining-parameter-types)
@@ -31,6 +32,8 @@ Volunteers for polishing and extending it are more than welcome._
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
+  - [Randomly Choosing Values](#randomly-choosing-values)
+  - [Choosing with Weights](#choosing-with-weights)
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
@@ -846,6 +849,53 @@ Arbitrary<List<Integer>> fixedSizedListOfPositiveIntegers() {
 }
 ```
 
+### Randomly Choosing Values
+
+If you have a set of values to choose from with equal probability, just use `Arbitraries.of(...)`:
+
+```java
+@Property
+void abcd(@ForAll("abcd") String aString) {
+    Statistics.collect(aString);
+}
+
+@Provide
+Arbitrary<String> abcd() {
+    return Arbitraries.of("a", "b", "c", "d");
+}
+```
+
+Shrinking moves towards the start of the list.
+
+### Choosing with Weights
+
+If you have a set of values to choose from with weighted probabilities, use `Arbitraries.frequency(...)`:
+
+```java
+@Property
+void abcdWithFrequencies(@ForAll("abcdWeighted") String aString) {
+    Statistics.collect(aString);
+}
+
+@Provide
+Arbitrary<String> abcdWeighted() {
+    return Arbitraries.frequency(
+        Tuples.tuple(1, "a"),
+        Tuples.tuple(5, "b"),
+        Tuples.tuple(10, "c"),
+        Tuples.tuple(20, "d")
+    );
+}
+```
+
+The first value of the tuple specifies the frequency of a particular value in relation to the
+sum of all frequencies. In 
+[the given example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/ChoosingExamples.java#L17)
+the sum is 36, thus `"a"` will be generated with a probability of `1/36` 
+whereas `"d"` has a generation probability of `20/36` (= `5/9`).
+
+Shrinking moves towards the start of the frequency list.
+
 
 ### Generate `null` values
 
@@ -1460,6 +1510,8 @@ _TBD_
 - Changed license from EPL 1.0 to EPL 2.0
 - Added `@Tag` to allow the [tagging of examples, properties and containers](#tagging-tests)
 - User guide: Added links to example sources on github
+- Added `Arbitraries.frequency()` to enable 
+  [choosing values with weighted probabilities](#choosing-with-weights)
 
 ### 0.8.6
 

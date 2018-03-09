@@ -53,6 +53,11 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(all)).flatMap(arbitrary -> arbitrary);
 	}
 
+	@SafeVarargs
+	public static <T> Arbitrary<T> frequency(Tuples.Tuple2<Integer, T> ... frequencies) {
+		return fromGenerator(RandomGenerators.frequency(frequencies));
+	}
+
 	public static IntegerArbitrary integers() {
 		return new DefaultIntegerArbitrary();
 	}
@@ -301,10 +306,4 @@ public class Arbitraries {
 		}
 	}
 
-	@SafeVarargs
-	public static <T> Arbitrary<T> frequency(Tuples.Tuple2<Integer, T> ... frequencies) {
-		if (frequencies.length == 0)
-			throw new JqwikException("No frequency specified.");
-		return constant(frequencies[0].v2);
-	}
 }

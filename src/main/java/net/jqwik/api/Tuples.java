@@ -22,8 +22,8 @@ public class Tuples {
 	}
 
 	public static class Tuple2<T1, T2> implements Tuple {
-		protected final T1 v1;
-		protected final T2 v2;
+		final T1 v1;
+		final T2 v2;
 
 		private Tuple2(T1 v1, T2 v2) {
 			this.v1 = v1;
@@ -64,7 +64,7 @@ public class Tuples {
 	}
 
 	public static class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
-		protected final T3 v3;
+		final T3 v3;
 
 		private Tuple3(T1 v1, T2 v2, T3 v3) {
 			super(v1, v2);
@@ -102,7 +102,7 @@ public class Tuples {
 	}
 
 	public static class Tuple4<T1, T2, T3, T4> extends Tuple3<T1, T2, T3> {
-		protected final T4 v4;
+		final T4 v4;
 
 		private Tuple4(T1 v1, T2 v2, T3 v3, T4 v4) {
 			super(v1, v2, v3);

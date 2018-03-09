@@ -15,6 +15,18 @@ public class ArbitraryTestHelper {
 		assertAtLeastOneGenerated(generator, checker, "Failed to generate at least one");
 	}
 
+	public static <T> Map<T, Integer> count(RandomGenerator<T> generator, int tries) {
+		Random random = SourceOfRandomness.current();
+		Map<T, Integer> counts = new HashMap<>();
+		for (int i = 0; i < tries; i++) {
+			Shrinkable<T> value = generator.next(random);
+			T key = value.value();
+			int previous = counts.computeIfAbsent(key, k -> 0);
+			counts.put(key, previous + 1);
+		}
+		return counts;
+	}
+
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
 		Random random = SourceOfRandomness.current();
 		for (int i = 0; i < 200; i++) {

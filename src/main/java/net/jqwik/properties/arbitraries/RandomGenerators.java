@@ -141,6 +141,12 @@ public class RandomGenerators {
 		return samples(Arrays.asList(samples));
 	}
 
+	public static <T> RandomGenerator<T> frequency(Tuples.Tuple2<Integer, T>[] frequencies) {
+		FrequencyGenerator<T> frequencyGenerator = new FrequencyGenerator<>(frequencies);
+		return frequencyGenerator;
+	}
+
+
 	public static <T> RandomGenerator<T> fail(String message) {
 		return ignored -> {
 			throw new JqwikException(message);

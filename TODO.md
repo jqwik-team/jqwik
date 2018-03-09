@@ -1,6 +1,3 @@
-- Arbitraries.frequency: pairs of (frequency, value)
-  see https://github.com/rickynils/scalacheck/blob/master/doc/UserGuide.md#generators
-  
 - Documentation:
   - Link to Javadoc
   - Fill section on Arbitrary configurators

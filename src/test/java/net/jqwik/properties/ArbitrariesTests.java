@@ -1,5 +1,6 @@
 package net.jqwik.properties;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import org.assertj.core.api.*;
@@ -10,6 +11,7 @@ import java.util.stream.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@Label("Arbitraries")
 class ArbitrariesTests {
 
 	enum MyEnum {
@@ -87,6 +89,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	@Label("frequency")
 	class Frequency {
 
 		@Example
@@ -95,15 +98,44 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAllGenerated(one.generator(1000), value -> {return value.equals("a");});
 		}
 
-		//@Property(tries = 10)
-		void twoPairs() {
+		@Property(tries = 10)
+		void twoEqualPairs() {
 			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(1, "b"));
-			Assertions.fail("not specified yet");
-			//ArbitraryTestHelper.assertAtLeastOneGenerated(one.generator(1000), value -> value.equals("a"));
+			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Assertions.assertThat(counts.get("a") > 200).isTrue();
+			Assertions.assertThat(counts.get("b") > 200).isTrue();
 		}
+
+		@Property(tries = 10)
+		void twoUnequalPairs() {
+			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(10, "b"));
+			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Assertions.assertThat(counts.get("a")).isLessThan(counts.get("b"));
+		}
+
+		@Property(tries = 10)
+		void fourUnequalPairs() {
+			Arbitrary<String> one = Arbitraries.frequency(
+				Tuples.tuple(1, "a"),
+				Tuples.tuple(5, "b"),
+				Tuples.tuple(10, "c"),
+				Tuples.tuple(20, "d")
+			);
+			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Assertions.assertThat(counts.get("a")).isLessThan(counts.get("b"));
+			Assertions.assertThat(counts.get("b")).isLessThan(counts.get("c"));
+			Assertions.assertThat(counts.get("c")).isLessThan(counts.get("d"));
+		}
+
+		@Example
+		void noPositiveFrequencies() {
+			assertThatThrownBy(() -> Arbitraries.frequency(Tuples.tuple(0, "a"))).isInstanceOf(JqwikException.class);
+		}
+
 	}
 
 	@Group
+	@Label("defaultFor")
 	class DefaultFor {
 		@Example
 		void simpleType() {
@@ -129,6 +161,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	@Label("chars")
 	class Chars {
 		@Example
 		void charsDefault() {
