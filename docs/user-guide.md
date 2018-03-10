@@ -3,7 +3,7 @@
 _The user guide is still a bit rough and incomplete in some areas. 
 Volunteers for polishing and extending it are more than welcome._
 
-<!-- use `doctoc --maxlevel 3 user-guide.md` to recreate the TOC -->
+<!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
@@ -25,15 +25,28 @@ Volunteers for polishing and extending it are more than welcome._
 - [Tagging Tests](#tagging-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
-  - [Constraining parameter types](#constraining-parameter-types)
+    - [Allow Null Values](#allow-null-values)
+    - [String Length](#string-length)
+    - [Character Sets](#character-sets)
+    - [List, Set, Stream and Array Size:](#list-set-stream-and-array-size)
+    - [Integer Constraints](#integer-constraints)
+    - [Decimal Constraints](#decimal-constraints)
+  - [Constraining parameterized types](#constraining-parameterized-types)
   - [Providing variable types](#providing-variable-types)
 - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
+    - [Generate values yourself](#generate-values-yourself)
+    - [Select values randomly](#select-values-randomly)
+    - [Select randomly with Weights](#select-randomly-with-weights)
+    - [Integers](#integers)
+    - [Decimals](#decimals)
+    - [Characters and Strings](#characters-and-strings)
+    - [java.util.Random](#javautilrandom)
+    - [Constants](#constants)
+    - [Default Types](#default-types)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
-  - [Randomly Choosing Values](#randomly-choosing-values)
-  - [Choosing with Weights](#choosing-with-weights)
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
   - [Mapping](#mapping)
@@ -496,18 +509,21 @@ required type (see [Customized Parameter Generation](#customized-parameter-gener
 Default parameter generation can be influenced and constrained by additional annotations, 
 depending on the requested parameter type.
 
-#### All types:
+#### Allow Null Values
 
 - [`@WithNull(double value = 0.1)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/WithNull.html): 
   Inject `null` into generated values with a probability of `value`. 
+  
+  Works for all generated types.
    
-#### Strings:
+#### String Length
 
 If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
 
 - [`@StringLength(int value = 0, int min = 0, int max = 0)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/StringLength.html):
   Set either fixed length through `value` or configure the length range between `min` and `max`.
 
+#### Character Sets
 
 The following constraints can be combined with each other:
 
@@ -520,75 +536,37 @@ The following constraints can be combined with each other:
 - `@UpperChars`: Use upper case chars `A` through `Z`
 - `@AlphaChars`: Lower and upper case chars are allowed.
 
-#### Characters:
+They work for generated `String`s and `Character`s.
 
-If Characters are not constrained any char between `'\u0000'` and `'\uffff'` might be created.
-
-Only one of the following constraints can be used:
-
-- `@CharRange(char min = 0, char max)`: Specify a set of characters
-  or a start and end character. This annotation can be repeated which will add up all allowed chars.
-- `@NumericChars`: Use only digits `0` through `9`
-- `@LowerChars`: Use only lower case chars `a` through `z`
-- `@UpperChars`: Use only upper case chars `A` through `Z`
-
-#### List, Set, Stream and Arrays:
+#### List, Set, Stream and Array Size:
 
 - [`@Size(int value = 0, int min = 0, int max = 0)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Size.html): 
   Set either fixed size through `value` or configure the size range between `min` and `max`.
 
-#### Byte and byte:
 
-- `@ByteRange(byte min = 0, byte max)`
-- `@Positive`: Numbers equal to or larger than `0`.
-- `@Negative`: Numbers lower than or equal to `-0`.
+#### Integer Constraints
 
-#### Short and short:
+- `@ByteRange(byte min = 0, byte max)`: For `Byte` and `byte` only.
+- `@ShortRange(short min = 0, short max)`: For `Short` and `short` only.
+- `@IntRange(int min = 0, int max)`: For `Integer` and `int` only.
+- `@LongRange(long min = 0L, long max)`: For `Long` and `long` only.
+- `@BigRange(String min = "", String max = "")`: For `BigInteger` generation.
 
-- `@ShortRange(short min = 0, short max)`
-- `@Positive`: Numbers equal to or larger than `0`.
-- `@Negative`: Numbers lower than or equal to `-0`.
+- `@Positive`: Numbers equal to or larger than `0`. For all integral types. 
+- `@Negative`: Numbers lower than or equal to `-0`. For all integral types.
 
-#### Integer and int:
 
-- `@IntRange(int min = 0, int max)`
-- `@Positive`: Numbers equal to or larger than `0`.
-- `@Negative`: Numbers lower than or equal to `-0`.
+#### Decimal Constraints
 
-#### Long, long:
+- `@FloatRange(float min = 0.0f, float max)`: For `Float` and `float` only.
+- `@DoubleRange(double min = 0.0, double max)`: For `Double` and `double` only.
+- `@BigRange(String min = "", String max = "")`: For `BigDecimal` generation.
 
-- `@LongRange(long min = 0L, long max)`
-- `@Positive`: Numbers equal to or larger than `0L`.
-- `@Negative`: Numbers lower than or equal to `-0L`.
+- `@Scale(int value)`: Specify the maximum number of decimal places. For all decimal types.
+- `@Positive`: Numbers equal to or larger than `0.0`. For all decimal types.
+- `@Negative`: Numbers lower than or equal to `-0.0`. For all decimal types.
 
-#### BigInteger:
-
-- `@BigRange(String min = "", String max = "")`
-- `@Positive`: Numbers equal to or larger than `0L`.
-- `@Negative`: Numbers lower than or equal to `-0L`.
-
-#### Float and float:
-
-- `@FloatRange(float min = 0.0f, float max)`
-- `@Positive`: Numbers equal to or larger than `0f`.
-- `@Negative`: Numbers lower than or equal to `-0f`.
-- `@Scale(int value)`
-
-#### Double, double:
-
-- `@DoubleRange(double min = 0.0, double max)`
-- `@Positive`: Numbers equal to or larger than `0.0`.
-- `@Negative`: Numbers lower than or equal to `-0.0`.
-- `@Scale(int value)`
-
-#### BigDecimal:
-
-- `@BigRange(String min = "", String max = "")`
-- `@Positive`: Numbers equal to or larger than `0.0`.
-- `@Negative`: Numbers lower than or equal to `-0.0`.
-- `@Scale(int value)`
-
-### Constraining parameter types
+### Constraining parameterized types
 
 When you want to constrain the generation of contained parameter types you can annotate 
 the parameter type directly, e.g.:
@@ -1045,7 +1023,9 @@ the three types of integers.
 
 Sometimes just mapping a single stream of generated values is not enough to generate
 a more complicated domain object. In those cases you can combine several arbitraries to
-a single result arbitrary using `Combinators.combine()` with up to four arbitraries. 
+a single result arbitrary using 
+`Combinators.combine()`](http://jqwik.net/javadoc/net/jqwik/api/Combinators.html#combine-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) 
+with up to four arbitraries. 
 [Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than four. 
 
 [The following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/MappingAndCombinatorExamples.java#L25) 
@@ -1530,7 +1510,7 @@ _TBD_
 - Added new method `Arbitraries.defaultFor()`
 - `@WithNull.target()` has been removed
   <p/>_This is an incompatible API change!_
-- Parameterized types [can now be annotated directly](#constraining-parameter-types)
+- Parameterized types [can now be annotated directly](#constraining-parameterized-types)
 - Added `@Size.value()` for fixed size collections
 - Added `@StringLength.value()` for fixed size Strings
 
