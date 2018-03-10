@@ -64,8 +64,9 @@ Volunteers for polishing and extending it are more than welcome._
 - [Providing Default Arbitraries](#providing-default-arbitraries)
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
-- [Program your own Generators and Arbitraries](#program-your-own-generators-and-arbitraries)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
+- [Program your own Arbitraries and Generators](#program-your-own-arbitraries-and-generators)
+  - [Arbitrary DIY Examples](#arbitrary-diy-examples)
 - [Release Notes](#release-notes)
   - [0.8.7](#087)
   - [0.8.6](#086)
@@ -1472,14 +1473,42 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 Not too difficult, is it?
 
 
-## Program your own Generators and Arbitraries
-
-_TBD_
-
-
 ## Create your own Annotations for Arbitrary Configuration
 
 _TBD_
+
+
+## Program your own Arbitraries and Generators
+
+In your everyday property testing you will often get along without ever implementing
+an arbitrary yourself. In cases where 
+[constraining default generation through annotations](#constraining-default-generation)
+does not cut it, you can use all the mechanisms to configure, (flat-)map, filter and combine
+the pre-implemented arbitraries.
+
+However, there are a few circumstances when you should think about rolling your own
+implementation. The most important of which are:
+
+- You want to expand the fluent API for configuration
+- The (randomized) generation of values needs different qualities than can easily be
+  derived by reusing existing arbitraries.
+  
+In those - and maybe a few other cases - you can implement your own arbitrary.
+To get a feel for what a usable implementation looks like, you might start with
+having a look at some of the internal arbitraries:
+
+- [ObjectArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/ObjectArbitrary.java) 
+- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultBigDecimalArbitrary.java) 
+- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultStringArbitrary.java) 
+
+Under the hood, most arbitraries use `RandomGenerator`s for the final value generation. Since
+[`RandomGenerator`](http://jqwik.net/javadoc/net/jqwik/api/RandomGenerator.html) 
+is a SAM type, most implementations are just lambda expression. 
+Start with the methods on [`RandomGenerators`]() to figure out how they work.
+
+### Arbitrary DIY Examples
+
+One of these days, an example will show up here...
 
 
 ## Release Notes

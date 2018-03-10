@@ -1,4 +1,4 @@
-package net.jqwik.properties;
+package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
 
@@ -9,7 +9,7 @@ public class ObjectArbitrary implements Arbitrary<Object> {
 			Object randomObject = new Object() {
 				@Override
 				public String toString() {
-					return String.format("Arbitrary Object [%d]", random.nextLong());
+					return String.format("Object[%d]", random.nextLong());
 				}
 			};
 			return Shrinkable.unshrinkable(randomObject);

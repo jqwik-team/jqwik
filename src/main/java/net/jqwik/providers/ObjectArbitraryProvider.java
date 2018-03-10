@@ -5,7 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.properties.*;
+import net.jqwik.properties.arbitraries.*;
 
 public class ObjectArbitraryProvider implements ArbitraryProvider {
 	@Override
