@@ -1,3 +1,2 @@
 - Documentation:
-  - Link to Javadoc
   - Fill section on Arbitrary configurators

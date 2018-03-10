@@ -180,7 +180,7 @@ You will have to add _at least_ the following jars to your classpath:
 
 ## Creating an Example-based Test
 
-Just annotate a `public`, `protected` or package-scoped method with `@Example`.
+Just annotate a `public`, `protected` or package-scoped method with [`@Example`](http://jqwik.net/javadoc/net/jqwik/api/Example.html).
 Example-based tests work just like plain JUnit-style test cases and
 are not supposed to take any parameters.
 
@@ -218,9 +218,11 @@ class ExampleBasedTests {
 _Properties_ are the core concept of [property-based testing](/#properties).
 
 You create a _Property_ by annotating a `public`, `protected` 
-or package-scoped method with `@Property`. In contrast to
-examples a property method is supposed to have one or
-more parameters, all of which must be annotated with `@ForAll`.
+or package-scoped method with 
+[`@Property`](http://jqwik.net/javadoc/net/jqwik/api/Property.html). 
+In contrast to examples a property method is supposed to have one or
+more parameters, all of which must be annotated with 
+[`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -269,7 +271,8 @@ in future versions.
 
 ### Optional `@Property` Parameters
 
-The `@Property` annotation has a few optional values:
+The [`@Property`](http://jqwik.net/javadoc/net/jqwik/api/Property.html) 
+annotation has a few optional values:
 
 - `int tries`: The number of times _jqwik_ tries to generate parameter values for this method.
   
@@ -312,7 +315,9 @@ static methods in `org.junit.jupiter.api.Assertions`.
 
 The current lifecycle of jqwik test methods is rather simple:
 
-- For each method, annotated with `@Property` or `@Example`, 
+- For each method, annotated with 
+  [`@Property`](http://jqwik.net/javadoc/net/jqwik/api/Property.html) 
+  or [`@Example`](http://jqwik.net/javadoc/net/jqwik/api/Example.html), 
   a new instance of the containing test class is created
   in order to keep the individual tests isolated from each other.
 - If you have preparatory work to do for each method, 
@@ -465,7 +470,7 @@ Tags must follow certain rules as described
 ## Default Parameter Generation
 
 _jqwik_ tries to generate values for those property method parameters that are
-annotated with `@ForAll`. If the annotation does not have a `value` parameter,
+annotated with [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html). If the annotation does not have a `value` parameter,
 jqwik will use default generation for the following types:
 
 - `Object`
@@ -481,25 +486,26 @@ jqwik will use default generation for the following types:
 - Array `T[]` of types that are provided by default.
 - `java.util.Random`
 
-If you use `@ForAll` with a value, e.g. `@ForAll("aMethodName")`, the method
+If you use [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html) 
+with a value, e.g. `@ForAll("aMethodName")`, the method
 referenced by `"aMethodName"` will be called to provide an Arbitrary of the 
 required type (see [Customized Parameter Generation](#customized-parameter-generation)). 
 
 ### Constraining Default Generation
 
-Default parameter generation can be influenced and constrained by additional annotations, depending
-on the requested parameter type.
+Default parameter generation can be influenced and constrained by additional annotations, 
+depending on the requested parameter type.
 
 #### All types:
 
-- `@WithNull(double value = 0.1)`: 
-   Inject `null` into generated values with a probability of `value`. 
+- [`@WithNull(double value = 0.1)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/WithNull.html): 
+  Inject `null` into generated values with a probability of `value`. 
    
 #### Strings:
 
 If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
 
-- `@StringLength(int value = 0, int min = 0, int max = 0)`
+- [`@StringLength(int value = 0, int min = 0, int max = 0)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/StringLength.html):
   Set either fixed length through `value` or configure the length range between `min` and `max`.
 
 
@@ -528,7 +534,7 @@ Only one of the following constraints can be used:
 
 #### List, Set, Stream and Arrays:
 
-- `@Size(int value = 0, int min = 0, int max = 0)`: 
+- [`@Size(int value = 0, int min = 0, int max = 0)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Size.html): 
   Set either fixed size through `value` or configure the size range between `min` and `max`.
 
 #### Byte and byte:
@@ -628,7 +634,7 @@ the last one will fail with `CannotFindArbitraryException`.
 ## Self-Made Annotations
 
 You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests-meta-annotations)
-instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using `@Property`
+instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using [`@Property`](http://jqwik.net/javadoc/net/jqwik/api/Property.html)
 as "meta"-annotation.
 
 The following example provides an annotation to constrain String or Character generation to German letters only:
@@ -681,13 +687,15 @@ Arbitrary<Integer> numbers() {
 }
 ```
 
-The String value of the `@ForAll` annotation serves as a reference to a 
+The String value of the [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html) 
+annotation serves as a reference to a 
 method within the same class (or one of its superclasses or owning classes).
 This reference refers to either the method's name or the String value
 of the method's `@Provide` annotation.
 
-The providing method has to return an object of type `@Arbitrary<T>` where
-`T` is the static type of the parameter to be provided. 
+The providing method has to return an object of type 
+[`@Arbitrary<T>`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html) 
+where `T` is the static type of the parameter to be provided. 
 
 Parameter provision usually starts with a 
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
@@ -696,17 +704,18 @@ by one or more [filtering](#filtering), [mapping](#mapping) or
 
 For types that have no default generation at all, _jqwik_ will use
 any provider method returning the correct type even if there is no
-explicit reference value in `@ForAll`. If provision is ambiguous
+explicit reference value in [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html). If provision is ambiguous
 _jqwik_ will complain and throw an exception at runtime. 
 
 
 ### Static `Arbitraries` methods 
 
-The starting point for generation usually is a static method call on class `Arbitraries`. 
+The starting point for generation usually is a static method call on class 
+[`Arbitraries`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html). 
 
 #### Generate values yourself
 
-- `Arbitrary<T> randomValue(Function<Random, T> generator)`: 
+- [`Arbitrary<T> randomValue(Function<Random, T> generator)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#randomValue-java.util.function.Function-): 
   Take a `random` instance and create an object from it.
   Those values cannot be [shrunk](#result-shrinking), though.
   
@@ -726,17 +735,17 @@ The starting point for generation usually is a static method call on class `Arbi
   }
   ```
 
-- `Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`:
+- [`Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#fromGenerator-net.jqwik.api.RandomGenerator-):
   If the number of _tries_ influences value generation or if you want 
   to allow for [shrinking](#result-shrinking) you have to provide 
   your own `RandomGenerator` implementation. 
   
 #### Select values randomly
 
-- `Arbitrary<U> of(U... values)`:
+- [`Arbitrary<U> of(U... values)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#of-U...-):
   Choose randomly from a list of values. Shrink towards the first one.
   
-- `Arbitrary<T> samples(T... samples)`:
+- [`Arbitrary<T> samples(T... samples)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#samples-T...-):
   Go through samples from first to last. Shrink towards the first sample.
   
   If instead you want to _add_ samples to an existing arbitrary you'd rather use 
@@ -752,44 +761,76 @@ The starting point for generation usually is a static method call on class `Arbi
   will first generate the 7 enumerated prime numbers and only then generate random 
   integers between -1000 and +1000.
   
-- `Arbitrary<T> of(Class<T  extends Enum> enumClass)`:
+- [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
+
+#### Select randomly with Weights
+
+If you have a set of values to choose from with weighted probabilities, use 
+[`Arbitraries.frequency(...)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuples.Tuple2...-):
+
+```java
+@Property
+void abcdWithFrequencies(@ForAll("abcdWeighted") String aString) {
+    Statistics.collect(aString);
+}
+
+@Provide
+Arbitrary<String> abcdWeighted() {
+    return Arbitraries.frequency(
+        Tuples.tuple(1, "a"),
+        Tuples.tuple(5, "b"),
+        Tuples.tuple(10, "c"),
+        Tuples.tuple(20, "d")
+    );
+}
+```
+
+The first value of the tuple specifies the frequency of a particular value in relation to the
+sum of all frequencies. In 
+[the given example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/ChoosingExamples.java#L17)
+the sum is 36, thus `"a"` will be generated with a probability of `1/36` 
+whereas `"d"` has a generation probability of `20/36` (= `5/9`).
+
+Shrinking moves towards the start of the frequency list.
 
 #### Integers
 
-- `ByteArbitrary bytes()`
-- `ShortArbitrary shorts()`
-- `IntegerArbitrary integers()`
-- `LongArbitrary longs()`
-- `BigIntegerArbitrary bigIntegers()`
+- [`ByteArbitrary bytes()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
+- [`ShortArbitrary shorts()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
+- [`IntegerArbitrary integers()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#integers--)
+- [`LongArbitrary longs()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#longs--)
+- [`BigIntegerArbitrary bigIntegers()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
 
 #### Decimals
 
-- `FloatArbitrary floats()`
-- `DoubleArbitrary doubles()`
-- `BigDecimalArbitrary bigDecimals()`
+- [`FloatArbitrary floats()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#floats--)
+- [`DoubleArbitrary doubles()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
+- [`BigDecimalArbitrary bigDecimals()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
 
 #### Characters and Strings
 
-- `StringArbitrary strings()`
-- `CharacterArbitrary chars()`
+- [`StringArbitrary strings()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#strings--)
+- [`CharacterArbitrary chars()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#chars--)
 
 #### java.util.Random
 
-- `Arbitrary<Random> randoms()`: Random instances will never be shrunk
+- [`Arbitrary<Random> randoms()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#randoms--): 
+  Random instances will never be shrunk
 
 #### Constants
 
-- `Arbitrary<T> constant(T value)`: Always return an unshrinkable `value` of type `T`.
+- [`Arbitrary<T> constant(T value)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
+  Always return an unshrinkable `value` of type `T`.
 
 #### Default Types
 
-- `Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`: 
+- [`Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#defaultFor-java.lang.Class-java.lang.Class...-): 
   Return the default arbitrary available for type `type` [if one is provided](#providing-default-arbitraries)
   by default. For parameterized types you can also specify the parameter types. 
   
   Keep in mind, though, that the parameter types are lost in the type signature and therefore
-  cannot be used in the respective `@ForAll` property method parameter. Raw types and wildcards, 
+  cannot be used in the respective [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html) property method parameter. Raw types and wildcards, 
   however, match; thus the following example will work:
   
   ````java
@@ -809,11 +850,11 @@ The starting point for generation usually is a static method call on class `Arbi
 Generating types who have generic type parameters, requires to start with 
 an `Arbitrary` instance for the generic type. You can create the corresponding collection arbitrary from there:
 
-- `Arbitrary.list()`
-- `Arbitrary.set()`
-- `Arbitrary.streamOf()`
-- `Arbitrary.array(Class<A> arrayClass)`
-- `Arbitrary.optional()`
+- [`Arbitrary.list()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#list--)
+- [`Arbitrary.set()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#set--)
+- [`Arbitrary.streamOf()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#stream--)
+- [`Arbitrary.array(Class<A> arrayClass)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
+- [`Arbitrary.optional()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#optional--)
 
 ### Fluent Configuration Interfaces
 
@@ -849,59 +890,11 @@ Arbitrary<List<Integer>> fixedSizedListOfPositiveIntegers() {
 }
 ```
 
-### Randomly Choosing Values
-
-If you have a set of values to choose from with equal probability, just use `Arbitraries.of(...)`:
-
-```java
-@Property
-void abcd(@ForAll("abcd") String aString) {
-    Statistics.collect(aString);
-}
-
-@Provide
-Arbitrary<String> abcd() {
-    return Arbitraries.of("a", "b", "c", "d");
-}
-```
-
-Shrinking moves towards the start of the list.
-
-### Choosing with Weights
-
-If you have a set of values to choose from with weighted probabilities, use `Arbitraries.frequency(...)`:
-
-```java
-@Property
-void abcdWithFrequencies(@ForAll("abcdWeighted") String aString) {
-    Statistics.collect(aString);
-}
-
-@Provide
-Arbitrary<String> abcdWeighted() {
-    return Arbitraries.frequency(
-        Tuples.tuple(1, "a"),
-        Tuples.tuple(5, "b"),
-        Tuples.tuple(10, "c"),
-        Tuples.tuple(20, "d")
-    );
-}
-```
-
-The first value of the tuple specifies the frequency of a particular value in relation to the
-sum of all frequencies. In 
-[the given example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/ChoosingExamples.java#L17)
-the sum is 36, thus `"a"` will be generated with a probability of `1/36` 
-whereas `"d"` has a generation probability of `20/36` (= `5/9`).
-
-Shrinking moves towards the start of the frequency list.
-
-
 ### Generate `null` values
 
 Predefined generators will never create `null` values. If you want to allow that,
-call `Arbitrary.injectNull(double probability)`. The following
-provider method creates an arbitrary that will return a `null` String 
+call [`Arbitrary.injectNull(double probability)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#injectNull-double-). 
+The following provider method creates an arbitrary that will return a `null` String 
 in about 1 of 100 generated values.
 
 ```java
@@ -914,7 +907,9 @@ Arbitrary<String> stringsWithNull() {
 ### Filtering
 
 If you want to include only part of all the values generated by an arbitrary,
-use `Arbitrary.filter(Predicate<T> filterPredicate)`. The following arbitrary will filter out all
+use 
+[`Arbitrary.filter(Predicate<T> filterPredicate)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#filter-java.util.function.Predicate-). 
+The following arbitrary will filter out all
 even numbers from the stream of generated integers:
 
 ```java
@@ -931,7 +926,8 @@ resulting in an endless loop.
 ### Mapping
 
 Sometimes it's easier to start with an existing arbitrary and use its generated values to
-build other objects from them. In that case, use `Arbitrary.map(Function<T, U> mapper)`.
+build other objects from them. In that case, use 
+[`Arbitrary.map(Function<T, U> mapper)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#map-java.util.function.Function-).
 The following example uses generated integers to create numerical Strings: 
 
 ```java
@@ -983,8 +979,9 @@ To randomize the method call, you not only need a string but also the `begin` an
 However, both have dependencies:
 - `end` must not be larger than the string size
 - `begin` must not be larger than `end`
-You can make _jqwik_ create all three values by using `flatMap` combined with a
-tuple type 
+You can make _jqwik_ create all three values by using 
+[`flatMap`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#flatMap-java.util.function.Function-) 
+combined with a tuple type 
 [like this](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/FlatMappingExamples.java#L32):
 
 
@@ -1115,8 +1112,9 @@ boolean comparingUnequalStrings( //
 }
 ```
 
-This is a reasonable use of `Assume.that(boolean condition)` because most generated
-value sets will pass through.
+This is a reasonable use of 
+[`Assume.that(boolean condition)`](http://jqwik.net/javadoc/net/jqwik/api/Assume.html#that-boolean-) 
+because most generated value sets will pass through.
 
 Have a look at a seemingly similar example:
 
@@ -1148,15 +1146,17 @@ org.opentest4j.AssertionFailedError:
 The problem is that - given a random generation of two strings - only in very few cases
 one string will be contained in the other. _jqwik_ will report a property as `exhausted`
 if the ratio between generated and accepted parameters is higher than 5. You can change
-the maximum discard ratio by specifying a parameter `maxDiscardRatio` in the `@Property` annotation.
+the maximum discard ratio by specifying a parameter `maxDiscardRatio` in the 
+[`@Property`](http://jqwik.net/javadoc/net/jqwik/api/Property.html) annotation.
 That's why changing to `@Property(maxDiscardRatio = 100)` in the previous example 
 will probably result in a successful property run, even though only a handful 
 cases - of 1000 generated - will actually be checked.
 
 In many cases turning up the accepted discard ration is a bad idea. With some creativity
 we can often avoid the problem by generating out test data a bit differently. 
-Look at this variant of the above property, which also uses `Assume.that()` but with
-a much lower discard ratio:
+Look at this variant of the above property, which also uses 
+[`Assume.that()`](http://jqwik.net/javadoc/net/jqwik/api/Assume.html#that-boolean-)
+but with a much lower discard ratio:
 
 ```java
 @Property
@@ -1266,7 +1266,8 @@ void aPropertyWithLongShrinkingTimes(
 In many situations you'd like to know if _jqwik_ will really generate
 the kind of values you expect and if the frequency and distribution of
 certain value classes meets your testing needs. 
-`Statistics.collect()` is made for this exact purpose.
+[`Statistics.collect()`] (http://jqwik.net/javadoc/net/jqwik/api/Statistics.html#collect-java.lang.Object...-)
+is made for this exact purpose.
 
 In the most simple case you'd like to know how often a certain value
 is being generated:
@@ -1391,7 +1392,7 @@ Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
 _jqwik_ will then add an instance of your arbitrary provider into the list of
 its default providers. Those default providers are considered for every test parameter annotated 
-with `@ForAll` that has no explicit `value`. By using this mechanism you can also replace
+with [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html) that has no explicit `value`. By using this mechanism you can also replace
 the default providers packaged into _jqwik_.
 
 ### Simple Arbitrary Providers
@@ -1511,7 +1512,7 @@ _TBD_
 - Added `@Tag` to allow the [tagging of examples, properties and containers](#tagging-tests)
 - User guide: Added links to example sources on github
 - Added `Arbitraries.frequency()` to enable 
-  [choosing values with weighted probabilities](#choosing-with-weights)
+  [choosing values with weighted probabilities](#select-randomly-with-weights)
 - Collection and String generation now explores a wider range of sizes and lengths
 
 ### 0.8.6
