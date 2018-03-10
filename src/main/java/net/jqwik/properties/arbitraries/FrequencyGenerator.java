@@ -17,7 +17,6 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 		if (size <= 0) {
 			throw new JqwikException(String.format("%s does not contain any positive frequencies.", JqwikStringSupport.displayString(frequencies)));
 		}
-
 	}
 
 	private void calculateUpperBorders(Tuples.Tuple2<Integer, T>[] frequencies) {

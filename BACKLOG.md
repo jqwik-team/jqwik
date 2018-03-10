@@ -43,6 +43,11 @@
 
 ### Properties
 
+- @ForAll 
+  - can be used in parameter types to choose provider method
+  - can take `providerClass` parameter (but no value parameter) 
+    to specify ArbitraryProvider implementation
+
 - ArbitraryProvider: Add priority to provider registration to allow more specific providers.
   Currently the order of registration is decisive - last registered provider wins.
 
@@ -58,10 +63,6 @@
 
 - Evaluate properties in parallel (max tries worker thread per property)
 
-- @ForAll 
-  - can be used in parameter types to choose provider method
-  - can take `providerClass` parameter (with or without value param)
-
 - Handle error
   - if more than one generator applies
   - if generic type is a bounded type
@@ -69,7 +70,7 @@
 - Default Arbitraries, Generators and Shrinking for
   - Tuples.Tuple2/3/4
   - Map
-  - Function and SAM types
+  - Functional interfaces and SAM types
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
   - Files, Paths etc.
   - Arrays of Arrays
