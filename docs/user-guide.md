@@ -10,6 +10,8 @@ Volunteers for polishing and extending it are more than welcome._
 
 - [How to Use](#how-to-use)
   - [Gradle](#gradle)
+    - [Using JUnit's own Gradle Plugin](#using-junits-own-gradle-plugin)
+    - [Using Gradle's Built-in Support](#using-gradles-built-in-support)
   - [Maven](#maven)
   - [Snapshot Releases](#snapshot-releases)
   - [Project without Build Tool](#project-without-build-tool)
@@ -65,8 +67,8 @@ Volunteers for polishing and extending it are more than welcome._
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
+  - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Program your own Arbitraries and Generators](#program-your-own-arbitraries-and-generators)
-  - [Arbitrary DIY Examples](#arbitrary-diy-examples)
 - [Release Notes](#release-notes)
   - [0.8.7](#087)
   - [0.8.6](#086)
@@ -1485,8 +1487,62 @@ Not too difficult, is it?
 
 ## Create your own Annotations for Arbitrary Configuration
 
-_TBD_
+All you [can do to constrain default parameter generation](#constraining-default-generation)
+is adding another annotation to a parameter or its parameter types. What if the existing parameters
+do not suffice your needs? Is there a way to enhance the set of constraint annotations? Yes, there is!
 
+The mechanism you can plug into is similar to what you do when 
+[providing your own default arbitrary providers](#providing-default-arbitraries). That means:
+
+1. Create an implementation of an interface, in this case 
+  [`ArbitraryConfigurator`](http://jqwik.net/javadoc/net/jqwik/api/configurators/ArbitraryConfigurator.html).
+2. Register the implementation using using Java’s `java.util.ServiceLoader` mechanism.
+
+### Arbitrary Configuration Example: `@Odd`
+
+To demonstrate the idea let's create an annotation `@Odd` which will constrain any integer
+generation to only generate odd numbers. First things first, so here's 
+the [`@Odd` annotation](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/arbitraryconfigurator/Odd.java) 
+together with the 
+[configurator implementation](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/arbitraryconfigurator/OddConfigurator.java):
+
+```java
+@Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_USE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Odd {
+}
+
+public class OddConfigurator extends ArbitraryConfiguratorBase {
+	public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, Odd odd) {
+		return arbitrary.filter(number -> Math.abs(number % 2) == 1);
+	}
+}
+```
+
+Mind that the implementation uses an abstract base class - instead of the interface itself -
+which simplifies implementation if you're only interested in a single annotation.
+
+If you now 
+[register the implementation](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator), 
+the [following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/arbitraryconfigurator/OddProperties.java) 
+will work:
+
+```java
+@Property(reporting = Reporting.GENERATED)
+boolean oddIntegersOnly(@ForAll @Odd int aNumber) {
+    return Math.abs(aNumber % 2) == 1;
+}
+```
+
+There are two catches, though: 
+
+- Currently `OddConfigurator` only works for numbers of type `Integer` or `int`. If you want
+  to generalize it to all integral types, you have to provide additional `configure` methods
+  that accept `ByteInteger`, `ShortInteger` and so on as their first parameter.
+- You can combine `@Odd` it with other annotations like `@Positive` or `@Range`. 
+  In this case the order of configurator registration might play a role, because a configurator
+  will potentially change the runtime type of an arbitrary instance.
+ 
 
 ## Program your own Arbitraries and Generators
 

@@ -1,2 +1,4 @@
-- Documentation:
-  - Fill section on Arbitrary configurators
+- Javadoc:
+  - Arbitraries methods
+  - Arbitrary methods
+  - Fluent configurator methods
