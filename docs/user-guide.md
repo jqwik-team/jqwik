@@ -68,7 +68,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Generic Arbitrary Providers](#generic-arbitrary-providers)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
-- [Program your own Arbitraries and Generators](#program-your-own-arbitraries-and-generators)
+- [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
   - [0.8.7](#087)
   - [0.8.6](#086)
@@ -1487,7 +1487,7 @@ Not too difficult, is it?
 
 ## Create your own Annotations for Arbitrary Configuration
 
-All you [can do to constrain default parameter generation](#constraining-default-generation)
+All you can do [to constrain default parameter generation](#constraining-default-generation)
 is adding another annotation to a parameter or its parameter types. What if the existing parameters
 do not suffice your needs? Is there a way to enhance the set of constraint annotations? Yes, there is!
 
@@ -1539,12 +1539,12 @@ There are two catches, though:
 - Currently `OddConfigurator` only works for numbers of type `Integer` or `int`. If you want
   to generalize it to all integral types, you have to provide additional `configure` methods
   that accept `ByteInteger`, `ShortInteger` and so on as their first parameter.
-- You can combine `@Odd` it with other annotations like `@Positive` or `@Range`. 
-  In this case the order of configurator registration might play a role, because a configurator
-  will potentially change the runtime type of an arbitrary instance.
+- You can combine `@Odd` with other annotations like `@Positive` or `@Range` or another
+  self-made configurator. In this case the order of configurator registration might play a role, 
+  because a configurator will potentially change the runtime type of an arbitrary instance.
  
 
-## Program your own Arbitraries and Generators
+## Implement your own Arbitraries and Generators
 
 In your everyday property testing you will often get along without ever implementing
 an arbitrary yourself. In cases where 
