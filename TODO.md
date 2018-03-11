@@ -1,2 +1,4 @@
 - Documentation:
+  - Add shrinking as reason for implementing Arbitrary
+  - Add subsection why native gradle test is currently not the best way
   - Fill section on Arbitrary configurators
