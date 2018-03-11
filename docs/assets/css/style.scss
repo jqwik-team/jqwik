@@ -21,6 +21,17 @@ h2 a {
     color: white;
 }
 
+ul {
+    margin-bottom: 0;
+}
+
+li {
+    margin-top: 0.7em;
+    li {
+        margin-top: 0;
+    }
+}
+
 header.inner {
     max-width: 800px;
 }
@@ -66,3 +77,4 @@ a code {
     color: #0F79D0;
     text-decoration: underline;
 }
+
