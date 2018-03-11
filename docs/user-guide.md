@@ -151,7 +151,6 @@ dependencies {
     testCompile("org.assertj:assertj-core:3.9.0")
 
 }
-
 ```
 
 See [the Gradle section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
@@ -181,7 +180,6 @@ and add the following dependency to your `pom.xml` file:
         <scope>test</scope>
     </dependency>
 </dependencies>
-
 ```
 
 
@@ -642,7 +640,6 @@ public @interface GermanText { }
 
 @Property(tries = 10, reporting = ReportingMode.GENERATED)
 void aGermanText(@ForAll @GermanText String aText) {}
-
 ```
 
 The drawback of self-made annotations is that they do not forward their parameters to meta-annotations,
