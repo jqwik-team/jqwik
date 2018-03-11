@@ -95,6 +95,8 @@ The latest release of __jqwik__ is deployed to [Maven Central](https://mvnreposi
 
 To use __jqwik__ in a gradle-based project add the following stuff to your `build.gradle` file:
 
+#### Using JUnit's own Gradle Plugin
+
 ```
 buildscript {
 	dependencies {
@@ -152,6 +154,14 @@ dependencies {
 
 See [the Gradle section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
 for more details on how to configure test execution.
+
+#### Using Gradle's Built-in Support
+
+Since version 4.6, Gradle has 
+[built-in support for the JUnit platform](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html).
+In its current state I do not recommend it for use with _jqwik_ because some of the 
+[important information is not reported](https://github.com/gradle/gradle/issues/4605)
+by Gradle. Just wait till they fix it.
 
 ### Maven
 
@@ -1489,9 +1499,10 @@ the pre-implemented arbitraries.
 However, there are a few circumstances when you should think about rolling your own
 implementation. The most important of which are:
 
-- You want to expand the fluent API for configuration
+- You want to expand the fluent API for configuration purposes.
 - The (randomized) generation of values needs different qualities than can easily be
   derived by reusing existing arbitraries.
+- Standard shrinking attempts do not come up with simple enough examples.
   
 In those - and maybe a few other cases - you can implement your own arbitrary.
 To get a feel for what a usable implementation looks like, you might start with
@@ -1506,10 +1517,8 @@ Under the hood, most arbitraries use `RandomGenerator`s for the final value gene
 is a SAM type, most implementations are just lambda expression. 
 Start with the methods on [`RandomGenerators`]() to figure out how they work.
 
-### Arbitrary DIY Examples
-
-One of these days, an example will show up here...
-
+Since the topic is rather complicated, a detailed example will one day be published 
+in a separate article...
 
 ## Release Notes
 
