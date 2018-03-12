@@ -1034,7 +1034,7 @@ the three types of integers.
 Sometimes just mapping a single stream of generated values is not enough to generate
 a more complicated domain object. In those cases you can combine several arbitraries to
 a single result arbitrary using 
-`Combinators.combine()`](http://jqwik.net/javadoc/net/jqwik/api/Combinators.html#combine-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) 
+[`Combinators.combine()`](http://jqwik.net/javadoc/net/jqwik/api/Combinators.html#combine-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) 
 with up to four arbitraries. 
 [Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than four. 
 
