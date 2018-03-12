@@ -188,7 +188,14 @@ and add the following dependency to your `pom.xml` file:
 Snapshot releases are available through Sonatype's 
 [snapshot repositories](#https://oss.sonatype.org/content/repositories/snapshots).
 
-Adding `https://oss.sonatype.org/content/repositories/snapshots` as a maven repository
+Adding 
+
+```
+https://oss.sonatype.org/content/
+        repositories/snapshots
+``` 
+
+as a maven repository
 will allow you to use _jqwik_'s snapshot release which contains all the latest features.
 
 ### Project without Build Tool
@@ -821,7 +828,7 @@ Shrinking moves towards the start of the frequency list.
   cannot be used in the respective [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html) property method parameter. Raw types and wildcards, 
   however, match; thus the following example will work:
   
-  ````java
+  ```java
   @Property
   boolean listWithWildcard(@ForAll("stringLists") List<?> stringList) {
       return stringList.isEmpty() || stringList.get(0) instanceof String;
@@ -831,7 +838,7 @@ Shrinking moves towards the start of the frequency list.
   Arbitrary<List> stringLists() {
       return Arbitraries.defaultFor(List.class, String.class);
   }
-  ````
+  ```
 
 ### Collections, Streams, Arrays and Optional
 
@@ -1256,7 +1263,7 @@ void aPropertyWithLongShrinkingTimes(
 In many situations you'd like to know if _jqwik_ will really generate
 the kind of values you expect and if the frequency and distribution of
 certain value classes meets your testing needs. 
-[`Statistics.collect()`] (http://jqwik.net/javadoc/net/jqwik/api/Statistics.html#collect-java.lang.Object...-)
+[`Statistics.collect()`](http://jqwik.net/javadoc/net/jqwik/api/Statistics.html#collect-java.lang.Object...-)
 is made for this exact purpose.
 
 In the most simple case you'd like to know how often a certain value
@@ -1377,8 +1384,12 @@ Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
 - Implement the interface `net.jqwik.api.providers.ArbitraryProvider`.<br/> 
   The implementing class _must_ have a default constructor without parameters.
-- Register the implementation class in file <br/>
-  `META-INF/services/net.jqwik.api.providers.ArbitraryProvider`
+- Register the implementation class in file
+
+  ```
+  META-INF/services/
+      net.jqwik.api.providers.ArbitraryProvider
+  ```
 
 _jqwik_ will then add an instance of your arbitrary provider into the list of
 its default providers. Those default providers are considered for every test parameter annotated 
