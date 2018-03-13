@@ -1381,7 +1381,7 @@ classes, in all of your properties, and without having to add `@Provide` method
 to all test classes. _jqwik_ enables this feature by using 
 Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
-- Implement the interface `net.jqwik.api.providers.ArbitraryProvider`.<br/> 
+- Implement the interface [`ArbitraryProvider`](http://jqwik.net/javadoc/net/jqwik/api/providers/ArbitraryProvider.html).<br/> 
   The implementing class _must_ have a default constructor without parameters.
 - Register the implementation class in file
 

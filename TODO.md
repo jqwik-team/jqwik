@@ -1,4 +1,6 @@
 - Javadoc:
+  - ArbitraryProvider 
+  - ArbitraryConfigurator
   - Arbitraries methods
   - Arbitrary methods
   - Fluent configurator methods
