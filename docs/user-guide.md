@@ -191,8 +191,7 @@ Snapshot releases are available through Sonatype's
 Adding 
 
 ```
-https://oss.sonatype.org/content/
-        repositories/snapshots
+https://oss.sonatype.org/content/repositories/snapshots
 ``` 
 
 as a maven repository
@@ -1387,8 +1386,7 @@ Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 - Register the implementation class in file
 
   ```
-  META-INF/services/
-      net.jqwik.api.providers.ArbitraryProvider
+  META-INF/services/net.jqwik.api.providers.ArbitraryProvider
   ```
 
 _jqwik_ will then add an instance of your arbitrary provider into the list of
