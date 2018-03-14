@@ -3,28 +3,26 @@ package net.jqwik.properties.arbitraries;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-import java.math.*;
-
 public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements CharacterArbitrary {
 
 	public static final int MAX_ASCII_CODEPOINT = 0x007F;
 
-	private final IntegralGeneratingArbitrary generatingArbitrary;
+	private char min = 0;
+	private char max = 0;
 
 	public DefaultCharacterArbitrary() {
-		this.generatingArbitrary = new IntegralGeneratingArbitrary(BigInteger.ZERO, BigInteger.ZERO);
 	}
 
 	@Override
 	public RandomGenerator<Character> generator(int tries) {
-		return this.generatingArbitrary.generator(tries).map(bigInteger -> (char) bigInteger.intValueExact());
+		return RandomGenerators.chars(min, max);
 	}
 
 	@Override
 	public CharacterArbitrary between(char min, char max) {
 		DefaultCharacterArbitrary clone = typedClone();
-		clone.generatingArbitrary.min = BigInteger.valueOf(min);
-		clone.generatingArbitrary.max = BigInteger.valueOf(max);
+		clone.min = min;
+		clone.max = max;
 		return clone;
 	}
 

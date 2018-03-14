@@ -1,10 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
-import static net.jqwik.properties.ArbitraryTestHelper.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.properties.*;
+
+import static net.jqwik.properties.ArbitraryTestHelper.*;
 
 class DefaultCharacterArbitraryTests {
 
@@ -19,14 +19,14 @@ class DefaultCharacterArbitraryTests {
 	void all() {
 		CharacterArbitrary all = this.arbitrary.all();
 		assertAllGenerated(all.generator(1000), c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == Character.MIN_VALUE);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == Character.MAX_VALUE);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c <= '\u1000');
+		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c >= '\uF000');
 	}
 
 	@Example
 	void between() {
 		char min = '\u0010';
-		char max = '\u1000';
+		char max = '\u0030';
 		CharacterArbitrary all = this.arbitrary.between(min, max);
 		assertAllGenerated(all.generator(1000), c -> c >= min && c <= max);
 		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == min);
@@ -45,8 +45,8 @@ class DefaultCharacterArbitraryTests {
 	void ascii() {
 		CharacterArbitrary all = this.arbitrary.ascii();
 		assertAllGenerated(all.generator(1000), c -> c >= 0 && c <= 127);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == 0);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == 127);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c <= 10);
+		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c >= 126);
 	}
 
 }
