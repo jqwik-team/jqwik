@@ -1,3 +1,5 @@
+- Recursive Arbitraries
+  - Make flatMap sample only once
 - Javadoc:
   - ArbitraryProvider 
   - ArbitraryConfigurator
