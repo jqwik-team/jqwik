@@ -50,7 +50,14 @@ public class Arbitraries {
 		}
 		List<Arbitrary<T>> all = new ArrayList<>(Arrays.asList(rest));
 		all.add(first);
-		return fromGenerator(RandomGenerators.choose(all)).flatMap(arbitrary -> arbitrary);
+		return oneOf(all);
+	}
+
+	public static <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all) {
+		return tries -> {
+			List<RandomGenerator<T>> generators = all.stream().map(a -> a.generator(tries)).collect(Collectors.toList());
+			return RandomGenerators.oneOf(generators);
+		};
 	}
 
 	@SafeVarargs

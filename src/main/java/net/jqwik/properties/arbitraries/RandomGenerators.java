@@ -16,10 +16,14 @@ public class RandomGenerators {
 		}
 		ValuesShrinkCandidates<U> shrinkingCandidates = new ValuesShrinkCandidates<>(values);
 		return random -> {
-			int index = random.nextInt(values.size());
-			U value = values.get(index);
+			U value = chooseValue(values, random);
 			return new ShrinkableValue<>(value, shrinkingCandidates);
 		};
+	}
+
+	public static <U> U chooseValue(List<U> values, Random random) {
+		int index = random.nextInt(values.size());
+		return values.get(index);
 	}
 
 	public static <U> RandomGenerator<U> choose(U[] values) {
@@ -36,6 +40,10 @@ public class RandomGenerators {
 			validCharacters[i] = characters[i];
 		}
 		return choose(validCharacters);
+	}
+
+	public static <T> RandomGenerator<T> oneOf(List<RandomGenerator<T>> generators) {
+		return random -> RandomGenerators.chooseValue(generators, random).next(random);
 	}
 
 	public static RandomGenerator<Character> chars(char min, char max) {
