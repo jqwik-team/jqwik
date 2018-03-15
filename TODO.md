@@ -1,5 +1,6 @@
 - Recursive Arbitraries
-  - Introduce Arbitraries.recursive()
+  - Introduce Arbitraries.flatFrequency()
+  - Document Arbitraries.recursive()
 - Javadoc:
   - ArbitraryProvider 
   - ArbitraryConfigurator

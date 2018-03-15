@@ -34,6 +34,10 @@ public class Arbitraries {
 		return fromGenerator(RandomGenerators.choose(values));
 	}
 
+	public static <U> Arbitrary<U> of(List<U> values) {
+		return fromGenerator(RandomGenerators.choose(values));
+	}
+
 	public static Arbitrary<Character> of(char[] values) {
 		return fromGenerator(RandomGenerators.choose(values));
 	}
@@ -54,10 +58,7 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all) {
-		return tries -> {
-			List<RandomGenerator<T>> generators = all.stream().map(a -> a.generator(tries)).collect(Collectors.toList());
-			return RandomGenerators.oneOf(generators);
-		};
+		return of(all).flatMap(a -> a);
 	}
 
 	@SafeVarargs
@@ -311,6 +312,10 @@ public class Arbitraries {
 		} else {
 			throw new JqwikException(String.format("No default arbitrary for type [%s]", genericType));
 		}
+	}
+
+	public static <T> Arbitrary<T> recursive(Supplier<Arbitrary<T>> arbitrarySupplier) {
+		return tries -> arbitrarySupplier.get().generator(tries);
 	}
 
 }

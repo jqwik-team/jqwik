@@ -42,10 +42,6 @@ public class RandomGenerators {
 		return choose(validCharacters);
 	}
 
-	public static <T> RandomGenerator<T> oneOf(List<RandomGenerator<T>> generators) {
-		return random -> RandomGenerators.chooseValue(generators, random).next(random);
-	}
-
 	public static RandomGenerator<Character> chars(char min, char max) {
 		return integers(min, max).map(anInt -> ((char) (int) anInt));
 	}

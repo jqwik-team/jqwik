@@ -1584,6 +1584,10 @@ in a separate article...
 
 ## Release Notes
 
+### 0.8.8-SNAPSHOT
+
+- Added `Arbitraries.recursive()` to allow recursive value generation
+
 ### 0.8.7
 
 - Property methods that also have Jupiter annotations are skipped

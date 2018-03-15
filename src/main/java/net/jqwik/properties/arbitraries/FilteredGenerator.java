@@ -18,9 +18,23 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 
 	@Override
 	public Shrinkable<T> next(Random random) {
+		return nextUntilAccepted(random, toFilter::next);
+	}
+
+	@Override
+	public Shrinkable<T> sampleRandomly(Random random) {
+		return nextUntilAccepted(random, toFilter::sampleRandomly);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Filtering [%s]", toFilter);
+	}
+
+	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
 		long count = 0;
 		while (true) {
-			Shrinkable<T> next = toFilter.next(random);
+			Shrinkable<T> next = fetchShrinkable.apply(random);
 			if (filterPredicate.test(next.value())) {
 				return new FilteredShrinkable<>(next, filterPredicate);
 			} else {
@@ -32,8 +46,4 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return String.format("Filtering [%s]", toFilter);
-	}
 }

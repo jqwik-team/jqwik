@@ -19,7 +19,8 @@ public interface RandomGenerator<T> {
 	 * As opposed to {@code next} this method only chooses values from the random part
 	 * of a generator. For purely random generators this is the same as calling {@code next}.
 	 * <p>
-	 * Needed for Arbitraries.flatMap
+	 *
+	 * Needed for flatMap and derived operations
 	 *
 	 * @param random the source of randomness. Injected by jqwik itself.
 	 * @return the next _randomly_ generated value wrapped within the Shrinkable interface. The method must ALWAYS return a next value.
@@ -29,12 +30,22 @@ public interface RandomGenerator<T> {
 	}
 
 	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
-		return random -> this.next(random).map(mapper);
+		return new RandomGenerator<U>() {
+			@Override
+			public Shrinkable<U> next(Random random) {
+				return RandomGenerator.this.next(random).map(mapper);
+			}
+
+			@Override
+			public Shrinkable<U> sampleRandomly(Random random) {
+				return RandomGenerator.this.sampleRandomly(random).map(mapper);
+			}
+		};
 	}
 
 	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int tries) {
 		return random -> {
-			Shrinkable<T> wrappedShrinkable = this.next(random);
+			Shrinkable<T> wrappedShrinkable = this.sampleRandomly(random);
 			return new FlatMappedShrinkable<>(wrappedShrinkable, mapper, tries, random.nextLong());
 		};
 	}
@@ -44,10 +55,18 @@ public interface RandomGenerator<T> {
 	}
 
 	default RandomGenerator<T> injectNull(double nullProbability) {
-		return random -> {
-			if (random.nextDouble() <= nullProbability)
-				return Shrinkable.unshrinkable(null);
-			return RandomGenerator.this.next(random);
+		return new RandomGenerator<T>() {
+			@Override
+			public Shrinkable<T> next(Random random) {
+				if (random.nextDouble() <= nullProbability) return Shrinkable.unshrinkable(null);
+				return RandomGenerator.this.next(random);
+			}
+
+			@Override
+			public Shrinkable<T> sampleRandomly(Random random) {
+				if (random.nextDouble() <= nullProbability) return Shrinkable.unshrinkable(null);
+				return RandomGenerator.this.sampleRandomly(random);
+			}
 		};
 	}
 

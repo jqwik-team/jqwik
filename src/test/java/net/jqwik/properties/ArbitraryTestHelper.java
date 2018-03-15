@@ -11,6 +11,13 @@ import static org.assertj.core.api.Assertions.*;
 
 public class ArbitraryTestHelper {
 
+	@SafeVarargs
+	public static <T> void assertAtLeastOneGeneratedOf(RandomGenerator<T> generator, T... values) {
+		for (T value : values) {
+			assertAtLeastOneGenerated(generator, value::equals, "Failed to generate " + value);
+		}
+	}
+
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
 		assertAtLeastOneGenerated(generator, checker, "Failed to generate at least one");
 	}
@@ -29,7 +36,7 @@ public class ArbitraryTestHelper {
 
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
 		Random random = SourceOfRandomness.current();
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 500; i++) {
 			Shrinkable<T> value = generator.next(random);
 			if (checker.apply(value.value()))
 				return;

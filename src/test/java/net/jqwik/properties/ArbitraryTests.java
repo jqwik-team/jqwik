@@ -218,7 +218,7 @@ class ArbitraryTests {
 		void flatMapIntegerToString() {
 			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings() //
-					.withCharRange('a', 'z') //
+					.withCharRange('a', 'e') //
 					.ofMinLength(anInt).ofMaxLength(anInt));
 
 			RandomGenerator<String> generator = mapped.generator(10);
@@ -228,26 +228,35 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).hasSize(3);
 			assertThat(generator.next(random).value()).hasSize(4);
 			assertThat(generator.next(random).value()).hasSize(5);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("a"));
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("b"));
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("c"));
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("d"));
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("e"));
 		}
 
 		@Property(tries = 50)
 		void shrinkIntegerFlatMappedToString() {
 			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary
-					.flatMap(anInt -> Arbitraries.strings().withCharRange('a', 'a').ofMinLength(anInt * 2).ofMaxLength(anInt * 2));
+					.flatMap(anInt -> Arbitraries.strings().withCharRange('a', 'b').ofLength(anInt * 2));
 			RandomGenerator<String> generator = mapped.generator(10);
 
 			Shrinkable<String> value5 = generateNth(generator, 5);
-			assertThat(value5.value()).isEqualTo("aaaaaaaaaa");
+			assertThat(value5.value()).hasSize(10);
+			assertThat(value5.value()).matches("[ab]+");
 
 			Set<ShrinkResult<Shrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
 			assertThat(shrunkValues).hasSize(1);
 
 			ShrinkResult<Shrinkable<String>> shrunkValue = shrunkValues.iterator().next();
-			assertThat(shrunkValue.shrunkValue().value()).isEqualTo("aaaaaaaa");
+			assertThat(shrunkValue.shrunkValue().value()).hasSize(8);
+			assertThat(shrunkValue.shrunkValue().value()).matches("[ab]+");
 
 			// distance of underlying * 100 + distance of embedded
-			assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3 * 100 + 8);
+			assertThat(shrunkValue.shrunkValue().distance()).isGreaterThanOrEqualTo(3 * 100 + 8);
+			assertThat(shrunkValue.shrunkValue().distance()).isLessThanOrEqualTo(3 * 100 + 16);
 		}
 
 		@Example

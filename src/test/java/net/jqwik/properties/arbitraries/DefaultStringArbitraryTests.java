@@ -1,9 +1,9 @@
 package net.jqwik.properties.arbitraries;
 
-import static net.jqwik.properties.ArbitraryTestHelper.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+
+import static net.jqwik.properties.ArbitraryTestHelper.*;
 
 class DefaultStringArbitraryTests {
 
@@ -29,7 +29,7 @@ class DefaultStringArbitraryTests {
 	}
 
 	@Example
-	void withDoubleCharRange() {
+	void withTwoCharRanges() {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withCharRange('A', 'Z');
 		assertAllGenerated(stringArbitrary.generator(10), s -> {
 			return s.chars().allMatch(c -> (c >= '\u0222' && c <= '\u0333') || (c >= 'A' && c <= 'Z'));

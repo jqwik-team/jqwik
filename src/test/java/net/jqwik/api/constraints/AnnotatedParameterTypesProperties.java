@@ -11,7 +11,7 @@ class AnnotatedParameterTypesProperties {
 		return aValue.stream().allMatch(Objects::isNull);
 	}
 
-	@Property(tries = 20, reporting = Reporting.GENERATED)
+	@Property(tries = 20)
 	boolean fixedSizedListWithFixedLengthString(
 		@ForAll @Size(3) List<@StringLength(5) @Chars({'a', 'b', 'c'}) String> aStringList
 	) {
