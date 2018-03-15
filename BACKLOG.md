@@ -80,12 +80,8 @@
 - Arbitraries and Generators
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - functions/methods (whose output parameter can be generated)
-  - Recursive generators, like in 
-    http://propertesting.com/book_custom_generators.html#_recursive_generators
   - @Regex(RegularExpression value)
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
-  - mutate: like map, but with a random parameter added, see mutate in QuickTheories
-    Maybe not needed, flatMap with returning tuple does the same.
 
 - Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
 

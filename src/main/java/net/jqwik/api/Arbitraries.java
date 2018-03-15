@@ -58,7 +58,7 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all) {
-		return of(all).flatMap(a -> a);
+		return of(all).flatMap(Function.identity());
 	}
 
 	@SafeVarargs

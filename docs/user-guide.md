@@ -56,6 +56,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
+  - [Recursive Arbitraries](#recursive-arbitraries)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
   - [Integrated Shrinking](#integrated-shrinking)
@@ -70,6 +71,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
+  - [0.8.8-SNAPSHOT](#088-snapshot)
   - [0.8.7](#087)
   - [0.8.6](#086)
   - [0.8.5](#085)
@@ -1087,6 +1089,45 @@ class Person {
 The property should fail, thereby shrinking the falsified Person instance to
 `[Aaaaaaaaaaaaaaaaaaaaa:100]`.
 
+### Recursive Arbitraries
+
+Sometimes it seems like a good idea to compose arbitraries and thereby
+recursively calling an arbitrary creation method. Generating recursive data types
+is one application field but you can also use it for other stuff. 
+
+Look at the 
+[following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/RecursiveExamples.java) 
+which generates sentences by recursively adding words to a sentence:
+
+```java
+@Property(reporting = Reporting.GENERATED)
+boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
+    return aSentence.endsWith(".");
+}
+
+@Provide
+Arbitrary<String> sentences() {
+        Arbitrary<String> word = Arbitraries.strings().alpha().ofLength(5);
+        Arbitrary<String> sentence = Combinators.combine(
+            Arbitraries.recursive(this::sentences) , word)
+            .as((s, w) -> w + " " + s);
+        return Arbitraries.oneOf(
+            word.map(w -> w + "."),
+            sentence,
+            sentence,
+            sentence
+        );
+}
+``` 
+
+There are two things to which you must pay attention:
+
+- Use `Arbitraries.recursive(Supplier<Arbitrary<T>>)` to wrap the recursive call itself. 
+  Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
+- Every recursion needs a base case. This base case must have a high enough
+  probability so that recursive generation will end.
+  Otherwise a stack overflow will catch you during value generation.
+
 ## Assumptions
 
 If you want to constrain the set of generated values in a way that embraces
@@ -1586,7 +1627,8 @@ in a separate article...
 
 ### 0.8.8-SNAPSHOT
 
-- Added `Arbitraries.recursive()` to allow recursive value generation
+- Added `Arbitraries.recursive()` 
+  to allow [recursive value generation](#recursive-arbitraries)
 
 ### 0.8.7
 
