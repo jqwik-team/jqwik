@@ -1124,9 +1124,9 @@ There are two things to which you must pay attention:
 
 - Use `Arbitraries.recursive(Supplier<Arbitrary<T>>)` to wrap the recursive call itself. 
   Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
-- Every recursion needs a base case. This base case must have a high enough
-  probability so that recursive generation will end.
-  Otherwise a stack overflow will catch you during value generation.
+- Every recursion needs one or more base cases in order to stop recursion at some point. 
+  Base cases must have a high enough probability, 
+  otherwise a stack overflow will get you during value generation.
 
 ## Assumptions
 
