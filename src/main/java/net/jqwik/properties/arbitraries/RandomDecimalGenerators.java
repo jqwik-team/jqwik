@@ -81,8 +81,8 @@ class RandomDecimalGenerators {
 	}
 
 	// TODO: This could be way more sophisticated
-	static BigDecimal[] calculateDefaultPartitionPoints(int tries, BigDecimal min, BigDecimal max) {
-		int partitionPoint = Math.max(tries / 2, 10);
+	static BigDecimal[] calculateDefaultPartitionPoints(int genSize, BigDecimal min, BigDecimal max) {
+		int partitionPoint = Math.max(genSize / 2, 10);
 		BigDecimal upperPartitionPoint = BigDecimal.valueOf(partitionPoint).min(max);
 		BigDecimal lowerPartitionPoint = BigDecimal.valueOf(partitionPoint).negate().max(min);
 		return new BigDecimal[]{lowerPartitionPoint, upperPartitionPoint};

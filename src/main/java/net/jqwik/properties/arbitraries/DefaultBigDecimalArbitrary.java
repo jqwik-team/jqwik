@@ -18,8 +18,8 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
-	public RandomGenerator<BigDecimal> generator(int tries) {
-		return generatingArbitrary.generator(tries);
+	public RandomGenerator<BigDecimal> generator(int genSize) {
+		return generatingArbitrary.generator(genSize);
 	}
 
 	@Override

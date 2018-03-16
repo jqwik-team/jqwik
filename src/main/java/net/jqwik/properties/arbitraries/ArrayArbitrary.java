@@ -9,7 +9,7 @@ import java.util.stream.*;
 
 public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A> {
 
-	private static final int DEFAULT_MAX_SIZE = Short.MAX_VALUE;
+	private static final int DEFAULT_MAX_SIZE = 255;
 
 	private final Class<A> arrayClass;
 	private final Arbitrary<T> elementArbitrary;
@@ -22,8 +22,8 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 	}
 
 	@Override
-	public RandomGenerator<A> generator(int tries) {
-		return listGenerator(tries).map(this::toArray);
+	public RandomGenerator<A> generator(int genSize) {
+		return createListGenerator(genSize).map(this::toArray);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -35,17 +35,9 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 		return array;
 	}
 
-	private RandomGenerator<List<T>> listGenerator(int tries) {
-		int cutoffSize = RandomGenerators.defaultCutoffSize(minSize, maxSize, tries);
-		RandomGenerator<T> elementGenerator = elementArbitrary.generator(tries);
-		List<T> emptyList = Collections.emptyList();
-		List<Shrinkable<List<T>>> samples = Stream.of(emptyList).filter(l -> l.size() >= minSize)
-				.filter(l -> maxSize == 0 || l.size() <= maxSize).map(Shrinkable::unshrinkable).collect(Collectors.toList());
-		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize).withShrinkableSamples(samples);
-	}
-
-	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int cutoffSize) {
-		RandomGenerator<T> elementGenerator = elementArbitrary.generator(tries);
+	private RandomGenerator<List<T>> createListGenerator(int genSize) {
+		int cutoffSize = RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
+		RandomGenerator<T> elementGenerator = elementArbitrary.generator(genSize);
 		List<T> emptyList = Collections.emptyList();
 		List<Shrinkable<List<T>>> samples = Stream.of(emptyList).filter(l -> l.size() >= minSize)
 				.filter(l -> maxSize == 0 || l.size() <= maxSize).map(Shrinkable::unshrinkable).collect(Collectors.toList());

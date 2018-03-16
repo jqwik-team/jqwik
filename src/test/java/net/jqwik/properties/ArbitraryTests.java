@@ -3,6 +3,7 @@ package net.jqwik.properties;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
+import org.assertj.core.api.*;
 
 import java.util.*;
 
@@ -12,6 +13,20 @@ import static org.assertj.core.api.Assertions.*;
 class ArbitraryTests {
 
 	private Random random = SourceOfRandomness.current();
+
+	@Example
+	void fixGenSize() {
+		int[] injectedGenSize = {0};
+
+		Arbitrary<Integer> arbitrary = genSize -> {
+			injectedGenSize[0] = genSize;
+			return ignore -> Shrinkable.unshrinkable(0);
+		};
+
+		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000);
+		Assertions.assertThat(injectedGenSize[0]).isEqualTo(42);
+	}
+
 
 	@Group
 	class GeneratingAndShrinking {

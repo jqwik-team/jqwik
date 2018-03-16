@@ -1,9 +1,9 @@
 package net.jqwik.api;
 
+import net.jqwik.properties.arbitraries.*;
+
 import java.util.*;
 import java.util.function.*;
-
-import net.jqwik.properties.arbitraries.*;
 
 public class Combinators {
 
@@ -54,9 +54,9 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
-			return (tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(tries);
-				RandomGenerator<T2> g2 = a2.generator(tries);
+			return (genSize) -> {
+				RandomGenerator<T1> g1 = a1.generator(genSize);
+				RandomGenerator<T2> g2 = a2.generator(genSize);
 				return random -> {
 					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 					shrinkables.add((Shrinkable<Object>) g1.next(random));
@@ -82,10 +82,10 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator) {
-			return (tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(tries);
-				RandomGenerator<T2> g2 = a2.generator(tries);
-				RandomGenerator<T3> g3 = a3.generator(tries);
+			return (genSize) -> {
+				RandomGenerator<T1> g1 = a1.generator(genSize);
+				RandomGenerator<T2> g2 = a2.generator(genSize);
+				RandomGenerator<T3> g3 = a3.generator(genSize);
 				return random -> {
 					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 					shrinkables.add((Shrinkable<Object>) g1.next(random));
@@ -115,11 +115,11 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(F4<T1, T2, T3, T4, R> combinator) {
-			return (tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(tries);
-				RandomGenerator<T2> g2 = a2.generator(tries);
-				RandomGenerator<T3> g3 = a3.generator(tries);
-				RandomGenerator<T4> g4 = a4.generator(tries);
+			return (genSize) -> {
+				RandomGenerator<T1> g1 = a1.generator(genSize);
+				RandomGenerator<T2> g2 = a2.generator(genSize);
+				RandomGenerator<T3> g3 = a3.generator(genSize);
+				RandomGenerator<T4> g4 = a4.generator(genSize);
 				return random -> {
 					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 					shrinkables.add((Shrinkable<Object>) g1.next(random));
@@ -152,12 +152,12 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(F5<T1, T2, T3, T4, T5, R> combinator) {
-			return (tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(tries);
-				RandomGenerator<T2> g2 = a2.generator(tries);
-				RandomGenerator<T3> g3 = a3.generator(tries);
-				RandomGenerator<T4> g4 = a4.generator(tries);
-				RandomGenerator<T5> g5 = a5.generator(tries);
+			return (genSize) -> {
+				RandomGenerator<T1> g1 = a1.generator(genSize);
+				RandomGenerator<T2> g2 = a2.generator(genSize);
+				RandomGenerator<T3> g3 = a3.generator(genSize);
+				RandomGenerator<T4> g4 = a4.generator(genSize);
+				RandomGenerator<T5> g5 = a5.generator(genSize);
 				return random -> {
 					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 					shrinkables.add((Shrinkable<Object>) g1.next(random));
@@ -193,13 +193,13 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(F6<T1, T2, T3, T4, T5, T6, R> combinator) {
-			return (tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(tries);
-				RandomGenerator<T2> g2 = a2.generator(tries);
-				RandomGenerator<T3> g3 = a3.generator(tries);
-				RandomGenerator<T4> g4 = a4.generator(tries);
-				RandomGenerator<T5> g5 = a5.generator(tries);
-				RandomGenerator<T6> g6 = a6.generator(tries);
+			return (genSize) -> {
+				RandomGenerator<T1> g1 = a1.generator(genSize);
+				RandomGenerator<T2> g2 = a2.generator(genSize);
+				RandomGenerator<T3> g3 = a3.generator(genSize);
+				RandomGenerator<T4> g4 = a4.generator(genSize);
+				RandomGenerator<T5> g5 = a5.generator(genSize);
+				RandomGenerator<T6> g6 = a6.generator(genSize);
 				return random -> {
 					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 					shrinkables.add((Shrinkable<Object>) g1.next(random));
@@ -239,14 +239,14 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator) {
-			return (tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(tries);
-				RandomGenerator<T2> g2 = a2.generator(tries);
-				RandomGenerator<T3> g3 = a3.generator(tries);
-				RandomGenerator<T4> g4 = a4.generator(tries);
-				RandomGenerator<T5> g5 = a5.generator(tries);
-				RandomGenerator<T6> g6 = a6.generator(tries);
-				RandomGenerator<T7> g7 = a7.generator(tries);
+			return (genSize) -> {
+				RandomGenerator<T1> g1 = a1.generator(genSize);
+				RandomGenerator<T2> g2 = a2.generator(genSize);
+				RandomGenerator<T3> g3 = a3.generator(genSize);
+				RandomGenerator<T4> g4 = a4.generator(genSize);
+				RandomGenerator<T5> g5 = a5.generator(genSize);
+				RandomGenerator<T6> g6 = a6.generator(genSize);
+				RandomGenerator<T7> g7 = a7.generator(genSize);
 				return random -> {
 					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 					shrinkables.add((Shrinkable<Object>) g1.next(random));
@@ -289,15 +289,15 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator) {
-			return (tries) -> {
-				RandomGenerator<T1> g1 = a1.generator(tries);
-				RandomGenerator<T2> g2 = a2.generator(tries);
-				RandomGenerator<T3> g3 = a3.generator(tries);
-				RandomGenerator<T4> g4 = a4.generator(tries);
-				RandomGenerator<T5> g5 = a5.generator(tries);
-				RandomGenerator<T6> g6 = a6.generator(tries);
-				RandomGenerator<T7> g7 = a7.generator(tries);
-				RandomGenerator<T8> g8 = a8.generator(tries);
+			return (genSize) -> {
+				RandomGenerator<T1> g1 = a1.generator(genSize);
+				RandomGenerator<T2> g2 = a2.generator(genSize);
+				RandomGenerator<T3> g3 = a3.generator(genSize);
+				RandomGenerator<T4> g4 = a4.generator(genSize);
+				RandomGenerator<T5> g5 = a5.generator(genSize);
+				RandomGenerator<T6> g6 = a6.generator(genSize);
+				RandomGenerator<T7> g7 = a7.generator(genSize);
+				RandomGenerator<T8> g8 = a8.generator(genSize);
 				return random -> {
 					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 					shrinkables.add((Shrinkable<Object>) g1.next(random));

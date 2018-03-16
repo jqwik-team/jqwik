@@ -1,11 +1,11 @@
 package net.jqwik.properties;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
+
+import java.util.*;
+import java.util.concurrent.atomic.*;
 
 public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 	private final T[] values;
@@ -16,7 +16,7 @@ public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 	}
 
 	@Override
-	public RandomGenerator<T> generator(int tries) {
+	public RandomGenerator<T> generator(int genSize) {
 		AtomicInteger index = new AtomicInteger(0);
 		return new RandomGenerator<T>() {
 			@Override

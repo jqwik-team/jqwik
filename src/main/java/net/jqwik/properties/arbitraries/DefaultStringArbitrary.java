@@ -1,10 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
-import java.util.*;
-import java.util.stream.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+
+import java.util.*;
+import java.util.stream.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
 
@@ -20,8 +20,8 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	}
 
 	@Override
-	public RandomGenerator<String> generator(int tries) {
-		final int cutoffLength = RandomGenerators.defaultCutoffSize(minLength, maxLength, tries);
+	public RandomGenerator<String> generator(int genSize) {
+		final int cutoffLength = RandomGenerators.defaultCutoffSize(minLength, maxLength, genSize);
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
 				.filter(s -> s.length() >= minLength && s.length() <= maxLength).map(Shrinkable::unshrinkable)
 				.collect(Collectors.toList());

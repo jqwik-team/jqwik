@@ -4,7 +4,7 @@ import net.jqwik.api.*;
 
 public class ObjectArbitrary implements Arbitrary<Object> {
 	@Override
-	public RandomGenerator<Object> generator(int tries) {
+	public RandomGenerator<Object> generator(int genSize) {
 		return random -> {
 			Object randomObject = new Object() {
 				@Override

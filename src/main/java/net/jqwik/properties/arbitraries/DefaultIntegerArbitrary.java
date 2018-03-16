@@ -17,8 +17,8 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 	}
 
 	@Override
-	public RandomGenerator<Integer> generator(int tries) {
-		return generatingArbitrary.generator(tries).map(BigInteger::intValueExact);
+	public RandomGenerator<Integer> generator(int genSize) {
+		return generatingArbitrary.generator(genSize).map(BigInteger::intValueExact);
 	}
 
 	@Override

@@ -315,7 +315,7 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<T> recursive(Supplier<Arbitrary<T>> arbitrarySupplier) {
-		return tries -> arbitrarySupplier.get().generator(tries);
+		return genSize -> arbitrarySupplier.get().generator(genSize);
 	}
 
 }

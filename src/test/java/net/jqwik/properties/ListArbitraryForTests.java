@@ -14,7 +14,7 @@ public class ListArbitraryForTests implements Arbitrary<List<Integer>> {
 	}
 
 	@Override
-	public RandomGenerator<List<Integer>> generator(int tries) {
+	public RandomGenerator<List<Integer>> generator(int genSize) {
 		AtomicInteger index = new AtomicInteger(0);
 		return new RandomGenerator<List<Integer>>() {
 			@Override

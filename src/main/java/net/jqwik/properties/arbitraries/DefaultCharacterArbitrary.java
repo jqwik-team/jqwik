@@ -14,7 +14,7 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	@Override
-	public RandomGenerator<Character> generator(int tries) {
+	public RandomGenerator<Character> generator(int genSize) {
 		return RandomGenerators.chars(min, max);
 	}
 

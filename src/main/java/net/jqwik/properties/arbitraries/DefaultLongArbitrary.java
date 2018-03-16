@@ -17,8 +17,8 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 	}
 
 	@Override
-	public RandomGenerator<Long> generator(int tries) {
-		return generatingArbitrary.generator(tries).map(BigInteger::longValueExact);
+	public RandomGenerator<Long> generator(int genSize) {
+		return generatingArbitrary.generator(genSize).map(BigInteger::longValueExact);
 	}
 
 	@Override

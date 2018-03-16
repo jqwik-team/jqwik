@@ -1128,6 +1128,15 @@ There are two things to which you must pay attention:
   Base cases must have a high enough probability, 
   otherwise a stack overflow will get you during value generation.
 
+### Fix an Arbitrary's `genSize`
+
+Some generators (e.g. most number generators) are sensitive to the 
+`genSize` value that is used when creating them. 
+The default value for `genSize` is the number of tries configured for the property
+they are used in. If there is a need to influence the behaviour of generators
+you can do so by using 
+[`Arbitrary.fixGenSize(int)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
+
 ## Assumptions
 
 If you want to constrain the set of generated values in a way that embraces
@@ -1629,6 +1638,7 @@ in a separate article...
 
 - Added `Arbitraries.recursive()` 
   to allow [recursive value generation](#recursive-arbitraries)
+- Added `Arbitrary.fixGenSize()` to enable a fixed genSize when creating random generators
 
 ### 0.8.7
 

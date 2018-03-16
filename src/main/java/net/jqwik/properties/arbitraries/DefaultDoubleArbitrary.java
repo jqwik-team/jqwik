@@ -18,8 +18,8 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 	}
 
 	@Override
-	public RandomGenerator<Double> generator(int tries) {
-		return generatingArbitrary.generator(tries).map(BigDecimal::doubleValue);
+	public RandomGenerator<Double> generator(int genSize) {
+		return generatingArbitrary.generator(genSize).map(BigDecimal::doubleValue);
 	}
 
 	@Override

@@ -17,8 +17,8 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 	}
 
 	@Override
-	public RandomGenerator<Short> generator(int tries) {
-		return generatingArbitrary.generator(tries).map(BigInteger::shortValueExact);
+	public RandomGenerator<Short> generator(int genSize) {
+		return generatingArbitrary.generator(genSize).map(BigInteger::shortValueExact);
 	}
 
 	@Override

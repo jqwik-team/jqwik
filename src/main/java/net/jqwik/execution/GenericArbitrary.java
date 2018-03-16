@@ -12,7 +12,7 @@ class GenericArbitrary implements Arbitrary<Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public RandomGenerator<Object> generator(int tries) {
-		return wrapped.generator(tries);
+	public RandomGenerator<Object> generator(int genSize) {
+		return wrapped.generator(genSize);
 	}
 }

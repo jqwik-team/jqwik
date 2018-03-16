@@ -20,8 +20,8 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	@Override
-	public RandomGenerator<BigDecimal> generator(int tries) {
-		BigDecimal[] partitionPoints = RandomDecimalGenerators.calculateDefaultPartitionPoints(tries, this.min, this.max);
+	public RandomGenerator<BigDecimal> generator(int genSize) {
+		BigDecimal[] partitionPoints = RandomDecimalGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max);
 		return decimalGenerator(partitionPoints);
 	}
 

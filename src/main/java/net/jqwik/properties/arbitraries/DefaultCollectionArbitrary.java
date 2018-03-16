@@ -8,7 +8,7 @@ import java.util.stream.*;
 
 abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase implements SizableArbitrary<U> {
 
-	private static final int DEFAULT_COLLECTION_SIZE = Short.MAX_VALUE;
+	private static final int DEFAULT_COLLECTION_SIZE = 255;
 
 	protected final Arbitrary<T> elementArbitrary;
 	protected int minSize = 0;
@@ -18,18 +18,16 @@ abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase im
 		this.elementArbitrary = elementArbitrary;
 	}
 
-	protected RandomGenerator<List<T>> listGenerator(int tries) {
-		return createListGenerator(elementArbitrary, tries, cutoffSize(tries));
-	}
-
-	protected int cutoffSize(int tries) {
-		return RandomGenerators.defaultCutoffSize(minSize, maxSize, tries);
-	}
-
-	private RandomGenerator<List<T>> createListGenerator(Arbitrary<T> elementArbitrary, int tries, int cutoffPoint) {
-		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, tries);
+	protected RandomGenerator<List<T>> listGenerator(int genSize) {
+		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
 		List<Shrinkable<List<T>>> samples = samplesList(new ArrayList<>());
-		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffPoint).withShrinkableSamples(samples);
+		return RandomGenerators //
+			.list(elementGenerator, minSize, maxSize, cutoffSize(genSize)) //
+			.withShrinkableSamples(samples);
+	}
+
+	protected int cutoffSize(int genSize) {
+		return RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
 	}
 
 	protected <C extends Collection> List<Shrinkable<C>> samplesList(C sample) {
@@ -37,8 +35,8 @@ abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase im
 				.map(Shrinkable::unshrinkable).collect(Collectors.toList());
 	}
 
-	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int tries) {
-		return elementArbitrary.generator(tries);
+	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int genSize) {
+		return elementArbitrary.generator(genSize);
 	}
 
 	@Override

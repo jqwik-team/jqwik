@@ -31,7 +31,7 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
-	public RandomGenerator<BigInteger> generator(int tries) {
-		return generatingArbitrary.generator(tries);
+	public RandomGenerator<BigInteger> generator(int genSize) {
+		return generatingArbitrary.generator(genSize);
 	}
 }

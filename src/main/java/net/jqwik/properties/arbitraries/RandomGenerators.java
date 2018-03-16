@@ -194,9 +194,9 @@ public class RandomGenerators {
 		};
 	}
 
-	static int defaultCutoffSize(int minSize, int maxSize, int tries) {
+	static int defaultCutoffSize(int minSize, int maxSize, int genSize) {
 		int range = maxSize - minSize;
-		int offset = (int) Math.max(Math.round(Math.sqrt(tries)), 10);
+		int offset = (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
 		if (range <= offset)
 			return maxSize;
 		return Math.min(offset + minSize, maxSize);

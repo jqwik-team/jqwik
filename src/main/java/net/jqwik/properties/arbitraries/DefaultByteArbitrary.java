@@ -17,8 +17,8 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 	}
 
 	@Override
-	public RandomGenerator<Byte> generator(int tries) {
-		return generatingArbitrary.generator(tries).map(BigInteger::byteValueExact);
+	public RandomGenerator<Byte> generator(int genSize) {
+		return generatingArbitrary.generator(genSize).map(BigInteger::byteValueExact);
 	}
 
 	@Override

@@ -15,7 +15,22 @@ import java.util.stream.*;
  *            type (e.g. Integer, Boolean).
  */
 public interface Arbitrary<T> {
-	RandomGenerator<T> generator(int tries);
+
+	/**
+	 * Create the random generator for an arbitrary
+	 *
+	 * @param genSize a very unspecific configuration parameter that can be used
+	 *                to influence the configuration and behaviour of a random generator
+	 *                if and only if the generator wants to be influenced.
+	 *                Many generators are independent of genSize.
+	 *
+	 *                The default value of {@code genSize} is the number of tries configured
+	 *                for a property. Use {@linkplain Arbitrary#fixGenSize(int)} to fix
+	 *                the parameter for a given arbitrary.
+	 *
+	 * @return a new random generator instance
+	 */
+	RandomGenerator<T> generator(int genSize);
 
 	/**
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
@@ -23,7 +38,7 @@ public interface Arbitrary<T> {
 	 *
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
-		return tries -> new FilteredGenerator<T>(Arbitrary.this.generator(tries), filterPredicate);
+		return genSize -> new FilteredGenerator<T>(Arbitrary.this.generator(genSize), filterPredicate);
 	}
 
 	/**
@@ -31,7 +46,7 @@ public interface Arbitrary<T> {
 	 * function.
 	 */
 	default <U> Arbitrary<U> map(Function<T, U> mapper) {
-		return tries -> Arbitrary.this.generator(tries).map(mapper);
+		return genSize -> Arbitrary.this.generator(genSize).map(mapper);
 	}
 
 	/**
@@ -39,7 +54,7 @@ public interface Arbitrary<T> {
 	 * using the {@code mapper} function.
 	 */
 	default <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
-		return tries -> Arbitrary.this.generator(tries).flatMap(mapper, tries);
+		return genSize -> Arbitrary.this.generator(genSize).flatMap(mapper, genSize);
 	}
 
 	/**
@@ -49,7 +64,7 @@ public interface Arbitrary<T> {
 		if (nullProbability <= 0.0) {
 			return this;
 		}
-		return tries -> Arbitrary.this.generator(tries).injectNull(nullProbability);
+		return genSize -> Arbitrary.this.generator(genSize).injectNull(nullProbability);
 	}
 
 	/**
@@ -58,7 +73,14 @@ public interface Arbitrary<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	default Arbitrary<T> withSamples(T... samples) {
-		return tries -> Arbitrary.this.generator(tries).withSamples(samples);
+		return genSize -> Arbitrary.this.generator(genSize).withSamples(samples);
+	}
+
+	/**
+	 * Fix the genSize of an arbitrary so that it can no longer be influenced from outside
+	 */
+	default Arbitrary<T> fixGenSize(int genSize) {
+		return ignoredGenSize -> Arbitrary.this.generator(genSize);
 	}
 
 	/**

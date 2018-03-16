@@ -17,8 +17,8 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 	}
 
 	@Override
-	public RandomGenerator<Float> generator(int tries) {
-		return generatingArbitrary.generator(tries).map(BigDecimal::floatValue);
+	public RandomGenerator<Float> generator(int genSize) {
+		return generatingArbitrary.generator(genSize).map(BigDecimal::floatValue);
 	}
 
 	@Override
