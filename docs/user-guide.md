@@ -57,6 +57,8 @@ Volunteers for polishing and extending it are more than welcome._
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
   - [Recursive Arbitraries](#recursive-arbitraries)
+    - [Deterministic Recursion](#deterministic-recursion)
+  - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
   - [Integrated Shrinking](#integrated-shrinking)
@@ -1107,16 +1109,20 @@ boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
 
 @Provide
 Arbitrary<String> sentences() {
-        Arbitrary<String> word = Arbitraries.strings().alpha().ofLength(5);
-        Arbitrary<String> sentence = Combinators.combine(
-            Arbitraries.recursive(this::sentences) , word)
-            .as((s, w) -> w + " " + s);
-        return Arbitraries.oneOf(
-            word.map(w -> w + "."),
-            sentence,
-            sentence,
-            sentence
-        );
+    Arbitrary<String> sentence = Combinators.combine( //
+        Arbitraries.recursive(this::sentences), //
+        word() //
+    ).as((s, w) -> w + " " + s);
+    return Arbitraries.oneOf( //
+        word().map(w -> w + "."), //
+        sentence, //
+        sentence, //
+        sentence //
+    );
+}
+
+private StringArbitrary word() {
+    return Arbitraries.strings().alpha().ofLength(5);
 }
 ``` 
 
@@ -1127,6 +1133,36 @@ There are two things to which you must pay attention:
 - Every recursion needs one or more base cases in order to stop recursion at some point. 
   Base cases must have a high enough probability, 
   otherwise a stack overflow will get you during value generation.
+  
+#### Deterministic Recursion
+
+An alternative to the non-deterministic recursion shown above, is to use classical
+recursion with a counter to determine the base case. If you then use an arbitrary value
+for the counter, the generated sentences will be very similar, and there is _no need_
+for using `Arbitraries.recursive()` at all:
+
+```java
+@Property(tries = 10, reporting = Reporting.GENERATED)
+boolean sentencesEndWithAPoint_2(@ForAll("deterministic") String aSentence) {
+    return aSentence.endsWith(".");
+}
+
+@Provide
+Arbitrary<String> deterministic() {
+    Arbitrary<Integer> length = Arbitraries.integers().between(1, 10);
+    Arbitrary<String> lastWord = word().map(w -> w + ".");
+    return length.flatMap(l -> deterministic(l, lastWord));
+}
+
+@Provide
+Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
+    if (length == 0) {
+        return sentence;
+    }
+    Arbitrary<String> more = Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
+    return deterministic(length - 1, more);
+}
+```
 
 ### Fix an Arbitrary's `genSize`
 
