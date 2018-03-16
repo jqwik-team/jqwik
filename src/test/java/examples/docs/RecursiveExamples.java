@@ -13,7 +13,7 @@ class RecursiveExamples {
 	@Provide
 	Arbitrary<String> sentences() {
 		Arbitrary<String> sentence = Combinators.combine( //
-			Arbitraries.recursive(this::sentences), //
+			Arbitraries.lazy(this::sentences), //
 			word() //
 		).as((s, w) -> w + " " + s);
 		return Arbitraries.oneOf( //

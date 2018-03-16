@@ -101,8 +101,8 @@ class ArbitrariesTests {
 	}
 
 	@Example
-	void recursive() {
-		Arbitrary<Integer> samples = Arbitraries.recursive(() -> Arbitraries.samples(1, 2, 3));
+	void lazy() {
+		Arbitrary<Integer> samples = Arbitraries.lazy(() -> Arbitraries.samples(1, 2, 3));
 
 		ArbitraryTestHelper.assertGenerated(samples.generator(1000), 1, 2, 3, 1);
 		ArbitraryTestHelper.assertGenerated(samples.generator(1000), 1, 2, 3, 1);

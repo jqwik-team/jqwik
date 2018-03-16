@@ -1110,7 +1110,7 @@ boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
 @Provide
 Arbitrary<String> sentences() {
     Arbitrary<String> sentence = Combinators.combine( //
-        Arbitraries.recursive(this::sentences), //
+        Arbitraries.lazy(this::sentences), //
         word() //
     ).as((s, w) -> w + " " + s);
     return Arbitraries.oneOf( //
@@ -1128,7 +1128,7 @@ private StringArbitrary word() {
 
 There are two things to which you must pay attention:
 
-- Use `Arbitraries.recursive(Supplier<Arbitrary<T>>)` to wrap the recursive call itself. 
+- Use `Arbitraries.lazy(Supplier<Arbitrary<T>>)` to wrap the recursive call itself. 
   Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
 - Every recursion needs one or more base cases in order to stop recursion at some point. 
   Base cases must have a high enough probability, 
@@ -1139,7 +1139,7 @@ There are two things to which you must pay attention:
 An alternative to the non-deterministic recursion shown above, is to use classical
 recursion with a counter to determine the base case. If you then use an arbitrary value
 for the counter, the generated sentences will be very similar, and there is _no need_
-for using `Arbitraries.recursive()` at all:
+for using `Arbitraries.lazy()` at all:
 
 ```java
 @Property(tries = 10, reporting = Reporting.GENERATED)
@@ -1672,7 +1672,7 @@ in a separate article...
 
 ### 0.8.8-SNAPSHOT
 
-- Added `Arbitraries.recursive()` 
+- Added `Arbitraries.lazy()` 
   to allow [recursive value generation](#recursive-arbitraries)
 - Added `Arbitrary.fixGenSize()` to enable a fixed genSize when creating random generators
 

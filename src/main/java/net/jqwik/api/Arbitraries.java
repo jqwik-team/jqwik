@@ -314,7 +314,7 @@ public class Arbitraries {
 		}
 	}
 
-	public static <T> Arbitrary<T> recursive(Supplier<Arbitrary<T>> arbitrarySupplier) {
+	public static <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
 		return genSize -> arbitrarySupplier.get().generator(genSize);
 	}
 
