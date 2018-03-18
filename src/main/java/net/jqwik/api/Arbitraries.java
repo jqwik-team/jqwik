@@ -3,8 +3,10 @@ package net.jqwik.api;
 import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.stateful.*;
 import net.jqwik.execution.*;
 import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.stateful.*;
 import net.jqwik.providers.*;
 
 import java.math.*;
@@ -318,4 +320,7 @@ public class Arbitraries {
 		return genSize -> arbitrarySupplier.get().generator(genSize);
 	}
 
+	public static <M> Arbitrary<StateMachineRunner<M>> stateMachineRunner(Class<? extends StateMachine<M>> stateMachineClass) {
+		return SequentialStateMachineRunner.arbitrary(stateMachineClass);
+	}
 }

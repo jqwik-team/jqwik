@@ -75,8 +75,6 @@
   - Files, Paths etc.
   - Arrays of Arrays
 
-- Report the samples in the state BEFORE execution of property method
-
 - Arbitraries and Generators
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - functions/methods (whose output parameter can be generated)

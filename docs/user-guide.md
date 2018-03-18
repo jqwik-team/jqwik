@@ -1675,6 +1675,7 @@ in a separate article...
 - Added `Arbitraries.lazy()` 
   to allow [recursive value generation](#recursive-arbitraries)
 - Added `Arbitrary.fixGenSize()` to enable a fixed genSize when creating random generators
+- Added `Arbitrary.stateMachineRunner()` to create state machine runners for stateful testing
 
 ### 0.8.7
 
