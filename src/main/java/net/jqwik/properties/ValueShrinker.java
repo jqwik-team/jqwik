@@ -34,11 +34,8 @@ public class ValueShrinker<T> {
 		ShrinkingHelper.minDistanceStream(toTry) //
 			.limit(10) // This is a more or less random value to constrain the number of options considered
 			.forEach(shrinkResult -> {
-				Optional<ShrinkResult<Shrinkable<T>>> falsifyResult = SafeFalsifier.falsify(falsifier, shrinkResult.shrunkValue());
-				falsifyResult.ifPresent(result -> {
-					allFalsified.add(result);
-					toTryNext.addAll(result.shrunkValue().shrinkNext(falsifier));
-				});
+				allFalsified.add(shrinkResult);
+				toTryNext.addAll(shrinkResult.shrunkValue().shrinkNext(falsifier));
 			});
 		return collectAllFalsified(toTryNext, allFalsified, falsifier);
 	}
