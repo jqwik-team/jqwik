@@ -20,8 +20,10 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	private final List<Shrinkable<Action<M>>> candidateSequence;
 
-	public List<Shrinkable<Action<M>>> getRunSequence() {
-		return runSequence;
+	List<Shrinkable<Action<M>>> sequenceToShrink() {
+		if (hasRun)
+			return runSequence;
+		return candidateSequence;
 	}
 
 	private final List<Shrinkable<Action<M>>> runSequence = new ArrayList<>();

@@ -11,16 +11,18 @@ import java.util.stream.*;
 class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 
 	private final ActionSequenceShrinkCandidates<M> sequenceShrinker = new ActionSequenceShrinkCandidates<>();
-	private final ActionSequence<M> value;
+	private final List<Shrinkable<Action<M>>> candidateActions;
+	private final SequentialActionSequence<M> value;
 
-	ShrinkableActionSequence(ActionSequence<M> value) {
-		this.value = value;
+	ShrinkableActionSequence(List<Shrinkable<Action<M>>> candidateActions) {
+		this.candidateActions = candidateActions;
+		this.value = new SequentialActionSequence<>(candidateActions);
 	}
 
 	@Override
 	public Set<ShrinkResult<Shrinkable<ActionSequence<M>>>> shrinkNext(Predicate<ActionSequence<M>> falsifier) {
-		Set<ActionSequence<M>> candidates = sequenceShrinker.nextCandidates(value);
-		Set<ShrinkResult<Shrinkable<ActionSequence<M>>>> shrunkList = shrinkSequence(falsifier, candidates);
+		Set<List<Shrinkable<Action<M>>>> shrinkingCandidates = sequenceShrinker.nextCandidates(candidateActions);
+		Set<ShrinkResult<Shrinkable<ActionSequence<M>>>> shrunkList = shrinkSequence(falsifier, shrinkingCandidates);
 		if (shrunkList.isEmpty()) {
 			return shrinkActions(falsifier);
 		}
@@ -28,7 +30,7 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 	}
 
 	private Set<ShrinkResult<Shrinkable<ActionSequence<M>>>> shrinkSequence(
-		Predicate<ActionSequence<M>> falsifier, Set<ActionSequence<M>> candidates
+		Predicate<ActionSequence<M>> falsifier, Set<List<Shrinkable<Action<M>>>> candidates
 	) {
 		return candidates
 			.stream() //
@@ -39,7 +41,18 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 	}
 
 	private Set<ShrinkResult<Shrinkable<ActionSequence<M>>>> shrinkActions(Predicate<ActionSequence<M>> falsifier) {
-		return Collections.emptySet();
+		Predicate<List<Action<M>>> valuesFalsifier = list -> {
+			List<Shrinkable<Action<M>>> listShrinkable = list.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());
+			ActionSequence<M> actionSequence = new SequentialActionSequence<>(listShrinkable);
+			return falsifier.test(actionSequence);
+		};
+		ParameterListShrinker<Action<M>> listElementShrinker = new ParameterListShrinker<>(value.sequenceToShrink(), e -> {}, new Reporting[0]);
+		Set<ShrinkResult<List<Shrinkable<Action<M>>>>> shrunkElements = listElementShrinker.shrinkNext(valuesFalsifier);
+		return shrunkElements //
+			.stream() //
+			.map(listShrinkResult -> listShrinkResult //
+				.map(listShrinkableAction -> (Shrinkable<ActionSequence<M>>) new ShrinkableActionSequence<>(listShrinkableAction)))
+			.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -49,6 +62,6 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 
 	@Override
 	public int distance() {
-		return sequenceShrinker.distance(value);
+		return sequenceShrinker.distance(candidateActions);
 	}
 }

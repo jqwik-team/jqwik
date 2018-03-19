@@ -1,6 +1,5 @@
 - Support stateful testing, e.g. StateMachine<T extends Model>
   - Add microtests for stateful package
-  - Also shrink actions after shrinking sequence
   - Add StateMachineRunnerArbitraryProvider
   - Add section on stateful testing to user guide
 

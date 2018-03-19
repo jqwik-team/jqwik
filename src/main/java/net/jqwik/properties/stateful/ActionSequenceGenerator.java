@@ -21,8 +21,7 @@ class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
 	@Override
 	public Shrinkable<ActionSequence<M>> next(Random random) {
 		List<Shrinkable<Action<M>>> candidateActions = generateCandidates(numberOfActions, random);
-		SequentialActionSequence<M> actionSequence = new SequentialActionSequence<>(candidateActions);
-		return new ShrinkableActionSequence<>(actionSequence);
+		return new ShrinkableActionSequence<>(candidateActions);
 	}
 
 	private List<Shrinkable<Action<M>>> generateCandidates(int numberOfActions, Random random) {
