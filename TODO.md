@@ -1,6 +1,5 @@
-- Support stateful testing, e.g. StateMachine<T extends Model>
-  - Add microtests for stateful package
-  - Add StateMachineRunnerArbitraryProvider
+- Support stateful testing
+  - Add ArbitraryProvider for ActionSequence?
   - Add section on stateful testing to user guide
 
 - Javadoc:

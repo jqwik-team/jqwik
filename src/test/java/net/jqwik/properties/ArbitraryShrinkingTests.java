@@ -1,9 +1,10 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
-import org.assertj.core.api.*;
 
 import java.util.*;
+
+import static net.jqwik.properties.ArbitraryTestHelper.*;
 
 class ArbitraryShrinkingTests {
 
@@ -41,9 +42,4 @@ class ArbitraryShrinkingTests {
 		assertAllValuesAreShrunkTo(1, arbitrary, random);
 	}
 
-	private <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<T> arbitrary, @ForAll Random random) {
-		Shrinkable<T> shrinkable = arbitrary.generator(10).next(random);
-		ShrinkResult<Shrinkable<T>> shrunk = new ValueShrinker<>(shrinkable).shrink(value -> false, null);
-		Assertions.assertThat(shrunk.shrunkValue().value()).isEqualTo(expectedShrunkValue);
-	}
 }

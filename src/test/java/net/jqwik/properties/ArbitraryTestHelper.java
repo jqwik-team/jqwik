@@ -132,6 +132,17 @@ public class ArbitraryTestHelper {
 		return shrinkableChars;
 	}
 
+	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<T> arbitrary, Random random) {
+		T value = shrinkToEnd(arbitrary, random);
+		assertThat(value).isEqualTo(expectedShrunkValue);
+	}
+
+	public static <T> T shrinkToEnd(Arbitrary<T> arbitrary, Random random) {
+		Shrinkable<T> shrinkable = arbitrary.generator(10).next(random);
+		ShrinkResult<Shrinkable<T>> shrunk = new ValueShrinker<>(shrinkable).shrink(value -> false, null);
+		return shrunk.shrunkValue().value();
+	}
+
 	private static class SimpleCharacterShrinker implements ShrinkCandidates<Character> {
 
 		@Override

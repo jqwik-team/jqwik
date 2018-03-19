@@ -24,7 +24,7 @@ class ActionSequenceShrinkCandidates<M> implements ShrinkCandidates<List<Shrinka
 
 	@Override
 	public int distance(List<Shrinkable<Action<M>>> actions) {
-		return actions.stream().mapToInt(Shrinkable::distance).sum();
+		return actions.size() * 100 + actions.stream().mapToInt(Shrinkable::distance).sum();
 	}
 
 }
