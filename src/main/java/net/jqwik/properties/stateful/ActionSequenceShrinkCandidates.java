@@ -24,7 +24,17 @@ class ActionSequenceShrinkCandidates<M> implements ShrinkCandidates<List<Shrinka
 
 	@Override
 	public int distance(List<Shrinkable<Action<M>>> actions) {
-		return actions.size() * 100 + actions.stream().mapToInt(Shrinkable::distance).sum();
+		// The algorithm is more involved because the distance may never never never overflow
+		// TODO: Remove duplication with ListShrinkCandidates.distance()
+		int sumOfDistances = 0;
+		for (Shrinkable<Action<M>> shrinkable : actions) {
+			int distance = shrinkable.distance();
+			long newDistance = (long) sumOfDistances + (long) distance;
+			if (newDistance >= Integer.MAX_VALUE)
+				return Integer.MAX_VALUE;
+			sumOfDistances = (int) newDistance;
+		}
+		return actions.size() + sumOfDistances;
 	}
 
 }
