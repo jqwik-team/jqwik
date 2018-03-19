@@ -1,5 +1,7 @@
 package examples.docs.stateful.mystack;
 
+import net.jqwik.support.*;
+
 import java.util.*;
 
 public class MyStringStack {
@@ -15,7 +17,7 @@ public class MyStringStack {
 
 	public void clear() {
 		// Wrong implementation to provoke falsification for stacks with more than 2 elements
-		if (elements.size() > 2) {
+		if (elements.size() > 1) {
 			elements.remove(0);
 		} else {
 			elements.clear();
@@ -32,5 +34,10 @@ public class MyStringStack {
 
 	public String top() {
 		return elements.get(0);
+	}
+
+	@Override
+	public String toString() {
+		return JqwikStringSupport.displayString(elements);
 	}
 }

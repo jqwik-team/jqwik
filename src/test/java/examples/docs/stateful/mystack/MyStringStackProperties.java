@@ -5,8 +5,8 @@ import net.jqwik.api.stateful.*;
 
 class MyStringStackProperties {
 
-	@Property(tries = 10, reporting = Reporting.GENERATED)
-	void checkMyStackMachine(@ForAll("sequences") ActionSequence<MyStringStack> stackMachine) {
+	@Property(reporting = Reporting.GENERATED)
+	void checkMyStack(@ForAll("sequences") ActionSequence<MyStringStack> stackMachine) {
 		stackMachine.run(new MyStringStack());
 	}
 

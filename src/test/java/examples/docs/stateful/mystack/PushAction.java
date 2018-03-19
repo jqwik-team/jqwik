@@ -12,11 +12,12 @@ class PushAction implements Action<MyStringStack> {
 	}
 
 	@Override
-	public void run(MyStringStack model) {
+	public MyStringStack run(MyStringStack model) {
 		int sizeBefore = model.size();
 		model.push(element);
 		Assertions.assertThat(model.isEmpty()).isFalse();
 		Assertions.assertThat(model.size()).isEqualTo(sizeBefore + 1);
+		return model;
 	}
 
 	@Override

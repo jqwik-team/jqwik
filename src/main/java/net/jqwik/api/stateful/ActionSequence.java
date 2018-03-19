@@ -5,5 +5,5 @@ import java.util.*;
 public interface ActionSequence<M> {
 	List<Action<M>> sequence();
 
-	void run(M model);
+	M run(M model);
 }

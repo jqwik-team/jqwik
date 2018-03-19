@@ -6,5 +6,5 @@ public interface Action<M> {
 		return true;
 	}
 
-	void run(M model);
+	M run(M model);
 }

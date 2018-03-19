@@ -43,7 +43,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	@Override
-	public synchronized void run(M model) {
+	public synchronized M run(M model) {
 		if (hasRun) {
 			runSequence.clear();
 		}
@@ -55,20 +55,25 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 				Action<M> action = candidate.value();
 				if (action.precondition(model)) {
 					runSequence.add(candidate);
-					action.run(model);
+					model = action.run(model);
 				}
 			}
 		} catch (Throwable t) {
 			String actionsString = extractValues(runSequence)
 				.stream() //
-				.map(action -> "   " + action.toString()) //
+				.map(action -> "    " + action.toString()) //
 				.collect(Collectors.joining(System.lineSeparator()));
 			String message = String.format(
-				"Run failed with following actions:%s%s",
-				System.lineSeparator(), actionsString
+				"Run failed with following actions:%s%s%s  model state: %s",
+				System.lineSeparator(),
+				actionsString,
+				System.lineSeparator(),
+				JqwikStringSupport.displayString(model)
 			);
 			throw new AssertionFailedError(message, t);
 		}
+
+		return model;
 	}
 
 	@Override

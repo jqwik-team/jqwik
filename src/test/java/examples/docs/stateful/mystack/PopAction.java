@@ -11,13 +11,14 @@ class PopAction implements Action<MyStringStack> {
 	}
 
 	@Override
-	public void run(MyStringStack model) {
+	public MyStringStack run(MyStringStack model) {
 		int sizeBefore = model.size();
 		String topBefore = model.top();
 
 		String popped = model.pop();
 		Assertions.assertThat(popped).isEqualTo(topBefore);
 		Assertions.assertThat(model.size()).isEqualTo(sizeBefore - 1);
+		return model;
 	}
 
 	@Override
