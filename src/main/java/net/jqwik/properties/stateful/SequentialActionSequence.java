@@ -9,43 +9,43 @@ import org.opentest4j.*;
 import java.util.*;
 import java.util.stream.*;
 
-public class SequentialStateMachineRunner<M> implements StateMachineRunner<M> {
+public class SequentialActionSequence<M> implements ActionSequence<M> {
 
-	public static <M> Arbitrary<StateMachineRunner<M>> arbitrary(Class<? extends StateMachine<M>> stateMachineClass) {
-		StateMachine<M> stateMachine = JqwikReflectionSupport.newInstanceWithDefaultConstructor(stateMachineClass);
-		return genSize -> new StateMachineGenerator<>(stateMachine, genSize);
+	public static <M> Arbitrary<ActionSequence<M>> fromActions(Arbitrary<Action<M>> actionArbitrary) {
+		return genSize -> {
+			RandomGenerator<Action<M>> actionGenerator = actionArbitrary.generator(genSize);
+			return new ActionSequenceGenerator<>(actionGenerator, genSize);
+		};
 	}
 
-	private final StateMachine<M> stateMachine;
 	private final List<Shrinkable<Action<M>>> candidateSequence;
+
+	public List<Shrinkable<Action<M>>> getRunSequence() {
+		return runSequence;
+	}
+
 	private final List<Shrinkable<Action<M>>> runSequence = new ArrayList<>();
 
 	private boolean hasRun = false;
 
-	SequentialStateMachineRunner(StateMachine<M> stateMachine, List<Shrinkable<Action<M>>> candidateSequence) {
-		this.stateMachine = stateMachine;
+	SequentialActionSequence(List<Shrinkable<Action<M>>> candidateSequence) {
 		this.candidateSequence = candidateSequence;
 	}
 
-	public StateMachine<M> getStateMachine() {
-		return stateMachine;
-	}
-
 	@Override
-	public List<Shrinkable<Action<M>>> runSequence() {
+	public List<Action<M>> sequence() {
 		if (!hasRun) {
-			throw new JqwikException(String.format("State machine %s has not run yet.", stateMachine));
+			throw new JqwikException("Sequence has not run yet.");
 		}
-		return runSequence;
+		return extractValues(runSequence);
 	}
 
 	@Override
-	public synchronized void run() {
+	public synchronized void run(M model) {
 		if (hasRun) {
 			runSequence.clear();
 		}
 
-		M model = stateMachine.createModel();
 		runSequence.clear();
 		hasRun = true;
 		try {
@@ -62,8 +62,7 @@ public class SequentialStateMachineRunner<M> implements StateMachineRunner<M> {
 				.map(action -> "   " + action.toString()) //
 				.collect(Collectors.joining(System.lineSeparator()));
 			String message = String.format(
-				"State machine [%s] failed with following actions:%s%s",
-				stateMachine.getClass().getSimpleName(),
+				"Run failed with following actions:%s%s",
 				System.lineSeparator(), actionsString
 			);
 			throw new AssertionFailedError(message, t);
@@ -75,14 +74,14 @@ public class SequentialStateMachineRunner<M> implements StateMachineRunner<M> {
 		String stateString = "";
 		List<Shrinkable<Action<M>>> actionsToShow = runSequence;
 		if (!hasRun) {
-			stateString = "(not yet run)";
+			stateString = "(before run)";
 			actionsToShow = candidateSequence;
 		}
 		String actionsString = JqwikStringSupport.displayString(extractValues(actionsToShow));
 		return String.format("%s%s:%s", this.getClass().getSimpleName(), stateString, actionsString);
 	}
 
-	private List<Action> extractValues(List<Shrinkable<Action<M>>> shrinkables) {
+	private List<Action<M>> extractValues(List<Shrinkable<Action<M>>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 }

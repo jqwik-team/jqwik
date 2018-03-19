@@ -14,8 +14,12 @@ public class MyStringStack {
 	}
 
 	public void clear() {
-		// Commented out to provoke property falsification
-		//elements.clear();
+		// Wrong implementation to provoke falsification for stacks with more than 2 elements
+		if (elements.size() > 2) {
+			elements.remove(0);
+		} else {
+			elements.clear();
+		}
 	}
 
 	public boolean isEmpty() {
