@@ -3,3 +3,4 @@ net.jqwik.api.arbitraries
 net.jqwik.api.configurators
 net.jqwik.api.constraints
 net.jqwik.api.providers
+net.jqwik.api.stateful
