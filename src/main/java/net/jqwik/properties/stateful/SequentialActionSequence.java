@@ -20,6 +20,8 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	private final List<Shrinkable<Action<M>>> candidateSequence;
 	private final List<Shrinkable<Action<M>>> runSequence = new ArrayList<>();
+	private final List<Invariant<M>> invariants = new ArrayList<>();
+
 	private boolean hasRun = false;
 
 	SequentialActionSequence(List<Shrinkable<Action<M>>> candidateSequence) {
@@ -44,8 +46,16 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		} catch (InvariantFailedError ife) {
 			throw ife;
 		} catch (Throwable t) {
-			throw new AssertionFailedError(createErrorMessage(model, "Run"), t);
+			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage(model, "Run"), t);
+			assertionFailedError.setStackTrace(t.getStackTrace());
+			throw assertionFailedError;
 		}
+	}
+
+	@Override
+	public ActionSequence<M> withInvariant(Invariant<M> invariant) {
+		invariants.add(invariant);
+		return this;
 	}
 
 	@Override
@@ -78,26 +88,20 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		if (action.precondition(model)) {
 			runSequence.add(candidate);
 			model = action.run(model);
-			checkInvariant(model);
+			checkInvariants(model);
 		}
 		return model;
 	}
 
-	private void checkInvariant(M model) {
-		if (model instanceof Invariant) {
-			Invariant invariant = (Invariant) model;
+	private void checkInvariants(M model) {
 			try {
-				if (!invariant.invariant()) {
-					String name = String.format("Invariant in %s", model.getClass().getSimpleName());
-					throw new InvariantFailedError(createErrorMessage(model, name));
+				for (Invariant<M> invariant : invariants) {
+					invariant.check(model);
 				}
-			} catch (InvariantFailedError ife) {
-				throw ife;
 			} catch (Throwable t) {
-				String name = String.format("Invariant in %s", model.getClass().getSimpleName());
+				String name = String.format("Invariant");
 				throw new InvariantFailedError(createErrorMessage(model, name), t);
 			}
-		}
 	}
 
 	private String createErrorMessage(M model, String name) {

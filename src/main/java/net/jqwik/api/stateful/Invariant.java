@@ -1,6 +1,7 @@
 package net.jqwik.api.stateful;
 
-public interface Invariant {
+@FunctionalInterface
+public interface Invariant<T> {
 
-	boolean invariant();
+	void check(T model);
 }

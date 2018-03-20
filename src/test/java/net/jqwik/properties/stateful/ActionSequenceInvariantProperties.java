@@ -10,43 +10,46 @@ class ActionSequenceInvariantProperties {
 
 	@Example
 	boolean succeedingInvariant(@ForAll Random random) {
-		Arbitrary<ActionSequence<ModelWithInvariant>> arbitrary = Arbitraries.sequences(changeValue());
-		Shrinkable<ActionSequence<ModelWithInvariant>> sequence = arbitrary.generator(10).next(random);
+		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(changeValue());
+		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
-		ModelWithInvariant result = sequence.value().run(new ModelWithInvariant());
+		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> {
+			Assertions.assertThat(true).isTrue();
+		});
+		MyModel result = sequenceWithInvariant.run(new MyModel());
 		return result.value.length() > 0;
 	}
 
-	private Arbitrary<Action<ModelWithInvariant>> changeValue() {
+	private Arbitrary<Action<MyModel>> changeValue() {
 		return Arbitraries.strings().alpha().ofMinLength(1).map(aString -> model -> model.setValue(aString));
 	}
 
 	@Example
 	void failingInvariantFailSequenceRun(@ForAll Random random) {
-		Arbitrary<ActionSequence<ModelWithInvariant>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify()));
-		Shrinkable<ActionSequence<ModelWithInvariant>> sequence = arbitrary.generator(10).next(random);
+		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify()));
+		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
-		Assertions.assertThatThrownBy(() -> sequence.value().run(new ModelWithInvariant()))
+		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> {
+			Assertions.assertThat(model.value).isNotNull();
+		});
+
+		Assertions.assertThatThrownBy(() -> sequenceWithInvariant.run(new MyModel()))
 				  .isInstanceOf(InvariantFailedError.class);
 	}
 
-	private Arbitrary<Action<ModelWithInvariant>> nullify() {
+	private Arbitrary<Action<MyModel>> nullify() {
 		return Arbitraries.constant(model -> model.setValue(null));
 	}
 
-	static class ModelWithInvariant implements Invariant {
+	static class MyModel {
 
-		private String value = "";
+		public String value = "";
 
-		ModelWithInvariant setValue(String aString) {
+		MyModel setValue(String aString) {
 			this.value = aString;
 			return this;
 		}
 
-		@Override
-		public boolean invariant() {
-			return value != null;
-		}
 	}
 
 }
