@@ -18,9 +18,20 @@ class ActionSequenceProperties {
 		Assertions.assertThat(result).contains("y");
 	}
 
+	@Property
+	void sequencesCanBeSized(@ForAll("ofSize5") ActionSequence<String> actions) {
+		String result = actions.run("");
+		Assertions.assertThat(actions.sequence()).hasSize(5);
+	}
+
 	@Provide
 	Arbitrary<ActionSequence<String>> xOrY() {
 		return Arbitraries.sequences(Arbitraries.oneOf(addX(), addY()));
+	}
+
+	@Provide
+	Arbitrary<ActionSequence<String>> ofSize5() {
+		return Arbitraries.sequences(Arbitraries.oneOf(addX(), addY())).ofSize(5);
 	}
 
 	@Property

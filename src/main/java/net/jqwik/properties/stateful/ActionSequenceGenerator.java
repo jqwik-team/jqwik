@@ -9,13 +9,9 @@ class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
 	private final RandomGenerator<Action<M>> actionGenerator;
 	private final int numberOfActions;
 
-	ActionSequenceGenerator(RandomGenerator<Action<M>> actionGenerator, int genSize) {
+	ActionSequenceGenerator(RandomGenerator<Action<M>> actionGenerator, int numberOfActions) {
 		this.actionGenerator = actionGenerator;
-		this.numberOfActions = calculateNumberOfActions(genSize);
-	}
-
-	private int calculateNumberOfActions(int genSize) {
-		return (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
+		this.numberOfActions = numberOfActions;
 	}
 
 	@Override

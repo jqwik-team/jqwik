@@ -320,7 +320,7 @@ public class Arbitraries {
 		return genSize -> arbitrarySupplier.get().generator(genSize);
 	}
 
-	public static <M> Arbitrary<ActionSequence<M>> sequences(Arbitrary<Action<M>> actionArbitrary) {
+	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary) {
 		return SequentialActionSequence.fromActions(actionArbitrary);
 	}
 }
