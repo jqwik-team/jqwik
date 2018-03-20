@@ -5,6 +5,7 @@
 - Rename GenericType to GenericTarget or TargetSpec
 
 - Javadoc:
+  - GenericType
   - ArbitraryProvider 
   - ArbitraryConfigurator
   - Arbitraries methods
