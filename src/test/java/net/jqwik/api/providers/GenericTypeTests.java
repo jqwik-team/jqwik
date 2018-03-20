@@ -19,6 +19,8 @@ class GenericTypeTests {
 		GenericType stringType = GenericType.of(String.class);
 		assertThat(stringType.getRawType()).isEqualTo(String.class);
 		assertThat(stringType.isOfType(String.class)).isTrue();
+		assertThat(stringType.canBeAssignedTo(GenericType.of(CharSequence.class))).isTrue();
+		assertThat(GenericType.of(CharSequence.class).canBeAssignedTo(stringType)).isFalse();
 		assertThat(stringType.isGeneric()).isFalse();
 		assertThat(stringType.isArray()).isFalse();
 		assertThat(stringType.isEnum()).isFalse();

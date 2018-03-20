@@ -194,13 +194,21 @@ public class GenericType {
 	}
 
 	/**
-	 * Check if an instance is of a specific raw type.
+	 * Check if an instance is of a specific raw type
 	 *
 	 * Most of the time this is what you want to do when checking for applicability of a
 	 * {@linkplain ArbitraryProvider}.
 	 */
 	public boolean isOfType(Class<?> aRawType) {
 		return rawType == aRawType;
+	}
+
+	/**
+	 * Check if an instance can be assigned to another {@code GenericType} instance.
+	 */
+	public boolean canBeAssignedTo(GenericType genericType) {
+		// TODO: Checking real assignability including type parameters etc. is very involved
+		return genericType.getRawType().isAssignableFrom(rawType);
 	}
 
 	/**

@@ -1,5 +1,10 @@
 ### Bugs
 
+- Bug: @Provide method return types cannot be subtypes of Arbitrary<MyType>
+  Solution (seems complicated):
+  - Extend GenericType.canBeAssignedTo to consider super types and type parameters
+  - Use GenericType.canBeAssignedTo in PropertyMethodArbitraryResolver.isCreatorForType()
+
 - Rerunning failures first does not work in all cases, e.g. try in pbt-java project
   
 ### Tests
