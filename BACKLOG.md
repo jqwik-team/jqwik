@@ -1,9 +1,5 @@
 ### Bugs
 
-- ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
-  - Alternative 1: change distance to be of type BigInteger!
-  - Alternative 2: Make distance a structured value object with higher position compared first, 
-    e.g. [distanceOfList, distanceOfListValues] or [distanceOfToFlatMap, distanceOfEmbedded]
 - Rerunning failures first does not work in all cases, e.g. try in pbt-java project
   
 ### Tests
@@ -18,18 +14,25 @@
 
 ### Refactoring
 
+- Replace ShrinkingCandidates with something like composable ShrinkingPolicy
+  - Use it everywhere, especially in ContainerShrinkable, ShrinkableActionSequence, ParameterListShrinker 
+- ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
+  - Alternative 1: change distance to be of type BigInteger!
+  - Alternative 2: Make distance a structured value object with higher position compared first, 
+    e.g. [distanceOfList, distanceOfListValues] or [distanceOfToFlatMap, distanceOfEmbedded]
 - Introduce PropertyExecutionListener and build all reporting/results on top of it
 
 ### General
 
-- Allow reporting to be configured to also go to stdtout
+- Allow reporting to be configured to also go to stdtout 
+  (to work around missing reporting in Gradle's useJunitPlatform() )
 
 - Switch to gradle library plugin: 
   https://docs.gradle.org/current/userguide/java_library_plugin.html
 
 - Allow Fixture parameters to examples and properties
 
-- Use apiguardian annotations
+- Use apiguardian annotations (starting version 1.0)
 
 - LifeCycles
   - PerTestRunLifeCycle
@@ -40,6 +43,7 @@
 - Parallel test execution:
   - Across single property with annotation @Parallel 
   - Across Properties: Does it make sense with non working IntelliJ support?
+  - For ActionSequences
 
 ### Properties
 
