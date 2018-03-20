@@ -19,15 +19,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	private final List<Shrinkable<Action<M>>> candidateSequence;
-
-	List<Shrinkable<Action<M>>> sequenceToShrink() {
-		if (hasRun)
-			return runSequence;
-		return candidateSequence;
-	}
-
 	private final List<Shrinkable<Action<M>>> runSequence = new ArrayList<>();
-
 	private boolean hasRun = false;
 
 	SequentialActionSequence(List<Shrinkable<Action<M>>> candidateSequence) {
@@ -44,36 +36,16 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	@Override
 	public synchronized M run(M model) {
-		if (hasRun) {
-			runSequence.clear();
-		}
-
 		runSequence.clear();
 		hasRun = true;
 		try {
-			for (Shrinkable<Action<M>> candidate : candidateSequence) {
-				Action<M> action = candidate.value();
-				if (action.precondition(model)) {
-					runSequence.add(candidate);
-					model = action.run(model);
-				}
-			}
+			model = tryAllCandidates(model);
+			return model;
+		} catch (InvariantFailedError ife) {
+			throw ife;
 		} catch (Throwable t) {
-			String actionsString = extractValues(runSequence)
-				.stream() //
-				.map(action -> "    " + action.toString()) //
-				.collect(Collectors.joining(System.lineSeparator()));
-			String message = String.format(
-				"Run failed with following actions:%s%s%s  model state: %s",
-				System.lineSeparator(),
-				actionsString,
-				System.lineSeparator(),
-				JqwikStringSupport.displayString(model)
-			);
-			throw new AssertionFailedError(message, t);
+			throw new AssertionFailedError(createErrorMessage(model, "Run"), t);
 		}
-
-		return model;
 	}
 
 	@Override
@@ -86,6 +58,61 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		}
 		String actionsString = JqwikStringSupport.displayString(extractValues(actionsToShow));
 		return String.format("%s%s:%s", this.getClass().getSimpleName(), stateString, actionsString);
+	}
+
+	List<Shrinkable<Action<M>>> sequenceToShrink() {
+		if (hasRun)
+			return runSequence;
+		return candidateSequence;
+	}
+
+	private M tryAllCandidates(M model) {
+		for (Shrinkable<Action<M>> candidate : candidateSequence) {
+			model = tryNextCandidate(model, candidate);
+		}
+		return model;
+	}
+
+	private M tryNextCandidate(M model, Shrinkable<Action<M>> candidate) {
+		Action<M> action = candidate.value();
+		if (action.precondition(model)) {
+			runSequence.add(candidate);
+			model = action.run(model);
+			checkInvariant(model);
+		}
+		return model;
+	}
+
+	private void checkInvariant(M model) {
+		if (model instanceof Invariant) {
+			Invariant invariant = (Invariant) model;
+			try {
+				if (!invariant.invariant()) {
+					String name = String.format("Invariant in %s", model.getClass().getSimpleName());
+					throw new InvariantFailedError(createErrorMessage(model, name));
+				}
+			} catch (InvariantFailedError ife) {
+				throw ife;
+			} catch (Throwable t) {
+				String name = String.format("Invariant in %s", model.getClass().getSimpleName());
+				throw new InvariantFailedError(createErrorMessage(model, name), t);
+			}
+		}
+	}
+
+	private String createErrorMessage(M model, String name) {
+		String actionsString = extractValues(runSequence)
+			.stream() //
+			.map(action -> "    " + action.toString()) //
+			.collect(Collectors.joining(System.lineSeparator()));
+		return String.format(
+			"%s failed after following actions:%s%s%s  model state: %s",
+			name,
+			System.lineSeparator(),
+			actionsString,
+			System.lineSeparator(),
+			JqwikStringSupport.displayString(model)
+		);
 	}
 
 	private List<Action<M>> extractValues(List<Shrinkable<Action<M>>> shrinkables) {

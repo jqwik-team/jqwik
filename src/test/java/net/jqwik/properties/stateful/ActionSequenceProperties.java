@@ -7,7 +7,7 @@ import org.opentest4j.*;
 
 import java.util.*;
 
-class ActionSequencesProperties {
+class ActionSequenceProperties {
 
 	@Property
 	void createdSequencesDoTheirWork(@ForAll("xOrY") ActionSequence<String> actions) {
