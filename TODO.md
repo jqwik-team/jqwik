@@ -1,5 +1,4 @@
 - Javadoc:
-  - ArbitraryProvider 
   - ArbitraryConfigurator
   - Arbitraries methods
   - Arbitrary methods
