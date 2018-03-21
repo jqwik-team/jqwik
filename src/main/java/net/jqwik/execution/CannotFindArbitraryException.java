@@ -7,23 +7,25 @@ import net.jqwik.support.*;
 
 public class CannotFindArbitraryException extends JqwikException {
 
-	private final MethodParameter parameter;
-
 	CannotFindArbitraryException(MethodParameter parameter) {
 		super(createMessage(parameter));
-		this.parameter = parameter;
+	}
+
+	public CannotFindArbitraryException(GenericType genericType) {
+		super(createMessage("", genericType));
 	}
 
 	private static String createMessage(MethodParameter parameter) {
 		String forAllValue = parameter.getAnnotation(ForAll.class).value();
 		GenericType genericType = GenericType.forParameter(parameter);
+		return createMessage(forAllValue, genericType);
+	}
+
+	private static String createMessage(String forAllValue, GenericType genericType) {
 		if (forAllValue.isEmpty())
 			return String.format("Cannot find an Arbitrary for Parameter of type [%s]", genericType);
 		else
 			return String.format("Cannot find an Arbitrary [%s] for Parameter of type [%s]", forAllValue, genericType);
 	}
 
-	public MethodParameter getParameter() {
-		return parameter;
-	}
 }

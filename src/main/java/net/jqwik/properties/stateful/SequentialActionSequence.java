@@ -97,8 +97,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 					invariant.check(model);
 				}
 			} catch (Throwable t) {
-				String name = String.format("Invariant");
-				throw new InvariantFailedError(createErrorMessage(model, name), t);
+				throw new InvariantFailedError(createErrorMessage(model, "Invariant"), t);
 			}
 	}
 

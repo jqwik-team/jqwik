@@ -112,8 +112,8 @@ class CheckedPropertyTests {
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
-			CannotFindArbitraryException cannotFindeArbitraryException = (CannotFindArbitraryException) check.throwable().get();
-			assertThat(cannotFindeArbitraryException.getParameter()).isSameAs(parameters.get(0));
+			assertThat(check.throwable()).isPresent();
+			assertThat(check.throwable().get()).isInstanceOf(CannotFindArbitraryException.class);
 		}
 
 		@Example

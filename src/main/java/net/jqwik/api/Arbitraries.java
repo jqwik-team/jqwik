@@ -312,7 +312,7 @@ public class Arbitraries {
 			//noinspection unchecked
 			return (Arbitrary<T>) optionalArbitrary.get();
 		} else {
-			throw new JqwikException(String.format("No default arbitrary for type [%s]", genericType));
+			throw new CannotFindArbitraryException(genericType);
 		}
 	}
 
