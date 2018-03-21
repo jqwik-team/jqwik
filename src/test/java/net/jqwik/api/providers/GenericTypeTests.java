@@ -6,12 +6,14 @@ import net.jqwik.api.Tuples.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.support.*;
 
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
 import static net.jqwik.api.providers.GenericType.*;
 import static org.assertj.core.api.Assertions.*;
 
+@Label("GenericType")
 class GenericTypeTests {
 
 	@Example
@@ -19,8 +21,6 @@ class GenericTypeTests {
 		GenericType stringType = GenericType.of(String.class);
 		assertThat(stringType.getRawType()).isEqualTo(String.class);
 		assertThat(stringType.isOfType(String.class)).isTrue();
-		assertThat(stringType.canBeAssignedTo(GenericType.of(CharSequence.class))).isTrue();
-		assertThat(GenericType.of(CharSequence.class).canBeAssignedTo(stringType)).isFalse();
 		assertThat(stringType.isGeneric()).isFalse();
 		assertThat(stringType.isArray()).isFalse();
 		assertThat(stringType.isEnum()).isFalse();
@@ -55,6 +55,86 @@ class GenericTypeTests {
 		assertThat(tupleType.isGeneric()).isTrue();
 		assertThat(tupleType.isArray()).isFalse();
 		assertThat(tupleType.isEnum()).isFalse();
+	}
+
+	@Group
+	@Label("canBeAssigned(GenericType)")
+	class CanBeAssigned {
+
+		@Example
+		void nonGenericTypes() {
+			GenericType stringType = GenericType.of(String.class);
+
+			assertThat(stringType.canBeAssignedTo(stringType)).isTrue();
+			assertThat(stringType.canBeAssignedTo(GenericType.of(CharSequence.class))).isTrue();
+			assertThat(GenericType.of(CharSequence.class).canBeAssignedTo(stringType)).isFalse();
+		}
+
+		@Example
+		void primitiveAndBoxedTypes() {
+			GenericType bigInt = GenericType.of(Integer.class);
+			GenericType smallInt = GenericType.of(int.class);
+
+			assertThat(bigInt.canBeAssignedTo(smallInt)).isTrue();
+			assertThat(smallInt.canBeAssignedTo(bigInt)).isTrue();
+			assertThat(bigInt.canBeAssignedTo(GenericType.of(Number.class))).isTrue();
+		}
+
+		@Example
+		void arrayTypes() {
+			GenericType stringArray = GenericType.of(String[].class);
+			GenericType csArray = GenericType.of(CharSequence[].class);
+
+			assertThat(stringArray.canBeAssignedTo(stringArray)).isTrue();
+			assertThat(stringArray.canBeAssignedTo(csArray)).isTrue();
+			assertThat(csArray.canBeAssignedTo(stringArray)).isFalse();
+		}
+
+		@Example
+		void primitiveArrayTypes() {
+			GenericType intArray = GenericType.of(int[].class);
+			GenericType integerArray = GenericType.of(Integer[].class);
+
+			assertThat(intArray.canBeAssignedTo(intArray)).isTrue();
+			assertThat(intArray.canBeAssignedTo(integerArray)).isFalse();
+			assertThat(integerArray.canBeAssignedTo(intArray)).isFalse();
+		}
+
+		@Example
+		void parameterizedTypes() {
+			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
+			GenericType rawList = GenericType.of(List.class);
+			GenericType listOfInteger = GenericType.of(List.class, GenericType.of(Integer.class));
+
+			assertThat(listOfString.canBeAssignedTo(listOfString)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(rawList)).isTrue();
+			assertThat(rawList.canBeAssignedTo(listOfString)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(listOfInteger)).isFalse();
+		}
+
+		@Example
+		void parameterizedTypesWithWildcards() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public List<?> listOfWildcard() { return null; }
+			}
+
+			Type type = LocalClass.class.getMethod("listOfWildcard").getAnnotatedReturnType().getType();
+			GenericType listOfWildcard = GenericType.forType(type);
+			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
+			GenericType rawList = GenericType.of(List.class);
+
+			assertThat(listOfWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
+
+			// This fails because wildcard types are not recognized as such:
+			assertThat(listOfString.canBeAssignedTo(listOfWildcard)).isTrue();
+
+			assertThat(listOfWildcard.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfWildcard.canBeAssignedTo(rawList)).isTrue();
+			assertThat(rawList.canBeAssignedTo(listOfWildcard)).isTrue();
+		}
+
+
 	}
 
 	@Group

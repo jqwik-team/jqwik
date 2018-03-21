@@ -45,6 +45,16 @@ public class GenericType {
 	}
 
 	public static GenericType forType(Type type) {
+//		if (type instanceof WildcardType) {
+//			WildcardType wildcardType = (WildcardType) type;
+//			GenericType[] upperBounds = Arrays.stream(wildcardType.getUpperBounds())
+//											  .map(GenericType::forType)
+//											  .toArray(a -> new GenericType[0]);
+//			return new GenericType(Object.class, "?", upperBounds, Collections.emptyList(),
+//								   Collections.emptyList()
+//			);
+//		}
+
 		return new GenericType(type);
 	}
 
@@ -206,9 +216,38 @@ public class GenericType {
 	/**
 	 * Check if an instance can be assigned to another {@code GenericType} instance.
 	 */
-	public boolean canBeAssignedTo(GenericType genericType) {
+	public boolean canBeAssignedTo(GenericType targetType) {
 		// TODO: Checking real assignability including type parameters etc. is very involved
-		return genericType.getRawType().isAssignableFrom(rawType);
+		if (targetType.getRawType().isAssignableFrom(rawType)) {
+			return allTypeArgumentsCanBeAssigned(targetType.getTypeArguments(), this.getTypeArguments());
+		}
+		if (boxedTypeMatches(targetType.rawType, this.rawType))
+			return true;
+		return boxedTypeMatches(this.rawType, targetType.rawType);
+	}
+
+	private boolean allTypeArgumentsCanBeAssigned(
+		List<GenericType> providedTypeArguments, List<GenericType> targetTypeArguments
+	) {
+		if (providedTypeArguments.size() == 0) {
+			return true;
+		}
+		if (targetTypeArguments.size() == 0) {
+			return true;
+		}
+		if (targetTypeArguments.size() != providedTypeArguments.size())
+			return false;
+		for (int i = 0; i < targetTypeArguments.size(); i++) {
+			GenericType providedTypeArgument = providedTypeArguments.get(i);
+			GenericType targetTypeArgument = targetTypeArguments.get(i);
+			if (!providedTypeArgument.canBeAssignedTo(targetTypeArgument))
+				return false;
+		}
+		return true;
+	}
+
+	private boolean isRawType() {
+		return isOfType(Object.class) && !hasBounds();
 	}
 
 	/**
@@ -286,8 +325,7 @@ public class GenericType {
 		List<GenericType> targetTypeArguments, List<GenericType> providedTypeArguments
 	) {
 		if (providedTypeArguments.size() == 0) {
-			return targetTypeArguments.stream()
-									  .allMatch(targetType -> targetType.isOfType(Object.class) && !targetType.hasBounds());
+			return targetTypeArguments.stream().allMatch(GenericType::isRawType);
 		}
 		if (targetTypeArguments.size() != providedTypeArguments.size())
 			return false;
