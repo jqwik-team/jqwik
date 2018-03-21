@@ -1,5 +1,5 @@
-- Support stateful testing
-  - Add section on stateful testing to user guide
+- Bug: Invariant test is not being shrunk
+  see MyStringStackProperties.checkMyStackWithInvariant
 
 - Javadoc:
   - ArbitraryProvider 

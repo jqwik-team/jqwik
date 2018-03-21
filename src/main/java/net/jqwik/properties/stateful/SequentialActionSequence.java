@@ -108,7 +108,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 			.map(action -> "    " + action.toString()) //
 			.collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
-			"%s failed after following actions:%s%s%s  model state: %s",
+			"%s failed after following actions:%s%s%s  final state: %s",
 			name,
 			System.lineSeparator(),
 			actionsString,

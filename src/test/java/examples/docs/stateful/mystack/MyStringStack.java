@@ -17,11 +17,11 @@ public class MyStringStack {
 
 	public void clear() {
 		// Wrong implementation to provoke falsification for stacks with more than 2 elements
-		if (elements.size() > 1) {
-			elements.remove(0);
-		} else {
+//		if (elements.size() > 2) {
+//			elements.remove(0);
+//		} else {
 			elements.clear();
-		}
+//		}
 	}
 
 	public boolean isEmpty() {

@@ -56,9 +56,14 @@ Volunteers for polishing and extending it are more than welcome._
   - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
-  - [Recursive Arbitraries](#recursive-arbitraries)
-    - [Deterministic Recursion](#deterministic-recursion)
   - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
+- [Recursive Arbitraries](#recursive-arbitraries)
+  - [Probabilistic Recursion](#probabilistic-recursion)
+  - [Deterministic Recursion](#deterministic-recursion)
+- [Stateful Testing](#stateful-testing)
+  - [Specify Actions](#specify-actions)
+  - [Check Postconditions](#check-postconditions)
+  - [Check Invariants](#check-invariants)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
   - [Integrated Shrinking](#integrated-shrinking)
@@ -1091,11 +1096,22 @@ class Person {
 The property should fail, thereby shrinking the falsified Person instance to
 `[Aaaaaaaaaaaaaaaaaaaaa:100]`.
 
-### Recursive Arbitraries
+### Fix an Arbitrary's `genSize`
+
+Some generators (e.g. most number generators) are sensitive to the 
+`genSize` value that is used when creating them. 
+The default value for `genSize` is the number of tries configured for the property
+they are used in. If there is a need to influence the behaviour of generators
+you can do so by using 
+[`Arbitrary.fixGenSize(int)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
+
+## Recursive Arbitraries
 
 Sometimes it seems like a good idea to compose arbitraries and thereby
 recursively calling an arbitrary creation method. Generating recursive data types
 is one application field but you can also use it for other stuff. 
+
+### Probabilistic Recursion
 
 Look at the 
 [following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/RecursiveExamples.java) 
@@ -1128,13 +1144,14 @@ private StringArbitrary word() {
 
 There are two things to which you must pay attention:
 
-- Use `Arbitraries.lazy(Supplier<Arbitrary<T>>)` to wrap the recursive call itself. 
+- Use [`Arbitraries.lazy(Supplier<Arbitrary<T>>)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#lazy-java.util.function.Supplier-) 
+  to wrap the recursive call itself. 
   Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
 - Every recursion needs one or more base cases in order to stop recursion at some point. 
   Base cases must have a high enough probability, 
   otherwise a stack overflow will get you during value generation.
   
-#### Deterministic Recursion
+### Deterministic Recursion
 
 An alternative to the non-deterministic recursion shown above, is to use classical
 recursion with a counter to determine the base case. If you then use an arbitrary value
@@ -1164,14 +1181,208 @@ Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
 }
 ```
 
-### Fix an Arbitrary's `genSize`
+## Stateful Testing
 
-Some generators (e.g. most number generators) are sensitive to the 
-`genSize` value that is used when creating them. 
-The default value for `genSize` is the number of tries configured for the property
-they are used in. If there is a need to influence the behaviour of generators
-you can do so by using 
-[`Arbitrary.fixGenSize(int)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
+Despite its bad reputation _state_ is an important concept in object-oriented languages like Java.
+We often have to deal with stateful objects or components whose state can be changed through methods. 
+
+Thinking in a more formal way we can look at those objects as _state machines_ and the methods as
+_actions_ that move the object from one state to another. Some actions have preconditions to constrain
+when they can be invoked and some objects have invariants that should never be violated regardless
+of the sequence of performed actions.
+
+To make this abstract concept concrete, let's look at a 
+[simple stack implementation](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/stateful/mystack/MyStringStack.java):
+
+```java
+public class MyStringStack {
+	public void push(String element) { ... }
+	public String pop() { ... }
+	public void clear() { ... }
+	public boolean isEmpty() { ... }
+	public int size() { ... }
+	public String top() { ... }
+}
+```
+
+### Specify Actions
+
+We can see at least three _actions_ with their preconditions and expected state changes:
+
+- [`Push`](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/stateful/mystack/PushAction.java): 
+  Push a string onto the stack. The string should be on top afterwards and the size
+  should have increased by 1.
+  
+  ```java
+  import net.jqwik.api.stateful.*;
+  import org.assertj.core.api.*;
+  
+  class PushAction implements Action<MyStringStack> {
+  
+  	private final String element;
+  
+  	PushAction(String element) {
+  		this.element = element;
+  	}
+  
+  	@Override
+  	public MyStringStack run(MyStringStack model) {
+  		int sizeBefore = model.size();
+  		model.push(element);
+  		Assertions.assertThat(model.isEmpty()).isFalse();
+  		Assertions.assertThat(model.size()).isEqualTo(sizeBefore + 1);
+  		return model;
+  	}
+  
+  	@Override
+  	public String toString() { return String.format("push(%s)", element); }
+  }
+  ``` 
+
+- [`Pop`](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/stateful/mystack/PopAction.java): 
+  If (and only if) the stack is not empty, pop the element on top off the stack. 
+  The size of the stack should have decreased by 1.
+  
+  ```java
+  class PopAction implements Action<MyStringStack> {
+    
+        @Override
+        public boolean precondition(MyStringStack model) {
+            return !model.isEmpty();
+        }
+    
+        @Override
+        public MyStringStack run(MyStringStack model) {
+            int sizeBefore = model.size();
+            String topBefore = model.top();
+    
+            String popped = model.pop();
+            Assertions.assertThat(popped).isEqualTo(topBefore);
+            Assertions.assertThat(model.size()).isEqualTo(sizeBefore - 1);
+            return model;
+        }
+    
+        @Override
+        public String toString() { return "pop"; }
+  }
+  ``` 
+
+- [`Clear`](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/stateful/mystack/ClearAction.java): 
+  Remove all elements from the stack which should be empty afterwards.
+  
+  ```java
+  class ClearAction implements Action<MyStringStack> {
+
+        @Override
+        public MyStringStack run(MyStringStack model) {
+            model.clear();
+            Assertions.assertThat(model.isEmpty()).isTrue();
+            return model;
+        }
+    
+        @Override
+        public String toString() { return "clear"; }
+  }
+  ``` 
+
+### Check Postconditions
+
+The fundamental property that _jqwik_ should try to falsify is:
+
+    For any valid sequence of actions all required state changes
+    (aka postconditions) should be fulfilled.
+    
+We can formulate that quite easily as a 
+[_jqwik_ property](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/stateful/mystack/MyStringStackProperties.java):
+
+```java
+class MyStringStackProperties {
+
+	@Property
+	void checkMyStack(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
+		actions.run(new MyStringStack());
+	}
+
+	@Provide
+	Arbitrary<ActionSequence<MyStringStack>> sequences() {
+		return Arbitraries.sequences(Arbitraries.oneOf(push(), pop(), clear()));
+	}
+
+	private Arbitrary<Action<MyStringStack>> push() {
+		return Arbitraries.strings().alpha().ofLength(5).map(PushAction::new);
+	}
+
+	private Arbitrary<Action<MyStringStack>> clear() {
+		return Arbitraries.constant(new ClearAction());
+	}
+
+	private Arbitrary<Action<MyStringStack>> pop() {
+		return Arbitraries.constant(new PopAction());
+	}
+}
+```
+
+The interesting API elements are 
+- [`ActionSequence`](http://jqwik.net/javadoc/net/jqwik/api/stateful/ActionSequence.html):
+  A generic collection type especially crafted for holding and shrinking of a list of actions.
+  As a convenience it will apply the actions to a model.
+  
+- [`Arbitraries.sequences()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-):
+  This method will create the arbitrary for generating an `ActionSequence` given the
+  arbitrary for generating actions.
+
+To give _jqwik_ something to falsify, we broke the implementation of `clear()` so that
+it won't clear everything if there are more than two elements on the stack:
+
+```java
+public void clear() {
+    // Wrong implementation to provoke falsification for stacks with more than 2 elements
+    if (elements.size() > 2) {
+        elements.remove(0);
+    } else {
+        elements.clear();
+    }
+}
+```
+
+Running the property should now produce a result similar to:
+
+```
+org.opentest4j.AssertionFailedError: Run failed after following actions:
+    push(AAAAA)
+    push(AAAAA)
+    push(AAAAA)
+    clear
+  final state: ["AAAAA", "AAAAA"]
+```
+   
+### Check Invariants
+
+We can also add an invariant to our sequence checking property like that:
+
+```java
+@Property
+void checkMyStackWithInvariant(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
+    actions
+        .withInvariant(stack -> Assertions.assertThat(stack.size()).isGreaterThanOrEqualTo(0))
+        .withInvariant(stack -> Assertions.assertThat(stack.size()).isLessThan(5))
+        .run(new MyStringStack());
+}
+```
+
+If we first fix the bug in `MyStringStack.clear()` our property should eventually fail 
+with the following result:
+
+```
+org.opentest4j.AssertionFailedError: Run failed after following actions:
+    push(AAAAA)
+    push(AAAAA)
+    push(AAAAA)
+    push(AAAAA)
+    push(AAAAA)
+  final state: ["AAAAA", "AAAAA", "AAAAA", "AAAAA", "AAAAA"]
+```
+
 
 ## Assumptions
 
@@ -1675,7 +1886,7 @@ in a separate article...
 - Added `Arbitraries.lazy()` 
   to allow [recursive value generation](#recursive-arbitraries)
 - Added `Arbitrary.fixGenSize()` to enable a fixed genSize when creating random generators
-- Added `Arbitrary.sequences()` to create sequences of actions for stateful testing
+- Added `Arbitrary.sequences()` to create sequences of actions for [stateful testing](#stateful-testing)
 
 ### 0.8.7
 

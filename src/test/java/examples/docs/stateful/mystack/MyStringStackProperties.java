@@ -2,12 +2,13 @@ package examples.docs.stateful.mystack;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
+import org.assertj.core.api.*;
 
 class MyStringStackProperties {
 
 	@Property(reporting = Reporting.GENERATED)
-	void checkMyStack(@ForAll("sequences") ActionSequence<MyStringStack> stackMachine) {
-		stackMachine.run(new MyStringStack());
+	void checkMyStack(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
+		actions.run(new MyStringStack());
 	}
 
 	@Provide
@@ -27,4 +28,12 @@ class MyStringStackProperties {
 		return Arbitraries.constant(new PopAction());
 	}
 
+
+	@Property(reporting = Reporting.FALSIFIED)
+	void checkMyStackWithInvariant(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
+		actions
+			.withInvariant(stack -> Assertions.assertThat(stack.size()).isGreaterThanOrEqualTo(0))
+			.withInvariant(stack -> Assertions.assertThat(stack.size()).isLessThan(5))
+			.run(new MyStringStack());
+	}
 }
