@@ -1325,7 +1325,7 @@ class MyStringStackProperties {
 The interesting API elements are 
 - [`ActionSequence`](http://jqwik.net/javadoc/net/jqwik/api/stateful/ActionSequence.html):
   A generic collection type especially crafted for holding and shrinking of a list of actions.
-  As a convenience it will apply the actions to a model.
+  As a convenience it will apply the actions to a model when you call `run(model)`.
   
 - [`Arbitraries.sequences()`](http://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-):
   This method will create the arbitrary for generating an `ActionSequence` given the
@@ -1358,7 +1358,7 @@ org.opentest4j.AssertionFailedError: Run failed after following actions:
    
 ### Check Invariants
 
-We can also add an invariant to our sequence checking property like that:
+We can also add invariants to our sequence checking property:
 
 ```java
 @Property
