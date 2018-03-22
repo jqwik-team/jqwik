@@ -268,7 +268,25 @@ class GenericTypeTests {
 			assertThat(rawList.canBeAssignedTo(listOfVariable)).isTrue();
 		}
 
+		@Example
+		void superTypes() {
+			class LocalStringArbitrary extends DefaultStringArbitrary {
+			}
 
+			GenericType localStringArbitrary = GenericType.of(LocalStringArbitrary.class);
+
+			assertThat(localStringArbitrary.canBeAssignedTo(GenericType.of(Object.class))).isTrue();
+			assertThat(localStringArbitrary.canBeAssignedTo(GenericType.of(AbstractArbitraryBase.class))).isTrue();
+			assertThat(localStringArbitrary.canBeAssignedTo(GenericType.of(String.class))).isFalse();
+
+			GenericType stringArbitrary = GenericType.of(Arbitrary.class, GenericType.of(String.class));
+			assertThat(localStringArbitrary.canBeAssignedTo(stringArbitrary)).isTrue();
+
+			// TODO: Make the next assertion work, maybe using GenericType.findSuperType
+			// jqwik is too loose here which might result in a class cast exception during runtime
+			//	GenericType integerArbitrary = GenericType.of(Arbitrary.class, GenericType.of(Integer.class));
+			//	assertThat(localStringArbitrary.canBeAssignedTo(integerArbitrary)).isFalse();
+		}
 
 	}
 

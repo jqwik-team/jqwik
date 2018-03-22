@@ -239,12 +239,15 @@ public class GenericType {
 		if (isTypeVariableOrWildcard(targetType)) {
 			return canBeAssignedToUpperBounds(targetType);
 		}
-		if (targetType.getRawType().isAssignableFrom(rawType)) {
-			return allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments());
-		}
 		if (boxedTypeMatches(targetType.rawType, this.rawType))
 			return true;
-		return boxedTypeMatches(this.rawType, targetType.rawType);
+		if (boxedTypeMatches(this.rawType, targetType.rawType))
+			return true;
+		if (targetType.getRawType().isAssignableFrom(rawType)) {
+			// TODO: ActionSequenceArbitrary<String> should be assignable to Arbitrary<ActionsSequence<String>> but is not :-(
+			return allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments());
+		}
+		return false;
 	}
 
 	private boolean isTypeVariableOrWildcard(GenericType targetType) {
@@ -354,6 +357,30 @@ public class GenericType {
 		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
+	public Optional<GenericType> findSuperType(Class<?> typeToFind) {
+		return findSuperTypeIn(typeToFind, this.rawType);
+	}
+
+	private Optional<GenericType> findSuperTypeIn(Class<?> typeToFind, Class<?> rawType) {
+		List<AnnotatedType> supertypes = new ArrayList<>();
+		if (rawType.getSuperclass() != null)
+			supertypes.add(rawType.getAnnotatedSuperclass());
+		supertypes.addAll(Arrays.asList(rawType.getAnnotatedInterfaces()));
+		for (AnnotatedType type : supertypes) {
+			if (extractRawType(type.getType()).equals(typeToFind))
+				return Optional.of(new GenericType(type));
+		}
+
+		for (AnnotatedType type : supertypes) {
+			GenericType genericType = new GenericType(type);
+			Optional<GenericType> nestedFound = genericType.findSuperType(typeToFind);
+			if (nestedFound.isPresent())
+				return nestedFound;
+		}
+
+		return Optional.empty();
+	}
+
 	@Override
 	public String toString() {
 		String representation = getRawType().getSimpleName();
@@ -385,27 +412,4 @@ public class GenericType {
 		return representation;
 	}
 
-	public Optional<GenericType> findSuperType(Class<?> typeToFind) {
-		return findSuperTypeIn(typeToFind, this.rawType);
-	}
-
-	private Optional<GenericType> findSuperTypeIn(Class<?> typeToFind, Class<?> rawType) {
-		List<AnnotatedType> supertypes = new ArrayList<>();
-		if (rawType.getSuperclass() != null)
-			supertypes.add(rawType.getAnnotatedSuperclass());
-		supertypes.addAll(Arrays.asList(rawType.getAnnotatedInterfaces()));
-		for (AnnotatedType type : supertypes) {
-			if (extractRawType(type.getType()).equals(typeToFind))
-				return Optional.of(new GenericType(type));
-		}
-
-		for (AnnotatedType type : supertypes) {
-			GenericType genericType = new GenericType(type);
-			Optional<GenericType> nestedFound = genericType.findSuperType(typeToFind);
-			if (nestedFound.isPresent())
-				return nestedFound;
-		}
-
-		return Optional.empty();
-	}
 }

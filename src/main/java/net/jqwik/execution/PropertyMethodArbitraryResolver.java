@@ -126,15 +126,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 				return false;
 			}
 			GenericType arbitraryReturnType = GenericType.forType(method.getAnnotatedReturnType().getType());
-			if (!arbitraryReturnType.isOfType(Arbitrary.class)) {
-				return false;
-			}
-			if (!arbitraryReturnType.isGeneric()) {
-				return false;
-			}
-			GenericType providedType = arbitraryReturnType.getTypeArguments().get(0);
-			return providedType.canBeAssignedTo(targetType);
-//			return genericType.isCompatibleWith(arbitraryReturnType.getTypeArguments().get(0));
+			GenericType targetArbitraryType = GenericType.of(Arbitrary.class, targetType);
+			return arbitraryReturnType.canBeAssignedTo(targetArbitraryType);
 		};
 	}
 
