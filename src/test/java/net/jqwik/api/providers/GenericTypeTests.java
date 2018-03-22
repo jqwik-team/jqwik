@@ -4,6 +4,7 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuples.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 
 import java.io.*;
@@ -34,6 +35,45 @@ class GenericTypeTests {
 		assertThat(tupleType.isGeneric()).isTrue();
 		assertThat(tupleType.isArray()).isFalse();
 		assertThat(tupleType.isEnum()).isFalse();
+	}
+
+	@Example
+	void findDirectSuperTypes() {
+		class LocalStringArbitrary extends AbstractArbitraryBase implements Arbitrary<String> {
+			@Override
+			public RandomGenerator<String> generator(int genSize) {
+				return null;
+			}
+		}
+
+		GenericType stringArbitrary = GenericType.of(LocalStringArbitrary.class);
+		assertThat(stringArbitrary.getRawType()).isEqualTo(LocalStringArbitrary.class);
+
+		Optional<GenericType> superClass = stringArbitrary.findSuperType(AbstractArbitraryBase.class);
+		assertThat(superClass.get().isOfType(AbstractArbitraryBase.class));
+
+		Optional<GenericType> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
+		assertThat(arbitraryInterface.get().isOfType(Arbitrary.class)).isTrue();
+		assertThat(arbitraryInterface.get().isGeneric()).isTrue();
+		assertThat(arbitraryInterface.get().getTypeArguments().get(0).isOfType(String.class)).isTrue();
+
+		assertThat(stringArbitrary.findSuperType(String.class)).isNotPresent();
+	}
+
+	@Example
+	void findRemoteSuperTypes() {
+		class LocalStringArbitrary extends DefaultStringArbitrary {
+		}
+
+		GenericType stringArbitrary = GenericType.of(LocalStringArbitrary.class);
+
+		assertThat(stringArbitrary.findSuperType(Object.class)).isPresent();
+		assertThat(stringArbitrary.findSuperType(AbstractArbitraryBase.class)).isPresent();
+
+		Optional<GenericType> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
+		assertThat(arbitraryInterface.get().isOfType(Arbitrary.class)).isTrue();
+		assertThat(arbitraryInterface.get().isGeneric()).isTrue();
+		assertThat(arbitraryInterface.get().getTypeArguments().get(0).isOfType(String.class)).isTrue();
 	}
 
 	@Example
@@ -227,6 +267,7 @@ class GenericTypeTests {
 			assertThat(listOfVariable.canBeAssignedTo(rawList)).isTrue();
 			assertThat(rawList.canBeAssignedTo(listOfVariable)).isTrue();
 		}
+
 
 
 	}

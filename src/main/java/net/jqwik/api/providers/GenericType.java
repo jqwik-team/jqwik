@@ -78,13 +78,13 @@ public class GenericType {
 		);
 	}
 
-	private GenericType(AnnotatedType parameter) {
+	private GenericType(AnnotatedType annotatedType) {
 		this(
-			extractRawType(parameter.getType()),
-			extractTypeVariable(parameter.getType()),
-			extractBounds(parameter.getType()),
-			extractPlainTypeArguments(parameter),
-			extractAnnotations(parameter)
+			extractRawType(annotatedType.getType()),
+			extractTypeVariable(annotatedType.getType()),
+			extractBounds(annotatedType.getType()),
+			extractPlainTypeArguments(annotatedType),
+			extractAnnotations(annotatedType)
 		);
 	}
 
@@ -385,4 +385,27 @@ public class GenericType {
 		return representation;
 	}
 
+	public Optional<GenericType> findSuperType(Class<?> typeToFind) {
+		return findSuperTypeIn(typeToFind, this.rawType);
+	}
+
+	private Optional<GenericType> findSuperTypeIn(Class<?> typeToFind, Class<?> rawType) {
+		List<AnnotatedType> supertypes = new ArrayList<>();
+		if (rawType.getSuperclass() != null)
+			supertypes.add(rawType.getAnnotatedSuperclass());
+		supertypes.addAll(Arrays.asList(rawType.getAnnotatedInterfaces()));
+		for (AnnotatedType type : supertypes) {
+			if (extractRawType(type.getType()).equals(typeToFind))
+				return Optional.of(new GenericType(type));
+		}
+
+		for (AnnotatedType type : supertypes) {
+			GenericType genericType = new GenericType(type);
+			Optional<GenericType> nestedFound = genericType.findSuperType(typeToFind);
+			if (nestedFound.isPresent())
+				return nestedFound;
+		}
+
+		return Optional.empty();
+	}
 }
