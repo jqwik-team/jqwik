@@ -1,10 +1,11 @@
 ### Bugs
 
-- Bug: @Provide method return types cannot be subtypes of Arbitrary<MyType>
-  Solution (seems complicated):
-  - Extend GenericType.canBeAssignedTo to consider super types and type parameters
-
 - Rerunning failures first does not work in all cases, e.g. try in pbt-java project
+
+- Bug: Arbitrary method resolution is sometimes too loose.
+  E.g. return type `@Provide ActionSequenceArbitrary<Integer>` would be accepted
+  for parameter of type `@ForAll Arbitrary<ActionSequence<String>>` which will lead
+  to class cast exception on property evaluation. See TODO in GenericType.canBeAssignedTo()
   
 ### Tests
 

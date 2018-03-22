@@ -4,6 +4,7 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuples.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.stateful.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 
@@ -282,11 +283,43 @@ class GenericTypeTests {
 			GenericType stringArbitrary = GenericType.of(Arbitrary.class, GenericType.of(String.class));
 			assertThat(localStringArbitrary.canBeAssignedTo(stringArbitrary)).isTrue();
 
-			// TODO: Make the next assertion work, maybe using GenericType.findSuperType
-			// jqwik is too loose here which might result in a class cast exception during runtime
-			//	GenericType integerArbitrary = GenericType.of(Arbitrary.class, GenericType.of(Integer.class));
-			//	assertThat(localStringArbitrary.canBeAssignedTo(integerArbitrary)).isFalse();
+			GenericType integerArbitrary = GenericType.of(Arbitrary.class, GenericType.of(Integer.class));
+			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution
+			// assertThat(localStringArbitrary.canBeAssignedTo(integerArbitrary)).isFalse();
 		}
+
+		@Example
+		void typedSuperTypes() throws NoSuchMethodException {
+			class LocalClass {
+				public ActionSequenceArbitrary<String> stringActionSequenceArbitrary() {
+					return null;
+				}
+			}
+
+			Type stringActionSequenceArbitrary = LocalClass.class.getMethod("stringActionSequenceArbitrary")
+																 .getAnnotatedReturnType()
+																 .getType();
+			GenericType actionSequenceStringArbitraryType = GenericType.forType(stringActionSequenceArbitrary);
+			GenericType actionSequenceArbitrary = GenericType.of(
+				Arbitrary.class,
+				GenericType.of(
+					ActionSequence.class,
+					GenericType.of(String.class)
+				)
+			);
+			assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceArbitrary)).isTrue();
+
+			GenericType actionSequenceIntegerArbitrary = GenericType.of(
+				Arbitrary.class,
+				GenericType.of(
+					ActionSequence.class,
+					GenericType.of(Integer.class)
+				)
+			);
+			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution
+			// assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceIntegerArbitrary)).isFalse();
+		}
+
 
 	}
 

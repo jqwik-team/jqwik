@@ -24,14 +24,15 @@ class ActionSequenceProperties {
 		Assertions.assertThat(actions.sequence()).hasSize(5);
 	}
 
+	@SuppressWarnings("WeakerAccess")
 	@Provide
-	Arbitrary<ActionSequence<String>> xOrY() {
+	ActionSequenceArbitrary<String> xOrY() {
 		return Arbitraries.sequences(Arbitraries.oneOf(addX(), addY()));
 	}
 
 	@Provide
-	Arbitrary<ActionSequence<String>> ofSize5() {
-		return Arbitraries.sequences(Arbitraries.oneOf(addX(), addY())).ofSize(5);
+	ActionSequenceArbitrary<String> ofSize5() {
+		return xOrY().ofSize(5);
 	}
 
 	@Property

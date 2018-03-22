@@ -244,8 +244,13 @@ public class GenericType {
 		if (boxedTypeMatches(this.rawType, targetType.rawType))
 			return true;
 		if (targetType.getRawType().isAssignableFrom(rawType)) {
-			// TODO: ActionSequenceArbitrary<String> should be assignable to Arbitrary<ActionsSequence<String>> but is not :-(
-			return allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments());
+			if (allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments())) {
+				return true;
+			} else {
+				// TODO: This is too loose since it potentially allows not matching types
+				// which will lead to class cast exception during property execution
+				return findSuperType(targetType.rawType).isPresent();
+			}
 		}
 		return false;
 	}

@@ -4,5 +4,5 @@ import net.jqwik.api.*;
 
 public interface ActionSequenceArbitrary<M> extends Arbitrary<ActionSequence<M>> {
 
-	Arbitrary<ActionSequence<M>> ofSize(int size);
+	ActionSequenceArbitrary<M> ofSize(int size);
 }
