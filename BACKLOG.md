@@ -52,6 +52,8 @@
 
 ### Properties
 
+- Optionally report for each property which arbitraries are used.
+
 - @ForAll 
   - can be used in parameter types to choose provider method
   - can take `providerClass` parameter (but no value parameter) 
