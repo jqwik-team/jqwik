@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 public class IntegerArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isCompatibleWith(Integer.class);
+		return targetType.isAssignableFrom(Integer.class);
 	}
 
 	@Override

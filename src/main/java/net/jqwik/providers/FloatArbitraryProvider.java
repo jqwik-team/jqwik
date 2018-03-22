@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 public class FloatArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isCompatibleWith(Float.class);
+		return targetType.isAssignableFrom(Float.class);
 	}
 
 	@Override

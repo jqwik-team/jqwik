@@ -32,6 +32,8 @@ import java.util.stream.*;
  */
 public class GenericType {
 
+	private static final String WILDCARD = "?";
+
 	public static GenericType of(Class<?> type, GenericType... typeParameters) {
 		if (typeParameters.length > 0 && typeParameters.length != type.getTypeParameters().length) {
 			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
@@ -45,24 +47,26 @@ public class GenericType {
 	}
 
 	public static GenericType forType(Type type) {
-//		if (type instanceof WildcardType) {
-//			WildcardType wildcardType = (WildcardType) type;
-//			GenericType[] upperBounds = Arrays.stream(wildcardType.getUpperBounds())
-//											  .map(GenericType::forType)
-//											  .toArray(a -> new GenericType[0]);
-//			return new GenericType(Object.class, "?", upperBounds, Collections.emptyList(),
-//								   Collections.emptyList()
-//			);
-//		}
-
+		if (type instanceof WildcardType) {
+			return GenericType.forWildcard((WildcardType) type);
+		}
 		return new GenericType(type);
+	}
+
+	public static GenericType forWildcard(WildcardType wildcardType) {
+		GenericType[] upperBounds = Arrays.stream(wildcardType.getUpperBounds())
+										  .map(GenericType::forType)
+										  .toArray(GenericType[]::new);
+		return new GenericType(Object.class, WILDCARD, upperBounds, Collections.emptyList(),
+							   Collections.emptyList()
+		);
 	}
 
 	private final Class<?> rawType;
 	private final List<Annotation> annotations;
 	private final List<GenericType> typeArguments;
 	private final String typeVariable;
-	private final GenericType[] bounds;
+	private final GenericType[] upperBounds;
 
 	private GenericType(Class<?> rawType, GenericType... typeArguments) {
 		this(
@@ -107,13 +111,13 @@ public class GenericType {
 	private GenericType(
 		Class<?> rawType,
 		String typeVariable,
-		GenericType[] bounds,
+		GenericType[] upperBounds,
 		List<GenericType> typeArguments,
 		List<Annotation> annotations
 	) {
 		this.rawType = rawType;
 		this.typeVariable = typeVariable;
-		this.bounds = bounds;
+		this.upperBounds = upperBounds;
 		this.typeArguments = typeArguments;
 		this.annotations = annotations;
 	}
@@ -142,7 +146,6 @@ public class GenericType {
 	private static GenericType[] extractBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
 			return Arrays.stream(((TypeVariable) parameterizedType).getBounds()) //
-						 .filter(type -> type != Object.class) //
 						 .map(GenericType::forType) //
 						 .toArray(GenericType[]::new);
 		}
@@ -193,7 +196,23 @@ public class GenericType {
 	 * Return true if a type parameter has bounds.
 	 */
 	public boolean hasBounds() {
-		return bounds.length > 0;
+		if (upperBounds.length > 1)
+			return true;
+		return upperBounds.length == 1 && !upperBounds[0].isOfType(Object.class);
+	}
+
+	/**
+	 * Return true if a generic type is a wildcard.
+	 */
+	public boolean isWildcard() {
+		return typeVariable != null && typeVariable.equals(WILDCARD);
+	}
+
+	/**
+	 * Return true if a generic type is a wildcard.
+	 */
+	public boolean isTypeVariable() {
+		return typeVariable != null && !isWildcard();
 	}
 
 	/**
@@ -217,13 +236,26 @@ public class GenericType {
 	 * Check if an instance can be assigned to another {@code GenericType} instance.
 	 */
 	public boolean canBeAssignedTo(GenericType targetType) {
-		// TODO: Checking real assignability including type parameters etc. is very involved
+		if (isTypeVariableOrWildcard(targetType)) {
+			return canBeAssignedToUpperBounds(targetType);
+		}
 		if (targetType.getRawType().isAssignableFrom(rawType)) {
-			return allTypeArgumentsCanBeAssigned(targetType.getTypeArguments(), this.getTypeArguments());
+			return allTypeArgumentsCanBeAssigned(this.getTypeArguments(), targetType.getTypeArguments());
 		}
 		if (boxedTypeMatches(targetType.rawType, this.rawType))
 			return true;
 		return boxedTypeMatches(this.rawType, targetType.rawType);
+	}
+
+	private boolean isTypeVariableOrWildcard(GenericType targetType) {
+		return targetType.isWildcard() || targetType.isTypeVariable();
+	}
+
+	private boolean canBeAssignedToUpperBounds(GenericType targetType) {
+		if (isTypeVariableOrWildcard(this)) {
+			return Arrays.stream(upperBounds).allMatch(upperBound -> upperBound.canBeAssignedToUpperBounds(targetType));
+		}
+		return Arrays.stream(targetType.upperBounds).allMatch(this::canBeAssignedTo);
 	}
 
 	private boolean allTypeArgumentsCanBeAssigned(
@@ -244,10 +276,6 @@ public class GenericType {
 				return false;
 		}
 		return true;
-	}
-
-	private boolean isRawType() {
-		return isOfType(Object.class) && !hasBounds();
 	}
 
 	/**
@@ -292,23 +320,10 @@ public class GenericType {
 	}
 
 	/**
-	 * Check if a given {@code providedClass} is compatible with this instance, i.e. if there raw types match
-	 * and all there type arguments can be assigned to each other.
+	 * Check if a given {@code providedClass} is assignable from this generic type.
 	 */
-	public boolean isCompatibleWith(Class<?> providedClass) {
-		if (isOfType(providedClass))
-			return true;
-		return boxedTypeMatches(providedClass, this.getRawType());
-	}
-
-	/**
-	 * Check if a given {@code providedType} is compatible with this instance, i.e. if there raw types match
-	 * and all there type arguments can be assigned to each other.
-	 */
-	public boolean isCompatibleWith(GenericType providedType) {
-		if (!this.isCompatibleWith(providedType.getRawType()))
-			return false;
-		return allTypeArgumentsAreCompatible(typeArguments, providedType.getTypeArguments());
+	public boolean isAssignableFrom(Class<?> providedClass) {
+		return GenericType.of(providedClass).canBeAssignedTo(this);
 	}
 
 	/**
@@ -319,23 +334,6 @@ public class GenericType {
 		if (componentType != null)
 			return Optional.of(GenericType.of(componentType));
 		return Optional.empty();
-	}
-
-	private boolean allTypeArgumentsAreCompatible(
-		List<GenericType> targetTypeArguments, List<GenericType> providedTypeArguments
-	) {
-		if (providedTypeArguments.size() == 0) {
-			return targetTypeArguments.stream().allMatch(GenericType::isRawType);
-		}
-		if (targetTypeArguments.size() != providedTypeArguments.size())
-			return false;
-		for (int i = 0; i < targetTypeArguments.size(); i++) {
-			GenericType targetTypeArgument = targetTypeArguments.get(i);
-			GenericType providedTypeArgument = providedTypeArguments.get(i);
-			if (!targetTypeArgument.isCompatibleWith(providedTypeArgument))
-				return false;
-		}
-		return true;
 	}
 
 	private boolean boxedTypeMatches(Class<?> providedType, Class<?> targetType) {
@@ -371,9 +369,10 @@ public class GenericType {
 		if (typeVariable != null) {
 			representation = typeVariable;
 			if (hasBounds()) {
-				String boundsRepresentation = Arrays.stream(bounds) //
-													.map(GenericType::toString) //
-													.collect(Collectors.joining(" & "));
+				String boundsRepresentation =
+					Arrays.stream(upperBounds) //
+						  .map(GenericType::toString) //
+						  .collect(Collectors.joining(" & "));
 				representation += String.format(" extends %s", boundsRepresentation);
 			}
 		}

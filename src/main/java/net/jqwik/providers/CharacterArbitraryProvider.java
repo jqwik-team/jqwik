@@ -10,7 +10,7 @@ import net.jqwik.api.providers.*;
 public class CharacterArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isCompatibleWith(Character.class);
+		return targetType.isAssignableFrom(Character.class);
 	}
 
 	@Override

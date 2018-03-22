@@ -53,7 +53,7 @@ class PropertyMethodArbitraryResolverTests {
 			return new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(GenericType targetType) {
-					return targetType.isCompatibleWith(targetClass);
+					return targetType.isAssignableFrom(targetClass);
 				}
 
 				@Override

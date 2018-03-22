@@ -120,7 +120,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		return creators.stream().findFirst();
 	}
 
-	private Predicate<Method> isCreatorForType(GenericType genericType) {
+	private Predicate<Method> isCreatorForType(GenericType targetType) {
 		return method -> {
 			if (!method.isAnnotationPresent(Provide.class)) {
 				return false;
@@ -132,7 +132,9 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 			if (!arbitraryReturnType.isGeneric()) {
 				return false;
 			}
-			return genericType.isCompatibleWith(arbitraryReturnType.getTypeArguments().get(0));
+			GenericType providedType = arbitraryReturnType.getTypeArguments().get(0);
+			return providedType.canBeAssignedTo(targetType);
+//			return genericType.isCompatibleWith(arbitraryReturnType.getTypeArguments().get(0));
 		};
 	}
 

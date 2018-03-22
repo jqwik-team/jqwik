@@ -179,7 +179,7 @@ class RegisteredArbitraryProvidersTests {
 			personProvider = new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(GenericType targetType) {
-					return targetType.isCompatibleWith(Person.class);
+					return targetType.isOfType(Person.class);
 				}
 
 				@Override

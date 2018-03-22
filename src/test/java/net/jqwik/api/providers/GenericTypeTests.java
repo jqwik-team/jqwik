@@ -117,21 +117,115 @@ class GenericTypeTests {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public List<?> listOfWildcard() { return null; }
+
+				@SuppressWarnings("WeakerAccess")
+				public List<? extends Arbitrary> listOfBoundWildcard() { return null; }
 			}
 
-			Type type = LocalClass.class.getMethod("listOfWildcard").getAnnotatedReturnType().getType();
-			GenericType listOfWildcard = GenericType.forType(type);
+			Type wildcardType = LocalClass.class.getMethod("listOfWildcard").getAnnotatedReturnType().getType();
+			GenericType listOfWildcard = GenericType.forType(wildcardType);
+
+			Type boundWildcardType = LocalClass.class.getMethod("listOfBoundWildcard").getAnnotatedReturnType().getType();
+			GenericType listOfBoundWildcard = GenericType.forType(boundWildcardType);
+
 			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
 			GenericType rawList = GenericType.of(List.class);
 
+			assertThat(listOfBoundWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
+			assertThat(listOfWildcard.canBeAssignedTo(listOfBoundWildcard)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
-
-			// This fails because wildcard types are not recognized as such:
 			assertThat(listOfString.canBeAssignedTo(listOfWildcard)).isTrue();
-
+			assertThat(listOfString.canBeAssignedTo(listOfBoundWildcard)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(listOfString)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(rawList)).isTrue();
 			assertThat(rawList.canBeAssignedTo(listOfWildcard)).isTrue();
+		}
+
+		@Example
+		void boundWildcardTypes() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public List<? extends String> listOfWildcardString() { return null; }
+
+				@SuppressWarnings("WeakerAccess")
+				public List<? extends Serializable> listOfWildcardSerializable() { return null; }
+			}
+
+			Type wildcardStringType = LocalClass.class.getMethod("listOfWildcardString").getAnnotatedReturnType().getType();
+			GenericType listOfWildcardString = GenericType.forType(wildcardStringType);
+
+			Type wildcardSerializableType = LocalClass.class.getMethod("listOfWildcardSerializable").getAnnotatedReturnType().getType();
+			GenericType listOfWildcardSerializable = GenericType.forType(wildcardSerializableType);
+
+			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
+			GenericType listOfArbitrary = GenericType.of(List.class, GenericType.of(Arbitrary.class));
+
+			assertThat(listOfWildcardString.canBeAssignedTo(listOfWildcardString)).isTrue();
+
+			assertThat(listOfString.canBeAssignedTo(listOfWildcardString)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(listOfWildcardSerializable)).isTrue();
+			assertThat(listOfArbitrary.canBeAssignedTo(listOfWildcardString)).isFalse();
+
+			assertThat(listOfWildcardString.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfWildcardSerializable.canBeAssignedTo(listOfString)).isFalse();
+		}
+
+		@Example
+		void boundTypeVariables() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <T extends String> List<T> listOfVariableString() { return null; }
+
+				@SuppressWarnings("WeakerAccess")
+				public <T extends Serializable & CharSequence> List<T> listOfVariableSerializable() { return null; }
+			}
+
+			Type variableStringType = LocalClass.class.getMethod("listOfVariableString").getAnnotatedReturnType().getType();
+			GenericType listOfVariableString = GenericType.forType(variableStringType);
+
+			Type variableSerializableType = LocalClass.class.getMethod("listOfVariableSerializable").getAnnotatedReturnType().getType();
+			GenericType listOfVariableSerializable = GenericType.forType(variableSerializableType);
+
+			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
+			GenericType listOfArbitrary = GenericType.of(List.class, GenericType.of(Arbitrary.class));
+
+			assertThat(listOfVariableString.canBeAssignedTo(listOfVariableString)).isTrue();
+
+			assertThat(listOfString.canBeAssignedTo(listOfVariableString)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(listOfVariableSerializable)).isTrue();
+			assertThat(listOfArbitrary.canBeAssignedTo(listOfVariableString)).isFalse();
+
+			assertThat(listOfVariableString.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfVariableSerializable.canBeAssignedTo(listOfString)).isFalse();
+		}
+
+		@Example
+		void parameterizedTypesWithTypeVariable() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <T> List<T> listOfTypeVariable() { return null; }
+
+				@SuppressWarnings("WeakerAccess")
+				public <T extends Arbitrary> List<T> listOfBoundTypeVariable() { return null; }
+			}
+
+			Type variableType = LocalClass.class.getMethod("listOfTypeVariable").getAnnotatedReturnType().getType();
+			GenericType listOfVariable = GenericType.forType(variableType);
+
+			Type boundVariableType = LocalClass.class.getMethod("listOfBoundTypeVariable").getAnnotatedReturnType().getType();
+			GenericType listOfBoundVariable = GenericType.forType(boundVariableType);
+
+			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
+			GenericType rawList = GenericType.of(List.class);
+
+			assertThat(listOfBoundVariable.canBeAssignedTo(listOfVariable)).isTrue();
+			assertThat(listOfVariable.canBeAssignedTo(listOfBoundVariable)).isFalse();
+			assertThat(listOfVariable.canBeAssignedTo(listOfVariable)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(listOfVariable)).isTrue();
+			assertThat(listOfString.canBeAssignedTo(listOfBoundVariable)).isFalse();
+			assertThat(listOfVariable.canBeAssignedTo(listOfString)).isFalse();
+			assertThat(listOfVariable.canBeAssignedTo(rawList)).isTrue();
+			assertThat(rawList.canBeAssignedTo(listOfVariable)).isTrue();
 		}
 
 
@@ -192,62 +286,6 @@ class GenericTypeTests {
 			assertThat(stringType.getAnnotations().get(1)).isInstanceOf(CharRange.class);
 		}
 
-	}
-
-	@Group
-	class Compatibility {
-
-		@Example
-		void primitiveTypes() {
-			assertThat(of(int.class).isCompatibleWith(Integer.class)).isTrue();
-			assertThat(of(int.class).isCompatibleWith(int.class)).isTrue();
-			assertThat(of(Integer.class).isCompatibleWith(Integer.class)).isTrue();
-
-			assertThat(of(Integer.class).isCompatibleWith(int.class)).isFalse();
-			assertThat(of(int.class).isCompatibleWith(float.class)).isFalse();
-		}
-
-		@Example
-		void rawTypes() {
-			assertThat(of(Object.class).isCompatibleWith(Object.class)).isTrue();
-			assertThat(of(Object.class).isCompatibleWith(String.class)).isFalse();
-		}
-
-		@Example
-		void genericTypesToRawTypes() {
-			GenericType target = of(List.class, of(String.class));
-
-			assertThat(target.isCompatibleWith(List.class)).isTrue();
-			assertThat(target.isCompatibleWith(Collection.class)).isFalse();
-			assertThat(target.isCompatibleWith(Set.class)).isFalse();
-		}
-
-		@Example
-		void plainTypeToWildcardType() throws NoSuchMethodException {
-			class LocalClass {
-				@SuppressWarnings("WeakerAccess")
-				public void withParameter(List<?> list) {}
-			}
-
-			Method method = LocalClass.class.getMethod("withParameter", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
-
-			GenericType target = forParameter(parameter);
-			GenericType provided = of(List.class);
-
-			assertThat(target.isCompatibleWith(provided)).isTrue();
-		}
-
-		@Example
-		void genericTypesAmongEachOther() {
-			GenericType target = of(List.class, of(String.class));
-			GenericType provided = of(List.class, of(String.class));
-
-			assertThat(target.isCompatibleWith(provided)).isTrue();
-
-			assertThat(target.isCompatibleWith(of(List.class, of(Object.class)))).isFalse();
-			assertThat(of(List.class, of(Object.class)).isCompatibleWith(provided)).isFalse();
-		}
 	}
 
 }

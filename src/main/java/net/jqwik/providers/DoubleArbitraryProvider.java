@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 public class DoubleArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isCompatibleWith(Double.class);
+		return targetType.isAssignableFrom(Double.class);
 	}
 
 	@Override

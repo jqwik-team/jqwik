@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 public class LongArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isCompatibleWith(Long.class);
+		return targetType.isAssignableFrom(Long.class);
 	}
 
 	@Override

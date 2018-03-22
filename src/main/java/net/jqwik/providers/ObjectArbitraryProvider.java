@@ -10,7 +10,7 @@ import net.jqwik.properties.arbitraries.*;
 public class ObjectArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
-		return targetType.isOfType(Object.class) && !targetType.hasBounds();
+		return GenericType.of(Object.class).canBeAssignedTo(targetType);
 	}
 
 	@Override
