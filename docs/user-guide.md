@@ -78,6 +78,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
+  - [0.8.9-SNAPSHOT](#089-snapshot)
   - [0.8.8](#088)
   - [0.8.7](#087)
   - [0.8.6](#086)
@@ -1880,6 +1881,10 @@ Since the topic is rather complicated, a detailed example will one day be publis
 in a separate article...
 
 ## Release Notes
+
+### 0.8.9-SNAPSHOT
+
+- Some minor but potentially incompatible API changes in `GenericType`.
 
 ### 0.8.8
 
