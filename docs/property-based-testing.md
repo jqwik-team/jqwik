@@ -31,5 +31,7 @@ There are a few alternatives to _jqwik_ if you want to do PBT on the JVM:
   iff you prefer Scala over Java.
 - [test.check for Clojure](https://github.com/clojure/test.check): Inspired by QuickCheck. Since Clojure
   does not have static types generators must always be declared explicitly.
+- [KotlinTest](https://github.com/kotlintest/kotlintest): Has some basic support for PBT. 
+  Currently no shrinking yet.
   
 Please let me know if you learn about any other _maintained_ library or tool.
