@@ -52,6 +52,11 @@
 
 ### Properties
 
+- Create different types for wildcards and type variables
+  e.g. Choose between a given set of types
+  
+- Allow generation for wildcards and type variables with bounds
+
 - Optionally report for each property which arbitraries are used.
 
 - @ForAll 
