@@ -1,5 +1,3 @@
-- Bug: Tags at class level are not present in methods
-
 - Bug: Catch wildcard with lower bound
   jqwik should not generate objects for that.
 

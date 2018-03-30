@@ -41,7 +41,9 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 
 	@Override
 	public Set<TestTag> getTags() {
-		return tags;
+		Set<TestTag> allTags = new LinkedHashSet<>(tags);
+		getParent().ifPresent(parentDescriptor -> allTags.addAll(parentDescriptor.getTags()));
+		return allTags;
 	}
 
 	@Override

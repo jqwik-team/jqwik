@@ -1885,6 +1885,7 @@ in a separate article...
 ### 0.8.9-SNAPSHOT
 
 - Some minor but potentially incompatible API changes in `GenericType`.
+- Tags from parent (e.g. container class) are now also present in children (methods) 
 
 ### 0.8.8
 
