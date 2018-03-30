@@ -36,5 +36,10 @@ There are a few alternatives to _jqwik_ if you want to do PBT on the JVM:
   does not have static types generators must always be declared explicitly.
 - [KotlinTest](https://github.com/kotlintest/kotlintest): Has some basic support for PBT. 
   Currently no shrinking yet.
+- [Frege, a Haskell for the JVM,](https://github.com/Frege/frege)
+  comes with a classical QuickCheck implementation.
+  [This section](https://dierk.gitbooks.io/fregegoodness/content/src/docs/asciidoc/qc_property.html)
+  from Dierk König's Frege book provides a short introduction.
+
   
 Please let me know if you learn about any other _maintained_ library or tool.
