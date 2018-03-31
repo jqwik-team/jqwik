@@ -52,6 +52,9 @@
 
 ### Properties
 
+- Check arbitrary providers for numbers that @Range annotations fit, e.g.
+  `@IntRange @ForAll long aNumber` should result in a warning
+
 - Create different types for wildcards and type variables
   e.g. Choose between a given set of types
   
