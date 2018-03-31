@@ -31,14 +31,14 @@ public class BigIntegerShrinkCandidates implements ShrinkCandidates<BigInteger> 
 	}
 
 	private BigInteger nextShrinkValue(BigInteger value) {
-		return value.subtract(calculateDelta(determineTarget(value), value));
+		return value.subtract(calculateDeltaHalf(determineTarget(value), value));
 	}
 
 	private BigInteger nextShrinkOne(BigInteger value) {
 		return value.subtract(calculateDeltaOne(determineTarget(value), value));
 	}
 
-	private static BigInteger calculateDelta(BigInteger current, BigInteger target) {
+	private static BigInteger calculateDeltaHalf(BigInteger current, BigInteger target) {
 		if (target.compareTo(current) > 0)
 			return target.subtract(current).divide(BigInteger.valueOf(2)).max(BigInteger.ONE);
 		if (target.compareTo(current) < 0)

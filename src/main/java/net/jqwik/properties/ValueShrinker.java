@@ -28,16 +28,21 @@ public class ValueShrinker<T> {
 	private Set<ShrinkResult<Shrinkable<T>>> collectAllFalsified(
 		Set<ShrinkResult<Shrinkable<T>>> toTry, Set<ShrinkResult<Shrinkable<T>>> allFalsified, Predicate<T> falsifier
 	) {
-		if (toTry.isEmpty()) return allFalsified;
-		toTry.removeAll(allFalsified);
-		Set<ShrinkResult<Shrinkable<T>>> toTryNext = new HashSet<>();
-		ShrinkingHelper.minDistanceStream(toTry) //
-			.limit(10) // This is a more or less random value to constrain the number of options considered
-			.forEach(shrinkResult -> {
-				allFalsified.add(shrinkResult);
-				toTryNext.addAll(shrinkResult.shrunkValue().shrinkNext(falsifier));
-			});
-		return collectAllFalsified(toTryNext, allFalsified, falsifier);
+		// This was originally a (tail) recursive call.
+		// Converted to to iteration in order to prevent stack overflow
+		while (!toTry.isEmpty()) {
+			toTry.removeAll(allFalsified);
+			Set<ShrinkResult<Shrinkable<T>>> toTryNext = new HashSet<>();
+			ShrinkingHelper
+				.minDistanceStream(toTry) //
+				.limit(10) // This is a more or less random value to constrain the number of options considered
+				.forEach(shrinkResult -> {
+					allFalsified.add(shrinkResult);
+					toTryNext.addAll(shrinkResult.shrunkValue().shrinkNext(falsifier));
+				});
+			toTry = toTryNext;
+		}
+		return allFalsified;
 	}
 
 }
