@@ -1,4 +1,10 @@
 - Bug:
+  ```
+  @IntRange(min = 1, max = Integer.MAX_VALUE - 10) @ForAll int anInt
+  ```
+  will generate Integer.MAX_VALUE although it should not
+
+- Bug:
   ```java
     @Property
     boolean rootOfSquareShouldBeOriginalValue(@Positive @ForAll int anInt) {
