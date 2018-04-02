@@ -330,7 +330,7 @@ annotation has a few optional values:
 
 - `ShrinkingMode shrinking`: You can switch off parameter shrinking by using `ShrinkingMode.OFF`.
   
-  The default is `ShrinkingMode.ON`
+  The default is `ShrinkingMode.FULL`
 
 - `Reporting[] reporting`: You can switch on additional reporting aspects. 
   by specifying one or more of the following `Reporting` values:
@@ -1886,6 +1886,8 @@ in a separate article...
 
 - Some minor but potentially incompatible API changes in `GenericType`.
 - Tags from parent (e.g. container class) are now also present in children (methods) 
+- Renamed `ShrinkingMode.ON` to `ShrinkingMode.FULL`
+  <p/>_This is an incompatible API change!_
 
 ### 0.8.8
 

@@ -33,7 +33,7 @@ public @interface Property {
 
 	String seed() default SEED_NOT_SET;
 
-	ShrinkingMode shrinking() default ShrinkingMode.ON;
+	ShrinkingMode shrinking() default ShrinkingMode.FULL;
 
 	Reporting[] reporting() default {};
 
