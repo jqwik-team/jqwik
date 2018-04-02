@@ -26,7 +26,7 @@ class TestEngineIntegrationTests {
 	private EngineExecutionListener eventRecorder;
 	private UniqueId engineId;
 
-	private TestEngineIntegrationTests() throws IOException {
+	private TestEngineIntegrationTests() {
 		testEngine = new JqwikTestEngine(configuration());
 		eventRecorder = Mockito.mock(EngineExecutionListener.class);
 		engineId = UniqueId.forEngine(testEngine.getId());
@@ -36,7 +36,7 @@ class TestEngineIntegrationTests {
 		return new JqwikConfiguration() {
 			@Override
 			public PropertyDefaultValues propertyDefaultValues() {
-				return PropertyDefaultValues.with(1000, 5);
+				return PropertyDefaultValues.with(1000, 5, 1000);
 			}
 
 			@Override

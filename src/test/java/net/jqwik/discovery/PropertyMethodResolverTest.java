@@ -16,15 +16,16 @@ class PropertyMethodResolverTest {
 
 	private final int DEFAULT_TRIES = 999;
 	private final int DEFAULT_MAX_DISCARD_RATIO = 4;
+	private final int DEFAULT_MAX_SHRINKING_RATE = 99;
 
 	private TestRunData testRunData = new TestRunData();
-	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO);
+	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO, DEFAULT_MAX_SHRINKING_RATE);
 	private PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
 
 	@Group
 	class ResolveElement {
 		@Example
-		void plainProperty() throws NoSuchMethodException {
+		void plainProperty() {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "plainProperty");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
@@ -41,7 +42,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void propertyWithLabel() throws NoSuchMethodException {
+		void propertyWithLabel() {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithLabel");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
@@ -56,14 +57,14 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void propertyWithTag() throws NoSuchMethodException {
+		void propertyWithTag() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithOneTag", TestContainer.class);
 
 			Assertions.assertThat(propertyMethodDescriptor.getTags()).containsExactly(TestTag.create("tag1"));
 		}
 
 		@Example
-		void propertyWithSeveralTags() throws NoSuchMethodException {
+		void propertyWithSeveralTags() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithTwoTags", TestContainer.class);
 
 			Assertions.assertThat(propertyMethodDescriptor.getTags())
@@ -71,7 +72,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void propertyWithTaggedContainer() throws NoSuchMethodException {
+		void propertyWithTaggedContainer() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithTag", TaggedTestContainer.class);
 
 			Assertions.assertThat(propertyMethodDescriptor.getTags())
@@ -79,7 +80,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void propertyWithParams() throws NoSuchMethodException {
+		void propertyWithParams() {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithParams");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
@@ -92,7 +93,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void propertyWithAnnotationParams() throws NoSuchMethodException {
+		void propertyWithAnnotationParams() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withPropertyParams", TestContainer.class);
 
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("42");
@@ -103,7 +104,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void propertyThatPreviouslyFailed() throws NoSuchMethodException {
+		void propertyThatPreviouslyFailed() {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
@@ -115,7 +116,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void explicitSeedOverwritesSeedFromPreviouslyFailedTestRun() throws NoSuchMethodException {
+		void explicitSeedOverwritesSeedFromPreviouslyFailedTestRun() {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "withSeed41");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
@@ -126,8 +127,7 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("41");
 		}
 
-		private PropertyMethodDescriptor resolveMethodInClass(String methodName, Class<?> containerClass)
-			throws NoSuchMethodException {
+		private PropertyMethodDescriptor resolveMethodInClass(String methodName, Class<?> containerClass) {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(containerClass);
 			Method method = TestHelper.getMethod(containerClass, methodName);
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
@@ -145,7 +145,7 @@ class PropertyMethodResolverTest {
 	@Group
 	class ResolveUniqueId {
 		@Example
-		void plainProperty() throws NoSuchMethodException {
+		void plainProperty() {
 			Method method = TestHelper.getMethod(TestContainer.class, "plainProperty");
 			UniqueId uniqueId = JqwikUniqueIDs.appendProperty(UniqueId.forEngine(JqwikTestEngine.ENGINE_ID), method);
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
@@ -158,7 +158,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Example
-		void propertyWithParams() throws NoSuchMethodException {
+		void propertyWithParams() {
 			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithParams");
 			UniqueId uniqueId = JqwikUniqueIDs.appendProperty(UniqueId.forEngine(JqwikTestEngine.ENGINE_ID), method);
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
@@ -172,7 +172,7 @@ class PropertyMethodResolverTest {
 
 	}
 
-	private ContainerClassDescriptor buildContainerDescriptor(Class<?> containerClass) throws NoSuchMethodException {
+	private ContainerClassDescriptor buildContainerDescriptor(Class<?> containerClass) {
 		return (ContainerClassDescriptor) TestDescriptorBuilder.forClass(containerClass).build();
 	}
 
@@ -182,6 +182,7 @@ class PropertyMethodResolverTest {
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.FULL);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReporting()).isEmpty();
+		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxShrinkingDepth()).isEqualTo(DEFAULT_MAX_SHRINKING_RATE);
 	}
 
 	private static class TestContainer {

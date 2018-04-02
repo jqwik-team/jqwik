@@ -33,6 +33,11 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			public int maxDiscardRatio() {
 				return properties.defaultMaxDiscardRatio();
 			}
+
+			@Override
+			public int maxShrinkingDepth() {
+				return properties.maxShrinkingDepth();
+			}
 		};
 	}
 

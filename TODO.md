@@ -1,5 +1,5 @@
 - Add Shrinking.BOUNDED
-  - Configuration.MAX_SHRINKING_DEPTH
+  - Use maxShrinkingDepth in ValueShrinker
   - Make BOUNDED the default
   - Make configurable in jqwik.properties
   - Document in User Guide

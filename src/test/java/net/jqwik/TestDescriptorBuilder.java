@@ -21,6 +21,7 @@ public class TestDescriptorBuilder {
 
 	public static final int TRIES = 1000;
 	public static final int MAX_DISCARD_RATIO = 5;
+	public static final int MAX_SHRINKING_DEPTH = 1000;
 
 	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes) {
 		Optional<Method> optionalMethod = ReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
@@ -34,7 +35,7 @@ public class TestDescriptorBuilder {
 		return new TestDescriptorBuilder(engine);
 	}
 
-	public static TestDescriptorBuilder forClass(Class<?> clazz, String... methodNames) throws NoSuchMethodException {
+	public static TestDescriptorBuilder forClass(Class<?> clazz, String... methodNames) {
 		TestDescriptorBuilder testDescriptorBuilder = new TestDescriptorBuilder(clazz);
 		for (String methodName : methodNames) {
 			testDescriptorBuilder.with(forMethod(clazz, methodName));
@@ -92,7 +93,7 @@ public class TestDescriptorBuilder {
 			if (optionalProperty.isPresent()) {
 				Property property = optionalProperty.get();
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
-				PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO));
+				PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, MAX_SHRINKING_DEPTH));
 
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), propertyConfig);
 			}
