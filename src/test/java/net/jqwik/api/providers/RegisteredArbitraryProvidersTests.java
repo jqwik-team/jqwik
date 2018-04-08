@@ -170,6 +170,12 @@ class RegisteredArbitraryProvidersTests {
 		return aValue != null;
 	}
 
+	@Property
+	//TODO: Cannot be called as single tests from IntelliJ (probably a bug in IntelliJ 2018.1)
+	boolean byteArray(@ForAll byte[] aValue) {
+		return aValue != null;
+	}
+
 	@Group
 	class Registration implements AutoCloseable {
 
