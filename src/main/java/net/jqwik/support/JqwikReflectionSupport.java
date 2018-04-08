@@ -2,7 +2,6 @@ package net.jqwik.support;
 
 import net.jqwik.discovery.predicates.*;
 import org.junit.platform.commons.support.*;
-import org.junit.platform.commons.util.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -16,15 +15,6 @@ import static java.util.stream.Collectors.*;
 public class JqwikReflectionSupport {
 
 	private final static IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
-
-	// TODO: Remove as soon as there is a supported ModuleSupport class in JUnit 5
-	// see https://github.com/junit-team/junit5/issues/1300
-	public static List<Class<?>> findAllClassesInModule(
-		String basePackageName, Predicate<Class<?>> classFilter,
-		Predicate<String> classNameFilter
-	) {
-		return ModuleUtils.findAllClassesInModule(basePackageName, ClassFilter.of(classNameFilter, classFilter));
-	}
 
 	public static Stream<Object> streamInnerInstances(Object inner) {
 		return addInstances(inner, new ArrayList<>()).stream();

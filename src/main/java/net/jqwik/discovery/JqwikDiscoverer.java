@@ -9,7 +9,6 @@ import org.junit.platform.engine.discovery.*;
 import java.util.*;
 import java.util.function.*;
 
-import static net.jqwik.support.JqwikReflectionSupport.*;
 import static org.junit.platform.commons.support.ReflectionSupport.*;
 import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
 
