@@ -654,7 +654,7 @@ The following example provides an annotation to constrain String or Character ge
 @StringLength(min = 10, max = 100)
 public @interface GermanText { }
 
-@Property(tries = 10, reporting = ReportingMode.GENERATED)
+@Property(tries = 10, reporting = Reporting.GENERATED)
 void aGermanText(@ForAll @GermanText String aText) {}
 ```
 
@@ -990,7 +990,7 @@ combined with a tuple type
 
 
 ```java
-@Property(reporting = ReportingMode.GENERATED)
+@Property(reporting = Reporting.GENERATED)
 void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringBeginEnd) {
     String aString = stringBeginEnd.get1();
     int begin = stringBeginEnd.get2();
