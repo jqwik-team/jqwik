@@ -1,3 +1,17 @@
 language: java
 
-install: true
+before_install:
+  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+
+matrix:
+  include:
+    - jdk: oraclejdk8
+      install: true
+    - jdk: oraclejdk9
+      install: true
+    - env: JDK='10'
+      install: . ./install-jdk.sh --feature 10
+    - env: JDK='11'
+      install: . ./install-jdk.sh --feature 11
+  allow_failures:
+    - env: JDK='11'
