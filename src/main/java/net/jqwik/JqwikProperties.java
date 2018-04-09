@@ -7,8 +7,13 @@ import java.util.logging.*;
 public class JqwikProperties {
 
 	private static final String DEFAULT_PROPERTIES_FILE = "jqwik.properties";
-	private static final String JQWIK_DEFAULT_DATABASE = ".jqwik-database";
 	private static final Logger LOG = Logger.getLogger(JqwikProperties.class.getName());
+
+	private static final String DEFAULT_DATABASE_PATH = ".jqwik-database";
+	private static final String DEFAULT_RERUN_FAILURES_WITH_SAME_SEED = "true";
+	private static final String DEFAULT_RERUN_FAILURES_FIRST = "false";
+	private static final String DEFAULT_TRIES = "1000";
+	private static final String DEFAULT_MAX_DISCARD_RATIO = "5";
 
 	private String databasePath;
 	private boolean rerunFailuresWithSameSeed;
@@ -54,11 +59,11 @@ public class JqwikProperties {
 		Properties properties = new Properties();
 		try {
 			properties.load(inputStream);
-			databasePath = properties.getProperty("database", JQWIK_DEFAULT_DATABASE);
-			rerunFailuresWithSameSeed = Boolean.parseBoolean(properties.getProperty("rerunFailuresWithSameSeed"));
-			runFailuresFirst = Boolean.parseBoolean(properties.getProperty("runFailuresFirst"));
-			defaultTries = Integer.parseInt(properties.getProperty("defaultTries"));
-			defaultMaxDiscardRatio = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio"));
+			databasePath = properties.getProperty("database", DEFAULT_DATABASE_PATH);
+			rerunFailuresWithSameSeed = Boolean.parseBoolean(properties.getProperty("rerunFailuresWithSameSeed", DEFAULT_RERUN_FAILURES_WITH_SAME_SEED));
+			runFailuresFirst = Boolean.parseBoolean(properties.getProperty("runFailuresFirst", DEFAULT_RERUN_FAILURES_FIRST));
+			defaultTries = Integer.parseInt(properties.getProperty("defaultTries", DEFAULT_TRIES));
+			defaultMaxDiscardRatio = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio", DEFAULT_MAX_DISCARD_RATIO));
 		} catch (IOException ioe) {
 			LOG.log(Level.WARNING, String.format("Error while reading properties file [%s] found.", propertiesFileName), ioe);
 		}
