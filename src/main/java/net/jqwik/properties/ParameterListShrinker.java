@@ -14,11 +14,16 @@ public class ParameterListShrinker<T> {
 	private final List<Shrinkable<T>> parametersToShrink;
 	private final Consumer<ReportEntry> reporter;
 	private final Reporting[] reporting;
+	private final ShrinkingMode shrinkingMode;
 
-	public ParameterListShrinker(List<Shrinkable<T>> parametersToShrink, Consumer<ReportEntry> reporter, Reporting[] reporting) {
+	public ParameterListShrinker(
+		List<Shrinkable<T>> parametersToShrink, Consumer<ReportEntry> reporter, Reporting[] reporting,
+		ShrinkingMode shrinkingMode
+	) {
 		this.parametersToShrink = parametersToShrink;
 		this.reporter = reporter;
 		this.reporting = reporting;
+		this.shrinkingMode = shrinkingMode;
 	}
 
 	public ShrinkResult<List<Shrinkable<T>>> shrink(Predicate<List<T>> forAllFalsifier, Throwable originalError) {
@@ -36,7 +41,7 @@ public class ParameterListShrinker<T> {
 	private ShrinkResult<Shrinkable<T>> shrinkPosition(int position, ArrayList<Shrinkable<T>> shrinkables, Predicate<List<T>> forAllFalsifier) {
 		Shrinkable<T> currentShrinkable = shrinkables.get(position);
 		Predicate<T> elementFalsifier = createFalsifierForPosition(position, shrinkables, forAllFalsifier);
-		ValueShrinker<T> shrinker = new ValueShrinker<>(currentShrinkable);
+		ValueShrinker<T> shrinker = new ValueShrinker<>(currentShrinkable, reporter, shrinkingMode);
 		return shrinker.shrink(elementFalsifier, null);
 	}
 

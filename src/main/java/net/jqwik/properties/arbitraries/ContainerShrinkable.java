@@ -51,7 +51,7 @@ public class ContainerShrinkable<T, E> implements Shrinkable<T> {
 			T container = containerCreator.apply(list);
 			return falsifier.test(container);
 		};
-		ParameterListShrinker<E> listElementShrinker = new ParameterListShrinker<>(elements, e -> {}, new Reporting[0]);
+		ParameterListShrinker<E> listElementShrinker = new ParameterListShrinker<>(elements, e -> {}, new Reporting[0], ShrinkingMode.FULL);
 		Set<ShrinkResult<List<Shrinkable<E>>>> shrunkElements = listElementShrinker.shrinkNext(valuesFalsifier);
 		return shrunkElements.stream();
 	}

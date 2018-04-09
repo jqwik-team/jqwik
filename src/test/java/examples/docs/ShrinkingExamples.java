@@ -35,4 +35,12 @@ class ShrinkingExamples {
 	@Property(shrinking = ShrinkingMode.OFF)
 	void aPropertyWithLongShrinkingTimes(@ForAll List<Set<String>> list1, @ForAll List<Set<String>> list2) {
 	}
+
+	@Property(shrinking = ShrinkingMode.BOUNDED)
+	boolean rootOfSquareShouldBeOriginalValue(@Positive @ForAll int anInt) {
+		Assume.that(anInt != Integer.MAX_VALUE);
+		int square = anInt * anInt;
+		return Math.sqrt(square) == anInt;
+	}
+
 }

@@ -96,7 +96,7 @@ public class GenericProperty {
 		if (configuration.getShrinkingMode() == ShrinkingMode.OFF) {
 			return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), originalParams, originalParams, error);
 		}
-		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables, reporter, configuration.getReporting());
+		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables, reporter, configuration.getReporting(), configuration.getShrinkingMode());
 		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
 		List<Object> shrunkParams = extractParams(shrinkResult.shrunkValue());
 		Throwable throwable = shrinkResult.throwable().orElse(null);

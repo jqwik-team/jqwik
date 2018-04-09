@@ -139,7 +139,7 @@ public class ArbitraryTestHelper {
 
 	public static <T> T shrinkToEnd(Arbitrary<T> arbitrary, Random random) {
 		Shrinkable<T> shrinkable = arbitrary.generator(10).next(random);
-		ShrinkResult<Shrinkable<T>> shrunk = new ValueShrinker<>(shrinkable).shrink(value -> false, null);
+		ShrinkResult<Shrinkable<T>> shrunk = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL).shrink(value -> false, null);
 		return shrunk.shrunkValue().value();
 	}
 

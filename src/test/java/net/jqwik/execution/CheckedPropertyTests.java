@@ -33,7 +33,7 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(Property.DEFAULT_STEREOTYPE);
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
-			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.FULL);
+			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
 			assertThat(checkedProperty.configuration.getReporting()).isEqualTo(new Reporting[0]);
 		}
 
