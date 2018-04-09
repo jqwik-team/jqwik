@@ -93,7 +93,7 @@ public class TestDescriptorBuilder {
 			if (optionalProperty.isPresent()) {
 				Property property = optionalProperty.get();
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
-				PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, MAX_SHRINKING_DEPTH));
+				PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO));
 
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), propertyConfig);
 			}

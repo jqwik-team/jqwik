@@ -12,7 +12,7 @@ public class PropertyConfiguration {
 		int maxDiscardRatio = property.maxDiscardRatio() == Property.MAX_DISCARD_RATIO_NOT_SET //
 				? propertyDefaultValues.maxDiscardRatio()
 				: property.maxDiscardRatio();
-		return new PropertyConfiguration(property.stereotype(), property.seed(), tries, maxDiscardRatio, property.shrinking(), property.reporting(), propertyDefaultValues.maxShrinkingDepth());
+		return new PropertyConfiguration(property.stereotype(), property.seed(), tries, maxDiscardRatio, property.shrinking(), property.reporting());
 	}
 
 	private final String stereotype;
@@ -21,7 +21,6 @@ public class PropertyConfiguration {
 	private final int maxDiscardRatio;
 	private final ShrinkingMode shrinkingMode;
 	private final Reporting[] reporting;
-	private final int maxShrinkingDepth;
 
 	public PropertyConfiguration( //
 								  String stereotype, //
@@ -29,8 +28,7 @@ public class PropertyConfiguration {
 								  int tries, //
 								  int maxDiscardRatio, //
 								  ShrinkingMode shrinkingMode, //
-								  Reporting[] reporting, //
-								  int maxShrinkingDepth //
+								  Reporting[] reporting //
 	) {
 		this.stereotype = stereotype;
 		this.seed = seed;
@@ -38,7 +36,6 @@ public class PropertyConfiguration {
 		this.maxDiscardRatio = maxDiscardRatio;
 		this.shrinkingMode = shrinkingMode;
 		this.reporting = reporting;
-		this.maxShrinkingDepth = maxShrinkingDepth;
 	}
 
 	public String getSeed() {
@@ -46,7 +43,7 @@ public class PropertyConfiguration {
 	}
 
 	public PropertyConfiguration withSeed(String changedSeed) {
-		return new PropertyConfiguration(this.stereotype, changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.reporting, this.maxShrinkingDepth);
+		return new PropertyConfiguration(this.stereotype, changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.reporting);
 	}
 
 	public String getStereotype() {
@@ -69,7 +66,4 @@ public class PropertyConfiguration {
 		return reporting;
 	}
 
-	public int getMaxShrinkingDepth() {
-		return maxShrinkingDepth;
-	}
 }

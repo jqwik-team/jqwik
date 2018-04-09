@@ -5,9 +5,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
 import static org.mockito.Mockito.*;
 
-import java.io.*;
 import java.util.*;
-import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
@@ -36,7 +34,7 @@ class TestEngineIntegrationTests {
 		return new JqwikConfiguration() {
 			@Override
 			public PropertyDefaultValues propertyDefaultValues() {
-				return PropertyDefaultValues.with(1000, 5, 1000);
+				return PropertyDefaultValues.with(1000, 5);
 			}
 
 			@Override

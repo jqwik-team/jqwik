@@ -108,7 +108,7 @@ class CheckedPropertyTests {
 			List<MethodParameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
 					p -> Optional.empty(), //
-					new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0], 1000));
+					new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -123,7 +123,7 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = new CheckedProperty("prop1", addIntToList, getParametersForMethod("prop1"),
 																  p -> Optional.of(new GenericArbitrary(Arbitraries.integers()
 																												   .between(-100, 100))),
-																  new PropertyConfiguration("Property", "42", 12, 5, ShrinkingMode.FULL, new Reporting[0], 1000));
+																  new PropertyConfiguration("Property", "42", 12, 5, ShrinkingMode.FULL, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.randomSeed()).isEqualTo("42");
@@ -138,7 +138,7 @@ class CheckedPropertyTests {
 		CheckedProperty checkedProperty = new CheckedProperty(methodName, forAllFunction, getParametersForMethod(methodName),
 															  p -> Optional.of(new GenericArbitrary(Arbitraries.integers()
 																											   .between(-50, 50))), //
-															  new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0], 1000));
+															  new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0]));
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}

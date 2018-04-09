@@ -63,7 +63,7 @@ public class CheckedPropertyFactoryTests {
 			ShrinkingMode shrinking) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, new Reporting[0], 100);
+		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, new Reporting[0]);
 		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, propertyConfig);
 	}
 

@@ -19,7 +19,7 @@ class PropertyMethodResolverTest {
 	private final int DEFAULT_MAX_SHRINKING_RATE = 99;
 
 	private TestRunData testRunData = new TestRunData();
-	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO, DEFAULT_MAX_SHRINKING_RATE);
+	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO);
 	private PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
 
 	@Group
@@ -182,7 +182,6 @@ class PropertyMethodResolverTest {
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.FULL);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getReporting()).isEmpty();
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxShrinkingDepth()).isEqualTo(DEFAULT_MAX_SHRINKING_RATE);
 	}
 
 	private static class TestContainer {

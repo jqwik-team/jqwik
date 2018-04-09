@@ -3,9 +3,8 @@ package net.jqwik;
 public interface PropertyDefaultValues {
 	int tries();
 	int maxDiscardRatio();
-	int maxShrinkingDepth();
 
-	static PropertyDefaultValues with(int tries, int maxDiscardRatio, int maxShrinkingDepth) {
+	static PropertyDefaultValues with(int tries, int maxDiscardRatio) {
 		return new PropertyDefaultValues() {
 			@Override
 			public int tries() {
@@ -15,11 +14,6 @@ public interface PropertyDefaultValues {
 			@Override
 			public int maxDiscardRatio() {
 				return maxDiscardRatio;
-			}
-
-			@Override
-			public int maxShrinkingDepth() {
-				return maxShrinkingDepth;
 			}
 		};
 	}

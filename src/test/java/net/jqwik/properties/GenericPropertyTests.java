@@ -32,7 +32,7 @@ class GenericPropertyTests {
 		List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 		GenericProperty property = new GenericProperty("simple", arbitraries, forAllFunction);
-		PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+		PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 		Consumer<ReportEntry> mockPublisher = mock(Consumer.class);
 
 		PropertyCheckResult result = property.check(configuration, mockPublisher);
@@ -64,7 +64,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(2);
@@ -88,7 +88,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(6);
@@ -114,7 +114,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.OFF, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.OFF, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry); // If shrunk number would be higher
@@ -132,7 +132,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(1);
@@ -164,7 +164,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
@@ -188,7 +188,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
@@ -215,7 +215,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 20, maxDiscardRatio, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 20, maxDiscardRatio, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.EXHAUSTED);
@@ -237,7 +237,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary);
 
 			GenericProperty property = new GenericProperty("erroneous property", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(erroneousTry);
@@ -261,7 +261,7 @@ class GenericPropertyTests {
 			CheckedFunction checkedFunction = params -> ((int) params.get(0)) < 5;
 
 			GenericProperty property = new GenericProperty("falsified property", arbitraries, checkedFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
@@ -284,7 +284,7 @@ class GenericPropertyTests {
 			};
 
 			GenericProperty property = new GenericProperty("satisfied property", arbitraries(), forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
 
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
@@ -305,7 +305,7 @@ class GenericPropertyTests {
 			};
 
 			GenericProperty property = new GenericProperty("failing property", arbitraries(), forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
@@ -327,7 +327,7 @@ class GenericPropertyTests {
 			};
 
 			GenericProperty property = new GenericProperty("failing property", arbitraries(), forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
@@ -362,7 +362,7 @@ class GenericPropertyTests {
 			List<Arbitrary> arbitraries = arbitraries(arbitrary1, arbitrary2);
 
 			GenericProperty property = new GenericProperty("property with 2", arbitraries, forAllFunction);
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "4242", 5, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "4242", 5, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.propertyName()).isEqualTo("property with 2");
@@ -391,7 +391,7 @@ class GenericPropertyTests {
 
 			GenericProperty property = new GenericProperty("property with 4", arbitraries, forAllFunction);
 
-			PropertyConfiguration configuration = new PropertyConfiguration("Property", "4141", 10, 5, ShrinkingMode.FULL, new Reporting[0], 1000);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "4141", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
 			assertThat(result.propertyName()).isEqualTo("property with 4");
