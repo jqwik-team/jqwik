@@ -137,6 +137,7 @@ junitPlatform {
 	}
 	// Only use platform tests
 	enableStandardTestTask false
+	details org.junit.platform.console.options.Details.SUMMARY
 }
 
 dependencies {
