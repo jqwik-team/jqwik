@@ -45,23 +45,22 @@ class RandomIntegralGenerators {
 			if (upper.compareTo(max) >= 0) {
 				break;
 			}
-			partitions.add(createBaseGenerator(lower, upper.subtract(BigInteger.ONE)));
+			partitions.add(createBaseGenerator(lower, upper.subtract(BigInteger.ONE), new BigIntegerShrinkCandidates(min, max)));
 			lower = upper;
 		}
-		partitions.add(createBaseGenerator(lower, max));
+		partitions.add(createBaseGenerator(lower, max, new BigIntegerShrinkCandidates(min, max)));
 		return partitions;
 	}
 
-	private static RandomGenerator<BigInteger> createBaseGenerator(BigInteger min, BigInteger max) {
+	private static RandomGenerator<BigInteger> createBaseGenerator(BigInteger min, BigInteger max, BigIntegerShrinkCandidates shrinkCandidates) {
 		if (isWithinIntegerRange(min, max)) {
-			return createIntegerGenerator(min, max);
+			return createIntegerGenerator(min, max, shrinkCandidates);
 		} else {
-			return createBigIntegerGenerator(min, max);
+			return createBigIntegerGenerator(min, max, shrinkCandidates);
 		}
 	}
 
-	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger min, BigInteger max) {
-		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(min, max);
+	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger min, BigInteger max, BigIntegerShrinkCandidates shrinkCandidates) {
 		BigInteger range = max.subtract(min);
 		int bits = range.bitLength();
 		return random -> {
@@ -75,8 +74,7 @@ class RandomIntegralGenerators {
 		};
 	}
 
-	private static RandomGenerator<BigInteger> createIntegerGenerator(BigInteger min, BigInteger max) {
-		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(min, max);
+	private static RandomGenerator<BigInteger> createIntegerGenerator(BigInteger min, BigInteger max, BigIntegerShrinkCandidates shrinkCandidates) {
 		final int _min = Math.min(min.intValue(), max.intValue());
 		final int _max = Math.max(min.intValue(), max.intValue());
 		return random -> {
