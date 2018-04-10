@@ -617,8 +617,10 @@ will generate lists with a minimum size of 1 filled with Strings that have 10 ch
 
 While checking properties of generically typed classes or functions, you often don't care
 about the exact type of variables and therefore want to express them with type variables.
-_jqwik_ can handle unbound type variables and wildcard types, but will refuse to provide
-variables with bound types. Consider 
+_jqwik_ can also handle type variables and wildcard types. The handling of upper and lower
+bounds works but the types of generated values are not always what you'd expect.
+
+Consider
 [the following examples](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/VariableTypedPropertyExamples.java):
 
 ```java
@@ -630,12 +632,12 @@ class VariableTypedPropertyExamples {
 		return items.contains(newItem);
 	}
 
-	@Property
-	void wildcardTypesAreResolved(@ForAll List<? extends Serializable> items) {
+	@Property(reporting = Reporting.GENERATED)
+	<T extends Serializable & Comparable> void someBoundedGenericTypesCanBeResolved(@ForAll List<T> items, @ForAll T newItem) {
 	}
 
-	@Property
-	<T extends Serializable> void boundedGenericTypesCannotBeResolved(@ForAll List<T> items) {
+	@Property(reporting = Reporting.GENERATED)
+	void someWildcardTypesWithUpperBoundsCanBeResolved(@ForAll List<? extends Serializable> items) {
 	}
 
 }
@@ -1898,6 +1900,7 @@ in a separate article...
   <p/>_This is an incompatible API change!_
 - Introduced `ShrinkingMode.BOUNDED` and made it the default
 - Introduced `ShrinkingMode.FULL`
+- Some bounded wildcard types and type variables can be provided automatically
 
 ### 0.8.8
 

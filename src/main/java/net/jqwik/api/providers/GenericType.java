@@ -54,11 +54,13 @@ public class GenericType {
 	}
 
 	public static GenericType forWildcard(WildcardType wildcardType) {
-		GenericType[] upperBounds = Arrays.stream(wildcardType.getUpperBounds())
-										  .map(GenericType::forType)
-										  .toArray(GenericType[]::new);
-		return new GenericType(Object.class, WILDCARD, upperBounds, Collections.emptyList(),
-							   Collections.emptyList()
+		return new GenericType(
+			Object.class,
+			WILDCARD,
+			extractUpperBounds(wildcardType),
+			extractLowerBounds(wildcardType),
+			Collections.emptyList(),
+			extractAnnotations(wildcardType)
 		);
 	}
 
@@ -67,11 +69,13 @@ public class GenericType {
 	private final List<GenericType> typeArguments;
 	private final String typeVariable;
 	private final GenericType[] upperBounds;
+	private final GenericType[] lowerBounds;
 
 	private GenericType(Class<?> rawType, GenericType... typeArguments) {
 		this(
 			rawType,
 			null,
+			new GenericType[0],
 			new GenericType[0],
 			Arrays.asList(typeArguments),
 			Collections.emptyList()
@@ -82,7 +86,8 @@ public class GenericType {
 		this(
 			extractRawType(annotatedType.getType()),
 			extractTypeVariable(annotatedType.getType()),
-			extractBounds(annotatedType.getType()),
+			extractUpperBounds(annotatedType.getType()),
+			extractLowerBounds(annotatedType.getType()),
 			extractPlainTypeArguments(annotatedType),
 			extractAnnotations(annotatedType)
 		);
@@ -92,7 +97,8 @@ public class GenericType {
 		this(
 			parameter.getType(),
 			extractTypeVariable(parameter.getParameterizedType()),
-			extractBounds(parameter.getParameterizedType()),
+			extractUpperBounds(parameter.getParameterizedType()),
+			extractLowerBounds(parameter.getParameterizedType()),
 			extractTypeArguments(parameter),
 			parameter.findAllAnnotations()
 		);
@@ -102,7 +108,8 @@ public class GenericType {
 		this(
 			extractRawType(parameterizedType),
 			extractTypeVariable(parameterizedType),
-			extractBounds(parameterizedType),
+			extractUpperBounds(parameterizedType),
+			extractLowerBounds(parameterizedType),
 			extractPlainTypeArguments(parameterizedType),
 			Collections.emptyList()
 		);
@@ -112,12 +119,14 @@ public class GenericType {
 		Class<?> rawType,
 		String typeVariable,
 		GenericType[] upperBounds,
+		GenericType[] lowerBounds,
 		List<GenericType> typeArguments,
 		List<Annotation> annotations
 	) {
 		this.rawType = rawType;
 		this.typeVariable = typeVariable;
 		this.upperBounds = upperBounds;
+		this.lowerBounds = lowerBounds;
 		this.typeArguments = typeArguments;
 		this.annotations = annotations;
 	}
@@ -137,19 +146,44 @@ public class GenericType {
 	}
 
 	private static String extractTypeVariable(Type parameterizedType) {
+		if (parameterizedType instanceof WildcardType) {
+			return WILDCARD;
+		}
 		if (parameterizedType instanceof TypeVariable) {
 			return ((TypeVariable) parameterizedType).getName();
 		}
 		return null;
 	}
 
-	private static GenericType[] extractBounds(Type parameterizedType) {
+	private static GenericType[] extractUpperBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
 			return Arrays.stream(((TypeVariable) parameterizedType).getBounds()) //
 						 .map(GenericType::forType) //
 						 .toArray(GenericType[]::new);
 		}
+		if (parameterizedType instanceof WildcardType) {
+			return extractUpperBounds((WildcardType) parameterizedType);
+		}
 		return new GenericType[0];
+	}
+
+	private static GenericType[] extractUpperBounds(WildcardType wildcardType) {
+		return Arrays.stream(wildcardType.getUpperBounds())
+					 .map(GenericType::forType)
+					 .toArray(GenericType[]::new);
+	}
+
+	private static GenericType[] extractLowerBounds(Type parameterizedType) {
+		if (parameterizedType instanceof WildcardType) {
+			return extractLowerBounds((WildcardType) parameterizedType);
+		}
+		return new GenericType[0];
+	}
+
+	private static GenericType[] extractLowerBounds(WildcardType wildcardType) {
+		return Arrays.stream(wildcardType.getLowerBounds())
+					 .map(GenericType::forType)
+					 .toArray(GenericType[]::new);
 	}
 
 	private static Class<?> extractRawType(Type parameterizedType) {
@@ -193,12 +227,19 @@ public class GenericType {
 	}
 
 	/**
-	 * Return true if a type parameter has bounds.
+	 * Return true if a type parameter has upper bounds.
 	 */
-	public boolean hasBounds() {
+	public boolean hasUpperBounds() {
 		if (upperBounds.length > 1)
 			return true;
 		return upperBounds.length == 1 && !upperBounds[0].isOfType(Object.class);
+	}
+
+	/**
+	 * Return true if a type parameter has upper bounds.
+	 */
+	public boolean hasLowerBounds() {
+		return lowerBounds.length > 0;
 	}
 
 	/**
@@ -213,6 +254,13 @@ public class GenericType {
 	 */
 	public boolean isTypeVariable() {
 		return typeVariable != null && !isWildcard();
+	}
+
+	/**
+	 * Return true if a generic type is a type variable or a wildcard.
+	 */
+	public boolean isTypeVariableOrWildcard(GenericType targetType) {
+		return targetType.isWildcard() || targetType.isTypeVariable();
 	}
 
 	/**
@@ -237,7 +285,7 @@ public class GenericType {
 	 */
 	public boolean canBeAssignedTo(GenericType targetType) {
 		if (isTypeVariableOrWildcard(targetType)) {
-			return canBeAssignedToUpperBounds(targetType);
+			return canBeAssignedToUpperBounds(targetType) && canBeAssignedToLowerBounds(targetType);
 		}
 		if (boxedTypeMatches(targetType.rawType, this.rawType))
 			return true;
@@ -255,15 +303,18 @@ public class GenericType {
 		return false;
 	}
 
-	private boolean isTypeVariableOrWildcard(GenericType targetType) {
-		return targetType.isWildcard() || targetType.isTypeVariable();
-	}
-
 	private boolean canBeAssignedToUpperBounds(GenericType targetType) {
 		if (isTypeVariableOrWildcard(this)) {
 			return Arrays.stream(upperBounds).allMatch(upperBound -> upperBound.canBeAssignedToUpperBounds(targetType));
 		}
 		return Arrays.stream(targetType.upperBounds).allMatch(this::canBeAssignedTo);
+	}
+
+	private boolean canBeAssignedToLowerBounds(GenericType targetType) {
+		if (isTypeVariableOrWildcard(this)) {
+			return Arrays.stream(lowerBounds).allMatch(lowerBound -> lowerBound.canBeAssignedToLowerBounds(targetType));
+		}
+		return Arrays.stream(targetType.lowerBounds).allMatch(lowerBound -> lowerBound.canBeAssignedTo(this));
 	}
 
 	private boolean allTypeArgumentsCanBeAssigned(
@@ -400,12 +451,19 @@ public class GenericType {
 		}
 		if (typeVariable != null) {
 			representation = typeVariable;
-			if (hasBounds()) {
+			if (hasUpperBounds()) {
 				String boundsRepresentation =
 					Arrays.stream(upperBounds) //
 						  .map(GenericType::toString) //
 						  .collect(Collectors.joining(" & "));
 				representation += String.format(" extends %s", boundsRepresentation);
+			}
+			if (hasLowerBounds()) {
+				String boundsRepresentation =
+					Arrays.stream(lowerBounds) //
+						  .map(GenericType::toString) //
+						  .collect(Collectors.joining(" & "));
+				representation += String.format(" super %s", boundsRepresentation);
 			}
 		}
 		if (!annotations.isEmpty()) {

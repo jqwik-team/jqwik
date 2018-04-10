@@ -183,7 +183,7 @@ class GenericTypeTests {
 		}
 
 		@Example
-		void boundWildcardTypes() throws NoSuchMethodException {
+		void upperBoundWildcardTypes() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public List<? extends String> listOfWildcardString() { return null; }
@@ -209,6 +209,31 @@ class GenericTypeTests {
 
 			assertThat(listOfWildcardString.canBeAssignedTo(listOfString)).isFalse();
 			assertThat(listOfWildcardSerializable.canBeAssignedTo(listOfString)).isFalse();
+		}
+
+		@Example
+		void lowerBoundWildcardTypes() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public List<? super String> listOfWildcardSuperString() { return null; }
+
+			}
+
+			Type wildcardStringType = LocalClass.class.getMethod("listOfWildcardSuperString").getAnnotatedReturnType().getType();
+			GenericType listOfWildcardSuperString = GenericType.forType(wildcardStringType);
+
+			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
+			GenericType listOfCharSequence = GenericType.of(List.class, GenericType.of(CharSequence.class));
+			GenericType listOfArbitrary = GenericType.of(List.class, GenericType.of(Arbitrary.class));
+
+			assertThat(listOfWildcardSuperString.canBeAssignedTo(listOfWildcardSuperString)).isTrue();
+
+			assertThat(listOfCharSequence.canBeAssignedTo(listOfWildcardSuperString)).isTrue();
+			assertThat(listOfWildcardSuperString.canBeAssignedTo(listOfCharSequence)).isFalse();
+
+			assertThat(listOfString.canBeAssignedTo(listOfWildcardSuperString)).isTrue();
+			assertThat(listOfArbitrary.canBeAssignedTo(listOfWildcardSuperString)).isFalse();
+
 		}
 
 		@Example

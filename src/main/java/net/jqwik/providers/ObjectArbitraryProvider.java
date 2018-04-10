@@ -10,6 +10,8 @@ import net.jqwik.properties.arbitraries.*;
 public class ObjectArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(GenericType targetType) {
+		if (targetType.hasUpperBounds())
+			return false;
 		return GenericType.of(Object.class).canBeAssignedTo(targetType);
 	}
 
