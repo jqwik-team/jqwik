@@ -78,6 +78,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
+  - [0.8.10-SNAPSHOT](#0810-snapshot)
   - [0.8.9](#089)
   - [0.8.8](#088)
   - [0.8.7](#087)
@@ -1891,6 +1892,11 @@ Since the topic is rather complicated, a detailed example will one day be publis
 in a separate article...
 
 ## Release Notes
+
+### 0.8.10-SNAPSHOT
+
+- Fixed shrinking bug that could result in integers not being shrunk
+  as far as possible
 
 ### 0.8.9
 
