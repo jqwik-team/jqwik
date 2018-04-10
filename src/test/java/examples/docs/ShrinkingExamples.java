@@ -5,6 +5,8 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
+import static java.util.Collections.reverse;
+
 class ShrinkingExamples {
 
 	@Property(reporting = Reporting.FALSIFIED)
@@ -41,6 +43,21 @@ class ShrinkingExamples {
 		Assume.that(anInt != Integer.MAX_VALUE);
 		int square = anInt * anInt;
 		return Math.sqrt(square) == anInt;
+	}
+
+	static <E> List<E> brokenReverse(List<E> aList) {
+		if (aList.size() < 4) {
+			aList = new ArrayList<>(aList);
+			reverse(aList);
+		}
+		return aList;
+	}
+
+	@Property(shrinking = ShrinkingMode.FULL, seed = "-7126148097596742512")
+	boolean reverseShouldSwapFirstAndLast(@ForAll List<Integer> aList) {
+		Assume.that(!aList.isEmpty());
+		List<Integer> reversed = brokenReverse(aList);
+		return aList.get(0) == reversed.get(aList.size() - 1);
 	}
 
 }
