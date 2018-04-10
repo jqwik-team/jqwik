@@ -328,9 +328,17 @@ annotation has a few optional values:
   
   The default is `5` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
 
-- `ShrinkingMode shrinking`: You can switch off parameter shrinking by using `ShrinkingMode.OFF`.
-  
-  The default is `ShrinkingMode.BOUNDED`
+- `ShrinkingMode shrinking`: You can influence the way shrinking is done
+  - `ShrinkingMode.OFF`: No shrinking at all
+  - `ShrinkingMode.FULL`: Shrinking continues until no smaller value can
+    be found that also falsifies the property.
+    This might take very long or not end at all in rare cases.
+  - `ShrinkingMode.BOUNDED`: Shrinking is tried to a depth of 1000 steps
+    maximum per value. This is the default.
+
+  Most of the time you want to stick with the default. Only if
+  bounded shrinking is reported - look at a falsified property's output! -
+  should you try with `ShrinkingMode.FULL`.
 
 - `Reporting[] reporting`: You can switch on additional reporting aspects. 
   by specifying one or more of the following `Reporting` values:
@@ -1889,6 +1897,7 @@ in a separate article...
 - Renamed `ShrinkingMode.ON` to `ShrinkingMode.FULL`
   <p/>_This is an incompatible API change!_
 - Introduced `ShrinkingMode.BOUNDED` and made it the default
+- Introduced `ShrinkingMode.FULL`
 
 ### 0.8.8
 
