@@ -619,7 +619,7 @@ will generate lists with a minimum size of 1 filled with Strings that have 10 ch
 While checking properties of generically typed classes or functions, you often don't care
 about the exact type of variables and therefore want to express them with type variables.
 _jqwik_ can also handle type variables and wildcard types. The handling of upper and lower
-bounds works but the types of generated values are not always what you'd expect.
+bounds works sometimes but I wouldn't recommend it.
 
 Consider
 [the following examples](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/VariableTypedPropertyExamples.java):

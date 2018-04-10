@@ -1,11 +1,11 @@
 package examples.docs;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
-import static java.util.Collections.reverse;
+import java.util.*;
+
+import static java.util.Collections.*;
 
 class ShrinkingExamples {
 
@@ -53,11 +53,20 @@ class ShrinkingExamples {
 		return aList;
 	}
 
-	@Property(shrinking = ShrinkingMode.FULL, seed = "-7126148097596742512")
+	@Property
 	boolean reverseShouldSwapFirstAndLast(@ForAll List<Integer> aList) {
 		Assume.that(!aList.isEmpty());
 		List<Integer> reversed = brokenReverse(aList);
 		return aList.get(0) == reversed.get(aList.size() - 1);
 	}
+
+	@Property
+	boolean reverseShouldSwapFirstAndLast_Wildcard(@ForAll List<?> aList) {
+		Assume.that(!aList.isEmpty());
+		List<?> reversed = brokenReverse(aList);
+		return aList.get(0).equals(reversed.get(aList.size() - 1));
+	}
+
+
 
 }

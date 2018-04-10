@@ -259,8 +259,8 @@ public class GenericType {
 	/**
 	 * Return true if a generic type is a type variable or a wildcard.
 	 */
-	public boolean isTypeVariableOrWildcard(GenericType targetType) {
-		return targetType.isWildcard() || targetType.isTypeVariable();
+	public boolean isTypeVariableOrWildcard() {
+		return isWildcard() || isTypeVariable();
 	}
 
 	/**
@@ -277,6 +277,8 @@ public class GenericType {
 	 * {@linkplain ArbitraryProvider}.
 	 */
 	public boolean isOfType(Class<?> aRawType) {
+		if (isTypeVariableOrWildcard())
+			return false;
 		return rawType == aRawType;
 	}
 
@@ -284,7 +286,7 @@ public class GenericType {
 	 * Check if an instance can be assigned to another {@code GenericType} instance.
 	 */
 	public boolean canBeAssignedTo(GenericType targetType) {
-		if (isTypeVariableOrWildcard(targetType)) {
+		if (targetType.isTypeVariableOrWildcard()) {
 			return canBeAssignedToUpperBounds(targetType) && canBeAssignedToLowerBounds(targetType);
 		}
 		if (boxedTypeMatches(targetType.rawType, this.rawType))
@@ -304,14 +306,14 @@ public class GenericType {
 	}
 
 	private boolean canBeAssignedToUpperBounds(GenericType targetType) {
-		if (isTypeVariableOrWildcard(this)) {
+		if (isTypeVariableOrWildcard()) {
 			return Arrays.stream(upperBounds).allMatch(upperBound -> upperBound.canBeAssignedToUpperBounds(targetType));
 		}
 		return Arrays.stream(targetType.upperBounds).allMatch(this::canBeAssignedTo);
 	}
 
 	private boolean canBeAssignedToLowerBounds(GenericType targetType) {
-		if (isTypeVariableOrWildcard(this)) {
+		if (isTypeVariableOrWildcard()) {
 			return Arrays.stream(lowerBounds).allMatch(lowerBound -> lowerBound.canBeAssignedToLowerBounds(targetType));
 		}
 		return Arrays.stream(targetType.lowerBounds).allMatch(lowerBound -> lowerBound.canBeAssignedTo(this));

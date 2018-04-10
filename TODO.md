@@ -1,9 +1,6 @@
 - User Guide
   - Add BOUNDED to shrinking section
 
-- ObjectArbitrary will create shrinkable objects.
-  Maybe differentiate between ObjectArbitrary and WildcardArbitrary?
-
 - Refactor GenericTypeTests
   - More tests for creation from parameters with wildcards and type variables
 

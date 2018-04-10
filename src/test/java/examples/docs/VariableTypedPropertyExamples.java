@@ -1,10 +1,9 @@
 package examples.docs;
 
+import net.jqwik.api.*;
+
 import java.io.*;
 import java.util.*;
-
-import examples.docs.arbitraryconfigurator.*;
-import net.jqwik.api.*;
 
 class VariableTypedPropertyExamples {
 
@@ -35,7 +34,7 @@ class VariableTypedPropertyExamples {
 	}
 
 	@Property(reporting = Reporting.GENERATED)
-	void wildcardTypesWithLowerBoundsCanBeResolved(@ForAll List<? super String> items) {
+	void wildcardTypesWithLowerBoundsCannotBeResolved(@ForAll List<? super String> items) {
 	}
 
 }
