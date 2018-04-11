@@ -57,7 +57,7 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			public Set<UniqueId> previousFailures() {
 				if (!properties.runFailuresFirst())
 					return Collections.emptySet();
-				return previousRun.allNonSuccessfulTests().map(testRun -> testRun.getUniqueId()).collect(Collectors.toSet());
+				return previousRun.allNonSuccessfulTests().map(TestRun::getUniqueId).collect(Collectors.toSet());
 			}
 		};
 	}
