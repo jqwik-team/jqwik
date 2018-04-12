@@ -34,6 +34,6 @@ public class TestRun implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("TestRun[%s:%s:%d]", uniqueIdString, getStatus(), randomSeed);
+		return String.format("TestRun[%s:%s:%s]", uniqueIdString, getStatus(), randomSeed);
 	}
 }
