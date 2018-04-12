@@ -13,7 +13,7 @@ public class TopLevelContainerDiscoverySpec implements DiscoverySpec<Class<?>> {
 	private final static Predicate<Class<?>> isPotentialTestContainer = new IsPotentialTestContainer();
 	private final static Predicate<Class<?>> isTopLevelClass = new IsTopLevelClass();
 	private final static Predicate<Class<?>> isGroup = candidate -> candidate.isAnnotationPresent(Group.class);
-	private final static Predicate<Class<?>> isStaticNonGroupMember = candidate -> isStatic(candidate) && !isGroup.test(Group.class);
+	private final static Predicate<Class<?>> isStaticNonGroupMember = candidate -> isStatic(candidate) && !isGroup.test(candidate);
 
 	@Override
 	public boolean shouldBeDiscovered(Class<?> candidate) {

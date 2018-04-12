@@ -93,6 +93,16 @@ class DiscoveryTests {
 	}
 
 	@Example
+	void discoverNestedContainerAnnotatedWithGroup(){
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(ClassWithContainer.NestedGroupAnnotatedContainer.class))
+			.build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
+		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
+	}
+
+	@Example
 	void discoverInnerContainerFromClass() {
 		LauncherDiscoveryRequest discoveryRequest = request()
 				.selectors(selectClass(TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class)).build();
