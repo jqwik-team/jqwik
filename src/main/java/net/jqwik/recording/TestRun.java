@@ -15,6 +15,11 @@ public class TestRun implements Serializable {
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
 	}
+
+	boolean hasUniqueId(UniqueId uniqueId) {
+		return getUniqueId().equals(uniqueId);
+	}
+
 	public UniqueId getUniqueId() {
 		return UniqueId.parse(uniqueIdString);
 	}

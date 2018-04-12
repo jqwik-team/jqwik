@@ -26,7 +26,7 @@ public class TestRunData {
 	public Optional<TestRun> byUniqueId(UniqueId uniqueId) {
 		try {
 			return data.stream() //
-					.filter(testRun -> testRun.getUniqueId().equals(uniqueId)) //
+					.filter(testRun -> testRun.hasUniqueId(uniqueId)) //
 					.findFirst();
 		} catch (Throwable t) {
 			// An exception during test run data read should not stop the test run.
