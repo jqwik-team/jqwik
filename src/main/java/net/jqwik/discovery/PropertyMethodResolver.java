@@ -88,11 +88,17 @@ class PropertyMethodResolver implements ElementResolver {
 	}
 
 	private String determineSeed(UniqueId uniqueId, String seedFromProperty) {
+		if(seedIsSet(seedFromProperty)){
+			return seedFromProperty;
+		}
 		return testRunData.byUniqueId(uniqueId) //
 						  .filter(TestRun::isNotSuccessful) //
 						  .map(TestRun::getRandomSeed) //
-						  .filter(seedFromFailedRun -> seedFromProperty.equals(Property.SEED_NOT_SET)) //
 						  .orElse(seedFromProperty);
+	}
+
+	private boolean seedIsSet(String seedFromProperty) {
+		return !seedFromProperty.equals(Property.SEED_NOT_SET);
 	}
 
 	private String getSegmentType() {
