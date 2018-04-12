@@ -28,7 +28,6 @@ public class JqwikDiscoverer {
 		HierarchicalJavaResolver javaElementsResolver = createHierarchicalResolver(engineDescriptor);
 		Predicate<String> classNamePredicate = buildClassNamePredicate(request);
 
-		// TODO: Test with Java 9 or above
 		request.getSelectorsByType(ModuleSelector.class).forEach(selector -> {
 			findAllClassesInModule(selector.getModuleName(), isScannableTestClass, classNamePredicate)
 				.forEach(javaElementsResolver::resolveClass);
