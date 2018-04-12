@@ -5,7 +5,6 @@ import java.util.stream.*;
 
 import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestExecutionResult.*;
 
 public class TestRunData {
 
@@ -38,6 +37,6 @@ public class TestRunData {
 	}
 
 	public Stream<TestRun> allNonSuccessfulTests() {
-		return data.stream().filter(testRun -> testRun.getStatus() != Status.SUCCESSFUL);
+		return data.stream().filter(TestRun::isNotSuccessful);
 	}
 }
