@@ -89,7 +89,7 @@ class PropertyMethodResolver implements ElementResolver {
 
 	private String determineSeed(UniqueId uniqueId, String seedFromProperty) {
 		return testRunData.byUniqueId(uniqueId) //
-						  .filter(testRunData -> testRunData.getStatus() != TestExecutionResult.Status.SUCCESSFUL) //
+						  .filter(TestRun::isNotSuccessful) //
 						  .map(TestRun::getRandomSeed) //
 						  .map(seedFromFailedRun -> !seedFromProperty.equals(Property.SEED_NOT_SET) ? seedFromProperty : seedFromFailedRun) //
 						  .orElse(seedFromProperty);

@@ -20,6 +20,10 @@ public class TestRun implements Serializable {
 		return getUniqueId().equals(uniqueId);
 	}
 
+	public boolean isNotSuccessful() {
+		return getStatus() != Status.SUCCESSFUL;
+	}
+
 	public UniqueId getUniqueId() {
 		return UniqueId.parse(uniqueIdString);
 	}
