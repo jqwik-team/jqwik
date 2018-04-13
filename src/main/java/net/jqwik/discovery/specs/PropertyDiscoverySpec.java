@@ -1,6 +1,5 @@
 package net.jqwik.discovery.specs;
 
-import net.jqwik.api.*;
 import net.jqwik.discovery.predicates.*;
 import net.jqwik.support.*;
 import org.junit.platform.engine.support.hierarchical.Node.*;
@@ -11,14 +10,13 @@ import java.util.*;
 import java.util.stream.*;
 
 import static net.jqwik.support.JqwikReflectionSupport.*;
-import static org.junit.platform.commons.support.AnnotationSupport.*;
 
 public class PropertyDiscoverySpec implements DiscoverySpec<Method> {
-	private final static IsDiscoverableTestMethod isDiscoverableTestMethod = new IsDiscoverableTestMethod();
+	private final IsProperty isProperty = new IsProperty();
 
 	@Override
 	public boolean shouldBeDiscovered(Method candidate) {
-		return isDiscoverableTestMethod.test(candidate) && isAnnotated(candidate, Property.class);
+		return isProperty.test(candidate);
 	}
 
 	@Override
