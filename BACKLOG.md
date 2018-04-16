@@ -52,6 +52,11 @@
 
 ### Properties
 
+- Provide arbitraries for classes with single constructor with parameters
+  that can be provided
+
+- Allow `@ForAll @From(MyProvider.class) MyType myObject`
+
 - Check arbitrary providers for numbers that @Range annotations fit, e.g.
   `@IntRange @ForAll long aNumber` should result in a warning
 
