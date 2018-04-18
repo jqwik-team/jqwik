@@ -67,6 +67,15 @@ class ShrinkingExamples {
 		return aList.get(0).equals(reversed.get(aList.size() - 1));
 	}
 
+	@Property(seed = "-6868766892804735822", reporting = Reporting.FALSIFIED)
+	boolean shouldShrinkTo101(@ForAll("numberStrings") String aNumberString) {
+		return Integer.parseInt(aNumberString) % 2 == 0;
+	}
+
+	@Provide
+	Arbitrary<String> numberStrings() {
+		return Arbitraries.integers().between(100, 1000).map(String::valueOf);
+	}
 
 
 }
