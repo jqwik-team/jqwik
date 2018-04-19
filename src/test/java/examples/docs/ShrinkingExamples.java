@@ -38,7 +38,7 @@ class ShrinkingExamples {
 	void aPropertyWithLongShrinkingTimes(@ForAll List<Set<String>> list1, @ForAll List<Set<String>> list2) {
 	}
 
-	@Property(shrinking = ShrinkingMode.BOUNDED)
+	@Property(shrinking = ShrinkingMode.BOUNDED, reporting = Reporting.FALSIFIED)
 	// Should shrink to 46341 - the smallest number whose square is bigger than Integer.MAX_VALUE
 	boolean rootOfSquareShouldBeOriginalValue(@Positive @ForAll int anInt) {
 		Assume.that(anInt != Integer.MAX_VALUE);

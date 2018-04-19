@@ -1897,6 +1897,7 @@ in a separate article...
 
 - Fixed shrinking bug that could result in integers not being shrunk
   as far as possible
+- Integer shrinking should be faster in most cases and cover more cases
 
 ### 0.8.9
 
