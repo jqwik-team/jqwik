@@ -39,6 +39,7 @@ class ShrinkingExamples {
 	}
 
 	@Property(shrinking = ShrinkingMode.BOUNDED)
+	// Should shrink to 46341 - the smallest number whose square is bigger than Integer.MAX_VALUE
 	boolean rootOfSquareShouldBeOriginalValue(@Positive @ForAll int anInt) {
 		Assume.that(anInt != Integer.MAX_VALUE);
 		int square = anInt * anInt;

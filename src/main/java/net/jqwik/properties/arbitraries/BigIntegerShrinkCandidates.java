@@ -13,13 +13,45 @@ public class BigIntegerShrinkCandidates implements ShrinkCandidates<BigInteger> 
 
 	@Override
 	public Set<BigInteger> nextCandidates(BigInteger value) {
-		BigInteger shrunkValue = nextShrinkValue(value);
-		if (value.equals(shrunkValue))
-			return Collections.emptySet();
 		Set<BigInteger> candidates = new HashSet<>();
-		candidates.add(shrunkValue);
-		candidates.add(nextShrinkOne(value));
+		BigInteger target = determineTarget(value);
+		BigInteger lower = target.min(value);
+		BigInteger higher = target.max(value);
+		addFibbonaci(candidates, lower, BigInteger.valueOf(0), BigInteger.valueOf(1), higher);
+		subFibbonaci(candidates, higher, BigInteger.valueOf(0), BigInteger.valueOf(1), lower);
+		candidates.add(target);
+		candidates.remove(value);
 		return candidates;
+	}
+
+	private void subFibbonaci(
+		Set<BigInteger> candidates, BigInteger target, BigInteger butLast, BigInteger last, BigInteger border
+	) {
+		while (true) {
+			BigInteger step = butLast.add(last);
+			BigInteger candidate = target.subtract(step);
+			if (candidate.compareTo(border) <= 0) {
+				break;
+			}
+			candidates.add(candidate);
+			butLast = last;
+			last = step;
+		}
+	}
+
+	private void addFibbonaci(
+		Set<BigInteger> candidates, BigInteger target, BigInteger butLast, BigInteger last, BigInteger border
+	) {
+		while (true) {
+			BigInteger step = butLast.add(last);
+			BigInteger candidate = target.add(step);
+			if (candidate.compareTo(border) >= 0) {
+				break;
+			}
+			candidates.add(candidate);
+			butLast = last;
+			last = step;
+		}
 	}
 
 	@Override
@@ -28,30 +60,6 @@ public class BigIntegerShrinkCandidates implements ShrinkCandidates<BigInteger> 
 		if (diff.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0)
 			return diff.intValue();
 		return Integer.MAX_VALUE;
-	}
-
-	private BigInteger nextShrinkValue(BigInteger value) {
-		return value.subtract(calculateDeltaHalf(determineTarget(value), value));
-	}
-
-	private BigInteger nextShrinkOne(BigInteger value) {
-		return value.subtract(calculateDeltaOne(determineTarget(value), value));
-	}
-
-	private static BigInteger calculateDeltaHalf(BigInteger current, BigInteger target) {
-		if (target.compareTo(current) > 0)
-			return target.subtract(current).divide(BigInteger.valueOf(2)).max(BigInteger.ONE);
-		if (target.compareTo(current) < 0)
-			return target.subtract(current).divide(BigInteger.valueOf(2)).min(BigInteger.ONE.negate());
-		return BigInteger.ZERO;
-	}
-
-	private static BigInteger calculateDeltaOne(BigInteger current, BigInteger target) {
-		if (target.compareTo(current) > 0)
-			return BigInteger.ONE;
-		if (target.compareTo(current) < 0)
-			return BigInteger.ONE.negate();
-		return BigInteger.ZERO;
 	}
 
 	private BigInteger determineTarget(BigInteger value) {

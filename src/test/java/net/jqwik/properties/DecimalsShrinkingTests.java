@@ -30,7 +30,7 @@ class DecimalsShrinkingTests {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.15"));
 
-		assertThat(candidates).containsOnly(new BigDecimal("1"), new BigDecimal("2.1"), new BigDecimal("2.2"));
+		assertThat(candidates).containsOnly(new BigDecimal("0"), new BigDecimal("1"), new BigDecimal("2.1"), new BigDecimal("2.2"));
 	}
 
 	@Example
@@ -54,7 +54,7 @@ class DecimalsShrinkingTests {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("-3.99"));
 
-		assertThat(candidates).containsOnly(new BigDecimal("-2"), new BigDecimal("-3.9"), new BigDecimal("-4.0"));
+		assertThat(candidates).containsOnly(new BigDecimal("0"), new BigDecimal("-1"), new BigDecimal("-2"), new BigDecimal("-3.9"), new BigDecimal("-4.0"));
 	}
 
 	@Example
@@ -62,7 +62,7 @@ class DecimalsShrinkingTests {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal(5.0));
 
-		assertThat(candidates).containsExactlyInAnyOrder(new BigDecimal(3.0), new BigDecimal(4.0));
+		assertThat(candidates).containsExactlyInAnyOrder(new BigDecimal(0.0), new BigDecimal(1.0), new BigDecimal(2.0), new BigDecimal(3.0), new BigDecimal(4.0));
 	}
 
 	@Example

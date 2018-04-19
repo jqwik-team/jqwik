@@ -52,11 +52,13 @@ class IntegralShrinkingTests {
 	@Example
 	void shrinkPositiveValueTowards0If0isInRange() {
 		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-10), BigInteger.valueOf(20));
-		Set<BigInteger> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, BigInteger.valueOf(10));
+		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
+				BigInteger.valueOf(9), //
+				BigInteger.valueOf(8), //
+				BigInteger.valueOf(7), //
 				BigInteger.valueOf(5), //
-				BigInteger.valueOf(4), //
 				BigInteger.valueOf(3), //
 				BigInteger.valueOf(2), //
 				BigInteger.valueOf(1), //
@@ -67,11 +69,13 @@ class IntegralShrinkingTests {
 	@Example
 	void shrinkNegativeValueTowards0If0isInRange() {
 		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-10), BigInteger.valueOf(20));
-		Set<BigInteger> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, BigInteger.valueOf(-10));
+		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(-10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
+				BigInteger.valueOf(-9), //
+				BigInteger.valueOf(-8), //
+				BigInteger.valueOf(-7), //
 				BigInteger.valueOf(-5), //
-				BigInteger.valueOf(-4), //
 				BigInteger.valueOf(-3), //
 				BigInteger.valueOf(-2), //
 				BigInteger.valueOf(-1), //
@@ -82,9 +86,10 @@ class IntegralShrinkingTests {
 	@Example
 	void shrinkNegativeValueTowardMaxIf0IsOutsideRange() {
 		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-20), BigInteger.valueOf(-5));
-		Set<BigInteger> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, BigInteger.valueOf(-10));
+		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(-10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
+				BigInteger.valueOf(-9), //
 				BigInteger.valueOf(-8), //
 				BigInteger.valueOf(-7), //
 				BigInteger.valueOf(-6), //
@@ -95,13 +100,42 @@ class IntegralShrinkingTests {
 	@Example
 	void shrinkPositiveValueTowardMinIf0IsOutsideRange() {
 		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(5), BigInteger.valueOf(20));
-		Set<BigInteger> allShrunkValues = ArbitraryTestHelper.allShrunkValues(shrinker, BigInteger.valueOf(10));
+		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
+				BigInteger.valueOf(9), //
 				BigInteger.valueOf(8), //
 				BigInteger.valueOf(7), //
 				BigInteger.valueOf(6), //
 				BigInteger.valueOf(5) //
+			);
+	}
+
+	@Example
+	void shrinkCandidatesApproachTargetAndShrinkValueWithFibbonacciDistance() {
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(0), BigInteger.valueOf(100));
+		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(90));
+		assertThat(allShrunkValues)
+			.containsExactlyInAnyOrder(
+				BigInteger.valueOf(0), //
+				BigInteger.valueOf(1), //
+				BigInteger.valueOf(2), //
+				BigInteger.valueOf(3), //
+				BigInteger.valueOf(5), //
+				BigInteger.valueOf(8), //
+				BigInteger.valueOf(13), //
+				BigInteger.valueOf(21), //
+				BigInteger.valueOf(34), //
+				BigInteger.valueOf(55), //
+				BigInteger.valueOf(90 - 1), //
+				BigInteger.valueOf(90 - 2), //
+				BigInteger.valueOf(90 - 3), //
+				BigInteger.valueOf(90 - 5), //
+				BigInteger.valueOf(90 - 8), //
+				BigInteger.valueOf(90 - 13), //
+				BigInteger.valueOf(90 - 21), //
+				BigInteger.valueOf(90 - 34), //
+				BigInteger.valueOf(90 - 55) //
 			);
 	}
 
