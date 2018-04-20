@@ -14,7 +14,13 @@ class ShrinkingExamples {
 		return aString.length() > 5 || aString.length() < 2;
 	}
 
-	@Property(seed="0")
+	@Property(reporting = Reporting.FALSIFIED)
+	boolean shouldShrinkToAAH(@ForAll("first") String first) {
+		return first.length() != 3;
+	}
+
+
+	@Property(seed="2", reporting = Reporting.GENERATED)
 	boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") String second) {
 		String aString = first + second;
 		return aString.length() > 5 || aString.length() < 4;
