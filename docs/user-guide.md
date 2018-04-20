@@ -1566,6 +1566,29 @@ void aPropertyWithLongShrinkingTimes(
 ) {	... }
 ```
 
+### Switch Shrinking to Full Mode
+
+Sometimes you can find a message similar to
+
+```
+shrinking bound reached =
+    steps : 1000
+    original value : [blah blah blah ...]
+    shrunk value   : [bl bl bl ...]
+```
+
+in your testrun's output.
+This happens in rare cases when _jqwik_ has not found the end of its search for
+simpler falsifiable values after 1000 iterations. In those cases you
+can try
+
+```java
+@Property(shrinking = ShrinkingMode.FULL)
+```
+
+to tell _jqwik_ to go all the way, even if it takes a million steps,
+even if it never ends...
+
 ## Collecting and Reporting Statistics
 
 In many situations you'd like to know if _jqwik_ will really generate
