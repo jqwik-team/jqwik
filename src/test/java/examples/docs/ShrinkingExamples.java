@@ -14,10 +14,10 @@ class ShrinkingExamples {
 		return aString.length() > 5 || aString.length() < 2;
 	}
 
-	@Property
+	@Property(seed="0")
 	boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") String second) {
 		String aString = first + second;
-		return aString.length() > 5 || aString.length() < 2;
+		return aString.length() > 5 || aString.length() < 4;
 	}
 
 	@Provide
