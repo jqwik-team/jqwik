@@ -23,11 +23,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'net.jqwik'
-version = '0.8.10-SNAPSHOT'
+version = '0.8.10'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.8.10-SNAPSHOT'
+	version = '0.8.10'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
@@ -156,5 +156,5 @@ dependencies {
 
 task wrapper(type: Wrapper) {
 	description = 'Generates gradlew[.bat] scripts'
-	gradleVersion = '4.6'
+	gradleVersion = '4.7'
 }

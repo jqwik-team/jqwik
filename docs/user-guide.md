@@ -68,6 +68,7 @@ Volunteers for polishing and extending it are more than welcome._
 - [Result Shrinking](#result-shrinking)
   - [Integrated Shrinking](#integrated-shrinking)
   - [Switch Shrinking Off](#switch-shrinking-off)
+  - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
 - [Running and Configuration](#running-and-configuration)
   - [jqwik Configuration](#jqwik-configuration)
@@ -78,7 +79,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
-  - [0.8.10-SNAPSHOT](#0810-snapshot)
+  - [0.8.10](#0810)
   - [0.8.9](#089)
   - [0.8.8](#088)
   - [0.8.7](#087)
@@ -132,8 +133,8 @@ repositories {
 ext.junitPlatformVersion = '1.1.1'
 ext.junitJupiterVersion = '5.1.1'
 
-ext.jqwikVersion = '0.8.9'
-#ext.jqwikVersion = '0.8.10-SNAPSHOT'
+ext.jqwikVersion = '0.8.10'
+#ext.jqwikVersion = '0.8.11-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -187,7 +188,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.9</version>
+        <version>0.8.10</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -213,9 +214,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.9.jar`
-- `junit-platform-engine-1.1.0.jar`
-- `junit-platform-commons-1.1.0.jar`
+- `jqwik-0.8.10.jar`
+- `junit-platform-engine-1.1.1.jar`
+- `junit-platform-commons-1.1.1.jar`
 - `opentest4j-1.0.0.jar`
 - `assertj-core-3.9.x.jar` in case you need assertion support
 
@@ -1916,7 +1917,7 @@ in a separate article...
 
 ## Release Notes
 
-### 0.8.10-SNAPSHOT
+### 0.8.10
 
 - Fixed shrinking bug that could result in integers not being shrunk
   as far as possible
