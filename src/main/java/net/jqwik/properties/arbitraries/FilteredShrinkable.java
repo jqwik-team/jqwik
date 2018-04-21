@@ -1,11 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
+import net.jqwik.api.*;
+import net.jqwik.properties.*;
+
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 public class FilteredShrinkable<T> implements Shrinkable<T> {
 	private final Shrinkable<T> toFilter;
@@ -18,12 +18,16 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
-		Set<ShrinkResult<Shrinkable<T>>> branches = toFilter.shrinkNext(falsifier) //
-															.stream() //
-															.map(shrinkResult -> shrinkResult //
-						.map(shrinkable -> (Shrinkable<T>) new FilteredShrinkable<>(shrinkable, filterPredicate))) //
-															.collect(Collectors.toSet());
+		Set<ShrinkResult<Shrinkable<T>>> branches =
+			toFilter.shrinkNext(falsifier) //
+					.stream() //
+					.map(shrinkResult -> shrinkResult.map(this::asFilteredShrinkable)) //
+					.collect(Collectors.toSet());
 		return firstFalsifiedFitPerBranch(branches, falsifier);
+	}
+
+	private Shrinkable<T> asFilteredShrinkable(Shrinkable<T> shrinkable) {
+		return new FilteredShrinkable<>(shrinkable, filterPredicate);
 	}
 
 	private Set<ShrinkResult<Shrinkable<T>>> firstFalsifiedFitPerBranch(Set<ShrinkResult<Shrinkable<T>>> branches,

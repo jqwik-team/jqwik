@@ -28,12 +28,12 @@ class ShrinkingFilterExamples {
 						  .filter(string -> string.length() >= 1);
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property(seed = "-8252575718510288250", reporting = Reporting.GENERATED)
 	boolean shouldShrinkToAAH(@ForAll("aVariableString") String aString) {
 		return aString.length() > 4 || aString.length() < 3;
 	}
 
-	@Provide
+	@Provide()
 	Arbitrary<String> aVariableString() {
 		return Arbitraries.strings() //
 						  .withCharRange('a', 'z') //
