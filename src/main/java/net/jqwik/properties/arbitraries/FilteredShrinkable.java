@@ -18,11 +18,11 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
+		Set<ShrinkResult<Shrinkable<T>>> candidates = toFilter.shrinkNext(falsifier);
 		Set<ShrinkResult<Shrinkable<T>>> branches =
-			toFilter.shrinkNext(falsifier) //
-					.stream() //
-					.map(shrinkResult -> shrinkResult.map(this::asFilteredShrinkable)) //
-					.collect(Collectors.toSet());
+			candidates.stream() //
+					  .map(shrinkResult -> shrinkResult.map(this::asFilteredShrinkable)) //
+					  .collect(Collectors.toSet());
 		return firstFalsifiedFitPerBranch(branches, falsifier);
 	}
 
@@ -38,7 +38,7 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 				fits.add(branch);
 			else {
 				Set<ShrinkResult<Shrinkable<T>>> newBranches = branch.shrunkValue().shrinkNext(falsifier);
-				fits.addAll(firstFalsifiedFitPerBranch(newBranches, falsifier));
+				fits.addAll(newBranches);
 			}
 		}
 		return fits;

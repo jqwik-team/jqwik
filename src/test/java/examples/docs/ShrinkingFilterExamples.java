@@ -4,8 +4,9 @@ import net.jqwik.api.*;
 
 class ShrinkingFilterExamples {
 
-	@Property(seed = "2", reporting = Reporting.GENERATED)
-	boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") String second) {
+	@Property(seed = "2")
+	// Different seeds result in fast shrinking
+	boolean shrinkingCanTakeAVeryLongTime(@ForAll("first") String first, @ForAll("second") String second) {
 		String aString = first + second;
 		return aString.length() > 5 || aString.length() < 4;
 	}
@@ -29,7 +30,7 @@ class ShrinkingFilterExamples {
 	}
 
 	@Property(seed = "-8252575718510288250", reporting = Reporting.GENERATED)
-	boolean shouldShrinkToAAH(@ForAll("aVariableString") String aString) {
+	boolean shouldShrinkToBAH_butDoesNot(@ForAll("aVariableString") String aString) {
 		return aString.length() > 4 || aString.length() < 3;
 	}
 
@@ -39,8 +40,8 @@ class ShrinkingFilterExamples {
 						  .withCharRange('a', 'z') //
 						  .ofMinLength(1) //
 						  .ofMaxLength(10) //
-						  .filter(string -> string.endsWith("h"));
-//						  .filter(string -> string.charAt(0) > 'a');
+						  .filter(string -> string.endsWith("h"))
+						  .filter(string -> string.charAt(0) > 'a');
 	}
 
 }
