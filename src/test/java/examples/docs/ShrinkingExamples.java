@@ -14,12 +14,6 @@ class ShrinkingExamples {
 		return aString.length() > 5 || aString.length() < 2;
 	}
 
-	@Property(reporting = Reporting.FALSIFIED)
-	boolean shouldShrinkToAAH(@ForAll("first") String first) {
-		return first.length() != 3;
-	}
-
-
 	@Property(seed="2", reporting = Reporting.GENERATED)
 	boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") String second) {
 		String aString = first + second;
@@ -38,6 +32,20 @@ class ShrinkingExamples {
 	@Provide
 	Arbitrary<String> second() {
 		return Arbitraries.strings().withCharRange('0', '9').ofMinLength(0).ofMaxLength(10).filter(string -> string.length() >= 1);
+	}
+
+	@Property(reporting = Reporting.FALSIFIED)
+	boolean shouldShrinkToAAH(@ForAll("aVariableString") String aString) {
+		return aString.length() > 3 || aString.length() < 2;
+	}
+
+	@Provide
+	Arbitrary<String> aVariableString() {
+		return Arbitraries.strings() //
+						  .withCharRange('a', 'z') //
+						  .ofMinLength(1) //
+						  .ofMaxLength(10) //
+						  .filter(string -> string.endsWith("h"));
 	}
 
 	@Property(shrinking = ShrinkingMode.OFF)
