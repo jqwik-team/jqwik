@@ -1,3 +1,5 @@
+- Shrinking bug
+  examples.doc.ShrinkingFilterExamples.shouldShrinkToBAH_butDoesNot
 - Reporting.FALSIFIED bug
   In the context of filtering FALSIFIED value are reported that
   are not valid in the first place

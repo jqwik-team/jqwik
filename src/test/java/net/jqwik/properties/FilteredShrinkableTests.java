@@ -46,7 +46,7 @@ class FilteredShrinkableTests {
 			Set<ShrinkResult<Shrinkable<Integer>>> shrinkResults = shrinkableDivisibleBy10.shrinkNext(falsifyEverything);
 
 			Set<Integer> shrinkValues = toValues(shrinkResults);
-			Assertions.assertThat(shrinkValues).containsExactlyInAnyOrder(0, 10, 20, 30);
+			Assertions.assertThat(shrinkValues).containsExactlyInAnyOrder(0);
 		}
 
 	}

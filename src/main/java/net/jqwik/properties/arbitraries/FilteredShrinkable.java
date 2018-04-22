@@ -23,24 +23,35 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 			candidates.stream() //
 					  .map(shrinkResult -> shrinkResult.map(this::asFilteredShrinkable)) //
 					  .collect(Collectors.toSet());
-		return firstFalsifiedFitPerBranch(branches, falsifier);
+		return minDistanceFalsifiedFitsPerBranch(branches, falsifier);
 	}
 
 	private Shrinkable<T> asFilteredShrinkable(Shrinkable<T> shrinkable) {
 		return new FilteredShrinkable<>(shrinkable, filterPredicate);
 	}
 
-	private Set<ShrinkResult<Shrinkable<T>>> firstFalsifiedFitPerBranch(Set<ShrinkResult<Shrinkable<T>>> branches,
-																		Predicate<T> falsifier) {
+	private Set<ShrinkResult<Shrinkable<T>>> minDistanceFalsifiedFitsPerBranch(
+		Set<ShrinkResult<Shrinkable<T>>> branches,
+		Predicate<T> falsifier
+	) {
 		Set<ShrinkResult<Shrinkable<T>>> fits = new HashSet<>();
+		Set<ShrinkResult<Shrinkable<T>>> nonFits = new HashSet<>();
 		for (ShrinkResult<Shrinkable<T>> branch : branches) {
 			if (filterPredicate.test(branch.shrunkValue().value()))
 				fits.add(branch);
 			else {
-				Set<ShrinkResult<Shrinkable<T>>> newBranches = branch.shrunkValue().shrinkNext(falsifier);
-				fits.addAll(newBranches);
+				nonFits.add(branch);
 			}
 		}
+		ShrinkingHelper
+			.minDistanceStream(nonFits)
+			.forEach(nonFit -> {
+				Set<ShrinkResult<Shrinkable<T>>> newBranches = nonFit.shrunkValue().shrinkNext(falsifier);
+				ShrinkingHelper
+					.minDistanceStream(newBranches)
+					.forEach(fits::add);
+			});
+
 		return fits;
 	}
 
