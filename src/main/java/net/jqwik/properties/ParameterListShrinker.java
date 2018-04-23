@@ -41,8 +41,20 @@ public class ParameterListShrinker<T> {
 	private ShrinkResult<Shrinkable<T>> shrinkPosition(int position, ArrayList<Shrinkable<T>> shrinkables, Predicate<List<T>> forAllFalsifier) {
 		Shrinkable<T> currentShrinkable = shrinkables.get(position);
 		Predicate<T> elementFalsifier = createFalsifierForPosition(position, shrinkables, forAllFalsifier);
-		ValueShrinker<T> shrinker = new ValueShrinker<>(currentShrinkable, reporter, shrinkingMode);
+		Consumer<T> falsifiedReporter = createFalsifiedReporter(position, shrinkables);
+		ValueShrinker<T> shrinker = new ValueShrinker<>(currentShrinkable, reporter, shrinkingMode, falsifiedReporter);
 		return shrinker.shrink(elementFalsifier, null);
+	}
+
+	private Consumer<T> createFalsifiedReporter(int position, ArrayList<Shrinkable<T>> shrinkables) {
+		if (!isFalsifiedReportingSwitchedOn()) {
+			return ignore -> {};
+		}
+		return value -> {
+			List<T> parametersToDisplay = shrinkablesToValues(shrinkables);
+			parametersToDisplay.set(position, value);
+			reportFalsifiedParams(parametersToDisplay);
+		};
 	}
 
 	public Set<ShrinkResult<List<Shrinkable<T>>>> shrinkNext(Predicate<List<T>> forAllFalsifier) {
@@ -70,7 +82,7 @@ public class ParameterListShrinker<T> {
 
 	private Predicate<T> createFalsifierForPosition(int position, List<Shrinkable<T>> shrinkables, Predicate<List<T>> forAllFalsifier) {
 		return param -> {
-			List<T> effectiveParams = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+			List<T> effectiveParams = shrinkablesToValues(shrinkables);
 			effectiveParams.set(position, param);
 			try {
 				return forAllFalsifier.test(effectiveParams);
@@ -80,12 +92,14 @@ public class ParameterListShrinker<T> {
 		};
 	}
 
-	// Currently not used because Reporting.FALSIFIED functionality removed
+	private List<T> shrinkablesToValues(List<Shrinkable<T>> shrinkables) {
+		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+	}
+
 	private void reportFalsifiedParams(List<T> effectiveParams) {
 		reporter.accept(ReportEntry.from("falsified", JqwikStringSupport.displayString(effectiveParams)));
 	}
 
-	// Currently not used because Reporting.FALSIFIED functionality removed
 	private boolean isFalsifiedReportingSwitchedOn() {
 		return Reporting.FALSIFIED.containedIn(reporting);
 	}

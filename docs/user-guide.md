@@ -345,8 +345,8 @@ annotation has a few optional values:
 - `Reporting[] reporting`: You can switch on additional reporting aspects. 
   by specifying one or more of the following `Reporting` values:
   - `Reporting.GENERATED` will report each generated set of parameters.
-  <!-- - `Reporting.FALSIFIED` will report each falsified set of parameters  -->
-  <!-- during shrinking. -->
+  - `Reporting.FALSIFIED` will report _some_ falsified sets of parameters
+    during shrinking.
   
   The default is _no_ additional reporting aspects are switched on.
 
@@ -1919,7 +1919,7 @@ in a separate article...
 
 ### 0.8.11-SNAPSHOT
 
-- Removed functionality behind `Reporting.FALSIFIED` because it did the wrong thing :-(
+- Reporting with `Reporting.FALSIFIED` now reports much less, and hopefully no wrong values anymore.
 
 ### 0.8.10
 

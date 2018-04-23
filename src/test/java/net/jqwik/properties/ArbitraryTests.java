@@ -285,7 +285,8 @@ class ArbitraryTests {
 			assertThat(value5.value()).isGreaterThanOrEqualTo(5);
 			assertThat(value5.value()).isLessThanOrEqualTo(100);
 
-			ShrinkResult<Shrinkable<Integer>> result = new ValueShrinker<>(value5, ignore -> {}, ShrinkingMode.FULL).shrink(MockFalsifier.falsifyAll(), null);
+			ShrinkResult<Shrinkable<Integer>> result = new ValueShrinker<>(value5, ignore -> {}, ShrinkingMode.FULL, ignore -> {})
+				.shrink(MockFalsifier.falsifyAll(), null);
 			assertThat(result.shrunkValue().value()).isEqualTo(1);
 
 		}

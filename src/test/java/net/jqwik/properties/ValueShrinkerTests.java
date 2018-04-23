@@ -16,7 +16,7 @@ class ValueShrinkerTests {
 
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyAll();
 		AssertionError originalError = new AssertionError();
-		ValueShrinker<String> singleValueShrinker = new ValueShrinker<>(unshrinkable, ignore -> {}, ShrinkingMode.FULL);
+		ValueShrinker<String> singleValueShrinker = new ValueShrinker<>(unshrinkable, ignore -> {}, ShrinkingMode.FULL, ignore -> {});
 
 		ShrinkResult<Shrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier, originalError);
 		assertThat(shrinkResult.shrunkValue()).isSameAs(unshrinkable);
@@ -27,7 +27,7 @@ class ValueShrinkerTests {
 	void shrinkSingletonShrinkSetToFalsifiedValueWithLowestDistance() {
 		Shrinkable<Integer> shrinkable = ArbitraryTestHelper.shrinkableInteger(10);
 		MockFalsifier<Integer> falsifier = MockFalsifier.falsifyWhen(anInt -> anInt < 3);
-		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL);
+		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL, ignore -> {});
 		ShrinkResult<Shrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(3);
 		assertThat(shrinkResult.throwable()).isNotPresent();
@@ -37,7 +37,7 @@ class ValueShrinkerTests {
 	void shrinkMultiShrinkSetToFalsifiedValueWithLowestDistance() {
 		Shrinkable<String> shrinkable = ArbitraryTestHelper.shrinkableString("hello this is a longer sentence.");
 		MockFalsifier<String> falsifier = MockFalsifier.falsifyWhen(aString -> aString.length() < 3 || !aString.startsWith("h"));
-		ValueShrinker<String> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL);
+		ValueShrinker<String> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL, ignore -> {});
 		ShrinkResult<Shrinkable<String>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo("haa");
 		assertThat(shrinkResult.throwable()).isNotPresent();
@@ -50,7 +50,7 @@ class ValueShrinkerTests {
 			Assertions.assertThat(anInt).isEqualTo(0);
 			return true;
 		};
-		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL);
+		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL, ignore -> {});
 		ShrinkResult<Shrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(1);
 		assertThat(shrinkResult.throwable()).isPresent();
@@ -64,7 +64,7 @@ class ValueShrinkerTests {
 			Assumptions.assumeThat(anInt % 2 == 0);
 			return anInt < 3;
 		};
-		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL);
+		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, ignore -> {}, ShrinkingMode.FULL, ignore -> {});
 		ShrinkResult<Shrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(falsifier, null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(4);
 		assertThat(shrinkResult.throwable()).isNotPresent();
@@ -75,7 +75,7 @@ class ValueShrinkerTests {
 		Shrinkable<Integer> shrinkable = ArbitraryTestHelper.shrinkableInteger(2000);
 		ReportEntry[] lastEntry = new ReportEntry[1];
 		Consumer<ReportEntry> reporter = entry -> {lastEntry[0] = entry;};
-		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, reporter, ShrinkingMode.BOUNDED);
+		ValueShrinker<Integer> singleValueShrinker = new ValueShrinker<>(shrinkable, reporter, ShrinkingMode.BOUNDED, ignore -> {});
 		ShrinkResult<Shrinkable<Integer>> shrinkResult = singleValueShrinker.shrink(MockFalsifier.falsifyAll(), null);
 		assertThat(shrinkResult.shrunkValue().value()).isEqualTo(1000);
 		assertThat(lastEntry[0].getKeyValuePairs()).containsKeys("shrinking bound reached");

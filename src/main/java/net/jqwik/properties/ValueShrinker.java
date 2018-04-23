@@ -13,11 +13,13 @@ public class ValueShrinker<T> {
 	private final Shrinkable<T> shrinkable;
 	private final Consumer<ReportEntry> reporter;
 	private final ShrinkingMode shrinkingMode;
+	private final Consumer<T> falsifiedReporter;
 
-	public ValueShrinker(Shrinkable<T> shrinkable, Consumer<ReportEntry> reporter, ShrinkingMode shrinkingMode) {
+	public ValueShrinker(Shrinkable<T> shrinkable, Consumer<ReportEntry> reporter, ShrinkingMode shrinkingMode, Consumer<T> falsifiedReporter) {
 		this.shrinkable = shrinkable;
 		this.reporter = reporter;
 		this.shrinkingMode = shrinkingMode;
+		this.falsifiedReporter = falsifiedReporter;
 	}
 
 	public ShrinkResult<Shrinkable<T>> shrink(Predicate<T> falsifier, Throwable originalError) {
@@ -32,7 +34,8 @@ public class ValueShrinker<T> {
 			.stream() //
 			.filter(shrinkResult -> !isViolatedAssumption(shrinkResult)) //
 			.sorted(Comparator.comparingInt(result -> result.shrunkValue().distance())) //
-			.findFirst().orElse(ShrinkResult.of(shrinkable, originalError));
+			.findFirst()
+			.orElse(ShrinkResult.of(shrinkable, originalError));
 	}
 
 	private boolean isViolatedAssumption(ShrinkResult<Shrinkable<T>> shrinkResult) {
@@ -56,6 +59,7 @@ public class ValueShrinker<T> {
 			ShrinkingHelper
 				.minDistanceStream(toTry) //
 				.limit(10) // This is a more or less random value to constrain the number of options considered
+				.peek(a -> falsifiedReporter.accept(a.shrunkValue().value()))
 				.forEach(shrinkResult -> {
 					allFalsified.add(shrinkResult);
 					toTryNext.addAll(shrinkResult.shrunkValue().shrinkNext(falsifier));

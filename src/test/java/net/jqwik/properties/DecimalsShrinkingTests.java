@@ -102,7 +102,7 @@ class DecimalsShrinkingTests {
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-100", max = "100") @Scale(15) BigDecimal aValue) {
 		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-100.0), new BigDecimal(100.0), 15);
 		ShrinkableValue<BigDecimal> shrinkableValue = new ShrinkableValue<>(aValue, shrinker);
-		ValueShrinker<BigDecimal> valueShrinker = new ValueShrinker<>(shrinkableValue, ignore -> {}, ShrinkingMode.FULL);
+		ValueShrinker<BigDecimal> valueShrinker = new ValueShrinker<>(shrinkableValue, ignore -> {}, ShrinkingMode.FULL, ignore -> {});
 		BigDecimal shrunkValue = valueShrinker.shrink(MockFalsifier.falsifyAll(), null).shrunkValue().value();
 		assertThat(shrunkValue).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.ZERO)); // can be + or - 0.0
 	}

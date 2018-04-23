@@ -5,10 +5,6 @@
   examples.doc.ShrinkingFilterExamples.withAssumption_shouldShrinkToCCH_butDoesNotShrinkAtAll
   Should work the same as with filtering?
 
-- Reporting.FALSIFIED
-  Introduce new implementation for reporting falsified values
-  - Maybe in ParameterListShrinker.shrinkPosition? Only top-level shrinking?
-
 - Refactor GenericTypeTests
   - More tests for creation from parameters with wildcards and type variables
 

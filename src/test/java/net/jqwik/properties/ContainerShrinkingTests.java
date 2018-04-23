@@ -181,6 +181,6 @@ class ContainerShrinkingTests {
 	}
 
 	private <T> ShrinkResult<Shrinkable<T>> shrink(Shrinkable<T> toShrink, Predicate<T> falsifier, Throwable originalError) {
-		return new ValueShrinker<T>(toShrink, ignore -> {}, ShrinkingMode.FULL).shrink(falsifier, originalError);
+		return new ValueShrinker<T>(toShrink, ignore -> {}, ShrinkingMode.FULL, ignore -> {}).shrink(falsifier, originalError);
 	}
 }
