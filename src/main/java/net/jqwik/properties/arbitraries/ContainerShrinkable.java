@@ -34,11 +34,12 @@ public class ContainerShrinkable<T, E> implements Shrinkable<T> {
 	@Override
 	public Set<ShrinkResult<Shrinkable<T>>> shrinkNext(Predicate<T> falsifier) {
 		Set<List<Shrinkable<E>>> candidates = listShrinker.nextCandidates(elements);
-		Set<ShrinkResult<Shrinkable<T>>> shrunkList = candidates.stream() //
-				.map(shrunkValue -> SafeFalsifier.falsify(falsifier, new ContainerShrinkable<>(shrunkValue, containerCreator, minSize))) //
-				.filter(optional -> optional.isPresent()) //
-				.map(optional -> optional.get()) //
-				.collect(Collectors.toSet());
+		Set<ShrinkResult<Shrinkable<T>>> shrunkList =
+			candidates.stream() //
+					  .map(shrunkValue -> SafeFalsifier.falsify(falsifier, new ContainerShrinkable<>(shrunkValue, containerCreator, minSize))) //
+					  .filter(Optional::isPresent) //
+					  .map(Optional::get) //
+					  .collect(Collectors.toSet());
 		nextShrinkElements(falsifier) //
 				.map(shrinkResult -> shrinkResult
 						.map(shrunkValue -> (Shrinkable<T>) new ContainerShrinkable<>(shrunkValue, containerCreator, minSize))) //
