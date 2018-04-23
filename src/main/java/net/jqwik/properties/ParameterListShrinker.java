@@ -73,25 +73,19 @@ public class ParameterListShrinker<T> {
 			List<T> effectiveParams = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 			effectiveParams.set(position, param);
 			try {
-
-				boolean verified = forAllFalsifier.test(effectiveParams);
-				if (!verified && isFalsifiedReportingSwitchedOn()) {
-					reportFalsifiedParams(effectiveParams);
-				}
-				return verified;
+				return forAllFalsifier.test(effectiveParams);
 			} catch (Throwable throwable) {
-				if (isFalsifiedReportingSwitchedOn()) {
-					reportFalsifiedParams(effectiveParams);
-				}
 				throw throwable;
 			}
 		};
 	}
 
+	// Currently not used because Reporting.FALSIFIED functionality removed
 	private void reportFalsifiedParams(List<T> effectiveParams) {
 		reporter.accept(ReportEntry.from("falsified", JqwikStringSupport.displayString(effectiveParams)));
 	}
 
+	// Currently not used because Reporting.FALSIFIED functionality removed
 	private boolean isFalsifiedReportingSwitchedOn() {
 		return Reporting.FALSIFIED.containedIn(reporting);
 	}
