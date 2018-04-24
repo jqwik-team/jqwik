@@ -11,8 +11,8 @@ import static org.assertj.core.api.Assertions.*;
 @Group
 class NShrinkingTests {
 
-	AtomicInteger counter = new AtomicInteger(0);
-	Runnable count = counter::incrementAndGet;
+	private AtomicInteger counter = new AtomicInteger(0);
+	private Runnable count = counter::incrementAndGet;
 
 	@Group
 	class ShrinkableWithSimpleSequence {
@@ -23,21 +23,21 @@ class NShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			NShrinkingSequence<Integer> shrinker = new NShrinkingSequence<>(shrinkable, anInt -> false);
-			assertThat(shrinker.currentBest()).isEqualTo(shrinkable);
+			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> false);
+			assertThat(sequence.currentBest()).isEqualTo(shrinkable);
 
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(4);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(3);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(2);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(1);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(0);
-			assertThat(shrinker.next(count)).isFalse();
-			assertThat(shrinker.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(4);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(3);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(1);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.currentBest().value()).isEqualTo(0);
 
 			assertThat(counter.get()).isEqualTo(5);
 		}
@@ -48,16 +48,16 @@ class NShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			NShrinkingSequence<Integer> shrinker = new NShrinkingSequence<>(shrinkable, anInt -> anInt < 2);
+			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> anInt < 2);
 
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(4);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(3);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(2);
-			assertThat(shrinker.next(count)).isFalse();
-			assertThat(shrinker.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(4);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(3);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.currentBest().value()).isEqualTo(2);
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -68,19 +68,19 @@ class NShrinkingTests {
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			NShrinkingSequence<Integer> shrinker = new NShrinkingSequence<>(shrinkable, falsifier.withFilter(onlyEvenNumbers));
+			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, falsifier.withFilter(onlyEvenNumbers));
 
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(10);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(8);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(8);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(6);
-			assertThat(shrinker.next(count)).isTrue();
-			assertThat(shrinker.currentBest().value()).isEqualTo(6);
-			assertThat(shrinker.next(count)).isFalse();
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(10);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(8);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(8);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(6);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.currentBest().value()).isEqualTo(6);
+			assertThat(sequence.next(count)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(5);
 		}
