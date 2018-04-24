@@ -45,7 +45,7 @@ class ShrinkingFilterExamples {
 	}
 
 	@Property
-	boolean withAssumption_shouldShrinkToCCH_butDoesNotShrinkAtAll(@ForAll("aVariableString") String aString) {
+	boolean withAssumption_shouldShrinkToCCH_butDoesNot(@ForAll("aVariableString") String aString) {
 		Assume.that(!aString.contains("a") && !aString.contains("b"));
 		return aString.length() > 4 || aString.length() < 3;
 	}

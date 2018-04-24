@@ -1920,6 +1920,7 @@ in a separate article...
 ### 0.8.11-SNAPSHOT
 
 - Reporting with `Reporting.FALSIFIED` now reports much less, and hopefully no wrong values anymore.
+- Shrinking with filtered values finds simpler values in some circumstance
 
 ### 0.8.10
 

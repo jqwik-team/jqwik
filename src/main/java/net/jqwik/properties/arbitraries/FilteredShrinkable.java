@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.*;
+import org.opentest4j.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -37,7 +38,7 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 		Set<ShrinkResult<Shrinkable<T>>> fits = new HashSet<>();
 		Set<ShrinkResult<Shrinkable<T>>> nonFits = new HashSet<>();
 		for (ShrinkResult<Shrinkable<T>> branch : branches) {
-			if (filterPredicate.test(branch.shrunkValue().value()))
+			if (branchFits(branch))
 				fits.add(branch);
 			else {
 				nonFits.add(branch);
@@ -53,6 +54,12 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 			});
 
 		return fits;
+	}
+
+	private boolean branchFits(ShrinkResult<Shrinkable<T>> branch) {
+		if (branch.throwable().isPresent() && branch.throwable().get() instanceof TestAbortedException)
+			return false;
+		return filterPredicate.test(branch.shrunkValue().value());
 	}
 
 	@Override
