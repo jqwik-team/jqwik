@@ -27,4 +27,9 @@ public abstract class NShrinkableValue<T> implements NShrinkable<T> {
 	public int hashCode() {
 		return value.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return String.format("%s(%s:%s)", getClass().getSimpleName(), value(), distance());
+	}
 }
