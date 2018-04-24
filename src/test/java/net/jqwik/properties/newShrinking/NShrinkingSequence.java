@@ -3,6 +3,7 @@ package net.jqwik.properties.newShrinking;
 import org.opentest4j.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class NShrinkingSequence<T> {
 	private final Falsifier<T> falsifier;
@@ -19,22 +20,38 @@ public class NShrinkingSequence<T> {
 	public boolean next(Runnable count) {
 		if (!lastStepSuccessful)
 			return false;
+
+		lastStepSuccessful = false;
+
 		Set<NShrinkable<T>> candidates = searchBase.shrink();
-		Optional<FalsificationResult<T>> newBest = candidates
+		List<FalsificationResult<T>> nextBase = candidates
 			.stream()
 			.sorted()
 			.map(this::falsify)
 			.filter(result -> result.status() != FalsificationResult.Status.NOT_FALSIFIED)
-			.findFirst();
+			.peek(result -> lastStepSuccessful = true)
+			.collect(Collectors.toList());
 
-		lastStepSuccessful = newBest.isPresent();
-		if (lastStepSuccessful) {
-			count.run();
-			searchBase = newBest.get().shrinkable();
-			if (newBest.get().status() == FalsificationResult.Status.FALSIFIED) {
-				this.currentBest = newBest.get().shrinkable();
-			}
-		}
+		nextBase
+			.stream()
+			.filter(result -> result.status() == FalsificationResult.Status.FALSIFIED)
+			.findFirst()
+			.ifPresent(result -> {
+				count.run();
+				this.currentBest = result.shrinkable();
+				this.searchBase = this.currentBest;
+			});
+
+		nextBase
+			.stream()
+			.filter(result -> result.status() == FalsificationResult.Status.FILTERED)
+			.findFirst()
+			.ifPresent(result -> {
+				count.run();
+				lastStepSuccessful = true;
+				searchBase = result.shrinkable();
+			});
+
 		return lastStepSuccessful;
 	}
 
