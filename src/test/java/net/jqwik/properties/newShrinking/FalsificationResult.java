@@ -9,7 +9,7 @@ public class FalsificationResult<T> implements Comparable<FalsificationResult<T>
 	private final Throwable throwable;
 
 	public enum Status {
-		FALSIFIED, NOT_FALSIFIED, FILTERED
+		FALSIFIED, VERIFIED, FILTERED_OUT
 	}
 
 	public static <T> FalsificationResult<T> falsified(NShrinkable<T> shrinkable, Throwable throwable) {
@@ -18,11 +18,11 @@ public class FalsificationResult<T> implements Comparable<FalsificationResult<T>
 
 
 	public static <T> FalsificationResult<T> notFalsified(NShrinkable<T> shrinkable) {
-		return new FalsificationResult<>(shrinkable, Status.NOT_FALSIFIED, null);
+		return new FalsificationResult<>(shrinkable, Status.VERIFIED, null);
 	}
 
 	public static <T> FalsificationResult<T> filtered(NShrinkable<T> shrinkable) {
-		return new FalsificationResult<>(shrinkable, Status.FILTERED, null);
+		return new FalsificationResult<>(shrinkable, Status.FILTERED_OUT, null);
 	}
 
 	private FalsificationResult(NShrinkable<T> shrinkable, Status status, Throwable throwable) {

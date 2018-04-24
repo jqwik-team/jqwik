@@ -28,7 +28,7 @@ public class NShrinkingSequence<T> {
 			.stream()
 			.sorted()
 			.map(this::falsify)
-			.filter(result -> result.status() != FalsificationResult.Status.NOT_FALSIFIED)
+			.filter(result -> result.status() != FalsificationResult.Status.VERIFIED)
 			.peek(result -> lastStepSuccessful = true)
 			.collect(Collectors.toList());
 
@@ -44,7 +44,7 @@ public class NShrinkingSequence<T> {
 
 		nextBase
 			.stream()
-			.filter(result -> result.status() == FalsificationResult.Status.FILTERED)
+			.filter(result -> result.status() == FalsificationResult.Status.FILTERED_OUT)
 			.findFirst()
 			.ifPresent(result -> {
 				count.run();
