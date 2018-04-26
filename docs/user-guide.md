@@ -555,14 +555,14 @@ depending on the requested parameter type.
    
 #### String Length
 
-If Strings are not constrained a standard set of alphanumeric characters and a few other chars is used.
-
 - [`@StringLength(int value = 0, int min = 0, int max = 0)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/StringLength.html):
   Set either fixed length through `value` or configure the length range between `min` and `max`.
 
 #### Character Sets
 
-The following constraints can be combined with each other:
+By default any unicode character might be generated.
+You can use the following annotations to restrict the set of allowed characters and even
+combine several of them:
 
 - `@Chars(chars[] value = {})`: Specify a set of characters.
   This annotation can be repeated which will add up all allowed chars.
@@ -1921,6 +1921,7 @@ in a separate article...
 
 - Reporting with `Reporting.FALSIFIED` now reports much less, and hopefully no wrong values anymore.
 - Shrinking with filtered values finds simpler values in some circumstance
+- Generation of strings will allow any unicode character by default
 
 ### 0.8.10
 

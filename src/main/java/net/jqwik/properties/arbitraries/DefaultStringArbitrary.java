@@ -16,7 +16,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	private int maxLength = DEFAULT_MAX_LENGTH;
 
 	private CharacterArbitrary defaultCharacterArbitrary() {
-		return Arbitraries.chars().ascii();
+		return Arbitraries.chars().all();
 	}
 
 	@Override

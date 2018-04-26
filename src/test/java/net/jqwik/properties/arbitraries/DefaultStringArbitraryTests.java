@@ -10,12 +10,10 @@ class DefaultStringArbitraryTests {
 	StringArbitrary arbitrary = new DefaultStringArbitrary();
 
 	@Example
-	void perDefaultOnlyAsciiCharactersAreCreated() {
+	void perDefaultAllUnicodeCharactersAreCreated() {
 		assertAllGenerated(arbitrary.generator(10), s -> {
-			return s.chars().allMatch(c -> c <= DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT);
+			return s.chars().allMatch(c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
 		});
-		assertAtLeastOneGenerated(arbitrary.generator(10),
-				s -> s.contains(Character.toString((char) DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT)));
 	}
 
 	@Example
