@@ -198,6 +198,32 @@ class NShrinkingTests {
 
 	}
 
+	@Group
+	class ListShrinkable {
+
+		@Example
+		void shrinkDownAllTheWay() {
+			List<NShrinkable<Integer>> elementShrinkables = Arrays.asList( //
+				new OneStepShrinkable(0), //
+				new OneStepShrinkable(1), //
+				new OneStepShrinkable(2) //
+			);
+			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
+
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(1);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(0);
+			assertThat(sequence.next(count)).isFalse();
+
+			assertThat(counter.get()).isEqualTo(2);
+		}
+
+	}
+
 	private static class OneStepShrinkable extends NShrinkableValue<Integer> {
 		OneStepShrinkable(int integer) {
 			super(integer);
