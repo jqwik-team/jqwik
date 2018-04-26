@@ -14,4 +14,8 @@ public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 	default int compareTo(NShrinkable<T> other) {
 		return this.distance().compareTo(other.distance());
 	}
+
+	default boolean isSmallerThan(NShrinkable<T> other) {
+		return this.distance().compareTo(other.distance()) < 0;
+	}
 }

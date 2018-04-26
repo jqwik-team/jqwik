@@ -45,6 +45,7 @@ public class NShrinkingSequence<T> {
 		nextBase
 			.stream()
 			.filter(result -> result.status() == FalsificationResult.Status.FILTERED_OUT)
+			.filter(result -> result.shrinkable().isSmallerThan(currentBest))
 			.findFirst()
 			.ifPresent(result -> {
 				count.run();
