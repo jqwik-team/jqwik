@@ -24,21 +24,21 @@ class NShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> false);
-			assertThat(sequence.currentBest()).isEqualTo(shrinkable);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(4);
+			assertThat(sequence.current().value()).isEqualTo(4);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(3);
+			assertThat(sequence.current().value()).isEqualTo(3);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.current().value()).isEqualTo(2);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(1);
+			assertThat(sequence.current().value()).isEqualTo(1);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.current().value()).isEqualTo(0);
 			assertThat(sequence.next(count)).isFalse();
-			assertThat(sequence.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.current().value()).isEqualTo(0);
 
 			assertThat(counter.get()).isEqualTo(5);
 		}
@@ -49,16 +49,16 @@ class NShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(4);
+			assertThat(sequence.current().value()).isEqualTo(4);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(3);
+			assertThat(sequence.current().value()).isEqualTo(3);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.current().value()).isEqualTo(2);
 			assertThat(sequence.next(count)).isFalse();
-			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.current().value()).isEqualTo(2);
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -69,18 +69,18 @@ class NShrinkingTests {
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, falsifier.withFilter(onlyEvenNumbers));
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(10);
+			assertThat(sequence.current().value()).isEqualTo(10);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(8);
+			assertThat(sequence.current().value()).isEqualTo(8);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(8);
+			assertThat(sequence.current().value()).isEqualTo(8);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(6);
+			assertThat(sequence.current().value()).isEqualTo(6);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(6);
+			assertThat(sequence.current().value()).isEqualTo(6);
 			assertThat(sequence.next(count)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(5);
@@ -94,13 +94,13 @@ class NShrinkingTests {
 		void shrinkDownAllTheWay() {
 			NShrinkable<Integer> shrinkable = new FullShrinkable(5);
 
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> false);
-			assertThat(sequence.currentBest()).isEqualTo(shrinkable);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.current().value()).isEqualTo(0);
 			assertThat(sequence.next(count)).isFalse();
-			assertThat(sequence.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.current().value()).isEqualTo(0);
 
 			assertThat(counter.get()).isEqualTo(1);
 		}
@@ -111,12 +111,12 @@ class NShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.current().value()).isEqualTo(2);
 			assertThat(sequence.next(count)).isFalse();
-			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.current().value()).isEqualTo(2);
 
 			assertThat(counter.get()).isEqualTo(1);
 		}
@@ -127,10 +127,10 @@ class NShrinkingTests {
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, falsifier.withFilter(onlyEvenNumbers));
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(6);
+			assertThat(sequence.current().value()).isEqualTo(6);
 			assertThat(sequence.next(count)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(2);
@@ -144,17 +144,17 @@ class NShrinkingTests {
 		void shrinkDownAllTheWay() {
 			NShrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> false);
-			assertThat(sequence.currentBest()).isEqualTo(shrinkable);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(3);
+			assertThat(sequence.current().value()).isEqualTo(3);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(1);
+			assertThat(sequence.current().value()).isEqualTo(1);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.current().value()).isEqualTo(0);
 			assertThat(sequence.next(count)).isFalse();
-			assertThat(sequence.currentBest().value()).isEqualTo(0);
+			assertThat(sequence.current().value()).isEqualTo(0);
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -163,14 +163,14 @@ class NShrinkingTests {
 		void shrinkDownSomeWay() {
 			NShrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(3);
+			assertThat(sequence.current().value()).isEqualTo(3);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.current().value()).isEqualTo(2);
 			assertThat(sequence.next(count)).isFalse();
-			assertThat(sequence.currentBest().value()).isEqualTo(2);
+			assertThat(sequence.current().value()).isEqualTo(2);
 
 			assertThat(counter.get()).isEqualTo(2);
 		}
@@ -181,16 +181,16 @@ class NShrinkingTests {
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			NShrinkingSequence<Integer> sequence = new NShrinkingSequence<>(shrinkable, falsifier.withFilter(onlyEvenNumbers));
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(8);
+			assertThat(sequence.current().value()).isEqualTo(8);
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(6);
+			assertThat(sequence.current().value()).isEqualTo(6);
 			assertThat(sequence.next(count)).isTrue();
 			assertThat(sequence.next(count)).isTrue();
 			assertThat(sequence.next(count)).isTrue();
-			assertThat(sequence.currentBest().value()).isEqualTo(6);
+			assertThat(sequence.current().value()).isEqualTo(6);
 			assertThat(sequence.next(count)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(5);
@@ -204,10 +204,10 @@ class NShrinkingTests {
 		}
 
 		@Override
-		public Set<NShrinkable<Integer>> shrink() {
-			if (value() == 0)
+		public Set<NShrinkable<Integer>> shrinkCandidatesFor(NShrinkable<Integer> shrinkable) {
+			if (shrinkable.value() == 0)
 				return Collections.emptySet();
-			return Collections.singleton(new OneStepShrinkable(value() - 1));
+			return Collections.singleton(new OneStepShrinkable(shrinkable.value() - 1));
 		}
 
 		@Override
@@ -222,8 +222,8 @@ class NShrinkingTests {
 		}
 
 		@Override
-		public Set<NShrinkable<Integer>> shrink() {
-			return IntStream.range(0, value()).mapToObj(FullShrinkable::new).collect(Collectors.toSet());
+		public Set<NShrinkable<Integer>> shrinkCandidatesFor(NShrinkable<Integer> shrinkable) {
+			return IntStream.range(0, shrinkable.value()).mapToObj(FullShrinkable::new).collect(Collectors.toSet());
 		}
 
 		@Override
@@ -238,10 +238,11 @@ class NShrinkingTests {
 		}
 
 		@Override
-		public Set<NShrinkable<Integer>> shrink() {
+		public Set<NShrinkable<Integer>> shrinkCandidatesFor(NShrinkable<Integer> shrinkable) {
+			Integer value = shrinkable.value();
 			Set<NShrinkable<Integer>> shrinks = new HashSet<>();
-			if (value() > 0) shrinks.add(new PartialShrinkable(value() - 1));
-			if (value() > 1) shrinks.add(new PartialShrinkable(value() - 2));
+			if (value > 0) shrinks.add(new PartialShrinkable(value - 1));
+			if (value > 1) shrinks.add(new PartialShrinkable(value - 2));
 			return shrinks;
 		}
 

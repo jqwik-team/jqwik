@@ -1,5 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
+import java.util.*;
+
 public abstract class NShrinkableValue<T> implements NShrinkable<T> {
 
 	private final T value;
@@ -12,6 +14,13 @@ public abstract class NShrinkableValue<T> implements NShrinkable<T> {
 	public T value() {
 		return value;
 	}
+
+	@Override
+	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
+		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier);
+	}
+
+	public abstract Set<NShrinkable<T>> shrinkCandidatesFor(NShrinkable<T> shrinkable);
 
 	@Override
 	public boolean equals(Object o) {

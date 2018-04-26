@@ -3,27 +3,31 @@ package net.jqwik.properties.newShrinking;
 import org.opentest4j.*;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
-public class NShrinkingSequence<T> {
+public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
+	private final Function<NShrinkable<T>, Set<NShrinkable<T>>> candidatesFor;
 	private final Falsifier<T> falsifier;
 	private NShrinkable<T> currentBest;
 	private NShrinkable<T> searchBase;
 	private boolean lastStepSuccessful = true;
 
-	public NShrinkingSequence(NShrinkable<T> shrinkable, Falsifier<T> falsifier) {
-		this.currentBest = shrinkable;
-		this.searchBase = shrinkable;
+	public DeepSearchShrinkingSequence(NShrinkable<T> startingShrinkable, Function<NShrinkable<T>, Set<NShrinkable<T>>> candidatesFor, Falsifier<T> falsifier) {
+		this.currentBest = startingShrinkable;
+		this.searchBase = startingShrinkable;
+		this.candidatesFor = candidatesFor;
 		this.falsifier = falsifier;
 	}
 
+	@Override
 	public boolean next(Runnable count) {
 		if (!lastStepSuccessful)
 			return false;
 
 		lastStepSuccessful = false;
 
-		Set<NShrinkable<T>> candidates = searchBase.shrink();
+		Set<NShrinkable<T>> candidates = candidatesFor.apply(searchBase);
 		List<FalsificationResult<T>> nextBase = candidates
 			.stream()
 			.sorted()
@@ -71,7 +75,8 @@ public class NShrinkingSequence<T> {
 		}
 	}
 
-	NShrinkable<T> currentBest() {
+	@Override
+	public NShrinkable<T> current() {
 		return currentBest;
 	}
 }

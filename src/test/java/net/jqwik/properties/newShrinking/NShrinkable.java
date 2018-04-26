@@ -1,12 +1,10 @@
 package net.jqwik.properties.newShrinking;
 
-import java.util.*;
-
 public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 
 	T value();
 
-	Set<NShrinkable<T>> shrink();
+	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);
 
 	ShrinkingDistance distance();
 
