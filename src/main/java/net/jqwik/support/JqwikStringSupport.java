@@ -15,12 +15,15 @@ public class JqwikStringSupport {
 			return "null";
 		if (object instanceof Collection) {
 			Collection<Object> collection = (Collection) object;
-			String elements = collection.stream().map(o -> displayString(o)).collect(Collectors.joining(", "));
+			String elements = collection.stream().map(JqwikStringSupport::displayString).collect(Collectors.joining(", "));
 			return String.format("[%s]", elements);
 		}
 		if (object.getClass().isArray()) {
+			if (object.getClass().getComponentType().isPrimitive()) {
+				return StringUtils.nullSafeToString(object);
+			}
 			Object[] array = (Object[]) object;
-			String elements = Arrays.stream(array).map(o -> displayString(o)).collect(Collectors.joining(", "));
+			String elements = Arrays.stream(array).map(JqwikStringSupport::displayString).collect(Collectors.joining(", "));
 			return String.format("%s{%s}", object.getClass().getSimpleName(), elements);
 		}
 		if (String.class.isAssignableFrom(object.getClass())) {
