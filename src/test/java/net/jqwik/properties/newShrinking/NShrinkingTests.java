@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -203,14 +204,14 @@ class NShrinkingTests {
 
 		@Example
 		void shrinkDownAllTheWay() {
-			List<NShrinkable<Integer>> elementShrinkables = Arrays.asList( //
+			List<NShrinkable<Integer>> elementShrinkables = asList( //
 				new OneStepShrinkable(0), //
 				new OneStepShrinkable(1), //
 				new OneStepShrinkable(2) //
 			);
 			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 3));
-			assertThat(shrinkable.value()).containsExactlyInAnyOrder(0, 1, 2);
+			assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2));
 
 //			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
 //			assertThat(sequence.current()).isEqualTo(shrinkable);
