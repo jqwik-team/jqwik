@@ -227,6 +227,51 @@ class NShrinkingTests {
 			assertThat(counter.get()).isEqualTo(3);
 		}
 
+		@Example
+		void shrinkDownToOneElement() {
+			List<NShrinkable<Integer>> elementShrinkables = asList( //
+				new OneStepShrinkable(0), //
+				new OneStepShrinkable(1), //
+				new OneStepShrinkable(2) //
+			);
+			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
+
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(2);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(1);
+			assertThat(sequence.next(count)).isFalse();
+
+			assertThat(counter.get()).isEqualTo(2);
+		}
+
+		@Example
+		void alsoShrinkElements() {
+			List<NShrinkable<Integer>> elementShrinkables = asList( //
+				new OneStepShrinkable(1), //
+				new OneStepShrinkable(1), //
+				new OneStepShrinkable(1) //
+			);
+			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> integers.size() <= 1);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
+
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(1, 1));
+//			assertThat(sequence.next(count)).isTrue();
+//			assertThat(sequence.current().value().size()).isEqualTo(2);
+//			assertThat(sequence.next(count)).isTrue();
+//			assertThat(sequence.current().value().size()).isEqualTo(2);
+//			assertThat(sequence.next(count)).isFalse();
+//			assertThat(shrinkable.value()).isEqualTo(asList(0, 0));
+//
+//			assertThat(counter.get()).isEqualTo(4);
+		}
+
 	}
 
 	private static class OneStepShrinkable extends NShrinkableValue<Integer> {
