@@ -213,16 +213,18 @@ class NShrinkingTests {
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 3));
 			assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2));
 
-//			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
-//			assertThat(sequence.current()).isEqualTo(shrinkable);
-//
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
+
+//			assertThat(sequence.next(count)).isTrue();
+//			assertThat(sequence.current().value().size()).isEqualTo(2);
 //			assertThat(sequence.next(count)).isTrue();
 //			assertThat(sequence.current().value().size()).isEqualTo(1);
 //			assertThat(sequence.next(count)).isTrue();
 //			assertThat(sequence.current().value().size()).isEqualTo(0);
 //			assertThat(sequence.next(count)).isFalse();
 //
-//			assertThat(counter.get()).isEqualTo(2);
+//			assertThat(counter.get()).isEqualTo(3);
 		}
 
 	}
