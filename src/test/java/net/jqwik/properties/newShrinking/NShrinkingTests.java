@@ -274,6 +274,14 @@ class NShrinkingTests {
 
 	}
 
+	@Group
+	class Properties {
+
+		// All sequences finish
+
+		// All sequences shrink to lower values
+	}
+
 	private static class OneStepShrinkable extends NShrinkableValue<Integer> {
 		OneStepShrinkable(int integer) {
 			super(integer);

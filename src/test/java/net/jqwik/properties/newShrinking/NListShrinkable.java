@@ -21,8 +21,9 @@ public class NListShrinkable<T> extends NShrinkableValue<List<T>> {
 
 	@Override
 	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
-		//TODO: Shrink elements afterwards
-		return super.shrink(falsifier);
+		return super.shrink(falsifier).andThen(shrinkableList -> {
+			return ShrinkingSequence.dontShrink(shrinkableList);
+		});
 	}
 
 	@Override
