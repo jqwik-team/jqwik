@@ -27,11 +27,11 @@ public class NListShrinkable<T> extends NShrinkableValue<List<T>> {
 
 	@Override
 	public Set<NShrinkable<List<T>>> shrinkCandidatesFor(NShrinkable<List<T>> shrinkable) {
-		return null;
-//		return shrinkCandidates.candidatesFor(shrinkable.value())
-//			.stream()
-//			.map(list -> new NListShrinkable<>(list))
-//			.collect(Collectors.toSet());
+		NListShrinkable<T> listShrinkable = (NListShrinkable<T>) shrinkable;
+		return shrinkCandidates.candidatesFor(listShrinkable.elements)
+			.stream()
+			.map(shrunkElements -> new NListShrinkable<>(shrunkElements))
+			.collect(Collectors.toSet());
 	}
 
 	@Override
