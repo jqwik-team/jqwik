@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -200,15 +200,16 @@ class NShrinkingTests {
 	}
 
 	@Group
-	class ListShrinkable {
+	class ListShrinking {
 
 		@Example
 		void shrinkDownAllTheWay() {
-			List<NShrinkable<Integer>> elementShrinkables = asList( //
-				new OneStepShrinkable(0), //
-				new OneStepShrinkable(1), //
-				new OneStepShrinkable(2) //
-			);
+			List<NShrinkable<Integer>> elementShrinkables =
+				asList( //
+						new OneStepShrinkable(0), //
+						new OneStepShrinkable(1), //
+						new OneStepShrinkable(2) //
+				);
 			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 3));
 			assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2));
@@ -229,11 +230,12 @@ class NShrinkingTests {
 
 		@Example
 		void shrinkDownToOneElement() {
-			List<NShrinkable<Integer>> elementShrinkables = asList( //
-				new OneStepShrinkable(0), //
-				new OneStepShrinkable(1), //
-				new OneStepShrinkable(2) //
-			);
+			List<NShrinkable<Integer>> elementShrinkables =
+				asList( //
+						new OneStepShrinkable(0), //
+						new OneStepShrinkable(1), //
+						new OneStepShrinkable(2) //
+				);
 			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
@@ -250,11 +252,12 @@ class NShrinkingTests {
 
 		@Example
 		void alsoShrinkElements() {
-			List<NShrinkable<Integer>> elementShrinkables = asList( //
-				new OneStepShrinkable(1), //
-				new OneStepShrinkable(1), //
-				new OneStepShrinkable(1) //
-			);
+			List<NShrinkable<Integer>> elementShrinkables =
+				asList( //
+						new OneStepShrinkable(1), //
+						new OneStepShrinkable(1), //
+						new OneStepShrinkable(1) //
+				);
 			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> integers.size() <= 1);
@@ -272,14 +275,88 @@ class NShrinkingTests {
 			assertThat(counter.get()).isEqualTo(3);
 		}
 
+		@Example
+		void alsoShrinkWithFilter() {
+			List<NShrinkable<Integer>> elementShrinkables =
+				asList( //
+						new OneStepShrinkable(3), //
+						new OneStepShrinkable(3), //
+						new OneStepShrinkable(3) //
+				);
+			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
+
+			Falsifier<List<Integer>> falsifier = List::isEmpty;
+			Falsifier<List<Integer>> filteredFalsifier = falsifier.withFilter(
+				elements -> elements.stream().allMatch(i -> i % 2 == 1));
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
+			assertThat(sequence.current()).isEqualTo(shrinkable);
+
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3));
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3));
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(1));
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(1));
+			assertThat(sequence.next(count)).isFalse();
+
+			assertThat(counter.get()).isEqualTo(5);
+		}
+
 	}
 
 	@Group
 	class Properties {
 
-		// All sequences finish
+		@Property
+		boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
+			ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
+			while (sequence.next(() -> {})) {}
+			return true;
+		}
 
-		// All sequences shrink to lower values
+		@Property
+		boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
+			ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
+			NShrinkable<?> current = sequence.current();
+			while (sequence.next(() -> {})) {
+				assertThat(sequence.current().distance()).isLessThanOrEqualTo(current.distance());
+				current = sequence.current();
+			}
+			return true;
+		}
+
+		@Provide
+		Arbitrary<NShrinkable> anyShrinkable() {
+			// TODO: Enhance the list of shrinkables.
+			return Arbitraries.oneOf(
+				oneStepShrinkable(),
+				partialShrinkable(),
+				listShrinkable()
+			);
+		}
+
+		private Arbitrary<NShrinkable> listShrinkable() {
+			// TODO: Use anyShrinkable() recursively for elements
+			return Arbitraries.integers().between(0, 10).map(size -> {
+				List<NShrinkable<Integer>> elements =
+					IntStream.range(0, size)
+							 .mapToObj(ignore -> new OneStepShrinkable(20))
+							 .collect(Collectors.toList());
+				return new NListShrinkable<>(elements);
+			});
+		}
+
+		private Arbitrary<NShrinkable> oneStepShrinkable() {
+			return Arbitraries.integers().between(0, 1000).map(OneStepShrinkable::new);
+		}
+
+		private Arbitrary<NShrinkable> partialShrinkable() {
+			return Arbitraries.integers().between(0, 1000).map(PartialShrinkable::new);
+		}
 	}
 
 	private static class OneStepShrinkable extends NShrinkableValue<Integer> {

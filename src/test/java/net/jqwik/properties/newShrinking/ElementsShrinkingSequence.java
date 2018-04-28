@@ -16,7 +16,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	}
 
 	@Override
-	public synchronized boolean next(Runnable count) {
+	public boolean next(Runnable count) {
 		if (currentShrinkingPosition >= currentElements.size())
 			return false;
 		return shrinkCurrentPosition(count);
@@ -58,7 +58,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	}
 
 	@Override
-	public synchronized NShrinkable<List<T>> current() {
+	public NShrinkable<List<T>> current() {
 		return createCurrent(currentElements);
 	}
 
