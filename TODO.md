@@ -1,6 +1,3 @@
-- Combinators.combine(List<Arbitrary<T>> arbitraries)
-    .as(List<T> values -> Something): Arbitrary<Something>
-
 - Reimplement Shrinking
   - Consider Filtering and assumptions in all shrink attempts
     see: examples.doc.ShrinkingFilterExamples.shouldShrinkToBAH_butDoesNot

@@ -4,6 +4,7 @@ import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 public class Combinators {
 
@@ -11,37 +12,42 @@ public class Combinators {
 	}
 
 	public static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
-		return new Combinator2<T1, T2>(a1, a2);
+		return new Combinator2<>(a1, a2);
 	}
 
 	public static <T1, T2, T3> Combinator3<T1, T2, T3> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3) {
-		return new Combinator3<T1, T2, T3>(a1, a2, a3);
+		return new Combinator3<>(a1, a2, a3);
 	}
 
 	public static <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 			Arbitrary<T4> a4) {
-		return new Combinator4<T1, T2, T3, T4>(a1, a2, a3, a4);
+		return new Combinator4<>(a1, a2, a3, a4);
 	}
 
 	public static <T1, T2, T3, T4, T5> Combinator5<T1, T2, T3, T4, T5> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 			Arbitrary<T4> a4, Arbitrary<T5> a5) {
-		return new Combinator5<T1, T2, T3, T4, T5>(a1, a2, a3, a4, a5);
+		return new Combinator5<>(a1, a2, a3, a4, a5);
 	}
 
 	public static <T1, T2, T3, T4, T5, T6> Combinator6<T1, T2, T3, T4, T5, T6> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 			Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6) {
-		return new Combinator6<T1, T2, T3, T4, T5, T6>(a1, a2, a3, a4, a5, a6);
+		return new Combinator6<>(a1, a2, a3, a4, a5, a6);
 	}
 
 	public static <T1, T2, T3, T4, T5, T6, T7> Combinator7<T1, T2, T3, T4, T5, T6, T7> combine(Arbitrary<T1> a1, Arbitrary<T2> a2,
 			Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7) {
-		return new Combinator7<T1, T2, T3, T4, T5, T6, T7>(a1, a2, a3, a4, a5, a6, a7);
+		return new Combinator7<>(a1, a2, a3, a4, a5, a6, a7);
 	}
 
 	public static <T1, T2, T3, T4, T5, T6, T7, T8> Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> combine(Arbitrary<T1> a1, Arbitrary<T2> a2,
 			Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7, Arbitrary<T8> a8) {
-		return new Combinator8<T1, T2, T3, T4, T5, T6, T7, T8>(a1, a2, a3, a4, a5, a6, a7, a8);
+		return new Combinator8<>(a1, a2, a3, a4, a5, a6, a7, a8);
 	}
+
+	public static <T> ListCombinator<T> combine(List<Arbitrary<T>> listOfArbitraries) {
+		return new ListCombinator<T>(listOfArbitraries);
+	}
+
 
 	public static class Combinator2<T1, T2> {
 		private final Arbitrary<T1> a1;
@@ -316,6 +322,37 @@ public class Combinators {
 			};
 		}
 	}
+
+	public static class ListCombinator<T> {
+		private final List<Arbitrary<T>> listOfArbitraries;
+
+		private ListCombinator(List<Arbitrary<T>> listOfArbitraries) {
+			this.listOfArbitraries = listOfArbitraries;
+		}
+
+		@SuppressWarnings("unchecked")
+		public <R> Arbitrary<R> as(Function<List<T>, R> combinator) {
+			return (genSize) -> {
+				List<RandomGenerator<T>> listOfGenerators = listOfArbitraries
+					.stream()
+					.map(a -> a.generator(genSize))
+					.collect(Collectors.toList());
+
+				return random -> {
+					List<Shrinkable<Object>> shrinkables = listOfGenerators
+						.stream()
+						.map(g -> g.next(random))
+						.map(s -> (Shrinkable<Object>) s)
+						.collect(Collectors.toList());
+
+					Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
+
+					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+				};
+			};
+		}
+	}
+
 
 	@FunctionalInterface
 	public interface F2<T1, T2, R> {

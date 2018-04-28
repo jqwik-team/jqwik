@@ -67,6 +67,15 @@ class CombinatorsTests {
 		assertThat(value.value()).isEqualTo(36);
 	}
 
+	@Example
+	void listOfArbitrariesCanBeCombined() {
+		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), one(), two(), two(), three(), three());
+		Arbitrary<Integer> combineList = Combinators.combine(listOfArbitraries) //
+				.as(list -> list.stream().mapToInt(e -> e).sum());
+		Shrinkable<Integer> value = generate(combineList);
+		assertThat(value.value()).isEqualTo(12);
+	}
+
 	Arbitrary<Integer> one() {
 		return Arbitraries.of(1);
 	}

@@ -1922,6 +1922,8 @@ in a separate article...
 - Reporting with `Reporting.FALSIFIED` now reports much less, and hopefully no wrong values anymore.
 - Shrinking with filtered values finds simpler values in some circumstance
 - Generation of strings will allow any unicode character by default
+- `Combinators.combine()` can now take a list of arbitraries of same return type.
+
 
 ### 0.8.10
 
