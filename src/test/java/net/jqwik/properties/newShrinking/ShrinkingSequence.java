@@ -11,8 +11,8 @@ public interface ShrinkingSequence<T> {
 
 	NShrinkable<T> current();
 
-	default ShrinkingSequence<T> andThen(Function<NShrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep) {
-		return new NextShrinkingSequence<>(this, nextShrinkingStep);
+	default ShrinkingSequence<T> andThen(Function<NShrinkable<T>, ShrinkingSequence<T>> createFollowupSequence) {
+		return new NextShrinkingSequence<>(this, createFollowupSequence);
 	}
 
 }

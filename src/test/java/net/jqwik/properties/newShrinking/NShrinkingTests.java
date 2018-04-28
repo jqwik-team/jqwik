@@ -262,14 +262,14 @@ class NShrinkingTests {
 
 			assertThat(sequence.next(count)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1, 1));
-//			assertThat(sequence.next(count)).isTrue();
-//			assertThat(sequence.current().value().size()).isEqualTo(2);
-//			assertThat(sequence.next(count)).isTrue();
-//			assertThat(sequence.current().value().size()).isEqualTo(2);
-//			assertThat(sequence.next(count)).isFalse();
-//			assertThat(shrinkable.value()).isEqualTo(asList(0, 0));
-//
-//			assertThat(counter.get()).isEqualTo(4);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(2);
+			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(2);
+			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
+
+			assertThat(counter.get()).isEqualTo(3);
 		}
 
 	}

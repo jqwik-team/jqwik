@@ -29,6 +29,8 @@
 
 ### General
 
+- `@Disabled("reason")` annotation
+
 - Allow reporting to be configured to also go to stdtout 
   (to work around missing reporting in Gradle's useJunitPlatform() )
 

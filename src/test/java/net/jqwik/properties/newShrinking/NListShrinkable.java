@@ -22,7 +22,8 @@ public class NListShrinkable<T> extends NShrinkableValue<List<T>> {
 	@Override
 	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
 		return super.shrink(falsifier).andThen(shrinkableList -> {
-			return ShrinkingSequence.dontShrink(shrinkableList);
+			List<NShrinkable<T>> elements = ((NListShrinkable<T>) shrinkableList).elements;
+			return new ElementsShrinkingSequence<>(elements, falsifier);
 		});
 	}
 
@@ -37,11 +38,6 @@ public class NListShrinkable<T> extends NShrinkableValue<List<T>> {
 
 	@Override
 	public ShrinkingDistance distance() {
-		ShrinkingDistance sumDistanceOfElements = elements
-			.stream()
-			.map(NShrinkable::distance)
-			.reduce(ShrinkingDistance.of(0), ShrinkingDistance::plus);
-
-		return ShrinkingDistance.of(elements.size()).append(sumDistanceOfElements);
+		return ShrinkingDistance.forCollection(elements);
 	}
 }
