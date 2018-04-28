@@ -311,7 +311,7 @@ class NShrinkingTests {
 	@Group
 	class Properties {
 
-		@Property
+		@Property(reporting = Reporting.GENERATED)
 		boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
 			ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
 			while (sequence.next(() -> {})) {}
@@ -335,18 +335,21 @@ class NShrinkingTests {
 			return Arbitraries.oneOf(
 				oneStepShrinkable(),
 				partialShrinkable(),
+				oneStepShrinkable(),
+				partialShrinkable(),
+				oneStepShrinkable(),
+				partialShrinkable(),
 				listShrinkable()
 			);
 		}
 
 		private Arbitrary<NShrinkable> listShrinkable() {
-			// TODO: Use anyShrinkable() recursively for elements
-			return Arbitraries.integers().between(0, 10).map(size -> {
-				List<NShrinkable<Integer>> elements =
+			return Arbitraries.integers().between(0, 10).flatMap(size -> {
+				List<Arbitrary<NShrinkable>> elementArbitraries =
 					IntStream.range(0, size)
-							 .mapToObj(ignore -> new OneStepShrinkable(20))
+							 .mapToObj(ignore -> Arbitraries.lazy(this::anyShrinkable))
 							 .collect(Collectors.toList());
-				return new NListShrinkable<>(elements);
+				return Combinators.combine(elementArbitraries).as(elements -> new NListShrinkable(elements));
 			});
 		}
 
