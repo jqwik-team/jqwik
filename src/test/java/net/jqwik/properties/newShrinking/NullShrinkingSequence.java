@@ -1,5 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
+import java.util.function.*;
+
 class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 
 	private final NShrinkable<T> shrinkable;
@@ -9,7 +11,7 @@ class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	@Override
-	public boolean next(Runnable count) {
+	public boolean next(Runnable count, Consumer<T> reportFalsified) {
 		return false;
 	}
 

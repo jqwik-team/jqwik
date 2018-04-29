@@ -40,13 +40,13 @@ class NListShrinkableTests {
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(1);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(0);
-			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.next(count, ignore -> {})).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(3);
 		}
@@ -58,11 +58,11 @@ class NListShrinkableTests {
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(1);
-			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.next(count, ignore -> {})).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(2);
 		}
@@ -74,13 +74,13 @@ class NListShrinkableTests {
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> integers.size() <= 1);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1, 1));
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.next(count, ignore -> {})).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 
 			Assertions.assertThat(counter.get()).isEqualTo(3);
@@ -96,17 +96,17 @@ class NListShrinkableTests {
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3));
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3));
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1));
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1));
-			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.next(count, ignore -> {})).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(5);
 		}
@@ -123,35 +123,35 @@ class NListShrinkableTests {
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(falsifier);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(100);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(50);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(25);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(13);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(9);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(8);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(7);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(6);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(5);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(4);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(3);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(2);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(1);
-			assertThat(sequence.next(count)).isTrue();
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(1);
-			assertThat(sequence.next(count)).isFalse();
+			assertThat(sequence.next(count, ignore -> {})).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(14);
 		}

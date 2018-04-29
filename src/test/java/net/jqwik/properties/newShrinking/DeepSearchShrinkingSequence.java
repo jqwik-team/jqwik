@@ -1,7 +1,5 @@
 package net.jqwik.properties.newShrinking;
 
-import org.opentest4j.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -21,7 +19,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	@Override
-	public boolean next(Runnable count) {
+	public boolean next(Runnable count, Consumer<T> reportFalsified) {
 		if (!lastStepSuccessful)
 			return false;
 
@@ -43,6 +41,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 			.ifPresent(result -> {
 				count.run();
 				this.currentBest = result.shrinkable();
+				reportFalsified.accept(this.currentBest.value());
 				this.searchBase = this.currentBest;
 			});
 
@@ -61,18 +60,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	private FalsificationResult<T> falsify(NShrinkable<T> candidate) {
-		try {
-			boolean falsified = !falsifier.test(candidate.value());
-			if (falsified) {
-				return FalsificationResult.falsified(candidate, null);
-			} else {
-				return FalsificationResult.notFalsified(candidate);
-			}
-		} catch (TestAbortedException tae) {
-			return FalsificationResult.filtered(candidate);
-		} catch (Throwable throwable) {
-			return FalsificationResult.falsified(candidate, throwable);
-		}
+		return falsifier.falsify(candidate);
 	}
 
 	@Override

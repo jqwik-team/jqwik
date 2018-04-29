@@ -1,6 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
@@ -16,7 +17,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	}
 
 	@Override
-	public boolean next(Runnable count) {
+	public boolean next(Runnable count, Consumer<List<T>> reportFalsified) {
 		if (currentShrinkingPosition >= currentElements.size())
 			return false;
 		return shrinkCurrentPosition(count);
@@ -26,7 +27,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 		if (currentShrinkingSequence == null) {
 			currentShrinkingSequence = createShrinkingSequence(currentShrinkingPosition);
 		}
-		if (!currentShrinkingSequence.next(count)) {
+		if (!currentShrinkingSequence.next(count, ignore -> {})) {
 			return advanceToNextShrinkingPosition(count);
 		}
 		replaceCurrentPosition(currentShrinkingSequence.current());
@@ -36,7 +37,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	private boolean advanceToNextShrinkingPosition(Runnable count) {
 		currentShrinkingSequence = null;
 		currentShrinkingPosition++;
-		return next(count);
+		return next(count, ignore -> {});
 	}
 
 	private void replaceCurrentPosition(NShrinkable<T> shrinkable) {

@@ -7,7 +7,7 @@ public interface ShrinkingSequence<T> {
 		return new NullShrinkingSequence<>(shrinkable);
 	}
 
-	boolean next(Runnable count);
+	boolean next(Runnable count, Consumer<T> reportFalsified);
 
 	NShrinkable<T> current();
 

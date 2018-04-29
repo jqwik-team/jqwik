@@ -13,7 +13,7 @@ class NShrinkableProperties {
 	@Property(reporting = Reporting.GENERATED)
 	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
-		while (sequence.next(() -> {})) {}
+		while (sequence.next(() -> {}, ignore -> {})) {}
 		return true;
 	}
 
@@ -21,7 +21,7 @@ class NShrinkableProperties {
 	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
 		NShrinkable<?> current = sequence.current();
-		while (sequence.next(() -> {})) {
+		while (sequence.next(() -> {}, ignore -> {})) {
 			assertThat(sequence.current().distance()).isLessThanOrEqualTo(current.distance());
 			current = sequence.current();
 		}
