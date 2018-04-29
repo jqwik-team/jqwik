@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Group
 class NShrinkableProperties {
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property //(reporting = Reporting.GENERATED)
 	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
 		while (sequence.next(() -> {}, ignore -> {})) {}

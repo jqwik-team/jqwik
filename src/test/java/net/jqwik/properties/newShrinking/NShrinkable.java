@@ -1,5 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
+import java.util.function.*;
+
 public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 
 	T value();
@@ -7,6 +9,10 @@ public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);
 
 	ShrinkingDistance distance();
+
+	default <U> NShrinkable<U> map(Function<T, U> mapper) {
+		return new NMappedShrinkable<>(this, mapper);
+	}
 
 	@Override
 	default int compareTo(NShrinkable<T> other) {
