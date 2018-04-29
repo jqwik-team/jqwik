@@ -4,6 +4,25 @@ import java.util.function.*;
 
 public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 
+	static <T> NShrinkable<T> unshrinkable(T value) {
+		return new NShrinkable<T>() {
+			@Override
+			public T value() {
+				return value;
+			}
+
+			@Override
+			public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
+				return ShrinkingSequence.dontShrink(this);
+			}
+
+			@Override
+			public ShrinkingDistance distance() {
+				return ShrinkingDistance.of(0);
+			}
+		};
+	}
+
 	T value();
 
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);
