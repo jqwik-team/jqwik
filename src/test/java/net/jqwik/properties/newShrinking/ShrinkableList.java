@@ -3,11 +3,11 @@ package net.jqwik.properties.newShrinking;
 import java.util.*;
 import java.util.stream.*;
 
-public class NListShrinkable<T> extends NShrinkableValue<List<T>> {
+public class ShrinkableList<T> extends NShrinkableValue<List<T>> {
 	private final List<NShrinkable<T>> elements;
 	private final NListShrinkCandidates<NShrinkable<T>> shrinkCandidates = new NListShrinkCandidates<>(0);
 
-	public NListShrinkable(List<NShrinkable<T>> elements) {
+	public ShrinkableList(List<NShrinkable<T>> elements) {
 		super(createValue(elements));
 		this.elements = elements;
 	}
@@ -22,17 +22,17 @@ public class NListShrinkable<T> extends NShrinkableValue<List<T>> {
 	@Override
 	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
 		return super.shrink(falsifier).andThen(shrinkableList -> {
-			List<NShrinkable<T>> elements = ((NListShrinkable<T>) shrinkableList).elements;
+			List<NShrinkable<T>> elements = ((ShrinkableList<T>) shrinkableList).elements;
 			return new ElementsShrinkingSequence<>(elements, falsifier);
 		});
 	}
 
 	@Override
 	public Set<NShrinkable<List<T>>> shrinkCandidatesFor(NShrinkable<List<T>> shrinkable) {
-		NListShrinkable<T> listShrinkable = (NListShrinkable<T>) shrinkable;
+		ShrinkableList<T> listShrinkable = (ShrinkableList<T>) shrinkable;
 		return shrinkCandidates.candidatesFor(listShrinkable.elements)
 			.stream()
-			.map(shrunkElements -> new NListShrinkable<>(shrunkElements))
+			.map(shrunkElements -> new ShrinkableList<>(shrunkElements))
 			.collect(Collectors.toSet());
 	}
 

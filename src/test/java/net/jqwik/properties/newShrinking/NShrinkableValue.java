@@ -39,6 +39,9 @@ public abstract class NShrinkableValue<T> implements NShrinkable<T> {
 
 	@Override
 	public String toString() {
-		return String.format("%s(%s:%s)", getClass().getSimpleName(), value(), distance());
+		return String.format("%s<%s>(%s:%s)", //
+			getClass().getSimpleName(), //
+			value().getClass().getSimpleName(), //
+			value(), distance());
 	}
 }

@@ -14,8 +14,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @Group
-@Label("ListShrinkable")
-class NListShrinkableTests {
+@Label("ShrinkableList")
+class ShrinkableListTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
@@ -25,7 +25,7 @@ class NListShrinkableTests {
 
 		@Example
 		void simple() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(0, 1, 2, 3);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2, 3);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
 			assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2, 3));
 		}
@@ -40,7 +40,7 @@ class NListShrinkableTests {
 		@Example
 		@Label("report all falsified on the way")
 		void downAllTheWay() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(0, 1, 2);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
 
@@ -63,7 +63,7 @@ class NListShrinkableTests {
 		@Example
 		@Label("also report falsified elements")
 		void withElementShrinking() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(3, 3, 3);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3, 3);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
 
@@ -98,7 +98,7 @@ class NListShrinkableTests {
 
 		@Example
 		void downAllTheWay() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(0, 1, 2);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
@@ -116,7 +116,7 @@ class NListShrinkableTests {
 
 		@Example
 		void downToOneElement() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(0, 1, 2);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
@@ -132,7 +132,7 @@ class NListShrinkableTests {
 
 		@Example
 		void alsoShrinkElements() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(1, 1, 1);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> integers.size() <= 1);
 			assertThat(sequence.current()).isEqualTo(shrinkable);
@@ -151,7 +151,7 @@ class NListShrinkableTests {
 
 		@Example
 		void withFilterOnListSize() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(3, 3, 3, 3);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3, 3, 3);
 
 			Falsifier<List<Integer>> falsifier = ignore -> false;
 			Falsifier<List<Integer>> filteredFalsifier = falsifier.withFilter(
@@ -177,7 +177,7 @@ class NListShrinkableTests {
 
 		@Example
 		void withFilterOnElementContents() {
-			NShrinkable<List<Integer>> shrinkable = createListShrinkable(3, 3, 3);
+			NShrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3, 3);
 
 			Falsifier<List<Integer>> falsifier = List::isEmpty;
 			Falsifier<List<Integer>> filteredFalsifier = falsifier.withFilter(
@@ -205,7 +205,7 @@ class NListShrinkableTests {
 				IntStream.range(1, 200)
 						 .mapToObj(OneStepShrinkable::new)
 						 .collect(Collectors.toList());
-			NShrinkable<List<Integer>> shrinkable = new NListShrinkable<>(elementShrinkables);
+			NShrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables);
 
 			Falsifier<List<Integer>> falsifier = List::isEmpty;
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(falsifier);
@@ -245,10 +245,10 @@ class NListShrinkableTests {
 	}
 
 
-	private NShrinkable<List<Integer>> createListShrinkable(Integer... listValues) {
+	private NShrinkable<List<Integer>> createShrinkableList(Integer... listValues) {
 		List<NShrinkable<Integer>> elementShrinkables =
 			Arrays.stream(listValues).map(OneStepShrinkable::new).collect(Collectors.toList());
-		return new NListShrinkable<>(elementShrinkables);
+		return new ShrinkableList<>(elementShrinkables);
 	}
 
 }

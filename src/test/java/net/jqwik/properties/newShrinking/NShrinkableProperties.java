@@ -48,7 +48,7 @@ class NShrinkableProperties {
 				IntStream.range(0, size)
 						 .mapToObj(ignore -> Arbitraries.lazy(this::anyShrinkable))
 						 .collect(Collectors.toList());
-			return Combinators.combine(elementArbitraries).as(elements -> new NListShrinkable(elements));
+			return Combinators.combine(elementArbitraries).as(elements -> new ShrinkableList(elements));
 		});
 	}
 
