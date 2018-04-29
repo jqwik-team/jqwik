@@ -69,16 +69,24 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 	}
 
 	public ShrinkingDistance plus(ShrinkingDistance other) {
-		//TODO: Only works if this and other have one dimension
-		long[] summedUpDistances = new long[]{this.distances[0] + other.distances[0]};
+		//TODO: What should happen if dimension of this or other > 1?
+		long[] summedUpDistances = sumUpArrays(distances, other.distances);
 		return new ShrinkingDistance(summedUpDistances);
 	}
 
-	public ShrinkingDistance append(ShrinkingDistance distance) {
-		//TODO: Only works if distance has one dimension
-		long[] appendedDistances = Arrays.copyOf(distances, distances.length + 1);
-		appendedDistances[distances.length] = distance.distances[0];
+	private long[] sumUpArrays(long[] left, long[] right) {
+		return new long[]{left[0] + right[0]};
+	}
+
+	public ShrinkingDistance append(ShrinkingDistance other) {
+		long[] appendedDistances = concatArrays(distances, other.distances);
 		return new ShrinkingDistance(appendedDistances);
+	}
+
+	private long[] concatArrays(long[] left, long[] right) {
+		long[] concatenated = Arrays.copyOf(left, left.length + right.length);
+		System.arraycopy(right, 0, concatenated, left.length, right.length);
+		return concatenated;
 	}
 
 }
