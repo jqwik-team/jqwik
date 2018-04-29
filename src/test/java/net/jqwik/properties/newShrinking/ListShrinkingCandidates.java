@@ -2,11 +2,11 @@ package net.jqwik.properties.newShrinking;
 
 import java.util.*;
 
-public class NListShrinkCandidates<T> {
+public class ListShrinkingCandidates<T> {
 
 	private final int minSize;
 
-	public NListShrinkCandidates(int minSize) {
+	public ListShrinkingCandidates(int minSize) {
 		this.minSize = minSize;
 	}
 

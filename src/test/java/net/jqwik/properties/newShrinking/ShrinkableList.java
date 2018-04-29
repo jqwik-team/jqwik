@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 public class ShrinkableList<T> extends NShrinkableValue<List<T>> {
 	private final List<NShrinkable<T>> elements;
-	private final NListShrinkCandidates<NShrinkable<T>> shrinkCandidates = new NListShrinkCandidates<>(0);
+	private final ListShrinkingCandidates<NShrinkable<T>> shrinkCandidates = new ListShrinkingCandidates<>(0);
 
 	public ShrinkableList(List<NShrinkable<T>> elements) {
 		super(createValue(elements));
