@@ -15,13 +15,13 @@ class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 	@Override
 	public boolean next(Runnable count, Consumer<T> reportFalsified) {
 		if (nextSequence == null) {
-			if (before.next(count, ignore -> {})) {
+			if (before.next(count, reportFalsified)) {
 				return true;
 			} else {
 				nextSequence = nextShrinkingStep.apply(before.current());
 			}
 		}
-		return nextSequence.next(count, ignore -> {});
+		return nextSequence.next(count, reportFalsified);
 	}
 
 	@Override

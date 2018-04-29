@@ -18,26 +18,39 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	@Override
 	public boolean next(Runnable count, Consumer<List<T>> reportFalsified) {
-		if (currentShrinkingPosition >= currentElements.size())
+		if (isShrinkingDone())
 			return false;
-		return shrinkCurrentPosition(count);
+		return shrinkCurrentPosition(count, reportFalsified);
 	}
 
-	private boolean shrinkCurrentPosition(Runnable count) {
+	private boolean isShrinkingDone() {
+		return currentShrinkingPosition >= currentElements.size();
+	}
+
+	private boolean shrinkCurrentPosition(Runnable count, Consumer<List<T>> reportFalsified) {
 		if (currentShrinkingSequence == null) {
 			currentShrinkingSequence = createShrinkingSequence(currentShrinkingPosition);
 		}
-		if (!currentShrinkingSequence.next(count, ignore -> {})) {
-			return advanceToNextShrinkingPosition(count);
+		if (!currentShrinkingSequence.next(count, currentFalsifiedReporter(reportFalsified))) {
+			return advanceToNextShrinkingPosition(count, reportFalsified);
 		}
 		replaceCurrentPosition(currentShrinkingSequence.current());
 		return true;
 	}
 
-	private boolean advanceToNextShrinkingPosition(Runnable count) {
+	private boolean advanceToNextShrinkingPosition(Runnable count, Consumer<List<T>> reportFalsified) {
 		currentShrinkingSequence = null;
 		currentShrinkingPosition++;
-		return next(count, ignore -> {});
+		return next(count, reportFalsified);
+	}
+
+	private Consumer<T> currentFalsifiedReporter(Consumer<List<T>> listReporter) {
+		if (isShrinkingDone()) return ignore -> {};
+		return valueOnCurrentShrinkingPosition -> {
+			List<T> values = createList(currentElements);
+			values.set(currentShrinkingPosition, valueOnCurrentShrinkingPosition);
+			listReporter.accept(values);
+		};
 	}
 
 	private void replaceCurrentPosition(NShrinkable<T> shrinkable) {

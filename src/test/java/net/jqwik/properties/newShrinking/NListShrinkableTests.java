@@ -6,10 +6,12 @@ import org.assertj.core.api.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @Group
 @Label("ListShrinkable")
@@ -26,6 +28,67 @@ class NListShrinkableTests {
 			NShrinkable<List<Integer>> shrinkable = createListShrinkable(0, 1, 2, 3);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
 			assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2, 3));
+		}
+
+	}
+
+	@Group
+	class ReportFalsified {
+
+		private Consumer<List<Integer>> reporter = mock(Consumer.class);
+
+		@Example
+		@Label("report all falsified on the way")
+		void downAllTheWay() {
+			NShrinkable<List<Integer>> shrinkable = createListShrinkable(0, 1, 2);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(0, 1));
+			verify(reporter).accept(asList(0, 1));
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(0));
+			verify(reporter).accept(asList(0));
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList());
+			verify(reporter).accept(asList());
+
+			assertThat(sequence.next(count, reporter)).isFalse();
+			verifyNoMoreInteractions(reporter);
+		}
+
+		@Example
+		@Label("also report falsified elements")
+		void withElementShrinking() {
+			NShrinkable<List<Integer>> shrinkable = createListShrinkable(3, 3, 3);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
+			verify(reporter).accept(asList(3, 3));
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3));
+			verify(reporter).accept(asList(3));
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(2));
+			verify(reporter).accept(asList(2));
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(1));
+			verify(reporter).accept(asList(1));
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(0));
+			verify(reporter).accept(asList(0));
+
+			assertThat(sequence.next(count, reporter)).isFalse();
+			verifyNoMoreInteractions(reporter);
 		}
 
 	}
@@ -87,14 +150,39 @@ class NListShrinkableTests {
 		}
 
 		@Example
-		void alsoShrinkWithFilter() {
+		void withFilterOnListSize() {
+			NShrinkable<List<Integer>> shrinkable = createListShrinkable(3, 3, 3, 3);
+
+			Falsifier<List<Integer>> falsifier = ignore -> false;
+			Falsifier<List<Integer>> filteredFalsifier = falsifier.withFilter(
+				elements -> elements.size() % 2 == 0);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
+
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3, 3, 3, 3));
+
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
+
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
+
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(asList());
+
+			assertThat(sequence.next(count, ignore -> {})).isFalse();
+
+			Assertions.assertThat(counter.get()).isEqualTo(4);
+		}
+
+		@Example
+		void withFilterOnElementContents() {
 			NShrinkable<List<Integer>> shrinkable = createListShrinkable(3, 3, 3);
 
 			Falsifier<List<Integer>> falsifier = List::isEmpty;
 			Falsifier<List<Integer>> filteredFalsifier = falsifier.withFilter(
 				elements -> elements.stream().allMatch(i -> i % 2 == 1));
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
@@ -121,7 +209,6 @@ class NListShrinkableTests {
 
 			Falsifier<List<Integer>> falsifier = List::isEmpty;
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(falsifier);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).hasSize(100);
