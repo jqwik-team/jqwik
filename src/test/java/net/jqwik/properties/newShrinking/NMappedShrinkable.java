@@ -42,7 +42,7 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 
 	@Override
 	public String toString() {
-		return String.format("MappedShrinkable(%s:%d)", value(), distance());
+		return String.format("Mapped<%s>|%s", value().getClass().getSimpleName(), toMap);
 	}
 
 	private class MappedShrinkingSequence implements ShrinkingSequence<U> {
