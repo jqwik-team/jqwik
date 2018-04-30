@@ -7,7 +7,6 @@ import org.mockito.*;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
@@ -25,7 +24,7 @@ class PropertyShrinkerTests {
 		Throwable originalError = new RuntimeException("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
 
-		assertThat(result.parameters()).isSameAs(unshrinkableParameters);
+		assertThat(result.values()).isEqualTo(asList(1, "hello"));
 		assertThat(result.steps()).isEqualTo(0);
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
@@ -45,7 +44,7 @@ class PropertyShrinkerTests {
 		Throwable originalError = new RuntimeException("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
 
-		assertThat(result.parameters()).isSameAs(parameters);
+		assertThat(result.values()).isEqualTo(asList(5, 10));
 		assertThat(result.steps()).isEqualTo(0);
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
@@ -53,7 +52,7 @@ class PropertyShrinkerTests {
 		Mockito.verifyZeroInteractions(reporter);
 	}
 
-	//@Example
+	@Example
 	void shrinkAllParameters() {
 		List<NShrinkable> parameters = asList(
 			new OneStepShrinkable(5),
@@ -63,16 +62,19 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
 		Falsifier<List> listFalsifier = params -> {
-			if (((int) params.get(0)) > 0) return false;
+			if (((int) params.get(0)) == 0) return true;
 			return ((int) params.get(1)) <= 1;
 		};
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
 
-		assertThat(toValues(result)).isEqualTo(asList(1, 2));
+		assertThat(result.values()).isEqualTo(asList(1, 2));
 		assertThat(result.steps()).isEqualTo(12);
 	}
 
-	private List toValues(PropertyShrinkingResult result) {
-		return result.parameters().stream().map(NShrinkable::value).collect(Collectors.toList());
-	}
+	// Test throwable
+
+	// Test report falsifier
+
+	// Test ShrinkingMode.BOUNDED
+
 }

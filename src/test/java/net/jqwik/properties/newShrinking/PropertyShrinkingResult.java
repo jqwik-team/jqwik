@@ -3,18 +3,18 @@ package net.jqwik.properties.newShrinking;
 import java.util.*;
 
 public class PropertyShrinkingResult {
-	private final List<NShrinkable> parameters;
+	private final List values;
 	private final int steps;
 	private final Throwable throwable;
 
-	public PropertyShrinkingResult(List<NShrinkable> parameters, int steps, Throwable throwable) {
-		this.parameters = parameters;
+	public PropertyShrinkingResult(List values, int steps, Throwable throwable) {
+		this.values = values;
 		this.steps = steps;
 		this.throwable = throwable;
 	}
 
-	public List<NShrinkable> parameters() {
-		return parameters;
+	public List values() {
+		return values;
 	}
 
 	public Optional<Throwable> throwable() {

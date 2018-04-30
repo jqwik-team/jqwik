@@ -4,7 +4,9 @@ import net.jqwik.api.*;
 import org.junit.platform.engine.reporting.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 public class PropertyShrinker {
 
@@ -20,14 +22,25 @@ public class PropertyShrinker {
 		this.reporting = reporting;
 	}
 
+	@SuppressWarnings("unchecked")
 	public PropertyShrinkingResult shrink(Falsifier<List> forAllFalsifier, Throwable originalError) {
-//		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, forAllFalsifier);
-//
-//		List<NShrinkable> current = parameters;
-//		while(sequence.next(() -> {}, ignore -> {})) {
-//			current = (List<NShrinkable>) sequence.current().value();
-//		}
-//		return new ShrinkingResult(current, 0, originalError);
-		return new PropertyShrinkingResult(parameters, 0, originalError);
+		if (shrinkingMode == ShrinkingMode.OFF) {
+			return new PropertyShrinkingResult(toValues(parameters), 0 , originalError);
+		}
+		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, forAllFalsifier);
+
+		FalsificationResult<List> current = null;
+		AtomicInteger counter = new AtomicInteger(0);
+		while(sequence.next(counter::incrementAndGet, ignore -> {})) {
+			current = sequence.current();
+		}
+		if (current == null) {
+			return new PropertyShrinkingResult(toValues(parameters), 0 , originalError);
+		}
+		return new PropertyShrinkingResult(current.value(), counter.get(), originalError);
+	}
+
+	private List toValues(List<NShrinkable> shrinkables) {
+		return shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
 	}
 }
