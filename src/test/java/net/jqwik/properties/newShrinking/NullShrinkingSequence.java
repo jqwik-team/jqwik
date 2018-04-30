@@ -16,8 +16,8 @@ class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	@Override
-	public NShrinkable<T> current() {
-		return shrinkable;
+	public FalsificationResult<T> current() {
+		return FalsificationResult.falsified(shrinkable);
 	}
 
 }

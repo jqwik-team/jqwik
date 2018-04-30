@@ -20,7 +20,7 @@ public class PropertyShrinker {
 		this.reporting = reporting;
 	}
 
-	public ShrinkingResult shrink(Falsifier<List> forAllFalsifier, Throwable originalError) {
+	public PropertyShrinkingResult shrink(Falsifier<List> forAllFalsifier, Throwable originalError) {
 //		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, forAllFalsifier);
 //
 //		List<NShrinkable> current = parameters;
@@ -28,6 +28,6 @@ public class PropertyShrinker {
 //			current = (List<NShrinkable>) sequence.current().value();
 //		}
 //		return new ShrinkingResult(current, 0, originalError);
-		return new ShrinkingResult(parameters, 0, originalError);
+		return new PropertyShrinkingResult(parameters, 0, originalError);
 	}
 }

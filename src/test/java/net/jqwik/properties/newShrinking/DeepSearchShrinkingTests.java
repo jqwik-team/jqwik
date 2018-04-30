@@ -84,7 +84,7 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
+			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(4);
@@ -154,7 +154,7 @@ class DeepSearchShrinkingTests {
 			NShrinkable<Integer> shrinkable = new FullShrinkable(5);
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
+			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(0);
@@ -204,7 +204,7 @@ class DeepSearchShrinkingTests {
 			NShrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
+			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);

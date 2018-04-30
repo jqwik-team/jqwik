@@ -53,8 +53,8 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 		};
 	}
 
-	private void replaceCurrentPosition(NShrinkable<T> shrinkable) {
-		currentElements.set(currentShrinkingPosition, shrinkable);
+	private void replaceCurrentPosition(FalsificationResult<T> falsificationResult) {
+		currentElements.set(currentShrinkingPosition, falsificationResult.shrinkable());
 	}
 
 	private ShrinkingSequence<T> createShrinkingSequence(int position) {
@@ -72,8 +72,8 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	}
 
 	@Override
-	public NShrinkable<List<T>> current() {
-		return createCurrent(currentElements);
+	public FalsificationResult<List<T>> current() {
+		return FalsificationResult.falsified(createCurrent(currentElements));
 	}
 
 	private NShrinkable<List<T>> createCurrent(List<NShrinkable<T>> listOfShrinkables) {

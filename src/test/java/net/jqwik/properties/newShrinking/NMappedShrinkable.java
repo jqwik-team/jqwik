@@ -61,7 +61,7 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 		}
 
 		@Override
-		public NShrinkable<U> current() {
+		public FalsificationResult<U> current() {
 			return toMapSequence.current().map(mapper);
 		}
 	}

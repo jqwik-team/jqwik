@@ -1,6 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
 import java.util.*;
+import java.util.function.*;
 
 public class FalsificationResult<T> implements Comparable<FalsificationResult<T>> {
 
@@ -10,6 +11,10 @@ public class FalsificationResult<T> implements Comparable<FalsificationResult<T>
 
 	public enum Status {
 		FALSIFIED, VERIFIED, FILTERED_OUT
+	}
+
+	public static <T> FalsificationResult<T> falsified(NShrinkable<T> shrinkable) {
+		return FalsificationResult.falsified(shrinkable, null);
 	}
 
 	public static <T> FalsificationResult<T> falsified(NShrinkable<T> shrinkable, Throwable throwable) {
@@ -35,6 +40,14 @@ public class FalsificationResult<T> implements Comparable<FalsificationResult<T>
 		return shrinkable;
 	}
 
+	public T value() {
+		return shrinkable.value();
+	}
+
+	public ShrinkingDistance distance() {
+		return shrinkable.distance();
+	}
+
 	public Status status() {
 		return status;
 	}
@@ -48,6 +61,12 @@ public class FalsificationResult<T> implements Comparable<FalsificationResult<T>
 		return shrinkable.compareTo(other.shrinkable);
 	}
 
+	public FalsificationResult<T> filter(Predicate<T> filter) {
+		return new FalsificationResult<>(shrinkable.filter(filter), status, throwable);
+	}
 
+	public <U> FalsificationResult<U> map(Function<T, U> mapper) {
+		return new FalsificationResult<>(shrinkable.map(mapper), status, throwable);
+	}
 
 }

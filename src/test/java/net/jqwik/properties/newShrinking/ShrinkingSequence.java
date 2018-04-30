@@ -9,7 +9,7 @@ public interface ShrinkingSequence<T> {
 
 	boolean next(Runnable count, Consumer<T> reportFalsified);
 
-	NShrinkable<T> current();
+	FalsificationResult<T> current();
 
 	default ShrinkingSequence<T> andThen(Function<NShrinkable<T>, ShrinkingSequence<T>> createFollowupSequence) {
 		return new NextShrinkingSequence<>(this, createFollowupSequence);

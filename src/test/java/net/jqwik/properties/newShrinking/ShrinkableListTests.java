@@ -101,7 +101,6 @@ class ShrinkableListTests {
 			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
@@ -119,7 +118,6 @@ class ShrinkableListTests {
 			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
@@ -135,7 +133,6 @@ class ShrinkableListTests {
 			NShrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> integers.size() <= 1);
-			assertThat(sequence.current()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1, 1));

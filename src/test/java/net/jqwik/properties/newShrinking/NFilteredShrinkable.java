@@ -60,7 +60,7 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 		}
 
 		@Override
-		public NShrinkable<T> current() {
+		public FalsificationResult<T> current() {
 			return toFilterSequence.current().filter(filter);
 		}
 	}

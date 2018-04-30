@@ -20,7 +20,7 @@ class NShrinkableProperties {
 	@Property
 	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
-		NShrinkable<?> current = sequence.current();
+		FalsificationResult<?> current = sequence.current();
 		while (sequence.next(() -> {}, ignore -> {})) {
 			assertThat(sequence.current().distance()).isLessThanOrEqualTo(current.distance());
 			current = sequence.current();

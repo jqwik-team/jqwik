@@ -23,7 +23,7 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(unshrinkableParameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
 		Throwable originalError = new RuntimeException("original error");
-		ShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
+		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
 
 		assertThat(result.parameters()).isSameAs(unshrinkableParameters);
 		assertThat(result.steps()).isEqualTo(0);
@@ -43,7 +43,7 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.OFF, reporter, new Reporting[0]);
 
 		Throwable originalError = new RuntimeException("original error");
-		ShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
+		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
 
 		assertThat(result.parameters()).isSameAs(parameters);
 		assertThat(result.steps()).isEqualTo(0);
@@ -66,13 +66,13 @@ class PropertyShrinkerTests {
 			if (((int) params.get(0)) > 0) return false;
 			return ((int) params.get(1)) <= 1;
 		};
-		ShrinkingResult result = shrinker.shrink(listFalsifier, null);
+		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
 
 		assertThat(toValues(result)).isEqualTo(asList(1, 2));
 		assertThat(result.steps()).isEqualTo(12);
 	}
 
-	private List toValues(ShrinkingResult result) {
+	private List toValues(PropertyShrinkingResult result) {
 		return result.parameters().stream().map(NShrinkable::value).collect(Collectors.toList());
 	}
 }

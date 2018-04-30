@@ -18,14 +18,14 @@ class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 			if (before.next(count, reportFalsified)) {
 				return true;
 			} else {
-				nextSequence = nextShrinkingStep.apply(before.current());
+				nextSequence = nextShrinkingStep.apply(before.current().shrinkable());
 			}
 		}
 		return nextSequence.next(count, reportFalsified);
 	}
 
 	@Override
-	public NShrinkable<T> current() {
+	public FalsificationResult<T> current() {
 		if (nextSequence == null) {
 			return before.current();
 		}
