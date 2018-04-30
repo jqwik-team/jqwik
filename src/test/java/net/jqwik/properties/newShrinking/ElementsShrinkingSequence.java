@@ -6,13 +6,13 @@ import java.util.stream.*;
 
 public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	private final Falsifier<List<T>> listFalsifier;
-	private final List<NShrinkable<T>> currentElements;
+	private final List<FalsificationResult<T>> currentResults;
 
 	private int currentShrinkingPosition = 0;
 	private ShrinkingSequence<T> currentShrinkingSequence = null;
 
 	public ElementsShrinkingSequence(List<NShrinkable<T>> currentElements, Falsifier<List<T>> listFalsifier) {
-		this.currentElements = new ArrayList<>(currentElements);
+		this.currentResults = currentElements.stream().map(FalsificationResult::falsified).collect(Collectors.toList());
 		this.listFalsifier = listFalsifier;
 	}
 
@@ -24,7 +24,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	}
 
 	private boolean isShrinkingDone() {
-		return currentShrinkingPosition >= currentElements.size();
+		return currentShrinkingPosition >= currentResults.size();
 	}
 
 	private boolean shrinkCurrentPosition(Runnable count, Consumer<List<T>> reportFalsified) {
@@ -47,25 +47,25 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	private Consumer<T> currentFalsifiedReporter(Consumer<List<T>> listReporter) {
 		if (isShrinkingDone()) return ignore -> {};
 		return valueOnCurrentShrinkingPosition -> {
-			List<T> values = createList(currentElements);
+			List<T> values = toValueList(currentResults);
 			values.set(currentShrinkingPosition, valueOnCurrentShrinkingPosition);
 			listReporter.accept(values);
 		};
 	}
 
 	private void replaceCurrentPosition(FalsificationResult<T> falsificationResult) {
-		currentElements.set(currentShrinkingPosition, falsificationResult.shrinkable());
+		currentResults.set(currentShrinkingPosition, falsificationResult);
 	}
 
 	private ShrinkingSequence<T> createShrinkingSequence(int position) {
-		NShrinkable<T> positionShrinkable = currentElements.get(position);
-		Falsifier<T> positionFalsifier = falsifierForPosition(position, currentElements);
-		return positionShrinkable.shrink(positionFalsifier);
+		FalsificationResult<T> positionResult = currentResults.get(position);
+		Falsifier<T> positionFalsifier = falsifierForPosition(position, currentResults);
+		return positionResult.shrinkable().shrink(positionFalsifier);
 	}
 
-	private Falsifier<T> falsifierForPosition(int position, List<NShrinkable<T>> shrinkableElements) {
+	private Falsifier<T> falsifierForPosition(int position, List<FalsificationResult<T>> falsificationResults) {
 		return elementValue -> {
-			List<T> effectiveParams = createList(shrinkableElements);
+			List<T> effectiveParams = toValueList(falsificationResults);
 			effectiveParams.set(position, elementValue);
 			return listFalsifier.test(effectiveParams);
 		};
@@ -73,14 +73,14 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	@Override
 	public FalsificationResult<List<T>> current() {
-		return FalsificationResult.falsified(createCurrent(currentElements));
+		return FalsificationResult.falsified(createCurrent(currentResults));
 	}
 
-	private NShrinkable<List<T>> createCurrent(List<NShrinkable<T>> listOfShrinkables) {
+	private NShrinkable<List<T>> createCurrent(List<FalsificationResult<T>> falsificationResults) {
 		return new NShrinkable<List<T>>() {
 			@Override
 			public List<T> value() {
-				return createList(listOfShrinkables);
+				return toValueList(falsificationResults);
 			}
 
 			@Override
@@ -90,15 +90,22 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 			@Override
 			public ShrinkingDistance distance() {
-				return ShrinkingDistance.forCollection(listOfShrinkables);
+				return ShrinkingDistance.forCollection(toShrinkableList(falsificationResults));
 			}
 		};
 	}
 
-	private List<T> createList(List<NShrinkable<T>> shrinkables) {
-		return shrinkables
+	private List<T> toValueList(List<FalsificationResult<T>> results) {
+		return results
 			.stream()
-			.map(NShrinkable::value)
+			.map(FalsificationResult::value)
+			.collect(Collectors.toList());
+	}
+
+	private List<NShrinkable<T>> toShrinkableList(List<FalsificationResult<T>> results) {
+		return results
+			.stream()
+			.map(FalsificationResult::shrinkable)
 			.collect(Collectors.toList());
 	}
 
