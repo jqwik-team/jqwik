@@ -114,6 +114,25 @@ class ShrinkableListTests {
 		}
 
 		@Example
+		void downToMinsize() {
+			List<NShrinkable<Integer>> elementShrinkables =
+				Arrays.stream(new Integer[]{0, 1, 2, 3, 4}).map(NShrinkable::unshrinkable).collect(Collectors.toList());
+			NShrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
+
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(4);
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(3);
+			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.current().value().size()).isEqualTo(2);
+			assertThat(sequence.next(count, ignore -> {})).isFalse();
+
+			Assertions.assertThat(counter.get()).isEqualTo(3);
+		}
+
+		@Example
 		void downToOneElement() {
 			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
@@ -202,7 +221,7 @@ class ShrinkableListTests {
 				IntStream.range(1, 200)
 						 .mapToObj(OneStepShrinkable::new)
 						 .collect(Collectors.toList());
-			NShrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables);
+			NShrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
 
 			Falsifier<List<Integer>> falsifier = List::isEmpty;
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(falsifier);
@@ -245,7 +264,7 @@ class ShrinkableListTests {
 	private NShrinkable<List<Integer>> createShrinkableList(Integer... listValues) {
 		List<NShrinkable<Integer>> elementShrinkables =
 			Arrays.stream(listValues).map(OneStepShrinkable::new).collect(Collectors.toList());
-		return new ShrinkableList<>(elementShrinkables);
+		return new ShrinkableList<>(elementShrinkables, 0);
 	}
 
 }

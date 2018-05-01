@@ -3,36 +3,39 @@ package net.jqwik.properties.newShrinking;
 import java.util.*;
 import java.util.stream.*;
 
-public class ShrinkableList<T> extends AbstractShrinkable<List<T>> {
-	private final List<NShrinkable<T>> elements;
-	private final ListShrinkingCandidates<NShrinkable<T>> shrinkCandidates = new ListShrinkingCandidates<>(0);
+public class ShrinkableList<E> implements NShrinkable<List<E>> {
+	private final Collector<E, ?, List<E>> collectionCollector;
+	private final List<NShrinkable<E>> elements;
+	private final ListShrinkingCandidates<NShrinkable<E>> shrinkCandidates;
 
-	public ShrinkableList(List<NShrinkable<T>> elements) {
-		super(createValue(elements));
+	public ShrinkableList(List<NShrinkable<E>> elements, int minSize) {
 		this.elements = elements;
+		this.shrinkCandidates = new ListShrinkingCandidates<>(minSize);
+		this.collectionCollector = Collectors.toList();
 	}
 
-	private static <T> List<T> createValue(List<NShrinkable<T>> shrinkables) {
+	private List<E> createValue(List<NShrinkable<E>> shrinkables) {
 		return shrinkables
-			.stream()
-			.map(NShrinkable::value)
-			.collect(Collectors.toList());
+			.stream().map(NShrinkable::value).collect(collectionCollector);
 	}
 
 	@Override
-	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
-		return super.shrink(falsifier).andThen(shrinkableList -> {
-			List<NShrinkable<T>> elements = ((ShrinkableList<T>) shrinkableList).elements;
-			return new ElementsShrinkingSequence<>(elements, null, falsifier, ShrinkingDistance::forCollection);
-		});
+	public List<E> value() {
+		return createValue(elements);
 	}
 
 	@Override
-	public Set<NShrinkable<List<T>>> shrinkCandidatesFor(NShrinkable<List<T>> shrinkable) {
-		ShrinkableList<T> listShrinkable = (ShrinkableList<T>) shrinkable;
-		return shrinkCandidates.candidatesFor(listShrinkable.elements)
-			.stream()
-			.map(shrunkElements -> new ShrinkableList<>(shrunkElements))
+	public ShrinkingSequence<List<E>> shrink(Falsifier<List<E>> falsifier) {
+		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier) //
+			.andThen(shrinkableList -> { //
+				List<NShrinkable<E>> elements = ((ShrinkableList<E>) shrinkableList).elements;
+				return new ElementsShrinkingSequence<>(elements, null, falsifier, ShrinkingDistance::forCollection);
+			});
+	}
+
+	private Set<NShrinkable<List<E>>> shrinkCandidatesFor(NShrinkable<List<E>> shrinkable) {
+		ShrinkableList<E> listShrinkable = (ShrinkableList<E>) shrinkable;
+		return shrinkCandidates.candidatesFor(listShrinkable.elements).stream().map(shrunkElements -> new ShrinkableList<>(shrunkElements, 0))
 			.collect(Collectors.toSet());
 	}
 
