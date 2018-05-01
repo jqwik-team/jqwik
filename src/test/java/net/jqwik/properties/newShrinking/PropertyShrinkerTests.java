@@ -8,7 +8,7 @@ import org.mockito.*;
 import java.util.*;
 import java.util.function.*;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 class PropertyShrinkerTests {
@@ -68,7 +68,29 @@ class PropertyShrinkerTests {
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
 
 		assertThat(result.values()).isEqualTo(asList(1, 2));
+		assertThat(result.throwable()).isNotPresent();
+
 		assertThat(result.steps()).isEqualTo(12);
+	}
+
+	@Example
+	void resultThrowableComesFromActualShrinkedValue() {
+		List<NShrinkable> parameters = asList(
+			new OneStepShrinkable(5),
+			new OneStepShrinkable(10)
+		);
+
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
+
+		Falsifier<List> listFalsifier = params -> {
+			if (((int) params.get(0)) == 0) return true;
+			if (((int) params.get(1)) <= 1) return true;
+			throw new RuntimeException(String.format("%s:%s", params.get(0), params.get(1)));
+		};
+		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
+
+		assertThat(result.values()).isEqualTo(asList(1, 2));
+		assertThat(result.throwable()).isPresent();
 	}
 
 	// Test throwable

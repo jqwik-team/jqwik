@@ -27,17 +27,13 @@ public class PropertyShrinker {
 		if (shrinkingMode == ShrinkingMode.OFF) {
 			return new PropertyShrinkingResult(toValues(parameters), 0 , originalError);
 		}
-		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, forAllFalsifier);
 
-		FalsificationResult<List> current = null;
+		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier);
+
 		AtomicInteger counter = new AtomicInteger(0);
-		while(sequence.next(counter::incrementAndGet, ignore -> {})) {
-			current = sequence.current();
-		}
-		if (current == null) {
-			return new PropertyShrinkingResult(toValues(parameters), 0 , originalError);
-		}
-		return new PropertyShrinkingResult(current.value(), counter.get(), originalError);
+		while (sequence.next(counter::incrementAndGet, ignore -> {})) { }
+		FalsificationResult<List> current = sequence.current();
+		return new PropertyShrinkingResult(current.value(), counter.get(), current.throwable().orElse(null));
 	}
 
 	private List toValues(List<NShrinkable> shrinkables) {

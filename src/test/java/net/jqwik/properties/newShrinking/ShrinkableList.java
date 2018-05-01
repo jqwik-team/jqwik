@@ -23,7 +23,7 @@ public class ShrinkableList<T> extends NShrinkableValue<List<T>> {
 	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
 		return super.shrink(falsifier).andThen(shrinkableList -> {
 			List<NShrinkable<T>> elements = ((ShrinkableList<T>) shrinkableList).elements;
-			return new ElementsShrinkingSequence<>(elements, falsifier);
+			return new ElementsShrinkingSequence<>(elements, null, falsifier);
 		});
 	}
 

@@ -10,9 +10,16 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	private int currentShrinkingPosition = 0;
 	private ShrinkingSequence<T> currentShrinkingSequence = null;
+	private Throwable currentThrowable = null;
 
-	public ElementsShrinkingSequence(List<NShrinkable<T>> currentElements, Falsifier<List<T>> listFalsifier) {
-		this.currentResults = currentElements.stream().map(FalsificationResult::falsified).collect(Collectors.toList());
+	public ElementsShrinkingSequence(
+		List<NShrinkable<T>> currentElements, Throwable originalError, Falsifier<List<T>> listFalsifier
+	) {
+		this.currentResults = currentElements
+			.stream()
+			.map(shrinkable -> FalsificationResult.falsified(shrinkable, originalError))
+			.collect(Collectors.toList());
+		this.currentThrowable = originalError;
 		this.listFalsifier = listFalsifier;
 	}
 
@@ -55,6 +62,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	private void replaceCurrentPosition(FalsificationResult<T> falsificationResult) {
 		currentResults.set(currentShrinkingPosition, falsificationResult);
+		currentThrowable = falsificationResult.throwable().orElse(null);
 	}
 
 	private ShrinkingSequence<T> createShrinkingSequence(int position) {
@@ -73,7 +81,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	@Override
 	public FalsificationResult<List<T>> current() {
-		return FalsificationResult.falsified(createCurrent(currentResults));
+		return FalsificationResult.falsified(createCurrent(currentResults), currentThrowable);
 	}
 
 	private NShrinkable<List<T>> createCurrent(List<FalsificationResult<T>> falsificationResults) {
