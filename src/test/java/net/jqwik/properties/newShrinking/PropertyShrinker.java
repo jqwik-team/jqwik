@@ -1,6 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
 import net.jqwik.api.*;
+import net.jqwik.support.*;
 import org.junit.platform.engine.reporting.*;
 
 import java.util.*;
@@ -30,13 +31,25 @@ public class PropertyShrinker {
 
 		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier);
 
+		Consumer falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
+
 		AtomicInteger counter = new AtomicInteger(0);
-		while (sequence.next(counter::incrementAndGet, ignore -> {})) { }
+		while (sequence.next(counter::incrementAndGet, falsifiedReporter)) { }
 		FalsificationResult<List> current = sequence.current();
 		return new PropertyShrinkingResult(current.value(), counter.get(), current.throwable().orElse(null));
+	}
+
+	private boolean isFalsifiedReportingOn() {
+		return Reporting.FALSIFIED.containedIn(reporting);
 	}
 
 	private List toValues(List<NShrinkable> shrinkables) {
 		return shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
 	}
+
+	private void reportFalsifiedParams(Object effectiveParams) {
+		ReportEntry falsifiedEntry = ReportEntry.from("falsified", JqwikStringSupport.displayString(effectiveParams));
+		reporter.accept(falsifiedEntry);
+	}
+
 }

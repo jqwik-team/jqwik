@@ -10,6 +10,8 @@ import java.util.function.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class PropertyShrinkerTests {
 
@@ -29,7 +31,7 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
 
-		Mockito.verifyZeroInteractions(reporter);
+		verifyZeroInteractions(reporter);
 	}
 
 	@Example
@@ -49,7 +51,7 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
 
-		Mockito.verifyZeroInteractions(reporter);
+		verifyZeroInteractions(reporter);
 	}
 
 	@Example
@@ -71,6 +73,21 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isNotPresent();
 
 		assertThat(result.steps()).isEqualTo(12);
+
+		verifyZeroInteractions(reporter);
+	}
+
+	@Example
+	void reportFalsifiedParameters() {
+		List<NShrinkable> parameters = asList(
+			new OneStepShrinkable(5),
+			new OneStepShrinkable(10)
+		);
+
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[]{Reporting.FALSIFIED});
+		shrinker.shrink(ignore -> false, null);
+
+		verify(reporter, times(15)).accept(any(ReportEntry.class));
 	}
 
 	@Example
@@ -92,10 +109,6 @@ class PropertyShrinkerTests {
 		assertThat(result.values()).isEqualTo(asList(1, 2));
 		assertThat(result.throwable()).isPresent();
 	}
-
-	// Test throwable
-
-	// Test report falsifier
 
 	// Test ShrinkingMode.BOUNDED
 
