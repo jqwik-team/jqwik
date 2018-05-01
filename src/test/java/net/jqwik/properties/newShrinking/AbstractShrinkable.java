@@ -2,11 +2,11 @@ package net.jqwik.properties.newShrinking;
 
 import java.util.*;
 
-public abstract class NShrinkableValue<T> implements NShrinkable<T> {
+public abstract class AbstractShrinkable<T> implements NShrinkable<T> {
 
 	private final T value;
 
-	public NShrinkableValue(T value) {
+	public AbstractShrinkable(T value) {
 		this.value = value;
 	}
 
@@ -27,7 +27,7 @@ public abstract class NShrinkableValue<T> implements NShrinkable<T> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		NShrinkableValue<?> that = (NShrinkableValue<?>) o;
+		AbstractShrinkable<?> that = (AbstractShrinkable<?>) o;
 
 		return value.equals(that.value);
 	}

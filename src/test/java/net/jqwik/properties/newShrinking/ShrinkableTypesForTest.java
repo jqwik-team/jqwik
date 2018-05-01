@@ -8,7 +8,7 @@ import java.util.stream.*;
 @Group
 class ShrinkableTypesForTest {
 
-	static class OneStepShrinkable extends NShrinkableValue<Integer> {
+	static class OneStepShrinkable extends AbstractShrinkable<Integer> {
 		OneStepShrinkable(int integer) {
 			super(integer);
 		}
@@ -26,7 +26,7 @@ class ShrinkableTypesForTest {
 		}
 	}
 
-	static class FullShrinkable extends NShrinkableValue<Integer> {
+	static class FullShrinkable extends AbstractShrinkable<Integer> {
 		FullShrinkable(int integer) {
 			super(integer);
 		}
@@ -42,7 +42,7 @@ class ShrinkableTypesForTest {
 		}
 	}
 
-	static class PartialShrinkable extends NShrinkableValue<Integer> {
+	static class PartialShrinkable extends AbstractShrinkable<Integer> {
 		PartialShrinkable(int integer) {
 			super(integer);
 		}

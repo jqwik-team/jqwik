@@ -3,7 +3,7 @@ package net.jqwik.properties.newShrinking;
 import java.util.*;
 import java.util.stream.*;
 
-public class ShrinkableList<T> extends NShrinkableValue<List<T>> {
+public class ShrinkableList<T> extends AbstractShrinkable<List<T>> {
 	private final List<NShrinkable<T>> elements;
 	private final ListShrinkingCandidates<NShrinkable<T>> shrinkCandidates = new ListShrinkingCandidates<>(0);
 
