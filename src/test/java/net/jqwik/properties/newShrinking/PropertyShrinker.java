@@ -31,7 +31,7 @@ public class PropertyShrinker {
 			return new PropertyShrinkingResult(toValues(parameters), 0 , originalError);
 		}
 
-		Function distanceFunction = shrinkables -> ShrinkingDistance.combine(shrinkables);
+		Function distanceFunction = shrinkables -> ShrinkingDistance.combine((List<NShrinkable<Object>>) shrinkables);
 		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier, distanceFunction);
 
 		Consumer falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
