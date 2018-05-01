@@ -51,20 +51,20 @@ class RandomDecimalGenerators {
 			if (upper.compareTo(max) >= 0) {
 				break;
 			}
-			partitions.add(createBaseGenerator(lower, upper, scale));
+			partitions.add(createBaseGenerator(lower, upper, scale, new BigDecimalShrinkCandidates(min, max, scale)));
 			lower = upper;
 		}
-		partitions.add(createBaseGenerator(lower, max, scale));
+		partitions.add(createBaseGenerator(lower, max, scale, new BigDecimalShrinkCandidates(min, max, scale)));
 		return partitions;
 	}
 
-	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal min, BigDecimal max, int scale) {
-		BigInteger scaledMin = min.scaleByPowerOfTen(scale).toBigInteger();
-		BigInteger scaledMax = max.scaleByPowerOfTen(scale).toBigInteger();
+	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal minGenerate, BigDecimal maxGenerate, int scale, BigDecimalShrinkCandidates candidates) {
+		BigInteger scaledMin = minGenerate.scaleByPowerOfTen(scale).toBigInteger();
+		BigInteger scaledMax = maxGenerate.scaleByPowerOfTen(scale).toBigInteger();
 		return random -> {
 			BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
 			BigDecimal randomDecimal = new BigDecimal(randomIntegral, scale);
-			return new ShrinkableValue<>(randomDecimal, new BigDecimalShrinkCandidates(min, max, scale));
+			return new ShrinkableValue<>(randomDecimal, candidates);
 		};
 	}
 

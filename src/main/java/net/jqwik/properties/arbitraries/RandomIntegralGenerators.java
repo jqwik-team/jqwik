@@ -52,22 +52,22 @@ class RandomIntegralGenerators {
 		return partitions;
 	}
 
-	private static RandomGenerator<BigInteger> createBaseGenerator(BigInteger min, BigInteger max, BigIntegerShrinkCandidates shrinkCandidates) {
-		if (isWithinIntegerRange(min, max)) {
-			return createIntegerGenerator(min, max, shrinkCandidates);
+	private static RandomGenerator<BigInteger> createBaseGenerator(BigInteger minGenerate, BigInteger maxGenerate, BigIntegerShrinkCandidates shrinkCandidates) {
+		if (isWithinIntegerRange(minGenerate, maxGenerate)) {
+			return createIntegerGenerator(minGenerate, maxGenerate, shrinkCandidates);
 		} else {
-			return createBigIntegerGenerator(min, max, shrinkCandidates);
+			return createBigIntegerGenerator(minGenerate, maxGenerate, shrinkCandidates);
 		}
 	}
 
-	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger min, BigInteger max, BigIntegerShrinkCandidates shrinkCandidates) {
-		BigInteger range = max.subtract(min);
+	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger minGenerate, BigInteger maxGenerate, BigIntegerShrinkCandidates shrinkCandidates) {
+		BigInteger range = maxGenerate.subtract(minGenerate);
 		int bits = range.bitLength();
 		return random -> {
 			while (true) {
 				BigInteger rawValue = new BigInteger(bits, random);
-				BigInteger value = rawValue.add(min);
-				if (value.compareTo(min) >= 0 && value.compareTo(max) <= 0) {
+				BigInteger value = rawValue.add(minGenerate);
+				if (value.compareTo(minGenerate) >= 0 && value.compareTo(maxGenerate) <= 0) {
 					return new ShrinkableValue<>(value, shrinkCandidates);
 				}
 			}
