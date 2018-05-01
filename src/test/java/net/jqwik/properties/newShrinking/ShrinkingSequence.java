@@ -15,4 +15,8 @@ public interface ShrinkingSequence<T> {
 		return new NextShrinkingSequence<>(this, createFollowupSequence);
 	}
 
+	default <U> ShrinkingSequence<U> map(Function<T, U> mapper) {
+		return new MappedShrinkingSequence<>(this, mapper);
+	}
+
 }

@@ -7,7 +7,7 @@ class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 	private final Function<NShrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep;
 	private ShrinkingSequence<T> nextSequence = null;
 
-	public NextShrinkingSequence(ShrinkingSequence<T> before, Function<NShrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep) {
+	NextShrinkingSequence(ShrinkingSequence<T> before, Function<NShrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep) {
 		this.before = before;
 		this.nextShrinkingStep = nextShrinkingStep;
 	}
