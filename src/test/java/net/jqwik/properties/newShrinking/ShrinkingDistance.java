@@ -21,6 +21,13 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return ShrinkingDistance.of(elements.size()).append(sumDistanceOfElements);
 	}
 
+	public static <T> ShrinkingDistance combine(List<NShrinkable<T>> shrinkables) {
+		return shrinkables
+			.stream()
+			.map(NShrinkable::distance)
+			.reduce(new ShrinkingDistance(new long[0]), ShrinkingDistance::append);
+	}
+
 	private ShrinkingDistance(long[] distances) {
 		this.distances = distances;
 	}

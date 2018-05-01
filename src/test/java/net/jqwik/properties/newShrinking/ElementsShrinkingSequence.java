@@ -7,13 +7,17 @@ import java.util.stream.*;
 public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	private final Falsifier<List<T>> listFalsifier;
 	private final List<FalsificationResult<T>> currentResults;
+	private final Function<List<NShrinkable<T>>, ShrinkingDistance> distanceFunction;
 
 	private int currentShrinkingPosition = 0;
 	private ShrinkingSequence<T> currentShrinkingSequence = null;
 	private Throwable currentThrowable = null;
 
-	public ElementsShrinkingSequence(
-		List<NShrinkable<T>> currentElements, Throwable originalError, Falsifier<List<T>> listFalsifier
+	public ElementsShrinkingSequence( //
+									  List<NShrinkable<T>> currentElements, //
+									  Throwable originalError, //
+									  Falsifier<List<T>> listFalsifier, //
+									  Function<List<NShrinkable<T>>, ShrinkingDistance> distanceFunction //
 	) {
 		this.currentResults = currentElements
 			.stream()
@@ -21,6 +25,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 			.collect(Collectors.toList());
 		this.currentThrowable = originalError;
 		this.listFalsifier = listFalsifier;
+		this.distanceFunction = distanceFunction;
 	}
 
 	@Override
@@ -98,7 +103,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 			@Override
 			public ShrinkingDistance distance() {
-				return ShrinkingDistance.forCollection(toShrinkableList(falsificationResults));
+				return distanceFunction.apply(toShrinkableList(falsificationResults));
 			}
 		};
 	}

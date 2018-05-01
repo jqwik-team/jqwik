@@ -31,7 +31,8 @@ public class PropertyShrinker {
 			return new PropertyShrinkingResult(toValues(parameters), 0 , originalError);
 		}
 
-		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier);
+		Function distanceFunction = shrinkables -> ShrinkingDistance.combine(shrinkables);
+		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier, distanceFunction);
 
 		Consumer falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
 
