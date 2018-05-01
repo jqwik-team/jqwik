@@ -110,6 +110,23 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isPresent();
 	}
 
-	// Test ShrinkingMode.BOUNDED
+	@Example
+	void withBoundedShrinkingBreakOffAfter1000Steps() {
+		List<NShrinkable> parameters = asList(
+			new OneStepShrinkable(900),
+			new OneStepShrinkable(900)
+		);
+
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.BOUNDED, reporter, new Reporting[0]);
+
+		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, null);
+
+		assertThat(result.values()).isEqualTo(asList(0, 800));
+
+		ArgumentCaptor<ReportEntry> entryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
+		verify(reporter, times(1)).accept(entryCaptor.capture());
+
+		assertThat(entryCaptor.getValue().getKeyValuePairs()).containsKeys("shrinking bound reached");
+	}
 
 }

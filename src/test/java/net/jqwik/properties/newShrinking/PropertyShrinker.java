@@ -11,6 +11,8 @@ import java.util.stream.*;
 
 public class PropertyShrinker {
 
+	private final static int BOUNDED_SHRINK_STEPS = 1000;
+
 	private final List<NShrinkable> parameters;
 	private final ShrinkingMode shrinkingMode;
 	private final Consumer<ReportEntry> reporter;
@@ -33,10 +35,15 @@ public class PropertyShrinker {
 
 		Consumer falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
 
-		AtomicInteger counter = new AtomicInteger(0);
-		while (sequence.next(counter::incrementAndGet, falsifiedReporter)) { }
+		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
+		while (sequence.next(shrinkingStepsCounter::incrementAndGet, falsifiedReporter)) {
+			if (shrinkingMode == ShrinkingMode.BOUNDED && shrinkingStepsCounter.get() >= BOUNDED_SHRINK_STEPS) {
+				reportShrinkingBoundReached(shrinkingStepsCounter.get(), toValues(parameters), sequence.current().value());
+				break;
+			}
+		}
 		FalsificationResult<List> current = sequence.current();
-		return new PropertyShrinkingResult(current.value(), counter.get(), current.throwable().orElse(null));
+		return new PropertyShrinkingResult(current.value(), shrinkingStepsCounter.get(), current.throwable().orElse(null));
 	}
 
 	private boolean isFalsifiedReportingOn() {
@@ -50,6 +57,19 @@ public class PropertyShrinker {
 	private void reportFalsifiedParams(Object effectiveParams) {
 		ReportEntry falsifiedEntry = ReportEntry.from("falsified", JqwikStringSupport.displayString(effectiveParams));
 		reporter.accept(falsifiedEntry);
+	}
+
+	private void reportShrinkingBoundReached(int steps, Object originalValue, Object bestShrunkValue) {
+		String value = String.format(
+			"%n    steps : %s" +
+				"%n    original parameters : %s" +
+				"%n    shrunk parameters   : %s" +
+				"%nYou can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
+			steps,
+			JqwikStringSupport.displayString(originalValue),
+			JqwikStringSupport.displayString(bestShrunkValue)
+		);
+		reporter.accept(ReportEntry.from("shrinking bound reached", value));
 	}
 
 }
