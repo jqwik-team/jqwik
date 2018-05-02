@@ -65,7 +65,7 @@ public class RandomGenerators {
 	public static RandomGenerator<BigInteger> bigIntegers(
 		BigInteger min, BigInteger max, BigInteger... partitionPoints
 	) {
-		return RandomIntegralGenerators.bigIntegers(min, max, partitionPoints);
+		return RandomIntegralGenerators.bigIntegers(Range.of(min, max), partitionPoints);
 	}
 
 	public static RandomGenerator<Double> doubles(double min, double max, int scale) {

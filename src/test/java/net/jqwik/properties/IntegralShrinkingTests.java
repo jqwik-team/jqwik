@@ -13,21 +13,20 @@ class IntegralShrinkingTests {
 
 	@Example
 	void shrinkFrom0DoesNotShrink() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-10), BigInteger.valueOf(10));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(-10, 10).map(BigInteger::valueOf));
 		assertThat(shrinker.distance(BigInteger.valueOf(0))).isEqualTo(0);
 		assertThat(shrinker.nextCandidates(BigInteger.valueOf(0))).isEmpty();
 	}
 
 	@Example
 	void shrinkFromValueOutsideRangeReturnsNothing() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-10), BigInteger.valueOf(10));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(-10, 10).map(BigInteger::valueOf));
 		assertThat(shrinker.nextCandidates(BigInteger.valueOf(20))).isEmpty();
 	}
 
 	@Example
 	void if0isInRangeDistanceIsAbsoluteNumber() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-10000), BigInteger
-			.valueOf(10000));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(-10000, 10000).map(BigInteger::valueOf));
 		assertThat(shrinker.distance(BigInteger.valueOf(10000))).isEqualTo(10000);
 		assertThat(shrinker.distance(BigInteger.valueOf(10))).isEqualTo(10);
 		assertThat(shrinker.distance(BigInteger.valueOf(1))).isEqualTo(1);
@@ -38,20 +37,18 @@ class IntegralShrinkingTests {
 
 	@Example
 	void if0isOutsideRangeDistanceIsDistanceToShrinkTarget() {
-		ShrinkCandidates<BigInteger> shrinkerAboveZero = new BigIntegerShrinkCandidates(BigInteger.valueOf(10), BigInteger
-			.valueOf(100));
+		ShrinkCandidates<BigInteger> shrinkerAboveZero = new BigIntegerShrinkCandidates(Range.of(10, 100).map(BigInteger::valueOf));
 		assertThat(shrinkerAboveZero.distance(BigInteger.valueOf(20))).isEqualTo(10);
 		assertThat(shrinkerAboveZero.distance(BigInteger.valueOf(10))).isEqualTo(0);
 
-		ShrinkCandidates<BigInteger> shrinkerBelowZero = new BigIntegerShrinkCandidates(BigInteger.valueOf(-100), BigInteger
-			.valueOf(-10));
+		ShrinkCandidates<BigInteger> shrinkerBelowZero = new BigIntegerShrinkCandidates(Range.of(-100, -10).map(BigInteger::valueOf));
 		assertThat(shrinkerBelowZero.distance(BigInteger.valueOf(-20))).isEqualTo(10);
 		assertThat(shrinkerBelowZero.distance(BigInteger.valueOf(-10))).isEqualTo(0);
 	}
 
 	@Example
 	void shrinkPositiveValueTowards0If0isInRange() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-10), BigInteger.valueOf(20));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(-10, 20).map(BigInteger::valueOf));
 		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
@@ -68,7 +65,7 @@ class IntegralShrinkingTests {
 
 	@Example
 	void shrinkNegativeValueTowards0If0isInRange() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-10), BigInteger.valueOf(20));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(-10, 20).map(BigInteger::valueOf));
 		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(-10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
@@ -85,7 +82,7 @@ class IntegralShrinkingTests {
 
 	@Example
 	void shrinkNegativeValueTowardMaxIf0IsOutsideRange() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(-20), BigInteger.valueOf(-5));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(-20, -5).map(BigInteger::valueOf));
 		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(-10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
@@ -99,7 +96,7 @@ class IntegralShrinkingTests {
 
 	@Example
 	void shrinkPositiveValueTowardMinIf0IsOutsideRange() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(5), BigInteger.valueOf(20));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(5, 20).map(BigInteger::valueOf));
 		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
@@ -113,7 +110,7 @@ class IntegralShrinkingTests {
 
 	@Example
 	void shrinkCandidatesApproachTargetAndShrinkValueWithFibbonacciDistance() {
-		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(BigInteger.valueOf(0), BigInteger.valueOf(100));
+		ShrinkCandidates<BigInteger> shrinker = new BigIntegerShrinkCandidates(Range.of(0, 100).map(BigInteger::valueOf));
 		Set<BigInteger> allShrunkValues = shrinker.nextCandidates(BigInteger.valueOf(90));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(

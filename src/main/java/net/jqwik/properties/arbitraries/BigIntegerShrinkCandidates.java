@@ -7,8 +7,8 @@ public class BigIntegerShrinkCandidates implements ShrinkCandidates<BigInteger> 
 
 	private final Range<BigInteger> range;
 
-	public BigIntegerShrinkCandidates(BigInteger min, BigInteger max) {
-		this.range = Range.of(min, max);
+	public BigIntegerShrinkCandidates(Range<BigInteger> range) {
+		this.range = range;
 	}
 
 	@Override

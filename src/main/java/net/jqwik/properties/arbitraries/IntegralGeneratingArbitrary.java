@@ -23,7 +23,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints) {
-		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(min, max);
+		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(Range.of(min, max));
 		List<Shrinkable<BigInteger>> samples =
 			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), min, max}) //
 				  .distinct() //

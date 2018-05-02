@@ -1,6 +1,5 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 
 import java.math.*;
@@ -9,22 +8,18 @@ import java.util.*;
 // TODO: Remove duplication with RandomDecimalGenerators
 class RandomIntegralGenerators {
 
-	static RandomGenerator<BigInteger> bigIntegers(BigInteger min, BigInteger max, BigInteger[] partitionPoints) {
-		if (min.compareTo(max) == 0) {
-			return ignored -> Shrinkable.unshrinkable(min);
+	static RandomGenerator<BigInteger> bigIntegers(Range<BigInteger> range, BigInteger[] partitionPoints) {
+		if (range.isSingular()) {
+			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 
-		if (min.compareTo(max) > 0) {
-			throw new JqwikException(String.format("Min value [%s] must not be greater that max value [%s].", min, max));
-		}
-
-		return partitionedGenerator(min, max, partitionPoints);
+		return partitionedGenerator(range, partitionPoints);
 	}
 
 	private static RandomGenerator<BigInteger> partitionedGenerator(
-		BigInteger min, BigInteger max, BigInteger[] partitionPoints
+		Range<BigInteger> range, BigInteger[] partitionPoints
 	) {
-		List<RandomGenerator<BigInteger>> generators = createPartitions(min, max, partitionPoints);
+		List<RandomGenerator<BigInteger>> generators = createPartitions(range, partitionPoints);
 		if (generators.size() == 1) {
 			return generators.get(0);
 		}
@@ -32,37 +27,38 @@ class RandomIntegralGenerators {
 	}
 
 	private static List<RandomGenerator<BigInteger>> createPartitions(
-		BigInteger min, BigInteger max, BigInteger[] partitionPoints
+		Range<BigInteger> range, BigInteger[] partitionPoints
 	) {
 		List<RandomGenerator<BigInteger>> partitions = new ArrayList<>();
 		Arrays.sort(partitionPoints);
-		BigInteger lower = min;
+		BigInteger lower = range.min;
 		for (BigInteger partitionPoint : partitionPoints) {
 			BigInteger upper = partitionPoint;
 			if (upper.compareTo(lower) <= 0) {
 				continue;
 			}
-			if (upper.compareTo(max) >= 0) {
+			if (upper.compareTo(range.max) >= 0) {
 				break;
 			}
-			partitions.add(createBaseGenerator(lower, upper.subtract(BigInteger.ONE), new BigIntegerShrinkCandidates(min, max)));
+			partitions.add(createBaseGenerator(lower, upper.subtract(BigInteger.ONE), range));
 			lower = upper;
 		}
-		partitions.add(createBaseGenerator(lower, max, new BigIntegerShrinkCandidates(min, max)));
+		partitions.add(createBaseGenerator(lower, range.max, range));
 		return partitions;
 	}
 
-	private static RandomGenerator<BigInteger> createBaseGenerator(BigInteger minGenerate, BigInteger maxGenerate, BigIntegerShrinkCandidates shrinkCandidates) {
+	private static RandomGenerator<BigInteger> createBaseGenerator(BigInteger minGenerate, BigInteger maxGenerate, Range<BigInteger> shrinkingRange) {
 		if (isWithinIntegerRange(minGenerate, maxGenerate)) {
-			return createIntegerGenerator(minGenerate, maxGenerate, shrinkCandidates);
+			return createIntegerGenerator(minGenerate, maxGenerate, shrinkingRange);
 		} else {
-			return createBigIntegerGenerator(minGenerate, maxGenerate, shrinkCandidates);
+			return createBigIntegerGenerator(minGenerate, maxGenerate, shrinkingRange);
 		}
 	}
 
-	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger minGenerate, BigInteger maxGenerate, BigIntegerShrinkCandidates shrinkCandidates) {
+	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger minGenerate, BigInteger maxGenerate, Range<BigInteger> shrinkingRange) {
 		BigInteger range = maxGenerate.subtract(minGenerate);
 		int bits = range.bitLength();
+		ShrinkCandidates<BigInteger> shrinkCandidates = new BigIntegerShrinkCandidates(shrinkingRange);
 		return random -> {
 			while (true) {
 				BigInteger rawValue = new BigInteger(bits, random);
@@ -74,9 +70,10 @@ class RandomIntegralGenerators {
 		};
 	}
 
-	private static RandomGenerator<BigInteger> createIntegerGenerator(BigInteger min, BigInteger max, BigIntegerShrinkCandidates shrinkCandidates) {
+	private static RandomGenerator<BigInteger> createIntegerGenerator(BigInteger min, BigInteger max, Range<BigInteger> shrinkingRange) {
 		final int _min = Math.min(min.intValue(), max.intValue());
 		final int _max = Math.max(min.intValue(), max.intValue());
+		ShrinkCandidates<BigInteger> shrinkCandidates = new BigIntegerShrinkCandidates(shrinkingRange);
 		return random -> {
 			int bound = Math.abs(_max - _min) + 1;
 			int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min;
