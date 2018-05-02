@@ -88,20 +88,22 @@ public class RandomGenerators {
 	public static <T> RandomGenerator<List<T>> list(
 		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
 	) {
-		return container(elementGenerator, ArrayList::new, minSize, maxSize, cutoffSize);
+		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable = elements -> new ContainerShrinkable<>(elements, ArrayList::new, minSize);
+		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
 	}
 
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
 	) {
-		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength, cutoffLength);
+		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ContainerShrinkable<>(elements, ContainerShrinkable.CREATE_STRING, minLength);
+		return container(elementGenerator, createShrinkable, minLength, maxLength, cutoffLength);
 	}
 
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength
 	) {
 		int defaultCutoff = defaultCutoffSize(minLength, maxLength);
-		return container(elementGenerator, ContainerShrinkable.CREATE_STRING, minLength, maxLength, defaultCutoff);
+		return strings(elementGenerator, minLength, maxLength, defaultCutoff);
 	}
 
 	private static int defaultCutoffSize(int minSize, int maxSize) {
@@ -114,7 +116,7 @@ public class RandomGenerators {
 
 	private static <T, C> RandomGenerator<C> container( //
 														RandomGenerator<T> elementGenerator, //
-														Function<List<T>, C> containerFunction, //
+														Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable, //
 														int minSize, int maxSize, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
@@ -124,7 +126,7 @@ public class RandomGenerators {
 			while (list.size() < listSize) {
 				list.add(elementGenerator.next(random));
 			}
-			return new ContainerShrinkable<>(list, containerFunction, minSize);
+			return createShrinkable.apply(list);
 		};
 	}
 
