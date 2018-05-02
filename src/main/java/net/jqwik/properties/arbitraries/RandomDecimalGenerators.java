@@ -9,58 +9,49 @@ import java.util.*;
 // TODO: Remove duplication with RandomIntegralGenerators
 class RandomDecimalGenerators {
 
-	static RandomGenerator<BigDecimal> bigDecimals(
-		BigDecimal min, BigDecimal max, int scale, BigDecimal[] partitionPoints
-	) {
+	static RandomGenerator<BigDecimal> bigDecimals(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
 		if (scale < 0) {
 			throw new JqwikException(String.format("Scale [%s] must be positive.", scale));
 		}
 
-		if (min.compareTo(max) == 0) {
-			return ignored -> Shrinkable.unshrinkable(min);
+		if (range.isSingular()) {
+			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 
-		if (min.compareTo(max) > 0) {
-			throw new JqwikException(String.format("Min value [%s] must not be greater that max value [%s].", min, max));
-		}
-
-		return partitionedGenerator(min, max, scale, partitionPoints);
+		return partitionedGenerator(range, scale, partitionPoints);
 	}
 
-	private static RandomGenerator<BigDecimal> partitionedGenerator(
-		BigDecimal min, BigDecimal max, int scale, BigDecimal[] partitionPoints
-	) {
-		List<RandomGenerator<BigDecimal>> generators = createPartitions(min, max, scale, partitionPoints);
+	private static RandomGenerator<BigDecimal> partitionedGenerator(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
+		List<RandomGenerator<BigDecimal>> generators = createPartitions(range, scale, partitionPoints);
 		if (generators.size() == 1) {
 			return generators.get(0);
 		}
 		return random -> generators.get(random.nextInt(generators.size())).next(random);
 	}
 
-	private static List<RandomGenerator<BigDecimal>> createPartitions(
-		BigDecimal min, BigDecimal max, int scale, BigDecimal[] partitionPoints
-	) {
+	private static List<RandomGenerator<BigDecimal>> createPartitions(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
 		List<RandomGenerator<BigDecimal>> partitions = new ArrayList<>();
 		Arrays.sort(partitionPoints);
-		BigDecimal lower = min;
+		BigDecimal lower = range.min;
 		for (BigDecimal partitionPoint : partitionPoints) {
 			BigDecimal upper = partitionPoint;
 			if (upper.compareTo(lower) <= 0) {
 				continue;
 			}
-			if (upper.compareTo(max) >= 0) {
+			if (upper.compareTo(range.max) >= 0) {
 				break;
 			}
-			partitions.add(createBaseGenerator(lower, upper, scale, new BigDecimalShrinkCandidates(min, max, scale)));
+			partitions.add(createBaseGenerator(lower, upper, scale, range));
 			lower = upper;
 		}
-		partitions.add(createBaseGenerator(lower, max, scale, new BigDecimalShrinkCandidates(min, max, scale)));
+		partitions.add(createBaseGenerator(lower, range.max, scale, range));
 		return partitions;
 	}
 
-	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal minGenerate, BigDecimal maxGenerate, int scale, BigDecimalShrinkCandidates candidates) {
+	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal minGenerate, BigDecimal maxGenerate, int scale, Range<BigDecimal> range) {
 		BigInteger scaledMin = minGenerate.scaleByPowerOfTen(scale).toBigInteger();
 		BigInteger scaledMax = maxGenerate.scaleByPowerOfTen(scale).toBigInteger();
+		ShrinkCandidates<BigDecimal> candidates = new BigDecimalShrinkCandidates(range, scale);
 		return random -> {
 			BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
 			BigDecimal randomDecimal = new BigDecimal(randomIntegral, scale);

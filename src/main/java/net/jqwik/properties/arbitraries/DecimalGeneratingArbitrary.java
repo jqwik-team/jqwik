@@ -26,7 +26,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints) {
-		BigDecimalShrinkCandidates shrinkCandidates = new BigDecimalShrinkCandidates(min, max, scale);
+		BigDecimalShrinkCandidates shrinkCandidates = new BigDecimalShrinkCandidates(Range.of(min, max), scale);
 		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
 		BigDecimal[] sampleValues = {BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ONE.negate(), smallest, smallest.negate(), min, max};
 		List<Shrinkable<BigDecimal>> samples =

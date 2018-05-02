@@ -15,19 +15,19 @@ class DecimalsShrinkingTests {
 
 	@Example
 	void valueOutsideRangeDoesNotShrink() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-10.0, 10.0).map(BigDecimal::new), 2);
 		assertThat(shrinker.nextCandidates(new BigDecimal(20.0))).isEmpty();
 	}
 
 	@Example
 	void shrinkFrom0DoesNotShrink() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-10.0, 10.0).map(BigDecimal::new), 2);
 		assertThat(shrinker.nextCandidates(BigDecimal.ZERO)).isEmpty();
 	}
 
 	@Example
 	void shrinkByRemovingDecimalsAndShrinkingIntegralPart() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-10.0, 10.0).map(BigDecimal::new), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.15"));
 
 		assertThat(candidates).containsOnly(new BigDecimal("0"), new BigDecimal("1"), new BigDecimal("2.1"), new BigDecimal("2.2"));
@@ -35,7 +35,7 @@ class DecimalsShrinkingTests {
 
 	@Example
 	void shrinkWillNotShrinkToDecimalsOutsideRange() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal("2.11"), new BigDecimal("10"), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(new BigDecimal("2.11"), new BigDecimal("10")), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.15"));
 
 		assertThat(candidates).containsOnly(new BigDecimal("2.2"));
@@ -43,7 +43,7 @@ class DecimalsShrinkingTests {
 
 	@Example
 	void shrinkByRemovingLastDecimal() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-10.0, 10.0).map(BigDecimal::new), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("2.1"));
 
 		assertThat(candidates).contains(new BigDecimal("2"), new BigDecimal("3"));
@@ -51,7 +51,7 @@ class DecimalsShrinkingTests {
 
 	@Example
 	void shrinkNegativeByRemovingDecimalsAndShrinkingIntegral() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-10.0, 10.0).map(BigDecimal::new), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal("-3.99"));
 
 		assertThat(candidates).containsOnly(new BigDecimal("0"), new BigDecimal("-1"), new BigDecimal("-2"), new BigDecimal("-3.9"), new BigDecimal("-4.0"));
@@ -59,7 +59,7 @@ class DecimalsShrinkingTests {
 
 	@Example
 	void withNoDecimalsShrinkLikeIntegrals() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-10.0, 10.0).map(BigDecimal::new), 2);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(new BigDecimal(5.0));
 
 		assertThat(candidates).containsExactlyInAnyOrder(new BigDecimal(0.0), new BigDecimal(1.0), new BigDecimal(2.0), new BigDecimal(3.0), new BigDecimal(4.0));
@@ -67,7 +67,7 @@ class DecimalsShrinkingTests {
 
 	@Example
 	void if0isInRangeDistanceIsDistanceTo0ShiftedByPrecision() {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-10.0), new BigDecimal(10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-10.0, 10.0).map(BigDecimal::new), 2);
 		assertThat(shrinker.distance(new BigDecimal("10.0"))).isEqualTo(1000);
 		assertThat(shrinker.distance(new BigDecimal("9.55"))).isEqualTo(955);
 		assertThat(shrinker.distance(new BigDecimal("9.559"))).isEqualTo(955);
@@ -81,26 +81,25 @@ class DecimalsShrinkingTests {
 
 	@Example
 	void if0isOutsideRangeDistanceIsDistanceToShrinkTarget() {
-		ShrinkCandidates<BigDecimal> shrinkerAboveZero = new BigDecimalShrinkCandidates(new BigDecimal(10.0), new BigDecimal(100.0), 2);
+		ShrinkCandidates<BigDecimal> shrinkerAboveZero = new BigDecimalShrinkCandidates(Range.of(10.0, 100.0).map(BigDecimal::new), 2);
 		assertThat(shrinkerAboveZero.distance(new BigDecimal(20.1))).isEqualTo(1010);
 		assertThat(shrinkerAboveZero.distance(new BigDecimal(10.0))).isEqualTo(0);
 
-		ShrinkCandidates<BigDecimal> shrinkerBelowZero = new BigDecimalShrinkCandidates(new BigDecimal(-100.0), new BigDecimal(-10.0), 2);
+		ShrinkCandidates<BigDecimal> shrinkerBelowZero = new BigDecimalShrinkCandidates(Range.of(-100.0, -10.0).map(BigDecimal::new), 2);
 		assertThat(shrinkerBelowZero.distance(new BigDecimal(-20.1))).isEqualTo(1010);
 		assertThat(shrinkerBelowZero.distance(new BigDecimal(-10.0))).isEqualTo(0);
 	}
 
 	@Property(tries = 10000)
 	void aValueIsNeverShrunkToItself(@ForAll @BigRange(min = "-100000", max = "100000") @Scale(4) BigDecimal aValue) {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-Double.MAX_VALUE + 1),
-				new BigDecimal(Double.MAX_VALUE - 1), 4);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(new BigDecimal(-Double.MAX_VALUE + 1), new BigDecimal(Double.MAX_VALUE - 1)), 4);
 		Set<BigDecimal> candidates = shrinker.nextCandidates(aValue);
 		assertThat(candidates).doesNotContain(aValue);
 	}
 
 	@Property(tries = 10000)
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-100", max = "100") @Scale(15) BigDecimal aValue) {
-		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(new BigDecimal(-100.0), new BigDecimal(100.0), 15);
+		ShrinkCandidates<BigDecimal> shrinker = new BigDecimalShrinkCandidates(Range.of(-100.0, 100.0).map(BigDecimal::new), 15);
 		ShrinkableValue<BigDecimal> shrinkableValue = new ShrinkableValue<>(aValue, shrinker);
 		ValueShrinker<BigDecimal> valueShrinker = new ValueShrinker<>(shrinkableValue, ignore -> {}, ShrinkingMode.FULL, ignore -> {});
 		BigDecimal shrunkValue = valueShrinker.shrink(MockFalsifier.falsifyAll(), null).shrunkValue().value();

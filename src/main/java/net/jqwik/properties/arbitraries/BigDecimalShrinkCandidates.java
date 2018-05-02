@@ -9,8 +9,8 @@ public class BigDecimalShrinkCandidates implements ShrinkCandidates<BigDecimal> 
 	private final int scale;
 	private final BigIntegerShrinkCandidates integralShrinkCandidates;
 
-	public BigDecimalShrinkCandidates(BigDecimal min, BigDecimal max, int scale) {
-		range = Range.of(min, max);
+	public BigDecimalShrinkCandidates(Range<BigDecimal> range, int scale) {
+		this.range = range;
 		this.scale = scale;
 		this.integralShrinkCandidates = new BigIntegerShrinkCandidates(range.map(BigDecimal::toBigInteger));
 	}

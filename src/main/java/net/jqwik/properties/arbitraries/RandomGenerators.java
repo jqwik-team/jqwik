@@ -77,7 +77,7 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<BigDecimal> bigDecimals(BigDecimal min, BigDecimal max, int scale, BigDecimal... partitionPoints) {
-		return RandomDecimalGenerators.bigDecimals(min, max, scale, partitionPoints);
+		return RandomDecimalGenerators.bigDecimals(Range.of(min, max), scale, partitionPoints);
 	}
 
 	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
