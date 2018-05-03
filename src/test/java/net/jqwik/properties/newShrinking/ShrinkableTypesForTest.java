@@ -9,20 +9,26 @@ import java.util.stream.*;
 class ShrinkableTypesForTest {
 
 	static class OneStepShrinkable extends AbstractShrinkable<Integer> {
+		private final int minimum;
+
 		OneStepShrinkable(int integer) {
+			this(integer, 0);
+		}
+		OneStepShrinkable(int integer, int minimum) {
 			super(integer);
+			this.minimum = minimum;
 		}
 
 		@Override
 		public Set<NShrinkable<Integer>> shrinkCandidatesFor(NShrinkable<Integer> shrinkable) {
-			if (shrinkable.value() == 0)
+			if (shrinkable.value() == minimum)
 				return Collections.emptySet();
-			return Collections.singleton(new OneStepShrinkable(shrinkable.value() - 1));
+			return Collections.singleton(new OneStepShrinkable(shrinkable.value() - 1, minimum));
 		}
 
 		@Override
 		public ShrinkingDistance distance() {
-			return ShrinkingDistance.of(value());
+			return ShrinkingDistance.of(value() - minimum);
 		}
 	}
 
