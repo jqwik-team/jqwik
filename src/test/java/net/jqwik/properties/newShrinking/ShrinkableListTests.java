@@ -19,23 +19,17 @@ class ShrinkableListTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+	private Consumer<List<Integer>> reporter = mock(Consumer.class);
 
-	@Group
-	class Creation {
-
-		@Example
-		void simple() {
-			NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2, 3);
-			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
-			assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2, 3));
-		}
-
+	@Example
+	void creation() {
+		NShrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2, 3);
+		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
+		assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2, 3));
 	}
 
 	@Group
 	class ReportFalsified {
-
-		private Consumer<List<Integer>> reporter = mock(Consumer.class);
 
 		@Example
 		@Label("report all falsified on the way")
@@ -102,13 +96,13 @@ class ShrinkableListTests {
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(1);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(0);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(3);
 		}
@@ -121,13 +115,13 @@ class ShrinkableListTests {
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(aList -> false);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(4);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(3);
 		}
@@ -138,11 +132,11 @@ class ShrinkableListTests {
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(List::isEmpty);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(1);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(2);
 		}
@@ -153,13 +147,13 @@ class ShrinkableListTests {
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> integers.size() <= 1);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1, 1));
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 
 			Assertions.assertThat(counter.get()).isEqualTo(3);
@@ -174,19 +168,19 @@ class ShrinkableListTests {
 				elements -> elements.size() % 2 == 0);
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3, 3, 3, 3));
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList());
 
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(4);
 		}
@@ -200,17 +194,17 @@ class ShrinkableListTests {
 				elements -> elements.stream().allMatch(i -> i % 2 == 1));
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3));
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3));
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1));
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1));
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(5);
 		}
@@ -226,40 +220,39 @@ class ShrinkableListTests {
 			Falsifier<List<Integer>> falsifier = List::isEmpty;
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(falsifier);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(100);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(50);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(25);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(13);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(9);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(8);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(7);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(6);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(5);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(4);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(2);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(1);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(1);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			Assertions.assertThat(counter.get()).isEqualTo(14);
 		}
 	}
-
 
 	private NShrinkable<List<Integer>> createShrinkableList(Integer... listValues) {
 		List<NShrinkable<Integer>> elementShrinkables =

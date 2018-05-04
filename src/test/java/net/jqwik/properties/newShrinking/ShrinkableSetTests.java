@@ -177,6 +177,20 @@ class ShrinkableSetTests {
 			assertThat(counter.get()).isEqualTo(5);
 		}
 
+		@Example
+		void bigSet() {
+			Set<NShrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new).collect(Collectors.toSet());
+			NShrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5);
+
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
+
+			while (sequence.next(count, reporter)) {
+			}
+			assertThat(sequence.current().value()).hasSize(5);
+
+			assertThat(counter.get()).isEqualTo(21);
+		}
+
 	}
 
 
