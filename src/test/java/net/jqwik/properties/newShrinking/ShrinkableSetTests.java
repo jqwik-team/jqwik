@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static java.util.Arrays.asList;
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -85,7 +85,7 @@ class ShrinkableSetTests {
 		void downToMinSize() {
 			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3, 4), 2);
 
-			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> true);
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(4);
@@ -93,101 +93,89 @@ class ShrinkableSetTests {
 			assertThat(sequence.current().value().size()).isEqualTo(3);
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
+			assertThat(sequence.current().value()).containsExactly(0, 1);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(0, 1);
+			assertThat(sequence.next(count, reporter)).isFalse();
+
+			assertThat(counter.get()).isEqualTo(4);
+		}
+
+		@Example
+		void downToNonEmpty() {
+			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
+
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(0, 1, 2);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(0, 1);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(0);
 			assertThat(sequence.next(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
 
-//		@Example
-//		void downToNonEmpty() {
-//			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet("abcd", 0);
-//
-//			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(String::isEmpty);
-//
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value().size()).isEqualTo(3);
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value().size()).isEqualTo(2);
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value().size()).isEqualTo(1);
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isFalse();
-//
-//			assertThat(counter.get()).isEqualTo(3);
-//		}
-//
-//		@Example
-//		void alsoShrinkElements() {
-//
-//			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet("bbb", 0);
-//
-//			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> aSet.size() <= 1);
-//
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value()).isEqualTo("bb");
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value().size()).isEqualTo(2);
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value().size()).isEqualTo(2);
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isFalse();
-//			assertThat(sequence.current().value()).isEqualTo("aa");
-//
-//			assertThat(counter.get()).isEqualTo(3);
-//		}
-//
-//		@Example
-//		void withFilterOnStringLength() {
-//			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet("cccc", 0);
-//
-//			Falsifier<String> falsifier = ignore -> false;
-//			Falsifier<String> filteredFalsifier = falsifier.withFilter(aSet -> aSet.size() % 2 == 0);
-//
-//			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
-//
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value()).isEqualTo("cccc");
-//
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value()).isEqualTo("cc");
-//
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value()).isEqualTo("cc");
-//
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isTrue();
-//			assertThat(sequence.current().value()).isEqualTo("");
-//
-//			assertThat(sequence.next(count, ignore -> {
-//			})).isFalse();
-//
-//			assertThat(counter.get()).isEqualTo(4);
-//		}
-//
-//		@Example
-//		void withFilterOnStringContents() {
-//			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet("ddd", 0);
-//
-//			Falsifier<String> falsifier = String::isEmpty;
-//			Falsifier<String> filteredFalsifier = falsifier //
-//				.withFilter(aSet -> aSet.startsWith("d") || aSet.startsWith("b"));
-//			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
-//
-//			while (sequence.next(count, reporter)) {
-//			}
-//			assertThat(sequence.current().value()).isEqualTo("b");
-//
-//			assertThat(counter.get()).isEqualTo(6);
-//		}
+		@Example
+		void alsoShrinkElements() {
+
+			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
+
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> aSet.size() <= 1);
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(2, 3);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(1, 3);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(0, 3);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(0, 2);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(0, 1);
+			assertThat(sequence.next(count, reporter)).isFalse();
+
+			assertThat(counter.get()).isEqualTo(5);
+		}
+
+		@Example
+		void withFilterOnSetSize() {
+			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(1, 2, 3, 4), 0);
+
+			Falsifier<Set<Integer>> falsifier = ignore -> false;
+			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.size() % 2 == 0);
+
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
+
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(1, 2, 3, 4);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(1, 2);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).containsExactly(1, 2);
+			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.current().value()).isEmpty();
+			assertThat(sequence.next(count, reporter)).isFalse();
+
+			assertThat(counter.get()).isEqualTo(4);
+		}
+
+		@Example
+		void withFilterOnSetContents() {
+			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 5, 6), 0);
+
+			Falsifier<Set<Integer>> falsifier = Set::isEmpty;
+			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
+
+			while (sequence.next(count, reporter)) {
+			}
+			assertThat(sequence.current().value()).containsExactly(2);
+
+			assertThat(counter.get()).isEqualTo(5);
+		}
 
 	}
 
