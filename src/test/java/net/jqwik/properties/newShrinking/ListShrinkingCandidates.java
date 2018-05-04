@@ -2,7 +2,7 @@ package net.jqwik.properties.newShrinking;
 
 import java.util.*;
 
-public class ListShrinkingCandidates<T> {
+public class ListShrinkingCandidates<T> implements ShrinkingCandidates<List<T>> {
 
 	private final int minSize;
 
@@ -10,6 +10,7 @@ public class ListShrinkingCandidates<T> {
 		this.minSize = minSize;
 	}
 
+	@Override
 	public Set<List<T>> candidatesFor(List<T> toShrink) {
 		if (toShrink.size() <= minSize)
 			return Collections.emptySet();
