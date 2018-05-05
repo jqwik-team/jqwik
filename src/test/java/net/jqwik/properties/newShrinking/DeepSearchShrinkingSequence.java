@@ -25,13 +25,13 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 
 		lastStepSuccessful = false;
 
-		Set<NShrinkable<T>> candidates = candidatesFor.apply(searchBase.shrinkable());
+		Set<NShrinkable<T>> candidates = getShrinkableCandidates();
+
 		List<FalsificationResult<T>> nextBase = candidates
 			.stream()
 			.sorted()
 			.map(this::falsify)
 			.filter(result -> result.status() != FalsificationResult.Status.VERIFIED)
-			.peek(result -> lastStepSuccessful = true)
 			.collect(Collectors.toList());
 
 		nextBase
@@ -40,6 +40,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 			.findFirst()
 			.ifPresent(result -> {
 				count.run();
+				lastStepSuccessful = true;
 				this.currentBest = result;
 				reportFalsified.accept(this.currentBest.value());
 				this.searchBase = this.currentBest;
@@ -48,7 +49,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 		nextBase
 			.stream()
 			.filter(result -> result.status() == FalsificationResult.Status.FILTERED_OUT)
-			.filter(result -> result.shrinkable().isSmallerThan(currentBest.shrinkable()))
+			.filter(result -> result.shrinkable().isSmallerThan(currentBest.shrinkable())).filter(result -> result.shrinkable().isSmallerThan(searchBase.shrinkable()))
 			.findFirst()
 			.ifPresent(result -> {
 				count.run();
@@ -57,6 +58,14 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 			});
 
 		return lastStepSuccessful;
+	}
+
+	private Set<NShrinkable<T>> getShrinkableCandidates() {
+		Set<NShrinkable<T>> candidates = new HashSet<>(candidatesFor.apply(searchBase.shrinkable()));
+		if (searchBase != currentBest) {
+			candidates.addAll(candidatesFor.apply(currentBest.shrinkable()));
+		}
+		return candidates;
 	}
 
 	private FalsificationResult<T> falsify(NShrinkable<T> candidate) {

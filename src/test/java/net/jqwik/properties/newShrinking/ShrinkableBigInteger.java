@@ -5,20 +5,26 @@ import net.jqwik.properties.arbitraries.*;
 
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 	private final Range<BigInteger> range;
 	private final BigInteger target;
+	private final BigIntegerShrinkingCandidates shrinkingCandidates;
 
 	public ShrinkableBigInteger(BigInteger value, Range<BigInteger> range) {
 		super(value);
 		this.range = range;
 		this.target = determineTarget(value);
+		this.shrinkingCandidates = new BigIntegerShrinkingCandidates(this.target);
 	}
 
 	@Override
 	public Set<NShrinkable<BigInteger>> shrinkCandidatesFor(NShrinkable<BigInteger> shrinkable) {
-		return null;
+		return shrinkingCandidates.candidatesFor(shrinkable.value()) //
+			.stream() //
+			.map(aBigInteger -> new ShrinkableBigInteger(aBigInteger, range)) //
+			.collect(Collectors.toSet());
 	}
 
 	@Override
