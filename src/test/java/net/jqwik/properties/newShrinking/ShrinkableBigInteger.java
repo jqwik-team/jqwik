@@ -29,7 +29,11 @@ public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 
 	@Override
 	public ShrinkingDistance distance() {
-		BigInteger distance = value().subtract(target).abs();
+		return distanceFor(value(), target);
+	}
+
+	static ShrinkingDistance distanceFor(BigInteger value, BigInteger target) {
+		BigInteger distance = value.subtract(target).abs();
 		if (distance.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) >= 0) return ShrinkingDistance.of(Long.MAX_VALUE);
 		return ShrinkingDistance.of(distance.longValueExact());
 	}

@@ -5,6 +5,7 @@ import net.jqwik.properties.arbitraries.*;
 
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 
@@ -23,12 +24,22 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 
 	@Override
 	public Set<NShrinkable<BigDecimal>> shrinkCandidatesFor(NShrinkable<BigDecimal> shrinkable) {
-		return null;
+		return shrinkingCandidates.candidatesFor(shrinkable.value())
+			.stream() //
+			.map(aBigDecimal -> new ShrinkableBigDecimal(aBigDecimal, range, scale)) //
+			.collect(Collectors.toSet());
 	}
 
 	@Override
 	public ShrinkingDistance distance() {
-		return null;
+		ShrinkingDistance bigIntegerDistance =
+			ShrinkableBigInteger.distanceFor(value().toBigInteger(), target.toBigInteger());
+		BigDecimal fractionalPart = value().remainder(BigDecimal.ONE).abs();
+		BigDecimal fractionalPartScaled = fractionalPart.scaleByPowerOfTen(scale);
+		ShrinkingDistance decimalDistance = fractionalPartScaled.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) < 0
+			? ShrinkingDistance.of(fractionalPartScaled.longValue())
+			: ShrinkingDistance.of(Long.MAX_VALUE);
+		return bigIntegerDistance.append(decimalDistance);
 	}
 
 	//TODO: Remove duplication with ShrinkableBigInteger

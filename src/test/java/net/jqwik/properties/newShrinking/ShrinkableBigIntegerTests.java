@@ -49,9 +49,23 @@ class ShrinkableBigIntegerTests {
 			.isEqualTo(ShrinkingDistance.of(20));
 	}
 
+	@Example
+	void shrinkingDistanceOutsideLongRange() {
+		Range<BigInteger> bigIntegerRange = Range.of( //
+			new BigInteger("-1000000000000000000000"), //
+			new BigInteger("1000000000000000000000"));
+
+		assertThat( //
+			new ShrinkableBigInteger(new BigInteger("99999999999999999999"), bigIntegerRange).distance()) //
+			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE));
+
+		assertThat( //
+			new ShrinkableBigInteger(new BigInteger("-99999999999999999999"), bigIntegerRange).distance()) //
+			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE));
+	}
 
 	@Example
-	@Label("report all falsified on the way")
+	@Label("report all falsified")
 	void reportFalsified() {
 		NShrinkable<BigInteger> shrinkable = createShrinkableBigInteger(30, Range.of(-100l, 100l));
 
@@ -96,7 +110,6 @@ class ShrinkableBigIntegerTests {
 			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(filteredFalsifier);
 
 			while (sequence.next(count, reporter)) {
-				System.out.println(sequence.current().shrinkable());
 			}
 
 			assertThat(sequence.current().value()).isEqualTo(100);
