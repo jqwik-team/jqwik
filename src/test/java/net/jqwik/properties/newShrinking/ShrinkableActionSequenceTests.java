@@ -28,7 +28,7 @@ class ShrinkableActionSequenceTests {
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
 
 		NSequentialActionSequence<String> sequence = (NSequentialActionSequence<String>) shrinkable.value();
-		assertThat(sequence.sequenceToShrink()).hasSize(2);
+		assertThat(sequence.size()).isEqualTo(2);
 	}
 
 	@Example
@@ -78,8 +78,46 @@ class ShrinkableActionSequenceTests {
 		while(sequence.next(count, reporter));
 
 		assertThat(sequence.current().value().size()).isEqualTo(1);
-		//TODO: Next line shows that actions are being shrunk
-		//assertThat(sequence.current().value().run("")).isEqualTo("aa");
+		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+	}
+
+	@Example
+	void actionsWithFailingPreconditionsAreShrunkAway() {
+		List<NShrinkable<Action<String>>> actions = asList(
+			shrinkableFailingPrecondition(),
+			shrinkableAddString(),
+			shrinkableAddX(),
+			shrinkableFailingPrecondition(),
+			shrinkableAddString(),
+			shrinkableFailingPrecondition(),
+			shrinkableFailingPrecondition(),
+			shrinkableAddString()
+		);
+		NShrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			String result = seq.run("");
+			return result.length() < 2;
+		});
+
+		while(sequence.next(count, reporter));
+
+		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+	}
+
+	private NShrinkable<Action<String>> shrinkableFailingPrecondition() {
+		return NShrinkable.unshrinkable("poops")
+			.map(ignore -> new Action<String>() {
+				@Override
+				public boolean precondition(String model) {
+					return false;
+				}
+
+				@Override
+				public String run(String model) {
+					return model;
+				}
+			});
 	}
 
 	private NShrinkable<Action<String>> shrinkableAddX() {
