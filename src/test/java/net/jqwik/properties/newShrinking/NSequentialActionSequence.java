@@ -58,6 +58,11 @@ public class NSequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	@Override
+	public int size() {
+		return candidateSequence.size();
+	}
+
+	@Override
 	public String toString() {
 		String stateString = "";
 		List<NShrinkable<Action<M>>> actionsToShow = runSequence;

@@ -6,6 +6,7 @@ class ComprehensiveListShrinkingCandidates<T> implements ShrinkingCandidates<Lis
 
 	@Override
 	public Set<List<T>> candidatesFor(List<T> toShrink) {
+		//At least on element will be kept
 		if (toShrink.size() <= 1) {
 			return Collections.emptySet();
 		}

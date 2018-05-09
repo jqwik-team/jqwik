@@ -57,6 +57,11 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	@Override
+	public int size() {
+		return sequenceToShrink().size();
+	}
+
+	@Override
 	public String toString() {
 		String stateString = "";
 		List<Shrinkable<Action<M>>> actionsToShow = runSequence;

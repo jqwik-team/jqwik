@@ -184,7 +184,7 @@ class ShrinkableStringTests {
 	}
 
 
-	private NShrinkable<String> createShrinkableString(String aString, int minSize) {
+	static NShrinkable<String> createShrinkableString(String aString, int minSize) {
 		List<NShrinkable<Character>> elementShrinkables = aString //
 			.chars() //
 			.mapToObj(aChar -> new OneStepShrinkable(aChar, 'a')) //

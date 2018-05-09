@@ -1,5 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
+import net.jqwik.support.*;
+
 import java.util.function.*;
 
 public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
@@ -19,6 +21,11 @@ public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 			@Override
 			public ShrinkingDistance distance() {
 				return ShrinkingDistance.of(0);
+			}
+
+			@Override
+			public String toString() {
+				return JqwikStringSupport.displayString(value);
 			}
 		};
 	}

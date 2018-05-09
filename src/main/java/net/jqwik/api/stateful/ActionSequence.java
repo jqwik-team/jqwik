@@ -8,4 +8,6 @@ public interface ActionSequence<M> {
 	M run(M model);
 
 	ActionSequence<M> withInvariant(Invariant<M> invariant);
+
+	int size();
 }

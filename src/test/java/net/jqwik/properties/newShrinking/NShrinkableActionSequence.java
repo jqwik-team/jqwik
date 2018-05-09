@@ -20,19 +20,21 @@ class NShrinkableActionSequence<M> implements NShrinkable<ActionSequence<M>> {
 	public ShrinkingSequence<ActionSequence<M>> shrink(Falsifier<ActionSequence<M>> falsifier) {
 		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier); //
 //			.andThen(shrinkableList -> { //
-//				List<NShrinkable<E>> elements = ((ShrinkableContainer<C, E>) shrinkableList).elements;
-//				Falsifier<List<E>> listFalsifier = list -> falsifier.test(toContainer(list));
-//				return new ElementsShrinkingSequence<E>(elements, null, listFalsifier, ShrinkingDistance::forCollection)
-//					.map(this::toContainer);
+//				NShrinkableActionSequence<M> actionSequence = (NShrinkableActionSequence<M>) shrinkableList;
+//				Falsifier<List<Action<M>>> listFalsifier = list -> falsifier.test(actionSequence.candidateActions);
+//				return new ElementsShrinkingSequence<Action<M>>(actionSequence.candidateActions, null, listFalsifier, ShrinkingDistance::forCollection);
+//					.map(this::toActionList);
 //			});
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private Set<NShrinkable<ActionSequence<M>>> shrinkCandidatesFor(NShrinkable<ActionSequence<M>> shrinkable) {
-		return candidates.candidatesFor(value.sequenceToShrink()) //
-			.stream() //
-			.map(list -> new NShrinkableActionSequence<>(list)) //
-			.collect(Collectors.toSet());
+		NShrinkableActionSequence<M> shrinkableSequence = (NShrinkableActionSequence<M>) shrinkable;
+		return candidates.candidatesFor(shrinkableSequence.candidateActions) //
+						 .stream() //
+						 .map(list -> new NShrinkableActionSequence<>(list)) //
+						 .collect(Collectors.toSet());
 	}
 
 	@Override
