@@ -53,11 +53,8 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@Override
 	public int compareTo(ShrinkingDistance other) {
-		int compareLengthResult = compareLength(other);
-		if (compareLengthResult != 0)
-			return compareLengthResult;
-
-		for (int i = 0; i < distances.length; i++) {
+		int dimensionsToCompare = Math.max(dimensions(), other.dimensions());
+		for (int i = 0; i < dimensionsToCompare; i++) {
 			int compareDimensionResult = compareDimension(other, i);
 			if (compareDimensionResult != 0)
 				return compareDimensionResult;
@@ -65,24 +62,35 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return 0;
 	}
 
+	public int dimensions() {
+		return distances.length;
+	}
+
 	private int compareDimension(ShrinkingDistance other, int i) {
-		long left = distances[i];
-		long right = other.distances[i];
+		long left = at(distances, i);
+		long right = at(other.distances, i);
 		return Long.compare(left, right);
 	}
 
-	private int compareLength(ShrinkingDistance other) {
-		return Integer.compare(distances.length, other.distances.length);
+	private long at(long[] array, int i) {
+		return array.length > i ? array[i] : 0;
 	}
 
 	public ShrinkingDistance plus(ShrinkingDistance other) {
-		//TODO: What should happen if dimension of this or other > 1?
 		long[] summedUpDistances = sumUpArrays(distances, other.distances);
 		return new ShrinkingDistance(summedUpDistances);
 	}
 
 	private long[] sumUpArrays(long[] left, long[] right) {
-		return new long[]{left[0] + right[0]};
+		long[] sum = new long[Math.max(left.length, right.length)];
+		for (int i = 0; i < sum.length; i++) {
+			long summedValue = at(left, i) + at(right, i);
+			if (summedValue < 0) {
+				summedValue = Long.MAX_VALUE;
+			}
+			sum[i] = summedValue;
+		}
+		return sum;
 	}
 
 	public ShrinkingDistance append(ShrinkingDistance other) {
