@@ -24,9 +24,4 @@ public class WithSamplesGenerator<T> implements RandomGenerator<T> {
 			return samplesGenerator.next(random);
 		return base.next(random);
 	}
-
-	@Override
-	public Shrinkable<T> sampleRandomly(Random random) {
-		return base.sampleRandomly(random);
-	}
 }

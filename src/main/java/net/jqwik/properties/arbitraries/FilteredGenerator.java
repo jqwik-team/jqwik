@@ -22,11 +22,6 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public Shrinkable<T> sampleRandomly(Random random) {
-		return nextUntilAccepted(random, toFilter::sampleRandomly);
-	}
-
-	@Override
 	public String toString() {
 		return String.format("Filtering [%s]", toFilter);
 	}

@@ -86,7 +86,7 @@ class ContainerShrinkingTests {
 			RandomGenerator<Integer> integers = RandomGenerators.integers(1, 100);
 			RandomGenerator<List<Integer>> lists = RandomGenerators.list(integers, minSize, minSize + 10);
 
-			Shrinkable<List<Integer>> list = lists.sampleRandomly(random);
+			Shrinkable<List<Integer>> list = lists.next(random);
 
 			ShrinkResult<Shrinkable<List<Integer>>> shrinkResult = shrink(list, listToShrink -> false, null);
 
@@ -171,7 +171,7 @@ class ContainerShrinkingTests {
 			RandomGenerator<Character> characters = RandomGenerators.chars('a', 'b');
 			RandomGenerator<String> strings = RandomGenerators.strings(characters, minSize, minSize + 100);
 
-			Shrinkable<String> string = strings.sampleRandomly(random);
+			Shrinkable<String> string = strings.next(random);
 
 			ShrinkResult<Shrinkable<String>> shrinkResult = shrink(string, listToShrink -> false, null);
 

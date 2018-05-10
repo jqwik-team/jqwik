@@ -25,7 +25,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private Shrinkable<U> generateShrinkable(T value) {
 		RandomGenerator<U> generator = mapper.apply(value).generator(tries);
-		return generator.sampleRandomly(new Random(randomSeed));
+		return generator.next(new Random(randomSeed));
 	}
 
 	@Override
