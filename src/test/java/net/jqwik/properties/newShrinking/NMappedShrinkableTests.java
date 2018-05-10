@@ -15,6 +15,7 @@ class NMappedShrinkableTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+	private Consumer<String> reporter = mock(Consumer.class);
 
 	@Example
 	void creation() {
@@ -31,17 +32,13 @@ class NMappedShrinkableTests {
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> false);
 
-		assertThat(sequence.next(count, ignore -> {
-		})).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("22");
-		assertThat(sequence.next(count, ignore -> {
-		})).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("11");
-		assertThat(sequence.next(count, ignore -> {
-		})).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("00");
-		assertThat(sequence.next(count, ignore -> {
-		})).isFalse();
+		assertThat(sequence.next(count, reporter)).isFalse();
 		assertThat(sequence.current().value()).isEqualTo("00");
 
 		assertThat(counter.get()).isEqualTo(3);
@@ -50,8 +47,6 @@ class NMappedShrinkableTests {
 
 	@Example
 	void reportFalsifier() {
-
-		Consumer<String> reporter = mock(Consumer.class);
 
 		NShrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		NShrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + String.valueOf(i));
