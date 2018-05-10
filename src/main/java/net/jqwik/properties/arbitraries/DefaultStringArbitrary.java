@@ -25,7 +25,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
 				.filter(s -> s.length() >= minLength && s.length() <= maxLength).map(Shrinkable::unshrinkable)
 				.collect(Collectors.toList());
-		return RandomGenerators.strings(createCharacterGenerator(), minLength, maxLength, cutoffLength).withShrinkableSamples(samples);
+		return RandomGenerators.strings(createCharacterGenerator(), minLength, maxLength, cutoffLength).withEdgeCases(samples);
 	}
 
 	@Override

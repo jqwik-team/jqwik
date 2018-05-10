@@ -3,6 +3,7 @@ package net.jqwik.properties;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
+import org.assertj.core.api.*;
 
 import java.math.*;
 import java.util.*;
@@ -19,6 +20,16 @@ class RandomGeneratorsTests {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
 		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 2, 5);
 		ArbitraryTestHelper.assertAllGenerated(generator, set -> set.size() >= 2 && set.size() <= 5);
+	}
+
+	@Example
+	void samplesAreGeneratedFirst(@ForAll Random random) {
+		RandomGenerator<Integer> generator = RandomGenerators.integers(1, 10).withSamples(-1, -2);
+
+		Assertions.assertThat(generator.next(random).value()).isEqualTo(-1);
+		Assertions.assertThat(generator.next(random).value()).isEqualTo(-2);
+
+		ArbitraryTestHelper.assertAllGenerated(generator, anInt -> anInt >= 1 && anInt <= 10);
 	}
 
 	@Group
@@ -183,9 +194,6 @@ class RandomGeneratorsTests {
 			assertThatThrownBy(() -> RandomGenerators.bigDecimals(BigDecimal.valueOf(1), BigDecimal.valueOf(-1), 2))
 				.isInstanceOf(JqwikException.class);
 		}
-
-
-
 	}
 
 	private void assertAllPartitionsAreCovered(

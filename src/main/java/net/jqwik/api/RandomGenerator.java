@@ -70,7 +70,7 @@ public interface RandomGenerator<T> {
 		};
 	}
 
-	default RandomGenerator<T> withShrinkableSamples(List<Shrinkable<T>> samples) {
+	default RandomGenerator<T> withEdgeCases(List<Shrinkable<T>> samples) {
 		RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
 		RandomGenerator<T> generator = this;
 		AtomicInteger tryCount = new AtomicInteger(0);
@@ -89,8 +89,7 @@ public interface RandomGenerator<T> {
 	}
 
 	default RandomGenerator<T> withSamples(T... samples) {
-		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
-		return withShrinkableSamples(shrinkables);
+		return new WithSamplesGenerator<>(samples, this);
 	}
 
 }

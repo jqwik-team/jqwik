@@ -35,7 +35,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 				  .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
 				  .map(value -> new ShrinkableValue<>(value, shrinkCandidates)) //
 				  .collect(Collectors.toList());
-		return RandomGenerators.bigDecimals(min, max, scale, partitionPoints).withShrinkableSamples(samples);
+		return RandomGenerators.bigDecimals(min, max, scale, partitionPoints).withEdgeCases(samples);
 	}
 
 }

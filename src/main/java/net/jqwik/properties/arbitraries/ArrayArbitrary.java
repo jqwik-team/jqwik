@@ -41,7 +41,7 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 		List<T> emptyList = Collections.emptyList();
 		List<Shrinkable<List<T>>> samples = Stream.of(emptyList).filter(l -> l.size() >= minSize)
 				.filter(l -> maxSize == 0 || l.size() <= maxSize).map(Shrinkable::unshrinkable).collect(Collectors.toList());
-		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize).withShrinkableSamples(samples);
+		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize).withEdgeCases(samples);
 	}
 
 	@Override

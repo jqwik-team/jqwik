@@ -30,7 +30,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
 				  .map(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
 				  .collect(Collectors.toList());
-		return RandomGenerators.bigIntegers(min, max, partitionPoints).withShrinkableSamples(samples);
+		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(samples);
 	}
 
 }
