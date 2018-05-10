@@ -46,7 +46,7 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 			ActionSequence<M> actionSequence = new SequentialActionSequence<>(listShrinkable);
 			return falsifier.test(actionSequence);
 		};
-		ParameterListShrinker<Action<M>> listElementShrinker = new ParameterListShrinker<>(value.sequenceToShrink(), e -> {}, new Reporting[0], ShrinkingMode.FULL);
+		ParameterListShrinker<Action<M>> listElementShrinker = new ParameterListShrinker<>(candidateActions, e -> {}, new Reporting[0], ShrinkingMode.FULL);
 		Set<ShrinkResult<List<Shrinkable<Action<M>>>>> shrunkElements = listElementShrinker.shrinkNext(valuesFalsifier);
 		return shrunkElements //
 			.stream() //

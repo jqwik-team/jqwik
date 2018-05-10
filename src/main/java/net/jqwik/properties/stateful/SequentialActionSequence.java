@@ -58,7 +58,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	@Override
 	public int size() {
-		return sequenceToShrink().size();
+		return candidateSequence.size();
 	}
 
 	@Override
@@ -79,12 +79,6 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		}
 		String actionsString = JqwikStringSupport.displayString(extractValues(actionsToShow));
 		return String.format("%s%s:%s", this.getClass().getSimpleName(), stateString, actionsString);
-	}
-
-	List<Shrinkable<Action<M>>> sequenceToShrink() {
-		if (hasRun)
-			return runSequence;
-		return candidateSequence;
 	}
 
 	private M tryAllCandidates(M model) {
