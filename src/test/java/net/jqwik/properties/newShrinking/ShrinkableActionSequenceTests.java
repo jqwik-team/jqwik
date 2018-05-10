@@ -2,13 +2,14 @@ package net.jqwik.properties.newShrinking;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.properties.stateful.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ShrinkableActionSequenceTests {
@@ -27,7 +28,7 @@ class ShrinkableActionSequenceTests {
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
 
-		NSequentialActionSequence<String> sequence = (NSequentialActionSequence<String>) shrinkable.value();
+		SequentialActionSequence<String> sequence = (SequentialActionSequence<String>) shrinkable.value();
 		assertThat(sequence.size()).isEqualTo(2);
 	}
 

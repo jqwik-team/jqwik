@@ -1,6 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
 import net.jqwik.api.stateful.*;
+import net.jqwik.properties.stateful.*;
 
 import java.util.*;
 import java.util.stream.*;
@@ -9,7 +10,7 @@ class NShrinkableActionSequence<M> implements NShrinkable<ActionSequence<M>> {
 
 	private final ComprehensiveListShrinkingCandidates<NShrinkable<Action<M>>> candidates = new ComprehensiveListShrinkingCandidates<>();
 	private final List<NShrinkable<Action<M>>> candidateActions;
-	private final NSequentialActionSequence<M> value;
+	private final SequentialActionSequence<M> value;
 
 	NShrinkableActionSequence(List<NShrinkable<Action<M>>> candidateActions) {
 		this.candidateActions = candidateActions;
@@ -32,8 +33,8 @@ class NShrinkableActionSequence<M> implements NShrinkable<ActionSequence<M>> {
 
 	}
 
-	private NSequentialActionSequence<M> toActionSequence(List<Action<M>> list) {
-		return new NSequentialActionSequence<>(list);
+	private SequentialActionSequence<M> toActionSequence(List<Action<M>> list) {
+		return new SequentialActionSequence<>(list);
 	}
 
 	@SuppressWarnings("unchecked")

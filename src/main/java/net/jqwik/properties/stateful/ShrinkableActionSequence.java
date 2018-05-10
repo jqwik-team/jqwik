@@ -16,7 +16,14 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 
 	ShrinkableActionSequence(List<Shrinkable<Action<M>>> candidateActions) {
 		this.candidateActions = candidateActions;
-		this.value = new SequentialActionSequence<>(candidateActions);
+		this.value = new SequentialActionSequence<>(toList(candidateActions));
+	}
+
+	private List<Action<M>> toList(List<Shrinkable<Action<M>>> candidateActions) {
+		return candidateActions //
+			.stream() //
+			.map(Shrinkable::value) //
+			.collect(Collectors.toList());
 	}
 
 	@Override
@@ -43,7 +50,7 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 	private Set<ShrinkResult<Shrinkable<ActionSequence<M>>>> shrinkActions(Predicate<ActionSequence<M>> falsifier) {
 		Predicate<List<Action<M>>> valuesFalsifier = list -> {
 			List<Shrinkable<Action<M>>> listShrinkable = list.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());
-			ActionSequence<M> actionSequence = new SequentialActionSequence<>(listShrinkable);
+			ActionSequence<M> actionSequence = new SequentialActionSequence<>(toList(listShrinkable));
 			return falsifier.test(actionSequence);
 		};
 		ParameterListShrinker<Action<M>> listElementShrinker = new ParameterListShrinker<>(candidateActions, e -> {}, new Reporting[0], ShrinkingMode.FULL);

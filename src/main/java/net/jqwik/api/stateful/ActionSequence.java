@@ -3,7 +3,7 @@ package net.jqwik.api.stateful;
 import java.util.*;
 
 public interface ActionSequence<M> {
-	List<Action<M>> sequence();
+	List<Action<M>> runSequence();
 
 	M run(M model);
 

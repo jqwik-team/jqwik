@@ -1,4 +1,4 @@
-package net.jqwik.properties.newShrinking;
+package net.jqwik.properties.stateful;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
@@ -11,7 +11,7 @@ class SequentialActionSequenceTests {
 
 	@Example
 	void runSequence() {
-		NSequentialActionSequence<Integer> sequence = createSequence( //
+		SequentialActionSequence<Integer> sequence = createSequence( //
 			plus1(), //
 			ignore(), //
 			plus10(), //
@@ -26,7 +26,7 @@ class SequentialActionSequenceTests {
 
 	@Example
 	void runWithFailure() {
-		NSequentialActionSequence<Integer> sequence = createSequence( //
+		SequentialActionSequence<Integer> sequence = createSequence( //
 			plus1(), //
 			ignore(), //
 			plus10(), //
@@ -133,9 +133,9 @@ class SequentialActionSequenceTests {
 		};
 	}
 
-	private NSequentialActionSequence<Integer> createSequence(Action<Integer>... actions) {
+	private SequentialActionSequence<Integer> createSequence(Action<Integer>... actions) {
 		List<Action<Integer>> list = Arrays.asList(actions);
-		return new NSequentialActionSequence<>(list);
+		return new SequentialActionSequence<>(list);
 	}
 
 }

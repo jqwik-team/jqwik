@@ -16,35 +16,44 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		return new DefaultActionSequenceArbitrary<>(actionArbitrary);
 	}
 
-	private final List<Shrinkable<Action<M>>> candidateSequence;
-	private final List<Shrinkable<Action<M>>> runSequence = new ArrayList<>();
+	private final List<Action<M>> candidateSequence;
+	private final List<Try<M>> tries = new ArrayList<>();
 	private final List<Invariant<M>> invariants = new ArrayList<>();
 
 	private boolean hasRun = false;
+	private M state = null;
 
-	SequentialActionSequence(List<Shrinkable<Action<M>>> candidateSequence) {
+	public SequentialActionSequence(List<Action<M>> candidateSequence) {
 		this.candidateSequence = candidateSequence;
 	}
 
 	@Override
-	public List<Action<M>> sequence() {
+	public synchronized List<Action<M>> runSequence() {
+		assertHasRun();
+		return tries //
+			.stream() //
+			.filter(Try::preconditionValid) //
+			.map(Try::action) //
+			.collect(Collectors.toList());
+	}
+
+	private void assertHasRun() {
 		if (!hasRun) {
 			throw new JqwikException("Sequence has not run yet.");
 		}
-		return extractValues(runSequence);
 	}
 
 	@Override
 	public synchronized M run(M model) {
-		runSequence.clear();
+		tries.clear();
 		hasRun = true;
 		try {
-			model = tryAllCandidates(model);
-			return model;
+			state = tryAllCandidates(model);
+			return state;
 		} catch (InvariantFailedError ife) {
 			throw ife;
 		} catch (Throwable t) {
-			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage(model, "Run"), t);
+			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run"), t);
 			assertionFailedError.setStackTrace(t.getStackTrace());
 			throw assertionFailedError;
 		}
@@ -63,68 +72,95 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	@Override
 	public M state() {
-		if (!hasRun) {
-			throw new JqwikException("Sequence has not run yet.");
-		}
-		return null;
+		assertHasRun();
+		return state;
 	}
 
 	@Override
 	public String toString() {
 		String stateString = "";
-		List<Shrinkable<Action<M>>> actionsToShow = runSequence;
-		if (!hasRun) {
+		List<Action<M>> actionsToShow;
+		if (hasRun) {
+			stateString = "(after run)";
+			actionsToShow = runSequence();
+		} else {
 			stateString = "(before run)";
 			actionsToShow = candidateSequence;
 		}
-		String actionsString = JqwikStringSupport.displayString(extractValues(actionsToShow));
-		return String.format("%s%s:%s", this.getClass().getSimpleName(), stateString, actionsString);
+		String actionsString = JqwikStringSupport.displayString(actionsToShow);
+		return String.format("%s %s:%s", this.getClass().getSimpleName(), stateString, actionsString);
 	}
 
 	private M tryAllCandidates(M model) {
-		for (Shrinkable<Action<M>> candidate : candidateSequence) {
-			model = tryNextCandidate(model, candidate);
+		state = model;
+		for (Action<M> candidate : candidateSequence) {
+			tryNextCandidate(candidate);
 		}
-		return model;
+		return state;
 	}
 
-	private M tryNextCandidate(M model, Shrinkable<Action<M>> candidate) {
-		Action<M> action = candidate.value();
-		if (action.precondition(model)) {
-			runSequence.add(candidate);
-			model = action.run(model);
-			checkInvariants(model);
+	private void tryNextCandidate(Action<M> candidate) {
+		Try<M> aTry = new Try<M>(candidate);
+		tries.add(aTry);
+		state = aTry.run(state);
+		if (aTry.preconditionValid()) {
+			checkInvariants();
 		}
-		return model;
 	}
 
-	private void checkInvariants(M model) {
-			try {
-				for (Invariant<M> invariant : invariants) {
-					invariant.check(model);
-				}
-			} catch (Throwable t) {
-				throw new InvariantFailedError(createErrorMessage(model, "Invariant"), t);
+	private void checkInvariants() {
+		try {
+			for (Invariant<M> invariant : invariants) {
+				invariant.check(state);
 			}
+		} catch (Throwable t) {
+			throw new InvariantFailedError(createErrorMessage("Invariant"), t);
+		}
 	}
 
-	private String createErrorMessage(M model, String name) {
-		String actionsString = extractValues(runSequence)
+	private String createErrorMessage(String name) {
+		String actionsString = tries
 			.stream() //
-			.map(action -> "    " + action.toString()) //
+			.map(aTry -> "    " + aTry.toString()) //
 			.collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
-			"%s failed after following actions:%s%s%s  final state: %s",
+			"%s failed after following actions:%n%s%n  final state: %s",
 			name,
-			System.lineSeparator(),
 			actionsString,
-			System.lineSeparator(),
-			JqwikStringSupport.displayString(model)
+			JqwikStringSupport.displayString(state)
 		);
 	}
 
-	private List<Action<M>> extractValues(List<Shrinkable<Action<M>>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+	private static class Try<M> {
+
+		private final Action<M> action;
+		private boolean preconditionValid = false;
+
+		public Try(Action<M> action) {
+			this.action = action;
+		}
+
+		public M run(M model) {
+			if (action.precondition(model)) {
+				preconditionValid = true;
+				return action.run(model);
+			}
+			return model;
+		}
+
+		public boolean preconditionValid() {
+			return preconditionValid;
+		}
+
+		public Action<M> action() {
+			return action;
+		}
+
+		@Override
+		public String toString() {
+			String precondition = preconditionValid ? "" : " (precondition failed)";
+			return String.format("%s%s", action.toString(), precondition);
+		}
 	}
 
 	private static class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase implements ActionSequenceArbitrary<M> {
