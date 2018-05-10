@@ -1,6 +1,7 @@
 package net.jqwik.properties.newShrinking;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.stateful.*;
 
@@ -104,6 +105,26 @@ class ShrinkableActionSequenceTests {
 		while(sequence.next(count, reporter));
 
 		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+	}
+
+	@Property
+	void alwaysShrinkToSingleAction(@ForAll("stringActions") @Size(max = 50) List<NShrinkable<Action<String>>> actions) {
+		actions.add(shrinkableAddX());
+		NShrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			String result = seq.run("");
+			return !result.contains("x");
+		});
+
+		while(sequence.next(count, reporter));
+
+		assertThat(sequence.current().value().run("")).isEqualTo("x");
+	}
+
+	@Provide
+	Arbitrary<List<NShrinkable<Action<String>>>> stringActions() {
+		return Arbitraries.of(shrinkableAddString(), shrinkableAddX(), shrinkableFailingPrecondition()).list();
 	}
 
 	private NShrinkable<Action<String>> shrinkableFailingPrecondition() {
