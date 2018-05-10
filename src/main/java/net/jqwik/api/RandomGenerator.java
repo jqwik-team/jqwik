@@ -41,10 +41,11 @@ public interface RandomGenerator<T> {
 			return this;
 		}
 
-		// TODO: Calculate a smoothly changing ratio
-		int baseToEdgeCaseRatio = genSize <= 20 ? 2 //
-			: genSize <= 50 ? 5 //
-			: genSize <= 1000 ? 10 : 20;
+		int baseToEdgeCaseRatio =
+			Math.min( //
+					  Math.max(Math.round(genSize / 10), 1), //
+					  100 //
+			) + 1;
 
 		RandomGenerator<T> samplesGenerator = RandomGenerators.samplesFromShrinkables(samples);
 		RandomGenerator<T> baseGenerator = this;

@@ -29,7 +29,7 @@ public class PropertyTests {
 		return "aString";
 	}
 
-	@Property(tries = 100, seed = "42")
+	@Property(tries = 100, seed = "42", maxDiscardRatio = 10)
 	boolean withEverything(@ForAll("lessThan5") int aNumber, @ForAll("shorterThan5") String aString) {
 		Assume.that(aNumber == aString.length());
 		return aString.length() == aNumber;
