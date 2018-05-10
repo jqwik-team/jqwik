@@ -22,10 +22,10 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
 		BigDecimal[] partitionPoints = RandomDecimalGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max);
-		return decimalGenerator(partitionPoints);
+		return decimalGenerator(partitionPoints, genSize);
 	}
 
-	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints) {
+	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
 		BigDecimalShrinkCandidates shrinkCandidates = new BigDecimalShrinkCandidates(Range.of(min, max), scale);
 		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
 		BigDecimal[] sampleValues = {BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ONE.negate(), smallest, smallest.negate(), min, max};
@@ -35,7 +35,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 				  .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
 				  .map(value -> new ShrinkableValue<>(value, shrinkCandidates)) //
 				  .collect(Collectors.toList());
-		return RandomGenerators.bigDecimals(min, max, scale, partitionPoints).withEdgeCases(samples);
+		return RandomGenerators.bigDecimals(min, max, scale, partitionPoints).withEdgeCases(genSize, samples);
 	}
 
 }

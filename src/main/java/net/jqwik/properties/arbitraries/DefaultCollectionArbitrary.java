@@ -23,7 +23,7 @@ abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase im
 		List<Shrinkable<List<T>>> samples = samplesList(new ArrayList<>());
 		return RandomGenerators //
 			.list(elementGenerator, minSize, maxSize, cutoffSize(genSize)) //
-			.withEdgeCases(samples);
+			.withEdgeCases(genSize, samples);
 	}
 
 	protected int cutoffSize(int genSize) {

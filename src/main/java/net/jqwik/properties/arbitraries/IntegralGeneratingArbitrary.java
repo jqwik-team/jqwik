@@ -19,10 +19,10 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	@Override
 	public RandomGenerator<BigInteger> generator(int genSize) {
 		BigInteger[] partitionPoints = RandomIntegralGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max);
-		return createGenerator(partitionPoints);
+		return createGenerator(partitionPoints, genSize);
 	}
 
-	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints) {
+	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
 		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(Range.of(min, max));
 		List<Shrinkable<BigInteger>> samples =
 			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), min, max}) //
@@ -30,7 +30,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
 				  .map(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
 				  .collect(Collectors.toList());
-		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(samples);
+		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(genSize, samples);
 	}
 
 }

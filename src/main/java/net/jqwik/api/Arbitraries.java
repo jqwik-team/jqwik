@@ -286,8 +286,7 @@ public class Arbitraries {
 
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
-		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
-		return fromGenerator(RandomGenerators.samples(shrinkables));
+		return fromGenerator(RandomGenerators.samples(samples));
 	}
 
 	public static <T> Arbitrary<T> constant(T value) {

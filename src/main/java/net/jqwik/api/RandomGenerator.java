@@ -3,7 +3,6 @@ package net.jqwik.api;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 public interface RandomGenerator<T> {
@@ -70,20 +69,23 @@ public interface RandomGenerator<T> {
 		};
 	}
 
-	default RandomGenerator<T> withEdgeCases(List<Shrinkable<T>> samples) {
-		RandomGenerator<T> samplesGenerator = RandomGenerators.samples(samples);
-		RandomGenerator<T> generator = this;
-		AtomicInteger tryCount = new AtomicInteger(0);
-		return new RandomGenerator<T>() {
-			@Override
-			public Shrinkable<T> next(Random random) {
-				if (tryCount.getAndIncrement() < samples.size()) return samplesGenerator.next(random);
-				return generator.next(random);
-			}
+	default RandomGenerator<T> withEdgeCases(int genSize, List<Shrinkable<T>> samples) {
+		if (samples.isEmpty()) {
+			return this;
+		}
 
-			@Override
-			public Shrinkable<T> sampleRandomly(Random random) {
-				return generator.sampleRandomly(random);
+		// TODO: Calculate a smoothly changing ratio
+		int baseToEdgeCaseRatio = genSize <= 20 ? 2 //
+			: genSize <= 50 ? 5 //
+			: genSize <= 1000 ? 10 : 20;
+
+		RandomGenerator<T> samplesGenerator = RandomGenerators.samplesFromShrinkables(samples);
+		RandomGenerator<T> baseGenerator = this;
+		return random -> {
+			if (random.nextInt(baseToEdgeCaseRatio) == 0) {
+				return samplesGenerator.next(random);
+			} else {
+				return baseGenerator.next(random);
 			}
 		};
 	}

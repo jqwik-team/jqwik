@@ -1,7 +1,6 @@
 package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -14,7 +13,7 @@ public class WithSamplesGenerator<T> implements RandomGenerator<T> {
 
 	public WithSamplesGenerator(T[] samples, RandomGenerator<T> base) {
 		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
-		this.samplesGenerator = RandomGenerators.samples(shrinkables);
+		this.samplesGenerator = RandomGenerators.samplesFromShrinkables(shrinkables);
 		this.numberOfSamples = shrinkables.size();
 		this.base = base;
 	}

@@ -171,7 +171,7 @@ public class RandomGenerators {
 		};
 	}
 
-	public static <T> RandomGenerator<T> samples(List<Shrinkable<T>> samples) {
+	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {
 			if (tryCount.get() >= samples.size())
@@ -180,9 +180,9 @@ public class RandomGenerators {
 		};
 	}
 
-	@SafeVarargs
-	public static <T> RandomGenerator<T> samples(Shrinkable<T>... samples) {
-		return samples(Arrays.asList(samples));
+	public static <T> RandomGenerator<T> samples(T[] samples) {
+		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
+		return samplesFromShrinkables(shrinkables);
 	}
 
 	public static <T> RandomGenerator<T> frequency(Tuples.Tuple2<Integer, T>[] frequencies) {
@@ -203,4 +203,5 @@ public class RandomGenerators {
 			return maxSize;
 		return Math.min(offset + minSize, maxSize);
 	}
+
 }

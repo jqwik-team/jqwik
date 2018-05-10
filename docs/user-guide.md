@@ -1923,6 +1923,7 @@ in a separate article...
 - Shrinking with filtered values finds simpler values in some circumstance
 - Generation of strings will allow any unicode character by default
 - `Combinators.combine()` can now take a list of arbitraries of same return type.
+- Generated edge cases are now injected again and again and not only in the beginning.
 
 
 ### 0.8.10
