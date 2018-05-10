@@ -11,28 +11,25 @@ import java.util.stream.*;
 
 public class NSequentialActionSequence<M> implements ActionSequence<M> {
 
-//	public static <M> ActionSequenceArbitrary<M> fromActions(Arbitrary<Action<M>> actionArbitrary) {
-//		return new DefaultActionSequenceArbitrary<>(actionArbitrary);
-//	}
-
 	private final List<Action<M>> candidateSequence;
 	private final List<Try<M>> tries = new ArrayList<>();
 	private final List<Invariant<M>> invariants = new ArrayList<>();
 
 	private boolean hasRun = false;
+	private M state = null;
 
 	NSequentialActionSequence(List<Action<M>> candidateSequence) {
 		this.candidateSequence = candidateSequence;
 	}
 
 	@Override
-	public List<Action<M>> sequence() {
+	public synchronized List<Action<M>> sequence() {
 		if (!hasRun) {
 			throw new JqwikException("Sequence has not run yet.");
 		}
 		return tries //
 			.stream() //
-			.filter(Try::wasRun) //
+			.filter(Try::preconditionValid) //
 			.map(Try::action) //
 			.collect(Collectors.toList());
 	}
@@ -42,12 +39,12 @@ public class NSequentialActionSequence<M> implements ActionSequence<M> {
 		tries.clear();
 		hasRun = true;
 		try {
-			model = tryAllCandidates(model);
-			return model;
+			state = tryAllCandidates(model);
+			return state;
 		} catch (InvariantFailedError ife) {
 			throw ife;
 		} catch (Throwable t) {
-			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage(model, "Run"), t);
+			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run"), t);
 			assertionFailedError.setStackTrace(t.getStackTrace());
 			throw assertionFailedError;
 		}
@@ -65,6 +62,15 @@ public class NSequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	@Override
+	public M state() {
+		if (!hasRun) {
+			throw new JqwikException("Sequence has not run yet.");
+		}
+
+		return state;
+	}
+
+	@Override
 	public String toString() {
 		String stateString = "";
 		List<Action<M>> actionsToShow;
@@ -76,37 +82,37 @@ public class NSequentialActionSequence<M> implements ActionSequence<M> {
 			actionsToShow = candidateSequence;
 		}
 		String actionsString = JqwikStringSupport.displayString(actionsToShow);
-		return String.format("%s%s:%s", this.getClass().getSimpleName(), stateString, actionsString);
+		return String.format("%s %s:%s", this.getClass().getSimpleName(), stateString, actionsString);
 	}
 
 	private M tryAllCandidates(M model) {
+		state = model;
 		for (Action<M> candidate : candidateSequence) {
-			model = tryNextCandidate(model, candidate);
+			tryNextCandidate(candidate);
 		}
-		return model;
+		return state;
 	}
 
-	private M tryNextCandidate(M model, Action<M> candidate) {
+	private void tryNextCandidate(Action<M> candidate) {
 		Try<M> aTry = new Try<M>(candidate);
 		tries.add(aTry);
-		model = aTry.run(model);
-		if (aTry.wasRun()) {
-			checkInvariants(model);
+		state = aTry.run(state);
+		if (aTry.preconditionValid()) {
+			checkInvariants();
 		}
-		return model;
 	}
 
-	private void checkInvariants(M model) {
+	private void checkInvariants() {
 		try {
 			for (Invariant<M> invariant : invariants) {
-				invariant.check(model);
+				invariant.check(state);
 			}
 		} catch (Throwable t) {
-			throw new InvariantFailedError(createErrorMessage(model, "Invariant"), t);
+			throw new InvariantFailedError(createErrorMessage("Invariant"), t);
 		}
 	}
 
-	private String createErrorMessage(M model, String name) {
+	private String createErrorMessage(String name) {
 		String actionsString = tries
 			.stream() //
 			.map(aTry -> "    " + aTry.toString()) //
@@ -115,15 +121,14 @@ public class NSequentialActionSequence<M> implements ActionSequence<M> {
 			"%s failed after following actions:%n%s%n  final state: %s",
 			name,
 			actionsString,
-			System.lineSeparator(),
-			JqwikStringSupport.displayString(model)
+			JqwikStringSupport.displayString(state)
 		);
 	}
 
 	private static class Try<M> {
 
 		private final Action<M> action;
-		private boolean wasRun = false;
+		private boolean preconditionValid = false;
 
 		public Try(Action<M> action) {
 			this.action = action;
@@ -131,14 +136,14 @@ public class NSequentialActionSequence<M> implements ActionSequence<M> {
 
 		public M run(M model) {
 			if (action.precondition(model)) {
-				wasRun = true;
+				preconditionValid = true;
 				return action.run(model);
 			}
 			return model;
 		}
 
-		public boolean wasRun() {
-			return wasRun;
+		public boolean preconditionValid() {
+			return preconditionValid;
 		}
 
 		public Action<M> action() {
@@ -147,34 +152,9 @@ public class NSequentialActionSequence<M> implements ActionSequence<M> {
 
 		@Override
 		public String toString() {
-			String precondition = wasRun ? "" : " (precondition failed)";
+			String precondition = preconditionValid ? "" : " (precondition failed)";
 			return String.format("%s%s", action.toString(), precondition);
 		}
 	}
 
-//	private static class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase implements ActionSequenceArbitrary<M> {
-//
-//		private final Arbitrary<Action<M>> actionArbitrary;
-//		private int size = 0;
-//
-//		DefaultActionSequenceArbitrary(Arbitrary<Action<M>> actionArbitrary) {this.actionArbitrary = actionArbitrary;}
-//
-//		@Override
-//		public DefaultActionSequenceArbitrary<M> ofSize(int size) {
-//			DefaultActionSequenceArbitrary<M> clone = typedClone();
-//			clone.size = size;
-//			return clone;
-//		}
-//
-//		@Override
-//		public RandomGenerator<ActionSequence<M>> generator(int genSize) {
-//			return null;
-////			final int numberOfActions = //
-////				size != 0 ? size //
-////					: (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-////			RandomGenerator<Action<M>> actionGenerator = actionArbitrary.generator(genSize);
-////			return new ActionSequenceGenerator<>(actionGenerator, numberOfActions);
-//		}
-//
-//	}
 }

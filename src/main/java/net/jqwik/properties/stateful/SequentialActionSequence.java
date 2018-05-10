@@ -62,6 +62,14 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	@Override
+	public M state() {
+		if (!hasRun) {
+			throw new JqwikException("Sequence has not run yet.");
+		}
+		return null;
+	}
+
+	@Override
 	public String toString() {
 		String stateString = "";
 		List<Shrinkable<Action<M>>> actionsToShow = runSequence;

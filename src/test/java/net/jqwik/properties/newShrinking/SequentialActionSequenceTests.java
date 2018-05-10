@@ -19,12 +19,9 @@ class SequentialActionSequenceTests {
 			plus100() //
 		);
 
-		System.out.println(sequence);
-
 		int result = sequence.run(0);
 		Assertions.assertThat(result).isEqualTo(111);
-
-		System.out.println(sequence);
+		Assertions.assertThat(result).isEqualTo(sequence.state());
 	}
 
 	@Example
@@ -34,13 +31,33 @@ class SequentialActionSequenceTests {
 			ignore(), //
 			plus10(), //
 			ignore(), //
-			fail(), plus100() //
+			check42(), plus100() //
 		);
 
-		Assertions.assertThatThrownBy(() -> sequence.run(0)).isInstanceOf(AssertionError.class);
+		Assertions.assertThatThrownBy(() -> //
+			sequence.run(0) //
+		).isInstanceOf(AssertionError.class);
+
+		Assertions.assertThat(sequence.state()).isEqualTo(11);
 	}
 
-	private Action<Integer> fail() {
+	@Example
+	void failInInvariant() {
+		ActionSequence<Integer> sequence = createSequence( //
+			plus1(), //
+			plus10(), //
+			plus100() //
+		).withInvariant(anInt -> Assertions.assertThat(anInt).isLessThan(100));
+
+		Assertions.assertThatThrownBy(() -> //
+			sequence.run(0) //
+		).isInstanceOf(AssertionError.class);
+
+		Assertions.assertThat(sequence.state()).isEqualTo(111);
+
+	}
+
+	private Action<Integer> check42() {
 		return new Action<Integer>() {
 			@Override
 			public Integer run(Integer model) {

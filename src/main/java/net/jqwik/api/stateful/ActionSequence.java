@@ -10,4 +10,6 @@ public interface ActionSequence<M> {
 	ActionSequence<M> withInvariant(Invariant<M> invariant);
 
 	int size();
+
+	M state();
 }
