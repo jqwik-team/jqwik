@@ -181,7 +181,7 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<T> samples(T[] samples) {
-		List<NShrinkable<T>> shrinkables = ShrinkableSample.of(samples);
+		List<NShrinkable<T>> shrinkables = SampleShrinkable.listOf(samples);
 		return samplesFromShrinkables(shrinkables);
 	}
 
