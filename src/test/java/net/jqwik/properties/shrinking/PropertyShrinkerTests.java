@@ -20,7 +20,7 @@ class PropertyShrinkerTests {
 
 	@Example
 	void ifThereIsNothingToShrinkReturnOriginalValue() {
-		List<NShrinkable> unshrinkableParameters = asList(NShrinkable.unshrinkable(1), NShrinkable.unshrinkable("hello"));
+		List<Shrinkable> unshrinkableParameters = asList(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable("hello"));
 		PropertyShrinker shrinker = new PropertyShrinker(unshrinkableParameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
 		Throwable originalError = new RuntimeException("original error");
@@ -36,7 +36,7 @@ class PropertyShrinkerTests {
 
 	@Example
 	void ifShrinkingIsOffReturnOriginalValue() {
-		List<NShrinkable> parameters = asList(
+		List<Shrinkable> parameters = asList(
 			new OneStepShrinkable(5),
 			new OneStepShrinkable(10)
 		);
@@ -56,7 +56,7 @@ class PropertyShrinkerTests {
 
 	@Example
 	void shrinkAllParameters() {
-		List<NShrinkable> parameters = asList(
+		List<Shrinkable> parameters = asList(
 			new OneStepShrinkable(5),
 			new OneStepShrinkable(10)
 		);
@@ -79,7 +79,7 @@ class PropertyShrinkerTests {
 
 	@Example
 	void reportFalsifiedParameters() {
-		List<NShrinkable> parameters = asList(
+		List<Shrinkable> parameters = asList(
 			new OneStepShrinkable(5),
 			new OneStepShrinkable(10)
 		);
@@ -92,7 +92,7 @@ class PropertyShrinkerTests {
 
 	@Example
 	void resultThrowableComesFromActualShrinkedValue() {
-		List<NShrinkable> parameters = asList(
+		List<Shrinkable> parameters = asList(
 			new OneStepShrinkable(5),
 			new OneStepShrinkable(10)
 		);
@@ -112,7 +112,7 @@ class PropertyShrinkerTests {
 
 	@Example
 	void withBoundedShrinkingBreakOffAfter1000Steps() {
-		List<NShrinkable> parameters = asList(
+		List<Shrinkable> parameters = asList(
 			new OneStepShrinkable(900),
 			new OneStepShrinkable(900)
 		);

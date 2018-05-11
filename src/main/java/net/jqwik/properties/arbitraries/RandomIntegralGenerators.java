@@ -11,7 +11,7 @@ class RandomIntegralGenerators {
 
 	static RandomGenerator<BigInteger> bigIntegers(Range<BigInteger> range, BigInteger[] partitionPoints) {
 		if (range.isSingular()) {
-			return ignored -> NShrinkable.unshrinkable(range.min);
+			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 		return partitionedGenerator(range, partitionPoints);
 	}

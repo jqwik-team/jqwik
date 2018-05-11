@@ -29,7 +29,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
 		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
 		BigDecimal[] sampleValues = {BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ONE.negate(), smallest, smallest.negate(), min, max};
-		List<NShrinkable<BigDecimal>> samples =
+		List<Shrinkable<BigDecimal>> samples =
 			Arrays.stream(sampleValues) //
 				  .distinct() //
 				  .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //

@@ -7,26 +7,26 @@ import net.jqwik.properties.shrinking.*;
 import java.util.*;
 import java.util.stream.*;
 
-class NShrinkableActionSequence<M> implements NShrinkable<ActionSequence<M>> {
+class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 
-	private final ComprehensiveListShrinkingCandidates<NShrinkable<Action<M>>> candidates = new ComprehensiveListShrinkingCandidates<>();
-	private final List<NShrinkable<Action<M>>> candidateActions;
+	private final ComprehensiveListShrinkingCandidates<Shrinkable<Action<M>>> candidates = new ComprehensiveListShrinkingCandidates<>();
+	private final List<Shrinkable<Action<M>>> candidateActions;
 	private final SequentialActionSequence<M> value;
 
-	NShrinkableActionSequence(List<NShrinkable<Action<M>>> candidateActions) {
+	ShrinkableActionSequence(List<Shrinkable<Action<M>>> candidateActions) {
 		this.candidateActions = candidateActions;
 		this.value = toActionSequence(extractValues(candidateActions));
 	}
 
-	private List<Action<M>> extractValues(List<NShrinkable<Action<M>>> shrinkables) {
-		return shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
+	private List<Action<M>> extractValues(List<Shrinkable<Action<M>>> shrinkables) {
+		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	@Override
 	public ShrinkingSequence<ActionSequence<M>> shrink(Falsifier<ActionSequence<M>> falsifier) {
 		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier) //
 			.andThen(shrinkableList -> { //
-				NShrinkableActionSequence<M> actionSequence = (NShrinkableActionSequence<M>) shrinkableList;
+				ShrinkableActionSequence<M> actionSequence = (ShrinkableActionSequence<M>) shrinkableList;
 				Falsifier<List<Action<M>>> listFalsifier = list -> falsifier.test(toActionSequence(list));
 				return new ElementsShrinkingSequence<>(actionSequence.candidateActions, null, listFalsifier, ShrinkingDistance::forCollection)
 					.map(this::toActionSequence);
@@ -39,12 +39,12 @@ class NShrinkableActionSequence<M> implements NShrinkable<ActionSequence<M>> {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Set<NShrinkable<ActionSequence<M>>> shrinkCandidatesFor(NShrinkable<ActionSequence<M>> shrinkable) {
-		NShrinkableActionSequence<M> shrinkableSequence = (NShrinkableActionSequence<M>) shrinkable;
+	private Set<Shrinkable<ActionSequence<M>>> shrinkCandidatesFor(Shrinkable<ActionSequence<M>> shrinkable) {
+		ShrinkableActionSequence<M> shrinkableSequence = (ShrinkableActionSequence<M>) shrinkable;
 		//noinspection Convert2MethodRef
 		return candidates.candidatesFor(shrinkableSequence.candidateActions) //
 						 .stream() //
-						 .map(list -> new NShrinkableActionSequence<>(list)) //
+						 .map(list -> new ShrinkableActionSequence<>(list)) //
 						 .collect(Collectors.toSet());
 	}
 

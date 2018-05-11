@@ -20,7 +20,7 @@ public class ShrinkableTypesForTest {
 		}
 
 		@Override
-		public Set<NShrinkable<Integer>> shrinkCandidatesFor(NShrinkable<Integer> shrinkable) {
+		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
 			if (shrinkable.value() == minimum)
 				return Collections.emptySet();
 			return Collections.singleton(new OneStepShrinkable(shrinkable.value() - 1, minimum));
@@ -38,7 +38,7 @@ public class ShrinkableTypesForTest {
 		}
 
 		@Override
-		public Set<NShrinkable<Integer>> shrinkCandidatesFor(NShrinkable<Integer> shrinkable) {
+		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
 			return IntStream.range(0, shrinkable.value()).mapToObj(FullShrinkable::new).collect(Collectors.toSet());
 		}
 
@@ -54,9 +54,9 @@ public class ShrinkableTypesForTest {
 		}
 
 		@Override
-		public Set<NShrinkable<Integer>> shrinkCandidatesFor(NShrinkable<Integer> shrinkable) {
+		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
 			Integer value = shrinkable.value();
-			Set<NShrinkable<Integer>> shrinks = new HashSet<>();
+			Set<Shrinkable<Integer>> shrinks = new HashSet<>();
 			if (value > 0) shrinks.add(new PartialShrinkable(value - 1));
 			if (value > 1) shrinks.add(new PartialShrinkable(value - 2));
 			return shrinks;

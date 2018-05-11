@@ -9,17 +9,17 @@ import java.util.stream.*;
 public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	private final Falsifier<List<T>> listFalsifier;
 	private final List<FalsificationResult<T>> currentResults;
-	private final Function<List<NShrinkable<T>>, ShrinkingDistance> distanceFunction;
+	private final Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction;
 
 	private int currentShrinkingPosition = 0;
 	private ShrinkingSequence<T> currentShrinkingSequence = null;
 	private Throwable currentThrowable;
 
 	public ElementsShrinkingSequence( //
-									  List<NShrinkable<T>> currentElements, //
+									  List<Shrinkable<T>> currentElements, //
 									  Throwable originalError, //
 									  Falsifier<List<T>> listFalsifier, //
-									  Function<List<NShrinkable<T>>, ShrinkingDistance> distanceFunction //
+									  Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction //
 	) {
 		this.currentResults = currentElements
 			.stream()
@@ -91,8 +91,8 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 		return FalsificationResult.falsified(createCurrent(currentResults), currentThrowable);
 	}
 
-	private NShrinkable<List<T>> createCurrent(List<FalsificationResult<T>> falsificationResults) {
-		return new NShrinkable<List<T>>() {
+	private Shrinkable<List<T>> createCurrent(List<FalsificationResult<T>> falsificationResults) {
+		return new Shrinkable<List<T>>() {
 			@Override
 			public List<T> value() {
 				return toValueList(falsificationResults);
@@ -117,7 +117,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 			.collect(Collectors.toList());
 	}
 
-	private List<NShrinkable<T>> toShrinkableList(List<FalsificationResult<T>> results) {
+	private List<Shrinkable<T>> toShrinkableList(List<FalsificationResult<T>> results) {
 		return results
 			.stream()
 			.map(FalsificationResult::shrinkable)

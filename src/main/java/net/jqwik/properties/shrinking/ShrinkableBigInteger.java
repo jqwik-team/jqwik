@@ -21,7 +21,7 @@ public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 	}
 
 	@Override
-	public Set<NShrinkable<BigInteger>> shrinkCandidatesFor(NShrinkable<BigInteger> shrinkable) {
+	public Set<Shrinkable<BigInteger>> shrinkCandidatesFor(Shrinkable<BigInteger> shrinkable) {
 		return shrinkingCandidates.candidatesFor(shrinkable.value()) //
 			.stream() //
 			.map(aBigInteger -> new ShrinkableBigInteger(aBigInteger, range)) //

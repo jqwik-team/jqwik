@@ -3,10 +3,10 @@ package net.jqwik.properties.shrinking;
 import net.jqwik.api.*;
 import net.jqwik.support.*;
 
-public class NUnshrinkable<T> implements NShrinkable<T> {
+public class Unshrinkable<T> implements Shrinkable<T> {
 	private final T value;
 
-	public NUnshrinkable(T value) {this.value = value;}
+	public Unshrinkable(T value) {this.value = value;}
 
 	@Override
 	public T value() {

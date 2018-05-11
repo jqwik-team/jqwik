@@ -50,7 +50,7 @@ public class GenericProperty {
 		int countChecks = 0;
 		Random random = SourceOfRandomness.create(configuration.getSeed());
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<NShrinkable> shrinkableParams = generateParameters(generators, random);
+			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, configuration.getReporting(), reporter)) {
@@ -73,7 +73,7 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
 	}
 
-	private boolean testPredicate(List<NShrinkable> shrinkableParams, Reporting[] reporting, Consumer<ReportEntry> reporter) {
+	private boolean testPredicate(List<Shrinkable> shrinkableParams, Reporting[] reporting, Consumer<ReportEntry> reporter) {
 		List<Object> plainParams = extractParams(shrinkableParams);
 		if (Reporting.GENERATED.containedIn(reporting)) {
 			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
@@ -86,12 +86,12 @@ public class GenericProperty {
 		return actualDiscardRatio > maxDiscardRatio;
 	}
 
-	private List<Object> extractParams(List<NShrinkable> shrinkableParams) {
-		return shrinkableParams.stream().map(NShrinkable::value).collect(Collectors.toList());
+	private List<Object> extractParams(List<Shrinkable> shrinkableParams) {
+		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(PropertyConfiguration configuration, Consumer<ReportEntry> reporter, int countChecks,
-			int countTries, List<NShrinkable> shrinkables, AssertionError error) {
+														   int countTries, List<Shrinkable> shrinkables, AssertionError error) {
 		List<Object> originalParams = extractParams(shrinkables);
 
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, configuration.getReporting());
@@ -105,7 +105,7 @@ public class GenericProperty {
 		return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), shrunkParams, originalParams, throwable);
 	}
 
-	private List<NShrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
+	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
 		return generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
 	}
 }

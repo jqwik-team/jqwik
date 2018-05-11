@@ -9,11 +9,11 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
 	private final int minSize;
 
-	public ShrinkableSet(Set<NShrinkable<E>> elements, int minSize) {
+	public ShrinkableSet(Set<Shrinkable<E>> elements, int minSize) {
 		this(new ArrayList<>(elements), minSize);
 	}
 
-	private ShrinkableSet(List<NShrinkable<E>> elements, int minSize) {
+	private ShrinkableSet(List<Shrinkable<E>> elements, int minSize) {
 		super(elements, minSize);
 		this.minSize = minSize;
 	}
@@ -29,7 +29,7 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 	}
 
 	@Override
-	NShrinkable<Set<E>> createShrinkable(List<NShrinkable<E>> shrunkElements) {
+	Shrinkable<Set<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
 		return new ShrinkableSet<>(shrunkElements, minSize);
 	}
 }

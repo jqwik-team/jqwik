@@ -4,7 +4,7 @@ import net.jqwik.api.*;
 
 import java.util.*;
 
-public abstract class AbstractShrinkable<T> implements NShrinkable<T> {
+public abstract class AbstractShrinkable<T> implements Shrinkable<T> {
 
 	private final T value;
 
@@ -22,7 +22,7 @@ public abstract class AbstractShrinkable<T> implements NShrinkable<T> {
 		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier);
 	}
 
-	public abstract Set<NShrinkable<T>> shrinkCandidatesFor(NShrinkable<T> shrinkable);
+	public abstract Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable);
 
 	@Override
 	public boolean equals(Object o) {

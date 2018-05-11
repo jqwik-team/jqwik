@@ -5,20 +5,20 @@ import net.jqwik.api.*;
 import java.util.*;
 import java.util.stream.*;
 
-abstract class ShrinkableContainer<C, E> implements NShrinkable<C> {
-	private final List<NShrinkable<E>> elements;
-	private final ListShrinkingCandidates<NShrinkable<E>> shrinkCandidates;
+abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
+	private final List<Shrinkable<E>> elements;
+	private final ListShrinkingCandidates<Shrinkable<E>> shrinkCandidates;
 
-	ShrinkableContainer(List<NShrinkable<E>> elements, int minSize) {
+	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize) {
 		this.elements = elements;
 		this.shrinkCandidates = new ListShrinkingCandidates<>(minSize);
 	}
 
-	private C createValue(List<NShrinkable<E>> shrinkables) {
+	private C createValue(List<Shrinkable<E>> shrinkables) {
 		return shrinkables //
-			.stream() //
-			.map(NShrinkable::value) //
-			.collect(containerCollector());
+						   .stream() //
+						   .map(Shrinkable::value) //
+						   .collect(containerCollector());
 	}
 
 	@Override
@@ -30,7 +30,7 @@ abstract class ShrinkableContainer<C, E> implements NShrinkable<C> {
 	public ShrinkingSequence<C> shrink(Falsifier<C> falsifier) {
 		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier) //
 			.andThen(shrinkableList -> { //
-				List<NShrinkable<E>> elements = ((ShrinkableContainer<C, E>) shrinkableList).elements;
+				List<Shrinkable<E>> elements = ((ShrinkableContainer<C, E>) shrinkableList).elements;
 				Falsifier<List<E>> listFalsifier = list -> falsifier.test(toContainer(list));
 				return new ElementsShrinkingSequence<>(elements, null, listFalsifier, ShrinkingDistance::forCollection)
 					.map(this::toContainer);
@@ -41,7 +41,7 @@ abstract class ShrinkableContainer<C, E> implements NShrinkable<C> {
 		return listOfE.stream().collect(containerCollector());
 	}
 
-	private Set<NShrinkable<C>> shrinkCandidatesFor(NShrinkable<C> shrinkable) {
+	private Set<Shrinkable<C>> shrinkCandidatesFor(Shrinkable<C> shrinkable) {
 		ShrinkableContainer<C, E> listShrinkable = (ShrinkableContainer<C, E>) shrinkable;
 		return shrinkCandidates.candidatesFor(listShrinkable.elements) //
 			.stream() //
@@ -75,7 +75,7 @@ abstract class ShrinkableContainer<C, E> implements NShrinkable<C> {
 			value(), distance());
 	}
 
-	abstract NShrinkable<C> createShrinkable(List<NShrinkable<E>> shrunkElements);
+	abstract Shrinkable<C> createShrinkable(List<Shrinkable<E>> shrunkElements);
 
 	abstract Collector<E, ?, C> containerCollector();
 

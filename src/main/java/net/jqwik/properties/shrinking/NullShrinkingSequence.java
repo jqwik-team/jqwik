@@ -6,9 +6,9 @@ import java.util.function.*;
 
 public class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 
-	private final NShrinkable<T> shrinkable;
+	private final Shrinkable<T> shrinkable;
 
-	public NullShrinkingSequence(NShrinkable<T> shrinkable) {
+	public NullShrinkingSequence(Shrinkable<T> shrinkable) {
 		this.shrinkable = shrinkable;
 	}
 

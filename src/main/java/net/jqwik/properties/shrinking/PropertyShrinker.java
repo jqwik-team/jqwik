@@ -13,12 +13,12 @@ public class PropertyShrinker {
 
 	private final static int BOUNDED_SHRINK_STEPS = 1000;
 
-	private final List<NShrinkable> parameters;
+	private final List<Shrinkable> parameters;
 	private final ShrinkingMode shrinkingMode;
 	private final Consumer<ReportEntry> reporter;
 	private final Reporting[] reporting;
 
-	public PropertyShrinker(List<NShrinkable> parameters, ShrinkingMode shrinkingMode, Consumer<ReportEntry> reporter, Reporting[] reporting) {
+	public PropertyShrinker(List<Shrinkable> parameters, ShrinkingMode shrinkingMode, Consumer<ReportEntry> reporter, Reporting[] reporting) {
 		this.parameters = parameters;
 		this.shrinkingMode = shrinkingMode;
 		this.reporter = reporter;
@@ -31,7 +31,7 @@ public class PropertyShrinker {
 			return new PropertyShrinkingResult(toValues(parameters), 0 , originalError);
 		}
 
-		Function<List<NShrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
+		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
 		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier, distanceFunction);
 
 		Consumer falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
@@ -51,8 +51,8 @@ public class PropertyShrinker {
 		return Reporting.FALSIFIED.containedIn(reporting);
 	}
 
-	private List toValues(List<NShrinkable> shrinkables) {
-		return shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
+	private List toValues(List<Shrinkable> shrinkables) {
+		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	private void reportFalsifiedParams(Object effectiveParams) {

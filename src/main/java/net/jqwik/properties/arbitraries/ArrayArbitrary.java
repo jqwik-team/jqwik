@@ -39,8 +39,8 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 		int cutoffSize = RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(genSize);
 		List<T> emptyList = Collections.emptyList();
-		List<NShrinkable<List<T>>> edgeCases = Stream.of(emptyList).filter(l -> l.size() >= minSize)
-				.filter(l -> maxSize == 0 || l.size() <= maxSize).map(NShrinkable::unshrinkable).collect(Collectors.toList());
+		List<Shrinkable<List<T>>> edgeCases = Stream.of(emptyList).filter(l -> l.size() >= minSize)
+													.filter(l -> maxSize == 0 || l.size() <= maxSize).map(Shrinkable::unshrinkable).collect(Collectors.toList());
 		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize).withEdgeCases(genSize, edgeCases);
 	}
 

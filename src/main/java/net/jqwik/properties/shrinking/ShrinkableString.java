@@ -10,7 +10,7 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
 	private final int minSize;
 
-	public ShrinkableString(List<NShrinkable<Character>> elements, int minSize) {
+	public ShrinkableString(List<Shrinkable<Character>> elements, int minSize) {
 		super(elements, minSize);
 		this.minSize = minSize;
 	}
@@ -21,7 +21,7 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 	}
 
 	@Override
-	NShrinkable<String> createShrinkable(List<NShrinkable<Character>> shrunkElements) {
+	Shrinkable<String> createShrinkable(List<Shrinkable<Character>> shrunkElements) {
 		return new ShrinkableString(shrunkElements, minSize);
 	}
 

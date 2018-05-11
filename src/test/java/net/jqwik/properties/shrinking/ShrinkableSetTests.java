@@ -24,7 +24,7 @@ class ShrinkableSetTests {
 
 	@Example
 	void creation() {
-		NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
+		Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
 		assertThat(shrinkable.value()).containsExactly(0, 1, 2, 3);
 	}
@@ -33,7 +33,7 @@ class ShrinkableSetTests {
 	@Example
 	@Label("report all falsified on the way")
 	void reportFalsified() {
-		NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(4, 0, 1, 2), 0);
+		Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(4, 0, 1, 2), 0);
 
 		ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
 
@@ -67,7 +67,7 @@ class ShrinkableSetTests {
 
 		@Example
 		void downAllTheWay() {
-			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2), 0);
+			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2), 0);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> false);
 
@@ -84,7 +84,7 @@ class ShrinkableSetTests {
 
 		@Example
 		void downToMinSize() {
-			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3, 4), 2);
+			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3, 4), 2);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> false);
 
@@ -104,7 +104,7 @@ class ShrinkableSetTests {
 
 		@Example
 		void downToNonEmpty() {
-			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
+			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
 
@@ -122,7 +122,7 @@ class ShrinkableSetTests {
 		@Example
 		void alsoShrinkElements() {
 
-			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
+			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> aSet.size() <= 1);
 
@@ -143,7 +143,7 @@ class ShrinkableSetTests {
 
 		@Example
 		void withFilterOnSetSize() {
-			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(1, 2, 3, 4), 0);
+			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(1, 2, 3, 4), 0);
 
 			Falsifier<Set<Integer>> falsifier = ignore -> false;
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.size() % 2 == 0);
@@ -165,7 +165,7 @@ class ShrinkableSetTests {
 
 		@Example
 		void withFilterOnSetContents() {
-			NShrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 5, 6), 0);
+			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 5, 6), 0);
 
 			Falsifier<Set<Integer>> falsifier = Set::isEmpty;
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
@@ -180,8 +180,8 @@ class ShrinkableSetTests {
 
 		@Example
 		void bigSet() {
-			Set<NShrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new).collect(Collectors.toSet());
-			NShrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5);
+			Set<Shrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new).collect(Collectors.toSet());
+			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
 
@@ -195,8 +195,8 @@ class ShrinkableSetTests {
 	}
 
 
-	private NShrinkable<Set<Integer>> createShrinkableSet(List<Integer> listValues, int minSize) {
-		Set<NShrinkable<Integer>> elementShrinkables = listValues.stream().map(OneStepShrinkable::new).collect(Collectors.toSet());
+	private Shrinkable<Set<Integer>> createShrinkableSet(List<Integer> listValues, int minSize) {
+		Set<Shrinkable<Integer>> elementShrinkables = listValues.stream().map(OneStepShrinkable::new).collect(Collectors.toSet());
 		return new ShrinkableSet<>(elementShrinkables, minSize);
 	}
 

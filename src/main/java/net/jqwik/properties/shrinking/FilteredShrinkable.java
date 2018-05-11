@@ -4,12 +4,12 @@ import net.jqwik.api.*;
 
 import java.util.function.*;
 
-public class NFilteredShrinkable<T> implements NShrinkable<T> {
+public class FilteredShrinkable<T> implements Shrinkable<T> {
 
-	private final NShrinkable<T> toFilter;
+	private final Shrinkable<T> toFilter;
 	private final Predicate<T> filter;
 
-	public NFilteredShrinkable(NShrinkable<T> toFilter, Predicate<T> filter) {
+	public FilteredShrinkable(Shrinkable<T> toFilter, Predicate<T> filter) {
 		this.toFilter = toFilter;
 		this.filter = filter;
 	}
@@ -33,7 +33,7 @@ public class NFilteredShrinkable<T> implements NShrinkable<T> {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		NFilteredShrinkable<?> that = (NFilteredShrinkable<?>) o;
+		FilteredShrinkable<?> that = (FilteredShrinkable<?>) o;
 		return toFilter.equals(that.toFilter);
 	}
 

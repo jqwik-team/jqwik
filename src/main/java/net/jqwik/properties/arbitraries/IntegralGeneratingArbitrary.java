@@ -24,7 +24,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
-		List<NShrinkable<BigInteger>> samples =
+		List<Shrinkable<BigInteger>> samples =
 			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), min, max}) //
 				  .distinct() //
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //

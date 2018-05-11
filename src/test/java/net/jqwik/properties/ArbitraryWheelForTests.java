@@ -21,7 +21,7 @@ public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 		AtomicInteger index = new AtomicInteger(0);
 		return new RandomGenerator<T>() {
 			@Override
-			public NShrinkable<T> next(Random random) {
+			public Shrinkable<T> next(Random random) {
 				if (index.get() < values.length) {
 					int current = index.getAndIncrement();
 					T value = values[current];
@@ -59,7 +59,7 @@ public class ArbitraryWheelForTests<T> implements Arbitrary<T> {
 		}
 
 		@Override
-		public Set<NShrinkable<T>> shrinkCandidatesFor(NShrinkable<T> shrinkable) {
+		public Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable) {
 			return nextCandidates(shrinkable.value()) //
 													  .stream() //
 													  .map(WheelShrinkable::new) //

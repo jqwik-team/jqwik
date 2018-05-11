@@ -6,10 +6,10 @@ import java.util.function.*;
 
 public class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 	private final ShrinkingSequence<T> before;
-	private final Function<NShrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep;
+	private final Function<Shrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep;
 	private ShrinkingSequence<T> nextSequence = null;
 
-	public NextShrinkingSequence(ShrinkingSequence<T> before, Function<NShrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep) {
+	public NextShrinkingSequence(ShrinkingSequence<T> before, Function<Shrinkable<T>, ShrinkingSequence<T>> nextShrinkingStep) {
 		this.before = before;
 		this.nextShrinkingStep = nextShrinkingStep;
 	}

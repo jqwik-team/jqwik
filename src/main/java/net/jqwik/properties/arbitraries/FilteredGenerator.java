@@ -18,7 +18,7 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public NShrinkable<T> next(Random random) {
+	public Shrinkable<T> next(Random random) {
 		return nextUntilAccepted(random, toFilter::next);
 	}
 
@@ -27,12 +27,12 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 		return String.format("Filtering [%s]", toFilter);
 	}
 
-	private NShrinkable<T> nextUntilAccepted(Random random, Function<Random, NShrinkable<T>> fetchShrinkable) {
+	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
 		long count = 0;
 		while (true) {
-			NShrinkable<T> next = fetchShrinkable.apply(random);
+			Shrinkable<T> next = fetchShrinkable.apply(random);
 			if (filterPredicate.test(next.value())) {
-				return new NFilteredShrinkable<>(next, filterPredicate);
+				return new FilteredShrinkable<>(next, filterPredicate);
 			} else {
 				if (++count > MAX_MISSES) {
 					throw new JqwikException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));

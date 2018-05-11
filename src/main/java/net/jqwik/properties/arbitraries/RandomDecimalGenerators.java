@@ -16,7 +16,7 @@ class RandomDecimalGenerators {
 		}
 
 		if (range.isSingular()) {
-			return ignored -> NShrinkable.unshrinkable(range.min);
+			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 
 		return partitionedGenerator(range, scale, partitionPoints);

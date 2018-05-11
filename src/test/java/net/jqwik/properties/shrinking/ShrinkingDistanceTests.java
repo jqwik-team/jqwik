@@ -53,7 +53,7 @@ class ShrinkingDistanceTests {
 
 		@Example
 		void uniformCollection() {
-			Collection<NShrinkable<Integer>> elements = asList(
+			Collection<Shrinkable<Integer>> elements = asList(
 				new OneStepShrinkable(1),
 				new OneStepShrinkable(2),
 				new OneStepShrinkable(3),
@@ -65,8 +65,8 @@ class ShrinkingDistanceTests {
 
 		@Example
 		void nonUniformCollection() {
-			Collection<NShrinkable<String>> elements = asList(
-				NShrinkable.unshrinkable("hello"), // [0]
+			Collection<Shrinkable<String>> elements = asList(
+				Shrinkable.unshrinkable("hello"), // [0]
 				ShrinkableStringTests.createShrinkableString("bcd", 0) // [3, 6]
 			);
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(elements);

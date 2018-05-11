@@ -21,7 +21,7 @@ public class RandomGenerators {
 		};
 	}
 
-	public static <U> U chooseValue(List<U> values, Random random) {
+	private static <U> U chooseValue(List<U> values, Random random) {
 		int index = random.nextInt(values.size());
 		return values.get(index);
 	}
@@ -88,14 +88,14 @@ public class RandomGenerators {
 	public static <T> RandomGenerator<List<T>> list(
 		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
 	) {
-		Function<List<NShrinkable<T>>, NShrinkable<List<T>>> createShrinkable = elements -> new ShrinkableList<>(elements, minSize);
+		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable = elements -> new ShrinkableList<>(elements, minSize);
 		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
 	}
 
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
 	) {
-		Function<List<NShrinkable<Character>>, NShrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength);
+		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength);
 		return container(elementGenerator, createShrinkable, minLength, maxLength, cutoffLength);
 	}
 
@@ -116,13 +116,13 @@ public class RandomGenerators {
 
 	private static <T, C> RandomGenerator<C> container( //
 														RandomGenerator<T> elementGenerator, //
-														Function<List<NShrinkable<T>>, NShrinkable<C>> createShrinkable, //
+														Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,//
 														int minSize, int maxSize, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
 		return random -> {
 			int listSize = sizeGenerator.apply(random);
-			List<NShrinkable<T>> list = new ArrayList<>();
+			List<Shrinkable<T>> list = new ArrayList<>();
 			while (list.size() < listSize) {
 				list.add(elementGenerator.next(random));
 			}
@@ -158,10 +158,10 @@ public class RandomGenerators {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
 		return random -> {
 			int listSize = sizeGenerator.apply(random);
-			Set<NShrinkable<T>> elements = new HashSet<>();
+			Set<Shrinkable<T>> elements = new HashSet<>();
 			Set<T> values = new HashSet<>();
 			while (elements.size() < listSize) {
-				NShrinkable<T> next = elementGenerator.next(random);
+				Shrinkable<T> next = elementGenerator.next(random);
 				if (values.contains(next.value()))
 					continue;
 				elements.add(next);
@@ -171,7 +171,7 @@ public class RandomGenerators {
 		};
 	}
 
-	public static <T> RandomGenerator<T> samplesFromShrinkables(List<NShrinkable<T>> samples) {
+	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {
 			if (tryCount.get() >= samples.size())
@@ -181,7 +181,7 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<T> samples(T[] samples) {
-		List<NShrinkable<T>> shrinkables = SampleShrinkable.listOf(samples);
+		List<Shrinkable<T>> shrinkables = SampleShrinkable.listOf(samples);
 		return samplesFromShrinkables(shrinkables);
 	}
 
