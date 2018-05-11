@@ -1,34 +1,13 @@
 package net.jqwik.api;
 
 import net.jqwik.properties.shrinking.*;
-import net.jqwik.support.*;
 
 import java.util.function.*;
 
 public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 
 	static <T> NShrinkable<T> unshrinkable(T value) {
-		return new NShrinkable<T>() {
-			@Override
-			public T value() {
-				return value;
-			}
-
-			@Override
-			public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
-				return ShrinkingSequence.dontShrink(this);
-			}
-
-			@Override
-			public ShrinkingDistance distance() {
-				return ShrinkingDistance.of(0);
-			}
-
-			@Override
-			public String toString() {
-				return JqwikStringSupport.displayString(value);
-			}
-		};
+		return new NUnshrinkable<>(value);
 	}
 
 	T value();
@@ -53,4 +32,5 @@ public interface NShrinkable<T> extends Comparable<NShrinkable<T>> {
 	default boolean isSmallerThan(NShrinkable<T> other) {
 		return this.distance().compareTo(other.distance()) < 0;
 	}
+
 }
