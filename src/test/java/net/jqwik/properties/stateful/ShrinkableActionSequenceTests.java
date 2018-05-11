@@ -4,7 +4,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.shrinking.*;
-import net.jqwik.properties.stateful.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -23,11 +22,11 @@ class ShrinkableActionSequenceTests {
 
 	@Example
 	void creation() {
-		List<NShrinkable<Action<String>>> actions = asList(
+		List<Shrinkable<Action<String>>> actions = asList(
 			shrinkableAddString(),
 			shrinkableAddX()
 		);
-		NShrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
 
@@ -38,13 +37,13 @@ class ShrinkableActionSequenceTests {
 	@SuppressWarnings("unchecked")
 	@Example
 	void shrinkToEmptySequence() {
-		List<NShrinkable<Action<String>>> actions = asList(
+		List<Shrinkable<Action<String>>> actions = asList(
 			shrinkableAddString(),
 			shrinkableAddX(),
 			shrinkableAddString(),
 			shrinkableAddX()
 		);
-		NShrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			seq.run("");
@@ -67,13 +66,13 @@ class ShrinkableActionSequenceTests {
 
 	@Example
 	void alsoShrinkActions() {
-		List<NShrinkable<Action<String>>> actions = asList(
+		List<Shrinkable<Action<String>>> actions = asList(
 			shrinkableAddString(),
 			shrinkableAddX(),
 			shrinkableAddString(),
 			shrinkableAddString()
 		);
-		NShrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			String result = seq.run("");
@@ -88,7 +87,7 @@ class ShrinkableActionSequenceTests {
 
 	@Example
 	void actionsWithFailingPreconditionsAreShrunkAway() {
-		List<NShrinkable<Action<String>>> actions = asList(
+		List<Shrinkable<Action<String>>> actions = asList(
 			shrinkableFailingPrecondition(),
 			shrinkableAddString(),
 			shrinkableAddX(),
@@ -98,7 +97,7 @@ class ShrinkableActionSequenceTests {
 			shrinkableFailingPrecondition(),
 			shrinkableAddString()
 		);
-		NShrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			String result = seq.run("");
@@ -111,9 +110,9 @@ class ShrinkableActionSequenceTests {
 	}
 
 	@Property
-	void alwaysShrinkToSingleAction(@ForAll("stringActions") @Size(max = 50) List<NShrinkable<Action<String>>> actions) {
+	void alwaysShrinkToSingleAction(@ForAll("stringActions") @Size(max = 50) List<Shrinkable<Action<String>>> actions) {
 		actions.add(shrinkableAddX());
-		NShrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			String result = seq.run("");
@@ -126,13 +125,13 @@ class ShrinkableActionSequenceTests {
 	}
 
 	@Provide
-	Arbitrary<List<NShrinkable<Action<String>>>> stringActions() {
+	Arbitrary<List<Shrinkable<Action<String>>>> stringActions() {
 		return Arbitraries.of(shrinkableAddString(), shrinkableAddX(), shrinkableFailingPrecondition()).list();
 	}
 
-	private NShrinkable<Action<String>> shrinkableFailingPrecondition() {
-		return NShrinkable.unshrinkable("poops")
-			.map(ignore -> new Action<String>() {
+	private Shrinkable<Action<String>> shrinkableFailingPrecondition() {
+		return Shrinkable.unshrinkable("poops")
+						 .map(ignore -> new Action<String>() {
 				@Override
 				public boolean precondition(String model) {
 					return false;
@@ -145,12 +144,12 @@ class ShrinkableActionSequenceTests {
 			});
 	}
 
-	private NShrinkable<Action<String>> shrinkableAddX() {
-		return NShrinkable.unshrinkable("x")
-			.map(aString -> model -> model + aString);
+	private Shrinkable<Action<String>> shrinkableAddX() {
+		return Shrinkable.unshrinkable("x")
+						 .map(aString -> model -> model + aString);
 	}
 
-	private NShrinkable<Action<String>> shrinkableAddString() {
+	private Shrinkable<Action<String>> shrinkableAddString() {
 		return ShrinkableStringTests.createShrinkableString("cc", 2)
 									.map(aString -> model -> model + aString);
 	}

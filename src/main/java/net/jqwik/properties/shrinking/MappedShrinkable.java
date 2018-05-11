@@ -4,12 +4,12 @@ import net.jqwik.api.*;
 
 import java.util.function.*;
 
-public class NMappedShrinkable<T, U> implements NShrinkable<U> {
+public class MappedShrinkable<T, U> implements Shrinkable<U> {
 
-	private final NShrinkable<T> toMap;
+	private final Shrinkable<T> toMap;
 	private final Function<T, U> mapper;
 
-	public NMappedShrinkable(NShrinkable<T> toMap, Function<T, U> mapper) {
+	public MappedShrinkable(Shrinkable<T> toMap, Function<T, U> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
 	}
@@ -33,7 +33,7 @@ public class NMappedShrinkable<T, U> implements NShrinkable<U> {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		NMappedShrinkable<?, ?> that = (NMappedShrinkable<?, ?>) o;
+		MappedShrinkable<?, ?> that = (MappedShrinkable<?, ?>) o;
 		return toMap.equals(that.toMap);
 	}
 

@@ -9,7 +9,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
 	private final int minSize;
 
-	public ShrinkableList(List<NShrinkable<E>> elements, int minSize) {
+	public ShrinkableList(List<Shrinkable<E>> elements, int minSize) {
 		super(elements, minSize);
 		this.minSize = minSize;
 	}
@@ -20,7 +20,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	@Override
-	NShrinkable<List<E>> createShrinkable(List<NShrinkable<E>> shrunkElements) {
+	Shrinkable<List<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
 		return new ShrinkableList<>(shrunkElements, minSize);
 	}
 }

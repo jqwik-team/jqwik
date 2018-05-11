@@ -22,7 +22,7 @@ public class ShrinkableStringTests {
 
 	@Example
 	void creation() {
-		NShrinkable<String> shrinkable = createShrinkableString("abcd", 0);
+		Shrinkable<String> shrinkable = createShrinkableString("abcd", 0);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
 		assertThat(shrinkable.value()).isEqualTo("abcd");
 	}
@@ -31,7 +31,7 @@ public class ShrinkableStringTests {
 	@Example
 	@Label("report all falsified on the way")
 	void reportFalsified() {
-		NShrinkable<String> shrinkable = createShrinkableString("bcd", 0);
+		Shrinkable<String> shrinkable = createShrinkableString("bcd", 0);
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
 
@@ -57,7 +57,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void downAllTheWay() {
-			NShrinkable<String> shrinkable = createShrinkableString("abc", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("abc", 0);
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> false);
 
@@ -74,7 +74,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void downToMinSize() {
-			NShrinkable<String> shrinkable = createShrinkableString("aaaaa", 2);
+			Shrinkable<String> shrinkable = createShrinkableString("aaaaa", 2);
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> false);
 
@@ -91,7 +91,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void downToNonEmpty() {
-			NShrinkable<String> shrinkable = createShrinkableString("abcd", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("abcd", 0);
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
 
@@ -109,7 +109,7 @@ public class ShrinkableStringTests {
 		@Example
 		void alsoShrinkElements() {
 
-			NShrinkable<String> shrinkable = createShrinkableString("bbb", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> aString.length() <= 1);
 
@@ -127,7 +127,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void withFilterOnStringLength() {
-			NShrinkable<String> shrinkable = createShrinkableString("cccc", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("cccc", 0);
 
 			Falsifier<String> falsifier = ignore -> false;
 			Falsifier<String> filteredFalsifier = falsifier.withFilter(aString -> aString.length() % 2 == 0);
@@ -149,7 +149,7 @@ public class ShrinkableStringTests {
 
 		@Example
 		void withFilterOnStringContents() {
-			NShrinkable<String> shrinkable = createShrinkableString("ddd", 0);
+			Shrinkable<String> shrinkable = createShrinkableString("ddd", 0);
 
 			Falsifier<String> falsifier = String::isEmpty;
 			Falsifier<String> filteredFalsifier = falsifier //
@@ -165,13 +165,13 @@ public class ShrinkableStringTests {
 
 		@Example
 		void longString() {
-			List<NShrinkable<Character>> elementShrinkables =
+			List<Shrinkable<Character>> elementShrinkables =
 				IntStream.range(0, 1000) //
 						 .mapToObj(aChar -> new OneStepShrinkable(aChar, 0)) //
 						 .map(shrinkableInt -> shrinkableInt.map(anInt -> (char) (int) anInt)) //
 						 .collect(Collectors.toList());
 
-			NShrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5);
+			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5);
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
 
@@ -185,12 +185,12 @@ public class ShrinkableStringTests {
 	}
 
 
-	public static NShrinkable<String> createShrinkableString(String aString, int minSize) {
-		List<NShrinkable<Character>> elementShrinkables = aString //
-			.chars() //
-			.mapToObj(aChar -> new OneStepShrinkable(aChar, 'a')) //
-			.map(shrinkable -> shrinkable.map(anInt -> (char) (int) anInt)) //
-			.collect(Collectors.toList());
+	public static Shrinkable<String> createShrinkableString(String aString, int minSize) {
+		List<Shrinkable<Character>> elementShrinkables = aString //
+																 .chars() //
+																 .mapToObj(aChar -> new OneStepShrinkable(aChar, 'a')) //
+																 .map(shrinkable -> shrinkable.map(anInt -> (char) (int) anInt)) //
+																 .collect(Collectors.toList());
 
 		return new ShrinkableString(elementShrinkables, minSize);
 	}

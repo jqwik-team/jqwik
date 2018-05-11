@@ -13,7 +13,7 @@ public interface RandomGenerator<T> {
 	 *
 	 * @return the next generated value wrapped within the Shrinkable interface. The method must ALWAYS return a next value.
 	 */
-	NShrinkable<T> next(Random random);
+	Shrinkable<T> next(Random random);
 
 	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
 		return random -> RandomGenerator.this.next(random).map(mapper);
@@ -21,7 +21,7 @@ public interface RandomGenerator<T> {
 
 	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int tries) {
 		return random -> {
-			NShrinkable<T> wrappedShrinkable = this.next(random);
+			Shrinkable<T> wrappedShrinkable = this.next(random);
 			return new FlatMappedShrinkable<>(wrappedShrinkable, mapper, tries, random.nextLong());
 		};
 	}
@@ -32,12 +32,12 @@ public interface RandomGenerator<T> {
 
 	default RandomGenerator<T> injectNull(double nullProbability) {
 		return random -> {
-			if (random.nextDouble() <= nullProbability) return NShrinkable.unshrinkable(null);
+			if (random.nextDouble() <= nullProbability) return Shrinkable.unshrinkable(null);
 			return RandomGenerator.this.next(random);
 		};
 	}
 
-	default RandomGenerator<T> withEdgeCases(int genSize, List<NShrinkable<T>> samples) {
+	default RandomGenerator<T> withEdgeCases(int genSize, List<Shrinkable<T>> samples) {
 		if (samples.isEmpty()) {
 			return this;
 		}

@@ -6,11 +6,11 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-public class NCombinedShrinkable<T> implements NShrinkable<T> {
-	private final List<NShrinkable<Object>> shrinkables;
+public class CombinedShrinkable<T> implements Shrinkable<T> {
+	private final List<Shrinkable<Object>> shrinkables;
 	private final Function<List<Object>, T> combinator;
 
-	public NCombinedShrinkable(List<NShrinkable<Object>> shrinkables, Function<List<Object>, T> combinator) {
+	public CombinedShrinkable(List<Shrinkable<Object>> shrinkables, Function<List<Object>, T> combinator) {
 		this.shrinkables = shrinkables;
 		this.combinator = combinator;
 	}
@@ -20,8 +20,8 @@ public class NCombinedShrinkable<T> implements NShrinkable<T> {
 		return combinator.apply(toValues(shrinkables));
 	}
 
-	private List<Object> toValues(List<NShrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(NShrinkable::value).collect(Collectors.toList());
+	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
+		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	@Override

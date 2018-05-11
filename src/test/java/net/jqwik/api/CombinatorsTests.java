@@ -13,25 +13,25 @@ class CombinatorsTests {
 	@Example
 	void twoArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine2 = Combinators.combine(one(), two()).as((a, b) -> a + b);
-		NShrinkable<Integer> value = generate(combine2);
+		Shrinkable<Integer> value = generate(combine2);
 		assertThat(value.value()).isEqualTo(3);
 	}
 
-	private NShrinkable<Integer> generate(Arbitrary<Integer> integerArbitrary) {
+	private Shrinkable<Integer> generate(Arbitrary<Integer> integerArbitrary) {
 		return integerArbitrary.generator(1).next(random);
 	}
 
 	@Example
 	void threeArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine3 = Combinators.combine(one(), two(), three()).as((a, b, c) -> a + b + c);
-		NShrinkable<Integer> value = generate(combine3);
+		Shrinkable<Integer> value = generate(combine3);
 		assertThat(value.value()).isEqualTo(6);
 	}
 
 	@Example
 	void fourArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine4 = Combinators.combine(one(), two(), three(), four()).as((a, b, c, d) -> a + b + c + d);
-		NShrinkable<Integer> value = generate(combine4);
+		Shrinkable<Integer> value = generate(combine4);
 		assertThat(value.value()).isEqualTo(10);
 	}
 
@@ -39,7 +39,7 @@ class CombinatorsTests {
 	void fiveArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine5 = Combinators.combine(one(), two(), three(), four(), five()) //
 				.as((a, b, c, d, e) -> a + b + c + d + e);
-		NShrinkable<Integer> value = generate(combine5);
+		Shrinkable<Integer> value = generate(combine5);
 		assertThat(value.value()).isEqualTo(15);
 	}
 
@@ -47,7 +47,7 @@ class CombinatorsTests {
 	void sixArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine6 = Combinators.combine(one(), two(), three(), four(), five(), six()) //
 				.as((a, b, c, d, e, f) -> a + b + c + d + e + f);
-		NShrinkable<Integer> value = generate(combine6);
+		Shrinkable<Integer> value = generate(combine6);
 		assertThat(value.value()).isEqualTo(21);
 	}
 
@@ -55,7 +55,7 @@ class CombinatorsTests {
 	void sevenArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine7 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven()) //
 				.as((a, b, c, d, e, f, g) -> a + b + c + d + e + f + g);
-		NShrinkable<Integer> value = generate(combine7);
+		Shrinkable<Integer> value = generate(combine7);
 		assertThat(value.value()).isEqualTo(28);
 	}
 
@@ -63,7 +63,7 @@ class CombinatorsTests {
 	void eightArbitrariesCanBeCombined() {
 		Arbitrary<Integer> combine8 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven(), eight()) //
 				.as((a, b, c, d, e, f, g, h) -> a + b + c + d + e + f + g + h);
-		NShrinkable<Integer> value = generate(combine8);
+		Shrinkable<Integer> value = generate(combine8);
 		assertThat(value.value()).isEqualTo(36);
 	}
 
@@ -72,7 +72,7 @@ class CombinatorsTests {
 		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), one(), two(), two(), three(), three());
 		Arbitrary<Integer> combineList = Combinators.combine(listOfArbitraries) //
 				.as(list -> list.stream().mapToInt(e -> e).sum());
-		NShrinkable<Integer> value = generate(combineList);
+		Shrinkable<Integer> value = generate(combineList);
 		assertThat(value.value()).isEqualTo(12);
 	}
 

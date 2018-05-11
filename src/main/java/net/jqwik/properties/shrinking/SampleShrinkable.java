@@ -10,9 +10,9 @@ public class SampleShrinkable<T> extends AbstractShrinkable<T> {
 	private final int index;
 
 	@SafeVarargs
-	public static<T> List<NShrinkable<T>> listOf(T ... samples) {
+	public static<T> List<Shrinkable<T>> listOf(T ... samples) {
 		List<T> samplesList = Arrays.asList(samples);
-		List<NShrinkable<T>> shrinkables = new ArrayList<>();
+		List<Shrinkable<T>> shrinkables = new ArrayList<>();
 		for (int i = 0; i < samples.length; i++) {
 			shrinkables.add(new SampleShrinkable<>(samplesList, i));
 		}
@@ -26,7 +26,7 @@ public class SampleShrinkable<T> extends AbstractShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> shrinkCandidatesFor(NShrinkable<T> shrinkable) {
+	public Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable) {
 		int sampleIndex = ((SampleShrinkable<T>) shrinkable).index;
 		if (sampleIndex == 0)
 			return Collections.emptySet();

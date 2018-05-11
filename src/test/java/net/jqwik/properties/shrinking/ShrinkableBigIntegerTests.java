@@ -17,11 +17,12 @@ class ShrinkableBigIntegerTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+	@SuppressWarnings("unchecked")
 	private Consumer<BigInteger> reporter = mock(Consumer.class);
 
 	@Example
 	void creation() {
-		NShrinkable<BigInteger> shrinkable = createShrinkableBigInteger(25, Range.of(-100L, 100L));
+		Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(25, Range.of(-100L, 100L));
 		assertThat(shrinkable.value()).isEqualTo(BigInteger.valueOf(25));
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(25));
 	}
@@ -67,7 +68,7 @@ class ShrinkableBigIntegerTests {
 	@Example
 	@Label("report all falsified")
 	void reportFalsified() {
-		NShrinkable<BigInteger> shrinkable = createShrinkableBigInteger(30, Range.of(-100L, 100L));
+		Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(30, Range.of(-100L, 100L));
 
 		ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(10)) < 0);
 
@@ -89,7 +90,7 @@ class ShrinkableBigIntegerTests {
 
 		@Example
 		void downAllTheWay() {
-			NShrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
+			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
 
 			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0);
 
@@ -101,7 +102,7 @@ class ShrinkableBigIntegerTests {
 
 		@Example
 		void withFilter() {
-			NShrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(0L, 1000000L));
+			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(0L, 1000000L));
 
 			Falsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.intValueExact() < 99;
 			Falsifier<BigInteger> filteredFalsifier = falsifier.withFilter(aBigInteger -> aBigInteger.intValueExact() % 2 == 0);
@@ -117,7 +118,7 @@ class ShrinkableBigIntegerTests {
 
 	}
 
-	private NShrinkable<BigInteger> createShrinkableBigInteger(long number, Range<Long> longRange) {
+	private Shrinkable<BigInteger> createShrinkableBigInteger(long number, Range<Long> longRange) {
 		Range<BigInteger> bigIntegerRange = longRange.map(BigInteger::valueOf);
 		return new ShrinkableBigInteger(BigInteger.valueOf(number), bigIntegerRange);
 	}

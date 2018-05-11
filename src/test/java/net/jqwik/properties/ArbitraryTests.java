@@ -2,7 +2,6 @@ package net.jqwik.properties;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
 import org.assertj.core.api.*;
 
 import java.util.*;
@@ -20,7 +19,7 @@ class ArbitraryTests {
 
 		Arbitrary<Integer> arbitrary = genSize -> {
 			injectedGenSize[0] = genSize;
-			return ignore -> NShrinkable.unshrinkable(0);
+			return ignore -> Shrinkable.unshrinkable(0);
 		};
 
 		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000);
@@ -225,8 +224,8 @@ class ArbitraryTests {
 
 	}
 
-	private <T> NShrinkable<T> generateNth(RandomGenerator<T> generator, int n) {
-		NShrinkable<T> generated = null;
+	private <T> Shrinkable<T> generateNth(RandomGenerator<T> generator, int n) {
+		Shrinkable<T> generated = null;
 		for (int i = 0; i < n; i++) {
 			generated = generator.next(random);
 		}

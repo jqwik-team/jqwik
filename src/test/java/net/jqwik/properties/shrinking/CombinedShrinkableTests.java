@@ -13,7 +13,7 @@ import static org.mockito.Mockito.*;
 
 @Group
 @Label("CombinedShrinkable")
-class NCombinedShrinkableTests {
+class CombinedShrinkableTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
@@ -21,17 +21,17 @@ class NCombinedShrinkableTests {
 
 	@Example
 	void creation() {
-		NShrinkable three = new OneStepShrinkable(3);
-		NShrinkable hello = NShrinkable.unshrinkable("hello");
+		Shrinkable three = new OneStepShrinkable(3);
+		Shrinkable hello = Shrinkable.unshrinkable("hello");
 		Function<List<Object>, String> combinator = shrinkables -> {
 			int anInt = (int) shrinkables.get(0);
 			String aString = (String) shrinkables.get(1);
 			return aString + anInt;
 		};
 
-		@SuppressWarnings("unchecked") List<NShrinkable<Object>> shrinkables = Arrays.asList(three, hello);
-		NShrinkable<String> shrinkable = new NCombinedShrinkable<>( //
-			shrinkables, combinator);
+		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, hello);
+		Shrinkable<String> shrinkable = new CombinedShrinkable<>( //
+																  shrinkables, combinator);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 0));
 		assertThat(shrinkable.value()).isEqualTo("hello3");
@@ -39,17 +39,17 @@ class NCombinedShrinkableTests {
 
 	@Example
 	void shrinking() {
-		NShrinkable three = new OneStepShrinkable(3);
-		NShrinkable five = new OneStepShrinkable(5);
+		Shrinkable three = new OneStepShrinkable(3);
+		Shrinkable five = new OneStepShrinkable(5);
 		Function<List<Object>, Integer> combinator = shrinkables -> {
 			int first = (int) shrinkables.get(0);
 			int second = (int) shrinkables.get(1);
 			return first + second;
 		};
 
-		@SuppressWarnings("unchecked") List<NShrinkable<Object>> shrinkables = Arrays.asList(three, five);
-		NShrinkable<Integer> shrinkable = new NCombinedShrinkable<>( //
-			shrinkables, combinator);
+		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
+		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>( //
+																   shrinkables, combinator);
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
 
@@ -68,17 +68,17 @@ class NCombinedShrinkableTests {
 		@SuppressWarnings("unchecked")
 		Consumer<Integer> reporter = Mockito.mock(Consumer.class);
 
-		NShrinkable three = new OneStepShrinkable(3);
-		NShrinkable five = new OneStepShrinkable(5);
+		Shrinkable three = new OneStepShrinkable(3);
+		Shrinkable five = new OneStepShrinkable(5);
 		Function<List<Object>, Integer> combinator = shrinkables -> {
 			int first = (int) shrinkables.get(0);
 			int second = (int) shrinkables.get(1);
 			return first + second;
 		};
 
-		@SuppressWarnings("unchecked") List<NShrinkable<Object>> shrinkables = Arrays.asList(three, five);
-		NShrinkable<Integer> shrinkable = new NCombinedShrinkable<>( //
-			shrinkables, combinator);
+		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
+		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>( //
+																   shrinkables, combinator);
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
 

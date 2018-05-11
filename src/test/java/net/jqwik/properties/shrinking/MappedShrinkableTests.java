@@ -11,24 +11,25 @@ import static org.mockito.Mockito.*;
 
 @Group
 @Label("MappedShrinkable")
-class NMappedShrinkableTests {
+class MappedShrinkableTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+	@SuppressWarnings("unchecked")
 	private Consumer<String> reporter = mock(Consumer.class);
 
 	@Example
 	void creation() {
-		NShrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
-		NShrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + String.valueOf(i));
+		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
+		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + String.valueOf(i));
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3));
 		assertThat(shrinkable.value()).isEqualTo("33");
 	}
 
 	@Example
 	void shrinking() {
-		NShrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
-		NShrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + String.valueOf(i));
+		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
+		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + String.valueOf(i));
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> false);
 
@@ -48,8 +49,8 @@ class NMappedShrinkableTests {
 	@Example
 	void reportFalsifier() {
 
-		NShrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
-		NShrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + String.valueOf(i));
+		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
+		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + String.valueOf(i));
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> false);
 

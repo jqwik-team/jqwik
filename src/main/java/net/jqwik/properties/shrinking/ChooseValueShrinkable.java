@@ -20,7 +20,7 @@ public class ChooseValueShrinkable<T> extends AbstractShrinkable<T> {
 	}
 
 	@Override
-	public Set<NShrinkable<T>> shrinkCandidatesFor(NShrinkable<T> shrinkable) {
+	public Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable) {
 		int index = values.indexOf(shrinkable.value());
 		if (index == 0) {
 			return Collections.emptySet();

@@ -11,11 +11,9 @@ class ActionSequenceInvariantProperties {
 	@Example
 	boolean succeedingInvariant(@ForAll Random random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(changeValue());
-		NShrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
+		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
-		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> {
-			Assertions.assertThat(true).isTrue();
-		});
+		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> Assertions.assertThat(true).isTrue());
 		MyModel result = sequenceWithInvariant.run(new MyModel());
 		return result.value.length() > 0;
 	}
@@ -27,11 +25,9 @@ class ActionSequenceInvariantProperties {
 	@Example
 	void failingInvariantFailSequenceRun(@ForAll Random random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify()));
-		NShrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
+		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
-		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> {
-			Assertions.assertThat(model.value).isNotNull();
-		});
+		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> Assertions.assertThat(model.value).isNotNull());
 
 		Assertions.assertThatThrownBy(() -> sequenceWithInvariant.run(new MyModel()))
 				  .isInstanceOf(InvariantFailedError.class);

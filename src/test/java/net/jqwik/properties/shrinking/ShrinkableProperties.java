@@ -8,17 +8,17 @@ import java.util.stream.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Group
-class NShrinkableProperties {
+class ShrinkableProperties {
 
 	@Property //(reporting = Reporting.GENERATED)
-	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
+	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
-		while (sequence.next(() -> {}, ignore -> {})) {}
+		while (sequence.next(() -> {}, ignore -> {}));
 		return true;
 	}
 
 	@Property
-	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") NShrinkable<?> aShrinkable) {
+	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
 		FalsificationResult<?> current = sequence.current();
 		while (sequence.next(() -> {}, ignore -> {})) {
@@ -29,7 +29,7 @@ class NShrinkableProperties {
 	}
 
 	@Provide
-	Arbitrary<NShrinkable> anyShrinkable() {
+	Arbitrary<Shrinkable> anyShrinkable() {
 		// TODO: Enhance the list of shrinkables.
 		return Arbitraries.oneOf(
 			oneStepShrinkable(),
@@ -42,9 +42,9 @@ class NShrinkableProperties {
 		);
 	}
 
-	private Arbitrary<NShrinkable> listShrinkable() {
+	private Arbitrary<Shrinkable> listShrinkable() {
 		return Arbitraries.integers().between(0, 10).flatMap(size -> {
-			List<Arbitrary<NShrinkable>> elementArbitraries =
+			List<Arbitrary<Shrinkable>> elementArbitraries =
 				IntStream.range(0, size)
 						 .mapToObj(ignore -> Arbitraries.lazy(this::anyShrinkable))
 						 .collect(Collectors.toList());
@@ -52,11 +52,11 @@ class NShrinkableProperties {
 		});
 	}
 
-	private Arbitrary<NShrinkable> oneStepShrinkable() {
+	private Arbitrary<Shrinkable> oneStepShrinkable() {
 		return Arbitraries.integers().between(0, 1000).map(ShrinkableTypesForTest.OneStepShrinkable::new);
 	}
 
-	private Arbitrary<NShrinkable> partialShrinkable() {
+	private Arbitrary<Shrinkable> partialShrinkable() {
 		return Arbitraries.integers().between(0, 1000).map(ShrinkableTypesForTest.PartialShrinkable::new);
 	}
 }

@@ -24,7 +24,7 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 	}
 
 	@Override
-	public Set<NShrinkable<BigDecimal>> shrinkCandidatesFor(NShrinkable<BigDecimal> shrinkable) {
+	public Set<Shrinkable<BigDecimal>> shrinkCandidatesFor(Shrinkable<BigDecimal> shrinkable) {
 		return shrinkingCandidates.candidatesFor(shrinkable.value())
 			.stream() //
 			.map(aBigDecimal -> new ShrinkableBigDecimal(aBigDecimal, range, scale)) //

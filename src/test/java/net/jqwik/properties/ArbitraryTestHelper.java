@@ -1,12 +1,9 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.properties.shrinking.*;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -27,7 +24,7 @@ public class ArbitraryTestHelper {
 		Random random = SourceOfRandomness.current();
 		Map<T, Integer> counts = new HashMap<>();
 		for (int i = 0; i < tries; i++) {
-			NShrinkable<T> value = generator.next(random);
+			Shrinkable<T> value = generator.next(random);
 			T key = value.value();
 			int previous = counts.computeIfAbsent(key, k -> 0);
 			counts.put(key, previous + 1);
@@ -38,7 +35,7 @@ public class ArbitraryTestHelper {
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
 		Random random = SourceOfRandomness.current();
 		for (int i = 0; i < 500; i++) {
-			NShrinkable<T> value = generator.next(random);
+			Shrinkable<T> value = generator.next(random);
 			if (checker.apply(value.value()))
 				return;
 		}
@@ -48,7 +45,7 @@ public class ArbitraryTestHelper {
 	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Predicate<T> checker) {
 		Random random = SourceOfRandomness.current();
 		for (int i = 0; i < 100; i++) {
-			NShrinkable<T> value = generator.next(random);
+			Shrinkable<T> value = generator.next(random);
 			if (!checker.test(value.value()))
 				fail(String.format("Value [%s] failed to fulfill condition.", value.value().toString()));
 		}
@@ -71,7 +68,7 @@ public class ArbitraryTestHelper {
 		Random random = SourceOfRandomness.current();
 
 		for (int i = 0; i < expectedValues.length; i++) {
-			NShrinkable<T> actual = generator.next(random);
+			Shrinkable<T> actual = generator.next(random);
 			T expected = expectedValues[i];
 			if (!actual.value().equals(expected))
 				fail(String.format("Generated value [%s] not equals to expected value [%s].", actual.toString(), expected.toString()));
@@ -84,7 +81,7 @@ public class ArbitraryTestHelper {
 	}
 
 	public static <T> T shrinkToEnd(Arbitrary<T> arbitrary, Random random) {
-		NShrinkable<T> shrinkable = arbitrary.generator(10).next(random);
+		Shrinkable<T> shrinkable = arbitrary.generator(10).next(random);
 		ShrinkingSequence<T> sequence = shrinkable.shrink(value -> false);
 		while(sequence.next(() -> {}, ignore -> {}));
 		return sequence.current().value();

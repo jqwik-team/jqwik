@@ -11,23 +11,23 @@ import static org.mockito.Mockito.*;
 
 @Group
 @Label("FilteredShrinkable")
-class NFilteredShrinkableTests {
+class FilteredShrinkableTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
 
 	@Example
 	void creation() {
-		NShrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
-		NShrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
+		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
+		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3));
 		assertThat(shrinkable.value()).isEqualTo(3);
 	}
 
 	@Example
 	void shrinking() {
-		NShrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
-		NShrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
+		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
+		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
 
@@ -49,8 +49,8 @@ class NFilteredShrinkableTests {
 		@SuppressWarnings("unchecked")
 		Consumer<Integer> reporter = mock(Consumer.class);
 
-		NShrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
-		NShrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
+		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
+		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
 

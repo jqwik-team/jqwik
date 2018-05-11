@@ -5,7 +5,7 @@ import net.jqwik.properties.shrinking.*;
 import java.util.function.*;
 
 public interface ShrinkingSequence<T> {
-	static <T> ShrinkingSequence<T> dontShrink(NShrinkable<T> shrinkable) {
+	static <T> ShrinkingSequence<T> dontShrink(Shrinkable<T> shrinkable) {
 		return new NullShrinkingSequence<>(shrinkable);
 	}
 
@@ -13,7 +13,7 @@ public interface ShrinkingSequence<T> {
 
 	FalsificationResult<T> current();
 
-	default ShrinkingSequence<T> andThen(Function<NShrinkable<T>, ShrinkingSequence<T>> createFollowupSequence) {
+	default ShrinkingSequence<T> andThen(Function<Shrinkable<T>, ShrinkingSequence<T>> createFollowupSequence) {
 		return new NextShrinkingSequence<>(this, createFollowupSequence);
 	}
 

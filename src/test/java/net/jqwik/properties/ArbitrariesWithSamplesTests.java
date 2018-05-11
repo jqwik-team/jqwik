@@ -46,7 +46,7 @@ class ArbitrariesWithSamplesTests {
 			generator.next(random);
 			generator.next(random);
 			generator.next(random);
-			NShrinkable<Integer> shrinkable4 = generator.next(random);
+			Shrinkable<Integer> shrinkable4 = generator.next(random);
 			assertThat(shrinkable4.value()).isEqualTo(4);
 
 			ShrinkingSequence<Integer> sequence = shrinkable4.shrink(anInt -> false);
@@ -67,7 +67,7 @@ class ArbitrariesWithSamplesTests {
 
 			generator.next(random);
 			generator.next(random);
-			NShrinkable<Integer> shrinkable5 = generator.next(random);
+			Shrinkable<Integer> shrinkable5 = generator.next(random);
 			assertThat(shrinkable5.value()).isEqualTo(3);
 
 			ShrinkingSequence<Integer> sequence = shrinkable5.shrink(anInt -> false);

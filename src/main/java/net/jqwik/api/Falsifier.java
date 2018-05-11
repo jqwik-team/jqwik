@@ -16,7 +16,7 @@ public interface Falsifier<T> extends Predicate<T> {
 		};
 	}
 
-	default FalsificationResult<T> falsify(NShrinkable<T> candidate) {
+	default FalsificationResult<T> falsify(Shrinkable<T> candidate) {
 		try {
 			boolean falsified = !test(candidate.value());
 			if (falsified) {

@@ -13,7 +13,7 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 	private int size = 0;
 	private List<T> valuesToChooseFrom;
 
-	public FrequencyGenerator(Tuples.Tuple2<Integer, T>[] frequencies) {
+	FrequencyGenerator(Tuples.Tuple2<Integer, T>[] frequencies) {
 		calculateUpperBorders(frequencies);
 		if (size <= 0) {
 			throw new JqwikException(String.format("%s does not contain any positive frequencies.", JqwikStringSupport.displayString(frequencies)));
@@ -50,7 +50,7 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public NShrinkable<T> next(Random random) {
+	public Shrinkable<T> next(Random random) {
 		int index = random.nextInt(size);
 		return new ChooseValueShrinkable<>(choose(index), valuesToChooseFrom);
 	}

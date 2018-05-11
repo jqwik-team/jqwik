@@ -25,7 +25,7 @@ class DeepSearchShrinkingTests {
 		@Example
 		@Label("without filter report all current values on the way")
 		void withoutFilter() {
-			NShrinkable<Integer> shrinkable = new OneStepShrinkable(4);
+			Shrinkable<Integer> shrinkable = new OneStepShrinkable(4);
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
@@ -45,7 +45,7 @@ class DeepSearchShrinkingTests {
 		@Example
 		@Label("with filter report only simpler values that match filter")
 		void withFilter() {
-			NShrinkable<Integer> shrinkable = new OneStepShrinkable(10);
+			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
@@ -80,7 +80,7 @@ class DeepSearchShrinkingTests {
 
 		@Example
 		void shrinkDownAllTheWay() {
-			NShrinkable<Integer> shrinkable = new OneStepShrinkable(5);
+			Shrinkable<Integer> shrinkable = new OneStepShrinkable(5);
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
@@ -105,7 +105,7 @@ class DeepSearchShrinkingTests {
 
 		@Example
 		void shrinkDownSomeWay() {
-			NShrinkable<Integer> shrinkable = new OneStepShrinkable(5);
+			Shrinkable<Integer> shrinkable = new OneStepShrinkable(5);
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
@@ -125,7 +125,7 @@ class DeepSearchShrinkingTests {
 
 		@Example
 		void shrinkDownWithFilter() {
-			NShrinkable<Integer> shrinkable = new OneStepShrinkable(10);
+			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
@@ -152,7 +152,7 @@ class DeepSearchShrinkingTests {
 	class ShrinkableWithFullShrinking {
 		@Example
 		void shrinkDownAllTheWay() {
-			NShrinkable<Integer> shrinkable = new FullShrinkable(5);
+			Shrinkable<Integer> shrinkable = new FullShrinkable(5);
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
@@ -167,7 +167,7 @@ class DeepSearchShrinkingTests {
 
 		@Example
 		void shrinkDownSomeWay() {
-			NShrinkable<Integer> shrinkable = new FullShrinkable(5);
+			Shrinkable<Integer> shrinkable = new FullShrinkable(5);
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
@@ -183,7 +183,7 @@ class DeepSearchShrinkingTests {
 
 		@Example
 		void shrinkDownWithFilter() {
-			NShrinkable<Integer> shrinkable = new FullShrinkable(10);
+			Shrinkable<Integer> shrinkable = new FullShrinkable(10);
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
@@ -202,7 +202,7 @@ class DeepSearchShrinkingTests {
 	class ShrinkableWithPartialShrinking {
 		@Example
 		void shrinkDownAllTheWay() {
-			NShrinkable<Integer> shrinkable = new PartialShrinkable(5);
+			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
@@ -221,7 +221,7 @@ class DeepSearchShrinkingTests {
 
 		@Example
 		void shrinkDownSomeWay() {
-			NShrinkable<Integer> shrinkable = new PartialShrinkable(5);
+			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
@@ -237,7 +237,7 @@ class DeepSearchShrinkingTests {
 
 		@Example
 		void shrinkDownWithFilter() {
-			NShrinkable<Integer> shrinkable = new PartialShrinkable(10);
+			Shrinkable<Integer> shrinkable = new PartialShrinkable(10);
 
 			Falsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;

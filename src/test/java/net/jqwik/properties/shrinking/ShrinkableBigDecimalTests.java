@@ -22,7 +22,7 @@ class ShrinkableBigDecimalTests {
 
 	@Example
 	void creation() {
-		NShrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("25.23", Range.of(-100.0, 100.0));
+		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("25.23", Range.of(-100.0, 100.0));
 		assertThat(shrinkable.value()).isEqualTo(new BigDecimal("25.23"));
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(25, 23));
 	}
@@ -78,7 +78,7 @@ class ShrinkableBigDecimalTests {
 	@Example
 	@Label("report all falsified")
 	void reportFalsified() {
-		NShrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
+		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
 
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
 
@@ -96,7 +96,7 @@ class ShrinkableBigDecimalTests {
 
 	@Example
 	void shrinkWithFilter() {
-		NShrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("31.55", Range.of(-100.0, 100.0));
+		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("31.55", Range.of(-100.0, 100.0));
 
 		Falsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.doubleValue() < 24.9;
 		Falsifier<BigDecimal> filteredFalsifier = falsifier.withFilter(aBigDecimal -> aBigDecimal.remainder(BigDecimal.valueOf(2)).longValue() == 1);
@@ -114,7 +114,7 @@ class ShrinkableBigDecimalTests {
 
 	@Property
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-1000000000", max = "1000000000") @Scale(15) BigDecimal aValue) {
-		NShrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
+		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(ignore -> false);
 		while(sequence.next(count, reporter)) {
 		}
@@ -123,7 +123,7 @@ class ShrinkableBigDecimalTests {
 		assertThat(shrunkValue).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.ZERO));
 	}
 
-	private NShrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange) {
+	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange) {
 		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
 		BigDecimal value = new BigDecimal(numberString);
 		return new ShrinkableBigDecimal(value, bigDecimalRange, value.scale());

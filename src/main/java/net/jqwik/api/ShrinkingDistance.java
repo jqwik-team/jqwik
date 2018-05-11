@@ -12,19 +12,19 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return new ShrinkingDistance(distances);
 	}
 
-	public static <T> ShrinkingDistance forCollection(Collection<NShrinkable<T>> elements) {
+	public static <T> ShrinkingDistance forCollection(Collection<Shrinkable<T>> elements) {
 		ShrinkingDistance sumDistanceOfElements = elements
 			.stream()
-			.map(NShrinkable::distance)
+			.map(Shrinkable::distance)
 			.reduce(ShrinkingDistance.of(0), ShrinkingDistance::plus);
 
 		return ShrinkingDistance.of(elements.size()).append(sumDistanceOfElements);
 	}
 
-	public static <T> ShrinkingDistance combine(List<NShrinkable<T>> shrinkables) {
+	public static <T> ShrinkingDistance combine(List<Shrinkable<T>> shrinkables) {
 		return shrinkables
 			.stream()
-			.map(NShrinkable::distance)
+			.map(Shrinkable::distance)
 			.reduce(new ShrinkingDistance(new long[0]), ShrinkingDistance::append);
 	}
 

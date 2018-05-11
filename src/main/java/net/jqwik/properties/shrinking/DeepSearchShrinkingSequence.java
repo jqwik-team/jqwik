@@ -7,13 +7,13 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
-	private final Function<NShrinkable<T>, Set<NShrinkable<T>>> candidatesFor;
+	private final Function<Shrinkable<T>, Set<Shrinkable<T>>> candidatesFor;
 	private final Falsifier<T> falsifier;
 	private FalsificationResult<T> currentBest;
 	private FalsificationResult<T> searchBase;
 	private boolean lastStepSuccessful = true;
 
-	public DeepSearchShrinkingSequence(NShrinkable<T> startingShrinkable, Function<NShrinkable<T>, Set<NShrinkable<T>>> candidatesFor, Falsifier<T> falsifier) {
+	public DeepSearchShrinkingSequence(Shrinkable<T> startingShrinkable, Function<Shrinkable<T>, Set<Shrinkable<T>>> candidatesFor, Falsifier<T> falsifier) {
 		this.currentBest = FalsificationResult.falsified(startingShrinkable);
 		this.searchBase = currentBest;
 		this.candidatesFor = candidatesFor;
@@ -27,7 +27,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 
 		lastStepSuccessful = false;
 
-		Set<NShrinkable<T>> candidates = getShrinkableCandidates();
+		Set<Shrinkable<T>> candidates = getShrinkableCandidates();
 
 		List<FalsificationResult<T>> nextBase = candidates
 			.stream()
@@ -62,15 +62,15 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 		return lastStepSuccessful;
 	}
 
-	private Set<NShrinkable<T>> getShrinkableCandidates() {
-		Set<NShrinkable<T>> candidates = new HashSet<>(candidatesFor.apply(searchBase.shrinkable()));
+	private Set<Shrinkable<T>> getShrinkableCandidates() {
+		Set<Shrinkable<T>> candidates = new HashSet<>(candidatesFor.apply(searchBase.shrinkable()));
 		if (searchBase != currentBest) {
 			candidates.addAll(candidatesFor.apply(currentBest.shrinkable()));
 		}
 		return candidates;
 	}
 
-	private FalsificationResult<T> falsify(NShrinkable<T> candidate) {
+	private FalsificationResult<T> falsify(Shrinkable<T> candidate) {
 		return falsifier.falsify(candidate);
 	}
 
