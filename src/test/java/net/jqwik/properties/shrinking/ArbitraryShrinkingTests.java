@@ -1,4 +1,4 @@
-package net.jqwik.properties;
+package net.jqwik.properties.shrinking;
 
 import net.jqwik.api.*;
 

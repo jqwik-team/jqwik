@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.util.*;
 import java.util.function.*;

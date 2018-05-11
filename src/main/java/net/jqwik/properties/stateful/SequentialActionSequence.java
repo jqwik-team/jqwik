@@ -168,7 +168,9 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		private final Arbitrary<Action<M>> actionArbitrary;
 		private int size = 0;
 
-		DefaultActionSequenceArbitrary(Arbitrary<Action<M>> actionArbitrary) {this.actionArbitrary = actionArbitrary;}
+		DefaultActionSequenceArbitrary(Arbitrary<Action<M>> actionArbitrary) {
+			this.actionArbitrary = actionArbitrary;
+		}
 
 		@Override
 		public DefaultActionSequenceArbitrary<M> ofSize(int size) {

@@ -78,36 +78,6 @@ public class ArbitraryTestHelper {
 		}
 	}
 
-	public static NShrinkable<List<Integer>> shrinkableListOfIntegers(int... numbers) {
-		return new ShrinkableList<>(listOfShrinkableIntegers(numbers), 0);
-	}
-
-	public static List<NShrinkable<Integer>> listOfShrinkableIntegers(int... numbers) {
-		return Arrays.stream(numbers) //
-					 .mapToObj(ArbitraryTestHelper::shrinkableInteger) //
-					 .collect(Collectors.toList());
-	}
-
-	public static NShrinkable<Integer> shrinkableInteger(int anInt) {
-		return new ShrinkableTypesForTest.OneStepShrinkable(anInt);
-	}
-
-	public static NShrinkable<String> shrinkableString(String aString) {
-		return shrinkableString(aString.toCharArray());
-	}
-
-	public static NShrinkable<String> shrinkableString(char... chars) {
-		return new ShrinkableString(listOfShrinkableChars(chars), 0);
-	}
-
-	private static List<NShrinkable<Character>> listOfShrinkableChars(char[] chars) {
-		List<NShrinkable<Character>> shrinkableChars = new ArrayList<>();
-		for (char aChar : chars) {
-			shrinkableChars.add(new SimpleCharacterShrinker(aChar));
-		}
-		return shrinkableChars;
-	}
-
 	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<T> arbitrary, Random random) {
 		T value = shrinkToEnd(arbitrary, random);
 		assertThat(value).isEqualTo(expectedShrunkValue);
@@ -120,30 +90,4 @@ public class ArbitraryTestHelper {
 		return sequence.current().value();
 	}
 
-	private static class SimpleCharacterShrinker extends AbstractShrinkable<Character> {
-
-		public SimpleCharacterShrinker(Character value) {
-			super(value);
-		}
-
-		private Set<Character> nextCandidates(Character value) {
-			if (value <= 'a')
-				return Collections.emptySet();
-			return Collections.singleton((char) (value - 1));
-		}
-
-		@Override
-		public ShrinkingDistance distance() {
-			return ShrinkingDistance.of(Math.abs(value() - 'a'));
-		}
-
-		@Override
-		public Set<NShrinkable<Character>> shrinkCandidatesFor(NShrinkable<Character> shrinkable) {
-			return nextCandidates(shrinkable.value()) //
-													  .stream() //
-													  .map(SimpleCharacterShrinker::new) //
-													  .collect(Collectors.toSet());
-		}
-
-	}
 }

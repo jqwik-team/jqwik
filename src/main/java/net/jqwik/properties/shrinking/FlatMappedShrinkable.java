@@ -1,11 +1,9 @@
-package net.jqwik.properties.arbitraries;
+package net.jqwik.properties.shrinking;
 
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 public class FlatMappedShrinkable<T, U> implements NShrinkable<U> {
 
