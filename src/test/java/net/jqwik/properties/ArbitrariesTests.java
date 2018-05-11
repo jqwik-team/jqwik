@@ -33,7 +33,7 @@ class ArbitrariesTests {
 	@Example
 	void fromGenerator() {
 		Arbitrary<String> stringArbitrary = Arbitraries
-				.fromGenerator(random -> Shrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
+				.fromGenerator(random -> NShrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		ArbitraryTestHelper.assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
@@ -454,7 +454,7 @@ class ArbitrariesTests {
 
 			RandomGenerator<int[]> generator = arrayArbitrary.generator(1);
 
-			Shrinkable<int[]> array = generator.next(random);
+			NShrinkable<int[]> array = generator.next(random);
 			assertThat(array.value().length).isBetween(0, 5);
 			List<Integer> actual = IntStream.of(array.value()).boxed().collect(Collectors.toList());
 			assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -469,7 +469,7 @@ class ArbitrariesTests {
 				(String value) -> value.chars().allMatch(i -> allowedChars.contains(Character.valueOf((char) i))));
 	}
 
-	private void assertGeneratedStream(Shrinkable<Stream<Integer>> stream) {
+	private void assertGeneratedStream(NShrinkable<Stream<Integer>> stream) {
 		Set<Integer> set = stream.value().collect(Collectors.toSet());
 		assertThat(set.size()).isBetween(0, 5);
 		assertThat(set).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);

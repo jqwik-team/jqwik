@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -17,7 +18,7 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public Shrinkable<T> next(Random random) {
+	public NShrinkable<T> next(Random random) {
 		return nextUntilAccepted(random, toFilter::next);
 	}
 
@@ -26,12 +27,12 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 		return String.format("Filtering [%s]", toFilter);
 	}
 
-	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
+	private NShrinkable<T> nextUntilAccepted(Random random, Function<Random, NShrinkable<T>> fetchShrinkable) {
 		long count = 0;
 		while (true) {
-			Shrinkable<T> next = fetchShrinkable.apply(random);
+			NShrinkable<T> next = fetchShrinkable.apply(random);
 			if (filterPredicate.test(next.value())) {
-				return new FilteredShrinkable<>(next, filterPredicate);
+				return new NFilteredShrinkable<>(next, filterPredicate);
 			} else {
 				if (++count > MAX_MISSES) {
 					throw new JqwikException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));

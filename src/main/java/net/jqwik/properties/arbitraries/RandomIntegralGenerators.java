@@ -1,6 +1,7 @@
 package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.math.*;
 import java.util.*;
@@ -10,9 +11,8 @@ class RandomIntegralGenerators {
 
 	static RandomGenerator<BigInteger> bigIntegers(Range<BigInteger> range, BigInteger[] partitionPoints) {
 		if (range.isSingular()) {
-			return ignored -> Shrinkable.unshrinkable(range.min);
+			return ignored -> NShrinkable.unshrinkable(range.min);
 		}
-
 		return partitionedGenerator(range, partitionPoints);
 	}
 
@@ -58,13 +58,12 @@ class RandomIntegralGenerators {
 	private static RandomGenerator<BigInteger> createBigIntegerGenerator(BigInteger minGenerate, BigInteger maxGenerate, Range<BigInteger> shrinkingRange) {
 		BigInteger range = maxGenerate.subtract(minGenerate);
 		int bits = range.bitLength();
-		ShrinkCandidates<BigInteger> shrinkCandidates = new BigIntegerShrinkCandidates(shrinkingRange);
 		return random -> {
 			while (true) {
 				BigInteger rawValue = new BigInteger(bits, random);
 				BigInteger value = rawValue.add(minGenerate);
 				if (value.compareTo(minGenerate) >= 0 && value.compareTo(maxGenerate) <= 0) {
-					return new ShrinkableValue<>(value, shrinkCandidates);
+					return new ShrinkableBigInteger(value, shrinkingRange);
 				}
 			}
 		};
@@ -73,11 +72,10 @@ class RandomIntegralGenerators {
 	private static RandomGenerator<BigInteger> createIntegerGenerator(BigInteger min, BigInteger max, Range<BigInteger> shrinkingRange) {
 		final int _min = Math.min(min.intValue(), max.intValue());
 		final int _max = Math.max(min.intValue(), max.intValue());
-		ShrinkCandidates<BigInteger> shrinkCandidates = new BigIntegerShrinkCandidates(shrinkingRange);
 		return random -> {
 			int bound = Math.abs(_max - _min) + 1;
 			int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min;
-			return new ShrinkableValue<>(BigInteger.valueOf(value), shrinkCandidates);
+			return new ShrinkableBigInteger(BigInteger.valueOf(value), shrinkingRange);
 		};
 	}
 

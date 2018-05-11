@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 import net.jqwik.support.*;
 
 import java.util.*;
@@ -10,7 +11,7 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 
 	private final Map<T, Integer> upperBorders = new HashMap<>();
 	private int size = 0;
-	private ShrinkCandidates<T> shrinkCandidates;
+	private List<T> valuesToChooseFrom;
 
 	public FrequencyGenerator(Tuples.Tuple2<Integer, T>[] frequencies) {
 		calculateUpperBorders(frequencies);
@@ -30,7 +31,7 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 			values.add(value);
 			upperBorders.put(value, size);
 		}
-		shrinkCandidates = new ValuesShrinkCandidates<>(values);
+		valuesToChooseFrom = values;
 	}
 
 	private T choose(int index) {
@@ -49,8 +50,8 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
-	public Shrinkable<T> next(Random random) {
+	public NShrinkable<T> next(Random random) {
 		int index = random.nextInt(size);
-		return new ShrinkableValue<>(choose(index), shrinkCandidates);
+		return new ChooseValueShrinkable<>(choose(index), valuesToChooseFrom);
 	}
 }

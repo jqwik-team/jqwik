@@ -15,13 +15,13 @@ class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
 	}
 
 	@Override
-	public Shrinkable<ActionSequence<M>> next(Random random) {
-		List<Shrinkable<Action<M>>> candidateActions = generateCandidates(numberOfActions, random);
-		return new ShrinkableActionSequence<>(candidateActions);
+	public NShrinkable<ActionSequence<M>> next(Random random) {
+		List<NShrinkable<Action<M>>> candidateActions = generateCandidates(numberOfActions, random);
+		return new NShrinkableActionSequence<>(candidateActions);
 	}
 
-	private List<Shrinkable<Action<M>>> generateCandidates(int numberOfActions, Random random) {
-		List<Shrinkable<Action<M>>> candidates = new ArrayList<>();
+	private List<NShrinkable<Action<M>>> generateCandidates(int numberOfActions, Random random) {
+		List<NShrinkable<Action<M>>> candidates = new ArrayList<>();
 		for (int i = 0; i < numberOfActions; i++) {
 			candidates.add(actionGenerator.next(random));
 		}

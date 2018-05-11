@@ -41,7 +41,7 @@ class PropertyMethodArbitraryResolverTests {
 		void useNextDefaultProviderIfFirstDoesNotProvideAnArbitrary() {
 			PropertyMethodDescriptor descriptor = getDescriptor(DefaultParams.class, "aString", String.class);
 			List<ArbitraryProvider> defaultProviders = Arrays.asList(createProvider(String.class, null),
-					createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string")));
+					createProvider(String.class, (Arbitrary<String>) tries -> random -> NShrinkable.unshrinkable("an arbitrary string")));
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(),
 					new RegisteredArbitraryResolver(defaultProviders), Collections.emptyList());
 			MethodParameter parameter = getParameter(DefaultParams.class, "aString");

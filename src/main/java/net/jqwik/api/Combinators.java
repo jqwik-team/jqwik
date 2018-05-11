@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -64,12 +65,12 @@ public class Combinators {
 				RandomGenerator<T1> g1 = a1.generator(genSize);
 				RandomGenerator<T2> g2 = a2.generator(genSize);
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
+					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((NShrinkable<Object>) g1.next(random));
+					shrinkables.add((NShrinkable<Object>) g2.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -93,14 +94,14 @@ public class Combinators {
 				RandomGenerator<T2> g2 = a2.generator(genSize);
 				RandomGenerator<T3> g3 = a3.generator(genSize);
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
+					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((NShrinkable<Object>) g1.next(random));
+					shrinkables.add((NShrinkable<Object>) g2.next(random));
+					shrinkables.add((NShrinkable<Object>) g3.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -127,15 +128,15 @@ public class Combinators {
 				RandomGenerator<T3> g3 = a3.generator(genSize);
 				RandomGenerator<T4> g4 = a4.generator(genSize);
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
+					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((NShrinkable<Object>) g1.next(random));
+					shrinkables.add((NShrinkable<Object>) g2.next(random));
+					shrinkables.add((NShrinkable<Object>) g3.next(random));
+					shrinkables.add((NShrinkable<Object>) g4.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -165,16 +166,16 @@ public class Combinators {
 				RandomGenerator<T4> g4 = a4.generator(genSize);
 				RandomGenerator<T5> g5 = a5.generator(genSize);
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
+					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((NShrinkable<Object>) g1.next(random));
+					shrinkables.add((NShrinkable<Object>) g2.next(random));
+					shrinkables.add((NShrinkable<Object>) g3.next(random));
+					shrinkables.add((NShrinkable<Object>) g4.next(random));
+					shrinkables.add((NShrinkable<Object>) g5.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -207,17 +208,17 @@ public class Combinators {
 				RandomGenerator<T5> g5 = a5.generator(genSize);
 				RandomGenerator<T6> g6 = a6.generator(genSize);
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
-					shrinkables.add((Shrinkable<Object>) g6.next(random));
+					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((NShrinkable<Object>) g1.next(random));
+					shrinkables.add((NShrinkable<Object>) g2.next(random));
+					shrinkables.add((NShrinkable<Object>) g3.next(random));
+					shrinkables.add((NShrinkable<Object>) g4.next(random));
+					shrinkables.add((NShrinkable<Object>) g5.next(random));
+					shrinkables.add((NShrinkable<Object>) g6.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -254,18 +255,18 @@ public class Combinators {
 				RandomGenerator<T6> g6 = a6.generator(genSize);
 				RandomGenerator<T7> g7 = a7.generator(genSize);
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
-					shrinkables.add((Shrinkable<Object>) g6.next(random));
-					shrinkables.add((Shrinkable<Object>) g7.next(random));
+					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((NShrinkable<Object>) g1.next(random));
+					shrinkables.add((NShrinkable<Object>) g2.next(random));
+					shrinkables.add((NShrinkable<Object>) g3.next(random));
+					shrinkables.add((NShrinkable<Object>) g4.next(random));
+					shrinkables.add((NShrinkable<Object>) g5.next(random));
+					shrinkables.add((NShrinkable<Object>) g6.next(random));
+					shrinkables.add((NShrinkable<Object>) g7.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -305,19 +306,19 @@ public class Combinators {
 				RandomGenerator<T7> g7 = a7.generator(genSize);
 				RandomGenerator<T8> g8 = a8.generator(genSize);
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
-					shrinkables.add((Shrinkable<Object>) g6.next(random));
-					shrinkables.add((Shrinkable<Object>) g7.next(random));
-					shrinkables.add((Shrinkable<Object>) g8.next(random));
+					List<NShrinkable<Object>> shrinkables = new ArrayList<>();
+					shrinkables.add((NShrinkable<Object>) g1.next(random));
+					shrinkables.add((NShrinkable<Object>) g2.next(random));
+					shrinkables.add((NShrinkable<Object>) g3.next(random));
+					shrinkables.add((NShrinkable<Object>) g4.next(random));
+					shrinkables.add((NShrinkable<Object>) g5.next(random));
+					shrinkables.add((NShrinkable<Object>) g6.next(random));
+					shrinkables.add((NShrinkable<Object>) g7.next(random));
+					shrinkables.add((NShrinkable<Object>) g8.next(random));
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6), (T8) params.get(7));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -339,15 +340,15 @@ public class Combinators {
 					.collect(Collectors.toList());
 
 				return random -> {
-					List<Shrinkable<Object>> shrinkables = listOfGenerators
+					List<NShrinkable<Object>> shrinkables = listOfGenerators
 						.stream()
 						.map(g -> g.next(random))
-						.map(s -> (Shrinkable<Object>) s)
+						.map(s -> (NShrinkable<Object>) s)
 						.collect(Collectors.toList());
 
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new NCombinedShrinkable<R>(shrinkables, combineFunction);
 				};
 			};
 		}

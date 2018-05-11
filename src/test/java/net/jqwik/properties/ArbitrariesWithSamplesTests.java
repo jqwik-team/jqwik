@@ -1,11 +1,10 @@
 package net.jqwik.properties;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.assertj.core.api.Assertions;
-
 import net.jqwik.api.*;
+
+import java.util.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class ArbitrariesWithSamplesTests {
@@ -32,7 +31,7 @@ class ArbitrariesWithSamplesTests {
 		@SafeVarargs
 		private final <T> void assertGeneratedSequence(RandomGenerator<T> generator, T... sequence) {
 			for (T expected : sequence) {
-				Assertions.assertThat(generator.next(random).value()).isEqualTo(expected);
+				assertThat(generator.next(random).value()).isEqualTo(expected);
 			}
 		}
 	}
@@ -44,17 +43,21 @@ class ArbitrariesWithSamplesTests {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4);
 			RandomGenerator<Integer> generator = arbitrary.generator(1);
 
-			Shrinkable<Integer> shrinkable1 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable1)).hasSize(0);
+			generator.next(random);
+			generator.next(random);
+			generator.next(random);
+			NShrinkable<Integer> shrinkable4 = generator.next(random);
+			assertThat(shrinkable4.value()).isEqualTo(4);
 
-			Shrinkable<Integer> shrinkable2 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable2)).containsExactly(1);
+			ShrinkingSequence<Integer> sequence = shrinkable4.shrink(anInt -> false);
 
-			Shrinkable<Integer> shrinkable3 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable3)).containsExactly(2);
-
-			Shrinkable<Integer> shrinkable4 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable4)).containsExactly(3);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(3);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(2);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(1);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isFalse();
 		}
 
 		@Example
@@ -62,26 +65,21 @@ class ArbitrariesWithSamplesTests {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(5).withSamples(1, 2, 3);
 			RandomGenerator<Integer> generator = arbitrary.generator(1);
 
-			Shrinkable<Integer> shrinkable1 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable1)).hasSize(0);
+			generator.next(random);
+			generator.next(random);
+			generator.next(random);
+			NShrinkable<Integer> shrinkable5 = generator.next(random);
+			assertThat(shrinkable5.value()).isEqualTo(5);
 
-			Shrinkable<Integer> shrinkable2 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable2)).containsExactly(1);
+			ShrinkingSequence<Integer> sequence = shrinkable5.shrink(anInt -> false);
 
-			Shrinkable<Integer> shrinkable3 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable3)).containsExactly(2);
-
-			Shrinkable<Integer> shrinkable5 = generator.next(random);
-			Assertions.assertThat(shrunkValues(shrinkable5)).hasSize(0);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(3);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(2);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
+			assertThat(sequence.current().value()).isEqualTo(1);
+			assertThat(sequence.next(() -> {}, ignore -> {})).isFalse();
 		}
-
-		private Set<Integer> shrunkValues(Shrinkable<Integer> shrinkable) {
-			return asValuesSet(shrinkable.shrinkNext(MockFalsifier.falsifyAll()));
-		}
-
-		private Set<Integer> asValuesSet(Set<ShrinkResult<Shrinkable<Integer>>> shrinkResults) {
-			return shrinkResults.stream().map(result -> result.shrunkValue().value()).collect(Collectors.toSet());
-		}
-
 	}
 }

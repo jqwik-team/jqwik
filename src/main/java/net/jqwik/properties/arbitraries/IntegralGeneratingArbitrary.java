@@ -1,6 +1,7 @@
 package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.math.*;
 import java.util.*;
@@ -23,12 +24,11 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
-		BigIntegerShrinkCandidates shrinkCandidates = new BigIntegerShrinkCandidates(Range.of(min, max));
-		List<Shrinkable<BigInteger>> samples =
+		List<NShrinkable<BigInteger>> samples =
 			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), min, max}) //
 				  .distinct() //
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
-				  .map(anInt -> new ShrinkableValue<>(anInt, shrinkCandidates)) //
+				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max))) //
 				  .collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(genSize, samples);
 	}

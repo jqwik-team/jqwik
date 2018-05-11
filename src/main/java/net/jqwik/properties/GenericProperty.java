@@ -2,6 +2,7 @@ package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.properties.shrinking.*;
 import net.jqwik.support.*;
 import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.reporting.*;
@@ -49,7 +50,7 @@ public class GenericProperty {
 		int countChecks = 0;
 		Random random = SourceOfRandomness.create(configuration.getSeed());
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
+			List<NShrinkable> shrinkableParams = generateParameters(generators, random);
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, configuration.getReporting(), reporter)) {
@@ -72,7 +73,7 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
 	}
 
-	private boolean testPredicate(List<Shrinkable> shrinkableParams, Reporting[] reporting, Consumer<ReportEntry> reporter) {
+	private boolean testPredicate(List<NShrinkable> shrinkableParams, Reporting[] reporting, Consumer<ReportEntry> reporter) {
 		List<Object> plainParams = extractParams(shrinkableParams);
 		if (Reporting.GENERATED.containedIn(reporting)) {
 			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
@@ -85,25 +86,26 @@ public class GenericProperty {
 		return actualDiscardRatio > maxDiscardRatio;
 	}
 
-	private List<Object> extractParams(List<Shrinkable> shrinkableParams) {
-		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
+	private List<Object> extractParams(List<NShrinkable> shrinkableParams) {
+		return shrinkableParams.stream().map(NShrinkable::value).collect(Collectors.toList());
 	}
 
-	@SuppressWarnings("unchecked")
 	private PropertyCheckResult shrinkAndCreateCheckResult(PropertyConfiguration configuration, Consumer<ReportEntry> reporter, int countChecks,
-			int countTries, List<Shrinkable> shrinkables, AssertionError error) {
+			int countTries, List<NShrinkable> shrinkables, AssertionError error) {
 		List<Object> originalParams = extractParams(shrinkables);
-		if (configuration.getShrinkingMode() == ShrinkingMode.OFF) {
-			return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), originalParams, originalParams, error);
-		}
-		ParameterListShrinker shrinker = new ParameterListShrinker(shrinkables, reporter, configuration.getReporting(), configuration.getShrinkingMode());
-		ShrinkResult<List<Shrinkable>> shrinkResult = shrinker.shrink(forAllPredicate, error);
-		List<Object> shrunkParams = extractParams(shrinkResult.shrunkValue());
-		Throwable throwable = shrinkResult.throwable().orElse(null);
+
+		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, configuration.getReporting());
+
+		Falsifier<List> forAllFalsifier = forAllPredicate::test;
+		PropertyShrinkingResult shrinkingResult = shrinker.shrink(forAllFalsifier, error);
+
+		@SuppressWarnings("unchecked")
+		List<Object> shrunkParams = shrinkingResult.values();
+		Throwable throwable = shrinkingResult.throwable().orElse(null);
 		return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), shrunkParams, originalParams, throwable);
 	}
 
-	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
+	private List<NShrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
 		return generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
 	}
 }

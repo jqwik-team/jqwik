@@ -11,7 +11,7 @@ class ActionSequenceInvariantProperties {
 	@Example
 	boolean succeedingInvariant(@ForAll Random random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(changeValue());
-		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
+		NShrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
 		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> {
 			Assertions.assertThat(true).isTrue();
@@ -27,7 +27,7 @@ class ActionSequenceInvariantProperties {
 	@Example
 	void failingInvariantFailSequenceRun(@ForAll Random random) {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify()));
-		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
+		NShrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
 		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> {
 			Assertions.assertThat(model.value).isNotNull();

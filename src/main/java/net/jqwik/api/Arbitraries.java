@@ -24,7 +24,7 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
-		return fromGenerator(random -> Shrinkable.unshrinkable(generator.apply(random)));
+		return fromGenerator(random -> NShrinkable.unshrinkable(generator.apply(random)));
 	}
 
 	public static Arbitrary<Random> randoms() {
@@ -290,7 +290,7 @@ public class Arbitraries {
 	}
 
 	public static <T> Arbitrary<T> constant(T value) {
-		return fromGenerator(random -> Shrinkable.unshrinkable(value));
+		return fromGenerator(random -> NShrinkable.unshrinkable(value));
 	}
 
 	public static <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>... typeParameters) {

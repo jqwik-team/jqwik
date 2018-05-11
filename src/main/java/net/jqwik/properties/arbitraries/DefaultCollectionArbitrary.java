@@ -20,7 +20,7 @@ abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase im
 
 	protected RandomGenerator<List<T>> listGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
-		List<Shrinkable<List<T>>> samples = samplesList(new ArrayList<>());
+		List<NShrinkable<List<T>>> samples = edgeCases(new ArrayList<>());
 		return RandomGenerators //
 			.list(elementGenerator, minSize, maxSize, cutoffSize(genSize)) //
 			.withEdgeCases(genSize, samples);
@@ -30,9 +30,9 @@ abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase im
 		return RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
 	}
 
-	protected <C extends Collection> List<Shrinkable<C>> samplesList(C sample) {
+	protected <C extends Collection> List<NShrinkable<C>> edgeCases(C sample) {
 		return Stream.of(sample).filter(l -> l.size() >= minSize).filter(l -> maxSize == 0 || l.size() <= maxSize)
-				.map(Shrinkable::unshrinkable).collect(Collectors.toList());
+				.map(NShrinkable::unshrinkable).collect(Collectors.toList());
 	}
 
 	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int genSize) {
