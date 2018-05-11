@@ -6,12 +6,12 @@ import java.util.*;
 import java.util.stream.*;
 
 @Group
-class ShrinkableTypesForTest {
+public class ShrinkableTypesForTest {
 
-	static class OneStepShrinkable extends AbstractShrinkable<Integer> {
+	public static class OneStepShrinkable extends AbstractShrinkable<Integer> {
 		private final int minimum;
 
-		OneStepShrinkable(int integer) {
+		public OneStepShrinkable(int integer) {
 			this(integer, 0);
 		}
 		OneStepShrinkable(int integer, int minimum) {
@@ -32,7 +32,7 @@ class ShrinkableTypesForTest {
 		}
 	}
 
-	static class FullShrinkable extends AbstractShrinkable<Integer> {
+	public static class FullShrinkable extends AbstractShrinkable<Integer> {
 		FullShrinkable(int integer) {
 			super(integer);
 		}
@@ -48,7 +48,7 @@ class ShrinkableTypesForTest {
 		}
 	}
 
-	static class PartialShrinkable extends AbstractShrinkable<Integer> {
+	public static class PartialShrinkable extends AbstractShrinkable<Integer> {
 		PartialShrinkable(int integer) {
 			super(integer);
 		}

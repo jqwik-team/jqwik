@@ -14,6 +14,6 @@ public class ObjectArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
-		return (Arbitrary<Object>) genSize -> random -> Shrinkable.unshrinkable(new Object());
+		return (Arbitrary<Object>) genSize -> random -> NShrinkable.unshrinkable(new Object());
 	}
 }

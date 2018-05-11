@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.math.*;
 import java.util.*;
@@ -14,10 +15,9 @@ public class RandomGenerators {
 		if (values.size() == 0) {
 			return fail("empty set of values");
 		}
-		ValuesShrinkCandidates<U> shrinkingCandidates = new ValuesShrinkCandidates<>(values);
 		return random -> {
 			U value = chooseValue(values, random);
-			return new ShrinkableValue<>(value, shrinkingCandidates);
+			return new ChooseValueShrinkable<>(value, values);
 		};
 	}
 
@@ -88,14 +88,14 @@ public class RandomGenerators {
 	public static <T> RandomGenerator<List<T>> list(
 		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
 	) {
-		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable = elements -> new ContainerShrinkable<>(elements, ArrayList::new, minSize);
+		Function<List<NShrinkable<T>>, NShrinkable<List<T>>> createShrinkable = elements -> new ShrinkableList<>(elements, minSize);
 		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
 	}
 
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
 	) {
-		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ContainerShrinkable<>(elements, ContainerShrinkable.CREATE_STRING, minLength);
+		Function<List<NShrinkable<Character>>, NShrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength);
 		return container(elementGenerator, createShrinkable, minLength, maxLength, cutoffLength);
 	}
 
@@ -116,13 +116,13 @@ public class RandomGenerators {
 
 	private static <T, C> RandomGenerator<C> container( //
 														RandomGenerator<T> elementGenerator, //
-														Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable, //
+														Function<List<NShrinkable<T>>, NShrinkable<C>> createShrinkable, //
 														int minSize, int maxSize, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
 		return random -> {
 			int listSize = sizeGenerator.apply(random);
-			List<Shrinkable<T>> list = new ArrayList<>();
+			List<NShrinkable<T>> list = new ArrayList<>();
 			while (list.size() < listSize) {
 				list.add(elementGenerator.next(random));
 			}
@@ -158,20 +158,20 @@ public class RandomGenerators {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
 		return random -> {
 			int listSize = sizeGenerator.apply(random);
-			List<Shrinkable<T>> list = new ArrayList<>();
-			Set<T> elements = new HashSet<>();
-			while (list.size() < listSize) {
-				Shrinkable<T> next = elementGenerator.next(random);
-				if (elements.contains(next.value()))
+			Set<NShrinkable<T>> elements = new HashSet<>();
+			Set<T> values = new HashSet<>();
+			while (elements.size() < listSize) {
+				NShrinkable<T> next = elementGenerator.next(random);
+				if (values.contains(next.value()))
 					continue;
-				list.add(next);
-				elements.add(next.value());
+				elements.add(next);
+				values.add(next.value());
 			}
-			return new ContainerShrinkable<>(list, HashSet::new, minSize);
+			return new ShrinkableSet<>(elements, minSize);
 		};
 	}
 
-	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {
+	public static <T> RandomGenerator<T> samplesFromShrinkables(List<NShrinkable<T>> samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {
 			if (tryCount.get() >= samples.size())
@@ -181,7 +181,7 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<T> samples(T[] samples) {
-		List<Shrinkable<T>> shrinkables = ShrinkableSample.of(samples);
+		List<NShrinkable<T>> shrinkables = ShrinkableSample.of(samples);
 		return samplesFromShrinkables(shrinkables);
 	}
 

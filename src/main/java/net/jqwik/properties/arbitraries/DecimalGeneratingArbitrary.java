@@ -1,6 +1,7 @@
 package net.jqwik.properties.arbitraries;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.math.*;
 import java.util.*;
@@ -26,14 +27,13 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
-		BigDecimalShrinkCandidates shrinkCandidates = new BigDecimalShrinkCandidates(Range.of(min, max), scale);
 		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
 		BigDecimal[] sampleValues = {BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ONE.negate(), smallest, smallest.negate(), min, max};
-		List<Shrinkable<BigDecimal>> samples =
+		List<NShrinkable<BigDecimal>> samples =
 			Arrays.stream(sampleValues) //
 				  .distinct() //
 				  .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
-				  .map(value -> new ShrinkableValue<>(value, shrinkCandidates)) //
+				  .map(value -> new ShrinkableBigDecimal(value, Range.of(min, max), scale)) //
 				  .collect(Collectors.toList());
 		return RandomGenerators.bigDecimals(min, max, scale, partitionPoints).withEdgeCases(genSize, samples);
 	}

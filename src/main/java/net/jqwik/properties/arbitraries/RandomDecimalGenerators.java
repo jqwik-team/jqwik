@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 import java.math.*;
 import java.util.*;
@@ -15,7 +16,7 @@ class RandomDecimalGenerators {
 		}
 
 		if (range.isSingular()) {
-			return ignored -> Shrinkable.unshrinkable(range.min);
+			return ignored -> NShrinkable.unshrinkable(range.min);
 		}
 
 		return partitionedGenerator(range, scale, partitionPoints);
@@ -51,11 +52,10 @@ class RandomDecimalGenerators {
 	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal minGenerate, BigDecimal maxGenerate, int scale, Range<BigDecimal> range) {
 		BigInteger scaledMin = minGenerate.scaleByPowerOfTen(scale).toBigInteger();
 		BigInteger scaledMax = maxGenerate.scaleByPowerOfTen(scale).toBigInteger();
-		ShrinkCandidates<BigDecimal> candidates = new BigDecimalShrinkCandidates(range, scale);
 		return random -> {
 			BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
 			BigDecimal randomDecimal = new BigDecimal(randomIntegral, scale);
-			return new ShrinkableValue<>(randomDecimal, candidates);
+			return new ShrinkableBigDecimal(randomDecimal, range, scale);
 		};
 	}
 

@@ -5,11 +5,11 @@ import net.jqwik.api.*;
 import java.util.*;
 import java.util.stream.*;
 
-class ChooseValueShrinkable<T> extends AbstractShrinkable<T> {
+public class ChooseValueShrinkable<T> extends AbstractShrinkable<T> {
 
 	private final List<T> values;
 
-	ChooseValueShrinkable(T value, List<T> values) {
+	public ChooseValueShrinkable(T value, List<T> values) {
 		super(value);
 		this.values = values;
 	}
