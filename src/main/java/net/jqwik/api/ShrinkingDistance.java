@@ -3,6 +3,7 @@ package net.jqwik.api;
 import net.jqwik.support.*;
 
 import java.util.*;
+import java.util.stream.*;
 
 public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
@@ -53,7 +54,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@Override
 	public int compareTo(ShrinkingDistance other) {
-		int dimensionsToCompare = Math.max(dimensions(), other.dimensions());
+		int dimensionsToCompare = Math.max(size(), other.size());
 		for (int i = 0; i < dimensionsToCompare; i++) {
 			int compareDimensionResult = compareDimension(other, i);
 			if (compareDimensionResult != 0)
@@ -62,7 +63,11 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return 0;
 	}
 
-	public int dimensions() {
+	public List<ShrinkingDistance> dimensions() {
+		return Arrays.stream(distances).mapToObj(ShrinkingDistance::of).collect(Collectors.toList());
+	}
+
+	public int size() {
 		return distances.length;
 	}
 

@@ -33,4 +33,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return this.distance().compareTo(other.distance()) < 0;
 	}
 
+	default <U> Shrinkable<U> flatMap(Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
+		return new FlatMappedShrinkable<>(this, flatMapper, tries, randomSeed);
+	}
 }
