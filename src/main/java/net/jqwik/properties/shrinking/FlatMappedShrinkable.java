@@ -28,30 +28,11 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
-		return new FlatMappedShrinkingSequence(falsifier);
-//		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
-//		ShrinkingSequence<U> shrinkToMapSequence = toMap.shrink(toMapFalsifier).map(aT -> generateShrinkable(aT).value());
-//		return shrinkToMapSequence.andThen(uShrinkable -> {
-//			return uShrinkable.shrink(falsifier);
-//		});
+		return new FlatMappedShrinkingSequence(falsifier).andThen(aShrinkable -> {
+			FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
+			return flatMappedShrinkable.shrinkable.shrink(falsifier);
+		});
 	}
-
-
-//	@Override
-//	public Set<ShrinkResult<NShrinkable<U>>> shrinkNext(Predicate<U> falsifier) {
-//		Predicate<T> toMapPredicate = aT -> falsifier.test(generateShrinkable(aT).value());
-//		Set<ShrinkResult<NShrinkable<U>>> shrinkToMapResults = shrinkToMap(toMapPredicate);
-//		if (shrinkToMapResults.isEmpty())
-//			return shrinkable.shrinkNext(falsifier);
-//		return shrinkToMapResults;
-//	}
-//
-//	private Set<ShrinkResult<NShrinkable<U>>> shrinkToMap(Predicate<T> toMapPredicate) {
-//		return toMap.shrinkNext(toMapPredicate).stream() //
-//			.map(shrinkResult -> shrinkResult //
-//				.map(shrunkValue -> (NShrinkable<U>) new FlatMappedShrinkable(shrunkValue, mapper, tries, randomSeed))) //
-//			.collect(Collectors.toSet());
-//	}
 
 	@Override
 	public U value() {
@@ -81,6 +62,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		return String.format("FlatMapped<%s>(%s)|%s", value().getClass().getSimpleName(), value(), toMap);
 	}
 
+	//TODO: Use ShrinkingSequence.map instead. map() requires different function then.
 	class FlatMappedShrinkingSequence implements ShrinkingSequence<U> {
 
 		private final Falsifier<T> toMapFalsifier;
