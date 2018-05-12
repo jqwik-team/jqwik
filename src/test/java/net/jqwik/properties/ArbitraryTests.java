@@ -145,42 +145,20 @@ class ArbitraryTests {
 			assertThat(generator.next(random).value()).isEqualTo("1:4");
 		}
 
-//		@Example
-//		void shrinkCombination() {
-//			Arbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
-//			Arbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
-//			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
-//			RandomGenerator<String> generator = combined.generator(10);
-//
-//			NShrinkable<String> value3to6 = generateNth(generator, 3);
-//			assertThat(value3to6.value()).isEqualTo("3:6");
-//
-//			Set<ShrinkResult<NShrinkable<String>>> shrunkValues = value3to6.shrinkNext(MockFalsifier.falsifyAll());
-//			assertThat(shrunkValues).hasSize(2); // 2:6 3:5
-//			shrunkValues.forEach(shrunkValue -> {
-//				assertThat(shrunkValue.shrunkValue().value()).isIn("2:6", "3:5");
-//				assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3); // sum of single distances
-//			});
-//		}
+		@Example
+		void shrinkCombination() {
+			Arbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
+			Arbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
+			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
+			RandomGenerator<String> generator = combined.generator(10);
 
-//		@Example
-//		void shrinkListCombinedWithInteger() {
-//			Arbitrary<List<Integer>> lists = new ListArbitraryForTests(2);
-//			Arbitrary<Integer> integers = new ArbitraryWheelForTests<>(0, 1, 2);
-//			Arbitrary<String> combined = Combinators.combine(lists, integers).as((l, i) -> l.toString() + ":" + i);
-//
-//			RandomGenerator<String> generator = combined.generator(10);
-//
-//			NShrinkable<String> combinedString = generateNth(generator, 3);
-//			assertThat(combinedString.value()).isEqualTo("[1, 2]:2");
-//
-//			Set<ShrinkResult<NShrinkable<String>>> shrunkValues = combinedString.shrinkNext(MockFalsifier.falsifyAll());
-//			assertThat(shrunkValues).hasSize(3);
-//			shrunkValues.forEach(shrunkValue -> {
-//				assertThat(shrunkValue.shrunkValue().value()).isIn("[1]:2", "[2]:2", "[1, 2]:1");
-//				assertThat(shrunkValue.shrunkValue().distance()).isEqualTo(3); // sum of single distances
-//			});
-//		}
+			Shrinkable<String> value3to6 = generateNth(generator, 3);
+			assertThat(value3to6.value()).isEqualTo("3:6");
+
+			ShrinkingSequence<String> sequence = value3to6.shrink(ignore -> false);
+			while(sequence.next(() -> {}, ignore -> {}));
+			assertThat(sequence.current().value()).isEqualTo("1:4");
+		}
 
 	}
 
