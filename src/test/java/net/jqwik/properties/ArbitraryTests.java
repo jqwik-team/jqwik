@@ -127,46 +127,6 @@ class ArbitraryTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("e"));
 		}
 
-//		@Property(tries = 50)
-//		void shrinkIntegerFlatMappedToString() {
-//			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-//			Arbitrary<String> mapped = arbitrary
-//					.flatMap(anInt -> Arbitraries.strings().withCharRange('a', 'b').ofLength(anInt * 2));
-//			RandomGenerator<String> generator = mapped.generator(10);
-//
-//			NShrinkable<String> value5 = generateNth(generator, 5);
-//			assertThat(value5.value()).hasSize(10);
-//			assertThat(value5.value()).matches("[ab]+");
-//
-//			Set<ShrinkResult<NShrinkable<String>>> shrunkValues = value5.shrinkNext(MockFalsifier.falsifyAll());
-//			assertThat(shrunkValues).hasSize(1);
-//
-//			ShrinkResult<NShrinkable<String>> shrunkValue = shrunkValues.iterator().next();
-//			assertThat(shrunkValue.shrunkValue().value()).hasSize(8);
-//			assertThat(shrunkValue.shrunkValue().value()).matches("[ab]+");
-//
-//			// distance of underlying * 100 + distance of embedded
-//			assertThat(shrunkValue.shrunkValue().distance()).isGreaterThanOrEqualTo(3 * 100 + 8);
-//			assertThat(shrunkValue.shrunkValue().distance()).isLessThanOrEqualTo(3 * 100 + 16);
-//		}
-//
-//		@Example
-//		void shrinkAlsoEmbeddedValueWhenFlatMapped() {
-//			Arbitrary<Integer> inner = random -> RandomGenerators.integers(1, 10);
-//			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-//			Arbitrary<Integer> mapped = arbitrary.flatMap(anInt -> inner.map(i -> i * anInt));
-//			RandomGenerator<Integer> generator = mapped.generator(1);
-//
-//			NShrinkable<Integer> value5 = generateNth(generator, 5);
-//			assertThat(value5.value()).isGreaterThanOrEqualTo(5);
-//			assertThat(value5.value()).isLessThanOrEqualTo(100);
-//
-//			ShrinkResult<NShrinkable<Integer>> result = new ValueShrinker<>(value5, ignore -> {}, ShrinkingMode.FULL, ignore -> {})
-//				.shrink(MockFalsifier.falsifyAll(), null);
-//			assertThat(result.shrunkValue().value()).isEqualTo(1);
-//
-//		}
-
 	}
 
 	@Group

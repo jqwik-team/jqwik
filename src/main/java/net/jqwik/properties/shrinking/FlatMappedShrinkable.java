@@ -28,7 +28,8 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
-		return null;
+		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
+		return toMap.shrink(toMapFalsifier).map(aT -> generateShrinkable(aT).value());
 	}
 
 
@@ -73,6 +74,6 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public String toString() {
-		return String.format("Mapped<%s>(%s)|%s", value().getClass().getSimpleName(), value(), toMap);
+		return String.format("FlatMapped<%s>(%s)|%s", value().getClass().getSimpleName(), value(), toMap);
 	}
 }
