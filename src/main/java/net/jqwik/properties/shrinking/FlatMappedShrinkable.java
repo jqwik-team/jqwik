@@ -28,8 +28,12 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
-		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
-		return toMap.shrink(toMapFalsifier).map(aT -> generateShrinkable(aT).value());
+		return new FlatMappedShrinkingSequence(falsifier);
+//		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
+//		ShrinkingSequence<U> shrinkToMapSequence = toMap.shrink(toMapFalsifier).map(aT -> generateShrinkable(aT).value());
+//		return shrinkToMapSequence.andThen(uShrinkable -> {
+//			return uShrinkable.shrink(falsifier);
+//		});
 	}
 
 
@@ -75,5 +79,29 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	@Override
 	public String toString() {
 		return String.format("FlatMapped<%s>(%s)|%s", value().getClass().getSimpleName(), value(), toMap);
+	}
+
+	class FlatMappedShrinkingSequence implements ShrinkingSequence<U> {
+
+		private final Falsifier<T> toMapFalsifier;
+		private final ShrinkingSequence<T> toMapShrinkingSequence;
+
+		public FlatMappedShrinkingSequence(Falsifier<U> falsifier) {
+			toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
+			toMapShrinkingSequence = toMap.shrink(toMapFalsifier);
+		}
+
+		@Override
+		public boolean next(Runnable count, Consumer<U> uReporter) {
+			Consumer<T> tReporter = aT -> uReporter.accept(generateShrinkable(aT).value());
+			return toMapShrinkingSequence.next(count, tReporter);
+		}
+
+		@Override
+		public FalsificationResult<U> current() {
+			FalsificationResult<T> currentT = toMapShrinkingSequence.current();
+			FlatMappedShrinkable<T, U> shrinkableU = new FlatMappedShrinkable<>(currentT.shrinkable(), mapper, tries, randomSeed);
+			return FalsificationResult.falsified(shrinkableU, currentT.throwable().orElse(null));
+		}
 	}
 }
