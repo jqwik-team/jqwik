@@ -66,6 +66,7 @@ class FlatMappedShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(4);
 		Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().withCharRange('a', 'z').ofLength(anInt);
 		Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
+		assertThat(shrinkable.value()).hasSize(4);
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> aString.length() < 3);
 
