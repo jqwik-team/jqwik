@@ -79,6 +79,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
+  - [0.8.11](#0811)
   - [0.8.10](#0810)
   - [0.8.9](#089)
   - [0.8.8](#088)
@@ -133,8 +134,8 @@ repositories {
 ext.junitPlatformVersion = '1.1.1'
 ext.junitJupiterVersion = '5.1.1'
 
-ext.jqwikVersion = '0.8.10'
-#ext.jqwikVersion = '0.8.11-SNAPSHOT'
+ext.jqwikVersion = '0.8.11'
+#ext.jqwikVersion = '0.8.12-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -188,7 +189,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.10</version>
+        <version>0.8.11</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -214,7 +215,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.10.jar`
+- `jqwik-0.8.11.jar`
 - `junit-platform-engine-1.1.1.jar`
 - `junit-platform-commons-1.1.1.jar`
 - `opentest4j-1.0.0.jar`
@@ -1917,7 +1918,7 @@ in a separate article...
 
 ## Release Notes
 
-### 0.8.11-SNAPSHOT
+### 0.8.11
 
 - Reporting with `Reporting.FALSIFIED` now reports much less, and hopefully no wrong values anymore.
 - Shrinking with filtered values finds simpler values in some circumstance
