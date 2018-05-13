@@ -31,8 +31,7 @@ public class JqwikUniqueIDs {
 		Matcher matcher = METHOD_PATTERN.matcher(methodId);
 
 		if (!matcher.matches()) {
-			LOG.warning(() -> String.format("Method id [%s] must follow '<method-name>(<list-of-parameter-types>)'", methodId,
-				METHOD_PATTERN));
+			LOG.warning(() -> String.format("Method id [%s] must follow '<method-name>(<list-of-parameter-types>)'", methodId));
 			return Optional.empty();
 		}
 

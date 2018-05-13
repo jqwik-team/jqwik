@@ -14,7 +14,8 @@ public class JqwikStringSupport {
 		if (object == null)
 			return "null";
 		if (object instanceof Collection) {
-			Collection<Object> collection = (Collection) object;
+			@SuppressWarnings("unchecked")
+			Collection<Object> collection = (Collection<Object>) object;
 			String elements = collection.stream().map(JqwikStringSupport::displayString).collect(Collectors.joining(", "));
 			return String.format("[%s]", elements);
 		}

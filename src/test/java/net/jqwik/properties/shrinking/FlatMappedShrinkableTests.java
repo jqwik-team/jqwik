@@ -16,8 +16,10 @@ class FlatMappedShrinkableTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+
 	@SuppressWarnings("unchecked")
-	private Consumer<String> reporter = mock(Consumer.class);
+	private Consumer<String> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<String>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation(@ForAll long seed) {
@@ -32,7 +34,7 @@ class FlatMappedShrinkableTests {
 	@Property(tries = 50)
 	void shrinkingEmbeddedShrinkable(@ForAll long seed) {
 		//noinspection unchecked
-		Mockito.reset(reporter);
+		Mockito.reset(valueReporter);
 		counter.set(0);
 
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(4);
@@ -41,21 +43,21 @@ class FlatMappedShrinkableTests {
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> false);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(3);
-		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 3));
+		verify(valueReporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 3));
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(2);
-		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 2));
+		verify(valueReporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 2));
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(1);
-		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 1));
+		verify(valueReporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 1));
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(0);
-		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 0));
+		verify(valueReporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 0));
 
 		assertThat(counter.get()).isEqualTo(4);
 	}
@@ -69,7 +71,7 @@ class FlatMappedShrinkableTests {
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> aString.length() < 3);
 
-		while(sequence.nextValue(count, reporter));
+		while(sequence.next(count, reporter));
 
 		assertThat(sequence.current().value()).isEqualTo("aaa");
 	}

@@ -3,7 +3,6 @@ package net.jqwik.support;
 import net.jqwik.api.*;
 import org.assertj.core.api.*;
 
-import java.util.*;
 import java.util.stream.*;
 
 @Group

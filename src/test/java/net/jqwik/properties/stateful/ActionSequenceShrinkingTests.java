@@ -32,7 +32,7 @@ class ActionSequenceShrinkingTests {
 	}
 
 	private Arbitrary<Action<String>> addStringOfLength2() {
-		return Arbitraries.strings().alpha().ofLength(2).map(s -> (Action<String>) model -> model + s);
+		return Arbitraries.strings().alpha().ofLength(2).map(s -> model -> model + s);
 	}
 
 

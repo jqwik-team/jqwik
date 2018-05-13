@@ -49,7 +49,7 @@ public class JqwikProperties {
 		loadProperties(fileName);
 	}
 
-	private final void loadProperties(String propertiesFileName) {
+	private void loadProperties(String propertiesFileName) {
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
 		if (inputStream == null) {
 			LOG.info(String.format("No Jqwik properties file [%s] found.", propertiesFileName));

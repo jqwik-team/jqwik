@@ -206,9 +206,7 @@ class DiscoveryTests {
 	}
 
 	private Predicate<TestDescriptor> isChildOf(Predicate<TestDescriptor> parentPredicate) {
-		return descriptor -> {
-			return descriptor.getParent().map(parentPredicate::test).orElse(false);
-		};
+		return descriptor -> descriptor.getParent().map(parentPredicate::test).orElse(false);
 	}
 
 	private Predicate<TestDescriptor> isExample(Class<?> implementationClass, String methodName) {

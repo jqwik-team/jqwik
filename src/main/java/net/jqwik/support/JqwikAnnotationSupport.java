@@ -17,9 +17,7 @@ public class JqwikAnnotationSupport {
 		List<Annotation> annotations = new ArrayList<>();
 		List<Annotation> presentAnnotations = Arrays.asList(element.getAnnotations());
 		annotations.addAll(presentAnnotations);
-		presentAnnotations.forEach(annotation -> {
-			appendMetaAnnotations(annotation, annotations);
-		});
+		presentAnnotations.forEach(annotation -> appendMetaAnnotations(annotation, annotations));
 		return annotations;
 	}
 

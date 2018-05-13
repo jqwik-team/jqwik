@@ -9,15 +9,6 @@ public interface ShrinkingSequence<T> {
 		return new NullShrinkingSequence<>(shrinkable);
 	}
 
-	/**
-	 * @deprecated  Replace with next(Runnable, Consumer<FalsificationResult<T>>);
-	 */
-	@Deprecated
-	default boolean nextValue(Runnable count, Consumer<T> falsifiedValueReporter) {
-		Consumer<FalsificationResult<T>> falsifiedResultReporter = result -> falsifiedValueReporter.accept(result.value());
-		return next(count, falsifiedResultReporter);
-	}
-
 	boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter);
 
 	FalsificationResult<T> current();

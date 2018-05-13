@@ -26,7 +26,7 @@ public class PropertyMethodExecutor {
 	}
 
 	public TestExecutionResult execute(Function<Object, PropertyLifecycle> lifecycleSupplier, EngineExecutionListener listener) {
-		Object testInstance = null;
+		Object testInstance;
 		try {
 			testInstance = createTestInstance();
 		} catch (Throwable throwable) {

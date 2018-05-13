@@ -18,7 +18,8 @@ class ShrinkableActionSequenceTests {
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
 	@SuppressWarnings("unchecked")
-	private Consumer<ActionSequence<String>> reporter = mock(Consumer.class);
+	private Consumer<ActionSequence<String>> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<ActionSequence<String>>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -49,19 +50,19 @@ class ShrinkableActionSequenceTests {
 			seq.run("");
 			return false;
 		});
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
-		verify(reporter).accept(any(ActionSequence.class));
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
-		verify(reporter, times(2)).accept(any(ActionSequence.class));
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
-		verify(reporter, times(3)).accept(any(ActionSequence.class));
-		assertThat(sequence.nextValue(count, reporter)).isFalse();
+		assertThat(sequence.next(count, reporter)).isTrue();
+		verify(valueReporter).accept(any(ActionSequence.class));
+		assertThat(sequence.next(count, reporter)).isTrue();
+		verify(valueReporter, times(2)).accept(any(ActionSequence.class));
+		assertThat(sequence.next(count, reporter)).isTrue();
+		verify(valueReporter, times(3)).accept(any(ActionSequence.class));
+		assertThat(sequence.next(count, reporter)).isFalse();
 
 		assertThat(sequence.current().value().size()).isEqualTo(1);
 		assertThat(sequence.current().value().run("")).isEqualTo("x");
 
 		assertThat(counter.get()).isEqualTo(3);
-		verifyNoMoreInteractions(reporter);
+		verifyNoMoreInteractions(valueReporter);
 	}
 
 	@Example
@@ -79,7 +80,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		});
 
-		while(sequence.nextValue(count, reporter));
+		while(sequence.next(count, reporter));
 
 		assertThat(sequence.current().value().size()).isEqualTo(1);
 		assertThat(sequence.current().value().run("")).isEqualTo("aa");
@@ -104,12 +105,12 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		});
 
-		while(sequence.nextValue(count, reporter));
+		while(sequence.next(count, reporter));
 
 		assertThat(sequence.current().value().run("")).isEqualTo("aa");
 	}
 
-	@Property
+	@Property(tries = 100)
 	void alwaysShrinkToSingleAction(@ForAll("stringActions") @Size(max = 50) List<Shrinkable<Action<String>>> actions) {
 		actions.add(shrinkableAddX());
 		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
@@ -119,7 +120,7 @@ class ShrinkableActionSequenceTests {
 			return !result.contains("x");
 		});
 
-		while(sequence.nextValue(count, reporter));
+		while(sequence.next(count, reporter));
 
 		assertThat(sequence.current().value().run("")).isEqualTo("x");
 	}

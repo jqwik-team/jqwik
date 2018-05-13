@@ -17,8 +17,10 @@ class ShrinkableBigIntegerTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+
 	@SuppressWarnings("unchecked")
-	private Consumer<BigInteger> reporter = mock(Consumer.class);
+	private Consumer<BigInteger> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<BigInteger>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -72,16 +74,16 @@ class ShrinkableBigIntegerTests {
 
 		ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(10)) < 0);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(13));
-		verify(reporter).accept(BigInteger.valueOf(13));
+		verify(valueReporter).accept(BigInteger.valueOf(13));
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(10));
-		verify(reporter).accept(BigInteger.valueOf(10));
+		verify(valueReporter).accept(BigInteger.valueOf(10));
 
-		assertThat(sequence.nextValue(count, reporter)).isFalse();
-		verifyNoMoreInteractions(reporter);
+		assertThat(sequence.next(count, reporter)).isFalse();
+		verifyNoMoreInteractions(valueReporter);
 	}
 
 
@@ -94,7 +96,7 @@ class ShrinkableBigIntegerTests {
 
 			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0);
 
-			while (sequence.nextValue(count, reporter));
+			while (sequence.next(count, reporter));
 
 			assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(1001));
 			assertThat(counter.get()).isEqualTo(7);
@@ -109,8 +111,7 @@ class ShrinkableBigIntegerTests {
 
 			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(filteredFalsifier);
 
-			while (sequence.nextValue(count, reporter)) {
-			}
+			while (sequence.next(count, reporter));
 
 			assertThat(sequence.current().value()).isEqualTo(100);
 			assertThat(counter.get()).isEqualTo(8);

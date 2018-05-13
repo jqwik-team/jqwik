@@ -11,14 +11,14 @@ class LifecycleTests implements AutoCloseable {
 	public static final int COUNTER_RESET_VALUE = 22;
 
 	private static int staticCounter = STATIC_COUNTER_RESET_VALUE;
-	private int counter = 999;
+	private int counter;
 
 	LifecycleTests() {
 		counter = COUNTER_RESET_VALUE;
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() {
 		staticCounter = STATIC_COUNTER_RESET_VALUE;
 	}
 

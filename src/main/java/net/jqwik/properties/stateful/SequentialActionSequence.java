@@ -78,7 +78,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	@Override
 	public String toString() {
-		String stateString = "";
+		String stateString;
 		List<Action<M>> actionsToShow;
 		if (hasRun) {
 			stateString = "(after run)";
@@ -100,7 +100,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	private void tryNextCandidate(Action<M> candidate) {
-		Try<M> aTry = new Try<M>(candidate);
+		Try<M> aTry = new Try<>(candidate);
 		tries.add(aTry);
 		state = aTry.run(state);
 		if (aTry.preconditionValid()) {

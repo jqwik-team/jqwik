@@ -5,10 +5,5 @@ public interface TestRunRecorder extends AutoCloseable {
 
 	default void close() {}
 
-	TestRunRecorder NULL = new TestRunRecorder() {
-		@Override
-		public void record(TestRun testRun) {
-
-		}
-	};
+	TestRunRecorder NULL = testRun -> { };
 }

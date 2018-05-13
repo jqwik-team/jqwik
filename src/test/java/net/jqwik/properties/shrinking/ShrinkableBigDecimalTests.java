@@ -17,8 +17,10 @@ class ShrinkableBigDecimalTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+
 	@SuppressWarnings("unchecked")
-	private Consumer<BigDecimal> reporter = mock(Consumer.class);
+	private Consumer<BigDecimal> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<BigDecimal>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -82,16 +84,16 @@ class ShrinkableBigDecimalTests {
 
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(new BigDecimal("13"));
-		verify(reporter).accept(new BigDecimal("13"));
+		verify(valueReporter).accept(new BigDecimal("13"));
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(new BigDecimal("10"));
-		verify(reporter).accept(new BigDecimal("10"));
+		verify(valueReporter).accept(new BigDecimal("10"));
 
-		assertThat(sequence.nextValue(count, reporter)).isFalse();
-		verifyNoMoreInteractions(reporter);
+		assertThat(sequence.next(count, reporter)).isFalse();
+		verifyNoMoreInteractions(valueReporter);
 	}
 
 	@Example
@@ -104,7 +106,7 @@ class ShrinkableBigDecimalTests {
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(filteredFalsifier);
 
 
-		while (sequence.nextValue(count, reporter)) {
+		while (sequence.next(count, reporter)) {
 		}
 
 		assertThat(sequence.current().value().longValueExact()).isEqualTo(25);
@@ -116,8 +118,7 @@ class ShrinkableBigDecimalTests {
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-1000000000", max = "1000000000") @Scale(15) BigDecimal aValue) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(ignore -> false);
-		while(sequence.nextValue(count, reporter)) {
-		}
+		while(sequence.next(count, reporter));
 		BigDecimal shrunkValue = sequence.current().value();
 		// can be + or - 0.0:
 		assertThat(shrunkValue).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.ZERO));
