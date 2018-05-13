@@ -31,39 +31,45 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	}
 
 	@Override
-	public boolean next(Runnable count, Consumer<List<T>> reportFalsified) {
+	public boolean next(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
 		if (isShrinkingDone())
 			return false;
-		return shrinkCurrentPosition(count, reportFalsified);
+		return shrinkCurrentPosition(count, falsifiedReporter);
 	}
 
 	private boolean isShrinkingDone() {
 		return currentShrinkingPosition >= currentResults.size();
 	}
 
-	private boolean shrinkCurrentPosition(Runnable count, Consumer<List<T>> reportFalsified) {
+	private boolean shrinkCurrentPosition(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
 		if (currentShrinkingSequence == null) {
 			currentShrinkingSequence = createShrinkingSequence(currentShrinkingPosition);
 		}
-		if (!currentShrinkingSequence.next(count, currentFalsifiedReporter(reportFalsified))) {
-			return advanceToNextShrinkingPosition(count, reportFalsified);
+		if (!currentShrinkingSequence.next(count, currentFalsifiedReporter(falsifiedReporter))) {
+			return advanceToNextShrinkingPosition(count, falsifiedReporter);
 		}
 		replaceCurrentPosition(currentShrinkingSequence.current());
 		return true;
 	}
 
-	private boolean advanceToNextShrinkingPosition(Runnable count, Consumer<List<T>> reportFalsified) {
+	private boolean advanceToNextShrinkingPosition(
+		Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter
+	) {
 		currentShrinkingSequence = null;
 		currentShrinkingPosition++;
-		return next(count, reportFalsified);
+		return next(count, falsifiedReporter);
 	}
 
-	private Consumer<T> currentFalsifiedReporter(Consumer<List<T>> listReporter) {
+	private Consumer<FalsificationResult<T>> currentFalsifiedReporter(
+		Consumer<FalsificationResult<List<T>>> listReporter
+	) {
 		if (isShrinkingDone()) return ignore -> {};
-		return valueOnCurrentShrinkingPosition -> {
-			List<T> values = toValueList(currentResults);
-			values.set(currentShrinkingPosition, valueOnCurrentShrinkingPosition);
-			listReporter.accept(values);
+		return resultOnCurrentShrinkingPosition -> { //
+			listReporter.accept(resultOnCurrentShrinkingPosition.map(shrinkable -> shrinkable.map(valueOnCurrentShrinkingPosition -> {
+				List<T> values = toValueList(currentResults);
+				values.set(currentShrinkingPosition, resultOnCurrentShrinkingPosition.value());
+				return values;
+			})));
 		};
 	}
 

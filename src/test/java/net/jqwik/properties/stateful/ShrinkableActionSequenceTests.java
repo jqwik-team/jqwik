@@ -49,13 +49,13 @@ class ShrinkableActionSequenceTests {
 			seq.run("");
 			return false;
 		});
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		verify(reporter).accept(any(ActionSequence.class));
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		verify(reporter, times(2)).accept(any(ActionSequence.class));
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		verify(reporter, times(3)).accept(any(ActionSequence.class));
-		assertThat(sequence.next(count, reporter)).isFalse();
+		assertThat(sequence.nextValue(count, reporter)).isFalse();
 
 		assertThat(sequence.current().value().size()).isEqualTo(1);
 		assertThat(sequence.current().value().run("")).isEqualTo("x");
@@ -79,7 +79,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		});
 
-		while(sequence.next(count, reporter));
+		while(sequence.nextValue(count, reporter));
 
 		assertThat(sequence.current().value().size()).isEqualTo(1);
 		assertThat(sequence.current().value().run("")).isEqualTo("aa");
@@ -104,7 +104,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		});
 
-		while(sequence.next(count, reporter));
+		while(sequence.nextValue(count, reporter));
 
 		assertThat(sequence.current().value().run("")).isEqualTo("aa");
 	}
@@ -119,7 +119,7 @@ class ShrinkableActionSequenceTests {
 			return !result.contains("x");
 		});
 
-		while(sequence.next(count, reporter));
+		while(sequence.nextValue(count, reporter));
 
 		assertThat(sequence.current().value().run("")).isEqualTo("x");
 	}

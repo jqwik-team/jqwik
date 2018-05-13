@@ -37,19 +37,19 @@ class ShrinkableSetTests {
 
 		ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(0, 1, 2);
 		verifyLastReporterCall(0, 1, 2);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(0, 1);
 		verifyLastReporterCall(0, 1);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(0);
 		verifyLastReporterCall(0);
 
-		assertThat(sequence.next(count, reporter)).isFalse();
+		assertThat(sequence.nextValue(count, reporter)).isFalse();
 		verifyNoMoreInteractions(reporter);
 	}
 
@@ -71,13 +71,13 @@ class ShrinkableSetTests {
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> false);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(1);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(0);
-			assertThat(sequence.next(count, reporter)).isFalse();
+			assertThat(sequence.nextValue(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -88,16 +88,16 @@ class ShrinkableSetTests {
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> false);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(4);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(3);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
 			assertThat(sequence.current().value()).containsExactly(0, 1);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 1);
-			assertThat(sequence.next(count, reporter)).isFalse();
+			assertThat(sequence.nextValue(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(4);
 		}
@@ -108,13 +108,13 @@ class ShrinkableSetTests {
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 1, 2);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 1);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0);
-			assertThat(sequence.next(count, reporter)).isFalse();
+			assertThat(sequence.nextValue(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -126,17 +126,17 @@ class ShrinkableSetTests {
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> aSet.size() <= 1);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(2, 3);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(1, 3);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 3);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 2);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 1);
-			assertThat(sequence.next(count, reporter)).isFalse();
+			assertThat(sequence.nextValue(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(5);
 		}
@@ -150,15 +150,15 @@ class ShrinkableSetTests {
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(1, 2, 3, 4);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(1, 2);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(1, 2);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEmpty();
-			assertThat(sequence.next(count, reporter)).isFalse();
+			assertThat(sequence.nextValue(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(4);
 		}
@@ -171,7 +171,7 @@ class ShrinkableSetTests {
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
 
-			while (sequence.next(count, reporter)) {
+			while (sequence.nextValue(count, reporter)) {
 			}
 			assertThat(sequence.current().value()).containsExactly(2);
 
@@ -185,7 +185,7 @@ class ShrinkableSetTests {
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
 
-			while (sequence.next(count, reporter)) {
+			while (sequence.nextValue(count, reporter)) {
 			}
 			assertThat(sequence.current().value()).hasSize(5);
 

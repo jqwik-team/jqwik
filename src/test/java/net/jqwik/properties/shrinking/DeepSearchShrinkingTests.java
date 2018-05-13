@@ -29,15 +29,15 @@ class DeepSearchShrinkingTests {
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
 			verify(reporter).accept(3);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);
 			verify(reporter).accept(2);
 
-			assertThat(sequence.next(count, reporter)).isFalse();
+			assertThat(sequence.nextValue(count, reporter)).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(2);
 			verifyNoMoreInteractions(reporter);
 		}
@@ -51,24 +51,24 @@ class DeepSearchShrinkingTests {
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(10);
 			// 10 is not a new value
 			verify(reporter, never()).accept(10);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(8);
 			verify(reporter, times(1)).accept(8);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			assertThat(sequence.nextValue(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(6);
 			verify(reporter, times(1)).accept(6);
 
-			assertThat(sequence.next(count, reporter)).isFalse();
+			assertThat(sequence.nextValue(count, reporter)).isFalse();
 			verifyNoMoreInteractions(reporter);
 
 		}
@@ -87,17 +87,17 @@ class DeepSearchShrinkingTests {
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(4);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(1);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(0);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(0);
 
 			assertThat(counter.get()).isEqualTo(5);
@@ -111,13 +111,13 @@ class DeepSearchShrinkingTests {
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(4);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(2);
 
 			assertThat(counter.get()).isEqualTo(3);
@@ -131,17 +131,17 @@ class DeepSearchShrinkingTests {
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(10);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 
 			assertThat(counter.get()).isEqualTo(5);
 		}
@@ -157,9 +157,9 @@ class DeepSearchShrinkingTests {
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(0);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(0);
 
 			assertThat(counter.get()).isEqualTo(1);
@@ -173,9 +173,9 @@ class DeepSearchShrinkingTests {
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(2);
 
 			assertThat(counter.get()).isEqualTo(1);
@@ -189,9 +189,9 @@ class DeepSearchShrinkingTests {
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 
 			assertThat(counter.get()).isEqualTo(2);
 		}
@@ -207,13 +207,13 @@ class DeepSearchShrinkingTests {
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(1);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(0);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(0);
 
 			assertThat(counter.get()).isEqualTo(3);
@@ -225,11 +225,11 @@ class DeepSearchShrinkingTests {
 
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(2);
 
 			assertThat(counter.get()).isEqualTo(2);
@@ -243,15 +243,15 @@ class DeepSearchShrinkingTests {
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
+			assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
+			assertThat(sequence.nextValue(count, ignore -> {})).isFalse();
 
 			assertThat(counter.get()).isEqualTo(5);
 		}

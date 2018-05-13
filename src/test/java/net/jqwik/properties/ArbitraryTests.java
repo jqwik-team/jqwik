@@ -156,7 +156,7 @@ class ArbitraryTests {
 			assertThat(value3to6.value()).isEqualTo("3:6");
 
 			ShrinkingSequence<String> sequence = value3to6.shrink(ignore -> false);
-			while(sequence.next(() -> {}, ignore -> {}));
+			while(sequence.nextValue(() -> {}, ignore -> {}));
 			assertThat(sequence.current().value()).isEqualTo("1:4");
 		}
 

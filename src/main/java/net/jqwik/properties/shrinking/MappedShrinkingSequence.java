@@ -13,9 +13,8 @@ public class MappedShrinkingSequence<T, U> implements ShrinkingSequence<U> {
 	}
 
 	@Override
-	public boolean next(Runnable count, Consumer<U> uReporter) {
-		//TODO: This is really involved. See TODO in ShrinkingSequence.next()
-		Consumer<T> tReporter = aT -> uReporter.accept(mapper.apply(FalsificationResult.falsified(Shrinkable.unshrinkable(aT))).value());
+	public boolean next(Runnable count, Consumer<FalsificationResult<U>> uReporter) {
+		Consumer<FalsificationResult<T>> tReporter = tResult -> uReporter.accept(mapper.apply(tResult));
 		return toMap.next(count, tReporter);
 	}
 

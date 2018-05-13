@@ -31,13 +31,13 @@ class FilteredShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
 
-		assertThat(sequence.next(count, ignore -> {})).isTrue();
+		assertThat(sequence.nextValue(count, ignore -> {})).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(3);
-		assertThat(sequence.next(count, ignore -> { })).isTrue();
+		assertThat(sequence.nextValue(count, ignore -> { })).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(1);
-		assertThat(sequence.next(count, ignore -> { })).isTrue();
+		assertThat(sequence.nextValue(count, ignore -> { })).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(1);
-		assertThat(sequence.next(count, ignore -> { })).isFalse();
+		assertThat(sequence.nextValue(count, ignore -> { })).isFalse();
 
 		assertThat(counter.get()).isEqualTo(3);
 	}
@@ -54,16 +54,16 @@ class FilteredShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(3);
 		verify(reporter, never()).accept(3);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(1);
 		verify(reporter).accept(1);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.next(count, reporter)).isFalse();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isFalse();
 
 		verifyNoMoreInteractions(reporter);
 	}

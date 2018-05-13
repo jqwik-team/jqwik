@@ -48,8 +48,9 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 		}
 
 		@Override
-		public boolean next(Runnable count, Consumer<T> falsifiedReporter) {
-			Consumer<List<Object>> combinedReporter = elements -> falsifiedReporter.accept(combinator.apply(elements));
+		public boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter) {
+			Consumer<FalsificationResult<List<Object>>> combinedReporter =
+				result -> falsifiedReporter.accept(result.map(shrinkable -> shrinkable.map(combinator)));
 			return elementsSequence.next(count, combinedReporter);
 		}
 

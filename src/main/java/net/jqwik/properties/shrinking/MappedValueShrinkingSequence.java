@@ -15,8 +15,8 @@ public class MappedValueShrinkingSequence<T, U> implements ShrinkingSequence<U> 
 	}
 
 	@Override
-	public boolean next(Runnable count, Consumer<U> reportFalsified) {
-		return toMap.next(count, aT -> reportFalsified.accept(mapper.apply(aT)));
+	public boolean next(Runnable count, Consumer<FalsificationResult<U>> falsifiedReporter) {
+		return toMap.next(count, tResult -> falsifiedReporter.accept(tResult.map(shrinkable -> shrinkable.map(mapper))));
 	}
 
 	@Override

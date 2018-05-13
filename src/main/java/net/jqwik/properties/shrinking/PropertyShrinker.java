@@ -34,7 +34,7 @@ public class PropertyShrinker {
 		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
 		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier, distanceFunction);
 
-		Consumer falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
+		Consumer<FalsificationResult> falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
 
 		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
 		while (sequence.next(shrinkingStepsCounter::incrementAndGet, falsifiedReporter)) {
@@ -55,8 +55,8 @@ public class PropertyShrinker {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
-	private void reportFalsifiedParams(Object effectiveParams) {
-		ReportEntry falsifiedEntry = ReportEntry.from("falsified", JqwikStringSupport.displayString(effectiveParams));
+	private void reportFalsifiedParams(FalsificationResult result) {
+		ReportEntry falsifiedEntry = ReportEntry.from("falsified", JqwikStringSupport.displayString(result.value()));
 		reporter.accept(falsifiedEntry);
 	}
 
