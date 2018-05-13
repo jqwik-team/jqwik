@@ -1924,6 +1924,15 @@ in a separate article...
 - Generation of strings will allow any unicode character by default
 - `Combinators.combine()` can now take a list of arbitraries of same return type.
 - Generated edge cases are now injected again and again and not only in the beginning.
+- Complete re-implementation of shrinking with a few implications:
+  - Shrinking should work better and more efficient overall. There might
+    be situations, though, in which shrinking does no longer find
+    the simplest example.
+  - `ShrinkingMode.BOUNDED` might interrupt shrinking with completely different results.
+  - When using `Reporting.FALSIFIED` you will see different inbetween
+    shrinking steps that before.
+  - The public interface of `Shrinkable` has changed in an incompatible way,
+    but that shouldn't affect anyone but myself.
 
 
 ### 0.8.10
