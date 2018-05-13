@@ -33,7 +33,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 				List<Shrinkable<E>> elements = ((ShrinkableContainer<C, E>) shrinkableList).elements;
 				Falsifier<List<E>> listFalsifier = list -> falsifier.test(toContainer(list));
 				return new ElementsShrinkingSequence<>(elements, null, listFalsifier, ShrinkingDistance::forCollection)
-					.map(this::toContainer);
+					.mapValue(this::toContainer);
 			});
 	}
 

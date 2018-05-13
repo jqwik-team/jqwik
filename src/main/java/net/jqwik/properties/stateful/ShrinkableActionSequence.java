@@ -29,7 +29,7 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 				ShrinkableActionSequence<M> actionSequence = (ShrinkableActionSequence<M>) shrinkableList;
 				Falsifier<List<Action<M>>> listFalsifier = list -> falsifier.test(toActionSequence(list));
 				return new ElementsShrinkingSequence<>(actionSequence.candidateActions, null, listFalsifier, ShrinkingDistance::forCollection)
-					.map(this::toActionSequence);
+					.mapValue(this::toActionSequence);
 			});
 
 	}

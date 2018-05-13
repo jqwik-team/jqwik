@@ -65,8 +65,8 @@ public class FalsificationResult<T> implements Comparable<FalsificationResult<T>
 		return new FalsificationResult<>(shrinkable.filter(filter), status, throwable);
 	}
 
-	public <U> FalsificationResult<U> map(Function<T, U> mapper) {
-		return new FalsificationResult<>(shrinkable.map(mapper), status, throwable);
+	public <U> FalsificationResult<U> map(Function<Shrinkable<T>, Shrinkable<U>> mapper) {
+		return new FalsificationResult<>(mapper.apply(this.shrinkable()), status, throwable);
 	}
 
 }
