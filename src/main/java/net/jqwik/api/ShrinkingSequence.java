@@ -9,6 +9,7 @@ public interface ShrinkingSequence<T> {
 		return new NullShrinkingSequence<>(shrinkable);
 	}
 
+	//TODO: replace with next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter)
 	boolean next(Runnable count, Consumer<T> reportFalsified);
 
 	FalsificationResult<T> current();
@@ -17,7 +18,12 @@ public interface ShrinkingSequence<T> {
 		return new NextShrinkingSequence<>(this, createFollowupSequence);
 	}
 
-	default <U> ShrinkingSequence<U> map(Function<T, U> mapper) {
+	// TODO: This feels strange. There _should_ be a way to replace all calls by calls to map().
+	default <U> ShrinkingSequence<U> mapValue(Function<T, U> mapper) {
+		return new MappedValueShrinkingSequence<>(this, mapper);
+	}
+
+	default <U> ShrinkingSequence<U> map(Function<FalsificationResult<T>, FalsificationResult<U>> mapper) {
 		return new MappedShrinkingSequence<>(this, mapper);
 	}
 

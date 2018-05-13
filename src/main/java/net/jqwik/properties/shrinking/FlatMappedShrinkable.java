@@ -28,10 +28,13 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
-		return new FlatMappedShrinkingSequence(falsifier).andThen(aShrinkable -> {
-			FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
-			return flatMappedShrinkable.shrinkable.shrink(falsifier);
-		});
+		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
+		return toMap.shrink(toMapFalsifier) //
+					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, tries, randomSeed))) //
+					.andThen(aShrinkable -> {
+						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
+						return flatMappedShrinkable.shrinkable.shrink(falsifier);
+					});
 	}
 
 	@Override
@@ -62,28 +65,4 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		return String.format("FlatMapped<%s>(%s)|%s", value().getClass().getSimpleName(), value(), toMap);
 	}
 
-	//TODO: Use ShrinkingSequence.map instead. map() requires different function then.
-	class FlatMappedShrinkingSequence implements ShrinkingSequence<U> {
-
-		private final Falsifier<T> toMapFalsifier;
-		private final ShrinkingSequence<T> toMapShrinkingSequence;
-
-		public FlatMappedShrinkingSequence(Falsifier<U> falsifier) {
-			toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
-			toMapShrinkingSequence = toMap.shrink(toMapFalsifier);
-		}
-
-		@Override
-		public boolean next(Runnable count, Consumer<U> uReporter) {
-			Consumer<T> tReporter = aT -> uReporter.accept(generateShrinkable(aT).value());
-			return toMapShrinkingSequence.next(count, tReporter);
-		}
-
-		@Override
-		public FalsificationResult<U> current() {
-			FalsificationResult<T> currentT = toMapShrinkingSequence.current();
-			FlatMappedShrinkable<T, U> shrinkableU = new FlatMappedShrinkable<>(currentT.shrinkable(), mapper, tries, randomSeed);
-			return FalsificationResult.falsified(shrinkableU, currentT.throwable().orElse(null));
-		}
-	}
 }

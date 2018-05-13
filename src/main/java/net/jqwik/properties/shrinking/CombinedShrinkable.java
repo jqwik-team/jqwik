@@ -55,7 +55,8 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 		@Override
 		public FalsificationResult<T> current() {
-			return elementsSequence.current().map(combinator);
+			return elementsSequence.current() //
+								   .map(shrinkable -> shrinkable.map(combinator));
 		}
 	}
 }

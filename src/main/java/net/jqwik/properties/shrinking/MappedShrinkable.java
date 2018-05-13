@@ -21,7 +21,9 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
-		return new MappedShrinkingSequence(falsifier);
+		Falsifier<T> toMapFalsifier = aT -> falsifier.test(mapper.apply(aT));
+		return toMap.shrink(toMapFalsifier) //
+			.map(result -> result.map(shrinkable -> shrinkable.map(mapper)));
 	}
 
 	@Override
@@ -47,24 +49,4 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 		return String.format("Mapped<%s>(%s)|%s", value().getClass().getSimpleName(), value(), toMap);
 	}
 
-	private class MappedShrinkingSequence implements ShrinkingSequence<U> {
-
-		private final ShrinkingSequence<T> toMapSequence;
-
-		private MappedShrinkingSequence(Falsifier<U> falsifier) {
-			Falsifier<T> toMapFalsifier = aT -> falsifier.test(mapper.apply(aT));
-			toMapSequence = toMap.shrink(toMapFalsifier);
-		}
-
-		@Override
-		public boolean next(Runnable count, Consumer<U> reportFalsified) {
-			Consumer<T> toMapReporter = aT -> reportFalsified.accept(mapper.apply(aT));
-			return toMapSequence.next(count, toMapReporter);
-		}
-
-		@Override
-		public FalsificationResult<U> current() {
-			return toMapSequence.current().map(mapper);
-		}
-	}
 }
