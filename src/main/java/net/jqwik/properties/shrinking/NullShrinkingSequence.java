@@ -13,7 +13,7 @@ public class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	@Override
-	public boolean next(Runnable count, Consumer<T> reportFalsified) {
+	public boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter) {
 		return false;
 	}
 

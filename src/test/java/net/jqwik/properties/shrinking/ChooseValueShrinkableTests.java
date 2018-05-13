@@ -28,11 +28,11 @@ class ChooseValueShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(1);
 		verify(reporter).accept(1);
 
-		assertThat(sequence.next(count, reporter)).isFalse();
+		assertThat(sequence.nextValue(count, reporter)).isFalse();
 		assertThat(counter.get()).isEqualTo(1);
 		verifyNoMoreInteractions(reporter);
 	}

@@ -21,7 +21,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	@Override
-	public boolean next(Runnable count, Consumer<T> reportFalsified) {
+	public boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter) {
 		if (!lastStepSuccessful)
 			return false;
 
@@ -44,7 +44,7 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 				count.run();
 				lastStepSuccessful = true;
 				this.currentBest = result;
-				reportFalsified.accept(this.currentBest.value());
+				falsifiedReporter.accept(this.currentBest);
 				this.searchBase = this.currentBest;
 			});
 

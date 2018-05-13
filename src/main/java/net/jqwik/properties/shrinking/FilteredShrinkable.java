@@ -47,6 +47,7 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 		return String.format("Filtered|%s", toFilter);
 	}
 
+	//TODO: Extract to ShrinkingSequence.filter() method
 	private class FilteredShrinkingSequence implements ShrinkingSequence<T> {
 
 		private final ShrinkingSequence<T> toFilterSequence;
@@ -57,8 +58,8 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 		}
 
 		@Override
-		public boolean next(Runnable count, Consumer<T> reportFalsified) {
-			return toFilterSequence.next(count, reportFalsified);
+		public boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter) {
+			return toFilterSequence.next(count, falsifiedReporter);
 		}
 
 		@Override

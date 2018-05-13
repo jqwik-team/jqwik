@@ -13,7 +13,7 @@ class ShrinkableProperties {
 	@Property //(reporting = Reporting.GENERATED)
 	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
-		while (sequence.next(() -> {}, ignore -> {}));
+		while (sequence.nextValue(() -> {}, ignore -> {}));
 		return true;
 	}
 
@@ -21,7 +21,7 @@ class ShrinkableProperties {
 	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> aShrinkable) {
 		ShrinkingSequence<?> sequence = aShrinkable.shrink(ignore -> false);
 		FalsificationResult<?> current = sequence.current();
-		while (sequence.next(() -> {}, ignore -> {})) {
+		while (sequence.nextValue(() -> {}, ignore -> {})) {
 			assertThat(sequence.current().distance()).isLessThanOrEqualTo(current.distance());
 			current = sequence.current();
 		}

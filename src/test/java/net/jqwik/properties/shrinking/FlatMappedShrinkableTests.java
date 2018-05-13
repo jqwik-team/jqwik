@@ -4,7 +4,6 @@ import net.jqwik.api.*;
 import net.jqwik.properties.shrinking.ShrinkableTypesForTest.*;
 import org.mockito.*;
 
-import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
@@ -42,19 +41,19 @@ class FlatMappedShrinkableTests {
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> false);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(3);
 		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 3));
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(2);
 		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 2));
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(1);
 		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 1));
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(0);
 		verify(reporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 0));
 
@@ -70,7 +69,7 @@ class FlatMappedShrinkableTests {
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> aString.length() < 3);
 
-		while(sequence.next(count, reporter));
+		while(sequence.nextValue(count, reporter));
 
 		assertThat(sequence.current().value()).isEqualTo("aaa");
 	}

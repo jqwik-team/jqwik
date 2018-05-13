@@ -53,10 +53,10 @@ class CombinedShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
 
-		assertThat(sequence.next(count, reportFalsified)).isTrue();
-		assertThat(sequence.next(count, reportFalsified)).isTrue();
-		assertThat(sequence.next(count, reportFalsified)).isTrue();
-		assertThat(sequence.next(count, reportFalsified)).isTrue();
+		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
+		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
+		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
+		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
 
 		assertThat(sequence.current().value()).isEqualTo(4);
 		assertThat(sequence.current().distance()).isEqualTo(ShrinkingDistance.of(0, 4));
@@ -82,19 +82,19 @@ class CombinedShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(7);
 		verify(reporter).accept(7);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(6);
 		verify(reporter).accept(6);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(5);
 		verify(reporter).accept(5);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.nextValue(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(4);
 		verify(reporter).accept(4);
 

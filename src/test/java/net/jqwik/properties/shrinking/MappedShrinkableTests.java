@@ -16,7 +16,8 @@ class MappedShrinkableTests {
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
 	@SuppressWarnings("unchecked")
-	private Consumer<String> reporter = mock(Consumer.class);
+	private Consumer<String> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<String>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -56,19 +57,19 @@ class MappedShrinkableTests {
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("22");
-		verify(reporter).accept("22");
+		verify(valueReporter).accept("22");
 
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("11");
-		verify(reporter).accept("11");
+		verify(valueReporter).accept("11");
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("00");
-		verify(reporter).accept("00");
+		verify(valueReporter).accept("00");
 
 		assertThat(sequence.next(count, reporter)).isFalse();
-		verifyNoMoreInteractions(reporter);
+		verifyNoMoreInteractions(valueReporter);
 
 	}
 
