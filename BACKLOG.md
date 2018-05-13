@@ -10,21 +10,12 @@
 ### Tests
 
 - Add tests for RandomGenerators
-- Add / rework tests for all Shrinkables 
-  - especially Sets
-- Tests for distance of Shrinkables -> They must not overflow! E.g. ListShrinkCandidates.distance()
 - Tests for TestRunDatabase
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
 
 ### Refactoring
 
-- Replace ShrinkingCandidates with something like composable ShrinkingPolicy
-  - Use it everywhere, especially in ContainerShrinkable, ShrinkableActionSequence, ParameterListShrinker 
-- ListShrinkCandidates.distance() should be scaled down to distribute equally over 0 to Integer.MAX
-  - Alternative 1: change distance to be of type BigInteger!
-  - Alternative 2: Make distance a structured value object with higher position compared first, 
-    e.g. [distanceOfList, distanceOfListValues] or [distanceOfToFlatMap, distanceOfEmbedded]
 - Introduce PropertyExecutionListener and build all reporting/results on top of it
 
 ### General
@@ -81,11 +72,6 @@
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
 
 - Generator/Arbitrary for sequences of method/function calls 
-
-- Shrinking
-  - Time limit (100ms default?) for shrinking
-    - Make it configurable
-  - Make it configurable (default on/off)
 
 - Evaluate properties in parallel (max tries worker thread per property)
 
