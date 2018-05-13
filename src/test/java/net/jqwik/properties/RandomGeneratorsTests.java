@@ -13,8 +13,6 @@ import static org.assertj.core.api.Assertions.*;
 
 class RandomGeneratorsTests {
 
-	// TODO: Move generator tests from ArbitrariesTests here
-
 	@Example
 	void setsAreGeneratedWithCorrectMinAndMaxSize() {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
