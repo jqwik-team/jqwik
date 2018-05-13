@@ -45,7 +45,7 @@ public class Combinators {
 	}
 
 	public static <T> ListCombinator<T> combine(List<Arbitrary<T>> listOfArbitraries) {
-		return new ListCombinator<T>(listOfArbitraries);
+		return new ListCombinator<>(listOfArbitraries);
 	}
 
 
@@ -100,7 +100,7 @@ public class Combinators {
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -135,7 +135,7 @@ public class Combinators {
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -174,7 +174,7 @@ public class Combinators {
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -217,7 +217,7 @@ public class Combinators {
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -265,7 +265,7 @@ public class Combinators {
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -317,7 +317,7 @@ public class Combinators {
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
 							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6), (T8) params.get(7));
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}
@@ -347,7 +347,7 @@ public class Combinators {
 
 					Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
 
-					return new CombinedShrinkable<R>(shrinkables, combineFunction);
+					return new CombinedShrinkable<>(shrinkables, combineFunction);
 				};
 			};
 		}

@@ -51,7 +51,7 @@ class GenericTypeTests {
 		assertThat(stringArbitrary.getRawType()).isEqualTo(LocalStringArbitrary.class);
 
 		Optional<GenericType> superClass = stringArbitrary.findSuperType(AbstractArbitraryBase.class);
-		assertThat(superClass.get().isOfType(AbstractArbitraryBase.class));
+		assertThat(superClass.get().isOfType(AbstractArbitraryBase.class)).isTrue();
 
 		Optional<GenericType> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
 		assertThat(arbitraryInterface.get().isOfType(Arbitrary.class)).isTrue();

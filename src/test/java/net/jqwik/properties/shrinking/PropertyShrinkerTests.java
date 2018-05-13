@@ -10,7 +10,6 @@ import java.util.function.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class PropertyShrinkerTests {

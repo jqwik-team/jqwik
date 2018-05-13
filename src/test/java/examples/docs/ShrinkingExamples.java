@@ -34,7 +34,7 @@ class ShrinkingExamples {
 	boolean reverseShouldSwapFirstAndLast(@ForAll List<Integer> aList) {
 		Assume.that(!aList.isEmpty());
 		List<Integer> reversed = brokenReverse(aList);
-		return aList.get(0) == reversed.get(aList.size() - 1);
+		return aList.get(0).equals(reversed.get(aList.size() - 1));
 	}
 
 	@Property

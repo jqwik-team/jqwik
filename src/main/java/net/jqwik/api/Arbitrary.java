@@ -38,7 +38,7 @@ public interface Arbitrary<T> {
 	 *
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
-		return genSize -> new FilteredGenerator<T>(Arbitrary.this.generator(genSize), filterPredicate);
+		return genSize -> new FilteredGenerator<>(Arbitrary.this.generator(genSize), filterPredicate);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code List<T>} using the existing arbitrary for generating the elements of the list.
 	 */
 	default SizableArbitrary<List<T>> list() {
-		return new ListArbitrary<T>(this);
+		return new ListArbitrary<>(this);
 	}
 
 	/**
@@ -113,7 +113,7 @@ public interface Arbitrary<T> {
 	 *            reflection capabilities.
 	 */
 	default <A> SizableArbitrary<A> array(Class<A> arrayClass) {
-		return new ArrayArbitrary<A, T>(arrayClass, this);
+		return new ArrayArbitrary<>(arrayClass, this);
 	}
 
 	/**

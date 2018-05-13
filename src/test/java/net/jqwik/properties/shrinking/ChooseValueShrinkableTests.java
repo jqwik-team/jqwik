@@ -13,7 +13,9 @@ class ChooseValueShrinkableTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
-	private Consumer<Integer> reporter = mock(Consumer.class);
+	@SuppressWarnings("unchecked")
+	private Consumer<Integer> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<Integer>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -28,12 +30,12 @@ class ChooseValueShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(1);
-		verify(reporter).accept(1);
+		verify(valueReporter).accept(1);
 
-		assertThat(sequence.nextValue(count, reporter)).isFalse();
+		assertThat(sequence.next(count, reporter)).isFalse();
 		assertThat(counter.get()).isEqualTo(1);
-		verifyNoMoreInteractions(reporter);
+		verifyNoMoreInteractions(valueReporter);
 	}
 }

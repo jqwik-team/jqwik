@@ -22,7 +22,7 @@ class AssumptionExamples {
 	) {
 		Assume.that(container.contains(contained));
 
-		return container.indexOf(contained) >= 0;
+		return container.contains(contained);
 	}
 
 	@Property
@@ -34,6 +34,6 @@ class AssumptionExamples {
 		Assume.that((length + startIndex) <= container.length());
 
 		String contained = container.substring(startIndex, startIndex + length);
-		return container.indexOf(contained) >= 0;
+		return container.contains(contained);
 	}
 }

@@ -17,8 +17,10 @@ public class ShrinkableStringTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
+
 	@SuppressWarnings("unchecked")
-	private Consumer<String> reporter = mock(Consumer.class);
+	private Consumer<String> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<String>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -35,20 +37,20 @@ public class ShrinkableStringTests {
 
 		ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("bc");
-		verify(reporter).accept("bc");
+		verify(valueReporter).accept("bc");
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("b");
-		verify(reporter).accept("b");
+		verify(valueReporter).accept("b");
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("a");
-		verify(reporter).accept("a");
+		verify(valueReporter).accept("a");
 
-		assertThat(sequence.nextValue(count, reporter)).isFalse();
-		verifyNoMoreInteractions(reporter);
+		assertThat(sequence.next(count, reporter)).isFalse();
+		verifyNoMoreInteractions(valueReporter);
 	}
 
 
@@ -61,13 +63,13 @@ public class ShrinkableStringTests {
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> false);
 
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(2);
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(1);
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(0);
-			assertThat(sequence.nextValue(count, reporter)).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -78,13 +80,13 @@ public class ShrinkableStringTests {
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> false);
 
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(4);
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(3);
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(2);
-			assertThat(sequence.nextValue(count, reporter)).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -95,13 +97,13 @@ public class ShrinkableStringTests {
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
 
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(3);
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(2);
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(1);
-			assertThat(sequence.nextValue(count, reporter)).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(3);
 		}
@@ -113,13 +115,13 @@ public class ShrinkableStringTests {
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> aString.length() <= 1);
 
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo("bb");
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(2);
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(2);
-			assertThat(sequence.nextValue(count, reporter)).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 			assertThat(sequence.current().value()).isEqualTo("aa");
 
 			assertThat(counter.get()).isEqualTo(3);
@@ -134,15 +136,15 @@ public class ShrinkableStringTests {
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(filteredFalsifier);
 
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo("cccc");
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo("cc");
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo("cc");
-			assertThat(sequence.nextValue(count, reporter)).isTrue();
+			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo("");
-			assertThat(sequence.nextValue(count, reporter)).isFalse();
+			assertThat(sequence.next(count, reporter)).isFalse();
 
 			assertThat(counter.get()).isEqualTo(4);
 		}
@@ -156,8 +158,7 @@ public class ShrinkableStringTests {
 				.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
 			ShrinkingSequence<String> sequence = shrinkable.shrink(filteredFalsifier);
 
-			while (sequence.nextValue(count, reporter)) {
-			}
+			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).isEqualTo("b");
 
 			assertThat(counter.get()).isEqualTo(6);
@@ -175,8 +176,7 @@ public class ShrinkableStringTests {
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
 
-			while (sequence.nextValue(count, reporter)) {
-			}
+			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).hasSize(5);
 
 			assertThat(counter.get()).isEqualTo(21);

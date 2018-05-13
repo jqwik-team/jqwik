@@ -67,11 +67,12 @@ public class ArbitraryTestHelper {
 	public static <T> void assertGenerated(RandomGenerator<T> generator, T... expectedValues) {
 		Random random = SourceOfRandomness.current();
 
-		for (int i = 0; i < expectedValues.length; i++) {
+		for (T expectedValue : expectedValues) {
 			Shrinkable<T> actual = generator.next(random);
-			T expected = expectedValues[i];
+			T expected = expectedValue;
 			if (!actual.value().equals(expected))
-				fail(String.format("Generated value [%s] not equals to expected value [%s].", actual.toString(), expected.toString()));
+				fail(String.format("Generated value [%s] not equals to expected value [%s].", actual.toString(), expected
+					.toString()));
 		}
 	}
 

@@ -133,6 +133,7 @@ class SequentialActionSequenceTests {
 		};
 	}
 
+	@SuppressWarnings("unchecked")
 	private SequentialActionSequence<Integer> createSequence(Action<Integer>... actions) {
 		List<Action<Integer>> list = Arrays.asList(actions);
 		return new SequentialActionSequence<>(list);

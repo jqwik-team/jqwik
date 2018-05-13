@@ -16,11 +16,10 @@ class ShrinkingListElementsNotEnough {
 		return aList;
 	}
 
-	// Should shrink to [0, 0, 0, 1] but doesn't
 	@Property
 	boolean reverseShouldSwapFirstAndLast(@ForAll List<Integer> aList) {
 		Assume.that(!aList.isEmpty());
 		List<Integer> reversed = brokenReverse(aList);
-		return aList.get(0) == reversed.get(aList.size() - 1);
+		return aList.get(0).equals(reversed.get(aList.size() - 1));
 	}
 }

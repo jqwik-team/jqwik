@@ -156,7 +156,7 @@ class GenericPropertyTests {
 
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
 				Assumptions.assumeThat(isEven.test(aTry));
-				assertThat(isEven.test(aTry));
+				assertThat(isEven.test(aTry)).isTrue();
 				return true;
 			}, exactlyOneInteger);
 

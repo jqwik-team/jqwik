@@ -1,7 +1,6 @@
 package net.jqwik.discovery.predicates;
 
 import net.jqwik.api.Property;
-import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.lang.reflect.Method;
 import java.util.function.Predicate;

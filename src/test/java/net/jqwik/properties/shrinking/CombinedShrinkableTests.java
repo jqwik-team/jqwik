@@ -2,7 +2,6 @@ package net.jqwik.properties.shrinking;
 
 import net.jqwik.api.*;
 import net.jqwik.properties.shrinking.ShrinkableTypesForTest.*;
-import org.mockito.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -17,7 +16,10 @@ class CombinedShrinkableTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
 	private Runnable count = counter::incrementAndGet;
-	private Consumer<Integer> reportFalsified = ignore -> { };
+
+	@SuppressWarnings("unchecked")
+	private Consumer<Integer> valueReporter = mock(Consumer.class);
+	private Consumer<FalsificationResult<Integer>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -53,10 +55,10 @@ class CombinedShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
 
-		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
-		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
-		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
-		assertThat(sequence.nextValue(count, reportFalsified)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 
 		assertThat(sequence.current().value()).isEqualTo(4);
 		assertThat(sequence.current().distance()).isEqualTo(ShrinkingDistance.of(0, 4));
@@ -64,9 +66,6 @@ class CombinedShrinkableTests {
 
 	@Example
 	void reportFalsifier() {
-
-		@SuppressWarnings("unchecked")
-		Consumer<Integer> reporter = Mockito.mock(Consumer.class);
 
 		Shrinkable three = new OneStepShrinkable(3);
 		Shrinkable five = new OneStepShrinkable(5);
@@ -82,23 +81,23 @@ class CombinedShrinkableTests {
 
 		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(7);
-		verify(reporter).accept(7);
+		verify(valueReporter).accept(7);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(6);
-		verify(reporter).accept(6);
+		verify(valueReporter).accept(6);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(5);
-		verify(reporter).accept(5);
+		verify(valueReporter).accept(5);
 
-		assertThat(sequence.nextValue(count, reporter)).isTrue();
+		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(4);
-		verify(reporter).accept(4);
+		verify(valueReporter).accept(4);
 
-		verifyNoMoreInteractions(reporter);
+		verifyNoMoreInteractions(valueReporter);
 	}
 
 }
