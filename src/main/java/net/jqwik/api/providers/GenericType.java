@@ -53,7 +53,7 @@ public class GenericType {
 		return new GenericType(type);
 	}
 
-	public static GenericType forWildcard(WildcardType wildcardType) {
+	private static GenericType forWildcard(WildcardType wildcardType) {
 		return new GenericType(
 			Object.class,
 			WILDCARD,
