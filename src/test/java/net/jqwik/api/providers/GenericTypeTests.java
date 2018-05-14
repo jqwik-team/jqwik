@@ -216,10 +216,9 @@ class GenericTypeTests {
 
 			// TODO: This string changes from Java 8 to 9 :-(
 			// assertThat(stringType.toString()).isEqualTo("@net.jqwik.api.constraints.StringLength(value=0, max=2, min=0) "
-			//												+ "@net.jqwik.api.constraints.CharRange(from=a, to=z) String");
-
+			// Java 8:										+ "@net.jqwik.api.constraints.CharRange(from=a, to=z) String");
+			// Java 9:										+ "@net.jqwik.api.constraints.CharRange(from='a', to='z') String");
 		}
-
 	}
 
 	@Group
