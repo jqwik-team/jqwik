@@ -1,5 +1,4 @@
 - Javadoc:
   - ArbitraryConfigurator
-  - Arbitraries methods
   - Arbitrary methods
   - Fluent configurator methods
