@@ -400,7 +400,15 @@ public class Arbitraries {
 		return elementArbitrary.array(arrayClass).ofMinSize(minSize).ofMaxSize(maxSize);
 	}
 
-	// TODO: Is there a notable difference between samples() and choose() ?
+	/**
+	 * Create an arbitrary that will provide the sample values from first to last
+	 * and then start again at the beginning. Shrinking of samples is tried
+	 * towards the start of the samples.
+	 *
+	 * @param samples The array of sample values
+	 * @param <T> The type of values to generate
+	 * @return a new arbitrary instance
+	 */
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
 		return fromGenerator(RandomGenerators.samples(samples));
