@@ -15,7 +15,7 @@ public interface ComparatorContract<T> {
 	Comparator<T> subject();
 
 	@Property
-	default void symmetry(T x, T y) {
+	default void symmetry(@ForAll T x, @ForAll T y) {
 		Comparator<T> subject = subject();
 
 		Assertions.assertThat(signum(subject.compare(x, y))).isEqualTo(-signum(subject.compare(y, x)));
