@@ -144,6 +144,7 @@ dependencies {
 	compile("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
 	compile("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	compile("org.apiguardian:apiguardian-api:1.0.0")
+	compile("ru.vyarus:generics-resolver:2.0.1")
 
 	testCompile("org.mockito:mockito-core:2.18.0")
 	testCompile("org.assertj:assertj-core:3.9.1")

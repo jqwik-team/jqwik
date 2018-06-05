@@ -22,7 +22,7 @@ public class CheckedPropertyFactory {
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
 		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
-		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod);
+		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor, testInstance);
 		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, configuration);
 	}
@@ -41,9 +41,9 @@ public class CheckedPropertyFactory {
 			};
 	}
 
-	private List<MethodParameter> extractForAllParameters(Method targetMethod) {
+	private List<MethodParameter> extractForAllParameters(Method targetMethod, Class<?> containerClass) {
 		return Arrays //
-				.stream(JqwikReflectionSupport.getMethodParameters(targetMethod)) //
+				.stream(JqwikReflectionSupport.getMethodParameters(targetMethod, containerClass)) //
 				.filter(this::isForAllPresent) //
 				.collect(Collectors.toList());
 	}

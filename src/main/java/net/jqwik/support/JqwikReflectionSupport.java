@@ -2,6 +2,8 @@ package net.jqwik.support;
 
 import net.jqwik.discovery.predicates.*;
 import org.junit.platform.commons.support.*;
+import ru.vyarus.java.generics.resolver.*;
+import ru.vyarus.java.generics.resolver.context.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -139,6 +141,25 @@ public class JqwikReflectionSupport {
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
 			AnnotatedType annotatedType = annotatedTypes[i];
+			MethodParameter methodParameter = new MethodParameter(parameter, annotatedType);
+			list.add(methodParameter);
+		}
+		return list.toArray(new MethodParameter[parameters.length]);
+	}
+
+	public static MethodParameter[] getMethodParameters(Method method, Class<?> containerClass) {
+
+		GenericsContext context = GenericsResolver.resolve(containerClass).type(method.getDeclaringClass());
+
+		List<MethodParameter> list = new ArrayList<>();
+		Parameter[] parameters = method.getParameters();
+		AnnotatedType[] annotatedTypes = method.getAnnotatedParameterTypes();
+		List<Class<?>> resolvedGenericParameters = context.method(method).resolveParameters();
+
+		for (int i = 0; i < parameters.length; i++) {
+			Parameter parameter = parameters[i];
+			AnnotatedType annotatedType = annotatedTypes[i];
+			Class<?> resolvedParameter = resolvedGenericParameters.get(i);
 			MethodParameter methodParameter = new MethodParameter(parameter, annotatedType);
 			list.add(methodParameter);
 		}
