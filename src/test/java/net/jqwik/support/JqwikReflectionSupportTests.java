@@ -62,6 +62,25 @@ class JqwikReflectionSupportTests {
 			Assertions.assertThat(param2.getAnnotatedType().getAnnotatedActualTypeArguments()[0].getType()).isEqualTo(Integer.class);
 			Assertions.assertThat(param2.getParameterizedType()).isEqualTo(param2.getAnnotatedType().getType());
 		}
+
+		@Example
+		void typeVariableParameter() throws NoSuchMethodException {
+			class ClassWithTypeVariableMethod {
+				public <T> void method(T param1) {
+
+				}
+			}
+
+			Method method = ClassWithTypeVariableMethod.class.getMethod("method", Object.class);
+			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithTypeVariableMethod.class);
+
+			MethodParameter param1 = parameters[0];
+			Assertions.assertThat(param1.getType()).isEqualTo(Object.class);
+			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
+			Assertions.assertThat(param1.getAnnotatedType()).isNull();
+			Assertions.assertThat(param1.getParameterizedType()).isEqualTo(Object.class);
+
+		}
 	}
 
 	@Example
