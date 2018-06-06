@@ -133,6 +133,7 @@ public class JqwikReflectionSupport {
 				.collect(toSet());
 	}
 
+	@Deprecated
 	public static MethodParameter[] getMethodParameters(Method method) {
 		List<MethodParameter> list = new ArrayList<>();
 		Parameter[] parameters = method.getParameters();
