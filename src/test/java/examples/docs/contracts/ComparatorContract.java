@@ -14,7 +14,7 @@ import static java.lang.Integer.signum;
 public interface ComparatorContract<T> {
 	Comparator<T> subject();
 
-	@Property
+	@Property(reporting = Reporting.GENERATED)
 	default void symmetry(@ForAll T x, @ForAll T y) {
 		Comparator<T> subject = subject();
 

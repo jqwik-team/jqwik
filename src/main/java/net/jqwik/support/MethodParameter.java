@@ -10,13 +10,18 @@ public class MethodParameter {
 
 	private final Parameter parameter;
 	private final AnnotatedType annotatedType;
+	private final Class<?> resolvedType;
 
-	public MethodParameter(Parameter parameter, AnnotatedType annotatedType) {
+	public MethodParameter(Parameter parameter, AnnotatedType annotatedType, Class<?> resolvedType) {
 		this.parameter = parameter;
 		this.annotatedType = annotatedType;
+		this.resolvedType = resolvedType;
 	}
 
 	public boolean isAnnotatedParameterized() {
+		if (typeVariableWasResolved()) {
+			return false;
+		}
 		return (annotatedType instanceof AnnotatedParameterizedType);
 	}
 
@@ -33,11 +38,18 @@ public class MethodParameter {
 	}
 
 	public Class<?> getType() {
-		return parameter.getType();
+		return resolvedType != null ? resolvedType : parameter.getType();
 	}
 
 	public Type getParameterizedType() {
+		if (typeVariableWasResolved()) {
+			return resolvedType;
+		}
 		return parameter.getParameterizedType();
+	}
+
+	private boolean typeVariableWasResolved() {
+		return resolvedType != null && resolvedType != parameter.getType();
 	}
 
 	@Override

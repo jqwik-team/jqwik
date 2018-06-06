@@ -11,11 +11,11 @@ import java.util.stream.*;
 
 public class TestHelper {
 	public static List<MethodParameter> getParametersFor(Class<?> aClass, String methodName) {
-		return getParameters(getMethod(aClass, methodName));
+		return getParameters(getMethod(aClass, methodName), aClass);
 	}
 
-	private static List<MethodParameter> getParameters(Method method) {
-		return Arrays.stream(JqwikReflectionSupport.getMethodParameters(method)).collect(Collectors.toList());
+	private static List<MethodParameter> getParameters(Method method, Class<?> containerClass) {
+		return Arrays.stream(JqwikReflectionSupport.getMethodParameters(method, containerClass)).collect(Collectors.toList());
 	}
 
 	public static Method getMethod(Class<?> aClass, String methodName) {

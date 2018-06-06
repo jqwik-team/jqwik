@@ -133,21 +133,6 @@ public class JqwikReflectionSupport {
 				.collect(toSet());
 	}
 
-	@Deprecated
-	public static MethodParameter[] getMethodParameters(Method method) {
-		List<MethodParameter> list = new ArrayList<>();
-		Parameter[] parameters = method.getParameters();
-		AnnotatedType[] annotatedTypes = method.getAnnotatedParameterTypes();
-
-		for (int i = 0; i < parameters.length; i++) {
-			Parameter parameter = parameters[i];
-			AnnotatedType annotatedType = annotatedTypes[i];
-			MethodParameter methodParameter = new MethodParameter(parameter, annotatedType);
-			list.add(methodParameter);
-		}
-		return list.toArray(new MethodParameter[parameters.length]);
-	}
-
 	public static MethodParameter[] getMethodParameters(Method method, Class<?> containerClass) {
 
 		GenericsContext context = GenericsResolver.resolve(containerClass).type(method.getDeclaringClass());
@@ -161,7 +146,7 @@ public class JqwikReflectionSupport {
 			Parameter parameter = parameters[i];
 			AnnotatedType annotatedType = annotatedTypes[i];
 			Class<?> resolvedParameter = resolvedGenericParameters.get(i);
-			MethodParameter methodParameter = new MethodParameter(parameter, annotatedType);
+			MethodParameter methodParameter = new MethodParameter(parameter, annotatedType, resolvedParameter);
 			list.add(methodParameter);
 		}
 		return list.toArray(new MethodParameter[parameters.length]);

@@ -105,7 +105,7 @@ class GenericTypeTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withParameter", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			GenericType tupleType = GenericType.forParameter(parameter);
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
@@ -124,7 +124,7 @@ class GenericTypeTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			GenericType parameterType = GenericType.forParameter(parameter);
 			assertThat(parameterType.getRawType()).isEqualTo(List.class);
 			assertThat(parameterType.getAnnotations().get(0)).isInstanceOf(Size.class);
@@ -143,7 +143,7 @@ class GenericTypeTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			GenericType wildcardType = GenericType.forParameter(parameter);
 
 			GenericType first = wildcardType.getTypeArguments().get(0);
@@ -173,7 +173,7 @@ class GenericTypeTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			GenericType typeVariableType = GenericType.forParameter(parameter);
 
 			GenericType first = typeVariableType.getTypeArguments().get(0);
@@ -206,7 +206,7 @@ class GenericTypeTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			GenericType listType = GenericType.forParameter(parameter);
 			assertThat(listType.getAnnotations().get(0)).isInstanceOf(Size.class);
 			GenericType stringType = listType.getTypeArguments().get(0);
