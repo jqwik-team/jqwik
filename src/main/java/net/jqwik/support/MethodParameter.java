@@ -12,9 +12,9 @@ public class MethodParameter {
 	private final AnnotatedType annotatedType;
 	private final Class<?> resolvedType;
 
-	public MethodParameter(Parameter parameter, AnnotatedType annotatedType, Class<?> resolvedType) {
+	public MethodParameter(Parameter parameter, Class<?> resolvedType) {
 		this.parameter = parameter;
-		this.annotatedType = annotatedType;
+		this.annotatedType = parameter.getAnnotatedType();
 		this.resolvedType = resolvedType;
 	}
 

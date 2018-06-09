@@ -102,6 +102,28 @@ class JqwikReflectionSupportTests {
 			Assertions.assertThat(param1.getAnnotatedType()).isNull();
 			Assertions.assertThat(param1.getParameterizedType()).isEqualTo(String.class);
 		}
+
+		//@Example TODO: Does not work yet
+		void parameterWithGenericTypeResolvedInSubclass() throws NoSuchMethodException {
+			class ClassWithGenericType<T> {
+				public<S> void method(@ForAll List<T> param1, @ForAll List<S> param2) {
+
+				}
+			}
+
+			class ClassWithListOfString extends ClassWithGenericType<String> {
+
+			}
+
+			Method method = ClassWithListOfString.class.getMethod("method", List.class, List.class);
+			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithListOfString.class);
+
+			MethodParameter param1 = parameters[0];
+			Assertions.assertThat(param1.getType()).isEqualTo(List.class);
+			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
+			Assertions.assertThat(param1.getAnnotatedType()).isNull();
+			Assertions.assertThat(param1.getParameterizedType()).isEqualTo(String.class);
+		}
 	}
 
 	@Example
