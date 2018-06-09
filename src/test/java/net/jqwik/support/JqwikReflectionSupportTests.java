@@ -54,14 +54,12 @@ class JqwikReflectionSupportTests {
 			Assertions.assertThat(param1.getType()).isEqualTo(String.class);
 			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
 			Assertions.assertThat(param1.getAnnotatedType()).isNull();
-			Assertions.assertThat(param1.getParameterizedType()).isEqualTo(String.class);
 			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
 			MethodParameter param2 = parameters[1];
-			Assertions.assertThat(param2.getType()).isEqualTo(List.class);
+			Assertions.assertThat(param2.getType()).isEqualTo(param2.getAnnotatedType().getType());
 			Assertions.assertThat(param2.isAnnotatedParameterized()).isTrue();
 			Assertions.assertThat(param2.getAnnotatedType().getAnnotatedActualTypeArguments()[0].getType()).isEqualTo(Integer.class);
-			Assertions.assertThat(param2.getParameterizedType()).isEqualTo(param2.getAnnotatedType().getType());
 			Assertions.assertThat(param2.findAllAnnotations()).isEmpty();
 		}
 
@@ -77,10 +75,9 @@ class JqwikReflectionSupportTests {
 			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithTypeVariableMethod.class);
 
 			MethodParameter param1 = parameters[0];
-			Assertions.assertThat(param1.getType()).isEqualTo(Object.class);
+			Assertions.assertThat(param1.getType()).isInstanceOf(TypeVariable.class);
 			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
 			Assertions.assertThat(param1.getAnnotatedType()).isNull();
-			Assertions.assertThat(param1.getParameterizedType()).isInstanceOf(TypeVariable.class);
 		}
 
 		@Example
@@ -100,7 +97,6 @@ class JqwikReflectionSupportTests {
 
 			MethodParameter param1 = parameters[0];
 			Assertions.assertThat(param1.getType()).isEqualTo(String.class);
-			Assertions.assertThat(param1.getParameterizedType()).isEqualTo(String.class);
 			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
 			// TODO: if ClassWithTypeVariable<@MyAnnotation String> has annotations
@@ -109,7 +105,8 @@ class JqwikReflectionSupportTests {
 			Assertions.assertThat(param1.getAnnotatedType()).isNull();
 		}
 
-		//@Example //TODO: Does not work yet
+		// TODO: Does not work yet, see JqwikReflectionSupport.resolveGenericParameters
+		//@Example
 		void parameterWithGenericTypeResolvedInSubclass() throws NoSuchMethodException {
 			class ClassWithGenericType<T> {
 				public<S> void method(@ForAll List<T> param1, @ForAll List<S> param2) {
@@ -125,11 +122,13 @@ class JqwikReflectionSupportTests {
 			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithListOfString.class);
 
 			MethodParameter param1 = parameters[0];
-			Assertions.assertThat(param1.getType()).isEqualTo(List.class);
+			Assertions.assertThat(param1.getType()).isInstanceOf(ParameterizedType.class);
+			Assertions.assertThat(((ParameterizedType) param1.getType()).getRawType()).isEqualTo(List.class);
+			Assertions.assertThat(((ParameterizedType) param1.getType()).getActualTypeArguments()).containsExactly(String.class);
+			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
+
 			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
 			Assertions.assertThat(param1.getAnnotatedType()).isNull();
-			Assertions.assertThat(param1.getParameterizedType()).isEqualTo(String.class);
-			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
 		}
 	}

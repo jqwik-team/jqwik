@@ -17,7 +17,7 @@ public class MethodParameter {
 	}
 
 	public boolean isAnnotatedParameterized() {
-		if (typeVariableWasResolved()) {
+		if (genericsCouldBeResolved()) {
 			return false;
 		}
 		return (parameter.getAnnotatedType() instanceof AnnotatedParameterizedType);
@@ -36,17 +36,10 @@ public class MethodParameter {
 	}
 
 	public Type getType() {
-		return typeVariableWasResolved() ? resolvedType : parameter.getType();
+		return genericsCouldBeResolved() ? resolvedType : parameter.getParameterizedType();
 	}
 
-	public Type getParameterizedType() {
-		if (typeVariableWasResolved()) {
-			return resolvedType;
-		}
-		return parameter.getParameterizedType();
-	}
-
-	private boolean typeVariableWasResolved() {
+	private boolean genericsCouldBeResolved() {
 		return resolvedType != null;
 	}
 

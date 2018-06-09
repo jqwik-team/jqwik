@@ -96,9 +96,9 @@ public class GenericType {
 	private GenericType(MethodParameter parameter) {
 		this(
 			extractRawType(parameter.getType()),
-			extractTypeVariable(parameter.getParameterizedType()),
-			extractUpperBounds(parameter.getParameterizedType()),
-			extractLowerBounds(parameter.getParameterizedType()),
+			extractTypeVariable(parameter.getType()),
+			extractUpperBounds(parameter.getType()),
+			extractLowerBounds(parameter.getType()),
 			extractTypeArguments(parameter),
 			parameter.findAllAnnotations()
 		);
@@ -135,7 +135,7 @@ public class GenericType {
 		if (parameter.isAnnotatedParameterized()) {
 			return extractAnnotatedTypeArguments(parameter.getAnnotatedType());
 		} else {
-			return extractPlainTypeArguments(parameter.getParameterizedType());
+			return extractPlainTypeArguments(parameter.getType());
 		}
 	}
 
