@@ -9,12 +9,10 @@ import java.util.*;
 public class MethodParameter {
 
 	private final Parameter parameter;
-	private final AnnotatedType annotatedType;
-	private final Class<?> resolvedType;
+	private final Type resolvedType;
 
-	public MethodParameter(Parameter parameter, Class<?> resolvedType) {
+	public MethodParameter(Parameter parameter, Type resolvedType) {
 		this.parameter = parameter;
-		this.annotatedType = parameter.getAnnotatedType();
 		this.resolvedType = resolvedType;
 	}
 
@@ -22,7 +20,7 @@ public class MethodParameter {
 		if (typeVariableWasResolved()) {
 			return false;
 		}
-		return (annotatedType instanceof AnnotatedParameterizedType);
+		return (parameter.getAnnotatedType() instanceof AnnotatedParameterizedType);
 	}
 
 	public boolean isAnnotated(Class<? extends Annotation> annotationType) {
@@ -37,8 +35,8 @@ public class MethodParameter {
 		return AnnotationSupport.findAnnotation(parameter, annotationClass);
 	}
 
-	public Class<?> getType() {
-		return resolvedType != null ? resolvedType : parameter.getType();
+	public Type getType() {
+		return typeVariableWasResolved() ? resolvedType : parameter.getType();
 	}
 
 	public Type getParameterizedType() {
@@ -49,7 +47,7 @@ public class MethodParameter {
 	}
 
 	private boolean typeVariableWasResolved() {
-		return resolvedType != null && resolvedType != parameter.getType();
+		return resolvedType != null;
 	}
 
 	@Override
@@ -63,7 +61,7 @@ public class MethodParameter {
 
 	public AnnotatedParameterizedType getAnnotatedType() {
 		if (isAnnotatedParameterized())
-			return (AnnotatedParameterizedType) annotatedType;
+			return (AnnotatedParameterizedType) parameter.getAnnotatedType();
 		else
 			return null;
 	}

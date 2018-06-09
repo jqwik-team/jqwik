@@ -85,7 +85,8 @@ public class JqwikReflectionSupport {
 	 * @return List of found methods
 	 */
 	public static List<Method> findMethodsPotentiallyOuter(Class<?> clazz, Predicate<Method> predicate,
-			HierarchyTraversalMode traversalMode) {
+														   HierarchyTraversalMode traversalMode
+	) {
 
 		List<Method> foundMethods = new ArrayList<>();
 		foundMethods.addAll(ReflectionSupport.findMethods(clazz, predicate, traversalMode));
@@ -129,26 +130,47 @@ public class JqwikReflectionSupport {
 		// Especially under Java 9's module system this will probably no longer work.
 		String classpath = System.getProperty("java.class.path");
 		return Arrays.stream(classpath.split(File.pathSeparator)) //
-				.map(Paths::get).filter(Files::isDirectory) //
-				.collect(toSet());
+					 .map(Paths::get).filter(Files::isDirectory) //
+					 .collect(toSet());
 	}
 
 	public static MethodParameter[] getMethodParameters(Method method, Class<?> containerClass) {
 
-		GenericsContext context = GenericsResolver.resolve(containerClass).type(method.getDeclaringClass());
-
 		List<MethodParameter> list = new ArrayList<>();
 		Parameter[] parameters = method.getParameters();
-		MethodGenericsContext methodContext = context.method(method);
-		List<Class<?>> resolvedGenericParameters = methodContext.resolveParameters();
+
+		List<Type> resolvedGenericParameters = resolveGenericParameters(method, containerClass);
 
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
-			Class<?> resolvedParameter = resolvedGenericParameters.get(i);
+			Type resolvedParameter = resolvedGenericParameters.get(i);
 			MethodParameter methodParameter = new MethodParameter(parameter, resolvedParameter);
 			list.add(methodParameter);
 		}
 		return list.toArray(new MethodParameter[parameters.length]);
+	}
+
+	private static List<Type> resolveGenericParameters(Method method, Class<?> containerClass) {
+
+		// TODO: GenericsContext cannot resolve parameter who are generic types themselves, e.g. List<T>
+		//       I probably have to build my own generics resolver
+		GenericsContext context = GenericsResolver.resolve(containerClass).type(method.getDeclaringClass());
+		MethodGenericsContext methodContext = context.method(method);
+		List<Class<?>> resolvedParameters = methodContext.resolveParameters();
+		Parameter[] parameters = method.getParameters();
+
+		List<Type> genericParameters = new ArrayList<>();
+		for (int i = 0; i < resolvedParameters.size(); i++) {
+			Class<?> resolvedParameter = resolvedParameters.get(i);
+			if (resolvedParameter == parameters[i].getType()) {
+				genericParameters.add(null);
+			} else {
+				genericParameters.add(resolvedParameter);
+			}
+		}
+
+		return genericParameters;
+
 	}
 
 	public static boolean isPublic(Class<?> clazz) {

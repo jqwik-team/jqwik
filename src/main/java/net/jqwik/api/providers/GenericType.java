@@ -95,7 +95,7 @@ public class GenericType {
 
 	private GenericType(MethodParameter parameter) {
 		this(
-			parameter.getType(),
+			extractRawType(parameter.getType()),
 			extractTypeVariable(parameter.getParameterizedType()),
 			extractUpperBounds(parameter.getParameterizedType()),
 			extractLowerBounds(parameter.getParameterizedType()),
