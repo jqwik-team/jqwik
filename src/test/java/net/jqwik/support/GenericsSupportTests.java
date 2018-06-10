@@ -5,7 +5,7 @@ import net.jqwik.api.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @Group()
 @Label("GenericsSupport")
@@ -126,5 +126,35 @@ class GenericsSupportTests {
 			assertThat(genericSupertypes).hasSize(3);
 		}
 
+	}
+
+	@Group
+	@Label("parameter resolution")
+	class ParameterResolution {
+
+		private GenericsContext context = GenericsSupport.contextFor(ClassWithString.class);
+
+		@Example
+		void nonGenericParameter() throws NoSuchMethodException {
+			Method methodWithString = ClassWithString.class.getMethod("methodWithStringParameter", String.class);
+			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
+			assertThat(resolvedType).isEqualTo(String.class);
+		}
+
+		@Example
+		void parameterWithTypeVariable() throws NoSuchMethodException {
+			Method methodWithString = ClassWithString.class.getMethod("methodWithTypeParameter", Object.class);
+			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
+			assertThat(resolvedType).isEqualTo(String.class);
+		}
+	}
+
+	interface MyInterface<T> {
+		default void methodWithStringParameter(String param) {}
+
+		default void methodWithTypeParameter(T param) {}
+	}
+
+	class ClassWithString implements MyInterface<String> {
 	}
 }

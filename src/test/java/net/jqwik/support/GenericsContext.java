@@ -31,4 +31,8 @@ public class GenericsContext {
 	public String toString() {
 		return String.format("GenericsContext(%s)", contextClass.getSimpleName());
 	}
+
+	public Type resolveParameter(Parameter parameter) {
+		return parameter.getParameterizedType();
+	}
 }
