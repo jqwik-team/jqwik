@@ -147,6 +147,13 @@ class GenericsSupportTests {
 			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolvedType).isEqualTo(String.class);
 		}
+
+		// TODO: Many more tests
+		// List<T> -> List<String>
+		// List<Iterable<T>> -> List<Iterable<String>>
+		// type variable with same name but declared in method -> no resolution
+		// several resolved types variable
+		// type variable from super super type
 	}
 
 	interface MyInterface<T> {
