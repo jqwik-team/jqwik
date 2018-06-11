@@ -136,7 +136,7 @@ class GenericsSupportTests {
 		@Label("no generic parameter")
 		void nonGenericParameter() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
-			Method methodWithString = MyInterfaceWithStringAndInteger.class.getMethod("methodWithStringParameter", String.class);
+			Method methodWithString = MyInterface.class.getMethod("methodWithStringParameter", String.class);
 			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolvedType).isEqualTo(String.class);
 		}
@@ -145,7 +145,7 @@ class GenericsSupportTests {
 		@Label("type variable from interface")
 		void parameterWithTypeVariableFromInterface() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
-			Method methodWithString = MyInterfaceWithStringAndInteger.class.getMethod("methodWithTypeParameter", Object.class);
+			Method methodWithString = MyInterface.class.getMethod("methodWithTypeParameter", Object.class);
 			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolvedType).isEqualTo(String.class);
 		}
@@ -154,9 +154,9 @@ class GenericsSupportTests {
 		@Label("two type variables")
 		void parameterWithTypeVariablesFromDifferentInterfaces() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
-			Method methodWithString = MyInterfaceWithStringAndInteger.class.getMethod("methodWithTwoTypeParameters", Object.class, Object.class);
-			assertThat(context.resolveParameter(methodWithString.getParameters()[0])).isEqualTo(String.class);
-			assertThat(context.resolveParameter(methodWithString.getParameters()[1])).isEqualTo(Integer.class);
+			Method method = MyInterface.class.getMethod("methodWithTwoTypeParameters", Object.class, Object.class);
+			assertThat(context.resolveParameter(method.getParameters()[0])).isEqualTo(String.class);
+			assertThat(context.resolveParameter(method.getParameters()[1])).isEqualTo(Integer.class);
 		}
 
 		@Example
@@ -172,7 +172,7 @@ class GenericsSupportTests {
 		@Label("type variable resolved to generic type")
 		void parameterWithTypeVariableResolvedToGenericType() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyClassWithStringList.class);
-			Method methodWithString = MyClassWithString.class.getMethod("methodWithTypeParameter", Object.class);
+			Method methodWithString = MyClass.class.getMethod("methodWithTypeParameter", Object.class);
 			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolvedType.getRawType()).isEqualTo(List.class);
 			assertThat(resolvedType.getActualTypeArguments()[0]).isEqualTo(String.class);
@@ -182,8 +182,8 @@ class GenericsSupportTests {
 		@Label("type variable from method should not be resolved")
 		void parameterWithTypeVariableFromMethod() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyClassWithString.class);
-			Method methodWithString = MyClassWithString.class.getMethod("typedMethodWithParameter", Object.class);
-			Parameter parameter = methodWithString.getParameters()[0];
+			Method method = MyClass.class.getMethod("typedMethodWithParameter", Object.class);
+			Parameter parameter = method.getParameters()[0];
 			Type resolvedType = context.resolveParameter(parameter);
 			assertThat(resolvedType).isInstanceOf(TypeVariable.class);
 			assertThat(resolvedType).isSameAs(parameter.getParameterizedType());
@@ -193,16 +193,16 @@ class GenericsSupportTests {
 		@Label("type variables from further up in class hierarchy")
 		void parameterWithTypeVariablesFromFurtherUpInClassHierarchy() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceFurtherDown.class);
-			Method methodWithString = MyInterfaceFurtherDown.class.getMethod("methodWithTwoTypeParameters", Object.class, Object.class);
-			assertThat(context.resolveParameter(methodWithString.getParameters()[0])).isEqualTo(String.class);
-			assertThat(context.resolveParameter(methodWithString.getParameters()[1])).isEqualTo(Integer.class);
+			Method method = MyInterface.class.getMethod("methodWithTwoTypeParameters", Object.class, Object.class);
+			assertThat(context.resolveParameter(method.getParameters()[0])).isEqualTo(String.class);
+			assertThat(context.resolveParameter(method.getParameters()[1])).isEqualTo(Integer.class);
 		}
 
 		@Example
 		@Label("type variables from further up in interface hierarchy")
 		void parameterWithTypeVariablesFromFurtherUpInInterfaceHierarchy() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceFurtherDown.class);
-			Method methodWithString = MyInterfaceFurtherDown.class.getMethod("poop", Object.class);
+			Method methodWithString = StringPooper.class.getMethod("poop", Object.class);
 			assertThat(context.resolveParameter(methodWithString.getParameters()[0])).isEqualTo(String.class);
 		}
 
@@ -210,8 +210,8 @@ class GenericsSupportTests {
 		@Label("list of type variable")
 		void parameterWithListOfTypeVariable() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
-			Method methodWithString = MyInterfaceWithStringAndInteger.class.getMethod("methodWithListOfTypeParameter", List.class);
-			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(methodWithString.getParameters()[0]);
+			Method methodWithListOfString = MyInterface.class.getMethod("methodWithListOfTypeParameter", List.class);
+			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(methodWithListOfString.getParameters()[0]);
 			assertThat(resolvedType.getTypeName()).isEqualTo("java.util.List<java.lang.String>");
 		}
 
@@ -219,13 +219,30 @@ class GenericsSupportTests {
 		@Label("nested type variable")
 		void parameterWithNestedTypeVariable() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
-			Method methodWithString = MyInterfaceWithStringAndInteger.class.getMethod("methodWithNestedTypeParameter", List.class);
-			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(methodWithString.getParameters()[0]);
+			Method method = MyInterface.class.getMethod("methodWithNestedTypeParameter", List.class);
+			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(method.getParameters()[0]);
 			assertThat(resolvedType.getTypeName()).isEqualTo("java.util.List<java.lang.Iterable<java.lang.String>>");
 		}
 
-		//TODO: Test where variables are mapped on each other
+		@Example
+		@Label("type variable mapped on each other")
+		void parameterWithMappedTypeVariables() throws NoSuchMethodException {
+			class MyInterfaceWithX<X> implements MyInterface<X, Integer> {
+			}
 
+			class AllResolved extends MyInterfaceWithX<String> {
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(AllResolved.class);
+
+			Method methodWithStringAndInteger = MyInterface.class.getMethod("methodWithTwoTypeParameters", Object.class, Object.class);
+			assertThat(context.resolveParameter(methodWithStringAndInteger.getParameters()[0])).isEqualTo(String.class);
+			assertThat(context.resolveParameter(methodWithStringAndInteger.getParameters()[1])).isEqualTo(Integer.class);
+
+			Method methodWithListOfString = MyInterface.class.getMethod("methodWithListOfTypeParameter", List.class);
+			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(methodWithListOfString.getParameters()[0]);
+			assertThat(resolvedType.getTypeName()).isEqualTo("java.util.List<java.lang.String>");
+		}
 	}
 
 	interface MyInterface<T, U> {

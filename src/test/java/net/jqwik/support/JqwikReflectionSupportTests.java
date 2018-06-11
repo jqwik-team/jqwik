@@ -43,7 +43,6 @@ class JqwikReflectionSupportTests {
 		void simpleParameters() throws NoSuchMethodException {
 			class ClassWithMethod {
 				public void method(@ForAll String param1, List<Integer> param2) {
-
 				}
 			}
 
@@ -67,7 +66,6 @@ class JqwikReflectionSupportTests {
 		void typeVariableParameter() throws NoSuchMethodException {
 			class ClassWithTypeVariableMethod {
 				public <T> void method(T param1) {
-
 				}
 			}
 
@@ -84,12 +82,10 @@ class JqwikReflectionSupportTests {
 		void typeVariableParameterResolvedInSubclass() throws NoSuchMethodException {
 			class ClassWithTypeVariable<T> {
 				public void method(@ForAll T param1) {
-
 				}
 			}
 
 			class ClassWithString extends ClassWithTypeVariable<String> {
-
 			}
 
 			Method method = ClassWithString.class.getMethod("method", Object.class);
@@ -105,20 +101,17 @@ class JqwikReflectionSupportTests {
 			Assertions.assertThat(param1.getAnnotatedType()).isNull();
 		}
 
-		// TODO: Does not work yet, see JqwikReflectionSupport.resolveGenericParameters
-		//@Example
+		@Example
 		void parameterWithGenericTypeResolvedInSubclass() throws NoSuchMethodException {
 			class ClassWithGenericType<T> {
-				public<S> void method(@ForAll List<T> param1, @ForAll List<S> param2) {
-
+				public void method(@ForAll List<T> param1) {
 				}
 			}
 
 			class ClassWithListOfString extends ClassWithGenericType<String> {
-
 			}
 
-			Method method = ClassWithListOfString.class.getMethod("method", List.class, List.class);
+			Method method = ClassWithListOfString.class.getMethod("method", List.class);
 			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithListOfString.class);
 
 			MethodParameter param1 = parameters[0];

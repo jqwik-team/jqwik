@@ -41,7 +41,7 @@ public class MethodParameter {
 	}
 
 	private boolean genericsCouldBeResolved() {
-		return resolvedType != parameter.getParameterizedType();
+		return !resolvedType.equals(parameter.getParameterizedType());
 	}
 
 	@Override

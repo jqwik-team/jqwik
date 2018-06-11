@@ -83,7 +83,12 @@ public class GenericsClassContext {
 	public Type resolveVariable(TypeVariable typeVariable) {
 		GenericVariable variable = new GenericVariable(typeVariable);
 		Type localResolution = resolutions.getOrDefault(variable, typeVariable);
-		return resolveInSupertypes(localResolution);
+		Type resolvedType = resolveInSupertypes(localResolution);
+		if (resolvedType == typeVariable) {
+			return resolvedType;
+		}
+		// Recursive resolution necessary for variables mapped on variables
+		return resolveType(resolvedType);
 	}
 
 	protected Type resolveInSupertypes(Type typeToResolve) {
@@ -126,6 +131,11 @@ public class GenericsClassContext {
 			int result = name.hashCode();
 			result = 31 * result + declaration.hashCode();
 			return result;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("<%s>", name);
 		}
 	}
 
