@@ -11,7 +11,7 @@ import static java.lang.Integer.signum;
  * Example was "borrowed" from junit-quickcheck.
  * See http://pholser.github.io/junit-quickcheck/site/0.8/usage/contract-tests.html
  */
-public interface ComparatorContract<T> {
+interface ComparatorContract<T> {
 	Comparator<T> subject();
 
 	@Property(reporting = Reporting.GENERATED)
@@ -21,6 +21,17 @@ public interface ComparatorContract<T> {
 		Assertions.assertThat(signum(subject.compare(x, y))).isEqualTo(-signum(subject.compare(y, x)));
 	}
 
+	@Property(reporting = Reporting.GENERATED)
+	default boolean sorting(@ForAll("listOfT") List<T> aList) {
+		aList.sort(subject());
+		return isSorted(aList);
+	}
+
+	boolean isSorted(List<T> aList);
+
 	@Provide
 	Arbitrary<T> anyT();
+
+	@Provide
+	Arbitrary<List<T>> listOfT();
 }
