@@ -8,6 +8,9 @@ public class GenericsSupport {
 	private static Map<Class, GenericsClassContext> contextsCache = new HashMap<>();
 
 	public static GenericsClassContext contextFor(Class<?> contextClass) {
+		if (contextClass == null) {
+			return GenericsClassContext.NULL;
+		}
 		return contextsCache.computeIfAbsent(contextClass, GenericsSupport::createContext);
 	}
 

@@ -1,9 +1,20 @@
 package net.jqwik.support;
 
+import net.jqwik.api.*;
+
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class GenericsClassContext {
+
+	public static final GenericsClassContext NULL = new GenericsClassContext(null) {
+		@Override
+		protected Type resolveInSupertypes(Type typeToResolve) {
+			return typeToResolve;
+		}
+	};
+
 	private final Class<?> contextClass;
 	private Set<Type> supertypes = new HashSet<>();
 	private Map<GenericVariable, Type> resolutions = new HashMap<>();
@@ -51,7 +62,23 @@ public class GenericsClassContext {
 
 	public Type resolveVariable(TypeVariable typeVariable) {
 		GenericVariable variable = new GenericVariable(typeVariable);
-		return resolutions.getOrDefault(variable, typeVariable);
+		Type localResolution = resolutions.getOrDefault(variable, typeVariable);
+		return resolveInSupertypes(localResolution);
+	}
+
+	protected Type resolveInSupertypes(Type typeToResolve) {
+		return supertypeContexts() //
+								   .map(context -> Tuples.tuple(typeToResolve, context.resolveType(typeToResolve)))
+								   .filter(tuple -> tuple.get1() != tuple.get2()) //
+								   .map(Tuples.Tuple2::get2) //
+								   .findFirst() //
+								   .orElse(typeToResolve);
+	}
+
+	private Stream<GenericsClassContext> supertypeContexts() {
+		Stream<Class<?>> superclassStream = Stream.of(contextClass.getSuperclass());
+		Stream<Class<?>> interfacesStream = Stream.of(contextClass.getInterfaces());
+		return Stream.concat(superclassStream, interfacesStream).map(GenericsSupport::contextFor);
 	}
 
 	private static class GenericVariable {
