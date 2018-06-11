@@ -16,7 +16,7 @@ class GenericsSupportTests {
 		class JustAClass{
 		}
 
-		GenericsContext context = GenericsSupport.contextFor(JustAClass.class);
+		GenericsClassContext context = GenericsSupport.contextFor(JustAClass.class);
 		assertThat(context.contextClass()).isSameAs(JustAClass.class);
 	}
 
@@ -25,8 +25,8 @@ class GenericsSupportTests {
 		class AnotherClass {
 		}
 
-		GenericsContext context1 = GenericsSupport.contextFor(AnotherClass.class);
-		GenericsContext context2 = GenericsSupport.contextFor(AnotherClass.class);
+		GenericsClassContext context1 = GenericsSupport.contextFor(AnotherClass.class);
+		GenericsClassContext context2 = GenericsSupport.contextFor(AnotherClass.class);
 		assertThat(context1).isSameAs(context2);
 	}
 
@@ -48,7 +48,7 @@ class GenericsSupportTests {
 				}
 			}
 
-			GenericsContext context = GenericsSupport.contextFor(ClassWithInterface.class);
+			GenericsClassContext context = GenericsSupport.contextFor(ClassWithInterface.class);
 
 			Set<Type> genericSupertypes = context.genericSupertypes();
 			assertThat(genericSupertypes).hasSize(1);
@@ -72,7 +72,7 @@ class GenericsSupportTests {
 				}
 			}
 
-			GenericsContext context = GenericsSupport.contextFor(ClassWithSuperclass.class);
+			GenericsClassContext context = GenericsSupport.contextFor(ClassWithSuperclass.class);
 
 			Set<Type> genericSupertypes = context.genericSupertypes();
 			assertThat(genericSupertypes).hasSize(1);
@@ -87,7 +87,7 @@ class GenericsSupportTests {
 			class ClassWithPlainSuperclass extends Exception {
 			}
 
-			GenericsContext context = GenericsSupport.contextFor(ClassWithPlainSuperclass.class);
+			GenericsClassContext context = GenericsSupport.contextFor(ClassWithPlainSuperclass.class);
 
 			Set<Type> genericSupertypes = context.genericSupertypes();
 			assertThat(genericSupertypes).hasSize(1);
@@ -119,7 +119,7 @@ class GenericsSupportTests {
 				}
 			}
 
-			GenericsContext context = GenericsSupport.contextFor(ClassWithSeveralInterfaces.class);
+			GenericsClassContext context = GenericsSupport.contextFor(ClassWithSeveralInterfaces.class);
 			assertThat(context.contextClass()).isEqualTo(ClassWithSeveralInterfaces.class);
 
 			Set<Type> genericSupertypes = context.genericSupertypes();
@@ -132,18 +132,26 @@ class GenericsSupportTests {
 	@Label("parameter resolution")
 	class ParameterResolution {
 
-		private GenericsContext context = GenericsSupport.contextFor(ClassWithString.class);
-
 		@Example
 		void nonGenericParameter() throws NoSuchMethodException {
-			Method methodWithString = ClassWithString.class.getMethod("methodWithStringParameter", String.class);
+			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithString.class);
+			Method methodWithString = MyInterfaceWithString.class.getMethod("methodWithStringParameter", String.class);
 			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolvedType).isEqualTo(String.class);
 		}
 
 		@Example
-		void parameterWithTypeVariable() throws NoSuchMethodException {
-			Method methodWithString = ClassWithString.class.getMethod("methodWithTypeParameter", Object.class);
+		void parameterWithTypeVariableFromInterface() throws NoSuchMethodException {
+			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithString.class);
+			Method methodWithString = MyInterfaceWithString.class.getMethod("methodWithTypeParameter", Object.class);
+			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
+			assertThat(resolvedType).isEqualTo(String.class);
+		}
+
+		@Example
+		void parameterWithTypeVariableFromSuperclass() throws NoSuchMethodException {
+			GenericsClassContext context = GenericsSupport.contextFor(MyClassWithString.class);
+			Method methodWithString = MyClassWithString.class.getMethod("methodWithTypeParameter", Object.class);
 			Type resolvedType = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolvedType).isEqualTo(String.class);
 		}
@@ -162,6 +170,13 @@ class GenericsSupportTests {
 		default void methodWithTypeParameter(T param) {}
 	}
 
-	class ClassWithString implements MyInterface<String> {
+	static class MyInterfaceWithString implements MyInterface<String> {
+	}
+
+	static class MyClass<T> {
+		public void methodWithTypeParameter(T param) {}
+	}
+
+	static class MyClassWithString extends MyClass<String> {
 	}
 }
