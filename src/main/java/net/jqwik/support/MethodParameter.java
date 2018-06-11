@@ -40,7 +40,7 @@ public class MethodParameter {
 	}
 
 	private boolean genericsCouldBeResolved() {
-		return resolvedType != null;
+		return resolvedType != parameter.getParameterizedType();
 	}
 
 	@Override

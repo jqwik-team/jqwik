@@ -2,8 +2,6 @@ package net.jqwik.support;
 
 import net.jqwik.discovery.predicates.*;
 import org.junit.platform.commons.support.*;
-import ru.vyarus.java.generics.resolver.*;
-import ru.vyarus.java.generics.resolver.context.*;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -138,39 +136,15 @@ public class JqwikReflectionSupport {
 
 		List<MethodParameter> list = new ArrayList<>();
 		Parameter[] parameters = method.getParameters();
-
-		List<Type> resolvedGenericParameters = resolveGenericParameters(method, containerClass);
+		GenericsClassContext containerClassContext = GenericsSupport.contextFor(containerClass);
 
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
-			Type resolvedParameter = resolvedGenericParameters.get(i);
+			Type resolvedParameter = containerClassContext.resolveParameter(parameter);
 			MethodParameter methodParameter = new MethodParameter(parameter, resolvedParameter);
 			list.add(methodParameter);
 		}
 		return list.toArray(new MethodParameter[parameters.length]);
-	}
-
-	private static List<Type> resolveGenericParameters(Method method, Class<?> containerClass) {
-
-		// TODO: GenericsContext cannot resolve parameter who are generic types themselves, e.g. List<T>
-		//       I probably have to build my own generics resolver
-		GenericsContext context = GenericsResolver.resolve(containerClass).type(method.getDeclaringClass());
-		MethodGenericsContext methodContext = context.method(method);
-		List<Class<?>> resolvedParameters = methodContext.resolveParameters();
-		Parameter[] parameters = method.getParameters();
-
-		List<Type> genericParameters = new ArrayList<>();
-		for (int i = 0; i < resolvedParameters.size(); i++) {
-			Class<?> resolvedParameter = resolvedParameters.get(i);
-			if (resolvedParameter == parameters[i].getType()) {
-				genericParameters.add(null);
-			} else {
-				genericParameters.add(resolvedParameter);
-			}
-		}
-
-		return genericParameters;
-
 	}
 
 	public static boolean isPublic(Class<?> clazz) {
