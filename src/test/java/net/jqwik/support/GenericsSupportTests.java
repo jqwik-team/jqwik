@@ -206,17 +206,36 @@ class GenericsSupportTests {
 			assertThat(context.resolveParameter(methodWithString.getParameters()[0])).isEqualTo(String.class);
 		}
 
-		// TODO: Many more tests
-		// List<T> -> List<String>
-		// List<Iterable<T>> -> List<Iterable<String>>
-		// several resolved types variable
-		// type variable from super super type
+		@Example
+		@Label("list of type variable")
+		void parameterWithListOfTypeVariable() throws NoSuchMethodException {
+			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
+			Method methodWithString = MyInterfaceWithStringAndInteger.class.getMethod("methodWithListOfTypeParameter", List.class);
+			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(methodWithString.getParameters()[0]);
+			assertThat(resolvedType.getTypeName()).isEqualTo("java.util.List<java.lang.String>");
+		}
+
+		@Example
+		@Label("nested type variable")
+		void parameterWithNestedTypeVariable() throws NoSuchMethodException {
+			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
+			Method methodWithString = MyInterfaceWithStringAndInteger.class.getMethod("methodWithNestedTypeParameter", List.class);
+			ParameterizedType resolvedType = (ParameterizedType) context.resolveParameter(methodWithString.getParameters()[0]);
+			assertThat(resolvedType.getTypeName()).isEqualTo("java.util.List<java.lang.Iterable<java.lang.String>>");
+		}
+
+		//TODO: Test where variables are mapped on each other
+
 	}
 
 	interface MyInterface<T, U> {
 		default void methodWithStringParameter(String param) {}
 
 		default void methodWithTypeParameter(T param) {}
+
+		default void methodWithListOfTypeParameter(List<T> param) {}
+
+		default void methodWithNestedTypeParameter(List<Iterable<T>> param) {}
 
 		default void methodWithTwoTypeParameters(T param1, U param2) {}
 	}

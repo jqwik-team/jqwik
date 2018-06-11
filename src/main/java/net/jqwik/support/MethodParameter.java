@@ -18,6 +18,7 @@ public class MethodParameter {
 
 	public boolean isAnnotatedParameterized() {
 		if (genericsCouldBeResolved()) {
+			// TODO: What if a resolved type has annotations?
 			return false;
 		}
 		return (parameter.getAnnotatedType() instanceof AnnotatedParameterizedType);

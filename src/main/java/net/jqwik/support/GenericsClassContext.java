@@ -57,7 +57,27 @@ public class GenericsClassContext {
 		if (type instanceof TypeVariable) {
 			return resolveVariable((TypeVariable) type);
 		}
+		if (type instanceof ParameterizedType) {
+			return resolveParameterizedType((ParameterizedType) type);
+		}
 		return type;
+	}
+
+	private Type resolveParameterizedType(ParameterizedType type) {
+		Type[] resolvedTypeArguments = Arrays
+			.stream(type.getActualTypeArguments()) //
+			.map(this::resolveType) //
+			.toArray(Type[]::new);
+
+		if (Arrays.equals(type.getActualTypeArguments(), resolvedTypeArguments)) {
+			return type;
+		}
+		return new ParameterizedTypeWrapper(type) {
+			@Override
+			public Type[] getActualTypeArguments() {
+				return resolvedTypeArguments;
+			}
+		};
 	}
 
 	public Type resolveVariable(TypeVariable typeVariable) {
@@ -106,6 +126,39 @@ public class GenericsClassContext {
 			int result = name.hashCode();
 			result = 31 * result + declaration.hashCode();
 			return result;
+		}
+	}
+
+	private static class ParameterizedTypeWrapper implements ParameterizedType {
+
+		private final ParameterizedType wrapped;
+
+		public ParameterizedTypeWrapper(ParameterizedType wrapped) {
+			this.wrapped = wrapped;
+		}
+
+		@Override
+		public Type[] getActualTypeArguments() {
+			return wrapped.getActualTypeArguments();
+		}
+
+		@Override
+		public Type getRawType() {
+			return wrapped.getRawType();
+		}
+
+		@Override
+		public Type getOwnerType() {
+			return wrapped.getOwnerType();
+		}
+
+		@Override
+		public String toString() {
+			String baseString = JqwikStringSupport.displayString(getRawType());
+			String typeArgumentsString = Arrays.stream(getActualTypeArguments()) //
+											   .map(JqwikStringSupport::displayString) //
+											   .collect(Collectors.joining(", "));
+			return String.format("%s<%s>", baseString, typeArgumentsString);
 		}
 	}
 }

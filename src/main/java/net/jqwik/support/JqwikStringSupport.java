@@ -13,6 +13,9 @@ public class JqwikStringSupport {
 	public static String displayString(Object object) {
 		if (object == null)
 			return "null";
+		if (object instanceof Class) {
+			return ((Class) object).getName();
+		}
 		if (object instanceof Collection) {
 			@SuppressWarnings("unchecked")
 			Collection<Object> collection = (Collection<Object>) object;
