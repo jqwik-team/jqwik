@@ -222,6 +222,13 @@ public class GenericsClassContext {
 			return annotatedType.getDeclaredAnnotations();
 		}
 
+		// This method exists since JDK 9. A breaking change :-(
+		// @Override
+		public AnnotatedType getAnnotatedOwnerType​() {
+			// TODO: Make it do something useful. But what exactly?
+			return null;
+		}
+
 		@Override
 		public String toString() {
 			String typeString = JqwikStringSupport.displayString(getType());
