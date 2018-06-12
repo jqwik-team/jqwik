@@ -1,6 +1,7 @@
 package net.jqwik.support;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import org.assertj.core.api.*;
 
 import java.lang.reflect.*;
@@ -85,7 +86,7 @@ class JqwikReflectionSupportTests {
 				}
 			}
 
-			class ClassWithString extends ClassWithTypeVariable<String> {
+			class ClassWithString extends ClassWithTypeVariable<@AlphaChars String> {
 			}
 
 			Method method = ClassWithString.class.getMethod("method", Object.class);
@@ -95,10 +96,9 @@ class JqwikReflectionSupportTests {
 			Assertions.assertThat(param1.getType()).isEqualTo(String.class);
 			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
-			// TODO: if ClassWithTypeVariable<@MyAnnotation String> has annotations
-			//       they should be available but they are not:
-			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
-			Assertions.assertThat(param1.getAnnotatedType()).isNull();
+//			Assertions.assertThat(param1.isAnnotatedParameterized()).isTrue();
+//			Assertions.assertThat(param1.getAnnotatedType().getAnnotatedActualTypeArguments()[0].getAnnotation(AlphaChars.class)).isNotNull();
+
 		}
 
 		@Example
@@ -120,8 +120,8 @@ class JqwikReflectionSupportTests {
 			Assertions.assertThat(((ParameterizedType) param1.getType()).getActualTypeArguments()).containsExactly(String.class);
 			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
-			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
-			Assertions.assertThat(param1.getAnnotatedType()).isNull();
+			Assertions.assertThat(param1.isAnnotatedParameterized()).isTrue();
+			Assertions.assertThat(param1.getAnnotatedType()).isNotNull();
 
 		}
 	}

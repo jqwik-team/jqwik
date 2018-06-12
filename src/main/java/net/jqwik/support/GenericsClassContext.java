@@ -1,5 +1,6 @@
 package net.jqwik.support;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
@@ -8,13 +9,18 @@ public class GenericsClassContext {
 
 	public static final GenericsClassContext NULL = new GenericsClassContext(null) {
 		@Override
-		protected Type resolveInSupertypes(TypeResolution typeResolution) {
-			return typeResolution.type();
+		protected TypeResolution resolveInSupertypes(TypeResolution typeResolution) {
+			return typeResolution.unchanged();
+		}
+
+		@Override
+		public String toString() {
+			return "GenericsContext(null)";
 		}
 	};
 
 	private final Class<?> contextClass;
-	private Map<GenericVariable, TypeResolution> resolutions = new HashMap<>();
+	private Map<LookupTypeVariable, TypeResolution> resolutions = new HashMap<>();
 
 	GenericsClassContext(Class<?> contextClass) {
 		this.contextClass = contextClass;
@@ -25,9 +31,8 @@ public class GenericsClassContext {
 	}
 
 	void addResolution(TypeVariable typeVariable, Type resolvedType, AnnotatedType annotatedType) {
-		// TODO: Use annotatedType to keep annotations after resolution
-		GenericVariable genericVariable = new GenericVariable(typeVariable);
-		resolutions.put(genericVariable, new TypeResolution(resolvedType, true));
+		LookupTypeVariable genericVariable = new LookupTypeVariable(typeVariable);
+		resolutions.put(genericVariable, new TypeResolution(resolvedType, annotatedType, true));
 	}
 
 	@Override
@@ -36,7 +41,7 @@ public class GenericsClassContext {
 	}
 
 	public TypeResolution resolveParameter(Parameter parameter) {
-		TypeResolution initial = new TypeResolution(parameter.getParameterizedType(), false);
+		TypeResolution initial = new TypeResolution(parameter.getParameterizedType(), parameter.getAnnotatedType(), false);
 		return resolveType(initial);
 	}
 
@@ -52,10 +57,18 @@ public class GenericsClassContext {
 
 	private TypeResolution resolveParameterizedType(TypeResolution parameterizedTypeResolution) {
 		ParameterizedType type = (ParameterizedType) parameterizedTypeResolution.type();
-		List<TypeResolution> resolvedTypeArguments = Arrays
-			.stream(type.getActualTypeArguments()) //
-			.map(typeArgument -> resolveType(new TypeResolution(typeArgument, false))) //
-			.collect(Collectors.toList());
+		Type[] actualTypeArguments = type.getActualTypeArguments();
+
+		AnnotatedParameterizedType annotatedType = (AnnotatedParameterizedType) parameterizedTypeResolution.annotatedType();
+		AnnotatedType[] annotatedActualTypeArguments = annotatedType.getAnnotatedActualTypeArguments();
+
+		List<TypeResolution> resolvedTypeArguments = new ArrayList<>();
+		for (int i = 0; i < actualTypeArguments.length; i++) {
+			Type typeArgument = actualTypeArguments[i];
+			AnnotatedType annotatedTypeArgument = annotatedActualTypeArguments[i];
+			TypeResolution typeResolution = resolveType(new TypeResolution(typeArgument, annotatedTypeArgument, false));
+			resolvedTypeArguments.add(typeResolution);
+		}
 
 		if (resolvedTypeArguments.stream().noneMatch(TypeResolution::typeHasChanged)) {
 			return parameterizedTypeResolution;
@@ -66,32 +79,42 @@ public class GenericsClassContext {
 				return resolvedTypeArguments.stream().map(TypeResolution::type).toArray(Type[]::new);
 			}
 		};
-		return new TypeResolution(resolvedType, true);
+		AnnotatedParameterizedType resolvedAnnotatedType = new AnnotatedParameterizedTypeWrapper(annotatedType) {
+			@Override
+			public Type getType() {
+				return resolvedType;
+			}
+
+			@Override
+			public AnnotatedType[] getAnnotatedActualTypeArguments() {
+				return resolvedTypeArguments.stream().map(TypeResolution::annotatedType).toArray(AnnotatedType[]::new);
+			}
+		};
+		return new TypeResolution(resolvedType, resolvedAnnotatedType, true);
 	}
 
 	private TypeResolution resolveVariable(TypeResolution typeVariableResolution) {
 		TypeVariable typeVariable = (TypeVariable) typeVariableResolution.type();
-		GenericVariable variable = new GenericVariable(typeVariable);
-		TypeResolution localResolution = resolveLocally(typeVariable, variable);
-		Type resolvedType = resolveInSupertypes(localResolution);
-		if (resolvedType == typeVariable) {
-			return typeVariableResolution;
+		LookupTypeVariable variable = new LookupTypeVariable(typeVariable);
+		TypeResolution localResolution = resolveLocally(typeVariableResolution, variable);
+		TypeResolution supertypeResolution = resolveInSupertypes(localResolution);
+		if (!supertypeResolution.typeHasChanged()) {
+			return localResolution;
 		}
 		// Recursive resolution necessary for variables mapped on variables
-		return resolveType(new TypeResolution(resolvedType, true));
+		return resolveType(supertypeResolution);
 	}
 
-	private TypeResolution resolveLocally(TypeVariable typeVariable, GenericVariable variable) {
-		return resolutions.getOrDefault(variable, new TypeResolution(typeVariable, false));
+	private TypeResolution resolveLocally(TypeResolution typeResolution, LookupTypeVariable variable) {
+		return resolutions.getOrDefault(variable, typeResolution.unchanged());
 	}
 
-	protected Type resolveInSupertypes(TypeResolution typeResolution) {
+	protected TypeResolution resolveInSupertypes(TypeResolution typeResolution) {
 		return supertypeContexts() //
-								   .map(context -> context.resolveType(typeResolution))
+								   .map(context -> context.resolveType(typeResolution)) //
 								   .filter(TypeResolution::typeHasChanged) //
 								   .findFirst() //
-								   .map(TypeResolution::type)
-								   .orElse(typeResolution.type());
+								   .orElse(typeResolution.unchanged());
 	}
 
 	private Stream<GenericsClassContext> supertypeContexts() {
@@ -100,11 +123,11 @@ public class GenericsClassContext {
 		return Stream.concat(superclassStream, interfacesStream).map(GenericsSupport::contextFor);
 	}
 
-	private static class GenericVariable {
+	private static class LookupTypeVariable {
 		private final String name;
 		private final GenericDeclaration declaration;
 
-		public GenericVariable(TypeVariable typeVariable) {
+		public LookupTypeVariable(TypeVariable typeVariable) {
 			this.name = typeVariable.getName();
 			this.declaration = typeVariable.getGenericDeclaration();
 		}
@@ -114,7 +137,7 @@ public class GenericsClassContext {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
 
-			GenericVariable that = (GenericVariable) o;
+			LookupTypeVariable that = (LookupTypeVariable) o;
 
 			if (!name.equals(that.name)) return false;
 			return declaration.equals(that.declaration);
@@ -137,7 +160,7 @@ public class GenericsClassContext {
 
 		private final ParameterizedType wrapped;
 
-		public ParameterizedTypeWrapper(ParameterizedType wrapped) {
+		private ParameterizedTypeWrapper(ParameterizedType wrapped) {
 			this.wrapped = wrapped;
 		}
 
@@ -164,5 +187,49 @@ public class GenericsClassContext {
 											   .collect(Collectors.joining(", "));
 			return String.format("%s<%s>", baseString, typeArgumentsString);
 		}
+	}
+
+	private static class AnnotatedParameterizedTypeWrapper implements AnnotatedParameterizedType {
+
+		private final AnnotatedParameterizedType annotatedType;
+
+		private AnnotatedParameterizedTypeWrapper(AnnotatedParameterizedType annotatedType) {
+			this.annotatedType = annotatedType;
+		}
+
+		@Override
+		public AnnotatedType[] getAnnotatedActualTypeArguments() {
+			return annotatedType.getAnnotatedActualTypeArguments();
+		}
+
+		@Override
+		public Type getType() {
+			return annotatedType.getType();
+		}
+
+		@Override
+		public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+			return annotatedType.getAnnotation(annotationClass);
+		}
+
+		@Override
+		public Annotation[] getAnnotations() {
+			return annotatedType.getAnnotations();
+		}
+
+		@Override
+		public Annotation[] getDeclaredAnnotations() {
+			return annotatedType.getDeclaredAnnotations();
+		}
+
+		@Override
+		public String toString() {
+			String typeString = JqwikStringSupport.displayString(getType());
+			String annotationsString = Arrays.stream(getAnnotations()) //
+											   .map(JqwikStringSupport::displayString) //
+											   .collect(Collectors.joining(", "));
+			return String.format("%s %s", annotationsString, typeString);
+		}
+
 	}
 }

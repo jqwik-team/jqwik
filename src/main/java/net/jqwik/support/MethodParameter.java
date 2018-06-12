@@ -17,11 +17,7 @@ public class MethodParameter {
 	}
 
 	public boolean isAnnotatedParameterized() {
-		if (genericsResolutionChangedType()) {
-			// TODO: What if a resolved type has annotations?
-			return false;
-		}
-		return (parameter.getAnnotatedType() instanceof AnnotatedParameterizedType);
+		return (resolution.annotatedType() instanceof AnnotatedParameterizedType);
 	}
 
 	public boolean isAnnotated(Class<? extends Annotation> annotationType) {
@@ -37,11 +33,7 @@ public class MethodParameter {
 	}
 
 	public Type getType() {
-		return genericsResolutionChangedType() ? resolution.type() : parameter.getParameterizedType();
-	}
-
-	private boolean genericsResolutionChangedType() {
-		return resolution.typeHasChanged();
+		return resolution.type();
 	}
 
 	@Override
@@ -55,7 +47,7 @@ public class MethodParameter {
 
 	public AnnotatedParameterizedType getAnnotatedType() {
 		if (isAnnotatedParameterized())
-			return (AnnotatedParameterizedType) parameter.getAnnotatedType();
+			return (AnnotatedParameterizedType) resolution.annotatedType();
 		else
 			return null;
 	}

@@ -1,6 +1,7 @@
 package net.jqwik.support;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -167,6 +168,48 @@ class GenericsSupportTests {
 			ParameterizedType resolvedType = (ParameterizedType) resolution.type();
 			assertThat(resolvedType.getTypeName()).isEqualTo("java.util.List<java.lang.String>");
 		}
+
+		//@Example
+		@Label("annotation is kept when replacing type variable")
+		void parameterWithAnnotatedType() throws NoSuchMethodException {
+
+			class AClass<T> {
+				public void method(T aT) {}
+			}
+
+			class AClassWithAnnotatedString extends AClass<@AlphaChars String> {
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(AClassWithAnnotatedString.class);
+			Method methodWithString = AClass.class.getMethod("method", Object.class);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+			assertThat(resolution.typeHasChanged()).isTrue();
+			assertThat(resolution.type()).isEqualTo(String.class);
+			assertThat(resolution.annotatedType()).isNotNull();
+			assertThat(resolution.annotatedType().getAnnotations()).isNotEmpty();
+		}
+
+		@Example
+		@Label("annotation is kept when replacing nested type variable")
+		void parameterWithNestedAnnotatedType() throws NoSuchMethodException {
+
+			class AnotherClass<T> {
+				public void method(Iterable<@Size(max = 5) List<T>> aT) {}
+			}
+
+			class AnotherClassWithAnnotatedString extends AnotherClass<@AlphaChars String> {
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(AnotherClassWithAnnotatedString.class);
+			Method methodWithString = AnotherClass.class.getMethod("method", Iterable.class);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+			assertThat(resolution.typeHasChanged()).isTrue();
+			assertThat(resolution.type().getTypeName()).isEqualTo("java.lang.Iterable<java.util.List<java.lang.String>>");
+			assertThat(resolution.annotatedType()).isNotNull();
+			AnnotatedType annotatedList = ((AnnotatedParameterizedType) resolution.annotatedType()).getAnnotatedActualTypeArguments()[0];
+			assertThat(annotatedList.getAnnotation(Size.class)).isNotNull();
+		}
+
 	}
 
 	interface MyInterface<T, U> {
