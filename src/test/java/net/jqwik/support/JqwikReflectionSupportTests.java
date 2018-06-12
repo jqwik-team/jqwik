@@ -95,10 +95,7 @@ class JqwikReflectionSupportTests {
 			MethodParameter param1 = parameters[0];
 			Assertions.assertThat(param1.getType()).isEqualTo(String.class);
 			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
-
-//			Assertions.assertThat(param1.isAnnotatedParameterized()).isTrue();
-//			Assertions.assertThat(param1.getAnnotatedType().getAnnotatedActualTypeArguments()[0].getAnnotation(AlphaChars.class)).isNotNull();
-
+			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
 		}
 
 		@Example

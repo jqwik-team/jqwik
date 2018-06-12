@@ -169,26 +169,6 @@ class GenericsSupportTests {
 			assertThat(resolvedType.getTypeName()).isEqualTo("java.util.List<java.lang.String>");
 		}
 
-		//@Example
-		@Label("annotation is kept when replacing type variable")
-		void parameterWithAnnotatedType() throws NoSuchMethodException {
-
-			class AClass<T> {
-				public void method(T aT) {}
-			}
-
-			class AClassWithAnnotatedString extends AClass<@AlphaChars String> {
-			}
-
-			GenericsClassContext context = GenericsSupport.contextFor(AClassWithAnnotatedString.class);
-			Method methodWithString = AClass.class.getMethod("method", Object.class);
-			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
-			assertThat(resolution.typeHasChanged()).isTrue();
-			assertThat(resolution.type()).isEqualTo(String.class);
-			assertThat(resolution.annotatedType()).isNotNull();
-			assertThat(resolution.annotatedType().getAnnotations()).isNotEmpty();
-		}
-
 		@Example
 		@Label("annotation is kept when replacing nested type variable")
 		void parameterWithNestedAnnotatedType() throws NoSuchMethodException {
@@ -197,7 +177,7 @@ class GenericsSupportTests {
 				public void method(Iterable<@Size(max = 5) List<T>> aT) {}
 			}
 
-			class AnotherClassWithAnnotatedString extends AnotherClass<@AlphaChars String> {
+			class AnotherClassWithAnnotatedString extends AnotherClass<String> {
 			}
 
 			GenericsClassContext context = GenericsSupport.contextFor(AnotherClassWithAnnotatedString.class);
