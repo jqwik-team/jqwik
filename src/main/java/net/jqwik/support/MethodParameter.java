@@ -9,15 +9,15 @@ import java.util.*;
 public class MethodParameter {
 
 	private final Parameter parameter;
-	private final Type resolvedType;
+	private final GenericsResolution resolution;
 
-	public MethodParameter(Parameter parameter, Type resolvedType) {
+	public MethodParameter(Parameter parameter, GenericsResolution resolution) {
 		this.parameter = parameter;
-		this.resolvedType = resolvedType;
+		this.resolution = resolution;
 	}
 
 	public boolean isAnnotatedParameterized() {
-		if (genericsCouldBeResolved()) {
+		if (genericsResolutionChangedType()) {
 			// TODO: What if a resolved type has annotations?
 			return false;
 		}
@@ -37,11 +37,11 @@ public class MethodParameter {
 	}
 
 	public Type getType() {
-		return genericsCouldBeResolved() ? resolvedType : parameter.getParameterizedType();
+		return genericsResolutionChangedType() ? resolution.type() : parameter.getParameterizedType();
 	}
 
-	private boolean genericsCouldBeResolved() {
-		return !resolvedType.equals(parameter.getParameterizedType());
+	private boolean genericsResolutionChangedType() {
+		return resolution.typeHasChanged();
 	}
 
 	@Override

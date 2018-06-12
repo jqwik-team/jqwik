@@ -30,16 +30,4 @@ public class RegisteredArbitraryConfigurators {
 		registeredConfigurators.add(0, configurator);
 	}
 
-	public static void unregister(ArbitraryConfigurator configuratorToDelete) {
-		getConfigurators().stream() //
-				.filter(provider -> provider == configuratorToDelete) //
-				.forEach(provider -> registeredConfigurators.remove(provider));
-	}
-
-	public static void unregister(Class<? extends ArbitraryConfigurator> configuratorClass) {
-		getConfigurators().stream() //
-				.filter(provider -> provider.getClass() == configuratorClass) //
-				.forEach(provider -> registeredConfigurators.remove(provider));
-	}
-
 }

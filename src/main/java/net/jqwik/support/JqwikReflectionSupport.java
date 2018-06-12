@@ -140,8 +140,8 @@ public class JqwikReflectionSupport {
 
 		for (int i = 0; i < parameters.length; i++) {
 			Parameter parameter = parameters[i];
-			Type resolvedParameter = containerClassContext.resolveParameter(parameter);
-			MethodParameter methodParameter = new MethodParameter(parameter, resolvedParameter);
+			GenericsResolution resolution = containerClassContext.resolveParameter(parameter);
+			MethodParameter methodParameter = new MethodParameter(parameter, resolution);
 			list.add(methodParameter);
 		}
 		return list.toArray(new MethodParameter[parameters.length]);

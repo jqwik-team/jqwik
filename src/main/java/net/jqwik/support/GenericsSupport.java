@@ -24,26 +24,30 @@ public class GenericsSupport {
 	private static void addResolutionForInterfaces(Class<?> contextClass, GenericsClassContext context) {
 		Class<?>[] interfaces = contextClass.getInterfaces();
 		Type[] genericInterfaces = contextClass.getGenericInterfaces();
+		AnnotatedType[] annotatedInterfaces = contextClass.getAnnotatedInterfaces();
 		for (int i = 0; i < interfaces.length; i++) {
 			Class<?> supertype = interfaces[i];
 			Type genericSupertype = genericInterfaces[i];
-			addResolutionForSupertype(supertype, genericSupertype, context);
+			AnnotatedType annotatedSupertype = annotatedInterfaces[i];
+			addResolutionForSupertype(supertype, genericSupertype, annotatedSupertype, context);
 		}
 	}
 
 	private static void addResolutionForSuperclass(Class<?> contextClass, GenericsClassContext context) {
-		addResolutionForSupertype(contextClass.getSuperclass(), contextClass.getGenericSuperclass(), context);
+		addResolutionForSupertype(contextClass.getSuperclass(), contextClass.getGenericSuperclass(), contextClass.getAnnotatedSuperclass(), context);
 	}
 
-	private static void addResolutionForSupertype(Class<?> supertype, Type genericSupertype, GenericsClassContext context) {
+	private static void addResolutionForSupertype(Class<?> supertype, Type genericSupertype, AnnotatedType annotatedSupertype, GenericsClassContext context) {
 		if (genericSupertype instanceof ParameterizedType) {
 			ParameterizedType genericParameterizedType = (ParameterizedType) genericSupertype;
 			Type[] supertypeTypeArguments = genericParameterizedType.getActualTypeArguments();
 			TypeVariable[] superclassTypeVariables = supertype.getTypeParameters();
+			AnnotatedType[] annotatedTypeVariables = ((AnnotatedParameterizedType) annotatedSupertype).getAnnotatedActualTypeArguments();
 			for (int i = 0; i < superclassTypeVariables.length; i++) {
 				TypeVariable variable = superclassTypeVariables[i];
 				Type resolvedType = supertypeTypeArguments[i];
-				context.addResolution(variable, resolvedType);
+				AnnotatedType annotatedType = annotatedTypeVariables[i];
+				context.addResolution(variable, resolvedType, annotatedType);
 			}
 		}
 	}

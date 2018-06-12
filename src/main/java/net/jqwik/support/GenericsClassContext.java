@@ -27,7 +27,8 @@ public class GenericsClassContext {
 		return contextClass;
 	}
 
-	void addResolution(TypeVariable typeVariable, Type resolvedType) {
+	void addResolution(TypeVariable typeVariable, Type resolvedType, AnnotatedType annotatedType) {
+		// TODO: Use annotatedType to keep annotations after resolution
 		GenericVariable genericVariable = new GenericVariable(typeVariable);
 		resolutions.put(genericVariable, resolvedType);
 	}
@@ -37,11 +38,13 @@ public class GenericsClassContext {
 		return String.format("GenericsContext(%s)", contextClass.getSimpleName());
 	}
 
-	public Type resolveParameter(Parameter parameter) {
-		return resolveType(parameter.getParameterizedType());
+	public GenericsResolution resolveParameter(Parameter parameter) {
+		Type resolvedType = resolveType(parameter.getParameterizedType());
+		boolean typeHasChanged = !parameter.getParameterizedType().equals(resolvedType);
+		return new GenericsResolution(resolvedType, typeHasChanged);
 	}
 
-	public Type resolveType(Type type) {
+	private Type resolveType(Type type) {
 		if (type instanceof TypeVariable) {
 			return resolveVariable((TypeVariable) type);
 		}
@@ -68,7 +71,7 @@ public class GenericsClassContext {
 		};
 	}
 
-	public Type resolveVariable(TypeVariable typeVariable) {
+	private Type resolveVariable(TypeVariable typeVariable) {
 		GenericVariable variable = new GenericVariable(typeVariable);
 		Type localResolution = resolutions.getOrDefault(variable, typeVariable);
 		Type resolvedType = resolveInSupertypes(localResolution);
