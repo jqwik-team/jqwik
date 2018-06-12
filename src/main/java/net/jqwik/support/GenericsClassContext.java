@@ -8,18 +8,17 @@ public class GenericsClassContext {
 
 	public static final GenericsClassContext NULL = new GenericsClassContext(null) {
 		@Override
-		protected Type resolveInSupertypes(Type typeToResolve) {
-			return typeToResolve;
+		protected Type resolveInSupertypes(TypeResolution typeResolution) {
+			return typeResolution.type();
 		}
 	};
 
 	private final Class<?> contextClass;
-	private Map<GenericVariable, Type> resolutions = new HashMap<>();
+	private Map<GenericVariable, TypeResolution> resolutions = new HashMap<>();
 
 	GenericsClassContext(Class<?> contextClass) {
 		this.contextClass = contextClass;
 	}
-
 
 	public Class<?> contextClass() {
 		return contextClass;
@@ -28,7 +27,7 @@ public class GenericsClassContext {
 	void addResolution(TypeVariable typeVariable, Type resolvedType, AnnotatedType annotatedType) {
 		// TODO: Use annotatedType to keep annotations after resolution
 		GenericVariable genericVariable = new GenericVariable(typeVariable);
-		resolutions.put(genericVariable, resolvedType);
+		resolutions.put(genericVariable, new TypeResolution(resolvedType, true));
 	}
 
 	@Override
@@ -43,50 +42,56 @@ public class GenericsClassContext {
 
 	private TypeResolution resolveType(TypeResolution typeResolution) {
 		if (typeResolution.type() instanceof TypeVariable) {
-			return typeResolution.then(resolveVariable((TypeVariable) typeResolution.type()));
+			return resolveVariable(typeResolution);
 		}
 		if (typeResolution.type() instanceof ParameterizedType) {
-			return typeResolution.then(resolveParameterizedType((ParameterizedType) typeResolution.type()));
+			return resolveParameterizedType(typeResolution);
 		}
 		return typeResolution;
 	}
 
-	private TypeResolution resolveParameterizedType(ParameterizedType type) {
-		Type[] resolvedTypeArguments = Arrays
+	private TypeResolution resolveParameterizedType(TypeResolution parameterizedTypeResolution) {
+		ParameterizedType type = (ParameterizedType) parameterizedTypeResolution.type();
+		List<TypeResolution> resolvedTypeArguments = Arrays
 			.stream(type.getActualTypeArguments()) //
-			.map(typeArgument -> resolveType(new TypeResolution(typeArgument, false)).type()) //
-			.toArray(Type[]::new);
+			.map(typeArgument -> resolveType(new TypeResolution(typeArgument, false))) //
+			.collect(Collectors.toList());
 
-		if (Arrays.equals(type.getActualTypeArguments(), resolvedTypeArguments)) {
-			return new TypeResolution(type, false);
+		if (resolvedTypeArguments.stream().noneMatch(TypeResolution::typeHasChanged)) {
+			return parameterizedTypeResolution;
 		}
 		ParameterizedTypeWrapper resolvedType = new ParameterizedTypeWrapper(type) {
 			@Override
 			public Type[] getActualTypeArguments() {
-				return resolvedTypeArguments;
+				return resolvedTypeArguments.stream().map(TypeResolution::type).toArray(Type[]::new);
 			}
 		};
 		return new TypeResolution(resolvedType, true);
 	}
 
-	private TypeResolution resolveVariable(TypeVariable typeVariable) {
+	private TypeResolution resolveVariable(TypeResolution typeVariableResolution) {
+		TypeVariable typeVariable = (TypeVariable) typeVariableResolution.type();
 		GenericVariable variable = new GenericVariable(typeVariable);
-		Type localResolution = resolutions.getOrDefault(variable, typeVariable);
+		TypeResolution localResolution = resolveLocally(typeVariable, variable);
 		Type resolvedType = resolveInSupertypes(localResolution);
 		if (resolvedType == typeVariable) {
-			return new TypeResolution(resolvedType, false);
+			return typeVariableResolution;
 		}
 		// Recursive resolution necessary for variables mapped on variables
 		return resolveType(new TypeResolution(resolvedType, true));
 	}
 
-	protected Type resolveInSupertypes(Type typeToResolve) {
+	private TypeResolution resolveLocally(TypeVariable typeVariable, GenericVariable variable) {
+		return resolutions.getOrDefault(variable, new TypeResolution(typeVariable, false));
+	}
+
+	protected Type resolveInSupertypes(TypeResolution typeResolution) {
 		return supertypeContexts() //
-								   .map(context -> context.resolveType(new TypeResolution(typeToResolve, false)))
+								   .map(context -> context.resolveType(typeResolution))
 								   .filter(TypeResolution::typeHasChanged) //
 								   .findFirst() //
 								   .map(TypeResolution::type)
-								   .orElse(typeToResolve);
+								   .orElse(typeResolution.type());
 	}
 
 	private Stream<GenericsClassContext> supertypeContexts() {

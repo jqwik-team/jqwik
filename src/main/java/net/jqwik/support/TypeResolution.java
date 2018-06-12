@@ -22,4 +22,9 @@ public class TypeResolution {
 	public TypeResolution then(TypeResolution other) {
 		return new TypeResolution(other.type(), typeHasChanged || other.typeHasChanged);
 	}
+
+	@Override
+	public String toString() {
+		return String.format("TypeResolution(%s:%s)", typeHasChanged, JqwikStringSupport.displayString(resolvedType));
+	}
 }
