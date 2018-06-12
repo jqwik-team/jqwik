@@ -16,8 +16,6 @@ public class GenericsSupport {
 
 	private static GenericsClassContext createContext(Class<?> contextClass) {
 		GenericsClassContext context = new GenericsClassContext(contextClass);
-		addGenericSuperclass(contextClass, context);
-		addGenericInterfaces(contextClass, context);
 		addResolutionForSuperclass(contextClass, context);
 		addResolutionForInterfaces(contextClass, context);
 		return context;
@@ -48,13 +46,5 @@ public class GenericsSupport {
 				context.addResolution(variable, resolvedType);
 			}
 		}
-	}
-
-	private static void addGenericSuperclass(Class<?> contextClass, GenericsClassContext context) {
-		context.addGenericSupertype(contextClass.getGenericSuperclass());
-	}
-
-	private static void addGenericInterfaces(Class<?> contextClass, GenericsClassContext context) {
-		Arrays.stream(contextClass.getGenericInterfaces()).forEach(context::addGenericSupertype);
 	}
 }

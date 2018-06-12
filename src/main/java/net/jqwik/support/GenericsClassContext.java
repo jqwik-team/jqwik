@@ -16,27 +16,15 @@ public class GenericsClassContext {
 	};
 
 	private final Class<?> contextClass;
-	private Set<Type> supertypes = new HashSet<>();
 	private Map<GenericVariable, Type> resolutions = new HashMap<>();
 
 	GenericsClassContext(Class<?> contextClass) {
 		this.contextClass = contextClass;
 	}
 
-	public Set<Type> genericSupertypes() {
-		return Collections.unmodifiableSet(supertypes);
-	}
 
 	public Class<?> contextClass() {
 		return contextClass;
-	}
-
-	void addGenericSupertype(Type supertype) {
-		if (supertype == null)
-			return;
-		if (supertype == Object.class)
-			return;
-		supertypes.add(supertype);
 	}
 
 	void addResolution(TypeVariable typeVariable, Type resolvedType) {
