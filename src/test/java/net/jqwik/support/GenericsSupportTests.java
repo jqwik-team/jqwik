@@ -39,7 +39,7 @@ class GenericsSupportTests {
 		void nonGenericParameter() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
 			Method methodWithString = MyInterface.class.getMethod("methodWithStringParameter", String.class);
-			GenericsResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isFalse();
 			assertThat(resolution.type()).isEqualTo(String.class);
 		}
@@ -49,7 +49,7 @@ class GenericsSupportTests {
 		void parameterWithTypeVariableFromInterface() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
 			Method methodWithString = MyInterface.class.getMethod("methodWithTypeParameter", Object.class);
-			GenericsResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isTrue();
 			assertThat(resolution.type()).isEqualTo(String.class);
 		}
@@ -68,7 +68,7 @@ class GenericsSupportTests {
 		void parameterWithTypeVariableFromSuperclass() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyClassWithString.class);
 			Method methodWithString = MyClassWithString.class.getMethod("methodWithTypeParameter", Object.class);
-			GenericsResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isTrue();
 			assertThat(resolution.type()).isEqualTo(String.class);
 		}
@@ -78,7 +78,7 @@ class GenericsSupportTests {
 		void parameterWithTypeVariableResolvedToGenericType() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyClassWithStringList.class);
 			Method methodWithString = MyClass.class.getMethod("methodWithTypeParameter", Object.class);
-			GenericsResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isTrue();
 
 			ParameterizedType resolvedType = (ParameterizedType) resolution.type();
@@ -92,7 +92,7 @@ class GenericsSupportTests {
 			GenericsClassContext context = GenericsSupport.contextFor(MyClassWithString.class);
 			Method method = MyClass.class.getMethod("typedMethodWithParameter", Object.class);
 			Parameter parameter = method.getParameters()[0];
-			GenericsResolution resolution = context.resolveParameter(parameter);
+			TypeResolution resolution = context.resolveParameter(parameter);
 			assertThat(resolution.typeHasChanged()).isFalse();
 
 			Type resolvedType = resolution.type();
@@ -114,7 +114,7 @@ class GenericsSupportTests {
 		void parameterWithTypeVariablesFromFurtherUpInInterfaceHierarchy() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceFurtherDown.class);
 			Method methodWithString = StringPooper.class.getMethod("poop", Object.class);
-			GenericsResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isTrue();
 			assertThat(resolution.type()).isEqualTo(String.class);
 		}
@@ -124,7 +124,7 @@ class GenericsSupportTests {
 		void parameterWithListOfTypeVariable() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
 			Method methodWithListOfString = MyInterface.class.getMethod("methodWithListOfTypeParameter", List.class);
-			GenericsResolution resolution = context.resolveParameter(methodWithListOfString.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(methodWithListOfString.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isTrue();
 
 			ParameterizedType resolvedType = (ParameterizedType) resolution.type();
@@ -136,7 +136,7 @@ class GenericsSupportTests {
 		void parameterWithNestedTypeVariable() throws NoSuchMethodException {
 			GenericsClassContext context = GenericsSupport.contextFor(MyInterfaceWithStringAndInteger.class);
 			Method method = MyInterface.class.getMethod("methodWithNestedTypeParameter", List.class);
-			GenericsResolution resolution = context.resolveParameter(method.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(method.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isTrue();
 
 			ParameterizedType resolvedType = (ParameterizedType) resolution.type();
@@ -161,7 +161,7 @@ class GenericsSupportTests {
 							  .type()).isEqualTo(Integer.class);
 
 			Method methodWithListOfString = MyInterface.class.getMethod("methodWithListOfTypeParameter", List.class);
-			GenericsResolution resolution = context.resolveParameter(methodWithListOfString.getParameters()[0]);
+			TypeResolution resolution = context.resolveParameter(methodWithListOfString.getParameters()[0]);
 			assertThat(resolution.typeHasChanged()).isTrue();
 
 			ParameterizedType resolvedType = (ParameterizedType) resolution.type();

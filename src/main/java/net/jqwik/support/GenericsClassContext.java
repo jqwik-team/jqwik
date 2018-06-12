@@ -1,7 +1,5 @@
 package net.jqwik.support;
 
-import net.jqwik.api.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
@@ -38,56 +36,56 @@ public class GenericsClassContext {
 		return String.format("GenericsContext(%s)", contextClass.getSimpleName());
 	}
 
-	public GenericsResolution resolveParameter(Parameter parameter) {
-		Type resolvedType = resolveType(parameter.getParameterizedType());
-		boolean typeHasChanged = !parameter.getParameterizedType().equals(resolvedType);
-		return new GenericsResolution(resolvedType, typeHasChanged);
+	public TypeResolution resolveParameter(Parameter parameter) {
+		TypeResolution initial = new TypeResolution(parameter.getParameterizedType(), false);
+		return resolveType(initial);
 	}
 
-	private Type resolveType(Type type) {
-		if (type instanceof TypeVariable) {
-			return resolveVariable((TypeVariable) type);
+	private TypeResolution resolveType(TypeResolution typeResolution) {
+		if (typeResolution.type() instanceof TypeVariable) {
+			return typeResolution.then(resolveVariable((TypeVariable) typeResolution.type()));
 		}
-		if (type instanceof ParameterizedType) {
-			return resolveParameterizedType((ParameterizedType) type);
+		if (typeResolution.type() instanceof ParameterizedType) {
+			return typeResolution.then(resolveParameterizedType((ParameterizedType) typeResolution.type()));
 		}
-		return type;
+		return typeResolution;
 	}
 
-	private Type resolveParameterizedType(ParameterizedType type) {
+	private TypeResolution resolveParameterizedType(ParameterizedType type) {
 		Type[] resolvedTypeArguments = Arrays
 			.stream(type.getActualTypeArguments()) //
-			.map(this::resolveType) //
+			.map(typeArgument -> resolveType(new TypeResolution(typeArgument, false)).type()) //
 			.toArray(Type[]::new);
 
 		if (Arrays.equals(type.getActualTypeArguments(), resolvedTypeArguments)) {
-			return type;
+			return new TypeResolution(type, false);
 		}
-		return new ParameterizedTypeWrapper(type) {
+		ParameterizedTypeWrapper resolvedType = new ParameterizedTypeWrapper(type) {
 			@Override
 			public Type[] getActualTypeArguments() {
 				return resolvedTypeArguments;
 			}
 		};
+		return new TypeResolution(resolvedType, true);
 	}
 
-	private Type resolveVariable(TypeVariable typeVariable) {
+	private TypeResolution resolveVariable(TypeVariable typeVariable) {
 		GenericVariable variable = new GenericVariable(typeVariable);
 		Type localResolution = resolutions.getOrDefault(variable, typeVariable);
 		Type resolvedType = resolveInSupertypes(localResolution);
 		if (resolvedType == typeVariable) {
-			return resolvedType;
+			return new TypeResolution(resolvedType, false);
 		}
 		// Recursive resolution necessary for variables mapped on variables
-		return resolveType(resolvedType);
+		return resolveType(new TypeResolution(resolvedType, true));
 	}
 
 	protected Type resolveInSupertypes(Type typeToResolve) {
 		return supertypeContexts() //
-								   .map(context -> Tuples.tuple(typeToResolve, context.resolveType(typeToResolve)))
-								   .filter(tuple -> tuple.get1() != tuple.get2()) //
-								   .map(Tuples.Tuple2::get2) //
+								   .map(context -> context.resolveType(new TypeResolution(typeToResolve, false)))
+								   .filter(TypeResolution::typeHasChanged) //
 								   .findFirst() //
+								   .map(TypeResolution::type)
 								   .orElse(typeToResolve);
 	}
 

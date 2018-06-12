@@ -9,9 +9,9 @@ import java.util.*;
 public class MethodParameter {
 
 	private final Parameter parameter;
-	private final GenericsResolution resolution;
+	private final TypeResolution resolution;
 
-	public MethodParameter(Parameter parameter, GenericsResolution resolution) {
+	public MethodParameter(Parameter parameter, TypeResolution resolution) {
 		this.parameter = parameter;
 		this.resolution = resolution;
 	}

@@ -2,11 +2,11 @@ package net.jqwik.support;
 
 import java.lang.reflect.*;
 
-public class GenericsResolution {
+public class TypeResolution {
 	private final Type resolvedType;
 	private final boolean typeHasChanged;
 
-	GenericsResolution(Type resolvedType, boolean typeHasChanged) {
+	TypeResolution(Type resolvedType, boolean typeHasChanged) {
 		this.resolvedType = resolvedType;
 		this.typeHasChanged = typeHasChanged;
 	}
@@ -17,5 +17,9 @@ public class GenericsResolution {
 
 	public boolean typeHasChanged() {
 		return typeHasChanged;
+	}
+
+	public TypeResolution then(TypeResolution other) {
+		return new TypeResolution(other.type(), typeHasChanged || other.typeHasChanged);
 	}
 }
