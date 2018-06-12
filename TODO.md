@@ -1,4 +1,4 @@
-- Use GenericsSupport for GenericType.canBeAssignedTo
+- Keep annotations when resolving generics for parameters
 
 - Javadoc:
   - ArbitraryConfigurator
