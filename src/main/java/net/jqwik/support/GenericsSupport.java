@@ -7,7 +7,15 @@ public class GenericsSupport {
 
 	private static Map<Class, GenericsClassContext> contextsCache = new HashMap<>();
 
-	public static GenericsClassContext contextFor(Class<?> contextClass) {
+	/**
+	 * Return a context object which can resolve generic types for a given {@code contextClass}.
+	 *
+	 * Must be synchronized because of caching.
+	 *
+	 * @param contextClass
+	 * @return a potentially cached context object
+	 */
+	public synchronized static GenericsClassContext contextFor(Class<?> contextClass) {
 		if (contextClass == null) {
 			return GenericsClassContext.NULL;
 		}

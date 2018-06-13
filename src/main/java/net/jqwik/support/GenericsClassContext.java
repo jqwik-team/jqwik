@@ -7,7 +7,7 @@ import java.util.stream.*;
 
 public class GenericsClassContext {
 
-	public static final GenericsClassContext NULL = new GenericsClassContext(null) {
+	static final GenericsClassContext NULL = new GenericsClassContext(null) {
 		@Override
 		protected TypeResolution resolveInSupertypes(TypeResolution typeResolution) {
 			return typeResolution.unchanged();
@@ -20,7 +20,7 @@ public class GenericsClassContext {
 	};
 
 	private final Class<?> contextClass;
-	private Map<LookupTypeVariable, TypeResolution> resolutions = new HashMap<>();
+	private final Map<LookupTypeVariable, TypeResolution> resolutions = new HashMap<>();
 
 	GenericsClassContext(Class<?> contextClass) {
 		this.contextClass = contextClass;
@@ -127,7 +127,7 @@ public class GenericsClassContext {
 		private final String name;
 		private final GenericDeclaration declaration;
 
-		public LookupTypeVariable(TypeVariable typeVariable) {
+		private LookupTypeVariable(TypeVariable typeVariable) {
 			this.name = typeVariable.getName();
 			this.declaration = typeVariable.getGenericDeclaration();
 		}
@@ -222,7 +222,7 @@ public class GenericsClassContext {
 			return annotatedType.getDeclaredAnnotations();
 		}
 
-		// This method exists since JDK 9. A breaking change :-(
+		// For compatibility with JDK >= 9. A breaking change in the JDK :-(
 		// @Override
 		public AnnotatedType getAnnotatedOwnerType​() {
 			// TODO: Make it do something useful. But what exactly?
