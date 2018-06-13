@@ -1814,12 +1814,12 @@ package my.own.provider;
 
 public class MoneyArbitraryProvider implements ArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isOfType(Money.class);
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
 				.between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
 				.ofScale(2);
@@ -1860,13 +1860,13 @@ Let's have a look at the default provider for `java.util.Optional<T>`:
 ```java
 public class OptionalArbitraryProvider implements ArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isOfType(Optional.class);
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeSupplier) {
-		GenericType innerType = targetType.getTypeArguments()[0];
+	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeSupplier) {
+		TypeUsage innerType = targetType.getTypeArguments()[0];
 		return subtypeSupplier.apply(innerType) //
 			.map(Arbitrary::optional) //
 			.orElse(null);
@@ -1973,6 +1973,8 @@ in a separate article...
 ### 0.8.12-SNAPSHOT
 
 - Implemented generic type resolution to enable [contract tests](#contract-tests)
+- Renamed `GenericType` to `TypeUsage`
+  <p/>_This is an incompatible API change!_
 
 ### 0.8.11
 

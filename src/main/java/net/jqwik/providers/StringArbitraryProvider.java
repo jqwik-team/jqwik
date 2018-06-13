@@ -9,12 +9,12 @@ import net.jqwik.api.providers.*;
 
 public class StringArbitraryProvider implements ArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isOfType(String.class);
 	}
 
 	@Override
-	public StringArbitrary provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+	public StringArbitrary provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		return Arbitraries.strings();
 	}
 

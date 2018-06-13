@@ -24,18 +24,18 @@ public interface ArbitraryProvider {
 	 * Return true if the provider is suitable for {@code targetType}
 	 *
 	 * This is a pre filter. Even if it returns {@code true}
-	 * {@linkplain #provideFor(GenericType, Function)} can still return {@code null}
+	 * {@linkplain #provideFor(TypeUsage, Function)} can still return {@code null}
 	 */
-	boolean canProvideFor(GenericType targetType);
+	boolean canProvideFor(TypeUsage targetType);
 
 	/**
 	 * Return an arbitrary instance or {@code null} for a given {@code targetType}.
 	 * If {@code null} is returned the search for a fitting provider will continue.
 	 *
-	 * Only {@code targetType}s that have been allowed by {@linkplain #canProvideFor(GenericType)}
+	 * Only {@code targetType}s that have been allowed by {@linkplain #canProvideFor(TypeUsage)}
 	 * will be given to this method.
 	 *
 	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
 	 */
-	Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider);
+	Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider);
 }

@@ -5,7 +5,7 @@
 - Bug: Arbitrary method resolution is sometimes too loose.
   E.g. return type `@Provide ActionSequenceArbitrary<Integer>` would be accepted
   for parameter of type `@ForAll Arbitrary<ActionSequence<String>>` which will lead
-  to class cast exception on property evaluation. See TODO in GenericType.canBeAssignedTo()
+  to class cast exception on property evaluation. See TODO in TypeUsage.canBeAssignedTo()
   
 ### Tests
 

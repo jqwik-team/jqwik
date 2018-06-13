@@ -439,24 +439,24 @@ public class Arbitraries {
 	 * @throws CannotFindArbitraryException if there is no registered arbitrary provider to serve this type
 	 */
 	public static <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>... typeParameters) {
-		GenericType[] genericTypeParameters =
+		TypeUsage[] genericTypeParameters =
 			Arrays.stream(typeParameters)
-				  .map(GenericType::of)
-				  .toArray(GenericType[]::new);
-		return defaultFor(GenericType.of(type, genericTypeParameters));
+				  .map(TypeUsage::of)
+				  .toArray(TypeUsage[]::new);
+		return defaultFor(TypeUsage.of(type, genericTypeParameters));
 	}
 
-	private static <T> Arbitrary<T> defaultFor(GenericType genericType) {
+	private static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
 		RegisteredArbitraryResolver defaultArbitraryResolver =
 			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
-		Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider = subtype -> Optional.of(defaultFor(subtype));
-		Optional<Arbitrary<?>> optionalArbitrary = defaultArbitraryResolver.resolve(genericType, subtypeProvider);
+		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider = subtype -> Optional.of(defaultFor(subtype));
+		Optional<Arbitrary<?>> optionalArbitrary = defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 
 		if (optionalArbitrary.isPresent()) {
 			//noinspection unchecked
 			return (Arbitrary<T>) optionalArbitrary.get();
 		} else {
-			throw new CannotFindArbitraryException(genericType);
+			throw new CannotFindArbitraryException(typeUsage);
 		}
 	}
 

@@ -9,14 +9,14 @@ import java.util.function.*;
 
 public class WildcardArbitraryProvider implements ArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(TypeUsage targetType) {
 		if (!targetType.isTypeVariableOrWildcard())
 			return false;
 		return !targetType.hasUpperBounds() && !targetType.hasLowerBounds();
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		return new WildcardArbitrary();
 	}
 }

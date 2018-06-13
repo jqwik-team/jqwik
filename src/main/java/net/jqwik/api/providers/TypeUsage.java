@@ -10,51 +10,51 @@ import java.util.*;
 import java.util.stream.*;
 
 /**
- * An instance of {@code GenericType} describes the information available for parameter or return types.
+ * An instance of {@code TypeUsage} describes the information available for parameter or return types.
  * The class is supposed to relieve its users from all the intricacies of the Java reflection API.
  * Doing that it will resolve meta annotations, repeated annotations as well as annotated type parameters.
  * <p>
- * {@code GenericType} provides access to:
+ * {@code TypeUsage} provides access to:
  * <ul>
  * <li>the native type of an object</li>
  * <li>the component type (if it's an array)</li>
- * <li>the type parameters (again as instances of {@code GenericType})</li>
+ * <li>the type parameters (again as instances of {@code TypeUsage})</li>
  * <li>the annotations (if the object is derived from a parameter)</li>
  * <li>methods to test for compatibility of types that do also handle compatibility
  * between raw types and boxed type</li>
  * </ul>
  * <p>
- * Within the public API {@code GenericType} is used in two places:
+ * Within the public API {@code TypeUsage} is used in two places:
  * <ul>
  * <li>@see {@link ArbitraryProvider}</li>
- * <li>@see {@link Arbitraries#defaultFor(GenericType)}</li>
+ * <li>@see {@link Arbitraries#defaultFor(TypeUsage)}</li>
  * </ul>
  */
-public class GenericType {
+public class TypeUsage {
 
 	private static final String WILDCARD = "?";
 
-	public static GenericType of(Class<?> type, GenericType... typeParameters) {
+	public static TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
 		if (typeParameters.length > 0 && typeParameters.length != type.getTypeParameters().length) {
 			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
 			throw new JqwikException(String.format("Type [%s] cannot have type parameters [%s]", type, typeArgumentsString));
 		}
-		return new GenericType(type, typeParameters);
+		return new TypeUsage(type, typeParameters);
 	}
 
-	public static GenericType forParameter(MethodParameter parameter) {
-		return new GenericType(parameter);
+	public static TypeUsage forParameter(MethodParameter parameter) {
+		return new TypeUsage(parameter);
 	}
 
-	public static GenericType forType(Type type) {
+	public static TypeUsage forType(Type type) {
 		if (type instanceof WildcardType) {
-			return GenericType.forWildcard((WildcardType) type);
+			return TypeUsage.forWildcard((WildcardType) type);
 		}
-		return new GenericType(type);
+		return new TypeUsage(type);
 	}
 
-	private static GenericType forWildcard(WildcardType wildcardType) {
-		return new GenericType(
+	private static TypeUsage forWildcard(WildcardType wildcardType) {
+		return new TypeUsage(
 			Object.class,
 			WILDCARD,
 			extractUpperBounds(wildcardType),
@@ -66,23 +66,23 @@ public class GenericType {
 
 	private final Class<?> rawType;
 	private final List<Annotation> annotations;
-	private final List<GenericType> typeArguments;
+	private final List<TypeUsage> typeArguments;
 	private final String typeVariable;
-	private final GenericType[] upperBounds;
-	private final GenericType[] lowerBounds;
+	private final TypeUsage[] upperBounds;
+	private final TypeUsage[] lowerBounds;
 
-	private GenericType(Class<?> rawType, GenericType... typeArguments) {
+	private TypeUsage(Class<?> rawType, TypeUsage... typeArguments) {
 		this(
 			rawType,
 			null,
-			new GenericType[0],
-			new GenericType[0],
+			new TypeUsage[0],
+			new TypeUsage[0],
 			Arrays.asList(typeArguments),
 			Collections.emptyList()
 		);
 	}
 
-	private GenericType(AnnotatedType annotatedType) {
+	private TypeUsage(AnnotatedType annotatedType) {
 		this(
 			extractRawType(annotatedType.getType()),
 			extractTypeVariable(annotatedType.getType()),
@@ -93,7 +93,7 @@ public class GenericType {
 		);
 	}
 
-	private GenericType(MethodParameter parameter) {
+	private TypeUsage(MethodParameter parameter) {
 		this(
 			extractRawType(parameter.getType()),
 			extractTypeVariable(parameter.getType()),
@@ -104,7 +104,7 @@ public class GenericType {
 		);
 	}
 
-	private GenericType(Type parameterizedType) {
+	private TypeUsage(Type parameterizedType) {
 		this(
 			extractRawType(parameterizedType),
 			extractTypeVariable(parameterizedType),
@@ -115,12 +115,12 @@ public class GenericType {
 		);
 	}
 
-	private GenericType(
+	private TypeUsage(
 		Class<?> rawType,
 		String typeVariable,
-		GenericType[] upperBounds,
-		GenericType[] lowerBounds,
-		List<GenericType> typeArguments,
+		TypeUsage[] upperBounds,
+		TypeUsage[] lowerBounds,
+		List<TypeUsage> typeArguments,
 		List<Annotation> annotations
 	) {
 		this.rawType = rawType;
@@ -131,7 +131,7 @@ public class GenericType {
 		this.annotations = annotations;
 	}
 
-	private static List<GenericType> extractTypeArguments(MethodParameter parameter) {
+	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
 		if (parameter.isAnnotatedParameterized()) {
 			return extractAnnotatedTypeArguments(parameter.getAnnotatedType());
 		} else {
@@ -155,35 +155,35 @@ public class GenericType {
 		return null;
 	}
 
-	private static GenericType[] extractUpperBounds(Type parameterizedType) {
+	private static TypeUsage[] extractUpperBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
 			return Arrays.stream(((TypeVariable) parameterizedType).getBounds()) //
-						 .map(GenericType::forType) //
-						 .toArray(GenericType[]::new);
+						 .map(TypeUsage::forType) //
+						 .toArray(TypeUsage[]::new);
 		}
 		if (parameterizedType instanceof WildcardType) {
 			return extractUpperBounds((WildcardType) parameterizedType);
 		}
-		return new GenericType[0];
+		return new TypeUsage[0];
 	}
 
-	private static GenericType[] extractUpperBounds(WildcardType wildcardType) {
+	private static TypeUsage[] extractUpperBounds(WildcardType wildcardType) {
 		return Arrays.stream(wildcardType.getUpperBounds())
-					 .map(GenericType::forType)
-					 .toArray(GenericType[]::new);
+					 .map(TypeUsage::forType)
+					 .toArray(TypeUsage[]::new);
 	}
 
-	private static GenericType[] extractLowerBounds(Type parameterizedType) {
+	private static TypeUsage[] extractLowerBounds(Type parameterizedType) {
 		if (parameterizedType instanceof WildcardType) {
 			return extractLowerBounds((WildcardType) parameterizedType);
 		}
-		return new GenericType[0];
+		return new TypeUsage[0];
 	}
 
-	private static GenericType[] extractLowerBounds(WildcardType wildcardType) {
+	private static TypeUsage[] extractLowerBounds(WildcardType wildcardType) {
 		return Arrays.stream(wildcardType.getLowerBounds())
-					 .map(GenericType::forType)
-					 .toArray(GenericType[]::new);
+					 .map(TypeUsage::forType)
+					 .toArray(TypeUsage[]::new);
 	}
 
 	private static Class<?> extractRawType(Type parameterizedType) {
@@ -197,22 +197,22 @@ public class GenericType {
 		return Object.class;
 	}
 
-	private static List<GenericType> extractPlainTypeArguments(Object parameterizedType) {
+	private static List<TypeUsage> extractPlainTypeArguments(Object parameterizedType) {
 		if (parameterizedType instanceof AnnotatedParameterizedType) {
 			return extractAnnotatedTypeArguments((AnnotatedParameterizedType) parameterizedType);
 		}
 		if (parameterizedType instanceof ParameterizedType) {
 			return Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments()) //
-						 .map(GenericType::forType) //
+						 .map(TypeUsage::forType) //
 						 .collect(Collectors.toList());
 		}
 		// Now it's either not a generic type or it has type variables
 		return Collections.emptyList();
 	}
 
-	private static List<GenericType> extractAnnotatedTypeArguments(AnnotatedParameterizedType annotatedType) {
+	private static List<TypeUsage> extractAnnotatedTypeArguments(AnnotatedParameterizedType annotatedType) {
 		return Arrays.stream(annotatedType.getAnnotatedActualTypeArguments()) //
-					 .map(GenericType::new) //
+					 .map(TypeUsage::new) //
 					 .collect(Collectors.toList());
 	}
 
@@ -266,7 +266,7 @@ public class GenericType {
 	/**
 	 * Return the type arguments of a generic type in the order of there appearance in a type's declaration.
 	 */
-	public List<GenericType> getTypeArguments() {
+	public List<TypeUsage> getTypeArguments() {
 		return typeArguments;
 	}
 
@@ -283,9 +283,9 @@ public class GenericType {
 	}
 
 	/**
-	 * Check if an instance can be assigned to another {@code GenericType} instance.
+	 * Check if an instance can be assigned to another {@code TypeUsage} instance.
 	 */
-	public boolean canBeAssignedTo(GenericType targetType) {
+	public boolean canBeAssignedTo(TypeUsage targetType) {
 		if (targetType.isTypeVariableOrWildcard()) {
 			return canBeAssignedToUpperBounds(targetType) && canBeAssignedToLowerBounds(targetType);
 		}
@@ -305,14 +305,14 @@ public class GenericType {
 		return false;
 	}
 
-	private boolean canBeAssignedToUpperBounds(GenericType targetType) {
+	private boolean canBeAssignedToUpperBounds(TypeUsage targetType) {
 		if (isTypeVariableOrWildcard()) {
 			return Arrays.stream(upperBounds).allMatch(upperBound -> upperBound.canBeAssignedToUpperBounds(targetType));
 		}
 		return Arrays.stream(targetType.upperBounds).allMatch(this::canBeAssignedTo);
 	}
 
-	private boolean canBeAssignedToLowerBounds(GenericType targetType) {
+	private boolean canBeAssignedToLowerBounds(TypeUsage targetType) {
 		if (isTypeVariableOrWildcard()) {
 			return Arrays.stream(lowerBounds).allMatch(lowerBound -> lowerBound.canBeAssignedToLowerBounds(targetType));
 		}
@@ -320,7 +320,7 @@ public class GenericType {
 	}
 
 	private boolean allTypeArgumentsCanBeAssigned(
-		List<GenericType> providedTypeArguments, List<GenericType> targetTypeArguments
+		List<TypeUsage> providedTypeArguments, List<TypeUsage> targetTypeArguments
 	) {
 		if (providedTypeArguments.size() == 0) {
 			return true;
@@ -331,8 +331,8 @@ public class GenericType {
 		if (targetTypeArguments.size() != providedTypeArguments.size())
 			return false;
 		for (int i = 0; i < targetTypeArguments.size(); i++) {
-			GenericType providedTypeArgument = providedTypeArguments.get(i);
-			GenericType targetTypeArgument = targetTypeArguments.get(i);
+			TypeUsage providedTypeArgument = providedTypeArguments.get(i);
+			TypeUsage targetTypeArgument = targetTypeArguments.get(i);
 			if (!providedTypeArgument.canBeAssignedTo(targetTypeArgument))
 				return false;
 		}
@@ -384,16 +384,16 @@ public class GenericType {
 	 * Check if a given {@code providedClass} is assignable from this generic type.
 	 */
 	public boolean isAssignableFrom(Class<?> providedClass) {
-		return GenericType.of(providedClass).canBeAssignedTo(this);
+		return TypeUsage.of(providedClass).canBeAssignedTo(this);
 	}
 
 	/**
 	 * Return an {@code Optional} of an array's component type - if it is an array.
 	 */
-	public Optional<GenericType> getComponentType() {
+	public Optional<TypeUsage> getComponentType() {
 		Class<?> componentType = rawType.getComponentType();
 		if (componentType != null)
-			return Optional.of(GenericType.of(componentType));
+			return Optional.of(TypeUsage.of(componentType));
 		return Optional.empty();
 	}
 
@@ -415,23 +415,23 @@ public class GenericType {
 		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
-	public Optional<GenericType> findSuperType(Class<?> typeToFind) {
+	public Optional<TypeUsage> findSuperType(Class<?> typeToFind) {
 		return findSuperTypeIn(typeToFind, this.rawType);
 	}
 
-	private Optional<GenericType> findSuperTypeIn(Class<?> typeToFind, Class<?> rawType) {
+	private Optional<TypeUsage> findSuperTypeIn(Class<?> typeToFind, Class<?> rawType) {
 		List<AnnotatedType> supertypes = new ArrayList<>();
 		if (rawType.getSuperclass() != null)
 			supertypes.add(rawType.getAnnotatedSuperclass());
 		supertypes.addAll(Arrays.asList(rawType.getAnnotatedInterfaces()));
 		for (AnnotatedType type : supertypes) {
 			if (extractRawType(type.getType()).equals(typeToFind))
-				return Optional.of(new GenericType(type));
+				return Optional.of(new TypeUsage(type));
 		}
 
 		for (AnnotatedType type : supertypes) {
-			GenericType genericType = new GenericType(type);
-			Optional<GenericType> nestedFound = genericType.findSuperType(typeToFind);
+			TypeUsage typeUsage = new TypeUsage(type);
+			Optional<TypeUsage> nestedFound = typeUsage.findSuperType(typeToFind);
 			if (nestedFound.isPresent())
 				return nestedFound;
 		}
@@ -444,7 +444,7 @@ public class GenericType {
 		String representation = getRawType().getSimpleName();
 		if (isGeneric()) {
 			String typeArgsRepresentation = typeArguments.stream() //
-														 .map(GenericType::toString) //
+														 .map(TypeUsage::toString) //
 														 .collect(Collectors.joining(", "));
 			representation = String.format("%s<%s>", representation, typeArgsRepresentation);
 		}
@@ -456,14 +456,14 @@ public class GenericType {
 			if (hasUpperBounds()) {
 				String boundsRepresentation =
 					Arrays.stream(upperBounds) //
-						  .map(GenericType::toString) //
+						  .map(TypeUsage::toString) //
 						  .collect(Collectors.joining(" & "));
 				representation += String.format(" extends %s", boundsRepresentation);
 			}
 			if (hasLowerBounds()) {
 				String boundsRepresentation =
 					Arrays.stream(lowerBounds) //
-						  .map(GenericType::toString) //
+						  .map(TypeUsage::toString) //
 						  .collect(Collectors.joining(" & "));
 				representation += String.format(" super %s", boundsRepresentation);
 			}

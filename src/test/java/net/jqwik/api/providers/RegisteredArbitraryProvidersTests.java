@@ -184,12 +184,12 @@ class RegisteredArbitraryProvidersTests {
 		Registration() {
 			personProvider = new ArbitraryProvider() {
 				@Override
-				public boolean canProvideFor(GenericType targetType) {
+				public boolean canProvideFor(TypeUsage targetType) {
 					return targetType.isOfType(Person.class);
 				}
 
 				@Override
-				public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+				public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 					return Arbitraries.of(new Person());
 				}
 			};

@@ -9,12 +9,12 @@ import net.jqwik.api.providers.*;
 
 public class MoneyArbitraryProvider implements ArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isOfType(Money.class);
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
 				.between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
 				.ofScale(2);

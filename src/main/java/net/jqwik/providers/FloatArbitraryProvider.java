@@ -8,12 +8,12 @@ import net.jqwik.api.providers.*;
 
 public class FloatArbitraryProvider implements ArbitraryProvider {
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isAssignableFrom(Float.class);
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		return Arbitraries.floats();
 	}
 }

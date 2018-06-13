@@ -12,16 +12,16 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-import static net.jqwik.api.providers.GenericType.*;
+import static net.jqwik.api.providers.TypeUsage.*;
 import static org.assertj.core.api.Assertions.*;
 
-@Label("GenericType")
-class GenericTypeTests {
+@Label("TypeUsage")
+class TypeUsageTests {
 
 	@Example
 	void isAssignable() {
-		assertThat(GenericType.of(CharSequence.class).isAssignableFrom(String.class)).isTrue();
-		assertThat(GenericType.of(String.class).isAssignableFrom(CharSequence.class)).isFalse();
+		assertThat(TypeUsage.of(CharSequence.class).isAssignableFrom(String.class)).isTrue();
+		assertThat(TypeUsage.of(String.class).isAssignableFrom(CharSequence.class)).isFalse();
 	}
 
 	@Group
@@ -30,7 +30,7 @@ class GenericTypeTests {
 		@Example
 		@Label("simple type")
 		void simpleType() {
-			GenericType stringType = GenericType.of(String.class);
+			TypeUsage stringType = TypeUsage.of(String.class);
 			assertThat(stringType.getRawType()).isEqualTo(String.class);
 			assertThat(stringType.isOfType(String.class)).isTrue();
 			assertThat(stringType.isGeneric()).isFalse();
@@ -43,7 +43,7 @@ class GenericTypeTests {
 		@Example
 		@Label("parameterized type")
 		void parameterizedType() {
-			GenericType tupleType = GenericType.of(Tuple2.class, of(String.class), of(Integer.class));
+			TypeUsage tupleType = TypeUsage.of(Tuple2.class, of(String.class), of(Integer.class));
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 			assertThat(tupleType.isGeneric()).isTrue();
@@ -56,7 +56,7 @@ class GenericTypeTests {
 		@Example
 		@Label("array")
 		void arrayTypes() {
-			GenericType arrayType = GenericType.of(String[].class);
+			TypeUsage arrayType = TypeUsage.of(String[].class);
 			assertThat(arrayType.getRawType()).isEqualTo(String[].class);
 			assertThat(arrayType.isOfType(String[].class)).isTrue();
 			assertThat(arrayType.isGeneric()).isFalse();
@@ -70,7 +70,7 @@ class GenericTypeTests {
 		@Example
 		@Label("fails if parameterized type is not generic")
 		void specifyingTypeParametersForNonGenericTypeFails() {
-			assertThatThrownBy(() -> GenericType.of(String.class, of(String.class))).isInstanceOf(JqwikException.class);
+			assertThatThrownBy(() -> TypeUsage.of(String.class, of(String.class))).isInstanceOf(JqwikException.class);
 		}
 
 	}
@@ -84,7 +84,7 @@ class GenericTypeTests {
 		}
 
 		Type type = LocalClass.class.getMethod("withReturn").getAnnotatedReturnType().getType();
-		GenericType tupleType = GenericType.forType(type);
+		TypeUsage tupleType = TypeUsage.forType(type);
 		assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 		assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 		assertThat(tupleType.isGeneric()).isTrue();
@@ -106,7 +106,7 @@ class GenericTypeTests {
 
 			Method method = LocalClass.class.getMethod("withParameter", Tuple2.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			GenericType tupleType = GenericType.forParameter(parameter);
+			TypeUsage tupleType = TypeUsage.forParameter(parameter);
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 			assertThat(tupleType.isGeneric()).isTrue();
@@ -125,7 +125,7 @@ class GenericTypeTests {
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			GenericType parameterType = GenericType.forParameter(parameter);
+			TypeUsage parameterType = TypeUsage.forParameter(parameter);
 			assertThat(parameterType.getRawType()).isEqualTo(List.class);
 			assertThat(parameterType.getAnnotations().get(0)).isInstanceOf(Size.class);
 
@@ -144,16 +144,16 @@ class GenericTypeTests {
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			GenericType wildcardType = GenericType.forParameter(parameter);
+			TypeUsage wildcardType = TypeUsage.forParameter(parameter);
 
-			GenericType first = wildcardType.getTypeArguments().get(0);
+			TypeUsage first = wildcardType.getTypeArguments().get(0);
 			assertThat(first.isWildcard()).isTrue();
 			assertThat(first.isTypeVariableOrWildcard()).isTrue();
 			assertThat(first.isTypeVariable()).isFalse();
 			assertThat(first.hasLowerBounds()).isFalse();
 			assertThat(first.hasUpperBounds()).isTrue();
 
-			GenericType second = wildcardType.getTypeArguments().get(1);
+			TypeUsage second = wildcardType.getTypeArguments().get(1);
 			assertThat(second.isWildcard()).isTrue();
 			assertThat(second.isTypeVariableOrWildcard()).isTrue();
 			assertThat(second.isTypeVariable()).isFalse();
@@ -174,16 +174,16 @@ class GenericTypeTests {
 
 			Method method = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			GenericType typeVariableType = GenericType.forParameter(parameter);
+			TypeUsage typeVariableType = TypeUsage.forParameter(parameter);
 
-			GenericType first = typeVariableType.getTypeArguments().get(0);
+			TypeUsage first = typeVariableType.getTypeArguments().get(0);
 			assertThat(first.isWildcard()).isFalse();
 			assertThat(first.isTypeVariableOrWildcard()).isTrue();
 			assertThat(first.isTypeVariable()).isTrue();
 			assertThat(first.hasLowerBounds()).isFalse();
 			assertThat(first.hasUpperBounds()).isTrue();
 
-			GenericType second = typeVariableType.getTypeArguments().get(0);
+			TypeUsage second = typeVariableType.getTypeArguments().get(0);
 			assertThat(second.isWildcard()).isFalse();
 			assertThat(second.isTypeVariableOrWildcard()).isTrue();
 			assertThat(second.isTypeVariable()).isTrue();
@@ -207,9 +207,9 @@ class GenericTypeTests {
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			GenericType listType = GenericType.forParameter(parameter);
+			TypeUsage listType = TypeUsage.forParameter(parameter);
 			assertThat(listType.getAnnotations().get(0)).isInstanceOf(Size.class);
-			GenericType stringType = listType.getTypeArguments().get(0);
+			TypeUsage stringType = listType.getTypeArguments().get(0);
 			assertThat(stringType.isOfType(String.class)).isTrue();
 			assertThat(stringType.getAnnotations().get(0)).isInstanceOf(StringLength.class);
 			assertThat(stringType.getAnnotations().get(1)).isInstanceOf(CharRange.class);
@@ -235,13 +235,13 @@ class GenericTypeTests {
 				}
 			}
 
-			GenericType stringArbitrary = GenericType.of(LocalStringArbitrary.class);
+			TypeUsage stringArbitrary = TypeUsage.of(LocalStringArbitrary.class);
 			assertThat(stringArbitrary.getRawType()).isEqualTo(LocalStringArbitrary.class);
 
-			Optional<GenericType> superClass = stringArbitrary.findSuperType(AbstractArbitraryBase.class);
+			Optional<TypeUsage> superClass = stringArbitrary.findSuperType(AbstractArbitraryBase.class);
 			assertThat(superClass.get().isOfType(AbstractArbitraryBase.class)).isTrue();
 
-			Optional<GenericType> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
+			Optional<TypeUsage> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
 			assertThat(arbitraryInterface.get().isOfType(Arbitrary.class)).isTrue();
 			assertThat(arbitraryInterface.get().isGeneric()).isTrue();
 			assertThat(arbitraryInterface.get().getTypeArguments().get(0).isOfType(String.class)).isTrue();
@@ -255,12 +255,12 @@ class GenericTypeTests {
 			class LocalStringArbitrary extends DefaultStringArbitrary {
 			}
 
-			GenericType stringArbitrary = GenericType.of(LocalStringArbitrary.class);
+			TypeUsage stringArbitrary = TypeUsage.of(LocalStringArbitrary.class);
 
 			assertThat(stringArbitrary.findSuperType(Object.class)).isPresent();
 			assertThat(stringArbitrary.findSuperType(AbstractArbitraryBase.class)).isPresent();
 
-			Optional<GenericType> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
+			Optional<TypeUsage> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
 			assertThat(arbitraryInterface.get().isOfType(Arbitrary.class)).isTrue();
 			assertThat(arbitraryInterface.get().isGeneric()).isTrue();
 			assertThat(arbitraryInterface.get().getTypeArguments().get(0).isOfType(String.class)).isTrue();
@@ -268,32 +268,32 @@ class GenericTypeTests {
 	}
 
 	@Group
-	@Label("canBeAssigned(GenericType)")
+	@Label("canBeAssigned(TypeUsage)")
 	class CanBeAssigned {
 
 		@Example
 		void nonGenericTypes() {
-			GenericType stringType = GenericType.of(String.class);
+			TypeUsage stringType = TypeUsage.of(String.class);
 
 			assertThat(stringType.canBeAssignedTo(stringType)).isTrue();
-			assertThat(stringType.canBeAssignedTo(GenericType.of(CharSequence.class))).isTrue();
-			assertThat(GenericType.of(CharSequence.class).canBeAssignedTo(stringType)).isFalse();
+			assertThat(stringType.canBeAssignedTo(TypeUsage.of(CharSequence.class))).isTrue();
+			assertThat(TypeUsage.of(CharSequence.class).canBeAssignedTo(stringType)).isFalse();
 		}
 
 		@Example
 		void primitiveAndBoxedTypes() {
-			GenericType bigInt = GenericType.of(Integer.class);
-			GenericType smallInt = GenericType.of(int.class);
+			TypeUsage bigInt = TypeUsage.of(Integer.class);
+			TypeUsage smallInt = TypeUsage.of(int.class);
 
 			assertThat(bigInt.canBeAssignedTo(smallInt)).isTrue();
 			assertThat(smallInt.canBeAssignedTo(bigInt)).isTrue();
-			assertThat(bigInt.canBeAssignedTo(GenericType.of(Number.class))).isTrue();
+			assertThat(bigInt.canBeAssignedTo(TypeUsage.of(Number.class))).isTrue();
 		}
 
 		@Example
 		void arrayTypes() {
-			GenericType stringArray = GenericType.of(String[].class);
-			GenericType csArray = GenericType.of(CharSequence[].class);
+			TypeUsage stringArray = TypeUsage.of(String[].class);
+			TypeUsage csArray = TypeUsage.of(CharSequence[].class);
 
 			assertThat(stringArray.canBeAssignedTo(stringArray)).isTrue();
 			assertThat(stringArray.canBeAssignedTo(csArray)).isTrue();
@@ -302,8 +302,8 @@ class GenericTypeTests {
 
 		@Example
 		void primitiveArrayTypes() {
-			GenericType intArray = GenericType.of(int[].class);
-			GenericType integerArray = GenericType.of(Integer[].class);
+			TypeUsage intArray = TypeUsage.of(int[].class);
+			TypeUsage integerArray = TypeUsage.of(Integer[].class);
 
 			assertThat(intArray.canBeAssignedTo(intArray)).isTrue();
 			assertThat(intArray.canBeAssignedTo(integerArray)).isFalse();
@@ -312,9 +312,9 @@ class GenericTypeTests {
 
 		@Example
 		void parameterizedTypes() {
-			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
-			GenericType rawList = GenericType.of(List.class);
-			GenericType listOfInteger = GenericType.of(List.class, GenericType.of(Integer.class));
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			TypeUsage rawList = TypeUsage.of(List.class);
+			TypeUsage listOfInteger = TypeUsage.of(List.class, TypeUsage.of(Integer.class));
 
 			assertThat(listOfString.canBeAssignedTo(listOfString)).isTrue();
 			assertThat(listOfString.canBeAssignedTo(rawList)).isTrue();
@@ -333,13 +333,13 @@ class GenericTypeTests {
 			}
 
 			Type wildcardType = LocalClass.class.getMethod("listOfWildcard").getAnnotatedReturnType().getType();
-			GenericType listOfWildcard = GenericType.forType(wildcardType);
+			TypeUsage listOfWildcard = TypeUsage.forType(wildcardType);
 
 			Type boundWildcardType = LocalClass.class.getMethod("listOfBoundWildcard").getAnnotatedReturnType().getType();
-			GenericType listOfBoundWildcard = GenericType.forType(boundWildcardType);
+			TypeUsage listOfBoundWildcard = TypeUsage.forType(boundWildcardType);
 
-			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
-			GenericType rawList = GenericType.of(List.class);
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			TypeUsage rawList = TypeUsage.of(List.class);
 
 			assertThat(listOfBoundWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
 			assertThat(listOfWildcard.canBeAssignedTo(listOfBoundWildcard)).isFalse();
@@ -362,13 +362,13 @@ class GenericTypeTests {
 			}
 
 			Type wildcardStringType = LocalClass.class.getMethod("listOfWildcardString").getAnnotatedReturnType().getType();
-			GenericType listOfWildcardString = GenericType.forType(wildcardStringType);
+			TypeUsage listOfWildcardString = TypeUsage.forType(wildcardStringType);
 
 			Type wildcardSerializableType = LocalClass.class.getMethod("listOfWildcardSerializable").getAnnotatedReturnType().getType();
-			GenericType listOfWildcardSerializable = GenericType.forType(wildcardSerializableType);
+			TypeUsage listOfWildcardSerializable = TypeUsage.forType(wildcardSerializableType);
 
-			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
-			GenericType listOfArbitrary = GenericType.of(List.class, GenericType.of(Arbitrary.class));
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			TypeUsage listOfArbitrary = TypeUsage.of(List.class, TypeUsage.of(Arbitrary.class));
 
 			assertThat(listOfWildcardString.canBeAssignedTo(listOfWildcardString)).isTrue();
 
@@ -389,11 +389,11 @@ class GenericTypeTests {
 			}
 
 			Type wildcardStringType = LocalClass.class.getMethod("listOfWildcardSuperString").getAnnotatedReturnType().getType();
-			GenericType listOfWildcardSuperString = GenericType.forType(wildcardStringType);
+			TypeUsage listOfWildcardSuperString = TypeUsage.forType(wildcardStringType);
 
-			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
-			GenericType listOfCharSequence = GenericType.of(List.class, GenericType.of(CharSequence.class));
-			GenericType listOfArbitrary = GenericType.of(List.class, GenericType.of(Arbitrary.class));
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			TypeUsage listOfCharSequence = TypeUsage.of(List.class, TypeUsage.of(CharSequence.class));
+			TypeUsage listOfArbitrary = TypeUsage.of(List.class, TypeUsage.of(Arbitrary.class));
 
 			assertThat(listOfWildcardSuperString.canBeAssignedTo(listOfWildcardSuperString)).isTrue();
 
@@ -416,13 +416,13 @@ class GenericTypeTests {
 			}
 
 			Type variableStringType = LocalClass.class.getMethod("listOfVariableString").getAnnotatedReturnType().getType();
-			GenericType listOfVariableString = GenericType.forType(variableStringType);
+			TypeUsage listOfVariableString = TypeUsage.forType(variableStringType);
 
 			Type variableSerializableType = LocalClass.class.getMethod("listOfVariableSerializable").getAnnotatedReturnType().getType();
-			GenericType listOfVariableSerializable = GenericType.forType(variableSerializableType);
+			TypeUsage listOfVariableSerializable = TypeUsage.forType(variableSerializableType);
 
-			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
-			GenericType listOfArbitrary = GenericType.of(List.class, GenericType.of(Arbitrary.class));
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			TypeUsage listOfArbitrary = TypeUsage.of(List.class, TypeUsage.of(Arbitrary.class));
 
 			assertThat(listOfVariableString.canBeAssignedTo(listOfVariableString)).isTrue();
 
@@ -445,13 +445,13 @@ class GenericTypeTests {
 			}
 
 			Type variableType = LocalClass.class.getMethod("listOfTypeVariable").getAnnotatedReturnType().getType();
-			GenericType listOfVariable = GenericType.forType(variableType);
+			TypeUsage listOfVariable = TypeUsage.forType(variableType);
 
 			Type boundVariableType = LocalClass.class.getMethod("listOfBoundTypeVariable").getAnnotatedReturnType().getType();
-			GenericType listOfBoundVariable = GenericType.forType(boundVariableType);
+			TypeUsage listOfBoundVariable = TypeUsage.forType(boundVariableType);
 
-			GenericType listOfString = GenericType.of(List.class, GenericType.of(String.class));
-			GenericType rawList = GenericType.of(List.class);
+			TypeUsage listOfString = TypeUsage.of(List.class, TypeUsage.of(String.class));
+			TypeUsage rawList = TypeUsage.of(List.class);
 
 			assertThat(listOfBoundVariable.canBeAssignedTo(listOfVariable)).isTrue();
 			assertThat(listOfVariable.canBeAssignedTo(listOfBoundVariable)).isFalse();
@@ -468,16 +468,16 @@ class GenericTypeTests {
 			class LocalStringArbitrary extends DefaultStringArbitrary {
 			}
 
-			GenericType localStringArbitrary = GenericType.of(LocalStringArbitrary.class);
+			TypeUsage localStringArbitrary = TypeUsage.of(LocalStringArbitrary.class);
 
-			assertThat(localStringArbitrary.canBeAssignedTo(GenericType.of(Object.class))).isTrue();
-			assertThat(localStringArbitrary.canBeAssignedTo(GenericType.of(AbstractArbitraryBase.class))).isTrue();
-			assertThat(localStringArbitrary.canBeAssignedTo(GenericType.of(String.class))).isFalse();
+			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(Object.class))).isTrue();
+			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(AbstractArbitraryBase.class))).isTrue();
+			assertThat(localStringArbitrary.canBeAssignedTo(TypeUsage.of(String.class))).isFalse();
 
-			GenericType stringArbitrary = GenericType.of(Arbitrary.class, GenericType.of(String.class));
+			TypeUsage stringArbitrary = TypeUsage.of(Arbitrary.class, TypeUsage.of(String.class));
 			assertThat(localStringArbitrary.canBeAssignedTo(stringArbitrary)).isTrue();
 
-			GenericType integerArbitrary = GenericType.of(Arbitrary.class, GenericType.of(Integer.class));
+			TypeUsage integerArbitrary = TypeUsage.of(Arbitrary.class, TypeUsage.of(Integer.class));
 			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution
 			// assertThat(localStringArbitrary.canBeAssignedTo(integerArbitrary)).isFalse();
 		}
@@ -493,21 +493,21 @@ class GenericTypeTests {
 			Type stringActionSequenceArbitrary = LocalClass.class.getMethod("stringActionSequenceArbitrary")
 																 .getAnnotatedReturnType()
 																 .getType();
-			GenericType actionSequenceStringArbitraryType = GenericType.forType(stringActionSequenceArbitrary);
-			GenericType actionSequenceArbitrary = GenericType.of(
+			TypeUsage actionSequenceStringArbitraryType = TypeUsage.forType(stringActionSequenceArbitrary);
+			TypeUsage actionSequenceArbitrary = TypeUsage.of(
 				Arbitrary.class,
-				GenericType.of(
+				TypeUsage.of(
 					ActionSequence.class,
-					GenericType.of(String.class)
+					TypeUsage.of(String.class)
 				)
 			);
 			assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceArbitrary)).isTrue();
 
-			GenericType actionSequenceIntegerArbitrary = GenericType.of(
+			TypeUsage actionSequenceIntegerArbitrary = TypeUsage.of(
 				Arbitrary.class,
-				GenericType.of(
+				TypeUsage.of(
 					ActionSequence.class,
-					GenericType.of(Integer.class)
+					TypeUsage.of(Integer.class)
 				)
 			);
 			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution

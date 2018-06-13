@@ -9,12 +9,12 @@ import java.util.function.*;
 public class EnumArbitraryProvider implements ArbitraryProvider {
 
 	@Override
-	public boolean canProvideFor(GenericType targetType) {
+	public boolean canProvideFor(TypeUsage targetType) {
 		return targetType.isEnum();
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		// noinspection unchecked
 		return Arbitraries.of((Class<Enum>) targetType.getRawType());
 	}

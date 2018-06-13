@@ -14,7 +14,7 @@ public class RegisteredArbitraryResolver {
 		this.registeredProviders = registeredProviders;
 	}
 
-	public Optional<Arbitrary<?>> resolve(GenericType targetType, Function<GenericType, Optional<Arbitrary<?>>> subtypeProvider) {
+	public Optional<Arbitrary<?>> resolve(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		for (ArbitraryProvider provider : registeredProviders) {
 			if (provider.canProvideFor(targetType)) {
 				Arbitrary<?> arbitrary = provider.provideFor(targetType, subtypeProvider);
