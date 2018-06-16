@@ -7,5 +7,5 @@ import net.jqwik.api.*;
 
 public interface ArbitraryConfigurator {
 
-	Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations);
+	<T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations);
 }

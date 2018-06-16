@@ -19,10 +19,10 @@ public interface RandomGenerator<T> {
 		return random -> RandomGenerator.this.next(random).map(mapper);
 	}
 
-	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int tries) {
+	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int genSize) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = this.next(random);
-			return new FlatMappedShrinkable<>(wrappedShrinkable, mapper, tries, random.nextLong());
+			return new FlatMappedShrinkable<>(wrappedShrinkable, mapper, genSize, random.nextLong());
 		};
 	}
 

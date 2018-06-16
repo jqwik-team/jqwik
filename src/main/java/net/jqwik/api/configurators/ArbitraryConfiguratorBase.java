@@ -15,13 +15,16 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	private final static String CONFIG_METHOD_NAME = "configure";
 
 	@Override
-	public Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations) {
+	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations) {
+		if (arbitrary instanceof Configurable) {
+			return ((Configurable<T>) arbitrary).configure(this, annotations);
+		}
 		for (Annotation annotation : annotations) {
 			Class<? extends Arbitrary> arbitraryClass = arbitrary.getClass();
 			List<Method> configurationMethods = findMethods(getClass(),
 					method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP);
 			for (Method configurationMethod : configurationMethods) {
-				arbitrary = (Arbitrary<?>) invokeMethod(configurationMethod, this, arbitrary, annotation);
+				arbitrary = (Arbitrary<T>) invokeMethod(configurationMethod, this, arbitrary, annotation);
 			}
 		}
 		return arbitrary;

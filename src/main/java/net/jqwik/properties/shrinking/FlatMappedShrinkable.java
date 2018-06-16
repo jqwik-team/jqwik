@@ -9,20 +9,20 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private final Shrinkable<T> toMap;
 	private final Function<T, Arbitrary<U>> mapper;
-	private final int tries;
+	private final int genSize;
 	private final long randomSeed;
 	private final Shrinkable<U> shrinkable;
 
-	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> mapper, int tries, long randomSeed) {
+	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> mapper, int genSize, long randomSeed) {
 		this.toMap = toMap;
 		this.mapper = mapper;
-		this.tries = tries;
+		this.genSize = genSize;
 		this.randomSeed = randomSeed;
 		this.shrinkable = generateShrinkable(toMap.value());
 	}
 
 	private Shrinkable<U> generateShrinkable(T value) {
-		RandomGenerator<U> generator = mapper.apply(value).generator(tries);
+		RandomGenerator<U> generator = mapper.apply(value).generator(genSize);
 		return generator.next(new Random(randomSeed));
 	}
 
@@ -30,7 +30,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
 		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
 		return toMap.shrink(toMapFalsifier) //
-					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, tries, randomSeed))) //
+					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, genSize, randomSeed))) //
 					.andThen(aShrinkable -> {
 						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
 						return flatMappedShrinkable.shrinkable.shrink(falsifier);
