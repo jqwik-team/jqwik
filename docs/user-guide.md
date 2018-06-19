@@ -613,7 +613,7 @@ the parameter type directly, e.g.:
 
 ```java
 @Property
-void aProperty(@ForAll @Size(min= 1) <@StringLength(max=10) String> listOfStrings) {
+void aProperty(@ForAll @Size(min= 1) List<@StringLength(max=10) String> listOfStrings) {
 }
 ```
 will generate lists with a minimum size of 1 filled with Strings that have 10 characters max.
