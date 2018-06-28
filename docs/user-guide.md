@@ -80,7 +80,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
-  - [0.8.12-SNAPSHOT](#0812-snapshot)
+  - [0.8.12](#0812)
   - [0.8.11](#0811)
   - [0.8.10](#0810)
   - [0.8.9](#089)
@@ -1970,7 +1970,7 @@ in a separate article...
 
 ## Release Notes
 
-### 0.8.12-SNAPSHOT
+### 0.8.12
 
 - Implemented generic type resolution to enable [contract tests](#contract-tests)
 - Renamed `GenericType` to `TypeUsage`

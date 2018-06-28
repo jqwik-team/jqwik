@@ -16,9 +16,6 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 
 	@Override
 	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations) {
-		if (arbitrary instanceof Configurable) {
-			return ((Configurable<T>) arbitrary).configure(this, annotations);
-		}
 		for (Annotation annotation : annotations) {
 			Class<? extends Arbitrary> arbitraryClass = arbitrary.getClass();
 			List<Method> configurationMethods = findMethods(getClass(),
