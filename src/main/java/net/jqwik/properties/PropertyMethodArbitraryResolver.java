@@ -59,7 +59,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		if (optionalCreator.isPresent()) {
 			createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
 		} else if (generatorName.isEmpty()) {
-			createdArbitrary = resolveDefaultArbitrary(typeUsage)
+			createdArbitrary = resolveRegisteredArbitrary(typeUsage)
 				.orElseGet(() -> findFirstFitArbitrary(typeUsage)
 					.orElse(null));
 		}
@@ -131,7 +131,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		};
 	}
 
-	private Optional<Arbitrary<?>> resolveDefaultArbitrary(TypeUsage parameterType) {
+	private Optional<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
 		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider = this::createForType;
 
 		return registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
