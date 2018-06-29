@@ -409,7 +409,10 @@ class GenericPropertyTests {
 
 	private ShrinkablesGenerator createShrinkablesGenerator(int genSize, Arbitrary... arbitraries) {
 		List<Arbitrary> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
-		return DefaultShrinkablesGenerator.forArbitraries(arbitraryList, genSize);
+		List<RandomGenerator> generators = arbitraryList.stream()
+														.map(arbitrary -> arbitrary.generator(genSize))
+														.collect(Collectors.toList());
+		return random -> generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
 	}
 
 
