@@ -8,22 +8,21 @@ import org.junit.platform.engine.reporting.*;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 public class CheckedProperty {
 
 	public final String propertyName;
 	public final CheckedFunction forAllPredicate;
 	public final List<MethodParameter> forAllParameters;
-	public final ArbitraryResolver arbitraryProvider;
+	public final ArbitraryResolver arbitraryResolver;
 	public final PropertyConfiguration configuration;
 
 	public CheckedProperty(String propertyName, CheckedFunction forAllPredicate, List<MethodParameter> forAllParameters,
-			ArbitraryResolver arbitraryProvider, PropertyConfiguration configuration) {
+						   ArbitraryResolver arbitraryResolver, PropertyConfiguration configuration) {
 		this.propertyName = propertyName;
 		this.forAllPredicate = forAllPredicate;
 		this.forAllParameters = forAllParameters;
-		this.arbitraryProvider = arbitraryProvider;
+		this.arbitraryResolver = arbitraryResolver;
 		this.configuration = configuration;
 	}
 
@@ -33,20 +32,15 @@ public class CheckedProperty {
 			.getSeed();
 		PropertyConfiguration effectiveConfiguration = configuration.withSeed(effectiveSeed);
 		try {
-			return createGenericProperty().check(effectiveConfiguration, publisher);
+			return createGenericProperty(effectiveConfiguration.getTries()).check(effectiveConfiguration, publisher);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.erroneous(effectiveConfiguration.getStereotype(), propertyName, 0, 0, effectiveConfiguration.getSeed(), Collections.emptyList(), cannotFindArbitraryException);
 		}
 	}
 
-	private Arbitrary<Object> findArbitrary(MethodParameter parameter) {
-		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryProvider.forParameter(parameter);
-		return arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
-	}
-
-	private GenericProperty createGenericProperty() {
-		List<Arbitrary> arbitraries = forAllParameters.stream().map(this::findArbitrary).collect(Collectors.toList());
-		return new GenericProperty(propertyName, arbitraries, forAllPredicate);
+	private GenericProperty createGenericProperty(int genSize) {
+		ShrinkablesGenerator shrinkablesGenerator = DefaultShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, genSize);
+		return new GenericProperty(propertyName, shrinkablesGenerator, forAllPredicate);
 	}
 
 }

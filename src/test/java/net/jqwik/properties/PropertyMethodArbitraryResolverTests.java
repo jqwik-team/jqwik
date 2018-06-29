@@ -1,9 +1,10 @@
-package net.jqwik.execution;
+package net.jqwik.properties;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.execution.*;
 import net.jqwik.support.*;
 
 import java.util.*;
@@ -43,7 +44,9 @@ class PropertyMethodArbitraryResolverTests {
 			List<ArbitraryProvider> defaultProviders = Arrays.asList(createProvider(String.class, null),
 					createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string")));
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(),
-					new RegisteredArbitraryResolver(defaultProviders), Collections.emptyList());
+																						   new RegisteredArbitraryResolver(defaultProviders), Collections
+																							   .emptyList()
+			);
 			MethodParameter parameter = getParameter(DefaultParams.class, "aString");
 			Object actual = generateFirst(resolver, parameter);
 			assertThat(actual).isEqualTo("an arbitrary string");

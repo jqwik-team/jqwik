@@ -1,9 +1,9 @@
-package net.jqwik.execution;
+package net.jqwik.properties;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
+import net.jqwik.execution.*;
 import net.jqwik.support.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;

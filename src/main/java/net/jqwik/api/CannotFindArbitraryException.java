@@ -1,13 +1,12 @@
-package net.jqwik.execution;
+package net.jqwik.api;
 
 import net.jqwik.*;
-import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.support.*;
 
 public class CannotFindArbitraryException extends JqwikException {
 
-	CannotFindArbitraryException(MethodParameter parameter) {
+	public CannotFindArbitraryException(MethodParameter parameter) {
 		super(createMessage(parameter));
 	}
 

@@ -17,12 +17,12 @@ import static net.jqwik.properties.PropertyCheckResult.Status.*;
 public class GenericProperty {
 
 	private final String name;
-	private final List<Arbitrary> arbitraries;
+	private final ShrinkablesGenerator shrinkablesGenerator;
 	private final Predicate<List<Object>> forAllPredicate;
 
-	public GenericProperty(String name, List<Arbitrary> arbitraries, CheckedFunction forAllPredicate) {
+	public GenericProperty(String name, ShrinkablesGenerator shrinkablesGenerator, CheckedFunction forAllPredicate) {
 		this.name = name;
-		this.arbitraries = arbitraries;
+		this.shrinkablesGenerator = shrinkablesGenerator;
 		this.forAllPredicate = forAllPredicate;
 	}
 
@@ -44,13 +44,11 @@ public class GenericProperty {
 	}
 
 	private PropertyCheckResult checkWithoutReporting(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
-		List<RandomGenerator> generators = arbitraries.stream().map(a1 -> a1.generator(configuration.getTries()))
-				.collect(Collectors.toList());
 		int maxTries = configuration.getTries();
 		int countChecks = 0;
 		Random random = SourceOfRandomness.create(configuration.getSeed());
 		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<Shrinkable> shrinkableParams = generateParameters(generators, random);
+			List<Shrinkable> shrinkableParams = generateParameters(random);
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, configuration.getReporting(), reporter)) {
@@ -105,7 +103,7 @@ public class GenericProperty {
 		return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), shrunkParams, originalParams, throwable);
 	}
 
-	private List<Shrinkable> generateParameters(List<RandomGenerator> generators, Random random) {
-		return generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
+	private List<Shrinkable> generateParameters(Random random) {
+		return shrinkablesGenerator.next(random);
 	}
 }

@@ -1,10 +1,11 @@
-package net.jqwik.execution;
+package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.configurators.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.execution.*;
 import net.jqwik.providers.*;
 import net.jqwik.support.*;
 import org.junit.platform.commons.support.*;
