@@ -44,9 +44,6 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	@Override
 	public Optional<Arbitrary<Object>> forParameter(MethodParameter parameter) {
-		if (!parameter.isAnnotated(ForAll.class)) {
-			return Optional.empty();
-		}
 		TypeUsage typeUsage = TypeUsage.forParameter(parameter);
 		return createForType(typeUsage).map(GenericArbitrary::new);
 	}
