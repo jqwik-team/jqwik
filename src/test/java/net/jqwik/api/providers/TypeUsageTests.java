@@ -130,8 +130,6 @@ class TypeUsageTests {
 				@SuppressWarnings("WeakerAccess")
 				public void withList(@Size(max = 2) List list) {}
 
-				public void withEqualList(@Size(max = 2) List list) {}
-
 				public void withNonEqualList(@Size(max = 3) List list) {}
 			}
 
@@ -146,9 +144,7 @@ class TypeUsageTests {
 
 			assertThat(parameterType.toString()).isEqualTo("@net.jqwik.api.constraints.Size(value=0, max=2, min=0) List");
 
-			Method methodWithEqualList = LocalClass.class.getMethod("withEqualList", List.class);
-			MethodParameter equalParameter = JqwikReflectionSupport.getMethodParameters(methodWithEqualList, LocalClass.class)[0];
-			TypeUsage equalParameterType = TypeUsage.forParameter(equalParameter);
+			TypeUsage equalParameterType = TypeUsage.forParameter(parameter);
 			assertThat(parameterType.equals(equalParameterType)).isTrue();
 
 			Method methodWithNonEqualList = LocalClass.class.getMethod("withNonEqualList", List.class);
@@ -163,6 +159,8 @@ class TypeUsageTests {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public void withWildcard(Tuple2<? extends CharSequence, ? super String> tuple) {}
+
+				public void withNonEqualWildcard(Tuple2<? extends CharSequence, ? super Number> tuple) {}
 			}
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
@@ -184,6 +182,14 @@ class TypeUsageTests {
 			assertThat(second.hasUpperBounds()).isFalse();
 
 			assertThat(wildcardType.toString()).isEqualTo("Tuple2<? extends CharSequence, ? super String>");
+
+			TypeUsage equalWildcardType = TypeUsage.forParameter(parameter);
+			assertThat(wildcardType.equals(equalWildcardType)).isTrue();
+
+			Method methodWithNonEqualWildcard = LocalClass.class.getMethod("withNonEqualWildcard", Tuple2.class);
+			MethodParameter nonEqualParameter = JqwikReflectionSupport.getMethodParameters(methodWithNonEqualWildcard, LocalClass.class)[0];
+			TypeUsage nonEqualWildcardType = TypeUsage.forParameter(nonEqualParameter);
+			assertThat(wildcardType.equals(nonEqualWildcardType)).isFalse();
 		}
 
 		@Example
@@ -191,6 +197,16 @@ class TypeUsageTests {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public <T extends CharSequence, U extends Serializable & Cloneable> void withTypeVariable(
+					Tuple2<T, U> tuple
+				) {}
+
+				@SuppressWarnings("WeakerAccess")
+				public <S extends CharSequence, U extends Serializable & Cloneable> void differentByName(
+					Tuple2<S, U> tuple
+				) {}
+
+				@SuppressWarnings("WeakerAccess")
+				public <T, U extends Serializable & Cloneable> void differentByLowerBounds(
 					Tuple2<T, U> tuple
 				) {}
 			}
@@ -214,6 +230,21 @@ class TypeUsageTests {
 			assertThat(second.hasUpperBounds()).isTrue();
 
 			assertThat(typeVariableType.toString()).isEqualTo("Tuple2<T extends CharSequence, U extends Serializable & Cloneable>");
+
+			TypeUsage equalTypeVariableType = TypeUsage.forParameter(parameter);
+			assertThat(typeVariableType.equals(equalTypeVariableType)).isTrue();
+
+
+			Method differentByNameMethod = LocalClass.class.getMethod("differentByName", Tuple2.class);
+			MethodParameter differentByNameParameter = JqwikReflectionSupport.getMethodParameters(differentByNameMethod, LocalClass.class)[0];
+			TypeUsage differentByNameType = TypeUsage.forParameter(differentByNameParameter);
+			assertThat(typeVariableType.equals(differentByNameType)).isFalse();
+
+			Method differentByLowerBoundsMethod = LocalClass.class.getMethod("differentByLowerBounds", Tuple2.class);
+			MethodParameter differentByLowerBoundsParameter = JqwikReflectionSupport.getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)[0];
+			TypeUsage differentByLowerBoundsType = TypeUsage.forParameter(differentByLowerBoundsParameter);
+			assertThat(typeVariableType.equals(differentByLowerBoundsType)).isFalse();
+
 		}
 
 		@Example

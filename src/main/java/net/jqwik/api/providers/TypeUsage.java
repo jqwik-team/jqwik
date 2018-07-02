@@ -450,7 +450,20 @@ public class TypeUsage {
 			return false;
 		if (!other.getTypeArguments().equals(getTypeArguments()))
 			return false;
-		return other.getAnnotations().equals(getAnnotations());
+		if (!other.getAnnotations().equals(getAnnotations()))
+			return false;
+		if (other.isWildcard() && isWildcard()) {
+			if (!Arrays.equals(other.lowerBounds, lowerBounds))
+				return false;
+			if (!Arrays.equals(other.upperBounds, upperBounds))
+				return false;
+		}
+		if (other.isTypeVariable() && isTypeVariable()) {
+			if (!other.typeVariable.equals(typeVariable))
+				return false;
+			return Arrays.equals(other.upperBounds, upperBounds);
+		}
+		return true;
 	}
 
 	@Override
