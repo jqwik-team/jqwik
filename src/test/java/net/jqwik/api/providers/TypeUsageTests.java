@@ -38,6 +38,9 @@ class TypeUsageTests {
 			assertThat(stringType.isEnum()).isFalse();
 
 			assertThat(stringType.toString()).isEqualTo("String");
+
+			assertThat(stringType.equals(TypeUsage.of(String.class))).isTrue();
+			assertThat(stringType.equals(TypeUsage.of(Number.class))).isFalse();
 		}
 
 		@Example
@@ -51,6 +54,11 @@ class TypeUsageTests {
 			assertThat(tupleType.isEnum()).isFalse();
 
 			assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
+
+			TypeUsage equalType = TypeUsage.of(Tuple2.class, of(String.class), of(Integer.class));
+			assertThat(tupleType.equals(equalType)).isTrue();
+			TypeUsage nonEqualType = TypeUsage.of(Tuple2.class, of(String.class), of(Number.class));
+			assertThat(tupleType.equals(nonEqualType)).isFalse();
 		}
 
 		@Example
@@ -121,6 +129,10 @@ class TypeUsageTests {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public void withList(@Size(max = 2) List list) {}
+
+				public void withEqualList(@Size(max = 2) List list) {}
+
+				public void withNonEqualList(@Size(max = 3) List list) {}
 			}
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
@@ -133,6 +145,17 @@ class TypeUsageTests {
 			assertThat(parameterType.getAnnotation(WithNull.class)).isNotPresent();
 
 			assertThat(parameterType.toString()).isEqualTo("@net.jqwik.api.constraints.Size(value=0, max=2, min=0) List");
+
+			Method methodWithEqualList = LocalClass.class.getMethod("withEqualList", List.class);
+			MethodParameter equalParameter = JqwikReflectionSupport.getMethodParameters(methodWithEqualList, LocalClass.class)[0];
+			TypeUsage equalParameterType = TypeUsage.forParameter(equalParameter);
+			assertThat(parameterType.equals(equalParameterType)).isTrue();
+
+			Method methodWithNonEqualList = LocalClass.class.getMethod("withNonEqualList", List.class);
+			MethodParameter nonEqualParameter = JqwikReflectionSupport.getMethodParameters(methodWithNonEqualList, LocalClass.class)[0];
+			TypeUsage nonEqualParameterType = TypeUsage.forParameter(nonEqualParameter);
+			assertThat(parameterType.equals(nonEqualParameterType)).isFalse();
+
 		}
 
 		@Example

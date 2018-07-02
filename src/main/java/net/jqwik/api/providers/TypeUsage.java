@@ -440,6 +440,25 @@ public class TypeUsage {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj.getClass() != getClass())
+			return false;
+		TypeUsage other = (TypeUsage) obj;
+		if (!other.getRawType().equals(getRawType()))
+			return false;
+		if (!other.getTypeArguments().equals(getTypeArguments()))
+			return false;
+		return other.getAnnotations().equals(getAnnotations());
+	}
+
+	@Override
+	public int hashCode() {
+		return getRawType().hashCode();
+	}
+
+	@Override
 	public String toString() {
 		String representation = getRawType().getSimpleName();
 		if (isGeneric()) {
