@@ -1,8 +1,10 @@
 package net.jqwik;
 
 import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
+import org.junit.platform.engine.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -39,6 +41,12 @@ public class TestHelper {
 		return actual;
 	}
 
-
-
+	public static PropertyMethodDescriptor createPropertyMethodDescriptor(
+		Class<?> containerClass, String methodName, String seed, int tries, int maxDiscardRatio, ShrinkingMode shrinking
+	) {
+		UniqueId uniqueId = UniqueId.root("test", "i dont care");
+		Method method = getMethod(containerClass, methodName);
+		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, new Reporting[0]);
+		return new PropertyMethodDescriptor(uniqueId, method, containerClass, propertyConfig);
+	}
 }

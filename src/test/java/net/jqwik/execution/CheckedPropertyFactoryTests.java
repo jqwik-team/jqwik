@@ -3,9 +3,7 @@ package net.jqwik.execution;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
-import org.junit.platform.engine.*;
 
-import java.lang.reflect.*;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -59,12 +57,12 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllPredicate.test(noArgs)).isTrue();
 	}
 
-	private PropertyMethodDescriptor createDescriptor(String methodName, String seed, int tries, int maxDiscardRatio,
-			ShrinkingMode shrinking) {
-		UniqueId uniqueId = UniqueId.root("test", "i dont care");
-		Method method = TestHelper.getMethod(PropertyExamples.class, methodName);
-		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, new Reporting[0]);
-		return new PropertyMethodDescriptor(uniqueId, method, PropertyExamples.class, propertyConfig);
+	private PropertyMethodDescriptor createDescriptor(
+		String methodName, String seed, int tries, int maxDiscardRatio,
+		ShrinkingMode shrinking
+	) {
+		Class<PropertyExamples> containerClass = PropertyExamples.class;
+		return TestHelper.createPropertyMethodDescriptor(containerClass, methodName, seed, tries, maxDiscardRatio, shrinking);
 	}
 
 	private static class PropertyExamples {
