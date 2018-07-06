@@ -22,15 +22,11 @@ public interface ArbitraryProvider {
 
 	/**
 	 * Return true if the provider is suitable for {@code targetType}
-	 *
-	 * This is a pre filter. Even if it returns {@code true}
-	 * {@linkplain #provideFor(TypeUsage, Function)} can still return {@code null}
 	 */
 	boolean canProvideFor(TypeUsage targetType);
 
 	/**
-	 * Return an arbitrary instance or {@code null} for a given {@code targetType}.
-	 * If {@code null} is returned the search for a fitting provider will continue.
+	 * Return an arbitrary instance for a given {@code targetType}.
 	 *
 	 * Only {@code targetType}s that have been allowed by {@linkplain #canProvideFor(TypeUsage)}
 	 * will be given to this method.
