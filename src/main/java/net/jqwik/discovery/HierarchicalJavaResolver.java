@@ -34,7 +34,7 @@ class HierarchicalJavaResolver {
 		resolvedDescriptors.forEach(this::resolveChildren);
 
 		if (resolvedDescriptors.isEmpty()) {
-			LOG.warning(() -> format("Class '%s' could not be resolved", testClass.getName()));
+			LOG.info(() -> format("Received request to resolve class '%s' as test container but could not fulfill it", testClass.getName()));
 		}
 	}
 
@@ -43,7 +43,7 @@ class HierarchicalJavaResolver {
 		Set<TestDescriptor> resolvedDescriptors = resolveForAllParents(testMethod, potentialParents);
 
 		if (resolvedDescriptors.isEmpty()) {
-			LOG.warning(() -> format("Method '%s' could not be resolved", testMethod.toGenericString()));
+			LOG.info(() -> format("Received request to resolve method '%s' as test but could not fulfill it", testMethod.toGenericString()));
 		}
 	}
 
@@ -58,7 +58,8 @@ class HierarchicalJavaResolver {
 		segments.remove(0); // Ignore engine unique ID
 
 		if (!resolveUniqueId(this.engineDescriptor, segments)) {
-			LOG.warning(() -> format("Unique ID '%s' could not be resolved", uniqueId));
+			// This is more severe than unresolvable methods or classes because only suitable IDs should get here anyway
+			LOG.warning(() -> format("Received request to resolve unique id '%s' as test or test container but could not fulfill it", uniqueId));
 		}
 	}
 
