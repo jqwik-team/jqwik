@@ -6,5 +6,5 @@ import net.jqwik.api.providers.*;
 import java.util.*;
 
 public interface ArbitraryBuilder {
-	Arbitrary build(Map<TypeUsage, ArbitraryBuilder> subtypeBuilders);
+	Arbitrary build(Object testInstance, Map<TypeUsage, ArbitraryBuilder> subtypeBuilders);
 }
