@@ -23,7 +23,7 @@ class DefaultShrinkablesGeneratorTests {
 
 	private DefaultShrinkablesGenerator createGenerator(String methodName) {
 		PropertyMethodDescriptor methodDescriptor = createDescriptor(methodName);
-		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(methodDescriptor, new MyProperties());
+		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(MyProperties.class, new MyProperties());
 		List<MethodParameter> parameters = getParameters(methodDescriptor);
 
 		return DefaultShrinkablesGenerator.forParameters(parameters, arbitraryResolver, 1000);

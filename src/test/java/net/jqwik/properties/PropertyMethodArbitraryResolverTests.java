@@ -3,14 +3,12 @@ package net.jqwik.properties;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.descriptor.*;
 import net.jqwik.execution.*;
 import net.jqwik.support.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static net.jqwik.TestDescriptorBuilder.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -25,7 +23,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void defaultProvidersAreUsedIfNothingIsProvided() {
-			PropertyMethodArbitraryResolver provider = getResolver(DefaultParams.class, "intParam", int.class);
+			PropertyMethodArbitraryResolver provider = getResolver(DefaultParams.class);
 			MethodParameter parameter = getParameter(DefaultParams.class, "intParam");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(Integer.class);
@@ -33,17 +31,16 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void doNotUseDefaultIfForAllHasValue() {
-			PropertyMethodArbitraryResolver resolver = getResolver(DefaultParams.class, "intParamWithForAllValue", int.class);
+			PropertyMethodArbitraryResolver resolver = getResolver(DefaultParams.class);
 			MethodParameter parameter = getParameter(DefaultParams.class, "intParamWithForAllValue");
 			assertThat(resolver.forParameter(parameter)).isEmpty();
 		}
 
 		@Example
 		void useNextDefaultProviderIfFirstDoesNotProvideAnArbitrary() {
-			PropertyMethodDescriptor descriptor = getDescriptor(DefaultParams.class, "aString", String.class);
 			List<ArbitraryProvider> defaultProviders = Arrays.asList(createProvider(String.class, null),
 					createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string")));
-			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(descriptor, new DefaultParams(),
+			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(DefaultParams.class, new DefaultParams(),
 																						   new RegisteredArbitraryResolver(defaultProviders), Collections
 																							   .emptyList()
 			);
@@ -91,7 +88,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void unnamedStringGenerator() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithUnnamedGenerator.class, "string", String.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithUnnamedGenerator.class);
 			MethodParameter parameter = getParameter(WithUnnamedGenerator.class, "string");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -111,7 +108,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void findBoxedTypeGenerator() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "longFromBoxedType", long.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "longFromBoxedType");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(Long.class);
@@ -119,7 +116,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void findStringGeneratorByName() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "string", String.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "string");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -127,7 +124,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void findStringGeneratorByMethodName() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "stringByMethodName", String.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -135,8 +132,8 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void findGeneratorByMethodNameOutsideGroup() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class,
-					"nestedStringByMethodName", String.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class
+			);
 			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -144,8 +141,8 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void findGeneratorByNameOutsideGroup() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class, "nestedString",
-					String.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class
+			);
 			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedString");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(String.class);
@@ -153,8 +150,8 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void findFirstFitIfNoNameIsGivenInOutsideGroup() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing",
-					Thing.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class
+			);
 			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing");
 			Object actual = generateFirst(provider, parameter);
 			assertThat(actual).isInstanceOf(Thing.class);
@@ -162,14 +159,14 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void namedStringGeneratorNotFound() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "otherString", String.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "otherString");
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
 		@Example
 		void findFirstFitIfNoNameIsGiven() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class, "listOfThingWithoutName", List.class);
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "listOfThingWithoutName");
 			List actualList = generateCollection(provider, parameter);
 			assertThat(actualList.get(0)).isInstanceOf(Thing.class);
@@ -260,13 +257,8 @@ class PropertyMethodArbitraryResolverTests {
 		return TestHelper.generateFirst(provider.forParameter(parameter).get());
 	}
 
-	private static PropertyMethodArbitraryResolver getResolver(Class<?> container, String methodName, Class<?>... parameterTypes) {
-		PropertyMethodDescriptor descriptor = getDescriptor(container, methodName, parameterTypes);
-		return new PropertyMethodArbitraryResolver(descriptor, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
-	}
-
-	private static PropertyMethodDescriptor getDescriptor(Class container, String methodName, Class... parameterTypes) {
-		return (PropertyMethodDescriptor) forMethod(container, methodName, parameterTypes).build();
+	private static PropertyMethodArbitraryResolver getResolver(Class<?> container) {
+		return new PropertyMethodArbitraryResolver(container, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
 	}
 
 	private static MethodParameter getParameter(Class container, String methodName) {

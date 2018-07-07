@@ -4,7 +4,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.configurators.*;
-import net.jqwik.descriptor.*;
 import net.jqwik.execution.*;
 import net.jqwik.providers.*;
 import net.jqwik.support.*;
@@ -20,23 +19,23 @@ import static net.jqwik.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
-	private final PropertyMethodDescriptor descriptor;
+	private final Class<?> containerClass;
 	private final Object testInstance;
 	private final RegisteredArbitraryResolver registeredArbitraryResolver;
 	private final List<ArbitraryConfigurator> registeredArbitraryConfigurators;
 
-	public PropertyMethodArbitraryResolver(PropertyMethodDescriptor descriptor, Object testInstance) {
-		this(descriptor, testInstance, new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders()),
+	public PropertyMethodArbitraryResolver(Class<?> containerClass, Object testInstance) {
+		this(containerClass, testInstance, new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders()),
 			 RegisteredArbitraryConfigurators.getConfigurators()
 		);
 	}
 
 	public PropertyMethodArbitraryResolver(
-		PropertyMethodDescriptor descriptor, Object testInstance,
+		Class<?> containerClass, Object testInstance,
 		RegisteredArbitraryResolver registeredArbitraryResolver,
 		List<ArbitraryConfigurator> registeredArbitraryConfigurators
 	) {
-		this.descriptor = descriptor;
+		this.containerClass = containerClass;
 		this.testInstance = testInstance;
 		this.registeredArbitraryResolver = registeredArbitraryResolver;
 		this.registeredArbitraryConfigurators = registeredArbitraryConfigurators;
@@ -89,7 +88,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		if (generatorToFind.isEmpty())
 			return Optional.empty();
 		List<Method> creators = findMethodsPotentiallyOuter( //
-															 descriptor.getContainerClass(), //
+															 containerClass, //
 															 isCreatorForType(typeUsage), //
 															 HierarchyTraversalMode.BOTTOM_UP
 		);
@@ -108,7 +107,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Optional<Method> findArbitraryCreator(TypeUsage typeUsage) {
-		List<Method> creators = findMethodsPotentiallyOuter(descriptor.getContainerClass(), isCreatorForType(typeUsage),
+		List<Method> creators = findMethodsPotentiallyOuter(containerClass, isCreatorForType(typeUsage),
 															HierarchyTraversalMode.BOTTOM_UP
 		);
 		if (creators.size() > 1) {
