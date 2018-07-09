@@ -132,14 +132,13 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Optional<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
-		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider = typeUsage -> {
-			List<Arbitrary<?>> arbitraries = createForType(typeUsage);
-			if (arbitraries.isEmpty())
-				return Optional.empty();
-			else return Optional.of(arbitraries.get(0));
-		};
-
-		return registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
+		Function<TypeUsage, List<Arbitrary<?>>> subtypeProvider = typeUsage -> createForType(typeUsage);
+		List<Arbitrary<?>> arbitraries = registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
+		if (arbitraries.isEmpty()) {
+			return Optional.empty();
+		}
+		// TODO: Handle more than one fitting arbitrary
+		return Optional.of(arbitraries.get(0));
 	}
 
 }
