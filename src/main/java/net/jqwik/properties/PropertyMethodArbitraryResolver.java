@@ -42,12 +42,12 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	@Override
-	public Optional<Arbitrary<Object>> forParameter(MethodParameter parameter) {
+	public List<Arbitrary<?>> forParameter(MethodParameter parameter) {
 		TypeUsage typeUsage = TypeUsage.forParameter(parameter);
-		return createForType(typeUsage).map(GenericArbitrary::new);
+		return createForType(typeUsage);
 	}
 
-	private Optional<Arbitrary<?>> createForType(TypeUsage typeUsage) {
+	private List<Arbitrary<?>> createForType(TypeUsage typeUsage) {
 		Arbitrary<?> createdArbitrary = null;
 
 		String generatorName = typeUsage.getAnnotation(ForAll.class).map(ForAll::value).orElse("");
@@ -64,7 +64,11 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 			createdArbitrary = configure(createdArbitrary, typeUsage);
 		}
 
-		return Optional.ofNullable(createdArbitrary);
+		if (createdArbitrary == null) {
+			return Collections.emptyList();
+		} else {
+			return Collections.singletonList(createdArbitrary);
+		}
 	}
 
 	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage typeUsage) {
@@ -128,7 +132,12 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Optional<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
-		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider = this::createForType;
+		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider = typeUsage -> {
+			List<Arbitrary<?>> arbitraries = createForType(typeUsage);
+			if (arbitraries.isEmpty())
+				return Optional.empty();
+			else return Optional.of(arbitraries.get(0));
+		};
 
 		return registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
 	}

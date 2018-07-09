@@ -4,6 +4,7 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.execution.*;
+import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 
 import java.util.*;
@@ -19,34 +20,38 @@ class PropertyMethodArbitraryResolverTests {
 	}
 
 	@Group
-	class Defaults {
+	class RegisteredArbitraryResolvers {
 
 		@Example
 		void defaultProvidersAreUsedIfNothingIsProvided() {
 			PropertyMethodArbitraryResolver provider = getResolver(DefaultParams.class);
 			MethodParameter parameter = getParameter(DefaultParams.class, "intParam");
-			Object actual = generateFirst(provider, parameter);
-			assertThat(actual).isInstanceOf(Integer.class);
+			List<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			assertThat(arbitraries).hasSize(1);
+			assertThat(arbitraries.get(0)).isInstanceOf(DefaultIntegerArbitrary.class);
 		}
 
 		@Example
-		void doNotUseDefaultIfForAllHasValue() {
+		void doNotConsiderRegisteredProvidersIfForAllHasValue() {
 			PropertyMethodArbitraryResolver resolver = getResolver(DefaultParams.class);
 			MethodParameter parameter = getParameter(DefaultParams.class, "intParamWithForAllValue");
 			assertThat(resolver.forParameter(parameter)).isEmpty();
 		}
 
 		@Example
-		void useNextDefaultProviderIfFirstDoesNotProvideAnArbitrary() {
-			List<ArbitraryProvider> defaultProviders = Arrays.asList(createProvider(String.class, null),
-					createProvider(String.class, (Arbitrary<String>) tries -> random -> Shrinkable.unshrinkable("an arbitrary string")));
-			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(DefaultParams.class, new DefaultParams(),
-																						   new RegisteredArbitraryResolver(defaultProviders), Collections
-																							   .emptyList()
+		void useNextRegisteredProviderIfFirstDoesNotProvideAnArbitrary() {
+			Arbitrary<String> secondArbitrary = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			List<ArbitraryProvider> registeredProviders = Arrays.asList(
+				createProvider(String.class, null),
+				createProvider(String.class, secondArbitrary)
+			);
+			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
+				DefaultParams.class, new DefaultParams(),
+				new RegisteredArbitraryResolver(registeredProviders),
+				Collections.emptyList()
 			);
 			MethodParameter parameter = getParameter(DefaultParams.class, "aString");
-			Object actual = generateFirst(resolver, parameter);
-			assertThat(actual).isEqualTo("an arbitrary string");
+			assertThat(resolver.forParameter(parameter).get(0)).isSameAs(secondArbitrary);
 		}
 
 		private ArbitraryProvider createProvider(Class targetClass, Arbitrary<?> arbitrary) {
@@ -240,13 +245,13 @@ class PropertyMethodArbitraryResolverTests {
 
 	}
 
-	private static RandomGenerator<Object> getGenerator(PropertyMethodArbitraryResolver provider, MethodParameter parameter) {
-		return provider.forParameter(parameter).get().generator(1);
+	private static RandomGenerator<?> getGenerator(PropertyMethodArbitraryResolver provider, MethodParameter parameter) {
+		return provider.forParameter(parameter).get(0).generator(1);
 	}
 
 	@SuppressWarnings("unchecked")
 	private <T extends Collection> T generateCollection(PropertyMethodArbitraryResolver provider, MethodParameter parameter) {
-		RandomGenerator<Object> generator = getGenerator(provider, parameter);
+		RandomGenerator<?> generator = getGenerator(provider, parameter);
 		return (T) TestHelper.generateUntil(generator, o -> {
 			T c = (T) o;
 			return !c.isEmpty();
@@ -254,7 +259,7 @@ class PropertyMethodArbitraryResolverTests {
 	}
 
 	private static Object generateFirst(PropertyMethodArbitraryResolver provider, MethodParameter parameter) {
-		return TestHelper.generateFirst(provider.forParameter(parameter).get());
+		return TestHelper.generateFirst(provider.forParameter(parameter).get(0));
 	}
 
 	private static PropertyMethodArbitraryResolver getResolver(Class<?> container) {

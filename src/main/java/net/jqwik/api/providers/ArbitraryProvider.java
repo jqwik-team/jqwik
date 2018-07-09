@@ -32,6 +32,33 @@ public interface ArbitraryProvider {
 	 * will be given to this method.
 	 *
 	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
+	 *
+	 * {@link Deprecated Use {@linkplain #provideArbitrariesFor(TypeUsage, Function)} instead.}
+	 *
+	 * This method will be removed in one of the next versions of jqwik.
 	 */
+	@Deprecated
 	Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider);
+
+	/**
+	 * Return a list of arbitrary instances for a given {@code targetType}.
+	 *
+	 * Only {@code targetType}s that have been allowed by {@linkplain #canProvideFor(TypeUsage)}
+	 * will be given to this method.
+	 *
+	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
+	 */
+	default List<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, Function<TypeUsage, List<Arbitrary<?>>> subtypeProvider) {
+		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeOptionalProvider = typeUsage -> {
+			List<Arbitrary<?>> arbitraries = subtypeProvider.apply(typeUsage);
+			if (arbitraries.isEmpty())
+				return Optional.empty();
+			else return Optional.of(arbitraries.get(0));
+		};
+		Arbitrary<?> arbitrary = provideFor(targetType, subtypeOptionalProvider);
+		if (arbitrary == null)
+			return Collections.emptyList();
+		else
+			return Collections.singletonList(arbitrary);
+	}
 }
