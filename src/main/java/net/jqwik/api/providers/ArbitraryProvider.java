@@ -41,24 +41,24 @@ public interface ArbitraryProvider {
 	Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider);
 
 	/**
-	 * Return a list of arbitrary instances for a given {@code targetType}.
+	 * Return a set of arbitrary instances for a given {@code targetType}.
 	 *
 	 * Only {@code targetType}s that have been allowed by {@linkplain #canProvideFor(TypeUsage)}
 	 * will be given to this method.
 	 *
 	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
 	 */
-	default List<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, Function<TypeUsage, List<Arbitrary<?>>> subtypeProvider) {
+	default Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider) {
 		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeOptionalProvider = typeUsage -> {
-			List<Arbitrary<?>> arbitraries = subtypeProvider.apply(typeUsage);
+			Set<Arbitrary<?>> arbitraries = subtypeProvider.apply(typeUsage);
 			if (arbitraries.isEmpty())
 				return Optional.empty();
-			else return Optional.of(arbitraries.get(0));
+			else return Optional.of(arbitraries.iterator().next());
 		};
 		Arbitrary<?> arbitrary = provideFor(targetType, subtypeOptionalProvider);
 		if (arbitrary == null)
-			return Collections.emptyList();
+			return Collections.emptySet();
 		else
-			return Collections.singletonList(arbitrary);
+			return Collections.singleton(arbitrary);
 	}
 }
