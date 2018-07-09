@@ -1,11 +1,8 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.*;
-import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.properties.arbitraries.*;
 
-import java.lang.annotation.*;
 import java.util.*;
 import java.util.function.*;
 

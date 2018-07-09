@@ -17,8 +17,12 @@ public class DefaultShrinkablesGenerator implements ShrinkablesGenerator {
 	}
 
 	private static Arbitrary<Object> findArbitrary(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
-		Optional<Arbitrary<Object>> arbitraryOptional = arbitraryResolver.forParameter(parameter);
-		return arbitraryOptional.orElseThrow(() -> new CannotFindArbitraryException(parameter));
+		List<Arbitrary<?>> arbitraries = arbitraryResolver.forParameter(parameter);
+		// TODO: Handle more than one provided arbitrary
+		if (arbitraries.isEmpty()) {
+			throw new CannotFindArbitraryException(parameter);
+		}
+		return new GenericArbitrary(arbitraries.get(0));
 	}
 
 	private final List<RandomGenerator> generators;
