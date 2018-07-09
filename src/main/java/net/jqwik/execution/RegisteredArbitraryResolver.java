@@ -14,26 +14,17 @@ public class RegisteredArbitraryResolver {
 		this.registeredProviders = registeredProviders;
 	}
 
-	public Optional<Arbitrary<?>> resolve(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		// Wildcards without bounds are handled specially
-		//if (targetType.isWildcard() && !targetType.hasUpperBounds() && !targetType.hasLowerBounds())
-		//	return Optional.of(new WildcardArbitrary());
-
+	public List<Arbitrary<?>> resolve(TypeUsage targetType, Function<TypeUsage, List<Arbitrary<?>>> subtypeProvider) {
 		List<Arbitrary<?>> fittingArbitraries = new ArrayList<>();
 		for (ArbitraryProvider provider : registeredProviders) {
 			if (provider.canProvideFor(targetType)) {
-				Arbitrary<?> arbitrary = provider.provideFor(targetType, subtypeProvider);
+				List<Arbitrary<?>> arbitrary = provider.provideArbitrariesFor(targetType, subtypeProvider);
 				if (arbitrary != null) {
-					fittingArbitraries.add(arbitrary);
+					fittingArbitraries.addAll(arbitrary);
 				}
 			}
 		}
-		if (fittingArbitraries.isEmpty()) {
-			return Optional.empty();
-		}
-		// TODO: Handle case of more than one fitting arbitrary.
-		return Optional.of(fittingArbitraries.get(0));
-
+		return fittingArbitraries;
 	}
 
 }
