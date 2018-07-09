@@ -449,15 +449,15 @@ public class Arbitraries {
 	private static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
 		RegisteredArbitraryResolver defaultArbitraryResolver =
 			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
-		Function<TypeUsage, List<Arbitrary<?>>> subtypeProvider = subtype -> Collections.singletonList(defaultFor(subtype));
-		List<Arbitrary<?>> arbitraries = defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
+		Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider = subtype -> Collections.singleton(defaultFor(subtype));
+		Set<Arbitrary<?>> arbitraries = defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(typeUsage);
 		}
 
 		//TODO: Handle case if there is more than one fitting default provider
-		return (Arbitrary<T>) arbitraries.get(0);
+		return (Arbitrary<T>) arbitraries.iterator().next();
 	}
 
 	/**

@@ -107,7 +107,7 @@ class CheckedPropertyTests {
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
 			List<MethodParameter> parameters = getParametersForMethod("stringProp");
 			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
-					p -> Collections.emptyList(), //
+					p -> Collections.emptySet(), //
 					new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0]));
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
@@ -122,7 +122,7 @@ class CheckedPropertyTests {
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
 			CheckedProperty checkedProperty = new CheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
-				p -> Collections.singletonList(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				new PropertyConfiguration("Property", "42", 12, 5, ShrinkingMode.FULL, new Reporting[0])
 			);
 
@@ -138,7 +138,7 @@ class CheckedPropertyTests {
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty( //
 			methodName, forAllFunction, getParametersForMethod(methodName), //
-			p -> Collections.singletonList(new GenericArbitrary(Arbitraries.integers().between(-50, 50))), //
+			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))), //
 			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0]) //
 		);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);

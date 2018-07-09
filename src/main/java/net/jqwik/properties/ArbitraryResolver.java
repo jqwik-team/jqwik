@@ -6,5 +6,5 @@ import net.jqwik.support.*;
 import java.util.*;
 
 public interface ArbitraryResolver {
-	List<Arbitrary<?>> forParameter(MethodParameter parameter);
+	Set<Arbitrary<?>> forParameter(MethodParameter parameter);
 }

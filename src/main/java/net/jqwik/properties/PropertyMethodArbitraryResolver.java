@@ -42,33 +42,27 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	@Override
-	public List<Arbitrary<?>> forParameter(MethodParameter parameter) {
+	public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
 		TypeUsage typeUsage = TypeUsage.forParameter(parameter);
 		return createForType(typeUsage);
 	}
 
-	private List<Arbitrary<?>> createForType(TypeUsage typeUsage) {
-		Arbitrary<?> createdArbitrary = null;
+	private Set<Arbitrary<?>> createForType(TypeUsage typeUsage) {
+		final Set<Arbitrary<?>> resolvedArbitraries = new HashSet<>();
 
 		String generatorName = typeUsage.getAnnotation(ForAll.class).map(ForAll::value).orElse("");
 		Optional<Method> optionalCreator = findArbitraryCreatorByName(typeUsage, generatorName);
 		if (optionalCreator.isPresent()) {
-			createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
+			Arbitrary<?> createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
+			resolvedArbitraries.add(createdArbitrary);
 		} else if (generatorName.isEmpty()) {
-			createdArbitrary = resolveRegisteredArbitrary(typeUsage)
-				.orElseGet(() -> findFirstFitArbitrary(typeUsage)
-					.orElse(null));
+			resolvedArbitraries.addAll(resolveRegisteredArbitrary(typeUsage));
+			if (resolvedArbitraries.isEmpty()) {
+				findFirstFitArbitrary(typeUsage).ifPresent(resolvedArbitraries::add);
+			}
 		}
 
-		if (createdArbitrary != null) {
-			createdArbitrary = configure(createdArbitrary, typeUsage);
-		}
-
-		if (createdArbitrary == null) {
-			return Collections.emptyList();
-		} else {
-			return Collections.singletonList(createdArbitrary);
-		}
+		return resolvedArbitraries.stream().map(arbitrary -> configure(arbitrary, typeUsage)).collect(Collectors.toSet());
 	}
 
 	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage typeUsage) {
@@ -131,14 +125,9 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		};
 	}
 
-	private Optional<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
-		Function<TypeUsage, List<Arbitrary<?>>> subtypeProvider = typeUsage -> createForType(typeUsage);
-		List<Arbitrary<?>> arbitraries = registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
-		if (arbitraries.isEmpty()) {
-			return Optional.empty();
-		}
-		// TODO: Handle more than one fitting arbitrary
-		return Optional.of(arbitraries.get(0));
+	private Set<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
+		Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider = this::createForType;
+		return registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
 	}
 
 }

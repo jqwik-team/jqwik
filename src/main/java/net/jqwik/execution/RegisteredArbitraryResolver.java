@@ -14,11 +14,11 @@ public class RegisteredArbitraryResolver {
 		this.registeredProviders = registeredProviders;
 	}
 
-	public List<Arbitrary<?>> resolve(TypeUsage targetType, Function<TypeUsage, List<Arbitrary<?>>> subtypeProvider) {
-		List<Arbitrary<?>> fittingArbitraries = new ArrayList<>();
+	public Set<Arbitrary<?>> resolve(TypeUsage targetType, Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider) {
+		Set<Arbitrary<?>> fittingArbitraries = new HashSet<>();
 		for (ArbitraryProvider provider : registeredProviders) {
 			if (provider.canProvideFor(targetType)) {
-				List<Arbitrary<?>> arbitrary = provider.provideArbitrariesFor(targetType, subtypeProvider);
+				Set<Arbitrary<?>> arbitrary = provider.provideArbitrariesFor(targetType, subtypeProvider);
 				if (arbitrary != null) {
 					fittingArbitraries.addAll(arbitrary);
 				}

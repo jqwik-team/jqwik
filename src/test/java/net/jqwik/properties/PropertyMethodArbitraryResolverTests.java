@@ -26,9 +26,9 @@ class PropertyMethodArbitraryResolverTests {
 		void defaultProvidersAreUsedIfNothingIsProvided() {
 			PropertyMethodArbitraryResolver provider = getResolver(DefaultParams.class);
 			MethodParameter parameter = getParameter(DefaultParams.class, "intParam");
-			List<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
 			assertThat(arbitraries).hasSize(1);
-			assertThat(arbitraries.get(0)).isInstanceOf(DefaultIntegerArbitrary.class);
+			assertThat(arbitraries.iterator().next()).isInstanceOf(DefaultIntegerArbitrary.class);
 		}
 
 		@Example
@@ -51,7 +51,29 @@ class PropertyMethodArbitraryResolverTests {
 				Collections.emptyList()
 			);
 			MethodParameter parameter = getParameter(DefaultParams.class, "aString");
-			assertThat(resolver.forParameter(parameter).get(0)).isSameAs(secondArbitrary);
+			assertThat(resolver.forParameter(parameter).iterator().next()).isSameAs(secondArbitrary);
+		}
+
+		@Example
+		void resolveSeveralFittingArbitraries() {
+			Arbitrary<String> doesNotFitFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> firstFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> secondFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> thirdFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			List<ArbitraryProvider> registeredProviders = Arrays.asList(
+				createProvider(String.class, firstFit),
+				createProvider(Integer.class, doesNotFitFit),
+				createProvider(String.class, secondFit),
+				createProvider(String.class, thirdFit)
+			);
+			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
+				DefaultParams.class, new DefaultParams(),
+				new RegisteredArbitraryResolver(registeredProviders),
+				Collections.emptyList()
+			);
+			MethodParameter parameter = getParameter(DefaultParams.class, "aString");
+			assertThat(resolver.forParameter(parameter)).hasSize(3);
+			assertThat(resolver.forParameter(parameter)).containsOnly(firstFit, secondFit, thirdFit);
 		}
 
 		private ArbitraryProvider createProvider(Class targetClass, Arbitrary<?> arbitrary) {
@@ -246,7 +268,7 @@ class PropertyMethodArbitraryResolverTests {
 	}
 
 	private static RandomGenerator<?> getGenerator(PropertyMethodArbitraryResolver provider, MethodParameter parameter) {
-		return provider.forParameter(parameter).get(0).generator(1);
+		return provider.forParameter(parameter).iterator().next().generator(1);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -259,7 +281,7 @@ class PropertyMethodArbitraryResolverTests {
 	}
 
 	private static Object generateFirst(PropertyMethodArbitraryResolver provider, MethodParameter parameter) {
-		return TestHelper.generateFirst(provider.forParameter(parameter).get(0));
+		return TestHelper.generateFirst(provider.forParameter(parameter).iterator().next());
 	}
 
 	private static PropertyMethodArbitraryResolver getResolver(Class<?> container) {
