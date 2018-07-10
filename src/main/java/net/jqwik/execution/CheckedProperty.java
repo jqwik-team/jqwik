@@ -39,7 +39,7 @@ public class CheckedProperty {
 	}
 
 	private GenericProperty createGenericProperty(int genSize) {
-		ShrinkablesGenerator shrinkablesGenerator = DefaultShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, genSize);
+		ShrinkablesGenerator shrinkablesGenerator = PropertyMethodShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, genSize);
 		return new GenericProperty(propertyName, shrinkablesGenerator, forAllPredicate);
 	}
 
