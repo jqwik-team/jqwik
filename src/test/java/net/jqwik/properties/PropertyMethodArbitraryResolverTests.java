@@ -9,7 +9,6 @@ import net.jqwik.api.providers.*;
 import net.jqwik.execution.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
-import org.mockito.*;
 
 import java.lang.annotation.*;
 import java.util.*;
@@ -86,6 +85,7 @@ class PropertyMethodArbitraryResolverTests {
 			ArbitraryConfigurator configurator = new ArbitraryConfigurator() {
 				@Override
 				public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations) {
+					assertThat(annotations.get(0)).isInstanceOf(StringLength.class);
 					configured.add(arbitrary);
 					return arbitrary;
 				}
@@ -198,13 +198,17 @@ class PropertyMethodArbitraryResolverTests {
 			ArbitraryConfigurator configurator = new ArbitraryConfigurator() {
 				@Override
 				public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations) {
+					assertThat(annotations.get(0)).isInstanceOf(StringLength.class);
 					configured.add(arbitrary);
 					return arbitrary;
 				}
 			};
 
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
+			PropertyMethodArbitraryResolver provider = new PropertyMethodArbitraryResolver(
+				WithNamedProviders.class, new WithNamedProviders(), new RegisteredArbitraryResolver(Collections.emptyList()),
+				Collections.singletonList(configurator)
+			);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringOfLength5ByMethodName");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
 			Arbitrary<?> arbitrary = arbitraries.iterator().next();
 			assertThat(configured).containsOnly(arbitrary);
@@ -284,6 +288,11 @@ class PropertyMethodArbitraryResolverTests {
 
 			@Property
 			boolean stringByMethodName(@ForAll("byMethodName") String aString) {
+				return true;
+			}
+
+			@Property
+			boolean stringOfLength5ByMethodName(@ForAll("byMethodName") @StringLength(5) String aString) {
 				return true;
 			}
 
