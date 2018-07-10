@@ -6,9 +6,9 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.execution.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
+import org.mockito.*;
 
 import java.lang.annotation.*;
 import java.util.*;
@@ -52,7 +52,7 @@ class PropertyMethodArbitraryResolverTests {
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
 				DefaultParams.class, new DefaultParams(),
 				new RegisteredArbitraryResolver(registeredProviders),
-				Collections.emptyList()
+				new RegisteredArbitraryConfigurer(Collections.emptyList())
 			);
 			MethodParameter parameter = getParameter(DefaultParams.class, "aString");
 			assertThat(resolver.forParameter(parameter).iterator().next()).isSameAs(secondArbitrary);
@@ -73,7 +73,7 @@ class PropertyMethodArbitraryResolverTests {
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
 				DefaultParams.class, new DefaultParams(),
 				new RegisteredArbitraryResolver(registeredProviders),
-				Collections.emptyList()
+				new RegisteredArbitraryConfigurer(Collections.emptyList())
 			);
 			MethodParameter parameter = getParameter(DefaultParams.class, "aString");
 			assertThat(resolver.forParameter(parameter)).containsOnly(firstFit, secondFit, thirdFit);
@@ -82,9 +82,9 @@ class PropertyMethodArbitraryResolverTests {
 		@Example
 		void allFittingArbitrariesAreConfigured() {
 			final List<Arbitrary> configured = new ArrayList<>();
-			ArbitraryConfigurator configurator = new ArbitraryConfigurator() {
+			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
-				public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations) {
+				public Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations) {
 					assertThat(annotations.get(0)).isInstanceOf(StringLength.class);
 					configured.add(arbitrary);
 					return arbitrary;
@@ -100,7 +100,7 @@ class PropertyMethodArbitraryResolverTests {
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
 				DefaultParams.class, new DefaultParams(),
 				new RegisteredArbitraryResolver(registeredProviders),
-				Collections.singletonList(configurator)
+				configurer
 			);
 			MethodParameter parameter = getParameter(DefaultParams.class, "stringOfLength5");
 			assertThat(resolver.forParameter(parameter)).containsOnly(firstFit, secondFit);
@@ -195,9 +195,9 @@ class PropertyMethodArbitraryResolverTests {
 		@Example
 		void providedArbitraryIsConfigured() {
 			final List<Arbitrary> configured = new ArrayList<>();
-			ArbitraryConfigurator configurator = new ArbitraryConfigurator() {
+			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
-				public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations) {
+				public Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations) {
 					assertThat(annotations.get(0)).isInstanceOf(StringLength.class);
 					configured.add(arbitrary);
 					return arbitrary;
@@ -205,8 +205,9 @@ class PropertyMethodArbitraryResolverTests {
 			};
 
 			PropertyMethodArbitraryResolver provider = new PropertyMethodArbitraryResolver(
-				WithNamedProviders.class, new WithNamedProviders(), new RegisteredArbitraryResolver(Collections.emptyList()),
-				Collections.singletonList(configurator)
+				WithNamedProviders.class, new WithNamedProviders(),
+				new RegisteredArbitraryResolver(Collections.emptyList()),
+				configurer
 			);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringOfLength5ByMethodName");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);

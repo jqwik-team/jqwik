@@ -3,7 +3,7 @@ package net.jqwik.api;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.execution.*;
+import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.properties.stateful.*;
 import net.jqwik.providers.*;
@@ -443,21 +443,24 @@ public class Arbitraries {
 			Arrays.stream(typeParameters)
 				  .map(TypeUsage::of)
 				  .toArray(TypeUsage[]::new);
-		return defaultFor(TypeUsage.of(type, genericTypeParameters));
+		return firstDefaultFor(TypeUsage.of(type, genericTypeParameters));
 	}
 
-	private static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
-		RegisteredArbitraryResolver defaultArbitraryResolver =
-			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
-		Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider = subtype -> Collections.singleton(defaultFor(subtype));
-		Set<Arbitrary<?>> arbitraries = defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
-
+	private static <T> Arbitrary<T> firstDefaultFor(TypeUsage typeUsage) {
+		Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage);
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(typeUsage);
 		}
 
 		//TODO: Handle case if there is more than one fitting default provider
 		return (Arbitrary<T>) arbitraries.iterator().next();
+	}
+
+	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
+		RegisteredArbitraryResolver defaultArbitraryResolver =
+			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
+		Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider = Arbitraries::allDefaultsFor;
+		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 	}
 
 	/**
