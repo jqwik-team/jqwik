@@ -4,7 +4,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.configurators.*;
-import net.jqwik.execution.*;
 import net.jqwik.providers.*;
 import net.jqwik.support.*;
 import org.junit.platform.commons.support.*;
@@ -22,23 +21,23 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private final Class<?> containerClass;
 	private final Object testInstance;
 	private final RegisteredArbitraryResolver registeredArbitraryResolver;
-	private final List<ArbitraryConfigurator> registeredArbitraryConfigurators;
+	private final RegisteredArbitraryConfigurer registeredArbitraryConfigurer;
 
 	public PropertyMethodArbitraryResolver(Class<?> containerClass, Object testInstance) {
 		this(containerClass, testInstance, new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders()),
-			 RegisteredArbitraryConfigurators.getConfigurators()
+			 new RegisteredArbitraryConfigurer(RegisteredArbitraryConfigurators.getConfigurators())
 		);
 	}
 
 	public PropertyMethodArbitraryResolver(
 		Class<?> containerClass, Object testInstance,
 		RegisteredArbitraryResolver registeredArbitraryResolver,
-		List<ArbitraryConfigurator> registeredArbitraryConfigurators
+		RegisteredArbitraryConfigurer registeredArbitraryConfigurer
 	) {
 		this.containerClass = containerClass;
 		this.testInstance = testInstance;
 		this.registeredArbitraryResolver = registeredArbitraryResolver;
-		this.registeredArbitraryConfigurators = registeredArbitraryConfigurators;
+		this.registeredArbitraryConfigurer = registeredArbitraryConfigurer;
 	}
 
 	@Override
@@ -67,12 +66,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage typeUsage) {
 		List<Annotation> configurationAnnotations = findConfigurationAnnotations(typeUsage);
-		if (!configurationAnnotations.isEmpty()) {
-			for (ArbitraryConfigurator arbitraryConfigurator : registeredArbitraryConfigurators) {
-				createdArbitrary = arbitraryConfigurator.configure(createdArbitrary, configurationAnnotations);
-			}
-		}
-		return createdArbitrary;
+		return registeredArbitraryConfigurer.configure(createdArbitrary, configurationAnnotations);
 	}
 
 	private List<Annotation> findConfigurationAnnotations(TypeUsage typeUsage) {
