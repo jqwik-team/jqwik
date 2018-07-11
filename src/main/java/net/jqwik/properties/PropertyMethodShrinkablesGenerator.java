@@ -1,6 +1,7 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.support.*;
 
 import java.util.*;
@@ -31,15 +32,6 @@ public class PropertyMethodShrinkablesGenerator implements ShrinkablesGenerator 
 		return new RandomParameterGenerator(parameter, generators);
 	}
 
-	private static Arbitrary<Object> findArbitrary(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
-		Set<Arbitrary<?>> arbitraries = arbitraryResolver.forParameter(parameter);
-		// TODO: Handle more than one provided arbitrary
-		if (arbitraries.isEmpty()) {
-			throw new CannotFindArbitraryException(parameter);
-		}
-		return new GenericArbitrary(arbitraries.iterator().next());
-	}
-
 	private final List<RandomParameterGenerator> parameterGenerators;
 
 	private PropertyMethodShrinkablesGenerator(List<RandomParameterGenerator> parameterGenerators) {
@@ -48,7 +40,8 @@ public class PropertyMethodShrinkablesGenerator implements ShrinkablesGenerator 
 
 	@Override
 	public List<Shrinkable> next(Random random) {
-		return parameterGenerators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
+		Map<TypeUsage, RandomGenerator> generatorsCache = new HashMap<>();
+		return parameterGenerators.stream().map(generator -> generator.next(random, generatorsCache)).collect(Collectors.toList());
 	}
 
 

@@ -2,17 +2,16 @@ package net.jqwik.properties;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.support.*;
 import org.assertj.core.api.*;
 
-import java.io.*;
+import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
-import static org.assertj.core.api.Assertions.fail;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.*;
 
 class PropertyMethodShrinkablesGeneratorTests {
 
@@ -48,12 +47,61 @@ class PropertyMethodShrinkablesGeneratorTests {
 
 		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("simpleParameters", arbitraryResolver);
 
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("a", 1));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("a", 2));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("a", 3));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("b", 1));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("b", 2));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("b", 3));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", 1));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", 2));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", 3));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", 1));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", 2));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", 3));
+	}
+
+	@Example
+	void sameTypeVariableGetsSameArbitrary(@ForAll Random random) {
+
+		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
+			@Override
+			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
+				Set<Arbitrary<?>> arbitraries = new HashSet<>();
+				arbitraries.add(Arbitraries.constant("a"));
+				arbitraries.add(Arbitraries.constant("b"));
+				return arbitraries;
+			}
+		};
+
+		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("twiceTypeVariableT", arbitraryResolver);
+
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", "a"));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", "b"));
+		assertNeverGenerated(shrinkablesGenerator, random, asList("a", "b"));
+		assertNeverGenerated(shrinkablesGenerator, random, asList("b", "a"));
+	}
+
+	@Example
+	void sameTypeVariableInParameter(@ForAll Random random) {
+
+		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
+			@Override
+			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
+				Set<Arbitrary<?>> arbitraries = new HashSet<>();
+				Arbitrary<String> a = Arbitraries.constant("a");
+				Arbitrary<String> b = Arbitraries.constant("b");
+				if (parameter.getType() instanceof TypeVariable) {
+					arbitraries.add(a);
+					arbitraries.add(b);
+				} else {
+					arbitraries.add(a.list().ofSize(1));
+					arbitraries.add(b.list().ofSize(1));
+				}
+				return arbitraries;
+			}
+		};
+
+		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("typeVariableAlsoInList", arbitraryResolver);
+
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", asList("a")));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", asList("b")));
+		assertNeverGenerated(shrinkablesGenerator, random, asList("a", asList("b")));
+		assertNeverGenerated(shrinkablesGenerator, random, asList("b", asList("a")));
 	}
 
 	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, Random random, List expected) {
@@ -63,6 +111,14 @@ class PropertyMethodShrinkablesGeneratorTests {
 				return;
 		}
 		fail("Failed to generate at least once");
+	}
+
+	private void assertNeverGenerated(ShrinkablesGenerator generator, Random random, List expected) {
+		for (int i = 0; i < 500; i++) {
+			List<Shrinkable> shrinkables = generator.next(random);
+			if (values(shrinkables).equals(expected))
+				fail(String.format("%s should never be generated", values(shrinkables)));
+		}
 	}
 
 	private List<Object> values(List<Shrinkable> shrinkables) {
@@ -95,5 +151,9 @@ class PropertyMethodShrinkablesGeneratorTests {
 	private static class MyProperties {
 
 		public void simpleParameters(@ForAll String aString, @ForAll int anInt) {}
+
+		public <T> void twiceTypeVariableT(@ForAll T t1, @ForAll T t2) {}
+
+		public <T> void typeVariableAlsoInList(@ForAll T t, @ForAll List<T> tList) {}
 	}
 }
