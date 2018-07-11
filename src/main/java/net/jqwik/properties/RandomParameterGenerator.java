@@ -1,20 +1,22 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.support.*;
 
 import java.util.*;
 
 public class RandomParameterGenerator {
-	private final MethodParameter parameter;
-	private final Set<RandomGenerator> generators;
+	private final TypeUsage typeUsage;
+	private final List<RandomGenerator> generators;
 
 	public RandomParameterGenerator(MethodParameter parameter, Set<RandomGenerator> generators) {
-		this.parameter = parameter;
-		this.generators = generators;
+		this.typeUsage = TypeUsage.forParameter(parameter);
+		this.generators = new ArrayList<>(generators);
 	}
 
 	public Shrinkable next(Random random) {
-		return generators.iterator().next().next(random);
+		int index = generators.size() == 1 ? 0 : random.nextInt(generators.size());
+		return generators.get(index).next(random);
 	}
 }

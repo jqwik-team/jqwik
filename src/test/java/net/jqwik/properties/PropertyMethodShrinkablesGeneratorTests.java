@@ -7,8 +7,12 @@ import net.jqwik.descriptor.*;
 import net.jqwik.support.*;
 import org.assertj.core.api.*;
 
+import java.io.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
+
+import static org.assertj.core.api.Assertions.fail;
 
 class PropertyMethodShrinkablesGeneratorTests {
 
@@ -44,10 +48,21 @@ class PropertyMethodShrinkablesGeneratorTests {
 
 		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("simpleParameters", arbitraryResolver);
 
-		Assertions.assertThat(values(shrinkablesGenerator.next(random))).containsExactly("a", 1);
-		Assertions.assertThat(values(shrinkablesGenerator.next(random))).containsExactly("b", 2);
-		Assertions.assertThat(values(shrinkablesGenerator.next(random))).containsExactly("a", 3);
-		Assertions.assertThat(values(shrinkablesGenerator.next(random))).containsExactly("b", 1);
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("a", 1));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("a", 2));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("a", 3));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("b", 1));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("b", 2));
+		assertAtLeastOneGenerated(shrinkablesGenerator, random, Arrays.asList("b", 3));
+	}
+
+	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, Random random, List expected) {
+		for (int i = 0; i < 500; i++) {
+			List<Shrinkable> shrinkables = generator.next(random);
+			if (values(shrinkables).equals(expected))
+				return;
+		}
+		fail("Failed to generate at least once");
 	}
 
 	private List<Object> values(List<Shrinkable> shrinkables) {
