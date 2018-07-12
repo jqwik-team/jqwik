@@ -1,10 +1,9 @@
 package net.jqwik.providers;
 
-import java.util.*;
-import java.util.function.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+
+import java.util.*;
 
 public class ByteArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -13,7 +12,7 @@ public class ByteArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		return Arbitraries.bytes();
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+		return Collections.singleton(Arbitraries.bytes());
 	}
 }
