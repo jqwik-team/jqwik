@@ -4,7 +4,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider {
@@ -17,9 +16,7 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 	protected abstract Class<?> getProvidedType();
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(
-		TypeUsage targetType, Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider
-	) {
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage innerType = targetType.getTypeArguments().isEmpty() ? //
 			TypeUsage.forType(Object.class) //
 			: targetType.getTypeArguments().get(0);

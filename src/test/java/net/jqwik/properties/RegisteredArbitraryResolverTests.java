@@ -2,10 +2,10 @@ package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
-import java.util.function.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -31,9 +31,7 @@ class RegisteredArbitraryResolverTests {
 		);
 		RegisteredArbitraryResolver resolver = new RegisteredArbitraryResolver(providers);
 
-		Function<TypeUsage, Set<Arbitrary<?>>> noSubtypes = noSubtypes();
-		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Integer.class), noSubtypes);
-
+		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Integer.class), noSubtypes());
 		assertThat(arbitraries).containsOnly(defaultIntegerArbitrary);
 	}
 
@@ -47,9 +45,7 @@ class RegisteredArbitraryResolverTests {
 		);
 		RegisteredArbitraryResolver resolver = new RegisteredArbitraryResolver(providers);
 
-		Function<TypeUsage, Set<Arbitrary<?>>> noSubtypes = noSubtypes();
-		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes);
-
+		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes());
 		assertThat(arbitraries).containsOnly(defaultIntegerArbitrary, defaultDoubleArbitrary);
 	}
 
@@ -62,9 +58,7 @@ class RegisteredArbitraryResolverTests {
 		);
 		RegisteredArbitraryResolver resolver = new RegisteredArbitraryResolver(providers);
 
-		Function<TypeUsage, Set<Arbitrary<?>>> noSubtypes = noSubtypes();
-		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes);
-
+		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes());
 		assertThat(arbitraries).containsOnly(defaultIntegerArbitrary, defaultDoubleArbitrary);
 	}
 
@@ -80,9 +74,7 @@ class RegisteredArbitraryResolverTests {
 		);
 		RegisteredArbitraryResolver resolver = new RegisteredArbitraryResolver(providers);
 
-		Function<TypeUsage, Set<Arbitrary<?>>> noSubtypes = noSubtypes();
-		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes);
-
+		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes());
 		assertThat(arbitraries).containsOnly(higherPriorityArbitrary);
 	}
 
@@ -103,13 +95,11 @@ class RegisteredArbitraryResolverTests {
 		);
 		RegisteredArbitraryResolver resolver = new RegisteredArbitraryResolver(providers);
 
-		Function<TypeUsage, Set<Arbitrary<?>>> noSubtypes = noSubtypes();
-		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes);
-
+		Set<Arbitrary<?>> arbitraries = resolver.resolve(TypeUsage.of(Number.class), noSubtypes());
 		assertThat(arbitraries).containsOnly(highestPriorityArbitrary1, highestPriorityArbitrary2, highestPriorityArbitrary3);
 	}
 
-	private Function<TypeUsage, Set<Arbitrary<?>>> noSubtypes() {
+	private SubtypeProvider noSubtypes() {
 		return ignore -> Collections.emptySet();
 	}
 
@@ -121,9 +111,7 @@ class RegisteredArbitraryResolverTests {
 			}
 
 			@Override
-			public Set<Arbitrary<?>> provideArbitrariesFor(
-				TypeUsage targetType, Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider
-			) {
+			public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 				return new HashSet<>(asList(arbitraries));
 			}
 

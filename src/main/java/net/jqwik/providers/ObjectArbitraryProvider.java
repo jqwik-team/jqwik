@@ -14,7 +14,7 @@ public class ObjectArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public int priority() {
-		return 1;
+		return 100;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
@@ -459,7 +460,7 @@ public class Arbitraries {
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
 		RegisteredArbitraryResolver defaultArbitraryResolver =
 			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
-		Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider = Arbitraries::allDefaultsFor;
+		SubtypeProvider subtypeProvider = Arbitraries::allDefaultsFor;
 		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 	}
 

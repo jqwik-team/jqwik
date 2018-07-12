@@ -2,9 +2,9 @@ package net.jqwik.properties;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 
 import java.util.*;
-import java.util.function.*;
 
 public class RegisteredArbitraryResolver {
 
@@ -14,7 +14,7 @@ public class RegisteredArbitraryResolver {
 		this.registeredProviders = registeredProviders;
 	}
 
-	public Set<Arbitrary<?>> resolve(TypeUsage targetType, Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider) {
+	public Set<Arbitrary<?>> resolve(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		int currentPriority = Integer.MIN_VALUE;
 		Set<Arbitrary<?>> fittingArbitraries = new HashSet<>();
 		for (ArbitraryProvider provider : registeredProviders) {

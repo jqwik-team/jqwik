@@ -75,11 +75,13 @@ Volunteers for polishing and extending it are more than welcome._
   - [jqwik Configuration](#jqwik-configuration)
 - [Providing Default Arbitraries](#providing-default-arbitraries)
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
-  - [Generic Arbitrary Providers](#generic-arbitrary-providers)
+  - [Arbitrary Providers for Parameterized Types](#arbitrary-providers-for-parameterized-types)
+  - [Arbitrary Provider Priority](#arbitrary-provider-priority)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
+  - [0.8.13](#0813)
   - [0.8.12](#0812)
   - [0.8.11](#0811)
   - [0.8.10](#0810)
@@ -1767,7 +1769,7 @@ classes, in all of your properties, and without having to add `@Provide` method
 to all test classes. _jqwik_ enables this feature by using 
 Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
-- Implement the interface [`ArbitraryProvider`](http://jqwik.net/javadoc/net/jqwik/api/providers/ArbitraryProvider.html).<br/> 
+- Implement the interface [`ArbitraryProvider`](http://jqwik.net/javadoc/net/jqwik/api/providers/ArbitraryProvider.html).<br/>
   The implementing class _must_ have a default constructor without parameters.
 - Register the implementation class in file
 
@@ -1777,8 +1779,9 @@ Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
 _jqwik_ will then add an instance of your arbitrary provider into the list of
 its default providers. Those default providers are considered for every test parameter annotated 
-with [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html) that has no explicit `value`. By using this mechanism you can also replace
-the default providers packaged into _jqwik_.
+with [`@ForAll`](http://jqwik.net/javadoc/net/jqwik/api/ForAll.html) that has no explicit `value`.
+By using this mechanism you can also replace the default providers
+packaged into _jqwik_.
 
 ### Simple Arbitrary Providers
 
@@ -1819,12 +1822,12 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
-				.between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
-				.ofScale(2);
+				  .between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
+				  .ofScale(2);
 		Arbitrary<String> currency = Arbitraries.of("EUR", "USD", "CHF");
-		return Combinators.combine(amount, currency).as((a, c) -> new Money(a, c));
+		return Collections.singleton(Combinators.combine(amount, currency).as(Money::new));
 	}
 }
 ```
@@ -1851,7 +1854,7 @@ void moneyCanBeMultiplied(@ForAll Money money) {
 }
 ```
 
-### Generic Arbitrary Providers 
+### Arbitrary Providers for Parameterized Types
 
 Providing arbitraries for generic types requires a little bit more effort
 since you have to create arbitraries for the "inner" types as well. 
@@ -1865,17 +1868,48 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeSupplier) {
-		TypeUsage innerType = targetType.getTypeArguments()[0];
-		return subtypeSupplier.apply(innerType) //
-			.map(Arbitrary::optional) //
-			.orElse(null);
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+		TypeUsage innerType = targetType.getTypeArguments().get(0);
+		return subtypeProvider.apply(innerType).stream() //
+			.map(Arbitrary::optional)
+			.collect(Collectors.toSet());
 	}
 }
 ```
 
-Not too difficult, is it?
+Mind that `provideArbitrariesFor` returns a set of potential arbitraries.
+That's necessary because the `subtypeProvider` might also deliver a choice of
+subtype arbitraries. Not too difficult, is it?
 
+
+### Arbitrary Provider Priority
+
+When more than one provider is suitable for a given type, _jqwik_ will randomly
+choose between all available options. That's why you'll have to take additional
+measures if you want to replace an already registered provider. The trick
+is to override the a provider's `priority()` method that returns `0` by default:
+
+```java
+public class AlternativeStringArbitraryProvider implements ArbitraryProvider {
+	@Override
+	public boolean canProvideFor(TypeUsage targetType) {
+		return targetType.isAssignableFrom(String.class);
+	}
+
+	@Override
+	public int priority() {
+		return 1;
+	}
+
+	@Override
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+		return Collections.singleton(Arbitraries.constant("A String"));
+	}
+}
+```
+
+If you register this class as arbitrary provider any `@ForAll String` will
+be resolved to `"A String"`.
 
 ## Create your own Annotations for Arbitrary Configuration
 
@@ -1969,6 +2003,16 @@ Since the topic is rather complicated, a detailed example will one day be publis
 in a separate article...
 
 ## Release Notes
+
+### 0.8.13
+
+- Some potentially incompatible stuff has changed for
+  [default arbitrary providers](#providing-default-arbitraries):
+  - Introduced `ArbitraryProvider.priority()`
+  - `ArbitraryProvider.provideFor()` is now deprecated, override
+    `ArbitraryProvider.provideForArbitraries()` instead
+  - If more than one provider fits a given type, one of the will be
+    chosen randomly
 
 ### 0.8.12
 
