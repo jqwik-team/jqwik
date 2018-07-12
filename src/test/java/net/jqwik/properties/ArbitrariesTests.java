@@ -3,7 +3,6 @@ package net.jqwik.properties;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import org.assertj.core.api.*;
 
 import java.math.*;
 import java.util.*;
@@ -100,6 +99,17 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertAtLeastOneGeneratedOf(generator, 1, 2, 3, 4, 5);
 	}
 
+	@Property
+	void oneOfWillHandDownConfigurations(@ForAll("stringCollections") @Size(10) Collection<?> stringList) {
+		assertThat(stringList).hasSize(10);
+		assertThat(stringList).allMatch(element -> element instanceof String);
+	}
+
+	@Provide
+	Arbitrary<Collection> stringCollections() {
+		return Arbitraries.defaultFor(Collection.class, String.class);
+	}
+
 	@Example
 	void lazy() {
 		Arbitrary<Integer> samples = Arbitraries.lazy(() -> Arbitraries.samples(1, 2, 3));
@@ -176,6 +186,7 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(collections.generator(1000), Set.class::isInstance);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Property
 		void defaultForParameterizedType(@ForAll("stringLists") @Size(10) List<?> stringList) {
 			assertThat(stringList).hasSize(10);
@@ -186,17 +197,6 @@ class ArbitrariesTests {
 		Arbitrary<List> stringLists() {
 			return Arbitraries.defaultFor(List.class, String.class);
 		}
-
-//		@Property
-//		void moreThanOneDefaultWithConfiguration(@ForAll("stringCollections") @Size(10) Collection<?> stringList) {
-//			assertThat(stringList).hasSize(10);
-//			assertThat(stringList).allMatch(element -> element instanceof String);
-//		}
-//
-//		@Provide
-//		Arbitrary<Collection> stringCollections() {
-//			return Arbitraries.defaultFor(Collection.class, String.class);
-//		}
 	}
 
 	@Group
