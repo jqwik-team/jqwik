@@ -53,9 +53,6 @@
 - Check arbitrary providers for numbers that @Range annotations fit, e.g.
   `@IntRange @ForAll long aNumber` should result in a warning
 
-- Create different types for wildcards and type variables
-  e.g. Choose between a given set of types
-  
 - Allow generation for wildcards and type variables with bounds
 
 - Optionally report for each property which arbitraries are used.
@@ -64,9 +61,6 @@
   - can be used in parameter types to choose provider method
   - can take `providerClass` parameter (but no value parameter) 
     to specify ArbitraryProvider implementation
-
-- ArbitraryProvider: Add priority to provider registration to allow more specific providers.
-  Currently the order of registration is decisive - last registered provider wins.
 
 - Provider methods can take params e.g.
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
