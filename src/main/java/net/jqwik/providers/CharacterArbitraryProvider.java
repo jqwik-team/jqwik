@@ -1,11 +1,9 @@
 package net.jqwik.providers;
 
-import java.util.*;
-import java.util.function.*;
-
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
+
+import java.util.*;
 
 public class CharacterArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -14,8 +12,7 @@ public class CharacterArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public CharacterArbitrary provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		return Arbitraries.chars();
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+		return Collections.singleton(Arbitraries.chars());
 	}
-
 }
