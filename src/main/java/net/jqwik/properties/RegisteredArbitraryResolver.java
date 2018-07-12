@@ -15,13 +15,19 @@ public class RegisteredArbitraryResolver {
 	}
 
 	public Set<Arbitrary<?>> resolve(TypeUsage targetType, Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider) {
+		int currentPriority = Integer.MIN_VALUE;
 		Set<Arbitrary<?>> fittingArbitraries = new HashSet<>();
 		for (ArbitraryProvider provider : registeredProviders) {
 			if (provider.canProvideFor(targetType)) {
-				Set<Arbitrary<?>> arbitrary = provider.provideArbitrariesFor(targetType, subtypeProvider);
-				if (arbitrary != null) {
-					fittingArbitraries.addAll(arbitrary);
+				if (provider.priority() < currentPriority) {
+					continue;
 				}
+				if (provider.priority() > currentPriority) {
+					fittingArbitraries.clear();
+					currentPriority = provider.priority();
+				}
+				Set<Arbitrary<?>> arbitrary = provider.provideArbitrariesFor(targetType, subtypeProvider);
+				fittingArbitraries.addAll(arbitrary);
 			}
 		}
 		return fittingArbitraries;

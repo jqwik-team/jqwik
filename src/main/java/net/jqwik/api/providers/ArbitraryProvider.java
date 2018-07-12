@@ -38,7 +38,9 @@ public interface ArbitraryProvider {
 	 * This method will be removed in one of the next versions of jqwik.
 	 */
 	@Deprecated
-	Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider);
+	default Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
+		return null;
+	}
 
 	/**
 	 * Return a set of arbitrary instances for a given {@code targetType}.
@@ -60,5 +62,9 @@ public interface ArbitraryProvider {
 			return Collections.emptySet();
 		else
 			return Collections.singleton(arbitrary);
+	}
+
+	default int priority() {
+		return 0;
 	}
 }

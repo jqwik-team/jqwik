@@ -13,6 +13,11 @@ public class ObjectArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
+	public int priority() {
+		return 1;
+	}
+
+	@Override
 	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		return (Arbitrary<Object>) genSize -> random -> Shrinkable.unshrinkable(new Object());
 	}
