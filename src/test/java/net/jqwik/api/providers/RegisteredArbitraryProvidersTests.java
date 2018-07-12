@@ -218,8 +218,8 @@ class RegisteredArbitraryProvidersTests {
 				}
 
 				@Override
-				public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-					return Arbitraries.of(new Person());
+				public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+					return Collections.singleton(Arbitraries.of(new Person()));
 				}
 			};
 			RegisteredArbitraryProviders.register(personProvider);

@@ -5,7 +5,6 @@ import net.jqwik.api.providers.*;
 import net.jqwik.properties.arbitraries.*;
 
 import java.util.*;
-import java.util.function.*;
 
 public class WildcardArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -16,8 +15,8 @@ public class WildcardArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		return new WildcardArbitrary();
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+		return Collections.singleton(new WildcardArbitrary());
 	}
 
 	@Override

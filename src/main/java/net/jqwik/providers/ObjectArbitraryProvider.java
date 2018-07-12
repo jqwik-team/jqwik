@@ -4,8 +4,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
 import java.util.*;
-import java.util.function.*;
-
 public class ObjectArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
@@ -18,7 +16,7 @@ public class ObjectArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		return (Arbitrary<Object>) genSize -> random -> Shrinkable.unshrinkable(new Object());
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+		return Collections.singleton(genSize -> random -> Shrinkable.unshrinkable(new Object()));
 	}
 }
