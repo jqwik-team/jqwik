@@ -4,7 +4,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.stream.*;
 
 public class ArrayArbitraryProvider implements ArbitraryProvider {
 	@Override
@@ -13,14 +13,11 @@ public class ArrayArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		return targetType //
-			.getComponentType() //
-			.map(subtypeProvider) //
-			.map(optionalArbitrary -> optionalArbitrary
-				.map(elementArbitrary -> elementArbitrary.array(targetType.getRawType()))
-				.orElse(null)) //
-			.orElse(null);
+	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+		TypeUsage componentType = targetType.getComponentType().orElse(TypeUsage.forType(Object.class));
+		return subtypeProvider.apply(componentType) //
+			.stream() //
+			.map(elementArbitrary -> elementArbitrary.array(targetType.getRawType())) //
+			.collect(Collectors.toSet());
 	}
-
 }

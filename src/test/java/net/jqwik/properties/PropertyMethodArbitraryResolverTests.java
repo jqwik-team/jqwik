@@ -3,16 +3,13 @@ package net.jqwik.properties;
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
-import org.mockito.*;
 
 import java.lang.annotation.*;
 import java.util.*;
-import java.util.function.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -46,7 +43,7 @@ class PropertyMethodArbitraryResolverTests {
 		void useNextRegisteredProviderIfFirstDoesNotProvideAnArbitrary() {
 			Arbitrary<String> secondArbitrary = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
 			List<ArbitraryProvider> registeredProviders = Arrays.asList(
-				createProvider(String.class, null),
+				createProvider(String.class),
 				createProvider(String.class, secondArbitrary)
 			);
 			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
@@ -107,7 +104,7 @@ class PropertyMethodArbitraryResolverTests {
 			assertThat(configured).containsOnly(firstFit, secondFit);
 		}
 
-		private ArbitraryProvider createProvider(Class targetClass, Arbitrary<?> arbitrary) {
+		private ArbitraryProvider createProvider(Class targetClass, Arbitrary<?>... arbitraries) {
 			return new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(TypeUsage targetType) {
@@ -115,8 +112,8 @@ class PropertyMethodArbitraryResolverTests {
 				}
 
 				@Override
-				public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-					return arbitrary;
+				public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+					return new HashSet<>(Arrays.asList(arbitraries));
 				}
 			};
 		}
