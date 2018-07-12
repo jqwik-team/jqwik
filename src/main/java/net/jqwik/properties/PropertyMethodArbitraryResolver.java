@@ -1,7 +1,6 @@
 package net.jqwik.properties;
 
 import net.jqwik.api.*;
-import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.configurators.*;
 import net.jqwik.providers.*;
@@ -120,8 +119,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Set<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
-		Function<TypeUsage, Set<Arbitrary<?>>> subtypeProvider = this::createForType;
-		return registeredArbitraryResolver.resolve(parameterType, subtypeProvider);
+		return registeredArbitraryResolver.resolve(parameterType, this::createForType);
 	}
 
 }
