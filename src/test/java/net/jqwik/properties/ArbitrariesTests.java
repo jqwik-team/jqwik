@@ -81,7 +81,7 @@ class ArbitrariesTests {
 	void constant() {
 		Arbitrary<String> constant = Arbitraries.constant("hello");
 		ArbitraryTestHelper.assertAllGenerated(constant.generator(1000), value -> {
-			Assertions.assertThat(value).isEqualTo("hello");
+			assertThat(value).isEqualTo("hello");
 		});
 	}
 
@@ -93,7 +93,7 @@ class ArbitrariesTests {
 
 		Arbitrary<Integer> oneOfArbitrary = Arbitraries.oneOf(one, two, threeToFive);
 		ArbitraryTestHelper.assertAllGenerated(oneOfArbitrary.generator(1000), value -> {
-			Assertions.assertThat(value).isIn(1, 2, 3, 4, 5);
+			assertThat(value).isIn(1, 2, 3, 4, 5);
 		});
 
 		RandomGenerator<Integer> generator = oneOfArbitrary.generator(1000);
@@ -122,15 +122,15 @@ class ArbitrariesTests {
 		void twoEqualPairs() {
 			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(1, "b"));
 			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
-			Assertions.assertThat(counts.get("a") > 200).isTrue();
-			Assertions.assertThat(counts.get("b") > 200).isTrue();
+			assertThat(counts.get("a") > 200).isTrue();
+			assertThat(counts.get("b") > 200).isTrue();
 		}
 
 		@Property(tries = 10)
 		void twoUnequalPairs() {
 			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(10, "b"));
 			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
-			Assertions.assertThat(counts.get("a")).isLessThan(counts.get("b"));
+			assertThat(counts.get("a")).isLessThan(counts.get("b"));
 		}
 
 		@Property(tries = 10)
@@ -142,9 +142,9 @@ class ArbitrariesTests {
 				Tuples.tuple(20, "d")
 			);
 			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
-			Assertions.assertThat(counts.get("a")).isLessThan(counts.get("b"));
-			Assertions.assertThat(counts.get("b")).isLessThan(counts.get("c"));
-			Assertions.assertThat(counts.get("c")).isLessThan(counts.get("d"));
+			assertThat(counts.get("a")).isLessThan(counts.get("b"));
+			assertThat(counts.get("b")).isLessThan(counts.get("c"));
+			assertThat(counts.get("c")).isLessThan(counts.get("d"));
 		}
 
 		@Example
@@ -169,15 +169,34 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAllGenerated(list.generator(1000), List.class::isInstance);
 		}
 
+		@Example
+		void moreThanOneDefault() {
+			Arbitrary<Collection> collections = Arbitraries.defaultFor(Collection.class, String.class);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(collections.generator(1000), List.class::isInstance);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(collections.generator(1000), Set.class::isInstance);
+		}
+
 		@Property
-		boolean defaultForParameterizedType(@ForAll("stringLists") @Size(max = 50) List<?> stringList) {
-			return stringList.isEmpty() || stringList.get(0) instanceof String;
+		void defaultForParameterizedType(@ForAll("stringLists") @Size(10) List<?> stringList) {
+			assertThat(stringList).hasSize(10);
+			assertThat(stringList).allMatch(element -> element instanceof String);
 		}
 
 		@Provide
 		Arbitrary<List> stringLists() {
 			return Arbitraries.defaultFor(List.class, String.class);
 		}
+
+//		@Property
+//		void moreThanOneDefaultWithConfiguration(@ForAll("stringCollections") @Size(10) Collection<?> stringList) {
+//			assertThat(stringList).hasSize(10);
+//			assertThat(stringList).allMatch(element -> element instanceof String);
+//		}
+//
+//		@Provide
+//		Arbitrary<Collection> stringCollections() {
+//			return Arbitraries.defaultFor(Collection.class, String.class);
+//		}
 	}
 
 	@Group
