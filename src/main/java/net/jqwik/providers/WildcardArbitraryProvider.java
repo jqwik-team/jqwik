@@ -19,4 +19,9 @@ public class WildcardArbitraryProvider implements ArbitraryProvider {
 	public Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
 		return new WildcardArbitrary();
 	}
+
+	@Override
+	public int priority() {
+		return 1;
+	}
 }

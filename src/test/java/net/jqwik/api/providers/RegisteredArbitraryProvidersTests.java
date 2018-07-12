@@ -1,12 +1,16 @@
 package net.jqwik.api.providers;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.properties.arbitraries.*;
 import net.jqwik.providers.*;
 
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 class RegisteredArbitraryProvidersTests {
 
@@ -18,6 +22,11 @@ class RegisteredArbitraryProvidersTests {
 
 	private static class Person {
 
+	}
+
+	@Property
+	<T> boolean unconstrainedTypeVariables(@ForAll T aValue) {
+		return aValue instanceof WildcardArbitrary.WildcardObject;
 	}
 
 	@Property
@@ -51,7 +60,7 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
-	boolean byterParam(@ForAll Byte aValue) {
+	boolean byteParam(@ForAll Byte aValue) {
 		return aValue != null;
 	}
 
@@ -156,6 +165,26 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
+	boolean collectionsCanBeListsOrSets(@ForAll Collection<Integer> aValue) {
+		return (aValue instanceof Set) || (aValue instanceof List);
+	}
+
+	@Property
+	void collectionsDoVaryOverTheirParameterType(@ForAll @Size(5) Collection<Number> aCollection) {
+		Class<?> elementType = aCollection.iterator().next().getClass();
+		//Statistics.collect(aCollection.getClass(), elementType);
+		assertThat(elementType)
+			.isIn(Byte.class, Short.class, Integer.class, Long.class, Float.class, Double.class, BigDecimal.class, BigInteger.class);
+		assertThat(aCollection.stream()).allMatch(element -> element.getClass() == elementType);
+	}
+
+	@Property
+	boolean rawCollectionsUseObjectAsElementType(@ForAll @Size(1) Collection aCollections) {
+		assertThat(aCollections.iterator().next().getClass()).isSameAs(Object.class);
+		return (aCollections instanceof Set) || (aCollections instanceof List);
+	}
+
+	@Property
 	boolean integerStream(@ForAll Stream<Integer> aValue) {
 		return aValue != null;
 	}
@@ -171,7 +200,7 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
-	//TODO: Cannot be called as single tests from IntelliJ (probably a bug in IntelliJ 2018.1)
+		//TODO: Cannot be called as single tests from IntelliJ (a bug in IntelliJ 2018.1)
 	boolean byteArray(@ForAll byte[] aValue) {
 		return aValue != null;
 	}

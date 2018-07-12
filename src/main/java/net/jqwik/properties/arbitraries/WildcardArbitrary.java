@@ -7,10 +7,10 @@ import java.util.*;
 public class WildcardArbitrary implements Arbitrary<Object> {
 	@Override
 	public RandomGenerator<Object> generator(int genSize) {
-		return RandomGenerators.integers(0, genSize).map(integer -> new WildcardObject(integer));
+		return RandomGenerators.integers(0, genSize).map(WildcardObject::new);
 	}
 
-	private static class WildcardObject {
+	public static class WildcardObject {
 		private final Integer index;
 
 		public WildcardObject(Integer index) {
