@@ -343,7 +343,7 @@ class ArbitrariesTests {
 		void doublesWithMaximumRange() {
 			double min = -Double.MAX_VALUE;
 			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, Double.MAX_VALUE).ofScale(2);
-			RandomGenerator<Double> generator = doubleArbitrary.generator(10000);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(500);
 
 			ArbitraryTestHelper.assertAtLeastOneGeneratedOf(generator, 0.0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value < -1000.0);
