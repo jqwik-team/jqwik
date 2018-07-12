@@ -2013,6 +2013,8 @@ in a separate article...
     `ArbitraryProvider.provideForArbitraries()` instead
   - If more than one provider fits a given type, one of the will be
     chosen randomly
+- `Arbitraries.defaultFor()` will randomly choose one arbitrary if
+  there is more than one fitting registered arbitrary provider
 
 ### 0.8.12
 

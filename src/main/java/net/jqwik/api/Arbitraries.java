@@ -108,9 +108,6 @@ public class Arbitraries {
 	 */
 	@SafeVarargs
 	public static <T> Arbitrary<T> oneOf(Arbitrary<T> first, Arbitrary<T>... rest) {
-		if (rest.length == 0) {
-			return first;
-		}
 		List<Arbitrary<T>> all = new ArrayList<>(Arrays.asList(rest));
 		all.add(first);
 		return oneOf(all);
@@ -124,6 +121,9 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all) {
+		if (all.size() == 1) {
+			return all.get(0);
+		}
 		return of(all).flatMap(Function.identity());
 	}
 
@@ -444,17 +444,19 @@ public class Arbitraries {
 			Arrays.stream(typeParameters)
 				  .map(TypeUsage::of)
 				  .toArray(TypeUsage[]::new);
-		return firstDefaultFor(TypeUsage.of(type, genericTypeParameters));
+		return oneOfAllDefaults(TypeUsage.of(type, genericTypeParameters));
 	}
 
-	private static <T> Arbitrary<T> firstDefaultFor(TypeUsage typeUsage) {
+	private static <T> Arbitrary<T> oneOfAllDefaults(TypeUsage typeUsage) {
 		Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage);
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(typeUsage);
 		}
 
-		//TODO: Handle case if there is more than one fitting default provider
-		return (Arbitrary<T>) arbitraries.iterator().next();
+		List<Arbitrary<T>> arbitrariesList = new ArrayList<>();
+		//noinspection unchecked
+		arbitraries.forEach(arbitrary -> arbitrariesList.add((Arbitrary<T>) arbitrary));
+		return oneOf(arbitrariesList);
 	}
 
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {

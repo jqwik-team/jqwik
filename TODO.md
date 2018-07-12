@@ -1,4 +1,5 @@
-- Arbitraries.allDefaultsFor(Class<?> targetClass, Class<?> ... typeParameters)
+- Configuration is handed down in
+  - Arbitraries.oneOf
 
 - Javadoc:
   - ArbitraryConfigurator
