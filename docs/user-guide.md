@@ -81,6 +81,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
+  - [0.8.14](#0814)
   - [0.8.13](#0813)
   - [0.8.12](#0812)
   - [0.8.11](#0811)
@@ -138,8 +139,8 @@ repositories {
 ext.junitPlatformVersion = '1.2.0'
 ext.junitJupiterVersion = '5.2.0'
 
-ext.jqwikVersion = '0.8.13'
-#ext.jqwikVersion = '0.8.14-SNAPSHOT'
+ext.jqwikVersion = '0.8.14'
+#ext.jqwikVersion = '0.8.15-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -193,7 +194,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.13</version>
+        <version>0.8.14</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -219,7 +220,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.13.jar`
+- `jqwik-0.8.14.jar`
 - `junit-platform-engine-1.2.0.jar`
 - `junit-platform-commons-1.2.0.jar`
 - `opentest4j-1.0.0.jar`
@@ -2016,17 +2017,21 @@ in a separate article...
 
 ## Release Notes
 
-### 0.8.13
+### 0.8.14
 
 - Some potentially incompatible stuff has changed for
   [default arbitrary providers](#providing-default-arbitraries):
   - Introduced `ArbitraryProvider.priority()`
-  - `ArbitraryProvider.provideFor()` is now deprecated, override
-    `ArbitraryProvider.provideForArbitraries()` instead
+  - The old `ArbitraryProvider.provideFor(TypeUsage, Function)` is now deprecated, override
+    `ArbitraryProvider.provideFor(TypeUsage, SubtypeProvider)` instead
   - If more than one provider fits a given type, one of the will be
     chosen randomly
 - `Arbitraries.defaultFor()` will randomly choose one arbitrary if
   there is more than one fitting registered arbitrary provider
+
+### 0.8.13
+
+Faulty release. Do not use!
 
 ### 0.8.12
 
