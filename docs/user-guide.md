@@ -2003,8 +2003,7 @@ In those - and maybe a few other cases - you can implement your own arbitrary.
 To get a feel for what a usable implementation looks like, you might start with
 having a look at some of the internal arbitraries:
 
-- [ObjectArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/ObjectArbitrary.java) 
-- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultBigDecimalArbitrary.java) 
+- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultBigDecimalArbitrary.java)
 - [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultStringArbitrary.java) 
 
 Under the hood, most arbitraries use `RandomGenerator`s for the final value generation. Since
