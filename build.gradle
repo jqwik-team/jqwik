@@ -23,11 +23,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'net.jqwik'
-version = '0.8.13-SNAPSHOT'
+version = '0.8.13'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.8.13-SNAPSHOT'
+	version = '0.8.13'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
