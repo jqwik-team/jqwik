@@ -1899,7 +1899,7 @@ subtype arbitraries. Not too difficult, is it?
 When more than one provider is suitable for a given type, _jqwik_ will randomly
 choose between all available options. That's why you'll have to take additional
 measures if you want to replace an already registered provider. The trick
-is to override the a provider's `priority()` method that returns `0` by default:
+is to override a provider's `priority()` method that returns `0` by default:
 
 ```java
 public class AlternativeStringArbitraryProvider implements ArbitraryProvider {
