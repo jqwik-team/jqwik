@@ -13,7 +13,7 @@ public class ArrayArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage componentType = targetType.getComponentType().orElse(TypeUsage.forType(Object.class));
 		return subtypeProvider.apply(componentType) //
 			.stream() //

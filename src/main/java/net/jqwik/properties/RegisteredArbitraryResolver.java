@@ -26,7 +26,7 @@ public class RegisteredArbitraryResolver {
 					fittingArbitraries.clear();
 					currentPriority = provider.priority();
 				}
-				Set<Arbitrary<?>> arbitrary = provider.provideArbitrariesFor(targetType, subtypeProvider);
+				Set<Arbitrary<?>> arbitrary = provider.provideFor(targetType, subtypeProvider);
 				fittingArbitraries.addAll(arbitrary);
 			}
 		}

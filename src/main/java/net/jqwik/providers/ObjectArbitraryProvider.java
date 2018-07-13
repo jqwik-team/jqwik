@@ -16,7 +16,7 @@ public class ObjectArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		return Collections.singleton(genSize -> random -> Shrinkable.unshrinkable(new Object()));
 	}
 }

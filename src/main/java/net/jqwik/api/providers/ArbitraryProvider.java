@@ -38,13 +38,13 @@ public interface ArbitraryProvider {
 	 *
 	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
 	 *
-	 * {@link Deprecated Use {@linkplain #provideArbitrariesFor(TypeUsage, SubtypeProvider)} instead.}
+	 * {@link Deprecated Use {@linkplain #provideFor(TypeUsage, SubtypeProvider)} instead.}
 	 *
 	 * This method will be removed in version 0.9 of jqwik.
 	 */
 	@Deprecated
 	default Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		throw new JqwikException(String.format("Please implement/override %s.provideArbitrariesFor()", getClass().getName()));
+		throw new JqwikException(String.format("Please implement/override %s.provideFor()", getClass().getName()));
 	}
 
 	/**
@@ -57,7 +57,7 @@ public interface ArbitraryProvider {
 	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
 	 */
 	// TODO: Remove default implementation in jqwik 0.9
-	default Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	default Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeOptionalProvider = typeUsage -> {
 			Set<Arbitrary<?>> arbitraries = subtypeProvider.apply(typeUsage);
 			if (arbitraries.isEmpty())

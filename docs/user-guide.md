@@ -1834,7 +1834,7 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
 				  .between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
 				  .ofScale(2);
@@ -1880,7 +1880,7 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage innerType = targetType.getTypeArguments().get(0);
 		return subtypeProvider.apply(innerType).stream() //
 			.map(Arbitrary::optional)
@@ -1889,7 +1889,7 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 }
 ```
 
-Mind that `provideArbitrariesFor` returns a set of potential arbitraries.
+Mind that `provideFor` returns a set of potential arbitraries.
 That's necessary because the `subtypeProvider` might also deliver a choice of
 subtype arbitraries. Not too difficult, is it?
 
@@ -1914,7 +1914,7 @@ public class AlternativeStringArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		return Collections.singleton(Arbitraries.constant("A String"));
 	}
 }

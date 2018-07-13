@@ -13,7 +13,7 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
 				.between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
 				.ofScale(2);

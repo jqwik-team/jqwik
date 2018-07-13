@@ -13,7 +13,7 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 	}
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage innerType = targetType.getTypeArguments().get(0);
 		return subtypeProvider.apply(innerType).stream() //
 							  .map(Arbitrary::optional)

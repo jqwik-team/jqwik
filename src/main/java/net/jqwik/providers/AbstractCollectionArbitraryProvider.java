@@ -16,7 +16,7 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 	protected abstract Class<?> getProvidedType();
 
 	@Override
-	public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage innerType = targetType.getTypeArguments().isEmpty() ? //
 			TypeUsage.forType(Object.class) //
 			: targetType.getTypeArguments().get(0);

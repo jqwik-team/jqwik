@@ -111,7 +111,7 @@ class RegisteredArbitraryResolverTests {
 			}
 
 			@Override
-			public Set<Arbitrary<?>> provideArbitrariesFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+			public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 				return new HashSet<>(asList(arbitraries));
 			}
 
