@@ -27,7 +27,7 @@ import java.util.stream.*;
  * Within the public API {@code TypeUsage} is used in two places:
  * <ul>
  * <li>@see {@link ArbitraryProvider}</li>
- * <li>@see {@link Arbitraries#defaultFor(TypeUsage)}</li>
+ * <li>@see {@link Arbitraries#defaultFor(Class, Class[])}</li>
  * </ul>
  */
 public class TypeUsage {
