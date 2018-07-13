@@ -124,7 +124,7 @@ public class Arbitraries {
 		if (all.size() == 1) {
 			return all.get(0);
 		}
-		return of(all).flatMap(Function.identity());
+		return new OneOfArbitrary<>(all);
 	}
 
 	/**
