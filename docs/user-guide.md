@@ -625,7 +625,7 @@ will generate lists with a minimum size of 1 filled with Strings that have 10 ch
 While checking properties of generically typed classes or functions, you often don't care
 about the exact type of variables and therefore want to express them with type variables.
 _jqwik_ can also handle type variables and wildcard types. The handling of upper and lower
-bounds works sometimes but I wouldn't recommend it.
+bounds works mostly as you would expect it.
 
 Consider
 [the following examples](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/VariableTypedPropertyExamples.java):
@@ -650,8 +650,20 @@ class VariableTypedPropertyExamples {
 }
 ```
 
-Whereas the first two properties will run - creating instances of type Object under the hood -
-the last one will fail with `CannotFindArbitraryException`.
+In the case of unbounded type variables or an unbounded wildcard type, _jqwik_
+will create instanced of a special class (`WildcardObject`) under the hood.
+
+In the case of bounded type variables and bounded wildcard types, _jqwik_
+will check if any [registered arbitrary provider](#providing-default-arbitraries)
+can provide suitable arbitraries and choose randomly between those.
+
+There is, however, a potentially unexpected behaviour,
+when the same type variable is used in more than one place and can be
+resolved by more than one arbitrary. In this case it can happen that the variable
+does not represent the same type in all places. You can see this above
+in property method `someBoundedGenericTypesCanBeResolved()` where `items`
+might be a list of Strings but `newItem` of some number type - and all that
+_in the same call to the method_!
 
 ## Self-Made Annotations
 

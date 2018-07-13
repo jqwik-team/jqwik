@@ -8,7 +8,7 @@ import java.util.*;
 public class StringArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		return targetType.isOfType(String.class);
+		return targetType.isAssignableFrom(String.class);
 	}
 
 	@Override
