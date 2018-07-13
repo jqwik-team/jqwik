@@ -82,7 +82,6 @@ class PropertyMethodArbitraryResolverTests {
 			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
 				public Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations) {
-					assertThat(annotations.get(0)).isInstanceOf(StringLength.class);
 					configured.add(arbitrary);
 					return arbitrary;
 				}
@@ -195,7 +194,6 @@ class PropertyMethodArbitraryResolverTests {
 			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
 				public Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations) {
-					assertThat(annotations.get(0)).isInstanceOf(StringLength.class);
 					configured.add(arbitrary);
 					return arbitrary;
 				}

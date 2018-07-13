@@ -64,15 +64,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage typeUsage) {
-		List<Annotation> configurationAnnotations = findConfigurationAnnotations(typeUsage);
-		return registeredArbitraryConfigurer.configure(createdArbitrary, configurationAnnotations);
-	}
-
-	private List<Annotation> findConfigurationAnnotations(TypeUsage typeUsage) {
-		return typeUsage.getAnnotations() //
-						.stream() //
-						.filter(annotation -> !annotation.annotationType().equals(ForAll.class)) //
-						.collect(Collectors.toList());
+		return registeredArbitraryConfigurer.configure(createdArbitrary, typeUsage.getAnnotations());
 	}
 
 	private Optional<Method> findArbitraryCreatorByName(TypeUsage typeUsage, String generatorToFind) {
