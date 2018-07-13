@@ -77,9 +77,9 @@ public interface ArbitraryProvider {
 	 * to use.
 	 *
 	 * <ul>
-	 * <li>Override with value > 0 to replace most of _jqwik_'s default providers.</li>
-	 * <li>Override with value > 100 to replace arbitrary provisioning for unrestricted type variables and wildcard types.</li>
-	 * <li>Override with value > 100 to replace arbitrary provisioning for plain type {@code Object}.</li>
+	 * <li>Override with value &gt; 0 to replace most of _jqwik_'s default providers.</li>
+	 * <li>Override with value &gt;  100 to replace arbitrary provisioning for unrestricted type variables and wildcard types.</li>
+	 * <li>Override with value &gt;  100 to replace arbitrary provisioning for plain type {@code Object}.</li>
 	 * </ul>
 	 *
 	 */
