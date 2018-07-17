@@ -11,7 +11,7 @@ import org.assertj.core.data.*;
 class RateProviderContract {
 
 	RateProviderContract() {
-		// TODO: This part is not used (yet) in jqwik yet
+		// TODO: This part is not used (yet) in jqwik. It could be easily applied when creating mock/stub collaborators
 		ContractRegistry.addPrecondition(RateProvider.class, "rate", (String fromCurrency, String toCurrency) -> {
 			Assume.that(!fromCurrency.equals(toCurrency));
 			return null;
@@ -75,12 +75,7 @@ class RateProviderContract {
 
 		@Example
 		void willCorrectlyUseExchangeRate() {
-			RateProvider provider = new RateProvider() {
-				@Override
-				public double rate(String fromCurrency, String toCurrency) {
-					return 0.8;
-				}
-			};
+			RateProvider provider = (fromCurrency, toCurrency) -> 0.8;
 			double euroAmount = new EuroConverter(provider).convert(8.0, "USD");
 			Assertions.assertThat(euroAmount).isCloseTo(6.4, Offset.offset(0.01));
 		}
@@ -93,16 +88,9 @@ class RateProviderContract {
 		@Provide
 		Arbitrary<RateProvider> aRateProvider() {
 			DoubleArbitrary rate = Arbitraries.doubles().between(0.1, 10.0);
-			return rate.map(exchangeRate -> new RateProvider() {
-				@Override
-				public double rate(String fromCurrency, String toCurrency) {
-					return exchangeRate;
-				}
-
-				@Override
-				public String toString() {
-					return String.format("RateProvider(rate=%s)", exchangeRate);
-				}
+			return rate.map(exchangeRate -> (fromCurrency, toCurrency) -> {
+				Assertions.assertThat(fromCurrency).isNotEqualTo(toCurrency);
+				return exchangeRate;
 			});
 		}
 	}
