@@ -43,6 +43,7 @@ public class BigDecimalShrinkingCandidates implements ShrinkingCandidates<BigDec
 		return integralShrinkCandidates.candidatesFor(value.toBigInteger()) //
 									   .stream() //
 									   .map(BigDecimal::new) //
+									   .filter(range::includes) //
 									   .collect(Collectors.toSet());
 	}
 

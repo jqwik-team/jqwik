@@ -77,4 +77,17 @@ class BigDecimalShrinkingCandidatesTests {
 		);
 	}
 
+	@Example
+	void integralsWillNotShrinkOutsideRange() {
+		ShrinkingCandidates<BigDecimal> shrinker = new BigDecimalShrinkingCandidates(Range.of(0.1, 10.0).map(BigDecimal::new), BigDecimal.ZERO);
+		Set<BigDecimal> candidates = shrinker.candidatesFor(new BigDecimal(5.0));
+
+		assertThat(candidates).containsOnly( //
+			new BigDecimal(1.0), //
+			new BigDecimal(2.0), //
+			new BigDecimal(3.0), //
+			new BigDecimal(4.0) //
+		);
+	}
+
 }
