@@ -7,6 +7,7 @@ import static org.junit.platform.engine.TestExecutionResult.*;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.api.lifecycles.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.ReportEntry;
 import org.opentest4j.*;
@@ -77,7 +78,8 @@ public class PropertyMethodExecutor {
 		JqwikReflectionSupport.streamInnerInstances(testInstance).forEach(innerInstance -> {
 			try {
 				PropertyLifecycle lifecycle = lifecycleSupplier.apply(innerInstance);
-				lifecycle.doFinally(methodDescriptor, innerInstance);
+				PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, innerInstance) ;
+				lifecycle.doFinally(context);
 			} catch (Throwable throwable) {
 				throwableCollector.add(throwable);
 			}

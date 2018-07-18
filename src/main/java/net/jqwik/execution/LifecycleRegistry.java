@@ -2,6 +2,7 @@ package net.jqwik.execution;
 
 import java.util.function.Function;
 
+import net.jqwik.api.lifecycles.*;
 import net.jqwik.descriptor.PropertyMethodDescriptor;
 
 public class LifecycleRegistry {

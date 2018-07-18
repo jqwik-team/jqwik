@@ -4,6 +4,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
+import net.jqwik.api.lifecycles.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.descriptor.*;

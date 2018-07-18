@@ -1,6 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycles.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
 import org.junit.platform.engine.*;
