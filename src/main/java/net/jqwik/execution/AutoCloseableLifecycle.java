@@ -1,10 +1,12 @@
 package net.jqwik.execution;
 
+import net.jqwik.api.lifecycles.*;
+
 public class AutoCloseableLifecycle implements PropertyLifecycle {
 	@Override
-	public void doFinally(PropertyContext exampleDescriptor, Object testInstance) throws Throwable {
-		if (testInstance instanceof AutoCloseable) {
-			AutoCloseable closeable = (AutoCloseable) testInstance;
+	public void doFinally(PropertyLifecycleContext propertyLifecycleContext) throws Throwable {
+		if (propertyLifecycleContext.testInstance() instanceof AutoCloseable) {
+			AutoCloseable closeable = (AutoCloseable) propertyLifecycleContext.testInstance();
 			closeable.close();
 		}
 	}

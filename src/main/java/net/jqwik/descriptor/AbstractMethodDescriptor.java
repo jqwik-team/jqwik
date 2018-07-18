@@ -1,13 +1,12 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.execution.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
 import java.lang.reflect.*;
 import java.util.*;
 
-abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements PropertyContext {
+abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 	private final Method targetMethod;
 	private final Class containerClass;
 	private final Set<TestTag> tags;
