@@ -1,15 +1,12 @@
 package net.jqwik.execution;
 
-import java.util.Set;
-import java.util.function.Function;
-import java.util.logging.Logger;
-
-import net.jqwik.api.lifecycles.*;
-import org.junit.platform.engine.*;
-
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
-import net.jqwik.recording.TestRunRecorder;
+import net.jqwik.recording.*;
+import org.junit.platform.engine.*;
+
+import java.util.*;
+import java.util.logging.*;
 
 public class JqwikExecutor {
 
@@ -65,8 +62,7 @@ public class JqwikExecutor {
 	}
 
 	private ExecutionTask createPropertyTask(PropertyMethodDescriptor propertyMethodDescriptor, Pipeline pipeline) {
-		Function<Object, PropertyLifecycle> lifecycleSupplier = registry.supplierFor(propertyMethodDescriptor);
-		return propertyTaskCreator.createTask(propertyMethodDescriptor, lifecycleSupplier);
+		return propertyTaskCreator.createTask(propertyMethodDescriptor, registry);
 	}
 
 	private ExecutionTask createContainerTask(TestDescriptor containerDescriptor, Pipeline pipeline) {

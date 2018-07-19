@@ -1,21 +1,19 @@
 package net.jqwik.execution;
 
+import net.jqwik.*;
+import net.jqwik.api.lifecycles.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.support.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
+
+import java.util.function.*;
+
 import static net.jqwik.properties.PropertyCheckResult.Status.*;
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
-
-import java.util.*;
-import java.util.function.*;
-
-import net.jqwik.api.lifecycles.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.reporting.ReportEntry;
-import org.opentest4j.*;
-
-import net.jqwik.JqwikException;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
-import net.jqwik.properties.PropertyCheckResult;
-import net.jqwik.support.JqwikReflectionSupport;
 
 public class PropertyMethodExecutor {
 
@@ -26,7 +24,7 @@ public class PropertyMethodExecutor {
 		this.methodDescriptor = methodDescriptor;
 	}
 
-	public TestExecutionResult execute(Function<Object, PropertyLifecycle> lifecycleSupplier, EngineExecutionListener listener) {
+	public TestExecutionResult execute(LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
 		Object testInstance;
 		try {
 			testInstance = createTestInstance();
@@ -35,24 +33,26 @@ public class PropertyMethodExecutor {
 					methodDescriptor.getContainerClass());
 			return TestExecutionResult.failed(new JqwikException(message, throwable));
 		}
-		return invokeTestMethod(testInstance, lifecycleSupplier, listener);
+		return executePropertyMethod(testInstance, lifecycleSupplier, listener);
 	}
 
 	private Object createTestInstance() {
 		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
 	}
 
-	private TestExecutionResult invokeTestMethod(Object testInstance, Function<Object, PropertyLifecycle> lifecycleSupplier,
-			EngineExecutionListener listener) {
+	private TestExecutionResult executePropertyMethod(Object testInstance, LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
+		PropertyLifecycle lifecycle = lifecycleSupplier.propertyLifecycle(methodDescriptor);
+		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
 			testExecutionResult = executeMethod(testInstance, listener);
 		} finally {
-			List<Throwable> throwableCollector = new ArrayList<>();
-			lifecycleDoFinally(testInstance, lifecycleSupplier, throwableCollector);
-			if (!throwableCollector.isEmpty() && testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
-				// TODO: Use MultiException for reporting all exceptions
-				testExecutionResult = TestExecutionResult.failed(throwableCollector.get(0));
+			try {
+				lifecycle.finallyAfterProperty(context);
+			} catch (Throwable throwable) {
+				if (testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
+					testExecutionResult = TestExecutionResult.failed(throwable);
+				}
 			}
 		}
 		return testExecutionResult;
@@ -70,20 +70,6 @@ public class PropertyMethodExecutor {
 			rethrowIfBlacklisted(t);
 			return failed(t);
 		}
-	}
-
-	private void lifecycleDoFinally(Object testInstance, Function<Object, PropertyLifecycle> lifecycleSupplier,
-			List<Throwable> throwableCollector) {
-
-		JqwikReflectionSupport.streamInnerInstances(testInstance).forEach(innerInstance -> {
-			try {
-				PropertyLifecycle lifecycle = lifecycleSupplier.apply(innerInstance);
-				PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, innerInstance) ;
-				lifecycle.doFinally(context);
-			} catch (Throwable throwable) {
-				throwableCollector.add(throwable);
-			}
-		});
 	}
 
 	private TestExecutionResult createTestExecutionResult(PropertyCheckResult checkResult) {

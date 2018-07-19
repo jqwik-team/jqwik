@@ -6,9 +6,9 @@ import org.junit.platform.engine.*;
 import java.util.*;
 import java.util.stream.*;
 
-public class ContainerTaskCreator {
+class ContainerTaskCreator {
 
-	public ExecutionTask createTask(TestDescriptor containerDescriptor, ExecutionTaskCreator childTaskCreator, Pipeline pipeline) {
+	ExecutionTask createTask(TestDescriptor containerDescriptor, ExecutionTaskCreator childTaskCreator, Pipeline pipeline) {
 		ExecutionTask prepareContainerTask = ExecutionTask.from(
 			listener -> listener.executionStarted(containerDescriptor),
 			containerDescriptor.getUniqueId(),
