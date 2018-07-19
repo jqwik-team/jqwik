@@ -124,11 +124,11 @@ class JqwikReflectionSupportTests {
 	}
 
 	@Example
-	void streamInnerInstances() {
+	void streamInstancesFromInside() {
 		Outer outer = new Outer();
 		Outer.Inner inner = outer.createInner();
 
-		Stream<Object> instances = JqwikReflectionSupport.streamInnerInstances(inner);
+		Stream<Object> instances = JqwikReflectionSupport.streamInstancesFromInside(inner);
 
 		Assertions.assertThat(instances).containsExactly(inner, outer);
 	}

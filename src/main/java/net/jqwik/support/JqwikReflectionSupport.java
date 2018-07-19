@@ -16,7 +16,7 @@ public class JqwikReflectionSupport {
 
 	private final static IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
 
-	public static Stream<Object> streamInnerInstances(Object inner) {
+	public static Stream<Object> streamInstancesFromInside(Object inner) {
 		return addInstances(inner, new ArrayList<>()).stream();
 	}
 

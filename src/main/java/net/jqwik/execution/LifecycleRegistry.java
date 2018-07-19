@@ -1,13 +1,12 @@
 package net.jqwik.execution;
 
-import java.util.function.Function;
-
 import net.jqwik.api.lifecycles.*;
-import net.jqwik.descriptor.PropertyMethodDescriptor;
+import net.jqwik.descriptor.*;
 
-public class LifecycleRegistry {
+public class LifecycleRegistry implements LifecycleSupplier {
 
-	public Function<Object, PropertyLifecycle> supplierFor(PropertyMethodDescriptor propertyMethodDescriptor) {
-		return (testInstance) -> new AutoCloseableLifecycle();
+	@Override
+	public PropertyLifecycle propertyLifecycle(PropertyMethodDescriptor propertyMethodDescriptor) {
+		return new AutoCloseableLifecycle();
 	}
 }
