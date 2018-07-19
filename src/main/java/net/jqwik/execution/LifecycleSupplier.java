@@ -5,6 +5,6 @@ import net.jqwik.descriptor.*;
 
 public interface LifecycleSupplier {
 
-	PropertyFinallyLifecycle propertyLifecycle(PropertyMethodDescriptor propertyMethodDescriptor);
+	PropertyFinallyLifecycle propertyFinallyLifecycle(PropertyMethodDescriptor propertyMethodDescriptor);
 
 }
