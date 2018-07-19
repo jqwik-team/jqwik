@@ -42,7 +42,7 @@ public class PropertyMethodExecutor {
 
 	private TestExecutionResult executePropertyMethod(Object testInstance, LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
-		PropertyFinallyLifecycle lifecycle = lifecycleSupplier.propertyLifecycle(methodDescriptor);
+		PropertyFinallyLifecycle lifecycle = lifecycleSupplier.propertyFinallyLifecycle(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
 			testExecutionResult = executeMethod(testInstance, listener);
