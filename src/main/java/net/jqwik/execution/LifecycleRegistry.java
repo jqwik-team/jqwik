@@ -6,7 +6,7 @@ import net.jqwik.descriptor.*;
 public class LifecycleRegistry implements LifecycleSupplier {
 
 	@Override
-	public PropertyLifecycle propertyLifecycle(PropertyMethodDescriptor propertyMethodDescriptor) {
+	public PropertyFinallyLifecycle propertyLifecycle(PropertyMethodDescriptor propertyMethodDescriptor) {
 		return new AutoCloseableLifecycle();
 	}
 }

@@ -5,7 +5,7 @@ import net.jqwik.support.*;
 
 import java.util.*;
 
-public class AutoCloseableLifecycle implements PropertyLifecycle {
+public class AutoCloseableLifecycle implements PropertyFinallyLifecycle {
 	@Override
 	public void finallyAfterProperty(PropertyLifecycleContext propertyLifecycleContext) throws Throwable {
 		List<Throwable> throwableCollector = new ArrayList<>();
