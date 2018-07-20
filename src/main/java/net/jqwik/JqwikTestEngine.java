@@ -53,16 +53,28 @@ public class JqwikTestEngine implements TestEngine {
 		if (descriptor instanceof PropertyMethodDescriptor) {
 			registerPropertyMethodHooks((PropertyMethodDescriptor) descriptor);
 		}
+		if (descriptor instanceof ContainerClassDescriptor) {
+			registerContainerHooks((ContainerClassDescriptor) descriptor);
+		}
 		for (TestDescriptor childDescriptor : descriptor.getChildren()) {
 			registerLifecycleHooks(childDescriptor);
 		}
 	}
 
+	private void registerContainerHooks(ContainerClassDescriptor containerClassDescriptor) {
+		Class<?> containerClass = containerClassDescriptor.getContainerClass();
+		registerHooks(containerClassDescriptor, containerClass);
+	}
+
 	private void registerPropertyMethodHooks(PropertyMethodDescriptor propertyMethodDescriptor) {
 		Method targetMethod = propertyMethodDescriptor.getTargetMethod();
-		List<AddLifecycleHook> addLifecycleHooks = AnnotationSupport.findRepeatableAnnotations(targetMethod, AddLifecycleHook.class);
+		registerHooks(propertyMethodDescriptor, targetMethod);
+	}
+
+	private void registerHooks(TestDescriptor descriptor, AnnotatedElement element) {
+		List<AddLifecycleHook> addLifecycleHooks = AnnotationSupport.findRepeatableAnnotations(element, AddLifecycleHook.class);
 		for (AddLifecycleHook addLifecycleHook : addLifecycleHooks) {
-			registry.registerLifecycleHook(propertyMethodDescriptor, addLifecycleHook.value());
+			registry.registerLifecycleHook(descriptor, addLifecycleHook.value());
 		}
 	}
 

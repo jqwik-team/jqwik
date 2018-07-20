@@ -26,6 +26,7 @@ public class LifecycleRegistry implements LifecycleSupplier {
 	}
 
 	private AroundPropertyHook combineAroundHooks(List<AroundPropertyHook> aroundPropertyHooks) {
+		// TODO: Handle more than one fitting hook
 		return aroundPropertyHooks.isEmpty() ? AroundPropertyHook.NONE : aroundPropertyHooks.get(0);
 	}
 
@@ -66,7 +67,13 @@ public class LifecycleRegistry implements LifecycleSupplier {
 		}
 
 		public boolean match(TestDescriptor descriptor) {
-			return this.descriptor.equals(descriptor);
+			if (descriptor == null) {
+				return false;
+			}
+			if (this.descriptor.equals(descriptor)) {
+				return true;
+			}
+			return match(descriptor.getParent().orElse(null));
 		}
 
 		public <T extends LifecycleHook> boolean match(Class<? extends LifecycleHook> hookType) {

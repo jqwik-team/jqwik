@@ -8,6 +8,7 @@ import org.junit.platform.engine.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
+@AddLifecycleHook(TestsWithPropertyLifecycle.AroundAll.class)
 class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	TestsWithPropertyLifecycle() {
@@ -39,12 +40,22 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 	private static class Count10Tries implements AroundPropertyHook {
 		@Override
 		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, Callable<TestExecutionResult> property) throws Exception {
-			System.out.println("Before around: " + propertyDescriptor.label());
+			System.out.println("Before around counting: " + propertyDescriptor.label());
 			TestExecutionResult testExecutionResult = property.call();
-			System.out.println("After around: " + propertyDescriptor.label());
+			System.out.println("After around counting: " + propertyDescriptor.label());
 
 			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) propertyDescriptor.testInstance();
 			Assertions.assertThat(testInstance.counter.get()).isEqualTo(10);
+			return testExecutionResult;
+		}
+	}
+
+	static class AroundAll implements AroundPropertyHook {
+		@Override
+		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, Callable<TestExecutionResult> property) throws Exception {
+			System.out.println("Before around all: " + propertyDescriptor.label());
+			TestExecutionResult testExecutionResult = property.call();
+			System.out.println("After around all: " + propertyDescriptor.label());
 			return testExecutionResult;
 		}
 	}
