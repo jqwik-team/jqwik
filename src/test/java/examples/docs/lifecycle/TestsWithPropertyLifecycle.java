@@ -28,6 +28,8 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	@Property(tries = 10)
 	@AddLifecycleHook(Count10Tries.class)
+	// is also declared at class level and therefor ignored:
+	@AddLifecycleHook(AroundAll.class)
 	void countingTries(@ForAll String aString) {
 		counter.incrementAndGet();
 	}
