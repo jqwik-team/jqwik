@@ -1,13 +1,13 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.lifecycles.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.support.*;
 
 import java.util.*;
 
-public class AutoCloseableLifecycle implements PropertyFinallyLifecycle {
+public class AutoCloseableLifecycle implements TeardownPropertyHook {
 	@Override
-	public void finallyAfterProperty(PropertyLifecycleContext propertyLifecycleContext) throws Throwable {
+	public void teardownProperty(PropertyLifecycleContext propertyLifecycleContext) throws Throwable {
 		List<Throwable> throwableCollector = new ArrayList<>();
 		JqwikReflectionSupport.streamInstancesFromInside(propertyLifecycleContext.testInstance()).forEach(innerInstance -> {
 			if (innerInstance instanceof AutoCloseable) {

@@ -1,6 +1,6 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.lifecycles.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.descriptor.*;
 
 import java.lang.reflect.*;
