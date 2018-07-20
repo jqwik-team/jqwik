@@ -61,7 +61,7 @@ public class TestHelper {
 
 			@Override
 			public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-				return AroundPropertyHook.NONE;
+				return AroundPropertyHook.BASE;
 			}
 		};
 	}
