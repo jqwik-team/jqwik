@@ -5,6 +5,8 @@ import net.jqwik.descriptor.*;
 
 public interface LifecycleSupplier {
 
-	TeardownPropertyHook propertyFinallyLifecycle(PropertyMethodDescriptor propertyMethodDescriptor);
+	TeardownPropertyHook teardownPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor);
+
+	AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor);
 
 }

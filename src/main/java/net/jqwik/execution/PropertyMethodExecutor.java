@@ -45,22 +45,30 @@ public class PropertyMethodExecutor {
 
 	private TestExecutionResult executePropertyMethod(Object testInstance, LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
-		TeardownPropertyHook lifecycle = lifecycleSupplier.propertyFinallyLifecycle(methodDescriptor);
+		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
+		TeardownPropertyHook teardown = lifecycleSupplier.teardownPropertyHook(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
-			testExecutionResult = executeMethod(testInstance, listener);
+			testExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
+		} catch (Throwable throwable) {
+			testExecutionResult = handleThrowable(testExecutionResult, throwable);
 		} finally {
 			try {
-				lifecycle.teardownProperty(context);
+				teardown.teardownProperty(context);
 			} catch (Throwable throwable) {
-				if (testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
-					testExecutionResult = TestExecutionResult.failed(throwable);
-				} else {
-					LOG.warning(String.format("Exception occurred during teardown: %s", throwable));
-				}
+				testExecutionResult = handleThrowable(testExecutionResult, throwable);
 			}
 		}
 		return testExecutionResult;
+	}
+
+	private TestExecutionResult handleThrowable(TestExecutionResult previousResult, Throwable throwable) {
+		if (previousResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
+			return TestExecutionResult.failed(throwable);
+		} else {
+			LOG.warning(String.format("Additional exception occurred: %s", throwable));
+			return previousResult;
+		}
 	}
 
 	private TestExecutionResult executeMethod(Object testInstance, EngineExecutionListener listener) {

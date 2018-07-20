@@ -1,5 +1,6 @@
 package net.jqwik.support;
 
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.discovery.predicates.*;
 import org.junit.platform.commons.support.*;
 
@@ -179,4 +180,7 @@ public class JqwikReflectionSupport {
 		return Modifier.isStatic(member.getModifiers());
 	}
 
+	public static boolean isInnerClass(Class<? extends LifecycleHook> hookClass) {
+		return hookClass.isMemberClass() && !isStatic(hookClass);
+	}
 }

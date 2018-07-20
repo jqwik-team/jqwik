@@ -2,7 +2,7 @@ package examples.docs.lifecycle;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import org.assertj.core.api.Assertions;
+import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 
 import java.util.concurrent.*;
@@ -33,17 +33,18 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	@Override
 	public void close() {
-		System.out.println("Finally after each property");
+		System.out.println("Teardown after each property");
 	}
 
 	private static class Count10Tries implements AroundPropertyHook {
 		@Override
 		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, Callable<TestExecutionResult> property) throws Exception {
+			System.out.println("Before around: " + propertyDescriptor.label());
 			TestExecutionResult testExecutionResult = property.call();
-			if (testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
-				Assertions.assertThat(true).isFalse();
-				// Assertions.assertThat(counter.get()).isEqualTo(10);
-			}
+			System.out.println("After around: " + propertyDescriptor.label());
+
+			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) propertyDescriptor.testInstance();
+			Assertions.assertThat(testInstance.counter.get()).isEqualTo(10);
 			return testExecutionResult;
 		}
 	}

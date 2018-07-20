@@ -1,7 +1,9 @@
 package net.jqwik;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.descriptor.*;
+import net.jqwik.execution.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
 import org.junit.platform.engine.*;
@@ -48,5 +50,19 @@ public class TestHelper {
 		Method method = getMethod(containerClass, methodName);
 		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, new Reporting[0]);
 		return new PropertyMethodDescriptor(uniqueId, method, containerClass, propertyConfig);
+	}
+
+	public static LifecycleSupplier nullLifecycleSupplier() {
+		return new LifecycleSupplier() {
+			@Override
+			public TeardownPropertyHook teardownPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
+				return new AutoCloseableLifecycle();
+			}
+
+			@Override
+			public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
+				return AroundPropertyHook.NONE;
+			}
+		};
 	}
 }
