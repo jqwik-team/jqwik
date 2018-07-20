@@ -1,4 +1,4 @@
-package net.jqwik.api.lifecycles;
+package net.jqwik.api.lifecycle;
 
 import java.lang.reflect.Method;
 

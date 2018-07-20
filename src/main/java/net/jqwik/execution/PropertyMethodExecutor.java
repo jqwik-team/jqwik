@@ -1,7 +1,7 @@
 package net.jqwik.execution;
 
 import net.jqwik.*;
-import net.jqwik.api.lifecycles.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
@@ -10,12 +10,15 @@ import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
 import java.util.function.*;
+import java.util.logging.*;
 
 import static net.jqwik.properties.PropertyCheckResult.Status.*;
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
 
 public class PropertyMethodExecutor {
+
+	private static final Logger LOG = Logger.getLogger(JqwikProperties.class.getName());
 
 	private final PropertyMethodDescriptor methodDescriptor;
 	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
@@ -42,16 +45,18 @@ public class PropertyMethodExecutor {
 
 	private TestExecutionResult executePropertyMethod(Object testInstance, LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
-		PropertyFinallyLifecycle lifecycle = lifecycleSupplier.propertyFinallyLifecycle(methodDescriptor);
+		TeardownPropertyHook lifecycle = lifecycleSupplier.propertyFinallyLifecycle(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
 			testExecutionResult = executeMethod(testInstance, listener);
 		} finally {
 			try {
-				lifecycle.finallyAfterProperty(context);
+				lifecycle.teardownProperty(context);
 			} catch (Throwable throwable) {
 				if (testExecutionResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
 					testExecutionResult = TestExecutionResult.failed(throwable);
+				} else {
+					LOG.warning(String.format("Exception occurred during teardown: %s", throwable));
 				}
 			}
 		}

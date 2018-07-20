@@ -1,7 +1,7 @@
 package examples.docs.lifecycle;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycles.*;
+import net.jqwik.api.lifecycle.*;
 import org.assertj.core.api.Assertions;
 import org.junit.platform.engine.*;
 
@@ -26,7 +26,7 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 	}
 
 	@Property(tries = 10)
-	@Lifecycle(Count10Tries.class)
+	@AddLifecycleHook(Count10Tries.class)
 	void countingTries(@ForAll String aString) {
 		counter.incrementAndGet();
 	}
@@ -36,7 +36,7 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 		System.out.println("Finally after each property");
 	}
 
-	private static class Count10Tries implements PropertyAroundLifecycle {
+	private static class Count10Tries implements AroundPropertyHook {
 		@Override
 		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, Callable<TestExecutionResult> property) throws Exception {
 			TestExecutionResult testExecutionResult = property.call();
