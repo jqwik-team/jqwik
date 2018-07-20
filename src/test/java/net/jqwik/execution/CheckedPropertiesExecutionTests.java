@@ -1,5 +1,6 @@
 package net.jqwik.execution;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
@@ -21,7 +22,7 @@ class CheckedPropertiesExecutionTests {
 	private static int countTries = 0;
 
 	@Example
-	void failWithSingleNumber() throws NoSuchMethodException {
+	void failWithSingleNumber() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failWithANumber", int.class)
 			.build();
 
@@ -37,7 +38,7 @@ class CheckedPropertiesExecutionTests {
 	}
 
 	@Example
-	void succeedWithSingleNumber() throws NoSuchMethodException {
+	void succeedWithSingleNumber() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithANumber", int.class)
 			.build();
 
@@ -53,7 +54,7 @@ class CheckedPropertiesExecutionTests {
 	}
 
 	@Example
-	void succeedWithThreeNumbers() throws NoSuchMethodException {
+	void succeedWithThreeNumbers() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedWithThreeNumbers",
 			int.class, int.class, int.class).build();
 
@@ -66,7 +67,7 @@ class CheckedPropertiesExecutionTests {
 	}
 
 	@Example
-	void triesParameterIsRespected() throws NoSuchMethodException {
+	void triesParameterIsRespected() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedIn11Tries", int.class)
 			.build();
 
@@ -78,7 +79,7 @@ class CheckedPropertiesExecutionTests {
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		MockPipeline pipeline = new MockPipeline();
-		ExecutionTask task = executor.createTask(propertyMethodDescriptor, (testInstance) -> new AutoCloseableLifecycle());
+		ExecutionTask task = executor.createTask(propertyMethodDescriptor, TestHelper.nullLifecycleSupplier());
 		pipeline.submit(task);
 		pipeline.runWith(eventRecorder);
 	}

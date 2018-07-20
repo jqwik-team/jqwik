@@ -8,7 +8,7 @@ import java.util.concurrent.*;
  * Experimental feature. Not ready for public usage yet.
  */
 public interface AroundPropertyHook extends LifecycleHook {
-	TestExecutionResult aroundProperty(
-		PropertyLifecycleContext propertyDescriptor, Callable<TestExecutionResult> property
-	) throws Throwable;
+	AroundPropertyHook NONE = (propertyDescriptor, property) -> property.call();
+
+	TestExecutionResult aroundProperty(PropertyLifecycleContext context, Callable<TestExecutionResult> property) throws Throwable;
 }

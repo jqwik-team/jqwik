@@ -1,5 +1,6 @@
 package net.jqwik.execution;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
@@ -25,7 +26,7 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
-	void succeeding() throws NoSuchMethodException {
+	void succeeding() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeeding").build();
 
 		executeTests(descriptor);
@@ -37,7 +38,7 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
-	void succeedWithVoid() throws NoSuchMethodException {
+	void succeedWithVoid() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "succeedingWithVoid").build();
 
 		executeTests(descriptor);
@@ -50,7 +51,7 @@ class SimplePropertiesExecutionTests {
 
 
 	@Example
-	void succeedingWithBoxedBoolean() throws NoSuchMethodException {
+	void succeedingWithBoxedBoolean() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "alsoSucceeding").build();
 
 		executeTests(descriptor);
@@ -62,7 +63,7 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
-	void failing() throws NoSuchMethodException {
+	void failing() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failing").build();
 
 		executeTests(descriptor);
@@ -74,7 +75,7 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
-	void failingInClose() throws NoSuchMethodException {
+	void failingInClose() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failingInClose").build();
 
 		executeTests(descriptor);
@@ -86,7 +87,7 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
-	void failingTwiceInTargetAndInClose() throws NoSuchMethodException {
+	void failingTwiceInTargetAndInClose() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "failingTwice").build();
 
 		executeTests(descriptor);
@@ -98,7 +99,7 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
-	void methodWithUnboundParameterIsSkipped() throws NoSuchMethodException {
+	void methodWithUnboundParameterIsSkipped() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class)
 			.build();
 
@@ -111,7 +112,7 @@ class SimplePropertiesExecutionTests {
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		MockPipeline pipeline = new MockPipeline();
-		ExecutionTask task = executor.createTask(propertyMethodDescriptor, (testInstance) -> new AutoCloseableLifecycle());
+		ExecutionTask task = executor.createTask(propertyMethodDescriptor, TestHelper.nullLifecycleSupplier());
 		pipeline.submit(task);
 		pipeline.runWith(eventRecorder);
 	}
