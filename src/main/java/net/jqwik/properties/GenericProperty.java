@@ -18,12 +18,12 @@ public class GenericProperty {
 
 	private final String name;
 	private final ShrinkablesGenerator shrinkablesGenerator;
-	private final Predicate<List<Object>> forAllPredicate;
+	private final CheckedFunction checkedFunction;
 
-	public GenericProperty(String name, ShrinkablesGenerator shrinkablesGenerator, CheckedFunction forAllPredicate) {
+	public GenericProperty(String name, ShrinkablesGenerator shrinkablesGenerator, CheckedFunction checkedFunction) {
 		this.name = name;
 		this.shrinkablesGenerator = shrinkablesGenerator;
-		this.forAllPredicate = forAllPredicate;
+		this.checkedFunction = checkedFunction;
 	}
 
 	public PropertyCheckResult check(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
@@ -76,7 +76,7 @@ public class GenericProperty {
 		if (Reporting.GENERATED.containedIn(reporting)) {
 			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
 		}
-		return forAllPredicate.test(plainParams);
+		return checkedFunction.test(plainParams);
 	}
 
 	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {
@@ -94,7 +94,7 @@ public class GenericProperty {
 
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, configuration.getReporting());
 
-		Falsifier<List> forAllFalsifier = forAllPredicate::test;
+		Falsifier<List> forAllFalsifier = checkedFunction::test;
 		PropertyShrinkingResult shrinkingResult = shrinker.shrink(forAllFalsifier, error);
 
 		@SuppressWarnings("unchecked")
