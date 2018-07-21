@@ -81,6 +81,48 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 		return clone;
 	}
 
+	/**
+	 * Extracted unicodes from java 8 with
+	 * <pre>
+	 * 	for (char c = Character.MIN_VALUE;c < Character.MAX_VALUE; c++) {
+	 * 		if (Character.isWhitespace(c)) {
+	 * 			System.out.println( "\\u" + Integer.toHexString(c | 0x10000).substring(1) );
+	 * 		}
+	 * 	}
+	 *  </pre>
+	 */
+	@Override
+	public StringArbitrary whitespace() {
+		return this.withChars( //
+			'\u0009', //
+			'\n', //
+			'\u000b', //
+			'\u000c', //
+			'\r', //
+			'\u001c', //
+			'\u001d', //
+			'\u001e', //
+			'\u001f', //
+			'\u0020', //
+			'\u1680', //
+			'\u180e', //
+			'\u2000', //
+			'\u2001', //
+			'\u2002', //
+			'\u2003', //
+			'\u2004', //
+			'\u2005', //
+			'\u2006', //
+			'\u2008', //
+			'\u2009', //
+			'\u200a', //
+			'\u2028', //
+			'\u2029', //
+			'\u205f', //
+			'\u3000' //
+		);
+	}
+
 	private void addCharRange(char from, char to) {
 		characterArbitraries.add(Arbitraries.chars().between(from, to));
 	}

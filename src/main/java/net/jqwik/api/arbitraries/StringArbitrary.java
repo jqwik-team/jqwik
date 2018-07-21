@@ -58,4 +58,12 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 * Can be combined with other methods that allow chars.
 	 */
 	StringArbitrary numeric();
+
+	/**
+	 * Allow all chars that will return {@code true} for
+	 * {@link Character#isWhitespace(char)}.
+	 *
+	 * Can be combined with other methods that allow chars.
+	 */
+	StringArbitrary whitespace();
 }
