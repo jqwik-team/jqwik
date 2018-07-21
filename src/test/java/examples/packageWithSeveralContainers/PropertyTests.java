@@ -42,7 +42,7 @@ public class PropertyTests {
 
 	@Provide
 	Arbitrary<String> shorterThan5() {
-		return Arbitraries.strings().withChars(new char[]{'a', 'b', 'c'}).ofMinLength(0).ofMaxLength(4);
+		return Arbitraries.strings().withChars('a', 'b', 'c').ofMinLength(0).ofMaxLength(4);
 	}
 
 }

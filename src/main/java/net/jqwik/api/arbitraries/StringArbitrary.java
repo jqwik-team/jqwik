@@ -29,7 +29,7 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 *
 	 * Can be combined with other methods that allow chars.
 	 */
-	StringArbitrary withChars(char[] chars);
+	StringArbitrary withChars(char... chars);
 
 	/**
 	 * Allow all chars within {@code from} (included) and {@code to} (included) to show up in generated strings.

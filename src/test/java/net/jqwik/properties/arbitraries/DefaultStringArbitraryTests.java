@@ -40,7 +40,7 @@ class DefaultStringArbitraryTests {
 
 	@Example
 	void withChars() {
-		StringArbitrary stringArbitrary = this.arbitrary.withChars(new char[] { 'a', 'm', 'x' });
+		StringArbitrary stringArbitrary = this.arbitrary.withChars('a', 'm', 'x');
 		assertAllGenerated(stringArbitrary.generator(10), s -> {
 			return s.chars().allMatch(c -> c == 'a' || c == 'm' || c == 'x');
 		});
@@ -51,7 +51,7 @@ class DefaultStringArbitraryTests {
 
 	@Example
 	void withCharsAndCharRange() {
-		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withChars(new char[] { 'a', 'm', 'x' });
+		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withChars('a', 'm', 'x');
 		assertAllGenerated(stringArbitrary.generator(10), s -> {
 			return s.chars().allMatch(c -> (c == 'a' || c == 'm' || c == 'x') || (c >= '\u0222' && c <= '\u0333'));
 		});
