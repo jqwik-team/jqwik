@@ -21,14 +21,14 @@ public class CheckedPropertyFactory {
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
-		CheckedFunction forAllPredicate = createForAllPredicate(propertyMethodDescriptor, testInstance);
+		CheckedFunction checkedFunction = createCheckedFunction(propertyMethodDescriptor, testInstance);
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor.getContainerClass(), testInstance);
-		return new CheckedProperty(propertyName, forAllPredicate, forAllParameters, arbitraryProvider, configuration);
+		return new CheckedProperty(propertyName, checkedFunction, forAllParameters, arbitraryProvider, configuration);
 	}
 
-	private CheckedFunction createForAllPredicate(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+	private CheckedFunction createCheckedFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		// Todo: Bind all non @ForAll params first
 		Class<?> returnType = propertyMethodDescriptor.getTargetMethod().getReturnType();
 		Function<List, Object> function = params -> ReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance,

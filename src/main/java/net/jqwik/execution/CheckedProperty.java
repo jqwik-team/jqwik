@@ -12,15 +12,15 @@ import java.util.function.*;
 public class CheckedProperty {
 
 	public final String propertyName;
-	public final CheckedFunction forAllPredicate;
+	public final CheckedFunction checkedFunction;
 	public final List<MethodParameter> forAllParameters;
 	public final ArbitraryResolver arbitraryResolver;
 	public final PropertyConfiguration configuration;
 
-	public CheckedProperty(String propertyName, CheckedFunction forAllPredicate, List<MethodParameter> forAllParameters,
+	public CheckedProperty(String propertyName, CheckedFunction checkedFunction, List<MethodParameter> forAllParameters,
 						   ArbitraryResolver arbitraryResolver, PropertyConfiguration configuration) {
 		this.propertyName = propertyName;
-		this.forAllPredicate = forAllPredicate;
+		this.checkedFunction = checkedFunction;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryResolver = arbitraryResolver;
 		this.configuration = configuration;
@@ -40,7 +40,7 @@ public class CheckedProperty {
 
 	private GenericProperty createGenericProperty(int genSize) {
 		ShrinkablesGenerator shrinkablesGenerator = PropertyMethodShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, genSize);
-		return new GenericProperty(propertyName, shrinkablesGenerator, forAllPredicate);
+		return new GenericProperty(propertyName, shrinkablesGenerator, checkedFunction);
 	}
 
 }

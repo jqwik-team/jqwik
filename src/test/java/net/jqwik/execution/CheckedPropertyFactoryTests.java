@@ -25,8 +25,8 @@ public class CheckedPropertyFactoryTests {
 
 		List<Object> argsTrue = Arrays.asList(1, "test");
 		List<Object> argsFalse = Arrays.asList(2, "test");
-		assertThat(property.forAllPredicate.test(argsTrue)).isTrue();
-		assertThat(property.forAllPredicate.test(argsFalse)).isFalse();
+		assertThat(property.checkedFunction.test(argsTrue)).isTrue();
+		assertThat(property.checkedFunction.test(argsFalse)).isFalse();
 
 		assertThat(property.configuration.getStereotype()).isEqualTo("Property");
 		assertThat(property.configuration.getSeed()).isEqualTo("42");
@@ -54,7 +54,7 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllParameters).size().isEqualTo(0);
 
 		List<Object> noArgs = Arrays.asList();
-		assertThat(property.forAllPredicate.test(noArgs)).isTrue();
+		assertThat(property.checkedFunction.test(noArgs)).isTrue();
 	}
 
 	private PropertyMethodDescriptor createDescriptor(
