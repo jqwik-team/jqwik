@@ -2,6 +2,7 @@ package net.jqwik.api.lifecycle;
 
 import org.junit.platform.engine.*;
 
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -19,4 +20,13 @@ public interface AroundPropertyHook extends LifecycleHook {
 			return AroundPropertyHook.this.aroundProperty(context, callInner);
 		};
 	}
+
+	static AroundPropertyHook combine(List<AroundPropertyHook> aroundPropertyHooks) {
+		if (aroundPropertyHooks.isEmpty()) {
+			return AroundPropertyHook.BASE;
+		}
+		AroundPropertyHook first = aroundPropertyHooks.remove(0);
+		return first.around(combine(aroundPropertyHooks));
+	}
+
 }

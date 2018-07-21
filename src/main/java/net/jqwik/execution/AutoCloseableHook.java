@@ -5,7 +5,7 @@ import net.jqwik.support.*;
 
 import java.util.*;
 
-public class AutoCloseableLifecycle implements TeardownPropertyHook {
+public class AutoCloseableHook implements TeardownPropertyHook {
 	@Override
 	public void teardownProperty(PropertyLifecycleContext propertyLifecycleContext) throws Throwable {
 		List<Throwable> throwableCollector = new ArrayList<>();
