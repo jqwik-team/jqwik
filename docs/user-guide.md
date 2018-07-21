@@ -578,6 +578,7 @@ combine several of them:
 - `@LowerChars`: Use lower case chars `a` through `z`
 - `@UpperChars`: Use upper case chars `A` through `Z`
 - `@AlphaChars`: Lower and upper case chars are allowed.
+- `@Whitespace`: All whitespace characters are allowed.
 
 They work for generated `String`s and `Character`s.
 
@@ -2015,6 +2016,12 @@ Since the topic is rather complicated, a detailed example will one day be publis
 in a separate article...
 
 ## Release Notes
+
+### 0.8.15-SNAPSHOT
+
+- `StringArbitrary.withChars()` now accepts varargs.
+- Added `StringArbitrary.whitespace()`
+- Added `@Whitespace` annotation
 
 ### 0.8.14
 
