@@ -14,7 +14,7 @@ import java.util.*;
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
 
-	private final LifecycleRegistry registry = new LifecycleRegistry();
+	private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry();
 	private final JqwikConfiguration configuration;
 
 	public JqwikTestEngine() {
@@ -43,13 +43,22 @@ public class JqwikTestEngine implements TestEngine {
 		TestDescriptor root = request.getRootTestDescriptor();
 		registerLifecycleHooks(root);
 		try (TestRunRecorder recorder = configuration.testEngineConfiguration().recorder()) {
-			new JqwikExecutor(registry, recorder, configuration.testEngineConfiguration().previousFailures()) //
-					.execute(root, request.getEngineExecutionListener());
+			new JqwikExecutor(lifecycleRegistry, recorder, configuration.testEngineConfiguration().previousFailures())
+				.execute(root, request.getEngineExecutionListener());
 		}
 	}
 
 	// TODO: Extract hook registration into class of its own
-	private void registerLifecycleHooks(TestDescriptor descriptor) {
+	private void registerLifecycleHooks(TestDescriptor rootDescriptor) {
+		registerGlobalHooks(rootDescriptor);
+		register(rootDescriptor);
+	}
+
+	private void registerGlobalHooks(TestDescriptor rootDescriptor) {
+		lifecycleRegistry.registerLifecycleHook(rootDescriptor, AutoCloseableHook.class);
+	}
+
+	private void register(TestDescriptor descriptor) {
 		if (descriptor instanceof PropertyMethodDescriptor) {
 			registerPropertyMethodHooks((PropertyMethodDescriptor) descriptor);
 		}
@@ -57,7 +66,7 @@ public class JqwikTestEngine implements TestEngine {
 			registerContainerHooks((ContainerClassDescriptor) descriptor);
 		}
 		for (TestDescriptor childDescriptor : descriptor.getChildren()) {
-			registerLifecycleHooks(childDescriptor);
+			register(childDescriptor);
 		}
 	}
 
@@ -74,7 +83,7 @@ public class JqwikTestEngine implements TestEngine {
 	private void registerHooks(TestDescriptor descriptor, AnnotatedElement element) {
 		List<AddLifecycleHook> addLifecycleHooks = AnnotationSupport.findRepeatableAnnotations(element, AddLifecycleHook.class);
 		for (AddLifecycleHook addLifecycleHook : addLifecycleHooks) {
-			registry.registerLifecycleHook(descriptor, addLifecycleHook.value());
+			lifecycleRegistry.registerLifecycleHook(descriptor, addLifecycleHook.value());
 		}
 	}
 

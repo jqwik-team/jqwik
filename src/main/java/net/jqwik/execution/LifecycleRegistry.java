@@ -11,26 +11,19 @@ import java.util.stream.*;
 
 public class LifecycleRegistry implements LifecycleSupplier {
 
-	private List<HookRegistration> registrations = new ArrayList<>();
-	private Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new HashMap<>();
+	private final List<HookRegistration> registrations = new ArrayList<>();
+	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new HashMap<>();
 
 	@Override
 	public TeardownPropertyHook teardownPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-		return new AutoCloseableLifecycle();
+		List<TeardownPropertyHook> teardownPropertyHooks = findHooks(propertyMethodDescriptor, TeardownPropertyHook.class);
+		return TeardownPropertyHook.combine(teardownPropertyHooks);
 	}
 
 	@Override
 	public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
 		List<AroundPropertyHook> aroundPropertyHooks = findHooks(propertyMethodDescriptor, AroundPropertyHook.class);
-		return combineAroundHooks(aroundPropertyHooks);
-	}
-
-	private AroundPropertyHook combineAroundHooks(List<AroundPropertyHook> aroundPropertyHooks) {
-		if (aroundPropertyHooks.isEmpty()) {
-			return AroundPropertyHook.BASE;
-		}
-		AroundPropertyHook first = aroundPropertyHooks.remove(0);
-		return first.around(combineAroundHooks(aroundPropertyHooks));
+		return AroundPropertyHook.combine(aroundPropertyHooks);
 	}
 
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType) {

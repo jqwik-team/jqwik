@@ -1,6 +1,7 @@
 package examples.docs.lifecycle;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
@@ -22,8 +23,9 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 	}
 
 	@Property(tries = 5)
-	void aProperty(@ForAll String aString) {
-		System.out.println("anProperty: " + aString);
+	@AddLifecycleHook(MyTeardown.class)
+	void aProperty(@ForAll @AlphaChars @StringLength(5) String aString) {
+		System.out.println("    aProperty: " + aString);
 	}
 
 	@Property(tries = 10)
@@ -36,7 +38,7 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	@Override
 	public void close() {
-		System.out.println("Teardown after each property");
+		System.out.println("Teardown in close()");
 	}
 
 	private static class Count10Tries implements AroundPropertyHook {
@@ -59,6 +61,14 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 			TestExecutionResult testExecutionResult = property.call();
 			System.out.println("After around all: " + propertyDescriptor.label());
 			return testExecutionResult;
+		}
+	}
+
+	static class MyTeardown implements TeardownPropertyHook {
+
+		@Override
+		public void teardownProperty(PropertyLifecycleContext propertyDescriptor) throws Throwable {
+			System.out.println("Teardown after: " + propertyDescriptor.label());
 		}
 	}
 }

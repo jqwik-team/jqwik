@@ -5,7 +5,7 @@ import org.assertj.core.api.Assertions;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.IntRange;
 
-class AutoCloseableLifecycleTests implements AutoCloseable {
+class AutoCloseableHookTests implements AutoCloseable {
 
 	public static final int STATIC_COUNTER_RESET_VALUE = 11;
 	public static final int COUNTER_RESET_VALUE = 22;
@@ -13,7 +13,7 @@ class AutoCloseableLifecycleTests implements AutoCloseable {
 	private static int staticCounter = STATIC_COUNTER_RESET_VALUE;
 	private int counter;
 
-	AutoCloseableLifecycleTests() {
+	AutoCloseableHookTests() {
 		counter = COUNTER_RESET_VALUE;
 	}
 
