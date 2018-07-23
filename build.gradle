@@ -152,6 +152,8 @@ dependencies {
 	// Only needed to check interferences between Jupiter and jqwik
 	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
+	testCompile "com.tngtech.archunit:archunit:0.8.2"
+
 }
 
 wrapper {
