@@ -9,12 +9,24 @@ public class ArchitectureTests {
 
 	static JavaClasses importedClasses = new ClassFileImporter().importPackages("net.jqwik");
 
+	//@Example
+	// TODO: Rule is heavily violated. Fixing requires changes in api packages :-(
+	void noCyclicDependencies() {
+
+		SliceRule noCyclicDependencies = SlicesRuleDefinition
+			.slices()
+			.matching("net.jqwik.(**)..")
+			.should().beFreeOfCycles();
+
+		noCyclicDependencies.check(importedClasses);
+	}
+
 	@Example
 	void noCyclicDependenciesInApiPackages() {
 
 		SliceRule noCyclicDependencies = SlicesRuleDefinition
 			.slices()
-			.matching("net.jqwik.api.(*)..")
+			.matching("net.jqwik.api.(**)..")
 			.should().beFreeOfCycles();
 
 		noCyclicDependencies.check(importedClasses);
