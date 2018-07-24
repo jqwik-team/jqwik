@@ -84,7 +84,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	/**
 	 * Extracted unicodes from java 8 with
 	 * <pre>
-	 * 	for (char c = Character.MIN_VALUE;c < Character.MAX_VALUE; c++) {
+	 * 	for (char c = Character.MIN_VALUE; c &lt; Character.MAX_VALUE; c++) {
 	 * 		if (Character.isWhitespace(c)) {
 	 * 			System.out.println( "\\u" + Integer.toHexString(c | 0x10000).substring(1) );
 	 * 		}
