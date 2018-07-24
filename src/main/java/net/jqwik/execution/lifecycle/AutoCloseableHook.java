@@ -1,4 +1,4 @@
-package net.jqwik.execution;
+package net.jqwik.execution.lifecycle;
 
 import java.util.*;
 

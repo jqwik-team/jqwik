@@ -3,7 +3,7 @@ package net.jqwik;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.descriptor.*;
-import net.jqwik.execution.*;
+import net.jqwik.execution.lifecycle.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
 import org.junit.platform.engine.*;

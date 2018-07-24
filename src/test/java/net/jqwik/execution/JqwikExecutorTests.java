@@ -1,14 +1,16 @@
 package net.jqwik.execution;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.discovery.*;
+import java.util.*;
+
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
-import java.util.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.discovery.*;
+import net.jqwik.execution.lifecycle.*;
 
-import static net.jqwik.matchers.MockitoMatchers.isPropertyDescriptorFor;
+import static net.jqwik.matchers.MockitoMatchers.*;
 
 public class JqwikExecutorTests {
 
@@ -16,7 +18,7 @@ public class JqwikExecutorTests {
 	private JqwikExecutor executor = new JqwikExecutor(new LifecycleRegistry(), testRun -> {}, previouslyFailedTests);
 
 	@Example
-	void previouslyFailedTestsAreRunFirst() throws NoSuchMethodException {
+	void previouslyFailedTestsAreRunFirst() {
 		TestDescriptor descriptor = TestDescriptorBuilder.forClass(TestContainer.class, "test1", "test2", "test3").build();
 		EngineExecutionListener listener = Mockito.mock(EngineExecutionListener.class);
 
