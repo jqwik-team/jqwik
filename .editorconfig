@@ -8,10 +8,12 @@ indent_size=4
 [*.java]
 indent_style=tab
 tab_width=4
+max_line_length=140
 
 [{*.gson,*.gradle,*.groovy,*.gant,*.gdsl,*.gy,*.gs}]
 indent_style=tab
 tab_width=4
+max_line_length=140
 
 [{*.yml,*.yaml}]
 indent_style=space
