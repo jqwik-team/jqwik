@@ -1,11 +1,12 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.lifecycle.*;
-import net.jqwik.support.*;
+import java.util.*;
+
 import org.junit.platform.engine.*;
 import org.opentest4j.*;
 
-import java.util.*;
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.support.*;
 
 public class AutoCloseableHook implements AroundPropertyHook {
 
@@ -17,6 +18,13 @@ public class AutoCloseableHook implements AroundPropertyHook {
 			handleExceptions(throwableCollector);
 		}
 		return testExecutionResult;
+	}
+
+	@Override
+	public int aroundPropertyProximity() {
+		// AutoCloseable.close() should be the last thing in the hook chain
+		// unless there is a hook with a proximity < -100
+		return -100;
 	}
 
 	private List<Throwable> executeCloseMethods(PropertyLifecycleContext context) {

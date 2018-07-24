@@ -53,6 +53,12 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 			assertThat(testInstance.counter.get()).isEqualTo(10);
 			return testExecutionResult;
 		}
+
+		@Override
+		public int aroundPropertyProximity() {
+			// Will be called closer to actual property execution
+			return 1;
+		}
 	}
 
 	static class AroundAll implements AroundPropertyHook {
