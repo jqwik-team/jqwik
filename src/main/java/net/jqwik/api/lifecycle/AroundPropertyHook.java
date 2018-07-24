@@ -1,8 +1,8 @@
 package net.jqwik.api.lifecycle;
 
-import org.junit.platform.engine.*;
-
 import java.util.*;
+
+import org.junit.platform.engine.*;
 
 /**
  * Experimental feature. Not ready for public usage yet.
@@ -18,7 +18,7 @@ public interface AroundPropertyHook extends LifecycleHook {
 			PropertyExecutor innerExecutor = () -> {
 				try {
 					return inner.aroundProperty(context, property);
-				} catch(Throwable throwable) {
+				} catch (Throwable throwable) {
 					return TestExecutionResult.failed(throwable);
 				}
 			};

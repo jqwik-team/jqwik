@@ -1,13 +1,14 @@
 package examples.docs.lifecycle;
 
+import java.util.concurrent.atomic.*;
+
+import org.junit.platform.engine.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
-import org.assertj.core.api.*;
-import org.junit.platform.engine.*;
 
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
+import static org.assertj.core.api.Assertions.*;
 
 @AddLifecycleHook(TestsWithPropertyLifecycle.AroundAll.class)
 class TestsWithPropertyLifecycle implements AutoCloseable {
@@ -49,7 +50,7 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 			System.out.println("After around counting: " + propertyDescriptor.label());
 
 			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) propertyDescriptor.testInstance();
-			Assertions.assertThat(testInstance.counter.get()).isEqualTo(10);
+			assertThat(testInstance.counter.get()).isEqualTo(10);
 			return testExecutionResult;
 		}
 	}
