@@ -1,20 +1,23 @@
 package net.jqwik.execution;
 
-import net.jqwik.*;
-import net.jqwik.api.lifecycle.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
-import net.jqwik.support.*;
+import java.util.function.*;
+import java.util.logging.*;
+
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
-import java.util.function.*;
-import java.util.logging.*;
+import net.jqwik.*;
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.lifecycle.*;
+import net.jqwik.properties.*;
+import net.jqwik.support.*;
 
-import static net.jqwik.properties.PropertyCheckResult.Status.*;
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
+
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
 
 public class PropertyMethodExecutor {
 

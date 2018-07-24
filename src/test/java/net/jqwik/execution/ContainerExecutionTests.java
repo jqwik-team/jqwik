@@ -1,16 +1,19 @@
 package net.jqwik.execution;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.recording.*;
+import java.util.*;
+
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
-import java.util.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.execution.lifecycle.*;
+import net.jqwik.recording.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.TestDescriptorBuilder.*;
 import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.assertj.core.api.Assertions.*;
 
 class ContainerExecutionTests {
 
@@ -42,7 +45,7 @@ class ContainerExecutionTests {
 	}
 
 	@Example
-	void engineWithClassWithTests() throws NoSuchMethodException {
+	void engineWithClassWithTests() {
 		TestDescriptor engineDescriptor = forEngine(testEngine).with(forClass(ContainerClass.class, "succeeding", "failing")).build();
 
 		executeTests(engineDescriptor);
@@ -59,7 +62,7 @@ class ContainerExecutionTests {
 	}
 
 	@Example
-	void engineWithTwoClasses() throws NoSuchMethodException {
+	void engineWithTwoClasses() {
 		TestDescriptor engineDescriptor = forEngine(testEngine)
 			.with(forClass(ContainerClass.class, "succeeding", "failing"), forClass(SecondContainerClass.class, "succeeding")).build();
 
@@ -81,7 +84,7 @@ class ContainerExecutionTests {
 	}
 
 	@Example
-	void engineWithNestedGroups() throws NoSuchMethodException {
+	void engineWithNestedGroups() {
 		TestDescriptor engineDescriptor = forEngine(testEngine).with(forClass(TopLevelContainer.class, "topLevelSuccess").with(
 			forClass(TopLevelContainer.InnerGroup.class, "innerGroupSuccess")
 				.with(forClass(TopLevelContainer.InnerGroup.InnerInnerGroup.class, "innerInnerGroupSuccess")),

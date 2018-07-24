@@ -1,4 +1,4 @@
-package net.jqwik.execution;
+package net.jqwik.execution.lifecycle;
 
 import java.util.*;
 import java.util.stream.*;
@@ -40,6 +40,17 @@ public class LifecycleRegistry implements LifecycleSupplier {
 			.map(registration -> (Class<T>) registration.hookClass)
 			.distinct()
 			.collect(Collectors.toList());
+	}
+
+	/**
+	 * Use only for registering lifecycles through Java's ServiceLoader mechanism
+	 */
+	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook hookInstance) {
+		Class<? extends LifecycleHook> hookClass = hookInstance.getClass();
+		registrations.add(new HookRegistration(descriptor, hookClass));
+		if (!instances.containsKey(hookClass)) {
+			instances.put(hookClass, hookInstance);
+		}
 	}
 
 	public void registerLifecycleHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {

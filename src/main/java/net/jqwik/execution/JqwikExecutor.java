@@ -1,12 +1,14 @@
 package net.jqwik.execution;
 
-import net.jqwik.descriptor.*;
-import net.jqwik.execution.pipeline.*;
-import net.jqwik.recording.*;
-import org.junit.platform.engine.*;
-
 import java.util.*;
 import java.util.logging.*;
+
+import org.junit.platform.engine.*;
+
+import net.jqwik.descriptor.*;
+import net.jqwik.execution.lifecycle.*;
+import net.jqwik.execution.pipeline.*;
+import net.jqwik.recording.*;
 
 public class JqwikExecutor {
 
