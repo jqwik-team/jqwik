@@ -15,12 +15,6 @@ public class LifecycleRegistry implements LifecycleSupplier {
 	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new HashMap<>();
 
 	@Override
-	public TeardownPropertyHook teardownPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-		List<TeardownPropertyHook> teardownPropertyHooks = findHooks(propertyMethodDescriptor, TeardownPropertyHook.class);
-		return TeardownPropertyHook.combine(teardownPropertyHooks);
-	}
-
-	@Override
 	public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
 		List<AroundPropertyHook> aroundPropertyHooks = findHooks(propertyMethodDescriptor, AroundPropertyHook.class);
 		return AroundPropertyHook.combine(aroundPropertyHooks);

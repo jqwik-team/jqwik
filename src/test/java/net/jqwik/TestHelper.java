@@ -55,13 +55,8 @@ public class TestHelper {
 	public static LifecycleSupplier nullLifecycleSupplier() {
 		return new LifecycleSupplier() {
 			@Override
-			public TeardownPropertyHook teardownPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-				return new AutoCloseableHook();
-			}
-
-			@Override
 			public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-				return AroundPropertyHook.BASE;
+				return new AutoCloseableHook();
 			}
 		};
 	}

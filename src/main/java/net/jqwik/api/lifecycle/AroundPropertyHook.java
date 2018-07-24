@@ -3,21 +3,26 @@ package net.jqwik.api.lifecycle;
 import org.junit.platform.engine.*;
 
 import java.util.*;
-import java.util.concurrent.*;
 
 /**
  * Experimental feature. Not ready for public usage yet.
  */
 public interface AroundPropertyHook extends LifecycleHook {
 
-	TestExecutionResult aroundProperty(PropertyLifecycleContext context, Callable<TestExecutionResult> property) throws Exception;
+	TestExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable;
 
-	AroundPropertyHook BASE = (propertyDescriptor, property) -> property.call();
+	AroundPropertyHook BASE = (propertyDescriptor, property) -> property.execute();
 
 	default AroundPropertyHook around(AroundPropertyHook inner) {
 		return (context, property) -> {
-			Callable<TestExecutionResult> callInner = () -> inner.aroundProperty(context, property);
-			return AroundPropertyHook.this.aroundProperty(context, callInner);
+			PropertyExecutor innerExecutor = () -> {
+				try {
+					return inner.aroundProperty(context, property);
+				} catch(Throwable throwable) {
+					return TestExecutionResult.failed(throwable);
+				}
+			};
+			return AroundPropertyHook.this.aroundProperty(context, innerExecutor);
 		};
 	}
 

@@ -40,6 +40,20 @@ class AutoCloseableHookTests implements AutoCloseable {
 		counter = 2000;
 	}
 
+	@Group
+	class InnerContainer {
+
+		@Example
+		void innerExampleAlsoCallsOuterClose() {
+			Assertions.assertThat(staticCounter).isEqualTo(STATIC_COUNTER_RESET_VALUE);
+			Assertions.assertThat(counter).isEqualTo(COUNTER_RESET_VALUE);
+
+			staticCounter = 1000;
+			counter = 2000;
+		}
+
+	}
+
 	@Property
 	void closeIsCalledOnlyOncePerTestMethod(@ForAll @IntRange(min = 1, max = 100) int anInt) {
 		Assertions.assertThat(staticCounter).isGreaterThanOrEqualTo(STATIC_COUNTER_RESET_VALUE);

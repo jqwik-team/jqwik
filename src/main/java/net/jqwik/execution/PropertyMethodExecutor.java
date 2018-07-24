@@ -18,7 +18,7 @@ import static org.junit.platform.engine.TestExecutionResult.*;
 
 public class PropertyMethodExecutor {
 
-	private static final Logger LOG = Logger.getLogger(JqwikProperties.class.getName());
+	private static final Logger LOG = Logger.getLogger(PropertyMethodExecutor.class.getName());
 
 	private final PropertyMethodDescriptor methodDescriptor;
 	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
@@ -46,37 +46,25 @@ public class PropertyMethodExecutor {
 	private TestExecutionResult executePropertyMethod(Object testInstance, LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
-		TeardownPropertyHook teardown = lifecycleSupplier.teardownPropertyHook(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
 			testExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
 		} catch (Throwable throwable) {
-			testExecutionResult = handleThrowable(testExecutionResult, throwable);
-		} finally {
-			try {
-				teardown.teardownProperty(context);
-			} catch (Throwable throwable) {
-				testExecutionResult = handleThrowable(testExecutionResult, throwable);
+			if (testExecutionResult.getStatus() == Status.SUCCESSFUL) {
+				return TestExecutionResult.failed(throwable);
+			} else {
+				LOG.warning(throwable.toString());
+				return testExecutionResult;
 			}
 		}
 		return testExecutionResult;
-	}
-
-	private TestExecutionResult handleThrowable(TestExecutionResult previousResult, Throwable throwable) {
-		if (previousResult.getStatus() == TestExecutionResult.Status.SUCCESSFUL) {
-			return TestExecutionResult.failed(throwable);
-		} else {
-			LOG.warning(String.format("Additional exception occurred: %s", throwable));
-			return previousResult;
-		}
 	}
 
 	private TestExecutionResult executeMethod(Object testInstance, EngineExecutionListener listener) {
 		try {
 			Consumer<ReportEntry> reporter = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
 			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, reporter);
-			TestExecutionResult testExecutionResult = createTestExecutionResult(propertyExecutionResult);
-			return testExecutionResult;
+			return createTestExecutionResult(propertyExecutionResult);
 		} catch (TestAbortedException e) {
 			return aborted(e);
 		} catch (Throwable t) {
