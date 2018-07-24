@@ -31,10 +31,9 @@
 - Use apiguardian annotations (starting version 1.0)
 
 - LifeCycles
+  - PerTryLifeCycle
   - PerTestRunLifeCycle
   - PerClassLifeCycle
-  - PerMethodLifeCycle
-  - PerTryLifeCycle
 
 - Parallel test execution:
   - Across single property with annotation @Parallel 
@@ -46,12 +45,8 @@
 - Provide arbitraries for classes with single constructor with parameters
   that can be provided
 
-- Allow `@ForAll @From(MyProvider.class) MyType myObject`
-
 - Check arbitrary providers for numbers that @Range annotations fit, e.g.
   `@IntRange @ForAll long aNumber` should result in a warning
-
-- Allow generation for wildcards and type variables with bounds
 
 - Optionally report for each property which arbitraries are used.
 
@@ -59,17 +54,11 @@
   - can be used in parameter types to choose provider method
   - can take `providerClass` parameter (but no value parameter) 
     to specify ArbitraryProvider implementation
+  - Alternative: Allow `@ForAll @From(MyProvider.class) MyType myObject`
+
 
 - Provider methods can take params e.g.
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
-
-- Generator/Arbitrary for sequences of method/function calls 
-
-- Evaluate properties in parallel (max tries worker thread per property)
-
-- Handle error
-  - if more than one generator applies
-  - if generic type is a bounded type
 
 - Default Arbitraries, Generators and Shrinking for
   - Tuples.Tuple2/3/4
@@ -90,6 +79,8 @@
 - Group properties, e.g. @Property for classes and individual methods with preconditions
 
 ### Contracts / Specifications / Domain objects
+
+see example in package `examples.docs.contracts.eurocalc`
 
 - Allow specification of consumer and provider contract in test class
 - Allow spec annotations in domain classes a la clojure-spec
