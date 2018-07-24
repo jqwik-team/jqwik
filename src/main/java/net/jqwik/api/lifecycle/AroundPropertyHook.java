@@ -7,11 +7,20 @@ import org.junit.platform.engine.*;
 /**
  * Experimental feature. Not ready for public usage yet.
  */
-public interface AroundPropertyHook extends LifecycleHook {
+public interface AroundPropertyHook extends LifecycleHook<AroundPropertyHook> {
 
 	TestExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable;
 
 	AroundPropertyHook BASE = (propertyDescriptor, property) -> property.execute();
+
+	@Override
+	default int compareTo(AroundPropertyHook other) {
+		return Integer.compare(this.aroundPropertyProximity(), other.aroundPropertyProximity());
+	}
+
+	default int aroundPropertyProximity() {
+		return 0;
+	}
 
 	default AroundPropertyHook around(AroundPropertyHook inner) {
 		return (context, property) -> {
