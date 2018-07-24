@@ -23,9 +23,9 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 	}
 
 	@Property(tries = 5)
-	@AddLifecycleHook(MyTeardown.class)
-	void aProperty(@ForAll @AlphaChars @StringLength(5) String aString) {
-		System.out.println("    aProperty: " + aString);
+	boolean failingProperty(@ForAll @AlphaChars @StringLength(5) String aString) {
+		System.out.println("    failingProperty: " + aString);
+		return false;
 	}
 
 	@Property(tries = 10)
@@ -43,9 +43,9 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	private static class Count10Tries implements AroundPropertyHook {
 		@Override
-		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, Callable<TestExecutionResult> property) throws Exception {
+		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, PropertyExecutor property) throws Throwable {
 			System.out.println("Before around counting: " + propertyDescriptor.label());
-			TestExecutionResult testExecutionResult = property.call();
+			TestExecutionResult testExecutionResult = property.execute();
 			System.out.println("After around counting: " + propertyDescriptor.label());
 
 			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) propertyDescriptor.testInstance();
@@ -56,19 +56,11 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	static class AroundAll implements AroundPropertyHook {
 		@Override
-		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, Callable<TestExecutionResult> property) throws Exception {
+		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, PropertyExecutor property) throws Throwable {
 			System.out.println("Before around all: " + propertyDescriptor.label());
-			TestExecutionResult testExecutionResult = property.call();
+			TestExecutionResult testExecutionResult = property.execute();
 			System.out.println("After around all: " + propertyDescriptor.label());
 			return testExecutionResult;
-		}
-	}
-
-	static class MyTeardown implements TeardownPropertyHook {
-
-		@Override
-		public void teardownProperty(PropertyLifecycleContext propertyDescriptor) throws Throwable {
-			System.out.println("Teardown after: " + propertyDescriptor.label());
 		}
 	}
 }
