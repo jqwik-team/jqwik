@@ -47,7 +47,11 @@ public class LifecycleRegistry implements LifecycleSupplier {
 	 */
 	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook hookInstance) {
 		Class<? extends LifecycleHook> hookClass = hookInstance.getClass();
-		registrations.add(new HookRegistration(descriptor, hookClass));
+		HookRegistration registration = new HookRegistration(descriptor, hookClass);
+		if (registrations.contains(registration)) {
+			return;
+		}
+		registrations.add(registration);
 		if (!instances.containsKey(hookClass)) {
 			instances.put(hookClass, hookInstance);
 		}
@@ -86,6 +90,24 @@ public class LifecycleRegistry implements LifecycleSupplier {
 
 		public <T extends LifecycleHook> boolean match(Class<? extends LifecycleHook> hookType) {
 			return hookType.isAssignableFrom(hookClass);
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			HookRegistration that = (HookRegistration) o;
+
+			if (!descriptor.equals(that.descriptor)) return false;
+			return hookClass.equals(that.hookClass);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = descriptor.hashCode();
+			result = 31 * result + hookClass.hashCode();
+			return result;
 		}
 	}
 }
