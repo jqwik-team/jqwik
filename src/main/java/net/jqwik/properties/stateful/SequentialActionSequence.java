@@ -53,7 +53,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		} catch (InvariantFailedError ife) {
 			throw ife;
 		} catch (Throwable t) {
-			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run"), t);
+			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run", t.getMessage()), t);
 			assertionFailedError.setStackTrace(t.getStackTrace());
 			throw assertionFailedError;
 		}
@@ -114,20 +114,21 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 				invariant.check(state);
 			}
 		} catch (Throwable t) {
-			throw new InvariantFailedError(createErrorMessage("Invariant"), t);
+			throw new InvariantFailedError(createErrorMessage("Invariant", t.getMessage()), t);
 		}
 	}
 
-	private String createErrorMessage(String name) {
+	private String createErrorMessage(String name, String causeMessage) {
 		String actionsString = tries
 			.stream() //
 			.map(aTry -> "    " + aTry.toString()) //
 			.collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
-			"%s failed after following actions:%n%s%n  final state: %s",
+			"%s failed after following actions:%n%s%n  final state: %s%n%s",
 			name,
 			actionsString,
-			JqwikStringSupport.displayString(state)
+			JqwikStringSupport.displayString(state),
+			causeMessage
 		);
 	}
 
