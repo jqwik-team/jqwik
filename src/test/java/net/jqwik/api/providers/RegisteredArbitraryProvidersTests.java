@@ -1,14 +1,13 @@
 package net.jqwik.api.providers;
 
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.providers.*;
-
 import java.math.*;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import java.util.stream.Stream;
+
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.Size;
+import net.jqwik.properties.arbitraries.WildcardArbitrary;
+import net.jqwik.providers.RegisteredArbitraryProviders;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -200,7 +199,6 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
-		//TODO: Cannot be called as single tests from IntelliJ (a bug in IntelliJ 2018.1)
 	boolean byteArray(@ForAll byte[] aValue) {
 		return aValue != null;
 	}
