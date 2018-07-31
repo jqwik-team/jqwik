@@ -2,10 +2,13 @@ package net.jqwik.properties.shrinking;
 
 import java.util.*;
 
-public class ComprehensiveListShrinkingCandidates<T> implements ShrinkingCandidates<List<T>> {
+/**
+ * It no longer implements ShrinkingCandidates<List<T>> because its single use
+ * in ShrinkableActionSequence requires two different type signatures
+ */
+public class ComprehensiveListShrinkingCandidates {
 
-	@Override
-	public Set<List<T>> candidatesFor(List<T> toShrink) {
+	public <T> Set<List<T>> candidatesFor(List<T> toShrink) {
 		//At least one element will be kept
 		if (toShrink.size() <= 1) {
 			return Collections.emptySet();

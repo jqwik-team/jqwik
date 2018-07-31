@@ -1,13 +1,13 @@
 package net.jqwik.properties.stateful;
 
+import java.util.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.shrinking.*;
-
-import java.util.*;
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -80,7 +80,31 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		});
 
-		while(sequence.next(count, reporter));
+		while (sequence.next(count, reporter)) ;
+
+		assertThat(sequence.current().value().size()).isEqualTo(1);
+		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+	}
+
+	@Example
+	void alsoShrinkSequenceThenActionsTheSequenceAgain() {
+		List<Shrinkable<Action<String>>> actions = asList(
+			shrinkableAddString(),
+			shrinkableAddX(),
+			shrinkableAddString(),
+			shrinkableAddString()
+		);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			String result = seq.run("");
+			if (result.contains("c"))
+				return result.length() < 4;
+			else
+				return result.length() < 2;
+		});
+
+		while (sequence.next(count, reporter)) ;
 
 		assertThat(sequence.current().value().size()).isEqualTo(1);
 		assertThat(sequence.current().value().run("")).isEqualTo("aa");
@@ -105,7 +129,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		});
 
-		while(sequence.next(count, reporter));
+		while (sequence.next(count, reporter)) ;
 
 		assertThat(sequence.current().value().run("")).isEqualTo("aa");
 	}
@@ -120,7 +144,7 @@ class ShrinkableActionSequenceTests {
 			return !result.contains("x");
 		});
 
-		while(sequence.next(count, reporter));
+		while (sequence.next(count, reporter)) ;
 
 		assertThat(sequence.current().value().run("")).isEqualTo("x");
 	}
@@ -131,8 +155,9 @@ class ShrinkableActionSequenceTests {
 	}
 
 	private Shrinkable<Action<String>> shrinkableFailingPrecondition() {
-		return Shrinkable.unshrinkable("poops")
-						 .map(ignore -> new Action<String>() {
+		return Shrinkable
+			.unshrinkable("poops") //
+			.map(ignore -> new Action<String>() {
 				@Override
 				public boolean precondition(String model) {
 					return false;
@@ -146,13 +171,15 @@ class ShrinkableActionSequenceTests {
 	}
 
 	private Shrinkable<Action<String>> shrinkableAddX() {
-		return Shrinkable.unshrinkable("x")
-						 .map(aString -> model -> model + aString);
+		return Shrinkable
+			.unshrinkable("x")
+			.map(aString -> model -> model + aString);
 	}
 
 	private Shrinkable<Action<String>> shrinkableAddString() {
-		return ShrinkableStringTests.createShrinkableString("cc", 2)
-									.map(aString -> model -> model + aString);
+		return ShrinkableStringTests
+			.createShrinkableString("cc", 2)
+			.map(aString -> model -> model + aString);
 	}
 
 }

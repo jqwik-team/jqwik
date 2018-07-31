@@ -2022,6 +2022,7 @@ in a separate article...
 - `StringArbitrary.withChars()` now accepts varargs.
 - Added `StringArbitrary.whitespace()`
 - Added `@Whitespace` annotation
+- Improved shrinking of action sequences
 
 ### 0.8.14
 
