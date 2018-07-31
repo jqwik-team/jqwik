@@ -1,12 +1,12 @@
-package net.jqwik.properties.shrinking;
+package net.jqwik.properties.stateful;
 
 import java.util.*;
 
 /**
- * It no longer implements ShrinkingCandidates<List<T>> because its single use
- * in ShrinkableActionSequence requires two different type signatures
+ * It no longer implements {@code ShrinkingCandidates<List<T>>} because its single use
+ * in {@linkplain ShrinkableActionSequence} requires two different type signatures
  */
-public class ComprehensiveListShrinkingCandidates {
+class ComprehensiveListShrinkingCandidates {
 
 	public <T> Set<List<T>> candidatesFor(List<T> toShrink) {
 		//At least one element will be kept
