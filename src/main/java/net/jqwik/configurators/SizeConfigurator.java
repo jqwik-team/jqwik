@@ -27,7 +27,7 @@ public class SizeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	private void reportError(Size size) {
-		throw new JqwikException(String.format("%s: You have to either choose a fixed value or set min/max", size));
+		throw new JqwikException(String.format("%s: You have to either choose a fixed value or set min and max", size));
 	}
 
 }
