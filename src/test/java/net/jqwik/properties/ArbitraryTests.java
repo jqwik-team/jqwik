@@ -1,10 +1,11 @@
 package net.jqwik.properties;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
+import java.util.*;
+
 import org.assertj.core.api.*;
 
-import java.util.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -31,7 +32,7 @@ class ArbitraryTests {
 	class Generating {
 		@Example
 		void generateInteger() {
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			RandomGenerator<Integer> generator = arbitrary.generator(10);
 
 			assertThat(generator.next(random).value()).isEqualTo(1);
@@ -44,7 +45,7 @@ class ArbitraryTests {
 
 		@Example
 		void samplesArePrependedToGeneration() {
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2);
 			Arbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
 			RandomGenerator<Integer> generator = arbitraryWithSamples.generator(10);
 
@@ -61,7 +62,7 @@ class ArbitraryTests {
 	class Filtering {
 		@Example
 		void filterInteger() {
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
 			RandomGenerator<Integer> generator = filtered.generator(10);
 
@@ -73,7 +74,7 @@ class ArbitraryTests {
 
 		@Example
 		void failIfFilterWillDiscard10000ValuesInARow() {
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
 			RandomGenerator<Integer> generator = filtered.generator(10);
 
@@ -88,7 +89,7 @@ class ArbitraryTests {
 
 		@Example
 		void mapIntegerToString() {
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
 			RandomGenerator<String> generator = mapped.generator(10);
 
@@ -107,7 +108,7 @@ class ArbitraryTests {
 
 		@Example
 		void flatMapIntegerToString() {
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings() //
 					.withCharRange('a', 'e') //
 					.ofMinLength(anInt).ofMaxLength(anInt));
@@ -134,8 +135,8 @@ class ArbitraryTests {
 
 		@Example
 		void generateCombination() {
-			Arbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
-			Arbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
+			Arbitrary<Integer> a1 = Arbitraries.samples(1, 2, 3);
+			Arbitrary<Integer> a2 = Arbitraries.samples(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
 			RandomGenerator<String> generator = combined.generator(10);
 
@@ -147,8 +148,8 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkCombination() {
-			Arbitrary<Integer> a1 = new ArbitraryWheelForTests<>(1, 2, 3);
-			Arbitrary<Integer> a2 = new ArbitraryWheelForTests<>(4, 5, 6);
+			Arbitrary<Integer> a1 = Arbitraries.samples(1, 2, 3);
+			Arbitrary<Integer> a2 = Arbitraries.samples(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
 			RandomGenerator<String> generator = combined.generator(10);
 

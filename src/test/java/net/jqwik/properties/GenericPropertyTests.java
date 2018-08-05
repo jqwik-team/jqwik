@@ -1,15 +1,16 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import org.assertj.core.api.*;
-import org.junit.platform.engine.reporting.*;
-import org.mockito.*;
-
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import org.assertj.core.api.*;
+import org.junit.platform.engine.reporting.*;
+import org.mockito.*;
+
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,7 +29,7 @@ class GenericPropertyTests {
 			return true;
 		}, value -> true);
 
-		Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1);
+		Arbitrary<Integer> arbitrary = Arbitraries.samples(1);
 		ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
 
 		GenericProperty property = new GenericProperty("simple", shrinkablesGenerator, forAllFunction);
@@ -41,8 +42,8 @@ class GenericPropertyTests {
 		verify(mockPublisher, atLeast(2)).accept(reportEntryCaptor.capture());
 
 		Set<String> keys = reportEntryCaptor.getAllValues().stream() //
-			.flatMap(entry -> entry.getKeyValuePairs().keySet().stream()) //
-			.collect(Collectors.toSet());
+											.flatMap(entry -> entry.getKeyValuePairs().keySet().stream()) //
+											.collect(Collectors.toSet());
 
 		Assertions.assertThat(keys).contains("collected statistics");
 
@@ -60,7 +61,7 @@ class GenericPropertyTests {
 		void satisfied() {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
 
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(2, arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", shrinkablesGenerator, forAllFunction);
@@ -110,7 +111,7 @@ class GenericPropertyTests {
 
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
 
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5, 6, 7, 8);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", shrinkablesGenerator, forAllFunction);
@@ -160,7 +161,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", shrinkablesGenerator, forAllFunction);
@@ -184,7 +185,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", shrinkablesGenerator, forAllFunction);
@@ -211,7 +212,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(20, arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", shrinkablesGenerator, forAllFunction);
@@ -233,7 +234,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Integer> arbitrary = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(20, arbitrary);
 
 			GenericProperty property = new GenericProperty("erroneous property", shrinkablesGenerator, forAllFunction);
@@ -357,8 +358,8 @@ class GenericPropertyTests {
 				return true;
 			};
 
-			Arbitrary<Integer> arbitrary1 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			Arbitrary<Integer> arbitrary2 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary1 = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(5, arbitrary1, arbitrary2);
 
 			GenericProperty property = new GenericProperty("property with 2", shrinkablesGenerator, forAllFunction);
@@ -383,10 +384,10 @@ class GenericPropertyTests {
 				return ((int) args.get(0)) < failingTry;
 			};
 
-			Arbitrary<Integer> arbitrary1 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			Arbitrary<Integer> arbitrary2 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			Arbitrary<Integer> arbitrary3 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
-			Arbitrary<Integer> arbitrary4 = new ArbitraryWheelForTests<>(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary1 = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary3 = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary4 = Arbitraries.samples(1, 2, 3, 4, 5);
 			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary1, arbitrary2, arbitrary3, arbitrary4);
 
 			GenericProperty property = new GenericProperty("property with 4", shrinkablesGenerator, forAllFunction);
@@ -409,11 +410,14 @@ class GenericPropertyTests {
 
 	private ShrinkablesGenerator createShrinkablesGenerator(int genSize, Arbitrary... arbitraries) {
 		List<Arbitrary> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
-		List<RandomGenerator> generators = arbitraryList.stream()
-														.map(arbitrary -> arbitrary.generator(genSize))
-														.collect(Collectors.toList());
-		return random -> generators.stream().map(generator -> generator.next(random)).collect(Collectors.toList());
+		List<RandomGenerator> generators = arbitraryList
+			.stream()
+			.map(arbitrary -> arbitrary.generator(genSize))
+			.collect(Collectors.toList());
+		return random -> generators
+			.stream()
+			.map(generator -> generator.next(random))
+			.collect(Collectors.toList());
 	}
-
 
 }
