@@ -1,8 +1,9 @@
 package net.jqwik.api.constraints;
 
-import net.jqwik.api.*;
-
 import java.util.*;
+
+import net.jqwik.api.*;
+import org.assertj.core.api.Assertions;
 
 class AnnotatedParameterTypesProperties {
 
@@ -12,11 +13,18 @@ class AnnotatedParameterTypesProperties {
 	}
 
 	@Property(tries = 20)
-	boolean fixedSizedListWithFixedLengthString(
+	void fixedSizedListWithFixedLengthString(
 		@ForAll @Size(3) List<@StringLength(5) @Chars({'a', 'b', 'c'}) String> aStringList
 	) {
-		return aStringList.size() == 3
-			&& aStringList.stream().allMatch(s -> s.length() == 5);
+		Assertions.assertThat(aStringList).hasSize(3);
+		Assertions.assertThat(aStringList.stream()).allMatch(s -> s.length() == 5);
+		Assertions.assertThat(aStringList.stream()).allMatch(s -> {
+			for (char c : s.toCharArray()) {
+				if (! "abc".contains(String.valueOf(c)))
+					return false;
+			}
+			return true;
+		});
 	}
 
 }
