@@ -566,8 +566,10 @@ depending on the requested parameter type.
 
 #### Character Sets
 
-By default any unicode character from plane 0 (Basic Multilingual Plane)
-might be generated. When generating Strings, however,
+When generating chars any unicode character from plane 0 (Basic Multilingual Plane)
+might be generated.
+
+When generating Strings, however,
 Unicode "noncharacters" and "private use characters"
 will not be generated unless you explicitly include them using
 `@Chars` or `@CharRange` (see below).
