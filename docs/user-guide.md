@@ -566,7 +566,12 @@ depending on the requested parameter type.
 
 #### Character Sets
 
-By default any unicode character might be generated.
+By default any unicode character from plane 0 (Basic Multilingual Plane)
+might be generated. When generating Strings, however,
+Unicode "noncharacters" and "private use characters"
+will not be generated unless you explicitly include them using
+`@Chars` or `@CharRange` (see below).
+
 You can use the following annotations to restrict the set of allowed characters and even
 combine several of them:
 
@@ -2023,6 +2028,10 @@ in a separate article...
 - Added `StringArbitrary.whitespace()`
 - Added `@Whitespace` annotation
 - Improved shrinking of action sequences
+- Default String generation does no longer generate Unicode "noncharacters"
+  or "private use characters"
+- Added `StringArbitrary.all()` for also generating
+  Unicode "noncharacters" and "private use characters"
 
 ### 0.8.14
 
