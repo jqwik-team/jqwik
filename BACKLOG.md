@@ -42,7 +42,7 @@
 
 ### Properties
 
-- Use every combination of generated shrinkables only once
+- Unique parameter sets: Use every combination of generated shrinkables only once
 
 - Provide arbitraries for classes with single constructor with parameters
   that can be provided
