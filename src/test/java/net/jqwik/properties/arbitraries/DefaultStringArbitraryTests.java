@@ -10,10 +10,26 @@ class DefaultStringArbitraryTests {
 	StringArbitrary arbitrary = new DefaultStringArbitrary();
 
 	@Example
-	void perDefaultAllUnicodeCharactersAreCreated() {
+	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated() {
 		assertAllGenerated(arbitrary.generator(10), s -> {
+			return s.chars().allMatch(c -> {
+				if (DefaultStringArbitrary.isNoncharacter(c))
+					return false;
+				if (DefaultStringArbitrary.isPrivateUseCharacter(c))
+					return false;
+				return true;
+			});
+		});
+	}
+
+	@Example
+	void allAlsoAllowsNoncharactersAndPrivateUseCharacters() {
+		StringArbitrary stringArbitrary = this.arbitrary.all();
+		assertAllGenerated(stringArbitrary.generator(10), s -> {
 			return s.chars().allMatch(c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
 		});
+		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.chars().anyMatch(DefaultStringArbitrary::isNoncharacter));
+		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.chars().anyMatch(DefaultStringArbitrary::isPrivateUseCharacter));
 	}
 
 	@Example

@@ -1,10 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
 
@@ -15,8 +15,23 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	private int minLength = 0;
 	private int maxLength = DEFAULT_MAX_LENGTH;
 
-	private CharacterArbitrary defaultCharacterArbitrary() {
-		return Arbitraries.chars().all();
+	private Arbitrary<Character> defaultCharacterArbitrary() {
+		return Arbitraries.chars().all().filter(c -> !DefaultStringArbitrary.isNoncharacter(c)
+			&& !DefaultStringArbitrary.isPrivateUseCharacter(c));
+	}
+
+	public static boolean isNoncharacter(int codepoint) {
+		if (codepoint >= 0xfdd0 && codepoint <= 0xfdef)
+			return true;
+		if (codepoint == 0xfffe || codepoint == 0xffff)
+			return true;
+		return false;
+	}
+
+	public static boolean isPrivateUseCharacter(int codepoint) {
+		if (codepoint >= 0xe000 && codepoint <= 0xf8ff)
+			return true;
+		return false;
 	}
 
 	@Override
@@ -121,6 +136,11 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 			'\u205f', //
 			'\u3000' //
 		);
+	}
+
+	@Override
+	public StringArbitrary all() {
+		return this.withCharRange(Character.MIN_VALUE, Character.MAX_VALUE);
 	}
 
 	private void addCharRange(char from, char to) {

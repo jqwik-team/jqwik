@@ -66,4 +66,9 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 * Can be combined with other methods that allow chars.
 	 */
 	StringArbitrary whitespace();
+
+	/**
+	 * Allow all unicode chars even noncharacters and private use characters
+	 */
+	StringArbitrary all();
 }
