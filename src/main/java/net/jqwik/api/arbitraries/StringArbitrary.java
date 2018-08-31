@@ -69,6 +69,7 @@ public interface StringArbitrary extends Arbitrary<String> {
 
 	/**
 	 * Allow all unicode chars even noncharacters and private use characters
+	 * but only in plane 0 aka Basic Multilingual Plane
 	 */
 	StringArbitrary all();
 }

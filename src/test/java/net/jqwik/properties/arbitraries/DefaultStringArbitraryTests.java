@@ -1,5 +1,7 @@
 package net.jqwik.properties.arbitraries;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
@@ -8,6 +10,16 @@ import static net.jqwik.properties.ArbitraryTestHelper.*;
 class DefaultStringArbitraryTests {
 
 	StringArbitrary arbitrary = new DefaultStringArbitrary();
+
+	@Example
+	void currentlyNoCodepointsOutsidePlane0AreCreated() {
+		// Maybe it should also be possible to create strings with codepoints outside of plane 0 (Basic Multilingual Plane)
+		assertAllGenerated(arbitrary.generator(10), s -> {
+			for (int i = 0; i < s.length(); i++) {
+				Assertions.assertThat(s.codePointAt(i)).isLessThanOrEqualTo(Character.MAX_VALUE);
+			}
+		});
+	}
 
 	@Example
 	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated() {
