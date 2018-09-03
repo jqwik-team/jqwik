@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.8.15-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.8.15</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -80,7 +80,7 @@
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
-  - [0.8.15-SNAPSHOT](#0815-snapshot)
+  - [0.8.15](#0815)
   - [0.8.14](#0814)
   - [0.8.13](#0813)
   - [0.8.12](#0812)
@@ -139,8 +139,8 @@ repositories {
 ext.junitPlatformVersion = '1.2.0'
 ext.junitJupiterVersion = '5.2.0'
 
-ext.jqwikVersion = '0.8.14'
-#ext.jqwikVersion = '0.8.15-SNAPSHOT'
+ext.jqwikVersion = '0.8.15'
+#ext.jqwikVersion = '0.8.16-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -194,7 +194,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.14</version>
+        <version>0.8.15</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -220,7 +220,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.14.jar`
+- `jqwik-0.8.15.jar`
 - `junit-platform-engine-1.2.0.jar`
 - `junit-platform-commons-1.2.0.jar`
 - `opentest4j-1.0.0.jar`

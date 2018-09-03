@@ -23,11 +23,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'net.jqwik'
-version = '0.8.15-SNAPSHOT'
+version = '0.8.15'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.8.15-SNAPSHOT'
+	version = '0.8.15'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
@@ -145,7 +145,7 @@ dependencies {
 	compile("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	compile("org.apiguardian:apiguardian-api:1.0.0")
 
-	testCompile("org.mockito:mockito-core:2.18.0")
+	testCompile("org.mockito:mockito-core:2.21.0")
 	testCompile("org.assertj:assertj-core:3.9.1")
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
@@ -158,5 +158,5 @@ dependencies {
 
 wrapper {
 	description = 'Generates gradlew[.bat] scripts'
-	gradleVersion = '4.8.1'
+	gradleVersion = '4.10'
 }
