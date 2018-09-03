@@ -1,4 +1,4 @@
-# The jqwik User Guide ([0.8.15-SNAPSHOT](#0815-SNAPSHOT))
+<h1>The jqwik User Guide <span style="font-size:smaller;font-weight:lighter">0.8.15-SNAPSHOT</span><h1>
 
 _The user guide is still a bit rough and incomplete in some areas. 
 Volunteers for polishing and extending it are more than welcome._
