@@ -1,9 +1,6 @@
 <h1>The jqwik User Guide
-<span style="font-size:smaller;font-weight:lighter;float:right">0.8.15-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter;float:right">0.8.15-SNAPSHOT</span>
 </h1>
-
-_The user guide is still a bit rough and incomplete in some areas. 
-Volunteers for polishing and extending it are more than welcome._
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
