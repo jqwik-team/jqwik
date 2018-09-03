@@ -68,7 +68,7 @@ public interface Arbitrary<T> {
 	}
 
 	/**
-	 * Create a new arbitrary of the same type but inject values in{@code samples} first before continuing with standard
+	 * Create a new arbitrary of the same type but inject values in {@code samples} first before continuing with standard
 	 * value generation.
 	 */
 	@SuppressWarnings("unchecked")

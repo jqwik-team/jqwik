@@ -1,4 +1,4 @@
-# The jqwik User Guide
+# The jqwik User Guide ([0.8.15-SNAPSHOT](#0815-SNAPSHOT))
 
 _The user guide is still a bit rough and incomplete in some areas. 
 Volunteers for polishing and extending it are more than welcome._
@@ -81,6 +81,7 @@ Volunteers for polishing and extending it are more than welcome._
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
+  - [0.8.15-SNAPSHOT](#0815-snapshot)
   - [0.8.14](#0814)
   - [0.8.13](#0813)
   - [0.8.12](#0812)
@@ -577,15 +578,22 @@ will not be generated unless you explicitly include them using
 You can use the following annotations to restrict the set of allowed characters and even
 combine several of them:
 
-- `@Chars(chars[] value = {})`: Specify a set of characters.
+- [`@Chars(chars[] value = {})`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Chars.html):
+  Specify a set of characters.
   This annotation can be repeated which will add up all allowed chars.
-- `@CharRange(char from = 0, char to = 0)`: Specify a start and end character. 
+- [`@CharRange(char from = 0, char to = 0)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/CharRange.html):
+  Specify a start and end character.
   This annotation can be repeated which will add up all allowed chars.
-- `@NumericChars`: Use digits `0` through `9`
-- `@LowerChars`: Use lower case chars `a` through `z`
-- `@UpperChars`: Use upper case chars `A` through `Z`
-- `@AlphaChars`: Lower and upper case chars are allowed.
-- `@Whitespace`: All whitespace characters are allowed.
+- [`@NumericChars`](http://jqwik.net/javadoc/net/jqwik/api/constraints/NumericChars.html):
+  Use digits `0` through `9`
+- [`@LowerChars`](http://jqwik.net/javadoc/net/jqwik/api/constraints/LowerChars.html):
+  Use lower case chars `a` through `z`
+- [`@UpperChars`](http://jqwik.net/javadoc/net/jqwik/api/constraints/UpperChars.html):
+  Use upper case chars `A` through `Z`
+- [`@AlphaChars`](http://jqwik.net/javadoc/net/jqwik/api/constraints/AlphaChars.html):
+  Lower and upper case chars are allowed.
+- [`@Whitespace`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Whitespace.html):
+  All whitespace characters are allowed.
 
 They work for generated `String`s and `Character`s.
 
@@ -597,25 +605,36 @@ They work for generated `String`s and `Character`s.
 
 #### Integer Constraints
 
-- `@ByteRange(byte min = 0, byte max)`: For `Byte` and `byte` only.
-- `@ShortRange(short min = 0, short max)`: For `Short` and `short` only.
-- `@IntRange(int min = 0, int max)`: For `Integer` and `int` only.
-- `@LongRange(long min = 0L, long max)`: For `Long` and `long` only.
-- `@BigRange(String min = "", String max = "")`: For `BigInteger` generation.
-
-- `@Positive`: Numbers equal to or larger than `0`. For all integral types. 
-- `@Negative`: Numbers lower than or equal to `-0`. For all integral types.
+- [`@ByteRange(byte min = 0, byte max)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/ByteRange.html):
+  For `Byte` and `byte` only.
+- [`@ShortRange(short min = 0, short max)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/ShortRange.html):
+  For `Short` and `short` only.
+- [`@IntRange(int min = 0, int max)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/IntRange.html):
+  For `Integer` and `int` only.
+- [`@LongRange(long min = 0L, long max)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/LongRange.html):
+  For `Long` and `long` only.
+- [`@BigRange(String min = "", String max = "")`](http://jqwik.net/javadoc/net/jqwik/api/constraints/BigRange.html):
+  For `BigInteger` generation.
+- [`@Positive`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Positive.html):
+  Numbers equal to or larger than `0`. For all integral types.
+- [`@Negative`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Negative.html):
+  Numbers lower than or equal to `-0`. For all integral types.
 
 
 #### Decimal Constraints
 
-- `@FloatRange(float min = 0.0f, float max)`: For `Float` and `float` only.
-- `@DoubleRange(double min = 0.0, double max)`: For `Double` and `double` only.
-- `@BigRange(String min = "", String max = "")`: For `BigDecimal` generation.
-
-- `@Scale(int value)`: Specify the maximum number of decimal places. For all decimal types.
-- `@Positive`: Numbers equal to or larger than `0.0`. For all decimal types.
-- `@Negative`: Numbers lower than or equal to `-0.0`. For all decimal types.
+- [`@FloatRange(float min = 0.0f, float max)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/FloatRange.html):
+  For `Float` and `float` only.
+- [`@DoubleRange(double min = 0.0, double max)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/DoubleRange.html):
+  For `Double` and `double` only.
+- [`@BigRange(String min = "", String max = "")`](http://jqwik.net/javadoc/net/jqwik/api/constraints/BigRange.html):
+  For `BigDecimal` generation.
+- [`@Scale(int value)`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Scale.html):
+  Specify the maximum number of decimal places. For all decimal types.
+- [`@Positive`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Positive.html):
+  Numbers equal to or larger than `0.0`. For all decimal types.
+- [`@Negative`](http://jqwik.net/javadoc/net/jqwik/api/constraints/Negative.html):
+  Numbers lower than or equal to `-0.0`. For all decimal types.
 
 ### Constraining parameterized types
 
@@ -791,7 +810,8 @@ The starting point for generation usually is a static method call on class
   Go through samples from first to last. Shrink towards the first sample.
   
   If instead you want to _add_ samples to an existing arbitrary you'd rather use 
-  `Arbitrary.withSamples(T... samples)`. The following arbitrary:
+  [`Arbitrary.withSamples(T... samples)`](http://jqwik.net/javadoc/net/jqwik/api/Arbitrary.html#withSamples-T...-).
+  The following arbitrary:
   
   ```java
   @Provide 
