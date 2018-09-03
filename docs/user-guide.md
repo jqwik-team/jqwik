@@ -2043,7 +2043,7 @@ in a separate article...
 
 ## Release Notes
 
-### 0.8.15-SNAPSHOT
+### 0.8.15
 
 - `StringArbitrary.withChars()` now accepts varargs.
 - Added `StringArbitrary.whitespace()`
