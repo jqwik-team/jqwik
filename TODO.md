@@ -1,3 +1,7 @@
+- TypeUsage
+  - isAnnotated
+  - findAnnotation
+
 - Lifecycle Hooks
   - AroundAllHook
   - AroundContainerHook
