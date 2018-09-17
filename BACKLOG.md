@@ -42,7 +42,7 @@
 
 ### Properties
 
-- Unique parameter sets: Use every combination of generated shrinkables only once
+- Reimplement String generation based on Unicode codepoints, not on characters
 
 - Provide arbitraries for classes with single constructor with parameters
   that can be provided
