@@ -1,10 +1,9 @@
 package net.jqwik.api.providers;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.api.*;
 
 /**
  * Implementation of this class are used to provide default arbitraries to
@@ -31,23 +30,6 @@ public interface ArbitraryProvider {
 	boolean canProvideFor(TypeUsage targetType);
 
 	/**
-	 * Return an arbitrary instance for a given {@code targetType}.
-	 *
-	 * Only {@code targetType}s that have been allowed by {@linkplain #canProvideFor(TypeUsage)}
-	 * will be given to this method.
-	 *
-	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
-	 *
-	 * {@link Deprecated Use {@linkplain #provideFor(TypeUsage, SubtypeProvider)} instead.}
-	 *
-	 * This method will be removed in version 0.9 of jqwik.
-	 */
-	@Deprecated
-	default Arbitrary<?> provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider) {
-		throw new JqwikException(String.format("Please implement/override %s.provideFor()", getClass().getName()));
-	}
-
-	/**
 	 * This is the method you must override in your own implementations of {@code ArbitraryProvider}.
 	 * It should return a set of arbitrary instances for a given {@code targetType}.
 	 *
@@ -56,20 +38,7 @@ public interface ArbitraryProvider {
 	 *
 	 * {@code subtypeProvider} can be used to get the arbitraries for any type argument of {@code targetType}.
 	 */
-	// TODO: Remove default implementation in jqwik 0.9
-	default Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		Function<TypeUsage, Optional<Arbitrary<?>>> subtypeOptionalProvider = typeUsage -> {
-			Set<Arbitrary<?>> arbitraries = subtypeProvider.apply(typeUsage);
-			if (arbitraries.isEmpty())
-				return Optional.empty();
-			else return Optional.of(arbitraries.iterator().next());
-		};
-		Arbitrary<?> arbitrary = provideFor(targetType, subtypeOptionalProvider);
-		if (arbitrary == null)
-			return Collections.emptySet();
-		else
-			return Collections.singleton(arbitrary);
-	}
+	Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider);
 
 	/**
 	 * Providers with higher priority will replace providers with lower priority. If there is more than one

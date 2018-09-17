@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.8.15</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.0-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -80,22 +80,8 @@
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Release Notes](#release-notes)
-  - [0.8.15](#0815)
-  - [0.8.14](#0814)
-  - [0.8.13](#0813)
-  - [0.8.12](#0812)
-  - [0.8.11](#0811)
-  - [0.8.10](#0810)
-  - [0.8.9](#089)
-  - [0.8.8](#088)
-  - [0.8.7](#087)
-  - [0.8.6](#086)
-  - [0.8.5](#085)
-  - [0.8.4](#084)
-  - [0.8.3](#083)
-  - [0.8.2](#082)
-  - [0.8.1](#081)
-  - [0.8.0](#080)
+  - [0.9.0-SNAPSHOT](#090-snapshot)
+  - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -110,6 +96,10 @@ All you have to do is add all needed engines to your `testCompile` dependencies 
 [gradle file](#gradle) below.
 
 The latest release of __jqwik__ is deployed to [Maven Central](https://mvnrepository.com/).
+
+Snapshot releases can be fetched from https://oss.sonatype.org/content/repositories/snapshots.
+
+
 
 ### Gradle
 
@@ -2043,7 +2033,15 @@ in a separate article...
 
 ## Release Notes
 
-### 0.8.15
+### 0.9.0-SNAPSHOT
+
+- Removed deprecated static methods in `Arbitraries`
+- Removed deprecated method `ArbitraryProvider.provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider)`
+- Removed default implementation of `ArbitraryProvider.provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider)`
+
+### 0.8.x
+
+##### 0.8.15
 
 - `StringArbitrary.withChars()` now accepts varargs.
 - Added `StringArbitrary.whitespace()`
@@ -2054,7 +2052,7 @@ in a separate article...
 - Added `StringArbitrary.all()` for also generating
   Unicode "noncharacters" and "private use characters"
 
-### 0.8.14
+##### 0.8.14
 
 - Some potentially incompatible stuff has changed for
   [default arbitrary providers](#providing-default-arbitraries):
@@ -2066,17 +2064,17 @@ in a separate article...
 - `Arbitraries.defaultFor()` will randomly choose one arbitrary if
   there is more than one fitting registered arbitrary provider
 
-### 0.8.13
+##### 0.8.13
 
 Faulty release. Do not use!
 
-### 0.8.12
+##### 0.8.12
 
 - Implemented generic type resolution to enable [contract tests](#contract-tests)
 - Renamed `GenericType` to `TypeUsage`
   <p/>_This is an incompatible API change!_
 
-### 0.8.11
+##### 0.8.11
 
 - Reporting with `Reporting.FALSIFIED` now reports much less, and hopefully no wrong values anymore.
 - Shrinking with filtered values finds simpler values in some circumstance
@@ -2094,13 +2092,13 @@ Faulty release. Do not use!
     but that shouldn't affect anyone but myself.
 
 
-### 0.8.10
+##### 0.8.10
 
 - Fixed shrinking bug that could result in integers not being shrunk
   as far as possible
 - Integer shrinking should be faster in most cases and cover more cases
 
-### 0.8.9
+##### 0.8.9
 
 - Some minor but potentially incompatible API changes in `GenericType`.
 - Tags from parent (e.g. container class) are now also present in children (methods) 
@@ -2110,14 +2108,14 @@ Faulty release. Do not use!
 - Introduced `ShrinkingMode.FULL`
 - Some bounded wildcard types and type variables can be provided automatically
 
-### 0.8.8
+##### 0.8.8
 
 - Added `Arbitraries.lazy()` 
   to allow [recursive value generation](#recursive-arbitraries)
 - Added `Arbitrary.fixGenSize()` to enable a fixed genSize when creating random generators
 - Added `Arbitrary.sequences()` to create sequences of actions for [stateful testing](#stateful-testing)
 
-### 0.8.7
+##### 0.8.7
 
 - Property methods that also have Jupiter annotations are skipped
 - Added `@Label` to allow the [labeling of examples, properties and containers](#labeling-tests)
@@ -2128,7 +2126,7 @@ Faulty release. Do not use!
   [choosing values with weighted probabilities](#select-randomly-with-weights)
 - Collection and String generation now explores a wider range of sizes and lengths
 
-### 0.8.6
+##### 0.8.6
 
 - BigInteger generation does no longer support `@LongRange` but only `@BigRange`
   <p/>_This is an incompatible API change!_
@@ -2147,7 +2145,7 @@ Faulty release. Do not use!
 - Added `@Size.value()` for fixed size collections
 - Added `@StringLength.value()` for fixed size Strings
 
-### 0.8.5
+##### 0.8.5
 
 - All decimal generation (float, double, BigDecimal) now uses BigDecimal under the hood
 - All integral generation (int, short, byte, long, BigInteger) now uses BigInteger under the hood
@@ -2156,7 +2154,7 @@ Faulty release. Do not use!
 - Fixed bug: Reporting.FALSIFIED now also works for falsification through exception
 - Added support for running all tests in a module (Java 9 only). I HAVE NOT TESTED IT! 
 
-### 0.8.4
+##### 0.8.4
 
 - Completely rebuild the annotation-based configuration of registered arbitrary providers
 - Introduced [fluent configuration interfaces](#fluent-configuration-interfaces)
@@ -2172,13 +2170,13 @@ Faulty release. Do not use!
 - Deprecated `@Digits` constraint. Replaced by `@NumericChars`.
 - Upgrade to JUnit 5.1.0
 
-### 0.8.3
+##### 0.8.3
 
 - Bugfix: Injected empty list samples are now mutable
 - Bugfix: Injected empty set samples are now mutable
 - Unbound type variables in properties [can now be provided](#providing-variable-types)
 
-### 0.8.2
+##### 0.8.2
 
 - Added support for `java.util.Random` generation.
 - Added [Tuple types](#flat-mapping-with-tuple-types) 
@@ -2188,12 +2186,12 @@ Faulty release. Do not use!
 
 - Added `Reporting.FALSIFIED`. See [section on optional property parameters](#optional-property-parameters)
 
-### 0.8.1
+##### 0.8.1
 
 - Added support for [default arbitrary providers](#providing-default-arbitraries).
 - Added support for `byte` and `Byte` generation.
 - Added support for `short` and `Short` generation.
 
-### 0.8.0
+##### 0.8.0
 
 The first release published on maven central.

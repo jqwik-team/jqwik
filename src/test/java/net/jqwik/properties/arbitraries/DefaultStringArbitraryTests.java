@@ -16,6 +16,7 @@ class DefaultStringArbitraryTests {
 		// Maybe it should also be possible to create strings with codepoints outside of plane 0 (Basic Multilingual Plane)
 		assertAllGenerated(arbitrary.generator(10), s -> {
 			for (int i = 0; i < s.length(); i++) {
+				System.out.println(i + ": " + s.codePointAt(i));
 				Assertions.assertThat(s.codePointAt(i)).isLessThanOrEqualTo(Character.MAX_VALUE);
 			}
 		});
