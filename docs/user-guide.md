@@ -556,8 +556,7 @@ depending on the requested parameter type.
 
 #### Character Sets
 
-When generating chars any unicode character from plane 0 (Basic Multilingual Plane)
-might be generated.
+When generating chars any unicode character might be generated.
 
 When generating Strings, however,
 Unicode "noncharacters" and "private use characters"
