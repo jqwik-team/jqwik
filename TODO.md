@@ -9,6 +9,9 @@
         }
     ```
 
+- Arbitrary.unique()
+  - @Unique
+
 - Lifecycle Hooks
   - AroundAllHook
   - AroundContainerHook
