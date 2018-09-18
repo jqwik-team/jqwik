@@ -2037,6 +2037,8 @@ in a separate article...
 - Removed deprecated static methods in `Arbitraries`
 - Removed deprecated method `ArbitraryProvider.provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider)`
 - Removed default implementation of `ArbitraryProvider.provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider)`
+- Renamed `TypeUsage.getAnnotation(Class annotationClass)` to `findAnnotation`.
+
 
 ### 0.8.x
 

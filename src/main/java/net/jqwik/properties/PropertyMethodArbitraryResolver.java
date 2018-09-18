@@ -48,7 +48,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private Set<Arbitrary<?>> createForType(TypeUsage typeUsage) {
 		final Set<Arbitrary<?>> resolvedArbitraries = new HashSet<>();
 
-		String generatorName = typeUsage.getAnnotation(ForAll.class).map(ForAll::value).orElse("");
+		String generatorName = typeUsage.findAnnotation(ForAll.class).map(ForAll::value).orElse("");
 		Optional<Method> optionalCreator = findArbitraryCreatorByName(typeUsage, generatorName);
 		if (optionalCreator.isPresent()) {
 			Arbitrary<?> createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);

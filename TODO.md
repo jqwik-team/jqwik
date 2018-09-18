@@ -1,6 +1,5 @@
 - TypeUsage
   - isAnnotated
-  - findAnnotation
 
 - Combinators.flatCombine
     ```java

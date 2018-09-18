@@ -139,8 +139,8 @@ class TypeUsageTests {
 			assertThat(parameterType.getRawType()).isEqualTo(List.class);
 			assertThat(parameterType.getAnnotations().get(0)).isInstanceOf(Size.class);
 
-			assertThat(parameterType.getAnnotation(Size.class)).isPresent();
-			assertThat(parameterType.getAnnotation(WithNull.class)).isNotPresent();
+			assertThat(parameterType.findAnnotation(Size.class)).isPresent();
+			assertThat(parameterType.findAnnotation(WithNull.class)).isNotPresent();
 
 			assertThat(parameterType.toString()).isEqualTo("@net.jqwik.api.constraints.Size(value=0, max=2, min=0) List");
 

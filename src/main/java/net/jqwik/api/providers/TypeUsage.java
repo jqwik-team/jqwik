@@ -372,8 +372,18 @@ public class TypeUsage {
 
 	/**
 	 * Return an {@code Optional} of the first instance of a specific {@code annotationType} if there is one.
+	 *
+	 * @deprecated Use {@link #findAnnotation(Class)} instead.
 	 */
+	@Deprecated
 	public <A extends Annotation> Optional<A> getAnnotation(Class<A> annotationType) {
+		return findAnnotation(annotationType);
+	}
+
+	/**
+	 * Return an {@code Optional} of the first instance of a specific {@code annotationType} if there is one.
+	 */
+	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
 		return annotations.stream()
 						  .filter(annotation -> annotation.annotationType().equals(annotationType))
 						  .map(annotationType::cast)
