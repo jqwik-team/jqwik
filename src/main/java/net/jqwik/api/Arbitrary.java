@@ -1,11 +1,12 @@
 package net.jqwik.api;
 
-import net.jqwik.api.arbitraries.*;
-import net.jqwik.properties.arbitraries.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import net.jqwik.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.*;
 
 /**
  * The main interface for representing objects that can be generated and shrunk.
@@ -36,9 +37,11 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
+	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
+	 *
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
-		return genSize -> new FilteredGenerator<>(Arbitrary.this.generator(genSize), filterPredicate);
+		return genSize -> Arbitrary.this.generator(genSize).filter(filterPredicate);
 	}
 
 	/**
@@ -65,6 +68,16 @@ public interface Arbitrary<T> {
 			return this;
 		}
 		return genSize -> Arbitrary.this.generator(genSize).injectNull(nullProbability);
+	}
+
+	/**
+	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but will
+	 * never generate the same value twice.
+	 *
+	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
+	 */
+	default Arbitrary<T> unique() {
+		return genSize -> Arbitrary.this.generator(genSize).unique();
 	}
 
 	/**

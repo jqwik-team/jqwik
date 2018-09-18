@@ -1,10 +1,11 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.properties.shrinking.*;
-
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
+
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.shrinking.*;
 
 public interface RandomGenerator<T> {
 
@@ -64,4 +65,11 @@ public interface RandomGenerator<T> {
 		return new WithSamplesGenerator<>(samples, this);
 	}
 
+	default RandomGenerator<T> unique() {
+		return new UniqueGenerator<>(this);
+	}
+
+	default Stream<T> stream(Random random) {
+		return Stream.generate(() -> this.next(random).value());
+	}
 }

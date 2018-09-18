@@ -1,6 +1,7 @@
 package net.jqwik.properties;
 
 import java.util.*;
+import java.util.stream.*;
 
 import org.assertj.core.api.*;
 
@@ -80,8 +81,37 @@ class ArbitraryTests {
 
 			assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
 		}
+	}
 
+	@Group
+	class Unique {
+		@Example
+		void uniqueInteger() {
+			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 5);
+			Arbitrary<Integer> unique = arbitrary.unique();
+			RandomGenerator<Integer> generator = unique.generator(10);
 
+			Set<Integer> generatedValues =
+				generator
+					.stream(random)
+					.limit(5)
+					.collect(Collectors.toSet());
+
+			assertThat(generatedValues).containsExactly(1, 2, 3, 4, 5);
+		}
+
+		@Example
+		void failIfUniqueWillDiscard10000ValuesInARow() {
+			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 3);
+			Arbitrary<Integer> unique = arbitrary.unique();
+			RandomGenerator<Integer> generator = unique.generator(10);
+
+			generator.next(random);
+			generator.next(random);
+			generator.next(random);
+
+			assertThatThrownBy(() -> generator.next(random)).isInstanceOf(JqwikException.class);
+		}
 	}
 
 	@Group

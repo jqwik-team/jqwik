@@ -34,7 +34,7 @@ public class ArbitraryTestHelper {
 
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
 		Random random = SourceOfRandomness.current();
-		for (int i = 0; i < 500; i++) {
+		for (int i = 0; i < 1000; i++) {
 			Shrinkable<T> value = generator.next(random);
 			if (checker.apply(value.value()))
 				return;
