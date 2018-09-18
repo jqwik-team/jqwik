@@ -1,5 +1,9 @@
 package net.jqwik.api.providers;
 
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuples.*;
@@ -8,12 +12,9 @@ import net.jqwik.api.stateful.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
 
-import java.io.*;
-import java.lang.reflect.*;
-import java.util.*;
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.providers.TypeUsage.*;
-import static org.assertj.core.api.Assertions.*;
 
 @Label("TypeUsage")
 class TypeUsageTests {
@@ -141,6 +142,9 @@ class TypeUsageTests {
 
 			assertThat(parameterType.findAnnotation(Size.class)).isPresent();
 			assertThat(parameterType.findAnnotation(WithNull.class)).isNotPresent();
+
+			assertThat(parameterType.isAnnotated(Size.class)).isTrue();
+			assertThat(parameterType.isAnnotated(WithNull.class)).isFalse();
 
 			assertThat(parameterType.toString()).isEqualTo("@net.jqwik.api.constraints.Size(value=0, max=2, min=0) List");
 

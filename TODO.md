@@ -1,5 +1,6 @@
-- TypeUsage
-  - isAnnotated
+- Arbitrary.unique()
+  - @Unique constraint
+  - Shrinking may not allow duplicates!
 
 - Combinators.flatCombine
     ```java
@@ -7,9 +8,6 @@
             return key.flatMap(k -> value.flatMap( v -> combinator.apply(k, v)));
         }
     ```
-
-- Arbitrary.unique()
-  - @Unique
 
 - Lifecycle Hooks
   - AroundAllHook

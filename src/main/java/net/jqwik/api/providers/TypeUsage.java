@@ -1,13 +1,13 @@
 package net.jqwik.api.providers;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.support.*;
-
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.support.*;
 
 /**
  * An instance of {@code TypeUsage} describes the information available for parameter or return types.
@@ -381,7 +381,8 @@ public class TypeUsage {
 	}
 
 	/**
-	 * Return an {@code Optional} of the first instance of a specific {@code annotationType} if there is one.
+	 * Return an {@code Optional} of the first instance of a specific {@code annotationType}
+	 * if there is one (directly or indirectly through meta-annotations).
 	 */
 	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
 		return annotations.stream()
@@ -389,6 +390,15 @@ public class TypeUsage {
 						  .map(annotationType::cast)
 						  .findFirst();
 	}
+
+	/**
+	 * Return true if the current instance is annotated (directly or indirectly through meta-annotations)
+	 * with a specific {@code annotationType}.
+	 */
+	public <A extends Annotation> boolean isAnnotated(Class<A> annotationType) {
+		return findAnnotation(annotationType).isPresent();
+	}
+
 
 	/**
 	 * Check if a given {@code providedClass} is assignable from this generic type.
