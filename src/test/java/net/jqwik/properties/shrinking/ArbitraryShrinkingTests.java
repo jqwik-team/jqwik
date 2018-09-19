@@ -29,6 +29,20 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10)
+	void unique(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
+			.unique();
+		assertAllValuesAreShrunkTo(1, arbitrary, random);
+	}
+
+	@Property(tries = 10)
+	void uniqueInSet(@ForAll Random random) {
+		Arbitrary<Set<Integer>> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
+			.unique().set().ofSize(3);
+		assertAllValuesAreShrunkTo(new HashSet<>(Arrays.asList(1, 2, 3)), arbitrary, random);
+	}
+
+	@Property(tries = 10)
 	void mapped(@ForAll Random random) {
 		Arbitrary<String> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
 			.map(String::valueOf);

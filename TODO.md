@@ -1,6 +1,5 @@
 - Arbitrary.unique()
   - @Unique constraint
-  - Shrinking may not allow duplicates!
 
 - Combinators.flatCombine
     ```java

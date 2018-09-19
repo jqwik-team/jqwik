@@ -6,6 +6,7 @@ import java.util.function.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 public class UniqueGenerator<T> implements RandomGenerator<T> {
 	private static final long MAX_MISSES = 10000;
@@ -18,8 +19,10 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 
 	@Override
 	public Shrinkable<T> next(Random random) {
-		// TODO: Wrap Shrinkables so that there cannot be duplicate objects during shrinking either
-		return nextUntilAccepted(random, toFilter::next);
+		return nextUntilAccepted(random, r -> {
+			Shrinkable<T> next = toFilter.next(r);
+			return new UniqueShrinkable<>(next, generatedValues);
+		});
 	}
 
 	@Override
