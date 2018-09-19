@@ -11,17 +11,18 @@ import net.jqwik.properties.shrinking.*;
 public class UniqueGenerator<T> implements RandomGenerator<T> {
 	private static final long MAX_MISSES = 10000;
 	private final RandomGenerator<T> toFilter;
-	private final Set<T> generatedValues = ConcurrentHashMap.newKeySet();
+	private final Set<T> usedValues;
 
-	public UniqueGenerator(RandomGenerator<T> toFilter) {
+	public UniqueGenerator(RandomGenerator<T> toFilter, Set<T> usedValues) {
 		this.toFilter = toFilter;
+		this.usedValues = usedValues;
 	}
 
 	@Override
 	public Shrinkable<T> next(Random random) {
 		return nextUntilAccepted(random, r -> {
 			Shrinkable<T> next = toFilter.next(r);
-			return new UniqueShrinkable<>(next, generatedValues);
+			return new UniqueShrinkable<>(next, usedValues);
 		});
 	}
 
@@ -34,13 +35,13 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 		long count = 0;
 		while (true) {
 			Shrinkable<T> next = fetchShrinkable.apply(random);
-			if (generatedValues.contains(next.value())) {
+			if (usedValues.contains(next.value())) {
 				if (++count > MAX_MISSES) {
 					throw new JqwikException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));
 				}
 				continue;
 			} else {
-				generatedValues.add(next.value());
+				usedValues.add(next.value());
 			}
 			return next;
 		}

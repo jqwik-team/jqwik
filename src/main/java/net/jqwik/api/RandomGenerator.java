@@ -65,11 +65,11 @@ public interface RandomGenerator<T> {
 		return new WithSamplesGenerator<>(samples, this);
 	}
 
-	default RandomGenerator<T> unique() {
-		return new UniqueGenerator<>(this);
+	default RandomGenerator<T> unique(Set<T> usedValues) {
+		return new UniqueGenerator<>(this, usedValues);
 	}
 
-	default Stream<T> stream(Random random) {
-		return Stream.generate(() -> this.next(random).value());
+	default Stream<Shrinkable<T>> stream(Random random) {
+		return Stream.generate(() -> this.next(random));
 	}
 }

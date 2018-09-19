@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -77,7 +78,9 @@ public interface Arbitrary<T> {
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> unique() {
-		return genSize -> Arbitrary.this.generator(genSize).unique();
+		// Remembering of used values must be outside of generator!
+		Set<T> usedValues = ConcurrentHashMap.newKeySet();
+		return genSize -> Arbitrary.this.generator(genSize).unique(usedValues);
 	}
 
 	/**

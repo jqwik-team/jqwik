@@ -92,12 +92,28 @@ class ArbitraryTests {
 			RandomGenerator<Integer> generator = unique.generator(10);
 
 			Set<Integer> generatedValues =
-				generator
-					.stream(random)
-					.limit(5)
-					.collect(Collectors.toSet());
+				generator.stream(random)
+						 .map(Shrinkable::value)
+						 .limit(5)
+						 .collect(Collectors.toSet());
 
 			assertThat(generatedValues).containsExactly(1, 2, 3, 4, 5);
+		}
+
+		@Property
+		void uniqueAcrossGenerators(@ForAll Random rand) {
+			Arbitrary<Integer> primes = Arbitraries.of(2, 3, 5, 7, 11, 13, 17, 19);
+			Arbitrary<Integer> uniquePrimes = primes.unique();
+			Arbitrary<Integer> product = Combinators.combine(uniquePrimes, uniquePrimes).as((p1, p2) -> p1 * p2);
+			RandomGenerator<Integer> generator = product.generator(10);
+
+			Set<Integer> generatedValues =
+				generator.stream(rand)
+						 .map(Shrinkable::value)
+						 .limit(4)
+						 .collect(Collectors.toSet());
+
+			assertThat(generatedValues).hasSize(4);
 		}
 
 		@Example
