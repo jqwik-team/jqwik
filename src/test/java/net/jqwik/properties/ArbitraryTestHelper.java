@@ -67,16 +67,16 @@ public class ArbitraryTestHelper {
 	}
 
 	@SafeVarargs
-	public static <T> void assertGenerated(RandomGenerator<T> generator, T... expectedValues) {
+	public static <T> void assertGeneratedExactly(RandomGenerator<T> generator, T... expectedValues) {
 		Random random = SourceOfRandomness.current();
 
-		for (T expectedValue : expectedValues) {
-			Shrinkable<T> actual = generator.next(random);
-			T expected = expectedValue;
-			if (!actual.value().equals(expected))
-				fail(String.format("Generated value [%s] not equals to expected value [%s].", actual.toString(), expected
-					.toString()));
-		}
+		List<T> generated = generator
+								.stream(random)
+								.limit(expectedValues.length)
+								.map(Shrinkable::value)
+								.collect(Collectors.toList());
+
+		assertThat(generated).containsExactly(expectedValues);
 	}
 
 	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<T> arbitrary, Random random) {

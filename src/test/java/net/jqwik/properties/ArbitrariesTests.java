@@ -1,12 +1,12 @@
 package net.jqwik.properties;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -66,7 +66,7 @@ class ArbitrariesTests {
 	void samplesAreGeneratedDeterministicallyInRoundRobin() {
 		Arbitrary<Integer> integerArbitrary = Arbitraries.samples(-5, 0, 3);
 		RandomGenerator<Integer> generator = integerArbitrary.generator(1);
-		ArbitraryTestHelper.assertGenerated(generator, -5, 0, 3, -5, 0, 3);
+		ArbitraryTestHelper.assertGeneratedExactly(generator, -5, 0, 3, -5, 0, 3);
 	}
 
 	@Example
@@ -114,8 +114,8 @@ class ArbitrariesTests {
 	void lazy() {
 		Arbitrary<Integer> samples = Arbitraries.lazy(() -> Arbitraries.samples(1, 2, 3));
 
-		ArbitraryTestHelper.assertGenerated(samples.generator(1000), 1, 2, 3, 1);
-		ArbitraryTestHelper.assertGenerated(samples.generator(1000), 1, 2, 3, 1);
+		ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
+		ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
 	}
 
 	@Group
