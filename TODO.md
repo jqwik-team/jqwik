@@ -1,4 +1,5 @@
 - Arbitrary.unique()
+  - uniqueness must be reset per try!
   - @Unique constraint
 
 - Combinators.flatCombine
