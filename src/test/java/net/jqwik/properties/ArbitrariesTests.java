@@ -131,7 +131,7 @@ class ArbitrariesTests {
 		@Property(tries = 10)
 		void twoEqualPairs() {
 			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(1, "b"));
-			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
 			assertThat(counts.get("a") > 200).isTrue();
 			assertThat(counts.get("b") > 200).isTrue();
 		}
@@ -139,7 +139,7 @@ class ArbitrariesTests {
 		@Property(tries = 10)
 		void twoUnequalPairs() {
 			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(10, "b"));
-			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
 		}
 
@@ -151,7 +151,7 @@ class ArbitrariesTests {
 				Tuples.tuple(10, "c"),
 				Tuples.tuple(20, "d")
 			);
-			Map<String, Integer> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
+			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
 			assertThat(counts.get("b")).isLessThan(counts.get("c"));
 			assertThat(counts.get("c")).isLessThan(counts.get("d"));

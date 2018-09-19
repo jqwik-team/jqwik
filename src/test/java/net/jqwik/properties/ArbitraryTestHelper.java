@@ -1,9 +1,10 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
+
+import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -20,35 +21,37 @@ public class ArbitraryTestHelper {
 		assertAtLeastOneGenerated(generator, checker, "Failed to generate at least one");
 	}
 
-	public static <T> Map<T, Integer> count(RandomGenerator<T> generator, int tries) {
-		Random random = SourceOfRandomness.current();
-		Map<T, Integer> counts = new HashMap<>();
-		for (int i = 0; i < tries; i++) {
-			Shrinkable<T> value = generator.next(random);
-			T key = value.value();
-			int previous = counts.computeIfAbsent(key, k -> 0);
-			counts.put(key, previous + 1);
-		}
-		return counts;
+	public static <T> Map<T, Long> count(RandomGenerator<T> generator, int tries) {
+		return generator
+				   .stream(SourceOfRandomness.current())
+				   .limit(tries)
+				   .map(Shrinkable::value)
+				   .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
 
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
 		Random random = SourceOfRandomness.current();
-		for (int i = 0; i < 1000; i++) {
-			Shrinkable<T> value = generator.next(random);
-			if (checker.apply(value.value()))
-				return;
+		Optional<Shrinkable<T>> success = generator
+											  .stream(random)
+											  .limit(1000)
+											  .filter(shrinkable -> checker.apply(shrinkable.value()))
+											  .findAny();
+		if (!success.isPresent()) {
+			fail(failureMessage);
 		}
-		fail(failureMessage);
 	}
 
 	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Predicate<T> checker) {
 		Random random = SourceOfRandomness.current();
-		for (int i = 0; i < 100; i++) {
-			Shrinkable<T> value = generator.next(random);
-			if (!checker.test(value.value()))
-				fail(String.format("Value [%s] failed to fulfill condition.", value.value().toString()));
-		}
+		Optional<Shrinkable<T>> failure = generator
+											  .stream(random)
+											  .limit(100)
+											  .filter(shrinkable -> !checker.test(shrinkable.value()))
+											  .findAny();
+
+		failure.ifPresent(shrinkable -> {
+			fail(String.format("Value [%s] failed to fulfill condition.", shrinkable.value().toString()));
+		});
 	}
 
 	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Consumer<T> assertions) {
