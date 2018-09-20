@@ -19,6 +19,11 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
+	public void reset() {
+		usedValues.clear();
+	}
+
+	@Override
 	public Shrinkable<T> next(Random random) {
 		return nextUntilAccepted(random, r -> {
 			Shrinkable<T> next = toFilter.next(r);

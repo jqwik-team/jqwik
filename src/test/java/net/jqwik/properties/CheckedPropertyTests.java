@@ -123,14 +123,14 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = new CheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
-				new PropertyConfiguration("Property", "42", 12, 5, ShrinkingMode.FULL, new Reporting[0])
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, new Reporting[0])
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.randomSeed()).isEqualTo("42");
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
-			assertThat(allGeneratedInts).containsExactly(-82, 0, 1, 13, 62, -1, -100, 100, 0, -40, 50, 1);
+			assertThat(allGeneratedInts).containsExactly(0, -56, 1, -1, -100, 3, 31, 27, -27, 53, -77, 8, -60, 69, 29, -6, -7, 38, 37, -10);
 		}
 
 	}

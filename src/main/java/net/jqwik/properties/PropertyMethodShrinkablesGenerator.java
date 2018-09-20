@@ -41,7 +41,10 @@ public class PropertyMethodShrinkablesGenerator implements ShrinkablesGenerator 
 	@Override
 	public List<Shrinkable> next(Random random) {
 		Map<TypeUsage, RandomGenerator> generatorsCache = new HashMap<>();
-		return parameterGenerators.stream().map(generator -> generator.next(random, generatorsCache)).collect(Collectors.toList());
+		return parameterGenerators
+				   .stream()
+				   .map(generator -> generator.next(random, generatorsCache))
+				   .collect(Collectors.toList());
 	}
 
 

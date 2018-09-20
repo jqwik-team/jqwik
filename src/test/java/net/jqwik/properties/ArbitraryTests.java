@@ -128,6 +128,26 @@ class ArbitraryTests {
 
 			assertThatThrownBy(() -> generator.next(random)).isInstanceOf(JqwikException.class);
 		}
+
+		@Property
+		void uniquenessIsResetPerTry(@ForAll("uniqueIntegers") int anInt) {
+		}
+
+		@Property
+		void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
+			Assertions.assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
+		}
+
+		@Provide
+		Arbitrary<Integer> uniqueIntegers() {
+			return Arbitraries.integers().between(1, 10).unique();
+		}
+
+		@Provide
+		Arbitrary<List<Integer>> listOfUniqueIntegers() {
+			return uniqueIntegers().list().ofSize(3);
+		}
+
 	}
 
 	@Group

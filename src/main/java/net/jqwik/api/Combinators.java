@@ -1,10 +1,10 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.shrinking.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import net.jqwik.properties.shrinking.*;
 
 public class Combinators {
 
@@ -63,13 +63,22 @@ public class Combinators {
 			return (genSize) -> {
 				RandomGenerator<T1> g1 = a1.generator(genSize);
 				RandomGenerator<T2> g2 = a2.generator(genSize);
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+						shrinkables.add((Shrinkable<Object>) g1.next(random));
+						shrinkables.add((Shrinkable<Object>) g2.next(random));
+						Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
+
+					@Override
+					public void reset() {
+						g1.reset();
+						g2.reset();
+					}
 				};
 			};
 		}
@@ -92,15 +101,26 @@ public class Combinators {
 				RandomGenerator<T1> g1 = a1.generator(genSize);
 				RandomGenerator<T2> g2 = a2.generator(genSize);
 				RandomGenerator<T3> g3 = a3.generator(genSize);
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
-							(T3) params.get(2));
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+						shrinkables.add((Shrinkable<Object>) g1.next(random));
+						shrinkables.add((Shrinkable<Object>) g2.next(random));
+						shrinkables.add((Shrinkable<Object>) g3.next(random));
+						Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+																							   (T3) params.get(2)
+						);
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
+
+					@Override
+					public void reset() {
+						g1.reset();
+						g2.reset();
+						g3.reset();
+					}
 				};
 			};
 		}
@@ -126,16 +146,28 @@ public class Combinators {
 				RandomGenerator<T2> g2 = a2.generator(genSize);
 				RandomGenerator<T3> g3 = a3.generator(genSize);
 				RandomGenerator<T4> g4 = a4.generator(genSize);
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
-							(T3) params.get(2), (T4) params.get(3));
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+						shrinkables.add((Shrinkable<Object>) g1.next(random));
+						shrinkables.add((Shrinkable<Object>) g2.next(random));
+						shrinkables.add((Shrinkable<Object>) g3.next(random));
+						shrinkables.add((Shrinkable<Object>) g4.next(random));
+						Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+																							   (T3) params.get(2), (T4) params.get(3)
+						);
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
+
+					@Override
+					public void reset() {
+						g1.reset();
+						g2.reset();
+						g3.reset();
+						g4.reset();
+					}
 				};
 			};
 		}
@@ -164,17 +196,32 @@ public class Combinators {
 				RandomGenerator<T3> g3 = a3.generator(genSize);
 				RandomGenerator<T4> g4 = a4.generator(genSize);
 				RandomGenerator<T5> g5 = a5.generator(genSize);
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
-							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4));
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+						shrinkables.add((Shrinkable<Object>) g1.next(random));
+						shrinkables.add((Shrinkable<Object>) g2.next(random));
+						shrinkables.add((Shrinkable<Object>) g3.next(random));
+						shrinkables.add((Shrinkable<Object>) g4.next(random));
+						shrinkables.add((Shrinkable<Object>) g5.next(random));
+						Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+																							   (T3) params.get(2), (T4) params
+																															.get(3), (T5) params
+																																			  .get(4)
+						);
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
+
+					@Override
+					public void reset() {
+						g1.reset();
+						g2.reset();
+						g3.reset();
+						g4.reset();
+						g5.reset();
+					}
 				};
 			};
 		}
@@ -206,18 +253,35 @@ public class Combinators {
 				RandomGenerator<T4> g4 = a4.generator(genSize);
 				RandomGenerator<T5> g5 = a5.generator(genSize);
 				RandomGenerator<T6> g6 = a6.generator(genSize);
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
-					shrinkables.add((Shrinkable<Object>) g6.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
-							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5));
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+						shrinkables.add((Shrinkable<Object>) g1.next(random));
+						shrinkables.add((Shrinkable<Object>) g2.next(random));
+						shrinkables.add((Shrinkable<Object>) g3.next(random));
+						shrinkables.add((Shrinkable<Object>) g4.next(random));
+						shrinkables.add((Shrinkable<Object>) g5.next(random));
+						shrinkables.add((Shrinkable<Object>) g6.next(random));
+						Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
+																							   (T3) params.get(2), (T4) params
+																															.get(3), (T5) params
+																																			  .get(4), (T6) params
+																																								.get(5)
+						);
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
+
+					@Override
+					public void reset() {
+						g1.reset();
+						g2.reset();
+						g3.reset();
+						g4.reset();
+						g5.reset();
+						g6.reset();
+					}
 				};
 			};
 		}
@@ -253,19 +317,36 @@ public class Combinators {
 				RandomGenerator<T5> g5 = a5.generator(genSize);
 				RandomGenerator<T6> g6 = a6.generator(genSize);
 				RandomGenerator<T7> g7 = a7.generator(genSize);
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
-					shrinkables.add((Shrinkable<Object>) g6.next(random));
-					shrinkables.add((Shrinkable<Object>) g7.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
-							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6));
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+						shrinkables.add((Shrinkable<Object>) g1.next(random));
+						shrinkables.add((Shrinkable<Object>) g2.next(random));
+						shrinkables.add((Shrinkable<Object>) g3.next(random));
+						shrinkables.add((Shrinkable<Object>) g4.next(random));
+						shrinkables.add((Shrinkable<Object>) g5.next(random));
+						shrinkables.add((Shrinkable<Object>) g6.next(random));
+						shrinkables.add((Shrinkable<Object>) g7.next(random));
+						Function<List<Object>, R> combineFunction = params -> combinator.apply(
+							(T1) params.get(0), (T2) params.get(1),
+							(T3) params.get(2), (T4) params.get(3),
+							(T5) params.get(4), (T6) params.get(5),
+							(T7) params.get(6)
+						);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+					@Override
+					public void reset() {
+						g1.reset();
+						g2.reset();
+						g3.reset();
+						g4.reset();
+						g5.reset();
+						g6.reset();
+						g7.reset();
+					}
 				};
 			};
 		}
@@ -304,20 +385,39 @@ public class Combinators {
 				RandomGenerator<T6> g6 = a6.generator(genSize);
 				RandomGenerator<T7> g7 = a7.generator(genSize);
 				RandomGenerator<T8> g8 = a8.generator(genSize);
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-					shrinkables.add((Shrinkable<Object>) g1.next(random));
-					shrinkables.add((Shrinkable<Object>) g2.next(random));
-					shrinkables.add((Shrinkable<Object>) g3.next(random));
-					shrinkables.add((Shrinkable<Object>) g4.next(random));
-					shrinkables.add((Shrinkable<Object>) g5.next(random));
-					shrinkables.add((Shrinkable<Object>) g6.next(random));
-					shrinkables.add((Shrinkable<Object>) g7.next(random));
-					shrinkables.add((Shrinkable<Object>) g8.next(random));
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1),
-							(T3) params.get(2), (T4) params.get(3), (T5) params.get(4), (T6) params.get(5), (T7) params.get(6), (T8) params.get(7));
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+						shrinkables.add((Shrinkable<Object>) g1.next(random));
+						shrinkables.add((Shrinkable<Object>) g2.next(random));
+						shrinkables.add((Shrinkable<Object>) g3.next(random));
+						shrinkables.add((Shrinkable<Object>) g4.next(random));
+						shrinkables.add((Shrinkable<Object>) g5.next(random));
+						shrinkables.add((Shrinkable<Object>) g6.next(random));
+						shrinkables.add((Shrinkable<Object>) g7.next(random));
+						shrinkables.add((Shrinkable<Object>) g8.next(random));
+						Function<List<Object>, R> combineFunction = params -> combinator.apply(
+							(T1) params.get(0), (T2) params.get(1),
+							(T3) params.get(2), (T4) params.get(3),
+							(T5) params.get(4), (T6) params.get(5),
+							(T7) params.get(6), (T8) params.get(7)
+						);
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
+
+					@Override
+					public void reset() {
+						g1.reset();
+						g2.reset();
+						g3.reset();
+						g4.reset();
+						g5.reset();
+						g6.reset();
+						g7.reset();
+						g8.reset();
+					}
 				};
 			};
 		}
@@ -338,16 +438,25 @@ public class Combinators {
 					.map(a -> a.generator(genSize))
 					.collect(Collectors.toList());
 
-				return random -> {
-					List<Shrinkable<Object>> shrinkables = listOfGenerators
-						.stream()
-						.map(g -> g.next(random))
-						.map(s -> (Shrinkable<Object>) s)
-						.collect(Collectors.toList());
+				return new RandomGenerator<R>() {
+					@Override
+					public Shrinkable<R> next(Random random) {
+						List<Shrinkable<Object>> shrinkables =
+							listOfGenerators
+								.stream()
+								.map(g -> g.next(random))
+								.map(s -> (Shrinkable<Object>) s)
+								.collect(Collectors.toList());
 
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
+						Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
 
-					return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return new CombinedShrinkable<>(shrinkables, combineFunction);
+					}
+
+					@Override
+					public void reset() {
+						listOfGenerators.forEach(RandomGenerator::reset);
+					}
 				};
 			};
 		}

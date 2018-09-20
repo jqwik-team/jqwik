@@ -25,4 +25,10 @@ public class WithSamplesGenerator<T> implements RandomGenerator<T> {
 			return samplesGenerator.next(random);
 		return base.next(random);
 	}
+
+	@Override
+	public void reset() {
+		samplesGenerator.reset();
+		base.reset();
+	}
 }

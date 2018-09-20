@@ -15,6 +15,11 @@ class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
 	}
 
 	@Override
+	public void reset() {
+		actionGenerator.reset();
+	}
+
+	@Override
 	public Shrinkable<ActionSequence<M>> next(Random random) {
 		List<Shrinkable<Action<M>>> candidateActions = generateCandidates(numberOfActions, random);
 		return new ShrinkableActionSequence<>(candidateActions);

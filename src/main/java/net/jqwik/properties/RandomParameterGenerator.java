@@ -17,6 +17,7 @@ public class RandomParameterGenerator {
 
 	public Shrinkable next(Random random, Map<TypeUsage, RandomGenerator> generatorsCache) {
 		RandomGenerator selectedGenerator = selectGenerator(random, generatorsCache);
+		selectedGenerator.reset();
 		return selectedGenerator.next(random);
 	}
 

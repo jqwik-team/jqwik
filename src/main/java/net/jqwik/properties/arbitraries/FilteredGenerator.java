@@ -23,6 +23,11 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 	}
 
 	@Override
+	public void reset() {
+		toFilter.reset();
+	}
+
+	@Override
 	public String toString() {
 		return String.format("Filtering [%s]", toFilter);
 	}

@@ -1,13 +1,13 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.*;
 
 public class RandomGenerators {
 
@@ -114,20 +114,13 @@ public class RandomGenerators {
 		return Math.min(offset + minSize, maxSize);
 	}
 
-	private static <T, C> RandomGenerator<C> container( //
-														RandomGenerator<T> elementGenerator, //
-														Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,//
-														int minSize, int maxSize, int cutoffSize
+	private static <T, C> RandomGenerator<C> container(
+		RandomGenerator<T> elementGenerator, //
+		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,//
+		int minSize, int maxSize, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
-		return random -> {
-			int listSize = sizeGenerator.apply(random);
-			List<Shrinkable<T>> list = new ArrayList<>();
-			while (list.size() < listSize) {
-				list.add(elementGenerator.next(random));
-			}
-			return createShrinkable.apply(list);
-		};
+		return new ContainerGenerator<>(elementGenerator, createShrinkable, sizeGenerator);
 	}
 
 	private static Function<Random, Integer> sizeGenerator(int minSize, int maxSize, int cutoffSize) {
