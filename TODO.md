@@ -7,11 +7,3 @@
             return key.flatMap(k -> value.flatMap( v -> combinator.apply(k, v)));
         }
     ```
-
-- Lifecycle Hooks
-  - AroundAllHook
-  - AroundContainerHook
-  - AroundTryHook
-
-- Lifecycle Tests
-a

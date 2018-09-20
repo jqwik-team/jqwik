@@ -30,10 +30,11 @@
 
 - Use apiguardian annotations (starting version 1.0)
 
-- LifeCycles
-  - PerTryLifeCycle
-  - PerTestRunLifeCycle
-  - PerClassLifeCycle
+- Lifecycle Hooks
+  - AroundTryHook
+  - AroundContainerHook
+  - AroundAllHook
+  - Tests for AroundPropertyHook
 
 - Parallel test execution:
   - Across single property with annotation @Parallel 
