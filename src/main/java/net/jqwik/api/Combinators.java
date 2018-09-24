@@ -58,12 +58,17 @@ public class Combinators {
 			this.a2 = a2;
 		}
 
-		@SuppressWarnings("unchecked")
+		// This is a shorter implementation of as, which however would have worse shrinking
+		// behaviour because it builds on flatMap:
+		//		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
+		//			return a1.flatMap(v1 -> a2.map(v2 -> combinator.apply(v1, v2)));
+		//		}
 		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
 			return (genSize) -> {
 				RandomGenerator<T1> g1 = a1.generator(genSize);
 				RandomGenerator<T2> g2 = a2.generator(genSize);
 				return new RandomGenerator<R>() {
+					@SuppressWarnings("unchecked")
 					@Override
 					public Shrinkable<R> next(Random random) {
 						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
@@ -81,6 +86,10 @@ public class Combinators {
 					}
 				};
 			};
+		}
+
+		public <R> Arbitrary<R> flatAs(F2<T1, T2, Arbitrary<R>> flatCombinator) {
+			return a1.flatMap(v1 -> a2.flatMap(v2 -> flatCombinator.apply(v1, v2)));
 		}
 	}
 
@@ -124,6 +133,14 @@ public class Combinators {
 				};
 			};
 		}
+
+		public <R> Arbitrary<R> flatAs(F3<T1, T2, T3, Arbitrary<R>> flatCombinator) {
+			return a1.flatMap(
+				v1 -> a2.flatMap(
+					v2 -> a3.flatMap(
+						v3 -> flatCombinator.apply(v1, v2, v3))));
+		}
+
 	}
 
 	public static class Combinator4<T1, T2, T3, T4> {
@@ -171,6 +188,16 @@ public class Combinators {
 				};
 			};
 		}
+
+		public <R> Arbitrary<R> flatAs(F4<T1, T2, T3, T4, Arbitrary<R>> flatCombinator) {
+			return a1.flatMap(
+				v1 -> a2.flatMap(
+					v2 -> a3.flatMap(
+						v3 -> a4.flatMap(
+							v4 -> flatCombinator.apply(v1, v2, v3, v4)))));
+		}
+
+
 	}
 
 	public static class Combinator5<T1, T2, T3, T4, T5> {
