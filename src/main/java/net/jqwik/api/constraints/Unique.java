@@ -3,9 +3,11 @@ package net.jqwik.api.constraints;
 import java.lang.annotation.*;
 
 /**
- * Make a generated value to be unique withing the same try
+ * Make a generated value to be unique withing the same try.
  *
+ * <p>
  * Applies to any embedded types of a parameter that is annotated with {@code @ForAll}.
+ * </p>
  *
  * @see net.jqwik.api.ForAll
  */
