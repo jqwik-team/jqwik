@@ -2078,7 +2078,8 @@ in a separate article...
 - Added `TypeUsage.isAnnotated(Class annotationClass)`
 - Added [`Arbitrary.unique()`](#creating-unique-values)
 - Added constraint [`@Unique`](#unique-values)
-- Implementations of `ArbitraryConfigurator` can optionally implement `int order()`.
+- Implementations of `ArbitraryConfigurator` can optionally implement `int order()`
+- It's now possible to "flat combine" arbitraries
 
 ### 0.8.x
 

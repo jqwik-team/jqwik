@@ -38,46 +38,46 @@ class FlatCombinatorsTests {
 		assertThat(value.value()).isEqualTo(10);
 	}
 
-//	@Example
-//	void fiveArbitrariesCanBeCombined() {
-//		Arbitrary<Integer> combine5 = Combinators.combine(one(), two(), three(), four(), five()) //
-//				.as((a, b, c, d, e) -> a + b + c + d + e);
-//		Shrinkable<Integer> value = generate(combine5);
-//		assertThat(value.value()).isEqualTo(15);
-//	}
-//
-//	@Example
-//	void sixArbitrariesCanBeCombined() {
-//		Arbitrary<Integer> combine6 = Combinators.combine(one(), two(), three(), four(), five(), six()) //
-//				.as((a, b, c, d, e, f) -> a + b + c + d + e + f);
-//		Shrinkable<Integer> value = generate(combine6);
-//		assertThat(value.value()).isEqualTo(21);
-//	}
-//
-//	@Example
-//	void sevenArbitrariesCanBeCombined() {
-//		Arbitrary<Integer> combine7 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven()) //
-//				.as((a, b, c, d, e, f, g) -> a + b + c + d + e + f + g);
-//		Shrinkable<Integer> value = generate(combine7);
-//		assertThat(value.value()).isEqualTo(28);
-//	}
-//
-//	@Example
-//	void eightArbitrariesCanBeCombined() {
-//		Arbitrary<Integer> combine8 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven(), eight()) //
-//				.as((a, b, c, d, e, f, g, h) -> a + b + c + d + e + f + g + h);
-//		Shrinkable<Integer> value = generate(combine8);
-//		assertThat(value.value()).isEqualTo(36);
-//	}
-//
-//	@Example
-//	void listOfArbitrariesCanBeCombined() {
-//		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), one(), two(), two(), three(), three());
-//		Arbitrary<Integer> combineList = Combinators.combine(listOfArbitraries) //
-//				.as(list -> list.stream().mapToInt(e -> e).sum());
-//		Shrinkable<Integer> value = generate(combineList);
-//		assertThat(value.value()).isEqualTo(12);
-//	}
+	@Example
+	void fiveArbitrariesCanBeCombined() {
+		Arbitrary<Integer> combine5 = Combinators.combine(one(), two(), three(), four(), five()) //
+												 .flatAs((a, b, c, d, e) -> Arbitraries.constant(a + b + c + d + e));
+		Shrinkable<Integer> value = generate(combine5);
+		assertThat(value.value()).isEqualTo(15);
+	}
+
+	@Example
+	void sixArbitrariesCanBeCombined() {
+		Arbitrary<Integer> combine6 = Combinators.combine(one(), two(), three(), four(), five(), six()) //
+												 .flatAs((a, b, c, d, e, f) -> Arbitraries.constant(a + b + c + d + e + f));
+		Shrinkable<Integer> value = generate(combine6);
+		assertThat(value.value()).isEqualTo(21);
+	}
+
+	@Example
+	void sevenArbitrariesCanBeCombined() {
+		Arbitrary<Integer> combine7 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven()) //
+												 .flatAs((a, b, c, d, e, f, g) -> Arbitraries.constant(a + b + c + d + e + f + g));
+		Shrinkable<Integer> value = generate(combine7);
+		assertThat(value.value()).isEqualTo(28);
+	}
+
+	@Example
+	void eightArbitrariesCanBeCombined() {
+		Arbitrary<Integer> combine8 = Combinators.combine(one(), two(), three(), four(), five(), six(), seven(), eight()) //
+												 .flatAs((a, b, c, d, e, f, g, h) -> Arbitraries.constant(a + b + c + d + e + f + g + h));
+		Shrinkable<Integer> value = generate(combine8);
+		assertThat(value.value()).isEqualTo(36);
+	}
+
+	@Example
+	void listOfArbitrariesCanBeCombined() {
+		List<Arbitrary<Integer>> listOfArbitraries = Arrays.asList(one(), one(), two(), two(), three(), three());
+		Arbitrary<Integer> combineList = Combinators.combine(listOfArbitraries) //
+													.flatAs(list -> Arbitraries.constant(list.stream().mapToInt(e -> e).sum()));
+		Shrinkable<Integer> value = generate(combineList);
+		assertThat(value.value()).isEqualTo(12);
+	}
 
 	Arbitrary<Integer> one() {
 		return Arbitraries.of(1);
