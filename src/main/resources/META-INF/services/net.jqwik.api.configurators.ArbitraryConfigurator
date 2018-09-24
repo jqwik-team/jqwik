@@ -4,3 +4,4 @@ net.jqwik.configurators.SizeConfigurator
 net.jqwik.configurators.CharsConfigurator
 net.jqwik.configurators.StringLengthConfigurator
 net.jqwik.configurators.RangeConfigurator
+net.jqwik.configurators.UniqueConfigurator

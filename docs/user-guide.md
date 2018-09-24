@@ -549,6 +549,25 @@ depending on the requested parameter type.
   
   Works for all generated types.
    
+#### Unique Values
+
+- [`@Unique`](https://jqwik.net/javadoc/net/jqwik/api/constraints/Unique.html):
+  Prevent duplicate values to be generated _per try_. That means that
+  there can still be duplicate values across several tries. That also means
+  that `@Unique` only makes sense as annotation for a parameter type, e.g.:
+
+  ```java
+    @Property
+    void uniqueInList(@ForAll @Size(5) List<@IntRange(min = 0, max = 10) @Unique Integer> aList) {
+        Assertions.assertThat(aList).doesNotHaveDuplicates();
+        Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
+    }
+  ```
+
+  Trying to generate a list with more than 11 elements would not work here.
+
+  Works for all generated types.
+
 #### String Length
 
 - [`@StringLength(int value = 0, int min = 0, int max = 0)`](https://jqwik.net/javadoc/net/jqwik/api/constraints/StringLength.html):
@@ -2058,7 +2077,8 @@ in a separate article...
 - Renamed `TypeUsage.getAnnotation(Class annotationClass)` to `findAnnotation`
 - Added `TypeUsage.isAnnotated(Class annotationClass)`
 - Added [`Arbitrary.unique()`](#creating-unique-values)
-
+- Added constraint [`@Unique`](#unique-values)
+- Implementations of `ArbitraryConfigurator` can optionally implement `int order()`.
 
 ### 0.8.x
 

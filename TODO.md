@@ -1,6 +1,3 @@
-- Arbitrary.unique()
-  - @Unique constraint
-
 - Combinators.flatCombine
     ```java
         private Arbitrary<String> flatCombine(Arbitrary<String> key, Arbitrary<String> value, Combinators.F2<String, String, Arbitrary<String>> combinator) {

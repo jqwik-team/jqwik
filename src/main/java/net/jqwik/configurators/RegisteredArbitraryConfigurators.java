@@ -12,7 +12,7 @@ public class RegisteredArbitraryConfigurators {
 		if (null == registeredConfigurators) {
 			loadArbitraryConfigurators();
 		}
-		return Collections.unmodifiableList(new ArrayList<>(registeredConfigurators));
+		return Collections.unmodifiableList(registeredConfigurators);
 	}
 
 	private static void loadArbitraryConfigurators() {
@@ -21,6 +21,7 @@ public class RegisteredArbitraryConfigurators {
 		for (ArbitraryConfigurator provider : providers) {
 			register(provider);
 		}
+		Collections.sort(registeredConfigurators);
 	}
 
 	public static void register(ArbitraryConfigurator configurator) {

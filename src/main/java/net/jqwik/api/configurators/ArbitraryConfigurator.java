@@ -14,7 +14,7 @@ import net.jqwik.api.*;
  * so that they will be automatically considered for arbitrary configuration.
  * <p>
  */
-public interface ArbitraryConfigurator {
+public interface ArbitraryConfigurator extends Comparable<ArbitraryConfigurator> {
 
 	/**
 	 * Configure a given {@code arbitrary} and return the configured instance
@@ -24,7 +24,23 @@ public interface ArbitraryConfigurator {
 	 * @param arbitrary
 	 * @param annotations
 	 * @param <T>
-	 * @return
+	 * @return the newly configured arbitrary instance
 	 */
 	<T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations);
+
+	/**
+	 * Determines the order in which a configurator will be applied in regards to other configurators.
+	 * Default value is {@code 100}. Use lower values to enforce earlier application and
+	 * higher values for later application.
+	 *
+	 * @return the order
+	 */
+	default int order() {
+		return 100;
+	}
+
+	@Override
+	default int compareTo(ArbitraryConfigurator other) {
+		return Integer.compare(this.order(), other.order());
+	}
 }
