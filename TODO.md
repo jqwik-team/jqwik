@@ -1,0 +1,4 @@
+- Tuples.tupleX -> Tuple.of(...)
+  - Tuple -> outside Tuples
+  - Tuples.TupleX extends Tuple.TupleX
+  - Make Tuples.tupleX deprecated
