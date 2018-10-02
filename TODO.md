@@ -1,1 +1,0 @@
-- Userguide: Add section on Combinators.combine(...).flatAs(...)

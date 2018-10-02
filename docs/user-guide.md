@@ -27,6 +27,7 @@
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
     - [Allow Null Values](#allow-null-values)
+    - [Unique Values](#unique-values)
     - [String Length](#string-length)
     - [Character Sets](#character-sets)
     - [List, Set, Stream and Array Size:](#list-set-stream-and-array-size)
@@ -50,11 +51,13 @@
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
+  - [Creating unique values](#creating-unique-values)
   - [Mapping](#mapping)
   - [Flat Mapping](#flat-mapping)
   - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
+    - [Flat Combination](#flat-combination)
   - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
 - [Recursive Arbitraries](#recursive-arbitraries)
   - [Probabilistic Recursion](#probabilistic-recursion)
@@ -1180,6 +1183,43 @@ class Person {
 The property should fail, thereby shrinking the falsified Person instance to
 `[Aaaaaaaaaaaaaaaaaaaaa:100]`.
 
+#### Flat Combination
+
+If generating domain values requires to use several generated values to be used
+in generating another one, there's the combination of flat mapping and combining:
+
+```java
+@Property
+boolean fullNameHasTwoParts(@ForAll("fullName") String aName) {
+    return aName.split(" ").length == 2;
+}
+
+@Provide
+Arbitrary<String> fullName() {
+    IntegerArbitrary firstNameLength = Arbitraries.integers().between(2, 10);
+    IntegerArbitrary lastNameLength = Arbitraries.integers().between(2, 10);
+    return Combinators.combine(firstNameLength, lastNameLength).flatAs( (fLength, lLength) -> {
+        Arbitrary<String> firstName = Arbitraries.strings().alpha().ofLength(fLength);
+        Arbitrary<String> lastName = Arbitraries.strings().alpha().ofLength(fLength);
+        return Combinators.combine(firstName, lastName).as((f,l) -> f + " " + l);
+    });
+}
+```
+
+Often, however, there's an easier way to achieve the same goal which
+does not require the flat combination of arbitraries:
+
+```java
+@Provide
+Arbitrary<String> fullName2() {
+    Arbitrary<String> firstName = Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
+    Arbitrary<String> lastName = Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10);
+    return Combinators.combine(firstName, lastName).as((f, l) -> f + " " + l);
+}
+```
+
+This is not only easier to understand but it usually improves shrinking.
+
 ### Fix an Arbitrary's `genSize`
 
 Some generators (e.g. most number generators) are sensitive to the 
@@ -2079,7 +2119,7 @@ in a separate article...
 - Added [`Arbitrary.unique()`](#creating-unique-values)
 - Added constraint [`@Unique`](#unique-values)
 - Implementations of `ArbitraryConfigurator` can optionally implement `int order()`
-- It's now possible to "flat combine" arbitraries
+- It's now possible to ["flat combine"](#flat-combination) arbitraries
 
 ### 0.8.x
 
