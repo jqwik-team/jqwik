@@ -2120,6 +2120,8 @@ in a separate article...
 - Added constraint [`@Unique`](#unique-values)
 - Implementations of `ArbitraryConfigurator` can optionally implement `int order()`
 - It's now possible to ["flat combine"](#flat-combination) arbitraries
+- Deprecated all types and methods in `net.jqwik.api.Tuples.*`
+  in favour of `net.jqwik.api.Tuple.*`
 
 ### 0.8.x
 
