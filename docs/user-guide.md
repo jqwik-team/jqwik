@@ -839,7 +839,7 @@ The starting point for generation usually is a static method call on class
 #### Select randomly with Weights
 
 If you have a set of values to choose from with weighted probabilities, use 
-[`Arbitraries.frequency(...)`](https://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuples.Tuple2...-):
+[`Arbitraries.frequency(...)`](https://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuple.Tuple2...-):
 
 ```java
 @Property
@@ -850,10 +850,10 @@ void abcdWithFrequencies(@ForAll("abcdWeighted") String aString) {
 @Provide
 Arbitrary<String> abcdWeighted() {
     return Arbitraries.frequency(
-        Tuples.tuple(1, "a"),
-        Tuples.tuple(5, "b"),
-        Tuples.tuple(10, "c"),
-        Tuples.tuple(20, "d")
+        Tuple.of(1, "a"),
+        Tuple.of(5, "b"),
+        Tuple.of(10, "c"),
+        Tuple.of(20, "d")
     );
 }
 ```
@@ -1093,7 +1093,7 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
     return stringArbitrary //
             .flatMap(aString -> Arbitraries.integers().between(0, aString.length()) //
                     .flatMap(end -> Arbitraries.integers().between(0, end) //
-                            .map(begin -> Tuples.tuple(aString, begin, end))));
+                            .map(begin -> Tuple.of(aString, begin, end))));
 }
 ```
 
