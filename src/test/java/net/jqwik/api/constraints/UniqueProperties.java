@@ -14,7 +14,7 @@ class UniqueProperties {
 		Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property
 	void uniqueIsAppliedAfterStandardConfigurators(@ForAll @Size(5) List<@Unique @IntRange(min = 0, max = 10) Integer> aList) {
 		Assertions.assertThat(aList).doesNotHaveDuplicates();
 		Assertions.assertThat(aList).allMatch(anInt -> anInt >= 0 && anInt <= 10);
