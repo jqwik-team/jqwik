@@ -1,11 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
+import java.util.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.shrinking.*;
 import net.jqwik.support.*;
-
-import java.util.*;
 
 public class FrequencyGenerator<T> implements RandomGenerator<T> {
 
@@ -13,16 +13,16 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 	private int size = 0;
 	private List<T> valuesToChooseFrom;
 
-	FrequencyGenerator(Tuples.Tuple2<Integer, T>[] frequencies) {
+	FrequencyGenerator(Tuple.Tuple2<Integer, T>[] frequencies) {
 		calculateUpperBorders(frequencies);
 		if (size <= 0) {
 			throw new JqwikException(String.format("%s does not contain any positive frequencies.", JqwikStringSupport.displayString(frequencies)));
 		}
 	}
 
-	private void calculateUpperBorders(Tuples.Tuple2<Integer, T>[] frequencies) {
+	private void calculateUpperBorders(Tuple.Tuple2<Integer, T>[] frequencies) {
 		List<T> values = new ArrayList<>();
-		for (Tuples.Tuple2<Integer, T> tuple : frequencies) {
+		for (Tuple.Tuple2<Integer, T> tuple : frequencies) {
 			int frequency = tuple.get1();
 			if (frequency <= 0)
 				continue;

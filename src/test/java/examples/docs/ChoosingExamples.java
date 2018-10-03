@@ -22,10 +22,10 @@ class ChoosingExamples {
 	@Provide
 	Arbitrary<String> abcdWeighted() {
 		return Arbitraries.frequency(
-			Tuples.tuple(1, "a"),
-			Tuples.tuple(5, "b"),
-			Tuples.tuple(10, "c"),
-			Tuples.tuple(20, "d")
+			Tuple.of(1, "a"),
+			Tuple.of(5, "b"),
+			Tuple.of(10, "c"),
+			Tuple.of(20, "d")
 		);
 	}
 
@@ -38,14 +38,14 @@ class ChoosingExamples {
 	@Provide
 	Arbitrary<String> someStrings() {
 		return Arbitraries.frequency(
-			Tuples.tuple(1, "oops"),
-			Tuples.tuple(1, "all"),
-			Tuples.tuple(2, "but"),
-			Tuples.tuple(3, "character"),
-			Tuples.tuple(4, "diploma"),
-			Tuples.tuple(5, "emex"),
-			Tuples.tuple(6, "fair"),
-			Tuples.tuple(7, "ghost")
+			Tuple.of(1, "oops"),
+			Tuple.of(1, "all"),
+			Tuple.of(2, "but"),
+			Tuple.of(3, "character"),
+			Tuple.of(4, "diploma"),
+			Tuple.of(5, "emex"),
+			Tuple.of(6, "fair"),
+			Tuple.of(7, "ghost")
 		);
 	}
 }

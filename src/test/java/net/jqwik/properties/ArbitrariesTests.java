@@ -124,13 +124,13 @@ class ArbitrariesTests {
 
 		@Example
 		void onePair() {
-			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"));
+			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"));
 			ArbitraryTestHelper.assertAllGenerated(one.generator(1000), value -> {return value.equals("a");});
 		}
 
 		@Property(tries = 10)
 		void twoEqualPairs() {
-			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(1, "b"));
+			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"), Tuple.of(1, "b"));
 			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
 			assertThat(counts.get("a") > 200).isTrue();
 			assertThat(counts.get("b") > 200).isTrue();
@@ -138,7 +138,7 @@ class ArbitrariesTests {
 
 		@Property(tries = 10)
 		void twoUnequalPairs() {
-			Arbitrary<String> one = Arbitraries.frequency(Tuples.tuple(1, "a"), Tuples.tuple(10, "b"));
+			Arbitrary<String> one = Arbitraries.frequency(Tuple.of(1, "a"), Tuple.of(10, "b"));
 			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
 		}
@@ -146,10 +146,10 @@ class ArbitrariesTests {
 		@Property(tries = 10)
 		void fourUnequalPairs() {
 			Arbitrary<String> one = Arbitraries.frequency(
-				Tuples.tuple(1, "a"),
-				Tuples.tuple(5, "b"),
-				Tuples.tuple(10, "c"),
-				Tuples.tuple(20, "d")
+				Tuple.of(1, "a"),
+				Tuple.of(5, "b"),
+				Tuple.of(10, "c"),
+				Tuple.of(20, "d")
 			);
 			Map<String, Long> counts = ArbitraryTestHelper.count(one.generator(1000), 1000);
 			assertThat(counts.get("a")).isLessThan(counts.get("b"));
@@ -159,7 +159,7 @@ class ArbitrariesTests {
 
 		@Example
 		void noPositiveFrequencies() {
-			assertThatThrownBy(() -> Arbitraries.frequency(Tuples.tuple(0, "a"))).isInstanceOf(JqwikException.class);
+			assertThatThrownBy(() -> Arbitraries.frequency(Tuple.of(0, "a"))).isInstanceOf(JqwikException.class);
 		}
 
 	}

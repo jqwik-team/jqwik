@@ -6,7 +6,7 @@ import java.util.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.api.Tuples.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.arbitraries.*;

@@ -134,7 +134,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
-	public static <T> Arbitrary<T> frequency(Tuples.Tuple2<Integer, T> ... frequencies) {
+	public static <T> Arbitrary<T> frequency(Tuple.Tuple2<Integer, T> ... frequencies) {
 		return fromGenerator(RandomGenerators.frequency(frequencies));
 	}
 

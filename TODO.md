@@ -1,2 +1,2 @@
 - Tuples.tupleX -> Tuple.of(...)
-  - Replace deprecated usages of Tuples.* in code and user-guide
+  - Replace deprecated usages of Tuples.* in user-guide

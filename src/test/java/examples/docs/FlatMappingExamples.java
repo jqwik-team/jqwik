@@ -5,7 +5,7 @@ import java.util.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuples.*;
+import net.jqwik.api.Tuple.*;
 
 class FlatMappingExamples {
 
@@ -57,6 +57,6 @@ class FlatMappingExamples {
 		return stringArbitrary //
 				.flatMap(aString -> Arbitraries.integers().between(0, aString.length()) //
 						.flatMap(end -> Arbitraries.integers().between(0, end) //
-								.map(begin -> Tuples.tuple(aString, begin, end))));
+								.map(begin -> Tuple.of(aString, begin, end))));
 	}
 }

@@ -21,9 +21,9 @@ public class LifecycleRegistry implements LifecycleSupplier {
 		return AroundPropertyHook.combine(aroundPropertyHooks);
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);
-		//noinspection unchecked
 		return hookClasses
 			.stream()
 			.map(hookClass -> (T) instances.get(hookClass))
@@ -31,8 +31,8 @@ public class LifecycleRegistry implements LifecycleSupplier {
 			.collect(Collectors.toList());
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends LifecycleHook> List<Class<T>> findHookClasses(TestDescriptor descriptor, Class<T> hookType) {
-		//noinspection unchecked
 		return registrations
 			.stream()
 			.filter(registration -> registration.match(descriptor))
