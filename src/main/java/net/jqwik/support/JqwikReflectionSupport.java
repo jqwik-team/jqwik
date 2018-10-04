@@ -1,15 +1,18 @@
 package net.jqwik.support;
 
-import net.jqwik.api.lifecycle.*;
-import net.jqwik.discovery.predicates.*;
-import org.junit.platform.commons.support.*;
-
 import java.io.*;
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import org.junit.platform.commons.support.*;
+
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.providers.*;
+import net.jqwik.discovery.predicates.*;
 
 import static java.util.stream.Collectors.*;
 
@@ -32,16 +35,17 @@ public class JqwikReflectionSupport {
 		// This is risky since it depends on the name of the field which is nowhere guaranteed
 		// but has been stable so far in all JDKs
 
-		// @formatter:off
-		return Arrays.stream(inner.getClass().getDeclaredFields()).filter(field -> field.getName().startsWith("this$")).findFirst()
-				.map(field -> {
-					try {
-						return makeAccessible(field).get(inner);
-					} catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-						return Optional.empty();
-					}
-				});
-		// @formatter:on
+		return Arrays
+				   .stream(inner.getClass().getDeclaredFields())
+				   .filter(field -> field.getName().startsWith("this$"))
+				   .findFirst()
+				   .map(field -> {
+					   try {
+						   return makeAccessible(field).get(inner);
+					   } catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+						   return Optional.empty();
+					   }
+				   });
 	}
 
 	private static <T extends AccessibleObject> T makeAccessible(T object) {
@@ -148,6 +152,37 @@ public class JqwikReflectionSupport {
 		return list.toArray(new MethodParameter[parameters.length]);
 	}
 
+	public static Optional<Method> findGeneratorMethod(
+		String generatorToFind,
+		Class<?> containerClass,
+		Class<? extends Annotation> requiredGeneratorAnnotation,
+		Function<Method, String> generatorNameSupplier,
+		TypeUsage targetType
+	) {
+		List<Method> creators = findMethodsPotentiallyOuter(
+			containerClass,
+			isGeneratorMethod(targetType, requiredGeneratorAnnotation),
+			HierarchyTraversalMode.BOTTOM_UP
+		);
+		return creators.stream().filter(generatorMethod -> {
+			String generatorName = generatorNameSupplier.apply(generatorMethod);
+			if (generatorName.isEmpty()) {
+				generatorName = generatorMethod.getName();
+			}
+			return generatorName.equals(generatorToFind);
+		}).findFirst();
+	}
+
+	public static Predicate<Method> isGeneratorMethod(TypeUsage targetType, Class<? extends Annotation> requiredAnnotation) {
+		return method -> {
+			if (!method.isAnnotationPresent(requiredAnnotation)) {
+				return false;
+			}
+			TypeUsage generatorReturnType = TypeUsage.forType(method.getAnnotatedReturnType().getType());
+			return generatorReturnType.canBeAssignedTo(targetType);
+		};
+	}
+
 	public static boolean isPublic(Class<?> clazz) {
 		return Modifier.isPublic(clazz.getModifiers());
 	}
@@ -183,4 +218,5 @@ public class JqwikReflectionSupport {
 	public static boolean isInnerClass(Class<? extends LifecycleHook> hookClass) {
 		return hookClass.isMemberClass() && !isStatic(hookClass);
 	}
+
 }

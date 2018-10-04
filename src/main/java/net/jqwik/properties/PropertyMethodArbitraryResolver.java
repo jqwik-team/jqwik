@@ -1,17 +1,17 @@
 package net.jqwik.properties;
 
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
+import org.junit.platform.commons.support.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.configurators.*;
 import net.jqwik.providers.*;
 import net.jqwik.support.*;
-import org.junit.platform.commons.support.*;
-
-import java.lang.annotation.*;
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 import static net.jqwik.support.JqwikReflectionSupport.*;
 
@@ -49,7 +49,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		final Set<Arbitrary<?>> resolvedArbitraries = new HashSet<>();
 
 		String generatorName = typeUsage.findAnnotation(ForAll.class).map(ForAll::value).orElse("");
-		Optional<Method> optionalCreator = findArbitraryCreatorByName(typeUsage, generatorName);
+		Optional<Method> optionalCreator = findArbitraryGeneratorByName(typeUsage, generatorName);
 		if (optionalCreator.isPresent()) {
 			Arbitrary<?> createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
 			resolvedArbitraries.add(createdArbitrary);
@@ -67,22 +67,17 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		return registeredArbitraryConfigurer.configure(createdArbitrary, typeUsage.getAnnotations());
 	}
 
-	private Optional<Method> findArbitraryCreatorByName(TypeUsage typeUsage, String generatorToFind) {
+	private Optional<Method> findArbitraryGeneratorByName(TypeUsage typeUsage, String generatorToFind) {
 		if (generatorToFind.isEmpty())
 			return Optional.empty();
-		List<Method> creators = findMethodsPotentiallyOuter( //
-															 containerClass, //
-															 isCreatorForType(typeUsage), //
-															 HierarchyTraversalMode.BOTTOM_UP
-		);
-		return creators.stream().filter(generatorMethod -> {
-			Provide generateAnnotation = generatorMethod.getDeclaredAnnotation(Provide.class);
-			String generatorName = generateAnnotation.value();
-			if (generatorName.isEmpty()) {
-				generatorName = generatorMethod.getName();
-			}
-			return generatorName.equals(generatorToFind);
-		}).findFirst();
+
+		Function<Method, String> generatorNameSupplier = method -> {
+			Provide generateAnnotation = method.getDeclaredAnnotation(Provide.class);
+			return generateAnnotation.value();
+		};
+		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
+
+		return findGeneratorMethod(generatorToFind, this.containerClass, Provide.class, generatorNameSupplier, targetArbitraryType);
 	}
 
 	private Optional<Arbitrary<?>> findFirstFitArbitrary(TypeUsage typeUsage) {
@@ -90,24 +85,16 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Optional<Method> findArbitraryCreator(TypeUsage typeUsage) {
-		List<Method> creators = findMethodsPotentiallyOuter(containerClass, isCreatorForType(typeUsage),
-															HierarchyTraversalMode.BOTTOM_UP
+		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
+		List<Method> creators = findMethodsPotentiallyOuter(
+			containerClass,
+			isGeneratorMethod(targetArbitraryType, Provide.class),
+			HierarchyTraversalMode.BOTTOM_UP
 		);
 		if (creators.size() > 1) {
 			throw new AmbiguousArbitraryException(typeUsage, creators);
 		}
 		return creators.stream().findFirst();
-	}
-
-	private Predicate<Method> isCreatorForType(TypeUsage targetType) {
-		return method -> {
-			if (!method.isAnnotationPresent(Provide.class)) {
-				return false;
-			}
-			TypeUsage arbitraryReturnType = TypeUsage.forType(method.getAnnotatedReturnType().getType());
-			TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, targetType);
-			return arbitraryReturnType.canBeAssignedTo(targetArbitraryType);
-		};
 	}
 
 	private Set<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
