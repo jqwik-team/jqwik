@@ -4,7 +4,10 @@
   Possible syntax:
 
   ```
-  @Provide
+  @Property @FromData("representations")
+  void aProperty(@ForAll int anInt, @ForAll String aString) {}
+
+  @Data
   Table<Integer, String> representations() {
       return Table.of(
             Tuple.of(1, "1"),
