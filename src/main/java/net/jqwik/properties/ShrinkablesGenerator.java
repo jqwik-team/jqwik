@@ -4,6 +4,5 @@ import net.jqwik.api.*;
 
 import java.util.*;
 
-public interface ShrinkablesGenerator {
-	List<Shrinkable> next(Random random);
+public interface ShrinkablesGenerator extends Iterator<List<Shrinkable>> {
 }

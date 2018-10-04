@@ -30,7 +30,7 @@ class GenericPropertyTests {
 		}, value -> true);
 
 		Arbitrary<Integer> arbitrary = Arbitraries.samples(1);
-		ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
+		ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 		GenericProperty property = new GenericProperty("simple", shrinkablesGenerator, forAllFunction);
 		PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -62,7 +62,7 @@ class GenericPropertyTests {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(2, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -74,7 +74,26 @@ class GenericPropertyTests {
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
 			assertThat(result.countTries()).isEqualTo(2);
 			assertThat(result.countChecks()).isEqualTo(2);
-			assertThat(result.randomSeed()).isEqualTo("42");
+			assertThat(result.throwable()).isNotPresent();
+			assertThat(result.sample()).isNotPresent();
+		}
+
+		@Example
+		void stopWhenNoMoreShrinkablesCanBeGenerated() {
+			ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
+
+			ShrinkablesGenerator shrinkablesGenerator = finiteShrinkablesGenerator(1, 2, 3);
+
+			GenericProperty property = new GenericProperty("finite property", shrinkablesGenerator, forAllFunction);
+			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
+			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
+
+			assertThat(forAllFunction.countCalls()).isEqualTo(3);
+
+			assertThat(result.propertyName()).isEqualTo("finite property");
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+			assertThat(result.countTries()).isEqualTo(3);
+			assertThat(result.countChecks()).isEqualTo(3);
 			assertThat(result.throwable()).isNotPresent();
 			assertThat(result.sample()).isNotPresent();
 		}
@@ -86,7 +105,7 @@ class GenericPropertyTests {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie != failingTry, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8, 9);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -98,7 +117,6 @@ class GenericPropertyTests {
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
 			assertThat(result.countTries()).isEqualTo(failingTry);
 			assertThat(result.countChecks()).isEqualTo(failingTry);
-			assertThat(result.randomSeed()).isEqualTo("41");
 			assertThat(result.throwable()).isNotPresent();
 
 			assertThat(result.sample()).isPresent();
@@ -112,7 +130,7 @@ class GenericPropertyTests {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.OFF, new Reporting[0]);
@@ -130,7 +148,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -142,7 +160,6 @@ class GenericPropertyTests {
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
-			assertThat(result.randomSeed()).isEqualTo("41");
 
 			assertThat(result.sample()).isPresent();
 			assertThat(result.sample().get()).containsExactly(1);
@@ -162,7 +179,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("satisfied property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -173,7 +190,6 @@ class GenericPropertyTests {
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
 			assertThat(result.countTries()).isEqualTo(10);
 			assertThat(result.countChecks()).isEqualTo(5);
-			assertThat(result.randomSeed()).isEqualTo("42");
 			assertThat(result.throwable()).isNotPresent();
 			assertThat(result.sample()).isNotPresent();
 		}
@@ -186,7 +202,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -213,7 +229,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(20, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("exhausted property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 20, maxDiscardRatio, ShrinkingMode.FULL, new Reporting[0]);
@@ -235,7 +251,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(20, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("erroneous property", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -259,7 +275,7 @@ class GenericPropertyTests {
 		void falsifiedAndShrunk() {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 100);
 			CheckedFunction checkedFunction = params -> ((int) params.get(0)) < 5;
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property = new GenericProperty("falsified property", shrinkablesGenerator, checkedFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "41", 10, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -284,7 +300,7 @@ class GenericPropertyTests {
 				return true;
 			};
 
-			GenericProperty property = new GenericProperty("satisfied property", createShrinkablesGenerator(2), forAllFunction);
+			GenericProperty property = new GenericProperty("satisfied property", emptyShrinkablesGenerator(), forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
 
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
@@ -305,7 +321,7 @@ class GenericPropertyTests {
 				return false;
 			};
 
-			GenericProperty property = new GenericProperty("failing property", createShrinkablesGenerator(2), forAllFunction);
+			GenericProperty property = new GenericProperty("failing property", emptyShrinkablesGenerator(), forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
@@ -327,7 +343,7 @@ class GenericPropertyTests {
 				throw new RuntimeException();
 			};
 
-			GenericProperty property = new GenericProperty("failing property", createShrinkablesGenerator(2), forAllFunction);
+			GenericProperty property = new GenericProperty("failing property", emptyShrinkablesGenerator(), forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "42", 2, 5, ShrinkingMode.FULL, new Reporting[0]);
 			PropertyCheckResult result = property.check(configuration, NULL_PUBLISHER);
 
@@ -335,7 +351,6 @@ class GenericPropertyTests {
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
-			assertThat(result.randomSeed()).isEqualTo("42");
 
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isInstanceOf(RuntimeException.class);
@@ -360,7 +375,7 @@ class GenericPropertyTests {
 
 			Arbitrary<Integer> arbitrary1 = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Integer> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(5, arbitrary1, arbitrary2);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2);
 
 			GenericProperty property = new GenericProperty("property with 2", shrinkablesGenerator, forAllFunction);
 			PropertyConfiguration configuration = new PropertyConfiguration("Property", "4242", 5, 5, ShrinkingMode.FULL, new Reporting[0]);
@@ -388,7 +403,7 @@ class GenericPropertyTests {
 			Arbitrary<Integer> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Integer> arbitrary3 = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Integer> arbitrary4 = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(10, arbitrary1, arbitrary2, arbitrary3, arbitrary4);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2, arbitrary3, arbitrary4);
 
 			GenericProperty property = new GenericProperty("property with 4", shrinkablesGenerator, forAllFunction);
 
@@ -408,16 +423,61 @@ class GenericPropertyTests {
 
 	}
 
-	private ShrinkablesGenerator createShrinkablesGenerator(int genSize, Arbitrary... arbitraries) {
+	private ShrinkablesGenerator randomizedShrinkablesGenerator(Arbitrary... arbitraries) {
+		Random random = SourceOfRandomness.current();
 		List<Arbitrary> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
 		List<RandomGenerator> generators = arbitraryList
 			.stream()
-			.map(arbitrary -> arbitrary.generator(genSize))
+			.map(arbitrary -> arbitrary.generator(9999))
 			.collect(Collectors.toList());
-		return random -> generators
-			.stream()
-			.map(generator -> generator.next(random))
-			.collect(Collectors.toList());
+
+		return new ShrinkablesGenerator() {
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public List<Shrinkable> next() {
+				return generators
+						   .stream()
+						   .map(generator -> generator.next(random))
+						   .collect(Collectors.toList());
+			}
+		};
 	}
+
+	private ShrinkablesGenerator emptyShrinkablesGenerator() {
+		return new ShrinkablesGenerator() {
+			@Override
+			public boolean hasNext() {
+				return true;
+			}
+
+			@Override
+			public List<Shrinkable> next() {
+				return new ArrayList<>();
+			}
+		};
+	}
+
+	private ShrinkablesGenerator finiteShrinkablesGenerator(int... values) {
+		Iterator<Integer> valuesIterator = Arrays.stream(values).iterator();
+
+		return new ShrinkablesGenerator() {
+			@Override
+			public boolean hasNext() {
+				return valuesIterator.hasNext();
+			}
+
+			@Override
+			public List<Shrinkable> next() {
+				Shrinkable<Integer> shrinkable = Shrinkable.unshrinkable(valuesIterator.next());
+				return Collections.singletonList(shrinkable);
+			}
+		};
+	}
+
+
 
 }

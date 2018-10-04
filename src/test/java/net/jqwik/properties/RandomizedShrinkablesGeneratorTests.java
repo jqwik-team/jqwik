@@ -1,25 +1,25 @@
 package net.jqwik.properties;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.support.*;
-import org.assertj.core.api.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
+import org.assertj.core.api.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.support.*;
+
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-class PropertyMethodShrinkablesGeneratorTests {
-
+class RandomizedShrinkablesGeneratorTests {
 
 	@Example
 	void useSimpleRegisteredArbitraryProviders(@ForAll Random random) {
-		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("simpleParameters");
-		List<Shrinkable> shrinkables = shrinkablesGenerator.next(random);
+		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "simpleParameters");
+		List<Shrinkable> shrinkables = shrinkablesGenerator.next();
 
 		Assertions.assertThat(shrinkables.get(0).value()).isInstanceOf(String.class);
 		Assertions.assertThat(shrinkables.get(1).value()).isInstanceOf(Integer.class);
@@ -45,14 +45,14 @@ class PropertyMethodShrinkablesGeneratorTests {
 			}
 		};
 
-		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("simpleParameters", arbitraryResolver);
+		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "simpleParameters", arbitraryResolver);
 
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", 1));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", 2));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", 3));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", 1));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", 2));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", 3));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", 1));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", 2));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", 3));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", 1));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", 2));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", 3));
 	}
 
 	@Example
@@ -68,12 +68,12 @@ class PropertyMethodShrinkablesGeneratorTests {
 			}
 		};
 
-		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("twiceTypeVariableT", arbitraryResolver);
+		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "twiceTypeVariableT", arbitraryResolver);
 
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", "a"));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", "b"));
-		assertNeverGenerated(shrinkablesGenerator, random, asList("a", "b"));
-		assertNeverGenerated(shrinkablesGenerator, random, asList("b", "a"));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", "a"));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", "b"));
+		assertNeverGenerated(shrinkablesGenerator, asList("a", "b"));
+		assertNeverGenerated(shrinkablesGenerator, asList("b", "a"));
 	}
 
 	@Example
@@ -96,28 +96,28 @@ class PropertyMethodShrinkablesGeneratorTests {
 			}
 		};
 
-		PropertyMethodShrinkablesGenerator shrinkablesGenerator = createGenerator("typeVariableAlsoInList", arbitraryResolver);
+		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "typeVariableAlsoInList", arbitraryResolver);
 
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("a", asList("a")));
-		assertAtLeastOneGenerated(shrinkablesGenerator, random, asList("b", asList("b")));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", asList("a")));
+		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", asList("b")));
 
 		// TODO: This is really hard to implement and probably requires core changes in Arbitrary/RandomGenerator
 		//assertNeverGenerated(shrinkablesGenerator, random, asList("a", asList("b")));
 		//assertNeverGenerated(shrinkablesGenerator, random, asList("b", asList("a")));
 	}
 
-	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, Random random, List expected) {
+	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, List expected) {
 		for (int i = 0; i < 500; i++) {
-			List<Shrinkable> shrinkables = generator.next(random);
+			List<Shrinkable> shrinkables = generator.next();
 			if (values(shrinkables).equals(expected))
 				return;
 		}
 		fail("Failed to generate at least once");
 	}
 
-	private void assertNeverGenerated(ShrinkablesGenerator generator, Random random, List expected) {
+	private void assertNeverGenerated(ShrinkablesGenerator generator, List expected) {
 		for (int i = 0; i < 500; i++) {
-			List<Shrinkable> shrinkables = generator.next(random);
+			List<Shrinkable> shrinkables = generator.next();
 			if (values(shrinkables).equals(expected))
 				fail(String.format("%s should never be generated", values(shrinkables)));
 		}
@@ -127,22 +127,23 @@ class PropertyMethodShrinkablesGeneratorTests {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
-	private PropertyMethodShrinkablesGenerator createGenerator(String methodName) {
+	private RandomizedShrinkablesGenerator createGenerator(Random random, String methodName) {
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(MyProperties.class, new MyProperties());
-		return createGenerator(methodName, arbitraryResolver);
+		return createGenerator(random, methodName, arbitraryResolver);
 	}
 
-	private PropertyMethodShrinkablesGenerator createGenerator(String methodName, ArbitraryResolver arbitraryResolver) {
+	private RandomizedShrinkablesGenerator createGenerator(Random random, String methodName, ArbitraryResolver arbitraryResolver) {
 		PropertyMethodDescriptor methodDescriptor = createDescriptor(methodName);
 		List<MethodParameter> parameters = getParameters(methodDescriptor);
 
-		return PropertyMethodShrinkablesGenerator.forParameters(parameters, arbitraryResolver, 1000);
+		return RandomizedShrinkablesGenerator.forParameters(parameters, arbitraryResolver, random, 1000);
 	}
 
 	private List<MethodParameter> getParameters(PropertyMethodDescriptor methodDescriptor) {
-		return Arrays //
-					  .stream(JqwikReflectionSupport.getMethodParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass())) //
-					  .collect(Collectors.toList());
+		return Arrays
+				   .stream(JqwikReflectionSupport
+							   .getMethodParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass()))
+				   .collect(Collectors.toList());
 
 	}
 

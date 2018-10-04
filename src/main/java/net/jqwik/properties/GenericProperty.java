@@ -46,9 +46,14 @@ public class GenericProperty {
 	private PropertyCheckResult checkWithoutReporting(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
 		int maxTries = configuration.getTries();
 		int countChecks = 0;
-		Random random = SourceOfRandomness.create(configuration.getSeed());
-		for (int countTries = 1; countTries <= maxTries; countTries++) {
-			List<Shrinkable> shrinkableParams = generateParameters(random);
+		int countTries = 0;
+		while (countTries < maxTries) {
+			if (!shrinkablesGenerator.hasNext()) {
+				break;
+			} else {
+				countTries++;
+			}
+			List<Shrinkable> shrinkableParams = shrinkablesGenerator.next();
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, configuration.getReporting(), reporter)) {
@@ -66,9 +71,9 @@ public class GenericProperty {
 						extractParams(shrinkableParams), throwable);
 			}
 		}
-		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, maxTries, configuration.getMaxDiscardRatio()))
+		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, countTries, configuration.getMaxDiscardRatio()))
 			return PropertyCheckResult.exhausted(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
-		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
+		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed());
 	}
 
 	private boolean testPredicate(List<Shrinkable> shrinkableParams, Reporting[] reporting, Consumer<ReportEntry> reporter) {
@@ -103,7 +108,4 @@ public class GenericProperty {
 		return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), shrunkParams, originalParams, throwable);
 	}
 
-	private List<Shrinkable> generateParameters(Random random) {
-		return shrinkablesGenerator.next(random);
-	}
 }
