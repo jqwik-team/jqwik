@@ -28,21 +28,24 @@ public class CheckedProperty {
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> publisher) {
-		String effectiveSeed = configuration.getSeed().equals(Property.SEED_NOT_SET)
-								   ? SourceOfRandomness.createRandomSeed()
-								   : configuration.getSeed();
-		PropertyConfiguration effectiveConfiguration = configuration.withSeed(effectiveSeed);
-
+		PropertyConfiguration effectiveConfiguration = configurationWithEffectiveSeed();
 		try {
-			return createGenericProperty(effectiveConfiguration).check(effectiveConfiguration, publisher);
+			return createGenericProperty(effectiveConfiguration).check(publisher);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.erroneous(effectiveConfiguration.getStereotype(), propertyName, 0, 0, effectiveConfiguration.getSeed(), Collections.emptyList(), cannotFindArbitraryException);
 		}
 	}
 
+	private PropertyConfiguration configurationWithEffectiveSeed() {
+		String effectiveSeed = configuration.getSeed().equals(Property.SEED_NOT_SET)
+								   ? SourceOfRandomness.createRandomSeed()
+								   : configuration.getSeed();
+		return configuration.withSeed(effectiveSeed);
+	}
+
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
 		ShrinkablesGenerator shrinkablesGenerator = createRandomizedShrinkablesGenerator(configuration);
-		return new GenericProperty(propertyName, shrinkablesGenerator, checkedFunction);
+		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
 	}
 
 	private ShrinkablesGenerator createRandomizedShrinkablesGenerator(PropertyConfiguration configuration) {

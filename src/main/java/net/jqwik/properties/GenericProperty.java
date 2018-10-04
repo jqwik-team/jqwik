@@ -17,18 +17,25 @@ import static net.jqwik.properties.PropertyCheckResult.Status.*;
 public class GenericProperty {
 
 	private final String name;
+	private final PropertyConfiguration configuration;
 	private final ShrinkablesGenerator shrinkablesGenerator;
 	private final CheckedFunction checkedFunction;
 
-	public GenericProperty(String name, ShrinkablesGenerator shrinkablesGenerator, CheckedFunction checkedFunction) {
+	public GenericProperty(
+		String name,
+		PropertyConfiguration configuration,
+		ShrinkablesGenerator shrinkablesGenerator,
+		CheckedFunction checkedFunction
+	) {
 		this.name = name;
+		this.configuration = configuration;
 		this.shrinkablesGenerator = shrinkablesGenerator;
 		this.checkedFunction = checkedFunction;
 	}
 
-	public PropertyCheckResult check(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
+	public PropertyCheckResult check(Consumer<ReportEntry> reporter) {
 		StatisticsCollector.clearAll();
-		PropertyCheckResult checkResult = checkWithoutReporting(configuration, reporter);
+		PropertyCheckResult checkResult = checkWithoutReporting(reporter);
 		reportResult(reporter, checkResult);
 		reportStatistics(reporter);
 		return checkResult;
@@ -43,7 +50,7 @@ public class GenericProperty {
 			publisher.accept(CheckResultReportEntry.from(checkResult));
 	}
 
-	private PropertyCheckResult checkWithoutReporting(PropertyConfiguration configuration, Consumer<ReportEntry> reporter) {
+	private PropertyCheckResult checkWithoutReporting(Consumer<ReportEntry> reporter) {
 		int maxTries = configuration.getTries();
 		int countChecks = 0;
 		int countTries = 0;
@@ -57,11 +64,10 @@ public class GenericProperty {
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, configuration.getReporting(), reporter)) {
-					return shrinkAndCreateCheckResult(configuration, reporter, countChecks, countTries, shrinkableParams, null);
+					return shrinkAndCreateCheckResult(reporter, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(configuration, reporter,
-						countChecks, countTries, shrinkableParams, ae);
+				return shrinkAndCreateCheckResult(reporter, countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
@@ -93,7 +99,7 @@ public class GenericProperty {
 		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
-	private PropertyCheckResult shrinkAndCreateCheckResult(PropertyConfiguration configuration, Consumer<ReportEntry> reporter, int countChecks,
+	private PropertyCheckResult shrinkAndCreateCheckResult(Consumer<ReportEntry> reporter, int countChecks,
 														   int countTries, List<Shrinkable> shrinkables, AssertionError error) {
 		List<Object> originalParams = extractParams(shrinkables);
 
