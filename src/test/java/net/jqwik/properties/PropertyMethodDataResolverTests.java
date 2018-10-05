@@ -96,6 +96,19 @@ class PropertyMethodDataResolverTests {
 				Tuple.of("6", 6)
 			);
 		}
+
+		@Example
+		void eightParameters() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
+			Method parameter = getMethod(NamedResolvers.class, "eightParameters");
+			Optional<Iterable<? extends Tuple>> optionalData = resolver.forMethod(parameter);
+
+			Iterable<Tuple8> data = (Iterable<Tuple8>) optionalData.get();
+			assertThat(data).containsExactly(
+				Tuple.of(1, 2, 3, 4, 5, 6, 7, 8),
+				Tuple.of(11, 22, 33, 44, 55, 66, 77, 88)
+			);
+		}
 	}
 
 
@@ -144,6 +157,20 @@ class PropertyMethodDataResolverTests {
 				Tuple.of("4", 4),
 				Tuple.of("5", 5),
 				Tuple.of("6", 6)
+			);
+		}
+
+		@Property
+		@DataFrom("eight")
+		boolean eightParameters(@ForAll String aString) {
+			return true;
+		}
+
+		@Data
+		Iterable eight() {
+			return Table.of(
+				Tuple.of(1, 2, 3, 4, 5, 6, 7, 8),
+				Tuple.of(11, 22, 33, 44, 55, 66, 77, 88)
 			);
 		}
 
