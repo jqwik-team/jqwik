@@ -19,7 +19,7 @@ class PropertyMethodDataResolverTests {
 		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
 		Method parameter = getMethod(NamedResolvers.class, "string");
 		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
-		assertThat(optionalData).isPresent();
+
 		Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
 		assertThat(data).containsExactly(
 			Tuple.of("1"),
@@ -28,12 +28,18 @@ class PropertyMethodDataResolverTests {
 		);
 	}
 
-	//	@Example
-	void findStringGeneratorByMethodName() throws NoSuchMethodException {
+	@Example
+	void findStringGeneratorByMethodName() {
 		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
 		Method parameter = getMethod(NamedResolvers.class, "stringByMethodName");
 		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
-		assertThat(optionalData).isPresent();
+
+		Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
+		assertThat(data).containsExactly(
+			Tuple.of("4"),
+			Tuple.of("5"),
+			Tuple.of("6")
+		);
 	}
 
 	//	@Example
@@ -89,8 +95,12 @@ class PropertyMethodDataResolverTests {
 		}
 
 		@Data
-		Iterable<Tuple1<String>> byMethodName() {
-			return null;
+		Iterable<? extends Tuple> byMethodName() {
+			return Table.of(
+				Tuple.of("4"),
+				Tuple.of("5"),
+				Tuple.of("6")
+			);
 		}
 
 		@Group
