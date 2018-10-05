@@ -1,31 +1,39 @@
 package net.jqwik.properties;
 
+import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.support.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressWarnings("unchecked")
 @Group
 class PropertyMethodDataResolverTests {
 
-	//	@Example
+	@Example
 	void findStringGeneratorByName() {
-		PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-		MethodParameter parameter = getParameter(WithNamedProviders.class, "string");
-		Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-		assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
+		Method parameter = getMethod(NamedResolvers.class, "string");
+		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
+		assertThat(optionalData).isPresent();
+		Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
+		assertThat(data).containsExactly(
+			Tuple.of("1"),
+			Tuple.of("2"),
+			Tuple.of("3")
+		);
 	}
 
 	//	@Example
-	void findStringGeneratorByMethodName() {
-		PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-		MethodParameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
-		Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-		assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+	void findStringGeneratorByMethodName() throws NoSuchMethodException {
+		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
+		Method parameter = getMethod(NamedResolvers.class, "stringByMethodName");
+		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
+		assertThat(optionalData).isPresent();
 	}
 
 	//	@Example
@@ -34,29 +42,29 @@ class PropertyMethodDataResolverTests {
 	}
 
 	//	@Example
-	void findGeneratorByMethodNameOutsideGroup() {
-		PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class);
-		MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName");
-		Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-		assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+	void findGeneratorByMethodNameOutsideGroup() throws NoSuchMethodException {
+		PropertyMethodDataResolver provider = getResolver(NamedResolvers.NestedNamedProviders.class);
+		Method parameter = getMethod(NamedResolvers.NestedNamedProviders.class, "nestedStringByMethodName");
+		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
+		assertThat(optionalData).isPresent();
 	}
 
 	//	@Example
-	void findGeneratorByNameOutsideGroup() {
-		PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class);
-		MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedString");
-		Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-		assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+	void findGeneratorByNameOutsideGroup() throws NoSuchMethodException {
+		PropertyMethodDataResolver provider = getResolver(NamedResolvers.NestedNamedProviders.class);
+		Method parameter = getMethod(NamedResolvers.NestedNamedProviders.class, "nestedString");
+		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
+		assertThat(optionalData).isPresent();
 	}
 
 	//	@Example
-	void namedStringGeneratorNotFound() {
-		PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-		MethodParameter parameter = getParameter(WithNamedProviders.class, "otherString");
-		assertThat(provider.forParameter(parameter)).isEmpty();
+	void namedStringGeneratorNotFound() throws NoSuchMethodException {
+		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
+		Method parameter = getMethod(NamedResolvers.class, "otherString");
+		assertThat(provider.forMethod(parameter)).isEmpty();
 	}
 
-	private class WithNamedProviders {
+	private class NamedResolvers {
 		@Property
 		@DataFrom("aString")
 		boolean string(@ForAll String aString) {
@@ -64,8 +72,8 @@ class PropertyMethodDataResolverTests {
 		}
 
 		@Data("aString")
-		Iterable<String> aString() {
-			return null;
+		Iterable<Tuple1<String>>  aString() {
+			return Table.of("1", "2", "3");
 		}
 
 		@Property
@@ -81,31 +89,33 @@ class PropertyMethodDataResolverTests {
 		}
 
 		@Data
-		Iterable<String> byMethodName() {
+		Iterable<Tuple1<String>> byMethodName() {
 			return null;
 		}
 
 		@Group
-		class NestedWithNamedProviders {
+		class NestedNamedProviders {
 			@Property
-			boolean nestedStringByMethodName(@ForAll("byMethodName") String aString) {
+			@DataFrom("byMethodName")
+			boolean nestedStringByMethodName(@ForAll String aString) {
 				return true;
 			}
 
 			@Property
-			boolean nestedString(@ForAll("aString") String aString) {
+			@DataFrom("aString")
+			boolean nestedString(@ForAll String aString) {
 				return true;
 			}
 
 		}
 	}
 
-	private static PropertyMethodArbitraryResolver getResolver(Class<?> container) {
-		return new PropertyMethodArbitraryResolver(container, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
+	private static PropertyMethodDataResolver getResolver(Class<?> container) {
+		return new PropertyMethodDataResolver(container, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
 	}
 
-	private static MethodParameter getParameter(Class container, String methodName) {
-		return TestHelper.getParametersFor(container, methodName).get(0);
+	private static Method getMethod(Class container, String methodName) {
+		return TestHelper.getMethod(container, methodName);
 	}
 
 }
