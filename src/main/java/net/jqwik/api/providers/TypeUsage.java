@@ -53,6 +53,17 @@ public class TypeUsage {
 		return new TypeUsage(type);
 	}
 
+	public static TypeUsage wildcard(TypeUsage upperBound) {
+		return new TypeUsage(
+			Object.class,
+			WILDCARD,
+			new TypeUsage[] {upperBound},
+			new TypeUsage[0],
+			Collections.emptyList(),
+			Collections.emptyList()
+		);
+	}
+
 	private static TypeUsage forWildcard(WildcardType wildcardType) {
 		return new TypeUsage(
 			Object.class,

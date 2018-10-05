@@ -103,6 +103,21 @@ class TypeUsageTests {
 		assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
 	}
 
+	@Example
+	@Label("wildcard()")
+	void wildcard() {
+		TypeUsage wildcardWithUpperBound = TypeUsage.wildcard(TypeUsage.of(Collection.class));
+
+		assertThat(wildcardWithUpperBound.getRawType()).isEqualTo(Object.class);
+		assertThat(wildcardWithUpperBound.isWildcard()).isTrue();
+		assertThat(wildcardWithUpperBound.isTypeVariableOrWildcard()).isTrue();
+		assertThat(wildcardWithUpperBound.isGeneric()).isFalse();
+		assertThat(wildcardWithUpperBound.isArray()).isFalse();
+		assertThat(wildcardWithUpperBound.isEnum()).isFalse();
+
+		assertThat(wildcardWithUpperBound.toString()).isEqualTo("? extends Collection");
+	}
+
 	@Group
 	@Label("forParameter()")
 	class ForParameter {
@@ -400,13 +415,35 @@ class TypeUsageTests {
 			TypeUsage rawList = TypeUsage.of(List.class);
 
 			assertThat(listOfBoundWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
+
 			assertThat(listOfWildcard.canBeAssignedTo(listOfBoundWildcard)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(listOfWildcard)).isTrue();
+
 			assertThat(listOfString.canBeAssignedTo(listOfWildcard)).isTrue();
 			assertThat(listOfString.canBeAssignedTo(listOfBoundWildcard)).isFalse();
+
 			assertThat(listOfWildcard.canBeAssignedTo(listOfString)).isFalse();
 			assertThat(listOfWildcard.canBeAssignedTo(rawList)).isTrue();
+
 			assertThat(rawList.canBeAssignedTo(listOfWildcard)).isTrue();
+		}
+
+		@Example
+		void parameterizedTypesWithBoundWildcards() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public List<? extends Tuple> listOfBoundWildcard() { return null; }
+			}
+
+			Type boundWildcardType = LocalClass.class.getMethod("listOfBoundWildcard").getAnnotatedReturnType().getType();
+			TypeUsage listOfBoundWildcard = TypeUsage.forType(boundWildcardType);
+
+			TypeUsage listOfTypeThatMatchesBound = TypeUsage.of(List.class, TypeUsage.of(Tuple1.class, TypeUsage.of(String.class)));
+			assertThat(listOfTypeThatMatchesBound.canBeAssignedTo(listOfBoundWildcard)).isTrue();
+			assertThat(listOfBoundWildcard.canBeAssignedTo(listOfTypeThatMatchesBound)).isFalse();
+
+			TypeUsage listOfTypeThatDoesntMatchBound = TypeUsage.of(List.class, TypeUsage.of(Tuple.class));
+			assertThat(listOfBoundWildcard.canBeAssignedTo(listOfTypeThatDoesntMatchBound)).isFalse();
 		}
 
 		@Example

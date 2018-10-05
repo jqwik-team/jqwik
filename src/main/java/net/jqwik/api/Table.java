@@ -14,7 +14,7 @@ public class Table {
 		return tuples;
 	}
 
-//	public static <T> Iterable<Tuple1<T>> of(Tuple1<T>... tuples) {
-//		return null;
-//	}
+	public static <T> Iterable<Tuple1<T>> of(Tuple1<T>... tuples) {
+		return Arrays.asList(tuples);
+	}
 }

@@ -35,7 +35,7 @@ public class PropertyMethodDataResolver implements DataResolver {
 			Data generateAnnotation = method.getDeclaredAnnotation(Data.class);
 			return generateAnnotation.value();
 		};
-		TypeUsage targetType = TypeUsage.of(Iterable.class, TypeUsage.of(Tuple.class));
+		TypeUsage targetType = TypeUsage.of(Iterable.class, TypeUsage.wildcard(TypeUsage.of(Tuple.class)));
 		return JqwikReflectionSupport.findGeneratorMethod(generatorName, this.containerClass, Data.class, generatorNameSupplier, targetType);
 	}
 }
