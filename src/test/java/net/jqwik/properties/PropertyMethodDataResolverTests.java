@@ -14,61 +14,90 @@ import static org.assertj.core.api.Assertions.*;
 @Group
 class PropertyMethodDataResolverTests {
 
-	@Example
-	void findStringGeneratorByName() {
-		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
-		Method parameter = getMethod(NamedResolvers.class, "string");
-		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
+	@Group
+	class SingleParameter {
+		@Example
+		void findStringGeneratorByName() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
+			Method parameter = getMethod(NamedResolvers.class, "string");
+			Optional<Iterable<? extends Tuple>> optionalData = resolver.forMethod(parameter);
 
-		Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
-		assertThat(data).containsExactly(
-			Tuple.of("1"),
-			Tuple.of("2"),
-			Tuple.of("3")
-		);
+			Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
+			assertThat(data).containsExactly(
+				Tuple.of("1"),
+				Tuple.of("2"),
+				Tuple.of("3")
+			);
+		}
+
+		@Example
+		void findStringGeneratorByMethodName() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
+			Method parameter = getMethod(NamedResolvers.class, "stringByMethodName");
+			Optional<Iterable<? extends Tuple>> optionalData = resolver.forMethod(parameter);
+
+			Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
+			assertThat(data).containsExactly(
+				Tuple.of("4"),
+				Tuple.of("5"),
+				Tuple.of("6")
+			);
+		}
+
+		@Example
+		void findGeneratorByMethodNameOutsideGroup() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.NestedNamedProviders.class);
+			Method parameter = getMethod(NamedResolvers.NestedNamedProviders.class, "nestedStringByMethodName");
+
+			Optional<Iterable<? extends Tuple>> optionalData = resolver.forMethod(parameter);
+			Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
+			assertThat(data).containsExactly(
+				Tuple.of("4"),
+				Tuple.of("5"),
+				Tuple.of("6")
+			);
+		}
+
+		@Example
+		void findGeneratorByNameOutsideGroup() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.NestedNamedProviders.class);
+			Method parameter = getMethod(NamedResolvers.NestedNamedProviders.class, "nestedString");
+			Optional<Iterable<? extends Tuple>> optionalData = resolver.forMethod(parameter);
+
+			Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
+			assertThat(data).containsExactly(
+				Tuple.of("1"),
+				Tuple.of("2"),
+				Tuple.of("3")
+			);
+		}
+
+		@Example
+		void namedDataGeneratorNotFound() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
+			Method parameter = getMethod(NamedResolvers.class, "otherString");
+			assertThat(resolver.forMethod(parameter)).isEmpty();
+		}
+
 	}
 
-	@Example
-	void findStringGeneratorByMethodName() {
-		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
-		Method parameter = getMethod(NamedResolvers.class, "stringByMethodName");
-		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
+	@Group
+	class MoreThanOneParameter {
+		@Example
+		void twoParameters() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
+			Method parameter = getMethod(NamedResolvers.class, "twoParameters");
+			Optional<Iterable<? extends Tuple>> optionalData = resolver.forMethod(parameter);
 
-		Iterable<Tuple1<String>> data = (Iterable<Tuple1<String>>) optionalData.get();
-		assertThat(data).containsExactly(
-			Tuple.of("4"),
-			Tuple.of("5"),
-			Tuple.of("6")
-		);
+			Iterable<Tuple2<String, Integer>> data = (Iterable<Tuple2<String, Integer>>) optionalData.get();
+			assertThat(data).containsExactly(
+				Tuple.of("4", 4),
+				Tuple.of("5", 5),
+				Tuple.of("6", 6)
+			);
+		}
 	}
 
-	//	@Example
-	void findWithMoreThanOneParameter() {
-		assertThat(false).isTrue();
-	}
-
-	//	@Example
-	void findGeneratorByMethodNameOutsideGroup() throws NoSuchMethodException {
-		PropertyMethodDataResolver provider = getResolver(NamedResolvers.NestedNamedProviders.class);
-		Method parameter = getMethod(NamedResolvers.NestedNamedProviders.class, "nestedStringByMethodName");
-		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
-		assertThat(optionalData).isPresent();
-	}
-
-	//	@Example
-	void findGeneratorByNameOutsideGroup() throws NoSuchMethodException {
-		PropertyMethodDataResolver provider = getResolver(NamedResolvers.NestedNamedProviders.class);
-		Method parameter = getMethod(NamedResolvers.NestedNamedProviders.class, "nestedString");
-		Optional<Iterable<? extends Tuple>> optionalData = provider.forMethod(parameter);
-		assertThat(optionalData).isPresent();
-	}
-
-	//	@Example
-	void namedStringGeneratorNotFound() throws NoSuchMethodException {
-		PropertyMethodDataResolver provider = getResolver(NamedResolvers.class);
-		Method parameter = getMethod(NamedResolvers.class, "otherString");
-		assertThat(provider.forMethod(parameter)).isEmpty();
-	}
 
 	private class NamedResolvers {
 		@Property
@@ -100,6 +129,21 @@ class PropertyMethodDataResolverTests {
 				Tuple.of("4"),
 				Tuple.of("5"),
 				Tuple.of("6")
+			);
+		}
+
+		@Property
+		@DataFrom("twos")
+		boolean twoParameters(@ForAll String aString) {
+			return true;
+		}
+
+		@Data
+		Iterable twos() {
+			return Table.of(
+				Tuple.of("4", 4),
+				Tuple.of("5", 5),
+				Tuple.of("6", 6)
 			);
 		}
 
