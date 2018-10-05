@@ -9,6 +9,21 @@ import static org.assertj.core.api.Assertions.*;
 class TupleTests {
 
 	@Example
+	void tupleOfOne() {
+		Tuple1<String> tuple1 = Tuple.of("hallo");
+		assertThat(tuple1.size()).isEqualTo(1);
+
+		assertThat(tuple1.get1()).isEqualTo("hallo");
+
+		assertThat(tuple1.equals(Tuple.of("hallo"))).isTrue();
+		assertThat(tuple1.equals(Tuple.of("hello"))).isFalse();
+
+		assertThat(tuple1.hashCode()).isEqualTo(Tuple.of("hallo").hashCode());
+
+		assertThat(tuple1.toString()).isEqualTo("(hallo)");
+	}
+
+	@Example
 	void tupleOfTwo() {
 		Tuple2<String, Integer> tuple2 = Tuple.of("hallo", 42);
 		assertThat(tuple2.size()).isEqualTo(2);
