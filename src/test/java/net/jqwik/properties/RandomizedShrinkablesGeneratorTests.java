@@ -134,17 +134,9 @@ class RandomizedShrinkablesGeneratorTests {
 
 	private RandomizedShrinkablesGenerator createGenerator(Random random, String methodName, ArbitraryResolver arbitraryResolver) {
 		PropertyMethodDescriptor methodDescriptor = createDescriptor(methodName);
-		List<MethodParameter> parameters = getParameters(methodDescriptor);
+		List<MethodParameter> parameters = TestHelper.getParameters(methodDescriptor);
 
 		return RandomizedShrinkablesGenerator.forParameters(parameters, arbitraryResolver, random, 1000);
-	}
-
-	private List<MethodParameter> getParameters(PropertyMethodDescriptor methodDescriptor) {
-		return Arrays
-				   .stream(JqwikReflectionSupport
-							   .getMethodParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass()))
-				   .collect(Collectors.toList());
-
 	}
 
 	private PropertyMethodDescriptor createDescriptor(String methodName) {

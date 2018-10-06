@@ -38,7 +38,7 @@ class TupleTests {
 
 		assertThat(tuple2.hashCode()).isEqualTo(Tuple.of("hallo", 42).hashCode());
 
-		assertThat(tuple2.toString()).isEqualTo("(hallo,42)");
+		assertThat(tuple2.toString()).isEqualTo("(\"hallo\",42)");
 	}
 
 	@Example
@@ -56,7 +56,7 @@ class TupleTests {
 
 		assertThat(tuple3.hashCode()).isEqualTo(Tuple.of("hallo", 42, true).hashCode());
 
-		assertThat(tuple3.toString()).isEqualTo("(hallo,42,true)");
+		assertThat(tuple3.toString()).isEqualTo("(\"hallo\",42,true)");
 	}
 
 	@Example
@@ -75,7 +75,7 @@ class TupleTests {
 
 		assertThat(tuple4.hashCode()).isEqualTo(Tuple.of("hallo", 42, true, RoundingMode.CEILING).hashCode());
 
-		assertThat(tuple4.toString()).isEqualTo("(hallo,42,true,CEILING)");
+		assertThat(tuple4.toString()).isEqualTo("(\"hallo\",42,true,CEILING)");
 	}
 
 	@Example
@@ -95,7 +95,7 @@ class TupleTests {
 
 		assertThat(tuple5.hashCode()).isEqualTo(Tuple.of("hallo", 42, true, RoundingMode.CEILING, 0.5).hashCode());
 
-		assertThat(tuple5.toString()).isEqualTo("(hallo,42,true,CEILING,0.5)");
+		assertThat(tuple5.toString()).isEqualTo("(\"hallo\",42,true,CEILING,0.5)");
 	}
 
 	@Example
@@ -116,7 +116,7 @@ class TupleTests {
 
 		assertThat(tuple6.hashCode()).isEqualTo(Tuple.of("hallo", 42, true, RoundingMode.CEILING, 0.5, "six").hashCode());
 
-		assertThat(tuple6.toString()).isEqualTo("(hallo,42,true,CEILING,0.5,six)");
+		assertThat(tuple6.toString()).isEqualTo("(\"hallo\",42,true,CEILING,0.5,\"six\")");
 	}
 
 	@Example
@@ -139,7 +139,7 @@ class TupleTests {
 
 		assertThat(tuple7.hashCode()).isEqualTo(Tuple.of("hallo", 42, true, RoundingMode.CEILING, 0.5, "six", 7).hashCode());
 
-		assertThat(tuple7.toString()).isEqualTo("(hallo,42,true,CEILING,0.5,six,7)");
+		assertThat(tuple7.toString()).isEqualTo("(\"hallo\",42,true,CEILING,0.5,\"six\",7)");
 	}
 
 	@Example
@@ -163,6 +163,6 @@ class TupleTests {
 
 		assertThat(tuple8.hashCode()).isEqualTo(Tuple.of("hallo", 42, true, RoundingMode.CEILING, 0.5, "six", 7, false).hashCode());
 
-		assertThat(tuple8.toString()).isEqualTo("(hallo,42,true,CEILING,0.5,six,7,false)");
+		assertThat(tuple8.toString()).isEqualTo("(\"hallo\",42,true,CEILING,0.5,\"six\",7,false)");
 	}
 }
