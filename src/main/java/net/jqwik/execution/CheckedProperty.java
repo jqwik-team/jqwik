@@ -15,19 +15,19 @@ public class CheckedProperty {
 	public final String propertyName;
 	public final CheckedFunction checkedFunction;
 	public final List<MethodParameter> forAllParameters;
-	public final ArbitraryResolver arbitraryResolver;
-	public final DataResolver dataResolver;
+	private final ArbitraryResolver arbitraryResolver;
+	private final Optional<Iterable<? extends Tuple>> optionalData;
 	public final PropertyConfiguration configuration;
 
 	public CheckedProperty(
 		String propertyName, CheckedFunction checkedFunction, List<MethodParameter> forAllParameters,
-		ArbitraryResolver arbitraryResolver, DataResolver dataResolver, PropertyConfiguration configuration
+		ArbitraryResolver arbitraryResolver, Optional<Iterable<? extends Tuple>> optionalData, PropertyConfiguration configuration
 	) {
 		this.propertyName = propertyName;
 		this.checkedFunction = checkedFunction;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryResolver = arbitraryResolver;
-		this.dataResolver = dataResolver;
+		this.optionalData = optionalData;
 		this.configuration = configuration;
 	}
 
@@ -48,9 +48,15 @@ public class CheckedProperty {
 	}
 
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
-		// TODO: When data is available -> createDataDrivenShrinkablesGenerator
-		ShrinkablesGenerator shrinkablesGenerator = createRandomizedShrinkablesGenerator(configuration);
+		ShrinkablesGenerator shrinkablesGenerator =
+			optionalData.isPresent()
+				? createDataBasedShrinkablesGenerator()
+				: createRandomizedShrinkablesGenerator(configuration);
 		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
+	}
+
+	private ShrinkablesGenerator createDataBasedShrinkablesGenerator() {
+		return new DataBasedShrinkablesGenerator(forAllParameters, optionalData.get());
 	}
 
 	private ShrinkablesGenerator createRandomizedShrinkablesGenerator(PropertyConfiguration configuration) {
