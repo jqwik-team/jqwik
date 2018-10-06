@@ -1,17 +1,18 @@
 package net.jqwik;
 
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
+import org.junit.platform.engine.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.lifecycle.*;
 import net.jqwik.properties.*;
 import net.jqwik.support.*;
-import org.junit.platform.engine.*;
-
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 public class TestHelper {
 	public static List<MethodParameter> getParametersFor(Class<?> aClass, String methodName) {
@@ -59,5 +60,13 @@ public class TestHelper {
 				return new AutoCloseableHook();
 			}
 		};
+	}
+
+	public static List<MethodParameter> getParameters(PropertyMethodDescriptor methodDescriptor) {
+		return
+			Arrays.stream(JqwikReflectionSupport
+							  .getMethodParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass()))
+				  .collect(Collectors.toList());
+
 	}
 }

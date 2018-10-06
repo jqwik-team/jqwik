@@ -3,6 +3,8 @@ package net.jqwik.api;
 import java.io.*;
 import java.util.*;
 
+import static net.jqwik.support.JqwikStringSupport.*;
+
 public interface Tuple extends Serializable, Cloneable {
 
 	int size();
@@ -120,7 +122,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s)", v1, v2);
+			return String.format("(%s,%s)", displayString(v1), displayString(v2));
 		}
 	}
 
@@ -164,7 +166,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s)", v1, v2, v3);
+			return String.format("(%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3));
 		}
 	}
 
@@ -209,7 +211,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s)", v1, v2, v3, v4);
+			return String.format("(%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4));
 		}
 	}
 
@@ -254,7 +256,8 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5);
+			return String
+					   .format("(%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5));
 		}
 	}
 
@@ -300,7 +303,8 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6);
+			return String
+					   .format("(%s,%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5), displayString(v6));
 		}
 	}
 
@@ -347,7 +351,8 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6, v7);
+			return String
+					   .format("(%s,%s,%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5), displayString(v6), displayString(v7));
 		}
 	}
 
@@ -395,7 +400,8 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6, v7, v8);
+			return String
+					   .format("(%s,%s,%s,%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5), displayString(v6), displayString(v7), displayString(v8));
 		}
 	}
 }
