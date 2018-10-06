@@ -6,6 +6,7 @@ import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.support.*;
@@ -25,7 +26,11 @@ public class PropertyMethodDataResolver implements DataResolver {
 		Optional<FromData> optionalDataFrom = AnnotationSupport.findAnnotation(method, FromData.class);
 		return optionalDataFrom
 				   .map(FromData::value)
-				   .flatMap(this::findGenerator)
+				   .map(generatorName -> {
+					   Supplier<JqwikException> exceptionSupplier =
+						   () -> new JqwikException("No data provider method for generator [" + generatorName + "] found");
+					   return findGenerator(generatorName).orElseThrow(exceptionSupplier);
+				   })
 				   .map(generatorMethod -> JqwikReflectionSupport.invokeMethodPotentiallyOuter(generatorMethod, testInstance))
 				   .map(invocationResult -> (Iterable<Tuple>) invocationResult);
 	}

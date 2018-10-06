@@ -83,7 +83,7 @@ class PropertyMethodDataResolverTests {
 		void unknownGeneratorName() {
 			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
 			Method parameter = getMethod(NamedResolvers.class, "unknownGeneratorName");
-			assertThat(resolver.forMethod(parameter)).isEmpty();
+			assertThatThrownBy(() ->resolver.forMethod(parameter)).isInstanceOf(JqwikException.class);
 		}
 
 	}
