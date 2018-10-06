@@ -117,7 +117,7 @@ class CheckedPropertyTests {
 				params -> false,
 				parameters,
 				p -> Collections.emptySet(),
-				m -> Optional.empty(),
+				Optional.empty(),
 				new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0])
 			);
 
@@ -134,7 +134,7 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = new CheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
-				m -> Optional.empty(),
+				Optional.empty(),
 				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, new Reporting[0])
 			);
 
@@ -152,7 +152,7 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = new CheckedProperty(
 				"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 				p -> Collections.emptySet(),
-				m -> Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
+				Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
 				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, new Reporting[0])
 			);
 
@@ -167,7 +167,7 @@ class CheckedPropertyTests {
 		CheckedProperty checkedProperty = new CheckedProperty(
 			methodName, forAllFunction, getParametersForMethod(methodName),
 			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
-			m -> Optional.empty(),
+			Optional.empty(),
 			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0])
 		);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);

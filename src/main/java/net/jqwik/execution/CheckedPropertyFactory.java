@@ -1,15 +1,16 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.*;
-import net.jqwik.support.*;
-import org.junit.platform.commons.support.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import org.junit.platform.commons.support.*;
+
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.properties.*;
+import net.jqwik.support.*;
 
 public class CheckedPropertyFactory {
 
@@ -25,9 +26,12 @@ public class CheckedPropertyFactory {
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor.getContainerClass(), testInstance);
-		PropertyMethodDataResolver dataResolver = new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), testInstance);
 
-		return new CheckedProperty(propertyName, checkedFunction, forAllParameters, arbitraryProvider, dataResolver, configuration);
+		Optional<Iterable<? extends Tuple>> optionalData =
+			new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), testInstance)
+				.forMethod(propertyMethodDescriptor.getTargetMethod());
+
+		return new CheckedProperty(propertyName, checkedFunction, forAllParameters, arbitraryProvider, optionalData, configuration);
 	}
 
 	private CheckedFunction createCheckedFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

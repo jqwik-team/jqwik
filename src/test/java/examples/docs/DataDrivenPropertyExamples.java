@@ -1,0 +1,28 @@
+package examples.docs;
+
+import org.assertj.core.api.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
+
+class DataDrivenPropertyExamples {
+
+	@Data
+	Iterable<Tuple2<Integer, String>> fizzBuzzExamples() {
+		return Table.of(
+			Tuple.of(1, "1"),
+			Tuple.of(3, "Fizz"),
+			Tuple.of(5, "Buzz")
+		);
+	}
+
+	@Property
+	@FromData("fizzBuzzExamples")
+	void fizzBuzzWorks(@ForAll int index, @ForAll String result) {
+		Assertions.assertThat(fizzBuzz(index)).isEqualTo(result);
+	}
+
+	private String fizzBuzz(int index) {
+		return Integer.toString(index);
+	}
+}
