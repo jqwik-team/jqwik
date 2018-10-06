@@ -16,14 +16,18 @@ public class CheckedProperty {
 	public final CheckedFunction checkedFunction;
 	public final List<MethodParameter> forAllParameters;
 	public final ArbitraryResolver arbitraryResolver;
+	public final DataResolver dataResolver;
 	public final PropertyConfiguration configuration;
 
-	public CheckedProperty(String propertyName, CheckedFunction checkedFunction, List<MethodParameter> forAllParameters,
-						   ArbitraryResolver arbitraryResolver, PropertyConfiguration configuration) {
+	public CheckedProperty(
+		String propertyName, CheckedFunction checkedFunction, List<MethodParameter> forAllParameters,
+		ArbitraryResolver arbitraryResolver, DataResolver dataResolver, PropertyConfiguration configuration
+	) {
 		this.propertyName = propertyName;
 		this.checkedFunction = checkedFunction;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryResolver = arbitraryResolver;
+		this.dataResolver = dataResolver;
 		this.configuration = configuration;
 	}
 
@@ -44,6 +48,7 @@ public class CheckedProperty {
 	}
 
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
+		// TODO: When data is available -> createDataDrivenShrinkablesGenerator
 		ShrinkablesGenerator shrinkablesGenerator = createRandomizedShrinkablesGenerator(configuration);
 		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
 	}

@@ -1,19 +1,21 @@
 package net.jqwik.properties;
 
+import java.util.*;
+import java.util.function.*;
+
+import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.*;
 import net.jqwik.support.*;
-import org.junit.platform.engine.reporting.*;
-import org.opentest4j.*;
 
-import java.util.*;
-import java.util.function.*;
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.TestHelper.*;
 import static net.jqwik.properties.PropertyCheckResult.Status.*;
-import static org.assertj.core.api.Assertions.*;
 
 @Group
 class CheckedPropertyTests {
@@ -25,8 +27,10 @@ class CheckedPropertyTests {
 	class CheckedPropertyCreation {
 		@Example
 		void createCheckedPropertyWithoutParameters() {
-			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
-					.forMethod(BooleanReturningExamples.class, "propertyWithoutParameters", int.class).build();
+			PropertyMethodDescriptor descriptor =
+				(PropertyMethodDescriptor) TestDescriptorBuilder
+											   .forMethod(CheckingExamples.class, "propertyWithoutParameters", int.class)
+											   .build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
@@ -39,8 +43,10 @@ class CheckedPropertyTests {
 
 		@Example
 		void createCheckedPropertyWithTriesParameter() {
-			PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) TestDescriptorBuilder
-					.forMethod(BooleanReturningExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class).build();
+			PropertyMethodDescriptor descriptor =
+				(PropertyMethodDescriptor) TestDescriptorBuilder
+											   .forMethod(CheckingExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class)
+											   .build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
 			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
 
@@ -53,7 +59,7 @@ class CheckedPropertyTests {
 	}
 
 	@Group
-	class PropertiesReturningBoolean {
+	class PropertyChecking {
 		@Example
 		void intParametersSuccess() {
 			intOnlyExample("prop0", params -> params.size() == 0, SATISFIED);
@@ -106,9 +112,14 @@ class CheckedPropertyTests {
 		@Example
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
 			List<MethodParameter> parameters = getParametersForMethod("stringProp");
-			CheckedProperty checkedProperty = new CheckedProperty("stringProp", params -> false, parameters, //
-					p -> Collections.emptySet(), //
-					new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0]));
+			CheckedProperty checkedProperty = new CheckedProperty(
+				"stringProp",
+				params -> false,
+				parameters,
+				p -> Collections.emptySet(),
+				m -> Optional.empty(),
+				new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0])
+			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
@@ -123,6 +134,7 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = new CheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				m -> Optional.empty(),
 				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, new Reporting[0])
 			);
 
@@ -133,23 +145,40 @@ class CheckedPropertyTests {
 			assertThat(allGeneratedInts).containsExactly(0, -56, 1, -1, -100, 3, 31, 27, -27, 53, -77, 8, -60, 69, 29, -6, -7, 38, 37, -10);
 		}
 
+		@Example
+		void dataDrivenProperty() {
+			List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
+			CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
+			CheckedProperty checkedProperty = new CheckedProperty(
+				"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
+				p -> Collections.emptySet(),
+				m -> Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, new Reporting[0])
+			);
+
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
+			assertThat(check.countTries()).isEqualTo(3);
+			assertThat(check.status()).isEqualTo(SATISFIED);
+			assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
+		}
 	}
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
-		CheckedProperty checkedProperty = new CheckedProperty( //
-			methodName, forAllFunction, getParametersForMethod(methodName), //
-			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))), //
-			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0]) //
+		CheckedProperty checkedProperty = new CheckedProperty(
+			methodName, forAllFunction, getParametersForMethod(methodName),
+			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
+			m -> Optional.empty(),
+			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0])
 		);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
 
 	private List<MethodParameter> getParametersForMethod(String methodName) {
-		return getParametersFor(BooleanReturningExamples.class, methodName);
+		return getParametersFor(CheckingExamples.class, methodName);
 	}
 
-	private static class BooleanReturningExamples {
+	private static class CheckingExamples {
 
 		@Property
 		public boolean propertyWithoutParameters(@ForAll int anyNumber) {
@@ -177,9 +206,18 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		public boolean prop8(@ForAll int n1, @ForAll int n2, @ForAll int n3, @ForAll int n4, @ForAll int n5, @ForAll int n6, @ForAll int n7,
-				@ForAll int n8) {
+		public boolean prop8(
+			@ForAll int n1, @ForAll int n2, @ForAll int n3, @ForAll int n4, @ForAll int n5, @ForAll int n6, @ForAll int n7,
+			@ForAll int n8
+		) {
 			return true;
 		}
+
+		@Property
+		@FromData("fizzBuzzSamples")
+		public boolean dataDrivenProperty(@ForAll int index, @ForAll String fizzBuzz) {
+			return true;
+		}
+
 	}
 }
