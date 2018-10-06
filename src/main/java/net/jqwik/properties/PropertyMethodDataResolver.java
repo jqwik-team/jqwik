@@ -22,9 +22,9 @@ public class PropertyMethodDataResolver implements DataResolver {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<Iterable<? extends Tuple>> forMethod(Method method) {
-		Optional<DataFrom> optionalDataFrom = AnnotationSupport.findAnnotation(method, DataFrom.class);
+		Optional<FromData> optionalDataFrom = AnnotationSupport.findAnnotation(method, FromData.class);
 		return optionalDataFrom
-				   .map(DataFrom::value)
+				   .map(FromData::value)
 				   .flatMap(this::findGenerator)
 				   .map(generatorMethod -> JqwikReflectionSupport.invokeMethodPotentiallyOuter(generatorMethod, testInstance))
 				   .map(invocationResult -> (Iterable<Tuple>) invocationResult);
