@@ -73,9 +73,16 @@ class PropertyMethodDataResolverTests {
 		}
 
 		@Example
-		void namedDataGeneratorNotFound() {
+		void noFromDataAnnotation() {
 			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
-			Method parameter = getMethod(NamedResolvers.class, "otherString");
+			Method parameter = getMethod(NamedResolvers.class, "noFromData");
+			assertThat(resolver.forMethod(parameter)).isEmpty();
+		}
+
+		@Example
+		void unknownGeneratorName() {
+			PropertyMethodDataResolver resolver = getResolver(NamedResolvers.class);
+			Method parameter = getMethod(NamedResolvers.class, "unknownGeneratorName");
 			assertThat(resolver.forMethod(parameter)).isEmpty();
 		}
 
@@ -114,7 +121,7 @@ class PropertyMethodDataResolverTests {
 
 	private class NamedResolvers {
 		@Property
-		@DataFrom("aString")
+		@FromData("aString")
 		boolean string(@ForAll String aString) {
 			return true;
 		}
@@ -125,13 +132,18 @@ class PropertyMethodDataResolverTests {
 		}
 
 		@Property
-		@DataFrom("otherString")
-		boolean otherString(@ForAll String aString) {
+		boolean noFromData(@ForAll String aString) {
 			return true;
 		}
 
 		@Property
-		@DataFrom("byMethodName")
+		@FromData("unknown")
+		boolean unknownGeneratorName(@ForAll String aString) {
+			return true;
+		}
+
+		@Property
+		@FromData("byMethodName")
 		boolean stringByMethodName(String aString) {
 			return true;
 		}
@@ -146,7 +158,7 @@ class PropertyMethodDataResolverTests {
 		}
 
 		@Property
-		@DataFrom("twos")
+		@FromData("twos")
 		boolean twoParameters(@ForAll String aString) {
 			return true;
 		}
@@ -161,7 +173,7 @@ class PropertyMethodDataResolverTests {
 		}
 
 		@Property
-		@DataFrom("eight")
+		@FromData("eight")
 		boolean eightParameters(@ForAll String aString) {
 			return true;
 		}
@@ -177,13 +189,13 @@ class PropertyMethodDataResolverTests {
 		@Group
 		class NestedNamedProviders {
 			@Property
-			@DataFrom("byMethodName")
+			@FromData("byMethodName")
 			boolean nestedStringByMethodName(@ForAll String aString) {
 				return true;
 			}
 
 			@Property
-			@DataFrom("aString")
+			@FromData("aString")
 			boolean nestedString(@ForAll String aString) {
 				return true;
 			}
