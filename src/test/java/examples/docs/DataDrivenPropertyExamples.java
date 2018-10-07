@@ -12,7 +12,8 @@ class DataDrivenPropertyExamples {
 		return Table.of(
 			Tuple.of(1, "1"),
 			Tuple.of(3, "Fizz"),
-			Tuple.of(5, "Buzz")
+			Tuple.of(5, "Buzz"),
+			Tuple.of(15, "FizzBuzz")
 		);
 	}
 

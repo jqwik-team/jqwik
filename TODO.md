@@ -1,4 +1,3 @@
 - Data-driven properties
-  - Tests for DataBasedShrinkablesGenerator
-  - Add section on data-driven properties to user guide
+  - Warnings if method parameters have other annotations than @ForAll
 
