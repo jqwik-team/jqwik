@@ -2151,8 +2151,10 @@ number of `@ForAll` parameters in your property method, e.g. `Tuple.Tuple3`
 for a method with three parameters. Otherwise _jqwik_ will fail the property
 and tell you that the provided data is inconsistent with the method's parameters. 
 
-Data points are fed to the property in their provided order.
-But unlike parameterized tests in JUnit4 or Jupiter, _jqwik_ will report only the
+Data points are fed to the property in their provided order. 
+The `tries` parameter of `@Property` will constrain the maximum data points
+being tried.
+Unlike parameterized tests in JUnit4 or Jupiter, _jqwik_ will report only the
 first falsified data point. Thus, fixing the first failure might lead to another
 falsified data point later on. There is also _no shrinking_ being done for data-driven
 properties since _jqwik_ has no information about the constraints under which 
