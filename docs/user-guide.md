@@ -456,17 +456,26 @@ class TestsWithGroups {
 }
 ```
 
-## Labeling Tests
+## Naming and Labeling Tests
 
-Test container classes, groups, example methods and property methods can be labeled
+Using Java-style camel case naming for your test container classes and property methods
+will sometimes lead to hard to read display names in your test reports
+and your IDE.
+Therefore, _jqwik_ provides a simple way to insert spaces
+into the displayed name of your test container or property:
+just add underscores (`_`), which are valid Java identifier characters.
+Each underscore will be replaced by a space for display purposes.
+
+If you want to tweak display names even more,
+test container classes, groups, example methods and property methods can be labeled
 using the annotation `@Label("a label")`. This label will be used to display the element
 in test reports or within the IDE. 
-[In the following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/LabelingExamples.java), 
+[In the following example](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/NamingExamples.java),
 every test relevant element has been labeled:
 
 ```java
-@Label("Labeling")
-class LabelingExamples {
+@Label("Naming")
+class NamingExamples {
 
 	@Property
 	@Label("a property")
@@ -479,6 +488,13 @@ class LabelingExamples {
 		@Label("an example with äöüÄÖÜ")
 		void anExampleWithALabel() { }
 	}
+
+    @Group
+    class Group_with_spaces {
+        @Example
+        void example_with_spaces() { }
+    }
+
 }
 ```
 
@@ -2179,6 +2195,10 @@ the external data was conceived or generated.
 - There are new tuple types `Tuple5` up to `Tuple8`
 - [Data-Driven Properties:](#data-driven-properties) Feed data into your properties
   instead of randomized generation
+- Display names of test containers and properties
+  [will now automatically be prettified](#naming-and-labeling-tests),
+  i.e. each underscore will be replaced by a single space.
+
 
 ### 0.8.x
 
@@ -2259,7 +2279,7 @@ Faulty release. Do not use!
 ##### 0.8.7
 
 - Property methods that also have Jupiter annotations are skipped
-- Added `@Label` to allow the [labeling of examples, properties and containers](#labeling-tests)
+- Added `@Label` to allow the [labeling of examples, properties and containers](#naming-and-labeling-tests)
 - Changed license from EPL 1.0 to EPL 2.0
 - Added `@Tag` to allow the [tagging of examples, properties and containers](#tagging-tests)
 - User guide: Added links to example sources on github

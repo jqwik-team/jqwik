@@ -1,12 +1,13 @@
 package net.jqwik.descriptor;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import org.junit.platform.engine.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
+
+import org.junit.platform.engine.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
 
 import static java.util.stream.Collectors.*;
 import static org.junit.platform.commons.support.AnnotationSupport.*;
@@ -27,10 +28,16 @@ public class DiscoverySupport {
 			.collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
 	}
 
-	public static String determineLabel(AnnotatedElement element, Supplier<String> defaultName) {
+	public static String determineLabel(AnnotatedElement element, Supplier<String> defaultNameSupplier) {
 		return findAnnotation(element, Label.class)
-			.map(Label::value)
-			.filter(displayName -> !displayName.trim().isEmpty())
-			.orElseGet(defaultName);
+				   .map(Label::value)
+				   .filter(displayName -> !displayName.trim().isEmpty())
+				   .orElseGet(readableNameSupplier(defaultNameSupplier));
+	}
+
+	private static Supplier<String> readableNameSupplier(Supplier<String> nameSupplier) {
+		return () -> nameSupplier
+						 .get()
+						 .replaceAll("_", " ");
 	}
 }

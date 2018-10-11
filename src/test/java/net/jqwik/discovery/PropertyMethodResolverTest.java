@@ -1,22 +1,22 @@
 package net.jqwik.discovery;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.recording.*;
+import java.lang.reflect.*;
+import java.util.*;
+
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
-import java.lang.reflect.*;
-import java.util.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.recording.*;
 
 @Group
 class PropertyMethodResolverTest {
 
 	private final int DEFAULT_TRIES = 999;
 	private final int DEFAULT_MAX_DISCARD_RATIO = 4;
-	private final int DEFAULT_MAX_SHRINKING_RATE = 99;
 
 	private TestRunData testRunData = new TestRunData();
 	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO);
@@ -53,6 +53,21 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("my label");
 			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
 					.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
+
+		}
+
+		@Example
+		void property_with_underscores() {
+			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
+			Method method = TestHelper.getMethod(TestContainer.class, "property_with_underscores");
+			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
+
+			Assertions.assertThat(descriptors).hasSize(1);
+			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
+
+			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("property with underscores");
+			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
+					  .isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
 
 		}
 
@@ -192,6 +207,10 @@ class PropertyMethodResolverTest {
 		@Property
 		@Label("my label")
 		void propertyWithLabel() {
+		}
+
+		@Property
+		void property_with_underscores() {
 		}
 
 		@Property

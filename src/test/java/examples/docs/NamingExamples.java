@@ -2,8 +2,8 @@ package examples.docs;
 
 import net.jqwik.api.*;
 
-@Label("Labeling")
-class LabelingExamples {
+@Label("Naming")
+class NamingExamples {
 
 	@Property
 	@Label("a property")
@@ -15,5 +15,11 @@ class LabelingExamples {
 		@Example
 		@Label("an example äÄöÖüÜ")
 		void anExampleWithALabel() { }
+	}
+
+	@Group
+	class Group_with_spaces {
+		@Example
+		void example_with_spaces() { }
 	}
 }

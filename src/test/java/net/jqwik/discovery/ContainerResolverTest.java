@@ -1,12 +1,13 @@
 package net.jqwik.discovery;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
+import java.util.*;
+
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 
-import java.util.*;
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
 
 @Label("Container Resolver Tests")
 class ContainerResolverTest {
@@ -34,12 +35,22 @@ class ContainerResolverTest {
 		@Label("with label")
 		void withLabel() {
 
-			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithLabel.class, engineDescriptor);
+			Set<TestDescriptor> descriptors = resolver.resolveElement(Container_With_Label.class, engineDescriptor);
 
 			Assertions.assertThat(descriptors).hasSize(1);
 			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
 			Assertions.assertThat(classTestDescriptor.getDisplayName())
 					  .isEqualTo("container with label");
+		}
+
+		@Example
+		void with_underscores() {
+			Set<TestDescriptor> descriptors = resolver.resolveElement(Container_with_underscores.class, engineDescriptor);
+
+			Assertions.assertThat(descriptors).hasSize(1);
+			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(classTestDescriptor.getDisplayName())
+					  .isEqualTo("ContainerResolverTest.Container with underscores");
 		}
 
 		@Example
@@ -76,11 +87,22 @@ class ContainerResolverTest {
 		@Label("with label")
 		void withLabel() {
 
-			Set<TestDescriptor> descriptors = resolver.resolveElement(ContainerWithLabel.GroupWithLabel.class, engineDescriptor);
+			Set<TestDescriptor> descriptors = resolver.resolveElement(Container_With_Label.GroupWithLabel.class, engineDescriptor);
 
 			Assertions.assertThat(descriptors).hasSize(1);
 			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
 			Assertions.assertThat(classTestDescriptor.getDisplayName()).isEqualTo("group with label");
+		}
+
+		@Example
+		void with_underscores() {
+
+			Set<TestDescriptor> descriptors = resolver
+												  .resolveElement(Container_with_underscores.Group_with_underscores.class, engineDescriptor);
+
+			Assertions.assertThat(descriptors).hasSize(1);
+			ContainerClassDescriptor classTestDescriptor = (ContainerClassDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(classTestDescriptor.getDisplayName()).isEqualTo("Group with underscores");
 		}
 
 		@Example
@@ -103,10 +125,16 @@ class ContainerResolverTest {
 	}
 
 	@Label("container with label")
-	static class ContainerWithLabel {
+	static class Container_With_Label {
 		@Group
 		@Label("group with label")
 		class GroupWithLabel {
+		}
+	}
+
+	static class Container_with_underscores {
+		@Group
+		class Group_with_underscores {
 		}
 	}
 
