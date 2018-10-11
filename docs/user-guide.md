@@ -22,7 +22,7 @@
   - [Method Lifecycle](#method-lifecycle)
   - [Other Lifecycles](#other-lifecycles)
 - [Grouping Tests](#grouping-tests)
-- [Labeling Tests](#labeling-tests)
+- [Naming and Labeling Tests](#naming-and-labeling-tests)
 - [Tagging Tests](#tagging-tests)
 - [Default Parameter Generation](#default-parameter-generation)
   - [Constraining Default Generation](#constraining-default-generation)
