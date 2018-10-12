@@ -1,14 +1,14 @@
 -  Allow exhaustive generation
-   - Optional<ExhaustiveGenerator> Arbitrary.exhaustiveGenerator
-   - ExhaustiveGenerator<T> extends Iterator<T> {
-        long maxCount();
-     }
+   - ExhaustiveGenerator implementations:
      - BooleanArbitrary
      - DefaultShort|Byte|LongArbitrary
-     - ExamplesArbitrary
-     - MappedArbitrary
-     - FilteredArbitrary
-     - FlatMappedArbitrary
+     - DefaultCharsArbitrary
+     - Arbitraries.of()
+     - Arbitrary.map()
+     - Arbitrary.filter()
+     - Arbitrary.flatMap()
+     - Unique?
+     - reset needed?
    - ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator
    - Report actual generationMode
    - User Guide
