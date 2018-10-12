@@ -1,16 +1,17 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.descriptor.*;
-import net.jqwik.properties.shrinking.*;
-import net.jqwik.support.*;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
+
 import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
+import net.jqwik.api.*;
+import net.jqwik.descriptor.*;
+import net.jqwik.properties.shrinking.*;
+import net.jqwik.support.*;
 
 import static net.jqwik.properties.PropertyCheckResult.Status.*;
 
@@ -33,9 +34,9 @@ public class GenericProperty {
 		this.checkedFunction = checkedFunction;
 	}
 
-	public PropertyCheckResult check(Consumer<ReportEntry> reporter) {
+	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting) {
 		StatisticsCollector.clearAll();
-		PropertyCheckResult checkResult = checkWithoutReporting(reporter);
+		PropertyCheckResult checkResult = checkWithoutReporting(reporter, reporting);
 		reportResult(reporter, checkResult);
 		reportStatistics(reporter);
 		return checkResult;
@@ -50,7 +51,7 @@ public class GenericProperty {
 			publisher.accept(CheckResultReportEntry.from(checkResult));
 	}
 
-	private PropertyCheckResult checkWithoutReporting(Consumer<ReportEntry> reporter) {
+	private PropertyCheckResult checkWithoutReporting(Consumer<ReportEntry> reporter, Reporting[] reporting) {
 		int maxTries = configuration.getTries();
 		int countChecks = 0;
 		int countTries = 0;
@@ -63,11 +64,11 @@ public class GenericProperty {
 			List<Shrinkable> shrinkableParams = shrinkablesGenerator.next();
 			try {
 				countChecks++;
-				if (!testPredicate(shrinkableParams, configuration.getReporting(), reporter)) {
-					return shrinkAndCreateCheckResult(reporter, countChecks, countTries, shrinkableParams, null);
+				if (!testPredicate(shrinkableParams, reporter, reporting)) {
+					return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(reporter, countChecks, countTries, shrinkableParams, ae);
+				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
 				continue;
@@ -82,7 +83,11 @@ public class GenericProperty {
 		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed());
 	}
 
-	private boolean testPredicate(List<Shrinkable> shrinkableParams, Reporting[] reporting, Consumer<ReportEntry> reporter) {
+	private boolean testPredicate(
+		List<Shrinkable> shrinkableParams,
+		Consumer<ReportEntry> reporter,
+		Reporting[] reporting
+	) {
 		List<Object> plainParams = extractParams(shrinkableParams);
 		if (Reporting.GENERATED.containedIn(reporting)) {
 			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
@@ -99,11 +104,13 @@ public class GenericProperty {
 		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
-	private PropertyCheckResult shrinkAndCreateCheckResult(Consumer<ReportEntry> reporter, int countChecks,
-														   int countTries, List<Shrinkable> shrinkables, AssertionError error) {
+	private PropertyCheckResult shrinkAndCreateCheckResult(
+		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
+		int countTries, List<Shrinkable> shrinkables, AssertionError error
+	) {
 		List<Object> originalParams = extractParams(shrinkables);
 
-		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, configuration.getReporting());
+		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting);
 
 		Falsifier<List> forAllFalsifier = checkedFunction::test;
 		PropertyShrinkingResult shrinkingResult = shrinker.shrink(forAllFalsifier, error);

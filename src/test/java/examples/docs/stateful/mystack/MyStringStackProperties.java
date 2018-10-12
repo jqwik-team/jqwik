@@ -6,7 +6,7 @@ import org.assertj.core.api.*;
 
 class MyStringStackProperties {
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	void checkMyStack(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
 		actions.run(new MyStringStack());
 	}
@@ -29,7 +29,7 @@ class MyStringStackProperties {
 	}
 
 
-	@Property(reporting = Reporting.FALSIFIED)
+	@Property @Report(Reporting.FALSIFIED)
 	void checkMyStackWithInvariant(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
 		actions
 			.withInvariant(stack -> Assertions.assertThat(stack.size()).isGreaterThanOrEqualTo(0))

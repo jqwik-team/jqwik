@@ -31,10 +31,10 @@ public class CheckedProperty {
 		this.configuration = configuration;
 	}
 
-	public PropertyCheckResult check(Consumer<ReportEntry> publisher) {
+	public PropertyCheckResult check(Consumer<ReportEntry> publisher, Reporting[] reporting) {
 		PropertyConfiguration effectiveConfiguration = configurationWithEffectiveSeed();
 		try {
-			return createGenericProperty(effectiveConfiguration).check(publisher);
+			return createGenericProperty(effectiveConfiguration).check(publisher, reporting);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.erroneous(effectiveConfiguration.getStereotype(), propertyName, 0, 0, effectiveConfiguration.getSeed(), Collections.emptyList(), cannotFindArbitraryException);
 		}

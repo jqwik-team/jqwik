@@ -49,7 +49,7 @@ public class TestHelper {
 	) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = getMethod(containerClass, methodName);
-		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking, new Reporting[0]);
+		PropertyConfiguration propertyConfig = new PropertyConfiguration("Property", seed, tries, maxDiscardRatio, shrinking);
 		return new PropertyMethodDescriptor(uniqueId, method, containerClass, propertyConfig);
 	}
 

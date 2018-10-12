@@ -1,10 +1,13 @@
 package net.jqwik.descriptor;
 
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
-import java.lang.reflect.*;
-import java.util.*;
+import net.jqwik.api.*;
 
 abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 	private final Method targetMethod;
@@ -50,4 +53,16 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 		return Type.TEST;
 	}
 
+	public Reporting[] getReporting() {
+		Optional<Report> optionalReport = AnnotationSupport.findAnnotation(getTargetMethod(), Report.class);
+		return optionalReport.map(Report::value).orElseGet(this::getOldStyleReporting);
+	}
+
+	// TODO: Remove as soon as deprecated Property.reporting will be removed
+	private Reporting[] getOldStyleReporting() {
+		Optional<Property> optionalProperty = AnnotationSupport.findAnnotation(getTargetMethod(), Property.class);
+		if (optionalProperty.isPresent())
+			return optionalProperty.get().reporting();
+		return new Reporting[0];
+	}
 }

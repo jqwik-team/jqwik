@@ -1,8 +1,8 @@
 package net.jqwik.api;
 
-import org.junit.platform.commons.annotation.*;
-
 import java.lang.annotation.*;
+
+import org.junit.platform.commons.annotation.*;
 
 /**
  * Use {@code @Property} to mark methods that serve as properties.
@@ -35,6 +35,10 @@ public @interface Property {
 
 	ShrinkingMode shrinking() default ShrinkingMode.BOUNDED;
 
+	/**
+	 * @deprecated Use annotation {@linkplain Report} instead
+	 */
+	@Deprecated
 	Reporting[] reporting() default {};
 
 	String stereotype() default DEFAULT_STEREOTYPE;

@@ -85,7 +85,7 @@ public class PropertyMethodExecutor {
 
 	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, testInstance);
-		return property.check(publisher);
+		return property.check(publisher, methodDescriptor.getReporting());
 	}
 
 }

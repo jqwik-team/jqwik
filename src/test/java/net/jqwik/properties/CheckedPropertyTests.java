@@ -38,7 +38,6 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
-			assertThat(checkedProperty.configuration.getReporting()).isEqualTo(new Reporting[0]);
 		}
 
 		@Example
@@ -54,7 +53,6 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(42);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(2);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
-			assertThat(checkedProperty.configuration.getReporting()).containsExactly(Reporting.GENERATED);
 		}
 	}
 
@@ -118,10 +116,10 @@ class CheckedPropertyTests {
 				parameters,
 				p -> Collections.emptySet(),
 				Optional.empty(),
-				new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0])
+				new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
 			assertThat(check.throwable()).isPresent();
 			assertThat(check.throwable().get()).isInstanceOf(CannotFindArbitraryException.class);
@@ -135,10 +133,10 @@ class CheckedPropertyTests {
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, new Reporting[0])
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 			assertThat(check.randomSeed()).isEqualTo("42");
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
@@ -153,10 +151,10 @@ class CheckedPropertyTests {
 				"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 				p -> Collections.emptySet(),
 				Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, new Reporting[0])
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 			assertThat(check.countTries()).isEqualTo(3);
 			assertThat(check.status()).isEqualTo(SATISFIED);
 			assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
@@ -168,9 +166,9 @@ class CheckedPropertyTests {
 			methodName, forAllFunction, getParametersForMethod(methodName),
 			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
 			Optional.empty(),
-			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, new Reporting[0])
+			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL)
 		);
-		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER);
+		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
 
@@ -185,7 +183,7 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF, reporting = Reporting.GENERATED)
+		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF)
 		public boolean propertyWith42TriesAndMaxDiscardRatio2(@ForAll int anyNumber) {
 			return true;
 		}
