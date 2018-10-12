@@ -35,6 +35,15 @@ public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int genSize);
 
 	/**
+	 * Create the exhaustive generator for an arbitrary
+	 *
+	 * @return a new exhaustive generator or Optional.empty() if it cannot be created.
+	 */
+	default Optional<ExhaustiveGenerator<T>> exhaustive() {
+		return Optional.empty();
+	}
+
+	/**
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
