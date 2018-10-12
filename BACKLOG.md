@@ -51,7 +51,10 @@
 - Check arbitrary providers for numbers that @Range annotations fit, e.g.
   `@IntRange @ForAll long aNumber` should result in a warning
 
-- Optionally report for each property which arbitraries are used.
+- Data-driven properties: Warnings if method parameters have
+  other annotations than @ForAll
+
+- Reporting.ARBITRARIES: report for each property which arbitraries are used.
 
 - @ForAll 
   - can be used in parameter types to choose provider method
