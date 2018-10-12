@@ -2,5 +2,5 @@
   - Warnings if method parameters have other annotations than @ForAll
 
 - @Property.reporting ->  @Report(Reporting.GENERATED, Reporting.FALSIFIED)
-  - Remove deprecated examples
   - Change user guide
+  - Update API javadoc

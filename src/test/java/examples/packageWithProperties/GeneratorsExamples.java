@@ -9,7 +9,7 @@ import java.util.stream.*;
 
 public class GeneratorsExamples {
 
-	@Property(tries = 50, reporting = Reporting.GENERATED)
+	@Property(tries = 50) @Report(Reporting.GENERATED)
 	boolean aString(@ForAll @StringLength(min = 2, max = 33) String aString, @ForAll(value = "digitsOnly") String anotherString) {
 		return true;
 	}
@@ -79,7 +79,7 @@ public class GeneratorsExamples {
 		return true;
 	}
 
-	@Property(tries = 10, reporting = Reporting.GENERATED)
+	@Property(tries = 10) @Report(Reporting.GENERATED)
 	boolean aChar(@ForAll @AlphaChars char aChar, @ForAll char unconstrained) {
 		return true;
 	}
@@ -89,7 +89,7 @@ public class GeneratorsExamples {
 		return Arbitraries.longs().between(1L, 100L);
 	}
 
-	@Property(tries = 10, reporting = Reporting.GENERATED)
+	@Property(tries = 10) @Report(Reporting.GENERATED)
 	boolean aListOfInts(@ForAll List<Integer> anIntList) {
 		return true;
 	}
@@ -104,7 +104,7 @@ public class GeneratorsExamples {
 		System.out.println(Arrays.asList(array));
 	}
 
-	@Property(tries = 10, reporting = Reporting.GENERATED)
+	@Property(tries = 10) @Report(Reporting.GENERATED)
 	void anArrayOfPrimitiveInts(@ForAll @Size(max = 10) @IntRange(min = 1, max = 5) int[] array) {
 	}
 
@@ -118,12 +118,12 @@ public class GeneratorsExamples {
 		return Arbitraries.constant("hello");
 	}
 
-	@Property(tries = 10, reporting = Reporting.GENERATED)
+	@Property(tries = 10) @Report(Reporting.GENERATED)
 	boolean aPeopleList(@ForAll @Size(min = 2, max = 5) List<Person> people) {
 		return people != null;
 	}
 
-	@Property(tries = 100, reporting = Reporting.GENERATED)
+	@Property(tries = 100) @Report(Reporting.GENERATED)
 	boolean aPeopleSet(@ForAll Set<Person> people) {
 		return people != null;
 	}

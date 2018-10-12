@@ -29,7 +29,7 @@ class ShrinkingFilterExamples {
 						  .filter(string -> string.length() >= 1);
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	boolean shouldShrinkToBAH_butDoesNot(@ForAll("aVariableString") String aString) {
 		return aString.length() > 4 || aString.length() < 3;
 	}

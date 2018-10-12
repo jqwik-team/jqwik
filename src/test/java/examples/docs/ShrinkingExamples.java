@@ -9,12 +9,12 @@ import static java.util.Collections.*;
 
 class ShrinkingExamples {
 
-	@Property(reporting = Reporting.FALSIFIED)
+	@Property @Report(Reporting.FALSIFIED)
 	boolean stringShouldBeShrunkToAA(@ForAll @AlphaChars String aString) {
 		return aString.length() > 5 || aString.length() < 2;
 	}
 
-	@Property(shrinking = ShrinkingMode.BOUNDED, reporting = Reporting.FALSIFIED)
+	@Property(shrinking = ShrinkingMode.BOUNDED) @Report(Reporting.FALSIFIED)
 	// Should shrink to 46341 - the smallest number whose square is bigger than Integer.MAX_VALUE
 	boolean rootOfSquareShouldBeOriginalValue(@Positive @ForAll int anInt) {
 		Assume.that(anInt != Integer.MAX_VALUE);
@@ -44,7 +44,7 @@ class ShrinkingExamples {
 		return aList.get(0).equals(reversed.get(aList.size() - 1));
 	}
 
-	@Property(seed = "-6868766892804735822", reporting = Reporting.FALSIFIED)
+	@Property(seed = "-6868766892804735822") @Report(Reporting.FALSIFIED)
 	boolean shouldShrinkTo101(@ForAll("numberStrings") String aNumberString) {
 		return Integer.parseInt(aNumberString) % 2 == 0;
 	}

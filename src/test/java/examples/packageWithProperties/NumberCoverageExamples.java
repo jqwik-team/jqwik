@@ -50,7 +50,7 @@ public class NumberCoverageExamples {
 		Statistics.collect(hasDecimals, aboveMillion);
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	void bigIntegerDistribution(@ForAll BigInteger bigInteger) {
 		String ranges = bigInteger.compareTo(BigInteger.valueOf(100)) < 0 ? "<100"
 			: bigInteger.compareTo(BigInteger.valueOf(1000000)) < 0 ? "<1M" : ">1M";

@@ -23,7 +23,7 @@ class FlatMappingExamples {
 						.ofMinLength(size).ofMaxLength(size));
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	boolean fixedSizedStringLists(@ForAll("listsOfEqualSizedStrings") List<String> strings) {
 		Assume.that(!strings.isEmpty());
 		return strings.stream().map(String::length).distinct().count() == 1;
@@ -40,7 +40,7 @@ class FlatMappingExamples {
 		});
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringBeginEnd) {
 		String aString = stringBeginEnd.get1();
 		int begin = stringBeginEnd.get2();

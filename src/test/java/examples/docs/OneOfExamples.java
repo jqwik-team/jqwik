@@ -5,7 +5,7 @@ import net.jqwik.api.arbitraries.*;
 
 class OneOfExamples {
 
-	@Property(tries = 100, reporting = Reporting.GENERATED)
+	@Property(tries = 100)  @Report(Reporting.GENERATED)
 	boolean intsAreCreatedFromOneOfThreeArbitraries(@ForAll("oneOfThree") int anInt) {
 		String classifier = anInt < -1000 ? "below" : anInt > 1000 ? "above" : "one";
 		Statistics.collect(classifier);

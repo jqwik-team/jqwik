@@ -4,7 +4,7 @@ import net.jqwik.api.*;
 
 class FlatCombinationExamples {
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	boolean fullNameHasTwoParts(@ForAll("fullName") String aName) {
 		return aName.split(" ").length == 2;
 	}

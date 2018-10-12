@@ -4,6 +4,6 @@ import net.jqwik.api.*;
 
 class StringProperties {
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	void aString(@ForAll String aString) {}
 }

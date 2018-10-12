@@ -14,14 +14,14 @@ import static java.lang.Integer.signum;
 interface ComparatorContract<T> {
 	Comparator<T> subject();
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	default void symmetry(@ForAll("anyT") T x, @ForAll("anyT") T y) {
 		Comparator<T> subject = subject();
 
 		Assertions.assertThat(signum(subject.compare(x, y))).isEqualTo(-signum(subject.compare(y, x)));
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property @Report(Reporting.GENERATED)
 	default boolean sorting(@ForAll("listOfT") List<T> aList) {
 		aList.sort(subject());
 		return isSorted(aList);

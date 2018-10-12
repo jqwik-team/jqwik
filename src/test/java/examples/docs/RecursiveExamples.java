@@ -5,7 +5,7 @@ import net.jqwik.api.arbitraries.*;
 
 class RecursiveExamples {
 
-	@Property(tries = 10, reporting = Reporting.GENERATED)
+	@Property(tries = 10) @Report(Reporting.GENERATED)
 	boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
 		return aSentence.endsWith(".");
 	}
@@ -29,7 +29,7 @@ class RecursiveExamples {
 	}
 
 
-	@Property(tries = 10, reporting = Reporting.GENERATED)
+	@Property(tries = 10) @Report(Reporting.GENERATED)
 	boolean sentencesEndWithAPoint_2(@ForAll("deterministic") String aSentence) {
 		return aSentence.endsWith(".");
 	}
