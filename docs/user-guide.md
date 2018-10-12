@@ -17,6 +17,7 @@
 - [Creating an Example-based Test](#creating-an-example-based-test)
 - [Creating a Property](#creating-a-property)
   - [Optional `@Property` Parameters](#optional-property-parameters)
+  - [Additional Reporting](#additional-reporting)
 - [Assertions](#assertions)
 - [Lifecycle](#lifecycle)
   - [Method Lifecycle](#method-lifecycle)
@@ -342,13 +343,17 @@ annotation has a few optional values:
   bounded shrinking is reported - look at a falsified property's output! -
   should you try with `ShrinkingMode.FULL`.
 
-- `Reporting[] reporting`: You can switch on additional reporting aspects. 
-  by specifying one or more of the following `Reporting` values:
-  - `Reporting.GENERATED` will report each generated set of parameters.
-  - `Reporting.FALSIFIED` will report _some_ falsified sets of parameters
-    during shrinking.
-  
-  The default is _no_ additional reporting aspects are switched on.
+### Additional Reporting
+
+You can switch on additional reporting aspects by adding a
+[`@Report(Reporting[])` annotation](https://jqwik.net/javadoc/net/jqwik/api/Property.html)
+to a property method.
+
+The following reporting aspects are available:
+
+- `Reporting.GENERATED` will report each generated set of parameters.
+- `Reporting.FALSIFIED` will report each set of parameters
+  that is falsified during shrinking.
 
 ## Assertions
 
@@ -694,11 +699,11 @@ class VariableTypedPropertyExamples {
 		return items.contains(newItem);
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property
 	<T extends Serializable & Comparable> void someBoundedGenericTypesCanBeResolved(@ForAll List<T> items, @ForAll T newItem) {
 	}
 
-	@Property(reporting = Reporting.GENERATED)
+	@Property
 	void someWildcardTypesWithUpperBoundsCanBeResolved(@ForAll List<? extends Serializable> items) {
 	}
 
@@ -738,7 +743,7 @@ The following example provides an annotation to constrain String or Character ge
 @StringLength(min = 10, max = 100)
 public @interface GermanText { }
 
-@Property(tries = 10, reporting = Reporting.GENERATED)
+@Property(tries = 10) @Reporting(Reporting.GENERATED)
 void aGermanText(@ForAll @GermanText String aText) {}
 ```
 
@@ -1093,7 +1098,7 @@ combined with a tuple type
 
 
 ```java
-@Property(reporting = Reporting.GENERATED)
+@Property
 void substringLength(@ForAll("stringWithBeginEnd") Tuple3<String, Integer, Integer> stringBeginEnd) {
     String aString = stringBeginEnd.get1();
     int begin = stringBeginEnd.get2();
@@ -1259,7 +1264,7 @@ Look at the
 which generates sentences by recursively adding words to a sentence:
 
 ```java
-@Property(reporting = Reporting.GENERATED)
+@Property
 boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
     return aSentence.endsWith(".");
 }
@@ -1300,7 +1305,7 @@ for the counter, the generated sentences will be very similar, and there is _no 
 for using `Arbitraries.lazy()` at all:
 
 ```java
-@Property(tries = 10, reporting = Reporting.GENERATED)
+@Property(tries = 10)
 boolean sentencesEndWithAPoint_2(@ForAll("deterministic") String aSentence) {
     return aSentence.endsWith(".");
 }
@@ -2077,7 +2082,7 @@ the [following example](https://github.com/jlink/jqwik/blob/master/src/test/java
 will work:
 
 ```java
-@Property(reporting = Reporting.GENERATED)
+@Property
 boolean oddIntegersOnly(@ForAll @Odd int aNumber) {
     return Math.abs(aNumber % 2) == 1;
 }
@@ -2198,6 +2203,7 @@ the external data was conceived or generated.
 - Display names of test containers and properties
   [will now automatically be prettified](#naming-and-labeling-tests),
   i.e. each underscore will be replaced by a single space.
+- Added [`@Report` annotation](#additional-reporting) to replace `Property.reporting`
 
 
 ### 0.8.x
