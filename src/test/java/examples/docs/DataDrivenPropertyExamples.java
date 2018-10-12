@@ -26,4 +26,14 @@ class DataDrivenPropertyExamples {
 	private String fizzBuzz(int index) {
 		return Integer.toString(index);
 	}
+
+
+	@Property(generation = GenerationMode.RANDOMIZED) @FromData("myStrings")
+	void dataDrivenAndRandomizedIsNotPossible(@ForAll String aString) {}
+
+	@Data
+	Iterable myStrings() {
+		return Table.of("a", "b");
+	}
+
 }

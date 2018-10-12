@@ -1,8 +1,10 @@
 package net.jqwik.properties;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 
+import org.assertj.core.api.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -116,7 +118,7 @@ class CheckedPropertyTests {
 				parameters,
 				p -> Collections.emptySet(),
 				Optional.empty(),
-				new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL)
+				new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -133,7 +135,7 @@ class CheckedPropertyTests {
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL)
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -151,13 +153,26 @@ class CheckedPropertyTests {
 				"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 				p -> Collections.emptySet(),
 				Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL)
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 			assertThat(check.countTries()).isEqualTo(3);
 			assertThat(check.status()).isEqualTo(SATISFIED);
 			assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
+		}
+
+		@Example
+		@Label("fail if data-driven property has GenerationMode.Randomized")
+		void failIfDataDrivenPropertyHasGenerationModeRandomized() {
+			CheckedProperty checkedProperty = new CheckedProperty(
+				"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
+				p -> Collections.emptySet(),
+				Optional.of(Table.of(Tuple.of(1, "1"))),
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
+			);
+
+			assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
 		}
 	}
 
@@ -166,7 +181,7 @@ class CheckedPropertyTests {
 			methodName, forAllFunction, getParametersForMethod(methodName),
 			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
 			Optional.empty(),
-			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL)
+			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
 		);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 		assertThat(check.status()).isEqualTo(expectedStatus);
