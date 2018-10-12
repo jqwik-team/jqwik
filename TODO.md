@@ -1,7 +1,16 @@
 -  Allow exhaustive generation
-   - Introduce Arbitrary.exhaustiveGenerator
+   - Optional<ExhaustiveGenerator> Arbitrary.exhaustiveGenerator
    - Property.generation = GenerationMode.EXHAUSTIVE|RANDOMIZED|AUTO
-   - ExhaustiveGenerator<T> implements Iterator<T>
+   - PropertyConfiguration.generation
+   - ExhaustiveGenerator<T> extends Iterator<T> {
+        long maxCount();
+     }
+     - BooleanArbitrary
+     - DefaultShort|Byte|LongArbitrary
+     - ExamplesArbitrary
+     - MappedArbitrary
+     - FilteredArbitrary
+     - FlatMappedArbitrary
    - ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator
    - User Guide
 
