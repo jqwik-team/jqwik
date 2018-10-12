@@ -80,8 +80,6 @@
   - @Regex(RegularExpression value)
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
 
-- Introduce Arbitrary.deterministicGenerator and Property.Mode.EXHAUSTIVE
-
 - Group properties, e.g. @Property for classes and individual methods with preconditions
 
 ### Contracts / Specifications / Domain objects
