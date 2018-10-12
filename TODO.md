@@ -10,5 +10,6 @@
      - FilteredArbitrary
      - FlatMappedArbitrary
    - ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator
+   - Report actual generationMode
    - User Guide
 
