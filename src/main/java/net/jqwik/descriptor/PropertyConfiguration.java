@@ -12,7 +12,14 @@ public class PropertyConfiguration {
 		int maxDiscardRatio = property.maxDiscardRatio() == Property.MAX_DISCARD_RATIO_NOT_SET //
 				? propertyDefaultValues.maxDiscardRatio()
 				: property.maxDiscardRatio();
-		return new PropertyConfiguration(property.stereotype(), property.seed(), tries, maxDiscardRatio, property.shrinking());
+		return new PropertyConfiguration(
+			property.stereotype(),
+			property.seed(),
+			tries,
+			maxDiscardRatio,
+			property.shrinking(),
+			property.generation()
+		);
 	}
 
 	private final String stereotype;
@@ -20,19 +27,22 @@ public class PropertyConfiguration {
 	private final int tries;
 	private final int maxDiscardRatio;
 	private final ShrinkingMode shrinkingMode;
+	private final GenerationMode generationMode;
 
 	public PropertyConfiguration(
 		String stereotype,
 		String seed,
 		int tries,
 		int maxDiscardRatio,
-		ShrinkingMode shrinkingMode
+		ShrinkingMode shrinkingMode,
+		GenerationMode generationMode
 	) {
 		this.stereotype = stereotype;
 		this.seed = seed;
 		this.tries = tries;
 		this.maxDiscardRatio = maxDiscardRatio;
 		this.shrinkingMode = shrinkingMode;
+		this.generationMode = generationMode;
 	}
 
 	public String getSeed() {
@@ -40,7 +50,7 @@ public class PropertyConfiguration {
 	}
 
 	public PropertyConfiguration withSeed(String changedSeed) {
-		return new PropertyConfiguration(this.stereotype, changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode);
+		return new PropertyConfiguration(this.stereotype, changedSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode);
 	}
 
 	public String getStereotype() {
@@ -59,4 +69,7 @@ public class PropertyConfiguration {
 		return shrinkingMode;
 	}
 
+	public GenerationMode getGenerationMode() {
+		return generationMode;
+	}
 }

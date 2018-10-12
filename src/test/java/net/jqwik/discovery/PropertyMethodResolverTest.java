@@ -115,6 +115,7 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(99);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(6);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.EXHAUSTIVE);
 
 			// TODO: Remove when deprecated Property.reporting will be removed
 			Assertions.assertThat(propertyMethodDescriptor.getReporting()).containsExactly(Reporting.GENERATED, Reporting.FALSIFIED);
@@ -205,6 +206,7 @@ class PropertyMethodResolverTest {
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(DEFAULT_TRIES);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
+		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.AUTO);
 	}
 
 	private static class TestContainer {
@@ -249,6 +251,7 @@ class PropertyMethodResolverTest {
 			tries = 99, //
 			maxDiscardRatio = 6, //
 			shrinking = ShrinkingMode.OFF, //
+			generation = GenerationMode.EXHAUSTIVE, //
 			reporting = {Reporting.GENERATED, Reporting.FALSIFIED} //
 		)
 		void withPropertyParams() {

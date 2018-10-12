@@ -16,6 +16,9 @@ import org.junit.platform.commons.annotation.*;
  * or {@code void}.
  *
  * @see Example
+ * @see ShrinkingMode
+ * @see GenerationMode
+ * @see Data
  */
 @Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
@@ -42,4 +45,6 @@ public @interface Property {
 	Reporting[] reporting() default {};
 
 	String stereotype() default DEFAULT_STEREOTYPE;
+
+	GenerationMode generation() default GenerationMode.AUTO;
 }

@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import org.junit.platform.engine.reporting.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;
@@ -50,12 +51,15 @@ public class CheckedProperty {
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
 		ShrinkablesGenerator shrinkablesGenerator =
 			optionalData.isPresent()
-				? createDataBasedShrinkablesGenerator()
+				? createDataBasedShrinkablesGenerator(configuration)
 				: createRandomizedShrinkablesGenerator(configuration);
 		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
 	}
 
-	private ShrinkablesGenerator createDataBasedShrinkablesGenerator() {
+	private ShrinkablesGenerator createDataBasedShrinkablesGenerator(PropertyConfiguration configuration) {
+		if (configuration.getGenerationMode() == GenerationMode.RANDOMIZED) {
+			throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = RANDOMIZED)");
+		}
 		return new DataBasedShrinkablesGenerator(forAllParameters, optionalData.get());
 	}
 
