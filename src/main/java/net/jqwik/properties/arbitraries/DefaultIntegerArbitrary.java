@@ -1,9 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
+import java.math.*;
+import java.util.*;
+import java.util.stream.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-
-import java.math.*;
 
 public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements IntegerArbitrary {
 
@@ -19,6 +21,38 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 	@Override
 	public RandomGenerator<Integer> generator(int genSize) {
 		return generatingArbitrary.generator(genSize).map(BigInteger::intValueExact);
+	}
+
+	@Override
+	//TODO: Generalize for all Integrals and move to IntegralGeneratingArbitrary
+	public Optional<ExhaustiveGenerator<Integer>> exhaustive() {
+		BigInteger maxCount = generatingArbitrary.max.subtract(generatingArbitrary.min).add(BigInteger.ONE);
+
+		if (maxCount.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+			return Optional.empty();
+		} else {
+			int begin = generatingArbitrary.min.intValueExact();
+			int end = generatingArbitrary.max.intValueExact() + 1;
+			ExhaustiveGenerator<Integer> exhaustiveGenerator = new ExhaustiveGenerator<Integer>() {
+				private Iterator<Integer> intIterator = IntStream.range(begin, end).iterator();
+
+				@Override
+				public boolean hasNext() {
+					return intIterator.hasNext();
+				}
+
+				@Override
+				public Integer next() {
+					return intIterator.next();
+				}
+
+				@Override
+				public long maxCount() {
+					return maxCount.longValueExact();
+				}
+			};
+			return Optional.of(exhaustiveGenerator);
+		}
 	}
 
 	@Override
