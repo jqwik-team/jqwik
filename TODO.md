@@ -1,9 +1,8 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - BooleanArbitrary
      - DefaultShort|Byte|Long|BigIntegerArbitrary
      - DefaultCharsArbitrary
-     - Arbitraries.of()
+     - Arbitraries.of(char[])
      - Arbitrary.map()
      - Arbitrary.filter()
      - Arbitrary.flatMap()

@@ -59,7 +59,7 @@ public class Arbitraries {
 	 */
 	@SafeVarargs
 	public static <T> Arbitrary<T> of(T... values) {
-		return fromGenerator(RandomGenerators.choose(values));
+		return of(Arrays.asList(values));
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> of(List<T> values) {
-		return fromGenerator(RandomGenerators.choose(values));
+		return fromGenerators(RandomGenerators.choose(values), ExhaustiveGenerators.choose(values));
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class Arbitraries {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
-		return fromGenerator(RandomGenerators.choose(enumClass));
+		return fromGenerators(RandomGenerators.choose(enumClass), ExhaustiveGenerators.choose(enumClass));
 	}
 
 	/**
@@ -286,6 +286,23 @@ public class Arbitraries {
 			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
 		SubtypeProvider subtypeProvider = Arbitraries::allDefaultsFor;
 		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
+	}
+
+	private static <T> Arbitrary<T> fromGenerators(
+		RandomGenerator<T> randomGenerator,
+		Optional<ExhaustiveGenerator<T>> exhaustiveGenerator
+	) {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int tries) {
+				return randomGenerator;
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive() {
+				return exhaustiveGenerator;
+			}
+		};
 	}
 
 	/**
