@@ -5,6 +5,7 @@ package net.jqwik.api;
  * It can be set in {@linkplain Property#generation()} for any property method; default is {@linkplain #AUTO}.
  *
  * @see Property
+ * @see FromData
  */
 public enum GenerationMode {
 	/**
@@ -14,10 +15,14 @@ public enum GenerationMode {
 
 	/**
 	 * Use exhaustive generation. Only possible if all used arbitraries can
-	 * provide exhaustive generators. Allow data-driven generation
-	 * if the property also has a {@linkplain Data} annotation
+	 * provide exhaustive generators.
 	 */
 	EXHAUSTIVE,
+
+	/**
+	 * Use data specified in {@linkplain FromData} annotation
+	 */
+	DATA_DRIVEN,
 
 	/**
 	 * Let jqwik choose which generation mode it prefers:
@@ -26,9 +31,10 @@ public enum GenerationMode {
 	 *     if the multiplication of all maxCount() values is <=
 	 *     {@linkplain Property#tries()} use {@linkplain #EXHAUSTIVE}</li>
 
-	 *     <li>In all other cases use {@linkplain #RANDOMIZED} but
-	 *     allow data-driven generation if the property also has a
-	 *     {@linkplain Data} annotation</li>
+	 *     <li>If the property has a {@linkplain FromData} annotation
+	 *     use {@linkplain #DATA_DRIVEN}</li>
+
+	 *     <li>In all other cases use {@linkplain #RANDOMIZED}</li>
 	 * </ul>
 	 */
 	AUTO
