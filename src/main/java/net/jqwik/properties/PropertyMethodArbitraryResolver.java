@@ -23,8 +23,11 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private final RegisteredArbitraryConfigurer registeredArbitraryConfigurer;
 
 	public PropertyMethodArbitraryResolver(Class<?> containerClass, Object testInstance) {
-		this(containerClass, testInstance, new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders()),
-			 new RegisteredArbitraryConfigurer(RegisteredArbitraryConfigurators.getConfigurators())
+		this(
+			containerClass,
+			testInstance,
+			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders()),
+			new RegisteredArbitraryConfigurer(RegisteredArbitraryConfigurators.getConfigurators())
 		);
 	}
 

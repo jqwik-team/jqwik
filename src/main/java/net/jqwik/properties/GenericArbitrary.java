@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 
 class GenericArbitrary implements Arbitrary<Object> {
@@ -14,5 +16,11 @@ class GenericArbitrary implements Arbitrary<Object> {
 	@Override
 	public RandomGenerator<Object> generator(int genSize) {
 		return wrapped.generator(genSize);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Optional<ExhaustiveGenerator<Object>> exhaustive() {
+		return wrapped.exhaustive();
 	}
 }
