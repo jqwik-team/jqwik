@@ -27,4 +27,19 @@ public class Unshrinkable<T> implements Shrinkable<T> {
 	public String toString() {
 		return JqwikStringSupport.displayString(value);
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Unshrinkable<?> that = (Unshrinkable<?>) o;
+
+		return value.equals(that.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return value.hashCode();
+	}
 }
