@@ -135,7 +135,7 @@ class CheckedPropertyTests {
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);

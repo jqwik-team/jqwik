@@ -3,6 +3,7 @@ package net.jqwik.properties;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.support.*;
 
@@ -24,9 +25,15 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		Set<ExhaustiveGenerator> generators =
 			arbitraryResolver.forParameter(parameter).stream()
 							 .map(GenericArbitrary::new)
-							 .map(GenericArbitrary::exhaustive)
-							 .filter(Optional::isPresent)
-							 .map(Optional::get)
+							 .map(genericArbitrary -> {
+								 Optional<ExhaustiveGenerator<Object>> exhaustive = genericArbitrary.exhaustive();
+								 if (exhaustive.isPresent()) {
+									 return exhaustive.get();
+								 } else {
+									 String message = String.format("Arbitrary %s does not provide exhaustive generator", genericArbitrary);
+									 throw new JqwikException(message);
+								 }
+							 })
 							 .collect(Collectors.toSet());
 
 		if (generators.isEmpty()) {
@@ -43,15 +50,14 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 
 	@Override
 	public boolean hasNext() {
-		// Randomized generation should always be able to generate a next set of values
-		return true;
+		return parameterGenerators.stream().allMatch(ExhaustiveParameterGenerator::hasNext);
 	}
 
 	@Override
 	public List<Shrinkable> next() {
 		return parameterGenerators
 				   .stream()
-				   .map(generator -> generator.next())
+				   .map(ExhaustiveParameterGenerator::next)
 				   .collect(Collectors.toList());
 	}
 
