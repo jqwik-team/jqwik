@@ -49,11 +49,32 @@ public class CheckedProperty {
 	}
 
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
+		// TODO: Clean up this terrible and partially untested code
+		Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive = createExhaustiveShrinkablesGenerator(configuration);
+		if (optionalExhaustive.isPresent()) {
+			return new GenericProperty(propertyName, configuration, optionalExhaustive.get(), checkedFunction);
+		}
 		ShrinkablesGenerator shrinkablesGenerator =
 			optionalData.isPresent()
 				? createDataBasedShrinkablesGenerator(configuration)
 				: createRandomizedShrinkablesGenerator(configuration);
 		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
+	}
+
+	private Optional<ExhaustiveShrinkablesGenerator> createExhaustiveShrinkablesGenerator(PropertyConfiguration configuration) {
+		if (configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE) {
+			return Optional.of(ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver));
+		}
+		if (configuration.getGenerationMode() == GenerationMode.AUTO) {
+			try {
+				ExhaustiveShrinkablesGenerator exhaustiveShrinkablesGenerator =
+					ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver);
+				return Optional.of(exhaustiveShrinkablesGenerator);
+			} catch (JqwikException ex) {
+				return Optional.empty();
+			}
+		}
+		return Optional.empty();
 	}
 
 	private ShrinkablesGenerator createDataBasedShrinkablesGenerator(PropertyConfiguration configuration) {
