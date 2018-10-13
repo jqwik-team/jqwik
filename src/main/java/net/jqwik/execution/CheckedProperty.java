@@ -51,34 +51,45 @@ public class CheckedProperty {
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
 		// TODO: Clean up this terrible and partially untested code
 		Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive = createExhaustiveShrinkablesGenerator(configuration);
-		if (optionalExhaustive.isPresent()) {
-			return new GenericProperty(propertyName, configuration, optionalExhaustive.get(), checkedFunction);
+		if (configuration.getGenerationMode() == GenerationMode.AUTO) {
+			if (optionalData.isPresent()) {
+				configuration = configuration.withGenerationMode(GenerationMode.DATA_DRIVEN);
+			} else if (optionalExhaustive.isPresent()) {
+				configuration = configuration.withGenerationMode(GenerationMode.EXHAUSTIVE);
+			} else {
+				configuration = configuration.withGenerationMode(GenerationMode.RANDOMIZED);
+			}
+		} else if (configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE) {
+			if (optionalData.isPresent()) {
+				throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = EXHAUSTIVE)");
+			}
+		} else if (configuration.getGenerationMode() == GenerationMode.RANDOMIZED) {
+			if (optionalData.isPresent()) {
+				throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = RANDOMIZED)");
+			}
 		}
 		ShrinkablesGenerator shrinkablesGenerator =
-			optionalData.isPresent()
-				? createDataBasedShrinkablesGenerator(configuration)
-				: createRandomizedShrinkablesGenerator(configuration);
+			configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE
+				? optionalExhaustive.get()
+				: configuration.getGenerationMode() == GenerationMode.DATA_DRIVEN
+					  ? createDataBasedShrinkablesGenerator(configuration)
+					  : createRandomizedShrinkablesGenerator(configuration);
+
 		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
 	}
 
 	private Optional<ExhaustiveShrinkablesGenerator> createExhaustiveShrinkablesGenerator(PropertyConfiguration configuration) {
-		if (configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE) {
-			return Optional.of(ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver));
+		try {
+			ExhaustiveShrinkablesGenerator exhaustiveShrinkablesGenerator =
+				ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver);
+			return Optional.of(exhaustiveShrinkablesGenerator);
+		} catch (JqwikException ex) {
+			return Optional.empty();
 		}
-		if (configuration.getGenerationMode() == GenerationMode.AUTO) {
-			try {
-				ExhaustiveShrinkablesGenerator exhaustiveShrinkablesGenerator =
-					ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver);
-				return Optional.of(exhaustiveShrinkablesGenerator);
-			} catch (JqwikException ex) {
-				return Optional.empty();
-			}
-		}
-		return Optional.empty();
 	}
 
 	private ShrinkablesGenerator createDataBasedShrinkablesGenerator(PropertyConfiguration configuration) {
-		if (configuration.getGenerationMode() == GenerationMode.RANDOMIZED) {
+		if (configuration.getGenerationMode() != GenerationMode.DATA_DRIVEN) {
 			throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = RANDOMIZED)");
 		}
 		return new DataBasedShrinkablesGenerator(forAllParameters, optionalData.get());

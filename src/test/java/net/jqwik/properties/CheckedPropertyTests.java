@@ -1,10 +1,8 @@
 package net.jqwik.properties;
 
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
-import org.assertj.core.api.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -145,34 +143,105 @@ class CheckedPropertyTests {
 			assertThat(allGeneratedInts).containsExactly(0, -56, 1, -1, -100, 3, 31, 27, -27, 53, -77, 8, -60, 69, 29, -6, -7, 38, 37, -10);
 		}
 
-		@Example
-		void dataDrivenProperty() {
-			List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
-			CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
-			CheckedProperty checkedProperty = new CheckedProperty(
-				"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
-				p -> Collections.emptySet(),
-				Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
-			);
+		@Group
+		class DataDrivenProperty {
+			@Example
+			@Label("works with GenerationMode.AUTO")
+			void runWithGenerationModeAuto() {
+				List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
+					p -> Collections.emptySet(),
+					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+				);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
-			assertThat(check.countTries()).isEqualTo(3);
-			assertThat(check.status()).isEqualTo(SATISFIED);
-			assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.countTries()).isEqualTo(3);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
+			}
+
+			@Example
+			@Label("works with GenerationMode.DATA_DRIVEN")
+			void runWithGenerationModeDataDriven() {
+				List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
+					p -> Collections.emptySet(),
+					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.DATA_DRIVEN)
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.countTries()).isEqualTo(3);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
+			}
+
+			@Example
+			@Label("fails if it has GenerationMode.RANDOMIZED")
+			void failIfItHasGenerationModeRandomized() {
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
+					p -> Collections.emptySet(),
+					Optional.of(Table.of(Tuple.of(1, "1"))),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
+				);
+
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+			}
+
+			@Example
+			@Label("fails if it has GenerationMode.EXHAUSTIVE")
+			void failIfItHasGenerationModeExhaustive() {
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
+					p -> Collections.emptySet(),
+					Optional.of(Table.of(Tuple.of(1, "1"))),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+				);
+
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+			}
 		}
 
-		@Example
-		@Label("fail if data-driven property has GenerationMode.Randomized")
-		void failIfDataDrivenPropertyHasGenerationModeRandomized() {
-			CheckedProperty checkedProperty = new CheckedProperty(
-				"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
-				p -> Collections.emptySet(),
-				Optional.of(Table.of(Tuple.of(1, "1"))),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
-			);
+		@Group
+		class ExhaustiveProperty {
+			@Example
+			@Label("works with GenerationMode.AUTO")
+			void runWithGenerationModeAuto() {
+				assertThat(true).isFalse();
 
-			assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+//				List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
+//				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
+//				CheckedProperty checkedProperty = new CheckedProperty(
+//					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
+//					p -> Collections.emptySet(),
+//					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
+//					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+//				);
+//
+//				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+//				assertThat(check.countTries()).isEqualTo(3);
+//				assertThat(check.status()).isEqualTo(SATISFIED);
+//				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
+			}
+
+			@Example
+			@Label("works with GenerationMode.EXHAUSTIVE")
+			void runWithGenerationModeDataDriven() {
+				assertThat(true).isFalse();
+			}
+
+			@Example
+			@Label("fails if it no exhaustive generators are provided")
+			void failIfItHasGenerationModeRandomized() {
+				assertThat(true).isFalse();
+			}
+
 		}
 	}
 
