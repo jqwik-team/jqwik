@@ -1,4 +1,5 @@
 -  Allow exhaustive generation
+   - ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator
    - ExhaustiveGenerator implementations:
      - DefaultShort|Byte|Long|BigIntegerArbitrary
      - DefaultCharsArbitrary
@@ -8,7 +9,6 @@
      - Arbitrary.flatMap()
      - Unique?
      - reset needed?
-   - ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator
    - Report actual generationMode
    - User Guide
 

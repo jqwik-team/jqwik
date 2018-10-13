@@ -15,7 +15,7 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 		Random random,
 		int genSize
 	) {
-		List<RandomParameterGenerator> parameterGenerators =
+		List<RandomizedParameterGenerator> parameterGenerators =
 			parameters.stream()
 					  .map(parameter -> resolveParameter(arbitraryResolver, parameter, genSize))
 					  .collect(Collectors.toList());
@@ -23,7 +23,7 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 		return new RandomizedShrinkablesGenerator(parameterGenerators, random);
 	}
 
-	private static RandomParameterGenerator resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter, int genSize) {
+	private static RandomizedParameterGenerator resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter, int genSize) {
 		Set<RandomGenerator> generators =
 			arbitraryResolver.forParameter(parameter).stream()
 							 .map(GenericArbitrary::new)
@@ -32,13 +32,13 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 		if (generators.isEmpty()) {
 			throw new CannotFindArbitraryException(parameter);
 		}
-		return new RandomParameterGenerator(parameter, generators);
+		return new RandomizedParameterGenerator(parameter, generators);
 	}
 
-	private final List<RandomParameterGenerator> parameterGenerators;
+	private final List<RandomizedParameterGenerator> parameterGenerators;
 	private final Random random;
 
-	private RandomizedShrinkablesGenerator(List<RandomParameterGenerator> parameterGenerators, Random random) {
+	private RandomizedShrinkablesGenerator(List<RandomizedParameterGenerator> parameterGenerators, Random random) {
 		this.parameterGenerators = parameterGenerators;
 		this.random = random;
 	}
@@ -58,4 +58,29 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 				   .collect(Collectors.toList());
 	}
 
+	private static class RandomizedParameterGenerator {
+		private final TypeUsage typeUsage;
+		private final List<RandomGenerator> generators;
+
+		private RandomizedParameterGenerator(MethodParameter parameter, Set<RandomGenerator> generators) {
+			this.typeUsage = TypeUsage.forParameter(parameter);
+			this.generators = new ArrayList<>(generators);
+		}
+
+		private Shrinkable next(Random random, Map<TypeUsage, RandomGenerator> generatorsCache) {
+			RandomGenerator selectedGenerator = selectGenerator(random, generatorsCache);
+			selectedGenerator.reset();
+			return selectedGenerator.next(random);
+		}
+
+		private RandomGenerator selectGenerator(Random random, Map<TypeUsage, RandomGenerator> generatorsCache) {
+			if (generatorsCache.containsKey(typeUsage)) {
+				return generatorsCache.get(typeUsage);
+			}
+			int index = generators.size() == 1 ? 0 : random.nextInt(generators.size());
+			RandomGenerator selectedGenerator = generators.get(index);
+			generatorsCache.put(typeUsage, selectedGenerator);
+			return selectedGenerator;
+		}
+	}
 }
