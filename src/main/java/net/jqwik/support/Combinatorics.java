@@ -9,20 +9,47 @@ public class Combinatorics {
 
 	private static class CombinedIterator<T> implements Iterator<List<T>> {
 
-		private final Iterator<T> iterator;
+		private final Iterator<T> first;
+		private final ArrayList<Iterable<T>> iterables;
+		private Iterator<List<T>> next = null;
+		private T current = null;
 
-		public CombinedIterator(List<Iterable<T>> iterables) {
-			this.iterator = iterables.get(0).iterator();
+		private CombinedIterator(List<Iterable<T>> iterables) {
+			this.iterables = new ArrayList<>(iterables);
+			this.first = this.iterables.remove(0).iterator();
+			if (!this.iterables.isEmpty()) {
+				this.next = new CombinedIterator<>(this.iterables);
+			}
 		}
 
 		@Override
 		public boolean hasNext() {
-			return iterator.hasNext();
+			if (next != null) return next.hasNext() || first.hasNext();
+			return first.hasNext();
 		}
 
 		@Override
 		public List<T> next() {
-			return Collections.singletonList(iterator.next());
+			if (next != null) {
+				if (next.hasNext()) {
+					if (current == null) {
+						current = first.next();
+					}
+					List<T> rest = new ArrayList<>(next.next());
+					rest.add(0, current);
+					return rest;
+				} else {
+					current = first.next();
+					next = new CombinedIterator<>(iterables);
+					List<T> rest = new ArrayList<>(next.next());
+					rest.add(0, current);
+					return rest;
+				}
+			}  else {
+				current = first.next();
+				return Collections.singletonList(current);
+			}
 		}
 	}
 }
+
