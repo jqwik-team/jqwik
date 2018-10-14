@@ -19,6 +19,7 @@ import static net.jqwik.TestHelper.*;
 import static net.jqwik.properties.PropertyCheckResult.Status.*;
 
 @Group
+//TODO: Clean up. So much duplication :-((
 class CheckedPropertyTests {
 
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> {
