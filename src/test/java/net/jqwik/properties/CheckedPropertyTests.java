@@ -8,6 +8,7 @@ import org.opentest4j.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.*;
 import net.jqwik.support.*;
@@ -158,6 +159,7 @@ class CheckedPropertyTests {
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.status()).isEqualTo(SATISFIED);
 				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
@@ -176,6 +178,7 @@ class CheckedPropertyTests {
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.status()).isEqualTo(SATISFIED);
 				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
@@ -206,40 +209,121 @@ class CheckedPropertyTests {
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
 			}
+
+			@Example
+			@Label("fails if optional data is empty")
+			void failIfItOptionalDataIsEmpty() {
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
+					p -> Collections.emptySet(),
+					Optional.empty(),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.DATA_DRIVEN)
+				);
+
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+			}
 		}
 
 		@Group
 		class ExhaustiveProperty {
-			@Example
-			@Label("works with GenerationMode.AUTO")
-			void runWithGenerationModeAuto() {
-				assertThat(true).isFalse();
-
-//				List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
-//				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
-//				CheckedProperty checkedProperty = new CheckedProperty(
-//					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
-//					p -> Collections.emptySet(),
-//					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-//					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
-//				);
-//
-//				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
-//				assertThat(check.countTries()).isEqualTo(3);
-//				assertThat(check.status()).isEqualTo(SATISFIED);
-//				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
-			}
 
 			@Example
 			@Label("works with GenerationMode.EXHAUSTIVE")
-			void runWithGenerationModeDataDriven() {
-				assertThat(true).isFalse();
+			void runWithGenerationModeExhaustive() {
+				List<Tuple.Tuple1> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0)));
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
+					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
+					Optional.empty(),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
+				assertThat(check.countTries()).isEqualTo(3);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1), Tuple.of(2), Tuple.of(3));
+			}
+
+			@Example
+			@Label("with explicit GenerationMode.EXHAUSTIVE number of tries is set to countMax")
+			void withExplicitGenerationModeExhaustive() {
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
+					p -> Collections.singleton(Arbitraries.integers().between(1, 99)),
+					Optional.empty(),
+					new PropertyConfiguration("Property", "42", 50, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
+				assertThat(check.countTries()).isEqualTo(99);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+			}
+
+			@Example
+			@Label("works with GenerationMode.AUTO")
+			void runWithGenerationModeAuto() {
+				List<Tuple.Tuple1> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0)));
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
+					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
+					Optional.empty(),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
+				assertThat(check.countTries()).isEqualTo(3);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1), Tuple.of(2), Tuple.of(3));
 			}
 
 			@Example
 			@Label("fails if it no exhaustive generators are provided")
-			void failIfItHasGenerationModeRandomized() {
-				assertThat(true).isFalse();
+			void failIfNoExhaustiveGeneratorsAreProvided() {
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
+					p -> Collections.singleton(Arbitraries.integers()),
+					Optional.empty(),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+				);
+
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+			}
+
+			@Example
+			@Label("use randomized generation if countMax is larger than configured tries")
+			void useRandomizedGenerationIfCountMaxIsAboveTries() {
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
+					p -> Collections.singleton(Arbitraries.integers().between(1, 21)),
+					Optional.empty(),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
+				assertThat(check.countTries()).isEqualTo(20);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+			}
+
+			@Example
+			@Label("use randomized generation with explicit GenerationMode.RANDOMIZED")
+			void useRandomizedWithExplicitGenerationModeRandomized() {
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
+					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
+					Optional.empty(),
+					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
+				assertThat(check.countTries()).isEqualTo(20);
+				assertThat(check.status()).isEqualTo(SATISFIED);
 			}
 
 		}
@@ -295,9 +379,12 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		@Property
 		@FromData("fizzBuzzSamples")
 		public boolean dataDrivenProperty(@ForAll int index, @ForAll String fizzBuzz) {
+			return true;
+		}
+
+		public boolean exhaustiveProperty(@ForAll @IntRange(min = 1, max = 3) int anInt) {
 			return true;
 		}
 
