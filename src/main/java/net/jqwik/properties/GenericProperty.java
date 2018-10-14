@@ -74,13 +74,19 @@ public class GenericProperty {
 				continue;
 			} catch (Throwable throwable) {
 				BlacklistedExceptions.rethrowIfBlacklisted(throwable);
-				return PropertyCheckResult.erroneous(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-						extractParams(shrinkableParams), throwable);
+				return PropertyCheckResult.erroneous(
+					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
+					configuration.getGenerationMode(), extractParams(shrinkableParams), throwable
+				);
 			}
 		}
 		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, countTries, configuration.getMaxDiscardRatio()))
-			return PropertyCheckResult.exhausted(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed());
-		return PropertyCheckResult.satisfied(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed());
+			return PropertyCheckResult
+				.exhausted(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed(), configuration
+					.getGenerationMode());
+		return PropertyCheckResult
+			.satisfied(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration
+				.getGenerationMode());
 	}
 
 	private boolean testPredicate(
@@ -118,7 +124,10 @@ public class GenericProperty {
 		@SuppressWarnings("unchecked")
 		List<Object> shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
-		return PropertyCheckResult.falsified(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), shrunkParams, originalParams, throwable);
+		return PropertyCheckResult.falsified(
+			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
+			configuration.getGenerationMode(), shrunkParams, originalParams, throwable
+		);
 	}
 
 }

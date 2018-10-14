@@ -57,6 +57,10 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(this.stereotype, this.seed, this.tries, this.maxDiscardRatio, this.shrinkingMode, changedGenerationMode);
 	}
 
+	public PropertyConfiguration withTries(int changedTries) {
+		return new PropertyConfiguration(this.stereotype, this.seed, changedTries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode);
+	}
+
 	public String getStereotype() {
 		return stereotype;
 	}
@@ -76,4 +80,5 @@ public class PropertyConfiguration {
 	public GenerationMode getGenerationMode() {
 		return generationMode;
 	}
+
 }

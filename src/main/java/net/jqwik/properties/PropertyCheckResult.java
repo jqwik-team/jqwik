@@ -2,6 +2,7 @@ package net.jqwik.properties;
 
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.support.*;
 
 public interface PropertyCheckResult {
@@ -36,6 +37,8 @@ public interface PropertyCheckResult {
 
 	Optional<Throwable> throwable();
 
+	GenerationMode generation();
+
 	abstract class ResultBase implements PropertyCheckResult {
 
 		protected final Status status;
@@ -43,13 +46,15 @@ public interface PropertyCheckResult {
 		protected final int tries;
 		protected final int checks;
 		protected final String randomSeed;
+		protected final GenerationMode generation;
 
-		ResultBase(Status status, String propertyName, int tries, int checks, String randomSeed) {
+		ResultBase(Status status, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation) {
 			this.status = status;
 			this.propertyName = propertyName;
 			this.tries = tries;
 			this.checks = checks;
 			this.randomSeed = randomSeed;
+			this.generation = generation;
 		}
 
 		@Override
@@ -92,10 +97,14 @@ public interface PropertyCheckResult {
 			return Optional.empty();
 		}
 
+		@Override
+		public GenerationMode generation() {
+			return generation;
+		}
 	}
 
-	static PropertyCheckResult satisfied(String stereotype, String propertyName, int tries, int checks, String randomSeed) {
-		return new ResultBase(Status.SATISFIED, propertyName, tries, checks, randomSeed) {
+	static PropertyCheckResult satisfied(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation) {
+		return new ResultBase(Status.SATISFIED, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public String toString() {
 				return String.format("%s [%s] satisfied", stereotype, propertyName);
@@ -103,9 +112,9 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(String stereotype, String propertyName, int tries, int checks, String randomSeed, List<Object> sample,
+	static PropertyCheckResult falsified(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation, List<Object> sample,
 			List<Object> originalSample, Throwable throwable) {
-		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed) {
+		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public Optional<List<Object>> sample() {
 				return Optional.of(sample);
@@ -130,9 +139,9 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult erroneous(String stereotype, String propertyName, int tries, int checks, String randomSeed,
+	static PropertyCheckResult erroneous(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
 			List<Object> sample, Throwable throwable) {
-		return new ResultBase(Status.ERRONEOUS, propertyName, tries, checks, randomSeed) {
+		return new ResultBase(Status.ERRONEOUS, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public Optional<List<Object>> sample() {
 				return Optional.ofNullable(sample);
@@ -150,8 +159,8 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult exhausted(String stereotype, String propertyName, int tries, int checks, String randomSeed) {
-		return new ResultBase(Status.EXHAUSTED, propertyName, tries, checks, randomSeed) {
+	static PropertyCheckResult exhausted(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation) {
+		return new ResultBase(Status.EXHAUSTED, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public String toString() {
 				int rejections = tries - checks;
