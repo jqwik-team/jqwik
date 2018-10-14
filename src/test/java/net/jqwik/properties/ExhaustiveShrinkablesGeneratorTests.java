@@ -1,6 +1,5 @@
 package net.jqwik.properties;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -10,7 +9,6 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.support.*;
 
-import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 class ExhaustiveShrinkablesGeneratorTests {
@@ -31,94 +29,23 @@ class ExhaustiveShrinkablesGeneratorTests {
 		assertThat(shrinkablesGenerator.hasNext()).isFalse();
 	}
 
-	//@Example
-	void useSimpleRegisteredArbitraryProviders() {
-		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("simpleParameters");
-		List<Shrinkable> shrinkables = shrinkablesGenerator.next();
-
-		assertThat(shrinkables.get(0).value()).isInstanceOf(String.class);
-		assertThat(shrinkables.get(1).value()).isInstanceOf(Integer.class);
+	@Example
+	void ambiguousArbitraryResolutionFailsToCreateExhaustiveShrinkablesGenerator() {
+		assertThatThrownBy( () -> createGenerator("genericNumber")).isInstanceOf(JqwikException.class);
 	}
 
 	//@Example
-	void severalFittingArbitraries() {
+	void twoIntParameters() {
+		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("intFrom1to3And4to5");
+		assertThat(shrinkablesGenerator.maxCount()).isEqualTo(6);
 
-		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
-			@Override
-			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
-				Set<Arbitrary<?>> arbitraries = new HashSet<>();
-				if (parameter.getType().equals(String.class)) {
-					arbitraries.add(Arbitraries.constant("a"));
-					arbitraries.add(Arbitraries.constant("b"));
-				}
-				if (parameter.getType().equals(int.class)) {
-					arbitraries.add(Arbitraries.constant(1));
-					arbitraries.add(Arbitraries.constant(2));
-					arbitraries.add(Arbitraries.constant(3));
-				}
-				return arbitraries;
-			}
-		};
-
-		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("simpleParameters", arbitraryResolver);
-
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", 1));
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", 2));
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", 3));
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", 1));
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", 2));
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", 3));
-	}
-
-	//@Example
-	void sameTypeVariableGetsSameArbitrary() {
-
-		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
-			@Override
-			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
-				Set<Arbitrary<?>> arbitraries = new HashSet<>();
-				arbitraries.add(Arbitraries.constant("a"));
-				arbitraries.add(Arbitraries.constant("b"));
-				return arbitraries;
-			}
-		};
-
-		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("twiceTypeVariableT", arbitraryResolver);
-
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", "a"));
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", "b"));
-		assertNeverGenerated(shrinkablesGenerator, asList("a", "b"));
-		assertNeverGenerated(shrinkablesGenerator, asList("b", "a"));
-	}
-
-	//@Example
-	void sameTypeVariableInParameterOfType() {
-
-		ArbitraryResolver arbitraryResolver = new ArbitraryResolver() {
-			@Override
-			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
-				Set<Arbitrary<?>> arbitraries = new HashSet<>();
-				Arbitrary<String> a = Arbitraries.constant("a");
-				Arbitrary<String> b = Arbitraries.constant("b");
-				if (parameter.getType() instanceof TypeVariable) {
-					arbitraries.add(a);
-					arbitraries.add(b);
-				} else {
-					arbitraries.add(a.list().ofSize(1));
-					arbitraries.add(b.list().ofSize(1));
-				}
-				return arbitraries;
-			}
-		};
-
-		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("typeVariableAlsoInList", arbitraryResolver);
-
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("a", asList("a")));
-		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", asList("b")));
-
-		// TODO: This is really hard to implement and probably requires core changes in Arbitrary/RandomGenerator
-		//assertNeverGenerated(shrinkablesGenerator, random, asList("a", asList("b")));
-		//assertNeverGenerated(shrinkablesGenerator, random, asList("b", asList("a")));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable(4));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(2), Shrinkable.unshrinkable(4));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3), Shrinkable.unshrinkable(4));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable(5));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(2), Shrinkable.unshrinkable(5));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3), Shrinkable.unshrinkable(5));
+		assertThat(shrinkablesGenerator.hasNext()).isFalse();
 	}
 
 	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, List expected) {
@@ -162,10 +89,11 @@ class ExhaustiveShrinkablesGeneratorTests {
 
 		public void intFrom0to5(@ForAll @IntRange(min = 0, max = 5) int anInt) {}
 
-		public void simpleParameters(@ForAll String aString, @ForAll int anInt) {}
+		public void intFrom1to3And4to5(
+			@ForAll @IntRange(min = 1, max = 3) int int1,
+			@ForAll @IntRange(min = 4, max = 5) int int2
+		) {}
 
-		public <T> void twiceTypeVariableT(@ForAll T t1, @ForAll T t2) {}
-
-		public <T> void typeVariableAlsoInList(@ForAll T t, @ForAll List<T> tList) {}
+		public void genericNumber(@ForAll Number aNumber) {}
 	}
 }
