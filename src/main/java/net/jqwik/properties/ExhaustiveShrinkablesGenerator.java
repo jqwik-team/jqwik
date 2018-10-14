@@ -13,87 +13,57 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		List<MethodParameter> parameters,
 		ArbitraryResolver arbitraryResolver
 	) {
-		List<ExhaustiveParameterGenerator> parameterGenerators =
+		List<Arbitrary> arbitraries =
 			parameters.stream()
 					  .map(parameter -> resolveParameter(arbitraryResolver, parameter))
 					  .collect(Collectors.toList());
 
-		return new ExhaustiveShrinkablesGenerator(parameterGenerators);
+		return new ExhaustiveShrinkablesGenerator(arbitraries);
 	}
 
-	private static ExhaustiveParameterGenerator resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
-		Set<ExhaustiveGenerator> generators =
-			arbitraryResolver.forParameter(parameter).stream()
-							 .map(GenericArbitrary::new)
-							 .map(genericArbitrary -> {
-								 Optional<ExhaustiveGenerator<Object>> exhaustive = genericArbitrary.exhaustive();
-								 if (exhaustive.isPresent()) {
-									 return exhaustive.get();
-								 } else {
-									 String message = String.format("Arbitrary %s does not provide exhaustive generator", genericArbitrary);
-									 throw new JqwikException(message);
-								 }
-							 })
-							 .collect(Collectors.toSet());
-
-		if (generators.isEmpty()) {
+	private static Arbitrary resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
+		Set<Arbitrary<?>> arbitraries = arbitraryResolver.forParameter(parameter);
+		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(parameter);
 		}
-		return new ExhaustiveParameterGenerator(generators);
+		if (arbitraries.size() > 1) {
+			String message = String.format("Exhaustive generation requires unambiguous arbitrary for parameter [%s]", parameter);
+			throw new JqwikException(message);
+		}
+
+		Arbitrary arbitrary = arbitraries.iterator().next();
+		if (!arbitrary.exhaustive().isPresent()) {
+			String message = String.format("Arbitrary %s does not provide exhaustive generator", arbitrary);
+			throw new JqwikException(message);
+		}
+
+		return arbitrary;
 	}
 
-	private final List<ExhaustiveParameterGenerator> parameterGenerators;
+	private final List<Arbitrary> arbitraries;
+	private final List<ExhaustiveGenerator> currentGenerators;
 
-	private ExhaustiveShrinkablesGenerator(List<ExhaustiveParameterGenerator> parameterGenerators) {
-		this.parameterGenerators = parameterGenerators;
+	private ExhaustiveShrinkablesGenerator(List<Arbitrary> arbitraries) {
+		this.arbitraries = arbitraries;
+		this.currentGenerators = arbitraries.stream().map(arbitrary -> (ExhaustiveGenerator) arbitrary.exhaustive().get()).collect(Collectors.toList());
 	}
 
 	@Override
 	public boolean hasNext() {
-		return parameterGenerators.stream().allMatch(ExhaustiveParameterGenerator::hasNext);
+		return currentGenerators.get(0).hasNext();
 	}
 
 	@Override
 	public List<Shrinkable> next() {
-		return parameterGenerators
-				   .stream()
-				   .map(ExhaustiveParameterGenerator::next)
-				   .collect(Collectors.toList());
+		return Arrays.asList(Shrinkable.unshrinkable(currentGenerators.get(0).next()));
 	}
 
 	public long maxCount() {
-		return parameterGenerators
+		return currentGenerators
 				   .stream()
-				   .mapToLong(ExhaustiveParameterGenerator::maxCount)
+				   .mapToLong(ExhaustiveGenerator::maxCount)
 				   .reduce((product, count) -> product * count)
 				   .getAsLong();
-
 	}
 
-	private static class ExhaustiveParameterGenerator implements Iterator<Shrinkable> {
-		private final List<ExhaustiveGenerator> generators;
-
-		private ExhaustiveParameterGenerator(Set<ExhaustiveGenerator> generators) {
-			this.generators = new ArrayList<>(generators);
-		}
-
-		@Override
-		public boolean hasNext() {
-			return generators.get(0).hasNext();
-		}
-
-		@Override
-		public Shrinkable next() {
-			return Shrinkable.unshrinkable(generators.get(0).next());
-		}
-
-		private long maxCount() {
-			return generators
-					   .stream()
-					   .mapToLong(ExhaustiveGenerator::maxCount)
-					   .reduce((product, count) -> product * count)
-					   .getAsLong();
-		}
-
-	}
 }
