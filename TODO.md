@@ -1,5 +1,7 @@
 -  Allow exhaustive generation
+   - Combinatorics.combine(List<Iterable>) -> Iterator<List>
    - ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator
+     - use Combinatorics.combine
    - ExhaustiveGenerator implementations:
      - DefaultShort|Byte|Long|BigIntegerArbitrary
      - DefaultCharsArbitrary
