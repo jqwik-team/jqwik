@@ -6,24 +6,24 @@ import net.jqwik.api.*;
 
 public class ExhaustiveGenerators {
 	public static <T> Optional<ExhaustiveGenerator<T>> choose(List<T> values) {
-		return fromIterator(values.iterator(), values.size());
+		return fromIterable(values, values.size());
 	}
 
 	public static <T extends Enum<T>>  Optional<ExhaustiveGenerator<T>> choose(Class<T> enumClass) {
 		return choose(Arrays.asList(enumClass.getEnumConstants()));
 	}
 
-	public static <T> Optional<ExhaustiveGenerator<T>> fromIterator(Iterator<T> iterator, long maxCount) {
-		return Optional.of(new IteratorBasedGenerator<>(iterator, maxCount));
+	public static <T> Optional<ExhaustiveGenerator<T>> fromIterable(Iterable<T> iterator, long maxCount) {
+		return Optional.of(new IterableBasedGenerator<>(iterator, maxCount));
 	}
 
-	private static class IteratorBasedGenerator<T> implements ExhaustiveGenerator<T> {
+	private static class IterableBasedGenerator<T> implements ExhaustiveGenerator<T> {
 
-		final private Iterator<T> iterator ;
+		final private Iterable<T> iterable;
 		final private long maxCount;
 
-		private IteratorBasedGenerator(Iterator<T> iterator, long maxCount) {
-			this.iterator = iterator;
+		private IterableBasedGenerator(Iterable<T> iterable, long maxCount) {
+			this.iterable = iterable;
 			this.maxCount = maxCount;
 		}
 
@@ -33,13 +33,8 @@ public class ExhaustiveGenerators {
 		}
 
 		@Override
-		public boolean hasNext() {
-			return iterator.hasNext();
-		}
-
-		@Override
-		public T next() {
-			return iterator.next();
+		public Iterator<T> iterator() {
+			return iterable.iterator();
 		}
 	}
 }

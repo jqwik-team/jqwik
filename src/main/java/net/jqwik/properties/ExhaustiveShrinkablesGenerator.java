@@ -9,16 +9,14 @@ import net.jqwik.support.*;
 
 public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 
-	public static ExhaustiveShrinkablesGenerator forParameters(
-		List<MethodParameter> parameters,
-		ArbitraryResolver arbitraryResolver
-	) {
-		List<Arbitrary> arbitraries =
+	public static ExhaustiveShrinkablesGenerator forParameters(List<MethodParameter> parameters, ArbitraryResolver arbitraryResolver) {
+		List<ExhaustiveGenerator> exhaustiveGenerators =
 			parameters.stream()
 					  .map(parameter -> resolveParameter(arbitraryResolver, parameter))
+					  .map((Arbitrary arbitrary) -> (ExhaustiveGenerator) arbitrary.exhaustive().get())
 					  .collect(Collectors.toList());
 
-		return new ExhaustiveShrinkablesGenerator(arbitraries);
+		return new ExhaustiveShrinkablesGenerator(exhaustiveGenerators);
 	}
 
 	private static Arbitrary resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
@@ -40,30 +38,48 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		return arbitrary;
 	}
 
-	private final List<Arbitrary> arbitraries;
-	private final List<ExhaustiveGenerator> currentGenerators;
+	private final Iterator<List<Shrinkable>> combinatorialIterator;
+	private final long maxCount;
 
-	private ExhaustiveShrinkablesGenerator(List<Arbitrary> arbitraries) {
-		this.arbitraries = arbitraries;
-		this.currentGenerators = arbitraries.stream().map(arbitrary -> (ExhaustiveGenerator) arbitrary.exhaustive().get()).collect(Collectors.toList());
+
+	private ExhaustiveShrinkablesGenerator(List<ExhaustiveGenerator> generators) {
+		this.maxCount = generators
+			.stream()
+			.mapToLong(ExhaustiveGenerator::maxCount)
+			.reduce((product, count) -> product * count)
+			.getAsLong();
+
+		this.combinatorialIterator = combine(generators);
+	}
+
+	private Iterator<List<Shrinkable>> combine(List<ExhaustiveGenerator> generators) {
+		return new Iterator<List<Shrinkable>>() {
+			Iterator iterator = generators.get(0).iterator();
+
+			@Override
+			public boolean hasNext() {
+				return iterator.hasNext();
+			}
+
+			@Override
+			public List<Shrinkable> next() {
+				return Arrays.asList(Shrinkable.unshrinkable(iterator.next()));
+			}
+		};
 	}
 
 	@Override
 	public boolean hasNext() {
-		return currentGenerators.get(0).hasNext();
+		return combinatorialIterator.hasNext();
 	}
 
 	@Override
 	public List<Shrinkable> next() {
-		return Arrays.asList(Shrinkable.unshrinkable(currentGenerators.get(0).next()));
+		return combinatorialIterator.next();
 	}
 
 	public long maxCount() {
-		return currentGenerators
-				   .stream()
-				   .mapToLong(ExhaustiveGenerator::maxCount)
-				   .reduce((product, count) -> product * count)
-				   .getAsLong();
+		return maxCount;
 	}
 
 }

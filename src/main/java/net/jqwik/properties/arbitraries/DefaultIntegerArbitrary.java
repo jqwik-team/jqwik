@@ -33,7 +33,7 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 		} else {
 			int begin = generatingArbitrary.min.intValueExact();
 			int end = generatingArbitrary.max.intValueExact() + 1;
-			return ExhaustiveGenerators.fromIterator(IntStream.range(begin, end).iterator(), maxCount.longValueExact());
+			return ExhaustiveGenerators.fromIterable(() -> IntStream.range(begin, end).iterator(), maxCount.longValueExact());
 		}
 	}
 
