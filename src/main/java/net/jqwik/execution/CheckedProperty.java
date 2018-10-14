@@ -19,6 +19,7 @@ public class CheckedProperty {
 	private final ArbitraryResolver arbitraryResolver;
 	private final Optional<Iterable<? extends Tuple>> optionalData;
 	public final PropertyConfiguration configuration;
+	private final Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive;
 
 	public CheckedProperty(
 		String propertyName, CheckedFunction checkedFunction, List<MethodParameter> forAllParameters,
@@ -30,6 +31,7 @@ public class CheckedProperty {
 		this.arbitraryResolver = arbitraryResolver;
 		this.optionalData = optionalData;
 		this.configuration = configuration;
+		this.optionalExhaustive = createExhaustiveShrinkablesGenerator();
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> publisher, Reporting[] reporting) {
@@ -52,44 +54,65 @@ public class CheckedProperty {
 	}
 
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {
-		// TODO: Clean up this terrible and partially untested code
-		Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive = createExhaustiveShrinkablesGenerator(configuration);
 		if (configuration.getGenerationMode() == GenerationMode.AUTO) {
-			if (optionalData.isPresent()) {
-				configuration = configuration.withGenerationMode(GenerationMode.DATA_DRIVEN);
-			} else if (optionalExhaustive.isPresent() && optionalExhaustive.get().maxCount() <= configuration.getTries()) {
-				configuration = configuration.withGenerationMode(GenerationMode.EXHAUSTIVE);
-			} else {
-				configuration = configuration.withGenerationMode(GenerationMode.RANDOMIZED);
-			}
+			configuration = chooseGenerationMode(configuration);
 		} else if (configuration.getGenerationMode() == GenerationMode.DATA_DRIVEN) {
-			if (!optionalData.isPresent()) {
-				throw new JqwikException("With @Property(generation = EXHAUSTIVE) there must be a @FromData annotation");
-			}
+			ensureValidDataDrivenMode();
 		} else if (configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE) {
-			if (optionalData.isPresent()) {
-				throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = EXHAUSTIVE)");
-			}
-			if (!optionalExhaustive.isPresent()) {
-				throw new JqwikException("@Property(generation = EXHAUSTIVE) requires all arbitraries to provide exhaustive generators");
-			}
+			ensureValidExhaustiveMode();
 			configuration = configuration.withTries(Math.toIntExact(optionalExhaustive.get().maxCount()));
 		} else if (configuration.getGenerationMode() == GenerationMode.RANDOMIZED) {
-			if (optionalData.isPresent()) {
-				throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = RANDOMIZED)");
-			}
+			ensureValidRandomizedMode();
 		}
-		ShrinkablesGenerator shrinkablesGenerator =
-			configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE
-				? optionalExhaustive.get()
-				: configuration.getGenerationMode() == GenerationMode.DATA_DRIVEN
-					  ? createDataBasedShrinkablesGenerator(configuration)
-					  : createRandomizedShrinkablesGenerator(configuration);
 
+		ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
 		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
 	}
 
-	private Optional<ExhaustiveShrinkablesGenerator> createExhaustiveShrinkablesGenerator(PropertyConfiguration configuration) {
+	private ShrinkablesGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {
+		switch (configuration.getGenerationMode()) {
+			case EXHAUSTIVE:
+				return optionalExhaustive.get();
+			case DATA_DRIVEN:
+				return createDataBasedShrinkablesGenerator(configuration);
+			default:
+				return createRandomizedShrinkablesGenerator(configuration);
+		}
+	}
+
+	private void ensureValidRandomizedMode() {
+		if (optionalData.isPresent()) {
+			throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = RANDOMIZED)");
+		}
+	}
+
+	private void ensureValidExhaustiveMode() {
+		if (optionalData.isPresent()) {
+			throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = EXHAUSTIVE)");
+		}
+		if (!optionalExhaustive.isPresent()) {
+			throw new JqwikException("@Property(generation = EXHAUSTIVE) requires all arbitraries to provide exhaustive generators");
+		}
+	}
+
+	private void ensureValidDataDrivenMode() {
+		if (!optionalData.isPresent()) {
+			throw new JqwikException("With @Property(generation = DATA_DRIVEN) there must be a @FromData annotation");
+		}
+	}
+
+	private PropertyConfiguration chooseGenerationMode(PropertyConfiguration configuration) {
+		if (optionalData.isPresent()) {
+			configuration = configuration.withGenerationMode(GenerationMode.DATA_DRIVEN);
+		} else if (optionalExhaustive.isPresent() && optionalExhaustive.get().maxCount() <= configuration.getTries()) {
+			configuration = configuration.withGenerationMode(GenerationMode.EXHAUSTIVE);
+		} else {
+			configuration = configuration.withGenerationMode(GenerationMode.RANDOMIZED);
+		}
+		return configuration;
+	}
+
+	private Optional<ExhaustiveShrinkablesGenerator> createExhaustiveShrinkablesGenerator() {
 		if (forAllParameters.isEmpty()) {
 			return Optional.empty();
 		}
