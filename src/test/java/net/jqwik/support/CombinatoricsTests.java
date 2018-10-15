@@ -67,7 +67,18 @@ class CombinatoricsTests {
 	}
 
 	@Example
-	void twoIterablesOneIsEmpty() {
+	void twoIterablesFirstIsEmpty() {
+		List<Iterable> iterables = asList(
+			Collections.emptyList(),
+			asList(1, 2, 3)
+		);
+		Iterator<List> iterator = Combinatorics.combine(iterables);
+		assertThat(iterator.hasNext()).isFalse();
+		assertThat(iterator).isEmpty();
+	}
+
+	@Example
+	void twoIterablesSecondIsEmpty() {
 		List<Iterable> iterables = asList(
 			asList(1, 2, 3),
 			Collections.emptyList()
