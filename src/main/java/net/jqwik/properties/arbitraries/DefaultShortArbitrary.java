@@ -4,6 +4,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
+import java.util.*;
 
 public class DefaultShortArbitrary extends AbstractArbitraryBase implements ShortArbitrary {
 
@@ -19,6 +20,11 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 	@Override
 	public RandomGenerator<Short> generator(int genSize) {
 		return generatingArbitrary.generator(genSize).map(BigInteger::shortValueExact);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Short>> exhaustive() {
+		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::shortValueExact));
 	}
 
 	@Override

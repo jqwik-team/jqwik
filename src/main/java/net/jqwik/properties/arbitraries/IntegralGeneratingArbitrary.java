@@ -23,6 +23,17 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 		return createGenerator(partitionPoints, genSize);
 	}
 
+	@Override
+	public Optional<ExhaustiveGenerator<BigInteger>> exhaustive() {
+		BigInteger maxCount = max.subtract(min).add(BigInteger.ONE);
+
+		if (maxCount.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+			return Optional.empty();
+		} else {
+			return ExhaustiveGenerators.fromIterable(RangeIterator::new, maxCount.longValueExact());
+		}
+	}
+
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
 		List<Shrinkable<BigInteger>> samples =
 			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), min, max}) //
@@ -31,6 +42,23 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max))) //
 				  .collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(genSize, samples);
+	}
+
+	class RangeIterator implements Iterator<BigInteger> {
+
+		BigInteger current = min;
+
+		@Override
+		public boolean hasNext() {
+			return current.compareTo(max) <= 0;
+		}
+
+		@Override
+		public BigInteger next() {
+			BigInteger next = current;
+			current = current.add(BigInteger.ONE);
+			return next;
+		}
 	}
 
 }
