@@ -59,7 +59,18 @@ public interface Arbitrary<T> {
 	 * function.
 	 */
 	default <U> Arbitrary<U> map(Function<T, U> mapper) {
-		return genSize -> Arbitrary.this.generator(genSize).map(mapper);
+		return new Arbitrary<U>() {
+			@Override
+			public RandomGenerator<U> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).map(mapper);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<U>> exhaustive() {
+				return Arbitrary.this.exhaustive()
+									 .map(generator -> generator.map(mapper));
+			}
+		};
 	}
 
 	/**

@@ -16,6 +16,16 @@ class ExhaustiveGenerationTests {
 		Maybe
 	}
 
+	@Example
+	void mapping() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.integers().between(-5, 5).map(i -> Integer.toString(i)).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(11);
+		assertThat(generator).containsExactly("-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3", "4", "5");
+	}
+
 	@Group
 	class OfValues {
 
@@ -51,12 +61,10 @@ class ExhaustiveGenerationTests {
 
 	}
 
-
 	@Group
-	class Integrals {
-
+	class Integers {
 		@Example
-		void integersFromMinToMax() {
+		void fromMinToMax() {
 			Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.integers().between(-10, 10).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -66,10 +74,31 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
-		void integerRangeTooBig() {
+		void rangeTooBig() {
 			Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.integers().between(-1, Integer.MAX_VALUE).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
+	}
 
+	//@Group
+	class Shorts {
+		@Example
+		void fromMinToMax() {
+			Optional<ExhaustiveGenerator<Short>> optionalGenerator = Arbitraries.shorts().between((short) -5, (short) 5).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Short> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(21);
+			assertThat(generator).containsExactly((short) -5, (short) -4, (short) -3, (short) -2, (short) -1, (short) 0, (short) 1, (short) 2, (short) 3, (short) 4, (short) 5);
+		}
+
+		@Example
+		void rangeCannotBeTooBig() {
+			Optional<ExhaustiveGenerator<Short>> optionalGenerator = Arbitraries.shorts().between(Short.MIN_VALUE, Short.MAX_VALUE).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Short> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(21);
+		}
 	}
 }
