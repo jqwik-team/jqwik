@@ -2,7 +2,6 @@ package net.jqwik.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -24,17 +23,8 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 	}
 
 	@Override
-	//TODO: Generalize for all Integrals and move to IntegralGeneratingArbitrary
 	public Optional<ExhaustiveGenerator<Integer>> exhaustive() {
-		BigInteger maxCount = generatingArbitrary.max.subtract(generatingArbitrary.min).add(BigInteger.ONE);
-
-		if (maxCount.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
-			return Optional.empty();
-		} else {
-			int begin = generatingArbitrary.min.intValueExact();
-			int end = generatingArbitrary.max.intValueExact() + 1;
-			return ExhaustiveGenerators.fromIterable(() -> IntStream.range(begin, end).iterator(), maxCount.longValueExact());
-		}
+		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::intValueExact));
 	}
 
 	@Override

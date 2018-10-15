@@ -80,7 +80,7 @@ class ExhaustiveGenerationTests {
 		}
 	}
 
-	//@Group
+	@Group
 	class Shorts {
 		@Example
 		void fromMinToMax() {
@@ -88,7 +88,7 @@ class ExhaustiveGenerationTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Short> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(21);
+			assertThat(generator.maxCount()).isEqualTo(11);
 			assertThat(generator).containsExactly((short) -5, (short) -4, (short) -3, (short) -2, (short) -1, (short) 0, (short) 1, (short) 2, (short) 3, (short) 4, (short) 5);
 		}
 
@@ -98,7 +98,7 @@ class ExhaustiveGenerationTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Short> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(21);
+			assertThat(generator.maxCount()).isEqualTo(65536);
 		}
 	}
 }

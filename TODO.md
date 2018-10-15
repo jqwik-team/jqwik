@@ -1,6 +1,8 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - DefaultShort|Byte|Long|BigIntegerArbitrary
+     - Byte
+     - Long
+     - BigInteger
      - DefaultCharsArbitrary
      - Arbitraries.of(char[])
      - Arbitrary.filter()
