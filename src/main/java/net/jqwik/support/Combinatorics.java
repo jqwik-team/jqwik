@@ -10,52 +10,53 @@ public class Combinatorics {
 	private static class CombinedIterator<T> implements Iterator<List<T>> {
 
 		private final Iterator<T> first;
-		private final ArrayList<Iterable<T>> iterables;
-		private Iterator<List<T>> next = null;
+		private final ArrayList<Iterable<T>> rest;
+		private Iterator<List<T>> next;
+
+		private static <U> Iterator<List<U>> emptyListSingleton() {
+			return Arrays.asList((List<U>) new ArrayList<U>()).iterator();
+		}
+
 		private T current = null;
 
 		private CombinedIterator(List<Iterable<T>> iterables) {
-			this.iterables = new ArrayList<>(iterables);
-			this.first = this.iterables.remove(0).iterator();
-			if (!this.iterables.isEmpty()) {
-				this.next = new CombinedIterator<>(this.iterables);
-			}
+			this.rest = new ArrayList<>(iterables);
+			this.first = this.rest.remove(0).iterator();
+			this.next = restIterator();
+		}
+
+		private Iterator<List<T>> restIterator() {
+			return this.rest.isEmpty()
+					   ? emptyListSingleton()
+					   : new CombinedIterator<T>(this.rest);
 		}
 
 		@Override
 		public boolean hasNext() {
-			if (next != null) {
-				if (current == null) {
-					return next.hasNext() && first.hasNext();
-				} else {
-					return next.hasNext() || first.hasNext();
-				}
+			if (current == null) {
+				return next.hasNext() && first.hasNext();
 			} else {
-				return first.hasNext();
+				return next.hasNext() || first.hasNext();
 			}
 		}
 
 		@Override
 		public List<T> next() {
-			if (next != null) {
-				if (next.hasNext()) {
-					if (current == null) {
-						current = first.next();
-					}
-					List<T> rest = new ArrayList<>(next.next());
-					rest.add(0, current);
-					return rest;
-				} else {
+			if (next.hasNext()) {
+				if (current == null) {
 					current = first.next();
-					next = new CombinedIterator<>(iterables);
-					List<T> rest = new ArrayList<>(next.next());
-					rest.add(0, current);
-					return rest;
 				}
-			}  else {
+			} else {
 				current = first.next();
-				return Collections.singletonList(current);
+				this.next = restIterator();
 			}
+			return prepend(current, next.next());
+		}
+
+		private List<T> prepend(T head, List<T> tail) {
+			List<T> rest = new ArrayList<>(tail);
+			rest.add(0, head);
+			return rest;
 		}
 	}
 }
