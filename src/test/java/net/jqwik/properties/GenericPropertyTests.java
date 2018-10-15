@@ -373,7 +373,7 @@ class GenericPropertyTests {
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
 			assertThat(result.countTries()).isEqualTo(5);
 			assertThat(result.countChecks()).isEqualTo(5);
-			assertThat(result.randomSeed()).isEqualTo("1000L");
+			assertThat(result.randomSeed()).isEqualTo("1000");
 			assertThat(result.throwable()).isNotPresent();
 			assertThat(result.sample()).isNotPresent();
 		}

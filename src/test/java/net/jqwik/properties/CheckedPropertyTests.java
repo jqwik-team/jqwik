@@ -16,10 +16,11 @@ import net.jqwik.support.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.TestHelper.*;
+import static net.jqwik.api.GenerationMode.*;
 import static net.jqwik.properties.PropertyCheckResult.Status.*;
+import static net.jqwik.properties.PropertyConfigurationBuilder.aConfig;
 
 @Group
-//TODO: Clean up. So much duplication :-((
 class CheckedPropertyTests {
 
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> {
@@ -112,13 +113,14 @@ class CheckedPropertyTests {
 		@Example
 		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
 			List<MethodParameter> parameters = getParametersForMethod("stringProp");
+
 			CheckedProperty checkedProperty = new CheckedProperty(
 				"stringProp",
 				params -> false,
 				parameters,
 				p -> Collections.emptySet(),
 				Optional.empty(),
-				new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+				aConfig().build()
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -135,7 +137,7 @@ class CheckedPropertyTests {
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
-				new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
+				aConfig().withSeed("42").withTries(20).build()
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -156,7 +158,7 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+					aConfig().withGeneration(AUTO).build()
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -175,7 +177,7 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.DATA_DRIVEN)
+					aConfig().withGeneration(DATA_DRIVEN).build()
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -192,7 +194,7 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"))),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
+					aConfig().withGeneration(RANDOMIZED).build()
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -205,7 +207,7 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"))),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+					aConfig().withGeneration(EXHAUSTIVE).build()
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -218,7 +220,7 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.empty(),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.DATA_DRIVEN)
+					aConfig().withGeneration(DATA_DRIVEN).build()
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -237,7 +239,7 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+					aConfig().withGeneration(EXHAUSTIVE).build()
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -254,7 +256,7 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 99)),
 					Optional.empty(),
-					new PropertyConfiguration("Property", "42", 50, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+					aConfig().withTries(50).withGeneration(EXHAUSTIVE).build()
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -272,7 +274,7 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+					aConfig().withGeneration(AUTO).build()
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -289,7 +291,7 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers()),
 					Optional.empty(),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.EXHAUSTIVE)
+					aConfig().withGeneration(EXHAUSTIVE).build()
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -302,7 +304,7 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 21)),
 					Optional.empty(),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+					aConfig().withTries(20).build()
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -318,7 +320,7 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
-					new PropertyConfiguration("Property", "42", 20, 5, ShrinkingMode.FULL, GenerationMode.RANDOMIZED)
+					aConfig().withTries(20).withGeneration(RANDOMIZED).build()
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -335,7 +337,7 @@ class CheckedPropertyTests {
 			methodName, forAllFunction, getParametersForMethod(methodName),
 			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
 			Optional.empty(),
-			new PropertyConfiguration("Property", "1000", 100, 5, ShrinkingMode.FULL, GenerationMode.AUTO)
+			aConfig().build()
 		);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 		assertThat(check.status()).isEqualTo(expectedStatus);
