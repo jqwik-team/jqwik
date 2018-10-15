@@ -47,7 +47,7 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 			.stream()
 			.mapToLong(ExhaustiveGenerator::maxCount)
 			.reduce((product, count) -> product * count)
-			.getAsLong();
+			.orElse(1L);
 
 		this.combinatorialIterator = combine(generators);
 	}
