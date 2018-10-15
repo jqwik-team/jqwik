@@ -14,6 +14,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CombinatoricsTests {
 
 	@Example
+	void combineNoIterables() {
+		List<Iterable> iterables = asList();
+		Iterator<List> iterator = Combinatorics.combine(iterables);
+
+		assertThat(iterator).containsExactly(
+			asList()
+		);
+	}
+
+	@Example
 	void combineSingleIterable() {
 		List<Iterable> iterables = asList(
 			asList(1, 2, 3)
