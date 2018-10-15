@@ -9,10 +9,16 @@ class PropertyConfigurationBuilder {
 		return new PropertyConfigurationBuilder();
 	}
 
+	private String seed = "1000";
 	private int tries = 100;
 	private int maxDiscardRatio = 5;
 	private ShrinkingMode shrinkingMode = ShrinkingMode.FULL;
 	private GenerationMode generationMode = GenerationMode.AUTO;
+
+	PropertyConfigurationBuilder withSeed(String seed) {
+		this.seed = seed;
+		return this;
+	}
 
 	PropertyConfigurationBuilder withTries(int tries) {
 		this.tries = tries;
@@ -37,7 +43,7 @@ class PropertyConfigurationBuilder {
 	PropertyConfiguration build() {
 		return new PropertyConfiguration(
 			"Property",
-			"1000L",
+			seed,
 			tries,
 			maxDiscardRatio,
 			shrinkingMode,
@@ -45,4 +51,5 @@ class PropertyConfigurationBuilder {
 		);
 
 	}
+
 }
