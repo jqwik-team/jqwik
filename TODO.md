@@ -8,6 +8,5 @@
      - Arbitrary.flatMap()
      - Unique?
      - reset needed?
-   - Report actual generationMode
    - User Guide
 
