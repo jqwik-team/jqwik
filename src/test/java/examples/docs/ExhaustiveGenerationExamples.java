@@ -7,7 +7,7 @@ import static net.jqwik.api.GenerationMode.*;
 
 class ExhaustiveGenerationExamples {
 
-	@Property(generation = EXHAUSTIVE)
+	@Property //(generation = EXHAUSTIVE) // AUTO will choose EXHAUSTIVE anyway
 	@Report(Reporting.GENERATED)
 	void all_numbers_from_1_to_10(@ForAll @IntRange(min = 1, max = 10) int anInt) {
 	}
