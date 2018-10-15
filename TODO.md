@@ -3,7 +3,6 @@
      - DefaultShort|Byte|Long|BigIntegerArbitrary
      - DefaultCharsArbitrary
      - Arbitraries.of(char[])
-     - Arbitrary.map()
      - Arbitrary.filter()
      - Arbitrary.flatMap()
      - Unique?

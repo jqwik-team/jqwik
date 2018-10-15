@@ -1,5 +1,9 @@
 package net.jqwik.api;
 
+import java.util.function.*;
+
+import net.jqwik.properties.arbitraries.*;
+
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 	/**
@@ -7,4 +11,7 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	 */
 	long maxCount();
 
+	default <U> ExhaustiveGenerator<U> map(Function<T, U> mapper) {
+		return new MappedExhaustiveGenerator<>(this, mapper);
+	}
 }
