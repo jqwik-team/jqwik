@@ -3,12 +3,11 @@ package net.jqwik.support;
 import java.util.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 
 @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 class CombinatoricsTests {
@@ -96,5 +95,32 @@ class CombinatoricsTests {
 		Iterator<List> iterator = Combinatorics.combine(iterables);
 		assertThat(iterator.hasNext()).isFalse();
 		assertThat(iterator).isEmpty();
+	}
+
+	@Property
+	@Label("all combinations produce product of individual iterators")
+	void productOfIterables(@ForAll("iterables") @Size(min = 0, max = 4) List<List> listOfLists) {
+
+		int product =
+			listOfLists
+				.stream()
+				.mapToInt(List::size)
+				.reduce(((left, right) -> left * right)).orElse(1);
+
+		List<Iterable> iterables = listOfLists
+									   .stream()
+									   .map(aList -> (Iterable) aList)
+									   .collect(Collectors.toList());
+
+		Iterator<List> iterator = Combinatorics.combine(iterables);
+		assertThat(iterator).hasSize(product);
+	}
+
+	@Provide
+	Arbitrary<List<List<Integer>>> iterables() {
+		return Arbitraries
+				   .integers().between(-1000, 1000).unique()
+				   .list().ofMaxSize(15)
+				   .list();
 	}
 }

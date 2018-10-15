@@ -30,43 +30,23 @@ class ExhaustiveShrinkablesGeneratorTests {
 	}
 
 	@Example
-	void ambiguousArbitraryResolutionFailsToCreateExhaustiveShrinkablesGenerator() {
+	@Label("ambiguous Arbitrary resolution fails to create ExhaustiveShrinkablesGenerator")
+	void ambiguousArbitraryResolution() {
 		assertThatThrownBy( () -> createGenerator("genericNumber")).isInstanceOf(JqwikException.class);
 	}
 
-	//@Example
+	@Example
 	void twoIntParameters() {
 		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("intFrom1to3And4to5");
 		assertThat(shrinkablesGenerator.maxCount()).isEqualTo(6);
 
 		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable(4));
-		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(2), Shrinkable.unshrinkable(4));
-		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3), Shrinkable.unshrinkable(4));
 		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable(5));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(2), Shrinkable.unshrinkable(4));
 		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(2), Shrinkable.unshrinkable(5));
+		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3), Shrinkable.unshrinkable(4));
 		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3), Shrinkable.unshrinkable(5));
 		assertThat(shrinkablesGenerator.hasNext()).isFalse();
-	}
-
-	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, List expected) {
-		for (int i = 0; i < 500; i++) {
-			List<Shrinkable> shrinkables = generator.next();
-			if (values(shrinkables).equals(expected))
-				return;
-		}
-		fail("Failed to generate at least once");
-	}
-
-	private void assertNeverGenerated(ShrinkablesGenerator generator, List expected) {
-		for (int i = 0; i < 500; i++) {
-			List<Shrinkable> shrinkables = generator.next();
-			if (values(shrinkables).equals(expected))
-				fail(String.format("%s should never be generated", values(shrinkables)));
-		}
-	}
-
-	private List<Object> values(List<Shrinkable> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	private ExhaustiveShrinkablesGenerator createGenerator(String methodName) {

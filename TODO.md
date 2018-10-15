@@ -1,5 +1,4 @@
 -  Allow exhaustive generation
-   - Combinatorics.combine(List<Iterable>) -> Iterator<List>
    - ExhaustiveGenerator implementations:
      - DefaultShort|Byte|Long|BigIntegerArbitrary
      - DefaultCharsArbitrary
