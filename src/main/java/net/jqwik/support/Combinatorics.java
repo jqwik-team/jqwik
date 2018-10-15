@@ -3,32 +3,37 @@ package net.jqwik.support;
 import java.util.*;
 
 public class Combinatorics {
+
+	@SuppressWarnings("unchecked")
 	public static Iterator<List> combine(List<Iterable> listOfIterables) {
+		if (listOfIterables.isEmpty()) {
+			return emptyListSingleton();
+		}
 		return new CombinedIterator(listOfIterables);
 	}
 
-	private static class CombinedIterator<T> implements Iterator<List<T>> {
+	private static Iterator<List> emptyListSingleton() {
+		return Arrays.asList((List) new ArrayList()).iterator();
+	}
 
-		private final Iterator<T> first;
-		private final ArrayList<Iterable<T>> rest;
-		private Iterator<List<T>> next;
+	private static class CombinedIterator implements Iterator<List> {
 
-		private static <U> Iterator<List<U>> emptyListSingleton() {
-			return Arrays.asList((List<U>) new ArrayList<U>()).iterator();
-		}
+		private final Iterator first;
+		private final ArrayList<Iterable> rest;
+		private Iterator<List> next;
 
-		private T current = null;
+		private Object current = null;
 
-		private CombinedIterator(List<Iterable<T>> iterables) {
+		private CombinedIterator(List<Iterable> iterables) {
 			this.rest = new ArrayList<>(iterables);
 			this.first = this.rest.remove(0).iterator();
 			this.next = restIterator();
 		}
 
-		private Iterator<List<T>> restIterator() {
+		private Iterator<List> restIterator() {
 			return this.rest.isEmpty()
 					   ? emptyListSingleton()
-					   : new CombinedIterator<T>(this.rest);
+					   : new CombinedIterator(this.rest);
 		}
 
 		@Override
@@ -41,7 +46,7 @@ public class Combinatorics {
 		}
 
 		@Override
-		public List<T> next() {
+		public List next() {
 			if (next.hasNext()) {
 				if (current == null) {
 					current = first.next();
@@ -53,8 +58,9 @@ public class Combinatorics {
 			return prepend(current, next.next());
 		}
 
-		private List<T> prepend(T head, List<T> tail) {
-			List<T> rest = new ArrayList<>(tail);
+		@SuppressWarnings("unchecked")
+		private List prepend(Object head, List tail) {
+			List rest = new ArrayList(tail);
 			rest.add(0, head);
 			return rest;
 		}
