@@ -8,6 +8,11 @@
      - Arbitrary.filter()
      - Arbitrary.flatMap()
      - Unique?
+     - List
+     - Set
+     - Arrays
+     - Stream
+     - Optional
    - User Guide
 
 - Release 0.9.0
