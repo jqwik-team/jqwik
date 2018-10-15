@@ -24,8 +24,15 @@ public class Combinatorics {
 
 		@Override
 		public boolean hasNext() {
-			if (next != null) return next.hasNext() || first.hasNext();
-			return first.hasNext();
+			if (next != null) {
+				if (current == null) {
+					return next.hasNext() && first.hasNext();
+				} else {
+					return next.hasNext() || first.hasNext();
+				}
+			} else {
+				return first.hasNext();
+			}
 		}
 
 		@Override
