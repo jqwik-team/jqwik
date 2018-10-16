@@ -18,6 +18,7 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
+	@Label("Arbitrary.map()")
 	void mapping() {
 		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.integers().between(-5, 5).map(i -> Integer.toString(i)).exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -28,6 +29,7 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
+	@Label("Arbitrary.filter()")
 	void filtering() {
 		Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.integers().between(-5, 5)
 																			  .filter(i -> i % 2 == 0)
@@ -40,6 +42,7 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
+	@Label("Arbitrary.unique()")
 	void unique() {
 		Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.of(1, 2, 1, 3, 1, 2).unique().exhaustive();
 		assertThat(optionalGenerator).isPresent();

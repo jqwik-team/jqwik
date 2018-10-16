@@ -119,8 +119,7 @@ public interface Arbitrary<T> {
 			}
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Arbitrary.this.exhaustive()
-									 .map(generator -> generator.unique(usedValues));
+				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
 			}
 
 		};
