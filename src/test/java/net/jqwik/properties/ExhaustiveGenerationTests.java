@@ -1,5 +1,6 @@
 package net.jqwik.properties;
 
+import java.math.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -95,6 +96,25 @@ class ExhaustiveGenerationTests {
 		@Example
 		void rangeTooBig() {
 			Optional<ExhaustiveGenerator<Long>> optionalGenerator = Arbitraries.longs().between(-1, Long.MAX_VALUE).exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
+		}
+	}
+
+	@Group
+	class BigIntegers {
+		@Example
+		void fromMinToMax() {
+			Optional<ExhaustiveGenerator<BigInteger>> optionalGenerator = Arbitraries.bigIntegers().between(BigInteger.valueOf(-2), BigInteger.valueOf(2)).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<BigInteger> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(5);
+			assertThat(generator).containsExactly(BigInteger.valueOf(-2), BigInteger.valueOf(-1), BigInteger.valueOf(0), BigInteger.valueOf(1), BigInteger.valueOf(2));
+		}
+
+		@Example
+		void rangeTooBig() {
+			Optional<ExhaustiveGenerator<BigInteger>> optionalGenerator = Arbitraries.bigIntegers().between(BigInteger.valueOf(Long.MIN_VALUE), BigInteger.ZERO).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
