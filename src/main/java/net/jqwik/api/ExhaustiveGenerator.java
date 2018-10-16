@@ -38,4 +38,7 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		return new WithNullExhaustiveGenerator<>(ExhaustiveGenerator.this);
 	}
 
+	default ExhaustiveGenerator<T> withSamples(T[] samples) {
+		return new WithSamplesExhaustiveGenerator<>(samples, ExhaustiveGenerator.this);
+	}
 }
