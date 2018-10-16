@@ -9,6 +9,14 @@ public class ExhaustiveGenerators {
 		return fromIterable(values, values.size());
 	}
 
+	public static Optional<ExhaustiveGenerator<Character>> choose(char[] characters) {
+		Character[] validCharacters = new Character[characters.length];
+		for (int i = 0; i < characters.length; i++) {
+			validCharacters[i] = characters[i];
+		}
+		return choose(Arrays.asList(validCharacters));
+	}
+
 	public static <T extends Enum<T>>  Optional<ExhaustiveGenerator<T>> choose(Class<T> enumClass) {
 		return choose(Arrays.asList(enumClass.getEnumConstants()));
 	}

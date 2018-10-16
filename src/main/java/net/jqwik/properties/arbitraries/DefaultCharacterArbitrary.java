@@ -1,5 +1,8 @@
 package net.jqwik.properties.arbitraries;
 
+import java.util.*;
+import java.util.stream.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
@@ -17,6 +20,15 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	public RandomGenerator<Character> generator(int genSize) {
 		return RandomGenerators.chars(min, max);
 	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Character>> exhaustive() {
+		long maxCount = max + 1 - min;
+		return ExhaustiveGenerators
+				   .fromIterable(() -> IntStream.range(min, max + 1).iterator(), maxCount)
+				   .map(optionalGenerator -> optionalGenerator.map(anInt -> (char) (int) anInt));
+	}
+
 
 	@Override
 	public CharacterArbitrary between(char min, char max) {

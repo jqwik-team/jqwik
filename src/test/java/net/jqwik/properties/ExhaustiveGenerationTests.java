@@ -159,8 +159,40 @@ class ExhaustiveGenerationTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Byte> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(256
-			);
+			assertThat(generator.maxCount()).isEqualTo(256);
+		}
+	}
+
+	@Group
+	class Chars {
+		@Example
+		void fromMinToMax() {
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars().between('a', 'f').exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(6);
+			assertThat(generator).containsExactly('a', 'b', 'c', 'd', 'e', 'f');
+		}
+
+		@Example
+		void rangeCannotBeTooBig() {
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars().between(Character.MIN_VALUE, Character.MAX_VALUE).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(65536);
+		}
+
+		@Example
+		@Label("Arbitraries.of(char[])")
+		void arbitrariesOf() {
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.of(new char[] {'a', 'c', 'e', 'X'}).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly('a', 'c', 'e', 'X');
 		}
 	}
 }

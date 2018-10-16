@@ -1,7 +1,5 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - DefaultCharsArbitrary
-     - Arbitraries.of(char[])
      - Arbitrary.filter()
      - Arbitrary.flatMap()
      - Unique?
