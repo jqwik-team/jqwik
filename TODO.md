@@ -1,6 +1,5 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - Arbitrary.injectNull
      - Arbitrary.withSamples
      - Arbitrary.fixGenSize
      - List
