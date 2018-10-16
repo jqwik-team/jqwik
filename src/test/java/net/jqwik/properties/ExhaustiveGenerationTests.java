@@ -66,6 +66,18 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsExactly(null, "abc", "def");
 	}
 
+	@Example
+	@Label("Arbitrary.fixGenSize() has no influence on exhaustive generation")
+	void fixGenSize() {
+		int doesNotMatter = 42;
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.of("abc", "def").fixGenSize(doesNotMatter).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(2);
+		assertThat(generator).containsExactly("abc", "def");
+	}
+
 	@Group
 	class OfValues {
 

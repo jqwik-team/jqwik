@@ -148,7 +148,17 @@ public interface Arbitrary<T> {
 	 * Fix the genSize of an arbitrary so that it can no longer be influenced from outside
 	 */
 	default Arbitrary<T> fixGenSize(int genSize) {
-		return ignoredGenSize -> Arbitrary.this.generator(genSize);
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int ignoredGenSize) {
+				return Arbitrary.this.generator(genSize);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive() {
+				return Arbitrary.this.exhaustive();
+			}
+		};
 	}
 
 	/**
