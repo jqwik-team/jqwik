@@ -81,7 +81,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static Arbitrary<Character> of(char[] values) {
-		return fromGenerator(RandomGenerators.choose(values));
+		return fromGenerators(RandomGenerators.choose(values), ExhaustiveGenerators.choose(values));
 	}
 
 	/**
