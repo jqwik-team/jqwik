@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
 
@@ -23,15 +24,11 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	public static boolean isNoncharacter(int codepoint) {
 		if (codepoint >= 0xfdd0 && codepoint <= 0xfdef)
 			return true;
-		if (codepoint == 0xfffe || codepoint == 0xffff)
-			return true;
-		return false;
+		return codepoint == 0xfffe || codepoint == 0xffff;
 	}
 
 	public static boolean isPrivateUseCharacter(int codepoint) {
-		if (codepoint >= 0xe000 && codepoint <= 0xf8ff)
-			return true;
-		return false;
+		return codepoint >= 0xe000 && codepoint <= 0xf8ff;
 	}
 
 	@Override

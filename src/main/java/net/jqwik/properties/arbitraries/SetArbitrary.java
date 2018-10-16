@@ -1,8 +1,9 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-
 import java.util.*;
+
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 
 public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 

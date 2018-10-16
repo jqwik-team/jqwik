@@ -1,7 +1,6 @@
-package net.jqwik.properties.arbitraries;
+package net.jqwik.properties.arbitraries.randomized;
 
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 import net.jqwik.*;

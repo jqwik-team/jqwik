@@ -1,15 +1,16 @@
-package net.jqwik.properties.arbitraries;
-
-import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
+package net.jqwik.properties.arbitraries.randomized;
 
 import java.math.*;
 import java.util.*;
 
-// TODO: Remove duplication with RandomDecimalGenerators
-class RandomIntegralGenerators {
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.shrinking.*;
 
-	static RandomGenerator<BigInteger> bigIntegers(Range<BigInteger> range, BigInteger[] partitionPoints) {
+// TODO: Remove duplication with RandomDecimalGenerators
+public class RandomIntegralGenerators {
+
+	public static RandomGenerator<BigInteger> bigIntegers(Range<BigInteger> range, BigInteger[] partitionPoints) {
 		if (range.isSingular()) {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
@@ -85,7 +86,7 @@ class RandomIntegralGenerators {
 	}
 
 	// TODO: This could be way more sophisticated
-	static BigInteger[] calculateDefaultPartitionPoints(int tries, BigInteger min, BigInteger max) {
+	public static BigInteger[] calculateDefaultPartitionPoints(int tries, BigInteger min, BigInteger max) {
 		int partitionPoint = Math.max(tries / 2, 10);
 		BigInteger upperPartitionPoint = BigInteger.valueOf(partitionPoint).min(max);
 		BigInteger lowerPartitionPoint = BigInteger.valueOf(partitionPoint).negate().max(min);

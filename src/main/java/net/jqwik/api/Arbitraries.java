@@ -9,6 +9,8 @@ import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.*;
 import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 import net.jqwik.properties.stateful.*;
 import net.jqwik.providers.*;
 

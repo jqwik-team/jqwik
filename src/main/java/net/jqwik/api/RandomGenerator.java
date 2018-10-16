@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 import net.jqwik.properties.shrinking.*;
 
 public interface RandomGenerator<T> {

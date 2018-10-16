@@ -1,15 +1,17 @@
 package net.jqwik.properties;
 
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.properties.arbitraries.*;
-import org.assertj.core.api.*;
-
 import java.math.*;
 import java.util.*;
 
-import static net.jqwik.properties.ArbitraryTestHelper.assertAtLeastOneGenerated;
+import org.assertj.core.api.*;
+
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.randomized.*;
+
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.properties.ArbitraryTestHelper.*;
 
 class RandomGeneratorsTests {
 

@@ -1,4 +1,4 @@
-package net.jqwik.properties.arbitraries;
+package net.jqwik.properties.arbitraries.randomized;
 
 import java.math.*;
 import java.util.*;
@@ -7,6 +7,7 @@ import java.util.function.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
 import net.jqwik.properties.shrinking.*;
 
 public class RandomGenerators {
@@ -189,7 +190,7 @@ public class RandomGenerators {
 		};
 	}
 
-	static int defaultCutoffSize(int minSize, int maxSize, int genSize) {
+	public static int defaultCutoffSize(int minSize, int maxSize, int genSize) {
 		int range = maxSize - minSize;
 		int offset = (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
 		if (range <= offset)

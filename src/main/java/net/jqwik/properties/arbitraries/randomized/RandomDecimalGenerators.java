@@ -1,16 +1,17 @@
-package net.jqwik.properties.arbitraries;
-
-import net.jqwik.*;
-import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
+package net.jqwik.properties.arbitraries.randomized;
 
 import java.math.*;
 import java.util.*;
 
-// TODO: Remove duplication with RandomIntegralGenerators
-class RandomDecimalGenerators {
+import net.jqwik.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.shrinking.*;
 
-	static RandomGenerator<BigDecimal> bigDecimals(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
+// TODO: Remove duplication with RandomIntegralGenerators
+public class RandomDecimalGenerators {
+
+	public static RandomGenerator<BigDecimal> bigDecimals(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
 		if (scale < 0) {
 			throw new JqwikException(String.format("Scale [%s] must be positive.", scale));
 		}
@@ -72,7 +73,7 @@ class RandomDecimalGenerators {
 	}
 
 	// TODO: This could be way more sophisticated
-	static BigDecimal[] calculateDefaultPartitionPoints(int genSize, BigDecimal min, BigDecimal max) {
+	public static BigDecimal[] calculateDefaultPartitionPoints(int genSize, BigDecimal min, BigDecimal max) {
 		int partitionPoint = Math.max(genSize / 2, 10);
 		BigDecimal upperPartitionPoint = BigDecimal.valueOf(partitionPoint).min(max);
 		BigDecimal lowerPartitionPoint = BigDecimal.valueOf(partitionPoint).negate().max(min);
