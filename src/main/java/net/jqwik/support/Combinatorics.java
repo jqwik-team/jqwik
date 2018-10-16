@@ -5,39 +5,43 @@ import java.util.*;
 public class Combinatorics {
 
 	@SuppressWarnings("unchecked")
-	public static Iterator<List> combine(List<Iterable> listOfIterables) {
+	public static <T> Iterator<List<T>> combine(List<Iterable<T>> listOfIterables) {
 		if (listOfIterables.isEmpty()) {
 			return emptyListSingleton();
 		}
-		return new CombinedIterator(listOfIterables);
+		return new CombinedIterator<>(listOfIterables);
 	}
 
-	private static Iterator<List> emptyListSingleton() {
-		return Arrays.asList((List) new ArrayList()).iterator();
+	private static <T> Iterator<List<T>> emptyListSingleton() {
+		return Arrays.asList((List<T>) new ArrayList()).iterator();
 	}
 
-	public static <T> Iterator<List<T>> combineList(Iterable<T> elementIterable, int minSize, int maxSize) {
-		return new ArrayList<List<T>>().iterator();
+	public static <T> Iterator<List<T>> listCombinations(Iterable<T> elementIterable, int minSize, int maxSize) {
+		List<Iterable<T>> listOfIterables = new ArrayList<>();
+		for (int i = 0; i < maxSize; i++) {
+			listOfIterables.add(elementIterable);
+		}
+		return combine(listOfIterables);
 	}
 
-	private static class CombinedIterator implements Iterator<List> {
+	private static class CombinedIterator<T> implements Iterator<List<T>> {
 
 		private final Iterator first;
-		private final ArrayList<Iterable> rest;
-		private Iterator<List> next;
+		private final ArrayList<Iterable<T>> rest;
+		private Iterator<List<T>> next;
 
 		private Object current = null;
 
-		private CombinedIterator(List<Iterable> iterables) {
+		private CombinedIterator(List<Iterable<T>> iterables) {
 			this.rest = new ArrayList<>(iterables);
 			this.first = this.rest.remove(0).iterator();
 			this.next = restIterator();
 		}
 
-		private Iterator<List> restIterator() {
+		private Iterator<List<T>> restIterator() {
 			return this.rest.isEmpty()
 					   ? emptyListSingleton()
-					   : new CombinedIterator(this.rest);
+					   : new CombinedIterator<>(this.rest);
 		}
 
 		@Override
@@ -50,7 +54,7 @@ public class Combinatorics {
 		}
 
 		@Override
-		public List next() {
+		public List<T> next() {
 			if (next.hasNext()) {
 				if (current == null) {
 					current = first.next();
@@ -63,7 +67,7 @@ public class Combinatorics {
 		}
 
 		@SuppressWarnings("unchecked")
-		private List prepend(Object head, List tail) {
+		private List<T> prepend(Object head, List tail) {
 			List rest = new ArrayList(tail);
 			rest.add(0, head);
 			return rest;

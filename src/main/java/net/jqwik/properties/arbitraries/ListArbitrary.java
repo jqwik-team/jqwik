@@ -28,7 +28,7 @@ public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 		ExhaustiveGenerator<List<T>> generator = new ExhaustiveGenerator<List<T>>() {
 			@Override
 			public Iterator<List<T>> iterator() {
-				return Combinatorics.combineList(exhaustiveElement.get(), minSize, maxSize);
+				return Combinatorics.listCombinations(exhaustiveElement.get(), minSize, maxSize);
 			}
 
 			@Override
