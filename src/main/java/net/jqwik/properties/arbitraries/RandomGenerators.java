@@ -35,9 +35,9 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Character> choose(char[] characters) {
-		Character[] validCharacters = new Character[characters.length];
-		for (int i = 0; i < characters.length; i++) {
-			validCharacters[i] = characters[i];
+		List<Character> validCharacters = new ArrayList<>(characters.length);
+		for (char character : characters) {
+			validCharacters.add(character);
 		}
 		return choose(validCharacters);
 	}
