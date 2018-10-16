@@ -100,7 +100,17 @@ public interface Arbitrary<T> {
 		if (nullProbability <= 0.0) {
 			return this;
 		}
-		return genSize -> Arbitrary.this.generator(genSize).injectNull(nullProbability);
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).injectNull(nullProbability);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive() {
+				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::injectNull);
+			}
+		};
 	}
 
 	/**
@@ -117,11 +127,11 @@ public interface Arbitrary<T> {
 			public RandomGenerator<T> generator(int genSize) {
 				return Arbitrary.this.generator(genSize).unique(usedValues);
 			}
+
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive() {
 				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
 			}
-
 		};
 	}
 

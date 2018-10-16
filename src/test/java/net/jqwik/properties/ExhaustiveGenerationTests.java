@@ -50,6 +50,20 @@ class ExhaustiveGenerationTests {
 		ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
 		assertThat(generator.maxCount()).isEqualTo(6); // Cannot know the number of unique elements in advance
 		assertThat(generator).containsExactly(1, 2, 3);
+
+		//TODO: Add test for unique used as element arbitrary of list()
+	}
+
+	@Example
+	@Label("Arbitrary.injectNull()")
+	void withNull() {
+		double doesNotMatter = 0.5;
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.of("abc", "def").injectNull(doesNotMatter).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(3);
+		assertThat(generator).containsExactly(null, "abc", "def");
 	}
 
 	@Group
