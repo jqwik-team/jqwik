@@ -112,7 +112,18 @@ public interface Arbitrary<T> {
 	default Arbitrary<T> unique() {
 		// Remembering of used values must be outside of generator!
 		Set<T> usedValues = ConcurrentHashMap.newKeySet();
-		return genSize -> Arbitrary.this.generator(genSize).unique(usedValues);
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).unique(usedValues);
+			}
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive() {
+				return Arbitrary.this.exhaustive()
+									 .map(generator -> generator.unique(usedValues));
+			}
+
+		};
 	}
 
 	/**

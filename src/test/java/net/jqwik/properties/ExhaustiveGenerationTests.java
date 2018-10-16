@@ -39,6 +39,16 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsExactly(-4, -2, 0, 2, 4);
 	}
 
+	@Example
+	void unique() {
+		Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.of(1, 2, 1, 3, 1, 2).unique().exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(6); // Cannot know the number of unique elements in advance
+		assertThat(generator).containsExactly(1, 2, 3);
+	}
+
 	@Group
 	class OfValues {
 

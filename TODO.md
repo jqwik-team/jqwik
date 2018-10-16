@@ -1,12 +1,14 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - Arbitrary.flatMap()
-     - Unique?
+     - Arbitrary.injectNull
+     - Arbitrary.withSamples
+     - Arbitrary.fixGenSize
      - List
      - Set
      - Arrays
      - Stream
      - Optional
+     - Combinators.combine
    - User Guide
 
 - Release 0.9.0
