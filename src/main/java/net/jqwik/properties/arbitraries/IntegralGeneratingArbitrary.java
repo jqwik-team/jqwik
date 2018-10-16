@@ -1,11 +1,13 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.*;
-
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
+import net.jqwik.properties.arbitraries.randomized.*;
+import net.jqwik.properties.shrinking.*;
 
 class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 

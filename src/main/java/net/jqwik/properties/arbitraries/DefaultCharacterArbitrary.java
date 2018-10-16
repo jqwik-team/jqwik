@@ -5,6 +5,8 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 
 public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements CharacterArbitrary {
 

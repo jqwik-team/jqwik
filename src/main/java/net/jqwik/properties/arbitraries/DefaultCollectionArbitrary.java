@@ -1,10 +1,11 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 
 abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase implements SizableArbitrary<U> {
 
@@ -21,9 +22,9 @@ abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase im
 	protected RandomGenerator<List<T>> listGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
 		List<Shrinkable<List<T>>> samples = edgeCases(new ArrayList<>());
-		return RandomGenerators //
-			.list(elementGenerator, minSize, maxSize, cutoffSize(genSize)) //
-			.withEdgeCases(genSize, samples);
+		return RandomGenerators
+				   .list(elementGenerator, minSize, maxSize, cutoffSize(genSize)) //
+				   .withEdgeCases(genSize, samples);
 	}
 
 	protected int cutoffSize(int genSize) {

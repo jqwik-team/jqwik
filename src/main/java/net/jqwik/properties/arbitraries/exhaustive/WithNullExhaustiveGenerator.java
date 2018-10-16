@@ -1,4 +1,4 @@
-package net.jqwik.properties.arbitraries;
+package net.jqwik.properties.arbitraries.exhaustive;
 
 import java.util.*;
 

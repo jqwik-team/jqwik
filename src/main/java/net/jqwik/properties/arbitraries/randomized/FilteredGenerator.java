@@ -1,4 +1,4 @@
-package net.jqwik.properties.arbitraries;
+package net.jqwik.properties.arbitraries.randomized;
 
 import net.jqwik.*;
 import net.jqwik.api.*;

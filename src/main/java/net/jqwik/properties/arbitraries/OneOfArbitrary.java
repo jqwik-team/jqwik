@@ -1,11 +1,12 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.api.configurators.*;
-
 import java.lang.annotation.*;
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.configurators.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 
 public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 	private final List<Arbitrary<T>> all;

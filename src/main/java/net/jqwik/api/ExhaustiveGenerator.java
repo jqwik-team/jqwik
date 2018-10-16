@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
 
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
 

@@ -1,11 +1,12 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 
 public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A> {
 
