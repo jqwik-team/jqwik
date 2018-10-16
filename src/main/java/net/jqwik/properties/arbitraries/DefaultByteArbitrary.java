@@ -27,7 +27,6 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::byteValueExact));
 	}
 
-
 	@Override
 	public ByteArbitrary greaterOrEqual(byte min) {
 		DefaultByteArbitrary clone = typedClone();
