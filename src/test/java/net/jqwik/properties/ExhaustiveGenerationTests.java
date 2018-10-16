@@ -45,31 +45,6 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
-	@Label("Arbitrary.unique(): filter out duplicates")
-	void unique() {
-		Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.of(1, 2, 1, 3, 1, 2).unique().exhaustive();
-		assertThat(optionalGenerator).isPresent();
-
-		ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
-		assertThat(generator.maxCount()).isEqualTo(6); // Cannot know the number of unique elements in advance
-		assertThat(generator).containsExactly(1, 2, 3);
-
-		//TODO: Add test for unique used as element arbitrary of list()
-	}
-
-	//@Property
-	@Label("Arbitrary.unique(): reset in each list")
-	void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
-		Assertions.assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
-	}
-
-	@Provide
-	Arbitrary<List<Integer>> listOfUniqueIntegers() {
-		return Arbitraries.integers().between(1, 10).unique().list().ofSize(3);
-	}
-
-
-	@Example
 	@Label("Arbitrary.injectNull(): null is prepended")
 	void withNull() {
 		double doesNotMatter = 0.5;
@@ -104,6 +79,34 @@ class ExhaustiveGenerationTests {
 		ExhaustiveGenerator<String> generator = optionalGenerator.get();
 		assertThat(generator.maxCount()).isEqualTo(2);
 		assertThat(generator).containsExactly("abc", "def");
+	}
+
+	@Group
+	@Label("Arbitrary.unique()")
+	class Unique {
+		@Example
+		@Label("filter out duplicates")
+		void unique() {
+			Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.of(1, 2, 1, 3, 1, 2).unique().exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(6); // Cannot know the number of unique elements in advance
+			assertThat(generator).containsExactly(1, 2, 3);
+
+			//TODO: Add test for unique used as element arbitrary of list()
+		}
+
+		@Property
+		@Label("reset of uniqueness for embedded arbitraries")
+		void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
+			Assertions.assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
+		}
+
+		@Provide
+		Arbitrary<List<Integer>> listOfUniqueIntegers() {
+			return Arbitraries.integers().between(1, 10).unique().list().ofSize(3);
+		}
 	}
 
 	@Group
