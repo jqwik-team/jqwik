@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.properties.arbitraries.*;
@@ -17,5 +18,17 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 	default ExhaustiveGenerator filter(Predicate<T> filterPredicate) {
 		return new FilteredExhaustiveGenerator<>(this, filterPredicate);
+	}
+
+	default ExhaustiveGenerator unique(Set<T> usedValues) {
+		Predicate<T> isUnique = o -> {
+			if (usedValues.contains(o)) {
+				return false;
+			} else {
+				usedValues.add(o);
+				return true;
+			}
+		};
+		return filter(isUnique);
 	}
 }
