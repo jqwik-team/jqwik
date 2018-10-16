@@ -5,15 +5,15 @@ import java.util.*;
 import net.jqwik.api.*;
 
 public class WithNullExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
-	private final ExhaustiveGenerator<T> baseGenerator;
+	private final ExhaustiveGenerator<T> base;
 
-	public WithNullExhaustiveGenerator(ExhaustiveGenerator<T> baseGenerator) {
-		this.baseGenerator = baseGenerator;
+	public WithNullExhaustiveGenerator(ExhaustiveGenerator<T> base) {
+		this.base = base;
 	}
 
 	@Override
 	public long maxCount() {
-		return baseGenerator.maxCount() + 1;
+		return base.maxCount() + 1;
 	}
 
 	@Override
@@ -21,7 +21,7 @@ public class WithNullExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 		return new Iterator<T>() {
 
 			boolean nullDelivered = false;
-			Iterator<T> iterator = baseGenerator.iterator();
+			Iterator<T> iterator = base.iterator();
 
 			@Override
 			public boolean hasNext() {

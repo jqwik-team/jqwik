@@ -1,6 +1,5 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - Arbitrary.withSamples
      - List
      - Set
      - Arrays

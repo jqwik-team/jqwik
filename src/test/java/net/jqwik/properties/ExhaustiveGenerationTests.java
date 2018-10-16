@@ -42,7 +42,7 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
-	@Label("Arbitrary.unique()")
+	@Label("Arbitrary.unique(): filter out duplicates")
 	void unique() {
 		Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.of(1, 2, 1, 3, 1, 2).unique().exhaustive();
 		assertThat(optionalGenerator).isPresent();
@@ -55,7 +55,7 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
-	@Label("Arbitrary.injectNull()")
+	@Label("Arbitrary.injectNull(): null is prepended")
 	void withNull() {
 		double doesNotMatter = 0.5;
 		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.of("abc", "def").injectNull(doesNotMatter).exhaustive();
@@ -64,6 +64,19 @@ class ExhaustiveGenerationTests {
 		ExhaustiveGenerator<String> generator = optionalGenerator.get();
 		assertThat(generator.maxCount()).isEqualTo(3);
 		assertThat(generator).containsExactly(null, "abc", "def");
+	}
+
+	@Example
+	@Label("Arbitrary.withSamples(): samples are prepended")
+	void withSamples() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator =
+			Arbitraries.of("abc", "def")
+					   .withSamples("s1", "s2").exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(4);
+		assertThat(generator).containsExactly("s1", "s2", "abc", "def");
 	}
 
 	@Example

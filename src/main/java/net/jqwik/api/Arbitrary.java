@@ -141,7 +141,17 @@ public interface Arbitrary<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	default Arbitrary<T> withSamples(T... samples) {
-		return genSize -> Arbitrary.this.generator(genSize).withSamples(samples);
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).withSamples(samples);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive() {
+				return Arbitrary.this.exhaustive().map(exhaustive -> exhaustive.withSamples(samples));
+			}
+		};
 	}
 
 	/**
