@@ -259,4 +259,46 @@ class ExhaustiveGenerationTests {
 			assertThat(generator).containsExactly('a', 'c', 'e', 'X');
 		}
 	}
+
+	@Group
+	class Lists {
+		@Example
+		void listsAreCombinationsOfElementsUpToMaxLength() {
+			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
+				Arbitraries.integers().between(1, 3).list().ofMaxSize(2).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(13);
+			assertThat(generator).containsExactly(
+				Arrays.asList(),
+				Arrays.asList(1),
+				Arrays.asList(2),
+				Arrays.asList(3),
+				Arrays.asList(1, 1),
+				Arrays.asList(1, 2),
+				Arrays.asList(1, 3),
+				Arrays.asList(2, 1),
+				Arrays.asList(2, 2),
+				Arrays.asList(2, 3),
+				Arrays.asList(3, 1),
+				Arrays.asList(3, 2),
+				Arrays.asList(3, 3)
+			);
+		}
+
+		@Example
+		void elementArbitraryNotExhaustive() {
+			Optional<ExhaustiveGenerator<List<Double>>> optionalGenerator =
+				Arbitraries.doubles().between(1, 10).list().ofMaxSize(1).exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
+		}
+
+		@Example
+		void tooManyCombinations() {
+			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
+				Arbitraries.integers().between(1, 10).list().ofMaxSize(10).exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
+		}
+	}
 }
