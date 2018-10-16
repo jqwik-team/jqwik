@@ -1,8 +1,5 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - Arbitrary.unique
-       - Introduce ExhaustiveGenerator.reset() to get rid of uniqueness bugs
-     - List
      - Set
      - Arrays
      - Stream
