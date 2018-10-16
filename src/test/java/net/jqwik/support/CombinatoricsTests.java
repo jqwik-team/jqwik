@@ -35,6 +35,18 @@ class CombinatoricsTests {
 	}
 
 	@Example
+	void failsWithNoSuchElementException() {
+		List<Iterable> iterables = asList(
+			asList(1)
+		);
+		Iterator<List> iterator = Combinatorics.combine(iterables);
+		iterator.next();
+
+		assertThat(iterator.hasNext()).isFalse();
+		assertThatThrownBy(() -> iterator.next()).isInstanceOf(NoSuchElementException.class);
+	}
+
+	@Example
 	void combineTwoIterables() {
 		List<Iterable> iterables = asList(
 			asList(1, 2, 3),
