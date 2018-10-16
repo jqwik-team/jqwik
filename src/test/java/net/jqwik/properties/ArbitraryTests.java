@@ -10,6 +10,8 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.GenerationMode.RANDOMIZED;
+
 @Group
 class ArbitraryTests {
 
@@ -129,11 +131,11 @@ class ArbitraryTests {
 			assertThatThrownBy(() -> generator.next(random)).isInstanceOf(JqwikException.class);
 		}
 
-		@Property
+		@Property(generation = RANDOMIZED)
 		void uniquenessIsResetPerTry(@ForAll("uniqueIntegers") int anInt) {
 		}
 
-		@Property
+		@Property(generation = RANDOMIZED)
 		void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
 			Assertions.assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
 		}

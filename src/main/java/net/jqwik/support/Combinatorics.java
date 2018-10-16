@@ -1,6 +1,7 @@
 package net.jqwik.support;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 public class Combinatorics {
 
@@ -17,8 +18,48 @@ public class Combinatorics {
 	}
 
 	public static <T> Iterator<List<T>> listCombinations(Iterable<T> elementIterable, int minSize, int maxSize) {
+		List<Iterator<List<T>>> iterators = new ArrayList<>();
+		for(int listSize = minSize; listSize <= maxSize; listSize++) {
+			iterators.add(listIterator(elementIterable, listSize));
+		}
+		return concat(iterators);
+	}
+
+	private static <T> Iterator<List<T>> concat(List<Iterator<List<T>>> iterators) {
+		return new Iterator<List<T>>() {
+
+			AtomicInteger position = new AtomicInteger(0);
+			Iterator<List<T>> next = findNext();
+
+			private Iterator<List<T>> findNext() {
+				while (!iterators.get(position.get()).hasNext()) {
+					if (position.get() >= iterators.size() -1)
+						return null;
+					position.getAndIncrement();
+				}
+				return iterators.get(position.get());
+			}
+
+			@Override
+			public boolean hasNext() {
+				return next != null && next.hasNext();
+			}
+
+			@Override
+			public List<T> next() {
+				if (!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				List<T> current = next.next();
+				next = findNext();
+				return current;
+			}
+		};
+	}
+
+	private static <T> Iterator<List<T>> listIterator(Iterable<T> elementIterable, int listSize) {
 		List<Iterable<T>> listOfIterables = new ArrayList<>();
-		for (int i = 0; i < maxSize; i++) {
+		for (int i = 0; i < listSize; i++) {
 			listOfIterables.add(elementIterable);
 		}
 		return combine(listOfIterables);

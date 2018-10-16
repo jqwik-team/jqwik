@@ -68,6 +68,26 @@ class CombinatoricsTests {
 			);
 		}
 
+		@Example
+		void listOfSize2to3() {
+			Iterable<Integer> elementIterable = asList(1, 2);
+			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 2, 3);
+
+			assertThat(iterator).containsExactly(
+				asList(1, 1),
+				asList(1, 2),
+				asList(2, 1),
+				asList(2, 2),
+				asList(1, 1, 1),
+				asList(1, 1, 2),
+				asList(1, 2, 1),
+				asList(1, 2, 2),
+				asList(2, 1, 1),
+				asList(2, 1, 2),
+				asList(2, 2, 1),
+				asList(2, 2, 2)
+			);
+		}
 	}
 
 	@Group

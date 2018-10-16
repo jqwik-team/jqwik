@@ -3,8 +3,11 @@ package net.jqwik.properties;
 import java.math.*;
 import java.util.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -53,6 +56,18 @@ class ExhaustiveGenerationTests {
 
 		//TODO: Add test for unique used as element arbitrary of list()
 	}
+
+	//@Property
+	@Label("Arbitrary.unique(): reset in each list")
+	void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
+		Assertions.assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
+	}
+
+	@Provide
+	Arbitrary<List<Integer>> listOfUniqueIntegers() {
+		return Arbitraries.integers().between(1, 10).unique().list().ofSize(3);
+	}
+
 
 	@Example
 	@Label("Arbitrary.injectNull(): null is prepended")
@@ -271,19 +286,19 @@ class ExhaustiveGenerationTests {
 			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(13);
 			assertThat(generator).containsExactly(
-				Arrays.asList(),
-				Arrays.asList(1),
-				Arrays.asList(2),
-				Arrays.asList(3),
-				Arrays.asList(1, 1),
-				Arrays.asList(1, 2),
-				Arrays.asList(1, 3),
-				Arrays.asList(2, 1),
-				Arrays.asList(2, 2),
-				Arrays.asList(2, 3),
-				Arrays.asList(3, 1),
-				Arrays.asList(3, 2),
-				Arrays.asList(3, 3)
+				asList(),
+				asList(1),
+				asList(2),
+				asList(3),
+				asList(1, 1),
+				asList(1, 2),
+				asList(1, 3),
+				asList(2, 1),
+				asList(2, 2),
+				asList(2, 3),
+				asList(3, 1),
+				asList(3, 2),
+				asList(3, 3)
 			);
 		}
 

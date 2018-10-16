@@ -17,6 +17,7 @@ public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 	}
 
 	@Override
+	// TODO: Generalize and move to DefaultCollectionArbitrary
 	public Optional<ExhaustiveGenerator<List<T>>> exhaustive() {
 		Optional<ExhaustiveGenerator<T>> exhaustiveElement = elementArbitrary.exhaustive();
 		if (!exhaustiveElement.isPresent())
