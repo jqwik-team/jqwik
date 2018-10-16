@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 
 import net.jqwik.properties.arbitraries.*;
@@ -16,11 +17,12 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		return new MappedExhaustiveGenerator<>(this, mapper);
 	}
 
-	default ExhaustiveGenerator filter(Predicate<T> filterPredicate) {
+	default ExhaustiveGenerator<T> filter(Predicate<T> filterPredicate) {
 		return new FilteredExhaustiveGenerator<>(this, filterPredicate);
 	}
 
-	default ExhaustiveGenerator unique(Set<T> usedValues) {
+	default ExhaustiveGenerator<T> unique() {
+		Set<T> usedValues = ConcurrentHashMap.newKeySet();
 		Predicate<T> isUnique = o -> {
 			if (usedValues.contains(o)) {
 				return false;
