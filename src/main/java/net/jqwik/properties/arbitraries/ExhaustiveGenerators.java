@@ -10,11 +10,11 @@ public class ExhaustiveGenerators {
 	}
 
 	public static Optional<ExhaustiveGenerator<Character>> choose(char[] characters) {
-		Character[] validCharacters = new Character[characters.length];
-		for (int i = 0; i < characters.length; i++) {
-			validCharacters[i] = characters[i];
+		List<Character> validCharacters = new ArrayList<>(characters.length);
+		for (char character : characters) {
+			validCharacters.add(character);
 		}
-		return choose(Arrays.asList(validCharacters));
+		return choose(validCharacters);
 	}
 
 	public static <T extends Enum<T>>  Optional<ExhaustiveGenerator<T>> choose(Class<T> enumClass) {
