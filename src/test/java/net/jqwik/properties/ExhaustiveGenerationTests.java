@@ -81,6 +81,25 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Group
+	class Longs {
+		@Example
+		void fromMinToMax() {
+			Optional<ExhaustiveGenerator<Long>> optionalGenerator = Arbitraries.longs().between(-10, 10).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Long> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(21);
+			assertThat(generator).containsExactly(-10L, -9L, -8L, -7L, -6L, -5L, -4L, -3L, -2L, -1L, 0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L);
+		}
+
+		@Example
+		void rangeTooBig() {
+			Optional<ExhaustiveGenerator<Long>> optionalGenerator = Arbitraries.longs().between(-1, Long.MAX_VALUE).exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
+		}
+	}
+
+	@Group
 	class Shorts {
 		@Example
 		void fromMinToMax() {
@@ -120,7 +139,8 @@ class ExhaustiveGenerationTests {
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Byte> generator = optionalGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(256);
+			assertThat(generator.maxCount()).isEqualTo(256
+			);
 		}
 	}
 }

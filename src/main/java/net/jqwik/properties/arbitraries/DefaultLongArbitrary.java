@@ -4,6 +4,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
+import java.util.*;
 
 public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongArbitrary {
 
@@ -19,6 +20,11 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 	@Override
 	public RandomGenerator<Long> generator(int genSize) {
 		return generatingArbitrary.generator(genSize).map(BigInteger::longValueExact);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Long>> exhaustive() {
+		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::longValueExact));
 	}
 
 	@Override
