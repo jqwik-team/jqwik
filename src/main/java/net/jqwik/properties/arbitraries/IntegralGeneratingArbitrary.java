@@ -55,6 +55,9 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 		@Override
 		public BigInteger next() {
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
 			BigInteger next = current;
 			current = current.add(BigInteger.ONE);
 			return next;

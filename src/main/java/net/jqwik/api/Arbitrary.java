@@ -51,7 +51,19 @@ public interface Arbitrary<T> {
 	 *
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
-		return genSize -> Arbitrary.this.generator(genSize).filter(filterPredicate);
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).filter(filterPredicate);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive() {
+				return Arbitrary.this.exhaustive()
+									 .map(generator -> generator.filter(filterPredicate));
+			}
+
+		};
 	}
 
 	/**

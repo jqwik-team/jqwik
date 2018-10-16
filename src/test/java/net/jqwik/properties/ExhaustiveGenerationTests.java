@@ -27,6 +27,18 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsExactly("-5", "-4", "-3", "-2", "-1", "0", "1", "2", "3", "4", "5");
 	}
 
+	@Example
+	void filtering() {
+		Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.integers().between(-5, 5)
+																			  .filter(i -> i % 2 == 0)
+																			  .exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(11); // Cannot know the number of filtered elements in advance
+		assertThat(generator).containsExactly(-4, -2, 0, 2, 4);
+	}
+
 	@Group
 	class OfValues {
 

@@ -14,4 +14,8 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	default <U> ExhaustiveGenerator<U> map(Function<T, U> mapper) {
 		return new MappedExhaustiveGenerator<>(this, mapper);
 	}
+
+	default ExhaustiveGenerator filter(Predicate<T> filterPredicate) {
+		return new FilteredExhaustiveGenerator<>(this, filterPredicate);
+	}
 }
