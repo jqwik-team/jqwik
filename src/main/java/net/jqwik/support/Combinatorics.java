@@ -16,6 +16,10 @@ public class Combinatorics {
 		return Arrays.asList((List) new ArrayList()).iterator();
 	}
 
+	public static <T> Iterator<List<T>> combineList(Iterable<T> elementIterable, int minSize, int maxSize) {
+		return new ArrayList<List<T>>().iterator();
+	}
+
 	private static class CombinedIterator implements Iterator<List> {
 
 		private final Iterator first;
