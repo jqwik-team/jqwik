@@ -58,6 +58,9 @@
 
 - Exhaustive Generators:
   - Arbitrary.flatMap
+  - Arbitrary.unique: Seems to be difficult,
+    see commented out tests in ExhaustiveGenerationTests
+
 
 - @ForAll 
   - can be used in parameter types to choose provider method

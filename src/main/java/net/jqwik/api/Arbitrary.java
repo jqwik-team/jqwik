@@ -130,7 +130,9 @@ public interface Arbitrary<T> {
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
+				return Optional.empty();
+				// TODO: Does not work as elements in collections
+				// return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
 			}
 		};
 	}
