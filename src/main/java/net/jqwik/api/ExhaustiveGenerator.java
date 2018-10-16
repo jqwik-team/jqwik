@@ -35,16 +35,7 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	}
 
 	default ExhaustiveGenerator<T> injectNull() {
-		return new ExhaustiveGenerator<T>() {
-			@Override
-			public long maxCount() {
-				return ExhaustiveGenerator.this.maxCount();
-			}
-
-			@Override
-			public Iterator<T> iterator() {
-				return null;
-			}
-		};
+		return new WithNullExhaustiveGenerator<>(ExhaustiveGenerator.this);
 	}
+
 }
