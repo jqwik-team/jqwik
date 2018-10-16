@@ -101,4 +101,26 @@ class ExhaustiveGenerationTests {
 			assertThat(generator.maxCount()).isEqualTo(65536);
 		}
 	}
+
+	@Group
+	class Bytes {
+		@Example
+		void fromMinToMax() {
+			Optional<ExhaustiveGenerator<Byte>> optionalGenerator = Arbitraries.bytes().between((byte) -5, (byte) 5).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Byte> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(11);
+			assertThat(generator).containsExactly((byte) -5, (byte) -4, (byte) -3, (byte) -2, (byte) -1, (byte) 0, (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5);
+		}
+
+		@Example
+		void rangeCannotBeTooBig() {
+			Optional<ExhaustiveGenerator<Byte>> optionalGenerator = Arbitraries.bytes().between(Byte.MIN_VALUE, Byte.MAX_VALUE).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Byte> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(256);
+		}
+	}
 }

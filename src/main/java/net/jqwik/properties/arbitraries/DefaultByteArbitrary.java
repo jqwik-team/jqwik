@@ -4,6 +4,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 import java.math.*;
+import java.util.*;
 
 public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteArbitrary {
 
@@ -20,6 +21,12 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 	public RandomGenerator<Byte> generator(int genSize) {
 		return generatingArbitrary.generator(genSize).map(BigInteger::byteValueExact);
 	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Byte>> exhaustive() {
+		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::byteValueExact));
+	}
+
 
 	@Override
 	public ByteArbitrary greaterOrEqual(byte min) {

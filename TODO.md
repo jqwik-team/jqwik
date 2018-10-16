@@ -1,6 +1,5 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - Byte
      - Long
      - BigInteger
      - DefaultCharsArbitrary
