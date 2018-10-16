@@ -53,13 +53,13 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 	}
 
 	private Iterator<List<Shrinkable>> combine(List<ExhaustiveGenerator> generators) {
-		List<Iterable> iterables = generators
+		List<Iterable<Object>> iterables = generators
 			.stream()
-			.map(g -> (Iterable) g)
+			.map(g -> (Iterable<Object>) g)
 			.collect(Collectors.toList());
 
 		return new Iterator<List<Shrinkable>>() {
-			Iterator<List> iterator = Combinatorics.combine(iterables);
+			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 
 			@Override
 			public boolean hasNext() {
