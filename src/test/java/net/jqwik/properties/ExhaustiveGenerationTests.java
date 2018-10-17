@@ -9,6 +9,7 @@ import net.jqwik.api.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 @Group
 @Label("Exhaustive Generation")
 class ExhaustiveGenerationTests {
@@ -444,7 +445,7 @@ class ExhaustiveGenerationTests {
 		@Example
 		void tooManyCombinations() {
 			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 10).set().ofMaxSize(10).exhaustive();
+				Arbitraries.integers().between(1, 25).set().ofMaxSize(10).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}

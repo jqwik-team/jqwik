@@ -1,5 +1,7 @@
 package examples.docs;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
@@ -30,6 +32,11 @@ class ExhaustiveGenerationExamples {
 		@ForAll @IntRange(min = 21, max = 30) int int3,
 		@ForAll @IntRange(min = 31, max = 40) int int4
 	) {
+	}
+
+	@Property
+	@Report(Reporting.GENERATED)
+	void generateAllSets(@ForAll @Size(max = 5) Set<@IntRange(min = 1, max = 5) Integer> sets) {
 	}
 
 }

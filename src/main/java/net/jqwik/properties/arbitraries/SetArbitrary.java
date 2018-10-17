@@ -3,6 +3,7 @@ package net.jqwik.properties.arbitraries;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
 public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
@@ -17,5 +18,11 @@ public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
 		List<Shrinkable<Set<T>>> samples = edgeCases(new HashSet<>());
 		return RandomGenerators.set(elementGenerator, minSize, maxSize, cutoffSize).withEdgeCases(genSize, samples);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Set<T>>> exhaustive() {
+		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize);
+
 	}
 }
