@@ -1,9 +1,10 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
 
 public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>> {
 
@@ -14,5 +15,11 @@ public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>>
 	@Override
 	public RandomGenerator<Stream<T>> generator(int genSize) {
 		return listGenerator(genSize).map(Collection::stream);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Stream<T>>> exhaustive() {
+		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize)
+								   .map(generator -> generator.map(Collection::stream));
 	}
 }
