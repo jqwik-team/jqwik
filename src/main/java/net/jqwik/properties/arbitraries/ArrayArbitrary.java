@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
 public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A> {
@@ -27,6 +28,11 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 		return createListGenerator(genSize).map(this::toArray);
 	}
 
+	@Override
+	public Optional<ExhaustiveGenerator<A>> exhaustive() {
+		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize).map(generator -> generator.map(this::toArray));
+	}
+
 	@SuppressWarnings("unchecked")
 	private A toArray(List<T> from) {
 		A array = (A) Array.newInstance(arrayClass.getComponentType(), from.size());
@@ -36,6 +42,7 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 		return array;
 	}
 
+	// TODO: Remove duplication with DefaultCollectionArbitrary.listGenerator(genSize)
 	private RandomGenerator<List<T>> createListGenerator(int genSize) {
 		int cutoffSize = RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
 		RandomGenerator<T> elementGenerator = elementArbitrary.generator(genSize);

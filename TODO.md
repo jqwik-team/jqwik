@@ -1,7 +1,6 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
      - Set
-     - Arrays
      - Stream
      - Optional
      - Combinators.combine
