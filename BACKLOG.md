@@ -60,6 +60,7 @@
   - Arbitrary.flatMap
   - Arbitrary.unique: Seems to be difficult,
     see commented out tests in ExhaustiveGenerationTests
+  - Make default GenerationMode configurable
 
 
 - @ForAll 
