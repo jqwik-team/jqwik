@@ -409,4 +409,33 @@ class ExhaustiveGenerationTests {
 		}
 	}
 
+	@Group
+	@Label("Optional")
+	class OptionalTests {
+		@Example
+		void prependsOptionalEmpty() {
+			Optional<ExhaustiveGenerator<java.util.Optional<Integer>>> optionalGenerator =
+				Arbitraries.integers().between(1, 5).optional().exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Optional<Integer>> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(6);
+			assertThat(generator).containsExactly(
+				Optional.empty(),
+				Optional.of(1),
+				Optional.of(2),
+				Optional.of(3),
+				Optional.of(4),
+				Optional.of(5)
+			);
+		}
+
+		@Example
+		void elementArbitraryNotExhaustive() {
+			Optional<ExhaustiveGenerator<Optional<Double>>> optionalGenerator =
+				Arbitraries.doubles().between(1, 10).optional().exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
+		}
+	}
+
 }
