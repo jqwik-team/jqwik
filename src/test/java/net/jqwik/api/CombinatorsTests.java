@@ -1,10 +1,10 @@
 package net.jqwik.api;
 
+import java.util.*;
+
 import net.jqwik.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
-
-import java.util.*;
 
 class CombinatorsTests {
 
@@ -15,10 +15,6 @@ class CombinatorsTests {
 		Arbitrary<Integer> combine2 = Combinators.combine(one(), two()).as((a, b) -> a + b);
 		Shrinkable<Integer> value = generate(combine2);
 		assertThat(value.value()).isEqualTo(3);
-	}
-
-	private Shrinkable<Integer> generate(Arbitrary<Integer> integerArbitrary) {
-		return integerArbitrary.generator(1).next(random);
 	}
 
 	@Example
@@ -76,6 +72,10 @@ class CombinatorsTests {
 		assertThat(value.value()).isEqualTo(12);
 	}
 
+	private Shrinkable<Integer> generate(Arbitrary<Integer> integerArbitrary) {
+		return integerArbitrary.generator(1).next(random);
+	}
+
 	Arbitrary<Integer> one() {
 		return Arbitraries.of(1);
 	}
@@ -107,4 +107,5 @@ class CombinatorsTests {
 	Arbitrary<Integer> eight() {
 		return Arbitraries.of(8);
 	}
+
 }
