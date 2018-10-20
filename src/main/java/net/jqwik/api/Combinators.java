@@ -49,6 +49,10 @@ public class Combinators {
 		return new ListCombinator<>(listOfArbitraries);
 	}
 
+	@SuppressWarnings("unchecked")
+	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
+		return params -> combinator2.apply((T1) params.get(0), (T2) params.get(1));
+	}
 
 	public static class Combinator2<T1, T2> {
 		private final Arbitrary<T1> a1;
@@ -77,9 +81,7 @@ public class Combinators {
 							List<Shrinkable<Object>> shrinkables = new ArrayList<>();
 							shrinkables.add((Shrinkable<Object>) g1.next(random));
 							shrinkables.add((Shrinkable<Object>) g2.next(random));
-							Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
-
-							return new CombinedShrinkable<>(shrinkables, combineFunction);
+							return new CombinedShrinkable<>(shrinkables, combineFunction(combinator));
 						}
 
 						@Override
@@ -93,11 +95,10 @@ public class Combinators {
 				@SuppressWarnings("unchecked")
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
 					List<Arbitrary<Object>> arbitraries = new ArrayList<>();
 					arbitraries.add((Arbitrary<Object>) a1);
 					arbitraries.add((Arbitrary<Object>) a2);
-					return ExhaustiveGenerators.combine(arbitraries, combineFunction);
+					return ExhaustiveGenerators.combine(arbitraries, combineFunction(combinator));
 				}
 			};
 		}
