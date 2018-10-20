@@ -1,10 +1,5 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - Combinators.combine4
-     - Combinators.combine5
-     - Combinators.combine6
-     - Combinators.combine7
-     - Combinators.combine8
      - Combinators.combine(List)
    - User Guide
 
@@ -14,7 +9,7 @@
 - PackageDescriptor e.g.
   @Label("mypackage")
   @AddHook(...)
-  class JqwikPackage {
+  class Package implements JqwikPackage {
     @Provide
     Arbitrary<MyType> myType() { ... }
   }

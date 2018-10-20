@@ -514,6 +514,106 @@ class ExhaustiveGenerationTests {
 			assertThat(generator).containsExactly(111, 112, 121, 122, 211, 212, 221, 222);
 		}
 
+		@Example
+		void combine4arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> plus = Combinators
+				.combine(a1, a2, a3, a4)
+				.as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
+
+			assertThat(plus.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
+			assertThat(generator.maxCount()).isEqualTo(16);
+			assertThat(generator).hasSize(16);
+			assertThat(generator).contains(1111, 2222);
+		}
+
+		@Example
+		void combine5arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> plus = Combinators
+				.combine(a1, a2, a3, a4, a5)
+				.as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
+
+			assertThat(plus.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
+			assertThat(generator.maxCount()).isEqualTo(32);
+			assertThat(generator).hasSize(32);
+			assertThat(generator).contains(11111, 22222);
+		}
+
+		@Example
+		void combine6arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
+			Arbitrary<Integer> plus = Combinators
+				.combine(a1, a2, a3, a4, a5, a6)
+				.as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
+
+			assertThat(plus.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
+			assertThat(generator.maxCount()).isEqualTo(64);
+			assertThat(generator).hasSize(64);
+			assertThat(generator).contains(111111, 222222);
+		}
+
+		@Example
+		void combine7arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
+			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
+			Arbitrary<Integer> plus = Combinators
+				.combine(a1, a2, a3, a4, a5, a6, a7)
+				.as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
+
+			assertThat(plus.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
+			assertThat(generator.maxCount()).isEqualTo(128);
+			assertThat(generator).hasSize(128);
+			assertThat(generator).contains(1111111, 2222222);
+		}
+
+		@Example
+		void combine8arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
+			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
+			Arbitrary<Integer> a8 = Arbitraries.of(10000000, 20000000);
+			Arbitrary<Integer> plus = Combinators
+				.combine(a1, a2, a3, a4, a5, a6, a7, a8)
+				.as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
+
+			assertThat(plus.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
+			assertThat(generator.maxCount()).isEqualTo(256);
+			assertThat(generator).hasSize(256);
+			assertThat(generator).contains(11111111, 22222222);
+		}
+
 	}
 
 }
