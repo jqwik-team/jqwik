@@ -28,7 +28,7 @@ public enum GenerationMode {
 	 * Let jqwik choose which generation mode it prefers:
 	 * <ul>
 	 *     <li>If all arbitraries provide exhaustive generators and
-	 *     if the multiplication of all maxCount() values is <=
+	 *     if the multiplication of all maxCount() values is &le;
 	 *     {@linkplain Property#tries()} use {@linkplain #EXHAUSTIVE}</li>
 
 	 *     <li>If the property has a {@linkplain FromData} annotation
