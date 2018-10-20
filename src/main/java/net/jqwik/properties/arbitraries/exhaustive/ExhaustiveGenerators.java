@@ -1,6 +1,8 @@
 package net.jqwik.properties.arbitraries.exhaustive;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.support.*;
@@ -134,4 +136,52 @@ public class ExhaustiveGenerators {
 			return iterable.iterator();
 		}
 	}
+
+	public static <R> Optional<ExhaustiveGenerator<R>> combine(List<Arbitrary<Object>> arbitraries, Function<List<Object>, R> combinator) {
+		Optional<Long> optionalMaxCount = calculateMaxCountForCombination(arbitraries);
+		return optionalMaxCount.map(maxCount -> new ExhaustiveGenerator<R>() {
+			@Override
+			public long maxCount() {
+				return maxCount;
+			}
+
+			@Override
+			public Iterator<R> iterator() {
+				List<Iterable<Object>> iterables = arbitraries
+					.stream()
+					.map(a -> (Iterable<Object>) a.exhaustive().get())
+					.collect(Collectors.toList());
+				Iterator<List<Object>> valuesIterator = Combinatorics.combine(iterables);
+
+				return new Iterator<R>() {
+					@Override
+					public boolean hasNext() {
+						return valuesIterator.hasNext();
+					}
+
+					@Override
+					public R next() {
+						List<Object> values = valuesIterator.next();
+						return combinator.apply(values);
+					}
+				};
+			}
+		});
+	}
+
+	private static Optional<Long> calculateMaxCountForCombination(List<Arbitrary<Object>> arbitraries) {
+		long product = 1;
+		for (Arbitrary<Object> arbitrary : arbitraries) {
+			Optional<ExhaustiveGenerator<Object>> exhaustive = arbitrary.exhaustive();
+			if (!exhaustive.isPresent()) {
+				return Optional.empty();
+			}
+			product *= exhaustive.get().maxCount();
+			if (product > Integer.MAX_VALUE) {
+				return Optional.empty();
+			}
+		}
+		return Optional.of(product);
+	}
+
 }

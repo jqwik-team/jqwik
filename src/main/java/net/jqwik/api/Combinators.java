@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.shrinking.*;
 
 public class Combinators {
@@ -64,27 +65,40 @@ public class Combinators {
 		//			return a1.flatMap(v1 -> a2.map(v2 -> combinator.apply(v1, v2)));
 		//		}
 		public <R> Arbitrary<R> as(F2<T1, T2, R> combinator) {
-			return (genSize) -> {
-				RandomGenerator<T1> g1 = a1.generator(genSize);
-				RandomGenerator<T2> g2 = a2.generator(genSize);
-				return new RandomGenerator<R>() {
-					@SuppressWarnings("unchecked")
-					@Override
-					public Shrinkable<R> next(Random random) {
-						List<Shrinkable<Object>> shrinkables = new ArrayList<>();
-						shrinkables.add((Shrinkable<Object>) g1.next(random));
-						shrinkables.add((Shrinkable<Object>) g2.next(random));
-						Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
+			return new Arbitrary<R>() {
+				@Override
+				public RandomGenerator<R> generator(int genSize) {
+					RandomGenerator<T1> g1 = a1.generator(genSize);
+					RandomGenerator<T2> g2 = a2.generator(genSize);
+					return new RandomGenerator<R>() {
+						@SuppressWarnings("unchecked")
+						@Override
+						public Shrinkable<R> next(Random random) {
+							List<Shrinkable<Object>> shrinkables = new ArrayList<>();
+							shrinkables.add((Shrinkable<Object>) g1.next(random));
+							shrinkables.add((Shrinkable<Object>) g2.next(random));
+							Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
-					}
+							return new CombinedShrinkable<>(shrinkables, combineFunction);
+						}
 
-					@Override
-					public void reset() {
-						g1.reset();
-						g2.reset();
-					}
-				};
+						@Override
+						public void reset() {
+							g1.reset();
+							g2.reset();
+						}
+					};
+				}
+
+				@SuppressWarnings("unchecked")
+				@Override
+				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+					Function<List<Object>, R> combineFunction = params -> combinator.apply((T1) params.get(0), (T2) params.get(1));
+					List<Arbitrary<Object>> arbitraries = new ArrayList<>();
+					arbitraries.add((Arbitrary<Object>) a1);
+					arbitraries.add((Arbitrary<Object>) a2);
+					return ExhaustiveGenerators.combine(arbitraries, combineFunction);
+				}
 			};
 		}
 

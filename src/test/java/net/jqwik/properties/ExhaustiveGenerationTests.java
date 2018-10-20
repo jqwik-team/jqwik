@@ -479,4 +479,22 @@ class ExhaustiveGenerationTests {
 		}
 	}
 
+	@Group
+	@Label("Combinators")
+	class CombinatorsTests {
+
+		@Example
+		void combine2() {
+			Arbitrary<Integer> a1020 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a12 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> plus = Combinators.combine(a1020, a12).as((i1, i2) -> i1 + i2);
+
+			assertThat(plus.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
+			assertThat(generator).containsExactly(11, 12, 21, 22);
+		}
+
+	}
+
 }
