@@ -1,6 +1,11 @@
 -  Allow exhaustive generation
    - ExhaustiveGenerator implementations:
-     - Combinators.combine
+     - Combinators.combine3
+     - Combinators.combine4
+     - Combinators.combine5
+     - Combinators.combine6
+     - Combinators.combine7
+     - Combinators.combine8
    - User Guide
 
 - Release 0.9.0
