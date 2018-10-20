@@ -61,7 +61,14 @@ public class Combinators {
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
-		return params -> combinator2.apply((T1) params.get(0), (T2) params.get(1));
+		return params -> combinator2
+			.apply((T1) params.get(0), (T2) params.get(1));
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T1, T2, T3, R> Function<List<Object>, R> combineFunction(F3<T1, T2, T3, R> combinator3) {
+		return params -> combinator3
+			.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -132,33 +139,38 @@ public class Combinators {
 		}
 
 		public <R> Arbitrary<R> as(F3<T1, T2, T3, R> combinator) {
-			return (genSize) -> {
-				RandomGenerator<T1> g1 = a1.generator(genSize);
-				RandomGenerator<T2> g2 = a2.generator(genSize);
-				RandomGenerator<T3> g3 = a3.generator(genSize);
-				return new RandomGenerator<R>() {
-					@SuppressWarnings("unchecked")
-					@Override
-					public Shrinkable<R> next(Random random) {
-						List<Shrinkable<Object>> shrinkables = asTypedList(
-							g1.next(random),
-							g2.next(random),
-							g3.next(random)
-						);
-						Function<List<Object>, R> combineFunction = params ->
-							combinator.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2)
+			return new Arbitrary<R>() {
+				@Override
+				public RandomGenerator<R> generator(int genSize) {
+					RandomGenerator<T1> g1 = a1.generator(genSize);
+					RandomGenerator<T2> g2 = a2.generator(genSize);
+					RandomGenerator<T3> g3 = a3.generator(genSize);
+					return new RandomGenerator<R>() {
+						@SuppressWarnings("unchecked")
+						@Override
+						public Shrinkable<R> next(Random random) {
+							List<Shrinkable<Object>> shrinkables = asTypedList(
+								g1.next(random),
+								g2.next(random),
+								g3.next(random)
 							);
+							return new CombinedShrinkable<>(shrinkables, combineFunction(combinator));
+						}
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
-					}
+						@Override
+						public void reset() {
+							g1.reset();
+							g2.reset();
+							g3.reset();
+						}
+					};
+				}
 
-					@Override
-					public void reset() {
-						g1.reset();
-						g2.reset();
-						g3.reset();
-					}
-				};
+				@Override
+				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3), combineFunction(combinator));
+				}
+
 			};
 		}
 
