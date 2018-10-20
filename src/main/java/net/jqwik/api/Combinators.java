@@ -361,7 +361,6 @@ public class Combinators {
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
 					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5), combineFunction(combinator));
 				}
-
 			};
 		}
 
@@ -441,7 +440,6 @@ public class Combinators {
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
 					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5, a6), combineFunction(combinator));
 				}
-
 			};
 		}
 
@@ -531,7 +529,6 @@ public class Combinators {
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
 					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5, a6, a7), combineFunction(combinator));
 				}
-
 			};
 		}
 
@@ -627,7 +624,6 @@ public class Combinators {
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
 					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5, a6, a7, a8), combineFunction(combinator));
 				}
-
 			};
 		}
 
@@ -653,33 +649,42 @@ public class Combinators {
 
 		@SuppressWarnings("unchecked")
 		public <R> Arbitrary<R> as(Function<List<T>, R> combinator) {
-			return (genSize) -> {
-				List<RandomGenerator<T>> listOfGenerators =
-					listOfArbitraries
-						.stream()
-						.map(a -> a.generator(genSize))
-						.collect(Collectors.toList());
+			return new Arbitrary<R>() {
+				@Override
+				public RandomGenerator<R> generator(int genSize) {
+					List<RandomGenerator<T>> listOfGenerators =
+						listOfArbitraries
+							.stream()
+							.map(a -> a.generator(genSize))
+							.collect(Collectors.toList());
 
-				return new RandomGenerator<R>() {
-					@Override
-					public Shrinkable<R> next(Random random) {
-						List<Shrinkable<Object>> shrinkables =
-							listOfGenerators
-								.stream()
-								.map(g -> g.next(random))
-								.map(s -> (Shrinkable<Object>) s)
-								.collect(Collectors.toList());
+					return new RandomGenerator<R>() {
+						@Override
+						public Shrinkable<R> next(Random random) {
+							List<Shrinkable<Object>> shrinkables =
+								listOfGenerators
+									.stream()
+									.map(g -> g.next(random))
+									.map(s -> (Shrinkable<Object>) s)
+									.collect(Collectors.toList());
 
-						Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
+							Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
-					}
+							return new CombinedShrinkable<>(shrinkables, combineFunction);
+						}
 
-					@Override
-					public void reset() {
-						listOfGenerators.forEach(RandomGenerator::reset);
-					}
-				};
+						@Override
+						public void reset() {
+							listOfGenerators.forEach(RandomGenerator::reset);
+						}
+					};
+				}
+
+				@Override
+				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);;
+					return ExhaustiveGenerators.combine(asTypedList(listOfArbitraries.toArray()), combinedFunction);
+				}
 			};
 		}
 

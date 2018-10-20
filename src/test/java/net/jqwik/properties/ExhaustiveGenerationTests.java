@@ -614,6 +614,22 @@ class ExhaustiveGenerationTests {
 			assertThat(generator).contains(11111111, 22222222);
 		}
 
+		@Example
+		void combineArbitraryList() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2, 3);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> plus = Combinators
+				.combine(asList(a1, a2, a3))
+				.as(params -> params.stream().mapToInt(i -> i).sum());
+
+			assertThat(plus.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = plus.exhaustive().get();
+			assertThat(generator.maxCount()).isEqualTo(12);
+			assertThat(generator).containsOnly(111, 112, 113, 121, 122, 123, 211, 212, 213, 221, 222, 223);
+		}
+
 	}
 
 }

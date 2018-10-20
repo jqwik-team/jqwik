@@ -1,6 +1,4 @@
 -  Allow exhaustive generation
-   - ExhaustiveGenerator implementations:
-     - Combinators.combine(List)
    - User Guide
 
 - Release 0.9.0
