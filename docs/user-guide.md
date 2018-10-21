@@ -2186,7 +2186,7 @@ This is exactly what _jqwik_ will do:
   all combinations will be generated.
 - You can also enforce an exhaustive or randomized generation mode by using the
   [Property.generation attribute](#optional-property-parameters).
-- If _jqwik_ cannot figure how to do exhaustive generation for one of the 
+- If _jqwik_ cannot figure out how to do exhaustive generation for one of the 
   participating arbitraries it will switch to randomized generation if in auto mode
   or throw an exception if in exhaustive mode.
   
