@@ -86,7 +86,7 @@
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Release Notes](#release-notes)
-  - [0.9.0-SNAPSHOT](#090-snapshot)
+  - [0.9.0](#090)
   - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
