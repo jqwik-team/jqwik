@@ -18,6 +18,7 @@
 - [Creating a Property](#creating-a-property)
   - [Optional `@Property` Parameters](#optional-property-parameters)
   - [Additional Reporting](#additional-reporting)
+- [Exhaustive Generation](#exhaustive-generation)
 - [Assertions](#assertions)
 - [Lifecycle](#lifecycle)
   - [Method Lifecycle](#method-lifecycle)
@@ -131,11 +132,11 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.2.0'
-ext.junitJupiterVersion = '5.2.0'
+ext.junitPlatformVersion = '1.3.1'
+ext.junitJupiterVersion = '5.3.1'
 
 ext.jqwikVersion = '0.8.15'
-#ext.jqwikVersion = '0.8.16-SNAPSHOT'
+#ext.jqwikVersion = '0.9.0-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -216,8 +217,8 @@ I've never tried it but using jqwik without gradle or some other tool to manage 
 You will have to add _at least_ the following jars to your classpath:
 
 - `jqwik-0.8.15.jar`
-- `junit-platform-engine-1.2.0.jar`
-- `junit-platform-commons-1.2.0.jar`
+- `junit-platform-engine-1.3.1.jar`
+- `junit-platform-commons-1.3.1.jar`
 - `opentest4j-1.0.0.jar`
 - `assertj-core-3.9.x.jar` in case you need assertion support
 
@@ -343,6 +344,33 @@ annotation has a few optional values:
   bounded shrinking is reported - look at a falsified property's output! -
   should you try with `ShrinkingMode.FULL`.
 
+- `GenerationMode generation`: You can direct _jqwik_ about the principal approach
+  it takes towards value generation.
+
+  - `GenerationMode.AUTO` is the default. This will choose [exhaustive generation](#exhaustive-generation) 
+    whenever this is deemed sensible, i.e., when the maximum number of generated values is 
+    equal or less to the configured `tries` attribute.
+  - `GenerationMode.RANDOMIZED` directs _jqwik_ to always generate values using its
+    randomized generators.
+  - `GenerationMode.EXHAUSTIVE` directs _jqwik_ to use [exhaustive generation](#exhaustive-generation)
+    if the arbitraries in use support exhaustive generation at all and if the calculated
+    maximum number of different values to generate is below `Integer.MAX_VALUE`.
+  - `GenerationMode.DATA_DRIVEN` directs _jqwik_ to feed values from a data provider
+    specified with `@FromData`. See [data-driven properties](#data-driven-properties) 
+    for more information.
+  
+  The actual generation mode being used is reported for each property, like that
+  
+  ```
+  timestamp = 2018-10-21T10:22:57.936, 
+  generation-mode = EXHAUSTIVE, 
+  tries = 10, 
+  checks = 10, 
+  seed = 42859154278924201
+  ```
+    
+      
+    
 ### Additional Reporting
 
 You can switch on additional reporting aspects by adding a
@@ -354,6 +382,49 @@ The following reporting aspects are available:
 - `Reporting.GENERATED` will report each generated set of parameters.
 - `Reporting.FALSIFIED` will report each set of parameters
   that is falsified during shrinking.
+
+## Exhaustive Generation
+
+Sometimes it is possible to run a property method with all possible value combinations.
+Consider the following example:
+
+```java
+@Property
+boolean allSquaresOnChessBoardExist(
+    @ForAll @CharRange(from = 'a', to = 'h') char column,
+    @ForAll @CharRange(from = '1', to = '8') char row
+) {
+    String square = column + "" + row;
+    return new ChessBoard().square(square).isOnBoard();
+}
+```
+
+The property is supposed to check that all valid squares in chess are present
+on a new chess board. If _jqwik_ generates the values for `column` and `row`
+randomly 1000 tries might or might not produce all 64 different combinations.
+Why not change strategies in cases like that and just iterate through all
+possible values? 
+
+This is exactly what _jqwik_ will do:
+- As long as it can figure out that the maximum number of possible values
+  is equal or below a property's `tries` attribute (1000 by default), 
+  all combinations will be generated.
+- You can also enforce an exhaustive or randomized generation mode by using the
+  [Property.generation attribute](#optional-property-parameters).
+- If _jqwik_ cannot figure how to do exhaustive generation for one of the 
+  participating arbitraries it will switch to randomized generation if in auto mode
+  or throw an exception if in exhaustive mode.
+  
+Exhaustive generation is considered for:
+- All integer types
+- Enums
+- Booleans
+- Fixed number of choices given by `Arbitraries.of()`
+- Lists, sets, streams, optionals of the above
+- Combinations of the above using `Combinators.combine()`
+- Filtered and mapped arbitraries
+- Some other derived arbitraries
+
 
 ## Assertions
 
@@ -2204,6 +2275,7 @@ the external data was conceived or generated.
   [will now automatically be prettified](#naming-and-labeling-tests),
   i.e. each underscore will be replaced by a single space.
 - Added [`@Report` annotation](#additional-reporting) to replace `Property.reporting`
+- Added [exhaustive value generation](#exhaustive-generation)
 
 
 ### 0.8.x

@@ -39,4 +39,25 @@ class ExhaustiveGenerationExamples {
 	void generateAllSets(@ForAll @Size(max = 5) Set<@IntRange(min = 1, max = 5) Integer> sets) {
 	}
 
+	@Property
+	@Report(Reporting.GENERATED)
+	boolean allSquaresOnChessBoardExist(
+		@ForAll @CharRange(from = 'a', to = 'h') char column,
+		@ForAll @CharRange(from = '1', to = '8') char row
+	) {
+		String square = column + "" + row;
+		return new ChessBoard().square(square).isOnBoard();
+	}
+
+	private class ChessBoard {
+		Square square(String square) {
+			return null;
+		}
+
+		private class Square {
+			boolean isOnBoard() {
+				return true;
+			}
+		}
+	}
 }

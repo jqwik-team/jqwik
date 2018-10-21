@@ -61,7 +61,7 @@
   - Arbitrary.unique: Seems to be difficult,
     see commented out tests in ExhaustiveGenerationTests
   - Make default GenerationMode configurable
-
+  - Decimal generation with restricted scale
 
 - @ForAll 
   - can be used in parameter types to choose provider method
