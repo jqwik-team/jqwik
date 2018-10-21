@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.0-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.0</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -135,8 +135,8 @@ repositories {
 ext.junitPlatformVersion = '1.3.1'
 ext.junitJupiterVersion = '5.3.1'
 
-ext.jqwikVersion = '0.8.15'
-#ext.jqwikVersion = '0.9.0-SNAPSHOT'
+ext.jqwikVersion = '0.9.0'
+#ext.jqwikVersion = '0.9.1-SNAPSHOT'
 
 junitPlatform {
 	filters {
@@ -190,7 +190,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.8.15</version>
+        <version>0.9.0</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -216,7 +216,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.8.15.jar`
+- `jqwik-0.9.0.jar`
 - `junit-platform-engine-1.3.1.jar`
 - `junit-platform-commons-1.3.1.jar`
 - `opentest4j-1.0.0.jar`
@@ -2258,7 +2258,7 @@ the external data was conceived or generated.
 
 ## Release Notes
 
-### 0.9.0-SNAPSHOT
+### 0.9.0
 
 - Removed deprecated static methods in `Arbitraries`
 - Removed deprecated method `ArbitraryProvider.provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider)`
