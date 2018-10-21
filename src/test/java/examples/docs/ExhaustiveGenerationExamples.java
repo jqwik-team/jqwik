@@ -45,13 +45,12 @@ class ExhaustiveGenerationExamples {
 		@ForAll @CharRange(from = 'a', to = 'h') char column,
 		@ForAll @CharRange(from = '1', to = '8') char row
 	) {
-		String square = column + "" + row;
-		return new ChessBoard().square(square).isOnBoard();
+		return new ChessBoard().square(column, row).isOnBoard();
 	}
 
 	private class ChessBoard {
-		Square square(String square) {
-			return null;
+		Square square(char column, char row) {
+			return new Square();
 		}
 
 		private class Square {
