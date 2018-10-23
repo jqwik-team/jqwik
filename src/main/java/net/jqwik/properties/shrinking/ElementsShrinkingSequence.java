@@ -1,10 +1,10 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
 
 public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	private final Falsifier<List<T>> listFalsifier;
@@ -15,16 +15,17 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	private ShrinkingSequence<T> currentShrinkingSequence = null;
 	private Throwable currentThrowable;
 
-	public ElementsShrinkingSequence( //
-									  List<Shrinkable<T>> currentElements, //
-									  Throwable originalError, //
-									  Falsifier<List<T>> listFalsifier, //
-									  Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction //
+	public ElementsShrinkingSequence(
+		List<Shrinkable<T>> currentElements,
+		Throwable originalError,
+		Falsifier<List<T>> listFalsifier,
+		Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction
 	) {
-		this.currentResults = currentElements
-			.stream()
-			.map(shrinkable -> FalsificationResult.falsified(shrinkable, originalError))
-			.collect(Collectors.toList());
+		this.currentResults =
+			currentElements
+				.stream()
+				.map(shrinkable -> FalsificationResult.falsified(shrinkable, originalError))
+				.collect(Collectors.toList());
 		this.currentThrowable = originalError;
 		this.listFalsifier = listFalsifier;
 		this.distanceFunction = distanceFunction;
@@ -118,16 +119,16 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	private List<T> toValueList(List<FalsificationResult<T>> results) {
 		return results
-			.stream()
-			.map(FalsificationResult::value)
-			.collect(Collectors.toList());
+				   .stream()
+				   .map(FalsificationResult::value)
+				   .collect(Collectors.toList());
 	}
 
 	private List<Shrinkable<T>> toShrinkableList(List<FalsificationResult<T>> results) {
 		return results
-			.stream()
-			.map(FalsificationResult::shrinkable)
-			.collect(Collectors.toList());
+				   .stream()
+				   .map(FalsificationResult::shrinkable)
+				   .collect(Collectors.toList());
 	}
 
 }

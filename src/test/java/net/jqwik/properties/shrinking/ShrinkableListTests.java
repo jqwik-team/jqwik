@@ -1,13 +1,14 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.ShrinkableTypesForTest.*;
-import org.assertj.core.api.*;
-
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import org.assertj.core.api.*;
+
+import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -111,7 +112,7 @@ class ShrinkableListTests {
 		}
 
 		@Example
-		void downToMinsize() {
+		void downToMinSize() {
 			List<Shrinkable<Integer>> elementShrinkables =
 				Arrays.stream(new Integer[]{0, 1, 2, 3, 4}).map(Shrinkable::unshrinkable).collect(Collectors.toList());
 			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2);
@@ -160,6 +161,17 @@ class ShrinkableListTests {
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 
 			Assertions.assertThat(counter.get()).isEqualTo(3);
+		}
+
+		@Example
+		void shrinkSizeAgainAfterShrinkingElements() {
+			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 0, 2, 1);
+
+			ShrinkingSequence<List<Integer>> sequence =
+				shrinkable.shrink(integers -> integers.size() == new HashSet<>(integers).size());
+			while (sequence.next(count, reporter));
+
+			Assertions.assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 		}
 
 		@Example

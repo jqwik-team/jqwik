@@ -161,7 +161,7 @@ public class ShrinkableStringTests {
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).isEqualTo("b");
 
-			assertThat(counter.get()).isEqualTo(6);
+			assertThat(counter.get()).isEqualTo(7);
 		}
 
 		@Example

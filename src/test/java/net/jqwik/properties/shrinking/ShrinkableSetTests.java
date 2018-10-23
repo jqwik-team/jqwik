@@ -1,13 +1,14 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.shrinking.ShrinkableTypesForTest.*;
-import org.mockito.*;
-
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import org.mockito.*;
+
+import net.jqwik.api.*;
+import net.jqwik.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -176,7 +177,7 @@ class ShrinkableSetTests {
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).containsExactly(2);
 
-			assertThat(counter.get()).isEqualTo(5);
+			assertThat(counter.get()).isEqualTo(6);
 		}
 
 		@Example

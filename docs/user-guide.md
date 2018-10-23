@@ -86,6 +86,7 @@
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Release Notes](#release-notes)
+  - [0.9.1-SNAPSHOT](#091-snapshot)
   - [0.9.0](#090)
   - [0.8.x](#08x)
 
@@ -2257,6 +2258,10 @@ the external data was conceived or generated.
   
 
 ## Release Notes
+
+### 0.9.1-SNAPSHOT
+
+- Container shrinking tries one more thing to get smaller results
 
 ### 0.9.0
 

@@ -4,14 +4,12 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
-import static java.util.Collections.reverse;
-
 class ShrinkingListElementsNotEnough {
 
 	static <E> List<E> brokenReverse(List<E> aList) {
 		if (aList.size() < 4) {
 			aList = new ArrayList<>(aList);
-			reverse(aList);
+			Collections.reverse(aList);
 		}
 		return aList;
 	}
@@ -22,4 +20,18 @@ class ShrinkingListElementsNotEnough {
 		List<Integer> reversed = brokenReverse(aList);
 		return aList.get(0).equals(reversed.get(aList.size() - 1));
 	}
+
+	private <T> List<T> reverseWithoutDuplicates(List<T> original) {
+		List<T> clone = new ArrayList<>(new HashSet<>(original));
+		Collections.reverse(clone);
+		return clone;
+	}
+
+	@Property
+	//@Report(Reporting.FALSIFIED)
+	boolean shouldShrinkToListOf0and0(@ForAll List<Integer> original) {
+		List<Integer> reversed = reverseWithoutDuplicates(original);
+		return original.size() == reversed.size();
+	}
+
 }

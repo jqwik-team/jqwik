@@ -1,9 +1,9 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
 
 public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 

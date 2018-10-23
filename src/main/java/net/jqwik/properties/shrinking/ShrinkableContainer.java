@@ -1,9 +1,9 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
 
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	private final List<Shrinkable<E>> elements;
@@ -32,13 +32,22 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 			.andThen(shrinkableList -> { //
 				List<Shrinkable<E>> elements = ((ShrinkableContainer<C, E>) shrinkableList).elements;
 				Falsifier<List<E>> listFalsifier = list -> falsifier.test(toContainer(list));
-				return new ElementsShrinkingSequence<>(elements, null, listFalsifier, ShrinkingDistance::forCollection)
-					.mapValue(this::toContainer);
-			});
+				return new ContainerShrinkingSequence<>(elements, listFalsifier, ShrinkingDistance::forCollection, this::toContainerShrinkable);
+			}).andThen(shrinkableContainer ->
+						   new DeepSearchShrinkingSequence<>(shrinkableContainer, this::shrinkCandidatesFor, falsifier)
+			);
 	}
 
 	private C toContainer(List<E> listOfE) {
 		return listOfE.stream().collect(containerCollector());
+	}
+
+	private Shrinkable<C> toContainerShrinkable(Shrinkable<List<E>> listOfShrinkable) {
+		List<Shrinkable<E>> shrinkableElements =
+			listOfShrinkable.value().stream()
+							.map(Shrinkable::unshrinkable)
+							.collect(Collectors.toList());
+		return createShrinkable(shrinkableElements);
 	}
 
 	private Set<Shrinkable<C>> shrinkCandidatesFor(Shrinkable<C> shrinkable) {
