@@ -8,7 +8,7 @@ import net.jqwik.properties.arbitraries.randomized.*;
 public class WildcardArbitrary implements Arbitrary<Object> {
 	@Override
 	public RandomGenerator<Object> generator(int genSize) {
-		return RandomGenerators.integers(0, genSize).map(WildcardObject::new);
+		return RandomGenerators.integers(0, genSize/2).map(WildcardObject::new);
 	}
 
 	public static class WildcardObject implements Comparable<WildcardObject> {
