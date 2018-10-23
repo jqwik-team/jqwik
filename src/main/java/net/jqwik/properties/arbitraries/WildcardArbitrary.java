@@ -11,7 +11,7 @@ public class WildcardArbitrary implements Arbitrary<Object> {
 		return RandomGenerators.integers(0, genSize).map(WildcardObject::new);
 	}
 
-	public static class WildcardObject {
+	public static class WildcardObject implements Comparable<WildcardObject> {
 		private final Integer index;
 
 		public WildcardObject(Integer index) {
@@ -33,6 +33,11 @@ public class WildcardArbitrary implements Arbitrary<Object> {
 		@Override
 		public int hashCode() {
 			return Objects.hash(index);
+		}
+
+		@Override
+		public int compareTo(WildcardObject o) {
+			return Integer.compare(this.index, o.index);
 		}
 	}
 }
