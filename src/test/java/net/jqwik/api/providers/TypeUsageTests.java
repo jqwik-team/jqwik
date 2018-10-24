@@ -278,11 +278,12 @@ class TypeUsageTests {
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			TypeUsage typeVariableType = TypeUsage.forParameter(parameter);
 
-			TypeUsage first = typeVariableType.getTypeArguments().get(0);
-			assertThat(first.isTypeVariableOrWildcard()).isTrue();
-			assertThat(first.isTypeVariable()).isTrue();
-			assertThat(first.hasLowerBounds()).isFalse();
-			assertThat(first.hasUpperBounds()).isTrue();
+			assertThat(typeVariableType.isTypeVariableOrWildcard()).isTrue();
+			assertThat(typeVariableType.isTypeVariable()).isTrue();
+			assertThat(typeVariableType.hasLowerBounds()).isFalse();
+			assertThat(typeVariableType.hasUpperBounds()).isTrue();
+
+			assertThat(typeVariableType.toString()).isEqualTo("T extends Comparable<T>");
 
 		}
 

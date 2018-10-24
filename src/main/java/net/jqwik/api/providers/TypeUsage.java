@@ -3,6 +3,8 @@ package net.jqwik.api.providers;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.*;
@@ -32,6 +34,8 @@ import net.jqwik.support.*;
  */
 public class TypeUsage {
 
+	private static Map<Type, TypeUsage> resolved = new ConcurrentHashMap<>();
+
 	private static final String WILDCARD = "?";
 
 	public static TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
@@ -39,107 +43,126 @@ public class TypeUsage {
 			String typeArgumentsString = JqwikStringSupport.displayString(typeParameters);
 			throw new JqwikException(String.format("Type [%s] cannot have type parameters [%s]", type, typeArgumentsString));
 		}
-		return new TypeUsage(type, typeParameters);
+		TypeUsage typeUsage = new TypeUsage(type, null, Collections.emptyList());
+		typeUsage.addTypeArguments(Arrays.asList(typeParameters));
+		return typeUsage;
 	}
 
 	public static TypeUsage forParameter(MethodParameter parameter) {
-		return new TypeUsage(parameter);
-	}
+		TypeUsage typeUsage = new TypeUsage(
+			extractRawType(parameter.getType()),
+			extractTypeVariable(parameter.getType()),
+			parameter.findAllAnnotations()
+		);
+		typeUsage.addTypeArguments(extractTypeArguments(parameter));
+		typeUsage.addUpperBounds(extractUpperBounds(parameter.getType()));
+		typeUsage.addLowerBounds(extractLowerBounds(parameter.getType()));
 
-	public static TypeUsage forType(Type type) {
-		if (type instanceof WildcardType) {
-			return TypeUsage.forWildcard((WildcardType) type);
-		}
-		return new TypeUsage(type);
+		return typeUsage;
 	}
 
 	public static TypeUsage wildcard(TypeUsage upperBound) {
-		return new TypeUsage(
-			Object.class,
-			WILDCARD,
-			new TypeUsage[] {upperBound},
-			new TypeUsage[0],
+		TypeUsage typeUsage = new TypeUsage(Object.class, WILDCARD, Collections.emptyList());
+		typeUsage.addUpperBounds(Arrays.asList(upperBound));
+		return typeUsage;
+	}
+
+	public static TypeUsage forType(Type type) {
+		TypeUsage typeUsage;
+		if (type instanceof WildcardType) {
+			typeUsage = TypeUsage.forWildcard((WildcardType) type);
+		} else {
+			typeUsage = TypeUsage.forParameterizedType(type);
+		}
+		return typeUsage;
+	}
+
+	private static TypeUsage forParameterizedType(Type parameterizedType) {
+		return resolveOrCreate(
+			parameterizedType,
+			extractRawType(parameterizedType),
+			extractTypeVariable(parameterizedType),
 			Collections.emptyList(),
-			Collections.emptyList()
+			typeUsage -> {
+				typeUsage.addTypeArguments(extractPlainTypeArguments(parameterizedType));
+				typeUsage.addUpperBounds(extractUpperBounds(parameterizedType));
+				typeUsage.addLowerBounds(extractLowerBounds(parameterizedType));
+			}
 		);
 	}
 
 	private static TypeUsage forWildcard(WildcardType wildcardType) {
-		return new TypeUsage(
+		return resolveOrCreate(
+			wildcardType,
 			Object.class,
 			WILDCARD,
-			extractUpperBounds(wildcardType),
-			extractLowerBounds(wildcardType),
-			Collections.emptyList(),
-			extractAnnotations(wildcardType)
+			extractAnnotations(wildcardType),
+			typeUsage -> {
+				typeUsage.addUpperBounds(extractUpperBounds(wildcardType));
+				typeUsage.addLowerBounds(extractLowerBounds(wildcardType));
+			}
 		);
 	}
 
-	private final Class<?> rawType;
-	private final List<Annotation> annotations;
-	private final List<TypeUsage> typeArguments;
-	private final String typeVariable;
-	private final TypeUsage[] upperBounds;
-	private final TypeUsage[] lowerBounds;
+	private static TypeUsage resolveOrCreate(
+		Type type,
+		Class rawType,
+		String typeVariable,
+		List<Annotation> annotations,
+		Consumer<TypeUsage> processTypeUsage
+	) {
+		Optional<TypeUsage> alreadyResolved = alreadyResolvedIn(type);
+		if (alreadyResolved.isPresent()) {
+			return alreadyResolved.get();
+		}
 
-	private TypeUsage(Class<?> rawType, TypeUsage... typeArguments) {
-		this(
-			rawType,
-			null,
-			new TypeUsage[0],
-			new TypeUsage[0],
-			Arrays.asList(typeArguments),
-			Collections.emptyList()
-		);
+		TypeUsage typeUsage = new TypeUsage(rawType, typeVariable, annotations);
+		resolved.put(type, typeUsage);
+		processTypeUsage.accept(typeUsage);
+
+		return typeUsage;
 	}
 
-	private TypeUsage(AnnotatedType annotatedType) {
-		this(
+	private static TypeUsage forAnnotatedType(AnnotatedType annotatedType) {
+		TypeUsage typeUsage = new TypeUsage(
 			extractRawType(annotatedType.getType()),
 			extractTypeVariable(annotatedType.getType()),
-			extractUpperBounds(annotatedType.getType()),
-			extractLowerBounds(annotatedType.getType()),
-			extractPlainTypeArguments(annotatedType),
 			extractAnnotations(annotatedType)
 		);
+		typeUsage.addTypeArguments(extractPlainTypeArguments(annotatedType));
+		typeUsage.addUpperBounds(extractUpperBounds(annotatedType.getType()));
+		typeUsage.addLowerBounds(extractLowerBounds(annotatedType.getType()));
+		return typeUsage;
 	}
 
-	private TypeUsage(MethodParameter parameter) {
-		this(
-			extractRawType(parameter.getType()),
-			extractTypeVariable(parameter.getType()),
-			extractUpperBounds(parameter.getType()),
-			extractLowerBounds(parameter.getType()),
-			extractTypeArguments(parameter),
-			parameter.findAllAnnotations()
-		);
+	private static Optional<TypeUsage> alreadyResolvedIn(Type type) {
+		return Optional.ofNullable(resolved.get(type));
 	}
 
-	private TypeUsage(Type parameterizedType) {
-		this(
-			extractRawType(parameterizedType),
-			extractTypeVariable(parameterizedType),
-			extractUpperBounds(parameterizedType),
-			extractLowerBounds(parameterizedType),
-			extractPlainTypeArguments(parameterizedType),
-			Collections.emptyList()
-		);
-	}
 
-	private TypeUsage(
-		Class<?> rawType,
-		String typeVariable,
-		TypeUsage[] upperBounds,
-		TypeUsage[] lowerBounds,
-		List<TypeUsage> typeArguments,
-		List<Annotation> annotations
-	) {
+	private final Class<?> rawType;
+	private final String typeVariable;
+	private final List<Annotation> annotations;
+	private final List<TypeUsage> typeArguments = new ArrayList<>();
+	private final List<TypeUsage> upperBounds = new ArrayList<>();
+	private final List<TypeUsage> lowerBounds = new ArrayList<>();
+
+	private TypeUsage(Class<?> rawType, String typeVariable, List<Annotation> annotations) {
 		this.rawType = rawType;
 		this.typeVariable = typeVariable;
-		this.upperBounds = upperBounds;
-		this.lowerBounds = lowerBounds;
-		this.typeArguments = typeArguments;
 		this.annotations = annotations;
+	}
+
+	private void addTypeArguments(List<TypeUsage> typeArguments) {
+		this.typeArguments.addAll(typeArguments);
+	}
+
+	private void addLowerBounds(List<TypeUsage> lowerBounds) {
+		this.lowerBounds.addAll(lowerBounds);
+	}
+
+	private void addUpperBounds(List<TypeUsage> upperBounds) {
+		this.upperBounds.addAll(upperBounds);
 	}
 
 	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
@@ -166,35 +189,35 @@ public class TypeUsage {
 		return null;
 	}
 
-	private static TypeUsage[] extractUpperBounds(Type parameterizedType) {
+	private static List<TypeUsage> extractUpperBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
-			return Arrays.stream(((TypeVariable) parameterizedType).getBounds()) //
-						 .map(TypeUsage::forType) //
-						 .toArray(TypeUsage[]::new);
+			return Arrays.stream(((TypeVariable) parameterizedType).getBounds())
+						 .map(TypeUsage::forType)
+						 .collect(Collectors.toList());
 		}
 		if (parameterizedType instanceof WildcardType) {
 			return extractUpperBounds((WildcardType) parameterizedType);
 		}
-		return new TypeUsage[0];
+		return new ArrayList<>();
 	}
 
-	private static TypeUsage[] extractUpperBounds(WildcardType wildcardType) {
+	private static List<TypeUsage> extractUpperBounds(WildcardType wildcardType) {
 		return Arrays.stream(wildcardType.getUpperBounds())
 					 .map(TypeUsage::forType)
-					 .toArray(TypeUsage[]::new);
+					 .collect(Collectors.toList());
 	}
 
-	private static TypeUsage[] extractLowerBounds(Type parameterizedType) {
+	private static List<TypeUsage> extractLowerBounds(Type parameterizedType) {
 		if (parameterizedType instanceof WildcardType) {
 			return extractLowerBounds((WildcardType) parameterizedType);
 		}
-		return new TypeUsage[0];
+		return Collections.emptyList();
 	}
 
-	private static TypeUsage[] extractLowerBounds(WildcardType wildcardType) {
+	private static List<TypeUsage> extractLowerBounds(WildcardType wildcardType) {
 		return Arrays.stream(wildcardType.getLowerBounds())
 					 .map(TypeUsage::forType)
-					 .toArray(TypeUsage[]::new);
+					 .collect(Collectors.toList());
 	}
 
 	private static Class<?> extractRawType(Type parameterizedType) {
@@ -223,7 +246,7 @@ public class TypeUsage {
 
 	private static List<TypeUsage> extractAnnotatedTypeArguments(AnnotatedParameterizedType annotatedType) {
 		return Arrays.stream(annotatedType.getAnnotatedActualTypeArguments()) //
-					 .map(TypeUsage::new) //
+					 .map(TypeUsage::forAnnotatedType) //
 					 .collect(Collectors.toList());
 	}
 
@@ -241,16 +264,16 @@ public class TypeUsage {
 	 * Return true if a type parameter has upper bounds.
 	 */
 	public boolean hasUpperBounds() {
-		if (upperBounds.length > 1)
+		if (upperBounds.size() > 1)
 			return true;
-		return upperBounds.length == 1 && !upperBounds[0].isOfType(Object.class);
+		return upperBounds.size() == 1 && !upperBounds.get(0).isOfType(Object.class);
 	}
 
 	/**
 	 * Return true if a type parameter has upper bounds.
 	 */
 	public boolean hasLowerBounds() {
-		return lowerBounds.length > 0;
+		return lowerBounds.size() > 0;
 	}
 
 	/**
@@ -283,7 +306,7 @@ public class TypeUsage {
 
 	/**
 	 * Check if an instance is of a specific raw type
-	 *
+	 * <p>
 	 * Most of the time this is what you want to do when checking for applicability of a
 	 * {@linkplain ArbitraryProvider}.
 	 */
@@ -318,16 +341,16 @@ public class TypeUsage {
 
 	private boolean canBeAssignedToUpperBounds(TypeUsage targetType) {
 		if (isTypeVariableOrWildcard()) {
-			return Arrays.stream(upperBounds).allMatch(upperBound -> upperBound.canBeAssignedToUpperBounds(targetType));
+			return upperBounds.stream().allMatch(upperBound -> upperBound.canBeAssignedToUpperBounds(targetType));
 		}
-		return Arrays.stream(targetType.upperBounds).allMatch(this::canBeAssignedTo);
+		return targetType.upperBounds.stream().allMatch(this::canBeAssignedTo);
 	}
 
 	private boolean canBeAssignedToLowerBounds(TypeUsage targetType) {
 		if (isTypeVariableOrWildcard()) {
-			return Arrays.stream(lowerBounds).allMatch(lowerBound -> lowerBound.canBeAssignedToLowerBounds(targetType));
+			return lowerBounds.stream().allMatch(lowerBound -> lowerBound.canBeAssignedToLowerBounds(targetType));
 		}
-		return Arrays.stream(targetType.lowerBounds).allMatch(lowerBound -> lowerBound.canBeAssignedTo(this));
+		return targetType.lowerBounds.stream().allMatch(lowerBound -> lowerBound.canBeAssignedTo(this));
 	}
 
 	private boolean allTypeArgumentsCanBeAssigned(
@@ -373,7 +396,7 @@ public class TypeUsage {
 
 	/**
 	 * Return all annotations of a parameter (or an annotated type argument).
-	 *
+	 * <p>
 	 * This list already contains all meta annotations, repeated annotations and annotations
 	 * from annotated type arguments. Thus, it does much more than the usual Java reflection API.
 	 */
@@ -409,7 +432,6 @@ public class TypeUsage {
 	public <A extends Annotation> boolean isAnnotated(Class<A> annotationType) {
 		return findAnnotation(annotationType).isPresent();
 	}
-
 
 	/**
 	 * Check if a given {@code providedClass} is assignable from this generic type.
@@ -457,11 +479,11 @@ public class TypeUsage {
 		supertypes.addAll(Arrays.asList(rawType.getAnnotatedInterfaces()));
 		for (AnnotatedType type : supertypes) {
 			if (extractRawType(type.getType()).equals(typeToFind))
-				return Optional.of(new TypeUsage(type));
+				return Optional.of(TypeUsage.forAnnotatedType(type));
 		}
 
 		for (AnnotatedType type : supertypes) {
-			TypeUsage typeUsage = new TypeUsage(type);
+			TypeUsage typeUsage = TypeUsage.forAnnotatedType(type);
 			Optional<TypeUsage> nestedFound = typeUsage.findSuperType(typeToFind);
 			if (nestedFound.isPresent())
 				return nestedFound;
@@ -484,15 +506,15 @@ public class TypeUsage {
 		if (!other.getAnnotations().equals(getAnnotations()))
 			return false;
 		if (other.isWildcard() && isWildcard()) {
-			if (!Arrays.equals(other.lowerBounds, lowerBounds))
+			if (!(other.lowerBounds.equals(lowerBounds)))
 				return false;
-			if (!Arrays.equals(other.upperBounds, upperBounds))
+			if (!(other.upperBounds.equals(upperBounds)))
 				return false;
 		}
 		if (other.isTypeVariable() && isTypeVariable()) {
 			if (!other.typeVariable.equals(typeVariable))
 				return false;
-			return Arrays.equals(other.upperBounds, upperBounds);
+			return (other.upperBounds.equals(upperBounds));
 		}
 		return true;
 	}
@@ -504,30 +526,44 @@ public class TypeUsage {
 
 	@Override
 	public String toString() {
+		return toString(new HashSet<>());
+	}
+
+	// TODO: Clean up
+	public String toString(Set<TypeUsage> touchedTypes) {
+		if (touchedTypes.contains(this)) {
+			if (isTypeVariableOrWildcard()) {
+				return typeVariable;
+			}
+			return "";
+		}
+		touchedTypes.add(this);
+
 		String representation = getRawType().getSimpleName();
 		if (isGeneric()) {
-			String typeArgsRepresentation = typeArguments.stream() //
-														 .map(TypeUsage::toString) //
-														 .collect(Collectors.joining(", "));
+			String typeArgsRepresentation = typeArguments
+												.stream()
+												.map(typeUsage -> typeUsage.toString(touchedTypes))
+												.collect(Collectors.joining(", "));
 			representation = String.format("%s<%s>", representation, typeArgsRepresentation);
 		}
 		if (isArray()) {
-			representation = String.format("%s[]", getComponentType().get().toString());
+			representation = String.format("%s[]", getComponentType().get().toString(touchedTypes));
 		}
 		if (typeVariable != null) {
 			representation = typeVariable;
 			if (hasUpperBounds()) {
 				String boundsRepresentation =
-					Arrays.stream(upperBounds) //
-						  .map(TypeUsage::toString) //
-						  .collect(Collectors.joining(" & "));
+					upperBounds.stream()
+							   .map(typeUsage -> typeUsage.toString(touchedTypes))
+							   .collect(Collectors.joining(" & "));
 				representation += String.format(" extends %s", boundsRepresentation);
 			}
 			if (hasLowerBounds()) {
 				String boundsRepresentation =
-					Arrays.stream(lowerBounds) //
-						  .map(TypeUsage::toString) //
-						  .collect(Collectors.joining(" & "));
+					lowerBounds.stream() //
+							   .map(typeUsage -> typeUsage.toString(touchedTypes)) //
+							   .collect(Collectors.joining(" & "));
 				representation += String.format(" super %s", boundsRepresentation);
 			}
 		}
