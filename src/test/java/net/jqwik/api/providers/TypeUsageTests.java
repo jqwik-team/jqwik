@@ -267,6 +267,26 @@ class TypeUsageTests {
 		}
 
 		@Example
+		void typeVariableRecursive() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <T extends Comparable<T>> void recursiveTypeVariable(T element) {}
+
+			}
+
+			Method method = LocalClass.class.getMethod("recursiveTypeVariable", Comparable.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage typeVariableType = TypeUsage.forParameter(parameter);
+
+			TypeUsage first = typeVariableType.getTypeArguments().get(0);
+			assertThat(first.isTypeVariableOrWildcard()).isTrue();
+			assertThat(first.isTypeVariable()).isTrue();
+			assertThat(first.hasLowerBounds()).isFalse();
+			assertThat(first.hasUpperBounds()).isTrue();
+
+		}
+
+		@Example
 		void genericTypeWithAnnotatedParameters() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
