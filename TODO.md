@@ -1,3 +1,7 @@
+- <T> Arbitrary<List<T>> Arbitraries.shuffle(T...values)
+  - RandomGenerator
+  - ExhaustiveGenerator
+
 - PackageDescriptor e.g.
   @Label("mypackage")
   @AddHook(...)
