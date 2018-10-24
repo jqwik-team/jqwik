@@ -3,7 +3,6 @@ package net.jqwik.properties.arbitraries.exhaustive;
 import java.util.*;
 import java.util.concurrent.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 
 public class UniqueExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
@@ -62,7 +61,7 @@ public class UniqueExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 						if (++count > MAX_MISSES) {
 							String message =
 								String.format("Uniqueness filter missed more than %s times.", MAX_MISSES);
-							throw new JqwikException(message);
+							throw new TooManyFilterMissesException(message);
 						}
 					}
 

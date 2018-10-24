@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.shrinking.*;
 
@@ -36,7 +35,7 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 			Shrinkable<T> next = fetchShrinkable.apply(random);
 			if (usedValues.contains(next.value())) {
 				if (++count > MAX_MISSES) {
-					throw new JqwikException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));
+					throw new TooManyFilterMissesException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));
 				}
 				continue;
 			} else {

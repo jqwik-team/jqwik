@@ -120,6 +120,8 @@ public class CheckedProperty {
 			ExhaustiveShrinkablesGenerator exhaustiveShrinkablesGenerator =
 				ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver);
 			return Optional.of(exhaustiveShrinkablesGenerator);
+		} catch (TooManyFilterMissesException tmfme) {
+			throw tmfme;
 		} catch (JqwikException ex) {
 			return Optional.empty();
 		}

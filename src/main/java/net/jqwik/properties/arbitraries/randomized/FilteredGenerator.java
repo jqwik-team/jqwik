@@ -3,7 +3,6 @@ package net.jqwik.properties.arbitraries.randomized;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.shrinking.*;
 
@@ -35,7 +34,7 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 				return new FilteredShrinkable<>(next, filterPredicate);
 			} else {
 				if (++count > MAX_MISSES) {
-					throw new JqwikException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));
+					throw new TooManyFilterMissesException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));
 				}
 			}
 
