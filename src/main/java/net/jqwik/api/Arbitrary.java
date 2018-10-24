@@ -1,7 +1,6 @@
 package net.jqwik.api;
 
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -128,9 +127,7 @@ public interface Arbitrary<T> {
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Optional.empty();
-				// TODO: Does not work as elements in collections
-				// return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
+				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
 			}
 		};
 	}

@@ -1,34 +1,34 @@
 package net.jqwik.properties.arbitraries.exhaustive;
 
 import java.util.*;
-import java.util.function.*;
+import java.util.concurrent.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
 
-public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
+public class UniqueExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	private static final long MAX_MISSES = 10000;
-	private final ExhaustiveGenerator<T> toFilter;
-	private final Predicate<T> filter;
+	private final ExhaustiveGenerator<T> base;
 
-	public FilteredExhaustiveGenerator(ExhaustiveGenerator<T> toFilter, Predicate<T> filter) {
-		this.toFilter = toFilter;
-		this.filter = filter;
+	public UniqueExhaustiveGenerator(ExhaustiveGenerator<T> base) {
+		this.base = base;
 	}
 
 	@Override
 	public boolean isUnique() {
-		return toFilter.isUnique();
+		return true;
 	}
 
 	@Override
 	public long maxCount() {
-		return toFilter.maxCount();
+		return base.maxCount();
 	}
 
 	@Override
 	public Iterator<T> iterator() {
-		final Iterator<T> mappedIterator = toFilter.iterator();
+		final Iterator<T> mappedIterator = base.iterator();
+		final Set<T> usedValues = ConcurrentHashMap.newKeySet();
+
 		return new Iterator<T>() {
 
 			T next = findNext();
@@ -55,12 +55,13 @@ public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 						return null;
 					}
 					T next = mappedIterator.next();
-					if (filter.test(next)) {
+					if (!usedValues.contains(next)) {
+						usedValues.add(next);
 						return next;
 					} else {
 						if (++count > MAX_MISSES) {
 							String message =
-								String.format("Filter missed more than %s times.", MAX_MISSES);
+								String.format("Uniqueness filter missed more than %s times.", MAX_MISSES);
 							throw new JqwikException(message);
 						}
 					}

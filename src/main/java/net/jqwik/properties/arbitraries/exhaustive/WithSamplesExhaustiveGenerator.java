@@ -15,6 +15,11 @@ public class WithSamplesExhaustiveGenerator<T> implements ExhaustiveGenerator<T>
 	}
 
 	@Override
+	public boolean isUnique() {
+		return base.isUnique();
+	}
+
+	@Override
 	public long maxCount() {
 		return base.maxCount() + samples.length;
 	}

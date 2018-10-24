@@ -2266,6 +2266,7 @@ the external data was conceived or generated.
   <p/>_This is an incompatible API change!_
 - `Arbitrary.unique()` does no longer propagate uniqueness across usages
   of same arbitrary.
+- Implemented exhaustive generation for `Arbitrary.unique()`
 
 ### 0.9.0
 

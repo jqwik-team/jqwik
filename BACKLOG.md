@@ -58,8 +58,7 @@
 
 - Exhaustive Generators:
   - Arbitrary.flatMap
-  - Arbitrary.unique: Seems to be difficult,
-    see commented out tests in ExhaustiveGenerationTests
+  - Arbitraries.lazy
   - Make default GenerationMode configurable
   - Decimal generation with restricted scale
 

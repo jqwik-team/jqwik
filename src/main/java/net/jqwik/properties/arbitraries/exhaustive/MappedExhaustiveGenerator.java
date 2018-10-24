@@ -14,6 +14,11 @@ public class MappedExhaustiveGenerator<T, U> implements ExhaustiveGenerator<U> {
 	}
 
 	@Override
+	public boolean isUnique() {
+		return toMap.isUnique();
+	}
+
+	@Override
 	public long maxCount() {
 		return toMap.maxCount();
 	}

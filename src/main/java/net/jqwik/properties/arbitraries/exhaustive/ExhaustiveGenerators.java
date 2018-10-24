@@ -30,7 +30,18 @@ public class ExhaustiveGenerators {
 		Optional<Long> optionalMaxCount = ListExhaustiveGenerator.calculateMaxCount(elementArbitrary, minSize, maxSize);
 		return optionalMaxCount.map(
 			maxCount ->
-				new ListExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize)
+			{
+				ListExhaustiveGenerator<T> exhaustiveGenerator = new ListExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize);
+
+				// A hack to accommodate missing design idea for handling unique exhaustive generation:
+				Optional<ExhaustiveGenerator<T>> exhaustive = elementArbitrary.exhaustive();
+				if (exhaustive.isPresent() && exhaustive.get().isUnique()) {
+					Predicate<List<T>> allElementsUnique = list -> list.size() == new HashSet<>(list).size();
+					return exhaustiveGenerator.filter(allElementsUnique);
+				} else {
+					return exhaustiveGenerator;
+				}
+			}
 		);
 	}
 

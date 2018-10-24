@@ -81,50 +81,49 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsExactly("abc", "def");
 	}
 
-// TODO: Uniqueness for exhaustive generation probably requires majo refactoring
-//	@Group
-//	@Label("Arbitrary.unique()")
-//	class Unique {
-//		@Example
-//		@Label("filter out duplicates")
-//		void unique() {
-//			Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.of(1, 2, 1, 3, 1, 2).unique().exhaustive();
-//			assertThat(optionalGenerator).isPresent();
-//
-//			ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
-//			assertThat(generator.maxCount()).isEqualTo(6); // Cannot know the number of unique elements in advance
-//			assertThat(generator).containsExactly(1, 2, 3);
-//		}
-//
-//		@Example
-//		@Label("uniqueness within list")
-//		void uniqueWithinList() {
-//			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator = Arbitraries.of(1, 2, 3).unique().list().ofSize(3).exhaustive();
-//			assertThat(optionalGenerator).isPresent();
-//
-//			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
-//			assertThat(generator.maxCount()).isEqualTo(27); // Cannot know the number of unique elements in advance
-//			assertThat(generator).containsExactly(
-//				asList(1, 2, 3),
-//				asList(2, 3, 1),
-//				asList(3, 1, 2),
-//				asList(1, 3, 2),
-//				asList(2, 1, 3),
-//				asList(3, 2, 1)
-//			);
-//		}
-//
-//		@Property
-//		@Label("reset of uniqueness for embedded arbitraries")
-//		void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
-//			Assertions.assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
-//		}
-//
-//		@Provide
-//		Arbitrary<List<Integer>> listOfUniqueIntegers() {
-//			return Arbitraries.integers().between(1, 10).unique().list().ofSize(3);
-//		}
-//	}
+	@Group
+	@Label("Arbitrary.unique()")
+	class Unique {
+		@Example
+		@Label("filter out duplicates")
+		void unique() {
+			Optional<ExhaustiveGenerator<Integer>> optionalGenerator = Arbitraries.of(1, 2, 1, 3, 1, 2).unique().exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(6); // Cannot know the number of unique elements in advance
+			assertThat(generator).containsExactly(1, 2, 3);
+		}
+
+		@Example
+		@Label("uniqueness within list")
+		void uniqueWithinList() {
+			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator = Arbitraries.of(1, 2, 3).unique().list().ofSize(3).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(27); // Cannot know the number of unique elements in advance
+			assertThat(generator).containsOnly(
+				asList(1, 2, 3),
+				asList(2, 3, 1),
+				asList(3, 1, 2),
+				asList(1, 3, 2),
+				asList(2, 1, 3),
+				asList(3, 2, 1)
+			);
+		}
+
+		@Property
+		@Label("reset of uniqueness for embedded arbitraries")
+		void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
+			assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
+		}
+
+		@Provide
+		Arbitrary<List<Integer>> listOfUniqueIntegers() {
+			return Arbitraries.integers().between(1, 10).unique().list().ofSize(3);
+		}
+	}
 
 	@Group
 	class OfValues {

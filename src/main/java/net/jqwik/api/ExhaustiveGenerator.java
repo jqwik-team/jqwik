@@ -1,7 +1,5 @@
 package net.jqwik.api;
 
-import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 import net.jqwik.properties.arbitraries.exhaustive.*;
@@ -21,17 +19,15 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		return new FilteredExhaustiveGenerator<>(this, filterPredicate);
 	}
 
+	/**
+	 * This is a hack to make unique work for exhaustive generation
+	 */
+	default boolean isUnique() {
+		return false;
+	}
+
 	default ExhaustiveGenerator<T> unique() {
-		Set<T> usedValues = ConcurrentHashMap.newKeySet();
-		Predicate<T> isUnique = o -> {
-			if (usedValues.contains(o)) {
-				return false;
-			} else {
-				usedValues.add(o);
-				return true;
-			}
-		};
-		return filter(isUnique);
+		return new UniqueExhaustiveGenerator<>(this);
 	}
 
 	default ExhaustiveGenerator<T> injectNull() {
