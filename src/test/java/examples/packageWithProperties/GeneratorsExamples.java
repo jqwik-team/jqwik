@@ -55,8 +55,8 @@ public class GeneratorsExamples {
 		return aNumber - aNumber == 0;
 	}
 
-	@Property(tries = 100)
-	boolean numbersBetween1and100(@ForAll("between1and100") long aNumber) {
+	@Property(tries = 100, generation = GenerationMode.RANDOMIZED)
+	boolean numbersBetween0and100(@ForAll("between0and100") long aNumber) {
 		System.out.println(aNumber);
 		return aNumber - aNumber == 0;
 	}
@@ -85,8 +85,8 @@ public class GeneratorsExamples {
 	}
 
 	@Provide
-	Arbitrary<Long> between1and100() {
-		return Arbitraries.longs().between(1L, 100L);
+	Arbitrary<Long> between0and100() {
+		return Arbitraries.longs().between(0L, 100L);
 	}
 
 	@Property(tries = 10) @Report(Reporting.GENERATED)

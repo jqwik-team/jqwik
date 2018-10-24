@@ -120,12 +120,10 @@ public interface Arbitrary<T> {
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> unique() {
-		// Remembering of used values must be outside of generator!
-		Set<T> usedValues = ConcurrentHashMap.newKeySet();
 		return new Arbitrary<T>() {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
-				return Arbitrary.this.generator(genSize).unique(usedValues);
+				return Arbitrary.this.generator(genSize).unique();
 			}
 
 			@Override

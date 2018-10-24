@@ -2262,6 +2262,10 @@ the external data was conceived or generated.
 ### 0.9.1-SNAPSHOT
 
 - Container shrinking tries one more thing to get smaller results
+- Removed `RandomGenerator.reset()` since it's no longer needed for uniqueness behaviour
+  <p/>_This is an incompatible API change!_
+- `Arbitrary.unique()` does no longer propagate uniqueness across usages
+  of same arbitrary.
 
 ### 0.9.0
 

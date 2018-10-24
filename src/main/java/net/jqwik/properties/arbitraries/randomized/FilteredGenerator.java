@@ -1,11 +1,11 @@
 package net.jqwik.properties.arbitraries.randomized;
 
+import java.util.*;
+import java.util.function.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.shrinking.*;
-
-import java.util.*;
-import java.util.function.*;
 
 public class FilteredGenerator<T> implements RandomGenerator<T> {
 	private static final long MAX_MISSES = 10000;
@@ -20,11 +20,6 @@ public class FilteredGenerator<T> implements RandomGenerator<T> {
 	@Override
 	public Shrinkable<T> next(Random random) {
 		return nextUntilAccepted(random, toFilter::next);
-	}
-
-	@Override
-	public void reset() {
-		toFilter.reset();
 	}
 
 	@Override

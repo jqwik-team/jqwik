@@ -137,14 +137,14 @@ class CheckedPropertyTests {
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
-				aConfig().withSeed("42").withTries(20).build()
+				aConfig().withSeed("414243").withTries(20).build()
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
-			assertThat(check.randomSeed()).isEqualTo("42");
+			assertThat(check.randomSeed()).isEqualTo("414243");
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
-			assertThat(allGeneratedInts).containsExactly(0, -56, 1, -1, -100, 3, 31, 27, -27, 53, -77, 8, -60, 69, 29, -6, -7, 38, 37, -10);
+			assertThat(allGeneratedInts).containsExactly(5, 22, -100, 0, 43, 70, -66, -75, -11, -65, 93, -61, 100, 37, -2, -9, -86, 100, -10, 100);
 		}
 
 		@Group

@@ -30,9 +30,4 @@ class ContainerGenerator<T, C> implements RandomGenerator<C> {
 		return createShrinkable.apply(list);
 	}
 
-	@Override
-	public void reset() {
-		elementGenerator.reset();
-	}
-
 }

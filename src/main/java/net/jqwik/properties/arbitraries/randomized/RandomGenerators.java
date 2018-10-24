@@ -165,6 +165,10 @@ public class RandomGenerators {
 		};
 	}
 
+	public static <T> RandomGenerator<T> edgeCases(List<Shrinkable<T>> edgeCases) {
+		return choose(edgeCases).map(Shrinkable::value);
+	}
+
 	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {

@@ -1,6 +1,7 @@
 package net.jqwik.properties.arbitraries.randomized;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 
 import net.jqwik.*;
@@ -10,16 +11,10 @@ import net.jqwik.properties.shrinking.*;
 public class UniqueGenerator<T> implements RandomGenerator<T> {
 	private static final long MAX_MISSES = 10000;
 	private final RandomGenerator<T> toFilter;
-	private final Set<T> usedValues;
+	private final Set<T> usedValues = ConcurrentHashMap.newKeySet();
 
-	public UniqueGenerator(RandomGenerator<T> toFilter, Set<T> usedValues) {
+	public UniqueGenerator(RandomGenerator<T> toFilter) {
 		this.toFilter = toFilter;
-		this.usedValues = usedValues;
-	}
-
-	@Override
-	public void reset() {
-		usedValues.clear();
 	}
 
 	@Override

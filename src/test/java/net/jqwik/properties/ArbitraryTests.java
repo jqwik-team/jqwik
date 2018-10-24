@@ -10,7 +10,7 @@ import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.GenerationMode.RANDOMIZED;
+import static net.jqwik.api.GenerationMode.*;
 
 @Group
 class ArbitraryTests {
@@ -103,10 +103,10 @@ class ArbitraryTests {
 		}
 
 		@Property
-		void uniqueAcrossGenerators(@ForAll Random rand) {
+		void uniquenessAcrossGeneratorsMustBeEnforced(@ForAll Random rand) {
 			Arbitrary<Integer> primes = Arbitraries.of(2, 3, 5, 7, 11, 13, 17, 19);
-			Arbitrary<Integer> uniquePrimes = primes.unique();
-			Arbitrary<Integer> product = Combinators.combine(uniquePrimes, uniquePrimes).as((p1, p2) -> p1 * p2);
+			Arbitrary<List<Integer>> uniquePrimes = primes.unique().list().ofSize(2);
+			Arbitrary<Integer> product = uniquePrimes.map(p -> p.get(0) * p.get(1));
 			RandomGenerator<Integer> generator = product.generator(10);
 
 			Set<Integer> generatedValues =
