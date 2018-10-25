@@ -1,6 +1,3 @@
-- ExhaustiveGenerators for
-  - oneOf
-
 - PackageDescriptor e.g.
   @Label("mypackage")
   @AddHook(...)
