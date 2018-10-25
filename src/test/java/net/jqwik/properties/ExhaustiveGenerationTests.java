@@ -642,4 +642,15 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsExactly("abc");
 	}
 
+	@Example
+	@Label("Arbitraries.samples() returns all samples in row")
+	void samples() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.samples("a", "b", "c").exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(3);
+		assertThat(generator).containsExactly("a", "b", "c");
+	}
+
 }

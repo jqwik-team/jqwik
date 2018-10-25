@@ -236,7 +236,10 @@ public class Arbitraries {
 	 */
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
-		return fromGenerator(RandomGenerators.samples(samples));
+		return fromGenerators(
+			RandomGenerators.samples(samples),
+			ExhaustiveGenerators.choose(Arrays.asList(samples))
+		);
 	}
 
 	/**
