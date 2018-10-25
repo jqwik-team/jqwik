@@ -17,5 +17,7 @@ class JqwikPropertiesTests {
 
 		assertThat(properties.defaultTries()).isEqualTo(1000);
 		assertThat(properties.defaultMaxDiscardRatio()).isEqualTo(5);
+
+		assertThat(properties.useJunitPlatformReporter()).isEqualTo(false);
 	}
 }

@@ -2279,6 +2279,7 @@ the external data was conceived or generated.
 - Fixed bug when resolving recursive types
 - Added `Arbitraries.shuffle()` as a way to generate [permutations](#shuffling-permutations)
 - Implemented exhaustive generation for `Arbitraries.frequency()`
+- Changed display name of test engine to "jqwik for Java"
 
 ### 0.9.0
 

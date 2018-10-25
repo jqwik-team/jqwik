@@ -15,11 +15,16 @@ public class JqwikProperties {
 	private static final String DEFAULT_TRIES = "1000";
 	private static final String DEFAULT_MAX_DISCARD_RATIO = "5";
 
+	// TODO: Change default to true as soon as Gradle has support for platform reporter
+	// see https://github.com/gradle/gradle/issues/4605
+	private static final String DEFAULT_USE_JUNIT_PLATFORM_REPORTER = "false";
+
 	private String databasePath;
 	private boolean rerunFailuresWithSameSeed;
 	private boolean runFailuresFirst;
 	private int defaultTries;
 	private int defaultMaxDiscardRatio;
+	private boolean useJunitPlatformReporter;
 
 	public String databasePath() {
 		return databasePath;
@@ -39,6 +44,10 @@ public class JqwikProperties {
 
 	public int defaultMaxDiscardRatio() {
 		return defaultMaxDiscardRatio;
+	}
+
+	public boolean useJunitPlatformReporter() {
+		return useJunitPlatformReporter;
 	}
 
 	JqwikProperties() {
@@ -64,6 +73,7 @@ public class JqwikProperties {
 			runFailuresFirst = Boolean.parseBoolean(properties.getProperty("runFailuresFirst", DEFAULT_RERUN_FAILURES_FIRST));
 			defaultTries = Integer.parseInt(properties.getProperty("defaultTries", DEFAULT_TRIES));
 			defaultMaxDiscardRatio = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio", DEFAULT_MAX_DISCARD_RATIO));
+			useJunitPlatformReporter = Boolean.parseBoolean(properties.getProperty("useJunitPlatformReporter", DEFAULT_USE_JUNIT_PLATFORM_REPORTER));
 		} catch (IOException ioe) {
 			LOG.log(Level.WARNING, String.format("Error while reading properties file [%s] found.", propertiesFileName), ioe);
 		}
