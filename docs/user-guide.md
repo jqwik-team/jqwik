@@ -47,6 +47,7 @@
     - [Characters and Strings](#characters-and-strings)
     - [java.util.Random](#javautilrandom)
     - [Constants](#constants)
+    - [Shuffling Permutations](#shuffling-permutations)
     - [Default Types](#default-types)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
@@ -946,6 +947,14 @@ Shrinking moves towards the start of the frequency list.
 
 - [`Arbitrary<T> constant(T value)`](https://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
   Always return an unshrinkable `value` of type `T`.
+
+#### Shuffling Permutations
+
+- [`Arbitrary<List<T>> shuffle(T ... values)`](https://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#shuffle-T...-):
+  Return unshrinkable permutations of the `values` handed in.
+
+- [`Arbitrary<List<T>> shuffle(List<T> values)`](https://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#shuffle-java.util.List-):
+  Return unshrinkable permutations of the `values` handed in.
 
 #### Default Types
 
@@ -2268,6 +2277,7 @@ the external data was conceived or generated.
   of same arbitrary.
 - Implemented exhaustive generation for `Arbitrary.unique()`
 - Fixed bug when resolving recursive types
+- Added `Arbitraries.shuffle()` as a way to generate [permutations](#shuffling-permutations)
 
 ### 0.9.0
 

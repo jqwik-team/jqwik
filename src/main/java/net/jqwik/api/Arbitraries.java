@@ -251,6 +251,42 @@ public class Arbitraries {
 	}
 
 	/**
+	 * Create an arbitrary that will always generate a list which is a
+	 * permutation of the values handed to it. Permutations will
+	 * not be shrunk.
+	 *
+	 * @param values The values to permute
+	 * @param <T>    The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	public static <T> Arbitrary<List<T>> shuffle(T... values) {
+		return shuffle(Arrays.asList(values));
+	}
+
+	/**
+	 * Create an arbitrary that will always generate a list which is a
+	 * permutation of the values handed to it. Permutations will
+	 * not be shrunk.
+	 *
+	 * @param values The values to permute
+	 * @param <T>    The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	public static <T> Arbitrary<List<T>> shuffle(List<T> values) {
+		return new Arbitrary<List<T>>() {
+			@Override
+			public RandomGenerator<List<T>> generator(int genSize) {
+				return RandomGenerators.shuffle(values);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<List<T>>> exhaustive() {
+				return Optional.empty();
+			}
+		};
+	}
+
+	/**
 	 * Find a registered arbitrary that will be used to generate values of type T.
 	 * All default arbitrary providers and all registered arbitrary providers are considered.
 	 * This is more or less the same mechanism that jqwik uses to find arbitraries for
@@ -331,4 +367,5 @@ public class Arbitraries {
 	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary) {
 		return SequentialActionSequence.fromActions(actionArbitrary);
 	}
+
 }

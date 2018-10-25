@@ -1,6 +1,6 @@
-- <T> Arbitrary<List<T>> Arbitraries.shuffle(T...values)
-  - RandomGenerator
-  - ExhaustiveGenerator
+- ExhaustiveGenerators for
+  - shuffle
+  - constant
 
 - PackageDescriptor e.g.
   @Label("mypackage")

@@ -84,30 +84,72 @@ class ArbitrariesTests {
 		});
 	}
 
-	@Example
-	void oneOf() {
-		Arbitrary<Integer> one = Arbitraries.of(1);
-		Arbitrary<Integer> two = Arbitraries.of(2);
-		Arbitrary<Integer> threeToFive = Arbitraries.of(3, 4, 5);
+	@Group
+	class Shuffle {
+		@Example
+		void varArgsValues() {
+			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle(1, 2, 3);
+			assertPermutations(shuffled);
+		}
 
-		Arbitrary<Integer> oneOfArbitrary = Arbitraries.oneOf(one, two, threeToFive);
-		ArbitraryTestHelper.assertAllGenerated(oneOfArbitrary.generator(1000), value -> {
-			assertThat(value).isIn(1, 2, 3, 4, 5);
-		});
+		@Example
+		void noValues() {
+			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle();
+			ArbitraryTestHelper.assertAllGenerated(
+				shuffled.generator(1000),
+				list -> { assertThat(list).isEmpty();}
+			);
+		}
 
-		RandomGenerator<Integer> generator = oneOfArbitrary.generator(1000);
-		ArbitraryTestHelper.assertAtLeastOneGeneratedOf(generator, 1, 2, 3, 4, 5);
+		@Example
+		void listOfValues() {
+
+			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle(Arrays.asList(1, 2, 3));
+			assertPermutations(shuffled);
+
+		}
+
+		private void assertPermutations(Arbitrary<List<Integer>> shuffled) {
+			ArbitraryTestHelper.assertAtLeastOneGeneratedOf(
+				shuffled.generator(1000),
+				Arrays.asList(1, 2, 3),
+				Arrays.asList(1, 3, 2),
+				Arrays.asList(2, 3, 1),
+				Arrays.asList(2, 1, 3),
+				Arrays.asList(3, 1, 2),
+				Arrays.asList(3, 2, 1)
+			);
+		}
 	}
 
-	@Property
-	void oneOfWillHandDownConfigurations(@ForAll("stringCollections") @Size(10) Collection<?> stringList) {
-		assertThat(stringList).hasSize(10);
-		assertThat(stringList).allMatch(element -> element instanceof String);
-	}
+	@Group
+	class OneOf {
 
-	@Provide
-	Arbitrary<Collection> stringCollections() {
-		return Arbitraries.defaultFor(Collection.class, String.class);
+		@Example
+		void choosesOneOfManyArbitraries() {
+			Arbitrary<Integer> one = Arbitraries.of(1);
+			Arbitrary<Integer> two = Arbitraries.of(2);
+			Arbitrary<Integer> threeToFive = Arbitraries.of(3, 4, 5);
+
+			Arbitrary<Integer> oneOfArbitrary = Arbitraries.oneOf(one, two, threeToFive);
+			ArbitraryTestHelper.assertAllGenerated(oneOfArbitrary.generator(1000), value -> {
+				assertThat(value).isIn(1, 2, 3, 4, 5);
+			});
+
+			RandomGenerator<Integer> generator = oneOfArbitrary.generator(1000);
+			ArbitraryTestHelper.assertAtLeastOneGeneratedOf(generator, 1, 2, 3, 4, 5);
+		}
+
+		@Property
+		void willHandDownConfigurations(@ForAll("stringCollections") @Size(10) Collection<?> stringList) {
+			assertThat(stringList).hasSize(10);
+			assertThat(stringList).allMatch(element -> element instanceof String);
+		}
+
+		@Provide
+		Arbitrary<Collection> stringCollections() {
+			return Arbitraries.defaultFor(Collection.class, String.class);
+		}
 	}
 
 	@Example

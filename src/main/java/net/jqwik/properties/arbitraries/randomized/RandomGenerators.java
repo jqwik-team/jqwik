@@ -93,6 +93,14 @@ public class RandomGenerators {
 		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
 	}
 
+	public static <T> RandomGenerator<List<T>> shuffle(List<T> values) {
+		return random -> {
+			List<T> clone = new ArrayList<>(values);
+			Collections.shuffle(clone, random);
+			return Shrinkable.unshrinkable(clone);
+		};
+	}
+
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
 	) {
