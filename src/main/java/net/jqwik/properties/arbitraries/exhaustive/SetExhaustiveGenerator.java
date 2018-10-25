@@ -5,6 +5,8 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.support.*;
 
+import static net.jqwik.support.MathSupport.factorial;
+
 class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 	private final Arbitrary<T> elementArbitrary;
 	private final long maxCount;
@@ -33,16 +35,6 @@ class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 			sum += choices;
 		}
 		return Optional.of(sum);
-	}
-
-	private static long factorial(long number) {
-		long result = 1;
-
-		for (long factor = 2; factor <= number; factor++) {
-			result *= factor;
-		}
-
-		return result;
 	}
 
 	SetExhaustiveGenerator(Arbitrary<T> elementArbitrary, long maxCount, int minSize, int maxSize) {

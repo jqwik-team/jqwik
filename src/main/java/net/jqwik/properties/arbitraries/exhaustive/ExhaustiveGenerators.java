@@ -57,4 +57,10 @@ public class ExhaustiveGenerators {
 		return optionalMaxCount.map(maxCount -> new CombinedExhaustiveGenerator<>(maxCount, arbitraries, combinator));
 	}
 
+	public static <T> Optional<ExhaustiveGenerator<List<T>>> shuffle(List<T> values) {
+		Optional<Long> optionalMaxCount = PermutationExhaustiveGenerator.calculateMaxCount(values);
+		return optionalMaxCount.map(
+			maxCount -> new PermutationExhaustiveGenerator<>(values, maxCount)
+		);
+	}
 }

@@ -1,5 +1,4 @@
 - ExhaustiveGenerators for
-  - shuffle
   - oneOf
   - frequency
 

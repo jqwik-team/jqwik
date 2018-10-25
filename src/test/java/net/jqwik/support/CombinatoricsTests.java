@@ -170,6 +170,82 @@ class CombinatoricsTests {
 	}
 
 	@Group
+	@Label("listPermutations")
+	class ListPermutations {
+
+		@Example
+		void noValues() {
+			List<Integer> values = asList();
+			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
+
+			assertThat(iterator).containsExactly(
+				asList()
+			);
+			assertThat(iterator.hasNext()).isFalse();
+			assertThatThrownBy(iterator::next).isInstanceOf(NoSuchElementException.class);
+		}
+
+		@Example
+		void oneValue() {
+			List<Integer> values = asList(42);
+			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
+
+			assertThat(iterator).containsExactly(
+				asList(42)
+			);
+			assertThat(iterator.hasNext()).isFalse();
+			assertThatThrownBy(iterator::next).isInstanceOf(NoSuchElementException.class);
+		}
+
+		@Example
+		void threeValues() {
+			List<Integer> values = asList(1, 2, 3);
+			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
+
+			assertThat(iterator).containsExactly(
+				asList(1, 2, 3),
+				asList(1, 3, 2),
+				asList(2, 1, 3),
+				asList(2, 3, 1),
+				asList(3, 1, 2),
+				asList(3, 2, 1)
+			);
+			assertThat(iterator.hasNext()).isFalse();
+			assertThatThrownBy(iterator::next).isInstanceOf(NoSuchElementException.class);
+		}
+
+		@Example
+		void withDuplicates() {
+			List<Integer> values = asList(1, 2, 2);
+			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
+
+			assertThat(iterator).containsExactly(
+				asList(1, 2, 2),
+				asList(1, 2, 2),
+				asList(2, 1, 2),
+				asList(2, 2, 1),
+				asList(2, 1, 2),
+				asList(2, 2, 1)
+			);
+		}
+
+		@Example
+		void manyValues() {
+			List<Integer> values = asList(1, 2, 3, 4, 5, 6);
+			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
+
+			assertThat(iterator).contains(
+				asList(1, 2, 3, 4, 5 ,6),
+				asList(6, 5, 4, 3, 2, 1)
+			);
+
+			assertThat(Combinatorics.listPermutations(values))
+				.hasSize((int) MathSupport.factorial(6));
+		}
+
+	}
+
+	@Group
 	@Label("combine")
 	class Combine {
 		@Example

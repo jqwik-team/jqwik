@@ -653,4 +653,22 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsExactly("a", "b", "c");
 	}
 
+	@Example
+	@Label("Arbitraries.shuffle() returns all permutations")
+	void shuffle() {
+		Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator = Arbitraries.shuffle(1,2,3).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(6);
+		assertThat(generator).containsOnly(
+			asList(1, 2, 3),
+			asList(1, 3, 2),
+			asList(2, 3, 1),
+			asList(2, 1, 3),
+			asList(3, 1, 2),
+			asList(3, 2, 1)
+		);
+	}
+
 }

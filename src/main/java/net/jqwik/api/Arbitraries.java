@@ -279,17 +279,10 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<List<T>> shuffle(List<T> values) {
-		return new Arbitrary<List<T>>() {
-			@Override
-			public RandomGenerator<List<T>> generator(int genSize) {
-				return RandomGenerators.shuffle(values);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<List<T>>> exhaustive() {
-				return Optional.empty();
-			}
-		};
+		return fromGenerators(
+			RandomGenerators.shuffle(values),
+			ExhaustiveGenerators.shuffle(values)
+		);
 	}
 
 	/**
