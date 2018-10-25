@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
@@ -137,7 +138,15 @@ public class Arbitraries {
 	 */
 	@SafeVarargs
 	public static <T> Arbitrary<T> frequency(Tuple.Tuple2<Integer, T> ... frequencies) {
-		return fromGenerator(RandomGenerators.frequency(frequencies));
+		List<T> values = Arrays.stream(frequencies)
+			.filter(f -> f.get1() > 0)
+			.map(Tuple.Tuple2::get2)
+			.collect(Collectors.toList());
+
+		return fromGenerators(
+			RandomGenerators.frequency(frequencies),
+			ExhaustiveGenerators.choose(values)
+		);
 	}
 
 	/**

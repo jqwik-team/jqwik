@@ -139,7 +139,7 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
-		void samples() {
+		void values() {
 			Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.of("a", "b", "c", "d").exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
@@ -147,6 +147,36 @@ class ExhaustiveGenerationTests {
 			assertThat(generator.maxCount()).isEqualTo(4);
 			assertThat(generator).containsExactly("a", "b", "c", "d");
 		}
+
+		@Example
+		@Label("Arbitraries.samples() returns all samples in row")
+		void samples() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.samples("a", "b", "c").exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly("a", "b", "c");
+		}
+
+
+		@Example
+		@Label("Arbitraries.frequency() returns all in row")
+		void frequency() {
+			Tuple.Tuple2<Integer, String> frequency1 = Tuple.of(1, "a");
+			Tuple.Tuple2<Integer, String> frequency2 = Tuple.of(2, "b");
+			Tuple.Tuple2<Integer, String> frequency3 = Tuple.of(3, "c");
+			Tuple.Tuple2<Integer, String> frequency0 = Tuple.of(0, "d");
+
+			Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.frequency(frequency1, frequency2, frequency3, frequency0).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly("a", "b", "c");
+		}
+
+
 
 		@Example
 		void enums() {
@@ -640,17 +670,6 @@ class ExhaustiveGenerationTests {
 		ExhaustiveGenerator<String> generator = optionalGenerator.get();
 		assertThat(generator.maxCount()).isEqualTo(1);
 		assertThat(generator).containsExactly("abc");
-	}
-
-	@Example
-	@Label("Arbitraries.samples() returns all samples in row")
-	void samples() {
-		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.samples("a", "b", "c").exhaustive();
-		assertThat(optionalGenerator).isPresent();
-
-		ExhaustiveGenerator<String> generator = optionalGenerator.get();
-		assertThat(generator.maxCount()).isEqualTo(3);
-		assertThat(generator).containsExactly("a", "b", "c");
 	}
 
 	@Example

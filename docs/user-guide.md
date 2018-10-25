@@ -2278,6 +2278,7 @@ the external data was conceived or generated.
 - Implemented exhaustive generation for `Arbitrary.unique()`
 - Fixed bug when resolving recursive types
 - Added `Arbitraries.shuffle()` as a way to generate [permutations](#shuffling-permutations)
+- Implemented exhaustive generation for `Arbitraries.frequency()`
 
 ### 0.9.0
 

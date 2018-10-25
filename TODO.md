@@ -1,6 +1,5 @@
 - ExhaustiveGenerators for
   - oneOf
-  - frequency
 
 - PackageDescriptor e.g.
   @Label("mypackage")
