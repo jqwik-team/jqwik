@@ -247,7 +247,10 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> constant(T value) {
-		return fromGenerator(random -> Shrinkable.unshrinkable(value));
+		return fromGenerators(
+			random -> Shrinkable.unshrinkable(value),
+			ExhaustiveGenerators.choose(Arrays.asList(value))
+		);
 	}
 
 	/**

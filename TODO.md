@@ -1,6 +1,6 @@
 - ExhaustiveGenerators for
+  - samples
   - shuffle
-  - constant
 
 - PackageDescriptor e.g.
   @Label("mypackage")

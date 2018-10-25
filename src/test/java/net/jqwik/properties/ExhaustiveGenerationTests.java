@@ -631,4 +631,15 @@ class ExhaustiveGenerationTests {
 
 	}
 
+	@Example
+	@Label("Arbitraries.constant() returns the constant once")
+	void constant() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.constant("abc").exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(1);
+		assertThat(generator).containsExactly("abc");
+	}
+
 }
