@@ -4,6 +4,7 @@ import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.properties.arbitraries.randomized.*;
 
 public class StringLengthConfigurator extends ArbitraryConfiguratorBase {
 
@@ -12,13 +13,14 @@ public class StringLengthConfigurator extends ArbitraryConfiguratorBase {
 		if (stringLength.value() != 0) {
 			return arbitrary.ofLength(stringLength.value());
 		} else {
-			return arbitrary.ofMinLength(stringLength.min()).ofMaxLength(stringLength.max());
+			int effectiveMax = stringLength.max() == 0 ? RandomGenerators.DEFAULT_COLLECTION_SIZE : stringLength.max();
+			return arbitrary.ofMinLength(stringLength.min()).ofMaxLength(effectiveMax);
 		}
 	}
 
 	private void checkSize(StringLength stringLength) {
 		if (stringLength.value() == 0) {
-			if (stringLength.min() > stringLength.max())
+			if (stringLength.min() > stringLength.max() && stringLength.max() != 0)
 				reportError(stringLength);
 		} else {
 			if (stringLength.min() != 0 || stringLength.max() != 0)

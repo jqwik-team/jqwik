@@ -14,4 +14,14 @@ class StringLengthProperties {
 		return aString.length() == 5;
 	}
 
+	@Property
+	boolean minCanBeUsedWithoutMax(@ForAll @StringLength(min = 2) String aString) {
+		return aString.length() >= 2;
+	}
+
+	@Property
+	boolean maxCanBeUsedWithoutMin(@ForAll @StringLength(max = 7) String aString) {
+		return aString.length() <= 7;
+	}
+
 }

@@ -9,12 +9,10 @@ import net.jqwik.properties.arbitraries.randomized.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
 
-	private static final int DEFAULT_MAX_LENGTH = 255;
-
 	private List<Arbitrary<Character>> characterArbitraries = new ArrayList<>();
 
 	private int minLength = 0;
-	private int maxLength = DEFAULT_MAX_LENGTH;
+	private int maxLength = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 
 	private Arbitrary<Character> defaultCharacterArbitrary() {
 		return Arbitraries.chars().all().filter(c -> !DefaultStringArbitrary.isNoncharacter(c)

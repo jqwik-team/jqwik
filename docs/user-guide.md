@@ -2285,6 +2285,7 @@ the external data was conceived or generated.
   because Gradle does not support it yet
 - Using JUnit platform reporter [can now be configured](#jqwik-configuration)
 - `@Size`: min and max values can be used without the other
+- `@StringLength`: min and max values can be used without the other
 
 ### 0.9.0
 
