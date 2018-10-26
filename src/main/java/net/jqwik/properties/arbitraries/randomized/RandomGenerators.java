@@ -12,6 +12,8 @@ import net.jqwik.properties.shrinking.*;
 
 public class RandomGenerators {
 
+	public static final int DEFAULT_COLLECTION_SIZE = 255;
+
 	public static <U> RandomGenerator<U> choose(List<U> values) {
 		if (values.size() == 0) {
 			return fail("empty set of values");

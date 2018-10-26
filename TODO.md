@@ -3,7 +3,7 @@
   @AddHook(...)
   in package-info.java
 
-- @StringLength and @Size
+- @StringLength
   - Allow min / max without the other
 
 - Move release notes to their own web page

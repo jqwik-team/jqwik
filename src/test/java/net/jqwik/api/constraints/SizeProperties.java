@@ -32,4 +32,14 @@ class SizeProperties {
 		long count = aValue.count();
 		return count >= 2 && count <= 7;
 	}
+
+	@Property
+	boolean minCanBeUsedWithoutMax(@ForAll @Size(min = 2) List<?> aValue) {
+		return aValue.size() >= 2;
+	}
+
+	@Property
+	boolean maxCanBeUsedWithoutMin(@ForAll @Size(max = 7) List<?> aValue) {
+		return aValue.size() <= 7;
+	}
 }

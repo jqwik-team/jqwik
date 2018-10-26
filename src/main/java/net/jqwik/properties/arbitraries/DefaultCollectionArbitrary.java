@@ -9,11 +9,9 @@ import net.jqwik.properties.arbitraries.randomized.*;
 
 abstract class DefaultCollectionArbitrary<T, U> extends AbstractArbitraryBase implements SizableArbitrary<U> {
 
-	private static final int DEFAULT_COLLECTION_SIZE = 255;
-
 	protected final Arbitrary<T> elementArbitrary;
 	protected int minSize = 0;
-	protected int maxSize = DEFAULT_COLLECTION_SIZE;
+	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 
 	protected DefaultCollectionArbitrary(Arbitrary<T> elementArbitrary) {
 		this.elementArbitrary = elementArbitrary;

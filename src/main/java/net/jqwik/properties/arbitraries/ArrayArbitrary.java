@@ -11,11 +11,9 @@ import net.jqwik.properties.arbitraries.randomized.*;
 
 public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A> {
 
-	private static final int DEFAULT_MAX_SIZE = 255;
-
 	private final Class<A> arrayClass;
 	private final Arbitrary<T> elementArbitrary;
-	private int maxSize = DEFAULT_MAX_SIZE;
+	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private int minSize = 0;
 
 	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {

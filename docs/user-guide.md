@@ -2284,6 +2284,7 @@ the external data was conceived or generated.
 - Per default jqwik no longer uses the JUnit platform reporter for reporting
   because Gradle does not support it yet
 - Using JUnit platform reporter [can now be configured](#jqwik-configuration)
+- `@Size`: min and max values can be used without the other
 
 ### 0.9.0
 
