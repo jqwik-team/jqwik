@@ -15,20 +15,27 @@ public class JqwikExecutor {
 	private final LifecycleRegistry registry;
 	private final TestRunRecorder recorder;
 	private final Set<UniqueId> previousFailedTests;
+	private final boolean useJunitPlatformReporter;
 	private final PropertyTaskCreator propertyTaskCreator = new PropertyTaskCreator();
 	private final ContainerTaskCreator containerTaskCreator = new ContainerTaskCreator();
 	private final ExecutionTaskCreator childTaskCreator = this::createTask;
 
 	private static final Logger LOG = Logger.getLogger(JqwikExecutor.class.getName());
 
-	public JqwikExecutor(LifecycleRegistry registry, TestRunRecorder recorder, Set<UniqueId> previousFailedTests) {
+	public JqwikExecutor(
+		LifecycleRegistry registry,
+		TestRunRecorder recorder,
+		Set<UniqueId> previousFailedTests,
+		boolean useJunitPlatformReporter
+	) {
 		this.registry = registry;
 		this.recorder = recorder;
 		this.previousFailedTests = previousFailedTests;
+		this.useJunitPlatformReporter = useJunitPlatformReporter;
 	}
 
 	public void execute(TestDescriptor descriptor, EngineExecutionListener engineExecutionListener) {
-		EngineExecutionListener recordingListener = new RecordingExecutionListener(recorder, engineExecutionListener);
+		EngineExecutionListener recordingListener = new RecordingExecutionListener(recorder, engineExecutionListener, useJunitPlatformReporter);
 		ExecutionPipeline pipeline = new ExecutionPipeline(recordingListener);
 		ExecutionTask mainTask = createTask(descriptor, pipeline);
 		pipeline.submit(mainTask);

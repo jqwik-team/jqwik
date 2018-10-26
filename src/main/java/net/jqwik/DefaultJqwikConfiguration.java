@@ -34,6 +34,11 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 		return testEngineConfiguration;
 	}
 
+	@Override
+	public boolean useJunitPlatformReporter() {
+		return properties.useJunitPlatformReporter();
+	}
+
 	private TestEngineConfiguration createTestEngineConfiguration() {
 		TestRunDatabase database = new TestRunDatabase(Paths.get(properties.databasePath()));
 		TestRunData previousRun = database.previousRun();

@@ -1,22 +1,25 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
-import net.jqwik.properties.*;
-import net.jqwik.recording.*;
+import java.util.*;
+
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
-import java.util.*;
+import net.jqwik.api.*;
+import net.jqwik.properties.*;
+import net.jqwik.recording.*;
 
 public class RecordingExecutionListener implements EngineExecutionListener {
 
 	private final TestRunRecorder recorder;
 	private final EngineExecutionListener listener;
+	private final boolean useJunitPlatformReporter;
 	private Map<TestDescriptor, String> seeds = new IdentityHashMap<>();
 
-	RecordingExecutionListener(TestRunRecorder recorder, EngineExecutionListener listener) {
+	RecordingExecutionListener(TestRunRecorder recorder, EngineExecutionListener listener, boolean useJunitPlatformReporter) {
 		this.recorder = recorder;
 		this.listener = listener;
+		this.useJunitPlatformReporter = useJunitPlatformReporter;
 	}
 
 	@Override
@@ -49,7 +52,12 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 	@Override
 	public void reportingEntryPublished(TestDescriptor testDescriptor, ReportEntry entry) {
 		rememberSeed(testDescriptor, entry);
-		listener.reportingEntryPublished(testDescriptor, entry);
+
+		if (useJunitPlatformReporter) {
+			listener.reportingEntryPublished(testDescriptor, entry);
+		} else {
+			ReportEntrySupport.printToStdout(testDescriptor, entry);
+		}
 	}
 
 	private void rememberSeed(TestDescriptor testDescriptor, ReportEntry entry) {

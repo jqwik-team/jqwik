@@ -1927,6 +1927,7 @@ database = .jqwik-database
 rerunFailuresWithSameSeed = true
 defaultTries = 1000
 defaultMaxDiscardRatio = 5
+useJunitPlatformReporter = false
 ```
 
 ## Providing Default Arbitraries
@@ -2280,6 +2281,9 @@ the external data was conceived or generated.
 - Added `Arbitraries.shuffle()` as a way to generate [permutations](#shuffling-permutations)
 - Implemented exhaustive generation for `Arbitraries.frequency()`
 - Changed display name of test engine to "jqwik for Java"
+- Per default jqwik no longer uses the JUnit platform reporter for reporting
+  because Gradle does not support it yet
+- Using JUnit platform reporter [can now be configured](#jqwik-configuration)
 
 ### 0.9.0
 

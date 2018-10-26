@@ -15,7 +15,7 @@ import static net.jqwik.matchers.MockitoMatchers.*;
 public class JqwikExecutorTests {
 
 	private Set<UniqueId> previouslyFailedTests = new HashSet<>();
-	private JqwikExecutor executor = new JqwikExecutor(new LifecycleRegistry(), testRun -> {}, previouslyFailedTests);
+	private JqwikExecutor executor = new JqwikExecutor(new LifecycleRegistry(), testRun -> {}, previouslyFailedTests, true);
 
 	@Example
 	void previouslyFailedTestsAreRunFirst() {

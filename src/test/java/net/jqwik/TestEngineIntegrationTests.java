@@ -58,6 +58,11 @@ class TestEngineIntegrationTests {
 
 				};
 			}
+
+			@Override
+			public boolean useJunitPlatformReporter() {
+				return true;
+			}
 		};
 	}
 

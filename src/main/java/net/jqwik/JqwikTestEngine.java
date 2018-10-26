@@ -44,7 +44,7 @@ public class JqwikTestEngine implements TestEngine {
 
 	private void executeTests(TestDescriptor root, EngineExecutionListener listener) {
 		try (TestRunRecorder recorder = configuration.testEngineConfiguration().recorder()) {
-			new JqwikExecutor(lifecycleRegistry, recorder, configuration.testEngineConfiguration().previousFailures())
+			new JqwikExecutor(lifecycleRegistry, recorder, configuration.testEngineConfiguration().previousFailures(), configuration.useJunitPlatformReporter())
 				.execute(root, listener);
 		}
 	}
