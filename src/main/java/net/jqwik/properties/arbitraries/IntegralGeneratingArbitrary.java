@@ -37,13 +37,13 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
-		List<Shrinkable<BigInteger>> samples =
+		List<Shrinkable<BigInteger>> edgeCases =
 			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), min, max}) //
 				  .distinct() //
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
 				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max))) //
 				  .collect(Collectors.toList());
-		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(genSize, samples);
+		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(genSize, edgeCases);
 	}
 
 	class RangeIterator implements Iterator<BigInteger> {

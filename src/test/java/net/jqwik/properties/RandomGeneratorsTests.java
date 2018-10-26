@@ -7,7 +7,9 @@ import org.assertj.core.api.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
+import net.jqwik.properties.arbitraries.*;
 import net.jqwik.properties.arbitraries.randomized.*;
+import net.jqwik.properties.shrinking.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -193,6 +195,43 @@ class RandomGeneratorsTests {
 		void minGreaterThanMaxFails() {
 			assertThatThrownBy(() -> RandomGenerators.bigDecimals(BigDecimal.valueOf(1), BigDecimal.valueOf(-1), 2))
 				.isInstanceOf(JqwikException.class);
+		}
+	}
+
+	@Group
+	class EdgeCases {
+
+		@Example
+		void withEdgeCasesInjectsEdgeCasesIntoGeneratedValues() {
+			Shrinkable<Integer> zero = createShrinkableInt(0);
+			Shrinkable<Integer> thousand = createShrinkableInt(1000);
+			List<Shrinkable<Integer>> edgeCases = Arrays.asList(zero, thousand);
+			RandomGenerator<Integer> generator = RandomGenerators.integers(0, 1000).withEdgeCases(100, edgeCases);
+
+			assertAtLeastOneGenerated(generator, i -> i.equals(0));
+			assertAtLeastOneGenerated(generator, i -> i.equals(1000));
+		}
+
+		@Example
+		void edgeCaseIsAlsoShrunkToNonEdgeCase() {
+			Shrinkable<Integer> zero = createShrinkableInt(0);
+			Shrinkable<Integer> thousand = createShrinkableInt(1000);
+			List<Shrinkable<Integer>> edgeCases = Arrays.asList(zero, thousand);
+			RandomGenerator<Integer> generator = RandomGenerators.integers(0, 1000).withEdgeCases(10, edgeCases);
+
+			Shrinkable<Integer> thousandGenerated = generateValueUntil(generator, i -> i.equals(1000));
+
+			assertThat(thousandGenerated.value()).isEqualTo(1000);
+			ShrinkingSequence<Integer> sequence = thousandGenerated.shrink(i -> i < 5);
+			while (sequence.next(() -> {}, ignore -> {})) { }
+			assertThat(sequence.current().value()).isEqualTo(5);
+		}
+
+		private Shrinkable<Integer> createShrinkableInt(int value) {
+			return new ShrinkableBigInteger(
+				BigInteger.valueOf(value),
+				Range.of(BigInteger.valueOf(0), BigInteger.valueOf(1000))
+			).map(BigInteger::intValueExact);
 		}
 	}
 

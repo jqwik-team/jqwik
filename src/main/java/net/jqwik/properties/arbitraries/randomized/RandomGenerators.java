@@ -173,8 +173,11 @@ public class RandomGenerators {
 		};
 	}
 
-	public static <T> RandomGenerator<T> edgeCases(List<Shrinkable<T>> edgeCases) {
-		return choose(edgeCases).map(Shrinkable::value);
+	public static <T> RandomGenerator<T> chooseShrinkable(List<Shrinkable<T>> shrinkables) {
+		if (shrinkables.size() == 0) {
+			return fail("empty set of shrinkables");
+		}
+		return random -> chooseValue(shrinkables, random);
 	}
 
 	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {

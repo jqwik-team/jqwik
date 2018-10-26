@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -19,6 +20,16 @@ public class ArbitraryTestHelper {
 
 	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
 		assertAtLeastOneGenerated(generator, checker, "Failed to generate at least one");
+	}
+
+	public static <T> Shrinkable<T> generateValueUntil(RandomGenerator<T> generator, Function<T, Boolean> condition) {
+		long maxTries = 1000;
+		return generator
+				   .stream(SourceOfRandomness.current())
+				   .limit(maxTries)
+				   .filter(shrinkable -> condition.apply(shrinkable.value()))
+				   .findFirst()
+				   .orElseThrow(() -> new JqwikException("Failed to generate value that fits condition after " + maxTries + " tries."));
 	}
 
 	public static <T> Map<T, Long> count(RandomGenerator<T> generator, int tries) {

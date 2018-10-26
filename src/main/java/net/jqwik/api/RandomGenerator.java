@@ -38,8 +38,8 @@ public interface RandomGenerator<T> {
 		};
 	}
 
-	default RandomGenerator<T> withEdgeCases(int genSize, List<Shrinkable<T>> samples) {
-		if (samples.isEmpty()) {
+	default RandomGenerator<T> withEdgeCases(int genSize, List<Shrinkable<T>> edgeCases) {
+		if (edgeCases.isEmpty()) {
 			return this;
 		}
 
@@ -49,7 +49,7 @@ public interface RandomGenerator<T> {
 				100
 			) + 1;
 
-		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.edgeCases(samples);
+		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseShrinkable(edgeCases);
 		RandomGenerator<T> baseGenerator = this;
 
 		return random -> {
