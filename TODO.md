@@ -1,5 +1,3 @@
-- Tests for Combinatorics.concat()
-
 - PackageDescriptor e.g.
   @Label("mypackage")
   @AddHook(...)

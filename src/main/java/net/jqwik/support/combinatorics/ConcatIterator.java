@@ -12,7 +12,9 @@ public class ConcatIterator<T> implements Iterator<T> {
 	public ConcatIterator(List<Iterator<T>> iterators) {
 		this.iterators = iterators;
 		position = new AtomicInteger(0);
-		next = findNext();
+		if (!iterators.isEmpty()) {
+			next = findNext();
+		}
 	}
 
 	private Iterator<T> findNext() {

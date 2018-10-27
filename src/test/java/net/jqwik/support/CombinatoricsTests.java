@@ -13,6 +13,20 @@ import static org.assertj.core.api.Assertions.*;
 @Label("Combinatorics")
 class CombinatoricsTests {
 
+	@Property
+	@Label("concat(List<Iterable>)")
+	<T> void concatenatingIterables(@ForAll @Size(max = 10) List<@Size(max = 10) List<T>> listOfLists) {
+		List<Iterable<T>> iterables = listOfLists.stream().map(list -> (Iterable<T>) list).collect(Collectors.toList());
+		Iterator<T> iterator = Combinatorics.concat(iterables);
+
+		for (Iterable<T> list : iterables) {
+			for (T element : list) {
+				assertThat(iterator.next()).isEqualTo(element);
+			}
+		}
+		assertThat(iterator.hasNext()).isFalse();
+	}
+
 	@Group
 	@Label("listCombinations")
 	class CombineList {
