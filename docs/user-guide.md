@@ -2289,6 +2289,7 @@ the external data was conceived or generated.
 - `@Size`: min and max values can be used without the other
 - `@StringLength`: min and max values can be used without the other
 - Implemented exhaustive generation for `Arbitrary.flatMap()`
+- Implemented exhaustive generation for `Arbitrary.oneOf()`
 
 ### 0.9.0
 

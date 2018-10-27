@@ -57,16 +57,16 @@
 - Reporting.ARBITRARIES: report for each property which arbitraries are used.
 
 - Exhaustive Generators:
-  - Arbitrary.oneOf
   - Make default GenerationMode configurable
   - Decimal generation with restricted scale
   - Arbitraries.lazy (don't think that's possible b/c indeterminism)
 
-- @ForAll 
+- @From(String methodName)
   - can be used in parameter types to choose provider method
-  - can take `providerClass` parameter (but no value parameter) 
+    as replacement for @ForAll.value
+  - can have alternatively `Class provider` attribute (but no value parameter)
     to specify ArbitraryProvider implementation
-  - Alternative: Allow `@ForAll @From(MyProvider.class) MyType myObject`
+  - @ForAll.value should still be allowed as shortcut
 
 
 - Provider methods can take params e.g.

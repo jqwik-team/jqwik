@@ -721,4 +721,19 @@ class ExhaustiveGenerationTests {
 		);
 	}
 
+	@Example
+	@Label("Arbitraries.oneOf()")
+	void oneOf() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.oneOf(
+			Arbitraries.of("a", "b"),
+			Arbitraries.of("c", "d"),
+			Arbitraries.constant("e")
+		).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(5);
+		assertThat(generator).containsOnly("a", "b", "c", "d", "e");
+	}
+
 }

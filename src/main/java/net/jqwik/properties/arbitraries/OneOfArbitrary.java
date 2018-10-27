@@ -6,6 +6,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
 public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
@@ -16,6 +17,11 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
 		return RandomGenerators.choose(all).flatMap(Function.identity(), genSize);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<T>> exhaustive() {
+		return ExhaustiveGenerators.choose(all).flatMap(generator -> ExhaustiveGenerators.flatMap(generator, Function.identity()));
 	}
 
 	@Override

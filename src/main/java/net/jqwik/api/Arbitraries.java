@@ -125,6 +125,7 @@ public class Arbitraries {
 		if (all.size() == 1) {
 			return all.get(0);
 		}
+		// Simple flatMapping is not enough because of configurations
 		return new OneOfArbitrary<>(all);
 	}
 
