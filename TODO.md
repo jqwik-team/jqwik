@@ -1,4 +1,5 @@
 - PackageDescriptor e.g.
+  @Group
   @Label("mypackage")
   @AddHook(...)
   in package-info.java
