@@ -57,11 +57,10 @@
 - Reporting.ARBITRARIES: report for each property which arbitraries are used.
 
 - Exhaustive Generators:
-  - Arbitrary.flatMap
   - Arbitrary.oneOf
-  - Arbitraries.lazy
   - Make default GenerationMode configurable
   - Decimal generation with restricted scale
+  - Arbitraries.lazy (don't think that's possible b/c indeterminism)
 
 - @ForAll 
   - can be used in parameter types to choose provider method

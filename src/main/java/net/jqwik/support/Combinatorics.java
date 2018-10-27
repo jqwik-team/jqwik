@@ -2,6 +2,7 @@ package net.jqwik.support;
 
 import java.util.ArrayList;
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.support.combinatorics.*;
 
@@ -30,7 +31,7 @@ public class Combinatorics {
 		for(int listSize = minSize; listSize <= maxSize; listSize++) {
 			iterators.add(listIterator(elementIterable, listSize));
 		}
-		return concat(iterators);
+		return concatIterators(iterators);
 	}
 
 	private static <T> Iterator<List<T>> listIterator(Iterable<T> elementIterable, int listSize) {
@@ -47,7 +48,7 @@ public class Combinatorics {
 			Iterator<Set<T>> setIterator = setIterator(elementIterable, setSize);
 			iterators.add(setIterator);
 		}
-		return concat(iterators);
+		return concatIterators(iterators);
 	}
 
 	private static <T> Iterator<Set<T>> setIterator(Iterable<T> elementIterable, int setSize) {
@@ -64,7 +65,12 @@ public class Combinatorics {
 		return new PermutationIterator<>(values);
 	}
 
-	private static <T> Iterator<T> concat(List<Iterator<T>> iterators) {
+	public static <T> Iterator<T> concat(List<Iterable<T>> iterables) {
+		List<Iterator<T>> iterators = iterables.stream().map(Iterable::iterator).collect(Collectors.toList());
+		return new ConcatIterator<>(iterators);
+	}
+
+	private static <T> Iterator<T> concatIterators(List<Iterator<T>> iterators) {
 		return new ConcatIterator<>(iterators);
 	}
 

@@ -2207,11 +2207,13 @@ Exhaustive generation is considered for:
 - Enums
 - Booleans
 - Fixed number of choices given by `Arbitraries.of()`
+- Fixed number of choices given by `Arbitraries.shuffle()`
 - Lists, sets, streams, optionals of the above
 - Combinations of the above using `Combinators.combine()`
 - Mapped arbitraries using `Arbitrary.map()`
 - Filtered arbitraries using `Arbitrary.filter()`
-- Other derived arbitraries
+- Flat mapped arbitraries using `Arbitrary.flatMap()`
+- And a few other derived arbitraries...
 
 
 ## Data-Driven Properties
@@ -2286,6 +2288,7 @@ the external data was conceived or generated.
 - Using JUnit platform reporter [can now be configured](#jqwik-configuration)
 - `@Size`: min and max values can be used without the other
 - `@StringLength`: min and max values can be used without the other
+- Implemented exhaustive generation for `Arbitrary.flatMap()`
 
 ### 0.9.0
 

@@ -2,6 +2,7 @@ package net.jqwik.properties.arbitraries.exhaustive;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 
@@ -68,7 +69,7 @@ public class ExhaustiveGenerators {
 	}
 
 	public static <U, T> Optional<ExhaustiveGenerator<U>> flatMap(ExhaustiveGenerator<T> base, Function<T, Arbitrary<U>> mapper) {
-		List<T> allBaseValues = FlatMappedExhaustiveGenerator.baseValuesFor(base);
+		List<T> allBaseValues = StreamSupport.stream(base.spliterator(), false).collect(Collectors.toList());
 		Optional<Long> optionalMaxCount = FlatMappedExhaustiveGenerator.calculateMaxCounts(allBaseValues, mapper);
 		return optionalMaxCount.map(
 			maxCount -> new FlatMappedExhaustiveGenerator<>(allBaseValues, maxCount, mapper)

@@ -5,21 +5,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.support.*;
 
 public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<U> {
 	private final List<T> baseValues;
 	private final long maxCount;
 	private final Function<T, Arbitrary<U>> mapper;
-
-	public static <T> List<T> baseValuesFor(ExhaustiveGenerator<T> base) {
-		return StreamSupport.stream(base.spliterator(), false)
-			.collect(Collectors.toList());
-	}
-
-	public FlatMappedExhaustiveGenerator(List<T> baseValues, long maxCount, Function<T, Arbitrary<U>> mapper) {this.baseValues = baseValues;
-		this.maxCount = maxCount;
-		this.mapper = mapper;
-	}
 
 	public static <T, U> Optional<Long> calculateMaxCounts(List<T> baseValues, Function<T, Arbitrary<U>> mapper) {
 		long choices = 0;
@@ -36,6 +27,11 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 		return Optional.of(choices);
 	}
 
+	public FlatMappedExhaustiveGenerator(List<T> baseValues, long maxCount, Function<T, Arbitrary<U>> mapper) {this.baseValues = baseValues;
+		this.maxCount = maxCount;
+		this.mapper = mapper;
+	}
+
 	@Override
 	public long maxCount() {
 		return maxCount;
@@ -43,6 +39,12 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 
 	@Override
 	public Iterator<U> iterator() {
-		return null;
+		List<Iterable<U>> iterators =
+			baseValues
+				.stream()
+				.map(baseValue -> (Iterable<U>) mapper.apply(baseValue).exhaustive().get())
+				.collect(Collectors.toList());
+
+		return Combinatorics.concat(iterators);
 	}
 }
