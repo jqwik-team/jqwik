@@ -57,6 +57,9 @@
 - Reporting.ARBITRARIES: report for each property which arbitraries are used.
 
 - Exhaustive Generators:
+  - Better error messages when exhaustive generation not possible:
+    Tell when the number of combinations is too high
+    or which arbitrary does not provide exhaustive generation
   - Make default GenerationMode configurable
   - Decimal generation with restricted scale
   - Arbitraries.lazy (don't think that's possible b/c indeterminism)
@@ -68,9 +71,9 @@
     to specify ArbitraryProvider implementation
   - @ForAll.value should still be allowed as shortcut
 
-
 - Provider methods can take params e.g.
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
+  Does that really help since there is Arbitraries.defaultFor()
 
 - Default Arbitraries, Generators and Shrinking for
   - Tuples.Tuple2/3/4
