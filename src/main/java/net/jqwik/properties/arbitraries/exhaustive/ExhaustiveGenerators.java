@@ -49,6 +49,19 @@ public class ExhaustiveGenerators {
 		);
 	}
 
+	public static Optional<ExhaustiveGenerator<String>> strings(
+		Arbitrary<Character> characterArbitrary,
+		int minLength,
+		int maxLength
+	) {
+		return list(characterArbitrary, minLength, maxLength).map(
+			listGenerator -> listGenerator.map(
+				listOfChars -> listOfChars.stream()
+										  .map(String::valueOf)
+										  .collect(Collectors.joining())
+			));
+	}
+
 	public static <T> Optional<ExhaustiveGenerator<Set<T>>> set(Arbitrary<T> elementArbitrary, int minSize, int maxSize) {
 		Optional<Long> optionalMaxCount = SetExhaustiveGenerator.calculateMaxCount(elementArbitrary, minSize, maxSize);
 		return optionalMaxCount.map(
@@ -75,4 +88,5 @@ public class ExhaustiveGenerators {
 			maxCount -> new FlatMappedExhaustiveGenerator<>(allBaseValues, maxCount, mapper)
 		);
 	}
+
 }

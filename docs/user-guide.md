@@ -2206,6 +2206,7 @@ Exhaustive generation is considered for:
 - Characters and chars
 - Enums
 - Booleans
+- Strings
 - Fixed number of choices given by `Arbitraries.of()`
 - Fixed number of choices given by `Arbitraries.shuffle()`
 - Lists, sets, streams, optionals of the above
@@ -2289,7 +2290,8 @@ the external data was conceived or generated.
 - `@Size`: min and max values can be used without the other
 - `@StringLength`: min and max values can be used without the other
 - Implemented exhaustive generation for `Arbitrary.flatMap()`
-- Implemented exhaustive generation for `Arbitrary.oneOf()`
+- Implemented exhaustive generation for `Arbitraries.oneOf()`
+- Implemented exhaustive generation for `Arbitraries.strings()`
 
 ### 0.9.0
 

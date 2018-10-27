@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
@@ -35,7 +36,12 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
 												 .filter(s -> s.length() >= minLength && s.length() <= maxLength).map(Shrinkable::unshrinkable)
 												 .collect(Collectors.toList());
-		return RandomGenerators.strings(createCharacterGenerator(), minLength, maxLength, cutoffLength).withEdgeCases(genSize, samples);
+		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, cutoffLength).withEdgeCases(genSize, samples);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<String>> exhaustive() {
+		return ExhaustiveGenerators.strings(effectiveCharacterArbitrary(), minLength, maxLength);
 	}
 
 	@Override
@@ -146,16 +152,20 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 		characterArbitraries.add(Arbitraries.of(chars));
 	}
 
-	private RandomGenerator<Character> createCharacterGenerator() {
+	private RandomGenerator<Character> randomCharacterGenerator() {
+		return effectiveCharacterArbitrary().generator(1);
+	}
+
+	private Arbitrary<Character> effectiveCharacterArbitrary() {
 		if (characterArbitraries.isEmpty()) {
-			return defaultCharacterArbitrary().generator(1);
+			return defaultCharacterArbitrary();
 		}
 		Arbitrary<Character> first = characterArbitraries.get(0);
 		@SuppressWarnings("unchecked")
-		Arbitrary<Character>[] rest = characterArbitraries.subList(1, characterArbitraries.size()).toArray(new Arbitrary[characterArbitraries.size() - 1]);
-
-		Arbitrary<Character> allValidCharacters = Arbitraries.oneOf(first, rest);
-		return allValidCharacters.generator(1);
+		Arbitrary<Character>[] rest = characterArbitraries
+										  .subList(1, characterArbitraries.size())
+										  .toArray(new Arbitrary[characterArbitraries.size() - 1]);
+		return Arbitraries.oneOf(first, rest);
 	}
 
 }

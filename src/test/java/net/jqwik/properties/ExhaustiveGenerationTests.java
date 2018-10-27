@@ -736,4 +736,39 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsOnly("a", "b", "c", "d", "e");
 	}
 
+	@Group
+	@Label("Arbitraries.strings()")
+	class Strings {
+		@Example
+		void generateAllPossibleStrings() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				Arbitraries.strings().withChars('a', 'b').ofMinLength(0).ofMaxLength(2)
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(7);
+			assertThat(generator).containsOnly("", "a", "b", "aa", "bb", "ab", "ba");
+		}
+
+		@Example
+		void allNumberStringsWith5Digits() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				Arbitraries.strings().numeric().ofLength(5).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(100000);
+			assertThat(generator).contains("00000", "12345", "98765", "99999");
+		}
+
+		@Example
+		void elementArbitraryNotExhaustive() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				Arbitraries.strings().alpha().exhaustive();
+			assertThat(optionalGenerator).isNotPresent();
+		}
+
+	}
+
 }

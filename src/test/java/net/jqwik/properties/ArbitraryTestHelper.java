@@ -44,7 +44,7 @@ public class ArbitraryTestHelper {
 		Random random = SourceOfRandomness.current();
 		Optional<Shrinkable<T>> success = generator
 											  .stream(random)
-											  .limit(2000)
+											  .limit(3000)
 											  .filter(shrinkable -> checker.apply(shrinkable.value()))
 											  .findAny();
 		if (!success.isPresent()) {
