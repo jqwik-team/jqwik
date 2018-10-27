@@ -81,6 +81,35 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsExactly("abc", "def");
 	}
 
+	@Example
+	@Label("Arbitrary.flatMap()")
+	void flatMapping() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator =
+			Arbitraries.integers().between(1, 3)
+					   .flatMap(i -> Arbitraries.strings().ofLength(i).withChars('a', 'b')).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(14);
+		assertThat(generator).containsOnly(
+			"a",
+			"b",
+			"aa",
+			"bb",
+			"ab",
+			"ba",
+			"aaa",
+			"aab",
+			"aba",
+			"abb",
+			"baa",
+			"bab",
+			"bba",
+			"bbb"
+		);
+	}
+
+
 	@Group
 	@Label("Arbitrary.unique()")
 	class Unique {

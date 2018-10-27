@@ -31,10 +31,15 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	}
 
 	default ExhaustiveGenerator<T> injectNull() {
-		return new WithNullExhaustiveGenerator<>(ExhaustiveGenerator.this);
+		return new WithNullExhaustiveGenerator<>(this);
 	}
 
 	default ExhaustiveGenerator<T> withSamples(T[] samples) {
-		return new WithSamplesExhaustiveGenerator<>(samples, ExhaustiveGenerator.this);
+		return new WithSamplesExhaustiveGenerator<>(this, samples);
+	}
+
+	default <U> ExhaustiveGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper) {
+		return null;
+//		return new FlatMappedExhaustiveGenerator(this, mapper);
 	}
 }

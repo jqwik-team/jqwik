@@ -89,7 +89,17 @@ public interface Arbitrary<T> {
 	 * using the {@code mapper} function.
 	 */
 	default <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
-		return genSize -> Arbitrary.this.generator(genSize).flatMap(mapper, genSize);
+		return new Arbitrary<U>() {
+			@Override
+			public RandomGenerator<U> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).flatMap(mapper, genSize);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<U>> exhaustive() {
+				return Arbitrary.this.exhaustive().map(generator -> generator.flatMap(mapper));
+			}
+		};
 	}
 
 	/**

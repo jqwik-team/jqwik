@@ -9,7 +9,7 @@ public class WithSamplesExhaustiveGenerator<T> implements ExhaustiveGenerator<T>
 	private final T[] samples;
 	private final ExhaustiveGenerator<T> base;
 
-	public WithSamplesExhaustiveGenerator(T[] samples, ExhaustiveGenerator<T> base) {
+	public WithSamplesExhaustiveGenerator(ExhaustiveGenerator<T> base, T[] samples) {
 		this.samples = samples;
 		this.base = base;
 	}
