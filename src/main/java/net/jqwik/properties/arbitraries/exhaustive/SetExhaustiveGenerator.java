@@ -29,7 +29,7 @@ class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 				continue;
 			}
 			long choices = factorial(elementMaxCount) / (factorial(elementMaxCount - n) * factorial(n));
-			if (choices > Integer.MAX_VALUE || choices < 0) { // Stop when break off point reached
+			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT || choices < 0) { // Stop when break off point reached
 				return Optional.empty();
 			}
 			sum += choices;

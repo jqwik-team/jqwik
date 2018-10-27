@@ -18,7 +18,7 @@ class PermutationExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> 
 
 	static <T> Optional<Long> calculateMaxCount(List<T> values) {
 		long choices = factorial(values.size());
-		if (choices > Integer.MAX_VALUE || choices < 0) {
+		if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT || choices < 0) {
 			return Optional.empty();
 		}
 		return Optional.of(choices);

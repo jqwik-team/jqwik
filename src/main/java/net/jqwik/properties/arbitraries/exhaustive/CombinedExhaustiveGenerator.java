@@ -20,7 +20,7 @@ class CombinedExhaustiveGenerator<R> implements ExhaustiveGenerator<R> {
 				return Optional.empty();
 			}
 			product *= exhaustive.get().maxCount();
-			if (product > Integer.MAX_VALUE) {
+			if (product > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT) {
 				return Optional.empty();
 			}
 		}

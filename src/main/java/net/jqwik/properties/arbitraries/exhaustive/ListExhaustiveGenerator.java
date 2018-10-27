@@ -20,7 +20,7 @@ class ListExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> {
 		long sum = 0;
 		for (int n = minSize; n <= maxSize; n++) {
 			double choices = Math.pow(elementMaxCount, n);
-			if (choices > Integer.MAX_VALUE) { // Stop when break off point reached
+			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT) { // Stop when break off point reached
 				return Optional.empty();
 			}
 			sum += (long) choices;

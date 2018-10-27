@@ -6,6 +6,9 @@ import java.util.function.*;
 import net.jqwik.api.*;
 
 public class ExhaustiveGenerators {
+
+	public static long MAXIMUM_ACCEPTED_MAX_COUNT = Integer.MAX_VALUE;
+
 	public static <T> Optional<ExhaustiveGenerator<T>> choose(List<T> values) {
 		return fromIterable(values, values.size());
 	}
@@ -61,6 +64,14 @@ public class ExhaustiveGenerators {
 		Optional<Long> optionalMaxCount = PermutationExhaustiveGenerator.calculateMaxCount(values);
 		return optionalMaxCount.map(
 			maxCount -> new PermutationExhaustiveGenerator<>(values, maxCount)
+		);
+	}
+
+	public static <U, T> Optional<ExhaustiveGenerator<U>> flatMap(ExhaustiveGenerator<T> base, Function<T, Arbitrary<U>> mapper) {
+		List<T> allBaseValues = FlatMappedExhaustiveGenerator.baseValuesFor(base);
+		Optional<Long> optionalMaxCount = FlatMappedExhaustiveGenerator.calculateMaxCounts(allBaseValues, mapper);
+		return optionalMaxCount.map(
+			maxCount -> new FlatMappedExhaustiveGenerator<>(allBaseValues, maxCount, mapper)
 		);
 	}
 }

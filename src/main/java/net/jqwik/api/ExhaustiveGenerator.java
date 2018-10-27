@@ -38,8 +38,4 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		return new WithSamplesExhaustiveGenerator<>(this, samples);
 	}
 
-	default <U> ExhaustiveGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper) {
-		return null;
-//		return new FlatMappedExhaustiveGenerator(this, mapper);
-	}
 }

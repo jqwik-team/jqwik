@@ -7,6 +7,7 @@ import java.util.stream.*;
 import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.properties.arbitraries.*;
+import net.jqwik.properties.arbitraries.exhaustive.*;
 
 /**
  * The main interface for representing objects that can be generated and shrunk.
@@ -97,7 +98,7 @@ public interface Arbitrary<T> {
 
 			@Override
 			public Optional<ExhaustiveGenerator<U>> exhaustive() {
-				return Arbitrary.this.exhaustive().map(generator -> generator.flatMap(mapper));
+				return Arbitrary.this.exhaustive().flatMap(generator -> ExhaustiveGenerators.flatMap(generator, mapper));
 			}
 		};
 	}

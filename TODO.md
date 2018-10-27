@@ -1,3 +1,5 @@
+- Exhaustive Generation: Arbitraries.strings()
+
 - PackageDescriptor e.g.
   @Label("mypackage")
   @AddHook(...)

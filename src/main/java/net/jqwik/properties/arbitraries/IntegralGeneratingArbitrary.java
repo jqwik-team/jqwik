@@ -29,7 +29,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	public Optional<ExhaustiveGenerator<BigInteger>> exhaustive() {
 		BigInteger maxCount = max.subtract(min).add(BigInteger.ONE);
 
-		if (maxCount.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+		if (maxCount.compareTo(BigInteger.valueOf(ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT)) > 0) {
 			return Optional.empty();
 		} else {
 			return ExhaustiveGenerators.fromIterable(RangeIterator::new, maxCount.longValueExact());

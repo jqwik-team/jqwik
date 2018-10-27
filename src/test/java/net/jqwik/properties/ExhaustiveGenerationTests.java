@@ -84,28 +84,30 @@ class ExhaustiveGenerationTests {
 	@Example
 	@Label("Arbitrary.flatMap()")
 	void flatMapping() {
-		Optional<ExhaustiveGenerator<String>> optionalGenerator =
+		Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
 			Arbitraries.integers().between(1, 3)
-					   .flatMap(i -> Arbitraries.strings().ofLength(i).withChars('a', 'b')).exhaustive();
+					   .flatMap(i -> Arbitraries.integers().between(1, 2)
+												.list().ofSize(i)
+					   ).exhaustive();
 		assertThat(optionalGenerator).isPresent();
 
-		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
 		assertThat(generator.maxCount()).isEqualTo(14);
 		assertThat(generator).containsOnly(
-			"a",
-			"b",
-			"aa",
-			"bb",
-			"ab",
-			"ba",
-			"aaa",
-			"aab",
-			"aba",
-			"abb",
-			"baa",
-			"bab",
-			"bba",
-			"bbb"
+			asList(1),
+			asList(2),
+			asList(1,1),
+			asList(2,2),
+			asList(1,2),
+			asList(2,1),
+			asList(1,1,1),
+			asList(1,1,2),
+			asList(1,2,1),
+			asList(1,2,2),
+			asList(2,1,1),
+			asList(2,1,2),
+			asList(2,2,1),
+			asList(2,2,2)
 		);
 	}
 
