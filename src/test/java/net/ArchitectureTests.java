@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 
 public class ArchitectureTests {
 
-	static JavaClasses importedClasses = new ClassFileImporter().importPackages("net.jqwik");
+	private static JavaClasses importedClasses = new ClassFileImporter().importPackages("net.jqwik");
 
 	//@Example
 	// TODO: Rule is heavily violated. Fixing requires changes in api packages :-(

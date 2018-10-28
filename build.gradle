@@ -12,11 +12,11 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 group = 'net.jqwik'
-version = '0.9.1-SNAPSHOT'
+version = '0.9.1'
 
 jar {
 	baseName = 'jqwik'
-	version = '0.9.1-SNAPSHOT'
+	version = '0.9.1'
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
@@ -113,14 +113,15 @@ compileTestJava {
 test {
 	useJUnitPlatform {
 		includeEngines "jqwik"
+		includeEngines "junit-archunit"
 	}
 
 
-	include 'net/jqwik/**/*Properties.class'
-	include 'net/jqwik/**/*Example.class'
-	include 'net/jqwik/**/*Examples.class'
-	include 'net/jqwik/**/*Test.class'
-	include 'net/jqwik/**/*Tests.class'
+	include 'net/**/*Properties.class'
+	include 'net/**/*Example.class'
+	include 'net/**/*Examples.class'
+	include 'net/**/*Test.class'
+	include 'net/**/*Tests.class'
 
 	// testLogging.showStandardStreams = true
 }
@@ -130,14 +131,15 @@ dependencies {
 	compile("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	compile("org.apiguardian:apiguardian-api:1.0.0")
 
-	testCompile("org.mockito:mockito-core:2.21.0")
-	testCompile("org.assertj:assertj-core:3.9.1")
+	testCompile("org.mockito:mockito-core:2.23.0")
+	testCompile("org.assertj:assertj-core:3.11.1")
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 
 	// Only needed to check interferences between Jupiter and jqwik
 	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
-	testCompile "com.tngtech.archunit:archunit:0.8.2"
+	testCompile "com.tngtech.archunit:archunit-junit5-api:0.9.1"
+	testRuntime "com.tngtech.archunit:archunit-junit5-engine:0.9.1"
 
 }
 
