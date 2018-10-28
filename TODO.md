@@ -1,3 +1,6 @@
+- Configuration:
+  reportOnlyFailures = false
+
 - PackageDescriptor e.g.
   @Group
   @Label("mypackage")
