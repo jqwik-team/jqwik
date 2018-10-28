@@ -23,7 +23,7 @@ public class ArchitectureTests {
 	}
 
 	// TODO: Use @ArchTest instead
-	// see https://www.archunit.org/userguide/html/000_Index.html#_using_junit_4_or_junit_5
+	// see https://www.archunit.org/userguide/html/000_Index.html#_junit_4_5_support
 	@Example
 	void noCyclicDependenciesInApiPackages() {
 
