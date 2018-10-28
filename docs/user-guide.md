@@ -584,6 +584,7 @@ jqwik will use default generation for the following types:
 - All `enum` types
 - Collection types `List<T>`, `Set<T>` and `Stream<T>` 
   as long as `T` can also be provided by default generation.
+- `Iterable<T>` and `Iterator<T>` of types that are provided by default.
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
 - `java.util.Random`
@@ -2292,6 +2293,7 @@ the external data was conceived or generated.
 - Implemented exhaustive generation for `Arbitrary.flatMap()`
 - Implemented exhaustive generation for `Arbitraries.oneOf()`
 - Implemented exhaustive generation for `Arbitraries.strings()`
+- Support default generation of Iterables and Iterators
 
 ### 0.9.0
 

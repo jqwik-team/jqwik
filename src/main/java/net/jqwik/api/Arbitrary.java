@@ -202,6 +202,14 @@ public interface Arbitrary<T> {
 	}
 
 	/**
+	 * Create a new arbitrary of type {@code Iterable<T>} using the existing arbitrary for generating the elements of the
+	 * stream.
+	 */
+	default SizableArbitrary<Iterator<T>> iterator() {
+		return new IteratorArbitrary<>(this);
+	}
+
+	/**
 	 * Create a new arbitrary of type {@code T[]} using the existing arbitrary for generating the elements of the array.
 	 *
 	 * @param arrayClass

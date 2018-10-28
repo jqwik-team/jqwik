@@ -189,6 +189,16 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
+	boolean integerIterable(@ForAll Iterable<Integer> aValue) {
+		return aValue instanceof List || aValue instanceof Set;
+	}
+
+	@Property
+	boolean integerIterator(@ForAll Iterator<Integer> aValue) {
+		return aValue != null;
+	}
+
+	@Property
 	boolean integerOptional(@ForAll Optional<Integer> aValue) {
 		return aValue != null;
 	}

@@ -15,6 +15,7 @@ net.jqwik.providers.SetArbitraryProvider
 net.jqwik.providers.StreamArbitraryProvider
 net.jqwik.providers.OptionalArbitraryProvider
 net.jqwik.providers.ArrayArbitraryProvider
+net.jqwik.providers.IteratorArbitraryProvider
 net.jqwik.providers.RandomArbitraryProvider
 net.jqwik.providers.ObjectArbitraryProvider
 net.jqwik.providers.WildcardArbitraryProvider
