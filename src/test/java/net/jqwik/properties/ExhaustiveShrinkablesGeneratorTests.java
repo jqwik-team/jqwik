@@ -1,7 +1,8 @@
 package net.jqwik.properties;
 
 import java.util.*;
-import java.util.stream.*;
+
+import org.assertj.core.api.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
@@ -9,6 +10,7 @@ import net.jqwik.api.constraints.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.support.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 class ExhaustiveShrinkablesGeneratorTests {
@@ -30,9 +32,18 @@ class ExhaustiveShrinkablesGeneratorTests {
 	}
 
 	@Example
-	@Label("ambiguous Arbitrary resolution fails to create ExhaustiveShrinkablesGenerator")
+	@Label("ambiguous Arbitrary resolution generates sum of arbitraries")
 	void ambiguousArbitraryResolution() {
-		assertThatThrownBy( () -> createGenerator("genericNumber")).isInstanceOf(JqwikException.class);
+		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("iterables");
+		assertThat(shrinkablesGenerator.maxCount()).isEqualTo(5);
+
+		assertThat(shrinkablesGenerator).containsOnly(
+			asList(Shrinkable.unshrinkable(asList(0, 0))),
+			asList(Shrinkable.unshrinkable(asList(0, 1))),
+			asList(Shrinkable.unshrinkable(asList(1, 0))),
+			asList(Shrinkable.unshrinkable(asList(1, 1))),
+			asList(Shrinkable.unshrinkable(new HashSet<>(asList(0, 1))))
+		);
 	}
 
 	@Example
@@ -47,6 +58,11 @@ class ExhaustiveShrinkablesGeneratorTests {
 		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3), Shrinkable.unshrinkable(4));
 		assertThat(shrinkablesGenerator.next()).containsExactly(Shrinkable.unshrinkable(3), Shrinkable.unshrinkable(5));
 		assertThat(shrinkablesGenerator.hasNext()).isFalse();
+	}
+
+	@Example
+	void noExhaustiveGenerator() {
+		Assertions.assertThatThrownBy(() -> createGenerator("doubles")).isInstanceOf(JqwikException.class);
 	}
 
 	private ExhaustiveShrinkablesGenerator createGenerator(String methodName) {
@@ -74,6 +90,8 @@ class ExhaustiveShrinkablesGeneratorTests {
 			@ForAll @IntRange(min = 4, max = 5) int int2
 		) {}
 
-		public void genericNumber(@ForAll Number aNumber) {}
+		public void iterables(@ForAll @Size(2) Iterable<@IntRange(min = 0, max = 1) Integer> iterable) {}
+
+		public void doubles(@ForAll double aDouble) {}
 	}
 }

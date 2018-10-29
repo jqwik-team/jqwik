@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.1</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.2-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -87,6 +87,7 @@
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Release Notes](#release-notes)
+  - [0.9.2-SNAPSHOT](#092-snapshot)
   - [0.9.1](#091)
   - [0.9.0](#090)
   - [0.8.x](#08x)
@@ -2272,6 +2273,11 @@ the external data was conceived or generated.
   
 
 ## Release Notes
+
+### 0.9.2-SNAPSHOT
+
+- Exhaustive generation works for ambiguous arbitrary resolution if each arbitrary
+  can be generated exhaustively
 
 ### 0.9.1
 

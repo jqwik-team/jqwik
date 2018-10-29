@@ -1,9 +1,8 @@
 package examples.docs;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.support.*;
 
 import static net.jqwik.api.GenerationMode.*;
 
@@ -35,8 +34,8 @@ class ExhaustiveGenerationExamples {
 	}
 
 	@Property
-	@Report(Reporting.GENERATED)
-	void generateAllSets(@ForAll @Size(max = 5) Set<@IntRange(min = 1, max = 5) Integer> sets) {
+	void generateBothSetsAndLists(@ForAll @Size(2) Iterable<@IntRange(min = 0, max = 1) Integer> iterable, @ForAll boolean aBool) {
+		System.out.printf("%s: %s, %s%n", iterable.getClass(), JqwikStringSupport.displayString(iterable), aBool);
 	}
 
 	@Property
