@@ -8,3 +8,5 @@
   in package-info.java
 
 - Move release notes to their own web page
+
+- ArchitectureTests: Use @ArchTest annotations
