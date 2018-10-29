@@ -3,6 +3,9 @@ language: java
 before_install:
   - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
 
+after_failure:
+- cat build/reports/tests/test/index.html
+
 matrix:
   include:
     - jdk: oraclejdk8
