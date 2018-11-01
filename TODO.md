@@ -1,3 +1,6 @@
+- Bug?
+  What happens with failing assumption during shrinking?
+
 - Configuration:
   reportOnlyFailures = false
 
