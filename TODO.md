@@ -1,3 +1,6 @@
+- ShrinkingSequence.andThen
+  Change parameter to Function<FalsificationResult<T>, ShrinkingSequence<T>> createFollowupSequence
+
 - Configuration:
   reportOnlyFailures = false
 
