@@ -15,16 +15,16 @@ import net.jqwik.descriptor.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import static net.jqwik.api.ShrinkingMode.OFF;
-import static net.jqwik.properties.PropertyConfigurationBuilder.aConfig;
+import static net.jqwik.api.ShrinkingMode.*;
+import static net.jqwik.properties.PropertyConfigurationBuilder.*;
 
 @Group
+@SuppressWarnings("unchecked")
 class GenericPropertyTests {
 
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> {
 	};
 
-	@SuppressWarnings("unchecked")
 	@Example
 	void collectStatistics() {
 		ForAllSpy forAllFunction = new ForAllSpy(value -> {
@@ -53,7 +53,6 @@ class GenericPropertyTests {
 		StatisticsCollector.clearAll();
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	@Group
 	class OneParameter {
 
@@ -137,6 +136,23 @@ class GenericPropertyTests {
 		}
 
 		@Example
+		void dontShrinkIfFalsifiersThrowsThrowableThatIsNotAnException() {
+			CheckedFunction forAllFunction = params -> {
+				if (!params.get(0).equals(1)) throw new Error();
+				return true;
+			};
+
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+
+			PropertyConfiguration configuration = aConfig().build();
+			GenericProperty property = new GenericProperty("falsified property", configuration, shrinkablesGenerator, forAllFunction);
+			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+
+			assertThat(result.originalSample()).isNotPresent();
+		}
+
+		@Example
 		void falsifiedThroughAssertionError() {
 			AssertionError assertionError = new AssertionError("test");
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> {
@@ -157,11 +173,41 @@ class GenericPropertyTests {
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 
+			assertThat(result.originalSample()).isPresent();
 			assertThat(result.sample()).isPresent();
 			assertThat(result.sample().get()).containsExactly(1);
 
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isSameAs(assertionError);
+		}
+
+		@Example
+		void erroneousAndShrunkThroughRuntimeException() {
+			RuntimeException runtimeException = new RuntimeException("test");
+			ForAllSpy forAllFunction = new ForAllSpy(trie -> {
+				throw runtimeException;
+			}, exactlyOneInteger);
+
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+
+			PropertyConfiguration configuration = aConfig().build();
+			GenericProperty property = new GenericProperty("erroneous property", configuration, shrinkablesGenerator, forAllFunction);
+			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+
+			assertThat(forAllFunction.countCalls()).isEqualTo(1);
+
+			assertThat(result.propertyName()).isEqualTo("erroneous property");
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
+			assertThat(result.countTries()).isEqualTo(1);
+			assertThat(result.countChecks()).isEqualTo(1);
+
+			assertThat(result.originalSample()).isPresent();
+			assertThat(result.sample()).isPresent();
+			assertThat(result.sample().get()).containsExactly(1);
+
+			assertThat(result.throwable()).isPresent();
+			assertThat(result.throwable().get()).isSameAs(runtimeException);
 		}
 
 		@Example
@@ -250,8 +296,6 @@ class GenericPropertyTests {
 			GenericProperty property = new GenericProperty("erroneous property", configuration, shrinkablesGenerator, forAllFunction);
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
-			assertThat(forAllFunction.countCalls()).isEqualTo(erroneousTry);
-
 			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
 			assertThat(result.countTries()).isEqualTo(erroneousTry);
 			assertThat(result.countChecks()).isEqualTo(erroneousTry);
@@ -282,7 +326,6 @@ class GenericPropertyTests {
 
 	}
 
-	@SuppressWarnings("ConstantConditions")
 	@Group
 	class NoParameter {
 		@Example

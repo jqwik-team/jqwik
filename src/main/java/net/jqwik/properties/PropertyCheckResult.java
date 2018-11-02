@@ -31,9 +31,9 @@ public interface PropertyCheckResult {
 
 	String randomSeed();
 
-	Optional<List<Object>> sample();
+	Optional<List> sample();
 
-	Optional<List<Object>> originalSample();
+	Optional<List> originalSample();
 
 	Optional<Throwable> throwable();
 
@@ -83,12 +83,12 @@ public interface PropertyCheckResult {
 		}
 
 		@Override
-		public Optional<List<Object>> sample() {
+		public Optional<List> sample() {
 			return Optional.empty();
 		}
 
 		@Override
-		public Optional<List<Object>> originalSample() {
+		public Optional<List> originalSample() {
 			return Optional.empty();
 		}
 
@@ -112,16 +112,18 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation, List<Object> sample,
-			List<Object> originalSample, Throwable throwable) {
+	static PropertyCheckResult falsified(
+		String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
+		List<Object> sample, List<Object> originalSample, Throwable throwable
+	) {
 		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed, generation) {
 			@Override
-			public Optional<List<Object>> sample() {
+			public Optional<List> sample() {
 				return Optional.of(sample);
 			}
 
 			@Override
-			public Optional<List<Object>> originalSample() {
+			public Optional<List> originalSample() {
 				return Optional.of(originalSample);
 			}
 
@@ -139,17 +141,24 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult erroneous(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
-			List<Object> sample, Throwable throwable) {
+	static PropertyCheckResult erroneous(
+		String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
+		List sample, List originalSample, Throwable throwable
+	) {
 		return new ResultBase(Status.ERRONEOUS, propertyName, tries, checks, randomSeed, generation) {
 			@Override
-			public Optional<List<Object>> sample() {
+			public Optional<List> sample() {
 				return Optional.ofNullable(sample);
 			}
 
 			@Override
 			public Optional<Throwable> throwable() {
 				return Optional.of(throwable);
+			}
+
+			@Override
+			public Optional<List> originalSample() {
+				return Optional.ofNullable(originalSample);
 			}
 
 			@Override

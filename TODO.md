@@ -1,5 +1,3 @@
-- Bug: Does not shrink when exception is other than AssertionError
-
 - Configuration:
   reportOnlyFailures = false
 
