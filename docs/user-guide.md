@@ -2278,6 +2278,7 @@ the external data was conceived or generated.
 
 - Exhaustive generation works for ambiguous arbitrary resolution if each arbitrary
   can be generated exhaustively
+- Fixed bug related to correct throwable propagation when shrinking
 
 ### 0.9.1
 

@@ -128,6 +128,25 @@ public class ShrinkableStringTests {
 		}
 
 		@Example
+		void shrinkingResultHasValueAndThrowable() {
+			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
+
+
+			ShrinkingSequence<String> sequence = shrinkable.shrink(string -> {
+				if (string.length() > 1) throw new IllegalArgumentException("my reason");
+				return true;
+			});
+
+			while(sequence.next(count, reporter)) {}
+
+			assertThat(sequence.current().value()).isEqualTo("aa");
+			assertThat(sequence.current().throwable()).isPresent();
+			assertThat(sequence.current().throwable().get()).isInstanceOf(IllegalArgumentException.class);
+			assertThat(sequence.current().throwable().get()).hasMessage("my reason");
+		}
+
+
+		@Example
 		void withFilterOnStringLength() {
 			Shrinkable<String> shrinkable = createShrinkableString("cccc", 0);
 

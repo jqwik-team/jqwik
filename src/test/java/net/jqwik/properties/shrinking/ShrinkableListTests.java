@@ -164,6 +164,23 @@ class ShrinkableListTests {
 		}
 
 		@Example
+		void shrinkingResultHasValueAndThrowable() {
+			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> {
+				if (integers.size() > 1) throw new IllegalArgumentException("my reason");
+				return true;
+			});
+
+			while(sequence.next(count, reporter)) {}
+
+			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
+			assertThat(sequence.current().throwable()).isPresent();
+			assertThat(sequence.current().throwable().get()).isInstanceOf(IllegalArgumentException.class);
+			assertThat(sequence.current().throwable().get()).hasMessage("my reason");
+		}
+
+		@Example
 		void shrinkSizeAgainAfterShrinkingElements() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 0, 2, 1);
 

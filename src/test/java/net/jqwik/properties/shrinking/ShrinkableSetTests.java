@@ -145,6 +145,24 @@ class ShrinkableSetTests {
 		}
 
 		@Example
+		void shrinkingResultHasValueAndThrowable() {
+			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
+
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(integers -> {
+				if (integers.size() > 1) throw new IllegalArgumentException("my reason");
+				return true;
+			});
+
+			while(sequence.next(count, reporter)) {}
+
+			assertThat(sequence.current().value()).containsExactly(0, 1);
+			assertThat(sequence.current().throwable()).isPresent();
+			assertThat(sequence.current().throwable().get()).isInstanceOf(IllegalArgumentException.class);
+			assertThat(sequence.current().throwable().get()).hasMessage("my reason");
+		}
+
+
+		@Example
 		void withFilterOnSetSize() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(1, 2, 3, 4), 0);
 
