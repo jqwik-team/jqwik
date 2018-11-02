@@ -23,7 +23,7 @@ public class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 				current = before.current();
 				return true;
 			} else {
-				nextSequence = nextShrinkingStep.apply(before.current().shrinkable());
+				nextSequence = nextShrinkingStep.apply(current.shrinkable());
 			}
 		}
 		boolean next = nextSequence.next(count, falsifiedReporter);

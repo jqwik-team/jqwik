@@ -65,7 +65,7 @@ public class GenericProperty {
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, reporter, reporting)) {
-					return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, (AssertionError) null);
+					return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, null);
 				}
 			} catch (AssertionError ae) {
 				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ae);
@@ -113,14 +113,14 @@ public class GenericProperty {
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
 		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
-		int countTries, List<Shrinkable> shrinkables, AssertionError assertionError
+		int countTries, List<Shrinkable> shrinkables, Throwable exceptionOrAssertionError
 	) {
-		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, assertionError);
+		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, exceptionOrAssertionError);
 
 		List originalParams = extractParams(shrinkables);
 		List shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
-		return PropertyCheckResult.falsified(
+		return PropertyCheckResult.failure(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
 			configuration.getGenerationMode(), shrunkParams, originalParams, throwable
 		);
@@ -135,21 +135,6 @@ public class GenericProperty {
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting);
 		Falsifier<List> forAllFalsifier = checkedFunction::test;
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
-	}
-
-	private PropertyCheckResult shrinkAndCreateCheckResult(
-		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
-		int countTries, List<Shrinkable> shrinkables, Exception exception
-	) {
-		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, exception);
-
-		List originalParams = extractParams(shrinkables);
-		List shrunkParams = shrinkingResult.values();
-		Throwable throwable = shrinkingResult.throwable().orElse(null);
-		return PropertyCheckResult.erroneous(
-			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-			configuration.getGenerationMode(), shrunkParams, originalParams, throwable
-		);
 	}
 
 }

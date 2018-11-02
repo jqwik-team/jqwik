@@ -112,11 +112,12 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(
+	static PropertyCheckResult failure(
 		String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
 		List<Object> sample, List<Object> originalSample, Throwable throwable
 	) {
-		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed, generation) {
+		Status status = isFalsified(throwable) ? Status.FALSIFIED : Status.ERRONEOUS;
+		return new ResultBase(status, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public Optional<List> sample() {
 				return Optional.of(sample);
@@ -139,6 +140,10 @@ public interface PropertyCheckResult {
 			}
 
 		};
+	}
+
+	static boolean isFalsified(Throwable throwable) {
+		return throwable == null || throwable instanceof AssertionError;
 	}
 
 	static PropertyCheckResult erroneous(
