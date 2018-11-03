@@ -1,10 +1,10 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
 
 public class CombinedShrinkable<T> implements Shrinkable<T> {
 	private final List<Shrinkable<Object>> shrinkables;
@@ -40,11 +40,20 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 		private CombinedShrinkingSequence(Falsifier<T> falsifier) {
 			Falsifier<List<Object>> combinedFalsifier = elements -> falsifier.test(combinator.apply(elements));
-			elementsSequence = new ElementsShrinkingSequence<>( //
-				shrinkables, null, //
-				combinedFalsifier, //
-				ShrinkingDistance::combine //
+			elementsSequence = new ElementsShrinkingSequence<>(
+				shrinkables,
+				combinedFalsifier,
+				ShrinkingDistance::combine
 			);
+		}
+
+		@Override
+		public void init(FalsificationResult<T> initialCurrent) {
+			// Only throwable is used in elementsSequence
+			elementsSequence.init(FalsificationResult.falsified(
+				Shrinkable.unshrinkable(new ArrayList<>()),
+				initialCurrent.throwable().orElse(null)
+			));
 		}
 
 		@Override

@@ -32,7 +32,8 @@ public class PropertyShrinker {
 		}
 
 		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
-		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, originalError, forAllFalsifier, distanceFunction);
+		ElementsShrinkingSequence sequence = new ElementsShrinkingSequence(parameters, forAllFalsifier, distanceFunction);
+		sequence.init(FalsificationResult.falsified(Shrinkable.unshrinkable(toValues(parameters)), originalError));
 
 		Consumer<FalsificationResult> falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
 

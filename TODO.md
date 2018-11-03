@@ -1,6 +1,3 @@
-- ShrinkingSequence.andThen
-  Change parameter to Function<FalsificationResult<T>, ShrinkingSequence<T>> createFollowupSequence
-
 - Configuration:
   reportOnlyFailures = false
 
@@ -13,3 +10,5 @@
 - Move release notes to their own web page
 
 - ArchitectureTests: Use @ArchTest annotations
+
+- Expose failing sample as sub test

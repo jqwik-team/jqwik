@@ -8,6 +8,7 @@ import net.jqwik.api.*;
 class ContainerShrinkingSequence<C, E> implements ShrinkingSequence<C> {
 	private final ElementsShrinkingSequence<E> elementsSequence;
 	private final Function<Shrinkable<List<E>>, Shrinkable<C>> toContainerShrinkable;
+	private FalsificationResult<C> currentResult;
 
 	ContainerShrinkingSequence(
 		List<Shrinkable<E>> currentElements,
@@ -16,14 +17,32 @@ class ContainerShrinkingSequence<C, E> implements ShrinkingSequence<C> {
 		Function<Shrinkable<List<E>>, Shrinkable<C>> toContainerShrinkable
 	) {
 		this.toContainerShrinkable = toContainerShrinkable;
-		elementsSequence = new ElementsShrinkingSequence<>(currentElements, null, listFalsifier, distanceFunction);
+		elementsSequence = new ElementsShrinkingSequence<>(currentElements, listFalsifier, distanceFunction);
+	}
+
+	@Override
+	public void init(FalsificationResult<C> initialCurrent) {
+		if (currentResult == null) {
+			currentResult = initialCurrent;
+		} else {
+			currentResult = FalsificationResult.falsified(currentResult.shrinkable(), initialCurrent.throwable().orElse(null));
+		}
+		// Only throwable is used in elementsSequence
+		elementsSequence.init(FalsificationResult.falsified(
+			Shrinkable.unshrinkable(new ArrayList<>()),
+			initialCurrent.throwable().orElse(null)
+		));
 	}
 
 	@Override
 	public boolean next(Runnable count, Consumer<FalsificationResult<C>> falsifiedReporter) {
 		Consumer<FalsificationResult<List<E>>> listReporter =
 			listResult -> falsifiedReporter.accept(toContainerResult(listResult));
-		return elementsSequence.next(count, listReporter);
+		boolean next = elementsSequence.next(count, listReporter);
+		if (next) {
+			this.currentResult = toContainerResult(elementsSequence.current());
+		}
+		return next;
 	}
 
 	private FalsificationResult<C> toContainerResult(FalsificationResult<List<E>> listResult) {
@@ -32,6 +51,6 @@ class ContainerShrinkingSequence<C, E> implements ShrinkingSequence<C> {
 
 	@Override
 	public FalsificationResult<C> current() {
-		return toContainerResult(elementsSequence.current());
+		return currentResult;
 	}
 }

@@ -62,7 +62,7 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 		ShrinkableActionSequence<M> sequence,
 		Falsifier<List<Action<M>>> listFalsifier
 	) {
-		return new ElementsShrinkingSequence<>(sequence.candidateActions, null, listFalsifier, ShrinkingDistance::forCollection);
+		return new ElementsShrinkingSequence<>(sequence.candidateActions, listFalsifier, ShrinkingDistance::forCollection);
 	}
 
 	private SequentialActionSequence<M> toActionSequence(List<Action<M>> list) {

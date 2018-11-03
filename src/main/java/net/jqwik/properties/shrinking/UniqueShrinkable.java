@@ -70,6 +70,11 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 		}
 
 		@Override
+		public void init(FalsificationResult<T> initialCurrent) {
+			uniqueSequence.init(initialCurrent);
+		}
+
+		@Override
 		public FalsificationResult<T> current() {
 			return uniqueSequence.current().map(shrinkable -> new UniqueShrinkable<>(shrinkable, usedValues));
 		}

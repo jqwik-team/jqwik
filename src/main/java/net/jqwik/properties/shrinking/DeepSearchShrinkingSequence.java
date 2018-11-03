@@ -78,4 +78,9 @@ public class DeepSearchShrinkingSequence<T> implements ShrinkingSequence<T> {
 	public FalsificationResult<T> current() {
 		return currentBest;
 	}
+
+	@Override
+	public void init(FalsificationResult<T> initialCurrent) {
+		currentBest = FalsificationResult.falsified(currentBest.shrinkable(), initialCurrent.throwable().orElse(null));
+	}
 }

@@ -13,6 +13,8 @@ public interface ShrinkingSequence<T> {
 
 	FalsificationResult<T> current();
 
+	void init(FalsificationResult<T> initialCurrent);
+
 	default ShrinkingSequence<T> andThen(Function<Shrinkable<T>, ShrinkingSequence<T>> createFollowupSequence) {
 		return new NextShrinkingSequence<>(this, createFollowupSequence);
 	}

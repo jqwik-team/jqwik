@@ -17,18 +17,26 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	public ElementsShrinkingSequence(
 		List<Shrinkable<T>> currentElements,
-		Throwable originalError,
 		Falsifier<List<T>> listFalsifier,
 		Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction
 	) {
 		this.currentResults =
 			currentElements
 				.stream()
-				.map(shrinkable -> FalsificationResult.falsified(shrinkable, originalError))
+				.map(FalsificationResult::falsified)
 				.collect(Collectors.toList());
-		this.currentThrowable = originalError;
 		this.listFalsifier = listFalsifier;
 		this.distanceFunction = distanceFunction;
+	}
+
+	@Override
+	public void init(FalsificationResult<List<T>> initialCurrent) {
+		this.currentThrowable = initialCurrent.throwable().orElse(null);
+
+		for (int i = 0; i < currentResults.size(); i++) {
+			FalsificationResult<T> newResult = FalsificationResult.falsified(currentResults.get(i).shrinkable(), currentThrowable);
+			currentResults.set(i, newResult);
+		}
 	}
 
 	@Override

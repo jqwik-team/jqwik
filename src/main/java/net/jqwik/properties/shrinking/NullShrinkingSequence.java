@@ -18,6 +18,10 @@ public class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	@Override
+	public void init(FalsificationResult<T> initialCurrent) {
+	}
+
+	@Override
 	public FalsificationResult<T> current() {
 		return FalsificationResult.falsified(shrinkable);
 	}

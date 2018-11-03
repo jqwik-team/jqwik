@@ -66,5 +66,10 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 		public FalsificationResult<T> current() {
 			return toFilterSequence.current().filter(filter);
 		}
+
+		@Override
+		public void init(FalsificationResult<T> initialCurrent) {
+			toFilterSequence.init(initialCurrent);
+		}
 	}
 }

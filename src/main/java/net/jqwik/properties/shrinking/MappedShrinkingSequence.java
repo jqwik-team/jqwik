@@ -19,6 +19,14 @@ public class MappedShrinkingSequence<T, U> implements ShrinkingSequence<U> {
 	}
 
 	@Override
+	public void init(FalsificationResult<U> initialCurrent) {
+		FalsificationResult<T> toMapCurrent = toMap.current();
+		if (toMapCurrent != null) {
+			toMap.init(FalsificationResult.falsified(toMapCurrent.shrinkable(), initialCurrent.throwable().orElse(null)));
+		}
+	}
+
+	@Override
 	public FalsificationResult<U> current() {
 		return mapper.apply(toMap.current());
 	}

@@ -1,8 +1,8 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-
 import java.util.function.*;
+
+import net.jqwik.api.*;
 
 public class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 	private final ShrinkingSequence<T> before;
@@ -17,6 +17,16 @@ public class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 	}
 
 	@Override
+	public void init(FalsificationResult<T> initialCurrent) {
+		if (current == null) {
+			current = initialCurrent;
+		} else {
+			current = FalsificationResult.falsified(current.shrinkable(), initialCurrent.throwable().orElse(null));
+		}
+		this.before.init(initialCurrent);
+	}
+
+	@Override
 	public boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter) {
 		if (nextSequence == null) {
 			if (before.next(count, falsifiedReporter)) {
@@ -24,6 +34,7 @@ public class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 				return true;
 			} else {
 				nextSequence = nextShrinkingStep.apply(current.shrinkable());
+				nextSequence.init(current);
 			}
 		}
 		boolean next = nextSequence.next(count, falsifiedReporter);
@@ -36,5 +47,10 @@ public class NextShrinkingSequence<T> implements ShrinkingSequence<T> {
 	@Override
 	public FalsificationResult<T> current() {
 		return current;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("Next [%s, %s]", before, nextSequence);
 	}
 }
