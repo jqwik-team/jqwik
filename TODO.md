@@ -1,5 +1,6 @@
 - Configuration:
-  reportOnlyFailures = false
+  - reportOnlyFailures = false
+  - Find a way to set config params through command line or env variable
 
 - PackageDescriptor e.g.
   @Group
