@@ -13,3 +13,5 @@ matrix:
       install: true
     - jdk: openjdk11
       install: true
+
+script: ./gradlew clean test --info
