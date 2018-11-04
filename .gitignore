@@ -19,6 +19,7 @@ bin/
 *.ipr
 *.iws
 *.uml
+.shelf
 .idea/
 out/
 
