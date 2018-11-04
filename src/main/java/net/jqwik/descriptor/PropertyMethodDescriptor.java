@@ -15,8 +15,6 @@ public class PropertyMethodDescriptor extends AbstractMethodDescriptor {
 
 	@Override
 	public Type getType() {
-		// TODO: Should be Type.CONTAINER_AND_TEST but then
-		// IntelliJ does not display failures correctly in Test-Runner
 		return Type.TEST;
 	}
 
