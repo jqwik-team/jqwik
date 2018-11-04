@@ -119,24 +119,6 @@ class ShrinkingSequenceAndThenTests {
 		assertThat(sequence.current().throwable()).isPresent();
 	}
 
-//	@Example
-//	void failure() {
-//		ShrinkingSequenceStub start = new ShrinkingSequenceStub(asList(1000), AssertionFailedError::new);
-//		ShrinkingSequence<Integer> second = start.andThen(
-//			i -> new ShrinkingSequenceStub(asList(), AssertionFailedError::new)
-//		);
-//
-//		ShrinkingSequence<Integer> third = start.andThen(
-//			i -> new ShrinkingSequenceStub(asList(), AssertionFailedError::new)
-//		);
-//
-//		ShrinkingSequence<Integer> sequence = start.andThen(i -> second.andThen(j -> third));
-//
-//		while (sequence.next(counter, reporter)) {
-//			System.out.println(sequence);
-//		}
-//	}
-
 	@Provide
 	Arbitrary<ShrinkingSequence<Integer>> nestedSequence() {
 		Arbitrary<ShrinkingSequence<Integer>> start = Arbitraries
