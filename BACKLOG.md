@@ -12,6 +12,8 @@
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
 
+- ArchitectureTests: Use @ArchTest annotations
+
 ### Refactoring
 
 - Introduce PropertyExecutionListener and build all reporting/results on top of it
@@ -19,12 +21,6 @@
 ### General
 
 - `@Disabled("reason")` annotation
-
-- Allow reporting to be configured to also go to stdtout 
-  (to work around missing reporting in Gradle's useJunitPlatform() )
-
-- Switch to gradle library plugin: 
-  https://docs.gradle.org/current/userguide/java_library_plugin.html
 
 - Allow Fixture parameters to examples and properties
 
@@ -41,6 +37,10 @@
   - Across Properties: Does it make sense with non working IntelliJ support?
   - For ActionSequences
 
+- Configuration:
+  - reportOnlyFailures = false
+  - Find a way to set config params through command line or env variable
+
 ### Properties
 
 - Reimplement String generation based on Unicode codepoints, not on characters
@@ -55,6 +55,7 @@
   other annotations than @ForAll
 
 - Reporting.ARBITRARIES: report for each property which arbitraries are used.
+  - Requires Arbitray.describe() or something similar
 
 - Exhaustive Generators:
   - Better error messages when exhaustive generation not possible:
@@ -62,7 +63,6 @@
     or which arbitrary does not provide exhaustive generation
   - Make default GenerationMode configurable
   - Decimal generation with restricted scale
-  - Arbitraries.lazy (don't think that's possible b/c indeterminism)
 
 - @From(String methodName)
   - can be used in parameter types to choose provider method
@@ -76,7 +76,7 @@
   Does that really help since there is Arbitraries.defaultFor()
 
 - Default Arbitraries, Generators and Shrinking for
-  - Tuples.Tuple2/3/4
+  - Tuples.Tuple2/3/4/5/6/7/8
   - Map
   - Functional interfaces and SAM types
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
