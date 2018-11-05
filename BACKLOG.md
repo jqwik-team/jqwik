@@ -41,6 +41,21 @@
   - reportOnlyFailures = false
   - Find a way to set config params through command line or env variable
 
+    `request.getConfigurationParameters().get("jqwik.tries.default", Integer::valueOf)`
+
+    plus:
+
+    ```
+    test {
+        useJUnitPlatform {}
+        systemProperties = [
+            "jqwik.tries.default": 100
+        ]
+    }
+    ```
+
+    would do the trick.
+
 ### Properties
 
 - Reimplement String generation based on Unicode codepoints, not on characters
