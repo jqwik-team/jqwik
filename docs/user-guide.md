@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.2</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.3-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -2273,6 +2273,10 @@ the external data was conceived or generated.
   
 
 ## Release Notes
+
+### 0.9.3-SNAPSHOT
+
+- The probability of edge cases being generated is now higher
 
 ### 0.9.2
 

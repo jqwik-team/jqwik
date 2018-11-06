@@ -46,7 +46,7 @@ public interface RandomGenerator<T> {
 		int baseToEdgeCaseRatio =
 			Math.min(
 				Math.max(Math.round(genSize / 5), 1),
-				100
+				100 / edgeCases.size()
 			) + 1;
 
 		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseShrinkable(edgeCases);
