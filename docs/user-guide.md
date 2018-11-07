@@ -128,13 +128,6 @@ Since version 4.6, Gradle has
 Set up is rather simple:
 
 ```
-buildscript {
-	dependencies {
-	    ...
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.1.1'
-	}
-}
-
 repositories {
     ...
     mavenCentral()
