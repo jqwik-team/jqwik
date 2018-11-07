@@ -141,11 +141,14 @@ ext.junitPlatformVersion = '1.3.1'
 ext.junitJupiterVersion = '5.3.1'
 
 ext.jqwikVersion = '0.9.2'
-#ext.jqwikVersion = '0.9.3-SNAPSHOT'
+//ext.jqwikVersion = '0.9.3-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
 		includeEngines "jqwik"
+
+        // includeTags "fast", "medium"
+        // excludeTags "slow"
 	}
 
 	include '**/*Properties.class'
