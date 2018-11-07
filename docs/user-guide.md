@@ -147,8 +147,8 @@ test {
 	useJUnitPlatform {
 		includeEngines "jqwik"
 
-        // includeTags "fast", "medium"
-        // excludeTags "slow"
+		// includeTags "fast", "medium"
+		// excludeTags "slow"
 	}
 
 	include '**/*Properties.class'
