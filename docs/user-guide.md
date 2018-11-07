@@ -180,12 +180,21 @@ for more details on how to configure Gradle for the JUnit 5 platform.
 Since Gradle does not yet support JUnit platform reporting
 ([see this Github issue](https://github.com/gradle/gradle/issues/4605))
 jqwik has switched to do its own reporting by default. This behaviour
-[can be configured](#jqwik-configuration) through parameter `useJunitPlatformReporter`.
+[can be configured](#jqwik-configuration) through parameter `useJunitPlatformReporter`
+(default: `false`).
 
 If you want to see jqwik's reports in the output use Gradle's command line option `--info`:
 
 ```
-gradle clean test --info
+> gradle clean test --info
+...
+mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
+   timestamp = 2018-11-07T09:15:04.929
+       tries = 1000
+       checks = 1000
+       generation-mode = RANDOMIZED
+       seed = 3101984638825718297
+...
 ```
 
 ### Maven
