@@ -11,6 +11,7 @@
   - [Gradle](#gradle)
     - [Using JUnit's own Gradle Plugin](#using-junits-own-gradle-plugin)
     - [Using Gradle's Built-in Support](#using-gradles-built-in-support)
+    - [Seeing jqwik Reporting in Gradle Output](#seeing-jqwik-reporting-in-gradle-output)
   - [Maven](#maven)
   - [Snapshot Releases](#snapshot-releases)
   - [Project without Build Tool](#project-without-build-tool)
@@ -87,6 +88,7 @@
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Release Notes](#release-notes)
+  - [0.9.3-SNAPSHOT](#093-snapshot)
   - [0.9.2](#092)
   - [0.9.1](#091)
   - [0.9.0](#090)
@@ -116,6 +118,15 @@ To use __jqwik__ in a gradle-based project add the following stuff to your `buil
 
 #### Using JUnit's own Gradle Plugin
 
+You should _no longer use_ JUnit's own Gradle Plugin because support was discontinued
+starting with version 1.3.0.
+
+#### Using Gradle's Built-in Support
+
+Since version 4.6, Gradle has 
+[built-in support for the JUnit platform](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html).
+Set up is rather simple:
+
 ```
 buildscript {
 	dependencies {
@@ -124,12 +135,10 @@ buildscript {
 	}
 }
 
-apply plugin: 'org.junit.platform.gradle.plugin'
-
 repositories {
     ...
     mavenCentral()
-    
+
     # For snapshot releases only:
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 
@@ -141,45 +150,47 @@ ext.junitJupiterVersion = '5.3.1'
 ext.jqwikVersion = '0.9.2'
 #ext.jqwikVersion = '0.9.3-SNAPSHOT'
 
-junitPlatform {
-	filters {
-		includeClassNamePattern '.*Test'
-		includeClassNamePattern '.*Tests'
-		includeClassNamePattern '.*Properties'
+test {
+	useJUnitPlatform {
+		includeEngines "jqwik"
 	}
-	// Only enable if you also want to run tests outside the junit platform runner:
-	enableStandardTestTask false
+
+	include '**/*Properties.class'
+	include '**/*Test.class'
+	include '**/*Tests.class'
 }
 
 dependencies {
     ...
 
-    // Needed to enable the platform to run tests at all
-    testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-    
     // jqwik dependency
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
-    
-    // Add if you want to also use the Jupiter engine
-    // Also add if you use IntelliJ 2017.2 or older to enable JUnit-5 support
+
+    // Add if you also want to use the Jupiter engine or Assertions from it
     testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-    
-    // You'll probably need some assertions
+
+    // Add any other test library you need...
     testCompile("org.assertj:assertj-core:3.9.1")
 
 }
 ```
 
+
 See [the Gradle section in JUnit 5's user guide](http://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
-for more details on how to configure test execution.
+for more details on how to configure Gradle for the JUnit 5 platform.
 
-#### Using Gradle's Built-in Support
+#### Seeing jqwik Reporting in Gradle Output
 
-Since version 4.6, Gradle has 
-[built-in support for the JUnit platform](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html).
-In its current state I do not recommend it for use with _jqwik_ because some of the 
-[important information is not reported](https://github.com/gradle/gradle/issues/4605)
-by Gradle. Just wait till they fix it.
+Since Gradle does not yet support JUnit platform reporting
+([see this Github issue](https://github.com/gradle/gradle/issues/4605))
+jqwik has switched to do its own reporting by default. This behaviour
+[can be configured](#jqwik-configuration) through parameter `useJunitPlatformReporter`.
+
+If you want to see jqwik's reports in the output use Gradle's command line option `--info`:
+
+```
+gradle clean test --info
+```
 
 ### Maven
 
