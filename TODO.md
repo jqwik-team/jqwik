@@ -13,3 +13,5 @@
   
 - Applying constraint annotations to varargs
   void myProp(@ForAll @StringLength(5) String ... strings)
+  
+- Make ActionSequenceArbitrary a SizableArbitrary to enable annotation @Size
