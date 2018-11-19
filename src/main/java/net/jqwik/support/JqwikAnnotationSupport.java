@@ -1,7 +1,7 @@
 package net.jqwik.support;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class JqwikAnnotationSupport {
@@ -15,10 +15,17 @@ public class JqwikAnnotationSupport {
 	public static List<Annotation> findAllAnnotations(AnnotatedElement element) {
 
 		List<Annotation> annotations = new ArrayList<>();
-		List<Annotation> presentAnnotations = Arrays.asList(element.getAnnotations());
+		List<Annotation> presentAnnotations = Arrays.asList(getDeclaredAnnotations(element));
 		annotations.addAll(presentAnnotations);
 		presentAnnotations.forEach(annotation -> appendMetaAnnotations(annotation, annotations));
 		return annotations;
+	}
+
+	private static Annotation[] getDeclaredAnnotations(AnnotatedElement element) {
+		if (element instanceof AnnotatedArrayType) {
+			return ((AnnotatedArrayType) element).getAnnotatedGenericComponentType().getAnnotations();
+		}
+		return element.getAnnotations();
 	}
 
 	private static void appendMetaAnnotations(Annotation annotation, List<Annotation> collector) {

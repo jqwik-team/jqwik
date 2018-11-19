@@ -313,6 +313,23 @@ class TypeUsageTests {
 			// Java 8:										+ "@net.jqwik.api.constraints.CharRange(from=a, to=z) String");
 			// Java 9:										+ "@net.jqwik.api.constraints.CharRange(from='a', to='z') String");
 		}
+
+		@Example
+		void optionalArrayWithAnnotations() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withOptionalArray(
+					Optional<@Size(max = 5) @StringLength(max = 2) String[]> optional
+				) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withOptionalArray", Optional.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage optionalType = TypeUsage.forParameter(parameter);
+			TypeUsage arrayType = optionalType.getTypeArguments().get(0);
+			assertThat(arrayType.getAnnotations().get(0)).isInstanceOf(Size.class);
+			assertThat(arrayType.getAnnotations().get(1)).isInstanceOf(StringLength.class);
+		}
 	}
 
 	@Group

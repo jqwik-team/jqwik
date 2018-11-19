@@ -1,5 +1,7 @@
 package net.jqwik.api.constraints;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 
 class ArraysConstraintsProperties {
@@ -11,7 +13,12 @@ class ArraysConstraintsProperties {
 
 	@Property
 	boolean constraintAnnotationIsHandedDownToComponentType(@ForAll @Size(1) @StringLength(2) String[] aValue) {
-		return aValue[0].length() == 2;
+		return aValue.length == 1 && aValue[0].length() == 2;
+	}
+
+	@Property
+	boolean handingDownAlsoWorksInNestedArrays(@ForAll Optional<@Size(1) @StringLength(2) String[]> optional) {
+		return optional.map(aValue -> aValue[0].length() == 2).orElse(true);
 	}
 
 	@Property
