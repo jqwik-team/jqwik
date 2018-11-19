@@ -1,3 +1,18 @@
+- Applying constraint annotations to varargs
+  void myProp(@ForAll @StringLength(5) String ... strings)
+
+- @NotEmpty
+
+- Alternative: Introduce frequencyOf() for selection of Arbitraries
+
+- Arbitraries.recursive(() -> basCaseReturn, () -> recursiveMethod(…), depth) : Arbitrary<T>
+  https://hypothesis.readthedocs.io/en/latest/data.html#recursive-data
+
+- How does shrinking of recursive generators perform, eg will trees cut off branches during shrinking?
+
+- Additional edges cases for integral generation:
+  -5 .. +5, -10, +10
+
 - PackageDescriptor e.g.
   @Group
   @Label("mypackage")
@@ -6,12 +21,13 @@
 
 - Move release notes to their own web page
 
-- Expose failing sample as sub test
-
-- Automatically generate nulls for types annotated as nullable
-  See https://github.com/pholser/junit-quickcheck/pull/210
-  
-- Applying constraint annotations to varargs
-  void myProp(@ForAll @StringLength(5) String ... strings)
-  
-- Make ActionSequenceArbitrary a SizableArbitrary to enable annotation @Size
+- Stateless Testing
+    - Make ActionSequenceArbitrary a SizableArbitrary to enable annotation @Size
+    - Change Action Interface to split state change and change to system under tests:
+      This would allow sequence generation to consider preconditions.
+      Probably requires a new class like Model<T> with T is type of SUT.
+      In that case shrinking must consider preconditions!
+    - Let action generation access the model state?
+      E.g. to use a name that’s already been added to a store.
+    - Special support for FSMs (finite state machines)
+    - Parallel execution of action sequences (see Proper book)

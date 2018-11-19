@@ -20,6 +20,16 @@
 
 ### General
 
+- Expose failing sample as sub test
+
+- @AddExample[s] annotation like @FromData but additional to generated data
+
+- Store regressions (samples once failed) in dedicated database
+  https://hypothesis.readthedocs.io/en/latest/database.html
+
+- Automatically generate nulls for types annotated as nullable
+  See https://github.com/pholser/junit-quickcheck/pull/210
+
 - `@Disabled("reason")` annotation
 
 - Allow Fixture parameters to examples and properties
@@ -56,21 +66,59 @@
 
     would do the trick.
 
+### Reporting
+
+- @Report(mode: ON_FAIL|ALWAYS|ON_SUCCESS)
+
+- Reporting.ARBITRARIES: report for each property which arbitraries are used.
+  - Requires Arbitray.describe() or something similar
+
+- Reporter.report(key, value)
+
+- Additional reporting data, e.g. 
+  - Typical runtimes: ~ 1m 
+  - Fraction of time spent in data generation: ~ 12%
+
+- Record/report generated values by parameter name,
+  plus allow label for generated parameter like that: @ForAll(label = "first“)
+
+
 ### Properties
+
+- Arbitraries.fromSize(Function<Integer, Arbitrary> f) : Arbitrary
+  Use current size to influence arbitrary generation
+
+- SizableArbitrary.averageSize(50)
+
+- StringArbitrary.blacklist(char … chars)
+
+- Arbitraries.lambda(Arbitrary outputArbitrary, Class… inputTypes)
+
+- Arbitrary.share(Arbitrary, String key) 
+  https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared
+
+- Arbitraries.emails()
+
+- @Property(timeout=500) msecs to timeout a property run
+
+- Targeted data generation
+  Simulated annealing with an additional target function in property
+  (see Proper book)
+
+- Provide alternative shrinking targets for arbitraries,
+  eg Arbitraries.integers().shrinkTowards(42, 110)
 
 - Reimplement String generation based on Unicode codepoints, not on characters
 
 - Provide arbitraries for classes with single constructor with parameters
   that can be provided
+  - Group properties, e.g. @Property for classes and individual methods with preconditions
 
 - Check arbitrary providers for numbers that @Range annotations fit, e.g.
   `@IntRange @ForAll long aNumber` should result in a warning
 
 - Data-driven properties: Warnings if method parameters have
   other annotations than @ForAll
-
-- Reporting.ARBITRARIES: report for each property which arbitraries are used.
-  - Requires Arbitray.describe() or something similar
 
 - Exhaustive Generators:
   - Better error messages when exhaustive generation not possible:
@@ -104,8 +152,6 @@
   - @Regex(RegularExpression value)
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
 
-- Group properties, e.g. @Property for classes and individual methods with preconditions
-
 ### Contracts / Specifications / Domain objects
 
 see example in package `examples.docs.contracts.eurocalc`
@@ -114,3 +160,4 @@ see example in package `examples.docs.contracts.eurocalc`
 - Allow spec annotations in domain classes a la clojure-spec
 - Support domain object generation guided by spec annotations
   Have a look at https://github.com/benas/random-beans for inspiration 
+- Contract testing: https://hillelwayne.com/talks/beyond-unit-tests/
