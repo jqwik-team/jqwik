@@ -1,6 +1,3 @@
-- Applying constraint annotations to varargs
-  void myProp(@ForAll @Size(5) String ... strings)
-
 - Properties with type variables should generate all fitting types not just Any instances.
 
 - Arbitraries.frequencyOf() for selection of Arbitraries

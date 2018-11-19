@@ -1,11 +1,11 @@
 package net.jqwik.properties;
 
-import net.jqwik.api.*;
-import net.jqwik.api.configurators.*;
-
 import java.lang.annotation.*;
 import java.util.*;
 import java.util.stream.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.configurators.*;
 
 public class RegisteredArbitraryConfigurer {
 
@@ -19,10 +19,24 @@ public class RegisteredArbitraryConfigurer {
 		List<Annotation> configurationAnnotations = configurationAnnotations(annotations);
 		if (!configurationAnnotations.isEmpty()) {
 			for (ArbitraryConfigurator arbitraryConfigurator : registeredConfigurators) {
-				createdArbitrary = arbitraryConfigurator.configure(createdArbitrary, configurationAnnotations);
+				if (createdArbitrary instanceof SelfConfiguringArbitrary) {
+					createdArbitrary = performSelfConfiguration(createdArbitrary, arbitraryConfigurator, annotations);
+				} else {
+					createdArbitrary = arbitraryConfigurator.configure(createdArbitrary, configurationAnnotations);
+				}
 			}
 		}
 		return createdArbitrary;
+	}
+
+	private <T> Arbitrary<T> performSelfConfiguration(
+		Arbitrary<T> arbitrary,
+		ArbitraryConfigurator configurator,
+		List<Annotation> annotations
+	) {
+		@SuppressWarnings("unchecked")
+		SelfConfiguringArbitrary<T> selfConfiguringArbitrary = (SelfConfiguringArbitrary<T>) arbitrary;
+		return selfConfiguringArbitrary.configure(configurator, annotations);
 	}
 
 	private List<Annotation> configurationAnnotations(List<Annotation> annotations) {

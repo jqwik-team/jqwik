@@ -1,18 +1,20 @@
 package net.jqwik.properties.arbitraries;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.configurators.*;
 import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
-public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A> {
+public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A>, SelfConfiguringArbitrary<A> {
 
 	private final Class<A> arrayClass;
-	private final Arbitrary<T> elementArbitrary;
+	private Arbitrary<T> elementArbitrary;
 	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private int minSize = 0;
 
@@ -62,5 +64,11 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 		ArrayArbitrary<A, T> clone = typedClone();
 		clone.maxSize = maxSize;
 		return clone;
+	}
+
+	@Override
+	public Arbitrary<A> configure(ArbitraryConfigurator configurator, List<Annotation> annotations) {
+		elementArbitrary = configurator.configure(elementArbitrary, annotations);
+		return configurator.configure(this, annotations);
 	}
 }

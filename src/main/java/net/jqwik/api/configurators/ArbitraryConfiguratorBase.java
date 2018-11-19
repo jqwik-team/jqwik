@@ -29,9 +29,6 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 
 	@Override
 	public <T> Arbitrary<T> configure(Arbitrary<T> arbitrary, List<Annotation> annotations) {
-		if (arbitrary instanceof SelfConfiguringArbitrary) {
-			return performSelfConfiguration(arbitrary, annotations);
-		}
 		for (Annotation annotation : annotations) {
 			List<Method> configurationMethods = findConfigurationMethods(arbitrary, annotation);
 			for (Method configurationMethod : configurationMethods) {
@@ -50,20 +47,13 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 			throw new ArbitraryConfigurationException(configurationMethod);
 		}
 		//noinspection unchecked
-		arbitrary = (Arbitrary<T>) configurationResult;
-		return arbitrary;
+		return (Arbitrary<T>) configurationResult;
 	}
 
 	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, Annotation annotation) {
 		Class<? extends Arbitrary> arbitraryClass = arbitrary.getClass();
 		return findMethods(getClass(),
 				method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP);
-	}
-
-	private <T> Arbitrary<T> performSelfConfiguration(Arbitrary<T> arbitrary, List<Annotation> annotations) {
-		@SuppressWarnings("unchecked")
-		SelfConfiguringArbitrary<T> selfConfiguringArbitrary = (SelfConfiguringArbitrary<T>) arbitrary;
-		return selfConfiguringArbitrary.configure(this, annotations);
 	}
 
 	private static boolean hasCompatibleConfigurationSignature(Method candidate, Class<? extends Arbitrary> arbitraryClass,

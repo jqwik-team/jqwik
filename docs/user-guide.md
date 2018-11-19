@@ -2299,6 +2299,8 @@ the external data was conceived or generated.
 
 - The probability of edge cases being generated is now higher
 - New constraint annotation `@NotEmpty`
+- Arrays and varargs parameters hand configuration annotations down to their
+  component type arbitrary
 
 ### 0.9.2
 
