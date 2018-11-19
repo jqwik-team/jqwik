@@ -139,7 +139,19 @@ public class Arbitraries {
 	 */
 	@SafeVarargs
 	public static <T> Arbitrary<T> frequency(Tuple.Tuple2<Integer, T> ... frequencies) {
-		List<T> values = Arrays.stream(frequencies)
+		return frequency(Arrays.asList(frequencies));
+	}
+
+	/**
+	 * Create an arbitrary that will randomly choose between all given values of the same type T.
+	 * The probability distribution is weighted with the first parameter of the tuple.
+	 *
+	 * @param frequencies A list of tuples of which the first parameter gives the weight and the second the value.
+	 * @param <T> The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	public static <T> Arbitrary<T> frequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
+		List<T> values = frequencies.stream()
 			.filter(f -> f.get1() > 0)
 			.map(Tuple.Tuple2::get2)
 			.collect(Collectors.toList());
@@ -148,6 +160,32 @@ public class Arbitraries {
 			RandomGenerators.frequency(frequencies),
 			ExhaustiveGenerators.choose(values)
 		);
+	}
+
+	/**
+	 * Create an arbitrary that will randomly choose between all given arbitraries of the same type T.
+	 * The probability distribution is weighted with the first parameter of the tuple.
+	 *
+	 * @param frequencies An array of tuples of which the first parameter gives the weight and the second the arbitrary.
+	 * @param <T> The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	@SafeVarargs
+	public static <T> Arbitrary<T> frequencyOf(Tuple.Tuple2<Integer, Arbitrary<T>> ... frequencies) {
+		return frequencyOf(Arrays.asList(frequencies));
+	}
+
+	/**
+	 * Create an arbitrary that will randomly choose between all given arbitraries of the same type T.
+	 * The probability distribution is weighted with the first parameter of the tuple.
+	 *
+	 * @param frequencies A list of tuples of which the first parameter gives the weight and the second the arbitrary.
+	 * @param <T> The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	public static <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies) {
+		// Simple flatMapping is not enough because of configurations
+		return new FrequencyOfArbitrary<>(frequencies);
 	}
 
 	/**

@@ -1,5 +1,3 @@
-- Arbitraries.frequencyOf() for selection of Arbitraries
-
 - Arbitraries.recursive(() -> basCaseReturn, () -> recursiveMethod(…), depth) : Arbitrary<T>
   https://hypothesis.readthedocs.io/en/latest/data.html#recursive-data
 

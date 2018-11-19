@@ -19,6 +19,7 @@ public class RegisteredArbitraryConfigurer {
 		List<Annotation> configurationAnnotations = configurationAnnotations(annotations);
 		if (!configurationAnnotations.isEmpty()) {
 			for (ArbitraryConfigurator arbitraryConfigurator : registeredConfigurators) {
+				// TODO: This condition exists 3 times
 				if (createdArbitrary instanceof SelfConfiguringArbitrary) {
 					createdArbitrary = performSelfConfiguration(createdArbitrary, arbitraryConfigurator, annotations);
 				} else {

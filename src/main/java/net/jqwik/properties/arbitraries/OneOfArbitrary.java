@@ -10,9 +10,9 @@ import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
 public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
-	private final List<Arbitrary<T>> all;
+	private final List<Arbitrary<T>> all = new ArrayList<>();
 
-	public OneOfArbitrary(List<Arbitrary<T>> all) {this.all = all;}
+	public OneOfArbitrary(List<Arbitrary<T>> all) {this.all.addAll(all);}
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
@@ -26,12 +26,15 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public Arbitrary<T> configure(ArbitraryConfigurator configurator, List<Annotation> annotations) {
-		for (int i = 0; i < all.size(); i++) {
-			Arbitrary<T> arbitrary = all.get(i);
-			Arbitrary<T> configuredArbitrary = configurator.configure(arbitrary, annotations);
-			all.remove(i);
-			all.add(i, configuredArbitrary);
-		}
+		all.replaceAll(a -> {
+			if (a instanceof SelfConfiguringArbitrary) {
+				// TODO: This condition exists 3 times
+				//noinspection unchecked
+				return ((SelfConfiguringArbitrary) a).configure(configurator, annotations);
+			} else {
+				return configurator.configure(a, annotations);
+			}
+		});
 		return this;
 	}
 }

@@ -1215,6 +1215,32 @@ Arbitrary<Integer> oneOfThree() {
 the statistics should also give you an equal distribution between
 the three types of integers.
 
+If you don't want to choose with equal probability - but with differing frequency -
+you can do that in a similar way:
+
+```java
+@Property(tries = 100)
+@Report(Reporting.GENERATED)
+boolean intsAreCreatedFromOneOfThreeArbitraries(@ForAll("oneOfThree") int anInt) {
+    return anInt < -1000 //
+               || Math.abs(anInt) == 1 //
+               || anInt > 1000;
+}
+
+@Provide
+Arbitrary<Integer> oneOfThree() {
+    IntegerArbitrary below1000 = Arbitraries.integers().between(-1050, -1001);
+    IntegerArbitrary above1000 = Arbitraries.integers().between(1001, 1050);
+    Arbitrary<Integer> oneOrMinusOne = Arbitraries.samples(-1, 1);
+
+    return Arbitraries.frequencyOf(
+        Tuple.of(1, below1000),
+        Tuple.of(3, above1000),
+        Tuple.of(6, oneOrMinusOne)
+    );
+}
+```
+
 ### Combining Arbitraries
 
 Sometimes just mapping a single stream of generated values is not enough to generate
@@ -2303,6 +2329,7 @@ the external data was conceived or generated.
   component type arbitrary
 - Properties with unconstrained wildcards will now use any registered
   arbitrary for value generation
+- Added [`Arbitraries.frequencyOf()`](#randomly-choosing-among-arbitraries)
 
 ### 0.9.2
 

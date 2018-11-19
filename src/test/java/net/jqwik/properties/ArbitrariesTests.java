@@ -141,14 +141,55 @@ class ArbitrariesTests {
 		}
 
 		@Property
-		void willHandDownConfigurations(@ForAll("stringCollections") @Size(10) Collection<?> stringList) {
+		void willHandDownConfigurations(@ForAll("stringLists") @Size(10) Collection<?> stringList) {
 			assertThat(stringList).hasSize(10);
 			assertThat(stringList).allMatch(element -> element instanceof String);
 		}
 
 		@Provide
-		Arbitrary<Collection> stringCollections() {
-			return Arbitraries.defaultFor(Collection.class, String.class);
+		Arbitrary<List<String>> stringLists() {
+			return Arbitraries.oneOf(
+				Arbitraries.strings().ofLength(2).list(),
+				Arbitraries.strings().ofLength(3).list()
+			);
+		}
+	}
+
+	@Group
+	class FrequencyOf {
+
+		@Example
+		void choosesOneOfManyAccordingToFrequency(@ForAll Random random) {
+			Arbitrary<Integer> one = Arbitraries.of(1);
+			Arbitrary<Integer> two = Arbitraries.of(2);
+
+			Arbitrary<Integer> frequencyOfArbitrary = Arbitraries.frequencyOf(Tuple.of(10, one), Tuple.of(1, two));
+			ArbitraryTestHelper.assertAllGenerated(frequencyOfArbitrary.generator(1000), value -> {
+				assertThat(value).isIn(1, 2);
+			});
+
+			RandomGenerator<Integer> generator = frequencyOfArbitrary.generator(1000);
+			ArbitraryTestHelper.assertAtLeastOneGeneratedOf(generator, 1, 2);
+
+			List<Integer> elements = generator.stream(random).map(Shrinkable::value).limit(100).collect(Collectors.toList());
+			int countOnes = Collections.frequency(elements, 1);
+			int countTwos = Collections.frequency(elements, 2);
+
+			assertThat(countOnes).isGreaterThan(countTwos * 2);
+		}
+
+		@Property
+		void willHandDownConfigurations(@ForAll("stringLists") @Size(10) Collection<?> stringList) {
+			assertThat(stringList).hasSize(10);
+			assertThat(stringList).allMatch(element -> element instanceof String);
+		}
+
+		@Provide
+		Arbitrary<List<String>> stringLists() {
+			return Arbitraries.frequencyOf(
+				Tuple.of(1, Arbitraries.strings().ofLength(2).list()),
+				Tuple.of(2, Arbitraries.strings().ofLength(3).list())
+			);
 		}
 	}
 

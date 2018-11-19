@@ -196,7 +196,7 @@ public class RandomGenerators {
 		return samplesFromShrinkables(shrinkables);
 	}
 
-	public static <T> RandomGenerator<T> frequency(Tuple.Tuple2<Integer, T>[] frequencies) {
+	public static <T> RandomGenerator<T> frequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
 		return new FrequencyGenerator<>(frequencies);
 	}
 

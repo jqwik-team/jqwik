@@ -13,14 +13,14 @@ public class FrequencyGenerator<T> implements RandomGenerator<T> {
 	private int size = 0;
 	private List<T> valuesToChooseFrom;
 
-	FrequencyGenerator(Tuple.Tuple2<Integer, T>[] frequencies) {
+	FrequencyGenerator(List<Tuple.Tuple2<Integer, T>> frequencies) {
 		calculateUpperBorders(frequencies);
 		if (size <= 0) {
 			throw new JqwikException(String.format("%s does not contain any positive frequencies.", JqwikStringSupport.displayString(frequencies)));
 		}
 	}
 
-	private void calculateUpperBorders(Tuple.Tuple2<Integer, T>[] frequencies) {
+	private void calculateUpperBorders(List<Tuple.Tuple2<Integer, T>> frequencies) {
 		List<T> values = new ArrayList<>();
 		for (Tuple.Tuple2<Integer, T> tuple : frequencies) {
 			int frequency = tuple.get1();

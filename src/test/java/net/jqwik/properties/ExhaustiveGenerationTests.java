@@ -736,6 +736,21 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsOnly("a", "b", "c", "d", "e");
 	}
 
+	@Example
+	@Label("Arbitraries.frequencyOf()")
+	void frequencyOf() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.frequencyOf(
+			Tuple.of(1, Arbitraries.of("a", "b")),
+			Tuple.of(2, Arbitraries.of("c", "d")),
+			Tuple.of(3, Arbitraries.constant("e"))
+		).exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(5);
+		assertThat(generator).containsOnly("a", "b", "c", "d", "e");
+	}
+
 	@Group
 	@Label("Arbitraries.strings()")
 	class Strings {
