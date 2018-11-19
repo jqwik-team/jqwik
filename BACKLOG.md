@@ -20,6 +20,10 @@
 
 ### General
 
+- Divide deliverables into two artifacts:
+  - jqwik.api
+  - jqwik.engine
+
 - Expose failing sample as sub test
 
 - @AddExample[s] annotation like @FromData but additional to generated data
