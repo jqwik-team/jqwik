@@ -20,6 +20,12 @@
 
 ### General
 
+- PackageDescriptor e.g.
+  @Group
+  @Label("mypackage")
+  @AddHook(...)
+  in package-info.java
+
 - Divide deliverables into two artifacts:
   - jqwik.api
   - jqwik.engine
@@ -37,8 +43,6 @@
 - `@Disabled("reason")` annotation
 
 - Allow Fixture parameters to examples and properties
-
-- Use apiguardian annotations (starting version 1.0)
 
 - Lifecycle Hooks
   - AroundTryHook

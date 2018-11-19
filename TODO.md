@@ -10,12 +10,6 @@
 - Additional edges cases for integral generation:
   -5 .. +5, -10, +10
 
-- PackageDescriptor e.g.
-  @Group
-  @Label("mypackage")
-  @AddHook(...)
-  in package-info.java
-
 - Move release notes to their own web page
 
 - Stateless Testing
@@ -28,3 +22,6 @@
       E.g. to use a name that’s already been added to a store.
     - Special support for FSMs (finite state machines)
     - Parallel execution of action sequences (see Proper book)
+
+- Use apiguardian annotations (starting version 1.0)
+
