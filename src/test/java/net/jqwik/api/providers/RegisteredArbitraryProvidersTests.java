@@ -2,12 +2,12 @@ package net.jqwik.api.providers;
 
 import java.math.*;
 import java.util.*;
-import java.util.stream.Stream;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.Size;
-import net.jqwik.properties.arbitraries.WildcardArbitrary;
-import net.jqwik.providers.RegisteredArbitraryProviders;
+import net.jqwik.api.constraints.*;
+import net.jqwik.properties.arbitraries.WildcardArbitrary.*;
+import net.jqwik.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -24,17 +24,17 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
-	<T> boolean unconstrainedTypeVariables(@ForAll T aValue) {
-		return aValue instanceof WildcardArbitrary.WildcardObject;
-	}
-
-	@Property
 	boolean objects(@ForAll Object aValue) {
 		return aValue != null;
 	}
 
 	@Property
-	<T> boolean unboundTypeVariable(@ForAll T aValue) {
+	<T> boolean unconstrainedTypeVariables(@ForAll T aValue) {
+		return aValue != null;
+	}
+
+	@Property
+	<T extends Comparable> boolean constrainedTypeVariable(@ForAll T aValue) {
 		return aValue != null;
 	}
 
@@ -161,6 +161,11 @@ class RegisteredArbitraryProvidersTests {
 	@Property
 	void setsAreMutable(@ForAll Set<Integer> aValue) {
 		aValue.add(42);
+	}
+
+	@Property
+	boolean listOfUnconstrainedWildcard(@ForAll List<?> aValue) {
+		return aValue.stream().allMatch(e -> e instanceof WildcardObject);
 	}
 
 	@Property

@@ -9,7 +9,7 @@ import java.util.*;
 public class WildcardArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		if (!targetType.isTypeVariableOrWildcard())
+		if (!targetType.isWildcard())
 			return false;
 		return !targetType.hasUpperBounds() && !targetType.hasLowerBounds();
 	}

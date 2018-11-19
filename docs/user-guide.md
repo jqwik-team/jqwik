@@ -2301,6 +2301,8 @@ the external data was conceived or generated.
 - New constraint annotation `@NotEmpty`
 - Arrays and varargs parameters hand configuration annotations down to their
   component type arbitrary
+- Properties with unconstrained wildcards will now use any registered
+  arbitrary for value generation
 
 ### 0.9.2
 
