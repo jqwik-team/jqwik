@@ -13,8 +13,14 @@ public class StringLengthConfigurator extends ArbitraryConfiguratorBase {
 		if (stringLength.value() != 0) {
 			return arbitrary.ofLength(stringLength.value());
 		} else {
-			int effectiveMax = stringLength.max() == 0 ? RandomGenerators.DEFAULT_COLLECTION_SIZE : stringLength.max();
-			return arbitrary.ofMinLength(stringLength.min()).ofMaxLength(effectiveMax);
+			StringArbitrary newArbitrary = arbitrary;
+			if (stringLength.min() != 0) {
+				newArbitrary = newArbitrary.ofMinLength(stringLength.min());
+			}
+			if (stringLength.max() != 0) {
+				newArbitrary = newArbitrary.ofMaxLength(stringLength.max());
+			}
+			return newArbitrary;
 		}
 	}
 

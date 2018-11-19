@@ -34,6 +34,12 @@ class SizeProperties {
 	}
 
 	@Property
+	@Label("@NotEmpty is like @Size(min = 1)")
+	boolean notEmptyIsLikeSizeMin1(@ForAll @NotEmpty @Size(max = 5) List<?> aValue) {
+		return aValue.size() >= 1 && aValue.size() <= 5;
+	}
+
+	@Property
 	boolean minCanBeUsedWithoutMax(@ForAll @Size(min = 2) List<?> aValue) {
 		return aValue.size() >= 2;
 	}

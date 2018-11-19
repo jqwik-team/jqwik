@@ -20,6 +20,12 @@ class StringLengthProperties {
 	}
 
 	@Property
+	@Label("@NotEmpty is like @StringLength(min = 1)")
+	boolean notEmptyIsLikeMinLength1(@ForAll @NotEmpty @StringLength(max = 7) String aString) {
+		return aString.length() >= 1 && aString.length() <= 7;
+	}
+
+	@Property
 	boolean maxCanBeUsedWithoutMin(@ForAll @StringLength(max = 7) String aString) {
 		return aString.length() <= 7;
 	}

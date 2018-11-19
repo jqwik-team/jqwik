@@ -1,9 +1,9 @@
 - Applying constraint annotations to varargs
-  void myProp(@ForAll @StringLength(5) String ... strings)
+  void myProp(@ForAll @Size(5) String ... strings)
 
-- @NotEmpty
+- Properties with type variables should generate all fitting types not just Any instances.
 
-- Alternative: Introduce frequencyOf() for selection of Arbitraries
+- Arbitraries.frequencyOf() for selection of Arbitraries
 
 - Arbitraries.recursive(() -> basCaseReturn, () -> recursiveMethod(…), depth) : Arbitrary<T>
   https://hypothesis.readthedocs.io/en/latest/data.html#recursive-data

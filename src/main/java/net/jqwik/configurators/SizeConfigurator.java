@@ -13,8 +13,14 @@ public class SizeConfigurator extends ArbitraryConfiguratorBase {
 		if (size.value() != 0) {
 			return arbitrary.ofSize(size.value());
 		} else {
-			int effectiveMax = size.max() == 0 ? RandomGenerators.DEFAULT_COLLECTION_SIZE : size.max();
-			return arbitrary.ofMinSize(size.min()).ofMaxSize(effectiveMax);
+			SizableArbitrary<?> newArbitrary = arbitrary;
+			if (size.min() != 0) {
+				newArbitrary = newArbitrary.ofMinSize(size.min());
+			}
+			if (size.max() != 0) {
+				newArbitrary = newArbitrary.ofMaxSize(size.max());
+			}
+			return newArbitrary;
 		}
 	}
 

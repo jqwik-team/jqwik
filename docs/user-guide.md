@@ -646,6 +646,9 @@ depending on the requested parameter type.
 - [`@StringLength(int value = 0, int min = 0, int max = 0)`](https://jqwik.net/javadoc/net/jqwik/api/constraints/StringLength.html):
   Set either fixed length through `value` or configure the length range between `min` and `max`.
 
+- [`@NotEmpty`](https://jqwik.net/javadoc/net/jqwik/api/constraints/NotEmpty.html):
+  Set minimum length to `1`.
+
 #### Character Sets
 
 When generating chars any unicode character might be generated.
@@ -681,6 +684,9 @@ They work for generated `String`s and `Character`s.
 
 - [`@Size(int value = 0, int min = 0, int max = 0)`](https://jqwik.net/javadoc/net/jqwik/api/constraints/Size.html): 
   Set either fixed size through `value` or configure the size range between `min` and `max`.
+
+- [`@NotEmpty`](https://jqwik.net/javadoc/net/jqwik/api/constraints/NotEmpty.html):
+  Set minimum size to `1`.
 
 
 #### Integer Constraints
@@ -2292,6 +2298,7 @@ the external data was conceived or generated.
 ### 0.9.3-SNAPSHOT
 
 - The probability of edge cases being generated is now higher
+- New constraint annotation `@NotEmpty`
 
 ### 0.9.2
 
