@@ -38,16 +38,12 @@ class RecursiveExamples {
 	Arbitrary<String> deterministic() {
 		Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
 		Arbitrary<String> lastWord = word().map(w -> w + ".");
-		return length.flatMap(l -> deterministic(l, lastWord));
+
+		return length.flatMap(l -> Arbitraries.recursive(() -> lastWord, this::prependWord, l));
 	}
 
-	@Provide
-	Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
-		if (length == 0) {
-			return sentence;
-		}
-		Arbitrary<String> more = Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
-		return deterministic(length - 1, more);
+	private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
+		return Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
 	}
 
 }

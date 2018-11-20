@@ -65,6 +65,7 @@
 - [Recursive Arbitraries](#recursive-arbitraries)
   - [Probabilistic Recursion](#probabilistic-recursion)
   - [Deterministic Recursion](#deterministic-recursion)
+  - [Deterministic Recursion with `recursive()`](#deterministic-recursion-with-recursive)
 - [Contract Tests](#contract-tests)
 - [Stateful Testing](#stateful-testing)
   - [Specify Actions](#specify-actions)
@@ -1418,7 +1419,7 @@ Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
 ### Deterministic Recursion with `recursive()`
 
 To further simplify this _jqwik_ provides a helper function:
-[`Arbitraries.recursive(...)`](https://oops.met).
+[`Arbitraries.recursive(...)`](https://jqwik.net/javadoc/net/jqwik/api/Arbitraries.html#recursive-java.util.function.Supplier-java.util.function.Function-int-).
 Using that further simplifies the example:
 
 ```java
@@ -2357,6 +2358,7 @@ the external data was conceived or generated.
 - Properties with unconstrained wildcards will now use any registered
   arbitrary for value generation
 - Added [`Arbitraries.frequencyOf()`](#randomly-choosing-among-arbitraries)
+- Added [`Arbitraries.recursive()`](#deterministic-recursion-with-recursive)
 
 ### 0.9.2
 

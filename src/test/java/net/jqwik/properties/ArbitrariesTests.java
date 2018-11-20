@@ -193,12 +193,25 @@ class ArbitrariesTests {
 		}
 	}
 
-	@Example
-	void lazy() {
-		Arbitrary<Integer> samples = Arbitraries.lazy(() -> Arbitraries.samples(1, 2, 3));
+	@Group
+	class Recursion {
 
-		ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
-		ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
+		@Example
+		void lazy() {
+			Arbitrary<Integer> samples = Arbitraries.lazy(() -> Arbitraries.samples(1, 2, 3));
+
+			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
+			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
+		}
+
+		@Example
+		void recursive() {
+			Arbitrary<Integer> base = Arbitraries.constant(0);
+			Arbitrary<Integer> integer = Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
+
+			ArbitraryTestHelper.assertGeneratedExactly(integer.generator(1000), 3);
+		}
+
 	}
 
 	@Group

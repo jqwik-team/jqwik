@@ -1,6 +1,3 @@
-- Arbitraries.recursive(() -> basCaseReturn, () -> recursiveMethod(…), depth) : Arbitrary<T>
-  https://hypothesis.readthedocs.io/en/latest/data.html#recursive-data
-
 - Additional edges cases for integral generation:
   -5 .. +5, -10, +10
 

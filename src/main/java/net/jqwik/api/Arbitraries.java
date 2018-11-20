@@ -405,6 +405,29 @@ public class Arbitraries {
 	}
 
 	/**
+	 * Create an arbitrary by deterministic recursion.
+	 *
+	 * This is useful (and necessary) when arbitrary providing functions use other arbitrary providing functions
+	 * in a recursive way. Without the use of lazy() this would result in a stack overflow.
+	 *
+	 * @param base The supplier returning the recursion's base case
+	 * @param recur The function to extend the base case
+	 * @param depth The number of times to invoke recursion
+	 * @param <T> The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	public static <T> Arbitrary<T> recursive(
+		Supplier<Arbitrary<T>> base,
+		Function<Arbitrary<T>, Arbitrary<T>> recur,
+		int depth
+	) {
+		if (depth == 0) {
+			return base.get();
+		}
+		return recur.apply(recursive(base, recur, depth - 1));
+	}
+
+	/**
 	 * Create an arbitrary to create a sequence of actions. Useful for stateful testing.
 	 *
 	 * @param actionArbitrary The arbitrary to generate individual actions.
