@@ -1394,13 +1394,13 @@ for using `Arbitraries.lazy()` at all:
 
 ```java
 @Property(tries = 10)
-boolean sentencesEndWithAPoint_2(@ForAll("deterministic") String aSentence) {
+boolean sentencesEndWithAPoint(@ForAll("deterministic") String aSentence) {
     return aSentence.endsWith(".");
 }
 
 @Provide
 Arbitrary<String> deterministic() {
-    Arbitrary<Integer> length = Arbitraries.integers().between(1, 10);
+    Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
     Arbitrary<String> lastWord = word().map(w -> w + ".");
     return length.flatMap(l -> deterministic(l, lastWord));
 }
@@ -1414,6 +1414,33 @@ Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
     return deterministic(length - 1, more);
 }
 ```
+
+### Deterministic Recursion with `recursive()`
+
+To further simplify this _jqwik_ provides a helper function:
+[`Arbitraries.recursive(...)`](https://oops.met).
+Using that further simplifies the example:
+
+```java
+@Property(tries = 10)
+boolean sentencesEndWithAPoint(@ForAll("deterministic") String aSentence) {
+    return aSentence.endsWith(".");
+}
+
+@Provide
+Arbitrary<String> deterministic() {
+    Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
+    Arbitrary<String> lastWord = word().map(w -> w + ".");
+
+    return length.flatMap(l -> Arbitraries.recursive(() -> lastWord, s -> prependWord(s), l));
+}
+
+private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
+    return Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
+}
+```
+
+
 
 ## Contract Tests
 
