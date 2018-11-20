@@ -1,5 +1,3 @@
-- How does shrinking of recursive generators perform, eg will trees cut off branches during shrinking?
-
 - Arbitraries.recursive(() -> basCaseReturn, () -> recursiveMethod(…), depth) : Arbitrary<T>
   https://hypothesis.readthedocs.io/en/latest/data.html#recursive-data
 

@@ -3,6 +3,8 @@ package examples.docs;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
+import static net.jqwik.api.Arbitraries.*;
+
 class RecursiveExamples {
 
 	@Property(tries = 10) @Report(Reporting.GENERATED)
@@ -12,15 +14,13 @@ class RecursiveExamples {
 
 	@Provide
 	Arbitrary<String> sentences() {
-		Arbitrary<String> sentence = Combinators.combine( //
-			Arbitraries.lazy(this::sentences), //
-			word() //
-		).as((s, w) -> w + " " + s);
-		return Arbitraries.oneOf( //
-			word().map(w -> w + "."), //
-			sentence, //
-			sentence, //
-			sentence //
+		Arbitrary<String> sentence =
+			Combinators.combine(lazy(this::sentences), word())
+					   .as((s, w) -> w + " " + s);
+
+		return Arbitraries.frequencyOf(
+			Tuple.of(1, word().map(w -> w + ".")),
+			Tuple.of(3, sentence)
 		);
 	}
 
@@ -36,7 +36,7 @@ class RecursiveExamples {
 
 	@Provide
 	Arbitrary<String> deterministic() {
-		Arbitrary<Integer> length = Arbitraries.integers().between(1, 10);
+		Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
 		Arbitrary<String> lastWord = word().map(w -> w + ".");
 		return length.flatMap(l -> deterministic(l, lastWord));
 	}
