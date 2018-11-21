@@ -9,6 +9,8 @@ import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 import net.jqwik.properties.shrinking.*;
 
+import static java.math.BigInteger.*;
+
 class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	BigInteger min;
@@ -29,7 +31,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	public Optional<ExhaustiveGenerator<BigInteger>> exhaustive() {
 		BigInteger maxCount = max.subtract(min).add(BigInteger.ONE);
 
-		if (maxCount.compareTo(BigInteger.valueOf(ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT)) > 0) {
+		if (maxCount.compareTo(valueOf(ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT)) > 0) {
 			return Optional.empty();
 		} else {
 			return ExhaustiveGenerators.fromIterable(RangeIterator::new, maxCount.longValueExact());
@@ -38,12 +40,20 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
 		List<Shrinkable<BigInteger>> edgeCases =
-			Arrays.stream(new BigInteger[]{BigInteger.ZERO, BigInteger.ONE, BigInteger.ONE.negate(), min, max}) //
-				  .distinct() //
+			Arrays.stream(edgeCases()) //
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
 				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max))) //
 				  .collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(genSize, edgeCases);
+	}
+
+	private BigInteger[] edgeCases() {
+		return new BigInteger[]{
+			valueOf(-10), valueOf(-5), valueOf(-4), valueOf(-3), valueOf(-2), valueOf(-1),
+			BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, // more weight for 0
+			valueOf(10), valueOf(5), valueOf(4), valueOf(3), valueOf(2), valueOf(1),
+			min, max
+		};
 	}
 
 	class RangeIterator implements Iterator<BigInteger> {

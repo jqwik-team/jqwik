@@ -8,7 +8,10 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 
+import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.properties.ArbitraryTestHelper.*;
 
 @Label("Arbitraries")
 class ArbitrariesTests {
@@ -420,15 +423,30 @@ class ArbitrariesTests {
 
 		@Example
 		void bigIntegers() {
-			Arbitrary<BigInteger> longArbitrary = Arbitraries.bigIntegers() //
-															 .between(BigInteger.valueOf(-100L), BigInteger.valueOf(100L));
-			RandomGenerator<BigInteger> generator = longArbitrary.generator(1);
+			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(valueOf(-100L), valueOf(100L));
+			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) < 0);
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigInteger.valueOf(50L)) > 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(valueOf(50L)) < 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(valueOf(50L)) > 0);
 			ArbitraryTestHelper.assertAllGenerated(generator, //
-					value -> value.compareTo(BigInteger.valueOf(-100L)) >= 0 //
-							&& value.compareTo(BigInteger.valueOf(100L)) <= 0);
+												   value -> value.compareTo(valueOf(-100L)) >= 0 //
+																&& value.compareTo(valueOf(100L)) <= 0
+			);
+		}
+
+		@Example
+		void integralEdgeCasesAreGenerated() {
+			BigInteger min = valueOf(Integer.MIN_VALUE);
+			BigInteger max = valueOf(Integer.MAX_VALUE);
+			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(min, max);
+			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1000);
+			assertAtLeastOneGeneratedOf(
+				generator,
+				valueOf(-10), valueOf(-5), valueOf(-4), valueOf(-3), valueOf(-2), valueOf(-1),
+				valueOf(0),
+				valueOf(1), valueOf(2), valueOf(3), valueOf(4), valueOf(5), valueOf(10),
+				min, max
+			);
 		}
 
 		@Example

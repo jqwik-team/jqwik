@@ -144,7 +144,7 @@ class CheckedPropertyTests {
 			assertThat(check.randomSeed()).isEqualTo("414243");
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
-			assertThat(allGeneratedInts).containsExactly(5, 22, -100, 0, 43, 70, -66, -75, -11, -65, 93, -61, 100, 37, -2, -9, -86, 100, -10, 100);
+			assertThat(allGeneratedInts).containsExactly(5, 22, 10, 4, 43, 70, -66, -75, -11, -65, 93, -61, -5, 37, -2, -9, -86, 10, -10, -4);
 		}
 
 		@Group

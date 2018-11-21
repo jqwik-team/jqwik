@@ -1,6 +1,3 @@
-- Additional edges cases for integral generation:
-  -5 .. +5, -10, +10
-
 - Stateless Testing
     - Change Action Interface to split state change and change to system under tests:
       This would allow sequence generation to consider preconditions.

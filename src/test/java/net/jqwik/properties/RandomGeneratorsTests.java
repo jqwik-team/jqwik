@@ -11,6 +11,7 @@ import net.jqwik.properties.arbitraries.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 import net.jqwik.properties.shrinking.*;
 
+import static java.math.BigInteger.valueOf;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.properties.ArbitraryTestHelper.*;
@@ -39,33 +40,33 @@ class RandomGeneratorsTests {
 
 		@Example
 		void withinIntegerRange() {
-			BigInteger min = BigInteger.valueOf(Integer.MIN_VALUE);
-			BigInteger max = BigInteger.valueOf(Integer.MAX_VALUE);
+			BigInteger min = valueOf(Integer.MIN_VALUE);
+			BigInteger max = valueOf(Integer.MAX_VALUE);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max);
 			assertAllWithinRange(generator, min, max);
 		}
 
 		@Example
 		void withinSmallRange() {
-			BigInteger min = BigInteger.valueOf(-100);
-			BigInteger max = BigInteger.valueOf(10000);
+			BigInteger min = valueOf(-100);
+			BigInteger max = valueOf(10000);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max);
 			assertAllWithinRange(generator, min, max);
 		}
 
 		@Example
 		void withinGreaterRange() {
-			BigInteger min = BigInteger.valueOf(-100_000_000_000L);
-			BigInteger max = BigInteger.valueOf(100_000_000_000L);
+			BigInteger min = valueOf(-100_000_000_000L);
+			BigInteger max = valueOf(100_000_000_000L);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max);
 			assertAllWithinRange(generator, min, max);
 		}
 
 		@Example
 		void smallRangeWithPartitions() {
-			BigInteger min = BigInteger.valueOf(-100);
-			BigInteger max = BigInteger.valueOf(100000);
-			BigInteger[] partitionPoints = new BigInteger[]{BigInteger.ZERO, BigInteger.valueOf(100), BigInteger.valueOf(1000)};
+			BigInteger min = valueOf(-100);
+			BigInteger max = valueOf(100000);
+			BigInteger[] partitionPoints = new BigInteger[]{BigInteger.ZERO, valueOf(100), valueOf(1000)};
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max, partitionPoints);
 
 			assertAllWithinRange(generator, min, max);
@@ -74,9 +75,9 @@ class RandomGeneratorsTests {
 
 		@Example
 		void greaterRangeWithPartitions() {
-			BigInteger min = BigInteger.valueOf(Long.MIN_VALUE);
-			BigInteger max = BigInteger.valueOf(Long.MAX_VALUE);
-			BigInteger[] partitionPoints = new BigInteger[]{BigInteger.ZERO, BigInteger.valueOf(-10000), BigInteger.valueOf(10000)};
+			BigInteger min = valueOf(Long.MIN_VALUE);
+			BigInteger max = valueOf(Long.MAX_VALUE);
+			BigInteger[] partitionPoints = new BigInteger[]{BigInteger.ZERO, valueOf(-10000), valueOf(10000)};
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max, partitionPoints);
 
 			assertAllWithinRange(generator, min, max);
@@ -90,15 +91,15 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(min, max);
 			assertAllWithinRange(generator, min, max);
 			assertAtLeastOneGenerated(generator,
-				bigInteger -> bigInteger.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0);
+				bigInteger -> bigInteger.compareTo(valueOf(Long.MAX_VALUE)) > 0);
 			assertAtLeastOneGenerated(generator,
-				bigInteger -> bigInteger.compareTo(BigInteger.valueOf(Long.MIN_VALUE)) < 0);
+				bigInteger -> bigInteger.compareTo(valueOf(Long.MIN_VALUE)) < 0);
 		}
 
 
 		@Example
 		void minGreaterThanMaxFails() {
-			assertThatThrownBy(() -> RandomGenerators.bigIntegers(BigInteger.valueOf(1), BigInteger.valueOf(-1)))
+			assertThatThrownBy(() -> RandomGenerators.bigIntegers(valueOf(1), valueOf(-1)))
 				.isInstanceOf(JqwikException.class);
 		}
 
@@ -173,7 +174,7 @@ class RandomGeneratorsTests {
 
 			assertAllWithinRange(generator, min.toBigInteger(), max.toBigInteger());
 			assertAllPartitionsAreCovered(generator, min.toBigInteger(), max.toBigInteger(), //
-										  new BigInteger[]{BigInteger.ZERO, BigInteger.valueOf(100), BigInteger.valueOf(1000)} //
+										  new BigInteger[]{BigInteger.ZERO, valueOf(100), valueOf(1000)} //
 			);
 		}
 
@@ -187,7 +188,7 @@ class RandomGeneratorsTests {
 
 			assertAllWithinRange(generator, min.toBigInteger(), max.toBigInteger());
 			assertAllPartitionsAreCovered(generator, min.toBigInteger(), max.toBigInteger(), //
-										  new BigInteger[]{BigInteger.ZERO, BigInteger.valueOf(-10000), BigInteger.valueOf(10000)} //
+										  new BigInteger[]{BigInteger.ZERO, valueOf(-10000), valueOf(10000)} //
 			);
 		}
 
@@ -229,8 +230,8 @@ class RandomGeneratorsTests {
 
 		private Shrinkable<Integer> createShrinkableInt(int value) {
 			return new ShrinkableBigInteger(
-				BigInteger.valueOf(value),
-				Range.of(BigInteger.valueOf(0), BigInteger.valueOf(1000))
+				valueOf(value),
+				Range.of(valueOf(0), valueOf(1000))
 			).map(BigInteger::intValueExact);
 		}
 	}
