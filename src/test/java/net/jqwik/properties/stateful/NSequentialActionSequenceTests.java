@@ -1,6 +1,7 @@
 package net.jqwik.properties.stateful;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.assertj.core.api.*;
 
@@ -11,55 +12,69 @@ class NSequentialActionSequenceTests {
 
 
 	@Example
-	void runSequence() {
-		NSequentialActionSequence<Integer> sequence = createSequence( //
-			plus1(), //
-			ignore(), //
-			plus10(), //
-			ignore(), //
-			plus100() //
+	void run() {
+		NSequentialActionSequence<Integer> sequence = createSequence(
+			plus1(),
+			plus10(),
+			square()
 		);
 
 		int result = sequence.run(0);
-		Assertions.assertThat(result).isEqualTo(111);
+		Assertions.assertThat(result).isEqualTo(121);
 		Assertions.assertThat(result).isEqualTo(sequence.state());
+		Assertions.assertThat(sequence.runSequence()).hasSize(3);
 	}
 
-//	@Example
-//	void runWithFailure() {
-//		SequentialActionSequence<Integer> sequence = createSequence( //
-//			plus1(), //
-//			ignore(), //
-//			plus10(), //
-//			ignore(), //
-//			check42(), plus100() //
-//		);
-//
-//		Assertions.assertThatThrownBy(() -> //
-//			sequence.run(0) //
-//		).isInstanceOf(AssertionError.class);
-//
-//		Assertions.assertThat(sequence.state()).isEqualTo(11);
-//	}
-//
-//	@Example
-//	void failInInvariant() {
-//		ActionSequence<Integer> sequence = createSequence( //
-//			plus1(), //
-//			plus10(), //
-//			plus100() //
-//		).withInvariant(anInt -> Assertions.assertThat(anInt).isLessThan(100));
-//
-//		Assertions.assertThatThrownBy(() -> //
-//			sequence.run(0) //
-//		).isInstanceOf(AssertionError.class);
-//
-//		Assertions.assertThat(sequence.state()).isEqualTo(111);
-//
-//	}
+	@Example
+	void wontRunTwice() {
+		NSequentialActionSequence<Integer> sequence = createSequence(
+			plus1(),
+			plus10(),
+			square()
+		);
 
-	private Action<Integer> check42() {
-		return new Action<Integer>() {
+		sequence.run(0);
+		int result = sequence.run(0);
+		Assertions.assertThat(result).isEqualTo(121);
+		Assertions.assertThat(result).isEqualTo(sequence.state());
+		Assertions.assertThat(sequence.runSequence()).hasSize(3);
+	}
+
+	@Example
+	void runWithFailure() {
+		NSequentialActionSequence<Integer> sequence = createSequence(
+			plus1(),
+			plus10(),
+			check42(),
+			square()
+		);
+
+		Assertions.assertThatThrownBy(
+			() -> sequence.run(0)
+		).isInstanceOf(AssertionError.class);
+
+		Assertions.assertThat(sequence.state()).isEqualTo(11);
+		Assertions.assertThat(sequence.runSequence()).hasSize(3);
+	}
+
+	@Example
+	void failInInvariant() {
+		ActionSequence<Integer> sequence = createSequence(
+			plus10(),
+			square(),
+			plus10()
+		).withInvariant(anInt -> Assertions.assertThat(anInt).isLessThan(100));
+
+		Assertions.assertThatThrownBy(
+			() -> sequence.run(0)
+		).isInstanceOf(AssertionError.class);
+
+		Assertions.assertThat(sequence.state()).isEqualTo(100);
+		Assertions.assertThat(sequence.runSequence()).hasSize(2);
+	}
+
+	private Function<Integer, Action<Integer>> check42() {
+		return ignore -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer model) {
 				Assertions.assertThat(model).isEqualTo(42);
@@ -73,8 +88,8 @@ class NSequentialActionSequenceTests {
 		};
 	}
 
-	private Action<Integer> ignore() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> ignore() {
+		return ignore -> new Action<Integer>() {
 			@Override
 			public boolean precondition(Integer model) {
 				return false;
@@ -92,8 +107,8 @@ class NSequentialActionSequenceTests {
 		};
 	}
 
-	private Action<Integer> plus1() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> plus1() {
+		return ignore -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer anInt) {
 				return anInt + 1;
@@ -106,8 +121,8 @@ class NSequentialActionSequenceTests {
 		};
 	}
 
-	private Action<Integer> plus10() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> plus10() {
+		return ignore -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer anInt) {
 				return anInt + 10;
@@ -120,24 +135,28 @@ class NSequentialActionSequenceTests {
 		};
 	}
 
-	private Action<Integer> plus100() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> square() {
+		return number -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer anInt) {
-				return anInt + 100;
+				return anInt * number; // anInt should be number
 			}
 
 			@Override
 			public String toString() {
-				return "+100";
+				return "^2";
 			}
 		};
 	}
 
 	@SuppressWarnings("unchecked")
-	private NSequentialActionSequence<Integer> createSequence(Action<Integer>... actions) {
-		List<Action<Integer>> list = Arrays.asList(actions);
-		NActionGenerator<Integer> actionGenerator = model -> null;
+	private NSequentialActionSequence<Integer> createSequence(Function<Integer, Action<Integer>>... actions) {
+		Iterator<Function<Integer, Action<Integer>>> iterator = Arrays.asList(actions).iterator();
+		NActionGenerator<Integer> actionGenerator = model -> {
+			if (iterator.hasNext())
+				return iterator.next().apply(model);
+			throw new NoSuchElementException("No more actions available");
+		};
 		return new NSequentialActionSequence<>(actionGenerator, actions.length);
 	}
 
