@@ -13,7 +13,7 @@ class ShrinkableActionSequence<M> implements Shrinkable<ActionSequence<M>> {
 	private final ComprehensiveListShrinkingCandidates listShrinkingCandidates = new ComprehensiveListShrinkingCandidates();
 
 	private final List<Shrinkable<Action<M>>> candidateActions;
-	private final SequentialActionSequence<M> value;
+	private final ActionSequence<M> value;
 
 	ShrinkableActionSequence(List<Shrinkable<Action<M>>> candidateActions) {
 		this.candidateActions = candidateActions;
