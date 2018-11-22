@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.shrinking.*;
 
@@ -27,8 +28,7 @@ class NShrinkableActionSequenceTests {
 			shrinkableAddX()
 		);
 		NActionGenerator<String> actionGenerator = new NShrinkablesActionGenerator<>(actions);
-
-		Shrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actionGenerator, 2, ShrinkingDistance.of(2));
+		Shrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actionGenerator, actions.size(), ShrinkingDistance.of(2));
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2));
 
@@ -43,132 +43,126 @@ class NShrinkableActionSequenceTests {
 			shrinkableAddCC(),
 			shrinkableAddX()
 		);
-		NActionGenerator<String> actionGenerator = new NShrinkablesActionGenerator<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingDistance distance = ShrinkingDistance.forCollection(actions);
-		Shrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actionGenerator, 2, distance);
-
-		ActionSequence<String> sequence = shrinkable.value();
-		String result = sequence.run("");
-		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
-		assertThat(actionGenerator.generated()).hasSize(2);
-		assertThat(result).isEqualTo("ccx");
+		assertThat(shrinkable.value().state()).isEqualTo("ccx");
+		assertThat(shrinkable.value().runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
 	}
 
-//	@SuppressWarnings("unchecked")
-//	@Example
-//	void shrinkToEmptySequence() {
-//		List<Shrinkable<Action<String>>> actions = asList(
-//			shrinkableAddString(),
-//			shrinkableAddX(),
-//			shrinkableAddString(),
-//			shrinkableAddX()
-//		);
-//		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
-//
-//		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
-//			seq.run("");
-//			return false;
-//		});
-//		assertThat(sequence.next(count, reporter)).isTrue();
-//		verify(valueReporter).accept(any(ActionSequence.class));
-//		assertThat(sequence.next(count, reporter)).isTrue();
-//		verify(valueReporter, times(2)).accept(any(ActionSequence.class));
-//		assertThat(sequence.next(count, reporter)).isTrue();
-//		verify(valueReporter, times(3)).accept(any(ActionSequence.class));
-//		assertThat(sequence.next(count, reporter)).isFalse();
-//
-//		assertThat(sequence.current().value().size()).isEqualTo(1);
-//		assertThat(sequence.current().value().run("")).isEqualTo("x");
-//
-//		assertThat(counter.get()).isEqualTo(3);
-//		verifyNoMoreInteractions(valueReporter);
-//	}
-//
-//	@Example
-//	void alsoShrinkActions() {
-//		List<Shrinkable<Action<String>>> actions = asList(
-//			shrinkableAddString(),
-//			shrinkableAddX(),
-//			shrinkableAddString(),
-//			shrinkableAddString()
-//		);
-//		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
-//
-//		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
-//			String result = seq.run("");
-//			return result.length() < 2;
-//		});
-//
-//		while (sequence.next(count, reporter)) ;
-//
-//		assertThat(sequence.current().value().size()).isEqualTo(1);
-//		assertThat(sequence.current().value().run("")).isEqualTo("aa");
-//	}
-//
-//	@Example
-//	void alsoShrinkSequenceThenActionsTheSequenceAgain() {
-//		List<Shrinkable<Action<String>>> actions = asList(
-//			shrinkableAddString(),
-//			shrinkableAddX(),
-//			shrinkableAddString(),
-//			shrinkableAddString()
-//		);
-//		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
-//
-//		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
-//			String result = seq.run("");
-//			if (result.contains("c"))
-//				return result.length() < 4;
-//			else
-//				return result.length() < 2;
-//		});
-//
-//		while (sequence.next(count, reporter)) ;
-//
-//		assertThat(sequence.current().value().size()).isEqualTo(1);
-//		assertThat(sequence.current().value().run("")).isEqualTo("aa");
-//	}
-//
-//	@Example
-//	void actionsWithFailingPreconditionsAreShrunkAway() {
-//		List<Shrinkable<Action<String>>> actions = asList(
-//			shrinkableFailingPrecondition(),
-//			shrinkableAddString(),
-//			shrinkableAddX(),
-//			shrinkableFailingPrecondition(),
-//			shrinkableAddString(),
-//			shrinkableFailingPrecondition(),
-//			shrinkableFailingPrecondition(),
-//			shrinkableAddString()
-//		);
-//		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
-//
-//		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
-//			String result = seq.run("");
-//			return result.length() < 2;
-//		});
-//
-//		while (sequence.next(count, reporter)) ;
-//
-//		assertThat(sequence.current().value().run("")).isEqualTo("aa");
-//	}
-//
-//	@Property(tries = 100)
-//	void alwaysShrinkToSingleAction(@ForAll("stringActions") @Size(max = 50) List<Shrinkable<Action<String>>> actions) {
-//		actions.add(shrinkableAddX());
-//		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
-//
-//		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
-//			String result = seq.run("");
-//			return !result.contains("x");
-//		});
-//
-//		while (sequence.next(count, reporter)) ;
-//
-//		assertThat(sequence.current().value().run("")).isEqualTo("x");
-//	}
+	@SuppressWarnings("unchecked")
+	@Example
+	void shrinkToSequenceWithFirstActionOnly() {
+		List<Shrinkable<Action<String>>> actions = asList(
+			shrinkableAddCC(),
+			shrinkableAddX(),
+			shrinkableAddCC(),
+			shrinkableAddX()
+		);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			seq.run("");
+			return false;
+		});
+		assertThat(sequence.next(count, reporter)).isTrue();
+		verify(valueReporter).accept(any(ActionSequence.class));
+		assertThat(sequence.next(count, reporter)).isTrue();
+		verify(valueReporter, times(2)).accept(any(ActionSequence.class));
+		assertThat(sequence.next(count, reporter)).isTrue();
+		verify(valueReporter, times(3)).accept(any(ActionSequence.class));
+		assertThat(sequence.next(count, reporter)).isFalse();
+
+		assertThat(sequence.current().value().size()).isEqualTo(1);
+		assertThat(sequence.current().value().run("")).isEqualTo("x");
+
+		assertThat(counter.get()).isEqualTo(3);
+		verifyNoMoreInteractions(valueReporter);
+	}
+
+	@Example
+	void alsoShrinkActions() {
+		List<Shrinkable<Action<String>>> actions = asList(
+			shrinkableAddCC(),
+			shrinkableAddX(),
+			shrinkableAddCC(),
+			shrinkableAddCC()
+		);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			String result = seq.run("");
+			return result.length() < 2;
+		});
+
+		while (sequence.next(count, reporter)) ;
+
+		assertThat(sequence.current().value().size()).isEqualTo(1);
+		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+	}
+
+	@Example
+	void alsoShrinkSequenceThenActionsTheSequenceAgain() {
+		List<Shrinkable<Action<String>>> actions = asList(
+			shrinkableAddCC(),
+			shrinkableAddX(),
+			shrinkableAddCC(),
+			shrinkableAddCC()
+		);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			String result = seq.run("");
+			if (result.contains("c"))
+				return result.length() < 4;
+			else
+				return result.length() < 2;
+		});
+
+		while (sequence.next(count, reporter)) ;
+
+		assertThat(sequence.current().value().size()).isEqualTo(1);
+		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+	}
+
+	@Example
+	void actionsWithFailingPreconditionsAreShrunkAway() {
+		List<Shrinkable<Action<String>>> actions = asList(
+			shrinkableFailingPrecondition(),
+			shrinkableAddCC(),
+			shrinkableAddX(),
+			shrinkableFailingPrecondition(),
+			shrinkableAddCC(),
+			shrinkableFailingPrecondition(),
+			shrinkableFailingPrecondition(),
+			shrinkableAddCC()
+		);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			String result = seq.run("");
+			return result.length() < 2;
+		});
+
+		while (sequence.next(count, reporter)) ;
+
+		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+	}
+
+	@Property(tries = 100)
+	void alwaysShrinkToSingleAction(@ForAll("stringActions") @Size(max = 50) List<Shrinkable<Action<String>>> actions) {
+		actions.add(shrinkableAddX()); // to ensure that at least one action is valid
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+			String result = seq.run("");
+			return !result.contains("x");
+		});
+
+		while (sequence.next(count, reporter)) ;
+
+		assertThat(sequence.current().value().run("")).isEqualTo("x");
+	}
 
 	@Provide
 	Arbitrary<List<Shrinkable<Action<String>>>> stringActions() {
@@ -201,6 +195,13 @@ class NShrinkableActionSequenceTests {
 		return ShrinkableStringTests
 			.createShrinkableString("cc", 2)
 			.map(aString -> model -> model + aString);
+	}
+
+	private Shrinkable<ActionSequence<String>> createAndRunShrinkableSequence(List<Shrinkable<Action<String>>> actions) {
+		NActionGenerator<String> actionGenerator = new NShrinkablesActionGenerator<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new NShrinkableActionSequence<>(actionGenerator, actions.size(), ShrinkingDistance.of(2));
+		shrinkable.value().run("");
+		return shrinkable;
 	}
 
 }

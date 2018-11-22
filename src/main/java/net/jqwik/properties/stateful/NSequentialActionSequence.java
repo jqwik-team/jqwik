@@ -36,7 +36,12 @@ public class NSequentialActionSequence <M> implements ActionSequence<M> {
 		runState = RunState.RUNNING;
 		state = model;
 		for (int i = 0; i < size; i++) {
-			Action<M> action = actionGenerator.next(state);
+			Action<M> action;
+			try {
+				action = actionGenerator.next(state);
+			} catch (NoSuchElementException nsee) {
+				break;
+			}
 			sequence.add(action);
 			try {
 				state = action.run(state);
