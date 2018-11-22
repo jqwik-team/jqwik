@@ -1,31 +1,25 @@
 package net.jqwik.properties.stateful;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-import java.util.*;
-
 class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
-	private final RandomGenerator<Action<M>> actionGenerator;
+	private final int genSize;
 	private final int numberOfActions;
+	private final Arbitrary<Action<M>> actionArbitrary;
 
-	ActionSequenceGenerator(RandomGenerator<Action<M>> actionGenerator, int numberOfActions) {
-		this.actionGenerator = actionGenerator;
+	ActionSequenceGenerator(Arbitrary<Action<M>> actionArbitrary, int genSize, int numberOfActions) {
+		this.actionArbitrary = actionArbitrary;
+		this.genSize = genSize;
 		this.numberOfActions = numberOfActions;
 	}
 
 	@Override
 	public Shrinkable<ActionSequence<M>> next(Random random) {
-		List<Shrinkable<Action<M>>> candidateActions = generateCandidates(numberOfActions, random);
-		return new ShrinkableActionSequence<>(candidateActions);
-	}
-
-	private List<Shrinkable<Action<M>>> generateCandidates(int numberOfActions, Random random) {
-		List<Shrinkable<Action<M>>> candidates = new ArrayList<>();
-		for (int i = 0; i < numberOfActions; i++) {
-			candidates.add(actionGenerator.next(random));
-		}
-		return candidates;
+		NActionGenerator<M> actionGenerator = new NRandomActionGenerator<>(actionArbitrary, genSize, random);
+		return new NShrinkableActionSequence<>(actionGenerator, numberOfActions, ShrinkingDistance.of(numberOfActions));
 	}
 
 }

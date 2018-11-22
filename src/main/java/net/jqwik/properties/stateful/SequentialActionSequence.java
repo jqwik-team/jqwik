@@ -1,14 +1,14 @@
 package net.jqwik.properties.stateful;
 
+import java.util.*;
+import java.util.stream.*;
+
+import org.opentest4j.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.properties.arbitraries.*;
 import net.jqwik.support.*;
-import org.opentest4j.*;
-
-import java.util.*;
-import java.util.stream.*;
 
 public class SequentialActionSequence<M> implements ActionSequence<M> {
 
@@ -164,30 +164,4 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 		}
 	}
 
-	private static class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase implements ActionSequenceArbitrary<M> {
-
-		private final Arbitrary<Action<M>> actionArbitrary;
-		private int size = 0;
-
-		DefaultActionSequenceArbitrary(Arbitrary<Action<M>> actionArbitrary) {
-			this.actionArbitrary = actionArbitrary;
-		}
-
-		@Override
-		public DefaultActionSequenceArbitrary<M> ofSize(int size) {
-			DefaultActionSequenceArbitrary<M> clone = typedClone();
-			clone.size = size;
-			return clone;
-		}
-
-		@Override
-		public RandomGenerator<ActionSequence<M>> generator(int genSize) {
-			final int numberOfActions = //
-				size != 0 ? size //
-					: (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-			RandomGenerator<Action<M>> actionGenerator = actionArbitrary.generator(genSize);
-			return new ActionSequenceGenerator<>(actionGenerator, numberOfActions);
-		}
-
-	}
 }
