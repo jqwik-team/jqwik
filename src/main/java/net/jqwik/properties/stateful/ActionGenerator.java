@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-public interface NActionGenerator<M> {
+public interface ActionGenerator<M> {
 
 	Action<M> next(M model);
 

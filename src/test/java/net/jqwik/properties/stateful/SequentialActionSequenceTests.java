@@ -1,67 +1,126 @@
 package net.jqwik.properties.stateful;
 
-import net.jqwik.api.*;
-import net.jqwik.api.stateful.*;
+import java.util.*;
+import java.util.function.*;
+
 import org.assertj.core.api.*;
 
-import java.util.*;
+import net.jqwik.api.*;
+import net.jqwik.api.stateful.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 class SequentialActionSequenceTests {
 
 
 	@Example
-	void runSequence() {
-		SequentialActionSequence<Integer> sequence = createSequence( //
-			plus1(), //
-			ignore(), //
-			plus10(), //
-			ignore(), //
-			plus100() //
+	void run() {
+		SequentialActionSequence<Integer> sequence = createSequence(
+			plus1(),
+			plus10(),
+			square()
 		);
 
+
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.NOT_RUN);
+		int result = sequence.run(1);
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+
+		assertThat(result).isEqualTo(144);
+		assertThat(result).isEqualTo(sequence.state());
+		assertThat(sequence.runSequence()).hasSize(3);
+	}
+
+	@Example
+	void wontRunTwice() {
+		SequentialActionSequence<Integer> sequence = createSequence(
+			plus1(),
+			plus10(),
+			square()
+		);
+
+		sequence.run(0);
 		int result = sequence.run(0);
-		Assertions.assertThat(result).isEqualTo(111);
-		Assertions.assertThat(result).isEqualTo(sequence.state());
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+		assertThat(result).isEqualTo(121);
+		assertThat(result).isEqualTo(sequence.state());
+		assertThat(sequence.runSequence()).hasSize(3);
 	}
 
 	@Example
 	void runWithFailure() {
-		SequentialActionSequence<Integer> sequence = createSequence( //
-			plus1(), //
-			ignore(), //
-			plus10(), //
-			ignore(), //
-			check42(), plus100() //
+		SequentialActionSequence<Integer> sequence = createSequence(
+			plus1(),
+			plus10(),
+			check42(),
+			square()
 		);
 
-		Assertions.assertThatThrownBy(() -> //
-			sequence.run(0) //
+		Assertions.assertThatThrownBy(
+			() -> sequence.run(0)
 		).isInstanceOf(AssertionError.class);
 
-		Assertions.assertThat(sequence.state()).isEqualTo(11);
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
+		assertThat(sequence.state()).isEqualTo(11);
+		assertThat(sequence.runSequence()).hasSize(3);
+	}
+
+	@Example
+	void stopSequenceIfGeneratorThrowsNoSuchElementException() {
+		SequentialActionSequence<Integer> sequence = createSequence(10,
+																	plus10(),
+																	square(),
+																	plus10()
+		);
+
+		sequence.run(1);
+
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+		assertThat(sequence.state()).isEqualTo(131);
+		assertThat(sequence.runSequence()).hasSize(3);
 	}
 
 	@Example
 	void failInInvariant() {
-		ActionSequence<Integer> sequence = createSequence( //
-			plus1(), //
-			plus10(), //
-			plus100() //
-		).withInvariant(anInt -> Assertions.assertThat(anInt).isLessThan(100));
+		ActionSequence<Integer> sequence = createSequence(
+			plus10(),
+			square(),
+			plus10()
+		).withInvariant(anInt -> assertThat(anInt).isLessThan(100));
 
-		Assertions.assertThatThrownBy(() -> //
-			sequence.run(0) //
+		Assertions.assertThatThrownBy(
+			() -> sequence.run(0)
 		).isInstanceOf(AssertionError.class);
 
-		Assertions.assertThat(sequence.state()).isEqualTo(111);
-
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
+		assertThat(sequence.state()).isEqualTo(100);
+		assertThat(sequence.runSequence()).hasSize(2);
 	}
 
-	private Action<Integer> check42() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> preconditionBelow10() {
+		return ignore -> new Action<Integer>() {
+			@Override
+			public boolean precondition(Integer model) {
+				return model < 10;
+			}
+
 			@Override
 			public Integer run(Integer model) {
-				Assertions.assertThat(model).isEqualTo(42);
+				return model;
+			}
+
+			@Override
+			public String toString() {
+				return "precondition: < 10";
+			}
+		};
+	}
+
+	private Function<Integer, Action<Integer>> check42() {
+		return ignore -> new Action<Integer>() {
+			@Override
+			public Integer run(Integer model) {
+				assertThat(model).isEqualTo(42);
 				return model;
 			}
 
@@ -72,27 +131,8 @@ class SequentialActionSequenceTests {
 		};
 	}
 
-	private Action<Integer> ignore() {
-		return new Action<Integer>() {
-			@Override
-			public boolean precondition(Integer model) {
-				return false;
-			}
-
-			@Override
-			public Integer run(Integer model) {
-				return null;
-			}
-
-			@Override
-			public String toString() {
-				return "ignore";
-			}
-		};
-	}
-
-	private Action<Integer> plus1() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> plus1() {
+		return ignore -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer anInt) {
 				return anInt + 1;
@@ -105,8 +145,8 @@ class SequentialActionSequenceTests {
 		};
 	}
 
-	private Action<Integer> plus10() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> plus10() {
+		return ignore -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer anInt) {
 				return anInt + 10;
@@ -119,24 +159,43 @@ class SequentialActionSequenceTests {
 		};
 	}
 
-	private Action<Integer> plus100() {
-		return new Action<Integer>() {
+	private Function<Integer, Action<Integer>> square() {
+		return number -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer anInt) {
-				return anInt + 100;
+				return anInt * number; // anInt should be number
 			}
 
 			@Override
 			public String toString() {
-				return "+100";
+				return "^2";
 			}
 		};
 	}
 
 	@SuppressWarnings("unchecked")
-	private SequentialActionSequence<Integer> createSequence(Action<Integer>... actions) {
-		List<Action<Integer>> list = Arrays.asList(actions);
-		return new SequentialActionSequence<>(list);
+	private SequentialActionSequence<Integer> createSequence(Function<Integer, Action<Integer>>... actions) {
+		return createSequence(actions.length, actions);
+	}
+
+	@SuppressWarnings("unchecked")
+	private SequentialActionSequence<Integer> createSequence(int size, Function<Integer, Action<Integer>>... actions) {
+		Iterator<Function<Integer, Action<Integer>>> iterator = Arrays.asList(actions).iterator();
+		ActionGenerator<Integer> actionGenerator = new ActionGenerator<Integer>() {
+			@Override
+			public Action<Integer> next(Integer model) {
+				if (iterator.hasNext())
+					return iterator.next().apply(model);
+				throw new NoSuchElementException("No more actions available");
+			}
+
+			@Override
+			public List<Shrinkable<Action<Integer>>> generated() {
+				// Not used here
+				return null;
+			}
+		};
+		return new SequentialActionSequence<>(actionGenerator, size);
 	}
 
 }

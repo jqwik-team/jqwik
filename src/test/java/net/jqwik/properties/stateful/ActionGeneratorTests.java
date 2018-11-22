@@ -8,7 +8,7 @@ import net.jqwik.api.stateful.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
-class NActionGeneratorTests {
+class ActionGeneratorTests {
 
 	private static final Action<Integer> PLUS_2 = new Action<Integer>() {
 		@Override
@@ -41,7 +41,7 @@ class NActionGeneratorTests {
 		void generatesActionsFromArbitrary(@ForAll Random random) {
 			Arbitrary<Action<Integer>> samples = Arbitraries.samples(plus1(), plus2());
 
-			NRandomActionGenerator<Integer> actionGenerator = new NRandomActionGenerator<>(samples, 1000, random);
+			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
 
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
@@ -57,7 +57,7 @@ class NActionGeneratorTests {
 		void ignoresActionsWithFailingPrecondition(@ForAll Random random) {
 			Arbitrary<Action<Integer>> samples = Arbitraries.samples(plus1(), plus2(), failedPrecondition());
 
-			NRandomActionGenerator<Integer> actionGenerator = new NRandomActionGenerator<>(samples, 1000, random);
+			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
 
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
@@ -78,7 +78,7 @@ class NActionGeneratorTests {
 				Shrinkable.unshrinkable(PLUS_1)
 			);
 
-			NShrinkablesActionGenerator<Integer> actionGenerator = new NShrinkablesActionGenerator<>(shrinkables);
+			ShrinkablesActionGenerator<Integer> actionGenerator = new ShrinkablesActionGenerator<>(shrinkables);
 
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
@@ -97,7 +97,7 @@ class NActionGeneratorTests {
 				Shrinkable.unshrinkable(PLUS_1)
 			);
 
-			NShrinkablesActionGenerator<Integer> actionGenerator = new NShrinkablesActionGenerator<>(shrinkables);
+			ShrinkablesActionGenerator<Integer> actionGenerator = new ShrinkablesActionGenerator<>(shrinkables);
 
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
@@ -116,7 +116,7 @@ class NActionGeneratorTests {
 				PLUS_1
 			);
 
-			NListActionGenerator<Integer> actionGenerator = new NListActionGenerator<>(listOfActions);
+			ListActionGenerator<Integer> actionGenerator = new ListActionGenerator<>(listOfActions);
 
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
@@ -135,7 +135,7 @@ class NActionGeneratorTests {
 				PLUS_1
 			);
 
-			NListActionGenerator<Integer> actionGenerator = new NListActionGenerator<>(listOfActions);
+			ListActionGenerator<Integer> actionGenerator = new ListActionGenerator<>(listOfActions);
 
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
