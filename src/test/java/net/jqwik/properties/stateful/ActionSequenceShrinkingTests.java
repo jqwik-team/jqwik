@@ -1,19 +1,27 @@
 package net.jqwik.properties.stateful;
 
-import net.jqwik.api.*;
-import net.jqwik.api.stateful.*;
-import net.jqwik.properties.*;
+import java.util.*;
+
 import org.assertj.core.api.*;
 
-import java.util.*;
+import net.jqwik.api.*;
+import net.jqwik.api.stateful.*;
 
 class ActionSequenceShrinkingTests {
 
 	@Example
 	void sequencesAreShrunkToSingleAction(@ForAll Random random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX());
+		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
+		shrinkable.value().run(""); // to setup sequence
 
-		ActionSequence<String> shrunkValue = ArbitraryTestHelper.shrinkToEnd(arbitrary, random);
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(value -> {
+			value.run("");
+			return false;
+		});
+
+		while(sequence.next(() -> {}, ignore -> {}));
+		ActionSequence<String> shrunkValue = sequence.current().value();
 		String result = shrunkValue.run("");
 		Assertions.assertThat(result).isEqualTo("x");
 	}
@@ -25,8 +33,16 @@ class ActionSequenceShrinkingTests {
 	@Example
 	void remainingActionsAreShrunkThemselves(@ForAll Random random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addStringOfLength2());
+		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
+		shrinkable.value().run(""); // to setup sequence
 
-		ActionSequence<String> shrunkValue = ArbitraryTestHelper.shrinkToEnd(arbitrary, random);
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(value -> {
+			value.run("");
+			return false;
+		});
+
+		while(sequence.next(() -> {}, ignore -> {}));
+		ActionSequence<String> shrunkValue = sequence.current().value();
 		String result = shrunkValue.run("");
 		Assertions.assertThat(result).isEqualTo("AA");
 	}

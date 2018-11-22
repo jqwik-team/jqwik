@@ -435,7 +435,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary) {
-		return SequentialActionSequence.fromActions(actionArbitrary);
+		return new DefaultActionSequenceArbitrary<>(actionArbitrary);
 	}
 
 }
