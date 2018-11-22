@@ -1,13 +1,14 @@
 package examples.docs.stateful.mystack;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import org.assertj.core.api.*;
 
 class MyStringStackProperties {
 
 	@Property @Report(Reporting.GENERATED)
-	void checkMyStack(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
+	void checkMyStack(@ForAll("sequences") @Size(10) ActionSequence<MyStringStack> actions) {
 		actions.run(new MyStringStack());
 	}
 
