@@ -70,6 +70,7 @@
 - [Stateful Testing](#stateful-testing)
   - [Specify Actions](#specify-actions)
   - [Check Postconditions](#check-postconditions)
+  - [Number of actions](#number-of-actions)
   - [Check Invariants](#check-invariants)
 - [Assumptions](#assumptions)
 - [Result Shrinking](#result-shrinking)
@@ -1667,7 +1668,22 @@ org.opentest4j.AssertionFailedError: Run failed after following actions:
     clear
   final state: ["AAAAA", "AAAAA"]
 ```
-   
+
+### Number of actions
+
+_jqwik_ will vary the number of generated actions according to the number
+of `tries` of your property. For the default of 1000 tries a sequence will
+have up to 32 actions. If need be you can specify the number of actions
+to generate using either the fluent interface or the `@Size` annotation:
+
+```java
+@Property
+// check stack with sequences of 7 actions:
+void checkMyStack(@ForAll("sequences") @Size(7) ActionSequence<MyStringStack> actions) {
+    actions.run(new MyStringStack());
+}
+```
+
 ### Check Invariants
 
 We can also add invariants to our sequence checking property:
@@ -2360,6 +2376,8 @@ the external data was conceived or generated.
 - Added [`Arbitraries.frequencyOf()`](#randomly-choosing-among-arbitraries)
 - Added [`Arbitraries.recursive()`](#deterministic-recursion-with-recursive)
 - Integral number generation generates a few more edge cases
+- You can use `@Size(int size)` to [constrain the generation](#number-of-actions)
+  of `ActionSequence` parameters.
 
 ### 0.9.2
 

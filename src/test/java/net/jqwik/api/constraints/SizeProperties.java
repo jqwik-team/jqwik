@@ -1,6 +1,7 @@
 package net.jqwik.api.constraints;
 
 import net.jqwik.api.*;
+import net.jqwik.api.stateful.*;
 
 import java.util.*;
 import java.util.stream.*;
@@ -48,4 +49,5 @@ class SizeProperties {
 	boolean maxCanBeUsedWithoutMin(@ForAll @Size(max = 7) List<?> aValue) {
 		return aValue.size() <= 7;
 	}
+
 }
