@@ -11,20 +11,20 @@ import net.jqwik.support.*;
 public class NSequentialActionSequence <M> implements ActionSequence<M> {
 
 	private enum RunState {
-		NOT_RUN, FAILED, SUCCEEDED
+		NOT_RUN, RUNNING, FAILED, SUCCEEDED
 	}
 
 	private final NActionGenerator<M> actionGenerator;
-	private final int numberOfActions;
+	private final int size;
 	private final List<Action<M>> sequence = new ArrayList<>();
 	private final List<Invariant<M>> invariants = new ArrayList<>();
 
 	private RunState runState = RunState.NOT_RUN;
 	private M state = null;
 
-	public NSequentialActionSequence(NActionGenerator<M> actionGenerator, int numberOfActions) {
+	public NSequentialActionSequence(NActionGenerator<M> actionGenerator, int size) {
 		this.actionGenerator = actionGenerator;
-		this.numberOfActions = numberOfActions;
+		this.size = size;
 	}
 
 	@Override
@@ -37,17 +37,19 @@ public class NSequentialActionSequence <M> implements ActionSequence<M> {
 		if (runState != RunState.NOT_RUN) {
 			return state;
 		}
-		runState = RunState.FAILED;
+		runState = RunState.RUNNING;
 		state = model;
-		for (int i = 0; i < numberOfActions; i++) {
+		for (int i = 0; i < size; i++) {
 			Action<M> action = actionGenerator.next(state);
 			sequence.add(action);
 			try {
 				state = action.run(state);
 				checkInvariants();
 			} catch (InvariantFailedError ife) {
+				runState = RunState.FAILED;
 				throw ife;
 			} catch (Throwable t) {
+				runState = RunState.FAILED;
 				AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run", t.getMessage()), t);
 				assertionFailedError.setStackTrace(t.getStackTrace());
 				throw assertionFailedError;
@@ -90,7 +92,7 @@ public class NSequentialActionSequence <M> implements ActionSequence<M> {
 
 	@Override
 	public int size() {
-		return sequence.size();
+		return size;
 	}
 
 	@Override
@@ -102,6 +104,6 @@ public class NSequentialActionSequence <M> implements ActionSequence<M> {
 	public String toString() {
 		String stateString = runState.name();
 		String actionsString = JqwikStringSupport.displayString(sequence);
-		return String.format("%s [%s]:%s", this.getClass().getSimpleName(), stateString, actionsString);
+		return String.format("%s (%s) [%s]:%s", this.getClass().getSimpleName(), size, stateString, actionsString);
 	}
 }

@@ -88,25 +88,6 @@ class NSequentialActionSequenceTests {
 		};
 	}
 
-	private Function<Integer, Action<Integer>> ignore() {
-		return ignore -> new Action<Integer>() {
-			@Override
-			public boolean precondition(Integer model) {
-				return false;
-			}
-
-			@Override
-			public Integer run(Integer model) {
-				return null;
-			}
-
-			@Override
-			public String toString() {
-				return "ignore";
-			}
-		};
-	}
-
 	private Function<Integer, Action<Integer>> plus1() {
 		return ignore -> new Action<Integer>() {
 			@Override
