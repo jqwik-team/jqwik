@@ -15,9 +15,12 @@ public class NShrinkablesActionGenerator<T> implements NActionGenerator<T> {
 	}
 
 	@Override
-	public Action next(Object model) {
-		if (iterator.hasNext()) {
+	public Action<T> next(T model) {
+		while (iterator.hasNext()) {
 			Shrinkable<Action<T>> next = iterator.next();
+			if (!next.value().precondition(model)) {
+				continue;
+			}
 			shrinkables.add(next);
 			return next.value();
 		}

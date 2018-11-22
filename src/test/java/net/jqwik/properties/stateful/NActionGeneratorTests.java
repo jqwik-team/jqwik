@@ -71,7 +71,7 @@ class NActionGeneratorTests {
 	@Group
 	class FromShrinkables {
 		@Example
-		void generateActionsFromListOfShrinkables(@ForAll Random random) {
+		void generateActionsFromListOfShrinkables() {
 			List<Shrinkable<Action<Integer>>> shrinkables = Arrays.asList(
 				Shrinkable.unshrinkable(PLUS_1),
 				Shrinkable.unshrinkable(PLUS_2),
@@ -83,9 +83,66 @@ class NActionGeneratorTests {
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
+			assertThat(actionGenerator.generated()).hasSize(3);
 
 			assertThatThrownBy(() -> actionGenerator.next(42)).isInstanceOf(NoSuchElementException.class);
 		}
+
+		@Example
+		void filterOutFailingPreconditions() {
+			List<Shrinkable<Action<Integer>>> shrinkables = Arrays.asList(
+				Shrinkable.unshrinkable(PLUS_1),
+				Shrinkable.unshrinkable(PLUS_2),
+				Shrinkable.unshrinkable(failedPrecondition()),
+				Shrinkable.unshrinkable(PLUS_1)
+			);
+
+			NShrinkablesActionGenerator<Integer> actionGenerator = new NShrinkablesActionGenerator<>(shrinkables);
+
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
+			assertThat(actionGenerator.generated()).hasSize(3);
+		}
+	}
+
+	@Group
+	class FromListOfActions {
+		@Example
+		void generateActionsFromListOfShrinkables() {
+			List<Action<Integer>> listOfActions = Arrays.asList(
+				PLUS_1,
+				PLUS_2,
+				PLUS_1
+			);
+
+			NListActionGenerator<Integer> actionGenerator = new NListActionGenerator<>(listOfActions);
+
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
+			assertThat(actionGenerator.generated()).hasSize(3);
+
+			assertThatThrownBy(() -> actionGenerator.next(42)).isInstanceOf(NoSuchElementException.class);
+		}
+
+		@Example
+		void filterOutFailingPreconditions() {
+			List<Action<Integer>> listOfActions = Arrays.asList(
+				PLUS_1,
+				PLUS_2,
+				failedPrecondition(),
+				PLUS_1
+			);
+
+			NListActionGenerator<Integer> actionGenerator = new NListActionGenerator<>(listOfActions);
+
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
+			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
+			assertThat(actionGenerator.generated()).hasSize(3);
+		}
+
 	}
 
 	private Action<Integer> plus1() {
