@@ -8,6 +8,8 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class NSequentialActionSequenceTests {
 
 
@@ -19,10 +21,14 @@ class NSequentialActionSequenceTests {
 			square()
 		);
 
+
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.NOT_RUN);
 		int result = sequence.run(0);
-		Assertions.assertThat(result).isEqualTo(121);
-		Assertions.assertThat(result).isEqualTo(sequence.state());
-		Assertions.assertThat(sequence.runSequence()).hasSize(3);
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+
+		assertThat(result).isEqualTo(121);
+		assertThat(result).isEqualTo(sequence.state());
+		assertThat(sequence.runSequence()).hasSize(3);
 	}
 
 	@Example
@@ -35,9 +41,10 @@ class NSequentialActionSequenceTests {
 
 		sequence.run(0);
 		int result = sequence.run(0);
-		Assertions.assertThat(result).isEqualTo(121);
-		Assertions.assertThat(result).isEqualTo(sequence.state());
-		Assertions.assertThat(sequence.runSequence()).hasSize(3);
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+		assertThat(result).isEqualTo(121);
+		assertThat(result).isEqualTo(sequence.state());
+		assertThat(sequence.runSequence()).hasSize(3);
 	}
 
 	@Example
@@ -53,8 +60,9 @@ class NSequentialActionSequenceTests {
 			() -> sequence.run(0)
 		).isInstanceOf(AssertionError.class);
 
-		Assertions.assertThat(sequence.state()).isEqualTo(11);
-		Assertions.assertThat(sequence.runSequence()).hasSize(3);
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
+		assertThat(sequence.state()).isEqualTo(11);
+		assertThat(sequence.runSequence()).hasSize(3);
 	}
 
 	@Example
@@ -63,21 +71,22 @@ class NSequentialActionSequenceTests {
 			plus10(),
 			square(),
 			plus10()
-		).withInvariant(anInt -> Assertions.assertThat(anInt).isLessThan(100));
+		).withInvariant(anInt -> assertThat(anInt).isLessThan(100));
 
 		Assertions.assertThatThrownBy(
 			() -> sequence.run(0)
 		).isInstanceOf(AssertionError.class);
 
-		Assertions.assertThat(sequence.state()).isEqualTo(100);
-		Assertions.assertThat(sequence.runSequence()).hasSize(2);
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
+		assertThat(sequence.state()).isEqualTo(100);
+		assertThat(sequence.runSequence()).hasSize(2);
 	}
 
 	private Function<Integer, Action<Integer>> check42() {
 		return ignore -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer model) {
-				Assertions.assertThat(model).isEqualTo(42);
+				assertThat(model).isEqualTo(42);
 				return model;
 			}
 
@@ -133,10 +142,19 @@ class NSequentialActionSequenceTests {
 	@SuppressWarnings("unchecked")
 	private NSequentialActionSequence<Integer> createSequence(Function<Integer, Action<Integer>>... actions) {
 		Iterator<Function<Integer, Action<Integer>>> iterator = Arrays.asList(actions).iterator();
-		NActionGenerator<Integer> actionGenerator = model -> {
-			if (iterator.hasNext())
-				return iterator.next().apply(model);
-			throw new NoSuchElementException("No more actions available");
+		NActionGenerator<Integer> actionGenerator = new NActionGenerator<Integer>() {
+			@Override
+			public Action<Integer> next(Integer model) {
+				if (iterator.hasNext())
+					return iterator.next().apply(model);
+				throw new NoSuchElementException("No more actions available");
+			}
+
+			@Override
+			public List<Shrinkable<Action<Integer>>> generated() {
+				// Not used here
+				return null;
+			}
 		};
 		return new NSequentialActionSequence<>(actionGenerator, actions.length);
 	}

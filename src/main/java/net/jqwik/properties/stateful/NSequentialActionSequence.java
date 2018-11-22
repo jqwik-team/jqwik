@@ -10,10 +10,6 @@ import net.jqwik.support.*;
 
 public class NSequentialActionSequence <M> implements ActionSequence<M> {
 
-	private enum RunState {
-		NOT_RUN, RUNNING, FAILED, SUCCEEDED
-	}
-
 	private final NActionGenerator<M> actionGenerator;
 	private final int size;
 	private final List<Action<M>> sequence = new ArrayList<>();
@@ -93,6 +89,11 @@ public class NSequentialActionSequence <M> implements ActionSequence<M> {
 	@Override
 	public int size() {
 		return size;
+	}
+
+	@Override
+	public RunState runState() {
+		return runState;
 	}
 
 	@Override

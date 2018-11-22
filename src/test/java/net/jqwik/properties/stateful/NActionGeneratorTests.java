@@ -50,7 +50,7 @@ class NActionGeneratorTests {
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
 
-			assertThat(actionGenerator.shrinkableActions()).hasSize(6);
+			assertThat(actionGenerator.generated()).hasSize(6);
 		}
 
 		@Example
@@ -64,7 +64,7 @@ class NActionGeneratorTests {
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
 
-			assertThat(actionGenerator.shrinkableActions()).hasSize(4);
+			assertThat(actionGenerator.generated()).hasSize(4);
 		}
 	}
 
