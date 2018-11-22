@@ -3,6 +3,11 @@ package net.jqwik.api.stateful;
 import java.util.*;
 
 public interface ActionSequence<M> {
+
+	enum RunState {
+		NOT_RUN, RUNNING, FAILED, SUCCEEDED
+	}
+
 	List<Action<M>> runSequence();
 
 	M run(M model);
@@ -12,4 +17,9 @@ public interface ActionSequence<M> {
 	int size();
 
 	M state();
+
+	// TODO: Remove default imple as soon as old implementation has gone
+	default RunState runState() {
+		return RunState.NOT_RUN;
+	}
 }

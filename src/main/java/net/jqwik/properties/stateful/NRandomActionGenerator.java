@@ -29,7 +29,8 @@ public class NRandomActionGenerator<T> implements NActionGenerator<T> {
 		}
 	}
 
-	public List<Shrinkable<Action<T>>> shrinkableActions() {
+	@Override
+	public List<Shrinkable<Action<T>>> generated() {
 		return shrinkableActions;
 	}
 }
