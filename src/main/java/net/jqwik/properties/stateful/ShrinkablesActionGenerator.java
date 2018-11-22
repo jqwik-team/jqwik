@@ -5,12 +5,12 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-public class NShrinkablesActionGenerator<T> implements NActionGenerator<T> {
+public class ShrinkablesActionGenerator<T> implements ActionGenerator<T> {
 
 	private final Iterator<Shrinkable<Action<T>>> iterator;
 	private List<Shrinkable<Action<T>>> shrinkables = new ArrayList<>();
 
-	public NShrinkablesActionGenerator(List<Shrinkable<Action<T>>> shrinkables) {
+	public ShrinkablesActionGenerator(List<Shrinkable<Action<T>>> shrinkables) {
 		iterator = shrinkables.iterator();
 	}
 

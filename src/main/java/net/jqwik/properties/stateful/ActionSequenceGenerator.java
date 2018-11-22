@@ -18,8 +18,8 @@ class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
 
 	@Override
 	public Shrinkable<ActionSequence<M>> next(Random random) {
-		NActionGenerator<M> actionGenerator = new NRandomActionGenerator<>(actionArbitrary, genSize, random);
-		return new NShrinkableActionSequence<>(actionGenerator, numberOfActions, ShrinkingDistance.of(numberOfActions));
+		ActionGenerator<M> actionGenerator = new RandomActionGenerator<>(actionArbitrary, genSize, random);
+		return new ShrinkableActionSequence<>(actionGenerator, numberOfActions, ShrinkingDistance.of(numberOfActions));
 	}
 
 }

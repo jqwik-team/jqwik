@@ -22,29 +22,44 @@ class ShrinkableActionSequenceTests {
 	private Consumer<FalsificationResult<ActionSequence<String>>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
-	void creation() {
+	void createNotRunSequence() {
 		List<Shrinkable<Action<String>>> actions = asList(
-			shrinkableAddString(),
+			shrinkableAddCC(),
 			shrinkableAddX()
 		);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
+		ActionGenerator<String> actionGenerator = new ShrinkablesActionGenerator<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, actions.size(), ShrinkingDistance.of(2));
 
-		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
+		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2));
 
-		SequentialActionSequence<String> sequence = (SequentialActionSequence<String>) shrinkable.value();
+		ActionSequence<String> sequence = shrinkable.value();
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.NOT_RUN);
 		assertThat(sequence.size()).isEqualTo(2);
+	}
+
+	@Example
+	void createAndRunSequence() {
+		List<Shrinkable<Action<String>>> actions = asList(
+			shrinkableAddCC(),
+			shrinkableAddX()
+		);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
+
+		assertThat(shrinkable.value().state()).isEqualTo("ccx");
+		assertThat(shrinkable.value().runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
 	}
 
 	@SuppressWarnings("unchecked")
 	@Example
-	void shrinkToEmptySequence() {
+	void shrinkToSequenceWithFirstActionOnly() {
 		List<Shrinkable<Action<String>>> actions = asList(
-			shrinkableAddString(),
+			shrinkableAddCC(),
 			shrinkableAddX(),
-			shrinkableAddString(),
+			shrinkableAddCC(),
 			shrinkableAddX()
 		);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			seq.run("");
@@ -68,12 +83,12 @@ class ShrinkableActionSequenceTests {
 	@Example
 	void alsoShrinkActions() {
 		List<Shrinkable<Action<String>>> actions = asList(
-			shrinkableAddString(),
+			shrinkableAddCC(),
 			shrinkableAddX(),
-			shrinkableAddString(),
-			shrinkableAddString()
+			shrinkableAddCC(),
+			shrinkableAddCC()
 		);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			String result = seq.run("");
@@ -89,12 +104,12 @@ class ShrinkableActionSequenceTests {
 	@Example
 	void alsoShrinkSequenceThenActionsTheSequenceAgain() {
 		List<Shrinkable<Action<String>>> actions = asList(
-			shrinkableAddString(),
+			shrinkableAddCC(),
 			shrinkableAddX(),
-			shrinkableAddString(),
-			shrinkableAddString()
+			shrinkableAddCC(),
+			shrinkableAddCC()
 		);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			String result = seq.run("");
@@ -114,15 +129,15 @@ class ShrinkableActionSequenceTests {
 	void actionsWithFailingPreconditionsAreShrunkAway() {
 		List<Shrinkable<Action<String>>> actions = asList(
 			shrinkableFailingPrecondition(),
-			shrinkableAddString(),
+			shrinkableAddCC(),
 			shrinkableAddX(),
 			shrinkableFailingPrecondition(),
-			shrinkableAddString(),
+			shrinkableAddCC(),
 			shrinkableFailingPrecondition(),
 			shrinkableFailingPrecondition(),
-			shrinkableAddString()
+			shrinkableAddCC()
 		);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			String result = seq.run("");
@@ -136,8 +151,8 @@ class ShrinkableActionSequenceTests {
 
 	@Property(tries = 100)
 	void alwaysShrinkToSingleAction(@ForAll("stringActions") @Size(max = 50) List<Shrinkable<Action<String>>> actions) {
-		actions.add(shrinkableAddX());
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actions);
+		actions.add(shrinkableAddX()); // to ensure that at least one action is valid
+		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
 		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
 			String result = seq.run("");
@@ -151,7 +166,7 @@ class ShrinkableActionSequenceTests {
 
 	@Provide
 	Arbitrary<List<Shrinkable<Action<String>>>> stringActions() {
-		return Arbitraries.of(shrinkableAddString(), shrinkableAddX(), shrinkableFailingPrecondition()).list();
+		return Arbitraries.of(shrinkableAddCC(), shrinkableAddX(), shrinkableFailingPrecondition()).list();
 	}
 
 	private Shrinkable<Action<String>> shrinkableFailingPrecondition() {
@@ -176,10 +191,17 @@ class ShrinkableActionSequenceTests {
 			.map(aString -> model -> model + aString);
 	}
 
-	private Shrinkable<Action<String>> shrinkableAddString() {
+	private Shrinkable<Action<String>> shrinkableAddCC() {
 		return ShrinkableStringTests
 			.createShrinkableString("cc", 2)
 			.map(aString -> model -> model + aString);
+	}
+
+	private Shrinkable<ActionSequence<String>> createAndRunShrinkableSequence(List<Shrinkable<Action<String>>> actions) {
+		ActionGenerator<String> actionGenerator = new ShrinkablesActionGenerator<>(actions);
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, actions.size(), ShrinkingDistance.of(2));
+		shrinkable.value().run("");
+		return shrinkable;
 	}
 
 }

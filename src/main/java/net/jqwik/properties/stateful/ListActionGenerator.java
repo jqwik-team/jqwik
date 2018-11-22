@@ -5,11 +5,11 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-public class NListActionGenerator<T> implements NActionGenerator<T> {
+public class ListActionGenerator<T> implements ActionGenerator<T> {
 	private final Iterator<Action<T>> iterator;
 	private List<Shrinkable<Action<T>>> generated = new ArrayList<>();
 
-	public NListActionGenerator(List<Action<T>> listOfActions) {
+	public ListActionGenerator(List<Action<T>> listOfActions) {
 		iterator = listOfActions.iterator();
 	}
 
