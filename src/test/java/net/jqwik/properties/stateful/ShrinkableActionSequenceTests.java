@@ -34,7 +34,7 @@ class ShrinkableActionSequenceTests {
 
 		ActionSequence<String> sequence = shrinkable.value();
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.NOT_RUN);
-		assertThat(sequence.size()).isEqualTo(2);
+		assertThat(sequence.toString()).contains("2 actions intended");
 	}
 
 	@Example
@@ -45,7 +45,7 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		assertThat(shrinkable.value().state()).isEqualTo("ccx");
+		assertThat(shrinkable.value().finalModel()).isEqualTo("ccx");
 		assertThat(shrinkable.value().runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
 	}
@@ -73,7 +73,7 @@ class ShrinkableActionSequenceTests {
 		verify(valueReporter, times(3)).accept(any(ActionSequence.class));
 		assertThat(sequence.next(count, reporter)).isFalse();
 
-		assertThat(sequence.current().value().size()).isEqualTo(1);
+		assertThat(sequence.current().value().runActions()).hasSize(1);
 		assertThat(sequence.current().value().run("")).isEqualTo("x");
 
 		assertThat(counter.get()).isEqualTo(3);
@@ -97,8 +97,9 @@ class ShrinkableActionSequenceTests {
 
 		while (sequence.next(count, reporter)) ;
 
-		assertThat(sequence.current().value().size()).isEqualTo(1);
-		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+		ActionSequence<String> shrunkValue = sequence.current().value();
+		assertThat(shrunkValue.runActions()).hasSize(1);
+		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
 
 	@Example
@@ -121,8 +122,9 @@ class ShrinkableActionSequenceTests {
 
 		while (sequence.next(count, reporter)) ;
 
-		assertThat(sequence.current().value().size()).isEqualTo(1);
-		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+		ActionSequence<String> shrunkValue = sequence.current().value();
+		assertThat(shrunkValue.runActions()).hasSize(1);
+		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
 
 	@Example
@@ -146,7 +148,9 @@ class ShrinkableActionSequenceTests {
 
 		while (sequence.next(count, reporter)) ;
 
-		assertThat(sequence.current().value().run("")).isEqualTo("aa");
+		ActionSequence<String> shrunkValue = sequence.current().value();
+		assertThat(shrunkValue.runActions()).hasSize(1);
+		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
 
 	@Property(tries = 100)

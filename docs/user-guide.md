@@ -2377,7 +2377,8 @@ the external data was conceived or generated.
 - Added [`Arbitraries.recursive()`](#deterministic-recursion-with-recursive)
 - Integral number generation generates a few more edge cases
 - You can use `@Size(int size)` to [constrain the generation](#number-of-actions)
-  of `ActionSequence` parameters.
+  of `ActionSequence` parameters
+- Some incompatible changes to the `ActionSequence` interface
 
 ### 0.9.2
 

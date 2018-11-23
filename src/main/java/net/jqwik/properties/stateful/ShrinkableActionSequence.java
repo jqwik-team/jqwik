@@ -32,12 +32,12 @@ public class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>
 		return shrinkSequenceOfActions(falsifier)
 			.andThen(shrinkableList -> { //
 				ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkableList;
-				Falsifier<List<Action<T>>> listFalsifier = list -> falsifier.test(toActionSequence(list));
+				Falsifier<List<Action<T>>> listFalsifier = list -> falsifier.test(toRunnableActionSequence(list));
 				return shrinkIndividualActions(shrinkableSequence, listFalsifier)
 					// Shrink list of actions again since element shrinking
 					// might have made some actions unnecessary
 					.andThen(shrinkListOfActions(listFalsifier))
-					.mapValue(this::toActionSequence);
+					.mapValue(this::toDisplayOnlyActionSequence);
 			});
 
 	}
@@ -67,9 +67,13 @@ public class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>
 		);
 	}
 
-	private ActionSequence<T> toActionSequence(List<Action<T>> listOfActions) {
+	private ActionSequence<T> toDisplayOnlyActionSequence(List<Action<T>> listOfActions) {
+		return new DisplayOnlyFailedActionSequence<>(listOfActions);
+	}
+
+	private ActionSequence<T> toRunnableActionSequence(List<Action<T>> listOfActions) {
 		ActionGenerator<T> newActionGenerator = new ListActionGenerator<>(listOfActions);
-		return new SequentialActionSequence<>(newActionGenerator, listOfActions.size());
+		return new SequentialActionSequence<T>(newActionGenerator, listOfActions.size());
 	}
 
 	private ShrinkableActionSequence<T> toShrinkableActionSequence(List<Shrinkable<Action<T>>> list) {
