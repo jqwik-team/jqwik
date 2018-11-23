@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import org.assertj.core.api.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
@@ -29,6 +30,12 @@ class SequentialActionSequenceTests {
 		assertThat(result).isEqualTo(144);
 		assertThat(result).isEqualTo(sequence.finalModel());
 		assertThat(sequence.runActions()).hasSize(3);
+	}
+
+	@Example
+	void runThrowsExceptionIfNotAtLeastOneActionCanBeGenerated() {
+		SequentialActionSequence<Integer> sequence = createSequence(10);
+		assertThatThrownBy(() -> sequence.run(42)).isInstanceOf(JqwikException.class);
 	}
 
 	@Example

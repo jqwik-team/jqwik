@@ -7,6 +7,8 @@ import net.jqwik.api.stateful.*;
 
 public class RandomActionGenerator<T> implements ActionGenerator<T> {
 
+	private static final int MAX_TRIES = 1000;
+
 	private final RandomGenerator<Action<T>> randomGenerator;
 	private final Random random;
 	private List<Shrinkable<Action<T>>> shrinkableActions = new ArrayList<>();
@@ -18,7 +20,8 @@ public class RandomActionGenerator<T> implements ActionGenerator<T> {
 
 	@Override
 	public Action<T> next(T model) {
-		while (true) {
+		int tries = 0;
+		while (tries++ < MAX_TRIES) {
 			Shrinkable<Action<T>> shrinkable = randomGenerator.next(random);
 			boolean precondition = shrinkable.value().precondition(model);
 			if (!precondition) {
@@ -27,6 +30,8 @@ public class RandomActionGenerator<T> implements ActionGenerator<T> {
 			shrinkableActions.add(shrinkable);
 			return shrinkable.value();
 		}
+		String message = String.format("Could not find action with succeeding precondition after %s tries", tries);
+		throw new NoSuchElementException(message);
 	}
 
 	@Override
