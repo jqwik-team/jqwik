@@ -7,19 +7,21 @@ import net.jqwik.api.stateful.*;
 
 class ActionSequenceGenerator<M> implements RandomGenerator<ActionSequence<M>> {
 	private final int genSize;
-	private final int numberOfActions;
+	private final int minSize;
+	private final int maxSize;
 	private final Arbitrary<Action<M>> actionArbitrary;
 
-	ActionSequenceGenerator(Arbitrary<Action<M>> actionArbitrary, int genSize, int numberOfActions) {
+	ActionSequenceGenerator(Arbitrary<Action<M>> actionArbitrary, int genSize, int minSize, int maxSize) {
 		this.actionArbitrary = actionArbitrary;
 		this.genSize = genSize;
-		this.numberOfActions = numberOfActions;
+		this.minSize = minSize;
+		this.maxSize = maxSize;
 	}
 
 	@Override
 	public Shrinkable<ActionSequence<M>> next(Random random) {
 		ActionGenerator<M> actionGenerator = new RandomActionGenerator<>(actionArbitrary, genSize, random);
-		return new ShrinkableActionSequence<>(actionGenerator, numberOfActions, ShrinkingDistance.of(numberOfActions));
+		return new ShrinkableActionSequence<>(actionGenerator, minSize, maxSize, ShrinkingDistance.of(maxSize));
 	}
 
 }

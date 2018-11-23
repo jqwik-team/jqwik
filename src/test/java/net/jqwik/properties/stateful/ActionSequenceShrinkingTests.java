@@ -22,8 +22,24 @@ class ActionSequenceShrinkingTests {
 
 		while(sequence.next(() -> {}, ignore -> {}));
 		ActionSequence<String> shrunkValue = sequence.current().value();
-		String result = shrunkValue.run("");
-		Assertions.assertThat(result).isEqualTo("x");
+		Assertions.assertThat(shrunkValue.runActions()).hasSize(1);
+		Assertions.assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("x");
+	}
+
+	@Example
+	void dontShrinkUnderMinSize(@ForAll Random random) {
+		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX()).ofMinSize(3);
+		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
+		shrinkable.value().run(""); // to setup sequence
+
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(value -> {
+			value.run("");
+			throw new AssertionError();
+		});
+
+		while(sequence.next(() -> {}, ignore -> {}));
+		ActionSequence<String> shrunkValue = sequence.current().value();
+		Assertions.assertThat(shrunkValue.runActions()).hasSize(3);
 	}
 
 	private Arbitrary<Action<String>> addX() {

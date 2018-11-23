@@ -5,10 +5,10 @@ import java.util.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.support.*;
 
-public class DisplayOnlyFailedActionSequence<M> implements ActionSequence<M> {
+class DisplayOnlyFailedActionSequence<M> implements ActionSequence<M> {
 	private final List<Action<M>> listOfActions;
 
-	public <T> DisplayOnlyFailedActionSequence(List<Action<M>> listOfActions) {
+	<T> DisplayOnlyFailedActionSequence(List<Action<M>> listOfActions) {
 		this.listOfActions = listOfActions;
 	}
 

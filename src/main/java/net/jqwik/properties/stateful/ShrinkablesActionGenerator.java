@@ -5,12 +5,12 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-public class ShrinkablesActionGenerator<T> implements ActionGenerator<T> {
+class ShrinkablesActionGenerator<T> implements ActionGenerator<T> {
 
 	private final Iterator<Shrinkable<Action<T>>> iterator;
 	private List<Shrinkable<Action<T>>> shrinkables = new ArrayList<>();
 
-	public ShrinkablesActionGenerator(List<Shrinkable<Action<T>>> shrinkables) {
+	ShrinkablesActionGenerator(List<Shrinkable<Action<T>>> shrinkables) {
 		iterator = shrinkables.iterator();
 	}
 

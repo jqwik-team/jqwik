@@ -8,18 +8,20 @@ import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.shrinking.*;
 
-public class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
+class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 
 	private final ComprehensiveListShrinkingCandidates listShrinkingCandidates = new ComprehensiveListShrinkingCandidates();
 
 	private final ActionSequence<T> value;
 	private final ActionGenerator<T> actionGenerator;
+	private final int minSize;
 	private final ShrinkingDistance distance;
 
-	public ShrinkableActionSequence(ActionGenerator<T> actionGenerator, int size, ShrinkingDistance distance) {
+	ShrinkableActionSequence(ActionGenerator<T> actionGenerator, int minSize, int maxSize, ShrinkingDistance distance) {
 		this.actionGenerator = actionGenerator;
+		this.minSize = minSize;
 		this.distance = distance;
-		this.value = new SequentialActionSequence<>(actionGenerator, size);
+		this.value = new SequentialActionSequence<>(actionGenerator, maxSize);
 	}
 
 	@Override
@@ -29,10 +31,13 @@ public class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>
 
 	@Override
 	public ShrinkingSequence<ActionSequence<T>> shrink(Falsifier<ActionSequence<T>> falsifier) {
-		return shrinkSequenceOfActions(falsifier)
+		Falsifier<ActionSequence<T>> minRespectingFalsifier =
+			falsifier.withPostFilter(actionSequence -> actionSequence.runActions().size() >= minSize);
+
+		return shrinkSequenceOfActions(minRespectingFalsifier)
 			.andThen(shrinkableList -> { //
 				ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkableList;
-				Falsifier<List<Action<T>>> listFalsifier = list -> falsifier.test(toRunnableActionSequence(list));
+				Falsifier<List<Action<T>>> listFalsifier = list -> minRespectingFalsifier.test(toRunnableActionSequence(list));
 				return shrinkIndividualActions(shrinkableSequence, listFalsifier)
 					// Shrink list of actions again since element shrinking
 					// might have made some actions unnecessary
@@ -79,8 +84,7 @@ public class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>
 	private ShrinkableActionSequence<T> toShrinkableActionSequence(List<Shrinkable<Action<T>>> list) {
 		ActionGenerator<T> newGenerator = new ShrinkablesActionGenerator<>(list);
 		ShrinkingDistance newDistance = ShrinkingDistance.forCollection(list);
-		return new ShrinkableActionSequence<>(newGenerator, list
-			.size(), newDistance);
+		return new ShrinkableActionSequence<>(newGenerator, 1, list.size(), newDistance);
 	}
 
 	private DeepSearchShrinkingSequence<ActionSequence<T>> shrinkSequenceOfActions(Falsifier<ActionSequence<T>> falsifier) {

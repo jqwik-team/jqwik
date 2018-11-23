@@ -8,7 +8,7 @@ import org.assertj.core.api.*;
 class MyStringStackProperties {
 
 	@Property @Report(Reporting.GENERATED)
-	void checkMyStack(@ForAll("sequences") @Size(10) ActionSequence<MyStringStack> actions) {
+	void checkMyStack(@ForAll("sequences") @Size(max = 10) ActionSequence<MyStringStack> actions) {
 		actions.run(new MyStringStack());
 	}
 

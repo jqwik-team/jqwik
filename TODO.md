@@ -1,5 +1,3 @@
-- Bug: ActionSequenceShrinkingTests.remainingActionsAreShrunkThemselves
-
 - Stateless Testing
     - Let action generation access the model state?
       E.g. to use a name that’s already been added to a store.

@@ -28,7 +28,7 @@ class ShrinkableActionSequenceTests {
 			shrinkableAddX()
 		);
 		ActionGenerator<String> actionGenerator = new ShrinkablesActionGenerator<>(actions);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, actions.size(), ShrinkingDistance.of(2));
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, 1, actions.size(), ShrinkingDistance.of(2));
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2));
 
@@ -203,7 +203,7 @@ class ShrinkableActionSequenceTests {
 
 	private Shrinkable<ActionSequence<String>> createAndRunShrinkableSequence(List<Shrinkable<Action<String>>> actions) {
 		ActionGenerator<String> actionGenerator = new ShrinkablesActionGenerator<>(actions);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, actions.size(), ShrinkingDistance.of(2));
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, 1, actions.size(), ShrinkingDistance.of(2));
 		shrinkable.value().run("");
 		return shrinkable;
 	}
