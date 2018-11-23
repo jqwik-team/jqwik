@@ -50,4 +50,15 @@ class SizeProperties {
 		return aValue.size() <= 7;
 	}
 
+	@Property
+	boolean worksForActionSequences(@ForAll("actions") @Size(max = 7) ActionSequence<Integer> sequence) {
+		Integer result = sequence.run(0);
+		return result >= 1 && result <= 7;
+	}
+
+	@Provide
+	Arbitrary<ActionSequence<Integer>> actions() {
+		return Arbitraries.sequences(Arbitraries.constant(model -> model + 1));
+	}
+
 }
