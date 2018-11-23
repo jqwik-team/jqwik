@@ -1679,10 +1679,13 @@ to generate using either the fluent interface or the `@Size` annotation:
 ```java
 @Property
 // check stack with sequences of 7 actions:
-void checkMyStack(@ForAll("sequences") @Size(7) ActionSequence<MyStringStack> actions) {
+void checkMyStack(@ForAll("sequences") @Size(max = 7) ActionSequence<MyStringStack> actions) {
     actions.run(new MyStringStack());
 }
 ```
+
+The minimum number of generated actions in a sequence is 1 since checking
+an empty sequence does not make sense.
 
 ### Check Invariants
 
@@ -2376,7 +2379,7 @@ the external data was conceived or generated.
 - Added [`Arbitraries.frequencyOf()`](#randomly-choosing-among-arbitraries)
 - Added [`Arbitraries.recursive()`](#deterministic-recursion-with-recursive)
 - Integral number generation generates a few more edge cases
-- You can use `@Size(int size)` to [constrain the generation](#number-of-actions)
+- You can use `@Size` to [constrain the generation](#number-of-actions)
   of `ActionSequence` parameters
 - Some incompatible changes to the `ActionSequence` interface
 

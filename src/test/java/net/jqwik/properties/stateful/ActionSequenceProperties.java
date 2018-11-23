@@ -1,6 +1,7 @@
 package net.jqwik.properties.stateful;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
 import org.assertj.core.api.*;
 import org.opentest4j.*;
@@ -10,12 +11,12 @@ import java.util.*;
 class ActionSequenceProperties {
 
 	@Property
-	void createdSequencesDoTheirWork(@ForAll("xOrY") ActionSequence<String> actions) {
-		String result = actions.run("");
+	void createdSequencesDoTheirWork(@ForAll("xOrY") @Size(min = 2) ActionSequence<String> sequence) {
+		String result = sequence.run("");
 
-		Assertions.assertThat(result).hasSize(actions.runActions().size());
-		Assertions.assertThat(result).contains("x");
-		Assertions.assertThat(result).contains("y");
+		Assertions.assertThat(sequence.runActions().size()).isGreaterThanOrEqualTo(2);
+		Assertions.assertThat(result).hasSize(sequence.runActions().size());
+		Assertions.assertThat(result.contains("x") || result.contains("y")).isTrue();
 	}
 
 	@Property

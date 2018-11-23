@@ -1,11 +1,15 @@
 package net.jqwik.api.stateful;
 
-import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 
-public interface ActionSequenceArbitrary<M> extends Arbitrary<ActionSequence<M>> {
+public interface ActionSequenceArbitrary<M> extends SizableArbitrary<ActionSequence<M>> {
 
-	/**
-	 * Set the number of actions in a generated sequence to {@code size}.
-	 */
-	ActionSequenceArbitrary<M> ofSize(int size);
+	ActionSequenceArbitrary<M> ofMinSize(int minSize);
+
+	ActionSequenceArbitrary<M> ofMaxSize(int maxSize);
+
+	default ActionSequenceArbitrary<M> ofSize(int size) {
+		return ofMinSize(size).ofMaxSize(size);
+	}
+
 }

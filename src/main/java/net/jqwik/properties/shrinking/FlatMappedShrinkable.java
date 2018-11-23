@@ -1,28 +1,30 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.api.*;
-
 import java.util.*;
 import java.util.function.*;
+
+import net.jqwik.api.*;
 
 public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private final Shrinkable<T> toMap;
-	private final Function<T, Arbitrary<U>> mapper;
-	private final int genSize;
+	private final Function<T, RandomGenerator<U>> mapper;
 	private final long randomSeed;
 	private final Shrinkable<U> shrinkable;
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> mapper, int genSize, long randomSeed) {
+		this(toMap, value -> mapper.apply(value).generator(genSize), randomSeed);
+	}
+
+	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, RandomGenerator<U>> mapper, long randomSeed) {
 		this.toMap = toMap;
 		this.mapper = mapper;
-		this.genSize = genSize;
 		this.randomSeed = randomSeed;
 		this.shrinkable = generateShrinkable(toMap.value());
 	}
 
 	private Shrinkable<U> generateShrinkable(T value) {
-		RandomGenerator<U> generator = mapper.apply(value).generator(genSize);
+		RandomGenerator<U> generator = mapper.apply(value);
 		return generator.next(new Random(randomSeed));
 	}
 
@@ -30,7 +32,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
 		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
 		return toMap.shrink(toMapFalsifier) //
-					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, genSize, randomSeed))) //
+					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, randomSeed))) //
 					.andThen(aShrinkable -> {
 						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
 						return flatMappedShrinkable.shrinkable.shrink(falsifier);
