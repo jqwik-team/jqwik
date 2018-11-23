@@ -1,8 +1,8 @@
 package net.jqwik.api;
 
-import org.opentest4j.*;
-
 import java.util.function.*;
+
+import org.opentest4j.*;
 
 @FunctionalInterface
 public interface Falsifier<T> extends Predicate<T> {
@@ -13,6 +13,19 @@ public interface Falsifier<T> extends Predicate<T> {
 				throw new TestAbortedException();
 			}
 			return this.test(t);
+		};
+	}
+
+	default Falsifier<T> withPostFilter(Predicate<T> filter) {
+		return t -> {
+			try {
+				boolean result = this.test(t);
+				return result;
+			} finally {
+				if (!filter.test(t)) {
+					throw new TestAbortedException();
+				}
+			}
 		};
 	}
 

@@ -3,7 +3,6 @@ package net.jqwik.properties.stateful;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.properties.arbitraries.*;
-import net.jqwik.properties.arbitraries.randomized.*;
 
 public class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase implements ActionSequenceArbitrary<M> {
 
@@ -35,9 +34,7 @@ public class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase imp
 		final int effectiveMaxSize =
 			maxSize != 0 ? maxSize
 				: (int) Math.max(Math.round(Math.sqrt(genSize)), 10);
-		RandomGenerator<Integer> sizeGenerator = RandomGenerators.integers(minSize, effectiveMaxSize);
-		return sizeGenerator.flatMap(
-			size -> new ActionSequenceGenerator<>(actionArbitrary, genSize, size));
+		return new ActionSequenceGenerator<>(actionArbitrary, genSize, minSize, effectiveMaxSize);
 	}
 
 }

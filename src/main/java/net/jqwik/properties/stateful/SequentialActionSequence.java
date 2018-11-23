@@ -9,7 +9,7 @@ import net.jqwik.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.support.*;
 
-public class SequentialActionSequence<M> implements ActionSequence<M> {
+class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	private final ActionGenerator<M> actionGenerator;
 	private final int intendedSize;
@@ -19,7 +19,7 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	private RunState runState = RunState.NOT_RUN;
 	private M currentModel = null;
 
-	public SequentialActionSequence(ActionGenerator<M> actionGenerator, int intendedSize) {
+	SequentialActionSequence(ActionGenerator<M> actionGenerator, int intendedSize) {
 		if (intendedSize < 1) {
 			throw new IllegalArgumentException("The intended size of an ActionSequence must not be 0");
 		}

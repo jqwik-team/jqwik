@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-public class RandomActionGenerator<T> implements ActionGenerator<T> {
+class RandomActionGenerator<T> implements ActionGenerator<T> {
 
 	private static final int MAX_TRIES = 1000;
 
@@ -13,7 +13,7 @@ public class RandomActionGenerator<T> implements ActionGenerator<T> {
 	private final Random random;
 	private List<Shrinkable<Action<T>>> shrinkableActions = new ArrayList<>();
 
-	public RandomActionGenerator(Arbitrary<Action<T>> actionArbitrary, int genSize, Random random) {
+	RandomActionGenerator(Arbitrary<Action<T>> actionArbitrary, int genSize, Random random) {
 		this.random = random;
 		this.randomGenerator = actionArbitrary.generator(genSize);
 	}
