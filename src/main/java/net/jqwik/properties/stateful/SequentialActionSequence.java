@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import org.opentest4j.*;
 
+import net.jqwik.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.support.*;
 
@@ -19,6 +20,9 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	private M currentModel = null;
 
 	public SequentialActionSequence(ActionGenerator<M> actionGenerator, int intendedSize) {
+		if (intendedSize < 1) {
+			throw new IllegalArgumentException("The intended size of an ActionSequence must not be 0");
+		}
 		this.actionGenerator = actionGenerator;
 		this.intendedSize = intendedSize;
 	}
@@ -55,6 +59,9 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 				assertionFailedError.setStackTrace(t.getStackTrace());
 				throw assertionFailedError;
 			}
+		}
+		if (sequence.isEmpty()) {
+			throw new JqwikException("Could not generated a single action. At least 1 is required.");
 		}
 		runState = RunState.SUCCEEDED;
 		return currentModel;
