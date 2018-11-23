@@ -27,8 +27,8 @@ class SequentialActionSequenceTests {
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
 
 		assertThat(result).isEqualTo(144);
-		assertThat(result).isEqualTo(sequence.state());
-		assertThat(sequence.runSequence()).hasSize(3);
+		assertThat(result).isEqualTo(sequence.finalModel());
+		assertThat(sequence.runActions()).hasSize(3);
 	}
 
 	@Example
@@ -43,8 +43,8 @@ class SequentialActionSequenceTests {
 		int result = sequence.run(0);
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
 		assertThat(result).isEqualTo(121);
-		assertThat(result).isEqualTo(sequence.state());
-		assertThat(sequence.runSequence()).hasSize(3);
+		assertThat(result).isEqualTo(sequence.finalModel());
+		assertThat(sequence.runActions()).hasSize(3);
 	}
 
 	@Example
@@ -61,8 +61,8 @@ class SequentialActionSequenceTests {
 		).isInstanceOf(AssertionError.class);
 
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
-		assertThat(sequence.state()).isEqualTo(11);
-		assertThat(sequence.runSequence()).hasSize(3);
+		assertThat(sequence.finalModel()).isEqualTo(11);
+		assertThat(sequence.runActions()).hasSize(3);
 	}
 
 	@Example
@@ -76,8 +76,8 @@ class SequentialActionSequenceTests {
 		sequence.run(1);
 
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
-		assertThat(sequence.state()).isEqualTo(131);
-		assertThat(sequence.runSequence()).hasSize(3);
+		assertThat(sequence.finalModel()).isEqualTo(131);
+		assertThat(sequence.runActions()).hasSize(3);
 	}
 
 	@Example
@@ -93,8 +93,8 @@ class SequentialActionSequenceTests {
 		).isInstanceOf(AssertionError.class);
 
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
-		assertThat(sequence.state()).isEqualTo(100);
-		assertThat(sequence.runSequence()).hasSize(2);
+		assertThat(sequence.finalModel()).isEqualTo(100);
+		assertThat(sequence.runActions()).hasSize(2);
 	}
 
 	private Function<Integer, Action<Integer>> preconditionBelow10() {

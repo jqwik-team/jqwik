@@ -11,40 +11,40 @@ import net.jqwik.support.*;
 public class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	private final ActionGenerator<M> actionGenerator;
-	private final int size;
+	private final int intendedSize;
 	private final List<Action<M>> sequence = new ArrayList<>();
 	private final List<Invariant<M>> invariants = new ArrayList<>();
 
 	private RunState runState = RunState.NOT_RUN;
-	private M state = null;
+	private M currentModel = null;
 
-	public SequentialActionSequence(ActionGenerator<M> actionGenerator, int size) {
+	public SequentialActionSequence(ActionGenerator<M> actionGenerator, int intendedSize) {
 		this.actionGenerator = actionGenerator;
-		this.size = size;
+		this.intendedSize = intendedSize;
 	}
 
 	@Override
-	public synchronized List<Action<M>> runSequence() {
+	public synchronized List<Action<M>> runActions() {
 		return sequence;
 	}
 
 	@Override
 	public synchronized M run(M model) {
 		if (runState != RunState.NOT_RUN) {
-			return state;
+			return currentModel;
 		}
 		runState = RunState.RUNNING;
-		state = model;
-		for (int i = 0; i < size; i++) {
+		currentModel = model;
+		for (int i = 0; i < intendedSize; i++) {
 			Action<M> action;
 			try {
-				action = actionGenerator.next(state);
+				action = actionGenerator.next(currentModel);
 			} catch (NoSuchElementException nsee) {
 				break;
 			}
 			sequence.add(action);
 			try {
-				state = action.run(state);
+				currentModel = action.run(currentModel);
 				checkInvariants();
 			} catch (InvariantFailedError ife) {
 				runState = RunState.FAILED;
@@ -57,13 +57,13 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 			}
 		}
 		runState = RunState.SUCCEEDED;
-		return state;
+		return currentModel;
 	}
 
 	private void checkInvariants() {
 		try {
 			for (Invariant<M> invariant : invariants) {
-				invariant.check(state);
+				invariant.check(currentModel);
 			}
 		} catch (Throwable t) {
 			throw new InvariantFailedError(createErrorMessage("Invariant", t.getMessage()), t);
@@ -76,10 +76,10 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 			.map(aTry -> "    " + aTry.toString()) //
 			.collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
-			"%s failed after following actions:%n%s%n  final state: %s%n%s",
+			"%s failed after following actions:%n%s%n  final currentModel: %s%n%s",
 			name,
 			actionsString,
-			JqwikStringSupport.displayString(state),
+			JqwikStringSupport.displayString(currentModel),
 			causeMessage
 		);
 	}
@@ -92,24 +92,21 @@ public class SequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	@Override
-	public int size() {
-		return size;
-	}
-
-	@Override
 	public RunState runState() {
 		return runState;
 	}
 
 	@Override
-	public synchronized M state() {
-		return state;
+	public synchronized M finalModel() {
+		return currentModel;
 	}
 
 	@Override
 	public String toString() {
-		String stateString = runState.name();
+		if (runState == RunState.NOT_RUN) {
+			return String.format("ActionSequence[%s]: %s actions intended", runState.name(), intendedSize);
+		}
 		String actionsString = JqwikStringSupport.displayString(sequence);
-		return String.format("%s (%s) [%s]:%s", this.getClass().getSimpleName(), size, stateString, actionsString);
+		return String.format("ActionSequence[%s]: %s", runState.name(), actionsString);
 	}
 }

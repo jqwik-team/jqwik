@@ -1,7 +1,6 @@
-- Bug: MyStringStackProperties.checkMyStackWithInvariant:
-  Shrinking: Last falsified values are in [NOT_RUN] state. Why?
-
 - Stateless Testing
+    - Check behaviour if no more actions can be created
+    - Make DefaultActionSequenceArbitrary a SizableArbitrary
     - Let action generation access the model state?
       E.g. to use a name that’s already been added to a store.
     - Special support for FSMs (finite state machines)

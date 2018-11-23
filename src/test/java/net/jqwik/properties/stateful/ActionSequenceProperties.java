@@ -13,7 +13,7 @@ class ActionSequenceProperties {
 	void createdSequencesDoTheirWork(@ForAll("xOrY") ActionSequence<String> actions) {
 		String result = actions.run("");
 
-		Assertions.assertThat(result).hasSize(actions.runSequence().size());
+		Assertions.assertThat(result).hasSize(actions.runActions().size());
 		Assertions.assertThat(result).contains("x");
 		Assertions.assertThat(result).contains("y");
 	}
@@ -21,7 +21,7 @@ class ActionSequenceProperties {
 	@Property
 	void sequencesCanBeSized(@ForAll("ofSize5") ActionSequence<String> actions) {
 		String result = actions.run("");
-		Assertions.assertThat(actions.runSequence()).hasSize(5);
+		Assertions.assertThat(actions.runActions()).hasSize(5);
 	}
 
 	@SuppressWarnings("WeakerAccess")
@@ -39,7 +39,7 @@ class ActionSequenceProperties {
 	void preconditionsAreConsidered(@ForAll("xOrZ") ActionSequence<String> actions) {
 		String result = actions.run("");
 
-		Assertions.assertThat(result).hasSize(actions.runSequence().size());
+		Assertions.assertThat(result).hasSize(actions.runActions().size());
 		Assertions.assertThat(result).contains("x");
 		Assertions.assertThat(result).doesNotContain("z");
 	}
