@@ -93,6 +93,16 @@
 
 ### Properties
 
+- Stateless Properties:
+  - Let action generation access the model state?
+    E.g. to use a name that’s already been added to a store.
+    - Will require involved version of ActionGenerator, e.g. to take
+      Arbitrary<Function<T, Arbitrary<Action<T>>>>
+    - Will shrinking work on that?
+    - Are there other ways to reach the same goal?
+  - Parallel execution of action sequences (see Proper book)
+  - Special support for FSMs (finite state machines)
+
 - Arbitraries.fromSize(Function<Integer, Arbitrary> f) : Arbitrary
   Use current size to influence arbitrary generation
 
