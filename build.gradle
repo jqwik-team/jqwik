@@ -60,6 +60,13 @@ uploadArchives {
 		mavenDeployer {
 
 			if (signArtifacts) {
+				// signing requires credentials in ~/.gradle/gradle.properties:
+				//signing.keyId=<keyId>
+				//signing.password=<keySecretPhrase>
+				//signing.secretKeyRingFile=/Users/<user>/.gnupg/secring.gpg
+				//ossrhUsername=<configured user>
+				//ossrhPassword=<configured password>
+
 				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 			}
 
