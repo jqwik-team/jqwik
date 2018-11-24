@@ -10,7 +10,7 @@ ext {
 }
 
 apply plugin: 'java-library'
-apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = moduleName
@@ -46,70 +46,69 @@ artifacts {
 }
 
 signing {
+	//signing requires credentials in ~/.gradle/gradle.properties:
+	//    signing.keyId=<keyId>
+	//    signing.password=<keySecretPhrase>
+	//    signing.secretKeyRingFile=/Users/<user>/.gnupg/secring.gpg
+	//    ossrhUsername=<configured user>
+	//    ossrhPassword=<configured password>
 	sign configurations.archives
 }
 
-def isSnapshot = project.version.contains('SNAPSHOT')
-def signArtifacts = !isSnapshot
+publishing {
 
-uploadArchives {
-
-	dependsOn check
-
-	repositories {
-		mavenDeployer {
-
-			if (signArtifacts) {
-				// signing requires credentials in ~/.gradle/gradle.properties:
-				//signing.keyId=<keyId>
-				//signing.password=<keySecretPhrase>
-				//signing.secretKeyRingFile=/Users/<user>/.gnupg/secring.gpg
-				//ossrhUsername=<configured user>
-				//ossrhPassword=<configured password>
-
-				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-			}
-
-			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
-			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
-
-			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
-			}
-
-			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
-			}
-
-			pom.project {
-				name 'jqwik'
-				packaging 'jar'
-				description 'jqwik - Property-based testing for the JVM'
-				url 'http://jqwik.net'
-
-				scm {
-					connection 'scm:git:git://github.com/jlink/jqwik.git'
-					developerConnection 'scm:git:git://github.com/jlink/jqwik.git'
-					url 'https://github.com/jlink/jqwik'
-				}
-
+	publications {
+		
+		jqwikApi(MavenPublication) {
+			artifactId = 'jqwik'
+			from components.java
+			artifact sourcesJar
+			artifact javadocJar
+			pom {
+				name = 'jqwik'
+				description = 'jqwik - Property-based testing for the JVM'
+				url = 'https://jqwik.net/'
 				licenses {
 					license {
-						name 'Eclipse Public License - v 2.0'
-						url 'http://www.eclipse.org/legal/epl-v20.html'
+						name = 'Eclipse Public License - v 2.0'
+						url = 'http://www.eclipse.org/legal/epl-v20.html'
 					}
 				}
-
 				developers {
 					developer {
-						id 'jlink'
-						name 'Johannes Link'
-						email 'business@johanneslink.net'
+						id = 'jlink'
+						name = 'Johannes Link'
+						email = 'business@johanneslink.net'
 					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/jlink/jqwik.git'
+					developerConnection = 'scm:git:git://github.com/jlink/jqwik.git'
+					url = 'https://github.com/jlink/jqwik'
 				}
 			}
 		}
 	}
+	repositories {
+		maven {
+			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
+			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
+
+			credentials {
+				username = ossrhUsername
+				password = ossrhPassword
+			}
+
+			// change URLs to point to your repos, e.g. http://my.org/repo
+			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.jqwikApi
 }
 
 compileTestJava {
