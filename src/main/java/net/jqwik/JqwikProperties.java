@@ -62,7 +62,7 @@ public class JqwikProperties {
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFileName);
 		if (inputStream == null) {
 			LOG.info(String.format("No Jqwik properties file [%s] found.", propertiesFileName));
-			return;
+			inputStream = new ByteArrayInputStream("".getBytes());
 		}
 
 		Properties properties = new Properties();

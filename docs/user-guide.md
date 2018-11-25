@@ -2382,6 +2382,7 @@ the external data was conceived or generated.
 - You can use `@Size` to [constrain the generation](#number-of-actions)
   of `ActionSequence` parameters
 - Some incompatible changes to the `ActionSequence` interface
+- jqwik.jar does no longer deliver a jqwik.properties file in its classpath
 
 ### 0.9.2
 

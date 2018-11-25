@@ -6,10 +6,11 @@ import net.jqwik.api.*;
 
 class JqwikPropertiesTests {
 
-	private JqwikProperties properties = new JqwikProperties();
+	private JqwikProperties properties;
 
 	@Example
 	void defaultValues() {
+		properties = new JqwikProperties("nosuchfile.properties");
 
 		assertThat(properties.rerunFailuresWithSameSeed()).isEqualTo(true);
 		assertThat(properties.runFailuresFirst()).isEqualTo(false);
