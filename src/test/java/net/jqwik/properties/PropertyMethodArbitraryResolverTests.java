@@ -81,7 +81,7 @@ class PropertyMethodArbitraryResolverTests {
 			final List<Arbitrary> configured = new ArrayList<>();
 			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
-				public Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations) {
+				public Arbitrary<?> configure(Arbitrary<?> arbitrary, TypeUsage targetType) {
 					configured.add(arbitrary);
 					return arbitrary;
 				}
@@ -193,7 +193,7 @@ class PropertyMethodArbitraryResolverTests {
 			final List<Arbitrary> configured = new ArrayList<>();
 			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
-				public Arbitrary<?> configure(Arbitrary<?> arbitrary, List<Annotation> annotations) {
+				public Arbitrary<?> configure(Arbitrary<?> arbitrary, TypeUsage targetType) {
 					configured.add(arbitrary);
 					return arbitrary;
 				}

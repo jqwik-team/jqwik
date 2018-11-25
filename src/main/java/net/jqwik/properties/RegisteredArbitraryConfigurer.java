@@ -1,11 +1,10 @@
 package net.jqwik.properties;
 
-import java.lang.annotation.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
+import net.jqwik.api.providers.*;
 
 public class RegisteredArbitraryConfigurer {
 
@@ -15,34 +14,33 @@ public class RegisteredArbitraryConfigurer {
 		this.registeredConfigurators = registeredConfigurators;
 	}
 
-	public Arbitrary<?> configure(Arbitrary<?> createdArbitrary, List<Annotation> annotations) {
-		List<Annotation> configurationAnnotations = configurationAnnotations(annotations);
-		if (!configurationAnnotations.isEmpty()) {
+	public Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage targetType) {
+		if (hasConfigurationAnnotation(targetType)) {
 			for (ArbitraryConfigurator arbitraryConfigurator : registeredConfigurators) {
 				// TODO: This condition exists 3 times
 				if (createdArbitrary instanceof SelfConfiguringArbitrary) {
-					createdArbitrary = performSelfConfiguration(createdArbitrary, arbitraryConfigurator, annotations);
+					createdArbitrary = performSelfConfiguration(createdArbitrary, arbitraryConfigurator, targetType);
 				} else {
-					createdArbitrary = arbitraryConfigurator.configure(createdArbitrary, configurationAnnotations);
+					createdArbitrary = arbitraryConfigurator.configure(createdArbitrary, targetType);
 				}
 			}
 		}
 		return createdArbitrary;
 	}
 
+	private boolean hasConfigurationAnnotation(TypeUsage targetType) {
+		return targetType.getAnnotations().stream()
+						 .anyMatch(annotation -> !annotation.annotationType().equals(ForAll.class));
+	}
+
 	private <T> Arbitrary<T> performSelfConfiguration(
 		Arbitrary<T> arbitrary,
 		ArbitraryConfigurator configurator,
-		List<Annotation> annotations
+		TypeUsage parameter
 	) {
 		@SuppressWarnings("unchecked")
 		SelfConfiguringArbitrary<T> selfConfiguringArbitrary = (SelfConfiguringArbitrary<T>) arbitrary;
-		return selfConfiguringArbitrary.configure(configurator, annotations);
+		return selfConfiguringArbitrary.configure(configurator, parameter);
 	}
 
-	private List<Annotation> configurationAnnotations(List<Annotation> annotations) {
-		return annotations.stream() //
-				.filter(annotation -> !annotation.annotationType().equals(ForAll.class)) //
-				.collect(Collectors.toList());
-	}
 }

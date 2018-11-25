@@ -2,6 +2,7 @@ package net.jqwik.api.providers;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.math.*;
 import java.util.*;
 
 import net.jqwik.*;
@@ -22,6 +23,7 @@ class TypeUsageTests {
 	@Example
 	void isAssignable() {
 		assertThat(TypeUsage.of(CharSequence.class).isAssignableFrom(String.class)).isTrue();
+		assertThat(TypeUsage.of(BigInteger.class).isAssignableFrom(BigInteger.class)).isTrue();
 		assertThat(TypeUsage.of(String.class).isAssignableFrom(CharSequence.class)).isFalse();
 	}
 

@@ -48,26 +48,26 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		return createForType(typeUsage);
 	}
 
-	private Set<Arbitrary<?>> createForType(TypeUsage typeUsage) {
+	private Set<Arbitrary<?>> createForType(TypeUsage targetType) {
 		final Set<Arbitrary<?>> resolvedArbitraries = new HashSet<>();
 
-		String generatorName = typeUsage.findAnnotation(ForAll.class).map(ForAll::value).orElse("");
-		Optional<Method> optionalCreator = findArbitraryGeneratorByName(typeUsage, generatorName);
+		String generatorName = targetType.findAnnotation(ForAll.class).map(ForAll::value).orElse("");
+		Optional<Method> optionalCreator = findArbitraryGeneratorByName(targetType, generatorName);
 		if (optionalCreator.isPresent()) {
 			Arbitrary<?> createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
 			resolvedArbitraries.add(createdArbitrary);
 		} else if (generatorName.isEmpty()) {
-			resolvedArbitraries.addAll(resolveRegisteredArbitrary(typeUsage));
+			resolvedArbitraries.addAll(resolveRegisteredArbitrary(targetType));
 			if (resolvedArbitraries.isEmpty()) {
-				findFirstFitArbitrary(typeUsage).ifPresent(resolvedArbitraries::add);
+				findFirstFitArbitrary(targetType).ifPresent(resolvedArbitraries::add);
 			}
 		}
 
-		return resolvedArbitraries.stream().map(arbitrary -> configure(arbitrary, typeUsage)).collect(Collectors.toSet());
+		return resolvedArbitraries.stream().map(arbitrary -> configure(arbitrary, targetType)).collect(Collectors.toSet());
 	}
 
-	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage typeUsage) {
-		return registeredArbitraryConfigurer.configure(createdArbitrary, typeUsage.getAnnotations());
+	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage targetType) {
+		return registeredArbitraryConfigurer.configure(createdArbitrary, targetType);
 	}
 
 	private Optional<Method> findArbitraryGeneratorByName(TypeUsage typeUsage, String generatorToFind) {

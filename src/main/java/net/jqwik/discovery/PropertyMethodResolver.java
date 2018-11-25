@@ -92,6 +92,7 @@ class PropertyMethodResolver implements ElementResolver {
 		return testRunData.byUniqueId(uniqueId)
 						  .filter(TestRun::isNotSuccessful)
 						  .map(TestRun::getRandomSeed)
+						  .filter(seed -> !seed.isEmpty())
 						  .orElse(null);
 	}
 

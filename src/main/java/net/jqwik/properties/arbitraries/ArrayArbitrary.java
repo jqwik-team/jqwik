@@ -1,6 +1,5 @@
 package net.jqwik.properties.arbitraries;
 
-import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
@@ -8,6 +7,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
@@ -67,8 +67,8 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 	}
 
 	@Override
-	public Arbitrary<A> configure(ArbitraryConfigurator configurator, List<Annotation> annotations) {
-		elementArbitrary = configurator.configure(elementArbitrary, annotations);
-		return configurator.configure(this, annotations);
+	public Arbitrary<A> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
+		elementArbitrary = configurator.configure(elementArbitrary, targetType);
+		return configurator.configure(this, targetType);
 	}
 }

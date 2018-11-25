@@ -6,6 +6,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
@@ -25,14 +26,14 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 	}
 
 	@Override
-	public Arbitrary<T> configure(ArbitraryConfigurator configurator, List<Annotation> annotations) {
+	public Arbitrary<T> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
 		all.replaceAll(a -> {
 			if (a instanceof SelfConfiguringArbitrary) {
 				// TODO: This condition exists 3 times
 				//noinspection unchecked
-				return ((SelfConfiguringArbitrary) a).configure(configurator, annotations);
+				return ((SelfConfiguringArbitrary) a).configure(configurator, targetType);
 			} else {
-				return configurator.configure(a, annotations);
+				return configurator.configure(a, targetType);
 			}
 		});
 		return this;

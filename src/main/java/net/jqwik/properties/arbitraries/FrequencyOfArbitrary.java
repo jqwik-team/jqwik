@@ -9,6 +9,7 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.configurators.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.properties.arbitraries.exhaustive.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
@@ -41,15 +42,15 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 	}
 
 	@Override
-	public Arbitrary<T> configure(ArbitraryConfigurator configurator, List<Annotation> annotations) {
+	public Arbitrary<T> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
 		frequencies.replaceAll(f -> {
 			Arbitrary<T> configuredArbitrary;
 			if (f.get2() instanceof SelfConfiguringArbitrary) {
 				// TODO: This condition exists 3 times
 				//noinspection unchecked
-				configuredArbitrary =  ((SelfConfiguringArbitrary) f.get2()).configure(configurator, annotations);
+				configuredArbitrary =  ((SelfConfiguringArbitrary) f.get2()).configure(configurator, targetType);
 			} else {
-				configuredArbitrary = configurator.configure(f.get2(), annotations);
+				configuredArbitrary = configurator.configure(f.get2(), targetType);
 			}
 			return Tuple.of(f.get1(), configuredArbitrary);
 		});

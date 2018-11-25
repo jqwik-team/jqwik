@@ -2202,14 +2202,45 @@ boolean oddIntegersOnly(@ForAll @Odd int aNumber) {
 }
 ```
 
-There are two catches, though: 
+There are a few catches, though:
 
-- Currently `OddConfigurator` only works for numbers of type `Integer` or `int`. If you want
-  to generalize it to all integral types, you have to provide additional `configure` methods
-  that accept `ByteInteger`, `ShortInteger` and so on as their first parameter.
+- Currently `OddConfigurator` will accept any target type since type erasure
+  will get rid of `<Integer>` in configure-method's signature at runtime.
+  Therefore, using `@Odd` together with e.g. `BigInteger` will lead to a runtime
+  exception. You can prevent that by explicitly accepting only some target types:
+
+  ```java
+  public class OddConfigurator extends ArbitraryConfiguratorBase {
+
+  	@Override
+  	protected boolean acceptTargetType(TypeUsage targetType) {
+  		return targetType.isAssignableFrom(Integer.class);
+  	}
+
+  	public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, Odd odd) {
+  		return arbitrary.filter(number -> Math.abs(number % 2) == 1);
+  	}
+  }
+  ```
+
+  Alternatively, you could check for the objects type directly and use different
+  filter algorithms:
+
+  ```java
+  	public Arbitrary<Number> configure(Arbitrary<Number> arbitrary, Odd odd) {
+  		return arbitrary.filter(number -> {
+  			if (number instanceof Integer)
+  				return Math.abs((int) number % 2) == 1;
+  			if (number instanceof BigInteger)
+  				return ((BigInteger) number).remainder(BigInteger.valueOf(2)).abs().equals(BigInteger.ONE);
+  			return false;
+  		});
+  	}
+  ```
+
 - You can combine `@Odd` with other annotations like `@Positive` or `@Range` or another
-  self-made configurator. In this case the order of configurator registration might play a role, 
-  because a configurator will potentially change the runtime type of an arbitrary instance.
+  self-made configurator. In this case the order of configurator application might play a role,
+  which can be influenced by overriding the `order()` method of a configurator.
  
 
 ## Implement your own Arbitraries and Generators
@@ -2400,6 +2431,8 @@ useJunitPlatformReporter = false   # Set to fault if you want to use platform re
   `jqwik.properties` file
 - Removed property `rerunFailuresWithSameSeed` and introduced
   [`@Property(afterFailure)`](#rerunning-falsified-properties) instead.
+- `ArbitraryConfiguratorBase` has new method `acceptType(TypeUsage),
+  which can be overridden.
 
 ### 0.9.2
 

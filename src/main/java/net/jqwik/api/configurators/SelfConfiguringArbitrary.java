@@ -1,6 +1,7 @@
 package net.jqwik.api.configurators;
 
 import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 
 import java.lang.annotation.*;
 import java.util.*;
@@ -10,18 +11,20 @@ import java.util.*;
  * to take over its own configuration which is usually being done by registered instances
  * of {@linkplain ArbitraryConfigurator}.
  *
- * There is only a single implementor withing jqwik's own codebase:
+ * There are a few implementors within jqwik's own codebase:
  * @see net.jqwik.properties.arbitraries.OneOfArbitrary
+ * @see net.jqwik.properties.arbitraries.FrequencyOfArbitrary
+ * @see net.jqwik.properties.arbitraries.ArrayArbitrary
  */
 public interface SelfConfiguringArbitrary<T> {
 
 	/**
-	 * Do all configuration yourself or delegate to {@link ArbitraryConfigurator#configure(Arbitrary, List)}
+	 * Do all configuration yourself or delegate to {@link ArbitraryConfigurator#configure(Arbitrary, TypeUsage)}
 	 * of the {@code configurator} that's being handed in.
 	 *
 	 * @param configurator
-	 * @param annotations
+	 * @param targetType
 	 * @return
 	 */
-	Arbitrary<T> configure(ArbitraryConfigurator configurator, List<Annotation> annotations);
+	Arbitrary<T> configure(ArbitraryConfigurator configurator, TypeUsage targetType);
 }

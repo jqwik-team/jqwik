@@ -4,6 +4,7 @@ import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.properties.arbitraries.randomized.*;
 
 public class SizeConfigurator extends ArbitraryConfiguratorBase {
