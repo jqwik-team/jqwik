@@ -2223,19 +2223,20 @@ There are a few catches, though:
   }
   ```
 
-  Alternatively, you could check for the objects type directly and use different
+  Alternatively, you can check for an object's type directly and use different
   filter algorithms:
 
   ```java
-  	public Arbitrary<Number> configure(Arbitrary<Number> arbitrary, Odd odd) {
-  		return arbitrary.filter(number -> {
-  			if (number instanceof Integer)
-  				return Math.abs((int) number % 2) == 1;
-  			if (number instanceof BigInteger)
-  				return ((BigInteger) number).remainder(BigInteger.valueOf(2)).abs().equals(BigInteger.ONE);
-  			return false;
-  		});
-  	}
+  public Arbitrary<Number> configure(Arbitrary<Number> arbitrary, Odd odd) {
+      return arbitrary.filter(number -> {
+          if (number instanceof Integer)
+              return Math.abs((int) number % 2) == 1;
+          if (number instanceof BigInteger)
+              return ((BigInteger) number).remainder(BigInteger.valueOf(2))
+                                          .abs().equals(BigInteger.ONE);
+          return false;
+      });
+  }
   ```
 
 - You can combine `@Odd` with other annotations like `@Positive` or `@Range` or another
@@ -2431,7 +2432,7 @@ useJunitPlatformReporter = false   # Set to fault if you want to use platform re
   `jqwik.properties` file
 - Removed property `rerunFailuresWithSameSeed` and introduced
   [`@Property(afterFailure)`](#rerunning-falsified-properties) instead.
-- `ArbitraryConfiguratorBase` has new method `acceptType(TypeUsage),
+- `ArbitraryConfiguratorBase` has new method `acceptType(TypeUsage)`,
   which can be overridden.
 
 ### 0.9.2
