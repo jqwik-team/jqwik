@@ -2383,6 +2383,8 @@ the external data was conceived or generated.
   of `ActionSequence` parameters
 - Some incompatible changes to the `ActionSequence` interface
 - jqwik.jar does no longer deliver a jqwik.properties file in its classpath
+- jqwik logs WARNING if unsupported property is used in
+  `jqwik.properties` file
 
 ### 0.9.2
 

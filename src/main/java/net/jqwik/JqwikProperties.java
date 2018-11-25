@@ -6,7 +6,16 @@ import java.util.logging.*;
 
 public class JqwikProperties {
 
-	private static final String DEFAULT_PROPERTIES_FILE = "jqwik.properties";
+	private static final String[] SUPPORTED_PROPERTIES = new String[]{
+		"database",
+		"rerunFailuresWithSameSeed",
+		"runFailuresFirst",
+		"defaultTries",
+		"defaultMaxDiscardRatio",
+		"useJunitPlatformReporter"
+	};
+
+	private static final String PROPERTIES_FILE_NAME = "jqwik.properties";
 	private static final Logger LOG = Logger.getLogger(JqwikProperties.class.getName());
 
 	private static final String DEFAULT_DATABASE_PATH = ".jqwik-database";
@@ -51,7 +60,7 @@ public class JqwikProperties {
 	}
 
 	JqwikProperties() {
-		this(DEFAULT_PROPERTIES_FILE);
+		this(PROPERTIES_FILE_NAME);
 	}
 
 	JqwikProperties(String fileName) {
@@ -68,6 +77,7 @@ public class JqwikProperties {
 		Properties properties = new Properties();
 		try {
 			properties.load(inputStream);
+			warnOnUnsupportedProperties(properties);
 			databasePath = properties.getProperty("database", DEFAULT_DATABASE_PATH);
 			rerunFailuresWithSameSeed = Boolean.parseBoolean(properties.getProperty("rerunFailuresWithSameSeed", DEFAULT_RERUN_FAILURES_WITH_SAME_SEED));
 			runFailuresFirst = Boolean.parseBoolean(properties.getProperty("runFailuresFirst", DEFAULT_RERUN_FAILURES_FIRST));
@@ -78,6 +88,15 @@ public class JqwikProperties {
 			LOG.log(Level.WARNING, String.format("Error while reading properties file [%s] found.", propertiesFileName), ioe);
 		}
 
+	}
+
+	private void warnOnUnsupportedProperties(Properties properties) {
+		for (String propertyName : properties.stringPropertyNames()) {
+			if (!Arrays.asList(SUPPORTED_PROPERTIES).contains(propertyName)) {
+				String message = String.format("Property [%s] is not supported in '%s' file", propertyName, PROPERTIES_FILE_NAME);
+				LOG.log(Level.WARNING, message);
+			}
+		}
 	}
 
 }
