@@ -1,16 +1,17 @@
 package net.jqwik.discovery;
 
+import java.lang.reflect.*;
+import java.util.*;
+
+import org.junit.platform.commons.support.*;
+import org.junit.platform.engine.*;
+import org.junit.platform.engine.support.hierarchical.Node.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.discovery.specs.*;
 import net.jqwik.recording.*;
-import org.junit.platform.commons.support.*;
-import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.hierarchical.Node.*;
-
-import java.lang.reflect.*;
-import java.util.*;
 
 class PropertyMethodResolver implements ElementResolver {
 
@@ -82,23 +83,16 @@ class PropertyMethodResolver implements ElementResolver {
 			String message = String.format("Method [%s] is not annotated with @Property", method);
 			return new JqwikException(message);
 		});
-		String seed = determineSeed(uniqueId, property.seed());
-		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues).withSeed(seed);
+		String previousSeed = previousSeed(uniqueId);
+		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues, previousSeed);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
 
-	private String determineSeed(UniqueId uniqueId, String seedFromProperty) {
-		if(seedIsSet(seedFromProperty)){
-			return seedFromProperty;
-		}
-		return testRunData.byUniqueId(uniqueId) //
-						  .filter(TestRun::isNotSuccessful) //
-						  .map(TestRun::getRandomSeed) //
-						  .orElse(seedFromProperty);
-	}
-
-	private boolean seedIsSet(String seedFromProperty) {
-		return !seedFromProperty.equals(Property.SEED_NOT_SET);
+	private String previousSeed(UniqueId uniqueId) {
+		return testRunData.byUniqueId(uniqueId)
+						  .filter(TestRun::isNotSuccessful)
+						  .map(TestRun::getRandomSeed)
+						  .orElse(null);
 	}
 
 	private String getSegmentType() {

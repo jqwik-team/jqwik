@@ -12,7 +12,6 @@ class JqwikPropertiesTests {
 	void defaultValues() {
 		properties = new JqwikProperties("nosuchfile.properties");
 
-		assertThat(properties.rerunFailuresWithSameSeed()).isEqualTo(true);
 		assertThat(properties.runFailuresFirst()).isEqualTo(false);
 		assertThat(properties.databasePath()).isEqualTo(".jqwik-database");
 

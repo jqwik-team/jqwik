@@ -127,7 +127,7 @@ class GenericPropertyTests {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
 			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
-			PropertyConfiguration configuration = aConfig().withShriking(OFF).build();
+			PropertyConfiguration configuration = aConfig().withShrinking(OFF).build();
 			GenericProperty property = new GenericProperty("falsified property", configuration, shrinkablesGenerator, forAllFunction);
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 

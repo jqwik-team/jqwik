@@ -78,8 +78,7 @@
   - [Switch Shrinking Off](#switch-shrinking-off)
   - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
-- [Running and Configuration](#running-and-configuration)
-  - [jqwik Configuration](#jqwik-configuration)
+- [Rerunning Falsified Properties](#rerunning-falsified-properties)
 - [Providing Default Arbitraries](#providing-default-arbitraries)
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
   - [Arbitrary Providers for Parameterized Types](#arbitrary-providers-for-parameterized-types)
@@ -89,6 +88,7 @@
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
+- [jqwik Configuration](#jqwik-configuration)
 - [Release Notes](#release-notes)
   - [0.9.3-SNAPSHOT](#093-snapshot)
   - [0.9.2](#092)
@@ -2004,28 +2004,6 @@ As you can see, collected `null` values are not being reported.
 [Here](https://github.com/jlink/jqwik/blob/master/src/test/java/examples/docs/StatisticsExamples.java)
 are a couple of examples to try out.
 
-## Running and Configuration
-
-When running _jqwik_ tests (through your IDE or your build tool) you might notice 
-that - once a property has been falsified - it will always be tried
-with the same seed to enhance the reproducibility of a bug. This requires
-that _jqwik_ will persist some runtime data across test runs.
-
-You can configure this and other default behaviour in [jqwik's configuration](#jqwik_configuration).
-
-### jqwik Configuration
-
-_jqwik_ will look for a file `jqwik.properties` in your classpath in which you can configure
-a few basic parameters:
-
-```
-database = .jqwik-database
-rerunFailuresWithSameSeed = true
-defaultTries = 1000
-defaultMaxDiscardRatio = 5
-useJunitPlatformReporter = false
-```
-
 ## Providing Default Arbitraries
 
 Sometimes you want to use a certain, self-made `Arbitrary` for one of your own domain
@@ -2364,7 +2342,42 @@ first falsified data point. Thus, fixing the first failure might lead to another
 falsified data point later on. There is also _no shrinking_ being done for data-driven
 properties since _jqwik_ has no information about the constraints under which 
 the external data was conceived or generated.
-  
+
+## Rerunning Falsified Properties
+
+When you rerun properties after they failed, they will - by default - use
+the previous random seed so that the next run will generate the exact same
+parameter data and thereby expose the same failing behaviour. This simplifies
+debugging and regression testing since it makes a property's falsification
+stick until the problem has been fixed.
+
+If you want to, you can change the default for a given property like this:
+
+```java
+@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+void myProperty() { ... }
+```
+
+Doing that will generate a new seed even after falsification in the previous run.
+Specifying a constant seed, however, will always win:
+
+```java
+@Property(seed = "424242", afterFailure = AfterFailureMode.RANDOM_SEED)
+void myProperty() { ... }
+```
+
+
+## jqwik Configuration
+
+_jqwik_ will look for a file `jqwik.properties` in your classpath in which you can configure
+a few basic parameters:
+
+```
+database = .jqwik-database         # The database to store data of previous runs
+defaultTries = 1000                # The default number of tries for each property
+defaultMaxDiscardRatio = 5         # The default ratio before assumption misses make a property fail
+useJunitPlatformReporter = false   # Set to fault if you want to use platform reporting
+```
 
 ## Release Notes
 
@@ -2385,6 +2398,8 @@ the external data was conceived or generated.
 - jqwik.jar does no longer deliver a jqwik.properties file in its classpath
 - jqwik logs WARNING if unsupported property is used in
   `jqwik.properties` file
+- Removed property `rerunFailuresWithSameSeed` and introduced
+  [`@Property(afterFailure)`](#rerunning-falsified-properties) instead.
 
 ### 0.9.2
 

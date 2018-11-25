@@ -18,6 +18,7 @@ import org.junit.platform.commons.annotation.*;
  * @see Example
  * @see ShrinkingMode
  * @see GenerationMode
+ * @see AfterFailureMode
  * @see Data
  */
 @Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
@@ -47,4 +48,6 @@ public @interface Property {
 	String stereotype() default DEFAULT_STEREOTYPE;
 
 	GenerationMode generation() default GenerationMode.AUTO;
+
+	AfterFailureMode afterFailure() default AfterFailureMode.PREVIOUS_SEED;
 }

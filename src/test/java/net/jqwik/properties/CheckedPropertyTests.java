@@ -147,6 +147,63 @@ class CheckedPropertyTests {
 			assertThat(allGeneratedInts).containsExactly(5, 22, 10, 4, 43, 70, -66, -75, -11, -65, 93, -61, -5, 37, -2, -9, -86, 10, -10, -4);
 		}
 
+		@Example
+		@Label("previous seed will be used if onFailure=PREVIOUS_SEED")
+		void previousSeedWillBeUsed() {
+			List<Integer> allGeneratedInts = new ArrayList<>();
+			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
+			CheckedProperty checkedProperty = new CheckedProperty(
+				"prop1", addIntToList, getParametersForMethod("prop1"),
+				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				Optional.empty(),
+				aConfig()
+					.withSeed("")
+					.withPreviousSeed("101010")
+					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build()
+			);
+
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			assertThat(check.randomSeed()).isEqualTo("101010");
+		}
+
+		@Example
+		@Label("previous seed will not be used if onFailure=RANDOM_SEED")
+		void previousSeedWillNotBeUsed() {
+			List<Integer> allGeneratedInts = new ArrayList<>();
+			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
+			CheckedProperty checkedProperty = new CheckedProperty(
+				"prop1", addIntToList, getParametersForMethod("prop1"),
+				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				Optional.empty(),
+				aConfig()
+					.withSeed("")
+					.withPreviousSeed("101010")
+					.withAfterFailure(AfterFailureMode.RANDOM_SEED).build()
+			);
+
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			assertThat(check.randomSeed()).isNotEqualTo("101010");
+		}
+
+		@Example
+		@Label("previous seed will not be used if constant seed is set")
+		void previousSeedWillNotBeUsedWithConstantSeed() {
+			List<Integer> allGeneratedInts = new ArrayList<>();
+			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
+			CheckedProperty checkedProperty = new CheckedProperty(
+				"prop1", addIntToList, getParametersForMethod("prop1"),
+				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+				Optional.empty(),
+				aConfig()
+					.withSeed("4242")
+					.withPreviousSeed("101010")
+					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build()
+			);
+
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			assertThat(check.randomSeed()).isEqualTo("4242");
+		}
+
 		@Group
 		class DataDrivenProperty {
 			@Example

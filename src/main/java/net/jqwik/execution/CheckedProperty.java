@@ -47,10 +47,13 @@ public class CheckedProperty {
 	}
 
 	private PropertyConfiguration configurationWithEffectiveSeed() {
-		String effectiveSeed = configuration.getSeed().equals(Property.SEED_NOT_SET)
-								   ? SourceOfRandomness.createRandomSeed()
-								   : configuration.getSeed();
-		return configuration.withSeed(effectiveSeed);
+		if (!configuration.getSeed().equals(Property.SEED_NOT_SET)) {
+			return configuration.withSeed(configuration.getSeed());
+		}
+		if (configuration.getPreviousSeed() != null && configuration.getAfterFailureMode() != AfterFailureMode.RANDOM_SEED) {
+			return configuration.withSeed(configuration.getPreviousSeed());
+		}
+		return configuration.withSeed(SourceOfRandomness.createRandomSeed());
 	}
 
 	private GenericProperty createGenericProperty(PropertyConfiguration configuration) {

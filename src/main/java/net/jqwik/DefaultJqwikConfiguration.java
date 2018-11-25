@@ -45,16 +45,11 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 		return new TestEngineConfiguration() {
 			@Override
 			public TestRunRecorder recorder() {
-				if (needsDatabaseAtAll())
-					return database.recorder();
-				return testRun -> {
-				};
+				return database.recorder();
 			}
 
 			@Override
 			public TestRunData previousRun() {
-				if (!properties.rerunFailuresWithSameSeed())
-					return new TestRunData();
 				return database.previousRun();
 			}
 
@@ -66,9 +61,4 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			}
 		};
 	}
-
-	private boolean needsDatabaseAtAll() {
-		return properties.rerunFailuresWithSameSeed() || properties.runFailuresFirst();
-	}
-
 }

@@ -116,6 +116,7 @@ class PropertyMethodResolverTest {
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(6);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
 			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.EXHAUSTIVE);
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getAfterFailureMode()).isEqualTo(AfterFailureMode.RANDOM_SEED);
 
 			// TODO: Remove when deprecated Property.reporting will be removed
 			Assertions.assertThat(propertyMethodDescriptor.getReporting()).containsExactly(Reporting.GENERATED, Reporting.FALSIFIED);
@@ -137,7 +138,19 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("4243");
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isEqualTo("4243");
+		}
+
+		@Example
+		void propertyThatDidNotPreviouslyFailWontHavePreviousSeed() {
+			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
+			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
+			UniqueId previousId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
+			testRunData.add(new TestRun(previousId, Status.SUCCESSFUL, "4243"));
+			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
+
+			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
+			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
 		}
 
 		@Example
@@ -203,10 +216,12 @@ class PropertyMethodResolverTest {
 
 	private void assertDefaultConfigurationProperties(PropertyMethodDescriptor propertyMethodDescriptor) {
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(Property.SEED_NOT_SET);
+		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(DEFAULT_TRIES);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
 		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.AUTO);
+		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getAfterFailureMode()).isEqualTo(AfterFailureMode.PREVIOUS_SEED);
 	}
 
 	private static class TestContainer {
@@ -252,6 +267,7 @@ class PropertyMethodResolverTest {
 			maxDiscardRatio = 6, //
 			shrinking = ShrinkingMode.OFF, //
 			generation = GenerationMode.EXHAUSTIVE, //
+			afterFailure = AfterFailureMode.RANDOM_SEED, //
 			reporting = {Reporting.GENERATED, Reporting.FALSIFIED} //
 		)
 		void withPropertyParams() {

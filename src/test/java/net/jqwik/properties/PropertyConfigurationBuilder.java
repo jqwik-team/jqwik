@@ -10,13 +10,21 @@ class PropertyConfigurationBuilder {
 	}
 
 	private String seed = "1000";
+	private String previousSeed = null;
 	private int tries = 100;
 	private int maxDiscardRatio = 5;
 	private ShrinkingMode shrinkingMode = ShrinkingMode.FULL;
 	private GenerationMode generationMode = GenerationMode.AUTO;
+	private AfterFailureMode afterFailureMode = AfterFailureMode.PREVIOUS_SEED;
+
 
 	PropertyConfigurationBuilder withSeed(String seed) {
 		this.seed = seed;
+		return this;
+	}
+
+	PropertyConfigurationBuilder withPreviousSeed(String seed) {
+		this.previousSeed = seed;
 		return this;
 	}
 
@@ -30,7 +38,7 @@ class PropertyConfigurationBuilder {
 		return this;
 	}
 
-	PropertyConfigurationBuilder withShriking(ShrinkingMode shrinkingMode) {
+	PropertyConfigurationBuilder withShrinking(ShrinkingMode shrinkingMode) {
 		this.shrinkingMode = shrinkingMode;
 		return this;
 	}
@@ -40,14 +48,21 @@ class PropertyConfigurationBuilder {
 		return this;
 	}
 
+	PropertyConfigurationBuilder withAfterFailure(AfterFailureMode afterFailureMode) {
+		this.afterFailureMode = afterFailureMode;
+		return this;
+	}
+
 	PropertyConfiguration build() {
 		return new PropertyConfiguration(
 			"Property",
 			seed,
+			previousSeed,
 			tries,
 			maxDiscardRatio,
 			shrinkingMode,
-			generationMode
+			generationMode,
+			afterFailureMode
 		);
 
 	}
