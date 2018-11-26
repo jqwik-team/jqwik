@@ -2,8 +2,13 @@ package net.jqwik.properties;
 
 import java.util.*;
 
+import org.opentest4j.*;
+
 import net.jqwik.api.*;
+import net.jqwik.execution.*;
 import net.jqwik.support.*;
+
+import static net.jqwik.properties.PropertyCheckResult.Status.*;
 
 public interface PropertyCheckResult {
 
@@ -38,6 +43,13 @@ public interface PropertyCheckResult {
 	Optional<Throwable> throwable();
 
 	GenerationMode generation();
+
+	default PropertyExecutionResult toExecutionResult() {
+		if (status() == SATISFIED)
+			return PropertyExecutionResult.successful(randomSeed());
+		Throwable throwable = throwable().orElse(new AssertionFailedError(toString()));
+		return PropertyExecutionResult.failed(throwable, randomSeed());
+	}
 
 	abstract class ResultBase implements PropertyCheckResult {
 

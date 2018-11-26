@@ -16,8 +16,6 @@ import net.jqwik.support.*;
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 import static org.junit.platform.engine.TestExecutionResult.*;
 
-import static net.jqwik.properties.PropertyCheckResult.Status.*;
-
 public class PropertyMethodExecutor {
 
 	private static final Logger LOG = Logger.getLogger(PropertyMethodExecutor.class.getName());
@@ -50,40 +48,33 @@ public class PropertyMethodExecutor {
 		LifecycleSupplier lifecycleSupplier,
 		PropertyExecutionListener listener
 	) {
-		PropertyExecutionResult testExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
+		PropertyExecutionResult propertyExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
-			testExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
+			propertyExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
 		} catch (Throwable throwable) {
-			if (testExecutionResult.getStatus() == Status.SUCCESSFUL) {
-				return PropertyExecutionResult.failed(throwable, testExecutionResult.getSeed().orElse(null));
+			if (propertyExecutionResult.getStatus() == Status.SUCCESSFUL) {
+				return PropertyExecutionResult.failed(throwable, propertyExecutionResult.getSeed().orElse(null));
 			} else {
 				LOG.warning(throwable.toString());
-				return testExecutionResult;
+				return propertyExecutionResult;
 			}
 		}
-		return testExecutionResult;
+		return propertyExecutionResult;
 	}
 
 	private PropertyExecutionResult executeMethod(Object testInstance, PropertyExecutionListener listener) {
 		try {
 			Consumer<ReportEntry> reporter = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
-			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, reporter);
-			return createTestExecutionResult(propertyExecutionResult);
+			PropertyCheckResult checkResult = executeProperty(testInstance, reporter);
+			return checkResult.toExecutionResult();
 		} catch (TestAbortedException e) {
 			return PropertyExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
 			rethrowIfBlacklisted(t);
 			return PropertyExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed());
 		}
-	}
-
-	private PropertyExecutionResult createTestExecutionResult(PropertyCheckResult checkResult) {
-		if (checkResult.status() == SATISFIED)
-			return PropertyExecutionResult.successful(checkResult.randomSeed());
-		Throwable throwable = checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString()));
-		return PropertyExecutionResult.failed(throwable, checkResult.randomSeed());
 	}
 
 	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {
