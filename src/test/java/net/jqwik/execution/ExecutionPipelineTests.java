@@ -1,18 +1,19 @@
 package net.jqwik.execution;
 
-import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.execution.pipeline.*;
+import java.util.*;
+
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
-import java.util.*;
+import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.execution.pipeline.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class ExecutionPipelineTests {
+class ExecutionPipelineTests {
 
-	private EngineExecutionListener listener = Mockito.mock(EngineExecutionListener.class);
+	private JqwikExecutionListener listener = Mockito.mock(JqwikExecutionListener.class);
 	private ExecutionPipeline pipeline = new ExecutionPipeline(listener);
 
 	@Example

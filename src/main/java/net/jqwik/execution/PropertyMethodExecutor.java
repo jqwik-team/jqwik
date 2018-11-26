@@ -30,7 +30,7 @@ public class PropertyMethodExecutor {
 		this.methodDescriptor = methodDescriptor;
 	}
 
-	public TestExecutionResult execute(LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
+	public TestExecutionResult execute(LifecycleSupplier lifecycleSupplier, JqwikExecutionListener listener) {
 		Object testInstance;
 		try {
 			testInstance = createTestInstance();
@@ -46,7 +46,11 @@ public class PropertyMethodExecutor {
 		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
 	}
 
-	private TestExecutionResult executePropertyMethod(Object testInstance, LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener) {
+	private TestExecutionResult executePropertyMethod(
+		Object testInstance,
+		LifecycleSupplier lifecycleSupplier,
+		JqwikExecutionListener listener
+	) {
 		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
@@ -63,7 +67,7 @@ public class PropertyMethodExecutor {
 		return testExecutionResult;
 	}
 
-	private TestExecutionResult executeMethod(Object testInstance, EngineExecutionListener listener) {
+	private TestExecutionResult executeMethod(Object testInstance, JqwikExecutionListener listener) {
 		try {
 			Consumer<ReportEntry> reporter = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
 			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, reporter);

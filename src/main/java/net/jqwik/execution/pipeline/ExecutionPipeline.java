@@ -1,18 +1,20 @@
 package net.jqwik.execution.pipeline;
 
-import org.junit.platform.engine.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import org.junit.platform.engine.*;
+
+import net.jqwik.execution.*;
 
 public class ExecutionPipeline implements Pipeline {
 
 	private final List<ExecutionTask> tasks = new ArrayList<>();
 	private final Map<ExecutionTask, Boolean> taskFinished = new IdentityHashMap<>();
 	private final Map<ExecutionTask, ExecutionTask[]> taskPredecessors = new IdentityHashMap<>();
-	private final EngineExecutionListener executionListener;
+	private final JqwikExecutionListener executionListener;
 
-	public ExecutionPipeline(EngineExecutionListener executionListener) {
+	public ExecutionPipeline(JqwikExecutionListener executionListener) {
 		this.executionListener = executionListener;
 	}
 

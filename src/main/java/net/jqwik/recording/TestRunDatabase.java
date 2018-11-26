@@ -26,7 +26,7 @@ public class TestRunDatabase {
 			List<TestRun> data = readAllTestRuns(ois);
 			return new TestRunData(data);
 		} catch (Exception e) {
-			logException(e);
+			logWriteException(e);
 			try {
 				Files.delete(databasePath);
 			} catch (IOException ignore) {
@@ -43,13 +43,20 @@ public class TestRunDatabase {
 				testRuns.add(testRun);
 			} catch (EOFException eof) {
 				break;
+			} catch (IOException eof) {
+				logReadException(eof);
+				break;
 			}
 		}
 		return testRuns;
 	}
 
-	private void logException(Exception e) {
-		LOG.log(Level.SEVERE, e.getMessage(), e);
+	private void logReadException(IOException eof) {
+		LOG.log(Level.WARNING, eof, () -> String.format("Cannot read database [%s]", databasePath.toAbsolutePath()));
+	}
+
+	private void logWriteException(Exception e) {
+		LOG.log(Level.WARNING, e, () -> String.format("Cannot write database [%s]", databasePath.toAbsolutePath()));
 	}
 
 	private ObjectOutputStream createObjectOutputStream() {
@@ -57,7 +64,7 @@ public class TestRunDatabase {
 			return new ObjectOutputStream(Files.newOutputStream(databasePath, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
 		} catch (IOException e) {
 			stopRecording = true;
-			logException(e);
+			logWriteException(e);
 			return null;
 		}
 	}
@@ -82,7 +89,7 @@ public class TestRunDatabase {
 				objectOutputStream.writeObject(testRun);
 			} catch (IOException e) {
 				stopRecording = true;
-				logException(e);
+				logWriteException(e);
 			}
 		}
 
@@ -91,7 +98,7 @@ public class TestRunDatabase {
 			try {
 				objectOutputStream.close();
 			} catch (IOException e) {
-				logException(e);
+				logWriteException(e);
 			}
 		}
 

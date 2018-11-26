@@ -1,8 +1,9 @@
 package net.jqwik.execution;
 
-import net.jqwik.execution.pipeline.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
+
+import net.jqwik.execution.pipeline.*;
 
 public class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask {
 
@@ -20,7 +21,7 @@ public class MockExecutionTask extends AbstractTestDescriptor implements Executi
 	}
 
 	@Override
-	public void execute(EngineExecutionListener listener) {
+	public void execute(JqwikExecutionListener listener) {
 		listener.executionStarted(this);
 	}
 

@@ -1,16 +1,18 @@
 package net.jqwik.execution.pipeline;
 
+import java.util.function.*;
+
 import org.junit.platform.engine.*;
 
-import java.util.function.*;
+import net.jqwik.execution.*;
 
 public interface ExecutionTask {
 
 	UniqueId ownerId();
 
-	void execute(EngineExecutionListener listener);
+	void execute(JqwikExecutionListener listener);
 
-	static ExecutionTask from(Consumer<EngineExecutionListener> consumer, UniqueId ownerId, String description) {
+	static ExecutionTask from(Consumer<JqwikExecutionListener> consumer, UniqueId ownerId, String description) {
 		return new ExecutionTask() {
 			@Override
 			public UniqueId ownerId() {
@@ -18,7 +20,7 @@ public interface ExecutionTask {
 			}
 
 			@Override
-			public void execute(EngineExecutionListener listener) {
+			public void execute(JqwikExecutionListener listener) {
 				consumer.accept(listener);
 			}
 

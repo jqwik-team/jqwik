@@ -1,22 +1,23 @@
 package net.jqwik.execution;
 
+import java.util.*;
+
+import org.mockito.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.pipeline.*;
-import org.junit.platform.engine.*;
-import org.mockito.*;
 
-import java.util.*;
-
-import static net.jqwik.TestDescriptorBuilder.*;
-import static net.jqwik.matchers.MockitoMatchers.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 
+import static net.jqwik.TestDescriptorBuilder.*;
+import static net.jqwik.matchers.MockitoMatchers.*;
+
 class SimplePropertiesExecutionTests {
 
-	private final EngineExecutionListener eventRecorder = Mockito.mock(EngineExecutionListener.class);
+	private final JqwikExecutionListener eventRecorder = Mockito.mock(JqwikExecutionListener.class);
 	private final PropertyTaskCreator executor = new PropertyTaskCreator();
 
 	private static List<String> executions = new ArrayList<>();

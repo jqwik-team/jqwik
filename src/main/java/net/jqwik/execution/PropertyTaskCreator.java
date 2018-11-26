@@ -37,7 +37,7 @@ class PropertyTaskCreator {
 	}
 
 	private TestExecutionResult executeTestMethod(
-		PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, EngineExecutionListener listener
+		PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, JqwikExecutionListener listener
 	) {
 		PropertyMethodExecutor executor = new PropertyMethodExecutor(methodDescriptor);
 		return executor.execute(lifecycleSupplier, listener);

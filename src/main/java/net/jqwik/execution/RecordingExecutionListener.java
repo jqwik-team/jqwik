@@ -9,7 +9,7 @@ import net.jqwik.api.*;
 import net.jqwik.properties.*;
 import net.jqwik.recording.*;
 
-public class RecordingExecutionListener implements EngineExecutionListener {
+public class RecordingExecutionListener implements JqwikExecutionListener {
 
 	private final TestRunRecorder recorder;
 	private final EngineExecutionListener listener;
@@ -20,11 +20,6 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 		this.recorder = recorder;
 		this.listener = listener;
 		this.useJunitPlatformReporter = useJunitPlatformReporter;
-	}
-
-	@Override
-	public void dynamicTestRegistered(TestDescriptor testDescriptor) {
-		listener.dynamicTestRegistered(testDescriptor);
 	}
 
 	@Override
@@ -69,11 +64,6 @@ public class RecordingExecutionListener implements EngineExecutionListener {
 	}
 
 	private String getReportedSeed(Map<String, String> entries) {
-		String reportedSeed = Property.SEED_NOT_SET;
-		try {
-			reportedSeed = entries.get(CheckResultReportEntry.SEED_REPORT_KEY);
-		} catch (NumberFormatException ignore) {
-		}
-		return reportedSeed;
+		return entries.get(CheckResultReportEntry.SEED_REPORT_KEY);
 	}
 }
