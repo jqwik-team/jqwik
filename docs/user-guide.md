@@ -2383,7 +2383,7 @@ parameter data and thereby expose the same failing behaviour. This simplifies
 debugging and regression testing since it makes a property's falsification
 stick until the problem has been fixed.
 
-If you want to, you can change the default for a given property like this:
+If you want to, you can change this behaviour for a given property like this:
 
 ```java
 @Property(afterFailure = AfterFailureMode.RANDOM_SEED)
@@ -2398,6 +2398,12 @@ Specifying a constant seed, however, will always win:
 void myProperty() { ... }
 ```
 
+You can also determine the default behaviour of all properties by setting
+the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
+to one of:
+
+- `PREVIOUS_SEED`
+- `RANDOM_SEED`
 
 ## jqwik Configuration
 
@@ -2405,10 +2411,11 @@ _jqwik_ will look for a file `jqwik.properties` in your classpath in which you c
 a few basic parameters:
 
 ```
-database = .jqwik-database         # The database to store data of previous runs
-defaultTries = 1000                # The default number of tries for each property
-defaultMaxDiscardRatio = 5         # The default ratio before assumption misses make a property fail
-useJunitPlatformReporter = false   # Set to fault if you want to use platform reporting
+database = .jqwik-database          # The database to store data of previous runs
+defaultTries = 1000                 # The default number of tries for each property
+defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
+useJunitPlatformReporter = false    # Set to fault if you want to use platform reporting
+defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties
 ```
 
 ## Release Notes
@@ -2430,8 +2437,9 @@ useJunitPlatformReporter = false   # Set to fault if you want to use platform re
 - jqwik.jar does no longer deliver a jqwik.properties file in its classpath
 - jqwik logs WARNING if unsupported property is used in
   `jqwik.properties` file
-- Removed property `rerunFailuresWithSameSeed` and introduced
-  [`@Property(afterFailure)`](#rerunning-falsified-properties) instead.
+- Replaced configuration file property `rerunFailuresWithSameSeed` by
+  `defaultAfterFailure'
+- Introduced [`@Property(afterFailure)`](#rerunning-falsified-properties)
 - `ArbitraryConfiguratorBase` has new method `acceptType(TypeUsage)`,
   which can be overridden.
 

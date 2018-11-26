@@ -40,6 +40,7 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(Property.DEFAULT_STEREOTYPE);
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
+			assertThat(checkedProperty.configuration.getAfterFailureMode()).isEqualTo(TestDescriptorBuilder.AFTER_FAILURE);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
 		}
 
@@ -55,6 +56,7 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo("OtherStereotype");
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(42);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(2);
+			assertThat(checkedProperty.configuration.getAfterFailureMode()).isEqualTo(AfterFailureMode.RANDOM_SEED);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
 		}
 	}
@@ -411,7 +413,7 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF)
+		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF, afterFailure = AfterFailureMode.RANDOM_SEED)
 		public boolean propertyWith42TriesAndMaxDiscardRatio2(@ForAll int anyNumber) {
 			return true;
 		}

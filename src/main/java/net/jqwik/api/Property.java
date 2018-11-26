@@ -49,5 +49,5 @@ public @interface Property {
 
 	GenerationMode generation() default GenerationMode.AUTO;
 
-	AfterFailureMode afterFailure() default AfterFailureMode.PREVIOUS_SEED;
+	AfterFailureMode afterFailure() default AfterFailureMode.NOT_SET;
 }

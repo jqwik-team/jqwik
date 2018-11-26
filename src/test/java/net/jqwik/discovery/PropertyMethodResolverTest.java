@@ -15,11 +15,12 @@ import net.jqwik.recording.*;
 @Group
 class PropertyMethodResolverTest {
 
-	private final int DEFAULT_TRIES = 999;
-	private final int DEFAULT_MAX_DISCARD_RATIO = 4;
+	private static final int DEFAULT_TRIES = 999;
+	private static final int DEFAULT_MAX_DISCARD_RATIO = 4;
+	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
 
 	private TestRunData testRunData = new TestRunData();
-	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO);
+	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO, DEFAULT_AFTER_FAILURE);
 	private PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
 
 	@Group

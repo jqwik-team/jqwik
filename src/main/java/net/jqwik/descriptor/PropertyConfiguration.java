@@ -6,12 +6,15 @@ import net.jqwik.api.*;
 public class PropertyConfiguration {
 
 	public static PropertyConfiguration from(Property property, PropertyDefaultValues propertyDefaultValues, String previousSeed) {
-		int tries = property.tries() == Property.TRIES_NOT_SET //
-				? propertyDefaultValues.tries()
-				: property.tries();
-		int maxDiscardRatio = property.maxDiscardRatio() == Property.MAX_DISCARD_RATIO_NOT_SET //
-				? propertyDefaultValues.maxDiscardRatio()
-				: property.maxDiscardRatio();
+		int tries = property.tries() == Property.TRIES_NOT_SET
+						? propertyDefaultValues.tries()
+						: property.tries();
+		int maxDiscardRatio = property.maxDiscardRatio() == Property.MAX_DISCARD_RATIO_NOT_SET
+								  ? propertyDefaultValues.maxDiscardRatio()
+								  : property.maxDiscardRatio();
+		AfterFailureMode afterFailure = property.afterFailure() == AfterFailureMode.NOT_SET
+											? propertyDefaultValues.afterFailure()
+											: property.afterFailure();
 		return new PropertyConfiguration(
 			property.stereotype(),
 			property.seed(),
@@ -20,7 +23,7 @@ public class PropertyConfiguration {
 			maxDiscardRatio,
 			property.shrinking(),
 			property.generation(),
-			property.afterFailure()
+			afterFailure
 		);
 	}
 
@@ -96,8 +99,5 @@ public class PropertyConfiguration {
 	public AfterFailureMode getAfterFailureMode() {
 		return afterFailureMode;
 	}
-
-
-
 
 }

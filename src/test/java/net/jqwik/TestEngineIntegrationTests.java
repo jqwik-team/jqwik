@@ -25,7 +25,7 @@ class TestEngineIntegrationTests {
 	private UniqueId engineId;
 
 	private TestEngineIntegrationTests() {
-		testEngine = new JqwikTestEngine(configuration());
+		testEngine = new JqwikTestEngine(this::configuration);
 		eventRecorder = Mockito.mock(EngineExecutionListener.class);
 		engineId = UniqueId.forEngine(testEngine.getId());
 	}
@@ -34,7 +34,7 @@ class TestEngineIntegrationTests {
 		return new JqwikConfiguration() {
 			@Override
 			public PropertyDefaultValues propertyDefaultValues() {
-				return PropertyDefaultValues.with(1000, 5);
+				return PropertyDefaultValues.with(1000, 5, AfterFailureMode.PREVIOUS_SEED);
 			}
 
 			@Override

@@ -1,5 +1,5 @@
 - Property(afterFailure = AfterFailureMode.SAMPLE_ONLY|PREVIOUS_SEED|RANDOM_SEED)
-  - jqwik.properties: defaultOnFailure: SAMPLE_ONLY
+  - jqwik.properties: defaultOnFailure: PREVIOUS_SEED
 
 - Move release notes to their own web page
 

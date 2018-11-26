@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 
+import net.jqwik.api.*;
+
 public class JqwikProperties {
 
 	private static final String[] SUPPORTED_PROPERTIES = new String[]{
@@ -11,7 +13,8 @@ public class JqwikProperties {
 		"runFailuresFirst",
 		"defaultTries",
 		"defaultMaxDiscardRatio",
-		"useJunitPlatformReporter"
+		"useJunitPlatformReporter",
+		"defaultAfterFailure"
 	};
 
 	private static final String PROPERTIES_FILE_NAME = "jqwik.properties";
@@ -21,6 +24,7 @@ public class JqwikProperties {
 	private static final String DEFAULT_RERUN_FAILURES_FIRST = "false";
 	private static final String DEFAULT_TRIES = "1000";
 	private static final String DEFAULT_MAX_DISCARD_RATIO = "5";
+	private static final String DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED.name();
 
 	// TODO: Change default to true as soon as Gradle has support for platform reporter
 	// see https://github.com/gradle/gradle/issues/4605
@@ -31,6 +35,7 @@ public class JqwikProperties {
 	private int defaultTries;
 	private int defaultMaxDiscardRatio;
 	private boolean useJunitPlatformReporter;
+	private AfterFailureMode defaultAfterFailure;
 
 	public String databasePath() {
 		return databasePath;
@@ -50,6 +55,10 @@ public class JqwikProperties {
 
 	public boolean useJunitPlatformReporter() {
 		return useJunitPlatformReporter;
+	}
+
+	public AfterFailureMode defaultAfterFailure() {
+		return defaultAfterFailure;
 	}
 
 	JqwikProperties() {
@@ -76,8 +85,10 @@ public class JqwikProperties {
 			defaultTries = Integer.parseInt(properties.getProperty("defaultTries", DEFAULT_TRIES));
 			defaultMaxDiscardRatio = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio", DEFAULT_MAX_DISCARD_RATIO));
 			useJunitPlatformReporter = Boolean.parseBoolean(properties.getProperty("useJunitPlatformReporter", DEFAULT_USE_JUNIT_PLATFORM_REPORTER));
-		} catch (IOException ioe) {
-			LOG.log(Level.WARNING, String.format("Error while reading properties file [%s] found.", propertiesFileName), ioe);
+			defaultAfterFailure = AfterFailureMode.valueOf(properties.getProperty("defaultAfterFailure", DEFAULT_AFTER_FAILURE));
+		} catch (Throwable throwable) {
+			String message = String.format("Error while reading properties file [%s]", propertiesFileName);
+			throw new JqwikException(message, throwable);
 		}
 
 	}
@@ -90,5 +101,4 @@ public class JqwikProperties {
 			}
 		}
 	}
-
 }

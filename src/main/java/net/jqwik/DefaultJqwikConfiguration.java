@@ -23,7 +23,7 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 
 	@Override
 	public PropertyDefaultValues propertyDefaultValues() {
-		return PropertyDefaultValues.with(properties.defaultTries(), properties.defaultMaxDiscardRatio());
+		return PropertyDefaultValues.with(properties.defaultTries(), properties.defaultMaxDiscardRatio(), properties.defaultAfterFailure());
 	}
 
 	@Override

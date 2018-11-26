@@ -24,4 +24,6 @@ public enum AfterFailureMode {
 	 */
 	//SAMPLE_ONLY // Feature not available
 
+	NOT_SET
+
 }
