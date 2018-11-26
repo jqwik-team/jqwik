@@ -1,5 +1,7 @@
 package net.jqwik.matchers;
 
+import org.junit.platform.engine.*;
+
 import net.jqwik.execution.*;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -7,7 +9,7 @@ import static org.mockito.ArgumentMatchers.*;
 public class PropertyExecutionResultMatchers {
 
 	public static PropertyExecutionResult isSuccessful() {
-		return eq(PropertyExecutionResult.successful());
+		return argThat(argument -> argument.getStatus() == TestExecutionResult.Status.SUCCESSFUL);
 	}
 
 	public static PropertyExecutionResult isFailed(String message) {

@@ -36,7 +36,7 @@ public class PropertyMethodExecutor {
 		} catch (Throwable throwable) {
 			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
 					methodDescriptor.getContainerClass());
-			return PropertyExecutionResult.failed(new JqwikException(message, throwable));
+			return PropertyExecutionResult.failed(new JqwikException(message, throwable), methodDescriptor.getConfiguration().getSeed());
 		}
 		return executePropertyMethod(testInstance, lifecycleSupplier, listener);
 	}
@@ -50,14 +50,14 @@ public class PropertyMethodExecutor {
 		LifecycleSupplier lifecycleSupplier,
 		PropertyExecutionListener listener
 	) {
-		PropertyExecutionResult testExecutionResult = PropertyExecutionResult.successful();
+		PropertyExecutionResult testExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
 			testExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
 		} catch (Throwable throwable) {
 			if (testExecutionResult.getStatus() == Status.SUCCESSFUL) {
-				return PropertyExecutionResult.failed(throwable);
+				return PropertyExecutionResult.failed(throwable, testExecutionResult.getSeed());
 			} else {
 				LOG.warning(throwable.toString());
 				return testExecutionResult;
@@ -72,18 +72,18 @@ public class PropertyMethodExecutor {
 			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, reporter);
 			return createTestExecutionResult(propertyExecutionResult);
 		} catch (TestAbortedException e) {
-			return PropertyExecutionResult.aborted(e);
+			return PropertyExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
 			rethrowIfBlacklisted(t);
-			return PropertyExecutionResult.failed(t);
+			return PropertyExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed());
 		}
 	}
 
 	private PropertyExecutionResult createTestExecutionResult(PropertyCheckResult checkResult) {
 		if (checkResult.status() == SATISFIED)
-			return PropertyExecutionResult.successful();
+			return PropertyExecutionResult.successful(checkResult.randomSeed());
 		Throwable throwable = checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString()));
-		return PropertyExecutionResult.failed(throwable);
+		return PropertyExecutionResult.failed(throwable, checkResult.randomSeed());
 	}
 
 	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {

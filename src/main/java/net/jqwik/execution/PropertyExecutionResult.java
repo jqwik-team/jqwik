@@ -5,26 +5,32 @@ import java.util.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
+import net.jqwik.api.*;
+
 public class PropertyExecutionResult {
 
-	private static final PropertyExecutionResult SUCCESSFUL_RESULT = new PropertyExecutionResult(TestExecutionResult.successful());
-
 	private final TestExecutionResult testExecutionResult;
+	private final String seed;
 
-	public PropertyExecutionResult(TestExecutionResult testExecutionResult) {
+	public PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed) {
 		this.testExecutionResult = testExecutionResult;
+		this.seed = seed == null ? Property.SEED_NOT_SET : seed;
 	}
 
-	public static PropertyExecutionResult successful() {
-		return SUCCESSFUL_RESULT;
+	public static PropertyExecutionResult successful(String seed) {
+		return new PropertyExecutionResult(TestExecutionResult.successful(), seed);
 	}
 
-	public static PropertyExecutionResult failed(Throwable throwable) {
-		return new PropertyExecutionResult(TestExecutionResult.failed(throwable));
+	public static PropertyExecutionResult failed(Throwable throwable, String seed) {
+		return new PropertyExecutionResult(TestExecutionResult.failed(throwable), seed);
 	}
 
-	public static PropertyExecutionResult aborted(Throwable throwable) {
-		return new PropertyExecutionResult(TestExecutionResult.aborted(throwable));
+	public static PropertyExecutionResult aborted(Throwable throwable, String seed) {
+		return new PropertyExecutionResult(TestExecutionResult.aborted(throwable), seed);
+	}
+
+	public String getSeed() {
+		return seed;
 	}
 
 	public Status getStatus() {
@@ -35,12 +41,13 @@ public class PropertyExecutionResult {
 		return testExecutionResult.getThrowable();
 	}
 
+	public TestExecutionResult getResult() {
+		return testExecutionResult;
+	}
+
 	@Override
 	public String toString() {
 		return String.format("PropertyExecutionResult[%s]", testExecutionResult.getStatus());
 	}
 
-	public TestExecutionResult getResult() {
-		return testExecutionResult;
-	}
 }
