@@ -5,9 +5,7 @@ import java.util.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
-import net.jqwik.properties.*;
 import net.jqwik.recording.*;
 
 public class RecordingExecutionListener implements PropertyExecutionListener {
@@ -40,21 +38,13 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 	}
 
 	private void recordTestRun(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {
-		String seed = seeds.computeIfAbsent(testDescriptor, ignore -> Property.SEED_NOT_SET);
-
-		// TODO: Remove when seed recording has been moved
-		if (!seed.isEmpty() && !seed.equals(executionResult.getSeed())) {
-			throw  new JqwikException(String.format("SEED DIFFERENCE! From report: %s. From result: %s" , seed, executionResult.getSeed()));
-		}
-
+		String seed = executionResult.getSeed().orElse(Property.SEED_NOT_SET);
 		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.getStatus(), seed);
 		recorder.record(run);
 	}
 
 	@Override
 	public void reportingEntryPublished(TestDescriptor testDescriptor, ReportEntry entry) {
-		rememberSeed(testDescriptor, entry);
-
 		if (useJunitPlatformReporter) {
 			listener.reportingEntryPublished(testDescriptor, entry);
 		} else {
@@ -62,15 +52,4 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 		}
 	}
 
-	private void rememberSeed(TestDescriptor testDescriptor, ReportEntry entry) {
-		Map<String, String> entries = entry.getKeyValuePairs();
-		if (entries.containsKey(CheckResultReportEntry.SEED_REPORT_KEY)) {
-			String reportedSeed = getReportedSeed(entries);
-			seeds.put(testDescriptor, reportedSeed);
-		}
-	}
-
-	private String getReportedSeed(Map<String, String> entries) {
-		return entries.get(CheckResultReportEntry.SEED_REPORT_KEY);
-	}
 }

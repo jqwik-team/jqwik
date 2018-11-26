@@ -57,7 +57,7 @@ public class PropertyMethodExecutor {
 			testExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
 		} catch (Throwable throwable) {
 			if (testExecutionResult.getStatus() == Status.SUCCESSFUL) {
-				return PropertyExecutionResult.failed(throwable, testExecutionResult.getSeed());
+				return PropertyExecutionResult.failed(throwable, testExecutionResult.getSeed().orElse(null));
 			} else {
 				LOG.warning(throwable.toString());
 				return testExecutionResult;

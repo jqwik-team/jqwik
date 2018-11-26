@@ -24,7 +24,7 @@ class ContainerTaskCreator {
 		ExecutionTask finishContainerTask = ExecutionTask.from(
 			listener -> {
 				// TODO: Check predecessor results first: use SafeExecutor?
-				PropertyExecutionResult result = PropertyExecutionResult.successful(null);
+				PropertyExecutionResult result = PropertyExecutionResult.successful();
 				listener.executionFinished(containerDescriptor, result);
 			},
 			containerDescriptor.getUniqueId(),

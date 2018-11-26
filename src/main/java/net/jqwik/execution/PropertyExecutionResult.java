@@ -5,8 +5,6 @@ import java.util.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
-import net.jqwik.api.*;
-
 public class PropertyExecutionResult {
 
 	private final TestExecutionResult testExecutionResult;
@@ -14,7 +12,11 @@ public class PropertyExecutionResult {
 
 	public PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed) {
 		this.testExecutionResult = testExecutionResult;
-		this.seed = seed == null ? Property.SEED_NOT_SET : seed;
+		this.seed = seed;
+	}
+
+	public static PropertyExecutionResult successful() {
+		return new PropertyExecutionResult(TestExecutionResult.successful(), null);
 	}
 
 	public static PropertyExecutionResult successful(String seed) {
@@ -29,8 +31,8 @@ public class PropertyExecutionResult {
 		return new PropertyExecutionResult(TestExecutionResult.aborted(throwable), seed);
 	}
 
-	public String getSeed() {
-		return seed;
+	public Optional<String> getSeed() {
+		return Optional.ofNullable(seed);
 	}
 
 	public Status getStatus() {

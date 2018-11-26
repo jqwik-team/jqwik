@@ -22,10 +22,6 @@
   @AddHook(...)
   in package-info.java
 
-- Divide deliverables into two artifacts:
-  - jqwik.api
-  - jqwik.engine
-
 - Expose failing sample as sub test
 
 - @AddExample[s] annotation like @FromData but additional to generated data
@@ -35,8 +31,6 @@
 
 - Automatically generate nulls for types annotated as nullable
   See https://github.com/pholser/junit-quickcheck/pull/210
-
-- `@Disabled("reason")` annotation
 
 - Allow Fixture parameters to examples and properties
 
