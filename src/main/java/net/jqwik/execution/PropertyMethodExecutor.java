@@ -3,7 +3,6 @@ package net.jqwik.execution;
 import java.util.function.*;
 import java.util.logging.*;
 
-import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -30,14 +29,14 @@ public class PropertyMethodExecutor {
 		this.methodDescriptor = methodDescriptor;
 	}
 
-	public TestExecutionResult execute(LifecycleSupplier lifecycleSupplier, JqwikExecutionListener listener) {
+	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		Object testInstance;
 		try {
 			testInstance = createTestInstance();
 		} catch (Throwable throwable) {
 			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
 					methodDescriptor.getContainerClass());
-			return TestExecutionResult.failed(new JqwikException(message, throwable));
+			return PropertyExecutionResult.failed(new JqwikException(message, throwable));
 		}
 		return executePropertyMethod(testInstance, lifecycleSupplier, listener);
 	}
@@ -46,19 +45,19 @@ public class PropertyMethodExecutor {
 		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
 	}
 
-	private TestExecutionResult executePropertyMethod(
+	private PropertyExecutionResult executePropertyMethod(
 		Object testInstance,
 		LifecycleSupplier lifecycleSupplier,
-		JqwikExecutionListener listener
+		PropertyExecutionListener listener
 	) {
-		TestExecutionResult testExecutionResult = TestExecutionResult.successful();
+		PropertyExecutionResult testExecutionResult = PropertyExecutionResult.successful();
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
 		try {
 			testExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
 		} catch (Throwable throwable) {
 			if (testExecutionResult.getStatus() == Status.SUCCESSFUL) {
-				return TestExecutionResult.failed(throwable);
+				return PropertyExecutionResult.failed(throwable);
 			} else {
 				LOG.warning(throwable.toString());
 				return testExecutionResult;
@@ -67,24 +66,24 @@ public class PropertyMethodExecutor {
 		return testExecutionResult;
 	}
 
-	private TestExecutionResult executeMethod(Object testInstance, JqwikExecutionListener listener) {
+	private PropertyExecutionResult executeMethod(Object testInstance, PropertyExecutionListener listener) {
 		try {
 			Consumer<ReportEntry> reporter = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
 			PropertyCheckResult propertyExecutionResult = executeProperty(testInstance, reporter);
 			return createTestExecutionResult(propertyExecutionResult);
 		} catch (TestAbortedException e) {
-			return aborted(e);
+			return PropertyExecutionResult.aborted(e);
 		} catch (Throwable t) {
 			rethrowIfBlacklisted(t);
-			return failed(t);
+			return PropertyExecutionResult.failed(t);
 		}
 	}
 
-	private TestExecutionResult createTestExecutionResult(PropertyCheckResult checkResult) {
+	private PropertyExecutionResult createTestExecutionResult(PropertyCheckResult checkResult) {
 		if (checkResult.status() == SATISFIED)
-			return TestExecutionResult.successful();
+			return PropertyExecutionResult.successful();
 		Throwable throwable = checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString()));
-		return TestExecutionResult.failed(throwable);
+		return PropertyExecutionResult.failed(throwable);
 	}
 
 	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {

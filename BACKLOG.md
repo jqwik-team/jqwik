@@ -14,10 +14,6 @@
 
 - ArchitectureTests: Use @ArchTest annotations
 
-### Refactoring
-
-- Introduce PropertyExecutionListener and build all reporting/results on top of it
-
 ### General
 
 - PackageDescriptor e.g.

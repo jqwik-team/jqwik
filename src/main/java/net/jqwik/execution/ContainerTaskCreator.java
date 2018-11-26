@@ -1,10 +1,11 @@
 package net.jqwik.execution;
 
-import net.jqwik.execution.pipeline.*;
-import org.junit.platform.engine.*;
-
 import java.util.*;
 import java.util.stream.*;
+
+import org.junit.platform.engine.*;
+
+import net.jqwik.execution.pipeline.*;
 
 class ContainerTaskCreator {
 
@@ -21,7 +22,7 @@ class ContainerTaskCreator {
 
 		ExecutionTask finishContainerTask = ExecutionTask.from(listener -> {
 				// TODO: Check predecessor results first: use SafeExecutor?
-				TestExecutionResult result = TestExecutionResult.successful();
+																   PropertyExecutionResult result = PropertyExecutionResult.successful();
 				listener.executionFinished(containerDescriptor, result);
 			},
 			containerDescriptor.getUniqueId(),

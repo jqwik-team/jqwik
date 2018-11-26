@@ -2,17 +2,17 @@ package net.jqwik.execution.lifecycle;
 
 import java.util.*;
 
-import org.junit.platform.engine.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.execution.*;
 import net.jqwik.support.*;
 
 public class AutoCloseableHook implements AroundPropertyHook {
 
 	@Override
-	public TestExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
-		TestExecutionResult testExecutionResult = property.execute();
+	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+		PropertyExecutionResult testExecutionResult = property.execute();
 		List<Throwable> throwableCollector = executeCloseMethods(context);
 		if (!throwableCollector.isEmpty()) {
 			handleExceptions(throwableCollector);

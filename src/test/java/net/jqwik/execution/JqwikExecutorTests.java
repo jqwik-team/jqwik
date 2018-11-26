@@ -10,7 +10,7 @@ import net.jqwik.api.*;
 import net.jqwik.discovery.*;
 import net.jqwik.execution.lifecycle.*;
 
-import static net.jqwik.matchers.MockitoMatchers.*;
+import static net.jqwik.matchers.TestDescriptorMatchers.*;
 
 public class JqwikExecutorTests {
 

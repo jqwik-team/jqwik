@@ -1,22 +1,24 @@
 package net.jqwik;
 
-import static net.jqwik.matchers.MockitoMatchers.*;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
-import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
-import static org.mockito.Mockito.*;
-
 import java.util.*;
 
+import examples.packageWithSeveralContainers.*;
+import examples.packageWithSingleContainer.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.launcher.*;
 import org.mockito.*;
 
-import examples.packageWithSeveralContainers.*;
-import examples.packageWithSingleContainer.*;
 import net.jqwik.api.*;
 import net.jqwik.recording.*;
 import net.jqwik.support.*;
+
+import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
+import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
+import static org.mockito.Mockito.*;
+
+import static net.jqwik.matchers.TestDescriptorMatchers.*;
+import static net.jqwik.matchers.TestExecutionResultMatchers.*;
 
 class TestEngineIntegrationTests {
 

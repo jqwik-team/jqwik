@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class ExecutionPipelineTests {
 
-	private JqwikExecutionListener listener = Mockito.mock(JqwikExecutionListener.class);
+	private PropertyExecutionListener listener = Mockito.mock(PropertyExecutionListener.class);
 	private ExecutionPipeline pipeline = new ExecutionPipeline(listener);
 
 	@Example

@@ -12,9 +12,9 @@ public class ExecutionPipeline implements Pipeline {
 	private final List<ExecutionTask> tasks = new ArrayList<>();
 	private final Map<ExecutionTask, Boolean> taskFinished = new IdentityHashMap<>();
 	private final Map<ExecutionTask, ExecutionTask[]> taskPredecessors = new IdentityHashMap<>();
-	private final JqwikExecutionListener executionListener;
+	private final PropertyExecutionListener executionListener;
 
-	public ExecutionPipeline(JqwikExecutionListener executionListener) {
+	public ExecutionPipeline(PropertyExecutionListener executionListener) {
 		this.executionListener = executionListener;
 	}
 

@@ -12,7 +12,7 @@ public class MockPipeline implements Pipeline {
 		tasks.add(task);
 	}
 
-	public void runWith(JqwikExecutionListener listener) {
+	void runWith(PropertyExecutionListener listener) {
 		tasks.forEach(task -> task.execute(listener));
 	}
 }

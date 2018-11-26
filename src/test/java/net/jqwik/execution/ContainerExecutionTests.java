@@ -13,7 +13,8 @@ import net.jqwik.recording.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.TestDescriptorBuilder.*;
-import static net.jqwik.matchers.MockitoMatchers.*;
+import static net.jqwik.matchers.TestDescriptorMatchers.*;
+import static net.jqwik.matchers.TestExecutionResultMatchers.*;
 
 class ContainerExecutionTests {
 

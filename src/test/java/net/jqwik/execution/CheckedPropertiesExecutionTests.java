@@ -12,11 +12,12 @@ import net.jqwik.execution.pipeline.*;
 import static org.mockito.Mockito.*;
 
 import static net.jqwik.TestDescriptorBuilder.*;
-import static net.jqwik.matchers.MockitoMatchers.*;
+import static net.jqwik.matchers.PropertyExecutionResultMatchers.*;
+import static net.jqwik.matchers.TestDescriptorMatchers.*;
 
 class CheckedPropertiesExecutionTests {
 
-	private final JqwikExecutionListener eventRecorder = Mockito.mock(JqwikExecutionListener.class);
+	private final PropertyExecutionListener eventRecorder = Mockito.mock(PropertyExecutionListener.class);
 	private final PropertyTaskCreator executor = new PropertyTaskCreator();
 	private final ArgumentCaptor<ReportEntry> reportEntryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
 

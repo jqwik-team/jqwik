@@ -35,7 +35,7 @@ public class JqwikExecutor {
 	}
 
 	public void execute(TestDescriptor descriptor, EngineExecutionListener engineExecutionListener) {
-		JqwikExecutionListener recordingListener = new RecordingExecutionListener(recorder, engineExecutionListener, useJunitPlatformReporter);
+		PropertyExecutionListener recordingListener = new RecordingExecutionListener(recorder, engineExecutionListener, useJunitPlatformReporter);
 		ExecutionPipeline pipeline = new ExecutionPipeline(recordingListener);
 		ExecutionTask mainTask = createTask(descriptor, pipeline);
 		pipeline.submit(mainTask);
@@ -44,7 +44,7 @@ public class JqwikExecutor {
 	}
 
 	private void letNonSuccessfulTestsExecuteFirst(ExecutionPipeline pipeline) {
-		previousFailedTests.forEach(uniqueId -> pipeline.executeFirst(uniqueId));
+		previousFailedTests.forEach(pipeline::executeFirst);
 	}
 
 	private ExecutionTask createTask(TestDescriptor descriptor, Pipeline pipeline) {

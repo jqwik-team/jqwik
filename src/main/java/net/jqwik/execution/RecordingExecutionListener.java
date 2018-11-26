@@ -9,7 +9,7 @@ import net.jqwik.api.*;
 import net.jqwik.properties.*;
 import net.jqwik.recording.*;
 
-public class RecordingExecutionListener implements JqwikExecutionListener {
+public class RecordingExecutionListener implements PropertyExecutionListener {
 
 	private final TestRunRecorder recorder;
 	private final EngineExecutionListener listener;
@@ -33,14 +33,14 @@ public class RecordingExecutionListener implements JqwikExecutionListener {
 	}
 
 	@Override
-	public void executionFinished(TestDescriptor testDescriptor, TestExecutionResult testExecutionResult) {
-		recordTestRun(testDescriptor, testExecutionResult);
-		listener.executionFinished(testDescriptor, testExecutionResult);
+	public void executionFinished(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {
+		recordTestRun(testDescriptor, executionResult);
+		listener.executionFinished(testDescriptor, executionResult.getResult());
 	}
 
-	private void recordTestRun(TestDescriptor testDescriptor, TestExecutionResult testExecutionResult) {
+	private void recordTestRun(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {
 		String seed = seeds.computeIfAbsent(testDescriptor, ignore -> Property.SEED_NOT_SET);
-		TestRun run = new TestRun(testDescriptor.getUniqueId(), testExecutionResult.getStatus(), seed);
+		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.getStatus(), seed);
 		recorder.record(run);
 	}
 

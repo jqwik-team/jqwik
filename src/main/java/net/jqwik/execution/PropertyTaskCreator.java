@@ -2,8 +2,6 @@ package net.jqwik.execution;
 
 import java.util.*;
 
-import org.junit.platform.engine.*;
-
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.lifecycle.*;
@@ -23,7 +21,7 @@ class PropertyTaskCreator {
 		return ExecutionTask.from(
 			listener -> {
 				listener.executionStarted(methodDescriptor);
-				TestExecutionResult executionResult = executeTestMethod(methodDescriptor, lifecycleSupplier, listener);
+				PropertyExecutionResult executionResult = executeTestMethod(methodDescriptor, lifecycleSupplier, listener);
 				listener.executionFinished(methodDescriptor, executionResult);
 			},
 			methodDescriptor.getUniqueId(),
@@ -36,8 +34,8 @@ class PropertyTaskCreator {
 					 .anyMatch(parameter -> !parameter.isAnnotationPresent(ForAll.class));
 	}
 
-	private TestExecutionResult executeTestMethod(
-		PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, JqwikExecutionListener listener
+	private PropertyExecutionResult executeTestMethod(
+		PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener
 	) {
 		PropertyMethodExecutor executor = new PropertyMethodExecutor(methodDescriptor);
 		return executor.execute(lifecycleSupplier, listener);

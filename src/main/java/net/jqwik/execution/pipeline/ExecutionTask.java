@@ -10,9 +10,9 @@ public interface ExecutionTask {
 
 	UniqueId ownerId();
 
-	void execute(JqwikExecutionListener listener);
+	void execute(PropertyExecutionListener listener);
 
-	static ExecutionTask from(Consumer<JqwikExecutionListener> consumer, UniqueId ownerId, String description) {
+	static ExecutionTask from(Consumer<PropertyExecutionListener> consumer, UniqueId ownerId, String description) {
 		return new ExecutionTask() {
 			@Override
 			public UniqueId ownerId() {
@@ -20,7 +20,7 @@ public interface ExecutionTask {
 			}
 
 			@Override
-			public void execute(JqwikExecutionListener listener) {
+			public void execute(PropertyExecutionListener listener) {
 				consumer.accept(listener);
 			}
 

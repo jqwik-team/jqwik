@@ -5,13 +5,13 @@ import org.junit.platform.engine.support.descriptor.*;
 
 import net.jqwik.execution.pipeline.*;
 
-public class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask {
+class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask {
 
-	public MockExecutionTask(String name) {
+	MockExecutionTask(String name) {
 		this(UniqueId.root("test", name), name);
 	}
 
-	public MockExecutionTask(UniqueId uniqueId, String name) {
+	MockExecutionTask(UniqueId uniqueId, String name) {
 		super(uniqueId.append("task", name), name);
 	}
 
@@ -21,7 +21,7 @@ public class MockExecutionTask extends AbstractTestDescriptor implements Executi
 	}
 
 	@Override
-	public void execute(JqwikExecutionListener listener) {
+	public void execute(PropertyExecutionListener listener) {
 		listener.executionStarted(this);
 	}
 

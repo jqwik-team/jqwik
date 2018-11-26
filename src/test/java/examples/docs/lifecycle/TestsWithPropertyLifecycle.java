@@ -2,11 +2,10 @@ package examples.docs.lifecycle;
 
 import java.util.concurrent.atomic.*;
 
-import org.junit.platform.engine.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.execution.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -44,9 +43,12 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	private static class Count10Tries implements AroundPropertyHook {
 		@Override
-		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, PropertyExecutor property) throws Throwable {
+		public PropertyExecutionResult aroundProperty(
+			PropertyLifecycleContext propertyDescriptor,
+			PropertyExecutor property
+		) throws Throwable {
 			System.out.println("Before around counting: " + propertyDescriptor.label());
-			TestExecutionResult testExecutionResult = property.execute();
+			PropertyExecutionResult testExecutionResult = property.execute();
 			System.out.println("After around counting: " + propertyDescriptor.label());
 
 			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) propertyDescriptor.testInstance();
@@ -63,9 +65,12 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 
 	static class AroundAll implements AroundPropertyHook {
 		@Override
-		public TestExecutionResult aroundProperty(PropertyLifecycleContext propertyDescriptor, PropertyExecutor property) throws Throwable {
+		public PropertyExecutionResult aroundProperty(
+			PropertyLifecycleContext propertyDescriptor,
+			PropertyExecutor property
+		) throws Throwable {
 			System.out.println("Before around all: " + propertyDescriptor.label());
-			TestExecutionResult testExecutionResult = property.execute();
+			PropertyExecutionResult testExecutionResult = property.execute();
 			System.out.println("After around all: " + propertyDescriptor.label());
 			return testExecutionResult;
 		}
