@@ -38,9 +38,9 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 
 	private void recordTestRun(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {
 		String seed = executionResult.getSeed().orElse(null);
-		List sample = executionResult.getFalsifiedSample()
-									 .filter(this::isSerializable)
-									 .orElse(null);
+		List<Object> sample = executionResult.getFalsifiedSample()
+											 .filter(this::isSerializable)
+											 .orElse(null);
 		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.getStatus(), seed, sample);
 		recorder.record(run);
 	}

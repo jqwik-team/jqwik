@@ -9,9 +9,9 @@ public class PropertyExecutionResult {
 
 	private final TestExecutionResult testExecutionResult;
 	private final String seed;
-	private final List falsifiedSample;
+	private final List<Object> falsifiedSample;
 
-	public PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed, List falsifiedSample) {
+	public PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed, List<Object> falsifiedSample) {
 		this.testExecutionResult = testExecutionResult;
 		this.seed = seed != null ? (seed.isEmpty() ? null : seed) : null;
 		this.falsifiedSample = falsifiedSample;
@@ -25,7 +25,7 @@ public class PropertyExecutionResult {
 		return new PropertyExecutionResult(TestExecutionResult.successful(), seed, null);
 	}
 
-	public static PropertyExecutionResult failed(Throwable throwable, String seed, List sample) {
+	public static PropertyExecutionResult failed(Throwable throwable, String seed, List<Object> sample) {
 		return new PropertyExecutionResult(TestExecutionResult.failed(throwable), seed, sample);
 	}
 
@@ -37,7 +37,7 @@ public class PropertyExecutionResult {
 		return Optional.ofNullable(seed);
 	}
 
-	public Optional<List> getFalsifiedSample() {
+	public Optional<List<Object>> getFalsifiedSample() {
 		return Optional.ofNullable(falsifiedSample);
 	}
 
