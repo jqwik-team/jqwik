@@ -34,7 +34,7 @@ public class PropertyMethodExecutor {
 		} catch (Throwable throwable) {
 			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
 					methodDescriptor.getContainerClass());
-			return PropertyExecutionResult.failed(new JqwikException(message, throwable), methodDescriptor.getConfiguration().getSeed());
+			return PropertyExecutionResult.failed(new JqwikException(message, throwable), methodDescriptor.getConfiguration().getSeed(), null);
 		}
 		return executePropertyMethod(testInstance, lifecycleSupplier, listener);
 	}
@@ -55,7 +55,10 @@ public class PropertyMethodExecutor {
 			propertyExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
 		} catch (Throwable throwable) {
 			if (propertyExecutionResult.getStatus() == Status.SUCCESSFUL) {
-				return PropertyExecutionResult.failed(throwable, propertyExecutionResult.getSeed().orElse(null));
+				return PropertyExecutionResult.failed(
+					throwable,
+					propertyExecutionResult.getSeed().orElse(null),
+					propertyExecutionResult.getFalsifiedSample().orElse(null));
 			} else {
 				LOG.warning(throwable.toString());
 				return propertyExecutionResult;
@@ -73,7 +76,7 @@ public class PropertyMethodExecutor {
 			return PropertyExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
 			rethrowIfBlacklisted(t);
-			return PropertyExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed());
+			return PropertyExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed(), null);
 		}
 	}
 

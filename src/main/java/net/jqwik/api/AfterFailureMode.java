@@ -20,9 +20,11 @@ public enum AfterFailureMode {
 
 	/**
 	 * Run the property with just the previous falsified and shrunk sample.
-	 * Only works if sample data could be serialized
+	 *
+	 * Only works if sample data could be serialized.
+	 * Will use previous seed otherwise.
 	 */
-	//SAMPLE_ONLY // Feature not available
+	SAMPLE_ONLY,
 
 	NOT_SET
 

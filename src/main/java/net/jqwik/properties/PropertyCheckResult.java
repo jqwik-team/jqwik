@@ -48,7 +48,8 @@ public interface PropertyCheckResult {
 		if (status() == SATISFIED)
 			return PropertyExecutionResult.successful(randomSeed());
 		Throwable throwable = throwable().orElse(new AssertionFailedError(toString()));
-		return PropertyExecutionResult.failed(throwable, randomSeed());
+		List sample = sample().orElse(null);
+		return PropertyExecutionResult.failed(throwable, randomSeed(), sample);
 	}
 
 	abstract class ResultBase implements PropertyCheckResult {

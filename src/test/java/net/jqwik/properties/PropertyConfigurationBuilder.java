@@ -1,5 +1,7 @@
 package net.jqwik.properties;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 
@@ -11,6 +13,7 @@ class PropertyConfigurationBuilder {
 
 	private String seed = "1000";
 	private String previousSeed = null;
+	private List falsifiedSample = null;
 	private int tries = 100;
 	private int maxDiscardRatio = 5;
 	private ShrinkingMode shrinkingMode = ShrinkingMode.FULL;
@@ -25,6 +28,11 @@ class PropertyConfigurationBuilder {
 
 	PropertyConfigurationBuilder withPreviousSeed(String seed) {
 		this.previousSeed = seed;
+		return this;
+	}
+
+	PropertyConfigurationBuilder withFalsifiedSample(List sample) {
+		this.falsifiedSample = sample;
 		return this;
 	}
 
@@ -58,6 +66,7 @@ class PropertyConfigurationBuilder {
 			"Property",
 			seed,
 			previousSeed,
+			falsifiedSample,
 			tries,
 			maxDiscardRatio,
 			shrinkingMode,

@@ -1,6 +1,7 @@
 package net.jqwik.recording;
 
 import java.io.*;
+import java.util.*;
 
 import org.junit.platform.engine.TestExecutionResult.*;
 import org.junit.platform.engine.*;
@@ -9,11 +10,13 @@ public class TestRun implements Serializable {
 	private final String uniqueIdString;
 	private final int statusOrdinal;
 	private final String randomSeed;
+	private final List falsifiedSample;
 
-	public TestRun(UniqueId uniqueId, Status status, String randomSeed) {
+	public TestRun(UniqueId uniqueId, Status status, String randomSeed, List falsifiedSample) {
 		this.uniqueIdString = uniqueId.toString();
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
+		this.falsifiedSample = falsifiedSample;
 	}
 
 	boolean hasUniqueId(UniqueId uniqueId) {
@@ -32,12 +35,17 @@ public class TestRun implements Serializable {
 		return Status.values()[statusOrdinal];
 	}
 
-	public String getRandomSeed() {
-		return randomSeed;
+	public Optional<String> randomSeed() {
+		return Optional.ofNullable(randomSeed);
+	}
+
+	public Optional<List> falsifiedSample() {
+		return Optional.ofNullable(falsifiedSample);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("TestRun[%s:%s:%s]", uniqueIdString, getStatus(), randomSeed);
+		String randomSeedString = randomSeed().map(s -> ":" + s).orElse("");
+		return String.format("TestRun[%s:%s%s]", uniqueIdString, getStatus(), randomSeedString);
 	}
 }

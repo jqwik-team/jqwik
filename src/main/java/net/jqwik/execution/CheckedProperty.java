@@ -73,6 +73,9 @@ public class CheckedProperty {
 	}
 
 	private ShrinkablesGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {
+		if (configuration.getFalsifiedSample() != null && configuration.getAfterFailureMode() == AfterFailureMode.SAMPLE_ONLY) {
+			return createSampleOnlyShrinkableGenerator(configuration);
+		}
 		switch (configuration.getGenerationMode()) {
 			case EXHAUSTIVE:
 				return optionalExhaustive.get();
@@ -141,5 +144,10 @@ public class CheckedProperty {
 		Random random = SourceOfRandomness.create(configuration.getSeed());
 		return RandomizedShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, random, configuration.getTries());
 	}
+
+	private ShrinkablesGenerator createSampleOnlyShrinkableGenerator(PropertyConfiguration configuration) {
+		return new SampleOnlyShrinkablesGenerator(forAllParameters, configuration.getFalsifiedSample());
+	}
+
 
 }

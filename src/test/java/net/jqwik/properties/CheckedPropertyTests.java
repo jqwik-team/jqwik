@@ -389,6 +389,27 @@ class CheckedPropertyTests {
 			}
 
 		}
+
+		@Group
+		class RunSampleOnly {
+			@Example
+			@Label("run sample only when sample is provided")
+			void runWithSampleOnlyWhenSampleIsProvided() {
+				List<Object> sample = Arrays.asList("a", 1);
+				CheckedFunction checkSample = params -> params.equals(sample);
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"sampleOnlyProperty", checkSample, getParametersForMethod("sampleOnlyProperty"),
+					p -> Collections.emptySet(),
+					Optional.empty(),
+					aConfig().withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build()
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.countTries()).isEqualTo(1);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.sample()).isEmpty();
+			}
+		}
 	}
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
@@ -449,6 +470,12 @@ class CheckedPropertyTests {
 		public boolean exhaustiveProperty(@ForAll @IntRange(min = 1, max = 3) int anInt) {
 			return true;
 		}
+
+		public boolean sampleOnlyProperty(@ForAll String aString, @ForAll int aNumber) {
+			return true;
+		}
+
+
 
 	}
 }

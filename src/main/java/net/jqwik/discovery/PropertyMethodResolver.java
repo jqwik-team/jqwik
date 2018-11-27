@@ -84,15 +84,22 @@ class PropertyMethodResolver implements ElementResolver {
 			return new JqwikException(message);
 		});
 		String previousSeed = previousSeed(uniqueId);
-		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues, previousSeed);
+		List falsifiedSample = falsifiedSample(uniqueId);
+		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues, previousSeed, falsifiedSample);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
 
 	private String previousSeed(UniqueId uniqueId) {
 		return testRunData.byUniqueId(uniqueId)
 						  .filter(TestRun::isNotSuccessful)
-						  .map(TestRun::getRandomSeed)
-						  .filter(seed -> !seed.isEmpty())
+						  .flatMap(TestRun::randomSeed)
+						  .orElse(null);
+	}
+
+	private List falsifiedSample(UniqueId uniqueId) {
+		return testRunData.byUniqueId(uniqueId)
+						  .filter(TestRun::isNotSuccessful)
+						  .flatMap(TestRun::falsifiedSample)
 						  .orElse(null);
 	}
 

@@ -9,30 +9,36 @@ public class PropertyExecutionResult {
 
 	private final TestExecutionResult testExecutionResult;
 	private final String seed;
+	private final List falsifiedSample;
 
-	public PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed) {
+	public PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed, List falsifiedSample) {
 		this.testExecutionResult = testExecutionResult;
-		this.seed = seed;
+		this.seed = seed != null ? (seed.isEmpty() ? null : seed) : null;
+		this.falsifiedSample = falsifiedSample;
 	}
 
 	public static PropertyExecutionResult successful() {
-		return new PropertyExecutionResult(TestExecutionResult.successful(), null);
+		return new PropertyExecutionResult(TestExecutionResult.successful(), null, null);
 	}
 
 	public static PropertyExecutionResult successful(String seed) {
-		return new PropertyExecutionResult(TestExecutionResult.successful(), seed);
+		return new PropertyExecutionResult(TestExecutionResult.successful(), seed, null);
 	}
 
-	public static PropertyExecutionResult failed(Throwable throwable, String seed) {
-		return new PropertyExecutionResult(TestExecutionResult.failed(throwable), seed);
+	public static PropertyExecutionResult failed(Throwable throwable, String seed, List sample) {
+		return new PropertyExecutionResult(TestExecutionResult.failed(throwable), seed, sample);
 	}
 
 	public static PropertyExecutionResult aborted(Throwable throwable, String seed) {
-		return new PropertyExecutionResult(TestExecutionResult.aborted(throwable), seed);
+		return new PropertyExecutionResult(TestExecutionResult.aborted(throwable), seed, null);
 	}
 
 	public Optional<String> getSeed() {
 		return Optional.ofNullable(seed);
+	}
+
+	public Optional<List> getFalsifiedSample() {
+		return Optional.ofNullable(falsifiedSample);
 	}
 
 	public Status getStatus() {

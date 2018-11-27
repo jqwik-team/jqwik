@@ -35,6 +35,11 @@ public class PropertyTests {
 		return aString.length() == aNumber;
 	}
 
+	@Property(afterFailure = AfterFailureMode.SAMPLE_ONLY)
+	boolean sampleOnly(@ForAll String test, @ForAll int aNumber) {
+		return aNumber < 10000;
+	}
+
 	@Provide
 	Arbitrary<Integer> lessThan5() {
 		return Arbitraries.integers().between(0, 4);

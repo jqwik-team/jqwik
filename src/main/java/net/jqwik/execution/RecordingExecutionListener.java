@@ -1,11 +1,11 @@
 package net.jqwik.execution;
 
+import java.io.*;
 import java.util.*;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
-import net.jqwik.api.*;
 import net.jqwik.recording.*;
 
 public class RecordingExecutionListener implements PropertyExecutionListener {
@@ -13,7 +13,6 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 	private final TestRunRecorder recorder;
 	private final EngineExecutionListener listener;
 	private final boolean useJunitPlatformReporter;
-	private Map<TestDescriptor, String> seeds = new IdentityHashMap<>();
 
 	RecordingExecutionListener(TestRunRecorder recorder, EngineExecutionListener listener, boolean useJunitPlatformReporter) {
 		this.recorder = recorder;
@@ -38,9 +37,19 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 	}
 
 	private void recordTestRun(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {
-		String seed = executionResult.getSeed().orElse(Property.SEED_NOT_SET);
-		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.getStatus(), seed);
+		String seed = executionResult.getSeed().orElse(null);
+		List sample = executionResult.getFalsifiedSample()
+									 .filter(this::isSerializable)
+									 .orElse(null);
+		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.getStatus(), seed, sample);
 		recorder.record(run);
+	}
+
+	private boolean isSerializable(List<Object> sample) {
+		if (!(sample instanceof Serializable)) {
+			return false;
+		}
+		return sample.stream().allMatch(e -> e instanceof Serializable);
 	}
 
 	@Override

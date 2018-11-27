@@ -1,11 +1,18 @@
 package net.jqwik.descriptor;
 
+import java.util.*;
+
 import net.jqwik.*;
 import net.jqwik.api.*;
 
 public class PropertyConfiguration {
 
-	public static PropertyConfiguration from(Property property, PropertyDefaultValues propertyDefaultValues, String previousSeed) {
+	public static PropertyConfiguration from(
+		Property property,
+		PropertyDefaultValues propertyDefaultValues,
+		String previousSeed,
+		List<Object> falsifiedSample
+	) {
 		int tries = property.tries() == Property.TRIES_NOT_SET
 						? propertyDefaultValues.tries()
 						: property.tries();
@@ -19,6 +26,7 @@ public class PropertyConfiguration {
 			property.stereotype(),
 			property.seed(),
 			previousSeed,
+			falsifiedSample,
 			tries,
 			maxDiscardRatio,
 			property.shrinking(),
@@ -30,6 +38,7 @@ public class PropertyConfiguration {
 	private final String stereotype;
 	private final String seed;
 	private final String previousSeed;
+	private final List<Object> falsifiedSample;
 	private final int tries;
 	private final int maxDiscardRatio;
 	private final ShrinkingMode shrinkingMode;
@@ -40,6 +49,7 @@ public class PropertyConfiguration {
 		String stereotype,
 		String seed,
 		String previousSeed,
+		List falsifiedSample,
 		int tries,
 		int maxDiscardRatio,
 		ShrinkingMode shrinkingMode,
@@ -49,11 +59,24 @@ public class PropertyConfiguration {
 		this.stereotype = stereotype;
 		this.seed = seed;
 		this.previousSeed = previousSeed;
+		this.falsifiedSample = falsifiedSample;
 		this.tries = tries;
 		this.maxDiscardRatio = maxDiscardRatio;
 		this.shrinkingMode = shrinkingMode;
 		this.generationMode = generationMode;
 		this.afterFailureMode = afterFailureMode;
+	}
+
+	public PropertyConfiguration withSeed(String changedSeed) {
+		return new PropertyConfiguration(this.stereotype, changedSeed, this.previousSeed, this.falsifiedSample, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode, this.afterFailureMode);
+	}
+
+	public PropertyConfiguration withGenerationMode(GenerationMode changedGenerationMode) {
+		return new PropertyConfiguration(this.stereotype, this.seed, this.previousSeed, this.falsifiedSample, this.tries, this.maxDiscardRatio, this.shrinkingMode, changedGenerationMode, this.afterFailureMode);
+	}
+
+	public PropertyConfiguration withTries(int changedTries) {
+		return new PropertyConfiguration(this.stereotype, this.seed, this.previousSeed, this.falsifiedSample, changedTries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode, this.afterFailureMode);
 	}
 
 	public String getSeed() {
@@ -64,16 +87,8 @@ public class PropertyConfiguration {
 		return previousSeed;
 	}
 
-	public PropertyConfiguration withSeed(String changedSeed) {
-		return new PropertyConfiguration(this.stereotype, changedSeed, this.previousSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode, this.afterFailureMode);
-	}
-
-	public PropertyConfiguration withGenerationMode(GenerationMode changedGenerationMode) {
-		return new PropertyConfiguration(this.stereotype, this.seed, this.previousSeed, this.tries, this.maxDiscardRatio, this.shrinkingMode, changedGenerationMode, this.afterFailureMode);
-	}
-
-	public PropertyConfiguration withTries(int changedTries) {
-		return new PropertyConfiguration(this.stereotype, this.seed, this.previousSeed, changedTries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode, this.afterFailureMode);
+	public List<Object> getFalsifiedSample() {
+		return falsifiedSample;
 	}
 
 	public String getStereotype() {

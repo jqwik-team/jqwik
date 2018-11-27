@@ -87,6 +87,8 @@ public class TestRunDatabase {
 				return;
 			try {
 				objectOutputStream.writeObject(testRun);
+			} catch (NotSerializableException e) {
+				logWriteException(e);
 			} catch (IOException e) {
 				stopRecording = true;
 				logWriteException(e);

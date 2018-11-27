@@ -40,7 +40,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(13);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(14);
 	}
 
 	@Example
@@ -51,7 +51,7 @@ class DiscoveryTests {
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(3);
-		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(13);
+		assertThat(count(engineDescriptor, isPropertyDescriptor)).isEqualTo(14);
 	}
 
 	@Example
