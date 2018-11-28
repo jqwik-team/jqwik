@@ -1,6 +1,3 @@
-- Bug in test resolution: Every property method appears twice in
-  PropertyMethodResolver.createTestDescriptor
-
 - Property(afterFailure = AfterFailureMode.SAMPLE_ONLY|PREVIOUS_SEED|RANDOM_SEED)
   - User guide entry for PREVIOUS_SEED
   - Make Serializable:
