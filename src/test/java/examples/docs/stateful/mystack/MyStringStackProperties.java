@@ -7,7 +7,7 @@ import org.assertj.core.api.*;
 
 class MyStringStackProperties {
 
-	@Property @Report(Reporting.GENERATED)
+	@Property(afterFailure = AfterFailureMode.SAMPLE_ONLY) @Report(Reporting.GENERATED)
 	void checkMyStack(@ForAll("sequences") @Size(max = 10) ActionSequence<MyStringStack> actions) {
 		actions.run(new MyStringStack());
 	}

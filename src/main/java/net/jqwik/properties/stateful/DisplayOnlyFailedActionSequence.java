@@ -1,15 +1,18 @@
 package net.jqwik.properties.stateful;
 
+import java.io.*;
 import java.util.*;
 
 import net.jqwik.api.stateful.*;
 import net.jqwik.support.*;
 
-class DisplayOnlyFailedActionSequence<M> implements ActionSequence<M> {
+class DisplayOnlyFailedActionSequence<M> implements ActionSequence<M>, Serializable {
+
 	private final List<Action<M>> listOfActions;
 
-	<T> DisplayOnlyFailedActionSequence(List<Action<M>> listOfActions) {
-		this.listOfActions = listOfActions;
+	DisplayOnlyFailedActionSequence(List<Action<M>> listOfActions) {
+		// Make sure listOfActions is serializable
+		this.listOfActions = Collections.unmodifiableList(listOfActions);
 	}
 
 	@Override

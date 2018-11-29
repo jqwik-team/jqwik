@@ -1,9 +1,11 @@
 package examples.docs.stateful.mystack;
 
+import java.io.*;
+
 import net.jqwik.api.stateful.*;
 import org.assertj.core.api.*;
 
-class PopAction implements Action<MyStringStack> {
+class PopAction implements Action<MyStringStack>, Serializable {
 
 	@Override
 	public boolean precondition(MyStringStack model) {

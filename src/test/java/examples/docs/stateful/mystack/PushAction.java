@@ -1,9 +1,11 @@
 package examples.docs.stateful.mystack;
 
+import java.io.*;
+
 import net.jqwik.api.stateful.*;
 import org.assertj.core.api.*;
 
-class PushAction implements Action<MyStringStack> {
+class PushAction implements Action<MyStringStack>, Serializable {
 
 	private final String element;
 
