@@ -7,12 +7,12 @@ import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.support.*;
 
-class FixedActionsFailedActionSequence<M> extends AbstractActionSequence<M> implements Externalizable {
+class FixedActionsFailedActionSequence<M> extends SequentialActionSequence<M> implements Externalizable {
 
 	private List<Action<M>> listOfActions;
 
 	FixedActionsFailedActionSequence(List<Action<M>> listOfActions) {
-		super(listOfActions);
+		super(createGenerator(listOfActions), listOfActions.size());
 		this.runState = RunState.FAILED;
 		this.listOfActions = listOfActions;
 		this.sequence = listOfActions;
@@ -20,13 +20,13 @@ class FixedActionsFailedActionSequence<M> extends AbstractActionSequence<M> impl
 
 	// Needed for deserialization
 	public FixedActionsFailedActionSequence() {
-		super(new ArrayList<>());
+		super(createGenerator(new ArrayList<>()), 1);
 		this.listOfActions = new ArrayList<>();
 	}
 
 	@Override
 	public String toString() {
-		String actionsString = JqwikStringSupport.displayString(actions);
+		String actionsString = JqwikStringSupport.displayString(runActions());
 		return String.format("ActionSequence: %s", actionsString);
 	}
 
@@ -47,17 +47,18 @@ class FixedActionsFailedActionSequence<M> extends AbstractActionSequence<M> impl
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		this.listOfActions = (List<Action<M>>) in.readObject();
 		this.runState = RunState.FAILED;
-		this.actions = this.listOfActions;
+		this.actionGenerator = createGenerator(this.listOfActions);
+		this.intendedSize = this.listOfActions.size();
 		this.sequence = this.listOfActions;
 	}
 
-	private static <M> ActionGenerator createGenerator(List<Action<M>> listOfActions) {
+	private static <M> ActionGenerator<M> createGenerator(List<Action<M>> listOfActions) {
 		Iterator<Action<M>> iterator = listOfActions.iterator();
-		return new ActionGenerator() {
-			private List<Shrinkable<Action>> generated = new ArrayList<>();
+		return new ActionGenerator<M>() {
+			private List<Shrinkable<Action<M>>> generated = new ArrayList<>();
 
 			@Override
-			public Action next(Object model) {
+			public Action<M> next(M model) {
 				if (iterator.hasNext()) {
 					Action<M> action = iterator.next();
 					generated.add(Shrinkable.unshrinkable(action));
@@ -66,7 +67,7 @@ class FixedActionsFailedActionSequence<M> extends AbstractActionSequence<M> impl
 			}
 
 			@Override
-			public List<Shrinkable<Action>> generated() {
+			public List<Shrinkable<Action<M>>> generated() {
 				return generated;
 			}
 		};
