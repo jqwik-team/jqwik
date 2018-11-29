@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+@Deprecated
 public class Tuples {
 
 	/**
