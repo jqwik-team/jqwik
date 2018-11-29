@@ -17,6 +17,7 @@ public class MyStringStack {
 
 	public void clear() {
 		// Wrong implementation to provoke falsification for stacks with more than 2 elements
+		// elements.clear();
 		if (elements.size() > 2) {
 			elements.remove(0);
 		} else {

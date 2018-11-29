@@ -391,14 +391,15 @@ class CheckedPropertyTests {
 		}
 
 		@Group
-		class RunSampleOnly {
+		class WithSample {
+
 			@Example
 			@Label("run sample only when sample is provided")
 			void runWithSampleOnlyWhenSampleIsProvided() {
-				List<Object> sample = Arrays.asList("a", 1);
+				List<Object> sample = Arrays.asList(1, 2);
 				CheckedFunction checkSample = params -> params.equals(sample);
 				CheckedProperty checkedProperty = new CheckedProperty(
-					"sampleOnlyProperty", checkSample, getParametersForMethod("sampleOnlyProperty"),
+					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
 					p -> Collections.emptySet(),
 					Optional.empty(),
 					aConfig().withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build()
@@ -406,6 +407,24 @@ class CheckedPropertyTests {
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.countTries()).isEqualTo(1);
+				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.sample()).isEmpty();
+			}
+
+			@Example
+			@Label("run sample and then new random seed")
+			void runSampleAndRandomSeed() {
+				List<Object> sample = Arrays.asList(1, 2);
+				CheckedFunction checkSample = params -> true;
+				CheckedProperty checkedProperty = new CheckedProperty(
+					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
+					p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
+					Optional.empty(),
+					aConfig().withTries(10).withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_FIRST).build()
+				);
+
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				assertThat(check.countTries()).isEqualTo(10);
 				assertThat(check.status()).isEqualTo(SATISFIED);
 				assertThat(check.sample()).isEmpty();
 			}
@@ -471,7 +490,7 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		public boolean sampleOnlyProperty(@ForAll String aString, @ForAll int aNumber) {
+		public boolean sampleProperty(@ForAll int n1, @ForAll int n2) {
 			return true;
 		}
 

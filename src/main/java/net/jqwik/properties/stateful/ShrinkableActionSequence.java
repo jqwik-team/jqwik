@@ -73,7 +73,7 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 	}
 
 	private ActionSequence<T> toDisplayOnlyActionSequence(List<Action<T>> listOfActions) {
-		return new DisplayOnlyFailedActionSequence<>(listOfActions);
+		return new FixedActionsFailedActionSequence<>(listOfActions);
 	}
 
 	private ActionSequence<T> toRunnableActionSequence(List<Action<T>> listOfActions) {

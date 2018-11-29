@@ -9,22 +9,18 @@ import net.jqwik.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.support.*;
 
-class SequentialActionSequence<M> implements ActionSequence<M> {
+// TODO: Remove duplication with SequentialActionSequence
+abstract class AbstractActionSequence<M> implements ActionSequence<M> {
 
-	protected ActionGenerator<M> actionGenerator;
-	protected int intendedSize;
-	protected final List<Action<M>> sequence = new ArrayList<>();
+	protected Iterable<Action<M>> actions;
+	protected List<Action<M>> sequence = new ArrayList<>();
 	private final List<Invariant<M>> invariants = new ArrayList<>();
 
 	protected RunState runState = RunState.NOT_RUN;
 	private M currentModel = null;
 
-	SequentialActionSequence(ActionGenerator<M> actionGenerator, int intendedSize) {
-		if (intendedSize < 1) {
-			throw new IllegalArgumentException("The intended size of an ActionSequence must not be 0");
-		}
-		this.actionGenerator = actionGenerator;
-		this.intendedSize = intendedSize;
+	protected AbstractActionSequence(Iterable<Action<M>> actions) {
+		this.actions = actions;
 	}
 
 	@Override
@@ -39,13 +35,8 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 		}
 		runState = RunState.RUNNING;
 		currentModel = model;
-		for (int i = 0; i < intendedSize; i++) {
-			Action<M> action;
-			try {
-				action = actionGenerator.next(currentModel);
-			} catch (NoSuchElementException nsee) {
-				break;
-			}
+
+		for (Action<M> action : actions) {
 			sequence.add(action);
 			try {
 				currentModel = action.run(currentModel);
@@ -79,9 +70,9 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	private String createErrorMessage(String name, String causeMessage) {
 		String actionsString = sequence
-			.stream() //
-			.map(aTry -> "    " + aTry.toString()) //
-			.collect(Collectors.joining(System.lineSeparator()));
+								   .stream() //
+								   .map(aTry -> "    " + aTry.toString()) //
+								   .collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
 			"%s failed after following actions:%n%s%n  final currentModel: %s%n%s",
 			name,
@@ -90,7 +81,6 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 			causeMessage
 		);
 	}
-
 
 	@Override
 	public synchronized ActionSequence<M> withInvariant(Invariant<M> invariant) {
@@ -106,14 +96,5 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 	@Override
 	public synchronized M finalModel() {
 		return currentModel;
-	}
-
-	@Override
-	public String toString() {
-		if (runState == RunState.NOT_RUN) {
-			return String.format("ActionSequence[%s]: %s actions intended", runState.name(), intendedSize);
-		}
-		String actionsString = JqwikStringSupport.displayString(sequence);
-		return String.format("ActionSequence[%s]: %s", runState.name(), actionsString);
 	}
 }

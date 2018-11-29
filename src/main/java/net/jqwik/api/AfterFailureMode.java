@@ -26,6 +26,15 @@ public enum AfterFailureMode {
 	 */
 	SAMPLE_ONLY,
 
+	/**
+	 * Run the property with just the previous falsified and shrunk sample first,
+	 * if that succeeds run property default behaviour, i.e. data-driven or random seed.
+	 *
+	 * Only works if sample data could be serialized.
+	 * Will use previous seed otherwise.
+	 */
+	SAMPLE_FIRST,
+
 	NOT_SET
 
 }
