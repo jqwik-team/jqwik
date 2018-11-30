@@ -14,7 +14,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = moduleName
-version = '0.9.3'
+version = '1.0.0-SNAPSHOT'
 
 jar {
 	baseName = 'jqwik'

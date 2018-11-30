@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.3</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.0.0-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
