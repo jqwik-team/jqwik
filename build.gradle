@@ -14,7 +14,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
 group = moduleName
-version = '0.9.3-SNAPSHOT'
+version = '0.9.3'
 
 jar {
 	baseName = 'jqwik'
@@ -140,7 +140,7 @@ dependencies {
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
 
-	testCompile("org.mockito:mockito-core:2.23.0")
+	testCompile("org.mockito:mockito-core:2.23.4")
 	testCompile("org.assertj:assertj-core:3.11.1")
 	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 

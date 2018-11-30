@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.3-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.3</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -78,7 +78,6 @@
   - [Switch Shrinking Off](#switch-shrinking-off)
   - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
-- [Rerunning Falsified Properties](#rerunning-falsified-properties)
 - [Providing Default Arbitraries](#providing-default-arbitraries)
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
   - [Arbitrary Providers for Parameterized Types](#arbitrary-providers-for-parameterized-types)
@@ -88,9 +87,10 @@
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
+- [Rerunning Falsified Properties](#rerunning-falsified-properties)
 - [jqwik Configuration](#jqwik-configuration)
 - [Release Notes](#release-notes)
-  - [0.9.3-SNAPSHOT](#093-snapshot)
+  - [0.9.3](#093)
   - [0.9.2](#092)
   - [0.9.1](#091)
   - [0.9.0](#090)
@@ -138,11 +138,11 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.3.1'
-ext.junitJupiterVersion = '5.3.1'
+ext.junitPlatformVersion = '1.3.2'
+ext.junitJupiterVersion = '5.3.2'
 
-ext.jqwikVersion = '0.9.2'
-//ext.jqwikVersion = '0.9.3-SNAPSHOT'
+ext.jqwikVersion = '0.9.3'
+//ext.jqwikVersion = '1.0.0-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -210,7 +210,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.9.2</version>
+        <version>0.9.3</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -236,9 +236,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.9.2.jar`
-- `junit-platform-engine-1.3.1.jar`
-- `junit-platform-commons-1.3.1.jar`
+- `jqwik-0.9.3.jar`
+- `junit-platform-engine-1.3.2.jar`
+- `junit-platform-commons-1.3.2.jar`
 - `opentest4j-1.0.0.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -2390,20 +2390,31 @@ If you want to, you can change this behaviour for a given property like this:
 void myProperty() { ... }
 ```
 
-Doing that will generate a new seed even after falsification in the previous run.
-Specifying a constant seed, however, will always win:
+The `afterFailure` property can have one of four values:
 
-```java
-@Property(seed = "424242", afterFailure = AfterFailureMode.RANDOM_SEED)
-void myProperty() { ... }
-```
+- `AfterFailureMode.PREVIOUS_SEED`: Choose the same seed that provoked the failure in the first place.
+  Provided no arbitrary provider code has been changed, this will generate the same
+  sequence of generated parameters as the previous test run.
+
+- `AfterFailureMode.RANDOM_SEED`: Choose a new random seed even after failure in the previous run.
+  A constant seed will always prevail thought, as in the following example:
+
+  ```java
+  @Property(seed = "424242", afterFailure = AfterFailureMode.RANDOM_SEED)
+  void myProperty() { ... }
+  ```
+
+- `AfterFailureMode.SAMPLE_ONLY`: Only run the property with just the last falsified (and shrunk)
+  generated sample set of parameters. This only works if all parameters could
+  be serialized. Look into your test run log to check out if a serialization problem occurred.
+
+- `AfterFailureMode.SAMPLE_FIRST`: Same as `SAMPLE_ONLY` but generate additional examples if the
+  property no longer fails with the recorded sample.
+
 
 You can also determine the default behaviour of all properties by setting
 the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
-to one of:
-
-- `PREVIOUS_SEED`
-- `RANDOM_SEED`
+to one of those enum values.
 
 ## jqwik Configuration
 
@@ -2420,7 +2431,7 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 
 ## Release Notes
 
-### 0.9.3-SNAPSHOT
+### 0.9.3
 
 - The probability of edge cases being generated is now higher
 - New constraint annotation `@NotEmpty`
@@ -2442,6 +2453,9 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 - Introduced [`@Property(afterFailure)`](#rerunning-falsified-properties)
 - `ArbitraryConfiguratorBase` has new method `acceptType(TypeUsage)`,
   which can be overridden.
+- Added two new after-failure-modes: `SAMPLE_ONLY` and `SAMPLE_FIRST`
+- Action sequences for state-based properties are serializable now
+  in order to enable `SAMPLE_ONLY` and `SAMPLE_FIRST`
 
 ### 0.9.2
 
