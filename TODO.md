@@ -1,6 +1,3 @@
-- Property(afterFailure = AfterFailureMode.SAMPLE_ONLY|PREVIOUS_SEED|RANDOM_SEED)
-  - User guide entry for PREVIOUS_SEED
-
 - For version 1.0
 
   - Throw out all deprecations
