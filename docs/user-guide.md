@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.0.0-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.3</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -239,7 +239,7 @@ You will have to add _at least_ the following jars to your classpath:
 - `jqwik-0.9.3.jar`
 - `junit-platform-engine-1.3.2.jar`
 - `junit-platform-commons-1.3.2.jar`
-- `opentest4j-1.0.0.jar`
+- `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
 ## Creating an Example-based Test
