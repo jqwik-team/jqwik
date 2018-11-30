@@ -1,5 +1,7 @@
 - For version 1.0
 
+  - Cache discovery result in JqwikTestEngine for identical request
+
   - Throw out all deprecations
 
   - Divide deliverables into two artifacts:
