@@ -13,7 +13,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	protected ActionGenerator<M> actionGenerator;
 	protected int intendedSize;
-	protected List<Action<M>> sequence = new ArrayList<>();
+	protected final List<Action<M>> sequence = new ArrayList<>();
 	private final List<Invariant<M>> invariants = new ArrayList<>();
 
 	protected RunState runState = RunState.NOT_RUN;

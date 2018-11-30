@@ -15,7 +15,7 @@ class FixedActionsFailedActionSequence<M> extends SequentialActionSequence<M> im
 		super(createGenerator(listOfActions), listOfActions.size());
 		this.runState = RunState.FAILED;
 		this.listOfActions = listOfActions;
-		this.sequence = listOfActions;
+		this.sequence.addAll(listOfActions);
 	}
 
 	// Needed for deserialization
@@ -49,28 +49,11 @@ class FixedActionsFailedActionSequence<M> extends SequentialActionSequence<M> im
 		this.runState = RunState.FAILED;
 		this.actionGenerator = createGenerator(this.listOfActions);
 		this.intendedSize = this.listOfActions.size();
-		this.sequence = this.listOfActions;
+		this.sequence.addAll(this.listOfActions);
 	}
 
 	private static <M> ActionGenerator<M> createGenerator(List<Action<M>> listOfActions) {
-		Iterator<Action<M>> iterator = listOfActions.iterator();
-		return new ActionGenerator<M>() {
-			private List<Shrinkable<Action<M>>> generated = new ArrayList<>();
-
-			@Override
-			public Action<M> next(M model) {
-				if (iterator.hasNext()) {
-					Action<M> action = iterator.next();
-					generated.add(Shrinkable.unshrinkable(action));
-				}
-				throw new NoSuchElementException("No more actions available");
-			}
-
-			@Override
-			public List<Shrinkable<Action<M>>> generated() {
-				return generated;
-			}
-		};
+		return new ListActionGenerator<>(listOfActions);
 	}
 
 }

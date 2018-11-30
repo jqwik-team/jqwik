@@ -26,7 +26,7 @@ class ReportEntrySupport {
 	}
 
 	private static boolean isCheckResultEntry(ReportEntry entry) {
-		return entry.getKeyValuePairs().containsKey(CheckResultReportEntry.TRIES_REPORT_KEY);
+		return entry.getKeyValuePairs().containsKey(CheckResultReportEntry.TRIES_KEY);
 	}
 
 	private static String formatCheckResultReportEntry(ReportEntry entry) {
@@ -44,7 +44,7 @@ class ReportEntrySupport {
 
 	private static ArrayList<String> sortKeys(ReportEntry entry) {
 		ArrayList<String> keys = new ArrayList<>(entry.getKeyValuePairs().keySet());
-		sortToStart(keys, SAMPLE_REPORT_KEY, ORIGINAL_SAMPLE_REPORT_KEY, SEED_REPORT_KEY, GENERATION_REPORT_KEY, CHECKS_REPORT_KEY, TRIES_REPORT_KEY);
+		sortToStart(keys, SAMPLE_KEY, ORIGINAL_REPORT_KEY, SEED_KEY, AFTER_FAILURE_KEY, GENERATION_KEY, CHECKS_KEY, TRIES_KEY);
 		return keys;
 	}
 
