@@ -3,7 +3,6 @@ package net.jqwik.discovery;
 import java.lang.reflect.*;
 import java.util.*;
 
-import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
@@ -11,6 +10,8 @@ import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.recording.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class PropertyMethodResolverTest {
@@ -20,7 +21,8 @@ class PropertyMethodResolverTest {
 	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
 
 	private TestRunData testRunData = new TestRunData();
-	private PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO, DEFAULT_AFTER_FAILURE);
+	private PropertyDefaultValues propertyDefaultValues =
+		PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO, DEFAULT_AFTER_FAILURE);
 	private PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
 
 	@Group
@@ -31,13 +33,14 @@ class PropertyMethodResolverTest {
 			Method method = TestHelper.getMethod(TestContainer.class, "plainProperty");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
-			Assertions.assertThat(descriptors).hasSize(1);
+			assertThat(descriptors).hasSize(1);
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
 
+			assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
+			assertThat(propertyMethodDescriptor.getUniqueId())
+				.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
 
-			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
-			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
-					.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
+			assertThat(propertyMethodDescriptor.getReporting()).isEmpty();
 
 			assertDefaultConfigurationProperties(propertyMethodDescriptor);
 		}
@@ -48,12 +51,12 @@ class PropertyMethodResolverTest {
 			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithLabel");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
-			Assertions.assertThat(descriptors).hasSize(1);
+			assertThat(descriptors).hasSize(1);
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
 
-			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("my label");
-			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
-					.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
+			assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("my label");
+			assertThat(propertyMethodDescriptor.getUniqueId())
+				.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
 
 		}
 
@@ -63,11 +66,11 @@ class PropertyMethodResolverTest {
 			Method method = TestHelper.getMethod(TestContainer.class, "property_with_underscores");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
-			Assertions.assertThat(descriptors).hasSize(1);
+			assertThat(descriptors).hasSize(1);
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
 
-			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("property with underscores");
-			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
+			assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("property with underscores");
+			assertThat(propertyMethodDescriptor.getUniqueId())
 					  .isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
 
 		}
@@ -76,14 +79,14 @@ class PropertyMethodResolverTest {
 		void propertyWithTag() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithOneTag", TestContainer.class);
 
-			Assertions.assertThat(propertyMethodDescriptor.getTags()).containsExactly(TestTag.create("tag1"));
+			assertThat(propertyMethodDescriptor.getTags()).containsExactly(TestTag.create("tag1"));
 		}
 
 		@Example
 		void propertyWithSeveralTags() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithTwoTags", TestContainer.class);
 
-			Assertions.assertThat(propertyMethodDescriptor.getTags())
+			assertThat(propertyMethodDescriptor.getTags())
 					  .containsExactly(TestTag.create("tag1"), TestTag.create("tag2"));
 		}
 
@@ -91,7 +94,7 @@ class PropertyMethodResolverTest {
 		void propertyWithTaggedContainer() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithTag", TaggedTestContainer.class);
 
-			Assertions.assertThat(propertyMethodDescriptor.getTags())
+			assertThat(propertyMethodDescriptor.getTags())
 					  .containsExactlyInAnyOrder(TestTag.create("container-tag"), TestTag.create("property-tag"));
 		}
 
@@ -101,33 +104,31 @@ class PropertyMethodResolverTest {
 			Method method = TestHelper.getMethod(TestContainer.class, "propertyWithParams");
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
-			Assertions.assertThat(descriptors).hasSize(1);
+			assertThat(descriptors).hasSize(1);
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("propertyWithParams");
-			Assertions.assertThat(propertyMethodDescriptor.getUniqueId())
-					.isEqualTo(classDescriptor.getUniqueId().append("property", "propertyWithParams(int, java.lang.String)"));
+			assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("propertyWithParams");
+			assertThat(propertyMethodDescriptor.getUniqueId())
+				.isEqualTo(classDescriptor.getUniqueId().append("property", "propertyWithParams(int, java.lang.String)"));
 		}
 
 		@Example
 		void propertyWithAnnotationParams() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withPropertyParams", TestContainer.class);
 
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("42");
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(99);
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(6);
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.EXHAUSTIVE);
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getAfterFailureMode()).isEqualTo(AfterFailureMode.RANDOM_SEED);
-
-			// TODO: Remove when deprecated Property.reporting will be removed
-			Assertions.assertThat(propertyMethodDescriptor.getReporting()).containsExactly(Reporting.GENERATED, Reporting.FALSIFIED);
+			assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("42");
+			assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(99);
+			assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(6);
+			assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
+			assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.EXHAUSTIVE);
+			assertThat(propertyMethodDescriptor.getConfiguration().getAfterFailureMode())
+				.isEqualTo(AfterFailureMode.RANDOM_SEED);
 		}
 
 		@Example
 		void propertyWithReportAnnotation() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withReportAnnotation", TestContainer.class);
 
-			Assertions.assertThat(propertyMethodDescriptor.getReporting()).containsExactly(Reporting.GENERATED, Reporting.FALSIFIED);
+			assertThat(propertyMethodDescriptor.getReporting()).containsExactly(Reporting.GENERATED, Reporting.FALSIFIED);
 		}
 
 		@Example
@@ -140,8 +141,8 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isEqualTo("4243");
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getFalsifiedSample()).isEqualTo(falsifiedSample);
+			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isEqualTo("4243");
+			assertThat(propertyMethodDescriptor.getConfiguration().getFalsifiedSample()).isEqualTo(falsifiedSample);
 		}
 
 		@Example
@@ -153,7 +154,7 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
+			assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
 		}
 
 		@Example
@@ -165,7 +166,7 @@ class PropertyMethodResolverTest {
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptors.iterator().next();
-			Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("41");
+			assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo("41");
 		}
 
 		private PropertyMethodDescriptor resolveMethodInClass(String methodName, Class<?> containerClass) {
@@ -173,13 +174,12 @@ class PropertyMethodResolverTest {
 			Method method = TestHelper.getMethod(containerClass, methodName);
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 
-			Assertions.assertThat(descriptors).hasSize(1);
+			assertThat(descriptors).hasSize(1);
 			PropertyMethodDescriptor propertyMethodDescriptor =
 				(PropertyMethodDescriptor) descriptors.iterator().next();
 			classDescriptor.addChild(propertyMethodDescriptor);
 			return propertyMethodDescriptor;
 		}
-
 
 	}
 
@@ -194,7 +194,7 @@ class PropertyMethodResolverTest {
 			Optional<TestDescriptor> descriptor = resolver.resolveUniqueId(uniqueId.getSegments().get(1), classDescriptor);
 
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptor.get();
-			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
+			assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("plainProperty");
 			assertDefaultConfigurationProperties(propertyMethodDescriptor);
 		}
 
@@ -206,9 +206,9 @@ class PropertyMethodResolverTest {
 
 			Optional<TestDescriptor> descriptor = resolver.resolveUniqueId(uniqueId.getSegments().get(1), classDescriptor);
 
-			Assertions.assertThat(descriptor).isPresent();
+			assertThat(descriptor).isPresent();
 			PropertyMethodDescriptor propertyMethodDescriptor = (PropertyMethodDescriptor) descriptor.get();
-			Assertions.assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("propertyWithParams");
+			assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("propertyWithParams");
 		}
 
 	}
@@ -218,13 +218,13 @@ class PropertyMethodResolverTest {
 	}
 
 	private void assertDefaultConfigurationProperties(PropertyMethodDescriptor propertyMethodDescriptor) {
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(Property.SEED_NOT_SET);
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(DEFAULT_TRIES);
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.AUTO);
-		Assertions.assertThat(propertyMethodDescriptor.getConfiguration().getAfterFailureMode()).isEqualTo(AfterFailureMode.PREVIOUS_SEED);
+		assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(Property.SEED_NOT_SET);
+		assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
+		assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(DEFAULT_TRIES);
+		assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
+		assertThat(propertyMethodDescriptor.getConfiguration().getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
+		assertThat(propertyMethodDescriptor.getConfiguration().getGenerationMode()).isEqualTo(GenerationMode.AUTO);
+		assertThat(propertyMethodDescriptor.getConfiguration().getAfterFailureMode()).isEqualTo(AfterFailureMode.PREVIOUS_SEED);
 	}
 
 	private static class TestContainer {
@@ -264,19 +264,19 @@ class PropertyMethodResolverTest {
 		void withSeed41() {
 		}
 
-		@Property( //
-			seed = "42", //
-			tries = 99, //
-			maxDiscardRatio = 6, //
-			shrinking = ShrinkingMode.OFF, //
-			generation = GenerationMode.EXHAUSTIVE, //
-			afterFailure = AfterFailureMode.RANDOM_SEED, //
-			reporting = {Reporting.GENERATED, Reporting.FALSIFIED} //
+		@Property(
+			seed = "42",
+			tries = 99,
+			maxDiscardRatio = 6,
+			shrinking = ShrinkingMode.OFF,
+			generation = GenerationMode.EXHAUSTIVE,
+			afterFailure = AfterFailureMode.RANDOM_SEED
 		)
 		void withPropertyParams() {
 		}
 
-		@Property @Report({Reporting.GENERATED, Reporting.FALSIFIED})
+		@Property
+		@Report({Reporting.GENERATED, Reporting.FALSIFIED})
 		void withReportAnnotation() {
 		}
 	}

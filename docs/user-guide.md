@@ -1,5 +1,5 @@
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">0.9.3</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.0.0-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -90,10 +90,8 @@
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
 - [jqwik Configuration](#jqwik-configuration)
 - [Release Notes](#release-notes)
-  - [0.9.3](#093)
-  - [0.9.2](#092)
-  - [0.9.1](#091)
-  - [0.9.0](#090)
+  - [1.0.0-SNAPSHOT](#100-snapshot)
+  - [0.9.x](#09x)
   - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -2431,7 +2429,17 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 
 ## Release Notes
 
-### 0.9.3
+### 1.0.0-SNAPSHOT
+
+- Removed all deprecated APIs
+  - Annotation attribute `net.jqwik.api.Property.reporting()`
+  - Class `net.jqwik.api.Tuples`
+  - Method `net.jqwik.api.providers.TypeUsage.getAnnotation()`
+
+
+### 0.9.x
+
+##### 0.9.3
 
 - The probability of edge cases being generated is now higher
 - New constraint annotation `@NotEmpty`
@@ -2457,14 +2465,14 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 - Action sequences for state-based properties are serializable now
   in order to enable `SAMPLE_ONLY` and `SAMPLE_FIRST`
 
-### 0.9.2
+##### 0.9.2
 
 - Exhaustive generation works for ambiguous arbitrary resolution if each arbitrary
   can be generated exhaustively
 - Fixed bug related to correct throwable propagation when shrinking
 - Erroneous properties will also be shrunk now
 
-### 0.9.1
+##### 0.9.1
 
 - Container shrinking tries one more thing to get smaller results
 - Removed `RandomGenerator.reset()` since it's no longer needed for uniqueness behaviour
@@ -2486,7 +2494,7 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 - Implemented exhaustive generation for `Arbitraries.strings()`
 - Support default generation of Iterables and Iterators
 
-### 0.9.0
+##### 0.9.0
 
 - Removed deprecated static methods in `Arbitraries`
 - Removed deprecated method `ArbitraryProvider.provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider)`

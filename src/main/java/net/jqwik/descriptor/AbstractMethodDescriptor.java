@@ -55,14 +55,7 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 
 	public Reporting[] getReporting() {
 		Optional<Report> optionalReport = AnnotationSupport.findAnnotation(getTargetMethod(), Report.class);
-		return optionalReport.map(Report::value).orElseGet(this::getOldStyleReporting);
+		return optionalReport.map(Report::value).orElse(new Reporting[0]);
 	}
 
-	// TODO: Remove as soon as deprecated Property.reporting will be removed
-	private Reporting[] getOldStyleReporting() {
-		Optional<Property> optionalProperty = AnnotationSupport.findAnnotation(getTargetMethod(), Property.class);
-		if (optionalProperty.isPresent())
-			return optionalProperty.get().reporting();
-		return new Reporting[0];
-	}
 }

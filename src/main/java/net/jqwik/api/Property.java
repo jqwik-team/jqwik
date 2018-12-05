@@ -39,12 +39,6 @@ public @interface Property {
 
 	ShrinkingMode shrinking() default ShrinkingMode.BOUNDED;
 
-	/**
-	 * @deprecated Use annotation {@linkplain Report} instead
-	 */
-	@Deprecated
-	Reporting[] reporting() default {};
-
 	String stereotype() default DEFAULT_STEREOTYPE;
 
 	GenerationMode generation() default GenerationMode.AUTO;
