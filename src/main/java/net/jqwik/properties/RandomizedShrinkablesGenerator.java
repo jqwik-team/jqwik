@@ -29,7 +29,7 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 							 .map(GenericArbitrary::new)
 							 .collect(Collectors.toSet());
 		if (arbitraries.isEmpty()) {
-			throw new CannotFindArbitraryException(parameter);
+			throw new CannotFindArbitraryException(TypeUsage.forParameter(parameter), parameter.getAnnotation(ForAll.class));
 		}
 		return new RandomizedParameterGenerator(parameter, arbitraries, genSize);
 	}

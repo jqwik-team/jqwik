@@ -1,7 +1,5 @@
 package net.jqwik.api;
 
-import net.jqwik.support.*;
-
 import java.util.*;
 import java.util.stream.*;
 
@@ -49,7 +47,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@Override
 	public String toString() {
-		return String.format("%s", JqwikStringSupport.displayString(distances));
+		return String.format("ShrinkingDistance:%s", Arrays.toString(distances));
 	}
 
 	@Override
