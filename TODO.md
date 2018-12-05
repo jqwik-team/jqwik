@@ -1,7 +1,5 @@
 - For version 1.0
 
-  - Throw out all deprecations
-
   - Divide deliverables into two artifacts:
     - JqwikException -> jqwik.api
     - jqwik.api
