@@ -1,155 +1,18 @@
-repositories {
-	mavenCentral()
-	//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-}
-
 ext {
 	junitPlatformVersion = '1.3.2'
 	junitJupiterVersion = '5.3.2'
 	moduleName = 'net.jqwik'
+	jqwikVersion = '1.0.0-SNAPSHOT'
 }
 
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
-apply plugin: 'signing'
-
-group = moduleName
-version = '1.0.0-SNAPSHOT'
-
-jar {
-	baseName = 'jqwik'
-	version = version
-	manifest {
-		attributes('Automatic-Module-Name': moduleName)
-	}
-}
-
-task javadocApi(type: Javadoc) {
-	source = file('./src/main/java')
-	failOnError = false
-	destinationDir = file('./docs/javadoc')
-	include '**/api/**'
-}
-
-task javadocJar(type: Jar) {
-	classifier = 'javadoc'
-	from javadoc
-}
-
-task sourcesJar(type: Jar) {
-	classifier = 'sources'
-	from sourceSets.main.allSource
-}
-
-artifacts {
-	archives javadocJar, sourcesJar
-}
-
-signing {
-	//signing requires credentials in ~/.gradle/gradle.properties:
-	//    signing.keyId=<keyId>
-	//    signing.password=<keySecretPhrase>
-	//    signing.secretKeyRingFile=/Users/<user>/.gnupg/secring.gpg
-	//    ossrhUsername=<configured user>
-	//    ossrhPassword=<configured password>
-	sign configurations.archives
-}
-
-publishing {
-
-	publications {
-		
-		jqwikApi(MavenPublication) {
-			artifactId = 'jqwik'
-			from components.java
-			artifact sourcesJar
-			artifact javadocJar
-			pom {
-				name = 'jqwik'
-				description = 'jqwik - Property-based testing for the JVM'
-				url = 'https://jqwik.net/'
-				licenses {
-					license {
-						name = 'Eclipse Public License - v 2.0'
-						url = 'http://www.eclipse.org/legal/epl-v20.html'
-					}
-				}
-				developers {
-					developer {
-						id = 'jlink'
-						name = 'Johannes Link'
-						email = 'business@johanneslink.net'
-					}
-				}
-				scm {
-					connection = 'scm:git:git://github.com/jlink/jqwik.git'
-					developerConnection = 'scm:git:git://github.com/jlink/jqwik.git'
-					url = 'https://github.com/jlink/jqwik'
-				}
-			}
-		}
-	}
+allprojects {
 	repositories {
-		maven {
-			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
-			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
-
-			credentials {
-				username = ossrhUsername
-				password = ossrhPassword
-			}
-
-			// change URLs to point to your repos, e.g. http://my.org/repo
-			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-		}
-	}
-}
-
-signing {
-	sign publishing.publications.jqwikApi
-}
-
-compileTestJava {
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
-	options.compilerArgs += '-parameters'
-	options.encoding = 'UTF-8'
-}
-
-test {
-	useJUnitPlatform {
-		includeEngines "jqwik"
-		includeEngines "junit-archunit"
+		mavenCentral()
+		//maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
 	}
 
-
-	include 'net/**/*Properties.class'
-	include 'net/**/*Example.class'
-	include 'net/**/*Examples.class'
-	include 'net/**/*Test.class'
-	include 'net/**/*Tests.class'
-
-	// testLogging.showStandardStreams = true
-}
-
-dependencies {
-	api("org.apiguardian:apiguardian-api:1.0.0")
-	api("org.opentest4j:opentest4j:1.1.1")
-	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
-	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
-
-	testCompile("org.mockito:mockito-core:2.23.4")
-	testCompile("org.assertj:assertj-core:3.11.1")
-	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-
-	// Only needed to check interferences between Jupiter and jqwik
-	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-
-	testCompile "com.tngtech.archunit:archunit-junit5-api:0.9.3"
-	testRuntime "com.tngtech.archunit:archunit-junit5-engine:0.9.3"
-
+	group = moduleName
+	version = jqwikVersion
 }
 
 wrapper {

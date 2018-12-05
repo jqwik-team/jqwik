@@ -1,0 +1,141 @@
+description = "Jqwik API module"
+
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+jar {
+	baseName = 'jqwik-api'
+	version = version
+	manifest {
+		attributes('Automatic-Module-Name': "${moduleName}.api")
+	}
+}
+
+task javadocApi(type: Javadoc) {
+	source = file('./src/main/java')
+	failOnError = false
+	destinationDir = file('./docs/javadoc')
+	include '**/api/**'
+}
+
+task javadocJar(type: Jar) {
+	classifier = 'javadoc'
+	from javadoc
+}
+
+task sourcesJar(type: Jar) {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+
+artifacts {
+	archives javadocJar, sourcesJar
+}
+
+signing {
+	//signing requires credentials in ~/.gradle/gradle.properties:
+	//    signing.keyId=<keyId>
+	//    signing.password=<keySecretPhrase>
+	//    signing.secretKeyRingFile=/Users/<user>/.gnupg/secring.gpg
+	//    ossrhUsername=<configured user>
+	//    ossrhPassword=<configured password>
+	sign configurations.archives
+}
+
+publishing {
+
+	publications {
+		
+		jqwikApi(MavenPublication) {
+			artifactId = 'jqwik-api'
+			from components.java
+			artifact sourcesJar
+			artifact javadocJar
+			pom {
+				name = 'jqwik-api'
+				description = project.description
+				url = 'https://jqwik.net/'
+				licenses {
+					license {
+						name = 'Eclipse Public License - v 2.0'
+						url = 'http://www.eclipse.org/legal/epl-v20.html'
+					}
+				}
+				developers {
+					developer {
+						id = 'jlink'
+						name = 'Johannes Link'
+						email = 'business@johanneslink.net'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/jlink/jqwik.git'
+					developerConnection = 'scm:git:git://github.com/jlink/jqwik.git'
+					url = 'https://github.com/jlink/jqwik'
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
+			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
+
+			credentials {
+				username = ossrhUsername
+				password = ossrhPassword
+			}
+
+			// change URLs to point to your repos, e.g. http://my.org/repo
+			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.jqwikApi
+}
+
+compileTestJava {
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	options.compilerArgs += '-parameters'
+	options.encoding = 'UTF-8'
+}
+
+test {
+	useJUnitPlatform {
+		includeEngines "jqwik"
+		includeEngines "junit-archunit"
+	}
+
+
+	include 'net/**/*Properties.class'
+	include 'net/**/*Example.class'
+	include 'net/**/*Examples.class'
+	include 'net/**/*Test.class'
+	include 'net/**/*Tests.class'
+
+	// testLogging.showStandardStreams = true
+}
+
+dependencies {
+	api("org.apiguardian:apiguardian-api:1.0.0")
+	api("org.opentest4j:opentest4j:1.1.1")
+	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
+	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
+
+	testCompile("org.mockito:mockito-core:2.23.4")
+	testCompile("org.assertj:assertj-core:3.11.1")
+	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
+	// Only needed to check interferences between Jupiter and jqwik
+	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+	testCompile "com.tngtech.archunit:archunit-junit5-api:0.9.3"
+	testRuntime "com.tngtech.archunit:archunit-junit5-engine:0.9.3"
+
+}
