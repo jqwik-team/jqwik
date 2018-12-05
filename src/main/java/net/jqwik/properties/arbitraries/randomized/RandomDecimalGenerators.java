@@ -3,7 +3,6 @@ package net.jqwik.properties.arbitraries.randomized;
 import java.math.*;
 import java.util.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.properties.shrinking.*;

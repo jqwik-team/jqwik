@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.properties.arbitraries.exhaustive.*;

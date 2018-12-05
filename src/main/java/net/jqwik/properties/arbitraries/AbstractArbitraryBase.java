@@ -1,6 +1,5 @@
 package net.jqwik.properties.arbitraries;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 
 public abstract class AbstractArbitraryBase implements Cloneable {

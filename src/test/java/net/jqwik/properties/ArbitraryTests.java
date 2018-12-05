@@ -5,7 +5,6 @@ import java.util.stream.*;
 
 import org.assertj.core.api.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;

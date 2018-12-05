@@ -2,7 +2,6 @@ package net.jqwik.properties.arbitraries.randomized;
 
 import java.util.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.shrinking.*;
 import net.jqwik.support.*;

@@ -1,6 +1,5 @@
 package net.jqwik.properties.shrinking;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 

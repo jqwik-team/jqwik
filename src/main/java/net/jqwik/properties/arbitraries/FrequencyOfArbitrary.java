@@ -1,11 +1,9 @@
 package net.jqwik.properties.arbitraries;
 
-import java.lang.annotation.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.configurators.*;

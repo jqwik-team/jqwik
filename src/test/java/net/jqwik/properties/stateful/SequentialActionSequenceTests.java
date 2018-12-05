@@ -5,7 +5,6 @@ import java.util.function.*;
 
 import org.assertj.core.api.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 

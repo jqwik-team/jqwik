@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 import org.opentest4j.*;
 
-import net.jqwik.*;
+import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.support.*;
 

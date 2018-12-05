@@ -6,7 +6,6 @@ import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.support.*;

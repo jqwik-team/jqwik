@@ -6,7 +6,6 @@ import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 
 import static java.util.stream.Collectors.*;

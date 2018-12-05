@@ -5,7 +5,6 @@ import java.util.function.*;
 
 import org.junit.platform.engine.reporting.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.properties.*;

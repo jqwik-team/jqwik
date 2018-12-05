@@ -1,6 +1,6 @@
 package net.jqwik.properties;
 
-import net.jqwik.*;
+import net.jqwik.api.*;
 
 public class IncompatibleDataException extends JqwikException {
 	public IncompatibleDataException(String message) {

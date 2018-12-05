@@ -1,6 +1,5 @@
 package net.jqwik.api;
 
-import net.jqwik.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.support.*;
 

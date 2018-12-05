@@ -3,7 +3,6 @@ package net.jqwik.properties;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.support.*;
 

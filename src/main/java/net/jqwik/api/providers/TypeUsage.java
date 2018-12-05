@@ -7,7 +7,6 @@ import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.support.*;
 

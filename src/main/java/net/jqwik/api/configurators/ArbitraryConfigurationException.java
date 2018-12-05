@@ -1,6 +1,6 @@
 package net.jqwik.api.configurators;
 
-import net.jqwik.*;
+import net.jqwik.api.*;
 
 import java.lang.reflect.*;
 

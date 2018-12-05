@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.assertj.core.api.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.properties.arbitraries.*;
 import net.jqwik.properties.arbitraries.randomized.*;

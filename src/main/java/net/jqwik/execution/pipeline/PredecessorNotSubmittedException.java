@@ -1,6 +1,6 @@
 package net.jqwik.execution.pipeline;
 
-import net.jqwik.*;
+import net.jqwik.api.*;
 
 public class PredecessorNotSubmittedException extends JqwikException {
 

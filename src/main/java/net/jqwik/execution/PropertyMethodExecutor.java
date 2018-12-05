@@ -6,7 +6,7 @@ import java.util.logging.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
-import net.jqwik.*;
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.descriptor.*;
 import net.jqwik.execution.lifecycle.*;

@@ -5,7 +5,6 @@ import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 
-import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.constraints.*;

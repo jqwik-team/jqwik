@@ -1,6 +1,6 @@
 package net.jqwik.properties;
 
-import net.jqwik.*;
+import net.jqwik.api.*;
 
 import java.util.*;
 import java.util.concurrent.*;
