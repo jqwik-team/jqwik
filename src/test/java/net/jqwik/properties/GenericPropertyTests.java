@@ -215,7 +215,7 @@ class GenericPropertyTests {
 			IntPredicate isEven = aNumber -> aNumber % 2 == 0;
 
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
-				Assumptions.assumeThat(isEven.test(aTry));
+				Assume.that(isEven.test(aTry));
 				assertThat(isEven.test(aTry)).isTrue();
 				return true;
 			}, exactlyOneInteger);
@@ -237,7 +237,7 @@ class GenericPropertyTests {
 		@Example
 		void exhaustedWithAllTriesDiscarded() {
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
-				Assumptions.assumeThat(false);
+				Assume.that(false);
 				return true;
 			}, exactlyOneInteger);
 
@@ -263,7 +263,7 @@ class GenericPropertyTests {
 			final AtomicInteger counter = new AtomicInteger(0);
 			ForAllSpy forAllFunction = new ForAllSpy(aTry -> {
 				if (counter.incrementAndGet() % 4 != 0) // 3 of 4 are discarded
-					Assumptions.assumeThat(false);
+					Assume.that(false);
 				return true;
 			}, exactlyOneInteger);
 

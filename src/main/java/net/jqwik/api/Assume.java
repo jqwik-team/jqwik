@@ -1,8 +1,8 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.*;
-
 import java.util.function.*;
+
+import org.opentest4j.*;
 
 public class Assume {
 
@@ -10,10 +10,12 @@ public class Assume {
 	}
 
 	public static void that(boolean condition) {
-		Assumptions.assumeThat(condition);
+		if (!condition) {
+			throw new TestAbortedException();
+		}
 	}
 
 	public static void that(Supplier<Boolean> booleanSupplier) {
-		Assumptions.assumeThat(booleanSupplier);
+		that(booleanSupplier.get());
 	}
 }
