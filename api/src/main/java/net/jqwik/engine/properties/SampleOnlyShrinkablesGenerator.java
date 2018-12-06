@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 public class SampleOnlyShrinkablesGenerator implements ShrinkablesGenerator {
@@ -39,7 +40,7 @@ public class SampleOnlyShrinkablesGenerator implements ShrinkablesGenerator {
 		}
 		for (int i = 0; i < sample.size(); i++) {
 			TypeUsage valueType = TypeUsage.of(sample.get(i).getClass());
-			TypeUsage parameterType = TypeUsage.forParameter(forAllParameters.get(i));
+			TypeUsage parameterType = TypeUsageImpl.forParameter(forAllParameters.get(i));
 			if (!valueType.canBeAssignedTo(parameterType)) {
 				throw new IncompatibleDataException(createIncompatibilityMessage(sample));
 			}
@@ -50,7 +51,7 @@ public class SampleOnlyShrinkablesGenerator implements ShrinkablesGenerator {
 		List<TypeUsage> parameterTypes =
 			this.forAllParameters
 				.stream()
-				.map(TypeUsage::forParameter)
+				.map(TypeUsageImpl::forParameter)
 				.collect(Collectors.toList());
 
 		return String.format(

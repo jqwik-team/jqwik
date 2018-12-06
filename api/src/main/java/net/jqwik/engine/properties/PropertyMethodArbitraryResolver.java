@@ -10,6 +10,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.configurators.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.providers.*;
 import net.jqwik.engine.support.*;
 
@@ -44,7 +45,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
 	@Override
 	public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
-		TypeUsage typeUsage = TypeUsage.forParameter(parameter);
+		TypeUsage typeUsage = TypeUsageImpl.forParameter(parameter);
 		return createForType(typeUsage);
 	}
 

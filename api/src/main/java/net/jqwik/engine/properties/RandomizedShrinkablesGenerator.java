@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
@@ -29,7 +30,7 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 							 .map(GenericArbitrary::new)
 							 .collect(Collectors.toSet());
 		if (arbitraries.isEmpty()) {
-			throw new CannotFindArbitraryException(TypeUsage.forParameter(parameter), parameter.getAnnotation(ForAll.class));
+			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));
 		}
 		return new RandomizedParameterGenerator(parameter, arbitraries, genSize);
 	}
@@ -63,7 +64,7 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 		private final int genSize;
 
 		private RandomizedParameterGenerator(MethodParameter parameter, Set<Arbitrary> arbitraries, int genSize) {
-			this.typeUsage = TypeUsage.forParameter(parameter);
+			this.typeUsage = TypeUsageImpl.forParameter(parameter);
 			this.arbitraries = new ArrayList<>(arbitraries);
 			this.genSize = genSize;
 		}
