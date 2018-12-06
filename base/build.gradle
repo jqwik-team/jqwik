@@ -9,13 +9,10 @@ jar {
 }
 
 publishing {
-
 	publications {
-
 		jqwik(MavenPublication) {
 			artifactId = 'jqwik'
 			from components.java
-			artifact sourcesJar
 			pom {
 				name = 'jqwik'
 				description = project.description
@@ -39,22 +36,6 @@ publishing {
 					url = 'https://github.com/jlink/jqwik'
 				}
 			}
-		}
-	}
-	repositories {
-		maven {
-			def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
-			def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
-
-			credentials {
-				username = ossrhUsername
-				password = ossrhPassword
-			}
-
-			// change URLs to point to your repos, e.g. http://my.org/repo
-			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
 		}
 	}
 }
