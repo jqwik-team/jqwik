@@ -14,9 +14,9 @@ import net.jqwik.api.*;
  * <p>
  * Some examples that come with jqwik:
  *
- * @see net.jqwik.providers.EnumArbitraryProvider
- * @see net.jqwik.providers.BigDecimalArbitraryProvider
- * @see net.jqwik.providers.ListArbitraryProvider
+ * @see net.jqwik.engine.providers.EnumArbitraryProvider
+ * @see net.jqwik.engine.providers.BigDecimalArbitraryProvider
+ * @see net.jqwik.engine.providers.ListArbitraryProvider
  */
 public interface ArbitraryProvider {
 

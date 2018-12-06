@@ -8,12 +8,12 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.properties.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.properties.arbitraries.exhaustive.*;
-import net.jqwik.properties.arbitraries.randomized.*;
-import net.jqwik.properties.stateful.*;
-import net.jqwik.providers.*;
+import net.jqwik.engine.properties.*;
+import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.properties.arbitraries.exhaustive.*;
+import net.jqwik.engine.properties.arbitraries.randomized.*;
+import net.jqwik.engine.properties.stateful.*;
+import net.jqwik.engine.providers.*;
 
 public class Arbitraries {
 

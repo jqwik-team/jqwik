@@ -2,7 +2,7 @@ package net.jqwik.api;
 
 import java.util.function.*;
 
-import net.jqwik.properties.arbitraries.exhaustive.*;
+import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
 

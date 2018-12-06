@@ -2,7 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 
-import net.jqwik.properties.*;
+import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 

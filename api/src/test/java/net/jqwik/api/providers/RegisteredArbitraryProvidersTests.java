@@ -6,8 +6,8 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.properties.arbitraries.WildcardArbitrary.*;
-import net.jqwik.providers.*;
+import net.jqwik.engine.properties.arbitraries.WildcardArbitrary.*;
+import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
 

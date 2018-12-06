@@ -1,6 +1,6 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.shrinking.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 import java.util.function.*;
 

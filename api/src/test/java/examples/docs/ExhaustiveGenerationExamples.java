@@ -2,7 +2,7 @@ package examples.docs;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.support.*;
+import net.jqwik.engine.support.*;
 
 import static net.jqwik.api.GenerationMode.*;
 

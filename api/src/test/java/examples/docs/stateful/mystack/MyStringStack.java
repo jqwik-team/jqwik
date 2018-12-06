@@ -1,8 +1,8 @@
 package examples.docs.stateful.mystack;
 
-import net.jqwik.support.*;
-
 import java.util.*;
+
+import net.jqwik.engine.support.*;
 
 public class MyStringStack {
 	private List<String> elements = new ArrayList<>();

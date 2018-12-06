@@ -4,8 +4,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.properties.arbitraries.exhaustive.*;
-import net.jqwik.properties.shrinking.*;
+import net.jqwik.engine.properties.arbitraries.exhaustive.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 public class Combinators {
 
