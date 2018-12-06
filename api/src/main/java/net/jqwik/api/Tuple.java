@@ -3,7 +3,7 @@ package net.jqwik.api;
 import java.io.*;
 import java.util.*;
 
-import static net.jqwik.support.JqwikStringSupport.*;
+import static net.jqwik.engine.support.JqwikStringSupport.*;
 
 public interface Tuple extends Serializable, Cloneable {
 

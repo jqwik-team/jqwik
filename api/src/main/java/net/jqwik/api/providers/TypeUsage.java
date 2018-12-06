@@ -8,7 +8,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.support.*;
+import net.jqwik.engine.support.*;
 
 /**
  * An instance of {@code TypeUsage} describes the information available for parameter or return types.

@@ -23,8 +23,8 @@ import static org.junit.platform.commons.support.ReflectionSupport.*;
  * <p>
  * Some examples that come with jqwik:
  *
- * @see net.jqwik.configurators.CharsConfigurator
- * @see net.jqwik.configurators.SizeConfigurator
+ * @see net.jqwik.engine.configurators.CharsConfigurator
+ * @see net.jqwik.engine.configurators.SizeConfigurator
  */
 public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator {
 

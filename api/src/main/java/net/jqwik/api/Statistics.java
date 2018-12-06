@@ -1,6 +1,6 @@
 package net.jqwik.api;
 
-import net.jqwik.properties.*;
+import net.jqwik.engine.properties.*;
 
 public class Statistics {
 

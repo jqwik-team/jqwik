@@ -9,8 +9,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.support.*;
+import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.support.*;
 
 import static org.assertj.core.api.Assertions.*;
 

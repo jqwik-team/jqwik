@@ -1,7 +1,7 @@
-net.jqwik.configurators.WithNullConfigurator
-net.jqwik.configurators.ScaleConfigurator
-net.jqwik.configurators.SizeConfigurator
-net.jqwik.configurators.CharsConfigurator
-net.jqwik.configurators.StringLengthConfigurator
-net.jqwik.configurators.RangeConfigurator
-net.jqwik.configurators.UniqueConfigurator
+net.jqwik.engine.configurators.WithNullConfigurator
+net.jqwik.engine.configurators.ScaleConfigurator
+net.jqwik.engine.configurators.SizeConfigurator
+net.jqwik.engine.configurators.CharsConfigurator
+net.jqwik.engine.configurators.StringLengthConfigurator
+net.jqwik.engine.configurators.RangeConfigurator
+net.jqwik.engine.configurators.UniqueConfigurator

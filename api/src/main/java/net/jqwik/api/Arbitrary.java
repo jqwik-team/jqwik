@@ -5,8 +5,8 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.properties.arbitraries.*;
-import net.jqwik.properties.arbitraries.exhaustive.*;
+import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
 /**
  * The main interface for representing objects that can be generated and shrunk.
