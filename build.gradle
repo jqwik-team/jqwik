@@ -28,6 +28,8 @@ allprojects {
 		from sourceSets.main.allSource
 	}
 
+	tasks['publish'].dependsOn(build)
+
 	publishing {
 		repositories {
 			maven {

@@ -1,0 +1,86 @@
+description = "Jqwik Engine module"
+
+jar {
+	baseName = 'jqwik-engine'
+	version = version
+	manifest {
+		attributes('Automatic-Module-Name': "${moduleName}.engine")
+	}
+}
+
+task publishApiJavadoc(type: Javadoc) {
+	source = file('./src/main/java')
+	failOnError = false
+	destinationDir = file("${rootDir}/docs/javadoc")
+	include '**/api/**'
+}
+
+publishing {
+	publications {
+		jqwikEngine(MavenPublication) {
+			artifactId = 'jqwik-engine'
+			from components.java
+			artifact sourcesJar
+			artifact javadocJar
+			pom {
+				name = 'jqwik-engine'
+				description = project.description
+				url = 'https://jqwik.net/'
+				licenses {
+					license {
+						name = 'Eclipse Public License - v 2.0'
+						url = 'http://www.eclipse.org/legal/epl-v20.html'
+					}
+				}
+				developers {
+					developer {
+						id = 'jlink'
+						name = 'Johannes Link'
+						email = 'business@johanneslink.net'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://github.com/jlink/jqwik.git'
+					developerConnection = 'scm:git:git://github.com/jlink/jqwik.git'
+					url = 'https://github.com/jlink/jqwik'
+				}
+			}
+		}
+	}
+}
+
+signing {
+	sign publishing.publications.jqwikEngine
+}
+
+test {
+	useJUnitPlatform {
+		includeEngines "jqwik"
+		includeEngines "junit-archunit"
+	}
+
+	include 'net/**/*Properties.class'
+	include 'net/**/*Example.class'
+	include 'net/**/*Examples.class'
+	include 'net/**/*Test.class'
+	include 'net/**/*Tests.class'
+
+	// testLogging.showStandardStreams = true
+}
+
+dependencies {
+	api(project(":api"))
+	api("org.opentest4j:opentest4j:1.1.1")
+	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
+	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
+
+	testCompile("org.mockito:mockito-core:2.23.4")
+	testCompile("org.assertj:assertj-core:3.11.1")
+	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
+	// Only needed to check interferences between Jupiter and jqwik
+	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+	testCompile "com.tngtech.archunit:archunit-junit5-api:0.9.3"
+	testRuntime "com.tngtech.archunit:archunit-junit5-engine:0.9.3"
+}
