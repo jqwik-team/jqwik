@@ -13,6 +13,32 @@ allprojects {
 
 	group = moduleName
 	version = jqwikVersion
+
+	apply plugin: 'java-library'
+	apply plugin: 'maven-publish'
+	apply plugin: 'signing'
+
+	task javadocJar(type: Jar) {
+		classifier = 'javadoc'
+		from javadoc
+	}
+
+	task sourcesJar(type: Jar) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+
+	artifacts {
+		archives javadocJar, sourcesJar
+	}
+
+	signing {
+		sign configurations.archives
+	}
+
+	dependencies {
+		api("org.apiguardian:apiguardian-api:1.0.0")
+	}
 }
 
 wrapper {

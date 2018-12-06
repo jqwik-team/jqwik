@@ -1,31 +1,23 @@
-description = "Jqwik API module"
+description = "Jqwik Aggregator module"
 
 jar {
-	baseName = 'jqwik-api'
+	baseName = 'jqwik'
 	version = version
 	manifest {
-		attributes('Automatic-Module-Name': "${moduleName}.api")
+		attributes('Automatic-Module-Name': moduleName)
 	}
-}
-
-task javadocApi(type: Javadoc) {
-	source = file('./src/main/java')
-	failOnError = false
-	destinationDir = file('./docs/javadoc')
-	include '**/api/**'
 }
 
 publishing {
 
 	publications {
-		
-		jqwikApi(MavenPublication) {
-			artifactId = 'jqwik-api'
+
+		jqwik(MavenPublication) {
+			artifactId = 'jqwik'
 			from components.java
 			artifact sourcesJar
-			artifact javadocJar
 			pom {
-				name = 'jqwik-api'
+				name = 'jqwik'
 				description = project.description
 				url = 'https://jqwik.net/'
 				licenses {
@@ -68,7 +60,7 @@ publishing {
 }
 
 signing {
-	sign publishing.publications.jqwikApi
+	sign publishing.publications.jqwik
 }
 
 compileTestJava {
@@ -78,35 +70,7 @@ compileTestJava {
 	options.encoding = 'UTF-8'
 }
 
-test {
-	useJUnitPlatform {
-		includeEngines "jqwik"
-		includeEngines "junit-archunit"
-	}
-
-
-	include 'net/**/*Properties.class'
-	include 'net/**/*Example.class'
-	include 'net/**/*Examples.class'
-	include 'net/**/*Test.class'
-	include 'net/**/*Tests.class'
-
-	// testLogging.showStandardStreams = true
-}
-
 dependencies {
-	api("org.opentest4j:opentest4j:1.1.1")
-	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
-	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
-
-	testCompile("org.mockito:mockito-core:2.23.4")
-	testCompile("org.assertj:assertj-core:3.11.1")
-	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-
-	// Only needed to check interferences between Jupiter and jqwik
-	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
-
-	testCompile "com.tngtech.archunit:archunit-junit5-api:0.9.3"
-	testRuntime "com.tngtech.archunit:archunit-junit5-engine:0.9.3"
-
+	api(project(":api"))
+//	runtimeOnly(project(":engine"))
 }

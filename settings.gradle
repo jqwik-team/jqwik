@@ -1,3 +1,4 @@
 enableFeaturePreview('STABLE_PUBLISHING')
 
+include(':base')
 include(':api')
