@@ -36,6 +36,13 @@ allprojects {
 		sign configurations.archives
 	}
 
+	compileTestJava {
+		sourceCompatibility = 1.8
+		targetCompatibility = 1.8
+		options.compilerArgs += '-parameters'
+		options.encoding = 'UTF-8'
+	}
+
 	dependencies {
 		api("org.apiguardian:apiguardian-api:1.0.0")
 	}
