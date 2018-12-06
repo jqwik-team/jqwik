@@ -8,10 +8,10 @@ jar {
 	}
 }
 
-task javadocApi(type: Javadoc) {
+task publishApiJavadoc(type: Javadoc) {
 	source = file('./src/main/java')
 	failOnError = false
-	destinationDir = file('./docs/javadoc')
+	destinationDir = file("${rootDir}/docs/javadoc")
 	include '**/api/**'
 }
 
@@ -69,13 +69,6 @@ publishing {
 
 signing {
 	sign publishing.publications.jqwikApi
-}
-
-compileTestJava {
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
-	options.compilerArgs += '-parameters'
-	options.encoding = 'UTF-8'
 }
 
 test {

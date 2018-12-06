@@ -63,13 +63,6 @@ signing {
 	sign publishing.publications.jqwik
 }
 
-compileTestJava {
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
-	options.compilerArgs += '-parameters'
-	options.encoding = 'UTF-8'
-}
-
 dependencies {
 	api(project(":api"))
 //	runtimeOnly(project(":engine"))
