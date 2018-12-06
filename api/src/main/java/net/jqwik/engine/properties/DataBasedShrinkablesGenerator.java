@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 public class DataBasedShrinkablesGenerator implements ShrinkablesGenerator {
@@ -35,7 +36,7 @@ public class DataBasedShrinkablesGenerator implements ShrinkablesGenerator {
 		}
 		for (int i = 0; i < tuple.items().size(); i++) {
 			TypeUsage valueType = TypeUsage.of(tuple.items().get(i).getClass());
-			TypeUsage parameterType = TypeUsage.forParameter(forAllParameters.get(i));
+			TypeUsage parameterType = TypeUsageImpl.forParameter(forAllParameters.get(i));
 			if (!valueType.canBeAssignedTo(parameterType)) {
 				throw new IncompatibleDataException(createIncompatibilityMessage(tuple));
 			}
@@ -46,7 +47,7 @@ public class DataBasedShrinkablesGenerator implements ShrinkablesGenerator {
 		List<TypeUsage> parameterTypes =
 			this.forAllParameters
 				.stream()
-				.map(TypeUsage::forParameter)
+				.map(TypeUsageImpl::forParameter)
 				.collect(Collectors.toList());
 
 		return String.format(

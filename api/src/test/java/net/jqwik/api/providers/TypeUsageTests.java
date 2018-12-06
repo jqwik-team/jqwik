@@ -9,6 +9,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
 
@@ -120,7 +121,7 @@ class TypeUsageTests {
 	}
 
 	@Group
-	@Label("forParameter()")
+	@Label("TypeUsageImpl.forParameter()")
 	class ForParameter {
 		@Example
 		void genericParameter() throws NoSuchMethodException {
@@ -131,7 +132,7 @@ class TypeUsageTests {
 
 			Method method = LocalClass.class.getMethod("withParameter", Tuple2.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			TypeUsage tupleType = TypeUsage.forParameter(parameter);
+			TypeUsage tupleType = TypeUsageImpl.forParameter(parameter);
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 			assertThat(tupleType.isGeneric()).isTrue();
@@ -152,7 +153,7 @@ class TypeUsageTests {
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			TypeUsage parameterType = TypeUsage.forParameter(parameter);
+			TypeUsage parameterType = TypeUsageImpl.forParameter(parameter);
 			assertThat(parameterType.getRawType()).isEqualTo(List.class);
 			assertThat(parameterType.getAnnotations().get(0)).isInstanceOf(Size.class);
 
@@ -164,12 +165,12 @@ class TypeUsageTests {
 
 			assertThat(parameterType.toString()).isEqualTo("@net.jqwik.api.constraints.Size(value=0, max=2, min=0) List");
 
-			TypeUsage equalParameterType = TypeUsage.forParameter(parameter);
+			TypeUsage equalParameterType = TypeUsageImpl.forParameter(parameter);
 			assertThat(parameterType.equals(equalParameterType)).isTrue();
 
 			Method methodWithNonEqualList = LocalClass.class.getMethod("withNonEqualList", List.class);
 			MethodParameter nonEqualParameter = JqwikReflectionSupport.getMethodParameters(methodWithNonEqualList, LocalClass.class)[0];
-			TypeUsage nonEqualParameterType = TypeUsage.forParameter(nonEqualParameter);
+			TypeUsage nonEqualParameterType = TypeUsageImpl.forParameter(nonEqualParameter);
 			assertThat(parameterType.equals(nonEqualParameterType)).isFalse();
 
 		}
@@ -185,30 +186,30 @@ class TypeUsageTests {
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			TypeUsage wildcardType = TypeUsage.forParameter(parameter);
+			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage first = wildcardType.getTypeArguments().get(0);
 			assertThat(first.isWildcard()).isTrue();
 			assertThat(first.isTypeVariableOrWildcard()).isTrue();
 			assertThat(first.isTypeVariable()).isFalse();
-			assertThat(first.hasLowerBounds()).isFalse();
-			assertThat(first.hasUpperBounds()).isTrue();
+			assertThat(first.getLowerBounds()).isEmpty();
+			assertThat(first.getUpperBounds()).isNotEmpty();
 
 			TypeUsage second = wildcardType.getTypeArguments().get(1);
 			assertThat(second.isWildcard()).isTrue();
 			assertThat(second.isTypeVariableOrWildcard()).isTrue();
 			assertThat(second.isTypeVariable()).isFalse();
-			assertThat(second.hasLowerBounds()).isTrue();
-			assertThat(second.hasUpperBounds()).isFalse();
+			assertThat(second.getLowerBounds()).isNotEmpty();
+			assertThat(second.getUpperBounds()).isEmpty();
 
 			assertThat(wildcardType.toString()).isEqualTo("Tuple2<? extends CharSequence, ? super String>");
 
-			TypeUsage equalWildcardType = TypeUsage.forParameter(parameter);
+			TypeUsage equalWildcardType = TypeUsageImpl.forParameter(parameter);
 			assertThat(wildcardType.equals(equalWildcardType)).isTrue();
 
 			Method methodWithNonEqualWildcard = LocalClass.class.getMethod("withNonEqualWildcard", Tuple2.class);
 			MethodParameter nonEqualParameter = JqwikReflectionSupport.getMethodParameters(methodWithNonEqualWildcard, LocalClass.class)[0];
-			TypeUsage nonEqualWildcardType = TypeUsage.forParameter(nonEqualParameter);
+			TypeUsage nonEqualWildcardType = TypeUsageImpl.forParameter(nonEqualParameter);
 			assertThat(wildcardType.equals(nonEqualWildcardType)).isFalse();
 		}
 
@@ -233,36 +234,36 @@ class TypeUsageTests {
 
 			Method method = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			TypeUsage typeVariableType = TypeUsage.forParameter(parameter);
+			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage first = typeVariableType.getTypeArguments().get(0);
 			assertThat(first.isWildcard()).isFalse();
 			assertThat(first.isTypeVariableOrWildcard()).isTrue();
 			assertThat(first.isTypeVariable()).isTrue();
-			assertThat(first.hasLowerBounds()).isFalse();
-			assertThat(first.hasUpperBounds()).isTrue();
+			assertThat(first.getLowerBounds()).isEmpty();
+			assertThat(first.getUpperBounds()).isNotEmpty();
 
 			TypeUsage second = typeVariableType.getTypeArguments().get(0);
 			assertThat(second.isWildcard()).isFalse();
 			assertThat(second.isTypeVariableOrWildcard()).isTrue();
 			assertThat(second.isTypeVariable()).isTrue();
-			assertThat(second.hasLowerBounds()).isFalse();
-			assertThat(second.hasUpperBounds()).isTrue();
+			assertThat(first.getLowerBounds()).isEmpty();
+			assertThat(first.getUpperBounds()).isNotEmpty();
 
 			assertThat(typeVariableType.toString()).isEqualTo("Tuple2<T extends CharSequence, U extends Serializable & Cloneable>");
 
-			TypeUsage equalTypeVariableType = TypeUsage.forParameter(parameter);
+			TypeUsage equalTypeVariableType = TypeUsageImpl.forParameter(parameter);
 			assertThat(typeVariableType.equals(equalTypeVariableType)).isTrue();
 
 
 			Method differentByNameMethod = LocalClass.class.getMethod("differentByName", Tuple2.class);
 			MethodParameter differentByNameParameter = JqwikReflectionSupport.getMethodParameters(differentByNameMethod, LocalClass.class)[0];
-			TypeUsage differentByNameType = TypeUsage.forParameter(differentByNameParameter);
+			TypeUsage differentByNameType = TypeUsageImpl.forParameter(differentByNameParameter);
 			assertThat(typeVariableType.equals(differentByNameType)).isFalse();
 
 			Method differentByLowerBoundsMethod = LocalClass.class.getMethod("differentByLowerBounds", Tuple2.class);
 			MethodParameter differentByLowerBoundsParameter = JqwikReflectionSupport.getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)[0];
-			TypeUsage differentByLowerBoundsType = TypeUsage.forParameter(differentByLowerBoundsParameter);
+			TypeUsage differentByLowerBoundsType = TypeUsageImpl.forParameter(differentByLowerBoundsParameter);
 			assertThat(typeVariableType.equals(differentByLowerBoundsType)).isFalse();
 
 		}
@@ -277,12 +278,12 @@ class TypeUsageTests {
 
 			Method method = LocalClass.class.getMethod("recursiveTypeVariable", Comparable.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			TypeUsage typeVariableType = TypeUsage.forParameter(parameter);
+			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
 			assertThat(typeVariableType.isTypeVariableOrWildcard()).isTrue();
 			assertThat(typeVariableType.isTypeVariable()).isTrue();
-			assertThat(typeVariableType.hasLowerBounds()).isFalse();
-			assertThat(typeVariableType.hasUpperBounds()).isTrue();
+			assertThat(typeVariableType.getLowerBounds()).isEmpty();
+			assertThat(typeVariableType.getUpperBounds()).isNotEmpty();
 
 			assertThat(typeVariableType.toString()).isEqualTo("T extends Comparable<T>");
 
@@ -302,7 +303,7 @@ class TypeUsageTests {
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			TypeUsage listType = TypeUsage.forParameter(parameter);
+			TypeUsage listType = TypeUsageImpl.forParameter(parameter);
 			assertThat(listType.getAnnotations().get(0)).isInstanceOf(Size.class);
 			TypeUsage stringType = listType.getTypeArguments().get(0);
 			assertThat(stringType.isOfType(String.class)).isTrue();
@@ -326,56 +327,10 @@ class TypeUsageTests {
 
 			Method method = LocalClass.class.getMethod("withOptionalArray", Optional.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
-			TypeUsage optionalType = TypeUsage.forParameter(parameter);
+			TypeUsage optionalType = TypeUsageImpl.forParameter(parameter);
 			TypeUsage arrayType = optionalType.getTypeArguments().get(0);
 			assertThat(arrayType.getAnnotations().get(0)).isInstanceOf(Size.class);
 			assertThat(arrayType.getAnnotations().get(1)).isInstanceOf(StringLength.class);
-		}
-	}
-
-	@Group
-	@Label("findSuperType()")
-	class FindSuperType {
-
-		@Example
-		@Label("direct super types")
-		void findDirectSuperTypes() {
-			class LocalStringArbitrary extends AbstractArbitraryBase implements Arbitrary<String> {
-				@Override
-				public RandomGenerator<String> generator(int genSize) {
-					return null;
-				}
-			}
-
-			TypeUsage stringArbitrary = TypeUsage.of(LocalStringArbitrary.class);
-			assertThat(stringArbitrary.getRawType()).isEqualTo(LocalStringArbitrary.class);
-
-			Optional<TypeUsage> superClass = stringArbitrary.findSuperType(AbstractArbitraryBase.class);
-			assertThat(superClass.get().isOfType(AbstractArbitraryBase.class)).isTrue();
-
-			Optional<TypeUsage> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
-			assertThat(arbitraryInterface.get().isOfType(Arbitrary.class)).isTrue();
-			assertThat(arbitraryInterface.get().isGeneric()).isTrue();
-			assertThat(arbitraryInterface.get().getTypeArguments().get(0).isOfType(String.class)).isTrue();
-
-			assertThat(stringArbitrary.findSuperType(String.class)).isNotPresent();
-		}
-
-		@Example
-		@Label("remote super types")
-		void findRemoteSuperTypes() {
-			class LocalStringArbitrary extends DefaultStringArbitrary {
-			}
-
-			TypeUsage stringArbitrary = TypeUsage.of(LocalStringArbitrary.class);
-
-			assertThat(stringArbitrary.findSuperType(Object.class)).isPresent();
-			assertThat(stringArbitrary.findSuperType(AbstractArbitraryBase.class)).isPresent();
-
-			Optional<TypeUsage> arbitraryInterface = stringArbitrary.findSuperType(Arbitrary.class);
-			assertThat(arbitraryInterface.get().isOfType(Arbitrary.class)).isTrue();
-			assertThat(arbitraryInterface.get().isGeneric()).isTrue();
-			assertThat(arbitraryInterface.get().getTypeArguments().get(0).isOfType(String.class)).isTrue();
 		}
 	}
 

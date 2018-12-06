@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
@@ -21,7 +21,7 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 	private static List<ExhaustiveGenerator> resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
 		Set<Arbitrary<?>> arbitraries = arbitraryResolver.forParameter(parameter);
 		if (arbitraries.isEmpty()) {
-			throw new CannotFindArbitraryException(TypeUsage.forParameter(parameter), parameter.getAnnotation(ForAll.class));
+			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));
 		}
 
 		List<ExhaustiveGenerator> exhaustiveGenerators = new ArrayList<>();
