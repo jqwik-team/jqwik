@@ -1,8 +1,9 @@
 - For version 1.0
 
-  - Divide deliverables into two artifacts:
+  - Split
     - jqwik.api
     - jqwik.engine
+  - Move net.jqwik.engine to module engine
 
   - `@Disabled("reason")` annotation
 
