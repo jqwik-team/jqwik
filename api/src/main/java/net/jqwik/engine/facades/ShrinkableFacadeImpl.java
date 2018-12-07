@@ -8,7 +8,7 @@ import net.jqwik.engine.properties.shrinking.*;
 /**
  * Is loaded through reflection in api module
  */
-public class ShrinkableFactoryFacadeImpl extends Shrinkable.ShrinkableFactoryFacade {
+public class ShrinkableFacadeImpl extends Shrinkable.ShrinkableFacade {
 	@Override
 	public <T> Shrinkable<T> unshrinkable(T value) {
 		return new Unshrinkable<>(value);

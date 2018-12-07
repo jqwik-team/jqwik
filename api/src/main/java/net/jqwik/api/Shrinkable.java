@@ -4,13 +4,13 @@ import java.util.function.*;
 
 public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
-	abstract class ShrinkableFactoryFacade {
-		private static final String SHRINKABLE_FACTORY_FACADE_IMPL = "net.jqwik.engine.facades.ShrinkableFactoryFacadeImpl";
-		private static ShrinkableFactoryFacade implementation;
+	abstract class ShrinkableFacade {
+		private static final String SHRINKABLE_FACTORY_FACADE_IMPL = "net.jqwik.engine.facades.ShrinkableFacadeImpl";
+		private static ShrinkableFacade implementation;
 
 		static  {
 			try {
-				implementation = (ShrinkableFactoryFacade) Class.forName(SHRINKABLE_FACTORY_FACADE_IMPL).newInstance();
+				implementation = (ShrinkableFacade) Class.forName(SHRINKABLE_FACTORY_FACADE_IMPL).newInstance();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -23,7 +23,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	static <T> Shrinkable<T> unshrinkable(T value) {
-		return ShrinkableFactoryFacade.implementation.unshrinkable(value);
+		return ShrinkableFacade.implementation.unshrinkable(value);
 	}
 
 	T value();
@@ -33,11 +33,11 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	ShrinkingDistance distance();
 
 	default <U> Shrinkable<U> map(Function<T, U> mapper) {
-		return ShrinkableFactoryFacade.implementation.map(this, mapper);
+		return ShrinkableFacade.implementation.map(this, mapper);
 	}
 
 	default Shrinkable<T> filter(Predicate<T> filter) {
-		return ShrinkableFactoryFacade.implementation.filter(this, filter);
+		return ShrinkableFacade.implementation.filter(this, filter);
 	}
 
 	@Override
@@ -50,6 +50,6 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	default <U> Shrinkable<U> flatMap(Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
-		return ShrinkableFactoryFacade.implementation.flatMap(this, flatMapper, tries, randomSeed);
+		return ShrinkableFacade.implementation.flatMap(this, flatMapper, tries, randomSeed);
 	}
 }
