@@ -30,11 +30,12 @@ import net.jqwik.api.*;
 public abstract class TypeUsage {
 
 	public static abstract class TypeUsageFacade {
+		private static final String TYPE_USAGE_FACADE_IMPL = "net.jqwik.engine.facades.TypeUsageFacadeImpl";
 		private static TypeUsageFacade implementation;
 
 		static  {
 			try {
-				implementation = (TypeUsageFacade) Class.forName("net.jqwik.engine.facades.TypeUsageFacadeImpl").newInstance();
+				implementation = (TypeUsageFacade) Class.forName(TYPE_USAGE_FACADE_IMPL).newInstance();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
