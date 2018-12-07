@@ -10,7 +10,7 @@ import java.util.stream.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
-public class TypeUsageImpl extends TypeUsage {
+public class TypeUsageImpl implements TypeUsage {
 
 	private static Map<Type, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
 
@@ -91,41 +91,6 @@ public class TypeUsageImpl extends TypeUsage {
 		return Optional.ofNullable(resolved.get(type));
 	}
 
-
-	private final Class<?> rawType;
-	private final String typeVariable;
-	private final List<Annotation> annotations;
-	private final List<TypeUsage> typeArguments = new ArrayList<>();
-
-	public List<TypeUsage> getUpperBounds() {
-		return upperBounds;
-	}
-
-	public List<TypeUsage> getLowerBounds() {
-		return lowerBounds;
-	}
-
-	private final List<TypeUsage> upperBounds = new ArrayList<>();
-	private final List<TypeUsage> lowerBounds = new ArrayList<>();
-
-	TypeUsageImpl(Class<?> rawType, String typeVariable, List<Annotation> annotations) {
-		this.rawType = rawType;
-		this.typeVariable = typeVariable;
-		this.annotations = annotations;
-	}
-
-	void addTypeArguments(List<TypeUsage> typeArguments) {
-		this.typeArguments.addAll(typeArguments);
-	}
-
-	private void addLowerBounds(List<TypeUsage> lowerBounds) {
-		this.lowerBounds.addAll(lowerBounds);
-	}
-
-	void addUpperBounds(List<TypeUsage> upperBounds) {
-		this.upperBounds.addAll(upperBounds);
-	}
-
 	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
 		if (parameter.isAnnotatedParameterized()) {
 			return extractAnnotatedTypeArguments(parameter.getAnnotatedType());
@@ -153,7 +118,7 @@ public class TypeUsageImpl extends TypeUsage {
 	private static List<TypeUsage> extractUpperBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
 			return Arrays.stream(((TypeVariable) parameterizedType).getBounds())
-						 .map(TypeUsageImpl::forType)
+						 .map(TypeUsage::forType)
 						 .collect(Collectors.toList());
 		}
 		if (parameterizedType instanceof WildcardType) {
@@ -164,7 +129,7 @@ public class TypeUsageImpl extends TypeUsage {
 
 	private static List<TypeUsage> extractUpperBounds(WildcardType wildcardType) {
 		return Arrays.stream(wildcardType.getUpperBounds())
-					 .map(TypeUsageImpl::forType)
+					 .map(TypeUsage::forType)
 					 .collect(Collectors.toList());
 	}
 
@@ -177,7 +142,7 @@ public class TypeUsageImpl extends TypeUsage {
 
 	private static List<TypeUsage> extractLowerBounds(WildcardType wildcardType) {
 		return Arrays.stream(wildcardType.getLowerBounds())
-					 .map(TypeUsageImpl::forType)
+					 .map(TypeUsage::forType)
 					 .collect(Collectors.toList());
 	}
 
@@ -198,7 +163,7 @@ public class TypeUsageImpl extends TypeUsage {
 		}
 		if (parameterizedType instanceof ParameterizedType) {
 			return Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments()) //
-						 .map(TypeUsageImpl::forType) //
+						 .map(TypeUsage::forType) //
 						 .collect(Collectors.toList());
 		}
 		// Now it's either not a generic type or it has type variables
@@ -211,12 +176,43 @@ public class TypeUsageImpl extends TypeUsage {
 					 .collect(Collectors.toList());
 	}
 
-	/**
-	 * Return the raw type which is usually the class or interface you see in a parameters or return values
-	 * specification.
-	 * <p>
-	 * A raw type always exists.
-	 */
+	private final Class<?> rawType;
+	private final String typeVariable;
+	private final List<Annotation> annotations;
+	private final List<TypeUsage> typeArguments = new ArrayList<>();
+
+	private final List<TypeUsage> upperBounds = new ArrayList<>();
+	private final List<TypeUsage> lowerBounds = new ArrayList<>();
+
+	TypeUsageImpl(Class<?> rawType, String typeVariable, List<Annotation> annotations) {
+		this.rawType = rawType;
+		this.typeVariable = typeVariable;
+		this.annotations = annotations;
+	}
+
+	void addTypeArguments(List<TypeUsage> typeArguments) {
+		this.typeArguments.addAll(typeArguments);
+	}
+
+	void addLowerBounds(List<TypeUsage> lowerBounds) {
+		this.lowerBounds.addAll(lowerBounds);
+	}
+
+	void addUpperBounds(List<TypeUsage> upperBounds) {
+		this.upperBounds.addAll(upperBounds);
+	}
+
+	@Override
+	public List<TypeUsage> getUpperBounds() {
+		return upperBounds;
+	}
+
+	@Override
+	public List<TypeUsage> getLowerBounds() {
+		return lowerBounds;
+	}
+
+	@Override
 	public Class<?> getRawType() {
 		return rawType;
 	}
@@ -231,49 +227,34 @@ public class TypeUsageImpl extends TypeUsage {
 		return lowerBounds.size() > 0;
 	}
 
-	/**
-	 * Return true if a generic type is a wildcard.
-	 */
+	@Override
 	public boolean isWildcard() {
 		return typeVariable != null && typeVariable.equals(WILDCARD);
 	}
 
-	/**
-	 * Return true if a generic type is a wildcard.
-	 */
+	@Override
 	public boolean isTypeVariable() {
 		return typeVariable != null && !isWildcard();
 	}
 
-	/**
-	 * Return true if a generic type is a type variable or a wildcard.
-	 */
+	@Override
 	public boolean isTypeVariableOrWildcard() {
 		return isWildcard() || isTypeVariable();
 	}
 
-	/**
-	 * Return the type arguments of a generic type in the order of there appearance in a type's declaration.
-	 */
+	@Override
 	public List<TypeUsage> getTypeArguments() {
 		return typeArguments;
 	}
 
-	/**
-	 * Check if an instance is of a specific raw type
-	 * <p>
-	 * Most of the time this is what you want to do when checking for applicability of a
-	 * {@linkplain ArbitraryProvider}.
-	 */
+	@Override
 	public boolean isOfType(Class<?> aRawType) {
 		if (isTypeVariableOrWildcard())
 			return false;
 		return rawType == aRawType;
 	}
 
-	/**
-	 * Check if an instance can be assigned to another {@code TypeUsage} instance.
-	 */
+	@Override
 	public boolean canBeAssignedTo(TypeUsage targetType) {
 		if (targetType.isTypeVariableOrWildcard()) {
 			return canBeAssignedToUpperBounds(this, targetType) && canBeAssignedToLowerBounds(this, targetType);
@@ -328,41 +309,27 @@ public class TypeUsageImpl extends TypeUsage {
 		return true;
 	}
 
-	/**
-	 * Return true if a type has any type arguments itself.
-	 */
+	@Override
 	public boolean isGeneric() {
 		return typeArguments.size() > 0;
 	}
 
-	/**
-	 * Return true if a type is an {@code enum} type.
-	 */
+	@Override
 	public boolean isEnum() {
 		return getRawType().isEnum();
 	}
 
-	/**
-	 * Return true if a type is an array type.
-	 */
+	@Override
 	public boolean isArray() {
 		return getRawType().isArray();
 	}
 
-	/**
-	 * Return all annotations of a parameter (or an annotated type argument).
-	 * <p>
-	 * This list already contains all meta annotations, repeated annotations and annotations
-	 * from annotated type arguments. Thus, it does much more than the usual Java reflection API.
-	 */
+	@Override
 	public List<Annotation> getAnnotations() {
 		return annotations;
 	}
 
-	/**
-	 * Return an {@code Optional} of the first instance of a specific {@code annotationType}
-	 * if there is one (directly or indirectly through meta-annotations).
-	 */
+	@Override
 	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
 		return annotations.stream()
 						  .filter(annotation -> annotation.annotationType().equals(annotationType))
@@ -370,28 +337,21 @@ public class TypeUsageImpl extends TypeUsage {
 						  .findFirst();
 	}
 
-	/**
-	 * Return true if the current instance is annotated (directly or indirectly through meta-annotations)
-	 * with a specific {@code annotationType}.
-	 */
+	@Override
 	public <A extends Annotation> boolean isAnnotated(Class<A> annotationType) {
 		return findAnnotation(annotationType).isPresent();
 	}
 
-	/**
-	 * Check if a given {@code providedClass} is assignable from this generic type.
-	 */
+	@Override
 	public boolean isAssignableFrom(Class<?> providedClass) {
-		return TypeUsageImpl.of(providedClass).canBeAssignedTo(this);
+		return TypeUsage.of(providedClass).canBeAssignedTo(this);
 	}
 
-	/**
-	 * Return an {@code Optional} of an array's component type - if it is an array.
-	 */
+	@Override
 	public Optional<TypeUsage> getComponentType() {
 		Class<?> componentType = rawType.getComponentType();
 		if (componentType != null)
-			return Optional.of(TypeUsageImpl.of(componentType));
+			return Optional.of(TypeUsage.of(componentType));
 		return Optional.empty();
 	}
 
@@ -413,7 +373,7 @@ public class TypeUsageImpl extends TypeUsage {
 		return providedType.equals(Boolean.class) && targetType.equals(boolean.class);
 	}
 
-	public Optional<TypeUsageImpl> findSuperType(Class<?> typeToFind) {
+	private Optional<TypeUsageImpl> findSuperType(Class<?> typeToFind) {
 		return findSuperTypeIn(typeToFind, this.rawType);
 	}
 
