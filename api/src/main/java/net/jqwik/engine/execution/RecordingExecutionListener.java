@@ -34,7 +34,20 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 	@Override
 	public void executionFinished(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {
 		recordTestRun(testDescriptor, executionResult);
-		listener.executionFinished(testDescriptor, executionResult.getResult());
+		listener.executionFinished(testDescriptor, toTestExecutionResult(executionResult));
+	}
+
+	private TestExecutionResult toTestExecutionResult(PropertyExecutionResult executionResult) {
+		if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL) {
+			return TestExecutionResult.successful();
+		}
+		if (executionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
+			return TestExecutionResult.failed(executionResult.getThrowable().orElse(null));
+		}
+		if (executionResult.getStatus() == PropertyExecutionResult.Status.ABORTED) {
+			return TestExecutionResult.aborted(executionResult.getThrowable().orElse(null));
+		}
+		throw new IllegalArgumentException("No other status possible");
 	}
 
 	private void recordTestRun(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {

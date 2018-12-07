@@ -8,13 +8,13 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
-import static org.junit.platform.engine.TestExecutionResult.*;
 
 public class PropertyMethodExecutor {
 
@@ -32,9 +32,12 @@ public class PropertyMethodExecutor {
 		try {
 			testInstance = createTestInstance();
 		} catch (Throwable throwable) {
-			String message = String.format("Cannot create instance of class '%s'. Maybe it has no default constructor?",
-					methodDescriptor.getContainerClass());
-			return PropertyExecutionResult.failed(new JqwikException(message, throwable), methodDescriptor.getConfiguration().getSeed(), null);
+			String message = String.format(
+				"Cannot create instance of class '%s'. Maybe it has no default constructor?",
+				methodDescriptor.getContainerClass()
+			);
+			return PropertyExecutionResult
+					   .failed(new JqwikException(message, throwable), methodDescriptor.getConfiguration().getSeed(), null);
 		}
 		return executePropertyMethod(testInstance, lifecycleSupplier, listener);
 	}
@@ -58,7 +61,8 @@ public class PropertyMethodExecutor {
 				return PropertyExecutionResult.failed(
 					throwable,
 					propertyExecutionResult.getSeed().orElse(null),
-					propertyExecutionResult.getFalsifiedSample().orElse(null));
+					propertyExecutionResult.getFalsifiedSample().orElse(null)
+				);
 			} else {
 				LOG.warning(throwable.toString());
 				return propertyExecutionResult;
