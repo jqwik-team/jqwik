@@ -3,7 +3,6 @@
   - Remove compile-time dependencies from API to ENGINE module
     - Arbitraries
     - Arbitrary
-    - Combinators
 
   - Move net.jqwik.engine to module engine
 
@@ -13,6 +12,7 @@
 
   - JavaDoc
     - Statistics
+    - Combinators
 
   - `@Disabled("reason")` annotation
 
