@@ -4,8 +4,6 @@
     - Arbitraries
     - Arbitrary
     - Combinators
-    - ExhaustiveGenerator
-    - RandomGenerator
 
   - Move net.jqwik.engine to module engine
 

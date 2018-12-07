@@ -2,9 +2,30 @@ package net.jqwik.api;
 
 import java.util.function.*;
 
-import net.jqwik.engine.properties.arbitraries.exhaustive.*;
-
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
+
+	abstract class ExhaustiveGeneratorFacade {
+		private static final String EXHAUSTIVE_GENERATOR_FACADE_IMPL = "net.jqwik.engine.facades.ExhaustiveGeneratorFacadeImpl";
+		private static ExhaustiveGeneratorFacade implementation;
+
+		static  {
+			try {
+				implementation = (ExhaustiveGeneratorFacade) Class.forName(EXHAUSTIVE_GENERATOR_FACADE_IMPL).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public abstract <T, U> ExhaustiveGenerator<U> map(ExhaustiveGenerator<T> self, Function<T, U> mapper);
+
+		public abstract <T> ExhaustiveGenerator<T> filter(ExhaustiveGenerator<T> self, Predicate<T> filterPredicate);
+
+		public abstract <T> ExhaustiveGenerator<T> unique(ExhaustiveGenerator<T> self);
+
+		public abstract <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self);
+
+		public abstract <T> ExhaustiveGenerator<T> withSamples(ExhaustiveGenerator<T> self, T[] samples);
+	}
 
 	/**
 	 * @return the maximum number of values that will be generated
@@ -12,11 +33,11 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	long maxCount();
 
 	default <U> ExhaustiveGenerator<U> map(Function<T, U> mapper) {
-		return new MappedExhaustiveGenerator<>(this, mapper);
+		return ExhaustiveGeneratorFacade.implementation.map(this, mapper);
 	}
 
 	default ExhaustiveGenerator<T> filter(Predicate<T> filterPredicate) {
-		return new FilteredExhaustiveGenerator<>(this, filterPredicate);
+		return ExhaustiveGeneratorFacade.implementation.filter(this, filterPredicate);
 	}
 
 	/**
@@ -27,15 +48,15 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	}
 
 	default ExhaustiveGenerator<T> unique() {
-		return new UniqueExhaustiveGenerator<>(this);
+		return ExhaustiveGeneratorFacade.implementation.unique(this);
 	}
 
 	default ExhaustiveGenerator<T> injectNull() {
-		return new WithNullExhaustiveGenerator<>(this);
+		return ExhaustiveGeneratorFacade.implementation.injectNull(this);
 	}
 
 	default ExhaustiveGenerator<T> withSamples(T[] samples) {
-		return new WithSamplesExhaustiveGenerator<>(this, samples);
+		return ExhaustiveGeneratorFacade.implementation.withSamples(this, samples);
 	}
 
 }
