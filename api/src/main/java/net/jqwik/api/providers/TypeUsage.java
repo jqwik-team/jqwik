@@ -3,12 +3,8 @@ package net.jqwik.api.providers;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.concurrent.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.support.*;
 
 /**
  * An instance of {@code TypeUsage} describes the information available for parameter or return types.
@@ -33,32 +29,32 @@ import net.jqwik.engine.support.*;
  */
 public abstract class TypeUsage {
 
-	private static TypeUsageFacade facade;
+	public static abstract class TypeUsageFacade {
+		private static TypeUsageFacade implementation;
 
-	static  {
-		try {
-			facade = (TypeUsageFacade) Class.forName("net.jqwik.engine.facades.TypeUsageFacadeImpl").newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
+		static  {
+			try {
+				implementation = (TypeUsageFacade) Class.forName("net.jqwik.engine.facades.TypeUsageFacadeImpl").newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-	}
 
-	public interface TypeUsageFacade {
-		TypeUsage of(Class<?> type, TypeUsage... typeParameters);
-		TypeUsage wildcard(TypeUsage upperBound);
-		TypeUsage forType(Type type);
+		public abstract TypeUsage of(Class<?> type, TypeUsage... typeParameters);
+		public abstract TypeUsage wildcard(TypeUsage upperBound);
+		public abstract TypeUsage forType(Type type);
 	}
 
 	public static TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
-		return facade.of(type, typeParameters);
+		return TypeUsageFacade.implementation.of(type, typeParameters);
 	}
 
 	public static TypeUsage wildcard(TypeUsage upperBound) {
-		return facade.wildcard(upperBound);
+		return TypeUsageFacade.implementation.wildcard(upperBound);
 	}
 
 	public static TypeUsage forType(Type type) {
-		return facade.forType(type);
+		return TypeUsageFacade.implementation.forType(type);
 	}
 
 	/**
