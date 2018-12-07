@@ -3,6 +3,8 @@ package net.jqwik.engine.execution;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
+import net.jqwik.api.lifecycle.*;
+
 public interface PropertyExecutionListener {
 
 	void executionSkipped(TestDescriptor testDescriptor, String reason);
