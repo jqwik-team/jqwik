@@ -200,6 +200,29 @@ public class RandomGenerators {
 	}
 
 
+	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases) {
+		if (edgeCases.isEmpty()) {
+			return self;
+		}
+
+		int baseToEdgeCaseRatio =
+			Math.min(
+				Math.max(Math.round(genSize / 5), 1),
+				100 / edgeCases.size()
+			) + 1;
+
+		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseShrinkable(edgeCases);
+
+		return random -> {
+			if (random.nextInt(baseToEdgeCaseRatio) == 0) {
+				return edgeCasesGenerator.next(random);
+			} else {
+				return self.next(random);
+			}
+		};
+	}
+
+
 	public static <T> RandomGenerator<T> fail(String message) {
 		return ignored -> {
 			throw new JqwikException(message);

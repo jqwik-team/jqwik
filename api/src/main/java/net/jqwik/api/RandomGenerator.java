@@ -4,10 +4,27 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.engine.properties.arbitraries.randomized.*;
-import net.jqwik.engine.properties.shrinking.*;
-
 public interface RandomGenerator<T> {
+
+	abstract class RandomGeneratorFacade {
+		private static final String RANDOM_GENERATOR_FACADE_IMPL = "net.jqwik.engine.facades.RandomGeneratorFacadeImpl";
+		private static RandomGeneratorFacade implementation;
+
+		static  {
+			try {
+				implementation = (RandomGeneratorFacade) Class.forName(RANDOM_GENERATOR_FACADE_IMPL).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
+		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> wrappedShrinkable, Function<T, Arbitrary<U>> mapper, int genSize, long nextLong);
+		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate);
+		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases);
+		public abstract <T> RandomGenerator<T> withSamples(RandomGenerator<T> self, T[] samples);
+		public abstract <T> RandomGenerator<T> unique(RandomGenerator<T> self);
+	}
 
 	/**
 	 * @param random the source of randomness. Injected by jqwik itself.
@@ -23,19 +40,19 @@ public interface RandomGenerator<T> {
 	default <U> RandomGenerator<U> flatMap(Function<T, RandomGenerator<U>> mapper) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
-			return new FlatMappedShrinkable<>(wrappedShrinkable, mapper, random.nextLong());
+			return RandomGeneratorFacade.implementation.flatMap(wrappedShrinkable, mapper, random.nextLong());
 		};
 	}
 
 	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int genSize) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
-			return new FlatMappedShrinkable<>(wrappedShrinkable, mapper, genSize, random.nextLong());
+			return RandomGeneratorFacade.implementation.flatMap(wrappedShrinkable, mapper, genSize, random.nextLong());
 		};
 	}
 
 	default RandomGenerator<T> filter(Predicate<T> filterPredicate) {
-		return new FilteredGenerator<>(this, filterPredicate);
+		return RandomGeneratorFacade.implementation.filter(this, filterPredicate);
 	}
 
 	default RandomGenerator<T> injectNull(double nullProbability) {
@@ -46,35 +63,16 @@ public interface RandomGenerator<T> {
 	}
 
 	default RandomGenerator<T> withEdgeCases(int genSize, List<Shrinkable<T>> edgeCases) {
-		if (edgeCases.isEmpty()) {
-			return this;
-		}
-
-		int baseToEdgeCaseRatio =
-			Math.min(
-				Math.max(Math.round(genSize / 5), 1),
-				100 / edgeCases.size()
-			) + 1;
-
-		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseShrinkable(edgeCases);
-		RandomGenerator<T> baseGenerator = this;
-
-		return random -> {
-			if (random.nextInt(baseToEdgeCaseRatio) == 0) {
-				return edgeCasesGenerator.next(random);
-			} else {
-				return baseGenerator.next(random);
-			}
-		};
+		return RandomGeneratorFacade.implementation.withEdgeCases(this, genSize, edgeCases);
 	}
 
 	@SuppressWarnings("unchecked")
 	default RandomGenerator<T> withSamples(T... samples) {
-		return new WithSamplesGenerator<>(samples, this);
+		return RandomGeneratorFacade.implementation.withSamples(this, samples);
 	}
 
 	default RandomGenerator<T> unique() {
-		return new UniqueGenerator<>(this);
+		return RandomGeneratorFacade.implementation.unique(this);
 	}
 
 	default Stream<Shrinkable<T>> stream(Random random) {
