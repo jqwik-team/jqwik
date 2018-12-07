@@ -5,7 +5,7 @@ import java.util.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.execution.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.properties.PropertyCheckResult.Status.*;

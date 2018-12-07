@@ -3,7 +3,7 @@ package net.jqwik.engine.matchers;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
-import net.jqwik.engine.execution.*;
+import net.jqwik.api.lifecycle.*;
 
 class IsPropertyExecutionResultFailure implements ArgumentMatcher<PropertyExecutionResult> {
 	private final String message;

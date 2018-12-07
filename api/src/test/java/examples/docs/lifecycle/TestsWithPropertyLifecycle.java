@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.execution.*;
 
 import static org.assertj.core.api.Assertions.*;
 

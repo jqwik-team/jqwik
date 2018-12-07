@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
 
 class ContainerTaskCreator {

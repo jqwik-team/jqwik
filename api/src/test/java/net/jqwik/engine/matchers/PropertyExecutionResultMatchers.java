@@ -2,7 +2,7 @@ package net.jqwik.engine.matchers;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.engine.execution.*;
+import net.jqwik.api.lifecycle.*;
 
 import static org.mockito.ArgumentMatchers.*;
 

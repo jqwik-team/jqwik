@@ -3,6 +3,7 @@ package net.jqwik.engine.execution;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;

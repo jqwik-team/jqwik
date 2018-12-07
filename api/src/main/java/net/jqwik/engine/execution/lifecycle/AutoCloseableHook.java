@@ -5,7 +5,6 @@ import java.util.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.execution.*;
 import net.jqwik.engine.support.*;
 
 public class AutoCloseableHook implements AroundPropertyHook {

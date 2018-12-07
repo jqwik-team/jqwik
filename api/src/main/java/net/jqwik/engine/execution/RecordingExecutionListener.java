@@ -6,6 +6,7 @@ import java.util.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.recording.*;
 
 public class RecordingExecutionListener implements PropertyExecutionListener {

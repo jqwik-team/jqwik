@@ -1,17 +1,20 @@
-package net.jqwik.engine.execution;
+package net.jqwik.api.lifecycle;
 
 import java.util.*;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.TestExecutionResult.*;
 
+/**
+ * Experimental feature. Not ready for public usage yet.
+ */
 public class PropertyExecutionResult {
 
 	private final TestExecutionResult testExecutionResult;
 	private final String seed;
 	private final List<Object> falsifiedSample;
 
-	public PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed, List<Object> falsifiedSample) {
+	private PropertyExecutionResult(TestExecutionResult testExecutionResult, String seed, List<Object> falsifiedSample) {
 		this.testExecutionResult = testExecutionResult;
 		this.seed = seed != null ? (seed.isEmpty() ? null : seed) : null;
 		this.falsifiedSample = falsifiedSample;
