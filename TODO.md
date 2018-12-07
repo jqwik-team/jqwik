@@ -1,8 +1,5 @@
 - For version 1.0
 
-  - Remove compile-time dependencies from API to ENGINE module
-    - Arbitraries
-
   - Move net.jqwik.engine to module engine
 
   - Extract docs module

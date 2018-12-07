@@ -5,17 +5,70 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.providers.ArbitraryProvider.*;
-import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.arbitraries.*;
-import net.jqwik.engine.properties.arbitraries.exhaustive.*;
-import net.jqwik.engine.properties.arbitraries.randomized.*;
-import net.jqwik.engine.properties.stateful.*;
-import net.jqwik.engine.providers.*;
 
 public class Arbitraries {
+
+	public static abstract class ArbitrariesFacade {
+		private static final String ARBITRARIES_FACADE_IMPL = "net.jqwik.engine.facades.ArbitrariesFacadeImpl";
+		private static ArbitrariesFacade implementation;
+
+		static {
+			try {
+				implementation = (ArbitrariesFacade) Class.forName(ARBITRARIES_FACADE_IMPL).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public abstract <T> RandomGenerator<T> randomChoose(List<T> values);
+
+		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values);
+
+		public abstract RandomGenerator<Character> randomChoose(char[] values);
+
+		public abstract Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values);
+
+		public abstract <T extends Enum> RandomGenerator<T> randomChoose(Class<T> enumClass);
+
+		public abstract <T extends Enum> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass);
+
+		public abstract <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all);
+
+		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple.Tuple2<Integer, T>> frequencies);
+
+		public abstract <T> RandomGenerator<T> randomSamples(T[] samples);
+
+		public abstract <T> RandomGenerator<List<T>> randomShuffle(List<T> values);
+
+		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values);
+
+		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary);
+
+		public abstract <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies);
+
+		public abstract IntegerArbitrary integers();
+
+		public abstract LongArbitrary longs();
+
+		public abstract BigIntegerArbitrary bigIntegers();
+
+		public abstract FloatArbitrary floats();
+
+		public abstract BigDecimalArbitrary bigDecimals();
+
+		public abstract DoubleArbitrary doubles();
+
+		public abstract ByteArbitrary bytes();
+
+		public abstract ShortArbitrary shorts();
+
+		public abstract StringArbitrary strings();
+
+		public abstract CharacterArbitrary chars();
+
+		public abstract <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters);
+	}
 
 	private Arbitraries() {
 	}
@@ -74,7 +127,10 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> of(List<T> values) {
-		return fromGenerators(RandomGenerators.choose(values), ExhaustiveGenerators.choose(values));
+		return fromGenerators(
+			ArbitrariesFacade.implementation.randomChoose(values),
+			ArbitrariesFacade.implementation.exhaustiveChoose(values)
+		);
 	}
 
 	/**
@@ -84,7 +140,10 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static Arbitrary<Character> of(char[] values) {
-		return fromGenerators(RandomGenerators.choose(values), ExhaustiveGenerators.choose(values));
+		return fromGenerators(
+			ArbitrariesFacade.implementation.randomChoose(values),
+			ArbitrariesFacade.implementation.exhaustiveChoose(values)
+		);
 	}
 
 	/**
@@ -96,7 +155,10 @@ public class Arbitraries {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
-		return fromGenerators(RandomGenerators.choose(enumClass), ExhaustiveGenerators.choose(enumClass));
+		return fromGenerators(
+			ArbitrariesFacade.implementation.randomChoose(enumClass),
+			ArbitrariesFacade.implementation.exhaustiveChoose(enumClass)
+		);
 	}
 
 	/**
@@ -126,7 +188,7 @@ public class Arbitraries {
 			return all.get(0);
 		}
 		// Simple flatMapping is not enough because of configurations
-		return new OneOfArbitrary<>(all);
+		return ArbitrariesFacade.implementation.oneOf(all);
 	}
 
 	/**
@@ -157,9 +219,10 @@ public class Arbitraries {
 			.collect(Collectors.toList());
 
 		return fromGenerators(
-			RandomGenerators.frequency(frequencies),
-			ExhaustiveGenerators.choose(values)
+			ArbitrariesFacade.implementation.randomFrequency(frequencies),
+			ArbitrariesFacade.implementation.exhaustiveChoose(values)
 		);
+
 	}
 
 	/**
@@ -185,7 +248,7 @@ public class Arbitraries {
 	 */
 	public static <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies) {
 		// Simple flatMapping is not enough because of configurations
-		return new FrequencyOfArbitrary<>(frequencies);
+		return ArbitrariesFacade.implementation.frequencyOf(frequencies);
 	}
 
 	/**
@@ -194,7 +257,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static IntegerArbitrary integers() {
-		return new DefaultIntegerArbitrary();
+		return ArbitrariesFacade.implementation.integers();
 	}
 
 	/**
@@ -203,7 +266,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static LongArbitrary longs() {
-		return new DefaultLongArbitrary();
+		return ArbitrariesFacade.implementation.longs();
 	}
 
 	/**
@@ -212,7 +275,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static BigIntegerArbitrary bigIntegers() {
-		return new DefaultBigIntegerArbitrary();
+		return ArbitrariesFacade.implementation.bigIntegers();
 	}
 
 	/**
@@ -221,7 +284,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static FloatArbitrary floats() {
-		return new DefaultFloatArbitrary();
+		return ArbitrariesFacade.implementation.floats();
 	}
 
 	/**
@@ -230,7 +293,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static BigDecimalArbitrary bigDecimals() {
-		return new DefaultBigDecimalArbitrary();
+		return ArbitrariesFacade.implementation.bigDecimals();
 	}
 
 	/**
@@ -239,7 +302,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static DoubleArbitrary doubles() {
-		return new DefaultDoubleArbitrary();
+		return ArbitrariesFacade.implementation.doubles();
 	}
 
 	/**
@@ -248,7 +311,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static ByteArbitrary bytes() {
-		return new DefaultByteArbitrary();
+		return ArbitrariesFacade.implementation.bytes();
 	}
 
 	/**
@@ -257,7 +320,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static ShortArbitrary shorts() {
-		return new DefaultShortArbitrary();
+		return ArbitrariesFacade.implementation.shorts();
 	}
 
 	/**
@@ -266,11 +329,16 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static StringArbitrary strings() {
-		return new DefaultStringArbitrary();
+		return ArbitrariesFacade.implementation.strings();
 	}
 
+	/**
+	 * Create an arbitrary that generates values of type Character.
+	 *
+	 * @return a new arbitrary instance
+	 */
 	public static CharacterArbitrary chars() {
-		return new DefaultCharacterArbitrary().all();
+		return ArbitrariesFacade.implementation.chars().all();
 	}
 
 	/**
@@ -285,8 +353,8 @@ public class Arbitraries {
 	@SafeVarargs
 	public static <T> Arbitrary<T> samples(T... samples) {
 		return fromGenerators(
-			RandomGenerators.samples(samples),
-			ExhaustiveGenerators.choose(Arrays.asList(samples))
+			ArbitrariesFacade.implementation.randomSamples(samples),
+			ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(samples))
 		);
 	}
 
@@ -300,7 +368,7 @@ public class Arbitraries {
 	public static <T> Arbitrary<T> constant(T value) {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(value),
-			ExhaustiveGenerators.choose(Arrays.asList(value))
+			ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value))
 		);
 	}
 
@@ -328,8 +396,8 @@ public class Arbitraries {
 	 */
 	public static <T> Arbitrary<List<T>> shuffle(List<T> values) {
 		return fromGenerators(
-			RandomGenerators.shuffle(values),
-			ExhaustiveGenerators.shuffle(values)
+			ArbitrariesFacade.implementation.randomShuffle(values),
+			ArbitrariesFacade.implementation.exhaustiveShuffle(values)
 		);
 	}
 
@@ -347,30 +415,7 @@ public class Arbitraries {
 	 * @throws CannotFindArbitraryException if there is no registered arbitrary provider to serve this type
 	 */
 	public static <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>... typeParameters) {
-		TypeUsage[] genericTypeParameters =
-			Arrays.stream(typeParameters)
-				  .map(TypeUsage::of)
-				  .toArray(TypeUsage[]::new);
-		return oneOfAllDefaults(TypeUsage.of(type, genericTypeParameters));
-	}
-
-	private static <T> Arbitrary<T> oneOfAllDefaults(TypeUsage typeUsage) {
-		Set<Arbitrary<?>> arbitraries = allDefaultsFor(typeUsage);
-		if (arbitraries.isEmpty()) {
-			throw new CannotFindArbitraryException(typeUsage);
-		}
-
-		List<Arbitrary<T>> arbitrariesList = new ArrayList<>();
-		//noinspection unchecked
-		arbitraries.forEach(arbitrary -> arbitrariesList.add((Arbitrary<T>) arbitrary));
-		return oneOf(arbitrariesList);
-	}
-
-	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
-		RegisteredArbitraryResolver defaultArbitraryResolver =
-			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
-		SubtypeProvider subtypeProvider = Arbitraries::allDefaultsFor;
-		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
+		return ArbitrariesFacade.implementation.defaultFor(type, typeParameters);
 	}
 
 	private static <T> Arbitrary<T> fromGenerators(
@@ -435,7 +480,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary) {
-		return new DefaultActionSequenceArbitrary<>(actionArbitrary);
+		return ArbitrariesFacade.implementation.sequences(actionArbitrary);
 	}
 
 }
