@@ -1,6 +1,5 @@
 package net.jqwik.engine.matchers;
 
-import org.junit.platform.engine.*;
 import org.mockito.*;
 
 import net.jqwik.api.lifecycle.*;
@@ -14,7 +13,7 @@ class IsPropertyExecutionResultFailure implements ArgumentMatcher<PropertyExecut
 
 	@Override
 	public boolean matches(PropertyExecutionResult result) {
-		if (result.getStatus() != TestExecutionResult.Status.FAILED)
+		if (result.getStatus() != PropertyExecutionResult.Status.FAILED)
 			return false;
 		if (message == null)
 			return true;

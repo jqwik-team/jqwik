@@ -4,9 +4,9 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.TestExecutionResult.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.recording.*;

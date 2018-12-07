@@ -3,8 +3,10 @@ package net.jqwik.engine.recording;
 import java.io.*;
 import java.util.*;
 
-import org.junit.platform.engine.TestExecutionResult.*;
 import org.junit.platform.engine.*;
+
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 
 public class TestRun implements Serializable {
 	private final String uniqueIdString;
@@ -12,7 +14,7 @@ public class TestRun implements Serializable {
 	private final String randomSeed;
 	private final List falsifiedSample;
 
-	public TestRun(UniqueId uniqueId, Status status, String randomSeed, List falsifiedSample) {
+	public TestRun(UniqueId uniqueId, PropertyExecutionResult.Status status, String randomSeed, List falsifiedSample) {
 		this.uniqueIdString = uniqueId.toString();
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
