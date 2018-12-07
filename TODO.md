@@ -1,5 +1,8 @@
 - For version 1.0
 
+  - Extract XFacade implementations in common superclass EngineModuleFacade
+    - Log error on FacadeImpl generation
+
   - Move net.jqwik.engine to module engine
 
   - Extract docs module
