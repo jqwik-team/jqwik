@@ -6,7 +6,6 @@
     - Combinators
     - ExhaustiveGenerator
     - RandomGenerator
-    - ShrinkingSequence
 
   - Move net.jqwik.engine to module engine
 
