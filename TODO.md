@@ -2,7 +2,6 @@
 
   - Remove compile-time dependencies from API to ENGINE module
     - Arbitraries
-    - Arbitrary
 
   - Move net.jqwik.engine to module engine
 
