@@ -4,10 +4,25 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.engine.properties.arbitraries.exhaustive.*;
-import net.jqwik.engine.properties.shrinking.*;
-
 public class Combinators {
+
+	public static abstract class CombinatorsFacade {
+		private static final String COMBINATORS_FACADE_IMPL = "net.jqwik.engine.facades.CombinatorsFacadeImpl";
+		private static CombinatorsFacade implementation;
+
+		static  {
+			try {
+				implementation = (CombinatorsFacade) Class.forName(COMBINATORS_FACADE_IMPL).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public abstract <R> Shrinkable<R> combineShrinkables(List<Shrinkable<Object>> shrinkables, Function<List<Object>, R> combineFunction);
+
+		public abstract <R> Optional<ExhaustiveGenerator<R>> combineExhaustive(List<Arbitrary<Object>> arbitraries, Function<List<Object>, R> combineFunction);
+	}
+
 
 	private Combinators() {
 	}
@@ -153,13 +168,13 @@ public class Combinators {
 					RandomGenerator<T2> g2 = a2.generator(genSize);
 					return random -> {
 						List<Shrinkable<Object>> shrinkables = asTypedList(g1.next(random), g2.next(random));
-						return new CombinedShrinkable<>(shrinkables, combineFunction(combinator));
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
 					};
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return ExhaustiveGenerators.combine(asTypedList(a1, a2), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2), combineFunction(combinator));
 				}
 			};
 		}
@@ -193,13 +208,13 @@ public class Combinators {
 							g2.next(random),
 							g3.next(random)
 						);
-						return new CombinedShrinkable<>(shrinkables, combineFunction(combinator));
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction(combinator));
 					};
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3), combineFunction(combinator));
 				}
 
 			};
@@ -250,13 +265,13 @@ public class Combinators {
 								(T3) params.get(2), (T4) params.get(3)
 							);
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4), combineFunction(combinator));
 				}
 			};
 		}
@@ -312,13 +327,13 @@ public class Combinators {
 								(T5) params.get(4)
 							);
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5), combineFunction(combinator));
 				}
 			};
 		}
@@ -379,13 +394,13 @@ public class Combinators {
 								(T5) params.get(4), (T6) params.get(5)
 							);
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5, a6), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6), combineFunction(combinator));
 				}
 			};
 		}
@@ -454,14 +469,14 @@ public class Combinators {
 								(T5) params.get(4), (T6) params.get(5),
 								(T7) params.get(6)
 							);
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
 				}
 
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5, a6, a7), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7), combineFunction(combinator));
 				}
 			};
 		}
@@ -536,13 +551,13 @@ public class Combinators {
 								(T7) params.get(6), (T8) params.get(7)
 							);
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return ExhaustiveGenerators.combine(asTypedList(a1, a2, a3, a4, a5, a6, a7, a8), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7, a8), combineFunction(combinator));
 				}
 			};
 		}
@@ -588,14 +603,14 @@ public class Combinators {
 
 						Function<List<Object>, R> combineFunction = params -> combinator.apply((List<T>) params);
 
-						return new CombinedShrinkable<>(shrinkables, combineFunction);
+						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
 				}
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					return ExhaustiveGenerators.combine(asTypedList(listOfArbitraries.toArray()), combinedFunction);
+					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(listOfArbitraries.toArray()), combinedFunction);
 				}
 			};
 		}
