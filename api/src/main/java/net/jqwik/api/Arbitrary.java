@@ -5,8 +5,6 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.engine.properties.arbitraries.*;
-import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 
 /**
  * The main interface for representing objects that can be generated and shrunk.
@@ -16,6 +14,34 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
  *            type (e.g. Integer, Boolean).
  */
 public interface Arbitrary<T> {
+
+	abstract class ArbitraryFacade {
+		private static final String ARBITRARY_FACADE_IMPL = "net.jqwik.engine.facades.ArbitraryFacadeImpl";
+		private static ArbitraryFacade implementation;
+
+		static {
+			try {
+				implementation = (ArbitraryFacade) Class.forName(ARBITRARY_FACADE_IMPL).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public abstract <T, U> Optional<ExhaustiveGenerator<U>> flatMapExhaustiveGenerator(
+			ExhaustiveGenerator<T> self,
+			Function<T, Arbitrary<U>> mapper
+		);
+
+		public abstract <T> SizableArbitrary<List<T>> list(Arbitrary<T> elementArbitrary);
+
+		public abstract <T> SizableArbitrary<Set<T>> set(Arbitrary<T> elementArbitrary);
+
+		public abstract <T> SizableArbitrary<Stream<T>> stream(Arbitrary<T> elementArbitrary);
+
+		public abstract <T> SizableArbitrary<Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
+
+		public abstract <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
+	}
 
 	/**
 	 * Create the random generator for an arbitrary
@@ -97,7 +123,8 @@ public interface Arbitrary<T> {
 
 			@Override
 			public Optional<ExhaustiveGenerator<U>> exhaustive() {
-				return Arbitrary.this.exhaustive().flatMap(generator -> ExhaustiveGenerators.flatMap(generator, mapper));
+				return Arbitrary.this.exhaustive()
+									 .flatMap(generator -> ArbitraryFacade.implementation.flatMapExhaustiveGenerator(generator, mapper));
 			}
 		};
 	}
@@ -182,14 +209,14 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code List<T>} using the existing arbitrary for generating the elements of the list.
 	 */
 	default SizableArbitrary<List<T>> list() {
-		return new ListArbitrary<>(this);
+		return ArbitraryFacade.implementation.list(this);
 	}
 
 	/**
 	 * Create a new arbitrary of type {@code Set<T>} using the existing arbitrary for generating the elements of the set.
 	 */
 	default SizableArbitrary<Set<T>> set() {
-		return new SetArbitrary<>(this);
+		return ArbitraryFacade.implementation.set(this);
 	}
 
 	/**
@@ -197,7 +224,7 @@ public interface Arbitrary<T> {
 	 * stream.
 	 */
 	default SizableArbitrary<Stream<T>> stream() {
-		return new StreamArbitrary<>(this);
+		return ArbitraryFacade.implementation.stream(this);
 	}
 
 	/**
@@ -205,7 +232,7 @@ public interface Arbitrary<T> {
 	 * stream.
 	 */
 	default SizableArbitrary<Iterator<T>> iterator() {
-		return new IteratorArbitrary<>(this);
+		return ArbitraryFacade.implementation.iterator(this);
 	}
 
 	/**
@@ -216,7 +243,7 @@ public interface Arbitrary<T> {
 	 *            reflection capabilities.
 	 */
 	default <A> SizableArbitrary<A> array(Class<A> arrayClass) {
-		return new ArrayArbitrary<>(arrayClass, this);
+		return ArbitraryFacade.implementation.array(this, arrayClass);
 	}
 
 	/**

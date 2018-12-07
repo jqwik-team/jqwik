@@ -18,7 +18,7 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private int minSize = 0;
 
-	public ArrayArbitrary(Class<A> arrayClass, Arbitrary<T> elementArbitrary) {
+	public ArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
 		this.arrayClass = arrayClass;
 		this.elementArbitrary = elementArbitrary;
 	}
