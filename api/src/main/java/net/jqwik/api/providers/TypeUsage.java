@@ -27,9 +27,9 @@ import net.jqwik.api.*;
  * <li>@see {@link Arbitraries#defaultFor(Class, Class[])}</li>
  * </ul>
  */
-public abstract class TypeUsage {
+public interface TypeUsage {
 
-	public static abstract class TypeUsageFacade {
+	abstract class TypeUsageFacade {
 		private static final String TYPE_USAGE_FACADE_IMPL = "net.jqwik.engine.facades.TypeUsageFacadeImpl";
 		private static TypeUsageFacade implementation;
 
@@ -46,15 +46,15 @@ public abstract class TypeUsage {
 		public abstract TypeUsage forType(Type type);
 	}
 
-	public static TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
+	static TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
 		return TypeUsageFacade.implementation.of(type, typeParameters);
 	}
 
-	public static TypeUsage wildcard(TypeUsage upperBound) {
+	static TypeUsage wildcard(TypeUsage upperBound) {
 		return TypeUsageFacade.implementation.wildcard(upperBound);
 	}
 
-	public static TypeUsage forType(Type type) {
+	static TypeUsage forType(Type type) {
 		return TypeUsageFacade.implementation.forType(type);
 	}
 
@@ -64,37 +64,38 @@ public abstract class TypeUsage {
 	 * <p>
 	 * A raw type always exists.
 	 */
-	public abstract Class<?> getRawType();
+	Class<?> getRawType();
 
 	/**
-	 * Return upper bounds if a generic type is a wildcard.
+	 * Return upper bounds if a generic type is a wildcard or type variable.
+	 * {@code TypeUsage.of(Object.class)} is always included.
 	 */
-	public abstract List<TypeUsage> getUpperBounds();
+	List<TypeUsage> getUpperBounds();
 
 	/**
 	 * Return lower bounds if a generic type is a wildcard.
 	 */
-	public abstract List<TypeUsage> getLowerBounds();
+	List<TypeUsage> getLowerBounds();
 
 	/**
 	 * Return true if a generic type is a wildcard.
 	 */
-	public abstract boolean isWildcard();
+	boolean isWildcard();
 
 	/**
 	 * Return true if a generic type is a wildcard.
 	 */
-	public abstract boolean isTypeVariable();
+	boolean isTypeVariable();
 
 	/**
 	 * Return true if a generic type is a type variable or a wildcard.
 	 */
-	public abstract boolean isTypeVariableOrWildcard();
+	boolean isTypeVariableOrWildcard();
 
 	/**
 	 * Return the type arguments of a generic type in the order of there appearance in a type's declaration.
 	 */
-	public abstract List<TypeUsage> getTypeArguments();
+	List<TypeUsage> getTypeArguments();
 
 	/**
 	 * Check if an instance is of a specific raw type
@@ -102,27 +103,27 @@ public abstract class TypeUsage {
 	 * Most of the time this is what you want to do when checking for applicability of a
 	 * {@linkplain ArbitraryProvider}.
 	 */
-	public abstract boolean isOfType(Class<?> aRawType);
+	boolean isOfType(Class<?> aRawType);
 
 	/**
 	 * Check if an instance can be assigned to another {@code TypeUsage} instance.
 	 */
-	public abstract boolean canBeAssignedTo(TypeUsage targetType);
+	boolean canBeAssignedTo(TypeUsage targetType);
 
 	/**
 	 * Return true if a type has any type arguments itself.
 	 */
-	public abstract boolean isGeneric();
+	boolean isGeneric();
 
 	/**
 	 * Return true if a type is an {@code enum} type.
 	 */
-	public abstract boolean isEnum();
+	boolean isEnum();
 
 	/**
 	 * Return true if a type is an array type.
 	 */
-	public abstract boolean isArray();
+	boolean isArray();
 
 	/**
 	 * Return all annotations of a parameter (or an annotated type argument).
@@ -130,28 +131,28 @@ public abstract class TypeUsage {
 	 * This list already contains all meta annotations, repeated annotations and annotations
 	 * from annotated type arguments. Thus, it does much more than the usual Java reflection API.
 	 */
-	public abstract List<Annotation> getAnnotations();
+	List<Annotation> getAnnotations();
 
 	/**
 	 * Return an {@code Optional} of the first instance of a specific {@code annotationType}
 	 * if there is one (directly or indirectly through meta-annotations).
 	 */
-	public abstract <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType);
+	<A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType);
 
 	/**
 	 * Return true if the current instance is annotated (directly or indirectly through meta-annotations)
 	 * with a specific {@code annotationType}.
 	 */
-	public abstract <A extends Annotation> boolean isAnnotated(Class<A> annotationType);
+	<A extends Annotation> boolean isAnnotated(Class<A> annotationType);
 
 	/**
 	 * Check if a given {@code providedClass} is assignable from this generic type.
 	 */
-	public abstract boolean isAssignableFrom(Class<?> providedClass);
+	boolean isAssignableFrom(Class<?> providedClass);
 
 	/**
 	 * Return an {@code Optional} of an array's component type - if it is an array.
 	 */
-	public abstract Optional<TypeUsage> getComponentType();
+	Optional<TypeUsage> getComponentType();
 
 }

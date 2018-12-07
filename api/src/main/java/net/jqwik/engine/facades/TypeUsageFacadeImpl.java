@@ -8,9 +8,8 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
 /**
- * Is loaded through reflection in {@linkplain TypeUsage}
+ * Is loaded through reflection in api module
  */
-
 public class TypeUsageFacadeImpl extends TypeUsage.TypeUsageFacade {
 
 	@Override
