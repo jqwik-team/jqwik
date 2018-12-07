@@ -1,12 +1,30 @@
 package net.jqwik.api;
 
-import net.jqwik.engine.properties.shrinking.*;
-
 import java.util.function.*;
 
 public interface ShrinkingSequence<T> {
+
+	abstract class ShrinkingSequenceFacade {
+		private static final String SHRINKABLE_FACTORY_FACADE_IMPL = "net.jqwik.engine.facades.ShrinkingSequenceFacadeImpl";
+		private static ShrinkingSequenceFacade implementation;
+
+		static  {
+			try {
+				implementation = (ShrinkingSequenceFacade) Class.forName(SHRINKABLE_FACTORY_FACADE_IMPL).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public abstract <T> ShrinkingSequence<T> dontShrink(Shrinkable<T> shrinkable);
+		public abstract <T> ShrinkingSequence<T> andThen(ShrinkingSequence<T> self, Function<Shrinkable<T>, ShrinkingSequence<T>> createFollowupSequence);
+		public abstract <T, U> ShrinkingSequence<U> mapValue(ShrinkingSequence<T> self, Function<T, U> mapper);
+		public abstract <T, U> ShrinkingSequence<U> map(ShrinkingSequence<T> self, Function<FalsificationResult<T>, FalsificationResult<U>> mapper);
+	}
+
+
 	static <T> ShrinkingSequence<T> dontShrink(Shrinkable<T> shrinkable) {
-		return new NullShrinkingSequence<>(shrinkable);
+		return ShrinkingSequenceFacade.implementation.dontShrink(shrinkable);
 	}
 
 	boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter);
@@ -16,16 +34,16 @@ public interface ShrinkingSequence<T> {
 	void init(FalsificationResult<T> initialCurrent);
 
 	default ShrinkingSequence<T> andThen(Function<Shrinkable<T>, ShrinkingSequence<T>> createFollowupSequence) {
-		return new NextShrinkingSequence<>(this, createFollowupSequence);
+		return ShrinkingSequenceFacade.implementation.andThen(this, createFollowupSequence);
 	}
 
 	// TODO: This feels strange. There _should_ be a way to replace all calls by calls to map().
 	default <U> ShrinkingSequence<U> mapValue(Function<T, U> mapper) {
-		return new MappedValueShrinkingSequence<>(this, mapper);
+		return ShrinkingSequenceFacade.implementation.mapValue(this, mapper);
 	}
 
 	default <U> ShrinkingSequence<U> map(Function<FalsificationResult<T>, FalsificationResult<U>> mapper) {
-		return new MappedShrinkingSequence<>(this, mapper);
+		return ShrinkingSequenceFacade.implementation.map(this, mapper);
 	}
 
 }
