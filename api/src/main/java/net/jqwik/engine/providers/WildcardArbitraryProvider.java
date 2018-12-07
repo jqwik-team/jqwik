@@ -11,7 +11,12 @@ public class WildcardArbitraryProvider implements ArbitraryProvider {
 	public boolean canProvideFor(TypeUsage targetType) {
 		if (!targetType.isWildcard())
 			return false;
-		return targetType.getUpperBounds().isEmpty() && targetType.getLowerBounds().isEmpty();
+		return hasNoUpperBoundOtherThanObject(targetType) && targetType.getLowerBounds().isEmpty();
+	}
+
+	private boolean hasNoUpperBoundOtherThanObject(TypeUsage targetType) {
+		return targetType.getUpperBounds().size() != 1 ||
+				   targetType.getUpperBounds().get(0).isOfType(Object.class);
 	}
 
 	@Override

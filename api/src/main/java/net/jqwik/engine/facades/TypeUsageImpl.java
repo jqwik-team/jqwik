@@ -123,7 +123,7 @@ public class TypeUsageImpl extends TypeUsage {
 	}
 
 	void addUpperBounds(List<TypeUsage> upperBounds) {
-		upperBounds.stream().filter(bound -> !bound.isOfType(Object.class)).forEach(this.upperBounds::add);
+		this.upperBounds.addAll(upperBounds);
 	}
 
 	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
@@ -221,11 +221,13 @@ public class TypeUsageImpl extends TypeUsage {
 		return rawType;
 	}
 
-	boolean hasUpperBounds() {
-		return upperBounds.size() > 0;
+	private boolean hasUpperBoundBeyondObject() {
+		if (upperBounds.size() > 1)
+			return true;
+		return upperBounds.size() == 1 && !upperBounds.get(0).isOfType(Object.class);
 	}
 
-	boolean hasLowerBounds() {
+	private boolean hasLowerBounds() {
 		return lowerBounds.size() > 0;
 	}
 
@@ -502,7 +504,7 @@ public class TypeUsageImpl extends TypeUsage {
 		}
 		if (typeVariable != null) {
 			representation = typeVariable;
-			if (hasUpperBounds()) {
+			if (hasUpperBoundBeyondObject()) {
 				String boundsRepresentation =
 					upperBounds.stream()
 							   .map(typeUsage -> toString(typeUsage, touchedTypes))

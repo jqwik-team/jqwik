@@ -193,14 +193,14 @@ class TypeUsageTests {
 			assertThat(first.isTypeVariableOrWildcard()).isTrue();
 			assertThat(first.isTypeVariable()).isFalse();
 			assertThat(first.getLowerBounds()).isEmpty();
-			assertThat(first.getUpperBounds()).isNotEmpty();
+			assertThat(first.getUpperBounds()).containsExactly(TypeUsage.of(CharSequence.class));
 
 			TypeUsage second = wildcardType.getTypeArguments().get(1);
 			assertThat(second.isWildcard()).isTrue();
 			assertThat(second.isTypeVariableOrWildcard()).isTrue();
 			assertThat(second.isTypeVariable()).isFalse();
 			assertThat(second.getLowerBounds()).isNotEmpty();
-			assertThat(second.getUpperBounds()).isEmpty();
+			assertThat(second.getUpperBounds()).containsExactly(TypeUsage.of(Object.class));
 
 			assertThat(wildcardType.toString()).isEqualTo("Tuple2<? extends CharSequence, ? super String>");
 
@@ -241,14 +241,17 @@ class TypeUsageTests {
 			assertThat(first.isTypeVariableOrWildcard()).isTrue();
 			assertThat(first.isTypeVariable()).isTrue();
 			assertThat(first.getLowerBounds()).isEmpty();
-			assertThat(first.getUpperBounds()).isNotEmpty();
+			assertThat(first.getUpperBounds()).containsExactly(TypeUsage.of(CharSequence.class));
 
-			TypeUsage second = typeVariableType.getTypeArguments().get(0);
+			TypeUsage second = typeVariableType.getTypeArguments().get(1);
 			assertThat(second.isWildcard()).isFalse();
 			assertThat(second.isTypeVariableOrWildcard()).isTrue();
 			assertThat(second.isTypeVariable()).isTrue();
-			assertThat(first.getLowerBounds()).isEmpty();
-			assertThat(first.getUpperBounds()).isNotEmpty();
+			assertThat(second.getLowerBounds()).isEmpty();
+			assertThat(second.getUpperBounds()).containsExactly(
+				TypeUsage.of(Serializable.class),
+				TypeUsage.of(Cloneable.class)
+			);
 
 			assertThat(typeVariableType.toString()).isEqualTo("Tuple2<T extends CharSequence, U extends Serializable & Cloneable>");
 
@@ -283,10 +286,10 @@ class TypeUsageTests {
 			assertThat(typeVariableType.isTypeVariableOrWildcard()).isTrue();
 			assertThat(typeVariableType.isTypeVariable()).isTrue();
 			assertThat(typeVariableType.getLowerBounds()).isEmpty();
-			assertThat(typeVariableType.getUpperBounds()).isNotEmpty();
+			assertThat(typeVariableType.getUpperBounds()).hasSize(1);
+			assertThat(typeVariableType.getUpperBounds().get(0).getRawType()).isEqualTo(Comparable.class);
 
 			assertThat(typeVariableType.toString()).isEqualTo("T extends Comparable<T>");
-
 		}
 
 		@Example
