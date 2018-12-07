@@ -1,8 +1,8 @@
 package net.jqwik.api;
 
-public interface Statistics {
+public class Statistics {
 
-	abstract class StatisticsFacade {
+	public static abstract class StatisticsFacade {
 		private static final String STATISTICS_FACADE_IMPL = "net.jqwik.engine.facades.StatisticsFacadeImpl";
 		private static StatisticsFacade implementation;
 
@@ -17,7 +17,7 @@ public interface Statistics {
 		public abstract void collect(Object... values);
 	}
 
-	static void collect(Object... values) {
+	public static void collect(Object... values) {
 		StatisticsFacade.implementation.collect(values);
 	}
 
