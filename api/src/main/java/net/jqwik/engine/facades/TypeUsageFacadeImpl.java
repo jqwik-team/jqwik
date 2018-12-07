@@ -11,7 +11,7 @@ import net.jqwik.engine.support.*;
  * Is loaded through reflection in {@linkplain TypeUsage}
  */
 
-public class TypeUsageFacadeImpl implements TypeUsage.TypeUsageFacade {
+public class TypeUsageFacadeImpl extends TypeUsage.TypeUsageFacade {
 
 	@Override
 	public TypeUsage of(Class<?> type, TypeUsage... typeParameters) {
