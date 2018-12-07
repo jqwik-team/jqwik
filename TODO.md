@@ -1,5 +1,13 @@
 - For version 1.0
 
+  - Remove compile-time dependencies from API to ENGINE module
+    - Arbitraries
+    - Arbitrary
+    - Combinators
+    - ExhaustiveGenerator
+    - RandomGenerator
+    - ShrinkingSequence
+
   - Move net.jqwik.engine to module engine
 
   - Extract docs module
