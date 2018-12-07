@@ -22,7 +22,6 @@ public interface ShrinkingSequence<T> {
 		public abstract <T, U> ShrinkingSequence<U> map(ShrinkingSequence<T> self, Function<FalsificationResult<T>, FalsificationResult<U>> mapper);
 	}
 
-
 	static <T> ShrinkingSequence<T> dontShrink(Shrinkable<T> shrinkable) {
 		return ShrinkingSequenceFacade.implementation.dontShrink(shrinkable);
 	}

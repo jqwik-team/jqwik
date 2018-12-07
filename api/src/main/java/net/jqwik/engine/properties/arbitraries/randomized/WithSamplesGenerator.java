@@ -12,7 +12,7 @@ public class WithSamplesGenerator<T> implements RandomGenerator<T> {
 	private final RandomGenerator<T> base;
 	private final int numberOfSamples;
 
-	public WithSamplesGenerator(T[] samples, RandomGenerator<T> base) {
+	public WithSamplesGenerator(RandomGenerator<T> base, T[] samples) {
 		List<Shrinkable<T>> shrinkables = SampleShrinkable.listOf(samples);
 		this.samplesGenerator = RandomGenerators.samplesFromShrinkables(shrinkables);
 		this.numberOfSamples = shrinkables.size();
