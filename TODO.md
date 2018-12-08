@@ -1,7 +1,5 @@
 - For version 1.0
 
-  - Move net.jqwik.engine to module engine
-
   - Extract docs module
     - examples.docs tests -> net.jqwik.docs
     - Change github links in user-guide
