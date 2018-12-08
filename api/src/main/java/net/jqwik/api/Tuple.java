@@ -3,8 +3,6 @@ package net.jqwik.api;
 import java.io.*;
 import java.util.*;
 
-import static net.jqwik.engine.support.JqwikStringSupport.*;
-
 public interface Tuple extends Serializable, Cloneable {
 
 	int size();
@@ -39,7 +37,16 @@ public interface Tuple extends Serializable, Cloneable {
 		return new Tuple7<>(v1, v2, v3, v4, v5, v6, v7);
 	}
 
-	static <T1, T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(T1 v1, T2 v2, T3 v3, T4 v4, T5 v5, T6 v6, T7 v7, T8 v8) {
+	static <T1, T2, T3, T4, T5, T6, T7, T8> Tuple8<T1, T2, T3, T4, T5, T6, T7, T8> of(
+		T1 v1,
+		T2 v2,
+		T3 v3,
+		T4 v4,
+		T5 v5,
+		T6 v6,
+		T7 v7,
+		T8 v8
+	) {
 		return new Tuple8<>(v1, v2, v3, v4, v5, v6, v7, v8);
 	}
 
@@ -112,7 +119,7 @@ public interface Tuple extends Serializable, Cloneable {
 			if (o == null || getClass() != o.getClass()) return false;
 			Tuple2<?, ?> tuple = (Tuple2<?, ?>) o;
 			return Objects.equals(v1, tuple.v1) //
-					   && Objects.equals(v2, tuple.v2);
+				&& Objects.equals(v2, tuple.v2);
 		}
 
 		@Override
@@ -122,7 +129,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s)", displayString(v1), displayString(v2));
+			return String.format("(%s,%s)", v1, v2);
 		}
 	}
 
@@ -155,8 +162,8 @@ public interface Tuple extends Serializable, Cloneable {
 			if (o == null || getClass() != o.getClass()) return false;
 			Tuple3<?, ?, ?> tuple = (Tuple3<?, ?, ?>) o;
 			return Objects.equals(v1, tuple.v1) //
-					   && Objects.equals(v2, tuple.v2) //
-					   && Objects.equals(v3, tuple.v3);
+				&& Objects.equals(v2, tuple.v2) //
+				&& Objects.equals(v3, tuple.v3);
 		}
 
 		@Override
@@ -166,7 +173,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3));
+			return String.format("(%s,%s,%s)", v1, v2, v3);
 		}
 	}
 
@@ -199,9 +206,9 @@ public interface Tuple extends Serializable, Cloneable {
 			if (o == null || getClass() != o.getClass()) return false;
 			Tuple4<?, ?, ?, ?> tuple = (Tuple4<?, ?, ?, ?>) o;
 			return Objects.equals(v1, tuple.v1) //
-					   && Objects.equals(v2, tuple.v2) //
-					   && Objects.equals(v3, tuple.v3) //
-					   && Objects.equals(v4, tuple.v4);
+				&& Objects.equals(v2, tuple.v2) //
+				&& Objects.equals(v3, tuple.v3) //
+				&& Objects.equals(v4, tuple.v4);
 		}
 
 		@Override
@@ -211,7 +218,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4));
+			return String.format("(%s,%s,%s,%s)", v1, v2, v3, v4);
 		}
 	}
 
@@ -243,10 +250,10 @@ public interface Tuple extends Serializable, Cloneable {
 			if (o == null || getClass() != o.getClass()) return false;
 			Tuple5<?, ?, ?, ?, ?> tuple = (Tuple5<?, ?, ?, ?, ?>) o;
 			return Objects.equals(v1, tuple.v1) //
-					   && Objects.equals(v2, tuple.v2) //
-					   && Objects.equals(v3, tuple.v3) //
-					   && Objects.equals(v4, tuple.v4) //
-					   && Objects.equals(v5, tuple.v5);
+				&& Objects.equals(v2, tuple.v2) //
+				&& Objects.equals(v3, tuple.v3) //
+				&& Objects.equals(v4, tuple.v4) //
+				&& Objects.equals(v5, tuple.v5);
 		}
 
 		@Override
@@ -257,7 +264,7 @@ public interface Tuple extends Serializable, Cloneable {
 		@Override
 		public String toString() {
 			return String
-					   .format("(%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5));
+				.format("(%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5);
 		}
 	}
 
@@ -289,11 +296,11 @@ public interface Tuple extends Serializable, Cloneable {
 			if (o == null || getClass() != o.getClass()) return false;
 			Tuple6<?, ?, ?, ?, ?, ?> tuple = (Tuple6<?, ?, ?, ?, ?, ?>) o;
 			return Objects.equals(v1, tuple.v1) //
-					   && Objects.equals(v2, tuple.v2) //
-					   && Objects.equals(v3, tuple.v3) //
-					   && Objects.equals(v4, tuple.v4) //
-					   && Objects.equals(v5, tuple.v5) //
-					   && Objects.equals(v6, tuple.v6);
+				&& Objects.equals(v2, tuple.v2) //
+				&& Objects.equals(v3, tuple.v3) //
+				&& Objects.equals(v4, tuple.v4) //
+				&& Objects.equals(v5, tuple.v5) //
+				&& Objects.equals(v6, tuple.v6);
 		}
 
 		@Override
@@ -304,7 +311,7 @@ public interface Tuple extends Serializable, Cloneable {
 		@Override
 		public String toString() {
 			return String
-					   .format("(%s,%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5), displayString(v6));
+				.format("(%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6);
 		}
 	}
 
@@ -336,12 +343,12 @@ public interface Tuple extends Serializable, Cloneable {
 			if (o == null || getClass() != o.getClass()) return false;
 			Tuple7<?, ?, ?, ?, ?, ?, ?> tuple = (Tuple7<?, ?, ?, ?, ?, ?, ?>) o;
 			return Objects.equals(v1, tuple.v1) //
-					   && Objects.equals(v2, tuple.v2) //
-					   && Objects.equals(v3, tuple.v3) //
-					   && Objects.equals(v4, tuple.v4) //
-					   && Objects.equals(v5, tuple.v5) //
-					   && Objects.equals(v6, tuple.v6) //
-					   && Objects.equals(v7, tuple.v7);
+				&& Objects.equals(v2, tuple.v2) //
+				&& Objects.equals(v3, tuple.v3) //
+				&& Objects.equals(v4, tuple.v4) //
+				&& Objects.equals(v5, tuple.v5) //
+				&& Objects.equals(v6, tuple.v6) //
+				&& Objects.equals(v7, tuple.v7);
 		}
 
 		@Override
@@ -351,8 +358,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String
-					   .format("(%s,%s,%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5), displayString(v6), displayString(v7));
+			return String.format("(%s,%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6, v7);
 		}
 	}
 
@@ -384,13 +390,13 @@ public interface Tuple extends Serializable, Cloneable {
 			if (o == null || getClass() != o.getClass()) return false;
 			Tuple8<?, ?, ?, ?, ?, ?, ?, ?> tuple = (Tuple8<?, ?, ?, ?, ?, ?, ?, ?>) o;
 			return Objects.equals(v1, tuple.v1) //
-					   && Objects.equals(v2, tuple.v2) //
-					   && Objects.equals(v3, tuple.v3) //
-					   && Objects.equals(v4, tuple.v4) //
-					   && Objects.equals(v5, tuple.v5) //
-					   && Objects.equals(v6, tuple.v6) //
-					   && Objects.equals(v7, tuple.v7) //
-					   && Objects.equals(v8, tuple.v8);
+				&& Objects.equals(v2, tuple.v2) //
+				&& Objects.equals(v3, tuple.v3) //
+				&& Objects.equals(v4, tuple.v4) //
+				&& Objects.equals(v5, tuple.v5) //
+				&& Objects.equals(v6, tuple.v6) //
+				&& Objects.equals(v7, tuple.v7) //
+				&& Objects.equals(v8, tuple.v8);
 		}
 
 		@Override
@@ -400,8 +406,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String
-					   .format("(%s,%s,%s,%s,%s,%s,%s,%s)", displayString(v1), displayString(v2), displayString(v3), displayString(v4), displayString(v5), displayString(v6), displayString(v7), displayString(v8));
+			return String.format("(%s,%s,%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6, v7, v8);
 		}
 	}
 }
