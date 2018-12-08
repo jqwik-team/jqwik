@@ -1,10 +1,12 @@
 package net.jqwik.api;
 
 import java.util.function.*;
+import java.util.logging.*;
 
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 	abstract class ExhaustiveGeneratorFacade {
+		private static final Logger LOG = Logger.getLogger(ExhaustiveGeneratorFacade.class.getName());
 		private static final String EXHAUSTIVE_GENERATOR_FACADE_IMPL = "net.jqwik.engine.facades.ExhaustiveGeneratorFacadeImpl";
 		private static ExhaustiveGeneratorFacade implementation;
 
@@ -12,7 +14,11 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 			try {
 				implementation = (ExhaustiveGeneratorFacade) Class.forName(EXHAUSTIVE_GENERATOR_FACADE_IMPL).newInstance();
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.log(
+					Level.SEVERE,
+					"Cannot load implementation for " + ExhaustiveGeneratorFacade.class.getName(),
+					e
+				);
 			}
 		}
 

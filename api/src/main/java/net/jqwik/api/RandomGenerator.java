@@ -2,11 +2,13 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 public interface RandomGenerator<T> {
 
 	abstract class RandomGeneratorFacade {
+		private static final Logger LOG = Logger.getLogger(RandomGeneratorFacade.class.getName());
 		private static final String RANDOM_GENERATOR_FACADE_IMPL = "net.jqwik.engine.facades.RandomGeneratorFacadeImpl";
 		private static RandomGeneratorFacade implementation;
 
@@ -14,7 +16,11 @@ public interface RandomGenerator<T> {
 			try {
 				implementation = (RandomGeneratorFacade) Class.forName(RANDOM_GENERATOR_FACADE_IMPL).newInstance();
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.log(
+					Level.SEVERE,
+					"Cannot load implementation for " + RandomGeneratorFacade.class.getName(),
+					e
+				);
 			}
 		}
 
