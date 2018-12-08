@@ -1,10 +1,12 @@
 package net.jqwik.api;
 
 import java.util.function.*;
+import java.util.logging.*;
 
 public interface ShrinkingSequence<T> {
 
 	abstract class ShrinkingSequenceFacade {
+		private static final Logger LOG = Logger.getLogger(ShrinkingSequenceFacade.class.getName());
 		private static final String SHRINKABLE_FACTORY_FACADE_IMPL = "net.jqwik.engine.facades.ShrinkingSequenceFacadeImpl";
 		private static ShrinkingSequenceFacade implementation;
 
@@ -12,7 +14,11 @@ public interface ShrinkingSequence<T> {
 			try {
 				implementation = (ShrinkingSequenceFacade) Class.forName(SHRINKABLE_FACTORY_FACADE_IMPL).newInstance();
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOG.log(
+					Level.SEVERE,
+					"Cannot load implementation for " + ShrinkingSequenceFacade.class.getName(),
+					e
+				);
 			}
 		}
 

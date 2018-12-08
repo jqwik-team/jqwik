@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
@@ -10,14 +11,19 @@ import net.jqwik.api.stateful.*;
 public class Arbitraries {
 
 	public static abstract class ArbitrariesFacade {
+		private static final Logger LOG = Logger.getLogger(ArbitrariesFacade.class.getName());
 		private static final String ARBITRARIES_FACADE_IMPL = "net.jqwik.engine.facades.ArbitrariesFacadeImpl";
 		private static ArbitrariesFacade implementation;
 
 		static {
 			try {
 				implementation = (ArbitrariesFacade) Class.forName(ARBITRARIES_FACADE_IMPL).newInstance();
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Exception exception) {
+				LOG.log(
+					Level.SEVERE,
+					"Cannot load implementation for " + ArbitrariesFacade.class.getName(),
+					exception
+				);
 			}
 		}
 
