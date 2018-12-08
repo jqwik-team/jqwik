@@ -49,7 +49,7 @@ public class PropertyConfiguration {
 		String stereotype,
 		String seed,
 		String previousSeed,
-		List falsifiedSample,
+		List<Object> falsifiedSample,
 		int tries,
 		int maxDiscardRatio,
 		ShrinkingMode shrinkingMode,

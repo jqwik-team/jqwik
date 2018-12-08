@@ -84,7 +84,7 @@ class PropertyMethodResolver implements ElementResolver {
 			return new JqwikException(message);
 		});
 		String previousSeed = previousSeed(uniqueId);
-		List falsifiedSample = falsifiedSample(uniqueId);
+		List<Object> falsifiedSample = falsifiedSample(uniqueId);
 		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues, previousSeed, falsifiedSample);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
@@ -96,7 +96,7 @@ class PropertyMethodResolver implements ElementResolver {
 						  .orElse(null);
 	}
 
-	private List falsifiedSample(UniqueId uniqueId) {
+	private List<Object> falsifiedSample(UniqueId uniqueId) {
 		return testRunData.byUniqueId(uniqueId)
 						  .filter(TestRun::isNotSuccessful)
 						  .flatMap(TestRun::falsifiedSample)

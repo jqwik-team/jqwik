@@ -8,18 +8,20 @@ import net.jqwik.api.*;
 /**
  * Implementation of this class are used to provide default arbitraries to
  * {@code ForAll} parameters without an explicit provider reference.
- * <p/>
+ * <p>
  * Implementations must be registered in <code>/META-INF/services/net.jqwik.api.providers.ArbitraryProvider</code>
  * so that they will be automatically considered for parameter resolution.
- * <p/>
+ * </p>
+ * <p>
  * Some examples that come with jqwik:
+ * </p>
  * <ul>
  *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/EnumArbitraryProvider.java"
- *     >net.jqwik.engine.providers.EnumArbitraryProvider</li>
+ *     >net.jqwik.engine.providers.EnumArbitraryProvider</a></li>
  *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/BigDecimalArbitraryProvider.java"
- *     >net.jqwik.engine.providers.BigDecimalArbitraryProvider</li>
+ *     >net.jqwik.engine.providers.BigDecimalArbitraryProvider</a></li>
  *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/providers/ListArbitraryProvider.java"
- *     >net.jqwik.engine.providers.ListArbitraryProvider</li>
+ *     >net.jqwik.engine.providers.ListArbitraryProvider</a></li>
  * </ul>
  */
 public interface ArbitraryProvider {
