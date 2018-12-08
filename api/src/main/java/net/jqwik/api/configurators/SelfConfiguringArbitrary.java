@@ -8,10 +8,16 @@ import net.jqwik.api.providers.*;
  * to take over its own configuration which is usually being done by registered instances
  * of {@linkplain ArbitraryConfigurator}.
  *
+ * <p/>
  * There are a few implementors within jqwik's own codebase:
- * @see net.jqwik.engine.properties.arbitraries.OneOfArbitrary
- * @see net.jqwik.engine.properties.arbitraries.FrequencyOfArbitrary
- * @see net.jqwik.engine.properties.arbitraries.ArrayArbitrary
+ * <ul>
+ *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/OneOfArbitrary.java"
+ *     >net.jqwik.engine.properties.arbitraries.OneOfArbitrary</a></li>
+ *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/FrequencyOfArbitrary.java"
+ *     >net.jqwik.engine.properties.arbitraries.FrequencyOfArbitrary</a></li>
+ *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/ArrayArbitrary.java"
+ *     >net.jqwik.engine.properties.arbitraries.ArrayArbitrary</a></li>
+ * </ul>
  */
 public interface SelfConfiguringArbitrary<T> {
 
