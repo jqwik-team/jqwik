@@ -3,7 +3,6 @@ package net.jqwik.api.providers;
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.logging.*;
 
 import net.jqwik.api.*;
 
@@ -31,20 +30,10 @@ import net.jqwik.api.*;
 public interface TypeUsage {
 
 	abstract class TypeUsageFacade {
-		private static final Logger LOG = Logger.getLogger(TypeUsageFacade.class.getName());
-		private static final String TYPE_USAGE_FACADE_IMPL = "net.jqwik.engine.facades.TypeUsageFacadeImpl";
 		private static TypeUsageFacade implementation;
 
 		static  {
-			try {
-				implementation = (TypeUsageFacade) Class.forName(TYPE_USAGE_FACADE_IMPL).newInstance();
-			} catch (Exception exception) {
-				LOG.log(
-					Level.SEVERE,
-					"Cannot load implementation for " + TypeUsageFacade.class.getName(),
-					exception
-				);
-			}
+			implementation = FacadeLoader.load(TypeUsageFacade.class);
 		}
 
 		public abstract TypeUsage of(Class<?> type, TypeUsage... typeParameters);

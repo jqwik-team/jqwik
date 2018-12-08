@@ -6,6 +6,8 @@
     - examples.docs tests -> net.jqwik.docs
     - Change github links in user-guide
 
+  - Switch logging to SLF4J?
+  
   - JavaDoc
     - Statistics
     - Combinators

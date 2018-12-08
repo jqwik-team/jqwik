@@ -1,25 +1,14 @@
 package net.jqwik.api;
 
 import java.util.function.*;
-import java.util.logging.*;
 
 public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
 	abstract class ShrinkableFacade {
-		private static final Logger LOG = Logger.getLogger(ShrinkableFacade.class.getName());
-		private static final String SHRINKABLE_FACTORY_FACADE_IMPL = "net.jqwik.engine.facades.ShrinkableFacadeImpl";
 		private static ShrinkableFacade implementation;
 
 		static  {
-			try {
-				implementation = (ShrinkableFacade) Class.forName(SHRINKABLE_FACTORY_FACADE_IMPL).newInstance();
-			} catch (Exception e) {
-				LOG.log(
-					Level.SEVERE,
-					"Cannot load implementation for " + ShrinkableFacade.class.getName(),
-					e
-				);
-			}
+			implementation = FacadeLoader.load(ShrinkableFacade.class);
 		}
 
 		public abstract <T> Shrinkable<T> unshrinkable(T value);

@@ -2,26 +2,15 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.logging.*;
 import java.util.stream.*;
 
 public class Combinators {
 
 	public static abstract class CombinatorsFacade {
-		private static final Logger LOG = Logger.getLogger(CombinatorsFacade.class.getName());
-		private static final String COMBINATORS_FACADE_IMPL = "net.jqwik.engine.facades.CombinatorsFacadeImpl";
 		private static CombinatorsFacade implementation;
 
 		static  {
-			try {
-				implementation = (CombinatorsFacade) Class.forName(COMBINATORS_FACADE_IMPL).newInstance();
-			} catch (Exception e) {
-				LOG.log(
-					Level.SEVERE,
-					"Cannot load implementation for " + CombinatorsFacade.class.getName(),
-					e
-				);
-			}
+			implementation = FacadeLoader.load(CombinatorsFacade.class);
 		}
 
 		public abstract <R> Shrinkable<R> combineShrinkables(List<Shrinkable<Object>> shrinkables, Function<List<Object>, R> combineFunction);

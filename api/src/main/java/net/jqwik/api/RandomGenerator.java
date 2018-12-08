@@ -2,26 +2,15 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.logging.*;
 import java.util.stream.*;
 
 public interface RandomGenerator<T> {
 
 	abstract class RandomGeneratorFacade {
-		private static final Logger LOG = Logger.getLogger(RandomGeneratorFacade.class.getName());
-		private static final String RANDOM_GENERATOR_FACADE_IMPL = "net.jqwik.engine.facades.RandomGeneratorFacadeImpl";
 		private static RandomGeneratorFacade implementation;
 
 		static  {
-			try {
-				implementation = (RandomGeneratorFacade) Class.forName(RANDOM_GENERATOR_FACADE_IMPL).newInstance();
-			} catch (Exception e) {
-				LOG.log(
-					Level.SEVERE,
-					"Cannot load implementation for " + RandomGeneratorFacade.class.getName(),
-					e
-				);
-			}
+			implementation = FacadeLoader.load(RandomGeneratorFacade.class);
 		}
 
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
