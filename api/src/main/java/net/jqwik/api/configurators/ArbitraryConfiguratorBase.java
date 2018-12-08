@@ -1,14 +1,14 @@
 package net.jqwik.api.configurators;
 
-import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
-
-import org.junit.platform.commons.support.*;
-
 import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
+
+import org.junit.platform.commons.support.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.providers.*;
 
 import static org.junit.platform.commons.support.ReflectionSupport.*;
 
@@ -23,8 +23,12 @@ import static org.junit.platform.commons.support.ReflectionSupport.*;
  * <p>
  * Some examples that come with jqwik:
  *
- * @see net.jqwik.engine.configurators.CharsConfigurator
- * @see net.jqwik.engine.configurators.SizeConfigurator
+ * <ul>
+ *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/configurators/CharsConfigurator.java"
+ *     >net.jqwik.engine.configurators.CharsConfigurator</a></li>
+ *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/configurators/SizeConfigurator.java"
+ *     >net.jqwik.engine.configurators.SizeConfigurator</a></li>
+ * </ul>
  */
 public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator {
 
