@@ -12,7 +12,7 @@ public class GenericsSupport {
 	 *
 	 * Must be synchronized because of caching.
 	 *
-	 * @param contextClass
+	 * @param contextClass The class to wrap in a context
 	 * @return a potentially cached context object
 	 */
 	public synchronized static GenericsClassContext contextFor(Class<?> contextClass) {

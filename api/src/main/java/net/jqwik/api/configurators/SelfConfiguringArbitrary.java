@@ -8,8 +8,9 @@ import net.jqwik.api.providers.*;
  * to take over its own configuration which is usually being done by registered instances
  * of {@linkplain ArbitraryConfigurator}.
  *
- * <p/>
+ * <p>
  * There are a few implementors within jqwik's own codebase:
+ * </p>
  * <ul>
  *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/OneOfArbitrary.java"
  *     >net.jqwik.engine.properties.arbitraries.OneOfArbitrary</a></li>

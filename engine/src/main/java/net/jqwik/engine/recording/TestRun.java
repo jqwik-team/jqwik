@@ -12,9 +12,9 @@ public class TestRun implements Serializable {
 	private final String uniqueIdString;
 	private final int statusOrdinal;
 	private final String randomSeed;
-	private final List falsifiedSample;
+	private final List<Object> falsifiedSample;
 
-	public TestRun(UniqueId uniqueId, PropertyExecutionResult.Status status, String randomSeed, List falsifiedSample) {
+	public TestRun(UniqueId uniqueId, PropertyExecutionResult.Status status, String randomSeed, List<Object> falsifiedSample) {
 		this.uniqueIdString = uniqueId.toString();
 		this.statusOrdinal = status.ordinal();
 		this.randomSeed = randomSeed;
@@ -41,7 +41,7 @@ public class TestRun implements Serializable {
 		return Optional.ofNullable(randomSeed);
 	}
 
-	public Optional<List> falsifiedSample() {
+	public Optional<List<Object>> falsifiedSample() {
 		return Optional.ofNullable(falsifiedSample);
 	}
 
