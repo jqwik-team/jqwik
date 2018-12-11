@@ -1,6 +1,10 @@
 - For version 1.0
 
-  - Extract docs module
+  - Extract documentation module
+    - release-notes.md (linked from user-guide)
+    - user-guide/0.9.3/
+    - user-guide/current/
+    - user-guide/snapshot/
     - examples.docs tests -> net.jqwik.docs
     - Change github links in user-guide
 

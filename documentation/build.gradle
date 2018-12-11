@@ -1,0 +1,45 @@
+description = "Jqwik Documentation generation"
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+
+	dependencies {
+		classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2'
+	}
+}
+
+apply plugin: 'org.asciidoctor.convert'
+
+asciidoctor {
+	sourceDir = file('src/docs')
+	sources {
+		include 'user-guide.adoc'
+	}
+	outputDir = file('build/docs')
+}
+
+test {
+	useJUnitPlatform {
+		includeEngines "jqwik"
+	}
+
+	include 'net/**/*Properties.class'
+	include 'net/**/*Example.class'
+	include 'net/**/*Examples.class'
+	include 'net/**/*Test.class'
+	include 'net/**/*Tests.class'
+
+	// testLogging.showStandardStreams = true
+}
+
+dependencies {
+	testCompile(project(":base"))
+	testCompile("org.mockito:mockito-core:2.23.4")
+	testCompile("org.assertj:assertj-core:3.11.1")
+	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
+	// Only needed to check interferences between Jupiter and jqwik
+	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+}
