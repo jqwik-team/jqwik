@@ -1,23 +1,15 @@
 description = "Jqwik Documentation generation"
 
-buildscript {
-	repositories {
-		jcenter()
-	}
-
-	dependencies {
-		classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2'
-	}
+def toLink(version) {
+	return '#093'
 }
 
-apply plugin: 'org.asciidoctor.convert'
-
-asciidoctor {
-	sourceDir = file('src/docs')
-	sources {
-		include 'user-guide.adoc'
-	}
-	outputDir = file('build/docs')
+task generateUserGuide(type: Copy) {
+	from 'src/docs/'
+	into "$buildDir/docs"
+	include 'user-guide.template.md'
+	rename { file -> 'user-guide.md'}
+	expand(version: version, versionLink: toLink(version))
 }
 
 test {
