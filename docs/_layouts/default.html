@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" media="screen"
           href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
 
-    <title>{{ site.title | default: site.github.repository_name }}</title>
+    <title>{{ page.title | default: site.title }}</title>
 </head>
 
 <body>
@@ -36,8 +36,8 @@
 <!-- NAVIGATION -->
 <nav class="inner">
     <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/user-guide.html">User Guide</a></li>
+        <li><a href="/docs/current/user-guide.html">User Guide</a></li>
+        <li><a href="/release-notes.html">Release Notes</a></li>
         <li><a href="/how-to-contribute.html">How to Contribute</a></li>
         <li><a href="/javadoc/index.html">Javadoc</a></li>
     </ul>

@@ -2,3 +2,5 @@ title: jqwik
 description: Property-Based Testing in Java
 theme: jekyll-theme-slate
 show_downloads: false
+plugins:
+  - jekyll-redirect-from
