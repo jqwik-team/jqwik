@@ -2,8 +2,6 @@ package net.jqwik.docs.stateful.mystack;
 
 import java.util.*;
 
-import net.jqwik.engine.support.*;
-
 public class MyStringStack {
 	private List<String> elements = new ArrayList<>();
 
@@ -39,6 +37,6 @@ public class MyStringStack {
 
 	@Override
 	public String toString() {
-		return JqwikStringSupport.displayString(elements);
+		return elements.toString();
 	}
 }

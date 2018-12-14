@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.io.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -11,7 +12,7 @@ public class WildcardArbitrary implements Arbitrary<Object> {
 		return RandomGenerators.integers(0, genSize/2).map(WildcardObject::new);
 	}
 
-	public static class WildcardObject implements Comparable<WildcardObject> {
+	public static class WildcardObject implements Comparable<WildcardObject>, Serializable {
 		private final Integer index;
 
 		public WildcardObject(Integer index) {
