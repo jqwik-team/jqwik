@@ -2,7 +2,6 @@ package net.jqwik.docs;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.engine.support.*;
 
 import static net.jqwik.api.GenerationMode.*;
 
@@ -35,7 +34,7 @@ class ExhaustiveGenerationExamples {
 
 	@Property
 	void generateBothSetsAndLists(@ForAll @Size(2) Iterable<@IntRange(min = 0, max = 1) Integer> iterable, @ForAll boolean aBool) {
-		System.out.printf("%s: %s, %s%n", iterable.getClass(), JqwikStringSupport.displayString(iterable), aBool);
+		System.out.printf("%s: %s, %s%n", iterable.getClass(), iterable.toString(), aBool);
 	}
 
 	@Property

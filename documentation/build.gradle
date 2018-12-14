@@ -20,11 +20,7 @@ test {
 		includeEngines "jqwik"
 	}
 
-	include 'net/**/*Properties.class'
-	include 'net/**/*Example.class'
-	include 'net/**/*Examples.class'
-	include 'net/**/*Test.class'
-	include 'net/**/*Tests.class'
+	exclude 'net/jqwik/docs/**' // some tests are supposed to fail
 
 	// testLogging.showStandardStreams = true
 }
