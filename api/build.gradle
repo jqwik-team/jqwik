@@ -8,13 +8,6 @@ jar {
 	}
 }
 
-task publishApiJavadoc(type: Javadoc) {
-	source = file('./src/main/java')
-	failOnError = false
-	destinationDir = file("${rootDir}/docs/javadoc")
-	include '**/api/**'
-}
-
 publishing {
 	publications {
 		jqwikApi(MavenPublication) {

@@ -1,15 +1,18 @@
 description = "Jqwik Documentation generation"
 
-def toLink(version) {
-	return '#093'
-}
-
 task generateUserGuide(type: Copy) {
 	from 'src/docs/'
 	into "$buildDir/docs"
 	include 'user-guide.template.md'
 	rename { file -> 'user-guide.md'}
-	expand(version: version, versionLink: toLink(version))
+	expand(
+		version: version,
+		gitVersion: 'master', // when snapshot, otherwise version
+		docsVersion: 'snapshot', // when snapshot, otherwise version or 'current'
+		releaseNotesVersion: '#100-snapshot',
+		junitPlatformVersion: '1.3.2',
+		junitJupiterVersion: '5.3.2',
+	)
 }
 
 test {
