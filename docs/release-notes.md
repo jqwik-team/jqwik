@@ -18,6 +18,9 @@ title: jqwik Release Notes
 
 ## 1.0.0-SNAPSHOT
 
+[User guide](/docs/snapshot/user-guide.html)
+and [javadoc](/docs/snapshot/javadoc/index.html).
+
 - Removed all deprecated APIs
   - Annotation attribute `net.jqwik.api.Property.reporting()`
   - Class `net.jqwik.api.Tuples`
@@ -27,6 +30,9 @@ title: jqwik Release Notes
 ## 0.9.x
 
 ### 0.9.3
+
+[User guide](/docs/0.9.3/user-guide.html)
+and [javadoc](/docs/0.9.3/javadoc/index.html).
 
 - The probability of edge cases being generated is now higher
 - New constraint annotation `@NotEmpty`

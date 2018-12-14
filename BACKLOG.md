@@ -162,7 +162,7 @@
 
 ### Contracts / Specifications / Domain objects
 
-see example in package `examples.docs.contracts.eurocalc`
+see example in package `net.jqwik.docs.contracts.eurocalc`
 
 - Allow specification of consumer and provider contract in test class
 - Allow spec annotations in domain classes a la clojure-spec

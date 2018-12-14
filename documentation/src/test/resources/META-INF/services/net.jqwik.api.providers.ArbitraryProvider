@@ -1,0 +1,2 @@
+net.jqwik.docs.defaultprovider.MoneyArbitraryProvider
+net.jqwik.docs.defaultprovider.AlternativeStringArbitraryProvider
