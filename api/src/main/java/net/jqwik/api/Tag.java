@@ -26,7 +26,6 @@ import java.lang.annotation.*;
  * </li>
  * </ul>
  *
- * @see org.junit.platform.engine.TestTag
  */
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
