@@ -1,19 +1,23 @@
 description = "Jqwik Documentation generation"
 
-static def releaseNotesVersion(String versionString) {
+static releaseNotesVersion(String versionString) {
 	def version = versionString.replaceAll(/\./, '').toLowerCase()
 	return version
 }
 
-static def gitVersion(String versionString) {
-	if (versionString.contains('SNAPSHOT'))
+static isSnapshot(String versionString) {
+	return versionString.contains('SNAPSHOT')
+}
+
+static gitVersion(String versionString) {
+	if (isSnapshot(versionString))
 		return 'master'
 	else
 		return versionString
 }
 
-static def docsVersion(String versionString) {
-	if (versionString.contains('SNAPSHOT'))
+static docsVersion(String versionString) {
+	if (isSnapshot(versionString))
 		return 'snapshot'
 	else
 		return versionString
@@ -48,12 +52,29 @@ task generateJavaDoc(type:Javadoc) {
 	destinationDir = file("${buildDir}/docs/javadoc")
 }
 
-task generateUserGuide {
-	dependsOn(generateUserGuideToc, generateJavaDoc)
+task expandJavaDocIndexHtml(type: Copy) {
+	from 'src/docs/'
+	into "$buildDir/javadoc"
+	include 'index.template.html'
+	rename { file -> 'index.html' }
+	expand(
+		version: jqwikVersion
+	)
+}
+
+task generateDocumentation {
+	dependsOn(generateUserGuideToc, generateJavaDoc, expandJavaDocIndexHtml)
 	doLast {
 		String docsFolder = "${buildDir}/docs-${docsVersion(jqwikVersion)}"
 		file(docsFolder).delete()
 		file("${buildDir}/docs").renameTo(docsFolder)
+		String javadocCurrentFolder = "${buildDir}/javadoc-current"
+		file(javadocCurrentFolder).delete()
+		if (!isSnapshot(jqwikVersion)) {
+			file("${buildDir}/javadoc").renameTo(javadocCurrentFolder)
+		} else {
+			file("${buildDir}/javadoc").delete()
+		}
 	}
 }
 
