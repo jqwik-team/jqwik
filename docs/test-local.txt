@@ -5,4 +5,4 @@ Install Jekyll using bundler:
 `bundle install`
 
 Build site locally:
-`bundle exec jekyll serve
+`bundle exec jekyll serve`
