@@ -2,10 +2,6 @@
 
   - Switch logging to SLF4J?
   
-  - JavaDoc
-    - Statistics
-    - Combinators
-
   - `@Disabled("reason")` annotation
 
   - Review TODOs

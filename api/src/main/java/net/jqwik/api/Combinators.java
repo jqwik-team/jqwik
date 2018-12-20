@@ -22,14 +22,29 @@ public class Combinators {
 	private Combinators() {
 	}
 
+	/**
+	 * Combine 2 arbitraries into one.
+	 * 
+	 * @return Combinator2 instance which can be evaluated using {@linkplain Combinator2#as}
+	 */
 	public static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
 		return new Combinator2<>(a1, a2);
 	}
 
+	/**
+	 * Combine 3 arbitraries into one.
+	 *
+	 * @return Combinator3 instance which can be evaluated using {@linkplain Combinator3#as}
+	 */
 	public static <T1, T2, T3> Combinator3<T1, T2, T3> combine(Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3) {
 		return new Combinator3<>(a1, a2, a3);
 	}
 
+	/**
+	 * Combine 4 arbitraries into one.
+	 *
+	 * @return Combinator4 instance which can be evaluated using {@linkplain Combinator4#as}
+	 */
 	public static <T1, T2, T3, T4> Combinator4<T1, T2, T3, T4> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4
@@ -37,6 +52,11 @@ public class Combinators {
 		return new Combinator4<>(a1, a2, a3, a4);
 	}
 
+	/**
+	 * Combine 5 arbitraries into one.
+	 *
+	 * @return Combinator5 instance which can be evaluated using {@linkplain Combinator5#as}
+	 */
 	public static <T1, T2, T3, T4, T5> Combinator5<T1, T2, T3, T4, T5> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4, Arbitrary<T5> a5
@@ -44,6 +64,11 @@ public class Combinators {
 		return new Combinator5<>(a1, a2, a3, a4, a5);
 	}
 
+	/**
+	 * Combine 6 arbitraries into one.
+	 *
+	 * @return Combinator6 instance which can be evaluated using {@linkplain Combinator6#as}
+	 */
 	public static <T1, T2, T3, T4, T5, T6> Combinator6<T1, T2, T3, T4, T5, T6> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2, Arbitrary<T3> a3,
 		Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6
@@ -51,6 +76,11 @@ public class Combinators {
 		return new Combinator6<>(a1, a2, a3, a4, a5, a6);
 	}
 
+	/**
+	 * Combine 7 arbitraries into one.
+	 *
+	 * @return Combinator7 instance which can be evaluated using {@linkplain Combinator7#as}
+	 */
 	public static <T1, T2, T3, T4, T5, T6, T7> Combinator7<T1, T2, T3, T4, T5, T6, T7> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2,
 		Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7
@@ -58,6 +88,11 @@ public class Combinators {
 		return new Combinator7<>(a1, a2, a3, a4, a5, a6, a7);
 	}
 
+	/**
+	 * Combine 8 arbitraries into one.
+	 *
+	 * @return Combinator8 instance which can be evaluated using {@linkplain Combinator8#as}
+	 */
 	public static <T1, T2, T3, T4, T5, T6, T7, T8> Combinator8<T1, T2, T3, T4, T5, T6, T7, T8> combine(
 		Arbitrary<T1> a1, Arbitrary<T2> a2,
 		Arbitrary<T3> a3, Arbitrary<T4> a4, Arbitrary<T5> a5, Arbitrary<T6> a6, Arbitrary<T7> a7, Arbitrary<T8> a8
@@ -65,6 +100,11 @@ public class Combinators {
 		return new Combinator8<>(a1, a2, a3, a4, a5, a6, a7, a8);
 	}
 
+	/**
+	 * Combine a list of arbitraries into one.
+	 *
+	 * @return ListCombinator instance which can be evaluated using {@linkplain ListCombinator#as}
+	 */
 	public static <T> ListCombinator<T> combine(List<Arbitrary<T>> listOfArbitraries) {
 		return new ListCombinator<>(listOfArbitraries);
 	}

@@ -74,7 +74,7 @@ test {
 dependencies {
     ...
 
-    // jqwik dependency
+    // aggregate jqwik dependency
     testCompile "net.jqwik:jqwik:\${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it

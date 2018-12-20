@@ -26,6 +26,9 @@ and [javadoc](/docs/snapshot/javadoc/index.html).
   - Class `net.jqwik.api.Tuples`
   - Method `net.jqwik.api.providers.TypeUsage.getAnnotation()`
 
+- jqwik now produces three artefacts: jqwik-api, jqwik-engine, jqwik
+
+- Filled in some missing parts in API Javadoc
 
 ## 0.9.x
 

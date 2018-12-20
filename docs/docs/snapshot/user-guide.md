@@ -161,7 +161,7 @@ dependencies {
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.3.2")
 
     // Add any other test library you need...
     testCompile("org.assertj:assertj-core:3.9.1")
@@ -241,7 +241,7 @@ You will have to add _at least_ the following jars to your classpath:
 
 ## Creating an Example-based Test
 
-Just annotate a `public`, `protected` or package-scoped method with [`@Example`](/docs/snapshot/javadoc/net/jqwik/api/Example.html).
+Just annotate a `public`, `protected` or package-scoped method with [`@Example`](/docs/master/javadoc/net/jqwik/api/Example.html).
 Example-based tests work just like plain JUnit-style test cases and
 are not supposed to take any parameters.
 
@@ -280,10 +280,10 @@ _Properties_ are the core concept of [property-based testing](/#properties).
 
 You create a _Property_ by annotating a `public`, `protected` 
 or package-scoped method with 
-[`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
+[`@Property`](/docs/master/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.0.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -301,7 +301,7 @@ The first failed execution will stop value generation
 and be reported as failure - usually followed by an attempt to 
 [shrink](#result-shrinking) the falsified parameter set.
 
-[Here](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/PropertyBasedTests.java) 
+[Here](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/PropertyBasedTests.java)
 are two properties whose failures might surprise you:
 
 ```java
@@ -332,7 +332,7 @@ in future versions.
 
 ### Optional `@Property` Parameters
 
-The [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html) 
+The [`@Property`](/docs/master/javadoc/net/jqwik/api/Property.html) 
 annotation has a few optional values:
 
 - `int tries`: The number of times _jqwik_ tries to generate parameter values for this method.
@@ -392,7 +392,7 @@ annotation has a few optional values:
 ### Additional Reporting
 
 You can switch on additional reporting aspects by adding a
-[`@Report(Reporting[])` annotation](/docs/snapshot/javadoc/net/jqwik/api/Property.html)
+[`@Report(Reporting[])` annotation](/docs/master/javadoc/net/jqwik/api/Property.html)
 to a property method.
 
 The following reporting aspects are available:
@@ -417,8 +417,8 @@ static methods in `org.junit.jupiter.api.Assertions`.
 The current lifecycle of jqwik test methods is rather simple:
 
 - For each method, annotated with 
-  [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html) 
-  or [`@Example`](/docs/snapshot/javadoc/net/jqwik/api/Example.html), 
+  [`@Property`](/docs/master/javadoc/net/jqwik/api/Property.html) 
+  or [`@Example`](/docs/master/javadoc/net/jqwik/api/Example.html), 
   a new instance of the containing test class is created
   in order to keep the individual tests isolated from each other.
 - If you have preparatory work to do for each method, 
@@ -563,7 +563,7 @@ Those tag can be used to filter the set of tests
 Tags are handed down from container (class or group) to its children (test methods or groups).
 
 Have a look at 
-[the following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/TaggingExamples.java). 
+[the following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/TaggingExamples.java).
 Including the tag `integration-test` will include
 all tests of the class.
 
@@ -582,12 +582,12 @@ class TaggingExamples {
 ```
 
 Tags must follow certain rules as described 
-[here](/docs/snapshot/javadoc/net/jqwik/api/Tag.html)
+[here](/docs/master/javadoc/net/jqwik/api/Tag.html)
 
 ## Default Parameter Generation
 
 _jqwik_ tries to generate values for those property method parameters that are
-annotated with [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html). If the annotation does not have a `value` parameter,
+annotated with [`@ForAll`](/docs/master/javadoc/net/jqwik/api/ForAll.html). If the annotation does not have a `value` parameter,
 jqwik will use default generation for the following types:
 
 - `Object`
@@ -604,7 +604,7 @@ jqwik will use default generation for the following types:
 - Array `T[]` of types that are provided by default.
 - `java.util.Random`
 
-If you use [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) 
+If you use [`@ForAll`](/docs/master/javadoc/net/jqwik/api/ForAll.html) 
 with a value, e.g. `@ForAll("aMethodName")`, the method
 referenced by `"aMethodName"` will be called to provide an Arbitrary of the 
 required type (see [Customized Parameter Generation](#customized-parameter-generation)). 
@@ -616,14 +616,14 @@ depending on the requested parameter type.
 
 #### Allow Null Values
 
-- [`@WithNull(double value = 0.1)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/WithNull.html): 
+- [`@WithNull(double value = 0.1)`](/docs/master/javadoc/net/jqwik/api/constraints/WithNull.html): 
   Inject `null` into generated values with a probability of `value`. 
   
   Works for all generated types.
    
 #### Unique Values
 
-- [`@Unique`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Unique.html):
+- [`@Unique`](/docs/master/javadoc/net/jqwik/api/constraints/Unique.html):
   Prevent duplicate values to be generated _per try_. That means that
   there can still be duplicate values across several tries. That also means
   that `@Unique` only makes sense as annotation for a parameter type, e.g.:
@@ -642,10 +642,10 @@ depending on the requested parameter type.
 
 #### String Length
 
-- [`@StringLength(int value = 0, int min = 0, int max = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/StringLength.html):
+- [`@StringLength(int value = 0, int min = 0, int max = 0)`](/docs/master/javadoc/net/jqwik/api/constraints/StringLength.html):
   Set either fixed length through `value` or configure the length range between `min` and `max`.
 
-- [`@NotEmpty`](/docs/snapshot/javadoc/net/jqwik/api/constraints/NotEmpty.html):
+- [`@NotEmpty`](/docs/master/javadoc/net/jqwik/api/constraints/NotEmpty.html):
   Set minimum length to `1`.
 
 #### Character Sets
@@ -660,65 +660,65 @@ will not be generated unless you explicitly include them using
 You can use the following annotations to restrict the set of allowed characters and even
 combine several of them:
 
-- [`@Chars(chars[] value = {})`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Chars.html):
+- [`@Chars(chars[] value = {})`](/docs/master/javadoc/net/jqwik/api/constraints/Chars.html):
   Specify a set of characters.
   This annotation can be repeated which will add up all allowed chars.
-- [`@CharRange(char from = 0, char to = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/CharRange.html):
+- [`@CharRange(char from = 0, char to = 0)`](/docs/master/javadoc/net/jqwik/api/constraints/CharRange.html):
   Specify a start and end character.
   This annotation can be repeated which will add up all allowed chars.
-- [`@NumericChars`](/docs/snapshot/javadoc/net/jqwik/api/constraints/NumericChars.html):
+- [`@NumericChars`](/docs/master/javadoc/net/jqwik/api/constraints/NumericChars.html):
   Use digits `0` through `9`
-- [`@LowerChars`](/docs/snapshot/javadoc/net/jqwik/api/constraints/LowerChars.html):
+- [`@LowerChars`](/docs/master/javadoc/net/jqwik/api/constraints/LowerChars.html):
   Use lower case chars `a` through `z`
-- [`@UpperChars`](/docs/snapshot/javadoc/net/jqwik/api/constraints/UpperChars.html):
+- [`@UpperChars`](/docs/master/javadoc/net/jqwik/api/constraints/UpperChars.html):
   Use upper case chars `A` through `Z`
-- [`@AlphaChars`](/docs/snapshot/javadoc/net/jqwik/api/constraints/AlphaChars.html):
+- [`@AlphaChars`](/docs/master/javadoc/net/jqwik/api/constraints/AlphaChars.html):
   Lower and upper case chars are allowed.
-- [`@Whitespace`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Whitespace.html):
+- [`@Whitespace`](/docs/master/javadoc/net/jqwik/api/constraints/Whitespace.html):
   All whitespace characters are allowed.
 
 They work for generated `String`s and `Character`s.
 
 #### List, Set, Stream and Array Size:
 
-- [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Size.html): 
+- [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/master/javadoc/net/jqwik/api/constraints/Size.html): 
   Set either fixed size through `value` or configure the size range between `min` and `max`.
 
-- [`@NotEmpty`](/docs/snapshot/javadoc/net/jqwik/api/constraints/NotEmpty.html):
+- [`@NotEmpty`](/docs/master/javadoc/net/jqwik/api/constraints/NotEmpty.html):
   Set minimum size to `1`.
 
 
 #### Integer Constraints
 
-- [`@ByteRange(byte min = 0, byte max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/ByteRange.html):
+- [`@ByteRange(byte min = 0, byte max)`](/docs/master/javadoc/net/jqwik/api/constraints/ByteRange.html):
   For `Byte` and `byte` only.
-- [`@ShortRange(short min = 0, short max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/ShortRange.html):
+- [`@ShortRange(short min = 0, short max)`](/docs/master/javadoc/net/jqwik/api/constraints/ShortRange.html):
   For `Short` and `short` only.
-- [`@IntRange(int min = 0, int max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/IntRange.html):
+- [`@IntRange(int min = 0, int max)`](/docs/master/javadoc/net/jqwik/api/constraints/IntRange.html):
   For `Integer` and `int` only.
-- [`@LongRange(long min = 0L, long max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/LongRange.html):
+- [`@LongRange(long min = 0L, long max)`](/docs/master/javadoc/net/jqwik/api/constraints/LongRange.html):
   For `Long` and `long` only.
-- [`@BigRange(String min = "", String max = "")`](/docs/snapshot/javadoc/net/jqwik/api/constraints/BigRange.html):
+- [`@BigRange(String min = "", String max = "")`](/docs/master/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigInteger` generation.
-- [`@Positive`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Positive.html):
+- [`@Positive`](/docs/master/javadoc/net/jqwik/api/constraints/Positive.html):
   Numbers equal to or larger than `0`. For all integral types.
-- [`@Negative`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Negative.html):
+- [`@Negative`](/docs/master/javadoc/net/jqwik/api/constraints/Negative.html):
   Numbers lower than or equal to `-0`. For all integral types.
 
 
 #### Decimal Constraints
 
-- [`@FloatRange(float min = 0.0f, float max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/FloatRange.html):
+- [`@FloatRange(float min = 0.0f, float max)`](/docs/master/javadoc/net/jqwik/api/constraints/FloatRange.html):
   For `Float` and `float` only.
-- [`@DoubleRange(double min = 0.0, double max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/DoubleRange.html):
+- [`@DoubleRange(double min = 0.0, double max)`](/docs/master/javadoc/net/jqwik/api/constraints/DoubleRange.html):
   For `Double` and `double` only.
-- [`@BigRange(String min = "", String max = "")`](/docs/snapshot/javadoc/net/jqwik/api/constraints/BigRange.html):
+- [`@BigRange(String min = "", String max = "")`](/docs/master/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigDecimal` generation.
-- [`@Scale(int value)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Scale.html):
+- [`@Scale(int value)`](/docs/master/javadoc/net/jqwik/api/constraints/Scale.html):
   Specify the maximum number of decimal places. For all decimal types.
-- [`@Positive`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Positive.html):
+- [`@Positive`](/docs/master/javadoc/net/jqwik/api/constraints/Positive.html):
   Numbers equal to or larger than `0.0`. For all decimal types.
-- [`@Negative`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Negative.html):
+- [`@Negative`](/docs/master/javadoc/net/jqwik/api/constraints/Negative.html):
   Numbers lower than or equal to `-0.0`. For all decimal types.
 
 ### Constraining parameterized types
@@ -781,7 +781,7 @@ _in the same call to the method_!
 ## Self-Made Annotations
 
 You can [make your own annotations](http://junit.org/junit5/docs/5.0.0/user-guide/#writing-tests-meta-annotations)
-instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html)
+instead of using _jqwik_'s built-in ones. BTW, '@Example' is nothing but a plain annotation using [`@Property`](/docs/master/javadoc/net/jqwik/api/Property.html)
 as "meta"-annotation.
 
 The following example provides an annotation to constrain String or Character generation to German letters only:
@@ -833,14 +833,14 @@ Arbitrary<Integer> numbers() {
 }
 ```
 
-The String value of the [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) 
+The String value of the [`@ForAll`](/docs/master/javadoc/net/jqwik/api/ForAll.html) 
 annotation serves as a reference to a 
 method within the same class (or one of its superclasses or owning classes).
 This reference refers to either the method's name or the String value
 of the method's `@Provide` annotation.
 
 The providing method has to return an object of type 
-[`@Arbitrary<T>`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html) 
+[`@Arbitrary<T>`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html) 
 where `T` is the static type of the parameter to be provided. 
 
 Parameter provision usually starts with a 
@@ -850,18 +850,18 @@ by one or more [filtering](#filtering), [mapping](#mapping) or
 
 For types that have no default generation at all, _jqwik_ will use
 any provider method returning the correct type even if there is no
-explicit reference value in [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html). If provision is ambiguous
+explicit reference value in [`@ForAll`](/docs/master/javadoc/net/jqwik/api/ForAll.html). If provision is ambiguous
 _jqwik_ will complain and throw an exception at runtime. 
 
 
 ### Static `Arbitraries` methods 
 
 The starting point for generation usually is a static method call on class 
-[`Arbitraries`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html). 
+[`Arbitraries`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html). 
 
 #### Generate values yourself
 
-- [`Arbitrary<T> randomValue(Function<Random, T> generator)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#randomValue-java.util.function.Function-): 
+- [`Arbitrary<T> randomValue(Function<Random, T> generator)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#randomValue-java.util.function.Function-): 
   Take a `random` instance and create an object from it.
   Those values cannot be [shrunk](#result-shrinking), though.
   
@@ -881,21 +881,21 @@ The starting point for generation usually is a static method call on class
   }
   ```
 
-- [`Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#fromGenerator-net.jqwik.api.RandomGenerator-):
+- [`Arbitrary<T> fromGenerator(RandomGenerator<T> generator)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#fromGenerator-net.jqwik.api.RandomGenerator-):
   If the number of _tries_ influences value generation or if you want 
   to allow for [shrinking](#result-shrinking) you have to provide 
   your own `RandomGenerator` implementation. 
   
 #### Select values randomly
 
-- [`Arbitrary<U> of(U... values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#of-U...-):
+- [`Arbitrary<U> of(U... values)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#of-U...-):
   Choose randomly from a list of values. Shrink towards the first one.
   
-- [`Arbitrary<T> samples(T... samples)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#samples-T...-):
+- [`Arbitrary<T> samples(T... samples)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#samples-T...-):
   Go through samples from first to last. Shrink towards the first sample.
   
   If instead you want to _add_ samples to an existing arbitrary you'd rather use 
-  [`Arbitrary.withSamples(T... samples)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#withSamples-T...-).
+  [`Arbitrary.withSamples(T... samples)`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#withSamples-T...-).
   The following arbitrary:
   
   ```java
@@ -908,13 +908,13 @@ The starting point for generation usually is a static method call on class
   will first generate the 7 enumerated prime numbers and only then generate random 
   integers between -1000 and +1000.
   
-- [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
+- [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
 
 #### Select randomly with Weights
 
 If you have a set of values to choose from with weighted probabilities, use 
-[`Arbitraries.frequency(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuple.Tuple2...-):
+[`Arbitraries.frequency(...)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuple.Tuple2...-):
 
 ```java
 @Property
@@ -943,49 +943,49 @@ Shrinking moves towards the start of the frequency list.
 
 #### Integers
 
-- [`ByteArbitrary bytes()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
-- [`ShortArbitrary shorts()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
-- [`IntegerArbitrary integers()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#integers--)
-- [`LongArbitrary longs()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#longs--)
-- [`BigIntegerArbitrary bigIntegers()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
+- [`ByteArbitrary bytes()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
+- [`ShortArbitrary shorts()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
+- [`IntegerArbitrary integers()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#integers--)
+- [`LongArbitrary longs()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#longs--)
+- [`BigIntegerArbitrary bigIntegers()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
 
 #### Decimals
 
-- [`FloatArbitrary floats()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#floats--)
-- [`DoubleArbitrary doubles()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
-- [`BigDecimalArbitrary bigDecimals()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
+- [`FloatArbitrary floats()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#floats--)
+- [`DoubleArbitrary doubles()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
+- [`BigDecimalArbitrary bigDecimals()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
 
 #### Characters and Strings
 
-- [`StringArbitrary strings()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#strings--)
-- [`CharacterArbitrary chars()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#chars--)
+- [`StringArbitrary strings()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#strings--)
+- [`CharacterArbitrary chars()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#chars--)
 
 #### java.util.Random
 
-- [`Arbitrary<Random> randoms()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#randoms--): 
+- [`Arbitrary<Random> randoms()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#randoms--): 
   Random instances will never be shrunk
 
 #### Constants
 
-- [`Arbitrary<T> constant(T value)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
+- [`Arbitrary<T> constant(T value)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
   Always return an unshrinkable `value` of type `T`.
 
 #### Shuffling Permutations
 
-- [`Arbitrary<List<T>> shuffle(T ... values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shuffle-T...-):
+- [`Arbitrary<List<T>> shuffle(T ... values)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#shuffle-T...-):
   Return unshrinkable permutations of the `values` handed in.
 
-- [`Arbitrary<List<T>> shuffle(List<T> values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shuffle-java.util.List-):
+- [`Arbitrary<List<T>> shuffle(List<T> values)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#shuffle-java.util.List-):
   Return unshrinkable permutations of the `values` handed in.
 
 #### Default Types
 
-- [`Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#defaultFor-java.lang.Class-java.lang.Class...-): 
+- [`Arbitrary<T> defaultFor(Class<T> type, Class<?> ... parameterTypes)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#defaultFor-java.lang.Class-java.lang.Class...-): 
   Return the default arbitrary available for type `type` [if one is provided](#providing-default-arbitraries)
   by default. For parameterized types you can also specify the parameter types. 
   
   Keep in mind, though, that the parameter types are lost in the type signature and therefore
-  cannot be used in the respective [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) property method parameter. Raw types and wildcards, 
+  cannot be used in the respective [`@ForAll`](/docs/master/javadoc/net/jqwik/api/ForAll.html) property method parameter. Raw types and wildcards, 
   however, match; thus the following example will work:
   
   ```java
@@ -1005,32 +1005,32 @@ Shrinking moves towards the start of the frequency list.
 Generating types who have generic type parameters, requires to start with 
 an `Arbitrary` instance for the generic type. You can create the corresponding collection arbitrary from there:
 
-- [`Arbitrary.list()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#list--)
-- [`Arbitrary.set()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#set--)
-- [`Arbitrary.streamOf()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#stream--)
-- [`Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
-- [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional--)
+- [`Arbitrary.list()`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#list--)
+- [`Arbitrary.set()`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#set--)
+- [`Arbitrary.streamOf()`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#stream--)
+- [`Arbitrary.array(Class<A> arrayClass)`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
+- [`Arbitrary.optional()`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#optional--)
 
 ### Fluent Configuration Interfaces
 
 Most specialized arbitrary interfaces provide special methods to configure things
 like size, length, boundaries etc. Have a look at the Java doc for the following types:
 
-- [BigDecimalArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/BigDecimalArbitrary.html)
-- [BigIntegerArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/BigIntegerArbitrary.html)
-- [ByteArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ByteArbitrary.html)
-- [CharacterArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/CharacterArbitrary.html)
-- [DoubleArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/DoubleArbitrary.html)
-- [FloatArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FloatArbitrary.html)
-- [IntegerArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/IntegerArbitrary.html)
-- [LongArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
-- [ShortArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
-- [SizableArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
-- [StringArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
+- [BigDecimalArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/BigDecimalArbitrary.html)
+- [BigIntegerArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/BigIntegerArbitrary.html)
+- [ByteArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/ByteArbitrary.html)
+- [CharacterArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/CharacterArbitrary.html)
+- [DoubleArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/DoubleArbitrary.html)
+- [FloatArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/FloatArbitrary.html)
+- [IntegerArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/IntegerArbitrary.html)
+- [LongArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
+- [ShortArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
+- [SizableArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
+- [StringArbitrary](/docs/master/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 
 
 Here are a 
-[two examples](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/FluentConfigurationExamples.java) 
+[two examples](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/FluentConfigurationExamples.java)
 to give you a hint of what you can do:
 
 ```java
@@ -1048,7 +1048,7 @@ Arbitrary<List<Integer>> fixedSizedListOfPositiveIntegers() {
 ### Generate `null` values
 
 Predefined generators will never create `null` values. If you want to allow that,
-call [`Arbitrary.injectNull(double probability)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#injectNull-double-). 
+call [`Arbitrary.injectNull(double probability)`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#injectNull-double-). 
 The following provider method creates an arbitrary that will return a `null` String 
 in about 1 of 100 generated values.
 
@@ -1063,7 +1063,7 @@ Arbitrary<String> stringsWithNull() {
 
 If you want to include only part of all the values generated by an arbitrary,
 use 
-[`Arbitrary.filter(Predicate<T> filterPredicate)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#filter-java.util.function.Predicate-). 
+[`Arbitrary.filter(Predicate<T> filterPredicate)`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#filter-java.util.function.Predicate-). 
 The following arbitrary will filter out all
 even numbers from the stream of generated integers:
 
@@ -1082,7 +1082,7 @@ the current property will be abandoned by throwing an exception.
 
 If you want to make sure that all the values generated by an arbitrary are unique,
 use
-[`Arbitrary.unique()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#unique--).
+[`Arbitrary.unique()`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#unique--).
 The following arbitrary will generate integers between 1 and 1000 but never the same integer twice:
 
 ```java
@@ -1100,7 +1100,7 @@ the current property will be abandoned by throwing an exception.
 
 Sometimes it's easier to start with an existing arbitrary and use its generated values to
 build other objects from them. In that case, use 
-[`Arbitrary.map(Function<T, U> mapper)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#map-java.util.function.Function-).
+[`Arbitrary.map(Function<T, U> mapper)`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#map-java.util.function.Function-).
 The following example uses generated integers to create numerical Strings: 
 
 ```java
@@ -1153,7 +1153,7 @@ However, both have dependencies:
 - `end` must not be larger than the string size
 - `begin` must not be larger than `end`
 You can make _jqwik_ create all three values by using 
-[`flatMap`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#flatMap-java.util.function.Function-) 
+[`flatMap`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#flatMap-java.util.function.Function-) 
 combined with a tuple type 
 [like this](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/FlatMappingExamples.java#L32):
 
@@ -1245,11 +1245,11 @@ Arbitrary<Integer> oneOfThree() {
 Sometimes just mapping a single stream of generated values is not enough to generate
 a more complicated domain object. In those cases you can combine several arbitraries to
 a single result arbitrary using 
-[`Combinators.combine()`](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#combine-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) 
+[`Combinators.combine()`](/docs/master/javadoc/net/jqwik/api/Combinators.html#combine-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) 
 with up to eight arbitraries. 
 [Create an issue on github](https://github.com/jlink/jqwik/issues) if you need more than eight. 
 
-[The following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/MappingAndCombinatorExamples.java#L25) 
+[The following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/MappingAndCombinatorExamples.java#L25)
 generates `Person` instances from three arbitraries as inputs.
 
 ```java
@@ -1336,7 +1336,7 @@ Some generators (e.g. most number generators) are sensitive to the
 The default value for `genSize` is the number of tries configured for the property
 they are used in. If there is a need to influence the behaviour of generators
 you can do so by using 
-[`Arbitrary.fixGenSize(int)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
+[`Arbitrary.fixGenSize(int)`](/docs/master/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
 
 ## Recursive Arbitraries
 
@@ -1347,7 +1347,7 @@ is one application field but you can also use it for other stuff.
 ### Probabilistic Recursion
 
 Look at the 
-[following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/RecursiveExamples.java) 
+[following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/RecursiveExamples.java)
 which generates sentences by recursively adding words to a sentence:
 
 ```java
@@ -1377,7 +1377,7 @@ private StringArbitrary word() {
 
 There are two things to which you must pay attention:
 
-- Use [`Arbitraries.lazy(Supplier<Arbitrary<T>>)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#lazy-java.util.function.Supplier-) 
+- Use [`Arbitraries.lazy(Supplier<Arbitrary<T>>)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#lazy-java.util.function.Supplier-) 
   to wrap the recursive call itself. 
   Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
 - Every recursion needs one or more base cases in order to stop recursion at some point. 
@@ -1417,7 +1417,7 @@ Arbitrary<String> deterministic(int length, Arbitrary<String> sentence) {
 ### Deterministic Recursion with `recursive()`
 
 To further simplify this _jqwik_ provides a helper function:
-[`Arbitraries.recursive(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#recursive-java.util.function.Supplier-java.util.function.Function-int-).
+[`Arbitraries.recursive(...)`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#recursive-java.util.function.Supplier-java.util.function.Function-int-).
 Using that further simplifies the example:
 
 ```java
@@ -1519,7 +1519,7 @@ public class MyStringStack {
 
 We can see at least three _actions_ with their preconditions and expected state changes:
 
-- [`Push`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PushAction.java): 
+- [`Push`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PushAction.java):
   Push a string onto the stack. The string should be on top afterwards and the size
   should have increased by 1.
   
@@ -1549,7 +1549,7 @@ We can see at least three _actions_ with their preconditions and expected state 
   }
   ``` 
 
-- [`Pop`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PopAction.java): 
+- [`Pop`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/PopAction.java):
   If (and only if) the stack is not empty, pop the element on top off the stack. 
   The size of the stack should have decreased by 1.
   
@@ -1577,7 +1577,7 @@ We can see at least three _actions_ with their preconditions and expected state 
   }
   ``` 
 
-- [`Clear`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/ClearAction.java): 
+- [`Clear`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/stateful/mystack/ClearAction.java):
   Remove all elements from the stack which should be empty afterwards.
   
   ```java
@@ -1633,11 +1633,11 @@ class MyStringStackProperties {
 ```
 
 The interesting API elements are 
-- [`ActionSequence`](/docs/snapshot/javadoc/net/jqwik/api/stateful/ActionSequence.html):
+- [`ActionSequence`](/docs/master/javadoc/net/jqwik/api/stateful/ActionSequence.html):
   A generic collection type especially crafted for holding and shrinking of a list of actions.
   As a convenience it will apply the actions to a model when you call `run(model)`.
   
-- [`Arbitraries.sequences()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-):
+- [`Arbitraries.sequences()`](/docs/master/javadoc/net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-):
   This method will create the arbitrary for generating an `ActionSequence` given the
   arbitrary for generating actions.
 
@@ -1718,7 +1718,7 @@ If you want to constrain the set of generated values in a way that embraces
 more than one parameter, [filtering](#filtering) does not work. What you
 can do instead is putting one or more assumptions at the beginning of your property.
 
-[The following property](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/AssumptionExamples.java) 
+[The following property](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/AssumptionExamples.java)
 works only on strings that are not equal:
 
 ```java
@@ -1734,7 +1734,7 @@ boolean comparingUnequalStrings( //
 ```
 
 This is a reasonable use of 
-[`Assume.that(boolean condition)`](/docs/snapshot/javadoc/net/jqwik/api/Assume.html#that-boolean-) 
+[`Assume.that(boolean condition)`](/docs/master/javadoc/net/jqwik/api/Assume.html#that-boolean-) 
 because most generated value sets will pass through.
 
 Have a look at a seemingly similar example:
@@ -1768,7 +1768,7 @@ The problem is that - given a random generation of two strings - only in very fe
 one string will be contained in the other. _jqwik_ will report a property as `exhausted`
 if the ratio between generated and accepted parameters is higher than 5. You can change
 the maximum discard ratio by specifying a parameter `maxDiscardRatio` in the 
-[`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html) annotation.
+[`@Property`](/docs/master/javadoc/net/jqwik/api/Property.html) annotation.
 That's why changing to `@Property(maxDiscardRatio = 100)` in the previous example 
 will probably result in a successful property run, even though only a handful 
 cases - of 1000 generated - will actually be checked.
@@ -1776,7 +1776,7 @@ cases - of 1000 generated - will actually be checked.
 In many cases turning up the accepted discard ration is a bad idea. With some creativity
 we can often avoid the problem by generating out test data a bit differently. 
 Look at this variant of the above property, which also uses 
-[`Assume.that()`](/docs/snapshot/javadoc/net/jqwik/api/Assume.html#that-boolean-)
+[`Assume.that()`](/docs/master/javadoc/net/jqwik/api/Assume.html#that-boolean-)
 but with a much lower discard ratio:
 
 ```java
@@ -1910,7 +1910,7 @@ even if it never ends...
 In many situations you'd like to know if _jqwik_ will really generate
 the kind of values you expect and if the frequency and distribution of
 certain value classes meets your testing needs. 
-[`Statistics.collect()`](/docs/snapshot/javadoc/net/jqwik/api/Statistics.html#collect-java.lang.Object...-)
+[`Statistics.collect()`](/docs/master/javadoc/net/jqwik/api/Statistics.html#collect-java.lang.Object...-)
 is made for this exact purpose.
 
 In the most simple case you'd like to know how often a certain value
@@ -2008,7 +2008,7 @@ classes, in all of your properties, and without having to add `@Provide` method
 to all test classes. _jqwik_ enables this feature by using 
 Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
-- Implement the interface [`ArbitraryProvider`](/docs/snapshot/javadoc/net/jqwik/api/providers/ArbitraryProvider.html).<br/>
+- Implement the interface [`ArbitraryProvider`](/docs/master/javadoc/net/jqwik/api/providers/ArbitraryProvider.html).<br/>
   The implementing class _must_ have a default constructor without parameters.
 - Register the implementation class in file
 
@@ -2018,7 +2018,7 @@ Java’s `java.util.ServiceLoader` mechanism. All you have to do is:
 
 _jqwik_ will then add an instance of your arbitrary provider into the list of
 its default providers. Those default providers are considered for every test parameter annotated 
-with [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) that has no explicit `value`.
+with [`@ForAll`](/docs/master/javadoc/net/jqwik/api/ForAll.html) that has no explicit `value`.
 By using this mechanism you can also replace the default providers
 packaged into _jqwik_.
 
@@ -2072,7 +2072,7 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 ```
 
 in file 
-[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider) 
+[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
 with such an entry:
 
 ```
@@ -2160,14 +2160,14 @@ The mechanism you can plug into is similar to what you do when
 [providing your own default arbitrary providers](#providing-default-arbitraries). That means:
 
 1. Create an implementation of an interface, in this case 
-  [`ArbitraryConfigurator`](/docs/snapshot/javadoc/net/jqwik/api/configurators/ArbitraryConfigurator.html).
+  [`ArbitraryConfigurator`](/docs/master/javadoc/net/jqwik/api/configurators/ArbitraryConfigurator.html).
 2. Register the implementation using using Java’s `java.util.ServiceLoader` mechanism.
 
 ### Arbitrary Configuration Example: `@Odd`
 
 To demonstrate the idea let's create an annotation `@Odd` which will constrain any integer
 generation to only generate odd numbers. First things first, so here's 
-the [`@Odd` annotation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/Odd.java) 
+the [`@Odd` annotation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/Odd.java)
 together with the 
 [configurator implementation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddConfigurator.java):
 
@@ -2188,8 +2188,8 @@ Mind that the implementation uses an abstract base class - instead of the interf
 which simplifies implementation if you're only interested in a single annotation.
 
 If you now 
-[register the implementation](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator), 
-the [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddProperties.java) 
+[register the implementation](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
+the [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddProperties.java)
 will work:
 
 ```java
@@ -2262,10 +2262,10 @@ To get a feel for what a usable implementation looks like, you might start with
 having a look at some of the internal arbitraries:
 
 - [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultBigDecimalArbitrary.java)
-- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultStringArbitrary.java) 
+- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultStringArbitrary.java)
 
 Under the hood, most arbitraries use `RandomGenerator`s for the final value generation. Since
-[`RandomGenerator`](/docs/snapshot/javadoc/net/jqwik/api/RandomGenerator.html) 
+[`RandomGenerator`](/docs/master/javadoc/net/jqwik/api/RandomGenerator.html) 
 is a SAM type, most implementations are just lambda expression. 
 Start with the methods on [`RandomGenerators`]() to figure out how they work.
 
@@ -2354,7 +2354,7 @@ void fizzBuzzWorks(@ForAll int index, @ForAll String result) {
 All you have to do is annotate the property method with 
 `@FromData("dataProviderReference")`. The method you reference must be
 annotated with `@Data` and return an object of type `Iterable<? extends Tuple>`.
-The [`Table` class](/docs/snapshot/javadoc/net/jqwik/api/Table.html) 
+The [`Table` class](/docs/master/javadoc/net/jqwik/api/Table.html) 
 is just a convenient way to create such an object, but you can return
 any collection or create an implementation of your own. 
 
@@ -2428,4 +2428,4 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#100-snapshot). 
+Read this version's [release notes](/release-notes.html#100-snapshot).
