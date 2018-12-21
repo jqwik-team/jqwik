@@ -3,9 +3,9 @@ package net.jqwik.engine.properties;
 import java.util.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
+import net.jqwik.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -26,7 +26,7 @@ class ArbitraryTests {
 		};
 
 		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000);
-		Assertions.assertThat(injectedGenSize[0]).isEqualTo(42);
+		assertThat(injectedGenSize[0]).isEqualTo(42);
 	}
 
 
@@ -136,7 +136,7 @@ class ArbitraryTests {
 
 		@Property(generation = RANDOMIZED)
 		void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {
-			Assertions.assertThat(aList.size()).isEqualTo(new HashSet<>(aList).size());
+			assertThat(aList).hasSize(new HashSet<>(aList).size());
 		}
 
 		@Provide
@@ -147,6 +147,21 @@ class ArbitraryTests {
 		@Provide
 		Arbitrary<List<Integer>> listOfUniqueIntegers() {
 			return uniqueIntegers().list().ofSize(3);
+		}
+
+		@Property(generation = RANDOMIZED)
+		void listOfAllUniqueValuesCanBeGeneratedRandomly(@ForAll("listOfUniqueIntegerPairs") List<Tuple3<Integer, Integer, Integer>> aList) {
+			assertThat(aList).hasSize(1000);
+			assertThat(new HashSet<>(aList)).hasSize(1000);
+		}
+
+		@Provide
+		Arbitrary<List<Tuple3<Integer, Integer, Integer>>> listOfUniqueIntegerPairs() {
+			IntegerArbitrary first = Arbitraries.integers().between(1, 10);
+			IntegerArbitrary second = Arbitraries.integers().between(1, 10);
+			IntegerArbitrary third = Arbitraries.integers().between(1, 10);
+			return Combinators.combine(first, second, third).as((f, s, t) -> Tuple.of(f, s, t))
+							  .unique().list().ofSize(1000);
 		}
 
 	}
