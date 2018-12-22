@@ -17,11 +17,15 @@ class PermutationExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> 
 	}
 
 	static <T> Optional<Long> calculateMaxCount(List<T> values) {
-		long choices = factorial(values.size());
-		if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT || choices < 0) {
+		try {
+			long choices = factorial(values.size());
+			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT || choices < 0) {
+				return Optional.empty();
+			}
+			return Optional.of(choices);
+		} catch (ArithmeticException ae) {
 			return Optional.empty();
 		}
-		return Optional.of(choices);
 	}
 
 	@Override

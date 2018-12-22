@@ -32,7 +32,12 @@ class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 				// MathSupport.factorial() only works till 20
 				return Optional.empty();
 			}
-			long choices = factorial(elementMaxCount) / (factorial(elementMaxCount - n) * factorial(n));
+			long choices = 0;
+			try {
+				choices = factorial(elementMaxCount) / (factorial(elementMaxCount - n) * factorial(n));
+			} catch (ArithmeticException ae) {
+				return Optional.empty();
+			}
 			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT || choices < 0) { // Stop when break off point reached
 				return Optional.empty();
 			}

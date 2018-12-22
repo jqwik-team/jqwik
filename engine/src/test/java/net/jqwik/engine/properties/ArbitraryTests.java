@@ -164,7 +164,6 @@ class ArbitraryTests {
 			return Combinators.combine(first, second, third).as((f, s, t) -> Tuple.of(f, s, t))
 							  .unique().list().ofSize(500);
 		}
-
 	}
 
 	@Group
