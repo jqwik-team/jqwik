@@ -30,6 +30,8 @@ and [javadoc](/docs/snapshot/javadoc/index.html).
 
 - Filled in some missing parts in API Javadoc
 
+- Introduced `Arbitrary.allValues()`
+
 ## 0.9.x
 
 ### 0.9.3
@@ -43,10 +45,10 @@ and [javadoc](/docs/0.9.3/javadoc/index.html).
   component type arbitrary
 - Properties with unconstrained wildcards will now use any registered
   arbitrary for value generation
-- Added [`Arbitraries.frequencyOf()`](#randomly-choosing-among-arbitraries)
-- Added [`Arbitraries.recursive()`](#deterministic-recursion-with-recursive)
+- Added [`Arbitraries.frequencyOf()`](/docs/0.9.3/user-guide.html#randomly-choosing-among-arbitraries)
+- Added [`Arbitraries.recursive()`](/docs/0.9.3/user-guide.html#deterministic-recursion-with-recursive)
 - Integral number generation generates a few more edge cases
-- You can use `@Size` to [constrain the generation](#number-of-actions)
+- You can use `@Size` to [constrain the generation](/docs/0.9.3/user-guide.html#number-of-actions)
   of `ActionSequence` parameters
 - Some incompatible changes to the `ActionSequence` interface
 - jqwik.jar does no longer deliver a jqwik.properties file in its classpath
@@ -54,7 +56,7 @@ and [javadoc](/docs/0.9.3/javadoc/index.html).
   `jqwik.properties` file
 - Replaced configuration file property `rerunFailuresWithSameSeed` by
   `defaultAfterFailure'
-- Introduced [`@Property(afterFailure)`](#rerunning-falsified-properties)
+- Introduced [`@Property(afterFailure)`](/docs/0.9.3/user-guide.html#rerunning-falsified-properties)
 - `ArbitraryConfiguratorBase` has new method `acceptType(TypeUsage)`,
   which can be overridden.
 - Added two new after-failure-modes: `SAMPLE_ONLY` and `SAMPLE_FIRST`
@@ -77,12 +79,12 @@ and [javadoc](/docs/0.9.3/javadoc/index.html).
   of same arbitrary.
 - Implemented exhaustive generation for `Arbitrary.unique()`
 - Fixed bug when resolving recursive types
-- Added `Arbitraries.shuffle()` as a way to generate [permutations](#shuffling-permutations)
+- Added `Arbitraries.shuffle()` as a way to generate [permutations](/docs/0.9.3/user-guide.html#shuffling-permutations)
 - Implemented exhaustive generation for `Arbitraries.frequency()`
 - Changed display name of test engine to "jqwik for Java"
 - Per default jqwik no longer uses the JUnit platform reporter for reporting
   because Gradle does not support it yet
-- Using JUnit platform reporter [can now be configured](#jqwik-configuration)
+- Using JUnit platform reporter [can now be configured](/docs/0.9.3/user-guide.html#jqwik-configuration)
 - `@Size`: min and max values can be used without the other
 - `@StringLength`: min and max values can be used without the other
 - Implemented exhaustive generation for `Arbitrary.flatMap()`
@@ -97,20 +99,20 @@ and [javadoc](/docs/0.9.3/javadoc/index.html).
 - Removed default implementation of `ArbitraryProvider.provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider)`
 - Renamed `TypeUsage.getAnnotation(Class annotationClass)` to `findAnnotation`
 - Added `TypeUsage.isAnnotated(Class annotationClass)`
-- Added [`Arbitrary.unique()`](#creating-unique-values)
-- Added constraint [`@Unique`](#unique-values)
+- Added [`Arbitrary.unique()`](/docs/0.9.3/user-guide.html#creating-unique-values)
+- Added constraint [`@Unique`](/docs/0.9.3/user-guide.html#unique-values)
 - Implementations of `ArbitraryConfigurator` can optionally implement `int order()`
-- It's now possible to ["flat combine"](#flat-combination) arbitraries
+- It's now possible to ["flat combine"](/docs/0.9.3/user-guide.html#flat-combination) arbitraries
 - Deprecated all types and methods in `net.jqwik.api.Tuples.*`
   in favour of `net.jqwik.api.Tuple.*`
 - There are new tuple types `Tuple5` up to `Tuple8`
-- [Data-Driven Properties:](#data-driven-properties) Feed data into your properties
+- [Data-Driven Properties:](/docs/0.9.3/user-guide.html#data-driven-properties) Feed data into your properties
   instead of randomized generation
 - Display names of test containers and properties
-  [will now automatically be prettified](#naming-and-labeling-tests),
+  [will now automatically be prettified](/docs/0.9.3/user-guide.html#naming-and-labeling-tests),
   i.e. each underscore will be replaced by a single space.
-- Added [`@Report` annotation](#additional-reporting) to replace `Property.reporting`
-- Added [exhaustive value generation](#exhaustive-generation)
+- Added [`@Report` annotation](/docs/0.9.3/user-guide.html#additional-reporting) to replace `Property.reporting`
+- Added [exhaustive value generation](/docs/0.9.3/user-guide.html#exhaustive-generation)
 
 
 ## 0.8.x
@@ -129,7 +131,7 @@ and [javadoc](/docs/0.9.3/javadoc/index.html).
 ### 0.8.14
 
 - Some potentially incompatible stuff has changed for
-  [default arbitrary providers](#providing-default-arbitraries):
+  [default arbitrary providers](/docs/0.9.3/user-guide.html#providing-default-arbitraries):
   - Introduced `ArbitraryProvider.priority()`
   - The old `ArbitraryProvider.provideFor(TypeUsage, Function)` is now deprecated, override
     `ArbitraryProvider.provideFor(TypeUsage, SubtypeProvider)` instead
@@ -144,7 +146,7 @@ Faulty release. Do not use!
 
 ### 0.8.12
 
-- Implemented generic type resolution to enable [contract tests](#contract-tests)
+- Implemented generic type resolution to enable [contract tests](/docs/0.9.3/user-guide.html#contract-tests)
 - Renamed `GenericType` to `TypeUsage`
   <p/>_This is an incompatible API change!_
 
@@ -185,19 +187,19 @@ Faulty release. Do not use!
 ### 0.8.8
 
 - Added `Arbitraries.lazy()` 
-  to allow [recursive value generation](#recursive-arbitraries)
+  to allow [recursive value generation](/docs/0.9.3/user-guide.html#recursive-arbitraries)
 - Added `Arbitrary.fixGenSize()` to enable a fixed genSize when creating random generators
-- Added `Arbitrary.sequences()` to create sequences of actions for [stateful testing](#stateful-testing)
+- Added `Arbitrary.sequences()` to create sequences of actions for [stateful testing](/docs/0.9.3/user-guide.html#stateful-testing)
 
 ### 0.8.7
 
 - Property methods that also have Jupiter annotations are skipped
-- Added `@Label` to allow the [labeling of examples, properties and containers](#naming-and-labeling-tests)
+- Added `@Label` to allow the [labeling of examples, properties and containers](/docs/0.9.3/user-guide.html#naming-and-labeling-tests)
 - Changed license from EPL 1.0 to EPL 2.0
-- Added `@Tag` to allow the [tagging of examples, properties and containers](#tagging-tests)
+- Added `@Tag` to allow the [tagging of examples, properties and containers](/docs/0.9.3/user-guide.html#tagging-tests)
 - User guide: Added links to example sources on github
 - Added `Arbitraries.frequency()` to enable 
-  [choosing values with weighted probabilities](#select-randomly-with-weights)
+  [choosing values with weighted probabilities](/docs/0.9.3/user-guide.html#select-randomly-with-weights)
 - Collection and String generation now explores a wider range of sizes and lengths
 
 ### 0.8.6
@@ -215,7 +217,7 @@ Faulty release. Do not use!
 - Added new method `Arbitraries.defaultFor()`
 - `@WithNull.target()` has been removed
   <p/>_This is an incompatible API change!_
-- Parameterized types [can now be annotated directly](#constraining-parameterized-types)
+- Parameterized types [can now be annotated directly](/docs/0.9.3/user-guide.html#constraining-parameterized-types)
 - Added `@Size.value()` for fixed size collections
 - Added `@StringLength.value()` for fixed size Strings
 
@@ -231,14 +233,14 @@ Faulty release. Do not use!
 ### 0.8.4
 
 - Completely rebuild the annotation-based configuration of registered arbitrary providers
-- Introduced [fluent configuration interfaces](#fluent-configuration-interfaces)
-- Introduced [Arbitrary.list/set/stream/optional/array](#collections-streams-arrays-and-optional)
+- Introduced [fluent configuration interfaces](/docs/0.9.3/user-guide.html#fluent-configuration-interfaces)
+- Introduced [Arbitrary.list/set/stream/optional/array](/docs/0.9.3/user-guide.html#collections-streams-arrays-and-optional)
 - Combinators.combine() now allows up to 8 parameters
 - Character creation does no longer support `@Chars` but only `@CharRange`
   <p/>_This is an incompatible API change!_
 - 'Arbitraries.chars(char[] validChars)' does no longer exist
   <p/>_This is an incompatible API change!_
-- Added [`Arbitraries.oneOf`](#randomly-choosing-among-arbitraries)
+- Added [`Arbitraries.oneOf`](/docs/0.9.3/user-guide.html#randomly-choosing-among-arbitraries)
 - `@Char` cannot take `from` and `to` any longer. Replaced by `@CharRange`
 - Deprecated many methods in `Arbitraries` class. Replaced by fluent interface methods.
 - Deprecated `@Digits` constraint. Replaced by `@NumericChars`.
@@ -248,21 +250,21 @@ Faulty release. Do not use!
 
 - Bugfix: Injected empty list samples are now mutable
 - Bugfix: Injected empty set samples are now mutable
-- Unbound type variables in properties [can now be provided](#providing-variable-types)
+- Unbound type variables in properties [can now be provided](/docs/0.9.3/user-guide.html#providing-variable-types)
 
 ### 0.8.2
 
 - Added support for `java.util.Random` generation.
-- Added [Tuple types](#flat-mapping-with-tuple-types) 
+- Added [Tuple types](/docs/0.9.3/user-guide.html#flat-mapping-with-tuple-types)
   (`Tuple2`, `Tuple3`, `Tuple4`) to use in `Arbitrary.flatMap()`.
 - Renamed `ReportingMode` to `Reporting` and removed `Reporting.MINIMAL`.
   <p/>_This is an incompatible API change!_
 
-- Added `Reporting.FALSIFIED`. See [section on optional property parameters](#optional-property-parameters)
+- Added `Reporting.FALSIFIED`. See [section on optional property parameters](/docs/0.9.3/user-guide.html#optional-property-parameters)
 
 ### 0.8.1
 
-- Added support for [default arbitrary providers](#providing-default-arbitraries).
+- Added support for [default arbitrary providers](/docs/0.9.3/user-guide.html#providing-default-arbitraries).
 - Added support for `byte` and `Byte` generation.
 - Added support for `short` and `Short` generation.
 

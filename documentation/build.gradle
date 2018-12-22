@@ -31,7 +31,7 @@ task expandUserGuide(type: Copy) {
 	expand(
 		version: jqwikVersion,
 		gitVersion: gitVersion(jqwikVersion),
-		docsVersion: gitVersion(jqwikVersion),
+		docsVersion: docsVersion(jqwikVersion),
 		releaseNotesVersion: releaseNotesVersion(jqwikVersion),
 		junitPlatformVersion: junitPlatformVersion,
 		junitJupiterVersion: junitJupiterVersion,

@@ -1255,6 +1255,16 @@ they are used in. If there is a need to influence the behaviour of generators
 you can do so by using 
 [`Arbitrary.fixGenSize(int)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
 
+
+### Generating all possible values
+
+There are a few cases when you don't want to generate individual values from an
+arbitrary but use all possible values to construct another arbitrary. This can be achieved through
+[`Arbitrary.allValues()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#allValues--).
+
+Return type is `Optional<Stream<T>>` because _jqwik_ can only perform this task if
+[exhaustive generation](#exhaustive-generation) is doable.
+
 ## Recursive Arbitraries
 
 Sometimes it seems like a good idea to compose arbitraries and thereby

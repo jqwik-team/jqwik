@@ -64,6 +64,16 @@ public interface Arbitrary<T> {
 	}
 
 	/**
+	 * Create optional stream of all possible values this arbitrary could generate.
+	 * This is only possible if the arbitrary is available for exhaustive generation.
+	 *
+	 * @return optional stream of all possible values
+	 */
+	default Optional<Stream<T>> allValues() {
+		return exhaustive().map(generator -> StreamSupport.stream(generator.spliterator(), false));
+	}
+
+	/**
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
 	 * values that are accepted by the {@code filterPredicate}.
 	 *

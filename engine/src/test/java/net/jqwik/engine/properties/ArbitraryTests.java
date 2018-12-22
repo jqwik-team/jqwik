@@ -149,22 +149,39 @@ class ArbitraryTests {
 			return uniqueIntegers().list().ofSize(3);
 		}
 
-		//TODO fix
-		//@Property(generation = RANDOMIZED)
+		@Property(generation = RANDOMIZED)
+			// There's a small chance that this test fails if 10000 tries won't pick the missing value out of 500 possibilities
 		void listOfAllUniqueValuesCanBeGeneratedRandomly(@ForAll("listOfUniqueIntegerPairs") List<Tuple3<Integer, Integer, Integer>> aList) {
-			assertThat(aList).hasSize(1000);
-			assertThat(new HashSet<>(aList)).hasSize(1000);
+			assertThat(aList).hasSize(500);
+			assertThat(new HashSet<>(aList)).hasSize(500);
 		}
 
 		@Provide
 		Arbitrary<List<Tuple3<Integer, Integer, Integer>>> listOfUniqueIntegerPairs() {
 			IntegerArbitrary first = Arbitraries.integers().between(1, 10);
 			IntegerArbitrary second = Arbitraries.integers().between(1, 10);
-			IntegerArbitrary third = Arbitraries.integers().between(1, 10);
+			IntegerArbitrary third = Arbitraries.integers().between(1, 5);
 			return Combinators.combine(first, second, third).as((f, s, t) -> Tuple.of(f, s, t))
-							  .unique().list().ofSize(1000);
+							  .unique().list().ofSize(500);
 		}
 
+	}
+
+	@Group
+	class StreamOfAllValues {
+
+		@Example
+		void generateAllValues() {
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			assertThat(arbitrary.allValues()).isPresent();
+			assertThat(arbitrary.allValues().get()).containsExactlyInAnyOrder(1, 2, 3, 4, 5);
+		}
+
+		@Example
+		void notPossibleWithoutExhaustiveGenerator() {
+			Arbitrary<String> arbitrary = Arbitraries.strings();
+			assertThat(arbitrary.allValues()).isEmpty();
+		}
 	}
 
 	@Group

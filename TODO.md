@@ -1,8 +1,5 @@
 - For version 1.0
 
-  - Bug: ArbitraryTests.listOfAllUniqueValuesCanBeGeneratedRandomly fails randomly
-    Let UniqueGenerator take a short cut for arbitraries with exhaustive generators
-
   - `@Disabled("reason")` annotation
 
   - Review TODOs
