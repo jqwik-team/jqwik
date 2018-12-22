@@ -34,6 +34,9 @@ class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 			}
 			long choices = 0;
 			try {
+				// TODO: Use more efficient binomial calculation, e.g. from
+				// https://rosettacode.org/wiki/Evaluate_binomial_coefficients#Java
+				// and move it to MathSupport
 				choices = factorial(elementMaxCount) / (factorial(elementMaxCount - n) * factorial(n));
 			} catch (ArithmeticException ae) {
 				return Optional.empty();
