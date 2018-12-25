@@ -16,9 +16,14 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 
 	AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class containerClass) {
 		super(uniqueId, determineDisplayName(targetMethod), MethodSource.from(targetMethod));
+		warnWhenJunitAnnotationsArePresent(targetMethod);
 		this.tags = determineTags(targetMethod);
 		this.containerClass = containerClass;
 		this.targetMethod = targetMethod;
+	}
+
+	private void warnWhenJunitAnnotationsArePresent(Method targetMethod) {
+		DiscoverySupport.warnWhenJunitAnnotationsArePresent(targetMethod);
 	}
 
 	private Set<TestTag> determineTags(Method targetMethod) {

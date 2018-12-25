@@ -19,9 +19,14 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
 		super(uniqueId, determineDisplayName(containerClass), ClassSource.from(containerClass));
+		warnWhenJunitAnnotationsArePresent(containerClass);
 		this.tags = determineTags(containerClass);
 		this.containerClass = containerClass;
 		this.isGroup = isGroup;
+	}
+
+	private void warnWhenJunitAnnotationsArePresent(Class<?> containerClass) {
+		DiscoverySupport.warnWhenJunitAnnotationsArePresent(containerClass);
 	}
 
 	private Set<TestTag> determineTags(Class<?> containerClass) {

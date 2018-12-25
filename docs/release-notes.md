@@ -32,6 +32,8 @@ and [javadoc](/docs/snapshot/javadoc/index.html).
 
 - Introduced `Arbitrary.allValues()`
 
+- Adding annotations from JUnit Jupiter or Vintage engine will lead to warnings being logged
+
 ## 0.9.x
 
 ### 0.9.3
