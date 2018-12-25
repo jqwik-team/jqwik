@@ -21,5 +21,5 @@ import java.lang.annotation.*;
 public @interface ByteRange {
 	byte min() default 0;
 
-	byte max();
+	byte max() default Byte.MAX_VALUE;
 }

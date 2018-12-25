@@ -34,6 +34,8 @@ and [javadoc](/docs/snapshot/javadoc/index.html).
 
 - Adding annotations from JUnit Jupiter or Vintage engine will lead to warnings being logged
 
+- Range annotations (`IntRange` etc.) don't need `max` attribute any more
+
 ## 0.9.x
 
 ### 0.9.3

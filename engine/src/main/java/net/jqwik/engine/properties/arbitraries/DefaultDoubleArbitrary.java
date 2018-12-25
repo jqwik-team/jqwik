@@ -1,15 +1,14 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.math.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-
-import java.math.*;
 
 public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements DoubleArbitrary {
 
 	private static final double DEFAULT_MIN = -Double.MAX_VALUE;
 	private static final double DEFAULT_MAX = Double.MAX_VALUE;
-	private static final int DEFAULT_SCALE = 2;
 
 	private final DecimalGeneratingArbitrary generatingArbitrary;
 

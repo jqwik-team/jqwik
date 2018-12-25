@@ -12,8 +12,18 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean bytesMinOnly(@ForAll @ByteRange(min = 50) byte value) {
+		return value >= 50 && value <= Byte.MAX_VALUE;
+	}
+
+	@Property
 	boolean shorts(@ForAll @ShortRange(min = 2, max = 7) short value) {
 		return value >= 2 && value <= 7;
+	}
+
+	@Property
+	boolean shortsMinOnly(@ForAll @ShortRange(min = -2000) short value) {
+		return value >= -2000 && value <= Short.MAX_VALUE;
 	}
 
 	@Property
@@ -22,8 +32,18 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean integersMinOnly(@ForAll @IntRange(min = 1000000) int value) {
+		return value >= 10000 && value <= Integer.MAX_VALUE;
+	}
+
+	@Property
 	boolean longs(@ForAll @LongRange(min = 2, max = 7) long value) {
 		return value >= 2 && value <= 7;
+	}
+
+	@Property
+	boolean longsMinOnly(@ForAll @LongRange(min = Integer.MAX_VALUE) long value) {
+		return value >= Integer.MAX_VALUE && value <= Long.MAX_VALUE;
 	}
 
 	@Property
@@ -32,8 +52,18 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean floatsMinOnly(@ForAll @FloatRange(min = 1000.0f) float value) {
+		return value >= 1000.0f && value <= Float.MAX_VALUE;
+	}
+
+	@Property
 	boolean doubles(@ForAll @DoubleRange(min = 2, max = 7) double value) {
 		return value >= 2 && value <= 7;
+	}
+
+	@Property
+	boolean doublesMinOnly(@ForAll @DoubleRange(min = -100000.0) double value) {
+		return value >= -100000 && value <= Double.MAX_VALUE;
 	}
 
 	@Property
@@ -43,8 +73,20 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean bigDecimalsMinOnly(@ForAll @BigRange(min = "200000.5") BigDecimal value) {
+		return value.compareTo(new BigDecimal("200000.5")) >= 0 //
+			&& value.compareTo(new BigDecimal(Double.MAX_VALUE)) <= 0;
+	}
+
+	@Property
 	boolean bigIntegers(@ForAll @BigRange(min = "2.0", max = "7") BigInteger value) {
 		return value.compareTo(new BigInteger("2")) >= 0 //
 			&& value.compareTo(new BigInteger("7")) <= 0;
+	}
+
+	@Property
+	boolean bigIntegersMinOnly(@ForAll @BigRange(min = "1000") BigInteger value) {
+		return value.compareTo(new BigInteger("1000")) >= 0 //
+			&& value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0;
 	}
 }

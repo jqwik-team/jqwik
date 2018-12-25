@@ -21,5 +21,5 @@ import java.lang.annotation.*;
 public @interface IntRange {
 	int min() default 0;
 
-	int max();
+	int max() default Integer.MAX_VALUE;
 }

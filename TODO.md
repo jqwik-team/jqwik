@@ -1,8 +1,6 @@
 - For version 1.0
 
-  - *Range(min = ..) ohne max
-
-  - `@Disable(value = "reason", until = "2020-12-24")` annotation
+  - `@Skip(value = "reason", until = "2020-12-24")` annotation
     Implement as new LifecycleHook
 
   - Review TODOs

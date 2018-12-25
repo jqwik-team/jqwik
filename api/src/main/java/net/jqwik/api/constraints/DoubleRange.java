@@ -21,5 +21,5 @@ import java.lang.annotation.*;
 public @interface DoubleRange {
 	double min() default 0.0;
 
-	double max();
+	double max() default Double.MAX_VALUE;
 }

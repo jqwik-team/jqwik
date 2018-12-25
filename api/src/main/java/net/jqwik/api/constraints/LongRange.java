@@ -21,5 +21,5 @@ import java.lang.annotation.*;
 public @interface LongRange {
 	long min() default 0;
 
-	long max();
+	long max() default Long.MAX_VALUE;
 }

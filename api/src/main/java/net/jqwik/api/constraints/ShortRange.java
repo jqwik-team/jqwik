@@ -21,5 +21,5 @@ import java.lang.annotation.*;
 public @interface ShortRange {
 	short min() default 0;
 
-	short max();
+	short max() default Short.MAX_VALUE;
 }

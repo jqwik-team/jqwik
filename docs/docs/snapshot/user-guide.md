@@ -691,13 +691,13 @@ They work for generated `String`s and `Character`s.
 
 #### Integer Constraints
 
-- [`@ByteRange(byte min = 0, byte max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/ByteRange.html):
+- [`@ByteRange(byte min = 0, byte max = Byte.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/ByteRange.html):
   For `Byte` and `byte` only.
-- [`@ShortRange(short min = 0, short max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/ShortRange.html):
+- [`@ShortRange(short min = 0, short max = Short.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/ShortRange.html):
   For `Short` and `short` only.
-- [`@IntRange(int min = 0, int max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/IntRange.html):
+- [`@IntRange(int min = 0, int max = Integer.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/IntRange.html):
   For `Integer` and `int` only.
-- [`@LongRange(long min = 0L, long max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/LongRange.html):
+- [`@LongRange(long min = 0L, long max = Long.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/LongRange.html):
   For `Long` and `long` only.
 - [`@BigRange(String min = "", String max = "")`](/docs/snapshot/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigInteger` generation.
@@ -709,9 +709,9 @@ They work for generated `String`s and `Character`s.
 
 #### Decimal Constraints
 
-- [`@FloatRange(float min = 0.0f, float max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/FloatRange.html):
+- [`@FloatRange(float min = 0.0f, float max = Float.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/FloatRange.html):
   For `Float` and `float` only.
-- [`@DoubleRange(double min = 0.0, double max)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/DoubleRange.html):
+- [`@DoubleRange(double min = 0.0, double max = Double.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/DoubleRange.html):
   For `Double` and `double` only.
 - [`@BigRange(String min = "", String max = "")`](/docs/snapshot/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigDecimal` generation.

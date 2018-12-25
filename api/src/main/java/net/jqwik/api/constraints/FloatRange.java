@@ -21,5 +21,5 @@ import java.lang.annotation.*;
 public @interface FloatRange {
 	float min() default 0.0f;
 
-	float max();
+	float max() default Float.MAX_VALUE;
 }
