@@ -618,9 +618,9 @@ They work for generated `String`s and `Character`s.
 - [`@BigRange(String min = "", String max = "")`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigInteger` generation.
 - [`@Positive`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Positive.html):
-  Numbers equal to or larger than `0`. For all integral types.
+  Numbers larger than `0`. For all integral types.
 - [`@Negative`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Negative.html):
-  Numbers lower than or equal to `-0`. For all integral types.
+  Numbers lower than `0`. For all integral types.
 
 
 #### Decimal Constraints
@@ -634,9 +634,9 @@ They work for generated `String`s and `Character`s.
 - [`@Scale(int value)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Scale.html):
   Specify the maximum number of decimal places. For all decimal types.
 - [`@Positive`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Positive.html):
-  Numbers equal to or larger than `0.0`. For all decimal types.
+  Numbers larger than `0.0`. For all decimal types.
 - [`@Negative`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Negative.html):
-  Numbers lower than or equal to `-0.0`. For all decimal types.
+  Numbers lower than `0.0`. For all decimal types.
 
 ### Constraining parameterized types
 

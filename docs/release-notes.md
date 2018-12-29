@@ -36,6 +36,8 @@ and [javadoc](/docs/snapshot/javadoc/index.html).
 
 - Range annotations (`IntRange` etc.) don't need `max` attribute any more
 
+- `@Positive` and `@Negative` constraints no longer include 0 as possible value
+
 ## 0.9.x
 
 ### 0.9.3
