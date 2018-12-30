@@ -15,7 +15,7 @@ import net.jqwik.engine.support.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.providers.TypeUsage.*;
+import static net.jqwik.api.providers.TypeUsage.of;
 
 @Label("TypeUsage")
 class TypeUsageTests {
@@ -313,10 +313,13 @@ class TypeUsageTests {
 			assertThat(stringType.getAnnotations().get(0)).isInstanceOf(StringLength.class);
 			assertThat(stringType.getAnnotations().get(1)).isInstanceOf(CharRange.class);
 
-			// TODO: This string changes from Java 8 to 9 :-(
-			// assertThat(stringType.toString()).isEqualTo("@net.jqwik.api.constraints.StringLength(value=0, max=2, min=0) "
-			// Java 8:										+ "@net.jqwik.api.constraints.CharRange(from=a, to=z) String");
-			// Java 9:										+ "@net.jqwik.api.constraints.CharRange(from='a', to='z') String");
+			// This string changes from Java 8 to 9 :-(
+			// TODO: Remove as soon as min Java version is >= 9
+			String normalizedToString = stringType.toString()
+												  .replaceAll("from=a", "from='a'")
+												  .replaceAll("to=z", "to='z'");
+			assertThat(normalizedToString).isEqualTo("@net.jqwik.api.constraints.StringLength(value=0, max=2, min=0) "
+														 + "@net.jqwik.api.constraints.CharRange(from='a', to='z') String");
 		}
 
 		@Example

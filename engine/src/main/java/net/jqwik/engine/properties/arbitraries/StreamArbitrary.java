@@ -14,7 +14,7 @@ public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>>
 
 	@Override
 	public RandomGenerator<Stream<T>> generator(int genSize) {
-		return listGenerator(genSize).map(Collection::stream);
+		return createListGenerator(genSize).map(Collection::stream);
 	}
 
 	@Override

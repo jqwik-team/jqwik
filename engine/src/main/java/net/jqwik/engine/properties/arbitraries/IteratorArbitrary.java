@@ -13,7 +13,7 @@ public class IteratorArbitrary<T> extends DefaultCollectionArbitrary<T, Iterator
 
 	@Override
 	public RandomGenerator<Iterator<T>> generator(int genSize) {
-		return listGenerator(genSize).map(List::iterator);
+		return createListGenerator(genSize).map(List::iterator);
 	}
 
 	@Override

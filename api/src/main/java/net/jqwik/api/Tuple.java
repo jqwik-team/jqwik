@@ -93,8 +93,7 @@ public interface Tuple extends Serializable, Cloneable {
 	class Tuple2<T1, T2> extends Tuple1<T1> {
 		final T2 v2;
 
-		// TODO: Make private as soon as Tuples.Tuple2 has been removed
-		Tuple2(T1 v1, T2 v2) {
+		private Tuple2(T1 v1, T2 v2) {
 			super(v1);
 			this.v2 = v2;
 		}
@@ -136,8 +135,7 @@ public interface Tuple extends Serializable, Cloneable {
 	class Tuple3<T1, T2, T3> extends Tuple2<T1, T2> {
 		final T3 v3;
 
-		// TODO: Make private as soon as Tuples.Tuple3 has been removed
-		Tuple3(T1 v1, T2 v2, T3 v3) {
+		private Tuple3(T1 v1, T2 v2, T3 v3) {
 			super(v1, v2);
 			this.v3 = v3;
 		}
@@ -180,8 +178,7 @@ public interface Tuple extends Serializable, Cloneable {
 	class Tuple4<T1, T2, T3, T4> extends Tuple3<T1, T2, T3> {
 		final T4 v4;
 
-		// TODO: Make private as soon as Tuples.Tuple4 has been removed
-		Tuple4(T1 v1, T2 v2, T3 v3, T4 v4) {
+		private Tuple4(T1 v1, T2 v2, T3 v3, T4 v4) {
 			super(v1, v2, v3);
 			this.v4 = v4;
 		}

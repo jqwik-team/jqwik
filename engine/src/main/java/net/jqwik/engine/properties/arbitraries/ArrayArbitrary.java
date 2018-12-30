@@ -2,25 +2,20 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
-import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements SizableArbitrary<A>, SelfConfiguringArbitrary<A> {
+public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements SizableArbitrary<A>, SelfConfiguringArbitrary<A> {
 
 	private final Class<A> arrayClass;
-	private Arbitrary<T> elementArbitrary;
-	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
-	private int minSize = 0;
 
 	public ArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
+		super(elementArbitrary);
 		this.arrayClass = arrayClass;
-		this.elementArbitrary = elementArbitrary;
 	}
 
 	@Override
@@ -40,16 +35,6 @@ public class ArrayArbitrary<A, T> extends AbstractArbitraryBase implements Sizab
 			Array.set(array, i, from.get(i));
 		}
 		return array;
-	}
-
-	// TODO: Remove duplication with DefaultCollectionArbitrary.listGenerator(genSize)
-	private RandomGenerator<List<T>> createListGenerator(int genSize) {
-		int cutoffSize = RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
-		RandomGenerator<T> elementGenerator = elementArbitrary.generator(genSize);
-		List<T> emptyList = Collections.emptyList();
-		List<Shrinkable<List<T>>> edgeCases = Stream.of(emptyList).filter(l -> l.size() >= minSize)
-													.filter(l -> maxSize == 0 || l.size() <= maxSize).map(Shrinkable::unshrinkable).collect(Collectors.toList());
-		return RandomGenerators.list(elementGenerator, minSize, maxSize, cutoffSize).withEdgeCases(genSize, edgeCases);
 	}
 
 	@Override

@@ -130,7 +130,7 @@ public class JqwikReflectionSupport {
 
 	public static Set<Path> getAllClasspathRootDirectories() {
 		// TODO: This is quite a hack, since sometimes the classpath is quite different.
-		// Especially under Java 9's module system this will probably no longer work.
+		// Especially under Java >=9's module system this will probably no longer work.
 		String classpath = System.getProperty("java.class.path");
 		return Arrays.stream(classpath.split(File.pathSeparator)) //
 					 .map(Paths::get).filter(Files::isDirectory) //

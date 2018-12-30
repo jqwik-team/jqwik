@@ -3,8 +3,6 @@
   - `@Skip(value = "reason", until = "2020-12-24")` annotation
     Implement as new LifecycleHook
 
-  - Review TODOs
-
   - Use apiguardian annotations
 
   - Use junit-platform-testkit for engine integration tests

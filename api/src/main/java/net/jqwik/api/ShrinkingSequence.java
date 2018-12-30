@@ -31,7 +31,6 @@ public interface ShrinkingSequence<T> {
 		return ShrinkingSequenceFacade.implementation.andThen(this, createFollowupSequence);
 	}
 
-	// TODO: This feels strange. There _should_ be a way to replace all calls by calls to map().
 	default <U> ShrinkingSequence<U> mapValue(Function<T, U> mapper) {
 		return ShrinkingSequenceFacade.implementation.mapValue(this, mapper);
 	}

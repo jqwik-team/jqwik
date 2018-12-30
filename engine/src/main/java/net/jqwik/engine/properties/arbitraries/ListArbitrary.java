@@ -13,7 +13,7 @@ public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 
 	@Override
 	public RandomGenerator<List<T>> generator(int genSize) {
-		return listGenerator(genSize);
+		return createListGenerator(genSize);
 	}
 
 	@Override
