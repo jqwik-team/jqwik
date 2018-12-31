@@ -112,12 +112,14 @@ class TestEngineIntegrationTests {
 		verify(eventRecorder).executionStarted(engineDescriptor);
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class));
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), TestExecutionResultMatchers
-																														  .isSuccessful());
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isClassDescriptorFor(SimpleExampleTests.class), TestExecutionResultMatchers
-																										 .isSuccessful());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class),
+			TestExecutionResultMatchers.isSuccessful()
+		);
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
