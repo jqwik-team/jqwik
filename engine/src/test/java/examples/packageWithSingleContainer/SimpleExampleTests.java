@@ -16,7 +16,7 @@ public class SimpleExampleTests {
 	}
 
 	@Property
-	@Test
+	@DisplayName("with Jupiter annotation")
 	void withJupiterAnnotation() {
 	}
 
