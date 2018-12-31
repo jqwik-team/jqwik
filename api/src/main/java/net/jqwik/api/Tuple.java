@@ -3,6 +3,11 @@ package net.jqwik.api;
 import java.io.*;
 import java.util.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = STABLE, since = "1.0")
 public interface Tuple extends Serializable, Cloneable {
 
 	int size();

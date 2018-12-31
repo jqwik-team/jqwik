@@ -4,7 +4,11 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.arbitraries.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * The main interface for representing objects that can be generated and shrunk.
@@ -13,8 +17,10 @@ import net.jqwik.api.arbitraries.*;
  *            The type of generated objects. Primitive objects (e.g. int, boolean etc.) are represented by their boxed
  *            type (e.g. Integer, Boolean).
  */
+@API(status = STABLE, since = "1.0")
 public interface Arbitrary<T> {
 
+	@API(status = INTERNAL)
 	abstract class ArbitraryFacade {
 		private static ArbitraryFacade implementation;
 
@@ -196,6 +202,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Fix the genSize of an arbitrary so that it can no longer be influenced from outside
 	 */
+	@API(status = EXPERIMENTAL, since = "1.0")
 	default Arbitrary<T> fixGenSize(int genSize) {
 		return new Arbitrary<T>() {
 			@Override

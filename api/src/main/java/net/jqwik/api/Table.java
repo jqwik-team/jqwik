@@ -3,8 +3,13 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.Tuple.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = MAINTAINED, since = "1.0")
 public class Table {
 	public static <E> Iterable<Tuple1<E>> of(E... elements) {
 		List<Tuple1<E>> tuples =

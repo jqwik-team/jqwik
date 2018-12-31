@@ -3,14 +3,21 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = STABLE, since = "1.0")
 public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	private final long[] distances;
 
+	@API(status = MAINTAINED, since = "1.0")
 	public static ShrinkingDistance of(long... distances) {
 		return new ShrinkingDistance(distances);
 	}
 
+	@API(status = MAINTAINED, since = "1.0")
 	public static <T> ShrinkingDistance forCollection(Collection<Shrinkable<T>> elements) {
 		ShrinkingDistance sumDistanceOfElements = elements
 			.stream()
@@ -20,6 +27,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return ShrinkingDistance.of(elements.size()).append(sumDistanceOfElements);
 	}
 
+	@API(status = MAINTAINED, since = "1.0")
 	public static <T> ShrinkingDistance combine(List<Shrinkable<T>> shrinkables) {
 		return shrinkables
 			.stream()
@@ -61,10 +69,12 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return 0;
 	}
 
+	@API(status = INTERNAL)
 	public List<ShrinkingDistance> dimensions() {
 		return Arrays.stream(distances).mapToObj(ShrinkingDistance::of).collect(Collectors.toList());
 	}
 
+	@API(status = INTERNAL)
 	public int size() {
 		return distances.length;
 	}
@@ -79,6 +89,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return array.length > i ? array[i] : 0;
 	}
 
+	@API(status = INTERNAL)
 	public ShrinkingDistance plus(ShrinkingDistance other) {
 		long[] summedUpDistances = sumUpArrays(distances, other.distances);
 		return new ShrinkingDistance(summedUpDistances);
@@ -96,6 +107,7 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 		return sum;
 	}
 
+	@API(status = INTERNAL)
 	public ShrinkingDistance append(ShrinkingDistance other) {
 		long[] appendedDistances = concatArrays(distances, other.distances);
 		return new ShrinkingDistance(appendedDistances);

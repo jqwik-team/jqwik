@@ -3,7 +3,11 @@ package net.jqwik.api.providers;
 import java.util.*;
 import java.util.function.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * Implementation of this class are used to provide default arbitraries to
@@ -24,6 +28,7 @@ import net.jqwik.api.*;
  *     >net.jqwik.engine.providers.ListArbitraryProvider</a></li>
  * </ul>
  */
+@API(status = MAINTAINED, since = "1.0")
 public interface ArbitraryProvider {
 
 	@FunctionalInterface

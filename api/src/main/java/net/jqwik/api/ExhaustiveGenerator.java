@@ -2,8 +2,14 @@ package net.jqwik.api;
 
 import java.util.function.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = MAINTAINED, since = "1.0")
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
+	@API(status = INTERNAL)
 	abstract class ExhaustiveGeneratorFacade {
 		private static ExhaustiveGeneratorFacade implementation;
 
@@ -38,6 +44,7 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	/**
 	 * This is a hack to make unique work for exhaustive generation
 	 */
+	@API(status = INTERNAL)
 	default boolean isUnique() {
 		return false;
 	}

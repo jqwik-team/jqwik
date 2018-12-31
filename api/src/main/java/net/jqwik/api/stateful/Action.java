@@ -1,5 +1,9 @@
 package net.jqwik.api.stateful;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * An action class represents a state change that can be preformed on a model {@code M}.
  *
@@ -7,6 +11,7 @@ package net.jqwik.api.stateful;
  *
  * @param <M>
  */
+@API(status = MAINTAINED, since = "1.0")
 public interface Action<M> {
 
 	/**

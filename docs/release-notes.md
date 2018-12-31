@@ -38,6 +38,8 @@ and [javadoc](/docs/snapshot/javadoc/index.html).
 
 - `@Positive` and `@Negative` constraints no longer include 0 as possible value
 
+- Added `@org.apiguardian.api.API` annotation to all types in `net.jqwik.api.**`
+
 ## 0.9.x
 
 ### 0.9.3

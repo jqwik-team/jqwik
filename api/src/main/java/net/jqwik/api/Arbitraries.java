@@ -4,11 +4,17 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.stateful.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = STABLE, since = "1.0")
 public class Arbitraries {
 
+	@API(status = INTERNAL)
 	public static abstract class ArbitrariesFacade {
 		private static ArbitrariesFacade implementation;
 
@@ -474,6 +480,7 @@ public class Arbitraries {
 	 * @param <M> The type of actions to generate
 	 * @return a new arbitrary instance
 	 */
+	@API(status = MAINTAINED, since = "1.0")
 	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary) {
 		return ArbitrariesFacade.implementation.sequences(actionArbitrary);
 	}

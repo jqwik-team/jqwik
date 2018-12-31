@@ -1,5 +1,9 @@
 package net.jqwik.api;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * The generation mode defines the generation behaviour of a property.
  * It can be set in {@linkplain Property#generation()} for any property method; default is {@linkplain #AUTO}.
@@ -7,6 +11,7 @@ package net.jqwik.api;
  * @see Property
  * @see FromData
  */
+@API(status = MAINTAINED, since = "1.0")
 public enum GenerationMode {
 	/**
 	 * Use randomized value generation.

@@ -2,7 +2,10 @@ package net.jqwik.api;
 
 import java.lang.annotation.*;
 
+import org.apiguardian.api.*;
 import org.junit.platform.commons.annotation.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * Use {@code @Property} to mark methods that serve as properties.
@@ -25,6 +28,7 @@ import org.junit.platform.commons.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable
+@API(status = STABLE, since = "1.0")
 public @interface Property {
 	int TRIES_NOT_SET = 0;
 	int MAX_DISCARD_RATIO_NOT_SET = 0;
@@ -41,7 +45,9 @@ public @interface Property {
 
 	String stereotype() default DEFAULT_STEREOTYPE;
 
+	@API(status = MAINTAINED, since = "1.0")
 	GenerationMode generation() default GenerationMode.AUTO;
 
+	@API(status = MAINTAINED, since = "1.0")
 	AfterFailureMode afterFailure() default AfterFailureMode.NOT_SET;
 }

@@ -2,6 +2,10 @@ package net.jqwik.api;
 
 import java.lang.annotation.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * Use {@code @Tag("a tag")} to give test classes, groups and methods an (additional) tag
  * which can later be used to select the set of tests to execute.
@@ -31,6 +35,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Repeatable(TagList.class)
+@API(status = STABLE, since = "1.0")
 public @interface Tag {
 	String value();
 }

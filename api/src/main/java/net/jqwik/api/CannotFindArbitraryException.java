@@ -1,7 +1,12 @@
 package net.jqwik.api;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.providers.*;
 
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = MAINTAINED, since = "1.0")
 public class CannotFindArbitraryException extends JqwikException {
 
 	public CannotFindArbitraryException(TypeUsage typeUsage) {

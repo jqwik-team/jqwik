@@ -2,6 +2,10 @@ package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * Constrain the chars used to generate Strings or Characters to chars in the range
  * from {@code from} to {@code to}.
@@ -18,6 +22,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(CharRangeList.class)
 @Documented
+@API(status = MAINTAINED, since = "1.0")
 public @interface CharRange {
 	char from() default 0;
 

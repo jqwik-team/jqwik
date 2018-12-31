@@ -4,8 +4,14 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = MAINTAINED, since = "1.0")
 public class Combinators {
 
+	@API(status = INTERNAL)
 	public static abstract class CombinatorsFacade {
 		private static CombinatorsFacade implementation;
 
@@ -673,36 +679,43 @@ public class Combinators {
 	}
 
 	@FunctionalInterface
+	@API(status = INTERNAL)
 	public interface F2<T1, T2, R> {
 		R apply(T1 t1, T2 t2);
 	}
 
 	@FunctionalInterface
+	@API(status = INTERNAL)
 	public interface F3<T1, T2, T3, R> {
 		R apply(T1 t1, T2 t2, T3 t3);
 	}
 
 	@FunctionalInterface
+	@API(status = INTERNAL)
 	public interface F4<T1, T2, T3, T4, R> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4);
 	}
 
 	@FunctionalInterface
+	@API(status = INTERNAL)
 	public interface F5<T1, T2, T3, T4, T5, R> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5);
 	}
 
 	@FunctionalInterface
+	@API(status = INTERNAL)
 	public interface F6<T1, T2, T3, T4, T5, T6, R> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6);
 	}
 
 	@FunctionalInterface
+	@API(status = INTERNAL)
 	public interface F7<T1, T2, T3, T4, T5, T6, T7, R> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7);
 	}
 
 	@FunctionalInterface
+	@API(status = INTERNAL)
 	public interface F8<T1, T2, T3, T4, T5, T6, T7, T8, R> {
 		R apply(T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8);
 	}

@@ -1,8 +1,10 @@
 package net.jqwik.engine.support;
 
-import java.lang.annotation.Annotation;
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
+
+import org.apiguardian.api.*;
 
 public class JqwikAnnotationSupport {
 
@@ -32,11 +34,16 @@ public class JqwikAnnotationSupport {
 		Annotation[] metaAnnotationCandidates = annotation.annotationType().getDeclaredAnnotations();
 		Arrays.stream(metaAnnotationCandidates) //
 				.filter(candidate -> !isInJavaLangAnnotationPackage(candidate.annotationType())) //
+				.filter(candidate -> !isApiAnnotation(candidate.annotationType())) //
 				.filter(candidate -> !collector.contains(candidate)) //
 				.forEach(metaAnnotation -> {
 					collector.add(metaAnnotation);
 					appendMetaAnnotations(metaAnnotation, collector);
 				});
+	}
+
+	private static boolean isApiAnnotation(Class<? extends Annotation> annotationType) {
+		return annotationType == API.class;
 	}
 
 	private static boolean isInJavaLangAnnotationPackage(Class<? extends Annotation> annotationType) {

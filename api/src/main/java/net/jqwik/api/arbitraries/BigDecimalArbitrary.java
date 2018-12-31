@@ -4,9 +4,14 @@ import net.jqwik.api.*;
 
 import java.math.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * Fluent interface to configure the generation of BigDecimal values.
  */
+@API(status = MAINTAINED, since = "1.0")
 public interface BigDecimalArbitrary extends Arbitrary<BigDecimal> {
 
 	/**

@@ -5,11 +5,13 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
+import static org.apiguardian.api.API.Status.*;
 import static org.junit.platform.commons.support.ReflectionSupport.*;
 
 /**
@@ -30,6 +32,7 @@ import static org.junit.platform.commons.support.ReflectionSupport.*;
  *     >net.jqwik.engine.configurators.SizeConfigurator</a></li>
  * </ul>
  */
+@API(status = MAINTAINED, since = "1.0")
 public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator {
 
 	private final static String CONFIG_METHOD_NAME = "configure";

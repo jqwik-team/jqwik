@@ -1,9 +1,14 @@
 package net.jqwik.api;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * This class serves as a container for static methods to collect statistical
  * data about generated values within a property method.
  */
+@API(status = MAINTAINED, since = "1.0")
 public class Statistics {
 
 	public static abstract class StatisticsFacade {

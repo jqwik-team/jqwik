@@ -2,6 +2,10 @@ package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * Constrain the chars used to generate Strings or Characters to upper and lower case chars.
  *
@@ -17,5 +21,6 @@ import java.lang.annotation.*;
 @LowerChars
 @UpperChars
 @Documented
+@API(status = MAINTAINED, since = "1.0")
 public @interface AlphaChars {
 }

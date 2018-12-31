@@ -1,10 +1,15 @@
 package net.jqwik.api.arbitraries;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * Fluent interface to configure arbitraries that generate String values.
  */
+@API(status = MAINTAINED, since = "1.0")
 public interface StringArbitrary extends Arbitrary<String> {
 
 	/**

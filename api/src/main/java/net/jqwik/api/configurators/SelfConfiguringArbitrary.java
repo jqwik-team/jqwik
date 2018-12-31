@@ -1,7 +1,11 @@
 package net.jqwik.api.configurators;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * An {@linkplain Arbitrary} implementation can also implement this interface if it wants
@@ -20,6 +24,7 @@ import net.jqwik.api.providers.*;
  *     >net.jqwik.engine.properties.arbitraries.ArrayArbitrary</a></li>
  * </ul>
  */
+@API(status = MAINTAINED, since = "1.0")
 public interface SelfConfiguringArbitrary<T> {
 
 	/**

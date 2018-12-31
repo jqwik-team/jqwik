@@ -1,11 +1,16 @@
 package net.jqwik.api;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * The after-failure mode determines how a property behaves after it has been falsified.
  * It can be set in {@linkplain Property#afterFailure()} for any property method; default is {@linkplain #PREVIOUS_SEED}.
  *
  * @see Property
  */
+@API(status = MAINTAINED, since = "1.0")
 public enum AfterFailureMode {
 
 	/**

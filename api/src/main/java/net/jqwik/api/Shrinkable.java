@@ -2,8 +2,14 @@ package net.jqwik.api;
 
 import java.util.function.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = STABLE, since = "1.0")
 public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
+	@API(status = INTERNAL)
 	abstract class ShrinkableFacade {
 		private static ShrinkableFacade implementation;
 
@@ -36,10 +42,12 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	@Override
+	@API(status = INTERNAL)
 	default int compareTo(Shrinkable<T> other) {
 		return this.distance().compareTo(other.distance());
 	}
 
+	@API(status = INTERNAL)
 	default boolean isSmallerThan(Shrinkable<T> other) {
 		return this.distance().compareTo(other.distance()) < 0;
 	}

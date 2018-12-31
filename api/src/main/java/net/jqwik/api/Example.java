@@ -2,6 +2,10 @@ package net.jqwik.api;
 
 import java.lang.annotation.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * Use {@code @Example} to mark methods that are simple, example-based
  * test cases. Those methods usually don't have any {@linkplain ForAll} parameters.
@@ -17,5 +21,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Property(tries = 1, shrinking = ShrinkingMode.OFF, stereotype = "Example")
+@API(status = STABLE, since = "1.0")
 public @interface Example {
 }

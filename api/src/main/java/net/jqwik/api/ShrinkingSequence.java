@@ -2,8 +2,14 @@ package net.jqwik.api;
 
 import java.util.function.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = MAINTAINED, since = "1.0")
 public interface ShrinkingSequence<T> {
 
+	@API(status = INTERNAL)
 	abstract class ShrinkingSequenceFacade {
 		private static ShrinkingSequenceFacade implementation;
 
@@ -25,6 +31,7 @@ public interface ShrinkingSequence<T> {
 
 	FalsificationResult<T> current();
 
+	@API(status = INTERNAL)
 	void init(FalsificationResult<T> initialCurrent);
 
 	default ShrinkingSequence<T> andThen(Function<Shrinkable<T>, ShrinkingSequence<T>> createFollowupSequence) {

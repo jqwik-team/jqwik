@@ -3,6 +3,11 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.function.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = MAINTAINED, since = "1.0")
 public class FalsificationResult<T> implements Comparable<FalsificationResult<T>> {
 
 	private final Shrinkable<T> shrinkable;

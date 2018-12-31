@@ -1,5 +1,9 @@
 package net.jqwik.api;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * The shrinking mode defines the shrinking behaviour of a property.
  * It can be set in {@linkplain Property#shrinking()} for any property method; default is {@linkplain #BOUNDED}.
@@ -7,6 +11,7 @@ package net.jqwik.api;
  * @see Property
  *
  */
+@API(status = MAINTAINED, since = "1.0")
 public enum ShrinkingMode {
 	/**
 	 * No shrinking for falsified values.

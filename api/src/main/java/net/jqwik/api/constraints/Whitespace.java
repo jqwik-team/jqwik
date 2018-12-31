@@ -2,6 +2,10 @@ package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * Constrain the chars used to generate Strings or Characters to chars
  * that will return {@code true} for {@link Character#isWhitespace(char)}.
@@ -45,5 +49,6 @@ import java.lang.annotation.*;
 	'\u3000' //
 })
 @Documented
+@API(status = MAINTAINED, since = "1.0")
 public @interface Whitespace {
 }

@@ -2,6 +2,10 @@ package net.jqwik.api.constraints;
 
 import java.lang.annotation.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
 /**
  * Constrain the size of generated "sizable" types to be at least 1.
  *
@@ -17,5 +21,6 @@ import java.lang.annotation.*;
 @Size(min = 1)
 @StringLength(min = 1)
 @Documented
+@API(status = MAINTAINED, since = "1.0")
 public @interface NotEmpty {
 }

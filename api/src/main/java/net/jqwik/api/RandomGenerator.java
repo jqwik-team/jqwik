@@ -4,8 +4,14 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = STABLE, since = "1.0")
 public interface RandomGenerator<T> {
 
+	@API(status = INTERNAL)
 	abstract class RandomGeneratorFacade {
 		private static RandomGeneratorFacade implementation;
 
@@ -14,10 +20,15 @@ public interface RandomGenerator<T> {
 		}
 
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
+
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> wrappedShrinkable, Function<T, Arbitrary<U>> mapper, int genSize, long nextLong);
+
 		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate);
+
 		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases);
+
 		public abstract <T> RandomGenerator<T> withSamples(RandomGenerator<T> self, T[] samples);
+
 		public abstract <T> RandomGenerator<T> unique(RandomGenerator<T> self);
 	}
 

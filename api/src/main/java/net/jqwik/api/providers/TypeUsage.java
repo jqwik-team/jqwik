@@ -4,7 +4,11 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * An instance of {@code TypeUsage} describes the information available for parameter or return types.
@@ -27,8 +31,10 @@ import net.jqwik.api.*;
  * <li>@see {@link Arbitraries#defaultFor(Class, Class[])}</li>
  * </ul>
  */
+@API(status = MAINTAINED, since = "1.0")
 public interface TypeUsage {
 
+	@API(status = INTERNAL)
 	abstract class TypeUsageFacade {
 		private static TypeUsageFacade implementation;
 

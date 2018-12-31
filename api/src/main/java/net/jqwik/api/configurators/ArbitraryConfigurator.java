@@ -1,7 +1,11 @@
 package net.jqwik.api.configurators;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * Implementors can modify any arbitrary before it's being used for value generation.
@@ -12,6 +16,7 @@ import net.jqwik.api.providers.*;
  * so that they will be automatically considered for arbitrary configuration.
  * <p>
  */
+@API(status = MAINTAINED, since = "1.0")
 public interface ArbitraryConfigurator extends Comparable<ArbitraryConfigurator> {
 
 	/**

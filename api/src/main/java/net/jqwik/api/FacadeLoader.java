@@ -3,6 +3,11 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.logging.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+@API(status = INTERNAL)
 public class FacadeLoader {
 
 	private static final Logger LOG = Logger.getLogger(FacadeLoader.class.getName());
