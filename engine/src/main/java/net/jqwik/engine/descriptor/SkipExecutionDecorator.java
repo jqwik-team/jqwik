@@ -14,6 +14,10 @@ public class SkipExecutionDecorator implements TestDescriptor {
 		this.reason = reason;
 	}
 
+	public TestDescriptor getWrapped() {
+		return wrapped;
+	}
+
 	@Override
 	public UniqueId getUniqueId() {
 		return wrapped.getUniqueId();

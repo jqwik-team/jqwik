@@ -18,9 +18,6 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
 import static org.mockito.Mockito.*;
 
-import static net.jqwik.engine.matchers.TestDescriptorMatchers.*;
-import static net.jqwik.engine.matchers.TestExecutionResultMatchers.*;
-
 class TestEngineIntegrationTests {
 
 	private JqwikTestEngine testEngine;
@@ -71,25 +68,16 @@ class TestEngineIntegrationTests {
 
 	@Example
 	void runTestsFromRootDir() {
-		LauncherDiscoveryRequest discoveryRequest = request()
-				.selectors(selectClasspathRoots(JqwikReflectionSupport.getAllClasspathRootDirectories()))
-				.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer")).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request().selectors(selectClasspathRoots(JqwikReflectionSupport.getAllClasspathRootDirectories()))
+					 .filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer")).build();
 
 		TestDescriptor engineDescriptor = runTests(discoveryRequest);
 
 		verify(eventRecorder).executionStarted(engineDescriptor);
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"), TestExecutionResultMatchers
-																													   .isFailed());
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), TestExecutionResultMatchers
-																														  .isSuccessful());
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isClassDescriptorFor(SimpleExampleTests.class), TestExecutionResultMatchers
-																										 .isSuccessful());
+
+		verifyRunOfSimpleExampleTests();
+
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
@@ -100,18 +88,7 @@ class TestEngineIntegrationTests {
 		TestDescriptor engineDescriptor = runTests(discoveryRequest);
 
 		verify(eventRecorder).executionStarted(engineDescriptor);
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"), TestExecutionResultMatchers
-																													   .isFailed());
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), TestExecutionResultMatchers
-																														  .isSuccessful());
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isClassDescriptorFor(SimpleExampleTests.class), TestExecutionResultMatchers
-																										 .isSuccessful());
+		verifyRunOfSimpleExampleTests();
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
@@ -122,18 +99,7 @@ class TestEngineIntegrationTests {
 		TestDescriptor engineDescriptor = runTests(discoveryRequest);
 
 		verify(eventRecorder).executionStarted(engineDescriptor);
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"), TestExecutionResultMatchers
-																													   .isFailed());
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"), TestExecutionResultMatchers
-																														  .isSuccessful());
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isClassDescriptorFor(SimpleExampleTests.class), TestExecutionResultMatchers
-																										 .isSuccessful());
+		verifyRunOfSimpleExampleTests();
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
@@ -166,51 +132,100 @@ class TestEngineIntegrationTests {
 		// ExampleTests
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(ExampleTests.class));
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(ExampleTests.class, "failing"), TestExecutionResultMatchers
-																												 .isFailed());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "failing"),
+			TestExecutionResultMatchers.isFailed()
+		);
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(ExampleTests.class, "succeeding"), TestExecutionResultMatchers
-																													.isSuccessful());
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers.isClassDescriptorFor(ExampleTests.class), TestExecutionResultMatchers
-																													 .isSuccessful());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "succeeding"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isClassDescriptorFor(ExampleTests.class),
+			TestExecutionResultMatchers.isSuccessful()
+		);
 
 		// PropertyTests
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(PropertyTests.class));
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isFalse"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(PropertyTests.class, "isFalse"), TestExecutionResultMatchers
-																												  .isFailed());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isFalse"),
+			TestExecutionResultMatchers.isFailed()
+		);
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isTrue"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(PropertyTests.class, "isTrue"), TestExecutionResultMatchers
-																												 .isSuccessful());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isTrue"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "allNumbersAreZero"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(PropertyTests.class, "allNumbersAreZero"), TestExecutionResultMatchers
-																															.isFailed());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "allNumbersAreZero"),
+			TestExecutionResultMatchers.isFailed()
+		);
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "withEverything"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(PropertyTests.class, "withEverything"), TestExecutionResultMatchers
-																														 .isSuccessful());
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isClassDescriptorFor(PropertyTests.class), TestExecutionResultMatchers.isSuccessful());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "withEverything"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isClassDescriptorFor(PropertyTests.class),
+			TestExecutionResultMatchers.isSuccessful()
+		);
 
 		// MixedTests
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(MixedTests.class));
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "anExample"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(MixedTests.class, "anExample"), TestExecutionResultMatchers
-																												 .isSuccessful());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "anExample"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
 		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "aProperty"));
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers
-													.isPropertyDescriptorFor(MixedTests.class, "aProperty"), TestExecutionResultMatchers
-																												 .isSuccessful());
-		verify(eventRecorder).executionFinished(TestDescriptorMatchers.isClassDescriptorFor(MixedTests.class), TestExecutionResultMatchers
-																												   .isSuccessful());
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "aProperty"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isClassDescriptorFor(MixedTests.class),
+			TestExecutionResultMatchers.isSuccessful()
+		);
 
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
+	}
+
+	private void verifyRunOfSimpleExampleTests() {
+		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class));
+
+		// SimpleExampleTests.failing()
+		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"),
+			TestExecutionResultMatchers.isFailed()
+		);
+
+		// SimpleExampleTests.succeeding()
+		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
+
+		// SimpleExampleTests.withJupiterAnnotation()
+		verify(eventRecorder).executionSkipped(
+			TestDescriptorMatchers.isSkipDecoratorFor(SimpleExampleTests.class, "withJupiterAnnotation"),
+			anyString()
+		);
+
+		// SimpleExampleTests.staticExample()
+		verify(eventRecorder).executionSkipped(
+			TestDescriptorMatchers.isSkipDecoratorFor(SimpleExampleTests.class, "staticExample"),
+			anyString()
+		);
+
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class),
+			TestExecutionResultMatchers.isSuccessful()
+		);
 	}
 
 	private TestDescriptor runTests(LauncherDiscoveryRequest discoveryRequest) {
