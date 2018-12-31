@@ -50,4 +50,8 @@ public class TestRun implements Serializable {
 		String randomSeedString = randomSeed().map(s -> ":" + s).orElse("");
 		return String.format("TestRun[%s:%s%s]", uniqueIdString, getStatus(), randomSeedString);
 	}
+
+	TestRun withoutFalsifiedSample() {
+		return new TestRun(getUniqueId(), getStatus(), randomSeed, null);
+	}
 }

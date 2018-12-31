@@ -83,12 +83,19 @@ public class TestRunDatabase {
 
 		@Override
 		public void record(TestRun testRun) {
+			record(testRun, false);
+		}
+
+		private void record(TestRun testRun, boolean secondTry) {
 			if (stopRecording)
 				return;
 			try {
 				objectOutputStream.writeObject(testRun);
 			} catch (NotSerializableException e) {
 				logWriteException(e);
+				if (!secondTry) {
+					record(testRun.withoutFalsifiedSample(), true);
+				}
 			} catch (IOException e) {
 				stopRecording = true;
 				logWriteException(e);
