@@ -78,24 +78,17 @@ public class JqwikTestEngine implements TestEngine {
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
 		EngineExecutionListener engineExecutionListener = request.getEngineExecutionListener();
-		registerLifecycleHooks(root);
-		executeTests(root, engineExecutionListener, request.getConfigurationParameters());
+		registerLifecycleHooks(root, request.getConfigurationParameters());
+		executeTests(root, engineExecutionListener);
 	}
 
-	private void executeTests(
-		TestDescriptor root,
-		EngineExecutionListener listener,
-		ConfigurationParameters configurationParameters
-	) {
-		boolean skippingDisabled = isSkippingDisabledUsingJupiterConfigParameter(configurationParameters);
-
+	private void executeTests(TestDescriptor root, EngineExecutionListener listener) {
 		try (TestRunRecorder recorder = configuration.testEngineConfiguration().recorder()) {
 			new JqwikExecutor(
 				lifecycleRegistry,
 				recorder,
 				configuration.testEngineConfiguration().previousFailures(),
-				configuration.useJunitPlatformReporter(),
-				skippingDisabled
+				configuration.useJunitPlatformReporter()
 			).execute(root, listener);
 		}
 	}
@@ -109,8 +102,12 @@ public class JqwikTestEngine implements TestEngine {
 				   .orElse(false);
 	}
 
-	private void registerLifecycleHooks(TestDescriptor rootDescriptor) {
-		new JqwikLifecycleRegistrator(lifecycleRegistry).registerLifecycleHooks(rootDescriptor);
+	private void registerLifecycleHooks(
+		TestDescriptor rootDescriptor,
+		ConfigurationParameters configurationParameters
+	) {
+		Function<String, Optional<String>> parameters = configurationParameters::get;
+		new JqwikLifecycleRegistrator(lifecycleRegistry).registerLifecycleHooks(rootDescriptor, parameters);
 	}
 
 }

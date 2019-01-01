@@ -1,5 +1,8 @@
 package net.jqwik.api.lifecycle;
 
+import java.util.*;
+import java.util.function.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -9,4 +12,7 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = EXPERIMENTAL, since = "1.0")
 public interface LifecycleHook<T extends LifecycleHook> extends Comparable<T> {
+
+	default void configure(Function<String, Optional<String>> parameters) {
+	}
 }

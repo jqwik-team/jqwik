@@ -2,6 +2,7 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
@@ -17,13 +18,13 @@ public class JqwikLifecycleRegistrator {
 		this.lifecycleRegistry = lifecycleRegistry;
 	}
 
-	public void registerLifecycleHooks(TestDescriptor rootDescriptor) {
-		registerGlobalHooks(rootDescriptor);
+	public void registerLifecycleHooks(TestDescriptor rootDescriptor, Function<String, Optional<String>> parameters) {
+		registerGlobalHooks(rootDescriptor, parameters);
 		register(rootDescriptor);
 	}
 
-	private void registerGlobalHooks(TestDescriptor rootDescriptor) {
-		for (LifecycleHook lifecycleHook : RegisteredLifecycleHooks.getRegisteredHooks()) {
+	private void registerGlobalHooks(TestDescriptor rootDescriptor, Function<String, Optional<String>> parameters) {
+		for (LifecycleHook lifecycleHook : RegisteredLifecycleHooks.getRegisteredHooks(parameters)) {
 			lifecycleRegistry.registerLifecycleInstance(rootDescriptor, lifecycleHook);
 		}
 	}

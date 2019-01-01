@@ -16,7 +16,6 @@ public class JqwikExecutor {
 	private final TestRunRecorder recorder;
 	private final Set<UniqueId> previousFailedTests;
 	private final boolean useJunitPlatformReporter;
-	private final boolean skippingDisabled; // TODO: Use to switch off SkipTestLifecycle
 	private final PropertyTaskCreator propertyTaskCreator = new PropertyTaskCreator();
 	private final ContainerTaskCreator containerTaskCreator = new ContainerTaskCreator();
 	private final ExecutionTaskCreator childTaskCreator = this::createTask;
@@ -27,14 +26,12 @@ public class JqwikExecutor {
 		LifecycleRegistry registry,
 		TestRunRecorder recorder,
 		Set<UniqueId> previousFailedTests,
-		boolean useJunitPlatformReporter,
-		boolean skippingDisabled
+		boolean useJunitPlatformReporter
 	) {
 		this.registry = registry;
 		this.recorder = recorder;
 		this.previousFailedTests = previousFailedTests;
 		this.useJunitPlatformReporter = useJunitPlatformReporter;
-		this.skippingDisabled = skippingDisabled;
 	}
 
 	public void execute(TestDescriptor descriptor, EngineExecutionListener engineExecutionListener) {
