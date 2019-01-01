@@ -13,17 +13,19 @@ import net.jqwik.engine.descriptor.*;
 public class JqwikLifecycleRegistrator {
 
 	private final LifecycleRegistry lifecycleRegistry;
+	private final Function<String, Optional<String>> parameters;
 
-	public JqwikLifecycleRegistrator(LifecycleRegistry lifecycleRegistry) {
+	public JqwikLifecycleRegistrator(LifecycleRegistry lifecycleRegistry, ConfigurationParameters configurationParameters) {
 		this.lifecycleRegistry = lifecycleRegistry;
+		this.parameters = configurationParameters::get;
 	}
 
-	public void registerLifecycleHooks(TestDescriptor rootDescriptor, Function<String, Optional<String>> parameters) {
-		registerGlobalHooks(rootDescriptor, parameters);
+	public void registerLifecycleHooks(TestDescriptor rootDescriptor) {
+		registerGlobalHooks(rootDescriptor);
 		register(rootDescriptor);
 	}
 
-	private void registerGlobalHooks(TestDescriptor rootDescriptor, Function<String, Optional<String>> parameters) {
+	private void registerGlobalHooks(TestDescriptor rootDescriptor) {
 		for (LifecycleHook lifecycleHook : RegisteredLifecycleHooks.getRegisteredHooks(parameters)) {
 			lifecycleRegistry.registerLifecycleInstance(rootDescriptor, lifecycleHook);
 		}
@@ -54,7 +56,7 @@ public class JqwikLifecycleRegistrator {
 	private void registerHooks(TestDescriptor descriptor, AnnotatedElement element) {
 		List<AddLifecycleHook> addLifecycleHooks = AnnotationSupport.findRepeatableAnnotations(element, AddLifecycleHook.class);
 		for (AddLifecycleHook addLifecycleHook : addLifecycleHooks) {
-			lifecycleRegistry.registerLifecycleHook(descriptor, addLifecycleHook.value());
+			lifecycleRegistry.registerLifecycleHook(descriptor, addLifecycleHook.value(), parameters);
 		}
 	}
 

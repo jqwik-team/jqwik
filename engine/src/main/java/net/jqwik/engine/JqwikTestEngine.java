@@ -93,21 +93,10 @@ public class JqwikTestEngine implements TestEngine {
 		}
 	}
 
-	// TODO: Replace with generic mechanism as soon as there exists one
-	// see https://github.com/junit-team/junit5/issues/1717
-	private boolean isSkippingDisabledUsingJupiterConfigParameter(ConfigurationParameters configurationParameters) {
-		return configurationParameters
-				   .get("junit.jupiter.conditions.deactivate")
-				   .map(value -> value.endsWith("DisabledCondition"))
-				   .orElse(false);
-	}
-
 	private void registerLifecycleHooks(
-		TestDescriptor rootDescriptor,
-		ConfigurationParameters configurationParameters
+		TestDescriptor rootDescriptor, ConfigurationParameters configurationParameters
 	) {
-		Function<String, Optional<String>> parameters = configurationParameters::get;
-		new JqwikLifecycleRegistrator(lifecycleRegistry).registerLifecycleHooks(rootDescriptor, parameters);
+		new JqwikLifecycleRegistrator(lifecycleRegistry, configurationParameters).registerLifecycleHooks(rootDescriptor);
 	}
 
 }

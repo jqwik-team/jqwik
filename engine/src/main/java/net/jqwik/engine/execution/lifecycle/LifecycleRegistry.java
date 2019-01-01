@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.*;
@@ -25,21 +26,21 @@ public class LifecycleRegistry implements LifecycleSupplier {
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);
 		return hookClasses
-			.stream()
-			.map(hookClass -> (T) instances.get(hookClass))
-			.sorted()
-			.collect(Collectors.toList());
+				   .stream()
+				   .map(hookClass -> (T) instances.get(hookClass))
+				   .sorted()
+				   .collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
 	private <T extends LifecycleHook> List<Class<T>> findHookClasses(TestDescriptor descriptor, Class<T> hookType) {
 		return registrations
-			.stream()
-			.filter(registration -> registration.match(descriptor))
-			.filter(registration -> registration.match(hookType))
-			.map(registration -> (Class<T>) registration.hookClass)
-			.distinct()
-			.collect(Collectors.toList());
+				   .stream()
+				   .filter(registration -> registration.match(descriptor))
+				   .filter(registration -> registration.match(hookType))
+				   .map(registration -> (Class<T>) registration.hookClass)
+				   .distinct()
+				   .collect(Collectors.toList());
 	}
 
 	/**
@@ -57,7 +58,11 @@ public class LifecycleRegistry implements LifecycleSupplier {
 		}
 	}
 
-	public void registerLifecycleHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
+	public void registerLifecycleHook(
+		TestDescriptor descriptor,
+		Class<? extends LifecycleHook> hookClass,
+		Function<String, Optional<String>> parameters
+	) {
 		if (JqwikReflectionSupport.isInnerClass(hookClass)) {
 			String message = String.format("Inner class [%s] cannot be used as LifecycleHook", hookClass.getName());
 			throw new JqwikException(message);
@@ -65,6 +70,7 @@ public class LifecycleRegistry implements LifecycleSupplier {
 		registrations.add(new HookRegistration(descriptor, hookClass));
 		if (!instances.containsKey(hookClass)) {
 			LifecycleHook hookInstance = JqwikReflectionSupport.newInstanceWithDefaultConstructor(hookClass);
+			hookInstance.configure(parameters);
 			instances.put(hookClass, hookInstance);
 		}
 	}
