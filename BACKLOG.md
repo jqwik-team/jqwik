@@ -12,7 +12,8 @@
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
 
-- ArchitectureTests: Use @ArchTest annotations
+- Use junit-platform-testkit for engine integration tests
+  (iff junit 5.4 is out by then)
 
 ### General
 
@@ -21,8 +22,6 @@
   @Label("mypackage")
   @AddHook(...)
   in package-info.java
-
-- Expose failing sample as sub test
 
 - @AddExample[s] annotation like @FromData but additional to generated data
 
