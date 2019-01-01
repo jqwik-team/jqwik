@@ -53,7 +53,7 @@ public class PropertyMethodExecutor {
 	) {
 		PropertyExecutionResult propertyExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
-		PropertyLifecycleContext context = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance);
+		PropertyLifecycleContext context = new PropertyMethodLifecycleContext(methodDescriptor, testInstance);
 		try {
 			propertyExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
 		} catch (Throwable throwable) {

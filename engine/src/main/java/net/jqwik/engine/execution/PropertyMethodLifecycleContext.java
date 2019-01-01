@@ -1,15 +1,16 @@
 package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 
-class DefaultPropertyLifecycleContext implements PropertyLifecycleContext {
+class PropertyMethodLifecycleContext implements PropertyLifecycleContext {
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final Object testInstance;
 
-	DefaultPropertyLifecycleContext(PropertyMethodDescriptor methodDescriptor, Object testInstance) {
+	PropertyMethodLifecycleContext(PropertyMethodDescriptor methodDescriptor, Object testInstance) {
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
 	}
