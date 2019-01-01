@@ -79,14 +79,34 @@ public class JqwikTestEngine implements TestEngine {
 		TestDescriptor root = request.getRootTestDescriptor();
 		EngineExecutionListener engineExecutionListener = request.getEngineExecutionListener();
 		registerLifecycleHooks(root);
-		executeTests(root, engineExecutionListener);
+		executeTests(root, engineExecutionListener, request.getConfigurationParameters());
 	}
 
-	private void executeTests(TestDescriptor root, EngineExecutionListener listener) {
+	private void executeTests(
+		TestDescriptor root,
+		EngineExecutionListener listener,
+		ConfigurationParameters configurationParameters
+	) {
+		boolean skippingDisabled = isSkippingDisabledUsingJupiterConfigParameter(configurationParameters);
+
 		try (TestRunRecorder recorder = configuration.testEngineConfiguration().recorder()) {
-			new JqwikExecutor(lifecycleRegistry, recorder, configuration.testEngineConfiguration().previousFailures(), configuration.useJunitPlatformReporter())
-				.execute(root, listener);
+			new JqwikExecutor(
+				lifecycleRegistry,
+				recorder,
+				configuration.testEngineConfiguration().previousFailures(),
+				configuration.useJunitPlatformReporter(),
+				skippingDisabled
+			).execute(root, listener);
 		}
+	}
+
+	// TODO: Replace with generic mechanism as soon as there exists one
+	// see https://github.com/junit-team/junit5/issues/1717
+	private boolean isSkippingDisabledUsingJupiterConfigParameter(ConfigurationParameters configurationParameters) {
+		return configurationParameters
+				   .get("junit.jupiter.conditions.deactivate")
+				   .map(value -> value.endsWith("DisabledCondition"))
+				   .orElse(false);
 	}
 
 	private void registerLifecycleHooks(TestDescriptor rootDescriptor) {
