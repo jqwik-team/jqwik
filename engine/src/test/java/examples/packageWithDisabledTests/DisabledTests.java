@@ -7,14 +7,14 @@ import net.jqwik.api.*;
 public class DisabledTests {
 
 	@Example
-	@Disabled
+	@Disabled("a reason")
 	void disabledSuccess() {
 
 	}
 
 	@Example
 	@Disabled
-	void disabledFailure() {
+	void disabledFailure(@ForAll String test) {
 		Assertions.fail("should fail");
 	}
 

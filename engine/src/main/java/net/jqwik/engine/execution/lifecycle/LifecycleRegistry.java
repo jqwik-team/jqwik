@@ -22,6 +22,12 @@ public class LifecycleRegistry implements LifecycleSupplier {
 		return AroundPropertyHook.combine(aroundPropertyHooks);
 	}
 
+	@Override
+	public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
+		List<SkipExecutionHook> skipExecutionHooks = findHooks(testDescriptor, SkipExecutionHook.class);
+		return SkipExecutionHook.combine(skipExecutionHooks);
+	}
+
 	@SuppressWarnings("unchecked")
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);

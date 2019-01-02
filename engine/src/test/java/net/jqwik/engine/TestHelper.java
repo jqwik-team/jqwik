@@ -59,6 +59,11 @@ public class TestHelper {
 			public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
 				return new AutoCloseableHook();
 			}
+
+			@Override
+			public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
+				return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
+			}
 		};
 	}
 

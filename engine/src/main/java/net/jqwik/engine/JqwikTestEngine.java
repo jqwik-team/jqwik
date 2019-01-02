@@ -93,9 +93,7 @@ public class JqwikTestEngine implements TestEngine {
 		}
 	}
 
-	private void registerLifecycleHooks(
-		TestDescriptor rootDescriptor, ConfigurationParameters configurationParameters
-	) {
+	private void registerLifecycleHooks(TestDescriptor rootDescriptor, ConfigurationParameters configurationParameters) {
 		new JqwikLifecycleRegistrator(lifecycleRegistry, configurationParameters).registerLifecycleHooks(rootDescriptor);
 	}
 

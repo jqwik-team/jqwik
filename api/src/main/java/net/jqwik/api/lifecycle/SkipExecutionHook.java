@@ -3,7 +3,6 @@ package net.jqwik.api.lifecycle;
 import java.util.*;
 
 import org.apiguardian.api.*;
-import org.junit.platform.commons.util.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -11,7 +10,10 @@ import static org.apiguardian.api.API.Status.*;
  * Experimental feature. Not ready for public usage yet.
  */
 @API(status = EXPERIMENTAL, since = "1.0")
+@FunctionalInterface
 public interface SkipExecutionHook extends LifecycleHook<SkipExecutionHook> {
+
+	SkipResult shouldBeSkipped(LifecycleContext context);
 
 	@Override
 	default int compareTo(SkipExecutionHook other) {
@@ -22,7 +24,25 @@ public interface SkipExecutionHook extends LifecycleHook<SkipExecutionHook> {
 		return 0;
 	}
 
-	SkipResult shouldBeSkipped(LifecycleContext context);
+	default SkipExecutionHook then(SkipExecutionHook rest) {
+		return descriptor -> {
+			SkipResult result = this.shouldBeSkipped(descriptor);
+			if (result.isSkipped()) {
+				return result;
+			} else {
+				return rest.shouldBeSkipped(descriptor);
+			}
+		};
+	}
+
+	static SkipExecutionHook combine(List<SkipExecutionHook> skipExecutionHooks) {
+		if (skipExecutionHooks.isEmpty()) {
+			return descriptor -> SkipResult.doNotSkip();
+		}
+		SkipExecutionHook first = skipExecutionHooks.remove(0);
+		return first.then(combine(skipExecutionHooks));
+	}
+
 
 	class SkipResult {
 
@@ -34,12 +54,12 @@ public interface SkipExecutionHook extends LifecycleHook<SkipExecutionHook> {
 			return new SkipResult(false, null);
 		}
 
-		private boolean skipped = false;
-		private String reason;
+		private final boolean skipped;
+		private final String reason;
 
 		private SkipResult(boolean skipped, String reason) {
 			this.skipped = skipped;
-			this.reason = reason;
+			this.reason = reason == null || reason.isEmpty() ? null : reason;
 		}
 
 		/**

@@ -1,1 +1,2 @@
 net.jqwik.engine.execution.lifecycle.AutoCloseableHook
+net.jqwik.engine.execution.lifecycle.DisabledHook

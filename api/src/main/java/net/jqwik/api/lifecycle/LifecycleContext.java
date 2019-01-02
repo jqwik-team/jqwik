@@ -1,5 +1,8 @@
 package net.jqwik.api.lifecycle;
 
+import java.lang.reflect.*;
+import java.util.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -9,5 +12,9 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = EXPERIMENTAL, since = "1.0")
 public interface LifecycleContext {
+
 	String label();
+
+	Optional<AnnotatedElement> annotatedElement();
+
 }

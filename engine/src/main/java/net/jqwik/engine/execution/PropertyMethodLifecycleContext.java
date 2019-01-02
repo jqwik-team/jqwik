@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
@@ -27,6 +28,11 @@ class PropertyMethodLifecycleContext implements PropertyLifecycleContext {
 	@Override
 	public String label() {
 		return methodDescriptor.getLabel();
+	}
+
+	@Override
+	public Optional<AnnotatedElement> annotatedElement() {
+		return Optional.of(targetMethod());
 	}
 
 	@Override

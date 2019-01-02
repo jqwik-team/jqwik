@@ -6,13 +6,11 @@ import java.util.logging.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
-import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.support.*;
 
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 
@@ -21,41 +19,26 @@ public class PropertyMethodExecutor {
 	private static final Logger LOG = Logger.getLogger(PropertyMethodExecutor.class.getName());
 
 	private final PropertyMethodDescriptor methodDescriptor;
+	private final PropertyLifecycleContext propertyLifecycleContext;
 	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
 
-	public PropertyMethodExecutor(PropertyMethodDescriptor methodDescriptor) {
+	public PropertyMethodExecutor(PropertyMethodDescriptor methodDescriptor, PropertyLifecycleContext propertyLifecycleContext) {
 		this.methodDescriptor = methodDescriptor;
+		this.propertyLifecycleContext = propertyLifecycleContext;
 	}
 
 	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
-		Object testInstance;
-		try {
-			testInstance = createTestInstance();
-		} catch (Throwable throwable) {
-			String message = String.format(
-				"Cannot create instance of class '%s'. Maybe it has no default constructor?",
-				methodDescriptor.getContainerClass()
-			);
-			return PropertyExecutionResult
-					   .failed(new JqwikException(message, throwable), methodDescriptor.getConfiguration().getSeed(), null);
-		}
-		return executePropertyMethod(testInstance, lifecycleSupplier, listener);
+		return executePropertyMethod(lifecycleSupplier, listener);
 	}
 
-	private Object createTestInstance() {
-		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
-	}
-
-	private PropertyExecutionResult executePropertyMethod(
-		Object testInstance,
-		LifecycleSupplier lifecycleSupplier,
-		PropertyExecutionListener listener
-	) {
+	private PropertyExecutionResult executePropertyMethod(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		PropertyExecutionResult propertyExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
-		PropertyLifecycleContext context = new PropertyMethodLifecycleContext(methodDescriptor, testInstance);
 		try {
-			propertyExecutionResult = around.aroundProperty(context, () -> executeMethod(testInstance, listener));
+			propertyExecutionResult = around.aroundProperty(
+				propertyLifecycleContext,
+				() -> executeMethod(propertyLifecycleContext.testInstance(), listener)
+			);
 		} catch (Throwable throwable) {
 			if (propertyExecutionResult.getStatus() == Status.SUCCESSFUL) {
 				return PropertyExecutionResult.failed(
