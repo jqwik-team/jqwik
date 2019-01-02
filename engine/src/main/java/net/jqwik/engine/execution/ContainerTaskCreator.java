@@ -1,16 +1,38 @@
 package net.jqwik.engine.execution;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
 
 class ContainerTaskCreator {
 
-	ExecutionTask createTask(TestDescriptor containerDescriptor, ExecutionTaskCreator childTaskCreator, Pipeline pipeline) {
+	ExecutionTask createTask(
+		TestDescriptor containerDescriptor,
+		ExecutionTaskCreator childTaskCreator,
+		Pipeline pipeline,
+		LifecycleSupplier lifecycleSupplier
+	) {
+
+		// TODO: running of SkipExecutionHook should happen in task but then skipping of children wouldn't work :-(
+		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor);
+		SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(containerDescriptor);
+		SkipExecutionHook.SkipResult skipResult = skipExecutionHook.shouldBeSkipped(containerLifecycleContext);
+
+		if (skipResult.isSkipped()) {
+			return ExecutionTask.from(
+				listener -> listener.executionSkipped(containerDescriptor, skipResult.reason().orElse(null)),
+				containerDescriptor.getUniqueId(),
+				"skip " + containerDescriptor.getDisplayName()
+			);
+		}
+
 		ExecutionTask prepareContainerTask = ExecutionTask.from(
 			listener -> listener.executionStarted(containerDescriptor),
 			containerDescriptor.getUniqueId(),
@@ -38,6 +60,25 @@ class ContainerTaskCreator {
 			pipeline.submit(finishContainerTask, childrenTasks);
 
 		return prepareContainerTask;
+	}
+
+	private ContainerLifecycleContext createLifecycleContext(TestDescriptor containerDescriptor) {
+		if (containerDescriptor instanceof ContainerClassDescriptor) {
+			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) containerDescriptor;
+			return new ContainerClassLifecycleContext(classDescriptor);
+		}
+
+		return new ContainerLifecycleContext() {
+			@Override
+			public String label() {
+				return containerDescriptor.getDisplayName();
+			}
+
+			@Override
+			public Optional<AnnotatedElement> annotatedElement() {
+				return Optional.empty();
+			}
+		};
 	}
 
 	private ExecutionTask[] createChildren(

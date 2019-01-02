@@ -2,6 +2,7 @@ package net.jqwik.engine;
 
 import java.util.*;
 
+import examples.packageWithDisabledTests.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
 import org.junit.platform.engine.*;
@@ -189,6 +190,43 @@ class TestEngineIntegrationTests {
 		);
 		verify(eventRecorder).executionFinished(
 			TestDescriptorMatchers.isClassDescriptorFor(MixedTests.class),
+			TestExecutionResultMatchers.isSuccessful()
+		);
+
+		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
+	}
+
+	@Example
+	void runDisabledTests() {
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples.packageWithDisabledTests")).build();
+
+		TestDescriptor engineDescriptor = runTests(discoveryRequest);
+
+		verify(eventRecorder).executionStarted(engineDescriptor);
+
+		// DisabledTests
+		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(DisabledTests.class));
+
+		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(DisabledTests.class, "success"));
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isPropertyDescriptorFor(DisabledTests.class, "success"),
+			TestExecutionResultMatchers.isSuccessful()
+		);
+
+		verify(eventRecorder).executionSkipped(
+			TestDescriptorMatchers.isPropertyDescriptorFor(DisabledTests.class, "disabledSuccess"),
+			eq("a reason")
+		);
+		verify(eventRecorder).executionSkipped(
+			TestDescriptorMatchers.isPropertyDescriptorFor(DisabledTests.class, "disabledFailure"),
+			startsWith("@Disabled:")
+		);
+		verify(eventRecorder).executionSkipped(
+			TestDescriptorMatchers.isClassDescriptorFor(DisabledTests.DisabledGroup.class),
+			startsWith("@Disabled:")
+		);
+		verify(eventRecorder).executionFinished(
+			TestDescriptorMatchers.isClassDescriptorFor(DisabledTests.class),
 			TestExecutionResultMatchers.isSuccessful()
 		);
 

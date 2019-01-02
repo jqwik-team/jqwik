@@ -75,7 +75,7 @@ public class JqwikExecutor {
 	}
 
 	private ExecutionTask createContainerTask(TestDescriptor containerDescriptor, Pipeline pipeline) {
-		return containerTaskCreator.createTask(containerDescriptor, childTaskCreator, pipeline);
+		return containerTaskCreator.createTask(containerDescriptor, childTaskCreator, pipeline, registry);
 	}
 
 }

@@ -25,7 +25,7 @@ public class DisabledTests {
 
 	@Group
 	@Disabled
-	class DisabledGroup {
+	public class DisabledGroup {
 
 		@Example
 		void successInGroup() {
