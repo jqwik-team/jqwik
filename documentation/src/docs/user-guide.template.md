@@ -501,6 +501,33 @@ class TaggingExamples {
 Tags must follow certain rules as described 
 [here](/docs/${docsVersion}/javadoc/net/jqwik/api/Tag.html)
 
+## Disabling Tests
+
+From time to time you might want to disable a test or all tests in a container
+temporarily. You can do that by adding the
+[`@Disabled`](/docs/${docsVersion}/javadoc/net/jqwik/api/Disabled.html) annotation
+to a property method or a container class.
+
+```java
+import net.jqwik.api.Disabled
+
+@Disabled("for whatever reason")
+class DisablingExamples {
+
+	@Property
+	@Disabled
+	void aDisabledProperty() { }
+
+}
+```
+
+Disabled properties will be reported by IDEs and build tools as "skipped"
+together with the reason - if one has been provided.
+
+Be careful not to use the Jupiter annotation with the same name.
+_Jqwik_ will refuse to execute methods that have Jupiter annotations.
+
+
 ## Default Parameter Generation
 
 _jqwik_ tries to generate values for those property method parameters that are

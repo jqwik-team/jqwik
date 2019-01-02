@@ -40,6 +40,9 @@ and [javadoc](/docs/snapshot/javadoc/index.html).
 
 - Added `@org.apiguardian.api.API` annotation to all types in `net.jqwik.api.**`
 
+- Added annotation `@Disabled` as a means to temporarily
+  [skip test methods or test containers](/docs/snapshot/user-guide.html#disabling-tests)
+
 ## 0.9.x
 
 ### 0.9.3
