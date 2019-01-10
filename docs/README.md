@@ -90,3 +90,12 @@ class SimpleExampleTests implements AutoCloseable {
 This looks like standard JUnit tests and works basically the same but without
 the complicated lifecycle of Before's and After's.
 
+
+### Where to go from here
+
+You want to know more?
+
+- Learn about [property-based testing in general](/property-based-testing.html)
+- Read an introduction to [PBT in Java](https://blog.johanneslink.net/2018/03/24/property-based-testing-in-java-introduction/)
+- Learn the details of _jqwik_ in [the user-guide](/docs/current/user-guide.html)
+

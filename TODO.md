@@ -1,5 +1,2 @@
-- For version 1.0
-
-  - Write user guide entry and release notes
-    for `@net.jqwik.api.Disabled("reason")` annotation
-
+- Arbitraries.forType(Class<T> targetClass)
+  - Optional arguments Constructors and other creating methods

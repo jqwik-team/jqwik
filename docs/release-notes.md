@@ -9,17 +9,17 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.0.0-SNAPSHOT](#100-snapshot)
+- [1.0.0](#100)
 - [0.9.x](#09x)
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.0.0-SNAPSHOT
+## 1.0.0
 
-[User guide](/docs/snapshot/user-guide.html)
-and [javadoc](/docs/snapshot/javadoc/index.html).
+[User guide](/docs/1.0.0/user-guide.html)
+and [javadoc](/docs/1.0.0/javadoc/index.html).
 
 - Removed all deprecated APIs
   - Annotation attribute `net.jqwik.api.Property.reporting()`
