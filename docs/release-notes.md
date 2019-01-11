@@ -18,8 +18,11 @@ title: jqwik Release Notes
 
 ## 1.0.0
 
-[User guide](/docs/1.0.0/user-guide.html)
-and [javadoc](/docs/1.0.0/javadoc/index.html).
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.0.0/user-guide.html">User guide</a>
+and
+<a href="/docs/1.0.0/javadoc/index.html">javadoc</a>
+</p>
 
 - Removed all deprecated APIs
   - Annotation attribute `net.jqwik.api.Property.reporting()`
@@ -47,8 +50,11 @@ and [javadoc](/docs/1.0.0/javadoc/index.html).
 
 ### 0.9.3
 
-[User guide](/docs/0.9.3/user-guide.html)
-and [javadoc](/docs/0.9.3/javadoc/index.html).
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/0.9.3/user-guide.html">User guide</a>
+and
+<a href="/docs/0.9.3/javadoc/index.html">javadoc</a>
+</p>
 
 - The probability of edge cases being generated is now higher
 - New constraint annotation `@NotEmpty`
