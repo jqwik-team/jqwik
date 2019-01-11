@@ -18,11 +18,13 @@ task publishApiJavadoc(type: Javadoc) {
 publishing {
 	publications {
 		jqwikEngine(MavenPublication) {
+			groupId = 'net.jqwik'
 			artifactId = 'jqwik-engine'
 			from components.java
 			artifact sourcesJar
 			artifact javadocJar
 			pom {
+				groupId = 'net.jqwik'
 				name = 'jqwik-engine'
 				description = project.description
 				url = 'https://jqwik.net/'

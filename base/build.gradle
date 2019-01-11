@@ -11,9 +11,11 @@ jar {
 publishing {
 	publications {
 		jqwik(MavenPublication) {
+			groupId = 'net.jqwik'
 			artifactId = 'jqwik'
 			from components.java
 			pom {
+				groupId = 'net.jqwik'
 				name = 'jqwik'
 				description = project.description
 				url = 'https://jqwik.net/'
