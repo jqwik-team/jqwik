@@ -171,6 +171,15 @@ dependencies {
 }
 ```
 
+With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to simplify jqwik
+integration for standard users. 
+If you want to be more explicit about the real dependencies you can replace this dependency with
+
+```
+    testCompile "net.jqwik:jqwik-api:${jqwikVersion}"
+    testRuntime "net.jqwik:jqwik-engine:${jqwikVersion}"
+```
+
 
 See [the Gradle section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
 for more details on how to configure Gradle for the JUnit 5 platform.
@@ -209,7 +218,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.9.3</version>
+        <version>1.0.0</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -235,7 +244,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.9.3.jar`
+- `jqwik-1.0.0.jar`
 - `junit-platform-engine-1.3.2.jar`
 - `junit-platform-commons-1.3.2.jar`
 - `opentest4j-1.1.1.jar`
