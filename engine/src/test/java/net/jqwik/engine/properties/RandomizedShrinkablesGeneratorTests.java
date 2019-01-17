@@ -128,7 +128,10 @@ class RandomizedShrinkablesGeneratorTests {
 	}
 
 	private RandomizedShrinkablesGenerator createGenerator(Random random, String methodName) {
-		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(MyProperties.class, new MyProperties());
+		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
+			MyProperties.class, new MyProperties(),
+			DomainContext.global()
+		);
 		return createGenerator(random, methodName, arbitraryResolver);
 	}
 

@@ -66,7 +66,10 @@ class ExhaustiveShrinkablesGeneratorTests {
 	}
 
 	private ExhaustiveShrinkablesGenerator createGenerator(String methodName) {
-		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(MyProperties.class, new MyProperties());
+		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
+			MyProperties.class, new MyProperties(),
+			DomainContext.global()
+		);
 		return createGenerator(methodName, arbitraryResolver);
 	}
 

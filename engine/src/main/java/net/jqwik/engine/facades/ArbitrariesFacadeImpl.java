@@ -11,7 +11,6 @@ import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.stateful.*;
-import net.jqwik.engine.providers.*;
 
 /**
  * Is loaded through reflection in api module
@@ -156,8 +155,9 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
+		DomainContext domainContext = DomainContextFacadeImpl.currentContext.get();
 		RegisteredArbitraryResolver defaultArbitraryResolver =
-			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders());
+			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
 		ArbitraryProvider.SubtypeProvider subtypeProvider = ArbitrariesFacadeImpl::allDefaultsFor;
 		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 	}

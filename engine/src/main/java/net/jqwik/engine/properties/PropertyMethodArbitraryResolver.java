@@ -9,9 +9,7 @@ import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.configurators.*;
 import net.jqwik.engine.facades.*;
-import net.jqwik.engine.providers.*;
 import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
@@ -23,12 +21,12 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private final RegisteredArbitraryResolver registeredArbitraryResolver;
 	private final RegisteredArbitraryConfigurer registeredArbitraryConfigurer;
 
-	public PropertyMethodArbitraryResolver(Class<?> containerClass, Object testInstance) {
+	public PropertyMethodArbitraryResolver(Class<?> containerClass, Object testInstance, DomainContext domainContext) {
 		this(
 			containerClass,
 			testInstance,
-			new RegisteredArbitraryResolver(RegisteredArbitraryProviders.getProviders()),
-			new RegisteredArbitraryConfigurer(RegisteredArbitraryConfigurators.getConfigurators())
+			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders()),
+			new RegisteredArbitraryConfigurer(domainContext.getArbitraryConfigurators())
 		);
 	}
 

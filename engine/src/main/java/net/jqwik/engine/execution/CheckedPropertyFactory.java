@@ -9,6 +9,7 @@ import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
@@ -25,7 +26,10 @@ public class CheckedPropertyFactory {
 		CheckedFunction checkedFunction = createCheckedFunction(propertyMethodDescriptor, testInstance);
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
-		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(propertyMethodDescriptor.getContainerClass(), testInstance);
+		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(
+			propertyMethodDescriptor.getContainerClass(), testInstance,
+			DomainContextFacadeImpl.currentContext.get()
+		);
 
 		Optional<Iterable<? extends Tuple>> optionalData =
 			new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), testInstance)

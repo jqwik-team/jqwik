@@ -343,7 +343,11 @@ class PropertyMethodArbitraryResolverTests {
 	}
 
 	private static PropertyMethodArbitraryResolver getResolver(Class<?> container) {
-		return new PropertyMethodArbitraryResolver(container, JqwikReflectionSupport.newInstanceWithDefaultConstructor(container));
+		return new PropertyMethodArbitraryResolver(
+			container,
+			JqwikReflectionSupport.newInstanceWithDefaultConstructor(container),
+			DomainContext.global()
+		);
 	}
 
 	private static MethodParameter getParameter(Class container, String methodName) {

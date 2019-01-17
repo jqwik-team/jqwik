@@ -46,6 +46,11 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 		return getDisplayName();
 	}
 
+	public DomainContext getDomainContext() {
+		//TODO: Determine domain context from @Domain annotations on propertyMethod and container class
+		return DomainContext.global();
+	}
+
 	@Override
 	public Set<TestTag> getTags() {
 		Set<TestTag> allTags = new LinkedHashSet<>(tags);

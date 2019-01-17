@@ -6,10 +6,12 @@ import java.util.logging.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
@@ -28,7 +30,13 @@ public class PropertyMethodExecutor {
 	}
 
 	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
-		return executePropertyMethod(lifecycleSupplier, listener);
+		try {
+			DomainContext domainContext = methodDescriptor.getDomainContext();
+			DomainContextFacadeImpl.currentContext.set(domainContext);
+			return executePropertyMethod(lifecycleSupplier, listener);
+		} finally {
+			DomainContextFacadeImpl.currentContext.remove();
+		}
 	}
 
 	private PropertyExecutionResult executePropertyMethod(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
