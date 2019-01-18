@@ -8,16 +8,19 @@ import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.domains.*;
 
 abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 	private final Method targetMethod;
 	private final Class containerClass;
 	private final Set<TestTag> tags;
+	private final DomainContext domainContext;
 
 	AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class containerClass) {
 		super(uniqueId, determineDisplayName(targetMethod), MethodSource.from(targetMethod));
 		warnWhenJunitAnnotationsArePresent(targetMethod);
 		this.tags = determineTags(targetMethod);
+		this.domainContext = determineDomainContext(targetMethod);
 		this.containerClass = containerClass;
 		this.targetMethod = targetMethod;
 	}
@@ -28,6 +31,10 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 
 	private Set<TestTag> determineTags(Method targetMethod) {
 		return DiscoverySupport.findTestTags(targetMethod);
+	}
+
+	private DomainContext determineDomainContext(Method targetMethod) {
+		return DiscoverySupport.determineDomainContext(targetMethod);
 	}
 
 	private static String determineDisplayName(Method targetMethod) {
@@ -47,8 +54,7 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 	}
 
 	public DomainContext getDomainContext() {
-		//TODO: Determine domain context from @Domain annotations on propertyMethod and container class
-		return DomainContext.global();
+		return domainContext;
 	}
 
 	@Override

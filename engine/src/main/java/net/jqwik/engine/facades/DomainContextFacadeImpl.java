@@ -2,8 +2,8 @@ package net.jqwik.engine.facades;
 
 import java.util.*;
 
-import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.configurators.*;
 import net.jqwik.engine.providers.*;

@@ -16,7 +16,7 @@ class PropertyTaskCreator {
 		if (hasUnspecifiedParameters(methodDescriptor)) {
 			String taskDescription = "skipping " + methodDescriptor.getDisplayName();
 			return ExecutionTask.from(
-				listener -> listener.executionSkipped(methodDescriptor, "Cannot run methods with unbound parameters - yet."),
+				listener -> listener.executionSkipped(methodDescriptor, "All parameters must have @ForAll annotation."),
 				methodDescriptor.getUniqueId(),
 				taskDescription
 			);

@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.properties.*;

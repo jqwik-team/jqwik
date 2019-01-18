@@ -5,6 +5,7 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;

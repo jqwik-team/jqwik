@@ -8,6 +8,7 @@ import java.util.stream.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
