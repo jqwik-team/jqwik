@@ -1,5 +1,6 @@
 package net.jqwik.engine.execution;
 
+import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
@@ -31,12 +32,19 @@ public class PropertyMethodExecutor {
 
 	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		try {
-			DomainContext domainContext = methodDescriptor.getDomainContext();
+			DomainContext domainContext = combineDomainContexts(methodDescriptor.getDomainContexts());
 			DomainContextFacadeImpl.currentContext.set(domainContext);
 			return executePropertyMethod(lifecycleSupplier, listener);
 		} finally {
 			DomainContextFacadeImpl.currentContext.remove();
 		}
+	}
+
+	private DomainContext combineDomainContexts(Set<DomainContext> domainContexts) {
+		if (domainContexts.isEmpty()) {
+			return DomainContext.global();
+		}
+		return new CombinedDomainContext(domainContexts);
 	}
 
 	private PropertyExecutionResult executePropertyMethod(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {

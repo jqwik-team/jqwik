@@ -6,5 +6,7 @@
       TypeArbitrary<T> useFields(String setterMethods ...)
 
 - Introduce repeatable annotation `@Domain(Class<? extends DomainContext>`
-  `DomainContext` classes should collect all arbitrary providers and arbitrary configurators
-  used in a property method. Default is a global context.
+  - Add user guide entry
+
+- Exceptions during method resolution should skip/fail only this method
+  not the full discovery process, see PropertyMethodResolver.createTestDescriptor()

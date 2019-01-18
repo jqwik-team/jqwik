@@ -6,6 +6,7 @@ import java.util.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
@@ -96,6 +97,22 @@ class PropertyMethodResolverTest {
 
 			assertThat(propertyMethodDescriptor.getTags())
 					  .containsExactlyInAnyOrder(TestTag.create("container-tag"), TestTag.create("property-tag"));
+		}
+
+		@Example
+		void propertyWithDomains() {
+			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withDomains", TestContainer.class);
+
+			assertThat(propertyMethodDescriptor.getDomainContexts())
+				.containsExactlyInAnyOrder(new Domain1(), new Domain2());
+		}
+
+		@Example
+		void propertyWithDomainInContainer() {
+			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withDomain1", ContainerWithDomain2.class);
+
+			assertThat(propertyMethodDescriptor.getDomainContexts())
+				.containsExactlyInAnyOrder(new Domain1(), new Domain2());
 		}
 
 		@Example
@@ -279,6 +296,12 @@ class PropertyMethodResolverTest {
 		@Report({Reporting.GENERATED, Reporting.FALSIFIED})
 		void withReportAnnotation() {
 		}
+
+		@Property
+		@Domain(Domain1.class)
+		@Domain(Domain2.class)
+		void withDomains() {
+		}
 	}
 
 	@Tag("container-tag")
@@ -290,4 +313,16 @@ class PropertyMethodResolverTest {
 		}
 
 	}
+
+	@Domain(Domain2.class)
+	private static class ContainerWithDomain2 {
+		@Property
+		@Domain(Domain1.class)
+		void withDomain1() {
+		}
+	}
+
+	private static class Domain1 extends AbstractDomainContextBase { }
+
+	private static class Domain2 extends AbstractDomainContextBase { }
 }

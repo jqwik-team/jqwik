@@ -10,31 +10,25 @@ import org.junit.platform.engine.support.descriptor.*;
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 
-abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
+import static net.jqwik.engine.descriptor.DiscoverySupport.*;
+
+abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements JqwikDescriptor {
 	private final Method targetMethod;
 	private final Class containerClass;
 	private final Set<TestTag> tags;
-	private final DomainContext domainContext;
+	private final Set<DomainContext> domainContexts;
 
 	AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class containerClass) {
 		super(uniqueId, determineDisplayName(targetMethod), MethodSource.from(targetMethod));
 		warnWhenJunitAnnotationsArePresent(targetMethod);
-		this.tags = determineTags(targetMethod);
-		this.domainContext = determineDomainContext(targetMethod);
+		this.tags = findTestTags(targetMethod);
+		this.domainContexts = findDomainContexts(targetMethod);
 		this.containerClass = containerClass;
 		this.targetMethod = targetMethod;
 	}
 
 	private void warnWhenJunitAnnotationsArePresent(Method targetMethod) {
 		DiscoverySupport.warnWhenJunitAnnotationsArePresent(targetMethod);
-	}
-
-	private Set<TestTag> determineTags(Method targetMethod) {
-		return DiscoverySupport.findTestTags(targetMethod);
-	}
-
-	private DomainContext determineDomainContext(Method targetMethod) {
-		return DiscoverySupport.determineDomainContext(targetMethod);
 	}
 
 	private static String determineDisplayName(Method targetMethod) {
@@ -53,8 +47,15 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor {
 		return getDisplayName();
 	}
 
-	public DomainContext getDomainContext() {
-		return domainContext;
+	@Override
+	public Set<DomainContext> getDomainContexts() {
+		Set<DomainContext> allContexts = new LinkedHashSet<>(domainContexts);
+		getParent().ifPresent(parentDescriptor -> {
+			if (parentDescriptor instanceof JqwikDescriptor) {
+				allContexts.addAll(((JqwikDescriptor) parentDescriptor).getDomainContexts());
+			}
+		});
+		return allContexts;
 	}
 
 	@Override

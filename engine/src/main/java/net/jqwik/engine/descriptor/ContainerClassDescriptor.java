@@ -6,9 +6,12 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
+import net.jqwik.api.domains.*;
 import net.jqwik.engine.discovery.predicates.*;
 
-public class ContainerClassDescriptor extends AbstractTestDescriptor {
+import static net.jqwik.engine.descriptor.DiscoverySupport.*;
+
+public class ContainerClassDescriptor extends AbstractTestDescriptor implements JqwikDescriptor {
 
 	private final static Predicate<Class<?>> isTopLevelClass = new IsTopLevelClass();
 	private final static Predicate<Class<?>> isContainerAGroup = new IsContainerAGroup();
@@ -16,21 +19,19 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	private final Class<?> containerClass;
 	private final boolean isGroup;
 	private final Set<TestTag> tags;
+	private Set<DomainContext> domainContexts;
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
 		super(uniqueId, determineDisplayName(containerClass), ClassSource.from(containerClass));
 		warnWhenJunitAnnotationsArePresent(containerClass);
-		this.tags = determineTags(containerClass);
+		this.tags = findTestTags(containerClass);
+		this.domainContexts = findDomainContexts(containerClass);
 		this.containerClass = containerClass;
 		this.isGroup = isGroup;
 	}
 
 	private void warnWhenJunitAnnotationsArePresent(Class<?> containerClass) {
 		DiscoverySupport.warnWhenJunitAnnotationsArePresent(containerClass);
-	}
-
-	private Set<TestTag> determineTags(Class<?> containerClass) {
-		return DiscoverySupport.findTestTags(containerClass);
 	}
 
 	private static String determineDisplayName(Class<?> containerClass) {
@@ -57,6 +58,17 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	}
 
 	@Override
+	public Set<DomainContext> getDomainContexts() {
+		Set<DomainContext> allContexts = new LinkedHashSet<>(domainContexts);
+		getParent().ifPresent(parentDescriptor -> {
+			if (parentDescriptor instanceof JqwikDescriptor) {
+				allContexts.addAll(((JqwikDescriptor) parentDescriptor).getDomainContexts());
+			}
+		});
+		return allContexts;
+	}
+
+	@Override
 	public Type getType() {
 		return Type.CONTAINER;
 	}
@@ -68,4 +80,5 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor {
 	public boolean isGroup() {
 		return isGroup;
 	}
+
 }

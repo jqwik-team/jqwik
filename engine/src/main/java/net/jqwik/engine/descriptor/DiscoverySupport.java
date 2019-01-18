@@ -34,6 +34,22 @@ public class DiscoverySupport {
 				   .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
 	}
 
+	public static Set<DomainContext> findDomainContexts(AnnotatedElement element) {
+		return findRepeatableAnnotations(element, Domain.class)
+				   .stream()
+				   .map(Domain::value)
+				   .distinct()
+				   .map(domainContextClass -> {
+					   try {
+						   DomainContext domainContext = ReflectionSupport.newInstance(domainContextClass);
+						   return domainContext;
+					   } catch (Throwable throwable) {
+						   String message = String.format("Cannot instantiate domain context @Domain(\"%s\") on [%s].", domainContextClass, element);
+						   throw new JqwikException(message);
+					   }
+				   }).collect(toSet());
+	}
+
 	public static String determineLabel(AnnotatedElement element, Supplier<String> defaultNameSupplier) {
 		return findAnnotation(element, Label.class)
 				   .map(Label::value)
@@ -59,15 +75,5 @@ public class DiscoverySupport {
 				LOG.warning(message);
 			}
 		}
-	}
-
-	public static DomainContext determineDomainContext(AnnotatedElement element) {
-		return findRepeatableAnnotations(element, Domain.class)
-				   .stream()
-				   .map(Domain::value)
-				   .map(domainContextClass -> {
-					   DomainContext domainContext = ReflectionSupport.newInstance(domainContextClass);
-					   return domainContext;
-				   }).findFirst().orElse(DomainContext.global());
 	}
 }
