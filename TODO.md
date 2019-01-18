@@ -8,5 +8,7 @@
 - Introduce repeatable annotation `@Domain(Class<? extends DomainContext>`
   - Add user guide entry
 
+- Add @API parts to generated javadoc
+
 - Exceptions during method resolution should skip/fail only this method
   not the full discovery process, see PropertyMethodResolver.createTestDescriptor()
