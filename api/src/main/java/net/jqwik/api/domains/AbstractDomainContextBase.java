@@ -59,7 +59,7 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 		registerProvider(provider);
 	}
 
-	protected void registerArbitrary(Class<?> registeredType, Arbitrary<?> arbitrary) {
+	protected <T> void registerArbitrary(Class<T> registeredType, Arbitrary<T> arbitrary) {
 		registerArbitrary(TypeUsage.of(registeredType), arbitrary);
 	}
 
