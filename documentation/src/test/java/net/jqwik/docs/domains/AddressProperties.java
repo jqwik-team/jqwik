@@ -7,8 +7,8 @@ class AddressProperties {
 
 	@Property
 	@Domain(AddressDomain.class)
-	void anyAddressCanBePrinted(@ForAll Address anAddress) {
-		System.out.println(anAddress);
+	@Report(Reporting.GENERATED)
+	void anAddressWithAStreetNumber(@ForAll Address anAddress, @ForAll int streetNumber) {
 	}
 
 	@Property
