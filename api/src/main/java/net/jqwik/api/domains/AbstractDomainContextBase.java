@@ -69,21 +69,4 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 		}
 		configurators.add(configurator);
 	}
-
-	@Override
-	// Domain contexts with same class are considered equal since they are only
-	// instantiated through default constructor
-	public boolean equals(Object obj) {
-		return this.getClass().equals(obj.getClass());
-	}
-
-	@Override
-	public int hashCode() {
-		return this.getClass().hashCode();
-	}
-
-	@Override
-	public String toString() {
-		return super.getClass().getName();
-	}
 }

@@ -104,7 +104,7 @@ class PropertyMethodResolverTest {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withDomains", TestContainer.class);
 
 			assertThat(propertyMethodDescriptor.getDomainContexts())
-				.containsExactlyInAnyOrder(new Domain1(), new Domain2());
+				.containsExactlyInAnyOrder(Domain1.class, Domain2.class);
 		}
 
 		@Example
@@ -112,7 +112,7 @@ class PropertyMethodResolverTest {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withDomain1", ContainerWithDomain2.class);
 
 			assertThat(propertyMethodDescriptor.getDomainContexts())
-				.containsExactlyInAnyOrder(new Domain1(), new Domain2());
+				.containsExactlyInAnyOrder(Domain1.class, Domain2.class);
 		}
 
 		@Example

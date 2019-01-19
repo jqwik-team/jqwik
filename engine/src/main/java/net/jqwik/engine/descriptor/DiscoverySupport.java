@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
-import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
@@ -25,8 +24,13 @@ public class DiscoverySupport {
 				   .map(Tag::value)
 				   .filter(tag -> {
 					   if (!TestTag.isValid(tag)) {
-						   String message = String.format("Invalid tag format in @Tag(\"%s\") on [%s].", tag, element);
-						   throw new JqwikException(message);
+						   String message = String.format(
+							   "Invalid tag format in @Tag(\"%s\") on [%s]. " +
+								   "Tag will be ignored",
+							   tag, element
+						   );
+						   LOG.warning(message);
+						   return false;
 					   }
 					   return true;
 				   })
@@ -34,20 +38,11 @@ public class DiscoverySupport {
 				   .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
 	}
 
-	public static Set<DomainContext> findDomainContexts(AnnotatedElement element) {
+	public static Set<Class<? extends DomainContext>> findDomainContexts(AnnotatedElement element) {
 		return findRepeatableAnnotations(element, Domain.class)
 				   .stream()
 				   .map(Domain::value)
-				   .distinct()
-				   .map(domainContextClass -> {
-					   try {
-						   DomainContext domainContext = ReflectionSupport.newInstance(domainContextClass);
-						   return domainContext;
-					   } catch (Throwable throwable) {
-						   String message = String.format("Cannot instantiate domain context @Domain(\"%s\") on [%s].", domainContextClass, element);
-						   throw new JqwikException(message);
-					   }
-				   }).collect(toSet());
+				   .collect(toSet());
 	}
 
 	public static String determineLabel(AnnotatedElement element, Supplier<String> defaultNameSupplier) {

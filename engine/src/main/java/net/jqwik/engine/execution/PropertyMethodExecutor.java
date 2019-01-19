@@ -3,10 +3,13 @@ package net.jqwik.engine.execution;
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
+import java.util.stream.*;
 
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
@@ -40,11 +43,29 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private DomainContext combineDomainContexts(Set<DomainContext> domainContexts) {
-		if (domainContexts.isEmpty()) {
+	private DomainContext combineDomainContexts(Set<Class<? extends DomainContext>> domainContextsClasses) {
+		if (domainContextsClasses.isEmpty()) {
 			return DomainContext.global();
 		}
+		Set<DomainContext> domainContexts =
+			domainContextsClasses
+				.stream()
+				.map(this::createDomainContext)
+				.collect(Collectors.toSet());
 		return new CombinedDomainContext(domainContexts);
+	}
+
+	private DomainContext createDomainContext(Class<? extends DomainContext> domainContextClass) {
+		try {
+			DomainContext domainContext = ReflectionSupport.newInstance(domainContextClass);
+			return domainContext;
+		} catch (Throwable throwable) {
+			String message = String.format(
+				"Cannot instantiate domain context @Domain(\"%s\") on [%s].",
+				domainContextClass, methodDescriptor.getTargetMethod()
+			);
+			throw new JqwikException(message);
+		}
 	}
 
 	private PropertyExecutionResult executePropertyMethod(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
