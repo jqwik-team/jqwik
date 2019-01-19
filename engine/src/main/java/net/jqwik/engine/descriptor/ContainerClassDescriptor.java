@@ -62,11 +62,7 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor implements 
 	public Set<Class<? extends DomainContext>> getDomainContexts() {
 		// TODO: Remove duplication with AbstractMethodDescriptor.getDomainContexts()
 		Set<Class<? extends DomainContext>> allContexts = new LinkedHashSet<>(domainContexts);
-		getParent().ifPresent(parentDescriptor -> {
-			if (parentDescriptor instanceof JqwikDescriptor) {
-				allContexts.addAll(((JqwikDescriptor) parentDescriptor).getDomainContexts());
-			}
-		});
+		getJqwikParent().ifPresent(parentDescriptor -> allContexts.addAll(parentDescriptor.getDomainContexts()));
 		return allContexts;
 	}
 

@@ -42,7 +42,7 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 		ArbitraryProvider provider = new ArbitraryProvider() {
 			@Override
 			public boolean canProvideFor(TypeUsage targetType) {
-				return targetType.canBeAssignedTo(registeredType);
+				return registeredType.canBeAssignedTo(targetType);
 			}
 
 			@Override
@@ -52,7 +52,7 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 
 			@Override
 			public int priority() {
-				// Replace jqwik's default providers
+				// Override jqwik's default providers
 				return 1;
 			}
 		};
