@@ -1,6 +1,7 @@
 package net.jqwik.engine.facades;
 
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -135,12 +136,21 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
+	public <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
+		return new LazyArbitrary<>(arbitrarySupplier);
+	}
+
+	@Override
 	public <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters) {
-		TypeUsage[] genericTypeParameters =
-			Arrays.stream(typeParameters)
-				  .map(TypeUsage::of)
-				  .toArray(TypeUsage[]::new);
-		return oneOfAllDefaults(TypeUsage.of(type, genericTypeParameters));
+		// Lazy evaluation is necessary since defaults only exist in context of a domain
+		// and domains are only present during execution of a property
+		return Arbitraries.lazy(() -> {
+			TypeUsage[] genericTypeParameters =
+				Arrays.stream(typeParameters)
+					  .map(TypeUsage::of)
+					  .toArray(TypeUsage[]::new);
+			return oneOfAllDefaults(TypeUsage.of(type, genericTypeParameters));
+		});
 	}
 
 	private static <T> Arbitrary<T> oneOfAllDefaults(TypeUsage typeUsage) {

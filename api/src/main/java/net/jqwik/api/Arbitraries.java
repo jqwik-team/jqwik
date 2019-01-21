@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.stateful.*;
 
@@ -36,7 +37,7 @@ public class Arbitraries {
 
 		public abstract <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all);
 
-		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple.Tuple2<Integer, T>> frequencies);
+		public abstract <T> RandomGenerator<T> randomFrequency(List<Tuple2<Integer, T>> frequencies);
 
 		public abstract <T> RandomGenerator<T> randomSamples(T[] samples);
 
@@ -46,7 +47,7 @@ public class Arbitraries {
 
 		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary);
 
-		public abstract <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies);
+		public abstract <T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies);
 
 		public abstract IntegerArbitrary integers();
 
@@ -69,6 +70,8 @@ public class Arbitraries {
 		public abstract CharacterArbitrary chars();
 
 		public abstract <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters);
+
+		public abstract <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier);
 	}
 
 	private Arbitraries() {
@@ -90,7 +93,7 @@ public class Arbitraries {
 	 * The generated values are unshrinkable.
 	 *
 	 * @param generator The generator function to be used for generating the values
-	 * @param <T> The type of values to generate
+	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> randomValue(Function<Random, T> generator) {
@@ -111,7 +114,7 @@ public class Arbitraries {
 	 * A generated value will be shrunk towards the start of the array.
 	 *
 	 * @param values The array of values to choose from
-	 * @param <T> The type of values to generate
+	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
@@ -124,7 +127,7 @@ public class Arbitraries {
 	 * A generated value will be shrunk towards the start of the list.
 	 *
 	 * @param values The list of values to choose from
-	 * @param <T> The type of values to generate
+	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> of(List<T> values) {
@@ -151,7 +154,7 @@ public class Arbitraries {
 	 * Create an arbitrary for enum values of type T.
 	 *
 	 * @param enumClass The enum class.
-	 * @param <T> The type of values to generate
+	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@SuppressWarnings("unchecked")
@@ -166,8 +169,8 @@ public class Arbitraries {
 	 * Create an arbitrary that will randomly choose between all given arbitraries of the same type T.
 	 *
 	 * @param first The first arbitrary to choose form
-	 * @param rest An array of arbitraries to choose from
-	 * @param <T> The type of values to generate
+	 * @param rest  An array of arbitraries to choose from
+	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
@@ -197,11 +200,11 @@ public class Arbitraries {
 	 * The probability distribution is weighted with the first parameter of the tuple.
 	 *
 	 * @param frequencies An array of tuples of which the first parameter gives the weight and the second the value.
-	 * @param <T> The type of values to generate
+	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
-	public static <T> Arbitrary<T> frequency(Tuple.Tuple2<Integer, T> ... frequencies) {
+	public static <T> Arbitrary<T> frequency(Tuple2<Integer, T>... frequencies) {
 		return frequency(Arrays.asList(frequencies));
 	}
 
@@ -210,14 +213,14 @@ public class Arbitraries {
 	 * The probability distribution is weighted with the first parameter of the tuple.
 	 *
 	 * @param frequencies A list of tuples of which the first parameter gives the weight and the second the value.
-	 * @param <T> The type of values to generate
+	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> frequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
+	public static <T> Arbitrary<T> frequency(List<Tuple2<Integer, T>> frequencies) {
 		List<T> values = frequencies.stream()
-			.filter(f -> f.get1() > 0)
-			.map(Tuple.Tuple2::get2)
-			.collect(Collectors.toList());
+									.filter(f -> f.get1() > 0)
+									.map(Tuple2::get2)
+									.collect(Collectors.toList());
 
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomFrequency(frequencies),
@@ -231,11 +234,11 @@ public class Arbitraries {
 	 * The probability distribution is weighted with the first parameter of the tuple.
 	 *
 	 * @param frequencies An array of tuples of which the first parameter gives the weight and the second the arbitrary.
-	 * @param <T> The type of values to generate
+	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
-	public static <T> Arbitrary<T> frequencyOf(Tuple.Tuple2<Integer, Arbitrary<T>> ... frequencies) {
+	public static <T> Arbitrary<T> frequencyOf(Tuple2<Integer, Arbitrary<T>>... frequencies) {
 		return frequencyOf(Arrays.asList(frequencies));
 	}
 
@@ -244,10 +247,10 @@ public class Arbitraries {
 	 * The probability distribution is weighted with the first parameter of the tuple.
 	 *
 	 * @param frequencies A list of tuples of which the first parameter gives the weight and the second the arbitrary.
-	 * @param <T> The type of values to generate
+	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> frequencyOf(List<Tuple.Tuple2<Integer, Arbitrary<T>>> frequencies) {
+	public static <T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies) {
 		// Simple flatMapping is not enough because of configurations
 		return ArbitrariesFacade.implementation.frequencyOf(frequencies);
 	}
@@ -348,7 +351,7 @@ public class Arbitraries {
 	 * towards the start of the samples.
 	 *
 	 * @param samples The array of sample values
-	 * @param <T> The type of values to generate
+	 * @param <T>     The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@SafeVarargs
@@ -363,7 +366,7 @@ public class Arbitraries {
 	 * Create an arbitrary that will always generate the same value.
 	 *
 	 * @param value The value to "generate"
-	 * @param <T> The type of values to generate
+	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> constant(T value) {
@@ -408,10 +411,9 @@ public class Arbitraries {
 	 * This is more or less the same mechanism that jqwik uses to find arbitraries for
 	 * property method parameters.
 	 *
-	 * @param type The type of the value to find an arbitrary for
+	 * @param type           The type of the value to find an arbitrary for
 	 * @param typeParameters The type parameters if type is a generic type
-	 * @param <T> The type of values to generate
-	 *
+	 * @param <T>            The type of values to generate
 	 * @return a new arbitrary instance
 	 * @throws CannotFindArbitraryException if there is no registered arbitrary provider to serve this type
 	 */
@@ -438,28 +440,28 @@ public class Arbitraries {
 
 	/**
 	 * Create an arbitrary that will evaluate arbitrarySupplier as soon as it is used for generating values.
-	 *
+	 * <p>
 	 * This is useful (and necessary) when arbitrary providing functions use other arbitrary providing functions
 	 * in a recursive way. Without the use of lazy() this would result in a stack overflow.
 	 *
 	 * @param arbitrarySupplier The supplier function being used to generate an arbitrary
-	 * @param <T> The type of values to generate
+	 * @param <T>               The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
-		return genSize -> arbitrarySupplier.get().generator(genSize);
+		return ArbitrariesFacade.implementation.lazy(arbitrarySupplier);
 	}
 
 	/**
 	 * Create an arbitrary by deterministic recursion.
-	 *
+	 * <p>
 	 * This is useful (and necessary) when arbitrary providing functions use other arbitrary providing functions
 	 * in a recursive way. Without the use of lazy() this would result in a stack overflow.
 	 *
-	 * @param base The supplier returning the recursion's base case
+	 * @param base  The supplier returning the recursion's base case
 	 * @param recur The function to extend the base case
 	 * @param depth The number of times to invoke recursion
-	 * @param <T> The type of values to generate
+	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	public static <T> Arbitrary<T> recursive(
@@ -477,7 +479,7 @@ public class Arbitraries {
 	 * Create an arbitrary to create a sequence of actions. Useful for stateful testing.
 	 *
 	 * @param actionArbitrary The arbitrary to generate individual actions.
-	 * @param <M> The type of actions to generate
+	 * @param <M>             The type of actions to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.0")
