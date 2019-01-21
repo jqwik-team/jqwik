@@ -13,7 +13,9 @@ public class AddressDomain extends AbstractDomainContextBase {
 	}
 
 	private Arbitrary<Address> addresses() {
-		return Combinators.combine(streets(), streetNumbers(), cities()).as(Address::new);
+		Arbitrary<Street> streets = Arbitraries.defaultFor(Street.class);
+		Arbitrary<City> cities = Arbitraries.defaultFor(City.class);
+		return Combinators.combine(streets, streetNumbers(), cities).as(Address::new);
 	}
 
 	private Arbitrary<City> cities() {
@@ -25,6 +27,8 @@ public class AddressDomain extends AbstractDomainContextBase {
 	}
 
 	private Arbitrary<Street> streets() {
-		return Arbitraries.strings().alpha().withChars(' ').ofMinLength(1).ofMaxLength(30).map(Street::new);
+		Arbitrary<String> streetName = Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(30);
+		Arbitrary<String> streetType = Arbitraries.of("St.", "Av.", "Rd.", "Bvd.");
+		return Combinators.combine(streetName, streetType).as((n, t) -> n + " " + t).map(Street::new);
 	}
 }
