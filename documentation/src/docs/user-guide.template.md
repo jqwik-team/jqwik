@@ -2202,6 +2202,29 @@ There are a few catches, though:
   self-made configurator. In this case the order of configurator application might play a role,
   which can be influenced by overriding the `order()` method of a configurator.
  
+## Domain and Domain Context
+
+Until now you have seen two ways to specify which arbitraries will be created for a given parameter:
+
+- Annotate the parameter with `@ForAll("providerMethod")`.
+- Register a global arbitrary provider that will be triggered by a known parameter signature.
+
+In many cases both approaches can be tedious to set up or require constant repetition of the same
+annotation value. There's another way that allows you to collect a number of arbitrary providers
+(and also arbitrary configurators) in a single place, called a `DomainContext` and tell 
+a property method or container to only use providers and configurators from those domain contexts
+that are explicitly stated in a `@Domain` annotation.
+
+TO BE CONTINUED...
+
+### Domain example: American Addresses
+
+Let's say that US postal addresses play a crucial role in the software that we're developing.
+That's why there are a couple of classes that represent important domain concepts: 
+`Street`, `State`, `City` and `Address`. Since we have to generate instances of those classes
+for out properties, we collect all arbitrary provision code in a class...
+ 
+
 
 ## Implement your own Arbitraries and Generators
 
