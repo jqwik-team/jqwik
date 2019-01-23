@@ -14,6 +14,6 @@ public class Address {
 
 	@Override
 	public String toString() {
-		return String.format("%s %s, %s", street, number, city);
+		return String.format("%s %s, %s", number, street, city);
 	}
 }
