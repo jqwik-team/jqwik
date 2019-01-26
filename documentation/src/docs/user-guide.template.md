@@ -2034,7 +2034,7 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 ```
 
 in file 
-[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/${gitVersion}/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
+[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
 with such an entry:
 
 ```
@@ -2150,7 +2150,7 @@ Mind that the implementation uses an abstract base class - instead of the interf
 which simplifies implementation if you're only interested in a single annotation.
 
 If you now 
-[register the implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
+[register the implementation](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
 the [following example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddProperties.java)
 will work:
 
@@ -2207,23 +2207,55 @@ There are a few catches, though:
 Until now you have seen two ways to specify which arbitraries will be created for a given parameter:
 
 - Annotate the parameter with `@ForAll("providerMethod")`.
-- Register a global arbitrary provider that will be triggered by a known parameter signature.
+- [Register a global arbitrary provider](#providing-default-arbitraries)
+  that will be triggered by a known parameter signature.
 
 In many cases both approaches can be tedious to set up or require constant repetition of the same
 annotation value. There's another way that allows you to collect a number of arbitrary providers
 (and also arbitrary configurators) in a single place, called a `DomainContext` and tell 
 a property method or container to only use providers and configurators from those domain contexts
-that are explicitly stated in a `@Domain` annotation.
+that are explicitly stated in a `@Domain(Class<? extends DomainContext>)` annotation.
 
-TO BE CONTINUED...
+As for ways to implement domain context classes have a look at
+[DomainContext](/docs/${docsVersion}/javadoc/net/jqwik/api/domains/DomainContext.html)
+and [AbstractDomainContextBase](/docs/${docsVersion}/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html).
+
 
 ### Domain example: American Addresses
 
 Let's say that US postal addresses play a crucial role in the software that we're developing.
 That's why there are a couple of classes that represent important domain concepts: 
 `Street`, `State`, `City` and `Address`. Since we have to generate instances of those classes
-for out properties, we collect all arbitrary provision code in a class...
- 
+for our properties, we collect all arbitrary provision code in
+[AmericanAddresses](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java).
+Now look at
+[this example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/domains/AddressProperties.java):
+
+```java
+class AddressProperties {
+
+	@Property
+	@Domain(AmericanAddresses.class)
+	void anAddressWithAStreetNumber(@ForAll Address anAddress, @ForAll int streetNumber) {
+	}
+
+	@Property
+	@Domain(AmericanAddresses.class)
+	void globalDomainNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
+	}
+
+	@Property
+	@Domain(DomainContext.Global.class)
+	@Domain(AmericanAddresses.class)
+	void globalDomainCanBeAdded(@ForAll Address anAddress, @ForAll String anyString) {
+	}
+}
+```
+
+The first two properties above will resolve their arbitraries solely through providers
+specified in `AmericanAddresses`, whereas the last one also uses the default (global) context.
+Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
+property method `globalDomainNotPresent` will fail with a `CannotFindArbitraryException`.
 
 
 ## Implement your own Arbitraries and Generators
@@ -2246,13 +2278,15 @@ In those - and maybe a few other cases - you can implement your own arbitrary.
 To get a feel for what a usable implementation looks like, you might start with
 having a look at some of the internal arbitraries:
 
-- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/${gitVersion}/src/main/java/net/jqwik/properties/arbitraries/DefaultBigDecimalArbitrary.java)
-- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/${gitVersion}/src/main/java/net/jqwik/properties/arbitraries/DefaultStringArbitrary.java)
+- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/${gitVersion}/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultBigDecimalArbitrary.java)
+- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/${gitVersion}/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultStringArbitrary.java)
 
 Under the hood, most arbitraries use `RandomGenerator`s for the final value generation. Since
 [`RandomGenerator`](/docs/${docsVersion}/javadoc/net/jqwik/api/RandomGenerator.html) 
 is a SAM type, most implementations are just lambda expression. 
-Start with the methods on [`RandomGenerators`]() to figure out how they work.
+Start with the methods on
+[`RandomGenerators`](https://github.com/jlink/jqwik/blob/${gitVersion}/engine/src/main/java/net/jqwik/engine/properties/arbitraries/randomized/RandomGenerators.java)
+to figure out how they work.
 
 Since the topic is rather complicated, a detailed example will one day be published 
 in a separate article...

@@ -5,7 +5,3 @@
       TypeArbitrary<T> useMutators(String setterMethods ...)
       TypeArbitrary<T> useFields(String fieldNames ...)
 
-- Introduce repeatable annotation `@Domain(Class<? extends DomainContext>`
-  - Add user guide entry
-
-- Add @API parts to generated javadoc

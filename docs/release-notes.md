@@ -9,12 +9,24 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.1.0-SNAPSHOT](#110-snapshot)
 - [1.0.0](#100)
 - [0.9.x](#09x)
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+
+## 1.1.0-SNAPSHOT
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+- Added capability to
+  [collect arbitrary providers and configurators in domains](/docs/snapshot/user-guide.html#domain-and-domain-context).
 
 ## 1.0.0
 
@@ -44,7 +56,7 @@ and
 - Added `@org.apiguardian.api.API` annotation to all types in `net.jqwik.api.**`
 
 - Added annotation `@Disabled` as a means to temporarily
-  [skip test methods or test containers](/docs/snapshot/user-guide.html#disabling-tests)
+  [skip test methods or test containers](/docs/1.0.0/user-guide.html#disabling-tests)
 
 ## 0.9.x
 

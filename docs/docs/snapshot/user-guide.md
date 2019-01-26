@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.0.0-SNAPSHOT
+title: jqwik User Guide - 1.1.0-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.0.0-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.0-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -89,6 +89,8 @@ title: jqwik User Guide - 1.0.0-SNAPSHOT
   - [Arbitrary Provider Priority](#arbitrary-provider-priority)
 - [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
   - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
+- [Domain and Domain Context](#domain-and-domain-context)
+  - [Domain example: American Addresses](#domain-example-american-addresses)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
@@ -141,7 +143,7 @@ repositories {
 ext.junitPlatformVersion = '1.3.2'
 ext.junitJupiterVersion = '5.3.2'
 
-ext.jqwikVersion = '1.0.0-SNAPSHOT'
+ext.jqwikVersion = '1.1.0-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -171,6 +173,14 @@ dependencies {
 }
 ```
 
+With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to simplify jqwik
+integration for standard users. 
+If you want to be more explicit about the real dependencies you can replace this dependency with
+
+```
+    testCompile "net.jqwik:jqwik-api:${jqwikVersion}"
+    testRuntime "net.jqwik:jqwik-engine:${jqwikVersion}"
+```
 
 See [the Gradle section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
 for more details on how to configure Gradle for the JUnit 5 platform.
@@ -209,7 +219,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>0.9.3</version>
+        <version>1.1.0-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -235,7 +245,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-0.9.3.jar`
+- `jqwik-1.1.0-SNAPSHOT.jar`
 - `junit-platform-engine-1.3.2.jar`
 - `junit-platform-commons-1.3.2.jar`
 - `opentest4j-1.1.1.jar`
@@ -285,7 +295,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.0.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.1.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -2111,7 +2121,7 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 ```
 
 in file 
-[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
+[`META-INF/services/net.jqwik.api.providers.ArbitraryProvider`](https://github.com/jlink/jqwik/blob/master/documentation/src/test/resources/META-INF/services/net.jqwik.api.providers.ArbitraryProvider)
 with such an entry:
 
 ```
@@ -2227,7 +2237,7 @@ Mind that the implementation uses an abstract base class - instead of the interf
 which simplifies implementation if you're only interested in a single annotation.
 
 If you now 
-[register the implementation](https://github.com/jlink/jqwik/blob/master/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
+[register the implementation](https://github.com/jlink/jqwik/blob/master/documentation/src/test/resources/META-INF/services/net.jqwik.api.configurators.ArbitraryConfigurator),
 the [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/arbitraryconfigurator/OddProperties.java)
 will work:
 
@@ -2279,6 +2289,61 @@ There are a few catches, though:
   self-made configurator. In this case the order of configurator application might play a role,
   which can be influenced by overriding the `order()` method of a configurator.
  
+## Domain and Domain Context
+
+Until now you have seen two ways to specify which arbitraries will be created for a given parameter:
+
+- Annotate the parameter with `@ForAll("providerMethod")`.
+- [Register a global arbitrary provider](#providing-default-arbitraries)
+  that will be triggered by a known parameter signature.
+
+In many cases both approaches can be tedious to set up or require constant repetition of the same
+annotation value. There's another way that allows you to collect a number of arbitrary providers
+(and also arbitrary configurators) in a single place, called a `DomainContext` and tell 
+a property method or container to only use providers and configurators from those domain contexts
+that are explicitly stated in a `@Domain(Class<? extends DomainContext>)` annotation.
+
+As for ways to implement domain context classes have a look at
+[DomainContext](/docs/snapshot/javadoc/net/jqwik/api/domains/DomainContext.html)
+and [AbstractDomainContextBase](/docs/snapshot/javadoc/net/jqwik/api/domains/AbstractDomainContextBase.html).
+
+
+### Domain example: American Addresses
+
+Let's say that US postal addresses play a crucial role in the software that we're developing.
+That's why there are a couple of classes that represent important domain concepts: 
+`Street`, `State`, `City` and `Address`. Since we have to generate instances of those classes
+for our properties, we collect all arbitrary provision code in
+[AmericanAddresses](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/domains/AmericanAddresses.java).
+Now look at
+[this example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/domains/AddressProperties.java):
+
+```java
+class AddressProperties {
+
+	@Property
+	@Domain(AmericanAddresses.class)
+	void anAddressWithAStreetNumber(@ForAll Address anAddress, @ForAll int streetNumber) {
+	}
+
+	@Property
+	@Domain(AmericanAddresses.class)
+	void globalDomainNotPresent(@ForAll Address anAddress, @ForAll String anyString) {
+	}
+
+	@Property
+	@Domain(DomainContext.Global.class)
+	@Domain(AmericanAddresses.class)
+	void globalDomainCanBeAdded(@ForAll Address anAddress, @ForAll String anyString) {
+	}
+}
+```
+
+The first two properties above will resolve their arbitraries solely through providers
+specified in `AmericanAddresses`, whereas the last one also uses the default (global) context.
+Since `AmericanAddresses` does not configure any arbitrary provider for `String` parameters,
+property method `globalDomainNotPresent` will fail with a `CannotFindArbitraryException`.
+
 
 ## Implement your own Arbitraries and Generators
 
@@ -2300,13 +2365,15 @@ In those - and maybe a few other cases - you can implement your own arbitrary.
 To get a feel for what a usable implementation looks like, you might start with
 having a look at some of the internal arbitraries:
 
-- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultBigDecimalArbitrary.java)
-- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/master/src/main/java/net/jqwik/properties/arbitraries/DefaultStringArbitrary.java)
+- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultBigDecimalArbitrary.java)
+- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultStringArbitrary.java)
 
 Under the hood, most arbitraries use `RandomGenerator`s for the final value generation. Since
 [`RandomGenerator`](/docs/snapshot/javadoc/net/jqwik/api/RandomGenerator.html) 
 is a SAM type, most implementations are just lambda expression. 
-Start with the methods on [`RandomGenerators`]() to figure out how they work.
+Start with the methods on
+[`RandomGenerators`](https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/randomized/RandomGenerators.java)
+to figure out how they work.
 
 Since the topic is rather complicated, a detailed example will one day be published 
 in a separate article...
@@ -2467,4 +2534,4 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#100-snapshot).
+Read this version's [release notes](/release-notes.html#110-snapshot).
