@@ -1,0 +1,56 @@
+package net.jqwik.engine.properties.arbitraries;
+
+import java.util.*;
+
+import org.assertj.core.api.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.providers.*;
+import net.jqwik.engine.properties.*;
+
+class DefaultTypeArbitraryTests {
+
+	@Example
+	void useSingleStaticMethodWithoutParameter() throws NoSuchMethodException {
+
+		TypeArbitrary<String> typeArbitrary =
+			new DefaultTypeArbitrary<>(String.class)
+				.use(getClass().getDeclaredMethod("stringFromNoParams"));
+
+		ArbitraryTestHelper.assertAllGenerated(
+			typeArbitrary.generator(1000),
+			aString -> {return aString.equals("a string");}
+		);
+	}
+
+	@Example
+	void nonStaticMethodsAreNotSupported() {
+
+		Assertions.assertThatThrownBy(
+			() -> new DefaultTypeArbitrary<>(String.class)
+					  .use(getClass().getDeclaredMethod("nonStaticMethod"))
+		).isInstanceOf(JqwikException.class);
+	}
+
+	@Example
+	void creatorWithWrongReturnTypeIsNotSupported() {
+		Assertions.assertThatThrownBy(
+			() -> new DefaultTypeArbitrary<>(TypeUsage.of(List.class, TypeUsage.of(int.class)))
+					  .use(getClass().getDeclaredMethod("listOfStringsFromNoParams"))
+		).isInstanceOf(JqwikException.class);
+	}
+
+	private static String stringFromNoParams() {
+		return "a string";
+	}
+
+	private static List<String> listOfStringsFromNoParams() {
+		return Arrays.asList("a", "b");
+	}
+
+	private String nonStaticMethod() {
+		return "a string";
+	}
+
+}
