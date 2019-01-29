@@ -9,7 +9,22 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.*;
 
+import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
+
 class DefaultTypeArbitraryTests {
+
+	@Example
+	void useConstructorWithoutParameter() throws NoSuchMethodException {
+
+		TypeArbitrary<String> typeArbitrary =
+			new DefaultTypeArbitrary<>(String.class)
+				.use(String.class.getConstructor());
+
+		assertAllGenerated(
+			typeArbitrary.generator(1000),
+			aString -> {return aString.equals("");}
+		);
+	}
 
 	@Example
 	void useSingleStaticMethodWithoutParameter() throws NoSuchMethodException {
@@ -18,11 +33,30 @@ class DefaultTypeArbitraryTests {
 			new DefaultTypeArbitrary<>(String.class)
 				.use(getClass().getDeclaredMethod("stringFromNoParams"));
 
-		ArbitraryTestHelper.assertAllGenerated(
+		assertAllGenerated(
 			typeArbitrary.generator(1000),
 			aString -> {return aString.equals("a string");}
 		);
 	}
+
+	@Example
+	void twoCreatorsAreUsedRandomly() throws NoSuchMethodException {
+
+		TypeArbitrary<String> typeArbitrary =
+			new DefaultTypeArbitrary<>(String.class)
+				.use(getClass().getDeclaredMethod("stringFromNoParams"))
+				.use(String.class.getConstructor());
+
+		RandomGenerator<String> generator = typeArbitrary.generator(1000);
+
+		assertAllGenerated(
+			generator,
+			aString -> aString.equals("") || aString.equals("a string")
+		);
+
+		assertAtLeastOneGeneratedOf(generator, "", "a string");
+	}
+
 
 	@Example
 	void nonStaticMethodsAreNotSupported() {
