@@ -2,6 +2,8 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -67,25 +69,31 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	private Arbitrary<T> createArbitrary(Executable creator) {
-		return Arbitraries.fromGenerator(generatorForCreator(creator));
+		List<Arbitrary<Object>> parameterArbitraries = Arrays.stream(creator.getAnnotatedParameterTypes())
+			.map( annotatedType -> Arbitraries.defaultFor(TypeUsage.forType(annotatedType.getType())))
+			.collect(Collectors.toList());
+
+		Function<List<Object>, T> combinator = paramList -> combinator(creator).apply(paramList.toArray());
+		Arbitrary<T> combinedArbitrary = Combinators.combine(parameterArbitraries).as(combinator);
+
+		return new IgnoreGenerationExceptions<>(combinedArbitrary);
 	}
 
-	private RandomGenerator<T> generatorForCreator(Executable creator) {
+	private Function<Object[], T> combinator(Executable creator) {
 		if (creator instanceof Method) {
-			return generatorForMethod((Method) creator);
+			return combinatorForMethod((Method) creator);
 		}
 		if (creator instanceof Constructor) {
-			return generatorForConstructor((Constructor) creator);
+			return combinatorForConstructor((Constructor) creator);
 		}
 		throw new JqwikException(String.format("Creator %s is not supported", creator));
 	}
 
-	private RandomGenerator<T> generatorForMethod(Method method) {
+	private Function<Object[], T> combinatorForMethod(Method method) {
 		method.setAccessible(true);
-		return random -> {
+		return params -> {
 			try {
-				T value = (T) method.invoke(null);
-				return Shrinkable.unshrinkable(value);
+				return  (T) method.invoke(null, params);
 			} catch (Exception e) {
 				// TODO: Ignore this instance
 				throw new RuntimeException(e);
@@ -93,16 +101,16 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		};
 	}
 
-	private RandomGenerator<T> generatorForConstructor(Constructor constructor) {
+	private Function<Object[], T> combinatorForConstructor(Constructor constructor) {
 		constructor.setAccessible(true);
-		return random -> {
+		return params -> {
 			try {
-				T value = (T) constructor.newInstance();
-				return Shrinkable.unshrinkable(value);
+				return  (T) constructor.newInstance(params);
 			} catch (Exception e) {
 				// TODO: Ignore this instance
 				throw new RuntimeException(e);
 			}
 		};
 	}
+
 }

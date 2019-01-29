@@ -26,7 +26,9 @@ and
 </p>
 
 - Added capability to
-  [collect arbitrary providers and configurators in domains](/docs/snapshot/user-guide.html#domain-and-domain-context).
+  [collect arbitrary providers and configurators in domains](/docs/snapshot/user-guide.html#domain-and-domain-context)
+
+- Added `Arbitraries.defaultFor(TypeUsage typeUsage)`
 
 ## 1.0.0
 

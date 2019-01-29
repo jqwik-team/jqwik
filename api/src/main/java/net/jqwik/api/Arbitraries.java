@@ -8,6 +8,7 @@ import org.apiguardian.api.*;
 
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.providers.*;
 import net.jqwik.api.stateful.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -70,6 +71,8 @@ public class Arbitraries {
 		public abstract CharacterArbitrary chars();
 
 		public abstract <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>[] typeParameters);
+
+		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage);
 
 		public abstract <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier);
 	}
@@ -419,6 +422,21 @@ public class Arbitraries {
 	 */
 	public static <T> Arbitrary<T> defaultFor(Class<T> type, Class<?>... typeParameters) {
 		return ArbitrariesFacade.implementation.defaultFor(type, typeParameters);
+	}
+
+	/**
+	 * Find a registered arbitrary that will be used to generate values of type T.
+	 * All default arbitrary providers and all registered arbitrary providers are considered.
+	 * This is more or less the same mechanism that jqwik uses to find arbitraries for
+	 * property method parameters.
+	 *
+	 * @param typeUsage      The type of the value to find an arbitrary for
+	 * @param <T>            The type of values to generate
+	 * @return a new arbitrary instance
+	 * @throws CannotFindArbitraryException if there is no registered arbitrary provider to serve this type
+	 */
+	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
+		return ArbitrariesFacade.implementation.defaultFor(typeUsage);
 	}
 
 	private static <T> Arbitrary<T> fromGenerators(
