@@ -7,7 +7,6 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.properties.*;
 
 import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
 
@@ -57,10 +56,18 @@ class DefaultTypeArbitraryTests {
 		assertAtLeastOneGeneratedOf(generator, "", "a string");
 	}
 
+	@Example
+	void typeArbitraryWithoutUseFailsOnGeneration() throws NoSuchMethodException {
+		TypeArbitrary<String> typeArbitrary = new DefaultTypeArbitrary<>(String.class);
+
+		Assertions.assertThatThrownBy(
+			() -> typeArbitrary.generator(1000)
+		).isInstanceOf(JqwikException.class);
+	}
+
 
 	@Example
 	void nonStaticMethodsAreNotSupported() {
-
 		Assertions.assertThatThrownBy(
 			() -> new DefaultTypeArbitrary<>(String.class)
 					  .use(getClass().getDeclaredMethod("nonStaticMethod"))

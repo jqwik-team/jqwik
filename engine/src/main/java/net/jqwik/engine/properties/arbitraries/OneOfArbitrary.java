@@ -37,4 +37,12 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 		});
 		return this;
 	}
+
+	protected List<Arbitrary<T>> arbitraries() {
+		return all;
+	}
+
+	protected void addArbitrary(Arbitrary<T> arbitrary) {
+		all.add(arbitrary);
+	}
 }

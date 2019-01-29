@@ -2,16 +2,13 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.support.*;
 
-public class DefaultTypeArbitrary<T> extends AbstractArbitraryBase implements TypeArbitrary<T> {
+public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeArbitrary<T> {
 
 	private TypeUsage targetType;
 	private final List<Executable> creators = new ArrayList<>();
@@ -21,15 +18,15 @@ public class DefaultTypeArbitrary<T> extends AbstractArbitraryBase implements Ty
 	}
 
 	public DefaultTypeArbitrary(TypeUsage targetType) {
+		super(Collections.emptyList());
 		this.targetType = targetType;
 	}
 
 	@Override
 	public TypeArbitrary<T> use(Executable creator) {
 		checkCreator(creator);
-		DefaultTypeArbitrary<T> clone = typedClone();
-		clone.creators.add(creator);
-		return clone;
+		addArbitrary(createArbitrary(creator));
+		return this;
 	}
 
 	private void checkCreator(Executable creator) {
@@ -62,25 +59,28 @@ public class DefaultTypeArbitrary<T> extends AbstractArbitraryBase implements Ty
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
-		if (creators.isEmpty()) {
-			String message = String.format("TypeArbitrary<%s> has no creator to use.", targetType);
+		if (arbitraries().isEmpty()) {
+			String message = String.format("TypeArbitrary<%s> has no arbitraries to choose from.", targetType);
 			throw new JqwikException(message);
 		}
-		List<RandomGenerator<T>> all = creators.stream().map(c -> generatorForCreator(c, genSize)).collect(Collectors.toList());
-		return RandomGenerators.choose(all).flatMap(Function.identity());
+		return super.generator(genSize);
 	}
 
-	private RandomGenerator<T> generatorForCreator(Executable creator, int genSize) {
+	private Arbitrary<T> createArbitrary(Executable creator) {
+		return Arbitraries.fromGenerator(generatorForCreator(creator));
+	}
+
+	private RandomGenerator<T> generatorForCreator(Executable creator) {
 		if (creator instanceof Method) {
-			return generatorForMethod((Method) creator, genSize);
+			return generatorForMethod((Method) creator);
 		}
 		if (creator instanceof Constructor) {
-			return generatorForConstructor((Constructor) creator, genSize);
+			return generatorForConstructor((Constructor) creator);
 		}
 		throw new JqwikException(String.format("Creator %s is not supported", creator));
 	}
 
-	private RandomGenerator<T> generatorForMethod(Method method, int genSize) {
+	private RandomGenerator<T> generatorForMethod(Method method) {
 		method.setAccessible(true);
 		return random -> {
 			try {
@@ -93,7 +93,7 @@ public class DefaultTypeArbitrary<T> extends AbstractArbitraryBase implements Ty
 		};
 	}
 
-	private RandomGenerator<T> generatorForConstructor(Constructor constructor, int genSize) {
+	private RandomGenerator<T> generatorForConstructor(Constructor constructor) {
 		constructor.setAccessible(true);
 		return random -> {
 			try {
