@@ -11,80 +11,108 @@ import net.jqwik.engine.properties.*;
 
 import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
 
+@Group
+@Label("DefaultTypeArbitrary")
 class DefaultTypeArbitraryTests {
 
-	@Example
-	void useConstructorWithoutParameter() throws NoSuchMethodException {
+	@Group
+	class DirectUses {
 
-		TypeArbitrary<String> typeArbitrary =
-			new DefaultTypeArbitrary<>(String.class)
-				.use(String.class.getConstructor());
+		@Example
+		void useConstructorWithoutParameter() throws NoSuchMethodException {
 
-		assertAllGenerated(
-			typeArbitrary.generator(1000),
-			aString -> {return aString.equals("");}
-		);
-	}
+			TypeArbitrary<String> typeArbitrary =
+				new DefaultTypeArbitrary<>(String.class)
+					.use(String.class.getConstructor());
 
-	@Example
-	void useSingleStaticMethodWithoutParameter() throws NoSuchMethodException {
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aString -> {return aString.equals("");}
+			);
+		}
 
-		TypeArbitrary<String> typeArbitrary =
-			new DefaultTypeArbitrary<>(String.class)
-				.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
+		@Example
+		void useSingleFactoryWithoutParameter() throws NoSuchMethodException {
 
-		assertAllGenerated(
-			typeArbitrary.generator(1000),
-			aString -> {return aString.equals("a string");}
-		);
-	}
+			TypeArbitrary<String> typeArbitrary =
+				new DefaultTypeArbitrary<>(String.class)
+					.use(Samples.class.getDeclaredMethod("stringFromNoParams"));
 
-	@Example
-	void twoCreatorsAreUsedRandomly() throws NoSuchMethodException {
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aString -> {return aString.equals("a string");}
+			);
+		}
 
-		TypeArbitrary<String> typeArbitrary =
-			new DefaultTypeArbitrary<>(String.class)
-				.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
-				.use(String.class.getConstructor());
+		@Example
+		void twoCreatorsAreUsedRandomly() throws NoSuchMethodException {
 
-		RandomGenerator<String> generator = typeArbitrary.generator(1000);
+			TypeArbitrary<String> typeArbitrary =
+				new DefaultTypeArbitrary<>(String.class)
+					.use(Samples.class.getDeclaredMethod("stringFromNoParams"))
+					.use(String.class.getConstructor());
 
-		assertAllGenerated(
-			generator,
-			aString -> aString.equals("") || aString.equals("a string")
-		);
+			RandomGenerator<String> generator = typeArbitrary.generator(1000);
 
-		assertAtLeastOneGeneratedOf(generator, "", "a string");
-	}
+			assertAllGenerated(
+				generator,
+				aString -> aString.equals("") || aString.equals("a string")
+			);
 
-	@Example
-	@Disabled("currently failing") //TODO: fix
-	void exceptionsDuringCreationAreIgnored() throws NoSuchMethodException {
-		TypeArbitrary<String> typeArbitrary =
-			new DefaultTypeArbitrary<>(String.class)
-				.use(Samples.class.getDeclaredMethod("stringWithRandomException"));
+			assertAtLeastOneGeneratedOf(generator, "", "a string");
+		}
 
-		RandomGenerator<String> generator = typeArbitrary.generator(1000);
+		@Example
+		void exceptionsDuringCreationAreIgnored() throws NoSuchMethodException {
+			TypeArbitrary<String> typeArbitrary =
+				new DefaultTypeArbitrary<>(String.class)
+					.use(Samples.class.getDeclaredMethod("stringWithRandomException"));
 
-		assertAllGenerated(
-			generator,
-			aString -> {
-				return aString.equals("a string");
-			}
-		);
-	}
+			RandomGenerator<String> generator = typeArbitrary.generator(1000);
 
-	@Example
-	void useConstructorWithOneParameter() throws NoSuchMethodException {
+			assertAllGenerated(
+				generator,
+				aString -> {
+					return aString.equals("a string");
+				}
+			);
+		}
 
-		TypeArbitrary<Person> typeArbitrary =
-			new DefaultTypeArbitrary<>(Person.class)
-				.use(Person.class.getConstructor(String.class));
+		@Example
+		void useConstructorWithOneParameter() throws NoSuchMethodException {
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class)
+					.use(Person.class.getConstructor(String.class));
 
-		assertAllGenerated(
-			typeArbitrary.generator(1000),
-			aPerson -> aPerson.toString().length() <= 10
-		);
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.toString().length() <= 1000
+			);
+		}
+
+		@Example
+		void useConstructorWithTwoParameters() throws NoSuchMethodException {
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class)
+					.use(Person.class.getConstructor(String.class, int.class));
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.toString().length() <= 1000
+			);
+		}
+
+		@Example
+		void useFactoryMethodWithTwoParameters() throws NoSuchMethodException {
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class)
+					.use(Person.class.getDeclaredMethod("create", int.class, String.class));
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.toString().length() <= 1000
+			);
+		}
 	}
 
 	@Group
@@ -111,6 +139,18 @@ class DefaultTypeArbitraryTests {
 			Assertions.assertThatThrownBy(
 				() -> new DefaultTypeArbitrary<>(TypeUsage.of(List.class, TypeUsage.of(int.class)))
 						  .use(Samples.class.getDeclaredMethod("listOfStringsFromNoParams"))
+			).isInstanceOf(JqwikException.class);
+		}
+
+		@Example
+		void creatorWithParameterThatHasNoDefaultArbitraryWillThrowOnCreation() throws NoSuchMethodException {
+			TypeArbitrary<Customer> typeArbitrary =
+				new DefaultTypeArbitrary<>(Customer.class)
+					.use(Customer.class.getConstructor(Person.class));
+
+			RandomGenerator<Customer> generator = typeArbitrary.generator(1000);
+			Assertions.assertThatThrownBy(
+				() -> generator.next(SourceOfRandomness.current())
 			).isInstanceOf(JqwikException.class);
 		}
 
@@ -141,8 +181,16 @@ class DefaultTypeArbitraryTests {
 	private static class Person {
 		private final String name;
 
+		public static Person create(int age, String name) {
+			return new Person(name, age);
+		}
+
+		public Person(String name, int age) {
+			this(name);
+		}
+
 		public Person(String name) {
-			if (name.length() > 10) name = name.substring(0, 10);
+			if (name.length() > 1000) throw new IllegalArgumentException();
 			this.name = name;
 		}
 
@@ -150,6 +198,10 @@ class DefaultTypeArbitraryTests {
 		public String toString() {
 			return name;
 		}
+	}
+
+	private static class Customer {
+		public Customer(Person person) { }
 	}
 
 }

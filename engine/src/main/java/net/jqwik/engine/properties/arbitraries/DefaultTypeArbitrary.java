@@ -69,14 +69,13 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	private Arbitrary<T> createArbitrary(Executable creator) {
-		List<Arbitrary<Object>> parameterArbitraries = Arrays.stream(creator.getAnnotatedParameterTypes())
-			.map( annotatedType -> Arbitraries.defaultFor(TypeUsage.forType(annotatedType.getType())))
-			.collect(Collectors.toList());
+		List<Arbitrary<Object>> parameterArbitraries =
+			Arrays.stream(creator.getAnnotatedParameterTypes())
+				  .map(annotatedType -> Arbitraries.defaultFor(TypeUsage.forType(annotatedType.getType())))
+				  .collect(Collectors.toList());
 
 		Function<List<Object>, T> combinator = paramList -> combinator(creator).apply(paramList.toArray());
-		Arbitrary<T> combinedArbitrary = Combinators.combine(parameterArbitraries).as(combinator);
-
-		return new IgnoreGenerationExceptions<>(combinedArbitrary);
+		return Combinators.combine(parameterArbitraries).as(combinator);
 	}
 
 	private Function<Object[], T> combinator(Executable creator) {
@@ -91,26 +90,30 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	private Function<Object[], T> combinatorForMethod(Method method) {
 		method.setAccessible(true);
-		return params -> {
-			try {
-				return  (T) method.invoke(null, params);
-			} catch (Exception e) {
-				// TODO: Ignore this instance
-				throw new RuntimeException(e);
-			}
-		};
+		return params -> generateNext(params, p -> method.invoke(null, p));
 	}
 
 	private Function<Object[], T> combinatorForConstructor(Constructor constructor) {
 		constructor.setAccessible(true);
-		return params -> {
+		return params -> generateNext(params, p -> constructor.newInstance(p));
+	}
+
+	private T generateNext(Object[] params, Combinator combinator) {
+		long count = 0;
+		while (count++ <= 1000) {
 			try {
-				return  (T) constructor.newInstance(params);
-			} catch (Exception e) {
-				// TODO: Ignore this instance
-				throw new RuntimeException(e);
+				//noinspection unchecked
+				return (T) combinator.combine(params);
+			} catch (Throwable ignored) {
 			}
-		};
+		}
+		String message = String.format("TypeArbitrary<%s>: Trying to generate object failed too often", targetType);
+		throw new JqwikException(message);
+	}
+
+	@FunctionalInterface
+	private interface Combinator {
+		Object combine(Object[] params) throws Throwable;
 	}
 
 }
