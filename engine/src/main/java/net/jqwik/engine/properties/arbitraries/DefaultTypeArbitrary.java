@@ -12,22 +12,28 @@ import net.jqwik.engine.support.*;
 
 public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeArbitrary<T> {
 
-	private TypeUsage targetType;
-	private final List<Executable> creators = new ArrayList<>();
+	private Class<T> targetClass;
+
+	private final Set<Executable> creators = new HashSet<>();
 
 	public DefaultTypeArbitrary(Class<T> targetClass) {
-		this(TypeUsage.of(targetClass));
-	}
-
-	public DefaultTypeArbitrary(TypeUsage targetType) {
 		super(Collections.emptyList());
-		this.targetType = targetType;
+		this.targetClass = targetClass;
 	}
 
 	@Override
 	public TypeArbitrary<T> use(Executable creator) {
+		if (creators.contains(creator)) {
+			return this;
+		}
 		checkCreator(creator);
 		addArbitrary(createArbitrary(creator));
+		creators.add(creator);
+		return this;
+	}
+
+	@Override
+	public TypeArbitrary<T> usePublicConstructors() {
 		return this;
 	}
 
@@ -45,8 +51,8 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	private void checkReturnType(Executable creator) {
 		TypeUsage returnType = TypeUsage.forType(creator.getAnnotatedReturnType().getType());
-		if (!returnType.canBeAssignedTo(targetType)) {
-			throw new JqwikException(String.format("Creator %s should return type %s", creator, targetType));
+		if (!returnType.isAssignableFrom(targetClass)) {
+			throw new JqwikException(String.format("Creator %s should return type %s", creator, targetClass.getName()));
 		}
 	}
 
@@ -62,7 +68,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
 		if (arbitraries().isEmpty()) {
-			String message = String.format("TypeArbitrary<%s> has no arbitraries to choose from.", targetType);
+			String message = String.format("TypeArbitrary<%s> has no arbitraries to choose from.", targetClass.getName());
 			throw new JqwikException(message);
 		}
 		return super.generator(genSize);
@@ -95,7 +101,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	private Function<Object[], T> combinatorForConstructor(Constructor constructor) {
 		constructor.setAccessible(true);
-		return params -> generateNext(params, p -> constructor.newInstance(p));
+		return params -> generateNext(params, constructor::newInstance);
 	}
 
 	private T generateNext(Object[] params, Combinator combinator) {
@@ -107,8 +113,12 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 			} catch (Throwable ignored) {
 			}
 		}
-		String message = String.format("TypeArbitrary<%s>: Trying to generate object failed too often", targetType);
+		String message = String.format("TypeArbitrary<%s>: Trying to generate object failed too often", targetClass.getName());
 		throw new JqwikException(message);
+	}
+
+	public int countCreators() {
+		return creators.size();
 	}
 
 	@FunctionalInterface

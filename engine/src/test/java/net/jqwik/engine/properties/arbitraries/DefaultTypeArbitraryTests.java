@@ -1,12 +1,9 @@
 package net.jqwik.engine.properties.arbitraries;
 
-import java.util.*;
-
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.*;
 
 import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
@@ -113,6 +110,40 @@ class DefaultTypeArbitraryTests {
 				aPerson -> aPerson.toString().length() <= 1000
 			);
 		}
+
+		@SuppressWarnings("unchecked")
+		@Example
+		void reusingCreatorsIsIgnored() throws NoSuchMethodException {
+
+			DefaultTypeArbitrary<String> typeArbitrary =
+				(DefaultTypeArbitrary) new DefaultTypeArbitrary<>(String.class)
+										   .use(String.class.getConstructor())
+										   .use(String.class.getConstructor())
+										   .use(Samples.class.getDeclaredMethod("stringFromNoParams"))
+										   .use(Samples.class.getDeclaredMethod("stringFromNoParams"));
+
+			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
+		}
+	}
+
+	@Group
+	class UseConstructors {
+
+		@Example
+		@Disabled
+		void publicConstructorsOnly() {
+			TypeArbitrary<MyDomain> typeArbitrary =
+				new DefaultTypeArbitrary<>(MyDomain.class).usePublicConstructors();
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> {
+					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
+					Assertions.assertThat(aPerson.int1).isEqualTo(aPerson.int2);
+				}
+			);
+		}
+
 	}
 
 	@Group
@@ -137,8 +168,8 @@ class DefaultTypeArbitraryTests {
 		@Example
 		void creatorWithWrongReturnTypeIsNotSupported() {
 			Assertions.assertThatThrownBy(
-				() -> new DefaultTypeArbitrary<>(TypeUsage.of(List.class, TypeUsage.of(int.class)))
-						  .use(Samples.class.getDeclaredMethod("listOfStringsFromNoParams"))
+				() -> new DefaultTypeArbitrary<>(int.class)
+						  .use(Samples.class.getDeclaredMethod("stringFromNoParams"))
 			).isInstanceOf(JqwikException.class);
 		}
 
@@ -167,10 +198,6 @@ class DefaultTypeArbitraryTests {
 				throw new AssertionError();
 			}
 			return "a string";
-		}
-
-		private static List<String> listOfStringsFromNoParams() {
-			return Arrays.asList("a", "b");
 		}
 
 		private String nonStaticMethod() {
@@ -202,6 +229,32 @@ class DefaultTypeArbitraryTests {
 
 	private static class Customer {
 		public Customer(Person person) { }
+	}
+
+	private static class MyDomain {
+		String string1;
+		String string2;
+		int int1;
+		int int2;
+
+		public MyDomain(String string1) {
+			this(string1, string1);
+		}
+
+		public MyDomain(String string1, int int1) {
+			this(string1, string1, int1, int1);
+		}
+
+		private MyDomain(String string1, String string2) {
+			this(string1, string2, 0, 0);
+		}
+
+		private MyDomain(String string1, String string2, int int1, int int2) {
+			this.string1 = string1;
+			this.string2 = string2;
+			this.int1 = int1;
+			this.int2 = int2;
+		}
 	}
 
 }
