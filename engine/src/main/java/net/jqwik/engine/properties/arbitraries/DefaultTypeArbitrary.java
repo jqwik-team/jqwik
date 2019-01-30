@@ -123,10 +123,15 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
 		if (arbitraries().isEmpty()) {
-			String message = String.format("TypeArbitrary<%s> has no arbitraries to choose from.", targetType.getName());
+			String message = String.format("%s has no arbitraries to choose from.", this.toString());
 			throw new JqwikException(message);
 		}
 		return super.generator(genSize);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("TypeArbitrary<%s>", targetType.getName());
 	}
 
 	private Arbitrary<T> createArbitrary(Executable creator) {
@@ -136,7 +141,8 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 				  .collect(Collectors.toList());
 
 		Function<List<Object>, T> combinator = paramList -> combinator(creator).apply(paramList.toArray());
-		return Combinators.combine(parameterArbitraries).as(combinator);
+		Arbitrary<T> arbitrary = Combinators.combine(parameterArbitraries).as(combinator);
+		return new IgnoreGenerationErrorArbitrary<>(arbitrary);
 	}
 
 	private Function<Object[], T> combinator(Executable creator) {
