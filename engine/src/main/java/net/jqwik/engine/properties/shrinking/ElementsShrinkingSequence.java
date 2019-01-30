@@ -108,9 +108,11 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 	private Shrinkable<List<T>> createCurrent(List<FalsificationResult<T>> falsificationResults) {
 		return new Shrinkable<List<T>>() {
+			final List<T> value = toValueList(falsificationResults);
+
 			@Override
 			public List<T> value() {
-				return toValueList(falsificationResults);
+				return value;
 			}
 
 			@Override

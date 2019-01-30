@@ -437,6 +437,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 * @throws CannotFindArbitraryException if there is no registered arbitrary provider to serve this type
 	 */
+	@API(status = MAINTAINED, since = "1.1")
 	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
 		return ArbitrariesFacade.implementation.defaultFor(typeUsage);
 	}
@@ -451,6 +452,7 @@ public class Arbitraries {
 	 *
 	 * @see TypeArbitrary
 	 */
+	@API(status = EXPERIMENTAL, since = "1.1")
 	public static <T> TypeArbitrary<T> forType(Class<T> targetType) {
 		return ArbitrariesFacade.implementation.forType(targetType);
 	}

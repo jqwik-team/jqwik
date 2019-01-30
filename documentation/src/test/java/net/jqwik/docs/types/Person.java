@@ -4,7 +4,7 @@ public class Person {
 
 	private String name;
 
-	public Person withFirstAndLast(String first, String last) {
+	public static Person withFirstAndLast(String first, String last) {
 		return new Person(first + " " + last);
 	}
 

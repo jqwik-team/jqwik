@@ -3,7 +3,11 @@ package net.jqwik.api.arbitraries;
 import java.lang.reflect.*;
 import java.util.function.*;
 
+import org.apiguardian.api.*;
+
 import net.jqwik.api.*;
+
+import static org.apiguardian.api.API.Status.*;
 
 /**
  * Fluent interface to configure arbitraries that try to generate instances
@@ -19,6 +23,7 @@ import net.jqwik.api.*;
  * @see net.jqwik.api.domains.Domain
  * @see net.jqwik.api.domains.DomainContext
  */
+@API(status = EXPERIMENTAL, since = "1.1")
 public interface TypeArbitrary<T> extends Arbitrary<T> {
 
 	/**

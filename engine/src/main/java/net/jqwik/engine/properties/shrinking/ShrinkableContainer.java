@@ -8,10 +8,12 @@ import net.jqwik.api.*;
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	private final List<Shrinkable<E>> elements;
 	private final ListShrinkingCandidates<Shrinkable<E>> shrinkCandidates;
+	private final C value;
 
 	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize) {
 		this.elements = elements;
 		this.shrinkCandidates = new ListShrinkingCandidates<>(minSize);
+		this.value = createValue(elements);
 	}
 
 	private C createValue(List<Shrinkable<E>> shrinkables) {
@@ -23,7 +25,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	@Override
 	public C value() {
-		return createValue(elements);
+		return value;
 	}
 
 	@Override

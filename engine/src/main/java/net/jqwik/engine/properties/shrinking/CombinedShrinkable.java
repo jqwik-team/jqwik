@@ -9,15 +9,17 @@ import net.jqwik.api.*;
 public class CombinedShrinkable<T> implements Shrinkable<T> {
 	private final List<Shrinkable<Object>> shrinkables;
 	private final Function<List<Object>, T> combinator;
+	private final T value;
 
 	public CombinedShrinkable(List<Shrinkable<Object>> shrinkables, Function<List<Object>, T> combinator) {
 		this.shrinkables = shrinkables;
 		this.combinator = combinator;
+		this.value = combinator.apply(toValues(shrinkables));
 	}
 
 	@Override
 	public T value() {
-		return combinator.apply(toValues(shrinkables));
+		return value;
 	}
 
 	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
