@@ -12,17 +12,29 @@ import net.jqwik.engine.support.*;
 
 public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeArbitrary<T> {
 
-	private Class<T> targetType;
-
+	private final Class<T> targetType;
 	private final Set<Executable> creators = new HashSet<>();
+	private boolean defaultsSet = false;
 
 	public DefaultTypeArbitrary(Class<T> targetType) {
 		super(Collections.emptyList());
 		this.targetType = targetType;
 	}
 
+	public TypeArbitrary<T> useDefaults() {
+		usePublicConstructors();
+		useAllFactoryMethods();
+		defaultsSet = true;
+		return this;
+	}
+
 	@Override
 	public TypeArbitrary<T> use(Executable creator) {
+		if (defaultsSet) {
+			creators.clear();
+			arbitraries().clear();
+			defaultsSet = false;
+		}
 		if (creators.contains(creator)) {
 			return this;
 		}

@@ -75,6 +75,8 @@ public class Arbitraries {
 		public abstract <T> Arbitrary<T> defaultFor(TypeUsage typeUsage);
 
 		public abstract <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier);
+
+		public abstract <T> TypeArbitrary<T> forType(Class<T> targetType);
 	}
 
 	private Arbitraries() {
@@ -438,6 +440,21 @@ public class Arbitraries {
 	public static <T> Arbitrary<T> defaultFor(TypeUsage typeUsage) {
 		return ArbitrariesFacade.implementation.defaultFor(typeUsage);
 	}
+
+	/**
+	 * Create an arbitrary for type {@code T} that will by default use the type's
+	 * public constructors and public factory methods.
+	 *
+	 * @param targetType     The class of the type to create an arbitrary for
+	 * @param <T>            The type of values to generate
+	 * @return a new arbitrary instance
+	 *
+	 * @see TypeArbitrary
+	 */
+	public static <T> TypeArbitrary<T> forType(Class<T> targetType) {
+		return ArbitrariesFacade.implementation.forType(targetType);
+	}
+
 
 	private static <T> Arbitrary<T> fromGenerators(
 		RandomGenerator<T> randomGenerator,

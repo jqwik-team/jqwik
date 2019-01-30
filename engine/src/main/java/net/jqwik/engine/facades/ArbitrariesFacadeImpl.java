@@ -166,6 +166,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		});
 	}
 
+	@Override
+	public <T> TypeArbitrary<T> forType(Class<T> targetType) {
+		return new DefaultTypeArbitrary<>(targetType).useDefaults();
+	}
+
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
 		DomainContext domainContext = DomainContextFacadeImpl.currentContext.get();
 		RegisteredArbitraryResolver defaultArbitraryResolver =

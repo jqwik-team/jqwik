@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 
 import static java.math.BigInteger.*;
@@ -84,6 +85,23 @@ class ArbitrariesTests {
 		ArbitraryTestHelper.assertAllGenerated(constant.generator(1000), value -> {
 			assertThat(value).isEqualTo("hello");
 		});
+	}
+
+	@Example
+	void forType() {
+		TypeArbitrary<Person> constant = Arbitraries.forType(Person.class);
+		ArbitraryTestHelper.assertAllGenerated(constant.generator(1000), value -> {
+			assertThat(value).isInstanceOf(Person.class);
+		});
+	}
+
+	private static class Person {
+		public Person(String firstName, String lastName) {
+		}
+
+		public static Person create(String firstName) {
+			return new Person(firstName, "Stranger");
+		}
 	}
 
 	@Group

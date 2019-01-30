@@ -111,6 +111,30 @@ class DefaultTypeArbitraryTests {
 			);
 		}
 
+		@Example
+		void useDefaultsWillUseAllPublicConstructorsAndFactoryMethods() {
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class).useDefaults();
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.toString().length() <= 1000
+			);
+		}
+
+		@Example
+		void useDefaultsIsOverwrittenByDirectUse() throws NoSuchMethodException {
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class)
+					.useDefaults()
+					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> {return aPerson.toString().equals("a person");}
+			);
+		}
+
 		@SuppressWarnings("unchecked")
 		@Example
 		void reusingCreatorsIsIgnored() throws NoSuchMethodException {
@@ -314,6 +338,10 @@ class DefaultTypeArbitraryTests {
 	}
 
 	private static class Samples {
+
+		private static Person personFromNoParams() {
+			return Person.create(42, "a person");
+		}
 
 		private static String stringFromNoParams() {
 			return "a string";
