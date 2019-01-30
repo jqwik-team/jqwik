@@ -2,6 +2,8 @@
 
   - Shrinking does not work!
 
+  - Exhaustive generation!
+
   - class TypeArbitrary<T>
       TypeArbitrary<T> useMutators(String setterMethods ...)
       TypeArbitrary<T> useFields(String fieldNames ...)

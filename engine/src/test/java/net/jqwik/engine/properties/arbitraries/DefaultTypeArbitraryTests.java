@@ -83,7 +83,7 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000),
-				aPerson -> aPerson.toString().length() <= 1000
+				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 
@@ -95,7 +95,7 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000),
-				aPerson -> aPerson.toString().length() <= 1000
+				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 
@@ -107,7 +107,7 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000),
-				aPerson -> aPerson.toString().length() <= 1000
+				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 
@@ -118,7 +118,7 @@ class DefaultTypeArbitraryTests {
 
 			assertAllGenerated(
 				typeArbitrary.generator(1000),
-				aPerson -> aPerson.toString().length() <= 1000
+				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 
@@ -218,7 +218,7 @@ class DefaultTypeArbitraryTests {
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 			assertAllGenerated(
 				typeArbitrary.generator(1000),
-				aPerson -> aPerson.toString().length() <= 1000
+				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 	}
@@ -291,7 +291,7 @@ class DefaultTypeArbitraryTests {
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(1);
 			assertAllGenerated(
 				typeArbitrary.generator(1000),
-				aPerson -> aPerson.toString().length() <= 1000
+				aPerson -> aPerson.toString().length() <= 100
 			);
 		}
 	}
@@ -379,7 +379,8 @@ class DefaultTypeArbitraryTests {
 		}
 
 		public Person(String name) {
-			if (name.length() > 1000) throw new IllegalArgumentException();
+			if (name.length() > 100)
+				throw new IllegalArgumentException();
 			this.name = name;
 		}
 

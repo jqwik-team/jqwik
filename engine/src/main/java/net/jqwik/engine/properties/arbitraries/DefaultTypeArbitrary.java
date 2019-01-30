@@ -160,16 +160,12 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	private T generateNext(Object[] params, Combinator combinator) {
-		long count = 0;
-		while (count++ <= 1000) {
-			try {
-				//noinspection unchecked
-				return (T) combinator.combine(params);
-			} catch (Throwable ignored) {
-			}
+		try {
+			//noinspection unchecked
+			return (T) combinator.combine(params);
+		} catch (Throwable ignored) {
+			throw new RuntimeException(ignored);
 		}
-		String message = String.format("TypeArbitrary<%s>: Trying to generate object failed too often", targetType.getName());
-		throw new JqwikException(message);
 	}
 
 	public int countCreators() {
