@@ -5,3 +5,4 @@
       TypeArbitrary<T> useMutators(String setterMethods ...)
       TypeArbitrary<T> useFields(String fieldNames ...)
 
+  - Annotation @Use({PUBLIC_CONSTRUCTORS, ALL_CONSTRUCTORS, PUBLIC_FACTORIES, ALL_FACTORIES}

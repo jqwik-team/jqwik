@@ -130,7 +130,6 @@ class DefaultTypeArbitraryTests {
 	class UseConstructors {
 
 		@Example
-		@Disabled
 		void publicConstructorsOnly() {
 			TypeArbitrary<MyDomain> typeArbitrary =
 				new DefaultTypeArbitrary<>(MyDomain.class).usePublicConstructors();
@@ -142,6 +141,48 @@ class DefaultTypeArbitraryTests {
 					Assertions.assertThat(aPerson.int1).isEqualTo(aPerson.int2);
 				}
 			);
+		}
+
+		@Example
+		void allConstructors() {
+			TypeArbitrary<MyDomain> typeArbitrary =
+				new DefaultTypeArbitrary<>(MyDomain.class).useAllConstructors();
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.string1.equals(aPerson.string2)
+			);
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.int1 == aPerson.int2
+			);
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> !aPerson.string1.equals(aPerson.string2)
+			);
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.int1 != aPerson.int2
+			);
+		}
+
+		@Example
+		void filterConstructors() {
+			TypeArbitrary<MyDomain> typeArbitrary =
+				new DefaultTypeArbitrary<>(MyDomain.class).useConstructors(ctor -> ctor.getParameterCount() == 1);
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> {
+					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
+					Assertions.assertThat(aPerson.int1).isEqualTo(0);
+					Assertions.assertThat(aPerson.int2).isEqualTo(0);
+				}
+			);
+
 		}
 
 	}

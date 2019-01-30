@@ -33,8 +33,21 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	@Override
-	public TypeArbitrary<T> usePublicConstructors() {
+	public TypeArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter) {
+		Arrays.stream(targetClass.getDeclaredConstructors())
+			  .filter(filter)
+			  .forEach(this::use);
 		return this;
+	}
+
+	@Override
+	public TypeArbitrary<T> usePublicConstructors() {
+		return useConstructors(JqwikReflectionSupport::isPublic);
+	}
+
+	@Override
+	public TypeArbitrary<T> useAllConstructors() {
+		return useConstructors(ctor -> true);
 	}
 
 	private void checkCreator(Executable creator) {
