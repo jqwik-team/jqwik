@@ -12,13 +12,13 @@ import net.jqwik.engine.support.*;
 
 public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeArbitrary<T> {
 
-	private Class<T> targetClass;
+	private Class<T> targetType;
 
 	private final Set<Executable> creators = new HashSet<>();
 
-	public DefaultTypeArbitrary(Class<T> targetClass) {
+	public DefaultTypeArbitrary(Class<T> targetType) {
 		super(Collections.emptyList());
-		this.targetClass = targetClass;
+		this.targetType = targetType;
 	}
 
 	@Override
@@ -34,7 +34,8 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter) {
-		Arrays.stream(targetClass.getDeclaredConstructors())
+		Arrays.stream(targetType.getDeclaredConstructors())
+			  .filter(this::isNotRecursive)
 			  .filter(filter)
 			  .forEach(this::use);
 		return this;
@@ -52,9 +53,10 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter) {
-		Arrays.stream(targetClass.getDeclaredMethods())
+		Arrays.stream(targetType.getDeclaredMethods())
 			  .filter(JqwikReflectionSupport::isStatic)
 			  .filter(this::hasFittingReturnType)
+			  .filter(this::isNotRecursive)
 			  .filter(filter)
 			  .forEach(this::use);
 		return this;
@@ -84,13 +86,17 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	private void checkReturnType(Executable creator) {
 		if (!hasFittingReturnType(creator)) {
-			throw new JqwikException(String.format("Creator %s should return type %s", creator, targetClass.getName()));
+			throw new JqwikException(String.format("Creator %s should return type %s", creator, targetType.getName()));
 		}
 	}
 
 	private boolean hasFittingReturnType(Executable creator) {
 		TypeUsage returnType = TypeUsage.forType(creator.getAnnotatedReturnType().getType());
-		return returnType.isAssignableFrom(targetClass);
+		return returnType.isAssignableFrom(targetType);
+	}
+
+	private boolean isNotRecursive(Executable creator) {
+		return Arrays.stream(creator.getParameterTypes()).noneMatch(parameterType -> parameterType.equals(targetType));
 	}
 
 	private void checkMethod(Method method) {
@@ -105,7 +111,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
 		if (arbitraries().isEmpty()) {
-			String message = String.format("TypeArbitrary<%s> has no arbitraries to choose from.", targetClass.getName());
+			String message = String.format("TypeArbitrary<%s> has no arbitraries to choose from.", targetType.getName());
 			throw new JqwikException(message);
 		}
 		return super.generator(genSize);
@@ -150,7 +156,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 			} catch (Throwable ignored) {
 			}
 		}
-		String message = String.format("TypeArbitrary<%s>: Trying to generate object failed too often", targetClass.getName());
+		String message = String.format("TypeArbitrary<%s>: Trying to generate object failed too often", targetType.getName());
 		throw new JqwikException(message);
 	}
 

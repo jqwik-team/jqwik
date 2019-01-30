@@ -182,9 +182,21 @@ class DefaultTypeArbitraryTests {
 					Assertions.assertThat(aPerson.int2).isEqualTo(0);
 				}
 			);
-
 		}
 
+		@SuppressWarnings("unchecked")
+		@Example
+		void recursiveConstructorsAreIgnored() {
+
+			DefaultTypeArbitrary<Person> typeArbitrary =
+				(DefaultTypeArbitrary) new DefaultTypeArbitrary<>(Person.class).useAllConstructors();
+
+			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.toString().length() <= 1000
+			);
+		}
 	}
 
 	@Group
@@ -243,9 +255,21 @@ class DefaultTypeArbitraryTests {
 					Assertions.assertThat(aPerson.int2).isEqualTo(0);
 				}
 			);
-
 		}
 
+		@SuppressWarnings("unchecked")
+		@Example
+		void recursiveFactoryMethodsAreIgnored() throws NoSuchMethodException {
+
+			DefaultTypeArbitrary<Person> typeArbitrary =
+				(DefaultTypeArbitrary) new DefaultTypeArbitrary<>(Person.class).useAllFactoryMethods();
+
+			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(1);
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.toString().length() <= 1000
+			);
+		}
 	}
 
 	@Group
@@ -309,6 +333,14 @@ class DefaultTypeArbitraryTests {
 
 	private static class Person {
 		private final String name;
+
+		public static Person copy(Person person) {
+			return new Person(person);
+		}
+
+		public Person(Person person) {
+			this(person.name);
+		}
 
 		public static Person create(int age, String name) {
 			return new Person(name, age);
