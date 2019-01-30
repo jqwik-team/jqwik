@@ -13,4 +13,10 @@ public interface TypeArbitrary<T> extends Arbitrary<T> {
 	TypeArbitrary<T> useAllConstructors();
 
 	TypeArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter);
+
+	TypeArbitrary<T> usePublicFactoryMethods();
+
+	TypeArbitrary<T> useAllFactoryMethods();
+
+	TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter);
 }

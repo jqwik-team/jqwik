@@ -50,6 +50,26 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		return useConstructors(ctor -> true);
 	}
 
+	@Override
+	public TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter) {
+		Arrays.stream(targetClass.getDeclaredMethods())
+			  .filter(JqwikReflectionSupport::isStatic)
+			  .filter(this::hasFittingReturnType)
+			  .filter(filter)
+			  .forEach(this::use);
+		return this;
+	}
+
+	@Override
+	public TypeArbitrary<T> usePublicFactoryMethods() {
+		return useFactoryMethods(JqwikReflectionSupport::isPublic);
+	}
+
+	@Override
+	public TypeArbitrary<T> useAllFactoryMethods() {
+		return useFactoryMethods(method -> true);
+	}
+
 	private void checkCreator(Executable creator) {
 		checkReturnType(creator);
 
@@ -63,10 +83,14 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	private void checkReturnType(Executable creator) {
-		TypeUsage returnType = TypeUsage.forType(creator.getAnnotatedReturnType().getType());
-		if (!returnType.isAssignableFrom(targetClass)) {
+		if (!hasFittingReturnType(creator)) {
 			throw new JqwikException(String.format("Creator %s should return type %s", creator, targetClass.getName()));
 		}
+	}
+
+	private boolean hasFittingReturnType(Executable creator) {
+		TypeUsage returnType = TypeUsage.forType(creator.getAnnotatedReturnType().getType());
+		return returnType.isAssignableFrom(targetClass);
 	}
 
 	private void checkMethod(Method method) {

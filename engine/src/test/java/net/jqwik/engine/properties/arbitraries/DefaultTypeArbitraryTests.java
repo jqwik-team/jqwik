@@ -188,6 +188,67 @@ class DefaultTypeArbitraryTests {
 	}
 
 	@Group
+	class UseFactories {
+
+		@Example
+		void publicConstructorsOnly() {
+			TypeArbitrary<MyDomain> typeArbitrary =
+				new DefaultTypeArbitrary<>(MyDomain.class).usePublicFactoryMethods();
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> {
+					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
+					Assertions.assertThat(aPerson.int1).isEqualTo(aPerson.int2);
+				}
+			);
+		}
+
+		@Example
+		void allConstructors() {
+			TypeArbitrary<MyDomain> typeArbitrary =
+				new DefaultTypeArbitrary<>(MyDomain.class).useAllFactoryMethods();
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.string1.equals(aPerson.string2)
+			);
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.int1 == aPerson.int2
+			);
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> !aPerson.string1.equals(aPerson.string2)
+			);
+
+			assertAtLeastOneGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.int1 != aPerson.int2
+			);
+		}
+
+		@Example
+		void filterFactoryMethods() {
+			TypeArbitrary<MyDomain> typeArbitrary =
+				new DefaultTypeArbitrary<>(MyDomain.class).useFactoryMethods(method -> method.getParameterCount() == 1);
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> {
+					Assertions.assertThat(aPerson.string1).isEqualTo(aPerson.string2);
+					Assertions.assertThat(aPerson.int1).isEqualTo(0);
+					Assertions.assertThat(aPerson.int2).isEqualTo(0);
+				}
+			);
+
+		}
+
+	}
+
+	@Group
 	class ConfigurationErrors {
 		@Example
 		void typeArbitraryWithoutUseFailsOnGeneration() throws NoSuchMethodException {
@@ -278,16 +339,36 @@ class DefaultTypeArbitraryTests {
 		int int1;
 		int int2;
 
+		public static String notAFactoryMethod(String string1) {
+			return string1 + string1;
+		}
+
+		public static MyDomain factory1(String string1) {
+			return new MyDomain(string1);
+		}
+
 		public MyDomain(String string1) {
 			this(string1, string1);
+		}
+
+		public static MyDomain factory2(String string1, int int1) {
+			return new MyDomain(string1, int1);
 		}
 
 		public MyDomain(String string1, int int1) {
 			this(string1, string1, int1, int1);
 		}
 
+		private static MyDomain factory3(String string1, String string2) {
+			return new MyDomain(string1, string2);
+		}
+
 		private MyDomain(String string1, String string2) {
 			this(string1, string2, 0, 0);
+		}
+
+		private static MyDomain factory4(String string1, String string2, int int1, int int2) {
+			return new MyDomain(string1, string2, int1, int2);
 		}
 
 		private MyDomain(String string1, String string2, int int1, int int2) {
