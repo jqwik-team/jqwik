@@ -177,8 +177,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 			//noinspection unchecked
 			return (T) combinator.combine(params);
 		} catch (Throwable throwable) {
-			// Will never return anything
-			return JqwikReflectionSupport.throwAsUncheckedException(throwable);
+			throw new GenerationError(throwable);
 		}
 	}
 
