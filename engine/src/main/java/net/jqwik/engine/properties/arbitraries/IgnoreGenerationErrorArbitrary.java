@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.arbitraries;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 //TODO: Support configurators
 public class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
@@ -20,9 +21,9 @@ public class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 			int count = 0;
 			while (count++ < 1000) {
 				try {
-					return generator.next(random);
+					Shrinkable<T> next = generator.next(random);
+					return new IgnoreGenerationErrorShrinkable<>(next);
 				} catch (Throwable ignore) {
-					//System.out.println(ignore);
 				}
 			}
 			String message = String.format("Too many exceptions while generating values with %s", arbitrary.toString());
@@ -35,4 +36,5 @@ public class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 		// TODO: support exhaustive generation
 		return Optional.empty();
 	}
+
 }
