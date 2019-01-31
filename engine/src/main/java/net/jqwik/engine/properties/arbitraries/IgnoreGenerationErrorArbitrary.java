@@ -3,8 +3,8 @@ package net.jqwik.engine.properties.arbitraries;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.shrinking.*;
 
+//Currently only used in DefaultTypeArbitrary
 //TODO: Support configurators
 public class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 	private Arbitrary<T> arbitrary;
@@ -22,8 +22,8 @@ public class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 			while (count++ < 1000) {
 				try {
 					Shrinkable<T> next = generator.next(random);
-					return new IgnoreGenerationErrorShrinkable<>(next);
-				} catch (Throwable ignore) {
+					return next;
+				} catch (GenerationError ignore) {
 				}
 			}
 			String message = String.format("Too many exceptions while generating values with %s", arbitrary.toString());

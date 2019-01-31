@@ -1,7 +1,5 @@
 - Arbitraries.forType(Class<T> targetClass) : TypeArbitrary<T>
 
-  - Does Shrinking work?
-
   - class TypeArbitrary<T>
       TypeArbitrary<T> useFields(String fieldNames ...)
 
@@ -9,3 +7,4 @@
 
   - Annotation @Use({PUBLIC_CONSTRUCTORS, ALL_CONSTRUCTORS,
   PUBLIC_FACTORIES, ALL_FACTORIES, PUBLIC_FIELDS, ALL_FIELDS}
+    - Make IgnoreGeneratioErrorArbitrary a SelfConfiguringArbitrary

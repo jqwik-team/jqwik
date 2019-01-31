@@ -3,7 +3,6 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.domains.*;
 
 import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
 
@@ -17,65 +16,69 @@ class ArbitraryShrinkingTests {
 
 	@Property(tries = 10)
 	void withExamples(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3) //
-			.withSamples(100, 200, 300);
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.of(1, 2, 3).withSamples(100, 200, 300);
 		assertAllValuesAreShrunkTo(100, arbitrary, random);
 	}
 
 	@Property(tries = 10)
 	void filtered(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
-			.filter(i -> i % 2 == 0);
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).filter(i -> i % 2 == 0);
 		assertAllValuesAreShrunkTo(2, arbitrary, random);
 	}
 
 	@Property(tries = 10)
 	void unique(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
-			.unique();
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique();
 		assertAllValuesAreShrunkTo(1, arbitrary, random);
 	}
 
 	@Property(tries = 10)
 	void uniqueInSet(@ForAll Random random) {
-		Arbitrary<Set<Integer>> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
-			.unique().set().ofSize(3);
+		Arbitrary<Set<Integer>> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique().set().ofSize(3);
 		assertAllValuesAreShrunkTo(new HashSet<>(Arrays.asList(1, 2, 3)), arbitrary, random);
 	}
 
 	@Property(tries = 10)
 	void mapped(@ForAll Random random) {
-		Arbitrary<String> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
-			.map(String::valueOf);
+		Arbitrary<String> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
 		assertAllValuesAreShrunkTo("1", arbitrary, random);
 	}
 
 	@Property(tries = 10)
 	void flatMapped(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) //
-			.flatMap(i -> Arbitraries.of(i));
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+					   .flatMap(i -> Arbitraries.of(i));
 		assertAllValuesAreShrunkTo(1, arbitrary, random);
 	}
 
 	@Property(tries = 10)
 	void lazy(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.lazy( () -> Arbitraries.of(1, 2, 3, 4, 5, 6));
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.lazy(() -> Arbitraries.of(1, 2, 3, 4, 5, 6));
 		assertAllValuesAreShrunkTo(1, arbitrary, random);
 	}
 
 	@Property(tries = 10)
-	void forType(@ForAll Random random) {
+	boolean forType(@ForAll Random random) {
 		Arbitrary<Counter> arbitrary = Arbitraries.forType(Counter.class);
-		assertAllValuesAreShrunkTo(new Counter(1, 1), arbitrary, random);
-	}
+		Counter value = shrinkToEnd(arbitrary, random);
 
+		// 0:1, 1:0, 0:-1 or -1:0
+		return Math.abs(value.n1 + value.n2) == 1;
+	}
 
 	private static class Counter {
 		public int n1, n2;
 
 		public Counter(int n1, int n2) {
-			if (n1 == 0 || n2 == 0) {
-				throw new IllegalArgumentException("Numbers must not be 0");
+			if (n1 == n2) {
+				throw new IllegalArgumentException("Numbers must not be equal");
 			}
 			this.n1 = n1;
 			this.n2 = n2;

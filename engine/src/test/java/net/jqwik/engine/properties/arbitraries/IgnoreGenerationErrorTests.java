@@ -9,7 +9,7 @@ class IgnoreGenerationErrorTests {
 	void simpleArbitrary() {
 		Arbitrary<String> embedded = Arbitraries.fromGenerator(random -> {
 			if (random.nextBoolean()) {
-				throw new RuntimeException();
+				throw new GenerationError(null);
 			}
 			return Shrinkable.unshrinkable("a");
 		});
@@ -24,7 +24,7 @@ class IgnoreGenerationErrorTests {
 	void mappedArbitrary() {
 		Arbitrary<Integer> embedded = Arbitraries.integers().between(1, 10).map(i -> {
 			if (i > 5) {
-				throw new RuntimeException();
+				throw new GenerationError(null);
 			}
 			return i;
 		});
@@ -43,7 +43,7 @@ class IgnoreGenerationErrorTests {
 
 		Arbitrary<Integer> embedded = Combinators.combine(one, two).as((a, b) -> {
 			if (b == 2) {
-				throw new RuntimeException();
+				throw new GenerationError(null);
 			}
 			return a + b;
 		});
