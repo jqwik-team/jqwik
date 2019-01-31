@@ -130,6 +130,13 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	@Override
+	public Optional<ExhaustiveGenerator<T>> exhaustive() {
+		// Exhaustive generation cannot work because Arbitraries.defaultFor()
+		// is evaluated lazily which prevents ad ante calculation of combinations
+		return Optional.empty();
+	}
+
+	@Override
 	public String toString() {
 		return String.format("TypeArbitrary<%s>", targetType.getName());
 	}
@@ -169,8 +176,9 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		try {
 			//noinspection unchecked
 			return (T) combinator.combine(params);
-		} catch (Throwable ignored) {
-			throw new RuntimeException(ignored);
+		} catch (Throwable throwable) {
+			// Will never return anything
+			return JqwikReflectionSupport.throwAsUncheckedException(throwable);
 		}
 	}
 

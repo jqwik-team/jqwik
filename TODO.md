@@ -2,8 +2,6 @@
 
   - Does Shrinking work?
 
-  - Make exhaustive generation work
-
   - class TypeArbitrary<T>
       TypeArbitrary<T> useFields(String fieldNames ...)
 
