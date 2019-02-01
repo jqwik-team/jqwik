@@ -50,46 +50,7 @@ class FizzBuzzTests {
 ```
 
 By using a few Java annotations __jqwik__ tries to make it as simple as possible 
-for programmers to create Properties. Classes are used as containers to group properties
-that belong together.
-
-
-### Examples
-
-Unlike [Properties](#properties) an example-based test checks the correct behaviour
-for a single usage scenario. Thus, examples are just a fancy name for the usual unit tests 
-that directly specify the data being used to drive and assert a piece of code. 
-
-```java
-import static org.assertj.core.api.Assertions.*;
-
-import net.jqwik.api.*;
-import org.assertj.core.data.*;
-
-class SimpleExampleTests implements AutoCloseable {
-	@Example
-	void succeeding() { 
-		assertThat(Math.sqrt(15)).isCloseTo(3.872, Offset.offset(0.01));
-	}
-
-	@Example
-	void failing() {
-		fail("failing");
-	}
-
-	// Executed after each test case
-	public void close() { }
-
-	@Group
-	class AGroupOfCoherentTests {
-		@Example
-		void anotherSuccess() { }
-	}
-}
-```
-This looks like standard JUnit tests and works basically the same but without
-the complicated lifecycle of Before's and After's.
-
+for programmers to write and run Properties.
 
 ### Where to go from here
 
