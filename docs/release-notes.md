@@ -30,6 +30,9 @@ and
 
 - Added `Arbitraries.defaultFor(TypeUsage typeUsage)`
 
+- Added capability to generate objects from their type's
+  [constructors and factories](/docs/snapshot/user-guide.html#generation-from-a-types-interface)
+
 ## 1.0.0
 
 <p style="padding-left:1em;font-size:larger">

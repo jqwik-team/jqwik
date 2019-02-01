@@ -5,7 +5,5 @@
   - class TypeArbitrary<T>
       TypeArbitrary<T> useFields(String fieldNames ...)
 
-  - User guide entry
-
   - Annotation @UseType({FIELDS}
 

@@ -30,5 +30,6 @@ public enum UseTypeMode {
 		}
 	};
 
+	@API(status = INTERNAL, since = "1.1")
 	public abstract <T> TypeArbitrary<T> modify(TypeArbitrary<T> arbitrary);
 }

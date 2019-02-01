@@ -3,31 +3,44 @@ package net.jqwik.docs.types;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.domains.*;
 
 class TypeArbitraryExamples {
 
-	@Property(shrinking = ShrinkingMode.OFF)
+	@Property
 	@Report(Reporting.GENERATED)
-	void aPersonsNameIsNeverEmpty(@ForAll("people") Person aPerson) {
-		Assertions.assertThat(aPerson.toString()).isNotBlank();
+	void aPersonsIsAlwaysValid(@ForAll @UseType Person aPerson) {
+		Assertions.assertThat(aPerson.name).isNotBlank();
+		Assertions.assertThat(aPerson.age).isBetween(0, 130);
+	}
+
+	@Property
+	@Report(Reporting.GENERATED)
+	void aPersonsFromTheFactoryIsAlways0(@ForAll("people") Person aPerson) {
+		Assertions.assertThat(aPerson.name).isNotBlank();
+		Assertions.assertThat(aPerson.age).isEqualTo(0);
 	}
 
 	@Provide
 	Arbitrary<Person> people() {
-		return Arbitraries.forType(Person.class);
+		return Arbitraries.forType(Person.class).usePublicFactoryMethods();
 	}
 
-	@Property(shrinking = ShrinkingMode.OFF)
+	@Property
 	@Report(Reporting.GENERATED)
 	@Domain(People.class)
-	void aPersonsNameIsNeverEmpty2(@ForAll Person aPerson) {
-		Assertions.assertThat(aPerson.toString()).isNotBlank();
+	void aPersonsFromTheFactoryAndDomainStringsHasShortNameWithSpace(
+		@ForAll @UseType(UseTypeMode.FACTORIES) Person aPerson
+	) {
+		Assertions.assertThat(aPerson.name).contains(" ");
+		Assertions.assertThat(aPerson.name.length()).isBetween(5, 21);
 	}
 
 	static class People extends AbstractDomainContextBase {
 		public People() {
 			registerArbitrary(String.class, Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(10));
+			registerArbitrary(int.class, Arbitraries.integers().between(0, 100));
 		}
 	}
 
