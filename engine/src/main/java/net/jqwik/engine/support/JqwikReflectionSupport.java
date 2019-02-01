@@ -212,6 +212,8 @@ public class JqwikReflectionSupport {
 	/**
 	 * Throw the supplied {@link Throwable}, <em>masked</em> as an
 	 * unchecked exception.
+	 *
+	 * @param t type returns a throwable to make usage simpler
 	 */
 	public static <T> T throwAsUncheckedException(Throwable t) {
 		JqwikReflectionSupport.throwAs(t);
