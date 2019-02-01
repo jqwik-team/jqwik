@@ -19,3 +19,4 @@ net.jqwik.engine.providers.IteratorArbitraryProvider
 net.jqwik.engine.providers.RandomArbitraryProvider
 net.jqwik.engine.providers.ObjectArbitraryProvider
 net.jqwik.engine.providers.WildcardArbitraryProvider
+net.jqwik.engine.providers.UseTypeArbitraryProvider

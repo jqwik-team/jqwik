@@ -20,7 +20,16 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	private static class Person {
+		private String name;
 
+		public Person(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
 	}
 
 	@Property
@@ -219,11 +228,20 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Group
-	class Registration implements AutoCloseable {
+	@Label("@UseType")
+	class UseTypeTests {
+		@Property
+		boolean withoutValue(@ForAll @UseType Person aPerson) {
+			return aPerson != null;
+		}
+	}
+
+	@Group
+	class ProgrammaticRegistration implements AutoCloseable {
 
 		final ArbitraryProvider personProvider;
 
-		Registration() {
+		ProgrammaticRegistration() {
 			personProvider = new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(TypeUsage targetType) {
@@ -232,7 +250,7 @@ class RegisteredArbitraryProvidersTests {
 
 				@Override
 				public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-					return Collections.singleton(Arbitraries.of(new Person()));
+					return Collections.singleton(Arbitraries.of(new Person("stranger")));
 				}
 			};
 			RegisteredArbitraryProviders.register(personProvider);

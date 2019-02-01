@@ -7,3 +7,5 @@
 
   - Annotation @UseType({PUBLIC_CONSTRUCTORS, ALL_CONSTRUCTORS,
   PUBLIC_FACTORIES, ALL_FACTORIES, PUBLIC_FIELDS, ALL_FIELDS}
+
+  - Error if @UseType is combined with @ForAll("aMethodReference")
