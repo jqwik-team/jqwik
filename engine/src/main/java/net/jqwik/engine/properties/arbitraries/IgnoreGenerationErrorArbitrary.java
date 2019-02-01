@@ -5,11 +5,11 @@ import java.util.*;
 import net.jqwik.api.*;
 
 //Currently only used in DefaultTypeArbitrary
-//TODO: Support configurators
-public class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
+//Support configurators if this class is used somewhere else
+class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 	private Arbitrary<T> arbitrary;
 
-	public IgnoreGenerationErrorArbitrary(Arbitrary<T> arbitrary) {
+	IgnoreGenerationErrorArbitrary(Arbitrary<T> arbitrary) {
 		this.arbitrary = arbitrary;
 	}
 
@@ -33,7 +33,7 @@ public class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 
 	@Override
 	public Optional<ExhaustiveGenerator<T>> exhaustive() {
-		// TODO: support exhaustive generation
+		// Support exhaustive generation if this class is used somewhere else
 		return Optional.empty();
 	}
 

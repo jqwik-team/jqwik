@@ -5,6 +5,5 @@
 
   - User guide entry
 
-  - Annotation @Use({PUBLIC_CONSTRUCTORS, ALL_CONSTRUCTORS,
+  - Annotation @UseType({PUBLIC_CONSTRUCTORS, ALL_CONSTRUCTORS,
   PUBLIC_FACTORIES, ALL_FACTORIES, PUBLIC_FIELDS, ALL_FIELDS}
-    - Make IgnoreGeneratioErrorArbitrary a SelfConfiguringArbitrary
