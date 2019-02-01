@@ -11,6 +11,8 @@ import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.constraints.UseTypeMode.*;
+
 class RegisteredArbitraryProvidersTests {
 
 	private enum AnEnum {
@@ -22,8 +24,20 @@ class RegisteredArbitraryProvidersTests {
 	private static class Person {
 		private String name;
 
+		public static Person create(String name) {
+			return new Person("factory: " + name);
+		}
+
+		private static Person createPrivate(String name) {
+			return new Person("private factory: " + name);
+		}
+
 		public Person(String name) {
 			this.name = name;
+		}
+
+		private Person(String name, int ignore) {
+			this("private ctor: " + name);
 		}
 
 		@Override
@@ -232,6 +246,11 @@ class RegisteredArbitraryProvidersTests {
 	class UseTypeTests {
 		@Property
 		boolean withoutValue(@ForAll @UseType Person aPerson) {
+			return aPerson != null;
+		}
+
+		@Property
+		boolean fromAllConstructorsAndFactories(@ForAll @UseType({CONSTRUCTORS, FACTORIES}) Person aPerson) {
 			return aPerson != null;
 		}
 	}

@@ -11,11 +11,13 @@ import static org.apiguardian.api.API.Status.*;
  *
  * <p>
  * Applies to any parameter that is annotated with {@code @ForAll}.
+ * Only the raw type of a parameter is considered.
+ * Parameterized and generic types are forbidden.
  * </p>
  *
  * <p>
- * Only the raw type of a parameter is considered.
- * Parameterized and generic types are forbidden.
+ * If no {@code value} is given, the default is to use public constructors and
+ * factory methods from the annotated type.
  * </p>
  *
  * @see net.jqwik.api.ForAll
@@ -25,4 +27,6 @@ import static org.apiguardian.api.API.Status.*;
 @Documented
 @API(status = EXPERIMENTAL, since = "1.1")
 public @interface UseType {
+	UseTypeMode[] value() default {};
 }
+

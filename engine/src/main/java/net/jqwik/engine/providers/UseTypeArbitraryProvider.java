@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.logging.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.providers.*;
 
@@ -25,6 +26,20 @@ public class UseTypeArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		return Collections.singleton(Arbitraries.forType(targetType.getRawType()));
+		return Collections.singleton(createForTypeArbitrary(targetType));
+	}
+
+	private TypeArbitrary<?> createForTypeArbitrary(TypeUsage targetType) {
+		TypeArbitrary<?> typeArbitrary = Arbitraries.forType(targetType.getRawType());
+
+		UseTypeMode[] uses = targetType.findAnnotation(UseType.class)
+									   .map(UseType::value)
+									   .orElse(new UseTypeMode[0]);
+
+		for (UseTypeMode use : uses) {
+			typeArbitrary = use.modify(typeArbitrary);
+		}
+
+		return typeArbitrary;
 	}
 }
