@@ -227,39 +227,6 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findFirstFitIfNoNameIsGiven() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingWithoutName");
-			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			Arbitrary<?> firstArbitrary = arbitraries.iterator().next();
-			assertThat(firstArbitrary).isInstanceOf(Arbitrary.class);
-
-			assertThat(TestHelper.generateFirst(firstArbitrary)).isInstanceOf(Thing.class);
-		}
-
-		@Example
-		void findFirstFitOfGenericTypeIfNoNameIsGiven() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "listOfThingWithoutName");
-			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			Arbitrary<?> firstArbitrary = arbitraries.iterator().next();
-			assertThat(firstArbitrary).isInstanceOf(Arbitrary.class);
-
-			assertThat(TestHelper.generateFirst(firstArbitrary)).isInstanceOf(List.class);
-		}
-
-		@Example
-		void findFirstFitIfNoNameIsGivenInOutsideGroup() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing");
-			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			Arbitrary<?> firstArbitrary = arbitraries.iterator().next();
-			assertThat(firstArbitrary).isInstanceOf(Arbitrary.class);
-
-			assertThat(TestHelper.generateFirst(firstArbitrary)).isInstanceOf(Thing.class);
-		}
-
-		@Example
 		void namedStringGeneratorNotFound() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "otherString");
@@ -307,21 +274,6 @@ class PropertyMethodArbitraryResolverTests {
 				return Arbitraries.longs().between(1L, 10L);
 			}
 
-			@Property
-			boolean thingWithoutName(@ForAll Thing aThing) {
-				return true;
-			}
-
-			@Property
-			boolean listOfThingWithoutName(@ForAll List<Thing> thingList) {
-				return true;
-			}
-
-			@Provide()
-			Arbitrary<Thing> aThing() {
-				return Arbitraries.of(new Thing());
-			}
-
 			@Group
 			class NestedWithNamedProviders {
 				@Property
@@ -331,11 +283,6 @@ class PropertyMethodArbitraryResolverTests {
 
 				@Property
 				boolean nestedString(@ForAll("aString") String aString) {
-					return true;
-				}
-
-				@Property
-				boolean nestedThing(@ForAll Thing aThing) {
 					return true;
 				}
 

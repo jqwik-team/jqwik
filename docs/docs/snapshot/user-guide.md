@@ -889,11 +889,6 @@ Parameter provision usually starts with a
 by one or more [filtering](#filtering), [mapping](#mapping) or 
 [combining](#combining-arbitraries) actions.
 
-For types that have no default generation at all, _jqwik_ will use
-any provider method returning the correct type even if there is no
-explicit reference value in [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html). If provision is ambiguous
-_jqwik_ will complain and throw an exception at runtime. 
-
 
 ### Static `Arbitraries` methods 
 

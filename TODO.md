@@ -1,4 +1,2 @@
-- Breaking change:
-  Remove search for any provider method in container class if no provider is found
-
+- Update to jupiter 5.4
 

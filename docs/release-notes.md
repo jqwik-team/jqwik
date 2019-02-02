@@ -33,6 +33,9 @@ and
 - Added capability to generate objects from their type's
   [constructors and factories](/docs/snapshot/user-guide.html#generation-from-a-types-interface)
 
+- __Breaking Change__: Best fit search for provider methods is no longer supported. 
+  Reason: Using `@Domain` requires less magic and is a better abstraction for automatic arbitrary provision. 
+
 ## 1.0.0
 
 <p style="padding-left:1em;font-size:larger">

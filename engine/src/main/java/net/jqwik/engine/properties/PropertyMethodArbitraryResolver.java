@@ -5,8 +5,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.commons.support.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
@@ -58,9 +56,6 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 			resolvedArbitraries.add(createdArbitrary);
 		} else if (generatorName.isEmpty()) {
 			resolvedArbitraries.addAll(resolveRegisteredArbitrary(targetType));
-			if (resolvedArbitraries.isEmpty()) {
-				findFirstFitArbitrary(targetType).ifPresent(resolvedArbitraries::add);
-			}
 		}
 
 		return resolvedArbitraries.stream().map(arbitrary -> configure(arbitrary, targetType)).collect(Collectors.toSet());
@@ -81,23 +76,6 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
 
 		return findGeneratorMethod(generatorToFind, this.containerClass, Provide.class, generatorNameSupplier, targetArbitraryType);
-	}
-
-	private Optional<Arbitrary<?>> findFirstFitArbitrary(TypeUsage typeUsage) {
-		return findArbitraryCreator(typeUsage).map(creator -> (Arbitrary<?>) invokeMethodPotentiallyOuter(creator, testInstance));
-	}
-
-	private Optional<Method> findArbitraryCreator(TypeUsage typeUsage) {
-		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
-		List<Method> creators = findMethodsPotentiallyOuter(
-			containerClass,
-			isGeneratorMethod(targetArbitraryType, Provide.class),
-			HierarchyTraversalMode.BOTTOM_UP
-		);
-		if (creators.size() > 1) {
-			throw new AmbiguousArbitraryException(typeUsage, creators);
-		}
-		return creators.stream().findFirst();
 	}
 
 	private Set<Arbitrary<?>> resolveRegisteredArbitrary(TypeUsage parameterType) {
