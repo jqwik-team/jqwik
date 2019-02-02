@@ -82,6 +82,11 @@
 
 ### Properties
 
+- Arbitraries.forType(Class<T> targetClass) : TypeArbitrary<T>
+  - class TypeArbitrary<T> TypeArbitrary<T> useFields()
+  - class TypeArbitrary<T> TypeArbitrary<T> useProperties()
+  - Annotation @UseType({FIELDS, PROPERTIES}
+
 - Stateless Properties:
   - Let action generation access the model state?
     E.g. to use a name that’s already been added to a store.
@@ -133,13 +138,6 @@
     or which arbitrary does not provide exhaustive generation
   - Make default GenerationMode configurable
   - Decimal generation with restricted scale
-
-- @From(String methodName)
-  - can be used in parameter types to choose provider method
-    as replacement for @ForAll.value
-  - can have alternatively `Class provider` attribute (but no value parameter)
-    to specify ArbitraryProvider implementation
-  - @ForAll.value should still be allowed as shortcut
 
 - Provider methods can take params e.g.
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
