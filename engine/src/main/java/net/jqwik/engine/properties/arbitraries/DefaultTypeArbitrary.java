@@ -46,6 +46,9 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter) {
+		if (JqwikReflectionSupport.isAbstract(targetType)) {
+			return this;
+		}
 		Arrays.stream(targetType.getDeclaredConstructors())
 			  .filter(this::isNotRecursive)
 			  .filter(filter)
@@ -104,7 +107,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	private boolean hasFittingReturnType(Executable creator) {
 		TypeUsage returnType = TypeUsage.forType(creator.getAnnotatedReturnType().getType());
-		return returnType.isAssignableFrom(targetType);
+		return returnType.canBeAssignedTo(TypeUsage.of(targetType));
 	}
 
 	private boolean isNotRecursive(Executable creator) {

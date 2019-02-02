@@ -111,30 +111,6 @@ class DefaultTypeArbitraryTests {
 			);
 		}
 
-		@Example
-		void useDefaultsWillUseAllPublicConstructorsAndFactoryMethods() {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class).useDefaults();
-
-			assertAllGenerated(
-				typeArbitrary.generator(1000),
-				aPerson -> aPerson.toString().length() <= 100
-			);
-		}
-
-		@Example
-		void useDefaultsIsOverwrittenByDirectUse() throws NoSuchMethodException {
-			TypeArbitrary<Person> typeArbitrary =
-				new DefaultTypeArbitrary<>(Person.class)
-					.useDefaults()
-					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
-
-			assertAllGenerated(
-				typeArbitrary.generator(1000),
-				aPerson -> {return aPerson.toString().equals("a person");}
-			);
-		}
-
 		@SuppressWarnings("unchecked")
 		@Example
 		void reusingCreatorsIsIgnored() throws NoSuchMethodException {
@@ -148,6 +124,58 @@ class DefaultTypeArbitraryTests {
 
 			Assertions.assertThat(typeArbitrary.countCreators()).isEqualTo(2);
 		}
+	}
+
+	@Group
+	@Label("useDefaults")
+	class UseDefaults {
+
+		@Example
+		void willUseAllPublicConstructorsAndFactoryMethods() {
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class).useDefaults();
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> aPerson.toString().length() <= 100
+			);
+		}
+
+		@Example
+		void isOverwrittenByDirectUse() throws NoSuchMethodException {
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class)
+					.useDefaults()
+					.use(Samples.class.getDeclaredMethod("personFromNoParams"));
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				aPerson -> {return aPerson.toString().equals("a person");}
+			);
+		}
+
+		@Example
+		void onAbstractClassUsesOnlyFactoryMethods() {
+			TypeArbitrary<Animal> typeArbitrary =
+				new DefaultTypeArbitrary<>(Animal.class).useDefaults();
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				animal -> animal.toString().startsWith("Cat") || animal.toString().startsWith("Dog")
+			);
+		}
+
+		@Example
+		void onInterfaceUsesOnlyFactoryMethods() {
+			TypeArbitrary<Thing> typeArbitrary =
+				new DefaultTypeArbitrary<>(Thing.class).useDefaults();
+
+			assertAllGenerated(
+				typeArbitrary.generator(1000),
+				thing -> {return thing.toString().equals("Thing");}
+			);
+		}
+
 	}
 
 	@Group
@@ -356,6 +384,55 @@ class DefaultTypeArbitraryTests {
 
 		private String nonStaticMethod() {
 			return "a string";
+		}
+	}
+
+	private interface Thing {
+		static Thing aThing() {
+			return new Thing() {
+				@Override
+				public String toString() {
+					return "Thing";
+				}
+			};
+		}
+	}
+
+	private static abstract class Animal {
+
+		public static Cat aCat(String name) {
+			return new Cat(name);
+		}
+
+		public static Dog aDog(String name) {
+			return new Dog(name);
+		}
+
+		public static Object shouldNotBeCalled(String name) {
+			return new Object();
+		}
+
+		private String name;
+
+		public Animal(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s named %s", getClass().getSimpleName(), name);
+		}
+	}
+
+	private static class Cat extends Animal {
+		public Cat(String name) {
+			super(name);
+		}
+	}
+
+	private static class Dog extends Animal {
+		public Dog(String name) {
+			super(name);
 		}
 	}
 
