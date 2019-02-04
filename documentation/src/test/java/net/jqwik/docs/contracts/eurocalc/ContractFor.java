@@ -1,14 +1,14 @@
 package net.jqwik.docs.contracts.eurocalc;
 
-public @interface Contract {
+public @interface ContractFor {
 
 	Class value();
 
-	@interface Precondition {
+	@interface Require {
 
 	}
 
-	@interface Postcondition {
+	@interface Ensure {
 
 	}
 
