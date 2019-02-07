@@ -8,6 +8,7 @@ import org.assertj.core.data.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.domains.*;
 
 @Group
 @Label("Contract: RateProvider")
@@ -60,7 +61,7 @@ class RateProviderContractProperties {
 		default boolean willReturnRateAboveZeroForValidCurrencies(
 			@ForAll("currencies") String from,
 			@ForAll("currencies") String to,
-			@ForAll E provider) {
+			@ForAll("rateProvider") E provider) {
 			return provider.rate(from, to) > 0.0;
 		}
 
@@ -68,7 +69,7 @@ class RateProviderContractProperties {
 		default void willThrowExceptionsForInvalidCurrencies(
 			@ForAll("currencies") String from,
 			@ForAll("invalid") String to,
-			@ForAll E provider) {
+			@ForAll("rateProvider") E provider) {
 
 			Assertions.assertThatThrownBy(() -> provider.rate(from, to)).isInstanceOf(IllegalArgumentException.class);
 			Assertions.assertThatThrownBy(() -> provider.rate(to, from)).isInstanceOf(IllegalArgumentException.class);
@@ -88,10 +89,18 @@ class RateProviderContractProperties {
 
 	@Group
 	@Label("SimpleRateProvider")
+	//@Domain(SimpleRateProviderDomain.class) //does not work here
 	class SimpleRateProviderTests implements RateProviderContractTests<SimpleRateProvider> {
 		@Provide
-		Arbitrary<SimpleRateProvider> simpleRateProvider() {
+		Arbitrary<SimpleRateProvider> rateProvider() {
 			return Arbitraries.constant(new SimpleRateProvider());
+		}
+
+	}
+
+	static class SimpleRateProviderDomain extends AbstractDomainContextBase {
+		public SimpleRateProviderDomain() {
+			registerArbitrary(RateProvider.class, Arbitraries.constant(new SimpleRateProvider()));
 		}
 	}
 
@@ -103,7 +112,8 @@ class RateProviderContractProperties {
 		boolean willAlwaysConvertToPositiveEuroAmount(
 			@ForAll("nonEuroCurrencies") String from,
 			@ForAll @DoubleRange(min = 0.01, max = 1000000.0) double amount,
-			@ForAll RateProvider provider) {
+			@ForAll("rateProvider") RateProvider provider
+		) {
 
 			double euroAmount = new EuroConverter(provider).convert(amount, from);
 			return euroAmount > 0.0;
@@ -122,7 +132,7 @@ class RateProviderContractProperties {
 		}
 
 		@Provide
-		Arbitrary<RateProvider> aRateProvider() {
+		Arbitrary<RateProvider> rateProvider() {
 			DoubleArbitrary rate = Arbitraries.doubles().between(0.1, 10.0);
 			return rate.map(exchangeRate -> (fromCurrency, toCurrency) -> {
 				Assertions.assertThat(fromCurrency).isNotEqualTo(toCurrency);
