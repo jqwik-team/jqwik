@@ -5,7 +5,6 @@ import java.util.function.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
-import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -17,6 +16,7 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.support.*;
 
 import static org.junit.platform.commons.util.BlacklistedExceptions.*;
 
@@ -57,8 +57,7 @@ public class PropertyMethodExecutor {
 
 	private DomainContext createDomainContext(Class<? extends DomainContext> domainContextClass) {
 		try {
-			DomainContext domainContext = ReflectionSupport.newInstance(domainContextClass);
-			return domainContext;
+			return JqwikReflectionSupport.newInstanceInTestContext(domainContextClass, propertyLifecycleContext.testInstance());
 		} catch (Throwable throwable) {
 			String message = String.format(
 				"Cannot instantiate domain context @Domain(\"%s\") on [%s].",

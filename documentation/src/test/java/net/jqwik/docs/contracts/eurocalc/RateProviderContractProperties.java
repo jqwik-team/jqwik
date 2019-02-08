@@ -61,7 +61,7 @@ class RateProviderContractProperties {
 		default boolean willReturnRateAboveZeroForValidCurrencies(
 			@ForAll("currencies") String from,
 			@ForAll("currencies") String to,
-			@ForAll("rateProvider") E provider) {
+			@ForAll E provider) {
 			return provider.rate(from, to) > 0.0;
 		}
 
@@ -69,7 +69,7 @@ class RateProviderContractProperties {
 		default void willThrowExceptionsForInvalidCurrencies(
 			@ForAll("currencies") String from,
 			@ForAll("invalid") String to,
-			@ForAll("rateProvider") E provider) {
+			@ForAll E provider) {
 
 			Assertions.assertThatThrownBy(() -> provider.rate(from, to)).isInstanceOf(IllegalArgumentException.class);
 			Assertions.assertThatThrownBy(() -> provider.rate(to, from)).isInstanceOf(IllegalArgumentException.class);
@@ -89,19 +89,19 @@ class RateProviderContractProperties {
 
 	@Group
 	@Label("SimpleRateProvider")
-	//@Domain(SimpleRateProviderDomain.class) //does not work here
+	@Domain(SimpleRateProviderTests.SimpleRateProviderDomain.class) //does not work here
 	class SimpleRateProviderTests implements RateProviderContractTests<SimpleRateProvider> {
 		@Provide
 		Arbitrary<SimpleRateProvider> rateProvider() {
 			return Arbitraries.constant(new SimpleRateProvider());
 		}
 
-	}
-
-	static class SimpleRateProviderDomain extends AbstractDomainContextBase {
-		public SimpleRateProviderDomain() {
-			registerArbitrary(RateProvider.class, Arbitraries.constant(new SimpleRateProvider()));
+		class SimpleRateProviderDomain extends AbstractDomainContextBase {
+			public SimpleRateProviderDomain() {
+				registerArbitrary(SimpleRateProvider.class, Arbitraries.constant(new SimpleRateProvider()));
+			}
 		}
+
 	}
 
 	@Group

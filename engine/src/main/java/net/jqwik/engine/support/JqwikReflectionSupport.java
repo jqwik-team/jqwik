@@ -36,16 +36,16 @@ public class JqwikReflectionSupport {
 		// but has been stable so far in all JDKs
 
 		return Arrays
-				   .stream(inner.getClass().getDeclaredFields())
-				   .filter(field -> field.getName().startsWith("this$"))
-				   .findFirst()
-				   .map(field -> {
-					   try {
-						   return makeAccessible(field).get(inner);
-					   } catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-						   return Optional.empty();
-					   }
-				   });
+			.stream(inner.getClass().getDeclaredFields())
+			.filter(field -> field.getName().startsWith("this$"))
+			.findFirst()
+			.map(field -> {
+				try {
+					return makeAccessible(field).get(inner);
+				} catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+					return Optional.empty();
+				}
+			});
 	}
 
 	private static <T extends AccessibleObject> T makeAccessible(T object) {
@@ -60,15 +60,31 @@ public class JqwikReflectionSupport {
 	 *
 	 * @param <T>   The type of the instance to create
 	 * @param clazz The class to instantiate
-	 * @return the instance
+	 * @return the newly created instance
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
 		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz))
 			return ReflectionSupport.newInstance(clazz);
-		else {
-			Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
-			return ReflectionSupport.newInstance(clazz, parentInstance);
-		}
+		Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
+		return ReflectionSupport.newInstance(clazz, parentInstance);
+	}
+
+	/**
+	 * Create instance of a class that can potentially be a non static inner class
+	 * and its outer instance might be {@code context}
+	 *
+	 * @param <T>   The type of the instance to create
+	 * @param clazz The class to instantiate
+	 * @param context The potential context instance
+	 * @return the newly created instance
+	 */
+	public static <T> T newInstanceInTestContext(Class<T> clazz, Object context) {
+		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz))
+			return ReflectionSupport.newInstance(clazz);
+		Class<?> outerClass = clazz.getDeclaringClass();
+		Object parentInstance = outerClass.equals(context.getClass()) ?
+			context : newInstanceWithDefaultConstructor(outerClass);
+		return ReflectionSupport.newInstance(clazz, parentInstance);
 	}
 
 	/**

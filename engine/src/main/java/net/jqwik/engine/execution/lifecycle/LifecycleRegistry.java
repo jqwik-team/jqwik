@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
@@ -75,7 +76,7 @@ public class LifecycleRegistry implements LifecycleSupplier {
 		}
 		registrations.add(new HookRegistration(descriptor, hookClass));
 		if (!instances.containsKey(hookClass)) {
-			LifecycleHook hookInstance = JqwikReflectionSupport.newInstanceWithDefaultConstructor(hookClass);
+			LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
 			hookInstance.configure(parameters);
 			instances.put(hookClass, hookInstance);
 		}
