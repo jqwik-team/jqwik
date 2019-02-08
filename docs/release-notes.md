@@ -36,6 +36,8 @@ and
 - __Breaking Change__: Best fit search for provider methods is no longer supported. 
   Reason: Using `@Domain` requires less magic and is a better abstraction for automatic arbitrary provision. 
 
+- Update to JUnit Platform 5.4
+
 ## 1.0.0
 
 <p style="padding-left:1em;font-size:larger">
