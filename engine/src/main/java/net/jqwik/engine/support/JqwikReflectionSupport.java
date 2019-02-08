@@ -63,7 +63,7 @@ public class JqwikReflectionSupport {
 	 * @return the instance
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
-		if (isTopLevelClass.test(clazz) || JqwikReflectionSupport.isStatic(clazz))
+		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz))
 			return ReflectionSupport.newInstance(clazz);
 		else {
 			Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
@@ -173,40 +173,8 @@ public class JqwikReflectionSupport {
 		};
 	}
 
-	public static boolean isPublic(Class<?> clazz) {
-		return Modifier.isPublic(clazz.getModifiers());
-	}
-
-	public static boolean isPublic(Member member) {
-		return Modifier.isPublic(member.getModifiers());
-	}
-
-	public static boolean isPrivate(Class<?> clazz) {
-		return Modifier.isPrivate(clazz.getModifiers());
-	}
-
-	public static boolean isPrivate(Member member) {
-		return Modifier.isPrivate(member.getModifiers());
-	}
-
-	public static boolean isAbstract(Class<?> clazz) {
-		return Modifier.isAbstract(clazz.getModifiers());
-	}
-
-	public static boolean isAbstract(Member member) {
-		return Modifier.isAbstract(member.getModifiers());
-	}
-
-	public static boolean isStatic(Class<?> clazz) {
-		return Modifier.isStatic(clazz.getModifiers());
-	}
-
-	public static boolean isStatic(Member member) {
-		return Modifier.isStatic(member.getModifiers());
-	}
-
 	public static boolean isInnerClass(Class<? extends LifecycleHook> hookClass) {
-		return hookClass.isMemberClass() && !isStatic(hookClass);
+		return hookClass.isMemberClass() && !ModifierSupport.isStatic(hookClass);
 	}
 
 	/**

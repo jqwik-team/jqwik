@@ -35,7 +35,7 @@ public abstract class AbstractClassResolver implements ElementResolver {
 
 		String className = segment.getValue();
 
-		Optional<Class<?>> optionalContainerClass = ReflectionSupport.loadClass(className);
+		Optional<Class<?>> optionalContainerClass = ReflectionSupport.tryToLoadClass(className).toOptional();
 		if (!optionalContainerClass.isPresent())
 			return Optional.empty();
 

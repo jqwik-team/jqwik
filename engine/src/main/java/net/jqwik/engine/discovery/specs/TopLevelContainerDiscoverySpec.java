@@ -7,7 +7,7 @@ import org.junit.platform.engine.support.hierarchical.Node.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.discovery.predicates.*;
 
-import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.ModifierSupport.*;
 
 public class TopLevelContainerDiscoverySpec implements DiscoverySpec<Class<?>> {
 

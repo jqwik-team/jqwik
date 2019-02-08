@@ -2,7 +2,7 @@ package net.jqwik.engine.discovery.predicates;
 
 import java.util.function.*;
 
-import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.ModifierSupport.*;
 
 public class IsScannableContainerClass implements Predicate<Class<?>> {
 

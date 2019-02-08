@@ -3,7 +3,7 @@ package net.jqwik.engine.discovery.predicates;
 import java.lang.reflect.*;
 import java.util.function.*;
 
-import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.ModifierSupport.*;
 
 public class IsDiscoverableTestMethod implements Predicate<Method> {
 

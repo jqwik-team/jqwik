@@ -10,7 +10,7 @@ import org.junit.platform.engine.support.hierarchical.Node.*;
 import net.jqwik.engine.discovery.predicates.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static org.junit.platform.commons.support.ModifierSupport.*;
 
 public class PropertyDiscoverySpec implements DiscoverySpec<Method> {
 	private final IsProperty isProperty = new IsProperty();

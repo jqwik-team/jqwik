@@ -5,10 +5,13 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.junit.platform.commons.support.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.support.*;
+
+import static org.junit.platform.commons.support.ModifierSupport.*;
 
 public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeArbitrary<T> {
 
@@ -46,7 +49,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> useConstructors(Predicate<? super Constructor<?>> filter) {
-		if (JqwikReflectionSupport.isAbstract(targetType)) {
+		if (isAbstract(targetType)) {
 			return this;
 		}
 		Arrays.stream(targetType.getDeclaredConstructors())
@@ -58,7 +61,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> usePublicConstructors() {
-		return useConstructors(JqwikReflectionSupport::isPublic);
+		return useConstructors(ModifierSupport::isPublic);
 	}
 
 	@Override
@@ -69,7 +72,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	@Override
 	public TypeArbitrary<T> useFactoryMethods(Predicate<Method> filter) {
 		Arrays.stream(targetType.getDeclaredMethods())
-			  .filter(JqwikReflectionSupport::isStatic)
+			  .filter(ModifierSupport::isStatic)
 			  .filter(this::hasFittingReturnType)
 			  .filter(this::isNotRecursive)
 			  .filter(filter)
@@ -79,7 +82,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 	@Override
 	public TypeArbitrary<T> usePublicFactoryMethods() {
-		return useFactoryMethods(JqwikReflectionSupport::isPublic);
+		return useFactoryMethods(ModifierSupport::isPublic);
 	}
 
 	@Override
@@ -115,7 +118,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	private void checkMethod(Method method) {
-		if (!JqwikReflectionSupport.isStatic(method)) {
+		if (!isStatic(method)) {
 			throw new JqwikException(String.format("Method %s should be static", method));
 		}
 	}
