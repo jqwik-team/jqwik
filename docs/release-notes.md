@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.1.0-SNAPSHOT](#110-snapshot)
+- [1.1.0](#110)
 - [1.0.0](#100)
 - [0.9.x](#09x)
 - [0.8.x](#08x)
@@ -17,21 +17,21 @@ title: jqwik Release Notes
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-## 1.1.0-SNAPSHOT
+## 1.1.0
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.1.0/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.1.0/javadoc/index.html">javadoc</a>
 </p>
 
 - Added capability to
-  [collect arbitrary providers and configurators in domains](/docs/snapshot/user-guide.html#domain-and-domain-context)
+  [collect arbitrary providers and configurators in domains](/docs/1.1.0/user-guide.html#domain-and-domain-context)
 
 - Added `Arbitraries.defaultFor(TypeUsage typeUsage)`
 
 - Added capability to generate objects from their type's
-  [constructors and factories](/docs/snapshot/user-guide.html#generation-from-a-types-interface)
+  [constructors and factories](/docs/1.1.0/user-guide.html#generation-from-a-types-interface)
 
 - __Breaking Change__: Best fit search for provider methods is no longer supported. 
   Reason: Using `@Domain` requires less magic and is a better abstraction for automatic arbitrary provision. 
