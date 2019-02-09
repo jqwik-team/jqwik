@@ -8,7 +8,6 @@ import java.util.logging.*;
 public class TestRunDatabase {
 
 	private static final Logger LOG = Logger.getLogger(TestRunDatabase.class.getName());
-	private volatile static boolean databaseInUse = false;
 
 	private final Path databasePath;
 	private final TestRunData previousRunData;
@@ -20,12 +19,6 @@ public class TestRunDatabase {
 	}
 
 	private TestRunData loadExistingRunData() {
-		if (databaseInUse) {
-			// This happens when a test engine is created while tests are already running
-			// e.g. when using JUnit Platform TestKit
-			return new TestRunData();
-		}
-
 		if (!Files.exists(databasePath)) {
 			return new TestRunData();
 		}
@@ -92,7 +85,6 @@ public class TestRunDatabase {
 
 		private Recorder(ObjectOutputStream objectOutputStream) {
 			this.objectOutputStream = objectOutputStream;
-			databaseInUse = true;
 		}
 
 		@Override
@@ -122,8 +114,6 @@ public class TestRunDatabase {
 				objectOutputStream.close();
 			} catch (IOException e) {
 				logWriteException(e);
-			} finally {
-				databaseInUse = false;
 			}
 		}
 
@@ -134,12 +124,6 @@ public class TestRunDatabase {
 	}
 
 	public TestRunRecorder recorder() {
-		if (databaseInUse) {
-			// This happens when a test engine is created while tests are already running
-			// e.g. when using JUnit Platform TestKit
-			return TestRunRecorder.NULL;
-		}
-
 		return new Recorder(createObjectOutputStream());
 	}
 }
