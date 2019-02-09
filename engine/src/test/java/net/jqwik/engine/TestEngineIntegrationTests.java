@@ -4,7 +4,6 @@ import java.util.*;
 
 import examples.packageWithDisabledTests.*;
 import examples.packageWithSeveralContainers.*;
-import examples.packageWithSingleContainer.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.launcher.*;
 import org.mockito.*;
@@ -17,7 +16,8 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
 import static org.mockito.Mockito.*;
 
-// TODO: Migrate to JqwikTestKitTests
+// TODO: Migrate to JqwikTestKitTests as soons as it is capable enough
+// see https://github.com/junit-team/junit5/issues/1532
 class TestEngineIntegrationTests {
 
 	private JqwikTestEngine testEngine;
@@ -64,26 +64,6 @@ class TestEngineIntegrationTests {
 				return true;
 			}
 		};
-	}
-
-	@Example
-	void runTestsFromMethod() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectMethod(SimpleExampleTests.class, "succeeding")).build();
-
-		TestDescriptor engineDescriptor = runTests(discoveryRequest);
-
-		verify(eventRecorder).executionStarted(engineDescriptor);
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class));
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(
-			TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"),
-			TestExecutionResultMatchers.isSuccessful()
-		);
-		verify(eventRecorder).executionFinished(
-			TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class),
-			TestExecutionResultMatchers.isSuccessful()
-		);
-		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
 	@Example

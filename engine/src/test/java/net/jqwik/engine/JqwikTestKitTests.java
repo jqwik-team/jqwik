@@ -70,4 +70,22 @@ class JqwikTestKitTests {
 		);
 	}
 
+	@Example
+	void runTestsFromMethod() {
+		Events events = EngineTestKit
+							.engine("jqwik")
+							.selectors(selectMethod(SimpleExampleTests.class, "succeeding"))
+							.execute()
+							.all();
+
+		events.assertEventsMatchExactly(
+			event(engine(), started()),
+			event(container(SimpleExampleTests.class), started()),
+			event(test("succeeding"), started()),
+			event(test("succeeding"), finishedSuccessfully()),
+			event(container(SimpleExampleTests.class), finishedSuccessfully()),
+			event(engine(), finishedSuccessfully())
+		);
+	}
+
 }
