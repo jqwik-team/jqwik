@@ -6,19 +6,18 @@ import examples.packageWithDisabledTests.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.discovery.*;
 import org.junit.platform.launcher.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.matchers.*;
 import net.jqwik.engine.recording.*;
-import net.jqwik.engine.support.*;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.*;
 import static org.mockito.Mockito.*;
 
+// TODO: Migrate to JqwikTestKitTests
 class TestEngineIntegrationTests {
 
 	private JqwikTestEngine testEngine;
@@ -65,43 +64,6 @@ class TestEngineIntegrationTests {
 				return true;
 			}
 		};
-	}
-
-	@Example
-	void runTestsFromRootDir() {
-		LauncherDiscoveryRequest discoveryRequest =
-			request().selectors(selectClasspathRoots(JqwikReflectionSupport.getAllClasspathRootDirectories()))
-					 .filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer")).build();
-
-		TestDescriptor engineDescriptor = runTests(discoveryRequest);
-
-		verify(eventRecorder).executionStarted(engineDescriptor);
-
-		verifyRunOfSimpleExampleTests();
-
-		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
-	}
-
-	@Example
-	void runTestsFromPackage() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples.packageWithSingleContainer")).build();
-
-		TestDescriptor engineDescriptor = runTests(discoveryRequest);
-
-		verify(eventRecorder).executionStarted(engineDescriptor);
-		verifyRunOfSimpleExampleTests();
-		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
-	}
-
-	@Example
-	void runTestsFromClass() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(SimpleExampleTests.class)).build();
-
-		TestDescriptor engineDescriptor = runTests(discoveryRequest);
-
-		verify(eventRecorder).executionStarted(engineDescriptor);
-		verifyRunOfSimpleExampleTests();
-		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
 	@Example
@@ -233,45 +195,12 @@ class TestEngineIntegrationTests {
 		verify(eventRecorder).executionFinished(engineDescriptor, TestExecutionResult.successful());
 	}
 
-	private void verifyRunOfSimpleExampleTests() {
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class));
-
-		// SimpleExampleTests.failing()
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"));
-		verify(eventRecorder).executionFinished(
-			TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "failing"),
-			TestExecutionResultMatchers.isFailed()
-		);
-
-		// SimpleExampleTests.succeeding()
-		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"));
-		verify(eventRecorder).executionFinished(
-			TestDescriptorMatchers.isPropertyDescriptorFor(SimpleExampleTests.class, "succeeding"),
-			TestExecutionResultMatchers.isSuccessful()
-		);
-
-		// SimpleExampleTests.withJupiterAnnotation()
-		verify(eventRecorder).executionSkipped(
-			TestDescriptorMatchers.isSkipDecoratorFor(SimpleExampleTests.class, "withJupiterAnnotation"),
-			anyString()
-		);
-
-		// SimpleExampleTests.staticExample()
-		verify(eventRecorder).executionSkipped(
-			TestDescriptorMatchers.isSkipDecoratorFor(SimpleExampleTests.class, "staticExample"),
-			anyString()
-		);
-
-		verify(eventRecorder).executionFinished(
-			TestDescriptorMatchers.isClassDescriptorFor(SimpleExampleTests.class),
-			TestExecutionResultMatchers.isSuccessful()
-		);
-	}
-
 	private TestDescriptor runTests(LauncherDiscoveryRequest discoveryRequest) {
 		TestDescriptor engineDescriptor = testEngine.discover(discoveryRequest, engineId);
-		ExecutionRequest executionRequest = new ExecutionRequest(engineDescriptor, eventRecorder,
-				discoveryRequest.getConfigurationParameters());
+		ExecutionRequest executionRequest = new ExecutionRequest(
+			engineDescriptor, eventRecorder,
+			discoveryRequest.getConfigurationParameters()
+		);
 		testEngine.execute(executionRequest);
 		return engineDescriptor;
 	}

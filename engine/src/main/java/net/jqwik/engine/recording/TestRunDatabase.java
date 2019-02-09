@@ -8,6 +8,7 @@ import java.util.logging.*;
 public class TestRunDatabase {
 
 	private static final Logger LOG = Logger.getLogger(TestRunDatabase.class.getName());
+	private volatile static boolean databaseInUse = false;
 
 	private final Path databasePath;
 	private final TestRunData previousRunData;
@@ -19,19 +20,30 @@ public class TestRunDatabase {
 	}
 
 	private TestRunData loadExistingRunData() {
-		if (!Files.exists(databasePath))
+		if (databaseInUse) {
+			// This happens when a test engine is created while tests are already running
+			// e.g. when using JUnit Platform TestKit
 			return new TestRunData();
+		}
+
+		if (!Files.exists(databasePath)) {
+			return new TestRunData();
+		}
 
 		try (ObjectInputStream ois = createObjectInputStream()) {
 			List<TestRun> data = readAllTestRuns(ois);
 			return new TestRunData(data);
 		} catch (Exception e) {
-			logWriteException(e);
-			try {
-				Files.delete(databasePath);
-			} catch (IOException ignore) {
-			}
+			logReadException(e);
+			deleteDatabase();
 			return new TestRunData();
+		}
+	}
+
+	private void deleteDatabase() {
+		try {
+			Files.delete(databasePath);
+		} catch (IOException ignore) {
 		}
 	}
 
@@ -45,13 +57,14 @@ public class TestRunDatabase {
 				break;
 			} catch (IOException eof) {
 				logReadException(eof);
+				deleteDatabase();
 				break;
 			}
 		}
 		return testRuns;
 	}
 
-	private void logReadException(IOException eof) {
+	private void logReadException(Exception eof) {
 		LOG.log(Level.WARNING, eof, () -> String.format("Cannot read database [%s]", databasePath.toAbsolutePath()));
 	}
 
@@ -79,6 +92,7 @@ public class TestRunDatabase {
 
 		private Recorder(ObjectOutputStream objectOutputStream) {
 			this.objectOutputStream = objectOutputStream;
+			databaseInUse = true;
 		}
 
 		@Override
@@ -108,6 +122,8 @@ public class TestRunDatabase {
 				objectOutputStream.close();
 			} catch (IOException e) {
 				logWriteException(e);
+			} finally {
+				databaseInUse = false;
 			}
 		}
 
@@ -118,6 +134,12 @@ public class TestRunDatabase {
 	}
 
 	public TestRunRecorder recorder() {
+		if (databaseInUse) {
+			// This happens when a test engine is created while tests are already running
+			// e.g. when using JUnit Platform TestKit
+			return TestRunRecorder.NULL;
+		}
+
 		return new Recorder(createObjectOutputStream());
 	}
 }
