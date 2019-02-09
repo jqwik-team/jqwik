@@ -42,4 +42,10 @@ public class UseTypeArbitraryProvider implements ArbitraryProvider {
 
 		return typeArbitrary;
 	}
+
+	@Override
+	public int priority() {
+		// @UseType should override other default providers with priority 0
+		return 1;
+	}
 }

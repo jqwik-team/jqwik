@@ -31,13 +31,6 @@ Snapshot releases can be fetched from https://oss.sonatype.org/content/repositor
 
 ### Gradle
 
-#### Using JUnit's own Gradle Plugin
-
-You should _no longer use_ JUnit's own Gradle Plugin because support was discontinued
-starting with version 1.3.0.
-
-#### Using Gradle's Built-in Support
-
 Since version 4.6, Gradle has 
 [built-in support for the JUnit platform](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html).
 Set up is rather simple; here are the relevant parts of a project's `build.gradle` file:

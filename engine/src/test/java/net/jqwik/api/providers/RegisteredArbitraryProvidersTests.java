@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.domains.*;
 import net.jqwik.engine.properties.arbitraries.WildcardArbitrary.*;
 import net.jqwik.engine.providers.*;
 
@@ -253,6 +254,24 @@ class RegisteredArbitraryProvidersTests {
 		boolean fromAllConstructorsAndFactories(@ForAll @UseType({CONSTRUCTORS, FACTORIES}) Person aPerson) {
 			return aPerson != null;
 		}
+
+		@Property(tries = 20)
+		@Domain(SmallNumbers.class)
+		void useTypeShouldWorkRegardlessOfDomainContext(
+			@ForAll int smallNumber,
+			@ForAll @UseType Random random
+		) {
+			assertThat(smallNumber).isBetween(1, 99);
+			assertThat(random).isNotNull();
+		}
+
+		class SmallNumbers extends AbstractDomainContextBase {
+			public SmallNumbers() {
+				registerArbitrary(int.class, Arbitraries.integers().between(1, 99));
+				registerArbitrary(long.class, Arbitraries.longs());
+			}
+		}
+
 	}
 
 	@Group

@@ -8,10 +8,11 @@ import net.jqwik.api.providers.*;
 
 public class RegisteredArbitraryConfigurer {
 
-	private final List<ArbitraryConfigurator> registeredConfigurators;
+	private final List<ArbitraryConfigurator> registeredConfigurators = new ArrayList<>();
 
 	public RegisteredArbitraryConfigurer(List<ArbitraryConfigurator> registeredConfigurators) {
-		this.registeredConfigurators = registeredConfigurators;
+		this.registeredConfigurators.addAll(registeredConfigurators);
+		this.registeredConfigurators.addAll(DefaultArbitraries.getDefaultConfigurators());
 	}
 
 	public Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage targetType) {

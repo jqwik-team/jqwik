@@ -5,7 +5,7 @@ import java.util.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.configurators.*;
+import net.jqwik.engine.properties.configurators.*;
 import net.jqwik.engine.providers.*;
 
 public class DomainContextFacadeImpl extends DomainContext.DomainContextFacade {

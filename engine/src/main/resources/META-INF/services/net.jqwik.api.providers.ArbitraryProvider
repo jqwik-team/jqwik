@@ -1,4 +1,3 @@
-net.jqwik.engine.providers.EnumArbitraryProvider
 net.jqwik.engine.providers.CharacterArbitraryProvider
 net.jqwik.engine.providers.BooleanArbitraryProvider
 net.jqwik.engine.providers.IntegerArbitraryProvider
@@ -10,13 +9,5 @@ net.jqwik.engine.providers.FloatArbitraryProvider
 net.jqwik.engine.providers.BigIntegerArbitraryProvider
 net.jqwik.engine.providers.BigDecimalArbitraryProvider
 net.jqwik.engine.providers.StringArbitraryProvider
-net.jqwik.engine.providers.ListArbitraryProvider
-net.jqwik.engine.providers.SetArbitraryProvider
-net.jqwik.engine.providers.StreamArbitraryProvider
-net.jqwik.engine.providers.OptionalArbitraryProvider
-net.jqwik.engine.providers.ArrayArbitraryProvider
-net.jqwik.engine.providers.IteratorArbitraryProvider
 net.jqwik.engine.providers.RandomArbitraryProvider
 net.jqwik.engine.providers.ObjectArbitraryProvider
-net.jqwik.engine.providers.WildcardArbitraryProvider
-net.jqwik.engine.providers.UseTypeArbitraryProvider

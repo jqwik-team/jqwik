@@ -8,10 +8,11 @@ import net.jqwik.api.providers.ArbitraryProvider.*;
 
 public class RegisteredArbitraryResolver {
 
-	private final List<ArbitraryProvider> registeredProviders;
+	private final List<ArbitraryProvider> registeredProviders = new ArrayList<>();
 
 	public RegisteredArbitraryResolver(List<ArbitraryProvider> registeredProviders) {
-		this.registeredProviders = registeredProviders;
+		this.registeredProviders.addAll(registeredProviders);
+		this.registeredProviders.addAll(DefaultArbitraries.getDefaultProviders());
 	}
 
 	public Set<Arbitrary<?>> resolve(TypeUsage targetType, SubtypeProvider subtypeProvider) {

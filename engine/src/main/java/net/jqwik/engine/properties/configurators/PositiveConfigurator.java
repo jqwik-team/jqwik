@@ -1,4 +1,4 @@
-package net.jqwik.engine.configurators;
+package net.jqwik.engine.properties.configurators;
 
 import java.math.*;
 

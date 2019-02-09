@@ -27,9 +27,9 @@ import static org.junit.platform.commons.support.ReflectionSupport.*;
  *
  * <ul>
  *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/configurators/CharsConfigurator.java"
- *     >net.jqwik.engine.configurators.CharsConfigurator</a></li>
+ *     >net.jqwik.engine.properties.configurators.CharsConfigurator</a></li>
  *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/configurators/SizeConfigurator.java"
- *     >net.jqwik.engine.configurators.SizeConfigurator</a></li>
+ *     >net.jqwik.engine.properties.configurators.SizeConfigurator</a></li>
  * </ul>
  */
 @API(status = MAINTAINED, since = "1.0")
