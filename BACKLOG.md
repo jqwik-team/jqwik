@@ -12,9 +12,6 @@
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
 
-- Use junit-platform-testkit for engine integration tests
-  (iff junit 5.4 is out by then)
-
 ### General
 
 - PackageDescriptor e.g.
