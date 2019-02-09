@@ -90,12 +90,8 @@ test {
 }
 
 dependencies {
-	testCompile(project(":base"))
-	testCompile("org.mockito:mockito-core:2.23.4")
-	testCompile("org.assertj:assertj-core:3.11.1")
-	testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
-
-	// Only needed to check interferences between Jupiter and jqwik
-	testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+	testImplementation(project(":base"))
+	testImplementation("org.mockito:mockito-core:2.23.4")
+	testImplementation("org.assertj:assertj-core:3.11.1")
 }
 
