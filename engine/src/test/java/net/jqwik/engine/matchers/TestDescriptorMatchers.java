@@ -13,12 +13,4 @@ public class TestDescriptorMatchers {
 	public static PropertyMethodDescriptor isPropertyDescriptorFor(Class<?> containerClass, String methodName) {
 		return argThat(new IsPropertyDescriptorFor(containerClass, methodName));
 	}
-
-	public static SkipExecutionDecorator isSkipDecoratorFor(Class<?> containerClass, String methodName) {
-		return argThat(new IsSkipDecoratorFor(containerClass, methodName));
-	}
-
-	public static SkipExecutionDecorator isSkipDecoratorFor(Class<?> containerClass) {
-		return argThat(new IsSkipDecoratorFor(containerClass, null));
-	}
 }

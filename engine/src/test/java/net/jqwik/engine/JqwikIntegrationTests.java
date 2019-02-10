@@ -3,27 +3,22 @@ package net.jqwik.engine;
 import java.nio.file.*;
 import java.util.*;
 
+import examples.packageWithDisabledTests.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.*;
-import org.assertj.core.data.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
 import org.junit.platform.testkit.engine.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.matchers.*;
 import net.jqwik.engine.recording.*;
 import net.jqwik.engine.support.*;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 import static org.junit.platform.testkit.engine.EventConditions.*;
-import static org.mockito.Mockito.*;
 
-/**
- * Migrating tests from {@linkplain TestEngineIntegrationTests}
- */
 class JqwikIntegrationTests {
 
 	private final JqwikTestEngine testEngine;
@@ -139,7 +134,6 @@ class JqwikIntegrationTests {
 	}
 
 	@Example
-	@Disabled("assertion does not work as expected")
 	void runMixedExamples() {
 
 		Events events = EngineTestKit
@@ -151,84 +145,77 @@ class JqwikIntegrationTests {
 		assertAllEventsMatch(
 			events,
 			event(engine(), started()),
+
+			// ExampleTests
+			event(container(ExampleTests.class), started()),
+			event(test("succeeding"), started()),
+			event(test("succeeding"), finishedSuccessfully()),
+			event(test("failing"), started()),
+			event(test("failing"), finishedWithFailure()),
+			event(container(ExampleTests.class), finishedSuccessfully()),
+
+			// PropertyTests
+			event(container(PropertyTests.class), started()),
+			event(test("isTrue"), started()),
+			event(test("isTrue"), finishedSuccessfully()),
+			event(test("isFalse"), started()),
+			event(test("isFalse"), finishedWithFailure()),
+			event(test("withEverything"), started()),
+			event(test("withEverything"), finishedSuccessfully()),
+			event(test("allNumbersAreZero"), started()),
+			event(test("allNumbersAreZero"), finishedWithFailure()),
+			event(container(PropertyTests.class), finishedSuccessfully()),
+
+			// MixedTests
+			event(container(MixedTests.class), started()),
+			event(test("anExample"), started()),
+			event(test("anExample"), finishedSuccessfully()),
+			event(test("aProperty"), started()),
+			event(test("aProperty"), finishedSuccessfully()),
+			event(container(MixedTests.class), finishedSuccessfully()),
+
 			event(engine(), finishedSuccessfully())
 		);
 
-//		// ExampleTests
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(ExampleTests.class));
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "failing"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "failing"),
-//			TestExecutionResultMatchers.isFailed()
-//		);
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "succeeding"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(ExampleTests.class, "succeeding"),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isClassDescriptorFor(ExampleTests.class),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
-//
-//		// PropertyTests
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(PropertyTests.class));
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isFalse"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isFalse"),
-//			TestExecutionResultMatchers.isFailed()
-//		);
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isTrue"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "isTrue"),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "allNumbersAreZero"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "allNumbersAreZero"),
-//			TestExecutionResultMatchers.isFailed()
-//		);
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "withEverything"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(PropertyTests.class, "withEverything"),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isClassDescriptorFor(PropertyTests.class),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
-//
-//		// MixedTests
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isClassDescriptorFor(MixedTests.class));
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "anExample"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "anExample"),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
-//		verify(eventRecorder).executionStarted(TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "aProperty"));
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isPropertyDescriptorFor(MixedTests.class, "aProperty"),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
-//		verify(eventRecorder).executionFinished(
-//			TestDescriptorMatchers.isClassDescriptorFor(MixedTests.class),
-//			TestExecutionResultMatchers.isSuccessful()
-//		);
+	}
+
+	@Example
+	void runDisabledTests() {
+
+		Events events = EngineTestKit
+							.engine(testEngine)
+							.selectors(selectPackage("examples.packageWithDisabledTests"))
+							.execute()
+							.all();
+
+		assertAllEventsMatch(
+			events,
+			event(container(DisabledTests.class), started()),
+			event(test("disabledSuccess"), skippedWithReason("a reason")),
+			event(test("disabledFailure"), skippedWithReason(r -> r.startsWith("@Disabled:"))),
+			event(container(DisabledTests.class), finishedSuccessfully()),
+			event(container(DisabledTests.DisabledGroup.class), skippedWithReason(r -> r.startsWith("@Disabled:")))
+
+		);
+
 	}
 
 	@SafeVarargs
 	private static void assertAllEventsMatch(Events events, Condition<? super Event>... conditions) {
-		// TODO: match conditions starting in the beginning one by one
 		for (int i = 0; i < conditions.length; i++) {
-			final int index = i;
-			Condition<? super Event> condition = new Condition<Event>() {
-				@Override
-				public boolean matches(Event value) {
-					return conditions[index].matches(value);
-				}
-			};
-			Assertions.assertThat(events.list()).have(condition);
+			assertOneMatches(events.list(), conditions[i]);
 		}
+	}
+
+	private static void assertOneMatches(List<Event> events, Condition<? super Event> condition) {
+		if (events.stream().anyMatch(condition::matches)) {
+			return;
+		}
+		StringBuffer eventsList = new StringBuffer();
+		for (Event event : events) {
+			eventsList.append(String.format("%s%n", event));
+		}
+		Assertions.fail(String.format("No event in %n%s matches %s", eventsList, condition));
 	}
 
 }

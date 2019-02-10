@@ -13,8 +13,4 @@ public class TestExecutionResultMatchers {
 	public static TestExecutionResult isFailed(String message) {
 		return argThat(new IsTestResultFailure(message));
 	}
-
-	public static TestExecutionResult isFailed() {
-		return isFailed(null);
-	}
 }
