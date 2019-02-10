@@ -6,7 +6,6 @@ import java.util.*;
 import examples.packageWithDisabledTests.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
@@ -201,21 +200,10 @@ class JqwikIntegrationTests {
 	}
 
 	@SafeVarargs
+	// TODO: Remove as soon as https://github.com/junit-team/junit5/issues/1771 is implemented
 	private static void assertAllEventsMatch(Events events, Condition<? super Event>... conditions) {
 		for (int i = 0; i < conditions.length; i++) {
-			assertOneMatches(events.list(), conditions[i]);
+			events.assertThatEvents().haveExactly(1, conditions[1]);
 		}
 	}
-
-	private static void assertOneMatches(List<Event> events, Condition<? super Event> condition) {
-		if (events.stream().anyMatch(condition::matches)) {
-			return;
-		}
-		StringBuffer eventsList = new StringBuffer();
-		for (Event event : events) {
-			eventsList.append(String.format("%s%n", event));
-		}
-		Assertions.fail(String.format("No event in %n%s matches %s", eventsList, condition));
-	}
-
 }
