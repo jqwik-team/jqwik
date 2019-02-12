@@ -31,9 +31,9 @@
 - Allow Fixture parameters to examples and properties
 
 - Lifecycle Hooks
+  - AroundAllHook
   - AroundTryHook
   - AroundContainerHook
-  - AroundAllHook
   - Tests for AroundPropertyHook
 
 - Parallel test execution:
@@ -79,11 +79,6 @@
 
 ### Properties
 
-- Arbitraries.forType(Class<T> targetClass) : TypeArbitrary<T>
-  - class TypeArbitrary<T> TypeArbitrary<T> useFields()
-  - class TypeArbitrary<T> TypeArbitrary<T> useProperties()
-  - Annotation @UseType({FIELDS, PROPERTIES}
-
 - Stateless Properties:
   - Let action generation access the model state?
     E.g. to use a name that’s already been added to a store.
@@ -119,10 +114,6 @@
 
 - Reimplement String generation based on Unicode codepoints, not on characters
 
-- Provide arbitraries for classes with single constructor with parameters
-  that can be provided
-  - Group properties, e.g. @Property for classes and individual methods with preconditions
-
 - Check arbitrary providers for numbers that @Range annotations fit, e.g.
   `@IntRange @ForAll long aNumber` should result in a warning
 
@@ -133,7 +124,6 @@
   - Better error messages when exhaustive generation not possible:
     Tell when the number of combinations is too high
     or which arbitrary does not provide exhaustive generation
-  - Make default GenerationMode configurable
   - Decimal generation with restricted scale
 
 - Provider methods can take params e.g.
@@ -162,4 +152,3 @@ see example in package `net.jqwik.docs.contracts.eurocalc`
 - Allow spec annotations in domain classes a la clojure-spec
 - Support domain object generation guided by spec annotations
   Have a look at https://github.com/benas/random-beans for inspiration 
-- Contract testing: https://hillelwayne.com/talks/beyond-unit-tests/

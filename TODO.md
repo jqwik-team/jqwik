@@ -1,1 +1,3 @@
 - Repair ArchitectureTests
+
+- TupleArbitraryProvider
