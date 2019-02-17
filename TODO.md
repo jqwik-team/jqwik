@@ -3,5 +3,7 @@
   - user guide entry
   - release notes entry
   
+- @Provide can be inherited from super type
+  
 - TupleArbitraryProvider
 
