@@ -57,6 +57,11 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean scaledFloats(@ForAll @FloatRange(min = 2.01f, max = 2.03f) float value) {
+		return value >= 2.01f && value <= 2.03f;
+	}
+
+	@Property
 	boolean doubles(@ForAll @DoubleRange(min = 2, max = 7) double value) {
 		return value >= 2 && value <= 7;
 	}
