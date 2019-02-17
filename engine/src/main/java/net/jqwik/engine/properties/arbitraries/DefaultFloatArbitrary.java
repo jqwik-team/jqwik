@@ -43,7 +43,7 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 	}
 
 	private BigDecimal toBigDecimal(float value) {
-		return BigDecimal.valueOf(value);
+		return new BigDecimal(Float.toString(value));
 	}
 
 }
