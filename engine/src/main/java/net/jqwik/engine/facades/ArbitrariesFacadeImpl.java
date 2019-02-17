@@ -38,6 +38,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return ExhaustiveGenerators.choose(values);
 	}
 
+	@Override
+	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier) {
+		return ExhaustiveGenerators.create(supplier);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends Enum> RandomGenerator<T> randomChoose(Class<T> enumClass) {

@@ -704,6 +704,17 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
+	@Label("Arbitraries.create() returns the created value once")
+	void create() {
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.create(() -> "abc").exhaustive();
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(1);
+		assertThat(generator).containsExactly("abc");
+	}
+
+	@Example
 	@Label("Arbitraries.shuffle() returns all permutations")
 	void shuffle() {
 		Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator = Arbitraries.shuffle(1,2,3).exhaustive();

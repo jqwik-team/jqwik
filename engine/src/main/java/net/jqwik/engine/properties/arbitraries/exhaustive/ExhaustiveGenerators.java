@@ -10,6 +10,10 @@ public class ExhaustiveGenerators {
 
 	public static long MAXIMUM_ACCEPTED_MAX_COUNT = Integer.MAX_VALUE;
 
+	public static <T> Optional<ExhaustiveGenerator<T>> create(Supplier<T> supplier) {
+		return fromIterable(() -> new SupplierIterator<>(supplier), 1);
+	}
+
 	public static <T> Optional<ExhaustiveGenerator<T>> choose(List<T> values) {
 		return fromIterable(values, values.size());
 	}
@@ -89,4 +93,27 @@ public class ExhaustiveGenerators {
 		);
 	}
 
+	private static class SupplierIterator<T> implements Iterator<T> {
+
+		private final Supplier<T> supplier;
+		private volatile boolean generated = false;
+
+		private SupplierIterator(Supplier<T> supplier) {
+			this.supplier = supplier;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return !generated;
+		}
+
+		@Override
+		public T next() {
+			if (generated) {
+				throw new NoSuchElementException();
+			}
+			generated = true;
+			return supplier.get();
+		}
+	}
 }

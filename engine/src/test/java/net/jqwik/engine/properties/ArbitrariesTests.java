@@ -88,6 +88,14 @@ class ArbitrariesTests {
 	}
 
 	@Example
+	void create() {
+		Arbitrary<String> constant = Arbitraries.create(() -> "hello");
+		ArbitraryTestHelper.assertAllGenerated(constant.generator(1000), value -> {
+			assertThat(value).isEqualTo("hello");
+		});
+	}
+
+	@Example
 	void forType() {
 		TypeArbitrary<Person> constant = Arbitraries.forType(Person.class);
 		ArbitraryTestHelper.assertAllGenerated(constant.generator(1000), value -> {

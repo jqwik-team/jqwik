@@ -28,6 +28,8 @@ public class Arbitraries {
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values);
 
+		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier);
+
 		public abstract RandomGenerator<Character> randomChoose(char[] values);
 
 		public abstract Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values);
@@ -378,6 +380,25 @@ public class Arbitraries {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(value),
 			ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value))
+		);
+	}
+
+	/**
+	 * Create an arbitrary that will use a supplier to generate a value.
+	 * The difference to {@linkplain Arbitraries#constant(Object)} is that the value
+	 * is freshly generated for each try of a property.
+	 *
+	 * For exhaustive shrinking all generated values are supposed to have identical behaviour,
+	 * i.e. that means that only one try is done per combination.
+	 *
+	 * @param supplier The supplier use to generate a value
+	 * @param <T>   The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	public static <T> Arbitrary<T> create(Supplier<T> supplier) {
+		return fromGenerators(
+			random -> Shrinkable.unshrinkable(supplier.get()),
+			ArbitrariesFacade.implementation.exhaustiveCreate(supplier)
 		);
 	}
 
