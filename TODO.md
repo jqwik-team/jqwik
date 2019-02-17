@@ -4,5 +4,3 @@
   
 - TupleArbitraryProvider
 
-- Repair ArchitectureTests
-
