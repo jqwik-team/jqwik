@@ -72,6 +72,11 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean scaledDoubles(@ForAll @DoubleRange(min = 2.01d, max = 2.03d) double value) {
+		return value >= 2.01d && value <= 2.03d;
+	}
+
+	@Property
 	boolean bigDecimals(@ForAll @BigRange(min = "2.1", max = "7.77") BigDecimal value) {
 		return value.compareTo(new BigDecimal("2.1")) >= 0 //
 			&& value.compareTo(new BigDecimal("7.77")) <= 0;
