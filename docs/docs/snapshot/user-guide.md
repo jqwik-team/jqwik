@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.1.0-SNAPSHOT
+title: jqwik User Guide - 1.1.1-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.0-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.1-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -12,8 +12,6 @@ title: jqwik User Guide - 1.1.0-SNAPSHOT
 
 - [How to Use](#how-to-use)
   - [Gradle](#gradle)
-    - [Using JUnit's own Gradle Plugin](#using-junits-own-gradle-plugin)
-    - [Using Gradle's Built-in Support](#using-gradles-built-in-support)
     - [Seeing jqwik Reporting in Gradle Output](#seeing-jqwik-reporting-in-gradle-output)
   - [Maven](#maven)
   - [Snapshot Releases](#snapshot-releases)
@@ -52,6 +50,7 @@ title: jqwik User Guide - 1.1.0-SNAPSHOT
     - [Characters and Strings](#characters-and-strings)
     - [java.util.Random](#javautilrandom)
     - [Constants](#constants)
+    - [Create](#create)
     - [Shuffling Permutations](#shuffling-permutations)
     - [Default Types](#default-types)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
@@ -119,13 +118,6 @@ Snapshot releases can be fetched from https://oss.sonatype.org/content/repositor
 
 ### Gradle
 
-#### Using JUnit's own Gradle Plugin
-
-You should _no longer use_ JUnit's own Gradle Plugin because support was discontinued
-starting with version 1.3.0.
-
-#### Using Gradle's Built-in Support
-
 Since version 4.6, Gradle has 
 [built-in support for the JUnit platform](https://docs.gradle.org/current/dsl/org.gradle.api.tasks.testing.Test.html).
 Set up is rather simple; here are the relevant parts of a project's `build.gradle` file:
@@ -141,10 +133,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.3.2'
-ext.junitJupiterVersion = '5.3.2'
+ext.junitPlatformVersion = '1.4.0'
+ext.junitJupiterVersion = '5.4.0'
 
-ext.jqwikVersion = '1.1.0-SNAPSHOT'
+ext.jqwikVersion = '1.1.1-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -166,7 +158,7 @@ dependencies {
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.3.2")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.4.0")
 
     // Add any other test library you need...
     testCompile("org.assertj:assertj-core:3.9.1")
@@ -220,7 +212,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.1.1-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -246,9 +238,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.1.0-SNAPSHOT.jar`
-- `junit-platform-engine-1.3.2.jar`
-- `junit-platform-commons-1.3.2.jar`
+- `jqwik-1.1.1-SNAPSHOT.jar`
+- `junit-platform-engine-1.4.0.jar`
+- `junit-platform-commons-1.4.0.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -297,7 +289,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.1.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.1.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1005,6 +997,11 @@ Shrinking moves towards the start of the frequency list.
 
 - [`Arbitrary<T> constant(T value)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
   Always return an unshrinkable `value` of type `T`.
+
+#### Create
+
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
+  Always create a new unshrinkable instance of type `T` using `supplier`.
 
 #### Shuffling Permutations
 
@@ -2394,7 +2391,7 @@ the class in order to generate instances. Whenever there's an exception during
 generation they will be ignored; that way you'll only get valid instances.
 
 There are quite a few ways usage and configuration options. Have a look
-at the [complete example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/types/PersonProperties.java):
+at the [complete example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/types/PersonProperties.java)
 and check the following api entry points:
 
 - [UseType](/docs/snapshot/javadoc/net/jqwik/api/constraints/UseType.html)
@@ -2591,4 +2588,4 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#110-snapshot).
+Read this version's [release notes](/release-notes.html#111-snapshot).

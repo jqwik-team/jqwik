@@ -389,12 +389,13 @@ public class Arbitraries {
 	 * is freshly generated for each try of a property.
 	 *
 	 * For exhaustive shrinking all generated values are supposed to have identical behaviour,
-	 * i.e. that means that only one try is done per combination.
+	 * i.e. that means that only one value is generated per combination.
 	 *
 	 * @param supplier The supplier use to generate a value
 	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
 	 */
+	@API(status = MAINTAINED, since = "1.1.1")
 	public static <T> Arbitrary<T> create(Supplier<T> supplier) {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(supplier.get()),

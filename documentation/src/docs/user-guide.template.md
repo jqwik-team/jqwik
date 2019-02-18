@@ -909,7 +909,12 @@ Shrinking moves towards the start of the frequency list.
 #### Constants
 
 - [`Arbitrary<T> constant(T value)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
-  Always return an unshrinkable `value` of type `T`.
+  In each try use the same unshrinkable `value` of type `T`.
+
+#### Create
+
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
+  In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
 
 #### Shuffling Permutations
 
