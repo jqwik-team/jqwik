@@ -43,7 +43,6 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 	}
 
 	private BigDecimal toBigDecimal(double value) {
-		return BigDecimal.valueOf(value);
+		return new BigDecimal(Double.toString(value));
 	}
-
 }
