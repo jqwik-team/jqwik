@@ -25,8 +25,9 @@ and
 <a href="/docs/snapshot/javadoc/index.html">javadoc</a>
 </p>
 
-- Added 
-  [`Arbitraries.create`](/docs/snapshot/user-guide.html#create)
+- Added [`Arbitraries.create`](/docs/snapshot/user-guide.html#create)
+- Fixed problem with double and float conversion in range constraints.
+  My thanks go to [blairdye](https://github.com/blairdye) for that! 
 
 ## 1.1.0
 
