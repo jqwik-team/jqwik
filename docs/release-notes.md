@@ -33,6 +33,8 @@ and
 - Annotation `@Provide` can now be placed on a "super method" i.e. a method from
   a superclass or super interface that is overridden.
 
+- Annotation `@Provide` can now be placed on another annotation for composite annotations.
+
 ## 1.1.0
 
 <p style="padding-left:1em;font-size:larger">
