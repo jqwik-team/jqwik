@@ -16,7 +16,7 @@ import net.jqwik.engine.discovery.predicates.*;
 
 import static java.util.stream.Collectors.*;
 
-import static net.jqwik.engine.support.InheritedMethodAnnotationSupport.*;
+import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class JqwikReflectionSupport {
 

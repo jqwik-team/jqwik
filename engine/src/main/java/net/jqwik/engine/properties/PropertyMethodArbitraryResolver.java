@@ -11,7 +11,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.support.InheritedMethodAnnotationSupport.*;
+import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {

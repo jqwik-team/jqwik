@@ -4,23 +4,24 @@ import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
+import org.junit.platform.commons.support.*;
+
 /**
  * Adapted from https://stackoverflow.com/a/49164791/32352
  */
-// TODO: Also consider meta annotations as JUnit's AnnotationSupport does
-public final class InheritedMethodAnnotationSupport {
+public final class OverriddenMethodAnnotationSupport {
 
 	/**
 	 * Returns the optional first element of the list returned by
 	 * {@code getAnnotations}, or {@code null} if the
 	 * list would be empty.
 	 *
-	 * @param  <A> the type of the annotation to find.
-	 * @param  m   the method to begin the search from.
-	 * @param  t   the type of the annotation to find.
+	 * @param <A> the type of the annotation to find.
+	 * @param m   the method to begin the search from.
+	 * @param t   the type of the annotation to find.
 	 * @return optional of first annotation found of the specified type which
-	 *         is present on {@code m}, or present on any methods which
-	 *         {@code m} overrides.
+	 * is present on {@code m}, or present on any methods which
+	 * {@code m} overrides.
 	 * @throws NullPointerException if any argument is {@code null}.
 	 */
 	public static <A extends Annotation> Optional<A> findDeclaredOrInheritedAnnotation(Method m, Class<A> t) {
@@ -50,20 +51,20 @@ public final class InheritedMethodAnnotationSupport {
 	 * {@code interface X extends Z}, then annotations will appear in the
 	 * list in the order of {@code [D, X, Z, Y]}.
 	 *
-	 * @param  <A> the type of the annotation to find.
-	 * @param  m   the method to begin the search from.
-	 * @param  t   the type of the annotation to find.
+	 * @param <A> the type of the annotation to find.
+	 * @param m   the method to begin the search from.
+	 * @param t   the type of the annotation to find.
 	 * @return a list of all of the annotations of the specified type
-	 *         which are either present on {@code m}, or present on any
-	 *         methods which {@code m} overrides.
+	 * which are either present on {@code m}, or present on any
+	 * methods which {@code m} overrides.
 	 * @throws NullPointerException if any argument is {@code null}.
 	 */
 	private static <A extends Annotation> List<A> getAnnotations(Method m, Class<A> t) {
 		List<A> list = new ArrayList<>();
-		Collections.addAll(list, m.getAnnotationsByType(t));
+		Collections.addAll(list, allAnnotationsByType(m, t));
 		Class<?> decl = m.getDeclaringClass();
 
-		for (Class<?> supr = decl; (supr = supr.getSuperclass()) != null;) {
+		for (Class<?> supr = decl; (supr = supr.getSuperclass()) != null; ) {
 			addAnnotations(list, m, t, supr);
 		}
 		for (Class<?> face : getAllInterfaces(decl)) {
@@ -80,6 +81,7 @@ public final class InheritedMethodAnnotationSupport {
 		} while ((c = c.getSuperclass()) != null);
 		return set;
 	}
+
 	private static void addAllInterfaces(Set<Class<?>> set, Class<?> c) {
 		for (Class<?> i : c.getInterfaces()) {
 			if (set.add(i)) {
@@ -87,22 +89,32 @@ public final class InheritedMethodAnnotationSupport {
 			}
 		}
 	}
+
 	private static <A extends Annotation> void addAnnotations
 		(List<A> list, Method m, Class<A> t, Class<?> decl) {
 		try {
 			Method n = decl.getDeclaredMethod(m.getName(), m.getParameterTypes());
 			if (overrides(m, n)) {
-				Collections.addAll(list, n.getAnnotationsByType(t));
+				Collections.addAll(list, allAnnotationsByType(n, t));
 			}
 		} catch (NoSuchMethodException x) {
 		}
 	}
 
 	/**
-	 * @param  a the method which may override {@code b}.
-	 * @param  b the method which may be overridden by {@code a}.
+	 * Returns present and meta present annotations
+	 */
+	@SuppressWarnings("unchecked")
+	private static <A extends Annotation> A[] allAnnotationsByType(Method m, Class<A> t) {
+		// TODO: Does not work for repeatable annotations
+		return (A[]) AnnotationSupport.findAnnotation(m, t).map(a -> new Annotation[]{a}).orElse(new Annotation[0]);
+	}
+
+	/**
+	 * @param a the method which may override {@code b}.
+	 * @param b the method which may be overridden by {@code a}.
 	 * @return {@code true} if {@code a} probably overrides {@code b}
-	 *         and {@code false} otherwise.
+	 * and {@code false} otherwise.
 	 * @throws NullPointerException if any argument is {@code null}.
 	 */
 	private static boolean overrides(Method a, Method b) {
@@ -147,13 +159,17 @@ public final class InheritedMethodAnnotationSupport {
 		Modifier.PUBLIC | Modifier.PROTECTED | Modifier.PRIVATE;
 
 	private static final List<Integer> ACCESS_ORDER =
-		Arrays.asList(Modifier.PRIVATE,
-					  0,
-					  Modifier.PROTECTED,
-					  Modifier.PUBLIC);
+		Arrays.asList(
+			Modifier.PRIVATE,
+			0,
+			Modifier.PROTECTED,
+			Modifier.PUBLIC
+		);
 
 	private static int compareAccess(int lhs, int rhs) {
-		return Integer.compare(ACCESS_ORDER.indexOf(lhs & ACCESS_MODIFIERS),
-							   ACCESS_ORDER.indexOf(rhs & ACCESS_MODIFIERS));
+		return Integer.compare(
+			ACCESS_ORDER.indexOf(lhs & ACCESS_MODIFIERS),
+			ACCESS_ORDER.indexOf(rhs & ACCESS_MODIFIERS)
+		);
 	}
 }

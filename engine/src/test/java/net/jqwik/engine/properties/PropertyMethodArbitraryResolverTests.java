@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties;
 
+import java.lang.annotation.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -19,6 +20,14 @@ class PropertyMethodArbitraryResolverTests {
 	private static class Thing {
 
 	}
+
+	@Target({ ElementType.METHOD })
+	@Retention(RetentionPolicy.RUNTIME)
+	@Provide
+	@interface MyProvide {
+
+	}
+
 
 	@Group
 	class RegisteredArbitraryResolvers {
@@ -236,6 +245,15 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void findGeneratorByNameWithProvideInMetaAnnotation() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringFromProvideInMetaAnnotation");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			Arbitrary<?> arbitrary = arbitraries.iterator().next();
+			assertThat(arbitrary).isInstanceOf(Arbitrary.class);
+		}
+
+		@Example
 		void namedStringGeneratorNotFound() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "otherString");
@@ -246,6 +264,7 @@ class PropertyMethodArbitraryResolverTests {
 			@Provide
 			abstract Arbitrary<String> stringFromSuper();
 		}
+
 
 		private class WithNamedProviders extends AbstractNamedProviders {
 			@Property
@@ -296,6 +315,16 @@ class PropertyMethodArbitraryResolverTests {
 			@Override
 			Arbitrary<String> stringFromSuper() {
 				return Arbitraries.constant("string from super");
+			}
+
+			@Property
+			boolean stringFromProvideInMetaAnnotation(@ForAll("stringWithMetaAnnotation") String aString) {
+				return true;
+			}
+
+			@MyProvide
+			Arbitrary<String> stringWithMetaAnnotation() {
+				return Arbitraries.constant("string from meta");
 			}
 
 			@Group

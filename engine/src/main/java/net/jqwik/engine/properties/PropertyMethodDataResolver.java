@@ -10,6 +10,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+
 public class PropertyMethodDataResolver implements DataResolver {
 	private final Class<?> containerClass;
 	private final Object testInstance;
@@ -40,6 +42,6 @@ public class PropertyMethodDataResolver implements DataResolver {
 			return generateAnnotation.value();
 		};
 		TypeUsage targetType = TypeUsage.of(Iterable.class, TypeUsage.wildcard(TypeUsage.of(Tuple.class)));
-		return JqwikReflectionSupport.findGeneratorMethod(generatorName, this.containerClass, Data.class, generatorNameSupplier, targetType);
+		return findGeneratorMethod(generatorName, this.containerClass, Data.class, generatorNameSupplier, targetType);
 	}
 }
