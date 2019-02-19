@@ -26,8 +26,12 @@ and
 </p>
 
 - Added [`Arbitraries.create`](/docs/snapshot/user-guide.html#create)
+
 - Fixed problem with double and float conversion in range constraints.
   My thanks go to [blairdye](https://github.com/blairdye) for that! 
+
+- Annotation `@Provide` can now be placed on a "super method" i.e. a method from
+  a superclass or super interface that is overridden.
 
 ## 1.1.0
 

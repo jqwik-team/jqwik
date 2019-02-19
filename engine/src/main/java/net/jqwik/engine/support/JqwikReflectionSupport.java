@@ -16,6 +16,8 @@ import net.jqwik.engine.discovery.predicates.*;
 
 import static java.util.stream.Collectors.*;
 
+import static net.jqwik.engine.support.InheritedMethodAnnotationSupport.*;
+
 public class JqwikReflectionSupport {
 
 	private final static IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
@@ -181,7 +183,7 @@ public class JqwikReflectionSupport {
 
 	public static Predicate<Method> isGeneratorMethod(TypeUsage targetType, Class<? extends Annotation> requiredAnnotation) {
 		return method -> {
-			if (!method.isAnnotationPresent(requiredAnnotation)) {
+			if (!findDeclaredOrInheritedAnnotation(method, requiredAnnotation).isPresent()) {
 				return false;
 			}
 			TypeUsage generatorReturnType = TypeUsage.forType(method.getAnnotatedReturnType().getType());

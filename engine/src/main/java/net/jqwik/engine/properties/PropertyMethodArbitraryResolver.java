@@ -11,6 +11,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.support.InheritedMethodAnnotationSupport.*;
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
@@ -70,8 +71,8 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 			return Optional.empty();
 
 		Function<Method, String> generatorNameSupplier = method -> {
-			Provide generateAnnotation = method.getDeclaredAnnotation(Provide.class);
-			return generateAnnotation.value();
+			Optional<Provide> provideAnnotation = findDeclaredOrInheritedAnnotation(method, Provide.class);
+			return provideAnnotation.map(Provide::value).orElse("");
 		};
 		TypeUsage targetArbitraryType = TypeUsage.of(Arbitrary.class, typeUsage);
 

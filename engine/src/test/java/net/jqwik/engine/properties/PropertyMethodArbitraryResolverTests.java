@@ -227,13 +227,27 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void findGeneratorByNameWithProvideAnnotationInSuperclass() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringFromProviderAnnotatedInSuperclass");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			Arbitrary<?> arbitrary = arbitraries.iterator().next();
+			assertThat(arbitrary).isInstanceOf(Arbitrary.class);
+		}
+
+		@Example
 		void namedStringGeneratorNotFound() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "otherString");
 			assertThat(provider.forParameter(parameter)).isEmpty();
 		}
 
-		private class WithNamedProviders {
+		private abstract class AbstractNamedProviders {
+			@Provide
+			abstract Arbitrary<String> stringFromSuper();
+		}
+
+		private class WithNamedProviders extends AbstractNamedProviders {
 			@Property
 			boolean string(@ForAll("aString") String aString) {
 				return true;
@@ -272,6 +286,16 @@ class PropertyMethodArbitraryResolverTests {
 			@Provide
 			Arbitrary<Long> longBetween1and10() {
 				return Arbitraries.longs().between(1L, 10L);
+			}
+
+			@Property
+			boolean stringFromProviderAnnotatedInSuperclass(@ForAll("stringFromSuper") String aString) {
+				return true;
+			}
+
+			@Override
+			Arbitrary<String> stringFromSuper() {
+				return Arbitraries.constant("string from super");
 			}
 
 			@Group
