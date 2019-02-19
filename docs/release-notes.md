@@ -35,6 +35,9 @@ and
 
 - Annotation `@Provide` can now be placed on another annotation for composite annotations.
 
+- Loosened matching of return type of `@Provide` to enable generic provider
+  method's in derived container classes
+
 ## 1.1.0
 
 <p style="padding-left:1em;font-size:larger">
