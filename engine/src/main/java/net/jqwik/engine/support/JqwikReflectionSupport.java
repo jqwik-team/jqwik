@@ -38,16 +38,16 @@ public class JqwikReflectionSupport {
 		// but has been stable so far in all JDKs
 
 		return Arrays
-			.stream(inner.getClass().getDeclaredFields())
-			.filter(field -> field.getName().startsWith("this$"))
-			.findFirst()
-			.map(field -> {
-				try {
-					return makeAccessible(field).get(inner);
-				} catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-					return Optional.empty();
-				}
-			});
+				   .stream(inner.getClass().getDeclaredFields())
+				   .filter(field -> field.getName().startsWith("this$"))
+				   .findFirst()
+				   .map(field -> {
+					   try {
+						   return makeAccessible(field).get(inner);
+					   } catch (SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+						   return Optional.empty();
+					   }
+				   });
 	}
 
 	private static <T extends AccessibleObject> T makeAccessible(T object) {
@@ -75,8 +75,8 @@ public class JqwikReflectionSupport {
 	 * Create instance of a class that can potentially be a non static inner class
 	 * and its outer instance might be {@code context}
 	 *
-	 * @param <T>   The type of the instance to create
-	 * @param clazz The class to instantiate
+	 * @param <T>     The type of the instance to create
+	 * @param clazz   The class to instantiate
 	 * @param context The potential context instance
 	 * @return the newly created instance
 	 */
@@ -85,7 +85,7 @@ public class JqwikReflectionSupport {
 			return ReflectionSupport.newInstance(clazz);
 		Class<?> outerClass = clazz.getDeclaringClass();
 		Object parentInstance = outerClass.equals(context.getClass()) ?
-			context : newInstanceWithDefaultConstructor(outerClass);
+									context : newInstanceWithDefaultConstructor(outerClass);
 		return ReflectionSupport.newInstance(clazz, parentInstance);
 	}
 
@@ -187,7 +187,9 @@ public class JqwikReflectionSupport {
 				return false;
 			}
 			TypeUsage generatorReturnType = TypeUsage.forType(method.getAnnotatedReturnType().getType());
-			return generatorReturnType.canBeAssignedTo(targetType);
+			return generatorReturnType.canBeAssignedTo(targetType)
+					   // for generic types in test hierarchies:
+					   || targetType.canBeAssignedTo(generatorReturnType);
 		};
 	}
 
@@ -199,9 +201,8 @@ public class JqwikReflectionSupport {
 	 * Throw the supplied {@link Throwable}, <em>masked</em> as an
 	 * unchecked exception.
 	 *
-	 * @param t the Throwable to be wrapped
+	 * @param t   the Throwable to be wrapped
 	 * @param <T> type of the value to return
-	 *
 	 * @return Fake return to make using the method a bit simpler
 	 */
 	public static <T> T throwAsUncheckedException(Throwable t) {
