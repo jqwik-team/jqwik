@@ -5,7 +5,7 @@
   for parameter of type `@ForAll Arbitrary<ActionSequence<String>>` which will lead
   to class cast exception on property evaluation. See TODO in TypeUsage.canBeAssignedTo()
   
-### Tests
+### Missing Tests
 
 - Add tests for RandomGenerators
 - Tests for TestRunDatabase
@@ -62,7 +62,7 @@
 
 ### Reporting
 
-- @Report(mode: ON_FAIL|ALWAYS|ON_SUCCESS)
+- @Report(mode: ON_FAIL|ALWAYS|OFF)
 
 - Reporting.ARBITRARIES: report for each property which arbitraries are used.
   - Requires Arbitray.describe() or something similar
@@ -96,7 +96,7 @@
 
 - StringArbitrary.blacklist(char … chars)
 
-- Arbitraries.lambda(Arbitrary outputArbitrary, Class… inputTypes)
+- Arbitraries.function(Arbitrary outputArbitrary, Class inputType)
 
 - Arbitrary.share(Arbitrary, String key) 
   https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared
@@ -118,7 +118,7 @@
   `@IntRange @ForAll long aNumber` should result in a warning
 
 - Data-driven properties: Warnings if method parameters have
-  other annotations than @ForAll
+  additional annotations to @ForAll
 
 - Exhaustive Generators:
   - Better error messages when exhaustive generation not possible:
@@ -131,7 +131,7 @@
   Does that really help since there is Arbitraries.defaultFor()
 
 - Default Arbitraries, Generators and Shrinking for
-  - Tuples.Tuple2/3/4/5/6/7/8
+  - Tuples.Tuple1/2/3/4/5/6/7/8
   - Map
   - Functional interfaces and SAM types
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
