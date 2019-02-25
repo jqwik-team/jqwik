@@ -71,7 +71,8 @@ class DomainContextTests {
 
 	private static class SmallNumbersContext extends AbstractDomainContextBase {
 		private SmallNumbersContext() {
-			registerArbitrary(Integer.class, Arbitraries.of(1, 2, 3, 41, 55, 97, 98, 99));
+			registerArbitrary(Integer.class, Arbitraries.of(1000, 2000, 3000), 1); // should be overridden
+			registerArbitrary(Integer.class, Arbitraries.of(1, 2, 3, 41, 55, 97, 98, 99), 10);
 			registerConfigurator(new ArbitraryConfiguratorBase() {
 				public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, DoubleNumber ignore) {
 					return arbitrary.map(i -> 2 * i);

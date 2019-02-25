@@ -38,7 +38,7 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 		providers.add(provider);
 	}
 
-	protected void registerArbitrary(TypeUsage registeredType, Arbitrary<?> arbitrary) {
+	protected void registerArbitrary(TypeUsage registeredType, Arbitrary<?> arbitrary, int priority) {
 		ArbitraryProvider provider = new ArbitraryProvider() {
 			@Override
 			public boolean canProvideFor(TypeUsage targetType) {
@@ -52,15 +52,19 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 
 			@Override
 			public int priority() {
-				// Override jqwik's default providers
-				return 1;
+				return priority;
 			}
 		};
 		registerProvider(provider);
 	}
 
 	protected <T> void registerArbitrary(Class<T> registeredType, Arbitrary<T> arbitrary) {
-		registerArbitrary(TypeUsage.of(registeredType), arbitrary);
+		int overrideJqwikDefaultProviders = 1;
+		registerArbitrary(TypeUsage.of(registeredType), arbitrary, overrideJqwikDefaultProviders);
+	}
+
+	protected <T> void registerArbitrary(Class<T> registeredType, Arbitrary<T> arbitrary, int priority) {
+		registerArbitrary(TypeUsage.of(registeredType), arbitrary, priority);
 	}
 
 	protected void registerConfigurator(ArbitraryConfigurator configurator) {
