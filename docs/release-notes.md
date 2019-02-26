@@ -25,7 +25,9 @@ and
 <a href="/docs/snapshot/javadoc/index.html">javadoc</a>
 </p>
 
-- Added [`Arbitraries.create`](/docs/snapshot/user-guide.html#create)
+- Added `@Domain.priority()` to enable prioritisation of domain context classes.
+
+- Added [`Arbitraries.create`](/docs/snapshot/user-guide.html#create).
 
 - Fixed problem with double and float conversion in range constraints.
   My thanks go to [blairdye](https://github.com/blairdye) for that! 
@@ -36,7 +38,7 @@ and
 - Annotation `@Provide` can now be placed on another annotation for composite annotations.
 
 - Loosened matching of return type of `@Provide` to enable generic provider
-  method's in derived container classes
+  method's in derived container classes.
 
 ## 1.1.0
 

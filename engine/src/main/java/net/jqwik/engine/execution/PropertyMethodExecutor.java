@@ -50,14 +50,21 @@ public class PropertyMethodExecutor {
 		Set<DomainContext> domainContexts =
 			domainAnnotations
 				.stream()
-				.map((Domain domain) -> createDomainContext(domain.value()))
+				.map(this::createDomainContext)
 				.collect(Collectors.toSet());
 		return new CombinedDomainContext(domainContexts);
 	}
 
-	private DomainContext createDomainContext(Class<? extends DomainContext> domainContextClass) {
+	private DomainContext createDomainContext(Domain domain) {
+		Class<? extends DomainContext> domainContextClass = domain.value();
 		try {
-			return JqwikReflectionSupport.newInstanceInTestContext(domainContextClass, propertyLifecycleContext.testInstance());
+			DomainContext domainContext =
+				JqwikReflectionSupport.newInstanceInTestContext(domainContextClass, propertyLifecycleContext.testInstance());
+
+			if (domain.priority() != Domain.PRIORITY_NOT_SET) {
+				domainContext.setDefaultPriority(domain.priority());
+			}
+			return domainContext;
 		} catch (Throwable throwable) {
 			String message = String.format(
 				"Cannot instantiate domain context @Domain(\"%s\") on [%s].",

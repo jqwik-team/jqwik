@@ -14,6 +14,9 @@ import static org.apiguardian.api.API.Status.*;
  * <p>
  * You can have many domains on the same element. Providers and configurators
  * from all domains will be considered.
+ * <p>
+ * The priority of ArbitraryProviders and ArbitraryConfigurators can be changed
+ * using {@code priority}
  */
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -21,5 +24,11 @@ import static org.apiguardian.api.API.Status.*;
 @Repeatable(DomainList.class)
 @API(status = EXPERIMENTAL, since = "1.1")
 public @interface Domain {
+
+	int PRIORITY_NOT_SET = Integer.MIN_VALUE;
+
 	Class<? extends DomainContext> value();
+
+	@API(status = EXPERIMENTAL, since = "1.1.1")
+	int priority() default PRIORITY_NOT_SET;
 }

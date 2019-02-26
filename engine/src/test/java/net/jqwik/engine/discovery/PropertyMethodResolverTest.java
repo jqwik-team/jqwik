@@ -104,12 +104,19 @@ class PropertyMethodResolverTest {
 		void propertyWithDomains() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withDomains", TestContainer.class);
 
+			Set<Domain> domains = propertyMethodDescriptor.getDomains();
+
 			Stream<Class<? extends DomainContext>> domainClasses =
-				propertyMethodDescriptor.getDomains()
-										.stream()
-										.map(Domain::value);
+				domains
+					.stream()
+					.map(Domain::value);
 			assertThat(domainClasses)
 				.containsExactlyInAnyOrder(Domain1.class, Domain2.class);
+
+			domains.stream().filter(d -> d.value().equals(Domain1.class))
+				   .forEach(d -> assertThat(d.priority()).isEqualTo(42));
+			domains.stream().filter(d -> d.value().equals(Domain2.class))
+				   .forEach(d -> assertThat(d.priority()).isEqualTo(Domain.PRIORITY_NOT_SET));
 		}
 
 		@Example
@@ -307,7 +314,7 @@ class PropertyMethodResolverTest {
 		}
 
 		@Property
-		@Domain(Domain1.class)
+		@Domain(value = Domain1.class, priority = 42)
 		@Domain(Domain2.class)
 		void withDomains() {
 		}

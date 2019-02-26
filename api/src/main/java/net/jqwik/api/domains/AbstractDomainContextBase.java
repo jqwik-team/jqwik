@@ -18,8 +18,13 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.1")
 public abstract class AbstractDomainContextBase implements DomainContext {
 
+	// Override jqwik default providers
+	private static final int DEFAULT_PRIORITY = 1;
+
 	private final List<ArbitraryProvider> providers = new ArrayList<>();
 	private final List<ArbitraryConfigurator> configurators = new ArrayList<>();
+
+	private int priority = DEFAULT_PRIORITY;
 
 	@Override
 	public List<ArbitraryProvider> getArbitraryProviders() {
@@ -31,6 +36,11 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 		return configurators;
 	}
 
+	@Override
+	public void setDefaultPriority(int priority) {
+		this.priority = priority;
+	}
+
 	protected void registerProvider(ArbitraryProvider provider) {
 		if (providers.contains(provider)) {
 			return;
@@ -38,7 +48,7 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 		providers.add(provider);
 	}
 
-	protected void registerArbitrary(TypeUsage registeredType, Arbitrary<?> arbitrary, int priority) {
+	protected void registerArbitrary(TypeUsage registeredType, Arbitrary<?> arbitrary) {
 		ArbitraryProvider provider = new ArbitraryProvider() {
 			@Override
 			public boolean canProvideFor(TypeUsage targetType) {
@@ -59,12 +69,7 @@ public abstract class AbstractDomainContextBase implements DomainContext {
 	}
 
 	protected <T> void registerArbitrary(Class<T> registeredType, Arbitrary<T> arbitrary) {
-		int overrideJqwikDefaultProviders = 1;
-		registerArbitrary(TypeUsage.of(registeredType), arbitrary, overrideJqwikDefaultProviders);
-	}
-
-	protected <T> void registerArbitrary(Class<T> registeredType, Arbitrary<T> arbitrary, int priority) {
-		registerArbitrary(TypeUsage.of(registeredType), arbitrary, priority);
+		registerArbitrary(TypeUsage.of(registeredType), arbitrary);
 	}
 
 	protected void registerConfigurator(ArbitraryConfigurator configurator) {

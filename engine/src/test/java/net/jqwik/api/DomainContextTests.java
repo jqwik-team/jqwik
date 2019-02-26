@@ -50,6 +50,15 @@ class DomainContextTests {
 		assertThat(smallNumber).isBetween(1, 99);
 	}
 
+	@Property(tries = 20)
+	@Domain(SmallNumbersContext.class)
+	@Domain(value = BigNumbersContext.class, priority = 10)
+	void contextDefaultPriorityCanBeOverridden(
+		@ForAll int aNumber
+	) {
+		assertThat(aNumber).isBetween(1000000, 9000000);
+	}
+
 	@Target({ElementType.PARAMETER})
 	@Retention(RetentionPolicy.RUNTIME)
 	@interface DoubleString {}
@@ -71,13 +80,18 @@ class DomainContextTests {
 
 	private static class SmallNumbersContext extends AbstractDomainContextBase {
 		private SmallNumbersContext() {
-			registerArbitrary(Integer.class, Arbitraries.of(1000, 2000, 3000), 1); // should be overridden
-			registerArbitrary(Integer.class, Arbitraries.of(1, 2, 3, 41, 55, 97, 98, 99), 10);
+			registerArbitrary(Integer.class, Arbitraries.of(1, 2, 3, 41, 55, 97, 98, 99));
 			registerConfigurator(new ArbitraryConfiguratorBase() {
 				public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, DoubleNumber ignore) {
 					return arbitrary.map(i -> 2 * i);
 				}
 			});
+		}
+	}
+
+	private static class BigNumbersContext extends AbstractDomainContextBase {
+		private BigNumbersContext() {
+			registerArbitrary(Integer.class, Arbitraries.of(1000000, 2000000, 3000000));
 		}
 	}
 }

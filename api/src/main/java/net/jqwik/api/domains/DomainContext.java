@@ -30,6 +30,10 @@ public interface DomainContext {
 		return DomainContextFacade.implementation.global();
 	}
 
+	default void setDefaultPriority(int priority) {
+		// ignore
+	}
+
 	@API(status = MAINTAINED, since = "1.1")
 	class Global implements DomainContext {
 		@Override
