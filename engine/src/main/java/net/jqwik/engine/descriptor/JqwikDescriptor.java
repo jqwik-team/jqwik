@@ -7,7 +7,7 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.domains.*;
 
 public interface JqwikDescriptor extends TestDescriptor {
-	Set<Class<? extends DomainContext>> getDomainContexts();
+	Set<Domain> getDomains();
 
 	default Optional<JqwikDescriptor> getJqwikParent() {
 		return getParent()

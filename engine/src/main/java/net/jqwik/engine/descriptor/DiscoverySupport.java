@@ -38,11 +38,8 @@ public class DiscoverySupport {
 				   .collect(collectingAndThen(toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
 	}
 
-	public static Set<Class<? extends DomainContext>> findDomainContexts(AnnotatedElement element) {
-		return findRepeatableAnnotations(element, Domain.class)
-				   .stream()
-				   .map(Domain::value)
-				   .collect(toSet());
+	public static Set<Domain> findDomains(AnnotatedElement element) {
+		return new HashSet<>(findRepeatableAnnotations(element, Domain.class));
 	}
 
 	public static String determineLabel(AnnotatedElement element, Supplier<String> defaultNameSupplier) {

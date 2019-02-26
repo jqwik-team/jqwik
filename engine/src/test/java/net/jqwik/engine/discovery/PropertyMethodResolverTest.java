@@ -2,6 +2,7 @@ package net.jqwik.engine.discovery;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 
@@ -72,7 +73,7 @@ class PropertyMethodResolverTest {
 
 			assertThat(propertyMethodDescriptor.getLabel()).isEqualTo("property with underscores");
 			assertThat(propertyMethodDescriptor.getUniqueId())
-					  .isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
+				.isEqualTo(classDescriptor.getUniqueId().append("property", method.getName() + "()"));
 
 		}
 
@@ -88,7 +89,7 @@ class PropertyMethodResolverTest {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithTwoTags", TestContainer.class);
 
 			assertThat(propertyMethodDescriptor.getTags())
-					  .containsExactly(TestTag.create("tag1"), TestTag.create("tag2"));
+				.containsExactly(TestTag.create("tag1"), TestTag.create("tag2"));
 		}
 
 		@Example
@@ -96,14 +97,18 @@ class PropertyMethodResolverTest {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("propertyWithTag", TaggedTestContainer.class);
 
 			assertThat(propertyMethodDescriptor.getTags())
-					  .containsExactlyInAnyOrder(TestTag.create("container-tag"), TestTag.create("property-tag"));
+				.containsExactlyInAnyOrder(TestTag.create("container-tag"), TestTag.create("property-tag"));
 		}
 
 		@Example
 		void propertyWithDomains() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withDomains", TestContainer.class);
 
-			assertThat(propertyMethodDescriptor.getDomainContexts())
+			Stream<Class<? extends DomainContext>> domainClasses =
+				propertyMethodDescriptor.getDomains()
+										.stream()
+										.map(Domain::value);
+			assertThat(domainClasses)
 				.containsExactlyInAnyOrder(Domain1.class, Domain2.class);
 		}
 
@@ -111,7 +116,11 @@ class PropertyMethodResolverTest {
 		void propertyWithDomainInContainer() {
 			PropertyMethodDescriptor propertyMethodDescriptor = resolveMethodInClass("withDomain1", ContainerWithDomain2.class);
 
-			assertThat(propertyMethodDescriptor.getDomainContexts())
+			Stream<Class<? extends DomainContext>> domainClasses =
+				propertyMethodDescriptor.getDomains()
+										.stream()
+										.map(Domain::value);
+			assertThat(domainClasses)
 				.containsExactlyInAnyOrder(Domain1.class, Domain2.class);
 		}
 
@@ -322,7 +331,7 @@ class PropertyMethodResolverTest {
 		}
 	}
 
-	private static class Domain1 extends AbstractDomainContextBase { }
+	private static class Domain1 extends AbstractDomainContextBase {}
 
-	private static class Domain2 extends AbstractDomainContextBase { }
+	private static class Domain2 extends AbstractDomainContextBase {}
 }

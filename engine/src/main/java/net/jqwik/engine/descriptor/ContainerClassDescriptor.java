@@ -19,13 +19,13 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor implements 
 	private final Class<?> containerClass;
 	private final boolean isGroup;
 	private final Set<TestTag> tags;
-	private Set<Class<? extends DomainContext>> domainContexts;
+	private Set<Domain> domains;
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
 		super(uniqueId, determineDisplayName(containerClass), ClassSource.from(containerClass));
 		warnWhenJunitAnnotationsArePresent(containerClass);
 		this.tags = findTestTags(containerClass);
-		this.domainContexts = findDomainContexts(containerClass);
+		this.domains = findDomains(containerClass);
 		this.containerClass = containerClass;
 		this.isGroup = isGroup;
 	}
@@ -59,10 +59,10 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor implements 
 	}
 
 	@Override
-	public Set<Class<? extends DomainContext>> getDomainContexts() {
-		// TODO: Remove duplication with AbstractMethodDescriptor.getDomainContexts()
-		Set<Class<? extends DomainContext>> allContexts = new LinkedHashSet<>(domainContexts);
-		getJqwikParent().ifPresent(parentDescriptor -> allContexts.addAll(parentDescriptor.getDomainContexts()));
+	public Set<Domain> getDomains() {
+		// TODO: Remove duplication with AbstractMethodDescriptor.getDomains()
+		Set<Domain> allContexts = new LinkedHashSet<>(domains);
+		getJqwikParent().ifPresent(parentDescriptor -> allContexts.addAll(parentDescriptor.getDomains()));
 		return allContexts;
 	}
 

@@ -35,7 +35,7 @@ public class PropertyMethodExecutor {
 
 	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		try {
-			DomainContext domainContext = combineDomainContexts(methodDescriptor.getDomainContexts());
+			DomainContext domainContext = combineDomainContexts(methodDescriptor.getDomains());
 			DomainContextFacadeImpl.currentContext.set(domainContext);
 			return executePropertyMethod(lifecycleSupplier, listener);
 		} finally {
@@ -43,14 +43,14 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private DomainContext combineDomainContexts(Set<Class<? extends DomainContext>> domainContextsClasses) {
-		if (domainContextsClasses.isEmpty()) {
+	private DomainContext combineDomainContexts(Set<Domain> domainAnnotations) {
+		if (domainAnnotations.isEmpty()) {
 			return DomainContext.global();
 		}
 		Set<DomainContext> domainContexts =
-			domainContextsClasses
+			domainAnnotations
 				.stream()
-				.map(this::createDomainContext)
+				.map((Domain domain) -> createDomainContext(domain.value()))
 				.collect(Collectors.toSet());
 		return new CombinedDomainContext(domainContexts);
 	}
