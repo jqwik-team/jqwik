@@ -48,7 +48,7 @@ public class GenericProperty {
 
 	private void reportResult(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult) {
 		if (checkResult.countTries() > 1 || checkResult.status() != SATISFIED)
-			publisher.accept(CheckResultReportEntry.from(checkResult, configuration.getAfterFailureMode()));
+			publisher.accept(CheckResultReportEntry.from(name, checkResult, configuration.getAfterFailureMode()));
 	}
 
 	private PropertyCheckResult checkWithoutReporting(Consumer<ReportEntry> reporter, Reporting[] reporting) {

@@ -36,7 +36,7 @@ class CheckedPropertiesExecutionTests {
 			reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"), isFailed());
 
-		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("seed");
+		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("failWithANumber");
 	}
 
 	@Example
@@ -52,7 +52,7 @@ class CheckedPropertiesExecutionTests {
 			reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"), isSuccessful());
 
-		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("seed");
+		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("succeedWithANumber");
 	}
 
 	@Example

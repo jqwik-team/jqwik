@@ -1,4 +1,7 @@
-- Optional reporting of assertion error message first thing
-  - Make it configurable in jqwik.properties
+> Optional reporting of assertion error message first thing
+  see https://github.com/jlink/jqwik/issues/49
+
+- Configuration:
+  - reportOnlyFailures = false
 
 - Combinators.builder(...) or Builder.startWith(Supplier<B> createBuilder)

@@ -1,40 +1,115 @@
 package net.jqwik.engine.properties;
 
-import java.util.*;
-
-import org.junit.platform.engine.reporting.ReportEntry;
+import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.support.JqwikStringSupport;
+import net.jqwik.engine.support.*;
+
+import static net.jqwik.engine.properties.PropertyCheckResult.Status.*;
 
 public class CheckResultReportEntry {
 
-	public static final String TRIES_KEY = "tries";
-	public static final String CHECKS_KEY = "checks";
-	public static final String GENERATION_KEY = "generation-mode";
-	public static final String AFTER_FAILURE_KEY = "after-failure";
-	public static final String SEED_KEY = "seed";
-	public static final String SAMPLE_KEY = "sample";
-	public static final String ORIGINAL_REPORT_KEY = "original-sample";
+	private static final String TRIES_KEY = "tries";
+	private static final String CHECKS_KEY = "checks";
+	private static final String GENERATION_KEY = "generation-mode";
+	private static final String AFTER_FAILURE_KEY = "after-failure";
+	private static final String SEED_KEY = "seed";
+	private static final String SAMPLE_KEY = "sample";
+	private static final String ORIGINAL_REPORT_KEY = "original-sample";
 
-	public static ReportEntry from(PropertyCheckResult checkResult, AfterFailureMode afterFailureMode) {
-		Map<String, String> entries = new HashMap<>();
-		entries.put(TRIES_KEY, Integer.toString(checkResult.countTries()));
-		entries.put(CHECKS_KEY, Integer.toString(checkResult.countChecks()));
-		entries.put(GENERATION_KEY, checkResult.generation().name());
-		if (afterFailureMode != AfterFailureMode.NOT_SET) {
-			entries.put(AFTER_FAILURE_KEY, afterFailureMode.name());
+	public static ReportEntry from(String propertyName, PropertyCheckResult checkResult, AfterFailureMode afterFailureMode) {
+		return buildJqwikReport(propertyName, checkResult, afterFailureMode);
+	}
+
+	private static ReportEntry buildJqwikReport(
+		String propertyName,
+		PropertyCheckResult checkResult,
+		AfterFailureMode afterFailureMode
+	) {
+		StringBuilder reportLines = new StringBuilder();
+
+		if (checkResult.status() != SATISFIED) {
+			Throwable throwable = checkResult.toExecutionResult().getThrowable().get();
+			String assertionClass = throwable.getClass().getName();
+			String assertionMessage = throwable.getMessage();
+			reportLines.append(String.format("%n%n%s: ", assertionClass));
+			reportLines.append(String.format("%s%n", assertionMessage));
 		}
-		entries.put(SEED_KEY, checkResult.randomSeed());
-		checkResult.sample().ifPresent(sample -> {
-			if (!sample.isEmpty())
-				entries.put(SAMPLE_KEY, JqwikStringSupport.displayString(sample));
+
+		reportLines.append(String.format("%n"));
+		reportLines.append(buildLine("", "|---------- Jqwik ----------"));
+		appendProperty(reportLines, TRIES_KEY, Integer.toString(checkResult.countTries()), "# of calls to property");
+		appendProperty(reportLines, CHECKS_KEY, Integer.toString(checkResult.countChecks()), "# of not rejected calls");
+		appendProperty(reportLines, GENERATION_KEY, checkResult.generation().name(), helpGenerationMode(checkResult.generation()));
+		if (afterFailureMode != AfterFailureMode.NOT_SET) {
+			appendProperty(reportLines, AFTER_FAILURE_KEY, afterFailureMode.name(), helpAfterFailureMode(afterFailureMode));
+		}
+		appendProperty(reportLines, SEED_KEY, checkResult.randomSeed(), "random seed to reproduce generated values");
+
+		checkResult.sample().ifPresent(shrunkSample -> {
+			if (!shrunkSample.isEmpty()) {
+				reportLines.append(String.format("%s%n", buildProperty(
+					SAMPLE_KEY,
+					JqwikStringSupport.displayString(shrunkSample)
+				)));
+			}
 		});
-		checkResult.originalSample().ifPresent(sample -> {
-			if (!sample.isEmpty())
-				entries.put(ORIGINAL_REPORT_KEY, JqwikStringSupport.displayString(sample));
+
+		checkResult.originalSample().ifPresent(originalSample -> {
+			if (!originalSample.isEmpty()) {
+				reportLines
+					.append(String.format("%s%n", buildProperty(
+						ORIGINAL_REPORT_KEY,
+						JqwikStringSupport.displayString(originalSample)
+					)));
+			}
 		});
-		return ReportEntry.from(entries);
+
+		return ReportEntry.from(propertyName, reportLines.toString());
+	}
+
+	private static String helpAfterFailureMode(AfterFailureMode afterFailureMode) {
+		switch (afterFailureMode) {
+			case RANDOM_SEED:
+				return "use a new random seed";
+			case PREVIOUS_SEED:
+				return "use the previous seed";
+			case SAMPLE_ONLY:
+				return "only try the previously failed sample";
+			case SAMPLE_FIRST:
+				return "try the previously failed sample, then the previous seed";
+			default:
+				return "RANDOM_SEED, PREVIOUS_SEED or SAMPLE_FIRST";
+		}
+	}
+
+	private static String helpGenerationMode(GenerationMode generation) {
+		switch (generation) {
+			case RANDOMIZED:
+				return "parameters are randomly generated";
+			case EXHAUSTIVE:
+				return "parameters are exhaustively generated";
+			case DATA_DRIVEN:
+				return "parameters are taken from data provider";
+			default:
+				return "RANDOMIZED, EXHAUSTIVE or DATA_DRIVEN";
+		}
+	}
+
+	private static void appendProperty(StringBuilder reportLines, String triesKey, String value, String s) {
+		reportLines.append(buildPropertyLine(triesKey, value, s));
+	}
+
+	private static String buildPropertyLine(String key, String value, String help) {
+		return buildLine(buildProperty(key, value), String.format("| %s", help));
+	}
+
+	private static String buildProperty(String key, String value) {
+		return String.format("%s = %s", key, value);
+	}
+
+	private static String buildLine(String body, String helpString) {
+		return String.format("%-30s%s%n", body, helpString);
 	}
 
 }
