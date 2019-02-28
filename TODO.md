@@ -2,8 +2,8 @@
   see https://github.com/jlink/jqwik/issues/49
 
 - user guide:
-  - New Reporting
-  - New config option: reportFailuresOnly
+  - Changed Reporting format
+  - index.page changed reporting format
 
 - Configuration:
   - reportOnlyFailures = false

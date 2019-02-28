@@ -392,8 +392,7 @@ annotation has a few optional values:
   checks = 10, 
   seed = 42859154278924201
   ```
-    
-      
+  
     
 ### Additional Reporting
 
@@ -996,12 +995,12 @@ Shrinking moves towards the start of the frequency list.
 #### Constants
 
 - [`Arbitrary<T> constant(T value)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
-  Always return an unshrinkable `value` of type `T`.
+  In each try use the same unshrinkable `value` of type `T`.
 
 #### Create
 
 - [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
-  Always create a new unshrinkable instance of type `T` using `supplier`.
+  In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
 
 #### Shuffling Permutations
 
@@ -2584,6 +2583,7 @@ defaultTries = 1000                 # The default number of tries for each prope
 defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
 useJunitPlatformReporter = false    # Set to true if you want to use platform reporting
 defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties
+reportOnlyFailures = false          # Set to true if only falsified properties should be reported
 ```
 
 ## Release Notes
