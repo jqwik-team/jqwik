@@ -4,7 +4,5 @@
 - user guide:
   - Changed Reporting format
 
-- Configuration:
-  - reportOnlyFailures = false
-
 - Combinators.builder(...) or Builder.startWith(Supplier<B> createBuilder)
+  see https://github.com/jlink/jqwik/issues/46

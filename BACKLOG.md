@@ -42,7 +42,6 @@
   - For ActionSequences
 
 - Configuration:
-  - reportOnlyFailures = false
   - Find a way to set config params through command line or env variable
 
     `request.getConfigurationParameters().get("jqwik.tries.default", Integer::valueOf)`
