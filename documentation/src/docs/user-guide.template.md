@@ -105,12 +105,12 @@ If you want to see jqwik's reports in the output use Gradle's command line optio
 > gradle clean test --info
 ...
 mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
-   timestamp = 2018-11-07T09:15:04.929
-       tries = 1000
-       checks = 1000
-       generation-mode = RANDOMIZED
-       seed = 3101984638825718297
-...
+    timestamp = 2019-02-28T18:01:14.302, MyClassProperties:myPropertyMethod = 
+                                  |-----------------------jqwik-----------------------
+    tries = 1000                  | # of calls to property
+    checks = 1000                 | # of not rejected calls
+    generation-mode = RANDOMIZED  | parameters are randomly generated
+    seed = 1685744359484719817    | random seed to reproduce generated values
 ```
 
 ### Maven
@@ -299,10 +299,9 @@ annotation has a few optional values:
   together with the other information:
   
   ```
-  timestamp = 2018-10-21T10:22:57.936, 
-  generation-mode = EXHAUSTIVE, 
-  tries = 10, 
-  checks = 10, 
+  tries = 10 
+  checks = 10 
+  generation-mode = EXHAUSTIVE 
   seed = 42859154278924201
   ```
   
@@ -1710,13 +1709,12 @@ Despite the fact that the property condition itself is correct, the property wil
 fail with the following message:
 
 ```
-timestamp = 2017-11-06T14:36:15.134, 
-    seed = 1066117555581106850
-    tries = 1000, 
-    checks = 20, 
-
 org.opentest4j.AssertionFailedError: 
     Property [findingContainedStrings] exhausted after [1000] tries and [980] rejections
+
+tries = 1000 
+checks = 20 
+seed = 1066117555581106850
 ```
 
 The problem is that - given a random generation of two strings - only in very few cases
@@ -1763,15 +1761,15 @@ boolean stringShouldBeShrunkToAA(@ForAll @AlphaChars String aString) {
 ```
 
 The test run result should look something like:
-```
-timestamp = 2017-11-04T16:42:25.859, 
-    seed = -633877439388930932, 
-    tries = 38, 
-    checks = 38, 
-    originalSample = ["LVtyB"], 
-    sample = ["AA"]
 
+```
 AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample ["AA"]
+
+tries = 38 
+checks = 38 
+seed = -633877439388930932 
+sample = ["AA"]
+original-sample ["LVtyB"] 
 ```
 
 In this case the _originalSample_ could be any string between 2 and 5 chars, whereas the final _sample_
@@ -1814,14 +1812,13 @@ Arbitrary<String> second() {
 
 Shrinking still works, although there's quite a bit of filtering and string concatenation happening:
 ```
-timestamp = 2017-11-04T16:58:45.431, 
-    seed = -5596810132893895291, 
-    checks = 20, 
-    tries = 20, 
-    originalSample = ["gh", "774"], 
-    sample = ["h", "0"]
-
 AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h", "0"]
+
+checks = 20 
+tries = 20 
+seed = -5596810132893895291 
+sample = ["h", "0"]
+original-sample ["gh", "774"] 
 ```
 
 ### Switch Shrinking Off
@@ -1839,7 +1836,7 @@ void aPropertyWithLongShrinkingTimes(
 
 ### Switch Shrinking to Full Mode
 
-Sometimes you can find a message similar to
+Sometimes you can find a message like
 
 ```
 shrinking bound reached =
@@ -1881,7 +1878,7 @@ void simpleStats(@ForAll RoundingMode mode) {
 will create an output similar to that:
 
 ```
-collected statistics = 
+statistics for [MyTest:simpleStats] = 
      UNNECESSARY : 15 %
      DOWN        : 14 %
      FLOOR       : 13 %
@@ -1903,7 +1900,7 @@ void integerStats(@ForAll int anInt) {
 ```
 
 ```
-collected statistics = 
+statistics for [MyTest:integerStats] = 
      negative : 52 %
      positive : 48 %
 ```
@@ -1922,7 +1919,7 @@ void combinedIntegerStats(@ForAll int anInt) {
 ```
 
 ```
-collected statistics = 
+statistics for [MyTest:combinedIntegerStats] = 
      positive odd big    : 23 %
      negative even big   : 22 %
      positive even big   : 22 %
