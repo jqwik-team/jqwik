@@ -63,7 +63,7 @@ class StatisticsCollectionTests {
 		collector.collect("four");
 		collector.collect("three");
 
-		ReportEntry entry = collector.createReportEntry();
+		ReportEntry entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactly( //
@@ -83,7 +83,7 @@ class StatisticsCollectionTests {
 		collector.collect("aKey");
 		collector.collect((Object) null);
 
-		ReportEntry entry = collector.createReportEntry();
+		ReportEntry entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactly( //
@@ -92,7 +92,7 @@ class StatisticsCollectionTests {
 	}
 
 	private List<String> parseStatistics(ReportEntry entry) {
-		return Arrays.stream(entry.getKeyValuePairs().get(StatisticsCollector.KEY_STATISTICS).split(System.getProperty("line.separator"))) //
+		return Arrays.stream(entry.getKeyValuePairs().get("statistics for [a property]").split(System.getProperty("line.separator"))) //
 			.map(String::trim) //
 			.filter(s -> !s.isEmpty()) //
 			.collect(Collectors.toList());
@@ -107,7 +107,7 @@ class StatisticsCollectionTests {
 		collector.collect("three", 2);
 		collector.collect("two", 3);
 
-		ReportEntry entry = collector.createReportEntry();
+		ReportEntry entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactlyInAnyOrder( //

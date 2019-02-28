@@ -43,7 +43,7 @@ public class GenericProperty {
 	}
 
 	private void reportStatistics(Consumer<ReportEntry> reporter) {
-		StatisticsCollector.report(reporter);
+		StatisticsCollector.report(reporter, name);
 	}
 
 	private void reportResult(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult, boolean reportOnlyFailures) {

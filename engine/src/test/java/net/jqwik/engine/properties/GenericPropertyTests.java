@@ -35,7 +35,7 @@ class GenericPropertyTests {
 		Arbitrary<Integer> arbitrary = Arbitraries.samples(1);
 		ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
-		GenericProperty property = new GenericProperty("simple", aConfig().build(), shrinkablesGenerator, forAllFunction);
+		GenericProperty property = new GenericProperty("property name", aConfig().build(), shrinkablesGenerator, forAllFunction);
 		Consumer<ReportEntry> mockPublisher = mock(Consumer.class);
 
 		PropertyCheckResult result = property.check(mockPublisher, new Reporting[0], false);
@@ -47,7 +47,7 @@ class GenericPropertyTests {
 											.flatMap(entry -> entry.getKeyValuePairs().keySet().stream()) //
 											.collect(Collectors.toSet());
 
-		Assertions.assertThat(keys).contains("collected statistics");
+		Assertions.assertThat(keys).contains("statistics for [property name]");
 
 		// Remove statistics from this test from ThreadLocal<Collector>:
 		StatisticsCollector.clearAll();

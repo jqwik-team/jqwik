@@ -25,6 +25,10 @@ and
 <a href="/docs/snapshot/javadoc/index.html">javadoc</a>
 </p>
 
+- You can configure if you want to [report only failures](/docs/snapshot/user-guide.html#jqwik-configuration).
+
+- The reporting format for run properties has changed.
+
 - Added `@Domain.priority()` to enable prioritisation of domain context classes.
 
 - Added [`Arbitraries.create`](/docs/snapshot/user-guide.html#create).

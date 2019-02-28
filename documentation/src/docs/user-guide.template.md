@@ -305,8 +305,7 @@ annotation has a few optional values:
   checks = 10, 
   seed = 42859154278924201
   ```
-    
-      
+  
     
 ### Additional Reporting
 
@@ -2497,6 +2496,7 @@ defaultTries = 1000                 # The default number of tries for each prope
 defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
 useJunitPlatformReporter = false    # Set to true if you want to use platform reporting
 defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties
+reportOnlyFailures = false          # Set to true if only falsified properties should be reported
 ```
 
 ## Release Notes

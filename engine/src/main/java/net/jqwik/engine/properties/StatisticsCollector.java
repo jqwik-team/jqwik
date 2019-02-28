@@ -8,7 +8,7 @@ import org.junit.platform.engine.reporting.*;
 
 public class StatisticsCollector {
 
-	public static final String KEY_STATISTICS = "collected statistics";
+	public static final String KEY_STATISTICS = "statistics";
 	private static ThreadLocal<StatisticsCollector> collector = ThreadLocal.withInitial(StatisticsCollector::new);
 
 	public static void clearAll() {
@@ -19,11 +19,11 @@ public class StatisticsCollector {
 		return collector.get();
 	}
 
-	public static void report(Consumer<ReportEntry> reporter) {
+	public static void report(Consumer<ReportEntry> reporter, String propertyName) {
 		StatisticsCollector collector = get();
 		if (collector.isEmpty())
 			return;
-		reporter.accept(collector.createReportEntry());
+		reporter.accept(collector.createReportEntry(propertyName));
 	}
 
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
@@ -36,7 +36,7 @@ public class StatisticsCollector {
 		return counts;
 	}
 
-	public ReportEntry createReportEntry() {
+	public ReportEntry createReportEntry(String propertyName) {
 		StringBuilder statistics = new StringBuilder();
 		int sum = counts.values().stream().mapToInt(aCount -> aCount).sum();
 		List<StatisticsEntry> statisticsEntries = counts.entrySet().stream() //
@@ -53,7 +53,8 @@ public class StatisticsCollector {
 							statsEntry.name, //
 							displayPercentage(statsEntry.percentage, fullNumbersOnly)));
 				});
-		return ReportEntry.from(KEY_STATISTICS, statistics.toString());
+		String keyStatistics = String.format("%s for [%s]", KEY_STATISTICS, propertyName);
+		return ReportEntry.from(keyStatistics, statistics.toString());
 	}
 
 	private String displayPercentage(double percentage, boolean fullNumbersOnly) {
