@@ -3,7 +3,6 @@
 
 - user guide:
   - Changed Reporting format
-  - index.page changed reporting format
 
 - Configuration:
   - reportOnlyFailures = false

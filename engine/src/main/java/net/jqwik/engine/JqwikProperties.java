@@ -14,7 +14,8 @@ public class JqwikProperties {
 		"defaultTries",
 		"defaultMaxDiscardRatio",
 		"useJunitPlatformReporter",
-		"defaultAfterFailure"
+		"defaultAfterFailure",
+		"reportOnlyFailures"
 	};
 
 	private static final String PROPERTIES_FILE_NAME = "jqwik.properties";
