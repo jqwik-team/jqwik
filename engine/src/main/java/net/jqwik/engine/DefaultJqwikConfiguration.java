@@ -39,6 +39,11 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 		return properties.useJunitPlatformReporter();
 	}
 
+	@Override
+	public boolean reportOnlyFailures() {
+		return properties.reportOnlyFailures();
+	}
+
 	private TestEngineConfiguration createTestEngineConfiguration() {
 		TestRunDatabase database = new TestRunDatabase(Paths.get(properties.databasePath()));
 		TestRunData previousRun = database.previousRun();

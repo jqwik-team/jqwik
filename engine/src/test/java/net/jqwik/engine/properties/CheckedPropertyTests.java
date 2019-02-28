@@ -125,7 +125,7 @@ class CheckedPropertyTests {
 				aConfig().build()
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
 			assertThat(check.throwable()).isPresent();
 			assertThat(check.throwable().get()).isInstanceOf(CannotFindArbitraryException.class);
@@ -142,7 +142,7 @@ class CheckedPropertyTests {
 				aConfig().withSeed("414243").withTries(20).build()
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 			assertThat(check.randomSeed()).isEqualTo("414243");
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
@@ -164,7 +164,7 @@ class CheckedPropertyTests {
 					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build()
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 			assertThat(check.randomSeed()).isEqualTo("101010");
 		}
 
@@ -183,7 +183,7 @@ class CheckedPropertyTests {
 					.withAfterFailure(AfterFailureMode.RANDOM_SEED).build()
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 			assertThat(check.randomSeed()).isNotEqualTo("101010");
 		}
 
@@ -202,7 +202,7 @@ class CheckedPropertyTests {
 					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build()
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 			assertThat(check.randomSeed()).isEqualTo("4242");
 		}
 
@@ -220,7 +220,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(AUTO).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.status()).isEqualTo(SATISFIED);
@@ -239,7 +239,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(DATA_DRIVEN).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.status()).isEqualTo(SATISFIED);
@@ -256,7 +256,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(RANDOMIZED).build()
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false)).isInstanceOf(JqwikException.class);
 			}
 
 			@Example
@@ -269,7 +269,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(EXHAUSTIVE).build()
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false)).isInstanceOf(JqwikException.class);
 			}
 
 			@Example
@@ -282,7 +282,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(DATA_DRIVEN).build()
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false)).isInstanceOf(JqwikException.class);
 			}
 		}
 
@@ -301,7 +301,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(EXHAUSTIVE).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.status()).isEqualTo(SATISFIED);
@@ -318,7 +318,7 @@ class CheckedPropertyTests {
 					aConfig().withTries(50).withGeneration(EXHAUSTIVE).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(99);
 				assertThat(check.status()).isEqualTo(SATISFIED);
@@ -336,7 +336,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(AUTO).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.status()).isEqualTo(SATISFIED);
@@ -353,7 +353,7 @@ class CheckedPropertyTests {
 					aConfig().withGeneration(EXHAUSTIVE).build()
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false)).isInstanceOf(JqwikException.class);
 			}
 
 			@Example
@@ -366,7 +366,7 @@ class CheckedPropertyTests {
 					aConfig().withTries(20).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
 				assertThat(check.countTries()).isEqualTo(20);
 				assertThat(check.status()).isEqualTo(SATISFIED);
@@ -382,7 +382,7 @@ class CheckedPropertyTests {
 					aConfig().withTries(20).withGeneration(RANDOMIZED).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
 				assertThat(check.countTries()).isEqualTo(20);
 				assertThat(check.status()).isEqualTo(SATISFIED);
@@ -405,7 +405,7 @@ class CheckedPropertyTests {
 					aConfig().withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.countTries()).isEqualTo(1);
 				assertThat(check.status()).isEqualTo(SATISFIED);
 				assertThat(check.sample()).isEmpty();
@@ -423,7 +423,7 @@ class CheckedPropertyTests {
 					aConfig().withTries(10).withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_FIRST).build()
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 				assertThat(check.countTries()).isEqualTo(10);
 				assertThat(check.status()).isEqualTo(SATISFIED);
 				assertThat(check.sample()).isEmpty();
@@ -438,7 +438,7 @@ class CheckedPropertyTests {
 			Optional.empty(),
 			aConfig().build()
 		);
-		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0], false);
 		assertThat(check.status()).isEqualTo(expectedStatus);
 	}
 

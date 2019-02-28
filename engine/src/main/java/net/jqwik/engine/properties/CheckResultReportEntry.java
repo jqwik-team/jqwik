@@ -1,5 +1,7 @@
 package net.jqwik.engine.properties;
 
+import java.util.*;
+
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
@@ -28,24 +30,14 @@ public class CheckResultReportEntry {
 	) {
 		StringBuilder reportLines = new StringBuilder();
 
-		if (checkResult.status() != SATISFIED) {
-			Throwable throwable = checkResult.toExecutionResult().getThrowable().get();
-			String assertionClass = throwable.getClass().getName();
-			String assertionMessage = throwable.getMessage();
-			reportLines.append(String.format("%n%n%s: ", assertionClass));
-			reportLines.append(String.format("%s%n", assertionMessage));
-		}
+		appendThrowableMessage(reportLines, checkResult);
+		appendFixedSizedProperties(reportLines, checkResult, afterFailureMode);
+		appendSamples(reportLines, checkResult);
 
-		reportLines.append(String.format("%n"));
-		reportLines.append(buildLine("", "|---------- Jqwik ----------"));
-		appendProperty(reportLines, TRIES_KEY, Integer.toString(checkResult.countTries()), "# of calls to property");
-		appendProperty(reportLines, CHECKS_KEY, Integer.toString(checkResult.countChecks()), "# of not rejected calls");
-		appendProperty(reportLines, GENERATION_KEY, checkResult.generation().name(), helpGenerationMode(checkResult.generation()));
-		if (afterFailureMode != AfterFailureMode.NOT_SET) {
-			appendProperty(reportLines, AFTER_FAILURE_KEY, afterFailureMode.name(), helpAfterFailureMode(afterFailureMode));
-		}
-		appendProperty(reportLines, SEED_KEY, checkResult.randomSeed(), "random seed to reproduce generated values");
+		return ReportEntry.from(propertyName, reportLines.toString());
+	}
 
+	private static void appendSamples(StringBuilder reportLines, PropertyCheckResult checkResult) {
 		checkResult.sample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
 				reportLines.append(String.format("%s%n", buildProperty(
@@ -64,8 +56,40 @@ public class CheckResultReportEntry {
 					)));
 			}
 		});
+	}
 
-		return ReportEntry.from(propertyName, reportLines.toString());
+	private static void appendFixedSizedProperties(
+		StringBuilder reportLines,
+		PropertyCheckResult checkResult,
+		AfterFailureMode afterFailureMode
+	) {
+		List<String> propertiesLines = new ArrayList<>();
+		appendProperty(propertiesLines, TRIES_KEY, Integer.toString(checkResult.countTries()), "# of calls to property");
+		appendProperty(propertiesLines, CHECKS_KEY, Integer.toString(checkResult.countChecks()), "# of not rejected calls");
+		appendProperty(propertiesLines, GENERATION_KEY, checkResult.generation().name(), helpGenerationMode(checkResult.generation()));
+		if (afterFailureMode != AfterFailureMode.NOT_SET) {
+			appendProperty(propertiesLines, AFTER_FAILURE_KEY, afterFailureMode.name(), helpAfterFailureMode(afterFailureMode));
+		}
+		appendProperty(propertiesLines, SEED_KEY, checkResult.randomSeed(), "random seed to reproduce generated values");
+
+		int halfBorderLength =
+			(propertiesLines.stream().mapToInt(String::length).max().orElse(50) - 37) / 2 + 1;
+		String halfBorder = String.join("", Collections.nCopies(halfBorderLength, "-"));
+
+		reportLines.append(String.format("%n"));
+		reportLines.append(buildLine("", "|" + halfBorder + "jqwik" + halfBorder));
+		propertiesLines.forEach(reportLines::append);
+
+	}
+
+	private static void appendThrowableMessage(StringBuilder reportLines, PropertyCheckResult checkResult) {
+		if (checkResult.status() != SATISFIED) {
+			Throwable throwable = checkResult.toExecutionResult().getThrowable().get();
+			String assertionClass = throwable.getClass().getName();
+			String assertionMessage = throwable.getMessage();
+			reportLines.append(String.format("%n%n%s: ", assertionClass));
+			reportLines.append(String.format("%s%n", assertionMessage));
+		}
 	}
 
 	private static String helpAfterFailureMode(AfterFailureMode afterFailureMode) {
@@ -77,7 +101,7 @@ public class CheckResultReportEntry {
 			case SAMPLE_ONLY:
 				return "only try the previously failed sample";
 			case SAMPLE_FIRST:
-				return "try the previously failed sample, then the previous seed";
+				return "try previously failed sample, then previous seed";
 			default:
 				return "RANDOM_SEED, PREVIOUS_SEED or SAMPLE_FIRST";
 		}
@@ -96,8 +120,8 @@ public class CheckResultReportEntry {
 		}
 	}
 
-	private static void appendProperty(StringBuilder reportLines, String triesKey, String value, String s) {
-		reportLines.append(buildPropertyLine(triesKey, value, s));
+	private static void appendProperty(List<String> propertiesLines, String triesKey, String value, String s) {
+		propertiesLines.add(buildPropertyLine(triesKey, value, s));
 	}
 
 	private static String buildPropertyLine(String key, String value, String help) {

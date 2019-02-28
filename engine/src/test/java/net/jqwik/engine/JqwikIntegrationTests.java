@@ -59,6 +59,11 @@ class JqwikIntegrationTests {
 			public boolean useJunitPlatformReporter() {
 				return false;
 			}
+
+			@Override
+			public boolean reportOnlyFailures() {
+				return false;
+			}
 		};
 	}
 

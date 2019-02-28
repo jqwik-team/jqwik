@@ -12,7 +12,7 @@ import net.jqwik.engine.support.*;
 
 class PropertyTaskCreator {
 
-	ExecutionTask createTask(PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier) {
+	ExecutionTask createTask(PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, boolean reportOnlyFailures) {
 		if (hasUnspecifiedParameters(methodDescriptor)) {
 			String taskDescription = "skipping " + methodDescriptor.getDisplayName();
 			return ExecutionTask.from(
@@ -35,7 +35,9 @@ class PropertyTaskCreator {
 				}
 
 				listener.executionStarted(methodDescriptor);
-				PropertyExecutionResult executionResult = executeTestMethod(methodDescriptor, propertyLifecycleContext, lifecycleSupplier, listener);
+				PropertyExecutionResult executionResult = executeTestMethod(
+					methodDescriptor, propertyLifecycleContext, lifecycleSupplier, listener, reportOnlyFailures
+				);
 				listener.executionFinished(methodDescriptor, executionResult);
 			},
 			methodDescriptor.getUniqueId(),
@@ -64,9 +66,10 @@ class PropertyTaskCreator {
 		PropertyMethodDescriptor methodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
 		LifecycleSupplier lifecycleSupplier,
-		PropertyExecutionListener listener
+		PropertyExecutionListener listener,
+		boolean reportOnlyFailures
 	) {
-		PropertyMethodExecutor executor = new PropertyMethodExecutor(methodDescriptor, propertyLifecycleContext);
+		PropertyMethodExecutor executor = new PropertyMethodExecutor(methodDescriptor, propertyLifecycleContext, reportOnlyFailures);
 		return executor.execute(lifecycleSupplier, listener);
 	}
 

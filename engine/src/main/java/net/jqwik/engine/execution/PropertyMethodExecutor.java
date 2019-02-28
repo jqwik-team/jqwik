@@ -26,11 +26,17 @@ public class PropertyMethodExecutor {
 
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final PropertyLifecycleContext propertyLifecycleContext;
+	private final boolean reportOnlyFailures;
 	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
 
-	public PropertyMethodExecutor(PropertyMethodDescriptor methodDescriptor, PropertyLifecycleContext propertyLifecycleContext) {
+	public PropertyMethodExecutor(
+		PropertyMethodDescriptor methodDescriptor,
+		PropertyLifecycleContext propertyLifecycleContext,
+		boolean reportOnlyFailures
+	) {
 		this.methodDescriptor = methodDescriptor;
 		this.propertyLifecycleContext = propertyLifecycleContext;
+		this.reportOnlyFailures = reportOnlyFailures;
 	}
 
 	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
@@ -112,7 +118,7 @@ public class PropertyMethodExecutor {
 
 	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, testInstance);
-		return property.check(publisher, methodDescriptor.getReporting());
+		return property.check(publisher, methodDescriptor.getReporting(), reportOnlyFailures);
 	}
 
 }

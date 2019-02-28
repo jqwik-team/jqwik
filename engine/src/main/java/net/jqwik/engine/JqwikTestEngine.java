@@ -88,7 +88,8 @@ public class JqwikTestEngine implements TestEngine {
 				lifecycleRegistry,
 				recorder,
 				configuration.testEngineConfiguration().previousFailures(),
-				configuration.useJunitPlatformReporter()
+				configuration.useJunitPlatformReporter(),
+				configuration.reportOnlyFailures()
 			).execute(root, listener);
 		}
 	}

@@ -33,10 +33,10 @@ public class CheckedProperty {
 		this.optionalExhaustive = createExhaustiveShrinkablesGenerator();
 	}
 
-	public PropertyCheckResult check(Consumer<ReportEntry> publisher, Reporting[] reporting) {
+	public PropertyCheckResult check(Consumer<ReportEntry> publisher, Reporting[] reporting, boolean reportOnlyFailures) {
 		PropertyConfiguration effectiveConfiguration = configurationWithEffectiveSeed();
 		try {
-			return createGenericProperty(effectiveConfiguration).check(publisher, reporting);
+			return createGenericProperty(effectiveConfiguration).check(publisher, reporting, reportOnlyFailures);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.erroneous(
 				effectiveConfiguration.getStereotype(), propertyName, 0, 0, effectiveConfiguration.getSeed(),

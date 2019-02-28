@@ -25,6 +25,7 @@ public class JqwikProperties {
 	private static final String DEFAULT_TRIES = "1000";
 	private static final String DEFAULT_MAX_DISCARD_RATIO = "5";
 	private static final String DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED.name();
+	private static final String DEFAULT_REPORT_ONLY_FAILURES = "false";
 
 	// TODO: Change default to true as soon as Gradle has support for platform reporter
 	// see https://github.com/gradle/gradle/issues/4605
@@ -36,6 +37,7 @@ public class JqwikProperties {
 	private int defaultMaxDiscardRatio;
 	private boolean useJunitPlatformReporter;
 	private AfterFailureMode defaultAfterFailure;
+	private boolean reportOnlyFailures;
 
 	public String databasePath() {
 		return databasePath;
@@ -59,6 +61,10 @@ public class JqwikProperties {
 
 	public AfterFailureMode defaultAfterFailure() {
 		return defaultAfterFailure;
+	}
+
+	public boolean reportOnlyFailures() {
+		return reportOnlyFailures;
 	}
 
 	JqwikProperties() {
@@ -86,6 +92,7 @@ public class JqwikProperties {
 			defaultMaxDiscardRatio = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio", DEFAULT_MAX_DISCARD_RATIO));
 			useJunitPlatformReporter = Boolean.parseBoolean(properties.getProperty("useJunitPlatformReporter", DEFAULT_USE_JUNIT_PLATFORM_REPORTER));
 			defaultAfterFailure = AfterFailureMode.valueOf(properties.getProperty("defaultAfterFailure", DEFAULT_AFTER_FAILURE));
+			reportOnlyFailures = Boolean.parseBoolean(properties.getProperty("reportOnlyFailures", DEFAULT_REPORT_ONLY_FAILURES));
 		} catch (Throwable throwable) {
 			String message = String.format("Error while reading properties file [%s]", propertiesFileName);
 			throw new JqwikException(message, throwable);
@@ -101,4 +108,5 @@ public class JqwikProperties {
 			}
 		}
 	}
+
 }

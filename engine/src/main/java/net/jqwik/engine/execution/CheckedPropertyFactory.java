@@ -19,7 +19,7 @@ public class CheckedPropertyFactory {
 
 	public CheckedProperty fromDescriptor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
 		String displayName = propertyMethodDescriptor.getDisplayName();
-		String propertyName = propertyMethodDescriptor.getParent().map(parent -> parent.getDisplayName() + "." + displayName).orElse(displayName);
+		String propertyName = propertyMethodDescriptor.getParent().map(parent -> parent.getDisplayName() + ":" + displayName).orElse(displayName);
 
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();

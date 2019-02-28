@@ -6,4 +6,6 @@ public interface JqwikConfiguration {
 	TestEngineConfiguration testEngineConfiguration();
 
 	boolean useJunitPlatformReporter();
+
+	boolean reportOnlyFailures();
 }

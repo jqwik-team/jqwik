@@ -81,7 +81,7 @@ class CheckedPropertiesExecutionTests {
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		MockPipeline pipeline = new MockPipeline();
-		ExecutionTask task = executor.createTask(propertyMethodDescriptor, TestHelper.nullLifecycleSupplier());
+		ExecutionTask task = executor.createTask(propertyMethodDescriptor, TestHelper.nullLifecycleSupplier(), false);
 		pipeline.submit(task);
 		pipeline.runWith(eventRecorder);
 	}

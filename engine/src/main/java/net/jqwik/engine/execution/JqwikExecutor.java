@@ -16,6 +16,7 @@ public class JqwikExecutor {
 	private final TestRunRecorder recorder;
 	private final Set<UniqueId> previousFailedTests;
 	private final boolean useJunitPlatformReporter;
+	private final boolean reportOnlyFailures;
 	private final PropertyTaskCreator propertyTaskCreator = new PropertyTaskCreator();
 	private final ContainerTaskCreator containerTaskCreator = new ContainerTaskCreator();
 	private final ExecutionTaskCreator childTaskCreator = this::createTask;
@@ -26,12 +27,14 @@ public class JqwikExecutor {
 		LifecycleRegistry registry,
 		TestRunRecorder recorder,
 		Set<UniqueId> previousFailedTests,
-		boolean useJunitPlatformReporter
+		boolean useJunitPlatformReporter,
+		boolean reportOnlyFailures
 	) {
 		this.registry = registry;
 		this.recorder = recorder;
 		this.previousFailedTests = previousFailedTests;
 		this.useJunitPlatformReporter = useJunitPlatformReporter;
+		this.reportOnlyFailures = reportOnlyFailures;
 	}
 
 	public void execute(TestDescriptor descriptor, EngineExecutionListener engineExecutionListener) {
@@ -61,17 +64,22 @@ public class JqwikExecutor {
 			return createSkippingTask((SkipExecutionDecorator) descriptor, pipeline);
 		}
 		return ExecutionTask.from(listener -> LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor)),
-				descriptor.getUniqueId(), "log warning");
+								  descriptor.getUniqueId(), "log warning"
+		);
 	}
 
 	private ExecutionTask createSkippingTask(SkipExecutionDecorator descriptor, Pipeline pipeline) {
 		String taskDescription = String.format("Skipping [%s] due to: %s", descriptor.getDisplayName(), descriptor.getSkippingReason());
 		return ExecutionTask.from(listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()),
-				descriptor.getUniqueId(), taskDescription);
+								  descriptor.getUniqueId(), taskDescription
+		);
 	}
 
-	private ExecutionTask createPropertyTask(PropertyMethodDescriptor propertyMethodDescriptor, Pipeline pipeline) {
-		return propertyTaskCreator.createTask(propertyMethodDescriptor, registry);
+	private ExecutionTask createPropertyTask(
+		PropertyMethodDescriptor propertyMethodDescriptor,
+		Pipeline pipeline
+	) {
+		return propertyTaskCreator.createTask(propertyMethodDescriptor, registry, reportOnlyFailures);
 	}
 
 	private ExecutionTask createContainerTask(TestDescriptor containerDescriptor, Pipeline pipeline) {
