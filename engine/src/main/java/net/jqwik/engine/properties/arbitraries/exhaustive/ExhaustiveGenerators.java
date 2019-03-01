@@ -86,10 +86,9 @@ public class ExhaustiveGenerators {
 	}
 
 	public static <U, T> Optional<ExhaustiveGenerator<U>> flatMap(ExhaustiveGenerator<T> base, Function<T, Arbitrary<U>> mapper) {
-		List<T> allBaseValues = StreamSupport.stream(base.spliterator(), false).collect(Collectors.toList());
-		Optional<Long> optionalMaxCount = FlatMappedExhaustiveGenerator.calculateMaxCounts(allBaseValues, mapper);
+		Optional<Long> optionalMaxCount = FlatMappedExhaustiveGenerator.calculateMaxCounts(base, mapper);
 		return optionalMaxCount.map(
-			maxCount -> new FlatMappedExhaustiveGenerator<>(allBaseValues, maxCount, mapper)
+			maxCount -> new FlatMappedExhaustiveGenerator<>(base, maxCount, mapper)
 		);
 	}
 

@@ -8,13 +8,13 @@ import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
 public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<U> {
-	private final List<T> baseValues;
+	private final ExhaustiveGenerator<T> baseGenerator;
 	private final long maxCount;
 	private final Function<T, Arbitrary<U>> mapper;
 
-	public static <T, U> Optional<Long> calculateMaxCounts(List<T> baseValues, Function<T, Arbitrary<U>> mapper) {
+	public static <T, U> Optional<Long> calculateMaxCounts(ExhaustiveGenerator<T> baseGenerator, Function<T, Arbitrary<U>> mapper) {
 		long choices = 0;
-		for (T baseValue : baseValues) {
+		for (T baseValue : baseGenerator) {
 			Optional<ExhaustiveGenerator<U>> exhaustive = mapper.apply(baseValue).exhaustive();
 			if (!exhaustive.isPresent()) {
 				return Optional.empty();
@@ -27,7 +27,8 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 		return Optional.of(choices);
 	}
 
-	public FlatMappedExhaustiveGenerator(List<T> baseValues, long maxCount, Function<T, Arbitrary<U>> mapper) {this.baseValues = baseValues;
+	public FlatMappedExhaustiveGenerator(ExhaustiveGenerator<T> baseGenerator, long maxCount, Function<T, Arbitrary<U>> mapper) {
+		this.baseGenerator = baseGenerator;
 		this.maxCount = maxCount;
 		this.mapper = mapper;
 	}
@@ -40,8 +41,7 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 	@Override
 	public Iterator<U> iterator() {
 		List<Iterable<U>> iterators =
-			baseValues
-				.stream()
+			StreamSupport.stream(baseGenerator.spliterator(), false)
 				.map(baseValue -> (Iterable<U>) mapper.apply(baseValue).exhaustive().get())
 				.collect(Collectors.toList());
 

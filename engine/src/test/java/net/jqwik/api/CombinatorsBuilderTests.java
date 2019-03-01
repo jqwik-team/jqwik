@@ -1,6 +1,7 @@
 package net.jqwik.api;
 
 import net.jqwik.engine.*;
+import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -35,6 +36,23 @@ class CombinatorsBuilderTests {
 		Person value = TestHelper.generateFirst(personArbitrary);
 		assertThat(value.age).isBetween(0, 15);
 		assertThat(value.name).hasSize(10);
+	}
+
+	@Example
+	void builderIsFreshlyCreatedForEachTry() {
+
+		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
+
+		Arbitrary<Person> personArbitrary =
+			Combinators
+				.withBuilder(PersonBuilder::new)
+				.use(name).in((b, n) -> b.withName(n))
+				.build(PersonBuilder::build);
+
+		ArbitraryTestHelper.assertAllGenerated(
+			personArbitrary.generator(1),
+			person -> person.age == PersonBuilder.DEFAULT_AGE
+		);
 	}
 
 	private static class Person {

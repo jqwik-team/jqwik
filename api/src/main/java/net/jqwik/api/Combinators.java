@@ -15,22 +15,27 @@ public class Combinators {
 	public static abstract class CombinatorsFacade {
 		private static CombinatorsFacade implementation;
 
-		static  {
+		static {
 			implementation = FacadeLoader.load(CombinatorsFacade.class);
 		}
 
-		public abstract <R> Shrinkable<R> combineShrinkables(List<Shrinkable<Object>> shrinkables, Function<List<Object>, R> combineFunction);
+		public abstract <R> Shrinkable<R> combineShrinkables(
+			List<Shrinkable<Object>> shrinkables,
+			Function<List<Object>, R> combineFunction
+		);
 
-		public abstract <R> Optional<ExhaustiveGenerator<R>> combineExhaustive(List<Arbitrary<Object>> arbitraries, Function<List<Object>, R> combineFunction);
+		public abstract <R> Optional<ExhaustiveGenerator<R>> combineExhaustive(
+			List<Arbitrary<Object>> arbitraries,
+			Function<List<Object>, R> combineFunction
+		);
 	}
-
 
 	private Combinators() {
 	}
 
 	/**
 	 * Combine 2 arbitraries into one.
-	 * 
+	 *
 	 * @return Combinator2 instance which can be evaluated using {@linkplain Combinator2#as}
 	 */
 	public static <T1, T2> Combinator2<T1, T2> combine(Arbitrary<T1> a1, Arbitrary<T2> a2) {
@@ -128,64 +133,64 @@ public class Combinators {
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
 		return params -> combinator2
-			.apply((T1) params.get(0), (T2) params.get(1));
+							 .apply((T1) params.get(0), (T2) params.get(1));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, R> Function<List<Object>, R> combineFunction(F3<T1, T2, T3, R> combinator3) {
 		return params -> combinator3
-			.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
+							 .apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, R> Function<List<Object>, R> combineFunction(F4<T1, T2, T3, T4, R> combinator4) {
 		return params -> combinator4
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, R> Function<List<Object>, R> combineFunction(F5<T1, T2, T3, T4, T5, R> combinator5) {
 		return params -> combinator5
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, R> Function<List<Object>, R> combineFunction(F6<T1, T2, T3, T4, T5, T6, R> combinator6) {
 		return params -> combinator6
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4), (T6) params.get(5)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4), (T6) params.get(5)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, R> Function<List<Object>, R> combineFunction(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator7) {
 		return params -> combinator7
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4), (T6) params.get(5),
-				(T7) params.get(6)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4), (T6) params.get(5),
+								 (T7) params.get(6)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<List<Object>, R> combineFunction(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator8) {
 		return params -> combinator8
-			.apply(
-				(T1) params.get(0), (T2) params.get(1),
-				(T3) params.get(2), (T4) params.get(3),
-				(T5) params.get(4), (T6) params.get(5),
-				(T7) params.get(6), (T8) params.get(7)
-			);
+							 .apply(
+								 (T1) params.get(0), (T2) params.get(1),
+								 (T3) params.get(2), (T4) params.get(3),
+								 (T5) params.get(4), (T6) params.get(5),
+								 (T7) params.get(6), (T8) params.get(7)
+							 );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -311,10 +316,10 @@ public class Combinators {
 							g4.next(random)
 						);
 						Function<List<Object>, R> combineFunction = params ->
-							combinator.apply(
-								(T1) params.get(0), (T2) params.get(1),
-								(T3) params.get(2), (T4) params.get(3)
-							);
+																		combinator.apply(
+																			(T1) params.get(0), (T2) params.get(1),
+																			(T3) params.get(2), (T4) params.get(3)
+																		);
 
 						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
@@ -371,12 +376,13 @@ public class Combinators {
 							g4.next(random),
 							g5.next(random)
 						);
-						Function<List<Object>, R> combineFunction = params ->
-							combinator.apply(
-								(T1) params.get(0), (T2) params.get(1),
-								(T3) params.get(2), (T4) params.get(3),
-								(T5) params.get(4)
-							);
+						Function<List<Object>, R> combineFunction =
+							params ->
+								combinator.apply(
+									(T1) params.get(0), (T2) params.get(1),
+									(T3) params.get(2), (T4) params.get(3),
+									(T5) params.get(4)
+								);
 
 						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
@@ -438,12 +444,13 @@ public class Combinators {
 							g5.next(random),
 							g6.next(random)
 						);
-						Function<List<Object>, R> combineFunction = params ->
-							combinator.apply(
-								(T1) params.get(0), (T2) params.get(1),
-								(T3) params.get(2), (T4) params.get(3),
-								(T5) params.get(4), (T6) params.get(5)
-							);
+						Function<List<Object>, R> combineFunction =
+							params ->
+								combinator.apply(
+									(T1) params.get(0), (T2) params.get(1),
+									(T3) params.get(2), (T4) params.get(3),
+									(T5) params.get(4), (T6) params.get(5)
+								);
 
 						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
@@ -451,7 +458,8 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6), combineFunction(combinator));
+					return CombinatorsFacade.implementation
+							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6), combineFunction(combinator));
 				}
 			};
 		}
@@ -513,21 +521,22 @@ public class Combinators {
 							g6.next(random),
 							g7.next(random)
 						);
-						Function<List<Object>, R> combineFunction = params ->
-							combinator.apply(
-								(T1) params.get(0), (T2) params.get(1),
-								(T3) params.get(2), (T4) params.get(3),
-								(T5) params.get(4), (T6) params.get(5),
-								(T7) params.get(6)
-							);
+						Function<List<Object>, R> combineFunction =
+							params ->
+								combinator.apply(
+									(T1) params.get(0), (T2) params.get(1),
+									(T3) params.get(2), (T4) params.get(3),
+									(T5) params.get(4), (T6) params.get(5),
+									(T7) params.get(6)
+								);
 						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
 				}
 
-
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7), combineFunction(combinator));
+					return CombinatorsFacade.implementation
+							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7), combineFunction(combinator));
 				}
 			};
 		}
@@ -594,13 +603,14 @@ public class Combinators {
 							g7.next(random),
 							g8.next(random)
 						);
-						Function<List<Object>, R> combineFunction = params ->
-							combinator.apply(
-								(T1) params.get(0), (T2) params.get(1),
-								(T3) params.get(2), (T4) params.get(3),
-								(T5) params.get(4), (T6) params.get(5),
-								(T7) params.get(6), (T8) params.get(7)
-							);
+						Function<List<Object>, R> combineFunction =
+							params ->
+								combinator.apply(
+									(T1) params.get(0), (T2) params.get(1),
+									(T3) params.get(2), (T4) params.get(3),
+									(T5) params.get(4), (T6) params.get(5),
+									(T7) params.get(6), (T8) params.get(7)
+								);
 
 						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
@@ -608,7 +618,8 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive() {
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7, a8), combineFunction(combinator));
+					return CombinatorsFacade.implementation
+							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7, a8), combineFunction(combinator));
 				}
 			};
 		}
@@ -721,7 +732,7 @@ public class Combinators {
 		}
 
 		public <C> BuilderCombinator<C> in(Combinators.F2<B, T, C> toFunction) {
-			Arbitrary<C> arbitraryOfC = builder.flatMap(b -> arbitrary.map(t -> toFunction.apply(b, t)));
+			Arbitrary<C> arbitraryOfC = arbitrary.flatMap(t -> builder.map(b -> toFunction.apply(b, t)));
 			return new BuilderCombinator<>(arbitraryOfC);
 		}
 	}

@@ -2,6 +2,7 @@ package net.jqwik.engine.properties;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -23,7 +24,9 @@ class ExhaustiveGenerationTests {
 	@Example
 	@Label("Arbitrary.map()")
 	void mapping() {
-		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.integers().between(-5, 5).map(i -> Integer.toString(i)).exhaustive();
+		Optional<ExhaustiveGenerator<String>> optionalGenerator =
+			Arbitraries.integers().between(-5, 5).map(i -> Integer.toString(i))
+					   .exhaustive();
 		assertThat(optionalGenerator).isPresent();
 
 		ExhaustiveGenerator<String> generator = optionalGenerator.get();
@@ -96,21 +99,40 @@ class ExhaustiveGenerationTests {
 		assertThat(generator).containsOnly(
 			asList(1),
 			asList(2),
-			asList(1,1),
-			asList(2,2),
-			asList(1,2),
-			asList(2,1),
-			asList(1,1,1),
-			asList(1,1,2),
-			asList(1,2,1),
-			asList(1,2,2),
-			asList(2,1,1),
-			asList(2,1,2),
-			asList(2,2,1),
-			asList(2,2,2)
+			asList(1, 1),
+			asList(2, 2),
+			asList(1, 2),
+			asList(2, 1),
+			asList(1, 1, 1),
+			asList(1, 1, 2),
+			asList(1, 2, 1),
+			asList(1, 2, 2),
+			asList(2, 1, 1),
+			asList(2, 1, 2),
+			asList(2, 2, 1),
+			asList(2, 2, 2)
 		);
 	}
 
+	@Example
+	@Label("Arbitrary.flatMap() will freshly generate base values")
+	void flatMapWillFreshlyGenerateBaseValues() {
+		Set<Object> dates = new HashSet<>();
+
+		Optional<ExhaustiveGenerator<Integer>> optionalGenerator =
+			Arbitraries.create(Object::new).flatMap(object -> {
+				dates.add(object);
+				return Arbitraries.of(1, 2, 3);
+			}).exhaustive();
+
+		assertThat(optionalGenerator).isPresent();
+
+		ExhaustiveGenerator<Integer> generator = optionalGenerator.get();
+		assertThat(generator.maxCount()).isEqualTo(3);
+		assertThat(generator).containsOnly(1, 2, 3);
+
+		assertThat(dates.size()).isGreaterThanOrEqualTo(3); // maxCount() must also call base
+	}
 
 	@Group
 	@Label("Arbitrary.unique()")
@@ -190,7 +212,6 @@ class ExhaustiveGenerationTests {
 			assertThat(generator).containsExactly("a", "b", "c");
 		}
 
-
 		@Example
 		@Label("Arbitraries.frequency() returns all in row")
 		void frequency() {
@@ -199,15 +220,15 @@ class ExhaustiveGenerationTests {
 			Tuple.Tuple2<Integer, String> frequency3 = Tuple.of(3, "c");
 			Tuple.Tuple2<Integer, String> frequency0 = Tuple.of(0, "d");
 
-			Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.frequency(frequency1, frequency2, frequency3, frequency0).exhaustive();
+			Optional<ExhaustiveGenerator<String>> optionalGenerator =
+				Arbitraries.frequency(frequency1, frequency2, frequency3, frequency0)
+						   .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<String> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(3);
 			assertThat(generator).containsExactly("a", "b", "c");
 		}
-
-
 
 		@Example
 		void enums() {
@@ -249,7 +270,8 @@ class ExhaustiveGenerationTests {
 
 			ExhaustiveGenerator<Long> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(21);
-			assertThat(generator).containsExactly(-10L, -9L, -8L, -7L, -6L, -5L, -4L, -3L, -2L, -1L, 0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L);
+			assertThat(generator)
+				.containsExactly(-10L, -9L, -8L, -7L, -6L, -5L, -4L, -3L, -2L, -1L, 0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L);
 		}
 
 		@Example
@@ -263,17 +285,24 @@ class ExhaustiveGenerationTests {
 	class BigIntegers {
 		@Example
 		void fromMinToMax() {
-			Optional<ExhaustiveGenerator<BigInteger>> optionalGenerator = Arbitraries.bigIntegers().between(BigInteger.valueOf(-2), BigInteger.valueOf(2)).exhaustive();
+			Optional<ExhaustiveGenerator<BigInteger>> optionalGenerator =
+				Arbitraries.bigIntegers()
+						   .between(BigInteger.valueOf(-2), BigInteger.valueOf(2))
+						   .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<BigInteger> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(5);
-			assertThat(generator).containsExactly(BigInteger.valueOf(-2), BigInteger.valueOf(-1), BigInteger.valueOf(0), BigInteger.valueOf(1), BigInteger.valueOf(2));
+			assertThat(generator)
+				.containsExactly(BigInteger.valueOf(-2), BigInteger.valueOf(-1), BigInteger.valueOf(0), BigInteger.valueOf(1), BigInteger
+																																   .valueOf(2));
 		}
 
 		@Example
 		void rangeTooBig() {
-			Optional<ExhaustiveGenerator<BigInteger>> optionalGenerator = Arbitraries.bigIntegers().between(BigInteger.valueOf(Long.MIN_VALUE), BigInteger.ZERO).exhaustive();
+			Optional<ExhaustiveGenerator<BigInteger>> optionalGenerator = Arbitraries.bigIntegers().between(BigInteger
+																												.valueOf(Long.MIN_VALUE), BigInteger.ZERO)
+																					 .exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
@@ -287,12 +316,14 @@ class ExhaustiveGenerationTests {
 
 			ExhaustiveGenerator<Short> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(11);
-			assertThat(generator).containsExactly((short) -5, (short) -4, (short) -3, (short) -2, (short) -1, (short) 0, (short) 1, (short) 2, (short) 3, (short) 4, (short) 5);
+			assertThat(generator)
+				.containsExactly((short) -5, (short) -4, (short) -3, (short) -2, (short) -1, (short) 0, (short) 1, (short) 2, (short) 3, (short) 4, (short) 5);
 		}
 
 		@Example
 		void rangeCannotBeTooBig() {
-			Optional<ExhaustiveGenerator<Short>> optionalGenerator = Arbitraries.shorts().between(Short.MIN_VALUE, Short.MAX_VALUE).exhaustive();
+			Optional<ExhaustiveGenerator<Short>> optionalGenerator = Arbitraries.shorts().between(Short.MIN_VALUE, Short.MAX_VALUE)
+																				.exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Short> generator = optionalGenerator.get();
@@ -309,12 +340,14 @@ class ExhaustiveGenerationTests {
 
 			ExhaustiveGenerator<Byte> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(11);
-			assertThat(generator).containsExactly((byte) -5, (byte) -4, (byte) -3, (byte) -2, (byte) -1, (byte) 0, (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5);
+			assertThat(generator)
+				.containsExactly((byte) -5, (byte) -4, (byte) -3, (byte) -2, (byte) -1, (byte) 0, (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5);
 		}
 
 		@Example
 		void rangeCannotBeTooBig() {
-			Optional<ExhaustiveGenerator<Byte>> optionalGenerator = Arbitraries.bytes().between(Byte.MIN_VALUE, Byte.MAX_VALUE).exhaustive();
+			Optional<ExhaustiveGenerator<Byte>> optionalGenerator = Arbitraries.bytes().between(Byte.MIN_VALUE, Byte.MAX_VALUE)
+																			   .exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Byte> generator = optionalGenerator.get();
@@ -336,7 +369,9 @@ class ExhaustiveGenerationTests {
 
 		@Example
 		void rangeCannotBeTooBig() {
-			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars().between(Character.MIN_VALUE, Character.MAX_VALUE).exhaustive();
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars()
+																					.between(Character.MIN_VALUE, Character.MAX_VALUE)
+																					.exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
@@ -346,7 +381,7 @@ class ExhaustiveGenerationTests {
 		@Example
 		@Label("Arbitraries.of(char[])")
 		void arbitrariesOf() {
-			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.of(new char[] {'a', 'c', 'e', 'X'}).exhaustive();
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.of(new char[]{'a', 'c', 'e', 'X'}).exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
@@ -432,7 +467,7 @@ class ExhaustiveGenerationTests {
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
-	
+
 	@Group
 	class Arrays {
 		@Example
@@ -445,13 +480,13 @@ class ExhaustiveGenerationTests {
 			ExhaustiveGenerator<Integer[]> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(7);
 			assertThat(generator).containsExactly(
-				new Integer[] {},
-				new Integer[] {1},
-				new Integer[] {2},
-				new Integer[] {1, 1},
-				new Integer[] {1, 2},
-				new Integer[] {2, 1},
-				new Integer[] {2, 2}
+				new Integer[]{},
+				new Integer[]{1},
+				new Integer[]{2},
+				new Integer[]{1, 1},
+				new Integer[]{1, 2},
+				new Integer[]{2, 1},
+				new Integer[]{2, 2}
 			);
 		}
 
@@ -491,7 +526,7 @@ class ExhaustiveGenerationTests {
 			);
 		}
 
-		private Set<Integer> asSet(Integer...ints) {
+		private Set<Integer> asSet(Integer... ints) {
 			return new HashSet<>(asList(ints));
 		}
 
@@ -548,8 +583,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a1020 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a12 = Arbitraries.of(1, 2);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1020, a12)
-				.as((i1, i2) -> i1 + i2);
+										  .combine(a1020, a12)
+										  .as((i1, i2) -> i1 + i2);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -564,8 +599,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a1020 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a12 = Arbitraries.of(1, 2);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a100200, a1020, a12)
-				.as((i1, i2, i3) -> i1 + i2 + i3);
+										  .combine(a100200, a1020, a12)
+										  .as((i1, i2, i3) -> i1 + i2 + i3);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -581,8 +616,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
 			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4)
-				.as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
+										  .combine(a1, a2, a3, a4)
+										  .as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -600,8 +635,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
 			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5)
-				.as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
+										  .combine(a1, a2, a3, a4, a5)
+										  .as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -620,8 +655,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
 			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6)
-				.as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
+										  .combine(a1, a2, a3, a4, a5, a6)
+										  .as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -641,8 +676,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
 			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6, a7)
-				.as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
+										  .combine(a1, a2, a3, a4, a5, a6, a7)
+										  .as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -663,8 +698,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
 			Arbitrary<Integer> a8 = Arbitraries.of(10000000, 20000000);
 			Arbitrary<Integer> plus = Combinators
-				.combine(a1, a2, a3, a4, a5, a6, a7, a8)
-				.as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
+										  .combine(a1, a2, a3, a4, a5, a6, a7, a8)
+										  .as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -680,8 +715,8 @@ class ExhaustiveGenerationTests {
 			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
 			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
 			Arbitrary<Integer> plus = Combinators
-				.combine(asList(a1, a2, a3))
-				.as(params -> params.stream().mapToInt(i -> i).sum());
+										  .combine(asList(a1, a2, a3))
+										  .as(params -> params.stream().mapToInt(i -> i).sum());
 
 			assertThat(plus.exhaustive()).isPresent();
 
@@ -690,6 +725,23 @@ class ExhaustiveGenerationTests {
 			assertThat(generator).containsOnly(111, 112, 113, 121, 122, 123, 211, 212, 213, 221, 222, 223);
 		}
 
+		@Example
+		void combineWithBuilder() {
+			Arbitrary<Integer> numbers = Arbitraries.integers().between(1, 4);
+
+			Supplier<AdditionBuilder> additionBuilderSupplier = AdditionBuilder::new;
+			Arbitrary<Integer> sum = Combinators
+										 .withBuilder(additionBuilderSupplier)
+										 .use(numbers).in((b, n) -> b.addNumber(n))
+										 .use(numbers).in((b, n) -> b.addNumber(n))
+										 .build(AdditionBuilder::sum);
+
+			assertThat(sum.exhaustive()).isPresent();
+
+			ExhaustiveGenerator<Integer> generator = sum.exhaustive().get();
+			assertThat(generator.maxCount()).isEqualTo(16);
+			assertThat(generator).containsOnly(2, 3, 4, 5, 6, 7, 8);
+		}
 	}
 
 	@Example
@@ -706,18 +758,21 @@ class ExhaustiveGenerationTests {
 	@Example
 	@Label("Arbitraries.create() returns the created value once")
 	void create() {
-		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.create(() -> "abc").exhaustive();
+		Optional<ExhaustiveGenerator<Object>> optionalGenerator = Arbitraries.create(() -> new Object()).exhaustive();
 		assertThat(optionalGenerator).isPresent();
 
-		ExhaustiveGenerator<String> generator = optionalGenerator.get();
+		ExhaustiveGenerator<Object> generator = optionalGenerator.get();
 		assertThat(generator.maxCount()).isEqualTo(1);
-		assertThat(generator).containsExactly("abc");
+
+		Object first = generator.iterator().next();
+		assertThat(first).isInstanceOf(Object.class);
+		assertThat(first).isNotSameAs(generator.iterator().next());
 	}
 
 	@Example
 	@Label("Arbitraries.shuffle() returns all permutations")
 	void shuffle() {
-		Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator = Arbitraries.shuffle(1,2,3).exhaustive();
+		Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator = Arbitraries.shuffle(1, 2, 3).exhaustive();
 		assertThat(optionalGenerator).isPresent();
 
 		ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
@@ -797,4 +852,17 @@ class ExhaustiveGenerationTests {
 
 	}
 
+	static class AdditionBuilder {
+
+		private List<Integer> numbers = new ArrayList<>();
+
+		AdditionBuilder addNumber(int number) {
+			numbers.add(number);
+			return this;
+		}
+
+		int sum() {
+			return numbers.stream().mapToInt(n -> n).sum();
+		}
+	}
 }
