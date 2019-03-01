@@ -115,6 +115,16 @@ public class Combinators {
 		return new ListCombinator<>(listOfArbitraries);
 	}
 
+	/**
+	 * Combine Arbitraries by means of a builder.
+	 *
+	 * @return BuilderCombinator instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.1")
+	public static <B> BuilderCombinator<B> withBuilder(Supplier<B> builderSupplier) {
+		return new BuilderCombinator<>(builderSupplier);
+	}
+
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
 		return params -> combinator2
@@ -675,6 +685,44 @@ public class Combinators {
 				values.add(0, value);
 				return combineFlat(arbitraries, values, flatCombinator);
 			});
+		}
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.1.1")
+	public static class BuilderCombinator<B> {
+		private Arbitrary<B> builder;
+
+		private BuilderCombinator(Supplier<B> builder) {
+			this(Arbitraries.create(builder));
+		}
+
+		private BuilderCombinator(Arbitrary<B> delegate) {
+			this.builder = delegate;
+		}
+
+		public <T> CombinableBuilder<B, T> use(Arbitrary<T> arbitrary) {
+			return new CombinableBuilder<>(builder, arbitrary);
+		}
+
+		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
+			return builder.map(buildFunction);
+		}
+
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.1.1")
+	public static class CombinableBuilder<B, T> {
+		private final Arbitrary<B> builder;
+		private final Arbitrary<T> arbitrary;
+
+		private CombinableBuilder(Arbitrary<B> builder, Arbitrary<T> arbitrary) {
+			this.builder = builder;
+			this.arbitrary = arbitrary;
+		}
+
+		public <C> BuilderCombinator<C> in(Combinators.F2<B, T, C> toFunction) {
+			Arbitrary<C> arbitraryOfC = builder.flatMap(b -> arbitrary.map(t -> toFunction.apply(b, t)));
+			return new BuilderCombinator<>(arbitraryOfC);
 		}
 	}
 

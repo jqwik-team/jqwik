@@ -3,3 +3,5 @@
 
 - Combinators.builder(...) or Builder.startWith(Supplier<B> createBuilder)
   see https://github.com/jlink/jqwik/issues/46
+  - Write user guide entry
+  - Append release notes
