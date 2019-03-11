@@ -20,6 +20,12 @@
   @AddHook(...)
   in package-info.java
 
+- Classifiers as in John Hughes' talk: 
+  https://www.youtube.com/watch?v=NcJOiQlzlXQ&list=PLvL2NEhYV4ZvCRCVlXTfB6-d09K3r0Sxa
+
+  - Classifiers.label(boolean condition, String label)
+  - Classifiers.checkCoverage(boolean condition, String label, double minCoverage)
+
 - @AddExample[s] annotation like @FromData but additional to generated data
 
 - Store regressions (samples once failed) in dedicated database
@@ -42,6 +48,7 @@
   - For ActionSequences
 
 - Configuration:
+  - Switch to JUnit platform configuration
   - Find a way to set config params through command line or env variable
 
     `request.getConfigurationParameters().get("jqwik.tries.default", Integer::valueOf)`
@@ -60,8 +67,6 @@
     would do the trick.
 
 ### Reporting
-
-- @Report(mode: ON_FAIL|ALWAYS|OFF)
 
 - Reporting.ARBITRARIES: report for each property which arbitraries are used.
   - Requires Arbitray.describe() or something similar
@@ -98,7 +103,7 @@
 - Arbitraries.function(Arbitrary outputArbitrary, Class inputType)
 
 - Arbitrary.share(Arbitrary, String key) 
-  https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared
+  [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
 
 - Arbitraries.emails()
 
@@ -130,8 +135,8 @@
   Does that really help since there is Arbitraries.defaultFor()
 
 - Default Arbitraries, Generators and Shrinking for
-  - Tuples.Tuple1/2/3/4/5/6/7/8
   - Map
+  - Tuples.Tuple1/2/3/4/5/6/7/8
   - Functional interfaces and SAM types
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
   - Files, Paths etc.
