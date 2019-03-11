@@ -5,6 +5,9 @@ However, most of the stuff is in the context of functional programming languages
 
 ### Introductory Material
 
+- The author of [Hypothesis](https://hypothesis.works/), a PBT library for Python, 
+  tries to answer the question: 
+  [What is Property Based Testing?](https://hypothesis.works/articles/what-is-property-based-testing/)
 - A series of blog entries about 
   [PBT in Java](https://blog.johanneslink.net/2018/03/24/property-based-testing-in-java-introduction/)
   from the developer of jqwik.
