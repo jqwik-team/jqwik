@@ -130,14 +130,18 @@
     or which arbitrary does not provide exhaustive generation
   - Decimal generation with restricted scale
 
+- Automatic Provider detection/loading
+  - E.g. as in junit-quickcheck. If there is a
+    mypackage.MyDomainArbitraryProvider for mypackage.MyDomain then load it
+
 - Provider methods can take params e.g.
   - @Provided(value="otherProviderMethod") Arbitrary<String> aString
   Does that really help since there is Arbitraries.defaultFor()
 
 - Default Arbitraries, Generators and Shrinking for
   - Map
-  - Tuples.Tuple1/2/3/4/5/6/7/8
   - Functional interfaces and SAM types
+  - Tuples.Tuple1/2/3/4/5/6/7/8
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
   - Files, Paths etc.
   - Arrays of Arrays
