@@ -17,7 +17,7 @@ class FizzBuzzTests {
 	}
 
 	private List<String> fizzBuzz() {
-		return IntStream.range(1, 100).mapToObj((int i) -> {
+		return IntStream.range(1, 101).mapToObj((int i) -> {
 			boolean divBy3 = i % 3 == 0;
 			boolean divBy5 = i % 5 == 0;
 
