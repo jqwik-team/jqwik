@@ -123,12 +123,30 @@ public class Combinators {
 	/**
 	 * Combine Arbitraries by means of a builder.
 	 *
+	 * @param builderSupplier The supplier will be called freshly for each value generation.
+	 *                        For exhaustive generation all supplied objects are
+	 *                        supposed to be identical.
+	 *
 	 * @return BuilderCombinator instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.1")
 	public static <B> BuilderCombinator<B> withBuilder(Supplier<B> builderSupplier) {
-		return new BuilderCombinator<>(builderSupplier);
+		return new BuilderCombinator<>(Arbitraries.create(builderSupplier));
 	}
+
+	/**
+	 * Combine Arbitraries by means of a builder.
+	 *
+	 * @param builderArbitrary The arbitrary is used to generate a builder object
+	 *                         as starting point for building on each value generation.
+	 *
+	 * @return BuilderCombinator instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.1")
+	public static <B> BuilderCombinator<B> withBuilder(Arbitrary<B> builderArbitrary) {
+		return new BuilderCombinator<>(builderArbitrary);
+	}
+
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
@@ -702,10 +720,6 @@ public class Combinators {
 	@API(status = EXPERIMENTAL, since = "1.1.1")
 	public static class BuilderCombinator<B> {
 		private Arbitrary<B> builder;
-
-		private BuilderCombinator(Supplier<B> builder) {
-			this(Arbitraries.create(builder));
-		}
 
 		private BuilderCombinator(Arbitrary<B> delegate) {
 			this.builder = delegate;

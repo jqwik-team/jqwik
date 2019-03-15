@@ -39,6 +39,23 @@ class CombinatorsBuilderTests {
 	}
 
 	@Example
+	void startWithArbitrary() {
+
+		Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
+		Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
+
+		Arbitrary<String> personArbitrary =
+			Combinators
+				.withBuilder(stringBuilders)
+				.use(digit).in((b, d) -> b.append(d))
+				.build(b -> b.toString());
+
+		ArbitraryTestHelper.assertAllGenerated(personArbitrary.generator(1), (String value) -> {
+			assertThat(value).matches("(a|b|c)(1|2|3)");
+		});
+	}
+
+	@Example
 	void builderIsFreshlyCreatedForEachTry() {
 
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
