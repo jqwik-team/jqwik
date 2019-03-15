@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.1.1-SNAPSHOT](#111-snapshot)
+- [1.1.1](#111)
 - [1.1.0](#110)
 - [1.0.0](#100)
 - [0.9.x](#09x)
@@ -17,21 +17,24 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.1.1-SNAPSHOT
+## 1.1.1
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.1.1/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.1.1/javadoc/index.html">javadoc</a>
 </p>
 
-- You can configure if you want to [report only failures](/docs/snapshot/user-guide.html#jqwik-configuration).
+- Added `Combinators.withBuilder` to enable a 
+  [different way for combining arbitraries](/docs/1.1.1/user-guide.html#combining-arbitraries-with-builder).
+
+- You can configure if you want to [report only failures](/docs/1.1.1/user-guide.html#jqwik-configuration).
 
 - The reporting format for run properties has changed.
 
 - Added `@Domain.priority()` to enable prioritisation of domain context classes.
 
-- Added [`Arbitraries.create`](/docs/snapshot/user-guide.html#create).
+- Added [`Arbitraries.create`](/docs/1.1.1/user-guide.html#create).
 
 - Fixed problem with double and float conversion in range constraints.
   My thanks go to [blairdye](https://github.com/blairdye) for that! 

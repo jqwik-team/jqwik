@@ -17,17 +17,34 @@ class MappingAndCombinatorExamples {
 	}
 
 	@Property
-	void validPeopleHaveIDs(@ForAll Person aPerson) {
+	void validPeopleHaveIDs(@ForAll("validPeople") Person aPerson) {
 		Assertions.assertThat(aPerson.getID()).contains("-");
 		Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
 	}
 
 	@Provide
 	Arbitrary<Person> validPeople() {
-		Arbitrary<Character> initials = Arbitraries.chars().between('A', 'Z');
-		Arbitrary<String> names = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(20);
+		Arbitrary<String> names = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(3).ofMaxLength(21);
 		Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
-		return Combinators.combine(initials, names, ages).as((initial, name, age) -> new Person(initial + name, age));
+		return Combinators.combine(names, ages).as((name, age) -> new Person(name, age));
+	}
+
+	@Property
+	void validPeopleHaveIDs2(@ForAll("validPeopleWithBuilder") Person aPerson) {
+		Assertions.assertThat(aPerson.getID()).contains("-");
+		Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
+	}
+
+	@Provide
+	Arbitrary<Person> validPeopleWithBuilder() {
+		Arbitrary<String> names =
+			Arbitraries.strings().withCharRange('a', 'z').ofMinLength(3).ofMaxLength(21);
+		Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
+
+		return Combinators.withBuilder(() -> new PersonBuilder())
+						  .use(names).in((builder, name) -> builder.withName(name))
+						  .use(ages).in((builder, age)-> builder.withAge(age))
+						  .build( builder -> builder.build());
 	}
 
 	static class Person {
@@ -49,4 +66,25 @@ class MappingAndCombinatorExamples {
 			return String.format("%s:%s", name, age);
 		}
 	}
+
+	static class PersonBuilder {
+
+		private String name = "A name";
+		private int age = 42;
+
+		public PersonBuilder withName(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public PersonBuilder withAge(int age) {
+			this.age = age;
+			return this;
+		}
+
+		public Person build() {
+			return new Person(name, age);
+		}
+	}
+
 }

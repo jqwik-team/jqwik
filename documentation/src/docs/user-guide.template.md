@@ -1198,19 +1198,18 @@ generates `Person` instances from three arbitraries as inputs.
 
 ```java
 @Property
-void validPeopleHaveIDs(@ForAll Person aPerson) {
+void validPeopleHaveIDs(@ForAll("validPeople") Person aPerson) {
     Assertions.assertThat(aPerson.getID()).contains("-");
     Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
 }
 
 @Provide
 Arbitrary<Person> validPeople() {
-    Arbitrary<Character> initials = Arbitraries.chars('A', 'Z');
     Arbitrary<String> names = Arbitraries.strings().withCharRange('a', 'z')
-        .ofMinLength(2).ofMaxLength(20);
+        .ofMinLength(3).ofMaxLength(21);
     Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
-    return Combinators.combine(initials, names, ages)
-        .as((initial, name, age) -> new Person(initial + name, age));
+    return Combinators.combine(names, ages)
+        .as((name, age) -> new Person(name, age));
 }
 
 class Person {
@@ -1234,7 +1233,65 @@ class Person {
 ```
 
 The property should fail, thereby shrinking the falsified Person instance to
-`[Aaaaaaaaaaaaaaaaaaaaa:100]`.
+`[aaaaaaaaaaaaaaaaaaaaa:100]`.
+
+The `Combinators.combine` method accepts up to 8 parameters of type Arbitrary.
+If you need more you have a few options:
+
+- Consider to group some parameters into an object of their own and change your design
+- Generate inbetween arbitraries e.g. of type `Tuple` and combine those in another step
+- Introduce a build for your domain object and combine them 
+  [in this way](#combining-arbitraries-with-builder)
+
+
+### Combining Arbitraries with Builder
+
+There's an alternative way to combine arbitraries to create an aggregated object
+by using a builder for the aggregated object. Consider the example from
+[above](#combining-arbitraries) and throw a `PersonBuilder` into the mix:
+
+```java
+static class PersonBuilder {
+
+    private String name = "A name";
+    private int age = 42;
+
+    public PersonBuilder withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public PersonBuilder withAge(int age) {
+        this.age = age;
+        return this;
+    }
+
+    public Person build() {
+        return new Person(name, age);
+    }
+}
+```
+
+Then you can go about generating people in the following way:
+ 
+```java
+@Provide
+Arbitrary<Person> validPeopleWithBuilder() {
+    Arbitrary<String> names = 
+        Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(20);
+    Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
+    
+    return Combinators.withBuilder(() -> new PersonBuilder())
+        .use(names).in((builder, name) -> builder.withName(name))
+        .use(ages).in((builder, age)-> builder.withAge(age))
+        .build( builder -> builder.build());
+}
+```
+
+Have a look at 
+[Combinators.withBuilder(Supplier)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder-java.util.function.Supplier-)
+and [Combinators.withBuilder(Arbitrary)](/docs/${docsVersion}/javadoc/net/jqwik/api/Combinators.html#withBuilder-net.jqwik.api.Arbitrary-)
+to check the API.
 
 #### Flat Combination
 

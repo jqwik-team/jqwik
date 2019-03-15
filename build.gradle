@@ -2,7 +2,7 @@ ext {
 	junitPlatformVersion = '1.4.0'
 	junitJupiterVersion = '5.4.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.1.1-SNAPSHOT'
+	jqwikVersion = '1.1.1'
 }
 
 allprojects {
