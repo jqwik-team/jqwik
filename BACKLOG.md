@@ -117,6 +117,7 @@
   eg Arbitraries.integers().shrinkTowards(42, 110)
 
 - Reimplement String generation based on Unicode codepoints, not on characters
+  Maybe consider this: https://github.com/quicktheories/QuickTheories/issues/54
 
 - Check arbitrary providers for numbers that @Range annotations fit, e.g.
   `@IntRange @ForAll long aNumber` should result in a warning
