@@ -1,3 +1,12 @@
+- Arbitrary.assertAllValues(Consumer<T> valueConsumer)
+
+  ```
+  arbitrary.allValues().ifPresent(
+  				stream -> stream.forEach(value -> valueConsumer.apply(value)));
+  if (!arbitrary.allValues().isPresent()) 
+      throw AssertionError("Cannot generate all values")
+  ```
+  
 - Class-based Property like this:
   
   ```
