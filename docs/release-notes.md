@@ -17,6 +17,17 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.1.2-SNAPSHOT
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/current/user-guide.html">User guide</a>
+and
+<a href="/docs/current/javadoc/index.html">javadoc</a>
+</p>
+
+- Update to JUnit Platform 5.4.1
+
+
 ## 1.1.1
 
 <p style="padding-left:1em;font-size:larger">
