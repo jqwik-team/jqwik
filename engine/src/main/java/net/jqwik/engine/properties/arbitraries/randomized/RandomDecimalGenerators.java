@@ -50,9 +50,16 @@ public class RandomDecimalGenerators {
 	}
 
 	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal minGenerate, BigDecimal maxGenerate, int scale, Range<BigDecimal> range) {
-		BigInteger scaledMin = minGenerate.scaleByPowerOfTen(scale).toBigInteger();
-		BigInteger scaledMax = maxGenerate.scaleByPowerOfTen(scale).toBigInteger();
+		BigInteger scaledMinTry = minGenerate.scaleByPowerOfTen(scale).toBigInteger();
+		BigInteger scaledMin = new BigDecimal(scaledMinTry, scale).compareTo(minGenerate) >= 0 ?
+			scaledMinTry : scaledMinTry.add(BigInteger.ONE);
+		BigInteger scaledMaxTry = maxGenerate.scaleByPowerOfTen(scale).toBigInteger();
+		BigInteger scaledMax = new BigDecimal(scaledMaxTry, scale).compareTo(maxGenerate) <= 0 ?
+			scaledMaxTry : scaledMaxTry.subtract(BigInteger.ONE);
 		return random -> {
+			if (scaledMin.compareTo(scaledMax) >= 0) {
+				return new ShrinkableBigDecimal(minGenerate, range, scale);
+			}
 			BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
 			BigDecimal randomDecimal = new BigDecimal(randomIntegral, scale);
 			return new ShrinkableBigDecimal(randomDecimal, range, scale);

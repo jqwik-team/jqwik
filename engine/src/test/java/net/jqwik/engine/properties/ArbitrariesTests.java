@@ -509,6 +509,26 @@ class ArbitrariesTests {
 		}
 
 		@Example
+		void doublesBorderIsMorePreciseThanScale() {
+			double min = 0.001;
+			double max = 0.199;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, max).ofScale(2);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
+
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= min && value <= max);
+		}
+
+		@Example
+		void doublesBordersAreCloserThanScale() {
+			double min = 0.001;
+			double max = 0.002;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, max).ofScale(2);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
+
+			ArbitraryTestHelper.assertAllGenerated(generator, value -> value >= min && value <= max);
+		}
+
+		@Example
 		void floatMinsAndMaxes() {
 			RandomGenerator<Float> generator = Arbitraries.floats().generator(1);
 			ArbitraryTestHelper.assertAtLeastOneGeneratedOf(generator, 0.01f, -0.01f, -Float.MAX_VALUE, Float.MAX_VALUE);

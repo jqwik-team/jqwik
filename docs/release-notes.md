@@ -25,6 +25,7 @@ and
 <a href="/docs/current/javadoc/index.html">javadoc</a>
 </p>
 
+- Fixed decimal generation bug: https://github.com/jlink/jqwik/issues/50
 - Update to JUnit Platform 5.4.1
 
 
