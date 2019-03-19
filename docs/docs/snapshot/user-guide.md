@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.1.1-SNAPSHOT
+title: jqwik User Guide - 1.1.2-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.1-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.2-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -63,6 +63,7 @@ title: jqwik User Guide - 1.1.1-SNAPSHOT
   - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
   - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
   - [Combining Arbitraries](#combining-arbitraries)
+  - [Combining Arbitraries with Builder](#combining-arbitraries-with-builder)
     - [Flat Combination](#flat-combination)
   - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
   - [Generating all possible values](#generating-all-possible-values)
@@ -133,10 +134,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.4.0'
-ext.junitJupiterVersion = '5.4.0'
+ext.junitPlatformVersion = '1.4.1'
+ext.junitJupiterVersion = '5.4.1'
 
-ext.jqwikVersion = '1.1.1-SNAPSHOT'
+ext.jqwikVersion = '1.1.2-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -158,7 +159,7 @@ dependencies {
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.4.0")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.4.1")
 
     // Add any other test library you need...
     testCompile("org.assertj:assertj-core:3.9.1")
@@ -192,12 +193,12 @@ If you want to see jqwik's reports in the output use Gradle's command line optio
 > gradle clean test --info
 ...
 mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
-   timestamp = 2018-11-07T09:15:04.929
-       tries = 1000
-       checks = 1000
-       generation-mode = RANDOMIZED
-       seed = 3101984638825718297
-...
+    timestamp = 2019-02-28T18:01:14.302, MyClassProperties:myPropertyMethod = 
+                                  |-----------------------jqwik-----------------------
+    tries = 1000                  | # of calls to property
+    checks = 1000                 | # of not rejected calls
+    generation-mode = RANDOMIZED  | parameters are randomly generated
+    seed = 1685744359484719817    | random seed to reproduce generated values
 ```
 
 ### Maven
@@ -212,7 +213,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -238,9 +239,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.1.1-SNAPSHOT.jar`
-- `junit-platform-engine-1.4.0.jar`
-- `junit-platform-commons-1.4.0.jar`
+- `jqwik-1.1.2-SNAPSHOT.jar`
+- `junit-platform-engine-1.4.1.jar`
+- `junit-platform-commons-1.4.1.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -289,7 +290,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.1.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.1.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -386,10 +387,9 @@ annotation has a few optional values:
   together with the other information:
   
   ```
-  timestamp = 2018-10-21T10:22:57.936, 
-  generation-mode = EXHAUSTIVE, 
-  tries = 10, 
-  checks = 10, 
+  tries = 10 
+  checks = 10 
+  generation-mode = EXHAUSTIVE 
   seed = 42859154278924201
   ```
   
@@ -1286,19 +1286,18 @@ generates `Person` instances from three arbitraries as inputs.
 
 ```java
 @Property
-void validPeopleHaveIDs(@ForAll Person aPerson) {
+void validPeopleHaveIDs(@ForAll("validPeople") Person aPerson) {
     Assertions.assertThat(aPerson.getID()).contains("-");
     Assertions.assertThat(aPerson.getID().length()).isBetween(5, 24);
 }
 
 @Provide
 Arbitrary<Person> validPeople() {
-    Arbitrary<Character> initials = Arbitraries.chars('A', 'Z');
     Arbitrary<String> names = Arbitraries.strings().withCharRange('a', 'z')
-        .ofMinLength(2).ofMaxLength(20);
+        .ofMinLength(3).ofMaxLength(21);
     Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
-    return Combinators.combine(initials, names, ages)
-        .as((initial, name, age) -> new Person(initial + name, age));
+    return Combinators.combine(names, ages)
+        .as((name, age) -> new Person(name, age));
 }
 
 class Person {
@@ -1322,7 +1321,65 @@ class Person {
 ```
 
 The property should fail, thereby shrinking the falsified Person instance to
-`[Aaaaaaaaaaaaaaaaaaaaa:100]`.
+`[aaaaaaaaaaaaaaaaaaaaa:100]`.
+
+The `Combinators.combine` method accepts up to 8 parameters of type Arbitrary.
+If you need more you have a few options:
+
+- Consider to group some parameters into an object of their own and change your design
+- Generate inbetween arbitraries e.g. of type `Tuple` and combine those in another step
+- Introduce a build for your domain object and combine them 
+  [in this way](#combining-arbitraries-with-builder)
+
+
+### Combining Arbitraries with Builder
+
+There's an alternative way to combine arbitraries to create an aggregated object
+by using a builder for the aggregated object. Consider the example from
+[above](#combining-arbitraries) and throw a `PersonBuilder` into the mix:
+
+```java
+static class PersonBuilder {
+
+    private String name = "A name";
+    private int age = 42;
+
+    public PersonBuilder withName(String name) {
+        this.name = name;
+        return this;
+    }
+
+    public PersonBuilder withAge(int age) {
+        this.age = age;
+        return this;
+    }
+
+    public Person build() {
+        return new Person(name, age);
+    }
+}
+```
+
+Then you can go about generating people in the following way:
+ 
+```java
+@Provide
+Arbitrary<Person> validPeopleWithBuilder() {
+    Arbitrary<String> names = 
+        Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(20);
+    Arbitrary<Integer> ages = Arbitraries.integers().between(0, 130);
+    
+    return Combinators.withBuilder(() -> new PersonBuilder())
+        .use(names).in((builder, name) -> builder.withName(name))
+        .use(ages).in((builder, age)-> builder.withAge(age))
+        .build( builder -> builder.build());
+}
+```
+
+Have a look at 
+[Combinators.withBuilder(Supplier)](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#withBuilder-java.util.function.Supplier-)
+and [Combinators.withBuilder(Arbitrary)](/docs/snapshot/javadoc/net/jqwik/api/Combinators.html#withBuilder-net.jqwik.api.Arbitrary-)
+to check the API.
 
 #### Flat Combination
 
@@ -1797,13 +1854,12 @@ Despite the fact that the property condition itself is correct, the property wil
 fail with the following message:
 
 ```
-timestamp = 2017-11-06T14:36:15.134, 
-    seed = 1066117555581106850
-    tries = 1000, 
-    checks = 20, 
-
 org.opentest4j.AssertionFailedError: 
     Property [findingContainedStrings] exhausted after [1000] tries and [980] rejections
+
+tries = 1000 
+checks = 20 
+seed = 1066117555581106850
 ```
 
 The problem is that - given a random generation of two strings - only in very few cases
@@ -1850,15 +1906,15 @@ boolean stringShouldBeShrunkToAA(@ForAll @AlphaChars String aString) {
 ```
 
 The test run result should look something like:
-```
-timestamp = 2017-11-04T16:42:25.859, 
-    seed = -633877439388930932, 
-    tries = 38, 
-    checks = 38, 
-    originalSample = ["LVtyB"], 
-    sample = ["AA"]
 
+```
 AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample ["AA"]
+
+tries = 38 
+checks = 38 
+seed = -633877439388930932 
+sample = ["AA"]
+original-sample ["LVtyB"] 
 ```
 
 In this case the _originalSample_ could be any string between 2 and 5 chars, whereas the final _sample_
@@ -1901,14 +1957,13 @@ Arbitrary<String> second() {
 
 Shrinking still works, although there's quite a bit of filtering and string concatenation happening:
 ```
-timestamp = 2017-11-04T16:58:45.431, 
-    seed = -5596810132893895291, 
-    checks = 20, 
-    tries = 20, 
-    originalSample = ["gh", "774"], 
-    sample = ["h", "0"]
-
 AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h", "0"]
+
+checks = 20 
+tries = 20 
+seed = -5596810132893895291 
+sample = ["h", "0"]
+original-sample ["gh", "774"] 
 ```
 
 ### Switch Shrinking Off
@@ -1926,7 +1981,7 @@ void aPropertyWithLongShrinkingTimes(
 
 ### Switch Shrinking to Full Mode
 
-Sometimes you can find a message similar to
+Sometimes you can find a message like
 
 ```
 shrinking bound reached =
@@ -1968,7 +2023,7 @@ void simpleStats(@ForAll RoundingMode mode) {
 will create an output similar to that:
 
 ```
-collected statistics = 
+statistics for [MyTest:simpleStats] = 
      UNNECESSARY : 15 %
      DOWN        : 14 %
      FLOOR       : 13 %
@@ -1990,7 +2045,7 @@ void integerStats(@ForAll int anInt) {
 ```
 
 ```
-collected statistics = 
+statistics for [MyTest:integerStats] = 
      negative : 52 %
      positive : 48 %
 ```
@@ -2009,7 +2064,7 @@ void combinedIntegerStats(@ForAll int anInt) {
 ```
 
 ```
-collected statistics = 
+statistics for [MyTest:combinedIntegerStats] = 
      positive odd big    : 23 %
      negative even big   : 22 %
      positive even big   : 22 %
@@ -2588,4 +2643,4 @@ reportOnlyFailures = false          # Set to true if only falsified properties s
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#111-snapshot).
+Read this version's [release notes](/release-notes.html#112-snapshot).

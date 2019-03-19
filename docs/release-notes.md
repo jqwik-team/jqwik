@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.1.2-SNAPSHOT](#112-snapshot)
 - [1.1.1](#111)
 - [1.1.0](#110)
 - [1.0.0](#100)
@@ -20,9 +21,9 @@ title: jqwik Release Notes
 ## 1.1.2-SNAPSHOT
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/current/user-guide.html">User guide</a>
+<a href="/docs/snapshot/user-guide.html">User guide</a>
 and
-<a href="/docs/current/javadoc/index.html">javadoc</a>
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
 </p>
 
 - Fixed decimal generation bug: https://github.com/jlink/jqwik/issues/50
