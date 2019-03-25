@@ -1,8 +1,8 @@
-- Arbitrary.forEachValue(Consumer<T> valueConsumer)
+- Arbitrary.forEachValue(Consumer<? super T> action)
 
   ```
   arbitrary.allValues().ifPresent(
-  				stream -> stream.forEach(value -> valueConsumer.apply(value)));
+  				stream -> stream.forEach(value -> action.apply(value)));
   if (!arbitrary.allValues().isPresent()) 
       throw AssertionError("Cannot generate all values")
   ```
