@@ -1,4 +1,4 @@
-- Arbitrary.assertAllValues(Consumer<T> valueConsumer)
+- Arbitrary.forEachValue(Consumer<T> valueConsumer)
 
   ```
   arbitrary.allValues().ifPresent(
