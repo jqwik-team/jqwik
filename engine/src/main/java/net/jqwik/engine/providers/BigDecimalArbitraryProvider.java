@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 public class BigDecimalArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		return targetType.isOfType(BigDecimal.class);
+		return targetType.isAssignableFrom(BigDecimal.class);
 	}
 
 	@Override

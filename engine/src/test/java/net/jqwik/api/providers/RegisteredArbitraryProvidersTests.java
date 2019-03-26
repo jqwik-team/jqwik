@@ -153,8 +153,18 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
+	<T extends BigInteger> boolean bigIntegerSubtypeParam(@ForAll T aValue) {
+		return aValue.getClass().equals(BigInteger.class);
+	}
+
+	@Property
 	boolean bigDecimalParam(@ForAll BigDecimal aValue) {
 		return aValue != null;
+	}
+
+	@Property
+	<T extends BigDecimal> boolean bigDecimalSubtypeParam(@ForAll T aValue) {
+		return aValue.getClass().equals(BigDecimal.class);
 	}
 
 	@Property
