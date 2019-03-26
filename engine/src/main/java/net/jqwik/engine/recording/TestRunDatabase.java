@@ -96,16 +96,23 @@ public class TestRunDatabase {
 			if (stopRecording)
 				return;
 			try {
+				checkSerializability(testRun);
 				objectOutputStream.writeObject(testRun);
 			} catch (NotSerializableException e) {
-				logWriteException(e);
 				if (!secondTry) {
 					record(testRun.withoutFalsifiedSample(), true);
+				} else {
+					logWriteException(e);
 				}
 			} catch (IOException e) {
 				stopRecording = true;
 				logWriteException(e);
 			}
+		}
+
+		private void checkSerializability(TestRun testRun) throws IOException {
+			ObjectOutputStream testStream = new ObjectOutputStream(new ByteArrayOutputStream());
+			testStream.writeObject(testRun);
 		}
 
 		@Override

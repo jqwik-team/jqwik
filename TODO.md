@@ -52,5 +52,3 @@
   		int sum = positive1 + positive2;
   		return sum > positive1 && sum > positive2;
   	}
-
-- Serializable problem for test run: Serialize random seed anyway
