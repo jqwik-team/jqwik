@@ -26,8 +26,8 @@ and
 <a href="/docs/snapshot/javadoc/index.html">javadoc</a>
 </p>
 
-- Fixed [Kotlin compatibility issue]#(https://github.com/jlink/jqwik/issues/52)
-- Fixed [decimal generation bug]#(https://github.com/jlink/jqwik/issues/50)
+- Fixed [Kotlin compatibility issue](https://github.com/jlink/jqwik/issues/52)
+- Fixed [decimal generation bug](https://github.com/jlink/jqwik/issues/50)
 - Update to JUnit Platform 5.4.1
 
 
