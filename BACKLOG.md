@@ -14,6 +14,8 @@
 
 ### General
 
+- Use org.junit.platform.engine.support.discovery.* for discovery
+
 - PackageDescriptor e.g.
   @Group
   @Label("mypackage")
