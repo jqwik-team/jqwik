@@ -26,9 +26,9 @@ import static org.junit.platform.commons.support.ReflectionSupport.*;
  * Some examples that come with jqwik:
  *
  * <ul>
- *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/configurators/CharsConfigurator.java"
+ *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/configurators/CharsConfigurator.java"
  *     >net.jqwik.engine.properties.configurators.CharsConfigurator</a></li>
- *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/configurators/SizeConfigurator.java"
+ *     <li><a href="https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/configurators/SizeConfigurator.java"
  *     >net.jqwik.engine.properties.configurators.SizeConfigurator</a></li>
  * </ul>
  */
