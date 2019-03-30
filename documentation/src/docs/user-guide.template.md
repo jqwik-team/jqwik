@@ -1349,6 +1349,33 @@ arbitrary but use all possible values to construct another arbitrary. This can b
 Return type is `Optional<Stream<T>>` because _jqwik_ can only perform this task if
 [exhaustive generation](#exhaustive-generation) is doable.
 
+
+### Iterating through all possible values
+
+You can also use an arbitrary to iterate through all values it specifies.
+Use
+[`Arbitrary.forEachValue(Consumer action)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#forEachValue-java.util.function.Consumer-).
+for that purpose. This only works when [exhaustive generation](#exhaustive-generation) is possible.
+In other cases the attempt to iterate will result in an exception.
+
+This is typically useful when your test requires to assert some fact for all
+values of a given (sub)set of objects. Here's a contrived example:
+
+```java
+@Property
+void canPressAnyKeyOnKeyboard(@ForAll Keyboard keyboard, @ForAll Key key) {
+    keyboard.press(key);
+    assertThat(keyboard.isPressed(key));
+
+    Arbitrary<Key> unpressedKeys = Arbitraries.of(keyboard.allKeys()).filter(k -> !k.equals(key));
+    unpressedKeys.forEachValue(k -> assertThat(keyboard.isPressed(k)).isFalse());
+}
+```
+
+In this example a simple for loop over `allKeys()` would also work. In more complicated scenarios
+_jqwik_ will do all the combinations and filtering for you.
+
+
 ## Recursive Arbitraries
 
 Sometimes it seems like a good idea to compose arbitraries and thereby
