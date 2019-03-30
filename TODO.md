@@ -1,12 +1,8 @@
 - Arbitrary.forEachValue(Consumer<? super T> action)
-
-  ```
-  arbitrary.allValues().ifPresent(
-  				stream -> stream.forEach(value -> action.apply(value)));
-  if (!arbitrary.allValues().isPresent()) 
-      throw AssertionError("Cannot generate all values")
-  ```
+  - user guide entry
   
+- Arbitrary.describe() for all built-in arbitraries
+
 - Class-based Property like this:
   
   ```

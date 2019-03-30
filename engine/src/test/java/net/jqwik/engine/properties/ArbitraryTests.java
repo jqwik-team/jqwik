@@ -1,7 +1,10 @@
 package net.jqwik.engine.properties;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.stream.*;
+
+import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
@@ -28,7 +31,6 @@ class ArbitraryTests {
 		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000);
 		assertThat(injectedGenSize[0]).isEqualTo(42);
 	}
-
 
 	@Group
 	class Generating {
@@ -184,6 +186,28 @@ class ArbitraryTests {
 	}
 
 	@Group
+	class ForEachValue {
+
+		@Example
+		void iterateThroughEachValue() {
+			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			AtomicInteger count = new AtomicInteger(0);
+			arbitrary.forEachValue(i -> {
+				count.incrementAndGet();
+				assertThat(i).isIn(1, 2, 3, 4, 5);
+			});
+			assertThat(count.get()).isEqualTo(5);
+		}
+
+		@Example
+		void notPossibleWithoutExhaustiveGenerator() {
+			Arbitrary<String> arbitrary = Arbitraries.strings();
+			Assertions.assertThatThrownBy(() -> arbitrary.forEachValue(i -> {}))
+					  .isInstanceOf(AssertionError.class);
+		}
+	}
+
+	@Group
 	class Mapping {
 
 		@Example
@@ -209,8 +233,8 @@ class ArbitraryTests {
 		void flatMapIntegerToString() {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings() //
-					.withCharRange('a', 'e') //
-					.ofMinLength(anInt).ofMaxLength(anInt));
+																			 .withCharRange('a', 'e') //
+																			 .ofMinLength(anInt).ofMaxLength(anInt));
 
 			RandomGenerator<String> generator = mapped.generator(10);
 
@@ -256,7 +280,7 @@ class ArbitraryTests {
 			assertThat(value3to6.value()).isEqualTo("3:6");
 
 			ShrinkingSequence<String> sequence = value3to6.shrink(ignore -> false);
-			while(sequence.next(() -> {}, ignore -> {}));
+			while (sequence.next(() -> {}, ignore -> {})) ;
 			assertThat(sequence.current().value()).isEqualTo("1:4");
 		}
 

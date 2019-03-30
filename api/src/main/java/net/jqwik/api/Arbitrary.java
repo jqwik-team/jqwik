@@ -80,6 +80,22 @@ public interface Arbitrary<T> {
 	}
 
 	/**
+	 * Iterate through each value this arbitrary can generate if - and only if -
+	 * exhaustive generation is possible. This method can be used for example
+	 * to make assertions about a set of values described by an arbitrary.
+	 *
+	 * @param action the consumer function to be invoked for each value
+	 * @throws AssertionError if exhaustive generation is not possible
+	 */
+	@API(status = MAINTAINED, since = "1.1.2")
+	default void forEachValue(Consumer<? super T> action) {
+		if (!allValues().isPresent())
+			throw new AssertionError("Cannot generate all values of " + this.toString());
+		allValues().ifPresent(
+			stream -> stream.forEach(action::accept));
+	}
+
+	/**
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
