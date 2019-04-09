@@ -1,3 +1,6 @@
+- "All parameters must have @ForAll annotation."
+  Fail test (instead of ignore it)
+
 - Shrink correctly: (Maybe Integer.MAX_VALUE/2, 1)
   	@Property
   	boolean sumOfTwoIntegersAlwaysGreaterThanEach(
