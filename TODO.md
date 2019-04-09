@@ -1,5 +1,6 @@
-- "All parameters must have @ForAll annotation."
+- "All parameters must have @ForAll annotation." 
   Fail test (instead of ignore it)
+  https://github.com/jlink/jqwik/issues/54
 
 - Shrink correctly: (Maybe Integer.MAX_VALUE/2, 1)
   	@Property
