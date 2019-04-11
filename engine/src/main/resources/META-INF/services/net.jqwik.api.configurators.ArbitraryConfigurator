@@ -4,3 +4,4 @@ net.jqwik.engine.properties.configurators.StringLengthConfigurator
 net.jqwik.engine.properties.configurators.RangeConfigurator
 net.jqwik.engine.properties.configurators.PositiveConfigurator
 net.jqwik.engine.properties.configurators.NegativeConfigurator
+net.jqwik.engine.properties.configurators.WhitespaceConfigurator
