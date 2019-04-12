@@ -9,7 +9,7 @@ import net.jqwik.engine.properties.arbitraries.DefaultStringArbitrary;
 public class WhitespaceConfigurator extends ArbitraryConfiguratorBase {
 
 	public StringArbitrary configure(StringArbitrary arbitrary, Whitespace whitespace) {
-		return arbitrary.withChars(DefaultStringArbitrary.WHITESPACE_CHARS);
+		return arbitrary.whitespace();
 	}
 
 	public CharacterArbitrary configure(CharacterArbitrary arbitrary, Whitespace whitespace) {
