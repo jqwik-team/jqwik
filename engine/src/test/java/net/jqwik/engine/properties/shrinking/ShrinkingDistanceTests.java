@@ -60,7 +60,10 @@ class ShrinkingDistanceTests {
 				new OneStepShrinkable(0)
 			);
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(elements);
-			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(4, 6));
+
+			int sizeOfCollection = 4;
+			int sumOfElementDistances = 6;
+			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(sizeOfCollection, sumOfElementDistances));
 		}
 
 		@Example
