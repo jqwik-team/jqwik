@@ -1,3 +1,5 @@
+- DefaultCharacterArbitrary: Support more than one range.
+
 - "All parameters must have @ForAll annotation." 
   Fail test (instead of ignore it)
   https://github.com/jlink/jqwik/issues/54
@@ -13,6 +15,15 @@
   	}
   	
 - Arbitrary.describe() for all built-in arbitraries
+
+- Case-based branching with statistical reporting:
+
+  ```
+  Case
+    .of(condition1, "label1", () -> {})
+    .of(condition2, "label2", () -> {})
+    .of(true, "labelDefault", () -> {});
+  ``` 
 
 - Class-based Property like this:
   
