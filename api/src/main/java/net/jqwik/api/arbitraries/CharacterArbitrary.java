@@ -13,22 +13,45 @@ import static org.apiguardian.api.API.Status.*;
 public interface CharacterArbitrary extends Arbitrary<Character> {
 
 	/**
-	 * Allow all chars within {@code min} (included) and {@code max} (included) to show up in generated values.
-	 */
-	CharacterArbitrary between(char min, char max);
-
-	/**
-	 * Allow all ascii chars to show up in generated values.
-	 */
-	CharacterArbitrary ascii();
-
-	/**
 	 * Allow all unicode chars to show up in generated values.
 	 */
 	CharacterArbitrary all();
 
 	/**
+	 * Allow all chars within {@code min} (included) and {@code max} (included) to show up in generated values.
+	 *
+	 * @deprecated Use {@link #range(char, char)} instead.
+	 */
+	@Deprecated
+	default CharacterArbitrary between(char min, char max) {
+		return this.range(min, max);
+	}
+
+	/**
+	 * Allow all chars in {@code chars} show up in generated values.
+	 *
+	 * Adds to all already allowed chars.
+	 */
+	CharacterArbitrary with(char... allowedChars);
+
+	/**
+	 * Allow all chars within {@code min} (included) and {@code max} (included) to show up in generated values.
+	 *
+	 * Adds to all already allowed chars.
+	 */
+	CharacterArbitrary range(char min, char max);
+
+	/**
+	 * Allow all ascii chars to show up in generated values.
+	 *
+	 * Adds to all already allowed chars.
+	 */
+	CharacterArbitrary ascii();
+
+	/**
 	 * Allow all numeric chars (digits) to show up in generated values.
+	 *
+	 * Adds to all already allowed chars.
 	 */
 	CharacterArbitrary digit();
 }

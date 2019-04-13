@@ -358,8 +358,8 @@ class ExhaustiveGenerationTests {
 	@Group
 	class Chars {
 		@Example
-		void fromMinToMax() {
-			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars().between('a', 'f').exhaustive();
+		void range() {
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars().range('a', 'f').exhaustive();
 			assertThat(optionalGenerator).isPresent();
 
 			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
@@ -368,9 +368,32 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
+		void with() {
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars().with('a', 'c', 'e').exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly('a', 'c', 'e');
+		}
+
+		@Example
+		void withAndRange() {
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator =
+				Arbitraries.chars()
+						   .with('a', 'c', 'e')
+						   .range('1', '4')
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Character> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(7);
+			assertThat(generator).containsExactly('a', 'c', 'e', '1', '2', '3', '4');
+		}
+
+		@Example
 		void rangeCannotBeTooBig() {
-			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars()
-																					.between(Character.MIN_VALUE, Character.MAX_VALUE)
+			Optional<ExhaustiveGenerator<Character>> optionalGenerator = Arbitraries.chars().range(Character.MIN_VALUE, Character.MAX_VALUE)
 																					.exhaustive();
 			assertThat(optionalGenerator).isPresent();
 

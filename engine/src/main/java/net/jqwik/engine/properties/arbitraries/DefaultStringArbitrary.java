@@ -16,7 +16,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	private int maxLength = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 
 	private Arbitrary<Character> defaultCharacterArbitrary() {
-		return Arbitraries.chars().all().filter(c -> !DefaultStringArbitrary.isNoncharacter(c)
+		return Arbitraries.chars().filter(c -> !DefaultStringArbitrary.isNoncharacter(c)
 			&& !DefaultStringArbitrary.isPrivateUseCharacter(c));
 	}
 
@@ -145,7 +145,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	}
 
 	private void addCharRange(char from, char to) {
-		characterArbitraries.add(Arbitraries.chars().between(from, to));
+		characterArbitraries.add(Arbitraries.chars().range(from, to));
 	}
 
 	private void addChars(char[] chars) {

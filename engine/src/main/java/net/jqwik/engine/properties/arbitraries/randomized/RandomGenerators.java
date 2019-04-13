@@ -94,6 +94,10 @@ public class RandomGenerators {
 		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
 	}
 
+	public static<T> RandomGenerator<T> oneOf(List<RandomGenerator<T>> all) {
+		return choose(all).flatMap(Function.identity());
+	}
+
 	public static <T> RandomGenerator<List<T>> shuffle(List<T> values) {
 		return random -> {
 			List<T> clone = new ArrayList<>(values);

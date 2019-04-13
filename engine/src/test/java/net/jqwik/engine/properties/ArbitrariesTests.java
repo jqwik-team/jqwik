@@ -335,7 +335,7 @@ class ArbitrariesTests {
 
 		@Example
 		void chars() {
-			Arbitrary<Character> arbitrary = Arbitraries.chars().between('a', 'd');
+			Arbitrary<Character> arbitrary = Arbitraries.chars().range('a', 'd');
 			RandomGenerator<Character> generator = arbitrary.generator(1);
 			List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
 			ArbitraryTestHelper.assertAllGenerated(generator, (Character value) -> allowedChars.contains(value));

@@ -349,7 +349,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	public static CharacterArbitrary chars() {
-		return ArbitrariesFacade.implementation.chars().all();
+		return ArbitrariesFacade.implementation.chars();
 	}
 
 	/**

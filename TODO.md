@@ -1,4 +1,4 @@
-- DefaultCharacterArbitrary: Support more than one range.
+- DefaultStringArbitrary: Use new capabilities of CharacterArbitrary.
 
 - "All parameters must have @ForAll annotation." 
   Fail test (instead of ignore it)

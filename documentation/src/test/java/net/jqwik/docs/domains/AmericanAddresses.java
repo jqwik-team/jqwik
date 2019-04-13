@@ -41,7 +41,7 @@ public class AmericanAddresses extends AbstractDomainContextBase {
 	}
 
 	private Arbitrary<String> capitalizedWord(int maxLength) {
-		Arbitrary<Character> capital = Arbitraries.chars().between('A', 'Z');
+		Arbitrary<Character> capital = Arbitraries.chars().range('A', 'Z');
 		Arbitrary<String> rest = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1).ofMaxLength(maxLength - 1);
 		return Combinators.combine(capital, rest).as((c, r) -> c + r);
 	}

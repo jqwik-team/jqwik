@@ -20,8 +20,8 @@ class CombiningCharacterArbitrariesBug {
 
 	@Provide
 	Arbitrary<Character[]> combined() {
-		Arbitrary<Character> char1 = Arbitraries.chars().between('a', 'z');
-		Arbitrary<Character> char2 = Arbitraries.chars().between('0', '9');
+		Arbitrary<Character> char1 = Arbitraries.chars().range('a', 'z');
+		Arbitrary<Character> char2 = Arbitraries.chars().range('0', '9');
 		return Combinators.combine(char1, char2).as( (c1, c2) ->
 			new Character[] {c1, c2}
 		);

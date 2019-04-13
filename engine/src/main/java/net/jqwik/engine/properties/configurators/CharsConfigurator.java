@@ -30,7 +30,7 @@ public class CharsConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public CharacterArbitrary configure(CharacterArbitrary arbitrary, CharRange range) {
-		return arbitrary.between(range.from(), range.to());
+		return arbitrary.range(range.from(), range.to());
 	}
 
 	public CharacterArbitrary configure(CharacterArbitrary arbitrary, CharRangeList charRangeList) {

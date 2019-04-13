@@ -1,58 +1,81 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.engine.properties.arbitraries.exhaustive.*;
-import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements CharacterArbitrary {
 
-	public static final int MAX_ASCII_CODEPOINT = 0x007F;
+	static final int MAX_ASCII_CODEPOINT = 0x007F;
 
-	private char min = 0;
-	private char max = 0;
+	private List<Arbitrary<Character>> parts = new ArrayList<>();
 
 	public DefaultCharacterArbitrary() {
 	}
 
 	@Override
 	public RandomGenerator<Character> generator(int genSize) {
-		return RandomGenerators.chars(min, max);
+		return arbitrary().generator(genSize);
+	}
+
+	private Arbitrary<Character> arbitrary() {
+		if (parts.isEmpty()) {
+			return defaultArbitrary();
+		}
+		if (parts.size() == 1) {
+			return parts.get(0);
+		}
+		return Arbitraries.oneOf(parts);
+	}
+
+	private Arbitrary<Character> defaultArbitrary() {
+		return rangeArbitrary(Character.MIN_VALUE, Character.MAX_VALUE);
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<Character>> exhaustive() {
-		long maxCount = max + 1 - min;
-		return ExhaustiveGenerators
-				   .fromIterable(() -> IntStream.range(min, max + 1).iterator(), maxCount)
-				   .map(optionalGenerator -> optionalGenerator.map(anInt -> (char) (int) anInt));
-	}
-
-
-	@Override
-	public CharacterArbitrary between(char min, char max) {
-		DefaultCharacterArbitrary clone = typedClone();
-		clone.min = min;
-		clone.max = max;
-		return clone;
+		return arbitrary().exhaustive();
 	}
 
 	@Override
-	public CharacterArbitrary ascii() {
-		return between((char) Character.MIN_CODE_POINT, (char) MAX_ASCII_CODEPOINT);
+	public CharacterArbitrary range(char min, char max) {
+		return cloneWith(rangeArbitrary(min, max));
+	}
+
+	@Override
+	public CharacterArbitrary with(char... allowedChars) {
+		return cloneWith(charsArbitrary(allowedChars));
+	}
+
+	private Arbitrary<Character> charsArbitrary(char[] allowedChars) {
+		return Arbitraries.of(allowedChars);
 	}
 
 	@Override
 	public CharacterArbitrary all() {
-		return between(Character.MIN_VALUE, Character.MAX_VALUE);
+		return new DefaultCharacterArbitrary();
+	}
+
+	@Override
+	public CharacterArbitrary ascii() {
+		return range((char) Character.MIN_CODE_POINT, (char) MAX_ASCII_CODEPOINT);
 	}
 
 	@Override
 	public CharacterArbitrary digit() {
-		return between('0', '9');
+		return range('0', '9');
+	}
+
+	private CharacterArbitrary cloneWith(Arbitrary<Character> part) {
+		DefaultCharacterArbitrary clone = super.typedClone();
+		clone.parts = new ArrayList<>(parts);
+		clone.parts.add(part);
+		return clone;
+	}
+
+	private Arbitrary<Character> rangeArbitrary(char min, char max) {
+		return new CharacterRange(min, max);
 	}
 
 }

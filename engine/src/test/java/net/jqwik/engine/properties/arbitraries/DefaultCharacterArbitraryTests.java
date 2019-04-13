@@ -1,5 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.*;
@@ -11,42 +13,80 @@ class DefaultCharacterArbitraryTests {
 	CharacterArbitrary arbitrary = new DefaultCharacterArbitrary();
 
 	@Example
-	void perDefaultOnlyZeroIsCreated() {
-		assertAllGenerated(arbitrary.generator(1000), c -> c == 0);
+	void perDefaultAnyCharacterIsCreated() {
+		assertAllGenerated(this.arbitrary.generator(1000), c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
+		assertAtLeastOneGenerated(this.arbitrary.generator(1000), c -> c <= '\u1000');
+		assertAtLeastOneGenerated(this.arbitrary.generator(1000), c -> c >= '\uF000');
 	}
 
 	@Example
-	void all() {
-		CharacterArbitrary all = this.arbitrary.all();
+	void allOverridesAnythingBefore() {
+		CharacterArbitrary all = this.arbitrary.ascii().all();
 		assertAllGenerated(all.generator(1000), c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c <= '\u1000');
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c >= '\uF000');
+		assertAtLeastOneGenerated(all.generator(1000), c -> c <= '\u1000');
+		assertAtLeastOneGenerated(all.generator(1000), c -> c >= '\uF000');
 	}
 
 	@Example
-	void between() {
+	void chars() {
+		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
+		CharacterArbitrary all = this.arbitrary.with('a', 'b', 'c', '1', '2', '.');
+		assertAllGenerated(all.generator(1000), chars::contains);
+		assertAtLeastOneGeneratedOf(all.generator(1000), 'a', 'b', 'c', '1', '2', '.');
+	}
+
+	@Example
+	void range() {
 		char min = '\u0010';
 		char max = '\u0030';
-		CharacterArbitrary all = this.arbitrary.between(min, max);
+		CharacterArbitrary all = this.arbitrary.range(min, max);
 		assertAllGenerated(all.generator(1000), c -> c >= min && c <= max);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == min);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == max);
+		assertAtLeastOneGeneratedOf(all.generator(1000), min, max);
 	}
 
 	@Example
 	void digit() {
 		CharacterArbitrary all = this.arbitrary.digit();
 		assertAllGenerated(all.generator(1000), c -> c >= '0' && c <= '9');
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == '0');
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c == '9');
+		assertAtLeastOneGeneratedOf(all.generator(1000), '0', '9');
 	}
 
 	@Example
 	void ascii() {
 		CharacterArbitrary all = this.arbitrary.ascii();
 		assertAllGenerated(all.generator(1000), c -> c >= 0 && c <= 127);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c <= 10);
-		ArbitraryTestHelper.assertAtLeastOneGenerated(all.generator(1000), c -> c >= 126);
+		assertAtLeastOneGeneratedOf(all.generator(1000), (char) 10, (char) 126);
+	}
+
+	@Example
+	void addUpRangesAndChars() {
+		char min1 = '\u0010';
+		char max1 = '\u0030';
+		char min2 = '\u0110';
+		char max2 = '\u0130';
+		char min3 = '\u1010';
+		char max3 = '\u1030';
+
+		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
+
+		CharacterArbitrary all = this.arbitrary
+									 .range(min1, max1)
+									 .range(min2, max2)
+									 .range(min3, max3)
+									 .with('a', 'b', 'c', '1', '2', '.');
+
+		assertAllGenerated(
+			all.generator(1000),
+			c -> (c >= min1 && c <= max1) ||
+					 (c >= min2 && c <= max2) ||
+					 (c >= min3 && c <= max3) ||
+					 chars.contains(c)
+		);
+
+		ArbitraryTestHelper.assertAtLeastOneGeneratedOf(all.generator(1000),
+														min1, max1, min2, max2, min3, max3,
+														'a', 'b', 'c', '1', '2', '.'
+		);
 	}
 
 }

@@ -18,6 +18,19 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.1.3-SNAPSHOT
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+- Added `CharacterArbitrary.with(char ... allowedChars)'
+- Added `CharacterArbitrary.range(char min, char max)'
+- Deprecated `CharacterArbitrary.between(char min, char max)'
+
+
 ## 1.1.2
 
 <p style="padding-left:1em;font-size:larger">
