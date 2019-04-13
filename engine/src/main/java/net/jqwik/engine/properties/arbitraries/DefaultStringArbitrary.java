@@ -10,25 +10,10 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
 
-	private List<Arbitrary<Character>> characterArbitraries = new ArrayList<>();
+	private CharacterArbitrary characterArbitrary = new DefaultCharacterArbitrary();
 
 	private int minLength = 0;
 	private int maxLength = RandomGenerators.DEFAULT_COLLECTION_SIZE;
-
-	private Arbitrary<Character> defaultCharacterArbitrary() {
-		return Arbitraries.chars().filter(c -> !DefaultStringArbitrary.isNoncharacter(c)
-			&& !DefaultStringArbitrary.isPrivateUseCharacter(c));
-	}
-
-	public static boolean isNoncharacter(int codepoint) {
-		if (codepoint >= 0xfdd0 && codepoint <= 0xfdef)
-			return true;
-		return codepoint == 0xfffe || codepoint == 0xffff;
-	}
-
-	public static boolean isPrivateUseCharacter(int codepoint) {
-		return codepoint >= 0xe000 && codepoint <= 0xf8ff;
-	}
 
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
@@ -61,7 +46,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	@Override
 	public StringArbitrary withChars(char... chars) {
 		DefaultStringArbitrary clone = typedClone();
-		clone.addChars(chars);
+		clone.characterArbitrary = clone.characterArbitrary.with(chars);
 		return clone;
 	}
 
@@ -71,29 +56,29 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 			return this;
 		}
 		DefaultStringArbitrary clone = typedClone();
-		clone.addCharRange(from, to);
+		clone.characterArbitrary = clone.characterArbitrary.range(from, to);
 		return clone;
 	}
 
 	@Override
 	public StringArbitrary ascii() {
 		DefaultStringArbitrary clone = typedClone();
-		clone.characterArbitraries.add(Arbitraries.chars().ascii());
+		clone.characterArbitrary = characterArbitrary.ascii();
 		return clone;
 	}
 
 	@Override
 	public StringArbitrary alpha() {
 		DefaultStringArbitrary clone = typedClone();
-		clone.addCharRange('a', 'z');
-		clone.addCharRange('A', 'Z');
+		clone.characterArbitrary = clone.characterArbitrary.range('A', 'Z');
+		clone.characterArbitrary = clone.characterArbitrary.range('a', 'z');
 		return clone;
 	}
 
 	@Override
 	public StringArbitrary numeric() {
 		DefaultStringArbitrary clone = typedClone();
-		clone.addCharRange('0', '9');
+		clone.characterArbitrary = clone.characterArbitrary.range('0', '9');
 		return clone;
 	}
 
@@ -144,28 +129,12 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 		return this.withCharRange(Character.MIN_VALUE, Character.MAX_VALUE);
 	}
 
-	private void addCharRange(char from, char to) {
-		characterArbitraries.add(Arbitraries.chars().range(from, to));
-	}
-
-	private void addChars(char[] chars) {
-		characterArbitraries.add(Arbitraries.of(chars));
-	}
-
 	private RandomGenerator<Character> randomCharacterGenerator() {
 		return effectiveCharacterArbitrary().generator(1);
 	}
 
 	private Arbitrary<Character> effectiveCharacterArbitrary() {
-		if (characterArbitraries.isEmpty()) {
-			return defaultCharacterArbitrary();
-		}
-		Arbitrary<Character> first = characterArbitraries.get(0);
-		@SuppressWarnings("unchecked")
-		Arbitrary<Character>[] rest = characterArbitraries
-										  .subList(1, characterArbitraries.size())
-										  .toArray(new Arbitrary[characterArbitraries.size() - 1]);
-		return Arbitraries.oneOf(first, rest);
+		return characterArbitrary;
 	}
 
 }

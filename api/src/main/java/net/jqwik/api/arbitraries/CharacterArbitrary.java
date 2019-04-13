@@ -23,6 +23,7 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 * @deprecated Use {@link #range(char, char)} instead.
 	 */
 	@Deprecated
+	@API(status = DEPRECATED)
 	default CharacterArbitrary between(char min, char max) {
 		return this.range(min, max);
 	}
@@ -32,6 +33,7 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 *
 	 * Adds to all already allowed chars.
 	 */
+	@API(status = MAINTAINED, since = "1.1.3")
 	CharacterArbitrary with(char... allowedChars);
 
 	/**
@@ -39,6 +41,7 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 *
 	 * Adds to all already allowed chars.
 	 */
+	@API(status = MAINTAINED, since = "1.1.3")
 	CharacterArbitrary range(char min, char max);
 
 	/**

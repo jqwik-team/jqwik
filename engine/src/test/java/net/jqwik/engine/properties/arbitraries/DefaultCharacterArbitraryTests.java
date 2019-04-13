@@ -13,8 +13,13 @@ class DefaultCharacterArbitraryTests {
 	CharacterArbitrary arbitrary = new DefaultCharacterArbitrary();
 
 	@Example
-	void perDefaultAnyCharacterIsCreated() {
-		assertAllGenerated(this.arbitrary.generator(1000), c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
+	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated() {
+		assertAllGenerated(this.arbitrary.generator(1000), c -> {
+			if (DefaultCharacterArbitrary.isNoncharacter(c))
+				return false;
+			return !DefaultCharacterArbitrary.isPrivateUseCharacter(c);
+		});
+
 		assertAtLeastOneGenerated(this.arbitrary.generator(1000), c -> c <= '\u1000');
 		assertAtLeastOneGenerated(this.arbitrary.generator(1000), c -> c >= '\uF000');
 	}

@@ -11,6 +11,16 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 
 	private List<Arbitrary<Character>> parts = new ArrayList<>();
 
+	static boolean isNoncharacter(int codepoint) {
+		if (codepoint >= 0xfdd0 && codepoint <= 0xfdef)
+			return true;
+		return codepoint == 0xfffe || codepoint == 0xffff;
+	}
+
+	static boolean isPrivateUseCharacter(int codepoint) {
+		return codepoint >= 0xe000 && codepoint <= 0xf8ff;
+	}
+
 	public DefaultCharacterArbitrary() {
 	}
 
@@ -30,7 +40,9 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	private Arbitrary<Character> defaultArbitrary() {
-		return rangeArbitrary(Character.MIN_VALUE, Character.MAX_VALUE);
+		return rangeArbitrary(Character.MIN_VALUE, Character.MAX_VALUE)
+				   .filter(c -> !DefaultCharacterArbitrary.isNoncharacter(c)
+									&& !DefaultCharacterArbitrary.isPrivateUseCharacter(c));
 	}
 
 	@Override

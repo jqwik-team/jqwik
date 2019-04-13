@@ -21,12 +21,12 @@ class DefaultStringArbitraryTests {
 	}
 
 	@Example
-	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated() {
-		assertAllGenerated(arbitrary.generator(10), s -> {
+	void perDefaultNoNoncharactersAndNoPrivateUseCharactersAreCreated(@ForAll int i) {
+		assertAllGenerated(arbitrary.generator(10000), s -> {
 			return s.chars().allMatch(c -> {
-				if (DefaultStringArbitrary.isNoncharacter(c))
+				if (DefaultCharacterArbitrary.isNoncharacter(c))
 					return false;
-				return !DefaultStringArbitrary.isPrivateUseCharacter(c);
+				return !DefaultCharacterArbitrary.isPrivateUseCharacter(c);
 			});
 		});
 	}
@@ -37,8 +37,8 @@ class DefaultStringArbitraryTests {
 		assertAllGenerated(stringArbitrary.generator(10), s -> {
 			return s.chars().allMatch(c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);
 		});
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.chars().anyMatch(DefaultStringArbitrary::isNoncharacter));
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.chars().anyMatch(DefaultStringArbitrary::isPrivateUseCharacter));
+		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.chars().anyMatch(DefaultCharacterArbitrary::isNoncharacter));
+		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.chars().anyMatch(DefaultCharacterArbitrary::isPrivateUseCharacter));
 	}
 
 	@Example
