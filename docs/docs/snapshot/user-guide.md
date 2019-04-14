@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.1.2-SNAPSHOT
+title: jqwik User Guide - 1.1.3-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.2-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.3-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -67,6 +67,7 @@ title: jqwik User Guide - 1.1.2-SNAPSHOT
     - [Flat Combination](#flat-combination)
   - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
   - [Generating all possible values](#generating-all-possible-values)
+  - [Iterating through all possible values](#iterating-through-all-possible-values)
 - [Recursive Arbitraries](#recursive-arbitraries)
   - [Probabilistic Recursion](#probabilistic-recursion)
   - [Deterministic Recursion](#deterministic-recursion)
@@ -137,7 +138,7 @@ repositories {
 ext.junitPlatformVersion = '1.4.1'
 ext.junitJupiterVersion = '5.4.1'
 
-ext.jqwikVersion = '1.1.2-SNAPSHOT'
+ext.jqwikVersion = '1.1.3-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -213,7 +214,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.1.2-SNAPSHOT</version>
+        <version>1.1.3-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -239,7 +240,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.1.2-SNAPSHOT.jar`
+- `jqwik-1.1.3-SNAPSHOT.jar`
 - `junit-platform-engine-1.4.1.jar`
 - `junit-platform-commons-1.4.1.jar`
 - `opentest4j-1.1.1.jar`
@@ -290,7 +291,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.1.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.1.3-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1436,6 +1437,33 @@ arbitrary but use all possible values to construct another arbitrary. This can b
 
 Return type is `Optional<Stream<T>>` because _jqwik_ can only perform this task if
 [exhaustive generation](#exhaustive-generation) is doable.
+
+
+### Iterating through all possible values
+
+You can also use an arbitrary to iterate through all values it specifies.
+Use
+[`Arbitrary.forEachValue(Consumer action)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#forEachValue-java.util.function.Consumer-).
+for that purpose. This only works when [exhaustive generation](#exhaustive-generation) is possible.
+In other cases the attempt to iterate will result in an exception.
+
+This is typically useful when your test requires to assert some fact for all
+values of a given (sub)set of objects. Here's a contrived example:
+
+```java
+@Property
+void canPressAnyKeyOnKeyboard(@ForAll Keyboard keyboard, @ForAll Key key) {
+    keyboard.press(key);
+    assertThat(keyboard.isPressed(key));
+
+    Arbitrary<Key> unpressedKeys = Arbitraries.of(keyboard.allKeys()).filter(k -> !k.equals(key));
+    unpressedKeys.forEachValue(k -> assertThat(keyboard.isPressed(k)).isFalse());
+}
+```
+
+In this example a simple for loop over `allKeys()` would also work. In more complicated scenarios
+_jqwik_ will do all the combinations and filtering for you.
+
 
 ## Recursive Arbitraries
 
@@ -2643,4 +2671,4 @@ reportOnlyFailures = false          # Set to true if only falsified properties s
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#112-snapshot).
+Read this version's [release notes](/release-notes.html#113-snapshot).
