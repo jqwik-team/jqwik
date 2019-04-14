@@ -49,6 +49,18 @@ public class PropertyMethodExecutor {
 		}
 	}
 
+	private void ensureAllParametersHaveForAll(PropertyMethodDescriptor methodDescriptor) {
+		String parameters = Arrays.stream(methodDescriptor.getTargetMethod().getParameters())
+					 .filter(parameter -> !parameter.isAnnotationPresent(ForAll.class))
+			.map(parameter -> parameter.toString())
+			.collect(Collectors.joining(", "));
+
+		if (!parameters.isEmpty()) {
+			String message = String.format("All parameters must have @ForAll annotation: %s", parameters);
+			throw new JqwikException(message);
+		}
+	}
+
 	private DomainContext combineDomainContexts(Set<Domain> domainAnnotations) {
 		if (domainAnnotations.isEmpty()) {
 			return DomainContext.global();
@@ -84,6 +96,7 @@ public class PropertyMethodExecutor {
 		PropertyExecutionResult propertyExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		try {
+			ensureAllParametersHaveForAll(methodDescriptor);
 			propertyExecutionResult = around.aroundProperty(
 				propertyLifecycleContext,
 				() -> executeMethod(propertyLifecycleContext.testInstance(), listener)

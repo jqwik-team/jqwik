@@ -101,14 +101,14 @@ class SimplePropertiesExecutionTests {
 	}
 
 	@Example
-	void methodWithUnboundParameterIsSkipped() {
+	void methodWithUnboundParameterFails() {
 		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class)
 			.build();
 
 		executeTests(descriptor);
 
 		InOrder events = Mockito.inOrder(eventRecorder);
-		events.verify(eventRecorder).executionSkipped(isPropertyDescriptorFor(ContainerClass.class, "withParameter"), anyString());
+		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "withParameter"), isFailed());
 		assertThat(executions).isEmpty();
 	}
 

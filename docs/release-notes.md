@@ -26,10 +26,11 @@ and
 <a href="/docs/snapshot/javadoc/index.html">javadoc</a>
 </p>
 
+- Missing `@ForAll` annotation will now fail test - instead of skipping it.
+  See [this Github issue](https://github.com/jlink/jqwik/issues/54).
 - Added `CharacterArbitrary.with(char ... allowedChars)'
 - Added `CharacterArbitrary.range(char min, char max)'
 - Deprecated `CharacterArbitrary.between(char min, char max)'
-
 
 ## 1.1.2
 

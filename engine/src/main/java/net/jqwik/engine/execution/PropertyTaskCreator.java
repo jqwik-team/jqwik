@@ -1,7 +1,5 @@
 package net.jqwik.engine.execution;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.SkipExecutionHook.*;
@@ -13,14 +11,6 @@ import net.jqwik.engine.support.*;
 class PropertyTaskCreator {
 
 	ExecutionTask createTask(PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, boolean reportOnlyFailures) {
-		if (hasUnspecifiedParameters(methodDescriptor)) {
-			String taskDescription = "skipping " + methodDescriptor.getDisplayName();
-			return ExecutionTask.from(
-				listener -> listener.executionSkipped(methodDescriptor, "All parameters must have @ForAll annotation."),
-				methodDescriptor.getUniqueId(),
-				taskDescription
-			);
-		}
 		return ExecutionTask.from(
 			listener -> {
 				Object testInstance = createTestInstance(methodDescriptor);
@@ -55,11 +45,6 @@ class PropertyTaskCreator {
 			);
 			throw new JqwikException(message, throwable);
 		}
-	}
-
-	private boolean hasUnspecifiedParameters(PropertyMethodDescriptor methodDescriptor) {
-		return Arrays.stream(methodDescriptor.getTargetMethod().getParameters())
-					 .anyMatch(parameter -> !parameter.isAnnotationPresent(ForAll.class));
 	}
 
 	private PropertyExecutionResult executeTestMethod(
