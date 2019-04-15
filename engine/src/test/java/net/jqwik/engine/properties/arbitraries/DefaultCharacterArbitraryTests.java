@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -94,4 +95,18 @@ class DefaultCharacterArbitraryTests {
 		);
 	}
 
+	@Example
+	void whitespace() {
+		CharacterArbitrary all = this.arbitrary.with(DefaultStringArbitrary.WHITESPACE_CHARS);
+		assertAllGenerated(all.generator(1000), (Predicate<Character>) Character::isWhitespace);
+		assertAtLeastOneGeneratedOf(all.generator(1000), toCharacterArray(DefaultStringArbitrary.WHITESPACE_CHARS));
+	}
+
+	private Character[] toCharacterArray(char[] chars) {
+		Character[] result = new Character[chars.length];
+		for (int i=0; i<chars.length; i++) {
+			result[i] = chars[i];
+		}
+		return result;
+	}
 }

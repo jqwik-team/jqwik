@@ -13,13 +13,7 @@ public class WhitespaceConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public CharacterArbitrary configure(CharacterArbitrary arbitrary, Whitespace whitespace) {
-		CharacterArbitrary result = arbitrary;
-
-		for (char c : DefaultStringArbitrary.WHITESPACE_CHARS) {
-			result = result.between(c, c);
-		}
-
-		return result;
+		return arbitrary.with(DefaultStringArbitrary.WHITESPACE_CHARS);
 	}
 
 }

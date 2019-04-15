@@ -128,8 +128,11 @@ class DefaultStringArbitraryTests {
 	@Example
 	void whitespace() {
 		StringArbitrary stringArbitrary = this.arbitrary.whitespace();
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString(' ')));
-		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('\t')));
+
+		// the loop _could_ be extracted to an overloaded version of "assertAtLeastOneGeneratedOf" . . .
+		for (char c : DefaultStringArbitrary.WHITESPACE_CHARS) {
+			assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString(c)));
+		}
 	}
 
 }
