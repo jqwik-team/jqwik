@@ -1,10 +1,8 @@
 package net.jqwik.engine.properties.configurators;
 
-import net.jqwik.api.arbitraries.CharacterArbitrary;
-import net.jqwik.api.arbitraries.StringArbitrary;
-import net.jqwik.api.configurators.ArbitraryConfiguratorBase;
-import net.jqwik.api.constraints.Whitespace;
-import net.jqwik.engine.properties.arbitraries.DefaultStringArbitrary;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.configurators.*;
+import net.jqwik.api.constraints.*;
 
 public class WhitespaceConfigurator extends ArbitraryConfiguratorBase {
 
@@ -13,7 +11,7 @@ public class WhitespaceConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public CharacterArbitrary configure(CharacterArbitrary arbitrary, Whitespace whitespace) {
-		return arbitrary.with(DefaultStringArbitrary.WHITESPACE_CHARS);
+		return arbitrary.whitespace();
 	}
 
 }

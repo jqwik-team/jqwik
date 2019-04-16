@@ -14,6 +14,8 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 
 	/**
 	 * Allow all unicode chars to show up in generated values.
+	 *
+	 * Resets previous settings.
 	 */
 	CharacterArbitrary all();
 
@@ -57,4 +59,12 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 * Adds to all already allowed chars.
 	 */
 	CharacterArbitrary digit();
+
+	/**
+	 * Allow all whitespace chars to show up in generated values.
+	 *
+	 * Adds to all already allowed chars.
+	 */
+	@API(status = MAINTAINED, since = "1.1.3")
+	CharacterArbitrary whitespace();
 }

@@ -97,9 +97,9 @@ class DefaultCharacterArbitraryTests {
 
 	@Example
 	void whitespace() {
-		CharacterArbitrary all = this.arbitrary.with(DefaultStringArbitrary.WHITESPACE_CHARS);
+		CharacterArbitrary all = this.arbitrary.whitespace();
 		assertAllGenerated(all.generator(1000), (Predicate<Character>) Character::isWhitespace);
-		assertAtLeastOneGeneratedOf(all.generator(1000), toCharacterArray(DefaultStringArbitrary.WHITESPACE_CHARS));
+		assertAtLeastOneGeneratedOf(all.generator(1000), toCharacterArray(DefaultCharacterArbitrary.WHITESPACE_CHARS));
 	}
 
 	private Character[] toCharacterArray(char[] chars) {

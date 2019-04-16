@@ -27,6 +27,9 @@ and
 <a href="/docs/snapshot/javadoc/index.html">javadoc</a>
 </p>
 
+- Whitespace characters for generation of Strings and chars are now 
+  platform and JDK version dependent. 
+  See [this Github issue](https://github.com/jlink/jqwik/issues/55).
 - Missing `@ForAll` annotation will now fail test - instead of skipping it.
   See [this Github issue](https://github.com/jlink/jqwik/issues/54).
 - Added `CharacterArbitrary.with(char ... allowedChars)'

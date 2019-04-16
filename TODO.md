@@ -1,5 +1,3 @@
-- Review whitespace in DefaultString|CharacterArbitrary
-
 - Case-based branching with statistical reporting:
 
   ```

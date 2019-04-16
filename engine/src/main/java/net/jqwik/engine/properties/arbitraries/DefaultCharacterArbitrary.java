@@ -1,15 +1,29 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements CharacterArbitrary {
 
-	static final int MAX_ASCII_CODEPOINT = 0x007F;
+	static final char[] WHITESPACE_CHARS;
 
-	private List<Arbitrary<Character>> parts = new ArrayList<>();
+	static {
+		// determine WHITESPACE_CHARS at runtime because the environments differ . . .
+		final StringBuilder whitespace =
+			IntStream.range(Character.MIN_VALUE, Character.MAX_VALUE + 1)
+					 .filter(Character::isWhitespace)
+					 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append);
+
+		final int whitespaceLength = whitespace.length();
+		final char[] charArray = new char[whitespaceLength];
+		whitespace.getChars(0, whitespaceLength, charArray, 0);
+		WHITESPACE_CHARS = charArray;
+	}
+
+	static final int MAX_ASCII_CODEPOINT = 0x007F;
 
 	static boolean isNoncharacter(int codepoint) {
 		if (codepoint >= 0xfdd0 && codepoint <= 0xfdef)
@@ -20,6 +34,8 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	static boolean isPrivateUseCharacter(int codepoint) {
 		return codepoint >= 0xe000 && codepoint <= 0xf8ff;
 	}
+
+	private List<Arbitrary<Character>> parts = new ArrayList<>();
 
 	public DefaultCharacterArbitrary() {
 	}
@@ -77,6 +93,11 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	@Override
 	public CharacterArbitrary digit() {
 		return range('0', '9');
+	}
+
+	@Override
+	public CharacterArbitrary whitespace() {
+		return with(DefaultCharacterArbitrary.WHITESPACE_CHARS);
 	}
 
 	private CharacterArbitrary cloneWith(Arbitrary<Character> part) {

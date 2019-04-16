@@ -102,7 +102,8 @@ class DefaultStringArbitraryTests {
 		});
 		assertAtLeastOneGenerated(
 			stringArbitrary.generator(10),
-								  s -> s.contains(Character.toString((char) DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT)));
+			s -> s.contains(Character.toString((char) DefaultCharacterArbitrary.MAX_ASCII_CODEPOINT))
+		);
 	}
 
 	@Example
@@ -129,9 +130,9 @@ class DefaultStringArbitraryTests {
 	void whitespace() {
 		StringArbitrary stringArbitrary = this.arbitrary.whitespace();
 
-		// the loop _could_ be extracted to an overloaded version of "assertAtLeastOneGeneratedOf" . . .
-		for (char c : DefaultStringArbitrary.WHITESPACE_CHARS) {
-			assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString(c)));
+		RandomGenerator<String> generator = stringArbitrary.generator(10);
+		for (char c : DefaultCharacterArbitrary.WHITESPACE_CHARS) {
+			assertAtLeastOneGenerated(generator, s -> s.contains(Character.toString(c)));
 		}
 	}
 

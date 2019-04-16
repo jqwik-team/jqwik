@@ -9,19 +9,7 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
-	public static final char[] WHITESPACE_CHARS;
 
-	static {
-		// determine WHITESPACE_CHARS at runtime because the environments differ . . .
-		final StringBuilder whitespace = IntStream.range(Character.MIN_VALUE, Character.MAX_VALUE + 1)
-												  .filter(Character::isWhitespace)
-												  .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append);
-
-		final int whitespaceLength = whitespace.length();
-		final char[] charArray = new char[whitespaceLength];
-		whitespace.getChars(0, whitespaceLength, charArray, 0);
-		WHITESPACE_CHARS = charArray;
-	}
 
 	private CharacterArbitrary characterArbitrary = new DefaultCharacterArbitrary();
 
@@ -65,9 +53,6 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 
 	@Override
 	public StringArbitrary withCharRange(char from, char to) {
-		if (from == 0 && to == 0) {
-			return this;
-		}
 		DefaultStringArbitrary clone = typedClone();
 		clone.characterArbitrary = clone.characterArbitrary.range(from, to);
 		return clone;
@@ -83,8 +68,9 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	@Override
 	public StringArbitrary alpha() {
 		DefaultStringArbitrary clone = typedClone();
-		clone.characterArbitrary = clone.characterArbitrary.range('A', 'Z');
-		clone.characterArbitrary = clone.characterArbitrary.range('a', 'z');
+		clone.characterArbitrary = clone.characterArbitrary
+									   .range('A', 'Z')
+									   .range('a', 'z');
 		return clone;
 	}
 
@@ -97,7 +83,9 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 
 	@Override
 	public StringArbitrary whitespace() {
-		return this.withChars(WHITESPACE_CHARS);
+		DefaultStringArbitrary clone = typedClone();
+		clone.characterArbitrary = clone.characterArbitrary.whitespace();
+		return clone;
 	}
 
 	@Override
