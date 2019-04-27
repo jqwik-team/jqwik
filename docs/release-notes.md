@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.1.3-SNAPSHOT](#113-snapshot)
+- [1.1.3](#113)
 - [1.1.2](#112)
 - [1.1.1](#111)
 - [1.1.0](#110)
@@ -19,12 +19,12 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.1.3-SNAPSHOT
+## 1.1.3
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.1.3/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.1.3/javadoc/index.html">javadoc</a>
 </p>
 
 - Whitespace characters for generation of Strings and chars are now 
