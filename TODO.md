@@ -6,6 +6,12 @@
     .match(condition2, "label2", () -> {})
     .noMatch();
   ``` 
+  
+  - specify minimum coverage for each case
+  
+- Arbitraries.series(n -> prime(n)[, maxN])
+
+- Arbitraries.fromStream(aStream[, maxLength])
 
 - Arbitrary.describe() for all built-in arbitraries
 
