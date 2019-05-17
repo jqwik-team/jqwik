@@ -1,3 +1,11 @@
+- Arbitrary.collect(Predicate<T> until)
+
+- Statistics.keyFigures(String label, Number variable)
+
+- Arbitraries.series(n -> prime(n)[, maxN])
+
+- Arbitraries.fromStream(aStream[, maxLength])
+
 - Case-based branching with statistical reporting:
 
   ```
@@ -9,10 +17,6 @@
   
   - specify minimum coverage for each case
   
-- Arbitraries.series(n -> prime(n)[, maxN])
-
-- Arbitraries.fromStream(aStream[, maxLength])
-
 - Arbitrary.describe() for all built-in arbitraries
 
 - Default Arbitraries, Generators and Shrinking for
