@@ -19,6 +19,16 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.1.4-SNAPSHOT
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+- Upgrade to junit-platform 1.4.2
+
 ## 1.1.3
 
 <p style="padding-left:1em;font-size:larger">
