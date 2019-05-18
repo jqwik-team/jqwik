@@ -42,6 +42,8 @@ public interface Arbitrary<T> {
 		public abstract <T> SizableArbitrary<Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
 
 		public abstract <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
+
+		public abstract <T> Arbitrary<List<T>> collect(Arbitrary<T> elementArbitrary, Predicate<List<T>> until);
 	}
 
 	/**
@@ -283,5 +285,15 @@ public interface Arbitrary<T> {
 	default Arbitrary<Optional<T>> optional() {
 		return this.injectNull(0.05).map(Optional::ofNullable);
 	}
+
+	/**
+	 * Create a new arbitrary of type {@code List<T>} by adding elements of type T until condition {@code until} is fullfilled.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.4")
+	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
+		return ArbitraryFacade.implementation.collect(this, until);
+	}
+
+
 
 }

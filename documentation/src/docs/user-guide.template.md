@@ -955,6 +955,22 @@ an `Arbitrary` instance for the generic type. You can create the corresponding c
 - [`Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
 - [`Arbitrary.optional()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional--)
 
+### Collecting Values in a List
+
+If you do not want any random combination of values in your list - as 
+can be done with `Arbitrary.list()` - you have the possibility to collect random values
+in a list until a certain condition is fulfilled. 
+[`Arbitrary.collect(Predicate condition)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#collect-java.util.function.Predicate-)
+is what you need in those cases.
+
+Imagine you need a list of integers the sum of which should be at least `1000`.
+Here's how you could do that:
+
+```java
+Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000);
+```
+
 ### Fluent Configuration Interfaces
 
 Most specialized arbitrary interfaces provide special methods to configure things
@@ -1126,6 +1142,7 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful. 
+
 
 ### Randomly Choosing among Arbitraries
 

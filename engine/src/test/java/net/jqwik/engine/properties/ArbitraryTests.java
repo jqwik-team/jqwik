@@ -13,6 +13,7 @@ import net.jqwik.api.arbitraries.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.GenerationMode.*;
+import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
 
 @Group
 class ArbitraryTests {
@@ -282,6 +283,37 @@ class ArbitraryTests {
 			ShrinkingSequence<String> sequence = value3to6.shrink(ignore -> false);
 			while (sequence.next(() -> {}, ignore -> {})) ;
 			assertThat(sequence.current().value()).isEqualTo("1:4");
+		}
+
+	}
+
+	@Group
+	class Collect {
+
+		@Example
+		void collectUntil() {
+			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3);
+			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
+			RandomGenerator<List<Integer>> generator = collected.generator(10);
+
+			assertAllGenerated(generator, value -> {
+				assertThat(sum(value)).isBetween(10, 12);
+				assertThat(value.size()).isBetween(4, 10);
+			});
+		}
+
+		@Example
+		@Disabled
+		void shrinkIndividualElements() {
+			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3);
+			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
+			RandomGenerator<List<Integer>> generator = collected.generator(10);
+
+			Assertions.fail("not yet tested");
+		}
+
+		private int sum(List<Integer> list) {
+			return list.stream().mapToInt(i -> i).sum();
 		}
 
 	}

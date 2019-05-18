@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.1.4-SNAPSHOT](#114-SNAPSHOT)
 - [1.1.3](#113)
 - [1.1.2](#112)
 - [1.1.1](#111)
@@ -28,6 +29,8 @@ and
 </p>
 
 - Upgrade to junit-platform 1.4.2
+- Added `Arbitrary.collect(Predicate<List<T>> until)` in order to
+  [collect values in a list](/docs/snapshot/user-guide.html#collecting-values-in-a-list)
 
 ## 1.1.3
 
