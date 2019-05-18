@@ -24,6 +24,6 @@ public class CollectGenerator<T> implements RandomGenerator<List<T>> {
 			base.add(shrinkable.value());
 			shrinkables.add(shrinkable);
 		}
-		return new CollectShrinkable(shrinkables, until, random.nextLong());
+		return new CollectShrinkable<>(shrinkables, until);
 	}
 }

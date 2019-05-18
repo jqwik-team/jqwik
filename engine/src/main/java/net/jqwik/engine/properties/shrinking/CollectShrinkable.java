@@ -10,13 +10,11 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 	private final List<T> value;
 	private final List<Shrinkable<T>> elements;
 	private final Predicate<List<T>> until;
-	private final long randomSeed;
 
-	public CollectShrinkable(List<Shrinkable<T>> elements, Predicate<List<T>> until, long randomSeed) {
+	public CollectShrinkable(List<Shrinkable<T>> elements, Predicate<List<T>> until) {
 		this.value = createValue(elements);
 		this.elements = elements;
 		this.until = until;
-		this.randomSeed = randomSeed;
 	}
 
 	@Override
@@ -33,11 +31,12 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 
 	@Override
 	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
+		// return new CollectShrinkingSequence(elements, until, falsifier)
 		return ShrinkingSequence.dontShrink(this);
 	}
 
 	@Override
 	public ShrinkingDistance distance() {
-		return ShrinkingDistance.of(0);
+		return ShrinkingDistance.forCollection(elements);
 	}
 }

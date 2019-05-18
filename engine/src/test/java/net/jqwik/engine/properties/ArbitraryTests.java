@@ -303,7 +303,7 @@ class ArbitraryTests {
 		}
 
 		@Example
-		@Disabled("How is shrinking of a collected list supposed to work?")
+		// TODO: Move to ArbitraryShrinkingTests
 		void shrinkIndividualElementsAndSize() {
 			Arbitrary<Integer> integersShrunkTowardMax =
 				Arbitraries
