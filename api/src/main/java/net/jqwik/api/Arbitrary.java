@@ -287,7 +287,7 @@ public interface Arbitrary<T> {
 	}
 
 	/**
-	 * Create a new arbitrary of type {@code List<T>} by adding elements of type T until condition {@code until} is fullfilled.
+	 * Create a new arbitrary of type {@code List<T>} by adding elements of type T until condition {@code until} is fulfilled.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.4")
 	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
