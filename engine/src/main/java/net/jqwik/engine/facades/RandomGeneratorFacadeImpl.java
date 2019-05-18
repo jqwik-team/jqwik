@@ -40,4 +40,9 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	public <T> RandomGenerator<T> unique(RandomGenerator<T> self) {
 		return new UniqueGenerator<>(self);
 	}
+
+	@Override
+	public <T> RandomGenerator<List<T>> collect(RandomGenerator<T> self, Predicate<List<T>> until) {
+		return new CollectGenerator<>(self, until);
+	}
 }

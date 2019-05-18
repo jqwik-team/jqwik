@@ -303,17 +303,23 @@ class ArbitraryTests {
 		}
 
 		@Example
-		void shrinkIndividualElements() {
-			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
-			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
+		@Disabled("How is shrinking of a collected list supposed to work?")
+		void shrinkIndividualElementsAndSize() {
+			Arbitrary<Integer> integersShrunkTowardMax =
+				Arbitraries
+					.integers()
+					.between(1, 3)
+					.map(i -> 4 - i);
+
+			Arbitrary<List<Integer>> collected = integersShrunkTowardMax.collect(list -> sum(list) >= 12);
 			RandomGenerator<List<Integer>> generator = collected.generator(10);
 
 			Shrinkable<List<Integer>> shrinkable = generator.next(new Random(43L));
-			assertThat(shrinkable.value()).containsExactly(2, 3, 1, 3, 1);
+			assertThat(shrinkable.value()).containsExactly(2, 1, 3, 1, 3, 3);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
 			while (sequence.next(() -> {}, ignore -> {})) ;
-			assertThat(sequence.current().value()).containsExactly(1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
+			assertThat(sequence.current().value()).containsExactly(3, 3, 3, 3);
 		}
 
 		private int sum(List<Integer> list) {

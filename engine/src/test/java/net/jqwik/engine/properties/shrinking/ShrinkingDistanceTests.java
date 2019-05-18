@@ -28,6 +28,8 @@ class ShrinkingDistanceTests {
 			assertThat(ShrinkingDistance.of(2, 1, 5, 4).compareTo(ShrinkingDistance.of(2, 1, 5, 4))).isEqualTo(0);
 			assertThat(ShrinkingDistance.of(2, 1, 5, 0).compareTo(ShrinkingDistance.of(2, 1, 5, 1))).isLessThan(0);
 
+			assertThat(ShrinkingDistance.of(2, 1).compareTo(ShrinkingDistance.of(1, 2))).isGreaterThan(0);
+			assertThat(ShrinkingDistance.of(1, 2).compareTo(ShrinkingDistance.of(2, 1))).isLessThan(0);
 		}
 
 		@Example

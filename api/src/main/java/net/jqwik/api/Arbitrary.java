@@ -42,8 +42,6 @@ public interface Arbitrary<T> {
 		public abstract <T> SizableArbitrary<Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
 
 		public abstract <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
-
-		public abstract <T> Arbitrary<List<T>> collect(Arbitrary<T> elementArbitrary, Predicate<List<T>> until);
 	}
 
 	/**
@@ -291,7 +289,7 @@ public interface Arbitrary<T> {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.4")
 	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
-		return ArbitraryFacade.implementation.collect(this, until);
+		return genSize -> Arbitrary.this.generator(genSize).collect(until);
 	}
 
 

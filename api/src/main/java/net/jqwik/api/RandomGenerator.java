@@ -30,6 +30,8 @@ public interface RandomGenerator<T> {
 		public abstract <T> RandomGenerator<T> withSamples(RandomGenerator<T> self, T[] samples);
 
 		public abstract <T> RandomGenerator<T> unique(RandomGenerator<T> self);
+
+		public abstract <T> RandomGenerator<List<T>> collect(RandomGenerator<T> tRandomGenerator, Predicate<List<T>> until);
 	}
 
 	/**
@@ -84,4 +86,10 @@ public interface RandomGenerator<T> {
 	default Stream<Shrinkable<T>> stream(Random random) {
 		return Stream.generate(() -> this.next(random));
 	}
+
+	default RandomGenerator<List<T>> collect(Predicate<List<T>> until) {
+		return RandomGeneratorFacade.implementation.collect(this, until);
+	}
+
+
 }

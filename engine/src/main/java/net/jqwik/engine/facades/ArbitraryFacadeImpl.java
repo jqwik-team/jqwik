@@ -44,9 +44,4 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	public <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
 		return new ArrayArbitrary<>(elementArbitrary, arrayClass);
 	}
-
-	@Override
-	public <T> Arbitrary<List<T>> collect(Arbitrary<T> elementArbitrary, Predicate<List<T>> until) {
-		return new CollectArbitrary<>(elementArbitrary, until);
-	}
 }
