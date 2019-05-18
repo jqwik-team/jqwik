@@ -1,4 +1,5 @@
 - Arbitrary.collect(Predicate<T> until)
+  - Shrinking
 
 - Shrinking towards target
 

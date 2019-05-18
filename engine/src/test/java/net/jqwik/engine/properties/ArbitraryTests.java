@@ -292,7 +292,7 @@ class ArbitraryTests {
 
 		@Example
 		void collectUntil() {
-			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3);
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
 			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
 			RandomGenerator<List<Integer>> generator = collected.generator(10);
 
@@ -303,13 +303,17 @@ class ArbitraryTests {
 		}
 
 		@Example
-		@Disabled
 		void shrinkIndividualElements() {
-			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3);
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
 			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
 			RandomGenerator<List<Integer>> generator = collected.generator(10);
 
-			Assertions.fail("not yet tested");
+			Shrinkable<List<Integer>> shrinkable = generator.next(new Random(43L));
+			assertThat(shrinkable.value()).containsExactly(2, 3, 1, 3, 1);
+
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+			while (sequence.next(() -> {}, ignore -> {})) ;
+			assertThat(sequence.current().value()).containsExactly(1, 1, 1, 1, 1, 1, 1, 1, 1, 1);
 		}
 
 		private int sum(List<Integer> list) {
