@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.1.3-SNAPSHOT
+title: jqwik User Guide - 1.1.4-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.3-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.4-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -54,6 +54,7 @@ title: jqwik User Guide - 1.1.3-SNAPSHOT
     - [Shuffling Permutations](#shuffling-permutations)
     - [Default Types](#default-types)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
+  - [Collecting Values in a List](#collecting-values-in-a-list)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
@@ -135,10 +136,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.4.1'
-ext.junitJupiterVersion = '5.4.1'
+ext.junitPlatformVersion = '1.4.2'
+ext.junitJupiterVersion = '5.4.2'
 
-ext.jqwikVersion = '1.1.3-SNAPSHOT'
+ext.jqwikVersion = '1.1.4-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -160,7 +161,7 @@ dependencies {
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.4.1")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.4.2")
 
     // Add any other test library you need...
     testCompile("org.assertj:assertj-core:3.9.1")
@@ -214,7 +215,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.1.3-SNAPSHOT</version>
+        <version>1.1.4-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -240,9 +241,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.1.3-SNAPSHOT.jar`
-- `junit-platform-engine-1.4.1.jar`
-- `junit-platform-commons-1.4.1.jar`
+- `jqwik-1.1.4-SNAPSHOT.jar`
+- `junit-platform-engine-1.4.2.jar`
+- `junit-platform-commons-1.4.2.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -291,7 +292,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.1.3-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.1.4-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1044,6 +1045,22 @@ an `Arbitrary` instance for the generic type. You can create the corresponding c
 - [`Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
 - [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional--)
 
+### Collecting Values in a List
+
+If you do not want any random combination of values in your list - as 
+can be done with `Arbitrary.list()` - you have the possibility to collect random values
+in a list until a certain condition is fulfilled. 
+[`Arbitrary.collect(Predicate condition)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#collect-java.util.function.Predicate-)
+is what you need in those cases.
+
+Imagine you need a list of integers the sum of which should be at least `1000`.
+Here's how you could do that:
+
+```java
+Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000);
+```
+
 ### Fluent Configuration Interfaces
 
 Most specialized arbitrary interfaces provide special methods to configure things
@@ -1215,6 +1232,7 @@ Arbitrary<Tuple3<String, Integer, Integer>> stringWithBeginEnd() {
 
 Mind the nested flat mapping, which is an aesthetic nuisance but nevertheless
 very useful. 
+
 
 ### Randomly Choosing among Arbitraries
 
@@ -2671,4 +2689,4 @@ reportOnlyFailures = false          # Set to true if only falsified properties s
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#113-snapshot).
+Read this version's [release notes](/release-notes.html#114-snapshot).
