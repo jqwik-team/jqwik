@@ -84,26 +84,58 @@ class CollectShrinkableTests {
 		assertThat(counter.get()).isEqualTo(1);
 	}
 
-//
-//	@Example
-//	void reportFalsifier() {
-//		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
-//		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
-//
-//		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
-//
-//		assertThat(sequence.next(count, reporter)).isTrue();
-//		assertThat(sequence.current().value()).isEqualTo(3);
-//		verify(valueReporter, never()).accept(3);
-//
-//		assertThat(sequence.next(count, reporter)).isTrue();
-//		assertThat(sequence.current().value()).isEqualTo(1);
-//		verify(valueReporter).accept(1);
-//
-//		assertThat(sequence.next(count, reporter)).isTrue();
-//		assertThat(sequence.next(count, reporter)).isFalse();
-//
-//		verifyNoMoreInteractions(valueReporter);
-//	}
+	@Example
+	void shrinkingWithSizeReduction() {
+		Shrinkable<Integer> shrinkable1 = new OneStepShrinkable(2).map(i -> 3 - i);
+
+		List<Shrinkable<Integer>> shrinkables = Arrays.asList(shrinkable1, shrinkable1, shrinkable1, shrinkable1, shrinkable1, shrinkable1);
+
+		Predicate<List<Integer>> sumAtLeast6 = l -> {
+			int sum = l.stream().mapToInt(i -> i).sum();
+			return sum >= 6;
+		};
+		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, sumAtLeast6);
+
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(2, 1, 1, 1, 1);
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(3, 1, 1, 1);
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(3, 2, 1);
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(3, 3);
+		assertThat(sequence.next(count, reporter)).isFalse();
+
+		assertThat(counter.get()).isEqualTo(4);
+	}
+
+
+	@Example
+	void reportFalsifier() {
+		Shrinkable<Integer> shrinkable3 = new OneStepShrinkable(3);
+
+		List<Shrinkable<Integer>> shrinkables = Arrays.asList(shrinkable3);
+
+		Predicate<List<Integer>> untilNotEmpty = l -> !l.isEmpty();
+		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilNotEmpty);
+
+
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(2);
+		verify(valueReporter).accept(Arrays.asList(2));
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(1);
+		verify(valueReporter).accept(Arrays.asList(1));
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(0);
+		verify(valueReporter).accept(Arrays.asList(0));
+		assertThat(sequence.next(count, reporter)).isFalse();
+
+		verifyNoMoreInteractions(valueReporter);
+	}
 
 }
