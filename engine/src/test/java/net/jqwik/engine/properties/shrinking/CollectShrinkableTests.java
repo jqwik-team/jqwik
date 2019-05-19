@@ -37,15 +37,45 @@ class CollectShrinkableTests {
 	}
 
 	@Example
-	void shrinkSizeFirst() {
+	void shrinkingWithoutSizeReduction() {
+		Shrinkable<Integer> shrinkable4 = new OneStepShrinkable(3);
 		Shrinkable<Integer> shrinkable1 = new OneStepShrinkable(1);
 
-		List<Shrinkable<Integer>> shrinkables = Arrays.asList(shrinkable1, shrinkable1, shrinkable1, shrinkable1);
+		List<Shrinkable<Integer>> shrinkables = Arrays.asList(shrinkable4, shrinkable1);
 
 		Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
 		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(2, 1);
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(1, 1);
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(0, 1);
+		assertThat(sequence.next(count, reporter)).isTrue();
+		assertThat(sequence.current().value()).containsExactly(0, 0);
+		assertThat(sequence.next(count, reporter)).isFalse();
+
+		assertThat(counter.get()).isEqualTo(4);
+	}
+
+	@Example
+	void shrinkingWithoutSizeReductionButNotAllShrinkingStepsWork() {
+		Shrinkable<Integer> shrinkable4 = new FullShrinkable(5);
+		Shrinkable<Integer> shrinkable1 = new FullShrinkable(1);
+
+		List<Shrinkable<Integer>> shrinkables = Arrays.asList(shrinkable4, shrinkable1);
+
+		Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
+		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
+
+		Falsifier<List<Integer>> sumMustNotBeEven = listOfInts -> {
+			int sum = listOfInts.stream().mapToInt(i -> i).sum();
+			return sum % 2 != 0;
+		};
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(sumMustNotBeEven);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(1, 1);

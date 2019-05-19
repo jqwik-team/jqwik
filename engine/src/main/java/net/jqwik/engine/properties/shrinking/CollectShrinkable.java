@@ -31,8 +31,7 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 
 	@Override
 	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
-		// return new CollectShrinkingSequence(elements, until, falsifier)
-		return ShrinkingSequence.dontShrink(this);
+		return new CollectShrinkingSequence<>(elements, until, falsifier);
 	}
 
 	@Override
