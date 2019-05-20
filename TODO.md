@@ -1,6 +1,3 @@
-- Arbitrary.collect(Predicate<T> until)
-  - Shrinking
-
 - Shrinking towards target
 
     - [Number]Arbitrary.shrinkTowards(T extends Number target)

@@ -31,15 +31,16 @@ class CollectShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	}
 
 	private List<Shrinkable<T>> collectShrinkables(int replaceIndex, Shrinkable<T> replaceShrinkable) {
-		int i = 0;
 		List<Shrinkable<T>> collectedShrinkables = new ArrayList<>();
-		while(!until.test(toValues(collectedShrinkables)) && i < elements.size()) {
+		for (int i = 0; i < elements.size(); i++) {
+			if (until.test(toValues(collectedShrinkables))) {
+				break;
+			}
 			Shrinkable<T> shrinkable = elements.get(i);
 			if (i == replaceIndex) {
 				shrinkable = replaceShrinkable;
 			}
 			collectedShrinkables.add(shrinkable);
-			i++;
 		}
 		return collectedShrinkables;
 	}
@@ -49,17 +50,8 @@ class CollectShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	}
 
 	private List<T> collectValues(int replaceIndex, T replaceValue) {
-		int i = 0;
-		List<T> collectedValues = new ArrayList<>();
-		while(!until.test(collectedValues) && i < elements.size()) {
-			T value = elements.get(i).value();
-			if (i == replaceIndex) {
-				value = replaceValue;
-			}
-			collectedValues.add(value);
-			i++;
-		}
-		return collectedValues;
+		Shrinkable<T> replaceShrinkable = Shrinkable.unshrinkable(replaceValue);
+		return toValues(collectShrinkables(replaceIndex, replaceShrinkable));
 	}
 
 	@Override
@@ -68,19 +60,12 @@ class CollectShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 			if (currentShrinkingSequence == null) {
 				currentShrinkingSequence = getShrinkingSequence(currentShrinkingIndex);
 			}
-			Consumer<FalsificationResult<T>> elementReporter = elementResult -> {
-				FalsificationResult<List<T>> listResult = elementResult.map(
-					shrinkable -> new CollectShrinkable<>(collectShrinkables(currentShrinkingIndex, shrinkable), until));
-				falsifiedReporter.accept(listResult);
-			};
+			Consumer<FalsificationResult<T>> elementReporter = createElementReporter(falsifiedReporter, currentShrinkingIndex);
 			boolean next = currentShrinkingSequence.next(count, elementReporter);
 			if (next) {
 				elements = collectShrinkables(currentShrinkingIndex, currentShrinkingSequence.current().shrinkable());
-
-				current =
-					currentShrinkingSequence
-						.current()
-						.map(shrinkable -> new CollectShrinkable<>(elements, until));
+				current = currentShrinkingSequence.current()
+												  .map(shrinkable -> new CollectShrinkable<>(elements, until));
 			} else {
 				currentShrinkingSequence = null;
 				currentShrinkingIndex++;
@@ -89,6 +74,19 @@ class CollectShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 			return true;
 		}
 		return false;
+	}
+
+	private Consumer<FalsificationResult<T>> createElementReporter(
+		Consumer<FalsificationResult<List<T>>> falsifiedReporter,
+		int elementIndex
+	) {
+		return elementResult -> {
+			FalsificationResult<List<T>> listResult = elementResult.map(
+				shrinkable -> {
+					return new CollectShrinkable<>(collectShrinkables(elementIndex, shrinkable), until);
+				});
+			falsifiedReporter.accept(listResult);
+		};
 	}
 
 	@Override
