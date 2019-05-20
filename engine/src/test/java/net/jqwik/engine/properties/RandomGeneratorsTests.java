@@ -230,7 +230,8 @@ class RandomGeneratorsTests {
 		private Shrinkable<Integer> createShrinkableInt(int value) {
 			return new ShrinkableBigInteger(
 				valueOf(value),
-				Range.of(valueOf(0), valueOf(1000))
+				Range.of(valueOf(0), valueOf(1000)),
+				BigInteger.ZERO
 			).map(BigInteger::intValueExact);
 		}
 	}

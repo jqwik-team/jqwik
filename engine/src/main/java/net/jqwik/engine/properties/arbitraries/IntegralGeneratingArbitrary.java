@@ -42,9 +42,13 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 		List<Shrinkable<BigInteger>> edgeCases =
 			Arrays.stream(edgeCases()) //
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
-				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max))) //
+				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt))) //
 				  .collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, partitionPoints).withEdgeCases(genSize, edgeCases);
+	}
+
+	private BigInteger shrinkingTarget(BigInteger anInt) {
+		return ShrinkableBigInteger.defaultShrinkingTarget(anInt, Range.of(min, max));
 	}
 
 	private BigInteger[] edgeCases() {

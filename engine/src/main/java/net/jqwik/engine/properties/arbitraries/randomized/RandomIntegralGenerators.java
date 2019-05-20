@@ -64,7 +64,11 @@ public class RandomIntegralGenerators {
 				BigInteger rawValue = new BigInteger(bits, random);
 				BigInteger value = rawValue.add(minGenerate);
 				if (value.compareTo(minGenerate) >= 0 && value.compareTo(maxGenerate) <= 0) {
-					return new ShrinkableBigInteger(value, shrinkingRange);
+					return new ShrinkableBigInteger(
+						value,
+						shrinkingRange,
+						ShrinkableBigInteger.defaultShrinkingTarget(value, shrinkingRange)
+					);
 				}
 			}
 		};
@@ -76,7 +80,11 @@ public class RandomIntegralGenerators {
 		return random -> {
 			int bound = Math.abs(_max - _min) + 1;
 			int value = random.nextInt(bound >= 0 ? bound : Integer.MAX_VALUE) + _min;
-			return new ShrinkableBigInteger(BigInteger.valueOf(value), shrinkingRange);
+			return new ShrinkableBigInteger(
+				BigInteger.valueOf(value),
+				shrinkingRange,
+				ShrinkableBigInteger.defaultShrinkingTarget(BigInteger.valueOf(value), shrinkingRange)
+			);
 		};
 	}
 
