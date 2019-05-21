@@ -49,25 +49,37 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Byte> bytes(byte min, byte max) {
-		return bigIntegers(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::byteValueExact);
+		BigInteger min1 = BigInteger.valueOf(min);
+		BigInteger max1 = BigInteger.valueOf(max);
+		return bigIntegers(min1, max1, defaultShrinkingTargetCalculator(min1, max1)).map(BigInteger::byteValueExact);
 	}
 
 	public static RandomGenerator<Short> shorts(short min, short max) {
-		return bigIntegers(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::shortValueExact);
+		BigInteger min1 = BigInteger.valueOf(min);
+		BigInteger max1 = BigInteger.valueOf(max);
+		return bigIntegers(min1, max1, defaultShrinkingTargetCalculator(min1, max1)).map(BigInteger::shortValueExact);
 	}
 
 	public static RandomGenerator<Integer> integers(int min, int max) {
-		return bigIntegers(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::intValueExact);
+		BigInteger min1 = BigInteger.valueOf(min);
+		BigInteger max1 = BigInteger.valueOf(max);
+		return bigIntegers(min1, max1, defaultShrinkingTargetCalculator(min1, max1)).map(BigInteger::intValueExact);
 	}
 
 	public static RandomGenerator<Long> longs(long min, long max) {
-		return bigIntegers(BigInteger.valueOf(min), BigInteger.valueOf(max)).map(BigInteger::longValueExact);
+		BigInteger min1 = BigInteger.valueOf(min);
+		BigInteger max1 = BigInteger.valueOf(max);
+		return bigIntegers(min1, max1, defaultShrinkingTargetCalculator(min1, max1)).map(BigInteger::longValueExact);
 	}
 
 	public static RandomGenerator<BigInteger> bigIntegers(
-		BigInteger min, BigInteger max, BigInteger... partitionPoints
+		BigInteger min,
+		BigInteger max,
+		Function<BigInteger, BigInteger> shrinkingTargetCalculator,
+		BigInteger... partitionPoints
 	) {
-		return RandomIntegralGenerators.bigIntegers(Range.of(min, max), partitionPoints);
+		Range<BigInteger> range = Range.of(min, max);
+		return RandomIntegralGenerators.bigIntegers(range, partitionPoints, shrinkingTargetCalculator);
 	}
 
 	public static RandomGenerator<Double> doubles(double min, double max, int scale) {
@@ -241,4 +253,15 @@ public class RandomGenerators {
 		return Math.min(offset + minSize, maxSize);
 	}
 
+	public static Function<BigInteger, BigInteger> defaultShrinkingTargetCalculator(BigInteger min, BigInteger max) {
+		return value -> ShrinkableBigInteger.defaultShrinkingTarget(value, Range.of(min, max));
+	}
+
+	// TODO: This could be way more sophisticated
+	public static BigInteger[] calculateDefaultPartitionPoints(int tries, BigInteger min, BigInteger max) {
+		int partitionPoint = Math.max(tries / 2, 10);
+		BigInteger upperPartitionPoint = BigInteger.valueOf(partitionPoint).min(max);
+		BigInteger lowerPartitionPoint = BigInteger.valueOf(partitionPoint).negate().max(min);
+		return new BigInteger[]{lowerPartitionPoint, upperPartitionPoint};
+	}
 }
