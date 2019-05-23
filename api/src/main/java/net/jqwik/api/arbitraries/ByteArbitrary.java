@@ -13,19 +13,24 @@ import static org.apiguardian.api.API.Status.*;
 public interface ByteArbitrary extends Arbitrary<Byte> {
 
 	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (includedI bounder of generated numbers.
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounds of generated numbers.
 	 */
 	default ByteArbitrary between(byte min, byte max) {
 		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
 	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated numbers.
+	 * Set the allowed lower {@code min} (included) bound of generated numbers.
 	 */
 	ByteArbitrary greaterOrEqual(byte min);
 
 	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated numbers.
+	 * Set the allowed upper {@code max} (included) bound of generated numbers.
 	 */
 	ByteArbitrary lessOrEqual(byte max);
+
+	/**
+	 * Set shrinking target to {@code target} which must be between the allowed bounds.
+	 */
+	Arbitrary<Byte> shrinkTowards(int target);
 }

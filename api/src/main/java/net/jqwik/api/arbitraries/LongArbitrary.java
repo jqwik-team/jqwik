@@ -13,24 +13,24 @@ import static org.apiguardian.api.API.Status.*;
 public interface LongArbitrary extends Arbitrary<Long> {
 
 	/**
-	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.
+	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounds of generated numbers.
 	 */
 	default LongArbitrary between(long min, long max) {
 		return greaterOrEqual(min).lessOrEqual(max);
 	}
 
 	/**
-	 * Set the allowed lower {@code min} (included) bounder of generated numbers.
+	 * Set the allowed lower {@code min} (included) bound of generated numbers.
 	 */
 	LongArbitrary greaterOrEqual(long min);
 
 	/**
-	 * Set the allowed upper {@code max} (included) bounder of generated numbers.
+	 * Set the allowed upper {@code max} (included) bound of generated numbers.
 	 */
 	LongArbitrary lessOrEqual(long max);
 
 	/**
-	 * Set shrinking target to {@code target} which must be between the allowed bounders.
+	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 */
 	LongArbitrary shrinkTowards(long target);
 }

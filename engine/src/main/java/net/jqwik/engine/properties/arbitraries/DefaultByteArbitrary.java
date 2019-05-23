@@ -41,4 +41,11 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 		return clone;
 	}
 
+	@Override
+	public Arbitrary<Byte> shrinkTowards(int target) {
+		DefaultByteArbitrary clone = typedClone();
+		clone.generatingArbitrary.shrinkingTarget = BigInteger.valueOf(target);
+		return clone;
+	}
+
 }
