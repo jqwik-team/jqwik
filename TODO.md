@@ -1,6 +1,8 @@
 - Shrinking towards target
 
-    - [Number]Arbitrary.shrinkTowards(T extends Number target)
+    - [Short|Byte|Integer|BigInteger]Arbitrary.shrinkTowards(T extends Number target)
+    
+    - [Float|Double|Decimal]Arbitrary.shrinkTowards(T extends Number target)
     
     - @[Number]Range(shrinkingTarget=target)
 

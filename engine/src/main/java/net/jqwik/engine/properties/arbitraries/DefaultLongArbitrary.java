@@ -41,4 +41,11 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 		return clone;
 	}
 
+	@Override
+	public LongArbitrary shrinkTowards(long target) {
+		DefaultLongArbitrary clone = typedClone();
+		clone.generatingArbitrary.shrinkingTarget = BigInteger.valueOf(target);
+		return clone;
+	}
+
 }

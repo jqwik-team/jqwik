@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -15,10 +16,12 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	BigInteger min;
 	BigInteger max;
+	BigInteger shrinkingTarget;
 
 	IntegralGeneratingArbitrary(BigInteger defaultMin, BigInteger defaultMax) {
 		this.min = defaultMin;
 		this.max = defaultMax;
+		this.shrinkingTarget = null;
 	}
 
 	@Override
@@ -44,12 +47,20 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
 				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt))) //
 				  .collect(Collectors.toList());
-		return RandomGenerators.bigIntegers(min, max, RandomGenerators.defaultShrinkingTargetCalculator(min, max), partitionPoints)
+		return RandomGenerators.bigIntegers(min, max, shrinkingTargetCalculator(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases);
 	}
 
+	private Function<BigInteger, BigInteger> shrinkingTargetCalculator() {
+		if (shrinkingTarget == null) {
+			return RandomGenerators.defaultShrinkingTargetCalculator(min, max);
+		} else {
+			return ignore -> shrinkingTarget;
+		}
+	}
+
 	private BigInteger shrinkingTarget(BigInteger anInt) {
-		return ShrinkableBigInteger.defaultShrinkingTarget(anInt, Range.of(min, max));
+		return shrinkingTargetCalculator().apply(anInt);
 	}
 
 	private BigInteger[] edgeCases() {

@@ -28,4 +28,9 @@ public interface LongArbitrary extends Arbitrary<Long> {
 	 * Set the allowed upper {@code max} (included) bounder of generated numbers.
 	 */
 	LongArbitrary lessOrEqual(long max);
+
+	/**
+	 * Set shrinking target to {@code target} which must be between the allowed bounders.
+	 */
+	LongArbitrary shrinkTowards(long target);
 }
