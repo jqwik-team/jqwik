@@ -35,6 +35,7 @@ and
   ByteArbitrary, ShortArbitrary, IntegerArbitrary, LongArbitrary, BigIntegerArbitrary
   in order to [change the shrinking target](/docs/1.1.4/user-guide.html#change-the-shrinking-target)
 - Upgrade Gradle to 5.4.2
+- Improved shrinking of collections
 
 ## 1.1.3
 
