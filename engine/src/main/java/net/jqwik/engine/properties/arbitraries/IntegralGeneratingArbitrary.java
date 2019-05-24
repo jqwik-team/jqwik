@@ -43,12 +43,24 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
 		List<Shrinkable<BigInteger>> edgeCases =
-			Arrays.stream(edgeCases()) //
-				  .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
-				  .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt))) //
-				  .collect(Collectors.toList());
+			streamEdgeCases()
+				.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
+				.map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt))) //
+				.collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, shrinkingTargetCalculator(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases);
+	}
+
+	private Stream<BigInteger> streamEdgeCases() {
+		BigInteger[] literalEdgeCases = new BigInteger[]{
+			valueOf(-10), valueOf(-5), valueOf(-4), valueOf(-3), valueOf(-2), valueOf(-1),
+			BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, // more weight for 0
+			valueOf(10), valueOf(5), valueOf(4), valueOf(3), valueOf(2), valueOf(1),
+			min, max
+		};
+		return shrinkingTarget == null
+				   ? Arrays.stream(literalEdgeCases)
+				   : Stream.concat(Stream.of(shrinkingTarget), Arrays.stream(literalEdgeCases));
 	}
 
 	private Function<BigInteger, BigInteger> shrinkingTargetCalculator() {
@@ -61,15 +73,6 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	private BigInteger shrinkingTarget(BigInteger anInt) {
 		return shrinkingTargetCalculator().apply(anInt);
-	}
-
-	private BigInteger[] edgeCases() {
-		return new BigInteger[]{
-			valueOf(-10), valueOf(-5), valueOf(-4), valueOf(-3), valueOf(-2), valueOf(-1),
-			BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, // more weight for 0
-			valueOf(10), valueOf(5), valueOf(4), valueOf(3), valueOf(2), valueOf(1),
-			min, max
-		};
 	}
 
 	class RangeIterator implements Iterator<BigInteger> {

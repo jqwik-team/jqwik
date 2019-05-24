@@ -40,4 +40,11 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 		clone.generatingArbitrary.max = (max == null ? DEFAULT_MAX : max);
 		return clone;
 	}
+
+	@Override
+	public Arbitrary<BigInteger> shrinkTowards(BigInteger target) {
+		DefaultBigIntegerArbitrary clone = typedClone();
+		clone.generatingArbitrary.shrinkingTarget = target;
+		return clone;
+	}
 }

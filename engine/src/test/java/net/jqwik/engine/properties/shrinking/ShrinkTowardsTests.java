@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.math.*;
 import java.util.*;
 
 import org.assertj.core.api.*;
@@ -9,17 +10,24 @@ import net.jqwik.engine.properties.*;
 
 class ShrinkTowardsTests {
 
-	@Example
-	void bytes(@ForAll Random random) {
-		Arbitrary<Byte> bytes = Arbitraries.bytes().shrinkTowards(50);
+	@Property(tries = 50)
+	void bytes(@ForAll Random random, @ForAll byte target) {
+		Arbitrary<Byte> bytes = Arbitraries.bytes().shrinkTowards(target);
 		byte shrunkValue = ArbitraryTestHelper.shrinkToEnd(bytes, random);
-		Assertions.assertThat(shrunkValue).isEqualTo((byte) 50);
+		Assertions.assertThat(shrunkValue).isEqualTo(target);
 	}
 
-	@Example
-	void longs(@ForAll Random random) {
-		Arbitrary<Long> longs = Arbitraries.longs().shrinkTowards(50);
+	@Property(tries = 50)
+	void longs(@ForAll Random random, @ForAll long target) {
+		Arbitrary<Long> longs = Arbitraries.longs().shrinkTowards(target);
 		long shrunkValue = ArbitraryTestHelper.shrinkToEnd(longs, random);
-		Assertions.assertThat(shrunkValue).isEqualTo(50);
+		Assertions.assertThat(shrunkValue).isEqualTo(target);
+	}
+
+	@Property(tries = 50)
+	void bigIntegers(@ForAll Random random, @ForAll BigInteger target) {
+		Arbitrary<BigInteger> bigs = Arbitraries.bigIntegers().shrinkTowards(target);
+		BigInteger shrunkValue = ArbitraryTestHelper.shrinkToEnd(bigs, random);
+		Assertions.assertThat(shrunkValue).isEqualTo(target);
 	}
 }

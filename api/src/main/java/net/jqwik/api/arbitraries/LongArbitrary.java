@@ -32,5 +32,6 @@ public interface LongArbitrary extends Arbitrary<Long> {
 	/**
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.1.4")
 	LongArbitrary shrinkTowards(long target);
 }

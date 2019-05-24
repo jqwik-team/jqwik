@@ -32,5 +32,6 @@ public interface ByteArbitrary extends Arbitrary<Byte> {
 	/**
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 */
+	@API(status = EXPERIMENTAL, since = "1.1.4")
 	Arbitrary<Byte> shrinkTowards(int target);
 }

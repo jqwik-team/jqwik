@@ -463,10 +463,12 @@ class ArbitrariesTests {
 		void integralEdgeCasesAreGenerated() {
 			BigInteger min = valueOf(Integer.MIN_VALUE);
 			BigInteger max = valueOf(Integer.MAX_VALUE);
-			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(min, max);
+			BigInteger shrinkingTarget = valueOf(101);
+			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(min, max).shrinkTowards(shrinkingTarget);
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1000);
 			assertAtLeastOneGeneratedOf(
 				generator,
+				shrinkingTarget,
 				valueOf(-10), valueOf(-5), valueOf(-4), valueOf(-3), valueOf(-2), valueOf(-1),
 				valueOf(0),
 				valueOf(1), valueOf(2), valueOf(3), valueOf(4), valueOf(5), valueOf(10),

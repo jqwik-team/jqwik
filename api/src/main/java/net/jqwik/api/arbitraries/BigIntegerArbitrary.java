@@ -30,4 +30,10 @@ public interface BigIntegerArbitrary extends Arbitrary<BigInteger> {
 	 * Set the allowed upper {@code max} (included) bounder of generated numbers.
 	 */
 	BigIntegerArbitrary lessOrEqual(BigInteger max);
+
+	/**
+	 * Set shrinking target to {@code target} which must be between the allowed bounds.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.4")
+	Arbitrary<BigInteger> shrinkTowards(BigInteger target);
 }
