@@ -18,6 +18,20 @@ class ShrinkTowardsTests {
 	}
 
 	@Property(tries = 50)
+	void shorts(@ForAll Random random, @ForAll short target) {
+		Arbitrary<Short> shorts = Arbitraries.shorts().shrinkTowards(target);
+		short shrunkValue = ArbitraryTestHelper.shrinkToEnd(shorts, random);
+		Assertions.assertThat(shrunkValue).isEqualTo(target);
+	}
+
+	@Property(tries = 50)
+	void integers(@ForAll Random random, @ForAll int target) {
+		Arbitrary<Integer> integers = Arbitraries.integers().shrinkTowards(target);
+		int shrunkValue = ArbitraryTestHelper.shrinkToEnd(integers, random);
+		Assertions.assertThat(shrunkValue).isEqualTo(target);
+	}
+
+	@Property(tries = 50)
 	void longs(@ForAll Random random, @ForAll long target) {
 		Arbitrary<Long> longs = Arbitraries.longs().shrinkTowards(target);
 		long shrunkValue = ArbitraryTestHelper.shrinkToEnd(longs, random);

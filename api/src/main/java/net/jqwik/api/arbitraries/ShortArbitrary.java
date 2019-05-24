@@ -28,4 +28,10 @@ public interface ShortArbitrary extends Arbitrary<Short> {
 	 * Set the allowed upper {@code max} (included) bounder of generated numbers.
 	 */
 	ShortArbitrary lessOrEqual(short max);
+
+	/**
+	 * Set shrinking target to {@code target} which must be between the allowed bounds.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.4")
+	Arbitrary<Short> shrinkTowards(short target);
 }

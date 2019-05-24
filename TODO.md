@@ -1,6 +1,6 @@
 - Shrinking towards target
 
-    - [Short|Byte|Integer|BigInteger]Arbitrary.shrinkTowards(T extends Number target)
+    - Documentation for `shrinkTowards()`
     
     - [Float|Double|Decimal]Arbitrary.shrinkTowards(T extends Number target)
     

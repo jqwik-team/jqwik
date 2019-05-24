@@ -41,4 +41,11 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 		return clone;
 	}
 
+	@Override
+	public Arbitrary<Short> shrinkTowards(short target) {
+		DefaultShortArbitrary clone = typedClone();
+		clone.generatingArbitrary.shrinkingTarget = BigInteger.valueOf(target);
+		return clone;
+	}
+
 }
