@@ -8,6 +8,7 @@ class ShrinkingTargetExamples {
 
 	@Property
 	boolean shrinkAllSignalsToFrequency50(@ForAll("signals") List<Signal> signalStream) {
+		Statistics.collect(signalStream.size());
 		return signalStream.size() < 10;
 	}
 
@@ -17,7 +18,7 @@ class ShrinkingTargetExamples {
 			Arbitraries
 				.longs()
 				.between(45, 55)
-				.shrinkTowards(50);
+				.shrinkTowards(50L);
 
 		return frequencies.map(f -> Signal.withFrequency(f)).list().ofMaxSize(1000);
 	}
