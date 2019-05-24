@@ -1958,6 +1958,36 @@ can try
 to tell _jqwik_ to go all the way, even if it takes a million steps,
 even if it never ends...
 
+### Change the Shrinking Target
+
+By default shrinking of numbers will move towards zero (0). 
+If zero is outside the bounds of generation the closest number to zero 
+- either the min or max value - is used as a target for shrinking.
+There are cases, however, when you'd like _jqwik_ to choose a different 
+shrinking target, usually when the default value of a number is not 0. 
+
+Consider generating signals with a standard frequency of 50 hz that can vary by
+plus/minus 5 hz. If possible, shrinking of falsified scenarios should move
+towards the standard frequency. Here's how the provider method might look:
+
+```java
+@Provide
+Arbitrary<List<Signal>> signals() {
+	Arbitrary<Long> frequencies = 
+	    Arbitraries
+            .longs()
+            .between(45, 55)
+            .shrinkTowards(50);
+
+	return frequencies.map(f -> Signal.withFrequency(f)).list().ofMaxSize(1000);
+}
+```
+
+Currently shrinking targets are only supported for integral numbers, i.e.,
+bytes, shorts, integers, longs and BigIntegers.
+
+
+
 ## Collecting and Reporting Statistics
 
 In many situations you'd like to know if _jqwik_ will really generate

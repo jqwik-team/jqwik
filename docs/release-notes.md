@@ -31,8 +31,9 @@ and
 - Upgrade to junit-platform 1.4.2
 - Added `Arbitrary.collect(Predicate<List<T>> until)` in order to
   [collect values in a list](/docs/snapshot/user-guide.html#collecting-values-in-a-list)
-- Added `shrinkTowards(value)` for all integral number arbitraries: 
-  ByteArbitrary, ShortArbitrary, IntegerArbitrary, LongArbitrary, BigIntegerArbitrary 
+- Added `shrinkTowards(value)` to all integral number arbitraries: 
+  ByteArbitrary, ShortArbitrary, IntegerArbitrary, LongArbitrary, BigIntegerArbitrary
+  in order to [change the shrinking target](/docs/snapshot/user-guide.html#change-the-shrinking-target) 
 
 ## 1.1.3
 

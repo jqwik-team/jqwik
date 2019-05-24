@@ -1,7 +1,5 @@
 - Shrinking towards target
 
-    - Documentation for `shrinkTowards()`
-    
     - [Float|Double|Decimal]Arbitrary.shrinkTowards(T extends Number target)
     
     - @[Number]Range(shrinkingTarget=target)
