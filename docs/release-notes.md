@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.1.4-SNAPSHOT](#114-snapshot)
+- [1.1.4](#114)
 - [1.1.3](#113)
 - [1.1.2](#112)
 - [1.1.1](#111)
@@ -20,20 +20,21 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.1.4-SNAPSHOT
+## 1.1.4
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.1.4/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.1.4/javadoc/index.html">javadoc</a>
 </p>
 
 - Upgrade to junit-platform 1.4.2
 - Added `Arbitrary.collect(Predicate<List<T>> until)` in order to
-  [collect values in a list](/docs/snapshot/user-guide.html#collecting-values-in-a-list)
+  [collect values in a list](/docs/1.1.4/user-guide.html#collecting-values-in-a-list)
 - Added `shrinkTowards(value)` to all integral number arbitraries: 
   ByteArbitrary, ShortArbitrary, IntegerArbitrary, LongArbitrary, BigIntegerArbitrary
-  in order to [change the shrinking target](/docs/snapshot/user-guide.html#change-the-shrinking-target) 
+  in order to [change the shrinking target](/docs/1.1.4/user-guide.html#change-the-shrinking-target)
+- Upgrade Gradle to 5.4.2
 
 ## 1.1.3
 
