@@ -44,6 +44,12 @@ class ShrinkableBigDecimalTests {
 		assertThat(createShrinkableBigDecimal("25.23", Range.of(20.0, 100.0)).distance())
 			.isEqualTo(ShrinkingDistance.of(5, 23));
 
+		assertThat(createShrinkableBigDecimal("25.23", Range.of(24.5, 100.0)).distance())
+			.isEqualTo(ShrinkingDistance.of(0, 73));
+
+		assertThat(createShrinkableBigDecimal("-25.23", Range.of(-100.0, -24.5)).distance())
+			.isEqualTo(ShrinkingDistance.of(0, 73));
+
 		assertThat(createShrinkableBigDecimal("-52.32", Range.of(-100.0, 100.0)).distance())
 			.isEqualTo(ShrinkingDistance.of(52, 32));
 
@@ -56,6 +62,15 @@ class ShrinkableBigDecimalTests {
 		assertThat(createShrinkableBigDecimal("2222222222.1111111111", Range.of(-10000000000.0, 10000000000.0)).distance())
 			.isEqualTo(ShrinkingDistance.of(2222222222L, 1111111111L));
 
+	}
+
+	@Example
+	void shrinkingDistanceWithExplicitShrinkingTarget() {
+		assertThat(createShrinkableBigDecimal("25.23", Range.of(-100.0, 100.0), new BigDecimal("23.5")).distance())
+			.isEqualTo(ShrinkingDistance.of(1, 73));
+
+		assertThat(createShrinkableBigDecimal("-25.23", Range.of(-100.0, 100.0), new BigDecimal("-10.1")).distance())
+			.isEqualTo(ShrinkingDistance.of(15, 13));
 	}
 
 	@Example
@@ -124,10 +139,30 @@ class ShrinkableBigDecimalTests {
 		assertThat(shrunkValue).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.ZERO));
 	}
 
+	@Property
+	void shrinkToExplicitShrinkingTarget(
+		@ForAll @BigRange(min = "-1000", max = "1000") BigDecimal aValue,
+		@ForAll @BigRange(min = "-100", max = "100") BigDecimal shrinkingTarget
+	) {
+		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000.0, 1000.0), shrinkingTarget);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(ignore -> false);
+		while(sequence.next(count, reporter));
+		BigDecimal shrunkValue = sequence.current().value();
+		// Allow offset to max 1.0 because decimals are shrunk away if possible
+		Offset<BigDecimal> allowedOffset = Offset.offset(new BigDecimal(1));
+		assertThat(shrunkValue).isCloseTo(shrinkingTarget, allowedOffset);
+	}
+
 	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange) {
 		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
 		BigDecimal value = new BigDecimal(numberString);
 		return new ShrinkableBigDecimal(value, bigDecimalRange, value.scale());
+	}
+
+	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange, BigDecimal shrinkingTarget) {
+		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
+		BigDecimal value = new BigDecimal(numberString);
+		return new ShrinkableBigDecimal(value, bigDecimalRange, value.scale(), shrinkingTarget);
 	}
 
 }

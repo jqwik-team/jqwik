@@ -15,10 +15,14 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 	private final BigDecimalShrinkingCandidates shrinkingCandidates;
 
 	public ShrinkableBigDecimal(BigDecimal value, Range<BigDecimal> range, int scale) {
+		this(value, range, scale, determineTarget(range, value));
+	}
+
+	public ShrinkableBigDecimal(BigDecimal value, Range<BigDecimal> range, int scale, BigDecimal shrinkingTarget) {
 		super(value);
 		this.range = range;
 		this.scale = scale;
-		this.target = determineTarget(value);
+		this.target = shrinkingTarget;
 		this.shrinkingCandidates = new BigDecimalShrinkingCandidates(this.range, this.target);
 	}
 
@@ -32,9 +36,10 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 
 	@Override
 	public ShrinkingDistance distance() {
+		BigDecimal differenceToTarget = target.subtract(value());
 		ShrinkingDistance bigIntegerDistance =
-			ShrinkableBigInteger.distanceFor(value().toBigInteger(), target.toBigInteger());
-		BigDecimal fractionalPart = value().remainder(BigDecimal.ONE).abs();
+			ShrinkableBigInteger.distanceFor(differenceToTarget.toBigInteger(), BigInteger.ZERO);
+		BigDecimal fractionalPart = differenceToTarget.remainder(BigDecimal.ONE).abs();
 		BigDecimal fractionalPartScaled = fractionalPart.scaleByPowerOfTen(scale);
 		ShrinkingDistance decimalDistance = fractionalPartScaled.compareTo(BigDecimal.valueOf(Long.MAX_VALUE)) < 0
 			? ShrinkingDistance.of(fractionalPartScaled.longValue())
@@ -42,8 +47,7 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 		return bigIntegerDistance.append(decimalDistance);
 	}
 
-	//TODO: Remove duplication with ShrinkableBigInteger
-	private BigDecimal determineTarget(BigDecimal value) {
+	private static BigDecimal determineTarget(Range<BigDecimal> range, BigDecimal value) {
 		if (!range.includes(value)) {
 			String message = String.format("Number <%s> is outside allowed range %s", value, range);
 			throw new JqwikException(message);
@@ -58,6 +62,5 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 		}
 		return value; // Should never get here
 	}
-
 
 }
