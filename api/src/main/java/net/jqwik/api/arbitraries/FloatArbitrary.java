@@ -33,4 +33,10 @@ public interface FloatArbitrary extends Arbitrary<Float> {
 	 * Set the scale (maximum number of decimal places) to {@code scale}.
 	 */
 	FloatArbitrary ofScale(int scale);
+
+	/**
+	 * Set shrinking target to {@code target} which must be between the allowed bounds.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.5")
+	FloatArbitrary shrinkTowards(float target);
 }

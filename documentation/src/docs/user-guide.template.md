@@ -1983,9 +1983,8 @@ Arbitrary<List<Signal>> signals() {
 }
 ```
 
-Currently shrinking targets are only supported for integral numbers, i.e.,
-bytes, shorts, integers, longs and BigIntegers.
-
+Currently shrinking targets are supported for integral numbers and decimal numbers, i.e.,
+bytes, shorts, integers, longs, floats, doubles, BigIntegers and BigDecimals.
 
 
 ## Collecting and Reporting Statistics

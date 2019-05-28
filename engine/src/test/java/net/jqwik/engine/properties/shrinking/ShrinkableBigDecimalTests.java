@@ -80,16 +80,22 @@ class ShrinkableBigDecimalTests {
 			new BigDecimal("1000000000000000000000"));
 
 		assertThat( //
-			new ShrinkableBigDecimal(new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0).distance()) //
-			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
+			new ShrinkableBigDecimal(new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0, ShrinkableBigDecimal
+				.defaultShrinkingTarget(new BigDecimal("99999999999999999999.11"), bigDecimalRange))
+				.distance()) //
+							 .isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
 
 		assertThat( //
-			new ShrinkableBigDecimal(new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0).distance()) //
-			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
+			new ShrinkableBigDecimal(new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0, ShrinkableBigDecimal
+				.defaultShrinkingTarget(new BigDecimal("-99999999999999999999.11"), bigDecimalRange))
+				.distance()) //
+							 .isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
 
 		assertThat( //
-			new ShrinkableBigDecimal(new BigDecimal("99.11"), bigDecimalRange, 22).distance()) //
-			.isEqualTo(ShrinkingDistance.of(99, Long.MAX_VALUE));
+			new ShrinkableBigDecimal(new BigDecimal("99.11"), bigDecimalRange, 22, ShrinkableBigDecimal
+				.defaultShrinkingTarget(new BigDecimal("99.11"), bigDecimalRange))
+				.distance()) //
+							 .isEqualTo(ShrinkingDistance.of(99, Long.MAX_VALUE));
 	}
 
 	@Example
@@ -156,7 +162,8 @@ class ShrinkableBigDecimalTests {
 	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange) {
 		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
 		BigDecimal value = new BigDecimal(numberString);
-		return new ShrinkableBigDecimal(value, bigDecimalRange, value.scale());
+		return new ShrinkableBigDecimal(value, bigDecimalRange, value.scale(), ShrinkableBigDecimal
+			.defaultShrinkingTarget(value, bigDecimalRange));
 	}
 
 	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange, BigDecimal shrinkingTarget) {

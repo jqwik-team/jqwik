@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.*;
@@ -10,7 +11,12 @@ import net.jqwik.engine.properties.shrinking.*;
 // TODO: Remove duplication with RandomIntegralGenerators
 public class RandomDecimalGenerators {
 
-	public static RandomGenerator<BigDecimal> bigDecimals(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
+	public static RandomGenerator<BigDecimal> bigDecimals(
+		Range<BigDecimal> range,
+		int scale,
+		BigDecimal[] partitionPoints,
+		Function<BigDecimal, BigDecimal> shrinkingTargetCalculator
+	) {
 		if (scale < 0) {
 			throw new JqwikException(String.format("Scale [%s] must be positive.", scale));
 		}
@@ -19,18 +25,28 @@ public class RandomDecimalGenerators {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 
-		return partitionedGenerator(range, scale, partitionPoints);
+		return partitionedGenerator(range, scale, partitionPoints, shrinkingTargetCalculator);
 	}
 
-	private static RandomGenerator<BigDecimal> partitionedGenerator(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
-		List<RandomGenerator<BigDecimal>> generators = createPartitions(range, scale, partitionPoints);
+	private static RandomGenerator<BigDecimal> partitionedGenerator(
+		Range<BigDecimal> range,
+		int scale,
+		BigDecimal[] partitionPoints,
+		Function<BigDecimal, BigDecimal> shrinkingTargetCalculator
+	) {
+		List<RandomGenerator<BigDecimal>> generators = createPartitions(range, scale, partitionPoints, shrinkingTargetCalculator);
 		if (generators.size() == 1) {
 			return generators.get(0);
 		}
 		return random -> generators.get(random.nextInt(generators.size())).next(random);
 	}
 
-	private static List<RandomGenerator<BigDecimal>> createPartitions(Range<BigDecimal> range, int scale, BigDecimal[] partitionPoints) {
+	private static List<RandomGenerator<BigDecimal>> createPartitions(
+		Range<BigDecimal> range,
+		int scale,
+		BigDecimal[] partitionPoints,
+		Function<BigDecimal, BigDecimal> shrinkingTargetCalculator
+	) {
 		List<RandomGenerator<BigDecimal>> partitions = new ArrayList<>();
 		Arrays.sort(partitionPoints);
 		BigDecimal lower = range.min;
@@ -42,14 +58,20 @@ public class RandomDecimalGenerators {
 			if (upper.compareTo(range.max) >= 0) {
 				break;
 			}
-			partitions.add(createBaseGenerator(lower, upper, scale, range));
+			partitions.add(createBaseGenerator(lower, upper, scale, range, shrinkingTargetCalculator));
 			lower = upper;
 		}
-		partitions.add(createBaseGenerator(lower, range.max, scale, range));
+		partitions.add(createBaseGenerator(lower, range.max, scale, range, shrinkingTargetCalculator));
 		return partitions;
 	}
 
-	private static RandomGenerator<BigDecimal> createBaseGenerator(BigDecimal minGenerate, BigDecimal maxGenerate, int scale, Range<BigDecimal> range) {
+	private static RandomGenerator<BigDecimal> createBaseGenerator(
+		BigDecimal minGenerate,
+		BigDecimal maxGenerate,
+		int scale,
+		Range<BigDecimal> range,
+		Function<BigDecimal, BigDecimal> shrinkingTargetCalculator
+	) {
 		BigInteger scaledMinTry = minGenerate.scaleByPowerOfTen(scale).toBigInteger();
 		BigInteger scaledMin = new BigDecimal(scaledMinTry, scale).compareTo(minGenerate) >= 0 ?
 			scaledMinTry : scaledMinTry.add(BigInteger.ONE);
@@ -58,11 +80,11 @@ public class RandomDecimalGenerators {
 			scaledMaxTry : scaledMaxTry.subtract(BigInteger.ONE);
 		return random -> {
 			if (scaledMin.compareTo(scaledMax) >= 0) {
-				return new ShrinkableBigDecimal(minGenerate, range, scale);
+				return new ShrinkableBigDecimal(minGenerate, range, scale, shrinkingTargetCalculator.apply(minGenerate));
 			}
 			BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
 			BigDecimal randomDecimal = new BigDecimal(randomIntegral, scale);
-			return new ShrinkableBigDecimal(randomDecimal, range, scale);
+			return new ShrinkableBigDecimal(randomDecimal, range, scale, shrinkingTargetCalculator.apply(randomDecimal));
 		};
 	}
 
@@ -78,11 +100,4 @@ public class RandomDecimalGenerators {
 		}
 	}
 
-	// TODO: This could be way more sophisticated
-	public static BigDecimal[] calculateDefaultPartitionPoints(int genSize, BigDecimal min, BigDecimal max) {
-		int partitionPoint = Math.max(genSize / 2, 10);
-		BigDecimal upperPartitionPoint = BigDecimal.valueOf(partitionPoint).min(max);
-		BigDecimal lowerPartitionPoint = BigDecimal.valueOf(partitionPoint).negate().max(min);
-		return new BigDecimal[]{lowerPartitionPoint, upperPartitionPoint};
-	}
 }

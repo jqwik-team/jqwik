@@ -1,9 +1,9 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.math.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-
-import java.math.*;
 
 public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements BigDecimalArbitrary {
 
@@ -40,6 +40,13 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 	public BigDecimalArbitrary ofScale(int scale) {
 		DefaultBigDecimalArbitrary clone = typedClone();
 		clone.generatingArbitrary.scale = scale;
+		return clone;
+	}
+
+	@Override
+	public BigDecimalArbitrary shrinkTowards(BigDecimal target) {
+		DefaultBigDecimalArbitrary clone = typedClone();
+		clone.generatingArbitrary.shrinkingTarget = target;
 		return clone;
 	}
 

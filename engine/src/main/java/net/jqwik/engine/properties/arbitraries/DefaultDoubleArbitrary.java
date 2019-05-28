@@ -42,6 +42,13 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 		return clone;
 	}
 
+	@Override
+	public DoubleArbitrary shrinkTowards(double target) {
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.generatingArbitrary.shrinkingTarget = BigDecimal.valueOf(target);
+		return clone;
+	}
+
 	private BigDecimal toBigDecimal(double value) {
 		return new BigDecimal(Double.toString(value));
 	}

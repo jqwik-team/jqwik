@@ -34,4 +34,9 @@ public interface DoubleArbitrary extends Arbitrary<Double> {
 	 */
 	DoubleArbitrary ofScale(int scale);
 
+	/**
+	 * Set shrinking target to {@code target} which must be between the allowed bounds.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.5")
+	DoubleArbitrary shrinkTowards(double target);
 }

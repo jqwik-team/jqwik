@@ -6,6 +6,7 @@ import java.util.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
 
 class ShrinkTowardsTests {
@@ -44,4 +45,26 @@ class ShrinkTowardsTests {
 		BigInteger shrunkValue = ArbitraryTestHelper.shrinkToEnd(bigs, random);
 		Assertions.assertThat(shrunkValue).isEqualTo(target);
 	}
+
+	@Property(tries = 10)
+	void floats(@ForAll Random random, @ForAll @FloatRange(min = -10000, max = 10000) @Scale(0) float target) {
+		Arbitrary<Float> floats = Arbitraries.floats().shrinkTowards(target);
+		float shrunkValue = ArbitraryTestHelper.shrinkToEnd(floats, random);
+		Assertions.assertThat(shrunkValue).isEqualTo(target);
+	}
+
+	@Property(tries = 10)
+	void doubles(@ForAll Random random, @ForAll @DoubleRange(min = -10000, max = 10000) @Scale(0) double target) {
+		Arbitrary<Double> doubles = Arbitraries.doubles().shrinkTowards(target);
+		double shrunkValue = ArbitraryTestHelper.shrinkToEnd(doubles, random);
+		Assertions.assertThat(shrunkValue).isEqualTo(target);
+	}
+
+	@Property(tries = 10)
+	void bigDecimals(@ForAll Random random, @ForAll @BigRange(min = "-1000", max = "1000") @Scale(0) BigDecimal target) {
+		Arbitrary<BigDecimal> bigDecimals = Arbitraries.bigDecimals().shrinkTowards(target);
+		BigDecimal shrunkValue = ArbitraryTestHelper.shrinkToEnd(bigDecimals, random);
+		Assertions.assertThat(shrunkValue).isEqualByComparingTo(target);
+	}
+
 }

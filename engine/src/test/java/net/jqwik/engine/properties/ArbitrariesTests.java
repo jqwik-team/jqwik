@@ -552,11 +552,15 @@ class ArbitrariesTests {
 
 		@Example
 		void bigDecimals() {
-			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals() //
-														 .between(new BigDecimal(-10.0), new BigDecimal(10.0)) //
-														 .ofScale(2);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
+														 .between(new BigDecimal(-100.0), new BigDecimal(100.0))
+														 .ofScale(2)
+														 .shrinkTowards(BigDecimal.valueOf(4.2));
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
 
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.valueOf(4.2)) == 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.valueOf(-100.0)) == 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.valueOf(100.0)) == 0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ZERO) == 0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE) == 0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);

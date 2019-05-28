@@ -1,10 +1,10 @@
 package net.jqwik.api.arbitraries;
 
-import net.jqwik.api.*;
-
 import java.math.*;
 
 import org.apiguardian.api.*;
+
+import net.jqwik.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -35,4 +35,10 @@ public interface BigDecimalArbitrary extends Arbitrary<BigDecimal> {
 	 * Set the scale (maximum number of decimal places) to {@code scale}.
 	 */
 	BigDecimalArbitrary ofScale(int scale);
+
+	/**
+	 * Set shrinking target to {@code target} which must be between the allowed bounds.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.1.5")
+	BigDecimalArbitrary shrinkTowards(BigDecimal target);
 }

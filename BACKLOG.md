@@ -145,8 +145,8 @@
   Simulated annealing with an additional target function in property
   (see Proper book)
 
-- Provide alternative shrinking targets for arbitraries,
-  eg Arbitraries.integers().shrinkTowards(42, 110)
+- Provide multiple shrinking targets for number arbitraries,
+  eg Arbitraries.integers().shrinkTowards(42, 110, 1000000)
 
 - Reimplement String generation based on Unicode codepoints, not on characters
   Maybe consider this: https://github.com/quicktheories/QuickTheories/issues/54

@@ -1,11 +1,6 @@
 - Shrinking towards target
 
-    - [Float|Double|BigDecimal]Arbitrary.shrinkTowards(T extends Number target)
-    
     - @[Number]Range(shrinkingTarget=target)
-
-    - shrinkTowards(target2, target2...) 
-      e.g. implement as oneOf(shrinkTowards(target1), shrinkTowards(target2))`
 
     - CharArbitrary.shrinkTowards(Character target)
     

@@ -42,6 +42,13 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 		return clone;
 	}
 
+	@Override
+	public FloatArbitrary shrinkTowards(float target) {
+		DefaultFloatArbitrary clone = typedClone();
+		clone.generatingArbitrary.shrinkingTarget = BigDecimal.valueOf(target);
+		return clone;
+	}
+
 	private BigDecimal toBigDecimal(float value) {
 		return new BigDecimal(Float.toString(value));
 	}
