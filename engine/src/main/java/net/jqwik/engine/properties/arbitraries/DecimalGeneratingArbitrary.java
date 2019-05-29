@@ -41,8 +41,10 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	private Stream<BigDecimal> streamEdgeCases() {
 		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
+		BigDecimal zeroScaled = BigDecimal.ZERO.movePointLeft(scale);
 		BigDecimal[] literalEdgeCases = {
-			BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.ONE.negate(),
+			zeroScaled, zeroScaled, zeroScaled, // raise probability for zero
+			BigDecimal.ONE, BigDecimal.ONE.negate(),
 			smallest, smallest.negate(), min, max};
 
 		return shrinkingTarget == null

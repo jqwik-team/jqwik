@@ -1,6 +1,6 @@
-- Shrinking towards target
+- Fix bug: generators are not reused across tries
 
-    - @[Number]Range(shrinkingTarget=target)
+- Shrinking towards target
 
     - CharArbitrary.shrinkTowards(Character target)
     
