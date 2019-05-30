@@ -1,12 +1,10 @@
 package net.jqwik.engine;
 
-import java.util.*;
 import java.util.function.*;
 
 import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.*;
 import net.jqwik.engine.execution.*;
@@ -19,7 +17,6 @@ public class JqwikTestEngine implements TestEngine {
 	private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry();
 	private JqwikConfiguration configuration;
 	private Throwable startupThrowable = null;
-	private Tuple.Tuple2<EngineDiscoveryRequest, TestDescriptor> discoveryCache = null;
 
 	public JqwikTestEngine() {
 		this(DefaultJqwikConfiguration::new);
@@ -45,33 +42,11 @@ public class JqwikTestEngine implements TestEngine {
 			ExceptionUtils.throwAsUncheckedException(startupThrowable);
 		}
 
-		Optional<TestDescriptor> cachedTestDescriptor = getCachedDescriptor(request);
-
-		// TODO: Remove caching as soon as https://github.com/junit-team/junit5/issues/1695 has been resolved
-		if (cachedTestDescriptor.isPresent()) {
-			return cachedTestDescriptor.get();
-		}
-
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
 		new JqwikDiscoverer(configuration.testEngineConfiguration().previousRun(), configuration.propertyDefaultValues())
 			.discover(request, engineDescriptor);
 
-		// TODO: Remove caching as soon as https://github.com/junit-team/junit5/issues/1695 has been resolved
-		return cacheDescriptor(request, engineDescriptor);
-	}
-
-	private TestDescriptor cacheDescriptor(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
-		discoveryCache = Tuple.of(request, engineDescriptor);
 		return engineDescriptor;
-	}
-
-	private Optional<TestDescriptor> getCachedDescriptor(EngineDiscoveryRequest request) {
-		// Assumption: instances of EngineDiscoveryRequest are immutable so that
-		// the same instance will always mean the same thing
-		if (discoveryCache != null && discoveryCache.get1() == request) {
-			return Optional.of(discoveryCache.get2());
-		}
-		return Optional.empty();
 	}
 
 	@Override

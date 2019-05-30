@@ -32,6 +32,7 @@ and
 - Added `shrinkTowards(value)` to all decimal number arbitraries: 
   FloatArbitrary, DoubleArbitrary, BigDecimalArbitrary
 - Exceptions during test class instance creation are now reported as failures
+- Removed caching of engine descriptor in JqwikTestEngine
 
 ## 1.1.4
 
