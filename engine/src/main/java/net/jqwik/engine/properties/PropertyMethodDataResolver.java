@@ -29,7 +29,7 @@ public class PropertyMethodDataResolver implements DataResolver {
 				   .map(FromData::value)
 				   .map(generatorName -> {
 					   Supplier<JqwikException> exceptionSupplier =
-						   () -> new JqwikException("No data provider method for generator [" + generatorName + "] found");
+						   () -> new JqwikException("No data provider method (annotated with @Data) for generator [" + generatorName + "] found");
 					   return findGenerator(generatorName).orElseThrow(exceptionSupplier);
 				   })
 				   .map(generatorMethod -> JqwikReflectionSupport.invokeMethodPotentiallyOuter(generatorMethod, testInstance))
