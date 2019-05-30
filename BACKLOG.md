@@ -125,6 +125,10 @@
   - Parallel execution of action sequences (see Proper book)
   - Special support for FSMs (finite state machines)
 
+- Arbitraries.series(n -> prime(n)[, maxN])
+
+- Arbitraries.fromStream(aStream[, maxLength])
+
 - Arbitraries.fromSize(Function<Integer, Arbitrary> f) : Arbitrary
   Use current size to influence arbitrary generation
 

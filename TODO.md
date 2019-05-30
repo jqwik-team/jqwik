@@ -1,12 +1,4 @@
-- Shrinking towards target
-
-    - CharArbitrary.shrinkTowards(Character target)
-    
 - Statistics.keyFigures(String label, Number variable)
-
-- Arbitraries.series(n -> prime(n)[, maxN])
-
-- Arbitraries.fromStream(aStream[, maxLength])
 
 - Case-based branching with statistical reporting:
 
