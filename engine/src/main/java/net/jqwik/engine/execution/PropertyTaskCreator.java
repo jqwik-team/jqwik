@@ -1,5 +1,7 @@
 package net.jqwik.engine.execution;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.SkipExecutionHook.*;
@@ -13,14 +15,22 @@ class PropertyTaskCreator {
 	ExecutionTask createTask(PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, boolean reportOnlyFailures) {
 		return ExecutionTask.from(
 			listener -> {
-				Object testInstance = createTestInstance(methodDescriptor);
-				PropertyLifecycleContext propertyLifecycleContext = new PropertyMethodLifecycleContext(methodDescriptor, testInstance);
 
-				SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(methodDescriptor);
-				SkipResult skipResult = skipExecutionHook.shouldBeSkipped(propertyLifecycleContext);
+				PropertyLifecycleContext propertyLifecycleContext;
 
-				if (skipResult.isSkipped()) {
-					listener.executionSkipped(methodDescriptor, skipResult.reason().orElse(null));
+				try {
+					Object testInstance = createTestInstance(methodDescriptor);
+					propertyLifecycleContext = new PropertyMethodLifecycleContext(methodDescriptor, testInstance);
+
+					SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(methodDescriptor);
+					SkipResult skipResult = skipExecutionHook.shouldBeSkipped(propertyLifecycleContext);
+
+					if (skipResult.isSkipped()) {
+						listener.executionSkipped(methodDescriptor, skipResult.reason().orElse(null));
+						return;
+					}
+				} catch (Throwable throwable) {
+					handleExceptionDuringTestInstanceCreation(methodDescriptor, listener, throwable);
 					return;
 				}
 
@@ -33,6 +43,17 @@ class PropertyTaskCreator {
 			methodDescriptor.getUniqueId(),
 			"executing " + methodDescriptor.getDisplayName()
 		);
+	}
+
+	private void handleExceptionDuringTestInstanceCreation(
+		PropertyMethodDescriptor methodDescriptor,
+		PropertyExecutionListener listener,
+		Throwable throwable
+	) {
+		listener.executionStarted(methodDescriptor);
+		PropertyExecutionResult executionResult =
+			PropertyExecutionResult.failed(throwable, methodDescriptor.getConfiguration().getSeed(), Collections.emptyList());
+		listener.executionFinished(methodDescriptor, executionResult);
 	}
 
 	private Object createTestInstance(PropertyMethodDescriptor methodDescriptor) {

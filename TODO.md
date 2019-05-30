@@ -1,5 +1,3 @@
-- Fix bug: generators are not reused across tries
-
 - Shrinking towards target
 
     - CharArbitrary.shrinkTowards(Character target)

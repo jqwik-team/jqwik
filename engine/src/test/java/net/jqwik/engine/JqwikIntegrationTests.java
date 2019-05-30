@@ -4,6 +4,7 @@ import java.nio.file.*;
 import java.util.*;
 
 import examples.packageWithDisabledTests.*;
+import examples.packageWithFailings.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
 import org.assertj.core.api.*;
@@ -102,6 +103,24 @@ class JqwikIntegrationTests {
 							.all();
 
 		assertSimpleExampleTests(events);
+	}
+
+	@Example
+	void failingConstructorFailsTests() {
+		Events events = EngineTestKit
+							.engine(testEngine)
+							.selectors(selectClass(ContainerWithFailingConstructor.class))
+							.execute()
+							.all();
+
+		events.assertEventsMatchExactly(
+			event(engine(), started()),
+			event(container(ContainerWithFailingConstructor.class), started()),
+			event(test("success"), started()),
+			event(test("success"), finishedWithFailure()),
+			event(container(ContainerWithFailingConstructor.class), finishedSuccessfully()),
+			event(engine(), finishedSuccessfully())
+		);
 	}
 
 	private void assertSimpleExampleTests(Events events) {
