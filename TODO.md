@@ -1,5 +1,3 @@
-- Statistics.keyFigures(String label, Number variable)
-
 - Case-based branching with statistical reporting:
 
   ```

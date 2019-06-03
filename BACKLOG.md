@@ -45,6 +45,7 @@
 	}
   ```
 
+- Statistics.keyFigures(String label, Number variable)
 
 - PackageDescriptor e.g.
   @Group
