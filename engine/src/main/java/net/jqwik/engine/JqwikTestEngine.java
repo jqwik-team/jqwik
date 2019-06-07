@@ -2,7 +2,6 @@ package net.jqwik.engine;
 
 import java.util.function.*;
 
-import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.engine.descriptor.*;
@@ -10,6 +9,7 @@ import net.jqwik.engine.discovery.*;
 import net.jqwik.engine.execution.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.recording.*;
+import net.jqwik.engine.support.*;
 
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
@@ -39,7 +39,7 @@ public class JqwikTestEngine implements TestEngine {
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
 		// Throw exception caught during startup otherwise JUnit platform message hides original exception
 		if (startupThrowable != null) {
-			ExceptionUtils.throwAsUncheckedException(startupThrowable);
+			JqwikReflectionSupport.throwAsUncheckedException(startupThrowable);
 		}
 
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);

@@ -3,7 +3,7 @@ package net.jqwik.engine.support;
 import java.lang.reflect.*;
 import java.util.*;
 
-public class GenericsSupport {
+class GenericsSupport {
 
 	private static Map<Class, GenericsClassContext> contextsCache = new HashMap<>();
 

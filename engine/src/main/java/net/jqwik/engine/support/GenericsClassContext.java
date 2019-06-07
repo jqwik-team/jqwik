@@ -5,7 +5,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-public class GenericsClassContext {
+class GenericsClassContext {
 
 	static final GenericsClassContext NULL = new GenericsClassContext(null) {
 		@Override
