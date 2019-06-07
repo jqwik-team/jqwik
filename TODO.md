@@ -1,3 +1,9 @@
+- Get rid of dependencies to internal junit5 classes
+  e.g. https://github.com/jlink/jqwik/issues/59
+  
+- Don't use ClasspathScanningSupport anymore (deprecated in platform 1.5)
+  Use org.junit.platform.engine.support.discovery.EngineDiscoveryRequestResolver instead
+
 - Case-based branching with statistical reporting:
 
   ```
