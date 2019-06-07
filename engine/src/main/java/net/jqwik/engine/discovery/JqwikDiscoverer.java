@@ -11,7 +11,7 @@ import net.jqwik.engine.discovery.predicates.*;
 import net.jqwik.engine.recording.*;
 
 import static org.junit.platform.commons.support.ReflectionSupport.*;
-import static org.junit.platform.engine.support.filter.ClasspathScanningSupport.*;
+import static org.junit.platform.engine.Filter.*;
 
 public class JqwikDiscoverer {
 
@@ -58,6 +58,14 @@ public class JqwikDiscoverer {
 		resolvers.add(new GroupContainerResolver());
 		resolvers.add(new PropertyMethodResolver(testRunData, propertyDefaultValues));
 		return new HierarchicalJavaResolver(engineDescriptor, resolvers);
+	}
+
+	// TODO: Use EngineDiscoveryRequestResolver after migrating to JUnit Platform 1.5
+	private static Predicate<String> buildClassNamePredicate(EngineDiscoveryRequest request) {
+		List<DiscoveryFilter<String>> filters = new ArrayList<>();
+		filters.addAll(request.getFiltersByType(ClassNameFilter.class));
+		filters.addAll(request.getFiltersByType(PackageNameFilter.class));
+		return composeFilters(filters).toPredicate();
 	}
 
 }
