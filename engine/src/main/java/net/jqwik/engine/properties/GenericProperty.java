@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.commons.util.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -78,7 +77,7 @@ public class GenericProperty {
 			} catch (Exception ex) {
 				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ex);
 			} catch (Throwable throwable) {
-				BlacklistedExceptions.rethrowIfBlacklisted(throwable);
+				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				return PropertyCheckResult.erroneous(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
 					configuration.getGenerationMode(), extractParams(shrinkableParams), null, throwable

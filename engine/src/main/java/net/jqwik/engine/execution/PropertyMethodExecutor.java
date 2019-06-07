@@ -18,8 +18,6 @@ import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
-import static org.junit.platform.commons.util.BlacklistedExceptions.*;
-
 public class PropertyMethodExecutor {
 
 	private static final Logger LOG = Logger.getLogger(PropertyMethodExecutor.class.getName());
@@ -51,9 +49,9 @@ public class PropertyMethodExecutor {
 
 	private void ensureAllParametersHaveForAll(PropertyMethodDescriptor methodDescriptor) {
 		String parameters = Arrays.stream(methodDescriptor.getTargetMethod().getParameters())
-					 .filter(parameter -> !parameter.isAnnotationPresent(ForAll.class))
-			.map(parameter -> parameter.toString())
-			.collect(Collectors.joining(", "));
+								  .filter(parameter -> !parameter.isAnnotationPresent(ForAll.class))
+								  .map(parameter -> parameter.toString())
+								  .collect(Collectors.joining(", "));
 
 		if (!parameters.isEmpty()) {
 			String message = String.format("All parameters must have @ForAll annotation: %s", parameters);
@@ -124,7 +122,7 @@ public class PropertyMethodExecutor {
 		} catch (TestAbortedException e) {
 			return PropertyExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
-			rethrowIfBlacklisted(t);
+			JqwikExceptionSupport.rethrowIfBlacklisted(t);
 			return PropertyExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed(), null);
 		}
 	}

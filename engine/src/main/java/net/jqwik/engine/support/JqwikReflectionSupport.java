@@ -196,25 +196,4 @@ public class JqwikReflectionSupport {
 	public static boolean isInnerClass(Class<? extends LifecycleHook> hookClass) {
 		return hookClass.isMemberClass() && !ModifierSupport.isStatic(hookClass);
 	}
-
-	/**
-	 * Throw the supplied {@link Throwable}, <em>masked</em> as an
-	 * unchecked exception.
-	 *
-	 * @param t   the Throwable to be wrapped
-	 * @param <T> type of the value to return
-	 * @return Fake return to make using the method a bit simpler
-	 */
-	public static <T> T throwAsUncheckedException(Throwable t) {
-		JqwikReflectionSupport.throwAs(t);
-
-		// Will never get here
-		return null;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static <T extends Throwable> void throwAs(Throwable t) throws T {
-		throw (T) t;
-	}
-
 }
