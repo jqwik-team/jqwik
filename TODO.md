@@ -1,5 +1,9 @@
-- Default Arbitraries, Generators and Shrinking for
-  - Map
+- MapArbitrary
+  - Test shrinking
+  - Exhaustive generation
+  - Arbitrary Provider
+  - user guide
+  - release notes
 
 - Spring/Boot Testing
 

@@ -178,7 +178,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
-		return null;
+		return new MapArbitrary<>(keysArbitrary, valuesArbitrary);
 	}
 
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
