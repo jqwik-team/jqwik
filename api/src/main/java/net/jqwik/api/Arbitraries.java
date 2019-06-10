@@ -548,6 +548,14 @@ public class Arbitraries {
 		return ArbitrariesFacade.implementation.sequences(actionArbitrary);
 	}
 
+	/**
+	 * Create an arbitrary to create instances of Map.
+	 * The generated maps are mutable.
+	 *
+	 * @param keysArbitrary The arbitrary to generate the keys
+	 * @param valuesArbitrary The arbitrary to generate the values
+	 * @return a new arbitrary instance
+	 */
 	@API(status = MAINTAINED, since = "1.1.6")
 	public static <K,V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		return ArbitrariesFacade.implementation.maps(keysArbitrary, valuesArbitrary);

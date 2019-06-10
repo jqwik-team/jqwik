@@ -2,8 +2,6 @@
   - Test shrinking
   - Exhaustive generation
   - Arbitrary Provider
-  - user guide
-  - release notes
 
 - Spring/Boot Testing
 

@@ -662,6 +662,13 @@ class ArbitrariesTests {
 
 			assertAtLeastOneGenerated(generator, Map::isEmpty);
 			assertAtLeastOneGenerated(generator, map -> map.size() == 10);
+
+			// Generated maps are mutable
+			assertAllGenerated(generator, map -> {
+				int sizeBefore = map.size();
+				map.put(42, "fortytwo");
+				assertThat(map.size()).isEqualTo(sizeBefore + 1);
+			});
 		}
 
 	}

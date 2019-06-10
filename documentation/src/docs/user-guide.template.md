@@ -546,6 +546,7 @@ jqwik will use default generation for the following types:
 - `Iterable<T>` and `Iterator<T>` of types that are provided by default.
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
+- `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
 
 If you use [`@ForAll`](/docs/${docsVersion}/javadoc/net/jqwik/api/ForAll.html) 
@@ -852,7 +853,7 @@ The starting point for generation usually is a static method call on class
 
 #### Select randomly with Weights
 
-If you have a set of values to choose from with weighted probabilities, use 
+If you have a set of values to choose from with weighted probabilities, use `
 [`Arbitraries.frequency(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuple.Tuple2...-):
 
 ```java
@@ -954,6 +955,12 @@ an `Arbitrary` instance for the generic type. You can create the corresponding c
 - [`Arbitrary.streamOf()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#stream--)
 - [`Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
 - [`Arbitrary.optional()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional--)
+
+### Maps
+
+Generating instances of type `Map` is a bit different since two arbitraries
+are needed, one for the key and one for the value. Therefore you have to use
+[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-):
 
 ### Collecting Values in a List
 
@@ -2511,7 +2518,7 @@ Exhaustive generation is considered for:
 - Strings
 - Fixed number of choices given by `Arbitraries.of()`
 - Fixed number of choices given by `Arbitraries.shuffle()`
-- Lists, sets, streams, optionals of the above
+- Lists, sets, streams, optionals and maps of the above
 - Combinations of the above using `Combinators.combine()`
 - Mapped arbitraries using `Arbitrary.map()`
 - Filtered arbitraries using `Arbitrary.filter()`
