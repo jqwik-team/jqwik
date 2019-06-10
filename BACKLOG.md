@@ -138,6 +138,7 @@
 - StringArbitrary.blacklist(char … chars)
 
 - Arbitraries.function(Arbitrary outputArbitrary, Class inputType)
+  - arbitrary providers for functional types and sam types
 
 - Arbitrary.share(Arbitrary, String key) 
   [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
