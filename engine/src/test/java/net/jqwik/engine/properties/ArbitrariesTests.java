@@ -644,6 +644,23 @@ class ArbitrariesTests {
 			assertThat(actual).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 		}
 
+		@Example
+		@Disabled("generating maps is work in progress")
+		void map() {
+			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
+			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
+
+			Arbitrary<Map<Integer, String>> mapArbitrary = Arbitraries.maps(keys, values).ofMinSize(0).ofMaxSize(5);
+
+			RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAllGenerated(generator, map -> {
+				assertThat(map.size()).isBetween(0, 5);
+				assertThat(map).containsOnlyKeys(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+				assertThat(map.values()).isInstanceOf(String.class);
+			});
+		}
+
 	}
 
 	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {

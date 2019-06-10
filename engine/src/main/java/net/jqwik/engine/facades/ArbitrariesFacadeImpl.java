@@ -176,6 +176,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return new DefaultTypeArbitrary<>(targetType).useDefaults();
 	}
 
+	@Override
+	public <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+		return null;
+	}
+
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
 		DomainContext domainContext = DomainContextFacadeImpl.currentContext.get();
 		RegisteredArbitraryResolver defaultArbitraryResolver =

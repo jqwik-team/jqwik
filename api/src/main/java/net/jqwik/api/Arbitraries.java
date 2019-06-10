@@ -79,6 +79,8 @@ public class Arbitraries {
 		public abstract <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier);
 
 		public abstract <T> TypeArbitrary<T> forType(Class<T> targetType);
+
+		public abstract <K, V> SizableArbitrary<Map<K,V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 	}
 
 	private Arbitraries() {
@@ -545,5 +547,11 @@ public class Arbitraries {
 	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary) {
 		return ArbitrariesFacade.implementation.sequences(actionArbitrary);
 	}
+
+	@API(status = MAINTAINED, since = "1.1.6")
+	public static <K,V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+		return ArbitrariesFacade.implementation.maps(keysArbitrary, valuesArbitrary);
+	}
+
 
 }
