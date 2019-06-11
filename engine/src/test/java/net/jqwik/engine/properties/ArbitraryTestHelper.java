@@ -21,10 +21,10 @@ public class ArbitraryTestHelper {
 		assertAtLeastOneGenerated(generator, checker, "Failed to generate at least one");
 	}
 
-	public static <T> Shrinkable<T> generateValueUntil(RandomGenerator<T> generator, Function<T, Boolean> condition) {
+	public static <T> Shrinkable<T> generateUntil(RandomGenerator<T> generator, Random random, Function<T, Boolean> condition) {
 		long maxTries = 1000;
 		return generator
-				   .stream(SourceOfRandomness.current())
+				   .stream(random)
 				   .limit(maxTries)
 				   .filter(shrinkable -> condition.apply(shrinkable.value()))
 				   .findFirst()
@@ -95,9 +95,15 @@ public class ArbitraryTestHelper {
 	}
 
 	public static <T> T shrinkToEnd(Arbitrary<T> arbitrary, Random random) {
-		Shrinkable<T> shrinkable = arbitrary.generator(10).next(random);
-		ShrinkingSequence<T> sequence = shrinkable.shrink(value -> false);
-		while(sequence.next(() -> {}, ignore -> {}));
+		return falsifyThenShrink(arbitrary, random, ignore -> false);
+	}
+
+	public static <T> T falsifyThenShrink(Arbitrary<T> arbitrary, Random random, Falsifier<T> falsifier) {
+		RandomGenerator<T> generator = arbitrary.generator(10);
+		Shrinkable<T> falsifiedShrinkable = generateUntil(generator, random, value -> !falsifier.test(value));
+
+		ShrinkingSequence<T> sequence = falsifiedShrinkable.shrink(falsifier);
+		while (sequence.next(() -> {}, ignore -> { })) ;
 		return sequence.current().value();
 	}
 

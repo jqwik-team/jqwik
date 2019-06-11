@@ -1,6 +1,5 @@
 - MapArbitrary
-  - Test shrinking
-  - Exhaustive generation
+  - Test Exhaustive generation
   - Arbitrary Provider
 
 - Spring/Boot Testing

@@ -28,7 +28,9 @@ class ShrinkableActionSequenceTests {
 			shrinkableAddX()
 		);
 		ActionGenerator<String> actionGenerator = new ShrinkablesActionGenerator<>(actions);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, 1, actions.size(), ShrinkingDistance.of(2));
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(
+			actionGenerator, 1, actions.size(), ShrinkingDistance.of(2)
+		);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2));
 
@@ -175,35 +177,37 @@ class ShrinkableActionSequenceTests {
 
 	private Shrinkable<Action<String>> shrinkableFailingPrecondition() {
 		return Shrinkable
-			.unshrinkable("poops") //
-			.map(ignore -> new Action<String>() {
-				@Override
-				public boolean precondition(String model) {
-					return false;
-				}
+				   .unshrinkable("poops")
+				   .map(ignore -> new Action<String>() {
+					   @Override
+					   public boolean precondition(String model) {
+						   return false;
+					   }
 
-				@Override
-				public String run(String model) {
-					return model;
-				}
-			});
+					   @Override
+					   public String run(String model) {
+						   return model;
+					   }
+				   });
 	}
 
 	private Shrinkable<Action<String>> shrinkableAddX() {
 		return Shrinkable
-			.unshrinkable("x")
-			.map(aString -> model -> model + aString);
+				   .unshrinkable("x")
+				   .map(aString -> model -> model + aString);
 	}
 
 	private Shrinkable<Action<String>> shrinkableAddCC() {
 		return ShrinkableStringTests
-			.createShrinkableString("cc", 2)
-			.map(aString -> model -> model + aString);
+				   .createShrinkableString("cc", 2)
+				   .map(aString -> model -> model + aString);
 	}
 
 	private Shrinkable<ActionSequence<String>> createAndRunShrinkableSequence(List<Shrinkable<Action<String>>> actions) {
 		ActionGenerator<String> actionGenerator = new ShrinkablesActionGenerator<>(actions);
-		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(actionGenerator, 1, actions.size(), ShrinkingDistance.of(2));
+		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(
+			actionGenerator, 1, actions.size(), ShrinkingDistance.of(2)
+		);
 		shrinkable.value().run("");
 		return shrinkable;
 	}

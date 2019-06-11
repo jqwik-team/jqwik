@@ -3,6 +3,9 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
 
@@ -71,6 +74,36 @@ class ArbitraryShrinkingTests {
 
 		// 0:1, 1:0, 0:-1 or -1:0
 		return Math.abs(value.n1 + value.n2) == 1;
+	}
+
+	@Group
+	class Maps {
+
+		@Property(tries = 10)
+		boolean mapIsShrunkToEmptyMap(@ForAll Random random) {
+			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
+			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(1);
+
+			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
+
+			return shrinkToEnd(arbitrary, random).isEmpty();
+		}
+
+		@Property(tries = 10)
+		void mapIsShrunkToSmallestValue(@ForAll Random random) {
+			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
+			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(1);
+
+			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
+
+			Falsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
+			Map<Integer, String> map = falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
+
+			assertThat(map).hasSize(2);
+			assertThat(map.keySet()).containsAnyOf(0, 1, -1);
+			assertThat(map.values()).containsOnly("A");
+		}
+
 	}
 
 	private static class Counter {

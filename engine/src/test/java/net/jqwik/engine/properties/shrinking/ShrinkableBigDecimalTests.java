@@ -31,8 +31,8 @@ class ShrinkableBigDecimalTests {
 
 	@Example
 	void cannotCreateValueOutsideRange() {
-		assertThatThrownBy( //
-			() -> createShrinkableBigDecimal("25", Range.of(50.0, 100.0))) //
+		assertThatThrownBy(
+			() -> createShrinkableBigDecimal("25", Range.of(50.0, 100.0)))
 			.isInstanceOf(JqwikException.class);
 	}
 
@@ -75,27 +75,31 @@ class ShrinkableBigDecimalTests {
 
 	@Example
 	void shrinkingDistanceOutsideLongRange() {
-		Range<BigDecimal> bigDecimalRange = Range.of( //
-			new BigDecimal("-1000000000000000000000"), //
-			new BigDecimal("1000000000000000000000"));
+		Range<BigDecimal> bigDecimalRange = Range.of(
+			new BigDecimal("-1000000000000000000000"),
+			new BigDecimal("1000000000000000000000")
+		);
 
-		assertThat( //
-			new ShrinkableBigDecimal(new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0, ShrinkableBigDecimal
-				.defaultShrinkingTarget(new BigDecimal("99999999999999999999.11"), bigDecimalRange))
-				.distance()) //
-							 .isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
+		assertThat(
+			new ShrinkableBigDecimal(
+				new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0,
+				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("99999999999999999999.11"), bigDecimalRange)
+			).distance())
+			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
 
-		assertThat( //
-			new ShrinkableBigDecimal(new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0, ShrinkableBigDecimal
-				.defaultShrinkingTarget(new BigDecimal("-99999999999999999999.11"), bigDecimalRange))
-				.distance()) //
-							 .isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
+		assertThat(
+			new ShrinkableBigDecimal(
+				new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0,
+				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("-99999999999999999999.11"), bigDecimalRange)
+			).distance())
+			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
 
-		assertThat( //
-			new ShrinkableBigDecimal(new BigDecimal("99.11"), bigDecimalRange, 22, ShrinkableBigDecimal
-				.defaultShrinkingTarget(new BigDecimal("99.11"), bigDecimalRange))
-				.distance()) //
-							 .isEqualTo(ShrinkingDistance.of(99, Long.MAX_VALUE));
+		assertThat(
+			new ShrinkableBigDecimal(
+				new BigDecimal("99.11"), bigDecimalRange, 22,
+				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("99.11"), bigDecimalRange)
+			).distance())
+			.isEqualTo(ShrinkingDistance.of(99, Long.MAX_VALUE));
 	}
 
 	@Example
@@ -122,24 +126,21 @@ class ShrinkableBigDecimalTests {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("31.55", Range.of(-100.0, 100.0));
 
 		Falsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.doubleValue() < 24.9;
-		Falsifier<BigDecimal> filteredFalsifier = falsifier.withFilter(aBigDecimal -> aBigDecimal.remainder(BigDecimal.valueOf(2)).longValue() == 1);
+		Falsifier<BigDecimal> filteredFalsifier = falsifier.withFilter(aBigDecimal -> aBigDecimal.remainder(BigDecimal.valueOf(2))
+																								 .longValue() == 1);
 
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(filteredFalsifier);
-
-
-		while (sequence.next(count, reporter)) {
-		}
+		while (sequence.next(count, reporter)) ;
 
 		assertThat(sequence.current().value().longValueExact()).isEqualTo(25);
 		assertThat(counter.get()).isEqualTo(6);
 	}
 
-
 	@Property
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-1000000000", max = "1000000000") @Scale(15) BigDecimal aValue) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(ignore -> false);
-		while(sequence.next(count, reporter));
+		while (sequence.next(count, reporter)) ;
 		BigDecimal shrunkValue = sequence.current().value();
 		// can be + or - 0.0:
 		assertThat(shrunkValue).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.ZERO));
@@ -152,7 +153,7 @@ class ShrinkableBigDecimalTests {
 	) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000.0, 1000.0), shrinkingTarget);
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(ignore -> false);
-		while(sequence.next(count, reporter));
+		while (sequence.next(count, reporter)) ;
 		BigDecimal shrunkValue = sequence.current().value();
 		// Allow offset to max 1.0 because decimals are shrunk away if possible
 		Offset<BigDecimal> allowedOffset = Offset.offset(new BigDecimal(1));
@@ -163,7 +164,7 @@ class ShrinkableBigDecimalTests {
 		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
 		BigDecimal value = new BigDecimal(numberString);
 		return new ShrinkableBigDecimal(value, bigDecimalRange, value.scale(), ShrinkableBigDecimal
-			.defaultShrinkingTarget(value, bigDecimalRange));
+																				   .defaultShrinkingTarget(value, bigDecimalRange));
 	}
 
 	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange, BigDecimal shrinkingTarget) {

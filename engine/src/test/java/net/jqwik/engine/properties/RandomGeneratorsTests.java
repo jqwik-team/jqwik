@@ -240,13 +240,13 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
-		void edgeCaseIsAlsoShrunkToNonEdgeCase() {
+		void edgeCaseIsAlsoShrunkToNonEdgeCase(@ForAll Random random) {
 			Shrinkable<Integer> zero = createShrinkableInt(0);
 			Shrinkable<Integer> thousand = createShrinkableInt(1000);
 			List<Shrinkable<Integer>> edgeCases = Arrays.asList(zero, thousand);
 			RandomGenerator<Integer> generator = RandomGenerators.integers(0, 1000).withEdgeCases(10, edgeCases);
 
-			Shrinkable<Integer> thousandGenerated = generateValueUntil(generator, i -> i.equals(1000));
+			Shrinkable<Integer> thousandGenerated = generateUntil(generator, random, i -> i.equals(1000));
 
 			assertThat(thousandGenerated.value()).isEqualTo(1000);
 			ShrinkingSequence<Integer> sequence = thousandGenerated.shrink(i -> i < 5);
