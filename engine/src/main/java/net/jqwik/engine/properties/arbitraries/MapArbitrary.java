@@ -39,21 +39,19 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 	}
 
 	private Arbitrary<Map<K, V>> mapArbitrary() {
-		return entrySetArbitrary().map(entries -> {
-			HashMap<K, V> map = new HashMap<>();
-			for (Map.Entry<K, V> entry : entries) {
-				map.put(entry.getKey(), entry.getValue());
-			}
-			return map;
-		});
-	}
-
-	private Arbitrary<Set<Map.Entry<K, V>>> entrySetArbitrary() {
-		return entryArbitrary().set().ofMinSize(minSize).ofMaxSize(maxSize);
-	}
-
-	private Arbitrary<Map.Entry<K, V>> entryArbitrary() {
-		return Combinators.combine(keysArbitrary, valuesArbitrary).as(KeyDefinesIdentityEntry::new);
+		Arbitrary<List<K>> keyLists = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize).map(ArrayList::new);
+		// TODO: Should be more like keySets.combineElementsWith(valuesArbitrary).as((key, value) -> ...)
+		//       but combineElementsWith() does not exist yet
+		return keyLists.flatMap(keys -> valuesArbitrary.list().ofSize(keys.size()).map(
+			values -> {
+				HashMap<K, V> map = new HashMap<>();
+				for (int i = 0; i < keys.size(); i++) {
+					K key = keys.get(i);
+					V value = values.get(i);
+					map.put(key, value);
+				}
+				return map;
+			}));
 	}
 
 	@Override
@@ -61,43 +59,14 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 		return mapArbitrary().exhaustive();
 	}
 
-	private static class KeyDefinesIdentityEntry<K, V> implements Map.Entry<K, V> {
-		private final K key;
-		private final V value;
-
-		private KeyDefinesIdentityEntry(K key, V value) {
-			this.key = key;
-			this.value = value;
-		}
-
-		@Override
-		public K getKey() {
-			return key;
-		}
-
-		@Override
-		public V getValue() {
-			return value;
+	private static class MapEntry<K, V> extends AbstractMap.SimpleEntry<K, V> {
+		private MapEntry(K key, V value) {
+			super(key, value);
 		}
 
 		@Override
 		public V setValue(V value) {
 			throw new UnsupportedOperationException();
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-
-			KeyDefinesIdentityEntry<?, ?> that = (KeyDefinesIdentityEntry<?, ?>) o;
-
-			return key.equals(that.key);
-		}
-
-		@Override
-		public int hashCode() {
-			return key.hashCode();
 		}
 	}
 }

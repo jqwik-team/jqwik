@@ -610,21 +610,21 @@ class ExhaustiveGenerationTests {
 			assertThat(mapGenerator).isPresent();
 
 			ExhaustiveGenerator<Map<Integer, Integer>> generator = mapGenerator.get();
-			assertThat(generator.maxCount()).isEqualTo(15);
+			assertThat(generator.maxCount()).isEqualTo(12);
 
-			assertThat(generator).containsExactly(
-				createMap(Tuple.of(1, 3), Tuple.of(2, 3)),
+			assertThat(generator).containsExactlyInAnyOrder(
+				createMap(Tuple.of(1, 5), Tuple.of(2, 5)),
 				createMap(Tuple.of(1, 4), Tuple.of(2, 4)),
-				createMap(Tuple.of(1, 3), Tuple.of(2, 4)),
-				createMap(Tuple.of(1, 4), Tuple.of(2, 3)),
-				createMap(Tuple.of(1, 3), Tuple.of(3, 3)),
+				createMap(Tuple.of(1, 5), Tuple.of(2, 4)),
+				createMap(Tuple.of(1, 4), Tuple.of(2, 5)),
+				createMap(Tuple.of(1, 5), Tuple.of(3, 5)),
 				createMap(Tuple.of(1, 4), Tuple.of(3, 4)),
-				createMap(Tuple.of(1, 3), Tuple.of(3, 4)),
-				createMap(Tuple.of(1, 4), Tuple.of(3, 3)),
-				createMap(Tuple.of(2, 3), Tuple.of(3, 3)),
+				createMap(Tuple.of(1, 5), Tuple.of(3, 4)),
+				createMap(Tuple.of(1, 4), Tuple.of(3, 5)),
+				createMap(Tuple.of(2, 5), Tuple.of(3, 5)),
 				createMap(Tuple.of(2, 4), Tuple.of(3, 4)),
-				createMap(Tuple.of(2, 3), Tuple.of(3, 4)),
-				createMap(Tuple.of(2, 4), Tuple.of(3, 3))
+				createMap(Tuple.of(2, 5), Tuple.of(3, 4)),
+				createMap(Tuple.of(2, 4), Tuple.of(3, 5))
 			);
 		}
 
@@ -638,7 +638,7 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
-		void elementArbitraryNotExhaustive() {
+		void tooManyCombinations() {
 			IntegerArbitrary keys = Arbitraries.integers().between(1, 1000);
 			IntegerArbitrary values = Arbitraries.integers().between(1000, 2000);
 			Optional<ExhaustiveGenerator<Optional<Map<Integer, Integer>>>> optionalGenerator =

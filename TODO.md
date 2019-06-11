@@ -1,5 +1,4 @@
 - MapArbitrary
-  - Test Exhaustive generation
   - Arbitrary Provider
 
 - Spring/Boot Testing
