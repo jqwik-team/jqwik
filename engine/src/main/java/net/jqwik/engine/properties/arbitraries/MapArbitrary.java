@@ -6,7 +6,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class MapArbitrary<K, V> extends AbstractArbitraryBase implements SizableArbitrary<Map<K,V>> {
+public class MapArbitrary<K, V> extends AbstractArbitraryBase implements SizableArbitrary<Map<K, V>> {
 
 	private final Arbitrary<K> keysArbitrary;
 	private final Arbitrary<V> valuesArbitrary;
@@ -58,7 +58,7 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 
 	@Override
 	public Optional<ExhaustiveGenerator<Map<K, V>>> exhaustive() {
-		return Optional.empty();
+		return mapArbitrary().exhaustive();
 	}
 
 	private static class KeyDefinesIdentityEntry<K, V> implements Map.Entry<K, V> {
