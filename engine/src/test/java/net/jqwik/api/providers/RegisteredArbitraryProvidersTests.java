@@ -198,6 +198,22 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 	@Property
+	boolean mapsOfIntegerAndString(@ForAll Map<Integer, String> aValue) {
+		return aValue != null;
+	}
+
+	@Property
+	void mapsAreMutable(@ForAll Map<Integer, String> aValue) {
+		aValue.put(42, "forty two");
+	}
+
+	@Property(tries = 50)
+	void mapsWithNumberKeysAndNumberValues(@ForAll @Size(2) Map<Number, Number> aMap) {
+		assertThat(aMap.keySet()).allMatch(k -> Number.class.isAssignableFrom(k.getClass()));
+		assertThat(aMap.values()).allMatch(k -> Number.class.isAssignableFrom(k.getClass()));
+	}
+
+	@Property
 	boolean listOfUnconstrainedWildcard(@ForAll List<?> aValue) {
 		return aValue.stream().allMatch(e -> e instanceof WildcardObject);
 	}

@@ -99,6 +99,11 @@ public interface TypeUsage {
 	List<TypeUsage> getTypeArguments();
 
 	/**
+	 * Return the type argument at a specific position.
+	 */
+	TypeUsage getTypeArgument(int position);
+
+	/**
 	 * Check if an instance is of a specific raw type
 	 * <p>
 	 * Most of the time this is what you want to do when checking for applicability of a

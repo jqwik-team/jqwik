@@ -18,6 +18,7 @@ public class DefaultArbitraries {
 		providers.add(new WildcardArbitraryProvider());
 		providers.add(new ListArbitraryProvider());
 		providers.add(new SetArbitraryProvider());
+		providers.add(new MapArbitraryProvider());
 		providers.add(new StreamArbitraryProvider());
 		providers.add(new OptionalArbitraryProvider());
 		providers.add(new ArrayArbitraryProvider());

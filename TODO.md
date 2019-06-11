@@ -1,6 +1,3 @@
-- MapArbitrary
-  - Arbitrary Provider
-
 - Spring/Boot Testing
 
 - Case-based branching with statistical reporting:

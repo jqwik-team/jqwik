@@ -17,12 +17,10 @@ abstract class AbstractCollectionArbitraryProvider implements ArbitraryProvider 
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		TypeUsage innerType = targetType.getTypeArguments().isEmpty() ? //
-			TypeUsage.forType(Object.class) //
-			: targetType.getTypeArguments().get(0);
-		Set<Arbitrary<?>> elementArbitraries = subtypeProvider.apply(innerType);
-		return elementArbitraries.stream() //
-								 .map(this::create) //
+		TypeUsage elementType = targetType.getTypeArgument(0);
+		Set<Arbitrary<?>> elementArbitraries = subtypeProvider.apply(elementType);
+		return elementArbitraries.stream()
+								 .map(this::create)
 								 .collect(Collectors.toSet());
 	}
 

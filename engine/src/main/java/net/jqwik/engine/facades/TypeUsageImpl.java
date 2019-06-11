@@ -248,6 +248,13 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
+	public TypeUsage getTypeArgument(int position) {
+		return getTypeArguments().size() <= position ?
+				   TypeUsage.forType(Object.class)
+				   : getTypeArguments().get(position);
+	}
+
+	@Override
 	public boolean isOfType(Class<?> aRawType) {
 		if (isTypeVariableOrWildcard())
 			return false;
