@@ -734,7 +734,7 @@ The following example provides an annotation to constrain String or Character ge
 ```java
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Digits
+@NumericChars
 @AlphaChars
 @Chars({'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß'})
 @Chars({' ', '.', ',', ';', '?', '!'})
