@@ -26,6 +26,7 @@ title: jqwik Release Notes
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/snapshot/user-guide.html">User guide</a>
+</p>
 
 - Removed dependencies to internal classes in JUnit platform
 - Added [`Arbitraries.maps()`](/docs/snapshot/user-guide.html#maps)
@@ -241,6 +242,7 @@ and
 - Removed deprecated static methods in `Arbitraries`
 - Removed deprecated method `ArbitraryProvider.provideFor(TypeUsage targetType, Function<TypeUsage, Optional<Arbitrary<?>>> subtypeProvider)`
 - Removed default implementation of `ArbitraryProvider.provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider)`
+- Removed deprecated annotation `@Digits`
 - Renamed `TypeUsage.getAnnotation(Class annotationClass)` to `findAnnotation`
 - Added `TypeUsage.isAnnotated(Class annotationClass)`
 - Added [`Arbitrary.unique()`](/docs/0.9.3/user-guide.html#creating-unique-values)
