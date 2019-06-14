@@ -57,8 +57,20 @@
   https://www.youtube.com/watch?v=NcJOiQlzlXQ&list=PLvL2NEhYV4ZvCRCVlXTfB6-d09K3r0Sxa
 
   - Classifiers.label(boolean condition, String label)
+
   - Classifiers.checkCoverage(boolean condition, String label, double minCoverage)
 
+  - Alternative: Case-based branching with statistical reporting:
+
+    ```
+    Cases.of("name")
+      .match(condition1, "label1", () -> {})
+      .match(condition2, "label2", () -> {})
+      .noMatch();
+    ``` 
+
+    - specify minimum coverage for each case
+  
 - @AddExample[s] annotation like @FromData but additional to generated data
 
 - Store regressions (samples once failed) in dedicated database
@@ -106,8 +118,8 @@
 
 - Reporter.report(key, value)
 
-- Additional reporting data, e.g. 
-  - Typical runtimes: ~ 1m 
+- Additional reporting data, e.g.
+  - Typical runtimes: ~ 1m
   - Fraction of time spent in data generation: ~ 12%
 
 - Record/report generated values by parameter name,
@@ -140,7 +152,7 @@
 - Arbitraries.function(Arbitrary outputArbitrary, Class inputType)
   - arbitrary providers for functional types and sam types
 
-- Arbitrary.share(Arbitrary, String key) 
+- Arbitrary.share(Arbitrary, String key)
   [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
 
 - Arbitraries.emails()

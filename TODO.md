@@ -1,16 +1,24 @@
-- Spring/Boot Testing
+- 1.1.6
 
-- Case-based branching with statistical reporting:
+  - Function generation
 
-  ```
-  Cases.of("name")
-    .match(condition1, "label1", () -> {})
-    .match(condition2, "label2", () -> {})
-    .noMatch();
-  ``` 
+    - <F,R> Arbitrary<F> Arbitraries.functions(Class<F> functionalType, Arbitrary<R> resultArbitrary)
+
+    - Default mapping for SAM types and @Functional types
+
+- 1.2.0
+
+  - Remove deprecated stuff
   
-  - specify minimum coverage for each case
+  - Promote some experimental stuff
   
-- Arbitrary.describe() for all built-in arbitraries
+  - Lifecycle
+    - Around container
+    - Around try
+    - Around engine
+  
+  - Spring/Boot Testing in its own module
+
+  - Arbitrary.describe() for all built-in arbitraries
 
 
