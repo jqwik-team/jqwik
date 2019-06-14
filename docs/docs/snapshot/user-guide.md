@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.1.4-SNAPSHOT
+title: jqwik User Guide - 1.1.6-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.4-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.6-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -54,6 +54,7 @@ title: jqwik User Guide - 1.1.4-SNAPSHOT
     - [Shuffling Permutations](#shuffling-permutations)
     - [Default Types](#default-types)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
+  - [Maps](#maps)
   - [Collecting Values in a List](#collecting-values-in-a-list)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
   - [Generate `null` values](#generate-null-values)
@@ -84,6 +85,7 @@ title: jqwik User Guide - 1.1.4-SNAPSHOT
   - [Integrated Shrinking](#integrated-shrinking)
   - [Switch Shrinking Off](#switch-shrinking-off)
   - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
+  - [Change the Shrinking Target](#change-the-shrinking-target)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
 - [Providing Default Arbitraries](#providing-default-arbitraries)
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
@@ -139,7 +141,7 @@ repositories {
 ext.junitPlatformVersion = '1.4.2'
 ext.junitJupiterVersion = '5.4.2'
 
-ext.jqwikVersion = '1.1.4-SNAPSHOT'
+ext.jqwikVersion = '1.1.6-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -215,7 +217,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>1.1.6-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -241,7 +243,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.1.4-SNAPSHOT.jar`
+- `jqwik-1.1.6-SNAPSHOT.jar`
 - `junit-platform-engine-1.4.2.jar`
 - `junit-platform-commons-1.4.2.jar`
 - `opentest4j-1.1.1.jar`
@@ -292,7 +294,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.1.4-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.1.6-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -636,6 +638,7 @@ jqwik will use default generation for the following types:
 - `Iterable<T>` and `Iterator<T>` of types that are provided by default.
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
+- `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
 
 If you use [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) 
@@ -823,7 +826,7 @@ The following example provides an annotation to constrain String or Character ge
 ```java
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
-@Digits
+@NumericChars
 @AlphaChars
 @Chars({'ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß'})
 @Chars({' ', '.', ',', ';', '?', '!'})
@@ -942,7 +945,7 @@ The starting point for generation usually is a static method call on class
 
 #### Select randomly with Weights
 
-If you have a set of values to choose from with weighted probabilities, use 
+If you have a set of values to choose from with weighted probabilities, use `
 [`Arbitraries.frequency(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#frequency-net.jqwik.api.Tuple.Tuple2...-):
 
 ```java
@@ -1044,6 +1047,12 @@ an `Arbitrary` instance for the generic type. You can create the corresponding c
 - [`Arbitrary.streamOf()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#stream--)
 - [`Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
 - [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional--)
+
+### Maps
+
+Generating instances of type `Map` is a bit different since two arbitraries
+are needed, one for the key and one for the value. Therefore you have to use
+[`Arbitraries.maps(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-):
 
 ### Collecting Values in a List
 
@@ -2048,6 +2057,35 @@ can try
 to tell _jqwik_ to go all the way, even if it takes a million steps,
 even if it never ends...
 
+### Change the Shrinking Target
+
+By default shrinking of numbers will move towards zero (0). 
+If zero is outside the bounds of generation the closest number to zero 
+- either the min or max value - is used as a target for shrinking.
+There are cases, however, when you'd like _jqwik_ to choose a different 
+shrinking target, usually when the default value of a number is not 0. 
+
+Consider generating signals with a standard frequency of 50 hz that can vary by
+plus/minus 5 hz. If possible, shrinking of falsified scenarios should move
+towards the standard frequency. Here's how the provider method might look:
+
+```java
+@Provide
+Arbitrary<List<Signal>> signals() {
+	Arbitrary<Long> frequencies = 
+	    Arbitraries
+            .longs()
+            .between(45, 55)
+            .shrinkTowards(50);
+
+	return frequencies.map(f -> Signal.withFrequency(f)).list().ofMaxSize(1000);
+}
+```
+
+Currently shrinking targets are supported for integral numbers and decimal numbers, i.e.,
+bytes, shorts, integers, longs, floats, doubles, BigIntegers and BigDecimals.
+
+
 ## Collecting and Reporting Statistics
 
 In many situations you'd like to know if _jqwik_ will really generate
@@ -2572,7 +2610,7 @@ Exhaustive generation is considered for:
 - Strings
 - Fixed number of choices given by `Arbitraries.of()`
 - Fixed number of choices given by `Arbitraries.shuffle()`
-- Lists, sets, streams, optionals of the above
+- Lists, sets, streams, optionals and maps of the above
 - Combinations of the above using `Combinators.combine()`
 - Mapped arbitraries using `Arbitrary.map()`
 - Filtered arbitraries using `Arbitrary.filter()`
@@ -2689,4 +2727,4 @@ reportOnlyFailures = false          # Set to true if only falsified properties s
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#114-snapshot).
+Read this version's [release notes](/release-notes.html#116-snapshot).

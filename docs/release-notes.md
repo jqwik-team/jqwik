@@ -24,8 +24,11 @@ title: jqwik Release Notes
 
 ## 1.1.6-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+
 - Removed dependencies to internal classes in JUnit platform
-- Added [`Arbitraries.maps()`](/docs/1.1.6/user-guide.html#maps)
+- Added [`Arbitraries.maps()`](/docs/snapshot/user-guide.html#maps)
 - Added default generation for `Map` instances
 
 ## 1.1.5
