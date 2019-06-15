@@ -196,4 +196,20 @@ public class JqwikReflectionSupport {
 	public static boolean isInnerClass(Class<? extends LifecycleHook> hookClass) {
 		return hookClass.isMemberClass() && !ModifierSupport.isStatic(hookClass);
 	}
+
+	public static boolean isFunctionalType(Class<?> candidateType) {
+		if (!candidateType.isInterface()) {
+			return false;
+		}
+		return countInterfaceMethods(candidateType) == 1;
+	}
+
+	private static long countInterfaceMethods(Class<?> candidateType) {
+		Method[] methods = candidateType.getMethods();
+		return Arrays
+				   .stream(methods)
+				   .filter(m -> !m.isDefault() && !ModifierSupport.isStatic(m))
+				   .count();
+	}
+
 }
