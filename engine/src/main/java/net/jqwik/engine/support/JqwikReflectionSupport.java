@@ -13,6 +13,8 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.discovery.predicates.*;
+import org.junit.platform.commons.util.ExceptionUtils;
+import org.junit.platform.commons.util.ReflectionUtils;
 
 import static java.util.stream.Collectors.*;
 
@@ -84,9 +86,16 @@ public class JqwikReflectionSupport {
 		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz))
 			return ReflectionSupport.newInstance(clazz);
 		Class<?> outerClass = clazz.getDeclaringClass();
-		Object parentInstance = outerClass.equals(context.getClass()) ?
+		Object parentInstance = outerClass.isAssignableFrom(context.getClass()) ?
 									context : newInstanceWithDefaultConstructor(outerClass);
-		return ReflectionSupport.newInstance(clazz, parentInstance);
+		Constructor<T> constructor = null;
+		try {
+			constructor = clazz.getDeclaredConstructor(outerClass);
+		}
+		catch (NoSuchMethodException e) {
+			throw ExceptionUtils.throwAsUncheckedException(e);
+		}
+		return ReflectionUtils.newInstance(constructor, parentInstance);
 	}
 
 	/**

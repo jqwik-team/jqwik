@@ -8,7 +8,11 @@ import net.jqwik.api.domains.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class DomainContextTests {
+class DomainContextTests extends BaseDomainContexts {
+
+	DomainContextTests() {
+		specificNumbers = new Integer[]{10, 11, 12};
+	}
 
 	@Property(tries = 20)
 	@Domain(NumberStringContext.class)
@@ -57,6 +61,14 @@ class DomainContextTests {
 		@ForAll int aNumber
 	) {
 		assertThat(aNumber).isBetween(1000000, 9000000);
+	}
+
+	@Property
+	@Domain(SpecificNumbersContext.class)
+	void contextFromSuperClass(
+		@ForAll int aNumber
+	) {
+		assertThat(aNumber).isBetween(10, 12);
 	}
 
 	@Target({ElementType.PARAMETER})
