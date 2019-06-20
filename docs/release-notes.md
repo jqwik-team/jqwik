@@ -31,6 +31,8 @@ title: jqwik Release Notes
 - Removed dependencies to internal classes in JUnit platform
 - Added [`Arbitraries.maps()`](/docs/snapshot/user-guide.html#maps)
 - Added default generation for `Map` instances
+- `@Domain` annotation can now also refer to inner class of test container's base class.
+  Thanks to https://github.com/larsrh for that pull request!
 
 ## 1.1.5
 

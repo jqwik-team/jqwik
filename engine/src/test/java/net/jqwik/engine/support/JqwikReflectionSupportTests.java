@@ -17,23 +17,26 @@ class JqwikReflectionSupportTests {
 
 		@Example
 		boolean staticClass() {
-			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(Outer.class) instanceof Outer;
+			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(Outer.class)
+					   instanceof Outer;
 		}
 
 		@Example
 		boolean innerClassWithoutConstructor() {
-			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(Outer.Inner.class) instanceof Outer.Inner;
+			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(Outer.Inner.class)
+					   instanceof Outer.Inner;
 		}
 
 		@Example
 		boolean innerClassWithDefaultConstructor() {
-			return JqwikReflectionSupport
-					.newInstanceWithDefaultConstructor(Outer.InnerWithConstructor.class) instanceof Outer.InnerWithConstructor;
+			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(Outer.InnerWithConstructor.class)
+					   instanceof Outer.InnerWithConstructor;
 		}
 
 		@Example
 		boolean staticClassWithDefaultConstructor() {
-			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(OuterWithConstructor.class) instanceof OuterWithConstructor;
+			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(OuterWithConstructor.class)
+					   instanceof OuterWithConstructor;
 		}
 
 	}
@@ -43,22 +46,26 @@ class JqwikReflectionSupportTests {
 
 		@Example
 		boolean staticInnerClass() {
-			return JqwikReflectionSupport.newInstanceInTestContext(Outer.class, null) instanceof Outer;
+			return JqwikReflectionSupport.newInstanceInTestContext(Outer.class, null)
+					   instanceof Outer;
 		}
 
 		@Example
 		boolean toplevelClass() {
-			return JqwikReflectionSupport.newInstanceInTestContext(JqwikReflectionSupportTests.class, null) instanceof JqwikReflectionSupportTests;
+			return JqwikReflectionSupport.newInstanceInTestContext(JqwikReflectionSupportTests.class, null)
+					   instanceof JqwikReflectionSupportTests;
 		}
 
 		@Example
 		boolean innerClass() {
-			return JqwikReflectionSupport.newInstanceInTestContext(Outer.InnerWithConstructor.class, new Outer()) instanceof Outer.InnerWithConstructor;
+			return JqwikReflectionSupport.newInstanceInTestContext(Outer.InnerWithConstructor.class, new Outer())
+					   instanceof Outer.InnerWithConstructor;
 		}
 
 		@Example
 		boolean innerClassInherited() {
-			return JqwikReflectionSupport.newInstanceInTestContext(OuterBase.Inner.class, new OuterSub()) instanceof OuterBase.Inner;
+			return JqwikReflectionSupport.newInstanceInTestContext(OuterBase.Inner.class, new OuterSub())
+					   instanceof OuterBase.Inner;
 
 		}
 
@@ -172,6 +179,7 @@ class JqwikReflectionSupportTests {
 
 		class InnerWithConstructor {
 			private final String aString;
+
 			public InnerWithConstructor() {
 				this.aString = "hallo";
 			}

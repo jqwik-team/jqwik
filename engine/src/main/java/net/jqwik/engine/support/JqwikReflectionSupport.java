@@ -13,8 +13,6 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.discovery.predicates.*;
-import org.junit.platform.commons.util.ExceptionUtils;
-import org.junit.platform.commons.util.ReflectionUtils;
 
 import static java.util.stream.Collectors.*;
 
@@ -93,9 +91,18 @@ public class JqwikReflectionSupport {
 			constructor = clazz.getDeclaredConstructor(outerClass);
 		}
 		catch (NoSuchMethodException e) {
-			throw ExceptionUtils.throwAsUncheckedException(e);
+			JqwikExceptionSupport.throwAsUncheckedException(e);
 		}
-		return ReflectionUtils.newInstance(constructor, parentInstance);
+		return newInstance(constructor, parentInstance);
+	}
+
+	private static <T> T newInstance(Constructor<T> constructor, Object... args) {
+		try {
+			return makeAccessible(constructor).newInstance(args);
+		}
+		catch (Throwable t) {
+			return JqwikExceptionSupport.throwAsUncheckedException(t);
+		}
 	}
 
 	/**
