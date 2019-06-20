@@ -39,6 +39,32 @@ class JqwikReflectionSupportTests {
 	}
 
 	@Group
+	class NewInstanceInTestContext {
+
+		@Example
+		boolean staticInnerClass() {
+			return JqwikReflectionSupport.newInstanceInTestContext(Outer.class, null) instanceof Outer;
+		}
+
+		@Example
+		boolean toplevelClass() {
+			return JqwikReflectionSupport.newInstanceInTestContext(JqwikReflectionSupportTests.class, null) instanceof JqwikReflectionSupportTests;
+		}
+
+		@Example
+		boolean innerClass() {
+			return JqwikReflectionSupport.newInstanceInTestContext(Outer.InnerWithConstructor.class, new Outer()) instanceof Outer.InnerWithConstructor;
+		}
+
+		@Example
+		boolean innerClassInherited() {
+			return JqwikReflectionSupport.newInstanceInTestContext(OuterBase.Inner.class, new OuterSub()) instanceof OuterBase.Inner;
+
+		}
+
+	}
+
+	@Group
 	class GetMethodParameters {
 
 		@Example
@@ -150,6 +176,26 @@ class JqwikReflectionSupportTests {
 				this.aString = "hallo";
 			}
 		}
+	}
+
+	private static abstract class OuterBase {
+
+		public OuterBase(int i) {
+
+		}
+
+		class Inner {
+
+		}
+
+	}
+
+	private static class OuterSub extends OuterBase {
+
+		public OuterSub() {
+			super(0);
+		}
+
 	}
 
 	private static class OuterWithConstructor {
