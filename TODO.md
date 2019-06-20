@@ -3,6 +3,8 @@
   - Function generation
 
     - <F,R> Arbitrary<F> Arbitraries.functions(Class<F> functionalType, Arbitrary<R> resultArbitrary)
+      
+      or: Functions.forType(Class<F> functionalType).returns(Arbitrary<R> resultArbitrary))
 
     - Default mapping for SAM types and @Functional types
 
