@@ -13,10 +13,9 @@ class ArbitrariesFunctionsTests {
 	@Example
 	void function_creates_same_result_for_same_input(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
-		Arbitrary<Function> functions = Arbitraries.functions(Function.class, integers);
+		Arbitrary<Function<String, Integer>> functions = Arbitraries.functions(Function.class, integers);
 
-		Function<String, Integer> function =
-			(Function<String, Integer>) functions.generator(10).next(random).value();
+		Function<String, Integer> function = functions.generator(10).next(random).value();
 
 		Integer valueForHello = function.apply("hello");
 		assertThat(valueForHello).isBetween(1, 10);
@@ -26,10 +25,9 @@ class ArbitrariesFunctionsTests {
 	@Example
 	void supplier_always_returns_same_element(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
-		Arbitrary<Supplier> functions = Arbitraries.functions(Supplier.class, integers);
+		Arbitrary<Supplier<Integer>> functions = Arbitraries.functions(Supplier.class, integers);
 
-		Supplier<Integer> supplier =
-			(Supplier<Integer>) functions.generator(10).next(random).value();
+		Supplier<Integer> supplier = functions.generator(10).next(random).value();
 
 		Integer value = supplier.get();
 		assertThat(value).isBetween(1, 10);
@@ -38,10 +36,9 @@ class ArbitrariesFunctionsTests {
 
 	@Example
 	void consumer_accepts_anything(@ForAll Random random) {
-		Arbitrary<Consumer> functions = Arbitraries.functions(Consumer.class, Arbitraries.nothing());
+		Arbitrary<Consumer<Integer>> functions = Arbitraries.functions(Consumer.class, Arbitraries.nothing());
 
-		Consumer<Integer> supplier =
-			(Consumer<Integer>) functions.generator(10).next(random).value();
+		Consumer<Integer> supplier = functions.generator(10).next(random).value();
 
 		supplier.accept(0);
 		supplier.accept(Integer.MAX_VALUE);

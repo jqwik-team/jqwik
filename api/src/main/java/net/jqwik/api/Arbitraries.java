@@ -574,13 +574,15 @@ public class Arbitraries {
 	 *
 	 * Shrinking will consider constant functions.
 	 *
-	 * @param functionalType The functional type to generate
+	 * @param functionalType The class object of the functional type to generate
 	 * @param resultArbitrary The arbitrary used to generate return values
+	 * @param <T> The exact functional type to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.6")
-	public static <F> Arbitrary<F> functions(Class<F> functionalType, Arbitrary<?> resultArbitrary) {
-		return ArbitrariesFacade.implementation.functions(functionalType, resultArbitrary);
+	public static <T> Arbitrary<T> functions(Class<?> functionalType, Arbitrary<?> resultArbitrary) {
+		//noinspection unchecked
+		return (Arbitrary<T>) ArbitrariesFacade.implementation.functions(functionalType, resultArbitrary);
 	}
 
 	/**
