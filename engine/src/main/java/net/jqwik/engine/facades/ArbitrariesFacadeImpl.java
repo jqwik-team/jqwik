@@ -189,8 +189,4 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 	}
 
-	@Override
-	public <F> Arbitrary<F> functions(Class<F> functionalType, Arbitrary<?> resultArbitrary) {
-		return FunctionArbitraries.functions(functionalType, resultArbitrary);
-	}
 }

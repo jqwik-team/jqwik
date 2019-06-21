@@ -2,10 +2,12 @@
 
   - Function generation
 
-    - <F,R> Arbitrary<F> Arbitraries.functions(Class<F> functionalType, Arbitrary<R> resultArbitrary)
+    - Functions.function(Class<F> functionalType).returns(Arbitrary<R> resultArbitrary))
+    
+      - generate non constant functions
       
-      or: Functions.forType(Class<F> functionalType).returns(Arbitrary<R> resultArbitrary))
-
+      - allow returns depending on input parameter conditions
+      
     - Default mapping for SAM types and @Functional types
 
 - 1.2.0

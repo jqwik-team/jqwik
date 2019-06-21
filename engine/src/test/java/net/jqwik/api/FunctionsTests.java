@@ -1,19 +1,17 @@
-package net.jqwik.engine.properties;
+package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.*;
-
 import static org.assertj.core.api.Assertions.*;
 
-@Label("Arbitraries.functions()")
-class ArbitrariesFunctionsTests {
+class FunctionsTests {
 
 	@Example
 	void function_creates_same_result_for_same_input(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
-		Arbitrary<Function<String, Integer>> functions = Arbitraries.functions(Function.class, integers);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
 
 		Function<String, Integer> function = functions.generator(10).next(random).value();
 
@@ -25,7 +23,8 @@ class ArbitrariesFunctionsTests {
 	@Example
 	void supplier_always_returns_same_element(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
-		Arbitrary<Supplier<Integer>> functions = Arbitraries.functions(Supplier.class, integers);
+		Arbitrary<Supplier<Integer>> functions =
+			Functions.function(Supplier.class).returns(integers);
 
 		Supplier<Integer> supplier = functions.generator(10).next(random).value();
 
@@ -36,7 +35,8 @@ class ArbitrariesFunctionsTests {
 
 	@Example
 	void consumer_accepts_anything(@ForAll Random random) {
-		Arbitrary<Consumer<Integer>> functions = Arbitraries.functions(Consumer.class, Arbitraries.nothing());
+		Arbitrary<Consumer<Integer>> functions =
+			Functions.function(Consumer.class).returns(Arbitraries.nothing());
 
 		Consumer<Integer> supplier = functions.generator(10).next(random).value();
 
@@ -48,13 +48,13 @@ class ArbitrariesFunctionsTests {
 	void functional_interfaces_and_SAM_types_are_accepted() {
 		Arbitrary<Integer> any = Arbitraries.constant(1);
 
-		assertThat(Arbitraries.functions(Function.class, any)).isNotNull();
-		assertThat(Arbitraries.functions(Supplier.class, any)).isNotNull();
-		assertThat(Arbitraries.functions(Consumer.class, Arbitraries.nothing())).isNotNull();
-		assertThat(Arbitraries.functions(Predicate.class, any)).isNotNull();
-		assertThat(Arbitraries.functions(MyFunctionalInterface.class, any)).isNotNull();
-		assertThat(Arbitraries.functions(MyInheritedFunctionalInterface.class, any)).isNotNull();
-		assertThat(Arbitraries.functions(MySamType.class, any)).isNotNull();
+		assertThat(Functions.function(Function.class).returns(any)).isNotNull();
+		assertThat(Functions.function(Supplier.class).returns(any)).isNotNull();
+		assertThat(Functions.function(Consumer.class).returns(Arbitraries.nothing())).isNotNull();
+		assertThat(Functions.function(Predicate.class).returns(any)).isNotNull();
+		assertThat(Functions.function(MyFunctionalInterface.class).returns(any)).isNotNull();
+		assertThat(Functions.function(MyInheritedFunctionalInterface.class).returns(any)).isNotNull();
+		assertThat(Functions.function(MySamType.class).returns(any)).isNotNull();
 	}
 
 	@Example
@@ -62,10 +62,10 @@ class ArbitrariesFunctionsTests {
 		Arbitrary<Integer> any = Arbitraries.constant(1);
 
 		assertThatThrownBy(
-			() -> Arbitraries.functions(NotAFunctionalInterface.class, any))
+			() -> Functions.function(NotAFunctionalInterface.class).returns(any))
 			.isInstanceOf(JqwikException.class);
 		assertThatThrownBy(
-			() -> Arbitraries.functions(MyAbstractClass.class, any))
+			() -> Functions.function(MyAbstractClass.class).returns(any))
 			.isInstanceOf(JqwikException.class);
 	}
 

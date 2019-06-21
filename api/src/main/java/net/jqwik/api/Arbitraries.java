@@ -81,8 +81,6 @@ public class Arbitraries {
 		public abstract <T> TypeArbitrary<T> forType(Class<T> targetType);
 
 		public abstract <K, V> SizableArbitrary<Map<K,V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
-
-		public abstract <F> Arbitrary<F> functions(Class<F> functionalType, Arbitrary<?> resultArbitrary);
 	}
 
 	private Arbitraries() {
@@ -561,28 +559,6 @@ public class Arbitraries {
 	@API(status = MAINTAINED, since = "1.1.6")
 	public static <K,V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		return ArbitrariesFacade.implementation.maps(keysArbitrary, valuesArbitrary);
-	}
-
-
-	/**
-	 * Create an arbitrary to create instances of functions,
-	 * i.e. types marked {@linkplain FunctionalInterface} or representing a
-	 * SAM (single abstract method) type.
-	 *
-	 * The generated functions are guaranteed to return the same result
-	 * given the same input values.
-	 *
-	 * Shrinking will consider constant functions.
-	 *
-	 * @param functionalType The class object of the functional type to generate
-	 * @param resultArbitrary The arbitrary used to generate return values
-	 * @param <T> The exact functional type to generate
-	 * @return a new arbitrary instance
-	 */
-	@API(status = EXPERIMENTAL, since = "1.1.6")
-	public static <T> Arbitrary<T> functions(Class<?> functionalType, Arbitrary<?> resultArbitrary) {
-		//noinspection unchecked
-		return (Arbitrary<T>) ArbitrariesFacade.implementation.functions(functionalType, resultArbitrary);
 	}
 
 	/**
