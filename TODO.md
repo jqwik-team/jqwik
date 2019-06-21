@@ -1,5 +1,15 @@
 - 1.1.6
 
+  - Generate documentation
+  
+  - Release
+
+- 1.2.0
+
+  - Remove deprecated stuff
+  
+  - Promote some experimental stuff
+  
   - Function generation
 
     - Functions.function(Class<F> functionalType).returns(Arbitrary<R> resultArbitrary))
@@ -8,14 +18,10 @@
       
       - allow returns depending on input parameter conditions
       
+      - user guide entry
+      
     - Default mapping for SAM types and @Functional types
 
-- 1.2.0
-
-  - Remove deprecated stuff
-  
-  - Promote some experimental stuff
-  
   - Lifecycle
     - Around container
     - Around try
