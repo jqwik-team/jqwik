@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.2.0-SNAPSHOT](#120-snapshot)
 - [1.1.6](#116)
 - [1.1.5](#115)
 - [1.1.4](#114)
@@ -21,6 +22,11 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.2.0-SNAPSHOT
+
+- __Breaking Change__: Removed `CharacterArbitrary.between(min, max)` 
+  which had been deprecated in [1.1.3](#113)
 
 ## 1.1.6
 

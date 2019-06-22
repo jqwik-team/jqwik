@@ -1,7 +1,5 @@
 - 1.2.0
 
-  - Remove deprecated stuff
-  
   - Promote some experimental stuff
   
   - Function generation

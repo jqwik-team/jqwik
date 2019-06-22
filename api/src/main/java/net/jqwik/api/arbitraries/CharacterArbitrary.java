@@ -20,17 +20,6 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	CharacterArbitrary all();
 
 	/**
-	 * Allow all chars within {@code min} (included) and {@code max} (included) to show up in generated values.
-	 *
-	 * @deprecated Use {@link #range(char, char)} instead.
-	 */
-	@Deprecated
-	@API(status = DEPRECATED)
-	default CharacterArbitrary between(char min, char max) {
-		return this.range(min, max);
-	}
-
-	/**
 	 * Allow all chars in {@code chars} show up in generated values.
 	 *
 	 * Adds to all already allowed chars.
