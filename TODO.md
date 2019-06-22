@@ -1,14 +1,12 @@
 - 1.2.0
 
-  - Promote some experimental stuff
-  
   - Function generation
 
     - Functions.function(Class<F> functionalType).returns(Arbitrary<R> resultArbitrary))
     
       - generate non constant functions
       
-      - allow returns depending on input parameter conditions
+      - throws(Arbitrary<? extends Throwable>)
       
       - user guide entry
       

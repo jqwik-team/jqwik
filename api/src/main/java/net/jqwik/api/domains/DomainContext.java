@@ -23,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see AbstractDomainContextBase
  */
 
-@API(status = EXPERIMENTAL, since = "1.1")
+@API(status = MAINTAINED, since = "1.2.0")
 public interface DomainContext {
 
 	static DomainContext global() {

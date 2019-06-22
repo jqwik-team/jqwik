@@ -25,7 +25,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ ElementType.ANNOTATION_TYPE, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@API(status = EXPERIMENTAL, since = "1.1")
+@API(status = MAINTAINED, since = "1.2")
 public @interface UseType {
 	UseTypeMode[] value() default {};
 }

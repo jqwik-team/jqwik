@@ -218,7 +218,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Fix the genSize of an arbitrary so that it can no longer be influenced from outside
 	 */
-	@API(status = EXPERIMENTAL, since = "1.0")
+	@API(status = MAINTAINED, since = "1.2.0")
 	default Arbitrary<T> fixGenSize(int genSize) {
 		return new Arbitrary<T>() {
 			@Override

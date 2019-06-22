@@ -23,7 +23,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see net.jqwik.api.domains.Domain
  * @see net.jqwik.api.domains.DomainContext
  */
-@API(status = EXPERIMENTAL, since = "1.1")
+@API(status = MAINTAINED, since = "1.2")
 public interface TypeArbitrary<T> extends Arbitrary<T> {
 
 	/**

@@ -476,7 +476,7 @@ public class Arbitraries {
 	 *
 	 * @see TypeArbitrary
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1")
+	@API(status = MAINTAINED, since = "1.2.0")
 	public static <T> TypeArbitrary<T> forType(Class<T> targetType) {
 		return ArbitrariesFacade.implementation.forType(targetType);
 	}

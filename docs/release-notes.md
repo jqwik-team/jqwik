@@ -28,6 +28,15 @@ title: jqwik Release Notes
 - __Breaking Change__: Removed `CharacterArbitrary.between(min, max)` 
   which had been deprecated in [1.1.3](#113)
 
+- Promoted from `API.Status.EXPERIMENTAL` to `API.Status.MAINTAINED`:
+
+  - `Arbitraries.forType(Class<T> targetType)` and interface `TypeArbitrary`
+  - Annotation `@UseType` and enum `UseTypeMode`
+  - `Arbitrary.fixGenSize(int genSize)`
+  - `Combinators.withBuilder(Supplier<B> builderSupplier)` and
+    `Combinators.withBuilder(Arbitrary<B> builderArbitrary)`
+  - Annotation `@Domain` and interface `DomainContext`
+
 ## 1.1.6
 
 <p style="padding-left:1em;font-size:larger">

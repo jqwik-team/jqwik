@@ -6,7 +6,7 @@ import net.jqwik.api.arbitraries.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@API(status = EXPERIMENTAL, since = "1.1")
+@API(status = MAINTAINED, since = "1.2")
 public enum UseTypeMode {
 	CONSTRUCTORS {
 		@Override

@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 @Target({ElementType.METHOD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@API(status = EXPERIMENTAL, since = "1.1")
+@API(status = MAINTAINED, since = "1.2.0")
 public @interface DomainList {
 	Domain[] value();
 }

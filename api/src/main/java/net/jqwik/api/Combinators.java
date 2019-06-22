@@ -129,7 +129,7 @@ public class Combinators {
 	 *
 	 * @return BuilderCombinator instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.1")
+	@API(status = MAINTAINED, since = "1.2.0")
 	public static <B> BuilderCombinator<B> withBuilder(Supplier<B> builderSupplier) {
 		return new BuilderCombinator<>(Arbitraries.create(builderSupplier));
 	}
@@ -142,7 +142,7 @@ public class Combinators {
 	 *
 	 * @return BuilderCombinator instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.1")
+	@API(status = MAINTAINED, since = "1.2.0")
 	public static <B> BuilderCombinator<B> withBuilder(Arbitrary<B> builderArbitrary) {
 		return new BuilderCombinator<>(builderArbitrary);
 	}
@@ -717,7 +717,7 @@ public class Combinators {
 		}
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.1.1")
+	@API(status = MAINTAINED, since = "1.2.0")
 	public static class BuilderCombinator<B> {
 		private Arbitrary<B> builder;
 
@@ -735,7 +735,7 @@ public class Combinators {
 
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.1.1")
+	@API(status = MAINTAINED, since = "1.2.0")
 	public static class CombinableBuilder<B, T> {
 		private final Arbitrary<B> builder;
 		private final Arbitrary<T> arbitrary;

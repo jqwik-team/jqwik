@@ -22,13 +22,12 @@ import static org.apiguardian.api.API.Status.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Repeatable(DomainList.class)
-@API(status = EXPERIMENTAL, since = "1.1")
+@API(status = MAINTAINED, since = "1.2.0")
 public @interface Domain {
 
 	int PRIORITY_NOT_SET = Integer.MIN_VALUE;
 
 	Class<? extends DomainContext> value();
 
-	@API(status = EXPERIMENTAL, since = "1.1.1")
 	int priority() default PRIORITY_NOT_SET;
 }
