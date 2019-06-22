@@ -1,7 +1,3 @@
-- 1.1.6
-
-  - Release
-
 - 1.2.0
 
   - Remove deprecated stuff
