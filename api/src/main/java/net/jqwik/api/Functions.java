@@ -5,7 +5,7 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 
-@API(status = EXPERIMENTAL, since = "1.1.6")
+@API(status = EXPERIMENTAL, since = "1.2.0")
 public class Functions {
 
 	@API(status = INTERNAL)

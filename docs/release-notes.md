@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.1.6-SNAPSHOT](#116-snapshot)
+- [1.1.6](#116)
 - [1.1.5](#115)
 - [1.1.4](#114)
 - [1.1.3](#113)
@@ -22,17 +22,19 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.1.6-SNAPSHOT
+## 1.1.6
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.1.6/user-guide.html">User guide</a>
+and
+<a href="/docs/1.1.6/javadoc/index.html">javadoc</a>
 </p>
 
 - Removed dependencies to internal classes in JUnit platform
-- Added [`Arbitraries.maps()`](/docs/snapshot/user-guide.html#maps)
+- Added [`Arbitraries.maps()`](/docs/1.1.6/user-guide.html#maps)
 - Added default generation for `Map` instances
 - `@Domain` annotation can now also refer to inner class of test container's base class.
-  Thanks to https://github.com/larsrh for that pull request!
+  Many thanks to [larsrh](https://github.com/larsrh) for that pull request!
 
 ## 1.1.5
 

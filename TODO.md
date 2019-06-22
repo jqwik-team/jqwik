@@ -1,7 +1,5 @@
 - 1.1.6
 
-  - Generate documentation
-  
   - Release
 
 - 1.2.0
