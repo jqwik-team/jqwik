@@ -6,19 +6,22 @@
     
       - generate non constant functions
       
-      - throws(Arbitrary<? extends Throwable>)
+      - when(Predicate<List<Object>> parameterCondition).answer(Function<List, Object> answer)
       
       - user guide entry
       
     - Default mapping for SAM types and @Functional types
 
+  - Arbitrary.describe() for all built-in arbitraries
+  
+    - @Report(GENERATORS or ARBITRARIES)
+    
+    
   - Lifecycle
     - Around container
     - Around try
     - Around engine
   
   - Spring/Boot Testing in its own module
-
-  - Arbitrary.describe() for all built-in arbitraries
 
 
