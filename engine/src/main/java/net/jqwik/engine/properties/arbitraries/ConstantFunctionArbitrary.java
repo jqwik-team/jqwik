@@ -4,8 +4,9 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 
-public class ConstantFunctionArbitrary<F> implements Arbitrary<F> {
+public class ConstantFunctionArbitrary<F> implements FunctionArbitrary<F> {
 
 	private final Class<F> functionalType;
 	private final Arbitrary<?> resultArbitrary;

@@ -1,6 +1,7 @@
 package net.jqwik.engine.facades;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
@@ -18,8 +19,8 @@ public class FunctionsFacadeImpl extends Functions.FunctionsFacade {
 	}
 
 	@Override
-	public <T> Arbitrary<T> constantFunction(Class<?> functionalType, Arbitrary<?> resultArbitrary) {
+	public <F> FunctionArbitrary<F> constantFunction(Class<?> functionalType, Arbitrary<?> resultArbitrary) {
 		//noinspection unchecked
-		return (Arbitrary<T>) new ConstantFunctionArbitrary<>(functionalType, resultArbitrary);
+		return (FunctionArbitrary<F>) new ConstantFunctionArbitrary<>(functionalType, resultArbitrary);
 	}
 }

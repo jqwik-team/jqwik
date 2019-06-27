@@ -2,6 +2,8 @@ package net.jqwik.api;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.arbitraries.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 
@@ -18,7 +20,7 @@ public class Functions {
 
 		public abstract void ensureFunctionalType(Class<?> functionalType);
 
-		public abstract <T> Arbitrary<T> constantFunction(Class<?> functionalType, Arbitrary<?> resultArbitrary);
+		public abstract <F> FunctionArbitrary<F> constantFunction(Class<?> functionalType, Arbitrary<?> resultArbitrary);
 	}
 
 
@@ -55,10 +57,10 @@ public class Functions {
 		 * Shrinking will consider constant functions.
 		 *
 		 * @param resultArbitrary The arbitrary used to generate return values
-		 * @param <T> The exact functional type to generate
+		 * @param <F> The exact functional type to generate
 		 * @return a new arbitrary instance
 		 */
-		public <T> Arbitrary<T> returns(Arbitrary<?> resultArbitrary) {
+		public <F> FunctionArbitrary<F> returns(Arbitrary<?> resultArbitrary) {
 			return FunctionsFacade.implementation.constantFunction(functionalType, resultArbitrary);
 		}
 	}
