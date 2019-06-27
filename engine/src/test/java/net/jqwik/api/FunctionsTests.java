@@ -3,6 +3,8 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.function.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -81,6 +83,22 @@ class FunctionsTests {
 		assertThatThrownBy(
 			() -> Functions.function(MyAbstractClass.class).returns(any))
 			.isInstanceOf(JqwikException.class);
+	}
+
+	@Property(tries = 10)
+	@Disabled("Shrinking does not yet work as expected")
+	void functions_are_shrunk_to_constant_functions(@ForAll Random random) {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
+
+		Function<String, Integer> shrunkFunction =
+			ArbitraryTestHelper.falsifyThenShrink(functions, random, f -> f.apply("value1") < 11);
+
+		Assertions.assertThat(shrunkFunction.apply("value1")).isEqualTo(11);
+		Assertions.assertThat(shrunkFunction.apply("value2")).isEqualTo(11);
+		Assertions.assertThat(shrunkFunction.apply("any")).isEqualTo(11);
+
 	}
 
 	interface MySamType<P1, P2, R> {
