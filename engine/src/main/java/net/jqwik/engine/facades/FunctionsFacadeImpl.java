@@ -19,8 +19,8 @@ public class FunctionsFacadeImpl extends Functions.FunctionsFacade {
 	}
 
 	@Override
-	public <F> FunctionArbitrary<F> constantFunction(Class<?> functionalType, Arbitrary<?> resultArbitrary) {
+	public <F> FunctionArbitrary<F> function(Class<?> functionalType, Arbitrary<?> resultArbitrary) {
 		//noinspection unchecked
-		return (FunctionArbitrary<F>) new ConstantFunctionArbitrary<>(functionalType, resultArbitrary);
+		return (FunctionArbitrary<F>) new DefaultFunctionArbitrary<>(functionalType, resultArbitrary);
 	}
 }

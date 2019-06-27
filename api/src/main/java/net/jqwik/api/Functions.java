@@ -20,7 +20,7 @@ public class Functions {
 
 		public abstract void ensureFunctionalType(Class<?> functionalType);
 
-		public abstract <F> FunctionArbitrary<F> constantFunction(Class<?> functionalType, Arbitrary<?> resultArbitrary);
+		public abstract <F> FunctionArbitrary<F> function(Class<?> functionalType, Arbitrary<?> resultArbitrary);
 	}
 
 
@@ -61,7 +61,7 @@ public class Functions {
 		 * @return a new arbitrary instance
 		 */
 		public <F> FunctionArbitrary<F> returns(Arbitrary<?> resultArbitrary) {
-			return FunctionsFacade.implementation.constantFunction(functionalType, resultArbitrary);
+			return FunctionsFacade.implementation.function(functionalType, resultArbitrary);
 		}
 	}
 }

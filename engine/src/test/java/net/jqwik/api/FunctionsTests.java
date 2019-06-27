@@ -3,6 +3,8 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.engine.properties.*;
+
 import static org.assertj.core.api.Assertions.*;
 
 class FunctionsTests {
@@ -18,6 +20,18 @@ class FunctionsTests {
 		Integer valueForHello = function.apply("hello");
 		assertThat(valueForHello).isBetween(1, 10);
 		assertThat(function.apply("hello")).isEqualTo(valueForHello);
+	}
+
+	@Example
+	void some_functions_create_different_result_for_different_input() {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
+
+		ArbitraryTestHelper.assertAtLeastOneGenerated(
+			functions.generator(10),
+			function -> !function.apply("value1").equals(function.apply("value2"))
+		);
 	}
 
 	@Example
