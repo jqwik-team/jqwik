@@ -222,10 +222,14 @@ public class JqwikReflectionSupport {
 
 	private static long countInterfaceMethods(Class<?> candidateType) {
 		Method[] methods = candidateType.getMethods();
+		return findInterfaceMethods(methods).size();
+	}
+
+	private static List<Method> findInterfaceMethods(Method[] methods) {
 		return Arrays
 				   .stream(methods)
 				   .filter(m -> !m.isDefault() && !ModifierSupport.isStatic(m))
-				   .count();
+				   .collect(Collectors.toList());
 	}
 
 }
