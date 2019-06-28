@@ -4,8 +4,6 @@
 
     - Functions.function(Class<F> functionalType).returns(Arbitrary<R> resultArbitrary))
     
-      - generate non constant functions
-      
       - when(Predicate<List<Object>> parameterCondition).answer(Function<List, Object> answer)
       
       - user guide entry

@@ -10,6 +10,9 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = STABLE, since = "1.0")
 public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
+	@API(status = MAINTAINED, since = "1.2.0")
+	public static final ShrinkingDistance MAX = ShrinkingDistance.of(Long.MAX_VALUE);
+
 	private final long[] distances;
 
 	@API(status = MAINTAINED, since = "1.0")
@@ -60,6 +63,16 @@ public class ShrinkingDistance implements Comparable<ShrinkingDistance> {
 
 	@Override
 	public int compareTo(ShrinkingDistance other) {
+		if (this == MAX) {
+			if (other == MAX) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
+		if (other == MAX) {
+			return -1;
+		}
 		int dimensionsToCompare = Math.max(size(), other.size());
 		for (int i = 0; i < dimensionsToCompare; i++) {
 			int compareDimensionResult = compareDimension(other, i);

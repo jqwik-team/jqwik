@@ -43,6 +43,21 @@ class ShrinkingDistanceTests {
 
 	}
 
+	@Example
+	@Label("ShrinkingDistance.MAX")
+	void compareDifferentDimensions() {
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.MAX)).isEqualTo(0);
+
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(1))).isEqualTo(1);
+		assertThat(ShrinkingDistance.of(1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
+
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(1, 1))).isEqualTo(1);
+		assertThat(ShrinkingDistance.of(1, 1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
+
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(Long.MAX_VALUE, 1))).isEqualTo(1);
+		assertThat(ShrinkingDistance.of(Long.MAX_VALUE, 1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
+	}
+
 	@Group
 	@Label("forCollection()")
 	class ForCollections {

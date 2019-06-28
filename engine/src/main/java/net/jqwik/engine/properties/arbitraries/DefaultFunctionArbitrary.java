@@ -22,9 +22,16 @@ public class DefaultFunctionArbitrary<F> implements FunctionArbitrary<F> {
 	}
 
 	private List<RandomGenerator<F>> createGenerators(int genSize) {
+		ConstantFunctionGenerator<F> constantFunctionGenerator =
+			new ConstantFunctionGenerator<>(functionalType, resultArbitrary.generator(genSize));
+		FunctionGenerator<F> functionGenerator =
+			new FunctionGenerator<>(functionalType, resultArbitrary.generator(genSize));
 		return Arrays.asList(
-			new ConstantFunctionGenerator<>(functionalType, resultArbitrary.generator(genSize)),
-			new VaryingFunctionGenerator<>(functionalType, resultArbitrary.generator(genSize))
+			constantFunctionGenerator,
+			functionGenerator,
+			functionGenerator,
+			functionGenerator,
+			functionGenerator
 		);
 	}
 }

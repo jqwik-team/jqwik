@@ -86,7 +86,6 @@ class FunctionsTests {
 	}
 
 	@Property(tries = 10)
-	@Disabled("Shrinking does not yet work as expected")
 	void functions_are_shrunk_to_constant_functions(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 		Arbitrary<Function<String, Integer>> functions =
