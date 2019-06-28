@@ -232,4 +232,11 @@ public class JqwikReflectionSupport {
 				   .collect(Collectors.toList());
 	}
 
+	public static boolean isToStringMethod(Method method) {
+		try {
+			return method.equals(Object.class.getDeclaredMethod("toString"));
+		} catch (NoSuchMethodException shouldNeverHappen) {
+			return false;
+		}
+	}
 }

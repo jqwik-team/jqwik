@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 public class VaryingFunctionGenerator<F> implements RandomGenerator<F> {
 
@@ -22,6 +23,13 @@ public class VaryingFunctionGenerator<F> implements RandomGenerator<F> {
 
 	private F constantFunction(long baseSeed) {
 		InvocationHandler handler = (proxy, method, args) -> {
+			if (JqwikReflectionSupport.isToStringMethod(method)) {
+				return String.format(
+					"Varying Function<%s>(baseSeed: %s)",
+					functionalType.getSimpleName(),
+					baseSeed
+				);
+			}
 			Random randomForArgs = new Random(seedForArgs(baseSeed, args));
 			return resultGenerator.next(randomForArgs).value();
 		};

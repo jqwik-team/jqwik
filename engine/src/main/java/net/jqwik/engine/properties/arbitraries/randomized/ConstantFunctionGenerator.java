@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 public class ConstantFunctionGenerator<F> implements RandomGenerator<F> {
 
@@ -21,7 +22,16 @@ public class ConstantFunctionGenerator<F> implements RandomGenerator<F> {
 	}
 
 	private F constantFunction(Object constant) {
-		InvocationHandler handler = (proxy, method, args) -> constant;
+		InvocationHandler handler = (proxy, method, args) -> {
+			if (JqwikReflectionSupport.isToStringMethod(method)) {
+				return String.format(
+					"Constant Function<%s>(%s)",
+					functionalType.getSimpleName(),
+					JqwikStringSupport.displayString(constant)
+				);
+			}
+			return constant;
+		};
 		//noinspection unchecked
 		return (F) Proxy.newProxyInstance(functionalType.getClassLoader(), new Class[]{functionalType}, handler);
 	}
