@@ -60,7 +60,6 @@ public class JqwikDiscoverer {
 		return new HierarchicalJavaResolver(engineDescriptor, resolvers);
 	}
 
-	// TODO: Use EngineDiscoveryRequestResolver after migrating to JUnit Platform 1.5
 	private static Predicate<String> buildClassNamePredicate(EngineDiscoveryRequest request) {
 		List<DiscoveryFilter<String>> filters = new ArrayList<>();
 		filters.addAll(request.getFiltersByType(ClassNameFilter.class));
