@@ -20,7 +20,8 @@ public class Functions {
 
 		public abstract void ensureFunctionalType(Class<?> functionalType);
 
-		public abstract <F> FunctionArbitrary<F> function(Class<?> functionalType, Arbitrary<?> resultArbitrary);
+		public abstract <F, R> FunctionArbitrary<F, R> function(Class<?> functionalType, Arbitrary<R> resultArbitrary);
+
 	}
 
 
@@ -58,9 +59,10 @@ public class Functions {
 		 *
 		 * @param resultArbitrary The arbitrary used to generate return values
 		 * @param <F> The exact functional type to generate
+		 * @param <R> The return type of the functional interface
 		 * @return a new arbitrary instance
 		 */
-		public <F> FunctionArbitrary<F> returns(Arbitrary<?> resultArbitrary) {
+		public <F, R> FunctionArbitrary<F, R> returns(Arbitrary<R> resultArbitrary) {
 			return FunctionsFacade.implementation.function(functionalType, resultArbitrary);
 		}
 	}

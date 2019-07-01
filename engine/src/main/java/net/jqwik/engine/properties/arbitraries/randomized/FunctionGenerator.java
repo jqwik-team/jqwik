@@ -3,16 +3,22 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.support.*;
 
-public class FunctionGenerator<F> extends AbstractFunctionGenerator<F> {
+public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 
-	private final AtomicReference<Shrinkable<?>> lastResult = new AtomicReference<>();
+	private final AtomicReference<Shrinkable<R>> lastResult = new AtomicReference<>();
 
-	public FunctionGenerator(Class<F> functionalType, RandomGenerator<?> resultGenerator) {
-		super(functionalType, resultGenerator);
+	public FunctionGenerator(
+		Class<F> functionalType,
+		RandomGenerator<R> resultGenerator,
+		List<Tuple2<Predicate<List>, Function<List, R>>> conditions
+	) {
+		super(functionalType, resultGenerator, conditions);
 	}
 
 	@Override
@@ -30,15 +36,17 @@ public class FunctionGenerator<F> extends AbstractFunctionGenerator<F> {
 					baseSeed
 				);
 			}
-			Random randomForArgs = new Random(seedForArgs(baseSeed, args));
-			Shrinkable<?> shrinkableResult = resultGenerator.next(randomForArgs);
-			storeLastResult(shrinkableResult);
-			return shrinkableResult.value();
+			return conditionalResult(args).orElseGet(() -> {
+				Random randomForArgs = new Random(seedForArgs(baseSeed, args));
+				Shrinkable<R> shrinkableResult = resultGenerator.next(randomForArgs);
+				storeLastResult(shrinkableResult);
+				return shrinkableResult.value();
+			});
 		};
 		return createFunctionProxy(handler);
 	}
 
-	private void storeLastResult(Shrinkable<?> result) {
+	private void storeLastResult(Shrinkable<R> result) {
 		lastResult.set(result);
 	}
 
@@ -47,7 +55,9 @@ public class FunctionGenerator<F> extends AbstractFunctionGenerator<F> {
 		if (args != null) {
 			for (Object arg : args) {
 				seed = Long.rotateRight(seed, 16);
-				seed ^= arg.hashCode();
+				if (arg != null) {
+					seed ^= arg.hashCode();
+				}
 			}
 		}
 		return seed;

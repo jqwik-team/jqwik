@@ -37,6 +37,18 @@ class FunctionsTests {
 	}
 
 	@Example
+	void null_value_is_accepted_as_input() {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
+
+		ArbitraryTestHelper.assertAllGenerated(
+			functions.generator(10),
+			function -> function.apply(null) != null
+		);
+	}
+
+	@Example
 	void supplier_always_returns_same_element(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Supplier<Integer>> functions =
@@ -71,6 +83,7 @@ class FunctionsTests {
 		assertThat(Functions.function(MyFunctionalInterface.class).returns(any)).isNotNull();
 		assertThat(Functions.function(MyInheritedFunctionalInterface.class).returns(any)).isNotNull();
 		assertThat(Functions.function(MySamType.class).returns(any)).isNotNull();
+		assertThat(Functions.function(IntTransformer.class).returns(any)).isNotNull();
 	}
 
 	@Example
@@ -97,7 +110,54 @@ class FunctionsTests {
 		Assertions.assertThat(shrunkFunction.apply("value1")).isEqualTo(11);
 		Assertions.assertThat(shrunkFunction.apply("value2")).isEqualTo(11);
 		Assertions.assertThat(shrunkFunction.apply("any")).isEqualTo(11);
+	}
 
+	@Example
+	void function_with_conditional_answer() {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions
+				.function(Function.class).returns(integers)
+				.when(params -> params.get(0).equals("three"), params -> 3)
+				.when(params -> params.get(0).equals("four"), params -> 4);
+
+		ArbitraryTestHelper.assertAllGenerated(
+			functions.generator(10),
+			function -> function.apply("three") == 3 && function.apply("four") == 4
+		);
+	}
+
+	@Example
+	void function_with_conditional_exception() {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions
+				.function(Function.class).returns(integers)
+				.when(params -> params.get(0) == null, params -> {
+					throw new IllegalArgumentException();
+				});
+
+		ArbitraryTestHelper.assertAllGenerated(
+			functions.generator(10),
+			function -> {
+				assertThatThrownBy(
+					() -> function.apply(null)
+				).isInstanceOf(IllegalArgumentException.class);
+			}
+		);
+	}
+
+	@Example
+	void conditional_answer_works_when_shrunk(@ForAll Random random) {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions
+				.function(Function.class).returns(integers)
+				.when(params -> params.get(0).equals("three"), params -> 3);
+
+		Function<String, Integer> shrunkFunction = ArbitraryTestHelper.shrinkToEnd(functions, random);
+
+		assertThat(shrunkFunction.apply("three")).isEqualTo(3);
 	}
 
 	interface MySamType<P1, P2, R> {
@@ -118,6 +178,10 @@ class FunctionsTests {
 	}
 
 	interface MyInheritedFunctionalInterface<P1, P2, R> extends MyFunctionalInterface {
+	}
+
+	interface IntTransformer {
+		int transform(int anInt);
 	}
 
 	interface NotAFunctionalInterface<P1, P2, R> {

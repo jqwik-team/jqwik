@@ -2,8 +2,6 @@
 
   - Function generation
 
-    - when(Predicate<List<Object>> parameterCondition).answer(Function<List, Object> answer)
-  
     - user guide entry
       
     - Default mapping for SAM types and @Functional types
