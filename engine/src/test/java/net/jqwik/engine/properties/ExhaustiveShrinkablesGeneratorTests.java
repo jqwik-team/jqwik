@@ -38,7 +38,7 @@ class ExhaustiveShrinkablesGeneratorTests {
 		ExhaustiveShrinkablesGenerator shrinkablesGenerator = createGenerator("iterables");
 		assertThat(shrinkablesGenerator.maxCount()).isEqualTo(5);
 
-		assertThat(shrinkablesGenerator).containsOnly(
+		assertThat(shrinkablesGenerator).toIterable().containsOnly(
 			asList(Shrinkable.unshrinkable(asList(0, 0))),
 			asList(Shrinkable.unshrinkable(asList(0, 1))),
 			asList(Shrinkable.unshrinkable(asList(1, 0))),

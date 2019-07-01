@@ -1,6 +1,11 @@
 ext {
-	junitPlatformVersion = '1.4.2'
-	junitJupiterVersion = '5.4.2'
+	junitPlatformVersion = '1.5.0'
+	junitJupiterVersion = '5.5.0'
+	apiGuardianVersion = '1.1.0'
+	opentest4jVersion = '1.2.0'
+	archunitVersion = '0.10.2'
+	assertJVersion = '3.12.2'
+	mockitoVersion = '2.28.2'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.2.0-SNAPSHOT'
 }
@@ -57,7 +62,7 @@ allprojects {
 	}
 
 	dependencies {
-		api("org.apiguardian:apiguardian-api:1.0.0")
+		api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
 	}
 }
 

@@ -58,7 +58,7 @@ signing {
 test {
 	useJUnitPlatform {
 		includeEngines "jqwik"
-		includeEngines "junit-archunit"
+		includeEngines "archunit"
 	}
 
 	include 'net/**/*Properties.class'
@@ -72,18 +72,18 @@ test {
 
 dependencies {
 	api(project(":api"))
-	api("org.opentest4j:opentest4j:1.1.1")
+	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 	implementation("org.junit.platform:junit-platform-engine:${junitPlatformVersion}")
 
-	testImplementation("org.mockito:mockito-core:2.23.4")
-	testImplementation("org.assertj:assertj-core:3.11.1")
+	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
+	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 	testImplementation("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
 	testImplementation("org.junit.platform:junit-platform-testkit:${junitPlatformVersion}")
 
 	// Only needed to check interferences between Jupiter and jqwik
 	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
 
-	testCompile "com.tngtech.archunit:archunit-junit5-api:0.9.3"
-	testRuntime "com.tngtech.archunit:archunit-junit5-engine:0.9.3"
+	testCompile "com.tngtech.archunit:archunit-junit5-api:${archunitVersion}"
+	testRuntime "com.tngtech.archunit:archunit-junit5-engine:${archunitVersion}"
 }

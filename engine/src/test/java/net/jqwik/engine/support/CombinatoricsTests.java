@@ -36,7 +36,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 0, 0);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList()
 			);
 		}
@@ -46,7 +46,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 1, 1);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1),
 				asList(2),
 				asList(3)
@@ -58,7 +58,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2);
 			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 3, 3);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1, 1, 1),
 				asList(1, 1, 2),
 				asList(1, 2, 1),
@@ -75,7 +75,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 0, 1);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(),
 				asList(1),
 				asList(2),
@@ -88,7 +88,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2);
 			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 2, 3);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1, 1),
 				asList(1, 2),
 				asList(2, 1),
@@ -114,7 +114,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<Set<Integer>> iterator = Combinatorics.setCombinations(elementIterable, 0, 0);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asSet()
 			);
 		}
@@ -128,7 +128,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<Set<Integer>> iterator = Combinatorics.setCombinations(elementIterable, 1, 1);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asSet(1),
 				asSet(2),
 				asSet(3)
@@ -140,7 +140,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3, 4, 1, 1);
 			Iterator<Set<Integer>> iterator = Combinatorics.setCombinations(elementIterable, 3, 3);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asSet(1, 2, 3),
 				asSet(1, 2, 4),
 				asSet(1, 3, 4),
@@ -153,7 +153,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2);
 			Iterator<Set<Integer>> iterator = Combinatorics.setCombinations(elementIterable, 3, 3);
 
-			assertThat(iterator).isEmpty();
+			assertThat(iterator).toIterable().isEmpty();
 		}
 
 		@Example
@@ -161,7 +161,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<Set<Integer>> iterator = Combinatorics.setCombinations(elementIterable, 0, 1);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asSet(),
 				asSet(1),
 				asSet(2),
@@ -174,7 +174,7 @@ class CombinatoricsTests {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<Set<Integer>> iterator = Combinatorics.setCombinations(elementIterable, 2, 3);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asSet(1, 2),
 				asSet(1, 3),
 				asSet(2, 3),
@@ -192,7 +192,7 @@ class CombinatoricsTests {
 			List<Integer> values = asList();
 			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList()
 			);
 			assertThat(iterator.hasNext()).isFalse();
@@ -204,7 +204,7 @@ class CombinatoricsTests {
 			List<Integer> values = asList(42);
 			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(42)
 			);
 			assertThat(iterator.hasNext()).isFalse();
@@ -216,7 +216,7 @@ class CombinatoricsTests {
 			List<Integer> values = asList(1, 2, 3);
 			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1, 2, 3),
 				asList(1, 3, 2),
 				asList(2, 1, 3),
@@ -233,7 +233,7 @@ class CombinatoricsTests {
 			List<Integer> values = asList(1, 2, 2);
 			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1, 2, 2),
 				asList(1, 2, 2),
 				asList(2, 1, 2),
@@ -248,13 +248,13 @@ class CombinatoricsTests {
 			List<Integer> values = asList(1, 2, 3, 4, 5, 6);
 			Iterator<List<Integer>> iterator = Combinatorics.listPermutations(values);
 
-			assertThat(iterator).contains(
+			assertThat(iterator).toIterable().contains(
 				asList(1, 2, 3, 4, 5 ,6),
 				asList(6, 5, 4, 3, 2, 1)
 			);
 
 			assertThat(Combinatorics.listPermutations(values))
-				.hasSize((int) MathSupport.factorial(6));
+				.toIterable().hasSize((int) MathSupport.factorial(6));
 		}
 
 	}
@@ -267,7 +267,7 @@ class CombinatoricsTests {
 			List<Iterable<Integer>> iterables = asList();
 			Iterator<List<Integer>> iterator = Combinatorics.combine(iterables);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList()
 			);
 		}
@@ -279,7 +279,7 @@ class CombinatoricsTests {
 			);
 			Iterator<List<Integer>> iterator = Combinatorics.combine(iterables);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1), asList(2), asList(3)
 			);
 		}
@@ -304,7 +304,7 @@ class CombinatoricsTests {
 			);
 			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1, 'a'), asList(1, 'b'),
 				asList(2, 'a'), asList(2, 'b'),
 				asList(3, 'a'), asList(3, 'b')
@@ -319,7 +319,7 @@ class CombinatoricsTests {
 			);
 			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1, 'a'), asList(1, 'b')
 			);
 		}
@@ -332,7 +332,7 @@ class CombinatoricsTests {
 			);
 			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 
-			assertThat(iterator).containsExactly(
+			assertThat(iterator).toIterable().containsExactly(
 				asList(1, 'a'), asList(2, 'a'), asList(3, 'a')
 			);
 		}
@@ -345,7 +345,7 @@ class CombinatoricsTests {
 			);
 			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 			assertThat(iterator.hasNext()).isFalse();
-			assertThat(iterator).isEmpty();
+			assertThat(iterator).toIterable().isEmpty();
 		}
 
 		@Example
@@ -356,7 +356,7 @@ class CombinatoricsTests {
 			);
 			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 			assertThat(iterator.hasNext()).isFalse();
-			assertThat(iterator).isEmpty();
+			assertThat(iterator).toIterable().isEmpty();
 		}
 
 		@Property
@@ -375,7 +375,7 @@ class CombinatoricsTests {
 				.collect(Collectors.toList());
 
 			Iterator<List<Integer>> iterator = Combinatorics.combine(iterables);
-			assertThat(iterator).hasSize(product);
+			assertThat(iterator).toIterable().hasSize(product);
 		}
 
 		@Provide

@@ -36,6 +36,7 @@ title: jqwik Release Notes
   - `Combinators.withBuilder(Supplier<B> builderSupplier)` and
     `Combinators.withBuilder(Arbitrary<B> builderArbitrary)`
   - Annotation `@Domain` and interface `DomainContext`
+  - Upgrade to JUnit platform 1.5.0
 
 ## 1.1.6
 
