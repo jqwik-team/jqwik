@@ -82,7 +82,7 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 				return ShrinkingSequence.dontShrink(this);
 			}
 			Shrinkable<F> constantFunction = createConstantFunction(lastResult.get());
-			return constantFunction.shrink(falsifier);
+			return ShrinkingSequence.startWith(constantFunction, falsifier);
 		}
 
 		@Override

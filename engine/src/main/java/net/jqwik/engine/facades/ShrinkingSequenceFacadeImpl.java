@@ -32,4 +32,10 @@ public class ShrinkingSequenceFacadeImpl extends ShrinkingSequence.ShrinkingSequ
 	) {
 		return new MappedShrinkingSequence<>(self, mapper);
 	}
+
+	@Override
+	public <T> ShrinkingSequence<T> startWith(Shrinkable<T> startingShrinkable, Falsifier<T> falsifier) {
+		return new StartWithShrinkingSequence<>(startingShrinkable, falsifier);
+	}
+
 }

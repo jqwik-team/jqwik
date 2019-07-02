@@ -98,7 +98,7 @@ class FunctionsTests {
 			.isInstanceOf(JqwikException.class);
 	}
 
-	//@Property(tries = 100)
+	@Property(tries = 100)
 	void functions_are_shrunk_to_constant_functions(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 20);
 		Arbitrary<Function<String, Integer>> functions =

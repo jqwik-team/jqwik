@@ -21,10 +21,16 @@ public interface ShrinkingSequence<T> {
 		public abstract <T> ShrinkingSequence<T> andThen(ShrinkingSequence<T> self, Function<Shrinkable<T>, ShrinkingSequence<T>> createFollowupSequence);
 		public abstract <T, U> ShrinkingSequence<U> mapValue(ShrinkingSequence<T> self, Function<T, U> mapper);
 		public abstract <T, U> ShrinkingSequence<U> map(ShrinkingSequence<T> self, Function<FalsificationResult<T>, FalsificationResult<U>> mapper);
+		public abstract <T> ShrinkingSequence<T> startWith(Shrinkable<T> startingShrinkable, Falsifier<T> falsifier);
 	}
 
 	static <T> ShrinkingSequence<T> dontShrink(Shrinkable<T> shrinkable) {
 		return ShrinkingSequenceFacade.implementation.dontShrink(shrinkable);
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.2.0")
+	static <T> ShrinkingSequence<T> startWith(Shrinkable<T> startingShrinkable, Falsifier<T> falsifier) {
+		return ShrinkingSequenceFacade.implementation.startWith(startingShrinkable, falsifier);
 	}
 
 	boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter);
