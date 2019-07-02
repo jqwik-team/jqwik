@@ -98,9 +98,9 @@ class FunctionsTests {
 			.isInstanceOf(JqwikException.class);
 	}
 
-	@Property(tries = 10)
+	//@Property(tries = 100)
 	void functions_are_shrunk_to_constant_functions(@ForAll Random random) {
-		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 20);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
@@ -112,52 +112,85 @@ class FunctionsTests {
 		Assertions.assertThat(shrunkFunction.apply("any")).isEqualTo(11);
 	}
 
-	@Example
-	void function_with_conditional_answer() {
-		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
-		Arbitrary<Function<String, Integer>> functions =
-			Functions
-				.function(Function.class).returns(integers)
-				.when(params -> params.get(0).equals("three"), params -> 3)
-				.when(params -> params.get(0).equals("four"), params -> 4);
+	@Group
+	class Conditional_results {
+		@Example
+		void function_with_conditional_answer() {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+			Arbitrary<Function<String, Integer>> functions =
+				Functions
+					.function(Function.class).returns(integers)
+					.when(params -> params.get(0).equals("three"), params -> 3)
+					.when(params -> params.get(0).equals("four"), params -> 4);
 
-		ArbitraryTestHelper.assertAllGenerated(
-			functions.generator(10),
-			function -> function.apply("three") == 3 && function.apply("four") == 4
-		);
-	}
+			ArbitraryTestHelper.assertAllGenerated(
+				functions.generator(10),
+				function -> function.apply("three") == 3 && function.apply("four") == 4
+			);
+		}
 
-	@Example
-	void function_with_conditional_exception() {
-		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
-		Arbitrary<Function<String, Integer>> functions =
-			Functions
-				.function(Function.class).returns(integers)
-				.when(params -> params.get(0) == null, params -> {
-					throw new IllegalArgumentException();
-				});
+		@Example
+		void first_matching_conditional_answer_is_used() {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+			Arbitrary<Function<String, Integer>> functions =
+				Functions
+					.function(Function.class).returns(integers)
+					.when(params -> params.get(0).equals("three"), params -> 3)
+					.when(params -> params.get(0).equals("three"), params -> 33);
 
-		ArbitraryTestHelper.assertAllGenerated(
-			functions.generator(10),
-			function -> {
-				assertThatThrownBy(
-					() -> function.apply(null)
-				).isInstanceOf(IllegalArgumentException.class);
-			}
-		);
-	}
+			ArbitraryTestHelper.assertAllGenerated(
+				functions.generator(10),
+				function -> function.apply("three") == 3
+			);
+		}
 
-	@Example
-	void conditional_answer_works_when_shrunk(@ForAll Random random) {
-		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
-		Arbitrary<Function<String, Integer>> functions =
-			Functions
-				.function(Function.class).returns(integers)
-				.when(params -> params.get(0).equals("three"), params -> 3);
+		@Example
+		void function_with_conditional_null_answer() {
+			Arbitrary<String> integers = Arbitraries.of("1", "2", "3");
+			Arbitrary<Function<String, String>> functions =
+				Functions
+					.function(Function.class).returns(integers)
+					.when(params -> params.get(0).equals("null"), params -> null);
 
-		Function<String, Integer> shrunkFunction = ArbitraryTestHelper.shrinkToEnd(functions, random);
+			ArbitraryTestHelper.assertAllGenerated(
+				functions.generator(10),
+				function -> function.apply("null") == null
+			);
+		}
 
-		assertThat(shrunkFunction.apply("three")).isEqualTo(3);
+		@Example
+		void function_with_conditional_exception() {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+			Arbitrary<Function<String, Integer>> functions =
+				Functions
+					.function(Function.class).returns(integers)
+					.when(params -> params.get(0) == null, params -> {
+						throw new IllegalArgumentException();
+					});
+
+			ArbitraryTestHelper.assertAllGenerated(
+				functions.generator(10),
+				function -> {
+					assertThatThrownBy(
+						() -> function.apply(null)
+					).isInstanceOf(IllegalArgumentException.class);
+				}
+			);
+		}
+
+		@Example
+		void conditional_answer_works_when_shrunk(@ForAll Random random) {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
+			Arbitrary<Function<String, Integer>> functions =
+				Functions
+					.function(Function.class).returns(integers)
+					.when(params -> params.get(0).equals("three"), params -> 3);
+
+			Function<String, Integer> shrunkFunction = ArbitraryTestHelper.shrinkToEnd(functions, random);
+
+			assertThat(shrunkFunction.apply("three")).isEqualTo(3);
+		}
+
 	}
 
 	interface MySamType<P1, P2, R> {

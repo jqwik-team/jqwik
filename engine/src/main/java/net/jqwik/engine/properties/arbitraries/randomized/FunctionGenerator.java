@@ -40,8 +40,8 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 				Random randomForArgs = new Random(seedForArgs(baseSeed, args));
 				Shrinkable<R> shrinkableResult = resultGenerator.next(randomForArgs);
 				storeLastResult(shrinkableResult);
-				return shrinkableResult.value();
-			});
+				return new Object[]{shrinkableResult.value()};
+			})[0];
 		};
 		return createFunctionProxy(handler);
 	}

@@ -42,17 +42,20 @@ abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 					JqwikStringSupport.displayString(constant)
 				);
 			}
-			return conditionalResult(args).orElse(constant);
+			return conditionalResult(args).orElse(new Object[]{constant})[0];
 		};
 		return createFunctionProxy(handler);
 	}
 
-	Optional<R> conditionalResult(Object[] args) {
-		Optional<R> conditionalResult = Optional.empty();
+	// Returns result wrapped in array to allow null as result
+	Optional<Object[]> conditionalResult(Object[] args) {
+		Optional<Object[]> conditionalResult = Optional.empty();
 		for (Tuple2<Predicate<List>, Function<List, R>> condition : conditions) {
 			List<Object> params = Arrays.asList(args);
 			if (condition.get1().test(params)) {
-				conditionalResult = Optional.of(condition.get2().apply(params));
+				Object[] result = new Object[]{condition.get2().apply(params)};
+				conditionalResult = Optional.of(result);
+				break;
 			}
 		}
 		return conditionalResult;
