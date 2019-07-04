@@ -28,11 +28,13 @@ Some of the common patterns used in PBT are described
 There are a few alternatives to _jqwik_ if you want to do PBT on the JVM:
 
 - [JUnit-Quickcheck](http://pholser.github.io/junit-quickcheck): 
-  Tightly integrated with JUnit 4, also annotations to configure generators.
+  Tightly integrated with JUnit 4, also uses annotations to configure generators.
 - [QuickTheories](https://github.com/ncredinburgh/QuickTheories):
   Unlike other systems QuickTheories supports both shrinking and targeted search using coverage data.
 - [Vavr](http://www.vavr.io/): The functional library also comes with a 
   [property-based testing module](https://github.com/vavr-io/vavr/tree/master/vavr-test).
+- [jetCheck](https://github.com/JetBrains/jetCheck): A property-based testing library for Java 8+. 
+  Works with any testing framework.
 - [ScalaCheck](http://www.scalacheck.org/): A mature property based testing system with shrinking and all, 
   iff you prefer Scala over Java.
 - [test.check for Clojure](https://github.com/clojure/test.check): Inspired by QuickCheck. Since Clojure
