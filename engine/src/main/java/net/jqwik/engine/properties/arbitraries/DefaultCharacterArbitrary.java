@@ -28,6 +28,9 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	static boolean isNoncharacter(int codepoint) {
 		if (codepoint >= 0xfdd0 && codepoint <= 0xfdef)
 			return true;
+		// see https://en.wikipedia.org/wiki/UTF-16#U+D800_to_U+DFFF
+		if (codepoint >= 0xd800 && codepoint <= 0xdfff)
+			return true;
 		return codepoint == 0xfffe || codepoint == 0xffff;
 	}
 
