@@ -36,7 +36,9 @@ title: jqwik Release Notes
   - `Combinators.withBuilder(Supplier<B> builderSupplier)` and
     `Combinators.withBuilder(Arbitrary<B> builderArbitrary)`
   - Annotation `@Domain` and interface `DomainContext`
-  - Upgrade to JUnit platform 1.5.0
+  
+- Upgrade to JUnit platform 1.5.0
+- Default character generation now excludes codepoints `0xd800` through `0xdfff`
 
 ## 1.1.6
 
