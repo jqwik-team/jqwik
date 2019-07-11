@@ -34,7 +34,7 @@ public class GenericProperty {
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting, boolean reportOnlyFailures) {
-		StatisticsCollector.clearAll();
+		StatisticsCollectorImpl.clearAll();
 		PropertyCheckResult checkResult = checkWithoutReporting(reporter, reporting);
 		reportResult(reporter, checkResult, reportOnlyFailures);
 		reportStatistics(reporter);
@@ -42,7 +42,7 @@ public class GenericProperty {
 	}
 
 	private void reportStatistics(Consumer<ReportEntry> reporter) {
-		StatisticsCollector.report(reporter, name);
+		StatisticsCollectorImpl.report(reporter, name);
 	}
 
 	private void reportResult(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult, boolean reportOnlyFailures) {

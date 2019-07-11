@@ -47,10 +47,10 @@ class GenericPropertyTests {
 											.flatMap(entry -> entry.getKeyValuePairs().keySet().stream()) //
 											.collect(Collectors.toSet());
 
-		Assertions.assertThat(keys).contains("statistics for [property name]");
+		Assertions.assertThat(keys).contains("[property name] statistics");
 
 		// Remove statistics from this test from ThreadLocal<Collector>:
-		StatisticsCollector.clearAll();
+		StatisticsCollectorImpl.clearAll();
 	}
 
 	@Group

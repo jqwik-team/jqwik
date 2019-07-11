@@ -6,27 +6,54 @@ import java.util.stream.*;
 
 import org.junit.platform.engine.reporting.*;
 
-public class StatisticsCollector {
+import net.jqwik.api.*;
 
-	public static final String KEY_STATISTICS = "statistics";
-	private static ThreadLocal<StatisticsCollector> collector = ThreadLocal.withInitial(StatisticsCollector::new);
+public class StatisticsCollectorImpl implements StatisticsCollector {
+
+	public static final String DEFAULT_LABEL = "statistics";
+
+	private static ThreadLocal<Map<String, StatisticsCollectorImpl>> collectors = ThreadLocal.withInitial(HashMap::new);
 
 	public static void clearAll() {
-		collector.remove();
+		collectors.remove();
 	}
 
-	public static StatisticsCollector get() {
-		return collector.get();
+	public static StatisticsCollectorImpl get() {
+		return get(DEFAULT_LABEL);
+	}
+
+	public static StatisticsCollectorImpl get(String label) {
+		Map<String, StatisticsCollectorImpl> collectors = StatisticsCollectorImpl.collectors.get();
+		collectors.putIfAbsent(label, new StatisticsCollectorImpl(label));
+		return collectors.get(label);
 	}
 
 	public static void report(Consumer<ReportEntry> reporter, String propertyName) {
-		StatisticsCollector collector = get();
-		if (collector.isEmpty())
-			return;
-		reporter.accept(collector.createReportEntry(propertyName));
+		for (StatisticsCollectorImpl collector : collectors.get().values()) {
+			reporter.accept(collector.createReportEntry(propertyName));
+		}
 	}
 
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
+
+	private final String label;
+
+	public StatisticsCollectorImpl(String label) {
+		this.label = label;
+	}
+
+	@Override
+	public void collect(Object... values) {
+		List<Object> key = Collections.emptyList();
+		if (values != null) {
+			key = Arrays.stream(values) //
+						.filter(Objects::nonNull) //
+						.collect(Collectors.toList());
+		}
+
+		int count = counts.computeIfAbsent(key, any -> 0);
+		counts.put(key, ++count);
+	}
 
 	private boolean isEmpty() {
 		return counts.isEmpty();
@@ -46,13 +73,13 @@ public class StatisticsCollector {
 				  .map(entry -> new StatisticsEntry(displayKey(entry.getKey()), entry.getValue() * 100.0 / sum))
 				  .collect(Collectors.toList());
 		int maxKeyLength = statisticsEntries.stream().mapToInt(entry -> entry.name.length()).max().orElse(0);
-		boolean fullNumbersOnly = !statisticsEntries.stream().anyMatch(entry -> entry.percentage < 1);
+		boolean fullNumbersOnly = statisticsEntries.stream().noneMatch(entry -> entry.percentage < 1);
 
 		for (StatisticsEntry statsEntry : statisticsEntries) {
 			statistics.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly));
 		}
 
-		String keyStatistics = String.format("%s for [%s]", KEY_STATISTICS, propertyName);
+		String keyStatistics = String.format("[%s] %s", propertyName, label);
 		return ReportEntry.from(keyStatistics, statistics.toString());
 	}
 
@@ -81,18 +108,6 @@ public class StatisticsCollector {
 
 	private String displayKey(List<Object> key) {
 		return key.stream().map(Object::toString).collect(Collectors.joining(" "));
-	}
-
-	public void collect(Object... values) {
-		List<Object> key = Collections.emptyList();
-		if (values != null) {
-			key = Arrays.stream(values) //
-						.filter(Objects::nonNull) //
-						.collect(Collectors.toList());
-		}
-
-		int count = counts.computeIfAbsent(key, any -> 0);
-		counts.put(key, ++count);
 	}
 
 	static class StatisticsEntry {

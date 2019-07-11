@@ -19,6 +19,18 @@ public class Statistics {
 		}
 
 		public abstract void collect(Object... values);
+
+		public abstract StatisticsCollector label(String label);
+	}
+
+	/**
+	 * Call this method to get a labeled instance of {@linkplain StatisticsCollector}.
+	 *
+	 * @param label The label will be used for reporting the collected statistical values
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.0")
+	public static StatisticsCollector label(String label) {
+		return StatisticsFacade.implementation.label(label);
 	}
 
 	/**

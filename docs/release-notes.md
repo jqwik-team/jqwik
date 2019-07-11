@@ -25,6 +25,13 @@ title: jqwik Release Notes
 
 ## 1.2.0-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+
 - __Breaking Change__: Removed `CharacterArbitrary.between(min, max)` 
   which had been deprecated in [1.1.3](#113)
 
@@ -39,6 +46,7 @@ title: jqwik Release Notes
   
 - Upgrade to JUnit platform 1.5.0
 - Default character generation now excludes codepoints `0xd800` through `0xdfff`
+- Introduced [Labeled Statistics](/docs/snapshot/user-guide.html#labeled-statistics)
 
 ## 1.1.6
 

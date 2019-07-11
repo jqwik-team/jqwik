@@ -14,6 +14,13 @@ class StatisticsExamples {
 	}
 
 	@Property
+	void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
+		String range = anInt < 3 ? "small" : "large";
+		Statistics.label("range").collect(range);
+		Statistics.label("value").collect(anInt);
+	}
+
+	@Property
 	void integerStats(@ForAll int anInt) {
 		Statistics.collect(anInt > 0 ? "positive" : "negative");
 	}

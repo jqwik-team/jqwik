@@ -2015,7 +2015,7 @@ void simpleStats(@ForAll RoundingMode mode) {
 will create an output similar to that:
 
 ```
-statistics for [MyTest:simpleStats] = 
+[MyTest:simpleStats] statistics = 
      UNNECESSARY : 15 %
      DOWN        : 14 %
      FLOOR       : 13 %
@@ -2037,7 +2037,7 @@ void integerStats(@ForAll int anInt) {
 ```
 
 ```
-statistics for [MyTest:integerStats] = 
+[MyTest:integerStats] statistics = 
      negative : 52 %
      positive : 48 %
 ```
@@ -2056,7 +2056,7 @@ void combinedIntegerStats(@ForAll int anInt) {
 ```
 
 ```
-statistics for [MyTest:combinedIntegerStats] = 
+[MyTest:combinedIntegerStats] statistics = 
      positive odd big    : 23 %
      negative even big   : 22 %
      positive even big   : 22 %
@@ -2081,7 +2081,7 @@ void twoParameterStats(
 ```
 
 ```
-collected statistics = 
+[MyTest:twoParameterStats] statistics = 
      index within size : 48 %
 ```
 
@@ -2089,6 +2089,39 @@ As you can see, collected `null` values are not being reported.
 
 [Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/StatisticsExamples.java)
 are a couple of examples to try out.
+
+### Labeled Statistics
+
+If you want more than one statistic in a single property, you must give them labels for differentiation:
+
+```java
+@Property
+void severalStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
+    String range = anInt < 3 ? "small" : "large";
+    Statistics.label("range").collect(range);
+    Statistics.label("value").collect(anInt);
+}
+```
+
+produces the following reports:
+
+```
+[MyTest:severalStatistics] range = 
+    large : 80 %
+    small : 20 %
+
+[MyTest:severalStatistics] value = 
+    1  : 10 %
+    2  : 10 %
+    3  : 10 %
+    4  : 10 %
+    5  : 10 %
+    6  : 10 %
+    7  : 10 %
+    8  : 10 %
+    9  : 10 %
+    10 : 10 %
+```
 
 ## Providing Default Arbitraries
 

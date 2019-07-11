@@ -15,7 +15,7 @@ class StatisticsCollectionTests {
 	@SuppressWarnings({"SuspiciousMethodCalls", "ArraysAsListWithZeroOrOneArgument"})
 	@Example
 	void countSingleValues() {
-		StatisticsCollector collector = new StatisticsCollector();
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
 
 		collector.collect("two");
 		collector.collect("three");
@@ -33,7 +33,7 @@ class StatisticsCollectionTests {
 	@SuppressWarnings("SuspiciousMethodCalls")
 	@Example
 	void countDoubleValues() {
-		StatisticsCollector collector = new StatisticsCollector();
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
 
 		collector.collect("two", 2);
 		collector.collect("three", 3);
@@ -50,7 +50,7 @@ class StatisticsCollectionTests {
 
 	@Example
 	void reportCollectedPercentagesInDecreasingOrder() {
-		StatisticsCollector collector = new StatisticsCollector();
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
 
 		collector.collect("two");
 		collector.collect("three");
@@ -66,17 +66,35 @@ class StatisticsCollectionTests {
 		ReportEntry entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
-		Assertions.assertThat(stats).containsExactly( //
-				"four  : 40 %", //
-				"three : 30 %", //
-				"two   : 20 %", //
-				"one   : 10 %" //
+		Assertions.assertThat(stats).containsExactly(
+			"four  : 40 %",
+			"three : 30 %",
+			"two   : 20 %",
+			"one   : 10 %"
+		);
+	}
+
+	@Example
+	void reportWithDifferentLabel() {
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl("label");
+
+		collector.collect("two");
+		collector.collect("two");
+		collector.collect("two");
+		collector.collect("one");
+
+		ReportEntry entry = collector.createReportEntry("a property");
+
+		List<String> stats = parseStatistics(entry, "label");
+		Assertions.assertThat(stats).containsExactly(
+			"two : 75 %",
+			"one : 25 %"
 		);
 	}
 
 	@Example
 	void nullKeysAreNotReported() {
-		StatisticsCollector collector = new StatisticsCollector();
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
 
 		collector.collect("aKey");
 		collector.collect((Object) null);
@@ -86,21 +104,27 @@ class StatisticsCollectionTests {
 		ReportEntry entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
-		Assertions.assertThat(stats).containsExactly( //
-			"aKey : 50 %" //
+		Assertions.assertThat(stats).containsExactly(
+			"aKey : 50 %"
 		);
 	}
 
 	private List<String> parseStatistics(ReportEntry entry) {
-		return Arrays.stream(entry.getKeyValuePairs().get("statistics for [a property]").split(System.getProperty("line.separator"))) //
-			.map(String::trim) //
-			.filter(s -> !s.isEmpty()) //
-			.collect(Collectors.toList());
+		String label = StatisticsCollectorImpl.DEFAULT_LABEL;
+		return parseStatistics(entry, label);
+	}
+
+	private List<String> parseStatistics(ReportEntry entry, String label) {
+		return Arrays.stream(entry.getKeyValuePairs().get("[a property] " + label)
+								  .split(System.getProperty("line.separator")))
+					 .map(String::trim)
+					 .filter(s -> !s.isEmpty())
+					 .collect(Collectors.toList());
 	}
 
 	@Example
 	void reportDoubleValues() {
-		StatisticsCollector collector = new StatisticsCollector();
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
 
 		collector.collect("two", 2);
 		collector.collect("three", 3);
@@ -110,11 +134,11 @@ class StatisticsCollectionTests {
 		ReportEntry entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
-		Assertions.assertThat(stats).containsExactlyInAnyOrder( //
-				"two 2   : 25 %", //
-				"three 2 : 25 %", //
-				"two 3   : 25 %", //
-				"three 3 : 25 %" //
+		Assertions.assertThat(stats).containsExactlyInAnyOrder(
+			"two 2   : 25 %",
+			"three 2 : 25 %",
+			"two 3   : 25 %",
+			"three 3 : 25 %"
 		);
 	}
 
