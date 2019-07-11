@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.1.6-SNAPSHOT
+title: jqwik User Guide - 1.2.0-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.1.6-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.0-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -87,6 +87,7 @@ title: jqwik User Guide - 1.1.6-SNAPSHOT
   - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
   - [Change the Shrinking Target](#change-the-shrinking-target)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
+  - [Labeled Statistics](#labeled-statistics)
 - [Providing Default Arbitraries](#providing-default-arbitraries)
   - [Simple Arbitrary Providers](#simple-arbitrary-providers)
   - [Arbitrary Providers for Parameterized Types](#arbitrary-providers-for-parameterized-types)
@@ -138,10 +139,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.4.2'
-ext.junitJupiterVersion = '5.4.2'
+ext.junitPlatformVersion = '1.5.0'
+ext.junitJupiterVersion = '5.5.0'
 
-ext.jqwikVersion = '1.1.6-SNAPSHOT'
+ext.jqwikVersion = '1.2.0-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -163,7 +164,7 @@ dependencies {
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.4.2")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.5.0")
 
     // Add any other test library you need...
     testCompile("org.assertj:assertj-core:3.9.1")
@@ -217,7 +218,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.1.6-SNAPSHOT</version>
+        <version>1.2.0-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -243,9 +244,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.1.6-SNAPSHOT.jar`
-- `junit-platform-engine-1.4.2.jar`
-- `junit-platform-commons-1.4.2.jar`
+- `jqwik-1.2.0-SNAPSHOT.jar`
+- `junit-platform-engine-1.5.0.jar`
+- `junit-platform-commons-1.5.0.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -294,7 +295,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.1.6-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.2.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -2107,7 +2108,7 @@ void simpleStats(@ForAll RoundingMode mode) {
 will create an output similar to that:
 
 ```
-statistics for [MyTest:simpleStats] = 
+[MyTest:simpleStats] statistics = 
      UNNECESSARY : 15 %
      DOWN        : 14 %
      FLOOR       : 13 %
@@ -2129,7 +2130,7 @@ void integerStats(@ForAll int anInt) {
 ```
 
 ```
-statistics for [MyTest:integerStats] = 
+[MyTest:integerStats] statistics = 
      negative : 52 %
      positive : 48 %
 ```
@@ -2148,7 +2149,7 @@ void combinedIntegerStats(@ForAll int anInt) {
 ```
 
 ```
-statistics for [MyTest:combinedIntegerStats] = 
+[MyTest:combinedIntegerStats] statistics = 
      positive odd big    : 23 %
      negative even big   : 22 %
      positive even big   : 22 %
@@ -2173,7 +2174,7 @@ void twoParameterStats(
 ```
 
 ```
-collected statistics = 
+[MyTest:twoParameterStats] statistics = 
      index within size : 48 %
 ```
 
@@ -2181,6 +2182,39 @@ As you can see, collected `null` values are not being reported.
 
 [Here](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/StatisticsExamples.java)
 are a couple of examples to try out.
+
+### Labeled Statistics
+
+If you want more than one statistic in a single property, you must give them labels for differentiation:
+
+```java
+@Property
+void severalStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
+    String range = anInt < 3 ? "small" : "large";
+    Statistics.label("range").collect(range);
+    Statistics.label("value").collect(anInt);
+}
+```
+
+produces the following reports:
+
+```
+[MyTest:severalStatistics] range = 
+    large : 80 %
+    small : 20 %
+
+[MyTest:severalStatistics] value = 
+    1  : 10 %
+    2  : 10 %
+    3  : 10 %
+    4  : 10 %
+    5  : 10 %
+    6  : 10 %
+    7  : 10 %
+    8  : 10 %
+    9  : 10 %
+    10 : 10 %
+```
 
 ## Providing Default Arbitraries
 
@@ -2727,4 +2761,4 @@ reportOnlyFailures = false          # Set to true if only falsified properties s
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#116-snapshot).
+Read this version's [release notes](/release-notes.html#120-snapshot).
