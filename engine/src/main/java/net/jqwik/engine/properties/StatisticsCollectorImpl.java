@@ -12,7 +12,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	public static final String DEFAULT_LABEL = "statistics";
 
-	private static ThreadLocal<Map<String, StatisticsCollectorImpl>> collectors = ThreadLocal.withInitial(HashMap::new);
+	private static ThreadLocal<Map<String, StatisticsCollectorImpl>> collectors = ThreadLocal.withInitial(LinkedHashMap::new);
 
 	public static void clearAll() {
 		collectors.remove();
