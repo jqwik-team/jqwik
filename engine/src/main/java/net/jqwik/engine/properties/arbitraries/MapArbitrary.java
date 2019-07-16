@@ -59,14 +59,4 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 		return mapArbitrary().exhaustive();
 	}
 
-	private static class MapEntry<K, V> extends AbstractMap.SimpleEntry<K, V> {
-		private MapEntry(K key, V value) {
-			super(key, value);
-		}
-
-		@Override
-		public V setValue(V value) {
-			throw new UnsupportedOperationException();
-		}
-	}
 }

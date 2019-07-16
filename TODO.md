@@ -2,10 +2,10 @@
 
   - Function generation
 
-    - user guide entry
-      
     - Default mapping for SAM types and @Functional types
 
+    - user guide entry
+      
   - Arbitrary.describe() for all built-in arbitraries
   
     - @Report(GENERATORS or ARBITRARIES)
