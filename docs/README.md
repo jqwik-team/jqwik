@@ -16,7 +16,7 @@ The following property deals with a partial implementation for the (in)famous
 [Fizz Buzz Kata](http://codingdojo.org/kata/FizzBuzz/):
 
 - _Precondition_: Consider numbers between 1 and 100 that are divisible by 3
-- _Postcondition_: The string returned by `fizzBuzz()` contains the word `Fizz` 
+- _Postcondition_: The string returned by `fizzBuzz()` starts with `Fizz` 
 
 ```java
 import java.util.*;
