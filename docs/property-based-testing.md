@@ -11,6 +11,7 @@ However, most of the stuff is in the context of functional programming languages
 - A series of blog entries about 
   [PBT in Java](https://blog.johanneslink.net/2018/03/24/property-based-testing-in-java-introduction/)
   from the developer of jqwik.
+- [How to Specify it! In Java!](https://johanneslink.net/how-to-specify-it/)
 - Here is an [overview article](https://en.wikipedia.org/wiki/Property_testing) on Wikipedia.
 - [Quickcheck](https://en.wikipedia.org/wiki/QuickCheck) is the original tool for writing property tests.
 - A [nice video](https://www.youtube.com/watch?v=fltD7yrHbUA) from a presentation by Noel Markham
