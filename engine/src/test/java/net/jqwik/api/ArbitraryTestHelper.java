@@ -1,10 +1,10 @@
-package net.jqwik.engine.properties;
+package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -77,7 +77,7 @@ public class ArbitraryTestHelper {
 	}
 
 	@SafeVarargs
-	public static <T> void assertGeneratedExactly(RandomGenerator<T> generator, T... expectedValues) {
+	static <T> void assertGeneratedExactly(RandomGenerator<T> generator, T... expectedValues) {
 		Random random = SourceOfRandomness.current();
 
 		List<T> generated = generator
@@ -106,5 +106,11 @@ public class ArbitraryTestHelper {
 		while (sequence.next(() -> {}, ignore -> { })) ;
 		return sequence.current().value();
 	}
+
+	public static <T> T generateFirst(Arbitrary<T> arbitrary, Random random) {
+		RandomGenerator<T> generator = arbitrary.generator(1);
+		return generator.next(random).value();
+	}
+
 
 }

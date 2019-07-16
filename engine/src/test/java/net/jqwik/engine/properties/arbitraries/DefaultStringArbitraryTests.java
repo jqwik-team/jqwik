@@ -5,7 +5,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
-import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
+import static net.jqwik.api.ArbitraryTestHelper.*;
 
 class DefaultStringArbitraryTests {
 

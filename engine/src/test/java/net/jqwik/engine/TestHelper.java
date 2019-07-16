@@ -2,7 +2,6 @@ package net.jqwik.engine;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.*;
@@ -11,7 +10,6 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 public class TestHelper {
@@ -25,23 +23,6 @@ public class TestHelper {
 
 	public static Method getMethod(Class<?> aClass, String methodName) {
 		return Arrays.stream(aClass.getDeclaredMethods()).filter(m -> m.getName().equals(methodName)).findFirst().get();
-	}
-
-	public static <T> T generateFirst(Arbitrary<T> arbitrary) {
-		RandomGenerator<T> generator = arbitrary.generator(1);
-		return generateNext(generator);
-	}
-
-	public static <T> T generateNext(RandomGenerator<T> generator) {
-		return generator.next(SourceOfRandomness.current()).value();
-	}
-
-	public static <T> T generateUntil(RandomGenerator<T> generator, Predicate<T> untilCondition) {
-		T actual = generateNext(generator);
-		while (untilCondition.negate().test(actual)) {
-			actual = generateNext(generator);
-		}
-		return actual;
 	}
 
 	public static PropertyMethodDescriptor createPropertyMethodDescriptor(

@@ -7,7 +7,6 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.engine.properties.*;
 
 class ShrinkTowardsTests {
 

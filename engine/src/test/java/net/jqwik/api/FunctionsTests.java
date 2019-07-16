@@ -5,8 +5,6 @@ import java.util.function.*;
 
 import org.assertj.core.api.*;
 
-import net.jqwik.engine.properties.*;
-
 import static org.assertj.core.api.Assertions.*;
 
 class FunctionsTests {

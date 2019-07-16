@@ -7,7 +7,7 @@ import net.jqwik.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
+import static net.jqwik.api.ArbitraryTestHelper.*;
 
 class ArbitraryShrinkingTests {
 

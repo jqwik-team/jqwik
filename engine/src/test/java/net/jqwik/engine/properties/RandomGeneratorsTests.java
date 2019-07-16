@@ -13,7 +13,7 @@ import net.jqwik.engine.properties.shrinking.*;
 import static java.math.BigInteger.valueOf;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
+import static net.jqwik.api.ArbitraryTestHelper.*;
 
 class RandomGeneratorsTests {
 

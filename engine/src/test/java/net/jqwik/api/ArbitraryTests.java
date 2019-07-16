@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties;
+package net.jqwik.api;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -6,19 +6,16 @@ import java.util.stream.*;
 
 import org.assertj.core.api.*;
 
-import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.api.GenerationMode.*;
-import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
 
 @Group
 class ArbitraryTests {
-
-	private Random random = SourceOfRandomness.current();
 
 	@Example
 	void fixGenSize() {
@@ -36,7 +33,7 @@ class ArbitraryTests {
 	@Group
 	class Generating {
 		@Example
-		void generateInteger() {
+		void generateInteger(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			RandomGenerator<Integer> generator = arbitrary.generator(10);
 
@@ -49,7 +46,7 @@ class ArbitraryTests {
 		}
 
 		@Example
-		void samplesArePrependedToGeneration() {
+		void samplesArePrependedToGeneration(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2);
 			Arbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
 			RandomGenerator<Integer> generator = arbitraryWithSamples.generator(10);
@@ -66,7 +63,7 @@ class ArbitraryTests {
 	@Group
 	class Filtering {
 		@Example
-		void filterInteger() {
+		void filterInteger(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
 			RandomGenerator<Integer> generator = filtered.generator(10);
@@ -78,7 +75,7 @@ class ArbitraryTests {
 		}
 
 		@Example
-		void failIfFilterWillDiscard10000ValuesInARow() {
+		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
 			RandomGenerator<Integer> generator = filtered.generator(10);
@@ -90,7 +87,7 @@ class ArbitraryTests {
 	@Group
 	class Unique {
 		@Example
-		void uniqueInteger() {
+		void uniqueInteger(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 5);
 			Arbitrary<Integer> unique = arbitrary.unique();
 			RandomGenerator<Integer> generator = unique.generator(10);
@@ -121,7 +118,7 @@ class ArbitraryTests {
 		}
 
 		@Example
-		void failIfUniqueWillDiscard10000ValuesInARow() {
+		void failIfUniqueWillDiscard10000ValuesInARow(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 3);
 			Arbitrary<Integer> unique = arbitrary.unique();
 			RandomGenerator<Integer> generator = unique.generator(10);
@@ -212,7 +209,7 @@ class ArbitraryTests {
 	class Mapping {
 
 		@Example
-		void mapIntegerToString() {
+		void mapIntegerToString(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
 			RandomGenerator<String> generator = mapped.generator(10);
@@ -231,7 +228,7 @@ class ArbitraryTests {
 	class FlatMapping {
 
 		@Example
-		void flatMapIntegerToString() {
+		void flatMapIntegerToString(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings() //
 																			 .withCharRange('a', 'e') //
@@ -258,7 +255,7 @@ class ArbitraryTests {
 	class Combination {
 
 		@Example
-		void generateCombination() {
+		void generateCombination(@ForAll Random random) {
 			Arbitrary<Integer> a1 = Arbitraries.samples(1, 2, 3);
 			Arbitrary<Integer> a2 = Arbitraries.samples(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
@@ -271,13 +268,13 @@ class ArbitraryTests {
 		}
 
 		@Example
-		void shrinkCombination() {
+		void shrinkCombination(@ForAll Random random) {
 			Arbitrary<Integer> a1 = Arbitraries.samples(1, 2, 3);
 			Arbitrary<Integer> a2 = Arbitraries.samples(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
 			RandomGenerator<String> generator = combined.generator(10);
 
-			Shrinkable<String> value3to6 = generateNth(generator, 3);
+			Shrinkable<String> value3to6 = generateNth(generator, 3, random);
 			assertThat(value3to6.value()).isEqualTo("3:6");
 
 			ShrinkingSequence<String> sequence = value3to6.shrink(ignore -> false);
@@ -303,7 +300,7 @@ class ArbitraryTests {
 		}
 
 		@Example
-		// TODO: Move to ArbitraryShrinkingTests
+			// TODO: Move to ArbitraryShrinkingTests
 		void shrinkIndividualElementsAndSize() {
 			Arbitrary<Integer> integersShrunkTowardMax =
 				Arbitraries
@@ -328,7 +325,7 @@ class ArbitraryTests {
 
 	}
 
-	private <T> Shrinkable<T> generateNth(RandomGenerator<T> generator, int n) {
+	private <T> Shrinkable<T> generateNth(RandomGenerator<T> generator, int n, Random random) {
 		Shrinkable<T> generated = null;
 		for (int i = 0; i < n; i++) {
 			generated = generator.next(random);

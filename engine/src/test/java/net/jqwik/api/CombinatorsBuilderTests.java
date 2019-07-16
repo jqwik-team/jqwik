@@ -1,27 +1,28 @@
 package net.jqwik.api;
 
-import net.jqwik.engine.*;
-import net.jqwik.engine.properties.*;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.ArbitraryTestHelper.*;
 
 class CombinatorsBuilderTests {
 
 	@Example
-	void plainBuilder() {
+	void plainBuilder(@ForAll Random random) {
 
 		Arbitrary<Person> personArbitrary =
 			Combinators
 				.withBuilder(PersonBuilder::new)
 				.build(PersonBuilder::build);
 
-		Person value = TestHelper.generateFirst(personArbitrary);
+		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.age).isEqualTo(PersonBuilder.DEFAULT_AGE);
 		assertThat(value.name).isEqualTo(PersonBuilder.DEFAULT_NAME);
 	}
 
 	@Example
-	void useBuilderMethods() {
+	void useBuilderMethods(@ForAll Random random) {
 
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
@@ -33,7 +34,7 @@ class CombinatorsBuilderTests {
 				.use(age).in((b, a) -> b.withAge(a))
 				.build(PersonBuilder::build);
 
-		Person value = TestHelper.generateFirst(personArbitrary);
+		Person value = generateFirst(personArbitrary, random);
 		assertThat(value.age).isBetween(0, 15);
 		assertThat(value.name).hasSize(10);
 	}

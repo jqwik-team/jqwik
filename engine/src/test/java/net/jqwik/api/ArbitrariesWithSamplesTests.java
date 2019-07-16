@@ -1,35 +1,31 @@
-package net.jqwik.engine.properties;
+package net.jqwik.api;
 
 import java.util.*;
-
-import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 @Group
 class ArbitrariesWithSamplesTests {
 
-	Random random = SourceOfRandomness.current();
-
 	@Group
 	class Generation {
 
 		@Example
-		void examplesAreGeneratedInRoundRobin() {
+		void examplesAreGeneratedInRoundRobin(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3);
 			RandomGenerator<Integer> generator = arbitrary.generator(1);
-			assertGeneratedSequence(generator, 1, 2, 3, 1, 2);
+			assertGeneratedSequence(generator, random, 1, 2, 3, 1, 2);
 		}
 
 		@Example
-		void usingArbitraryWithExamplesGeneratesExamplesFirst() {
+		void usingArbitraryWithExamplesGeneratesExamplesFirst(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(5).withSamples(1, 2, 3);
 			RandomGenerator<Integer> generator = arbitrary.generator(1);
-			assertGeneratedSequence(generator, 1, 2, 3, 5, 5, 5);
+			assertGeneratedSequence(generator, random, 1, 2, 3, 5, 5, 5);
 		}
 
 		@SafeVarargs
-		private final <T> void assertGeneratedSequence(RandomGenerator<T> generator, T... sequence) {
+		private final <T> void assertGeneratedSequence(RandomGenerator<T> generator, Random random, T... sequence) {
 			for (T expected : sequence) {
 				assertThat(generator.next(random).value()).isEqualTo(expected);
 			}
@@ -39,7 +35,7 @@ class ArbitrariesWithSamplesTests {
 	@Group
 	class Shrinking {
 		@Example
-		void examplesAreShrunkDownToFirstExample() {
+		void examplesAreShrunkDownToFirstExample(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4);
 			RandomGenerator<Integer> generator = arbitrary.generator(1);
 
@@ -61,7 +57,7 @@ class ArbitrariesWithSamplesTests {
 		}
 
 		@Example
-		void withExamplesAreAlsoShrunkDownToFirstExample() {
+		void withExamplesAreAlsoShrunkDownToFirstExample(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.of(5).withSamples(1, 2, 3);
 			RandomGenerator<Integer> generator = arbitrary.generator(1);
 

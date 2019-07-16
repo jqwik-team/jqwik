@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 
 class IgnoreGenerationErrorTests {
 

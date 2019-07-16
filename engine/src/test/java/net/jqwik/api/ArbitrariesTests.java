@@ -1,17 +1,16 @@
-package net.jqwik.engine.properties;
+package net.jqwik.api;
 
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 
 import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.engine.properties.ArbitraryTestHelper.*;
+import static net.jqwik.api.ArbitraryTestHelper.*;
 
 @Label("Arbitraries")
 class ArbitrariesTests {
@@ -21,8 +20,6 @@ class ArbitrariesTests {
 		No,
 		Maybe
 	}
-
-	private Random random = SourceOfRandomness.current();
 
 	@Example
 	void randomValues() {
@@ -34,8 +31,8 @@ class ArbitrariesTests {
 
 	@Example
 	void fromGenerator() {
-		Arbitrary<String> stringArbitrary = Arbitraries
-				.fromGenerator(random -> Shrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
+		Arbitrary<String> stringArbitrary =
+			Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable(Integer.toString(random.nextInt(10))));
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, value -> Integer.parseInt(value) < 10);
 	}
@@ -365,7 +362,7 @@ class ArbitrariesTests {
 
 		@Example
 		void stringFromCharset() {
-			char[] validChars = new char[] { 'a', 'b', 'c', 'd' };
+			char[] validChars = new char[]{'a', 'b', 'c', 'd'};
 			Arbitrary<String> stringArbitrary = Arbitraries.strings() //
 														   .withChars(validChars) //
 														   .ofMinLength(2).ofMaxLength(5);
@@ -453,9 +450,10 @@ class ArbitrariesTests {
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(valueOf(50L)) < 0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(valueOf(50L)) > 0);
-			assertAllGenerated(generator, //
-												   value -> value.compareTo(valueOf(-100L)) >= 0 //
-																&& value.compareTo(valueOf(100L)) <= 0
+			assertAllGenerated(
+				generator, //
+				value -> value.compareTo(valueOf(-100L)) >= 0 //
+							 && value.compareTo(valueOf(100L)) <= 0
 			);
 		}
 
@@ -594,7 +592,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void stream() {
+		void stream(@ForAll Random random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 			Arbitrary<Stream<Integer>> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);
 
@@ -632,7 +630,7 @@ class ArbitrariesTests {
 		}
 
 		@Example
-		void arrayOfPrimitiveType() {
+		void arrayOfPrimitiveType(@ForAll Random random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 			Arbitrary<int[]> arrayArbitrary = integerArbitrary.array(int[].class).ofMinSize(0).ofMaxSize(5);
 
@@ -697,8 +695,10 @@ class ArbitrariesTests {
 	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
 		assertAllGenerated(generator, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');
-		assertAllGenerated(generator,
-				(String value) -> value.chars().allMatch(i -> allowedChars.contains((char) i)));
+		assertAllGenerated(
+			generator,
+			(String value) -> value.chars().allMatch(i -> allowedChars.contains((char) i))
+		);
 	}
 
 	private void assertGeneratedStream(Shrinkable<Stream<Integer>> stream) {
