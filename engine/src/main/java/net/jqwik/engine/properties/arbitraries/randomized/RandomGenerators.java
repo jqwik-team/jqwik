@@ -12,6 +12,7 @@ import net.jqwik.engine.properties.shrinking.*;
 public class RandomGenerators {
 
 	public static final int DEFAULT_COLLECTION_SIZE = 255;
+	private static final long MAX_MISSES = 10000;
 
 	public static <U> RandomGenerator<U> choose(List<U> values) {
 		if (values.size() == 0) {
@@ -199,10 +200,19 @@ public class RandomGenerators {
 			int listSize = sizeGenerator.apply(random);
 			Set<Shrinkable<T>> elements = new HashSet<>();
 			Set<T> values = new HashSet<>();
+			long count = 0;
 			while (elements.size() < listSize) {
 				Shrinkable<T> next = elementGenerator.next(random);
-				if (values.contains(next.value()))
+				if (values.contains(next.value())) {
+					if (++count > MAX_MISSES) {
+						String message = String.format(
+							"Generating values for set of size %s missed more than %s times.",
+							listSize, MAX_MISSES
+						);
+						throw new JqwikException(message);
+					}
 					continue;
+				}
 				elements.add(next);
 				values.add(next.value());
 			}

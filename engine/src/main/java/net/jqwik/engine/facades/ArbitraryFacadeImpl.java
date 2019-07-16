@@ -8,6 +8,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
+import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 /**
  * Is loaded through reflection in api module
@@ -27,7 +28,20 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> SizableArbitrary<Set<T>> set(Arbitrary<T> elementArbitrary) {
-		return new SetArbitrary<>(elementArbitrary);
+		// The set cannot be larger than the max number of possible elements
+		return new SetArbitrary<>(elementArbitrary)
+				   .ofMaxSize(defaultSetMaxSize(elementArbitrary));
+	}
+
+	private int defaultSetMaxSize(Arbitrary<?> elementArbitrary) {
+		return elementArbitrary
+				   .exhaustive()
+				   .map(generator -> {
+					   long maxCount = generator.maxCount();
+					   return maxCount < RandomGenerators.DEFAULT_COLLECTION_SIZE
+								  ? (int) maxCount : RandomGenerators.DEFAULT_COLLECTION_SIZE;
+				   })
+				   .orElse(RandomGenerators.DEFAULT_COLLECTION_SIZE);
 	}
 
 	@Override

@@ -592,6 +592,16 @@ class ArbitrariesTests {
 		}
 
 		@Example
+		void setWithLessElementsThanMaxSize() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.of(1, 2, 3, 4, 5);
+			Arbitrary<Set<Integer>> listArbitrary = integerArbitrary.set().ofMinSize(2);
+
+			RandomGenerator<Set<Integer>> generator = listArbitrary.generator(1);
+
+			assertGeneratedSet(generator, 2, 5);
+		}
+
+		@Example
 		void stream(@ForAll Random random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 			Arbitrary<Stream<Integer>> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);

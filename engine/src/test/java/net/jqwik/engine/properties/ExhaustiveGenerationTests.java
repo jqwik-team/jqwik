@@ -550,6 +550,22 @@ class ExhaustiveGenerationTests {
 			);
 		}
 
+		@Example
+		void lessElementsThanSetSize() {
+			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
+				Arbitraries.integers().between(1, 2).set().ofMaxSize(5).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Set<Integer>> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(4);
+			assertThat(generator).containsExactly(
+				asSet(),
+				asSet(1),
+				asSet(2),
+				asSet(1, 2)
+			);
+		}
+
 		private Set<Integer> asSet(Integer... ints) {
 			return new HashSet<>(asList(ints));
 		}
