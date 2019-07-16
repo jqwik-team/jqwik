@@ -6,15 +6,15 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
-public class MapArbitraryProvider implements ArbitraryProvider {
+public class EntryArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		return targetType.isAssignableFrom(Map.class);
+		return targetType.isAssignableFrom(Map.Entry.class);
 	}
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		// TODO: Remove duplication with EntryArbitraryProvider
+		// TODO: Remove duplication with MapArbitraryProvider
 		TypeUsage keyType = targetType.getTypeArgument(0);
 		TypeUsage valueType = targetType.getTypeArgument(1);
 
@@ -26,7 +26,7 @@ public class MapArbitraryProvider implements ArbitraryProvider {
 		Optional<Stream<Arbitrary>> optionalMapArbitraries =
 			Combinators
 				.combine(Arbitraries.of(keyArbitraries), Arbitraries.of(valueArbitraries))
-				.as((keysArbitrary, valuesArbitrary) -> (Arbitrary) Arbitraries.maps(keysArbitrary, valuesArbitrary))
+				.as((keysArbitrary, valuesArbitrary) -> (Arbitrary) Arbitraries.entries(keysArbitrary, valuesArbitrary))
 				.allValues();
 
 		optionalMapArbitraries.ifPresent(stream -> stream.forEach(providedArbitraries::add));

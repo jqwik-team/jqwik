@@ -47,6 +47,8 @@ and
 - Upgrade to JUnit platform 1.5.0
 - Default character generation now excludes codepoints `0xd800` through `0xdfff`
 - Introduced [Labeled Statistics](/docs/snapshot/user-guide.html#labeled-statistics)
+- Added [`Arbitraries.entries()`](/docs/snapshot/user-guide.html#maps)
+- Added default generation for `Map.Entry` instances
 
 ## 1.1.6
 

@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -39,10 +40,9 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 	}
 
 	private Arbitrary<Map<K, V>> mapArbitrary() {
-		Arbitrary<List<K>> keyLists = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize).map(ArrayList::new);
-		// TODO: Should be more like keySets.combineElementsWith(valuesArbitrary).as((key, value) -> ...)
-		//       but combineElementsWith() does not exist yet
-		return keyLists.flatMap(keys -> valuesArbitrary.list().ofSize(keys.size()).map(
+		// Using list of generated Map.Entry does not work because of potential duplicate keys
+		Arbitrary<List<K>> keySets = keysArbitrary.set().ofMinSize(minSize).ofMaxSize(maxSize).map(ArrayList::new);
+		return keySets.flatMap(keys -> valuesArbitrary.list().ofSize(keys.size()).map(
 			values -> {
 				HashMap<K, V> map = new HashMap<>();
 				for (int i = 0; i < keys.size(); i++) {

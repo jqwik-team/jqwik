@@ -81,6 +81,8 @@ public class Arbitraries {
 		public abstract <T> TypeArbitrary<T> forType(Class<T> targetType);
 
 		public abstract <K, V> SizableArbitrary<Map<K,V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
+
+		public abstract <K, V> Arbitrary<Map.Entry<K,V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 	}
 
 	private Arbitraries() {
@@ -549,7 +551,7 @@ public class Arbitraries {
 	}
 
 	/**
-	 * Create an arbitrary to create instances of Map.
+	 * Create an arbitrary to create instances of {@linkplain Map}.
 	 * The generated maps are mutable.
 	 *
 	 * @param keysArbitrary The arbitrary to generate the keys
@@ -559,6 +561,19 @@ public class Arbitraries {
 	@API(status = MAINTAINED, since = "1.1.6")
 	public static <K,V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		return ArbitrariesFacade.implementation.maps(keysArbitrary, valuesArbitrary);
+	}
+
+	/**
+	 * Create an arbitrary to create instances of {@linkplain Map.Entry}.
+	 * The generated entries are mutable.
+	 *
+	 * @param keysArbitrary The arbitrary to generate the keys
+	 * @param valuesArbitrary The arbitrary to generate the values
+	 * @return a new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.2.0")
+	public static <K,V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+		return ArbitrariesFacade.implementation.entries(keysArbitrary, valuesArbitrary);
 	}
 
 	/**

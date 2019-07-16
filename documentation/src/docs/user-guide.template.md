@@ -547,6 +547,7 @@ jqwik will use default generation for the following types:
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
 - `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
+- `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
 
 If you use [`@ForAll`](/docs/${docsVersion}/javadoc/net/jqwik/api/ForAll.html) 
@@ -960,7 +961,11 @@ an `Arbitrary` instance for the generic type. You can create the corresponding c
 
 Generating instances of type `Map` is a bit different since two arbitraries
 are needed, one for the key and one for the value. Therefore you have to use
-[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-):
+[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+
+For generating individual `Map.Entry` instances there is
+[`Arbitraries.entries(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+
 
 ### Collecting Values in a List
 

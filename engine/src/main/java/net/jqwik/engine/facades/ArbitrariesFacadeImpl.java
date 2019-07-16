@@ -181,6 +181,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return new MapArbitrary<>(keysArbitrary, valuesArbitrary);
 	}
 
+	@Override
+	public <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+		return Combinators.combine(keysArbitrary, valuesArbitrary).as(AbstractMap.SimpleEntry::new);
+	}
+
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
 		DomainContext domainContext = DomainContextFacadeImpl.currentContext.get();
 		RegisteredArbitraryResolver defaultArbitraryResolver =

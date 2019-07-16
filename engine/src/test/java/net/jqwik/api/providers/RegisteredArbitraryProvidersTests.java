@@ -265,6 +265,11 @@ class RegisteredArbitraryProvidersTests {
 			assertThat(aMap.keySet()).allMatch(k -> Number.class.isAssignableFrom(k.getClass()));
 			assertThat(aMap.values()).allMatch(k -> Number.class.isAssignableFrom(k.getClass()));
 		}
+
+		@Property
+		boolean entryOfIntegerAndString(@ForAll Map.Entry<Integer, String> aValue) {
+			return aValue != null;
+		}
 	}
 
 }

@@ -671,6 +671,27 @@ class ArbitrariesTests {
 			});
 		}
 
+		@Example
+		void entry() {
+			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
+			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
+
+			Arbitrary<Map.Entry<Integer, String>> entryArbitrary = Arbitraries.entries(keys, values);
+
+			RandomGenerator<Map.Entry<Integer, String>> generator = entryArbitrary.generator(1);
+
+			assertAllGenerated(generator, entry -> {
+				assertThat((int) entry.getKey()).isBetween(1, 10);
+				assertThat(entry.getValue()).hasSize(5);
+			});
+
+			// Generated entries are mutable
+			assertAllGenerated(generator, entry -> {
+				entry.setValue("fortytwo");
+				assertThat(entry.getValue()).isEqualTo("fortytwo");
+			});
+		}
+
 	}
 
 	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
