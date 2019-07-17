@@ -680,6 +680,23 @@ class ArbitrariesTests {
 		}
 
 		@Example
+		void mapWithLessElementsThanMaxSize() {
+			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 3);
+			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
+
+			SizableArbitrary<Map<Integer, String>> mapArbitrary = Arbitraries.maps(keys, values);
+			RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1);
+
+			assertAllGenerated(generator, map -> {
+				assertThat(map.size()).isBetween(0, 3);
+			});
+
+			assertAtLeastOneGenerated(generator, Map::isEmpty);
+			assertAtLeastOneGenerated(generator, map -> map.size() == 3);
+		}
+
+
+		@Example
 		void entry() {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
 			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);

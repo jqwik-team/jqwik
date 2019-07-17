@@ -14,24 +14,17 @@ public class EntryArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		// TODO: Remove duplication with MapArbitraryProvider
 		TypeUsage keyType = targetType.getTypeArgument(0);
 		TypeUsage valueType = targetType.getTypeArgument(1);
 
-		List<Arbitrary<?>> keyArbitraries = new ArrayList<>(subtypeProvider.apply(keyType));
-		List<Arbitrary<?>> valueArbitraries = new ArrayList<>(subtypeProvider.apply(valueType));
-
-		Set<Arbitrary<?>> providedArbitraries = new HashSet<>();
-
-		Optional<Stream<Arbitrary>> optionalMapArbitraries =
-			Combinators
-				.combine(Arbitraries.of(keyArbitraries), Arbitraries.of(valueArbitraries))
-				.as((keysArbitrary, valuesArbitrary) -> (Arbitrary) Arbitraries.entries(keysArbitrary, valuesArbitrary))
-				.allValues();
-
-		optionalMapArbitraries.ifPresent(stream -> stream.forEach(providedArbitraries::add));
-
-		return providedArbitraries;
+		return subtypeProvider
+				   .resolveAndCombine(keyType, valueType)
+				   .map(arbitraries -> {
+					   Arbitrary<?> keyArbitrary = arbitraries.get(0);
+					   Arbitrary<?> valueArbitrary = arbitraries.get(1);
+					   return Arbitraries.entries(keyArbitrary, valueArbitrary);
+				   })
+				   .collect(Collectors.toSet());
 
 	}
 }

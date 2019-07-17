@@ -14,6 +14,8 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.stateful.*;
 
+import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
+
 /**
  * Is loaded through reflection in api module
  */
@@ -178,7 +180,9 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
-		return new MapArbitrary<>(keysArbitrary, valuesArbitrary);
+		// The map cannot be larger than the max number of possible keys
+		return new MapArbitrary<>(keysArbitrary, valuesArbitrary)
+				   .ofMaxSize(maxNumberOfElements(keysArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override

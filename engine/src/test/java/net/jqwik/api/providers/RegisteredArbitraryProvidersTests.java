@@ -264,11 +264,17 @@ class RegisteredArbitraryProvidersTests {
 		void mapsWithNumberKeysAndNumberValues(@ForAll @Size(2) Map<Number, Number> aMap) {
 			assertThat(aMap.keySet()).allMatch(k -> Number.class.isAssignableFrom(k.getClass()));
 			assertThat(aMap.values()).allMatch(k -> Number.class.isAssignableFrom(k.getClass()));
+			assertThat(aMap).hasSize(2);
 		}
 
 		@Property
 		boolean entryOfIntegerAndString(@ForAll Map.Entry<Integer, String> aValue) {
 			return aValue != null;
+		}
+
+		@Property
+		void entriesAreMutable(@ForAll Map.Entry<Integer, String> anEntry) {
+			anEntry.setValue("other");
 		}
 	}
 
