@@ -8,12 +8,12 @@ import net.jqwik.api.constraints.*;
 
 class StatisticsExamples {
 
-	@Property
+	@Property(generation = GenerationMode.RANDOMIZED)
 	void simpleStats(@ForAll RoundingMode mode) {
 		Statistics.collect(mode);
 	}
 
-	@Property
+	@Property(generation = GenerationMode.RANDOMIZED)
 	void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
 		String range = anInt < 3 ? "small" : "large";
 		Statistics.label("range").collect(range);
@@ -40,7 +40,7 @@ class StatisticsExamples {
 		Statistics.collect(aList.size() > index ? "index within size" : null);
 	}
 
-	@Property
+	@Property(tries = 100000)
 	void statsWithRoundedNumbers(@ForAll @IntRange(max = 100000) int anInt) {
 		String classifier = anInt < 10 ? "smallest" //
 				: anInt < 1000 ? "small" //

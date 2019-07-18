@@ -67,10 +67,10 @@ class StatisticsCollectionTests {
 
 		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactly(
-			"four  : 40 %",
-			"three : 30 %",
-			"two   : 20 %",
-			"one   : 10 %"
+			"four  (4) : 40 %",
+			"three (3) : 30 %",
+			"two   (2) : 20 %",
+			"one   (1) : 10 %"
 		);
 	}
 
@@ -87,8 +87,8 @@ class StatisticsCollectionTests {
 
 		List<String> stats = parseStatistics(entry, "label");
 		Assertions.assertThat(stats).containsExactly(
-			"two : 75 %",
-			"one : 25 %"
+			"two (3) : 75 %",
+			"one (1) : 25 %"
 		);
 	}
 
@@ -105,7 +105,7 @@ class StatisticsCollectionTests {
 
 		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactly(
-			"aKey : 50 %"
+			"aKey (2) : 50 %"
 		);
 	}
 
@@ -115,11 +115,19 @@ class StatisticsCollectionTests {
 	}
 
 	private List<String> parseStatistics(ReportEntry entry, String label) {
-		return Arrays.stream(entry.getKeyValuePairs().get("[a property] " + label)
+		return Arrays.stream(getValue(entry, label)
 								  .split(System.getProperty("line.separator")))
 					 .map(String::trim)
 					 .filter(s -> !s.isEmpty())
 					 .collect(Collectors.toList());
+	}
+
+	private String getValue(ReportEntry entry, String label) {
+		return entry.getKeyValuePairs().entrySet()
+					.stream()
+					.filter(e -> e.getKey().contains(label))
+					.map(Map.Entry::getValue)
+					.findFirst().orElse(null);
 	}
 
 	@Example
@@ -135,10 +143,10 @@ class StatisticsCollectionTests {
 
 		List<String> stats = parseStatistics(entry);
 		Assertions.assertThat(stats).containsExactlyInAnyOrder(
-			"two 2   : 25 %",
-			"three 2 : 25 %",
-			"two 3   : 25 %",
-			"three 3 : 25 %"
+			"two 2   (1) : 25 %",
+			"three 2 (1) : 25 %",
+			"two 3   (1) : 25 %",
+			"three 3 (1) : 25 %"
 		);
 	}
 

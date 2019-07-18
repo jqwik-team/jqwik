@@ -6,8 +6,6 @@
 
     - user guide entry
       
-  - Statistics: Report # of calls besides percentage
-
   - Arbitrary.describe() for all built-in arbitraries
   
     - @Report(GENERATORS or ARBITRARIES)

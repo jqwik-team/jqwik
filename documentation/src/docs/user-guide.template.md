@@ -2020,15 +2020,15 @@ void simpleStats(@ForAll RoundingMode mode) {
 will create an output similar to that:
 
 ```
-[MyTest:simpleStats] statistics = 
-     UNNECESSARY : 15 %
-     DOWN        : 14 %
-     FLOOR       : 13 %
-     UP          : 13 %
-     HALF_DOWN   : 13 %
-     HALF_EVEN   : 12 %
-     CEILING     : 11 %
-     HALF_UP     : 11 %
+[MyTest:simpleStats] (1000) statistics = 
+    FLOOR       (158) : 16 %
+    HALF_EVEN   (135) : 14 %
+    DOWN        (126) : 13 %
+    UP          (120) : 12 %
+    HALF_UP     (118) : 12 %
+    CEILING     (117) : 12 %
+    UNNECESSARY (117) : 12 %
+    HALF_DOWN   (109) : 11 %
 ```
 
 More typical is the case in which you'll classify generated values
@@ -2042,9 +2042,9 @@ void integerStats(@ForAll int anInt) {
 ```
 
 ```
-[MyTest:integerStats] statistics = 
-     negative : 52 %
-     positive : 48 %
+[MyTest:integerStats] (1000) statistics = 
+    negative (506) : 51 %
+    positive (494) : 49 %
 ```
 
 You can also collect the distribution in more than one category
@@ -2061,15 +2061,15 @@ void combinedIntegerStats(@ForAll int anInt) {
 ```
 
 ```
-[MyTest:combinedIntegerStats] statistics = 
-     positive odd big    : 23 %
-     negative even big   : 22 %
-     positive even big   : 22 %
-     negative odd big    : 21 %
-     positive odd small  : 4 %
-     negative odd small  : 3 %
-     negative even small : 3 %
-     positive even small : 2 %
+[MyTest:combinedIntegerStats] (1000) statistics = 
+    negative even big   (222) : 22 %
+    positive even big   (201) : 20 %
+    positive odd big    (200) : 20 %
+    negative odd big    (194) : 19 %
+    negative even small ( 70) :  7 %
+    positive odd small  ( 42) :  4 %
+    negative odd small  ( 38) :  4 %
+    positive even small ( 33) :  3 %
 ```
 
 And, of course, you can combine different generated parameters into
@@ -2086,8 +2086,8 @@ void twoParameterStats(
 ```
 
 ```
-[MyTest:twoParameterStats] statistics = 
-     index within size : 48 %
+[MyTest:twoParameterStats] (1000) statistics = 
+    index within size (507) : 51 %
 ```
 
 As you can see, collected `null` values are not being reported.
@@ -2111,21 +2111,21 @@ void severalStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
 produces the following reports:
 
 ```
-[MyTest:severalStatistics] range = 
-    large : 80 %
-    small : 20 %
+[MyTest:labeledStatistics] (1000) range = 
+    large (783) : 78 %
+    small (217) : 22 %
 
-[MyTest:severalStatistics] value = 
-    1  : 10 %
-    2  : 10 %
-    3  : 10 %
-    4  : 10 %
-    5  : 10 %
-    6  : 10 %
-    7  : 10 %
-    8  : 10 %
-    9  : 10 %
-    10 : 10 %
+[MyTest:labeledStatistics] (1000) value = 
+    1  (115) : 12 %
+    5  (109) : 11 %
+    10 (105) : 11 %
+    4  (103) : 10 %
+    2  (102) : 10 %
+    3  ( 99) : 10 %
+    6  ( 97) : 10 %
+    8  ( 92) :  9 %
+    7  ( 91) :  9 %
+    9  ( 87) :  9 %
 ```
 
 ## Providing Default Arbitraries

@@ -50,6 +50,8 @@ and
 - Added [`Arbitraries.entries()`](/docs/snapshot/user-guide.html#maps)
 - Added default generation for `Map.Entry` instances
 - Fixed set generation bug https://github.com/jlink/jqwik/issues/65
+- [Enhanced statistics reporting](/docs/snapshot/user-guide.html#collecting-and-reporting-statistics) 
+  by absolute count
 
 ## 1.1.6
 

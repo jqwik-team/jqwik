@@ -70,23 +70,25 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 			counts.entrySet().stream()
 				  .sorted(this::compareStatisticsEntries)
 				  .filter(entry -> !entry.getKey().equals(Collections.emptyList()))
-				  .map(entry -> new StatisticsEntry(displayKey(entry.getKey()), entry.getValue() * 100.0 / sum))
+				  .map(entry -> new StatisticsEntry(displayKey(entry.getKey()), entry.getValue(), entry.getValue() * 100.0 / sum))
 				  .collect(Collectors.toList());
 		int maxKeyLength = statisticsEntries.stream().mapToInt(entry -> entry.name.length()).max().orElse(0);
 		boolean fullNumbersOnly = statisticsEntries.stream().noneMatch(entry -> entry.percentage < 1);
 
+		final int decimals = (int) Math.round(Math.log10(sum));
 		for (StatisticsEntry statsEntry : statisticsEntries) {
-			statistics.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly));
+			statistics.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly, decimals));
 		}
 
-		String keyStatistics = String.format("[%s] %s", propertyName, label);
+		String keyStatistics = String.format("[%s] (%d) %s", propertyName, sum, label);
 		return ReportEntry.from(keyStatistics, statistics.toString());
 	}
 
-	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly) {
+	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {
 		return String.format(
-			"%n    %1$-" + maxKeyLength + "s : %2$s %%",
+			"%n    %1$-" + maxKeyLength + "s (%2$" + decimals + "d) : %3$2s %%",
 			statsEntry.name,
+			statsEntry.count,
 			displayPercentage(statsEntry.percentage, fullNumbersOnly)
 		);
 	}
@@ -112,10 +114,12 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	static class StatisticsEntry {
 		private final String name;
+		private long count;
 		private final double percentage;
 
-		StatisticsEntry(String name, double percentage) {
+		StatisticsEntry(String name, long count, double percentage) {
 			this.name = name;
+			this.count = count;
 			this.percentage = percentage;
 		}
 	}
