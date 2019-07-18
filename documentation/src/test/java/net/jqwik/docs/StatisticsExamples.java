@@ -49,4 +49,13 @@ class StatisticsExamples {
 		Statistics.collect(classifier);
 	}
 
+	@Property(tries = 100000)
+	void statsWithDecimalNumbers(@ForAll int anInt) {
+		String classifier = anInt == 3 ? "three" //
+				: anInt < 1000 ? "small" //
+						: anInt < 80000 ? "normal" //
+								: "big";
+		Statistics.collect(classifier);
+	}
+
 }

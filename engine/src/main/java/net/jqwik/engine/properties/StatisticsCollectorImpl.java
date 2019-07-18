@@ -86,7 +86,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {
 		return String.format(
-			"%n    %1$-" + maxKeyLength + "s (%2$" + decimals + "d) : %3$2s %%",
+			"%n    %1$-" + maxKeyLength + "s (%2$" + decimals + "d) : %3$s %%",
 			statsEntry.name,
 			statsEntry.count,
 			displayPercentage(statsEntry.percentage, fullNumbersOnly)
@@ -104,8 +104,8 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	private String displayPercentage(double percentage, boolean fullNumbersOnly) {
 		if (fullNumbersOnly)
-			return String.valueOf(Math.round(percentage));
-		return String.valueOf(Math.round(percentage * 100.0) / 100.0);
+			return String.format("%2d", Math.round(percentage));
+		return String.format("%5.2f", Math.round(percentage * 100.0) / 100.0);
 	}
 
 	private String displayKey(List<Object> key) {
