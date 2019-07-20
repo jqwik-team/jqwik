@@ -25,6 +25,8 @@ public class DefaultArbitraries {
 		providers.add(new ArrayArbitraryProvider());
 		providers.add(new IteratorArbitraryProvider());
 		providers.add(new UseTypeArbitraryProvider());
+		providers.add(new FunctionArbitraryProvider());
+		providers.add(new VoidArbitraryProvider());
 		return providers;
 	}
 

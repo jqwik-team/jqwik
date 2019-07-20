@@ -18,12 +18,12 @@ public class MapArbitraryProvider implements ArbitraryProvider {
 		TypeUsage valueType = targetType.getTypeArgument(1);
 
 		return subtypeProvider
-				   .resolveAndCombine(keyType, valueType)
-				   .map(arbitraries -> {
-					   Arbitrary<?> keyArbitrary = arbitraries.get(0);
-					   Arbitrary<?> valueArbitrary = arbitraries.get(1);
-					   return Arbitraries.maps(keyArbitrary, valueArbitrary);
-				   })
-				   .collect(Collectors.toSet());
+			.resolveAndCombine(keyType, valueType)
+			.map(arbitraries -> {
+				Arbitrary<?> keyArbitrary = arbitraries.get(0);
+				Arbitrary<?> valueArbitrary = arbitraries.get(1);
+				return Arbitraries.maps(keyArbitrary, valueArbitrary);
+			})
+			.collect(Collectors.toSet());
 	}
 }

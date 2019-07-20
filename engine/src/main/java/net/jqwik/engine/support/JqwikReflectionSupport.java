@@ -232,6 +232,12 @@ public class JqwikReflectionSupport {
 				   .collect(Collectors.toList());
 	}
 
+	// TODO: Add test
+	public static Optional<Method> getInterfaceMethod(Class<?> candidateType) {
+		Method[] methods = candidateType.getMethods();
+		return findInterfaceMethods(methods).stream().findFirst();
+	}
+
 	public static boolean isToStringMethod(Method method) {
 		try {
 			return method.equals(Object.class.getDeclaredMethod("toString"));

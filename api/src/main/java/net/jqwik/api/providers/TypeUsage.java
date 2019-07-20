@@ -161,4 +161,9 @@ public interface TypeUsage {
 	 */
 	Optional<TypeUsage> getComponentType();
 
+	/**
+	 * Return true if type is Void.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.0")
+	boolean isVoid();
 }

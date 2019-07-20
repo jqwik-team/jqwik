@@ -2,17 +2,14 @@ package net.jqwik.api.providers;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.domains.*;
 import net.jqwik.engine.properties.arbitraries.WildcardArbitrary.*;
-import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
-
-import static net.jqwik.api.constraints.UseTypeMode.*;
 
 @Group
 class RegisteredArbitraryProvidersTests {
@@ -276,6 +273,57 @@ class RegisteredArbitraryProvidersTests {
 		void entriesAreMutable(@ForAll Map.Entry<Integer, String> anEntry) {
 			anEntry.setValue("other");
 		}
+	}
+
+	private interface MyConcreteFunction extends Function<Integer, String> {
+
+	}
+
+	private interface MyPartialFunction1<T> extends Function<T, String> {
+
+	}
+
+	private interface MyPartialFunction2<R> extends Function<Integer, R> {
+
+	}
+
+	@Group
+	class Functions_and_SAM_types {
+
+		@Property
+		void simpleFunction(@ForAll Function<Integer, String> aFunction) {
+			assertThat(aFunction.apply(3)).isInstanceOf(String.class);
+		}
+
+		@Property
+		void concreteFunction(@ForAll MyConcreteFunction aFunction) {
+			assertThat(aFunction.apply(3)).isInstanceOf(String.class);
+		}
+
+		@Property
+		void partialFunctions(
+			@ForAll MyPartialFunction1<Integer> function1,
+			@ForAll MyPartialFunction2<String> function2
+		) {
+			assertThat(function1.apply(3)).isInstanceOf(String.class);
+			assertThat(function2.apply(3)).isInstanceOf(String.class);
+		}
+
+		@Property
+		void predicate(@ForAll Predicate<Integer> aPredicate) {
+			assertThat(aPredicate.test(3)).isInstanceOf(Boolean.class);
+		}
+
+		@Property
+		void consumer(@ForAll Consumer<String> aConsumer) {
+			aConsumer.accept("anything");
+		}
+
+		@Property
+		void supplier(@ForAll Supplier<String> aSupplier) {
+			assertThat(aSupplier.get()).isInstanceOf(String.class);
+		}
+
 	}
 
 }
