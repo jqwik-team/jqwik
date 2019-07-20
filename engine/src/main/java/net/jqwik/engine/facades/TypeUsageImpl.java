@@ -431,7 +431,6 @@ public class TypeUsageImpl implements TypeUsage {
 		return true;
 	}
 
-	// TODO: Add tests
 	@Override
 	public boolean isVoid() {
 		return rawType.equals(Void.class) || rawType.equals(void.class);

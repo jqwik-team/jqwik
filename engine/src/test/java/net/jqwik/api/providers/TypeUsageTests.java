@@ -27,6 +27,13 @@ class TypeUsageTests {
 		assertThat(TypeUsage.of(String.class).isAssignableFrom(CharSequence.class)).isFalse();
 	}
 
+	@Example
+	void isVoid() {
+		assertThat(TypeUsage.of(Void.class).isVoid()).isTrue();
+		assertThat(TypeUsage.of(void.class).isVoid()).isTrue();
+		assertThat(TypeUsage.of(Object.class).isVoid()).isFalse();
+	}
+
 	@Group
 	@Label("of()")
 	class Of {
