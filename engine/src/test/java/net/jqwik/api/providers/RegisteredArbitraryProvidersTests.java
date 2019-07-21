@@ -311,8 +311,7 @@ class RegisteredArbitraryProvidersTests {
 			assertThat(function.apply(3)).isInstanceOf(Serializable.class);
 		}
 
-		@Property
-		@Disabled
+		@Property(tries = 10)
 		void wildcardsKeepTheirLowerBound(
 			@ForAll Function<Integer, ? super String> function
 		) {

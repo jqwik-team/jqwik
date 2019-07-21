@@ -420,6 +420,8 @@ public class TypeUsageImpl implements TypeUsage {
 		TypeUsageImpl other = (TypeUsageImpl) obj;
 		if (!other.getRawType().equals(getRawType()))
 			return false;
+		if (!other.getType().equals(getType()))
+			return false;
 		if (!other.getTypeArguments().equals(getTypeArguments()))
 			return false;
 		if (!other.getAnnotations().equals(getAnnotations()))
