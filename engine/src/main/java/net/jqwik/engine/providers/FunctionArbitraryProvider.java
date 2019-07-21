@@ -15,9 +15,6 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		if (!targetType.isInterface()) {
-			return false;
-		}
 		if (!JqwikReflectionSupport.isFunctionalType(targetType.getRawType())) {
 			return false;
 		}
@@ -45,7 +42,7 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 
 	private TypeUsage getReturnType(TypeUsage targetType) {
 		Optional<Method> optionalMethod =
-			JqwikReflectionSupport.getInterfaceMethod(targetType.getRawType());
+			JqwikReflectionSupport.getFunctionMethod(targetType.getRawType());
 
 		return optionalMethod
 				   .map(method -> {

@@ -232,10 +232,13 @@ public class JqwikReflectionSupport {
 				   .collect(Collectors.toList());
 	}
 
-	// TODO: Add test
-	public static Optional<Method> getInterfaceMethod(Class<?> candidateType) {
+	public static Optional<Method> getFunctionMethod(Class<?> candidateType) {
 		Method[] methods = candidateType.getMethods();
-		return findInterfaceMethods(methods).stream().findFirst();
+		List<Method> candidates = findInterfaceMethods(methods);
+		if (candidates.size() != 1) {
+			return Optional.empty();
+		}
+		return Optional.of(candidates.get(0));
 	}
 
 	public static boolean isToStringMethod(Method method) {

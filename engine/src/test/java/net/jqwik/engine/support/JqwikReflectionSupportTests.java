@@ -1,13 +1,15 @@
 package net.jqwik.engine.support;
 
+import java.io.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
-
-import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 @Group
 class JqwikReflectionSupportTests {
@@ -85,16 +87,16 @@ class JqwikReflectionSupportTests {
 			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithMethod.class);
 
 			MethodParameter param1 = parameters[0];
-			Assertions.assertThat(param1.getType()).isEqualTo(String.class);
-			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
-			Assertions.assertThat(param1.getAnnotatedType()).isNull();
-			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
+			assertThat(param1.getType()).isEqualTo(String.class);
+			assertThat(param1.isAnnotatedParameterized()).isFalse();
+			assertThat(param1.getAnnotatedType()).isNull();
+			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
 			MethodParameter param2 = parameters[1];
-			Assertions.assertThat(param2.getType()).isEqualTo(param2.getAnnotatedType().getType());
-			Assertions.assertThat(param2.isAnnotatedParameterized()).isTrue();
-			Assertions.assertThat(param2.getAnnotatedType().getAnnotatedActualTypeArguments()[0].getType()).isEqualTo(Integer.class);
-			Assertions.assertThat(param2.findAllAnnotations()).isEmpty();
+			assertThat(param2.getType()).isEqualTo(param2.getAnnotatedType().getType());
+			assertThat(param2.isAnnotatedParameterized()).isTrue();
+			assertThat(param2.getAnnotatedType().getAnnotatedActualTypeArguments()[0].getType()).isEqualTo(Integer.class);
+			assertThat(param2.findAllAnnotations()).isEmpty();
 		}
 
 		@Example
@@ -108,9 +110,9 @@ class JqwikReflectionSupportTests {
 			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithTypeVariableMethod.class);
 
 			MethodParameter param1 = parameters[0];
-			Assertions.assertThat(param1.getType()).isInstanceOf(TypeVariable.class);
-			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
-			Assertions.assertThat(param1.getAnnotatedType()).isNull();
+			assertThat(param1.getType()).isInstanceOf(TypeVariable.class);
+			assertThat(param1.isAnnotatedParameterized()).isFalse();
+			assertThat(param1.getAnnotatedType()).isNull();
 		}
 
 		@Example
@@ -127,9 +129,9 @@ class JqwikReflectionSupportTests {
 			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithString.class);
 
 			MethodParameter param1 = parameters[0];
-			Assertions.assertThat(param1.getType()).isEqualTo(String.class);
-			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
-			Assertions.assertThat(param1.isAnnotatedParameterized()).isFalse();
+			assertThat(param1.getType()).isEqualTo(String.class);
+			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
+			assertThat(param1.isAnnotatedParameterized()).isFalse();
 		}
 
 		@Example
@@ -146,16 +148,41 @@ class JqwikReflectionSupportTests {
 			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithListOfString.class);
 
 			MethodParameter param1 = parameters[0];
-			Assertions.assertThat(param1.getType()).isInstanceOf(ParameterizedType.class);
-			Assertions.assertThat(((ParameterizedType) param1.getType()).getRawType()).isEqualTo(List.class);
-			Assertions.assertThat(((ParameterizedType) param1.getType()).getActualTypeArguments()).containsExactly(String.class);
-			Assertions.assertThat(param1.findAnnotation(ForAll.class)).isPresent();
+			assertThat(param1.getType()).isInstanceOf(ParameterizedType.class);
+			assertThat(((ParameterizedType) param1.getType()).getRawType()).isEqualTo(List.class);
+			assertThat(((ParameterizedType) param1.getType()).getActualTypeArguments()).containsExactly(String.class);
+			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
-			Assertions.assertThat(param1.isAnnotatedParameterized()).isTrue();
-			Assertions.assertThat(param1.getAnnotatedType()).isNotNull();
-
+			assertThat(param1.isAnnotatedParameterized()).isTrue();
+			assertThat(param1.getAnnotatedType()).isNotNull();
 		}
 	}
+
+	@Example
+	void isFunctionalType() {
+		assertThat(JqwikReflectionSupport.isFunctionalType(Function.class)).isTrue();
+		assertThat(JqwikReflectionSupport.isFunctionalType(Iterable.class)).isTrue();
+		assertThat(JqwikReflectionSupport.isFunctionalType(Closeable.class)).isTrue();
+
+		// No method
+		assertThat(JqwikReflectionSupport.isFunctionalType(Serializable.class)).isFalse();
+
+		// Too many methods
+		assertThat(JqwikReflectionSupport.isFunctionalType(DataOutput.class)).isFalse();
+
+		// Not an interface
+		assertThat(JqwikReflectionSupport.isFunctionalType(Writer.class)).isFalse();
+	}
+
+	@Example
+	void getFunctionMethod() {
+		Optional<Method> method = JqwikReflectionSupport.getFunctionMethod(Function.class);
+		assertThat(method).isPresent();
+		assertThat(method.get().getName()).isEqualTo("apply");
+
+		assertThat(JqwikReflectionSupport.getFunctionMethod(DataOutput.class)).isNotPresent();
+	}
+
 
 	@Example
 	void streamInstancesFromInside() {
@@ -164,7 +191,7 @@ class JqwikReflectionSupportTests {
 
 		Stream<Object> instances = JqwikReflectionSupport.streamInstancesFromInside(inner);
 
-		Assertions.assertThat(instances).containsExactly(inner, outer);
+		assertThat(instances).containsExactly(inner, outer);
 	}
 
 	private static class Outer {
