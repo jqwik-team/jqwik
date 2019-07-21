@@ -17,7 +17,6 @@ public class TypeResolution {
 		return resolvedType;
 	}
 
-	// Currently used in tests only
 	public boolean typeHasChanged() {
 		return typeHasChanged;
 	}

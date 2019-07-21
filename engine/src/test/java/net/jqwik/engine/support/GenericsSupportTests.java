@@ -2,9 +2,11 @@ package net.jqwik.engine.support;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -13,12 +15,35 @@ import static org.assertj.core.api.Assertions.*;
 class GenericsSupportTests {
 
 	@Example
-	void createContext() {
-		class JustAClass{
+	void createContextFromClass() {
+		class JustAClass implements Function<String, Integer> {
+			@Override
+			public Integer apply(String s) {
+				return null;
+			}
 		}
 
 		GenericsClassContext context = GenericsSupport.contextFor(JustAClass.class);
-		assertThat(context.contextClass()).isSameAs(JustAClass.class);
+		assertThat(context.contextType().getRawType()).isSameAs(JustAClass.class);
+	}
+
+	private interface PartialFunction<T> extends Function<T, String> {}
+
+	@Example
+	void createContextFromTypeUsage() throws NoSuchMethodException {
+		TypeUsage integerToStringFunction =
+			TypeUsage.of(PartialFunction.class, TypeUsage.of(Integer.class));
+
+		GenericsClassContext context = GenericsSupport.contextFor(integerToStringFunction);
+		assertThat(context.contextType()).isSameAs(integerToStringFunction);
+
+		Method functionMethod = Function.class.getMethod("apply", Object.class);
+
+		TypeResolution parameterResolution = context.resolveParameter(functionMethod.getParameters()[0]);
+		assertThat(parameterResolution.type().getTypeName()).isEqualTo("java.lang.Integer");
+
+		TypeResolution returnTypeResolution = context.resolveReturnType(functionMethod);
+		assertThat(returnTypeResolution.type().getTypeName()).isEqualTo("java.lang.String");
 	}
 
 	@Example
@@ -190,6 +215,125 @@ class GenericsSupportTests {
 			assertThat(annotatedList.getAnnotation(Size.class)).isNotNull();
 		}
 
+		@Example
+		@Label("unresolved variable keeps annotation")
+		void resolveUnresolvedGeneric() throws NoSuchMethodException {
+
+			class AnotherClass<T> {
+				public void method(Iterable<@Size(max = 5) List<T>> aT) {}
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(AnotherClass.class);
+			Method methodWithString = AnotherClass.class.getMethod("method", Iterable.class);
+			TypeResolution resolution = context.resolveParameter(methodWithString.getParameters()[0]);
+
+			assertThat(resolution.typeHasChanged()).isFalse();
+			assertThat(resolution.type().getTypeName()).isEqualTo("java.lang.Iterable<java.util.List<T>>");
+			assertThat(resolution.annotatedType()).isNotNull();
+			AnnotatedType annotatedList = ((AnnotatedParameterizedType) resolution.annotatedType()).getAnnotatedActualTypeArguments()[0];
+			assertThat(annotatedList.getAnnotation(Size.class)).isNotNull();
+		}
+
+	}
+
+	@Group
+	@Label("resolve return type")
+	class ResolveReturnType {
+
+		@Example
+		@Label("generic return type")
+		void genericReturnType() throws NoSuchMethodException {
+
+			abstract class ClassReturnsT<T> {
+				public abstract T method();
+			}
+
+			class ClassReturnsString extends ClassReturnsT<String> {
+				@Override
+				public String method() {
+					return null;
+				}
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(ClassReturnsString.class);
+			Method methodWithString = ClassReturnsString.class.getMethod("method");
+			TypeResolution resolution = context.resolveReturnType(methodWithString);
+
+			assertThat(resolution.type().getTypeName()).isEqualTo("java.lang.String");
+			assertThat(resolution.annotatedType()).isNotNull();
+
+			TypeUsage typeUsage = TypeUsage.forType(resolution.type());
+			assertThat(typeUsage.getRawType()).isEqualTo(String.class);
+			assertThat(typeUsage.getAnnotations()).isEmpty();
+		}
+
+		@Example
+		@Label("generic function type")
+		void genericFunctionType() throws NoSuchMethodException {
+			GenericsClassContext context = GenericsSupport.contextFor(IntegerToStringFunction.class);
+			Method function = IntegerToStringFunction.class.getMethod("apply", Object.class);
+
+			TypeResolution resolution = context.resolveReturnType(function);
+			assertThat(resolution.type().getTypeName()).isEqualTo("java.lang.String");
+
+			TypeUsage typeUsage = TypeUsage.forType(resolution.type());
+			assertThat(typeUsage.getRawType()).isEqualTo(String.class);
+		}
+
+		@Example
+		@Label("unresolved return type")
+		void unresolvedReturnType() throws NoSuchMethodException {
+
+			abstract class ClassReturnsT<T, P> {
+				public abstract T method(P p);
+			}
+
+			class ClassTakesString<T1> extends ClassReturnsT<T1, String> {
+				@Override
+				public T1 method(String p) {
+					return null;
+				}
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(ClassTakesString.class);
+			Method methodWithString = ClassReturnsT.class.getMethod("method", Object.class);
+			TypeResolution resolution = context.resolveReturnType(methodWithString);
+
+			assertThat(resolution.typeHasChanged()).isTrue();
+			assertThat(resolution.type().getTypeName()).isEqualTo("T1");
+			assertThat(resolution.annotatedType()).isNotNull();
+
+			TypeUsage typeUsage = TypeUsage.forType(resolution.type());
+			assertThat(typeUsage.isTypeVariable()).isTrue();
+		}
+
+		@Example
+		@Label("non generic return type")
+		void nonGenericReturnType() throws NoSuchMethodException {
+
+			abstract class ClassReturnsT<T> {
+				public abstract String method(T param);
+			}
+
+			class ClassReturnsString extends ClassReturnsT<Integer> {
+				@Override
+				public String method(Integer param) {
+					return null;
+				}
+			}
+
+			GenericsClassContext context = GenericsSupport.contextFor(ClassReturnsString.class);
+			Method methodWithString = ClassReturnsT.class.getMethod("method", Object.class);
+			TypeResolution resolution = context.resolveReturnType(methodWithString);
+
+			assertThat(resolution.typeHasChanged()).isFalse();
+			assertThat(resolution.type().getTypeName()).isEqualTo("java.lang.String");
+			assertThat(resolution.annotatedType()).isNotNull();
+		}
+
+	}
+
+	interface IntegerToStringFunction extends Function<Integer, String> {
 	}
 
 	interface MyInterface<T, U> {

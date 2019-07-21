@@ -41,30 +41,14 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 	private TypeUsage getReturnType(TypeUsage targetType) {
 		Optional<Method> optionalMethod =
 			JqwikReflectionSupport.getInterfaceMethod(targetType.getRawType());
-		TypeUsage returnType = optionalMethod
-			.map(method -> TypeUsage.forType(method.getGenericReturnType()))
+
+		return optionalMethod
+			.map(method -> {
+				GenericsClassContext context = GenericsSupport.contextFor(targetType);
+				TypeResolution typeResolution = context.resolveReturnType(method);
+				return TypeUsage.forType(typeResolution.type());
+			})
 			.orElse(TypeUsage.of(Void.class));
-
-		// This does not match type variable names but just goes backward
-		//  through all argument types and those of super types.
-		//  This seems to work for all functional types in java.util.function.
-		//  Use GenericSupport if you want to support any functional type
-		List<TypeUsage> argumentTypes = collectTypeArguments(targetType);
-		for (int i = argumentTypes.size() - 1; i >= 0; i--) {
-			TypeUsage candidate = argumentTypes.get(i);
-			if (candidate.canBeAssignedTo(returnType))
-				return candidate;
-		}
-		return returnType;
-	}
-
-	private List<TypeUsage> collectTypeArguments(TypeUsage target) {
-		ArrayList<TypeUsage> allTypeArguments = new ArrayList<>();
-		allTypeArguments.addAll(target.getTypeArguments());
-		for (Type anInterface : target.getRawType().getGenericInterfaces()) {
-			allTypeArguments.addAll(TypeUsage.forType(anInterface).getTypeArguments());
-		}
-		return allTypeArguments;
 	}
 
 }

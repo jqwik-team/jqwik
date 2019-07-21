@@ -185,6 +185,9 @@ public class TypeUsageImpl implements TypeUsage {
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
 
 	TypeUsageImpl(Class<?> rawType, String typeVariable, List<Annotation> annotations) {
+		if (rawType == null) {
+			throw new IllegalArgumentException("rawType must never be null");
+		}
 		this.rawType = rawType;
 		this.typeVariable = typeVariable;
 		this.annotations = annotations;
@@ -437,8 +440,26 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
+	public Optional<TypeUsage> getSuperclass() {
+		if (rawType.getSuperclass() == null) {
+			return Optional.empty();
+		}
+		return Optional.of(TypeUsage.forType(rawType.getSuperclass()));
+	}
+
+	@Override
+	public List<TypeUsage> getInterfaces() {
+		if (rawType == null) {
+			return Collections.emptyList();
+		}
+		return Arrays.stream(getRawType().getInterfaces())
+					 .map(TypeUsage::forType)
+					 .collect(Collectors.toList());
+	}
+
+	@Override
 	public int hashCode() {
-		return getRawType().hashCode();
+		return rawType.hashCode();
 	}
 
 	@Override

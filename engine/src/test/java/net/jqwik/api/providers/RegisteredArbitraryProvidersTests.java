@@ -1,5 +1,6 @@
 package net.jqwik.api.providers;
 
+import java.io.*;
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
@@ -275,17 +276,11 @@ class RegisteredArbitraryProvidersTests {
 		}
 	}
 
-	private interface MyConcreteFunction extends Function<Integer, String> {
+	private interface MyConcreteFunction extends Function<Integer, String> {}
 
-	}
+	private interface MyPartialFunction1<T> extends Function<T, String> {}
 
-	private interface MyPartialFunction1<T> extends Function<T, String> {
-
-	}
-
-	private interface MyPartialFunction2<R> extends Function<Integer, R> {
-
-	}
+	private interface MyPartialFunction2<S> extends Function<Integer, S> {}
 
 	@Group
 	class Functions_and_SAM_types {
@@ -306,9 +301,15 @@ class RegisteredArbitraryProvidersTests {
 			@ForAll MyPartialFunction2<String> function2
 		) {
 			assertThat(function1.apply(3)).isInstanceOf(String.class);
-			//TODO: does not work yet
-			//assertThat(function2.apply(3)).isInstanceOf(String.class);
+			assertThat(function2.apply(3)).isInstanceOf(String.class);
 		}
+
+//		@Property
+//		<R extends Serializable> void partialFunctionWithTypeVariable(
+//			@ForAll MyPartialFunction2<R> function
+//		) {
+//			assertThat(function.apply(3)).isInstanceOf(Serializable.class);
+//		}
 
 		@Property
 		void predicate(@ForAll Predicate<Integer> aPredicate) {

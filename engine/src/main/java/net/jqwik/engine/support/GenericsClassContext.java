@@ -5,7 +5,9 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
-class GenericsClassContext {
+import net.jqwik.api.providers.*;
+
+public class GenericsClassContext {
 
 	static final GenericsClassContext NULL = new GenericsClassContext(null) {
 		@Override
@@ -19,15 +21,15 @@ class GenericsClassContext {
 		}
 	};
 
-	private final Class<?> contextClass;
+	private final TypeUsage contextType;
 	private final Map<LookupTypeVariable, TypeResolution> resolutions = new HashMap<>();
 
-	GenericsClassContext(Class<?> contextClass) {
-		this.contextClass = contextClass;
+	GenericsClassContext(TypeUsage contextType) {
+		this.contextType = contextType;
 	}
 
-	public Class<?> contextClass() {
-		return contextClass;
+	public TypeUsage contextType() {
+		return contextType;
 	}
 
 	void addResolution(TypeVariable typeVariable, Type resolvedType, AnnotatedType annotatedType) {
@@ -37,11 +39,16 @@ class GenericsClassContext {
 
 	@Override
 	public String toString() {
-		return String.format("GenericsContext(%s)", contextClass.getSimpleName());
+		return String.format("GenericsContext(%s)", contextType.toString());
 	}
 
 	public TypeResolution resolveParameter(Parameter parameter) {
 		TypeResolution initial = new TypeResolution(parameter.getParameterizedType(), parameter.getAnnotatedType(), false);
+		return resolveType(initial);
+	}
+
+	public TypeResolution resolveReturnType(Method method) {
+		TypeResolution initial = new TypeResolution(method.getGenericReturnType(), method.getAnnotatedReturnType(), false);
 		return resolveType(initial);
 	}
 
@@ -98,11 +105,13 @@ class GenericsClassContext {
 		LookupTypeVariable variable = new LookupTypeVariable(typeVariable);
 		TypeResolution localResolution = resolveLocally(typeVariableResolution, variable);
 		TypeResolution supertypeResolution = resolveInSupertypes(localResolution);
-		if (!supertypeResolution.typeHasChanged()) {
-			return localResolution;
+		if (supertypeResolution.typeHasChanged()) {
+			return resolveType(supertypeResolution);
 		}
-		// Recursive resolution necessary for variables mapped on variables
-		return resolveType(supertypeResolution);
+		if (localResolution.typeHasChanged()) {
+			return resolveType(localResolution);
+		}
+		return typeVariableResolution;
 	}
 
 	private TypeResolution resolveLocally(TypeResolution typeResolution, LookupTypeVariable variable) {
@@ -110,16 +119,16 @@ class GenericsClassContext {
 	}
 
 	protected TypeResolution resolveInSupertypes(TypeResolution typeResolution) {
-		return supertypeContexts() //
-								   .map(context -> context.resolveType(typeResolution)) //
-								   .filter(TypeResolution::typeHasChanged) //
-								   .findFirst() //
-								   .orElse(typeResolution.unchanged());
+		return supertypeContexts()
+				   .map(context -> context.resolveType(typeResolution))
+				   .filter(TypeResolution::typeHasChanged)
+				   .findFirst()
+				   .orElse(typeResolution.unchanged());
 	}
 
 	private Stream<GenericsClassContext> supertypeContexts() {
-		Stream<Class<?>> superclassStream = Stream.of(contextClass.getSuperclass());
-		Stream<Class<?>> interfacesStream = Stream.of(contextClass.getInterfaces());
+		Stream<TypeUsage> superclassStream = contextType.getSuperclass().map(Stream::of).orElseGet(Stream::empty);
+		Stream<TypeUsage> interfacesStream = contextType.getInterfaces().stream();
 		return Stream.concat(superclassStream, interfacesStream).map(GenericsSupport::contextFor);
 	}
 
@@ -232,9 +241,9 @@ class GenericsClassContext {
 		@Override
 		public String toString() {
 			String typeString = JqwikStringSupport.displayString(getType());
-			String annotationsString = Arrays.stream(getAnnotations()) //
-											   .map(JqwikStringSupport::displayString) //
-											   .collect(Collectors.joining(", "));
+			String annotationsString = Arrays.stream(getAnnotations())
+											 .map(JqwikStringSupport::displayString)
+											 .collect(Collectors.joining(", "));
 			return String.format("%s %s", annotationsString, typeString);
 		}
 

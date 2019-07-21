@@ -3,13 +3,15 @@ package net.jqwik.engine.support;
 import java.lang.reflect.*;
 import java.util.*;
 
-class GenericsSupport {
+import net.jqwik.api.providers.*;
 
-	private static Map<Class, GenericsClassContext> contextsCache = new HashMap<>();
+public class GenericsSupport {
+
+	private static Map<TypeUsage, GenericsClassContext> contextsCache = new HashMap<>();
 
 	/**
 	 * Return a context object which can resolve generic types for a given {@code contextClass}.
-	 *
+	 * <p>
 	 * Must be synchronized because of caching.
 	 *
 	 * @param contextClass The class to wrap in a context
@@ -19,44 +21,83 @@ class GenericsSupport {
 		if (contextClass == null) {
 			return GenericsClassContext.NULL;
 		}
-		return contextsCache.computeIfAbsent(contextClass, GenericsSupport::createContext);
+		return contextFor(TypeUsage.of(contextClass));
 	}
 
-	private static GenericsClassContext createContext(Class<?> contextClass) {
-		GenericsClassContext context = new GenericsClassContext(contextClass);
-		addResolutionForSuperclass(contextClass, context);
-		addResolutionForInterfaces(contextClass, context);
+	public synchronized static GenericsClassContext contextFor(TypeUsage typeUsage) {
+		return contextsCache.computeIfAbsent(typeUsage, GenericsSupport::createContext);
+	}
+
+	private static GenericsClassContext createContext(TypeUsage typeUsage) {
+		GenericsClassContext context = new GenericsClassContext(typeUsage);
+		if (typeUsage.getRawType() != null) {
+			addOwnResolutions(typeUsage, context);
+			addResolutionsForSuperclass(typeUsage, context);
+			addResolutionsForInterfaces(typeUsage, context);
+		}
 		return context;
 	}
 
-	private static void addResolutionForInterfaces(Class<?> contextClass, GenericsClassContext context) {
-		Class<?>[] interfaces = contextClass.getInterfaces();
-		Type[] genericInterfaces = contextClass.getGenericInterfaces();
-		AnnotatedType[] annotatedInterfaces = contextClass.getAnnotatedInterfaces();
+	private static void addResolutionsForInterfaces(TypeUsage contextType, GenericsClassContext context) {
+		Class<?>[] interfaces = contextType.getRawType().getInterfaces();
+		Type[] genericInterfaces = contextType.getRawType().getGenericInterfaces();
+		AnnotatedType[] annotatedInterfaces = contextType.getRawType().getAnnotatedInterfaces();
 		for (int i = 0; i < interfaces.length; i++) {
 			Class<?> supertype = interfaces[i];
 			Type genericSupertype = genericInterfaces[i];
 			AnnotatedType annotatedSupertype = annotatedInterfaces[i];
-			addResolutionForSupertype(supertype, genericSupertype, annotatedSupertype, context);
+			addResolutionsForSupertype(supertype, genericSupertype, annotatedSupertype, context);
 		}
 	}
 
-	private static void addResolutionForSuperclass(Class<?> contextClass, GenericsClassContext context) {
-		addResolutionForSupertype(contextClass.getSuperclass(), contextClass.getGenericSuperclass(), contextClass.getAnnotatedSuperclass(), context);
+	private static void addResolutionsForSuperclass(TypeUsage typeUsage, GenericsClassContext context) {
+		addResolutionsForSupertype(
+			typeUsage.getRawType().getSuperclass(),
+			typeUsage.getRawType().getGenericSuperclass(),
+			typeUsage.getRawType().getAnnotatedSuperclass(),
+			context
+		);
 	}
 
-	private static void addResolutionForSupertype(Class<?> supertype, Type genericSupertype, AnnotatedType annotatedSupertype, GenericsClassContext context) {
-		if (genericSupertype instanceof ParameterizedType) {
-			ParameterizedType genericParameterizedType = (ParameterizedType) genericSupertype;
-			Type[] supertypeTypeArguments = genericParameterizedType.getActualTypeArguments();
-			TypeVariable[] superclassTypeVariables = supertype.getTypeParameters();
-			AnnotatedType[] annotatedTypeVariables = ((AnnotatedParameterizedType) annotatedSupertype).getAnnotatedActualTypeArguments();
-			for (int i = 0; i < superclassTypeVariables.length; i++) {
-				TypeVariable variable = superclassTypeVariables[i];
-				Type resolvedType = supertypeTypeArguments[i];
-				AnnotatedType annotatedType = annotatedTypeVariables[i];
-				context.addResolution(variable, resolvedType, annotatedType);
-			}
+	private static void addOwnResolutions(TypeUsage typeUsage, GenericsClassContext context) {
+		if (typeUsage.getTypeArguments().isEmpty()) {
+			return;
+		}
+
+		List<TypeUsage> typeArguments = typeUsage.getTypeArguments();
+		Type[] supertypeTypeArguments = new Type[typeArguments.size()];
+		for (int i = 0; i < typeArguments.size(); i++) {
+			supertypeTypeArguments[i] = typeArguments.get(i).getRawType();
+		}
+		TypeVariable[] superclassTypeVariables = typeUsage.getRawType().getTypeParameters();
+		for (int i = 0; i < superclassTypeVariables.length; i++) {
+			TypeVariable variable = superclassTypeVariables[i];
+			Type resolvedType = supertypeTypeArguments[i];
+			// TODO: Is there some useful annotated type somewhere?
+			AnnotatedType annotatedType = null;
+			context.addResolution(variable, resolvedType, annotatedType);
 		}
 	}
+
+	private static void addResolutionsForSupertype(
+		Class<?> supertype,
+		Type genericSupertype,
+		AnnotatedType annotatedSupertype,
+		GenericsClassContext context
+	) {
+		if (!(genericSupertype instanceof ParameterizedType)) {
+			return;
+		}
+		ParameterizedType genericParameterizedType = (ParameterizedType) genericSupertype;
+		Type[] supertypeTypeArguments = genericParameterizedType.getActualTypeArguments();
+		TypeVariable[] superclassTypeVariables = supertype.getTypeParameters();
+		AnnotatedType[] annotatedTypeVariables = ((AnnotatedParameterizedType) annotatedSupertype).getAnnotatedActualTypeArguments();
+		for (int i = 0; i < superclassTypeVariables.length; i++) {
+			TypeVariable variable = superclassTypeVariables[i];
+			Type resolvedType = supertypeTypeArguments[i];
+			AnnotatedType annotatedType = annotatedTypeVariables[i];
+			context.addResolution(variable, resolvedType, annotatedType);
+		}
+	}
+
 }

@@ -166,4 +166,16 @@ public interface TypeUsage {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.0")
 	boolean isVoid();
+
+	/**
+	 * Return superclass of this type.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.0")
+	Optional<TypeUsage> getSuperclass();
+
+	/**
+	 * Return interfaces of this type.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.0")
+	List<TypeUsage> getInterfaces();
 }
