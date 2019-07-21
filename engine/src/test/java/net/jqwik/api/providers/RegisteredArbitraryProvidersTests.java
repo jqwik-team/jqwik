@@ -9,6 +9,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.arbitraries.WildcardArbitrary.*;
+import net.jqwik.engine.providers.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -286,8 +287,40 @@ class RegisteredArbitraryProvidersTests {
 		R apply(P p);
 	}
 
+	private interface MySpecial<P, R> {
+		R apply(P p);
+	}
+
 	@Group
-	class Functions_and_SAM_types {
+	class Functions_and_SAM_types implements AutoCloseable {
+
+		private final ArbitraryProvider specialProvider;
+
+		public Functions_and_SAM_types() {
+			specialProvider = new ArbitraryProvider() {
+				@Override
+				public boolean canProvideFor(TypeUsage targetType) {
+					return targetType.isOfType(MySpecial.class);
+				}
+
+				@Override
+				public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
+					Arbitrary<MySpecial<Integer, String>> constant = Arbitraries.constant(integer -> "special");
+					return Collections.singleton(constant);
+				}
+			};
+			RegisteredArbitraryProviders.register(specialProvider);
+		}
+
+		@Override
+		public void close() throws Exception {
+			RegisteredArbitraryProviders.unregister(specialProvider);
+		}
+
+		@Property
+		void registeredProvidersHavePriority(@ForAll MySpecial<Integer, String> aFunction) {
+			assertThat(aFunction.apply(3)).isEqualTo("special");
+		}
 
 		@Property
 		void simpleFunction(@ForAll Function<Integer, String> aFunction) {
@@ -320,7 +353,7 @@ class RegisteredArbitraryProvidersTests {
 			assertThat(function.apply(3)).isInstanceOf(Serializable.class);
 		}
 
-		@Property(tries = 10)
+		@Property
 		void wildcardsKeepTheirLowerBound(
 			@ForAll Function<Integer, ? super String> function
 		) {

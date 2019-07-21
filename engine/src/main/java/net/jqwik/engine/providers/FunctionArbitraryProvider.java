@@ -56,4 +56,9 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 				   .orElse(TypeUsage.of(Void.class));
 	}
 
+	@Override
+	public int priority() {
+		// Give specialized providers priority
+		return -1;
+	}
 }
