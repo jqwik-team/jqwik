@@ -2,7 +2,6 @@ package net.jqwik.engine.providers;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -11,17 +10,23 @@ import net.jqwik.engine.support.*;
 
 public class FunctionArbitraryProvider implements ArbitraryProvider {
 
-	private static Class<?>[] SUPPORTED_FUNCTIONAL_TYPES =
-		new Class[]{Function.class, Supplier.class, Consumer.class, Predicate.class};
+	private static Class<?>[] EXCLUDE_TYPES =
+		new Class[]{Iterable.class, Comparable.class};
 
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		for (Class<?> supportedType : SUPPORTED_FUNCTIONAL_TYPES) {
-			if (targetType.canBeAssignedTo(TypeUsage.of(supportedType))) {
-				return true;
+		if (!targetType.isInterface()) {
+			return false;
+		}
+		if (!JqwikReflectionSupport.isFunctionalType(targetType.getRawType())) {
+			return false;
+		}
+		for (Class<?> excludedType : EXCLUDE_TYPES) {
+			if (targetType.isOfType(excludedType)) {
+				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -30,12 +35,12 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 		TypeUsage returnType = getReturnType(targetType);
 
 		return subtypeProvider
-			.resolveAndCombine(returnType)
-			.map(arbitraries -> {
-				Arbitrary<?> resultArbitrary = arbitraries.get(0);
-				return Functions.function(functionalType).returns(resultArbitrary);
-			})
-			.collect(Collectors.toSet());
+				   .resolveAndCombine(returnType)
+				   .map(arbitraries -> {
+					   Arbitrary<?> resultArbitrary = arbitraries.get(0);
+					   return Functions.function(functionalType).returns(resultArbitrary);
+				   })
+				   .collect(Collectors.toSet());
 	}
 
 	private TypeUsage getReturnType(TypeUsage targetType) {
@@ -43,12 +48,12 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 			JqwikReflectionSupport.getInterfaceMethod(targetType.getRawType());
 
 		return optionalMethod
-			.map(method -> {
-				GenericsClassContext context = GenericsSupport.contextFor(targetType);
-				TypeResolution typeResolution = context.resolveReturnType(method);
-				return TypeUsage.forType(typeResolution.type());
-			})
-			.orElse(TypeUsage.of(Void.class));
+				   .map(method -> {
+					   GenericsClassContext context = GenericsSupport.contextFor(targetType);
+					   TypeResolution typeResolution = context.resolveReturnType(method);
+					   return TypeUsage.forType(typeResolution.type());
+				   })
+				   .orElse(TypeUsage.of(Void.class));
 	}
 
 }

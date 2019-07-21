@@ -186,4 +186,11 @@ public interface TypeUsage {
 	@API(status = EXPERIMENTAL, since = "1.2.0")
 	Type getType();
 
+	/**
+	 * Return true if this type represents an interface
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.0")
+	boolean isInterface();
+
+
 }

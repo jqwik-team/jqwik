@@ -466,6 +466,11 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
+	public boolean isInterface() {
+		return rawType.isInterface();
+	}
+
+	@Override
 	public int hashCode() {
 		return rawType.hashCode();
 	}
