@@ -42,6 +42,7 @@ class TypeUsageTests {
 		void simpleType() {
 			TypeUsage stringType = TypeUsage.of(String.class);
 			assertThat(stringType.getRawType()).isEqualTo(String.class);
+			assertThat(stringType.getType()).isEqualTo(String.class);
 			assertThat(stringType.isOfType(String.class)).isTrue();
 			assertThat(stringType.isGeneric()).isFalse();
 			assertThat(stringType.isArray()).isFalse();
@@ -51,6 +52,14 @@ class TypeUsageTests {
 
 			assertThat(stringType.equals(TypeUsage.of(String.class))).isTrue();
 			assertThat(stringType.equals(TypeUsage.of(Number.class))).isFalse();
+
+			assertThat(stringType.getSuperclass()).isPresent();
+			assertThat(stringType.getSuperclass().get()).isEqualTo(TypeUsage.of(Object.class));
+			assertThat(stringType.getInterfaces()).contains(
+				TypeUsage.of(Serializable.class),
+				TypeUsage.of(Comparable.class),
+				TypeUsage.of(CharSequence.class)
+			);
 		}
 
 		@Example
@@ -58,6 +67,7 @@ class TypeUsageTests {
 		void parameterizedType() {
 			TypeUsage tupleType = TypeUsage.of(Tuple2.class, of(String.class), of(Integer.class));
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
+			assertThat(tupleType.getType()).isEqualTo(Tuple2.class);
 			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 			assertThat(tupleType.isGeneric()).isTrue();
 			assertThat(tupleType.isArray()).isFalse();
@@ -104,6 +114,7 @@ class TypeUsageTests {
 		Type type = LocalClass.class.getMethod("withReturn").getAnnotatedReturnType().getType();
 		TypeUsage tupleType = TypeUsage.forType(type);
 		assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
+		assertThat(tupleType.getType()).isEqualTo(type);
 		assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 		assertThat(tupleType.isGeneric()).isTrue();
 		assertThat(tupleType.isArray()).isFalse();
@@ -118,6 +129,7 @@ class TypeUsageTests {
 		TypeUsage wildcardWithUpperBound = TypeUsage.wildcard(TypeUsage.of(Collection.class));
 
 		assertThat(wildcardWithUpperBound.getRawType()).isEqualTo(Object.class);
+		assertThat(wildcardWithUpperBound.getType()).isEqualTo(Object.class);
 		assertThat(wildcardWithUpperBound.isWildcard()).isTrue();
 		assertThat(wildcardWithUpperBound.isTypeVariableOrWildcard()).isTrue();
 		assertThat(wildcardWithUpperBound.isGeneric()).isFalse();
@@ -141,6 +153,7 @@ class TypeUsageTests {
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			TypeUsage tupleType = TypeUsageImpl.forParameter(parameter);
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
+			assertThat(tupleType.getType()).isEqualTo(parameter.getType());
 			assertThat(tupleType.isOfType(Tuple2.class)).isTrue();
 			assertThat(tupleType.isGeneric()).isTrue();
 			assertThat(tupleType.isArray()).isFalse();

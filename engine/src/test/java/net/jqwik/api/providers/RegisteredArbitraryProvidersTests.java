@@ -304,26 +304,47 @@ class RegisteredArbitraryProvidersTests {
 			assertThat(function2.apply(3)).isInstanceOf(String.class);
 		}
 
-//		@Property
-//		<R extends Serializable> void partialFunctionWithTypeVariable(
-//			@ForAll MyPartialFunction2<R> function
-//		) {
-//			assertThat(function.apply(3)).isInstanceOf(Serializable.class);
-//		}
-
 		@Property
-		void predicate(@ForAll Predicate<Integer> aPredicate) {
-			assertThat(aPredicate.test(3)).isInstanceOf(Boolean.class);
+		<R extends Serializable> void typeVariablesKeepTheirUpperBound(
+			@ForAll Function<Integer, R> function
+		) {
+			assertThat(function.apply(3)).isInstanceOf(Serializable.class);
 		}
 
 		@Property
-		void consumer(@ForAll Consumer<String> aConsumer) {
-			aConsumer.accept("anything");
+		@Disabled
+		void wildcardsKeepTheirLowerBound(
+			@ForAll Function<Integer, ? super String> function
+		) {
+			assertThat(function.apply(3)).isInstanceOf(String.class);
 		}
 
-		@Property
-		void supplier(@ForAll Supplier<String> aSupplier) {
-			assertThat(aSupplier.get()).isInstanceOf(String.class);
+		@Group
+		class Supported_Functional_Types {
+
+			@Property
+			@Label("java.function.Function")
+			void function(@ForAll Function<Integer, String> aFunction) {
+				assertThat(aFunction.apply(3)).isInstanceOf(String.class);
+			}
+
+			@Property
+			@Label("java.function.Predicate")
+			void predicate(@ForAll Predicate<Integer> aPredicate) {
+				assertThat(aPredicate.test(3)).isInstanceOf(Boolean.class);
+			}
+
+			@Property
+			@Label("java.function.Consumer")
+			void consumer(@ForAll Consumer<String> aConsumer) {
+				aConsumer.accept("anything");
+			}
+
+			@Property
+			@Label("java.function.Supplier")
+			void supplier(@ForAll Supplier<String> aSupplier) {
+				assertThat(aSupplier.get()).isInstanceOf(String.class);
+			}
 		}
 
 	}

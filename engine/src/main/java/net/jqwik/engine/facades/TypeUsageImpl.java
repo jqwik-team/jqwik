@@ -19,6 +19,7 @@ public class TypeUsageImpl implements TypeUsage {
 	public static TypeUsage forParameter(MethodParameter parameter) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(parameter.getType()),
+			parameter.getType(),
 			extractTypeVariable(parameter.getType()),
 			parameter.findAllAnnotations()
 		);
@@ -68,7 +69,7 @@ public class TypeUsageImpl implements TypeUsage {
 			return alreadyResolved.get();
 		}
 
-		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, typeVariable, annotations);
+		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, typeVariable, annotations);
 		resolved.put(type, typeUsage);
 		processTypeUsage.accept(typeUsage);
 
@@ -78,6 +79,7 @@ public class TypeUsageImpl implements TypeUsage {
 	private static TypeUsageImpl forAnnotatedType(AnnotatedType annotatedType) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(annotatedType.getType()),
+			annotatedType.getType(),
 			extractTypeVariable(annotatedType.getType()),
 			extractAnnotations(annotatedType)
 		);
@@ -177,6 +179,7 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	private final Class<?> rawType;
+	private final Type type;
 	private final String typeVariable;
 	private final List<Annotation> annotations;
 	private final List<TypeUsage> typeArguments = new ArrayList<>();
@@ -184,11 +187,12 @@ public class TypeUsageImpl implements TypeUsage {
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
 
-	TypeUsageImpl(Class<?> rawType, String typeVariable, List<Annotation> annotations) {
+	TypeUsageImpl(Class<?> rawType, Type type, String typeVariable, List<Annotation> annotations) {
 		if (rawType == null) {
 			throw new IllegalArgumentException("rawType must never be null");
 		}
 		this.rawType = rawType;
+		this.type = type;
 		this.typeVariable = typeVariable;
 		this.annotations = annotations;
 	}
@@ -449,12 +453,14 @@ public class TypeUsageImpl implements TypeUsage {
 
 	@Override
 	public List<TypeUsage> getInterfaces() {
-		if (rawType == null) {
-			return Collections.emptyList();
-		}
 		return Arrays.stream(getRawType().getInterfaces())
 					 .map(TypeUsage::forType)
 					 .collect(Collectors.toList());
+	}
+
+	@Override
+	public Type getType() {
+		return type;
 	}
 
 	@Override

@@ -178,4 +178,12 @@ public interface TypeUsage {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.0")
 	List<TypeUsage> getInterfaces();
+
+	/**
+	 * Return the type which can be of different classes depending on what is used to
+	 * create this instance. For plain classes the type is the same as the raw type
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.0")
+	Type getType();
+
 }

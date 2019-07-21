@@ -30,11 +30,9 @@ public class GenericsSupport {
 
 	private static GenericsClassContext createContext(TypeUsage typeUsage) {
 		GenericsClassContext context = new GenericsClassContext(typeUsage);
-		if (typeUsage.getRawType() != null) {
-			addOwnResolutions(typeUsage, context);
-			addResolutionsForSuperclass(typeUsage, context);
-			addResolutionsForInterfaces(typeUsage, context);
-		}
+		addOwnResolutions(typeUsage, context);
+		addResolutionsForSuperclass(typeUsage, context);
+		addResolutionsForInterfaces(typeUsage, context);
 		return context;
 	}
 
@@ -67,7 +65,7 @@ public class GenericsSupport {
 		List<TypeUsage> typeArguments = typeUsage.getTypeArguments();
 		Type[] supertypeTypeArguments = new Type[typeArguments.size()];
 		for (int i = 0; i < typeArguments.size(); i++) {
-			supertypeTypeArguments[i] = typeArguments.get(i).getRawType();
+			supertypeTypeArguments[i] = typeArguments.get(i).getType();
 		}
 		TypeVariable[] superclassTypeVariables = typeUsage.getRawType().getTypeParameters();
 		for (int i = 0; i < superclassTypeVariables.length; i++) {
