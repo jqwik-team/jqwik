@@ -323,13 +323,21 @@ class RegisteredArbitraryProvidersTests {
 		}
 
 		@Property
-		void simpleFunction(@ForAll Function<Integer, String> aFunction) {
-			assertThat(aFunction.apply(3)).isInstanceOf(String.class);
+		void simpleFunction(@ForAll Function<Integer, @StringLength(5) String> aFunction) {
+			String value = aFunction.apply(3);
+			assertThat(value).isInstanceOf(String.class);
+			assertThat(value).hasSize(5);
 		}
 
 		@Property
-		void selfDefinedFunction(@ForAll MyFunction<Integer, String> aFunction) {
-			assertThat(aFunction.apply(3)).isInstanceOf(String.class);
+		void selfDefinedFunction(@ForAll MyFunction<Integer, @StringLength(5) String> aFunction) {
+			String value = aFunction.apply(3);
+			assertThat(value).isInstanceOf(String.class);
+
+			// TODO: Retest with newer JDK
+			//  Does not work because of bug in JDK which handles annotations of inner interfaces
+			//  differently than annotations of top level interfaces
+			// assertThat(value).hasSize(5);
 		}
 
 		@Property
@@ -380,4 +388,8 @@ class RegisteredArbitraryProvidersTests {
 
 	}
 
+}
+
+interface TestFunction<P, R> {
+	R apply(P p);
 }

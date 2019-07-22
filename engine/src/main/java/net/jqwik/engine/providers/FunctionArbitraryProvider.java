@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
 public class FunctionArbitraryProvider implements ArbitraryProvider {
@@ -48,7 +49,7 @@ public class FunctionArbitraryProvider implements ArbitraryProvider {
 				   .map(method -> {
 					   GenericsClassContext context = GenericsSupport.contextFor(targetType);
 					   TypeResolution typeResolution = context.resolveReturnType(method);
-					   return TypeUsage.forType(typeResolution.type());
+					   return TypeUsageImpl.forResolution(typeResolution);
 				   })
 				   .orElse(TypeUsage.of(Void.class));
 	}

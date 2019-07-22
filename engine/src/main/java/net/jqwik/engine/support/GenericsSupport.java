@@ -62,19 +62,15 @@ public class GenericsSupport {
 			return;
 		}
 
-		List<TypeUsage> typeArguments = typeUsage.getTypeArguments();
-		Type[] supertypeTypeArguments = new Type[typeArguments.size()];
-		for (int i = 0; i < typeArguments.size(); i++) {
-			supertypeTypeArguments[i] = typeArguments.get(i).getType();
+		List<TypeUsage> typeArgumentsList = typeUsage.getTypeArguments();
+		Type[] typeArguments = new Type[typeArgumentsList.size()];
+		AnnotatedType[] annotatedTypeVariables = new AnnotatedType[typeArgumentsList.size()];
+		for (int i = 0; i < typeArgumentsList.size(); i++) {
+			typeArguments[i] = typeArgumentsList.get(i).getType();
+			annotatedTypeVariables[i] = typeArgumentsList.get(i).getAnnotatedType();
 		}
-		TypeVariable[] superclassTypeVariables = typeUsage.getRawType().getTypeParameters();
-		for (int i = 0; i < superclassTypeVariables.length; i++) {
-			TypeVariable variable = superclassTypeVariables[i];
-			Type resolvedType = supertypeTypeArguments[i];
-			// TODO: Is there some useful annotated type somewhere?
-			AnnotatedType annotatedType = null;
-			context.addResolution(variable, resolvedType, annotatedType);
-		}
+		TypeVariable[] typeVariables = typeUsage.getRawType().getTypeParameters();
+		addResolutions(context, typeArguments, typeVariables, annotatedTypeVariables);
 	}
 
 	private static void addResolutionsForSupertype(
@@ -87,12 +83,22 @@ public class GenericsSupport {
 			return;
 		}
 		ParameterizedType genericParameterizedType = (ParameterizedType) genericSupertype;
-		Type[] supertypeTypeArguments = genericParameterizedType.getActualTypeArguments();
-		TypeVariable[] superclassTypeVariables = supertype.getTypeParameters();
-		AnnotatedType[] annotatedTypeVariables = ((AnnotatedParameterizedType) annotatedSupertype).getAnnotatedActualTypeArguments();
-		for (int i = 0; i < superclassTypeVariables.length; i++) {
-			TypeVariable variable = superclassTypeVariables[i];
-			Type resolvedType = supertypeTypeArguments[i];
+		Type[] typeArguments = genericParameterizedType.getActualTypeArguments();
+		TypeVariable[] typeVariables = supertype.getTypeParameters();
+		AnnotatedType[] annotatedTypeVariables =
+			((AnnotatedParameterizedType) annotatedSupertype).getAnnotatedActualTypeArguments();
+		addResolutions(context, typeArguments, typeVariables, annotatedTypeVariables);
+	}
+
+	private static void addResolutions(
+		GenericsClassContext context,
+		Type[] typeArguments,
+		TypeVariable[] typeVariables,
+		AnnotatedType[] annotatedTypeVariables
+	) {
+		for (int i = 0; i < typeVariables.length; i++) {
+			TypeVariable variable = typeVariables[i];
+			Type resolvedType = typeArguments[i];
 			AnnotatedType annotatedType = annotatedTypeVariables[i];
 			context.addResolution(variable, resolvedType, annotatedType);
 		}

@@ -16,10 +16,27 @@ public class TypeUsageImpl implements TypeUsage {
 
 	static final String WILDCARD = "?";
 
+	public static TypeUsage forResolution(TypeResolution typeResolution) {
+		TypeUsageImpl typeUsage = new TypeUsageImpl(
+			extractRawType(typeResolution.type()),
+			typeResolution.type(),
+			typeResolution.annotatedType(),
+			extractTypeVariable(typeResolution.type()),
+			extractAnnotations(typeResolution.annotatedType())
+		);
+		typeUsage.addTypeArguments(extractTypeArguments(typeResolution));
+		typeUsage.addUpperBounds(extractUpperBounds(typeResolution.type()));
+		typeUsage.addLowerBounds(extractLowerBounds(typeResolution.type()));
+
+		return typeUsage;
+	}
+
+
 	public static TypeUsage forParameter(MethodParameter parameter) {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(parameter.getType()),
 			parameter.getType(),
+			parameter.getAnnotatedType(),
 			extractTypeVariable(parameter.getType()),
 			parameter.findAllAnnotations()
 		);
@@ -69,7 +86,8 @@ public class TypeUsageImpl implements TypeUsage {
 			return alreadyResolved.get();
 		}
 
-		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, typeVariable, annotations);
+		AnnotatedType annotatedType = type instanceof AnnotatedType ? (AnnotatedType) type : null;
+		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations);
 		resolved.put(type, typeUsage);
 		processTypeUsage.accept(typeUsage);
 
@@ -80,6 +98,7 @@ public class TypeUsageImpl implements TypeUsage {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(annotatedType.getType()),
 			annotatedType.getType(),
+			annotatedType,
 			extractTypeVariable(annotatedType.getType()),
 			extractAnnotations(annotatedType)
 		);
@@ -98,6 +117,14 @@ public class TypeUsageImpl implements TypeUsage {
 			return extractAnnotatedTypeArguments(parameter.getAnnotatedType());
 		} else {
 			return extractPlainTypeArguments(parameter.getType());
+		}
+	}
+
+	private static List<TypeUsage> extractTypeArguments(TypeResolution resolution) {
+		if (resolution.annotatedType()instanceof AnnotatedParameterizedType) {
+			return extractAnnotatedTypeArguments((AnnotatedParameterizedType) resolution.annotatedType());
+		} else {
+			return extractPlainTypeArguments(resolution.type());
 		}
 	}
 
@@ -180,6 +207,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	private final Class<?> rawType;
 	private final Type type;
+	private AnnotatedType annotatedType;
 	private final String typeVariable;
 	private final List<Annotation> annotations;
 	private final List<TypeUsage> typeArguments = new ArrayList<>();
@@ -187,12 +215,19 @@ public class TypeUsageImpl implements TypeUsage {
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
 
-	TypeUsageImpl(Class<?> rawType, Type type, String typeVariable, List<Annotation> annotations) {
+	TypeUsageImpl(
+		Class<?> rawType,
+		Type type,
+		AnnotatedType annotatedType,
+		String typeVariable,
+		List<Annotation> annotations
+	) {
 		if (rawType == null) {
 			throw new IllegalArgumentException("rawType must never be null");
 		}
 		this.rawType = rawType;
 		this.type = type;
+		this.annotatedType = annotatedType;
 		this.typeVariable = typeVariable;
 		this.annotations = annotations;
 	}
@@ -466,8 +501,8 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
-	public boolean isInterface() {
-		return rawType.isInterface();
+	public AnnotatedType getAnnotatedType() {
+		return annotatedType;
 	}
 
 	@Override
