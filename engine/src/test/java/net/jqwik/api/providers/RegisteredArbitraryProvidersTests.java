@@ -389,7 +389,3 @@ class RegisteredArbitraryProvidersTests {
 	}
 
 }
-
-interface TestFunction<P, R> {
-	R apply(P p);
-}
