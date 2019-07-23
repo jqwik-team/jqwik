@@ -44,7 +44,7 @@ and
     `Combinators.withBuilder(Arbitrary<B> builderArbitrary)`
   - Annotation `@Domain` and interface `DomainContext`
   
-- Upgrade to JUnit platform 1.5.0
+- Upgrade to JUnit platform 1.5.1
 - Default character generation now excludes codepoints `0xd800` through `0xdfff`
 - Introduced [Labeled Statistics](/docs/snapshot/user-guide.html#labeled-statistics)
 - Added [`Arbitraries.entries()`](/docs/snapshot/user-guide.html#maps)
@@ -52,6 +52,8 @@ and
 - Fixed set generation bug https://github.com/jlink/jqwik/issues/65
 - [Enhanced statistics reporting](/docs/snapshot/user-guide.html#collecting-and-reporting-statistics) 
   by absolute count
+- _jqwik_ can now generate instances of 
+  [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
 
 ## 1.1.6
 

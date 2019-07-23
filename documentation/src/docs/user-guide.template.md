@@ -992,9 +992,50 @@ If a functional type is used as a `@ForAll`-parameter _jqwik_ will automatically
 generate instances of those functions. The generated functions have the following
 characteristics:
 
-- They ...
-- They ...
-- They ...
+- Given the input parameters they will produce the same return values.
+- The return values are generated using the type information and constraints
+  in the parameter.
+- Given different input parameters they will _usually_ produce different
+  return values.
+- Shrinking of generated functions will try constant functions, i.e. functions
+  that always return the same value.
+  
+Let's look at an example:
+
+```java
+@Property
+void fromIntToString(@ForAll Function<Integer, @StringLength(5) String> function) {
+    assertThat(function.apply(42)).hasSize(5);
+    assertThat(function.apply(1)).isEqualTo(function.apply(1));
+}
+```
+
+This works for any _interface-based_ functional types, even your own.
+If you [register a default provider](#providing-default-arbitraries) for
+a functional type with a priority of 0 or above, it will take precedence.
+
+If the functions need some specialized arbitrary for return values or if you
+want to fix the function's behaviour for some range of values, you can define
+the arbitrary manually:
+
+```java
+@Property
+void emptyStringsTestFalse(@ForAll("predicates") Predicate<String> predicate) {
+    assertThat(predicate.test("")).isFalse();
+}
+
+@Provide
+Arbitrary<Predicate<String>> predicates() {
+    return Functions
+        .function(Predicate.class)
+        .returns(Arbitraries.of(true, false))
+        .when(parameters -> parameters.get(0).equals(""), parameters -> false);
+}
+```
+
+In this example the generated predicate will always return `false` when
+given an empty String and randomly choose between `true` and `false` in
+all other cases.
 
 ### Fluent Configuration Interfaces
 
@@ -1012,6 +1053,7 @@ like size, length, boundaries etc. Have a look at the Java doc for the following
 - [ShortArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
 - [SizableArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
 - [StringArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
+- [FunctionArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
 
 
 Here are a 

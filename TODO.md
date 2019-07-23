@@ -1,9 +1,5 @@
 - 1.2.0
 
-  - Function generation
-  
-    - user guide entry
-      
   - Arbitrary.describe() for all built-in arbitraries
   
     - @Report(GENERATORS or ARBITRARIES)
