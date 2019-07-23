@@ -74,14 +74,14 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
 
     // Add any other test library you need...
-    testCompile("org.assertj:assertj-core:3.9.1")
+    testCompile("org.assertj:assertj-core:3.12.2")
 
 }
 ```
 
-With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to simplify jqwik
-integration for standard users. 
-If you want to be more explicit about the real dependencies you can replace this dependency with
+With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to 
+simplify jqwik integration for standard users. If you want to be more explicit 
+about the real dependencies you can replace this dependency with
 
 ```
     testCompile "net.jqwik:jqwik-api:\${jqwikVersion}"
@@ -549,6 +549,7 @@ jqwik will use default generation for the following types:
 - `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
+- [Functional Types](#functional-types)
 
 If you use [`@ForAll`](/docs/${docsVersion}/javadoc/net/jqwik/api/ForAll.html) 
 with a value, e.g. `@ForAll("aMethodName")`, the method
@@ -625,7 +626,7 @@ combine several of them:
 
 They work for generated `String`s and `Character`s.
 
-#### List, Set, Stream and Array Size:
+#### List, Set, Stream, Map and Array Size
 
 - [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Size.html): 
   Set either fixed size through `value` or configure the size range between `min` and `max`.
@@ -957,16 +958,6 @@ an `Arbitrary` instance for the generic type. You can create the corresponding c
 - [`Arbitrary.array(Class<A> arrayClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
 - [`Arbitrary.optional()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#optional--)
 
-### Maps
-
-Generating instances of type `Map` is a bit different since two arbitraries
-are needed, one for the key and one for the value. Therefore you have to use
-[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
-
-For generating individual `Map.Entry` instances there is
-[`Arbitraries.entries(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
-
-
 ### Collecting Values in a List
 
 If you do not want any random combination of values in your list - as 
@@ -982,6 +973,28 @@ Here's how you could do that:
 Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000);
 ```
+
+### Maps
+
+Generating instances of type `Map` is a bit different since two arbitraries
+are needed, one for the key and one for the value. Therefore you have to use
+[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+
+For generating individual `Map.Entry` instances there is
+[`Arbitraries.entries(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+
+
+### Functional Types
+
+Interfaces that have a single (non default) method are considered to be 
+_Functional types_; they are sometimes called _SAM_ types for "single abstract method".
+If a functional type is used as a `@ForAll`-parameter _jqwik_ will automatically 
+generate instances of those functions. The generated functions have the following
+characteristics:
+
+- They ...
+- They ...
+- They ...
 
 ### Fluent Configuration Interfaces
 
