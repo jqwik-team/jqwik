@@ -34,7 +34,7 @@ title: jqwik User Guide - 1.2.0-SNAPSHOT
     - [Unique Values](#unique-values)
     - [String Length](#string-length)
     - [Character Sets](#character-sets)
-    - [List, Set, Stream and Array Size:](#list-set-stream-and-array-size)
+    - [List, Set, Stream, Map and Array Size](#list-set-stream-map-and-array-size)
     - [Integer Constraints](#integer-constraints)
     - [Decimal Constraints](#decimal-constraints)
   - [Constraining parameterized types](#constraining-parameterized-types)
@@ -54,8 +54,9 @@ title: jqwik User Guide - 1.2.0-SNAPSHOT
     - [Shuffling Permutations](#shuffling-permutations)
     - [Default Types](#default-types)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
-  - [Maps](#maps)
   - [Collecting Values in a List](#collecting-values-in-a-list)
+  - [Maps](#maps)
+  - [Functional Types](#functional-types)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
   - [Generate `null` values](#generate-null-values)
   - [Filtering](#filtering)
@@ -139,8 +140,8 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.5.0'
-ext.junitJupiterVersion = '5.5.0'
+ext.junitPlatformVersion = '1.5.1'
+ext.junitJupiterVersion = '5.5.1'
 
 ext.jqwikVersion = '1.2.0-SNAPSHOT'
 
@@ -164,17 +165,17 @@ dependencies {
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.5.0")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.5.1")
 
     // Add any other test library you need...
-    testCompile("org.assertj:assertj-core:3.9.1")
+    testCompile("org.assertj:assertj-core:3.12.2")
 
 }
 ```
 
-With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to simplify jqwik
-integration for standard users. 
-If you want to be more explicit about the real dependencies you can replace this dependency with
+With version 1.0.0 `net.jqwik:jqwik` has become an aggregating module to 
+simplify jqwik integration for standard users. If you want to be more explicit 
+about the real dependencies you can replace this dependency with
 
 ```
     testCompile "net.jqwik:jqwik-api:${jqwikVersion}"
@@ -245,8 +246,8 @@ I've never tried it but using jqwik without gradle or some other tool to manage 
 You will have to add _at least_ the following jars to your classpath:
 
 - `jqwik-1.2.0-SNAPSHOT.jar`
-- `junit-platform-engine-1.5.0.jar`
-- `junit-platform-commons-1.5.0.jar`
+- `junit-platform-engine-1.5.1.jar`
+- `junit-platform-commons-1.5.1.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -640,7 +641,9 @@ jqwik will use default generation for the following types:
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
 - `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
+- `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
+- [Functional Types](#functional-types)
 
 If you use [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) 
 with a value, e.g. `@ForAll("aMethodName")`, the method
@@ -717,7 +720,7 @@ combine several of them:
 
 They work for generated `String`s and `Character`s.
 
-#### List, Set, Stream and Array Size:
+#### List, Set, Stream, Map and Array Size
 
 - [`@Size(int value = 0, int min = 0, int max = 0)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Size.html): 
   Set either fixed size through `value` or configure the size range between `min` and `max`.
@@ -1049,12 +1052,6 @@ an `Arbitrary` instance for the generic type. You can create the corresponding c
 - [`Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
 - [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional--)
 
-### Maps
-
-Generating instances of type `Map` is a bit different since two arbitraries
-are needed, one for the key and one for the value. Therefore you have to use
-[`Arbitraries.maps(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-):
-
 ### Collecting Values in a List
 
 If you do not want any random combination of values in your list - as 
@@ -1070,6 +1067,69 @@ Here's how you could do that:
 Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000);
 ```
+
+### Maps
+
+Generating instances of type `Map` is a bit different since two arbitraries
+are needed, one for the key and one for the value. Therefore you have to use
+[`Arbitraries.maps(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+
+For generating individual `Map.Entry` instances there is
+[`Arbitraries.entries(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+
+
+### Functional Types
+
+Interfaces that have a single (non default) method are considered to be 
+_Functional types_; they are sometimes called _SAM_ types for "single abstract method".
+If a functional type is used as a `@ForAll`-parameter _jqwik_ will automatically 
+generate instances of those functions. The generated functions have the following
+characteristics:
+
+- Given the input parameters they will produce the same return values.
+- The return values are generated using the type information and constraints
+  in the parameter.
+- Given different input parameters they will _usually_ produce different
+  return values.
+- Shrinking of generated functions will try constant functions, i.e. functions
+  that always return the same value.
+  
+Let's look at an example:
+
+```java
+@Property
+void fromIntToString(@ForAll Function<Integer, @StringLength(5) String> function) {
+    assertThat(function.apply(42)).hasSize(5);
+    assertThat(function.apply(1)).isEqualTo(function.apply(1));
+}
+```
+
+This works for any _interface-based_ functional types, even your own.
+If you [register a default provider](#providing-default-arbitraries) for
+a functional type with a priority of 0 or above, it will take precedence.
+
+If the functions need some specialized arbitrary for return values or if you
+want to fix the function's behaviour for some range of values, you can define
+the arbitrary manually:
+
+```java
+@Property
+void emptyStringsTestFalse(@ForAll("predicates") Predicate<String> predicate) {
+    assertThat(predicate.test("")).isFalse();
+}
+
+@Provide
+Arbitrary<Predicate<String>> predicates() {
+    return Functions
+        .function(Predicate.class)
+        .returns(Arbitraries.of(true, false))
+        .when(parameters -> parameters.get(0).equals(""), parameters -> false);
+}
+```
+
+In this example the generated predicate will always return `false` when
+given an empty String and randomly choose between `true` and `false` in
+all other cases.
 
 ### Fluent Configuration Interfaces
 
@@ -1087,6 +1147,7 @@ like size, length, boundaries etc. Have a look at the Java doc for the following
 - [ShortArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
 - [SizableArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
 - [StringArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
+- [FunctionArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
 
 
 Here are a 
@@ -2108,15 +2169,15 @@ void simpleStats(@ForAll RoundingMode mode) {
 will create an output similar to that:
 
 ```
-[MyTest:simpleStats] statistics = 
-     UNNECESSARY : 15 %
-     DOWN        : 14 %
-     FLOOR       : 13 %
-     UP          : 13 %
-     HALF_DOWN   : 13 %
-     HALF_EVEN   : 12 %
-     CEILING     : 11 %
-     HALF_UP     : 11 %
+[MyTest:simpleStats] (1000) statistics = 
+    FLOOR       (158) : 16 %
+    HALF_EVEN   (135) : 14 %
+    DOWN        (126) : 13 %
+    UP          (120) : 12 %
+    HALF_UP     (118) : 12 %
+    CEILING     (117) : 12 %
+    UNNECESSARY (117) : 12 %
+    HALF_DOWN   (109) : 11 %
 ```
 
 More typical is the case in which you'll classify generated values
@@ -2130,9 +2191,9 @@ void integerStats(@ForAll int anInt) {
 ```
 
 ```
-[MyTest:integerStats] statistics = 
-     negative : 52 %
-     positive : 48 %
+[MyTest:integerStats] (1000) statistics = 
+    negative (506) : 51 %
+    positive (494) : 49 %
 ```
 
 You can also collect the distribution in more than one category
@@ -2149,15 +2210,15 @@ void combinedIntegerStats(@ForAll int anInt) {
 ```
 
 ```
-[MyTest:combinedIntegerStats] statistics = 
-     positive odd big    : 23 %
-     negative even big   : 22 %
-     positive even big   : 22 %
-     negative odd big    : 21 %
-     positive odd small  : 4 %
-     negative odd small  : 3 %
-     negative even small : 3 %
-     positive even small : 2 %
+[MyTest:combinedIntegerStats] (1000) statistics = 
+    negative even big   (222) : 22 %
+    positive even big   (201) : 20 %
+    positive odd big    (200) : 20 %
+    negative odd big    (194) : 19 %
+    negative even small ( 70) :  7 %
+    positive odd small  ( 42) :  4 %
+    negative odd small  ( 38) :  4 %
+    positive even small ( 33) :  3 %
 ```
 
 And, of course, you can combine different generated parameters into
@@ -2174,8 +2235,8 @@ void twoParameterStats(
 ```
 
 ```
-[MyTest:twoParameterStats] statistics = 
-     index within size : 48 %
+[MyTest:twoParameterStats] (1000) statistics = 
+    index within size (507) : 51 %
 ```
 
 As you can see, collected `null` values are not being reported.
@@ -2199,21 +2260,21 @@ void severalStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
 produces the following reports:
 
 ```
-[MyTest:severalStatistics] range = 
-    large : 80 %
-    small : 20 %
+[MyTest:labeledStatistics] (1000) range = 
+    large (783) : 78 %
+    small (217) : 22 %
 
-[MyTest:severalStatistics] value = 
-    1  : 10 %
-    2  : 10 %
-    3  : 10 %
-    4  : 10 %
-    5  : 10 %
-    6  : 10 %
-    7  : 10 %
-    8  : 10 %
-    9  : 10 %
-    10 : 10 %
+[MyTest:labeledStatistics] (1000) value = 
+    1  (115) : 12 %
+    5  (109) : 11 %
+    10 (105) : 11 %
+    4  (103) : 10 %
+    2  (102) : 10 %
+    3  ( 99) : 10 %
+    6  ( 97) : 10 %
+    8  ( 92) :  9 %
+    7  ( 91) :  9 %
+    9  ( 87) :  9 %
 ```
 
 ## Providing Default Arbitraries
