@@ -167,6 +167,21 @@ class ExhaustiveGenerationTests {
 			);
 		}
 
+		@Example
+		@Label("uniqueness within list can miss too often")
+		void uniqueListSearchMissesTooOften() {
+			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =
+				Arbitraries.of(1, 2, 3, 4, 5, 6, 7).unique().list().ofSize(8).exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<List<Integer>> generator = optionalGenerator.get();
+
+			assertThatThrownBy(() -> {
+				for (List<Integer> integers : generator) { }
+			}).isInstanceOf(JqwikException.class);
+
+		}
+
 		@Property
 		@Label("reset of uniqueness for embedded arbitraries")
 		void uniquenessIsResetForEmbeddedArbitraries(@ForAll("listOfUniqueIntegers") List<Integer> aList) {

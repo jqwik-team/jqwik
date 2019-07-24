@@ -5,10 +5,10 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class UniqueGenerator<T> implements RandomGenerator<T> {
-	private static final long MAX_MISSES = 10000;
 	private final RandomGenerator<T> toFilter;
 	private final Set<T> usedValues = ConcurrentHashMap.newKeySet();
 
@@ -30,19 +30,21 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 	}
 
 	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
-		long count = 0;
-		while (true) {
-			Shrinkable<T> next = fetchShrinkable.apply(random);
-			if (usedValues.contains(next.value())) {
-				if (++count > MAX_MISSES) {
-					throw new TooManyFilterMissesException(String.format("%s missed more than %s times.", toString(), MAX_MISSES));
+		return MaxTriesLoop.loop(
+			() -> true,
+			next -> {
+				next = fetchShrinkable.apply(random);
+				if (usedValues.contains(next.value())) {
+					return Tuple.of(false, next);
 				}
-				continue;
-			} else {
 				usedValues.add(next.value());
+				return Tuple.of(true, next);
+			},
+			maxMisses -> {
+				String message = String.format("%s missed more than %s times.", toString(), maxMisses);
+				return new TooManyFilterMissesException(message);
 			}
-			return next;
-		}
+		);
 	}
 
 }

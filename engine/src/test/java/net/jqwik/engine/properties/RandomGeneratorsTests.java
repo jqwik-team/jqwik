@@ -10,7 +10,7 @@ import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-import static java.math.BigInteger.valueOf;
+import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
@@ -22,6 +22,15 @@ class RandomGeneratorsTests {
 		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
 		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 2, 5);
 		ArbitraryTestHelper.assertAllGenerated(generator, set -> set.size() >= 2 && set.size() <= 5);
+	}
+
+	@Example
+	void setGenerationShouldStopWithTooManyMisses(@ForAll Random random) {
+		RandomGenerator<Integer> integerGenerator = RandomGenerators.integers(1, 10);
+		RandomGenerator<Set<Integer>> generator = RandomGenerators.set(integerGenerator, 11, 11);
+
+		Assertions.assertThatThrownBy(() -> generator.next(random))
+				  .isInstanceOf(JqwikException.class);
 	}
 
 	@Example
@@ -129,8 +138,11 @@ class RandomGeneratorsTests {
 		void smallBigDecimals() {
 			BigDecimal min = new BigDecimal(-10);
 			BigDecimal max = new BigDecimal(10);
-			RandomGenerator<BigDecimal> generator = RandomGenerators
-				.bigDecimals(min, max, 2, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
+			RandomGenerator<BigDecimal> generator =
+				RandomGenerators.bigDecimals(
+					min, max, 2,
+					RandomGenerators.defaultShrinkingTargetCalculator(min, max)
+				);
 			ArbitraryTestHelper.assertAllGenerated(
 				generator, //
 				decimal -> decimal.compareTo(min) >= 0 && decimal.compareTo(max) <= 0 && decimal.scale() == 2
@@ -141,8 +153,11 @@ class RandomGeneratorsTests {
 		void bigBigDecimals() {
 			BigDecimal min = new BigDecimal(-Double.MAX_VALUE);
 			BigDecimal max = new BigDecimal(Double.MAX_VALUE);
-			RandomGenerator<BigDecimal> generator = RandomGenerators
-				.bigDecimals(min, max, 0, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
+			RandomGenerator<BigDecimal> generator =
+				RandomGenerators.bigDecimals(
+					min, max, 0,
+					RandomGenerators.defaultShrinkingTargetCalculator(min, max)
+				);
 			ArbitraryTestHelper.assertAllGenerated(generator, decimal -> {
 				assertThat(decimal).isBetween(min, max);
 				assertThat(decimal.scale()).isEqualTo(0);
@@ -190,9 +205,12 @@ class RandomGeneratorsTests {
 			BigDecimal min = BigDecimal.valueOf(-100);
 			BigDecimal max = BigDecimal.valueOf(100000);
 			BigDecimal[] partitionPoints = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.valueOf(100), BigDecimal.valueOf(1000)};
-			RandomGenerator<BigInteger> generator = RandomGenerators
-				.bigDecimals(min, max, 0, RandomGenerators.defaultShrinkingTargetCalculator(min, max), partitionPoints)
-				.map(BigDecimal::toBigInteger);
+			RandomGenerator<BigInteger> generator =
+				RandomGenerators.bigDecimals(
+					min, max, 0,
+					RandomGenerators.defaultShrinkingTargetCalculator(min, max),
+					partitionPoints
+				).map(BigDecimal::toBigInteger);
 
 			assertAllWithinRange(generator, min.toBigInteger(), max.toBigInteger());
 			assertAllPartitionsAreCovered(generator, min.toBigInteger(), max.toBigInteger(), //
@@ -205,9 +223,12 @@ class RandomGeneratorsTests {
 			BigDecimal min = BigDecimal.valueOf(Long.MIN_VALUE);
 			BigDecimal max = BigDecimal.valueOf(Long.MAX_VALUE);
 			BigDecimal[] partitionPoints = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.valueOf(-10000), BigDecimal.valueOf(10000)};
-			RandomGenerator<BigInteger> generator = RandomGenerators
-				.bigDecimals(min, max, 0, RandomGenerators.defaultShrinkingTargetCalculator(min, max), partitionPoints)
-				.map(BigDecimal::toBigInteger);
+			RandomGenerator<BigInteger> generator =
+				RandomGenerators.bigDecimals(
+					min, max, 0,
+					RandomGenerators.defaultShrinkingTargetCalculator(min, max),
+					partitionPoints
+				).map(BigDecimal::toBigInteger);
 
 			assertAllWithinRange(generator, min.toBigInteger(), max.toBigInteger());
 			assertAllPartitionsAreCovered(generator, min.toBigInteger(), max.toBigInteger(), //

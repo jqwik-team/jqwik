@@ -113,8 +113,8 @@
 
 ### Reporting
 
-- Reporting.ARBITRARIES: report for each property which arbitraries are used.
-  - Requires Arbitray.describe() or something similar
+- Reporting.ARBITRARIES|GENERATORS: report for each property which arbitraries are used.
+  - Requires Arbitrary.describe() or something similar
 
 - Reporter.report(key, value)
 

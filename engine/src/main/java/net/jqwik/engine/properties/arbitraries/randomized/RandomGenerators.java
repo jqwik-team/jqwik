@@ -6,13 +6,13 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class RandomGenerators {
 
 	public static final int DEFAULT_COLLECTION_SIZE = 255;
-	private static final long MAX_MISSES = 10000;
 
 	public static <U> RandomGenerator<U> choose(List<U> values) {
 		if (values.size() == 0) {
@@ -127,7 +127,7 @@ public class RandomGenerators {
 		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
 	}
 
-	public static<T> RandomGenerator<T> oneOf(List<RandomGenerator<T>> all) {
+	public static <T> RandomGenerator<T> oneOf(List<RandomGenerator<T>> all) {
 		return choose(all).flatMap(Function.identity());
 	}
 
@@ -200,22 +200,25 @@ public class RandomGenerators {
 			int listSize = sizeGenerator.apply(random);
 			Set<Shrinkable<T>> elements = new HashSet<>();
 			Set<T> values = new HashSet<>();
-			long count = 0;
-			while (elements.size() < listSize) {
-				Shrinkable<T> next = elementGenerator.next(random);
-				if (values.contains(next.value())) {
-					if (++count > MAX_MISSES) {
-						String message = String.format(
-							"Generating values for set of size %s missed more than %s times.",
-							listSize, MAX_MISSES
-						);
-						throw new JqwikException(message);
+			MaxTriesLoop.loop(
+				() -> elements.size() < listSize,
+				ignore -> {
+					Shrinkable<T> next = elementGenerator.next(random);
+					if (values.contains(next.value())) {
+						return Tuple.of(false, ignore);
 					}
-					continue;
+					elements.add(next);
+					values.add(next.value());
+					return Tuple.of(false, ignore);
+				},
+				maxMisses -> {
+					String message = String.format(
+						"Generating values for set of size %s missed more than %s times.",
+						listSize, maxMisses
+					);
+					return new JqwikException(message);
 				}
-				elements.add(next);
-				values.add(next.value());
-			}
+			);
 			return new ShrinkableSet<>(elements, minSize);
 		};
 	}
@@ -245,7 +248,6 @@ public class RandomGenerators {
 		return new FrequencyGenerator<>(frequencies);
 	}
 
-
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases) {
 		if (edgeCases.isEmpty()) {
 			return self;
@@ -267,7 +269,6 @@ public class RandomGenerators {
 			}
 		};
 	}
-
 
 	public static <T> RandomGenerator<T> fail(String message) {
 		return ignored -> {
