@@ -20,7 +20,7 @@ class ContainerTaskCreator {
 		LifecycleSupplier lifecycleSupplier
 	) {
 
-		// TODO: running of SkipExecutionHook should happen in task but then skipping of children wouldn't work :-(
+		// If SkipExecutionHook ran in task skipping of children wouldn't work
 		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor);
 		SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(containerDescriptor);
 		SkipExecutionHook.SkipResult skipResult = skipExecutionHook.shouldBeSkipped(containerLifecycleContext);
