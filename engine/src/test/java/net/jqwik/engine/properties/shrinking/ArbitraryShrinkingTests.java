@@ -90,6 +90,8 @@ class ArbitraryShrinkingTests {
 		Shrinkable<List<Integer>> shrinkable = generator.next(random);
 
 		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+		sequence.init(FalsificationResult.falsified(shrinkable));
+
 		while (sequence.next(() -> {}, ignore -> {})) ;
 		assertThat(sequence.current().value()).containsExactly(3, 3, 3, 3);
 	}
