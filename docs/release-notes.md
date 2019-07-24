@@ -56,6 +56,7 @@ and
   [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
 - Fixed [bug in Unshrinkable.equals](https://github.com/jlink/jqwik/pull/66).
   Many thanks to [mhyeon-lee](https://github.com/mhyeon-lee) for that pull request!
+- Upgrade to Gradle 5.5.1
 
 ## 1.1.6
 
@@ -114,9 +115,9 @@ and
   See [this Github issue](https://github.com/jlink/jqwik/issues/55).
 - Missing `@ForAll` annotation will now fail test - instead of skipping it.
   See [this Github issue](https://github.com/jlink/jqwik/issues/54).
-- Added `CharacterArbitrary.with(char ... allowedChars)'
-- Added `CharacterArbitrary.range(char min, char max)'
-- Deprecated `CharacterArbitrary.between(char min, char max)'
+- Added `CharacterArbitrary.with(char ... allowedChars)`
+- Added `CharacterArbitrary.range(char min, char max)`
+- Deprecated `CharacterArbitrary.between(char min, char max)`
 
 ## 1.1.2
 
