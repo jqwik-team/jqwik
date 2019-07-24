@@ -1,9 +1,9 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
-
-import java.util.Objects;
 
 public class Unshrinkable<T> implements Shrinkable<T> {
 	private final T value;

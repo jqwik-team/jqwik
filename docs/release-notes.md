@@ -54,6 +54,8 @@ and
   by absolute count
 - _jqwik_ can now generate instances of 
   [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
+- Fixed [bug in Unshrinkable.equals](https://github.com/jlink/jqwik/pull/66).
+  Many thanks to [mhyeon-lee](https://github.com/mhyeon-lee) for that pull request!
 
 ## 1.1.6
 

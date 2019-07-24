@@ -1,11 +1,12 @@
 package net.jqwik.engine.properties.shrinking;
 
-import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.SizableArbitrary;
-import org.assertj.core.api.Assertions;
+import java.util.*;
 
-import java.util.Random;
-import java.util.Set;
+import org.assertj.core.api.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.constraints.*;
 
 class UnshrinkableTests {
 	@Example
@@ -23,9 +24,11 @@ class UnshrinkableTests {
 
 	@Property(tries = 50)
 	void nullValueUnshrinkable(@ForAll Random random) {
-		SizableArbitrary<Set<String>> setArbitrary = Arbitraries.strings().injectNull(1.0).set().ofSize(1);	// Element Unshrinkable null value
+		SizableArbitrary<Set<String>> setArbitrary =
+			Arbitraries.strings().injectNull(1.0).set().ofSize(1);
 		Set<?> set = setArbitrary.generator(10).next(random).value();
 		Assertions.assertThat(set).isNotEmpty();
 		Assertions.assertThat(set.iterator().next()).isNull();
 	}
+
 }
