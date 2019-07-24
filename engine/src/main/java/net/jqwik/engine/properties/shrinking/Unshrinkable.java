@@ -3,6 +3,8 @@ package net.jqwik.engine.properties.shrinking;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
+import java.util.Objects;
+
 public class Unshrinkable<T> implements Shrinkable<T> {
 	private final T value;
 
@@ -35,11 +37,11 @@ public class Unshrinkable<T> implements Shrinkable<T> {
 
 		Unshrinkable<?> that = (Unshrinkable<?>) o;
 
-		return value.equals(that.value);
+		return Objects.equals(value, that.value);
 	}
 
 	@Override
 	public int hashCode() {
-		return value.hashCode();
+		return Objects.hashCode(value);
 	}
 }
