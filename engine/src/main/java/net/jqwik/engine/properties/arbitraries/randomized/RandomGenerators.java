@@ -293,18 +293,17 @@ public class RandomGenerators {
 	}
 
 	// TODO: This could be way more sophisticated
-	public static BigInteger[] calculateDefaultPartitionPoints(int tries, BigInteger min, BigInteger max) {
-		int partitionPoint = Math.max(tries / 2, 10);
+	public static BigInteger[] calculateDefaultPartitionPoints(int genSize, BigInteger min, BigInteger max) {
+		int partitionPoint = Math.max(genSize / 2, 10);
 		BigInteger upperPartitionPoint = BigInteger.valueOf(partitionPoint).min(max);
 		BigInteger lowerPartitionPoint = BigInteger.valueOf(partitionPoint).negate().max(min);
 		return new BigInteger[]{lowerPartitionPoint, upperPartitionPoint};
 	}
 
-	// TODO: This could be way more sophisticated
 	public static BigDecimal[] calculateDefaultPartitionPoints(int genSize, BigDecimal min, BigDecimal max) {
-		int partitionPoint = Math.max(genSize / 2, 10);
-		BigDecimal upperPartitionPoint = BigDecimal.valueOf(partitionPoint).min(max);
-		BigDecimal lowerPartitionPoint = BigDecimal.valueOf(partitionPoint).negate().max(min);
-		return new BigDecimal[]{lowerPartitionPoint, upperPartitionPoint};
+		BigInteger[] partitionPoints = calculateDefaultPartitionPoints(genSize, min.toBigInteger(), max.toBigInteger());
+		return Arrays.stream(partitionPoints)
+					 .map(BigDecimal::new)
+					 .toArray(BigDecimal[]::new);
 	}
 }

@@ -49,7 +49,6 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 		return String.format("Filtered|%s", toFilter);
 	}
 
-	//TODO: Extract to ShrinkingSequence.filter() method
 	private class FilteredShrinkingSequence implements ShrinkingSequence<T> {
 
 		private final ShrinkingSequence<T> toFilterSequence;

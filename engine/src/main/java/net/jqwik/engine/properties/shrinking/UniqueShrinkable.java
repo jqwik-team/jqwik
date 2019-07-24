@@ -50,7 +50,6 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 		return String.format("Unique|%s", toFilter);
 	}
 
-	//TODO: Extract to ShrinkingSequence.unique() method
 	private class UniqueShrinkingSequence implements ShrinkingSequence<T> {
 
 		private final ShrinkingSequence<T> uniqueSequence;
