@@ -48,19 +48,13 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 	}
 
 	@Override
-	public Set<Domain> getDomains() {
-		// TODO: Remove duplication with ContainerClassDescriptor.getDomainContexts()
-		Set<Domain> allContexts = new LinkedHashSet<>(domains);
-		getJqwikParent().ifPresent(parentDescriptor -> allContexts.addAll(parentDescriptor.getDomains()));
-		return allContexts;
+	public Set<TestTag> getTags() {
+		return DiscoverySupport.getTags(getParent(), tags);
 	}
 
 	@Override
-	public Set<TestTag> getTags() {
-		// TODO: Remove duplication with ContainerClassDescriptor.getTags()
-		Set<TestTag> allTags = new LinkedHashSet<>(tags);
-		getParent().ifPresent(parentDescriptor -> allTags.addAll(parentDescriptor.getTags()));
-		return allTags;
+	public Set<Domain> getDomains() {
+		return DiscoverySupport.getDomains(getJqwikParent(), domains);
 	}
 
 	@Override

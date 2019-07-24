@@ -52,18 +52,12 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor implements 
 
 	@Override
 	public Set<TestTag> getTags() {
-		// TODO: Remove duplication with AbstractMethodDescriptor.getTags()
-		Set<TestTag> allTags = new LinkedHashSet<>(tags);
-		getParent().ifPresent(parentDescriptor -> allTags.addAll(parentDescriptor.getTags()));
-		return allTags;
+		return DiscoverySupport.getTags(getParent(), tags);
 	}
 
 	@Override
 	public Set<Domain> getDomains() {
-		// TODO: Remove duplication with AbstractMethodDescriptor.getDomains()
-		Set<Domain> allContexts = new LinkedHashSet<>(domains);
-		getJqwikParent().ifPresent(parentDescriptor -> allContexts.addAll(parentDescriptor.getDomains()));
-		return allContexts;
+		return DiscoverySupport.getDomains(getJqwikParent(), domains);
 	}
 
 	@Override

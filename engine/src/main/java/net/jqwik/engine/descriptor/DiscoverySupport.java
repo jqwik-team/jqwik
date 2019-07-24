@@ -68,4 +68,17 @@ public class DiscoverySupport {
 			}
 		}
 	}
+
+	public static Set<TestTag> getTags(Optional<TestDescriptor> parent, Set<TestTag> tags) {
+		Set<TestTag> allTags = new LinkedHashSet<>(tags);
+		parent.ifPresent(parentDescriptor -> allTags.addAll(parentDescriptor.getTags()));
+		return allTags;
+	}
+
+	public static Set<Domain> getDomains(Optional<JqwikDescriptor> parent, Set<Domain> domains) {
+		Set<Domain> allContexts = new LinkedHashSet<>(domains);
+		parent.ifPresent(parentDescriptor -> allContexts.addAll(parentDescriptor.getDomains()));
+		return allContexts;
+	}
+
 }
