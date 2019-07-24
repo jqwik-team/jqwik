@@ -25,8 +25,16 @@ I hereby agree to the terms of the jqwik Contributor Agreement.
 
 __Not formulated yet but nevertheless strictly enforced._
 
+Using `jqwik-intellij-codeformatting.xml` will simplify your life when formatting jqwik code.
+
+### Everywhere
+
+Use only wildcard imports.
+
 ### Tests
 
 Use _jqwik_ itself for all tests and properties.
 
 Use _AssertJ_ for non trivial assertions.
+
+Use `@ForAll Random random` parameter if you need a random value. 
