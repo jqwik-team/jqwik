@@ -288,7 +288,7 @@ class ArbitraryTests {
 	class Collect {
 
 		@Example
-		void collectUntil() {
+		void collectList() {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
 			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 10);
 			RandomGenerator<List<Integer>> generator = collected.generator(10);
@@ -300,23 +300,13 @@ class ArbitraryTests {
 		}
 
 		@Example
-			// TODO: Move to ArbitraryShrinkingTests
-		void shrinkIndividualElementsAndSize() {
-			Arbitrary<Integer> integersShrunkTowardMax =
-				Arbitraries
-					.integers()
-					.between(1, 3)
-					.map(i -> 4 - i);
-
-			Arbitrary<List<Integer>> collected = integersShrunkTowardMax.collect(list -> sum(list) >= 12);
+		void collectListWillThrowExceptionIfTooBig(@ForAll Random random) {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 3);
+			Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) < 0);
 			RandomGenerator<List<Integer>> generator = collected.generator(10);
 
-			Shrinkable<List<Integer>> shrinkable = generator.next(new Random(43L));
-			assertThat(shrinkable.value()).containsExactly(2, 1, 3, 1, 3, 3);
-
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
-			while (sequence.next(() -> {}, ignore -> {})) ;
-			assertThat(sequence.current().value()).containsExactly(3, 3, 3, 3);
+			assertThatThrownBy(() -> generator.next(random))
+				.isInstanceOf(JqwikException.class);
 		}
 
 		private int sum(List<Integer> list) {

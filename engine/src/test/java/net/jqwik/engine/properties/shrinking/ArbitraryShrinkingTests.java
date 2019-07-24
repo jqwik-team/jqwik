@@ -76,6 +76,29 @@ class ArbitraryShrinkingTests {
 		return Math.abs(value.n1 + value.n2) == 1;
 	}
 
+	@Property(tries = 10)
+	void collectedListShrinksElementsAndSize(@ForAll Random random) {
+		Arbitrary<Integer> integersShrunkTowardMax =
+			Arbitraries
+				.integers()
+				.between(1, 3)
+				.map(i -> 4 - i);
+
+		Arbitrary<List<Integer>> collected = integersShrunkTowardMax.collect(list -> sum(list) >= 12);
+		RandomGenerator<List<Integer>> generator = collected.generator(10);
+
+		Shrinkable<List<Integer>> shrinkable = generator.next(random);
+
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+		while (sequence.next(() -> {}, ignore -> {})) ;
+		assertThat(sequence.current().value()).containsExactly(3, 3, 3, 3);
+	}
+
+	private int sum(List<Integer> list) {
+		return list.stream().mapToInt(i -> i).sum();
+	}
+
+
 	@Group
 	class Maps {
 
