@@ -20,24 +20,21 @@ class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 
 		long elementMaxCount = exhaustiveElement.get().maxCount();
 		long sum = 0;
-		for (int n = minSize; n <= maxSize; n++) {
-			if (n == 0) { // empty set
+		for (int k = minSize; k <= maxSize; k++) {
+			if (k == 0) { // empty set
 				sum += 1;
 				continue;
 			}
-			if (elementMaxCount < n) { // empty set
+			if (elementMaxCount < k) { // empty set
 				continue;
 			}
-			if (elementMaxCount > 20) {
-				// MathSupport.factorial() only works till 20
+			if (elementMaxCount > 70) {
+				// MathSupport.binomial() only works till 70
 				return Optional.empty();
 			}
 			long choices = 0;
 			try {
-				// TODO: Use more efficient binomial calculation, e.g. from
-				// https://rosettacode.org/wiki/Evaluate_binomial_coefficients#Java
-				// and move it to MathSupport
-				choices = factorial(elementMaxCount) / (factorial(elementMaxCount - n) * factorial(n));
+				choices = MathSupport.binomial(Math.toIntExact(elementMaxCount), k);
 			} catch (ArithmeticException ae) {
 				return Optional.empty();
 			}

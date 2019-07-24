@@ -595,7 +595,7 @@ class ExhaustiveGenerationTests {
 		@Example
 		void tooManyCombinations() {
 			Optional<ExhaustiveGenerator<Set<Integer>>> optionalGenerator =
-				Arbitraries.integers().between(1, 25).set().ofMaxSize(10).exhaustive();
+				Arbitraries.integers().between(1, 75).set().ofMaxSize(10).exhaustive();
 			assertThat(optionalGenerator).isNotPresent();
 		}
 	}
