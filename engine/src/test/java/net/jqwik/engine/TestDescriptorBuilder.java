@@ -82,7 +82,7 @@ public class TestDescriptorBuilder {
 
 	private TestDescriptor createDescriptor(TestDescriptor parent) {
 		if (element instanceof JqwikTestEngine)
-			return new JqwikEngineDescriptor(engineId());
+			return new JqwikEngineDescriptor(engineId(), null, null);
 		if (element instanceof Class) {
 			Class<?> containerClass = (Class<?>) this.element;
 			return new ContainerClassDescriptor(uniqueIdForClassContainer(containerClass), containerClass, false);

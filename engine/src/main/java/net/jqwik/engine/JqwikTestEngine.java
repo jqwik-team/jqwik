@@ -42,9 +42,15 @@ public class JqwikTestEngine implements TestEngine {
 			JqwikExceptionSupport.throwAsUncheckedException(startupThrowable);
 		}
 
-		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);
-		new JqwikDiscoverer(configuration.testEngineConfiguration().previousRun(), configuration.propertyDefaultValues())
-			.discover(request, engineDescriptor);
+		JqwikEngineDescriptor engineDescriptor = new JqwikEngineDescriptor(
+			uniqueId,
+			configuration.testEngineConfiguration().previousRun(),
+			configuration.propertyDefaultValues()
+		);
+//		new JqwikDiscoverer(configuration.testEngineConfiguration().previousRun(), configuration.propertyDefaultValues())
+//			.discover(request, engineDescriptor);
+
+		new JqwikDiscoverySelectorResolver().resolveSelectors(request, engineDescriptor);
 
 		return engineDescriptor;
 	}
