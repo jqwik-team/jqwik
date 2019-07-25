@@ -18,9 +18,9 @@ public class ArchitectureTests {
 	//@ArchTest
 	//TODO: Does not work yet
 	public static final ArchRule noCyclicDependenciesInEngineClasses = SlicesRuleDefinition
-																			.slices()
-																			.matching("net.jqwik.engine.(**)..")
-																			.should().beFreeOfCycles();
+																		   .slices()
+																		   .matching("net.jqwik.engine.(**)..")
+																		   .should().beFreeOfCycles();
 
 	//@ArchTest
 	//TODO: Does not work yet
@@ -30,8 +30,8 @@ public class ArchitectureTests {
 																		 .should().notDependOnEachOther();
 	@ArchTest
 	public static final ArchRule noCyclicDependenciesInApiClasses = SlicesRuleDefinition
-																		 .slices()
-																		 .matching("net.jqwik.api.(**)..")
-																		 .should().beFreeOfCycles();
+																		.slices()
+																		.matching("net.jqwik.api.(**)..")
+																		.should().beFreeOfCycles();
 
 }
