@@ -7,6 +7,7 @@ import java.util.logging.*;
 
 import org.junit.platform.engine.*;
 
+import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.predicates.*;
 
@@ -48,13 +49,14 @@ class HierarchicalJavaResolver {
 		}
 	}
 
-	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
-		Set<TestDescriptor> potentialParents = isContainerAGroup.test(testClass)
-			? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections.singleton(engineDescriptor);
-		return resolveForAllParents(testClass, potentialParents);
-	}
-
 	void resolveUniqueId(UniqueId uniqueId) {
+		// Silently ignore request to resolve foreign ID
+		if (uniqueId.getEngineId().isPresent()) {
+			if (!uniqueId.getEngineId().get().equals(JqwikTestEngine.ENGINE_ID)) {
+				return;
+			}
+		}
+
 		List<UniqueId.Segment> segments = new ArrayList<>(uniqueId.getSegments());
 		segments.remove(0); // Ignore engine unique ID
 
@@ -62,6 +64,12 @@ class HierarchicalJavaResolver {
 			// This is more severe than unresolvable methods or classes because only suitable IDs should get here anyway
 			LOG.warning(() -> format("Received request to resolve unique id '%s' as test or test container but could not fulfill it", uniqueId));
 		}
+	}
+
+	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
+		Set<TestDescriptor> potentialParents = isContainerAGroup.test(testClass)
+			? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections.singleton(engineDescriptor);
+		return resolveForAllParents(testClass, potentialParents);
 	}
 
 	/**
@@ -76,7 +84,7 @@ class HierarchicalJavaResolver {
 		UniqueId.Segment head = remainingSegments.remove(0);
 		for (ElementResolver resolver : resolvers) {
 			Optional<TestDescriptor> resolvedDescriptor = resolver.resolveUniqueId(head, parent);
-			if (!resolvedDescriptor.isPresent())
+			if (resolvedDescriptor.isEmpty())
 				continue;
 
 			Optional<TestDescriptor> foundTestDescriptor = findTestDescriptorByUniqueId(resolvedDescriptor.get().getUniqueId());

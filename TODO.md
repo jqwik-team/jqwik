@@ -1,7 +1,5 @@
 - 1.2.0
 
-  - Unique-ID-Resolution: Ignore IDs from other engines
-  
   – @From("providerMethod") annotation
   
 - 1.2.1

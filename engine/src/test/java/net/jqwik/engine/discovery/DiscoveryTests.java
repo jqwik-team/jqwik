@@ -27,7 +27,8 @@ class DiscoveryTests {
 
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();
 	private final TestRunData testRunData = new TestRunData();
-	private final PropertyDefaultValues propertyDefaultValues = PropertyDefaultValues.with(1000, 5, AfterFailureMode.PREVIOUS_SEED);
+	private final PropertyDefaultValues propertyDefaultValues =
+		PropertyDefaultValues.with(1000, 5, AfterFailureMode.PREVIOUS_SEED);
 	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
 
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;
@@ -37,7 +38,10 @@ class DiscoveryTests {
 
 	@Example
 	void discoverFromPackage() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples.packageWithSeveralContainers")).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request()
+				.selectors(selectPackage("examples.packageWithSeveralContainers"))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
@@ -47,8 +51,10 @@ class DiscoveryTests {
 
 	@Example
 	void discoverWithPackageNameFilter() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples"))
-				.filters(PackageNameFilter.includePackageNames("examples.packageWithSeveralContainers")).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request().selectors(selectPackage("examples"))
+					 .filters(PackageNameFilter.includePackageNames("examples.packageWithSeveralContainers"))
+					 .build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
@@ -58,8 +64,10 @@ class DiscoveryTests {
 
 	@Example
 	void discoverWithClassNameFilter() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectPackage("examples"))
-				.filters(ClassNameFilter.includeClassNamePatterns(".+" + MixedTests.class.getSimpleName())).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request().selectors(selectPackage("examples"))
+					 .filters(ClassNameFilter.includeClassNamePatterns(".+" + MixedTests.class.getSimpleName()))
+					 .build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isEngineDescriptor)).isEqualTo(1);
@@ -77,7 +85,10 @@ class DiscoveryTests {
 
 	@Example
 	void discoverContainersWithinGroup() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithGroups.class)).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request()
+				.selectors(selectClass(TopLevelContainerWithGroups.class))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(9);
@@ -86,7 +97,9 @@ class DiscoveryTests {
 
 	@Example
 	void discoverNestedContainerNotInGroup() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(TopLevelContainerWithNoGroups.NestedContainer.class))
+		LauncherDiscoveryRequest discoveryRequest =
+			request()
+				.selectors(selectClass(TopLevelContainerWithNoGroups.NestedContainer.class))
 				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
@@ -95,9 +108,11 @@ class DiscoveryTests {
 	}
 
 	@Example
-	void discoverNestedContainerAnnotatedWithGroup(){
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(ClassWithContainer.NestedGroupAnnotatedContainer.class))
-			.build();
+	void discoverNestedContainerAnnotatedWithGroup() {
+		LauncherDiscoveryRequest discoveryRequest =
+			request()
+				.selectors(selectClass(ClassWithContainer.NestedGroupAnnotatedContainer.class))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
@@ -106,8 +121,10 @@ class DiscoveryTests {
 
 	@Example
 	void discoverInnerContainerFromClass() {
-		LauncherDiscoveryRequest discoveryRequest = request()
-				.selectors(selectClass(TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class)).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request()
+				.selectors(selectClass(TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(4);
@@ -117,8 +134,11 @@ class DiscoveryTests {
 
 	@Example
 	void discoverInnerContainerFromUniqueId() {
-		UniqueId uniqueId = uniqueIdForClassContainer(TopLevelContainerWithGroups.class, TopLevelContainerWithGroups.InnerGroup.class,
-				TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class);
+		UniqueId uniqueId = uniqueIdForClassContainer(
+			TopLevelContainerWithGroups.class,
+			TopLevelContainerWithGroups.InnerGroup.class,
+			TopLevelContainerWithGroups.InnerGroup.InnerInnerGroup.class
+		);
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
@@ -129,7 +149,10 @@ class DiscoveryTests {
 
 	@Example
 	void discoverClassWithInheritance() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClass(ContainerWithInheritance.class)).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request()
+				.selectors(selectClass(ContainerWithInheritance.class))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(count(engineDescriptor, isClassDescriptor)).isEqualTo(1);
@@ -160,7 +183,10 @@ class DiscoveryTests {
 
 	@Example
 	void discoverFromMethod() {
-		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectMethod(SimpleExampleTests.class, "succeeding")).build();
+		LauncherDiscoveryRequest discoveryRequest =
+			request()
+				.selectors(selectMethod(SimpleExampleTests.class, "succeeding"))
+				.build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
@@ -184,12 +210,24 @@ class DiscoveryTests {
 		assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
 	}
 
+	@Example
+	void silentlyIgnoreDiscoverByIdWithOtherEngine() {
+		// Manually check that no warning is logged
+		UniqueId uniqueId = UniqueId.forEngine("other-engine").append("class", "value");
+		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
+
+		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
+		assertThat(engineDescriptor.getDescendants()).isEmpty();
+	}
+
 	@Group
 	class Skipping {
 		@Example
 		void staticMethodIsSkipped() {
-			LauncherDiscoveryRequest discoveryRequest = request().selectors(selectMethod(SimpleExampleTests.class, "staticExample"))
-																 .build();
+			LauncherDiscoveryRequest discoveryRequest =
+				request()
+					.selectors(selectMethod(SimpleExampleTests.class, "staticExample"))
+					.build();
 
 			TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 			assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
@@ -198,17 +236,15 @@ class DiscoveryTests {
 
 		@Example
 		void methodWithJupiterAnnotationIsSkipped() {
-			LauncherDiscoveryRequest discoveryRequest = request().selectors(selectMethod(SimpleExampleTests.class, "withJupiterAnnotation"))
-																 .build();
+			LauncherDiscoveryRequest discoveryRequest =
+				request()
+					.selectors(selectMethod(SimpleExampleTests.class, "withJupiterAnnotation"))
+					.build();
 
 			TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 			assertThat(engineDescriptor.getDescendants().size()).isEqualTo(2);
 			assertThat(count(engineDescriptor, isSkipDecorator)).isEqualTo(1);
 		}
-	}
-
-	private Predicate<TestDescriptor> isChildOf(Predicate<TestDescriptor> parentPredicate) {
-		return descriptor -> descriptor.getParent().map(parentPredicate::test).orElse(false);
 	}
 
 	private Predicate<TestDescriptor> isExample(Class<?> implementationClass, String methodName) {
@@ -217,7 +253,7 @@ class DiscoveryTests {
 				return false;
 			PropertyMethodDescriptor exampleDescriptor = (PropertyMethodDescriptor) descriptor;
 			return exampleDescriptor.getTargetMethod().getName().equals(methodName)
-					&& exampleDescriptor.getTargetMethod().getDeclaringClass().equals(implementationClass);
+					   && exampleDescriptor.getTargetMethod().getDeclaringClass().equals(implementationClass);
 		};
 	}
 
