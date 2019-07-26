@@ -84,7 +84,7 @@ class HierarchicalJavaResolver {
 		UniqueId.Segment head = remainingSegments.remove(0);
 		for (ElementResolver resolver : resolvers) {
 			Optional<TestDescriptor> resolvedDescriptor = resolver.resolveUniqueId(head, parent);
-			if (resolvedDescriptor.isEmpty())
+			if (!resolvedDescriptor.isPresent())
 				continue;
 
 			Optional<TestDescriptor> foundTestDescriptor = findTestDescriptorByUniqueId(resolvedDescriptor.get().getUniqueId());
