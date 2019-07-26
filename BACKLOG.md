@@ -14,7 +14,8 @@
 
 ### General
 
-- Use org.junit.platform.engine.support.discovery.* for discovery
+- Use TestDiscovery from JUnit platform 1.5:
+https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discovery/package-summary.html
 
 - Class-based Property like this:
   
@@ -149,9 +150,6 @@
 
 - StringArbitrary.blacklist(char … chars)
 
-- Arbitraries.function(Arbitrary outputArbitrary, Class inputType)
-  - arbitrary providers for functional types and sam types
-
 - Arbitrary.share(Arbitrary, String key)
   [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
 
@@ -192,8 +190,6 @@
   Does that really help since there is Arbitraries.defaultFor()
 
 - Default Arbitraries, Generators and Shrinking for
-  - Map
-  - Functional interfaces and SAM types
   - Tuples.Tuple1/2/3/4/5/6/7/8
   - Dates and times (LocalDateTime, Date, Calendar, etc.)
   - Files, Paths etc.

@@ -1,9 +1,9 @@
 - 1.2.0
 
-  - Use TestDiscovery from JUnit platform 1.5:
-    https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discovery/package-summary.html
-
-
+  - Unique-ID-Resolution: Ignore IDs from other engines
+  
+  – @From("providerMethod") annotation
+  
 - 1.2.1
 
   - Lifecycle
