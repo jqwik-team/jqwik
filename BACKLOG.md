@@ -148,8 +148,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 - SizableArbitrary.averageSize(50)
 
-- StringArbitrary.blacklist(char … chars)
-
 - Arbitrary.share(Arbitrary, String key)
   [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
 
