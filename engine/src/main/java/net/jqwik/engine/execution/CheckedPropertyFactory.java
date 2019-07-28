@@ -27,7 +27,7 @@ public class CheckedPropertyFactory {
 		CheckedFunction checkedFunction = createCheckedFunction(propertyMethodDescriptor, testInstance);
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
-		PropertyMethodArbitraryResolver arbitraryProvider = new PropertyMethodArbitraryResolver(
+		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
 			propertyMethodDescriptor.getContainerClass(), testInstance,
 			DomainContextFacadeImpl.currentContext.get()
 		);
@@ -36,7 +36,14 @@ public class CheckedPropertyFactory {
 			new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), testInstance)
 				.forMethod(propertyMethodDescriptor.getTargetMethod());
 
-		return new CheckedProperty(propertyName, checkedFunction, forAllParameters, arbitraryProvider, optionalData, configuration);
+		return new CheckedProperty(
+			propertyName,
+			checkedFunction,
+			forAllParameters,
+			new CachingArbitraryResolver(arbitraryResolver),
+			optionalData,
+			configuration
+		);
 	}
 
 	private CheckedFunction createCheckedFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

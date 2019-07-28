@@ -8,11 +8,15 @@ import org.junit.platform.commons.support.*;
 
 public class MethodParameter {
 
-	private final Parameter parameter;
+	public Parameter getRawParameter() {
+		return rawParameter;
+	}
+
+	private final Parameter rawParameter;
 	private final TypeResolution resolution;
 
-	public MethodParameter(Parameter parameter, TypeResolution resolution) {
-		this.parameter = parameter;
+	public MethodParameter(Parameter rawParameter, TypeResolution resolution) {
+		this.rawParameter = rawParameter;
 		this.resolution = resolution;
 	}
 
@@ -21,7 +25,7 @@ public class MethodParameter {
 	}
 
 	public boolean isAnnotated(Class<? extends Annotation> annotationType) {
-		return AnnotationSupport.isAnnotated(parameter, annotationType);
+		return AnnotationSupport.isAnnotated(rawParameter, annotationType);
 	}
 
 	public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
@@ -29,7 +33,7 @@ public class MethodParameter {
 	}
 
 	public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
-		return AnnotationSupport.findAnnotation(parameter, annotationClass);
+		return AnnotationSupport.findAnnotation(rawParameter, annotationClass);
 	}
 
 	public Type getType() {
@@ -38,11 +42,11 @@ public class MethodParameter {
 
 	@Override
 	public String toString() {
-		return parameter.toString();
+		return rawParameter.toString();
 	}
 
 	public List<Annotation> findAllAnnotations() {
-		return JqwikAnnotationSupport.findAllAnnotations(parameter);
+		return JqwikAnnotationSupport.findAllAnnotations(rawParameter);
 	}
 
 	public AnnotatedParameterizedType getAnnotatedType() {
