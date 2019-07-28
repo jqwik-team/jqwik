@@ -1,11 +1,10 @@
 - 1.2.0
 
   – @From("providerMethod") annotation
-  
-    - Alternative to @ForAll("providerMethod")
-    - Allow in type parameters, 
-      e.g. @ForAll List<@From("zip codes") String> listOfZips)
+    - User guide entry  
     - Warn if there are conflicting @From/@ForAll annotations
+  
+  - Allow optional TypeUsage parameter in @Provide methods
   
 - 1.2.1
 

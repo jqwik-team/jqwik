@@ -11,8 +11,8 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 
@@ -50,7 +50,12 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private Set<Arbitrary<?>> createForType(TypeUsage targetType) {
 		final Set<Arbitrary<?>> resolvedArbitraries = new HashSet<>();
 
-		String generatorName = targetType.findAnnotation(ForAll.class).map(ForAll::value).orElse("");
+		String generatorName = targetType
+								   .findAnnotation(ForAll.class)
+								   .map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE))
+								   .orElseGet(() -> targetType
+														.findAnnotation(From.class)
+														.map(From::value).orElse(ForAll.NO_VALUE));
 		Optional<Method> optionalCreator = findArbitraryGeneratorByName(targetType, generatorName);
 		if (optionalCreator.isPresent()) {
 			Arbitrary<?> createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);

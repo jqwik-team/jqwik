@@ -296,7 +296,7 @@ class RegisteredArbitraryProvidersTests {
 
 		private final ArbitraryProvider specialProvider;
 
-		public Functions_and_SAM_types() {
+		Functions_and_SAM_types() {
 			specialProvider = new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(TypeUsage targetType) {
@@ -313,7 +313,7 @@ class RegisteredArbitraryProvidersTests {
 		}
 
 		@Override
-		public void close() throws Exception {
+		public void close() {
 			RegisteredArbitraryProviders.unregister(specialProvider);
 		}
 

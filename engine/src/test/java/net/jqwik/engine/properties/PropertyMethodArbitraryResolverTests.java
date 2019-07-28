@@ -190,6 +190,27 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void findGeneratorByNameInFromAnnotation(@ForAll Random random) {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFrom");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			Arbitrary<?> listOfThingsArbitrary = arbitraries.iterator().next();
+			Thing aThing = (Thing) listOfThingsArbitrary.generator(10).next(random).value();
+			assertThat(aThing).isInstanceOf(Thing.class);
+		}
+
+		@Example
+		void findGeneratorByNameInFromAnnotationOfTypeParameter(@ForAll Random random) {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "listOfThingFrom");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			Arbitrary<?> listOfThingsArbitrary = arbitraries.iterator().next();
+			List listOfThings = (List) listOfThingsArbitrary.generator(10).next(random).value();
+			//noinspection unchecked
+			assertThat(listOfThings).allMatch(aThing -> aThing instanceof Thing);
+		}
+
+		@Example
 		void findStringGeneratorByMethodName() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
@@ -325,6 +346,21 @@ class PropertyMethodArbitraryResolverTests {
 			@MyProvide
 			Arbitrary<String> stringWithMetaAnnotation() {
 				return Arbitraries.constant("string from meta");
+			}
+
+			@Property
+			boolean thingFrom(@ForAll @From("aThing") Thing t) {
+				return true;
+			}
+
+			@Property
+			boolean listOfThingFrom(@ForAll @Size(1) List<@From("aThing") Thing> l) {
+				return true;
+			}
+
+			@Provide
+			Arbitrary<Thing> aThing() {
+				return Arbitraries.constant(new Thing());
 			}
 
 			@Group

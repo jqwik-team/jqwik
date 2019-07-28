@@ -22,5 +22,7 @@ import static org.apiguardian.api.API.Status.*;
 @Documented
 @API(status = STABLE, since = "1.0")
 public @interface ForAll {
-	String value() default "";
+	@API(status = INTERNAL, since = "1.2.0")
+	String NO_VALUE = "";
+	String value() default NO_VALUE;
 }
