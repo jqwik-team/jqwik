@@ -30,7 +30,7 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		);
 	}
 
-	public PropertyMethodArbitraryResolver(
+	PropertyMethodArbitraryResolver(
 		Class<?> containerClass, Object testInstance,
 		RegisteredArbitraryResolver registeredArbitraryResolver,
 		RegisteredArbitraryConfigurer registeredArbitraryConfigurer
@@ -50,12 +50,26 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	private Set<Arbitrary<?>> createForType(TypeUsage targetType) {
 		final Set<Arbitrary<?>> resolvedArbitraries = new HashSet<>();
 
-		String generatorName = targetType
-								   .findAnnotation(ForAll.class)
-								   .map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE))
-								   .orElseGet(() -> targetType
-														.findAnnotation(From.class)
-														.map(From::value).orElse(ForAll.NO_VALUE));
+		Optional<String> optionalForAllValue = targetType
+												   .findAnnotation(ForAll.class)
+												   .map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE));
+
+		Optional<String> optionalFromValue = targetType
+												 .findAnnotation(From.class)
+												 .map(From::value);
+
+		if (optionalForAllValue.isPresent() && optionalFromValue.isPresent()) {
+			String message = String.format(
+				"You cannot have both @ForAll(\"%s\") and @From(\"%s\") in parameter %s",
+				optionalForAllValue.get(),
+				optionalFromValue.get(),
+				targetType
+			);
+			throw new JqwikException(message);
+		}
+
+		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElse(ForAll.NO_VALUE));
+
 		Optional<Method> optionalCreator = findArbitraryGeneratorByName(targetType, generatorName);
 		if (optionalCreator.isPresent()) {
 			Arbitrary<?> createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);

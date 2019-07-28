@@ -2,7 +2,6 @@
 
   – @From("providerMethod") annotation
     - User guide entry  
-    - Warn if there are conflicting @From/@ForAll annotations
   
   - Allow optional TypeUsage parameter in @Provide methods
   
