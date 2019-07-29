@@ -8,6 +8,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.providers.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.support.*;
@@ -21,13 +22,12 @@ class PropertyMethodArbitraryResolverTests {
 
 	}
 
-	@Target({ ElementType.METHOD })
+	@Target({ElementType.METHOD})
 	@Retention(RetentionPolicy.RUNTIME)
 	@Provide
 	@interface MyProvide {
 
 	}
-
 
 	@Group
 	class RegisteredArbitraryResolvers {
@@ -162,6 +162,22 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
+		void providerMethodCanHaveTypeUsageParameter() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingWithTypeUsage");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			assertThingArbitrary(arbitraries.iterator().next());
+		}
+
+		@Example
+		void providerMethodCanHaveTypeUsageAndSubtypeProviderParameters() {
+			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingWithTypeUsageAndSubtypeProvider");
+			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
+			assertThingArbitrary(arbitraries.iterator().next());
+		}
+
+		@Example
 		void findGeneratorByName() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "thing");
@@ -267,8 +283,33 @@ class PropertyMethodArbitraryResolverTests {
 			abstract Arbitrary<Thing> thingFromSuper();
 		}
 
-
 		private class WithNamedProviders extends AbstractNamedProviders {
+			@Property
+			boolean thingWithTypeUsage(@ForAll("thingProviderWithTypeUsage") Thing aThing) {
+				return true;
+			}
+
+			@Provide
+			Arbitrary<Thing> thingProviderWithTypeUsage(TypeUsage parameter) {
+				assertThat(parameter.isOfType(Thing.class));
+				return Arbitraries.constant(new Thing());
+			}
+
+			@Property
+			boolean thingWithTypeUsageAndSubtypeProvider(@ForAll("thingProviderWithTypeUsageAndSubtypeProvider") Thing aThing) {
+				return true;
+			}
+
+			@Provide
+			Arbitrary<Thing> thingProviderWithTypeUsageAndSubtypeProvider(
+				TypeUsage parameter,
+				SubtypeProvider subtypeProvider
+			) {
+				assertThat(parameter.isOfType(Thing.class));
+				assertThat(SubtypeProvider.class.isAssignableFrom(subtypeProvider.getClass()));
+				return Arbitraries.constant(new Thing());
+			}
+
 			@Property
 			boolean thing(@ForAll("aThingByValue") Thing aThing) {
 				return true;

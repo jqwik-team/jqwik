@@ -7,6 +7,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
+import net.jqwik.api.providers.ArbitraryProvider.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
@@ -48,15 +49,15 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 	}
 
 	private Set<Arbitrary<?>> createForType(TypeUsage targetType) {
-		final Set<Arbitrary<?>> resolvedArbitraries = new HashSet<>();
+		Optional<String> optionalForAllValue =
+			targetType
+				.findAnnotation(ForAll.class)
+				.map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE));
 
-		Optional<String> optionalForAllValue = targetType
-												   .findAnnotation(ForAll.class)
-												   .map(ForAll::value).filter(name -> !name.equals(ForAll.NO_VALUE));
-
-		Optional<String> optionalFromValue = targetType
-												 .findAnnotation(From.class)
-												 .map(From::value);
+		Optional<String> optionalFromValue =
+			targetType
+				.findAnnotation(From.class)
+				.map(From::value);
 
 		if (optionalForAllValue.isPresent() && optionalFromValue.isPresent()) {
 			String message = String.format(
@@ -69,16 +70,38 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 		}
 
 		String generatorName = optionalForAllValue.orElseGet(() -> optionalFromValue.orElse(ForAll.NO_VALUE));
-
-		Optional<Method> optionalCreator = findArbitraryGeneratorByName(targetType, generatorName);
-		if (optionalCreator.isPresent()) {
-			Arbitrary<?> createdArbitrary = (Arbitrary<?>) invokeMethodPotentiallyOuter(optionalCreator.get(), testInstance);
-			resolvedArbitraries.add(createdArbitrary);
-		} else if (generatorName.isEmpty()) {
-			resolvedArbitraries.addAll(resolveRegisteredArbitrary(targetType));
-		}
+		final Set<Arbitrary<?>> resolvedArbitraries =
+			findArbitraryGeneratorByName(targetType, generatorName)
+				.map(providerMethod -> invokeProviderMethod(providerMethod, targetType))
+				.orElseGet(() -> generatorName.equals(ForAll.NO_VALUE)
+									 ? resolveRegisteredArbitrary(targetType)
+									 : Collections.emptySet());
 
 		return resolvedArbitraries.stream().map(arbitrary -> configure(arbitrary, targetType)).collect(Collectors.toSet());
+	}
+
+	private Set<Arbitrary<?>> invokeProviderMethod(Method providerMethod, TypeUsage targetType) {
+		Parameter[] parameters = providerMethod.getParameters();
+		if (parameters.length == 0) {
+			return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, testInstance));
+		}
+		if (parameters[0].getType().isAssignableFrom(TypeUsage.class)) {
+			if (parameters.length == 1) {
+				return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, testInstance, targetType));
+			}
+		}
+		if (parameters[1].getType().isAssignableFrom(SubtypeProvider.class)) {
+			if (parameters.length == 2) {
+				SubtypeProvider subtypeProvider = this::createForType;
+				return wrapInSet(invokeMethodPotentiallyOuter(providerMethod, testInstance, targetType, subtypeProvider));
+			}
+		}
+		String message = String.format("Some of the parameters of %s are not allowed in provider methods", providerMethod);
+		throw new JqwikException(message);
+	}
+
+	private Set<Arbitrary<?>> wrapInSet(Object result) {
+		return Collections.singleton((Arbitrary<?>) result);
 	}
 
 	private Arbitrary<?> configure(Arbitrary<?> createdArbitrary, TypeUsage targetType) {

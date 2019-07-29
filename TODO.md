@@ -4,6 +4,7 @@
     - User guide entry  
   
   - Allow optional TypeUsage parameter in @Provide methods
+    - User guide entry
   
 - 1.2.1
 
