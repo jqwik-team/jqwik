@@ -154,26 +154,6 @@ class PropertyMethodArbitraryResolverTests {
 	class ProvidedArbitraries {
 
 		@Example
-		void unnamedStringGenerator() {
-			PropertyMethodArbitraryResolver provider = getResolver(WithUnnamedGenerator.class);
-			MethodParameter parameter = getParameter(WithUnnamedGenerator.class, "string");
-			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
-		}
-
-		private class WithUnnamedGenerator {
-			@Property
-			boolean string(@ForAll String aString) {
-				return true;
-			}
-
-			@Provide
-			Arbitrary<String> aString() {
-				return Arbitraries.strings().withCharRange('a', 'z');
-			}
-		}
-
-		@Example
 		void findBoxedTypeGenerator() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "longFromBoxedType");
@@ -182,21 +162,19 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findStringGeneratorByName() {
+		void findGeneratorByName() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "string");
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thing");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
 		@Example
-		void findGeneratorByNameInFromAnnotation(@ForAll Random random) {
+		void findGeneratorByNameInFromAnnotation() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFrom");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			Arbitrary<?> listOfThingsArbitrary = arbitraries.iterator().next();
-			Thing aThing = (Thing) listOfThingsArbitrary.generator(10).next(random).value();
-			assertThat(aThing).isInstanceOf(Thing.class);
+			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
 		@Example
@@ -211,11 +189,11 @@ class PropertyMethodArbitraryResolverTests {
 		}
 
 		@Example
-		void findStringGeneratorByMethodName() {
+		void findGeneratorByMethodName() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringByMethodName");
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingByMethodName");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+			assertThat(arbitraries.iterator().next()).isInstanceOf(Arbitrary.class);
 		}
 
 		@Example
@@ -234,7 +212,7 @@ class PropertyMethodArbitraryResolverTests {
 				new RegisteredArbitraryResolver(Collections.emptyList()),
 				configurer
 			);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringOfLength5ByMethodName");
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingWithNullByMethodName");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
 			Arbitrary<?> arbitrary = arbitraries.iterator().next();
 			assertThat(configured).containsOnly(arbitrary);
@@ -243,79 +221,82 @@ class PropertyMethodArbitraryResolverTests {
 		@Example
 		void findGeneratorByMethodNameOutsideGroup() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedStringByMethodName");
+			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThingByMethodName");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
 		@Example
-		void findGeneratorByNameOutsideGroup() {
+		void findGeneratorByNameOutsideGroup(@ForAll Random random) {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.NestedWithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedString");
+			MethodParameter parameter = getParameter(WithNamedProviders.NestedWithNamedProviders.class, "nestedThing");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			assertThat(arbitraries.iterator().next()).isInstanceOf(StringArbitrary.class);
+			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
 		@Example
 		void findGeneratorByNameWithProvideAnnotationInSuperclass() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringFromProviderAnnotatedInSuperclass");
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFromProvideAnnotatedInSuperclass");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			Arbitrary<?> arbitrary = arbitraries.iterator().next();
-			assertThat(arbitrary).isInstanceOf(Arbitrary.class);
+			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
 		@Example
 		void findGeneratorByNameWithProvideInMetaAnnotation() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "stringFromProvideInMetaAnnotation");
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "thingFromProvideInMetaAnnotation");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
-			Arbitrary<?> arbitrary = arbitraries.iterator().next();
-			assertThat(arbitrary).isInstanceOf(Arbitrary.class);
+			assertThingArbitrary(arbitraries.iterator().next());
 		}
 
 		@Example
-		void namedStringGeneratorNotFound() {
+		void namedGeneratorNotFound() {
 			PropertyMethodArbitraryResolver provider = getResolver(WithNamedProviders.class);
-			MethodParameter parameter = getParameter(WithNamedProviders.class, "otherString");
+			MethodParameter parameter = getParameter(WithNamedProviders.class, "otherThing");
 			assertThat(provider.forParameter(parameter)).isEmpty();
+		}
+
+		private void assertThingArbitrary(Arbitrary<?> arbitrary) {
+			Thing aThing = (Thing) arbitrary.generator(10).next(SourceOfRandomness.current()).value();
+			assertThat(aThing).isInstanceOf(Thing.class);
 		}
 
 		private abstract class AbstractNamedProviders {
 			@Provide
-			abstract Arbitrary<String> stringFromSuper();
+			abstract Arbitrary<Thing> thingFromSuper();
 		}
 
 
 		private class WithNamedProviders extends AbstractNamedProviders {
 			@Property
-			boolean string(@ForAll("aString") String aString) {
+			boolean thing(@ForAll("aThingByValue") Thing aThing) {
 				return true;
 			}
 
-			@Provide("aString")
-			Arbitrary<String> aString() {
-				return Arbitraries.strings().withCharRange('a', 'z');
+			@Provide("aThingByValue")
+			Arbitrary<Thing> aThingy() {
+				return Arbitraries.constant(new Thing());
 			}
 
 			@Property
-			boolean otherString(@ForAll("otherString") String aString) {
-				return true;
-			}
-
-			@Property
-			boolean stringByMethodName(@ForAll("byMethodName") String aString) {
+			boolean otherThing(@ForAll("unknown ref") Thing aThing) {
 				return true;
 			}
 
 			@Property
-			boolean stringOfLength5ByMethodName(@ForAll("byMethodName") @StringLength(5) String aString) {
+			boolean thingByMethodName(@ForAll("byMethodName") Thing aString) {
+				return true;
+			}
+
+			@Property
+			boolean thingWithNullByMethodName(@ForAll("byMethodName") @WithNull Thing aThing) {
 				return true;
 			}
 
 			@Provide
-			Arbitrary<String> byMethodName() {
-				return Arbitraries.strings().withCharRange('x', 'y');
+			Arbitrary<Thing> byMethodName() {
+				return Arbitraries.constant(new Thing());
 			}
 
 			@Property
@@ -329,23 +310,23 @@ class PropertyMethodArbitraryResolverTests {
 			}
 
 			@Property
-			boolean stringFromProviderAnnotatedInSuperclass(@ForAll("stringFromSuper") String aString) {
+			boolean thingFromProvideAnnotatedInSuperclass(@ForAll("thingFromSuper") Thing aString) {
 				return true;
 			}
 
 			@Override
-			Arbitrary<String> stringFromSuper() {
-				return Arbitraries.constant("string from super");
+			Arbitrary<Thing> thingFromSuper() {
+				return Arbitraries.constant(new Thing());
 			}
 
 			@Property
-			boolean stringFromProvideInMetaAnnotation(@ForAll("stringWithMetaAnnotation") String aString) {
+			boolean thingFromProvideInMetaAnnotation(@ForAll("thingWithMetaAnnotation") Thing aThing) {
 				return true;
 			}
 
 			@MyProvide
-			Arbitrary<String> stringWithMetaAnnotation() {
-				return Arbitraries.constant("string from meta");
+			Arbitrary<Thing> thingWithMetaAnnotation() {
+				return Arbitraries.constant(new Thing());
 			}
 
 			@Property
@@ -366,12 +347,12 @@ class PropertyMethodArbitraryResolverTests {
 			@Group
 			class NestedWithNamedProviders {
 				@Property
-				boolean nestedStringByMethodName(@ForAll("byMethodName") String aString) {
+				boolean nestedThingByMethodName(@ForAll("byMethodName") Thing aThing) {
 					return true;
 				}
 
 				@Property
-				boolean nestedString(@ForAll("aString") String aString) {
+				boolean nestedThing(@ForAll("aThingByValue") Thing aThing) {
 					return true;
 				}
 
