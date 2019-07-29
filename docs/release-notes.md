@@ -10,13 +10,7 @@ title: jqwik Release Notes
 ### Table of Contents  
 
 - [1.2.0-SNAPSHOT](#120-snapshot)
-- [1.1.6](#116)
-- [1.1.5](#115)
-- [1.1.4](#114)
-- [1.1.3](#113)
-- [1.1.2](#112)
-- [1.1.1](#111)
-- [1.1.0](#110)
+- [1.1.x](#11x)
 - [1.0.0](#100)
 - [0.9.x](#09x)
 - [0.8.x](#08x)
@@ -62,7 +56,9 @@ and
 - New `@From` annotation to 
   [provide arbitraries for embedded type parameters](/docs/snapshot/user-guide.html#providing-arbitraries-for-embedded-types) 
 
-## 1.1.6
+## 1.1.x
+
+### 1.1.6
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.1.6/user-guide.html">User guide</a>
@@ -76,7 +72,7 @@ and
 - `@Domain` annotation can now also refer to inner class of test container's base class.
   Many thanks to [larsrh](https://github.com/larsrh) for that pull request!
 
-## 1.1.5
+### 1.1.5
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.1.5/user-guide.html">User guide</a>
@@ -89,7 +85,7 @@ and
 - Exceptions during test class instance creation are now reported as failures
 - Removed caching of engine descriptor in JqwikTestEngine
 
-## 1.1.4
+### 1.1.4
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.1.4/user-guide.html">User guide</a>
@@ -106,7 +102,7 @@ and
 - Upgrade Gradle to 5.4.2
 - Improved shrinking of collections
 
-## 1.1.3
+### 1.1.3
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.1.3/user-guide.html">User guide</a>
@@ -123,7 +119,7 @@ and
 - Added `CharacterArbitrary.range(char min, char max)`
 - Deprecated `CharacterArbitrary.between(char min, char max)`
 
-## 1.1.2
+### 1.1.2
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.1.2/user-guide.html">User guide</a>
@@ -137,7 +133,7 @@ and
 - Update to JUnit Platform 5.4.1
 
 
-## 1.1.1
+### 1.1.1
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.1.1/user-guide.html">User guide</a>
@@ -167,7 +163,7 @@ and
 - Loosened matching of return type of `@Provide` to enable generic provider
   method's in derived container classes.
 
-## 1.1.0
+### 1.1.0
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.1.0/user-guide.html">User guide</a>
