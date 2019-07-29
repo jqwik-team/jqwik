@@ -45,6 +45,7 @@ and
   - Annotation `@Domain` and interface `DomainContext`
   
 - Upgrade to JUnit platform 1.5.1
+- Upgrade to Gradle 5.5.1
 - Default character generation now excludes codepoints `0xd800` through `0xdfff`
 - Introduced [Labeled Statistics](/docs/snapshot/user-guide.html#labeled-statistics)
 - Added [`Arbitraries.entries()`](/docs/snapshot/user-guide.html#maps)
@@ -56,7 +57,10 @@ and
   [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
 - Fixed [bug in Unshrinkable.equals](https://github.com/jlink/jqwik/pull/66).
   Many thanks to [mhyeon-lee](https://github.com/mhyeon-lee) for that pull request!
-- Upgrade to Gradle 5.5.1
+- Provider methods do now accept 
+  [two optional parameters](docs/snapshot/user-guide.html#parameter-provider-methods)
+- New `@From` annotation to 
+  [provide arbitraries for embedded type parameters](/docs/snapshot/user-guide.html#providing-arbitraries-for-embedded-types) 
 
 ## 1.1.6
 

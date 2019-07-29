@@ -1,11 +1,5 @@
 - 1.2.0
 
-  – @From("providerMethod") annotation
-    - User guide entry  
-  
-  - Allow optional TypeUsage parameter in @Provide methods
-    - User guide entry
-  
 - 1.2.1
 
   - Character|StringArbitrary.excludeChars(char … chars)

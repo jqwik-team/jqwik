@@ -41,6 +41,8 @@ title: jqwik User Guide - 1.2.0-SNAPSHOT
   - [Providing variable types](#providing-variable-types)
 - [Self-Made Annotations](#self-made-annotations)
 - [Customized Parameter Generation](#customized-parameter-generation)
+  - [Parameter Provider Methods](#parameter-provider-methods)
+  - [Providing Arbitraries for Embedded Types](#providing-arbitraries-for-embedded-types)
   - [Static `Arbitraries` methods](#static-arbitraries-methods)
     - [Generate values yourself](#generate-values-yourself)
     - [Select values randomly](#select-values-randomly)
@@ -648,7 +650,7 @@ jqwik will use default generation for the following types:
 If you use [`@ForAll`](/docs/snapshot/javadoc/net/jqwik/api/ForAll.html) 
 with a value, e.g. `@ForAll("aMethodName")`, the method
 referenced by `"aMethodName"` will be called to provide an Arbitrary of the 
-required type (see [Customized Parameter Generation](#customized-parameter-generation)). 
+required type (see [Parameter Provider Methods](#parameter-provider-methods)). 
 
 ### Constraining Default Generation
 
@@ -848,8 +850,12 @@ which constrains their applicability to simple cases.
 ## Customized Parameter Generation
 
 Sometimes the possibilities of adjusting default parameter generation
-through annotations is not enough. In that case you can delegate parameter
-provision to another method. Look at the 
+through annotations is not enough. You want to control the creation
+of values programmatically. The means to do that are _provider methods_.
+
+### Parameter Provider Methods
+
+Look at the 
 [following example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/ProvideMethodExamples.java):
 
 ```java
@@ -882,13 +888,47 @@ of the method's `@Provide` annotation.
 
 The providing method has to return an object of type 
 [`@Arbitrary<T>`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html) 
-where `T` is the static type of the parameter to be provided. 
+where `T` is the static type of the parameter to be provided. Optionally
+the provider method can take tow optional parameters:
+
+- a first parameter of type `TypeUsage` that describes the details of the target parameter to be provided
+- a second parameter of type `ArbitraryProvider.SubtypeProvider` 
+
+These two objects can be used to get detailed information about the parameter,
+like annotations and embedded type parameters, and to resolve other types,
+usually from type parameters embedded in the original parameter. Use with care!
 
 Parameter provision usually starts with a 
 [static method call to `Arbitraries`](#static-arbitraries-methods), maybe followed
 by one or more [filtering](#filtering), [mapping](#mapping) or 
 [combining](#combining-arbitraries) actions.
 
+
+### Providing Arbitraries for Embedded Types
+
+There is an alternative syntax to `@ForAll("methodRef")` using a `From` annotation: 
+
+```java
+@Property
+boolean concatenatingStringWithInt(
+    @ForAll @From("shortStrings") String aShortString,
+    @ForAll @From("10 to 99") int aNumber
+) { ... }
+```
+
+Why this redundancy? Well, `@From` becomes a necessity when you want to provide
+the arbitrary of an embedded type parameter. Consider this example:
+
+```java
+@Property
+boolean joiningListOfStrings(@ForAll List<@From("shortStrings") String> listOfStrings) {
+    String concatenated = String.join("", listOfStrings);
+    return concatenated.length() <= 8 * listOfStrings.size();
+}
+```
+
+Here, the list is created using the default list arbitrary, but the 
+String elements are generated using the arbitrary from the method `shortStrings`.
 
 ### Static `Arbitraries` methods 
 

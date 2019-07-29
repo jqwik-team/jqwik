@@ -1,5 +1,7 @@
 package net.jqwik.docs;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 
 class ProvideMethodExamples {
@@ -8,6 +10,18 @@ class ProvideMethodExamples {
 	boolean concatenatingStringWithInt(@ForAll("shortStrings") String aShortString, @ForAll("10 to 99") int aNumber) {
 		String concatenated = aShortString + aNumber;
 		return concatenated.length() > 2 && concatenated.length() < 11;
+	}
+
+	@Property
+	boolean concatenatingStringWithInt2(@ForAll @From("shortStrings") String aShortString, @ForAll @From("10 to 99") int aNumber) {
+		String concatenated = aShortString + aNumber;
+		return concatenated.length() > 2 && concatenated.length() < 11;
+	}
+
+	@Property
+	boolean joiningListOfStrings(@ForAll List<@From("shortStrings") String> listOfStrings) {
+		String concatenated = String.join("", listOfStrings);
+		return concatenated.length() <= 8 * listOfStrings.size();
 	}
 
 	@Provide
