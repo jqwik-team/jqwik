@@ -29,6 +29,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
+	public <T> SizableArbitrary<List<T>> listOfUnique(Arbitrary<T> uniqueArbitrary) {
+		return new ListArbitrary<>(uniqueArbitrary)
+				   .ofMaxSize(maxNumberOfElements(uniqueArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
+	}
+
+	@Override
 	public <T> SizableArbitrary<Set<T>> set(Arbitrary<T> elementArbitrary) {
 		// The set cannot be larger than the max number of possible elements
 		return new SetArbitrary<>(elementArbitrary)
@@ -48,5 +54,11 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	@Override
 	public <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
 		return new ArrayArbitrary<>(elementArbitrary, arrayClass);
+	}
+
+	@Override
+	public <T, A> SizableArbitrary<A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass) {
+		return new ArrayArbitrary<>(uniqueArbitrary, arrayClass)
+				   .ofMaxSize(maxNumberOfElements(uniqueArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 }

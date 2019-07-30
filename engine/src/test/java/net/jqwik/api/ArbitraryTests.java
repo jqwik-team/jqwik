@@ -8,6 +8,7 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.constraints.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -85,7 +86,8 @@ class ArbitraryTests {
 	}
 
 	@Group
-	class Unique {
+	@Label("Unique")
+	class UniqueMethod {
 		@Example
 		void uniqueInteger(@ForAll Random random) {
 			Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 5);
@@ -147,6 +149,21 @@ class ArbitraryTests {
 		@Provide
 		Arbitrary<List<Integer>> listOfUniqueIntegers() {
 			return uniqueIntegers().list().ofSize(3);
+		}
+
+		@Property
+		void listOfUniqueIntegersWithLessElementsThanMaxSize(@ForAll List<@Unique @IntRange(min =1, max = 5) Integer> list) {
+			assertThat(list).hasSizeLessThanOrEqualTo(5);
+		}
+
+		@Property
+		void arrayOfUniqueIntegersWithLessElementsThanMaxSize(@ForAll("arrayOfUniqueIntegers") Integer[] array) {
+			assertThat(array).hasSizeLessThanOrEqualTo(5);
+		}
+
+		@Provide
+		Arbitrary<Integer[]> arrayOfUniqueIntegers() {
+			return Arbitraries.integers().between(1, 5).unique().array(Integer[].class);
 		}
 
 		@Property(generation = RANDOMIZED)

@@ -35,6 +35,8 @@ public interface Arbitrary<T> {
 
 		public abstract <T> SizableArbitrary<List<T>> list(Arbitrary<T> elementArbitrary);
 
+		public abstract <T> SizableArbitrary<List<T>> listOfUnique(Arbitrary<T> uniqueArbitrary);
+
 		public abstract <T> SizableArbitrary<Set<T>> set(Arbitrary<T> elementArbitrary);
 
 		public abstract <T> SizableArbitrary<Stream<T>> stream(Arbitrary<T> elementArbitrary);
@@ -42,6 +44,8 @@ public interface Arbitrary<T> {
 		public abstract <T> SizableArbitrary<Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
 
 		public abstract <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
+
+		public abstract <T, A> SizableArbitrary<A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass);
 	}
 
 	/**
@@ -192,6 +196,16 @@ public interface Arbitrary<T> {
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive() {
 				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
+			}
+
+			@Override
+			public SizableArbitrary<List<T>> list() {
+				return ArbitraryFacade.implementation.listOfUnique(this);
+			}
+
+			@Override
+			public <A> SizableArbitrary<A> array(Class<A> arrayClass) {
+				return ArbitraryFacade.implementation.arrayOfUnique(this, arrayClass);
 			}
 		};
 	}
