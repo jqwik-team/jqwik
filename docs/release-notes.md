@@ -27,17 +27,17 @@ and
 
 #### New and Enhanced Features
 
-- Introduced [Labeled Statistics](/docs/snapshot/user-guide.html#labeled-statistics)
-- Added [`Arbitraries.entries()`](/docs/snapshot/user-guide.html#maps)
+- Introduced [Labeled Statistics](/docs/1.2.0/user-guide.html#labeled-statistics)
+- Added [`Arbitraries.entries()`](/docs/1.2.0/user-guide.html#maps)
 - Added default generation for `Map.Entry` instances
-- [Enhanced statistics reporting](/docs/snapshot/user-guide.html#collecting-and-reporting-statistics) 
+- [Enhanced statistics reporting](/docs/1.2.0/user-guide.html#collecting-and-reporting-statistics) 
   by absolute count
 - _jqwik_ can now generate instances of 
-  [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
+  [functions and other functional types](/docs/1.2.0/user-guide.html#functional-types)
 - Provider methods do now accept 
-  [two optional parameters](docs/snapshot/user-guide.html#parameter-provider-methods)
+  [two optional parameters](docs/1.2.0/user-guide.html#parameter-provider-methods)
 - New `@From` annotation to 
-  [provide arbitraries for embedded type parameters](/docs/snapshot/user-guide.html#providing-arbitraries-for-embedded-types) 
+  [provide arbitraries for embedded type parameters](/docs/1.2.0/user-guide.html#providing-arbitraries-for-embedded-types) 
 
 
 #### Breaking Changes
