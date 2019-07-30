@@ -25,9 +25,28 @@ and
 <a href="/docs/1.2.0/javadoc/index.html">javadoc</a>
 </p>
 
+#### New and Enhanced Features
 
-- __Breaking Change__: Removed `CharacterArbitrary.between(min, max)` 
+- Introduced [Labeled Statistics](/docs/snapshot/user-guide.html#labeled-statistics)
+- Added [`Arbitraries.entries()`](/docs/snapshot/user-guide.html#maps)
+- Added default generation for `Map.Entry` instances
+- [Enhanced statistics reporting](/docs/snapshot/user-guide.html#collecting-and-reporting-statistics) 
+  by absolute count
+- _jqwik_ can now generate instances of 
+  [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
+- Provider methods do now accept 
+  [two optional parameters](docs/snapshot/user-guide.html#parameter-provider-methods)
+- New `@From` annotation to 
+  [provide arbitraries for embedded type parameters](/docs/snapshot/user-guide.html#providing-arbitraries-for-embedded-types) 
+
+
+#### Breaking Changes
+
+- Removed `CharacterArbitrary.between(min, max)` 
   which had been deprecated in [1.1.3](#113)
+
+
+#### API Promotions
 
 - Promoted from `API.Status.EXPERIMENTAL` to `API.Status.MAINTAINED`:
 
@@ -37,26 +56,18 @@ and
   - `Combinators.withBuilder(Supplier<B> builderSupplier)` and
     `Combinators.withBuilder(Arbitrary<B> builderArbitrary)`
   - Annotation `@Domain` and interface `DomainContext`
-  
+
+#### Dependency Upgrades and Bug Fixes 
+
 - Upgrade to JUnit platform 1.5.1
 - Upgrade to Gradle 5.5.1
 - Default character generation now excludes codepoints `0xd800` through `0xdfff`
-- Introduced [Labeled Statistics](/docs/snapshot/user-guide.html#labeled-statistics)
-- Added [`Arbitraries.entries()`](/docs/snapshot/user-guide.html#maps)
-- Added default generation for `Map.Entry` instances
 - Fixed set generation bug https://github.com/jlink/jqwik/issues/65
-- [Enhanced statistics reporting](/docs/snapshot/user-guide.html#collecting-and-reporting-statistics) 
-  by absolute count
-- _jqwik_ can now generate instances of 
-  [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
 - Fixed [bug in Unshrinkable.equals](https://github.com/jlink/jqwik/pull/66).
   Many thanks to [mhyeon-lee](https://github.com/mhyeon-lee) for that pull request!
 - List and array generation from unique arbitraries now have a default max size
   that makes sense
-- Provider methods do now accept 
-  [two optional parameters](docs/snapshot/user-guide.html#parameter-provider-methods)
-- New `@From` annotation to 
-  [provide arbitraries for embedded type parameters](/docs/snapshot/user-guide.html#providing-arbitraries-for-embedded-types) 
+
 
 ## 1.1.x
 
