@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.2.0-SNAPSHOT](#120-snapshot)
+- [1.2.0](#120)
 - [1.1.x](#11x)
 - [1.0.0](#100)
 - [0.9.x](#09x)
@@ -17,12 +17,12 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.2.0-SNAPSHOT
+## 1.2.0
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.2.0/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.2.0/javadoc/index.html">javadoc</a>
 </p>
 
 
@@ -51,6 +51,8 @@ and
   [functions and other functional types](/docs/snapshot/user-guide.html#functional-types)
 - Fixed [bug in Unshrinkable.equals](https://github.com/jlink/jqwik/pull/66).
   Many thanks to [mhyeon-lee](https://github.com/mhyeon-lee) for that pull request!
+- List and array generation from unique arbitraries now have a default max size
+  that makes sense
 - Provider methods do now accept 
   [two optional parameters](docs/snapshot/user-guide.html#parameter-provider-methods)
 - New `@From` annotation to 

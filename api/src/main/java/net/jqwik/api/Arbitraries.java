@@ -579,6 +579,8 @@ public class Arbitraries {
 	/**
 	 * Create an arbitrary that never creates anything. Sometimes useful
 	 * when generating arbitraries of "functions" that have void as return type.
+	 *
+	 * @return arbitrary instance that will generate nothing
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.6")
 	public static Arbitrary<Void> nothing() {
