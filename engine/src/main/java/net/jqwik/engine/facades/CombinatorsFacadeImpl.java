@@ -20,8 +20,10 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 
 	@Override
 	public <R> Optional<ExhaustiveGenerator<R>> combineExhaustive(
-		List<Arbitrary<Object>> arbitraries, Function<List<Object>, R> combineFunction
+		List<Arbitrary<Object>> arbitraries,
+		Function<List<Object>, R> combineFunction,
+		long maxNumberOfSamples
 	) {
-		return ExhaustiveGenerators.combine(arbitraries, combineFunction);
+		return ExhaustiveGenerators.combine(arbitraries, combineFunction, maxNumberOfSamples);
 	}
 }

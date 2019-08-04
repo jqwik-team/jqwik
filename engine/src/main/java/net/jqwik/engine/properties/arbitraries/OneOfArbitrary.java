@@ -21,7 +21,9 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.choose(all).flatMap(generator -> ExhaustiveGenerators.flatMap(generator, Function.identity(), maxNumberOfSamples));
+		return ExhaustiveGenerators.choose(all, maxNumberOfSamples)
+								   .flatMap(generator -> ExhaustiveGenerators
+									   .flatMap(generator, Function.identity(), maxNumberOfSamples));
 	}
 
 	@Override

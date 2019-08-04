@@ -18,7 +18,7 @@ public class IteratorArbitrary<T> extends DefaultCollectionArbitrary<T, Iterator
 
 	@Override
 	public Optional<ExhaustiveGenerator<Iterator<T>>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize)
+		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
 								   .map(generator -> generator.map(List::iterator));
 	}
 }

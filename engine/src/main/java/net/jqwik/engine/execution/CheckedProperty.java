@@ -129,13 +129,13 @@ public class CheckedProperty {
 		return configuration;
 	}
 
-	private Optional<ExhaustiveShrinkablesGenerator> createOptionalExhaustiveShrinkablesGenerator() {
+	private Optional<ExhaustiveShrinkablesGenerator> createOptionalExhaustiveShrinkablesGenerator(long maxNumberOfSamples) {
 		if (forAllParameters.isEmpty()) {
 			return Optional.empty();
 		}
 		try {
 			ExhaustiveShrinkablesGenerator exhaustiveShrinkablesGenerator =
-				ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver);
+				ExhaustiveShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, maxNumberOfSamples);
 			return Optional.of(exhaustiveShrinkablesGenerator);
 		} catch (TooManyFilterMissesException tmfme) {
 			throw tmfme;
@@ -160,10 +160,11 @@ public class CheckedProperty {
 		return new SampleOnlyShrinkablesGenerator(forAllParameters, configuration.getFalsifiedSample());
 	}
 
+	//  TODO TODO TODO: Replace with explicit use of maxNumberOfSamples
 	private Optional<ExhaustiveShrinkablesGenerator> getOptionalExhaustive() {
 		// Make it lazy for performance reasons
 		if (optionalExhaustive == null) {
-			optionalExhaustive = createOptionalExhaustiveShrinkablesGenerator();
+			optionalExhaustive = createOptionalExhaustiveShrinkablesGenerator(ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE);
 		}
 		return optionalExhaustive;
 	}

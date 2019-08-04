@@ -24,19 +24,21 @@ public class Arbitraries {
 			implementation = FacadeLoader.load(ArbitrariesFacade.class);
 		}
 
+		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
+
+		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples);
+
+		public abstract Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values, long maxNumberOfSamples);
+
+		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples);
+
+		public abstract <T extends Enum> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples);
+
 		public abstract <T> RandomGenerator<T> randomChoose(List<T> values);
-
-		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values);
-
-		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier);
 
 		public abstract RandomGenerator<Character> randomChoose(char[] values);
 
-		public abstract Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values);
-
 		public abstract <T extends Enum> RandomGenerator<T> randomChoose(Class<T> enumClass);
-
-		public abstract <T extends Enum> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass);
 
 		public abstract <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all);
 
@@ -45,8 +47,6 @@ public class Arbitraries {
 		public abstract <T> RandomGenerator<T> randomSamples(T[] samples);
 
 		public abstract <T> RandomGenerator<List<T>> randomShuffle(List<T> values);
-
-		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values);
 
 		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary);
 
@@ -144,7 +144,7 @@ public class Arbitraries {
 	public static <T> Arbitrary<T> of(List<T> values) {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(values),
-			ArbitrariesFacade.implementation.exhaustiveChoose(values)
+			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max)
 		);
 	}
 
@@ -157,7 +157,7 @@ public class Arbitraries {
 	public static Arbitrary<Character> of(char[] values) {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(values),
-			ArbitrariesFacade.implementation.exhaustiveChoose(values)
+			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max)
 		);
 	}
 
@@ -172,7 +172,7 @@ public class Arbitraries {
 	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(enumClass),
-			ArbitrariesFacade.implementation.exhaustiveChoose(enumClass)
+			max -> ArbitrariesFacade.implementation.exhaustiveChoose(enumClass, max)
 		);
 	}
 
@@ -235,7 +235,7 @@ public class Arbitraries {
 
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomFrequency(frequencies),
-			ArbitrariesFacade.implementation.exhaustiveChoose(values)
+			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max)
 		);
 
 	}
@@ -369,7 +369,7 @@ public class Arbitraries {
 	public static <T> Arbitrary<T> samples(T... samples) {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomSamples(samples),
-			ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(samples))
+			max -> ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(samples), max)
 		);
 	}
 
@@ -383,7 +383,7 @@ public class Arbitraries {
 	public static <T> Arbitrary<T> constant(T value) {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(value),
-			ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value))
+			max -> ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value), max)
 		);
 	}
 
@@ -403,7 +403,7 @@ public class Arbitraries {
 	public static <T> Arbitrary<T> create(Supplier<T> supplier) {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(supplier.get()),
-			ArbitrariesFacade.implementation.exhaustiveCreate(supplier)
+			max -> ArbitrariesFacade.implementation.exhaustiveCreate(supplier, max)
 		);
 	}
 
@@ -432,7 +432,7 @@ public class Arbitraries {
 	public static <T> Arbitrary<List<T>> shuffle(List<T> values) {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomShuffle(values),
-			ArbitrariesFacade.implementation.exhaustiveShuffle(values)
+			max -> ArbitrariesFacade.implementation.exhaustiveShuffle(values, max)
 		);
 	}
 
@@ -484,10 +484,9 @@ public class Arbitraries {
 	}
 
 
-	// TODO: Second param must be a creator function that takes long maxNumberOfSamples
 	private static <T> Arbitrary<T> fromGenerators(
 		RandomGenerator<T> randomGenerator,
-		Optional<ExhaustiveGenerator<T>> exhaustiveGenerator
+		Function<Long, Optional<ExhaustiveGenerator<T>>> exhaustiveGeneratorFunction
 	) {
 		return new Arbitrary<T>() {
 			@Override
@@ -497,7 +496,7 @@ public class Arbitraries {
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return exhaustiveGenerator;
+				return exhaustiveGeneratorFunction.apply(maxNumberOfSamples);
 			}
 		};
 	}

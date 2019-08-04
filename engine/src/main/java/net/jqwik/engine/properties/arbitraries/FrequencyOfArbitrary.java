@@ -31,8 +31,10 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 
 	@Override
 	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.choose(allArbitraries())
-								   .flatMap(generator -> ExhaustiveGenerators.flatMap(generator, Function.identity(), maxNumberOfSamples));
+		return ExhaustiveGenerators
+			.choose(allArbitraries(), maxNumberOfSamples)
+			.flatMap(generator -> ExhaustiveGenerators
+				.flatMap(generator, Function.identity(), maxNumberOfSamples));
 	}
 
 	private List<Arbitrary<T>> allArbitraries() {
@@ -46,7 +48,7 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 			if (f.get2() instanceof SelfConfiguringArbitrary) {
 				// TODO: This condition exists 3 times
 				//noinspection unchecked
-				configuredArbitrary =  ((SelfConfiguringArbitrary) f.get2()).configure(configurator, targetType);
+				configuredArbitrary = ((SelfConfiguringArbitrary) f.get2()).configure(configurator, targetType);
 			} else {
 				configuredArbitrary = configurator.configure(f.get2(), targetType);
 			}

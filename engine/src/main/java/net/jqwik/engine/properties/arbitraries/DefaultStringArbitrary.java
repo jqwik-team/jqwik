@@ -27,7 +27,12 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 
 	@Override
 	public Optional<ExhaustiveGenerator<String>> exhaustive(long maxNumberOfSamples) {
-		return ExhaustiveGenerators.strings(effectiveCharacterArbitrary(), minLength, maxLength);
+		return ExhaustiveGenerators.strings(
+			effectiveCharacterArbitrary(),
+			minLength,
+			maxLength,
+			maxNumberOfSamples
+		);
 	}
 
 	@Override

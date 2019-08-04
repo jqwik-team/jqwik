@@ -9,16 +9,24 @@ import net.jqwik.engine.support.*;
 
 public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 
-	public static ExhaustiveShrinkablesGenerator forParameters(List<MethodParameter> parameters, ArbitraryResolver arbitraryResolver) {
+	public static ExhaustiveShrinkablesGenerator forParameters(
+		List<MethodParameter> parameters,
+		ArbitraryResolver arbitraryResolver,
+		long maxNumberOfSamples
+	) {
 		List<List<ExhaustiveGenerator>> exhaustiveGenerators =
 			parameters.stream()
-					  .map(parameter -> resolveParameter(arbitraryResolver, parameter))
+					  .map(parameter -> resolveParameter(arbitraryResolver, parameter, maxNumberOfSamples))
 					  .collect(Collectors.toList());
 
 		return new ExhaustiveShrinkablesGenerator(exhaustiveGenerators);
 	}
 
-	private static List<ExhaustiveGenerator> resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
+	private static List<ExhaustiveGenerator> resolveParameter(
+		ArbitraryResolver arbitraryResolver,
+		MethodParameter parameter,
+		long maxNumberOfSamples
+	) {
 		Set<Arbitrary<?>> arbitraries = arbitraryResolver.forParameter(parameter);
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));
@@ -27,7 +35,7 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		List<ExhaustiveGenerator> exhaustiveGenerators = new ArrayList<>();
 		for (Arbitrary arbitrary : arbitraries) {
 			@SuppressWarnings("unchecked")
-			Optional<ExhaustiveGenerator> optionalGenerator = arbitrary.exhaustive();
+			Optional<ExhaustiveGenerator> optionalGenerator = arbitrary.exhaustive(maxNumberOfSamples);
 			if (!optionalGenerator.isPresent()) {
 				String message = String.format("Arbitrary %s does not provide exhaustive generator", arbitrary);
 				throw new JqwikException(message);

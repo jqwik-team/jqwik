@@ -12,15 +12,15 @@ class CombinedExhaustiveGenerator<R> implements ExhaustiveGenerator<R> {
 	private final List<Arbitrary<Object>> arbitraries;
 	private final Function<List<Object>, R> combinator;
 
-	static Optional<Long> calculateMaxCount(List<Arbitrary<Object>> arbitraries) {
+	static Optional<Long> calculateMaxCount(List<Arbitrary<Object>> arbitraries, long maxNumberOfSamples) {
 		long product = 1;
 		for (Arbitrary<Object> arbitrary : arbitraries) {
-			Optional<ExhaustiveGenerator<Object>> exhaustive = arbitrary.exhaustive();
+			Optional<ExhaustiveGenerator<Object>> exhaustive = arbitrary.exhaustive(maxNumberOfSamples);
 			if (!exhaustive.isPresent()) {
 				return Optional.empty();
 			}
 			product *= exhaustive.get().maxCount();
-			if (product > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT) {
+			if (product > maxNumberOfSamples) {
 				return Optional.empty();
 			}
 		}

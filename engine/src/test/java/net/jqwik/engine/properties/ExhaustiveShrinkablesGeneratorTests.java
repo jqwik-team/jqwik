@@ -78,7 +78,7 @@ class ExhaustiveShrinkablesGeneratorTests {
 		PropertyMethodDescriptor methodDescriptor = createDescriptor(methodName);
 		List<MethodParameter> parameters = TestHelper.getParameters(methodDescriptor);
 
-		return ExhaustiveShrinkablesGenerator.forParameters(parameters, arbitraryResolver);
+		return ExhaustiveShrinkablesGenerator.forParameters(parameters, arbitraryResolver, ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE);
 	}
 
 	private PropertyMethodDescriptor createDescriptor(String methodName) {

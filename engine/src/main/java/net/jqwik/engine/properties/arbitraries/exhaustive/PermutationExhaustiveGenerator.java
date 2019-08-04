@@ -16,10 +16,10 @@ class PermutationExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> 
 		this.maxCount = maxCount;
 	}
 
-	static <T> Optional<Long> calculateMaxCount(List<T> values) {
+	static <T> Optional<Long> calculateMaxCount(List<T> values, long maxNumberOfSamples) {
 		try {
 			long choices = factorial(values.size());
-			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT || choices < 0) {
+			if (choices > maxNumberOfSamples || choices < 0) {
 				return Optional.empty();
 			}
 			return Optional.of(choices);

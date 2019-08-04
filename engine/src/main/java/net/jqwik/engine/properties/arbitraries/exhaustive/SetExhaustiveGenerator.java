@@ -5,16 +5,14 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.support.MathSupport.factorial;
-
 class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 	private final Arbitrary<T> elementArbitrary;
 	private final long maxCount;
 	private final int minSize;
 	private final int maxSize;
 
-	static Optional<Long> calculateMaxCount(Arbitrary<?> elementArbitrary, int minSize, int maxSize) {
-		Optional<? extends ExhaustiveGenerator<?>> exhaustiveElement = elementArbitrary.exhaustive();
+	static Optional<Long> calculateMaxCount(Arbitrary<?> elementArbitrary, int minSize, int maxSize, long maxNumberOfSamples) {
+		Optional<? extends ExhaustiveGenerator<?>> exhaustiveElement = elementArbitrary.exhaustive(maxNumberOfSamples);
 		if (!exhaustiveElement.isPresent())
 			return Optional.empty();
 
@@ -38,10 +36,13 @@ class SetExhaustiveGenerator<T> implements ExhaustiveGenerator<Set<T>> {
 			} catch (ArithmeticException ae) {
 				return Optional.empty();
 			}
-			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT || choices < 0) { // Stop when break off point reached
+			if (choices < 0) {
 				return Optional.empty();
 			}
 			sum += choices;
+			if (sum > maxNumberOfSamples) { // Stop when break off point reached
+				return Optional.empty();
+			}
 		}
 		return Optional.of(sum);
 	}

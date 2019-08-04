@@ -26,8 +26,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values) {
-		return ExhaustiveGenerators.choose(values);
+	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples) {
+		return ExhaustiveGenerators.choose(values, maxNumberOfSamples);
 	}
 
 	@Override
@@ -36,13 +36,13 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values) {
-		return ExhaustiveGenerators.choose(values);
+	public Optional<ExhaustiveGenerator<Character>> exhaustiveChoose(char[] values, long maxNumberOfSamples) {
+		return ExhaustiveGenerators.choose(values, maxNumberOfSamples);
 	}
 
 	@Override
-	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier) {
-		return ExhaustiveGenerators.create(supplier);
+	public <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples) {
+		return ExhaustiveGenerators.create(supplier, maxNumberOfSamples);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -53,8 +53,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Enum> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass) {
-		return ExhaustiveGenerators.choose(enumClass);
+	public <T extends Enum> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples) {
+		return ExhaustiveGenerators.choose(enumClass, maxNumberOfSamples);
 	}
 
 	@Override
@@ -78,8 +78,8 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values) {
-		return ExhaustiveGenerators.shuffle(values);
+	public <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples) {
+		return ExhaustiveGenerators.shuffle(values, maxNumberOfSamples);
 	}
 
 	@Override

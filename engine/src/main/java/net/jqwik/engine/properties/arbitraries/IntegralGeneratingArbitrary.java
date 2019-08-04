@@ -34,10 +34,11 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	public Optional<ExhaustiveGenerator<BigInteger>> exhaustive(long maxNumberOfSamples) {
 		BigInteger maxCount = max.subtract(min).add(BigInteger.ONE);
 
+		// Necessary because maxCount could be larger than Long.MAX_VALUE
 		if (maxCount.compareTo(valueOf(maxNumberOfSamples)) > 0) {
 			return Optional.empty();
 		} else {
-			return ExhaustiveGenerators.fromIterable(RangeIterator::new, maxCount.longValueExact());
+			return ExhaustiveGenerators.fromIterable(RangeIterator::new, maxCount.longValueExact(), maxNumberOfSamples);
 		}
 	}
 

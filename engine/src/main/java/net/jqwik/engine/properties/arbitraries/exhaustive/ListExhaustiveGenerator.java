@@ -11,8 +11,8 @@ class ListExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> {
 	private final int minSize;
 	private final int maxSize;
 
-	static Optional<Long> calculateMaxCount(Arbitrary<?> elementArbitrary, int minSize, int maxSize) {
-		Optional<? extends ExhaustiveGenerator<?>> exhaustiveElement = elementArbitrary.exhaustive();
+	static Optional<Long> calculateMaxCount(Arbitrary<?> elementArbitrary, int minSize, int maxSize, long maxNumberOfSamples) {
+		Optional<? extends ExhaustiveGenerator<?>> exhaustiveElement = elementArbitrary.exhaustive(maxNumberOfSamples);
 		if (!exhaustiveElement.isPresent())
 			return Optional.empty();
 
@@ -20,7 +20,7 @@ class ListExhaustiveGenerator<T> implements ExhaustiveGenerator<List<T>> {
 		long sum = 0;
 		for (int n = minSize; n <= maxSize; n++) {
 			double choices = Math.pow(elementMaxCount, n);
-			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT) { // Stop when break off point reached
+			if (choices > maxNumberOfSamples) { // Stop when break off point reached
 				return Optional.empty();
 			}
 			sum += (long) choices;

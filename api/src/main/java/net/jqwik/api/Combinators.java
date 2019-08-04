@@ -26,7 +26,8 @@ public class Combinators {
 
 		public abstract <R> Optional<ExhaustiveGenerator<R>> combineExhaustive(
 			List<Arbitrary<Object>> arbitraries,
-			Function<List<Object>, R> combineFunction
+			Function<List<Object>, R> combineFunction,
+			long maxNumberOfSamples
 		);
 	}
 
@@ -248,7 +249,11 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(a1, a2),
+						combineFunction(combinator),
+						maxNumberOfSamples
+					);
 				}
 			};
 		}
@@ -288,7 +293,11 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(a1, a2, a3),
+						combineFunction(combinator),
+						maxNumberOfSamples
+					);
 				}
 
 			};
@@ -345,7 +354,11 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(a1, a2, a3, a4),
+						combineFunction(combinator),
+						maxNumberOfSamples
+					);
 				}
 			};
 		}
@@ -408,7 +421,10 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(a1, a2, a3, a4, a5),
+						combineFunction(combinator),
+						maxNumberOfSamples);
 				}
 			};
 		}
@@ -476,8 +492,10 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation
-							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(a1, a2, a3, a4, a5, a6),
+						combineFunction(combinator),
+						maxNumberOfSamples);
 				}
 			};
 		}
@@ -553,8 +571,11 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation
-							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(a1, a2, a3, a4, a5, a6, a7),
+						combineFunction(combinator),
+						maxNumberOfSamples
+					);
 				}
 			};
 		}
@@ -636,8 +657,11 @@ public class Combinators {
 
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
-					return CombinatorsFacade.implementation
-							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7, a8), combineFunction(combinator));
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(a1, a2, a3, a4, a5, a6, a7, a8),
+						combineFunction(combinator),
+						maxNumberOfSamples
+					);
 				}
 			};
 		}
@@ -690,7 +714,11 @@ public class Combinators {
 				@Override
 				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
-					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(listOfArbitraries.toArray()), combinedFunction);
+					return CombinatorsFacade.implementation.combineExhaustive(
+						asTypedList(listOfArbitraries.toArray()),
+						combinedFunction,
+						maxNumberOfSamples
+					);
 				}
 			};
 		}

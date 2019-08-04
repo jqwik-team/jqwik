@@ -19,7 +19,7 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 	) {
 		long choices = 0;
 		for (T baseValue : baseGenerator) {
-			Optional<ExhaustiveGenerator<U>> exhaustive = mapper.apply(baseValue).exhaustive();
+			Optional<ExhaustiveGenerator<U>> exhaustive = mapper.apply(baseValue).exhaustive(maxNumberOfSamples);
 			if (!exhaustive.isPresent()) {
 				return Optional.empty();
 			}
