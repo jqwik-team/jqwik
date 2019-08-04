@@ -23,8 +23,8 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Short>> exhaustive() {
-		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::shortValueExact));
+	public Optional<ExhaustiveGenerator<Short>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigInteger::shortValueExact));
 	}
 
 	@Override

@@ -23,8 +23,8 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Long>> exhaustive() {
-		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::longValueExact));
+	public Optional<ExhaustiveGenerator<Long>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigInteger::longValueExact));
 	}
 
 	@Override

@@ -32,7 +32,7 @@ class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<T>> exhaustive() {
+	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		// Support exhaustive generation if this class is used somewhere else
 		return Optional.empty();
 	}

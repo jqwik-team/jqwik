@@ -247,7 +247,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2), combineFunction(combinator));
 				}
 			};
@@ -287,7 +287,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3), combineFunction(combinator));
 				}
 
@@ -344,7 +344,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4), combineFunction(combinator));
 				}
 			};
@@ -407,7 +407,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(a1, a2, a3, a4, a5), combineFunction(combinator));
 				}
 			};
@@ -475,7 +475,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation
 							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6), combineFunction(combinator));
 				}
@@ -552,7 +552,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation
 							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7), combineFunction(combinator));
 				}
@@ -635,7 +635,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					return CombinatorsFacade.implementation
 							   .combineExhaustive(asTypedList(a1, a2, a3, a4, a5, a6, a7, a8), combineFunction(combinator));
 				}
@@ -688,7 +688,7 @@ public class Combinators {
 				}
 
 				@Override
-				public Optional<ExhaustiveGenerator<R>> exhaustive() {
+				public Optional<ExhaustiveGenerator<R>> exhaustive(long maxNumberOfSamples) {
 					Function<List<Object>, R> combinedFunction = params -> combinator.apply((List<T>) params);
 					return CombinatorsFacade.implementation.combineExhaustive(asTypedList(listOfArbitraries.toArray()), combinedFunction);
 				}

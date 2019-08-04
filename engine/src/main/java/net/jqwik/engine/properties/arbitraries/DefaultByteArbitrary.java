@@ -23,8 +23,8 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Byte>> exhaustive() {
-		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::byteValueExact));
+	public Optional<ExhaustiveGenerator<Byte>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigInteger::byteValueExact));
 	}
 
 	@Override

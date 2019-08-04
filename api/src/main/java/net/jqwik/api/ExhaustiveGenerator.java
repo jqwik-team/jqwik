@@ -9,6 +9,9 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = MAINTAINED, since = "1.0")
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
+	@API(status = INTERNAL, since = "1.2.1")
+	long MAXIMUM_SAMPLES_TO_GENERATE = Integer.MAX_VALUE;
+
 	@API(status = INTERNAL)
 	abstract class ExhaustiveGeneratorFacade {
 		private static ExhaustiveGeneratorFacade implementation;

@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.2.1-SNAPSHOT](#121-snapshot)
 - [1.2.0](#120)
 - [1.1.x](#11x)
 - [1.0.0](#100)
@@ -16,6 +17,13 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.2.1-SNAPSHOT
+
+#### Breaking Changes
+
+- `Arbitrary.exhaustive()` must no longer be overridden. 
+  Override `Arbitrary.exhaustive(long maxNumberOfGeneratedSamples)` instead.
 
 ## 1.2.0
 

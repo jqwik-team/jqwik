@@ -30,9 +30,9 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<T>> exhaustive() {
+	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.choose(allArbitraries())
-								   .flatMap(generator -> ExhaustiveGenerators.flatMap(generator, Function.identity()));
+								   .flatMap(generator -> ExhaustiveGenerators.flatMap(generator, Function.identity(), maxNumberOfSamples));
 	}
 
 	private List<Arbitrary<T>> allArbitraries() {

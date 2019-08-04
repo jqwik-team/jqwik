@@ -24,7 +24,7 @@ public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements 
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<A>> exhaustive() {
+	public Optional<ExhaustiveGenerator<A>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize).map(generator -> generator.map(this::toArray));
 	}
 

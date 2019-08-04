@@ -21,7 +21,7 @@ public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Set<T>>> exhaustive() {
+	public Optional<ExhaustiveGenerator<Set<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.set(elementArbitrary, minSize, maxSize);
 
 	}

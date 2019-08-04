@@ -23,8 +23,8 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<BigInteger>> exhaustive() {
-		return generatingArbitrary.exhaustive();
+	public Optional<ExhaustiveGenerator<BigInteger>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples);
 	}
 
 	@Override

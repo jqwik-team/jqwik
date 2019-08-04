@@ -136,7 +136,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<T>> exhaustive() {
+	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		// Exhaustive generation cannot work because Arbitraries.defaultFor()
 		// is evaluated lazily which prevents ad ante calculation of combinations
 		return Optional.empty();

@@ -23,8 +23,8 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Integer>> exhaustive() {
-		return generatingArbitrary.exhaustive().map(generator -> generator.map(BigInteger::intValueExact));
+	public Optional<ExhaustiveGenerator<Integer>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigInteger::intValueExact));
 	}
 
 	@Override

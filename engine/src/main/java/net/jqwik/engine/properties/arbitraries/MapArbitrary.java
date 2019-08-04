@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -55,8 +54,8 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Map<K, V>>> exhaustive() {
-		return mapArbitrary().exhaustive();
+	public Optional<ExhaustiveGenerator<Map<K, V>>> exhaustive(long maxNumberOfSamples) {
+		return mapArbitrary().exhaustive(maxNumberOfSamples);
 	}
 
 }

@@ -18,9 +18,11 @@ import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	@Override
 	public <T, U> Optional<ExhaustiveGenerator<U>> flatMapExhaustiveGenerator(
-		ExhaustiveGenerator<T> self, Function<T, Arbitrary<U>> mapper
+		ExhaustiveGenerator<T> self,
+		Function<T, Arbitrary<U>> mapper,
+		long maxNumberOfSamples
 	) {
-		return ExhaustiveGenerators.flatMap(self, mapper);
+		return ExhaustiveGenerators.flatMap(self, mapper, maxNumberOfSamples);
 	}
 
 	@Override

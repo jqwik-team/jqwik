@@ -22,7 +22,7 @@ public class CharacterRange implements Arbitrary<Character> {
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Character>> exhaustive() {
+	public Optional<ExhaustiveGenerator<Character>> exhaustive(long maxNumberOfSamples) {
 		long maxCount = max + 1 - min;
 		return ExhaustiveGenerators
 				   .fromIterable(() -> IntStream.range(min, max + 1).iterator(), maxCount)

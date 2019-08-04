@@ -17,7 +17,7 @@ public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<List<T>>> exhaustive() {
+	public Optional<ExhaustiveGenerator<List<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize);
 	}
 

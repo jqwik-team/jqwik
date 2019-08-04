@@ -12,7 +12,11 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 	private final long maxCount;
 	private final Function<T, Arbitrary<U>> mapper;
 
-	public static <T, U> Optional<Long> calculateMaxCounts(ExhaustiveGenerator<T> baseGenerator, Function<T, Arbitrary<U>> mapper) {
+	public static <T, U> Optional<Long> calculateMaxCounts(
+		ExhaustiveGenerator<T> baseGenerator,
+		Function<T, Arbitrary<U>> mapper,
+		long maxNumberOfSamples
+	) {
 		long choices = 0;
 		for (T baseValue : baseGenerator) {
 			Optional<ExhaustiveGenerator<U>> exhaustive = mapper.apply(baseValue).exhaustive();
@@ -20,7 +24,7 @@ public class FlatMappedExhaustiveGenerator<U, T> implements ExhaustiveGenerator<
 				return Optional.empty();
 			}
 			choices += exhaustive.get().maxCount();
-			if (choices > ExhaustiveGenerators.MAXIMUM_ACCEPTED_MAX_COUNT) {
+			if (choices > maxNumberOfSamples) {
 				return Optional.empty();
 			}
 		}

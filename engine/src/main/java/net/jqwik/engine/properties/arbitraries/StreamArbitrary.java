@@ -18,7 +18,7 @@ public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>>
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Stream<T>>> exhaustive() {
+	public Optional<ExhaustiveGenerator<Stream<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize)
 								   .map(generator -> generator.map(Collection::stream));
 	}

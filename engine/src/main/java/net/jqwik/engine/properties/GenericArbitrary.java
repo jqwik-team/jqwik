@@ -20,7 +20,7 @@ class GenericArbitrary implements Arbitrary<Object> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Optional<ExhaustiveGenerator<Object>> exhaustive() {
-		return wrapped.exhaustive();
+	public Optional<ExhaustiveGenerator<Object>> exhaustive(long maxNumberOfSamples) {
+		return wrapped.exhaustive(maxNumberOfSamples);
 	}
 }

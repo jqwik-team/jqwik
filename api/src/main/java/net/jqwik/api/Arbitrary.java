@@ -30,7 +30,8 @@ public interface Arbitrary<T> {
 
 		public abstract <T, U> Optional<ExhaustiveGenerator<U>> flatMapExhaustiveGenerator(
 			ExhaustiveGenerator<T> self,
-			Function<T, Arbitrary<U>> mapper
+			Function<T, Arbitrary<U>> mapper,
+			long maxNumberOfSamples
 		);
 
 		public abstract <T> SizableArbitrary<List<T>> list(Arbitrary<T> elementArbitrary);
@@ -65,11 +66,30 @@ public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int genSize);
 
 	/**
-	 * Create the exhaustive generator for an arbitrary
+	 * Create the exhaustive generator for an arbitrary using the maximum allowed
+	 * number of generated samples. Just trying to find out if such a generator
+	 * exists might take a long time. This method should never be overridden.
 	 *
 	 * @return a new exhaustive generator or Optional.empty() if it cannot be created.
 	 */
 	default Optional<ExhaustiveGenerator<T>> exhaustive() {
+		return exhaustive(ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE);
+	}
+
+	/**
+	 * Create the exhaustive generator for an arbitrary. Depending on
+	 * {@code maxNumberOfSamples} this can take a long time.
+	 * This method must be overridden in all arbitraries that support exhaustive
+	 * generation.
+	 *
+	 * @param maxNumberOfSamples The maximum number of samples considered.
+	 *                           If during generation it becomes clear that this
+	 *                           number will be exceeded generation stops.
+	 *
+	 * @return a new exhaustive generator or Optional.empty() if it cannot be created.
+	 */
+	@API(status = MAINTAINED, since = "1.2.1")
+	default Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		return Optional.empty();
 	}
 
@@ -114,8 +134,8 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Arbitrary.this.exhaustive()
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples)
 									 .map(generator -> generator.filter(filterPredicate));
 			}
 
@@ -134,8 +154,8 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<U>> exhaustive() {
-				return Arbitrary.this.exhaustive()
+			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples)
 									 .map(generator -> generator.map(mapper));
 			}
 		};
@@ -153,9 +173,9 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<U>> exhaustive() {
-				return Arbitrary.this.exhaustive()
-									 .flatMap(generator -> ArbitraryFacade.implementation.flatMapExhaustiveGenerator(generator, mapper));
+			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples)
+									 .flatMap(generator -> ArbitraryFacade.implementation.flatMapExhaustiveGenerator(generator, mapper, maxNumberOfSamples));
 			}
 		};
 	}
@@ -174,8 +194,8 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::injectNull);
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ts -> ts.injectNull());
 			}
 		};
 	}
@@ -194,8 +214,8 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Arbitrary.this.exhaustive().map(ExhaustiveGenerator::unique);
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ExhaustiveGenerator::unique);
 			}
 
 			@Override
@@ -223,8 +243,8 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Arbitrary.this.exhaustive().map(exhaustive -> exhaustive.withSamples(samples));
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(exhaustive -> exhaustive.withSamples(samples));
 			}
 		};
 	}
@@ -241,8 +261,8 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive() {
-				return Arbitrary.this.exhaustive();
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples);
 			}
 		};
 	}

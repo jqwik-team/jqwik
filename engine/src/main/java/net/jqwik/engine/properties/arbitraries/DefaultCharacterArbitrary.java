@@ -65,8 +65,8 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	@Override
-	public Optional<ExhaustiveGenerator<Character>> exhaustive() {
-		return arbitrary().exhaustive();
+	public Optional<ExhaustiveGenerator<Character>> exhaustive(long maxNumberOfSamples) {
+		return arbitrary().exhaustive(maxNumberOfSamples);
 	}
 
 	@Override

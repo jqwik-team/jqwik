@@ -484,6 +484,7 @@ public class Arbitraries {
 	}
 
 
+	// TODO: Second param must be a creator function that takes long maxNumberOfSamples
 	private static <T> Arbitrary<T> fromGenerators(
 		RandomGenerator<T> randomGenerator,
 		Optional<ExhaustiveGenerator<T>> exhaustiveGenerator
@@ -495,7 +496,7 @@ public class Arbitraries {
 			}
 
 			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive() {
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return exhaustiveGenerator;
 			}
 		};
