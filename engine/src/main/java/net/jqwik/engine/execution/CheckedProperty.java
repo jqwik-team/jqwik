@@ -108,7 +108,7 @@ public class CheckedProperty {
 			throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = EXHAUSTIVE)");
 		}
 		if (!getOptionalExhaustive().isPresent()) {
-			throw new JqwikException("@Property(generation = EXHAUSTIVE) requires all arbitraries to provide exhaustive generators");
+			throw new JqwikException("EXHAUSTIVE generation is not possible. Maybe too many potential examples?");
 		}
 	}
 
@@ -163,8 +163,11 @@ public class CheckedProperty {
 	//  TODO TODO TODO: Replace with explicit use of maxNumberOfSamples
 	private Optional<ExhaustiveShrinkablesGenerator> getOptionalExhaustive() {
 		// Make it lazy for performance reasons
+		//noinspection OptionalAssignedToNull
 		if (optionalExhaustive == null) {
-			optionalExhaustive = createOptionalExhaustiveShrinkablesGenerator(ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE);
+			long maxNumberOfSamples = configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE
+				? ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE : configuration.getTries();
+			optionalExhaustive = createOptionalExhaustiveShrinkablesGenerator(maxNumberOfSamples);
 		}
 		return optionalExhaustive;
 	}
