@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.2.0-SNAPSHOT
+title: jqwik User Guide - 1.2.1-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.0-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.1-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -145,7 +145,7 @@ repositories {
 ext.junitPlatformVersion = '1.5.1'
 ext.junitJupiterVersion = '5.5.1'
 
-ext.jqwikVersion = '1.2.0-SNAPSHOT'
+ext.jqwikVersion = '1.2.1-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -221,7 +221,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>1.2.1-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -247,7 +247,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.2.0-SNAPSHOT.jar`
+- `jqwik-1.2.1-SNAPSHOT.jar`
 - `junit-platform-engine-1.5.1.jar`
 - `junit-platform-commons-1.5.1.jar`
 - `opentest4j-1.1.1.jar`
@@ -298,7 +298,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.2.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.2.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -2856,10 +2856,13 @@ database = .jqwik-database          # The database to store data of previous run
 defaultTries = 1000                 # The default number of tries for each property
 defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
 useJunitPlatformReporter = false    # Set to true if you want to use platform reporting
-defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties
+defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties:
+                                    # PREVIOUS_SEED, SAMPLE_ONLY or SAMPLE_FIRST
 reportOnlyFailures = false          # Set to true if only falsified properties should be reported
+defaultGeneration = AUTO            # Set default behaviour for generation:
+                                    # AUTO, RANDOMIZED, or EXHAUSTIVE
 ```
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#120-snapshot).
+Read this version's [release notes](/release-notes.html#121-snapshot).
