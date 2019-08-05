@@ -1,5 +1,7 @@
 - 1.2.1
 
+  - Configuration for default generation mode
+
   - Character|StringArbitrary.excludeChars(char … chars)
   - Character|StringArbitrary.withChars(CharSequence)
   - StringArbitrary.append(Arbitrary<String>)
