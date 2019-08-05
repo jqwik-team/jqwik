@@ -23,5 +23,8 @@ class JqwikPropertiesTests {
 		assertThat(properties.defaultAfterFailure()).isEqualTo(AfterFailureMode.PREVIOUS_SEED);
 
 		assertThat(properties.reportOnlyFailures()).isEqualTo(false);
+
+		assertThat(properties.defaultGeneration()).isEqualTo(GenerationMode.AUTO);
+
 	}
 }

@@ -16,12 +16,19 @@ public class PropertyConfiguration {
 		int tries = property.tries() == Property.TRIES_NOT_SET
 						? propertyDefaultValues.tries()
 						: property.tries();
+
 		int maxDiscardRatio = property.maxDiscardRatio() == Property.MAX_DISCARD_RATIO_NOT_SET
 								  ? propertyDefaultValues.maxDiscardRatio()
 								  : property.maxDiscardRatio();
+
 		AfterFailureMode afterFailure = property.afterFailure() == AfterFailureMode.NOT_SET
 											? propertyDefaultValues.afterFailure()
 											: property.afterFailure();
+
+		GenerationMode generation = property.generation() == GenerationMode.NOT_SET
+			? propertyDefaultValues.generation()
+			: property.generation();
+
 		return new PropertyConfiguration(
 			property.stereotype(),
 			property.seed(),
@@ -30,7 +37,7 @@ public class PropertyConfiguration {
 			tries,
 			maxDiscardRatio,
 			property.shrinking(),
-			property.generation(),
+			generation,
 			afterFailure
 		);
 	}

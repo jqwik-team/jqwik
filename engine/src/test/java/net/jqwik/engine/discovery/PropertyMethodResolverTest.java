@@ -21,10 +21,16 @@ class PropertyMethodResolverTest {
 	private static final int DEFAULT_TRIES = 999;
 	private static final int DEFAULT_MAX_DISCARD_RATIO = 4;
 	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
+	private static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
 
 	private TestRunData testRunData = new TestRunData();
 	private PropertyDefaultValues propertyDefaultValues =
-		PropertyDefaultValues.with(DEFAULT_TRIES, DEFAULT_MAX_DISCARD_RATIO, DEFAULT_AFTER_FAILURE);
+		PropertyDefaultValues.with(
+			DEFAULT_TRIES,
+			DEFAULT_MAX_DISCARD_RATIO,
+			DEFAULT_AFTER_FAILURE,
+			DEFAULT_GENERATION
+		);
 	private PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
 
 	@Group

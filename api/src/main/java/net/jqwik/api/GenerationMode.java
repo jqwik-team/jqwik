@@ -42,5 +42,7 @@ public enum GenerationMode {
 	 *     <li>In all other cases use {@linkplain #RANDOMIZED}</li>
 	 * </ul>
 	 */
-	AUTO
+	AUTO,
+
+	NOT_SET
 }

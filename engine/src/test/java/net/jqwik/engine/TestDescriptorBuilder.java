@@ -22,6 +22,7 @@ public class TestDescriptorBuilder {
 	public static final int TRIES = 1000;
 	public static final int MAX_DISCARD_RATIO = 5;
 	public static final AfterFailureMode AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
+	public static final GenerationMode GENERATION = GenerationMode.AUTO;
 
 	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes) {
 		Optional<Method> optionalMethod = ReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
@@ -93,7 +94,13 @@ public class TestDescriptorBuilder {
 			if (optionalProperty.isPresent()) {
 				Property property = optionalProperty.get();
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
-				PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE), null, null);
+				PropertyConfiguration propertyConfig =
+					PropertyConfiguration.from(
+						property,
+						PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE, GENERATION),
+						null,
+						null
+					);
 
 				return new PropertyMethodDescriptor(uniqueId, targetMethod, targetMethod.getDeclaringClass(), propertyConfig);
 			}

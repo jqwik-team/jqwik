@@ -46,7 +46,7 @@ public @interface Property {
 	String stereotype() default DEFAULT_STEREOTYPE;
 
 	@API(status = MAINTAINED, since = "1.0")
-	GenerationMode generation() default GenerationMode.AUTO;
+	GenerationMode generation() default GenerationMode.NOT_SET;
 
 	@API(status = MAINTAINED, since = "1.0")
 	AfterFailureMode afterFailure() default AfterFailureMode.NOT_SET;

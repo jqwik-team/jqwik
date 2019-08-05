@@ -15,7 +15,8 @@ public class JqwikProperties {
 		"defaultMaxDiscardRatio",
 		"useJunitPlatformReporter",
 		"defaultAfterFailure",
-		"reportOnlyFailures"
+		"reportOnlyFailures",
+		"defaultGeneration"
 	};
 
 	private static final String PROPERTIES_FILE_NAME = "jqwik.properties";
@@ -27,6 +28,7 @@ public class JqwikProperties {
 	private static final String DEFAULT_MAX_DISCARD_RATIO = "5";
 	private static final String DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED.name();
 	private static final String DEFAULT_REPORT_ONLY_FAILURES = "false";
+	private static final String DEFAULT_GENERATION = GenerationMode.AUTO.name();
 
 	// TODO: Change default to true as soon as Gradle has support for platform reporter
 	// see https://github.com/gradle/gradle/issues/4605
@@ -39,6 +41,7 @@ public class JqwikProperties {
 	private boolean useJunitPlatformReporter;
 	private AfterFailureMode defaultAfterFailure;
 	private boolean reportOnlyFailures;
+	private GenerationMode defaultGeneration;
 
 	public String databasePath() {
 		return databasePath;
@@ -68,6 +71,10 @@ public class JqwikProperties {
 		return reportOnlyFailures;
 	}
 
+	public GenerationMode defaultGeneration() {
+		return defaultGeneration;
+	}
+
 	JqwikProperties() {
 		this(PROPERTIES_FILE_NAME);
 	}
@@ -91,9 +98,11 @@ public class JqwikProperties {
 			runFailuresFirst = Boolean.parseBoolean(properties.getProperty("runFailuresFirst", DEFAULT_RERUN_FAILURES_FIRST));
 			defaultTries = Integer.parseInt(properties.getProperty("defaultTries", DEFAULT_TRIES));
 			defaultMaxDiscardRatio = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio", DEFAULT_MAX_DISCARD_RATIO));
-			useJunitPlatformReporter = Boolean.parseBoolean(properties.getProperty("useJunitPlatformReporter", DEFAULT_USE_JUNIT_PLATFORM_REPORTER));
+			useJunitPlatformReporter =
+				Boolean.parseBoolean(properties.getProperty("useJunitPlatformReporter", DEFAULT_USE_JUNIT_PLATFORM_REPORTER));
 			defaultAfterFailure = AfterFailureMode.valueOf(properties.getProperty("defaultAfterFailure", DEFAULT_AFTER_FAILURE));
 			reportOnlyFailures = Boolean.parseBoolean(properties.getProperty("reportOnlyFailures", DEFAULT_REPORT_ONLY_FAILURES));
+			defaultGeneration = GenerationMode.valueOf(properties.getProperty("defaultGeneration", DEFAULT_GENERATION));
 		} catch (Throwable throwable) {
 			String message = String.format("Error while reading properties file [%s]", propertiesFileName);
 			throw new JqwikException(message, throwable);

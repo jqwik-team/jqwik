@@ -31,7 +31,12 @@ class JqwikIntegrationTests {
 		return new JqwikConfiguration() {
 			@Override
 			public PropertyDefaultValues propertyDefaultValues() {
-				return PropertyDefaultValues.with(1000, 5, AfterFailureMode.PREVIOUS_SEED);
+				return PropertyDefaultValues.with(
+					1000,
+					5,
+					AfterFailureMode.PREVIOUS_SEED,
+					GenerationMode.AUTO
+				);
 			}
 
 			@Override

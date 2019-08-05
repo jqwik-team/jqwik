@@ -2760,8 +2760,11 @@ database = .jqwik-database          # The database to store data of previous run
 defaultTries = 1000                 # The default number of tries for each property
 defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
 useJunitPlatformReporter = false    # Set to true if you want to use platform reporting
-defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties
+defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified properties:
+                                    # PREVIOUS_SEED, SAMPLE_ONLY or SAMPLE_FIRST
 reportOnlyFailures = false          # Set to true if only falsified properties should be reported
+defaultGeneration = AUTO            # Set default behaviour for generation:
+                                    # AUTO, RANDOMIZED, or EXHAUSTIVE
 ```
 
 ## Release Notes

@@ -28,7 +28,12 @@ class DiscoveryTests {
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();
 	private final TestRunData testRunData = new TestRunData();
 	private final PropertyDefaultValues propertyDefaultValues =
-		PropertyDefaultValues.with(1000, 5, AfterFailureMode.PREVIOUS_SEED);
+		PropertyDefaultValues.with(
+			1000,
+			5,
+			AfterFailureMode.PREVIOUS_SEED,
+			GenerationMode.AUTO
+		);
 	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
 
 	private final Predicate<TestDescriptor> isEngineDescriptor = d -> d instanceof JqwikEngineDescriptor;

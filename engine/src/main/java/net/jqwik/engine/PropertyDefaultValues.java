@@ -7,11 +7,13 @@ public interface PropertyDefaultValues {
 	int maxDiscardRatio();
 
 	AfterFailureMode afterFailure();
+	GenerationMode generation();
 
 	static PropertyDefaultValues with(
 		int tries,
 		int maxDiscardRatio,
-		AfterFailureMode afterFailureMode
+		AfterFailureMode afterFailureMode,
+		GenerationMode generationMode
 	) {
 		return new PropertyDefaultValues() {
 			@Override
@@ -27,6 +29,11 @@ public interface PropertyDefaultValues {
 			@Override
 			public AfterFailureMode afterFailure() {
 				return afterFailureMode;
+			}
+
+			@Override
+			public GenerationMode generation() {
+				return generationMode;
 			}
 		};
 	}
