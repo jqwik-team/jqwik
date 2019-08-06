@@ -37,6 +37,14 @@ public interface StringArbitrary extends Arbitrary<String> {
 	StringArbitrary withChars(char... chars);
 
 	/**
+	 * Allow all chars in {@code chars} to show up in generated strings.
+	 *
+	 * Can be combined with other methods that allow chars.
+	 */
+	@API(status = MAINTAINED, since = "1.2.1")
+	StringArbitrary withChars(CharSequence chars);
+
+	/**
 	 * Allow all chars within {@code from} (included) and {@code to} (included) to show up in generated strings.
 	 *
 	 * Can be combined with other methods that allow chars.

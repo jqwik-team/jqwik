@@ -57,6 +57,13 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	}
 
 	@Override
+	public StringArbitrary withChars(CharSequence chars) {
+		DefaultStringArbitrary clone = typedClone();
+		clone.characterArbitrary = clone.characterArbitrary.with(chars);
+		return clone;
+	}
+
+	@Override
 	public StringArbitrary withCharRange(char from, char to) {
 		DefaultStringArbitrary clone = typedClone();
 		clone.characterArbitrary = clone.characterArbitrary.range(from, to);

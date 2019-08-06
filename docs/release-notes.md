@@ -29,7 +29,9 @@ and
 
 #### New and Enhanced Features
 
-- New configuration parameter `defaultGeneration` for `jqwik.properties` file.
+- New configuration parameter `defaultGeneration` for `jqwik.properties` file
+- Added `CharacterArbitrary.with(CharSequence allowedChars)`
+- Added `StringArbitrary.withChars(CharSequence allowedChars)`
 
 #### Breaking Changes
 

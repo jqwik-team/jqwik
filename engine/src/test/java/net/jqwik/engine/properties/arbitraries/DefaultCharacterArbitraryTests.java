@@ -41,6 +41,14 @@ class DefaultCharacterArbitraryTests {
 	}
 
 	@Example
+	void charsFromCharSequence() {
+		final List<Character> chars = Arrays.asList('a', 'b', 'c', '1', '2', '.');
+		CharacterArbitrary all = this.arbitrary.with("abc12.");
+		assertAllGenerated(all.generator(1000), chars::contains);
+		assertAtLeastOneGeneratedOf(all.generator(1000), 'a', 'b', 'c', '1', '2', '.');
+	}
+
+	@Example
 	void range() {
 		char min = '\u0010';
 		char max = '\u0030';

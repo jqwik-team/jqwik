@@ -75,6 +75,17 @@ class DefaultStringArbitraryTests {
 	}
 
 	@Example
+	void withCharsFromCharSequence() {
+		StringArbitrary stringArbitrary = this.arbitrary.withChars("amx");
+		assertAllGenerated(stringArbitrary.generator(10), s -> {
+			return s.chars().allMatch(c -> c == 'a' || c == 'm' || c == 'x');
+		});
+		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('a')));
+		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('m')));
+		assertAtLeastOneGenerated(stringArbitrary.generator(10), s -> s.contains(Character.toString('x')));
+	}
+
+	@Example
 	void withCharsAndCharRange() {
 		StringArbitrary stringArbitrary = this.arbitrary.withCharRange('\u0222', '\u0333').withChars('a', 'm', 'x');
 		assertAllGenerated(stringArbitrary.generator(10), s -> {
