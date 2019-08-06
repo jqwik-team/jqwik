@@ -192,7 +192,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Arbitraries and Generators
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - functions/methods (whose output parameter can be generated)
-  - @Regex(RegularExpression value)
+  - @Regex(RegularExpression value) or composable RegexStringArbitrary
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
 
 ### Contracts / Specifications / Domain objects

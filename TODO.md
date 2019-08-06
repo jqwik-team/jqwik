@@ -1,11 +1,8 @@
 - 1.2.1
 
-  - Character|StringArbitrary.excludeChars(char … chars)
   - Character|StringArbitrary.withChars(CharSequence)
-  - StringArbitrary.append(Arbitrary<String>)
-  - StringArbitrary.repeat(1, 10)
-  - StringArbitrary.repeatAndJoin(1, 3, ".")
-  - List|Set|Stream|ArrayArbitrary<T>.reduce(R initial, Function2<R, T, R> reducer)
+  
+  - List|Set|Stream|ArrayArbitrary<T>.reduce(R initial, BiFunction<R, T, R> reducer)
 
   - Lifecycle
     - Around container
