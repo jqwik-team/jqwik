@@ -12,6 +12,11 @@ public class IteratorArbitrary<T> extends DefaultCollectionArbitrary<T, Iterator
 	}
 
 	@Override
+	protected Iterable<T> toIterable(Iterator<T> streamable) {
+		return () -> streamable;
+	}
+
+	@Override
 	public RandomGenerator<Iterator<T>> generator(int genSize) {
 		return createListGenerator(genSize).map(List::iterator);
 	}

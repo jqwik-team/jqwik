@@ -13,6 +13,11 @@ public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>>
 	}
 
 	@Override
+	protected Iterable<T> toIterable(Stream<T> streamable) {
+		return streamable::iterator;
+	}
+
+	@Override
 	public RandomGenerator<Stream<T>> generator(int genSize) {
 		return createListGenerator(genSize).map(Collection::stream);
 	}

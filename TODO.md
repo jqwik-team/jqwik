@@ -1,6 +1,8 @@
 - 1.2.1
 
-  - List|Set|Stream|ArrayArbitrary<T>.reduce(R initial, BiFunction<R, T, R> reducer)
+  - ArrayArbitrary.reduce(R initial, BiFunction<R, T, R> reducer)
+  - user guide entry
+  - release notes
 
   - Lifecycle
     - Around container

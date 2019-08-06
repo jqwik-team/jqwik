@@ -13,6 +13,11 @@ public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 	}
 
 	@Override
+	protected Iterable<T> toIterable(Set<T> streamable) {
+		return streamable;
+	}
+
+	@Override
 	public RandomGenerator<Set<T>> generator(int genSize) {
 		int cutoffSize = cutoffSize(genSize);
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);

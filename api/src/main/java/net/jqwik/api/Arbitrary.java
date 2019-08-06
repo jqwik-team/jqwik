@@ -34,15 +34,15 @@ public interface Arbitrary<T> {
 			long maxNumberOfSamples
 		);
 
-		public abstract <T> SizableArbitrary<List<T>> list(Arbitrary<T> elementArbitrary);
+		public abstract <T> StreamableArbitrary<T, List<T>> list(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> SizableArbitrary<List<T>> listOfUnique(Arbitrary<T> uniqueArbitrary);
+		public abstract <T> StreamableArbitrary<T, List<T>> listOfUnique(Arbitrary<T> uniqueArbitrary);
 
-		public abstract <T> SizableArbitrary<Set<T>> set(Arbitrary<T> elementArbitrary);
+		public abstract <T> StreamableArbitrary<T, Set<T>> set(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> SizableArbitrary<Stream<T>> stream(Arbitrary<T> elementArbitrary);
+		public abstract <T> StreamableArbitrary<T, Stream<T>> stream(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> SizableArbitrary<Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
+		public abstract <T> StreamableArbitrary<T, Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
 
 		public abstract <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
 
@@ -219,7 +219,7 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public SizableArbitrary<List<T>> list() {
+			public StreamableArbitrary<T, List<T>> list() {
 				return ArbitraryFacade.implementation.listOfUnique(this);
 			}
 
@@ -270,14 +270,14 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code List<T>} using the existing arbitrary for generating the elements of the list.
 	 */
-	default SizableArbitrary<List<T>> list() {
+	default StreamableArbitrary<T, List<T>> list() {
 		return ArbitraryFacade.implementation.list(this);
 	}
 
 	/**
 	 * Create a new arbitrary of type {@code Set<T>} using the existing arbitrary for generating the elements of the set.
 	 */
-	default SizableArbitrary<Set<T>> set() {
+	default StreamableArbitrary<T, Set<T>> set() {
 		return ArbitraryFacade.implementation.set(this);
 	}
 
@@ -285,7 +285,7 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code Stream<T>} using the existing arbitrary for generating the elements of the
 	 * stream.
 	 */
-	default SizableArbitrary<Stream<T>> stream() {
+	default StreamableArbitrary<T, Stream<T>> stream() {
 		return ArbitraryFacade.implementation.stream(this);
 	}
 
@@ -293,7 +293,7 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of type {@code Iterable<T>} using the existing arbitrary for generating the elements of the
 	 * stream.
 	 */
-	default SizableArbitrary<Iterator<T>> iterator() {
+	default StreamableArbitrary<T, Iterator<T>> iterator() {
 		return ArbitraryFacade.implementation.iterator(this);
 	}
 

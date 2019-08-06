@@ -12,6 +12,11 @@ public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 	}
 
 	@Override
+	protected Iterable<T> toIterable(List<T> streamable) {
+		return streamable;
+	}
+
+	@Override
 	public RandomGenerator<List<T>> generator(int genSize) {
 		return createListGenerator(genSize);
 	}
