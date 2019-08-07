@@ -1090,6 +1090,7 @@ like size, length, boundaries etc. Have a look at the Java doc for the following
 - [LongArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
 - [ShortArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
 - [SizableArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
+- [StreamableArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/StreamableArbitrary.html)
 - [StringArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 - [FunctionArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
 

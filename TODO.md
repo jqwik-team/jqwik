@@ -1,8 +1,5 @@
 - 1.2.1
 
-  - user guide entry
-  - release notes
-
   - Lifecycle
     - Around container
     - Around try
