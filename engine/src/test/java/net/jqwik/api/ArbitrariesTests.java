@@ -582,6 +582,23 @@ class ArbitrariesTests {
 		}
 
 		@Example
+		void reduceList() {
+			StreamableArbitrary<Integer, List<Integer>> streamableArbitrary =
+				Arbitraries.integers().between(1, 5).list().ofMinSize(1).ofMaxSize(10);
+
+			Arbitrary<Integer> listArbitrary = streamableArbitrary.reduce(0, Integer::sum);
+
+			RandomGenerator<Integer> generator = listArbitrary.generator(1000);
+
+			assertAllGenerated(generator, sum -> {
+				assertThat(sum).isBetween(1, 50);
+			});
+
+			assertAtLeastOneGenerated(generator, sum -> sum == 1);
+			assertAtLeastOneGenerated(generator, sum -> sum > 30);
+		}
+
+		@Example
 		void set() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
 			Arbitrary<Set<Integer>> setArbitrary = integerArbitrary.set().ofMinSize(2).ofMaxSize(7);
