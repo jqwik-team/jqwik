@@ -33,7 +33,7 @@ and
 - Added `CharacterArbitrary.with(CharSequence allowedChars)`
 - Added `StringArbitrary.withChars(CharSequence allowedChars)`
 - Arbitraries of List, Set, Stream und arrays are now of type `StreamableArray`
-- Introduced [`StreamableArray.reduce()`](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StreamableArbitrary.html
+- Introduced [`StreamableArray.reduce()`](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StreamableArbitrary.html)
 
 #### Breaking Changes
 
