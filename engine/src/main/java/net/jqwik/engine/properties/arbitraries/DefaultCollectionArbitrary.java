@@ -27,6 +27,7 @@ abstract class DefaultCollectionArbitrary<T, U> extends MultivalueArbitraryBase<
 
 	@Override
 	public <R> Arbitrary<R> reduce(R initial, BiFunction<R, T, R> accumulator) {
+		// TODO: Remove duplication with ArrayArbitrary.reduce
 		return this.map(streamable -> {
 			// Couldn't find a way to use Stream.reduce since it requires a combinator
 			@SuppressWarnings("unchecked")

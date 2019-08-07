@@ -1,6 +1,5 @@
 - 1.2.1
 
-  - ArrayArbitrary.reduce(R initial, BiFunction<R, T, R> reducer)
   - user guide entry
   - release notes
 

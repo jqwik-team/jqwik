@@ -54,12 +54,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
+	public <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
 		return new ArrayArbitrary<>(elementArbitrary, arrayClass);
 	}
 
 	@Override
-	public <T, A> SizableArbitrary<A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass) {
+	public <T, A> StreamableArbitrary<T, A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass) {
 		return new ArrayArbitrary<>(uniqueArbitrary, arrayClass)
 				   .ofMaxSize(maxNumberOfElements(uniqueArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}

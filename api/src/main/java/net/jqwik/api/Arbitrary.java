@@ -44,9 +44,9 @@ public interface Arbitrary<T> {
 
 		public abstract <T> StreamableArbitrary<T, Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
 
-		public abstract <T, A> SizableArbitrary<A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
+		public abstract <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
 
-		public abstract <T, A> SizableArbitrary<A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass);
+		public abstract <T, A> StreamableArbitrary<T, A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass);
 	}
 
 	/**
@@ -224,7 +224,7 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
-			public <A> SizableArbitrary<A> array(Class<A> arrayClass) {
+			public <A> StreamableArbitrary<T, A> array(Class<A> arrayClass) {
 				return ArbitraryFacade.implementation.arrayOfUnique(this, arrayClass);
 			}
 		};
@@ -304,7 +304,7 @@ public interface Arbitrary<T> {
 	 *            The arrays class to create, e.g. {@code String[].class}. This is required due to limitations in Java's
 	 *            reflection capabilities.
 	 */
-	default <A> SizableArbitrary<A> array(Class<A> arrayClass) {
+	default <A> StreamableArbitrary<T, A> array(Class<A> arrayClass) {
 		return ArbitraryFacade.implementation.array(this, arrayClass);
 	}
 

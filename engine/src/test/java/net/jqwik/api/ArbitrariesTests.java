@@ -586,9 +586,9 @@ class ArbitrariesTests {
 			StreamableArbitrary<Integer, List<Integer>> streamableArbitrary =
 				Arbitraries.integers().between(1, 5).list().ofMinSize(1).ofMaxSize(10);
 
-			Arbitrary<Integer> listArbitrary = streamableArbitrary.reduce(0, Integer::sum);
+			Arbitrary<Integer> integerArbitrary = streamableArbitrary.reduce(0, Integer::sum);
 
-			RandomGenerator<Integer> generator = listArbitrary.generator(1000);
+			RandomGenerator<Integer> generator = integerArbitrary.generator(1000);
 
 			assertAllGenerated(generator, sum -> {
 				assertThat(sum).isBetween(1, 50);
@@ -655,6 +655,24 @@ class ArbitrariesTests {
 				assertThat(array).isSubsetOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
 			});
 		}
+
+		@Example
+		void reduceArray() {
+			StreamableArbitrary<Integer, Integer[]> streamableArbitrary =
+				Arbitraries.integers().between(1, 5).array(Integer[].class).ofMinSize(1).ofMaxSize(10);
+
+			Arbitrary<Integer> integerArbitrary = streamableArbitrary.reduce(0, Integer::sum);
+
+			RandomGenerator<Integer> generator = integerArbitrary.generator(1000);
+
+			assertAllGenerated(generator, sum -> {
+				assertThat(sum).isBetween(1, 50);
+			});
+
+			assertAtLeastOneGenerated(generator, sum -> sum == 1);
+			assertAtLeastOneGenerated(generator, sum -> sum > 30);
+		}
+
 
 		@Example
 		void arrayOfPrimitiveType(@ForAll Random random) {
