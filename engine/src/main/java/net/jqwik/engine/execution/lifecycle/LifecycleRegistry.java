@@ -56,10 +56,9 @@ public class LifecycleRegistry implements LifecycleSupplier {
 	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook hookInstance) {
 		Class<? extends LifecycleHook> hookClass = hookInstance.getClass();
 		HookRegistration registration = new HookRegistration(descriptor, hookClass);
-		if (registrations.contains(registration)) {
-			return;
+		if (!registrations.contains(registration)) {
+			registrations.add(registration);
 		}
-		registrations.add(registration);
 		if (!instances.containsKey(hookClass)) {
 			instances.put(hookClass, hookInstance);
 		}
@@ -74,7 +73,10 @@ public class LifecycleRegistry implements LifecycleSupplier {
 			String message = String.format("Inner class [%s] cannot be used as LifecycleHook", hookClass.getName());
 			throw new JqwikException(message);
 		}
-		registrations.add(new HookRegistration(descriptor, hookClass));
+		HookRegistration registration = new HookRegistration(descriptor, hookClass);
+		if (!registrations.contains(registration)) {
+			registrations.add(registration);
+		}
 		if (!instances.containsKey(hookClass)) {
 			LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
 			hookInstance.configure(parameters);
