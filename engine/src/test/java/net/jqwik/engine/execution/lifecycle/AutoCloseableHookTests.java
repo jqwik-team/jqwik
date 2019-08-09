@@ -1,4 +1,4 @@
-package net.jqwik.engine.execution;
+package net.jqwik.engine.execution.lifecycle;
 
 import org.assertj.core.api.Assertions;
 

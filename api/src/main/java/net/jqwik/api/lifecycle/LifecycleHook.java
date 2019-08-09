@@ -13,6 +13,20 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.0")
 public interface LifecycleHook<T extends LifecycleHook> extends Comparable<T> {
 
-	default void configure(Function<String, Optional<String>> parameters) {
+	/**
+	 * Marker interface.
+	 *
+	 * Experimental feature. Not ready for public usage yet.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.1")
+	interface PropagateToChildren {
+	}
+
+	/**
+	 * Experimental feature. Not ready for public usage yet.
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.1")
+	interface Configurable {
+		void configure(Function<String, Optional<String>> parameters);
 	}
 }

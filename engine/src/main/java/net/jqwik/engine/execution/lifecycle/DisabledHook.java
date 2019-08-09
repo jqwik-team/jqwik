@@ -4,8 +4,9 @@ import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.LifecycleHook.*;
 
-public class DisabledHook implements SkipExecutionHook {
+public class DisabledHook implements SkipExecutionHook, PropagateToChildren {
 
 	@Override
 	public SkipResult shouldBeSkipped(LifecycleContext context) {

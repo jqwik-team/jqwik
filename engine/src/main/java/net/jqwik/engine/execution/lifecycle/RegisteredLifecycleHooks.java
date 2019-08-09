@@ -13,7 +13,9 @@ public class RegisteredLifecycleHooks {
 		if (registeredHooks == null) {
 			registeredHooks = new ArrayList<>();
 			for (LifecycleHook lifecycleHook : ServiceLoader.load(LifecycleHook.class)) {
-				lifecycleHook.configure(parameters);
+				if (lifecycleHook instanceof LifecycleHook.Configurable) {
+					((LifecycleHook.Configurable) lifecycleHook).configure(parameters);
+				}
 				registeredHooks.add(lifecycleHook);
 			}
 		}

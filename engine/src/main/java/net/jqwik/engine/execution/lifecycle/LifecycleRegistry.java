@@ -9,6 +9,7 @@ import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
@@ -29,21 +30,25 @@ public class LifecycleRegistry implements LifecycleSupplier {
 		return SkipExecutionHook.combine(skipExecutionHooks);
 	}
 
-	@SuppressWarnings("unchecked")
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);
 		return hookClasses
 				   .stream()
-				   .map(hookClass -> (T) instances.get(hookClass))
+				   .map(this::getHook)
 				   .sorted()
 				   .collect(Collectors.toList());
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends LifecycleHook> T getHook(Class<T> hookClass) {
+		return (T) instances.get(hookClass);
 	}
 
 	@SuppressWarnings("unchecked")
 	private <T extends LifecycleHook> List<Class<T>> findHookClasses(TestDescriptor descriptor, Class<T> hookType) {
 		return registrations
 				   .stream()
-				   .filter(registration -> registration.match(descriptor))
+				   .filter(registration -> registration.match(descriptor, false))
 				   .filter(registration -> registration.match(hookType))
 				   .map(registration -> (Class<T>) registration.hookClass)
 				   .distinct()
@@ -55,12 +60,17 @@ public class LifecycleRegistry implements LifecycleSupplier {
 	 */
 	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook hookInstance) {
 		Class<? extends LifecycleHook> hookClass = hookInstance.getClass();
-		HookRegistration registration = new HookRegistration(descriptor, hookClass);
-		if (!registrations.contains(registration)) {
-			registrations.add(registration);
-		}
+		createAndRegisterHook(descriptor, hookClass);
 		if (!instances.containsKey(hookClass)) {
 			instances.put(hookClass, hookInstance);
+		}
+	}
+
+	private void createAndRegisterHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
+		boolean propagateToChildren = PropagateToChildren.class.isAssignableFrom(hookClass);
+		HookRegistration registration = new HookRegistration(descriptor, hookClass, propagateToChildren);
+		if (!registrations.contains(registration)) {
+			registrations.add(registration);
 		}
 	}
 
@@ -73,13 +83,12 @@ public class LifecycleRegistry implements LifecycleSupplier {
 			String message = String.format("Inner class [%s] cannot be used as LifecycleHook", hookClass.getName());
 			throw new JqwikException(message);
 		}
-		HookRegistration registration = new HookRegistration(descriptor, hookClass);
-		if (!registrations.contains(registration)) {
-			registrations.add(registration);
-		}
+		createAndRegisterHook(descriptor, hookClass);
 		if (!instances.containsKey(hookClass)) {
 			LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
-			hookInstance.configure(parameters);
+			if (hookInstance instanceof Configurable) {
+				((Configurable) hookInstance).configure(parameters);
+			}
 			instances.put(hookClass, hookInstance);
 		}
 	}
@@ -87,23 +96,28 @@ public class LifecycleRegistry implements LifecycleSupplier {
 	private static class HookRegistration {
 		private TestDescriptor descriptor;
 		private final Class<? extends LifecycleHook> hookClass;
+		private boolean propagateToChildren;
 
-		private HookRegistration(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
+		private HookRegistration(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass, boolean propagateToChildren) {
 			this.descriptor = descriptor;
 			this.hookClass = hookClass;
+			this.propagateToChildren = propagateToChildren;
 		}
 
-		public boolean match(TestDescriptor descriptor) {
+		boolean match(TestDescriptor descriptor, boolean fromChild) {
 			if (descriptor == null) {
+				return false;
+			}
+			if (fromChild && !propagateToChildren) {
 				return false;
 			}
 			if (this.descriptor.equals(descriptor)) {
 				return true;
 			}
-			return match(descriptor.getParent().orElse(null));
+			return match(descriptor.getParent().orElse(null), true);
 		}
 
-		public <T extends LifecycleHook> boolean match(Class<? extends LifecycleHook> hookType) {
+		<T extends LifecycleHook> boolean match(Class<? extends LifecycleHook> hookType) {
 			return hookType.isAssignableFrom(hookClass);
 		}
 

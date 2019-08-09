@@ -5,9 +5,10 @@ import java.util.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.engine.support.*;
 
-public class AutoCloseableHook implements AroundPropertyHook {
+public class AutoCloseableHook implements AroundPropertyHook, PropagateToChildren {
 
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
