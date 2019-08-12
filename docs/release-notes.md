@@ -40,6 +40,10 @@ and
 - `Arbitrary.exhaustive()` must no longer be overridden. 
   Override `Arbitrary.exhaustive(long maxNumberOfGeneratedSamples)` instead.
 
+#### Bug Fixes
+
+- `@ForAll` annotation could not be replaced by self-made annotation. Now it can. 
+
 ## 1.2.0
 
 <p style="padding-left:1em;font-size:larger">

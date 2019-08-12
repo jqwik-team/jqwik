@@ -1,10 +1,12 @@
 package net.jqwik.engine.execution;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
+import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -49,8 +51,8 @@ public class PropertyMethodExecutor {
 
 	private void ensureAllParametersHaveForAll(PropertyMethodDescriptor methodDescriptor) {
 		String parameters = Arrays.stream(methodDescriptor.getTargetMethod().getParameters())
-								  .filter(parameter -> !parameter.isAnnotationPresent(ForAll.class))
-								  .map(parameter -> parameter.toString())
+								  .filter(parameter -> !AnnotationSupport.isAnnotated(parameter, ForAll.class))
+								  .map(Parameter::toString)
 								  .collect(Collectors.joining(", "));
 
 		if (!parameters.isEmpty()) {
