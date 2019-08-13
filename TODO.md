@@ -2,12 +2,10 @@
 
   - Lifecycle
     - Around property
-      - @BeforeProperty
-      - @AfterProperty
     - Around try
       - @BeforeTry
       - @AfterTry      
-      - Allow premature success/failure in AroundPropertyHook
+      - Allow premature success/failure
     - Around container
       - @BeforeContainer
       - @AfterContainer
