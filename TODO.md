@@ -1,5 +1,5 @@
 - 1.2.1
-
+  - Allow fully qualified name of static method in @From annotation
   - Lifecycle
     - Around property
     - Around try
