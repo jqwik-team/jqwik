@@ -1,5 +1,9 @@
 - 1.2.1
+
+  - Update to JUnit platform 1.5.2
+
   - Allow fully qualified name of static method in @From annotation
+
   - Lifecycle
     - Around property
     - Around try
