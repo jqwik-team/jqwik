@@ -1,8 +1,7 @@
 - 1.2.1
 
-  - Update to JUnit platform 1.5.2
-
   - Allow fully qualified name of static method in @From annotation
+    as in Jupiter's `@MethodSource("example.StringsProviders#tinyStrings")`
 
   - Lifecycle
     - Around property
