@@ -139,6 +139,9 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - Parallel execution of action sequences (see Proper book)
   - Special support for FSMs (finite state machines)
 
+- Allow fully qualified name of static method in @From(method="") annotation
+  as in Jupiter's `@MethodSource("example.StringsProviders#tinyStrings")`
+
 - Arbitraries.series(n -> prime(n)[, maxN])
 
 - Arbitraries.fromStream(aStream[, maxLength])

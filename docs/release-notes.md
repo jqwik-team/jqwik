@@ -37,8 +37,8 @@ and
 
 #### Breaking Changes
 
-- `Arbitrary.exhaustive()` must no longer be overridden. 
-  Override `Arbitrary.exhaustive(long maxNumberOfGeneratedSamples)` instead.
+- `Arbitrary.exhaustive()` must no longer be overridden in implementors of 
+  Arbitrary. Override `Arbitrary.exhaustive(long maxNumberOfGeneratedSamples)` instead.
 
 #### Bug Fixes
 

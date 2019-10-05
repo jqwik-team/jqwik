@@ -1,7 +1,10 @@
 - 1.2.1
 
-  - Allow fully qualified name of static method in @From annotation
-    as in Jupiter's `@MethodSource("example.StringsProviders#tinyStrings")`
+  - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
+    - forType(Class<T> targetType, int depth)
+    - @UseType(depth = 1)
+    
+- 1.2.2
 
   - Lifecycle
     - Around property
@@ -15,7 +18,7 @@
     - Around engine
       - Register through Java Service Registration
   
-- 1.2.2
+- 1.2.3
 
   - Storing values
   - Spring/Boot Testing in its own module
