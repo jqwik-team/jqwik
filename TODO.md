@@ -1,6 +1,8 @@
 - 1.2.1
 
-  - Default arbitrary for Callable
+  - TypeUsage.canBeAssigned/isAssignableFrom to handle 
+    - `X extends XYZ`
+    - `X super XYZ` 
   
   - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
     - forType(Class<T> targetType, int depth)
