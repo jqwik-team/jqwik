@@ -1,5 +1,7 @@
 - 1.2.1
 
+  - Default arbitrary for Callable
+  
   - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
     - forType(Class<T> targetType, int depth)
     - @UseType(depth = 1)
