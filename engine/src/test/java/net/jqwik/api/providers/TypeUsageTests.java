@@ -313,6 +313,28 @@ class TypeUsageTests {
 		}
 
 		@Example
+		void typeVariableWithSingleUpperBoundTakesTypeArgumentsFromUpperBound() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <T extends Map<String, Integer>> void typeVariableWithSingleUpperBound(T element) {}
+
+			}
+
+			Method method = LocalClass.class.getMethod("typeVariableWithSingleUpperBound", Map.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
+
+			assertThat(typeVariableType.getUpperBounds().get(0).getRawType()).isEqualTo(Map.class);
+			assertThat(typeVariableType.toString()).isEqualTo("T extends Map<String, Integer>");
+
+			assertThat(typeVariableType.isAssignableFrom(Map.class)).isTrue();
+			List<TypeUsage> typeArguments = typeVariableType.getTypeArguments();
+			assertThat(typeArguments).hasSize(2);
+			assertThat(typeArguments.get(0)).isEqualTo(TypeUsage.of(String.class));
+			assertThat(typeArguments.get(1)).isEqualTo(TypeUsage.of(Integer.class));
+		}
+
+		@Example
 		void genericTypeWithAnnotatedParameters() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")

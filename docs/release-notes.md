@@ -40,6 +40,11 @@ and
 - `Arbitrary.exhaustive()` must no longer be overridden in implementors of 
   Arbitrary. Override `Arbitrary.exhaustive(long maxNumberOfGeneratedSamples)` instead.
 
+- `TypeUsage.getTypeArguments()`: In case of type variables or wildcard types
+  this method will now return the upper bound's type arguments if there is
+  a single upper bound and no lower bound. This enables correct generation
+  of variables like `T extends Map<Integer, String>`.
+
 #### Bug Fixes
 
 - `@ForAll` annotation could not be replaced by self-made annotation. Now it can. 

@@ -1,9 +1,5 @@
 - 1.2.1
 
-  - TypeUsage.canBeAssigned/isAssignableFrom to handle 
-    - `X extends XYZ`
-    - `X super XYZ` 
-  
   - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
     - forType(Class<T> targetType, int depth)
     - @UseType(depth = 1)

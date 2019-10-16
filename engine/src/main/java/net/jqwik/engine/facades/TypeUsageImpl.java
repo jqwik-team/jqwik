@@ -285,7 +285,14 @@ public class TypeUsageImpl implements TypeUsage {
 
 	@Override
 	public List<TypeUsage> getTypeArguments() {
+		if (isSingleUpperBoundVariableType()) {
+			return getUpperBounds().get(0).getTypeArguments();
+		}
 		return typeArguments;
+	}
+
+	private boolean isSingleUpperBoundVariableType() {
+		return isTypeVariableOrWildcard() && getUpperBounds().size() == 1 && getLowerBounds().isEmpty();
 	}
 
 	@Override
