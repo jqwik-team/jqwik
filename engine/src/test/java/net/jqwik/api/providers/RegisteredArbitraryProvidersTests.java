@@ -259,6 +259,11 @@ class RegisteredArbitraryProvidersTests {
 			aValue.put(42, "forty two");
 		}
 
+		@Property
+		void hashMaps(@ForAll HashMap<Integer, String> aValue) {
+			assertThat(aValue).isInstanceOf(HashMap.class);
+		}
+
 		@Property(tries = 50)
 		void mapsWithNumberKeysAndNumberValues(@ForAll @Size(2) Map<Number, Number> aMap) {
 			assertThat(aMap.keySet()).allMatch(k -> Number.class.isAssignableFrom(k.getClass()));

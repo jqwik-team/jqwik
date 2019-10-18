@@ -1,3 +1,9 @@
+- Bug:
+
+    <X extends HashMap<@IntRange(min = 1, max = 10) Integer, @AlphaChars Character>> void genericVars(@ForAll X callable) 
+
+    does not constrain the generated ints and chars
+
 - 1.2.1
 
   - Introduce recursive use of Arbitraries.forType(Class<T> targetType)

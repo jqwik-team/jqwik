@@ -6,10 +6,10 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.providers.*;
 
-public class MapArbitraryProvider implements ArbitraryProvider {
+public class HashMapArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public boolean canProvideFor(TypeUsage targetType) {
-		return targetType.isAssignableFrom(Map.class);
+		return targetType.isAssignableFrom(HashMap.class);
 	}
 
 	@Override

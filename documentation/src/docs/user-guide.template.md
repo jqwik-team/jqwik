@@ -547,6 +547,7 @@ jqwik will use default generation for the following types:
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
 - `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
+- `HashMap<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
 - [Functional Types](#functional-types)

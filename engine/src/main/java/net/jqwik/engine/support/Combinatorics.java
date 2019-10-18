@@ -10,7 +10,6 @@ import static java.util.Arrays.*;
 
 public class Combinatorics {
 
-	@SuppressWarnings("unchecked")
 	public static <T> Iterator<List<T>> combine(List<Iterable<T>> listOfIterables) {
 		if (listOfIterables.isEmpty()) {
 			return emptyListSingleton();
@@ -18,10 +17,12 @@ public class Combinatorics {
 		return new CombinedIterator<>(listOfIterables);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T> Iterator<List<T>> emptyListSingleton() {
 		return asList((List<T>) new ArrayList()).iterator();
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <T> Iterator<Set<T>> emptySetSingleton() {
 		return asList((Set<T>) new HashSet<>()).iterator();
 	}
