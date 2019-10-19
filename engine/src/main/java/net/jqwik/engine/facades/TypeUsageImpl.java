@@ -35,7 +35,7 @@ public class TypeUsageImpl implements TypeUsage {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(parameter.getType()),
 			parameter.getType(),
-			parameter.getAnnotatedType(),
+			parameter.getAnnotatedParameterizedType(),
 			extractTypeVariable(parameter.getType()),
 			parameter.findAllAnnotations()
 		);
@@ -113,7 +113,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
 		if (parameter.isAnnotatedParameterized()) {
-			return extractAnnotatedTypeArguments(parameter.getAnnotatedType());
+			return extractAnnotatedTypeArguments(parameter.getAnnotatedParameterizedType());
 		} else {
 			return extractPlainTypeArguments(parameter.getType());
 		}

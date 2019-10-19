@@ -24,6 +24,10 @@ public class MethodParameter {
 		return (resolution.annotatedType() instanceof AnnotatedParameterizedType);
 	}
 
+	public boolean isAnnotatedTypeVariable() {
+		return (resolution.annotatedType() instanceof AnnotatedTypeVariable);
+	}
+
 	public boolean isAnnotated(Class<? extends Annotation> annotationType) {
 		return AnnotationSupport.isAnnotated(rawParameter, annotationType);
 	}
@@ -49,9 +53,27 @@ public class MethodParameter {
 		return JqwikAnnotationSupport.findAllAnnotations(rawParameter);
 	}
 
-	public AnnotatedParameterizedType getAnnotatedType() {
+	public AnnotatedParameterizedType getAnnotatedParameterizedType() {
 		if (isAnnotatedParameterized())
 			return (AnnotatedParameterizedType) resolution.annotatedType();
+		else
+			return null;
+	}
+
+	public AnnotatedTypeVariable getAnnotatedTypeVariable() {
+		if (isAnnotatedTypeVariable())
+			return (AnnotatedTypeVariable) resolution.annotatedType();
+		else
+			return null;
+	}
+
+	public boolean isAnnotatedWildcard() {
+		return (resolution.annotatedType() instanceof AnnotatedWildcardType);
+	}
+
+	public AnnotatedWildcardType getAnnotatedWildcard() {
+		if (isAnnotatedWildcard())
+			return (AnnotatedWildcardType) resolution.annotatedType();
 		else
 			return null;
 	}

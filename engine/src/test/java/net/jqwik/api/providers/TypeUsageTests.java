@@ -334,6 +334,31 @@ class TypeUsageTests {
 			assertThat(typeArguments.get(1)).isEqualTo(TypeUsage.of(Integer.class));
 		}
 
+		// @Example
+		void typeVariableWithAnnotationInUpperBound() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <T extends List<@StringLength(10) String>> void typeVariableWithAnnotatedInnerType(T element) {}
+			}
+
+			Method method = LocalClass.class.getMethod("typeVariableWithAnnotatedInnerType", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
+
+			assertThat(typeVariableType.getUpperBounds().get(0).getRawType()).isEqualTo(List.class);
+			assertThat(typeVariableType.toString()).isEqualTo(
+				"T extends List<@net.jqwik.api.constraints.StringLength(value=10, max=0, min=0) String>"
+			);
+
+			assertThat(typeVariableType.isAssignableFrom(List.class)).isTrue();
+			List<TypeUsage> upperBounds = typeVariableType.getUpperBounds();
+			assertThat(upperBounds).hasSize(1);
+			assertThat(upperBounds.get(0).isOfType(List.class)).isTrue();
+			List<TypeUsage> typeArguments = upperBounds.get(0).getTypeArguments();
+			assertThat(typeArguments.get(0).getAnnotations()).hasSize(1);
+			assertThat(typeArguments.get(0).getAnnotations().get(0).annotationType()).isEqualTo(StringLength.class);
+		}
+
 		@Example
 		void genericTypeWithAnnotatedParameters() throws NoSuchMethodException {
 			class LocalClass {
