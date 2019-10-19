@@ -49,6 +49,7 @@ and
 #### Bug Fixes
 
 - `@ForAll` annotation could not be replaced by self-made annotation. Now it can. 
+- Annotations in type parameters of bounds of type variables are now correctly recognized.
 
 ## 1.2.0
 

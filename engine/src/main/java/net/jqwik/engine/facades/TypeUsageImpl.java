@@ -40,7 +40,7 @@ public class TypeUsageImpl implements TypeUsage {
 			parameter.findAllAnnotations()
 		);
 		typeUsage.addTypeArguments(extractTypeArguments(parameter));
-		typeUsage.addUpperBounds(extractUpperBounds(parameter.getType()));
+		typeUsage.addUpperBounds(extractUpperBounds(parameter));
 		typeUsage.addLowerBounds(extractLowerBounds(parameter.getType()));
 
 		return typeUsage;
@@ -143,9 +143,20 @@ public class TypeUsageImpl implements TypeUsage {
 		return null;
 	}
 
+	private static List<TypeUsage> extractUpperBounds(MethodParameter parameter) {
+		if (parameter.isAnnotatedTypeVariable()) {
+			AnnotatedType[] annotatedUpperBounds = parameter.getAnnotatedTypeVariable().getAnnotatedBounds();
+			return Arrays.stream(annotatedUpperBounds)
+						 .map(TypeUsageImpl::forAnnotatedType)
+						 .collect(Collectors.toList());
+		}
+		return extractUpperBounds(parameter.getType());
+	}
+
 	private static List<TypeUsage> extractUpperBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
-			return Arrays.stream(((TypeVariable) parameterizedType).getBounds())
+			Type[] upperBounds = ((TypeVariable) parameterizedType).getBounds();
+			return Arrays.stream(upperBounds)
 						 .map(TypeUsage::forType)
 						 .collect(Collectors.toList());
 		}

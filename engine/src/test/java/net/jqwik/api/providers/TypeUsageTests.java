@@ -334,14 +334,14 @@ class TypeUsageTests {
 			assertThat(typeArguments.get(1)).isEqualTo(TypeUsage.of(Integer.class));
 		}
 
-		// @Example
+		@Example
 		void typeVariableWithAnnotationInUpperBound() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
-				public <T extends List<@StringLength(10) String>> void typeVariableWithAnnotatedInnerType(T element) {}
+				public <T extends List<@StringLength(10) String>> void annotationInUpperBound(T element) {}
 			}
 
-			Method method = LocalClass.class.getMethod("typeVariableWithAnnotatedInnerType", List.class);
+			Method method = LocalClass.class.getMethod("annotationInUpperBound", List.class);
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
