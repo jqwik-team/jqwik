@@ -233,6 +233,29 @@ class TypeUsageTests {
 			assertThat(wildcardType.equals(nonEqualWildcardType)).isFalse();
 		}
 
+		// @Example
+		@Disabled("Not implemented yet. Maybe not implementable due to JDK bug")
+		void wildcardWithAnnotatedUpperBound() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void annotatedUpperBound(List<? extends @StringLength(1) String> list) {}
+			}
+
+			Method method = LocalClass.class.getMethod("annotatedUpperBound", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter);
+
+			TypeUsage first = wildcardType.getTypeArguments().get(0);
+			assertThat(first.isWildcard()).isTrue();
+			assertThat(first.getUpperBounds().get(0).isOfType(String.class)).isTrue();
+
+			assertThat(wildcardType.toString())
+				.isEqualTo("List<? extends @net.jqwik.api.constraints.Size(value=1, max=0, min=0) String>");
+
+			TypeUsage equalWildcardType = TypeUsageImpl.forParameter(parameter);
+			assertThat(wildcardType.equals(equalWildcardType)).isTrue();
+		}
+
 		@Example
 		void typeVariable() throws NoSuchMethodException {
 			class LocalClass {
