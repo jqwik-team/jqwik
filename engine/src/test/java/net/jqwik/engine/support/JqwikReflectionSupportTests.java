@@ -88,14 +88,15 @@ class JqwikReflectionSupportTests {
 
 			MethodParameter param1 = parameters[0];
 			assertThat(param1.getType()).isEqualTo(String.class);
-			assertThat(param1.isAnnotatedParameterized()).isFalse();
-			assertThat(param1.getAnnotatedParameterizedType()).isNull();
+			assertThat(param1.getType()).isEqualTo(param1.getAnnotatedType().getType());
+			assertThat(param1.isParameterized()).isFalse();
 			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
 			MethodParameter param2 = parameters[1];
-			assertThat(param2.getType()).isEqualTo(param2.getAnnotatedParameterizedType().getType());
-			assertThat(param2.isAnnotatedParameterized()).isTrue();
-			assertThat(param2.getAnnotatedParameterizedType().getAnnotatedActualTypeArguments()[0].getType()).isEqualTo(Integer.class);
+			assertThat(param2.getType()).isEqualTo(param2.getAnnotatedType().getType());
+			assertThat(param2.isParameterized()).isTrue();
+			assertThat(((AnnotatedParameterizedType) param2.getAnnotatedType()).getAnnotatedActualTypeArguments()[0].getType())
+				.isEqualTo(Integer.class);
 			assertThat(param2.findAllAnnotations()).isEmpty();
 		}
 
@@ -111,8 +112,7 @@ class JqwikReflectionSupportTests {
 
 			MethodParameter param1 = parameters[0];
 			assertThat(param1.getType()).isInstanceOf(TypeVariable.class);
-			assertThat(param1.isAnnotatedParameterized()).isFalse();
-			assertThat(param1.getAnnotatedParameterizedType()).isNull();
+			assertThat(param1.isParameterized()).isFalse();
 		}
 
 		@Example
@@ -131,7 +131,7 @@ class JqwikReflectionSupportTests {
 			MethodParameter param1 = parameters[0];
 			assertThat(param1.getType()).isEqualTo(String.class);
 			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
-			assertThat(param1.isAnnotatedParameterized()).isFalse();
+			assertThat(param1.isParameterized()).isFalse();
 		}
 
 		@Example
@@ -153,8 +153,7 @@ class JqwikReflectionSupportTests {
 			assertThat(((ParameterizedType) param1.getType()).getActualTypeArguments()).containsExactly(String.class);
 			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
-			assertThat(param1.isAnnotatedParameterized()).isTrue();
-			assertThat(param1.getAnnotatedParameterizedType()).isNotNull();
+			assertThat(param1.isParameterized()).isTrue();
 		}
 	}
 

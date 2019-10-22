@@ -20,12 +20,8 @@ public class MethodParameter {
 		this.resolution = resolution;
 	}
 
-	public boolean isAnnotatedParameterized() {
+	public boolean isParameterized() {
 		return (resolution.annotatedType() instanceof AnnotatedParameterizedType);
-	}
-
-	public boolean isAnnotatedTypeVariable() {
-		return (resolution.annotatedType() instanceof AnnotatedTypeVariable);
 	}
 
 	public boolean isAnnotated(Class<? extends Annotation> annotationType) {
@@ -53,28 +49,8 @@ public class MethodParameter {
 		return JqwikAnnotationSupport.findAllAnnotations(rawParameter);
 	}
 
-	public AnnotatedParameterizedType getAnnotatedParameterizedType() {
-		if (isAnnotatedParameterized())
-			return (AnnotatedParameterizedType) resolution.annotatedType();
-		else
-			return null;
+	public AnnotatedType getAnnotatedType() {
+		return resolution.annotatedType();
 	}
 
-	public AnnotatedTypeVariable getAnnotatedTypeVariable() {
-		if (isAnnotatedTypeVariable())
-			return (AnnotatedTypeVariable) resolution.annotatedType();
-		else
-			return null;
-	}
-
-	public boolean isAnnotatedWildcard() {
-		return (resolution.annotatedType() instanceof AnnotatedWildcardType);
-	}
-
-	public AnnotatedWildcardType getAnnotatedWildcard() {
-		if (isAnnotatedWildcard())
-			return (AnnotatedWildcardType) resolution.annotatedType();
-		else
-			return null;
-	}
 }

@@ -34,13 +34,10 @@ public class TypeUsageFacadeImpl extends TypeUsage.TypeUsageFacade {
 
 	@Override
 	public TypeUsage forType(Type type) {
-		TypeUsageImpl typeUsage;
 		if (type instanceof WildcardType) {
-			typeUsage = TypeUsageImpl.forWildcard((WildcardType) type);
-		} else {
-			typeUsage = TypeUsageImpl.forNonWildcardType(type);
+			return TypeUsageImpl.forWildcard((WildcardType) type);
 		}
-		return typeUsage;
+		return TypeUsageImpl.forNonWildcardType(type);
 	}
 
 }

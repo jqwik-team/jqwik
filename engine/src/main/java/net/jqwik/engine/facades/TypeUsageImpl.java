@@ -10,7 +10,6 @@ import java.util.stream.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
-// TODO: Refactor extractMethods
 public class TypeUsageImpl implements TypeUsage {
 
 	private static Map<TypeVariable, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
@@ -26,8 +25,8 @@ public class TypeUsageImpl implements TypeUsage {
 			extractAnnotations(typeResolution.annotatedType())
 		);
 		typeUsage.addTypeArguments(extractTypeArguments(typeResolution));
-		typeUsage.addUpperBounds(extractUpperBounds(typeResolution.type()));
-		typeUsage.addLowerBounds(extractLowerBounds(typeResolution.type()));
+		typeUsage.addUpperBounds(extractUpperBounds(typeResolution.annotatedType()));
+		typeUsage.addLowerBounds(extractLowerBounds(typeResolution.annotatedType()));
 
 		return typeUsage;
 	}
@@ -36,13 +35,13 @@ public class TypeUsageImpl implements TypeUsage {
 		TypeUsageImpl typeUsage = new TypeUsageImpl(
 			extractRawType(parameter.getType()),
 			parameter.getType(),
-			parameter.getAnnotatedParameterizedType(),
+			parameter.getAnnotatedType(),
 			extractTypeVariable(parameter.getType()),
 			parameter.findAllAnnotations()
 		);
 		typeUsage.addTypeArguments(extractTypeArguments(parameter));
 		typeUsage.addUpperBounds(extractUpperBounds(parameter));
-		typeUsage.addLowerBounds(extractLowerBounds(parameter.getType()));
+		typeUsage.addLowerBounds(extractLowerBounds(parameter));
 
 		return typeUsage;
 	}
@@ -67,8 +66,8 @@ public class TypeUsageImpl implements TypeUsage {
 			WILDCARD,
 			extractAnnotations(wildcardType),
 			typeUsage -> {
-				typeUsage.addUpperBounds(extractUpperBounds(wildcardType));
-				typeUsage.addLowerBounds(extractLowerBounds(wildcardType));
+				typeUsage.addUpperBounds(extractUpperBoundsForWildcard(wildcardType));
+				typeUsage.addLowerBounds(extractLowerBoundsForWildcard(wildcardType));
 			}
 		);
 	}
@@ -83,7 +82,7 @@ public class TypeUsageImpl implements TypeUsage {
 			typeUsage -> {
 				typeUsage.addTypeArguments(extractPlainTypeArguments(annotatedType));
 				typeUsage.addUpperBounds(extractUpperBounds(annotatedType));
-				typeUsage.addLowerBounds(extractLowerBounds(annotatedType.getType()));
+				typeUsage.addLowerBounds(extractLowerBounds(annotatedType));
 			}
 		);
 	}
@@ -115,11 +114,9 @@ public class TypeUsageImpl implements TypeUsage {
 		}
 
 		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations);
-
 		if (type instanceof TypeVariable) {
 			resolved.put((TypeVariable) type, typeUsage);
 		}
-
 		processTypeUsage.accept(typeUsage);
 
 		return typeUsage;
@@ -130,8 +127,8 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
-		if (parameter.isAnnotatedParameterized()) {
-			return extractAnnotatedTypeArguments(parameter.getAnnotatedParameterizedType());
+		if (parameter.getAnnotatedType() instanceof AnnotatedParameterizedType) {
+			return extractAnnotatedTypeArguments((AnnotatedParameterizedType) parameter.getAnnotatedType());
 		} else {
 			return extractPlainTypeArguments(parameter.getType());
 		}
@@ -143,6 +140,28 @@ public class TypeUsageImpl implements TypeUsage {
 		} else {
 			return extractPlainTypeArguments(resolution.type());
 		}
+	}
+
+	private static List<TypeUsage> extractPlainTypeArguments(Object parameterizedType) {
+		if (parameterizedType instanceof AnnotatedParameterizedType) {
+			return extractAnnotatedTypeArguments((AnnotatedParameterizedType) parameterizedType);
+		}
+		if (parameterizedType instanceof ParameterizedType) {
+			return toTypeUsages(((ParameterizedType) parameterizedType).getActualTypeArguments());
+		}
+		// Now it's either not a generic type or it has type variables
+		return Collections.emptyList();
+	}
+
+	private static List<TypeUsage> extractAnnotatedTypeArguments(AnnotatedParameterizedType annotatedType) {
+		AnnotatedType[] annotatedActualTypeArguments = annotatedType.getAnnotatedActualTypeArguments();
+		return toTypeUsages(annotatedActualTypeArguments);
+	}
+
+	private static List<TypeUsage> toTypeUsages(AnnotatedType[] annotatedActualTypeArguments) {
+		return Arrays.stream(annotatedActualTypeArguments) //
+					 .map(TypeUsageImpl::forAnnotatedType) //
+					 .collect(Collectors.toList());
 	}
 
 	private static List<Annotation> extractAnnotations(Object parameterizedType) {
@@ -165,65 +184,65 @@ public class TypeUsageImpl implements TypeUsage {
 		List<TypeUsage> upperBounds = Collections.emptyList();
 		if (annotatedType instanceof AnnotatedWildcardType) {
 			AnnotatedType[] annotatedUpperBounds = ((AnnotatedWildcardType) annotatedType).getAnnotatedUpperBounds();
-			upperBounds = Arrays.stream(annotatedUpperBounds)
-								.map(TypeUsageImpl::forAnnotatedType)
-								.collect(Collectors.toList());
+			upperBounds = toTypeUsages(annotatedUpperBounds);
 		}
 		if (annotatedType instanceof AnnotatedTypeVariable) {
 			AnnotatedType[] annotatedUpperBounds = ((AnnotatedTypeVariable) annotatedType).getAnnotatedBounds();
-			upperBounds = Arrays.stream(annotatedUpperBounds)
-								.map(TypeUsageImpl::forAnnotatedType)
-								.collect(Collectors.toList());
+			upperBounds = toTypeUsages(annotatedUpperBounds);
 		}
 		return upperBounds.isEmpty() ? Collections.singletonList(TypeUsage.of(Object.class)) : upperBounds;
 	}
 
 	private static List<TypeUsage> extractUpperBounds(MethodParameter parameter) {
-		if (parameter.isAnnotatedTypeVariable()) {
-			AnnotatedType[] annotatedUpperBounds = parameter.getAnnotatedTypeVariable().getAnnotatedBounds();
-			return Arrays.stream(annotatedUpperBounds)
-						 .map(TypeUsageImpl::forAnnotatedType)
-						 .collect(Collectors.toList());
-		}
-		if (parameter.isAnnotatedWildcard()) {
-			AnnotatedType[] annotatedUpperBounds = parameter.getAnnotatedWildcard().getAnnotatedUpperBounds();
-			return Arrays.stream(annotatedUpperBounds)
-						 .map(TypeUsageImpl::forAnnotatedType)
-						 .collect(Collectors.toList());
-		}
-		return extractUpperBounds(parameter.getType());
+		return extractUpperBounds(parameter.getAnnotatedType());
 	}
 
 	private static List<TypeUsage> extractUpperBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
-			Type[] upperBounds = ((TypeVariable) parameterizedType).getBounds();
-			return Arrays.stream(upperBounds)
-						 .map(TypeUsage::forType)
-						 .collect(Collectors.toList());
+			return extractUpperBoundsForTypeVariable((TypeVariable) parameterizedType);
 		}
 		if (parameterizedType instanceof WildcardType) {
-			return extractUpperBounds((WildcardType) parameterizedType);
-		}
-		return new ArrayList<>();
-	}
-
-	private static List<TypeUsage> extractUpperBounds(WildcardType wildcardType) {
-		return Arrays.stream(wildcardType.getUpperBounds())
-					 .map(TypeUsage::forType)
-					 .collect(Collectors.toList());
-	}
-
-	private static List<TypeUsage> extractLowerBounds(Type parameterizedType) {
-		if (parameterizedType instanceof WildcardType) {
-			return extractLowerBounds((WildcardType) parameterizedType);
+			return extractUpperBoundsForWildcard((WildcardType) parameterizedType);
 		}
 		return Collections.emptyList();
 	}
 
-	private static List<TypeUsage> extractLowerBounds(WildcardType wildcardType) {
-		return Arrays.stream(wildcardType.getLowerBounds())
+	private static List<TypeUsage> extractUpperBoundsForTypeVariable(TypeVariable typeVariable) {
+		Type[] upperBounds = typeVariable.getBounds();
+		return toTypeUsages(upperBounds);
+	}
+
+	private static List<TypeUsage> extractUpperBoundsForWildcard(WildcardType wildcardType) {
+		return toTypeUsages(wildcardType.getUpperBounds());
+	}
+
+	private static List<TypeUsage> toTypeUsages(Type[] upperBounds) {
+		return Arrays.stream(upperBounds)
 					 .map(TypeUsage::forType)
 					 .collect(Collectors.toList());
+	}
+
+	private static List<TypeUsage> extractLowerBounds(MethodParameter parameter) {
+		return extractLowerBounds(parameter.getAnnotatedType());
+	}
+
+	private static List<TypeUsage> extractLowerBounds(AnnotatedType annotatedType) {
+		if (annotatedType instanceof AnnotatedWildcardType) {
+			AnnotatedType[] annotatedUpperBounds = ((AnnotatedWildcardType) annotatedType).getAnnotatedLowerBounds();
+			return toTypeUsages(annotatedUpperBounds);
+		}
+		return Collections.emptyList();
+	}
+
+	private static List<TypeUsage> extractLowerBounds(Type parameterizedType) {
+		if (parameterizedType instanceof WildcardType) {
+			return extractLowerBoundsForWildcard((WildcardType) parameterizedType);
+		}
+		return Collections.emptyList();
+	}
+
+	private static List<TypeUsage> extractLowerBoundsForWildcard(WildcardType wildcardType) {
+		return toTypeUsages(wildcardType.getLowerBounds());
 	}
 
 	private static Class<?> extractRawType(Type parameterizedType) {
@@ -235,25 +254,6 @@ public class TypeUsageImpl implements TypeUsage {
 		}
 		// Now we have a type variable (java.lang.reflect.TypeVariable)
 		return Object.class;
-	}
-
-	private static List<TypeUsage> extractPlainTypeArguments(Object parameterizedType) {
-		if (parameterizedType instanceof AnnotatedParameterizedType) {
-			return extractAnnotatedTypeArguments((AnnotatedParameterizedType) parameterizedType);
-		}
-		if (parameterizedType instanceof ParameterizedType) {
-			return Arrays.stream(((ParameterizedType) parameterizedType).getActualTypeArguments()) //
-						 .map(TypeUsage::forType) //
-						 .collect(Collectors.toList());
-		}
-		// Now it's either not a generic type or it has type variables
-		return Collections.emptyList();
-	}
-
-	private static List<TypeUsage> extractAnnotatedTypeArguments(AnnotatedParameterizedType annotatedType) {
-		return Arrays.stream(annotatedType.getAnnotatedActualTypeArguments()) //
-					 .map(TypeUsageImpl::forAnnotatedType) //
-					 .collect(Collectors.toList());
 	}
 
 	private final Class<?> rawType;
@@ -433,6 +433,10 @@ public class TypeUsageImpl implements TypeUsage {
 
 	@Override
 	public List<Annotation> getAnnotations() {
+		if (isSingleUpperBoundVariableType()) {
+			return Stream.concat(annotations.stream(), getUpperBounds().get(0).getAnnotations().stream())
+						 .collect(Collectors.toList());
+		}
 		return annotations;
 	}
 
@@ -548,9 +552,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	@Override
 	public List<TypeUsage> getInterfaces() {
-		return Arrays.stream(getRawType().getInterfaces())
-					 .map(TypeUsage::forType)
-					 .collect(Collectors.toList());
+		return toTypeUsages(getRawType().getInterfaces());
 	}
 
 	@Override

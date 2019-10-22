@@ -4,6 +4,7 @@ import java.io.*;
 import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
@@ -253,6 +254,22 @@ class TypeUsageTests {
 
 			TypeUsage equalWildcardType = TypeUsageImpl.forParameter(parameter);
 			assertThat(wildcardType.equals(equalWildcardType)).isTrue();
+		}
+
+		@Example
+		void wildcardWithSingleUpperBoundAppendsAnnotationsFromUpperBound() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void annotatedUpperBound(List<@From("oops") ? extends @StringLength(1) String> list) {}
+			}
+
+			Method method = LocalClass.class.getMethod("annotatedUpperBound", List.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter).getTypeArgument(0);
+
+			assertThat(wildcardType.getAnnotations()).hasSize(2);
+			Stream<String> annotationNames = wildcardType.getAnnotations().stream().map(a -> a.annotationType().getSimpleName());
+			assertThat(annotationNames).containsExactlyInAnyOrder("From", "StringLength");
 		}
 
 		@Example
