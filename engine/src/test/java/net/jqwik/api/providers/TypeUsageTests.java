@@ -233,8 +233,7 @@ class TypeUsageTests {
 			assertThat(wildcardType.equals(nonEqualWildcardType)).isFalse();
 		}
 
-		// @Example
-		@Disabled("Not implemented yet. Maybe not implementable due to JDK bug")
+		@Example
 		void wildcardWithAnnotatedUpperBound() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
@@ -250,7 +249,7 @@ class TypeUsageTests {
 			assertThat(first.getUpperBounds().get(0).isOfType(String.class)).isTrue();
 
 			assertThat(wildcardType.toString())
-				.isEqualTo("List<? extends @net.jqwik.api.constraints.Size(value=1, max=0, min=0) String>");
+				.isEqualTo("List<? extends @net.jqwik.api.constraints.StringLength(value=1, max=0, min=0) String>");
 
 			TypeUsage equalWildcardType = TypeUsageImpl.forParameter(parameter);
 			assertThat(wildcardType.equals(equalWildcardType)).isTrue();

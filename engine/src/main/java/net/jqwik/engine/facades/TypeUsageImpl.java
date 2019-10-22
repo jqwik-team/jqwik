@@ -10,9 +10,10 @@ import java.util.stream.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.support.*;
 
+// TODO: Refactor extractMethods
 public class TypeUsageImpl implements TypeUsage {
 
-	private static Map<Type, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
+	private static Map<TypeVariable, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
 
 	static final String WILDCARD = "?";
 
@@ -46,24 +47,23 @@ public class TypeUsageImpl implements TypeUsage {
 		return typeUsage;
 	}
 
-	static TypeUsageImpl forParameterizedType(Type parameterizedType) {
-		return resolveOrCreate(
-			parameterizedType,
-			extractRawType(parameterizedType),
-			extractTypeVariable(parameterizedType),
+	static TypeUsageImpl forNonWildcardType(Type type) {
+		return resolveVariableOrCreate(
+			extractRawType(type),
+			type,
+			extractTypeVariable(type),
 			Collections.emptyList(),
 			typeUsage -> {
-				typeUsage.addTypeArguments(extractPlainTypeArguments(parameterizedType));
-				typeUsage.addUpperBounds(extractUpperBounds(parameterizedType));
-				typeUsage.addLowerBounds(extractLowerBounds(parameterizedType));
+				typeUsage.addTypeArguments(extractPlainTypeArguments(type));
+				typeUsage.addUpperBounds(extractUpperBounds(type));
+				typeUsage.addLowerBounds(extractLowerBounds(type));
 			}
 		);
 	}
 
 	static TypeUsageImpl forWildcard(WildcardType wildcardType) {
-		return resolveOrCreate(
-			wildcardType,
-			Object.class,
+		return resolveVariableOrCreate(
+			Object.class, wildcardType,
 			WILDCARD,
 			extractAnnotations(wildcardType),
 			typeUsage -> {
@@ -73,42 +73,60 @@ public class TypeUsageImpl implements TypeUsage {
 		);
 	}
 
-	private static TypeUsageImpl resolveOrCreate(
-		Type type,
+	private static TypeUsageImpl forAnnotatedType(AnnotatedType annotatedType) {
+		return resolveVariableOrCreate(
+			extractRawType(annotatedType.getType()),
+			annotatedType.getType(),
+			annotatedType,
+			extractTypeVariable(annotatedType.getType()),
+			extractAnnotations(annotatedType),
+			typeUsage -> {
+				typeUsage.addTypeArguments(extractPlainTypeArguments(annotatedType));
+				typeUsage.addUpperBounds(extractUpperBounds(annotatedType));
+				typeUsage.addLowerBounds(extractLowerBounds(annotatedType.getType()));
+			}
+		);
+	}
+
+	private static TypeUsageImpl resolveVariableOrCreate(
 		Class rawType,
+		Type type,
 		String typeVariable,
 		List<Annotation> annotations,
 		Consumer<TypeUsageImpl> processTypeUsage
 	) {
-		Optional<TypeUsageImpl> alreadyResolved = alreadyResolvedIn(type);
-		if (alreadyResolved.isPresent()) {
-			return alreadyResolved.get();
+		AnnotatedType annotatedType = type instanceof AnnotatedType ? (AnnotatedType) type : null;
+		return resolveVariableOrCreate(rawType, type, annotatedType, typeVariable, annotations, processTypeUsage);
+	}
+
+	private static TypeUsageImpl resolveVariableOrCreate(
+		Class rawType,
+		Type type,
+		AnnotatedType annotatedType,
+		String typeVariable,
+		List<Annotation> annotations,
+		Consumer<TypeUsageImpl> processTypeUsage
+	) {
+		if (type instanceof TypeVariable) {
+			Optional<TypeUsageImpl> alreadyResolved = alreadyResolvedIn((TypeVariable) type);
+			if (alreadyResolved.isPresent()) {
+				return alreadyResolved.get();
+			}
 		}
 
-		AnnotatedType annotatedType = type instanceof AnnotatedType ? (AnnotatedType) type : null;
 		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations);
-		resolved.put(type, typeUsage);
+
+		if (type instanceof TypeVariable) {
+			resolved.put((TypeVariable) type, typeUsage);
+		}
+
 		processTypeUsage.accept(typeUsage);
 
 		return typeUsage;
 	}
 
-	private static TypeUsageImpl forAnnotatedType(AnnotatedType annotatedType) {
-		TypeUsageImpl typeUsage = new TypeUsageImpl(
-			extractRawType(annotatedType.getType()),
-			annotatedType.getType(),
-			annotatedType,
-			extractTypeVariable(annotatedType.getType()),
-			extractAnnotations(annotatedType)
-		);
-		typeUsage.addTypeArguments(extractPlainTypeArguments(annotatedType));
-		typeUsage.addUpperBounds(extractUpperBounds(annotatedType.getType()));
-		typeUsage.addLowerBounds(extractLowerBounds(annotatedType.getType()));
-		return typeUsage;
-	}
-
-	private static Optional<TypeUsageImpl> alreadyResolvedIn(Type type) {
-		return Optional.ofNullable(resolved.get(type));
+	private static Optional<TypeUsageImpl> alreadyResolvedIn(TypeVariable typeVariable) {
+		return Optional.ofNullable(resolved.get(typeVariable));
 	}
 
 	private static List<TypeUsage> extractTypeArguments(MethodParameter parameter) {
@@ -143,9 +161,32 @@ public class TypeUsageImpl implements TypeUsage {
 		return null;
 	}
 
+	private static List<TypeUsage> extractUpperBounds(AnnotatedType annotatedType) {
+		List<TypeUsage> upperBounds = Collections.emptyList();
+		if (annotatedType instanceof AnnotatedWildcardType) {
+			AnnotatedType[] annotatedUpperBounds = ((AnnotatedWildcardType) annotatedType).getAnnotatedUpperBounds();
+			upperBounds = Arrays.stream(annotatedUpperBounds)
+								.map(TypeUsageImpl::forAnnotatedType)
+								.collect(Collectors.toList());
+		}
+		if (annotatedType instanceof AnnotatedTypeVariable) {
+			AnnotatedType[] annotatedUpperBounds = ((AnnotatedTypeVariable) annotatedType).getAnnotatedBounds();
+			upperBounds = Arrays.stream(annotatedUpperBounds)
+								.map(TypeUsageImpl::forAnnotatedType)
+								.collect(Collectors.toList());
+		}
+		return upperBounds.isEmpty() ? Collections.singletonList(TypeUsage.of(Object.class)) : upperBounds;
+	}
+
 	private static List<TypeUsage> extractUpperBounds(MethodParameter parameter) {
 		if (parameter.isAnnotatedTypeVariable()) {
 			AnnotatedType[] annotatedUpperBounds = parameter.getAnnotatedTypeVariable().getAnnotatedBounds();
+			return Arrays.stream(annotatedUpperBounds)
+						 .map(TypeUsageImpl::forAnnotatedType)
+						 .collect(Collectors.toList());
+		}
+		if (parameter.isAnnotatedWildcard()) {
+			AnnotatedType[] annotatedUpperBounds = parameter.getAnnotatedWildcard().getAnnotatedUpperBounds();
 			return Arrays.stream(annotatedUpperBounds)
 						 .map(TypeUsageImpl::forAnnotatedType)
 						 .collect(Collectors.toList());
