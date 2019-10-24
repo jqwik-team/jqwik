@@ -1017,7 +1017,23 @@ Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000)
 
 Generating instances of type `Map` is a bit different since two arbitraries
 are needed, one for the key and one for the value. Therefore you have to use
-[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-), which might look
+like this:
+
+```java
+@Property
+void mapsFromNumberToNumberString(@ForAll("numberMaps")  Map<Integer, String> map) {
+    Assertions.assertThat(map.keySet()).allMatch(key -> key >= 0 && key <= 1000);
+    Assertions.assertThat(map.values()).allMatch(value -> value.length() == 5);
+}
+
+@Provide
+Arbitrary<Map<Integer, String>> numberMaps() {
+    Arbitrary<Integer> keys = Arbitraries.integers().between(1, 100);
+    Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
+    return Arbitraries.maps(keys, values);
+}
+```
 
 For generating individual `Map.Entry` instances there is
 [`Arbitraries.entries(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)

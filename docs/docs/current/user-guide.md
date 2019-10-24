@@ -1114,6 +1114,21 @@ Generating instances of type `Map` is a bit different since two arbitraries
 are needed, one for the key and one for the value. Therefore you have to use
 [`Arbitraries.maps(...)`](/docs/1.2.0/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
 
+```java
+@Property
+void mapsFromNumberToNumberString(@ForAll("numberMaps")  Map<Integer, String> map) {
+    Assertions.assertThat(map.keySet()).allMatch(key -> key >= 0 && key <= 1000);
+    Assertions.assertThat(map.values()).allMatch(value -> value.length() == 5);
+}
+
+@Provide
+Arbitrary<Map<Integer, String>> numberMaps() {
+    Arbitrary<Integer> keys = Arbitraries.integers().between(1, 100);
+    Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
+    return Arbitraries.maps(keys, values);
+}
+```
+
 For generating individual `Map.Entry` instances there is
 [`Arbitraries.entries(...)`](/docs/1.2.0/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
 
