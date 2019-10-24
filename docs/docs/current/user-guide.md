@@ -1116,7 +1116,7 @@ are needed, one for the key and one for the value. Therefore you have to use
 
 ```java
 @Property
-void mapsFromNumberToNumberString(@ForAll("numberMaps")  Map<Integer, String> map) {
+void mapsFromNumberToString(@ForAll("numberMaps")  Map<Integer, String> map) {
     Assertions.assertThat(map.keySet()).allMatch(key -> key >= 0 && key <= 1000);
     Assertions.assertThat(map.values()).allMatch(value -> value.length() == 5);
 }
@@ -1130,7 +1130,7 @@ Arbitrary<Map<Integer, String>> numberMaps() {
 ```
 
 For generating individual `Map.Entry` instances there is
-[`Arbitraries.entries(...)`](/docs/1.2.0/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+[`Arbitraries.entries(...)`](/docs/1.2.0/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-).
 
 
 ### Functional Types
