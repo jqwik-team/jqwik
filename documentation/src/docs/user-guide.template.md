@@ -1017,8 +1017,7 @@ Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000)
 
 Generating instances of type `Map` is a bit different since two arbitraries
 are needed, one for the key and one for the value. Therefore you have to use
-[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-), which might look
-like this:
+[`Arbitraries.maps(...)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) like this:
 
 ```java
 @Property
