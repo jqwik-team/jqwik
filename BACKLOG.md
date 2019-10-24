@@ -198,6 +198,11 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - @Regex(RegularExpression value) or composable RegexStringArbitrary
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
 
+- Introduce recursive use of Arbitraries.forType(Class<T> targetType)
+    - forType(Class<T> targetType, int depth)
+    - @UseType(depth = 1)
+    
+
 ### Contracts / Specifications / Domain objects
 
 see example in package `net.jqwik.docs.contracts.eurocalc`
