@@ -75,7 +75,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		int maxKeyLength = statisticsEntries.stream().mapToInt(entry -> entry.name.length()).max().orElse(0);
 		boolean fullNumbersOnly = statisticsEntries.stream().noneMatch(entry -> entry.percentage < 1);
 
-		final int decimals = (int) Math.round(Math.log10(sum));
+		final int decimals = (int) Math.max(1, Math.round(Math.log10(sum)));
 		for (StatisticsEntry statsEntry : statisticsEntries) {
 			statistics.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly, decimals));
 		}

@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.2.2-SNAPSHOT](#122-snapshot)
 - [1.2.1](#121)
 - [1.2.0](#120)
 - [1.1.x](#11x)
@@ -17,6 +18,16 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.2.2-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- [Statistics formatting bug](https://github.com/jlink/jqwik/issues/72) 
 
 ## 1.2.1
 
