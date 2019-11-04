@@ -1,3 +1,7 @@
+static isSnapshotRelease(versionString) {
+	versionString.endsWith('SNAPSHOT')
+}
+
 ext {
 	junitPlatformVersion = '1.5.2'
 	junitJupiterVersion = '5.5.2'
@@ -8,6 +12,7 @@ ext {
 	mockitoVersion = '3.1.0'
 	moduleName = 'net.jqwik'
 	jqwikVersion = '1.2.2-SNAPSHOT'
+	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 
 allprojects {
@@ -49,7 +54,7 @@ allprojects {
 				// change URLs to point to your repos, e.g. http://my.org/repo
 				def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 				def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-				url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+				url = isSnapshotRelease ? snapshotsRepoUrl : releasesRepoUrl
 			}
 		}
 	}
@@ -64,9 +69,11 @@ allprojects {
 	dependencies {
 		api("org.apiguardian:apiguardian-api:${apiGuardianVersion}")
 	}
+
 }
 
 wrapper {
 	description = 'Generates gradlew[.bat] scripts'
 	gradleVersion = '5.6.3'
 }
+

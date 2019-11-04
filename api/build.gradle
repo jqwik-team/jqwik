@@ -45,7 +45,9 @@ publishing {
 }
 
 signing {
-	sign publishing.publications.jqwikApi
+	if (!isSnapshotRelease) {
+		sign publishing.publications.jqwikApi
+	}
 }
 
 dependencies {

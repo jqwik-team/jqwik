@@ -52,7 +52,9 @@ publishing {
 }
 
 signing {
-	sign publishing.publications.jqwikEngine
+	if (!isSnapshotRelease) {
+		sign publishing.publications.jqwikEngine
+	}
 }
 
 test {
