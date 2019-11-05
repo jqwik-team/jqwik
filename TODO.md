@@ -1,5 +1,7 @@
 - 1.2.2
 
+  - Change displayName of properties if their is more than one with the same name
+  
   - Lifecycle
     - Around property
     - Around try
