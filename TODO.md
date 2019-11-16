@@ -1,6 +1,18 @@
 - 1.2.2
 
-  - Change displayName of properties if their is more than one with the same name
+  - Change signature of Arbitraries.oneOf() to allow covariant arbitrary types, e.g.
+  
+    return Arbitraries.oneOf(
+			Arbitraries.strings(),
+			Arbitraries.strings().list(),
+			Arbitraries.integers()
+		);
+		
+	If not possible introduce Arbitraries.anyOf() as a type unsafe wrapper.
+
+  - Allow to annotate type variables with @From
+
+  - Have test names (optionally) include parameter types
   
   - Lifecycle
     - Around property
