@@ -1,5 +1,8 @@
 - 1.2.2
 
+  - Switch off database if it is configured with empty string
+    `database=`
+
   - Change signature of Arbitraries.oneOf() to allow covariant arbitrary types, e.g.
   
     return Arbitraries.oneOf(
