@@ -59,9 +59,12 @@ allprojects {
 		}
 	}
 
+	java {
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
+	}
+
 	compileTestJava {
-		sourceCompatibility = 1.8
-		targetCompatibility = 1.8
 		options.compilerArgs += '-parameters'
 		options.encoding = 'UTF-8'
 	}
