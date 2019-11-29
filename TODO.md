@@ -1,7 +1,7 @@
 - 1.2.2
 
-  - Switch off database if it is configured with empty string
-    `database=`
+  - Save random seed instead of serialized objects to recreate specific test data
+    when rerunning failed properties
 
   - Change signature of Arbitraries.oneOf() to allow covariant arbitrary types, e.g.
   

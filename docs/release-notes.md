@@ -23,6 +23,10 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- When configuration parameter `database` is set to empty, test run recording
+  is now completely disabled.
+
+
 #### Breaking Changes
 
 #### Bug Fixes

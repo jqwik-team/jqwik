@@ -2773,7 +2773,8 @@ _jqwik_ will look for a file `jqwik.properties` in your classpath in which you c
 a few basic parameters:
 
 ```
-database = .jqwik-database          # The database to store data of previous runs
+database = .jqwik-database          # The database file in which to store data of previous runs.
+                                    # Set to empty to fully disable test run recording.
 defaultTries = 1000                 # The default number of tries for each property
 defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
 useJunitPlatformReporter = false    # Set to true if you want to use platform reporting

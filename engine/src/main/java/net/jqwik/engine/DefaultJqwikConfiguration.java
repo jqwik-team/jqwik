@@ -2,6 +2,7 @@ package net.jqwik.engine;
 
 import java.nio.file.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.*;
@@ -9,6 +10,8 @@ import org.junit.platform.engine.*;
 import net.jqwik.engine.recording.*;
 
 public class DefaultJqwikConfiguration implements JqwikConfiguration {
+
+	private static final Logger LOG = Logger.getLogger(JqwikConfiguration.class.getName());
 
 	private final JqwikProperties properties;
 	private TestEngineConfiguration testEngineConfiguration = null;
@@ -50,7 +53,35 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 	}
 
 	private TestEngineConfiguration createTestEngineConfiguration() {
-		TestRunDatabase database = new TestRunDatabase(Paths.get(properties.databasePath()));
+		String databasePath = properties.databasePath();
+		if (databasePath == null || databasePath.trim().isEmpty()) {
+			LOG.log(Level.INFO, "jqwik's test run database has been switched off");
+			return testEngineConfigurationWithDisabledDatabase();
+		}
+		return testEngineConfigurationFromDatabase(databasePath);
+	}
+
+	private TestEngineConfiguration testEngineConfigurationWithDisabledDatabase() {
+		return new TestEngineConfiguration() {
+			@Override
+			public TestRunRecorder recorder() {
+				return TestRunRecorder.NULL;
+			}
+
+			@Override
+			public TestRunData previousRun() {
+				return new TestRunData();
+			}
+
+			@Override
+			public Set<UniqueId> previousFailures() {
+				return Collections.emptySet();
+			}
+		};
+	}
+
+	private TestEngineConfiguration testEngineConfigurationFromDatabase(String databasePath) {
+		TestRunDatabase database = new TestRunDatabase(Paths.get(databasePath));
 		TestRunData previousRun = database.previousRun();
 		return new TestEngineConfiguration() {
 			@Override
