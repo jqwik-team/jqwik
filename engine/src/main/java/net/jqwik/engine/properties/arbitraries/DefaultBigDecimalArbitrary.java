@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -20,6 +21,11 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
 		return generatingArbitrary.generator(genSize);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<BigDecimal>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples);
 	}
 
 	@Override

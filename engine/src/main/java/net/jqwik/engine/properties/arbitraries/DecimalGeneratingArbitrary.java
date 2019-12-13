@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -28,6 +29,14 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	public RandomGenerator<BigDecimal> generator(int genSize) {
 		BigDecimal[] partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max);
 		return decimalGenerator(partitionPoints, genSize);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<BigDecimal>> exhaustive(long maxNumberOfSamples) {
+		if (min.compareTo(max) == 0) {
+			return ExhaustiveGenerators.choose(Collections.singletonList(min), maxNumberOfSamples);
+		}
+		return Optional.empty();
 	}
 
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {

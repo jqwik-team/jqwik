@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties;
 
 import java.math.*;
+import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -264,6 +265,24 @@ class ExhaustiveGenerationTests {
 			ExhaustiveGenerator<String> generator = optionalGenerator.get();
 			assertThat(generator.maxCount()).isEqualTo(3);
 			assertThat(generator).containsExactly("string1", null, "string3");
+		}
+
+	}
+
+	@Group
+	class FloatsAndDecimals {
+
+		@Example
+		void singleBigDecimal() {
+			Optional<ExhaustiveGenerator<BigDecimal>> optionalGenerator =
+				Arbitraries.bigDecimals()
+						   .between(BigDecimal.valueOf(100.0), BigDecimal.valueOf(100.0))
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<BigDecimal> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(1);
+			assertThat(generator).containsExactly(BigDecimal.valueOf(100.0));
 		}
 
 	}
