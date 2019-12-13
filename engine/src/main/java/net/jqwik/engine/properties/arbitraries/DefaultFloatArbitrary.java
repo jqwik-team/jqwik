@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -19,6 +20,11 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 	@Override
 	public RandomGenerator<Float> generator(int genSize) {
 		return generatingArbitrary.generator(genSize).map(BigDecimal::floatValue);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Float>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigDecimal::floatValue));
 	}
 
 	@Override

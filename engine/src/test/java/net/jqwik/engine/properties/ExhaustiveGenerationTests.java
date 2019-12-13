@@ -285,6 +285,59 @@ class ExhaustiveGenerationTests {
 			assertThat(generator).containsExactly(BigDecimal.valueOf(100.0));
 		}
 
+		@Example
+		void bigDecimalRangeDoesNotAllowExhaustiveGeneration() {
+			Optional<ExhaustiveGenerator<BigDecimal>> optionalGenerator =
+				Arbitraries.bigDecimals()
+						   .between(BigDecimal.ONE, BigDecimal.valueOf(100.0))
+						   .exhaustive();
+			assertThat(optionalGenerator).isEmpty();
+		}
+		
+		@Example
+		void singleDouble() {
+			Optional<ExhaustiveGenerator<Double>> optionalGenerator =
+				Arbitraries.doubles()
+						   .between(100.0, 100.0)
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Double> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(1);
+			assertThat(generator).containsExactly(100.0);
+		}
+
+		@Example
+		void doubleRangeDoesNotAllowExhaustiveGeneration() {
+			Optional<ExhaustiveGenerator<Double>> optionalGenerator =
+				Arbitraries.doubles()
+						   .between(1.0, 100.0)
+						   .exhaustive();
+			assertThat(optionalGenerator).isEmpty();
+		}
+
+		@Example
+		void singleFloat() {
+			Optional<ExhaustiveGenerator<Float>> optionalGenerator =
+				Arbitraries.floats()
+						   .between(100.0f, 100.0f)
+						   .exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Float> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(1);
+			assertThat(generator).containsExactly(100.0f);
+		}
+
+		@Example
+		void floatRangeDoesNotAllowExhaustiveGeneration() {
+			Optional<ExhaustiveGenerator<Float>> optionalGenerator =
+				Arbitraries.floats()
+						   .between(1.0f, 100.0f)
+						   .exhaustive();
+			assertThat(optionalGenerator).isEmpty();
+		}
+
 	}
 
 	@Group

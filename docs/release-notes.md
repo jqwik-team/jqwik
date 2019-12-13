@@ -26,6 +26,7 @@ title: jqwik Release Notes
 - When configuration parameter `database` is set to empty, test run recording
   is now completely disabled.
 
+- Exhaustive generation of single decimals and floats
 
 #### Breaking Changes
 

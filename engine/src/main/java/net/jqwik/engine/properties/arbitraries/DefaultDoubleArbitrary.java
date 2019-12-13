@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
+import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -19,6 +20,11 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 	@Override
 	public RandomGenerator<Double> generator(int genSize) {
 		return generatingArbitrary.generator(genSize).map(BigDecimal::doubleValue);
+	}
+
+	@Override
+	public Optional<ExhaustiveGenerator<Double>> exhaustive(long maxNumberOfSamples) {
+		return generatingArbitrary.exhaustive(maxNumberOfSamples).map(generator -> generator.map(BigDecimal::doubleValue));
 	}
 
 	@Override
