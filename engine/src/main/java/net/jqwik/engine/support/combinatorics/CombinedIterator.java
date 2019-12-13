@@ -13,6 +13,9 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 
 	private Object current = null;
 
+	// This must be tracked because there can be null values
+	private boolean currentIsSet = false;
+
 	public CombinedIterator(List<Iterable<T>> iterables) {
 		this.rest = new ArrayList<>(iterables);
 		this.first = this.rest.remove(0).iterator();
@@ -31,18 +34,19 @@ public class CombinedIterator<T> implements Iterator<List<T>> {
 
 	@Override
 	public boolean hasNext() {
-		if (current == null) {
-			return next.hasNext() && first.hasNext();
-		} else {
+		if (currentIsSet) {
 			return next.hasNext() || first.hasNext();
+		} else {
+			return next.hasNext() && first.hasNext();
 		}
 	}
 
 	@Override
 	public List<T> next() {
 		if (next.hasNext()) {
-			if (current == null) {
+			if (!currentIsSet) {
 				current = first.next();
+				currentIsSet = true;
 			}
 		} else {
 			current = first.next();

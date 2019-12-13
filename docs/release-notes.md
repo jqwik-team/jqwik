@@ -32,6 +32,7 @@ title: jqwik Release Notes
 #### Bug Fixes
 
 - [Statistics formatting bug](https://github.com/jlink/jqwik/issues/72) 
+- [Exhaustive generation bug](https://github.com/jlink/jqwik/issues/77)
 
 ## 1.2.1
 

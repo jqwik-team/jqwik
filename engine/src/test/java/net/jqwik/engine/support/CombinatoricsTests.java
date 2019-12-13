@@ -71,6 +71,24 @@ class CombinatoricsTests {
 		}
 
 		@Example
+		void listWithNullValues() {
+			Iterable<Integer> elementIterable = asList(1, 2, null);
+			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 2, 2);
+
+			assertThat(iterator).toIterable().containsExactlyInAnyOrder(
+				asList(1, null),
+				asList(2, null),
+				asList(null, 1),
+				asList(null, 2),
+				asList(null, null),
+				asList(1, 2),
+				asList(2, 1),
+				asList(1, 1),
+				asList(2, 2)
+			);
+		}
+
+		@Example
 		void listOfSizeUpTo1() {
 			Iterable<Integer> elementIterable = asList(1, 2, 3);
 			Iterator<List<Integer>> iterator = Combinatorics.listCombinations(elementIterable, 0, 1);

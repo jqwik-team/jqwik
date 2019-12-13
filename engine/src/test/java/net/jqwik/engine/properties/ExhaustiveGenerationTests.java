@@ -256,6 +256,16 @@ class ExhaustiveGenerationTests {
 			assertThat(generator).containsExactly(MyEnum.Yes, MyEnum.No, MyEnum.Maybe);
 		}
 
+		@Example
+		void withNulls() {
+			Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.of("string1", null, "string3").exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<String> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(3);
+			assertThat(generator).containsExactly("string1", null, "string3");
+		}
+
 	}
 
 	@Group
