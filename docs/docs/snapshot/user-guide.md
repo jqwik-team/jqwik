@@ -2664,7 +2664,7 @@ the class in order to generate instances. Whenever there's an exception during
 generation they will be ignored; that way you'll only get valid instances.
 
 There are quite a few ways usage and configuration options. Have a look
-at the [complete example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/types/PersonProperties.java)
+at the [complete example](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/types/TypeArbitraryExamples.java)
 and check the following api entry points:
 
 - [UseType](/docs/snapshot/javadoc/net/jqwik/api/constraints/UseType.html)
