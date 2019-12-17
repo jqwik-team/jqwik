@@ -1,5 +1,7 @@
 - 1.2.2
 
+  - Make Arbitrary.withSamples deprecated.
+
   - Save random seed instead of serialized objects to recreate specific test data
     when rerunning failed properties
 
