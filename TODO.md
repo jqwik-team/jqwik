@@ -1,6 +1,11 @@
 - 1.2.2
 
   - Make Arbitrary.withSamples deprecated.
+  
+  - Arbitrary.sample(), see discussion in https://github.com/jlink/jqwik/issues/76#issuecomment-565810168
+  
+  - Fix https://github.com/jlink/jqwik/issues/79:
+    Arbitraries.forType should work outside property
 
   - Save random seed instead of serialized objects to recreate specific test data
     when rerunning failed properties
