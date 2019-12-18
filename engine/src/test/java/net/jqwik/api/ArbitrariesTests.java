@@ -673,7 +673,6 @@ class ArbitrariesTests {
 			assertAtLeastOneGenerated(generator, sum -> sum > 30);
 		}
 
-
 		@Example
 		void arrayOfPrimitiveType(@ForAll Random random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
@@ -730,7 +729,6 @@ class ArbitrariesTests {
 			assertAtLeastOneGenerated(generator, map -> map.size() == 3);
 		}
 
-
 		@Example
 		void entry() {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
@@ -750,6 +748,29 @@ class ArbitrariesTests {
 				entry.setValue("fortytwo");
 				assertThat(entry.getValue()).isEqualTo("fortytwo");
 			});
+		}
+
+	}
+
+	@Group
+	class Sampling {
+
+		@Property
+		void singleSample(@ForAll @Size(min = 1) List<Integer> values) {
+			Arbitrary<Integer> ints = Arbitraries.of(values);
+
+			Integer anInt = ints.sample();
+
+			assertThat(anInt).isIn(values);
+		}
+
+		@Property
+		void sampleStream(@ForAll @Size(min = 1) List<Integer> values) {
+			Arbitrary<Integer> ints = Arbitraries.of(values);
+
+			ints.sampleStream()
+				.limit(10)
+				.forEach(anInt -> assertThat(anInt).isIn(values));
 		}
 
 	}

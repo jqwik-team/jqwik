@@ -47,6 +47,8 @@ public interface Arbitrary<T> {
 		public abstract <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
 
 		public abstract <T, A> StreamableArbitrary<T, A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass);
+
+		public abstract <T> Stream<T> sampleStream(Arbitrary<T> arbitrary);
 	}
 
 	/**
@@ -328,6 +330,34 @@ public interface Arbitrary<T> {
 	@API(status = EXPERIMENTAL, since = "1.1.4")
 	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
 		return genSize -> Arbitrary.this.generator(genSize).collect(until);
+	}
+
+	/**
+	 * Generate a stream of sample values using this arbitrary.
+	 *
+	 * <p>
+	 *     Using this method within a property does not break reproducibility of results,
+	 *     i.e. rerunning it with same seed will also generate the same values.
+	 * </p>
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.2")
+	default Stream<T> sampleStream() {
+		return ArbitraryFacade.implementation.sampleStream(this);
+	}
+
+	/**
+	 * Generate a single sample value using this arbitrary.
+	 *
+	 * <p>
+	 *     Using this method within a property does not break reproducibility of results,
+	 *     i.e. rerunning it with same seed will also generate the same value.
+	 * </p>
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.2")
+	default T sample() {
+		return this.sampleStream()
+				   .findFirst()
+				   .orElseThrow(() -> new JqwikException("Cannot generate a value"));
 	}
 
 

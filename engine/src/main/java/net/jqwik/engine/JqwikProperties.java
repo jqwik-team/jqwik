@@ -8,6 +8,8 @@ import net.jqwik.api.*;
 
 public class JqwikProperties {
 
+	public static final int DEFAULT_TRIES = 1000;
+
 	private static final String[] SUPPORTED_PROPERTIES = new String[]{
 		"database",
 		"runFailuresFirst",
@@ -24,7 +26,7 @@ public class JqwikProperties {
 
 	private static final String DEFAULT_DATABASE_PATH = ".jqwik-database";
 	private static final String DEFAULT_RERUN_FAILURES_FIRST = "false";
-	private static final String DEFAULT_TRIES = "1000";
+	private static final String DEFAULT_TRIES_VALUE = Integer.toString(DEFAULT_TRIES);
 	private static final String DEFAULT_MAX_DISCARD_RATIO = "5";
 	private static final String DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED.name();
 	private static final String DEFAULT_REPORT_ONLY_FAILURES = "false";
@@ -96,7 +98,7 @@ public class JqwikProperties {
 			warnOnUnsupportedProperties(properties);
 			databasePath = properties.getProperty("database", DEFAULT_DATABASE_PATH);
 			runFailuresFirst = Boolean.parseBoolean(properties.getProperty("runFailuresFirst", DEFAULT_RERUN_FAILURES_FIRST));
-			defaultTries = Integer.parseInt(properties.getProperty("defaultTries", DEFAULT_TRIES));
+			defaultTries = Integer.parseInt(properties.getProperty("defaultTries", DEFAULT_TRIES_VALUE));
 			defaultMaxDiscardRatio = Integer.parseInt(properties.getProperty("defaultMaxDiscardRatio", DEFAULT_MAX_DISCARD_RATIO));
 			useJunitPlatformReporter =
 				Boolean.parseBoolean(properties.getProperty("useJunitPlatformReporter", DEFAULT_USE_JUNIT_PLATFORM_REPORTER));

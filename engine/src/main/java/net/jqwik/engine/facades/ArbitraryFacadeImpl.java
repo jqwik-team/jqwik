@@ -6,6 +6,8 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
@@ -62,5 +64,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	public <T, A> StreamableArbitrary<T, A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass) {
 		return new ArrayArbitrary<>(uniqueArbitrary, arrayClass)
 				   .ofMaxSize(maxNumberOfElements(uniqueArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
+	}
+
+	@Override
+	public <T> Stream<T> sampleStream(Arbitrary<T> arbitrary) {
+		return arbitrary.generator(JqwikProperties.DEFAULT_TRIES)
+						.stream(SourceOfRandomness.current())
+						.map(Shrinkable::value);
 	}
 }

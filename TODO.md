@@ -1,7 +1,5 @@
 - 1.2.2
 
-  - Arbitrary.sample(), see discussion in https://github.com/jlink/jqwik/issues/76#issuecomment-565810168
-  
   - Fix https://github.com/jlink/jqwik/issues/79:
     Arbitraries.forType should work outside property
 
