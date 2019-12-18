@@ -69,14 +69,12 @@ class ActionGeneratorTests {
 
 		@Example
 		void stopsSearchingForActionsAfter1000Tries(@ForAll Random random) {
-			Arbitrary<Action<Integer>> samples = Arbitraries.samples(failedPrecondition()).withSamples(plus1());
+			Arbitrary<Action<Integer>> samples = Arbitraries.samples(failedPrecondition());
 
 			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
 
-			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
 			assertThatThrownBy(() -> actionGenerator.next(42)).isInstanceOf(NoSuchElementException.class);
-
-			assertThat(actionGenerator.generated()).hasSize(1);
+			assertThat(actionGenerator.generated()).hasSize(0);
 		}
 	}
 

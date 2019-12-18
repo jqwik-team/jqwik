@@ -233,8 +233,12 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of the same type but inject values in {@code samples} first before continuing with standard
 	 * value generation.
+	 *
+	 * @deprecated Use something like {@code Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))}.
 	 */
 	@SuppressWarnings("unchecked")
+	@Deprecated
+	@API(status = DEPRECATED, since = "1.2.2")
 	default Arbitrary<T> withSamples(T... samples) {
 		return new Arbitrary<T>() {
 			@Override

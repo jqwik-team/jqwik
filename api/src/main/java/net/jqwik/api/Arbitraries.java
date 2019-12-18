@@ -361,6 +361,11 @@ public class Arbitraries {
 	 * and then start again at the beginning. Shrinking of samples is tried
 	 * towards the start of the samples.
 	 *
+	 * <p>
+	 *     Attention: If you want to randomly choose between {@code samples}
+	 *     you must use {@link Arbitraries#of(Object[])}
+	 * </p>
+	 *
 	 * @param samples The array of sample values
 	 * @param <T>     The type of values to generate
 	 * @return a new arbitrary instance

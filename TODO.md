@@ -1,7 +1,5 @@
 - 1.2.2
 
-  - Make Arbitrary.withSamples deprecated.
-  
   - Arbitrary.sample(), see discussion in https://github.com/jlink/jqwik/issues/76#issuecomment-565810168
   
   - Fix https://github.com/jlink/jqwik/issues/79:
@@ -24,6 +22,8 @@
 
   - Have test names (optionally) include parameter types
   
+- 1.2.3
+
   - Lifecycle
     - Around property
     - Around try
@@ -35,9 +35,9 @@
       - @AfterContainer
     - Around engine
       - Register through Java Service Registration
-  
-- 1.2.3
 
+- 1.2.x
+  
   - Storing values
   - Spring/Boot Testing in its own module
  

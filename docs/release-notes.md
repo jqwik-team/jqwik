@@ -30,6 +30,8 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Deprecated `Arbitrary.withSamples(T... samples)`
+
 #### Bug Fixes
 
 - [Statistics formatting bug](https://github.com/jlink/jqwik/issues/72) 

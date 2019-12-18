@@ -31,34 +31,17 @@ class ArbitraryTests {
 		assertThat(injectedGenSize[0]).isEqualTo(42);
 	}
 
-	@Group
-	class Generating {
-		@Example
-		void generateInteger(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			RandomGenerator<Integer> generator = arbitrary.generator(10);
+	@Example
+	void generateInteger(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+		RandomGenerator<Integer> generator = arbitrary.generator(10);
 
-			assertThat(generator.next(random).value()).isEqualTo(1);
-			assertThat(generator.next(random).value()).isEqualTo(2);
-			assertThat(generator.next(random).value()).isEqualTo(3);
-			assertThat(generator.next(random).value()).isEqualTo(4);
-			assertThat(generator.next(random).value()).isEqualTo(5);
-			assertThat(generator.next(random).value()).isEqualTo(1);
-		}
-
-		@Example
-		void samplesArePrependedToGeneration(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2);
-			Arbitrary<Integer> arbitraryWithSamples = arbitrary.withSamples(-1, -2);
-			RandomGenerator<Integer> generator = arbitraryWithSamples.generator(10);
-
-			assertThat(generator.next(random).value()).isEqualTo(-1);
-			assertThat(generator.next(random).value()).isEqualTo(-2);
-			assertThat(generator.next(random).value()).isEqualTo(1);
-			assertThat(generator.next(random).value()).isEqualTo(2);
-			assertThat(generator.next(random).value()).isEqualTo(1);
-		}
-
+		assertThat(generator.next(random).value()).isEqualTo(1);
+		assertThat(generator.next(random).value()).isEqualTo(2);
+		assertThat(generator.next(random).value()).isEqualTo(3);
+		assertThat(generator.next(random).value()).isEqualTo(4);
+		assertThat(generator.next(random).value()).isEqualTo(5);
+		assertThat(generator.next(random).value()).isEqualTo(1);
 	}
 
 	@Group
@@ -152,7 +135,7 @@ class ArbitraryTests {
 		}
 
 		@Property
-		void listOfUniqueIntegersWithLessElementsThanMaxSize(@ForAll List<@Unique @IntRange(min =1, max = 5) Integer> list) {
+		void listOfUniqueIntegersWithLessElementsThanMaxSize(@ForAll List<@Unique @IntRange(min = 1, max = 5) Integer> list) {
 			assertThat(list).hasSizeLessThanOrEqualTo(5);
 		}
 
