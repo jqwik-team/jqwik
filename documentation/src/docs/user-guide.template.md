@@ -68,13 +68,13 @@ dependencies {
     ...
 
     // aggregate jqwik dependency
-    testCompile "net.jqwik:jqwik:\${jqwikVersion}"
+    testImplementation "net.jqwik:jqwik:\${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+    testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
 
     // Add any other test library you need...
-    testCompile("org.assertj:assertj-core:3.12.2")
+    testImplementation("org.assertj:assertj-core:3.12.2")
 
 }
 ```
@@ -84,7 +84,7 @@ simplify jqwik integration for standard users. If you want to be more explicit
 about the real dependencies you can replace this dependency with
 
 ```
-    testCompile "net.jqwik:jqwik-api:\${jqwikVersion}"
+    testImplementation "net.jqwik:jqwik-api:\${jqwikVersion}"
     testRuntime "net.jqwik:jqwik-engine:\${jqwikVersion}"
 ```
 

@@ -86,6 +86,6 @@ dependencies {
 	// Only needed to check interferences between Jupiter and jqwik
 	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
 
-	testCompile "com.tngtech.archunit:archunit-junit5-api:${archunitVersion}"
+	testImplementation "com.tngtech.archunit:archunit-junit5-api:${archunitVersion}"
 	testRuntime "com.tngtech.archunit:archunit-junit5-engine:${archunitVersion}"
 }
