@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+@Deprecated
 public class WithSamplesGenerator<T> implements RandomGenerator<T> {
 	private final AtomicInteger tryCount = new AtomicInteger(0);
 	private final RandomGenerator<T> samplesGenerator;

@@ -27,6 +27,7 @@ public interface RandomGenerator<T> {
 
 		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases);
 
+		@Deprecated
 		public abstract <T> RandomGenerator<T> withSamples(RandomGenerator<T> self, T[] samples);
 
 		public abstract <T> RandomGenerator<T> unique(RandomGenerator<T> self);
@@ -75,6 +76,7 @@ public interface RandomGenerator<T> {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	default RandomGenerator<T> withSamples(T... samples) {
 		return RandomGeneratorFacade.implementation.withSamples(this, samples);
 	}

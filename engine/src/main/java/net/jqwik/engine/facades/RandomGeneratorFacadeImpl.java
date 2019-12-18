@@ -32,6 +32,7 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	}
 
 	@Override
+	@Deprecated
 	public <T> RandomGenerator<T> withSamples(RandomGenerator<T> self, T[] samples) {
 		return new WithSamplesGenerator<>(self, samples);
 	}
