@@ -21,12 +21,22 @@ title: jqwik Release Notes
 
 ## 1.2.2-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+
 #### New and Enhanced Features
 
 - When configuration parameter `database` is set to empty, test run recording
   is now completely disabled.
 
 - Exhaustive generation of single decimals and floats
+
+- Added `Arbitrary.sample()` and `Arbitrary.sampleStream()` for enabling
+  [the use of generators outside of properties](/docs/snapshot/user-guide.html#using-arbitraries-directly)
 
 #### Breaking Changes
 

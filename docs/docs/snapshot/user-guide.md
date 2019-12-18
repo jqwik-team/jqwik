@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.2.1-SNAPSHOT
+title: jqwik User Guide - 1.2.2-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.1-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.2-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -71,12 +71,15 @@ title: jqwik User Guide - 1.2.1-SNAPSHOT
   - [Combining Arbitraries with Builder](#combining-arbitraries-with-builder)
     - [Flat Combination](#flat-combination)
   - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
-  - [Generating all possible values](#generating-all-possible-values)
-  - [Iterating through all possible values](#iterating-through-all-possible-values)
 - [Recursive Arbitraries](#recursive-arbitraries)
   - [Probabilistic Recursion](#probabilistic-recursion)
   - [Deterministic Recursion](#deterministic-recursion)
   - [Deterministic Recursion with `recursive()`](#deterministic-recursion-with-recursive)
+- [Using Arbitraries Directly](#using-arbitraries-directly)
+  - [Generating a Single Value](#generating-a-single-value)
+  - [Generating a Stream of Values](#generating-a-stream-of-values)
+  - [Generating all possible values](#generating-all-possible-values)
+  - [Iterating through all possible values](#iterating-through-all-possible-values)
 - [Contract Tests](#contract-tests)
 - [Stateful Testing](#stateful-testing)
   - [Specify Actions](#specify-actions)
@@ -142,10 +145,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.5.1'
-ext.junitJupiterVersion = '5.5.1'
+ext.junitPlatformVersion = '1.5.2'
+ext.junitJupiterVersion = '5.5.2'
 
-ext.jqwikVersion = '1.2.1-SNAPSHOT'
+ext.jqwikVersion = '1.2.2-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -167,7 +170,7 @@ dependencies {
     testCompile "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.5.1")
+    testCompile("org.junit.jupiter:junit-jupiter-engine:5.5.2")
 
     // Add any other test library you need...
     testCompile("org.assertj:assertj-core:3.12.2")
@@ -221,7 +224,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.2-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -247,9 +250,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.2.1-SNAPSHOT.jar`
-- `junit-platform-engine-1.5.1.jar`
-- `junit-platform-commons-1.5.1.jar`
+- `jqwik-1.2.2-SNAPSHOT.jar`
+- `junit-platform-engine-1.5.2.jar`
+- `junit-platform-commons-1.5.2.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -298,7 +301,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.2.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.2.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -643,6 +646,7 @@ jqwik will use default generation for the following types:
 - `Optional<T>` of types that are provided by default.
 - Array `T[]` of types that are provided by default.
 - `Map<K, V>` as long as `K` and `V` can also be provided by default generation.
+- `HashMap<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `Map.Entry<K, V>` as long as `K` and `V` can also be provided by default generation.
 - `java.util.Random`
 - [Functional Types](#functional-types)
@@ -1112,10 +1116,25 @@ Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000)
 
 Generating instances of type `Map` is a bit different since two arbitraries
 are needed, one for the key and one for the value. Therefore you have to use
-[`Arbitraries.maps(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+[`Arbitraries.maps(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-) like this:
+
+```java
+@Property
+void mapsFromNumberToString(@ForAll("numberMaps")  Map<Integer, String> map) {
+    Assertions.assertThat(map.keySet()).allMatch(key -> key >= 0 && key <= 1000);
+    Assertions.assertThat(map.values()).allMatch(value -> value.length() == 5);
+}
+
+@Provide
+Arbitrary<Map<Integer, String>> numberMaps() {
+    Arbitrary<Integer> keys = Arbitraries.integers().between(1, 100);
+    Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
+    return Arbitraries.maps(keys, values);
+}
+```
 
 For generating individual `Map.Entry` instances there is
-[`Arbitraries.entries(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-)
+[`Arbitraries.entries(...)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-).
 
 
 ### Functional Types
@@ -1186,6 +1205,7 @@ like size, length, boundaries etc. Have a look at the Java doc for the following
 - [LongArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
 - [ShortArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
 - [SizableArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
+- [StreamableArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StreamableArbitrary.html)
 - [StringArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 - [FunctionArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
 
@@ -1557,43 +1577,6 @@ they are used in. If there is a need to influence the behaviour of generators
 you can do so by using 
 [`Arbitrary.fixGenSize(int)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#fixGenSize-int-)..
 
-
-### Generating all possible values
-
-There are a few cases when you don't want to generate individual values from an
-arbitrary but use all possible values to construct another arbitrary. This can be achieved through
-[`Arbitrary.allValues()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#allValues--).
-
-Return type is `Optional<Stream<T>>` because _jqwik_ can only perform this task if
-[exhaustive generation](#exhaustive-generation) is doable.
-
-
-### Iterating through all possible values
-
-You can also use an arbitrary to iterate through all values it specifies.
-Use
-[`Arbitrary.forEachValue(Consumer action)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#forEachValue-java.util.function.Consumer-).
-for that purpose. This only works when [exhaustive generation](#exhaustive-generation) is possible.
-In other cases the attempt to iterate will result in an exception.
-
-This is typically useful when your test requires to assert some fact for all
-values of a given (sub)set of objects. Here's a contrived example:
-
-```java
-@Property
-void canPressAnyKeyOnKeyboard(@ForAll Keyboard keyboard, @ForAll Key key) {
-    keyboard.press(key);
-    assertThat(keyboard.isPressed(key));
-
-    Arbitrary<Key> unpressedKeys = Arbitraries.of(keyboard.allKeys()).filter(k -> !k.equals(key));
-    unpressedKeys.forEachValue(k -> assertThat(keyboard.isPressed(k)).isFalse());
-}
-```
-
-In this example a simple for loop over `allKeys()` would also work. In more complicated scenarios
-_jqwik_ will do all the combinations and filtering for you.
-
-
 ## Recursive Arbitraries
 
 Sometimes it seems like a good idea to compose arbitraries and thereby
@@ -1694,6 +1677,77 @@ private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
     return Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
 }
 ```
+
+## Using Arbitraries Directly
+
+Most of the time arbitraries are used indirectly, i.e. _jqwik_ uses them under
+the hood to inject generated values as parameters. There are situations, though,
+in which you might want to generate values directly.
+
+### Generating a Single Value
+
+Getting a single random value out of an arbitrary is easy and can be done
+with [`Arbitrary.sample()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#sample--):
+
+```java
+Arbitrary<String> strings = Arbitraries.of("string1", "string2", "string3");
+String aString = strings.sample();
+assertThat(aString).isIn("string1", "string2", "string3");
+```
+
+Among other things, this allows you to use jqwik's generation functionality 
+with other test engines like Jupiter. 
+Mind that _jqwik_ uses a default `genSize` of 1000 under the hood and that
+the `Random` object will be either taken from the current property's context or 
+freshly instantiated if used outside a property.
+
+### Generating a Stream of Values
+
+Getting a stream of generated values is just as easy with [`Arbitrary.sampleStream()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#sampleStream--):
+
+```java
+List<String> values = Arrays.asList("string1", "string2", "string3");
+Arbitrary<String> strings = Arbitraries.of(values);
+Stream<String> streamOfStrings = strings.sampleStream();
+
+assertThat(streamOfStrings).allMatch(values::contains);
+```
+
+### Generating all possible values
+
+There are a few cases when you don't want to generate individual values from an
+arbitrary but use all possible values to construct another arbitrary. This can be achieved through
+[`Arbitrary.allValues()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#allValues--).
+
+Return type is `Optional<Stream<T>>` because _jqwik_ can only perform this task if
+[exhaustive generation](#exhaustive-generation) is doable.
+
+
+### Iterating through all possible values
+
+You can also use an arbitrary to iterate through all values it specifies.
+Use
+[`Arbitrary.forEachValue(Consumer action)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#forEachValue-java.util.function.Consumer-).
+for that purpose. This only works when [exhaustive generation](#exhaustive-generation) is possible.
+In other cases the attempt to iterate will result in an exception.
+
+This is typically useful when your test requires to assert some fact for all
+values of a given (sub)set of objects. Here's a contrived example:
+
+```java
+@Property
+void canPressAnyKeyOnKeyboard(@ForAll Keyboard keyboard, @ForAll Key key) {
+    keyboard.press(key);
+    assertThat(keyboard.isPressed(key));
+
+    Arbitrary<Key> unpressedKeys = Arbitraries.of(keyboard.allKeys()).filter(k -> !k.equals(key));
+    unpressedKeys.forEachValue(k -> assertThat(keyboard.isPressed(k)).isFalse());
+}
+```
+
+In this example a simple for loop over `allKeys()` would also work. In more complicated scenarios
+_jqwik_ will do all the combinations and filtering for you.
+
 
 
 
@@ -2852,7 +2906,8 @@ _jqwik_ will look for a file `jqwik.properties` in your classpath in which you c
 a few basic parameters:
 
 ```
-database = .jqwik-database          # The database to store data of previous runs
+database = .jqwik-database          # The database file in which to store data of previous runs.
+                                    # Set to empty to fully disable test run recording.
 defaultTries = 1000                 # The default number of tries for each property
 defaultMaxDiscardRatio = 5          # The default ratio before assumption misses make a property fail
 useJunitPlatformReporter = false    # Set to true if you want to use platform reporting
@@ -2865,4 +2920,4 @@ defaultGeneration = AUTO            # Set default behaviour for generation:
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#121-snapshot).
+Read this version's [release notes](/release-notes.html#122-snapshot).
