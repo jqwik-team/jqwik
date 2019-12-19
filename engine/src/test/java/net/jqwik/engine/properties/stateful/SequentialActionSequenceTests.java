@@ -106,13 +106,13 @@ class SequentialActionSequenceTests {
 	private Function<Integer, Action<Integer>> preconditionBelow10() {
 		return ignore -> new Action<Integer>() {
 			@Override
-			public boolean precondition(Integer model) {
-				return model < 10;
+			public boolean precondition(Integer state) {
+				return state < 10;
 			}
 
 			@Override
-			public Integer run(Integer model) {
-				return model;
+			public Integer run(Integer state) {
+				return state;
 			}
 
 			@Override
@@ -125,9 +125,9 @@ class SequentialActionSequenceTests {
 	private Function<Integer, Action<Integer>> check42() {
 		return ignore -> new Action<Integer>() {
 			@Override
-			public Integer run(Integer model) {
-				assertThat(model).isEqualTo(42);
-				return model;
+			public Integer run(Integer state) {
+				assertThat(state).isEqualTo(42);
+				return state;
 			}
 
 			@Override

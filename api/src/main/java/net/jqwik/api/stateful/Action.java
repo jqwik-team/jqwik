@@ -5,31 +5,32 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * An action class represents a state change that can be preformed on a model {@code M}.
+ * An action class represents a state change that can be preformed
+ * on a stateful {@code S}.
  *
  * At runtime the execution of an action is regulated by a precondition.
  *
- * @param <M>
+ * @param <S>
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface Action<M> {
+public interface Action<S> {
 
 	/**
 	 * If this method returns false, the action will not be performed.
 	 *
-	 * @param model
+	 * @param state
 	 * @return
 	 */
-	default boolean precondition(M model) {
+	default boolean precondition(S state) {
 		return true;
 	}
 
 	/**
-	 * Perform an action on model {@code M} and return the same model (if it has state)
+	 * Perform an action on state {@code S} and return the same state (if it has state)
 	 * or a new one representing the new state.
 	 *
-	 * @param model
+	 * @param state
 	 * @return
 	 */
-	M run(M model);
+	S run(S state);
 }

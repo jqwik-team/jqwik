@@ -1747,12 +1747,12 @@ We can see at least three _actions_ with their preconditions and expected state 
   	}
   
   	@Override
-  	public MyStringStack run(MyStringStack model) {
-  		int sizeBefore = model.size();
-  		model.push(element);
-  		Assertions.assertThat(model.isEmpty()).isFalse();
-  		Assertions.assertThat(model.size()).isEqualTo(sizeBefore + 1);
-  		return model;
+  	public MyStringStack run(MyStringStack stack) {
+  		int sizeBefore = stack.size();
+  		stack.push(element);
+  		Assertions.assertThat(stack.isEmpty()).isFalse();
+  		Assertions.assertThat(stack.size()).isEqualTo(sizeBefore + 1);
+  		return stack;
   	}
   
   	@Override
@@ -1768,19 +1768,19 @@ We can see at least three _actions_ with their preconditions and expected state 
   class PopAction implements Action<MyStringStack> {
     
         @Override
-        public boolean precondition(MyStringStack model) {
-            return !model.isEmpty();
+        public boolean precondition(MyStringStack stack) {
+            return !stack.isEmpty();
         }
     
         @Override
-        public MyStringStack run(MyStringStack model) {
-            int sizeBefore = model.size();
-            String topBefore = model.top();
+        public MyStringStack run(MyStringStack stack) {
+            int sizeBefore = stack.size();
+            String topBefore = stack.top();
     
-            String popped = model.pop();
+            String popped = stack.pop();
             Assertions.assertThat(popped).isEqualTo(topBefore);
-            Assertions.assertThat(model.size()).isEqualTo(sizeBefore - 1);
-            return model;
+            Assertions.assertThat(stack.size()).isEqualTo(sizeBefore - 1);
+            return stack;
         }
     
         @Override
@@ -1795,10 +1795,10 @@ We can see at least three _actions_ with their preconditions and expected state 
   class ClearAction implements Action<MyStringStack> {
 
         @Override
-        public MyStringStack run(MyStringStack model) {
-            model.clear();
-            Assertions.assertThat(model.isEmpty()).isTrue();
-            return model;
+        public MyStringStack run(MyStringStack stack) {
+            stack.clear();
+            Assertions.assertThat(stack.isEmpty()).isTrue();
+            return stack;
         }
     
         @Override
@@ -1846,7 +1846,7 @@ class MyStringStackProperties {
 The interesting API elements are 
 - [`ActionSequence`](/docs/${docsVersion}/javadoc/net/jqwik/api/stateful/ActionSequence.html):
   A generic collection type especially crafted for holding and shrinking of a list of actions.
-  As a convenience it will apply the actions to a model when you call `run(model)`.
+  As a convenience it will apply the actions to a state-based object when you call `run(state)`.
   
 - [`Arbitraries.sequences()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-):
   This method will create the arbitrary for generating an `ActionSequence` given the

@@ -71,12 +71,12 @@ class ActionSequenceProperties {
 	private Arbitrary<Action<String>> addZ() {
 		return Arbitraries.constant(new Action<String>() {
 			@Override
-			public boolean precondition(String model) {
+			public boolean precondition(String state) {
 				return false;
 			}
 
 			@Override
-			public String run(String model) {return model + "y";}
+			public String run(String state) {return state + "y";}
 		});
 	}
 

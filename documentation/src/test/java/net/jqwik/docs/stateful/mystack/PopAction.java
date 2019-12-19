@@ -8,19 +8,19 @@ import org.assertj.core.api.*;
 class PopAction implements Action<MyStringStack>, Serializable {
 
 	@Override
-	public boolean precondition(MyStringStack model) {
-		return !model.isEmpty();
+	public boolean precondition(MyStringStack state) {
+		return !state.isEmpty();
 	}
 
 	@Override
-	public MyStringStack run(MyStringStack model) {
-		int sizeBefore = model.size();
-		String topBefore = model.top();
+	public MyStringStack run(MyStringStack state) {
+		int sizeBefore = state.size();
+		String topBefore = state.top();
 
-		String popped = model.pop();
+		String popped = state.pop();
 		Assertions.assertThat(popped).isEqualTo(topBefore);
-		Assertions.assertThat(model.size()).isEqualTo(sizeBefore - 1);
-		return model;
+		Assertions.assertThat(state.size()).isEqualTo(sizeBefore - 1);
+		return state;
 	}
 
 	@Override

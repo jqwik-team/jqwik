@@ -8,10 +8,10 @@ import org.assertj.core.api.*;
 class ClearAction implements Action<MyStringStack>, Serializable {
 
 	@Override
-	public MyStringStack run(MyStringStack model) {
-		model.clear();
-		Assertions.assertThat(model.isEmpty()).isTrue();
-		return model;
+	public MyStringStack run(MyStringStack stack) {
+		stack.clear();
+		Assertions.assertThat(stack.isEmpty()).isTrue();
+		return stack;
 	}
 
 	@Override

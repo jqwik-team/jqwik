@@ -14,12 +14,12 @@ class PushAction implements Action<MyStringStack>, Serializable {
 	}
 
 	@Override
-	public MyStringStack run(MyStringStack model) {
-		int sizeBefore = model.size();
-		model.push(element);
-		Assertions.assertThat(model.isEmpty()).isFalse();
-		Assertions.assertThat(model.size()).isEqualTo(sizeBefore + 1);
-		return model;
+	public MyStringStack run(MyStringStack state) {
+		int sizeBefore = state.size();
+		state.push(element);
+		Assertions.assertThat(state.isEmpty()).isFalse();
+		Assertions.assertThat(state.size()).isEqualTo(sizeBefore + 1);
+		return state;
 	}
 
 	@Override

@@ -166,7 +166,7 @@ class ActionGeneratorTests {
 	private Action<Integer> failedPrecondition() {
 		return new Action<Integer>() {
 			@Override
-			public boolean precondition(Integer model) {
+			public boolean precondition(Integer state) {
 				return false;
 			}
 
