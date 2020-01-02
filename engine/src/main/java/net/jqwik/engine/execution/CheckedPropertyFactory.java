@@ -29,7 +29,7 @@ public class CheckedPropertyFactory {
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
 			propertyMethodDescriptor.getContainerClass(), testInstance,
-			DomainContextFacadeImpl.currentContext.get()
+			DomainContextFacadeImpl.getCurrentContext()
 		);
 
 		Optional<Iterable<? extends Tuple>> optionalData =

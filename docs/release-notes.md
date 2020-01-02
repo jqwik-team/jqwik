@@ -46,6 +46,7 @@ and
 
 - [Statistics formatting bug](https://github.com/jlink/jqwik/issues/72) 
 - [Exhaustive generation bug](https://github.com/jlink/jqwik/issues/77)
+- [Using Arbitraries.forType() outside property bug](https://github.com/jlink/jqwik/issues/79)
 
 ## 1.2.1
 

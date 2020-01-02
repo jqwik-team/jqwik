@@ -10,9 +10,24 @@ import net.jqwik.engine.providers.*;
 
 public class DomainContextFacadeImpl extends DomainContext.DomainContextFacade {
 
-	public static final ThreadLocal<DomainContext> currentContext = new ThreadLocal<>();
+	private static final ThreadLocal<DomainContext> currentContext = new ThreadLocal<>();
 
-	private DomainContext global = new GlobalDomainContext();
+	private static final DomainContext global = new GlobalDomainContext();
+
+	public static DomainContext getCurrentContext() {
+		if (currentContext.get() == null) {
+			return global;
+		}
+		return currentContext.get();
+	}
+
+	public static void setCurrentContext(DomainContext context) {
+		currentContext.set(context);
+	}
+
+	public static void removeCurrentContext() {
+		currentContext.remove();
+	}
 
 	@Override
 	public DomainContext global() {

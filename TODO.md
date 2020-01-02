@@ -1,8 +1,5 @@
 - 1.2.2
 
-  - Fix https://github.com/jlink/jqwik/issues/79:
-    Arbitraries.forType should work outside property
-
   - Save random seed instead of serialized objects to recreate specific test data
     when rerunning failed properties
 
@@ -18,8 +15,6 @@
 
   - Allow to annotate type variables with @From
 
-  - Have test names (optionally) include parameter types
-  
 - 1.2.3
 
   - Lifecycle

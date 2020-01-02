@@ -191,7 +191,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	private static Set<Arbitrary<?>> allDefaultsFor(TypeUsage typeUsage) {
-		DomainContext domainContext = DomainContextFacadeImpl.currentContext.get();
+		DomainContext domainContext = DomainContextFacadeImpl.getCurrentContext();
 		RegisteredArbitraryResolver defaultArbitraryResolver =
 			new RegisteredArbitraryResolver(domainContext.getArbitraryProviders());
 		ArbitraryProvider.SubtypeProvider subtypeProvider = ArbitrariesFacadeImpl::allDefaultsFor;

@@ -42,10 +42,10 @@ public class PropertyMethodExecutor {
 	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		try {
 			DomainContext domainContext = combineDomainContexts(methodDescriptor.getDomains());
-			DomainContextFacadeImpl.currentContext.set(domainContext);
+			DomainContextFacadeImpl.setCurrentContext(domainContext);
 			return executePropertyMethod(lifecycleSupplier, listener);
 		} finally {
-			DomainContextFacadeImpl.currentContext.remove();
+			DomainContextFacadeImpl.removeCurrentContext();
 		}
 	}
 
