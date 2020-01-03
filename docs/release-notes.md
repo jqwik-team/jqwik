@@ -38,6 +38,9 @@ and
 - Added `Arbitrary.sample()` and `Arbitrary.sampleStream()` for enabling
   [the use of generators outside of properties](/docs/snapshot/user-guide.html#using-arbitraries-directly)
 
+- `Arbitraries.oneOf(Arbitrary<? extends T>... arbitraries)` does now accept
+  covariant subtypes and still returns type `Arbitrary<T>`.
+
 #### Breaking Changes
 
 - Deprecated `Arbitrary.withSamples(T... samples)`

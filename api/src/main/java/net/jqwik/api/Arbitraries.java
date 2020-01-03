@@ -184,10 +184,14 @@ public class Arbitraries {
 	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
 	 */
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	public static <T> Arbitrary<T> oneOf(Arbitrary<T> first, Arbitrary<T>... rest) {
-		List<Arbitrary<T>> all = new ArrayList<>(Arrays.asList(rest));
-		all.add(first);
+	public static <T> Arbitrary<T> oneOf(Arbitrary<? extends T> first, Arbitrary<? extends T>... rest) {
+		List<Arbitrary<T>> all = new ArrayList<>();
+		all.add((Arbitrary<T>) first);
+		for (Arbitrary<?> arbitrary : rest) {
+			all.add((Arbitrary<T>) arbitrary);
+		}
 		return oneOf(all);
 	}
 

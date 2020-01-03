@@ -11,13 +11,13 @@ import static org.assertj.core.api.Assertions.*;
 public class ArbitraryTestHelper {
 
 	@SafeVarargs
-	public static <T> void assertAtLeastOneGeneratedOf(RandomGenerator<T> generator, T... values) {
+	public static <T> void assertAtLeastOneGeneratedOf(RandomGenerator<? extends T> generator, T... values) {
 		for (T value : values) {
 			assertAtLeastOneGenerated(generator, value::equals, "Failed to generate " + value);
 		}
 	}
 
-	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker) {
+	public static <T> void assertAtLeastOneGenerated(RandomGenerator<? extends T> generator, Function<T, Boolean> checker) {
 		assertAtLeastOneGenerated(generator, checker, "Failed to generate at least one");
 	}
 
@@ -39,32 +39,39 @@ public class ArbitraryTestHelper {
 				   .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
 
-	public static <T> void assertAtLeastOneGenerated(RandomGenerator<T> generator, Function<T, Boolean> checker, String failureMessage) {
+	public static <T> void assertAtLeastOneGenerated(
+		RandomGenerator<? extends T> generator,
+		Function<T, Boolean> checker,
+		String failureMessage
+	) {
 		Random random = SourceOfRandomness.current();
-		Optional<Shrinkable<T>> success = generator
-											  .stream(random)
-											  .limit(3000)
-											  .filter(shrinkable -> checker.apply(shrinkable.value()))
-											  .findAny();
+
+		Optional<? extends Shrinkable<? extends T>> success =
+			generator
+				.stream(random)
+				.limit(3000)
+				.filter(shrinkable -> checker.apply(shrinkable.value()))
+				.findAny();
 		if (!success.isPresent()) {
 			fail(failureMessage);
 		}
 	}
 
-	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Predicate<T> checker) {
+	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Predicate<T> checker) {
 		Random random = SourceOfRandomness.current();
-		Optional<Shrinkable<T>> failure = generator
-											  .stream(random)
-											  .limit(100)
-											  .filter(shrinkable -> !checker.test(shrinkable.value()))
-											  .findAny();
+		Optional<? extends Shrinkable<? extends T>> failure =
+			generator
+				.stream(random)
+				.limit(100)
+				.filter(shrinkable -> !checker.test(shrinkable.value()))
+				.findAny();
 
 		failure.ifPresent(shrinkable -> {
 			fail(String.format("Value [%s] failed to fulfill condition.", shrinkable.value().toString()));
 		});
 	}
 
-	public static <T> void assertAllGenerated(RandomGenerator<T> generator, Consumer<T> assertions) {
+	public static <T> void assertAllGenerated(RandomGenerator<? extends T> generator, Consumer<T> assertions) {
 		Predicate<T> checker = value -> {
 			try {
 				assertions.accept(value);
@@ -77,7 +84,7 @@ public class ArbitraryTestHelper {
 	}
 
 	@SafeVarargs
-	static <T> void assertGeneratedExactly(RandomGenerator<T> generator, T... expectedValues) {
+	static <T> void assertGeneratedExactly(RandomGenerator<? extends T> generator, T... expectedValues) {
 		Random random = SourceOfRandomness.current();
 
 		List<T> generated = generator
@@ -89,18 +96,19 @@ public class ArbitraryTestHelper {
 		assertThat(generated).containsExactly(expectedValues);
 	}
 
-	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<T> arbitrary, Random random) {
+	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
 		T value = shrinkToEnd(arbitrary, random);
 		assertThat(value).isEqualTo(expectedShrunkValue);
 	}
 
-	public static <T> T shrinkToEnd(Arbitrary<T> arbitrary, Random random) {
+	public static <T> T shrinkToEnd(Arbitrary<? extends T> arbitrary, Random random) {
 		return falsifyThenShrink(arbitrary, random, ignore -> false);
 	}
 
-	public static <T> T falsifyThenShrink(Arbitrary<T> arbitrary, Random random, Falsifier<T> falsifier) {
-		RandomGenerator<T> generator = arbitrary.generator(10);
-		Shrinkable<T> falsifiedShrinkable = generateUntil(generator, random, value -> !falsifier.test(value));
+	@SuppressWarnings("unchecked")
+	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
+		RandomGenerator<? extends T> generator = arbitrary.generator(10);
+		Shrinkable<T> falsifiedShrinkable = (Shrinkable<T>) generateUntil(generator, random, value -> !falsifier.test(value));
 
 		ShrinkingSequence<T> sequence = falsifiedShrinkable.shrink(falsifier);
 		while (sequence.next(() -> {}, ignore -> { })) ;
@@ -111,6 +119,5 @@ public class ArbitraryTestHelper {
 		RandomGenerator<T> generator = arbitrary.generator(1);
 		return generator.next(random).value();
 	}
-
 
 }
