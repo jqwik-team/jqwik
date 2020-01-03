@@ -5,7 +5,7 @@ import com.tngtech.archunit.junit.*;
 import com.tngtech.archunit.lang.*;
 import com.tngtech.archunit.library.dependencies.*;
 
-@AnalyzeClasses(packages = "net.jqwik", importOptions = {DontIncludeTests.class, DontIncludeJars.class})
+@AnalyzeClasses(packages = "net.jqwik", importOptions = {DoNotIncludeTests.class, DoNotIncludeJars.class})
 public class ArchitectureTests {
 
 	//@ArchTest
