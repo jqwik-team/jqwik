@@ -434,15 +434,21 @@ public class TypeUsageImpl implements TypeUsage {
 	@Override
 	public List<Annotation> getAnnotations() {
 		if (isSingleUpperBoundVariableType()) {
-			return Stream.concat(annotations.stream(), getUpperBounds().get(0).getAnnotations().stream())
-						 .collect(Collectors.toList());
+			return getAnnotationsStream().collect(Collectors.toList());
 		}
 		return annotations;
 	}
 
+	private Stream<Annotation> getAnnotationsStream() {
+		if (isSingleUpperBoundVariableType()) {
+			return Stream.concat(annotations.stream(), getUpperBounds().get(0).getAnnotations().stream());
+		}
+		return annotations.stream();
+	}
+
 	@Override
 	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
-		return getAnnotations().stream()
+		return getAnnotationsStream()
 						  .filter(annotation -> annotation.annotationType().equals(annotationType))
 						  .map(annotationType::cast)
 						  .findFirst();
