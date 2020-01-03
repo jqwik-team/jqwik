@@ -442,7 +442,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	@Override
 	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
-		return annotations.stream()
+		return getAnnotations().stream()
 						  .filter(annotation -> annotation.annotationType().equals(annotationType))
 						  .map(annotationType::cast)
 						  .findFirst();

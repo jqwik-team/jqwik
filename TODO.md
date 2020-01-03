@@ -3,8 +3,6 @@
   - Save random seed instead of serialized objects to recreate specific test data
     when rerunning failed properties
 
-  - Allow to annotate type variables with @From
-
 - 1.2.3
 
   - Lifecycle
