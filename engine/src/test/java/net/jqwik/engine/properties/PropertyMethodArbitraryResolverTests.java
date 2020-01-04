@@ -87,7 +87,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void allFittingArbitrariesAreConfigured() {
-			final List<Arbitrary> configured = new ArrayList<>();
+			final List<Arbitrary<?>> configured = new ArrayList<>();
 			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
 				public Arbitrary<?> configure(Arbitrary<?> arbitrary, TypeUsage targetType) {
@@ -110,6 +110,39 @@ class PropertyMethodArbitraryResolverTests {
 			MethodParameter parameter = getParameter(DefaultParams.class, "stringOfLength5");
 			assertThat(resolver.forParameter(parameter)).containsOnly(firstFit, secondFit);
 			assertThat(configured).containsOnly(firstFit, secondFit);
+		}
+
+		@Example
+		void whenConfigurerReturnsNullArbitraryIsFilteredOut() {
+
+			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
+				@Override
+				public Arbitrary<?> configure(Arbitrary<?> arbitrary, TypeUsage targetType) {
+					Object value = arbitrary.sample();
+					if (value.equals("filter out")) {
+						return null;
+					}
+					return arbitrary;
+				}
+			};
+
+			Arbitrary<String> firstFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> secondFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> filterOut = tries -> random -> Shrinkable.unshrinkable("filter out");
+
+			List<ArbitraryProvider> registeredProviders = Arrays.asList(
+				createProvider(String.class, firstFit),
+				createProvider(String.class, secondFit),
+				createProvider(String.class, filterOut)
+			);
+
+			PropertyMethodArbitraryResolver resolver = new PropertyMethodArbitraryResolver(
+				DefaultParams.class, new DefaultParams(),
+				new RegisteredArbitraryResolver(registeredProviders),
+				configurer
+			);
+			MethodParameter parameter = getParameter(DefaultParams.class, "stringOfLength5");
+			assertThat(resolver.forParameter(parameter)).containsOnly(firstFit, secondFit);
 		}
 
 		private ArbitraryProvider createProvider(Class targetClass, Arbitrary<?>... arbitraries) {

@@ -77,7 +77,11 @@ public class PropertyMethodArbitraryResolver implements ArbitraryResolver {
 									 ? resolveRegisteredArbitrary(targetType)
 									 : Collections.emptySet());
 
-		return resolvedArbitraries.stream().map(arbitrary -> configure(arbitrary, targetType)).collect(Collectors.toSet());
+		return resolvedArbitraries
+				   .stream()
+				   .map(arbitrary -> configure(arbitrary, targetType))
+				   .filter(Objects::nonNull)
+				   .collect(Collectors.toSet());
 	}
 
 	private Set<Arbitrary<?>> invokeProviderMethod(Method providerMethod, TypeUsage targetType) {
