@@ -262,6 +262,7 @@ public class TypeUsageImpl implements TypeUsage {
 	private final String typeVariable;
 	private final List<Annotation> annotations;
 	private final List<TypeUsage> typeArguments = new ArrayList<>();
+	private TypeUsage typeArgumentContainer = null;
 
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
@@ -284,15 +285,36 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	void addTypeArguments(List<TypeUsage> typeArguments) {
-		this.typeArguments.addAll(typeArguments);
+		for (TypeUsage typeArgument : typeArguments) {
+			this.typeArguments.add(typeArgument);
+			if (typeArgument instanceof TypeUsageImpl) {
+				((TypeUsageImpl) typeArgument).setTypeArgumentContainer(this);
+			}
+		}
+	}
+
+	private void setTypeArgumentContainer(TypeUsage container) {
+		if (typeArgumentContainer == null) {
+			typeArgumentContainer = container;
+		}
 	}
 
 	void addLowerBounds(List<TypeUsage> lowerBounds) {
-		this.lowerBounds.addAll(lowerBounds);
+		for (TypeUsage lowerBound : lowerBounds) {
+			this.lowerBounds.add(lowerBound);
+			if (lowerBound instanceof TypeUsageImpl) {
+				((TypeUsageImpl) lowerBound).setTypeArgumentContainer(this);
+			}
+		}
 	}
 
 	void addUpperBounds(List<TypeUsage> upperBounds) {
-		this.upperBounds.addAll(upperBounds);
+		for (TypeUsage upperBound : upperBounds) {
+			this.upperBounds.add(upperBound);
+			if (upperBound instanceof TypeUsageImpl) {
+				((TypeUsageImpl) upperBound).setTypeArgumentContainer(this);
+			}
+		}
 	}
 
 	@Override
@@ -449,9 +471,9 @@ public class TypeUsageImpl implements TypeUsage {
 	@Override
 	public <A extends Annotation> Optional<A> findAnnotation(Class<A> annotationType) {
 		return getAnnotationsStream()
-						  .filter(annotation -> annotation.annotationType().equals(annotationType))
-						  .map(annotationType::cast)
-						  .findFirst();
+				   .filter(annotation -> annotation.annotationType().equals(annotationType))
+				   .map(annotationType::cast)
+				   .findFirst();
 	}
 
 	@Override
@@ -569,6 +591,11 @@ public class TypeUsageImpl implements TypeUsage {
 	@Override
 	public AnnotatedType getAnnotatedType() {
 		return annotatedType;
+	}
+
+	@Override
+	public Optional<TypeUsage> getContainer() {
+		return Optional.ofNullable(typeArgumentContainer);
 	}
 
 	@Override

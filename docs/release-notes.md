@@ -41,6 +41,9 @@ and
 - `Arbitraries.oneOf(Arbitrary<? extends T>... arbitraries)` does now accept
   covariant subtypes and still returns type `Arbitrary<T>`.
 
+- Added [`TypeUsage.getContainer()](/docs/snapshot/javadoc/net/jqwik/api/providers/TypeUsage.html#getContainer--)
+
+
 #### Breaking Changes
 
 - Deprecated `Arbitrary.withSamples(T... samples)`

@@ -61,6 +61,8 @@ class TypeUsageTests {
 				TypeUsage.of(Comparable.class),
 				TypeUsage.of(CharSequence.class)
 			);
+
+			assertThat(stringType.getContainer()).isNotPresent();
 		}
 
 		@Example
@@ -75,9 +77,18 @@ class TypeUsageTests {
 			assertThat(tupleType.isEnum()).isFalse();
 
 			assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
+			assertThat(tupleType.getContainer()).isNotPresent();
+			assertTypeIsContainerOfItsTypeArguments(tupleType);
+		}
+
+		@Example
+		@Label("parameterized types equality")
+		void parameterizedTypeEquality() {
+			TypeUsage tupleType = TypeUsage.of(Tuple2.class, of(String.class), of(Integer.class));
 
 			TypeUsage equalType = TypeUsage.of(Tuple2.class, of(String.class), of(Integer.class));
 			assertThat(tupleType.equals(equalType)).isTrue();
+
 			TypeUsage nonEqualType = TypeUsage.of(Tuple2.class, of(String.class), of(Number.class));
 			assertThat(tupleType.equals(nonEqualType)).isFalse();
 		}
@@ -121,6 +132,8 @@ class TypeUsageTests {
 		assertThat(tupleType.isArray()).isFalse();
 		assertThat(tupleType.isEnum()).isFalse();
 
+		assertTypeIsContainerOfItsTypeArguments(tupleType);
+
 		assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
 	}
 
@@ -159,6 +172,8 @@ class TypeUsageTests {
 			assertThat(tupleType.isGeneric()).isTrue();
 			assertThat(tupleType.isArray()).isFalse();
 			assertThat(tupleType.isEnum()).isFalse();
+
+			assertTypeIsContainerOfItsTypeArguments(tupleType);
 
 			assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
 		}
@@ -201,8 +216,6 @@ class TypeUsageTests {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public void withWildcard(Tuple2<? extends CharSequence, ? super String> tuple) {}
-
-				public void withNonEqualWildcard(Tuple2<? extends CharSequence, ? super Number> tuple) {}
 			}
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
@@ -215,6 +228,7 @@ class TypeUsageTests {
 			assertThat(first.isTypeVariable()).isFalse();
 			assertThat(first.getLowerBounds()).isEmpty();
 			assertThat(first.getUpperBounds()).containsExactly(TypeUsage.of(CharSequence.class));
+			assertTypeIsContainerOfItsBounds(first);
 
 			TypeUsage second = wildcardType.getTypeArguments().get(1);
 			assertThat(second.isWildcard()).isTrue();
@@ -222,8 +236,25 @@ class TypeUsageTests {
 			assertThat(second.isTypeVariable()).isFalse();
 			assertThat(second.getLowerBounds()).isNotEmpty();
 			assertThat(second.getUpperBounds()).containsExactly(TypeUsage.of(Object.class));
+			assertTypeIsContainerOfItsBounds(second);
+
+			assertTypeIsContainerOfItsTypeArguments(wildcardType);
 
 			assertThat(wildcardType.toString()).isEqualTo("Tuple2<? extends CharSequence, ? super String>");
+		}
+
+		@Example
+		void wildcard_equality() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withWildcard(Tuple2<? extends CharSequence, ? super String> tuple) {}
+
+				public void withNonEqualWildcard(Tuple2<? extends CharSequence, ? super Number> tuple) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage equalWildcardType = TypeUsageImpl.forParameter(parameter);
 			assertThat(wildcardType.equals(equalWildcardType)).isTrue();
@@ -279,6 +310,43 @@ class TypeUsageTests {
 				public <T extends CharSequence, U extends Serializable & Cloneable> void withTypeVariable(
 					Tuple2<T, U> tuple
 				) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
+
+			TypeUsage first = typeVariableType.getTypeArguments().get(0);
+			assertThat(first.isWildcard()).isFalse();
+			assertThat(first.isTypeVariableOrWildcard()).isTrue();
+			assertThat(first.isTypeVariable()).isTrue();
+			assertThat(first.getLowerBounds()).isEmpty();
+			assertThat(first.getUpperBounds()).containsExactly(TypeUsage.of(CharSequence.class));
+			assertTypeIsContainerOfItsBounds(first);
+
+			TypeUsage second = typeVariableType.getTypeArguments().get(1);
+			assertThat(second.isWildcard()).isFalse();
+			assertThat(second.isTypeVariableOrWildcard()).isTrue();
+			assertThat(second.isTypeVariable()).isTrue();
+			assertThat(second.getLowerBounds()).isEmpty();
+			assertThat(second.getUpperBounds()).containsExactly(
+				TypeUsage.of(Serializable.class),
+				TypeUsage.of(Cloneable.class)
+			);
+			assertTypeIsContainerOfItsBounds(second);
+
+			assertTypeIsContainerOfItsTypeArguments(typeVariableType);
+
+			assertThat(typeVariableType.toString()).isEqualTo("Tuple2<T extends CharSequence, U extends Serializable & Cloneable>");
+		}
+
+		@Example
+		void typeVariable_equality() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public <T extends CharSequence, U extends Serializable & Cloneable> void withTypeVariable(
+					Tuple2<T, U> tuple
+				) {}
 
 				@SuppressWarnings("WeakerAccess")
 				public <S extends CharSequence, U extends Serializable & Cloneable> void differentByName(
@@ -295,39 +363,20 @@ class TypeUsageTests {
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
-			TypeUsage first = typeVariableType.getTypeArguments().get(0);
-			assertThat(first.isWildcard()).isFalse();
-			assertThat(first.isTypeVariableOrWildcard()).isTrue();
-			assertThat(first.isTypeVariable()).isTrue();
-			assertThat(first.getLowerBounds()).isEmpty();
-			assertThat(first.getUpperBounds()).containsExactly(TypeUsage.of(CharSequence.class));
-
-			TypeUsage second = typeVariableType.getTypeArguments().get(1);
-			assertThat(second.isWildcard()).isFalse();
-			assertThat(second.isTypeVariableOrWildcard()).isTrue();
-			assertThat(second.isTypeVariable()).isTrue();
-			assertThat(second.getLowerBounds()).isEmpty();
-			assertThat(second.getUpperBounds()).containsExactly(
-				TypeUsage.of(Serializable.class),
-				TypeUsage.of(Cloneable.class)
-			);
-
-			assertThat(typeVariableType.toString()).isEqualTo("Tuple2<T extends CharSequence, U extends Serializable & Cloneable>");
-
 			TypeUsage equalTypeVariableType = TypeUsageImpl.forParameter(parameter);
 			assertThat(typeVariableType.equals(equalTypeVariableType)).isTrue();
 
-
 			Method differentByNameMethod = LocalClass.class.getMethod("differentByName", Tuple2.class);
-			MethodParameter differentByNameParameter = JqwikReflectionSupport.getMethodParameters(differentByNameMethod, LocalClass.class)[0];
+			MethodParameter differentByNameParameter = JqwikReflectionSupport
+														   .getMethodParameters(differentByNameMethod, LocalClass.class)[0];
 			TypeUsage differentByNameType = TypeUsageImpl.forParameter(differentByNameParameter);
 			assertThat(typeVariableType.equals(differentByNameType)).isFalse();
 
 			Method differentByLowerBoundsMethod = LocalClass.class.getMethod("differentByLowerBounds", Tuple2.class);
-			MethodParameter differentByLowerBoundsParameter = JqwikReflectionSupport.getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)[0];
+			MethodParameter differentByLowerBoundsParameter = JqwikReflectionSupport
+																  .getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)[0];
 			TypeUsage differentByLowerBoundsType = TypeUsageImpl.forParameter(differentByLowerBoundsParameter);
 			assertThat(typeVariableType.equals(differentByLowerBoundsType)).isFalse();
-
 		}
 
 		@Example
@@ -404,9 +453,9 @@ class TypeUsageTests {
 				@SuppressWarnings("WeakerAccess")
 				public void withList(
 					@Size(max = 5) List<
-						@StringLength(max = 2)
-						@CharRange(from = 'a', to = 'z') String
-						> list
+										   @StringLength(max = 2)
+										   @CharRange(from = 'a', to = 'z') String
+										   > list
 				) {}
 			}
 
@@ -713,6 +762,21 @@ class TypeUsageTests {
 			);
 			// TODO: jqwik is too loose here which might result in a class cast exception during property resolution
 			// assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceIntegerArbitrary)).isFalse();
+		}
+	}
+
+	private void assertTypeIsContainerOfItsTypeArguments(TypeUsage container) {
+		for (TypeUsage typeArgument : container.getTypeArguments()) {
+			assertThat(typeArgument.getContainer()).isEqualTo(Optional.of(container));
+		}
+	}
+
+	private void assertTypeIsContainerOfItsBounds(TypeUsage container) {
+		for (TypeUsage upperBound : container.getUpperBounds()) {
+			assertThat(upperBound.getContainer()).isEqualTo(Optional.of(container));
+		}
+		for (TypeUsage lowerBound : container.getLowerBounds()) {
+			assertThat(lowerBound.getContainer()).isEqualTo(Optional.of(container));
 		}
 	}
 
