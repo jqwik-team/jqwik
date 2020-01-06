@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.2.2-SNAPSHOT](#122-snapshot)
+- [1.2.2](#122)
 - [1.2.1](#121)
 - [1.2.0](#120)
 - [1.1.x](#11x)
@@ -19,12 +19,12 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.2.2-SNAPSHOT
+## 1.2.2
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.2.2/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.2.2/javadoc/index.html">javadoc</a>
 </p>
 
 
@@ -36,7 +36,7 @@ and
 - Exhaustive generation of single decimals and floats
 
 - Added `Arbitrary.sample()` and `Arbitrary.sampleStream()` for enabling
-  [the use of generators outside of properties](/docs/snapshot/user-guide.html#using-arbitraries-directly)
+  [the use of generators outside of properties](/docs/1.2.2/user-guide.html#using-arbitraries-directly)
 
 - `Arbitraries.oneOf(Arbitrary<? extends T>... arbitraries)` does now accept
   covariant subtypes and still returns type `Arbitrary<T>`.
