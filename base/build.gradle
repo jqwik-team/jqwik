@@ -43,7 +43,7 @@ publishing {
 }
 
 signing {
-	if (isSnapshotRelease) {
+	if (!isSnapshotRelease) {
 		sign publishing.publications.jqwik
 	}
 }
