@@ -1,8 +1,6 @@
 package net.jqwik.engine.properties;
 
-import java.lang.annotation.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
@@ -36,15 +34,8 @@ public class RegisteredArbitraryConfigurer {
 	}
 
 	private boolean hasConfigurationAnnotation(TypeUsage targetType) {
-		return allPotentialAnnotations(targetType)
-				   .anyMatch(annotation -> !annotation.annotationType().equals(ForAll.class));
-	}
-
-	private Stream<Annotation> allPotentialAnnotations(TypeUsage targetType) {
-		// Annotations in class and in one of its containers might be valid
-		return targetType.getContainer()
-						 .map( container -> Stream.concat(targetType.getAnnotations().stream(), allPotentialAnnotations(container)))
-						 .orElse(targetType.getAnnotations().stream());
+		return targetType.getAnnotations().stream()
+						 .anyMatch(annotation -> !annotation.annotationType().equals(ForAll.class));
 	}
 
 	private <T> Arbitrary<T> performSelfConfiguration(

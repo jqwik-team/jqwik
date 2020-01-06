@@ -61,8 +61,6 @@ class TypeUsageTests {
 				TypeUsage.of(Comparable.class),
 				TypeUsage.of(CharSequence.class)
 			);
-
-			assertThat(stringType.getContainer()).isNotPresent();
 		}
 
 		@Example
@@ -77,8 +75,6 @@ class TypeUsageTests {
 			assertThat(tupleType.isEnum()).isFalse();
 
 			assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
-			assertThat(tupleType.getContainer()).isNotPresent();
-			assertTypeIsContainerOfItsTypeArguments(tupleType);
 		}
 
 		@Example
@@ -132,8 +128,6 @@ class TypeUsageTests {
 		assertThat(tupleType.isArray()).isFalse();
 		assertThat(tupleType.isEnum()).isFalse();
 
-		assertTypeIsContainerOfItsTypeArguments(tupleType);
-
 		assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
 	}
 
@@ -172,8 +166,6 @@ class TypeUsageTests {
 			assertThat(tupleType.isGeneric()).isTrue();
 			assertThat(tupleType.isArray()).isFalse();
 			assertThat(tupleType.isEnum()).isFalse();
-
-			assertTypeIsContainerOfItsTypeArguments(tupleType);
 
 			assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
 		}
@@ -228,7 +220,6 @@ class TypeUsageTests {
 			assertThat(first.isTypeVariable()).isFalse();
 			assertThat(first.getLowerBounds()).isEmpty();
 			assertThat(first.getUpperBounds()).containsExactly(TypeUsage.of(CharSequence.class));
-			assertTypeIsContainerOfItsBounds(first);
 
 			TypeUsage second = wildcardType.getTypeArguments().get(1);
 			assertThat(second.isWildcard()).isTrue();
@@ -236,9 +227,6 @@ class TypeUsageTests {
 			assertThat(second.isTypeVariable()).isFalse();
 			assertThat(second.getLowerBounds()).isNotEmpty();
 			assertThat(second.getUpperBounds()).containsExactly(TypeUsage.of(Object.class));
-			assertTypeIsContainerOfItsBounds(second);
-
-			assertTypeIsContainerOfItsTypeArguments(wildcardType);
 
 			assertThat(wildcardType.toString()).isEqualTo("Tuple2<? extends CharSequence, ? super String>");
 		}
@@ -322,7 +310,6 @@ class TypeUsageTests {
 			assertThat(first.isTypeVariable()).isTrue();
 			assertThat(first.getLowerBounds()).isEmpty();
 			assertThat(first.getUpperBounds()).containsExactly(TypeUsage.of(CharSequence.class));
-			assertTypeIsContainerOfItsBounds(first);
 
 			TypeUsage second = typeVariableType.getTypeArguments().get(1);
 			assertThat(second.isWildcard()).isFalse();
@@ -333,9 +320,6 @@ class TypeUsageTests {
 				TypeUsage.of(Serializable.class),
 				TypeUsage.of(Cloneable.class)
 			);
-			assertTypeIsContainerOfItsBounds(second);
-
-			assertTypeIsContainerOfItsTypeArguments(typeVariableType);
 
 			assertThat(typeVariableType.toString()).isEqualTo("Tuple2<T extends CharSequence, U extends Serializable & Cloneable>");
 		}
@@ -764,20 +748,4 @@ class TypeUsageTests {
 			// assertThat(actionSequenceStringArbitraryType.canBeAssignedTo(actionSequenceIntegerArbitrary)).isFalse();
 		}
 	}
-
-	private void assertTypeIsContainerOfItsTypeArguments(TypeUsage container) {
-		for (TypeUsage typeArgument : container.getTypeArguments()) {
-			assertThat(typeArgument.getContainer()).isEqualTo(Optional.of(container));
-		}
-	}
-
-	private void assertTypeIsContainerOfItsBounds(TypeUsage container) {
-		for (TypeUsage upperBound : container.getUpperBounds()) {
-			assertThat(upperBound.getContainer()).isEqualTo(Optional.of(container));
-		}
-		for (TypeUsage lowerBound : container.getLowerBounds()) {
-			assertThat(lowerBound.getContainer()).isEqualTo(Optional.of(container));
-		}
-	}
-
 }

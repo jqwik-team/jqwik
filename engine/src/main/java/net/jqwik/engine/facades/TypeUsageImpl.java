@@ -12,7 +12,7 @@ import net.jqwik.engine.support.*;
 
 public class TypeUsageImpl implements TypeUsage {
 
-	private static Map<TypeVariable, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
+	private static Map<TypeVariable<?>, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
 
 	static final String WILDCARD = "?";
 
@@ -88,7 +88,7 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	private static TypeUsageImpl resolveVariableOrCreate(
-		Class rawType,
+		Class<?> rawType,
 		Type type,
 		String typeVariable,
 		List<Annotation> annotations,
@@ -99,7 +99,7 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	private static TypeUsageImpl resolveVariableOrCreate(
-		Class rawType,
+		Class<?> rawType,
 		Type type,
 		AnnotatedType annotatedType,
 		String typeVariable,
@@ -107,7 +107,7 @@ public class TypeUsageImpl implements TypeUsage {
 		Consumer<TypeUsageImpl> processTypeUsage
 	) {
 		if (type instanceof TypeVariable) {
-			Optional<TypeUsageImpl> alreadyResolved = alreadyResolvedIn((TypeVariable) type);
+			Optional<TypeUsageImpl> alreadyResolved = alreadyResolvedIn((TypeVariable<?>) type);
 			if (alreadyResolved.isPresent()) {
 				return alreadyResolved.get();
 			}
@@ -115,14 +115,14 @@ public class TypeUsageImpl implements TypeUsage {
 
 		TypeUsageImpl typeUsage = new TypeUsageImpl(rawType, type, annotatedType, typeVariable, annotations);
 		if (type instanceof TypeVariable) {
-			resolved.put((TypeVariable) type, typeUsage);
+			resolved.put((TypeVariable<?>) type, typeUsage);
 		}
 		processTypeUsage.accept(typeUsage);
 
 		return typeUsage;
 	}
 
-	private static Optional<TypeUsageImpl> alreadyResolvedIn(TypeVariable typeVariable) {
+	private static Optional<TypeUsageImpl> alreadyResolvedIn(TypeVariable<?> typeVariable) {
 		return Optional.ofNullable(resolved.get(typeVariable));
 	}
 
@@ -175,7 +175,7 @@ public class TypeUsageImpl implements TypeUsage {
 			return WILDCARD;
 		}
 		if (parameterizedType instanceof TypeVariable) {
-			return ((TypeVariable) parameterizedType).getName();
+			return ((TypeVariable<?>) parameterizedType).getName();
 		}
 		return null;
 	}
@@ -199,7 +199,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	private static List<TypeUsage> extractUpperBounds(Type parameterizedType) {
 		if (parameterizedType instanceof TypeVariable) {
-			return extractUpperBoundsForTypeVariable((TypeVariable) parameterizedType);
+			return extractUpperBoundsForTypeVariable((TypeVariable<?>) parameterizedType);
 		}
 		if (parameterizedType instanceof WildcardType) {
 			return extractUpperBoundsForWildcard((WildcardType) parameterizedType);
@@ -207,7 +207,7 @@ public class TypeUsageImpl implements TypeUsage {
 		return Collections.emptyList();
 	}
 
-	private static List<TypeUsage> extractUpperBoundsForTypeVariable(TypeVariable typeVariable) {
+	private static List<TypeUsage> extractUpperBoundsForTypeVariable(TypeVariable<?> typeVariable) {
 		Type[] upperBounds = typeVariable.getBounds();
 		return toTypeUsages(upperBounds);
 	}
@@ -247,10 +247,10 @@ public class TypeUsageImpl implements TypeUsage {
 
 	private static Class<?> extractRawType(Type parameterizedType) {
 		if (parameterizedType instanceof Class) {
-			return (Class) parameterizedType;
+			return (Class<?>) parameterizedType;
 		}
 		if (parameterizedType instanceof ParameterizedType) {
-			return (Class) ((ParameterizedType) parameterizedType).getRawType();
+			return (Class<?>) ((ParameterizedType) parameterizedType).getRawType();
 		}
 		// Now we have a type variable (java.lang.reflect.TypeVariable)
 		return Object.class;
@@ -262,7 +262,6 @@ public class TypeUsageImpl implements TypeUsage {
 	private final String typeVariable;
 	private final List<Annotation> annotations;
 	private final List<TypeUsage> typeArguments = new ArrayList<>();
-	private TypeUsage typeArgumentContainer = null;
 
 	private final List<TypeUsage> upperBounds = new ArrayList<>();
 	private final List<TypeUsage> lowerBounds = new ArrayList<>();
@@ -285,36 +284,15 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	void addTypeArguments(List<TypeUsage> typeArguments) {
-		for (TypeUsage typeArgument : typeArguments) {
-			this.typeArguments.add(typeArgument);
-			if (typeArgument instanceof TypeUsageImpl) {
-				((TypeUsageImpl) typeArgument).setTypeArgumentContainer(this);
-			}
-		}
-	}
-
-	private void setTypeArgumentContainer(TypeUsage container) {
-		if (typeArgumentContainer == null) {
-			typeArgumentContainer = container;
-		}
+		this.typeArguments.addAll(typeArguments);
 	}
 
 	void addLowerBounds(List<TypeUsage> lowerBounds) {
-		for (TypeUsage lowerBound : lowerBounds) {
-			this.lowerBounds.add(lowerBound);
-			if (lowerBound instanceof TypeUsageImpl) {
-				((TypeUsageImpl) lowerBound).setTypeArgumentContainer(this);
-			}
-		}
+		this.lowerBounds.addAll(lowerBounds);
 	}
 
 	void addUpperBounds(List<TypeUsage> upperBounds) {
-		for (TypeUsage upperBound : upperBounds) {
-			this.upperBounds.add(upperBound);
-			if (upperBound instanceof TypeUsageImpl) {
-				((TypeUsageImpl) upperBound).setTypeArgumentContainer(this);
-			}
-		}
+		this.upperBounds.addAll(upperBounds);
 	}
 
 	@Override
@@ -594,11 +572,6 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	@Override
-	public Optional<TypeUsage> getContainer() {
-		return Optional.ofNullable(typeArgumentContainer);
-	}
-
-	@Override
 	public int hashCode() {
 		return rawType.hashCode();
 	}
@@ -629,6 +602,7 @@ public class TypeUsageImpl implements TypeUsage {
 			representation = String.format("%s<%s>", representation, toStringTypeArguments(touchedTypes));
 		}
 		if (isArray()) {
+			//noinspection OptionalGetWithoutIsPresent
 			representation = String.format("%s[]", toString(getComponentType().get(), touchedTypes));
 		}
 		if (isTypeVariableOrWildcard()) {

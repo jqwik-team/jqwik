@@ -185,16 +185,4 @@ public interface TypeUsage {
 	@API(status = INTERNAL, since = "1.2.0")
 	AnnotatedType getAnnotatedType();
 
-	/**
-	 * Return container if one of the following is true:
-	 * <ul>
-	 *     <li>current type is a type argument of another {@code TypeUsage} instance</li>
-	 *     <li>current type is an upper bound of another {@code TypeUsage} instance (wildcard or type variable)</li>
-	 *     <li>current type is an lower bound of another {@code TypeUsage} instance (wildcard or type variable)</li>
-	 * </ul>
-	 *
-	 */
-	@API(status = EXPERIMENTAL, since = "1.2.2")
-	Optional<TypeUsage> getContainer();
-
 }
