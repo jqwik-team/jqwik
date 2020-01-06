@@ -1,8 +1,5 @@
 - 1.2.2
 
-  - Save random seed instead of serialized objects to recreate specific test data
-    when rerunning failed properties
-
 - 1.2.3
 
   - Lifecycle
