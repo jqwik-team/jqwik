@@ -13,8 +13,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * The main interface for representing objects that can be generated and shrunk.
  *
- * @param <T>
- *            The type of generated objects. Primitive objects (e.g. int, boolean etc.) are represented by their boxed
+ * @param <T> The type of generated objects. Primitive objects (e.g. int, boolean etc.) are represented by their boxed
  *            type (e.g. Integer, Boolean).
  */
 @API(status = STABLE, since = "1.0")
@@ -58,11 +57,10 @@ public interface Arbitrary<T> {
 	 *                to influence the configuration and behaviour of a random generator
 	 *                if and only if the generator wants to be influenced.
 	 *                Many generators are independent of genSize.
-	 *
+	 *                <p>
 	 *                The default value of {@code genSize} is the number of tries configured
 	 *                for a property. Use {@linkplain Arbitrary#fixGenSize(int)} to fix
 	 *                the parameter for a given arbitrary.
-	 *
 	 * @return a new random generator instance
 	 */
 	RandomGenerator<T> generator(int genSize);
@@ -87,7 +85,6 @@ public interface Arbitrary<T> {
 	 * @param maxNumberOfSamples The maximum number of samples considered.
 	 *                           If during generation it becomes clear that this
 	 *                           number will be exceeded generation stops.
-	 *
 	 * @return a new exhaustive generator or Optional.empty() if it cannot be created.
 	 */
 	@API(status = MAINTAINED, since = "1.2.1")
@@ -126,7 +123,6 @@ public interface Arbitrary<T> {
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
-	 *
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
 		return new Arbitrary<T>() {
@@ -177,7 +173,8 @@ public interface Arbitrary<T> {
 			@Override
 			public Optional<ExhaustiveGenerator<U>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples)
-									 .flatMap(generator -> ArbitraryFacade.implementation.flatMapExhaustiveGenerator(generator, mapper, maxNumberOfSamples));
+									 .flatMap(generator -> ArbitraryFacade.implementation
+															   .flatMapExhaustiveGenerator(generator, mapper, maxNumberOfSamples));
 			}
 		};
 	}
@@ -306,9 +303,8 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code T[]} using the existing arbitrary for generating the elements of the array.
 	 *
-	 * @param arrayClass
-	 *            The arrays class to create, e.g. {@code String[].class}. This is required due to limitations in Java's
-	 *            reflection capabilities.
+	 * @param arrayClass The arrays class to create, e.g. {@code String[].class}. This is required due to limitations in Java's
+	 *                   reflection capabilities.
 	 */
 	default <A> StreamableArbitrary<T, A> array(Class<A> arrayClass) {
 		return ArbitraryFacade.implementation.array(this, arrayClass);
@@ -317,7 +313,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code Optional<T>} using the existing arbitrary for generating the elements of the
 	 * stream.
-	 *
+	 * <p>
 	 * The new arbitrary also generates {@code Optional.empty()} values with a probability of {@code 0.05} (i.e. 1 in 20).
 	 */
 	default Arbitrary<Optional<T>> optional() {
@@ -334,10 +330,22 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Generate a stream of sample values using this arbitrary.
+	 * This can be useful for
+	 * <ul>
+	 * 		<li>Testing arbitraries</li>
+	 * 		<li>Playing around with arbitraries in <em>jshell</em></li>
+	 * 		<li>Using arbitraries independently from jqwik, e.g. to feed test data builders</li>
+	 * </ul>
 	 *
 	 * <p>
-	 *     Using this method within a property does not break reproducibility of results,
-	 *     i.e. rerunning it with same seed will also generate the same values.
+	 * The underlying generator is created with size 1000.
+	 * Outside a property a new instance of {@linkplain Random} will be created
+	 * to feed the generator.
+	 * <p>
+	 *
+	 * <p>
+	 * Using this method within a property does not break reproducibility of results,
+	 * i.e. rerunning it with same seed will also generate the same values.
 	 * </p>
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.2")
@@ -347,6 +355,18 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Generate a single sample value using this arbitrary.
+	 * This can be useful for
+	 * <ul>
+	 * 		<li>Testing arbitraries</li>
+	 * 		<li>Playing around with arbitraries in <em>jshell</em></li>
+	 * 		<li>Using arbitraries independently from jqwik, e.g. to feed test data builders</li>
+	 * </ul>
+	 *
+	 * <p>
+	 * The underlying generator is created with size 1000.
+	 * Outside a property a new instance of {@linkplain Random} will be created
+	 * to feed the generator.
+	 * <p>
 	 *
 	 * <p>
 	 *     Using this method within a property does not break reproducibility of results,
@@ -359,7 +379,5 @@ public interface Arbitrary<T> {
 				   .findFirst()
 				   .orElseThrow(() -> new JqwikException("Cannot generate a value"));
 	}
-
-
 
 }
