@@ -35,6 +35,12 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 		counter.incrementAndGet();
 	}
 
+	@Example
+	@AddLifecycleHook(ReportingAround.class)
+	void justForReporting() {
+		System.out.println("just for reporting");
+	}
+
 	@Override
 	public void close() {
 		System.out.println("Teardown in close()");
@@ -43,14 +49,14 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 	private static class Count10Tries implements AroundPropertyHook {
 		@Override
 		public PropertyExecutionResult aroundProperty(
-			PropertyLifecycleContext propertyDescriptor,
+			PropertyLifecycleContext context,
 			PropertyExecutor property
 		) throws Throwable {
-			System.out.println("Before around counting: " + propertyDescriptor.label());
+			System.out.println("Before around counting: " + context.label());
 			PropertyExecutionResult testExecutionResult = property.execute();
-			System.out.println("After around counting: " + propertyDescriptor.label());
+			System.out.println("After around counting: " + context.label());
 
-			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) propertyDescriptor.testInstance();
+			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) context.testInstance();
 			assertThat(testInstance.counter.get()).isEqualTo(10);
 			return testExecutionResult;
 		}
@@ -62,16 +68,27 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 		}
 	}
 
-	static class AroundAll implements AroundPropertyHook {
+	static class AroundAll implements AroundPropertyHook, LifecycleHook.PropagateToChildren {
 		@Override
 		public PropertyExecutionResult aroundProperty(
-			PropertyLifecycleContext propertyDescriptor,
+			PropertyLifecycleContext context,
 			PropertyExecutor property
 		) throws Throwable {
-			System.out.println("Before around all: " + propertyDescriptor.label());
+			System.out.println("Before around all: " + context.label());
 			PropertyExecutionResult testExecutionResult = property.execute();
-			System.out.println("After around all: " + propertyDescriptor.label());
+			System.out.println("After around all: " + context.label());
 			return testExecutionResult;
+		}
+	}
+
+	static class ReportingAround implements AroundPropertyHook {
+
+		@Override
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+			context.reporter().publish("before", String.format("%d", System.currentTimeMillis()));
+			PropertyExecutionResult executionResult = property.execute();
+			context.reporter().publish("after", String.format("%d", System.currentTimeMillis()));
+			return executionResult;
 		}
 	}
 }

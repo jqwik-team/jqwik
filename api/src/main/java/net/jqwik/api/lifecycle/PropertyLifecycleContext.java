@@ -18,4 +18,7 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 
 	Object testInstance();
 
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	Reporter reporter();
+
 }

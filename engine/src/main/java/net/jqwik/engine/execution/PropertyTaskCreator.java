@@ -2,6 +2,8 @@ package net.jqwik.engine.execution;
 
 import java.util.*;
 
+import org.junit.platform.engine.reporting.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.SkipExecutionHook.*;
@@ -20,7 +22,8 @@ class PropertyTaskCreator {
 
 				try {
 					Object testInstance = createTestInstance(methodDescriptor);
-					propertyLifecycleContext = new PropertyMethodLifecycleContext(methodDescriptor, testInstance);
+					Reporter reporter = (key, value) -> listener.reportingEntryPublished(methodDescriptor, ReportEntry.from(key, value));
+					propertyLifecycleContext = new PropertyMethodLifecycleContext(methodDescriptor, testInstance, reporter);
 
 					SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(methodDescriptor);
 					SkipResult skipResult = skipExecutionHook.shouldBeSkipped(propertyLifecycleContext);

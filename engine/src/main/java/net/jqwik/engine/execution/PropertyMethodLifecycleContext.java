@@ -9,10 +9,12 @@ import net.jqwik.engine.descriptor.*;
 class PropertyMethodLifecycleContext implements PropertyLifecycleContext {
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final Object testInstance;
+	private final Reporter reporter;
 
-	PropertyMethodLifecycleContext(PropertyMethodDescriptor methodDescriptor, Object testInstance) {
+	PropertyMethodLifecycleContext(PropertyMethodDescriptor methodDescriptor, Object testInstance, Reporter reporter) {
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
+		this.reporter = reporter;
 	}
 
 	@Override
@@ -38,5 +40,10 @@ class PropertyMethodLifecycleContext implements PropertyLifecycleContext {
 	@Override
 	public Object testInstance() {
 		return testInstance;
+	}
+
+	@Override
+	public Reporter reporter() {
+		return reporter;
 	}
 }
