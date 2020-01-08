@@ -7,9 +7,11 @@ import examples.packageWithDisabledTests.*;
 import examples.packageWithFailings.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
+import org.assertj.core.api.Assertions;
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.discovery.*;
+import org.junit.platform.engine.reporting.*;
 import org.junit.platform.testkit.engine.*;
 
 import net.jqwik.api.*;
@@ -17,17 +19,13 @@ import net.jqwik.engine.recording.*;
 import net.jqwik.engine.support.*;
 
 import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
+import static org.junit.platform.testkit.engine.Event.*;
 import static org.junit.platform.testkit.engine.EventConditions.*;
+import static org.junit.platform.testkit.engine.EventType.*;
 
 class JqwikIntegrationTests {
 
-	private final JqwikTestEngine testEngine;
-
-	JqwikIntegrationTests() {
-		testEngine = new JqwikTestEngine(this::configuration);
-	}
-
-	private JqwikConfiguration configuration() {
+	private JqwikConfiguration configuration(final boolean useJunitPlatformReporter) {
 		return new JqwikConfiguration() {
 			@Override
 			public PropertyDefaultValues propertyDefaultValues() {
@@ -63,14 +61,22 @@ class JqwikIntegrationTests {
 
 			@Override
 			public boolean useJunitPlatformReporter() {
-				return false;
+				return useJunitPlatformReporter;
 			}
 
 			@Override
 			public boolean reportOnlyFailures() {
-				return false;
+				return true;
 			}
 		};
+	}
+
+	private JqwikTestEngine createTestEngine(final boolean useJunitPlatformReporter) {
+		return new JqwikTestEngine(() -> configuration(useJunitPlatformReporter));
+	}
+
+	private JqwikTestEngine createTestEngine() {
+		return createTestEngine(false);
 	}
 
 	@Example
@@ -79,7 +85,7 @@ class JqwikIntegrationTests {
 		ClasspathRootSelector[] classpathRootSelectors = selectClasspathRoots(classpathRoots)
 															 .toArray(new ClasspathRootSelector[classpathRoots.size()]);
 		Events events = EngineTestKit
-							.engine(testEngine)
+							.engine(createTestEngine())
 							.selectors(classpathRootSelectors)
 							.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
 							.execute()
@@ -91,7 +97,7 @@ class JqwikIntegrationTests {
 	@Example
 	void runTestsFromPackage() {
 		Events events = EngineTestKit
-							.engine(testEngine)
+							.engine(createTestEngine())
 							.selectors(selectPackage("examples.packageWithSingleContainer"))
 							.execute()
 							.all();
@@ -102,7 +108,7 @@ class JqwikIntegrationTests {
 	@Example
 	void runTestsFromClass() {
 		Events events = EngineTestKit
-							.engine(testEngine)
+							.engine(createTestEngine())
 							.selectors(selectClass(SimpleExampleTests.class))
 							.execute()
 							.all();
@@ -113,7 +119,7 @@ class JqwikIntegrationTests {
 	@Example
 	void failingConstructorFailsTests() {
 		Events events = EngineTestKit
-							.engine(testEngine)
+							.engine(createTestEngine())
 							.selectors(selectClass(ContainerWithFailingConstructor.class))
 							.execute()
 							.all();
@@ -146,7 +152,7 @@ class JqwikIntegrationTests {
 	@Example
 	void runTestsFromMethod() {
 		Events events = EngineTestKit
-							.engine(testEngine)
+							.engine(createTestEngine())
 							.selectors(selectMethod(SimpleExampleTests.class, "succeeding"))
 							.execute()
 							.all();
@@ -165,7 +171,7 @@ class JqwikIntegrationTests {
 	void runMixedExamples() {
 
 		Events events = EngineTestKit
-							.engine(testEngine)
+							.engine(createTestEngine())
 							.selectors(selectPackage("examples.packageWithSeveralContainers"))
 							.execute()
 							.all();
@@ -178,8 +184,8 @@ class JqwikIntegrationTests {
 			event(container(ExampleTests.class), started()),
 			event(test("succeeding"), started()),
 			event(test("succeeding"), finishedSuccessfully()),
-			event(test("failing"), started()),
-			event(test("failing"), finishedWithFailure()),
+			event(test("failingSimple"), started()),
+			event(test("failingSimple"), finishedWithFailure()),
 			event(container(ExampleTests.class), finishedSuccessfully()),
 
 			// PropertyTests
@@ -211,7 +217,7 @@ class JqwikIntegrationTests {
 	void runDisabledTests() {
 
 		Events events = EngineTestKit
-							.engine(testEngine)
+							.engine(createTestEngine())
 							.selectors(selectPackage("examples.packageWithDisabledTests"))
 							.execute()
 							.all();
@@ -228,11 +234,44 @@ class JqwikIntegrationTests {
 
 	}
 
+	@Example
+	void statisticsAreBeingReported() {
+
+		Events events = EngineTestKit
+							.engine(createTestEngine(true))
+							.selectors(selectClass(ContainerWithStatistics.class))
+							.execute()
+							.all();
+
+		assertAllEventsMatch(
+			events,
+			event(container(ContainerWithStatistics.class), started()),
+			event(test("propertyWithStatistics"), finishedSuccessfully()),
+			event(test("propertyWithStatistics"), reported("[propertyWithStatistics] (100) statistics")),
+			event(container(ContainerWithStatistics.class), finishedSuccessfully())
+		);
+
+	}
+
+	private Condition<Event> reported(String key) {
+		Condition<ReportEntry> condition = new Condition<ReportEntry>() {
+			@Override
+			public boolean matches(ReportEntry entry) {
+				return entry.getKeyValuePairs().containsKey(key);
+			}
+		};
+		return Assertions.allOf(
+			type(REPORTING_ENTRY_PUBLISHED),
+			new Condition<>(byPayload(ReportEntry.class, condition::matches), "event with result where %s", condition)
+		);
+	}
+
 	@SafeVarargs
 	// TODO: Remove as soon as https://github.com/junit-team/junit5/issues/1771 is implemented
 	private static void assertAllEventsMatch(Events events, Condition<? super Event>... conditions) {
 		for (int i = 0; i < conditions.length; i++) {
-			events.assertThatEvents().haveExactly(1, conditions[1]);
+			events.assertThatEvents().haveExactly(1, conditions[i]);
 		}
 	}
+
 }

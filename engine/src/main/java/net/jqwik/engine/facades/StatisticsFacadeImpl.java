@@ -1,7 +1,7 @@
 package net.jqwik.engine.facades;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
+import net.jqwik.engine.properties.statistics.*;
 
 /**
  * Is loaded through reflection in api module

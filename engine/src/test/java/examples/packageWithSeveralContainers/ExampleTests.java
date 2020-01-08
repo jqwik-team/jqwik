@@ -12,7 +12,7 @@ public class ExampleTests {
 	}
 
 	@Example
-	void failing() {
+	void failingSimple() {
 		fail("failing");
 	}
 }

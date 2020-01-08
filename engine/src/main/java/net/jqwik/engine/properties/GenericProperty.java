@@ -34,15 +34,9 @@ public class GenericProperty {
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting, boolean reportOnlyFailures) {
-		StatisticsCollectorImpl.clearAll();
 		PropertyCheckResult checkResult = checkWithoutReporting(reporter, reporting);
 		reportResult(reporter, checkResult, reportOnlyFailures);
-		reportStatistics(reporter);
 		return checkResult;
-	}
-
-	private void reportStatistics(Consumer<ReportEntry> reporter) {
-		StatisticsCollectorImpl.report(reporter, name);
 	}
 
 	private void reportResult(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult, boolean reportOnlyFailures) {
@@ -86,11 +80,11 @@ public class GenericProperty {
 		}
 		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, countTries, configuration.getMaxDiscardRatio()))
 			return PropertyCheckResult
-				.exhausted(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed(), configuration
-					.getGenerationMode());
+					   .exhausted(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed(), configuration
+																														   .getGenerationMode());
 		return PropertyCheckResult
-			.satisfied(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration
-				.getGenerationMode());
+				   .satisfied(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration
+																														 .getGenerationMode());
 	}
 
 	private boolean testPredicate(

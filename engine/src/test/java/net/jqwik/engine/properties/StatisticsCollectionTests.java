@@ -3,12 +3,12 @@ package net.jqwik.engine.properties;
 import java.util.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
-import org.junit.platform.engine.reporting.*;
-
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
+import net.jqwik.engine.properties.statistics.*;
 
 import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 
 class StatisticsCollectionTests {
 
@@ -25,9 +25,9 @@ class StatisticsCollectionTests {
 		collector.collect("three");
 
 		Map<List<Object>, Integer> counts = collector.getCounts();
-		Assertions.assertThat(counts.get(asList("one"))).isEqualTo(1);
-		Assertions.assertThat(counts.get(asList("two"))).isEqualTo(2);
-		Assertions.assertThat(counts.get(asList("three"))).isEqualTo(3);
+		assertThat(counts.get(asList("one"))).isEqualTo(1);
+		assertThat(counts.get(asList("two"))).isEqualTo(2);
+		assertThat(counts.get(asList("three"))).isEqualTo(3);
 	}
 
 	@SuppressWarnings("SuspiciousMethodCalls")
@@ -43,9 +43,9 @@ class StatisticsCollectionTests {
 		collector.collect("three", 3);
 
 		Map<List<Object>, Integer> counts = collector.getCounts();
-		Assertions.assertThat(counts.get(asList("one", 1))).isEqualTo(1);
-		Assertions.assertThat(counts.get(asList("two", 2))).isEqualTo(2);
-		Assertions.assertThat(counts.get(asList("three", 3))).isEqualTo(3);
+		assertThat(counts.get(asList("one", 1))).isEqualTo(1);
+		assertThat(counts.get(asList("two", 2))).isEqualTo(2);
+		assertThat(counts.get(asList("three", 3))).isEqualTo(3);
 	}
 
 	@Example
@@ -63,10 +63,10 @@ class StatisticsCollectionTests {
 		collector.collect("four");
 		collector.collect("three");
 
-		ReportEntry entry = collector.createReportEntry("a property");
+		Tuple2<String, String> entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
-		Assertions.assertThat(stats).containsExactly(
+		assertThat(stats).containsExactly(
 			"four  (4) : 40 %",
 			"three (3) : 30 %",
 			"two   (2) : 20 %",
@@ -83,10 +83,11 @@ class StatisticsCollectionTests {
 		collector.collect("two");
 		collector.collect("one");
 
-		ReportEntry entry = collector.createReportEntry("a property");
+		Tuple2<String, String> entry = collector.createReportEntry("a property");
+		assertThat(entry.get1()).isEqualTo("[a property] (4) label");
 
-		List<String> stats = parseStatistics(entry, "label");
-		Assertions.assertThat(stats).containsExactly(
+		List<String> stats = parseStatistics(entry);
+		assertThat(stats).containsExactly(
 			"two (3) : 75 %",
 			"one (1) : 25 %"
 		);
@@ -101,33 +102,23 @@ class StatisticsCollectionTests {
 		collector.collect("aKey");
 		collector.collect((Object) null);
 
-		ReportEntry entry = collector.createReportEntry("a property");
+		Tuple2<String, String> entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
-		Assertions.assertThat(stats).containsExactly(
+		assertThat(stats).containsExactly(
 			"aKey (2) : 50 %"
 		);
 	}
 
-	private List<String> parseStatistics(ReportEntry entry) {
-		String label = StatisticsCollectorImpl.DEFAULT_LABEL;
-		return parseStatistics(entry, label);
+	private List<String> parseStatistics(Tuple2<String, String> entry) {
+		return parseStatistics(entry.get2());
 	}
 
-	private List<String> parseStatistics(ReportEntry entry, String label) {
-		return Arrays.stream(getValue(entry, label)
-								  .split(System.getProperty("line.separator")))
+	private List<String> parseStatistics(String reportString) {
+		return Arrays.stream(reportString.split(System.getProperty("line.separator")))
 					 .map(String::trim)
 					 .filter(s -> !s.isEmpty())
 					 .collect(Collectors.toList());
-	}
-
-	private String getValue(ReportEntry entry, String label) {
-		return entry.getKeyValuePairs().entrySet()
-					.stream()
-					.filter(e -> e.getKey().contains(label))
-					.map(Map.Entry::getValue)
-					.findFirst().orElse(null);
 	}
 
 	@Example
@@ -139,10 +130,10 @@ class StatisticsCollectionTests {
 		collector.collect("three", 2);
 		collector.collect("two", 3);
 
-		ReportEntry entry = collector.createReportEntry("a property");
+		Tuple2<String, String> entry = collector.createReportEntry("a property");
 
 		List<String> stats = parseStatistics(entry);
-		Assertions.assertThat(stats).containsExactlyInAnyOrder(
+		assertThat(stats).containsExactlyInAnyOrder(
 			"two 2   (1) : 25 %",
 			"three 2 (1) : 25 %",
 			"two 3   (1) : 25 %",

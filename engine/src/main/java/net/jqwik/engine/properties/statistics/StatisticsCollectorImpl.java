@@ -1,12 +1,11 @@
-package net.jqwik.engine.properties;
+package net.jqwik.engine.properties.statistics;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.engine.reporting.*;
-
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
+import net.jqwik.api.lifecycle.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 
@@ -28,9 +27,10 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return collectors.get(label);
 	}
 
-	public static void report(Consumer<ReportEntry> reporter, String propertyName) {
+	public static void report(Reporter reporter, String propertyName) {
 		for (StatisticsCollectorImpl collector : collectors.get().values()) {
-			reporter.accept(collector.createReportEntry(propertyName));
+			Tuple2<String, String> reportEntry = collector.createReportEntry(propertyName);
+			reporter.publish(reportEntry.get1(), reportEntry.get2());
 		}
 	}
 
@@ -55,15 +55,11 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		counts.put(key, ++count);
 	}
 
-	private boolean isEmpty() {
-		return counts.isEmpty();
-	}
-
 	public Map<List<Object>, Integer> getCounts() {
 		return counts;
 	}
 
-	public ReportEntry createReportEntry(String propertyName) {
+	public Tuple2<String, String> createReportEntry(String propertyName) {
 		StringBuilder statistics = new StringBuilder();
 		int sum = counts.values().stream().mapToInt(aCount -> aCount).sum();
 		List<StatisticsEntry> statisticsEntries =
@@ -81,7 +77,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 
 		String keyStatistics = String.format("[%s] (%d) %s", propertyName, sum, label);
-		return ReportEntry.from(keyStatistics, statistics.toString());
+		return Tuple.of(keyStatistics, statistics.toString());
 	}
 
 	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {

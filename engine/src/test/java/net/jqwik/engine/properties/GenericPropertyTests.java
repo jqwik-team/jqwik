@@ -5,15 +5,12 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
 import org.junit.platform.engine.reporting.*;
-import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.descriptor.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import static net.jqwik.api.ShrinkingMode.*;
 import static net.jqwik.engine.properties.PropertyConfigurationBuilder.*;
@@ -24,34 +21,6 @@ class GenericPropertyTests {
 
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> {
 	};
-
-	@Example
-	void collectStatistics() {
-		ForAllSpy forAllFunction = new ForAllSpy(value -> {
-			Statistics.collect(value);
-			return true;
-		}, value -> true);
-
-		Arbitrary<Integer> arbitrary = Arbitraries.samples(1);
-		ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
-
-		GenericProperty property = new GenericProperty("property name", aConfig().build(), shrinkablesGenerator, forAllFunction);
-		Consumer<ReportEntry> mockPublisher = mock(Consumer.class);
-
-		PropertyCheckResult result = property.check(mockPublisher, new Reporting[0], false);
-
-		ArgumentCaptor<ReportEntry> reportEntryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
-		verify(mockPublisher, atLeast(2)).accept(reportEntryCaptor.capture());
-
-		Set<String> keys = reportEntryCaptor.getAllValues().stream() //
-											.flatMap(entry -> entry.getKeyValuePairs().keySet().stream()) //
-											.collect(Collectors.toSet());
-
-		Assertions.assertThat(keys).contains("[property name] (100) statistics");
-
-		// Remove statistics from this test from ThreadLocal<Collector>:
-		StatisticsCollectorImpl.clearAll();
-	}
 
 	@Group
 	class OneParameter {
@@ -457,9 +426,9 @@ class GenericPropertyTests {
 		Random random = SourceOfRandomness.current();
 		List<Arbitrary> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
 		List<RandomGenerator> generators = arbitraryList
-			.stream()
-			.map(arbitrary -> arbitrary.generator(9999))
-			.collect(Collectors.toList());
+											   .stream()
+											   .map(arbitrary -> arbitrary.generator(9999))
+											   .collect(Collectors.toList());
 
 		return new ShrinkablesGenerator() {
 			@Override
@@ -507,7 +476,5 @@ class GenericPropertyTests {
 			}
 		};
 	}
-
-
 
 }

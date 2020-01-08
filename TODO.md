@@ -2,7 +2,6 @@
 
   - Lifecycle
     - Around property
-      - Make Statistics a hook
       - Statistics.count()/percentage()
       - PerProperty.before/after/variable
     - Around try
