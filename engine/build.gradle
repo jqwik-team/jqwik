@@ -87,5 +87,5 @@ dependencies {
 	testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
 
 	testImplementation "com.tngtech.archunit:archunit-junit5-api:${archunitVersion}"
-	testRuntime "com.tngtech.archunit:archunit-junit5-engine:${archunitVersion}"
+	testRuntimeOnly "com.tngtech.archunit:archunit-junit5-engine:${archunitVersion}"
 }
