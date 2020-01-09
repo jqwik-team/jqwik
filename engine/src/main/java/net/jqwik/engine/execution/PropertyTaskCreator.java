@@ -43,7 +43,7 @@ class PropertyTaskCreator {
 				);
 				listener.executionFinished(methodDescriptor, executionResult);
 			},
-			methodDescriptor.getUniqueId(),
+			methodDescriptor,
 			"executing " + methodDescriptor.getDisplayName()
 		);
 	}

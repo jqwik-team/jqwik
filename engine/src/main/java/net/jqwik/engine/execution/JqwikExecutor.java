@@ -63,15 +63,17 @@ public class JqwikExecutor {
 		if (descriptor.getClass().equals(SkipExecutionDecorator.class)) {
 			return createSkippingTask((SkipExecutionDecorator) descriptor, pipeline);
 		}
-		return ExecutionTask.from(listener -> LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor)),
-								  descriptor.getUniqueId(), "log warning"
+		return ExecutionTask.from(
+			listener -> LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor)),
+			descriptor,
+			"log warning"
 		);
 	}
 
 	private ExecutionTask createSkippingTask(SkipExecutionDecorator descriptor, Pipeline pipeline) {
 		String taskDescription = String.format("Skipping [%s] due to: %s", descriptor.getDisplayName(), descriptor.getSkippingReason());
 		return ExecutionTask.from(listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()),
-								  descriptor.getUniqueId(), taskDescription
+								  descriptor, taskDescription
 		);
 	}
 

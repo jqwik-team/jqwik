@@ -5,6 +5,7 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.engine.execution.*;
+import net.jqwik.engine.execution.lifecycle.*;
 
 public interface ExecutionTask {
 
@@ -12,16 +13,16 @@ public interface ExecutionTask {
 
 	void execute(PropertyExecutionListener listener);
 
-	static ExecutionTask from(Consumer<PropertyExecutionListener> consumer, UniqueId ownerId, String description) {
+	static ExecutionTask from(Consumer<PropertyExecutionListener> consumer, TestDescriptor owner, String description) {
 		return new ExecutionTask() {
 			@Override
 			public UniqueId ownerId() {
-				return ownerId;
+				return owner.getUniqueId();
 			}
 
 			@Override
 			public void execute(PropertyExecutionListener listener) {
-				consumer.accept(listener);
+				CurrentTestDescriptor.runWithDescriptor(owner, () -> consumer.accept(listener));
 			}
 
 			@Override
@@ -31,8 +32,4 @@ public interface ExecutionTask {
 		};
 	}
 
-	static ExecutionTask doNothing(UniqueId ownerId) {
-		return from(listener -> {
-		}, ownerId, "doNothing");
-	}
 }

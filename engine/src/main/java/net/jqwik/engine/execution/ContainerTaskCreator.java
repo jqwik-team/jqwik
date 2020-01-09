@@ -28,14 +28,14 @@ class ContainerTaskCreator {
 		if (skipResult.isSkipped()) {
 			return ExecutionTask.from(
 				listener -> listener.executionSkipped(containerDescriptor, skipResult.reason().orElse(null)),
-				containerDescriptor.getUniqueId(),
+				containerDescriptor,
 				"skip " + containerDescriptor.getDisplayName()
 			);
 		}
 
 		ExecutionTask prepareContainerTask = ExecutionTask.from(
 			listener -> listener.executionStarted(containerDescriptor),
-			containerDescriptor.getUniqueId(),
+			containerDescriptor,
 			"prepare " + containerDescriptor.getDisplayName()
 		);
 
@@ -50,7 +50,7 @@ class ContainerTaskCreator {
 				PropertyExecutionResult result = PropertyExecutionResult.successful();
 				listener.executionFinished(containerDescriptor, result);
 			},
-			containerDescriptor.getUniqueId(),
+			containerDescriptor,
 			"finish " + containerDescriptor.getDisplayName()
 		);
 
