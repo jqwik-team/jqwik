@@ -1,8 +1,8 @@
 description = "Jqwik Engine module"
 
 jar {
-	baseName = 'jqwik-engine'
-	version = version
+	archiveBaseName.set('jqwik-engine')
+	archiveVersion.set("${jqwikVersion}")
 	manifest {
 		attributes('Automatic-Module-Name': "${moduleName}.engine")
 	}

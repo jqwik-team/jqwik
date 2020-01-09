@@ -1,8 +1,8 @@
 description = "Jqwik Aggregator module"
 
 jar {
-	baseName = 'jqwik'
-	version = version
+	archiveBaseName.set('jqwik')
+	archiveVersion.set("${jqwikVersion}")
 	manifest {
 		attributes('Automatic-Module-Name': moduleName)
 	}
