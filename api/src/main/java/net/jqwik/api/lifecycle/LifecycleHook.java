@@ -11,7 +11,7 @@ import static org.apiguardian.api.API.Status.*;
  * Experimental feature. Not ready for public usage yet.
  */
 @API(status = EXPERIMENTAL, since = "1.0")
-public interface LifecycleHook<T extends LifecycleHook> extends Comparable<T> {
+public interface LifecycleHook<T extends LifecycleHook<?>> extends Comparable<T> {
 
 	/**
 	 * Marker interface.

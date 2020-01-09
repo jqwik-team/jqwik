@@ -5,7 +5,7 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 
-public interface LifecycleSupplier {
+public interface LifecycleHooksSupplier {
 
 	AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor);
 

@@ -15,7 +15,7 @@ import static net.jqwik.engine.matchers.TestDescriptorMatchers.*;
 public class JqwikExecutorTests {
 
 	private Set<UniqueId> previouslyFailedTests = new HashSet<>();
-	private JqwikExecutor executor = new JqwikExecutor(new LifecycleRegistry(), testRun -> {}, previouslyFailedTests, true, false);
+	private JqwikExecutor executor = new JqwikExecutor(new LifecycleHooksRegistry(), testRun -> {}, previouslyFailedTests, true, false);
 
 	@Example
 	void previouslyFailedTestsAreRunFirst() {

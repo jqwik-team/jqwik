@@ -14,7 +14,7 @@ import net.jqwik.engine.support.*;
 
 class PropertyTaskCreator {
 
-	ExecutionTask createTask(PropertyMethodDescriptor methodDescriptor, LifecycleSupplier lifecycleSupplier, boolean reportOnlyFailures) {
+	ExecutionTask createTask(PropertyMethodDescriptor methodDescriptor, LifecycleHooksSupplier lifecycleSupplier, boolean reportOnlyFailures) {
 		return ExecutionTask.from(
 			listener -> {
 
@@ -74,7 +74,7 @@ class PropertyTaskCreator {
 	private PropertyExecutionResult executeTestMethod(
 		PropertyMethodDescriptor methodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
-		LifecycleSupplier lifecycleSupplier,
+		LifecycleHooksSupplier lifecycleSupplier,
 		PropertyExecutionListener listener,
 		boolean reportOnlyFailures
 	) {

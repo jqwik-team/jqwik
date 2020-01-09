@@ -14,7 +14,7 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 
 	Method targetMethod();
 
-	Class containerClass();
+	Class<?> containerClass();
 
 	Object testInstance();
 

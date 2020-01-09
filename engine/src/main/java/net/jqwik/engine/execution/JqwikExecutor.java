@@ -12,7 +12,7 @@ import net.jqwik.engine.recording.*;
 
 public class JqwikExecutor {
 
-	private final LifecycleRegistry registry;
+	private final LifecycleHooksRegistry registry;
 	private final TestRunRecorder recorder;
 	private final Set<UniqueId> previousFailedTests;
 	private final boolean useJunitPlatformReporter;
@@ -24,7 +24,7 @@ public class JqwikExecutor {
 	private static final Logger LOG = Logger.getLogger(JqwikExecutor.class.getName());
 
 	public JqwikExecutor(
-		LifecycleRegistry registry,
+		LifecycleHooksRegistry registry,
 		TestRunRecorder recorder,
 		Set<UniqueId> previousFailedTests,
 		boolean useJunitPlatformReporter,

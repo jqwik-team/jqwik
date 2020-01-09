@@ -12,10 +12,10 @@ import net.jqwik.engine.descriptor.*;
 
 public class JqwikLifecycleRegistrator {
 
-	private final LifecycleRegistry lifecycleRegistry;
+	private final LifecycleHooksRegistry lifecycleRegistry;
 	private final Function<String, Optional<String>> parameters;
 
-	public JqwikLifecycleRegistrator(LifecycleRegistry lifecycleRegistry, ConfigurationParameters configurationParameters) {
+	public JqwikLifecycleRegistrator(LifecycleHooksRegistry lifecycleRegistry, ConfigurationParameters configurationParameters) {
 		this.lifecycleRegistry = lifecycleRegistry;
 		this.parameters = configurationParameters::get;
 	}
@@ -26,7 +26,7 @@ public class JqwikLifecycleRegistrator {
 	}
 
 	private void registerGlobalHooks(TestDescriptor rootDescriptor) {
-		for (LifecycleHook lifecycleHook : RegisteredLifecycleHooks.getRegisteredHooks(parameters)) {
+		for (LifecycleHook<?> lifecycleHook : RegisteredLifecycleHooks.getRegisteredHooks(parameters)) {
 			lifecycleRegistry.registerLifecycleInstance(rootDescriptor, lifecycleHook);
 		}
 	}

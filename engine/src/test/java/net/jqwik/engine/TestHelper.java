@@ -34,8 +34,8 @@ public class TestHelper {
 		return new PropertyMethodDescriptor(uniqueId, method, containerClass, propertyConfig);
 	}
 
-	public static LifecycleSupplier nullLifecycleSupplier() {
-		return new LifecycleSupplier() {
+	public static LifecycleHooksSupplier nullLifecycleSupplier() {
+		return new LifecycleHooksSupplier() {
 			@Override
 			public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
 				return new AutoCloseableHook();

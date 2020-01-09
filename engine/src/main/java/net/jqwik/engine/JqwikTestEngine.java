@@ -14,7 +14,7 @@ import net.jqwik.engine.support.*;
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
 
-	private final LifecycleRegistry lifecycleRegistry = new LifecycleRegistry();
+	private final LifecycleHooksRegistry lifecycleRegistry = new LifecycleHooksRegistry();
 	private JqwikConfiguration configuration;
 	private Throwable startupThrowable = null;
 

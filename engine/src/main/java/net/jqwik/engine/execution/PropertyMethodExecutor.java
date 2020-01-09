@@ -39,7 +39,7 @@ public class PropertyMethodExecutor {
 		this.reportOnlyFailures = reportOnlyFailures;
 	}
 
-	public PropertyExecutionResult execute(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
+	public PropertyExecutionResult execute(LifecycleHooksSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		try {
 			DomainContext domainContext = combineDomainContexts(methodDescriptor.getDomains());
 			DomainContextFacadeImpl.setCurrentContext(domainContext);
@@ -92,7 +92,7 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private PropertyExecutionResult executePropertyMethod(LifecycleSupplier lifecycleSupplier, PropertyExecutionListener listener) {
+	private PropertyExecutionResult executePropertyMethod(LifecycleHooksSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		PropertyExecutionResult propertyExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		try {

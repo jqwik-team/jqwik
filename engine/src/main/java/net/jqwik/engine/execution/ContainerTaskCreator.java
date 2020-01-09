@@ -17,7 +17,7 @@ class ContainerTaskCreator {
 		TestDescriptor containerDescriptor,
 		ExecutionTaskCreator childTaskCreator,
 		Pipeline pipeline,
-		LifecycleSupplier lifecycleSupplier
+		LifecycleHooksSupplier lifecycleSupplier
 	) {
 
 		// If SkipExecutionHook ran in task skipping of children wouldn't work
