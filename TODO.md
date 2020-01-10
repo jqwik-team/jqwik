@@ -1,22 +1,29 @@
 - 1.2.3
 
-  - Lifecycle
-    - Around property
-      - Statistics.count()/percentage()
-      - PerProperty.before/after/variable
-    - Around try
-      - @BeforeTry
-      - @AfterTry      
-      - Allow premature success/failure
-    - Around container
-      - @BeforeContainer
-      - @AfterContainer
-    - Around engine
-      - Register through Java Service Registration
+    - Lifecycle
+        - Storing values
+            - API: Store
+                    get
+                    update
+                    - static:
+                        create(visibility, lifespan, name, initializer)
+                        get(name, type)
+
+        - Around property
+            - Statistics.count()/percentage()
+            - PerProperty.after/finally/variable
+        - Around container
+            - @BeforeContainer
+            - @AfterContainer
 
 - 1.2.x
   
-  - Storing values
-  - Spring/Boot Testing in its own module
+    - Spring/Boot Testing in its own module
  
+    - Around try
+      - @BeforeTry
+      - @AfterTry
+      - Allow premature success/failure
 
+    - Around engine
+      - Register through Java Service Registration
