@@ -1,11 +1,11 @@
-package net.jqwik.engine.properties;
+package net.jqwik.engine.hooks;
 
 import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
-import net.jqwik.engine.properties.statistics.*;
+import net.jqwik.engine.hooks.statistics.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;

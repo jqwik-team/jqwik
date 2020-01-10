@@ -1,4 +1,4 @@
-package net.jqwik.engine.execution.lifecycle;
+package net.jqwik.engine.hooks;
 
 import org.junit.platform.commons.support.*;
 

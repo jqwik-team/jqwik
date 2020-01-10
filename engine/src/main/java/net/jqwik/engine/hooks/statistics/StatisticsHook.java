@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties.statistics;
+package net.jqwik.engine.hooks.statistics;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;

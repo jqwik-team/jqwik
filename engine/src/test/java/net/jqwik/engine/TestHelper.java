@@ -12,13 +12,15 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.engine.support.JqwikReflectionSupport.*;
+
 public class TestHelper {
 	public static List<MethodParameter> getParametersFor(Class<?> aClass, String methodName) {
 		return getParameters(getMethod(aClass, methodName), aClass);
 	}
 
 	private static List<MethodParameter> getParameters(Method method, Class<?> containerClass) {
-		return Arrays.stream(JqwikReflectionSupport.getMethodParameters(method, containerClass)).collect(Collectors.toList());
+		return Arrays.stream(getMethodParameters(method, containerClass)).collect(Collectors.toList());
 	}
 
 	public static Method getMethod(Class<?> aClass, String methodName) {
@@ -34,11 +36,15 @@ public class TestHelper {
 		return new PropertyMethodDescriptor(uniqueId, method, containerClass, propertyConfig);
 	}
 
-	public static LifecycleHooksSupplier nullLifecycleSupplier() {
+	public static LifecycleHooksSupplier emptyLifecycleSupplier() {
+		return lifecycleSupplier(Collections.emptyList());
+	}
+
+	public static LifecycleHooksSupplier lifecycleSupplier(List<AroundPropertyHook> aroundPropertyHooks) {
 		return new LifecycleHooksSupplier() {
 			@Override
 			public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-				return new AutoCloseableHook();
+				return AroundPropertyHook.combine(aroundPropertyHooks);
 			}
 
 			@Override
@@ -50,9 +56,10 @@ public class TestHelper {
 
 	public static List<MethodParameter> getParameters(PropertyMethodDescriptor methodDescriptor) {
 		return
-			Arrays.stream(JqwikReflectionSupport
-							  .getMethodParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass()))
-				  .collect(Collectors.toList());
+			Arrays
+				.stream(getMethodParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass()))
+				.collect(Collectors.toList());
 
 	}
+
 }

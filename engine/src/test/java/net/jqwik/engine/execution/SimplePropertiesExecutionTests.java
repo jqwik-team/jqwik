@@ -7,10 +7,11 @@ import org.mockito.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
+import net.jqwik.engine.hooks.*;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 
 import static net.jqwik.engine.TestDescriptorBuilder.*;
 import static net.jqwik.engine.matchers.PropertyExecutionResultMatchers.*;
@@ -114,7 +115,8 @@ class SimplePropertiesExecutionTests {
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
 		MockPipeline pipeline = new MockPipeline();
-		ExecutionTask task = executor.createTask(propertyMethodDescriptor, TestHelper.nullLifecycleSupplier(), false);
+		LifecycleHooksSupplier lifecycleSupplier = TestHelper.lifecycleSupplier(Arrays.asList(new AutoCloseableHook()));
+		ExecutionTask task = executor.createTask(propertyMethodDescriptor, lifecycleSupplier, false);
 		pipeline.submit(task);
 		pipeline.runWith(eventRecorder);
 	}

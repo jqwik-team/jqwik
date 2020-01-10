@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties.statistics;
+package net.jqwik.engine.hooks.statistics;
 
 import java.util.*;
 import java.util.stream.*;

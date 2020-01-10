@@ -42,6 +42,7 @@ public interface AroundPropertyHook extends LifecycleHook<AroundPropertyHook> {
 		if (aroundPropertyHooks.isEmpty()) {
 			return AroundPropertyHook.BASE;
 		}
+		aroundPropertyHooks = new ArrayList<>(aroundPropertyHooks);
 		AroundPropertyHook first = aroundPropertyHooks.remove(0);
 		return first.around(combine(aroundPropertyHooks));
 	}
