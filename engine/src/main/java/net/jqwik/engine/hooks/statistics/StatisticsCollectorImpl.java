@@ -5,27 +5,19 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
-import net.jqwik.api.lifecycle.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	private static ThreadLocal<Map<String, StatisticsCollectorImpl>> collectors = ThreadLocal.withInitial(LinkedHashMap::new);
 
-	public static void clearAll() {
-		collectors.remove();
+	public static void setCurrent(Map<String, StatisticsCollectorImpl> statistics) {
+		collectors.set(statistics);
 	}
 
 	public static StatisticsCollectorImpl get(String label) {
 		Map<String, StatisticsCollectorImpl> collectors = StatisticsCollectorImpl.collectors.get();
 		collectors.putIfAbsent(label, new StatisticsCollectorImpl(label));
 		return collectors.get(label);
-	}
-
-	public static void report(Reporter reporter, String propertyName) {
-		for (StatisticsCollectorImpl collector : collectors.get().values()) {
-			Tuple2<String, String> reportEntry = collector.createReportEntry(propertyName);
-			reporter.publish(reportEntry.get1(), reportEntry.get2());
-		}
 	}
 
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
