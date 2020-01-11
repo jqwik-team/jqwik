@@ -5,14 +5,13 @@ import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.Store.*;
 
 public class StoreRepository {
 
-	private Map<String, Set<StoreImpl<?>>> stores = new HashMap<>();
+	private Map<String, Set<ScopedStore<?>>> stores = new HashMap<>();
 
-	public <T> Store<T> create(Visibility visibility, TestDescriptor owner, String name, Supplier<T> initializer) {
+	public <T> ScopedStore<T> create(Visibility visibility, TestDescriptor scope, String name, Supplier<T> initializer) {
 		if (visibility == null) {
 			throw new IllegalArgumentException("visibility must not be null");
 		}
@@ -26,14 +25,14 @@ public class StoreRepository {
 		if (key.isEmpty()) {
 			throw new IllegalArgumentException("name must not be empty");
 		}
-		StoreImpl<T> store = new StoreImpl<>(visibility, owner, initializer);
-		Set<StoreImpl<?>> storesOfThisName = stores.getOrDefault(key, new HashSet<>());
+		ScopedStore<T> store = new ScopedStore<>(visibility, scope, initializer);
+		Set<ScopedStore<?>> storesOfThisName = stores.getOrDefault(key, new HashSet<>());
 		storesOfThisName.add(store);
 		stores.put(key, storesOfThisName);
 		return store;
 	}
 
-	public <T> Optional<Store<T>> get(TestDescriptor retriever, String name, Class<T> type) {
+	public <T> Optional<ScopedStore<T>> get(TestDescriptor retriever, String name, Class<T> type) {
 		if (name == null) {
 			throw new IllegalArgumentException("name must not be null");
 		}
@@ -42,11 +41,11 @@ public class StoreRepository {
 			throw new IllegalArgumentException("name must not be empty");
 		}
 
-		Set<StoreImpl<?>> storesOfThisName = stores.getOrDefault(key, Collections.emptySet());
+		Set<ScopedStore<?>> storesOfThisName = stores.getOrDefault(key, Collections.emptySet());
 		//noinspection unchecked
 		return storesOfThisName.stream()
 							   .filter(store -> store.isVisibleFor(retriever))
-							   .map(store -> (Store<T>) store)
+							   .map(store -> (ScopedStore<T>) store)
 							   .findFirst();
 	}
 
