@@ -1,5 +1,7 @@
 - 1.2.3
 
+    - Arbitrary.duplicates(probability)
+
     - Lifecycle
         - Storing values
             - API: Store
