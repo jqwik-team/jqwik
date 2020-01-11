@@ -15,7 +15,7 @@ class StatisticsCollectionTests {
 	@SuppressWarnings({"SuspiciousMethodCalls", "ArraysAsListWithZeroOrOneArgument"})
 	@Example
 	void countSingleValues() {
-		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 		collector.collect("two");
 		collector.collect("three");
@@ -33,7 +33,7 @@ class StatisticsCollectionTests {
 	@SuppressWarnings("SuspiciousMethodCalls")
 	@Example
 	void countDoubleValues() {
-		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 		collector.collect("two", 2);
 		collector.collect("three", 3);
@@ -50,7 +50,7 @@ class StatisticsCollectionTests {
 
 	@Example
 	void reportCollectedPercentagesInDecreasingOrder() {
-		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 		collector.collect("two");
 		collector.collect("three");
@@ -95,7 +95,7 @@ class StatisticsCollectionTests {
 
 	@Example
 	void nullKeysAreNotReported() {
-		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 		collector.collect("aKey");
 		collector.collect((Object) null);
@@ -123,7 +123,7 @@ class StatisticsCollectionTests {
 
 	@Example
 	void reportDoubleValues() {
-		StatisticsCollectorImpl collector = new StatisticsCollectorImpl(StatisticsCollectorImpl.DEFAULT_LABEL);
+		StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 		collector.collect("two", 2);
 		collector.collect("three", 3);

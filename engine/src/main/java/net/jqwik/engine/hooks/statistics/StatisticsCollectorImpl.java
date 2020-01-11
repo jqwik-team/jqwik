@@ -9,16 +9,10 @@ import net.jqwik.api.lifecycle.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 
-	public static final String DEFAULT_LABEL = "statistics";
-
 	private static ThreadLocal<Map<String, StatisticsCollectorImpl>> collectors = ThreadLocal.withInitial(LinkedHashMap::new);
 
 	public static void clearAll() {
 		collectors.remove();
-	}
-
-	public static StatisticsCollectorImpl get() {
-		return get(DEFAULT_LABEL);
 	}
 
 	public static StatisticsCollectorImpl get(String label) {
