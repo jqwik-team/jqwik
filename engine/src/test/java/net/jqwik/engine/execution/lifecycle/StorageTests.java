@@ -128,17 +128,48 @@ class StorageTests {
 		}
 
 		@Example
-		void cannotBeRetrievedForOtherOwnerAndSameName() {
+		void cannotBeRetrievedForUnrelatedOwnerAndSameName() {
 			StoreRepository repository = new StoreRepository();
 
-			TestDescriptor owner = TestDescriptorBuilder.forClass(getClass()).build();
+			TestDescriptor owner = TestDescriptorBuilder.forClass(Container1.class).build();
 			repository.create(Visibility.LOCAL, owner, "aString", () -> "initial");
 
-			TestDescriptor otherOwner = TestDescriptorBuilder.forEngine(new JqwikTestEngine()).build();
+			TestDescriptor otherOwner = TestDescriptorBuilder.forClass(Container2.class).build();
 
 			Optional<Store<String>> optionalStore = repository.get(otherOwner, "aString", String.class);
 			assertThat(optionalStore).isNotPresent();
 		}
+
+//		@Example
+//		void childOwnersAndSameNameGetsFreshValues() {
+//			StoreRepository repository = new StoreRepository();
+//
+//			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1", "method2").build();
+//			Iterator<? extends TestDescriptor> children = container.getChildren().iterator();
+//
+//			TestDescriptor method1 = children.next();
+//			TestDescriptor method2 = children.next();
+//
+//			repository.create(Visibility.LOCAL, container, "aString", () -> "initial");
+//
+//			Store<String> containerStore = repository.get(container, "aString", String.class).get();
+//		}
+
+	}
+
+	private static class Container1 {
+
+		@Property
+		void method1() {
+		}
+
+		@Property
+		void method2() {
+		}
+
+	}
+
+	private static class Container2 {
 
 	}
 }
