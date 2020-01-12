@@ -46,4 +46,9 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	public <T> RandomGenerator<List<T>> collect(RandomGenerator<T> self, Predicate<List<T>> until) {
 		return new CollectGenerator<>(self, until);
 	}
+
+	@Override
+	public <T> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability) {
+		return new InjectDuplicatesGenerator(self, duplicateProbability);
+	}
 }

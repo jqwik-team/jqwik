@@ -1,6 +1,7 @@
 - 1.2.3
 
     - Arbitrary.duplicates(probability)
+      - User guide entry: "Inject Duplicate Values"
 
     - Lifecycle
         - Storing values

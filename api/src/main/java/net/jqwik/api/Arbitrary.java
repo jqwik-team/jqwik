@@ -380,4 +380,25 @@ public interface Arbitrary<T> {
 				   .orElseThrow(() -> new JqwikException("Cannot generate a value"));
 	}
 
+	/**
+	 * Create a new arbitrary of type {@code Iterable<T>} that will
+	 * inject duplicates of previously generated values with a probability of {@code duplicateProbability}
+	 *
+	 * @param duplicateProbability The probability with which a previous value will be generated
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	default Arbitrary<T> injectDuplicates(double duplicateProbability) {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).injectDuplicates(duplicateProbability);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples);
+			}
+		};
+	}
+
 }

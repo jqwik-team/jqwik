@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.2.3-SNAPSHOT](#123-snapshot)
 - [1.2.2](#122)
 - [1.2.1](#121)
 - [1.2.0](#120)
@@ -18,6 +19,18 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.2.3-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Added `Arbitrary.injectDuplicates(duplicateProbability)` to enable
+  [the high probability generation of duplicate values](/docs/snapshot/user-guide.html#inject-duplicate-values)
+
+#### Breaking Changes
+
+#### Bug Fixes
+
 
 ## 1.2.2
 
@@ -47,7 +60,7 @@ and
 
 #### Bug Fixes
 
-- [Statistics formatting bug](https://github.com/jlink/jqwik/issues/72) 
+- [Statistics formatting bug](https://github.com/jlink/jqwik/issues/72)
 - [Exhaustive generation bug](https://github.com/jlink/jqwik/issues/77)
 - [Using Arbitraries.forType() outside property bug](https://github.com/jlink/jqwik/issues/79)
 

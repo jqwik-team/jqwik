@@ -770,29 +770,6 @@ class ArbitrariesTests {
 
 	}
 
-	@Group
-	class Sampling {
-
-		@Property
-		void singleSample(@ForAll @Size(min = 1) List<Integer> values) {
-			Arbitrary<Integer> ints = Arbitraries.of(values);
-
-			Integer anInt = ints.sample();
-
-			assertThat(anInt).isIn(values);
-		}
-
-		@Property
-		void sampleStream(@ForAll @Size(min = 1) List<Integer> values) {
-			Arbitrary<Integer> ints = Arbitraries.of(values);
-
-			ints.sampleStream()
-				.limit(10)
-				.forEach(anInt -> assertThat(anInt).isIn(values));
-		}
-
-	}
-
 	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
 		assertAllGenerated(generator, value -> value.length() >= minLength && value.length() <= maxLength);
 		List<Character> allowedChars = Arrays.asList('a', 'b', 'c', 'd');

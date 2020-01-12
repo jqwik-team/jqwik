@@ -16,6 +16,7 @@ import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.api.GenerationMode.*;
 
 @Group
+@Label("Arbitrary")
 class ArbitraryTests {
 
 	@Example
@@ -42,6 +43,18 @@ class ArbitraryTests {
 		assertThat(generator.next(random).value()).isEqualTo(4);
 		assertThat(generator.next(random).value()).isEqualTo(5);
 		assertThat(generator.next(random).value()).isEqualTo(1);
+	}
+
+	@Example
+	void nullsWithProbability50Percent() {
+		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+		Arbitrary<Integer> intsWithNulls = ints.injectNull(0.5);
+
+		List<Integer> listWithNulls = intsWithNulls.list().ofSize(100).sample();
+		listWithNulls.removeIf(Objects::isNull);
+
+		// Might very rarely fail
+		assertThat(listWithNulls).hasSizeLessThanOrEqualTo(60);
 	}
 
 	@Group
@@ -314,6 +327,69 @@ class ArbitraryTests {
 		}
 
 	}
+
+	@Group
+	class Sampling {
+
+		@Property
+		void singleSample(@ForAll @Size(min = 1) List<Integer> values) {
+			Arbitrary<Integer> ints = Arbitraries.of(values);
+
+			Integer anInt = ints.sample();
+
+			assertThat(anInt).isIn(values);
+		}
+
+		@Property
+		void sampleStream(@ForAll @Size(min = 1) List<Integer> values) {
+			Arbitrary<Integer> ints = Arbitraries.of(values);
+
+			ints.sampleStream()
+				.limit(10)
+				.forEach(anInt -> assertThat(anInt).isIn(values));
+		}
+
+	}
+
+	@Group
+	class Duplicates {
+
+		@Example
+		void duplicatesWithProbability20Percent() {
+			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.2);
+
+			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+
+			// Might very rarely fail
+			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(85);
+		}
+
+		@Example
+		void duplicatesWith50Percent() {
+			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(0.5);
+
+			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+
+			// Might very rarely fail
+			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(60);
+		}
+
+		@Example
+		void duplicatesWith100Percent() {
+			Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
+			Arbitrary<Integer> intsWithDuplicates = ints.injectDuplicates(1.0);
+
+			List<Integer> listWithDuplicates = intsWithDuplicates.list().ofSize(100).sample();
+			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
+
+			assertThat(noMoreDuplicates).hasSize(1);
+		}
+	}
+
 
 	private <T> Shrinkable<T> generateNth(RandomGenerator<T> generator, int n, Random random) {
 		Shrinkable<T> generated = null;
