@@ -27,6 +27,9 @@ title: jqwik Release Notes
 - Added `Arbitrary.injectDuplicates(duplicateProbability)` to enable
   [the high probability generation of duplicate values](/docs/snapshot/user-guide.html#inject-duplicate-values)
 
+- Added `Arbitrary.tuple1(), Arbitrary.tuple2(), Arbitrary.tuple3(), Arbitrary.tuple4()`
+  to [generate tuples of same base type](/docs/snapshot/user-guide.html#tuples-of-same-base-types)
+
 #### Breaking Changes
 
 #### Bug Fixes

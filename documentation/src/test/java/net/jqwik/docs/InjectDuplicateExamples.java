@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
-import net.jqwik.api.arbitraries.*;
 
 class InjectDuplicateExamples {
 
@@ -42,8 +41,6 @@ class InjectDuplicateExamples {
 
 	@Provide
 	Arbitrary<Tuple2<String, String>> pair() {
-		StreamableArbitrary<String, List<String>> listOfTwoStrings =
-			Arbitraries.strings().injectDuplicates(0.1).list().ofSize(2);
-		return listOfTwoStrings.map(list -> Tuple.of(list.get(0), list.get(1)));
+		return Arbitraries.strings().injectDuplicates(0.1).tuple2();
 	}
 }

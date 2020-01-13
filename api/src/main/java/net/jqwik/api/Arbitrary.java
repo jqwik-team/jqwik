@@ -61,6 +61,7 @@ public interface Arbitrary<T> {
 	 *                The default value of {@code genSize} is the number of tries configured
 	 *                for a property. Use {@linkplain Arbitrary#fixGenSize(int)} to fix
 	 *                the parameter for a given arbitrary.
+	 *
 	 * @return a new random generator instance
 	 */
 	RandomGenerator<T> generator(int genSize);
@@ -123,6 +124,8 @@ public interface Arbitrary<T> {
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
 		return new Arbitrary<T>() {
@@ -143,6 +146,8 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code U} that maps the values of the original arbitrary using the {@code mapper}
 	 * function.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default <U> Arbitrary<U> map(Function<T, U> mapper) {
 		return new Arbitrary<U>() {
@@ -162,6 +167,8 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code U} that uses the values of the existing arbitrary to create a new arbitrary
 	 * using the {@code mapper} function.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default <U> Arbitrary<U> flatMap(Function<T, Arbitrary<U>> mapper) {
 		return new Arbitrary<U>() {
@@ -181,6 +188,8 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Create a new arbitrary of the same type but inject null values with a probability of {@code nullProbability}.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<T> injectNull(double nullProbability) {
 		if (nullProbability <= 0.0) {
@@ -204,6 +213,8 @@ public interface Arbitrary<T> {
 	 * never generate the same value twice.
 	 *
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<T> unique() {
 		return new Arbitrary<T>() {
@@ -254,6 +265,8 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Fix the genSize of an arbitrary so that it can no longer be influenced from outside
+	 *
+	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")
 	default Arbitrary<T> fixGenSize(int genSize) {
@@ -279,6 +292,8 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Create a new arbitrary of type {@code Set<T>} using the existing arbitrary for generating the elements of the set.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default StreamableArbitrary<T, Set<T>> set() {
 		return ArbitraryFacade.implementation.set(this);
@@ -287,6 +302,8 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code Stream<T>} using the existing arbitrary for generating the elements of the
 	 * stream.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default StreamableArbitrary<T, Stream<T>> stream() {
 		return ArbitraryFacade.implementation.stream(this);
@@ -295,6 +312,8 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code Iterable<T>} using the existing arbitrary for generating the elements of the
 	 * stream.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default StreamableArbitrary<T, Iterator<T>> iterator() {
 		return ArbitraryFacade.implementation.iterator(this);
@@ -305,6 +324,8 @@ public interface Arbitrary<T> {
 	 *
 	 * @param arrayClass The arrays class to create, e.g. {@code String[].class}. This is required due to limitations in Java's
 	 *                   reflection capabilities.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default <A> StreamableArbitrary<T, A> array(Class<A> arrayClass) {
 		return ArbitraryFacade.implementation.array(this, arrayClass);
@@ -313,8 +334,12 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code Optional<T>} using the existing arbitrary for generating the elements of the
 	 * stream.
+	 *
 	 * <p>
 	 * The new arbitrary also generates {@code Optional.empty()} values with a probability of {@code 0.05} (i.e. 1 in 20).
+	 * </p>
+	 *
+	 * @return a new arbitrary instance
 	 */
 	default Arbitrary<Optional<T>> optional() {
 		return this.injectNull(0.05).map(Optional::ofNullable);
@@ -322,6 +347,8 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Create a new arbitrary of type {@code List<T>} by adding elements of type T until condition {@code until} is fulfilled.
+	 *
+	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.4")
 	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
@@ -347,6 +374,8 @@ public interface Arbitrary<T> {
 	 * Using this method within a property does not break reproducibility of results,
 	 * i.e. rerunning it with same seed will also generate the same values.
 	 * </p>
+	 *
+	 * @return a stream of newly generated values
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.2")
 	default Stream<T> sampleStream() {
@@ -372,6 +401,8 @@ public interface Arbitrary<T> {
 	 *     Using this method within a property does not break reproducibility of results,
 	 *     i.e. rerunning it with same seed will also generate the same value.
 	 * </p>
+	 *
+	 * @return a newly generated value
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.2")
 	default T sample() {
@@ -382,9 +413,16 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Create a new arbitrary of type {@code Iterable<T>} that will
-	 * inject duplicates of previously generated values with a probability of {@code duplicateProbability}
+	 * inject duplicates of previously generated values with a probability of {@code duplicateProbability}.
+	 *
+	 * <p>
+	 *     Shrinking behavior for duplicate values
+	 *     -- if duplication is required for falsification -- is poor,
+	 *     i.e. those duplicate values cannot be shrunk to "smaller" duplicate values.
+	 * </p>
 	 *
 	 * @param duplicateProbability The probability with which a previous value will be generated
+	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	default Arbitrary<T> injectDuplicates(double duplicateProbability) {
@@ -399,6 +437,50 @@ public interface Arbitrary<T> {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples);
 			}
 		};
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code Tuple.Tuple1<T>} that will use the underlying
+	 * arbitrary to create the tuple value;
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	default Arbitrary<Tuple.Tuple1<T>> tuple1() {
+		return Arbitrary.this.map(Tuple::of);
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code Tuple.Tuple2<T, T>} that will use the underlying
+	 * arbitrary to create the tuple values;
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	default Arbitrary<Tuple.Tuple2<T, T>> tuple2() {
+		return Arbitrary.this.list().ofSize(2).map(l -> Tuple.of(l.get(0), l.get(1)));
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code Tuple.Tuple3<T, T, T>} that will use the underlying
+	 * arbitrary to create the tuple values;
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	default Arbitrary<Tuple.Tuple3<T, T, T>> tuple3() {
+		return Arbitrary.this.list().ofSize(3).map(l -> Tuple.of(l.get(0), l.get(1), l.get(2)));
+	}
+
+	/**
+	 * Create a new arbitrary of type {@code Tuple.Tuple4<T, T, T, T>} that will use the underlying
+	 * arbitrary to create the tuple values;
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	default Arbitrary<Tuple.Tuple4<T, T, T, T>> tuple4() {
+		return Arbitrary.this.list().ofSize(4).map(l -> Tuple.of(l.get(0), l.get(1), l.get(2), l.get(3)));
 	}
 
 }

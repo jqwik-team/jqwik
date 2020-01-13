@@ -1,9 +1,5 @@
 - 1.2.3
 
-    - Arbitrary.tuple2...8
-      - user guide entry
-      - use it in example for injectDuplicates
-
     - Lifecycle
         - Storing values
             - API: Store

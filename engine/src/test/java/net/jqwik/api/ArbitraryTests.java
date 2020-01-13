@@ -390,6 +390,43 @@ class ArbitraryTests {
 		}
 	}
 
+	@Group
+	@Label("tuple1..4")
+	class TupleOfSameType {
+
+		@Example
+		void tuple1() {
+			Arbitrary<Integer> integers = Arbitraries.samples(1);
+			Arbitrary<Tuple1<Integer>> tuple = integers.tuple1();
+
+			assertThat(tuple.sample()).isEqualTo(Tuple.of(1));
+		}
+
+		@Example
+		void tuple2() {
+			Arbitrary<Integer> integers = Arbitraries.samples(1, 2);
+			Arbitrary<Tuple2<Integer, Integer>> tuple = integers.tuple2();
+
+			assertThat(tuple.sample()).isEqualTo(Tuple.of(1, 2));
+		}
+
+		@Example
+		void tuple3() {
+			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3);
+			Arbitrary<Tuple3<Integer, Integer, Integer>> tuple = integers.tuple3();
+
+			assertThat(tuple.sample()).isEqualTo(Tuple.of(1, 2, 3));
+		}
+
+		@Example
+		void tuple4() {
+			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3, 4);
+			Arbitrary<Tuple4<Integer, Integer, Integer, Integer>> tuple = integers.tuple4();
+
+			assertThat(tuple.sample()).isEqualTo(Tuple.of(1, 2, 3, 4));
+		}
+
+	}
 
 	private <T> Shrinkable<T> generateNth(RandomGenerator<T> generator, int n, Random random) {
 		Shrinkable<T> generated = null;

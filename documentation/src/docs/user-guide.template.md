@@ -1013,6 +1013,24 @@ Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000);
 ```
 
+### Tuples of same base type
+
+If you want to generate tuples of the same base types that also use the same generator, that's how you can do it:
+
+```java
+Arbitrary<Tuple.Tuple2> integerPair = Arbitrary.integers().between(1, 25).tuple2();
+```
+
+There's a method for tuples of length 1 to 4:
+
+- [`Arbitrary.tuple1()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple1--)
+- [`Arbitrary.tuple2()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple2--)
+- [`Arbitrary.tuple3()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple3--)
+- [`Arbitrary.tuple4()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple4--)
+
+
+
+
 ### Maps
 
 Generating instances of type `Map` is a bit different since two arbitraries
@@ -1207,15 +1225,13 @@ boolean comparing_strings_is_symmetric(@ForAll("pair") Tuple2<String, String> pa
 
 @Provide
 Arbitrary<Tuple2<String, String>> pair() {
-    StreamableArbitrary<String, List<String>> listOfTwoStrings =
-        Arbitraries.strings().injectDuplicates(0.1).list().ofSize(2);
-    return listOfTwoStrings.map(list -> Tuple.of(list.get(0), list.get(1)));
+    return Arbitraries.strings().injectDuplicates(0.1).tuple2();
 }
 ```
 
 This will cover the missing case and will reveal a bug in the comparator.
 Mind that you have to make sure that the _same generator instance_ is being used
-for the two String values - using `list()` ensures that.
+for the two String values - using `tuple2()` does that.
 
 
 ### Filtering
