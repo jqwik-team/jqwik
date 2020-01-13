@@ -61,7 +61,6 @@ public interface Arbitrary<T> {
 	 *                The default value of {@code genSize} is the number of tries configured
 	 *                for a property. Use {@linkplain Arbitrary#fixGenSize(int)} to fix
 	 *                the parameter for a given arbitrary.
-	 *
 	 * @return a new random generator instance
 	 */
 	RandomGenerator<T> generator(int genSize);
@@ -123,9 +122,9 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but only allows
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
-	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
-	 *
 	 * @return a new arbitrary instance
+	 *
+	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
 		return new Arbitrary<T>() {
@@ -212,9 +211,9 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but will
 	 * never generate the same value twice.
 	 *
-	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
-	 *
 	 * @return a new arbitrary instance
+	 *
+	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> unique() {
 		return new Arbitrary<T>() {
@@ -244,7 +243,7 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of the same type but inject values in {@code samples} first before continuing with standard
 	 * value generation.
 	 *
-	 * @deprecated Use something like {@code Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))}.
+	 * @deprecated Use something like {@code Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))}. Will be removed in version 1.3.
 	 */
 	@SuppressWarnings("unchecked")
 	@Deprecated
@@ -324,7 +323,6 @@ public interface Arbitrary<T> {
 	 *
 	 * @param arrayClass The arrays class to create, e.g. {@code String[].class}. This is required due to limitations in Java's
 	 *                   reflection capabilities.
-	 *
 	 * @return a new arbitrary instance
 	 */
 	default <A> StreamableArbitrary<T, A> array(Class<A> arrayClass) {
@@ -416,9 +414,9 @@ public interface Arbitrary<T> {
 	 * inject duplicates of previously generated values with a probability of {@code duplicateProbability}.
 	 *
 	 * <p>
-	 *     Shrinking behavior for duplicate values
-	 *     -- if duplication is required for falsification -- is poor,
-	 *     i.e. those duplicate values cannot be shrunk to "smaller" duplicate values.
+	 * Shrinking behavior for duplicate values
+	 * -- if duplication is required for falsification -- is poor,
+	 * i.e. those duplicate values cannot be shrunk to "smaller" duplicate values.
 	 * </p>
 	 *
 	 * @param duplicateProbability The probability with which a previous value will be generated

@@ -22,6 +22,13 @@ title: jqwik Release Notes
 
 ## 1.2.3-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+
 #### New and Enhanced Features
 
 - Added `Arbitrary.injectDuplicates(duplicateProbability)` to enable

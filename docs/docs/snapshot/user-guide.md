@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.2.2-SNAPSHOT
+title: jqwik User Guide - 1.2.3-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.2-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.3-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -57,10 +57,12 @@ title: jqwik User Guide - 1.2.2-SNAPSHOT
     - [Default Types](#default-types)
   - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
   - [Collecting Values in a List](#collecting-values-in-a-list)
+  - [Tuples of same base type](#tuples-of-same-base-type)
   - [Maps](#maps)
   - [Functional Types](#functional-types)
   - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
   - [Generate `null` values](#generate-null-values)
+  - [Inject duplicate values](#inject-duplicate-values)
   - [Filtering](#filtering)
   - [Creating unique values](#creating-unique-values)
   - [Mapping](#mapping)
@@ -148,7 +150,7 @@ repositories {
 ext.junitPlatformVersion = '1.5.2'
 ext.junitJupiterVersion = '5.5.2'
 
-ext.jqwikVersion = '1.2.2-SNAPSHOT'
+ext.jqwikVersion = '1.2.3-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -167,13 +169,13 @@ dependencies {
     ...
 
     // aggregate jqwik dependency
-    testCompile "net.jqwik:jqwik:${jqwikVersion}"
+    testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testCompile("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
 
     // Add any other test library you need...
-    testCompile("org.assertj:assertj-core:3.12.2")
+    testImplementation("org.assertj:assertj-core:3.12.2")
 
 }
 ```
@@ -183,7 +185,7 @@ simplify jqwik integration for standard users. If you want to be more explicit
 about the real dependencies you can replace this dependency with
 
 ```
-    testCompile "net.jqwik:jqwik-api:${jqwikVersion}"
+    testImplementation "net.jqwik:jqwik-api:${jqwikVersion}"
     testRuntime "net.jqwik:jqwik-engine:${jqwikVersion}"
 ```
 
@@ -224,7 +226,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>1.2.3-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -250,7 +252,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.2.2-SNAPSHOT.jar`
+- `jqwik-1.2.3-SNAPSHOT.jar`
 - `junit-platform-engine-1.5.2.jar`
 - `junit-platform-commons-1.5.2.jar`
 - `opentest4j-1.1.1.jar`
@@ -301,7 +303,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.2.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.2.3-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -1112,6 +1114,24 @@ Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000);
 ```
 
+### Tuples of same base type
+
+If you want to generate tuples of the same base types that also use the same generator, that's how you can do it:
+
+```java
+Arbitrary<Tuple.Tuple2> integerPair = Arbitrary.integers().between(1, 25).tuple2();
+```
+
+There's a method for tuples of length 1 to 4:
+
+- [`Arbitrary.tuple1()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#tuple1--)
+- [`Arbitrary.tuple2()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#tuple2--)
+- [`Arbitrary.tuple3()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#tuple3--)
+- [`Arbitrary.tuple4()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#tuple4--)
+
+
+
+
 ### Maps
 
 Generating instances of type `Map` is a bit different since two arbitraries
@@ -1239,6 +1259,81 @@ Arbitrary<String> stringsWithNull() {
   return Arbitraries.strings(0, 10).injectNull(0.01);
 }
 ```
+
+### Inject duplicate values
+
+Sometimes it is important that your generator will create _a previous value_
+again in order to trigger certain scenarios or branches in your code.
+Imagine you want to check if your carefully hand-crafted String comparator really
+is as symmetric as it's supposed to be:
+
+```java
+Comparator<String> comparator = (s1, s2) -> {
+    if (s1.length() + s2.length() == 0) return 0;
+    if (s1.compareTo(s2) > 0) {
+        return 1;
+    } else {
+        return -1;
+    }
+};
+
+@Property
+boolean comparing_strings_is_symmetric(@ForAll String first, @ForAll String second) {
+    int comparison = comparator.compare(first, second);
+    return comparator.compare(second, first) == -comparison;
+}
+```
+
+The property (most probably) succeeds and will give you confidence in your code.
+Or does it? Natural scepticism makes you check some statistics:
+
+```java
+@Property
+boolean comparing_strings_is_symmetric(@ForAll String first, @ForAll String second) {
+    int comparison = comparator.compare(first, second);
+    String comparisonRange = comparison < 0 ? "<0" : comparison > 0 ? ">0" : "=0";
+    String empty = first.isEmpty() || second.isEmpty() ? "empty" : "not empty";
+    Statistics.collect(comparisonRange, empty);
+    return comparator.compare(second, first) == -comparison;
+}
+```
+
+The following output
+
+```
+[comparing strings is symmetric] (1000) statistics = 
+    <0 not empty (471) : 47,10 %
+    >0 not empty (456) : 45,60 %
+    <0 empty     ( 37) :  3,70 %
+    >0 empty     ( 35) :  3,50 %
+    =0 empty     (  1) :  0,10 %
+```
+
+reveals that our generated test data is missing one combination:
+Comparison value of 0 for non-empty strings. In theory a generic String arbitrary
+could generate the same non-empty string but it's highly unlikely.
+This is where we have to think about raising the probability of the same
+value being generated more often:
+
+```
+@Property
+boolean comparing_strings_is_symmetric(@ForAll("pair") Tuple2<String, String> pair) {
+    String first = pair.get1();
+    String second = pair.get2();
+    int comparison = comparator.compare(first, second);
+    return comparator.compare(second, first) == -comparison;
+}
+
+@Provide
+Arbitrary<Tuple2<String, String>> pair() {
+    return Arbitraries.strings().injectDuplicates(0.1).tuple2();
+}
+```
+
+This will cover the missing case and will reveal a bug in the comparator.
+Mind that you have to make sure that the _same generator instance_ is being used
+for the two String values - using `tuple2()` does that.
+
 
 ### Filtering
 
@@ -1846,12 +1941,12 @@ We can see at least three _actions_ with their preconditions and expected state 
   	}
   
   	@Override
-  	public MyStringStack run(MyStringStack model) {
-  		int sizeBefore = model.size();
-  		model.push(element);
-  		Assertions.assertThat(model.isEmpty()).isFalse();
-  		Assertions.assertThat(model.size()).isEqualTo(sizeBefore + 1);
-  		return model;
+  	public MyStringStack run(MyStringStack stack) {
+  		int sizeBefore = stack.size();
+  		stack.push(element);
+  		Assertions.assertThat(stack.isEmpty()).isFalse();
+  		Assertions.assertThat(stack.size()).isEqualTo(sizeBefore + 1);
+  		return stack;
   	}
   
   	@Override
@@ -1867,19 +1962,19 @@ We can see at least three _actions_ with their preconditions and expected state 
   class PopAction implements Action<MyStringStack> {
     
         @Override
-        public boolean precondition(MyStringStack model) {
-            return !model.isEmpty();
+        public boolean precondition(MyStringStack stack) {
+            return !stack.isEmpty();
         }
     
         @Override
-        public MyStringStack run(MyStringStack model) {
-            int sizeBefore = model.size();
-            String topBefore = model.top();
+        public MyStringStack run(MyStringStack stack) {
+            int sizeBefore = stack.size();
+            String topBefore = stack.top();
     
-            String popped = model.pop();
+            String popped = stack.pop();
             Assertions.assertThat(popped).isEqualTo(topBefore);
-            Assertions.assertThat(model.size()).isEqualTo(sizeBefore - 1);
-            return model;
+            Assertions.assertThat(stack.size()).isEqualTo(sizeBefore - 1);
+            return stack;
         }
     
         @Override
@@ -1894,10 +1989,10 @@ We can see at least three _actions_ with their preconditions and expected state 
   class ClearAction implements Action<MyStringStack> {
 
         @Override
-        public MyStringStack run(MyStringStack model) {
-            model.clear();
-            Assertions.assertThat(model.isEmpty()).isTrue();
-            return model;
+        public MyStringStack run(MyStringStack stack) {
+            stack.clear();
+            Assertions.assertThat(stack.isEmpty()).isTrue();
+            return stack;
         }
     
         @Override
@@ -1945,7 +2040,7 @@ class MyStringStackProperties {
 The interesting API elements are 
 - [`ActionSequence`](/docs/snapshot/javadoc/net/jqwik/api/stateful/ActionSequence.html):
   A generic collection type especially crafted for holding and shrinking of a list of actions.
-  As a convenience it will apply the actions to a model when you call `run(model)`.
+  As a convenience it will apply the actions to a state-based object when you call `run(state)`.
   
 - [`Arbitraries.sequences()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-):
   This method will create the arbitrary for generating an `ActionSequence` given the
@@ -2920,4 +3015,4 @@ defaultGeneration = AUTO            # Set default behaviour for generation:
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#122-snapshot).
+Read this version's [release notes](/release-notes.html#123-snapshot).
