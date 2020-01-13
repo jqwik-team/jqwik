@@ -113,6 +113,7 @@ public class PropertyMethodExecutor {
 				return propertyExecutionResult;
 			}
 		}
+		StoreRepository.getCurrent().removeStoresFor(methodDescriptor);
 		return propertyExecutionResult;
 	}
 

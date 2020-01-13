@@ -1,14 +1,6 @@
 - 1.2.3
 
     - Lifecycle
-        - Storing values
-            - API: Store
-                    get
-                    update
-                    - static:
-                        create(visibility, lifespan, name, initializer)
-                        get(name, type)
-
         - Around property
             - Statistics.count()/percentage()
             - PerProperty.after/finally/variable

@@ -42,7 +42,6 @@ class PropertyTaskCreator {
 					methodDescriptor, propertyLifecycleContext, lifecycleSupplier, listener, reportOnlyFailures
 				);
 				listener.executionFinished(methodDescriptor, executionResult);
-				StoreRepository.getCurrent().removeStoresFor(methodDescriptor);
 			},
 			methodDescriptor,
 			"executing " + methodDescriptor.getDisplayName()
