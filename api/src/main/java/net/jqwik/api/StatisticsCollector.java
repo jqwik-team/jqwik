@@ -20,4 +20,13 @@ public interface StatisticsCollector {
 	 *               a key for the reported table of frequencies.
 	 */
 	void collect(Object... values);
+
+	/**
+	 * Calculate the percentage of occurrences of a given combination of values
+	 *
+	 * @param values The value combination to retrieve
+	 * @return The percentage between 0.0 and 100.0
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	double percentage(Object... values);
 }

@@ -2,7 +2,10 @@
 
     - Lifecycle
         - Around property
-            - Statistics.count()/percentage()
+            - Statistics.percentage()
+              - In API
+              - release notes
+              - user guide
             - PerProperty.after/finally/variable
         - Around container
             - @BeforeContainer

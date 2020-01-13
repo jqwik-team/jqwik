@@ -12,6 +12,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
 
 	private final String label;
+	private List<StatisticsEntry> statisticsEntries = null;
 
 	public StatisticsCollectorImpl(String label) {
 		this.label = label;
@@ -19,15 +20,32 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public void collect(Object... values) {
+		List<Object> key = keyFrom(values);
+		int count = counts.computeIfAbsent(key, any -> 0);
+		counts.put(key, ++count);
+		statisticsEntries = null;
+	}
+
+	private List<Object> keyFrom(Object[] values) {
 		List<Object> key = Collections.emptyList();
 		if (values != null) {
 			key = Arrays.stream(values) //
 						.filter(Objects::nonNull) //
 						.collect(Collectors.toList());
+		} else {
+			key = Collections.singletonList(null);
 		}
+		return key;
+	}
 
-		int count = counts.computeIfAbsent(key, any -> 0);
-		counts.put(key, ++count);
+	@Override
+	public double percentage(Object... values) {
+		List<StatisticsEntry> statistics = statisticsEntries();
+		return statistics
+				   .stream()
+				   .filter(entry -> entry.key.equals(keyFrom(values)))
+				   .map(entry -> entry.percentage)
+				   .findFirst().orElse(0.0);
 	}
 
 	public Map<List<Object>, Integer> getCounts() {
@@ -35,17 +53,13 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	}
 
 	public Tuple2<String, String> createReportEntry(String propertyName) {
-		StringBuilder statistics = new StringBuilder();
-		int sum = counts.values().stream().mapToInt(aCount -> aCount).sum();
-		List<StatisticsEntry> statisticsEntries =
-			counts.entrySet().stream()
-				  .sorted(this::compareStatisticsEntries)
-				  .filter(entry -> !entry.getKey().equals(Collections.emptyList()))
-				  .map(entry -> new StatisticsEntry(displayKey(entry.getKey()), entry.getValue(), entry.getValue() * 100.0 / sum))
-				  .collect(Collectors.toList());
+		List<StatisticsEntry> statisticsEntries = statisticsEntries();
+
 		int maxKeyLength = statisticsEntries.stream().mapToInt(entry -> entry.name.length()).max().orElse(0);
 		boolean fullNumbersOnly = statisticsEntries.stream().noneMatch(entry -> entry.percentage < 1);
 
+		int sum = count();
+		StringBuilder statistics = new StringBuilder();
 		final int decimals = (int) Math.max(1, Math.round(Math.log10(sum)));
 		for (StatisticsEntry statsEntry : statisticsEntries) {
 			statistics.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly, decimals));
@@ -53,6 +67,31 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 		String keyStatistics = String.format("[%s] (%d) %s", propertyName, sum, label);
 		return Tuple.of(keyStatistics, statistics.toString());
+	}
+
+	private List<StatisticsEntry> statisticsEntries() {
+		if (statisticsEntries != null) {
+			return statisticsEntries;
+		}
+		statisticsEntries = calculateStatistics();
+		return statisticsEntries;
+	}
+
+	private List<StatisticsEntry> calculateStatistics() {
+		int sum = count();
+		return counts.entrySet().stream()
+				  .sorted(this::compareStatisticsEntries)
+				  .filter(entry -> !entry.getKey().equals(Collections.emptyList()))
+				  .map(entry -> {
+					  double percentage = entry.getValue() * 100.0 / sum;
+					  return new StatisticsEntry(entry.getKey(), displayKey(entry.getKey()), entry
+																								 .getValue(), percentage);
+				  })
+				  .collect(Collectors.toList());
+	}
+
+	int count() {
+		return counts.values().stream().mapToInt(aCount -> aCount).sum();
 	}
 
 	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {
@@ -80,15 +119,17 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	}
 
 	private String displayKey(List<Object> key) {
-		return key.stream().map(Object::toString).collect(Collectors.joining(" "));
+		return key.stream().map(Objects::toString).collect(Collectors.joining(" "));
 	}
 
-	static class StatisticsEntry {
+	private static class StatisticsEntry {
+		private List<Object> key;
 		private final String name;
 		private long count;
 		private final double percentage;
 
-		StatisticsEntry(String name, long count, double percentage) {
+		StatisticsEntry(List<Object> key, String name, long count, double percentage) {
+			this.key = key;
 			this.name = name;
 			this.count = count;
 			this.percentage = percentage;
