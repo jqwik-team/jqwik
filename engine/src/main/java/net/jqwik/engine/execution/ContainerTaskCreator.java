@@ -49,6 +49,7 @@ class ContainerTaskCreator {
 				// TODO: Check predecessor results first: use SafeExecutor?
 				PropertyExecutionResult result = PropertyExecutionResult.successful();
 				listener.executionFinished(containerDescriptor, result);
+				StoreRepository.getCurrent().removeStoresFor(containerDescriptor);
 			},
 			containerDescriptor,
 			"finish " + containerDescriptor.getDisplayName()

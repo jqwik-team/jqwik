@@ -3,6 +3,8 @@ package net.jqwik.engine.facades;
 import java.util.*;
 import java.util.function.*;
 
+import org.junit.platform.engine.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
@@ -12,17 +14,18 @@ import net.jqwik.engine.execution.lifecycle.*;
  */
 public class StoreFacadeImpl extends Store.StoreFacade {
 
-	private static StoreRepository repository = new StoreRepository();
-
 	@Override
 	public <T> Store<T> create(Store.Visibility visibility, String name, Supplier<T> initializer) {
-		throw new JqwikException("Store API not yet implemented");
-//		return repository.create(visibility, CurrentTestDescriptor.get(), name, initializer);
+		return StoreRepository.getCurrent().create(visibility, CurrentTestDescriptor.get(), name, initializer);
 	}
 
 	@Override
-	public <T> Optional<Store<T>> get(String name, Class<T> type) {
-		throw new JqwikException("Store API not yet implemented");
-//		return repository.get(CurrentTestDescriptor.get(), name, type);
+	public <T> Store<T> get(String name) {
+		TestDescriptor retriever = CurrentTestDescriptor.get();
+		Optional<? extends Store<T>> store = StoreRepository.getCurrent().get(retriever, name);
+		return store.orElseThrow(() -> {
+			String message = String.format("Cannot find store with name [%s] for [%s]", name, retriever.getUniqueId());
+			return new JqwikException(message);
+		});
 	}
 }

@@ -1,6 +1,9 @@
 package net.jqwik.engine.facades;
 
+import java.util.*;
+
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.hooks.statistics.*;
 
 /**
@@ -12,11 +15,12 @@ public class StatisticsFacadeImpl extends Statistics.StatisticsFacade {
 
 	@Override
 	public void collect(Object... values) {
-		StatisticsCollectorImpl.get(DEFAULT_LABEL).collect(values);
+		label(DEFAULT_LABEL).collect(values);
 	}
 
 	@Override
 	public StatisticsCollector label(String label) {
-		return StatisticsCollectorImpl.get(label);
+		Store<Map<String, StatisticsCollector>> statisticsStore = Store.get(StatisticsCollectorImpl.STORE_NAME);
+		return statisticsStore.get().get(label);
 	}
 }

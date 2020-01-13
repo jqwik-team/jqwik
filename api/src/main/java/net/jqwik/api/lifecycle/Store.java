@@ -31,7 +31,7 @@ public interface Store<T> {
 
 		public abstract <T> Store<T> create(Visibility visibility, String name, Supplier<T> initializer);
 
-		public abstract <T> Optional<Store<T>> get(String name, Class<T> type);
+		public abstract <T> Store<T> get(String name);
 	}
 
 	/**
@@ -54,8 +54,8 @@ public interface Store<T> {
 		return StoreFacade.implementation.create(visibility, name, initializer);
 	}
 
-	static <T> Optional<Store<T>> get(String name, Class<T> type) {
-		return StoreFacade.implementation.get(name, type);
+	static <T> Store<T> get(String name) {
+		return StoreFacade.implementation.get(name);
 	}
 
 }

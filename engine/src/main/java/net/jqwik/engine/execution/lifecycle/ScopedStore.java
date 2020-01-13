@@ -5,71 +5,64 @@ import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.lifecycle.Store.*;
+import net.jqwik.api.lifecycle.*;
 
-public class ScopedStore<T> {
+public class ScopedStore<T> implements Store<T> {
 
-	private interface Value<T> {
-		T get(TestDescriptor retriever);
-		void update(TestDescriptor retriever, Function<T, T> updater);
-		void reset(TestDescriptor retriever);
-	}
-
+	private final String name;
 	private final Visibility visibility;
 	private final TestDescriptor scope;
 	private final Supplier<T> initializer;
-	private final Value<T> value;
 
-	public ScopedStore(Visibility visibility, TestDescriptor scope, Supplier<T> initializer) {
+	private T value;
+	private boolean initialized = false;
+
+	public ScopedStore(String name, Visibility visibility, TestDescriptor scope, Supplier<T> initializer) {
+		this.name = name;
 		this.visibility = visibility;
 		this.scope = scope;
 		this.initializer = initializer;
-		this.value = new LocalValue();
 	}
 
-	public synchronized T get(TestDescriptor retriever) {
-		return value.get(retriever);
+	@Override
+	public synchronized T get() {
+		if (!initialized) {
+			value = initializer.get();
+			initialized = true;
+		}
+		return value;
 	}
 
-	public synchronized void update(TestDescriptor retriever, Function<T, T> updater) {
-		value.update(retriever, updater);
+	@Override
+	public synchronized void update(Function<T, T> updater) {
+		value = updater.apply(get());
 	}
 
-	public synchronized void reset(TestDescriptor retriever) {
-		value.reset(retriever);
+	@Override
+	public synchronized void reset() {
+		initialized = false;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public TestDescriptor getScope() {
+		return scope;
 	}
 
 	public boolean isVisibleFor(TestDescriptor retriever) {
-		if (Objects.equals(retriever, scope)) {
-			return true;
+		switch (visibility) {
+			case LOCAL:
+				return Objects.equals(retriever, scope);
+			default:
+				return true;
 		}
-		return scope.getDescendants().contains(retriever);
 	}
 
-	private class LocalValue implements Value<T> {
-
-		private Map<TestDescriptor, T> values = new HashMap<>();
-		private Map<TestDescriptor, Boolean> initialized = new HashMap<>();
-
-		@Override
-		public T get(TestDescriptor retriever) {
-			if (!initialized.getOrDefault(retriever, false)) {
-				values.put(retriever, initializer.get());
-				initialized.put(retriever, true);
-			}
-			return values.get(retriever);
-		}
-
-		@Override
-		public void update(TestDescriptor retriever, Function<T, T> updater) {
-			values.put(retriever, updater.apply(get(retriever)));
-		}
-
-		@Override
-		public void reset(TestDescriptor retriever) {
-			values.remove(retriever);
-			initialized.remove(retriever);
-		}
+	@Override
+	public String toString() {
+		return String.format("Store(%s, %s)", visibility, scope.getUniqueId());
 	}
 }
 
