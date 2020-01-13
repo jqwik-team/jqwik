@@ -54,7 +54,7 @@ class ArbitraryTests {
 		listWithNulls.removeIf(Objects::isNull);
 
 		// Might very rarely fail
-		assertThat(listWithNulls).hasSizeLessThanOrEqualTo(60);
+		assertThat(listWithNulls).hasSizeLessThanOrEqualTo(65);
 	}
 
 	@Group
@@ -363,7 +363,7 @@ class ArbitraryTests {
 			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
 
 			// Might very rarely fail
-			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(85);
+			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(90);
 		}
 
 		@Example
@@ -375,7 +375,7 @@ class ArbitraryTests {
 			Set<Integer> noMoreDuplicates = new HashSet<>(listWithDuplicates);
 
 			// Might very rarely fail
-			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(60);
+			assertThat(noMoreDuplicates).hasSizeLessThanOrEqualTo(65);
 		}
 
 		@Example
