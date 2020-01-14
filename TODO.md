@@ -3,7 +3,6 @@
     - Lifecycle
         - Around property
             - PropertyLifecycle
-               .after((PropertyExecutionResult, PropertyLifecycleContext) -> PER)
                .after((PropertyExecutionResult) -> PER)
                .onSuccess(() ->)
                .onFailure((Throwable) ->)

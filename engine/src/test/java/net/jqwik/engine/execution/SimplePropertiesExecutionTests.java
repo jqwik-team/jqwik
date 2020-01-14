@@ -9,7 +9,7 @@ import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
-import net.jqwik.engine.hooks.*;
+import net.jqwik.engine.hooks.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 

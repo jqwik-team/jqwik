@@ -8,10 +8,10 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-@AddLifecycleHook(TestsWithPropertyLifecycle.AroundAll.class)
-class TestsWithPropertyLifecycle implements AutoCloseable {
+@AddLifecycleHook(AroundPropertyHookExamples.AroundAll.class)
+class AroundPropertyHookExamples implements AutoCloseable {
 
-	TestsWithPropertyLifecycle() {
+	AroundPropertyHookExamples() {
 		System.out.println("Before each property");
 	}
 
@@ -56,7 +56,7 @@ class TestsWithPropertyLifecycle implements AutoCloseable {
 			PropertyExecutionResult testExecutionResult = property.execute();
 			System.out.println("After around counting: " + context.label());
 
-			TestsWithPropertyLifecycle testInstance = (TestsWithPropertyLifecycle) context.testInstance();
+			AroundPropertyHookExamples testInstance = (AroundPropertyHookExamples) context.testInstance();
 			assertThat(testInstance.counter.get()).isEqualTo(10);
 			return testExecutionResult;
 		}

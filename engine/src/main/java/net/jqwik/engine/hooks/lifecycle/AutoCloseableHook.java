@@ -1,4 +1,4 @@
-package net.jqwik.engine.hooks;
+package net.jqwik.engine.hooks.lifecycle;
 
 import java.util.*;
 

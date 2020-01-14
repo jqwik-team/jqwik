@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
-	public static final String STORE_NAME = "statistics";
+	public static final String STORE_NAME = String.format("%s:statistics", StatisticsCollector.class.getName());
 
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
 
