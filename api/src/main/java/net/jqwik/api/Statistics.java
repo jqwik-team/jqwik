@@ -20,6 +20,8 @@ public class Statistics {
 
 		public abstract void collect(Object... values);
 
+		public abstract double percentage(Object... values);
+
 		public abstract StatisticsCollector label(String label);
 	}
 

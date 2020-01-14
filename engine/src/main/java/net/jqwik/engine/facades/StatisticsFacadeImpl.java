@@ -19,6 +19,11 @@ public class StatisticsFacadeImpl extends Statistics.StatisticsFacade {
 	}
 
 	@Override
+	public double percentage(Object... values) {
+		return label(DEFAULT_LABEL).percentage(values);
+	}
+
+	@Override
 	public StatisticsCollector label(String label) {
 		Store<Map<String, StatisticsCollector>> statisticsStore = Store.get(StatisticsCollectorImpl.STORE_NAME);
 		return statisticsStore.get().get(label);
