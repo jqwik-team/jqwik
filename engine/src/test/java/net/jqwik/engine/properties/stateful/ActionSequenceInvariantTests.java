@@ -7,7 +7,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
-class ActionSequenceInvariantProperties {
+class ActionSequenceInvariantTests {
 
 	@Example
 	boolean succeedingInvariant(@ForAll Random random) {
@@ -25,7 +25,7 @@ class ActionSequenceInvariantProperties {
 
 	@Example
 	void failingInvariantFailSequenceRun(@ForAll Random random) {
-		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify()));
+		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify())).ofMinSize(20);
 		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
 		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> Assertions.assertThat(model.value).isNotNull());
