@@ -14,7 +14,7 @@ public class PropertyLifecycle {
 
 	@FunctionalInterface
 	public interface AfterPropertyExecutor {
-		PropertyExecutionResult execute(PropertyExecutionResult executionResult, PropertyLifecycleContext context) throws Throwable;
+		PropertyExecutionResult execute(PropertyExecutionResult executionResult, PropertyLifecycleContext context);
 	}
 
 	@API(status = INTERNAL)
@@ -25,10 +25,24 @@ public class PropertyLifecycle {
 			implementation = FacadeLoader.load(PropertyLifecycle.PropertyLifecycleFacade.class);
 		}
 
-		public abstract void after(AfterPropertyExecutor afterPropertyExecutor);
+		public abstract void after(String label, AfterPropertyExecutor afterPropertyExecutor);
+	}
+
+	public static void onSuccess(Runnable runnable) {
+		AfterPropertyExecutor afterPropertyExecutor = (executionResult, context) -> {
+			if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL) {
+				runnable.run();
+			}
+			return executionResult;
+		};
+		after(afterPropertyExecutor);
 	}
 
 	public static void after(AfterPropertyExecutor afterPropertyExecutor) {
-		PropertyLifecycleFacade.implementation.after(afterPropertyExecutor);
+		after(null, afterPropertyExecutor);
+	}
+
+	public static void after(String key, AfterPropertyExecutor afterPropertyExecutor) {
+		PropertyLifecycleFacade.implementation.after(key, afterPropertyExecutor);
 	}
 }

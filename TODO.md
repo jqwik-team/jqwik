@@ -3,9 +3,7 @@
     - Lifecycle
         - Around property
             - PropertyLifecycle
-               .after((PropertyExecutionResult) -> PER)
-               .onSuccess(() ->)
-               .onFailure((Throwable) ->)
+              - Tests for PropertyLifecycle.after/onSuccess
               - user guide after with Statistics percentage check
 
         - Around try
@@ -25,3 +23,5 @@
  
     - Around engine
       - Register through Java Service Registration
+
+    - Document lifecycle API in user guide

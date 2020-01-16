@@ -10,21 +10,22 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 
 	private static final String EXECUTORS_STORE_NAME = String.format("%s:executors", AfterPropertyExecutor.class);
 
-	public static void addAfterPropertyExecutor(AfterPropertyExecutor afterPropertyExecutor) {
-		Store<Map<Class<?>, AfterPropertyExecutor>> executors = Store.get(StaticPropertyLifecycleMethodsHook.EXECUTORS_STORE_NAME);
+	public static void addAfterPropertyExecutor(String key, AfterPropertyExecutor afterPropertyExecutor) {
+		Store<Map<PropertyExecutorKey, AfterPropertyExecutor>> executors = Store.get(StaticPropertyLifecycleMethodsHook.EXECUTORS_STORE_NAME);
+		PropertyExecutorKey executorKey = new PropertyExecutorKey(key, afterPropertyExecutor.getClass());
 		executors.update(mapOfExecutors -> {
-			if (mapOfExecutors.containsKey(afterPropertyExecutor.getClass())) {
+			if (mapOfExecutors.containsKey(executorKey)) {
 				return mapOfExecutors;
 			}
-			HashMap<Class<?>, AfterPropertyExecutor> newMap = new HashMap<>(mapOfExecutors);
-			newMap.put(afterPropertyExecutor.getClass(), afterPropertyExecutor);
+			HashMap<PropertyExecutorKey, AfterPropertyExecutor> newMap = new HashMap<>(mapOfExecutors);
+			newMap.put(executorKey, afterPropertyExecutor);
 			return newMap;
 		});
 	}
 
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
-		Store<Map<Class<?>, AfterPropertyExecutor>> executors =
+		Store<Map<?, AfterPropertyExecutor>> executors =
 			Store.create(
 				Store.Visibility.LOCAL,
 				EXECUTORS_STORE_NAME,
@@ -51,4 +52,31 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 		return -99;
 	}
 
+	static class PropertyExecutorKey {
+
+		private final String key;
+		private final Class<? extends AfterPropertyExecutor> aClass;
+
+		public PropertyExecutorKey(String key, Class<? extends AfterPropertyExecutor> aClass) {
+			this.key = key;
+			this.aClass = aClass;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			PropertyExecutorKey that = (PropertyExecutorKey) o;
+			if (!Objects.equals(key, that.key)) return false;
+			return aClass.equals(that.aClass);
+		}
+
+		@Override
+		public int hashCode() {
+			int result = key != null ? key.hashCode() : 0;
+			result = 31 * result + aClass.hashCode();
+			return result;
+		}
+	}
 }

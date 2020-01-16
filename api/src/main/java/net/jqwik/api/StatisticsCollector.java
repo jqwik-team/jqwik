@@ -2,6 +2,8 @@ package net.jqwik.api;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.lifecycle.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -22,9 +24,12 @@ public interface StatisticsCollector {
 	void collect(Object... values);
 
 	/**
-	 * Calculate the percentage of occurrences of a given combination of values
+	 * Calculate the percentage of occurrences of a given
+	 * {@code values} combination.
+	 * Since the value changes from try to try it's most of used in a call
+	 * to {@linkplain net.jqwik.api.lifecycle.PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
 	 *
-	 * @param values The value combination to retrieve
+	 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
 	 * @return The percentage between 0.0 and 100.0
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.3")

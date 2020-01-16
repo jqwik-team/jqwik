@@ -9,13 +9,40 @@ public class PropertyLifecycleExamples {
 
 	@Property
 	void stringLength(@ForAll String aString) {
+		Statistics.collect(aString.length() > 200);
+
+		PropertyLifecycle.after(((executionResult, context) -> {
+			assertThat(Statistics.percentage(true))
+				.describedAs("coverage of string length > 200")
+				.isGreaterThan(2.0);
+			return PropertyExecutionResult.successful();
+		}));
+	}
+
+	@Property
+	void stringLength_usingOnSuccess(@ForAll String aString) {
+		Statistics.collect(aString.length() > 200);
+
+		PropertyLifecycle.onSuccess(
+			() -> assertThat(Statistics.percentage(true))
+					  .describedAs("coverage of string length > 200")
+					  .isGreaterThan(5.0)
+		);
+
+		PropertyLifecycle.onSuccess((() -> {
+			System.out.println("SHOULD NOT BE CALLED");
+		}));
+	}
+
+	@Property
+	void stringLengthWithLabel(@ForAll String aString) {
 		String lengthLabel = "length > 200";
 		Statistics.label(lengthLabel).collect(aString.length() > 200);
 
 		PropertyLifecycle.after(((executionResult, context) -> {
 			assertThat(Statistics.label(lengthLabel).percentage(true))
-				.describedAs("coverage of '%s'", lengthLabel)
-				.isGreaterThan(5.0);
+				.describedAs("coverage of [%s]", lengthLabel)
+				.isGreaterThan(2.0);
 			return PropertyExecutionResult.successful();
 		}));
 	}
