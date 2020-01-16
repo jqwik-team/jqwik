@@ -1,11 +1,12 @@
 - 1.2.3
 
-    - Lifecycle
-        - Around property
-            - PropertyLifecycle
-              - Tests for PropertyLifecycle.after/onSuccess
-              - user guide after with Statistics percentage check
+    - Statistics.collect(anInt > 10)
+        .checkCoverageOf(false).isAtLeast(5.0)
+        .checkCoverageOf(true).isAtMost(99.0)
 
+    - Documentation for statistics coverage checking
+
+    - Lifecycle
         - Around try
           - @BeforeTry
             - For methods
@@ -24,4 +25,4 @@
     - Around engine
       - Register through Java Service Registration
 
-    - Document lifecycle API in user guide
+    - Documentation for lifecycle API in user guide

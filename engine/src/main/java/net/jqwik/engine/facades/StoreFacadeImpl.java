@@ -5,7 +5,6 @@ import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
-import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
 
@@ -23,9 +22,6 @@ public class StoreFacadeImpl extends Store.StoreFacade {
 	public <T> Store<T> get(String name) {
 		TestDescriptor retriever = CurrentTestDescriptor.get();
 		Optional<? extends Store<T>> store = StoreRepository.getCurrent().get(retriever, name);
-		return store.orElseThrow(() -> {
-			String message = String.format("Cannot find store with name [%s] for [%s]", name, retriever.getUniqueId());
-			return new JqwikException(message);
-		});
+		return store.orElseThrow(() -> new CannotFindStoreException(name, retriever));
 	}
 }
