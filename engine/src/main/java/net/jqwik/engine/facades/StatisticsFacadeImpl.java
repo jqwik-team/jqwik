@@ -3,6 +3,7 @@ package net.jqwik.engine.facades;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Statistics.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.hooks.statistics.*;
 

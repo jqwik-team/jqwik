@@ -3,6 +3,7 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.api.Statistics.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 
@@ -79,15 +80,16 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	private List<StatisticsEntry> calculateStatistics() {
 		int sum = count();
-		return counts.entrySet().stream()
-				  .sorted(this::compareStatisticsEntries)
-				  .filter(entry -> !entry.getKey().equals(Collections.emptyList()))
-				  .map(entry -> {
-					  double percentage = entry.getValue() * 100.0 / sum;
-					  return new StatisticsEntry(entry.getKey(), displayKey(entry.getKey()), entry
-																								 .getValue(), percentage);
-				  })
-				  .collect(Collectors.toList());
+		return counts.entrySet()
+					 .stream()
+					 .sorted(this::compareStatisticsEntries)
+					 .filter(entry -> !entry.getKey().equals(Collections.emptyList()))
+					 .map(entry -> {
+						 double percentage = entry.getValue() * 100.0 / sum;
+						 return new StatisticsEntry(entry.getKey(), displayKey(entry.getKey()), entry
+																									.getValue(), percentage);
+					 })
+					 .collect(Collectors.toList());
 	}
 
 	int count() {

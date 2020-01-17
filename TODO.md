@@ -1,8 +1,8 @@
 - 1.2.3
 
-    - Statistics.collect(anInt > 10)
-        .checkCoverageOf(false).isAtLeast(5.0)
-        .checkCoverageOf(true).isAtMost(99.0)
+    - Statistics
+        .coverageOf(false).checkPercentage("at least 5%", p -> p > 5.0)
+        .coverageOf(true).checkCount(all, p -> p > 0)
 
     - Documentation for statistics coverage checking
 
