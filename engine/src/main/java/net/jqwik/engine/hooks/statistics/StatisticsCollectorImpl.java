@@ -55,6 +55,17 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				   .findFirst().orElse(0.0);
 	}
 
+	@Override
+	public int count() {
+		return counts.values().stream().mapToInt(aCount -> aCount).sum();
+	}
+
+	@Override
+	public int count(Object... values) {
+		List<Object> key = keyFrom(values);
+		return getCounts().getOrDefault(key, 0);
+	}
+
 	public Map<List<Object>, Integer> getCounts() {
 		return counts;
 	}
@@ -96,10 +107,6 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 																									.getValue(), percentage);
 					 })
 					 .collect(Collectors.toList());
-	}
-
-	int count() {
-		return counts.values().stream().mapToInt(aCount -> aCount).sum();
 	}
 
 	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {

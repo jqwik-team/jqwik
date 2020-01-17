@@ -33,7 +33,7 @@ public class Statistics {
 		/**
 		 * Calculate the percentage of occurrences of a given
 		 * {@code values} combination.
-		 * Since the value changes from try to try it's most of used in a call
+		 * Since the value changes from try to try it's most often used in a call
 		 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
 		 *
 		 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
@@ -41,6 +41,27 @@ public class Statistics {
 		 */
 		@API(status = EXPERIMENTAL, since = "1.2.3")
 		double percentage(Object... values);
+
+		/**
+		 * Count all calls to {@linkplain #collect(Object...)}.
+		 * Since the value changes from try to try it's most often used in a call
+		 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
+		 *
+		 * @return The count is 0 or larger
+		 */
+		@API(status = EXPERIMENTAL, since = "1.2.3")
+		int count();
+
+		/**
+		 * Count all occurrences of a given {@code values} combination.
+		 * Since the value changes from try to try it's most often used in a call
+		 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
+		 *
+		 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
+		 * @return The count is 0 or larger
+		 */
+		@API(status = EXPERIMENTAL, since = "1.2.3")
+		int count(Object... values);
 	}
 
 	public static abstract class StatisticsFacade {
@@ -50,11 +71,10 @@ public class Statistics {
 			implementation = FacadeLoader.load(StatisticsFacade.class);
 		}
 
-		public abstract void collect(Object... values);
+		public abstract StatisticsCollector collectorByLabel(String label);
 
-		public abstract double percentage(Object... values);
+		public abstract StatisticsCollector defaultCollector();
 
-		public abstract StatisticsCollector label(String label);
 	}
 
 	/**
@@ -66,13 +86,13 @@ public class Statistics {
 	 *               a key for the reported table of frequencies.
 	 */
 	public static void collect(Object... values) {
-		StatisticsFacade.implementation.collect(values);
+		StatisticsFacade.implementation.defaultCollector().collect(values);
 	}
 
 	/**
 	 * Calculate the percentage of occurrences of a given
 	 * {@code values} combination.
-	 * Since the value changes from try to try it's most of used in a call
+	 * Since the value changes from try to try it's most often used in a call
 	 * to {@linkplain net.jqwik.api.lifecycle.PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
 	 *
 	 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
@@ -80,7 +100,7 @@ public class Statistics {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	public static double percentage(Object... values) {
-		return StatisticsFacade.implementation.percentage(values);
+		return StatisticsFacade.implementation.defaultCollector().percentage(values);
 	}
 
 	/**
@@ -90,7 +110,32 @@ public class Statistics {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.0")
 	public static StatisticsCollector label(String label) {
-		return StatisticsFacade.implementation.label(label);
+		return StatisticsFacade.implementation.collectorByLabel(label);
+	}
+
+	/**
+	 * Count all calls to {@linkplain #collect(Object...)}.
+	 * Since the value changes from try to try it's most often used in a call
+	 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
+	 *
+	 * @return The count is 0 or larger
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	public static int count() {
+		return StatisticsFacade.implementation.defaultCollector().count();
+	}
+
+	/**
+	 * Count all occurrences of a given {@code values} combination.
+	 * Since the value changes from try to try it's most often used in a call
+	 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
+	 *
+	 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
+	 * @return The count is 0 or larger
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	public static int count(Object... values) {
+		return StatisticsFacade.implementation.defaultCollector().count(values);
 	}
 
 }

@@ -42,7 +42,10 @@ public class PropertyLifecycleExamples {
 		PropertyLifecycle.after(((executionResult, context) -> {
 			assertThat(Statistics.label(lengthLabel).percentage(true))
 				.describedAs("coverage of [%s]", lengthLabel)
-				.isGreaterThan(2.0);
+				.isGreaterThan(1.5);
+			assertThat(Statistics.label(lengthLabel).count(true))
+				.describedAs("count of [%s]", lengthLabel)
+				.isGreaterThan(25);
 			return PropertyExecutionResult.successful();
 		}));
 	}

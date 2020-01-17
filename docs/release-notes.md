@@ -39,6 +39,8 @@ and
 
 - Added `Statistics.percentage(..)` and `StatisticsCollector.percentage(..)`
 
+- Added `Statistics.count(..)` and `StatisticsCollector.count(..)`
+
 #### Breaking Changes
 
 - `Statistics.collect(..)` and `StatisticsCollector.collect(..)` can no longer

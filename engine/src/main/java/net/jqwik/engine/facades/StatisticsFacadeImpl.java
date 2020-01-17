@@ -15,18 +15,13 @@ public class StatisticsFacadeImpl extends Statistics.StatisticsFacade {
 	private static final String DEFAULT_LABEL = "statistics";
 
 	@Override
-	public void collect(Object... values) {
-		label(DEFAULT_LABEL).collect(values);
-	}
-
-	@Override
-	public double percentage(Object... values) {
-		return label(DEFAULT_LABEL).percentage(values);
-	}
-
-	@Override
-	public StatisticsCollector label(String label) {
+	public StatisticsCollector collectorByLabel(String label) {
 		Store<Map<String, StatisticsCollector>> statisticsStore = Store.get(StatisticsCollectorImpl.STORE_NAME);
 		return statisticsStore.get().get(label);
+	}
+
+	@Override
+	public StatisticsCollector defaultCollector() {
+		return collectorByLabel(DEFAULT_LABEL);
 	}
 }

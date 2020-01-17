@@ -238,4 +238,72 @@ class StatisticsCollectionTests {
 
 	}
 
+	@Group
+	class Counts {
+
+		@Example
+		void exactCounts() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			collector.collect("two");
+			collector.collect("three");
+			collector.collect("two");
+			collector.collect("four");
+			collector.collect("four");
+			collector.collect("one");
+			collector.collect("three");
+			collector.collect("four");
+			collector.collect("four");
+			collector.collect("three");
+
+			assertThat(collector.count()).isEqualTo(10);
+			assertThat(collector.count("four")).isEqualTo(4);
+			assertThat(collector.count("three")).isEqualTo(3);
+			assertThat(collector.count("two")).isEqualTo(2);
+			assertThat(collector.count("one")).isEqualTo(1);
+		}
+
+		@Example
+		void unseenValuesHaveZeroCount() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			collector.collect("two");
+			collector.collect("one");
+
+			assertThat(collector.count("zero")).isEqualTo(0);
+			assertThat(collector.count(null)).isEqualTo(0);
+		}
+
+		@Example
+		void nullValueIsAlsoCounted() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			collector.collect("one");
+			collector.collect(null);
+
+			assertThat(collector.count("one")).isEqualTo(1);
+			assertThat(collector.count(null)).isEqualTo(1);
+		}
+
+		@Example
+		void countsAreRecalculated() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			collector.collect("one");
+			collector.collect("two");
+
+			assertThat(collector.count("one")).isEqualTo(1);
+			assertThat(collector.count("two")).isEqualTo(1);
+
+			collector.collect("two");
+			collector.collect("three");
+			collector.collect("three");
+			collector.collect("three");
+
+			assertThat(collector.count("one")).isEqualTo(1);
+			assertThat(collector.count("two")).isEqualTo(2);
+			assertThat(collector.count("three")).isEqualTo(3);
+		}
+
+	}
 }
