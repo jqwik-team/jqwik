@@ -2,6 +2,7 @@ package net.jqwik.docs;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
@@ -32,26 +33,53 @@ class StatisticsCoverageExamples {
 	}
 
 	@Property
-	void integerStats(@ForAll int anInt) {
-		Statistics.collect(anInt > 0 ? "positive" : "negative");
+	void combinedStats(@ForAll int anInt) {
+		String posOrNeg = anInt > 0 ? "positive" : "negative";
+		String evenOrOdd = anInt % 2 == 0 ? "even" : "odd";
+
+		Statistics.collect(posOrNeg, evenOrOdd);
 
 //		Statistics.coverage(coverage -> {
-//			coverage.checkAll(Arrays.asList("positive", "negative")).percentage(p -> p > 5.0);
+//			coverage.check("positive", "even").count(c -> c > 0);
+//			coverage.check("negative", "even").count(c -> c > 0);
+//			coverage.check("positive", "odd").count(c -> c > 0);
+//			coverage.check("negative", "odd").count(c -> c > 0);
 //		});
 	}
 
 	@Property
-	void combinedIntegerStats(@ForAll int anInt) {
+	void combinedStats2(@ForAll int anInt) {
 		String posOrNeg = anInt > 0 ? "positive" : "negative";
 		String evenOrOdd = anInt % 2 == 0 ? "even" : "odd";
-		String bigOrSmall = Math.abs(anInt) > 50 ? "big" : "small";
-		Statistics.collect(posOrNeg, evenOrOdd, bigOrSmall);
 
-//		Statistics.coverage().checkAll(
-//			Arrays.asList("positive", "negative"),
-//			Arrays.asList("even", "odd"),
-//			Arrays.asList("big", "small")
-//		).percentage(p -> p > 5.0);
+		Statistics.collect(posOrNeg, evenOrOdd);
+
+//		Statistics.coverage(coverage -> {
+//			coverage.checkAllCombinations(
+//				asList("positive", "negative"),
+//				asList("even", "odd")
+//			).count(c -> c > 0);
+//		});
+	}
+
+	// Different kind of statistics API:
+
+	enum Sign {POSITIVE, NEGATIVE}
+	enum Oddity {EVEN, ODD}
+
+	@Property
+	void combinedStats3(@ForAll int anInt) {
+		Statistics.collect(anInt);
+
+//		Statistics.coverage(coverage -> {
+//			Function<Integer, Sign> posOrNeg = i -> i > 0 ? Sign.POSITIVE : Sign.NEGATIVE;
+//			Function<Integer, Oddity>  evenOrOdd = i -> i % 2 == 0 ? Oddity.EVEN : Oddity.ODD;
+//			Classifier classifier = Classifier.from(posOrNeg, evenOrOdd);
+//
+//			coverage.classify(posOrNeg, evenOrOdd)
+//					.checkAll().count(c -> c > 0);
+//					.check(Sign.NEGATIVE, Oddity.ODD).percentage(p -> p > 5.0);
+//		});
 	}
 
 }
