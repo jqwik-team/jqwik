@@ -41,6 +41,9 @@ and
 
 #### Breaking Changes
 
+- `Statistics.collect(..)` and `StatisticsCollector.collect(..)` can no longer
+  be called with no parameters. There must be at least one - but it can be `null`
+
 #### Bug Fixes
 
 

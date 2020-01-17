@@ -53,6 +53,13 @@ class StatisticsCollectionTests {
 			assertThat(counts.get(asList("two", 2))).isEqualTo(2);
 			assertThat(counts.get(asList("three", 3))).isEqualTo(3);
 		}
+
+		@Example
+		void callingCollectWithNoParameterFails() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			assertThatThrownBy(() -> collector.collect()).isInstanceOf(IllegalArgumentException.class);
+		}
 	}
 
 	@Group

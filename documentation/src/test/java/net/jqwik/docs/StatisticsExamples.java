@@ -8,7 +8,7 @@ import net.jqwik.api.constraints.*;
 
 class StatisticsExamples {
 
-	@Property(generation = GenerationMode.RANDOMIZED)
+	@Property(tries = 10, generation = GenerationMode.RANDOMIZED)
 	void simpleStats(@ForAll RoundingMode mode) {
 		Statistics.collect(mode);
 	}

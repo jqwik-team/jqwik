@@ -21,22 +21,28 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public void collect(Object... values) {
+		ensureAtLeastOneParameter(values);
 		List<Object> key = keyFrom(values);
 		int count = counts.computeIfAbsent(key, any -> 0);
 		counts.put(key, ++count);
 		statisticsEntries = null;
 	}
 
-	private List<Object> keyFrom(Object[] values) {
-		List<Object> key = Collections.emptyList();
-		if (values != null) {
-			key = Arrays.stream(values) //
-						.filter(Objects::nonNull) //
-						.collect(Collectors.toList());
-		} else {
-			key = Collections.singletonList(null);
+	private void ensureAtLeastOneParameter(Object[] values) {
+		if (Arrays.equals(values, new Object[0])) {
+			String message = "StatisticsCollector.collect() must be called with at least one parameter";
+			throw new IllegalArgumentException(message);
 		}
-		return key;
+	}
+
+	private List<Object> keyFrom(Object[] values) {
+		if (values != null) {
+			return Arrays.stream(values) //
+						 .filter(Objects::nonNull) //
+						 .collect(Collectors.toList());
+		} else {
+			return Collections.singletonList(null);
+		}
 	}
 
 	@Override
