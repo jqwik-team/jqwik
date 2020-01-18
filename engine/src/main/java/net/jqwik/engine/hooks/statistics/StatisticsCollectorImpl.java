@@ -117,8 +117,11 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 					 .filter(entry -> !entry.getKey().equals(Collections.emptyList()))
 					 .map(entry -> {
 						 double percentage = entry.getValue() * 100.0 / sum;
-						 return new StatisticsEntry(entry.getKey(), displayKey(entry.getKey()), entry
-																									.getValue(), percentage);
+						 return new StatisticsEntry(
+							 entry.getKey(),
+							 displayKey(entry.getKey()),
+							 entry.getValue(), percentage
+						 );
 					 })
 					 .collect(Collectors.toList());
 	}
