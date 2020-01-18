@@ -44,7 +44,10 @@ and
 #### Breaking Changes
 
 - `Statistics.collect(..)` and `StatisticsCollector.collect(..)` can no longer
-  be called with no parameters. There must be at least one - but it can be `null`
+  be called with no values. There must be at least one - but it can be `null`.
+
+- `Statistics.collect(..)` and `StatisticsCollector.collect(..)` must always
+  be called with same number of parameters.
 
 #### Bug Fixes
 

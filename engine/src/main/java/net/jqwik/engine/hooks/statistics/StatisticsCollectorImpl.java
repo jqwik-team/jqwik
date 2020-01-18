@@ -23,6 +23,11 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	public void collect(Object... values) {
 		ensureAtLeastOneParameter(values);
 		List<Object> key = keyFrom(values);
+		ensureSameNumberOfValues(key);
+		updateCounts(key);
+	}
+
+	void updateCounts(List<Object> key) {
 		int count = counts.computeIfAbsent(key, any -> 0);
 		counts.put(key, ++count);
 		statisticsEntries = null;
@@ -30,16 +35,25 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	private void ensureAtLeastOneParameter(Object[] values) {
 		if (Arrays.equals(values, new Object[0])) {
-			String message = "StatisticsCollector.collect() must be called with at least one parameter";
+			String message = String.format("StatisticsCollector[%s] must be called with at least one value", label);
+			throw new IllegalArgumentException(message);
+		}
+	}
+
+	private void ensureSameNumberOfValues(List<Object> keyCandidate) {
+		if (counts.isEmpty()) {
+			return;
+		}
+		List<Object> anyKey = counts.keySet().iterator().next();
+		if (anyKey.size() != keyCandidate.size()) {
+			String message = String.format("StatisticsCollector[%s] must always be called with same number of values", label);
 			throw new IllegalArgumentException(message);
 		}
 	}
 
 	private List<Object> keyFrom(Object[] values) {
 		if (values != null) {
-			return Arrays.stream(values) //
-						 .filter(Objects::nonNull) //
-						 .collect(Collectors.toList());
+			return Arrays.asList(values);
 		} else {
 			return Collections.singletonList(null);
 		}

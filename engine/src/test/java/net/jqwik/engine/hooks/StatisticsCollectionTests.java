@@ -55,10 +55,22 @@ class StatisticsCollectionTests {
 		}
 
 		@Example
-		void callingCollectWithNoParameterFails() {
+		void callingCollectWithNoValueFails() {
 			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 			assertThatThrownBy(() -> collector.collect()).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
+		void callingCollectWithDifferentNumberOfValuesFails() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			collector.collect("a string", 1);
+			collector.collect("another string", null);
+			collector.collect(null, 2);
+
+			assertThatThrownBy(() -> collector.collect("just a string")).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(() -> collector.collect("a string", 3, new Object())).isInstanceOf(IllegalArgumentException.class);
 		}
 	}
 
@@ -283,6 +295,19 @@ class StatisticsCollectionTests {
 
 			assertThat(collector.count("one")).isEqualTo(1);
 			assertThat(collector.count(null)).isEqualTo(1);
+		}
+
+		@Example
+		void nullValueIsAlsoCountedWhenPartOfManyValues() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			collector.collect("one", null);
+			collector.collect("one", null);
+			collector.collect(null, "two");
+			collector.collect(null, "two");
+
+			assertThat(collector.count("one", null)).isEqualTo(2);
+			assertThat(collector.count(null, "two")).isEqualTo(2);
 		}
 
 		@Example

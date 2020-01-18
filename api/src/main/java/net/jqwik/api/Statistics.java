@@ -26,7 +26,14 @@ public class Statistics {
 		 * the statistical data will be reported after the property has finished.
 		 *
 		 * @param values Can be anything. The list of these values is considered
-		 *               a key for the reported table of frequencies.
+		 *               a key for the reported table of frequencies. Constraints:
+		 *               <ul>
+		 *               <li>There must be at least one value</li>
+		 *               <li>The number of values for the same collector (i.e. same label)
+		 *               must always be the same in a single property</li>
+		 *               <li>Values can be {@code null}</li>
+		 *               </ul>
+		 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 		 */
 		void collect(Object... values);
 
@@ -82,8 +89,14 @@ public class Statistics {
 	 * As soon as this method is called at least once in a property method,
 	 * the statistical data will be reported after the property has finished.
 	 *
-	 * @param values Can be anything. The list of these values is used as
-	 *               a key for the reported table of frequencies.
+	 * @param values Can be anything. The list of these values is considered
+	 *               a key for the reported table of frequencies. Constraints:
+	 *               <ul>
+	 *               <li>There must be at least one value</li>
+	 *               <li>The number of values must always be the same in a single property</li>
+	 *               <li>Values can be {@code null}</li>
+	 *               </ul>
+	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 	 */
 	public static void collect(Object... values) {
 		StatisticsFacade.implementation.defaultCollector().collect(values);
