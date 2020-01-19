@@ -10,8 +10,8 @@ import net.jqwik.engine.hooks.lifecycle.*;
 public class PropertyLifecycleFacadeImpl extends PropertyLifecycle.PropertyLifecycleFacade {
 
 	@Override
-	public void after(Object key, AfterPropertyExecutor afterPropertyExecutor) {
-		StaticPropertyLifecycleMethodsHook.addAfterPropertyExecutor(key, afterPropertyExecutor);
+	public void after(Object identifier, AfterPropertyExecutor afterPropertyExecutor) {
+		StaticPropertyLifecycleMethodsHook.addAfterPropertyExecutor(identifier, afterPropertyExecutor);
 	}
 
 	@Override

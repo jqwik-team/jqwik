@@ -90,7 +90,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public void coverage(Consumer<StatisticsCoverage> checker) {
-		PropertyLifecycle.onSuccess(label, () -> {
+		PropertyLifecycle.onSuccess(() -> {
 			StatisticsCoverage coverage = new StatisticsCoverageImpl();
 			checker.accept(coverage);
 		});
