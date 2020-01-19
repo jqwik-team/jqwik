@@ -27,26 +27,30 @@ public class PropertyLifecycle {
 			implementation = FacadeLoader.load(PropertyLifecycle.PropertyLifecycleFacade.class);
 		}
 
-		public abstract void after(String label, AfterPropertyExecutor afterPropertyExecutor);
+		public abstract void after(Object key, AfterPropertyExecutor afterPropertyExecutor);
 
 		public abstract <T> Store<T> store(String name, Supplier<T> initializer);
 	}
 
-	public static void onSuccess(Runnable runnable) {
+	public static void onSuccess(String key, Runnable runnable) {
 		AfterPropertyExecutor afterPropertyExecutor = (executionResult, context) -> {
 			if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL) {
 				runnable.run();
 			}
 			return executionResult;
 		};
-		after(afterPropertyExecutor);
+		after(key, afterPropertyExecutor);
+	}
+
+	public static void onSuccess(Runnable runnable) {
+		onSuccess(null, runnable);
 	}
 
 	public static void after(AfterPropertyExecutor afterPropertyExecutor) {
 		after(null, afterPropertyExecutor);
 	}
 
-	public static void after(String key, AfterPropertyExecutor afterPropertyExecutor) {
+	public static void after(Object key, AfterPropertyExecutor afterPropertyExecutor) {
 		PropertyLifecycleFacade.implementation.after(key, afterPropertyExecutor);
 	}
 

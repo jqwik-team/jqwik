@@ -80,6 +80,16 @@ public class PropertyExecutionResult {
 		return Optional.ofNullable(throwable);
 	}
 
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	public PropertyExecutionResult withSeedSuccessful() {
+		return PropertyExecutionResult.successful(getSeed().orElse(null));
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	public PropertyExecutionResult withSeedFailed(Throwable throwable) {
+		return PropertyExecutionResult.failed(throwable, getSeed().orElse(null), null);
+	}
+
 	@Override
 	public String toString() {
 		return String.format("PropertyExecutionResult[%s]", status);

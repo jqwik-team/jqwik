@@ -1,5 +1,7 @@
 package net.jqwik.api;
 
+import java.util.function.*;
+
 import org.apiguardian.api.*;
 
 import net.jqwik.api.lifecycle.*;
@@ -69,6 +71,27 @@ public class Statistics {
 		 */
 		@API(status = EXPERIMENTAL, since = "1.2.3")
 		int count(Object... values);
+
+		/**
+		 * Perform coverage checking for successful property on statistics
+		 * for values collected with {@linkplain #collect(Object...)}
+		 *
+		 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
+		 */
+		@API(status = EXPERIMENTAL, since = "1.2.3")
+		void coverage(Consumer<StatisticsCoverage> checker);
+
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	public interface StatisticsCoverage {
+
+		@API(status = EXPERIMENTAL, since = "1.2.3")
+		interface CoverageChecker {
+			void count(Predicate<Integer> countChecker);
+		}
+
+		CoverageChecker check(Object... values);
 	}
 
 	public static abstract class StatisticsFacade {
@@ -149,6 +172,17 @@ public class Statistics {
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	public static int count(Object... values) {
 		return StatisticsFacade.implementation.defaultCollector().count(values);
+	}
+
+	/**
+	 * Perform coverage checking for successful property on statistics
+	 * for values collected with {@linkplain #collect(Object...)}
+	 *
+	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	public static void coverage(Consumer<StatisticsCoverage> checker) {
+		StatisticsFacade.implementation.defaultCollector().coverage(checker);
 	}
 
 }

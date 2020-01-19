@@ -10,13 +10,15 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 
 	private static final String EXECUTORS_STORE_NAME = String.format("%s:executors", AfterPropertyExecutor.class);
 
-	public static void addAfterPropertyExecutor(String key, AfterPropertyExecutor afterPropertyExecutor) {
-		Store<Map<PropertyExecutorKey, AfterPropertyExecutor>> executors = Store.get(StaticPropertyLifecycleMethodsHook.EXECUTORS_STORE_NAME);
+	public static void addAfterPropertyExecutor(Object key, AfterPropertyExecutor afterPropertyExecutor) {
+		Store<Map<PropertyExecutorKey, AfterPropertyExecutor>> executors = Store
+																			   .get(StaticPropertyLifecycleMethodsHook.EXECUTORS_STORE_NAME);
 		PropertyExecutorKey executorKey = new PropertyExecutorKey(key, afterPropertyExecutor.getClass());
 		executors.update(mapOfExecutors -> {
 			if (mapOfExecutors.containsKey(executorKey)) {
 				return mapOfExecutors;
 			}
+			System.out.println("#### inserted: " + executorKey.key);
 			HashMap<PropertyExecutorKey, AfterPropertyExecutor> newMap = new HashMap<>(mapOfExecutors);
 			newMap.put(executorKey, afterPropertyExecutor);
 			return newMap;
@@ -29,7 +31,7 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 			Store.create(
 				Store.Visibility.LOCAL,
 				EXECUTORS_STORE_NAME,
-				IdentityHashMap::new
+				() -> new LinkedHashMap<>(16, 0.75f, false) // LinkedHashMap keeps order of entries!
 			);
 		PropertyExecutionResult executionResult = property.execute();
 		for (AfterPropertyExecutor afterPropertyExecutor : executors.get().values()) {
@@ -54,10 +56,10 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 
 	static class PropertyExecutorKey {
 
-		private final String key;
+		private final Object key;
 		private final Class<? extends AfterPropertyExecutor> aClass;
 
-		public PropertyExecutorKey(String key, Class<? extends AfterPropertyExecutor> aClass) {
+		public PropertyExecutorKey(Object key, Class<? extends AfterPropertyExecutor> aClass) {
 			this.key = key;
 			this.aClass = aClass;
 		}

@@ -1,11 +1,16 @@
 package net.jqwik.engine.hooks.statistics;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
+
+import org.opentest4j.*;
 
 import net.jqwik.api.Statistics.*;
 import net.jqwik.api.*;
+import net.jqwik.api.Statistics.StatisticsCoverage.*;
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.lifecycle.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 	public static final String STORE_NAME = String.format("%s:statistics", StatisticsCollector.class.getName());
@@ -61,12 +66,15 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public double percentage(Object... values) {
-		List<StatisticsEntry> statistics = statisticsEntries();
-		return statistics
-				   .stream()
-				   .filter(entry -> entry.key.equals(keyFrom(values)))
-				   .map(entry -> entry.percentage)
-				   .findFirst().orElse(0.0);
+		return statisticsEntry(values).percentage;
+	}
+
+	private StatisticsEntry statisticsEntry(Object[] values) {
+		return statisticsEntries()
+			.stream()
+			.filter(entry -> entry.key.equals(keyFrom(values)))
+			.findFirst()
+			.orElse(StatisticsEntry.NULL);
 	}
 
 	@Override
@@ -78,6 +86,14 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	public int count(Object... values) {
 		List<Object> key = keyFrom(values);
 		return getCounts().getOrDefault(key, 0);
+	}
+
+	@Override
+	public void coverage(Consumer<StatisticsCoverage> checker) {
+		PropertyLifecycle.onSuccess(label, () -> {
+			StatisticsCoverage coverage = new StatisticsCoverageImpl();
+			checker.accept(coverage);
+		});
 	}
 
 	public Map<List<Object>, Integer> getCounts() {
@@ -154,17 +170,46 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return key.stream().map(Objects::toString).collect(Collectors.joining(" "));
 	}
 
+	private class StatisticsCoverageImpl implements StatisticsCoverage {
+
+		@Override
+		public CoverageChecker check(Object... values) {
+			StatisticsEntry entry = statisticsEntry(values);
+			return new CoverageCheckerImpl(entry, count());
+		}
+	}
+
 	private static class StatisticsEntry {
+		public static final StatisticsEntry NULL = new StatisticsEntry(null, null, 0, 0.0);
+
 		private List<Object> key;
 		private final String name;
-		private long count;
+		private int count;
 		private final double percentage;
 
-		StatisticsEntry(List<Object> key, String name, long count, double percentage) {
+		StatisticsEntry(List<Object> key, String name, int count, double percentage) {
 			this.key = key;
 			this.name = name;
 			this.count = count;
 			this.percentage = percentage;
+		}
+	}
+
+	private static class CoverageCheckerImpl implements CoverageChecker {
+
+		private final StatisticsEntry entry;
+		private final int countAll;
+
+		public CoverageCheckerImpl(StatisticsEntry entry, int countAll) {this.entry = entry;
+			this.countAll = countAll;
+		}
+
+		@Override
+		public void count(Predicate<Integer> countChecker) {
+			if (!countChecker.test(entry.count)) {
+				String message = String.format("Count of %s does not fulfill condition", entry.count);
+				throw new AssertionFailedError(message);
+			}
 		}
 	}
 }
