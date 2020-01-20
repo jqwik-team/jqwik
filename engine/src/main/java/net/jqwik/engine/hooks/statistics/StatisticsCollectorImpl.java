@@ -208,8 +208,37 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		public void count(Predicate<Integer> countChecker) {
 			if (!countChecker.test(entry.count)) {
 				String message = String.format("Count of %s does not fulfill condition", entry.count);
-				throw new AssertionFailedError(message);
+				fail(message);
 			}
 		}
+
+		@Override
+		public void count(BiPredicate<Integer, Integer> countChecker) {
+			if (!countChecker.test(entry.count, countAll)) {
+				String message = String.format("Count of (%s, %s) does not fulfill condition", entry.count, countAll);
+				fail(message);
+			}
+		}
+
+		@Override
+		public void count(Consumer<Integer> countChecker) {
+			count(c -> {
+				countChecker.accept(c);
+				return true;
+			});
+		}
+
+		@Override
+		public void count(BiConsumer<Integer, Integer> countChecker) {
+			count((c, a) -> {
+				countChecker.accept(c, a);
+				return true;
+			});
+		}
+
+		private void fail(String message) {
+			throw new AssertionFailedError(message);
+		}
+
 	}
 }

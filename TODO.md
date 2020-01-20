@@ -1,8 +1,7 @@
 - 1.2.3
 
-    - Statistics
-        .coverageOf(false).checkPercentage("at least 5%", p -> p > 5.0)
-        .coverageOf(true).checkCount(all, p -> p > 0)
+    - Statistics.coverage(..)
+      - percentage()
 
     - Documentation for statistics coverage checking
 

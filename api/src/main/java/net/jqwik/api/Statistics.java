@@ -73,8 +73,7 @@ public class Statistics {
 		int count(Object... values);
 
 		/**
-		 * Perform coverage checking for successful property on statistics
-		 * for values collected with {@linkplain #collect(Object...)}
+		 * Perform coverage checking for successful property on statistics.
 		 *
 		 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
 		 */
@@ -88,9 +87,45 @@ public class Statistics {
 
 		@API(status = EXPERIMENTAL, since = "1.2.3")
 		interface CoverageChecker {
+
+			/**
+			 * Check the number of occurrences returning true (ok) or false (fail)
+			 *
+			 * @param countChecker a predicate to accept a select value sets number of occurrences
+			 */
 			void count(Predicate<Integer> countChecker);
+
+			/**
+			 * Check the number of occurrences using one or more assertions.
+			 *
+			 * @param countChecker a consumer to accept a select value sets number of occurrences
+			 */
+			void count(BiPredicate<Integer, Integer> countChecker);
+
+			/**
+			 * Check the number of occurrences returning true (ok) or false (fail).
+			 *
+			 * @param countChecker a predicate to accept a select value sets number of occurrences
+			 *                     and the count of all submitted value sets to compare with
+			 *                     or make a calculation
+			 */
+			void count(Consumer<Integer> countChecker);
+
+			/**
+			 * Check the number of occurrences using one or more assertions.
+			 *
+			 * @param countChecker a predicate to accept a select value sets number of occurrences
+			 *                     and the count of all submitted value sets to compare with
+			 *                     or make a calculation
+			 */
+			void count(BiConsumer<Integer, Integer> countChecker);
 		}
 
+		/**
+		 * Select a specific values set for coverage checking.
+		 *
+		 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
+		 */
 		CoverageChecker check(Object... values);
 	}
 
@@ -104,7 +139,6 @@ public class Statistics {
 		public abstract StatisticsCollector collectorByLabel(String label);
 
 		public abstract StatisticsCollector defaultCollector();
-
 	}
 
 	/**
@@ -183,6 +217,19 @@ public class Statistics {
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	public static void coverage(Consumer<StatisticsCoverage> checker) {
 		StatisticsFacade.implementation.defaultCollector().coverage(checker);
+	}
+
+	/**
+	 * Perform coverage checking for successful property on labelled statistics
+	 * for values collected with {@linkplain #collect(Object...)}
+	 *
+	 * @param label The label that was used for reporting the collected statistical values
+	 *
+	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	public static void coverageOf(String label, Consumer<StatisticsCoverage> checker) {
+		StatisticsFacade.implementation.collectorByLabel(label).coverage(checker);
 	}
 
 }
