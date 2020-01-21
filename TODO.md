@@ -1,15 +1,21 @@
 - 1.2.3
 
     - @ExpectFailure(ExpectedExceptionClass.class)
+      - PropertyLifecycle.expectFailure(Consumer<? extends Throwable> throwableChecker)
 
     - Statistics.coverage(..)
+      - check that is only called once per collector and try.
+        Might require per try lifecycle.
       - check(Predicate<List<Object>> query)
 
     - Documentation for statistics coverage checking
 
     - @StatisticsReport(OFF|STANDARD)
+      - StatisticsCollector.reportMode(OFF|STANDARD)
       - jqwik.properties, default = STANDARD
       - Documentation
+
+    - Probabilistic assertions
 
 - 1.2.x
   
