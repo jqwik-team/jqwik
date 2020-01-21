@@ -1,32 +1,39 @@
 package net.jqwik.docs.lifecycle;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class PropertyLifecycleExamples {
 
+	int maxLength = 0;
+
 	@Property
-	void stringLength(@ForAll String aString) {
-		Statistics.collect(aString.length() > 200);
+	void maxStringLength(@ForAll String aString) {
+
+		maxLength = Math.max(maxLength, aString.length());
 
 		PropertyLifecycle.after(((executionResult, context) -> {
-			assertThat(Statistics.percentage(true))
-				.describedAs("coverage of string length > 200")
-				.isGreaterThan(2.0);
+			assertThat(maxLength)
+				.describedAs("max size of all generated strings")
+				.isGreaterThan(10);
 			return PropertyExecutionResult.successful();
 		}));
 	}
 
+	long aggregatedLength = 0;
+
 	@Property
-	void stringLength_usingOnSuccess(@ForAll String aString) {
-		Statistics.collect(aString.length() > 200);
+	void aggregatedStringLength(@ForAll @StringLength(min = 1) String aString) {
+
+		aggregatedLength += aString.length();
 
 		PropertyLifecycle.onSuccess(
-			() -> assertThat(Statistics.percentage(true))
-					  .describedAs("coverage of string length > 200")
-					  .isGreaterThan(5.0)
+			() -> assertThat(aggregatedLength)
+					  .describedAs("aggregated length of all generated strings")
+					  .isGreaterThanOrEqualTo(100)
 		);
 
 		PropertyLifecycle.onSuccess((() -> {
@@ -34,19 +41,4 @@ public class PropertyLifecycleExamples {
 		}));
 	}
 
-	@Property
-	void stringLengthWithLabel(@ForAll String aString) {
-		String lengthLabel = "length > 200";
-		Statistics.label(lengthLabel).collect(aString.length() > 200);
-
-		PropertyLifecycle.after(((executionResult, context) -> {
-			assertThat(Statistics.label(lengthLabel).percentage(true))
-				.describedAs("coverage of [%s]", lengthLabel)
-				.isGreaterThan(1.5);
-			assertThat(Statistics.label(lengthLabel).count(true))
-				.describedAs("count of [%s]", lengthLabel)
-				.isGreaterThan(25);
-			return PropertyExecutionResult.successful();
-		}));
-	}
 }
