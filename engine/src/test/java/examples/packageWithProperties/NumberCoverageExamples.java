@@ -1,14 +1,15 @@
 package examples.packageWithProperties;
 
-import net.jqwik.api.*;
+import java.math.*;
+
 import org.assertj.core.api.*;
 
-import java.math.*;
+import net.jqwik.api.*;
+import net.jqwik.api.statistics.Statistics;
 
 import static org.assertj.core.api.Assertions.*;
 
 public class NumberCoverageExamples {
-
 
 	public static final Condition<Long> EVEN = new Condition<>(x -> x % 2 == 0, "even");
 	public static final Condition<Long> SMALL = new Condition<>(x -> x < 2000, "< 2000");
@@ -50,10 +51,11 @@ public class NumberCoverageExamples {
 		Statistics.collect(hasDecimals, aboveMillion);
 	}
 
-	@Property @Report(Reporting.GENERATED)
+	@Property
+	@Report(Reporting.GENERATED)
 	void bigIntegerDistribution(@ForAll BigInteger bigInteger) {
 		String ranges = bigInteger.compareTo(BigInteger.valueOf(100)) < 0 ? "<100"
-			: bigInteger.compareTo(BigInteger.valueOf(1000000)) < 0 ? "<1M" : ">1M";
+							: bigInteger.compareTo(BigInteger.valueOf(1000000)) < 0 ? "<1M" : ">1M";
 		Statistics.collect(ranges);
 	}
 }

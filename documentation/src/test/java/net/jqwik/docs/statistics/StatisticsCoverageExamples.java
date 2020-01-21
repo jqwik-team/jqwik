@@ -1,11 +1,10 @@
-package net.jqwik.docs;
+package net.jqwik.docs.statistics;
 
 import java.math.*;
-import java.util.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.Statistics;
 
 /**
  * For feature https://github.com/jlink/jqwik/issues/75
@@ -16,10 +15,10 @@ class StatisticsCoverageExamples {
 	void simpleStats(@ForAll RoundingMode mode) {
 		Statistics.collect(mode);
 
-//		Statistics.coverage(coverage -> {
-//			coverage.check(RoundingMode.CEILING).percentage(p -> p > 5.0);
-//			coverage.check(RoundingMode.FLOOR).count(c -> c > 2);
-//		});
+		Statistics.coverage(coverage -> {
+			coverage.check(RoundingMode.CEILING).percentage(p -> p > 5.0);
+			coverage.check(RoundingMode.FLOOR).count(c -> c > 2);
+		});
 	}
 
 	@Property(generation = GenerationMode.RANDOMIZED)
@@ -28,8 +27,8 @@ class StatisticsCoverageExamples {
 		Statistics.label("range").collect(range);
 		Statistics.label("value").collect(anInt);
 
-//		Statistics.coverageOf("range", coverage -> coverage.check("small").percentage(p -> p > 20.0));
-//		Statistics.coverageOf("value", coverage -> coverage.check(0).count(c -> c > 0));
+		Statistics.coverageOf("range", coverage -> coverage.check("small").percentage(p -> p > 20.0));
+		Statistics.coverageOf("value", coverage -> coverage.check(0).count(c -> c > 0));
 	}
 
 	@Property
@@ -39,12 +38,12 @@ class StatisticsCoverageExamples {
 
 		Statistics.collect(posOrNeg, evenOrOdd);
 
-//		Statistics.coverage(coverage -> {
-//			coverage.check("positive", "even").count(c -> c > 0);
-//			coverage.check("negative", "even").count(c -> c > 0);
-//			coverage.check("positive", "odd").count(c -> c > 0);
-//			coverage.check("negative", "odd").count(c -> c > 0);
-//		});
+		Statistics.coverage(coverage -> {
+			coverage.check("positive", "even").count(c -> c > 0);
+			coverage.check("negative", "even").count(c -> c > 0);
+			coverage.check("positive", "odd").count(c -> c > 0);
+			coverage.check("negative", "odd").count(c -> c > 0);
+		});
 	}
 
 	@Property
@@ -65,6 +64,7 @@ class StatisticsCoverageExamples {
 	// Different kind of statistics API:
 
 	enum Sign {POSITIVE, NEGATIVE}
+
 	enum Oddity {EVEN, ODD}
 
 	@Property

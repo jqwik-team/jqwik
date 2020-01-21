@@ -9,6 +9,8 @@
       - jqwik.properties, default = STANDARD
       - Documentation
 
+- 1.2.x
+  
     - Upgrade to JUnit platform 1.6
       https://junit.org/junit5/docs/5.6.0/release-notes/#deprecations-and-breaking-changes
 
@@ -20,8 +22,6 @@
           - @AfterTry for methods
           - Allow premature success/failure
 
-- 1.2.x
-  
     - Around container
         - @BeforeContainer
         - @AfterContainer

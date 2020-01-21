@@ -509,7 +509,7 @@ temporarily. You can do that by adding the
 to a property method or a container class.
 
 ```java
-import net.jqwik.api.Disabled
+import net.jqwik.api.Disabled;
 
 @Disabled("for whatever reason")
 class DisablingExamples {
@@ -2241,7 +2241,7 @@ bytes, shorts, integers, longs, floats, doubles, BigIntegers and BigDecimals.
 In many situations you'd like to know if _jqwik_ will really generate
 the kind of values you expect and if the frequency and distribution of
 certain value classes meets your testing needs. 
-[`Statistics.collect()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Statistics.html#collect-java.lang.Object...-)
+[`Statistics.collect()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#collect-java.lang.Object...-)
 is made for this exact purpose.
 
 In the most simple case you'd like to know how often a certain value
@@ -2329,7 +2329,7 @@ void twoParameterStats(
 
 As you can see, collected `null` values are not being reported.
 
-[Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/StatisticsExamples.java)
+[Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/statistics/StatisticsExamples.java)
 are a couple of examples to try out.
 
 ### Labeled Statistics

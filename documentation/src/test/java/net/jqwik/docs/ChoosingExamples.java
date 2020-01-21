@@ -1,6 +1,7 @@
 package net.jqwik.docs;
 
 import net.jqwik.api.*;
+import net.jqwik.api.statistics.Statistics;
 
 class ChoosingExamples {
 

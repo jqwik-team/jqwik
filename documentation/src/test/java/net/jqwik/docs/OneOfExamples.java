@@ -2,17 +2,19 @@ package net.jqwik.docs;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.statistics.Statistics;
 
 class OneOfExamples {
 
-	@Property(tries = 100)  @Report(Reporting.GENERATED)
+	@Property(tries = 100)
+	@Report(Reporting.GENERATED)
 	boolean intsAreCreatedFromOneOfThreeArbitraries(@ForAll("oneOfThree") int anInt) {
 		String classifier = anInt < -1000 ? "below" : anInt > 1000 ? "above" : "one";
 		Statistics.collect(classifier);
 
-		return anInt < -1000 //
-				|| Math.abs(anInt) == 1 //
-				|| anInt > 1000;
+		return anInt < -1000
+				   || Math.abs(anInt) == 1
+				   || anInt > 1000;
 	}
 
 	@Provide

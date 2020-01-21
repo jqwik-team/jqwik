@@ -2,6 +2,7 @@ package examples.packageWithProperties;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.Statistics;
 
 public class CollectingStatisticsExamples {
 
@@ -10,7 +11,6 @@ public class CollectingStatisticsExamples {
 		String range = anInt < 10 ? "small" : (anInt < 100 ? "middle" : "large");
 		Statistics.collect(range);
 	}
-
 
 	@Property(tries = 10000)
 	void statisticsForTwoParams(

@@ -4,6 +4,7 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.statistics.Statistics;
 
 @Group
 class StatisticsCoverageTests {

@@ -5,6 +5,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.Statistics;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
 

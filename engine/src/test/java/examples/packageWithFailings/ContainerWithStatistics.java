@@ -1,6 +1,7 @@
 package examples.packageWithFailings;
 
 import net.jqwik.api.*;
+import net.jqwik.api.statistics.Statistics;
 
 public class ContainerWithStatistics {
 

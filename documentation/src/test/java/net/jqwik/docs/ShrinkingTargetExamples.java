@@ -3,6 +3,7 @@ package net.jqwik.docs;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.statistics.Statistics;
 
 class ShrinkingTargetExamples {
 

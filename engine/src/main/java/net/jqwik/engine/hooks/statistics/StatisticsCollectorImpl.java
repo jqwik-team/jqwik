@@ -6,11 +6,11 @@ import java.util.stream.*;
 
 import org.opentest4j.*;
 
-import net.jqwik.api.Statistics.*;
 import net.jqwik.api.*;
-import net.jqwik.api.Statistics.StatisticsCoverage.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.statistics.Statistics.*;
+import net.jqwik.api.statistics.Statistics.StatisticsCoverage.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 	public static final String STORE_NAME = String.format("%s:statistics", StatisticsCollector.class.getName());
@@ -71,10 +71,10 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	private StatisticsEntry statisticsEntry(Object[] values) {
 		return statisticsEntries()
-			.stream()
-			.filter(entry -> entry.key.equals(keyFrom(values)))
-			.findFirst()
-			.orElse(StatisticsEntry.NULL);
+				   .stream()
+				   .filter(entry -> entry.key.equals(keyFrom(values)))
+				   .findFirst()
+				   .orElse(StatisticsEntry.NULL);
 	}
 
 	public int count() {
@@ -198,7 +198,8 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		private final StatisticsEntry entry;
 		private final int countAll;
 
-		public CoverageCheckerImpl(StatisticsEntry entry, int countAll) {this.entry = entry;
+		public CoverageCheckerImpl(StatisticsEntry entry, int countAll) {
+			this.entry = entry;
 			this.countAll = countAll;
 		}
 

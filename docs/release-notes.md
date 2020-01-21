@@ -48,6 +48,9 @@ and
 - `Statistics.collect(..)` and `StatisticsCollector.collect(..)` must always
   be called with same number of parameters.
 
+- Deprecated `net.jqwik.api.Statistics`. Use `net.jqwik.api.statistics.Statistics` instead.
+
+
 #### Bug Fixes
 
 
