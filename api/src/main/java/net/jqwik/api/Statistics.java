@@ -2,6 +2,8 @@ package net.jqwik.api;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.statistics.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -15,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
 public class Statistics {
 
 	/**
-	 * Call this method to get a labeled instance of {@link net.jqwik.api.statistics.Statistics.StatisticsCollector}.
+	 * Call this method to get a labeled instance of {@link StatisticsCollector}.
 	 *
 	 * @param label The label will be used for reporting the collected statistical values
 	 *
@@ -23,7 +25,7 @@ public class Statistics {
 	 */
 	@Deprecated
 	@API(status = DEPRECATED, since = "1.2.3")
-	public static net.jqwik.api.statistics.Statistics.StatisticsCollector label(String label) {
+	public static StatisticsCollector label(String label) {
 		return net.jqwik.api.statistics.Statistics.label(label);
 	}
 

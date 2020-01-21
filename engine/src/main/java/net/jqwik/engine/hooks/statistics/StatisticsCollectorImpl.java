@@ -9,8 +9,8 @@ import org.opentest4j.*;
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.statistics.Statistics.*;
-import net.jqwik.api.statistics.Statistics.StatisticsCoverage.*;
+import net.jqwik.api.statistics.*;
+import net.jqwik.api.statistics.StatisticsCoverage.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 	public static final String STORE_NAME = String.format("%s:statistics", StatisticsCollector.class.getName());
@@ -88,7 +88,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public void coverage(Consumer<StatisticsCoverage> checker) {
-		PropertyLifecycle.onSuccess(() -> {
+		PropertyLifecycle.onSuccess(Tuple.of(this, checker.getClass()), () -> {
 			StatisticsCoverage coverage = new StatisticsCoverageImpl();
 			checker.accept(coverage);
 		});

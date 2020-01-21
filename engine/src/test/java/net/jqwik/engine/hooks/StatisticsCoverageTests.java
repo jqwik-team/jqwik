@@ -9,6 +9,21 @@ import net.jqwik.api.statistics.Statistics;
 @Group
 class StatisticsCoverageTests {
 
+	@Property(tries = 10)
+	void moreThanOneCoverageWorks(@ForAll int anInt) {
+		Statistics.collect(anInt > 0);
+
+		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(true).count(c -> true));
+		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(false).count(c -> false));
+
+		PropertyLifecycle.after(((executionResult, context) -> {
+			Assertions.assertThat(executionResult.getStatus())
+					  .describedAs("coverage check should have failed")
+					  .isEqualTo(PropertyExecutionResult.Status.FAILED);
+			return executionResult.withSeedSuccessful();
+		}));
+	}
+
 	@Group
 	class Count {
 		@Property(tries = 10)

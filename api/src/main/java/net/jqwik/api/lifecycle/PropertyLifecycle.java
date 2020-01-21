@@ -32,15 +32,14 @@ public class PropertyLifecycle {
 		public abstract <T> Store<T> store(String name, Supplier<T> initializer);
 	}
 
-	// Should that be public?
-	private static void onSuccess(Object identifier, Runnable runnable) {
+	public static void onSuccess(Object identifier, Runnable runnable) {
 		AfterPropertyExecutor afterPropertyExecutor = (executionResult, context) -> {
 			if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL) {
 				runnable.run();
 			}
 			return executionResult;
 		};
-		after(identifier, afterPropertyExecutor);
+		after(Tuple.of(identifier, runnable.getClass()), afterPropertyExecutor);
 	}
 
 	public static void onSuccess(Runnable runnable) {

@@ -1,5 +1,7 @@
 - 1.2.3
 
+    - @ExpectFailure(ExpectedExceptionClass.class)
+
     - Statistics.coverage(..)
       - check(Predicate<List<Object>> query)
 
