@@ -32,7 +32,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		updateCounts(key);
 	}
 
-	void updateCounts(List<Object> key) {
+	private void updateCounts(List<Object> key) {
 		int count = counts.computeIfAbsent(key, any -> 0);
 		counts.put(key, ++count);
 		statisticsEntries = null;
@@ -64,7 +64,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		}
 	}
 
-	@Override
+	// Currently only used for testing
 	public double percentage(Object... values) {
 		return statisticsEntry(values).percentage;
 	}
@@ -77,15 +77,13 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 			.orElse(StatisticsEntry.NULL);
 	}
 
-	@Override
 	public int count() {
 		return counts.values().stream().mapToInt(aCount -> aCount).sum();
 	}
 
-	@Override
+	// Currently only used for testing
 	public int count(Object... values) {
-		List<Object> key = keyFrom(values);
-		return getCounts().getOrDefault(key, 0);
+		return statisticsEntry(values).count;
 	}
 
 	@Override

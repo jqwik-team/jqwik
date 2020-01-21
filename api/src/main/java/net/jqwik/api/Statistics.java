@@ -4,8 +4,6 @@ import java.util.function.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.lifecycle.*;
-
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -38,39 +36,6 @@ public class Statistics {
 		 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 		 */
 		void collect(Object... values);
-
-		/**
-		 * Calculate the percentage of occurrences of a given
-		 * {@code values} combination.
-		 * Since the value changes from try to try it's most often used in a call
-		 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
-		 *
-		 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
-		 * @return The percentage between 0.0 and 100.0
-		 */
-		@API(status = EXPERIMENTAL, since = "1.2.3")
-		double percentage(Object... values);
-
-		/**
-		 * Count all calls to {@linkplain #collect(Object...)}.
-		 * Since the value changes from try to try it's most often used in a call
-		 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
-		 *
-		 * @return The count is 0 or larger
-		 */
-		@API(status = EXPERIMENTAL, since = "1.2.3")
-		int count();
-
-		/**
-		 * Count all occurrences of a given {@code values} combination.
-		 * Since the value changes from try to try it's most often used in a call
-		 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
-		 *
-		 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
-		 * @return The count is 0 or larger
-		 */
-		@API(status = EXPERIMENTAL, since = "1.2.3")
-		int count(Object... values);
 
 		/**
 		 * Perform coverage checking for successful property on statistics.
@@ -160,20 +125,6 @@ public class Statistics {
 	}
 
 	/**
-	 * Calculate the percentage of occurrences of a given
-	 * {@code values} combination.
-	 * Since the value changes from try to try it's most often used in a call
-	 * to {@linkplain net.jqwik.api.lifecycle.PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
-	 *
-	 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
-	 * @return The percentage between 0.0 and 100.0
-	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	public static double percentage(Object... values) {
-		return StatisticsFacade.implementation.defaultCollector().percentage(values);
-	}
-
-	/**
 	 * Call this method to get a labeled instance of {@linkplain StatisticsCollector}.
 	 *
 	 * @param label The label will be used for reporting the collected statistical values
@@ -181,31 +132,6 @@ public class Statistics {
 	@API(status = EXPERIMENTAL, since = "1.2.0")
 	public static StatisticsCollector label(String label) {
 		return StatisticsFacade.implementation.collectorByLabel(label);
-	}
-
-	/**
-	 * Count all calls to {@linkplain #collect(Object...)}.
-	 * Since the value changes from try to try it's most often used in a call
-	 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
-	 *
-	 * @return The count is 0 or larger
-	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	public static int count() {
-		return StatisticsFacade.implementation.defaultCollector().count();
-	}
-
-	/**
-	 * Count all occurrences of a given {@code values} combination.
-	 * Since the value changes from try to try it's most often used in a call
-	 * to {@linkplain PropertyLifecycle#after(PropertyLifecycle.AfterPropertyExecutor)}.
-	 *
-	 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
-	 * @return The count is 0 or larger
-	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	public static int count(Object... values) {
-		return StatisticsFacade.implementation.defaultCollector().count(values);
 	}
 
 	/**
@@ -223,8 +149,7 @@ public class Statistics {
 	 * Perform coverage checking for successful property on labelled statistics
 	 * for values collected with {@linkplain #collect(Object...)}
 	 *
-	 * @param label The label that was used for reporting the collected statistical values
-	 *
+	 * @param label   The label that was used for reporting the collected statistical values
 	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.3")

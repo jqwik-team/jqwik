@@ -5,6 +5,9 @@
 
     - Documentation for statistics coverage checking
 
+    - Upgrade to JUnit platform 1.6
+      https://junit.org/junit5/docs/5.6.0/release-notes/#deprecations-and-breaking-changes
+
     - Lifecycle
         - Around try
           - @BeforeTry
