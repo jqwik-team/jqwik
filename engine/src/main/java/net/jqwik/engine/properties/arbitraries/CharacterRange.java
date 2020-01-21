@@ -1,11 +1,13 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 public class CharacterRange implements Arbitrary<Character> {
 	private final char min;
@@ -18,7 +20,21 @@ public class CharacterRange implements Arbitrary<Character> {
 
 	@Override
 	public RandomGenerator<Character> generator(int genSize) {
-		return RandomGenerators.chars(min, max);
+		List<Shrinkable<Character>> edgeCases = edgeCases();
+		return RandomGenerators.chars(min, max)
+							   .withEdgeCases(genSize, edgeCases);
+	}
+
+	private List<Shrinkable<Character>> edgeCases() {
+		return Stream.of(min, max)
+					 .map(aCharacter -> new ShrinkableBigInteger(
+							  BigInteger.valueOf(aCharacter),
+							  Range.of(BigInteger.valueOf(min), BigInteger.valueOf(max)),
+							  BigInteger.valueOf(min)
+						  )
+					 )
+					 .map(shrinkableBigInteger -> shrinkableBigInteger.map(bi -> (char) bi.intValueExact()))
+					 .collect(Collectors.toList());
 	}
 
 	@Override

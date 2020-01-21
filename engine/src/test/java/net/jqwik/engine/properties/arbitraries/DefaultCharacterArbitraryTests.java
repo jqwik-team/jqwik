@@ -25,6 +25,11 @@ class DefaultCharacterArbitraryTests {
 	}
 
 	@Example
+	void edgeCasesAreGenerated() {
+		assertAtLeastOneGenerated(this.arbitrary.generator(1000), c -> c == Character.MIN_VALUE);
+	}
+
+	@Example
 	void allOverridesAnythingBefore() {
 		CharacterArbitrary all = this.arbitrary.ascii().all();
 		assertAllGenerated(all.generator(1000), c -> c >= Character.MIN_VALUE && c <= Character.MAX_VALUE);

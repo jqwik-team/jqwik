@@ -37,6 +37,9 @@ and
 - Added `Arbitrary.tuple1(), Arbitrary.tuple2(), Arbitrary.tuple3(), Arbitrary.tuple4()`
   to [generate tuples of same base type](/docs/snapshot/user-guide.html#tuples-of-same-base-types)
 
+- Character `\u0000` is being generated as default edge case
+  in String and Character arbitraries (if within allowed range).
+
 #### Breaking Changes
 
 - `Statistics.collect(..)` and `StatisticsCollector.collect(..)` can no longer
