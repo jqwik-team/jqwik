@@ -234,6 +234,22 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 			});
 		}
 
+		@Override
+		public void percentage(Predicate<Double> percentageChecker) {
+			if (!percentageChecker.test(entry.percentage)) {
+				String message = String.format("Percentage of %s does not fulfill condition", entry.percentage);
+				fail(message);
+			}
+		}
+
+		@Override
+		public void percentage(Consumer<Double> percentageChecker) {
+			percentage(p -> {
+				percentageChecker.accept(p);
+				return true;
+			});
+		}
+
 		private void fail(String message) {
 			throw new AssertionFailedError(message);
 		}

@@ -56,21 +56,21 @@ public class Statistics {
 			/**
 			 * Check the number of occurrences returning true (ok) or false (fail)
 			 *
-			 * @param countChecker a predicate to accept a select value sets number of occurrences
+			 * @param countChecker a predicate to accept a selected value set's number of occurrences
 			 */
 			void count(Predicate<Integer> countChecker);
 
 			/**
 			 * Check the number of occurrences using one or more assertions.
 			 *
-			 * @param countChecker a consumer to accept a select value sets number of occurrences
+			 * @param countChecker a consumer to accept a selected value set's number of occurrences
 			 */
 			void count(BiPredicate<Integer, Integer> countChecker);
 
 			/**
 			 * Check the number of occurrences returning true (ok) or false (fail).
 			 *
-			 * @param countChecker a predicate to accept a select value sets number of occurrences
+			 * @param countChecker a predicate to accept a selected value set's number of occurrences
 			 *                     and the count of all submitted value sets to compare with
 			 *                     or make a calculation
 			 */
@@ -79,11 +79,28 @@ public class Statistics {
 			/**
 			 * Check the number of occurrences using one or more assertions.
 			 *
-			 * @param countChecker a predicate to accept a select value sets number of occurrences
+			 * @param countChecker a predicate to accept a selected value set's number of occurrences
 			 *                     and the count of all submitted value sets to compare with
 			 *                     or make a calculation
 			 */
 			void count(BiConsumer<Integer, Integer> countChecker);
+
+			/**
+			 * Check the percentage of occurrences returning true (ok) or false (fail)
+			 *
+			 * @param percentageChecker a predicate to accept a selected value set's
+			 *                          percentage (0.0 - 100.0) of occurrences
+			 */
+			void percentage(Predicate<Double> percentageChecker);
+
+			/**
+			 * Check the number of occurrences returning true (ok) or false (fail).
+			 *
+			 * @param percentageChecker a predicate to accept a selected value set's
+			 *                          percentage (0.0 - 100.0) of occurrences
+			 */
+			void percentage(Consumer<Double> percentageChecker);
+
 		}
 
 		/**

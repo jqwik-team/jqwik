@@ -83,4 +83,63 @@ class StatisticsCoverageTests {
 			});
 		}
 	}
+
+	@Group
+	class Percentage {
+		@Property(tries = 10)
+		void coverageFailsForViolatedPercentageCondition(@ForAll int anInt) {
+			Statistics.collect(anInt > 0);
+
+			Statistics.coverage(coverage -> {
+				coverage.check(true).percentage(c -> false);
+			});
+
+			PropertyLifecycle.after(((executionResult, context) -> {
+				Assertions.assertThat(executionResult.getStatus())
+						  .describedAs("coverage check should have failed")
+						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
+				return executionResult.withSeedSuccessful();
+			}));
+		}
+
+		@Property(tries = 10)
+		void coverageWorksForLabelledCollectors(@ForAll int anInt) {
+			Statistics.label("ints").collect(anInt > 0);
+
+			Statistics.coverageOf("ints", coverage -> {
+				coverage.check(true).percentage(c -> {
+					Assertions.fail("");
+				});
+			});
+
+			PropertyLifecycle.after(((executionResult, context) -> {
+				Assertions.assertThat(executionResult.getStatus())
+						  .describedAs("coverage check should have failed")
+						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
+				return executionResult.withSeedSuccessful();
+			}));
+		}
+
+		@Property(tries = 10)
+		void percentageCheckPredicate(@ForAll int anInt) {
+			Statistics.collect(anInt > 0);
+
+			Statistics.coverage(coverage -> {
+				coverage.check(true).percentage(p -> p > 0.0);
+			});
+		}
+
+		@Property(tries = 10)
+		void percentageCheckAssertion(@ForAll int anInt) {
+			Statistics.collect(anInt > 0);
+
+			Statistics.coverage(coverage -> {
+				coverage.check(true).percentage(p -> {
+					Assertions.assertThat(p).isGreaterThan(0.0);
+					Assertions.assertThat(p).isLessThan(100.0);
+				});
+			});
+		}
+
+	}
 }

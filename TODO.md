@@ -1,9 +1,13 @@
 - 1.2.3
 
     - Statistics.coverage(..)
-      - percentage()
+      - check(Predicate<List<Object>> query)
 
     - Documentation for statistics coverage checking
+
+    - @StatisticsReport(OFF|STANDARD)
+      - jqwik.properties, default = STANDARD
+      - Documentation
 
     - Upgrade to JUnit platform 1.6
       https://junit.org/junit5/docs/5.6.0/release-notes/#deprecations-and-breaking-changes
