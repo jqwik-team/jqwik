@@ -1,7 +1,9 @@
 - 1.2.3
 
-    - @ExpectFailure(ExpectedExceptionClass.class)
-      - PropertyLifecycle.expectFailure(Consumer<? extends Throwable> throwableChecker)
+    - @ExpectFailure(ExpectedThrowableClass.class)
+      - Add optional Throwable class
+      - Tests
+      - Documentation
 
     - Statistics.coverage(..)
       - check that is only called once per collector and try.

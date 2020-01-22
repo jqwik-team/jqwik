@@ -64,7 +64,7 @@ public interface StatisticsCoverage {
 	/**
 	 * Select a specific values set for coverage checking.
 	 *
-	 * @param values Can be anything. Must be equal to the values used in {@linkplain #collect(Object...)}
+	 * @param values Can be anything. Must be equal to the values used in {@linkplain Statistics#collect(Object...)}
 	 */
 	CoverageChecker check(Object... values);
 }

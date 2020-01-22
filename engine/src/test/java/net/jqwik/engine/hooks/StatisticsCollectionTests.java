@@ -74,6 +74,7 @@ class StatisticsCollectionTests {
 		}
 	}
 
+	@SuppressWarnings("ConfusingArgumentToVarargsMethod")
 	@Group
 	class Reporting {
 		@Example
