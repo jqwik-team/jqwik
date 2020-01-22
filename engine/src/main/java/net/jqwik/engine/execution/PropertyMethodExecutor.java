@@ -138,7 +138,7 @@ public class PropertyMethodExecutor {
 		if (executionResult instanceof ExtendedPropertyExecutionResult) {
 			if (isReportWorthy((ExtendedPropertyExecutionResult) executionResult)) {
 				ReportEntry reportEntry = ExecutionResultReportEntry.from(
-					methodDescriptor.getExtendedDisplayName(),
+					methodDescriptor.extendedLabel(),
 					(ExtendedPropertyExecutionResult) executionResult,
 					methodDescriptor.getConfiguration().getAfterFailureMode()
 				);

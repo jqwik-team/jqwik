@@ -47,8 +47,8 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 		return getDisplayName();
 	}
 
-	public String getExtendedDisplayName() {
-		return getParent().map(parent -> parent.getDisplayName() + ":" + getDisplayName()).orElse(getDisplayName());
+	public String extendedLabel() {
+		return getParent().map(parent -> parent.getDisplayName() + ":" + getLabel()).orElse(getLabel());
 	}
 
 	@Override

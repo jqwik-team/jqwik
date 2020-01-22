@@ -21,4 +21,7 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	Reporter reporter();
 
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	String extendedLabel();
+
 }

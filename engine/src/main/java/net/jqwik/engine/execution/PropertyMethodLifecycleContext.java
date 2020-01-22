@@ -46,4 +46,9 @@ class PropertyMethodLifecycleContext implements PropertyLifecycleContext {
 	public Reporter reporter() {
 		return reporter;
 	}
+
+	@Override
+	public String extendedLabel() {
+		return methodDescriptor.extendedLabel();
+	}
 }

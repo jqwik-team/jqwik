@@ -26,7 +26,7 @@ public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 				STATISTICS_MAP_SUPPLIER
 			);
 		PropertyExecutionResult testExecutionResult = property.execute();
-		report(collectorsStore.get(), context.reporter(), context.label());
+		report(collectorsStore.get(), context.reporter(), context.extendedLabel());
 		return testExecutionResult;
 	}
 

@@ -247,7 +247,7 @@ class JqwikIntegrationTests {
 			events,
 			event(container(ContainerWithStatistics.class), started()),
 			event(test("propertyWithStatistics"), finishedSuccessfully()),
-			event(test("propertyWithStatistics"), reported("[propertyWithStatistics] (100) statistics")),
+			event(test("propertyWithStatistics"), reported("[ContainerWithStatistics:propertyWithStatistics] (100) statistics")),
 			event(container(ContainerWithStatistics.class), finishedSuccessfully())
 		);
 
