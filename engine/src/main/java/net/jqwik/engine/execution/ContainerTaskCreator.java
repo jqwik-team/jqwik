@@ -47,7 +47,7 @@ class ContainerTaskCreator {
 		ExecutionTask finishContainerTask = ExecutionTask.from(
 			listener -> {
 				// TODO: Check predecessor results first: use SafeExecutor?
-				PropertyExecutionResult result = PropertyExecutionResult.successful();
+				PropertyExecutionResult result = PropertyExecutionResultImpl.successful();
 				listener.executionFinished(containerDescriptor, result);
 
 				// TODO: Move to AfterContainerExecutor as soon as there is one

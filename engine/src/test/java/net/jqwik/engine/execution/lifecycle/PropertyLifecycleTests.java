@@ -11,8 +11,7 @@ class PropertyLifecycleTests {
 	@Property
 	void coveringFailureInAfter(@ForAll @Positive int anInt) {
 		PropertyLifecycle.after(
-			(executionResult, context) ->
-				PropertyExecutionResult.successful(executionResult.getSeed().orElse(null)));
+			(executionResult, context) -> executionResult.changeToSuccessful());
 
 		fail("should be covered by after hook");
 	}

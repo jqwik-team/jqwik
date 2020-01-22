@@ -31,7 +31,9 @@ public interface AroundPropertyHook extends LifecycleHook<AroundPropertyHook> {
 				try {
 					return inner.aroundProperty(context, property);
 				} catch (Throwable throwable) {
-					return PropertyExecutionResult.failed(throwable, null, null);
+					throw throwable;
+					// TODO: Reenable after moving this code to engine
+					// return PropertyExecutionResult.failed(throwable, null, null);
 				}
 			};
 			return AroundPropertyHook.this.aroundProperty(context, innerExecutor);

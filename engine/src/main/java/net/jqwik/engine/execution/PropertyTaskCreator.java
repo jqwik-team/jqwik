@@ -1,7 +1,5 @@
 package net.jqwik.engine.execution;
 
-import java.util.*;
-
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
@@ -55,7 +53,7 @@ class PropertyTaskCreator {
 	) {
 		listener.executionStarted(methodDescriptor);
 		PropertyExecutionResult executionResult =
-			PropertyExecutionResult.failed(throwable, methodDescriptor.getConfiguration().getSeed(), null);
+			PropertyExecutionResultImpl.failed(throwable, methodDescriptor.getConfiguration().getSeed(), null);
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 

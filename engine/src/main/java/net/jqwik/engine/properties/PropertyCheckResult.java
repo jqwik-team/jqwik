@@ -2,13 +2,8 @@ package net.jqwik.engine.properties;
 
 import java.util.*;
 
-import org.opentest4j.*;
-
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
-
-import static net.jqwik.engine.properties.PropertyCheckResult.Status.*;
 
 public interface PropertyCheckResult {
 
@@ -30,7 +25,7 @@ public interface PropertyCheckResult {
 
 	/**
 	 * @return The number of times a property has actually been evaluated not counting the tries that were rejected by a
-	 *         precondition aka assumption
+	 * precondition aka assumption
 	 */
 	int countChecks();
 
@@ -43,14 +38,6 @@ public interface PropertyCheckResult {
 	Optional<Throwable> throwable();
 
 	GenerationMode generation();
-
-	default PropertyExecutionResult toExecutionResult() {
-		if (status() == SATISFIED)
-			return PropertyExecutionResult.successful(randomSeed());
-		Throwable throwable = throwable().orElse(new AssertionFailedError(toString()));
-		List sample = sample().orElse(null);
-		return PropertyExecutionResult.failed(throwable, randomSeed(), sample);
-	}
 
 	abstract class ResultBase implements PropertyCheckResult {
 
@@ -116,7 +103,14 @@ public interface PropertyCheckResult {
 		}
 	}
 
-	static PropertyCheckResult satisfied(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation) {
+	static PropertyCheckResult satisfied(
+		String stereotype,
+		String propertyName,
+		int tries,
+		int checks,
+		String randomSeed,
+		GenerationMode generation
+	) {
 		return new ResultBase(Status.SATISFIED, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public String toString() {
@@ -186,7 +180,14 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult exhausted(String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation) {
+	static PropertyCheckResult exhausted(
+		String stereotype,
+		String propertyName,
+		int tries,
+		int checks,
+		String randomSeed,
+		GenerationMode generation
+	) {
 		return new ResultBase(Status.EXHAUSTED, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public String toString() {

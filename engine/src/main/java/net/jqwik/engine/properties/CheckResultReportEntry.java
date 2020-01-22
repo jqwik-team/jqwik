@@ -3,6 +3,7 @@ package net.jqwik.engine.properties;
 import java.util.*;
 
 import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
@@ -84,7 +85,7 @@ public class CheckResultReportEntry {
 
 	private static void appendThrowableMessage(StringBuilder reportLines, PropertyCheckResult checkResult) {
 		if (checkResult.status() != SATISFIED) {
-			Throwable throwable = checkResult.toExecutionResult().getThrowable().get();
+			Throwable throwable = checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString()));
 			String assertionClass = throwable.getClass().getName();
 			String assertionMessage = throwable.getMessage();
 			reportLines.append(String.format("%n%n%s: ", assertionClass));

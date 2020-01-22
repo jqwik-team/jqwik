@@ -98,7 +98,7 @@ public class PropertyMethodExecutor {
 				() -> executeMethod(propertyLifecycleContext.testInstance(), listener)
 			);
 		} catch (Throwable throwable) {
-			propertyExecutionResult = PropertyExecutionResult.failed(
+			propertyExecutionResult = PropertyExecutionResultImpl.failed(
 				throwable,
 				methodDescriptor.getConfiguration().getSeed(),
 				null
@@ -112,12 +112,12 @@ public class PropertyMethodExecutor {
 		try {
 			Consumer<ReportEntry> reporter = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
 			PropertyCheckResult checkResult = executeProperty(testInstance, reporter);
-			return checkResult.toExecutionResult();
+			return PropertyExecutionResultImpl.from(checkResult);
 		} catch (TestAbortedException e) {
-			return PropertyExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
+			return PropertyExecutionResultImpl.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(t);
-			return PropertyExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed(), null);
+			return PropertyExecutionResultImpl.failed(t, methodDescriptor.getConfiguration().getSeed(), null);
 		}
 	}
 
