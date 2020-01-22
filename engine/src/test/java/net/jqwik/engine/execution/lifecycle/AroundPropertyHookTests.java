@@ -9,28 +9,33 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
 
-@AddLifecycleHook(AroundPropertyWithPropagation.class)
-@AddLifecycleHook(AroundPropertyWithoutPropagation.class)
 class AroundPropertyHookTests {
 
-	@Property(tries = 10)
-	void lifeCycleHasBeenCalledAndConfigured1() {
-		Assertions.assertThat(AroundPropertyWithPropagation.configured).isEqualTo(1);
-		Assertions.assertThat(AroundPropertyWithPropagation.calls).isEqualTo(1);
-		Assertions.assertThat(AroundPropertyWithoutPropagation.calls).isEqualTo(0);
+	@Group
+	@AddLifecycleHook(AroundPropertyWithPropagation.class)
+	@AddLifecycleHook(AroundPropertyWithoutPropagation.class)
+	class Propagation {
+
+		@Property(tries = 10)
+		void withPropagation() {
+			Assertions.assertThat(AroundPropertyWithPropagation.configured).isEqualTo(1);
+			Assertions.assertThat(AroundPropertyWithPropagation.calls).isEqualTo(2);
+		}
+
+		@Property(tries = 10)
+		void withoutPropagation() {
+			Assertions.assertThat(AroundPropertyWithoutPropagation.calls).isEqualTo(0);
+		}
+
 	}
 
 	@Property(tries = 10)
 	@AddLifecycleHook(AroundSingleProperty.class)
-	void  lifeCycleHasBeenCalledAndConfigured2() {
-		Assertions.assertThat(AroundPropertyWithPropagation.configured).isEqualTo(1);
-		Assertions.assertThat(AroundPropertyWithPropagation.calls).isEqualTo(2);
-		Assertions.assertThat(AroundPropertyWithoutPropagation.calls).isEqualTo(0);
+	void methodLevelLifecycle() {
 		Assertions.assertThat(AroundSingleProperty.calls).isEqualTo(1);
 	}
 
 }
-
 
 class AroundPropertyWithPropagation implements AroundPropertyHook, Configurable, PropagateToChildren {
 

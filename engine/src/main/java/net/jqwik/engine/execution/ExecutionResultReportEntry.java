@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties;
+package net.jqwik.engine.execution;
 
 import java.util.*;
 
@@ -6,11 +6,12 @@ import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.properties.PropertyCheckResult.Status.*;
-
-public class CheckResultReportEntry {
+public class ExecutionResultReportEntry {
 
 	private static final String TRIES_KEY = "tries";
 	private static final String CHECKS_KEY = "checks";
@@ -20,26 +21,30 @@ public class CheckResultReportEntry {
 	private static final String SAMPLE_KEY = "sample";
 	private static final String ORIGINAL_REPORT_KEY = "original-sample";
 
-	public static ReportEntry from(String propertyName, PropertyCheckResult checkResult, AfterFailureMode afterFailureMode) {
-		return buildJqwikReport(propertyName, checkResult, afterFailureMode);
+	public static ReportEntry from(
+		String propertyName,
+		ExtendedPropertyExecutionResult executionResult,
+		AfterFailureMode afterFailureMode
+	) {
+		return buildJqwikReport(propertyName, executionResult, afterFailureMode);
 	}
 
 	private static ReportEntry buildJqwikReport(
 		String propertyName,
-		PropertyCheckResult checkResult,
+		ExtendedPropertyExecutionResult executionResult,
 		AfterFailureMode afterFailureMode
 	) {
 		StringBuilder reportLines = new StringBuilder();
 
-		appendThrowableMessage(reportLines, checkResult);
-		appendFixedSizedProperties(reportLines, checkResult, afterFailureMode);
-		appendSamples(reportLines, checkResult);
+		appendThrowableMessage(reportLines, executionResult);
+		appendFixedSizedProperties(reportLines, executionResult, afterFailureMode);
+		appendSamples(reportLines, executionResult);
 
 		return ReportEntry.from(propertyName, reportLines.toString());
 	}
 
-	private static void appendSamples(StringBuilder reportLines, PropertyCheckResult checkResult) {
-		checkResult.sample().ifPresent(shrunkSample -> {
+	private static void appendSamples(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
+		executionResult.getFalsifiedSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
 				reportLines.append(String.format("%s%n", buildProperty(
 					SAMPLE_KEY,
@@ -48,30 +53,48 @@ public class CheckResultReportEntry {
 			}
 		});
 
-		checkResult.originalSample().ifPresent(originalSample -> {
-			if (!originalSample.isEmpty()) {
-				reportLines
-					.append(String.format("%s%n", buildProperty(
-						ORIGINAL_REPORT_KEY,
-						JqwikStringSupport.displayString(originalSample)
-					)));
-			}
+		executionResult.checkResult().ifPresent(checkResult -> {
+			checkResult.originalSample().ifPresent(originalSample -> {
+				if (!originalSample.isEmpty()) {
+					reportLines
+						.append(String.format("%s%n", buildProperty(
+							ORIGINAL_REPORT_KEY,
+							JqwikStringSupport.displayString(originalSample)
+						)));
+				}
+			});
 		});
 	}
 
 	private static void appendFixedSizedProperties(
 		StringBuilder reportLines,
-		PropertyCheckResult checkResult,
+		ExtendedPropertyExecutionResult executionResult,
 		AfterFailureMode afterFailureMode
 	) {
 		List<String> propertiesLines = new ArrayList<>();
-		appendProperty(propertiesLines, TRIES_KEY, Integer.toString(checkResult.countTries()), "# of calls to property");
-		appendProperty(propertiesLines, CHECKS_KEY, Integer.toString(checkResult.countChecks()), "# of not rejected calls");
-		appendProperty(propertiesLines, GENERATION_KEY, checkResult.generation().name(), helpGenerationMode(checkResult.generation()));
+		PropertyCheckResult checkResult;
+		int countTries = 0;
+		int countChecks = 0;
+		String generationMode = "<none>";
+		String randomSeed = "<none>";
+		String helpGenerationMode = "";
+
+		if (executionResult.checkResult().isPresent()) {
+			checkResult = executionResult.checkResult().get();
+			countTries = checkResult.countTries();
+			countChecks = checkResult.countChecks();
+			generationMode = checkResult.generation().name();
+			randomSeed = checkResult.randomSeed();
+			helpGenerationMode = helpGenerationMode(checkResult.generation());
+		}
+
+		appendProperty(propertiesLines, TRIES_KEY, Integer.toString(countTries), "# of calls to property");
+		appendProperty(propertiesLines, CHECKS_KEY, Integer.toString(countChecks), "# of not rejected calls");
+		appendProperty(propertiesLines, GENERATION_KEY, generationMode, helpGenerationMode);
 		if (afterFailureMode != AfterFailureMode.NOT_SET) {
 			appendProperty(propertiesLines, AFTER_FAILURE_KEY, afterFailureMode.name(), helpAfterFailureMode(afterFailureMode));
 		}
-		appendProperty(propertiesLines, SEED_KEY, checkResult.randomSeed(), "random seed to reproduce generated values");
+		appendProperty(propertiesLines, SEED_KEY, randomSeed, "random seed to reproduce generated values");
 
 		int halfBorderLength =
 			(propertiesLines.stream().mapToInt(String::length).max().orElse(50) - 37) / 2 + 1;
@@ -83,9 +106,9 @@ public class CheckResultReportEntry {
 
 	}
 
-	private static void appendThrowableMessage(StringBuilder reportLines, PropertyCheckResult checkResult) {
-		if (checkResult.status() != SATISFIED) {
-			Throwable throwable = checkResult.throwable().orElse(new AssertionFailedError(checkResult.toString()));
+	private static void appendThrowableMessage(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
+		if (executionResult.getStatus() != PropertyExecutionResult.Status.SUCCESSFUL) {
+			Throwable throwable = executionResult.getThrowable().orElse(new AssertionFailedError(null));
 			String assertionClass = throwable.getClass().getName();
 			String assertionMessage = throwable.getMessage();
 			reportLines.append(String.format("%n%n%s: ", assertionClass));
@@ -121,8 +144,8 @@ public class CheckResultReportEntry {
 		}
 	}
 
-	private static void appendProperty(List<String> propertiesLines, String triesKey, String value, String s) {
-		propertiesLines.add(buildPropertyLine(triesKey, value, s));
+	private static void appendProperty(List<String> propertiesLines, String triesKey, String value, String comment) {
+		propertiesLines.add(buildPropertyLine(triesKey, value, comment));
 	}
 
 	private static String buildPropertyLine(String key, String value, String help) {

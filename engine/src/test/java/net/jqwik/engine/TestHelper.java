@@ -44,7 +44,7 @@ public class TestHelper {
 		return new LifecycleHooksSupplier() {
 			@Override
 			public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-				return AroundPropertyHook.combine(aroundPropertyHooks);
+				return HookSupport.combine(aroundPropertyHooks);
 			}
 
 			@Override

@@ -25,28 +25,4 @@ public interface AroundPropertyHook extends LifecycleHook<AroundPropertyHook> {
 		return 0;
 	}
 
-	default AroundPropertyHook around(AroundPropertyHook inner) {
-		return (context, property) -> {
-			PropertyExecutor innerExecutor = () -> {
-				try {
-					return inner.aroundProperty(context, property);
-				} catch (Throwable throwable) {
-					throw throwable;
-					// TODO: Reenable after moving this code to engine
-					// return PropertyExecutionResult.failed(throwable, null, null);
-				}
-			};
-			return AroundPropertyHook.this.aroundProperty(context, innerExecutor);
-		};
-	}
-
-	static AroundPropertyHook combine(List<AroundPropertyHook> aroundPropertyHooks) {
-		if (aroundPropertyHooks.isEmpty()) {
-			return AroundPropertyHook.BASE;
-		}
-		aroundPropertyHooks = new ArrayList<>(aroundPropertyHooks);
-		AroundPropertyHook first = aroundPropertyHooks.remove(0);
-		return first.around(combine(aroundPropertyHooks));
-	}
-
 }

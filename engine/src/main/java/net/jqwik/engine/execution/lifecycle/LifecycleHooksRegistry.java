@@ -21,7 +21,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	@Override
 	public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
 		List<AroundPropertyHook> aroundPropertyHooks = findHooks(propertyMethodDescriptor, AroundPropertyHook.class);
-		return AroundPropertyHook.combine(aroundPropertyHooks);
+		return HookSupport.combine(aroundPropertyHooks);
 	}
 
 	@Override

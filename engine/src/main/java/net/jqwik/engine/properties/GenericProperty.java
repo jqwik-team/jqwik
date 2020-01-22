@@ -33,22 +33,7 @@ public class GenericProperty {
 		this.checkedFunction = checkedFunction;
 	}
 
-	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting, boolean reportOnlyFailures) {
-		PropertyCheckResult checkResult = checkWithoutReporting(reporter, reporting);
-		reportResult(reporter, checkResult, reportOnlyFailures);
-		return checkResult;
-	}
-
-	private void reportResult(Consumer<ReportEntry> publisher, PropertyCheckResult checkResult, boolean reportOnlyFailures) {
-		if (checkResult.status() == SATISFIED && reportOnlyFailures) {
-			return;
-		}
-		if (checkResult.countTries() > 1 || checkResult.status() != SATISFIED) {
-			publisher.accept(CheckResultReportEntry.from(name, checkResult, configuration.getAfterFailureMode()));
-		}
-	}
-
-	private PropertyCheckResult checkWithoutReporting(Consumer<ReportEntry> reporter, Reporting[] reporting) {
+	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting) {
 		int maxTries = configuration.getTries();
 		int countChecks = 0;
 		int countTries = 0;

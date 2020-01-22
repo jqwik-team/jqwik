@@ -3,6 +3,7 @@ package net.jqwik.engine.execution;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
@@ -20,10 +21,12 @@ import net.jqwik.engine.support.*;
 
 public class PropertyMethodExecutor {
 
+	private static final Logger LOG = Logger.getLogger(PropertyMethodExecutor.class.getName());
+
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final PropertyLifecycleContext propertyLifecycleContext;
 	private final boolean reportOnlyFailures;
-	private CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
+	private final CheckedPropertyFactory checkedPropertyFactory = new CheckedPropertyFactory();
 
 	public PropertyMethodExecutor(
 		PropertyMethodDescriptor methodDescriptor,
@@ -89,41 +92,70 @@ public class PropertyMethodExecutor {
 	}
 
 	private PropertyExecutionResult executePropertyMethod(LifecycleHooksSupplier lifecycleSupplier, PropertyExecutionListener listener) {
-		PropertyExecutionResult propertyExecutionResult;
+		Consumer<ReportEntry> publisher = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
+		PropertyExecutionResult propertyExecutionResult;
 		try {
 			ensureAllParametersHaveForAll(methodDescriptor);
 			propertyExecutionResult = around.aroundProperty(
 				propertyLifecycleContext,
-				() -> executeMethod(propertyLifecycleContext.testInstance(), listener)
+				() -> executeMethod(propertyLifecycleContext.testInstance(), publisher)
 			);
 		} catch (Throwable throwable) {
-			propertyExecutionResult = PropertyExecutionResultImpl.failed(
+			propertyExecutionResult = PlainExecutionResult.failed(
 				throwable,
 				methodDescriptor.getConfiguration().getSeed(),
 				null
 			);
 		}
 		StoreRepository.getCurrent().removeStoresFor(methodDescriptor);
+		reportResult(publisher, propertyExecutionResult);
 		return propertyExecutionResult;
 	}
 
-	private PropertyExecutionResult executeMethod(Object testInstance, PropertyExecutionListener listener) {
+	private ExtendedPropertyExecutionResult executeMethod(Object testInstance, Consumer<ReportEntry> publisher) {
 		try {
-			Consumer<ReportEntry> reporter = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
-			PropertyCheckResult checkResult = executeProperty(testInstance, reporter);
-			return PropertyExecutionResultImpl.from(checkResult);
+			PropertyCheckResult checkResult = executeProperty(testInstance, publisher);
+			return CheckResultBasedExecutionResult.from(checkResult);
 		} catch (TestAbortedException e) {
-			return PropertyExecutionResultImpl.aborted(e, methodDescriptor.getConfiguration().getSeed());
+			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(t);
-			return PropertyExecutionResultImpl.failed(t, methodDescriptor.getConfiguration().getSeed(), null);
+			return PlainExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed(), null);
 		}
 	}
 
 	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, testInstance);
-		return property.check(publisher, methodDescriptor.getReporting(), reportOnlyFailures);
+		return property.check(publisher, methodDescriptor.getReporting());
+	}
+
+	private void reportResult(Consumer<ReportEntry> publisher, PropertyExecutionResult executionResult) {
+		if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL && reportOnlyFailures) {
+			return;
+		}
+
+		if (executionResult instanceof ExtendedPropertyExecutionResult) {
+			if (isReportWorthy((ExtendedPropertyExecutionResult) executionResult)) {
+				ReportEntry reportEntry = ExecutionResultReportEntry.from(
+					methodDescriptor.getExtendedDisplayName(),
+					(ExtendedPropertyExecutionResult) executionResult,
+					methodDescriptor.getConfiguration().getAfterFailureMode()
+				);
+				publisher.accept(reportEntry);
+			}
+		} else {
+			String message = String.format("Unknown PropertyExecutionResult implementation: %s", executionResult.getClass());
+			LOG.warning(message);
+		}
+	}
+
+	private boolean isReportWorthy(ExtendedPropertyExecutionResult executionResult) {
+		if (executionResult.getStatus() != PropertyExecutionResult.Status.SUCCESSFUL) {
+			return true;
+		}
+		Integer tries = executionResult.checkResult().map(PropertyCheckResult::countTries).orElse(0);
+		return tries > 1;
 	}
 
 }
