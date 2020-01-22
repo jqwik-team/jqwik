@@ -3,7 +3,6 @@ package net.jqwik.engine.execution;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.logging.*;
 import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
@@ -20,8 +19,6 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 public class PropertyMethodExecutor {
-
-	private static final Logger LOG = Logger.getLogger(PropertyMethodExecutor.class.getName());
 
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final PropertyLifecycleContext propertyLifecycleContext;
