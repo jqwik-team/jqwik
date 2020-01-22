@@ -14,6 +14,9 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.2.3")
 public class PropertyLifecycle {
 
+	private PropertyLifecycle() {
+	}
+
 	@FunctionalInterface
 	public interface AfterPropertyExecutor {
 		PropertyExecutionResult execute(PropertyExecutionResult executionResult, PropertyLifecycleContext context);

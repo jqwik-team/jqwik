@@ -16,6 +16,10 @@ import static org.apiguardian.api.API.Status.*;
 @Deprecated
 public class Statistics {
 
+	private Statistics() {
+		// never invoke
+	}
+
 	/**
 	 * Call this method to get a labeled instance of {@link StatisticsCollector}.
 	 *

@@ -27,6 +27,9 @@ public class Statistics {
 		public abstract StatisticsCollector defaultCollector();
 	}
 
+	private Statistics() {
+	}
+
 	/**
 	 * Call this method to record an entry for statistical data about generated values.
 	 * As soon as this method is called at least once in a property method,
