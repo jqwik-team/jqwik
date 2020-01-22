@@ -81,13 +81,13 @@ public class PropertyExecutionResult {
 	}
 
 	@API(status = EXPERIMENTAL, since = "1.2.3")
-	public PropertyExecutionResult withSeedSuccessful() {
+	public PropertyExecutionResult mapToSuccessful() {
 		return PropertyExecutionResult.successful(getSeed().orElse(null));
 	}
 
 	@API(status = EXPERIMENTAL, since = "1.2.3")
-	public PropertyExecutionResult withSeedFailed(Throwable throwable) {
-		return PropertyExecutionResult.failed(throwable, getSeed().orElse(null), null);
+	public PropertyExecutionResult mapToFailed(Throwable throwable) {
+		return PropertyExecutionResult.failed(throwable, getSeed().orElse(null), getFalsifiedSample().orElse(null));
 	}
 
 	@Override

@@ -18,8 +18,7 @@ public class CheckedPropertyFactory {
 	private static List<Class<?>> BOOLEAN_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
 
 	public CheckedProperty fromDescriptor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		String displayName = propertyMethodDescriptor.getDisplayName();
-		String propertyName = propertyMethodDescriptor.getParent().map(parent -> parent.getDisplayName() + ":" + displayName).orElse(displayName);
+		String propertyName = propertyMethodDescriptor.getExtendedDisplayName();
 
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();

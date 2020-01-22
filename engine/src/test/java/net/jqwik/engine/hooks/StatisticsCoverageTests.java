@@ -20,7 +20,7 @@ class StatisticsCoverageTests {
 			Assertions.assertThat(executionResult.getStatus())
 					  .describedAs("coverage check should have failed")
 					  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-			return executionResult.withSeedSuccessful();
+			return executionResult.mapToSuccessful();
 		}));
 	}
 
@@ -38,7 +38,7 @@ class StatisticsCoverageTests {
 				Assertions.assertThat(executionResult.getStatus())
 						  .describedAs("coverage check should have failed")
 						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.withSeedSuccessful();
+				return executionResult.mapToSuccessful();
 			}));
 		}
 
@@ -54,7 +54,7 @@ class StatisticsCoverageTests {
 				Assertions.assertThat(executionResult.getStatus())
 						  .describedAs("coverage check should have failed")
 						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.withSeedSuccessful();
+				return executionResult.mapToSuccessful();
 			}));
 		}
 
@@ -114,7 +114,7 @@ class StatisticsCoverageTests {
 				Assertions.assertThat(executionResult.getStatus())
 						  .describedAs("coverage check should have failed")
 						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.withSeedSuccessful();
+				return executionResult.mapToSuccessful();
 			}));
 		}
 
@@ -132,7 +132,7 @@ class StatisticsCoverageTests {
 				Assertions.assertThat(executionResult.getStatus())
 						  .describedAs("coverage check should have failed")
 						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.withSeedSuccessful();
+				return executionResult.mapToSuccessful();
 			}));
 		}
 

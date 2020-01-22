@@ -13,7 +13,6 @@ import org.opentest4j.*;
 import net.jqwik.api.*;
 import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.PropertyExecutionResult.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.facades.*;
@@ -93,7 +92,7 @@ public class PropertyMethodExecutor {
 	}
 
 	private PropertyExecutionResult executePropertyMethod(LifecycleHooksSupplier lifecycleSupplier, PropertyExecutionListener listener) {
-		PropertyExecutionResult propertyExecutionResult = PropertyExecutionResult.successful(methodDescriptor.getConfiguration().getSeed());
+		PropertyExecutionResult propertyExecutionResult;
 		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		try {
 			ensureAllParametersHaveForAll(methodDescriptor);
@@ -102,16 +101,11 @@ public class PropertyMethodExecutor {
 				() -> executeMethod(propertyLifecycleContext.testInstance(), listener)
 			);
 		} catch (Throwable throwable) {
-			if (propertyExecutionResult.getStatus() == Status.SUCCESSFUL) {
-				return PropertyExecutionResult.failed(
-					throwable,
-					propertyExecutionResult.getSeed().orElse(null),
-					propertyExecutionResult.getFalsifiedSample().orElse(null)
-				);
-			} else {
-				LOG.warning(throwable.toString());
-				return propertyExecutionResult;
-			}
+			propertyExecutionResult = PropertyExecutionResult.failed(
+				throwable,
+				methodDescriptor.getConfiguration().getSeed(),
+				null
+			);
 		}
 		StoreRepository.getCurrent().removeStoresFor(methodDescriptor);
 		return propertyExecutionResult;

@@ -47,6 +47,10 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 		return getDisplayName();
 	}
 
+	public String getExtendedDisplayName() {
+		return getParent().map(parent -> parent.getDisplayName() + ":" + getDisplayName()).orElse(getDisplayName());
+	}
+
 	@Override
 	public Set<TestTag> getTags() {
 		return DiscoverySupport.getTags(getParent(), tags);
