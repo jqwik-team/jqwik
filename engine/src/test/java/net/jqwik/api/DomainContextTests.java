@@ -92,6 +92,7 @@ class DomainContextTests extends BaseDomainContexts {
 
 	private static class SmallNumbersContext extends AbstractDomainContextBase {
 		private SmallNumbersContext() {
+			setDefaultPriority(1); // supersede built-in arbitrary providers
 			registerArbitrary(Integer.class, Arbitraries.of(1, 2, 3, 41, 55, 97, 98, 99));
 			registerConfigurator(new ArbitraryConfiguratorBase() {
 				public Arbitrary<Integer> configure(Arbitrary<Integer> arbitrary, DoubleNumber ignore) {

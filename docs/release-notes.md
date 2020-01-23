@@ -53,6 +53,8 @@ and
 - The standard property report is now the last thing to be reported,
   i.e. after statistics reports.
 
+- Default priority in AbstractDomainContextBase is now 0 (previously 1),
+  i.e. they no longer supersede built-in jqwik arbitrary providers but mix in.
 
 #### Bug Fixes
 

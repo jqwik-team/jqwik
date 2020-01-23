@@ -18,8 +18,8 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.1")
 public abstract class AbstractDomainContextBase implements DomainContext {
 
-	// Override jqwik default providers
-	private static final int DEFAULT_PRIORITY = 1;
+	// Have same priority as jqwik default providers
+	private static final int DEFAULT_PRIORITY = 0;
 
 	private final List<ArbitraryProvider> providers = new ArrayList<>();
 	private final List<ArbitraryConfigurator> configurators = new ArrayList<>();

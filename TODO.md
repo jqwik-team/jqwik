@@ -1,9 +1,5 @@
 - 1.2.3
 
-    - Arbitraries.any()
-      - anyExtends(supertype)
-      - anySuper(subtype)
-
     - Statistics.coverage(..)
       - check that is only called once per collector and try.
         Might require per try lifecycle.
