@@ -1,10 +1,5 @@
 - 1.2.3
 
-    - @ExpectFailure(ExpectedThrowableClass.class)
-      - Add optional Throwable class
-      - Tests
-      - Documentation
-
     - Arbitraries.any()
       - anyExtends(supertype)
       - anySuper(subtype)

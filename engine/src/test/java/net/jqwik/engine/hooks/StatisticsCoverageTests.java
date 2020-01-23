@@ -3,59 +3,41 @@ package net.jqwik.engine.hooks;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.Statistics;
+import net.jqwik.engine.*;
 
 @Group
 class StatisticsCoverageTests {
 
 	@Property(tries = 10)
+	@ExpectFailure("coverage check should have failed")
 	void moreThanOneCoverageWorks(@ForAll int anInt) {
 		Statistics.collect(anInt > 0);
 
 		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(true).count(c -> true));
 		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(false).count(c -> false));
-
-		PropertyLifecycle.after(((executionResult, context) -> {
-			Assertions.assertThat(executionResult.getStatus())
-					  .describedAs("coverage check should have failed")
-					  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-			return executionResult.changeToSuccessful();
-		}));
 	}
 
 	@Group
 	class Count {
 		@Property(tries = 10)
+		@ExpectFailure("coverage check should have failed")
 		void coverageFailsForViolatedCountCondition(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
 
 			Statistics.coverage(coverage -> {
 				coverage.check(true).count(c -> false);
 			});
-
-			PropertyLifecycle.after(((executionResult, context) -> {
-				Assertions.assertThat(executionResult.getStatus())
-						  .describedAs("coverage check should have failed")
-						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.changeToSuccessful();
-			}));
 		}
 
 		@Property(tries = 10)
+		@ExpectFailure("coverage check should have failed")
 		void coverageWorksForLabelledCollectors(@ForAll int anInt) {
 			Statistics.label("ints").collect(anInt > 0);
 
 			Statistics.coverageOf("ints", coverage -> {
 				coverage.check(true).count(c -> false);
 			});
-
-			PropertyLifecycle.after(((executionResult, context) -> {
-				Assertions.assertThat(executionResult.getStatus())
-						  .describedAs("coverage check should have failed")
-						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.changeToSuccessful();
-			}));
 		}
 
 		@Property(tries = 10)
@@ -103,22 +85,17 @@ class StatisticsCoverageTests {
 	@Group
 	class Percentage {
 		@Property(tries = 10)
+		@ExpectFailure("coverage check should have failed")
 		void coverageFailsForViolatedPercentageCondition(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
 
 			Statistics.coverage(coverage -> {
 				coverage.check(true).percentage(c -> false);
 			});
-
-			PropertyLifecycle.after(((executionResult, context) -> {
-				Assertions.assertThat(executionResult.getStatus())
-						  .describedAs("coverage check should have failed")
-						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.changeToSuccessful();
-			}));
 		}
 
 		@Property(tries = 10)
+		@ExpectFailure("coverage check should have failed")
 		void coverageWorksForLabelledCollectors(@ForAll int anInt) {
 			Statistics.label("ints").collect(anInt > 0);
 
@@ -127,13 +104,6 @@ class StatisticsCoverageTests {
 					Assertions.fail("");
 				});
 			});
-
-			PropertyLifecycle.after(((executionResult, context) -> {
-				Assertions.assertThat(executionResult.getStatus())
-						  .describedAs("coverage check should have failed")
-						  .isEqualTo(PropertyExecutionResult.Status.FAILED);
-				return executionResult.changeToSuccessful();
-			}));
 		}
 
 		@Property(tries = 10)
