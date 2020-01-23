@@ -1,12 +1,8 @@
 package net.jqwik.engine.hooks;
 
 import java.util.*;
-import java.util.stream.*;
-
-import org.assertj.core.data.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.hooks.statistics.*;
 
 import static java.util.Arrays.*;
@@ -69,104 +65,6 @@ class StatisticsCollectionTests {
 
 			assertThatThrownBy(() -> collector.collect("just a string")).isInstanceOf(IllegalArgumentException.class);
 			assertThatThrownBy(() -> collector.collect("a string", 3, new Object())).isInstanceOf(IllegalArgumentException.class);
-		}
-	}
-
-	@SuppressWarnings("ConfusingArgumentToVarargsMethod")
-	@Group
-	class Reporting {
-		@Example
-		void reportCollectedPercentagesInDecreasingOrder() {
-			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
-
-			collector.collect("two");
-			collector.collect("three");
-			collector.collect("two");
-			collector.collect("four");
-			collector.collect("four");
-			collector.collect("one");
-			collector.collect("three");
-			collector.collect("four");
-			collector.collect("four");
-			collector.collect("three");
-
-			Tuple2<String, String> entry = collector.createReportEntry("a property");
-
-			List<String> stats = parseStatistics(entry);
-			assertThat(stats).containsExactly(
-				"four  (4) : 40 %",
-				"three (3) : 30 %",
-				"two   (2) : 20 %",
-				"one   (1) : 10 %"
-			);
-		}
-
-		@Example
-		void reportWithDifferentLabel() {
-			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("label");
-
-			collector.collect("two");
-			collector.collect("two");
-			collector.collect("two");
-			collector.collect("one");
-
-			Tuple2<String, String> entry = collector.createReportEntry("a property");
-			assertThat(entry.get1()).isEqualTo("[a property] (4) label");
-
-			List<String> stats = parseStatistics(entry);
-			assertThat(stats).containsExactly(
-				"two (3) : 75 %",
-				"one (1) : 25 %"
-			);
-		}
-
-		@Example
-		void nullKeysAreAlsoReported() {
-			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
-
-			collector.collect("aKey");
-			collector.collect(null);
-			collector.collect("aKey");
-			collector.collect(null);
-
-			Tuple2<String, String> entry = collector.createReportEntry("a property");
-
-			List<String> stats = parseStatistics(entry);
-			assertThat(stats).containsExactly(
-				"aKey (2) : 50 %",
-				"null (2) : 50 %"
-			);
-		}
-
-		@Example
-		void reportDoubleValues() {
-			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
-
-			collector.collect("two", 2);
-			collector.collect("three", 3);
-			collector.collect("three", 2);
-			collector.collect("two", 3);
-
-			Tuple2<String, String> entry = collector.createReportEntry("a property");
-
-			List<String> stats = parseStatistics(entry);
-			assertThat(stats).containsExactlyInAnyOrder(
-				"two 2   (1) : 25 %",
-				"three 2 (1) : 25 %",
-				"two 3   (1) : 25 %",
-				"three 3 (1) : 25 %"
-			);
-		}
-
-		private List<String> parseStatistics(Tuple2<String, String> entry) {
-			return parseStatistics(entry.get2());
-		}
-
-		private List<String> parseStatistics(String reportString) {
-			return Arrays.stream(reportString.split(System.getProperty("line.separator")))
-						 .map(String::trim)
-						 .filter(s -> !s.isEmpty())
-						 .collect(Collectors.toList());
 		}
 	}
 
@@ -269,7 +167,7 @@ class StatisticsCollectionTests {
 			collector.collect("four");
 			collector.collect("three");
 
-			assertThat(collector.count()).isEqualTo(10);
+			assertThat(collector.countAllCollects()).isEqualTo(10);
 			assertThat(collector.count("four")).isEqualTo(4);
 			assertThat(collector.count("three")).isEqualTo(3);
 			assertThat(collector.count("two")).isEqualTo(2);

@@ -1,8 +1,8 @@
 - 1.2.3
 
-    - @StatisticsReport(OFF|STANDARD)
-      - StatisticsCollector.reportMode(OFF|STANDARD)
-      - jqwik.properties, default = STANDARD
+    - StatisticsCollector.reportMode(OFF|STANDARD)
+        - @StatisticsReport(OFF|STANDARD)
+        - jqwik.properties, default = STANDARD
 
     - Statistics.coverage(..)
       - check that is only called once per collector and try.

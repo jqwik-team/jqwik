@@ -7,7 +7,6 @@ import java.util.stream.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsCoverage.*;
@@ -87,7 +86,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				   .reduce(StatisticsEntry.NULL, (aggregate, entry) -> aggregate.plus(entry));
 	}
 
-	public int count() {
+	public int countAllCollects() {
 		return counts.values().stream().mapToInt(aCount -> aCount).sum();
 	}
 
@@ -108,24 +107,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return counts;
 	}
 
-	public Tuple2<String, String> createReportEntry(String propertyName) {
-		List<StatisticsEntry> statisticsEntries = statisticsEntries();
-
-		int maxKeyLength = statisticsEntries.stream().mapToInt(entry -> entry.name.length()).max().orElse(0);
-		boolean fullNumbersOnly = statisticsEntries.stream().noneMatch(entry -> entry.percentage < 1);
-
-		int sum = count();
-		StringBuilder statistics = new StringBuilder();
-		final int decimals = (int) Math.max(1, Math.round(Math.log10(sum)));
-		for (StatisticsEntry statsEntry : statisticsEntries) {
-			statistics.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly, decimals));
-		}
-
-		String keyStatistics = String.format("[%s] (%d) %s", propertyName, sum, label);
-		return Tuple.of(keyStatistics, statistics.toString());
-	}
-
-	private List<StatisticsEntry> statisticsEntries() {
+	List<StatisticsEntry> statisticsEntries() {
 		if (statisticsEntries != null) {
 			return statisticsEntries;
 		}
@@ -134,7 +116,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	}
 
 	private List<StatisticsEntry> calculateStatistics() {
-		int sum = count();
+		int sum = countAllCollects();
 		return counts.entrySet()
 					 .stream()
 					 .sorted(this::compareStatisticsEntries)
@@ -150,15 +132,6 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 					 .collect(Collectors.toList());
 	}
 
-	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {
-		return String.format(
-			"%n    %1$-" + maxKeyLength + "s (%2$" + decimals + "d) : %3$s %%",
-			statsEntry.name,
-			statsEntry.count,
-			displayPercentage(statsEntry.percentage, fullNumbersOnly)
-		);
-	}
-
 	private int compareStatisticsEntries(Map.Entry<List<Object>, Integer> e1, Map.Entry<List<Object>, Integer> e2) {
 		List<Object> k1 = e1.getKey();
 		List<Object> k2 = e2.getKey();
@@ -168,14 +141,12 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return e2.getValue().compareTo(e1.getValue());
 	}
 
-	private String displayPercentage(double percentage, boolean fullNumbersOnly) {
-		if (fullNumbersOnly)
-			return String.format("%2d", Math.round(percentage));
-		return String.format("%5.2f", Math.round(percentage * 100.0) / 100.0);
-	}
-
 	private String displayKey(List<Object> key) {
 		return key.stream().map(Objects::toString).collect(Collectors.joining(" "));
+	}
+
+	String label() {
+		return label;
 	}
 
 	private class StatisticsCoverageImpl implements StatisticsCoverage {
@@ -183,36 +154,14 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		@Override
 		public CoverageChecker check(Object... values) {
 			StatisticsEntry entry = statisticsEntry(values);
-			return new CoverageCheckerImpl(entry, count());
+			return new CoverageCheckerImpl(entry, countAllCollects());
 		}
 
 		@Override
 		public CoverageChecker checkQuery(Predicate<? extends List<?>> query) {
 			@SuppressWarnings("unchecked")
 			StatisticsEntry entry = query((Predicate<List<Object>>) query);
-			return new CoverageCheckerImpl(entry, count());
-		}
-	}
-
-	private static class StatisticsEntry {
-		public static final StatisticsEntry NULL = new StatisticsEntry(null, null, 0, 0.0);
-
-		private List<Object> key;
-		private final String name;
-		private int count;
-		private final double percentage;
-
-		StatisticsEntry(List<Object> key, String name, int count, double percentage) {
-			this.key = key;
-			this.name = name;
-			this.count = count;
-			this.percentage = percentage;
-		}
-
-		public StatisticsEntry plus(StatisticsEntry other) {
-			int newCount = count + other.count;
-			double newPercentage = percentage + other.percentage;
-			return new StatisticsEntry(Collections.emptyList(), "adhoc query", newCount, newPercentage);
+			return new CoverageCheckerImpl(entry, countAllCollects());
 		}
 	}
 
