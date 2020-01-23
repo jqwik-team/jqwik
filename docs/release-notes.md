@@ -50,6 +50,9 @@ and
 
 - Deprecated `net.jqwik.api.Statistics`. Use `net.jqwik.api.statistics.Statistics` instead.
 
+- The standard property report is now the last thing to be reported,
+  i.e. after statistics reports.
+
 
 #### Bug Fixes
 
