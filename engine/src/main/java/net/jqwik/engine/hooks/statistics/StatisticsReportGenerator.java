@@ -20,13 +20,14 @@ public class StatisticsReportGenerator {
 	public String createReport() {
 		int maxKeyLength = entries.stream().mapToInt(entry -> entry.name.length()).max().orElse(0);
 		boolean fullNumbersOnly = entries.stream().noneMatch(entry -> entry.percentage < 1);
+		int maxCount = entries.stream().mapToInt(entry -> entry.count).max().orElse(0);
+		int decimals = (int) Math.max(1, Math.floor(Math.log10(maxCount)) + 1);
 
-		StringBuilder statistics = new StringBuilder();
-		final int decimals = (int) Math.max(1, Math.round(Math.log10(countCollects)));
+		StringBuilder report = new StringBuilder();
 		for (StatisticsEntry statsEntry : entries) {
-			statistics.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly, decimals));
+			report.append(formatEntry(statsEntry, maxKeyLength, fullNumbersOnly, decimals));
 		}
-		return statistics.toString();
+		return report.toString();
 	}
 
 	public String createReportEntryKey(String propertyName) {
@@ -47,6 +48,5 @@ public class StatisticsReportGenerator {
 			return String.format("%2d", Math.round(percentage));
 		return String.format("%5.2f", Math.round(percentage * 100.0) / 100.0);
 	}
-
 
 }
