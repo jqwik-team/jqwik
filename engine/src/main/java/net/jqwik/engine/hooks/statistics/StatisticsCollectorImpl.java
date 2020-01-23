@@ -77,6 +77,16 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				   .orElse(StatisticsEntry.NULL);
 	}
 
+	private StatisticsEntry query(Predicate<List<Object>> query) {
+		return statisticsEntries()
+				   .stream()
+				   .filter(entry -> {
+					   List<Object> values = entry.key;
+					   return query.test(values);
+				   })
+				   .reduce(StatisticsEntry.NULL, (aggregate, entry) -> aggregate.plus(entry));
+	}
+
 	public int count() {
 		return counts.values().stream().mapToInt(aCount -> aCount).sum();
 	}
@@ -175,6 +185,13 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 			StatisticsEntry entry = statisticsEntry(values);
 			return new CoverageCheckerImpl(entry, count());
 		}
+
+		@Override
+		public CoverageChecker checkQuery(Predicate<? extends List<?>> query) {
+			@SuppressWarnings("unchecked")
+			StatisticsEntry entry = query((Predicate<List<Object>>) query);
+			return new CoverageCheckerImpl(entry, count());
+		}
 	}
 
 	private static class StatisticsEntry {
@@ -190,6 +207,12 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 			this.name = name;
 			this.count = count;
 			this.percentage = percentage;
+		}
+
+		public StatisticsEntry plus(StatisticsEntry other) {
+			int newCount = count + other.count;
+			double newPercentage = percentage + other.percentage;
+			return new StatisticsEntry(Collections.emptyList(), "adhoc query", newCount, newPercentage);
 		}
 	}
 

@@ -1,8 +1,13 @@
 package net.jqwik.engine.hooks;
 
+import java.util.*;
+import java.util.function.*;
+
 import org.assertj.core.api.*;
+import org.assertj.core.data.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.Statistics;
 import net.jqwik.engine.*;
 
@@ -124,6 +129,54 @@ class StatisticsCoverageTests {
 					Assertions.assertThat(p).isGreaterThan(0.0);
 					Assertions.assertThat(p).isLessThan(100.0);
 				});
+			});
+		}
+	}
+
+	@Group
+	class AdHocQueries {
+
+		@Property(generation = GenerationMode.EXHAUSTIVE)
+		void checkCountForQuery(@ForAll @IntRange(min = 1, max = 100) int anInt) {
+			Statistics.collect(anInt);
+
+			Statistics.coverage(coverage -> {
+				Predicate<List<Integer>> query = params -> params.get(0) <= 10;
+				coverage.checkQuery(query).count(c -> c == 10);
+			});
+		}
+
+		@Property(generation = GenerationMode.EXHAUSTIVE)
+		void checkPercentageForQuery(@ForAll @IntRange(min = 1, max = 100) int anInt) {
+			Statistics.collect(anInt);
+
+			Statistics.coverage(coverage -> {
+				Predicate<List<Integer>> query = params -> params.get(0) <= 50;
+				coverage.checkQuery(query).percentage(p -> {
+					Assertions.assertThat(p).isCloseTo(50.0, Offset.offset(0.1));
+				});
+			});
+		}
+
+		@Property(generation = GenerationMode.EXHAUSTIVE)
+		void checkCountsAreAddedUp(@ForAll @IntRange(min = 1, max = 100) int anInt) {
+			Statistics.label("twice").collect(anInt);
+			Statistics.label("twice").collect(anInt);
+
+			Statistics.coverageOf("twice", coverage -> {
+				Predicate<List<Integer>> query = params -> params.get(0) <= 10;
+				coverage.checkQuery(query).count(c -> c == 20);
+			});
+		}
+
+		@Property(tries = 10)
+		@ExpectFailure(throwable = ClassCastException.class)
+		void queryWithWrongTypeFails(@ForAll int anInt) {
+			Statistics.collect(anInt);
+
+			Statistics.coverage(coverage -> {
+				Predicate<List<String>> query = params -> !params.get(0).isEmpty();
+				coverage.checkQuery(query).count(c -> c == 10);
 			});
 		}
 

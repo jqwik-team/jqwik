@@ -1,5 +1,6 @@
 package net.jqwik.api.statistics;
 
+import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
@@ -67,4 +68,12 @@ public interface StatisticsCoverage {
 	 * @param values Can be anything. Must be equal to the values used in {@linkplain Statistics#collect(Object...)}
 	 */
 	CoverageChecker check(Object... values);
+
+	/**
+	 * Execute a query for coverage checking.
+	 *
+	 * @param query A {@link Predicate} that takes the collected values as parameter
+	 *              and returns true if the specific values shall be counted.
+	 */
+	CoverageChecker checkQuery(Predicate<? extends List<?>> query);
 }

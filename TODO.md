@@ -3,14 +3,15 @@
     - Statistics.coverage(..)
       - check that is only called once per collector and try.
         Might require per try lifecycle.
-      - check(Predicate<List<Object>> query)
-
-    - Documentation for statistics coverage checking
 
     - @StatisticsReport(OFF|STANDARD)
       - StatisticsCollector.reportMode(OFF|STANDARD)
       - jqwik.properties, default = STANDARD
       - Documentation
+
+    - Documentation
+      - statistics coverage checking
+      - statistics reportMode
 
     - Probabilistic assertions
 
