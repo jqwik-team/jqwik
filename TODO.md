@@ -1,13 +1,12 @@
 - 1.2.3
 
-    - Statistics.coverage(..)
-      - check that is only called once per collector and try.
-        Might require per try lifecycle.
-
     - @StatisticsReport(OFF|STANDARD)
       - StatisticsCollector.reportMode(OFF|STANDARD)
       - jqwik.properties, default = STANDARD
-      - Documentation
+
+    - Statistics.coverage(..)
+      - check that is only called once per collector and try.
+        Might require per try lifecycle.
 
     - Documentation
       - statistics coverage checking
