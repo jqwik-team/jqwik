@@ -18,7 +18,6 @@ class StatisticsCollectionTests {
 
 	@Group
 	class Counting {
-		@SuppressWarnings({"SuspiciousMethodCalls", "ArraysAsListWithZeroOrOneArgument"})
 		@Example
 		void countSingleValues() {
 			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
@@ -36,7 +35,6 @@ class StatisticsCollectionTests {
 			assertThat(counts.get(asList("three"))).isEqualTo(3);
 		}
 
-		@SuppressWarnings("SuspiciousMethodCalls")
 		@Example
 		void countDoubleValues() {
 			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
@@ -172,6 +170,7 @@ class StatisticsCollectionTests {
 		}
 	}
 
+	@SuppressWarnings("ConfusingArgumentToVarargsMethod")
 	@Group
 	class Percentages {
 
@@ -251,6 +250,7 @@ class StatisticsCollectionTests {
 
 	}
 
+	@SuppressWarnings("ConfusingArgumentToVarargsMethod")
 	@Group
 	class Counts {
 
