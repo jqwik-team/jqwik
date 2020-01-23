@@ -5,6 +5,7 @@ import java.util.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.api.lifecycle.PropertyLifecycle.*;
+import net.jqwik.engine.hooks.*;
 
 public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, PropagateToChildren {
 
@@ -59,8 +60,7 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 
 	@Override
 	public int aroundPropertyProximity() {
-		// Should run shortly before AutoCloseableHook
-		return -99;
+		return Hooks.AroundProperty.STATIC_PROPERTY_LIFECYCLE_PROXIMITY;
 	}
 
 	static class PropertyExecutorIdentifier {

@@ -20,29 +20,12 @@ public interface SkipExecutionHook extends LifecycleHook<SkipExecutionHook> {
 		return Integer.compare(this.order(), other.order());
 	}
 
+	/**
+	 * Lower order value means earlier evaluation
+	 */
 	default int order() {
 		return 0;
 	}
-
-	default SkipExecutionHook then(SkipExecutionHook rest) {
-		return descriptor -> {
-			SkipResult result = this.shouldBeSkipped(descriptor);
-			if (result.isSkipped()) {
-				return result;
-			} else {
-				return rest.shouldBeSkipped(descriptor);
-			}
-		};
-	}
-
-	static SkipExecutionHook combine(List<SkipExecutionHook> skipExecutionHooks) {
-		if (skipExecutionHooks.isEmpty()) {
-			return descriptor -> SkipResult.doNotSkip();
-		}
-		SkipExecutionHook first = skipExecutionHooks.remove(0);
-		return first.then(combine(skipExecutionHooks));
-	}
-
 
 	class SkipResult {
 

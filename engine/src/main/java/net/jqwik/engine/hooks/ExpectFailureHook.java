@@ -16,8 +16,7 @@ public class ExpectFailureHook implements AroundPropertyHook {
 
 	@Override
 	public int aroundPropertyProximity() {
-		// Should run inside StatisticsHook
-		return -50;
+		return Hooks.AroundProperty.EXPECT_FAILURE_PROXIMITY;
 	}
 
 }

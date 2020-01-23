@@ -6,6 +6,7 @@ import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
+import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
 public class AutoCloseableHook implements AroundPropertyHook, PropagateToChildren {
@@ -22,9 +23,7 @@ public class AutoCloseableHook implements AroundPropertyHook, PropagateToChildre
 
 	@Override
 	public int aroundPropertyProximity() {
-		// AutoCloseable.close() should be the last thing in the hook chain
-		// unless there is a hook with a proximity < -100
-		return -100;
+		return Hooks.AroundProperty.AUTO_CLOSEABLE_PROXIMITY;
 	}
 
 	private List<Throwable> executeCloseMethods(PropertyLifecycleContext context) {

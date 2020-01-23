@@ -21,4 +21,8 @@ public class DisabledHook implements SkipExecutionHook, PropagateToChildren {
 					  .orElse(SkipResult.doNotSkip());
 	}
 
+	@Override
+	public int order() {
+		return Hooks.SkipExecution.DISABLED_ORDER;
+	}
 }

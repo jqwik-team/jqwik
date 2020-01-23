@@ -6,6 +6,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
+import net.jqwik.engine.hooks.*;
 
 public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 
@@ -43,8 +44,7 @@ public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 
 	@Override
 	public int aroundPropertyProximity() {
-		// Should run inside AutoCloseableHook
-		return -90;
+		return Hooks.AroundProperty.STATISTICS_PROXIMITY;
 	}
 
 }
