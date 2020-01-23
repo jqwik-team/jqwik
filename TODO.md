@@ -25,6 +25,8 @@
       https://junit.org/junit5/docs/5.6.0/release-notes/#deprecations-and-breaking-changes
 
     - Lifecycle
+        - Allow to specify proximity/order in `@AddLifecycleHook`
+
         - Around try
           - @BeforeTry
             - For methods
@@ -32,9 +34,9 @@
           - @AfterTry for methods
           - Allow premature success/failure
 
-    - Around container
-        - @BeforeContainer
-        - @AfterContainer
+        - Around container
+            - @BeforeContainer
+            - @AfterContainer
 
     - Spring/Boot Testing in its own module
  
