@@ -17,7 +17,7 @@ import static org.apiguardian.api.API.Status.*;
  *
  * @see Property
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Property(tries = 1, shrinking = ShrinkingMode.OFF, stereotype = "Example")

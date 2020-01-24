@@ -16,8 +16,12 @@ public class StatisticsPublisher {
 		StatisticsCollectorImpl statisticsCollector,
 		StatisticsReportFormat statisticsReportFormat
 	) {
-		this(statisticsReportFormat, statisticsCollector.statisticsEntries(), statisticsCollector.countAllCollects(), statisticsCollector
-																														  .label());
+		this(
+			statisticsReportFormat,
+			statisticsCollector.statisticsEntries(),
+			statisticsCollector.countAllCollects(),
+			statisticsCollector.label()
+		);
 	}
 
 	private StatisticsPublisher(
@@ -34,21 +38,19 @@ public class StatisticsPublisher {
 	}
 
 	public void publish(Reporter reporter, String propertyName) {
-		String statisticsReport = createReport();
-		String statisticsReportEntryKey = createReportEntryKey(propertyName);
-		Tuple.Tuple2<String, String> reportEntry = Tuple.of(statisticsReportEntryKey, statisticsReport);
+		String report = createReport();
+		String reportEntryKey = createReportEntryKey(propertyName);
+		Tuple.Tuple2<String, String> reportEntry = Tuple.of(reportEntryKey, report);
 		reporter.publish(reportEntry.get1(), reportEntry.get2());
 	}
 
-	public String createReport() {
+	private String createReport() {
+		List<String> reportLines = statisticsReportFormat.formatReport(entries);
 		StringBuilder report = new StringBuilder();
-		Optional<List<String>> optionalReport = statisticsReportFormat.formatReport(entries);
-		optionalReport.ifPresent(reportLines -> {
-			for (String reportLine : reportLines) {
-				report.append(String.format("%n    "));
-				report.append(reportLine);
-			}
-		});
+		for (String reportLine : reportLines) {
+			report.append(String.format("%n    "));
+			report.append(reportLine);
+		}
 		return report.toString();
 	}
 

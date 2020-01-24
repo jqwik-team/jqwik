@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * Use {@code @Disabled("reason to disable")} to disable test container or test method
  * during normal test execution.
  */
-@Target({ ElementType.TYPE, ElementType.METHOD })
+@Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = MAINTAINED, since = "1.0")

@@ -8,8 +8,11 @@ import org.assertj.core.data.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.Statistics;
 import net.jqwik.engine.*;
+
+import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
 
 @Group
 class StatisticsCoverageTests {
@@ -137,6 +140,7 @@ class StatisticsCoverageTests {
 	class AdHocQueries {
 
 		@Property(generation = GenerationMode.EXHAUSTIVE)
+		@StatisticsReport(OFF)
 		void checkCountForQuery(@ForAll @IntRange(min = 1, max = 100) int anInt) {
 			Statistics.collect(anInt);
 
@@ -147,6 +151,7 @@ class StatisticsCoverageTests {
 		}
 
 		@Property(generation = GenerationMode.EXHAUSTIVE)
+		@StatisticsReport(OFF)
 		void checkPercentageForQuery(@ForAll @IntRange(min = 1, max = 100) int anInt) {
 			Statistics.collect(anInt);
 
@@ -159,6 +164,7 @@ class StatisticsCoverageTests {
 		}
 
 		@Property(generation = GenerationMode.EXHAUSTIVE)
+		@StatisticsReport(OFF)
 		void checkCountsAreAddedUp(@ForAll @IntRange(min = 1, max = 100) int anInt) {
 			Statistics.label("twice").collect(anInt);
 			Statistics.label("twice").collect(anInt);
@@ -170,6 +176,7 @@ class StatisticsCoverageTests {
 		}
 
 		@Property(tries = 10)
+		@StatisticsReport(OFF)
 		@ExpectFailure(throwable = ClassCastException.class)
 		void queryWithWrongTypeFails(@ForAll int anInt) {
 			Statistics.collect(anInt);

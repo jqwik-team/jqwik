@@ -7,19 +7,16 @@ import net.jqwik.api.statistics.*;
 
 public class StandardStatisticsReportFormat implements StatisticsReportFormat {
 
-	public Optional<List<String>> formatReport(List<StatisticsEntry> entries) {
+	public List<String> formatReport(List<StatisticsEntry> entries) {
 		int maxKeyLength = entries.stream().mapToInt(entry -> entry.name().length()).max().orElse(0);
 		boolean fullNumbersOnly = entries.stream().noneMatch(entry -> entry.percentage() < 1);
 		int maxCount = entries.stream().mapToInt(StatisticsEntry::count).max().orElse(0);
 		int decimals = (int) Math.max(1, Math.floor(Math.log10(maxCount)) + 1);
 
-		List<String> reportLines =
-			entries
-				.stream()
-				.map(entry -> formatEntry(entry, maxKeyLength, fullNumbersOnly, decimals))
-				.collect(Collectors.toList());
-
-		return Optional.of(reportLines);
+		return entries
+				   .stream()
+				   .map(entry -> formatEntry(entry, maxKeyLength, fullNumbersOnly, decimals))
+				   .collect(Collectors.toList());
 	}
 
 	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {

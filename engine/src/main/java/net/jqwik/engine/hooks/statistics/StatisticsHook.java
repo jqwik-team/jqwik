@@ -3,9 +3,14 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 import java.util.function.*;
 
+import org.junit.platform.commons.support.*;
+
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
+import net.jqwik.api.statistics.*;
+import net.jqwik.api.statistics.StatisticsReport.*;
 import net.jqwik.engine.hooks.*;
+import net.jqwik.engine.support.*;
 
 public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 
@@ -25,14 +30,38 @@ public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 				StatisticsCollectorImpl.STORE_NAME,
 				STATISTICS_MAP_SUPPLIER
 			);
+
 		PropertyExecutionResult testExecutionResult = property.execute();
-		report(collectorsStore.get(), context.reporter(), context.extendedLabel());
+
+		afterExecution(collectorsStore.get(), context);
 		return testExecutionResult;
 	}
 
-	private void report(Map<String, StatisticsCollectorImpl> collectors, Reporter reporter, String propertyName) {
+	private void afterExecution(Map<String, StatisticsCollectorImpl> collectors, PropertyLifecycleContext context) {
+		StatisticsReportFormat reportFormat = new StandardStatisticsReportFormat();
+		Optional<StatisticsReport> optionalStatisticsReport =
+			AnnotationSupport.findAnnotation(context.targetMethod(), StatisticsReport.class);
+
+		if (optionalStatisticsReport.isPresent()) {
+			StatisticsReport reportConfiguration = optionalStatisticsReport.get();
+			if (reportConfiguration.value() == StatisticsReportMode.OFF) {
+				return;
+			}
+			if (reportConfiguration.value() == StatisticsReportMode.PLUG_IN) {
+				reportFormat = JqwikReflectionSupport.newInstanceInTestContext(reportConfiguration.format(), context.testInstance());
+			}
+		}
+		report(collectors, context.reporter(), context.extendedLabel(), reportFormat);
+	}
+
+	private void report(
+		Map<String, StatisticsCollectorImpl> collectors,
+		Reporter reporter,
+		String propertyName,
+		StatisticsReportFormat reportFormat
+	) {
 		for (StatisticsCollectorImpl collector : collectors.values()) {
-			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, new StandardStatisticsReportFormat());
+			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, reportFormat);
 			reportGenerator.publish(reporter, propertyName);
 		}
 	}

@@ -38,18 +38,17 @@ class StatisticsReportingTests {
 
 		@Example
 		void each_published_report_line_is_indented_by_4_spaces() {
-			StatisticsReportFormat format = entries -> Optional.of(Arrays.asList("line1", "line2"));
+			StatisticsReportFormat format = entries -> Arrays.asList("line1", "line2");
 			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, format);
 			reportGenerator.publish(this, "myProperty");
 			assertThat(publishedReport).isEqualTo(String.format("%n    line1%n    line2"));
 		}
-
 	}
 
 	@Group
 	class StandardFormat {
 
-		private final StandardStatisticsReportFormat standardFormat = new StandardStatisticsReportFormat();
+		private final StatisticsReportFormat standardFormat = new StandardStatisticsReportFormat();
 
 		@Example
 		void report_collected_percentages_in_decreasing_order() {
@@ -65,7 +64,7 @@ class StatisticsReportingTests {
 			collector.collect("three");
 
 			List<StatisticsEntry> entries = getStatisticsEntries();
-			List<String> stats = standardFormat.formatReport(entries).get();
+			List<String> stats = standardFormat.formatReport(entries);
 
 			assertThat(stats).containsExactly(
 				"four  (4) : 40 %",
@@ -88,7 +87,7 @@ class StatisticsReportingTests {
 			collector.collect((Object[]) null);
 
 			List<StatisticsEntry> entries = getStatisticsEntries();
-			List<String> stats = standardFormat.formatReport(entries).get();
+			List<String> stats = standardFormat.formatReport(entries);
 
 			assertThat(stats).containsExactly(
 				"aKey (2) : 50 %",
@@ -104,7 +103,7 @@ class StatisticsReportingTests {
 			collector.collect("two", 3);
 
 			List<StatisticsEntry> entries = getStatisticsEntries();
-			List<String> stats = standardFormat.formatReport(entries).get();
+			List<String> stats = standardFormat.formatReport(entries);
 
 			assertThat(stats).containsExactlyInAnyOrder(
 				"two 2   (1) : 25 %",
@@ -122,7 +121,7 @@ class StatisticsReportingTests {
 			collector.collect("1");
 
 			List<StatisticsEntry> entries = getStatisticsEntries();
-			List<String> stats = standardFormat.formatReport(entries).get();
+			List<String> stats = standardFormat.formatReport(entries);
 
 			assertThat(stats).containsExactlyInAnyOrder(
 				"199 (199) : 99,50 %",
