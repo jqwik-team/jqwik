@@ -16,13 +16,11 @@ class StorageTests {
 	private final TestDescriptor engine = TestDescriptorBuilder.forEngine(new JqwikTestEngine()).build();
 
 	@Property
-	void cannotCreateStoreWithEmptyName(@ForAll Visibility visibility) {
+	void cannotCreateStoreWithNullIdentifier(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
 		Supplier<String> initializer = () -> "a String";
 
-		assertThatThrownBy(() -> repository.create(visibility, engine, "", initializer))
-			.isInstanceOf(IllegalArgumentException.class);
 		assertThatThrownBy(() -> repository.create(visibility, engine, null, initializer))
 			.isInstanceOf(IllegalArgumentException.class);
 	}

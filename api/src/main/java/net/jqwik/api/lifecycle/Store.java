@@ -1,6 +1,5 @@
 package net.jqwik.api.lifecycle;
 
-import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
@@ -29,9 +28,9 @@ public interface Store<T> {
 			implementation = FacadeLoader.load(Store.StoreFacade.class);
 		}
 
-		public abstract <T> Store<T> create(Visibility visibility, String name, Supplier<T> initializer);
+		public abstract <T> Store<T> create(Visibility visibility, Object identifier, Supplier<T> initializer);
 
-		public abstract <T> Store<T> get(String name);
+		public abstract <T> Store<T> get(Object identifier);
 	}
 
 	/**
@@ -45,17 +44,17 @@ public interface Store<T> {
 	/**
 	 *
 	 * @param visibility
-	 * @param name Must not be empty. Is case-sensitive. Will be trimmed.
+	 * @param identifier Any object to identify a variable. Often a string.
 	 * @param initializer
 	 * @param <T>
 	 * @return
 	 */
-	static <T> Store<T> create(Visibility visibility, String name, Supplier<T> initializer) {
-		return StoreFacade.implementation.create(visibility, name, initializer);
+	static <T> Store<T> create(Visibility visibility, Object identifier, Supplier<T> initializer) {
+		return StoreFacade.implementation.create(visibility, identifier, initializer);
 	}
 
-	static <T> Store<T> get(String name) {
-		return StoreFacade.implementation.get(name);
+	static <T> Store<T> get(Object identifier) {
+		return StoreFacade.implementation.get(identifier);
 	}
 
 }

@@ -14,14 +14,14 @@ import net.jqwik.engine.execution.lifecycle.*;
 public class StoreFacadeImpl extends Store.StoreFacade {
 
 	@Override
-	public <T> Store<T> create(Store.Visibility visibility, String name, Supplier<T> initializer) {
-		return StoreRepository.getCurrent().create(visibility, CurrentTestDescriptor.get(), name, initializer);
+	public <T> Store<T> create(Store.Visibility visibility, Object identifier, Supplier<T> initializer) {
+		return StoreRepository.getCurrent().create(visibility, CurrentTestDescriptor.get(), identifier, initializer);
 	}
 
 	@Override
-	public <T> Store<T> get(String name) {
+	public <T> Store<T> get(Object identifier) {
 		TestDescriptor retriever = CurrentTestDescriptor.get();
-		Optional<? extends Store<T>> store = StoreRepository.getCurrent().get(retriever, name);
-		return store.orElseThrow(() -> new CannotFindStoreException(name, retriever));
+		Optional<? extends Store<T>> store = StoreRepository.getCurrent().get(retriever, identifier);
+		return store.orElseThrow(() -> new CannotFindStoreException(identifier, retriever));
 	}
 }

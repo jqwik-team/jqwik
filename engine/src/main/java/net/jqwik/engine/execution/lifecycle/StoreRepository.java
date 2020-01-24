@@ -23,29 +23,25 @@ public class StoreRepository {
 
 	private Set<ScopedStore<?>> stores = new HashSet<>();
 
-	public <T> ScopedStore<T> create(Visibility visibility, TestDescriptor scope, String name, Supplier<T> initializer) {
+	public <T> ScopedStore<T> create(Visibility visibility, TestDescriptor scope, Object identifier, Supplier<T> initializer) {
 		if (visibility == null) {
 			throw new IllegalArgumentException("visibility must not be null");
 		}
 		if (initializer == null) {
 			throw new IllegalArgumentException("initializer must not be null");
 		}
-		if (name == null) {
-			throw new IllegalArgumentException("name must not be null");
+		if (identifier == null) {
+			throw new IllegalArgumentException("identifier must not be null");
 		}
-		String normalizedName = normalize(name);
-		if (normalizedName.isEmpty()) {
-			throw new IllegalArgumentException("name must not be empty");
-		}
-		ScopedStore<T> store = new ScopedStore<>(normalizedName, visibility, scope, initializer);
-		addStore(normalizedName, store);
+		ScopedStore<T> store = new ScopedStore<>(identifier, visibility, scope, initializer);
+		addStore(identifier, store);
 		return store;
 	}
 
-	private <T> void addStore(String key, ScopedStore<T> newStore) {
+	private <T> void addStore(Object key, ScopedStore<T> newStore) {
 		Optional<ScopedStore<?>> conflictingStore =
 			stores.stream()
-				  .filter(store -> store.getName().equals(newStore.getName()))
+				  .filter(store -> store.getIdentifier().equals(newStore.getIdentifier()))
 				  .filter(store -> store.isVisibleFor(newStore.getScope()))
 				  .findFirst();
 
@@ -62,25 +58,17 @@ public class StoreRepository {
 		stores.add(newStore);
 	}
 
-	public <T> Optional<ScopedStore<T>> get(TestDescriptor retriever, String name) {
-		if (name == null) {
-			throw new IllegalArgumentException("name must not be null");
-		}
-		String normalizedName = normalize(name);
-		if (normalizedName.isEmpty()) {
-			throw new IllegalArgumentException("name must not be empty");
+	public <T> Optional<ScopedStore<T>> get(TestDescriptor retriever, Object identifier) {
+		if (identifier == null) {
+			throw new IllegalArgumentException("identifier must not be null");
 		}
 
 		//noinspection unchecked
 		return stores.stream()
-					 .filter(store -> store.getName().equals(normalizedName))
+					 .filter(store -> store.getIdentifier().equals(identifier))
 					 .filter(store -> store.isVisibleFor(retriever))
 					 .map(store -> (ScopedStore<T>) store)
 					 .findFirst();
-	}
-
-	private String normalize(String name) {
-		return name.trim();
 	}
 
 	public void removeStoresFor(TestDescriptor scope) {

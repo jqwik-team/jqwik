@@ -9,7 +9,7 @@ import net.jqwik.api.lifecycle.*;
 
 public class ScopedStore<T> implements Store<T> {
 
-	private final String name;
+	private final Object identifier;
 	private final Visibility visibility;
 	private final TestDescriptor scope;
 	private final Supplier<T> initializer;
@@ -17,8 +17,8 @@ public class ScopedStore<T> implements Store<T> {
 	private T value;
 	private boolean initialized = false;
 
-	public ScopedStore(String name, Visibility visibility, TestDescriptor scope, Supplier<T> initializer) {
-		this.name = name;
+	public ScopedStore(Object identifier, Visibility visibility, TestDescriptor scope, Supplier<T> initializer) {
+		this.identifier = identifier;
 		this.visibility = visibility;
 		this.scope = scope;
 		this.initializer = initializer;
@@ -43,8 +43,8 @@ public class ScopedStore<T> implements Store<T> {
 		initialized = false;
 	}
 
-	public String getName() {
-		return name;
+	public Object getIdentifier() {
+		return identifier;
 	}
 
 	public TestDescriptor getScope() {
