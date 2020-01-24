@@ -21,6 +21,7 @@ public class StandardStatisticsReportFormat implements StatisticsReportFormat {
 
 	private String formatEntry(StatisticsEntry statsEntry, int maxKeyLength, boolean fullNumbersOnly, int decimals) {
 		return String.format(
+			Locale.US,
 			"%1$-" + maxKeyLength + "s (%2$" + decimals + "d) : %3$s %%",
 			statsEntry.name(),
 			statsEntry.count(),
@@ -30,8 +31,8 @@ public class StandardStatisticsReportFormat implements StatisticsReportFormat {
 
 	private String displayPercentage(double percentage, boolean fullNumbersOnly) {
 		if (fullNumbersOnly)
-			return String.format("%2d", Math.round(percentage));
-		return String.format("%5.2f", Math.round(percentage * 100.0) / 100.0);
+			return String.format(Locale.US, "%2d", Math.round(percentage));
+		return String.format(Locale.US, "%5.2f", Math.round(percentage * 100.0) / 100.0);
 	}
 
 }

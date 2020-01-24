@@ -124,8 +124,8 @@ class StatisticsReportingTests {
 			List<String> stats = standardFormat.formatReport(entries);
 
 			assertThat(stats).containsExactlyInAnyOrder(
-				"199 (199) : 99,50 %",
-				"1   (  1) :  0,50 %"
+				"199 (199) : 99.50 %",
+				"1   (  1) :  0.50 %"
 			);
 		}
 	}
