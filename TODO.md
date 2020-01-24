@@ -8,8 +8,6 @@
       - statistics coverage checking
       - statistics reportMode
 
-    - Probabilistic assertions
-
 - 1.2.x
   
     - Upgrade to JUnit platform 1.6
@@ -17,6 +15,8 @@
 
     - @StatisticsReport
         - jqwik.properties, OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
+
+    - Probabilistic assertions
 
     - Lifecycle
         - Allow to specify proximity/order in `@AddLifecycleHook`
