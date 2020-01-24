@@ -3,8 +3,6 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 import java.util.function.*;
 
-import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.engine.hooks.*;
@@ -34,16 +32,9 @@ public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 
 	private void report(Map<String, StatisticsCollectorImpl> collectors, Reporter reporter, String propertyName) {
 		for (StatisticsCollectorImpl collector : collectors.values()) {
-			publishStatisticsReport(collector, reporter, propertyName);
+			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, new StandardStatisticsReportFormat());
+			reportGenerator.publish(reporter, propertyName);
 		}
-	}
-
-	private void publishStatisticsReport(StatisticsCollectorImpl collector, Reporter reporter, String propertyName) {
-		StatisticsReportGenerator reportGenerator = new StatisticsReportGenerator(collector);
-		String statisticsReport = reportGenerator.createReport();
-		String statisticsReportEntryKey = reportGenerator.createReportEntryKey(propertyName);
-		Tuple2<String, String> reportEntry = Tuple.of(statisticsReportEntryKey, statisticsReport);
-		reporter.publish(reportEntry.get1(), reportEntry.get2());
 	}
 
 	@Override

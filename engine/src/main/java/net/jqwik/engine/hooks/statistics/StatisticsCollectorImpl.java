@@ -17,7 +17,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
 
 	private final String label;
-	private List<StatisticsEntry> statisticsEntries = null;
+	private List<StatisticsEntryImpl> statisticsEntries = null;
 
 	public StatisticsCollectorImpl(String label) {
 		this.label = label;
@@ -65,7 +65,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	// Currently only used for testing
 	public double percentage(Object... values) {
-		return statisticsEntry(values).percentage;
+		return statisticsEntry(values).percentage();
 	}
 
 	private StatisticsEntry statisticsEntry(Object[] values) {
@@ -73,7 +73,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				   .stream()
 				   .filter(entry -> entry.key.equals(keyFrom(values)))
 				   .findFirst()
-				   .orElse(StatisticsEntry.NULL);
+				   .orElse(StatisticsEntryImpl.NULL);
 	}
 
 	private StatisticsEntry query(Predicate<List<Object>> query) {
@@ -83,7 +83,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 					   List<Object> values = entry.key;
 					   return query.test(values);
 				   })
-				   .reduce(StatisticsEntry.NULL, (aggregate, entry) -> aggregate.plus(entry));
+				   .reduce(StatisticsEntryImpl.NULL, StatisticsEntryImpl::plus);
 	}
 
 	public int countAllCollects() {
@@ -92,7 +92,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	// Currently only used for testing
 	public int count(Object... values) {
-		return statisticsEntry(values).count;
+		return statisticsEntry(values).count();
 	}
 
 	@Override
@@ -107,7 +107,10 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return counts;
 	}
 
-	List<StatisticsEntry> statisticsEntries() {
+	/**
+	 * Only used in tests so far
+	 */
+	public List<StatisticsEntryImpl> statisticsEntries() {
 		if (statisticsEntries != null) {
 			return statisticsEntries;
 		}
@@ -115,7 +118,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return statisticsEntries;
 	}
 
-	private List<StatisticsEntry> calculateStatistics() {
+	private List<StatisticsEntryImpl> calculateStatistics() {
 		int sum = countAllCollects();
 		return counts.entrySet()
 					 .stream()
@@ -123,7 +126,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 					 .filter(entry -> !entry.getKey().equals(Collections.emptyList()))
 					 .map(entry -> {
 						 double percentage = entry.getValue() * 100.0 / sum;
-						 return new StatisticsEntry(
+						 return new StatisticsEntryImpl(
 							 entry.getKey(),
 							 displayKey(entry.getKey()),
 							 entry.getValue(), percentage
@@ -177,16 +180,16 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 		@Override
 		public void count(Predicate<Integer> countChecker) {
-			if (!countChecker.test(entry.count)) {
-				String message = String.format("Count of %s does not fulfill condition", entry.count);
+			if (!countChecker.test(entry.count())) {
+				String message = String.format("Count of %s does not fulfill condition", entry.count());
 				fail(message);
 			}
 		}
 
 		@Override
 		public void count(BiPredicate<Integer, Integer> countChecker) {
-			if (!countChecker.test(entry.count, countAll)) {
-				String message = String.format("Count of (%s, %s) does not fulfill condition", entry.count, countAll);
+			if (!countChecker.test(entry.count(), countAll)) {
+				String message = String.format("Count of (%s, %s) does not fulfill condition", entry.count(), countAll);
 				fail(message);
 			}
 		}
@@ -209,8 +212,8 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 		@Override
 		public void percentage(Predicate<Double> percentageChecker) {
-			if (!percentageChecker.test(entry.percentage)) {
-				String message = String.format("Percentage of %s does not fulfill condition", entry.percentage);
+			if (!percentageChecker.test(entry.percentage())) {
+				String message = String.format("Percentage of %s does not fulfill condition", entry.percentage());
 				fail(message);
 			}
 		}
