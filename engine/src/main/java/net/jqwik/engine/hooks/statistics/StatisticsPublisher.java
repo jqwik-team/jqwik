@@ -41,6 +41,9 @@ public class StatisticsPublisher {
 		String report = createReport();
 		String reportEntryKey = createReportEntryKey(propertyName);
 		Tuple.Tuple2<String, String> reportEntry = Tuple.of(reportEntryKey, report);
+		if (report.isEmpty()) {
+			return;
+		}
 		reporter.publish(reportEntry.get1(), reportEntry.get2());
 	}
 

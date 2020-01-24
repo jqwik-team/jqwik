@@ -8,6 +8,10 @@ import net.jqwik.api.statistics.*;
 public class StandardStatisticsReportFormat implements StatisticsReportFormat {
 
 	public List<String> formatReport(List<StatisticsEntry> entries) {
+		if (entries.isEmpty()) {
+			return Collections.singletonList("no data collected");
+		}
+
 		int maxKeyLength = entries.stream().mapToInt(entry -> entry.name().length()).max().orElse(0);
 		boolean fullNumbersOnly = entries.stream().noneMatch(entry -> entry.percentage() < 1);
 		int maxCount = entries.stream().mapToInt(StatisticsEntry::count).max().orElse(0);

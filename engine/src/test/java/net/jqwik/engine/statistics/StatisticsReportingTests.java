@@ -43,12 +43,31 @@ class StatisticsReportingTests {
 			reportGenerator.publish(this, "myProperty");
 			assertThat(publishedReport).isEqualTo(String.format("%n    line1%n    line2"));
 		}
+
+		@Example
+		void empty_report_is_not_being_published() {
+			StatisticsReportFormat format = entries -> Collections.emptyList();
+			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, format);
+			reportGenerator.publish(this, "myProperty");
+			assertThat(publishedKey).isNull();
+			assertThat(publishedReport).isNull();
+		}
 	}
 
 	@Group
 	class StandardFormat {
 
 		private final StatisticsReportFormat standardFormat = new StandardStatisticsReportFormat();
+
+		@Example
+		void report_no_data_collected() {
+			List<StatisticsEntry> entries = getStatisticsEntries();
+			List<String> stats = standardFormat.formatReport(entries);
+
+			assertThat(stats).containsExactly(
+				"no data collected"
+			);
+		}
 
 		@Example
 		void report_collected_percentages_in_decreasing_order() {
