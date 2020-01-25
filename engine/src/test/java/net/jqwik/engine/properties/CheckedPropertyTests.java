@@ -16,10 +16,10 @@ import net.jqwik.engine.support.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.engine.TestHelper.*;
 import static net.jqwik.api.GenerationMode.*;
+import static net.jqwik.engine.TestHelper.*;
 import static net.jqwik.engine.properties.PropertyCheckResult.Status.*;
-import static net.jqwik.engine.properties.PropertyConfigurationBuilder.aConfig;
+import static net.jqwik.engine.properties.PropertyConfigurationBuilder.*;
 
 @Group
 class CheckedPropertyTests {
@@ -35,8 +35,7 @@ class CheckedPropertyTests {
 				(PropertyMethodDescriptor) TestDescriptorBuilder
 											   .forMethod(CheckingExamples.class, "propertyWithoutParameters", int.class)
 											   .build();
-			CheckedPropertyFactory factory = new CheckedPropertyFactory();
-			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, createPropertyContext(descriptor));
+			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(Property.DEFAULT_STEREOTYPE);
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
@@ -51,8 +50,7 @@ class CheckedPropertyTests {
 				(PropertyMethodDescriptor) TestDescriptorBuilder
 											   .forMethod(CheckingExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class)
 											   .build();
-			CheckedPropertyFactory factory = new CheckedPropertyFactory();
-			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, createPropertyContext(descriptor));
+			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo("OtherStereotype");
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(42);
@@ -61,10 +59,14 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
 		}
 
+		private CheckedProperty createCheckedProperty(PropertyMethodDescriptor descriptor) {
+			CheckedPropertyFactory factory = new CheckedPropertyFactory();
+			return factory.fromDescriptor(descriptor, createPropertyContext(descriptor), AroundTryHook.BASE);
+		}
+
 		private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
 			return new PropertyLifecycleContextForMethod(descriptor, new Object(), ((key, value) -> {}));
 		}
-
 
 	}
 
@@ -153,7 +155,8 @@ class CheckedPropertyTests {
 			assertThat(check.randomSeed()).isEqualTo("414243");
 
 			assertThat(check.status()).isEqualTo(SATISFIED);
-			assertThat(allGeneratedInts).containsExactly(5, 22, 10, 4, 43, 70, -66, -75, -11, -65, 93, -61, -5, 37, -2, -9, -86, 10, -10, -4);
+			assertThat(allGeneratedInts)
+				.containsExactly(5, 22, 10, 4, 43, 70, -66, -75, -11, -65, 93, -61, -5, 37, -2, -9, -86, 10, -10, -4);
 		}
 
 		@Example
@@ -500,8 +503,6 @@ class CheckedPropertyTests {
 		public boolean sampleProperty(@ForAll int n1, @ForAll int n2) {
 			return true;
 		}
-
-
 
 	}
 }

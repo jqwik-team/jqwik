@@ -25,6 +25,12 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	@Override
+	public AroundTryHook aroundTryHook(PropertyMethodDescriptor propertyMethodDescriptor) {
+		List<AroundTryHook> aroundTryHooks = findHooks(propertyMethodDescriptor, AroundTryHook.class);
+		return HookSupport.combineAroundTryHooks(aroundTryHooks);
+	}
+
+	@Override
 	public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
 		List<SkipExecutionHook> skipExecutionHooks = findHooks(testDescriptor, SkipExecutionHook.class);
 		return HookSupport.combineSkipExecutionHooks(skipExecutionHooks);

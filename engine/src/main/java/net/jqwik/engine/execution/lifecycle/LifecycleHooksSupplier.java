@@ -9,5 +9,8 @@ public interface LifecycleHooksSupplier {
 
 	AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor);
 
+	AroundTryHook aroundTryHook(PropertyMethodDescriptor methodDescriptor);
+
 	SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor);
+
 }

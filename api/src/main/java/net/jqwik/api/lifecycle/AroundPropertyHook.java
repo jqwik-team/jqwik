@@ -14,7 +14,7 @@ public interface AroundPropertyHook extends LifecycleHook<AroundPropertyHook> {
 
 	PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable;
 
-	AroundPropertyHook BASE = (propertyDescriptor, property) -> property.execute();
+	AroundPropertyHook BASE = (propertyLifecycleContext, property) -> property.execute();
 
 	@Override
 	default int compareTo(AroundPropertyHook other) {

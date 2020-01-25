@@ -1,7 +1,7 @@
 - 1.2.3
 
     - Statistics.coverage(..)
-      - check that is only called once per collector and try.
+      - Warn if coverage() is invoked more than once per collector and try.
         Might require per try lifecycle.
 
     - Documentation

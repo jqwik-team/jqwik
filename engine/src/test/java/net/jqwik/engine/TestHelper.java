@@ -48,6 +48,11 @@ public class TestHelper {
 			}
 
 			@Override
+			public AroundTryHook aroundTryHook(PropertyMethodDescriptor methodDescriptor) {
+				return AroundTryHook.BASE;
+			}
+
+			@Override
 			public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
 				return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
 			}

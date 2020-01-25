@@ -10,6 +10,7 @@ import org.junit.platform.commons.support.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
@@ -20,7 +21,8 @@ public class CheckedPropertyFactory {
 
 	public CheckedProperty fromDescriptor(
 		PropertyMethodDescriptor propertyMethodDescriptor,
-		PropertyLifecycleContext propertyLifecycleContext
+		PropertyLifecycleContext propertyLifecycleContext,
+		AroundTryHook aroundTry
 	) {
 		String propertyName = propertyMethodDescriptor.extendedLabel();
 
@@ -28,7 +30,7 @@ public class CheckedPropertyFactory {
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
 		CheckedFunction rawFunction = createRawFunction(propertyMethodDescriptor, propertyLifecycleContext.testInstance());
-		CheckedFunction checkedFunction = new AroundTryLifecycle(rawFunction, propertyLifecycleContext);
+		CheckedFunction checkedFunction = new AroundTryLifecycle(rawFunction, propertyLifecycleContext, aroundTry);
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(

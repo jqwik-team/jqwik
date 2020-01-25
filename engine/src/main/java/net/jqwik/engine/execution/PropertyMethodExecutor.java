@@ -93,13 +93,14 @@ public class PropertyMethodExecutor {
 
 	private PropertyExecutionResult executePropertyMethod(LifecycleHooksSupplier lifecycleSupplier, PropertyExecutionListener listener) {
 		Consumer<ReportEntry> publisher = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
-		AroundPropertyHook around = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
+		AroundPropertyHook aroundProperty = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
+		AroundTryHook aroundTry = lifecycleSupplier.aroundTryHook(methodDescriptor);
 		PropertyExecutionResult propertyExecutionResult;
 		try {
 			ensureAllParametersHaveForAll(methodDescriptor);
-			propertyExecutionResult = around.aroundProperty(
+			propertyExecutionResult = aroundProperty.aroundProperty(
 				propertyLifecycleContext,
-				() -> executeMethod(publisher)
+				() -> executeMethod(publisher, aroundTry)
 			);
 		} catch (Throwable throwable) {
 			propertyExecutionResult = PlainExecutionResult.failed(
@@ -113,9 +114,12 @@ public class PropertyMethodExecutor {
 		return propertyExecutionResult;
 	}
 
-	private ExtendedPropertyExecutionResult executeMethod(Consumer<ReportEntry> publisher) {
+	private ExtendedPropertyExecutionResult executeMethod(
+		Consumer<ReportEntry> publisher,
+		AroundTryHook aroundTry
+	) {
 		try {
-			PropertyCheckResult checkResult = executeProperty(publisher);
+			PropertyCheckResult checkResult = executeProperty(publisher, aroundTry);
 			return CheckResultBasedExecutionResult.from(checkResult);
 		} catch (TestAbortedException e) {
 			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
@@ -125,8 +129,11 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private PropertyCheckResult executeProperty(Consumer<ReportEntry> publisher) {
-		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, propertyLifecycleContext);
+	private PropertyCheckResult executeProperty(
+		Consumer<ReportEntry> publisher,
+		AroundTryHook aroundTry
+	) {
+		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, propertyLifecycleContext, aroundTry);
 		return property.check(publisher, methodDescriptor.getReporting());
 	}
 

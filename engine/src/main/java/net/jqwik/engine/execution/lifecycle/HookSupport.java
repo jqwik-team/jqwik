@@ -6,13 +6,6 @@ import net.jqwik.api.lifecycle.*;
 
 public class HookSupport {
 
-	private static AroundPropertyHook wrap(AroundPropertyHook outer, AroundPropertyHook inner) {
-		return (context, property) -> {
-			PropertyExecutor innerExecutor = () -> inner.aroundProperty(context, property);
-			return outer.aroundProperty(context, innerExecutor);
-		};
-	}
-
 	public static AroundPropertyHook combineAroundPropertyHooks(List<AroundPropertyHook> aroundPropertyHooks) {
 		if (aroundPropertyHooks.isEmpty()) {
 			return AroundPropertyHook.BASE;
@@ -20,6 +13,37 @@ public class HookSupport {
 		aroundPropertyHooks = new ArrayList<>(aroundPropertyHooks);
 		AroundPropertyHook first = aroundPropertyHooks.remove(0);
 		return wrap(first, combineAroundPropertyHooks(aroundPropertyHooks));
+	}
+
+	private static AroundPropertyHook wrap(AroundPropertyHook outer, AroundPropertyHook inner) {
+		return (context, property) -> {
+			PropertyExecutor innerExecutor = () -> inner.aroundProperty(context, property);
+			return outer.aroundProperty(context, innerExecutor);
+		};
+	}
+
+	public static AroundTryHook combineAroundTryHooks(List<AroundTryHook> aroundTryHooks) {
+		if (aroundTryHooks.isEmpty()) {
+			return AroundTryHook.BASE;
+		}
+		aroundTryHooks = new ArrayList<>(aroundTryHooks);
+		AroundTryHook first = aroundTryHooks.remove(0);
+		return wrap(first, combineAroundTryHooks(aroundTryHooks));
+	}
+
+	private static AroundTryHook wrap(AroundTryHook outer, AroundTryHook inner) {
+		return (context, aTry, outerParams) -> {
+			TryExecutor innerExecutor = (innerParams) -> inner.aroundTry(context, aTry, innerParams);
+			return outer.aroundTry(context, innerExecutor, outerParams);
+		};
+	}
+
+	public static SkipExecutionHook combineSkipExecutionHooks(List<SkipExecutionHook> skipExecutionHooks) {
+		if (skipExecutionHooks.isEmpty()) {
+			return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
+		}
+		SkipExecutionHook first = skipExecutionHooks.remove(0);
+		return then(first, combineSkipExecutionHooks(skipExecutionHooks));
 	}
 
 	private static SkipExecutionHook then(SkipExecutionHook first, SkipExecutionHook rest) {
@@ -31,14 +55,6 @@ public class HookSupport {
 				return rest.shouldBeSkipped(descriptor);
 			}
 		};
-	}
-
-	public static SkipExecutionHook combineSkipExecutionHooks(List<SkipExecutionHook> skipExecutionHooks) {
-		if (skipExecutionHooks.isEmpty()) {
-			return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
-		}
-		SkipExecutionHook first = skipExecutionHooks.remove(0);
-		return then(first, combineSkipExecutionHooks(skipExecutionHooks));
 	}
 
 }

@@ -103,8 +103,8 @@ class SimplePropertiesExecutionTests {
 
 	@Example
 	void methodWithUnboundParameterFails() {
-		PropertyMethodDescriptor descriptor = (PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class)
-			.build();
+		PropertyMethodDescriptor descriptor =
+			(PropertyMethodDescriptor) forMethod(ContainerClass.class, "withParameter", int.class).build();
 
 		executeTests(descriptor);
 
