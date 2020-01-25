@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.*;
+import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
@@ -17,11 +18,15 @@ class ContainerTaskCreator {
 		TestDescriptor containerDescriptor,
 		ExecutionTaskCreator childTaskCreator,
 		Pipeline pipeline,
-		LifecycleHooksSupplier lifecycleSupplier
+		LifecycleHooksSupplier lifecycleSupplier,
+		PropertyExecutionListener propertyExecutionListener
 	) {
 
+		Reporter reporter = (key, value) -> propertyExecutionListener
+												.reportingEntryPublished(containerDescriptor, ReportEntry.from(key, value));
+
 		// If SkipExecutionHook ran in task skipping of children wouldn't work
-		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor);
+		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter);
 		SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(containerDescriptor);
 		SkipExecutionHook.SkipResult skipResult = skipExecutionHook.shouldBeSkipped(containerLifecycleContext);
 
@@ -39,7 +44,12 @@ class ContainerTaskCreator {
 			"prepare " + containerDescriptor.getDisplayName()
 		);
 
-		ExecutionTask[] childrenTasks = createChildren(containerDescriptor.getChildren(), childTaskCreator, pipeline);
+		ExecutionTask[] childrenTasks = createChildren(
+			containerDescriptor.getChildren(),
+			childTaskCreator,
+			pipeline,
+			propertyExecutionListener
+		);
 		for (ExecutionTask childTask : childrenTasks) {
 			pipeline.submit(childTask, prepareContainerTask);
 		}
@@ -65,10 +75,10 @@ class ContainerTaskCreator {
 		return prepareContainerTask;
 	}
 
-	private ContainerLifecycleContext createLifecycleContext(TestDescriptor containerDescriptor) {
+	private ContainerLifecycleContext createLifecycleContext(TestDescriptor containerDescriptor, Reporter reporter) {
 		if (containerDescriptor instanceof ContainerClassDescriptor) {
 			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) containerDescriptor;
-			return new ContainerClassLifecycleContext(classDescriptor);
+			return new ContainerLifecycleContextForClass(classDescriptor, reporter);
 		}
 
 		return new ContainerLifecycleContext() {
@@ -81,17 +91,23 @@ class ContainerTaskCreator {
 			public Optional<AnnotatedElement> annotatedElement() {
 				return Optional.empty();
 			}
+
+			@Override
+			public Reporter reporter() {
+				return reporter;
+			}
 		};
 	}
 
 	private ExecutionTask[] createChildren(
 		Set<? extends TestDescriptor> children,
 		ExecutionTaskCreator childTaskCreator,
-		Pipeline pipeline
+		Pipeline pipeline,
+		PropertyExecutionListener propertyExecutionListener
 	) {
 		ExecutionTask[] childrenTasks = new ExecutionTask[0];
-		return children.stream() //
-					   .map(child -> childTaskCreator.createTask(child, pipeline)) //
+		return children.stream()
+					   .map(child -> childTaskCreator.createTask(child, pipeline, propertyExecutionListener))
 					   .collect(Collectors.toList()).toArray(childrenTasks);
 	}
 }

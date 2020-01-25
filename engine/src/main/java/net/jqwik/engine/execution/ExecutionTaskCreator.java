@@ -6,5 +6,9 @@ import net.jqwik.engine.execution.pipeline.*;
 
 @FunctionalInterface
 public interface ExecutionTaskCreator {
-	ExecutionTask createTask(TestDescriptor descriptor, Pipeline pipeline);
+	ExecutionTask createTask(
+		TestDescriptor descriptor,
+		Pipeline pipeline,
+		PropertyExecutionListener propertyExecutionListener
+	);
 }

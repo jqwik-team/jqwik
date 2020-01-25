@@ -99,7 +99,7 @@ public class PropertyMethodExecutor {
 			ensureAllParametersHaveForAll(methodDescriptor);
 			propertyExecutionResult = around.aroundProperty(
 				propertyLifecycleContext,
-				() -> executeMethod(propertyLifecycleContext.testInstance(), publisher)
+				() -> executeMethod(publisher)
 			);
 		} catch (Throwable throwable) {
 			propertyExecutionResult = PlainExecutionResult.failed(
@@ -113,9 +113,9 @@ public class PropertyMethodExecutor {
 		return propertyExecutionResult;
 	}
 
-	private ExtendedPropertyExecutionResult executeMethod(Object testInstance, Consumer<ReportEntry> publisher) {
+	private ExtendedPropertyExecutionResult executeMethod(Consumer<ReportEntry> publisher) {
 		try {
-			PropertyCheckResult checkResult = executeProperty(testInstance, publisher);
+			PropertyCheckResult checkResult = executeProperty(publisher);
 			return CheckResultBasedExecutionResult.from(checkResult);
 		} catch (TestAbortedException e) {
 			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
@@ -125,8 +125,8 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private PropertyCheckResult executeProperty(Object testInstance, Consumer<ReportEntry> publisher) {
-		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, testInstance);
+	private PropertyCheckResult executeProperty(Consumer<ReportEntry> publisher) {
+		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, propertyLifecycleContext);
 		return property.check(publisher, methodDescriptor.getReporting());
 	}
 

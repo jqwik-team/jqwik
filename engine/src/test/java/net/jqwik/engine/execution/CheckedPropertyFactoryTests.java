@@ -3,6 +3,7 @@ package net.jqwik.engine.execution;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 
@@ -15,7 +16,8 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void simple() {
 		PropertyMethodDescriptor descriptor = createDescriptor("prop", "42", 11, 4, ShrinkingMode.OFF);
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+
+		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor));
 
 		assertThat(property.propertyName).isEqualTo("prop");
 
@@ -34,10 +36,14 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.configuration.getMaxDiscardRatio()).isEqualTo(4);
 	}
 
+	private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
+		return new PropertyLifecycleContextForMethod(descriptor, new PropertyExamples(), ((key, value) -> {}));
+	}
+
 	@Example
 	void withUnboundParams() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", "42", 11, 5, ShrinkingMode.OFF);
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor));
 
 		assertThat(property.forAllParameters).size().isEqualTo(2);
 		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
@@ -49,7 +55,7 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withNoParamsAndVoidResult() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", "42", 11, 5, ShrinkingMode.OFF);
-		CheckedProperty property = factory.fromDescriptor(descriptor, new PropertyExamples());
+		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor));
 
 		assertThat(property.forAllParameters).size().isEqualTo(0);
 

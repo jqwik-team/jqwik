@@ -8,6 +8,7 @@ import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.*;
@@ -35,7 +36,7 @@ class CheckedPropertyTests {
 											   .forMethod(CheckingExamples.class, "propertyWithoutParameters", int.class)
 											   .build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
-			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
+			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, createPropertyContext(descriptor));
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(Property.DEFAULT_STEREOTYPE);
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
@@ -51,7 +52,7 @@ class CheckedPropertyTests {
 											   .forMethod(CheckingExamples.class, "propertyWith42TriesAndMaxDiscardRatio2", int.class)
 											   .build();
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
-			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, new Object());
+			CheckedProperty checkedProperty = factory.fromDescriptor(descriptor, createPropertyContext(descriptor));
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo("OtherStereotype");
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(42);
@@ -59,6 +60,12 @@ class CheckedPropertyTests {
 			assertThat(checkedProperty.configuration.getAfterFailureMode()).isEqualTo(AfterFailureMode.RANDOM_SEED);
 			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.OFF);
 		}
+
+		private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
+			return new PropertyLifecycleContextForMethod(descriptor, new Object(), ((key, value) -> {}));
+		}
+
+
 	}
 
 	@Group

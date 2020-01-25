@@ -8,6 +8,7 @@ import java.util.stream.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
@@ -17,22 +18,26 @@ public class CheckedPropertyFactory {
 
 	private static List<Class<?>> BOOLEAN_RETURN_TYPES = Arrays.asList(boolean.class, Boolean.class);
 
-	public CheckedProperty fromDescriptor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+	public CheckedProperty fromDescriptor(
+		PropertyMethodDescriptor propertyMethodDescriptor,
+		PropertyLifecycleContext propertyLifecycleContext
+	) {
 		String propertyName = propertyMethodDescriptor.extendedLabel();
 
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
-		CheckedFunction checkedFunction = createCheckedFunction(propertyMethodDescriptor, testInstance);
+		CheckedFunction rawFunction = createRawFunction(propertyMethodDescriptor, propertyLifecycleContext.testInstance());
+		CheckedFunction checkedFunction = new AroundTryLifecycle(rawFunction, propertyLifecycleContext);
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
-			propertyMethodDescriptor.getContainerClass(), testInstance,
+			propertyMethodDescriptor.getContainerClass(), propertyLifecycleContext.testInstance(),
 			DomainContextFacadeImpl.getCurrentContext()
 		);
 
 		Optional<Iterable<? extends Tuple>> optionalData =
-			new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), testInstance)
+			new PropertyMethodDataResolver(propertyMethodDescriptor.getContainerClass(), propertyLifecycleContext.testInstance())
 				.forMethod(propertyMethodDescriptor.getTargetMethod());
 
 		return new CheckedProperty(
@@ -45,11 +50,11 @@ public class CheckedPropertyFactory {
 		);
 	}
 
-	private CheckedFunction createCheckedFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		// Todo: Bind all non @ForAll params first
-		Class<?> returnType = propertyMethodDescriptor.getTargetMethod().getReturnType();
-		Function<List, Object> function = params -> ReflectionSupport.invokeMethod(propertyMethodDescriptor.getTargetMethod(), testInstance,
-				params.toArray());
+	private CheckedFunction createRawFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
+		Method targetMethod = propertyMethodDescriptor.getTargetMethod();
+		Class<?> returnType = targetMethod.getReturnType();
+		Function<List<Object>, Object> function = params -> ReflectionSupport.invokeMethod(targetMethod, testInstance, params.toArray());
+
 		if (BOOLEAN_RETURN_TYPES.contains(returnType))
 			return params -> (boolean) function.apply(params);
 		else
@@ -61,9 +66,9 @@ public class CheckedPropertyFactory {
 
 	private List<MethodParameter> extractForAllParameters(Method targetMethod, Class<?> containerClass) {
 		return Arrays //
-				.stream(JqwikReflectionSupport.getMethodParameters(targetMethod, containerClass)) //
-				.filter(this::isForAllPresent) //
-				.collect(Collectors.toList());
+					  .stream(JqwikReflectionSupport.getMethodParameters(targetMethod, containerClass)) //
+					  .filter(this::isForAllPresent) //
+					  .collect(Collectors.toList());
 	}
 
 	private boolean isForAllPresent(MethodParameter parameter) {

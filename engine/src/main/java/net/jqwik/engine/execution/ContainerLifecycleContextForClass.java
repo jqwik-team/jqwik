@@ -6,11 +6,13 @@ import java.util.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 
-public class ContainerClassLifecycleContext implements ContainerLifecycleContext {
+public class ContainerLifecycleContextForClass implements ContainerLifecycleContext {
 	private final ContainerClassDescriptor classDescriptor;
+	private Reporter reporter;
 
-	public ContainerClassLifecycleContext(ContainerClassDescriptor classDescriptor) {
+	public ContainerLifecycleContextForClass(ContainerClassDescriptor classDescriptor, Reporter reporter) {
 		this.classDescriptor = classDescriptor;
+		this.reporter = reporter;
 	}
 
 	@Override
@@ -21,5 +23,10 @@ public class ContainerClassLifecycleContext implements ContainerLifecycleContext
 	@Override
 	public Optional<AnnotatedElement> annotatedElement() {
 		return Optional.of(classDescriptor.getContainerClass());
+	}
+
+	@Override
+	public Reporter reporter() {
+		return reporter;
 	}
 }

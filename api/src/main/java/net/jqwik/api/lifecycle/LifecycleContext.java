@@ -17,4 +17,7 @@ public interface LifecycleContext {
 
 	Optional<AnnotatedElement> annotatedElement();
 
+	@API(status = EXPERIMENTAL, since = "1.2.3")
+	Reporter reporter();
+
 }

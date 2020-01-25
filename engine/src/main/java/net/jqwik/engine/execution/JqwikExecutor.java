@@ -40,7 +40,7 @@ public class JqwikExecutor {
 	public void execute(TestDescriptor descriptor, EngineExecutionListener engineExecutionListener) {
 		PropertyExecutionListener recordingListener = new RecordingExecutionListener(recorder, engineExecutionListener, useJunitPlatformReporter);
 		ExecutionPipeline pipeline = new ExecutionPipeline(recordingListener);
-		ExecutionTask mainTask = createTask(descriptor, pipeline);
+		ExecutionTask mainTask = createTask(descriptor, pipeline, recordingListener);
 		pipeline.submit(mainTask);
 		letNonSuccessfulTestsExecuteFirst(pipeline);
 		pipeline.runToTermination();
@@ -50,12 +50,12 @@ public class JqwikExecutor {
 		previousFailedTests.forEach(pipeline::executeFirst);
 	}
 
-	private ExecutionTask createTask(TestDescriptor descriptor, Pipeline pipeline) {
+	private ExecutionTask createTask(TestDescriptor descriptor, Pipeline pipeline, PropertyExecutionListener propertyExecutionListener) {
 		if (descriptor.getClass().equals(JqwikEngineDescriptor.class)) {
-			return createContainerTask(descriptor, pipeline);
+			return createContainerTask(descriptor, pipeline, propertyExecutionListener);
 		}
 		if (descriptor.getClass().equals(ContainerClassDescriptor.class)) {
-			return createContainerTask(descriptor, pipeline);
+			return createContainerTask(descriptor, pipeline, propertyExecutionListener);
 		}
 		if (descriptor.getClass().equals(PropertyMethodDescriptor.class)) {
 			return createPropertyTask((PropertyMethodDescriptor) descriptor, pipeline);
@@ -84,8 +84,8 @@ public class JqwikExecutor {
 		return propertyTaskCreator.createTask(propertyMethodDescriptor, registry, reportOnlyFailures);
 	}
 
-	private ExecutionTask createContainerTask(TestDescriptor containerDescriptor, Pipeline pipeline) {
-		return containerTaskCreator.createTask(containerDescriptor, childTaskCreator, pipeline, registry);
+	private ExecutionTask createContainerTask(TestDescriptor containerDescriptor, Pipeline pipeline, PropertyExecutionListener listener) {
+		return containerTaskCreator.createTask(containerDescriptor, childTaskCreator, pipeline, registry, listener);
 	}
 
 }

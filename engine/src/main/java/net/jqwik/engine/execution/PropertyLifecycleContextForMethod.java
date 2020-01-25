@@ -6,12 +6,12 @@ import java.util.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 
-class PropertyMethodLifecycleContext implements PropertyLifecycleContext {
+public class PropertyLifecycleContextForMethod implements PropertyLifecycleContext {
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final Object testInstance;
 	private final Reporter reporter;
 
-	PropertyMethodLifecycleContext(PropertyMethodDescriptor methodDescriptor, Object testInstance, Reporter reporter) {
+	public PropertyLifecycleContextForMethod(PropertyMethodDescriptor methodDescriptor, Object testInstance, Reporter reporter) {
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
 		this.reporter = reporter;
