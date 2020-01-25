@@ -29,10 +29,12 @@ class AroundPropertyHookTests {
 
 	}
 
+	static int countSingle = 0;
+
 	@Property(tries = 10)
 	@AddLifecycleHook(AroundSingleProperty.class)
 	void methodLevelLifecycle() {
-		Assertions.assertThat(AroundSingleProperty.calls).isEqualTo(1);
+		Assertions.assertThat(countSingle).isEqualTo(1);
 	}
 
 }
@@ -67,11 +69,9 @@ class AroundPropertyWithoutPropagation implements AroundPropertyHook {
 
 class AroundSingleProperty implements AroundPropertyHook {
 
-	static int calls = 0;
-
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
-		calls++;
+		AroundPropertyHookTests.countSingle++;
 		return property.execute();
 	}
 }
