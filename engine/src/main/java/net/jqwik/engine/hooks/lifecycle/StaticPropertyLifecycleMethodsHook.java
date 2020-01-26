@@ -2,6 +2,7 @@ package net.jqwik.engine.hooks.lifecycle;
 
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.api.lifecycle.PropertyLifecycle.*;
@@ -9,14 +10,14 @@ import net.jqwik.engine.hooks.*;
 
 public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, PropagateToChildren {
 
-	private static final String IDENTIFIERS_STORE_NAME = String.format("%s:identifiers", AfterPropertyExecutor.class);
-	private static final String ORDER_STORE_NAME = String.format("%s:order", AfterPropertyExecutor.class);
+	private static final Object IDENTIFIERS_STORE_ID = Tuple.of(AfterPropertyExecutor.class, "identifiers");
+	private static final Object ORDER_STORE_ID = Tuple.of(AfterPropertyExecutor.class, "order");
 
 	public static void addAfterPropertyExecutor(Object identifier, AfterPropertyExecutor afterPropertyExecutor) {
 		Store<Set<PropertyExecutorIdentifier>> identifiers =
-			Store.get(StaticPropertyLifecycleMethodsHook.IDENTIFIERS_STORE_NAME);
+			Store.get(StaticPropertyLifecycleMethodsHook.IDENTIFIERS_STORE_ID);
 		Store<List<AfterPropertyExecutor>> executorsInOrder =
-			Store.get(StaticPropertyLifecycleMethodsHook.ORDER_STORE_NAME);
+			Store.get(StaticPropertyLifecycleMethodsHook.ORDER_STORE_ID);
 		PropertyExecutorIdentifier executorKey = new PropertyExecutorIdentifier(identifier, afterPropertyExecutor.getClass());
 
 		identifiers.update(setOfIdentifiers -> {
@@ -37,14 +38,12 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 		// Identifiers and executors cannot be in Map because order of entry must be kept
 		Store<Set<AfterPropertyExecutor>> identifiers =
 			Store.create(
-				Store.Visibility.LOCAL,
-				IDENTIFIERS_STORE_NAME,
+				IDENTIFIERS_STORE_ID, Store.Visibility.LOCAL,
 				HashSet::new
 			);
 		Store<List<AfterPropertyExecutor>> executorsInOrder =
 			Store.create(
-				Store.Visibility.LOCAL,
-				ORDER_STORE_NAME,
+				ORDER_STORE_ID, Store.Visibility.LOCAL,
 				ArrayList::new
 			);
 		PropertyExecutionResult executionResult = property.execute();

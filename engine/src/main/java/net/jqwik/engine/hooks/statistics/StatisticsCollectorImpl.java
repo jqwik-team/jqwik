@@ -12,7 +12,7 @@ import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsCoverage.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
-	public static final String STORE_NAME = String.format("%s:statistics", StatisticsCollector.class.getName());
+	public static final Object COLLECTORS_ID = Tuple.of(StatisticsCollectorImpl.class, "collectors");
 
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
 

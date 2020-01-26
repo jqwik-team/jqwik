@@ -15,7 +15,7 @@ public class StatisticsFacadeImpl extends Statistics.StatisticsFacade {
 
 	@Override
 	public StatisticsCollector collectorByLabel(String label) {
-		Store<Map<String, StatisticsCollector>> statisticsStore = Store.get(StatisticsCollectorImpl.STORE_NAME);
+		Store<Map<String, StatisticsCollector>> statisticsStore = Store.get(StatisticsCollectorImpl.COLLECTORS_ID);
 		return statisticsStore.get().get(label);
 	}
 

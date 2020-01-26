@@ -14,8 +14,8 @@ import net.jqwik.engine.execution.lifecycle.*;
 public class StoreFacadeImpl extends Store.StoreFacade {
 
 	@Override
-	public <T> Store<T> create(Store.Visibility visibility, Object identifier, Supplier<T> initializer) {
-		return StoreRepository.getCurrent().create(visibility, CurrentTestDescriptor.get(), identifier, initializer);
+	public <T> Store<T> create(Object identifier, Store.Visibility visibility, Supplier<T> initializer) {
+		return StoreRepository.getCurrent().create(CurrentTestDescriptor.get(), identifier, visibility, initializer);
 	}
 
 	@Override

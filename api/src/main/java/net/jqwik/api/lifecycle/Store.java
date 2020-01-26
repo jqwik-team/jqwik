@@ -28,31 +28,59 @@ public interface Store<T> {
 			implementation = FacadeLoader.load(Store.StoreFacade.class);
 		}
 
-		public abstract <T> Store<T> create(Visibility visibility, Object identifier, Supplier<T> initializer);
+		public abstract <T> Store<T> create(Object identifier, Visibility visibility, Supplier<T> initializer);
 
 		public abstract <T> Store<T> get(Object identifier);
 	}
 
 	/**
-	 * A {@linkplain Store} with the same name can be visible globally,
-	 * for just the current test element or for the test element and its children
+	 * A {@linkplain Store} with the same identifier can be visible
+	 *
+	 * <ul>
+	 *     <li>globally, i.e. to all that have the identifier</li>
+	 *     <li>locally, i.e. to all that have the identifier and
+	 *     belong to the scoping element (a container class or a property method)
+	 *     or its children</li>
+	 * </ul>
 	 */
 	enum Visibility {
-		GLOBAL, LOCAL, CONTAINER
+		GLOBAL, LOCAL
 	}
 
 	/**
+	 * A {@linkplain Store} with the same identifier can live
 	 *
-	 * @param visibility
-	 * @param identifier Any object to identify a variable. Often a string.
-	 * @param initializer
-	 * @param <T>
-	 * @return
+	 * <ul>
+	 *     <li>For the whole test run</li>
+	 *     <li>For the currently running property</li>
+	 *     <li>For the currently running try</li>
+	 * </ul>
 	 */
-	static <T> Store<T> create(Visibility visibility, Object identifier, Supplier<T> initializer) {
-		return StoreFacade.implementation.create(visibility, identifier, initializer);
+	enum Lifespan {
+		TEST_RUN, CURRENT_PROPERTY, CURRENT_TRY
 	}
 
+	/**
+	 * Create a new store for storing and retrieving values and objects in lifecycle
+	 * hooks and lifecycle-dependent methods.
+	 *
+	 * @param <T>         The type of object to store
+	 * @param identifier  Any object to identify a store. Must be globally unique.
+	 * @param visibility
+	 * @param initializer
+	 * @return New store instance
+	 */
+	static <T> Store<T> create(Object identifier, Visibility visibility, Supplier<T> initializer) {
+		return StoreFacade.implementation.create(identifier, visibility, initializer);
+	}
+
+	/**
+	 * Retrieve a store that must be created somewhere else.
+	 *
+	 * @param identifier Any object to identify a store. Must be globally unique.
+	 * @param <T>        The type of object to store
+	 * @return New store instance
+	 */
 	static <T> Store<T> get(Object identifier) {
 		return StoreFacade.implementation.get(identifier);
 	}

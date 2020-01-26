@@ -12,7 +12,7 @@ public class StoreRepository {
 
 	private static StoreRepository current;
 
-	// I hate this singleton.
+	// I hate this singleton as much as any singleton.
 	// It seems to be necessary for the Store API though :-(
 	public synchronized static StoreRepository getCurrent() {
 		if (current == null) {
@@ -23,7 +23,12 @@ public class StoreRepository {
 
 	private Set<ScopedStore<?>> stores = new HashSet<>();
 
-	public <T> ScopedStore<T> create(Visibility visibility, TestDescriptor scope, Object identifier, Supplier<T> initializer) {
+	public <T> ScopedStore<T> create(
+		TestDescriptor scope,
+		Object identifier,
+		Visibility visibility,
+		Supplier<T> initializer
+	) {
 		if (visibility == null) {
 			throw new IllegalArgumentException("visibility must not be null");
 		}
@@ -38,7 +43,7 @@ public class StoreRepository {
 		return store;
 	}
 
-	private <T> void addStore(Object key, ScopedStore<T> newStore) {
+	private <T> void addStore(Object identifier, ScopedStore<T> newStore) {
 		Optional<ScopedStore<?>> conflictingStore =
 			stores.stream()
 				  .filter(store -> store.getIdentifier().equals(newStore.getIdentifier()))
@@ -47,9 +52,9 @@ public class StoreRepository {
 
 		conflictingStore.ifPresent(existingStore -> {
 			String message = String.format(
-				"You cannot create %s with name [%s]. It conflicts with existing %s",
+				"You cannot create %s with identifier [%s]. It conflicts with existing %s",
 				newStore,
-				key,
+				identifier.toString(),
 				conflictingStore
 			);
 			throw new JqwikException(message);

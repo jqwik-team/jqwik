@@ -21,7 +21,7 @@ class StorageTests {
 
 		Supplier<String> initializer = () -> "a String";
 
-		assertThatThrownBy(() -> repository.create(visibility, engine, null, initializer))
+		assertThatThrownBy(() -> repository.create(engine, null, visibility, initializer))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -29,7 +29,7 @@ class StorageTests {
 	void cannotCreateStoreWithNullInitializer(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
-		assertThatThrownBy(() -> repository.create(visibility, engine, "name", null))
+		assertThatThrownBy(() -> repository.create(engine, "name", visibility, null))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -39,7 +39,7 @@ class StorageTests {
 
 		Supplier<String> initializer = () -> "a String";
 
-		assertThatThrownBy(() -> repository.create(null, engine, "name", initializer))
+		assertThatThrownBy(() -> repository.create(engine, "name", null, initializer))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -47,7 +47,7 @@ class StorageTests {
 	void storeValueIsInitializedOnFirstAccess(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
-		ScopedStore<String> store = repository.create(visibility, engine, "aString", () -> "initial value");
+		ScopedStore<String> store = repository.create(engine, "aString", visibility, () -> "initial value");
 		assertThat(store.get()).isEqualTo("initial value");
 	}
 
@@ -55,7 +55,7 @@ class StorageTests {
 	void storeValueCanBeUpdated(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
-		ScopedStore<String> store = repository.create(visibility, engine, "aString", () -> "old");
+		ScopedStore<String> store = repository.create(engine, "aString", visibility, () -> "old");
 		store.update((old) -> old + ":" + old);
 		assertThat(store.get()).isEqualTo("old:old");
 	}
@@ -64,7 +64,7 @@ class StorageTests {
 	void storeValueCanBeReset(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
-		ScopedStore<String> store = repository.create(visibility, engine, "aString", () -> "initial");
+		ScopedStore<String> store = repository.create(engine, "aString", visibility, () -> "initial");
 		store.update((old) -> "updated");
 		store.reset();
 		assertThat(store.get()).isEqualTo("initial");
@@ -74,11 +74,11 @@ class StorageTests {
 	void removeAllStoresForScope(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
-		ScopedStore<String> engineStore = repository.create(visibility, engine, "aString", () -> "initial");
+		ScopedStore<String> engineStore = repository.create(engine, "aString", visibility, () -> "initial");
 
 		TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-		ScopedStore<String> containerStore1 = repository.create(visibility, container, "store1", () -> "initial");
-		ScopedStore<String> containerStore2 = repository.create(visibility, container, "store2", () -> "initial");
+		ScopedStore<String> containerStore1 = repository.create(container, "store1", visibility, () -> "initial");
+		ScopedStore<String> containerStore2 = repository.create(container, "store2", visibility, () -> "initial");
 
 		repository.removeStoresFor(container);
 
@@ -91,7 +91,7 @@ class StorageTests {
 	void nullValuesAreAllowed(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
-		ScopedStore<String> store = repository.create(visibility, engine, "aString", () -> null);
+		ScopedStore<String> store = repository.create(engine, "aString", visibility, () -> null);
 		assertThat(store.get()).isEqualTo(null);
 		store.update((old) -> "updated");
 		assertThat(store.get()).isEqualTo("updated");
@@ -103,7 +103,7 @@ class StorageTests {
 	void storeCanBeRetrievedForNullScope(@ForAll Visibility visibility) {
 		StoreRepository repository = new StoreRepository();
 
-		ScopedStore<String> store = repository.create(visibility, null, "aString", () -> "value");
+		ScopedStore<String> store = repository.create(null, "aString", visibility, () -> "value");
 		Optional<ScopedStore<String>> optionalStore = repository.get(null, "aString");
 		assertThat(optionalStore.get()).isSameAs(store);
 	}
@@ -117,10 +117,10 @@ class StorageTests {
 			StoreRepository repository = new StoreRepository();
 
 			TestDescriptor container1 = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(Visibility.LOCAL, container1, "aString", () -> "initial");
+			repository.create(container1, "aString", Visibility.LOCAL, () -> "initial");
 
 			TestDescriptor container2 = TestDescriptorBuilder.forClass(Container2.class).build();
-			repository.create(Visibility.LOCAL, container2, "aString", () -> "initial");
+			repository.create(container2, "aString", Visibility.LOCAL, () -> "initial");
 			
 			Optional<ScopedStore<String>> optionalStore1 = repository.get(container1, "aString");
 			assertThat(optionalStore1).isPresent();
@@ -136,10 +136,10 @@ class StorageTests {
 			StoreRepository repository = new StoreRepository();
 
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(Visibility.LOCAL, container, "aStore", () -> "initial");
+			repository.create(container, "aStore", Visibility.LOCAL, () -> "initial");
 
 			assertThatThrownBy(() -> {
-				repository.create(Visibility.LOCAL, container, "aStore", () -> 42);
+				repository.create(container, "aStore", Visibility.LOCAL, () -> 42);
 			}).isInstanceOf(JqwikException.class);
 		}
 
@@ -149,8 +149,8 @@ class StorageTests {
 			StoreRepository repository = new StoreRepository();
 
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-			ScopedStore<String> store = repository.create(Visibility.LOCAL, container, "aString", () -> "initial");
-			ScopedStore<String> otherStore = repository.create(Visibility.LOCAL, container, "otherString", () -> "initial");
+			ScopedStore<String> store = repository.create(container, "aString", Visibility.LOCAL, () -> "initial");
+			ScopedStore<String> otherStore = repository.create(container, "otherString", Visibility.LOCAL, () -> "initial");
 
 			Optional<ScopedStore<String>> optionalStore = repository.get(container, "aString");
 			assertThat(optionalStore).isPresent();
@@ -166,7 +166,7 @@ class StorageTests {
 			StoreRepository repository = new StoreRepository();
 
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
-			ScopedStore<String> store = repository.create(Visibility.LOCAL, container, "aString", () -> "initial");
+			ScopedStore<String> store = repository.create(container, "aString", Visibility.LOCAL, () -> "initial");
 
 			TestDescriptor method1 = container.getChildren().iterator().next();
 
@@ -179,7 +179,7 @@ class StorageTests {
 			StoreRepository repository = new StoreRepository();
 
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(Visibility.LOCAL, container, "aString", () -> "initial");
+			repository.create(container, "aString", Visibility.LOCAL, () -> "initial");
 
 			Optional<ScopedStore<String>> optionalStore = repository.get(container, "otherString");
 			assertThat(optionalStore).isNotPresent();
@@ -190,7 +190,7 @@ class StorageTests {
 			StoreRepository repository = new StoreRepository();
 
 			TestDescriptor owner = TestDescriptorBuilder.forClass(Container1.class).build();
-			repository.create(Visibility.LOCAL, owner, "aString", () -> "initial");
+			repository.create(owner, "aString", Visibility.LOCAL, () -> "initial");
 
 			TestDescriptor otherOwner = TestDescriptorBuilder.forClass(Container2.class).build();
 

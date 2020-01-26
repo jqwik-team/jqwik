@@ -26,8 +26,8 @@ public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
 		Store<Map<String, StatisticsCollectorImpl>> collectorsStore =
 			Store.create(
+				StatisticsCollectorImpl.COLLECTORS_ID,
 				Store.Visibility.LOCAL,
-				StatisticsCollectorImpl.STORE_NAME,
 				STATISTICS_MAP_SUPPLIER
 			);
 
