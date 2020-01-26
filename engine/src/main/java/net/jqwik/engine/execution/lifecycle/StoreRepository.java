@@ -6,7 +6,6 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.Store.*;
 
 public class StoreRepository {
 
@@ -26,19 +25,15 @@ public class StoreRepository {
 	public <T> ScopedStore<T> create(
 		TestDescriptor scope,
 		Object identifier,
-		Visibility visibility,
 		Supplier<T> initializer
 	) {
-		if (visibility == null) {
-			throw new IllegalArgumentException("visibility must not be null");
-		}
 		if (initializer == null) {
 			throw new IllegalArgumentException("initializer must not be null");
 		}
 		if (identifier == null) {
 			throw new IllegalArgumentException("identifier must not be null");
 		}
-		ScopedStore<T> store = new ScopedStore<>(identifier, visibility, scope, initializer);
+		ScopedStore<T> store = new ScopedStore<>(identifier, scope, initializer);
 		addStore(identifier, store);
 		return store;
 	}

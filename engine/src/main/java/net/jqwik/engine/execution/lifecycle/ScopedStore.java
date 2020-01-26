@@ -1,25 +1,23 @@
 package net.jqwik.engine.execution.lifecycle;
 
-import java.util.*;
 import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.support.*;
 
 public class ScopedStore<T> implements Store<T> {
 
 	private final Object identifier;
-	private final Visibility visibility;
 	private final TestDescriptor scope;
 	private final Supplier<T> initializer;
 
 	private T value;
 	private boolean initialized = false;
 
-	public ScopedStore(Object identifier, Visibility visibility, TestDescriptor scope, Supplier<T> initializer) {
+	public ScopedStore(Object identifier, TestDescriptor scope, Supplier<T> initializer) {
 		this.identifier = identifier;
-		this.visibility = visibility;
 		this.scope = scope;
 		this.initializer = initializer;
 	}
@@ -52,17 +50,19 @@ public class ScopedStore<T> implements Store<T> {
 	}
 
 	public boolean isVisibleFor(TestDescriptor retriever) {
-		switch (visibility) {
-			case LOCAL:
-				return Objects.equals(retriever, scope);
-			default:
-				return true;
+		return isInScope(retriever);
+	}
+
+	private boolean isInScope(TestDescriptor retriever) {
+		if (retriever == scope) {
+			return true;
 		}
+		return retriever.getParent().map(this::isInScope).orElse(false);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Store(%s, %s)", visibility, scope.getUniqueId());
+		return String.format("Store(%s): %s", scope.getUniqueId(), JqwikStringSupport.displayString(get()));
 	}
 }
 

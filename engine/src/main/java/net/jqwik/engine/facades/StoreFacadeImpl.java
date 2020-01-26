@@ -6,6 +6,7 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.Store.*;
 import net.jqwik.engine.execution.lifecycle.*;
 
 /**
@@ -14,8 +15,10 @@ import net.jqwik.engine.execution.lifecycle.*;
 public class StoreFacadeImpl extends Store.StoreFacade {
 
 	@Override
-	public <T> Store<T> create(Object identifier, Store.Visibility visibility, Supplier<T> initializer) {
-		return StoreRepository.getCurrent().create(CurrentTestDescriptor.get(), identifier, visibility, initializer);
+	public <T> Store<T> create(Object identifier, Visibility visibility, Supplier<T> initializer) {
+		// TODO: For global visibility choose root descriptor
+		TestDescriptor scope = CurrentTestDescriptor.get();
+		return StoreRepository.getCurrent().create(scope, identifier, initializer);
 	}
 
 	@Override
