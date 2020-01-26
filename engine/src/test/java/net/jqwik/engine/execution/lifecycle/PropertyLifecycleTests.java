@@ -17,49 +17,6 @@ class PropertyLifecycleTests {
 	}
 
 	@Group
-	class Stores {
-
-		private Store<Integer> outsideSum = PropertyLifecycle.store("outsideSum", () -> 0);
-
-		@Example
-		void outsideStoreHasLocalScope() {
-			outsideSum.update(outsideSum -> outsideSum + 1);
-			PropertyLifecycle.onSuccess( () -> assertThat(outsideSum.get()).isEqualTo(1));
-		}
-
-		@Example
-		void outsideStoreHasLocalScopeCounterPart() {
-			outsideSum.update(outsideSum -> outsideSum + 1000);
-			PropertyLifecycle.onSuccess( () -> assertThat(outsideSum.get()).isEqualTo(1000));
-		}
-
-		@Property(tries = 100, generation = GenerationMode.RANDOMIZED)
-		void insideStoreHasLocalScope(@ForAll @IntRange(min = 1, max = 10) int anInt) {
-			Store<Integer> sum = PropertyLifecycle.store("sum", () -> 0);
-			sum.update(before -> before + anInt);
-
-			PropertyLifecycle.onSuccess(
-				() -> {
-					assertThat(sum.get()).isGreaterThanOrEqualTo(100);
-					assertThat(sum.get()).isLessThanOrEqualTo(1000);
-				}
-			);
-		}
-
-		@Example
-		void insideStoreHasLocalScopeCounterPart(@ForAll @IntRange(min = 42, max = 42) int anInt) {
-			Store<Integer> sum = PropertyLifecycle.store("sum", () -> 0);
-			sum.update(before -> anInt);
-
-			PropertyLifecycle.onSuccess(
-				() -> {
-					assertThat(sum.get()).isEqualTo(42);
-				}
-			);
-		}
-	}
-
-	@Group
 	class AfterMethodsAreCalledOnSuccess implements AutoCloseable {
 
 		private boolean setByAfter = false;

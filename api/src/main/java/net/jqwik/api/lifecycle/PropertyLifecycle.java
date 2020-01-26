@@ -1,7 +1,5 @@
 package net.jqwik.api.lifecycle;
 
-import java.util.function.*;
-
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
@@ -31,8 +29,6 @@ public class PropertyLifecycle {
 		}
 
 		public abstract void after(Object key, AfterPropertyExecutor afterPropertyExecutor);
-
-		public abstract <T> Store<T> store(String name, Supplier<T> initializer);
 	}
 
 	public static void onSuccess(Object identifier, Runnable runnable) {
@@ -55,10 +51,6 @@ public class PropertyLifecycle {
 
 	public static void after(Object identifier, AfterPropertyExecutor afterPropertyExecutor) {
 		PropertyLifecycleFacade.implementation.after(identifier, afterPropertyExecutor);
-	}
-
-	public static <T> Store<T> store(String name, Supplier<T> initializer) {
-		return PropertyLifecycleFacade.implementation.store(name, initializer);
 	}
 
 }
