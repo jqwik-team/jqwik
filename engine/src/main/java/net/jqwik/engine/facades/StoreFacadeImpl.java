@@ -15,8 +15,8 @@ import net.jqwik.engine.execution.lifecycle.*;
 public class StoreFacadeImpl extends Store.StoreFacade {
 
 	@Override
-	public <T> Store<T> create(Object identifier, Visibility visibility, Supplier<T> initializer) {
-		// TODO: For global visibility choose root descriptor
+	public <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
+		// TODO: Handle lifespan
 		TestDescriptor scope = CurrentTestDescriptor.get();
 		return StoreRepository.getCurrent().create(scope, identifier, initializer);
 	}
@@ -25,6 +25,6 @@ public class StoreFacadeImpl extends Store.StoreFacade {
 	public <T> Store<T> get(Object identifier) {
 		TestDescriptor retriever = CurrentTestDescriptor.get();
 		Optional<? extends Store<T>> store = StoreRepository.getCurrent().get(retriever, identifier);
-		return store.orElseThrow(() -> new CannotFindStoreException(identifier, retriever));
+		return store.orElseThrow(() -> new CannotFindStoreException(identifier, retriever.getUniqueId().toString()));
 	}
 }

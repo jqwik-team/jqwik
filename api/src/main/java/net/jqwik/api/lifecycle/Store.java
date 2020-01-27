@@ -28,23 +28,9 @@ public interface Store<T> {
 			implementation = FacadeLoader.load(Store.StoreFacade.class);
 		}
 
-		public abstract <T> Store<T> create(Object identifier, Visibility visibility, Supplier<T> initializer);
+		public abstract <T> Store<T> create(Object identifier, Lifespan visibility, Supplier<T> initializer);
 
 		public abstract <T> Store<T> get(Object identifier);
-	}
-
-	/**
-	 * A {@linkplain Store} with the same identifier can be visible
-	 *
-	 * <ul>
-	 *     <li>globally, i.e. to all that have the identifier</li>
-	 *     <li>locally, i.e. to all that have the identifier and
-	 *     belong to the scoping element (a container class or a property method)
-	 *     or its children</li>
-	 * </ul>
-	 */
-	enum Visibility {
-		GLOBAL, LOCAL
 	}
 
 	/**
@@ -57,7 +43,7 @@ public interface Store<T> {
 	 * </ul>
 	 */
 	enum Lifespan {
-		TEST_RUN, CURRENT_PROPERTY, CURRENT_TRY
+		RUN, PROPERTY, TRY
 	}
 
 	/**
@@ -66,12 +52,29 @@ public interface Store<T> {
 	 *
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique.
-	 * @param visibility
+	 * @param lifespan
 	 * @param initializer
 	 * @return New store instance
 	 */
-	static <T> Store<T> create(Object identifier, Visibility visibility, Supplier<T> initializer) {
-		return StoreFacade.implementation.create(identifier, visibility, initializer);
+	static <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
+		return StoreFacade.implementation.create(identifier, lifespan, initializer);
+	}
+
+	/**
+	 * Find an existing store or create a new one if it doesn't exist
+	 *
+	 * @param <T>         The type of object to store
+	 * @param identifier  Any object to identify a store. Must be globally unique.
+	 * @param lifespan
+	 * @param initializer
+	 * @return New or existing store instance
+	 */
+	static <T> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
+		try {
+			return Store.get(identifier);
+		} catch (CannotFindStoreException cannotFindStore) {
+			return Store.create(identifier, lifespan, initializer);
+		}
 	}
 
 	/**
@@ -79,7 +82,9 @@ public interface Store<T> {
 	 *
 	 * @param identifier Any object to identify a store. Must be globally unique.
 	 * @param <T>        The type of object to store
-	 * @return New store instance
+	 * @return Existing store instance
+	 *
+	 * @throws CannotFindStoreException
 	 */
 	static <T> Store<T> get(Object identifier) {
 		return StoreFacade.implementation.get(identifier);

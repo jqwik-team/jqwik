@@ -6,11 +6,11 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.Store.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+// TODO: Add Lifespan
 class StoreRepositoryTests {
 
 	private final TestDescriptor engine = TestDescriptorBuilder.forEngine(new JqwikTestEngine()).build();

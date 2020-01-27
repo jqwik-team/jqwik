@@ -27,7 +27,7 @@ public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 		Store<Map<String, StatisticsCollectorImpl>> collectorsStore =
 			Store.create(
 				StatisticsCollectorImpl.COLLECTORS_ID,
-				Store.Visibility.LOCAL,
+				Store.Lifespan.PROPERTY,
 				STATISTICS_MAP_SUPPLIER
 			);
 

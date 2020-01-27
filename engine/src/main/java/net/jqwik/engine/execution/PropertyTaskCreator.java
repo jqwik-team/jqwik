@@ -1,5 +1,6 @@
 package net.jqwik.engine.execution;
 
+import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
@@ -12,7 +13,11 @@ import net.jqwik.engine.support.*;
 
 class PropertyTaskCreator {
 
-	ExecutionTask createTask(PropertyMethodDescriptor methodDescriptor, LifecycleHooksSupplier lifecycleSupplier, boolean reportOnlyFailures) {
+	ExecutionTask createTask(
+		PropertyMethodDescriptor methodDescriptor,
+		LifecycleHooksSupplier lifecycleSupplier,
+		boolean reportOnlyFailures
+	) {
 		return ExecutionTask.from(
 			listener -> {
 
@@ -59,7 +64,17 @@ class PropertyTaskCreator {
 
 	private Object createTestInstance(PropertyMethodDescriptor methodDescriptor) {
 		try {
-			return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
+			if (methodDescriptor.getParent().isPresent()) {
+				TestDescriptor container = methodDescriptor.getParent().get();
+				return CurrentTestDescriptor.runWithDescriptor(
+					container,
+					() -> JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass())
+				);
+			} else {
+				// Should only occur in tests
+				return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
+			}
+
 		} catch (Throwable throwable) {
 			String message = String.format(
 				"Cannot create instance of class '%s'. Maybe it has no default constructor?",
