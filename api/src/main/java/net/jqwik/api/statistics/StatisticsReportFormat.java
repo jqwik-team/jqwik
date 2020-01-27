@@ -25,6 +25,8 @@ public interface StatisticsReportFormat {
 	 * but that must not necessarily be the case.
 	 *
 	 * @return the report lines without trailing new lines
+	 *
+	 * @see StatisticsEntry
 	 */
 	List<String> formatReport(List<StatisticsEntry> entries);
 }

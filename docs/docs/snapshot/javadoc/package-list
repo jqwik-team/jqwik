@@ -6,3 +6,4 @@ net.jqwik.api.domains
 net.jqwik.api.lifecycle
 net.jqwik.api.providers
 net.jqwik.api.stateful
+net.jqwik.api.statistics

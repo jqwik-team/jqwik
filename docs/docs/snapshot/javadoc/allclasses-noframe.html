@@ -29,6 +29,7 @@
 <li><a href="net/jqwik/api/providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers"><span class="interfaceName">ArbitraryProvider</span></a></li>
 <li><a href="net/jqwik/api/providers/ArbitraryProvider.SubtypeProvider.html" title="interface in net.jqwik.api.providers"><span class="interfaceName">ArbitraryProvider.SubtypeProvider</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">AroundPropertyHook</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">AroundTryHook</span></a></li>
 <li><a href="net/jqwik/api/Assume.html" title="class in net.jqwik.api">Assume</a></li>
 <li><a href="net/jqwik/api/arbitraries/BigDecimalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="interfaceName">BigDecimalArbitrary</span></a></li>
 <li><a href="net/jqwik/api/arbitraries/BigIntegerArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="interfaceName">BigIntegerArbitrary</span></a></li>
@@ -106,9 +107,12 @@
 <li><a href="net/jqwik/api/constraints/NumericChars.html" title="annotation in net.jqwik.api.constraints">NumericChars</a></li>
 <li><a href="net/jqwik/api/constraints/Positive.html" title="annotation in net.jqwik.api.constraints">Positive</a></li>
 <li><a href="net/jqwik/api/Property.html" title="annotation in net.jqwik.api">Property</a></li>
-<li><a href="net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a></li>
+<li><a href="net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">PropertyExecutionResult</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a></li>
 <li><a href="net/jqwik/api/lifecycle/PropertyExecutor.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">PropertyExecutor</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/PropertyLifecycle.html" title="class in net.jqwik.api.lifecycle">PropertyLifecycle</a></li>
+<li><a href="net/jqwik/api/lifecycle/PropertyLifecycle.AfterPropertyExecutor.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">PropertyLifecycle.AfterPropertyExecutor</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/PropertyLifecycle.PropertyLifecycleFacade.html" title="class in net.jqwik.api.lifecycle">PropertyLifecycle.PropertyLifecycleFacade</a></li>
 <li><a href="net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">PropertyLifecycleContext</span></a></li>
 <li><a href="net/jqwik/api/Provide.html" title="annotation in net.jqwik.api">Provide</a></li>
 <li><a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api"><span class="interfaceName">RandomGenerator</span></a></li>
@@ -131,9 +135,18 @@
 <li><a href="net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">SkipExecutionHook</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></li>
 <li><a href="net/jqwik/api/Statistics.html" title="class in net.jqwik.api">Statistics</a></li>
-<li><a href="net/jqwik/api/Statistics.StatisticsFacade.html" title="class in net.jqwik.api">Statistics.StatisticsFacade</a></li>
-<li><a href="net/jqwik/api/StatisticsCollector.html" title="interface in net.jqwik.api"><span class="interfaceName">StatisticsCollector</span></a></li>
+<li><a href="net/jqwik/api/statistics/Statistics.html" title="class in net.jqwik.api.statistics">Statistics</a></li>
+<li><a href="net/jqwik/api/statistics/Statistics.StatisticsFacade.html" title="class in net.jqwik.api.statistics">Statistics.StatisticsFacade</a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsCollector.html" title="interface in net.jqwik.api.statistics"><span class="interfaceName">StatisticsCollector</span></a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsCoverage.html" title="interface in net.jqwik.api.statistics"><span class="interfaceName">StatisticsCoverage</span></a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsCoverage.CoverageChecker.html" title="interface in net.jqwik.api.statistics"><span class="interfaceName">StatisticsCoverage.CoverageChecker</span></a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsEntry.html" title="interface in net.jqwik.api.statistics"><span class="interfaceName">StatisticsEntry</span></a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsReport.html" title="annotation in net.jqwik.api.statistics">StatisticsReport</a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsReport.None.html" title="class in net.jqwik.api.statistics">StatisticsReport.None</a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsReport.StatisticsReportMode.html" title="enum in net.jqwik.api.statistics">StatisticsReport.StatisticsReportMode</a></li>
+<li><a href="net/jqwik/api/statistics/StatisticsReportFormat.html" title="interface in net.jqwik.api.statistics"><span class="interfaceName">StatisticsReportFormat</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">Store</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle">Store.Lifespan</a></li>
 <li><a href="net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle">Store.StoreFacade</a></li>
 <li><a href="net/jqwik/api/lifecycle/Store.Visibility.html" title="enum in net.jqwik.api.lifecycle">Store.Visibility</a></li>
 <li><a href="net/jqwik/api/arbitraries/StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="interfaceName">StreamableArbitrary</span></a></li>
@@ -143,6 +156,8 @@
 <li><a href="net/jqwik/api/Tag.html" title="annotation in net.jqwik.api">Tag</a></li>
 <li><a href="net/jqwik/api/TagList.html" title="annotation in net.jqwik.api">TagList</a></li>
 <li><a href="net/jqwik/api/TooManyFilterMissesException.html" title="class in net.jqwik.api">TooManyFilterMissesException</a></li>
+<li><a href="net/jqwik/api/lifecycle/TryExecutor.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">TryExecutor</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><span class="interfaceName">TryLifecycleContext</span></a></li>
 <li><a href="net/jqwik/api/Tuple.html" title="interface in net.jqwik.api"><span class="interfaceName">Tuple</span></a></li>
 <li><a href="net/jqwik/api/Tuple.Tuple1.html" title="class in net.jqwik.api">Tuple.Tuple1</a></li>
 <li><a href="net/jqwik/api/Tuple.Tuple2.html" title="class in net.jqwik.api">Tuple.Tuple2</a></li>

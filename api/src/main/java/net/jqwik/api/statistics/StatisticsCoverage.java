@@ -7,6 +7,12 @@ import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
+/**
+ * Intermediate object to provide statistics coverage checking capabilities
+ *
+ * @see Statistics#coverage(Consumer)
+ * @see Statistics#coverageOf(String, Consumer)
+ */
 @API(status = EXPERIMENTAL, since = "1.2.3")
 public interface StatisticsCoverage {
 

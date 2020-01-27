@@ -21,8 +21,6 @@ publishing {
 			groupId = 'net.jqwik'
 			artifactId = 'jqwik-engine'
 			from components.java
-			artifact sourcesJar
-			artifact javadocJar
 			pom {
 				groupId = 'net.jqwik'
 				name = 'jqwik-engine'

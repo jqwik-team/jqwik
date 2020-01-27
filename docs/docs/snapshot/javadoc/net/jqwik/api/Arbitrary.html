@@ -317,7 +317,7 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
 <td class="colFirst"><code>default <a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitrary.html#withSamples-T...-">withSamples</a></span>(<a href="../../../net/jqwik/api/Arbitrary.html" title="type parameter in Arbitrary">T</a>...&nbsp;samples)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use something like <code>Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))</code>.</span></div>
+<div class="block"><span class="deprecationComment">Use something like <code>Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))</code>. Will be removed in version 1.3.</span></div>
 </div>
 </td>
 </tr>
@@ -523,7 +523,7 @@ default&nbsp;void&nbsp;forEachValue(java.util.function.Consumer&lt;? super <a hr
  @API(status=DEPRECATED,
      since="1.2.2")
 default&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&nbsp;withSamples(<a href="../../../net/jqwik/api/Arbitrary.html" title="type parameter in Arbitrary">T</a>...&nbsp;samples)</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use something like <code>Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))</code>.</span></div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use something like <code>Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))</code>. Will be removed in version 1.3.</span></div>
 <div class="block">Create a new arbitrary of the same type but inject values in <code>samples</code> first before continuing with standard
  value generation.</div>
 </li>
@@ -729,9 +729,9 @@ default&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in
  inject duplicates of previously generated values with a probability of <code>duplicateProbability</code>.
 
  <p>
-     Shrinking behavior for duplicate values
-     -- if duplication is required for falsification -- is poor,
-     i.e. those duplicate values cannot be shrunk to "smaller" duplicate values.
+ Shrinking behavior for duplicate values
+ -- if duplication is required for falsification -- is poor,
+ i.e. those duplicate values cannot be shrunk to "smaller" duplicate values.
  </p></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

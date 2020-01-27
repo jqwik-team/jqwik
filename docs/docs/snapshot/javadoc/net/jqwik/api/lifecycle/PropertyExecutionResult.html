@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":9,"i8":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":18,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -91,17 +91,9 @@ var activeTableTab = "activeTableTab";
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">net.jqwik.api.lifecycle</div>
-<h2 title="Class PropertyExecutionResult" class="title">Class PropertyExecutionResult</h2>
+<h2 title="Interface PropertyExecutionResult" class="title">Interface PropertyExecutionResult</h2>
 </div>
 <div class="contentContainer">
-<ul class="inheritance">
-<li>java.lang.Object</li>
-<li>
-<ul class="inheritance">
-<li>net.jqwik.api.lifecycle.PropertyExecutionResult</li>
-</ul>
-</li>
-</ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
@@ -109,8 +101,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>@API(status=EXPERIMENTAL,
      since="1.0")
-public class <span class="typeNameLabel">PropertyExecutionResult</span>
-extends java.lang.Object</pre>
+public interface <span class="typeNameLabel">PropertyExecutionResult</span></pre>
 <div class="block">Experimental feature. Not ready for public usage yet.</div>
 </li>
 </ul>
@@ -128,7 +119,7 @@ extends java.lang.Object</pre>
 <caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Class and Description</th>
+<th class="colLast" scope="col">Interface and Description</th>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
@@ -146,58 +137,40 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#aborted-java.lang.Throwable-java.lang.String-">aborted</a></span>(java.lang.Throwable&nbsp;throwable,
-       java.lang.String&nbsp;seed)</code>&nbsp;</td>
+<td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#changeToFailed-java.lang.String-">changeToFailed</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#failed-java.lang.Throwable-java.lang.String-java.util.List-">failed</a></span>(java.lang.Throwable&nbsp;throwable,
-      java.lang.String&nbsp;seed,
-      java.util.List&lt;java.lang.Object&gt;&nbsp;sample)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#changeToFailed-java.lang.Throwable-">changeToFailed</a></span>(java.lang.Throwable&nbsp;throwable)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#changeToSuccessful--">changeToSuccessful</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.util.List&lt;java.lang.Object&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getFalsifiedSample--">getFalsifiedSample</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getSeed--">getSeed</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.lang.Throwable&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getThrowable--">getThrowable</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#successful--">successful</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#successful-java.lang.String-">successful</a></span>(java.lang.String&nbsp;seed)</code>&nbsp;</td>
-</tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#toString--">toString</a></span>()</code>&nbsp;</td>
-</tr>
 </table>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
-<!--   -->
-</a>
-<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
-</ul>
 </li>
 </ul>
 </li>
@@ -212,52 +185,13 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="successful--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>successful</h4>
-<pre>public static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;successful()</pre>
-</li>
-</ul>
-<a name="successful-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>successful</h4>
-<pre>public static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;successful(java.lang.String&nbsp;seed)</pre>
-</li>
-</ul>
-<a name="failed-java.lang.Throwable-java.lang.String-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>failed</h4>
-<pre>public static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;failed(java.lang.Throwable&nbsp;throwable,
-                                             java.lang.String&nbsp;seed,
-                                             java.util.List&lt;java.lang.Object&gt;&nbsp;sample)</pre>
-</li>
-</ul>
-<a name="aborted-java.lang.Throwable-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>aborted</h4>
-<pre>public static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="class in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;aborted(java.lang.Throwable&nbsp;throwable,
-                                              java.lang.String&nbsp;seed)</pre>
-</li>
-</ul>
 <a name="getSeed--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getSeed</h4>
-<pre>public&nbsp;java.util.Optional&lt;java.lang.String&gt;&nbsp;getSeed()</pre>
+<pre>java.util.Optional&lt;java.lang.String&gt;&nbsp;getSeed()</pre>
 </li>
 </ul>
 <a name="getFalsifiedSample--">
@@ -266,7 +200,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFalsifiedSample</h4>
-<pre>public&nbsp;java.util.Optional&lt;java.util.List&lt;java.lang.Object&gt;&gt;&nbsp;getFalsifiedSample()</pre>
+<pre>java.util.Optional&lt;java.util.List&lt;java.lang.Object&gt;&gt;&nbsp;getFalsifiedSample()</pre>
 </li>
 </ul>
 <a name="getStatus--">
@@ -275,7 +209,7 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getStatus</h4>
-<pre>public&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a>&nbsp;getStatus()</pre>
+<pre><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a>&nbsp;getStatus()</pre>
 </li>
 </ul>
 <a name="getThrowable--">
@@ -284,20 +218,40 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getThrowable</h4>
-<pre>public&nbsp;java.util.Optional&lt;java.lang.Throwable&gt;&nbsp;getThrowable()</pre>
+<pre>java.util.Optional&lt;java.lang.Throwable&gt;&nbsp;getThrowable()</pre>
 </li>
 </ul>
-<a name="toString--">
+<a name="changeToSuccessful--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>changeToSuccessful</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.3")
+<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;changeToSuccessful()</pre>
+</li>
+</ul>
+<a name="changeToFailed-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>changeToFailed</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.3")
+<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;changeToFailed(java.lang.Throwable&nbsp;throwable)</pre>
+</li>
+</ul>
+<a name="changeToFailed-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>toString</h4>
-<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
+<h4>changeToFailed</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.3")
+default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;changeToFailed(java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 </li>

@@ -52,7 +52,7 @@ class StatisticsCollectionTests {
 		void callingCollectWithNoValueFails() {
 			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
-			assertThatThrownBy(() -> collector.collect()).isInstanceOf(IllegalArgumentException.class);
+			assertThatThrownBy(collector::collect).isInstanceOf(IllegalArgumentException.class);
 		}
 
 		@Example
@@ -68,7 +68,6 @@ class StatisticsCollectionTests {
 		}
 	}
 
-	@SuppressWarnings("ConfusingArgumentToVarargsMethod")
 	@Group
 	class Percentages {
 
@@ -101,7 +100,7 @@ class StatisticsCollectionTests {
 			collector.collect("one");
 
 			assertThat(collector.percentage("zero")).isEqualTo(0.0);
-			assertThat(collector.percentage(null)).isEqualTo(0.0);
+			assertThat(collector.percentage((Object[]) null)).isEqualTo(0.0);
 		}
 
 		@Example
@@ -109,10 +108,10 @@ class StatisticsCollectionTests {
 			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 			collector.collect("one");
-			collector.collect(null);
+			collector.collect((Object) null);
 
 			assertThat(collector.percentage("one")).isEqualTo(50.0);
-			assertThat(collector.percentage(null)).isEqualTo(50.0);
+			assertThat(collector.percentage((Object) null)).isEqualTo(50.0);
 		}
 
 		@Example
@@ -148,7 +147,6 @@ class StatisticsCollectionTests {
 
 	}
 
-	@SuppressWarnings("ConfusingArgumentToVarargsMethod")
 	@Group
 	class Counts {
 
@@ -182,7 +180,18 @@ class StatisticsCollectionTests {
 			collector.collect("one");
 
 			assertThat(collector.count("zero")).isEqualTo(0);
-			assertThat(collector.count(null)).isEqualTo(0);
+			assertThat(collector.count((Object) null)).isEqualTo(0);
+		}
+
+		@Example
+		void nullArrayIsCountedAsNullValue() {
+			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
+
+			collector.collect("one");
+			collector.collect((Object[]) null);
+
+			assertThat(collector.count("one")).isEqualTo(1);
+			assertThat(collector.count((Object) null)).isEqualTo(1);
 		}
 
 		@Example
@@ -190,10 +199,10 @@ class StatisticsCollectionTests {
 			StatisticsCollectorImpl collector = new StatisticsCollectorImpl("a label");
 
 			collector.collect("one");
-			collector.collect(null);
+			collector.collect((Object) null);
 
 			assertThat(collector.count("one")).isEqualTo(1);
-			assertThat(collector.count(null)).isEqualTo(1);
+			assertThat(collector.count((Object) null)).isEqualTo(1);
 		}
 
 		@Example
