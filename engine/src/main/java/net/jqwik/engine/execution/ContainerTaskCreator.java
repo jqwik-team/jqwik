@@ -61,7 +61,7 @@ class ContainerTaskCreator {
 				listener.executionFinished(containerDescriptor, result);
 
 				// TODO: Move to AfterContainerExecutor as soon as there is one
-				StoreRepository.getCurrent().removeStoresFor(containerDescriptor);
+				StoreRepository.getCurrent().finishScope(containerDescriptor);
 			},
 			containerDescriptor,
 			"finish " + containerDescriptor.getDisplayName()

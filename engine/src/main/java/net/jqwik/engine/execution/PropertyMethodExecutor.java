@@ -109,7 +109,7 @@ public class PropertyMethodExecutor {
 				null
 			);
 		}
-		StoreRepository.getCurrent().removeStoresFor(methodDescriptor);
+		StoreRepository.getCurrent().finishScope(methodDescriptor);
 		reportResult(publisher, propertyExecutionResult);
 		return propertyExecutionResult;
 	}

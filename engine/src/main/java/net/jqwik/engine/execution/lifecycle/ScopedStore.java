@@ -5,19 +5,22 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.support.*;
+
+import static net.jqwik.engine.support.JqwikStringSupport.*;
 
 public class ScopedStore<T> implements Store<T> {
 
 	private final Object identifier;
+	private final Lifespan lifespan;
 	private final TestDescriptor scope;
 	private final Supplier<T> initializer;
 
 	private T value;
 	private boolean initialized = false;
 
-	public ScopedStore(Object identifier, TestDescriptor scope, Supplier<T> initializer) {
+	public ScopedStore(Object identifier, Lifespan lifespan, TestDescriptor scope, Supplier<T> initializer) {
 		this.identifier = identifier;
+		this.lifespan = lifespan;
 		this.scope = scope;
 		this.initializer = initializer;
 	}
@@ -29,6 +32,11 @@ public class ScopedStore<T> implements Store<T> {
 			initialized = true;
 		}
 		return value;
+	}
+
+	@Override
+	public Lifespan lifespan() {
+		return lifespan;
 	}
 
 	@Override
@@ -62,7 +70,13 @@ public class ScopedStore<T> implements Store<T> {
 
 	@Override
 	public String toString() {
-		return String.format("Store(%s): %s", scope.getUniqueId(), JqwikStringSupport.displayString(get()));
+		return String.format(
+			"Store(%s, %s, %s): [%s]",
+			displayString(identifier),
+			lifespan.name(),
+			scope.getUniqueId(),
+			displayString(value)
+		);
 	}
 }
 

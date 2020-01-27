@@ -6,6 +6,7 @@ import java.util.function.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.Store.*;
 
 public class StoreRepository {
 
@@ -25,15 +26,22 @@ public class StoreRepository {
 	public <T> ScopedStore<T> create(
 		TestDescriptor scope,
 		Object identifier,
+		Lifespan lifespan,
 		Supplier<T> initializer
 	) {
+		if (scope == null) {
+			throw new IllegalArgumentException("scope must not be null");
+		}
 		if (initializer == null) {
 			throw new IllegalArgumentException("initializer must not be null");
+		}
+		if (lifespan == null) {
+			throw new IllegalArgumentException("lifespan must not be null");
 		}
 		if (identifier == null) {
 			throw new IllegalArgumentException("identifier must not be null");
 		}
-		ScopedStore<T> store = new ScopedStore<>(identifier, scope, initializer);
+		ScopedStore<T> store = new ScopedStore<>(identifier, lifespan, scope, initializer);
 		addStore(identifier, store);
 		return store;
 	}
@@ -42,7 +50,7 @@ public class StoreRepository {
 		Optional<ScopedStore<?>> conflictingStore =
 			stores.stream()
 				  .filter(store -> store.getIdentifier().equals(newStore.getIdentifier()))
-				  .filter(store -> store.isVisibleFor(newStore.getScope()))
+				  .filter(store -> isVisibleInAncestorOrDescendant(newStore, store))
 				  .findFirst();
 
 		conflictingStore.ifPresent(existingStore -> {
@@ -58,6 +66,10 @@ public class StoreRepository {
 		stores.add(newStore);
 	}
 
+	private <T> boolean isVisibleInAncestorOrDescendant(ScopedStore<T> newStore, ScopedStore<?> store) {
+		return store.isVisibleFor(newStore.getScope()) || newStore.isVisibleFor(store.getScope());
+	}
+
 	public <T> Optional<ScopedStore<T>> get(TestDescriptor retriever, Object identifier) {
 		if (identifier == null) {
 			throw new IllegalArgumentException("identifier must not be null");
@@ -71,7 +83,7 @@ public class StoreRepository {
 					 .findFirst();
 	}
 
-	public void removeStoresFor(TestDescriptor scope) {
+	public void finishScope(TestDescriptor scope) {
 		stores.removeIf(store -> store.getScope().equals(scope));
 	}
 }

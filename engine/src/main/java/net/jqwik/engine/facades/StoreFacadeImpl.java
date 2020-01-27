@@ -16,9 +16,8 @@ public class StoreFacadeImpl extends Store.StoreFacade {
 
 	@Override
 	public <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
-		// TODO: Handle lifespan
 		TestDescriptor scope = CurrentTestDescriptor.get();
-		return StoreRepository.getCurrent().create(scope, identifier, initializer);
+		return StoreRepository.getCurrent().create(scope, identifier, lifespan, initializer);
 	}
 
 	@Override

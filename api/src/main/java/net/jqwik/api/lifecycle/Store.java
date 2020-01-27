@@ -16,6 +16,8 @@ public interface Store<T> {
 
 	T get();
 
+	Lifespan lifespan();
+
 	void update(Function<T, T> updater);
 
 	void reset();
@@ -71,7 +73,16 @@ public interface Store<T> {
 	 */
 	static <T> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
 		try {
-			return Store.get(identifier);
+			Store<T> store = Store.get(identifier);
+			if (!store.lifespan().equals(lifespan)) {
+				String message = String.format(
+					"Trying to recreate existing store [%s] with different lifespan [%s]",
+					store,
+					lifespan
+				);
+				throw new JqwikException(message);
+			}
+			return store;
 		} catch (CannotFindStoreException cannotFindStore) {
 			return Store.create(identifier, lifespan, initializer);
 		}
@@ -83,7 +94,6 @@ public interface Store<T> {
 	 * @param identifier Any object to identify a store. Must be globally unique.
 	 * @param <T>        The type of object to store
 	 * @return Existing store instance
-	 *
 	 * @throws CannotFindStoreException
 	 */
 	static <T> Store<T> get(Object identifier) {

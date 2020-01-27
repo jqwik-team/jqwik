@@ -31,23 +31,77 @@ class StoreTests {
 		});
 	}
 
+	@Property(tries = 10)
+	void getOrCreateWithDifferentLifespanFails() {
+		Store.getOrCreate("counter", Lifespan.PROPERTY, () -> 100);
+		assertThatThrownBy(() -> Store.getOrCreate("counter", Lifespan.TRY, () -> 100))
+			.isInstanceOf(JqwikException.class);
+	}
+
 	@Group
-	class StoreBelongsToContainer {
-		Store<Integer> counter = Store.getOrCreate("counter", Lifespan.RUN, () -> 0);
+	@Label("Lifespan.RUN")
+	class LifespanRun {
+		Store<Integer> lifespanRun = Store.getOrCreate("run", Lifespan.RUN, () -> 0);
 
 		@Example
-		void example1() {
-			counter.update(i -> i + 1);
+		void run1() {
+			lifespanRun.update(i -> i + 1);
 			PropertyLifecycle.onSuccess(() -> {
-				assertThat(counter.get()).isEqualTo(1);
+				assertThat(lifespanRun.get()).isEqualTo(1);
 			});
 		}
 
 		@Example
-		void example2() {
-			counter.update(i -> i + 1);
+		void run2() {
+			lifespanRun.update(i -> i + 1);
 			PropertyLifecycle.onSuccess(() -> {
-				assertThat(counter.get()).isEqualTo(2);
+				assertThat(lifespanRun.get()).isEqualTo(2);
+			});
+		}
+	}
+
+	@Group
+	@Label("Lifespan.PROPERTY")
+	@Disabled("Lifespan.PROPERTY is not yet implemented by StoreRepository")
+	class LifespanProperty {
+		Store<Integer> lifespanProperty = Store.getOrCreate("run", Lifespan.PROPERTY, () -> 0);
+
+		@Property(tries = 10)
+		void run1() {
+			lifespanProperty.update(i -> i + 1);
+			PropertyLifecycle.onSuccess(() -> {
+				assertThat(lifespanProperty.get()).isEqualTo(10);
+			});
+		}
+
+		@Property(tries = 10)
+		void run2() {
+			lifespanProperty.update(i -> i + 1);
+			PropertyLifecycle.onSuccess(() -> {
+				assertThat(lifespanProperty.get()).isEqualTo(10);
+			});
+		}
+	}
+
+	@Group
+	@Label("Lifespan.TRY")
+	@Disabled("Lifespan.TRY is not yet implemented by StoreRepository")
+	class LifespanTry {
+		Store<Integer> lifespanTry = Store.getOrCreate("run", Lifespan.TRY, () -> 0);
+
+		@Property(tries = 10)
+		void run1() {
+			lifespanTry.update(i -> i + 1);
+			PropertyLifecycle.onSuccess(() -> {
+				assertThat(lifespanTry.get()).isEqualTo(1);
+			});
+		}
+
+		@Property(tries = 10)
+		void run2() {
+			lifespanTry.update(i -> i + 1);
+			PropertyLifecycle.onSuccess(() -> {
+				assertThat(lifespanTry.get()).isEqualTo(1);
 			});
 		}
 	}
