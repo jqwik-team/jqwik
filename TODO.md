@@ -1,9 +1,6 @@
 - 1.2.3
 
-    - Statistics.coverage(..)
-      - Warn if coverage() is invoked more than once per collector and try.
-        Might require per try lifecycle.
-      - Stores: Handle Autoclosable values
+    - StoreRepository: Handle AutoCloseable values
 
     - Documentation
       - statistics coverage checking

@@ -2,6 +2,7 @@ package net.jqwik.engine.hooks.statistics;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import org.opentest4j.*;
@@ -14,6 +15,8 @@ import net.jqwik.engine.facades.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 	public static final Object COLLECTORS_ID = Tuple.of(StatisticsCollectorImpl.class, "collectors");
+
+	private static final Logger LOG = Logger.getLogger(StatisticsCollectorImpl.class.getName());
 
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
 
@@ -98,10 +101,32 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public void coverage(Consumer<StatisticsCoverage> checker) {
+		Store<Integer> maxCallsPerTry = registerMaxCallsPerTry();
+
 		PropertyLifecycle.onSuccess(Tuple.of(this, checker.getClass()), () -> {
+			if (maxCallsPerTry.get() > 1) {
+				String message = String.format("coverage() should not be invoked more than once %s", statisticsLabel(label));
+				LOG.warning(message);
+			}
 			StatisticsCoverage coverage = new StatisticsCoverageImpl();
 			checker.accept(coverage);
 		});
+	}
+
+	private Store<Integer> registerMaxCallsPerTry() {
+		Store<Integer> countCalls = Store.getOrCreate(
+			Tuple.of(this, "calls"),
+			Store.Lifespan.TRY,
+			() -> 0
+		);
+		countCalls.update(i -> i + 1);
+		Store<Integer> maxCallsPerTry = Store.getOrCreate(
+			Tuple.of(this, "max"),
+			Store.Lifespan.PROPERTY,
+			() -> 0
+		);
+		maxCallsPerTry.update(old -> Math.max(old, countCalls.get()));
+		return maxCallsPerTry;
 	}
 
 	public Map<List<Object>, Integer> getCounts() {
@@ -153,6 +178,10 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return label;
 	}
 
+	private static String statisticsLabel(String label) {
+		return label.equals(StatisticsFacadeImpl.DEFAULT_LABEL) ? "" : String.format(" for [%s]", label);
+	}
+
 	private class StatisticsCoverageImpl implements StatisticsCoverage {
 
 		@Override
@@ -187,10 +216,6 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				String condition = String.format("Count of %s", entry.count());
 				failCondition(condition);
 			}
-		}
-
-		private String statisticsLabel() {
-			return label.equals(StatisticsFacadeImpl.DEFAULT_LABEL) ? "" : String.format(" for [%s]", label);
 		}
 
 		@Override
@@ -237,7 +262,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 			String message = String.format(
 				"%s does not fulfill condition%s",
 				condition,
-				statisticsLabel()
+				statisticsLabel(label)
 			);
 			fail(message);
 		}
