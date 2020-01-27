@@ -10,6 +10,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsCoverage.*;
+import net.jqwik.engine.facades.*;
 
 public class StatisticsCollectorImpl implements StatisticsCollector {
 	public static final Object COLLECTORS_ID = Tuple.of(StatisticsCollectorImpl.class, "collectors");
@@ -157,23 +158,25 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		@Override
 		public CoverageChecker check(Object... values) {
 			StatisticsEntry entry = statisticsEntry(values);
-			return new CoverageCheckerImpl(entry, countAllCollects());
+			return new CoverageCheckerImpl(label, entry, countAllCollects());
 		}
 
 		@Override
 		public CoverageChecker checkQuery(Predicate<? extends List<?>> query) {
 			@SuppressWarnings("unchecked")
 			StatisticsEntry entry = query((Predicate<List<Object>>) query);
-			return new CoverageCheckerImpl(entry, countAllCollects());
+			return new CoverageCheckerImpl(label, entry, countAllCollects());
 		}
 	}
 
 	private static class CoverageCheckerImpl implements CoverageChecker {
 
+		private String label;
 		private final StatisticsEntry entry;
 		private final int countAll;
 
-		public CoverageCheckerImpl(StatisticsEntry entry, int countAll) {
+		public CoverageCheckerImpl(String label, StatisticsEntry entry, int countAll) {
+			this.label = label;
 			this.entry = entry;
 			this.countAll = countAll;
 		}
@@ -181,16 +184,20 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		@Override
 		public void count(Predicate<Integer> countChecker) {
 			if (!countChecker.test(entry.count())) {
-				String message = String.format("Count of %s does not fulfill condition", entry.count());
-				fail(message);
+				String condition = String.format("Count of %s", entry.count());
+				failCondition(condition);
 			}
+		}
+
+		private String statisticsLabel() {
+			return label.equals(StatisticsFacadeImpl.DEFAULT_LABEL) ? "" : String.format(" for [%s]", label);
 		}
 
 		@Override
 		public void count(BiPredicate<Integer, Integer> countChecker) {
 			if (!countChecker.test(entry.count(), countAll)) {
-				String message = String.format("Count of (%s, %s) does not fulfill condition", entry.count(), countAll);
-				fail(message);
+				String condition = String.format("Count of (%s, %s)", entry.count(), countAll);
+				failCondition(condition);
 			}
 		}
 
@@ -213,8 +220,8 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		@Override
 		public void percentage(Predicate<Double> percentageChecker) {
 			if (!percentageChecker.test(entry.percentage())) {
-				String message = String.format("Percentage of %s does not fulfill condition", entry.percentage());
-				fail(message);
+				String condition = String.format("Percentage of %s", entry.percentage());
+				failCondition(condition);
 			}
 		}
 
@@ -224,6 +231,15 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 				percentageChecker.accept(p);
 				return true;
 			});
+		}
+
+		private void failCondition(String condition) {
+			String message = String.format(
+				"%s does not fulfill condition%s",
+				condition,
+				statisticsLabel()
+			);
+			fail(message);
 		}
 
 		private void fail(String message) {

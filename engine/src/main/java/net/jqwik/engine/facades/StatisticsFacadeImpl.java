@@ -11,7 +11,7 @@ import net.jqwik.engine.hooks.statistics.*;
  */
 public class StatisticsFacadeImpl extends Statistics.StatisticsFacade {
 
-	private static final String DEFAULT_LABEL = "statistics";
+	public static final String DEFAULT_LABEL = "statistics";
 
 	@Override
 	public StatisticsCollector collectorByLabel(String label) {

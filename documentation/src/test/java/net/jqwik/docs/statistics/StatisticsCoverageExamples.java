@@ -1,10 +1,13 @@
 package net.jqwik.docs.statistics;
 
 import java.math.*;
+import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.Statistics;
+import net.jqwik.api.statistics.*;
 
 /**
  * For feature https://github.com/jlink/jqwik/issues/75
@@ -47,39 +50,13 @@ class StatisticsCoverageExamples {
 	}
 
 	@Property
-	void combinedStats2(@ForAll int anInt) {
-		String posOrNeg = anInt > 0 ? "positive" : "negative";
-		String evenOrOdd = anInt % 2 == 0 ? "even" : "odd";
-
-		Statistics.collect(posOrNeg, evenOrOdd);
-
-//		Statistics.coverage(coverage -> {
-//			coverage.checkAllCombinations(
-//				asList("positive", "negative"),
-//				asList("even", "odd")
-//			).count(c -> c > 0);
-//		});
-	}
-
-	// Different kind of statistics API:
-
-	enum Sign {POSITIVE, NEGATIVE}
-
-	enum Oddity {EVEN, ODD}
-
-	@Property
-	void combinedStats3(@ForAll int anInt) {
+	@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+	void queryStatistics(@ForAll int anInt) {
 		Statistics.collect(anInt);
 
-//		Statistics.coverage(coverage -> {
-//			Function<Integer, Sign> posOrNeg = i -> i > 0 ? Sign.POSITIVE : Sign.NEGATIVE;
-//			Function<Integer, Oddity>  evenOrOdd = i -> i % 2 == 0 ? Oddity.EVEN : Oddity.ODD;
-//			Classifier classifier = Classifier.from(posOrNeg, evenOrOdd);
-//
-//			coverage.classify(posOrNeg, evenOrOdd)
-//					.checkAll().count(c -> c > 0);
-//					.check(Sign.NEGATIVE, Oddity.ODD).percentage(p -> p > 5.0);
-//		});
+		Statistics.coverage(coverage -> {
+			Predicate<List<Integer>> isZero = params -> params.get(0) == 0;
+			coverage.checkQuery(isZero).percentage(p -> p > 5.0);
+		});
 	}
-
 }
