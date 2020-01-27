@@ -8,6 +8,9 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.Store.*;
 
+/**
+ * StoreRepository and ScopedStore CANNOT handle concurrent execution of properties!
+ */
 public class StoreRepository {
 
 	private static StoreRepository current;
@@ -85,5 +88,21 @@ public class StoreRepository {
 
 	public void finishScope(TestDescriptor scope) {
 		stores.removeIf(store -> store.getScope().equals(scope));
+	}
+
+	public void finishProperty(TestDescriptor scope) {
+		stores
+			.stream()
+			.filter(store -> store.lifespan() == Lifespan.PROPERTY)
+			.filter(store -> store.isVisibleFor(scope))
+			.forEach(ScopedStore::reset);
+	}
+
+	public void finishTry(TestDescriptor scope) {
+		stores
+			.stream()
+			.filter(store -> store.lifespan() == Lifespan.TRY)
+			.filter(store -> store.isVisibleFor(scope))
+			.forEach(ScopedStore::reset);
 	}
 }

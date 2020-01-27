@@ -3,6 +3,7 @@ package net.jqwik.engine.execution.lifecycle;
 import java.util.*;
 import java.util.function.*;
 
+import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
@@ -178,6 +179,64 @@ class StoreRepositoryTests {
 	class Lifecycles_and_Lifespans {
 
 		@Example
+		void finishTry_resetsAllVisibleStoresWithLifespanTry() {
+			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
+			ScopedStore<String> containerStoreTry = repository.create(container, "containerStoreTry", Lifespan.TRY, () -> "initial");
+			containerStoreTry.update(s -> "changed");
+			ScopedStore<String> containerStoreRun = repository.create(container, "containerStoreRun", Lifespan.RUN, () -> "initial");
+			containerStoreRun.update(s -> "changed");
+
+			TestDescriptor method = container.getChildren().iterator().next();
+			ScopedStore<String> methodStoreTry = repository.create(method, "methodStoreTry", Lifespan.TRY, () -> "initial");
+			methodStoreTry.update(s -> "changed");
+			ScopedStore<String> methodStoreProperty = repository.create(method, "methodStoreProperty", Lifespan.PROPERTY, () -> "initial");
+			methodStoreProperty.update(s -> "changed");
+
+			TestDescriptor otherContainer = TestDescriptorBuilder.forClass(Container2.class).build();
+			ScopedStore<String> otherContainerStoreTry = repository.create(otherContainer, "otherContainerStoreTry", Lifespan.TRY, () -> "initial");
+			otherContainerStoreTry.update(s -> "changed");
+
+			repository.finishTry(method);
+
+			SoftAssertions.assertSoftly(softly -> {
+				softly.assertThat(containerStoreTry.get()).isEqualTo("initial");
+				softly.assertThat(containerStoreRun.get()).isEqualTo("changed");
+				softly.assertThat(methodStoreTry.get()).isEqualTo("initial");
+				softly.assertThat(methodStoreProperty.get()).isEqualTo("changed");
+				softly.assertThat(otherContainerStoreTry.get()).isEqualTo("changed");
+			});
+		}
+
+		@Example
+		void finishProperty_resetsAllVisibleStoresWithLifespanProperty() {
+			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
+			ScopedStore<String> containerStoreProperty = repository.create(container, "containerStoreProperty", Lifespan.PROPERTY, () -> "initial");
+			containerStoreProperty.update(s -> "changed");
+			ScopedStore<String> containerStoreRun = repository.create(container, "containerStoreRun", Lifespan.RUN, () -> "initial");
+			containerStoreRun.update(s -> "changed");
+
+			TestDescriptor method = container.getChildren().iterator().next();
+			ScopedStore<String> methodStoreProperty = repository.create(method, "methodStoreProperty", Lifespan.PROPERTY, () -> "initial");
+			methodStoreProperty.update(s -> "changed");
+			ScopedStore<String> methodStoreTry = repository.create(method, "methodStoreTry", Lifespan.TRY, () -> "initial");
+			methodStoreTry.update(s -> "changed");
+
+			TestDescriptor otherContainer = TestDescriptorBuilder.forClass(Container2.class).build();
+			ScopedStore<String> otherContainerStoreProperty = repository.create(otherContainer, "otherContainerStoreProperty", Lifespan.PROPERTY, () -> "initial");
+			otherContainerStoreProperty.update(s -> "changed");
+
+			repository.finishProperty(method);
+
+			SoftAssertions.assertSoftly(softly -> {
+				softly.assertThat(containerStoreProperty.get()).isEqualTo("initial");
+				softly.assertThat(containerStoreRun.get()).isEqualTo("changed");
+				softly.assertThat(methodStoreProperty.get()).isEqualTo("initial");
+				softly.assertThat(methodStoreTry.get()).isEqualTo("changed");
+				softly.assertThat(otherContainerStoreProperty.get()).isEqualTo("changed");
+			});
+		}
+
+		@Example
 		void finishScope_removesAllStoresForScope() {
 			ScopedStore<String> engineStore = repository.create(engine, "aString", Lifespan.PROPERTY, () -> "initial");
 
@@ -191,6 +250,7 @@ class StoreRepositoryTests {
 			assertThat(repository.get(container, "store2")).isNotPresent();
 			assertThat(repository.get(engine, "aString")).isPresent();
 		}
+
 
 
 	}
