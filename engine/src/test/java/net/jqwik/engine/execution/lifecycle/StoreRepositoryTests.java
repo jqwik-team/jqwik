@@ -11,14 +11,14 @@ import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class StorageTests {
+class StoreRepositoryTests {
 
 	private final TestDescriptor engine = TestDescriptorBuilder.forEngine(new JqwikTestEngine()).build();
 
+	private StoreRepository repository = new StoreRepository();
+
 	@Example
 	void cannotCreateStoreWithNullIdentifier() {
-		StoreRepository repository = new StoreRepository();
-
 		Supplier<String> initializer = () -> "a String";
 
 		assertThatThrownBy(() -> repository.create(engine, null, initializer))
@@ -27,24 +27,18 @@ class StorageTests {
 
 	@Example
 	void cannotCreateStoreWithNullInitializer() {
-		StoreRepository repository = new StoreRepository();
-
 		assertThatThrownBy(() -> repository.create(engine, "name", null))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Example
 	void storeValueIsInitializedOnFirstAccess() {
-		StoreRepository repository = new StoreRepository();
-
 		ScopedStore<String> store = repository.create(engine, "aString", () -> "initial value");
 		assertThat(store.get()).isEqualTo("initial value");
 	}
 
 	@Example
 	void storeValueCanBeUpdated() {
-		StoreRepository repository = new StoreRepository();
-
 		ScopedStore<String> store = repository.create(engine, "aString", () -> "old");
 		store.update((old) -> old + ":" + old);
 		assertThat(store.get()).isEqualTo("old:old");
@@ -52,8 +46,6 @@ class StorageTests {
 
 	@Example
 	void storeValueCanBeReset() {
-		StoreRepository repository = new StoreRepository();
-
 		ScopedStore<String> store = repository.create(engine, "aString", () -> "initial");
 		store.update((old) -> "updated");
 		store.reset();
@@ -62,8 +54,6 @@ class StorageTests {
 
 	@Example
 	void removeAllStoresForScope() {
-		StoreRepository repository = new StoreRepository();
-
 		ScopedStore<String> engineStore = repository.create(engine, "aString", () -> "initial");
 
 		TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
@@ -79,8 +69,6 @@ class StorageTests {
 
 	@Example
 	void nullValuesAreAllowed() {
-		StoreRepository repository = new StoreRepository();
-
 		ScopedStore<String> store = repository.create(engine, "aString", () -> null);
 		assertThat(store.get()).isEqualTo(null);
 		store.update((old) -> "updated");
@@ -91,8 +79,6 @@ class StorageTests {
 
 	@Example
 	void storeCanBeRetrievedForNullScope() {
-		StoreRepository repository = new StoreRepository();
-
 		ScopedStore<String> store = repository.create(null, "aString", () -> "value");
 		Optional<ScopedStore<String>> optionalStore = repository.get(null, "aString");
 		assertThat(optionalStore.get()).isSameAs(store);
@@ -100,9 +86,6 @@ class StorageTests {
 
 	@Example
 	void canCreateTwoStoresWithSameNameInDifferentScopes() {
-
-		StoreRepository repository = new StoreRepository();
-
 		TestDescriptor container1 = TestDescriptorBuilder.forClass(Container1.class).build();
 		repository.create(container1, "aString", () -> "initial");
 
@@ -120,8 +103,6 @@ class StorageTests {
 
 	@Example
 	void cannotCreateTwoLocalStoresWithSameNameInSameScope() {
-		StoreRepository repository = new StoreRepository();
-
 		TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
 		repository.create(container, "aStore", () -> "initial");
 
@@ -132,8 +113,6 @@ class StorageTests {
 
 	@Example
 	void canBeRetrievedForSameScopeAndSameName() {
-		StoreRepository repository = new StoreRepository();
-
 		TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
 		ScopedStore<String> store = repository.create(container, "aString", () -> "initial");
 		ScopedStore<String> otherStore = repository.create(container, "otherString", () -> "initial");
@@ -149,8 +128,6 @@ class StorageTests {
 
 	@Example
 	void canBeRetrievedForChildScopeAndSameName() {
-		StoreRepository repository = new StoreRepository();
-
 		TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
 		ScopedStore<String> store = repository.create(container, "aString", () -> "initial");
 
@@ -163,8 +140,6 @@ class StorageTests {
 
 	@Example
 	void cannotBeRetrievedForSameScopeAndDifferentName() {
-		StoreRepository repository = new StoreRepository();
-
 		TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
 		repository.create(container, "aString", () -> "initial");
 
@@ -174,8 +149,6 @@ class StorageTests {
 
 	@Example
 	void cannotBeRetrievedForUnrelatedScopeAndSameName() {
-		StoreRepository repository = new StoreRepository();
-
 		TestDescriptor owner = TestDescriptorBuilder.forClass(Container1.class).build();
 		repository.create(owner, "aString", () -> "initial");
 
