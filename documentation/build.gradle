@@ -93,5 +93,9 @@ dependencies {
 	testImplementation(project(":base"))
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
+
+	// To work around IntelliJ bug to not provide run test annotation on properties
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+
 }
 
