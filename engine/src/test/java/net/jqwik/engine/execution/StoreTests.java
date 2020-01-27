@@ -62,7 +62,6 @@ class StoreTests {
 
 	@Group
 	@Label("Lifespan.PROPERTY")
-	@Disabled("Lifespan.PROPERTY is not yet implemented by StoreRepository")
 	class LifespanProperty {
 		Store<Integer> lifespanProperty = Store.getOrCreate("run", Lifespan.PROPERTY, () -> 0);
 
@@ -85,23 +84,24 @@ class StoreTests {
 
 	@Group
 	@Label("Lifespan.TRY")
-	@Disabled("Lifespan.TRY is not yet implemented by StoreRepository")
 	class LifespanTry {
 		Store<Integer> lifespanTry = Store.getOrCreate("run", Lifespan.TRY, () -> 0);
 
 		@Property(tries = 10)
 		void run1() {
-			lifespanTry.update(i -> i + 1);
+			lifespanTry.update(i -> 42);
+			assertThat(lifespanTry.get()).isEqualTo(42);
 			PropertyLifecycle.onSuccess(() -> {
-				assertThat(lifespanTry.get()).isEqualTo(1);
+				assertThat(lifespanTry.get()).isEqualTo(0);
 			});
 		}
 
 		@Property(tries = 10)
 		void run2() {
-			lifespanTry.update(i -> i + 1);
+			lifespanTry.update(i -> 42);
+			assertThat(lifespanTry.get()).isEqualTo(42);
 			PropertyLifecycle.onSuccess(() -> {
-				assertThat(lifespanTry.get()).isEqualTo(1);
+				assertThat(lifespanTry.get()).isEqualTo(0);
 			});
 		}
 	}
