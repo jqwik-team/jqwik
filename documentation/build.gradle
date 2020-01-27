@@ -94,7 +94,8 @@ dependencies {
 	testImplementation("org.mockito:mockito-core:${mockitoVersion}")
 	testImplementation("org.assertj:assertj-core:${assertJVersion}")
 
-	// To work around IntelliJ bug to not provide run test annotation on properties
+	// To work around IntelliJ bug to not provide run test decorator
+	// https://youtrack.jetbrains.com/issue/IDEA-231482
 	testRuntimeOnly("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
 
 }
