@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.util.function.*;
+import java.util.logging.*;
 
 import org.junit.platform.engine.*;
 
@@ -9,6 +10,8 @@ import net.jqwik.api.lifecycle.*;
 import static net.jqwik.engine.support.JqwikStringSupport.*;
 
 public class ScopedStore<T> implements Store<T> {
+
+	private static final Logger LOG = Logger.getLogger(ScopedStore.class.getName());
 
 	private final Object identifier;
 	private final Lifespan lifespan;
@@ -46,6 +49,7 @@ public class ScopedStore<T> implements Store<T> {
 
 	@Override
 	public synchronized void reset() {
+		close();
 		initialized = false;
 	}
 
@@ -77,6 +81,18 @@ public class ScopedStore<T> implements Store<T> {
 			scope.getUniqueId(),
 			displayString(value)
 		);
+	}
+
+	public void close() {
+		if (value instanceof AutoCloseable) {
+			try {
+				((AutoCloseable) value).close();
+			} catch (Exception e) {
+				String message = String.format("Exception while closing [%s] in store [%s]", value, this);
+				LOG.log(Level.SEVERE, message, e);
+			}
+
+		}
 	}
 }
 

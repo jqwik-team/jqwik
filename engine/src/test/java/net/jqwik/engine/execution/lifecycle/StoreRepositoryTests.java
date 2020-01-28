@@ -5,6 +5,7 @@ import java.util.function.*;
 
 import org.assertj.core.api.*;
 import org.junit.platform.engine.*;
+import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.Store.*;
@@ -40,6 +41,16 @@ class StoreRepositoryTests {
 	}
 
 	@Example
+	void resettingStoreCallsCloseOnAutoCloseableValue() throws Exception {
+		AutoCloseable value = Mockito.mock(AutoCloseable.class);
+		ScopedStore<AutoCloseable> store = repository.create(engine, "aString", Lifespan.PROPERTY, () -> value);
+		store.get(); // to invoke initialization
+		store.reset();
+
+		Mockito.verify(value, Mockito.times(1)).close();
+	}
+
+	@Example
 	void nullValuesAreAllowed() {
 		ScopedStore<String> store = repository.create(engine, "aString", Lifespan.PROPERTY, () -> null);
 		assertThat(store.get()).isEqualTo(null);
@@ -51,7 +62,6 @@ class StoreRepositoryTests {
 
 	@Group
 	class Creation {
-
 
 		@Example
 		void cannotCreateStoreWithNullScope() {
@@ -193,7 +203,8 @@ class StoreRepositoryTests {
 			methodStoreProperty.update(s -> "changed");
 
 			TestDescriptor otherContainer = TestDescriptorBuilder.forClass(Container2.class).build();
-			ScopedStore<String> otherContainerStoreTry = repository.create(otherContainer, "otherContainerStoreTry", Lifespan.TRY, () -> "initial");
+			ScopedStore<String> otherContainerStoreTry = repository
+															 .create(otherContainer, "otherContainerStoreTry", Lifespan.TRY, () -> "initial");
 			otherContainerStoreTry.update(s -> "changed");
 
 			repository.finishTry(method);
@@ -210,7 +221,8 @@ class StoreRepositoryTests {
 		@Example
 		void finishProperty_resetsAllVisibleStoresWithLifespanProperty() {
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
-			ScopedStore<String> containerStoreProperty = repository.create(container, "containerStoreProperty", Lifespan.PROPERTY, () -> "initial");
+			ScopedStore<String> containerStoreProperty = repository
+															 .create(container, "containerStoreProperty", Lifespan.PROPERTY, () -> "initial");
 			containerStoreProperty.update(s -> "changed");
 			ScopedStore<String> containerStoreRun = repository.create(container, "containerStoreRun", Lifespan.RUN, () -> "initial");
 			containerStoreRun.update(s -> "changed");
@@ -222,7 +234,8 @@ class StoreRepositoryTests {
 			methodStoreTry.update(s -> "changed");
 
 			TestDescriptor otherContainer = TestDescriptorBuilder.forClass(Container2.class).build();
-			ScopedStore<String> otherContainerStoreProperty = repository.create(otherContainer, "otherContainerStoreProperty", Lifespan.PROPERTY, () -> "initial");
+			ScopedStore<String> otherContainerStoreProperty = repository
+																  .create(otherContainer, "otherContainerStoreProperty", Lifespan.PROPERTY, () -> "initial");
 			otherContainerStoreProperty.update(s -> "changed");
 
 			repository.finishProperty(method);
@@ -237,21 +250,53 @@ class StoreRepositoryTests {
 		}
 
 		@Example
-		void finishScope_removesAllStoresForScope() {
-			ScopedStore<String> engineStore = repository.create(engine, "aString", Lifespan.PROPERTY, () -> "initial");
+		void finishScope_removesAllStoresForScopeAndItsChildren() {
+			TestDescriptor container1 = TestDescriptorBuilder.forClass(Container1.class, "method1").build();
+			TestDescriptor method1 = container1.getChildren().iterator().next();
 
-			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class).build();
-			ScopedStore<String> containerStore1 = repository.create(container, "store1", Lifespan.PROPERTY, () -> "initial");
-			ScopedStore<String> containerStore2 = repository.create(container, "store2", Lifespan.PROPERTY, () -> "initial");
+			ScopedStore<String> containerStore1 = repository.create(container1, "store1", Lifespan.PROPERTY, () -> "initial");
+			ScopedStore<String> containerStore2 = repository.create(container1, "store2", Lifespan.PROPERTY, () -> "initial");
+			ScopedStore<String> method1Store = repository.create(method1, "method1Store", Lifespan.PROPERTY, () -> "initial");
+
+			repository.finishScope(container1);
+
+			TestDescriptor container2 = TestDescriptorBuilder.forClass(Container2.class).build();
+			ScopedStore<String> container2Store = repository.create(container2, "container2store", Lifespan.PROPERTY, () -> "initial");
+
+			assertThat(repository.get(container1, "store1")).isNotPresent();
+			assertThat(repository.get(container1, "store2")).isNotPresent();
+			assertThat(repository.get(method1, "method1Store")).isNotPresent();
+			assertThat(repository.get(container2, "container2store")).isPresent();
+		}
+
+		@Example
+		void finishScope_callsCloseOnAllRemovedStoreValues() throws Exception {
+			AutoCloseable valueContainerStore = Mockito.mock(AutoCloseable.class);
+			AutoCloseable valueMethodStore = Mockito.mock(AutoCloseable.class);
+			AutoCloseable valueOtherMethodStore = Mockito.mock(AutoCloseable.class);
+
+			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1", "method2").build();
+			Iterator<? extends TestDescriptor> methods = container.getChildren().iterator();
+			TestDescriptor method = methods.next();
+			TestDescriptor otherMethod = methods.next();
+
+			ScopedStore<AutoCloseable> containerStore =
+				repository.create(container, "containerStore", Lifespan.PROPERTY, () -> valueContainerStore);
+			containerStore.get(); // to invoke initialization
+
+			ScopedStore<AutoCloseable> methodStore =
+				repository.create(method, "methodStore", Lifespan.PROPERTY, () -> valueMethodStore);
+			methodStore.get(); // to invoke initialization
+
+			ScopedStore<AutoCloseable> otherMethodStore =
+				repository.create(otherMethod, "otherMethodStore", Lifespan.PROPERTY, () -> valueMethodStore);
 
 			repository.finishScope(container);
 
-			assertThat(repository.get(container, "store1")).isNotPresent();
-			assertThat(repository.get(container, "store2")).isNotPresent();
-			assertThat(repository.get(engine, "aString")).isPresent();
+			Mockito.verify(valueContainerStore, Mockito.times(1)).close();
+			Mockito.verify(valueMethodStore, Mockito.times(1)).close();
+			Mockito.verify(valueOtherMethodStore, Mockito.never()).close();
 		}
-
-
 
 	}
 

@@ -1,7 +1,5 @@
 - 1.2.3
 
-    - StoreRepository: Handle AutoCloseable values
-
     - Documentation
       - statistics coverage checking
       - statistics reportMode
@@ -13,6 +11,9 @@
 
     - @StatisticsReport
         - jqwik.properties, OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
+
+    - Improve Sample Reporting
+      https://github.com/jlink/jqwik/issues/85
 
     - Probabilistic assertions
 

@@ -2,6 +2,7 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 
@@ -87,7 +88,20 @@ public class StoreRepository {
 	}
 
 	public void finishScope(TestDescriptor scope) {
-		stores.removeIf(store -> store.getScope().equals(scope));
+		List<ScopedStore<?>> storesToRemove =
+			stores
+				.stream()
+				.filter(store -> isStoreIn(store, scope))
+				.collect(Collectors.toList());
+
+		for (ScopedStore<?> store : storesToRemove) {
+			store.close();
+			stores.remove(store);
+		}
+	}
+
+	private boolean isStoreIn(ScopedStore<?> store, TestDescriptor scope) {
+		return store.getScope().equals(scope) || scope.getDescendants().contains(store.getScope());
 	}
 
 	public void finishProperty(TestDescriptor scope) {
