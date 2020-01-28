@@ -66,14 +66,19 @@ class StatisticsCoverageTests {
 			});
 		}
 
+		int countPositive = 0;
+
 		@Property(tries = 10)
 		void countCheckAssertion(@ForAll int anInt) {
-			Statistics.collect(anInt > 0);
+			boolean isPositive = anInt > 0;
+			if (isPositive) {
+				countPositive++;
+			}
+			Statistics.collect(isPositive);
 
 			Statistics.coverage(coverage -> {
 				coverage.check(true).count(c -> {
-					Assertions.assertThat(c).isGreaterThan(0);
-					Assertions.assertThat(c).isLessThan(11);
+					Assertions.assertThat(c).isEqualTo(countPositive);
 				});
 			});
 		}
