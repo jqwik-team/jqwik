@@ -119,7 +119,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		void percentageCheckPredicate(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
 
@@ -128,7 +128,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		void percentageCheckAssertion(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
 
