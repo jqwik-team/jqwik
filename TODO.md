@@ -1,11 +1,5 @@
-- 1.2.3
+- 1.2.4
 
-    - Documentation
-      - statistics coverage checking
-      - statistics reportMode
-
-- 1.2.x
-  
     - Upgrade to JUnit platform 1.6
       https://junit.org/junit5/docs/5.6.0/release-notes/#deprecations-and-breaking-changes
 
@@ -17,23 +11,34 @@
 
     - Probabilistic assertions
 
+    - Shrinking of Tuple<T, T>: Shrink parameters in sync
+
     - Lifecycle
         - Allow to specify proximity/order in `@AddLifecycleHook`
 
+        - Bind stores to member variables, e.g.
+          @Store(lifespan = RUN|PROPERTY|TRY)
+
         - Around try
-          - @BeforeTry
-            - For methods
-            - For variables
-          - @AfterTry for methods
-          - Allow premature success/failure
+          - TryLifecycle objects
+            try(TryLifecycle lc = new ...) {...}
+          - @PerTry(Class<? extends TryLifecycle>)
 
-        - Around container
-            - @BeforeContainer
-            - @AfterContainer
+        - Around property
+          - @PerProperty(Class<? extends TryLifecycle>)
 
+        - Container lifecycle
+            - BeforeContainerHook
+            - AfterContainerHook
+            - @PerContainer
+
+        - Engine Lifecycle
+            - BeforeEngineHook
+            - AfterEngineHook
+            - Register as Service Provider
+
+- 1.2.x
+  
     - Spring/Boot Testing in its own module
- 
-    - Around engine
-      - Register through Java Service Registration
 
     - Documentation for lifecycle API in user guide
