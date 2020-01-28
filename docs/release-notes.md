@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.2.3-SNAPSHOT](#123-snapshot)
+- [1.2.3](#123)
 - [1.2.2](#122)
 - [1.2.1](#121)
 - [1.2.0](#120)
@@ -20,32 +20,32 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.2.3-SNAPSHOT
+## 1.2.3
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.2.3/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.2.3/javadoc/index.html">javadoc</a>
 </p>
 
 
 #### New and Enhanced Features
 
-- This release's new big feature is [coverage checking](/docs/snapshot/user-guide.html#checking-coverage-of-collected-statistics).
+- The new big feature of this release is [coverage checking](/docs/1.2.3/user-guide.html#checking-coverage-of-collected-statistics).
 
 - Statistics reporting
-  [can now be switched off](/docs/snapshot/user-guide.html#switch-statistics-reporting-off).
+  [can now be switched off](/docs/1.2.3/user-guide.html#switch-statistics-reporting-off).
   Alternatively you can
-  [plug in your own reporting format](/docs/snapshot/user-guide.html#plug-in-your-own-statistics-report-format).
+  [plug in your own reporting format](/docs/1.2.3/user-guide.html#plug-in-your-own-statistics-report-format).
 
 - Added `Arbitrary.injectDuplicates(duplicateProbability)` to enable
-  [the high probability generation of duplicate values](/docs/snapshot/user-guide.html#inject-duplicate-values)
+  [the high probability generation of duplicate values](/docs/1.2.3/user-guide.html#inject-duplicate-values)
 
 - Added `Arbitrary.tuple1(), Arbitrary.tuple2(), Arbitrary.tuple3(), Arbitrary.tuple4()`
-  to [generate tuples of same base type](/docs/snapshot/user-guide.html#tuples-of-same-base-types)
+  to [generate tuples of same base type](/docs/1.2.3/user-guide.html#tuples-of-same-base-types)
 
 - Character `\u0000` is being generated as default edge case
-  in String and Character arbitraries (if within allowed range).
+  in String and Character arbitraries - if it lies within the allowed character range.
 
 #### Breaking Changes
 
@@ -65,6 +65,7 @@ and
 
 #### Bug Fixes
 
+No open bugs had been reported.
 
 ## 1.2.2
 
