@@ -31,6 +31,13 @@ and
 
 #### New and Enhanced Features
 
+- This release's new big feature is [coverage checking](/docs/snapshot/user-guide.html#checking-coverage-of-collected-statistics).
+
+- Statistics reporting
+  [can now be switched off](/docs/snapshot/user-guide.html#switch-statistics-reporting-off).
+  Alternatively you can
+  [plug in your own reporting format](/docs/snapshot/user-guide.html#plug-in-your-own-statistics-report-format).
+
 - Added `Arbitrary.injectDuplicates(duplicateProbability)` to enable
   [the high probability generation of duplicate values](/docs/snapshot/user-guide.html#inject-duplicate-values)
 

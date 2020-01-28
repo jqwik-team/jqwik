@@ -13,7 +13,7 @@ import static org.apiguardian.api.API.Status.*;
  * Use {@code @StatisticsReport(STANDARD)} to enable the standard reporting.
  * This is the default anyway.
  * <p>
- * Use {@code @StatisticsReport(format = YourReportFormat.class)} to use your own format.
+ * Use {@code @StatisticsReport(format = YourReportFormat.class)} to plug in your own format.
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -30,7 +30,18 @@ public @interface StatisticsReport {
 	}
 
 	enum StatisticsReportMode {
-		OFF, STANDARD, PLUG_IN
+		/**
+		 * No statistics report
+		 */
+		OFF,
+		/**
+		 * Standard statistics report format
+		 */
+		STANDARD,
+		/**
+		 * Plug in your own format. Must be set with {@linkplain StatisticsReport#format()}.
+		 */
+		PLUG_IN
 	}
 
 	StatisticsReportMode value() default StatisticsReportMode.PLUG_IN;

@@ -2365,6 +2365,137 @@ produces the following reports:
     9  ( 87) :  9 %
 ```
 
+### Statistics Report Formatting
+
+There is a
+[`@StatisticsReport`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/StatisticsReport.html)
+annotation that allows to change statistics report
+formats or to even switch it off. The `value` attribute is of type
+[StatisticsReportMode.OFF](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/StatisticsReport.StatisticsReportMode.html) and can have one of:
+
+- __`STANDARD`__: Use jqwik's standard reporting format. This is used anyway
+  if you leave the annotation away.
+- __`OFF`__: Switch statistics reporting off
+- __`PLUG_IN`__: Plug in your homemade format. This is the default so that
+  you only have to provide the `format` attribute
+  [as shown below](#plug-in-your-own-statistics-report-format)
+
+#### Switch Statistics Reporting Off
+
+You can switch off statistics report as simple as that:
+
+```java
+@Property
+@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+void queryStatistics(@ForAll int anInt) {
+	Statistics.collect(anInt);
+}
+```
+
+#### Plug in Your Own Statistics Report Format
+
+In order to format statistics to your own liking you have to create an
+implementation of type
+[StatisticsReportFormat](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/StatisticsReportFormat.html) and
+
+```java
+@Property
+@StatisticsReport(format = MyStatisticsFormat.class)
+void statisticsWithHandMadeFormat(@ForAll Integer anInt) {
+	String range = anInt < 0 ? "negative" : anInt > 0 ? "positive" : "zero";
+	Statistics.collect(range);
+}
+
+class MyStatisticsFormat implements StatisticsReportFormat {
+	@Override
+	public List<String> formatReport(List<StatisticsEntry> entries) {
+		return entries.stream()
+					  .map(e -> String.format("%s: %d", e.name(), e.count()))
+					  .collect(Collectors.toList());
+	}
+}
+```
+
+Running this property should produce a report similar to that:
+
+```
+[StatisticsExamples:statisticsWithHandMadeFormat] (1000) statistics = 
+    negative: 520
+    positive: 450
+    zero: 30
+```
+
+### Checking Coverage of Collected Statistics
+
+Just looking at the statistics of generated values might not be sufficient.
+Sometimes you want to make sure that certain scenarios are being covered by
+your generators and fail a property otherwise. In _jqwik_ you do that
+by first
+[collecting statistics](#collecting-and-reporting-statistics)
+and then specifying coverage conditions for those statistics.
+
+#### Check Percentages and Counts
+
+The following example does that for generated values of enum `RoundingMode`:
+
+```java
+@Property(generation = GenerationMode.RANDOMIZED)
+void simpleStats(@ForAll RoundingMode mode) {
+	Statistics.collect(mode);
+
+	Statistics.coverage(coverage -> {
+		coverage.check(RoundingMode.CEILING).percentage(p -> p > 5.0);
+		coverage.check(RoundingMode.FLOOR).count(c -> c > 2);
+	});
+}
+```
+
+The same thing is possible for values collected with a specific label:
+
+```java
+@Property(generation = GenerationMode.RANDOMIZED)
+void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
+	String range = anInt < 3 ? "small" : "large";
+	Statistics.label("range").collect(range);
+	Statistics.label("value").collect(anInt);
+
+	Statistics.coverageOf("range", 
+		coverage -> coverage.check("small").percentage(p -> p > 20.0)
+        );
+	Statistics.coverageOf("value", 
+		coverage -> coverage.check(0).count(c -> c > 0)
+        );
+}
+```
+
+Start by looking at
+[`Statistics.coverage()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#coverage-java.util.function.Consumer-) and
+[`Statistics.coverageOf()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#coverageOf-java.lang.String-java.util.function.Consumer-)
+to see all the options you have for checking percentages and counts.
+
+#### Check Ad-hoc Query Coverage
+
+Instead of classifying values at collection time you have the possibility to
+collect the raw data and use a query when doing coverage checking:
+
+```java
+@Property
+@StatisticsReport(StatisticsReport.StatisticsReportMode.OFF)
+void queryStatistics(@ForAll int anInt) {
+	Statistics.collect(anInt);
+
+	Statistics.coverage(coverage -> {
+		Predicate<List<Integer>> isZero = params -> params.get(0) == 0;
+		coverage.checkQuery(isZero).percentage(p -> p > 5.0);
+	});
+}
+```
+
+In those cases you probably want to
+[switch off reporting](#switch-statistics-reporting-off),
+otherwise the reports might get very long - and without informative value.
+
+
 ## Providing Default Arbitraries
 
 Sometimes you want to use a certain, self-made `Arbitrary` for one of your own domain

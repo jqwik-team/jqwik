@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":17,"i1":6,"i2":17,"i3":6,"i4":6};
+var methods = {"i0":17,"i1":6,"i2":17,"i3":17,"i4":6,"i5":6,"i6":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -137,19 +137,6 @@ public interface <span class="typeNameLabel">Store&lt;T&gt;</span></pre>
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle">Store.StoreFacade</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.Visibility.html" title="enum in net.jqwik.api.lifecycle">Store.Visibility</a></span></code>
-<div class="block">A <a href="../../../../net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a> with the same identifier can be visible
-
- 
-     globally, i.e. to all that have the identifier
-     locally, i.e. to all that have the identifier and
-     belong to the scoping element (a container class or a property method)
-     or its children
- </div>
-</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -167,8 +154,8 @@ public interface <span class="typeNameLabel">Store&lt;T&gt;</span></pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a>&lt;T&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.html#create-java.lang.Object-net.jqwik.api.lifecycle.Store.Visibility-java.util.function.Supplier-">create</a></span>(java.lang.Object&nbsp;identifier,
-      <a href="../../../../net/jqwik/api/lifecycle/Store.Visibility.html" title="enum in net.jqwik.api.lifecycle">Store.Visibility</a>&nbsp;visibility,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.html#create-java.lang.Object-net.jqwik.api.lifecycle.Store.Lifespan-java.util.function.Supplier-">create</a></span>(java.lang.Object&nbsp;identifier,
+      <a href="../../../../net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle">Store.Lifespan</a>&nbsp;lifespan,
       java.util.function.Supplier&lt;T&gt;&nbsp;initializer)</code>
 <div class="block">Create a new store for storing and retrieving values and objects in lifecycle
  hooks and lifecycle-dependent methods.</div>
@@ -185,10 +172,22 @@ public interface <span class="typeNameLabel">Store&lt;T&gt;</span></pre>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.html#getOrCreate-java.lang.Object-net.jqwik.api.lifecycle.Store.Lifespan-java.util.function.Supplier-">getOrCreate</a></span>(java.lang.Object&nbsp;identifier,
+           <a href="../../../../net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle">Store.Lifespan</a>&nbsp;lifespan,
+           java.util.function.Supplier&lt;T&gt;&nbsp;initializer)</code>
+<div class="block">Find an existing store or create a new one if it doesn't exist</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle">Store.Lifespan</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.html#lifespan--">lifespan</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.html#reset--">reset</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/Store.html#update-java.util.function.Function-">update</a></span>(java.util.function.Function&lt;<a href="../../../../net/jqwik/api/lifecycle/Store.html" title="type parameter in Store">T</a>,<a href="../../../../net/jqwik/api/lifecycle/Store.html" title="type parameter in Store">T</a>&gt;&nbsp;updater)</code>&nbsp;</td>
 </tr>
@@ -216,6 +215,15 @@ public interface <span class="typeNameLabel">Store&lt;T&gt;</span></pre>
 <pre><a href="../../../../net/jqwik/api/lifecycle/Store.html" title="type parameter in Store">T</a>&nbsp;get()</pre>
 </li>
 </ul>
+<a name="lifespan--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>lifespan</h4>
+<pre><a href="../../../../net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle">Store.Lifespan</a>&nbsp;lifespan()</pre>
+</li>
+</ul>
 <a name="update-java.util.function.Function-">
 <!--   -->
 </a>
@@ -234,14 +242,14 @@ public interface <span class="typeNameLabel">Store&lt;T&gt;</span></pre>
 <pre>void&nbsp;reset()</pre>
 </li>
 </ul>
-<a name="create-java.lang.Object-net.jqwik.api.lifecycle.Store.Visibility-java.util.function.Supplier-">
+<a name="create-java.lang.Object-net.jqwik.api.lifecycle.Store.Lifespan-java.util.function.Supplier-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>create</h4>
 <pre>static&nbsp;&lt;T&gt;&nbsp;<a href="../../../../net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a>&lt;T&gt;&nbsp;create(java.lang.Object&nbsp;identifier,
-                           <a href="../../../../net/jqwik/api/lifecycle/Store.Visibility.html" title="enum in net.jqwik.api.lifecycle">Store.Visibility</a>&nbsp;visibility,
+                           <a href="../../../../net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle">Store.Lifespan</a>&nbsp;lifespan,
                            java.util.function.Supplier&lt;T&gt;&nbsp;initializer)</pre>
 <div class="block">Create a new store for storing and retrieving values and objects in lifecycle
  hooks and lifecycle-dependent methods.</div>
@@ -250,10 +258,32 @@ public interface <span class="typeNameLabel">Store&lt;T&gt;</span></pre>
 <dd><code>T</code> - The type of object to store</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>identifier</code> - Any object to identify a store. Must be globally unique.</dd>
-<dd><code>visibility</code> - </dd>
+<dd><code>lifespan</code> - </dd>
 <dd><code>initializer</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>New store instance</dd>
+</dl>
+</li>
+</ul>
+<a name="getOrCreate-java.lang.Object-net.jqwik.api.lifecycle.Store.Lifespan-java.util.function.Supplier-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOrCreate</h4>
+<pre>static&nbsp;&lt;T&gt;&nbsp;<a href="../../../../net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a>&lt;T&gt;&nbsp;getOrCreate(java.lang.Object&nbsp;identifier,
+                                <a href="../../../../net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle">Store.Lifespan</a>&nbsp;lifespan,
+                                java.util.function.Supplier&lt;T&gt;&nbsp;initializer)</pre>
+<div class="block">Find an existing store or create a new one if it doesn't exist</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - The type of object to store</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>identifier</code> - Any object to identify a store. Must be globally unique.</dd>
+<dd><code>lifespan</code> - </dd>
+<dd><code>initializer</code> - </dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>New or existing store instance</dd>
 </dl>
 </li>
 </ul>
@@ -271,7 +301,9 @@ public interface <span class="typeNameLabel">Store&lt;T&gt;</span></pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>identifier</code> - Any object to identify a store. Must be globally unique.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>New store instance</dd>
+<dd>Existing store instance</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../net/jqwik/api/lifecycle/CannotFindStoreException.html" title="class in net.jqwik.api.lifecycle">CannotFindStoreException</a></code></dd>
 </dl>
 </li>
 </ul>

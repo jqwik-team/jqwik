@@ -100,6 +100,12 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">StatisticsEntry</span></pre>
+<div class="block">Describes an entry for a given statistics selector.
+ This is used when plugging in your own statistics report formats.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../net/jqwik/api/statistics/StatisticsReportFormat.html" title="interface in net.jqwik.api.statistics"><code>StatisticsReportFormat</code></a></dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -120,15 +126,21 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/statistics/StatisticsEntry.html#count--">count</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/statistics/StatisticsEntry.html#count--">count</a></span>()</code>
+<div class="block">The number of times a certain value (set) has been collected</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/statistics/StatisticsEntry.html#name--">name</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/statistics/StatisticsEntry.html#name--">name</a></span>()</code>
+<div class="block">The name of an entry usually refers to the collected value(s)</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/statistics/StatisticsEntry.html#percentage--">percentage</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/statistics/StatisticsEntry.html#percentage--">percentage</a></span>()</code>
+<div class="block">The percentage of times a certain value (set) has been collected</div>
+</td>
 </tr>
 </table>
 </li>
@@ -152,6 +164,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>name</h4>
 <pre>java.lang.String&nbsp;name()</pre>
+<div class="block">The name of an entry usually refers to the collected value(s)</div>
 </li>
 </ul>
 <a name="count--">
@@ -161,6 +174,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>count</h4>
 <pre>int&nbsp;count()</pre>
+<div class="block">The number of times a certain value (set) has been collected</div>
 </li>
 </ul>
 <a name="percentage--">
@@ -170,6 +184,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>percentage</h4>
 <pre>double&nbsp;percentage()</pre>
+<div class="block">The percentage of times a certain value (set) has been collected</div>
 </li>
 </ul>
 </li>

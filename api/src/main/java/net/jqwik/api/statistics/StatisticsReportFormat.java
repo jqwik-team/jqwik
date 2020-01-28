@@ -24,7 +24,7 @@ public interface StatisticsReportFormat {
 	 * Return a list of report lines. Often, one line will represent one entry
 	 * but that must not necessarily be the case.
 	 *
-	 * @return the report lines without trailing new lines
+	 * @return All report lines. No trailing `CR` or `LF` characters are needed.
 	 *
 	 * @see StatisticsEntry
 	 */
