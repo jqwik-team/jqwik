@@ -2,6 +2,7 @@ package net.jqwik.engine.discovery;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.logging.*;
 
@@ -10,11 +11,13 @@ import org.junit.platform.engine.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.predicates.*;
+import net.jqwik.engine.support.*;
 
 import static java.lang.String.*;
 import static java.util.stream.Collectors.*;
 import static org.junit.platform.commons.support.HierarchyTraversalMode.*;
 import static org.junit.platform.commons.support.ReflectionSupport.*;
+import static org.junit.platform.engine.SelectorResolutionResult.*;
 
 class HierarchicalJavaResolver {
 
@@ -32,49 +35,58 @@ class HierarchicalJavaResolver {
 	}
 
 	SelectorResolutionResult resolveClass(Class<?> testClass) {
-		Set<TestDescriptor> resolvedDescriptors = resolveContainerWithParents(testClass);
-		resolvedDescriptors.forEach(this::resolveChildren);
+		return resolveSafely(() -> {
+			Set<TestDescriptor> resolvedDescriptors = resolveContainerWithParents(testClass);
+			resolvedDescriptors.forEach(this::resolveChildren);
 
-		if (resolvedDescriptors.isEmpty()) {
-			LOG.info(() -> format("Received request to resolve class '%s' as test container but could not fulfill it", testClass
-																														   .getName()));
-			return SelectorResolutionResult.unresolved();
-		}
+			if (resolvedDescriptors.isEmpty()) {
+				return SelectorResolutionResult.unresolved();
+			}
 
-		return SelectorResolutionResult.resolved();
+			return SelectorResolutionResult.resolved();
+		});
 	}
 
 	SelectorResolutionResult resolveMethod(Class<?> testClass, Method testMethod) {
-		Set<TestDescriptor> potentialParents = resolveContainerWithParents(testClass);
-		Set<TestDescriptor> resolvedDescriptors = resolveForAllParents(testMethod, potentialParents);
+		return resolveSafely(() -> {
+			Set<TestDescriptor> potentialParents = resolveContainerWithParents(testClass);
+			Set<TestDescriptor> resolvedDescriptors = resolveForAllParents(testMethod, potentialParents);
 
-		if (resolvedDescriptors.isEmpty()) {
-			LOG.info(() -> format(
-				"Received request to resolve method '%s' as test but could not fulfill it",
-				testMethod.toGenericString()
-			));
-			return SelectorResolutionResult.unresolved();
-		}
-		return SelectorResolutionResult.resolved();
+			if (resolvedDescriptors.isEmpty()) {
+				return SelectorResolutionResult.unresolved();
+			}
+			return SelectorResolutionResult.resolved();
+		});
 	}
 
 	SelectorResolutionResult resolveUniqueId(UniqueId uniqueId) {
-		// Silently ignore request to resolve foreign ID
-		if (uniqueId.getEngineId().isPresent()) {
-			if (!uniqueId.getEngineId().get().equals(JqwikTestEngine.ENGINE_ID)) {
+		return resolveSafely(() -> {
+			// Silently ignore request to resolve foreign ID
+			if (uniqueId.getEngineId().isPresent()) {
+				if (!uniqueId.getEngineId().get().equals(JqwikTestEngine.ENGINE_ID)) {
+					return SelectorResolutionResult.unresolved();
+				}
+			}
+
+			List<UniqueId.Segment> segments = new ArrayList<>(uniqueId.getSegments());
+			segments.remove(0); // Ignore engine unique ID
+
+			if (!resolveUniqueId(this.engineDescriptor, segments)) {
+				// This is more severe than unresolvable methods or classes because only suitable IDs should get here anyway
+				LOG.warning(() -> format("Received request to resolve unique id '%s' as test or test container but could not fulfill it", uniqueId));
 				return SelectorResolutionResult.unresolved();
 			}
-		}
+			return SelectorResolutionResult.resolved();
+		});
+	}
 
-		List<UniqueId.Segment> segments = new ArrayList<>(uniqueId.getSegments());
-		segments.remove(0); // Ignore engine unique ID
-
-		if (!resolveUniqueId(this.engineDescriptor, segments)) {
-			// This is more severe than unresolvable methods or classes because only suitable IDs should get here anyway
-			LOG.warning(() -> format("Received request to resolve unique id '%s' as test or test container but could not fulfill it", uniqueId));
-			return SelectorResolutionResult.unresolved();
+	private SelectorResolutionResult resolveSafely(Callable<SelectorResolutionResult> callable) {
+		try {
+			return callable.call();
+		} catch (Throwable t) {
+			JqwikExceptionSupport.rethrowIfBlacklisted(t);
+			return failed(t);
 		}
-		return SelectorResolutionResult.resolved();
 	}
 
 	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
