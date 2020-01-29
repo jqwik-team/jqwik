@@ -27,28 +27,59 @@ public class JqwikDiscoverer {
 
 	public void discover(EngineDiscoveryRequest request, TestDescriptor engineDescriptor) {
 		HierarchicalJavaResolver javaElementsResolver = createHierarchicalResolver(engineDescriptor);
+		EngineDiscoveryListener discoveryListener = request.getDiscoveryListener();
 		Predicate<String> classNamePredicate = buildClassNamePredicate(request);
 
 		request.getSelectorsByType(ModuleSelector.class).forEach(selector -> {
 			findAllClassesInModule(selector.getModuleName(), isScannableTestClass, classNamePredicate)
-				.forEach(javaElementsResolver::resolveClass);
+				.forEach(testClass -> {
+					discoveryListener.selectorProcessed(
+						engineDescriptor.getUniqueId(),
+						selector,
+						javaElementsResolver.resolveClass(testClass)
+					);
+				});
 		});
 		request.getSelectorsByType(ClasspathRootSelector.class).forEach(selector -> {
 			findAllClassesInClasspathRoot(selector.getClasspathRoot(), isScannableTestClass, classNamePredicate)
-					.forEach(javaElementsResolver::resolveClass);
+				.forEach(testClass -> {
+					discoveryListener.selectorProcessed(
+						engineDescriptor.getUniqueId(),
+						selector,
+						javaElementsResolver.resolveClass(testClass)
+					);
+				});
 		});
 		request.getSelectorsByType(PackageSelector.class).forEach(selector -> {
 			findAllClassesInPackage(selector.getPackageName(), isScannableTestClass, classNamePredicate)
-					.forEach(javaElementsResolver::resolveClass);
+				.forEach(testClass -> {
+					discoveryListener.selectorProcessed(
+						engineDescriptor.getUniqueId(),
+						selector,
+						javaElementsResolver.resolveClass(testClass)
+					);
+				});
 		});
 		request.getSelectorsByType(ClassSelector.class).forEach(selector -> {
-			javaElementsResolver.resolveClass(selector.getJavaClass());
+			discoveryListener.selectorProcessed(
+				engineDescriptor.getUniqueId(),
+				selector,
+				javaElementsResolver.resolveClass(selector.getJavaClass())
+			);
 		});
 		request.getSelectorsByType(MethodSelector.class).forEach(selector -> {
-			javaElementsResolver.resolveMethod(selector.getJavaClass(), selector.getJavaMethod());
+			discoveryListener.selectorProcessed(
+				engineDescriptor.getUniqueId(),
+				selector,
+				javaElementsResolver.resolveMethod(selector.getJavaClass(), selector.getJavaMethod())
+			);
 		});
 		request.getSelectorsByType(UniqueIdSelector.class).forEach(selector -> {
-			javaElementsResolver.resolveUniqueId(selector.getUniqueId());
+			discoveryListener.selectorProcessed(
+				engineDescriptor.getUniqueId(),
+				selector,
+				javaElementsResolver.resolveUniqueId(selector.getUniqueId())
+			);
 		});
 	}
 

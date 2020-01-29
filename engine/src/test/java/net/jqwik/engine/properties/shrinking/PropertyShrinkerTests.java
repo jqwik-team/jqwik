@@ -31,7 +31,7 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
 
-		verifyZeroInteractions(reporter);
+		verifyNoInteractions(reporter);
 	}
 
 	@Example
@@ -51,7 +51,7 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
 
-		verifyZeroInteractions(reporter);
+		verifyNoInteractions(reporter);
 	}
 
 	@Example
@@ -74,7 +74,7 @@ class PropertyShrinkerTests {
 
 		assertThat(result.steps()).isEqualTo(12);
 
-		verifyZeroInteractions(reporter);
+		verifyNoInteractions(reporter);
 	}
 
 	@Example

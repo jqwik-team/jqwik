@@ -425,6 +425,7 @@ public class Arbitraries {
 	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
 	 */
+	@SafeVarargs
 	public static <T> Arbitrary<List<T>> shuffle(T... values) {
 		return shuffle(Arrays.asList(values));
 	}

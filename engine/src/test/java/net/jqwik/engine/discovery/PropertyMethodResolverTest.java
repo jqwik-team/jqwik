@@ -175,7 +175,7 @@ class PropertyMethodResolverTest {
 			ContainerClassDescriptor classDescriptor = buildContainerDescriptor(TestContainer.class);
 			Method method = TestHelper.getMethod(TestContainer.class, "previouslyFailed");
 			UniqueId previouslyFailedId = JqwikUniqueIDs.appendProperty(classDescriptor.getUniqueId(), method);
-			List falsifiedSample = Arrays.asList("a", 1);
+			List<Object> falsifiedSample = Arrays.asList("a", 1);
 			testRunData.add(new TestRun(previouslyFailedId, Status.FAILED, "4243", falsifiedSample));
 			Set<TestDescriptor> descriptors = resolver.resolveElement(method, classDescriptor);
 

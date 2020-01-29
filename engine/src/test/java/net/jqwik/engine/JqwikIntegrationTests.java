@@ -89,7 +89,7 @@ class JqwikIntegrationTests {
 							.selectors(classpathRootSelectors)
 							.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
 							.execute()
-							.all();
+							.allEvents();
 
 		assertSimpleExampleTests(events);
 	}
@@ -100,7 +100,7 @@ class JqwikIntegrationTests {
 							.engine(createTestEngine())
 							.selectors(selectPackage("examples.packageWithSingleContainer"))
 							.execute()
-							.all();
+							.allEvents();
 
 		assertSimpleExampleTests(events);
 	}
@@ -111,7 +111,7 @@ class JqwikIntegrationTests {
 							.engine(createTestEngine())
 							.selectors(selectClass(SimpleExampleTests.class))
 							.execute()
-							.all();
+							.allEvents();
 
 		assertSimpleExampleTests(events);
 	}
@@ -122,7 +122,7 @@ class JqwikIntegrationTests {
 							.engine(createTestEngine())
 							.selectors(selectClass(ContainerWithFailingConstructor.class))
 							.execute()
-							.all();
+							.allEvents();
 
 		events.assertEventsMatchExactly(
 			event(engine(), started()),
@@ -155,7 +155,7 @@ class JqwikIntegrationTests {
 							.engine(createTestEngine())
 							.selectors(selectMethod(SimpleExampleTests.class, "succeeding"))
 							.execute()
-							.all();
+							.allEvents();
 
 		events.assertEventsMatchExactly(
 			event(engine(), started()),
@@ -174,7 +174,7 @@ class JqwikIntegrationTests {
 							.engine(createTestEngine())
 							.selectors(selectPackage("examples.packageWithSeveralContainers"))
 							.execute()
-							.all();
+							.allEvents();
 
 		assertAllEventsMatch(
 			events,
@@ -220,7 +220,7 @@ class JqwikIntegrationTests {
 							.engine(createTestEngine())
 							.selectors(selectPackage("examples.packageWithDisabledTests"))
 							.execute()
-							.all();
+							.allEvents();
 
 		assertAllEventsMatch(
 			events,
@@ -241,7 +241,7 @@ class JqwikIntegrationTests {
 							.engine(createTestEngine(true))
 							.selectors(selectClass(ContainerWithStatistics.class))
 							.execute()
-							.all();
+							.allEvents();
 
 		assertAllEventsMatch(
 			events,
@@ -267,10 +267,11 @@ class JqwikIntegrationTests {
 	}
 
 	@SafeVarargs
+	// Order of events is ignored
 	// TODO: Remove as soon as https://github.com/junit-team/junit5/issues/1771 is implemented
 	private static void assertAllEventsMatch(Events events, Condition<? super Event>... conditions) {
-		for (int i = 0; i < conditions.length; i++) {
-			events.assertThatEvents().haveExactly(1, conditions[i]);
+		for (Condition<? super Event> condition : conditions) {
+			events.assertThatEvents().haveExactly(1, condition);
 		}
 	}
 

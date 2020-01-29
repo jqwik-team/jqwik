@@ -3,8 +3,8 @@ static isSnapshotRelease(versionString) {
 }
 
 ext {
-	junitPlatformVersion = '1.5.2'
-	junitJupiterVersion = '5.5.2'
+	junitPlatformVersion = '1.6.0'
+	junitJupiterVersion = '5.6.0'
 	apiGuardianVersion = '1.1.0'
 	opentest4jVersion = '1.2.0'
 	archunitVersion = '0.11.0'
@@ -28,16 +28,12 @@ allprojects {
 	apply plugin: 'maven-publish'
 	apply plugin: 'signing'
 
-	java {
-		withJavadocJar()
-		withSourcesJar()
-	}
-
 	tasks['publish'].dependsOn(build)
 
 	publishing {
 		repositories {
 			maven {
+				// hint: password is in ~/.gradle/gradle.properties
 				def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
 				def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
 
@@ -55,6 +51,8 @@ allprojects {
 	}
 
 	java {
+		withJavadocJar()
+		withSourcesJar()
 		sourceCompatibility = JavaVersion.VERSION_1_8
 		targetCompatibility = JavaVersion.VERSION_1_8
 	}

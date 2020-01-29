@@ -49,6 +49,6 @@ signing {
 }
 
 dependencies {
-	api("org.opentest4j:opentest4j:1.1.1")
+	api("org.opentest4j:opentest4j:${opentest4jVersion}")
 	api("org.junit.platform:junit-platform-commons:${junitPlatformVersion}")
 }

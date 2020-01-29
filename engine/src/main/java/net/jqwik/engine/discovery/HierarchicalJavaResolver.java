@@ -31,29 +31,38 @@ class HierarchicalJavaResolver {
 		this.resolvers = resolvers;
 	}
 
-	void resolveClass(Class<?> testClass) {
+	SelectorResolutionResult resolveClass(Class<?> testClass) {
 		Set<TestDescriptor> resolvedDescriptors = resolveContainerWithParents(testClass);
 		resolvedDescriptors.forEach(this::resolveChildren);
 
 		if (resolvedDescriptors.isEmpty()) {
-			LOG.info(() -> format("Received request to resolve class '%s' as test container but could not fulfill it", testClass.getName()));
+			LOG.info(() -> format("Received request to resolve class '%s' as test container but could not fulfill it", testClass
+																														   .getName()));
+			return SelectorResolutionResult.unresolved();
 		}
+
+		return SelectorResolutionResult.resolved();
 	}
 
-	void resolveMethod(Class<?> testClass, Method testMethod) {
+	SelectorResolutionResult resolveMethod(Class<?> testClass, Method testMethod) {
 		Set<TestDescriptor> potentialParents = resolveContainerWithParents(testClass);
 		Set<TestDescriptor> resolvedDescriptors = resolveForAllParents(testMethod, potentialParents);
 
 		if (resolvedDescriptors.isEmpty()) {
-			LOG.info(() -> format("Received request to resolve method '%s' as test but could not fulfill it", testMethod.toGenericString()));
+			LOG.info(() -> format(
+				"Received request to resolve method '%s' as test but could not fulfill it",
+				testMethod.toGenericString()
+			));
+			return SelectorResolutionResult.unresolved();
 		}
+		return SelectorResolutionResult.resolved();
 	}
 
-	void resolveUniqueId(UniqueId uniqueId) {
+	SelectorResolutionResult resolveUniqueId(UniqueId uniqueId) {
 		// Silently ignore request to resolve foreign ID
 		if (uniqueId.getEngineId().isPresent()) {
 			if (!uniqueId.getEngineId().get().equals(JqwikTestEngine.ENGINE_ID)) {
-				return;
+				return SelectorResolutionResult.unresolved();
 			}
 		}
 
@@ -63,12 +72,15 @@ class HierarchicalJavaResolver {
 		if (!resolveUniqueId(this.engineDescriptor, segments)) {
 			// This is more severe than unresolvable methods or classes because only suitable IDs should get here anyway
 			LOG.warning(() -> format("Received request to resolve unique id '%s' as test or test container but could not fulfill it", uniqueId));
+			return SelectorResolutionResult.unresolved();
 		}
+		return SelectorResolutionResult.resolved();
 	}
 
 	private Set<TestDescriptor> resolveContainerWithParents(Class<?> testClass) {
 		Set<TestDescriptor> potentialParents = isContainerAGroup.test(testClass)
-			? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections.singleton(engineDescriptor);
+												   ? resolveContainerWithParents(testClass.getDeclaringClass()) : Collections
+																													  .singleton(engineDescriptor);
 		return resolveForAllParents(testClass, potentialParents);
 	}
 
@@ -133,11 +145,12 @@ class HierarchicalJavaResolver {
 	}
 
 	private Set<TestDescriptor> resolve(AnnotatedElement element, TestDescriptor parent) {
-		return this.resolvers.stream() //
-			.map(resolver -> tryToResolveWithResolver(element, parent, resolver)) //
-			.filter(testDescriptors -> !testDescriptors.isEmpty()) //
-			.flatMap(Collection::stream) //
-			.collect(toSet());
+		return this.resolvers
+				   .stream()
+				   .map(resolver -> tryToResolveWithResolver(element, parent, resolver))
+				   .filter(testDescriptors -> !testDescriptors.isEmpty())
+				   .flatMap(Collection::stream)
+				   .collect(toSet());
 	}
 
 	private Set<TestDescriptor> tryToResolveWithResolver(AnnotatedElement element, TestDescriptor parent, ElementResolver resolver) {

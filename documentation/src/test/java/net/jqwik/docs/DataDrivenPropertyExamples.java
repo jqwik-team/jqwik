@@ -32,7 +32,7 @@ class DataDrivenPropertyExamples {
 	void dataDrivenAndRandomizedIsNotPossible(@ForAll String aString) {}
 
 	@Data
-	Iterable myStrings() {
+	Iterable<Tuple1<String>> myStrings() {
 		return Table.of("a", "b");
 	}
 
