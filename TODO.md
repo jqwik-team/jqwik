@@ -1,8 +1,5 @@
 - 1.2.4
 
-    - Upgrade to JUnit platform 1.6
-      https://junit.org/junit5/docs/5.6.0/release-notes/#deprecations-and-breaking-changes
-
     - @StatisticsReport
         - jqwik.properties, OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
 

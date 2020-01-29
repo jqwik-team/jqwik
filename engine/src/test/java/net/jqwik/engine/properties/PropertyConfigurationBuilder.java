@@ -13,7 +13,7 @@ class PropertyConfigurationBuilder {
 
 	private String seed = "1000";
 	private String previousSeed = null;
-	private List falsifiedSample = null;
+	private List<Object> falsifiedSample = null;
 	private int tries = 100;
 	private int maxDiscardRatio = 5;
 	private ShrinkingMode shrinkingMode = ShrinkingMode.FULL;
@@ -31,7 +31,7 @@ class PropertyConfigurationBuilder {
 		return this;
 	}
 
-	PropertyConfigurationBuilder withFalsifiedSample(List sample) {
+	PropertyConfigurationBuilder withFalsifiedSample(List<Object> sample) {
 		this.falsifiedSample = sample;
 		return this;
 	}

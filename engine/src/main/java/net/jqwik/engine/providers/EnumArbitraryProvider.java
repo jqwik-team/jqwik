@@ -14,8 +14,8 @@ public class EnumArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		// noinspection unchecked
-		return Collections.singleton(Arbitraries.of((Class<Enum>) targetType.getRawType()));
+		//noinspection unchecked
+		return Collections.singleton(Arbitraries.of((Class<? extends Enum<?>>) targetType.getRawType()));
 	}
 
 }

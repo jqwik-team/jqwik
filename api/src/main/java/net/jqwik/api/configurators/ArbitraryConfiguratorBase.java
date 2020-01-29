@@ -81,13 +81,17 @@ public abstract class ArbitraryConfiguratorBase implements ArbitraryConfigurator
 	}
 
 	private <T> List<Method> findConfigurationMethods(Arbitrary<T> arbitrary, Annotation annotation) {
-		Class<? extends Arbitrary> arbitraryClass = arbitrary.getClass();
+		@SuppressWarnings("unchecked")
+		Class<? extends Arbitrary<T>> arbitraryClass = (Class<? extends Arbitrary<T>>) arbitrary.getClass();
 		return findMethods(getClass(),
 				method -> hasCompatibleConfigurationSignature(method, arbitraryClass, annotation), HierarchyTraversalMode.BOTTOM_UP);
 	}
 
-	private static boolean hasCompatibleConfigurationSignature(Method candidate, Class<? extends Arbitrary> arbitraryClass,
-			Annotation annotation) {
+	private static boolean hasCompatibleConfigurationSignature(
+		Method candidate,
+		Class<? extends Arbitrary<?>> arbitraryClass,
+		Annotation annotation
+	) {
 		if (!CONFIG_METHOD_NAME.equals(candidate.getName())) {
 			return false;
 		}

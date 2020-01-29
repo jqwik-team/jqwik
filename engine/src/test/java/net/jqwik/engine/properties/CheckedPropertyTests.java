@@ -216,13 +216,15 @@ class CheckedPropertyTests {
 			assertThat(check.randomSeed()).isEqualTo("4242");
 		}
 
+		@SuppressWarnings("unchecked")
 		@Group
 		class DataDrivenProperty {
 			@Example
 			@Label("works with GenerationMode.AUTO")
 			void runWithGenerationModeAuto() {
-				List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
-				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
+				List<Tuple.Tuple2<Integer, String>> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters =
+					params -> allGeneratedParameters.add(Tuple.of((int) params.get(0), (String) params.get(1)));
 				CheckedProperty checkedProperty = new CheckedProperty(
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
@@ -240,8 +242,8 @@ class CheckedPropertyTests {
 			@Example
 			@Label("works with GenerationMode.DATA_DRIVEN")
 			void runWithGenerationModeDataDriven() {
-				List<Tuple.Tuple2> allGeneratedParameters = new ArrayList<>();
-				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0), params.get(1)));
+				List<Tuple.Tuple2<Integer, String>> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of((int) params.get(0), (String) params.get(1)));
 				CheckedProperty checkedProperty = new CheckedProperty(
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
@@ -302,8 +304,8 @@ class CheckedPropertyTests {
 			@Example
 			@Label("works with GenerationMode.EXHAUSTIVE")
 			void runWithGenerationModeExhaustive() {
-				List<Tuple.Tuple1> allGeneratedParameters = new ArrayList<>();
-				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0)));
+				List<Tuple.Tuple1<Integer>> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of((int) params.get(0)));
 				CheckedProperty checkedProperty = new CheckedProperty(
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
@@ -337,8 +339,8 @@ class CheckedPropertyTests {
 			@Example
 			@Label("works with GenerationMode.AUTO")
 			void runWithGenerationModeAuto() {
-				List<Tuple.Tuple1> allGeneratedParameters = new ArrayList<>();
-				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of(params.get(0)));
+				List<Tuple.Tuple1<Integer>> allGeneratedParameters = new ArrayList<>();
+				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of((int) params.get(0)));
 				CheckedProperty checkedProperty = new CheckedProperty(
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
