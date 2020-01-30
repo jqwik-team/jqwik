@@ -5,7 +5,11 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -119,12 +123,10 @@ public class ShrinkableStringTests {
 			assertThat(sequence.current().value()).isEqualTo("bb");
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(2);
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value().length()).isEqualTo(2);
 			assertThat(sequence.next(count, reporter)).isFalse();
 			assertThat(sequence.current().value()).isEqualTo("aa");
 
-			assertThat(counter.get()).isEqualTo(3);
+			assertThat(counter.get()).isEqualTo(2);
 		}
 
 		@Example

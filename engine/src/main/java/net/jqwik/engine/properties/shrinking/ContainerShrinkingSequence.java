@@ -17,7 +17,11 @@ class ContainerShrinkingSequence<C, E> implements ShrinkingSequence<C> {
 		Function<Shrinkable<List<E>>, Shrinkable<C>> toContainerShrinkable
 	) {
 		this.toContainerShrinkable = toContainerShrinkable;
-		elementsSequence = ShrinkElementsSequence.shrinkElements(currentElements, listFalsifier, distanceFunction);
+		elementsSequence = new ShrinkElementsSequence<>(
+			currentElements,
+			listFalsifier,
+			distanceFunction
+		);
 	}
 
 	@Override

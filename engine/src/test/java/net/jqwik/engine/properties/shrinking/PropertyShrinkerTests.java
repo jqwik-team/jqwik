@@ -7,6 +7,7 @@ import org.junit.platform.engine.reporting.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static java.util.Arrays.*;
@@ -70,6 +71,32 @@ class PropertyShrinkerTests {
 
 		verifyNoInteractions(reporter);
 	}
+
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	boolean shrinkBothParametersTo6(@ForAll @Positive int int1, @ForAll @IntRange(min = 0) int int2) {
+		return int1 <= 5 || int1 != int2;
+	}
+
+	@Property(tries = 10000, afterFailure = AfterFailureMode.PREVIOUS_SEED)
+	boolean shrinkBothParametersToStringAA(@ForAll("aString") String first, @ForAll("aString") String second) {
+		return !first.equals(second);
+	}
+
+	@Provide
+	Arbitrary<String> aString() {
+		return Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(5);
+	}
+
+	@Property(tries = 10000, afterFailure = AfterFailureMode.RANDOM_SEED)
+	boolean shrinkCharacterToA(@ForAll("aChar") char aChar) {
+		return false;
+	}
+
+	@Provide
+	Arbitrary<Character> aChar() {
+		return Arbitraries.chars().range('A', 'Z').range('a', 'z');
+	}
+
 
 	@Example
 	void reportFalsifiedParameters() {

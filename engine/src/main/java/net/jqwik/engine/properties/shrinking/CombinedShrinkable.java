@@ -51,7 +51,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 					return true;
 				}
 			};
-			elementsSequence = ShrinkElementsSequence.shrinkElements(
+			elementsSequence = new ShrinkElementsSequence<>(
 				shrinkables,
 				combinedFalsifier,
 				ShrinkingDistance::combine

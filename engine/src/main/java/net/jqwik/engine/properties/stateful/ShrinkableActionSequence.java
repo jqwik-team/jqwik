@@ -57,7 +57,7 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 				   .candidatesFor(shrinkableList.value())
 				   .stream()
 				   .map(elements -> elements.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList()))
-				   .map((List<Shrinkable<Action<T>>> shrinkableElements) -> (Shrinkable<List<Action<T>>>) new ShrinkableList(shrinkableElements, 1)) //
+				   .map((List<Shrinkable<Action<T>>> shrinkableElements) -> (Shrinkable<List<Action<T>>>) new ShrinkableList(shrinkableElements, 1))
 				   .collect(Collectors.toSet());
 	}
 
@@ -65,9 +65,10 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 		ShrinkableActionSequence<T> shrinkableActionSequence,
 		Falsifier<List<Action<T>>> listFalsifier
 	) {
-		return ShrinkElementsSequence.shrinkElements(
+		return new ShrinkElementsSequence<>(
 			shrinkableActionSequence.actionGenerator.generated(),
-			listFalsifier, ShrinkingDistance::forCollection
+			listFalsifier,
+			ShrinkingDistance::forCollection
 		);
 	}
 

@@ -74,4 +74,12 @@ public class FalsificationResult<T> implements Comparable<FalsificationResult<T>
 		return new FalsificationResult<>(mapper.apply(this.shrinkable()), status, throwable);
 	}
 
+	@Override
+	public String toString() {
+		return "FalsificationResult{" +
+				   "shrinkable.value()=" + shrinkable.value() +
+				   ", status=" + status +
+				   ", throwable=" + throwable +
+				   '}';
+	}
 }
