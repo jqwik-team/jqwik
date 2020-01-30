@@ -1,10 +1,13 @@
 - 1.2.4
 
     - @StatisticsReport
+        - Allow annotation for container class
         - jqwik.properties, OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
 
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
+
+    - Add convenience method for coverage query with single argument
 
     - Probabilistic assertions
 
