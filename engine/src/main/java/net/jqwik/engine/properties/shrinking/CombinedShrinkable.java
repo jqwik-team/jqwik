@@ -39,7 +39,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 	private class CombinedShrinkingSequence implements ShrinkingSequence<T> {
 
-		final private ElementsShrinkingSequence<Object> elementsSequence;
+		final private ShrinkingSequence<List<Object>> elementsSequence;
 
 		private CombinedShrinkingSequence(Falsifier<T> falsifier) {
 			Falsifier<List<Object>> combinedFalsifier = elements -> {
@@ -51,7 +51,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 					return true;
 				}
 			};
-			elementsSequence = new ElementsShrinkingSequence<>(
+			elementsSequence = ShrinkElementsSequence.shrinkElements(
 				shrinkables,
 				combinedFalsifier,
 				ShrinkingDistance::combine

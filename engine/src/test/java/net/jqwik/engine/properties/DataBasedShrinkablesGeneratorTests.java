@@ -50,7 +50,7 @@ class DataBasedShrinkablesGeneratorTests {
 		return values(shrinkablesGenerator.next());
 	}
 
-	private List<Object> values(List<Shrinkable> shrinkables) {
+	private List<Object> values(List<Shrinkable<Object>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 

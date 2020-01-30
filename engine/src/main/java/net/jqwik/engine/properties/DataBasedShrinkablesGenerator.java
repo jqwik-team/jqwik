@@ -24,7 +24,7 @@ public class DataBasedShrinkablesGenerator implements ShrinkablesGenerator {
 	}
 
 	@Override
-	public List<Shrinkable> next() {
+	public List<Shrinkable<Object>> next() {
 		Tuple tuple = iterator.next();
 		checkCompatibility(tuple);
 		return tuple.items().stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());

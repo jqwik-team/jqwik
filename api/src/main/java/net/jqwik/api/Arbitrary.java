@@ -51,6 +51,15 @@ public interface Arbitrary<T> {
 	}
 
 	/**
+	 * Sometimes simplifies test writing
+	 */
+	@SuppressWarnings("unchecked")
+	@API(status = INTERNAL, since = "1.2.4")
+	default Arbitrary<Object> asGeneric() {
+		return (Arbitrary<Object>) this;
+	}
+
+	/**
 	 * Create the random generator for an arbitrary
 	 *
 	 * @param genSize a very unspecific configuration parameter that can be used

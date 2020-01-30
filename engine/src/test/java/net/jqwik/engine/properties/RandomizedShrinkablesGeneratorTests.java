@@ -20,7 +20,7 @@ class RandomizedShrinkablesGeneratorTests {
 	@Example
 	void useSimpleRegisteredArbitraryProviders(@ForAll Random random) {
 		RandomizedShrinkablesGenerator shrinkablesGenerator = createGenerator(random, "simpleParameters");
-		List<Shrinkable> shrinkables = shrinkablesGenerator.next();
+		List<Shrinkable<Object>> shrinkables = shrinkablesGenerator.next();
 
 		Assertions.assertThat(shrinkables.get(0).value()).isInstanceOf(String.class);
 		Assertions.assertThat(shrinkables.get(1).value()).isInstanceOf(Integer.class);
@@ -107,24 +107,24 @@ class RandomizedShrinkablesGeneratorTests {
 		//assertNeverGenerated(shrinkablesGenerator, random, asList("b", asList("a")));
 	}
 
-	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, List expected) {
+	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, List<Object> expected) {
 		for (int i = 0; i < 500; i++) {
-			List<Shrinkable> shrinkables = generator.next();
+			List<Shrinkable<Object>> shrinkables = generator.next();
 			if (values(shrinkables).equals(expected))
 				return;
 		}
 		fail("Failed to generate at least once");
 	}
 
-	private void assertNeverGenerated(ShrinkablesGenerator generator, List expected) {
+	private void assertNeverGenerated(ShrinkablesGenerator generator, List<Object> expected) {
 		for (int i = 0; i < 500; i++) {
-			List<Shrinkable> shrinkables = generator.next();
+			List<Shrinkable<Object>> shrinkables = generator.next();
 			if (values(shrinkables).equals(expected))
 				fail(String.format("%s should never be generated", values(shrinkables)));
 		}
 	}
 
-	private List<Object> values(List<Shrinkable> shrinkables) {
+	private List<Object> values(List<Shrinkable<Object>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 

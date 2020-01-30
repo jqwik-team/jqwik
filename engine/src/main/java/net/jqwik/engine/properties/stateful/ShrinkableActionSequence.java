@@ -35,38 +35,37 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 			falsifier.withPostFilter(actionSequence -> actionSequence.runActions().size() >= minSize);
 
 		return shrinkSequenceOfActions(minRespectingFalsifier)
-			.andThen(shrinkableList -> { //
-				ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkableList;
-				Falsifier<List<Action<T>>> listFalsifier = list -> minRespectingFalsifier.test(toRunnableActionSequence(list));
-				return shrinkIndividualActions(shrinkableSequence, listFalsifier)
-					// Shrink list of actions again since element shrinking
-					// might have made some actions unnecessary
-					.andThen(shrinkListOfActions(listFalsifier))
-					.mapValue(this::toDisplayOnlyActionSequence);
-			});
+				   .andThen(shrinkableList -> { //
+					   ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkableList;
+					   Falsifier<List<Action<T>>> listFalsifier = list -> minRespectingFalsifier.test(toRunnableActionSequence(list));
+					   return shrinkIndividualActions(shrinkableSequence, listFalsifier)
+								  // Shrink list of actions again since element shrinking
+								  // might have made some actions unnecessary
+								  .andThen(shrinkListOfActions(listFalsifier))
+								  .mapValue(this::toDisplayOnlyActionSequence);
+				   });
 
 	}
 
 	private Function<Shrinkable<List<Action<T>>>, ShrinkingSequence<List<Action<T>>>> shrinkListOfActions(Falsifier<List<Action<T>>> listFalsifier) {
 		return shrinkableListOfActions ->
-			new DeepSearchShrinkingSequence<>(shrinkableListOfActions, this::shrinkActionListCandidates, listFalsifier);
+				   new DeepSearchShrinkingSequence<>(shrinkableListOfActions, this::shrinkActionListCandidates, listFalsifier);
 	}
 
 	private Set<Shrinkable<List<Action<T>>>> shrinkActionListCandidates(Shrinkable<List<Action<T>>> shrinkableList) {
-		//noinspection unchecked
 		return listShrinkingCandidates
-			.candidatesFor(shrinkableList.value())
-			.stream()
-			.map(elements -> elements.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList()))
-			.map((List<Shrinkable<Action<T>>> shrinkableElements) -> (Shrinkable<List<Action<T>>>) new ShrinkableList(shrinkableElements, 1)) //
-			.collect(Collectors.toSet());
+				   .candidatesFor(shrinkableList.value())
+				   .stream()
+				   .map(elements -> elements.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList()))
+				   .map((List<Shrinkable<Action<T>>> shrinkableElements) -> (Shrinkable<List<Action<T>>>) new ShrinkableList(shrinkableElements, 1)) //
+				   .collect(Collectors.toSet());
 	}
 
-	private ElementsShrinkingSequence<Action<T>> shrinkIndividualActions(
+	private ShrinkingSequence<List<Action<T>>> shrinkIndividualActions(
 		ShrinkableActionSequence<T> shrinkableActionSequence,
 		Falsifier<List<Action<T>>> listFalsifier
 	) {
-		return new ElementsShrinkingSequence<>(
+		return ShrinkElementsSequence.shrinkElements(
 			shrinkableActionSequence.actionGenerator.generated(),
 			listFalsifier, ShrinkingDistance::forCollection
 		);
@@ -94,10 +93,10 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 	private Set<Shrinkable<ActionSequence<T>>> shrinkSequenceCandidates(Shrinkable<ActionSequence<T>> shrinkable) {
 		ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkable;
 		return listShrinkingCandidates
-			.candidatesFor(shrinkableSequence.actionGenerator.generated())
-			.stream()
-			.map(this::toShrinkableActionSequence)
-			.collect(Collectors.toSet());
+				   .candidatesFor(shrinkableSequence.actionGenerator.generated())
+				   .stream()
+				   .map(this::toShrinkableActionSequence)
+				   .collect(Collectors.toSet());
 	}
 
 	@Override

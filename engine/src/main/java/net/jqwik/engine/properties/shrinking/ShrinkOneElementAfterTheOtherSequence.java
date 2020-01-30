@@ -6,7 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
-public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
+class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List<T>> {
 	private final Falsifier<List<T>> listFalsifier;
 	private final List<FalsificationResult<T>> currentResults;
 	private final Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction;
@@ -15,7 +15,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 	private ShrinkingSequence<T> currentShrinkingSequence = null;
 	private Throwable currentThrowable;
 
-	public ElementsShrinkingSequence(
+	ShrinkOneElementAfterTheOtherSequence(
 		List<Shrinkable<T>> currentElements,
 		Falsifier<List<T>> listFalsifier,
 		Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction
@@ -117,7 +117,7 @@ public class ElementsShrinkingSequence<T> implements ShrinkingSequence<List<T>> 
 
 			@Override
 			public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
-				return ElementsShrinkingSequence.this;
+				return ShrinkOneElementAfterTheOtherSequence.this;
 			}
 
 			@Override

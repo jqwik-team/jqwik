@@ -24,8 +24,12 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 		return new RandomizedShrinkablesGenerator(parameterGenerators, random);
 	}
 
-	private static RandomizedParameterGenerator resolveParameter(ArbitraryResolver arbitraryResolver, MethodParameter parameter, int genSize) {
-		Set<Arbitrary> arbitraries =
+	private static RandomizedParameterGenerator resolveParameter(
+		ArbitraryResolver arbitraryResolver,
+		MethodParameter parameter,
+		int genSize
+	) {
+		Set<Arbitrary<Object>> arbitraries =
 			arbitraryResolver.forParameter(parameter).stream()
 							 .map(GenericArbitrary::new)
 							 .collect(Collectors.toSet());
@@ -50,8 +54,8 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 	}
 
 	@Override
-	public List<Shrinkable> next() {
-		Map<TypeUsage, Arbitrary> generatorsCache = new HashMap<>();
+	public List<Shrinkable<Object>> next() {
+		Map<TypeUsage, Arbitrary<Object>> generatorsCache = new HashMap<>();
 		return parameterGenerators
 				   .stream()
 				   .map(generator -> generator.next(random, generatorsCache))
@@ -60,26 +64,26 @@ public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
 
 	private static class RandomizedParameterGenerator {
 		private final TypeUsage typeUsage;
-		private final List<Arbitrary> arbitraries;
+		private final List<Arbitrary<Object>> arbitraries;
 		private final int genSize;
 
-		private RandomizedParameterGenerator(MethodParameter parameter, Set<Arbitrary> arbitraries, int genSize) {
+		private RandomizedParameterGenerator(MethodParameter parameter, Set<Arbitrary<Object>> arbitraries, int genSize) {
 			this.typeUsage = TypeUsageImpl.forParameter(parameter);
 			this.arbitraries = new ArrayList<>(arbitraries);
 			this.genSize = genSize;
 		}
 
-		private Shrinkable next(Random random, Map<TypeUsage, Arbitrary> arbitrariesCache) {
-			RandomGenerator selectedGenerator = selectGenerator(random, arbitrariesCache);
+		private Shrinkable<Object> next(Random random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
+			RandomGenerator<Object> selectedGenerator = selectGenerator(random, arbitrariesCache);
 			return selectedGenerator.next(random);
 		}
 
-		private RandomGenerator selectGenerator(Random random, Map<TypeUsage, Arbitrary> arbitrariesCache) {
+		private RandomGenerator<Object> selectGenerator(Random random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
 			if (arbitrariesCache.containsKey(typeUsage)) {
 				return arbitrariesCache.get(typeUsage).generator(genSize);
 			}
 			int index = arbitraries.size() == 1 ? 0 : random.nextInt(arbitraries.size());
-			Arbitrary selectedArbitrary = arbitraries.get(index);
+			Arbitrary<Object> selectedArbitrary = arbitraries.get(index);
 			arbitrariesCache.put(typeUsage, selectedArbitrary);
 			return selectedArbitrary.generator(genSize);
 		}

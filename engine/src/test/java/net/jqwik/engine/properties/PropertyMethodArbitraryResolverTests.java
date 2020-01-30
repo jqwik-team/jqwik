@@ -145,7 +145,7 @@ class PropertyMethodArbitraryResolverTests {
 			assertThat(resolver.forParameter(parameter)).containsOnly(firstFit, secondFit);
 		}
 
-		private ArbitraryProvider createProvider(Class targetClass, Arbitrary<?>... arbitraries) {
+		private ArbitraryProvider createProvider(Class<?> targetClass, Arbitrary<?>... arbitraries) {
 			return new ArbitraryProvider() {
 				@Override
 				public boolean canProvideFor(TypeUsage targetType) {
@@ -442,7 +442,7 @@ class PropertyMethodArbitraryResolverTests {
 		);
 	}
 
-	private static MethodParameter getParameter(Class container, String methodName) {
+	private static MethodParameter getParameter(Class<?> container, String methodName) {
 		return TestHelper.getParametersFor(container, methodName).get(0);
 	}
 

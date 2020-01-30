@@ -25,7 +25,7 @@ public class SampleOnlyShrinkablesGenerator implements ShrinkablesGenerator {
 	}
 
 	@Override
-	public List<Shrinkable> next() {
+	public List<Shrinkable<Object>> next() {
 		if (generated) {
 			throw new NoSuchElementException("Sample has already been provided");
 		}
@@ -34,7 +34,7 @@ public class SampleOnlyShrinkablesGenerator implements ShrinkablesGenerator {
 		return sample.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());
 	}
 
-	private void checkCompatibility(List sample) {
+	private void checkCompatibility(List<Object> sample) {
 		if (sample.size() != forAllParameters.size()) {
 			throw new IncompatibleDataException(createIncompatibilityMessage(sample));
 		}
@@ -47,7 +47,7 @@ public class SampleOnlyShrinkablesGenerator implements ShrinkablesGenerator {
 		}
 	}
 
-	private String createIncompatibilityMessage(List sample) {
+	private String createIncompatibilityMessage(List<Object> sample) {
 		List<TypeUsage> parameterTypes =
 			this.forAllParameters
 				.stream()

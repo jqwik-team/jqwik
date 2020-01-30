@@ -5,7 +5,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public interface ShrinkablesGenerator extends Iterator<List<Shrinkable>> {
+public interface ShrinkablesGenerator extends Iterator<List<Shrinkable<Object>>> {
 
 	default ShrinkablesGenerator andThen(Supplier<ShrinkablesGenerator> generatorCreator) {
 		ShrinkablesGenerator first = this;
@@ -20,7 +20,7 @@ public interface ShrinkablesGenerator extends Iterator<List<Shrinkable>> {
 			}
 
 			@Override
-			public List<Shrinkable> next() {
+			public List<Shrinkable<Object>> next() {
 				if (first.hasNext()) {
 					return first.next();
 				}

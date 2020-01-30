@@ -33,6 +33,15 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
 	ShrinkingDistance distance();
 
+	/**
+	 * Sometimes simplifies test writing
+	 */
+	@SuppressWarnings("unchecked")
+	@API(status = INTERNAL, since = "1.2.4")
+	default Shrinkable<Object> asGeneric() {
+		return (Shrinkable<Object>) this;
+	}
+
 	default <U> Shrinkable<U> map(Function<T, U> mapper) {
 		return ShrinkableFacade.implementation.map(this, mapper);
 	}

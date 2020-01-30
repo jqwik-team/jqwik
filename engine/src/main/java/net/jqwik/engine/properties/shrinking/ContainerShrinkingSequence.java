@@ -6,7 +6,7 @@ import java.util.function.*;
 import net.jqwik.api.*;
 
 class ContainerShrinkingSequence<C, E> implements ShrinkingSequence<C> {
-	private final ElementsShrinkingSequence<E> elementsSequence;
+	private final ShrinkingSequence<List<E>> elementsSequence;
 	private final Function<Shrinkable<List<E>>, Shrinkable<C>> toContainerShrinkable;
 	private FalsificationResult<C> currentResult;
 
@@ -17,7 +17,7 @@ class ContainerShrinkingSequence<C, E> implements ShrinkingSequence<C> {
 		Function<Shrinkable<List<E>>, Shrinkable<C>> toContainerShrinkable
 	) {
 		this.toContainerShrinkable = toContainerShrinkable;
-		elementsSequence = new ElementsShrinkingSequence<>(currentElements, listFalsifier, distanceFunction);
+		elementsSequence = ShrinkElementsSequence.shrinkElements(currentElements, listFalsifier, distanceFunction);
 	}
 
 	@Override

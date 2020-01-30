@@ -14,7 +14,7 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		ArbitraryResolver arbitraryResolver,
 		long maxNumberOfSamples
 	) {
-		List<List<ExhaustiveGenerator>> exhaustiveGenerators =
+		List<List<ExhaustiveGenerator<Object>>> exhaustiveGenerators =
 			parameters.stream()
 					  .map(parameter -> resolveParameter(arbitraryResolver, parameter, maxNumberOfSamples))
 					  .collect(Collectors.toList());
@@ -22,7 +22,7 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		return new ExhaustiveShrinkablesGenerator(exhaustiveGenerators);
 	}
 
-	private static List<ExhaustiveGenerator> resolveParameter(
+	private static List<ExhaustiveGenerator<Object>> resolveParameter(
 		ArbitraryResolver arbitraryResolver,
 		MethodParameter parameter,
 		long maxNumberOfSamples
@@ -32,10 +32,9 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));
 		}
 
-		List<ExhaustiveGenerator> exhaustiveGenerators = new ArrayList<>();
+		List<ExhaustiveGenerator<Object>> exhaustiveGenerators = new ArrayList<>();
 		for (Arbitrary arbitrary : arbitraries) {
-			@SuppressWarnings("unchecked")
-			Optional<ExhaustiveGenerator> optionalGenerator = arbitrary.exhaustive(maxNumberOfSamples);
+			Optional<ExhaustiveGenerator<Object>> optionalGenerator = arbitrary.exhaustive(maxNumberOfSamples);
 			if (!optionalGenerator.isPresent()) {
 				String message = String.format("Arbitrary %s does not provide exhaustive generator", arbitrary);
 				throw new JqwikException(message);
@@ -46,10 +45,10 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 
 	}
 
-	private final Iterator<List<Shrinkable>> combinatorialIterator;
+	private final Iterator<List<Shrinkable<Object>>> combinatorialIterator;
 	private final long maxCount;
 
-	private ExhaustiveShrinkablesGenerator(List<List<ExhaustiveGenerator>> generators) {
+	private ExhaustiveShrinkablesGenerator(List<List<ExhaustiveGenerator<Object>>> generators) {
 		this.maxCount = generators
 							.stream()
 							.mapToLong(set -> set.stream().mapToLong(ExhaustiveGenerator::maxCount).sum())
@@ -59,13 +58,13 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		this.combinatorialIterator = combine(generators);
 	}
 
-	private Iterator<List<Shrinkable>> combine(List<List<ExhaustiveGenerator>> generators) {
+	private Iterator<List<Shrinkable<Object>>> combine(List<List<ExhaustiveGenerator<Object>>> generators) {
 		List<Iterable<Object>> iterables = generators
 											   .stream()
 											   .map(this::concat)
 											   .collect(Collectors.toList());
 
-		return new Iterator<List<Shrinkable>>() {
+		return new Iterator<List<Shrinkable<Object>>>() {
 			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 
 			@Override
@@ -74,8 +73,8 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 			}
 
 			@Override
-			public List<Shrinkable> next() {
-				List<Shrinkable> values = new ArrayList<>();
+			public List<Shrinkable<Object>> next() {
+				List<Shrinkable<Object>> values = new ArrayList<>();
 				for (Object o : iterator.next()) {
 					values.add(Shrinkable.unshrinkable(o));
 				}
@@ -84,8 +83,7 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 		};
 	}
 
-	@SuppressWarnings("unchecked")
-	private Iterable<Object> concat(List<ExhaustiveGenerator> generatorList) {
+	private Iterable<Object> concat(List<ExhaustiveGenerator<Object>> generatorList) {
 		List<Iterable<Object>> iterables = generatorList
 											   .stream()
 											   .map(g -> (Iterable<Object>) g)
@@ -99,7 +97,7 @@ public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
 	}
 
 	@Override
-	public List<Shrinkable> next() {
+	public List<Shrinkable<Object>> next() {
 		return combinatorialIterator.next();
 	}
 

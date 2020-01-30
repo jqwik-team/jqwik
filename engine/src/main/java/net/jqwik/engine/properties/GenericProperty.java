@@ -12,8 +12,6 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.engine.properties.PropertyCheckResult.Status.*;
-
 public class GenericProperty {
 
 	private final String name;
@@ -43,18 +41,16 @@ public class GenericProperty {
 			} else {
 				countTries++;
 			}
-			List<Shrinkable> shrinkableParams = shrinkablesGenerator.next();
+			List<Shrinkable<Object>> shrinkableParams = shrinkablesGenerator.next();
 			try {
 				countChecks++;
 				if (!testPredicate(shrinkableParams, reporter, reporting)) {
 					return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, null);
 				}
-			} catch (AssertionError ae) {
-				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ae);
 			} catch (TestAbortedException tae) {
 				countChecks--;
-			} catch (Exception ex) {
-				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ex);
+			} catch (AssertionError | Exception ae) {
+				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ae);
 			} catch (Throwable throwable) {
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				return PropertyCheckResult.erroneous(
@@ -73,7 +69,7 @@ public class GenericProperty {
 	}
 
 	private boolean testPredicate(
-		List<Shrinkable> shrinkableParams,
+		List<Shrinkable<Object>> shrinkableParams,
 		Consumer<ReportEntry> reporter,
 		Reporting[] reporting
 	) {
@@ -89,18 +85,18 @@ public class GenericProperty {
 		return actualDiscardRatio > maxDiscardRatio;
 	}
 
-	private List<Object> extractParams(List<Shrinkable> shrinkableParams) {
+	private List<Object> extractParams(List<Shrinkable<Object>> shrinkableParams) {
 		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
 		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
-		int countTries, List<Shrinkable> shrinkables, Throwable exceptionOrAssertionError
+		int countTries, List<Shrinkable<Object>> shrinkables, Throwable exceptionOrAssertionError
 	) {
 		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, exceptionOrAssertionError);
 
-		List originalParams = extractParams(shrinkables);
-		List shrunkParams = shrinkingResult.values();
+		List<Object> originalParams = extractParams(shrinkables);
+		List<Object> shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
 		return PropertyCheckResult.failure(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
@@ -111,11 +107,11 @@ public class GenericProperty {
 	private PropertyShrinkingResult shrink(
 		Consumer<ReportEntry> reporter,
 		Reporting[] reporting,
-		List<Shrinkable> shrinkables,
+		List<Shrinkable<Object>> shrinkables,
 		Throwable exceptionOrAssertionError
 	) {
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting);
-		Falsifier<List> forAllFalsifier = checkedFunction::test;
+		Falsifier<List<Object>> forAllFalsifier = checkedFunction::test;
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
 	}
 
