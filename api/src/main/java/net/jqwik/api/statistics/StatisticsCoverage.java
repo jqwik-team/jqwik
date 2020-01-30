@@ -29,6 +29,8 @@ public interface StatisticsCoverage {
 		 * Check the number of occurrences using one or more assertions.
 		 *
 		 * @param countChecker a consumer to accept a selected value set's number of occurrences
+		 *                     and the count of all submitted value sets to compare with
+		 *                     or make a calculation
 		 */
 		void count(BiPredicate<Integer, Integer> countChecker);
 
@@ -36,8 +38,6 @@ public interface StatisticsCoverage {
 		 * Check the number of occurrences returning true (ok) or false (fail).
 		 *
 		 * @param countChecker a predicate to accept a selected value set's number of occurrences
-		 *                     and the count of all submitted value sets to compare with
-		 *                     or make a calculation
 		 */
 		void count(Consumer<Integer> countChecker);
 
