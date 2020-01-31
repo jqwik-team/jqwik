@@ -8,9 +8,12 @@ import org.assertj.core.data.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.Statistics;
 import net.jqwik.engine.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
 
@@ -78,7 +81,7 @@ class StatisticsCoverageTests {
 
 			Statistics.coverage(coverage -> {
 				coverage.check(true).count(c -> {
-					Assertions.assertThat(c).isEqualTo(countPositive);
+					assertThat(c).isEqualTo(countPositive);
 				});
 			});
 		}
@@ -89,7 +92,7 @@ class StatisticsCoverageTests {
 
 			Statistics.coverage(coverage -> {
 				coverage.check(true).count((c, a) -> {
-					Assertions.assertThat(c).isLessThanOrEqualTo(a);
+					assertThat(c).isLessThanOrEqualTo(a);
 				});
 			});
 		}
@@ -134,8 +137,8 @@ class StatisticsCoverageTests {
 
 			Statistics.coverage(coverage -> {
 				coverage.check(true).percentage(p -> {
-					Assertions.assertThat(p).isGreaterThan(0.0);
-					Assertions.assertThat(p).isLessThan(100.0);
+					assertThat(p).isGreaterThan(0.0);
+					assertThat(p).isLessThan(100.0);
 				});
 			});
 		}
@@ -163,7 +166,7 @@ class StatisticsCoverageTests {
 			Statistics.coverage(coverage -> {
 				Predicate<List<Integer>> query = params -> params.get(0) <= 50;
 				coverage.checkQuery(query).percentage(p -> {
-					Assertions.assertThat(p).isCloseTo(50.0, Offset.offset(0.1));
+					assertThat(p).isCloseTo(50.0, Offset.offset(0.1));
 				});
 			});
 		}
@@ -182,7 +185,7 @@ class StatisticsCoverageTests {
 
 		@Property(tries = 10)
 		@StatisticsReport(OFF)
-		@ExpectFailure(throwable = ClassCastException.class)
+		@ExpectFailure(checkResult = CheckClassCastException.class)
 		void queryWithWrongTypeFails(@ForAll int anInt) {
 			Statistics.collect(anInt);
 
@@ -190,6 +193,14 @@ class StatisticsCoverageTests {
 				Predicate<List<String>> query = params -> !params.get(0).isEmpty();
 				coverage.checkQuery(query).count(c -> c == 10);
 			});
+		}
+
+		private class CheckClassCastException implements Consumer<PropertyExecutionResult> {
+			@Override
+			public void accept(PropertyExecutionResult propertyExecutionResult) {
+				assertThat(propertyExecutionResult.getThrowable()).isPresent();
+				assertThat(propertyExecutionResult.getThrowable().get()).isInstanceOf(ClassCastException.class);
+			}
 		}
 
 	}

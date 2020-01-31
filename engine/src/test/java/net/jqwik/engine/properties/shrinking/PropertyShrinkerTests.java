@@ -7,9 +7,8 @@ import org.junit.platform.engine.reporting.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static java.util.Arrays.*;
@@ -75,36 +74,32 @@ class PropertyShrinkerTests {
 	}
 
 	@Property(tries = 10000)
+	@ExpectFailure(checkResult = ShrinkTo77.class)
 	boolean shrinkDuplicateParametersTogether(
 		@ForAll @Positive int int1,
 		@ForAll @Positive int int2
 	) {
-		PropertyLifecycle.after(((executionResult, context) -> {
-			if (executionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
-				Optional<List<Object>> falsifiedSample = executionResult.getFalsifiedSample();
-				assertThat(falsifiedSample).isPresent();
-				assertThat(falsifiedSample.get()).containsExactly(6, 6);
-				return executionResult.changeToSuccessful();
-			} else {
-				return executionResult.changeToFailed("Should have failed");
-			}
-		}));
-		return int1 < 6 || int1 != int2;
+		return int1 < 7 || int1 != int2;
+	}
+
+	private class ShrinkTo77 extends ShrinkToChecker {
+		@Override
+		public Iterable<?> shrunkValues() {
+			return Arrays.asList(7, 7);
+		}
 	}
 
 	@Property(tries = 10000, afterFailure = AfterFailureMode.RANDOM_SEED)
+	@ExpectFailure(checkResult = ShrunkToAA.class)
 	void shrinkBothParametersToStringAA(@ForAll("aString") String first, @ForAll("aString") String second) {
-		PropertyLifecycle.after(((executionResult, context) -> {
-			if (executionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
-				Optional<List<Object>> falsifiedSample = executionResult.getFalsifiedSample();
-				assertThat(falsifiedSample).isPresent();
-				assertThat(falsifiedSample.get()).containsExactly("aa", "aa");
-				return executionResult.changeToSuccessful();
-			} else {
-				return executionResult.changeToFailed("Should have failed");
-			}
-		}));
 		assertThat(first).isNotEqualTo(second);
+	}
+
+	private class ShrunkToAA extends ShrinkToChecker {
+		@Override
+		public Iterable<?> shrunkValues() {
+			return Arrays.asList("aa", "aa");
+		}
 	}
 
 	@Provide

@@ -165,15 +165,13 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 	private List<Tuple2<Shrinkable<T>, Shrinkable<T>>> suggestions(Shrinkable<T> first, Shrinkable<T> second) {
 		List<Shrinkable<T>> suggestionsFirst = first.shrinkingSuggestions();
 		List<Shrinkable<T>> suggestionsSecond = second.shrinkingSuggestions();
-		int length = Math.min(suggestionsFirst.size(), suggestionsSecond.size());
 
 		List<Tuple2<Shrinkable<T>, Shrinkable<T>>> suggestions = new ArrayList<>();
-
-		for (int i = 0; i < length; i++) {
-			Shrinkable<T> firstSuggestion = suggestionsFirst.get(i);
-			Shrinkable<T> secondSuggestion = suggestionsSecond.get(i);
-			if (areDuplicates(firstSuggestion, secondSuggestion)) {
-				suggestions.add(Tuple.of(firstSuggestion, secondSuggestion));
+		for (Shrinkable<T> firstSuggestion : suggestionsFirst) {
+			for (Shrinkable<T> secondSuggestion : suggestionsSecond) {
+				if (areDuplicates(firstSuggestion, secondSuggestion)) {
+					suggestions.add(Tuple.of(firstSuggestion, secondSuggestion));
+				}
 			}
 		}
 		return suggestions;

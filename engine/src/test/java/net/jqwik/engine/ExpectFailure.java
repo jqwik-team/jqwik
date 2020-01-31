@@ -1,6 +1,7 @@
 package net.jqwik.engine;
 
 import java.lang.annotation.*;
+import java.util.function.*;
 
 import net.jqwik.api.lifecycle.*;
 
@@ -14,15 +15,16 @@ import net.jqwik.api.lifecycle.*;
 @AddLifecycleHook(ExpectFailureHook.class)
 public @interface ExpectFailure {
 
-	class None extends Throwable {
-		private None() {
+	class NullChecker implements Consumer<PropertyExecutionResult> {
+		@Override
+		public void accept(PropertyExecutionResult propertyExecutionResult) {
 		}
 	}
 
 	/**
-	 * Optionally specify an expected Throwable subtype to show up as failure reason.
+	 * Optionally specify a checker
 	 */
-	Class<? extends Throwable> throwable() default None.class;
+	Class<? extends Consumer<PropertyExecutionResult>> checkResult() default NullChecker.class;
 
 	String value() default "";
 }

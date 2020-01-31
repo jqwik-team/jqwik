@@ -2,40 +2,39 @@ package net.jqwik.engine;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.hooks.*;
+import net.jqwik.engine.support.*;
 
 public class ExpectFailureHook implements AroundPropertyHook {
 
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
 		PropertyExecutionResult testExecutionResult = property.execute();
-		Class<? extends Throwable> expectedFailureType = getExpectedFailureType(context.targetMethod());
+		Consumer<PropertyExecutionResult> resultChecker = getResultChecker(context.targetMethod(), context.testInstance());
 		String messageFromAnnotation = getMessage(context.targetMethod());
 
-		if (testExecutionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
-			if (expectedFailureType == null) {
+		try {
+			if (testExecutionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
+				resultChecker.accept(testExecutionResult);
 				return testExecutionResult.changeToSuccessful();
 			}
-			if (resultHasExpectedFailureType(testExecutionResult, expectedFailureType)) {
-				return testExecutionResult.changeToSuccessful();
-			}
+		} catch (AssertionError assertionError) {
+			return testExecutionResult.changeToFailed(assertionError);
 		}
 
 		String headerText = messageFromAnnotation == null ? "" : messageFromAnnotation + "\n\t";
-		String expectedFailureTypeText = expectedFailureType == null ? ""
-											 : String.format(" with exception of type [%s]", expectedFailureType.getName());
 		String reason = testExecutionResult.getThrowable()
 										   .map(throwable -> String.format("it failed with [%s]", throwable))
 										   .orElse("it did not fail at all");
 		String message = String.format(
-			"%sProperty [%s] should have failed%s, but %s",
+			"%sProperty [%s] should have failed, but %s",
 			headerText,
 			context.label(),
-			expectedFailureTypeText,
 			reason
 		);
 		return testExecutionResult.changeToFailed(message);
@@ -58,17 +57,26 @@ public class ExpectFailureHook implements AroundPropertyHook {
 								  .orElse(false);
 	}
 
-	private Class<? extends Throwable> getExpectedFailureType(Method method) {
+	private Consumer<PropertyExecutionResult> getResultChecker(Method method, Object testInstance) {
 		Optional<ExpectFailure> annotation = AnnotationSupport.findAnnotation(method, ExpectFailure.class);
-		return annotation.map(expectFailure -> {
-			Class<? extends Throwable> expectedFailureType = expectFailure.throwable();
-			return expectedFailureType == ExpectFailure.None.class ? null : expectedFailureType;
-		}).orElse(null);
+		return annotation.map((ExpectFailure expectFailure) -> {
+			Class<? extends Consumer<PropertyExecutionResult>> checkResult = expectFailure.checkResult();
+			return (Consumer<PropertyExecutionResult>) JqwikReflectionSupport.newInstanceInTestContext(checkResult, testInstance);
+		})
+						 .orElse(
+							 JqwikReflectionSupport.newInstanceInTestContext(ExpectFailure.NullChecker.class, testInstance)
+						 );
 	}
 
 	@Override
 	public int aroundPropertyProximity() {
 		return Hooks.AroundProperty.EXPECT_FAILURE_PROXIMITY;
+	}
+
+	static class NullChecker implements Consumer<PropertyExecutionResult> {
+		@Override
+		public void accept(PropertyExecutionResult propertyExecutionResult) {
+		}
 	}
 
 }
