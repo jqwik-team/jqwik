@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.util.*;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
@@ -17,14 +18,18 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 			implementation = FacadeLoader.load(ShrinkableFacade.class);
 		}
 
-		public abstract <T> Shrinkable<T> unshrinkable(T value);
+		public abstract <T> Shrinkable<T> unshrinkable(T value, ShrinkingDistance distance);
 		public abstract <T, U> Shrinkable<U> map(Shrinkable<T> self, Function<T, U> mapper);
 		public abstract <T> Shrinkable<T> filter(Shrinkable<T> self, Predicate<T> filter);
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed);
 	}
 
 	static <T> Shrinkable<T> unshrinkable(T value) {
-		return ShrinkableFacade.implementation.unshrinkable(value);
+		return unshrinkable(value, ShrinkingDistance.of(0));
+	}
+
+	static <T> Shrinkable<T> unshrinkable(T value, ShrinkingDistance distance) {
+		return ShrinkableFacade.implementation.unshrinkable(value, distance);
 	}
 
 	T value();
@@ -50,6 +55,10 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return ShrinkableFacade.implementation.filter(this, filter);
 	}
 
+	default <U> Shrinkable<U> flatMap(Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
+		return ShrinkableFacade.implementation.flatMap(this, flatMapper, tries, randomSeed);
+	}
+
 	@Override
 	@API(status = INTERNAL)
 	default int compareTo(Shrinkable<T> other) {
@@ -61,7 +70,20 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return this.distance().compareTo(other.distance()) < 0;
 	}
 
-	default <U> Shrinkable<U> flatMap(Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed) {
-		return ShrinkableFacade.implementation.flatMap(this, flatMapper, tries, randomSeed);
+	/**
+	 * Used only when several shrinkables must be shrunk in synchronicity e.g. duplicate values.
+	 * Override in mostly all implementations since the default produces only a few values.
+	 */
+	@API(status = INTERNAL)
+	default List<Shrinkable<T>> shrinkingSuggestions() {
+		ShrinkingSequence<T> allDown = shrink(ignore -> false);
+		List<Shrinkable<T>> suggestions = new ArrayList<>();
+		while(allDown.next(() -> {}, result -> {})) {
+			suggestions.add(allDown.current().shrinkable());
+		}
+		suggestions.sort(null);
+		return suggestions;
 	}
+
+
 }

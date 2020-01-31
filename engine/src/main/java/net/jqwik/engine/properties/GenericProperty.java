@@ -93,9 +93,8 @@ public class GenericProperty {
 		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
 		int countTries, List<Shrinkable<Object>> shrinkables, Throwable exceptionOrAssertionError
 	) {
-		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, exceptionOrAssertionError);
-
 		List<Object> originalParams = extractParams(shrinkables);
+		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, exceptionOrAssertionError);
 		List<Object> shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
 		return PropertyCheckResult.failure(

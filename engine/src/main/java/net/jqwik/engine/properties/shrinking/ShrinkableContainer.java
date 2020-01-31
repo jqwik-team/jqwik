@@ -17,10 +17,10 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	}
 
 	private C createValue(List<Shrinkable<E>> shrinkables) {
-		return shrinkables //
-						   .stream() //
-						   .map(Shrinkable::value) //
-						   .collect(containerCollector());
+		return shrinkables
+				   .stream()
+				   .map(Shrinkable::value)
+				   .collect(containerCollector());
 	}
 
 	@Override
@@ -40,6 +40,16 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 			);
 	}
 
+	@Override
+	public List<Shrinkable<C>> shrinkingSuggestions() {
+		ArrayList<Shrinkable<C>> shrinkables = new ArrayList<>(shrinkCandidatesFor(this));
+		if (shrinkables.isEmpty()) {
+			return Shrinkable.super.shrinkingSuggestions();
+		}
+		shrinkables.sort(null);
+		return shrinkables;
+	}
+
 	private C toContainer(List<E> listOfE) {
 		return listOfE.stream().collect(containerCollector());
 	}
@@ -47,6 +57,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	private Shrinkable<C> toContainerShrinkable(Shrinkable<List<E>> listOfShrinkable) {
 		List<Shrinkable<E>> shrinkableElements =
 			listOfShrinkable.value().stream()
+							// TODO: Can the distance of these unshrinkables be computed?
 							.map(Shrinkable::unshrinkable)
 							.collect(Collectors.toList());
 		return createShrinkable(shrinkableElements);
@@ -54,10 +65,10 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	private Set<Shrinkable<C>> shrinkCandidatesFor(Shrinkable<C> shrinkable) {
 		ShrinkableContainer<C, E> listShrinkable = (ShrinkableContainer<C, E>) shrinkable;
-		return shrinkCandidates.candidatesFor(listShrinkable.elements) //
-			.stream() //
-			.map(this::createShrinkable) //
-			.collect(Collectors.toSet());
+		return shrinkCandidates.candidatesFor(listShrinkable.elements)
+							   .stream()
+							   .map(this::createShrinkable)
+							   .collect(Collectors.toSet());
 	}
 
 	@Override
@@ -80,10 +91,12 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	@Override
 	public String toString() {
-		return String.format("%s<%s>(%s:%s)", //
-			getClass().getSimpleName(), //
-			value().getClass().getSimpleName(), //
-			value(), distance());
+		return String.format(
+			"%s<%s>(%s:%s)",
+			getClass().getSimpleName(),
+			value().getClass().getSimpleName(),
+			value(), distance()
+		);
 	}
 
 	abstract Shrinkable<C> createShrinkable(List<Shrinkable<E>> shrunkElements);

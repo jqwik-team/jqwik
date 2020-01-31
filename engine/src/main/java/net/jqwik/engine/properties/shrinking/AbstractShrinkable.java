@@ -22,6 +22,13 @@ public abstract class AbstractShrinkable<T> implements Shrinkable<T> {
 		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier);
 	}
 
+	@Override
+	public List<Shrinkable<T>> shrinkingSuggestions() {
+		ArrayList<Shrinkable<T>> shrinkables = new ArrayList<>(shrinkCandidatesFor(this));
+		shrinkables.sort(null);
+		return shrinkables;
+	}
+
 	public abstract Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable);
 
 	@Override

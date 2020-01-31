@@ -33,8 +33,8 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
 		Falsifier<T> toMapFalsifier = aT -> falsifier.test(generateShrinkable(aT).value());
-		return toMap.shrink(toMapFalsifier) //
-					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, randomSeed))) //
+		return toMap.shrink(toMapFalsifier)
+					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, randomSeed)))
 					.andThen(aShrinkable -> {
 						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
 						return flatMappedShrinkable.shrinkable.shrink(falsifier);

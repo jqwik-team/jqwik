@@ -2,8 +2,6 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
@@ -13,40 +11,46 @@ class UnshrinkableTests {
 
 	@Example
 	void unshrinkableAreNotBeingShrunk() {
-		Shrinkable<String> unshrinkableString = new Unshrinkable<>("a string");
+		Shrinkable<String> unshrinkableString = Shrinkable.unshrinkable("a string");
 
 		ShrinkingSequence<String> shrinkingSequence = unshrinkableString.shrink(ignore -> false);
-		while(shrinkingSequence.next(() -> {}, ignore -> {})) {}
+		while (shrinkingSequence.next(() -> {}, ignore -> {})) {}
 
 		assertThat(shrinkingSequence.current().value()).isEqualTo("a string");
 	}
 
 	@Example
+	void unshrinkableCanHaveDistance() {
+		Shrinkable<String> unshrinkableString = Shrinkable.unshrinkable("a string", ShrinkingDistance.of(42));
+		assertThat(unshrinkableString.distance()).isEqualTo(ShrinkingDistance.of(42));
+	}
+
+	@Example
 	void equals() {
-		Unshrinkable<?> unshrinkable1 = new Unshrinkable<>("a string");
-		Unshrinkable<?> unshrinkable2 = new Unshrinkable<>("a string");
-		Unshrinkable<?> unshrinkable3 = new Unshrinkable<>("different string");
+		Shrinkable<?> unshrinkable1 = Shrinkable.unshrinkable("a string");
+		Shrinkable<?> unshrinkable2 = Shrinkable.unshrinkable("a string");
+		Shrinkable<?> unshrinkable3 = Shrinkable.unshrinkable("different string");
 		assertThat(unshrinkable1.equals(unshrinkable2)).isTrue();
 		assertThat(unshrinkable1.equals(unshrinkable3)).isFalse();
 	}
 
 	@Example
 	void hashCodeDifferentForDifferentValues() {
-		Unshrinkable<?> unshrinkable1 = new Unshrinkable<>("a string");
-		Unshrinkable<?> unshrinkable2 = new Unshrinkable<>("different string");
+		Shrinkable<?> unshrinkable1 = Shrinkable.unshrinkable("a string");
+		Shrinkable<?> unshrinkable2 = Shrinkable.unshrinkable("different string");
 		assertThat(unshrinkable1.hashCode()).isNotEqualTo(unshrinkable2.hashCode());
 	}
 
 	@Example
 	void nullValueEquals() {
-		Unshrinkable<?> unshrinkable1 = new Unshrinkable<>(null);
-		Unshrinkable<?> unshrinkable2 = new Unshrinkable<>(null);
+		Shrinkable<?> unshrinkable1 = Shrinkable.unshrinkable(null);
+		Shrinkable<?> unshrinkable2 = Shrinkable.unshrinkable(null);
 		assertThat(unshrinkable1.equals(unshrinkable2)).isTrue();
 	}
 
 	@Example
 	void nullValueHashCode() {
-		Unshrinkable<?> unshrinkable = new Unshrinkable<>(null);
+		Shrinkable<?> unshrinkable = Shrinkable.unshrinkable(null);
 		assertThat(unshrinkable.hashCode()).isEqualTo(0);
 	}
 

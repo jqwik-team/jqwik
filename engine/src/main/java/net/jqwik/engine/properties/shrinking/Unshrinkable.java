@@ -7,8 +7,11 @@ import net.jqwik.engine.support.*;
 
 public class Unshrinkable<T> implements Shrinkable<T> {
 	private final T value;
+	private final ShrinkingDistance distance;
 
-	public Unshrinkable(T value) {this.value = value;}
+	public Unshrinkable(T value, ShrinkingDistance distance) {this.value = value;
+		this.distance = distance;
+	}
 
 	@Override
 	public T value() {
@@ -22,7 +25,7 @@ public class Unshrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public ShrinkingDistance distance() {
-		return ShrinkingDistance.of(0);
+		return distance;
 	}
 
 	@Override

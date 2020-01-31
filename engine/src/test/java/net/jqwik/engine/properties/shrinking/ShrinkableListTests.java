@@ -158,7 +158,7 @@ class ShrinkableListTests {
 			assertThat(sequence.next(count, reporter)).isFalse();
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 
-			Assertions.assertThat(counter.get()).isEqualTo(3);
+			Assertions.assertThat(counter.get()).isEqualTo(2);
 		}
 
 		@Example

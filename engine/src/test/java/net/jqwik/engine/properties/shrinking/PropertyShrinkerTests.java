@@ -7,7 +7,9 @@ import org.junit.platform.engine.reporting.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static java.util.Arrays.*;
@@ -72,39 +74,43 @@ class PropertyShrinkerTests {
 		verifyNoInteractions(reporter);
 	}
 
-	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
-	boolean shrinkBothParametersTo6(
+	@Property(tries = 10000)
+	boolean shrinkDuplicateParametersTogether(
 		@ForAll @Positive int int1,
 		@ForAll @Positive int int2
 	) {
-		return int1 <= 5 || int1 != int2;
+		PropertyLifecycle.after(((executionResult, context) -> {
+			if (executionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
+				Optional<List<Object>> falsifiedSample = executionResult.getFalsifiedSample();
+				assertThat(falsifiedSample).isPresent();
+				assertThat(falsifiedSample.get()).containsExactly(6, 6);
+				return executionResult.changeToSuccessful();
+			} else {
+				return executionResult.changeToFailed("Should have failed");
+			}
+		}));
+		return int1 < 6 || int1 != int2;
 	}
 
 	@Property(tries = 10000, afterFailure = AfterFailureMode.RANDOM_SEED)
 	void shrinkBothParametersToStringAA(@ForAll("aString") String first, @ForAll("aString") String second) {
+		PropertyLifecycle.after(((executionResult, context) -> {
+			if (executionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
+				Optional<List<Object>> falsifiedSample = executionResult.getFalsifiedSample();
+				assertThat(falsifiedSample).isPresent();
+				assertThat(falsifiedSample.get()).containsExactly("aa", "aa");
+				return executionResult.changeToSuccessful();
+			} else {
+				return executionResult.changeToFailed("Should have failed");
+			}
+		}));
 		assertThat(first).isNotEqualTo(second);
-	}
-
-	@Property(tries = 10000, afterFailure = AfterFailureMode.PREVIOUS_SEED)
-	void shrinkParameterToAA(@ForAll("aString") String first) {
-		assertThat(first).doesNotContain("B");
 	}
 
 	@Provide
 	Arbitrary<String> aString() {
 		return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
 	}
-
-	@Property(tries = 10000, generation = GenerationMode.RANDOMIZED, afterFailure = AfterFailureMode.RANDOM_SEED)
-	boolean shrinkCharacterToF(@ForAll("aChar") char aChar) {
-		return aChar < 'F';
-	}
-
-	@Provide
-	Arbitrary<Character> aChar() {
-		return Arbitraries.chars().range('A', 'Z').range('a', 'z');
-	}
-
 
 	@Example
 	void reportFalsifiedParameters() {
@@ -135,13 +141,13 @@ class PropertyShrinkerTests {
 
 	@Example
 	void withBoundedShrinkingBreakOffAfter1000Steps() {
-		List<Shrinkable<Object>> parameters = toList(900, 900);
+		List<Shrinkable<Object>> parameters = toList(900, 1000);
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.BOUNDED, reporter, new Reporting[0]);
 
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, null);
 
-		assertThat(result.values()).isEqualTo(asList(0, 800));
+		assertThat(result.values()).isEqualTo(asList(0, 900));
 
 		ArgumentCaptor<ReportEntry> entryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
 		verify(reporter, times(1)).accept(entryCaptor.capture());

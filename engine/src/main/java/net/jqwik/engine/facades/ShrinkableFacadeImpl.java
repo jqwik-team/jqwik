@@ -10,8 +10,8 @@ import net.jqwik.engine.properties.shrinking.*;
  */
 public class ShrinkableFacadeImpl extends Shrinkable.ShrinkableFacade {
 	@Override
-	public <T> Shrinkable<T> unshrinkable(T value) {
-		return new Unshrinkable<>(value);
+	public <T> Shrinkable<T> unshrinkable(T value, ShrinkingDistance distance) {
+		return new Unshrinkable<>(value, distance);
 	}
 
 	@Override

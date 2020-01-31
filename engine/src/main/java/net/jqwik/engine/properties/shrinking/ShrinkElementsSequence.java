@@ -1,11 +1,11 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 
 /**
  * This can be used to shrink the individual shrinkable elements in a list
@@ -20,9 +20,9 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 	private final List<Shrinkable<T>> currentShrinkables;
 	private final Falsifier<List<T>> listFalsifier;
 	private final Function<List<Shrinkable<T>>, ShrinkingDistance> distanceFunction;
+	private final List<Tuple2<Integer, Integer>> tableOfDuplicates;
 	private ShrinkOneElementAfterTheOtherSequence<T> nextSequence;
 	private Throwable currentThrowable;
-	private Map<Integer, Integer> tableOfDuplicates = new HashMap<>();
 
 	public ShrinkElementsSequence(
 		List<Shrinkable<T>> currentShrinkables,
@@ -32,24 +32,27 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 		this.currentShrinkables = currentShrinkables;
 		this.listFalsifier = listFalsifier;
 		this.distanceFunction = distanceFunction;
-		buildTableOfDuplicates();
+		this.tableOfDuplicates = buildTableOfDuplicates(currentShrinkables);
 	}
 
-	private void buildTableOfDuplicates() {
-		for (int i = 0; i < currentShrinkables.size(); i++) {
-			for (int j = i + 1; j < currentShrinkables.size(); j++) {
-				Shrinkable<T> iShrinkable = currentShrinkables.get(i);
-				Shrinkable<T> jShrinkable = currentShrinkables.get(j);
+	private static <T> List<Tuple2<Integer, Integer>> buildTableOfDuplicates(List<Shrinkable<T>> shrinkables) {
+		List<Tuple2<Integer, Integer>> indicesOfDuplicateValues = new ArrayList<>();
+		for (int i = 0; i < shrinkables.size(); i++) {
+			for (int j = i + 1; j < shrinkables.size(); j++) {
+				Shrinkable<T> iShrinkable = shrinkables.get(i);
+				Shrinkable<T> jShrinkable = shrinkables.get(j);
 				if (areDuplicates(iShrinkable, jShrinkable)) {
-					tableOfDuplicates.put(i, j);
+					indicesOfDuplicateValues.add(Tuple.of(i, j));
 				}
 			}
 		}
+		return indicesOfDuplicateValues;
 	}
 
-	private boolean areDuplicates(Shrinkable<T> iShrinkable, Shrinkable<T> jShrinkable) {
-		return Objects.equals(iShrinkable.value(), jShrinkable.value()) && iShrinkable.getClass().equals(jShrinkable.getClass());
+	private static <T> boolean areDuplicates(Shrinkable<T> first, Shrinkable<T> second) {
+		return Objects.equals(first.value(), second.value()) && first.getClass().equals(second.getClass());
 	}
+
 
 	@Override
 	public boolean next(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
@@ -58,6 +61,19 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 		} else {
 			return shrinkDuplicates(count, falsifiedReporter);
 		}
+	}
+
+	@Override
+	public FalsificationResult<List<T>> current() {
+		if (doneWithShrinkingDuplicates()) {
+			return nextSequence().current();
+		} else {
+			return createCurrent();
+		}
+	}
+
+	private boolean doneWithShrinkingDuplicates() {
+		return tableOfDuplicates.isEmpty();
 	}
 
 	private ShrinkOneElementAfterTheOtherSequence<T> nextSequence() {
@@ -73,65 +89,65 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 	}
 
 	private boolean shrinkDuplicates(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
-		if (tableOfDuplicates.isEmpty()) {
+		if (doneWithShrinkingDuplicates()) {
 			return false;
 		}
-		Map.Entry<Integer, Integer> indexPair = tableOfDuplicates.entrySet().iterator().next();
-		tableOfDuplicates.remove(indexPair.getKey());
-		boolean shrinkResult = shrinkPair(indexPair, count, falsifiedReporter);
-		if (shrinkResult) {
+		Tuple2<Integer, Integer> indexPair = tableOfDuplicates.get(0);
+		tableOfDuplicates.remove(indexPair);
+		if (shrinkPair(indexPair, count, falsifiedReporter)) {
+			tableOfDuplicates.removeIf(pairInTable -> shareAnyIndex(pairInTable, indexPair));
 			return true;
 		} else {
-			return shrinkDuplicates(count, falsifiedReporter);
+			return next(count, falsifiedReporter);
 		}
 	}
 
+	private boolean shareAnyIndex(Tuple2<Integer, Integer> pair1, Tuple2<Integer, Integer> pair2) {
+		if (pair1.get1().equals(pair2.get1())) {
+			return true;
+		}
+		if (pair1.get1().equals(pair2.get2())) {
+			return true;
+		}
+		if (pair1.get2().equals(pair2.get1())) {
+			return true;
+		}
+		if (pair1.get2().equals(pair2.get2())) {
+			return true;
+		}
+		return false;
+	}
+
 	private boolean shrinkPair(
-		Map.Entry<Integer, Integer> indexPair,
+		Tuple2<Integer, Integer> indexPair,
 		Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter
 	) {
 		List<Shrinkable<T>> current = new ArrayList<>(currentShrinkables);
 		boolean wasShrunk = false;
-		int firstIndex = indexPair.getKey();
-		int secondIndex = indexPair.getValue();
+		int firstIndex = indexPair.get1();
+		int secondIndex = indexPair.get2();
 
 		Shrinkable<T> firstShrinkable = current.get(firstIndex);
 		Shrinkable<T> secondShrinkable = current.get(secondIndex);
 
-		while (true) {
+		List<Tuple2<Shrinkable<T>, Shrinkable<T>>> candidatePairs = suggestions(firstShrinkable, secondShrinkable);
 
-			Optional<Shrinkable<T>> firstCandidate = candidate(firstShrinkable);
-			Optional<Shrinkable<T>> secondCandidate = candidate(secondShrinkable);
+		for (Tuple2<Shrinkable<T>, Shrinkable<T>> candidatePair : candidatePairs) {
 
-			if (firstCandidate.isPresent() && secondCandidate.isPresent()) {
+			Shrinkable<T> firstShrunk = candidatePair.get1();
+			Shrinkable<T> secondShrunk = candidatePair.get2();
 
-				Shrinkable<T> firstShrunk = firstCandidate.get();
-				Shrinkable<T> secondShrunk = secondCandidate.get();
+			ArrayList<Shrinkable<T>> toTry = new ArrayList<>(current);
+			toTry.set(firstIndex, firstShrunk);
+			toTry.set(secondIndex, secondShrunk);
+			FalsificationResult<List<T>> result = listFalsifier.falsify(toShrinkableList(toTry));
 
-				System.out.println(String.format("#### Trying %s:%s", firstShrunk, secondShrunk));
-
-				if (areDuplicates(firstShrunk, secondShrunk)) {
-					ArrayList<Shrinkable<T>> toTry = new ArrayList<>(current);
-					toTry.set(firstIndex, firstShrunk);
-					toTry.set(secondIndex, secondShrunk);
-					FalsificationResult<List<T>> result = listFalsifier.falsify(toShrinkableList(toTry));
-
-					if (result.status() == FalsificationResult.Status.FALSIFIED) {
-						System.out.println(result);
-						currentThrowable = result.throwable().orElse(null);
-						count.run();
-						falsifiedReporter.accept(result);
-						current = toTry;
-						wasShrunk = true;
-					}
-
-					firstShrinkable = firstShrunk;
-					secondShrinkable = secondShrunk;
-				} else {
-					break;
-				}
-
-			} else {
+			if (result.status() == FalsificationResult.Status.FALSIFIED) {
+				currentThrowable = result.throwable().orElse(null);
+				count.run();
+				falsifiedReporter.accept(result);
+				current = toTry;
+				wasShrunk = true;
 				break;
 			}
 		}
@@ -139,34 +155,28 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 		if (wasShrunk) {
 			currentShrinkables.set(firstIndex, current.get(firstIndex));
 			currentShrinkables.set(secondIndex, current.get(secondIndex));
+			// Shrink recursively with new values
+			shrinkPair(indexPair, count, falsifiedReporter);
 		}
 
 		return wasShrunk;
-//		return false;
 	}
 
-	private Optional<Shrinkable<T>> candidate(Shrinkable<T> toShrink) {
-		AtomicInteger count = new AtomicInteger();
-		ShrinkingSequence<T> sequence = toShrink.shrink(t -> count.getAndIncrement() > 0);
-		if (sequence.next(() -> {}, tFalsificationResult -> {})) {
-			return Optional.of(sequence.current().shrinkable());
-		} else {
-			return Optional.empty();
+	private List<Tuple2<Shrinkable<T>, Shrinkable<T>>> suggestions(Shrinkable<T> first, Shrinkable<T> second) {
+		List<Shrinkable<T>> suggestionsFirst = first.shrinkingSuggestions();
+		List<Shrinkable<T>> suggestionsSecond = second.shrinkingSuggestions();
+		int length = Math.min(suggestionsFirst.size(), suggestionsSecond.size());
+
+		List<Tuple2<Shrinkable<T>, Shrinkable<T>>> suggestions = new ArrayList<>();
+
+		for (int i = 0; i < length; i++) {
+			Shrinkable<T> firstSuggestion = suggestionsFirst.get(i);
+			Shrinkable<T> secondSuggestion = suggestionsSecond.get(i);
+			if (areDuplicates(firstSuggestion, secondSuggestion)) {
+				suggestions.add(Tuple.of(firstSuggestion, secondSuggestion));
+			}
 		}
-	}
-
-	private boolean doneWithShrinkingDuplicates() {
-//		return true;
-		return tableOfDuplicates.isEmpty();
-	}
-
-	@Override
-	public FalsificationResult<List<T>> current() {
-		if (doneWithShrinkingDuplicates()) {
-			return nextSequence().current();
-		} else {
-			return createCurrent();
-		}
+		return suggestions;
 	}
 
 	private FalsificationResult<List<T>> createCurrent() {

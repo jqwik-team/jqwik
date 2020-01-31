@@ -1,5 +1,10 @@
 - 1.2.4
 
+    - Duplicate Shrinking
+      - Tests for collections
+      - Test action sequences
+      - Implement shrinkingSuggestions for most Shrinkable subtypes
+
     - @StatisticsReport
         - Allow annotation for container class
         - jqwik.properties, OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
@@ -10,8 +15,6 @@
     - Add convenience method for coverage query with single argument
 
     - Probabilistic assertions
-
-    - Shrinking of Tuple<T, T>: Shrink parameters in sync
 
     - Lifecycle
         - Allow to specify proximity/order in `@AddLifecycleHook`
