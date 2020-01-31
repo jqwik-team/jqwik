@@ -45,12 +45,10 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 				}
 			}
 		}
-		System.out.println("###############################");
-		System.out.println(tableOfDuplicates);
 	}
 
 	private boolean areDuplicates(Shrinkable<T> iShrinkable, Shrinkable<T> jShrinkable) {
-		return iShrinkable.equals(jShrinkable);
+		return Objects.equals(iShrinkable.value(), jShrinkable.value()) && iShrinkable.getClass().equals(jShrinkable.getClass());
 	}
 
 	@Override
@@ -79,11 +77,11 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 			return false;
 		}
 		Map.Entry<Integer, Integer> indexPair = tableOfDuplicates.entrySet().iterator().next();
+		tableOfDuplicates.remove(indexPair.getKey());
 		boolean shrinkResult = shrinkPair(indexPair, count, falsifiedReporter);
 		if (shrinkResult) {
 			return true;
 		} else {
-			tableOfDuplicates.remove(indexPair.getKey());
 			return shrinkDuplicates(count, falsifiedReporter);
 		}
 	}
@@ -97,10 +95,10 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 		int firstIndex = indexPair.getKey();
 		int secondIndex = indexPair.getValue();
 
-		while (true) {
+		Shrinkable<T> firstShrinkable = current.get(firstIndex);
+		Shrinkable<T> secondShrinkable = current.get(secondIndex);
 
-			Shrinkable<T> firstShrinkable = current.get(firstIndex);
-			Shrinkable<T> secondShrinkable = current.get(secondIndex);
+		while (true) {
 
 			Optional<Shrinkable<T>> firstCandidate = candidate(firstShrinkable);
 			Optional<Shrinkable<T>> secondCandidate = candidate(secondShrinkable);
@@ -126,6 +124,9 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 						current = toTry;
 						wasShrunk = true;
 					}
+
+					firstShrinkable = firstShrunk;
+					secondShrinkable = secondShrunk;
 				} else {
 					break;
 				}
@@ -145,7 +146,8 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 	}
 
 	private Optional<Shrinkable<T>> candidate(Shrinkable<T> toShrink) {
-		ShrinkingSequence<T> sequence = toShrink.shrink(t -> false);
+		AtomicInteger count = new AtomicInteger();
+		ShrinkingSequence<T> sequence = toShrink.shrink(t -> count.getAndIncrement() > 0);
 		if (sequence.next(() -> {}, tFalsificationResult -> {})) {
 			return Optional.of(sequence.current().shrinkable());
 		} else {
@@ -186,7 +188,7 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 
 			@Override
 			public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
-				return ShrinkElementsSequence.this;
+				return new ShrinkElementsSequence<>(shrinkables, listFalsifier, distanceFunction);
 			}
 
 			@Override

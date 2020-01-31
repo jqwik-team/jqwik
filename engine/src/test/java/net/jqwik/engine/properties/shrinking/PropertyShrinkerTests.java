@@ -73,23 +73,31 @@ class PropertyShrinkerTests {
 	}
 
 	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
-	boolean shrinkBothParametersTo6(@ForAll @Positive int int1, @ForAll @IntRange(min = 0) int int2) {
+	boolean shrinkBothParametersTo6(
+		@ForAll @Positive int int1,
+		@ForAll @Positive int int2
+	) {
 		return int1 <= 5 || int1 != int2;
 	}
 
+	@Property(tries = 10000, afterFailure = AfterFailureMode.RANDOM_SEED)
+	void shrinkBothParametersToStringAA(@ForAll("aString") String first, @ForAll("aString") String second) {
+		assertThat(first).isNotEqualTo(second);
+	}
+
 	@Property(tries = 10000, afterFailure = AfterFailureMode.PREVIOUS_SEED)
-	boolean shrinkBothParametersToStringAA(@ForAll("aString") String first, @ForAll("aString") String second) {
-		return !first.equals(second);
+	void shrinkParameterToAA(@ForAll("aString") String first) {
+		assertThat(first).doesNotContain("B");
 	}
 
 	@Provide
 	Arbitrary<String> aString() {
-		return Arbitraries.strings().alpha().ofMinLength(2).ofMaxLength(5);
+		return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
 	}
 
-	@Property(tries = 10000, afterFailure = AfterFailureMode.RANDOM_SEED)
-	boolean shrinkCharacterToA(@ForAll("aChar") char aChar) {
-		return false;
+	@Property(tries = 10000, generation = GenerationMode.RANDOMIZED, afterFailure = AfterFailureMode.RANDOM_SEED)
+	boolean shrinkCharacterToF(@ForAll("aChar") char aChar) {
+		return aChar < 'F';
 	}
 
 	@Provide
