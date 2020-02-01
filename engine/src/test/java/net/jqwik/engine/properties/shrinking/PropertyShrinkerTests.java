@@ -75,7 +75,8 @@ class PropertyShrinkerTests {
 
 	@Property(tries = 10000)
 	@ExpectFailure(checkResult = ShrinkTo77.class)
-	boolean shrinkDuplicateParametersTogether(
+	// TODO: Sometimes does not fail
+	boolean shrinkDuplicateIntegersTogether(
 		@ForAll @Positive int int1,
 		@ForAll @Positive int int2
 	) {
@@ -89,9 +90,9 @@ class PropertyShrinkerTests {
 		}
 	}
 
-	@Property(tries = 10000, afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Property(tries = 10000)
 	@ExpectFailure(checkResult = ShrunkToAA.class)
-	void shrinkBothParametersToStringAA(@ForAll("aString") String first, @ForAll("aString") String second) {
+	void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
 		assertThat(first).isNotEqualTo(second);
 	}
 
