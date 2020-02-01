@@ -28,7 +28,7 @@ public interface StatisticsCollector {
 	 *               </ul>
 	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 	 */
-	void collect(Object... values);
+	StatisticsCollector collect(Object... values);
 
 	/**
 	 * Perform coverage checking for successful property on statistics.

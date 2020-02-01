@@ -28,11 +28,12 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	}
 
 	@Override
-	public void collect(Object... values) {
+	public StatisticsCollector collect(Object... values) {
 		ensureAtLeastOneParameter(values);
 		List<Object> key = keyFrom(values);
 		ensureSameNumberOfValues(key);
 		updateCounts(key);
+		return this;
 	}
 
 	private void updateCounts(List<Object> key) {
