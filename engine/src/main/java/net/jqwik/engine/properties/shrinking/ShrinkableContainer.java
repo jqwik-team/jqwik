@@ -43,9 +43,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	@Override
 	public List<Shrinkable<C>> shrinkingSuggestions() {
 		ArrayList<Shrinkable<C>> shrinkables = new ArrayList<>(shrinkCandidatesFor(this));
-		if (shrinkables.isEmpty()) {
-			return Shrinkable.super.shrinkingSuggestions();
-		}
+		shrinkables.addAll(Shrinkable.super.shrinkingSuggestions());
 		shrinkables.sort(null);
 		return shrinkables;
 	}

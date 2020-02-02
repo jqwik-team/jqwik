@@ -75,10 +75,9 @@ class PropertyShrinkerTests {
 
 	@Property(tries = 10000)
 	@ExpectFailure(checkResult = ShrinkTo77.class)
-	// TODO: Sometimes does not fail
 	boolean shrinkDuplicateIntegersTogether(
-		@ForAll @Positive int int1,
-		@ForAll @Positive int int2
+		@ForAll @IntRange(min = 1, max = 100) int int1,
+		@ForAll @IntRange(min = 1, max = 100) int int2
 	) {
 		return int1 < 7 || int1 != int2;
 	}

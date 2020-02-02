@@ -59,10 +59,18 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return ShrinkableFacade.implementation.flatMap(this, flatMapper, tries, randomSeed);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@API(status = INTERNAL)
 	default int compareTo(Shrinkable<T> other) {
-		return this.distance().compareTo(other.distance());
+		int comparison = this.distance().compareTo(other.distance());
+		if (comparison == 0) {
+			T value = value();
+			if (value instanceof Comparable) {
+				return ((Comparable<T>) value).compareTo(other.value());
+			}
+		}
+		return comparison;
 	}
 
 	@API(status = INTERNAL)
