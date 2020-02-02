@@ -23,16 +23,6 @@ class ShrinkingSuggestionsTests {
 		assertThat(suggestedValues).containsExactly(1, 2);
 	}
 
-	private <T> Stream<T> suggestedValues(Shrinkable<T> shrinkable) {
-		List<Shrinkable<T>> suggestions = shrinkable.shrinkingSuggestions();
-		return suggestions.stream().map(Shrinkable::value);
-	}
-
-	private <T> Shrinkable<T> generateValue(Arbitrary<T> arbitrary, int value) {
-		RandomGenerator<T> generator = arbitrary.generator(100);
-		return generateUntil(generator, SourceOfRandomness.current(), i -> i.equals(value));
-	}
-
 	@Example
 	void filtered(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
@@ -46,32 +36,43 @@ class ShrinkingSuggestionsTests {
 
 	}
 
+	@Property(tries = 10)
+	void mapped(@ForAll Random random) {
+		Arbitrary<String> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
+
+		Shrinkable<String> shrinkable = generateValue(arbitrary, "3");
+
+		Stream<String> suggestedValues = suggestedValues(shrinkable);
+		assertThat(suggestedValues).containsExactly("1", "2");
+
+	}
+
+	@Property(tries = 10)
+	void flatMapped(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+					   .flatMap(i -> Arbitraries.of(i));
+		Shrinkable<Integer> shrinkable = generateValue(arbitrary, 3);
+
+		Stream<Integer> suggestedValues = suggestedValues(shrinkable);
+		assertThat(suggestedValues).containsOnly(1, 2);
+	}
+
+	private <T> Stream<T> suggestedValues(Shrinkable<T> shrinkable) {
+		List<Shrinkable<T>> suggestions = shrinkable.shrinkingSuggestions();
+		return suggestions.stream().map(Shrinkable::value);
+	}
+
+	private <T> Shrinkable<T> generateValue(Arbitrary<T> arbitrary, T target) {
+		RandomGenerator<T> generator = arbitrary.generator(100);
+		return generateUntil(generator, SourceOfRandomness.current(), value -> value.equals(target));
+	}
+
 //	@Property(tries = 10)
 //	void unique(@ForAll Random random) {
 //		Arbitrary<Integer> arbitrary =
 //			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique();
-//		assertAllValuesAreShrunkTo(1, arbitrary, random);
-//	}
-//
-//	@Property(tries = 10)
-//	void uniqueInSet(@ForAll Random random) {
-//		Arbitrary<Set<Integer>> arbitrary =
-//			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique().set().ofSize(3);
-//		assertAllValuesAreShrunkTo(new HashSet<>(Arrays.asList(1, 2, 3)), arbitrary, random);
-//	}
-//
-//	@Property(tries = 10)
-//	void mapped(@ForAll Random random) {
-//		Arbitrary<String> arbitrary =
-//			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
-//		assertAllValuesAreShrunkTo("1", arbitrary, random);
-//	}
-//
-//	@Property(tries = 10)
-//	void flatMapped(@ForAll Random random) {
-//		Arbitrary<Integer> arbitrary =
-//			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
-//					   .flatMap(i -> Arbitraries.of(i));
 //		assertAllValuesAreShrunkTo(1, arbitrary, random);
 //	}
 //

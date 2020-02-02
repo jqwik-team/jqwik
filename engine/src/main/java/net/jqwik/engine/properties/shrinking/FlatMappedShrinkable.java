@@ -42,6 +42,19 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	}
 
 	@Override
+	public List<Shrinkable<U>> shrinkingSuggestions() {
+		List<Shrinkable<U>> suggestions = new ArrayList<>();
+		suggestions.addAll(shrinkable.shrinkingSuggestions());
+		for (Shrinkable<T> tShrinkable : toMap.shrinkingSuggestions()) {
+			FlatMappedShrinkable<T, U> flatMappedShrinkable = new FlatMappedShrinkable<>(tShrinkable, mapper, randomSeed);
+			suggestions.add(flatMappedShrinkable.shrinkable);
+			suggestions.addAll(flatMappedShrinkable.shrinkingSuggestions());
+		}
+		suggestions.sort(null);
+		return suggestions;
+	}
+
+	@Override
 	public U value() {
 		return value;
 	}
