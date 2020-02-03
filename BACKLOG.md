@@ -1,10 +1,5 @@
 ### Bugs
 
-- Bug: Arbitrary method resolution is sometimes too loose.
-  E.g. return type `@Provide ActionSequenceArbitrary<Integer>` would be accepted
-  for parameter of type `@ForAll Arbitrary<ActionSequence<String>>` which will lead
-  to class cast exception on property evaluation. See TODO in TypeUsage.canBeAssignedTo()
-  
 ### Missing Tests
 
 - Add tests for RandomGenerators
@@ -94,6 +89,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - For ActionSequences
 
 - Configuration:
+  - `defaultStatisticsReportFormat`=OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
   - Switch to JUnit platform configuration
   - Find a way to set config params through command line or env variable
 

@@ -1,8 +1,6 @@
 - 1.2.4
 
-    - @StatisticsReport
-        - Allow annotation for container class
-        - jqwik.properties, OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
+    - @StatisticsReport: Allow annotation for container class
 
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
