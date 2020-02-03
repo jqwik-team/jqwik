@@ -132,7 +132,6 @@ public interface Arbitrary<T> {
 	 * values that are accepted by the {@code filterPredicate}.
 	 *
 	 * @return a new arbitrary instance
-	 *
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> filter(Predicate<T> filterPredicate) {
@@ -221,7 +220,6 @@ public interface Arbitrary<T> {
 	 * never generate the same value twice.
 	 *
 	 * @return a new arbitrary instance
-	 *
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
 	default Arbitrary<T> unique() {
@@ -397,17 +395,22 @@ public interface Arbitrary<T> {
 	 * 		<li>Playing around with arbitraries in <em>jshell</em></li>
 	 * 		<li>Using arbitraries independently from jqwik, e.g. to feed test data builders</li>
 	 * </ul>
-	 *
 	 * <p>
-	 * The underlying generator is created with size 1000.
-	 * Outside a property a new instance of {@linkplain Random} will be created
-	 * to feed the generator.
-	 * <p>
-	 *
-	 * <p>
-	 *     Using this method within a property does not break reproducibility of results,
-	 *     i.e. rerunning it with same seed will also generate the same value.
-	 * </p>
+	 * Some additional things to be aware of:
+	 * <ul>
+	 *     <li>
+	 *         If you feel the need to use this method for real generation, e.g. in a provider method
+	 *         you are most probably doing it wrong. You might want to use {@linkplain Arbitrary#flatMap(Function)}.
+	 *     </li>
+	 *     <li>
+	 *         The underlying generator is created with size 1000.
+	 * 	       Outside a property a new instance of {@linkplain Random} will be created
+	 * 	       to feed the generator.</li>
+	 *     <li>
+	 *         Using this method within a property does not break reproducibility of results,
+	 * 	       i.e. rerunning it with same seed will also generate the same value.
+	 *     </li>
+	 * </ul>
 	 *
 	 * @return a newly generated value
 	 */
