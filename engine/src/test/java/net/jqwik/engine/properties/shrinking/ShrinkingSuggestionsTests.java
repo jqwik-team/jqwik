@@ -80,6 +80,19 @@ class ShrinkingSuggestionsTests {
 		assertThat(suggestedValues).containsExactlyElementsOf(expectedValues);
 	}
 
+	@Property(tries = 10)
+	void lazy(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.lazy(() -> Arbitraries.of(1, 2, 3, 4, 5, 6));
+
+		Shrinkable<Integer> shrinkable = generateValue(arbitrary, 3);
+
+		Stream<Integer> suggestedValues = suggestedValues(shrinkable);
+		assertThat(suggestedValues).containsOnly(1, 2);
+	}
+
+
+
 	private <T> Stream<T> suggestedValues(Shrinkable<T> shrinkable) {
 		List<Shrinkable<T>> suggestions = shrinkable.shrinkingSuggestions();
 		return suggestions.stream().map(Shrinkable::value);
@@ -90,13 +103,6 @@ class ShrinkingSuggestionsTests {
 		return generateUntil(generator, SourceOfRandomness.current(), value -> value.equals(target));
 	}
 
-//	@Property(tries = 10)
-//	void lazy(@ForAll Random random) {
-//		Arbitrary<Integer> arbitrary =
-//			Arbitraries.lazy(() -> Arbitraries.of(1, 2, 3, 4, 5, 6));
-//		assertAllValuesAreShrunkTo(1, arbitrary, random);
-//	}
-//
 //	@Property(tries = 10)
 //	boolean forType(@ForAll Random random) {
 //		Arbitrary<Counter> arbitrary = Arbitraries.forType(Counter.class);
