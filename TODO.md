@@ -3,7 +3,6 @@
     - Duplicate Shrinking
       - Tests for collections
       - Test action sequences
-      - Implement shrinkingSuggestions for most Shrinkable subtypes
 
     - @StatisticsReport
         - Allow annotation for container class

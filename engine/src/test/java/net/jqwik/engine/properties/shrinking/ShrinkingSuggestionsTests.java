@@ -4,13 +4,13 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
 
-// TODO: Add tests for all relevant shrinkables
 class ShrinkingSuggestionsTests {
 
 	@Example
@@ -21,6 +21,32 @@ class ShrinkingSuggestionsTests {
 
 		Stream<Integer> suggestedValues = suggestedValues(shrinkable);
 		assertThat(suggestedValues).containsExactly(1, 2);
+	}
+
+	@Example
+	void integers() {
+		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 6);
+
+		Shrinkable<Integer> shrinkable = generateValue(arbitrary, 3);
+
+		Stream<Integer> suggestedValues = suggestedValues(shrinkable);
+		assertThat(suggestedValues).containsExactly(1, 2);
+	}
+
+	@Example
+	void strings() {
+		Arbitrary<String> arbitrary = Arbitraries.strings()
+												 .withCharRange('a', 'd')
+												 .ofMinLength(1)
+												 .ofMaxLength(2);
+
+		Shrinkable<String> shrinkable = generateValue(arbitrary, "bb");
+
+		Stream<String> suggestedValues = suggestedValues(shrinkable);
+		assertThat(suggestedValues).containsOnly("a", "b");
+
+		// TODO: Improve ShrinkableContainer.shrinkingSuggestions() so that:
+		// assertThat(suggestedValues).containsOnly("aa", "ab", "ba", "a", "b");
 	}
 
 	@Example
@@ -35,7 +61,7 @@ class ShrinkingSuggestionsTests {
 
 	}
 
-	@Property(tries = 10)
+	@Example
 	void mapped() {
 		Arbitrary<String> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
@@ -47,7 +73,7 @@ class ShrinkingSuggestionsTests {
 
 	}
 
-	@Property(tries = 10)
+	@Example
 	void flatMapped() {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -80,8 +106,8 @@ class ShrinkingSuggestionsTests {
 		assertThat(suggestedValues).containsExactlyElementsOf(expectedValues);
 	}
 
-	@Property(tries = 10)
-	void lazy(@ForAll Random random) {
+	@Example
+	void lazy() {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazy(() -> Arbitraries.of(1, 2, 3, 4, 5, 6));
 
@@ -91,7 +117,33 @@ class ShrinkingSuggestionsTests {
 		assertThat(suggestedValues).containsOnly(1, 2);
 	}
 
+	@Example
+	void combinations() {
+		Arbitrary<Integer> arbitrary1 = Arbitraries.of(1, 2, 3, 4);
+		Arbitrary<Integer> arbitrary2 = Arbitraries.of(1, 2, 3, 4);
 
+		Arbitrary<Tuple2<Integer, Integer>> arbitrary =
+			Combinators.combine(arbitrary1, arbitrary2).as(Tuple::of);
+
+		Shrinkable<Tuple2<Integer, Integer>> shrinkable = generateValue(arbitrary, Tuple.of(3, 2));
+
+		Stream<Tuple2<Integer, Integer>> suggestedValues = suggestedValues(shrinkable);
+
+		assertThat(suggestedValues).containsExactlyInAnyOrder(
+			Tuple.of(1, 1),
+			Tuple.of(1, 2)
+		);
+
+		// TODO: Implement CombinedShrinkable.shrinkingSuggestions() so that:
+		//		assertThat(suggestedValues).containsOnly(
+		//			Tuple.of(1, 1),
+		//			Tuple.of(2, 1),
+		//			Tuple.of(3, 1),
+		//			Tuple.of(1, 2),
+		//			Tuple.of(2, 2)
+		//		);
+
+	}
 
 	private <T> Stream<T> suggestedValues(Shrinkable<T> shrinkable) {
 		List<Shrinkable<T>> suggestions = shrinkable.shrinkingSuggestions();
@@ -103,102 +155,4 @@ class ShrinkingSuggestionsTests {
 		return generateUntil(generator, SourceOfRandomness.current(), value -> value.equals(target));
 	}
 
-//	@Property(tries = 10)
-//	boolean forType(@ForAll Random random) {
-//		Arbitrary<Counter> arbitrary = Arbitraries.forType(Counter.class);
-//		Counter value = shrinkToEnd(arbitrary, random);
-//
-//		// 0:1, 1:0, 0:-1 or -1:0
-//		return Math.abs(value.n1 + value.n2) == 1;
-//	}
-//
-//	@Property(tries = 10)
-//	void collectedListShrinksElementsAndSize(@ForAll Random random) {
-//		Arbitrary<Integer> integersShrunkTowardMax =
-//			Arbitraries
-//				.integers()
-//				.between(1, 3)
-//				.map(i -> 4 - i);
-//
-//		Arbitrary<List<Integer>> collected = integersShrunkTowardMax.collect(list -> sum(list) >= 12);
-//		RandomGenerator<List<Integer>> generator = collected.generator(10);
-//
-//		Shrinkable<List<Integer>> shrinkable = generator.next(random);
-//
-//		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
-//		sequence.init(FalsificationResult.falsified(shrinkable));
-//
-//		while (sequence.next(() -> {}, ignore -> {})) ;
-//		assertThat(sequence.current().value()).containsExactly(3, 3, 3, 3);
-//	}
-//
-//	private int sum(List<Integer> list) {
-//		return list.stream().mapToInt(i -> i).sum();
-//	}
-//
-//
-//	@Group
-//	class Maps {
-//
-//		@Property(tries = 10)
-//		boolean mapIsShrunkToEmptyMap(@ForAll Random random) {
-//			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
-//			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(1);
-//
-//			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
-//
-//			return shrinkToEnd(arbitrary, random).isEmpty();
-//		}
-//
-//		@Property(tries = 10)
-//		void mapIsShrunkToSmallestValue(@ForAll Random random) {
-//			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
-//			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(1);
-//
-//			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
-//
-//			Falsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
-//			Map<Integer, String> map = falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
-//
-//			assertThat(map).hasSize(2);
-//			assertThat(map.keySet()).containsAnyOf(0, 1, -1);
-//			assertThat(map.values()).containsOnly("A");
-//		}
-//
-//	}
-//
-//	private static class Counter {
-//		public int n1, n2;
-//
-//		public Counter(int n1, int n2) {
-//			if (n1 == n2) {
-//				throw new IllegalArgumentException("Numbers must not be equal");
-//			}
-//			this.n1 = n1;
-//			this.n2 = n2;
-//		}
-//
-//		@Override
-//		public boolean equals(Object o) {
-//			if (this == o) return true;
-//			if (o == null || getClass() != o.getClass()) return false;
-//
-//			Counter counter = (Counter) o;
-//
-//			if (n1 != counter.n1) return false;
-//			return n2 == counter.n2;
-//		}
-//
-//		@Override
-//		public int hashCode() {
-//			int result = n1;
-//			result = 31 * result + n2;
-//			return result;
-//		}
-//
-//		@Override
-//		public String toString() {
-//			return n1 + ":" + n2;
-//		}
-//	}
 }
