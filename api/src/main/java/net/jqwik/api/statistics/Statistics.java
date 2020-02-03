@@ -57,10 +57,10 @@ public class Statistics {
 	 * 	Statistics.label("range").collect(range);
 	 * 	Statistics.label("value").collect(anInt);
 	 *
-	 * 	Statistics.coverageOf("range",
+	 * 	Statistics.label("range).coverage(
 	 * 		coverage -&gt; coverage.check("small").percentage(p -&gt; p &gt; 20.0)
 	 *         );
-	 * 	Statistics.coverageOf("value",
+	 * 	Statistics.label("value").coverage(
 	 * 		coverage -&gt; coverage.check(0).count(c -&gt; c &gt; 0)
 	 *         );
 	 * }
@@ -73,6 +73,7 @@ public class Statistics {
 	 *               <li>The number of values must always be the same in a single property</li>
 	 *               <li>Values can be {@code null}</li>
 	 *               </ul>
+	 *
 	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
 	 * @see #label(String)
 	 */
