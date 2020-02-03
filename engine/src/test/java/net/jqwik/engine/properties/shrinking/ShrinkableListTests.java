@@ -147,18 +147,22 @@ class ShrinkableListTests {
 
 		@Example
 		void alsoShrinkElements() {
-			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
+			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 2, 3);
 
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(integers -> integers.size() <= 1);
-
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(asList(1, 1));
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value().size()).isEqualTo(2);
-			assertThat(sequence.next(count, reporter)).isFalse();
+			while(sequence.next(count, reporter));
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
+		}
 
-			Assertions.assertThat(counter.get()).isEqualTo(2);
+		@Example
+		void shrinkDuplicateElements() {
+			Shrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3);
+
+			ShrinkingSequence<List<Integer>> sequence =
+				shrinkable.shrink(integers -> integers.size() != 2 ||
+												  !integers.get(0).equals(integers.get(1)));
+			while(sequence.next(count, reporter));
+			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 		}
 
 		@Example

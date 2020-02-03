@@ -1,9 +1,5 @@
 - 1.2.4
 
-    - Duplicate Shrinking
-      - Tests for collections
-      - Test action sequences
-
     - @StatisticsReport
         - Allow annotation for container class
         - jqwik.properties, OFF|STANDARD|<MyReportFormatClass>, default = STANDARD

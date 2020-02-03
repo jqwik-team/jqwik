@@ -124,24 +124,11 @@ class ShrinkableSetTests {
 
 		@Example
 		void alsoShrinkElements() {
-
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> aSet.size() <= 1);
-
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).containsExactly(2, 3);
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).containsExactly(1, 3);
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).containsExactly(0, 3);
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).containsExactly(0, 2);
-			assertThat(sequence.next(count, reporter)).isTrue();
+			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).containsExactly(0, 1);
-			assertThat(sequence.next(count, reporter)).isFalse();
-
-			assertThat(counter.get()).isEqualTo(5);
 		}
 
 		@Example
