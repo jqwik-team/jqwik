@@ -25,9 +25,15 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Statistical coverage checking can now be done in a fluent API style
+
+- Improved shrinking of parameters that require duplicate values for falsifying a property
+
 - Upgrade to JUnit Platform 1.6.0
 
 #### Breaking Changes
+
+- Removed `Statistics.coverageOf()`. It's now `Statistics.label(..).coverage(..)`
 
 #### Bug Fixes
 

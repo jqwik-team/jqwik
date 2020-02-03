@@ -2450,27 +2450,26 @@ void simpleStats(@ForAll RoundingMode mode) {
 }
 ```
 
-The same thing is possible for values collected with a specific label:
+The same thing is possible for values collected with a specific label
+and in a fluent API style.
 
 ```java
 @Property(generation = GenerationMode.RANDOMIZED)
 void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
 	String range = anInt < 3 ? "small" : "large";
-	Statistics.label("range").collect(range);
-	Statistics.label("value").collect(anInt);
 
-	Statistics.coverageOf("range", 
-		coverage -> coverage.check("small").percentage(p -> p > 20.0)
-        );
-	Statistics.coverageOf("value", 
-		coverage -> coverage.check(0).count(c -> c > 0)
-        );
+	Statistics.label("range")
+			  .collect(range)
+			  .coverage(coverage -> coverage.check("small").percentage(p -> p > 20.0));
+
+	Statistics.label("value")
+			  .collect(anInt)
+			  .coverage(coverage -> coverage.check(0).count(c -> c > 0));
 }
 ```
 
 Start by looking at
-[`Statistics.coverage()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#coverage-java.util.function.Consumer-) and
-[`Statistics.coverageOf()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#coverageOf-java.lang.String-java.util.function.Consumer-)
+[`Statistics.coverage()`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/Statistics.html#coverage-java.util.function.Consumer-)
 to see all the options you have for checking percentages and counts.
 
 #### Check Ad-hoc Query Coverage

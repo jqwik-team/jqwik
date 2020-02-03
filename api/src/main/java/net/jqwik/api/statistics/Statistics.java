@@ -68,16 +68,4 @@ public class Statistics {
 		StatisticsFacade.implementation.defaultCollector().coverage(checker);
 	}
 
-	/**
-	 * Perform coverage checking for successful property on labelled statistics
-	 * for values collected with {@linkplain #collect(Object...)}
-	 *
-	 * @param label   The label that was used for reporting the collected statistical values
-	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
-	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	public static void coverageOf(String label, Consumer<StatisticsCoverage> checker) {
-		StatisticsFacade.implementation.collectorByLabel(label).coverage(checker);
-	}
-
 }

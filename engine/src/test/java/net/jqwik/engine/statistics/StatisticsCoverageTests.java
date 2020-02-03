@@ -46,7 +46,7 @@ class StatisticsCoverageTests {
 		void coverageWorksForLabelledCollectors(@ForAll int anInt) {
 			Statistics.label("ints").collect(anInt > 0);
 
-			Statistics.coverageOf("ints", coverage -> {
+			Statistics.label("ints").coverage(coverage -> {
 				coverage.check(true).count(c -> false);
 			});
 		}
@@ -115,7 +115,7 @@ class StatisticsCoverageTests {
 		void coverageWorksForLabelledCollectors(@ForAll int anInt) {
 			Statistics.label("ints").collect(anInt > 0);
 
-			Statistics.coverageOf("ints", coverage -> {
+			Statistics.label("ints").coverage(coverage -> {
 				coverage.check(true).percentage(c -> {
 					Assertions.fail("");
 				});
@@ -177,7 +177,7 @@ class StatisticsCoverageTests {
 			Statistics.label("twice").collect(anInt);
 			Statistics.label("twice").collect(anInt);
 
-			Statistics.coverageOf("twice", coverage -> {
+			Statistics.label("twice").coverage(coverage -> {
 				Predicate<List<Integer>> query = params -> params.get(0) <= 10;
 				coverage.checkQuery(query).count(c -> c == 20);
 			});

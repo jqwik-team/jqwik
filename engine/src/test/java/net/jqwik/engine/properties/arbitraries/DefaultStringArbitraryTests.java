@@ -151,10 +151,12 @@ class DefaultStringArbitraryTests {
 
 	@Property
 	void randomStringsShouldContainZeroChar(@ForAll @StringLength(min = 1, max = 20) String aString) {
-		Statistics.label("contains 0").collect(aString.contains("\u0000"));
-		Statistics.label("0 at last position").collect(aString.charAt(aString.length() - 1) == '\u0000');
-		Statistics.coverageOf("contains 0", coverage -> coverage.check(true).count(c -> c > 10));
-		Statistics.coverageOf("0 at last position", coverage -> coverage.check(true).count(c -> c > 10));
+		Statistics.label("contains 0")
+				  .collect(aString.contains("\u0000"))
+				  .coverage(checker -> checker.check(true).count(c -> c > 10));
+		Statistics.label("0 at last position")
+				  .collect(aString.charAt(aString.length() - 1) == '\u0000')
+				  .coverage(checker -> checker.check(true).count(c -> c > 10));
 	}
 
 }

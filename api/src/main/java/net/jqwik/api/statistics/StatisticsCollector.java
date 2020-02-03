@@ -27,6 +27,8 @@ public interface StatisticsCollector {
 	 *               <li>Values can be {@code null}</li>
 	 *               </ul>
 	 * @throws IllegalArgumentException if one of the constraints on {@code values} is violated
+	 *
+	 * @return The current instance of collector to allow a fluent coverage API
 	 */
 	StatisticsCollector collect(Object... values);
 
