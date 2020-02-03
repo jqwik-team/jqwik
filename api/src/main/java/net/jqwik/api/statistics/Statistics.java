@@ -10,7 +10,8 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * This class serves as a container for static methods to collect statistical
- * data about generated values within a property method.
+ * data about generated values within a property method and to check coverage
+ * of that data.
  */
 @API(status = MAINTAINED, since = "1.2.3")
 public class Statistics {
@@ -39,9 +40,9 @@ public class Statistics {
 	 * (parameters passed to test) and than you use {@link Statistics#coverage(Consumer)}
 	 * method to ensure that certain count of some value has been tried.
 	 * <p>
-	 * NOTE: you can give descriptive name for some collections using {@link #label(String)}
+	 * NOTE: you can give descriptive name to some collections using {@link #label(String)}
 	 * method. Usually you make multiple label+collect calls, i.e. for each passed arbitrary
-	 * parameter. This way you can provide parameters with some descriptive names/labels.
+	 * parameter. This way you can provide parameters with descriptive names/labels.
 	 * <p>
 	 * Complete documentation is found at
 	 * <a href="https://jqwik.net/docs/current/user-guide.html#checking-coverage-of-collected-statistics">
@@ -106,32 +107,6 @@ public class Statistics {
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	public static void coverage(Consumer<StatisticsCoverage> checker) {
 		StatisticsFacade.implementation.defaultCollector().coverage(checker);
-	}
-
-	/**
-	 * Perform coverage checking for successful property on labelled statistics
-	 * for values collected with {@linkplain #collect(Object...)}
-	 * <p>
-	 * NOTE: This method is just shortcut to {@code Statistics.label(label).coverage(checker)} call.
-	 * <p>
-	 * Sample usage:
-	 *
-	 * <pre>
-	 * Statistics.coverageOf("range",
-	 * 	coverage -> coverage.check("small").percentage(p -> p > 20.0)
-	 * );
-	 * Statistics.coverageOf("value",
-	 * 	coverage -> coverage.check(0).count(c -> c > 0)
-	 * );
-	 * </pre>
-	 *
-	 * @param label   The label that was used for reporting the collected statistical values
-	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
-	 * @see #collect(Object...) javadoc of the collect(Object...) method for example usage
-	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	public static void coverageOf(String label, Consumer<StatisticsCoverage> checker) {
-		StatisticsFacade.implementation.collectorByLabel(label).coverage(checker);
 	}
 
 }

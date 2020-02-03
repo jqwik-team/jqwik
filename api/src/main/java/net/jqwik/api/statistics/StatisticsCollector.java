@@ -17,6 +17,10 @@ public interface StatisticsCollector {
 	 * Call this method to record an entry for statistical data about generated values.
 	 * As soon as this method is called at least once in a property method,
 	 * the statistical data will be reported after the property has finished.
+	 * 
+	 * <p>
+	 *     For examples see {@linkplain Statistics#collect(Object...)}
+	 * </p>
 	 *
 	 * @param values Can be anything. The list of these values is considered
 	 *               a key for the reported table of frequencies. Constraints:
@@ -34,6 +38,10 @@ public interface StatisticsCollector {
 
 	/**
 	 * Perform coverage checking for successful property on statistics.
+	 *
+	 * <p>
+	 *     For examples see {@linkplain Statistics#coverage(Consumer)}
+	 * </p>
 	 *
 	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
 	 */
