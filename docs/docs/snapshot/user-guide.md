@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.2.3-SNAPSHOT
+title: jqwik User Guide - 1.2.4-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.3-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.4-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -153,10 +153,10 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.5.2'
-ext.junitJupiterVersion = '5.5.2'
+ext.junitPlatformVersion = '1.6.0'
+ext.junitJupiterVersion = '5.6.0'
 
-ext.jqwikVersion = '1.2.3-SNAPSHOT'
+ext.jqwikVersion = '1.2.4-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
@@ -178,7 +178,7 @@ dependencies {
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation("org.junit.jupiter:junit-jupiter:5.5.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.6.0")
 
     // Add any other test library you need...
     testImplementation("org.assertj:assertj-core:3.12.2")
@@ -232,7 +232,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.2.3-SNAPSHOT</version>
+        <version>1.2.4-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -258,9 +258,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.2.3-SNAPSHOT.jar`
-- `junit-platform-engine-1.5.2.jar`
-- `junit-platform-commons-1.5.2.jar`
+- `jqwik-1.2.4-SNAPSHOT.jar`
+- `junit-platform-engine-1.6.0.jar`
+- `junit-platform-commons-1.6.0.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -309,7 +309,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.2.3-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.2.4-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -2557,27 +2557,26 @@ void simpleStats(@ForAll RoundingMode mode) {
 }
 ```
 
-The same thing is possible for values collected with a specific label:
+The same thing is possible for values collected with a specific label
+and in a fluent API style.
 
 ```java
 @Property(generation = GenerationMode.RANDOMIZED)
 void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
 	String range = anInt < 3 ? "small" : "large";
-	Statistics.label("range").collect(range);
-	Statistics.label("value").collect(anInt);
 
-	Statistics.coverageOf("range", 
-		coverage -> coverage.check("small").percentage(p -> p > 20.0)
-        );
-	Statistics.coverageOf("value", 
-		coverage -> coverage.check(0).count(c -> c > 0)
-        );
+	Statistics.label("range")
+			  .collect(range)
+			  .coverage(coverage -> coverage.check("small").percentage(p -> p > 20.0));
+
+	Statistics.label("value")
+			  .collect(anInt)
+			  .coverage(coverage -> coverage.check(0).count(c -> c > 0));
 }
 ```
 
 Start by looking at
-[`Statistics.coverage()`](/docs/snapshot/javadoc/net/jqwik/api/statistics/Statistics.html#coverage-java.util.function.Consumer-) and
-[`Statistics.coverageOf()`](/docs/snapshot/javadoc/net/jqwik/api/statistics/Statistics.html#coverageOf-java.lang.String-java.util.function.Consumer-)
+[`Statistics.coverage()`](/docs/snapshot/javadoc/net/jqwik/api/statistics/Statistics.html#coverage-java.util.function.Consumer-)
 to see all the options you have for checking percentages and counts.
 
 #### Check Ad-hoc Query Coverage
@@ -3152,4 +3151,4 @@ defaultGeneration = AUTO            # Set default behaviour for generation:
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#123-snapshot).
+Read this version's [release notes](/release-notes.html#124-snapshot).
