@@ -125,7 +125,21 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Properties
 
+- Allow specification of provider class in `@ForAll` and `@From`
+  see https://github.com/jlink/jqwik/issues/91
+
+- Generator / value sharing:
+    - `Arbitrary.shareGenerator()`:
+      To share same generator across multiple usages of an arbitrary. Important
+      e.g. for `unique`
+    - Arbitrary.shareValue(Arbitrary, String key)
+      [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
+
+- Probabilistic assertions
+  see experiments.ProbabilisticExperiments
+
 - Stateless Properties:
+  - see https://github.com/jlink/jqwik/issues/80
   - Let action generation access the model state?
     E.g. to use a name that’s already been added to a store.
     - Will require involved version of ActionGenerator, e.g. to take
@@ -135,13 +149,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - Parallel execution of action sequences (see Proper book)
   - Special support for FSMs (finite state machines)
 
-- Allow fully qualified name of static method in @From(method="") annotation
-  as in Jupiter's `@MethodSource("example.StringsProviders#tinyStrings")`
-
-- Arbitraries.any()
-  - anyExtends(supertype)
-  - anySuper(subtype)
-
 - Arbitraries.series(n -> prime(n)[, maxN])
 
 - Arbitraries.fromStream(aStream[, maxLength])
@@ -149,18 +156,14 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Arbitraries.fromSize(Function<Integer, Arbitrary> f) : Arbitrary
   Use current size to influence arbitrary generation
 
-- SizableArbitrary.averageSize(50)
-
-- Arbitrary.share(Arbitrary, String key)
-  [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
-
-- Arbitraries.emails()
+- Arbitraries.strings().emails()
 
 - @Property(timeout=500) msecs to timeout a property run
 
-- Targeted data generation
-  Simulated annealing with an additional target function in property
-  (see Proper book)
+- Guided data generation
+  see https://github.com/jlink/jqwik/issues/84
+  - also see: Targeted generation, Simulated annealing with an additional target
+    function in property (see Proper book)
 
 - Shrinking targets
     - Provide multiple shrinking targets for number arbitraries,
@@ -196,6 +199,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - Add Arbitrary.describe() to optionally describe elements in sample output
   - functions/methods (whose output parameter can be generated)
   - @Regex(RegularExpression value) or composable RegexStringArbitrary
+    see https://github.com/jlink/jqwik/issues/68
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
 
 - Introduce recursive use of Arbitraries.forType(Class<T> targetType)

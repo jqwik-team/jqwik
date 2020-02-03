@@ -5,10 +5,6 @@
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
 
-    - Add convenience method for coverage query with single argument
-
-    - Probabilistic assertions
-
     - Lifecycle
         - Allow to specify proximity/order in `@AddLifecycleHook`
 
