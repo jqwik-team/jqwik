@@ -52,16 +52,16 @@ public class Statistics {
 	 *
 	 * <pre>
 	 * &#064;Property(generation = GenerationMode.RANDOMIZED)
-	 * void labeledStatistics(@ForAll @IntRange(min = 1, max = 10) Integer anInt) {
-	 * 	String range = anInt < 3 ? "small" : "large";
+	 * void labeledStatistics(&#064;ForAll &#064;IntRange(min = 1, max = 10) Integer anInt) {
+	 * 	String range = anInt &lt; 3 ? "small" : "large";
 	 * 	Statistics.label("range").collect(range);
 	 * 	Statistics.label("value").collect(anInt);
 	 *
 	 * 	Statistics.coverageOf("range",
-	 * 		coverage -> coverage.check("small").percentage(p -> p > 20.0)
+	 * 		coverage -&gt; coverage.check("small").percentage(p -&gt; p &gt; 20.0)
 	 *         );
 	 * 	Statistics.coverageOf("value",
-	 * 		coverage -> coverage.check(0).count(c -> c > 0)
+	 * 		coverage -&gt; coverage.check(0).count(c -&gt; c &gt; 0)
 	 *         );
 	 * }
 	 * </pre>
@@ -97,8 +97,8 @@ public class Statistics {
 	 * Sample usage:
 	 *
 	 * <pre>
-	 * Statistics.coverage(coverage -> coverage.check("small").percentage(p -> p > 20.0));
-	 * Statistics.coverage(coverage -> coverage.check(0).count(c -> c > 0));
+	 * Statistics.coverage(coverage -&gt; coverage.check("small").percentage(p -&gt; p &gt; 20.0));
+	 * Statistics.coverage(coverage -&gt; coverage.check(0).count(c -&gt; c &gt; 0));
 	 * </pre>
 	 *
 	 * @param checker Code that consumes a {@linkplain StatisticsCoverage} object
