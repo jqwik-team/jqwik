@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 
@@ -25,6 +26,14 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 	@Override
 	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
 		return new UniqueShrinkingSequence(falsifier);
+	}
+
+	@Override
+	public List<Shrinkable<T>> shrinkingSuggestions() {
+		return toFilter.shrinkingSuggestions()
+					   .stream()
+					   .filter(shrinkable -> !usedValues.contains(shrinkable.value()))
+					   .collect(Collectors.toList());
 	}
 
 	@Override

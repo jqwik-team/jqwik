@@ -24,10 +24,9 @@ class ShrinkingSuggestionsTests {
 	}
 
 	@Example
-	void filtered(@ForAll Random random) {
+	void filtered() {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).filter(i -> i % 2 == 0);
-		assertAllValuesAreShrunkTo(2, arbitrary, random);
 
 		Shrinkable<Integer> shrinkable = generateValue(arbitrary, 6);
 
@@ -37,7 +36,7 @@ class ShrinkingSuggestionsTests {
 	}
 
 	@Property(tries = 10)
-	void mapped(@ForAll Random random) {
+	void mapped() {
 		Arbitrary<String> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
 
@@ -49,7 +48,7 @@ class ShrinkingSuggestionsTests {
 	}
 
 	@Property(tries = 10)
-	void flatMapped(@ForAll Random random) {
+	void flatMapped() {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 					   .flatMap(i -> Arbitraries.of(i));
@@ -57,6 +56,28 @@ class ShrinkingSuggestionsTests {
 
 		Stream<Integer> suggestedValues = suggestedValues(shrinkable);
 		assertThat(suggestedValues).containsOnly(1, 2);
+	}
+
+	@Property(tries = 10)
+	void unique(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique();
+
+		RandomGenerator<Integer> generator = arbitrary.generator(1000);
+
+		Set<Integer> generated = new HashSet<>();
+		generated.add(generator.next(random).value());
+		generated.add(generator.next(random).value());
+		generated.add(generator.next(random).value());
+
+		Shrinkable<Integer> shrinkable = generator.next(random);
+
+		List<Integer> expectedValues = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+		expectedValues.removeIf(value -> value >= shrinkable.value());
+		expectedValues.removeIf(value -> generated.contains(value));
+
+		Stream<Integer> suggestedValues = suggestedValues(shrinkable);
+		assertThat(suggestedValues).containsExactlyElementsOf(expectedValues);
 	}
 
 	private <T> Stream<T> suggestedValues(Shrinkable<T> shrinkable) {
@@ -69,13 +90,6 @@ class ShrinkingSuggestionsTests {
 		return generateUntil(generator, SourceOfRandomness.current(), value -> value.equals(target));
 	}
 
-//	@Property(tries = 10)
-//	void unique(@ForAll Random random) {
-//		Arbitrary<Integer> arbitrary =
-//			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique();
-//		assertAllValuesAreShrunkTo(1, arbitrary, random);
-//	}
-//
 //	@Property(tries = 10)
 //	void lazy(@ForAll Random random) {
 //		Arbitrary<Integer> arbitrary =
