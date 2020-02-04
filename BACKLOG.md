@@ -125,6 +125,10 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Properties
 
+- Duplicate Shrinking
+  - Implement CombinedShrinkable.shrinkingSuggestions()
+  - Also shrink triplets, quadruplets etc.
+
 - Allow specification of provider class in `@ForAll` and `@From`
   see https://github.com/jlink/jqwik/issues/91
 
