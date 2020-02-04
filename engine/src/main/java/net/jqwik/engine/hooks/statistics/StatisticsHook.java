@@ -3,8 +3,6 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 import java.util.function.*;
 
-import org.junit.platform.commons.support.*;
-
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.api.statistics.*;
@@ -40,7 +38,7 @@ public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
 	private void afterExecution(Map<String, StatisticsCollectorImpl> collectors, PropertyLifecycleContext context) {
 		StatisticsReportFormat reportFormat = new StandardStatisticsReportFormat();
 		Optional<StatisticsReport> optionalStatisticsReport =
-			AnnotationSupport.findAnnotation(context.targetMethod(), StatisticsReport.class);
+			JqwikAnnotationSupport.findAnnotationOnElementOrContainer(context.targetMethod(), StatisticsReport.class);
 
 		if (optionalStatisticsReport.isPresent()) {
 			StatisticsReport reportConfiguration = optionalStatisticsReport.get();

@@ -32,6 +32,8 @@ and
 
 #### New and Enhanced Features
 
+- `@StatisticsReport` can now also be used on container classes
+
 - Statistical coverage checking can now be done in a fluent API style
 
 - Improved shrinking of parameters that require duplicate values for falsifying a property

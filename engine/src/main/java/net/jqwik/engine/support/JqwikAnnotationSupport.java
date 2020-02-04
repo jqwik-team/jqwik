@@ -5,7 +5,13 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import org.apiguardian.api.*;
+import org.junit.platform.commons.support.*;
 
+import net.jqwik.engine.discovery.predicates.*;
+
+/**
+ * Provide stuff that org.junit.commons.support.AnnotationSupport does not.
+ */
 public class JqwikAnnotationSupport {
 
 	/**
@@ -32,14 +38,14 @@ public class JqwikAnnotationSupport {
 
 	private static void appendMetaAnnotations(Annotation annotation, List<Annotation> collector) {
 		Annotation[] metaAnnotationCandidates = annotation.annotationType().getDeclaredAnnotations();
-		Arrays.stream(metaAnnotationCandidates) //
-				.filter(candidate -> !isInJavaLangAnnotationPackage(candidate.annotationType())) //
-				.filter(candidate -> !isApiAnnotation(candidate.annotationType())) //
-				.filter(candidate -> !collector.contains(candidate)) //
-				.forEach(metaAnnotation -> {
-					collector.add(metaAnnotation);
-					appendMetaAnnotations(metaAnnotation, collector);
-				});
+		Arrays.stream(metaAnnotationCandidates)
+			  .filter(candidate -> !isInJavaLangAnnotationPackage(candidate.annotationType()))
+			  .filter(candidate -> !isApiAnnotation(candidate.annotationType()))
+			  .filter(candidate -> !collector.contains(candidate))
+			  .forEach(metaAnnotation -> {
+				  collector.add(metaAnnotation);
+				  appendMetaAnnotations(metaAnnotation, collector);
+			  });
 	}
 
 	private static boolean isApiAnnotation(Class<? extends Annotation> annotationType) {
@@ -50,4 +56,34 @@ public class JqwikAnnotationSupport {
 		return (annotationType != null && annotationType.getName().startsWith("java.lang.annotation"));
 	}
 
+	public static <A extends Annotation> Optional<A> findAnnotationOnElementOrContainer(
+		AnnotatedElement element,
+		Class<A> annotationType
+	) {
+
+		Optional<A> onElement = AnnotationSupport.findAnnotation(element, annotationType);
+		if (onElement.isPresent()) {
+			return onElement;
+		}
+		if (element instanceof Member) {
+			AnnotatedElement container = ((Member) element).getDeclaringClass();
+			return findAnnotationOnElementOrContainer(container, annotationType);
+		}
+		if (isGroup(element)) {
+			AnnotatedElement container = getGroupContainer((Class<?>) element);
+			return findAnnotationOnElementOrContainer(container, annotationType);
+		}
+		return Optional.empty();
+	}
+
+	private static AnnotatedElement getGroupContainer(Class<?> group) {
+		return group.getDeclaringClass();
+	}
+
+	private static boolean isGroup(AnnotatedElement element) {
+		if (element instanceof Class) {
+			return new IsContainerAGroup().test((Class<?>) element);
+		}
+		return false;
+	}
 }

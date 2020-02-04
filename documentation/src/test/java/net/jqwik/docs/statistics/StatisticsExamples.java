@@ -2,14 +2,10 @@ package net.jqwik.docs.statistics;
 
 import java.math.*;
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.Statistics;
-
-import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
 
 class StatisticsExamples {
 
@@ -23,29 +19,6 @@ class StatisticsExamples {
 		String range = anInt < 3 ? "small" : "large";
 		Statistics.label("range").collect(range);
 		Statistics.label("value").collect(anInt);
-	}
-
-	@Property
-	@StatisticsReport(OFF)
-	void dontShowStatistics(@ForAll Integer anInt) {
-		String range = anInt < 0 ? "negative" : anInt > 0 ? "positive" : "zero";
-		Statistics.collect(range);
-	}
-
-	@Property
-	@StatisticsReport(format = MyStatisticsFormat.class)
-	void statisticsWithHandMadeFormat(@ForAll Integer anInt) {
-		String range = anInt < 0 ? "negative" : anInt > 0 ? "positive" : "zero";
-		Statistics.collect(range);
-	}
-
-	class MyStatisticsFormat implements StatisticsReportFormat {
-		@Override
-		public List<String> formatReport(List<StatisticsEntry> entries) {
-			return entries.stream()
-						  .map(e -> String.format("%s: %d", e.name(), e.count()))
-						  .collect(Collectors.toList());
-		}
 	}
 
 	@Property

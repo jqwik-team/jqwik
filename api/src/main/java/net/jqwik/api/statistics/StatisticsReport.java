@@ -8,14 +8,26 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Use {@code @StatisticsReport(OFF)} to disable statistics reporting.
+ * This annotation can be used to influence statistics reporting. You can either
+ * annotate a property method to change reporting for this property only
+ * or a container class to change reporting for all properties in this class
+ * or nested subclasses.
  * <p>
- * Use {@code @StatisticsReport(STANDARD)} to enable the standard reporting.
- * This is the default anyway.
- * <p>
- * Use {@code @StatisticsReport(format = YourReportFormat.class)} to plug in your own format.
+ * There are three usage scenarios:
+ * <ul>
+ *     <li>
+ *          Use {@code @StatisticsReport(STANDARD)} to enable the standard reporting.
+ *  		This is the default anyway.
+ *  	</li>
+ *  	<li>
+ * 			Use {@code @StatisticsReport(OFF)} to disable statistics reporting.
+ *  	</li>
+ *  	<li>
+ * 			Use {@code @StatisticsReport(format = YourReportFormat.class)} to plug in your own format.
+ *  	</li>
+ * </ul>
  */
-@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @API(status = EXPERIMENTAL, since = "1.2.3")

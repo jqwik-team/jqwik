@@ -2370,7 +2370,10 @@ produces the following reports:
 There is a
 [`@StatisticsReport`](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/StatisticsReport.html)
 annotation that allows to change statistics report
-formats or to even switch it off. The `value` attribute is of type
+formats or to even switch it off. The annotation can be used on property methods
+or on container classes.
+
+The `value` attribute is of type
 [StatisticsReportMode.OFF](/docs/${docsVersion}/javadoc/net/jqwik/api/statistics/StatisticsReport.StatisticsReportMode.html) and can have one of:
 
 - __`STANDARD`__: Use jqwik's standard reporting format. This is used anyway
@@ -2379,6 +2382,7 @@ formats or to even switch it off. The `value` attribute is of type
 - __`PLUG_IN`__: Plug in your homemade format. This is the default so that
   you only have to provide the `format` attribute
   [as shown below](#plug-in-your-own-statistics-report-format)
+
 
 #### Switch Statistics Reporting Off
 
