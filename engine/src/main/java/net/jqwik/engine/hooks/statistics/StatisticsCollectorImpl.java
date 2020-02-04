@@ -134,9 +134,6 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return counts;
 	}
 
-	/**
-	 * Only used in tests so far
-	 */
 	public List<StatisticsEntryImpl> statisticsEntries() {
 		if (statisticsEntries != null) {
 			return statisticsEntries;
