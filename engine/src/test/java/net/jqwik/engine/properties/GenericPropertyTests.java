@@ -41,7 +41,7 @@ class GenericPropertyTests {
 			assertThat(forAllFunction.countCalls()).isEqualTo(2);
 
 			assertThat(result.propertyName()).isEqualTo("satisfied property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
 			assertThat(result.countTries()).isEqualTo(2);
 			assertThat(result.countChecks()).isEqualTo(2);
 		}
@@ -58,7 +58,7 @@ class GenericPropertyTests {
 			assertThat(forAllFunction.countCalls()).isEqualTo(3);
 
 			assertThat(result.propertyName()).isEqualTo("finite property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
 			assertThat(result.countTries()).isEqualTo(3);
 			assertThat(result.countChecks()).isEqualTo(3);
 		}
@@ -78,7 +78,7 @@ class GenericPropertyTests {
 			assertThat(forAllFunction.countCalls()).isEqualTo(6);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(failingTry);
 			assertThat(result.countChecks()).isEqualTo(failingTry);
 			assertThat(result.throwable()).isNotPresent();
@@ -138,7 +138,7 @@ class GenericPropertyTests {
 			assertThat(forAllFunction.countCalls()).isEqualTo(1);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 
@@ -167,7 +167,7 @@ class GenericPropertyTests {
 			assertThat(forAllFunction.countCalls()).isEqualTo(1);
 
 			assertThat(result.propertyName()).isEqualTo("erroneous property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 
@@ -198,7 +198,7 @@ class GenericPropertyTests {
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
 
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
 			assertThat(result.countTries()).isEqualTo(10);
 			assertThat(result.countChecks()).isEqualTo(5);
 		}
@@ -219,7 +219,7 @@ class GenericPropertyTests {
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
 
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.EXHAUSTED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.EXHAUSTED);
 			assertThat(result.countTries()).isEqualTo(10);
 			assertThat(result.countChecks()).isEqualTo(0);
 			assertThat(result.throwable()).isNotPresent();
@@ -243,7 +243,7 @@ class GenericPropertyTests {
 			GenericProperty property = new GenericProperty("exhausted property", configuration, shrinkablesGenerator, forAllFunction);
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.EXHAUSTED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.EXHAUSTED);
 			assertThat(result.countTries()).isEqualTo(20);
 			assertThat(result.countChecks()).isEqualTo(5);
 		}
@@ -265,7 +265,7 @@ class GenericPropertyTests {
 			GenericProperty property = new GenericProperty("erroneous property", configuration, shrinkablesGenerator, forAllFunction);
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(erroneousTry);
 			assertThat(result.countChecks()).isEqualTo(erroneousTry);
 
@@ -287,7 +287,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 
 			assertThat(result.sample()).isPresent();
 			assertThat(result.sample().get()).containsExactly(5);
@@ -310,7 +310,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("satisfied property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
 			assertThat(result.countTries()).isEqualTo(2);
 			assertThat(result.countChecks()).isEqualTo(2);
 		}
@@ -327,7 +327,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 			assertThat(result.throwable()).isNotPresent();
@@ -348,7 +348,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 
@@ -382,7 +382,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("property with 2");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.SATISFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
 			assertThat(result.countTries()).isEqualTo(5);
 			assertThat(result.countChecks()).isEqualTo(5);
 			assertThat(result.randomSeed()).isEqualTo("1000");
@@ -411,7 +411,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("property with 4");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
+			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(failingTry);
 			assertThat(result.countChecks()).isEqualTo(failingTry);
 			assertThat(result.throwable()).isNotPresent();

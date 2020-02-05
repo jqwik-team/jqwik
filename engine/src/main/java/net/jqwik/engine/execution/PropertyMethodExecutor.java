@@ -120,8 +120,7 @@ public class PropertyMethodExecutor {
 		AroundTryHook aroundTry
 	) {
 		try {
-			PropertyCheckResult checkResult = executeProperty(publisher, aroundTry);
-			return CheckResultBasedExecutionResult.from(checkResult);
+			return executeProperty(publisher, aroundTry);
 		} catch (TestAbortedException e) {
 			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
@@ -162,8 +161,7 @@ public class PropertyMethodExecutor {
 		if (executionResult.getStatus() != PropertyExecutionResult.Status.SUCCESSFUL) {
 			return true;
 		}
-		Integer tries = executionResult.checkResult().map(PropertyCheckResult::countTries).orElse(0);
-		return tries > 1;
+		return executionResult.countTries() > 1;
 	}
 
 }

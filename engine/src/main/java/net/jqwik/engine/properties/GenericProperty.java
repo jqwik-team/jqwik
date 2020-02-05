@@ -53,7 +53,7 @@ public class GenericProperty {
 				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ae);
 			} catch (Throwable throwable) {
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-				return PropertyCheckResult.falsified(
+				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
 					configuration.getGenerationMode(), extractParams(shrinkableParams), null, throwable
 				);
@@ -69,7 +69,7 @@ public class GenericProperty {
 				configuration.getGenerationMode()
 			);
 		}
-		return PropertyCheckResult.satisfied(
+		return PropertyCheckResult.successful(
 			configuration.getStereotype(),
 			name,
 			countTries,
@@ -108,7 +108,7 @@ public class GenericProperty {
 		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, exceptionOrAssertionError);
 		List<Object> shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
-		return PropertyCheckResult.falsified(
+		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
 			configuration.getGenerationMode(), shrunkParams, originalParams, throwable
 		);

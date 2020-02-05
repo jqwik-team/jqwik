@@ -38,9 +38,9 @@ public class CheckedProperty {
 		try {
 			return createGenericProperty(effectiveConfiguration).check(publisher, reporting);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
-			return PropertyCheckResult.falsified(
+			return PropertyCheckResult.failed(
 				effectiveConfiguration.getStereotype(), propertyName, 0, 0, effectiveConfiguration.getSeed(),
-				configuration.getGenerationMode(), Collections.emptyList(), null, cannotFindArbitraryException
+				configuration.getGenerationMode(), null, null, cannotFindArbitraryException
 			);
 		}
 	}

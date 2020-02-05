@@ -53,8 +53,8 @@ public class ExecutionResultReportEntry {
 			}
 		});
 
-		executionResult.checkResult().ifPresent(checkResult -> {
-			checkResult.originalSample().ifPresent(originalSample -> {
+		if (executionResult.isExtended()) {
+			executionResult.originalSample().ifPresent(originalSample -> {
 				if (!originalSample.isEmpty()) {
 					reportLines
 						.append(String.format("%s%n", buildProperty(
@@ -63,7 +63,7 @@ public class ExecutionResultReportEntry {
 						)));
 				}
 			});
-		});
+		}
 	}
 
 	private static void appendFixedSizedProperties(
@@ -72,20 +72,18 @@ public class ExecutionResultReportEntry {
 		AfterFailureMode afterFailureMode
 	) {
 		List<String> propertiesLines = new ArrayList<>();
-		PropertyCheckResult checkResult;
 		int countTries = 0;
 		int countChecks = 0;
 		String generationMode = "<none>";
 		String randomSeed = "<none>";
 		String helpGenerationMode = "";
 
-		if (executionResult.checkResult().isPresent()) {
-			checkResult = executionResult.checkResult().get();
-			countTries = checkResult.countTries();
-			countChecks = checkResult.countChecks();
-			generationMode = checkResult.generation().name();
-			randomSeed = checkResult.randomSeed();
-			helpGenerationMode = helpGenerationMode(checkResult.generation());
+		if (executionResult.isExtended()) {
+			countTries = executionResult.countTries();
+			countChecks = executionResult.countChecks();
+			generationMode = executionResult.generation().name();
+			randomSeed = executionResult.randomSeed();
+			helpGenerationMode = helpGenerationMode(executionResult.generation());
 		}
 
 		appendProperty(propertiesLines, TRIES_KEY, Integer.toString(countTries), "# of calls to property");

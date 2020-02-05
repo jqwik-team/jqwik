@@ -2,8 +2,8 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
 
 public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
@@ -66,12 +66,37 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public String toString() {
-		return String.format("PlainPropertyExecutionResult[%s]", status);
+	public boolean isExtended() {
+		return false;
 	}
 
 	@Override
-	public Optional<PropertyCheckResult> checkResult() {
+	public int countChecks() {
+		return 0;
+	}
+
+	@Override
+	public int countTries() {
+		return 0;
+	}
+
+	@Override
+	public Optional<List<Object>> originalSample() {
 		return Optional.empty();
+	}
+
+	@Override
+	public GenerationMode generation() {
+		return GenerationMode.NOT_SET;
+	}
+
+	@Override
+	public String randomSeed() {
+		return Long.toString(0L);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("PlainPropertyExecutionResult[%s]", status);
 	}
 }

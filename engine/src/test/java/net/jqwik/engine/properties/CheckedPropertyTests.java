@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.GenerationMode.*;
 import static net.jqwik.engine.TestHelper.*;
-import static net.jqwik.engine.properties.PropertyCheckResult.Status.*;
+import static net.jqwik.engine.properties.PropertyCheckResult.CheckStatus.*;
 import static net.jqwik.engine.properties.PropertyConfigurationBuilder.*;
 
 @Group
@@ -74,18 +74,18 @@ class CheckedPropertyTests {
 	class PropertyChecking {
 		@Example
 		void intParametersSuccess() {
-			intOnlyExample("prop0", params -> params.size() == 0, SATISFIED);
-			intOnlyExample("prop1", params -> params.size() == 1, SATISFIED);
-			intOnlyExample("prop2", params -> params.size() == 2, SATISFIED);
-			intOnlyExample("prop8", params -> params.size() == 8, SATISFIED);
+			intOnlyExample("prop0", params -> params.size() == 0, SUCCESSFUL);
+			intOnlyExample("prop1", params -> params.size() == 1, SUCCESSFUL);
+			intOnlyExample("prop2", params -> params.size() == 2, SUCCESSFUL);
+			intOnlyExample("prop8", params -> params.size() == 8, SUCCESSFUL);
 		}
 
 		@Example
 		void intParametersFailure() {
-			intOnlyExample("prop0", params -> false, FALSIFIED);
-			intOnlyExample("prop1", params -> false, FALSIFIED);
-			intOnlyExample("prop2", params -> false, FALSIFIED);
-			intOnlyExample("prop8", params -> false, FALSIFIED);
+			intOnlyExample("prop0", params -> false, FAILED);
+			intOnlyExample("prop1", params -> false, FAILED);
+			intOnlyExample("prop2", params -> false, FAILED);
+			intOnlyExample("prop8", params -> false, FAILED);
 		}
 
 		@Example
@@ -93,10 +93,10 @@ class CheckedPropertyTests {
 			RuntimeException toThrow = new RuntimeException("test");
 			intOnlyExample("prop0", params -> {
 				throw toThrow;
-			}, FALSIFIED);
+			}, FAILED);
 			intOnlyExample("prop8", params -> {
 				throw toThrow;
-			}, FALSIFIED);
+			}, FAILED);
 		}
 
 		@Example
@@ -115,10 +115,10 @@ class CheckedPropertyTests {
 			AssertionError toThrow = new AssertionError("test");
 			intOnlyExample("prop0", params -> {
 				throw toThrow;
-			}, FALSIFIED);
+			}, FAILED);
 			intOnlyExample("prop8", params -> {
 				throw toThrow;
-			}, FALSIFIED);
+			}, FAILED);
 		}
 
 		@Example
@@ -135,7 +135,7 @@ class CheckedPropertyTests {
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
-			assertThat(check.status()).isEqualTo(FALSIFIED);
+			assertThat(check.checkStatus()).isEqualTo(FAILED);
 			assertThat(check.throwable()).isPresent();
 			assertThat(check.throwable().get()).isInstanceOf(CannotFindArbitraryException.class);
 		}
@@ -154,7 +154,7 @@ class CheckedPropertyTests {
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 			assertThat(check.randomSeed()).isEqualTo("414243");
 
-			assertThat(check.status()).isEqualTo(SATISFIED);
+			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 			assertThat(allGeneratedInts)
 				.containsExactly(5, 22, 10, 4, 43, 70, -66, -75, -11, -65, 93, -61, -5, 37, -2, -9, -86, 10, -10, -4);
 		}
@@ -235,7 +235,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
 			}
 
@@ -243,7 +243,8 @@ class CheckedPropertyTests {
 			@Label("works with GenerationMode.DATA_DRIVEN")
 			void runWithGenerationModeDataDriven() {
 				List<Tuple.Tuple2<Integer, String>> allGeneratedParameters = new ArrayList<>();
-				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of((int) params.get(0), (String) params.get(1)));
+				CheckedFunction rememberParameters = params -> allGeneratedParameters
+																   .add(Tuple.of((int) params.get(0), (String) params.get(1)));
 				CheckedProperty checkedProperty = new CheckedProperty(
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
@@ -254,7 +255,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"));
 			}
 
@@ -316,7 +317,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(3);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1), Tuple.of(2), Tuple.of(3));
 			}
 
@@ -333,7 +334,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(99);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 			}
 
 			@Example
@@ -351,7 +352,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(3);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(allGeneratedParameters).containsExactly(Tuple.of(1), Tuple.of(2), Tuple.of(3));
 			}
 
@@ -381,7 +382,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
 				assertThat(check.countTries()).isEqualTo(20);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 			}
 
 			@Example
@@ -397,7 +398,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
 				assertThat(check.countTries()).isEqualTo(20);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 			}
 
 		}
@@ -419,7 +420,7 @@ class CheckedPropertyTests {
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.countTries()).isEqualTo(1);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(check.sample()).isEmpty();
 			}
 
@@ -437,13 +438,13 @@ class CheckedPropertyTests {
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.countTries()).isEqualTo(10);
-				assertThat(check.status()).isEqualTo(SATISFIED);
+				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(check.sample()).isEmpty();
 			}
 		}
 	}
 
-	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.Status expectedStatus) {
+	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.CheckStatus expectedStatus) {
 		CheckedProperty checkedProperty = new CheckedProperty(
 			methodName, forAllFunction, getParametersForMethod(methodName),
 			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
@@ -451,7 +452,7 @@ class CheckedPropertyTests {
 			aConfig().build()
 		);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
-		assertThat(check.status()).isEqualTo(expectedStatus);
+		assertThat(check.checkStatus()).isEqualTo(expectedStatus);
 	}
 
 	private List<MethodParameter> getParametersForMethod(String methodName) {

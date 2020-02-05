@@ -2,10 +2,21 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
 
 public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult {
 
-	Optional<PropertyCheckResult> checkResult();
+	boolean isExtended();
+
+	int countChecks();
+
+	int countTries();
+
+	String randomSeed();
+
+	Optional<List<Object>> originalSample();
+
+	GenerationMode generation();
+
 }

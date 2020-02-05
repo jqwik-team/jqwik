@@ -3,106 +3,19 @@ package net.jqwik.engine.properties;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-public interface PropertyCheckResult {
+public abstract class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
-	enum Status {
-		SATISFIED,
-		FALSIFIED,
+	enum CheckStatus {
+		SUCCESSFUL,
+		FAILED,
 		EXHAUSTED
 	}
 
-	Status status();
-
-	String propertyName();
-
-	/**
-	 * @return The number of times a property has been tried including all tries rejected by a precondition aka assumption
-	 */
-	int countTries();
-
-	/**
-	 * @return The number of times a property has actually been evaluated not counting the tries that were rejected by a
-	 * precondition aka assumption
-	 */
-	int countChecks();
-
-	String randomSeed();
-
-	Optional<List> sample();
-
-	Optional<List> originalSample();
-
-	Optional<Throwable> throwable();
-
-	GenerationMode generation();
-
-	abstract class ResultBase implements PropertyCheckResult {
-
-		protected final Status status;
-		protected final String propertyName;
-		protected final int tries;
-		protected final int checks;
-		protected final String randomSeed;
-		protected final GenerationMode generation;
-
-		ResultBase(Status status, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation) {
-			this.status = status;
-			this.propertyName = propertyName;
-			this.tries = tries;
-			this.checks = checks;
-			this.randomSeed = randomSeed;
-			this.generation = generation;
-		}
-
-		@Override
-		public String propertyName() {
-			return propertyName;
-		}
-
-		@Override
-		public Status status() {
-			return status;
-		}
-
-		@Override
-		public int countChecks() {
-			return checks;
-		}
-
-		@Override
-		public int countTries() {
-			return tries;
-		}
-
-		@Override
-		public String randomSeed() {
-			return randomSeed;
-		}
-
-		@Override
-		public Optional<List> sample() {
-			return Optional.empty();
-		}
-
-		@Override
-		public Optional<List> originalSample() {
-			return Optional.empty();
-		}
-
-		@Override
-		public Optional<Throwable> throwable() {
-			return Optional.empty();
-		}
-
-		@Override
-		public GenerationMode generation() {
-			return generation;
-		}
-	}
-
-	static PropertyCheckResult satisfied(
+	public static PropertyCheckResult successful(
 		String stereotype,
 		String propertyName,
 		int tries,
@@ -110,7 +23,17 @@ public interface PropertyCheckResult {
 		String randomSeed,
 		GenerationMode generation
 	) {
-		return new ResultBase(Status.SATISFIED, propertyName, tries, checks, randomSeed, generation) {
+		return new PropertyCheckResult(CheckStatus.SUCCESSFUL, propertyName, tries, checks, randomSeed, generation, null, null, null) {
+			@Override
+			public PropertyExecutionResult changeToSuccessful() {
+				return this;
+			}
+
+			@Override
+			public PropertyExecutionResult changeToFailed(Throwable throwable) {
+				return failed(stereotype, propertyName, tries, checks, randomSeed, generation, null, null, throwable);
+			}
+
 			@Override
 			public String toString() {
 				return String.format("%s [%s] satisfied", stereotype, propertyName);
@@ -118,21 +41,11 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult falsified(
+	public static PropertyCheckResult failed(
 		String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
 		List<Object> sample, List<Object> originalSample, Throwable throwable
 	) {
-		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed, generation) {
-			@Override
-			public Optional<List> sample() {
-				return Optional.ofNullable(sample);
-			}
-
-			@Override
-			public Optional<List> originalSample() {
-				return Optional.ofNullable(originalSample);
-			}
-
+		return new PropertyCheckResult(CheckStatus.FAILED, propertyName, tries, checks, randomSeed, generation, sample, originalSample, throwable) {
 			@Override
 			public String toString() {
 				String sampleString = sample.isEmpty() ? "" : String.format(" with sample %s", JqwikStringSupport.displayString(sample));
@@ -140,14 +53,19 @@ public interface PropertyCheckResult {
 			}
 
 			@Override
-			public Optional<Throwable> throwable() {
-				return Optional.ofNullable(throwable);
+			public PropertyExecutionResult changeToSuccessful() {
+				return successful(stereotype, propertyName, tries, checks, randomSeed, generation);
+			}
+
+			@Override
+			public PropertyExecutionResult changeToFailed(Throwable throwable) {
+				return failed(stereotype, propertyName, tries, checks, randomSeed, generation, sample, originalSample, throwable);
 			}
 
 		};
 	}
 
-	static PropertyCheckResult exhausted(
+	public static PropertyCheckResult exhausted(
 		String stereotype,
 		String propertyName,
 		int tries,
@@ -155,13 +73,118 @@ public interface PropertyCheckResult {
 		String randomSeed,
 		GenerationMode generation
 	) {
-		return new ResultBase(Status.EXHAUSTED, propertyName, tries, checks, randomSeed, generation) {
+		return new PropertyCheckResult(CheckStatus.EXHAUSTED, propertyName, tries, checks, randomSeed, generation, null, null, null) {
 			@Override
 			public String toString() {
 				int rejections = tries - checks;
 				return String.format("%s [%s] exhausted after [%d] tries and [%d] rejections", stereotype, propertyName, tries, rejections);
 			}
+
+			@Override
+			public PropertyExecutionResult changeToSuccessful() {
+				return successful(stereotype, propertyName, tries, checks, randomSeed, generation);
+			}
+
+			@Override
+			public PropertyExecutionResult changeToFailed(Throwable throwable) {
+				return failed(stereotype, propertyName, tries, checks, randomSeed, generation, null, null, throwable);
+			}
+
 		};
+	}
+
+	private final CheckStatus status;
+	private final String propertyName;
+	private final int tries;
+	private final int checks;
+	private final String randomSeed;
+	private final GenerationMode generation;
+	private final List<Object> sample;
+	private final List<Object> originalSample;
+	private final Throwable throwable;
+
+	private PropertyCheckResult(
+		CheckStatus status,
+		String propertyName,
+		int tries,
+		int checks,
+		String randomSeed,
+		GenerationMode generation,
+		List<Object> sample,
+		List<Object> originalSample,
+		Throwable throwable
+	) {
+		this.status = status;
+		this.propertyName = propertyName;
+		this.tries = tries;
+		this.checks = checks;
+		this.randomSeed = randomSeed;
+		this.generation = generation;
+		this.sample = sample;
+		this.originalSample = originalSample;
+		this.throwable = throwable;
+	}
+
+	public String propertyName() {
+		return propertyName;
+	}
+
+	public CheckStatus checkStatus() {
+		return status;
+	}
+
+	public int countChecks() {
+		return checks;
+	}
+
+	public int countTries() {
+		return tries;
+	}
+
+	public String randomSeed() {
+		return randomSeed;
+	}
+
+	public Optional<List<Object>> sample() {
+		return Optional.ofNullable(sample);
+	}
+
+	public Optional<List<Object>> originalSample() {
+		return Optional.ofNullable(originalSample);
+	}
+
+	public Optional<Throwable> throwable() {
+		return Optional.ofNullable(throwable);
+	}
+
+	public GenerationMode generation() {
+		return generation;
+	}
+
+	@Override
+	public boolean isExtended() {
+		return true;
+	}
+
+	@Override
+	public Optional<String> getSeed() {
+		return Optional.ofNullable(randomSeed());
+	}
+
+	@Override
+	public Optional<List<Object>> getFalsifiedSample() {
+		return sample();
+	}
+
+	@Override
+	public Status getStatus() {
+		return checkStatus() == CheckStatus.SUCCESSFUL ?
+				   Status.SUCCESSFUL : Status.FAILED;
+	}
+
+	@Override
+	public Optional<Throwable> getThrowable() {
+		return throwable();
 	}
 
 }
