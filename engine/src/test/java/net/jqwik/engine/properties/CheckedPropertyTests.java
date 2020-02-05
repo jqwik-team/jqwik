@@ -421,7 +421,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.countTries()).isEqualTo(1);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
-				assertThat(check.sample()).isEmpty();
+				assertThat(check.falsifiedSample()).isEmpty();
 			}
 
 			@Example
@@ -439,7 +439,7 @@ class CheckedPropertyTests {
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 				assertThat(check.countTries()).isEqualTo(10);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
-				assertThat(check.sample()).isEmpty();
+				assertThat(check.falsifiedSample()).isEmpty();
 			}
 		}
 	}

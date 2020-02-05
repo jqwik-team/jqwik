@@ -38,24 +38,24 @@ public class RecordingExecutionListener implements PropertyExecutionListener {
 	}
 
 	private TestExecutionResult toTestExecutionResult(PropertyExecutionResult executionResult) {
-		if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL) {
+		if (executionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL) {
 			return TestExecutionResult.successful();
 		}
-		if (executionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
-			return TestExecutionResult.failed(executionResult.getThrowable().orElse(null));
+		if (executionResult.status() == PropertyExecutionResult.Status.FAILED) {
+			return TestExecutionResult.failed(executionResult.throwable().orElse(null));
 		}
-		if (executionResult.getStatus() == PropertyExecutionResult.Status.ABORTED) {
-			return TestExecutionResult.aborted(executionResult.getThrowable().orElse(null));
+		if (executionResult.status() == PropertyExecutionResult.Status.ABORTED) {
+			return TestExecutionResult.aborted(executionResult.throwable().orElse(null));
 		}
 		throw new IllegalArgumentException("No other status possible");
 	}
 
 	private void recordTestRun(TestDescriptor testDescriptor, PropertyExecutionResult executionResult) {
-		String seed = executionResult.getSeed().orElse(null);
-		List<Object> sample = executionResult.getFalsifiedSample()
+		String seed = executionResult.seed().orElse(null);
+		List<Object> sample = executionResult.falsifiedSample()
 											 .filter(this::isSerializable)
 											 .orElse(null);
-		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.getStatus(), seed, sample);
+		TestRun run = new TestRun(testDescriptor.getUniqueId(), executionResult.status(), seed, sample);
 		recorder.record(run);
 	}
 

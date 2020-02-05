@@ -36,33 +36,33 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public Optional<String> getSeed() {
+	public Optional<String> seed() {
 		return Optional.ofNullable(seed);
 	}
 
 	@Override
-	public Optional<List<Object>> getFalsifiedSample() {
+	public Optional<List<Object>> falsifiedSample() {
 		return Optional.ofNullable(falsifiedSample);
 	}
 
 	@Override
-	public Status getStatus() {
+	public Status status() {
 		return status;
 	}
 
 	@Override
-	public Optional<Throwable> getThrowable() {
+	public Optional<Throwable> throwable() {
 		return Optional.ofNullable(throwable);
 	}
 
 	@Override
 	public PropertyExecutionResult changeToSuccessful() {
-		return PlainExecutionResult.successful(getSeed().orElse(null));
+		return PlainExecutionResult.successful(seed().orElse(null));
 	}
 
 	@Override
 	public PropertyExecutionResult changeToFailed(Throwable throwable) {
-		return PlainExecutionResult.failed(throwable, getSeed().orElse(null), getFalsifiedSample().orElse(null));
+		return PlainExecutionResult.failed(throwable, seed().orElse(null), falsifiedSample().orElse(null));
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.*;
 public class PropertyExecutionResultMatchers {
 
 	public static PropertyExecutionResult isSuccessful() {
-		return argThat(argument -> argument.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL);
+		return argThat(argument -> argument.status() == PropertyExecutionResult.Status.SUCCESSFUL);
 	}
 
 	public static PropertyExecutionResult isFailed(String message) {

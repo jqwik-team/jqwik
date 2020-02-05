@@ -10,6 +10,8 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.api.lifecycle.PropertyExecutionResult.Status.*;
+
 public class ExpectFailureHook implements AroundPropertyHook {
 
 	@Override
@@ -19,7 +21,7 @@ public class ExpectFailureHook implements AroundPropertyHook {
 		String messageFromAnnotation = getMessage(context.targetMethod());
 
 		try {
-			if (testExecutionResult.getStatus() == PropertyExecutionResult.Status.FAILED) {
+			if (testExecutionResult.status() == FAILED) {
 				resultChecker.accept(testExecutionResult);
 				return testExecutionResult.changeToSuccessful();
 			}
@@ -28,7 +30,7 @@ public class ExpectFailureHook implements AroundPropertyHook {
 		}
 
 		String headerText = messageFromAnnotation == null ? "" : messageFromAnnotation + "\n\t";
-		String reason = testExecutionResult.getThrowable()
+		String reason = testExecutionResult.throwable()
 										   .map(throwable -> String.format("it failed with [%s]", throwable))
 										   .orElse("it did not fail at all");
 		String message = String.format(
@@ -48,15 +50,6 @@ public class ExpectFailureHook implements AroundPropertyHook {
 		}).orElse(null);
 	}
 
-	private Boolean resultHasExpectedFailureType(
-		PropertyExecutionResult testExecutionResult,
-		Class<? extends Throwable> expectedFailureType
-	) {
-		return testExecutionResult.getThrowable()
-								  .map(throwable -> expectedFailureType.isAssignableFrom(throwable.getClass()))
-								  .orElse(false);
-	}
-
 	private Consumer<PropertyExecutionResult> getResultChecker(Method method, Object testInstance) {
 		Optional<ExpectFailure> annotation = AnnotationSupport.findAnnotation(method, ExpectFailure.class);
 		return annotation.map((ExpectFailure expectFailure) -> {
@@ -71,12 +64,6 @@ public class ExpectFailureHook implements AroundPropertyHook {
 	@Override
 	public int aroundPropertyProximity() {
 		return Hooks.AroundProperty.EXPECT_FAILURE_PROXIMITY;
-	}
-
-	static class NullChecker implements Consumer<PropertyExecutionResult> {
-		@Override
-		public void accept(PropertyExecutionResult propertyExecutionResult) {
-		}
 	}
 
 }

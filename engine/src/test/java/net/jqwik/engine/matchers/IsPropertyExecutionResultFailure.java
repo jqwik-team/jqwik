@@ -13,10 +13,10 @@ class IsPropertyExecutionResultFailure implements ArgumentMatcher<PropertyExecut
 
 	@Override
 	public boolean matches(PropertyExecutionResult result) {
-		if (result.getStatus() != PropertyExecutionResult.Status.FAILED)
+		if (result.status() != PropertyExecutionResult.Status.FAILED)
 			return false;
 		if (message == null)
 			return true;
-		return result.getThrowable().get().getMessage().equals(message);
+		return result.throwable().get().getMessage().equals(message);
 	}
 }

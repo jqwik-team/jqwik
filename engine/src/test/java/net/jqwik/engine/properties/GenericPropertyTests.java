@@ -83,8 +83,8 @@ class GenericPropertyTests {
 			assertThat(result.countChecks()).isEqualTo(failingTry);
 			assertThat(result.throwable()).isNotPresent();
 
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).containsExactly(failingTry);
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).containsExactly(failingTry);
 		}
 
 		@Example
@@ -101,7 +101,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry); // If shrunk number would be higher
-			assertThat(result.sample().get()).containsExactly(failingTry);
+			assertThat(result.falsifiedSample().get()).containsExactly(failingTry);
 		}
 
 		@Example
@@ -143,8 +143,8 @@ class GenericPropertyTests {
 			assertThat(result.countChecks()).isEqualTo(1);
 
 			assertThat(result.originalSample()).isPresent();
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).containsExactly(1);
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).containsExactly(1);
 
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isSameAs(assertionError);
@@ -172,8 +172,8 @@ class GenericPropertyTests {
 			assertThat(result.countChecks()).isEqualTo(1);
 
 			assertThat(result.originalSample()).isPresent();
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).containsExactly(1);
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).containsExactly(1);
 
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isSameAs(runtimeException);
@@ -223,7 +223,7 @@ class GenericPropertyTests {
 			assertThat(result.countTries()).isEqualTo(10);
 			assertThat(result.countChecks()).isEqualTo(0);
 			assertThat(result.throwable()).isNotPresent();
-			assertThat(result.sample()).isNotPresent();
+			assertThat(result.falsifiedSample()).isNotPresent();
 		}
 
 		@Example
@@ -272,8 +272,8 @@ class GenericPropertyTests {
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isSameAs(thrownException);
 
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).containsExactly(erroneousTry);
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).containsExactly(erroneousTry);
 		}
 
 		@Example
@@ -289,8 +289,8 @@ class GenericPropertyTests {
 			assertThat(result.propertyName()).isEqualTo("falsified property");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).containsExactly(5);
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).containsExactly(5);
 		}
 
 	}
@@ -332,8 +332,8 @@ class GenericPropertyTests {
 			assertThat(result.countChecks()).isEqualTo(1);
 			assertThat(result.throwable()).isNotPresent();
 
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).isEmpty();
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).isEmpty();
 		}
 
 		@Example
@@ -355,8 +355,8 @@ class GenericPropertyTests {
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isInstanceOf(RuntimeException.class);
 
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).isEmpty();
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).isEmpty();
 		}
 
 	}
@@ -387,7 +387,7 @@ class GenericPropertyTests {
 			assertThat(result.countChecks()).isEqualTo(5);
 			assertThat(result.randomSeed()).isEqualTo("1000");
 			assertThat(result.throwable()).isNotPresent();
-			assertThat(result.sample()).isNotPresent();
+			assertThat(result.falsifiedSample()).isNotPresent();
 		}
 
 		@Example
@@ -416,8 +416,8 @@ class GenericPropertyTests {
 			assertThat(result.countChecks()).isEqualTo(failingTry);
 			assertThat(result.throwable()).isNotPresent();
 
-			assertThat(result.sample()).isPresent();
-			assertThat(result.sample().get()).containsExactly(failingTry, 1, 1, 1);
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).containsExactly(failingTry, 1, 1, 1);
 		}
 
 	}

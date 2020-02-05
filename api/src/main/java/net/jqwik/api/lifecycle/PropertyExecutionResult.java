@@ -37,13 +37,13 @@ public interface PropertyExecutionResult {
 		FAILED
 	}
 
-	Optional<String> getSeed();
+	Optional<String> seed();
 
-	Optional<List<Object>> getFalsifiedSample();
+	Optional<List<Object>> falsifiedSample();
 
-	Status getStatus();
+	Status status();
 
-	Optional<Throwable> getThrowable();
+	Optional<Throwable> throwable();
 
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	PropertyExecutionResult changeToSuccessful();

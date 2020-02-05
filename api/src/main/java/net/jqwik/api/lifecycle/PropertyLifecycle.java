@@ -33,7 +33,7 @@ public class PropertyLifecycle {
 
 	public static void onSuccess(Object identifier, Runnable runnable) {
 		AfterPropertyExecutor afterPropertyExecutor = (executionResult, context) -> {
-			if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL) {
+			if (executionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL) {
 				runnable.run();
 			}
 			return executionResult;

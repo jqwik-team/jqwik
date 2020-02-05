@@ -138,7 +138,7 @@ public class PropertyMethodExecutor {
 	}
 
 	private void reportResult(Consumer<ReportEntry> publisher, PropertyExecutionResult executionResult) {
-		if (executionResult.getStatus() == PropertyExecutionResult.Status.SUCCESSFUL && reportOnlyFailures) {
+		if (executionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL && reportOnlyFailures) {
 			return;
 		}
 
@@ -158,7 +158,7 @@ public class PropertyMethodExecutor {
 	}
 
 	private boolean isReportWorthy(ExtendedPropertyExecutionResult executionResult) {
-		if (executionResult.getStatus() != PropertyExecutionResult.Status.SUCCESSFUL) {
+		if (executionResult.status() != PropertyExecutionResult.Status.SUCCESSFUL) {
 			return true;
 		}
 		return executionResult.countTries() > 1;

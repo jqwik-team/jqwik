@@ -8,7 +8,6 @@ import org.opentest4j.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 public class ExecutionResultReportEntry {
@@ -19,7 +18,7 @@ public class ExecutionResultReportEntry {
 	private static final String AFTER_FAILURE_KEY = "after-failure";
 	private static final String SEED_KEY = "seed";
 	private static final String SAMPLE_KEY = "sample";
-	private static final String ORIGINAL_REPORT_KEY = "original-sample";
+	private static final String ORIGINAL_SAMPLE_KEY = "original-sample";
 
 	public static ReportEntry from(
 		String propertyName,
@@ -44,7 +43,7 @@ public class ExecutionResultReportEntry {
 	}
 
 	private static void appendSamples(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
-		executionResult.getFalsifiedSample().ifPresent(shrunkSample -> {
+		executionResult.falsifiedSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
 				reportLines.append(String.format("%s%n", buildProperty(
 					SAMPLE_KEY,
@@ -58,7 +57,7 @@ public class ExecutionResultReportEntry {
 				if (!originalSample.isEmpty()) {
 					reportLines
 						.append(String.format("%s%n", buildProperty(
-							ORIGINAL_REPORT_KEY,
+							ORIGINAL_SAMPLE_KEY,
 							JqwikStringSupport.displayString(originalSample)
 						)));
 				}
@@ -105,8 +104,8 @@ public class ExecutionResultReportEntry {
 	}
 
 	private static void appendThrowableMessage(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
-		if (executionResult.getStatus() != PropertyExecutionResult.Status.SUCCESSFUL) {
-			Throwable throwable = executionResult.getThrowable().orElse(new AssertionFailedError(null));
+		if (executionResult.status() != PropertyExecutionResult.Status.SUCCESSFUL) {
+			Throwable throwable = executionResult.throwable().orElse(new AssertionFailedError(null));
 			String assertionClass = throwable.getClass().getName();
 			String assertionMessage = throwable.getMessage();
 			reportLines.append(String.format("%n%n%s: ", assertionClass));

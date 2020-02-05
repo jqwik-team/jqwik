@@ -7,7 +7,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-public abstract class PropertyCheckResult implements ExtendedPropertyExecutionResult {
+public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	enum CheckStatus {
 		SUCCESSFUL,
@@ -23,46 +23,43 @@ public abstract class PropertyCheckResult implements ExtendedPropertyExecutionRe
 		String randomSeed,
 		GenerationMode generation
 	) {
-		return new PropertyCheckResult(CheckStatus.SUCCESSFUL, propertyName, tries, checks, randomSeed, generation, null, null, null) {
-			@Override
-			public PropertyExecutionResult changeToSuccessful() {
-				return this;
-			}
-
-			@Override
-			public PropertyExecutionResult changeToFailed(Throwable throwable) {
-				return failed(stereotype, propertyName, tries, checks, randomSeed, generation, null, null, throwable);
-			}
-
-			@Override
-			public String toString() {
-				return String.format("%s [%s] satisfied", stereotype, propertyName);
-			}
-		};
+		return new PropertyCheckResult(
+			stereotype,
+			CheckStatus.SUCCESSFUL,
+			propertyName,
+			tries,
+			checks,
+			randomSeed,
+			generation,
+			null,
+			null,
+			null
+		);
 	}
 
 	public static PropertyCheckResult failed(
-		String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
-		List<Object> sample, List<Object> originalSample, Throwable throwable
+		String stereotype,
+		String propertyName,
+		int tries,
+		int checks,
+		String randomSeed,
+		GenerationMode generation,
+		List<Object> sample,
+		List<Object> originalSample,
+		Throwable throwable
 	) {
-		return new PropertyCheckResult(CheckStatus.FAILED, propertyName, tries, checks, randomSeed, generation, sample, originalSample, throwable) {
-			@Override
-			public String toString() {
-				String sampleString = sample.isEmpty() ? "" : String.format(" with sample %s", JqwikStringSupport.displayString(sample));
-				return String.format("%s [%s] falsified%s", stereotype, propertyName, sampleString);
-			}
-
-			@Override
-			public PropertyExecutionResult changeToSuccessful() {
-				return successful(stereotype, propertyName, tries, checks, randomSeed, generation);
-			}
-
-			@Override
-			public PropertyExecutionResult changeToFailed(Throwable throwable) {
-				return failed(stereotype, propertyName, tries, checks, randomSeed, generation, sample, originalSample, throwable);
-			}
-
-		};
+		return new PropertyCheckResult(
+			stereotype,
+			CheckStatus.FAILED,
+			propertyName,
+			tries,
+			checks,
+			randomSeed,
+			generation,
+			sample,
+			originalSample,
+			throwable
+		);
 	}
 
 	public static PropertyCheckResult exhausted(
@@ -73,26 +70,21 @@ public abstract class PropertyCheckResult implements ExtendedPropertyExecutionRe
 		String randomSeed,
 		GenerationMode generation
 	) {
-		return new PropertyCheckResult(CheckStatus.EXHAUSTED, propertyName, tries, checks, randomSeed, generation, null, null, null) {
-			@Override
-			public String toString() {
-				int rejections = tries - checks;
-				return String.format("%s [%s] exhausted after [%d] tries and [%d] rejections", stereotype, propertyName, tries, rejections);
-			}
-
-			@Override
-			public PropertyExecutionResult changeToSuccessful() {
-				return successful(stereotype, propertyName, tries, checks, randomSeed, generation);
-			}
-
-			@Override
-			public PropertyExecutionResult changeToFailed(Throwable throwable) {
-				return failed(stereotype, propertyName, tries, checks, randomSeed, generation, null, null, throwable);
-			}
-
-		};
+		return new PropertyCheckResult(
+			stereotype,
+			CheckStatus.EXHAUSTED,
+			propertyName,
+			tries,
+			checks,
+			randomSeed,
+			generation,
+			null,
+			null,
+			null
+		);
 	}
 
+	private final String stereotype;
 	private final CheckStatus status;
 	private final String propertyName;
 	private final int tries;
@@ -104,6 +96,7 @@ public abstract class PropertyCheckResult implements ExtendedPropertyExecutionRe
 	private final Throwable throwable;
 
 	private PropertyCheckResult(
+		String stereotype,
 		CheckStatus status,
 		String propertyName,
 		int tries,
@@ -114,6 +107,7 @@ public abstract class PropertyCheckResult implements ExtendedPropertyExecutionRe
 		List<Object> originalSample,
 		Throwable throwable
 	) {
+		this.stereotype = stereotype;
 		this.status = status;
 		this.propertyName = propertyName;
 		this.tries = tries;
@@ -123,6 +117,44 @@ public abstract class PropertyCheckResult implements ExtendedPropertyExecutionRe
 		this.sample = sample;
 		this.originalSample = originalSample;
 		this.throwable = throwable;
+	}
+
+	@Override
+	public Optional<List<Object>> falsifiedSample() {
+		return Optional.ofNullable(sample);
+	}
+
+	@Override
+	public Optional<String> seed() {
+		return Optional.ofNullable(randomSeed());
+	}
+
+	@Override
+	public Status status() {
+		return checkStatus() == CheckStatus.SUCCESSFUL ? Status.SUCCESSFUL : Status.FAILED;
+	}
+
+	@Override
+	public Optional<Throwable> throwable() {
+		return Optional.ofNullable(throwable);
+	}
+
+	@Override
+	public PropertyExecutionResult changeToSuccessful() {
+		if (status() == Status.SUCCESSFUL) {
+			return this;
+		}
+		return successful(stereotype, propertyName, tries, checks, randomSeed, generation);
+	}
+
+	@Override
+	public PropertyExecutionResult changeToFailed(Throwable throwable) {
+		return failed(stereotype, propertyName, tries, checks, randomSeed, generation, sample, originalSample, throwable);
+	}
+
+	@Override
+	public boolean isExtended() {
+		return true;
 	}
 
 	public String propertyName() {
@@ -145,16 +177,8 @@ public abstract class PropertyCheckResult implements ExtendedPropertyExecutionRe
 		return randomSeed;
 	}
 
-	public Optional<List<Object>> sample() {
-		return Optional.ofNullable(sample);
-	}
-
 	public Optional<List<Object>> originalSample() {
 		return Optional.ofNullable(originalSample);
-	}
-
-	public Optional<Throwable> throwable() {
-		return Optional.ofNullable(throwable);
 	}
 
 	public GenerationMode generation() {
@@ -162,29 +186,19 @@ public abstract class PropertyCheckResult implements ExtendedPropertyExecutionRe
 	}
 
 	@Override
-	public boolean isExtended() {
-		return true;
-	}
+	public String toString() {
+		String header = String.format("%s [%s] failed", stereotype, propertyName);
+		switch (checkStatus()) {
+			case FAILED:
+				String sampleString = sample.isEmpty() ? "" : String.format(" with sample %s", JqwikStringSupport.displayString(sample));
+				return String.format("%s%s", header, sampleString);
+			case EXHAUSTED:
+				int rejections = tries - checks;
+				return String.format("%s after [%d] tries and [%d] rejections", header, tries, rejections);
 
-	@Override
-	public Optional<String> getSeed() {
-		return Optional.ofNullable(randomSeed());
-	}
-
-	@Override
-	public Optional<List<Object>> getFalsifiedSample() {
-		return sample();
-	}
-
-	@Override
-	public Status getStatus() {
-		return checkStatus() == CheckStatus.SUCCESSFUL ?
-				   Status.SUCCESSFUL : Status.FAILED;
-	}
-
-	@Override
-	public Optional<Throwable> getThrowable() {
-		return throwable();
+			default:
+				return header;
+		}
 	}
 
 }

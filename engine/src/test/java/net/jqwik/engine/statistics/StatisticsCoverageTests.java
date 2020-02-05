@@ -198,8 +198,8 @@ class StatisticsCoverageTests {
 		private class CheckClassCastException implements Consumer<PropertyExecutionResult> {
 			@Override
 			public void accept(PropertyExecutionResult propertyExecutionResult) {
-				assertThat(propertyExecutionResult.getThrowable()).isPresent();
-				assertThat(propertyExecutionResult.getThrowable().get()).isInstanceOf(ClassCastException.class);
+				assertThat(propertyExecutionResult.throwable()).isPresent();
+				assertThat(propertyExecutionResult.throwable().get()).isInstanceOf(ClassCastException.class);
 			}
 		}
 
