@@ -4,12 +4,11 @@
       https://github.com/jlink/jqwik/issues/85
 
     - Lifecycle
-        - Allow to specify proximity/order in `@AddLifecycleHook`
-
         - Bind stores to member variables, e.g.
           @Store(lifespan = RUN|PROPERTY|TRY)
 
         - Around try
+          - TryExecutor -> TryExecutionResult
           - TryLifecycle objects
             try(TryLifecycle lc = new ...) {...}
           - @PerTry(Class<? extends TryLifecycle>)

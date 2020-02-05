@@ -59,13 +59,24 @@ public class GenericProperty {
 				);
 			}
 		}
-		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, countTries, configuration.getMaxDiscardRatio()))
-			return PropertyCheckResult
-					   .exhausted(configuration.getStereotype(), name, maxTries, countChecks, configuration.getSeed(), configuration
-																														   .getGenerationMode());
-		return PropertyCheckResult
-				   .satisfied(configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration
-																														 .getGenerationMode());
+		if (countChecks == 0 || maxDiscardRatioExceeded(countChecks, countTries, configuration.getMaxDiscardRatio())) {
+			return PropertyCheckResult.exhausted(
+				configuration.getStereotype(),
+				name,
+				maxTries,
+				countChecks,
+				configuration.getSeed(),
+				configuration.getGenerationMode()
+			);
+		}
+		return PropertyCheckResult.satisfied(
+			configuration.getStereotype(),
+			name,
+			countTries,
+			countChecks,
+			configuration.getSeed(),
+			configuration.getGenerationMode()
+		);
 	}
 
 	private boolean testPredicate(
