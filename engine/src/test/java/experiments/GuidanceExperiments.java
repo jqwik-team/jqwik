@@ -8,28 +8,25 @@ public class GuidanceExperiments {
 
 		/**
 		 * Returns a reference to an iterator that will deliver
-		 * return from the pseudo-random number generator.
+		 * integer values to feed the pseudo-random number generator for the next try.
+		 *
+		 * @throws IllegalStateException if there is no next try available
 		 */
-		Iterator<Long> guidedStream();
+		Iterator<Integer> nextTry();
 
 		/**
-		 * Decide if more values can be generated.
+		 * Decide if another sample can be tried.
 		 *
 		 * Method could potentially block to wait for guiding algorithm to finish.
 		 *
 		 * If it returns false generation will be finished.
 		 */
-		boolean continueGeneration();
+		boolean hasNextTry();
 
 		/**
 		 * Callback for observing actual generated sample passed to the property method.
 		 */
 		void observeGeneratedSample(List<Object> sample);
-
-		/**
-		 * Callback for observing the minimal shrunk sample.
-		 */
-		void observeShrunkSample(List<Object> sample);
 
 		/**
 		 * Handles the result of a property try.
@@ -44,6 +41,8 @@ public class GuidanceExperiments {
 			FALSIFIED,
 			INVALID
 		}
+
+		Status status();
 
 		Optional<Throwable> throwable();
 	}
