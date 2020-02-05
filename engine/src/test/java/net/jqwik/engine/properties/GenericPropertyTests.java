@@ -151,7 +151,7 @@ class GenericPropertyTests {
 		}
 
 		@Example
-		void erroneousAndShrunkThroughRuntimeException() {
+		void falsifiedAndShrunkThroughRuntimeException() {
 			RuntimeException runtimeException = new RuntimeException("test");
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> {
 				throw runtimeException;
@@ -167,7 +167,7 @@ class GenericPropertyTests {
 			assertThat(forAllFunction.countCalls()).isEqualTo(1);
 
 			assertThat(result.propertyName()).isEqualTo("erroneous property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 
@@ -249,7 +249,7 @@ class GenericPropertyTests {
 		}
 
 		@Example
-		void exceptionInForAllFunctionMakesPropertyErroneous() {
+		void exceptionInForAllFunctionMakesPropertyFalsified() {
 			int erroneousTry = 5;
 			RuntimeException thrownException = new RuntimeException("thrown in test");
 
@@ -265,7 +265,7 @@ class GenericPropertyTests {
 			GenericProperty property = new GenericProperty("erroneous property", configuration, shrinkablesGenerator, forAllFunction);
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
 			assertThat(result.countTries()).isEqualTo(erroneousTry);
 			assertThat(result.countChecks()).isEqualTo(erroneousTry);
 
@@ -348,7 +348,7 @@ class GenericPropertyTests {
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
-			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
+			assertThat(result.status()).isEqualTo(PropertyCheckResult.Status.FALSIFIED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 

@@ -93,10 +93,10 @@ class CheckedPropertyTests {
 			RuntimeException toThrow = new RuntimeException("test");
 			intOnlyExample("prop0", params -> {
 				throw toThrow;
-			}, ERRONEOUS);
+			}, FALSIFIED);
 			intOnlyExample("prop8", params -> {
 				throw toThrow;
-			}, ERRONEOUS);
+			}, FALSIFIED);
 		}
 
 		@Example
@@ -122,7 +122,7 @@ class CheckedPropertyTests {
 		}
 
 		@Example
-		void ifNoArbitraryForParameterCanBeFound_checkIsErroneous() {
+		void ifNoArbitraryForParameterCanBeFound_checkIsFalsified() {
 			List<MethodParameter> parameters = getParametersForMethod("stringProp");
 
 			CheckedProperty checkedProperty = new CheckedProperty(
@@ -135,7 +135,7 @@ class CheckedPropertyTests {
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
-			assertThat(check.status()).isEqualTo(PropertyCheckResult.Status.ERRONEOUS);
+			assertThat(check.status()).isEqualTo(FALSIFIED);
 			assertThat(check.throwable()).isPresent();
 			assertThat(check.throwable().get()).isInstanceOf(CannotFindArbitraryException.class);
 		}

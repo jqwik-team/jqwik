@@ -10,7 +10,6 @@ public interface PropertyCheckResult {
 	enum Status {
 		SATISFIED,
 		FALSIFIED,
-		ERRONEOUS,
 		EXHAUSTED
 	}
 
@@ -119,20 +118,19 @@ public interface PropertyCheckResult {
 		};
 	}
 
-	static PropertyCheckResult failure(
+	static PropertyCheckResult falsified(
 		String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
 		List<Object> sample, List<Object> originalSample, Throwable throwable
 	) {
-		Status status = isFalsified(throwable) ? Status.FALSIFIED : Status.ERRONEOUS;
-		return new ResultBase(status, propertyName, tries, checks, randomSeed, generation) {
+		return new ResultBase(Status.FALSIFIED, propertyName, tries, checks, randomSeed, generation) {
 			@Override
 			public Optional<List> sample() {
-				return Optional.of(sample);
+				return Optional.ofNullable(sample);
 			}
 
 			@Override
 			public Optional<List> originalSample() {
-				return Optional.of(originalSample);
+				return Optional.ofNullable(originalSample);
 			}
 
 			@Override
@@ -146,37 +144,6 @@ public interface PropertyCheckResult {
 				return Optional.ofNullable(throwable);
 			}
 
-		};
-	}
-
-	static boolean isFalsified(Throwable throwable) {
-		return throwable == null || throwable instanceof AssertionError;
-	}
-
-	static PropertyCheckResult erroneous(
-		String stereotype, String propertyName, int tries, int checks, String randomSeed, GenerationMode generation,
-		List sample, List originalSample, Throwable throwable
-	) {
-		return new ResultBase(Status.ERRONEOUS, propertyName, tries, checks, randomSeed, generation) {
-			@Override
-			public Optional<List> sample() {
-				return Optional.ofNullable(sample);
-			}
-
-			@Override
-			public Optional<Throwable> throwable() {
-				return Optional.of(throwable);
-			}
-
-			@Override
-			public Optional<List> originalSample() {
-				return Optional.ofNullable(originalSample);
-			}
-
-			@Override
-			public String toString() {
-				return String.format("%s [%s] erroneous with sample %s and exception [%s]", stereotype, propertyName, sample, throwable);
-			}
 		};
 	}
 
