@@ -11,15 +11,21 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 		return new PlainExecutionResult(Status.SUCCESSFUL, null, null, null);
 	}
 
-	public static ExtendedPropertyExecutionResult successful(String seed) {
+	private static ExtendedPropertyExecutionResult successful(String seed) {
 		return new PlainExecutionResult(Status.SUCCESSFUL, seed, null, null);
 	}
 
 	public static ExtendedPropertyExecutionResult failed(Throwable throwable, String seed, List<Object> sample) {
+		if (throwable == null) {
+			throw new IllegalArgumentException("throwable must never be null for failed PropertyExecutionResult");
+		}
 		return new PlainExecutionResult(Status.FAILED, seed, throwable, sample);
 	}
 
 	public static ExtendedPropertyExecutionResult aborted(Throwable throwable, String seed) {
+		if (throwable == null) {
+			throw new IllegalArgumentException("throwable must never be null for aborted PropertyExecutionResult");
+		}
 		return new PlainExecutionResult(Status.ABORTED, seed, throwable, null);
 	}
 
