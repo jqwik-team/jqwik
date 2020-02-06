@@ -2,6 +2,8 @@ package net.jqwik.engine.properties;
 
 import java.util.*;
 
+import org.opentest4j.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
@@ -116,7 +118,17 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		this.generation = generation;
 		this.sample = sample;
 		this.originalSample = originalSample;
-		this.throwable = throwable;
+		this.throwable = determineThrowable(status, throwable);
+	}
+
+	private Throwable determineThrowable(CheckStatus status, Throwable throwable) {
+		if (status != CheckStatus.FAILED) {
+			return null;
+		}
+		if (throwable == null) {
+			return new AssertionFailedError(this.toString());
+		}
+		return throwable;
 	}
 
 	@Override
@@ -195,7 +207,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			case EXHAUSTED:
 				int rejections = tries - checks;
 				return String.format("%s after [%d] tries and [%d] rejections", header, tries, rejections);
-
 			default:
 				return header;
 		}

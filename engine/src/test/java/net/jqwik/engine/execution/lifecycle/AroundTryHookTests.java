@@ -36,7 +36,9 @@ class AroundTryHookTests {
 	@AddLifecycleHook(SwallowFailure.class)
 	void hookCanSwallowFailures() {
 		count3++;
-		fail("Should be swallowed");
+		if (count3 > 5) {
+			fail("Should be swallowed");
+		}
 		PropertyLifecycle.onSuccess(() -> {
 			assertThat(count3).isEqualTo(10);
 		});
@@ -74,11 +76,8 @@ class IncrementCount2 implements AroundTryHook {
 class SwallowFailure implements AroundTryHook {
 	@Override
 	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
-		try {
-			return aTry.execute(parameters);
-		} catch (AssertionError ignore) {
-			return TryExecutionResult.satisfied();
-		}
+		aTry.execute(parameters);
+		return TryExecutionResult.satisfied();
 	}
 }
 

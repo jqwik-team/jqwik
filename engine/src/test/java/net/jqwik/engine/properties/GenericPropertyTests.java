@@ -64,7 +64,7 @@ class GenericPropertyTests {
 		}
 
 		@Example
-		void falsified() {
+		void falsifiedThroughReturningFalseInCheckedFunction() {
 			int failingTry = 5;
 
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie != failingTry, exactlyOneInteger);
@@ -81,10 +81,11 @@ class GenericPropertyTests {
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(failingTry);
 			assertThat(result.countChecks()).isEqualTo(failingTry);
-			assertThat(result.throwable()).isNotPresent();
+			assertThat(result.throwable()).isPresent();
 
 			assertThat(result.falsifiedSample()).isPresent();
 			assertThat(result.falsifiedSample().get()).containsExactly(failingTry);
+
 		}
 
 		@Example
@@ -330,7 +331,7 @@ class GenericPropertyTests {
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
-			assertThat(result.throwable()).isNotPresent();
+			assertThat(result.throwable()).isPresent();
 
 			assertThat(result.falsifiedSample()).isPresent();
 			assertThat(result.falsifiedSample().get()).isEmpty();
@@ -414,7 +415,7 @@ class GenericPropertyTests {
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(failingTry);
 			assertThat(result.countChecks()).isEqualTo(failingTry);
-			assertThat(result.throwable()).isNotPresent();
+			assertThat(result.throwable()).isPresent();
 
 			assertThat(result.falsifiedSample()).isPresent();
 			assertThat(result.falsifiedSample().get()).containsExactly(failingTry, 1, 1, 1);

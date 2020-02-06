@@ -43,6 +43,10 @@ public interface PropertyExecutionResult {
 
 	Status status();
 
+	/**
+	 * Will return {@code Optional.empty()} if status is anything but FAILED.
+	 * If FAILED the optional MUST contain a throwable.
+	 */
 	Optional<Throwable> throwable();
 
 	@API(status = EXPERIMENTAL, since = "1.2.3")

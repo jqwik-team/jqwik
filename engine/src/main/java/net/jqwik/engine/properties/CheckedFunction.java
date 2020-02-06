@@ -18,6 +18,9 @@ public interface CheckedFunction extends Predicate<List<Object>> {
 					case INVALID:
 						throw new TestAbortedException();
 					case FALSIFIED:
+						if (result.throwable().isPresent()) {
+							throw result.throwable().get();
+						}
 						return false;
 					default:
 						return true;

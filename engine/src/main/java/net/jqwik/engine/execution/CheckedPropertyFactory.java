@@ -29,15 +29,7 @@ public class CheckedPropertyFactory {
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
-		CheckedFunction rawFunction = createRawFunction(propertyMethodDescriptor, propertyLifecycleContext.testInstance());
-		AroundTryHook aroundTryWithFinishing = (context, aTry, parameters) -> {
-			try {
-				return aroundTry.aroundTry(context, aTry, parameters);
-			} finally {
-				StoreRepository.getCurrent().finishTry(propertyMethodDescriptor);
-			}
-		};
-		AroundTryLifecycle tryExecutor = new AroundTryLifecycle(rawFunction, propertyLifecycleContext, aroundTryWithFinishing);
+		AroundTryLifecycle tryExecutor = createTryExecutor(propertyMethodDescriptor, propertyLifecycleContext, aroundTry);
 		CheckedFunction checkedFunction = CheckedFunction.fromTryExecutor(tryExecutor);
 
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
@@ -59,6 +51,23 @@ public class CheckedPropertyFactory {
 			optionalData,
 			configuration
 		);
+	}
+
+	private AroundTryLifecycle createTryExecutor(
+		PropertyMethodDescriptor propertyMethodDescriptor,
+		PropertyLifecycleContext propertyLifecycleContext,
+		AroundTryHook aroundTry
+	) {
+		AroundTryHook aroundTryWithFinishing = (context, aTry, parameters) -> {
+			try {
+				return aroundTry.aroundTry(context, aTry, parameters);
+			} finally {
+				StoreRepository.getCurrent().finishTry(propertyMethodDescriptor);
+			}
+		};
+
+		CheckedFunction rawFunction = createRawFunction(propertyMethodDescriptor, propertyLifecycleContext.testInstance());
+		return new AroundTryLifecycle(rawFunction, propertyLifecycleContext, aroundTryWithFinishing);
 	}
 
 	private CheckedFunction createRawFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
