@@ -12,7 +12,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.2.3")
 public interface AroundTryHook extends LifecycleHook<AroundTryHook> {
 
-	boolean aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable;
+	TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable;
 
 	AroundTryHook BASE = (tryLifecycleContext, aTry, parameters) -> aTry.execute(parameters);
 

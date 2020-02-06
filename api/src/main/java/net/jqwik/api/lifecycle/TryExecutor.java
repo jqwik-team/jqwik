@@ -12,5 +12,5 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.2.3")
 public interface TryExecutor {
 
-	boolean execute(List<Object> parameters) throws Throwable;
+	TryExecutionResult execute(List<Object> parameters);
 }

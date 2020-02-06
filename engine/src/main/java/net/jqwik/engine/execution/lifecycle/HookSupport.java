@@ -3,6 +3,7 @@ package net.jqwik.engine.execution.lifecycle;
 import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.support.*;
 
 public class HookSupport {
 
@@ -33,7 +34,13 @@ public class HookSupport {
 
 	private static AroundTryHook wrap(AroundTryHook outer, AroundTryHook inner) {
 		return (context, aTry, outerParams) -> {
-			TryExecutor innerExecutor = (innerParams) -> inner.aroundTry(context, aTry, innerParams);
+			TryExecutor innerExecutor = (innerParams) -> {
+				try {
+					return inner.aroundTry(context, aTry, innerParams);
+				} catch (Throwable throwable) {
+					return JqwikExceptionSupport.throwAsUncheckedException(throwable);
+				}
+			};
 			return outer.aroundTry(context, innerExecutor, outerParams);
 		};
 	}

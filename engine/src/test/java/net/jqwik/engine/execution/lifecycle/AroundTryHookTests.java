@@ -57,7 +57,7 @@ class AroundTryHookTests {
 
 class IncrementCount1 implements AroundTryHook {
 	@Override
-	public boolean aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
+	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
 		AroundTryHookTests.count1++;
 		return aTry.execute(parameters);
 	}
@@ -65,7 +65,7 @@ class IncrementCount1 implements AroundTryHook {
 
 class IncrementCount2 implements AroundTryHook {
 	@Override
-	public boolean aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
+	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
 		AroundTryHookTests.count2++;
 		return aTry.execute(parameters);
 	}
@@ -73,18 +73,18 @@ class IncrementCount2 implements AroundTryHook {
 
 class SwallowFailure implements AroundTryHook {
 	@Override
-	public boolean aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
+	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
 		try {
 			return aTry.execute(parameters);
 		} catch (AssertionError ignore) {
-			return true;
+			return TryExecutionResult.satisfied();
 		}
 	}
 }
 
 class ChangeParamTo1 implements AroundTryHook {
 	@Override
-	public boolean aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
+	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
 		List<Object> changedParameters = Arrays.asList(1);
 		return aTry.execute(changedParameters);
 	}
