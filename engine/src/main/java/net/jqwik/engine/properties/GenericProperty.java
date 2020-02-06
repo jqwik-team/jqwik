@@ -8,6 +8,7 @@ import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
@@ -23,12 +24,12 @@ public class GenericProperty {
 		String name,
 		PropertyConfiguration configuration,
 		ShrinkablesGenerator shrinkablesGenerator,
-		CheckedFunction checkedFunction
+		TryExecutor tryExecutor
 	) {
 		this.name = name;
 		this.configuration = configuration;
 		this.shrinkablesGenerator = shrinkablesGenerator;
-		this.checkedFunction = checkedFunction;
+		this.checkedFunction = CheckedFunction.fromTryExecutor(tryExecutor);
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting) {

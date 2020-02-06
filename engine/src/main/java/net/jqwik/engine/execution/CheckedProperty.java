@@ -75,7 +75,7 @@ public class CheckedProperty {
 			configuration = chooseGenerationMode(configuration);
 		}
 		ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
-		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, CheckedFunction.fromTryExecutor(tryExecutor));
+		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, tryExecutor);
 	}
 
 	private ShrinkablesGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {

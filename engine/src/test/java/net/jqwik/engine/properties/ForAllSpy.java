@@ -6,7 +6,9 @@ import java.util.function.Function;
 
 import org.assertj.core.api.Assertions;
 
-class ForAllSpy implements CheckedFunction {
+import net.jqwik.api.lifecycle.*;
+
+class ForAllSpy implements TryExecutor {
 
 	private final Function<Integer, Boolean> returnFunc;
 	private final Function<List<Object>, Boolean> argumentsVerifier;
@@ -17,14 +19,20 @@ class ForAllSpy implements CheckedFunction {
 		this.argumentsVerifier = argumentsVerifier;
 	}
 
-	@Override
-	public boolean test(List<Object> args) {
+	private boolean test(List<Object> parameters) {
 		count.incrementAndGet();
-		Assertions.assertThat(argumentsVerifier.apply(args)).isTrue().describedAs("Arguments don't match expectation.");
+		Assertions.assertThat(argumentsVerifier.apply(parameters)).isTrue().describedAs("Arguments don't match expectation.");
 		return returnFunc.apply(count.get());
 	}
 
 	int countCalls() {
 		return count.get();
+	}
+
+	@Override
+	public TryExecutionResult execute(List<Object> parameters) {
+		CheckedFunction checkedFunction = this::test;
+		TryExecutor result = checkedFunction.asTryExecutor();
+		return result.execute(parameters);
 	}
 }
