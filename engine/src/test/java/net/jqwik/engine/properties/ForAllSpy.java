@@ -19,9 +19,13 @@ class ForAllSpy implements TryExecutor {
 		this.argumentsVerifier = argumentsVerifier;
 	}
 
+	ForAllSpy(Function<Integer, Boolean> returnFunc) {
+		this(returnFunc, args -> true);
+	}
+
 	private boolean test(List<Object> parameters) {
 		count.incrementAndGet();
-		Assertions.assertThat(argumentsVerifier.apply(parameters)).isTrue().describedAs("Arguments don't match expectation.");
+		Assertions.assertThat(argumentsVerifier.apply(parameters)).describedAs("Arguments don't match expectation.").isTrue();
 		return returnFunc.apply(count.get());
 	}
 

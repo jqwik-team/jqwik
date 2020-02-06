@@ -110,19 +110,23 @@ class GenericPropertyTests {
 
 		@Example
 		void dontShrinkIfFalsifiersThrowsThrowableThatIsNotAnException() {
-			CheckedFunction forAllFunction = params -> {
-				if (!params.get(0).equals(1)) throw new Error();
+			Function<Integer, Boolean> throwErrorOnFifthAttempt = count -> {
+				if (count == 5) throw new Error();
 				return true;
 			};
+			ForAllSpy forAllSpy = new ForAllSpy(throwErrorOnFifthAttempt);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
 			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
-				new GenericProperty("falsified property", configuration, shrinkablesGenerator, forAllFunction.asTryExecutor());
+				new GenericProperty("falsified property", configuration, shrinkablesGenerator, forAllSpy);
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
+			assertThat(forAllSpy.countCalls()).isEqualTo(5);
+			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedSample().get()).containsExactly(5);
 			assertThat(result.originalSample()).isNotPresent();
 		}
 

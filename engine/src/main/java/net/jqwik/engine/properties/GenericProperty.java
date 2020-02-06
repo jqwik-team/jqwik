@@ -5,7 +5,6 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.reporting.*;
-import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -13,12 +12,14 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.api.lifecycle.TryExecutionResult.Status.*;
+
 public class GenericProperty {
 
 	private final String name;
 	private final PropertyConfiguration configuration;
 	private final ShrinkablesGenerator shrinkablesGenerator;
-	private final CheckedFunction checkedFunction;
+	private final TryExecutor tryExecutor;
 
 	public GenericProperty(
 		String name,
@@ -29,7 +30,7 @@ public class GenericProperty {
 		this.name = name;
 		this.configuration = configuration;
 		this.shrinkablesGenerator = shrinkablesGenerator;
-		this.checkedFunction = CheckedFunction.fromTryExecutor(tryExecutor);
+		this.tryExecutor = tryExecutor;
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting) {
@@ -45,14 +46,16 @@ public class GenericProperty {
 			List<Shrinkable<Object>> shrinkableParams = shrinkablesGenerator.next();
 			try {
 				countChecks++;
-				if (!testPredicate(shrinkableParams, reporter, reporting)) {
-					return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, null);
+				TryExecutionResult tryExecutionResult = testPredicate(shrinkableParams, reporter, reporting);
+				if (tryExecutionResult.status() == FALSIFIED) {
+					return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, tryExecutionResult
+																														  .throwable());
 				}
-			} catch (TestAbortedException tae) {
-				countChecks--;
-			} catch (AssertionError | Exception ae) {
-				return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, ae);
+				if (tryExecutionResult.status() == INVALID) {
+					countChecks--;
+				}
 			} catch (Throwable throwable) {
+				// Only not AssertionErrors and non Exceptions get here
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
@@ -80,7 +83,7 @@ public class GenericProperty {
 		);
 	}
 
-	private boolean testPredicate(
+	private TryExecutionResult testPredicate(
 		List<Shrinkable<Object>> shrinkableParams,
 		Consumer<ReportEntry> reporter,
 		Reporting[] reporting
@@ -89,7 +92,7 @@ public class GenericProperty {
 		if (Reporting.GENERATED.containedIn(reporting)) {
 			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
 		}
-		return checkedFunction.test(plainParams);
+		return tryExecutor.execute(plainParams);
 	}
 
 	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {
@@ -103,10 +106,10 @@ public class GenericProperty {
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
 		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
-		int countTries, List<Shrinkable<Object>> shrinkables, Throwable exceptionOrAssertionError
+		int countTries, List<Shrinkable<Object>> shrinkables, Optional<Throwable> optionalThrowable
 	) {
 		List<Object> originalParams = extractParams(shrinkables);
-		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, exceptionOrAssertionError);
+		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, optionalThrowable.orElse(null));
 		List<Object> shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
 		return PropertyCheckResult.failed(
@@ -122,8 +125,12 @@ public class GenericProperty {
 		Throwable exceptionOrAssertionError
 	) {
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting);
-		Falsifier<List<Object>> forAllFalsifier = checkedFunction::test;
+		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryExecutor);
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
+	}
+
+	private Falsifier<List<Object>> createFalsifier(TryExecutor tryExecutor) {
+		return CheckedFunction.fromTryExecutor(tryExecutor)::test;
 	}
 
 }
