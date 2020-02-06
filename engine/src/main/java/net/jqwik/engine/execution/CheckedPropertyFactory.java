@@ -37,7 +37,9 @@ public class CheckedPropertyFactory {
 				StoreRepository.getCurrent().finishTry(propertyMethodDescriptor);
 			}
 		};
-		CheckedFunction checkedFunction = new AroundTryLifecycle(rawFunction, propertyLifecycleContext, aroundTryWithFinishing);
+		AroundTryLifecycle tryExecutor = new AroundTryLifecycle(rawFunction, propertyLifecycleContext, aroundTryWithFinishing);
+		CheckedFunction checkedFunction = CheckedFunction.fromTryExecutor(tryExecutor);
+
 		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
