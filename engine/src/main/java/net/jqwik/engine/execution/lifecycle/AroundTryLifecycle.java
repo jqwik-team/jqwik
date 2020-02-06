@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 public class AroundTryLifecycle implements TryExecutor {
@@ -14,11 +13,11 @@ public class AroundTryLifecycle implements TryExecutor {
 	private final TryLifecycleContextForMethod tryLifecycleContext;
 
 	public AroundTryLifecycle(
-		CheckedFunction rawFunction,
+		TryExecutor tryExecutor,
 		PropertyLifecycleContext propertyLifecycleContext,
 		AroundTryHook aroundTry
 	) {
-		this.tryExecutor = rawFunction.asTryExecutor();
+		this.tryExecutor = tryExecutor;
 		this.tryLifecycleContext = new TryLifecycleContextForMethod(propertyLifecycleContext);
 		this.aroundTry = aroundTry;
 	}

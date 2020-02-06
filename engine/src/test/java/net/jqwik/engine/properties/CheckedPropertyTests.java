@@ -125,7 +125,7 @@ class CheckedPropertyTests {
 		void ifNoArbitraryForParameterCanBeFound_checkIsFalsified() {
 			List<MethodParameter> parameters = getParametersForMethod("stringProp");
 
-			CheckedProperty checkedProperty = new CheckedProperty(
+			CheckedProperty checkedProperty = createCheckedProperty(
 				"stringProp",
 				params -> false,
 				parameters,
@@ -144,7 +144,7 @@ class CheckedPropertyTests {
 		void usingASeedWillAlwaysProvideSameArbitraryValues() {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
-			CheckedProperty checkedProperty = new CheckedProperty(
+			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
@@ -164,7 +164,7 @@ class CheckedPropertyTests {
 		void previousSeedWillBeUsed() {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
-			CheckedProperty checkedProperty = new CheckedProperty(
+			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
@@ -183,7 +183,7 @@ class CheckedPropertyTests {
 		void previousSeedWillNotBeUsed() {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
-			CheckedProperty checkedProperty = new CheckedProperty(
+			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
@@ -202,7 +202,7 @@ class CheckedPropertyTests {
 		void previousSeedWillNotBeUsedWithConstantSeed() {
 			List<Integer> allGeneratedInts = new ArrayList<>();
 			CheckedFunction addIntToList = params -> allGeneratedInts.add((int) params.get(0));
-			CheckedProperty checkedProperty = new CheckedProperty(
+			CheckedProperty checkedProperty = createCheckedProperty(
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
@@ -225,7 +225,7 @@ class CheckedPropertyTests {
 				List<Tuple.Tuple2<Integer, String>> allGeneratedParameters = new ArrayList<>();
 				CheckedFunction rememberParameters =
 					params -> allGeneratedParameters.add(Tuple.of((int) params.get(0), (String) params.get(1)));
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
@@ -245,7 +245,7 @@ class CheckedPropertyTests {
 				List<Tuple.Tuple2<Integer, String>> allGeneratedParameters = new ArrayList<>();
 				CheckedFunction rememberParameters = params -> allGeneratedParameters
 																   .add(Tuple.of((int) params.get(0), (String) params.get(1)));
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
@@ -262,7 +262,7 @@ class CheckedPropertyTests {
 			@Example
 			@Label("fails if it has GenerationMode.RANDOMIZED")
 			void failIfItHasGenerationModeRandomized() {
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"))),
@@ -275,7 +275,7 @@ class CheckedPropertyTests {
 			@Example
 			@Label("fails if it has GenerationMode.EXHAUSTIVE")
 			void failIfItHasGenerationModeExhaustive() {
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"))),
@@ -288,7 +288,7 @@ class CheckedPropertyTests {
 			@Example
 			@Label("fails if optional data is empty")
 			void failIfItOptionalDataIsEmpty() {
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.empty(),
@@ -307,7 +307,7 @@ class CheckedPropertyTests {
 			void runWithGenerationModeExhaustive() {
 				List<Tuple.Tuple1<Integer>> allGeneratedParameters = new ArrayList<>();
 				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of((int) params.get(0)));
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
@@ -324,7 +324,7 @@ class CheckedPropertyTests {
 			@Example
 			@Label("with explicit GenerationMode.EXHAUSTIVE number of tries is set to countMax")
 			void withExplicitGenerationModeExhaustive() {
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 99)),
 					Optional.empty(),
@@ -342,7 +342,7 @@ class CheckedPropertyTests {
 			void runWithGenerationModeAuto() {
 				List<Tuple.Tuple1<Integer>> allGeneratedParameters = new ArrayList<>();
 				CheckedFunction rememberParameters = params -> allGeneratedParameters.add(Tuple.of((int) params.get(0)));
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
@@ -359,7 +359,7 @@ class CheckedPropertyTests {
 			@Example
 			@Label("fails if it no exhaustive generators are provided")
 			void failIfNoExhaustiveGeneratorsAreProvided() {
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers()),
 					Optional.empty(),
@@ -372,7 +372,7 @@ class CheckedPropertyTests {
 			@Example
 			@Label("use randomized generation if countMax is larger than configured tries")
 			void useRandomizedGenerationIfCountMaxIsAboveTries() {
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 21)),
 					Optional.empty(),
@@ -388,7 +388,7 @@ class CheckedPropertyTests {
 			@Example
 			@Label("use randomized generation with explicit GenerationMode.RANDOMIZED")
 			void useRandomizedWithExplicitGenerationModeRandomized() {
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
@@ -411,7 +411,7 @@ class CheckedPropertyTests {
 			void runWithSampleOnlyWhenSampleIsProvided() {
 				List<Object> sample = Arrays.asList(1, 2);
 				CheckedFunction checkSample = params -> params.equals(sample);
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
 					p -> Collections.emptySet(),
 					Optional.empty(),
@@ -429,7 +429,7 @@ class CheckedPropertyTests {
 			void runSampleAndRandomSeed() {
 				List<Object> sample = Arrays.asList(1, 2);
 				CheckedFunction checkSample = params -> true;
-				CheckedProperty checkedProperty = new CheckedProperty(
+				CheckedProperty checkedProperty = createCheckedProperty(
 					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
 					p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 					Optional.empty(),
@@ -444,8 +444,26 @@ class CheckedPropertyTests {
 		}
 	}
 
+	private CheckedProperty createCheckedProperty(
+		String propertyName,
+		CheckedFunction checkedFunction,
+		List<MethodParameter> parameters,
+		ArbitraryResolver arbitraryResolver,
+		Optional<Iterable<? extends Tuple>> optionalData,
+		PropertyConfiguration configuration
+	) {
+		return new CheckedProperty(
+			propertyName,
+			checkedFunction.asTryExecutor(),
+			parameters,
+			arbitraryResolver,
+			optionalData,
+			configuration
+		);
+	}
+
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.CheckStatus expectedStatus) {
-		CheckedProperty checkedProperty = new CheckedProperty(
+		CheckedProperty checkedProperty = createCheckedProperty(
 			methodName, forAllFunction, getParametersForMethod(methodName),
 			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
 			Optional.empty(),
@@ -466,7 +484,13 @@ class CheckedPropertyTests {
 			return true;
 		}
 
-		@Property(stereotype = "OtherStereotype", tries = 42, maxDiscardRatio = 2, shrinking = ShrinkingMode.OFF, afterFailure = AfterFailureMode.RANDOM_SEED)
+		@Property(
+			stereotype = "OtherStereotype",
+			tries = 42,
+			maxDiscardRatio = 2,
+			shrinking = ShrinkingMode.OFF,
+			afterFailure = AfterFailureMode.RANDOM_SEED
+		)
 		public boolean propertyWith42TriesAndMaxDiscardRatio2(@ForAll int anyNumber) {
 			return true;
 		}

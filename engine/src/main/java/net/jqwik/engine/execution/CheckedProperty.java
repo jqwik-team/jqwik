@@ -6,6 +6,7 @@ import java.util.function.*;
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
@@ -22,11 +23,15 @@ public class CheckedProperty {
 	private Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive;
 
 	public CheckedProperty(
-		String propertyName, CheckedFunction checkedFunction, List<MethodParameter> forAllParameters,
-		ArbitraryResolver arbitraryResolver, Optional<Iterable<? extends Tuple>> optionalData, PropertyConfiguration configuration
+		String propertyName,
+		TryExecutor tryExecutor,
+		List<MethodParameter> forAllParameters,
+		ArbitraryResolver arbitraryResolver,
+		Optional<Iterable<? extends Tuple>> optionalData,
+		PropertyConfiguration configuration
 	) {
 		this.propertyName = propertyName;
-		this.checkedFunction = checkedFunction;
+		this.checkedFunction = CheckedFunction.fromTryExecutor(tryExecutor);
 		this.forAllParameters = forAllParameters;
 		this.arbitraryResolver = arbitraryResolver;
 		this.optionalData = optionalData;
