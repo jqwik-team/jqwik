@@ -24,11 +24,6 @@ public class GuidanceExperiments {
 		boolean hasNextTry();
 
 		/**
-		 * Callback for observing actual generated sample passed to the property method.
-		 */
-		void observeGeneratedSample(List<Object> sample);
-
-		/**
 		 * Handles the result of a property try.
 		 */
 		void handleResult(TryResult result);
