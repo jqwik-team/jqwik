@@ -13,7 +13,7 @@ class UnshrinkableTests {
 	void unshrinkableAreNotBeingShrunk() {
 		Shrinkable<String> unshrinkableString = Shrinkable.unshrinkable("a string");
 
-		ShrinkingSequence<String> shrinkingSequence = unshrinkableString.shrink(ignore -> false);
+		ShrinkingSequence<String> shrinkingSequence = unshrinkableString.shrinkWithCondition(ignore -> false);
 		while (shrinkingSequence.next(() -> {}, ignore -> {})) {}
 
 		assertThat(shrinkingSequence.current().value()).isEqualTo("a string");

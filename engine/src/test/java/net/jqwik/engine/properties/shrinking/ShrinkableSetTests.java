@@ -38,7 +38,7 @@ class ShrinkableSetTests {
 	void reportFalsified() {
 		Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(4, 0, 1, 2), 0);
 
-		ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
+		ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrinkWithCondition(Set::isEmpty);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(0, 1, 2);
@@ -72,7 +72,7 @@ class ShrinkableSetTests {
 		void downAllTheWay() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2), 0);
 
-			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> false);
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrinkWithCondition(aSet -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
@@ -89,7 +89,7 @@ class ShrinkableSetTests {
 		void downToMinSize() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3, 4), 2);
 
-			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> false);
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrinkWithCondition(aSet -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(4);
@@ -109,7 +109,7 @@ class ShrinkableSetTests {
 		void downToNonEmpty() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
 
-			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrinkWithCondition(Set::isEmpty);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 1, 2);
@@ -126,7 +126,7 @@ class ShrinkableSetTests {
 		void alsoShrinkElements() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
 
-			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(aSet -> aSet.size() <= 1);
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrinkWithCondition(aSet -> aSet.size() <= 1);
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).containsExactly(0, 1);
 		}
@@ -135,7 +135,7 @@ class ShrinkableSetTests {
 		void shrinkingResultHasValueAndThrowable() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
 
-			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(integers -> {
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrinkWithCondition(integers -> {
 				if (integers.size() > 1) throw new IllegalArgumentException("my reason");
 				return true;
 			});
@@ -153,7 +153,7 @@ class ShrinkableSetTests {
 		void withFilterOnSetSize() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(1, 2, 3, 4), 0);
 
-			Falsifier<Set<Integer>> falsifier = ignore -> false;
+			LegacyFalsifier<Set<Integer>> falsifier = ignore -> false;
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.size() % 2 == 0);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
@@ -175,7 +175,7 @@ class ShrinkableSetTests {
 		void withFilterOnSetContents() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 5, 6), 0);
 
-			Falsifier<Set<Integer>> falsifier = Set::isEmpty;
+			LegacyFalsifier<Set<Integer>> falsifier = Set::isEmpty;
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
 
@@ -190,7 +190,7 @@ class ShrinkableSetTests {
 			Set<Shrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new).collect(Collectors.toSet());
 			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5);
 
-			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(Set::isEmpty);
+			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrinkWithCondition(Set::isEmpty);
 
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).hasSize(5);

@@ -37,7 +37,7 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 		return shrinkSequenceOfActions(minRespectingFalsifier)
 				   .andThen(shrinkableList -> { //
 					   ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkableList;
-					   Falsifier<List<Action<T>>> listFalsifier = list -> minRespectingFalsifier.test(toRunnableActionSequence(list));
+					   Falsifier<List<Action<T>>> listFalsifier = list -> minRespectingFalsifier.executeTry(toRunnableActionSequence(list));
 					   return shrinkIndividualActions(shrinkableSequence, listFalsifier)
 								  // Shrink list of actions again since element shrinking
 								  // might have made some actions unnecessary

@@ -89,7 +89,7 @@ class ArbitraryShrinkingTests {
 
 		Shrinkable<List<Integer>> shrinkable = generator.next(random);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 		sequence.init(FalsificationResult.falsified(shrinkable));
 
 		while (sequence.next(() -> {}, ignore -> {})) ;
@@ -121,7 +121,7 @@ class ArbitraryShrinkingTests {
 
 			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
 
-			Falsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
+			LegacyFalsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
 			Map<Integer, String> map = falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
 
 			assertThat(map).hasSize(2);

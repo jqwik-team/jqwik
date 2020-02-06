@@ -32,7 +32,7 @@ class MappedShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + i);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("22");
@@ -53,7 +53,7 @@ class MappedShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + i);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("22");

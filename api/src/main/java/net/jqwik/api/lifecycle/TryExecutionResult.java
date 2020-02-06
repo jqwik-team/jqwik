@@ -62,6 +62,10 @@ public interface TryExecutionResult {
 		};
 	}
 
+	default boolean isSatisfied() {
+		return this.status() == Status.SATISFIED;
+	}
+
 	enum Status {
 		SATISFIED,
 		FALSIFIED,

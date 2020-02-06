@@ -59,7 +59,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
-		Falsifier<List<Object>> listFalsifier = params -> {
+		LegacyFalsifier<List<Object>> listFalsifier = params -> {
 			if (((int) params.get(0)) == 0) return true;
 			return ((int) params.get(1)) <= 1;
 		};
@@ -123,7 +123,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
-		Falsifier<List<Object>> listFalsifier = params -> {
+		LegacyFalsifier<List<Object>> listFalsifier = params -> {
 			if (((int) params.get(0)) == 0) return true;
 			if (((int) params.get(1)) <= 1) return true;
 			throw new RuntimeException(String.format("%s:%s", params.get(0), params.get(1)));

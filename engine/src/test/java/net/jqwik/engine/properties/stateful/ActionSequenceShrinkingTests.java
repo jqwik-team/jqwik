@@ -15,7 +15,7 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(value -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(value -> {
 			value.run("");
 			return false;
 		});
@@ -32,7 +32,7 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(value -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(value -> {
 			value.run("");
 			throw new AssertionError();
 		});
@@ -52,7 +52,7 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(value -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(value -> {
 			value.run("");
 			return false;
 		});

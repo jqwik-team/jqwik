@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
 public class CombinedShrinkable<T> implements Shrinkable<T> {
@@ -45,10 +46,10 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 			Falsifier<List<Object>> combinedFalsifier = elements -> {
 				try {
 					T value = combinator.apply(elements);
-					return falsifier.test(value);
+					return falsifier.executeTry(value);
 				} catch (GenerationError generationError) {
 					// Ignore Generation errors
-					return true;
+					return TryExecutionResult.satisfied();
 				}
 			};
 			elementsSequence = new ShrinkElementsSequence<>(

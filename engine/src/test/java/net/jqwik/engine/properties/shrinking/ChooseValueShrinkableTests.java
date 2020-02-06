@@ -28,7 +28,7 @@ class ChooseValueShrinkableTests {
 	void shrinking() {
 		Shrinkable<Integer> shrinkable = new ChooseValueShrinkable<>(4, Arrays.asList(1, 2, 3, 4, 5));
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(1);

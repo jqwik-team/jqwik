@@ -28,7 +28,7 @@ class DeepSearchShrinkingTests {
 		void withoutFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(4);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
@@ -48,7 +48,7 @@ class DeepSearchShrinkingTests {
 		void withFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
-			Falsifier<Integer> falsifier = anInt -> anInt < 6;
+			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
@@ -85,7 +85,7 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
@@ -110,7 +110,7 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(4);
@@ -128,7 +128,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
-			Falsifier<Integer> falsifier = anInt -> anInt < 6;
+			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
@@ -155,7 +155,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownAllTheWay() {
 			Shrinkable<Integer> shrinkable = new FullShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
@@ -172,7 +172,7 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);
@@ -186,7 +186,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new FullShrinkable(10);
 
-			Falsifier<Integer> falsifier = anInt -> anInt < 6;
+			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
@@ -205,7 +205,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownAllTheWay() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
@@ -224,7 +224,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownSomeWay() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
@@ -240,7 +240,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(10);
 
-			Falsifier<Integer> falsifier = anInt -> anInt < 6;
+			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 

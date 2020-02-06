@@ -53,7 +53,7 @@ class CombinedShrinkableTests {
 		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>( //
 																   shrinkables, combinator);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(result -> result < 4);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.next(count, reporter)).isTrue();
@@ -79,7 +79,7 @@ class CombinedShrinkableTests {
 		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>( //
 																   shrinkables, combinator);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink(result -> result < 4);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(result -> result < 4);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(7);

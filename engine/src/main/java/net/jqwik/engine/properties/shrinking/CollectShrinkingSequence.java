@@ -25,7 +25,7 @@ class CollectShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	private ShrinkingSequence<T> getShrinkingSequence(int shrinkingPosition) {
 		Falsifier<T> elementFalsifier = value -> {
 			List<T> currentValues = collectValues(shrinkingPosition, value);
-			return falsifier.test(currentValues);
+			return falsifier.executeTry(currentValues);
 		};
 		return elements.get(shrinkingPosition).shrink(elementFalsifier);
 	}

@@ -97,7 +97,7 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 		return elementValue -> {
 			List<T> effectiveParams = toValueList(falsificationResults);
 			effectiveParams.set(position, elementValue);
-			return listFalsifier.test(effectiveParams);
+			return listFalsifier.executeTry(effectiveParams);
 		};
 	}
 

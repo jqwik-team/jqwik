@@ -106,9 +106,14 @@ public class ArbitraryTestHelper {
 	}
 
 	@SuppressWarnings("unchecked")
+	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, LegacyFalsifier<T> falsifier) {
+		return falsifyThenShrink(arbitrary, random, (Falsifier<T>) falsifier);
+	}
+
 	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10);
-		Shrinkable<T> falsifiedShrinkable = (Shrinkable<T>) generateUntil(generator, random, value -> !falsifier.test(value));
+		Shrinkable<T> falsifiedShrinkable = (Shrinkable<T>) generateUntil(generator, random, value -> !falsifier.executeTry(value)
+																												.isSatisfied());
 
 		ShrinkingSequence<T> sequence = falsifiedShrinkable.shrink(falsifier);
 		while (sequence.next(() -> {}, ignore -> { })) ;

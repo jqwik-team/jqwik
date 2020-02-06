@@ -33,7 +33,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier)
 				   .andThen(shrinkableList -> {
 					   List<Shrinkable<E>> elements = ((ShrinkableContainer<C, E>) shrinkableList).elements;
-					   Falsifier<List<E>> listFalsifier = list -> falsifier.test(toContainer(list));
+					   Falsifier<List<E>> listFalsifier = list -> falsifier.executeTry(toContainer(list));
 					   return new ContainerShrinkingSequence<>(elements, listFalsifier, ShrinkingDistance::forCollection, this::toContainerShrinkable);
 				   }).andThen(shrinkableContainer ->
 								  new DeepSearchShrinkingSequence<>(shrinkableContainer, this::shrinkCandidatesFor, falsifier)

@@ -33,7 +33,7 @@ class FilteredShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(3);
@@ -52,7 +52,7 @@ class FilteredShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(3);

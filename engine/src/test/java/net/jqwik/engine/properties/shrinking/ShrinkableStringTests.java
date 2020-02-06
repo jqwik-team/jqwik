@@ -5,11 +5,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
-import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -39,7 +35,7 @@ public class ShrinkableStringTests {
 	void reportFalsified() {
 		Shrinkable<String> shrinkable = createShrinkableString("bcd", 0);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
+		ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(String::isEmpty);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("bc");
@@ -65,7 +61,7 @@ public class ShrinkableStringTests {
 		void downAllTheWay() {
 			Shrinkable<String> shrinkable = createShrinkableString("abc", 0);
 
-			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> false);
+			ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(aString -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(2);
@@ -82,7 +78,7 @@ public class ShrinkableStringTests {
 		void downToMinSize() {
 			Shrinkable<String> shrinkable = createShrinkableString("aaaaa", 2);
 
-			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> false);
+			ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(aString -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(4);
@@ -99,7 +95,7 @@ public class ShrinkableStringTests {
 		void downToNonEmpty() {
 			Shrinkable<String> shrinkable = createShrinkableString("abcd", 0);
 
-			ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
+			ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(String::isEmpty);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().length()).isEqualTo(3);
@@ -117,7 +113,7 @@ public class ShrinkableStringTests {
 
 			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
 
-			ShrinkingSequence<String> sequence = shrinkable.shrink(aString -> aString.length() <= 1);
+			ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(aString -> aString.length() <= 1);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo("bb");
@@ -134,7 +130,7 @@ public class ShrinkableStringTests {
 			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
 
 
-			ShrinkingSequence<String> sequence = shrinkable.shrink(string -> {
+			ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(string -> {
 				if (string.length() > 1) throw new IllegalArgumentException("my reason");
 				return true;
 			});
@@ -152,7 +148,7 @@ public class ShrinkableStringTests {
 		void withFilterOnStringLength() {
 			Shrinkable<String> shrinkable = createShrinkableString("cccc", 0);
 
-			Falsifier<String> falsifier = ignore -> false;
+			LegacyFalsifier<String> falsifier = ignore -> false;
 			Falsifier<String> filteredFalsifier = falsifier.withFilter(aString -> aString.length() % 2 == 0);
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(filteredFalsifier);
@@ -174,7 +170,7 @@ public class ShrinkableStringTests {
 		void withFilterOnStringContents() {
 			Shrinkable<String> shrinkable = createShrinkableString("ddd", 0);
 
-			Falsifier<String> falsifier = String::isEmpty;
+			LegacyFalsifier<String> falsifier = String::isEmpty;
 			Falsifier<String> filteredFalsifier = falsifier //
 				.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
 			ShrinkingSequence<String> sequence = shrinkable.shrink(filteredFalsifier);
@@ -195,7 +191,7 @@ public class ShrinkableStringTests {
 
 			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5);
 
-			ShrinkingSequence<String> sequence = shrinkable.shrink(String::isEmpty);
+			ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(String::isEmpty);
 
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).hasSize(5);

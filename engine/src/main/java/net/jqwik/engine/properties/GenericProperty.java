@@ -130,7 +130,7 @@ public class GenericProperty {
 	}
 
 	private Falsifier<List<Object>> createFalsifier(TryExecutor tryExecutor) {
-		return CheckedFunction.fromTryExecutor(tryExecutor)::test;
+		return tryExecutor::execute;
 	}
 
 }

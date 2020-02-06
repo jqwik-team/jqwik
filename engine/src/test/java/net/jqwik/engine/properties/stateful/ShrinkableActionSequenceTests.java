@@ -63,7 +63,7 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(seq -> {
 			seq.run("");
 			return false;
 		});
@@ -92,7 +92,7 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(seq -> {
 			String result = seq.run("");
 			return result.length() < 2;
 		});
@@ -114,7 +114,7 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(seq -> {
 			String result = seq.run("");
 			if (result.contains("c"))
 				return result.length() < 4;
@@ -143,7 +143,7 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(seq -> {
 			String result = seq.run("");
 			return result.length() < 2;
 		});
@@ -160,7 +160,7 @@ class ShrinkableActionSequenceTests {
 		actions.add(shrinkableAddX()); // to ensure that at least one action is valid
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink(seq -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(seq -> {
 			String result = seq.run("");
 			return !result.contains("x");
 		});

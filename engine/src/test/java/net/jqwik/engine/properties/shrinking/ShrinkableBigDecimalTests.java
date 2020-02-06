@@ -107,7 +107,7 @@ class ShrinkableBigDecimalTests {
 	void reportFalsified() {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
 
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrinkWithCondition(aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(new BigDecimal("13"));
@@ -125,7 +125,7 @@ class ShrinkableBigDecimalTests {
 	void shrinkWithFilter() {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("31.55", Range.of(-100.0, 100.0));
 
-		Falsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.doubleValue() < 24.9;
+		LegacyFalsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.doubleValue() < 24.9;
 		Falsifier<BigDecimal> filteredFalsifier = falsifier.withFilter(aBigDecimal -> aBigDecimal.remainder(BigDecimal.valueOf(2))
 																								 .longValue() == 1);
 
@@ -139,7 +139,7 @@ class ShrinkableBigDecimalTests {
 	@Property
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-1000000000", max = "1000000000") @Scale(15) BigDecimal aValue) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 		while (sequence.next(count, reporter)) ;
 		BigDecimal shrunkValue = sequence.current().value();
 		// can be + or - 0.0:
@@ -152,7 +152,7 @@ class ShrinkableBigDecimalTests {
 		@ForAll @BigRange(min = "-100", max = "100") BigDecimal shrinkingTarget
 	) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000.0, 1000.0), shrinkingTarget);
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 		while (sequence.next(count, reporter)) ;
 		BigDecimal shrunkValue = sequence.current().value();
 		// Allow offset to max 1.0 because decimals are shrunk away if possible

@@ -2,8 +2,12 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 
 import org.apiguardian.api.*;
+import org.opentest4j.*;
+
+import net.jqwik.api.lifecycle.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -35,6 +39,29 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	T value();
 
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);
+
+	@Deprecated
+	default ShrinkingSequence<T> shrinkWithCondition(Predicate<T> predicateFalsifier) {
+		Falsifier<T> falsifier = parameters -> {
+			try {
+				boolean result = predicateFalsifier.test(parameters);
+				return result ? TryExecutionResult.satisfied() : TryExecutionResult.falsified(null);
+			} catch (TestAbortedException tea) {
+				return TryExecutionResult.invalid();
+			} catch (AssertionError | Exception e) {
+				return TryExecutionResult.falsified(e);
+			} catch (Throwable throwable) {
+				throwAs(throwable);
+				return null;
+			}
+		};
+		return shrink(falsifier);
+	}
+
+	@SuppressWarnings("unchecked")
+	static <T extends Throwable> void throwAs(Throwable t) throws T {
+		throw (T) t;
+	}
 
 	ShrinkingDistance distance();
 
@@ -84,7 +111,8 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	 */
 	@API(status = INTERNAL)
 	default List<Shrinkable<T>> shrinkingSuggestions() {
-		ShrinkingSequence<T> allDown = shrink(ignore -> false);
+		Falsifier<T> falsifier = ignore -> TryExecutionResult.falsified(null);
+		ShrinkingSequence<T> allDown = shrink(falsifier);
 		List<Shrinkable<T>> suggestions = new ArrayList<>();
 		while(allDown.next(() -> {}, result -> {})) {
 			suggestions.add(allDown.current().shrinkable());

@@ -46,7 +46,7 @@ class CollectShrinkableTests {
 		Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(2, 1);
@@ -71,11 +71,11 @@ class CollectShrinkableTests {
 		Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
-		Falsifier<List<Integer>> sumMustNotBeEven = listOfInts -> {
+		Predicate<List<Integer>> sumMustNotBeEven = listOfInts -> {
 			int sum = listOfInts.stream().mapToInt(i -> i).sum();
 			return sum % 2 != 0;
 		};
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(sumMustNotBeEven);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(sumMustNotBeEven);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(1, 1);
@@ -96,7 +96,7 @@ class CollectShrinkableTests {
 		};
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, sumAtLeast6);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(2, 1, 1, 1, 1);
@@ -122,7 +122,7 @@ class CollectShrinkableTests {
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilNotEmpty);
 
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(2);

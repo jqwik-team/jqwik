@@ -84,7 +84,7 @@ class ShrinkableBigIntegerTests {
 	void reportFalsified() {
 		Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(30, Range.of(-100L, 100L));
 
-		ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(10)) < 0);
+		ShrinkingSequence<BigInteger> sequence = shrinkable.shrinkWithCondition(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(10)) < 0);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(13));
@@ -106,7 +106,7 @@ class ShrinkableBigIntegerTests {
 		void downAllTheWay() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
 
-			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0);
+			ShrinkingSequence<BigInteger> sequence = shrinkable.shrinkWithCondition(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0);
 
 			while (sequence.next(count, reporter));
 
@@ -118,7 +118,7 @@ class ShrinkableBigIntegerTests {
 		void withFilter() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(0L, 1000000L));
 
-			Falsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.intValueExact() < 99;
+			LegacyFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.intValueExact() < 99;
 			Falsifier<BigInteger> filteredFalsifier = falsifier.withFilter(aBigInteger -> aBigInteger.intValueExact() % 2 == 0);
 
 			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(filteredFalsifier);
@@ -133,7 +133,7 @@ class ShrinkableBigIntegerTests {
 		void upToExplicitShrinkingTarget() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(1000, Range.of(5L, 500000L), 5000L);
 
-			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(5000)) >= 0);
+			ShrinkingSequence<BigInteger> sequence = shrinkable.shrinkWithCondition(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(5000)) >= 0);
 
 			while (sequence.next(count, reporter)) ;
 

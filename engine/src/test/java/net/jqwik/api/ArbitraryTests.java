@@ -290,7 +290,7 @@ class ArbitraryTests {
 			Shrinkable<String> value3to6 = generateNth(generator, 3, random);
 			assertThat(value3to6.value()).isEqualTo("3:6");
 
-			ShrinkingSequence<String> sequence = value3to6.shrink(ignore -> false);
+			ShrinkingSequence<String> sequence = value3to6.shrinkWithCondition(ignore -> false);
 			while (sequence.next(() -> {}, ignore -> {})) ;
 			assertThat(sequence.current().value()).isEqualTo("1:4");
 		}

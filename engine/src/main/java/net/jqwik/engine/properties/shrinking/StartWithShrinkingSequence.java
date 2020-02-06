@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 
 public class StartWithShrinkingSequence<T> implements ShrinkingSequence<T> {
 	private final Shrinkable<T> starter;
@@ -22,7 +23,7 @@ public class StartWithShrinkingSequence<T> implements ShrinkingSequence<T> {
 			this.current = startersSequence.current();
 			return next;
 		}
-		if (falsifier.test(starter.value())) {
+		if (falsifier.executeTry(starter.value()).status() == TryExecutionResult.Status.SATISFIED) {
 			return false;
 		}
 		startersSequence = starter.shrink(falsifier);
