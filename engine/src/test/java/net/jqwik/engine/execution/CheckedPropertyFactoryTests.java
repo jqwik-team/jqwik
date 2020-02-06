@@ -2,8 +2,6 @@ package net.jqwik.engine.execution;
 
 import java.util.*;
 
-import org.omg.PortableInterceptor.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
