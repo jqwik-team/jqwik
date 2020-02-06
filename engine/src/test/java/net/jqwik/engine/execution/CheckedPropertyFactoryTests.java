@@ -2,12 +2,16 @@ package net.jqwik.engine.execution;
 
 import java.util.*;
 
+import org.omg.PortableInterceptor.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.lifecycle.TryExecutionResult.Status.*;
 
 public class CheckedPropertyFactoryTests {
 
@@ -27,8 +31,8 @@ public class CheckedPropertyFactoryTests {
 
 		List<Object> argsTrue = Arrays.asList(1, "test");
 		List<Object> argsFalse = Arrays.asList(2, "test");
-		assertThat(property.checkedFunction.test(argsTrue)).isTrue();
-		assertThat(property.checkedFunction.test(argsFalse)).isFalse();
+		assertThat(property.tryExecutor.execute(argsTrue).status()).isEqualTo(SATISFIED);
+		assertThat(property.tryExecutor.execute(argsFalse).status()).isEqualTo(FALSIFIED);
 
 		assertThat(property.configuration.getStereotype()).isEqualTo("Property");
 		assertThat(property.configuration.getSeed()).isEqualTo("42");
@@ -60,7 +64,7 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.forAllParameters).size().isEqualTo(0);
 
 		List<Object> noArgs = Arrays.asList();
-		assertThat(property.checkedFunction.test(noArgs)).isTrue();
+		assertThat(property.tryExecutor.execute(noArgs).status()).isEqualTo(SATISFIED);
 	}
 
 	private PropertyMethodDescriptor createDescriptor(

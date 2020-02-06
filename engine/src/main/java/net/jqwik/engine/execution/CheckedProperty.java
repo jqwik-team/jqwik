@@ -14,7 +14,7 @@ import net.jqwik.engine.support.*;
 public class CheckedProperty {
 
 	public final String propertyName;
-	public final CheckedFunction checkedFunction;
+	public final TryExecutor tryExecutor;
 	public final List<MethodParameter> forAllParameters;
 	public final PropertyConfiguration configuration;
 
@@ -31,7 +31,7 @@ public class CheckedProperty {
 		PropertyConfiguration configuration
 	) {
 		this.propertyName = propertyName;
-		this.checkedFunction = CheckedFunction.fromTryExecutor(tryExecutor);
+		this.tryExecutor = tryExecutor;
 		this.forAllParameters = forAllParameters;
 		this.arbitraryResolver = arbitraryResolver;
 		this.optionalData = optionalData;
@@ -75,7 +75,7 @@ public class CheckedProperty {
 			configuration = chooseGenerationMode(configuration);
 		}
 		ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
-		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, checkedFunction);
+		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, CheckedFunction.fromTryExecutor(tryExecutor));
 	}
 
 	private ShrinkablesGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {
@@ -165,9 +165,7 @@ public class CheckedProperty {
 		return new SampleOnlyShrinkablesGenerator(forAllParameters, configuration.getFalsifiedSample());
 	}
 
-	//  TODO TODO TODO: Replace with explicit use of maxNumberOfSamples
 	private Optional<ExhaustiveShrinkablesGenerator> getOptionalExhaustive() {
-		// Make it lazy for performance reasons
 		//noinspection OptionalAssignedToNull
 		if (optionalExhaustive == null) {
 			long maxNumberOfSamples = configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE
