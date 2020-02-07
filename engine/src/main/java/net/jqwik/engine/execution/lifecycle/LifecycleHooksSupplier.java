@@ -11,7 +11,7 @@ public interface LifecycleHooksSupplier {
 
 	AroundTryHook aroundTryHook(PropertyMethodDescriptor methodDescriptor);
 
-	BeforeContainerHook beforeContainerHook(ContainerClassDescriptor containerClassDescriptor);
+	BeforeContainerHook beforeContainerHook(TestDescriptor descriptor);
 
 	SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor);
 

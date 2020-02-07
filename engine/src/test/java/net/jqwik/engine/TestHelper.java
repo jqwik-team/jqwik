@@ -53,7 +53,7 @@ public class TestHelper {
 			}
 
 			@Override
-			public BeforeContainerHook beforeContainerHook(ContainerClassDescriptor containerClassDescriptor) {
+			public BeforeContainerHook beforeContainerHook(TestDescriptor descriptor) {
 				return BeforeContainerHook.BASE;
 			}
 

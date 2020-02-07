@@ -16,7 +16,8 @@ public interface BeforeContainerHook extends LifecycleHook<BeforeContainerHook> 
 
 	@Override
 	default int compareTo(BeforeContainerHook other) {
-		return Integer.compare(this.beforeContainerProximity(), other.beforeContainerProximity());
+		// The closer (higher proximity) the later it is called
+		return -Integer.compare(this.beforeContainerProximity(), other.beforeContainerProximity());
 	}
 
 	default int beforeContainerProximity() {

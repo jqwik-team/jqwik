@@ -11,6 +11,7 @@ public interface ExecutionTask {
 
 	UniqueId ownerId();
 
+	// TODO: return TaskExecutionResult
 	void execute(PropertyExecutionListener listener);
 
 	static ExecutionTask from(Consumer<PropertyExecutionListener> consumer, TestDescriptor owner, String description) {

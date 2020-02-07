@@ -11,6 +11,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
+import net.jqwik.engine.support.*;
 
 class ContainerTaskCreator {
 
@@ -38,8 +39,17 @@ class ContainerTaskCreator {
 			);
 		}
 
+		BeforeContainerHook beforeContainerHook = lifecycleSupplier.beforeContainerHook(containerDescriptor);
 		ExecutionTask prepareContainerTask = ExecutionTask.from(
-			listener -> listener.executionStarted(containerDescriptor),
+			listener -> {
+				listener.executionStarted(containerDescriptor);
+				try {
+					beforeContainerHook.beforeContainer(containerLifecycleContext);
+				} catch (Throwable throwable) {
+					JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+					TaskExecutionResult.failure(throwable);
+				}
+			},
 			containerDescriptor,
 			"prepare " + containerDescriptor.getDisplayName()
 		);

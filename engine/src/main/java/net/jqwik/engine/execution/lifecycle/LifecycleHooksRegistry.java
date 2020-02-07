@@ -31,8 +31,8 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	@Override
-	public BeforeContainerHook beforeContainerHook(ContainerClassDescriptor containerClassDescriptor) {
-		List<BeforeContainerHook> aroundTryHooks = findHooks(containerClassDescriptor, BeforeContainerHook.class);
+	public BeforeContainerHook beforeContainerHook(TestDescriptor descriptor) {
+		List<BeforeContainerHook> aroundTryHooks = findHooks(descriptor, BeforeContainerHook.class);
 		return HookSupport.combineBeforeContainerHooks(aroundTryHooks);
 	}
 
