@@ -55,6 +55,17 @@ class AroundTryHookTests {
 		});
 	}
 
+	static int finishEarlyTries = 0;
+
+	@Property(tries = 10)
+	@AddLifecycleHook(FinishAfter5Tries.class)
+	void hookCanFinishEarly(@ForAll int anInt) {
+		finishEarlyTries += 1;
+		PropertyLifecycle.onSuccess(() -> {
+			assertThat(finishEarlyTries).isEqualTo(5);
+		});
+	}
+
 }
 
 class IncrementCount1 implements AroundTryHook {
@@ -86,5 +97,14 @@ class ChangeParamTo1 implements AroundTryHook {
 	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
 		List<Object> changedParameters = Arrays.asList(1);
 		return aTry.execute(changedParameters);
+	}
+}
+
+class FinishAfter5Tries implements AroundTryHook {
+	@Override
+	public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
+		aTry.execute(parameters);
+		boolean finishEarly = AroundTryHookTests.finishEarlyTries >= 5;
+		return TryExecutionResult.satisfied(finishEarly);
 	}
 }

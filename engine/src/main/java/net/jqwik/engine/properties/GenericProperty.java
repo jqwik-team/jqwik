@@ -12,8 +12,6 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
-import static net.jqwik.api.lifecycle.TryExecutionResult.Status.*;
-
 public class GenericProperty {
 
 	private final String name;
@@ -37,22 +35,39 @@ public class GenericProperty {
 		int maxTries = configuration.getTries();
 		int countChecks = 0;
 		int countTries = 0;
+		boolean finishEarly = false;
 		while (countTries < maxTries) {
+			if (finishEarly) {
+				break;
+			}
 			if (!shrinkablesGenerator.hasNext()) {
 				break;
-			} else {
-				countTries++;
 			}
+			countTries++;
+
 			List<Shrinkable<Object>> shrinkableParams = shrinkablesGenerator.next();
 			try {
 				countChecks++;
 				TryExecutionResult tryExecutionResult = testPredicate(shrinkableParams, reporter, reporting);
-				if (tryExecutionResult.status() == FALSIFIED) {
-					return shrinkAndCreateCheckResult(reporter, reporting, countChecks, countTries, shrinkableParams, tryExecutionResult
-																														  .throwable());
-				}
-				if (tryExecutionResult.status() == INVALID) {
-					countChecks--;
+				switch (tryExecutionResult.status()) {
+					case SATISFIED:
+						finishEarly = tryExecutionResult.shouldPropertyFinishEarly();
+						continue;
+					case FALSIFIED:
+						return shrinkAndCreateCheckResult(
+							reporter,
+							reporting,
+							countChecks,
+							countTries,
+							shrinkableParams,
+							tryExecutionResult.throwable()
+						);
+					case INVALID:
+						countChecks--;
+						break;
+					default:
+						String message = String.format("Unknown TryExecutionResult.status [%s]", tryExecutionResult.status().name());
+						throw new RuntimeException(message);
 				}
 			} catch (Throwable throwable) {
 				// Only not AssertionErrors and non Exceptions get here

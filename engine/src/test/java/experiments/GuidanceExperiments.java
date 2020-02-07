@@ -7,18 +7,18 @@ public class GuidanceExperiments {
 	interface GenerationGuidance {
 
 		/**
-		 * Returns a reference to an iterator that will deliver
+		 * Returns a reference to a source that will deliver
 		 * integer values to feed the pseudo-random number generator for the next try.
 		 *
 		 * @throws IllegalStateException if there is no next try available
 		 */
-		Iterator<Integer> nextTry();
+		TryGenerationSource nextTry();
 
 		/**
 		 * Decide if another sample can be tried.
-		 *
+		 * <p>
 		 * Method could potentially block to wait for guiding algorithm to finish.
-		 *
+		 * <p>
 		 * If it returns false generation will be finished.
 		 */
 		boolean hasNextTry();
@@ -40,5 +40,23 @@ public class GuidanceExperiments {
 		Status status();
 
 		Optional<Throwable> throwable();
+	}
+
+	/**
+	 * Source for providing integer values.
+	 */
+	interface TryGenerationSource extends AutoCloseable {
+		int next();
+
+		boolean hasNext();
+
+		/**
+		 * Will be called when no more values are necessary for
+		 * generating the parameters of the current try.
+		 */
+		@Override
+		default void close() {
+			// Optional
+		}
 	}
 }

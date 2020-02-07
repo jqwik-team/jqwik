@@ -5,6 +5,10 @@ import java.util.*;
 public interface TryExecutionResult {
 
 	static TryExecutionResult satisfied() {
+		return satisfied(false);
+	}
+
+	static TryExecutionResult satisfied(boolean shouldPropertyFinishEarly) {
 		return new TryExecutionResult() {
 			@Override
 			public Status status() {
@@ -14,6 +18,11 @@ public interface TryExecutionResult {
 			@Override
 			public Optional<Throwable> throwable() {
 				return Optional.empty();
+			}
+
+			@Override
+			public boolean shouldPropertyFinishEarly() {
+				return shouldPropertyFinishEarly;
 			}
 
 			@Override
@@ -36,6 +45,11 @@ public interface TryExecutionResult {
 			}
 
 			@Override
+			public boolean shouldPropertyFinishEarly() {
+				return false;
+			}
+
+			@Override
 			public String toString() {
 				return String.format("TryExecutionResult(%s): %s", status().name(), throwable().map(Throwable::getMessage).orElse("null"));
 			}
@@ -52,6 +66,11 @@ public interface TryExecutionResult {
 			@Override
 			public Optional<Throwable> throwable() {
 				return Optional.empty();
+			}
+
+			@Override
+			public boolean shouldPropertyFinishEarly() {
+				return false;
 			}
 
 			@Override
@@ -75,5 +94,7 @@ public interface TryExecutionResult {
 	Status status();
 
 	Optional<Throwable> throwable();
+
+	boolean shouldPropertyFinishEarly();
 
 }

@@ -8,7 +8,6 @@
           @Store(lifespan = RUN|PROPERTY|TRY)
 
         - Around try
-          - TryExecutor -> TryExecutionResult
           - TryLifecycle objects
             try(TryLifecycle lc = new ...) {...}
           - @PerTry(Class<? extends TryLifecycle>)
