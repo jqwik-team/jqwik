@@ -1,7 +1,6 @@
 - 1.2.4
 
     - Container lifecycle
-        - BeforeContainerHook
         - AfterContainerHook
         - @PerContainer
 

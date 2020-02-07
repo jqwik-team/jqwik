@@ -8,37 +8,35 @@ import net.jqwik.api.lifecycle.*;
 public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
 	public static ExtendedPropertyExecutionResult successful() {
-		return new PlainExecutionResult(Status.SUCCESSFUL, null, null, null);
+		return new PlainExecutionResult(Status.SUCCESSFUL, null, null);
 	}
 
 	private static ExtendedPropertyExecutionResult successful(String seed) {
-		return new PlainExecutionResult(Status.SUCCESSFUL, seed, null, null);
+		return new PlainExecutionResult(Status.SUCCESSFUL, seed, null);
 	}
 
-	public static ExtendedPropertyExecutionResult failed(Throwable throwable, String seed, List<Object> sample) {
+	public static ExtendedPropertyExecutionResult failed(Throwable throwable, String seed) {
 		if (throwable == null) {
 			throw new IllegalArgumentException("throwable must never be null for failed PropertyExecutionResult");
 		}
-		return new PlainExecutionResult(Status.FAILED, seed, throwable, sample);
+		return new PlainExecutionResult(Status.FAILED, seed, throwable);
 	}
 
 	public static ExtendedPropertyExecutionResult aborted(Throwable throwable, String seed) {
 		if (throwable == null) {
 			throw new IllegalArgumentException("throwable must never be null for aborted PropertyExecutionResult");
 		}
-		return new PlainExecutionResult(Status.ABORTED, seed, throwable, null);
+		return new PlainExecutionResult(Status.ABORTED, seed, throwable);
 	}
 
 	private final Status status;
 	private final String seed;
-	private final List<Object> falsifiedSample;
 	private final Throwable throwable;
 
-	private PlainExecutionResult(Status status, String seed, Throwable throwable, List<Object> falsifiedSample) {
+	private PlainExecutionResult(Status status, String seed, Throwable throwable) {
 		this.status = status;
 		this.seed = seed != null ? (seed.isEmpty() ? null : seed) : null;
 		this.throwable = throwable;
-		this.falsifiedSample = falsifiedSample;
 	}
 
 	@Override
@@ -48,7 +46,7 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
 	@Override
 	public Optional<List<Object>> falsifiedSample() {
-		return Optional.ofNullable(falsifiedSample);
+		return Optional.empty();
 	}
 
 	@Override
@@ -68,7 +66,7 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
 	@Override
 	public PropertyExecutionResult changeToFailed(Throwable throwable) {
-		return PlainExecutionResult.failed(throwable, seed().orElse(null), falsifiedSample().orElse(null));
+		return PlainExecutionResult.failed(throwable, seed().orElse(null));
 	}
 
 	@Override

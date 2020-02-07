@@ -21,8 +21,9 @@ class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask 
 	}
 
 	@Override
-	public void execute(PropertyExecutionListener listener) {
+	public TaskExecutionResult execute(PropertyExecutionListener listener, TaskExecutionResult predecessorResult) {
 		listener.executionStarted(this);
+		return TaskExecutionResult.success();
 	}
 
 	@Override

@@ -19,7 +19,13 @@ class PropertyTaskCreator {
 		boolean reportOnlyFailures
 	) {
 		return ExecutionTask.from(
-			listener -> {
+			(listener, predecessorResult) -> {
+
+				if (!predecessorResult.successful()) {
+					String reason = String.format("Skipped due to container failure: %s", predecessorResult.throwable().orElse(null));
+					listener.executionSkipped(methodDescriptor, reason);
+					return predecessorResult;
+				}
 
 				PropertyLifecycleContext propertyLifecycleContext;
 
@@ -33,11 +39,11 @@ class PropertyTaskCreator {
 
 					if (skipResult.isSkipped()) {
 						listener.executionSkipped(methodDescriptor, skipResult.reason().orElse(null));
-						return;
+						return TaskExecutionResult.success();
 					}
 				} catch (Throwable throwable) {
 					handleExceptionDuringTestInstanceCreation(methodDescriptor, listener, throwable);
-					return;
+					return TaskExecutionResult.success();
 				}
 
 				listener.executionStarted(methodDescriptor);
@@ -45,6 +51,8 @@ class PropertyTaskCreator {
 					methodDescriptor, propertyLifecycleContext, lifecycleSupplier, listener, reportOnlyFailures
 				);
 				listener.executionFinished(methodDescriptor, executionResult);
+
+				return TaskExecutionResult.success();
 			},
 			methodDescriptor,
 			"executing " + methodDescriptor.getDisplayName()
@@ -58,7 +66,7 @@ class PropertyTaskCreator {
 	) {
 		listener.executionStarted(methodDescriptor);
 		PropertyExecutionResult executionResult =
-			PlainExecutionResult.failed(throwable, methodDescriptor.getConfiguration().getSeed(), null);
+			PlainExecutionResult.failed(throwable, methodDescriptor.getConfiguration().getSeed());
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 
@@ -76,6 +84,7 @@ class PropertyTaskCreator {
 			}
 
 		} catch (Throwable throwable) {
+			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 			String message = String.format(
 				"Cannot create instance of class '%s'. Maybe it has no default constructor?",
 				methodDescriptor.getContainerClass()

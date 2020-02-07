@@ -64,7 +64,10 @@ public class JqwikExecutor {
 			return createSkippingTask((SkipExecutionDecorator) descriptor, pipeline);
 		}
 		return ExecutionTask.from(
-			listener -> LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor)),
+			(listener, predecessorResult) -> {
+				LOG.warning(() -> String.format("Cannot execute descriptor [%s]", descriptor));
+				return TaskExecutionResult.failure(null);
+			},
 			descriptor,
 			"log warning"
 		);
@@ -72,8 +75,12 @@ public class JqwikExecutor {
 
 	private ExecutionTask createSkippingTask(SkipExecutionDecorator descriptor, Pipeline pipeline) {
 		String taskDescription = String.format("Skipping [%s] due to: %s", descriptor.getDisplayName(), descriptor.getSkippingReason());
-		return ExecutionTask.from(listener -> listener.executionSkipped(descriptor, descriptor.getSkippingReason()),
-								  descriptor, taskDescription
+		return ExecutionTask.from(
+			(listener, predecessorResult) -> {
+				listener.executionSkipped(descriptor, descriptor.getSkippingReason());
+				return TaskExecutionResult.success();
+			},
+			descriptor, taskDescription
 		);
 	}
 

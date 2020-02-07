@@ -13,6 +13,9 @@ public class MockPipeline implements Pipeline {
 	}
 
 	void runWith(PropertyExecutionListener listener) {
-		tasks.forEach(task -> task.execute(listener));
+		TaskExecutionResult executionResult = TaskExecutionResult.success();
+		for (ExecutionTask task : tasks) {
+			executionResult = task.execute(listener, executionResult);
+		}
 	}
 }

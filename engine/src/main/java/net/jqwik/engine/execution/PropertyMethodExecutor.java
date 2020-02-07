@@ -105,8 +105,7 @@ public class PropertyMethodExecutor {
 		} catch (Throwable throwable) {
 			propertyExecutionResult = PlainExecutionResult.failed(
 				throwable,
-				methodDescriptor.getConfiguration().getSeed(),
-				null
+				methodDescriptor.getConfiguration().getSeed()
 			);
 		}
 		StoreRepository.getCurrent().finishProperty(methodDescriptor);
@@ -125,7 +124,7 @@ public class PropertyMethodExecutor {
 			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(t);
-			return PlainExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed(), null);
+			return PlainExecutionResult.failed(t, methodDescriptor.getConfiguration().getSeed());
 		}
 	}
 

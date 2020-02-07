@@ -33,7 +33,10 @@ class ContainerTaskCreator {
 
 		if (skipResult.isSkipped()) {
 			return ExecutionTask.from(
-				listener -> listener.executionSkipped(containerDescriptor, skipResult.reason().orElse(null)),
+				(listener, ignorePredecessorResult) -> {
+					listener.executionSkipped(containerDescriptor, skipResult.reason().orElse(null));
+					return TaskExecutionResult.success();
+				},
 				containerDescriptor,
 				"skip " + containerDescriptor.getDisplayName()
 			);
@@ -41,14 +44,15 @@ class ContainerTaskCreator {
 
 		BeforeContainerHook beforeContainerHook = lifecycleSupplier.beforeContainerHook(containerDescriptor);
 		ExecutionTask prepareContainerTask = ExecutionTask.from(
-			listener -> {
+			(listener, predecessorResult) -> {
 				listener.executionStarted(containerDescriptor);
 				try {
 					beforeContainerHook.beforeContainer(containerLifecycleContext);
 				} catch (Throwable throwable) {
-					JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-					TaskExecutionResult.failure(throwable);
+					//noinspection ResultOfMethodCallIgnored
+					JqwikExceptionSupport.throwAsUncheckedException(throwable);
 				}
+				return TaskExecutionResult.success();
 			},
 			containerDescriptor,
 			"prepare " + containerDescriptor.getDisplayName()
@@ -65,13 +69,17 @@ class ContainerTaskCreator {
 		}
 
 		ExecutionTask finishContainerTask = ExecutionTask.from(
-			listener -> {
-				// TODO: Check predecessor results first: use SafeExecutor?
-				PropertyExecutionResult result = PlainExecutionResult.successful();
+			(listener, predecessorResult) -> {
+				PropertyExecutionResult result =
+					predecessorResult.successful() ?
+						PlainExecutionResult.successful() :
+						PlainExecutionResult.failed(predecessorResult.throwable().orElse(null), null);
 				listener.executionFinished(containerDescriptor, result);
 
 				// TODO: Move to AfterContainerExecutor as soon as there is one
 				StoreRepository.getCurrent().finishScope(containerDescriptor);
+
+				return predecessorResult;
 			},
 			containerDescriptor,
 			"finish " + containerDescriptor.getDisplayName()

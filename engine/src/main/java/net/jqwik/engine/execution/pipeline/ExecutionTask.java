@@ -6,15 +6,19 @@ import org.junit.platform.engine.*;
 
 import net.jqwik.engine.execution.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.support.*;
 
 public interface ExecutionTask {
 
 	UniqueId ownerId();
 
-	// TODO: return TaskExecutionResult
-	void execute(PropertyExecutionListener listener);
+	TaskExecutionResult execute(PropertyExecutionListener listener, TaskExecutionResult predecessorResult);
 
-	static ExecutionTask from(Consumer<PropertyExecutionListener> consumer, TestDescriptor owner, String description) {
+	static ExecutionTask from(
+		BiFunction<PropertyExecutionListener, TaskExecutionResult, TaskExecutionResult> consumer,
+		TestDescriptor owner,
+		String description
+	) {
 		return new ExecutionTask() {
 			@Override
 			public UniqueId ownerId() {
@@ -22,8 +26,15 @@ public interface ExecutionTask {
 			}
 
 			@Override
-			public void execute(PropertyExecutionListener listener) {
-				CurrentTestDescriptor.runWithDescriptor(owner, () -> consumer.accept(listener));
+			public TaskExecutionResult execute(PropertyExecutionListener listener, TaskExecutionResult predecessorResult) {
+				try {
+					TaskExecutionResult result =
+						CurrentTestDescriptor.runWithDescriptor(owner, () -> consumer.apply(listener, predecessorResult));
+					return result;
+				} catch (Throwable throwable) {
+					JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+					return TaskExecutionResult.failure(throwable);
+				}
 			}
 
 			@Override

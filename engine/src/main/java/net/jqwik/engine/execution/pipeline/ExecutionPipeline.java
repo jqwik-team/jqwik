@@ -74,11 +74,12 @@ public class ExecutionPipeline implements Pipeline {
 	}
 
 	public void runToTermination() {
+		TaskExecutionResult predecessorResult = TaskExecutionResult.success();
 		while (!tasks.isEmpty()) {
 			ExecutionTask head = tasks.get(0);
 			if (movedPredecessorsToTopOfQueue(head))
 				continue;
-			head.execute(executionListener);
+			predecessorResult = head.execute(executionListener, predecessorResult);
 			taskFinished.put(head, true);
 			tasks.remove(0);
 		}
