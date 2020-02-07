@@ -70,8 +70,7 @@ public class CheckedPropertyFactory {
 	}
 
 	private TryExecutor createRawExecutor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {
-		CheckedFunction rawFunction = createRawFunction(propertyMethodDescriptor, testInstance);
-		return rawFunction.asTryExecutor();
+		return createRawFunction(propertyMethodDescriptor, testInstance);
 	}
 
 	private CheckedFunction createRawFunction(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -102,18 +103,14 @@ public class ArbitraryTestHelper {
 	}
 
 	public static <T> T shrinkToEnd(Arbitrary<? extends T> arbitrary, Random random) {
-		return falsifyThenShrink(arbitrary, random, ignore -> false);
+		return falsifyThenShrink(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, LegacyFalsifier<T> falsifier) {
-		return falsifyThenShrink(arbitrary, random, (Falsifier<T>) falsifier);
-	}
-
 	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10);
-		Shrinkable<T> falsifiedShrinkable = (Shrinkable<T>) generateUntil(generator, random, value -> !falsifier.executeTry(value)
-																												.isSatisfied());
+		Shrinkable<T> falsifiedShrinkable =
+			(Shrinkable<T>) generateUntil(generator, random, value -> !falsifier.execute(value).isSatisfied());
 
 		ShrinkingSequence<T> sequence = falsifiedShrinkable.shrink(falsifier);
 		while (sequence.next(() -> {}, ignore -> { })) ;

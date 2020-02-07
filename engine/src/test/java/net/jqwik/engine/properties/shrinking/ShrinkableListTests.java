@@ -197,7 +197,7 @@ class ShrinkableListTests {
 		void withFilterOnListSize() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3, 3, 3);
 
-			LegacyFalsifier<List<Integer>> falsifier = ignore -> false;
+			TestingFalsifier<List<Integer>> falsifier = ignore -> false;
 			Falsifier<List<Integer>> filteredFalsifier = falsifier.withFilter(
 				elements -> elements.size() % 2 == 0);
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
@@ -223,7 +223,7 @@ class ShrinkableListTests {
 		void withFilterOnElementContents() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3, 3);
 
-			LegacyFalsifier<List<Integer>> falsifier = List::isEmpty;
+			TestingFalsifier<List<Integer>> falsifier = List::isEmpty;
 			Falsifier<List<Integer>> filteredFalsifier = falsifier.withFilter(
 				elements -> elements.stream().allMatch(i -> i % 2 == 1));
 			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(filteredFalsifier);

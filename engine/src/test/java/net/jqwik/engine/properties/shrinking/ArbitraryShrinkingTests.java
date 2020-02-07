@@ -100,7 +100,6 @@ class ArbitraryShrinkingTests {
 		return list.stream().mapToInt(i -> i).sum();
 	}
 
-
 	@Group
 	class Maps {
 
@@ -121,7 +120,7 @@ class ArbitraryShrinkingTests {
 
 			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
 
-			LegacyFalsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
+			TestingFalsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
 			Map<Integer, String> map = falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
 
 			assertThat(map).hasSize(2);

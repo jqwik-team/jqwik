@@ -118,7 +118,7 @@ class ShrinkableBigIntegerTests {
 		void withFilter() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(0L, 1000000L));
 
-			LegacyFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.intValueExact() < 99;
+			TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.intValueExact() < 99;
 			Falsifier<BigInteger> filteredFalsifier = falsifier.withFilter(aBigInteger -> aBigInteger.intValueExact() % 2 == 0);
 
 			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(filteredFalsifier);

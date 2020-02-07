@@ -46,10 +46,10 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 			Falsifier<List<Object>> combinedFalsifier = elements -> {
 				try {
 					T value = combinator.apply(elements);
-					return falsifier.executeTry(value);
+					return falsifier.execute(value);
 				} catch (GenerationError generationError) {
 					// Ignore Generation errors
-					return TryExecutionResult.satisfied();
+					return TryExecutionResult.invalid();
 				}
 			};
 			elementsSequence = new ShrinkElementsSequence<>(

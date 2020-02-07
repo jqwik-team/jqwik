@@ -23,7 +23,7 @@ public class StartWithShrinkingSequence<T> implements ShrinkingSequence<T> {
 			this.current = startersSequence.current();
 			return next;
 		}
-		if (falsifier.executeTry(starter.value()).status() == TryExecutionResult.Status.SATISFIED) {
+		if (falsifier.execute(starter.value()).status() == TryExecutionResult.Status.SATISFIED) {
 			return false;
 		}
 		startersSequence = starter.shrink(falsifier);

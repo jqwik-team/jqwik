@@ -36,7 +36,6 @@ class ForAllSpy implements TryExecutor {
 	@Override
 	public TryExecutionResult execute(List<Object> parameters) {
 		CheckedFunction checkedFunction = this::test;
-		TryExecutor result = checkedFunction.asTryExecutor();
-		return result.execute(parameters);
+		return checkedFunction.execute(parameters);
 	}
 }

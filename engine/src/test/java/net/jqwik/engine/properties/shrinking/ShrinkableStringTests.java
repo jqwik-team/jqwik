@@ -148,7 +148,7 @@ public class ShrinkableStringTests {
 		void withFilterOnStringLength() {
 			Shrinkable<String> shrinkable = createShrinkableString("cccc", 0);
 
-			LegacyFalsifier<String> falsifier = ignore -> false;
+			TestingFalsifier<String> falsifier = ignore -> false;
 			Falsifier<String> filteredFalsifier = falsifier.withFilter(aString -> aString.length() % 2 == 0);
 
 			ShrinkingSequence<String> sequence = shrinkable.shrink(filteredFalsifier);
@@ -170,7 +170,7 @@ public class ShrinkableStringTests {
 		void withFilterOnStringContents() {
 			Shrinkable<String> shrinkable = createShrinkableString("ddd", 0);
 
-			LegacyFalsifier<String> falsifier = String::isEmpty;
+			TestingFalsifier<String> falsifier = String::isEmpty;
 			Falsifier<String> filteredFalsifier = falsifier //
 				.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
 			ShrinkingSequence<String> sequence = shrinkable.shrink(filteredFalsifier);

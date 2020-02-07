@@ -107,7 +107,8 @@ class ShrinkableBigDecimalTests {
 	void reportFalsified() {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
 
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrinkWithCondition(aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable
+													 .shrinkWithCondition(aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(new BigDecimal("13"));
@@ -125,7 +126,7 @@ class ShrinkableBigDecimalTests {
 	void shrinkWithFilter() {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("31.55", Range.of(-100.0, 100.0));
 
-		LegacyFalsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.doubleValue() < 24.9;
+		TestingFalsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.doubleValue() < 24.9;
 		Falsifier<BigDecimal> filteredFalsifier = falsifier.withFilter(aBigDecimal -> aBigDecimal.remainder(BigDecimal.valueOf(2))
 																								 .longValue() == 1);
 

@@ -5,6 +5,8 @@ import java.util.function.*;
 
 import org.assertj.core.api.*;
 
+import net.jqwik.api.lifecycle.*;
+
 import static org.assertj.core.api.Assertions.*;
 
 class FunctionsTests {
@@ -102,8 +104,12 @@ class FunctionsTests {
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
+		Falsifier<Function<String, Integer>> falsifier =
+			f -> (f.apply("value1") < 11) ?
+					 TryExecutionResult.satisfied() :
+					 TryExecutionResult.falsified(null);
 		Function<String, Integer> shrunkFunction =
-			ArbitraryTestHelper.falsifyThenShrink(functions, random, f -> f.apply("value1") < 11);
+			ArbitraryTestHelper.falsifyThenShrink(functions, random, falsifier);
 
 		Assertions.assertThat(shrunkFunction.apply("value1")).isEqualTo(11);
 		Assertions.assertThat(shrunkFunction.apply("value2")).isEqualTo(11);

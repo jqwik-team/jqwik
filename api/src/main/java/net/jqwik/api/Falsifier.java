@@ -3,7 +3,6 @@ package net.jqwik.api;
 import java.util.function.*;
 
 import org.apiguardian.api.*;
-import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
 
@@ -13,12 +12,13 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = STABLE, since = "1.0")
 public interface Falsifier<T> {
 
-	TryExecutionResult executeTry(T t);
+	@API(status = INTERNAL)
+	TryExecutionResult execute(T t);
 
 	@API(status = INTERNAL)
 	default FalsificationResult<T> falsify(Shrinkable<T> candidate) {
 		try {
-			TryExecutionResult executionResult = executeTry(candidate.value());
+			TryExecutionResult executionResult = execute(candidate.value());
 			switch (executionResult.status()) {
 				case FALSIFIED:
 					return FalsificationResult.falsified(candidate, executionResult.throwable().orElse(null));
@@ -38,7 +38,7 @@ public interface Falsifier<T> {
 			if (!filter.test(value)) {
 				return TryExecutionResult.invalid();
 			}
-			return executeTry(value);
+			return execute(value);
 		};
 	}
 
@@ -46,7 +46,7 @@ public interface Falsifier<T> {
 	default Falsifier<T> withPostFilter(Predicate<T> filter) {
 		return value -> {
 			try {
-				return Falsifier.this.executeTry(value);
+				return Falsifier.this.execute(value);
 			} finally {
 				if (!filter.test(value)) {
 					return TryExecutionResult.invalid();

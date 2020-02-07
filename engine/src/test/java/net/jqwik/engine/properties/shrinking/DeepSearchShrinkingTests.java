@@ -48,7 +48,7 @@ class DeepSearchShrinkingTests {
 		void withFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
-			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
@@ -128,7 +128,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
-			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
@@ -186,7 +186,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new FullShrinkable(10);
 
-			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 
@@ -240,7 +240,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(10);
 
-			LegacyFalsifier<Integer> falsifier = anInt -> anInt < 6;
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
 			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
 			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
 

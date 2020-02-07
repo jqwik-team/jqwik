@@ -454,7 +454,7 @@ class CheckedPropertyTests {
 	) {
 		return new CheckedProperty(
 			propertyName,
-			checkedFunction.asTryExecutor(),
+			checkedFunction,
 			parameters,
 			arbitraryResolver,
 			optionalData,

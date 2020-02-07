@@ -8,6 +8,7 @@ import org.mockito.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
@@ -26,7 +27,7 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(unshrinkableParameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
 		Throwable originalError = new RuntimeException("original error");
-		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
+		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
 		assertThat(result.values()).isEqualTo(asList(1, "hello"));
 		assertThat(result.steps()).isEqualTo(0);
@@ -43,7 +44,7 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.OFF, reporter, new Reporting[0]);
 
 		Throwable originalError = new RuntimeException("original error");
-		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, originalError);
+		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
 		assertThat(result.values()).isEqualTo(asList(5, 10));
 		assertThat(result.steps()).isEqualTo(0);
@@ -59,7 +60,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
-		LegacyFalsifier<List<Object>> listFalsifier = params -> {
+		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			if (((int) params.get(0)) == 0) return true;
 			return ((int) params.get(1)) <= 1;
 		};
@@ -112,7 +113,7 @@ class PropertyShrinkerTests {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[]{Reporting.FALSIFIED});
-		shrinker.shrink(ignore -> false, null);
+		shrinker.shrink(ignore -> TryExecutionResult.falsified(null), null);
 
 		verify(reporter, times(15)).accept(any(ReportEntry.class));
 	}
@@ -123,7 +124,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0]);
 
-		LegacyFalsifier<List<Object>> listFalsifier = params -> {
+		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			if (((int) params.get(0)) == 0) return true;
 			if (((int) params.get(1)) <= 1) return true;
 			throw new RuntimeException(String.format("%s:%s", params.get(0), params.get(1)));
@@ -140,7 +141,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.BOUNDED, reporter, new Reporting[0]);
 
-		PropertyShrinkingResult result = shrinker.shrink(ignore -> false, null);
+		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), null);
 
 		assertThat(result.values()).isEqualTo(asList(0, 900));
 

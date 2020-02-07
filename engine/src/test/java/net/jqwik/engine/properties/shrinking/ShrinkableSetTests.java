@@ -153,7 +153,7 @@ class ShrinkableSetTests {
 		void withFilterOnSetSize() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(1, 2, 3, 4), 0);
 
-			LegacyFalsifier<Set<Integer>> falsifier = ignore -> false;
+			TestingFalsifier<Set<Integer>> falsifier = ignore -> false;
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.size() % 2 == 0);
 
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
@@ -175,7 +175,7 @@ class ShrinkableSetTests {
 		void withFilterOnSetContents() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 5, 6), 0);
 
-			LegacyFalsifier<Set<Integer>> falsifier = Set::isEmpty;
+			TestingFalsifier<Set<Integer>> falsifier = Set::isEmpty;
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
 			ShrinkingSequence<Set<Integer>> sequence = shrinkable.shrink(filteredFalsifier);
 

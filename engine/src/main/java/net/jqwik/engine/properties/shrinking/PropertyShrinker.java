@@ -31,10 +31,6 @@ public class PropertyShrinker {
 		this.reporting = reporting;
 	}
 
-	public PropertyShrinkingResult shrink(LegacyFalsifier<List<Object>> forAllFalsifier, Throwable originalError) {
-		return shrink((Falsifier<List<Object>>) forAllFalsifier, originalError);
-	}
-
 	public PropertyShrinkingResult shrink(Falsifier<List<Object>> forAllFalsifier, Throwable originalError) {
 		if (shrinkingMode == ShrinkingMode.OFF) {
 			return new PropertyShrinkingResult(toValues(parameters), 0, originalError);
