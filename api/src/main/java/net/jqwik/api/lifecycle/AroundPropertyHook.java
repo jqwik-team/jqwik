@@ -1,7 +1,5 @@
 package net.jqwik.api.lifecycle;
 
-import java.util.*;
-
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;

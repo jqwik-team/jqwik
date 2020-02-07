@@ -29,4 +29,9 @@ public class ContainerLifecycleContextForClass implements ContainerLifecycleCont
 	public Reporter reporter() {
 		return reporter;
 	}
+
+	@Override
+	public Optional<Class<?>> containerClass() {
+		return Optional.of(classDescriptor.getContainerClass());
+	}
 }

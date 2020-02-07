@@ -83,6 +83,11 @@ class ContainerTaskCreator {
 
 		return new ContainerLifecycleContext() {
 			@Override
+			public Optional<Class<?>> containerClass() {
+				return Optional.empty();
+			}
+
+			@Override
 			public String label() {
 				return containerDescriptor.getDisplayName();
 			}
