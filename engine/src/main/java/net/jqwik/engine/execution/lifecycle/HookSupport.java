@@ -2,6 +2,8 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
 
+import org.junit.platform.engine.support.hierarchical.*;
+
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
@@ -64,4 +66,21 @@ public class HookSupport {
 		};
 	}
 
+	public static BeforeContainerHook combineBeforeContainerHooks(List<BeforeContainerHook> beforeContainerHooks) {
+		return context -> {
+
+			ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
+
+			for (BeforeContainerHook hook : beforeContainerHooks) {
+				throwableCollector.execute(() -> {
+					hook.beforeContainer(context);
+				});
+			}
+
+			if (throwableCollector.isNotEmpty()) {
+				throw throwableCollector.getThrowable();
+			}
+
+		};
+	}
 }

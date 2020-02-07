@@ -53,6 +53,11 @@ public class TestHelper {
 			}
 
 			@Override
+			public BeforeContainerHook beforeContainerHook(ContainerClassDescriptor containerClassDescriptor) {
+				return BeforeContainerHook.BASE;
+			}
+
+			@Override
 			public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
 				return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
 			}
