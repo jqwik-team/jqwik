@@ -8,6 +8,7 @@ import org.assertj.core.data.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -107,8 +108,9 @@ class ShrinkableBigDecimalTests {
 	void reportFalsified() {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
 
-		ShrinkingSequence<BigDecimal> sequence = shrinkable
-													 .shrinkWithCondition(aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) aBigDecimal -> aBigDecimal
+																													 .compareTo(BigDecimal
+																																	.valueOf(10)) < 0);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(new BigDecimal("13"));
@@ -140,7 +142,7 @@ class ShrinkableBigDecimalTests {
 	@Property
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-1000000000", max = "1000000000") @Scale(15) BigDecimal aValue) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
 		while (sequence.next(count, reporter)) ;
 		BigDecimal shrunkValue = sequence.current().value();
 		// can be + or - 0.0:
@@ -153,7 +155,7 @@ class ShrinkableBigDecimalTests {
 		@ForAll @BigRange(min = "-100", max = "100") BigDecimal shrinkingTarget
 	) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000.0, 1000.0), shrinkingTarget);
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
 		while (sequence.next(count, reporter)) ;
 		BigDecimal shrunkValue = sequence.current().value();
 		// Allow offset to max 1.0 because decimals are shrunk away if possible

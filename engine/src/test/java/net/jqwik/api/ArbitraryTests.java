@@ -9,6 +9,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -162,9 +163,11 @@ class ArbitraryTests {
 			return Arbitraries.integers().between(1, 5).unique().array(Integer[].class);
 		}
 
+		// There's a small chance that this test fails if 10000 tries won't pick the missing value out of 500 possibilities
 		@Property(generation = RANDOMIZED)
-			// There's a small chance that this test fails if 10000 tries won't pick the missing value out of 500 possibilities
-		void listOfAllUniqueValuesCanBeGeneratedRandomly(@ForAll("listOfUniqueIntegerPairs") List<Tuple3<Integer, Integer, Integer>> aList) {
+		void listOfAllUniqueValuesCanBeGeneratedRandomly(
+			@ForAll("listOfUniqueIntegerPairs") List<Tuple3<Integer, Integer, Integer>> aList
+		) {
 			assertThat(aList).hasSize(500);
 			assertThat(new HashSet<>(aList)).hasSize(500);
 		}
@@ -290,7 +293,7 @@ class ArbitraryTests {
 			Shrinkable<String> value3to6 = generateNth(generator, 3, random);
 			assertThat(value3to6.value()).isEqualTo("3:6");
 
-			ShrinkingSequence<String> sequence = value3to6.shrinkWithCondition(ignore -> false);
+			ShrinkingSequence<String> sequence = value3to6.shrink(ignore1 -> TryExecutionResult.falsified(null));
 			while (sequence.next(() -> {}, ignore -> {})) ;
 			assertThat(sequence.current().value()).isEqualTo("1:4");
 		}

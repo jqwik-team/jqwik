@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -31,9 +32,9 @@ class CombinedShrinkableTests {
 			return aString + anInt;
 		};
 
-		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, hello);
-		Shrinkable<String> shrinkable = new CombinedShrinkable<>( //
-																  shrinkables, combinator);
+		@SuppressWarnings("unchecked")
+		List<Shrinkable<Object>> shrinkables = Arrays.asList(three, hello);
+		Shrinkable<String> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 0));
 		assertThat(shrinkable.value()).isEqualTo("hello3");
@@ -50,10 +51,9 @@ class CombinedShrinkableTests {
 		};
 
 		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
-		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>( //
-																   shrinkables, combinator);
+		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(result -> result < 4);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) result -> result < 4);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.next(count, reporter)).isTrue();
@@ -76,10 +76,9 @@ class CombinedShrinkableTests {
 		};
 
 		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
-		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>( //
-																   shrinkables, combinator);
+		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(result -> result < 4);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) result -> result < 4);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(7);

@@ -270,7 +270,7 @@ class RandomGeneratorsTests {
 			Shrinkable<Integer> thousandGenerated = generateUntil(generator, random, i -> i.equals(1000));
 
 			assertThat(thousandGenerated.value()).isEqualTo(1000);
-			ShrinkingSequence<Integer> sequence = thousandGenerated.shrinkWithCondition(i -> i < 5);
+			ShrinkingSequence<Integer> sequence = thousandGenerated.shrink((TestingFalsifier<Integer>) i -> i < 5);
 			while (sequence.next(() -> {}, ignore -> {})) { }
 			assertThat(sequence.current().value()).isEqualTo(5);
 		}

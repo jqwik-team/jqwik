@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -84,7 +85,9 @@ class ShrinkableBigIntegerTests {
 	void reportFalsified() {
 		Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(30, Range.of(-100L, 100L));
 
-		ShrinkingSequence<BigInteger> sequence = shrinkable.shrinkWithCondition(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(10)) < 0);
+		ShrinkingSequence<BigInteger> sequence = shrinkable.shrink((TestingFalsifier<BigInteger>) aBigInteger -> aBigInteger
+																													 .compareTo(BigInteger
+																																	.valueOf(10)) < 0);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(13));
@@ -106,7 +109,9 @@ class ShrinkableBigIntegerTests {
 		void downAllTheWay() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
 
-			ShrinkingSequence<BigInteger> sequence = shrinkable.shrinkWithCondition(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0);
+			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink((TestingFalsifier<BigInteger>) aBigInteger -> aBigInteger
+																														 .compareTo(BigInteger
+																																		.valueOf(1000)) <= 0);
 
 			while (sequence.next(count, reporter));
 
@@ -133,7 +138,9 @@ class ShrinkableBigIntegerTests {
 		void upToExplicitShrinkingTarget() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(1000, Range.of(5L, 500000L), 5000L);
 
-			ShrinkingSequence<BigInteger> sequence = shrinkable.shrinkWithCondition(aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(5000)) >= 0);
+			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink((TestingFalsifier<BigInteger>) aBigInteger -> aBigInteger
+																														 .compareTo(BigInteger
+																																		.valueOf(5000)) >= 0);
 
 			while (sequence.next(count, reporter)) ;
 

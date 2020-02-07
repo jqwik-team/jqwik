@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -32,7 +33,7 @@ class MappedShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + i);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("22");
@@ -53,7 +54,7 @@ class MappedShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + i);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo("22");

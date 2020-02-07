@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,7 +29,7 @@ class ChooseValueShrinkableTests {
 	void shrinking() {
 		Shrinkable<Integer> shrinkable = new ChooseValueShrinkable<>(4, Arrays.asList(1, 2, 3, 4, 5));
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(1);

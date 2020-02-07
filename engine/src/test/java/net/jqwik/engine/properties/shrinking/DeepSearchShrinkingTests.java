@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -28,7 +29,7 @@ class DeepSearchShrinkingTests {
 		void withoutFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(4);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
@@ -85,7 +86,7 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
@@ -110,7 +111,7 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(4);
@@ -155,7 +156,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownAllTheWay() {
 			Shrinkable<Integer> shrinkable = new FullShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
@@ -172,7 +173,7 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);
@@ -205,7 +206,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownAllTheWay() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> false);
 			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
@@ -224,7 +225,7 @@ class DeepSearchShrinkingTests {
 		void shrinkDownSomeWay() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(anInt -> anInt < 2);
+			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
 
 			assertThat(sequence.next(count, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);

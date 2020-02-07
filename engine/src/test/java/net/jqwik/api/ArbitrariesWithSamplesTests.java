@@ -2,6 +2,8 @@ package net.jqwik.api;
 
 import java.util.*;
 
+import net.jqwik.api.lifecycle.*;
+
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -45,7 +47,7 @@ class ArbitrariesWithSamplesTests {
 			Shrinkable<Integer> shrinkable4 = generator.next(random);
 			assertThat(shrinkable4.value()).isEqualTo(4);
 
-			ShrinkingSequence<Integer> sequence = shrinkable4.shrinkWithCondition(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable4.shrink(anInt -> TryExecutionResult.falsified(null));
 
 			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(3);
@@ -66,7 +68,7 @@ class ArbitrariesWithSamplesTests {
 			Shrinkable<Integer> shrinkable5 = generator.next(random);
 			assertThat(shrinkable5.value()).isEqualTo(3);
 
-			ShrinkingSequence<Integer> sequence = shrinkable5.shrinkWithCondition(anInt -> false);
+			ShrinkingSequence<Integer> sequence = shrinkable5.shrink(anInt -> TryExecutionResult.falsified(null));
 
 			assertThat(sequence.next(() -> {}, ignore -> {})).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(2);

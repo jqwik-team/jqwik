@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -33,7 +34,7 @@ class FilteredShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(3);
@@ -52,7 +53,7 @@ class FilteredShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).isEqualTo(3);

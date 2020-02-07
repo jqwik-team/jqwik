@@ -40,29 +40,6 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);
 
-	@Deprecated
-	default ShrinkingSequence<T> shrinkWithCondition(Predicate<T> predicateFalsifier) {
-		Falsifier<T> falsifier = parameters -> {
-			try {
-				boolean result = predicateFalsifier.test(parameters);
-				return result ? TryExecutionResult.satisfied() : TryExecutionResult.falsified(null);
-			} catch (TestAbortedException tea) {
-				return TryExecutionResult.invalid();
-			} catch (AssertionError | Exception e) {
-				return TryExecutionResult.falsified(e);
-			} catch (Throwable throwable) {
-				throwAs(throwable);
-				return null;
-			}
-		};
-		return shrink(falsifier);
-	}
-
-	@SuppressWarnings("unchecked")
-	static <T extends Throwable> void throwAs(Throwable t) throws T {
-		throw (T) t;
-	}
-
 	ShrinkingDistance distance();
 
 	/**

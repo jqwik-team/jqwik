@@ -6,6 +6,7 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.engine.properties.*;
 
 class ActionSequenceShrinkingTests {
 
@@ -15,7 +16,7 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(value -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) value -> {
 			value.run("");
 			return false;
 		});
@@ -32,7 +33,7 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(value -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) value -> {
 			value.run("");
 			throw new AssertionError();
 		});
@@ -52,7 +53,7 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrinkWithCondition(value -> {
+		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) value -> {
 			value.run("");
 			return false;
 		});

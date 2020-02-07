@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -89,7 +90,7 @@ class ArbitraryShrinkingTests {
 
 		Shrinkable<List<Integer>> shrinkable = generator.next(random);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore1 -> false);
 		sequence.init(FalsificationResult.falsified(shrinkable));
 
 		while (sequence.next(() -> {}, ignore -> {})) ;

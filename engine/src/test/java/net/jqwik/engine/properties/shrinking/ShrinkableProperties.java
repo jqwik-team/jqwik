@@ -4,22 +4,23 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 @Group
 class ShrinkableProperties {
 
-	@Property //(reporting = Reporting.GENERATED)
-	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> aShrinkable) {
-		ShrinkingSequence<?> sequence = aShrinkable.shrinkWithCondition(ignore -> false);
-		while (sequence.next(() -> {}, ignore -> {}));
+	@Property
+	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
+		ShrinkingSequence<?> sequence = shrinkable.shrink(ignore -> TryExecutionResult.falsified(null));
+		while (sequence.next(() -> {}, ignore -> {})) ;
 		return true;
 	}
 
 	@Property
-	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> aShrinkable) {
-		ShrinkingSequence<?> sequence = aShrinkable.shrinkWithCondition(ignore -> false);
+	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
+		ShrinkingSequence<?> sequence = shrinkable.shrink(ignore -> TryExecutionResult.falsified(null));
 		FalsificationResult<?> current = sequence.current();
 		while (sequence.next(() -> {}, ignore -> {})) {
 			assertThat(sequence.current().distance()).isLessThanOrEqualTo(current.distance());

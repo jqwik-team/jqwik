@@ -8,6 +8,7 @@ import java.util.stream.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static java.util.Arrays.*;
@@ -40,7 +41,7 @@ class ShrinkableListTests {
 		void downAllTheWay() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(aList -> false);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) aList -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 1));
@@ -63,7 +64,7 @@ class ShrinkableListTests {
 		void withElementShrinking() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3, 3);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(List::isEmpty);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) List::isEmpty);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(3, 3));
@@ -98,7 +99,7 @@ class ShrinkableListTests {
 		void downAllTheWay() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(aList -> false);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) aList -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
@@ -117,7 +118,7 @@ class ShrinkableListTests {
 				Arrays.stream(new Integer[]{0, 1, 2, 3, 4}).map(Shrinkable::unshrinkable).collect(Collectors.toList());
 			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(aList -> false);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) aList -> false);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(4);
@@ -134,7 +135,7 @@ class ShrinkableListTests {
 		void downToOneElement() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(List::isEmpty);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) List::isEmpty);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value().size()).isEqualTo(2);
@@ -149,7 +150,8 @@ class ShrinkableListTests {
 		void alsoShrinkElements() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 2, 3);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(integers -> integers.size() <= 1);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable
+															.shrink((TestingFalsifier<List<Integer>>) integers -> integers.size() <= 1);
 			while(sequence.next(count, reporter));
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 		}
@@ -159,8 +161,8 @@ class ShrinkableListTests {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3);
 
 			ShrinkingSequence<List<Integer>> sequence =
-				shrinkable.shrinkWithCondition(integers -> integers.size() != 2 ||
-												  !integers.get(0).equals(integers.get(1)));
+				shrinkable.shrink((TestingFalsifier<List<Integer>>) integers -> integers.size() != 2 ||
+																					!integers.get(0).equals(integers.get(1)));
 			while(sequence.next(count, reporter));
 			assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
 		}
@@ -169,7 +171,7 @@ class ShrinkableListTests {
 		void shrinkingResultHasValueAndThrowable() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(integers -> {
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) integers -> {
 				if (integers.size() > 1) throw new IllegalArgumentException("my reason");
 				return true;
 			});
@@ -187,7 +189,7 @@ class ShrinkableListTests {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 0, 2, 1);
 
 			ShrinkingSequence<List<Integer>> sequence =
-				shrinkable.shrinkWithCondition(integers -> integers.size() == new HashSet<>(integers).size());
+				shrinkable.shrink((TestingFalsifier<List<Integer>>) integers -> integers.size() == new HashSet<>(integers).size());
 			while (sequence.next(count, reporter));
 
 			Assertions.assertThat(sequence.current().value()).isEqualTo(asList(0, 0));
@@ -251,7 +253,7 @@ class ShrinkableListTests {
 						 .collect(Collectors.toList());
 			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
 
-			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(List::isEmpty);
+			ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) List::isEmpty);
 
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).hasSize(100);

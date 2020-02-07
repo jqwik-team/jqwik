@@ -6,6 +6,7 @@ import java.util.function.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -42,7 +43,7 @@ class FlatMappedShrinkableTests {
 		Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().alpha().ofLength(anInt);
 		Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(3);
@@ -70,7 +71,7 @@ class FlatMappedShrinkableTests {
 		Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
 		assertThat(shrinkable.value()).hasSize(4);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrinkWithCondition(aString -> aString.length() < 3);
+		ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) aString -> aString.length() < 3);
 
 		while(sequence.next(count, reporter));
 

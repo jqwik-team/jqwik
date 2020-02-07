@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -46,7 +47,7 @@ class CollectShrinkableTests {
 		Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(2, 1);
@@ -71,11 +72,11 @@ class CollectShrinkableTests {
 		Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
-		Predicate<List<Integer>> sumMustNotBeEven = listOfInts -> {
+		TestingFalsifier<List<Integer>> sumMustNotBeEven = listOfInts -> {
 			int sum = listOfInts.stream().mapToInt(i -> i).sum();
 			return sum % 2 != 0;
 		};
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(sumMustNotBeEven);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(sumMustNotBeEven);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(1, 1);
@@ -96,7 +97,7 @@ class CollectShrinkableTests {
 		};
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, sumAtLeast6);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(2, 1, 1, 1, 1);
@@ -121,8 +122,7 @@ class CollectShrinkableTests {
 		Predicate<List<Integer>> untilNotEmpty = l -> !l.isEmpty();
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilNotEmpty);
 
-
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrinkWithCondition(ignore -> false);
+		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore -> false);
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).containsExactly(2);
