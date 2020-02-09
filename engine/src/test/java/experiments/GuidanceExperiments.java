@@ -26,7 +26,7 @@ public class GuidanceExperiments {
 		/**
 		 * Handles the result of a property try.
 		 */
-		void handleResult(TryResult result);
+		void handleResult(TryResult result, List<Object> generatedParameters);
 
 	}
 
