@@ -46,9 +46,11 @@ public class GenericProperty {
 			countTries++;
 
 			List<Shrinkable<Object>> shrinkableParams = shrinkablesGenerator.next();
+			List<Object> sample = extractParams(shrinkableParams);
+
 			try {
 				countChecks++;
-				TryExecutionResult tryExecutionResult = testPredicate(shrinkableParams, reporter, reporting);
+				TryExecutionResult tryExecutionResult = testPredicate(sample, reporter, reporting);
 				switch (tryExecutionResult.status()) {
 					case SATISFIED:
 						finishEarly = tryExecutionResult.shouldPropertyFinishEarly();
@@ -60,6 +62,7 @@ public class GenericProperty {
 							countChecks,
 							countTries,
 							shrinkableParams,
+							sample,
 							tryExecutionResult.throwable()
 						);
 					case INVALID:
@@ -74,7 +77,7 @@ public class GenericProperty {
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-					configuration.getGenerationMode(), extractParams(shrinkableParams), null, throwable
+					configuration.getGenerationMode(), sample, null, throwable
 				);
 			}
 		}
@@ -99,15 +102,14 @@ public class GenericProperty {
 	}
 
 	private TryExecutionResult testPredicate(
-		List<Shrinkable<Object>> shrinkableParams,
+		List<Object> sample,
 		Consumer<ReportEntry> reporter,
 		Reporting[] reporting
 	) {
-		List<Object> plainParams = extractParams(shrinkableParams);
 		if (Reporting.GENERATED.containedIn(reporting)) {
-			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(plainParams)));
+			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(sample)));
 		}
-		return tryExecutor.execute(plainParams);
+		return tryExecutor.execute(sample);
 	}
 
 	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {
@@ -121,15 +123,14 @@ public class GenericProperty {
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
 		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
-		int countTries, List<Shrinkable<Object>> shrinkables, Optional<Throwable> optionalThrowable
+		int countTries, List<Shrinkable<Object>> shrinkables, List<Object> originalSample, Optional<Throwable> optionalThrowable
 	) {
-		List<Object> originalParams = extractParams(shrinkables);
 		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, optionalThrowable.orElse(null));
 		List<Object> shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-			configuration.getGenerationMode(), shrunkParams, originalParams, throwable
+			configuration.getGenerationMode(), shrunkParams, originalSample, throwable
 		);
 	}
 

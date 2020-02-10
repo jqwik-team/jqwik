@@ -19,7 +19,7 @@ public class PropertyLifecycleExamples {
 			assertThat(maxLength)
 				.describedAs("max size of all generated strings")
 				.isGreaterThan(10);
-			return executionResult.changeToSuccessful();
+			return executionResult.mapToSuccessful();
 		}));
 	}
 

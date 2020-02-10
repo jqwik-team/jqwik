@@ -60,13 +60,8 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public PropertyExecutionResult changeToSuccessful() {
-		return PlainExecutionResult.successful(seed().orElse(null));
-	}
-
-	@Override
-	public PropertyExecutionResult changeToFailed(Throwable throwable) {
-		return PlainExecutionResult.failed(throwable, seed().orElse(null));
+	public PropertyExecutionResult mapTo(Status newStatus, Throwable throwable) {
+		return new PlainExecutionResult(newStatus, seed, throwable);
 	}
 
 	@Override

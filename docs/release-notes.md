@@ -44,6 +44,11 @@ and
 
 - Removed `Statistics.coverageOf()`. It's now `Statistics.label(..).coverage(..)`
 
+- `Falsifier` no longer extends `Predicate<T>`
+
+- Many changes in Lifecycle API; but this API had not been published or documented
+  anyway. 
+
 #### Bug Fixes
 
 No open bugs had been reported.

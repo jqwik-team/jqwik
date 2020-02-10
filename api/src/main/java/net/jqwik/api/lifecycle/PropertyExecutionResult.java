@@ -49,14 +49,24 @@ public interface PropertyExecutionResult {
 	 */
 	Optional<Throwable> throwable();
 
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	PropertyExecutionResult changeToSuccessful();
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	PropertyExecutionResult mapTo(Status newStatus, Throwable throwable);
 
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	PropertyExecutionResult changeToFailed(Throwable throwable);
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	default PropertyExecutionResult mapToSuccessful() {
+		if (status() == Status.SUCCESSFUL) {
+			return this;
+		}
+		return mapTo(Status.SUCCESSFUL, null);
+	}
 
-	@API(status = EXPERIMENTAL, since = "1.2.3")
-	default PropertyExecutionResult changeToFailed(String message) {
-		return changeToFailed(new AssertionFailedError(message));
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	default PropertyExecutionResult mapToFailed(Throwable throwable) {
+		return mapTo(Status.FAILED, throwable);
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	default PropertyExecutionResult mapToFailed(String message) {
+		return mapToFailed(new AssertionFailedError(message));
 	}
 }

@@ -51,7 +51,7 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, P
 			try {
 				executionResult = afterPropertyExecutor.execute(executionResult, context);
 			} catch (Throwable throwable) {
-				executionResult = executionResult.changeToFailed(throwable);
+				executionResult = executionResult.mapToFailed(throwable);
 			}
 		}
 		return executionResult;

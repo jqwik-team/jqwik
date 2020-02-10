@@ -26,8 +26,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		GenerationMode generation
 	) {
 		return new PropertyCheckResult(
-			stereotype,
-			CheckStatus.SUCCESSFUL,
+			CheckStatus.SUCCESSFUL, stereotype,
 			propertyName,
 			tries,
 			checks,
@@ -51,8 +50,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		Throwable throwable
 	) {
 		return new PropertyCheckResult(
-			stereotype,
-			CheckStatus.FAILED,
+			CheckStatus.FAILED, stereotype,
 			propertyName,
 			tries,
 			checks,
@@ -73,8 +71,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		GenerationMode generation
 	) {
 		return new PropertyCheckResult(
-			stereotype,
-			CheckStatus.EXHAUSTED,
+			CheckStatus.EXHAUSTED, stereotype,
 			propertyName,
 			tries,
 			checks,
@@ -98,8 +95,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final Throwable throwable;
 
 	private PropertyCheckResult(
-		String stereotype,
-		CheckStatus status,
+		CheckStatus status, String stereotype,
 		String propertyName,
 		int tries,
 		int checks,
@@ -152,16 +148,39 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public PropertyExecutionResult changeToSuccessful() {
-		if (status() == Status.SUCCESSFUL) {
-			return this;
+	public PropertyExecutionResult mapTo(Status newStatus, Throwable throwable) {
+		switch (newStatus) {
+			case ABORTED:
+				return PlainExecutionResult.aborted(throwable, randomSeed);
+			case FAILED:
+				return new PropertyCheckResult(
+					CheckStatus.FAILED,
+					stereotype,
+					propertyName,
+					tries,
+					checks,
+					randomSeed,
+					generation,
+					sample,
+					originalSample,
+					throwable
+				);
+			case SUCCESSFUL:
+				return new PropertyCheckResult(
+					CheckStatus.SUCCESSFUL,
+					stereotype,
+					propertyName,
+					tries,
+					checks,
+					randomSeed,
+					generation,
+					sample,
+					originalSample,
+					throwable
+				);
+			default:
+				throw new IllegalStateException(String.format("Unknown state: %s", newStatus.name()));
 		}
-		return successful(stereotype, propertyName, tries, checks, randomSeed, generation);
-	}
-
-	@Override
-	public PropertyExecutionResult changeToFailed(Throwable throwable) {
-		return failed(stereotype, propertyName, tries, checks, randomSeed, generation, sample, originalSample, throwable);
 	}
 
 	@Override

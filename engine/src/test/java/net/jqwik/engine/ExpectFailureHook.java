@@ -23,10 +23,10 @@ public class ExpectFailureHook implements AroundPropertyHook {
 		try {
 			if (testExecutionResult.status() == FAILED) {
 				resultChecker.accept(testExecutionResult);
-				return testExecutionResult.changeToSuccessful();
+				return testExecutionResult.mapToSuccessful();
 			}
 		} catch (AssertionError assertionError) {
-			return testExecutionResult.changeToFailed(assertionError);
+			return testExecutionResult.mapToFailed(assertionError);
 		}
 
 		String headerText = messageFromAnnotation == null ? "" : messageFromAnnotation + "\n\t";
@@ -39,7 +39,7 @@ public class ExpectFailureHook implements AroundPropertyHook {
 			context.label(),
 			reason
 		);
-		return testExecutionResult.changeToFailed(message);
+		return testExecutionResult.mapToFailed(message);
 	}
 
 	private String getMessage(Method method) {
