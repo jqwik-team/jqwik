@@ -26,7 +26,7 @@ public class JqwikLifecycleRegistrator {
 	}
 
 	private void registerGlobalHooks(TestDescriptor rootDescriptor) {
-		for (LifecycleHook<?> lifecycleHook : RegisteredLifecycleHooks.getRegisteredHooks(parameters)) {
+		for (LifecycleHook lifecycleHook : RegisteredLifecycleHooks.getRegisteredHooks(parameters)) {
 			lifecycleRegistry.registerLifecycleInstance(rootDescriptor, lifecycleHook);
 		}
 	}

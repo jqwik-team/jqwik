@@ -5,8 +5,8 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-@AddLifecycleHook(CheckAfter.class)
-@AddLifecycleHook(IncrementAfter.class)
+@AddLifecycleHook(IncrementBefore.class)
+@AddLifecycleHook(IncrementPropagatedBefore.class)
 class BeforeContainerHookTests {
 	static int before = 0;
 	static int propagatedBefore = 0;

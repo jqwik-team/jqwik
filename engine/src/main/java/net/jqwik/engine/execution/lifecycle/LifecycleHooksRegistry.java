@@ -16,54 +16,54 @@ import net.jqwik.engine.support.*;
 public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	private final List<HookRegistration> registrations = new ArrayList<>();
-	private final Map<Class<? extends LifecycleHook<?>>, LifecycleHook<?>> instances = new HashMap<>();
+	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new HashMap<>();
 
 	@Override
 	public AroundPropertyHook aroundPropertyHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-		List<AroundPropertyHook> aroundPropertyHooks = findHooks(propertyMethodDescriptor, AroundPropertyHook.class);
+		List<AroundPropertyHook> aroundPropertyHooks = findHooks(propertyMethodDescriptor, AroundPropertyHook.class, AroundPropertyHook::compareTo);
 		return HookSupport.combineAroundPropertyHooks(aroundPropertyHooks);
 	}
 
 	@Override
 	public AroundTryHook aroundTryHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-		List<AroundTryHook> aroundTryHooks = findHooks(propertyMethodDescriptor, AroundTryHook.class);
+		List<AroundTryHook> aroundTryHooks = findHooks(propertyMethodDescriptor, AroundTryHook.class, AroundTryHook::compareTo);
 		return HookSupport.combineAroundTryHooks(aroundTryHooks);
 	}
 
 	@Override
 	public BeforeContainerHook beforeContainerHook(TestDescriptor descriptor) {
-		List<BeforeContainerHook> beforeContainerHooks = findHooks(descriptor, BeforeContainerHook.class);
+		List<BeforeContainerHook> beforeContainerHooks = findHooks(descriptor, BeforeContainerHook.class, BeforeContainerHook::compareTo);
 		return HookSupport.combineBeforeContainerHooks(beforeContainerHooks);
 	}
 
 	@Override
 	public AfterContainerHook afterContainerHook(TestDescriptor descriptor) {
-		List<AfterContainerHook> afterContainerHooks = findHooks(descriptor, AfterContainerHook.class);
+		List<AfterContainerHook> afterContainerHooks = findHooks(descriptor, AfterContainerHook.class, AfterContainerHook::compareTo);
 		return HookSupport.combineAfterContainerHooks(afterContainerHooks);
 	}
 
 	@Override
 	public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
-		List<SkipExecutionHook> skipExecutionHooks = findHooks(testDescriptor, SkipExecutionHook.class);
+		List<SkipExecutionHook> skipExecutionHooks = findHooks(testDescriptor, SkipExecutionHook.class, SkipExecutionHook::compareTo);
 		return HookSupport.combineSkipExecutionHooks(skipExecutionHooks);
 	}
 
-	private <T extends LifecycleHook<?>> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType) {
+	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType, Comparator<T> comparator) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);
 		return hookClasses
 				   .stream()
 				   .map(this::getHook)
-				   .sorted()
+				   .sorted(comparator)
 				   .collect(Collectors.toList());
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends LifecycleHook<?>> T getHook(Class<T> hookClass) {
+	private <T extends LifecycleHook> T getHook(Class<T> hookClass) {
 		return (T) instances.get(hookClass);
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends LifecycleHook<?>> List<Class<T>> findHookClasses(TestDescriptor descriptor, Class<T> hookType) {
+	private <T extends LifecycleHook> List<Class<T>> findHookClasses(TestDescriptor descriptor, Class<T> hookType) {
 		return registrations
 				   .stream()
 				   .filter(registration -> registration.match(descriptor, false))
@@ -76,16 +76,15 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	/**
 	 * Use only for registering lifecycles through Java's ServiceLoader mechanism
 	 */
-	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook<?> hookInstance) {
-		@SuppressWarnings("unchecked")
-		Class<? extends LifecycleHook<?>> hookClass = (Class<? extends LifecycleHook<?>>) hookInstance.getClass();
+	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook hookInstance) {
+		Class<? extends LifecycleHook> hookClass = hookInstance.getClass();
 		createAndRegisterHook(descriptor, hookClass);
 		if (!instances.containsKey(hookClass)) {
 			instances.put(hookClass, hookInstance);
 		}
 	}
 
-	private void createAndRegisterHook(TestDescriptor descriptor, Class<? extends LifecycleHook<?>> hookClass) {
+	private void createAndRegisterHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
 		boolean propagateToChildren = PropagateToChildren.class.isAssignableFrom(hookClass);
 		HookRegistration registration = new HookRegistration(descriptor, hookClass, propagateToChildren);
 		if (!registrations.contains(registration)) {
@@ -93,7 +92,6 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		}
 	}
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void registerLifecycleHook(
 		TestDescriptor descriptor,
 		Class<? extends LifecycleHook> hookClass,
@@ -103,22 +101,22 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			String message = String.format("Inner class [%s] cannot be used as LifecycleHook", hookClass.getName());
 			throw new JqwikException(message);
 		}
-		createAndRegisterHook(descriptor, (Class<? extends LifecycleHook<?>>) hookClass);
+		createAndRegisterHook(descriptor, hookClass);
 		if (!instances.containsKey(hookClass)) {
-			LifecycleHook<?> hookInstance = ReflectionSupport.newInstance(hookClass);
+			LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
 			if (hookInstance instanceof Configurable) {
 				((Configurable) hookInstance).configure(parameters);
 			}
-			instances.put((Class<? extends LifecycleHook<?>>) hookClass, hookInstance);
+			instances.put(hookClass, hookInstance);
 		}
 	}
 
 	private static class HookRegistration {
 		private TestDescriptor descriptor;
-		private final Class<? extends LifecycleHook<?>> hookClass;
+		private final Class<? extends LifecycleHook> hookClass;
 		private boolean propagateToChildren;
 
-		private HookRegistration(TestDescriptor descriptor, Class<? extends LifecycleHook<?>> hookClass, boolean propagateToChildren) {
+		private HookRegistration(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass, boolean propagateToChildren) {
 			this.descriptor = descriptor;
 			this.hookClass = hookClass;
 			this.propagateToChildren = propagateToChildren;
@@ -137,7 +135,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			return match(descriptor.getParent().orElse(null), true);
 		}
 
-		<T extends LifecycleHook<?>> boolean match(Class<? extends LifecycleHook<?>> hookType) {
+		<T extends LifecycleHook> boolean match(Class<? extends LifecycleHook> hookType) {
 			return hookType.isAssignableFrom(hookClass);
 		}
 

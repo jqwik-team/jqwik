@@ -11,11 +11,10 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = EXPERIMENTAL, since = "1.0")
 @FunctionalInterface
-public interface SkipExecutionHook extends LifecycleHook<SkipExecutionHook> {
+public interface SkipExecutionHook extends LifecycleHook {
 
 	SkipResult shouldBeSkipped(LifecycleContext context);
 
-	@Override
 	default int compareTo(SkipExecutionHook other) {
 		return Integer.compare(this.order(), other.order());
 	}

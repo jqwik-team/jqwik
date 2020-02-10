@@ -10,13 +10,12 @@ import static org.apiguardian.api.API.Status.*;
  * Experimental feature. Not ready for public usage yet.
  */
 @API(status = EXPERIMENTAL, since = "1.2.3")
-public interface AroundTryHook extends LifecycleHook<AroundTryHook> {
+public interface AroundTryHook extends LifecycleHook {
 
 	TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable;
 
 	AroundTryHook BASE = (tryLifecycleContext, aTry, parameters) -> aTry.execute(parameters);
 
-	@Override
 	default int compareTo(AroundTryHook other) {
 		return Integer.compare(this.aroundTryProximity(), other.aroundTryProximity());
 	}
