@@ -1,10 +1,10 @@
 - 1.2.4
 
     - Container lifecycle
-        - AfterContainerHook
         - @PerContainer
 
     - Lifecycle Storage: Bind stores to member variables, e.g.
+      Store.update(Consumer<T> consumer)
       @Store(lifespan = RUN|PROPERTY|TRY)
 
     - Around try lifecycle

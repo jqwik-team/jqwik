@@ -11,6 +11,78 @@ import net.jqwik.api.lifecycle.LifecycleHook.*;
 
 class AroundPropertyHookTests {
 
+	static Store<List<String>> calls = Store.create("calls", Store.Lifespan.PROPERTY, ArrayList::new);
+
+	@Example
+	@AddLifecycleHook(Outer.class)
+	@AddLifecycleHook(Inner.class)
+	@AddLifecycleHook(CheckCalls.class)
+	void example() {
+		calls.update(c -> {
+			c.add("example");
+			return c;
+		});
+	}
+
+	static class Outer implements AroundPropertyHook {
+		@Override
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+			calls.update(c -> {
+				c.add("before outer");
+				return c;
+			});
+			try {
+				return property.execute();
+			} finally {
+				calls.update(c -> {
+					c.add("after outer");
+					return c;
+				});
+			}
+		}
+
+		@Override
+		public int aroundPropertyProximity() {
+			return 10;
+		}
+	}
+
+	static class Inner implements AroundPropertyHook {
+		@Override
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+			calls.update(c -> {
+				c.add("before inner");
+				return c;
+			});
+			try {
+				return property.execute();
+			} finally {
+				calls.update(c -> {
+					c.add("after inner");
+					return c;
+				});
+			}
+		}
+
+		@Override
+		public int aroundPropertyProximity() {
+			return 100;
+		}
+	}
+
+	static class CheckCalls implements AroundPropertyHook {
+		@Override
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+			try {
+				return property.execute();
+			} finally {
+				Assertions.assertThat(calls.get()).containsExactly(
+					"before outer", "before inner", "example", "after inner", "after outer"
+				);
+			}
+		}
+	}
+
 	@Group
 	@AddLifecycleHook(AroundPropertyWithPropagation.class)
 	@AddLifecycleHook(AroundPropertyWithoutPropagation.class)

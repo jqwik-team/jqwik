@@ -1,6 +1,7 @@
 package net.jqwik.engine;
 
 import java.util.function.*;
+import java.util.logging.*;
 
 import org.junit.platform.engine.*;
 
@@ -13,6 +14,8 @@ import net.jqwik.engine.support.*;
 
 public class JqwikTestEngine implements TestEngine {
 	public static final String ENGINE_ID = "jqwik";
+
+	private static final Logger LOG = Logger.getLogger(JqwikTestEngine.class.getName());
 
 	private final LifecycleHooksRegistry lifecycleRegistry = new LifecycleHooksRegistry();
 	private JqwikConfiguration configuration;
@@ -53,8 +56,14 @@ public class JqwikTestEngine implements TestEngine {
 	public void execute(ExecutionRequest request) {
 		TestDescriptor root = request.getRootTestDescriptor();
 		EngineExecutionListener engineExecutionListener = request.getEngineExecutionListener();
-		registerLifecycleHooks(root, request.getConfigurationParameters());
-		executeTests(root, engineExecutionListener);
+		try {
+			registerLifecycleHooks(root, request.getConfigurationParameters());
+			executeTests(root, engineExecutionListener);
+		} catch (Throwable throwable) {
+			LOG.log(Level.SEVERE, throwable.getMessage(), throwable);
+			//noinspection ResultOfMethodCallIgnored
+			JqwikExceptionSupport.throwAsUncheckedException(throwable);
+		}
 	}
 
 	private void executeTests(TestDescriptor root, EngineExecutionListener listener) {
