@@ -54,7 +54,12 @@ public class TestHelper {
 
 			@Override
 			public BeforeContainerHook beforeContainerHook(TestDescriptor descriptor) {
-				return BeforeContainerHook.BASE;
+				return BeforeContainerHook.DO_NOTHING;
+			}
+
+			@Override
+			public AfterContainerHook afterContainerHook(TestDescriptor descriptor) {
+				return AfterContainerHook.DO_NOTHING;
 			}
 
 			@Override

@@ -12,7 +12,7 @@ public interface BeforeContainerHook extends LifecycleHook<BeforeContainerHook> 
 
 	void beforeContainer(ContainerLifecycleContext context) throws Throwable;
 
-	BeforeContainerHook BASE = (containerLifecycleContext) -> {};
+	BeforeContainerHook DO_NOTHING = (containerLifecycleContext) -> {};
 
 	@Override
 	default int compareTo(BeforeContainerHook other) {

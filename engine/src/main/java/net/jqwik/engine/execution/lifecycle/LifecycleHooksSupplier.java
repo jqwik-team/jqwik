@@ -13,6 +13,8 @@ public interface LifecycleHooksSupplier {
 
 	BeforeContainerHook beforeContainerHook(TestDescriptor descriptor);
 
+	AfterContainerHook afterContainerHook(TestDescriptor descriptor);
+
 	SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor);
 
 }

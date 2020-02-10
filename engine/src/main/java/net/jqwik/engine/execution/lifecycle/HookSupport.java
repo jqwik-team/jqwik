@@ -69,9 +69,7 @@ public class HookSupport {
 
 	public static BeforeContainerHook combineBeforeContainerHooks(List<BeforeContainerHook> beforeContainerHooks) {
 		return context -> {
-
 			ThrowableCollector throwableCollector = new ThrowableCollector(TestAbortedException.class::isInstance);
-
 			for (BeforeContainerHook hook : beforeContainerHooks) {
 				throwableCollector.execute(() -> {
 					hook.beforeContainer(context);
@@ -81,7 +79,22 @@ public class HookSupport {
 			if (throwableCollector.isNotEmpty()) {
 				throw throwableCollector.getThrowable();
 			}
-
 		};
 	}
+
+	public static AfterContainerHook combineAfterContainerHooks(List<AfterContainerHook> afterContainerHooks) {
+		return context -> {
+			ThrowableCollector throwableCollector = new ThrowableCollector(TestAbortedException.class::isInstance);
+			for (AfterContainerHook hook : afterContainerHooks) {
+				throwableCollector.execute(() -> {
+					hook.afterContainer(context);
+				});
+			}
+
+			if (throwableCollector.isNotEmpty()) {
+				throw throwableCollector.getThrowable();
+			}
+		};
+	}
+
 }

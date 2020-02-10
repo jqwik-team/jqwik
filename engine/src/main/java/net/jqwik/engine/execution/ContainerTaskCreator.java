@@ -68,18 +68,26 @@ class ContainerTaskCreator {
 			pipeline.submit(childTask, prepareContainerTask);
 		}
 
+		AfterContainerHook afterContainerHook = lifecycleSupplier.afterContainerHook(containerDescriptor);
 		ExecutionTask finishContainerTask = ExecutionTask.from(
 			(listener, predecessorResult) -> {
-				PropertyExecutionResult result =
+				PropertyExecutionResult propertyExecutionResult =
 					predecessorResult.successful() ?
 						PlainExecutionResult.successful() :
 						PlainExecutionResult.failed(predecessorResult.throwable().orElse(null), null);
-				listener.executionFinished(containerDescriptor, result);
+				try {
+					afterContainerHook.afterContainer(containerLifecycleContext);
+					return predecessorResult;
+				} catch (Throwable throwable) {
+					JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+					propertyExecutionResult = propertyExecutionResult.mapToFailed(throwable);
+					return TaskExecutionResult.failure(throwable);
+				} finally {
+					listener.executionFinished(containerDescriptor, propertyExecutionResult);
 
-				// TODO: Move to AfterContainerExecutor as soon as there is one
-				StoreRepository.getCurrent().finishScope(containerDescriptor);
-
-				return predecessorResult;
+					// TODO: Move to AfterContainerExecutor as soon as there is one
+					StoreRepository.getCurrent().finishScope(containerDescriptor);
+				}
 			},
 			containerDescriptor,
 			"finish " + containerDescriptor.getDisplayName()
