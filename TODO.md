@@ -1,8 +1,8 @@
 - 1.2.4
 
-    - Lifecycle Storage: Bind stores to member variables, e.g.
-      Store.update(Consumer<T> consumer)
-      @Store(lifespan = RUN|PROPERTY|TRY)
+    - LifecycleHooks: Warn on usage of fields in hook classes
+
+    - FieldInjectorHook: Allow to inject fields per container, per property, per try
 
     - Container lifecycle
         - @PerContainer
