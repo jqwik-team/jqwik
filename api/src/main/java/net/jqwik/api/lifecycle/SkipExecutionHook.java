@@ -19,6 +19,8 @@ public interface SkipExecutionHook extends LifecycleHook {
 		return Integer.compare(this.skipExecutionOrder(), other.skipExecutionOrder());
 	}
 
+	SkipExecutionHook DO_NOT_SKIP = descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
+
 	/**
 	 * Lower order value means earlier evaluation
 	 */

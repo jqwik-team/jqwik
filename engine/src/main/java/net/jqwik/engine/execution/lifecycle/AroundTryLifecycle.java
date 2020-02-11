@@ -10,7 +10,7 @@ public class AroundTryLifecycle implements TryExecutor {
 
 	private final TryExecutor tryExecutor;
 	private final AroundTryHook aroundTry;
-	private final TryLifecycleContextForMethod tryLifecycleContext;
+	private final TryLifecycleContext tryLifecycleContext;
 
 	public AroundTryLifecycle(
 		TryExecutor tryExecutor,
@@ -18,7 +18,7 @@ public class AroundTryLifecycle implements TryExecutor {
 		AroundTryHook aroundTry
 	) {
 		this.tryExecutor = tryExecutor;
-		this.tryLifecycleContext = new TryLifecycleContextForMethod(propertyLifecycleContext);
+		this.tryLifecycleContext = new DefaultTryLifecycleContext(propertyLifecycleContext);
 		this.aroundTry = aroundTry;
 	}
 

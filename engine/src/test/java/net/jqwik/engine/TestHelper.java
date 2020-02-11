@@ -63,6 +63,11 @@ public class TestHelper {
 			}
 
 			@Override
+			public InjectParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
+				return InjectParameterHook.INJECT_NOTHING;
+			}
+
+			@Override
 			public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
 				return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
 			}

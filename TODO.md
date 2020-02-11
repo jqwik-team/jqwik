@@ -2,8 +2,6 @@
 
     - ParameterInjector: Allow injection of parameters not annotated with `@ForAll`
 
-    - FieldInjectorHook: Allow to inject fields per container, per property, per try
-
     - Container lifecycle
         - @PerContainer
 

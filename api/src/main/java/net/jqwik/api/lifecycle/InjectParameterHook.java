@@ -12,18 +12,18 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.2.4")
 public interface InjectParameterHook extends LifecycleHook {
 
-	Optional<Object> generateParameterValue(ParameterInjectionContext parameterContext, TryLifecycleContext tryLifecycleContext);
+	Optional<Object> generateParameterValue(ParameterInjectionContext parameterContext);
 
-	InjectParameterHook INJECT_NOTHING = ((parameterContext, tryLifecycleContext) -> Optional.empty());
+	InjectParameterHook INJECT_NOTHING = (parameterContext -> Optional.empty());
 
 	default int compareTo(InjectParameterHook other) {
-		return Integer.compare(this.injectParameterOrder(), other.injectParameterOrder());
+		return -Integer.compare(this.injectParameterPriority(), other.injectParameterPriority());
 	}
 
 	/**
-	 * Lower order value means earlier evaluation
+	 * Higher values means higher priority
 	 */
-	default int injectParameterOrder() {
+	default int injectParameterPriority() {
 		return 0;
 	}
 }

@@ -6,11 +6,11 @@ import java.util.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 
-public class ContainerLifecycleContextForClass implements ContainerLifecycleContext {
+public class DefaultContainerLifecycleContext implements ContainerLifecycleContext {
 	private final ContainerClassDescriptor classDescriptor;
 	private Reporter reporter;
 
-	public ContainerLifecycleContextForClass(ContainerClassDescriptor classDescriptor, Reporter reporter) {
+	public DefaultContainerLifecycleContext(ContainerClassDescriptor classDescriptor, Reporter reporter) {
 		this.classDescriptor = classDescriptor;
 		this.reporter = reporter;
 	}

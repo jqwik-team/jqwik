@@ -56,7 +56,7 @@ public class HookSupport {
 
 	public static SkipExecutionHook combineSkipExecutionHooks(List<SkipExecutionHook> skipExecutionHooks) {
 		if (skipExecutionHooks.isEmpty()) {
-			return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
+			return SkipExecutionHook.DO_NOT_SKIP;
 		}
 		SkipExecutionHook first = skipExecutionHooks.remove(0);
 		return then(first, combineSkipExecutionHooks(skipExecutionHooks));
@@ -99,6 +99,25 @@ public class HookSupport {
 
 			if (throwableCollector.isNotEmpty()) {
 				throw throwableCollector.getThrowable();
+			}
+		};
+	}
+
+	public static InjectParameterHook combineInjectParameterHooks(List<InjectParameterHook> injectParameterHooks) {
+		if (injectParameterHooks.isEmpty()) {
+			return InjectParameterHook.INJECT_NOTHING;
+		}
+		InjectParameterHook first = injectParameterHooks.remove(0);
+		return then(first, combineInjectParameterHooks(injectParameterHooks));
+	}
+
+	private static InjectParameterHook then(InjectParameterHook first, InjectParameterHook rest) {
+		return parameterInjectionContext -> {
+			Optional<Object> optionalValue = first.generateParameterValue(parameterInjectionContext);
+			if (optionalValue.isPresent()) {
+				return optionalValue;
+			} else {
+				return rest.generateParameterValue(parameterInjectionContext);
 			}
 		};
 	}

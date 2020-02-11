@@ -104,7 +104,7 @@ class ContainerTaskCreator {
 	private ContainerLifecycleContext createLifecycleContext(TestDescriptor containerDescriptor, Reporter reporter) {
 		if (containerDescriptor instanceof ContainerClassDescriptor) {
 			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) containerDescriptor;
-			return new ContainerLifecycleContextForClass(classDescriptor, reporter);
+			return new DefaultContainerLifecycleContext(classDescriptor, reporter);
 		}
 
 		return new ContainerLifecycleContext() {

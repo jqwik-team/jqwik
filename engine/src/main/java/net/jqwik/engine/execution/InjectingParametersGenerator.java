@@ -42,7 +42,12 @@ public class InjectingParametersGenerator implements Iterator<List<Shrinkable<Ob
 	}
 
 	private Shrinkable<Object> findInjectableParameter(MethodParameter parameter) {
-		// TODO: Resolve parameter using some kind of parameter resolver
-		throw new JqwikException(String.format("Parameter [%s] without @ForAll cannot be resolved", parameter));
+		ParameterInjectionContext context = new DefaultParameterInjectionContext(parameter);
+		Optional<Object> optionalValue = injectParameterHook.generateParameterValue(context);
+		return optionalValue.map(Shrinkable::unshrinkable).orElseThrow(
+			() -> {
+				String message = String.format("Parameter [%s] without @ForAll cannot be resolved", parameter);
+				return new JqwikException(message);
+			});
 	}
 }

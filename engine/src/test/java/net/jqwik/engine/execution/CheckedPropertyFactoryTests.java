@@ -40,7 +40,7 @@ public class CheckedPropertyFactoryTests {
 	}
 
 	private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
-		return new PropertyLifecycleContextForMethod(descriptor, new PropertyExamples(), ((key, value) -> {}));
+		return new DefaultPropertyLifecycleContext(descriptor, new PropertyExamples(), ((key, value) -> {}));
 	}
 
 	@Example

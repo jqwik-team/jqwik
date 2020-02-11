@@ -5,10 +5,10 @@ import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
 
-public class TryLifecycleContextForMethod implements TryLifecycleContext {
+public class DefaultTryLifecycleContext implements TryLifecycleContext {
 	private final PropertyLifecycleContext propertyContext;
 
-	public TryLifecycleContextForMethod(PropertyLifecycleContext propertyContext) {
+	public DefaultTryLifecycleContext(PropertyLifecycleContext propertyContext) {
 		this.propertyContext = propertyContext;
 	}
 
