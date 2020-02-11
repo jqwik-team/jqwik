@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.lang.reflect.*;
+import java.util.*;
 
 import org.junit.platform.engine.*;
 
@@ -78,8 +79,8 @@ class LifecycleRegistryTests {
 		}
 
 		@Override
-		public boolean hookAppliesTo(AnnotatedElement element) {
-			return element instanceof Method;
+		public boolean appliesTo(Optional<AnnotatedElement> optionalElement) {
+			return optionalElement.map(element -> element instanceof Method).orElse(false);
 		}
 	}
 }

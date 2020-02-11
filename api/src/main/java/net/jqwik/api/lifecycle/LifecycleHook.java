@@ -15,11 +15,11 @@ import static org.apiguardian.api.API.Status.*;
 public interface LifecycleHook {
 
 	/**
-	 * @param element Can be null
+	 * @param element Optional contains element for container classes and methods but not for the engine
 	 * @return true if hook shall be applied to this element
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.4")
-	default boolean hookAppliesTo(AnnotatedElement element) {
+	default boolean appliesTo(Optional<AnnotatedElement> element) {
 		return true;
 	}
 

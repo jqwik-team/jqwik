@@ -60,11 +60,11 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	private <T extends LifecycleHook> boolean hookAppliesTo(T hook, TestDescriptor descriptor) {
-		AnnotatedElement element = null;
+		Optional<AnnotatedElement> element = Optional.empty();
 		if (descriptor instanceof JqwikDescriptor) {
-			element = ((JqwikDescriptor) descriptor).getAnnotatedElement();
+			element = Optional.of(((JqwikDescriptor) descriptor).getAnnotatedElement());
 		}
-		return hook.hookAppliesTo(element);
+		return hook.appliesTo(element);
 	}
 
 	/*
