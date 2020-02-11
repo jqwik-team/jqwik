@@ -111,7 +111,7 @@ class AroundPropertyHookTests {
 
 }
 
-class AroundPropertyWithPropagation implements AroundPropertyHook, Configurable, PropagateToChildren {
+class AroundPropertyWithPropagation implements AroundPropertyHook, Configurable, ApplyToChildren {
 
 	static int calls = 0;
 	static int configured = 0;

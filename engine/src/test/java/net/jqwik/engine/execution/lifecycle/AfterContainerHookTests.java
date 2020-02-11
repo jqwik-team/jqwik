@@ -37,7 +37,7 @@ class CheckAfter implements AfterContainerHook {
 	}
 }
 
-class IncrementAfter implements AfterContainerHook, LifecycleHook.PropagateToChildren {
+class IncrementAfter implements AfterContainerHook, LifecycleHook.ApplyToChildren {
 
 	@Override
 	public void afterContainer(ContainerLifecycleContext context) {

@@ -40,14 +40,14 @@ class BeforeContainerHookTests {
 class IncrementBefore implements BeforeContainerHook {
 
 	@Override
-	public void beforeContainer(ContainerLifecycleContext context) throws Throwable {
+	public void beforeContainer(ContainerLifecycleContext context) {
 		BeforeContainerHookTests.before++;
 		assertThat(context.containerClass()).isPresent();
 		assertThat(context.containerClass().get()).isEqualTo(BeforeContainerHookTests.class);
 	}
 }
 
-class IncrementPropagatedBefore implements BeforeContainerHook, LifecycleHook.PropagateToChildren {
+class IncrementPropagatedBefore implements BeforeContainerHook, LifecycleHook.ApplyToChildren {
 
 	@Override
 	public void beforeContainer(ContainerLifecycleContext context) throws Throwable {

@@ -28,8 +28,8 @@ public interface LifecycleHook {
 	 *
 	 * Experimental feature. Not ready for public usage yet.
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.1")
-	interface PropagateToChildren {
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	interface ApplyToChildren {
 	}
 
 	/**

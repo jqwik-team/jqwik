@@ -9,7 +9,7 @@ import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
-public class AutoCloseableHook implements AroundPropertyHook, PropagateToChildren {
+public class AutoCloseableHook implements AroundPropertyHook, ApplyToChildren {
 
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {

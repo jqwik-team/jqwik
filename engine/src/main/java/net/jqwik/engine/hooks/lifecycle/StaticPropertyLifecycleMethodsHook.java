@@ -8,7 +8,7 @@ import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.api.lifecycle.PropertyLifecycle.*;
 import net.jqwik.engine.hooks.*;
 
-public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, PropagateToChildren {
+public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, ApplyToChildren {
 
 	private static final Object IDENTIFIERS_STORE_ID = Tuple.of(AfterPropertyExecutor.class, "identifiers");
 	private static final Object ORDER_STORE_ID = Tuple.of(AfterPropertyExecutor.class, "order");

@@ -68,7 +68,7 @@ class AroundPropertyHookExamples implements AutoCloseable {
 		}
 	}
 
-	static class AroundAll implements AroundPropertyHook, LifecycleHook.PropagateToChildren {
+	static class AroundAll implements AroundPropertyHook, LifecycleHook.ApplyToChildren {
 		@Override
 		public PropertyExecutionResult aroundProperty(
 			PropertyLifecycleContext context,

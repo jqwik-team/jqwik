@@ -104,7 +104,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	private void createAndRegisterHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
-		boolean propagateToChildren = PropagateToChildren.class.isAssignableFrom(hookClass);
+		boolean propagateToChildren = ApplyToChildren.class.isAssignableFrom(hookClass);
 		HookRegistration registration = new HookRegistration(descriptor, hookClass, propagateToChildren);
 		if (!registrations.contains(registration)) {
 			registrations.add(registration);
@@ -120,13 +120,19 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			String message = String.format("Inner class [%s] cannot be used as LifecycleHook", hookClass.getName());
 			throw new JqwikException(message);
 		}
+		if (!JqwikReflectionSupport.hasDefaultConstructor(hookClass)) {
+			String message = String.format("Hook class [%s] must have default constructor", hookClass.getName());
+			throw new JqwikException(message);
+		}
 		createAndRegisterHook(descriptor, hookClass);
 		if (!instances.containsKey(hookClass)) {
-			LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
-			if (hookInstance instanceof Configurable) {
-				((Configurable) hookInstance).configure(parameters);
-			}
-			instances.put(hookClass, hookInstance);
+			CurrentTestDescriptor.runWithDescriptor(descriptor, () -> {
+				LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
+				if (hookInstance instanceof Configurable) {
+					((Configurable) hookInstance).configure(parameters);
+				}
+				instances.put(hookClass, hookInstance);
+			});
 		}
 	}
 

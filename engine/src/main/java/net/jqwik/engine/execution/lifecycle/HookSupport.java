@@ -21,7 +21,13 @@ public class HookSupport {
 
 	private static AroundPropertyHook wrap(AroundPropertyHook outer, AroundPropertyHook inner) {
 		return (context, property) -> {
-			PropertyExecutor innerExecutor = () -> inner.aroundProperty(context, property);
+			PropertyExecutor innerExecutor = () -> {
+				try {
+					return inner.aroundProperty(context, property);
+				} catch (Throwable throwable) {
+					return JqwikExceptionSupport.throwAsUncheckedException(throwable);
+				}
+			};
 			return outer.aroundProperty(context, innerExecutor);
 		};
 	}

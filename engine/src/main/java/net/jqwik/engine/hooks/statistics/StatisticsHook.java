@@ -10,7 +10,7 @@ import net.jqwik.api.statistics.StatisticsReport.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
-public class StatisticsHook implements AroundPropertyHook, PropagateToChildren {
+public class StatisticsHook implements AroundPropertyHook, ApplyToChildren {
 
 	private static final Supplier<Map<String, StatisticsCollectorImpl>> STATISTICS_MAP_SUPPLIER =
 		() -> new HashMap<String, StatisticsCollectorImpl>() {
