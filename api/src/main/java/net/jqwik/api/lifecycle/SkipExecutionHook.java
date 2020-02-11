@@ -16,13 +16,13 @@ public interface SkipExecutionHook extends LifecycleHook {
 	SkipResult shouldBeSkipped(LifecycleContext context);
 
 	default int compareTo(SkipExecutionHook other) {
-		return Integer.compare(this.order(), other.order());
+		return Integer.compare(this.skipExecutionOrder(), other.skipExecutionOrder());
 	}
 
 	/**
 	 * Lower order value means earlier evaluation
 	 */
-	default int order() {
+	default int skipExecutionOrder() {
 		return 0;
 	}
 

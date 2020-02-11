@@ -22,7 +22,7 @@ public class DisabledHook implements SkipExecutionHook, ApplyToChildren {
 	}
 
 	@Override
-	public int order() {
+	public int skipExecutionOrder() {
 		return Hooks.SkipExecution.DISABLED_ORDER;
 	}
 }

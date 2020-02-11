@@ -21,6 +21,7 @@ public class CheckedProperty {
 	public final PropertyConfiguration configuration;
 
 	private final ArbitraryResolver arbitraryResolver;
+	private final InjectParameterHook parameterInjector;
 	private final Optional<Iterable<? extends Tuple>> optionalData;
 	private Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive;
 
@@ -37,6 +38,7 @@ public class CheckedProperty {
 		this.propertyParameters = propertyParameters;
 		this.forAllParameters = selectForAllParameters(propertyParameters);
 		this.arbitraryResolver = arbitraryResolver;
+		this.parameterInjector = InjectParameterHook.INJECT_NOTHING;
 		this.optionalData = optionalData;
 		this.configuration = configuration;
 	}
@@ -82,7 +84,11 @@ public class CheckedProperty {
 			configuration = chooseGenerationMode(configuration);
 		}
 		ForAllParametersGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
-		InjectingParametersGenerator parametersGenerator = new InjectingParametersGenerator(propertyParameters, shrinkablesGenerator);
+		InjectingParametersGenerator parametersGenerator = new InjectingParametersGenerator(
+			propertyParameters,
+			shrinkablesGenerator,
+			parameterInjector
+		);
 		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor);
 	}
 
@@ -177,7 +183,7 @@ public class CheckedProperty {
 		//noinspection OptionalAssignedToNull
 		if (optionalExhaustive == null) {
 			long maxNumberOfSamples = configuration.getGenerationMode() == GenerationMode.EXHAUSTIVE
-				? ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE : configuration.getTries();
+										  ? ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE : configuration.getTries();
 			optionalExhaustive = createOptionalExhaustiveShrinkablesGenerator(maxNumberOfSamples);
 		}
 		return optionalExhaustive;
