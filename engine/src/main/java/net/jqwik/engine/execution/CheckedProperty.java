@@ -2,6 +2,7 @@ package net.jqwik.engine.execution;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.junit.platform.engine.reporting.*;
 
@@ -15,6 +16,7 @@ public class CheckedProperty {
 
 	public final String propertyName;
 	public final TryExecutor tryExecutor;
+	public final List<MethodParameter> propertyParameters;
 	public final List<MethodParameter> forAllParameters;
 	public final PropertyConfiguration configuration;
 
@@ -25,17 +27,22 @@ public class CheckedProperty {
 	public CheckedProperty(
 		String propertyName,
 		TryExecutor tryExecutor,
-		List<MethodParameter> forAllParameters,
+		List<MethodParameter> propertyParameters,
 		ArbitraryResolver arbitraryResolver,
 		Optional<Iterable<? extends Tuple>> optionalData,
 		PropertyConfiguration configuration
 	) {
 		this.propertyName = propertyName;
 		this.tryExecutor = tryExecutor;
-		this.forAllParameters = forAllParameters;
+		this.propertyParameters = propertyParameters;
+		this.forAllParameters = selectForAllParameters(propertyParameters);
 		this.arbitraryResolver = arbitraryResolver;
 		this.optionalData = optionalData;
 		this.configuration = configuration;
+	}
+
+	private List<MethodParameter> selectForAllParameters(List<MethodParameter> propertyParameters) {
+		return propertyParameters.stream().filter(parameter -> parameter.isAnnotated(ForAll.class)).collect(Collectors.toList());
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> publisher, Reporting[] reporting) {
@@ -74,11 +81,12 @@ public class CheckedProperty {
 		} else if (configuration.getGenerationMode() == GenerationMode.AUTO) {
 			configuration = chooseGenerationMode(configuration);
 		}
-		ShrinkablesGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
-		return new GenericProperty(propertyName, configuration, shrinkablesGenerator, tryExecutor);
+		ForAllParametersGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
+		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(propertyParameters, shrinkablesGenerator);
+		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor);
 	}
 
-	private ShrinkablesGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {
+	private ForAllParametersGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {
 		List<Object> falsifiedSample = configuration.getFalsifiedSample();
 		if (falsifiedSample != null && !falsifiedSample.isEmpty()) {
 			if (configuration.getAfterFailureMode() == AfterFailureMode.SAMPLE_ONLY) {
@@ -91,7 +99,7 @@ public class CheckedProperty {
 		return createDefaultShrinkablesGenerator(configuration);
 	}
 
-	private ShrinkablesGenerator createDefaultShrinkablesGenerator(PropertyConfiguration configuration) {
+	private ForAllParametersGenerator createDefaultShrinkablesGenerator(PropertyConfiguration configuration) {
 		switch (configuration.getGenerationMode()) {
 			case EXHAUSTIVE:
 				return getOptionalExhaustive().get();
@@ -149,19 +157,19 @@ public class CheckedProperty {
 		}
 	}
 
-	private ShrinkablesGenerator createDataBasedShrinkablesGenerator(PropertyConfiguration configuration) {
+	private ForAllParametersGenerator createDataBasedShrinkablesGenerator(PropertyConfiguration configuration) {
 		if (configuration.getGenerationMode() != GenerationMode.DATA_DRIVEN) {
 			throw new JqwikException("You cannot have both a @FromData annotation and @Property(generation = RANDOMIZED)");
 		}
 		return new DataBasedShrinkablesGenerator(forAllParameters, optionalData.get());
 	}
 
-	private ShrinkablesGenerator createRandomizedShrinkablesGenerator(PropertyConfiguration configuration) {
+	private ForAllParametersGenerator createRandomizedShrinkablesGenerator(PropertyConfiguration configuration) {
 		Random random = SourceOfRandomness.create(configuration.getSeed());
 		return RandomizedShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, random, configuration.getTries());
 	}
 
-	private ShrinkablesGenerator createSampleOnlyShrinkableGenerator(PropertyConfiguration configuration) {
+	private ForAllParametersGenerator createSampleOnlyShrinkableGenerator(PropertyConfiguration configuration) {
 		return new SampleOnlyShrinkablesGenerator(forAllParameters, configuration.getFalsifiedSample());
 	}
 

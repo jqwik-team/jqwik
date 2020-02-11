@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-public class ExhaustiveShrinkablesGenerator implements ShrinkablesGenerator {
+public class ExhaustiveShrinkablesGenerator implements ForAllParametersGenerator {
 
 	public static ExhaustiveShrinkablesGenerator forParameters(
 		List<MethodParameter> parameters,

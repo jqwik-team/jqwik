@@ -23,9 +23,10 @@ public class CheckedPropertyFactoryTests {
 
 		assertThat(property.propertyName).isEqualTo("prop");
 
+		assertThat(property.propertyParameters).size().isEqualTo(2);
 		assertThat(property.forAllParameters).size().isEqualTo(2);
-		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
-		assertThat(property.forAllParameters.get(1).getType()).isEqualTo(String.class);
+		assertThat(property.propertyParameters.get(0).getType()).isEqualTo(int.class);
+		assertThat(property.propertyParameters.get(1).getType()).isEqualTo(String.class);
 
 		List<Object> argsTrue = Arrays.asList(1, "test");
 		List<Object> argsFalse = Arrays.asList(2, "test");
@@ -47,11 +48,16 @@ public class CheckedPropertyFactoryTests {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", "42", 11, 5, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor), AroundTryHook.BASE);
 
+		assertThat(property.propertyParameters).size().isEqualTo(4);
 		assertThat(property.forAllParameters).size().isEqualTo(2);
-		assertThat(property.forAllParameters.get(0).getType()).isEqualTo(int.class);
-		assertThat(property.forAllParameters.get(0).getAnnotation(ForAll.class)).isNotNull();
-		assertThat(property.forAllParameters.get(1).getType()).isEqualTo(String.class);
-		assertThat(property.forAllParameters.get(1).getAnnotation(ForAll.class)).isNotNull();
+		assertThat(property.propertyParameters.get(0).getType()).isEqualTo(int.class);
+		assertThat(property.propertyParameters.get(0).getAnnotation(ForAll.class)).isNull();
+		assertThat(property.propertyParameters.get(1).getType()).isEqualTo(int.class);
+		assertThat(property.propertyParameters.get(1).getAnnotation(ForAll.class)).isNotNull();
+		assertThat(property.propertyParameters.get(2).getType()).isEqualTo(String.class);
+		assertThat(property.propertyParameters.get(2).getAnnotation(ForAll.class)).isNotNull();
+		assertThat(property.propertyParameters.get(3).getType()).isEqualTo(String.class);
+		assertThat(property.propertyParameters.get(3).getAnnotation(ForAll.class)).isNull();
 	}
 
 	@Example
@@ -59,7 +65,7 @@ public class CheckedPropertyFactoryTests {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", "42", 11, 5, ShrinkingMode.OFF);
 		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor), AroundTryHook.BASE);
 
-		assertThat(property.forAllParameters).size().isEqualTo(0);
+		assertThat(property.propertyParameters).size().isEqualTo(0);
 
 		List<Object> noArgs = Arrays.asList();
 		assertThat(property.tryExecutor.execute(noArgs).status()).isEqualTo(SATISFIED);

@@ -8,7 +8,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-public class DataBasedShrinkablesGenerator implements ShrinkablesGenerator {
+public class DataBasedShrinkablesGenerator implements ForAllParametersGenerator {
 
 	private final List<MethodParameter> forAllParameters;
 	private final Iterator<? extends Tuple> iterator;

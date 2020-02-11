@@ -8,7 +8,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-public class RandomizedShrinkablesGenerator implements ShrinkablesGenerator {
+public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator {
 
 	public static RandomizedShrinkablesGenerator forParameters(
 		List<MethodParameter> parameters,

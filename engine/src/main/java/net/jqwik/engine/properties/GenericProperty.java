@@ -16,18 +16,18 @@ public class GenericProperty {
 
 	private final String name;
 	private final PropertyConfiguration configuration;
-	private final ShrinkablesGenerator shrinkablesGenerator;
+	private final Iterator<List<Shrinkable<Object>>> parametersGenerator;
 	private final TryExecutor tryExecutor;
 
 	public GenericProperty(
 		String name,
 		PropertyConfiguration configuration,
-		ShrinkablesGenerator shrinkablesGenerator,
+		Iterator<List<Shrinkable<Object>>> parametersGenerator,
 		TryExecutor tryExecutor
 	) {
 		this.name = name;
 		this.configuration = configuration;
-		this.shrinkablesGenerator = shrinkablesGenerator;
+		this.parametersGenerator = parametersGenerator;
 		this.tryExecutor = tryExecutor;
 	}
 
@@ -40,12 +40,12 @@ public class GenericProperty {
 			if (finishEarly) {
 				break;
 			}
-			if (!shrinkablesGenerator.hasNext()) {
+			if (!parametersGenerator.hasNext()) {
 				break;
 			}
 			countTries++;
 
-			List<Shrinkable<Object>> shrinkableParams = shrinkablesGenerator.next();
+			List<Shrinkable<Object>> shrinkableParams = parametersGenerator.next();
 			List<Object> sample = extractParams(shrinkableParams);
 
 			try {

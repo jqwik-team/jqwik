@@ -8,7 +8,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-public class SampleOnlyShrinkablesGenerator implements ShrinkablesGenerator {
+public class SampleOnlyShrinkablesGenerator implements ForAllParametersGenerator {
 
 	private final List<MethodParameter> forAllParameters;
 	private final List<Object> sample;

@@ -107,7 +107,7 @@ class RandomizedShrinkablesGeneratorTests {
 		//assertNeverGenerated(shrinkablesGenerator, random, asList("b", asList("a")));
 	}
 
-	private void assertAtLeastOneGenerated(ShrinkablesGenerator generator, List<Object> expected) {
+	private void assertAtLeastOneGenerated(ForAllParametersGenerator generator, List<Object> expected) {
 		for (int i = 0; i < 500; i++) {
 			List<Shrinkable<Object>> shrinkables = generator.next();
 			if (values(shrinkables).equals(expected))
@@ -116,7 +116,7 @@ class RandomizedShrinkablesGeneratorTests {
 		fail("Failed to generate at least once");
 	}
 
-	private void assertNeverGenerated(ShrinkablesGenerator generator, List<Object> expected) {
+	private void assertNeverGenerated(ForAllParametersGenerator generator, List<Object> expected) {
 		for (int i = 0; i < 500; i++) {
 			List<Shrinkable<Object>> shrinkables = generator.next();
 			if (values(shrinkables).equals(expected))

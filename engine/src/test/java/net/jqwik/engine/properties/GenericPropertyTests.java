@@ -32,7 +32,7 @@ class GenericPropertyTests {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(2).build();
 			GenericProperty property = new GenericProperty("satisfied property", configuration, shrinkablesGenerator, forAllFunction);
@@ -50,7 +50,7 @@ class GenericPropertyTests {
 		void stopWhenNoMoreShrinkablesCanBeGenerated() {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
 
-			ShrinkablesGenerator shrinkablesGenerator = finiteShrinkablesGenerator(1, 2, 3);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = finiteShrinkablesGenerator(1, 2, 3);
 
 			GenericProperty property =
 				new GenericProperty("finite property", aConfig().build(), shrinkablesGenerator, forAllFunction);
@@ -71,7 +71,7 @@ class GenericPropertyTests {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie != failingTry, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8, 9);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property =
 				new GenericProperty("falsified property", aConfig().build(), shrinkablesGenerator, forAllFunction);
@@ -97,7 +97,7 @@ class GenericPropertyTests {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withShrinking(OFF).build();
 			GenericProperty property =
@@ -117,7 +117,7 @@ class GenericPropertyTests {
 			ForAllSpy forAllSpy = new ForAllSpy(throwErrorOnFifthAttempt);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
@@ -138,7 +138,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
@@ -168,7 +168,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
@@ -201,7 +201,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(10).build();
 			GenericProperty property =
@@ -223,7 +223,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(10).build();
 			GenericProperty property =
@@ -250,7 +250,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(20).withMaxDiscardRatio(maxDiscardRatio).build();
 			GenericProperty property =
@@ -273,7 +273,7 @@ class GenericPropertyTests {
 			}, exactlyOneInteger);
 
 			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
@@ -295,7 +295,7 @@ class GenericPropertyTests {
 		void falsifiedAndShrunk() {
 			Arbitrary<Object> arbitrary = Arbitraries.integers().between(1, 100).asGeneric();
 			CheckedFunction checkedFunction = params -> ((int) params.get(0)) < 5;
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
@@ -394,7 +394,7 @@ class GenericPropertyTests {
 
 			Arbitrary<Object> arbitrary1 = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Object> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2);
 
 			PropertyConfiguration configuration = aConfig().withTries(5).build();
 			GenericProperty property =
@@ -423,7 +423,7 @@ class GenericPropertyTests {
 			Arbitrary<Object> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Object> arbitrary3 = Arbitraries.samples(1, 2, 3, 4, 5);
 			Arbitrary<Object> arbitrary4 = Arbitraries.samples(1, 2, 3, 4, 5);
-			ShrinkablesGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2, arbitrary3, arbitrary4);
+			Iterator<List<Shrinkable<Object>>> shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2, arbitrary3, arbitrary4);
 
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
@@ -443,7 +443,7 @@ class GenericPropertyTests {
 
 	}
 
-	private ShrinkablesGenerator randomizedShrinkablesGenerator(Arbitrary<Object>... arbitraries) {
+	private Iterator<List<Shrinkable<Object>>> randomizedShrinkablesGenerator(Arbitrary<Object>... arbitraries) {
 		Random random = SourceOfRandomness.current();
 		List<Arbitrary<Object>> arbitraryList = Arrays.stream(arbitraries).collect(Collectors.toList());
 		List<RandomGenerator<Object>> generators = arbitraryList
@@ -451,7 +451,7 @@ class GenericPropertyTests {
 													   .map(arbitrary -> arbitrary.generator(9999))
 													   .collect(Collectors.toList());
 
-		return new ShrinkablesGenerator() {
+		return new Iterator<List<Shrinkable<Object>>>() {
 			@Override
 			public boolean hasNext() {
 				return true;
@@ -467,8 +467,8 @@ class GenericPropertyTests {
 		};
 	}
 
-	private ShrinkablesGenerator emptyShrinkablesGenerator() {
-		return new ShrinkablesGenerator() {
+	private Iterator<List<Shrinkable<Object>>> emptyShrinkablesGenerator() {
+		return new Iterator<List<Shrinkable<Object>>>() {
 			@Override
 			public boolean hasNext() {
 				return true;
@@ -481,10 +481,10 @@ class GenericPropertyTests {
 		};
 	}
 
-	private ShrinkablesGenerator finiteShrinkablesGenerator(int... values) {
+	private Iterator<List<Shrinkable<Object>>> finiteShrinkablesGenerator(int... values) {
 		Iterator<Integer> valuesIterator = Arrays.stream(values).iterator();
 
-		return new ShrinkablesGenerator() {
+		return new Iterator<List<Shrinkable<Object>>>() {
 			@Override
 			public boolean hasNext() {
 				return valuesIterator.hasNext();

@@ -5,12 +5,12 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-public interface ShrinkablesGenerator extends Iterator<List<Shrinkable<Object>>> {
+public interface ForAllParametersGenerator extends Iterator<List<Shrinkable<Object>>> {
 
-	default ShrinkablesGenerator andThen(Supplier<ShrinkablesGenerator> generatorCreator) {
-		ShrinkablesGenerator first = this;
-		ShrinkablesGenerator afterSuccessGenerator = generatorCreator.get();
-		return new ShrinkablesGenerator() {
+	default ForAllParametersGenerator andThen(Supplier<ForAllParametersGenerator> generatorCreator) {
+		ForAllParametersGenerator first = this;
+		ForAllParametersGenerator afterSuccessGenerator = generatorCreator.get();
+		return new ForAllParametersGenerator() {
 			@Override
 			public boolean hasNext() {
 				if (first.hasNext()) {

@@ -30,7 +30,7 @@ public class CheckedPropertyFactory {
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
 		AroundTryLifecycle tryExecutor = createTryExecutor(propertyMethodDescriptor, propertyLifecycleContext, aroundTry);
-		List<MethodParameter> forAllParameters = extractForAllParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
+		List<MethodParameter> propertyParameters = extractParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
 			propertyMethodDescriptor.getContainerClass(),
@@ -45,7 +45,7 @@ public class CheckedPropertyFactory {
 		return new CheckedProperty(
 			propertyName,
 			tryExecutor,
-			forAllParameters,
+			propertyParameters,
 			new CachingArbitraryResolver(arbitraryResolver),
 			optionalData,
 			configuration
@@ -87,15 +87,10 @@ public class CheckedPropertyFactory {
 			};
 	}
 
-	private List<MethodParameter> extractForAllParameters(Method targetMethod, Class<?> containerClass) {
-		return Arrays //
-					  .stream(JqwikReflectionSupport.getMethodParameters(targetMethod, containerClass)) //
-					  .filter(this::isForAllPresent) //
-					  .collect(Collectors.toList());
-	}
-
-	private boolean isForAllPresent(MethodParameter parameter) {
-		return parameter.isAnnotated(ForAll.class);
+	private List<MethodParameter> extractParameters(Method targetMethod, Class<?> containerClass) {
+		return Arrays
+				   .stream(JqwikReflectionSupport.getMethodParameters(targetMethod, containerClass))
+				   .collect(Collectors.toList());
 	}
 
 }
