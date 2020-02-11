@@ -1,5 +1,6 @@
 package net.jqwik.engine.descriptor;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -58,6 +59,11 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor implements 
 	@Override
 	public Set<Domain> getDomains() {
 		return DiscoverySupport.getDomains(getJqwikParent(), domains);
+	}
+
+	@Override
+	public AnnotatedElement getAnnotatedElement() {
+		return getContainerClass();
 	}
 
 	@Override

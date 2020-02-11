@@ -71,4 +71,9 @@ abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implement
 		return optionalReport.map(Report::value).orElse(new Reporting[0]);
 	}
 
+	@Override
+	public AnnotatedElement getAnnotatedElement() {
+		return getTargetMethod();
+	}
+
 }

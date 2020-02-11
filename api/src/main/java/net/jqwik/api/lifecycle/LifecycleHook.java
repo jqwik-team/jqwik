@@ -1,5 +1,6 @@
 package net.jqwik.api.lifecycle;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -12,6 +13,15 @@ import static org.apiguardian.api.API.Status.*;
  */
 @API(status = EXPERIMENTAL, since = "1.0")
 public interface LifecycleHook {
+
+	/**
+	 * @param element Can be null
+	 * @return true if hook shall be applied to this element
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	default boolean hookAppliesTo(AnnotatedElement element) {
+		return true;
+	}
 
 	/**
 	 * Marker interface.

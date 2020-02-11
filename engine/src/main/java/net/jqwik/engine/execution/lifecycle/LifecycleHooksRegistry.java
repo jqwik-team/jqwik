@@ -1,5 +1,6 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -53,8 +54,26 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		return hookClasses
 				   .stream()
 				   .map(this::getHook)
+				   .filter(hook -> hookAppliesTo(hook, descriptor))
 				   .sorted(comparator)
 				   .collect(Collectors.toList());
+	}
+
+	private <T extends LifecycleHook> boolean hookAppliesTo(T hook, TestDescriptor descriptor) {
+		AnnotatedElement element = null;
+		if (descriptor instanceof JqwikDescriptor) {
+			element = ((JqwikDescriptor) descriptor).getAnnotatedElement();
+		}
+		return hook.hookAppliesTo(element);
+	}
+
+	/*
+	 * For testing only
+	 */
+	public <T extends LifecycleHook> boolean hasHook(TestDescriptor descriptor, Class<T> concreteHook) {
+		Comparator<LifecycleHook> dontCompare = (a, b) -> 0;
+		List<LifecycleHook> hooks = findHooks(descriptor, LifecycleHook.class, dontCompare);
+		return hooks.stream().anyMatch(hook -> hook.getClass().equals(concreteHook));
 	}
 
 	@SuppressWarnings("unchecked")
