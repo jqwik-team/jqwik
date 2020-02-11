@@ -158,7 +158,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withParameter", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage tupleType = TypeUsageImpl.forParameter(parameter);
 			assertThat(tupleType.getRawType()).isEqualTo(Tuple2.class);
 			assertThat(tupleType.getType()).isEqualTo(parameter.getType());
@@ -180,7 +180,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage parameterType = TypeUsageImpl.forParameter(parameter);
 			assertThat(parameterType.getRawType()).isEqualTo(List.class);
 			assertThat(parameterType.getAnnotations().get(0)).isInstanceOf(Size.class);
@@ -197,7 +197,7 @@ class TypeUsageTests {
 			assertThat(parameterType.equals(equalParameterType)).isTrue();
 
 			Method methodWithNonEqualList = LocalClass.class.getMethod("withNonEqualList", List.class);
-			MethodParameter nonEqualParameter = JqwikReflectionSupport.getMethodParameters(methodWithNonEqualList, LocalClass.class)[0];
+			MethodParameter nonEqualParameter = JqwikReflectionSupport.getMethodParameters(methodWithNonEqualList, LocalClass.class).get(0);
 			TypeUsage nonEqualParameterType = TypeUsageImpl.forParameter(nonEqualParameter);
 			assertThat(parameterType.equals(nonEqualParameterType)).isFalse();
 
@@ -211,7 +211,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage first = wildcardType.getTypeArguments().get(0);
@@ -241,14 +241,15 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withWildcard", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage equalWildcardType = TypeUsageImpl.forParameter(parameter);
 			assertThat(wildcardType.equals(equalWildcardType)).isTrue();
 
 			Method methodWithNonEqualWildcard = LocalClass.class.getMethod("withNonEqualWildcard", Tuple2.class);
-			MethodParameter nonEqualParameter = JqwikReflectionSupport.getMethodParameters(methodWithNonEqualWildcard, LocalClass.class)[0];
+			MethodParameter nonEqualParameter =
+				JqwikReflectionSupport.getMethodParameters(methodWithNonEqualWildcard, LocalClass.class).get(0);
 			TypeUsage nonEqualWildcardType = TypeUsageImpl.forParameter(nonEqualParameter);
 			assertThat(wildcardType.equals(nonEqualWildcardType)).isFalse();
 		}
@@ -261,7 +262,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("annotatedUpperBound", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage first = wildcardType.getTypeArguments().get(0);
@@ -283,7 +284,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("annotatedUpperBound", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage wildcardType = TypeUsageImpl.forParameter(parameter).getTypeArgument(0);
 
 			assertThat(wildcardType.getAnnotations()).hasSize(2);
@@ -301,7 +302,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage first = typeVariableType.getTypeArguments().get(0);
@@ -344,7 +345,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withTypeVariable", Tuple2.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
 			TypeUsage equalTypeVariableType = TypeUsageImpl.forParameter(parameter);
@@ -352,13 +353,14 @@ class TypeUsageTests {
 
 			Method differentByNameMethod = LocalClass.class.getMethod("differentByName", Tuple2.class);
 			MethodParameter differentByNameParameter = JqwikReflectionSupport
-														   .getMethodParameters(differentByNameMethod, LocalClass.class)[0];
+														   .getMethodParameters(differentByNameMethod, LocalClass.class).get(0);
 			TypeUsage differentByNameType = TypeUsageImpl.forParameter(differentByNameParameter);
 			assertThat(typeVariableType.equals(differentByNameType)).isFalse();
 
 			Method differentByLowerBoundsMethod = LocalClass.class.getMethod("differentByLowerBounds", Tuple2.class);
 			MethodParameter differentByLowerBoundsParameter = JqwikReflectionSupport
-																  .getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)[0];
+																  .getMethodParameters(differentByLowerBoundsMethod, LocalClass.class)
+																  .get(0);
 			TypeUsage differentByLowerBoundsType = TypeUsageImpl.forParameter(differentByLowerBoundsParameter);
 			assertThat(typeVariableType.equals(differentByLowerBoundsType)).isFalse();
 		}
@@ -372,7 +374,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("recursiveTypeVariable", Comparable.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
 			assertThat(typeVariableType.isTypeVariableOrWildcard()).isTrue();
@@ -393,7 +395,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("typeVariableWithSingleUpperBound", Map.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
 			assertThat(typeVariableType.getUpperBounds().get(0).getRawType()).isEqualTo(Map.class);
@@ -414,7 +416,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("annotationInUpperBound", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage typeVariableType = TypeUsageImpl.forParameter(parameter);
 
 			assertThat(typeVariableType.getUpperBounds().get(0).getRawType()).isEqualTo(List.class);
@@ -444,7 +446,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withList", List.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage listType = TypeUsageImpl.forParameter(parameter);
 			assertThat(listType.getAnnotations().get(0)).isInstanceOf(Size.class);
 			TypeUsage stringType = listType.getTypeArguments().get(0);
@@ -471,7 +473,7 @@ class TypeUsageTests {
 			}
 
 			Method method = LocalClass.class.getMethod("withOptionalArray", Optional.class);
-			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class)[0];
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage optionalType = TypeUsageImpl.forParameter(parameter);
 			TypeUsage arrayType = optionalType.getTypeArguments().get(0);
 			assertThat(arrayType.getAnnotations().get(0)).isInstanceOf(Size.class);

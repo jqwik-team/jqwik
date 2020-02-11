@@ -88,9 +88,7 @@ public class CheckedPropertyFactory {
 	}
 
 	private List<MethodParameter> extractParameters(Method targetMethod, Class<?> containerClass) {
-		return Arrays
-				   .stream(JqwikReflectionSupport.getMethodParameters(targetMethod, containerClass))
-				   .collect(Collectors.toList());
+		return JqwikReflectionSupport.getMethodParameters(targetMethod, containerClass);
 	}
 
 }

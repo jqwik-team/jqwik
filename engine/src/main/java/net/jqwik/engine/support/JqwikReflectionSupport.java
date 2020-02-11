@@ -23,6 +23,7 @@ public class JqwikReflectionSupport {
 	private final static IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
 
 	public static Stream<Object> streamInstancesFromInside(Object inner) {
+		//noinspection RedundantOperationOnEmptyContainer
 		return addInstances(inner, new ArrayList<>()).stream();
 	}
 
@@ -86,21 +87,18 @@ public class JqwikReflectionSupport {
 		Class<?> outerClass = clazz.getDeclaringClass();
 		Object parentInstance = outerClass.isAssignableFrom(context.getClass()) ?
 									context : newInstanceWithDefaultConstructor(outerClass);
-		Constructor<T> constructor = null;
 		try {
-			constructor = clazz.getDeclaredConstructor(outerClass);
+			Constructor<T> constructor = clazz.getDeclaredConstructor(outerClass);
+			return newInstance(constructor, parentInstance);
+		} catch (NoSuchMethodException e) {
+			return JqwikExceptionSupport.throwAsUncheckedException(e);
 		}
-		catch (NoSuchMethodException e) {
-			JqwikExceptionSupport.throwAsUncheckedException(e);
-		}
-		return newInstance(constructor, parentInstance);
 	}
 
 	private static <T> T newInstance(Constructor<T> constructor, Object... args) {
 		try {
 			return makeAccessible(constructor).newInstance(args);
-		}
-		catch (Throwable t) {
+		} catch (Throwable t) {
 			return JqwikExceptionSupport.throwAsUncheckedException(t);
 		}
 	}
@@ -118,7 +116,6 @@ public class JqwikReflectionSupport {
 		Class<?> clazz, Predicate<Method> predicate,
 		HierarchyTraversalMode traversalMode
 	) {
-
 		List<Method> foundMethods = new ArrayList<>();
 		foundMethods.addAll(ReflectionSupport.findMethods(clazz, predicate, traversalMode));
 		Class<?> searchClass = clazz;
@@ -161,19 +158,17 @@ public class JqwikReflectionSupport {
 					 .collect(toSet());
 	}
 
-	public static MethodParameter[] getMethodParameters(Method method, Class<?> containerClass) {
-
+	public static List<MethodParameter> getMethodParameters(Method method, Class<?> containerClass) {
 		List<MethodParameter> list = new ArrayList<>();
 		Parameter[] parameters = method.getParameters();
 		GenericsClassContext containerClassContext = GenericsSupport.contextFor(containerClass);
 
-		for (int i = 0; i < parameters.length; i++) {
-			Parameter parameter = parameters[i];
+		for (Parameter parameter : parameters) {
 			TypeResolution resolution = containerClassContext.resolveParameter(parameter);
 			MethodParameter methodParameter = new MethodParameter(parameter, resolution);
 			list.add(methodParameter);
 		}
-		return list.toArray(new MethodParameter[parameters.length]);
+		return list;
 	}
 
 	public static Optional<Method> findGeneratorMethod(

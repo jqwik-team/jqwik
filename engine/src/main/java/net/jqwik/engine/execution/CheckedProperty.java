@@ -82,7 +82,7 @@ public class CheckedProperty {
 			configuration = chooseGenerationMode(configuration);
 		}
 		ForAllParametersGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
-		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(propertyParameters, shrinkablesGenerator);
+		InjectingParametersGenerator parametersGenerator = new InjectingParametersGenerator(propertyParameters, shrinkablesGenerator);
 		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor);
 	}
 

@@ -84,15 +84,15 @@ class JqwikReflectionSupportTests {
 			}
 
 			Method method = ClassWithMethod.class.getMethod("method", String.class, List.class);
-			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithMethod.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithMethod.class);
 
-			MethodParameter param1 = parameters[0];
+			MethodParameter param1 = parameters.get(0);
 			assertThat(param1.getType()).isEqualTo(String.class);
 			assertThat(param1.getType()).isEqualTo(param1.getAnnotatedType().getType());
 			assertThat(param1.isParameterized()).isFalse();
 			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 
-			MethodParameter param2 = parameters[1];
+			MethodParameter param2 = parameters.get(1);
 			assertThat(param2.getType()).isEqualTo(param2.getAnnotatedType().getType());
 			assertThat(param2.isParameterized()).isTrue();
 			assertThat(((AnnotatedParameterizedType) param2.getAnnotatedType()).getAnnotatedActualTypeArguments()[0].getType())
@@ -108,9 +108,9 @@ class JqwikReflectionSupportTests {
 			}
 
 			Method method = ClassWithTypeVariableMethod.class.getMethod("method", Object.class);
-			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithTypeVariableMethod.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithTypeVariableMethod.class);
 
-			MethodParameter param1 = parameters[0];
+			MethodParameter param1 = parameters.get(0);
 			assertThat(param1.getType()).isInstanceOf(TypeVariable.class);
 			assertThat(param1.isParameterized()).isFalse();
 		}
@@ -126,9 +126,9 @@ class JqwikReflectionSupportTests {
 			}
 
 			Method method = ClassWithString.class.getMethod("method", Object.class);
-			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithString.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithString.class);
 
-			MethodParameter param1 = parameters[0];
+			MethodParameter param1 = parameters.get(0);
 			assertThat(param1.getType()).isEqualTo(String.class);
 			assertThat(param1.findAnnotation(ForAll.class)).isPresent();
 			assertThat(param1.isParameterized()).isFalse();
@@ -145,9 +145,9 @@ class JqwikReflectionSupportTests {
 			}
 
 			Method method = ClassWithListOfString.class.getMethod("method", List.class);
-			MethodParameter[] parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithListOfString.class);
+			List<MethodParameter> parameters = JqwikReflectionSupport.getMethodParameters(method, ClassWithListOfString.class);
 
-			MethodParameter param1 = parameters[0];
+			MethodParameter param1 = parameters.get(0);
 			assertThat(param1.getType()).isInstanceOf(ParameterizedType.class);
 			assertThat(((ParameterizedType) param1.getType()).getRawType()).isEqualTo(List.class);
 			assertThat(((ParameterizedType) param1.getType()).getActualTypeArguments()).containsExactly(String.class);
@@ -181,7 +181,6 @@ class JqwikReflectionSupportTests {
 
 		assertThat(JqwikReflectionSupport.getFunctionMethod(DataOutput.class)).isNotPresent();
 	}
-
 
 	@Example
 	void streamInstancesFromInside() {

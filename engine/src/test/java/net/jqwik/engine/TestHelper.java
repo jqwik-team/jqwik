@@ -20,7 +20,7 @@ public class TestHelper {
 	}
 
 	private static List<MethodParameter> getParameters(Method method, Class<?> containerClass) {
-		return Arrays.stream(getMethodParameters(method, containerClass)).collect(Collectors.toList());
+		return getMethodParameters(method, containerClass);
 	}
 
 	public static Method getMethod(Class<?> aClass, String methodName) {
@@ -70,11 +70,7 @@ public class TestHelper {
 	}
 
 	public static List<MethodParameter> getParameters(PropertyMethodDescriptor methodDescriptor) {
-		return
-			Arrays
-				.stream(getMethodParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass()))
-				.collect(Collectors.toList());
-
+		return getParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass());
 	}
 
 }

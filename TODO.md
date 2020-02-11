@@ -1,6 +1,6 @@
 - 1.2.4
 
-    - LifecycleHooks: Warn on usage of fields in hook classes
+    - ParameterInjector: Allow injection of parameters not annotated with `@ForAll`
 
     - FieldInjectorHook: Allow to inject fields per container, per property, per try
 
