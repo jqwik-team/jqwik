@@ -20,7 +20,7 @@ import static net.jqwik.api.statistics.StatisticsReport.StatisticsReportMode.*;
 @Group
 class StatisticsCoverageTests {
 
-	@Property(tries = 10)
+	@Property(tries = 50)
 	@ExpectFailure("coverage check should have failed")
 	void moreThanOneCoverageWorks(@ForAll int anInt) {
 		Statistics.collect(anInt > 0);
@@ -31,7 +31,7 @@ class StatisticsCoverageTests {
 
 	@Group
 	class Count {
-		@Property(tries = 10)
+		@Property(tries = 50)
 		@ExpectFailure("coverage check should have failed")
 		void coverageFailsForViolatedCountCondition(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
@@ -41,7 +41,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		@ExpectFailure("coverage check should have failed")
 		void coverageWorksForLabelledCollectors(@ForAll int anInt) {
 			Statistics.label("ints").collect(anInt > 0);
@@ -51,7 +51,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		void countCheckPredicate(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
 
@@ -60,7 +60,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		void countCheckPredicateWithCountAll(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
 
@@ -71,7 +71,7 @@ class StatisticsCoverageTests {
 
 		int countPositive = 0;
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		void countCheckAssertion(@ForAll int anInt) {
 			boolean isPositive = anInt > 0;
 			if (isPositive) {
@@ -86,7 +86,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		void countCheckAssertionWithCountAll(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
 
@@ -100,7 +100,7 @@ class StatisticsCoverageTests {
 
 	@Group
 	class Percentage {
-		@Property(tries = 10)
+		@Property(tries = 50)
 		@ExpectFailure("coverage check should have failed")
 		void coverageFailsForViolatedPercentageCondition(@ForAll int anInt) {
 			Statistics.collect(anInt > 0);
@@ -110,7 +110,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		@ExpectFailure("coverage check should have failed")
 		void coverageWorksForLabelledCollectors(@ForAll int anInt) {
 			Statistics.label("ints").collect(anInt > 0);
@@ -183,7 +183,7 @@ class StatisticsCoverageTests {
 			});
 		}
 
-		@Property(tries = 10)
+		@Property(tries = 50)
 		@StatisticsReport(OFF)
 		@ExpectFailure(checkResult = CheckClassCastException.class)
 		void queryWithWrongTypeFails(@ForAll int anInt) {
