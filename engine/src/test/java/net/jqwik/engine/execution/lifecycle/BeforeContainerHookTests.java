@@ -1,5 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import org.junit.platform.engine.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
@@ -41,6 +43,7 @@ class IncrementBefore implements BeforeContainerHook {
 
 	@Override
 	public void beforeContainer(ContainerLifecycleContext context) {
+		assertThat(CurrentTestDescriptor.get()).isInstanceOf(TestDescriptor.class);
 		BeforeContainerHookTests.before++;
 		assertThat(context.containerClass()).isPresent();
 		assertThat(context.containerClass().get()).isEqualTo(BeforeContainerHookTests.class);

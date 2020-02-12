@@ -2,7 +2,6 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
@@ -15,6 +14,8 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
 public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
+
+	private static final Comparator<LifecycleHook> DONT_COMPARE = (a, b) -> 0;
 
 	private final List<HookRegistration> registrations = new ArrayList<>();
 	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new HashMap<>();
@@ -55,6 +56,13 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		return HookSupport.combineSkipExecutionHooks(skipExecutionHooks);
 	}
 
+	@Override
+	public void prepareHooks(TestDescriptor descriptor) {
+		for (LifecycleHook hook : findHooks(descriptor, LifecycleHook.class, DONT_COMPARE)) {
+			hook.prepareFor(elementFor(descriptor));
+		}
+	}
+
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType, Comparator<T> comparator) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);
 		return hookClasses
@@ -66,19 +74,23 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	private <T extends LifecycleHook> boolean hookAppliesTo(T hook, TestDescriptor descriptor) {
+		Optional<AnnotatedElement> element = elementFor(descriptor);
+		return hook.appliesTo(element);
+	}
+
+	private Optional<AnnotatedElement> elementFor(TestDescriptor descriptor) {
 		Optional<AnnotatedElement> element = Optional.empty();
 		if (descriptor instanceof JqwikDescriptor) {
 			element = Optional.of(((JqwikDescriptor) descriptor).getAnnotatedElement());
 		}
-		return hook.appliesTo(element);
+		return element;
 	}
 
 	/*
 	 * For testing only
 	 */
 	public <T extends LifecycleHook> boolean hasHook(TestDescriptor descriptor, Class<T> concreteHook) {
-		Comparator<LifecycleHook> dontCompare = (a, b) -> 0;
-		List<LifecycleHook> hooks = findHooks(descriptor, LifecycleHook.class, dontCompare);
+		List<LifecycleHook> hooks = findHooks(descriptor, LifecycleHook.class, DONT_COMPARE);
 		return hooks.stream().anyMatch(hook -> hook.getClass().equals(concreteHook));
 	}
 
@@ -117,11 +129,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		}
 	}
 
-	public void registerLifecycleHook(
-		TestDescriptor descriptor,
-		Class<? extends LifecycleHook> hookClass,
-		Function<String, Optional<String>> parameters
-	) {
+	public void registerLifecycleHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
 		if (JqwikReflectionSupport.isInnerClass(hookClass)) {
 			String message = String.format("Inner class [%s] cannot be used as LifecycleHook", hookClass.getName());
 			throw new JqwikException(message);
@@ -134,9 +142,6 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		if (!instances.containsKey(hookClass)) {
 			CurrentTestDescriptor.runWithDescriptor(descriptor, () -> {
 				LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
-				if (hookInstance instanceof Configurable) {
-					((Configurable) hookInstance).configure(parameters);
-				}
 				instances.put(hookClass, hookInstance);
 			});
 		}
@@ -147,7 +152,11 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		private final Class<? extends LifecycleHook> hookClass;
 		private boolean propagateToChildren;
 
-		private HookRegistration(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass, boolean propagateToChildren) {
+		private HookRegistration(
+			TestDescriptor descriptor,
+			Class<? extends LifecycleHook> hookClass,
+			boolean propagateToChildren
+		) {
 			this.descriptor = descriptor;
 			this.hookClass = hookClass;
 			this.propagateToChildren = propagateToChildren;

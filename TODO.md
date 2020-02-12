@@ -1,7 +1,5 @@
 - 1.2.4
 
-    - ParameterInjector: Allow injection of parameters not annotated with `@ForAll`
-
     - Container lifecycle
         - @PerContainer
 

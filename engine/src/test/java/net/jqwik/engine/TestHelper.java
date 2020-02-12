@@ -83,6 +83,10 @@ public class TestHelper {
 			public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
 				return descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
 			}
+
+			@Override
+			public void prepareHooks(TestDescriptor testDescriptor) {
+			}
 		};
 	}
 

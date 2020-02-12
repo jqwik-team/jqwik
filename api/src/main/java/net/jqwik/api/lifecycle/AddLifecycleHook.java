@@ -9,7 +9,7 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Experimental feature. Not ready for public usage yet.
  */
-@Target({ ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE })
+@Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(LifecycleHooks.class)
 @API(status = EXPERIMENTAL, since = "1.0")

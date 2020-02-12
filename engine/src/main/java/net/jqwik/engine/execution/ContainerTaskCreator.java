@@ -26,10 +26,15 @@ class ContainerTaskCreator {
 		Reporter reporter = (key, value) -> propertyExecutionListener
 												.reportingEntryPublished(containerDescriptor, ReportEntry.from(key, value));
 
-		// If SkipExecutionHook ran in task skipping of children wouldn't work
 		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter);
-		SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(containerDescriptor);
-		SkipExecutionHook.SkipResult skipResult = skipExecutionHook.shouldBeSkipped(containerLifecycleContext);
+
+		SkipExecutionHook.SkipResult skipResult = CurrentTestDescriptor.runWithDescriptor(containerDescriptor, () -> {
+			lifecycleSupplier.prepareHooks(containerDescriptor);
+
+			// If SkipExecutionHook ran in task skipping of children wouldn't work
+			SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(containerDescriptor);
+			return skipExecutionHook.shouldBeSkipped(containerLifecycleContext);
+		});
 
 		if (skipResult.isSkipped()) {
 			return ExecutionTask.from(

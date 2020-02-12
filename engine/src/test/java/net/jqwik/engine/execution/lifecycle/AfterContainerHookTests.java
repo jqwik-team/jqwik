@@ -1,5 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import org.junit.platform.engine.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
@@ -31,6 +33,7 @@ class CheckAfter implements AfterContainerHook {
 
 	@Override
 	public void afterContainer(ContainerLifecycleContext context) {
+		assertThat(CurrentTestDescriptor.get()).isInstanceOf(TestDescriptor.class);
 		assertThat(AfterContainerHookTests.after).isEqualTo(1);
 		assertThat(context.containerClass()).isPresent();
 		assertThat(context.containerClass().get()).isEqualTo(AfterContainerHookTests.class);

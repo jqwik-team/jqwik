@@ -1,7 +1,6 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
-import java.util.function.*;
 
 import org.assertj.core.api.*;
 
@@ -90,7 +89,6 @@ class AroundPropertyHookTests {
 
 		@Property(tries = 10)
 		void withPropagation() {
-			Assertions.assertThat(AroundPropertyWithPropagation.configured).isEqualTo(1);
 			Assertions.assertThat(AroundPropertyWithPropagation.calls).isEqualTo(2);
 		}
 
@@ -111,20 +109,14 @@ class AroundPropertyHookTests {
 
 }
 
-class AroundPropertyWithPropagation implements AroundPropertyHook, Configurable, ApplyToChildren {
+class AroundPropertyWithPropagation implements AroundPropertyHook, ApplyToChildren {
 
 	static int calls = 0;
-	static int configured = 0;
 
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
 		calls++;
 		return property.execute();
-	}
-
-	@Override
-	public void configure(Function<String, Optional<String>> parameters) {
-		configured++;
 	}
 }
 
