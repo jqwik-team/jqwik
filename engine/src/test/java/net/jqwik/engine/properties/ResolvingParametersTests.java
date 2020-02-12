@@ -113,14 +113,14 @@ class ResolvingParametersTests {
 	@AddLifecycleHook(CreateAString.class)
 	void resolverIsCalledOnce(@ForAll int ignore, String aString) {
 		assertThat(aString).isEqualTo("aString");
-		PropertyLifecycle.onSuccess(() -> assertThat(CreateAString.countInjectorCalls).isEqualTo(1));
+		PropertyLifecycle.onSuccess(() -> assertThat(CreateAString.countInjectorCalls.get()).isEqualTo(1));
 	}
 
 	@Property(tries = 10)
 	@AddLifecycleHook(CreateAString.class)
 	void supplierIsCalledOncePerTry(@ForAll int ignore, String aString) {
 		assertThat(aString).isEqualTo("aString");
-		PropertyLifecycle.onSuccess(() -> assertThat(CreateAString.countSupplierCalls).isEqualTo(10));
+		PropertyLifecycle.onSuccess(() -> assertThat(CreateAString.countSupplierCalls.get()).isEqualTo(10));
 	}
 
 	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
@@ -172,28 +172,27 @@ class ResolvingParametersTests {
 	}
 }
 
-class CreateAString implements ResolveParameterHook, AroundPropertyHook {
+class CreateAString implements ResolveParameterHook {
 
-	static int countInjectorCalls = 0;
-	static int countSupplierCalls = 0;
+	static Store<Integer> countInjectorCalls;
+
+	static Store<Integer> countSupplierCalls;
 
 	@Override
 	public Optional<Supplier<Object>> resolve(ParameterInjectionContext parameterContext, PropertyLifecycleContext propertyContext) {
 		assertThat(propertyContext.containerClass()).isEqualTo(ResolvingParametersTests.class);
-		countInjectorCalls++;
+
+		countInjectorCalls = Store.getOrCreate("injectorCalls", Store.Lifespan.PROPERTY, () -> 0);
+		countSupplierCalls = Store.getOrCreate("supplierCalls", Store.Lifespan.PROPERTY, () -> 0);
+
+		countInjectorCalls.update( i -> i + 1);
+
 		if (parameterContext.usage().isOfType(String.class)) {
 			return Optional.of(() -> {
-				countSupplierCalls++;
+				countSupplierCalls.update(i -> i + 1);
 				return "aString";
 			});
 		}
 		return Optional.empty();
-	}
-
-	@Override
-	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
-		countInjectorCalls = 0;
-		countSupplierCalls = 0;
-		return property.execute();
 	}
 }
