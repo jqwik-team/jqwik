@@ -6,10 +6,10 @@ import net.jqwik.api.*;
 
 public class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 
-	private final Shrinkable<T> shrinkable;
+	private FalsificationResult<T> current;
 
 	public NullShrinkingSequence(Shrinkable<T> shrinkable) {
-		this.shrinkable = shrinkable;
+		this.current = FalsificationResult.notFalsified(shrinkable);
 	}
 
 	@Override
@@ -19,11 +19,12 @@ public class NullShrinkingSequence<T> implements ShrinkingSequence<T> {
 
 	@Override
 	public void init(FalsificationResult<T> initialCurrent) {
+		current = initialCurrent;
 	}
 
 	@Override
 	public FalsificationResult<T> current() {
-		return FalsificationResult.falsified(shrinkable);
+		return current;
 	}
 
 }

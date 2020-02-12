@@ -61,7 +61,12 @@ class CheckedPropertyTests {
 
 		private CheckedProperty createCheckedProperty(PropertyMethodDescriptor descriptor) {
 			CheckedPropertyFactory factory = new CheckedPropertyFactory();
-			return factory.fromDescriptor(descriptor, createPropertyContext(descriptor), AroundTryHook.BASE);
+			return factory.fromDescriptor(
+				descriptor,
+				createPropertyContext(descriptor),
+				AroundTryHook.BASE,
+				ResolveParameterHook.DO_NOT_RESOLVE
+			);
 		}
 
 		private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
@@ -457,6 +462,7 @@ class CheckedPropertyTests {
 			checkedFunction,
 			parameters,
 			arbitraryResolver,
+			ResolveParameterHook.DO_NOT_RESOLVE,
 			optionalData,
 			configuration
 		);

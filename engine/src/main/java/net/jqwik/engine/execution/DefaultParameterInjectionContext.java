@@ -21,4 +21,9 @@ public class DefaultParameterInjectionContext implements ParameterInjectionConte
 	public TypeUsage usage() {
 		return TypeUsageImpl.forParameter(parameter);
 	}
+
+	@Override
+	public int index() {
+		return parameter.getIndex();
+	}
 }

@@ -19,7 +19,12 @@ public class CheckedPropertyFactoryTests {
 	void simple() {
 		PropertyMethodDescriptor descriptor = createDescriptor("prop", "42", 11, 4, ShrinkingMode.OFF);
 
-		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor), AroundTryHook.BASE);
+		CheckedProperty property = factory.fromDescriptor(
+			descriptor,
+			createPropertyContext(descriptor),
+			AroundTryHook.BASE,
+			ResolveParameterHook.DO_NOT_RESOLVE
+		);
 
 		assertThat(property.propertyName).isEqualTo("prop");
 
@@ -46,7 +51,12 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withUnboundParams() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithUnboundParams", "42", 11, 5, ShrinkingMode.OFF);
-		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor), AroundTryHook.BASE);
+		CheckedProperty property = factory.fromDescriptor(
+			descriptor,
+			createPropertyContext(descriptor),
+			AroundTryHook.BASE,
+			ResolveParameterHook.DO_NOT_RESOLVE
+		);
 
 		assertThat(property.propertyParameters).size().isEqualTo(4);
 		assertThat(property.forAllParameters).size().isEqualTo(2);
@@ -63,7 +73,12 @@ public class CheckedPropertyFactoryTests {
 	@Example
 	void withNoParamsAndVoidResult() {
 		PropertyMethodDescriptor descriptor = createDescriptor("propWithVoidResult", "42", 11, 5, ShrinkingMode.OFF);
-		CheckedProperty property = factory.fromDescriptor(descriptor, createPropertyContext(descriptor), AroundTryHook.BASE);
+		CheckedProperty property = factory.fromDescriptor(
+			descriptor,
+			createPropertyContext(descriptor),
+			AroundTryHook.BASE,
+			ResolveParameterHook.DO_NOT_RESOLVE
+		);
 
 		assertThat(property.propertyParameters).size().isEqualTo(0);
 

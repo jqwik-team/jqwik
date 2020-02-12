@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.junit.platform.engine.support.hierarchical.*;
 import org.opentest4j.*;
@@ -103,21 +104,21 @@ public class HookSupport {
 		};
 	}
 
-	public static InjectParameterHook combineInjectParameterHooks(List<InjectParameterHook> injectParameterHooks) {
+	public static ResolveParameterHook combineInjectParameterHooks(List<ResolveParameterHook> injectParameterHooks) {
 		if (injectParameterHooks.isEmpty()) {
-			return InjectParameterHook.INJECT_NOTHING;
+			return ResolveParameterHook.DO_NOT_RESOLVE;
 		}
-		InjectParameterHook first = injectParameterHooks.remove(0);
+		ResolveParameterHook first = injectParameterHooks.remove(0);
 		return then(first, combineInjectParameterHooks(injectParameterHooks));
 	}
 
-	private static InjectParameterHook then(InjectParameterHook first, InjectParameterHook rest) {
+	private static ResolveParameterHook then(ResolveParameterHook first, ResolveParameterHook rest) {
 		return parameterInjectionContext -> {
-			Optional<Object> optionalValue = first.generateParameterValue(parameterInjectionContext);
-			if (optionalValue.isPresent()) {
-				return optionalValue;
+			Optional<Supplier<Object>> optionalSupplier = first.resolve(parameterInjectionContext);
+			if (optionalSupplier.isPresent()) {
+				return optionalSupplier;
 			} else {
-				return rest.generateParameterValue(parameterInjectionContext);
+				return rest.resolve(parameterInjectionContext);
 			}
 		};
 	}

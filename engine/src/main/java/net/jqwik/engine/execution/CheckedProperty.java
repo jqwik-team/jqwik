@@ -21,7 +21,7 @@ public class CheckedProperty {
 	public final PropertyConfiguration configuration;
 
 	private final ArbitraryResolver arbitraryResolver;
-	private final InjectParameterHook parameterInjector;
+	private final ResolveParameterHook parameterResolver;
 	private final Optional<Iterable<? extends Tuple>> optionalData;
 	private Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive;
 
@@ -30,6 +30,7 @@ public class CheckedProperty {
 		TryExecutor tryExecutor,
 		List<MethodParameter> propertyParameters,
 		ArbitraryResolver arbitraryResolver,
+		ResolveParameterHook parameterResolver,
 		Optional<Iterable<? extends Tuple>> optionalData,
 		PropertyConfiguration configuration
 	) {
@@ -38,7 +39,7 @@ public class CheckedProperty {
 		this.propertyParameters = propertyParameters;
 		this.forAllParameters = selectForAllParameters(propertyParameters);
 		this.arbitraryResolver = arbitraryResolver;
-		this.parameterInjector = InjectParameterHook.INJECT_NOTHING;
+		this.parameterResolver = parameterResolver;
 		this.optionalData = optionalData;
 		this.configuration = configuration;
 	}
@@ -84,10 +85,10 @@ public class CheckedProperty {
 			configuration = chooseGenerationMode(configuration);
 		}
 		ForAllParametersGenerator shrinkablesGenerator = createShrinkablesGenerator(configuration);
-		InjectingParametersGenerator parametersGenerator = new InjectingParametersGenerator(
+		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(
 			propertyParameters,
 			shrinkablesGenerator,
-			parameterInjector
+			parameterResolver
 		);
 		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor);
 	}

@@ -14,10 +14,12 @@ public class MethodParameter {
 
 	private final Parameter rawParameter;
 	private final TypeResolution resolution;
+	private final int index;
 
-	public MethodParameter(Parameter rawParameter, TypeResolution resolution) {
+	public MethodParameter(Parameter rawParameter, TypeResolution resolution, int index) {
 		this.rawParameter = rawParameter;
 		this.resolution = resolution;
+		this.index = index;
 	}
 
 	public boolean isParameterized() {
@@ -51,6 +53,10 @@ public class MethodParameter {
 
 	public AnnotatedType getAnnotatedType() {
 		return resolution.annotatedType();
+	}
+
+	public int getIndex() {
+		return index;
 	}
 
 }

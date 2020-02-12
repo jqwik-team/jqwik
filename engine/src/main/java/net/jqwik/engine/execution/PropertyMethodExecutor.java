@@ -1,12 +1,10 @@
 package net.jqwik.engine.execution;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
-import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
@@ -48,18 +46,6 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private void ensureAllParametersHaveForAll(PropertyMethodDescriptor methodDescriptor) {
-		String parameters = Arrays.stream(methodDescriptor.getTargetMethod().getParameters())
-								  .filter(parameter -> !AnnotationSupport.isAnnotated(parameter, ForAll.class))
-								  .map(Parameter::toString)
-								  .collect(Collectors.joining(", "));
-
-		if (!parameters.isEmpty()) {
-			String message = String.format("All parameters must have @ForAll annotation: %s", parameters);
-			throw new JqwikException(message);
-		}
-	}
-
 	private DomainContext combineDomainContexts(Set<Domain> domainAnnotations) {
 		if (domainAnnotations.isEmpty()) {
 			return DomainContext.global();
@@ -95,12 +81,15 @@ public class PropertyMethodExecutor {
 		Consumer<ReportEntry> publisher = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
 		AroundPropertyHook aroundProperty = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		AroundTryHook aroundTry = lifecycleSupplier.aroundTryHook(methodDescriptor);
+		ResolveParameterHook resolveParameter = lifecycleSupplier.injectParameterHook(methodDescriptor);
+
 		PropertyExecutionResult propertyExecutionResult;
 		try {
-			ensureAllParametersHaveForAll(methodDescriptor);
 			propertyExecutionResult = aroundProperty.aroundProperty(
 				propertyLifecycleContext,
-				() -> executeMethod(publisher, aroundTry)
+				() -> {
+					return executeMethod(publisher, aroundTry, resolveParameter);
+				}
 			);
 		} catch (Throwable throwable) {
 			propertyExecutionResult = PlainExecutionResult.failed(
@@ -116,10 +105,11 @@ public class PropertyMethodExecutor {
 
 	private ExtendedPropertyExecutionResult executeMethod(
 		Consumer<ReportEntry> publisher,
-		AroundTryHook aroundTry
+		AroundTryHook aroundTry,
+		ResolveParameterHook resolveParameter
 	) {
 		try {
-			return executeProperty(publisher, aroundTry);
+			return executeProperty(publisher, aroundTry, resolveParameter);
 		} catch (TestAbortedException e) {
 			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
@@ -130,9 +120,15 @@ public class PropertyMethodExecutor {
 
 	private PropertyCheckResult executeProperty(
 		Consumer<ReportEntry> publisher,
-		AroundTryHook aroundTry
+		AroundTryHook aroundTry,
+		ResolveParameterHook resolveParameter
 	) {
-		CheckedProperty property = checkedPropertyFactory.fromDescriptor(methodDescriptor, propertyLifecycleContext, aroundTry);
+		CheckedProperty property = checkedPropertyFactory.fromDescriptor(
+			methodDescriptor,
+			propertyLifecycleContext,
+			aroundTry,
+			resolveParameter
+		);
 		return property.check(publisher, methodDescriptor.getReporting());
 	}
 

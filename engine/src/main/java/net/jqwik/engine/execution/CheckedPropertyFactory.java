@@ -3,7 +3,6 @@ package net.jqwik.engine.execution;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 
@@ -22,7 +21,8 @@ public class CheckedPropertyFactory {
 	public CheckedProperty fromDescriptor(
 		PropertyMethodDescriptor propertyMethodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
-		AroundTryHook aroundTry
+		AroundTryHook aroundTry,
+		ResolveParameterHook parameterResolver
 	) {
 		String propertyName = propertyMethodDescriptor.extendedLabel();
 
@@ -47,6 +47,7 @@ public class CheckedPropertyFactory {
 			tryExecutor,
 			propertyParameters,
 			new CachingArbitraryResolver(arbitraryResolver),
+			parameterResolver,
 			optionalData,
 			configuration
 		);

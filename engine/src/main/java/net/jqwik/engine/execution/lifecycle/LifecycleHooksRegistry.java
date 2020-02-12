@@ -44,8 +44,8 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	@Override
-	public InjectParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-		List<InjectParameterHook> injectParameterHooks = findHooks(propertyMethodDescriptor, InjectParameterHook.class, InjectParameterHook::compareTo);
+	public ResolveParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
+		List<ResolveParameterHook> injectParameterHooks = findHooks(propertyMethodDescriptor, ResolveParameterHook.class, ResolveParameterHook::compareTo);
 		return HookSupport.combineInjectParameterHooks(injectParameterHooks);
 	}
 

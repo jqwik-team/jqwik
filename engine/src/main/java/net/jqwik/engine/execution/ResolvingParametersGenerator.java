@@ -1,20 +1,23 @@
 package net.jqwik.engine.execution;
 
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-public class InjectingParametersGenerator implements Iterator<List<Shrinkable<Object>>> {
+public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Object>>> {
+	private final Map<Parameter, Shrinkable<Object>> resolvedShrinkables = new HashMap<>();
 	private final List<MethodParameter> propertyParameters;
 	private final Iterator<List<Shrinkable<Object>>> forAllParametersGenerator;
-	private final InjectParameterHook injectParameterHook;
+	private final ResolveParameterHook injectParameterHook;
 
-	public InjectingParametersGenerator(
+	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
 		Iterator<List<Shrinkable<Object>>> forAllParametersGenerator,
-		InjectParameterHook injectParameterHook
+		ResolveParameterHook injectParameterHook
 	) {
 		this.propertyParameters = propertyParameters;
 		this.forAllParametersGenerator = forAllParametersGenerator;
@@ -42,12 +45,40 @@ public class InjectingParametersGenerator implements Iterator<List<Shrinkable<Ob
 	}
 
 	private Shrinkable<Object> findInjectableParameter(MethodParameter parameter) {
+		return resolvedShrinkables.computeIfAbsent(parameter.getRawParameter(), ignore -> resolveShrinkable(parameter));
+	}
+
+	private Shrinkable<Object> resolveShrinkable(MethodParameter parameter) {
 		ParameterInjectionContext context = new DefaultParameterInjectionContext(parameter);
-		Optional<Object> optionalValue = injectParameterHook.generateParameterValue(context);
-		return optionalValue.map(Shrinkable::unshrinkable).orElseThrow(
+		Optional<Supplier<Object>> optionalSupplier = injectParameterHook.resolve(context);
+		return optionalSupplier.map(supplier -> createShrinkable(supplier, context)).orElseThrow(
 			() -> {
 				String message = String.format("Parameter [%s] without @ForAll cannot be resolved", parameter);
 				return new JqwikException(message);
 			});
+	}
+
+	private Shrinkable<Object> createShrinkable(Supplier<Object> supplier, ParameterInjectionContext context) {
+		return new Shrinkable<Object>() {
+			@Override
+			public Object value() {
+				return supplier.get();
+			}
+
+			@Override
+			public ShrinkingSequence<Object> shrink(Falsifier<Object> falsifier) {
+				return ShrinkingSequence.dontShrink(this);
+			}
+
+			@Override
+			public ShrinkingDistance distance() {
+				return ShrinkingDistance.of(0);
+			}
+
+			@Override
+			public String toString() {
+				return String.format("Unshrinkable injected parameter for [%s]", context.parameter());
+			}
+		};
 	}
 }

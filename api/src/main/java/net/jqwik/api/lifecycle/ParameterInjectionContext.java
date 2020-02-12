@@ -17,4 +17,6 @@ public interface ParameterInjectionContext {
 	Parameter parameter();
 
 	TypeUsage usage();
+
+	int index();
 }

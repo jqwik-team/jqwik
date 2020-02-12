@@ -15,7 +15,7 @@ public interface LifecycleHooksSupplier {
 
 	AfterContainerHook afterContainerHook(TestDescriptor descriptor);
 
-	InjectParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor);
+	ResolveParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor);
 
 	SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor);
 

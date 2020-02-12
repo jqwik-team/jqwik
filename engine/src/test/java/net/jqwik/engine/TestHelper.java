@@ -2,7 +2,6 @@ package net.jqwik.engine;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 
@@ -63,8 +62,8 @@ public class TestHelper {
 			}
 
 			@Override
-			public InjectParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-				return InjectParameterHook.INJECT_NOTHING;
+			public ResolveParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
+				return ResolveParameterHook.DO_NOT_RESOLVE;
 			}
 
 			@Override

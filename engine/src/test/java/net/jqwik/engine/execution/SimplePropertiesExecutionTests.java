@@ -110,7 +110,7 @@ class SimplePropertiesExecutionTests {
 
 		InOrder events = Mockito.inOrder(eventRecorder);
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "withParameter"), isFailed());
-		assertThat(executions).isEmpty();
+		assertThat(executions).containsExactly("close");
 	}
 
 	private void executeTests(PropertyMethodDescriptor propertyMethodDescriptor) {
