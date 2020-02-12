@@ -29,11 +29,11 @@ public interface LifecycleHook {
 	 * This method is called when an element, container class or property method,
 	 * is found with this hook directly attached or applied to through a parent element.
 	 *
-	 *  @param element The Optional instance contains element for container classes
-	 *                or method but is empty for the engine
+	 *  @param context The context can be a {@linkplain ContainerLifecycleContext}
+	 *                 or a {@linkplain PropertyLifecycleContext}
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.4")
-	default void prepareFor(Optional<AnnotatedElement> element) {
+	default void prepareFor(LifecycleContext context) {
 	}
 
 	/**

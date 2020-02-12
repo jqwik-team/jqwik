@@ -74,13 +74,34 @@ class LifecycleRegistryTests {
 			GlobalHook hookInstance = new GlobalHook();
 			registry.registerLifecycleInstance(engine, hookInstance);
 
-			registry.prepareHooks(engine);
-			assertThat(hookInstance.preparedElements.get(0)).isNull();
+			LifecycleContext engineContext = createLifecycleContext("engine");
+			registry.prepareHooks(engine, engineContext);
+			assertThat(hookInstance.preparedContexts).containsExactly(engineContext);
 
 			for (TestDescriptor descendant : engine.getDescendants()) {
-				registry.prepareHooks(descendant);
-				assertThat(hookInstance.preparedElements).contains(elementOf(descendant));
+				LifecycleContext childContext = createLifecycleContext(descendant.getDisplayName());
+				registry.prepareHooks(descendant, childContext);
+				assertThat(hookInstance.preparedContexts).contains(childContext);
 			}
+		}
+
+		private LifecycleContext createLifecycleContext(String label) {
+			return new LifecycleContext() {
+						@Override
+						public String label() {
+							return label;
+						}
+
+						@Override
+						public Optional<AnnotatedElement> annotatedElement() {
+							return Optional.empty();
+						}
+
+						@Override
+						public Reporter reporter() {
+							return null;
+						}
+					};
 		}
 
 		@Property(tries = 10)
@@ -114,11 +135,11 @@ class LifecycleRegistryTests {
 	}
 
 	class GlobalHook implements LifecycleHook, LifecycleHook.ApplyToChildren {
-		List<Object> preparedElements = new ArrayList<>();
+		List<LifecycleContext> preparedContexts = new ArrayList<>();
 
 		@Override
-		public void prepareFor(Optional<AnnotatedElement> element) {
-			preparedElements.add(element.orElse(null));
+		public void prepareFor(LifecycleContext lifecycleContext) {
+			preparedContexts.add(lifecycleContext);
 		}
 	}
 
@@ -141,10 +162,9 @@ class LifecycleRegistryTests {
 		boolean prepareHasBeenCalled = false;
 
 		@Override
-		public void prepareFor(Optional<AnnotatedElement> element) {
+		public void prepareFor(LifecycleContext lifecycleContext) {
 			assertThat(CurrentTestDescriptor.get()).isInstanceOf(TestDescriptor.class);
-			assertThat(element.isPresent());
-			assertThat(element.get()).isInstanceOf(Method.class);
+			assertThat(lifecycleContext).isInstanceOf(PropertyLifecycleContext.class);
 			prepareHasBeenCalled = true;
 		}
 
@@ -162,10 +182,10 @@ class LifecycleRegistryTests {
 		boolean prepareHasBeenCalled = false;
 
 		@Override
-		public void prepareFor(Optional<AnnotatedElement> element) {
+		public void prepareFor(LifecycleContext lifecycleContext) {
 			assertThat(CurrentTestDescriptor.get()).isInstanceOf(TestDescriptor.class);
-			assertThat(element.isPresent());
-			assertThat(element.get()).isInstanceOf(Class.class);
+			assertThat(lifecycleContext).isInstanceOf(ContainerLifecycleContext.class);
+			assertThat(lifecycleContext.annotatedElement().get()).isInstanceOf(Class.class);
 			prepareHasBeenCalled = true;
 		}
 

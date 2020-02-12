@@ -85,7 +85,7 @@ public class TestHelper {
 			}
 
 			@Override
-			public void prepareHooks(TestDescriptor testDescriptor) {
+			public void prepareHooks(TestDescriptor testDescriptor, LifecycleContext lifecycleContext) {
 			}
 		};
 	}

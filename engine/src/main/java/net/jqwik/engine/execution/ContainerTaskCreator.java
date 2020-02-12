@@ -1,6 +1,5 @@
 package net.jqwik.engine.execution;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -29,7 +28,7 @@ class ContainerTaskCreator {
 		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter);
 
 		SkipExecutionHook.SkipResult skipResult = CurrentTestDescriptor.runWithDescriptor(containerDescriptor, () -> {
-			lifecycleSupplier.prepareHooks(containerDescriptor);
+			lifecycleSupplier.prepareHooks(containerDescriptor, containerLifecycleContext);
 
 			// If SkipExecutionHook ran in task skipping of children wouldn't work
 			SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(containerDescriptor);
@@ -111,28 +110,8 @@ class ContainerTaskCreator {
 			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) containerDescriptor;
 			return new DefaultContainerLifecycleContext(classDescriptor, reporter);
 		}
-
-		return new ContainerLifecycleContext() {
-			@Override
-			public Optional<Class<?>> containerClass() {
-				return Optional.empty();
-			}
-
-			@Override
-			public String label() {
-				return containerDescriptor.getDisplayName();
-			}
-
-			@Override
-			public Optional<AnnotatedElement> annotatedElement() {
-				return Optional.empty();
-			}
-
-			@Override
-			public Reporter reporter() {
-				return reporter;
-			}
-		};
+		// TODO: Check if it really is an engine
+		return new EngineLifecycleContext(containerDescriptor, reporter);
 	}
 
 	private ExecutionTask[] createChildren(

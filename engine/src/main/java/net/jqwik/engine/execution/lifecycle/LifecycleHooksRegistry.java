@@ -57,9 +57,9 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	@Override
-	public void prepareHooks(TestDescriptor descriptor) {
+	public void prepareHooks(TestDescriptor descriptor, LifecycleContext lifecycleContext) {
 		for (LifecycleHook hook : findHooks(descriptor, LifecycleHook.class, DONT_COMPARE)) {
-			hook.prepareFor(elementFor(descriptor));
+			hook.prepareFor(lifecycleContext);
 		}
 	}
 

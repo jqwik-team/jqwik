@@ -1,5 +1,7 @@
 - 1.2.4
 
+    - Global ResolveReporterHook
+
     - Container lifecycle
         - @PerContainer
 

@@ -19,5 +19,5 @@ public interface LifecycleHooksSupplier {
 
 	SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor);
 
-	void prepareHooks(TestDescriptor testDescriptor);
+	void prepareHooks(TestDescriptor testDescriptor, LifecycleContext lifecycleContext);
 }

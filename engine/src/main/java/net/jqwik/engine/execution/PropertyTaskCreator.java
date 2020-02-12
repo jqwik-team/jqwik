@@ -30,11 +30,11 @@ class PropertyTaskCreator {
 				PropertyLifecycleContext propertyLifecycleContext;
 
 				try {
-					lifecycleSupplier.prepareHooks(methodDescriptor);
-
 					Object testInstance = createTestInstance(methodDescriptor);
 					Reporter reporter = (key, value) -> listener.reportingEntryPublished(methodDescriptor, ReportEntry.from(key, value));
 					propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter);
+
+					lifecycleSupplier.prepareHooks(methodDescriptor, propertyLifecycleContext);
 
 					SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(methodDescriptor);
 					SkipResult skipResult = skipExecutionHook.shouldBeSkipped(propertyLifecycleContext);
