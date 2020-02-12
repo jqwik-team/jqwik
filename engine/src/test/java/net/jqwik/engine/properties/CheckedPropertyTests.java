@@ -136,7 +136,8 @@ class CheckedPropertyTests {
 				parameters,
 				p -> Collections.emptySet(),
 				Optional.empty(),
-				aConfig().build()
+				aConfig().build(),
+				lifecycleContextForMethod("stringProp", String.class)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -153,7 +154,8 @@ class CheckedPropertyTests {
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
-				aConfig().withSeed("414243").withTries(20).build()
+				aConfig().withSeed("414243").withTries(20).build(),
+				lifecycleContextForMethod("prop1", int.class)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -176,7 +178,8 @@ class CheckedPropertyTests {
 				aConfig()
 					.withSeed("")
 					.withPreviousSeed("101010")
-					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build()
+					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build(),
+				lifecycleContextForMethod("prop1", int.class)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -195,7 +198,8 @@ class CheckedPropertyTests {
 				aConfig()
 					.withSeed("")
 					.withPreviousSeed("101010")
-					.withAfterFailure(AfterFailureMode.RANDOM_SEED).build()
+					.withAfterFailure(AfterFailureMode.RANDOM_SEED).build(),
+				lifecycleContextForMethod("prop1", int.class)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -214,7 +218,8 @@ class CheckedPropertyTests {
 				aConfig()
 					.withSeed("4242")
 					.withPreviousSeed("101010")
-					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build()
+					.withAfterFailure(AfterFailureMode.PREVIOUS_SEED).build(),
+				lifecycleContextForMethod("prop1", int.class)
 			);
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -234,7 +239,8 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-					aConfig().withGeneration(AUTO).build()
+					aConfig().withGeneration(AUTO).build(),
+					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -254,7 +260,8 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", rememberParameters, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"), Tuple.of(3, "Fizz"), Tuple.of(5, "Buzz"))),
-					aConfig().withGeneration(DATA_DRIVEN).build()
+					aConfig().withGeneration(DATA_DRIVEN).build(),
+					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -271,7 +278,8 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"))),
-					aConfig().withGeneration(RANDOMIZED).build()
+					aConfig().withGeneration(RANDOMIZED).build(),
+					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -284,7 +292,8 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.of(Table.of(Tuple.of(1, "1"))),
-					aConfig().withGeneration(EXHAUSTIVE).build()
+					aConfig().withGeneration(EXHAUSTIVE).build(),
+					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -297,7 +306,8 @@ class CheckedPropertyTests {
 					"dataDrivenProperty", params -> true, getParametersForMethod("dataDrivenProperty"),
 					p -> Collections.emptySet(),
 					Optional.empty(),
-					aConfig().withGeneration(DATA_DRIVEN).build()
+					aConfig().withGeneration(DATA_DRIVEN).build(),
+					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -316,7 +326,8 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
-					aConfig().withGeneration(EXHAUSTIVE).build()
+					aConfig().withGeneration(EXHAUSTIVE).build(),
+					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -333,7 +344,8 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 99)),
 					Optional.empty(),
-					aConfig().withTries(50).withGeneration(EXHAUSTIVE).build()
+					aConfig().withTries(50).withGeneration(EXHAUSTIVE).build(),
+					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -351,7 +363,8 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", rememberParameters, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
-					aConfig().withGeneration(AUTO).build()
+					aConfig().withGeneration(AUTO).build(),
+					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -368,7 +381,8 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers()),
 					Optional.empty(),
-					aConfig().withGeneration(EXHAUSTIVE).build()
+					aConfig().withGeneration(EXHAUSTIVE).build(),
+					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
 				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
@@ -381,7 +395,8 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 21)),
 					Optional.empty(),
-					aConfig().withTries(20).build()
+					aConfig().withTries(20).build(),
+					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -397,7 +412,8 @@ class CheckedPropertyTests {
 					"exhaustiveProperty", params -> true, getParametersForMethod("exhaustiveProperty"),
 					p -> Collections.singleton(Arbitraries.integers().between(1, 3)),
 					Optional.empty(),
-					aConfig().withTries(20).withGeneration(RANDOMIZED).build()
+					aConfig().withTries(20).withGeneration(RANDOMIZED).build(),
+					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -420,7 +436,8 @@ class CheckedPropertyTests {
 					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
 					p -> Collections.emptySet(),
 					Optional.empty(),
-					aConfig().withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build()
+					aConfig().withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_ONLY).build(),
+					lifecycleContextForMethod("sampleProperty", int.class, int.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -438,7 +455,8 @@ class CheckedPropertyTests {
 					"sampleProperty", checkSample, getParametersForMethod("sampleProperty"),
 					p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 					Optional.empty(),
-					aConfig().withTries(10).withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_FIRST).build()
+					aConfig().withTries(10).withFalsifiedSample(sample).withAfterFailure(AfterFailureMode.SAMPLE_FIRST).build(),
+					lifecycleContextForMethod("sampleProperty", int.class, int.class)
 				);
 
 				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
@@ -455,7 +473,8 @@ class CheckedPropertyTests {
 		List<MethodParameter> parameters,
 		ArbitraryResolver arbitraryResolver,
 		Optional<Iterable<? extends Tuple>> optionalData,
-		PropertyConfiguration configuration
+		PropertyConfiguration configuration,
+		PropertyLifecycleContext propertyLifecycleContext
 	) {
 		return new CheckedProperty(
 			propertyName,
@@ -463,17 +482,25 @@ class CheckedPropertyTests {
 			parameters,
 			arbitraryResolver,
 			ResolveParameterHook.DO_NOT_RESOLVE,
+			propertyLifecycleContext,
 			optionalData,
 			configuration
 		);
 	}
 
 	private void intOnlyExample(String methodName, CheckedFunction forAllFunction, PropertyCheckResult.CheckStatus expectedStatus) {
+		Class<?>[] parameterTypes =
+			methodName.equals("prop0") ? new Class<?>[0]
+				: methodName.equals("prop1") ? new Class<?>[]{int.class}
+					  : methodName.equals("prop2") ? new Class<?>[]{int.class, int.class}
+							: new Class<?>[]{int.class, int.class, int.class, int.class, int.class, int.class, int.class, int.class};
+
 		CheckedProperty checkedProperty = createCheckedProperty(
 			methodName, forAllFunction, getParametersForMethod(methodName),
 			p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-50, 50))),
 			Optional.empty(),
-			aConfig().build()
+			aConfig().build(),
+			lifecycleContextForMethod(methodName, parameterTypes)
 		);
 		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 		assertThat(check.checkStatus()).isEqualTo(expectedStatus);
@@ -481,6 +508,10 @@ class CheckedPropertyTests {
 
 	private List<MethodParameter> getParametersForMethod(String methodName) {
 		return getParametersFor(CheckingExamples.class, methodName);
+	}
+
+	private PropertyLifecycleContext lifecycleContextForMethod(String methodName, Class<?>... parameterTypes) {
+		return propertyLifecycleContextFor(CheckingExamples.class, methodName, parameterTypes);
 	}
 
 	private static class CheckingExamples {
@@ -501,22 +532,27 @@ class CheckedPropertyTests {
 			return true;
 		}
 
+		@Property
 		public boolean stringProp(@ForAll String aString) {
 			return true;
 		}
 
+		@Property
 		public boolean prop0() {
 			return true;
 		}
 
+		@Property
 		public boolean prop1(@ForAll int n1) {
 			return true;
 		}
 
+		@Property
 		public boolean prop2(@ForAll int n1, @ForAll int n2) {
 			return true;
 		}
 
+		@Property
 		public boolean prop8(
 			@ForAll int n1, @ForAll int n2, @ForAll int n3, @ForAll int n4, @ForAll int n5, @ForAll int n6, @ForAll int n7,
 			@ForAll int n8
@@ -524,15 +560,18 @@ class CheckedPropertyTests {
 			return true;
 		}
 
+		@Property
 		@FromData("fizzBuzzSamples")
 		public boolean dataDrivenProperty(@ForAll int index, @ForAll String fizzBuzz) {
 			return true;
 		}
 
+		@Property
 		public boolean exhaustiveProperty(@ForAll @IntRange(min = 1, max = 3) int anInt) {
 			return true;
 		}
 
+		@Property
 		public boolean sampleProperty(@ForAll int n1, @ForAll int n2) {
 			return true;
 		}

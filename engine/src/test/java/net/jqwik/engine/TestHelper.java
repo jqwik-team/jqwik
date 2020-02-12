@@ -8,12 +8,25 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 public class TestHelper {
+
+	public static PropertyLifecycleContext propertyLifecycleContextFor(
+		Class<?> containerClass,
+		String methodName,
+		Class<?>... parameterTypes
+	) {
+		PropertyMethodDescriptor methodDescriptor =
+			(PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(containerClass, methodName, parameterTypes).build();
+		Object instance = JqwikReflectionSupport.newInstanceWithDefaultConstructor(containerClass);
+		return new DefaultPropertyLifecycleContext(methodDescriptor, instance, (key, value) -> {});
+	}
+
 	public static List<MethodParameter> getParametersFor(Class<?> aClass, String methodName) {
 		return getParameters(getMethod(aClass, methodName), aClass);
 	}

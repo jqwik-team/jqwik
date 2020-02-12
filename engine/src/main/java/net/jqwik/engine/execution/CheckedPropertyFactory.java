@@ -48,6 +48,7 @@ public class CheckedPropertyFactory {
 			propertyParameters,
 			new CachingArbitraryResolver(arbitraryResolver),
 			parameterResolver,
+			propertyLifecycleContext,
 			optionalData,
 			configuration
 		);

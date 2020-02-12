@@ -113,12 +113,12 @@ public class HookSupport {
 	}
 
 	private static ResolveParameterHook then(ResolveParameterHook first, ResolveParameterHook rest) {
-		return parameterInjectionContext -> {
-			Optional<Supplier<Object>> optionalSupplier = first.resolve(parameterInjectionContext);
+		return (parameterContext, propertyContext) -> {
+			Optional<Supplier<Object>> optionalSupplier = first.resolve(parameterContext, propertyContext);
 			if (optionalSupplier.isPresent()) {
 				return optionalSupplier;
 			} else {
-				return rest.resolve(parameterInjectionContext);
+				return rest.resolve(parameterContext, propertyContext);
 			}
 		};
 	}

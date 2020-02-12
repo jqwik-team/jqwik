@@ -13,7 +13,6 @@ public abstract class ShrinkToChecker implements Consumer<PropertyExecutionResul
 		Optional<List<Object>> falsifiedSample = propertyExecutionResult.falsifiedSample();
 		assertThat(falsifiedSample).isPresent();
 		assertThat(falsifiedSample.get()).containsExactlyElementsOf(shrunkValues());
-
 	}
 
 	public abstract Iterable<?> shrunkValues();

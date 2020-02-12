@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.execution.*;
@@ -17,12 +18,15 @@ class ResolvingParametersTests {
 
 	@Example
 	void nothingToResolve() {
-		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "nothingToInject");
+		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "nothingToResolve");
+		PropertyLifecycleContext propertyLifecycleContext =
+			TestHelper.propertyLifecycleContextFor(TestContainer.class, "nothingToResolve", int.class);
 		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1), asList(2));
 		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
 			propertyParameters,
 			forAllGenerator,
-			ResolveParameterHook.DO_NOT_RESOLVE
+			ResolveParameterHook.DO_NOT_RESOLVE,
+			propertyLifecycleContext
 		);
 
 		assertThat(generator.hasNext()).isTrue();
@@ -35,8 +39,11 @@ class ResolvingParametersTests {
 	@Example
 	void resolveLastPosition() {
 		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "forAllIntAndString");
+		PropertyLifecycleContext propertyLifecycleContext =
+			TestHelper.propertyLifecycleContextFor(TestContainer.class, "forAllIntAndString", int.class, String.class);
 		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1), asList(2));
-		ResolveParameterHook stringInjector = parameterContext -> {
+		ResolveParameterHook stringInjector = (parameterContext, propertyContext) -> {
+			assertThat(propertyContext).isSameAs(propertyLifecycleContext);
 			assertThat(parameterContext.index()).isEqualTo(1);
 			if (parameterContext.usage().isOfType(String.class)) {
 				return Optional.of(() -> "aString");
@@ -46,7 +53,8 @@ class ResolvingParametersTests {
 		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
 			propertyParameters,
 			forAllGenerator,
-			stringInjector
+			stringInjector,
+			propertyLifecycleContext
 		);
 
 		assertThat(generator.hasNext()).isTrue();
@@ -59,11 +67,14 @@ class ResolvingParametersTests {
 	@Example
 	void failIfParameterCannotBeResolved() {
 		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "forAllIntAndString");
+		PropertyLifecycleContext propertyLifecycleContext =
+			TestHelper.propertyLifecycleContextFor(TestContainer.class, "forAllIntAndString", int.class, String.class);
 		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1), asList(2));
 		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
 			propertyParameters,
 			forAllGenerator,
-			ResolveParameterHook.DO_NOT_RESOLVE
+			ResolveParameterHook.DO_NOT_RESOLVE,
+			propertyLifecycleContext
 		);
 
 		assertThat(generator.hasNext()).isTrue();
@@ -73,8 +84,11 @@ class ResolvingParametersTests {
 	@Example
 	void resolveSeveralPositions() {
 		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "stringIntStringInt");
+		PropertyLifecycleContext propertyLifecycleContext =
+			TestHelper
+				.propertyLifecycleContextFor(TestContainer.class, "stringIntStringInt", String.class, int.class, String.class, int.class);
 		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1, 2), asList(3, 4));
-		ResolveParameterHook stringInjector = parameterContext -> {
+		ResolveParameterHook stringInjector = (parameterContext, propertyContext) -> {
 			assertThat(parameterContext.index()).isIn(0, 2);
 			if (parameterContext.usage().isOfType(String.class)) {
 				return Optional.of(() -> "aString");
@@ -84,7 +98,8 @@ class ResolvingParametersTests {
 		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
 			propertyParameters,
 			forAllGenerator,
-			stringInjector
+			stringInjector,
+			propertyLifecycleContext
 		);
 
 		assertThat(generator.hasNext()).isTrue();
@@ -106,6 +121,21 @@ class ResolvingParametersTests {
 	void supplierIsCalledOncePerTry(@ForAll int ignore, String aString) {
 		assertThat(aString).isEqualTo("aString");
 		PropertyLifecycle.onSuccess(() -> assertThat(CreateAString.countSupplierCalls).isEqualTo(10));
+	}
+
+	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
+	@AddLifecycleHook(CreateAString.class)
+	@ExpectFailure(checkResult = ShrinkTo7.class)
+	void shouldShrinkTo7(@ForAll @IntRange(min = 0) int anInt, String aString) {
+		assertThat(aString).isEqualTo("aString");
+		assertThat(anInt).isLessThan(7);
+	}
+
+	private class ShrinkTo7 extends ShrinkToChecker {
+		@Override
+		public Iterable<?> shrunkValues() {
+			return Arrays.asList(7, "aString");
+		}
 	}
 
 	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
@@ -132,7 +162,7 @@ class ResolvingParametersTests {
 
 	private static class TestContainer {
 		@Property
-		void nothingToInject(@ForAll int anInt) {}
+		void nothingToResolve(@ForAll int anInt) {}
 
 		@Property
 		void forAllIntAndString(@ForAll int anInt, String aString) {}
@@ -148,7 +178,8 @@ class CreateAString implements ResolveParameterHook, AroundPropertyHook {
 	static int countSupplierCalls = 0;
 
 	@Override
-	public Optional<Supplier<Object>> resolve(ParameterInjectionContext parameterContext) {
+	public Optional<Supplier<Object>> resolve(ParameterInjectionContext parameterContext, PropertyLifecycleContext propertyContext) {
+		assertThat(propertyContext.containerClass()).isEqualTo(ResolvingParametersTests.class);
 		countInjectorCalls++;
 		if (parameterContext.usage().isOfType(String.class)) {
 			return Optional.of(() -> {

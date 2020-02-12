@@ -22,6 +22,7 @@ public class CheckedProperty {
 
 	private final ArbitraryResolver arbitraryResolver;
 	private final ResolveParameterHook parameterResolver;
+	private final PropertyLifecycleContext propertyLifecycleContext;
 	private final Optional<Iterable<? extends Tuple>> optionalData;
 	private Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive;
 
@@ -31,6 +32,7 @@ public class CheckedProperty {
 		List<MethodParameter> propertyParameters,
 		ArbitraryResolver arbitraryResolver,
 		ResolveParameterHook parameterResolver,
+		PropertyLifecycleContext propertyLifecycleContext,
 		Optional<Iterable<? extends Tuple>> optionalData,
 		PropertyConfiguration configuration
 	) {
@@ -40,6 +42,7 @@ public class CheckedProperty {
 		this.forAllParameters = selectForAllParameters(propertyParameters);
 		this.arbitraryResolver = arbitraryResolver;
 		this.parameterResolver = parameterResolver;
+		this.propertyLifecycleContext = propertyLifecycleContext;
 		this.optionalData = optionalData;
 		this.configuration = configuration;
 	}
@@ -88,7 +91,8 @@ public class CheckedProperty {
 		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(
 			propertyParameters,
 			shrinkablesGenerator,
-			parameterResolver
+			parameterResolver,
+			propertyLifecycleContext
 		);
 		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor);
 	}

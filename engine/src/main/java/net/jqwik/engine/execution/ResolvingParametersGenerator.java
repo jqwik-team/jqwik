@@ -13,15 +13,18 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 	private final List<MethodParameter> propertyParameters;
 	private final Iterator<List<Shrinkable<Object>>> forAllParametersGenerator;
 	private final ResolveParameterHook injectParameterHook;
+	private final PropertyLifecycleContext propertyLifecycleContext;
 
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
 		Iterator<List<Shrinkable<Object>>> forAllParametersGenerator,
-		ResolveParameterHook injectParameterHook
+		ResolveParameterHook injectParameterHook,
+		PropertyLifecycleContext propertyLifecycleContext
 	) {
 		this.propertyParameters = propertyParameters;
 		this.forAllParametersGenerator = forAllParametersGenerator;
 		this.injectParameterHook = injectParameterHook;
+		this.propertyLifecycleContext = propertyLifecycleContext;
 	}
 
 	public boolean hasNext() {
@@ -49,9 +52,9 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 	}
 
 	private Shrinkable<Object> resolveShrinkable(MethodParameter parameter) {
-		ParameterInjectionContext context = new DefaultParameterInjectionContext(parameter);
-		Optional<Supplier<Object>> optionalSupplier = injectParameterHook.resolve(context);
-		return optionalSupplier.map(supplier -> createShrinkable(supplier, context)).orElseThrow(
+		ParameterInjectionContext parameterContext = new DefaultParameterInjectionContext(parameter);
+		Optional<Supplier<Object>> optionalSupplier = injectParameterHook.resolve(parameterContext, propertyLifecycleContext);
+		return optionalSupplier.map(supplier -> createShrinkable(supplier, parameterContext)).orElseThrow(
 			() -> {
 				String message = String.format("Parameter [%s] without @ForAll cannot be resolved", parameter);
 				return new JqwikException(message);
