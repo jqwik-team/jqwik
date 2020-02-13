@@ -6,6 +6,11 @@ title: Hot to Contribute
 Open source projects need a community to be successful. 
 That's why your contributions are essential.
 
+### Contact and Questions
+
+You can follow [jqwik on Twitter](https://jqwik.net/release-notes.html#123)
+and ask [questions on Stackoverflow](https://stackoverflow.com/questions/tagged/jqwik). 
+
 ### Bugs, Ideas and Feature Suggestions
 
 Please, please, please add your suggestion, ideas and bug reports using the project's
