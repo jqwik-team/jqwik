@@ -59,4 +59,6 @@ You want to know more?
 - Learn about [property-based testing in general](/property-based-testing.html)
 - Read an introduction to [PBT in Java](https://blog.johanneslink.net/2018/03/24/property-based-testing-in-java-introduction/)
 - Learn the details of _jqwik_ in [the user-guide](/docs/current/user-guide.html)
+- Ask and answer questions ask 
+  [on Stackoverflow](https://stackoverflow.com/questions/tagged/jqwik).
 

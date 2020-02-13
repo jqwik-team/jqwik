@@ -9,7 +9,7 @@ That's why your contributions are essential.
 ### Contact and Questions
 
 You can follow [jqwik on Twitter](https://jqwik.net/release-notes.html#123)
-and ask [questions on Stackoverflow](https://stackoverflow.com/questions/tagged/jqwik). 
+and answer [questions on Stackoverflow](https://stackoverflow.com/questions/tagged/jqwik). 
 
 ### Bugs, Ideas and Feature Suggestions
 
