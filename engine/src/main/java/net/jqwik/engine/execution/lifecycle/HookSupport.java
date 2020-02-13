@@ -81,10 +81,7 @@ public class HookSupport {
 					hook.beforeContainer(context);
 				});
 			}
-
-			if (throwableCollector.isNotEmpty()) {
-				throw throwableCollector.getThrowable();
-			}
+			throwableCollector.assertEmpty();
 		};
 	}
 
@@ -96,10 +93,7 @@ public class HookSupport {
 					hook.afterContainer(context);
 				});
 			}
-
-			if (throwableCollector.isNotEmpty()) {
-				throw throwableCollector.getThrowable();
-			}
+			throwableCollector.assertEmpty();
 		};
 	}
 

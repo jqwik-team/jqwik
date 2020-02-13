@@ -1,8 +1,6 @@
 package net.jqwik.engine.hooks.lifecycle;
 
-import java.util.*;
-
-import org.opentest4j.*;
+import org.junit.platform.engine.support.hierarchical.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.LifecycleHook.*;
@@ -14,10 +12,7 @@ public class AutoCloseableHook implements AroundPropertyHook, ApplyToChildren {
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
 		PropertyExecutionResult testExecutionResult = property.execute();
-		List<Throwable> throwableCollector = executeCloseMethods(context);
-		if (!throwableCollector.isEmpty()) {
-			handleExceptions(throwableCollector);
-		}
+		executeCloseMethods(context);
 		return testExecutionResult;
 	}
 
@@ -26,24 +21,14 @@ public class AutoCloseableHook implements AroundPropertyHook, ApplyToChildren {
 		return Hooks.AroundProperty.AUTO_CLOSEABLE_PROXIMITY;
 	}
 
-	private List<Throwable> executeCloseMethods(PropertyLifecycleContext context) {
-		List<Throwable> throwableCollector = new ArrayList<>();
+	private void executeCloseMethods(PropertyLifecycleContext context) {
+		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
+
 		JqwikReflectionSupport.streamInstancesFromInside(context.testInstance()).forEach(innerInstance -> {
 			if (innerInstance instanceof AutoCloseable) {
-				try {
-					((AutoCloseable) innerInstance).close();
-				} catch (Exception t) {
-					throwableCollector.add(t);
-				}
+				throwableCollector.execute(((AutoCloseable) innerInstance)::close);
 			}
 		});
-		return throwableCollector;
-	}
-
-	private void handleExceptions(List<Throwable> throwableCollector) throws Throwable {
-		Throwable throwable = throwableCollector.size() == 1 ?
-			throwableCollector.get(0) :
-			new MultipleFailuresError("Exceptions occurred during close()", throwableCollector);
-		throw throwable;
+		throwableCollector.assertEmpty();
 	}
 }
