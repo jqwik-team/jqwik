@@ -12,18 +12,18 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 	private final Map<Parameter, Shrinkable<Object>> resolvedShrinkables = new HashMap<>();
 	private final List<MethodParameter> propertyParameters;
 	private final Iterator<List<Shrinkable<Object>>> forAllParametersGenerator;
-	private final ResolveParameterHook injectParameterHook;
+	private final ResolveParameterHook resolveParameterHook;
 	private final PropertyLifecycleContext propertyLifecycleContext;
 
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
 		Iterator<List<Shrinkable<Object>>> forAllParametersGenerator,
-		ResolveParameterHook injectParameterHook,
+		ResolveParameterHook resolveParameterHook,
 		PropertyLifecycleContext propertyLifecycleContext
 	) {
 		this.propertyParameters = propertyParameters;
 		this.forAllParametersGenerator = forAllParametersGenerator;
-		this.injectParameterHook = injectParameterHook;
+		this.resolveParameterHook = resolveParameterHook;
 		this.propertyLifecycleContext = propertyLifecycleContext;
 	}
 
@@ -40,24 +40,24 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 				next.add(forAllShrinkables.get(0));
 				forAllShrinkables.remove(0);
 			} else {
-				next.add(findInjectableParameter(parameter));
+				next.add(findResolvableParameter(parameter));
 			}
 		}
 
 		return next;
 	}
 
-	private Shrinkable<Object> findInjectableParameter(MethodParameter parameter) {
+	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter) {
 		return resolvedShrinkables.computeIfAbsent(parameter.getRawParameter(), ignore -> resolveShrinkable(parameter));
 	}
 
 	private Shrinkable<Object> resolveShrinkable(MethodParameter parameter) {
 		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(parameter);
-		Optional<Supplier<Object>> optionalSupplier = injectParameterHook.resolve(parameterContext, propertyLifecycleContext);
+		Optional<Supplier<Object>> optionalSupplier = resolveParameterHook.resolve(parameterContext, propertyLifecycleContext);
 		return optionalSupplier.map(supplier -> createShrinkable(supplier, parameterContext)).orElseThrow(
 			() -> {
-				String message = String.format("Parameter [%s] without @ForAll cannot be resolved", parameter);
-				return new JqwikException(message);
+				String info = "No matching resolver could be found";
+				return new CannotResolveParameterException(parameterContext, info);
 			});
 	}
 
@@ -65,7 +65,16 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 		return new Shrinkable<Object>() {
 			@Override
 			public Object value() {
-				return supplier.get();
+				Object value = supplier.get();
+				if (!context.usage().isAssignableFrom(value.getClass())) {
+					String info = String.format(
+						"Type [%s] of resolved value does not fit parameter type [%s]",
+						value.getClass().getName(),
+						context.parameter().getParameterizedType().getTypeName()
+					);
+					throw new CannotResolveParameterException(context, info);
+				}
+				return value;
 			}
 
 			@Override

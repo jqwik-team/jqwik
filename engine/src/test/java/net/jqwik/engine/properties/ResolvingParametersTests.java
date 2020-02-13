@@ -78,7 +78,9 @@ class ResolvingParametersTests {
 		);
 
 		assertThat(generator.hasNext()).isTrue();
-		assertThatThrownBy(() -> generator.next()).isInstanceOf(JqwikException.class);
+		assertThatThrownBy(() -> {
+			generator.next();
+		}).isInstanceOf(CannotResolveParameterException.class);
 	}
 
 	@Example
@@ -138,6 +140,29 @@ class ResolvingParametersTests {
 		}
 	}
 
+	@Example
+	@AddLifecycleHook(CreateAlwaysAString.class)
+	@ExpectFailure(checkResult = HasCannotResolveException.class)
+	void shouldFailWithWrongParameterValueType(List<Integer> aList) {
+	}
+
+	@Example
+	@AddLifecycleHook(CreateAString.class)
+	@AddLifecycleHook(CreateAlwaysAString.class)
+	@ExpectFailure(checkResult = HasCannotResolveException.class)
+	void shouldFailWithDuplicateResolution(String aString) {
+	}
+
+	private class HasCannotResolveException implements Consumer<PropertyExecutionResult> {
+		@Override
+		public void accept(PropertyExecutionResult propertyExecutionResult) {
+			assertThat(propertyExecutionResult.throwable().isPresent());
+			propertyExecutionResult.throwable().ifPresent(throwable -> {
+				assertThat(throwable).isInstanceOf(CannotResolveParameterException.class);
+			});
+		}
+	}
+
 	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
@@ -172,6 +197,16 @@ class ResolvingParametersTests {
 	}
 }
 
+class CreateAlwaysAString implements ResolveParameterHook {
+	@Override
+	public Optional<Supplier<Object>> resolve(
+		ParameterResolutionContext parameterContext,
+		PropertyLifecycleContext propertyContext
+	) {
+		return Optional.of(() -> "a string");
+	}
+}
+
 class CreateAString implements ResolveParameterHook {
 
 	static Store<Integer> countInjectorCalls;
@@ -185,7 +220,7 @@ class CreateAString implements ResolveParameterHook {
 		countInjectorCalls = Store.getOrCreate("injectorCalls", Store.Lifespan.PROPERTY, () -> 0);
 		countSupplierCalls = Store.getOrCreate("supplierCalls", Store.Lifespan.PROPERTY, () -> 0);
 
-		countInjectorCalls.update( i -> i + 1);
+		countInjectorCalls.update(i -> i + 1);
 
 		if (parameterContext.usage().isOfType(String.class)) {
 			return Optional.of(() -> {

@@ -46,8 +46,8 @@ and
 
 - `Falsifier` no longer extends `Predicate<T>`
 
-- Many changes in Lifecycle API; but this API had not been published or documented
-  anyway. 
+- Many breaking changes in Lifecycle API; but this API had not been published 
+  or documented anyway.
 
 #### Bug Fixes
 

@@ -26,7 +26,7 @@ public interface PropertyExecutionResult {
 
 		/**
 		 * Indicates that the execution of a property was
-		 * <em>aborted</em> (started but not finished).
+		 * <em>aborted</em> before the actual property method could be run.
 		 */
 		ABORTED,
 
@@ -69,4 +69,10 @@ public interface PropertyExecutionResult {
 	default PropertyExecutionResult mapToFailed(String message) {
 		return mapToFailed(new AssertionFailedError(message));
 	}
+
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	default PropertyExecutionResult mapToAborted(Throwable throwable) {
+		return mapTo(Status.ABORTED, throwable);
+	}
+
 }
