@@ -7,7 +7,7 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
-public class DefaultParameterInjectionContext implements ParameterInjectionContext {
+public class DefaultParameterInjectionContext implements ParameterResolutionContext {
 	private MethodParameter parameter;
 
 	public DefaultParameterInjectionContext(MethodParameter parameter) {this.parameter = parameter;}

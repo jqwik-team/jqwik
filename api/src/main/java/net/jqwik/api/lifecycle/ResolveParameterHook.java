@@ -22,7 +22,7 @@ public interface ResolveParameterHook extends LifecycleHook {
 	 * @return a supplier function that should always return an equivalent object,
 	 * 			i.e. an object that behaves the same when used in the same way.
 	 */
-	Optional<Supplier<Object>> resolve(ParameterInjectionContext parameterContext, PropertyLifecycleContext propertyContext);
+	Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, PropertyLifecycleContext propertyContext);
 
 	ResolveParameterHook DO_NOT_RESOLVE = ((parameterContext, propertyContext) -> Optional.empty());
 

@@ -52,7 +52,7 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 	}
 
 	private Shrinkable<Object> resolveShrinkable(MethodParameter parameter) {
-		ParameterInjectionContext parameterContext = new DefaultParameterInjectionContext(parameter);
+		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(parameter);
 		Optional<Supplier<Object>> optionalSupplier = injectParameterHook.resolve(parameterContext, propertyLifecycleContext);
 		return optionalSupplier.map(supplier -> createShrinkable(supplier, parameterContext)).orElseThrow(
 			() -> {
@@ -61,7 +61,7 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 			});
 	}
 
-	private Shrinkable<Object> createShrinkable(Supplier<Object> supplier, ParameterInjectionContext context) {
+	private Shrinkable<Object> createShrinkable(Supplier<Object> supplier, ParameterResolutionContext context) {
 		return new Shrinkable<Object>() {
 			@Override
 			public Object value() {

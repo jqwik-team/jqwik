@@ -1,7 +1,5 @@
 - 1.2.4
 
-    - Global ResolveReporterHook
-
     - Container lifecycle
         - @PerContainer
 
@@ -21,6 +19,8 @@
 
 - 1.2.x
   
+    - Global ResolveReporterHook
+
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
 

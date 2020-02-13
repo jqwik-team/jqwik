@@ -179,7 +179,7 @@ class CreateAString implements ResolveParameterHook {
 	static Store<Integer> countSupplierCalls;
 
 	@Override
-	public Optional<Supplier<Object>> resolve(ParameterInjectionContext parameterContext, PropertyLifecycleContext propertyContext) {
+	public Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, PropertyLifecycleContext propertyContext) {
 		assertThat(propertyContext.containerClass()).isEqualTo(ResolvingParametersTests.class);
 
 		countInjectorCalls = Store.getOrCreate("injectorCalls", Store.Lifespan.PROPERTY, () -> 0);
