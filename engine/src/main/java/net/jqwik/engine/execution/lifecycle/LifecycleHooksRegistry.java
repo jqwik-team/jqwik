@@ -15,7 +15,9 @@ import net.jqwik.engine.support.*;
 
 public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
-	private static final Comparator<LifecycleHook> DONT_COMPARE = (a, b) -> 0;
+	private static <T extends LifecycleHook> Comparator<T> dontCompare() {
+		return (a, b) -> 0;
+	}
 
 	private final List<HookRegistration> registrations = new ArrayList<>();
 	private final Map<Class<? extends LifecycleHook>, LifecycleHook> instances = new HashMap<>();
@@ -46,7 +48,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	@Override
 	public ResolveParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-		List<ResolveParameterHook> injectParameterHooks = findHooks(propertyMethodDescriptor, ResolveParameterHook.class, ResolveParameterHook::compareTo);
+		List<ResolveParameterHook> injectParameterHooks = findHooks(propertyMethodDescriptor, ResolveParameterHook.class, dontCompare());
 		return HookSupport.combineInjectParameterHooks(injectParameterHooks);
 	}
 
@@ -58,7 +60,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	@Override
 	public void prepareHooks(TestDescriptor descriptor, LifecycleContext lifecycleContext) {
-		for (LifecycleHook hook : findHooks(descriptor, LifecycleHook.class, DONT_COMPARE)) {
+		for (LifecycleHook hook : findHooks(descriptor, LifecycleHook.class, dontCompare())) {
 			hook.prepareFor(lifecycleContext);
 		}
 	}
@@ -90,7 +92,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	 * For testing only
 	 */
 	public <T extends LifecycleHook> boolean hasHook(TestDescriptor descriptor, Class<T> concreteHook) {
-		List<LifecycleHook> hooks = findHooks(descriptor, LifecycleHook.class, DONT_COMPARE);
+		List<LifecycleHook> hooks = findHooks(descriptor, LifecycleHook.class, dontCompare());
 		return hooks.stream().anyMatch(hook -> hook.getClass().equals(concreteHook));
 	}
 

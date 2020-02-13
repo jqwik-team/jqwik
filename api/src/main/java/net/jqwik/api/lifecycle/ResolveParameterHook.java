@@ -20,20 +20,10 @@ public interface ResolveParameterHook extends LifecycleHook {
 	 * @param parameterContext
 	 * @param propertyContext
 	 * @return a supplier function that should always return an equivalent object,
-	 * 			i.e. an object that behaves the same when used in the same way.
+	 * i.e. an object that behaves the same when used in the same way.
 	 */
 	Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, PropertyLifecycleContext propertyContext);
 
 	ResolveParameterHook DO_NOT_RESOLVE = ((parameterContext, propertyContext) -> Optional.empty());
 
-	default int compareTo(ResolveParameterHook other) {
-		return -Integer.compare(this.injectParameterPriority(), other.injectParameterPriority());
-	}
-
-	/**
-	 * Higher values means higher priority
-	 */
-	default int injectParameterPriority() {
-		return 0;
-	}
 }
