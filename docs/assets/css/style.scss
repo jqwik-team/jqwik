@@ -83,3 +83,13 @@ a code {
     text-decoration: underline;
 }
 
+#top-link {
+    position: fixed;
+    bottom: 10px;
+    right: 50px;
+    font-size: 2em;
+    font-weight: bold;
+    text-decoration: none;
+
+    a:focus {text-decoration: none}
+}

@@ -13,6 +13,10 @@ title: jqwik User Guide - ${version}
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+<div id="top-link">
+    <a href="#top" title="Go to top of page">&uarr;</a>
+</div>
+
 ## How to Use
 
 __jqwik__ is an alternative test engine for the
