@@ -50,14 +50,20 @@ class IncrementBefore implements BeforeContainerHook {
 	}
 }
 
-class IncrementPropagatedBefore implements BeforeContainerHook, LifecycleHook.ApplyToChildren {
+class IncrementPropagatedBefore implements BeforeContainerHook {
 
 	@Override
-	public void beforeContainer(ContainerLifecycleContext context) throws Throwable {
+	public void beforeContainer(ContainerLifecycleContext context) {
 		BeforeContainerHookTests.propagatedBefore++;
 		assertThat(context.containerClass()).isPresent();
 		assertThat(context.containerClass().get())
 			.isIn(BeforeContainerHookTests.class, BeforeContainerHookTests.NestedTests.class);
 	}
+
+	@Override
+	public boolean applyToDescendants() {
+		return true;
+	}
+
 }
 

@@ -4,11 +4,10 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.api.lifecycle.PropertyLifecycle.*;
 import net.jqwik.engine.hooks.*;
 
-public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, ApplyToChildren {
+public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook {
 
 	private static final Object IDENTIFIERS_STORE_ID = Tuple.of(AfterPropertyExecutor.class, "identifiers");
 	private static final Object ORDER_STORE_ID = Tuple.of(AfterPropertyExecutor.class, "order");
@@ -55,6 +54,11 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook, A
 			}
 		}
 		return executionResult;
+	}
+
+	@Override
+	public boolean applyToDescendants() {
+		return true;
 	}
 
 	@Override

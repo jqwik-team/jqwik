@@ -68,7 +68,7 @@ class AroundPropertyHookExamples implements AutoCloseable {
 		}
 	}
 
-	static class AroundAll implements AroundPropertyHook, LifecycleHook.ApplyToChildren {
+	static class AroundAll implements AroundPropertyHook {
 		@Override
 		public PropertyExecutionResult aroundProperty(
 			PropertyLifecycleContext context,
@@ -78,6 +78,11 @@ class AroundPropertyHookExamples implements AutoCloseable {
 			PropertyExecutionResult testExecutionResult = property.execute();
 			System.out.println("After around all: " + context.label());
 			return testExecutionResult;
+		}
+
+		@Override
+		public boolean applyToDescendants() {
+			return true;
 		}
 	}
 

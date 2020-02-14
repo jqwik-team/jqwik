@@ -9,7 +9,6 @@ import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
@@ -117,15 +116,19 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	 */
 	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook hookInstance) {
 		Class<? extends LifecycleHook> hookClass = hookInstance.getClass();
-		createAndRegisterHook(descriptor, hookClass);
+		createAndRegisterHook(descriptor, hookClass, hookInstance);
 		if (!instances.containsKey(hookClass)) {
 			instances.put(hookClass, hookInstance);
 		}
 	}
 
-	private void createAndRegisterHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
-		boolean propagateToChildren = ApplyToChildren.class.isAssignableFrom(hookClass);
-		HookRegistration registration = new HookRegistration(descriptor, hookClass, propagateToChildren);
+	private void createAndRegisterHook(
+		TestDescriptor descriptor,
+		Class<? extends LifecycleHook> hookClass,
+		LifecycleHook hookInstance
+	) {
+		boolean applyToAllChildren = hookInstance.applyToDescendants();
+		HookRegistration registration = new HookRegistration(descriptor, hookClass, applyToAllChildren);
 		if (!registrations.contains(registration)) {
 			registrations.add(registration);
 		}
@@ -140,35 +143,34 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			String message = String.format("Hook class [%s] must have default constructor", hookClass.getName());
 			throw new JqwikException(message);
 		}
-		createAndRegisterHook(descriptor, hookClass);
-		if (!instances.containsKey(hookClass)) {
-			CurrentTestDescriptor.runWithDescriptor(descriptor, () -> {
-				LifecycleHook hookInstance = ReflectionSupport.newInstance(hookClass);
-				instances.put(hookClass, hookInstance);
-			});
-		}
+		LifecycleHook hookInstance = instances.computeIfAbsent(
+			hookClass, clazz -> CurrentTestDescriptor.runWithDescriptor(
+				descriptor, () -> ReflectionSupport.newInstance(hookClass)
+			)
+		);
+		createAndRegisterHook(descriptor, hookClass, hookInstance);
 	}
 
 	private static class HookRegistration {
-		private TestDescriptor descriptor;
+		private final TestDescriptor descriptor;
 		private final Class<? extends LifecycleHook> hookClass;
-		private boolean propagateToChildren;
+		private final boolean applyToDescendants;
 
 		private HookRegistration(
 			TestDescriptor descriptor,
 			Class<? extends LifecycleHook> hookClass,
-			boolean propagateToChildren
+			boolean applyToDescendants
 		) {
 			this.descriptor = descriptor;
 			this.hookClass = hookClass;
-			this.propagateToChildren = propagateToChildren;
+			this.applyToDescendants = applyToDescendants;
 		}
 
 		boolean match(TestDescriptor descriptor, boolean fromChild) {
 			if (descriptor == null) {
 				return false;
 			}
-			if (fromChild && !propagateToChildren) {
+			if (fromChild && !applyToDescendants) {
 				return false;
 			}
 			if (this.descriptor.equals(descriptor)) {

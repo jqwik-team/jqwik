@@ -4,13 +4,12 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.LifecycleHook.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsReport.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
-public class StatisticsHook implements AroundPropertyHook, ApplyToChildren {
+public class StatisticsHook implements AroundPropertyHook {
 
 	private static final Supplier<Map<String, StatisticsCollectorImpl>> STATISTICS_MAP_SUPPLIER =
 		() -> new HashMap<String, StatisticsCollectorImpl>() {
@@ -62,6 +61,11 @@ public class StatisticsHook implements AroundPropertyHook, ApplyToChildren {
 			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, reportFormat);
 			reportGenerator.publish(reporter, propertyName);
 		}
+	}
+
+	@Override
+	public boolean applyToDescendants() {
+		return true;
 	}
 
 	@Override

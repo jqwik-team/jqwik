@@ -4,9 +4,8 @@ import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.LifecycleHook.*;
 
-public class DisabledHook implements SkipExecutionHook, ApplyToChildren {
+public class DisabledHook implements SkipExecutionHook {
 
 	@Override
 	public SkipResult shouldBeSkipped(LifecycleContext context) {
@@ -25,4 +24,10 @@ public class DisabledHook implements SkipExecutionHook, ApplyToChildren {
 	public int skipExecutionOrder() {
 		return Hooks.SkipExecution.DISABLED_ORDER;
 	}
+
+	@Override
+	public boolean applyToDescendants() {
+		return true;
+	}
+
 }

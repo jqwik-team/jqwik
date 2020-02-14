@@ -40,7 +40,7 @@ class CheckAfter implements AfterContainerHook {
 	}
 }
 
-class IncrementAfter implements AfterContainerHook, LifecycleHook.ApplyToChildren {
+class IncrementAfter implements AfterContainerHook {
 
 	@Override
 	public void afterContainer(ContainerLifecycleContext context) {
@@ -49,5 +49,11 @@ class IncrementAfter implements AfterContainerHook, LifecycleHook.ApplyToChildre
 		assertThat(context.containerClass().get())
 			.isIn(AfterContainerHookTests.class, AfterContainerHookTests.NestedTests.class);
 	}
+
+	@Override
+	public boolean applyToDescendants() {
+		return true;
+	}
+
 }
 

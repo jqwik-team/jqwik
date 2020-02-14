@@ -109,7 +109,7 @@ class AroundPropertyHookTests {
 
 }
 
-class AroundPropertyWithPropagation implements AroundPropertyHook, ApplyToChildren {
+class AroundPropertyWithPropagation implements AroundPropertyHook {
 
 	static int calls = 0;
 
@@ -118,6 +118,12 @@ class AroundPropertyWithPropagation implements AroundPropertyHook, ApplyToChildr
 		calls++;
 		return property.execute();
 	}
+
+	@Override
+	public boolean applyToDescendants() {
+		return true;
+	}
+
 }
 
 class AroundPropertyWithoutPropagation implements AroundPropertyHook {

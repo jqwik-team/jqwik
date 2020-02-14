@@ -134,19 +134,29 @@ class LifecycleRegistryTests {
 		public void method2_2() {}
 	}
 
-	class GlobalHook implements LifecycleHook, LifecycleHook.ApplyToChildren {
+	class GlobalHook implements LifecycleHook {
 		List<LifecycleContext> preparedContexts = new ArrayList<>();
 
 		@Override
 		public void prepareFor(LifecycleContext lifecycleContext) {
 			preparedContexts.add(lifecycleContext);
 		}
+
+		@Override
+		public boolean applyToDescendants() {
+			return true;
+		}
 	}
 
-	class GlobalHookForMethodsOnly implements LifecycleHook, LifecycleHook.ApplyToChildren {
+	class GlobalHookForMethodsOnly implements LifecycleHook {
 		@Override
 		public boolean appliesTo(Optional<AnnotatedElement> optionalElement) {
 			return optionalElement.map(element -> element instanceof Method).orElse(false);
+		}
+
+		@Override
+		public boolean applyToDescendants() {
+			return true;
 		}
 	}
 
@@ -169,13 +179,19 @@ class LifecycleRegistryTests {
 		}
 
 		@Override
-		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
 			try {
 				return property.execute();
 			} finally {
 				assertThat(prepareHasBeenCalled).isTrue();
 			}
 		}
+
+		@Override
+		public boolean applyToDescendants() {
+			return true;
+		}
+
 	}
 
 	static class CheckPrepareForContainer implements LifecycleHook, AfterContainerHook {
