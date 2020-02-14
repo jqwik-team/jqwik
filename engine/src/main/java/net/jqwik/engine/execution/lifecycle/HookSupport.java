@@ -97,7 +97,7 @@ public class HookSupport {
 		};
 	}
 
-	public static ResolveParameterHook combineInjectParameterHooks(List<ResolveParameterHook> resolveParameterHooks) {
+	public static ResolveParameterHook combineResolveParameterHooks(List<ResolveParameterHook> resolveParameterHooks) {
 		if (resolveParameterHooks.isEmpty()) {
 			return ResolveParameterHook.DO_NOT_RESOLVE;
 		}

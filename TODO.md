@@ -1,7 +1,5 @@
 - 1.2.4
 
-    - RegistrationHook or other way to register hook instances
-
     - Container lifecycle
         - @BeforeContainer methods
         - @AfterContainer methods
@@ -20,7 +18,10 @@
 
 
 - 1.2.x
-  
+
+    - Somehow allow to parameterize hook registrations, e.g.
+      @AddLifecycleHook(MyHook.class, configuration = { })
+
     - Guided Generation
       https://github.com/jlink/jqwik/issues/84
       

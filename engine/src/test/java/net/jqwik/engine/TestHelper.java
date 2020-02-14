@@ -75,7 +75,7 @@ public class TestHelper {
 			}
 
 			@Override
-			public ResolveParameterHook injectParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
+			public ResolveParameterHook resolveParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
 				return ResolveParameterHook.DO_NOT_RESOLVE;
 			}
 

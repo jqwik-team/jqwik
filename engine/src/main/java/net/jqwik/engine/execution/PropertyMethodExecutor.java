@@ -81,7 +81,7 @@ public class PropertyMethodExecutor {
 		Consumer<ReportEntry> publisher = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
 		AroundPropertyHook aroundProperty = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		AroundTryHook aroundTry = lifecycleSupplier.aroundTryHook(methodDescriptor);
-		ResolveParameterHook resolveParameter = lifecycleSupplier.injectParameterHook(methodDescriptor);
+		ResolveParameterHook resolveParameter = lifecycleSupplier.resolveParameterHook(methodDescriptor);
 
 		PropertyExecutionResult propertyExecutionResult;
 		try {
