@@ -10,6 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * Experimental feature. Not ready for public usage yet.
  */
 @API(status = EXPERIMENTAL, since = "1.2.3")
+@FunctionalInterface
 public interface AroundTryHook extends LifecycleHook {
 
 	TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable;
