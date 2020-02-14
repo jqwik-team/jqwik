@@ -17,7 +17,16 @@ class AroundContainerHookTests {
 
 	@Example
 	void anExample() {
-		AroundContainerHookTests.calls.add("example");
+		calls.add("example");
+	}
+
+	@Group
+	@AddLifecycleHook(AroundNested.class)
+	class NestedContainer {
+		@Example
+		void nestedExample() {
+			calls.add("nested example");
+		}
 	}
 }
 
@@ -66,6 +75,17 @@ class Inner implements AroundContainerHook {
 	}
 }
 
+class AroundNested implements AroundContainerHook {
+	@Override
+	public void beforeContainer(ContainerLifecycleContext context) {
+		AroundContainerHookTests.calls.add("before nested");
+	}
+	@Override
+	public void afterContainer(ContainerLifecycleContext context) {
+		AroundContainerHookTests.calls.add("after nested");
+	}
+}
+
 class CheckCalls implements AfterContainerHook {
 
 	@Override
@@ -74,6 +94,9 @@ class CheckCalls implements AfterContainerHook {
 			"before outer",
 			"before middle",
 			"before inner",
+			"before nested",
+			"nested example",
+			"after nested",
 			"example",
 			"after inner",
 			"after middle",

@@ -2,11 +2,6 @@
 
     - RegistrationHook or other way to register hook instances
 
-    - Engine Lifecycle
-        - BeforeEngineHook
-        - AfterEngineHook
-        - Register as Service Provider
-
     - Container lifecycle
         - @BeforeContainer methods
         - @AfterContainer methods
