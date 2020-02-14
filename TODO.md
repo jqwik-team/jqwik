@@ -7,7 +7,6 @@
     - Around property lifecycle
         - @BeforeProperty methods
         - @AfterProperty methods
-        - @PerProperty(Class<? extends PropertyLifecycle>)
         - Get and set random seed
 
     - Around try lifecycle
