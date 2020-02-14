@@ -26,8 +26,8 @@ public class DisabledHook implements SkipExecutionHook {
 	}
 
 	@Override
-	public boolean applyToDescendants() {
-		return true;
+	public PropagationMode propagateTo() {
+		return PropagationMode.ALL_DESCENDANTS;
 	}
 
 }

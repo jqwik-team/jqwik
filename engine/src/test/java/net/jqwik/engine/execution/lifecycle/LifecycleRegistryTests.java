@@ -12,6 +12,7 @@ import net.jqwik.engine.descriptor.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.lifecycle.PropagationMode.*;
 import static net.jqwik.engine.TestDescriptorBuilder.*;
 
 class LifecycleRegistryTests {
@@ -54,9 +55,19 @@ class LifecycleRegistryTests {
 	@Example
 	void currentDescriptorIsSetDuringRegisteringHookClass() {
 		TestDescriptor container1 = forClass(Container1.class, "method1_1", "method1_2").build();
-		registry.registerLifecycleHook(container1, RememberCurrentDescriptorHook.class);
+		registry.registerLifecycleHook(container1, RememberCurrentDescriptorHook.class, PropagationMode.DEFAULT);
 
 		assertThat(RememberCurrentDescriptorHook.currentDescriptor).isSameAs(container1);
+	}
+
+	@Group
+	@AddLifecycleHook(value = ChangeFirstParamTo42.class, propagateTo = ALL_DESCENDANTS)
+	class ApplyToDescendants {
+
+		@Example
+		void exampleInDescendant(@ForAll int anInt) {
+			assertThat(anInt).isEqualTo(42);
+		}
 	}
 
 	@Group
@@ -143,8 +154,8 @@ class LifecycleRegistryTests {
 		}
 
 		@Override
-		public boolean applyToDescendants() {
-			return true;
+		public PropagationMode propagateTo() {
+			return PropagationMode.ALL_DESCENDANTS;
 		}
 	}
 
@@ -155,8 +166,8 @@ class LifecycleRegistryTests {
 		}
 
 		@Override
-		public boolean applyToDescendants() {
-			return true;
+		public PropagationMode propagateTo() {
+			return PropagationMode.ALL_DESCENDANTS;
 		}
 	}
 
@@ -188,8 +199,8 @@ class LifecycleRegistryTests {
 		}
 
 		@Override
-		public boolean applyToDescendants() {
-			return true;
+		public PropagationMode propagateTo() {
+			return PropagationMode.ALL_DESCENDANTS;
 		}
 
 	}
@@ -208,6 +219,15 @@ class LifecycleRegistryTests {
 		@Override
 		public void afterContainer(ContainerLifecycleContext context) throws Throwable {
 			assertThat(prepareHasBeenCalled).isTrue();
+		}
+	}
+
+	static class ChangeFirstParamTo42 implements AroundTryHook {
+
+		@Override
+		public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
+			parameters.set(0, 42);
+			return aTry.execute(parameters);
 		}
 	}
 }

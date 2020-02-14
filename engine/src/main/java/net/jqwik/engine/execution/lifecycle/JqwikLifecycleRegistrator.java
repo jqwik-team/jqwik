@@ -53,7 +53,7 @@ public class JqwikLifecycleRegistrator {
 	private void registerHooks(TestDescriptor descriptor, AnnotatedElement element) {
 		List<AddLifecycleHook> addLifecycleHooks = AnnotationSupport.findRepeatableAnnotations(element, AddLifecycleHook.class);
 		for (AddLifecycleHook addLifecycleHook : addLifecycleHooks) {
-			lifecycleRegistry.registerLifecycleHook(descriptor, addLifecycleHook.value());
+			lifecycleRegistry.registerLifecycleHook(descriptor, addLifecycleHook.value(), addLifecycleHook.propagateTo());
 		}
 	}
 

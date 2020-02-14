@@ -120,8 +120,8 @@ class AroundPropertyWithPropagation implements AroundPropertyHook {
 	}
 
 	@Override
-	public boolean applyToDescendants() {
-		return true;
+	public PropagationMode propagateTo() {
+		return PropagationMode.ALL_DESCENDANTS;
 	}
 
 }

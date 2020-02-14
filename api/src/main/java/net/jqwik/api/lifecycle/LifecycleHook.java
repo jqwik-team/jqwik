@@ -25,12 +25,9 @@ public interface LifecycleHook {
 		return true;
 	}
 
-	/**
-	 * @return true if a hook shall be applied to all descendants of the element at which the annotation is
-	 */
 	@API(status = EXPERIMENTAL, since = "1.2.4")
-	default boolean applyToDescendants() {
-		return false;
+	default PropagationMode propagateTo() {
+		return PropagationMode.NO_ONE;
 	}
 
 	/**

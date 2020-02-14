@@ -73,7 +73,7 @@ class AroundPropertyHookExamples implements AutoCloseable {
 		public PropertyExecutionResult aroundProperty(
 			PropertyLifecycleContext context,
 			PropertyExecutor property
-		) throws Throwable {
+		) {
 			System.out.println("Before around all: " + context.label());
 			PropertyExecutionResult testExecutionResult = property.execute();
 			System.out.println("After around all: " + context.label());
@@ -81,8 +81,8 @@ class AroundPropertyHookExamples implements AutoCloseable {
 		}
 
 		@Override
-		public boolean applyToDescendants() {
-			return true;
+		public PropagationMode propagateTo() {
+			return PropagationMode.ALL_DESCENDANTS;
 		}
 	}
 

@@ -12,6 +12,8 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
+import static net.jqwik.api.lifecycle.PropagationMode.*;
+
 public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	private static <T extends LifecycleHook> Comparator<T> dontCompare() {
@@ -116,7 +118,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	 */
 	void registerLifecycleInstance(TestDescriptor descriptor, LifecycleHook hookInstance) {
 		Class<? extends LifecycleHook> hookClass = hookInstance.getClass();
-		createAndRegisterHook(descriptor, hookClass, hookInstance);
+		createAndRegisterHook(descriptor, hookClass, hookInstance.propagateTo());
 		if (!instances.containsKey(hookClass)) {
 			instances.put(hookClass, hookInstance);
 		}
@@ -125,16 +127,19 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	private void createAndRegisterHook(
 		TestDescriptor descriptor,
 		Class<? extends LifecycleHook> hookClass,
-		LifecycleHook hookInstance
+		PropagationMode propagateTo
 	) {
-		boolean applyToAllChildren = hookInstance.applyToDescendants();
-		HookRegistration registration = new HookRegistration(descriptor, hookClass, applyToAllChildren);
+		HookRegistration registration = new HookRegistration(descriptor, hookClass, propagateTo);
 		if (!registrations.contains(registration)) {
 			registrations.add(registration);
 		}
 	}
 
-	public void registerLifecycleHook(TestDescriptor descriptor, Class<? extends LifecycleHook> hookClass) {
+	public void registerLifecycleHook(
+		TestDescriptor descriptor,
+		Class<? extends LifecycleHook> hookClass,
+		PropagationMode propagationMode
+	) {
 		if (JqwikReflectionSupport.isInnerClass(hookClass)) {
 			String message = String.format("Inner class [%s] cannot be used as LifecycleHook", hookClass.getName());
 			throw new JqwikException(message);
@@ -148,29 +153,33 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 				descriptor, () -> ReflectionSupport.newInstance(hookClass)
 			)
 		);
-		createAndRegisterHook(descriptor, hookClass, hookInstance);
+		PropagationMode propagateTo = propagationMode;
+		if (propagateTo == DEFAULT) {
+			propagateTo = hookInstance.propagateTo();
+		}
+		createAndRegisterHook(descriptor, hookClass, propagateTo);
 	}
 
 	private static class HookRegistration {
 		private final TestDescriptor descriptor;
 		private final Class<? extends LifecycleHook> hookClass;
-		private final boolean applyToDescendants;
+		private final PropagationMode propagationMode;
 
 		private HookRegistration(
 			TestDescriptor descriptor,
 			Class<? extends LifecycleHook> hookClass,
-			boolean applyToDescendants
+			PropagationMode propagationMode
 		) {
 			this.descriptor = descriptor;
 			this.hookClass = hookClass;
-			this.applyToDescendants = applyToDescendants;
+			this.propagationMode = propagationMode;
 		}
 
 		boolean match(TestDescriptor descriptor, boolean fromChild) {
 			if (descriptor == null) {
 				return false;
 			}
-			if (fromChild && !applyToDescendants) {
+			if (fromChild && (propagationMode != ALL_DESCENDANTS)) {
 				return false;
 			}
 			if (this.descriptor.equals(descriptor)) {
