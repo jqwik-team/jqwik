@@ -22,8 +22,8 @@ class ProbabilisticExperiments {
 class ProbabilisticAssertions {
 
 	public static void assertMinimumPercentage(double targetPercentage, Runnable assertions) {
-		Store<Integer> countAll = Store.getOrCreate(Tuple.of(assertions.getClass(), "countAll"), Store.Lifespan.PROPERTY, () -> 0);
-		Store<Integer> countSuccess = Store.getOrCreate(Tuple.of(assertions.getClass(), "countSuccess"), Store.Lifespan.PROPERTY, () -> 0);
+		Store<Integer> countAll = Store.getOrCreate(Tuple.of(assertions.getClass(), "countAll"), Lifespan.PROPERTY, () -> 0);
+		Store<Integer> countSuccess = Store.getOrCreate(Tuple.of(assertions.getClass(), "countSuccess"), Lifespan.PROPERTY, () -> 0);
 		try {
 			assertions.run();
 			countAll.update(i -> i + 1);

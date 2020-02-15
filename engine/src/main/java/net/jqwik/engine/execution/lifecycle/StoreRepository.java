@@ -7,7 +7,7 @@ import java.util.stream.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.Store.*;
+import net.jqwik.api.lifecycle.*;
 
 /**
  * StoreRepository and ScopedStore CANNOT handle concurrent execution of properties!

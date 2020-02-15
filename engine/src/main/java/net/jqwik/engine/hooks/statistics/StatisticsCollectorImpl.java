@@ -117,13 +117,13 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	private Store<Integer> registerMaxCallsPerTry() {
 		Store<Integer> countCalls = Store.getOrCreate(
 			Tuple.of(this, "calls"),
-			Store.Lifespan.TRY,
+			Lifespan.TRY,
 			() -> 0
 		);
 		countCalls.update(i -> i + 1);
 		Store<Integer> maxCallsPerTry = Store.getOrCreate(
 			Tuple.of(this, "max"),
-			Store.Lifespan.PROPERTY,
+			Lifespan.PROPERTY,
 			() -> 0
 		);
 		maxCallsPerTry.update(old -> Math.max(old, countCalls.get()));

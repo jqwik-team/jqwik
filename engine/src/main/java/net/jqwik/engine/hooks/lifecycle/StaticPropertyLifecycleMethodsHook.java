@@ -37,12 +37,12 @@ public class StaticPropertyLifecycleMethodsHook implements AroundPropertyHook {
 		// Identifiers and executors cannot be in Map because order of entry must be kept
 		Store<Set<AfterPropertyExecutor>> identifiers =
 			Store.create(
-				IDENTIFIERS_STORE_ID, Store.Lifespan.PROPERTY,
+				IDENTIFIERS_STORE_ID, Lifespan.PROPERTY,
 				HashSet::new
 			);
 		Store<List<AfterPropertyExecutor>> executorsInOrder =
 			Store.create(
-				ORDER_STORE_ID, Store.Lifespan.PROPERTY,
+				ORDER_STORE_ID, Lifespan.PROPERTY,
 				ArrayList::new
 			);
 		PropertyExecutionResult executionResult = property.execute();

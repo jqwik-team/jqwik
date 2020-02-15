@@ -2,7 +2,6 @@ package net.jqwik.engine.execution;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.Store.*;
 
 import static org.assertj.core.api.Assertions.*;
 

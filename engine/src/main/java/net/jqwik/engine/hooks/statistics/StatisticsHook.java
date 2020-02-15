@@ -24,7 +24,7 @@ public class StatisticsHook implements AroundPropertyHook {
 		Store<Map<String, StatisticsCollectorImpl>> collectorsStore =
 			Store.create(
 				StatisticsCollectorImpl.COLLECTORS_ID,
-				Store.Lifespan.PROPERTY,
+				Lifespan.PROPERTY,
 				STATISTICS_MAP_SUPPLIER
 			);
 

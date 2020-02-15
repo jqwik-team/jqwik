@@ -36,26 +36,13 @@ public interface Store<T> {
 	}
 
 	/**
-	 * A {@linkplain Store} with the same identifier can live
-	 *
-	 * <ul>
-	 *     <li>For the whole test run</li>
-	 *     <li>For the currently running property</li>
-	 *     <li>For the currently running try</li>
-	 * </ul>
-	 */
-	enum Lifespan {
-		RUN, PROPERTY, TRY
-	}
-
-	/**
 	 * Create a new store for storing and retrieving values and objects in lifecycle
 	 * hooks and lifecycle-dependent methods.
 	 *
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique.
 	 * @param lifespan
-	 * @param initializer
+	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New store instance
 	 */
 	static <T> Store<T> create(Object identifier, Lifespan lifespan, Supplier<T> initializer) {
@@ -68,7 +55,7 @@ public interface Store<T> {
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique.
 	 * @param lifespan
-	 * @param initializer
+	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New or existing store instance
 	 */
 	static <T> Store<T> getOrCreate(Object identifier, Lifespan lifespan, Supplier<T> initializer) {

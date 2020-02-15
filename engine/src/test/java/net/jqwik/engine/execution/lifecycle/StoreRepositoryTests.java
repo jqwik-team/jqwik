@@ -8,7 +8,7 @@ import org.junit.platform.engine.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.Store.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;

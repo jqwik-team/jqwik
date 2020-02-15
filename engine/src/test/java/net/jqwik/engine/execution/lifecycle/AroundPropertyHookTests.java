@@ -6,11 +6,10 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.LifecycleHook.*;
 
 class AroundPropertyHookTests {
 
-	static Store<List<String>> calls = Store.create("calls", Store.Lifespan.PROPERTY, ArrayList::new);
+	static Store<List<String>> calls = Store.create("calls", Lifespan.PROPERTY, ArrayList::new);
 
 	@Example
 	@AddLifecycleHook(Outer.class)
