@@ -16,7 +16,7 @@ public interface ParameterResolutionContext {
 
 	Parameter parameter();
 
-	TypeUsage usage();
+	TypeUsage typeUsage();
 
 	int index();
 }

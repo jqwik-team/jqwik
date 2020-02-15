@@ -66,7 +66,7 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 			@Override
 			public Object value() {
 				Object value = supplier.get();
-				if (!context.usage().isAssignableFrom(value.getClass())) {
+				if (!context.typeUsage().isAssignableFrom(value.getClass())) {
 					String info = String.format(
 						"Type [%s] of resolved value does not fit parameter type [%s]",
 						value.getClass().getName(),

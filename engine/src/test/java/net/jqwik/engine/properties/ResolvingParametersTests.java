@@ -45,7 +45,7 @@ class ResolvingParametersTests {
 		ResolveParameterHook stringInjector = (parameterContext, propertyContext) -> {
 			assertThat(propertyContext).isSameAs(propertyLifecycleContext);
 			assertThat(parameterContext.index()).isEqualTo(1);
-			if (parameterContext.usage().isOfType(String.class)) {
+			if (parameterContext.typeUsage().isOfType(String.class)) {
 				return Optional.of(() -> "aString");
 			}
 			return Optional.empty();
@@ -92,7 +92,7 @@ class ResolvingParametersTests {
 		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1, 2), asList(3, 4));
 		ResolveParameterHook stringInjector = (parameterContext, propertyContext) -> {
 			assertThat(parameterContext.index()).isIn(0, 2);
-			if (parameterContext.usage().isOfType(String.class)) {
+			if (parameterContext.typeUsage().isOfType(String.class)) {
 				return Optional.of(() -> "aString");
 			}
 			return Optional.empty();
@@ -222,7 +222,7 @@ class CreateAString implements ResolveParameterHook {
 
 		countInjectorCalls.update(i -> i + 1);
 
-		if (parameterContext.usage().isOfType(String.class)) {
+		if (parameterContext.typeUsage().isOfType(String.class)) {
 			return Optional.of(() -> {
 				countSupplierCalls.update(i -> i + 1);
 				return "aString";

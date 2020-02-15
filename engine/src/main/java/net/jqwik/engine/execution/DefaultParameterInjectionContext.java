@@ -18,7 +18,7 @@ public class DefaultParameterInjectionContext implements ParameterResolutionCont
 	}
 
 	@Override
-	public TypeUsage usage() {
+	public TypeUsage typeUsage() {
 		return TypeUsageImpl.forParameter(parameter);
 	}
 
