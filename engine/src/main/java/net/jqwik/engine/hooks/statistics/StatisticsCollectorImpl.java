@@ -2,13 +2,11 @@ package net.jqwik.engine.hooks.statistics;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.logging.*;
 import java.util.stream.*;
 
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsCoverage.*;
 import net.jqwik.engine.facades.*;
@@ -16,11 +14,10 @@ import net.jqwik.engine.facades.*;
 public class StatisticsCollectorImpl implements StatisticsCollector {
 	public static final Object COLLECTORS_ID = Tuple.of(StatisticsCollectorImpl.class, "collectors");
 
-	private static final Logger LOG = Logger.getLogger(StatisticsCollectorImpl.class.getName());
-
 	private final Map<List<Object>, Integer> counts = new HashMap<>();
-
+	private final List<Consumer<StatisticsCoverage>> coverageCheckers = new ArrayList<>();
 	private final String label;
+
 	private List<StatisticsEntryImpl> statisticsEntries = null;
 
 	public StatisticsCollectorImpl(String label) {
@@ -102,32 +99,14 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public void coverage(Consumer<StatisticsCoverage> checker) {
-		Store<Integer> maxCallsPerTry = registerMaxCallsPerTry();
-
-		PropertyLifecycle.onSuccess(Tuple.of(this, checker.getClass()), () -> {
-			if (maxCallsPerTry.get() > 1) {
-				String message = String.format("coverage() should not be invoked more than once %s", statisticsLabel(label));
-				LOG.warning(message);
-			}
-			StatisticsCoverage coverage = new StatisticsCoverageImpl();
-			checker.accept(coverage);
-		});
+		coverageCheckers.add(checker);
 	}
 
-	private Store<Integer> registerMaxCallsPerTry() {
-		Store<Integer> countCalls = Store.getOrCreate(
-			Tuple.of(this, "calls"),
-			Lifespan.TRY,
-			() -> 0
-		);
-		countCalls.update(i -> i + 1);
-		Store<Integer> maxCallsPerTry = Store.getOrCreate(
-			Tuple.of(this, "max"),
-			Lifespan.PROPERTY,
-			() -> 0
-		);
-		maxCallsPerTry.update(old -> Math.max(old, countCalls.get()));
-		return maxCallsPerTry;
+	public void checkCoverage() {
+		for (Consumer<StatisticsCoverage> checker : coverageCheckers) {
+			StatisticsCoverage coverage = new StatisticsCoverageImpl();
+			checker.accept(coverage);
+		}
 	}
 
 	public Map<List<Object>, Integer> getCounts() {

@@ -1,7 +1,6 @@
 - 1.2.4
 
     - Get rid of static PropertyLifecycle methods
-        - Switch StatisticsCollectorImpl.coverage to use own lifecycle hook
         - Implement @PropertyLifecycle with before/after/onSuccess/onFailure methods
         - Remove static PropertyLifecycle methods
 

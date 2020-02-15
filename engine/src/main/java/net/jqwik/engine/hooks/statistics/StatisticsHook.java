@@ -30,11 +30,30 @@ public class StatisticsHook implements AroundPropertyHook {
 
 		PropertyExecutionResult testExecutionResult = property.execute();
 
-		afterExecution(collectorsStore.get(), context);
+		Map<String, StatisticsCollectorImpl> collectors = collectorsStore.get();
+		createStatisticsReports(collectors, context);
+		if (testExecutionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL) {
+			return checkCoverages(testExecutionResult, collectors.values());
+		}
 		return testExecutionResult;
 	}
 
-	private void afterExecution(Map<String, StatisticsCollectorImpl> collectors, PropertyLifecycleContext context) {
+	private PropertyExecutionResult checkCoverages(
+		PropertyExecutionResult testExecutionResult,
+		Collection<StatisticsCollectorImpl> collectors
+	) {
+		try {
+			for (StatisticsCollectorImpl collector : collectors) {
+				collector.checkCoverage();
+			}
+			return testExecutionResult;
+		} catch (Throwable throwable) {
+			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+			return testExecutionResult.mapToFailed(throwable);
+		}
+	}
+
+	private void createStatisticsReports(Map<String, StatisticsCollectorImpl> collectors, PropertyLifecycleContext context) {
 		StatisticsReportFormat reportFormat = new StandardStatisticsReportFormat();
 		Optional<StatisticsReport> optionalStatisticsReport =
 			JqwikAnnotationSupport.findAnnotationOnElementOrContainer(context.targetMethod(), StatisticsReport.class);
