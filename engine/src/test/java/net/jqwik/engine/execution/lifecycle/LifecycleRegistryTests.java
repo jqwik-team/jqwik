@@ -55,7 +55,7 @@ class LifecycleRegistryTests {
 	@Example
 	void currentDescriptorIsSetDuringRegisteringHookClass() {
 		TestDescriptor container1 = forClass(Container1.class, "method1_1", "method1_2").build();
-		registry.registerLifecycleHook(container1, RememberCurrentDescriptorHook.class, PropagationMode.DEFAULT);
+		registry.registerLifecycleHook(container1, RememberCurrentDescriptorHook.class, NO_ONE);
 
 		assertThat(RememberCurrentDescriptorHook.currentDescriptor).isSameAs(container1);
 	}

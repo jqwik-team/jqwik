@@ -18,5 +18,5 @@ public @interface AddLifecycleHook {
 	Class<? extends LifecycleHook> value();
 
 	@API(status = EXPERIMENTAL, since = "1.0")
-	PropagationMode propagateTo() default PropagationMode.DEFAULT;
+	PropagationMode propagateTo() default PropagationMode.NOT_SET;
 }

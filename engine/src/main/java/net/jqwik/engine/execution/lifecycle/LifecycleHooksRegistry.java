@@ -154,7 +154,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			)
 		);
 		PropagationMode propagateTo = propagationMode;
-		if (propagateTo == DEFAULT) {
+		if (propagateTo == NOT_SET) {
 			propagateTo = hookInstance.propagateTo();
 		}
 		createAndRegisterHook(descriptor, hookClass, propagateTo);

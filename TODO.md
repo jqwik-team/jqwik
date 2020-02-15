@@ -1,5 +1,10 @@
 - 1.2.4
 
+    - Get rid of static PropertyLifecycle methods
+        - Switch StatisticsCollectorImpl.coverage to use own lifecycle hook
+        - Implement @PropertyLifecycle with before/after/onSuccess/onFailure methods
+        - Remove static PropertyLifecycle methods
+
     - Container lifecycle
         - @BeforeContainer methods
         - @AfterContainer methods
@@ -21,6 +26,13 @@
     - Somehow allow to parameterize hook registrations, e.g.
       @AddLifecycleHook(MyHook.class, configuration = { })
 
+    - ResolveParameterHook
+        - `@ResolveParameter` method
+    
+    - ProvideArbitraryHook
+        - Let domains use that hook
+        - Let ArbitraryProviders use that hook
+    
     - Guided Generation
       https://github.com/jlink/jqwik/issues/84
       
