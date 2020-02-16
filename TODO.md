@@ -1,9 +1,10 @@
 - 1.2.4
 
     - Get rid of static PropertyLifecycle methods
-        - Remove static PropertyLifecycle methods
         - PerPropertyLifecycle.resolveParameter()
 
+    - Store.onChange()
+    
     - Container lifecycle
         - @BeforeContainer methods
         - @AfterContainer methods

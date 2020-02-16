@@ -31,9 +31,6 @@ class AroundTryHookTests {
 	@AddLifecycleHook(IncrementCount2.class)
 	@PerProperty(AssertCount2.class)
 	void sameHookTwiceIsIgnored() {
-		PropertyLifecycle.onSuccess(() -> {
-			assertThat(count2).isEqualTo(10);
-		});
 	}
 
 	class AssertCount2 implements PerProperty.PerPropertyLifecycle {

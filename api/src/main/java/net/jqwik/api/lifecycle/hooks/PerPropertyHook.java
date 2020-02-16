@@ -16,9 +16,20 @@ public class PerPropertyHook implements AroundPropertyHook {
 		});
 		PerPropertyLifecycle lifecycle = context.newInstance(lifecycleClass);
 
-		lifecycle.before(context);
+		runBeforeExecutionLifecycles(context, lifecycle);
 
 		PropertyExecutionResult executionResult = property.execute();
+		return runAfterExecutionLifecycles(lifecycle, executionResult);
+	}
+
+	private void runBeforeExecutionLifecycles(PropertyLifecycleContext context, PerPropertyLifecycle lifecycle) {
+		lifecycle.before(context);
+	}
+
+	private PropertyExecutionResult runAfterExecutionLifecycles(
+		PerPropertyLifecycle lifecycle,
+		PropertyExecutionResult executionResult
+	) {
 		try {
 			if (executionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL) {
 				try {
@@ -38,6 +49,6 @@ public class PerPropertyHook implements AroundPropertyHook {
 	@Override
 	public int aroundPropertyProximity() {
 		// Somewhat closer than standard hooks
-		return 5;
+		return 10;
 	}
 }

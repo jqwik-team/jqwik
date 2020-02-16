@@ -10,13 +10,10 @@ public class Hooks {
 		// AutoCloseable.close() should usually be the last thing in the hook chain
 		public static final int AUTO_CLOSEABLE_PROXIMITY = -100;
 
-		// Should run shortly before AutoCloseableHook
-		public static final int STATIC_PROPERTY_LIFECYCLE_PROXIMITY = -90;
+		// Should run outside of standard hooks
+		public static final int STATISTICS_PROXIMITY = -50;
 
-		// Should run inside property lifecycle
-		public static final int STATISTICS_PROXIMITY = -80;
-
-		// Should run inside StatisticsHook
+		// Should run inside auto closeable
 		public static final int EXPECT_FAILURE_PROXIMITY = -95;
 
 	}
