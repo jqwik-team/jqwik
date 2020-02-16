@@ -8,6 +8,23 @@ import static org.assertj.core.api.Assertions.*;
 
 public class PropertyLifecycleExamples {
 
+	@Property
+	@PerProperty(CheckSuccess.class)
+	void test() {
+
+	}
+
+	class CheckSuccess implements PerProperty.PerPropertyLifecycle {
+		@Override
+		public void before() {
+
+		}
+		@Override
+		public void onSuccess() {
+
+		}
+	}
+
 	int maxLength = 0;
 
 //	@Property

@@ -12,8 +12,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.2.3")
 public class PropertyLifecycle {
 
-	private PropertyLifecycle() {
-	}
+	// OLD stuff below shall be removed
 
 	@FunctionalInterface
 	public interface AfterPropertyExecutor {
