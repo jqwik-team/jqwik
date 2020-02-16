@@ -1,8 +1,8 @@
 - 1.2.4
 
     - Get rid of static PropertyLifecycle methods
-        - Implement @PropertyLifecycle with before/after/onSuccess/onFailure methods
         - Remove static PropertyLifecycle methods
+        - PerPropertyLifecycle.resolveParameter()
 
     - Container lifecycle
         - @BeforeContainer methods

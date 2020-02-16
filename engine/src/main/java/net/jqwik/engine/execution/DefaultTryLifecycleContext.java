@@ -1,5 +1,6 @@
 package net.jqwik.engine.execution;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -30,5 +31,15 @@ public class DefaultTryLifecycleContext implements TryLifecycleContext {
 	@Override
 	public Reporter reporter() {
 		return propertyContext.reporter();
+	}
+
+	@Override
+	public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
+		return propertyContext.findAnnotation(annotationClass);
+	}
+
+	@Override
+	public <T> T newInstance(Class<T> clazz) {
+		return propertyContext.newInstance(clazz);
 	}
 }

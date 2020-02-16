@@ -5,14 +5,14 @@ import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.support.*;
 
-public class DefaultContainerLifecycleContext implements ContainerLifecycleContext {
+public class DefaultContainerLifecycleContext extends AbstractLifecycleContext implements ContainerLifecycleContext {
 	private final ContainerClassDescriptor classDescriptor;
-	private Reporter reporter;
 
 	public DefaultContainerLifecycleContext(ContainerClassDescriptor classDescriptor, Reporter reporter) {
+		super(reporter);
 		this.classDescriptor = classDescriptor;
-		this.reporter = reporter;
 	}
 
 	@Override
@@ -26,12 +26,13 @@ public class DefaultContainerLifecycleContext implements ContainerLifecycleConte
 	}
 
 	@Override
-	public Reporter reporter() {
-		return reporter;
-	}
-
-	@Override
 	public Optional<Class<?>> containerClass() {
 		return Optional.of(classDescriptor.getContainerClass());
 	}
+
+	@Override
+	public <T> T newInstance(Class<T> clazz) {
+		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(clazz);
+	}
+
 }

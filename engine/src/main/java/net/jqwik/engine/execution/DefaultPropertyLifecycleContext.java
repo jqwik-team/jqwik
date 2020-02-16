@@ -5,13 +5,15 @@ import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.support.*;
 
-public class DefaultPropertyLifecycleContext implements PropertyLifecycleContext {
+public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext implements PropertyLifecycleContext {
 	private final PropertyMethodDescriptor methodDescriptor;
 	private final Object testInstance;
 	private final Reporter reporter;
 
 	public DefaultPropertyLifecycleContext(PropertyMethodDescriptor methodDescriptor, Object testInstance, Reporter reporter) {
+		super(reporter);
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
 		this.reporter = reporter;
@@ -51,4 +53,10 @@ public class DefaultPropertyLifecycleContext implements PropertyLifecycleContext
 	public String extendedLabel() {
 		return methodDescriptor.extendedLabel();
 	}
+
+	@Override
+	public <T> T newInstance(Class<T> clazz) {
+		return JqwikReflectionSupport.newInstanceInTestContext(clazz, testInstance());
+	}
+
 }

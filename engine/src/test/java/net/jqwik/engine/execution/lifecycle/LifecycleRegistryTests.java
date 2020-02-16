@@ -1,5 +1,6 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -9,6 +10,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.support.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -98,21 +100,31 @@ class LifecycleRegistryTests {
 
 		private LifecycleContext createLifecycleContext(String label) {
 			return new LifecycleContext() {
-						@Override
-						public String label() {
-							return label;
-						}
+				@Override
+				public String label() {
+					return label;
+				}
 
-						@Override
-						public Optional<AnnotatedElement> annotatedElement() {
-							return Optional.empty();
-						}
+				@Override
+				public Optional<AnnotatedElement> annotatedElement() {
+					return Optional.empty();
+				}
 
-						@Override
-						public Reporter reporter() {
-							return null;
-						}
-					};
+				@Override
+				public Reporter reporter() {
+					return null;
+				}
+
+				@Override
+				public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
+					return Optional.empty();
+				}
+
+				@Override
+				public <T> T newInstance(Class<T> clazz) {
+					return JqwikReflectionSupport.newInstanceWithDefaultConstructor(clazz);
+				}
+			};
 		}
 
 		@Property(tries = 10)

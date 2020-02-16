@@ -6,15 +6,15 @@ import java.util.*;
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.support.*;
 
-public class EngineLifecycleContext implements ContainerLifecycleContext {
+public class EngineLifecycleContext extends AbstractLifecycleContext implements ContainerLifecycleContext {
 
 	private TestDescriptor engineDescriptor;
-	private Reporter reporter;
 
 	public EngineLifecycleContext(TestDescriptor engineDescriptor, Reporter reporter) {
+		super(reporter);
 		this.engineDescriptor = engineDescriptor;
-		this.reporter = reporter;
 	}
 
 	@Override
@@ -33,7 +33,8 @@ public class EngineLifecycleContext implements ContainerLifecycleContext {
 	}
 
 	@Override
-	public Reporter reporter() {
-		return reporter;
+	public <T> T newInstance(Class<T> clazz) {
+		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(clazz);
 	}
+
 }

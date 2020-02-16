@@ -34,6 +34,8 @@ public @interface PerProperty {
 
 		default void before() {}
 
+		default void after() {}
+
 		default void onSuccess() {}
 
 		default PropertyExecutionResult onFailure(PropertyExecutionResult propertyExecutionResult) {
