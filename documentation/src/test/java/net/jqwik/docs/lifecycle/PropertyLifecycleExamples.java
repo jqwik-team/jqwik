@@ -10,18 +10,18 @@ public class PropertyLifecycleExamples {
 
 	int maxLength = 0;
 
-	@Property
-	void maxStringLength(@ForAll String aString) {
-
-		maxLength = Math.max(maxLength, aString.length());
-
-		PropertyLifecycle.after(((executionResult, context) -> {
-			assertThat(maxLength)
-				.describedAs("max size of all generated strings")
-				.isGreaterThan(10);
-			return executionResult.mapToSuccessful();
-		}));
-	}
+//	@Property
+//	void maxStringLength(@ForAll String aString) {
+//
+//		maxLength = Math.max(maxLength, aString.length());
+//
+//		PropertyLifecycle.after(((executionResult, context) -> {
+//			assertThat(maxLength)
+//				.describedAs("max size of all generated strings")
+//				.isGreaterThan(10);
+//			return executionResult.mapToSuccessful();
+//		}));
+//	}
 
 	long aggregatedLength = 0;
 

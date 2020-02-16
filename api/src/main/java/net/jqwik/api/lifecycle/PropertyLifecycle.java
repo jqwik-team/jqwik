@@ -31,7 +31,7 @@ public class PropertyLifecycle {
 		public abstract void after(Object key, AfterPropertyExecutor afterPropertyExecutor);
 	}
 
-	public static void onSuccess(Object identifier, Runnable runnable) {
+	private static void onSuccess(Object identifier, Runnable runnable) {
 		AfterPropertyExecutor afterPropertyExecutor = (executionResult, context) -> {
 			if (executionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL) {
 				runnable.run();
@@ -49,7 +49,7 @@ public class PropertyLifecycle {
 		after(null, afterPropertyExecutor);
 	}
 
-	public static void after(Object identifier, AfterPropertyExecutor afterPropertyExecutor) {
+	private static void after(Object identifier, AfterPropertyExecutor afterPropertyExecutor) {
 		PropertyLifecycleFacade.implementation.after(identifier, afterPropertyExecutor);
 	}
 

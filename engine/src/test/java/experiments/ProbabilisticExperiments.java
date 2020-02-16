@@ -32,12 +32,12 @@ class ProbabilisticAssertions {
 			countAll.update(i -> i + 1);
 		}
 
-		PropertyLifecycle.onSuccess(countSuccess, () -> {
-			double percentage = countSuccess.get() * 100.0 / countAll.get();
-			if (percentage < targetPercentage) {
-				String message = String.format("[%s] is below minimum percentage [%s]", percentage, targetPercentage);
-				throw new AssertionFailedError(message);
-			}
-		});
+//		PropertyLifecycle.onSuccess(countSuccess, () -> {
+//			double percentage = countSuccess.get() * 100.0 / countAll.get();
+//			if (percentage < targetPercentage) {
+//				String message = String.format("[%s] is below minimum percentage [%s]", percentage, targetPercentage);
+//				throw new AssertionFailedError(message);
+//			}
+//		});
 	}
 }
