@@ -13,10 +13,15 @@ class AroundTryHookTests {
 
 	@Property(tries = 10)
 	@AddLifecycleHook(IncrementCount1.class)
+	@PerProperty(AssertCount1.class)
 	void singleHookIsApplied() {
-		PropertyLifecycle.onSuccess(() -> {
+	}
+
+	class AssertCount1 implements PerProperty.PerPropertyLifecycle {
+		@Override
+		public void onSuccess() {
 			assertThat(count1).isEqualTo(10);
-		});
+		}
 	}
 
 	static int count2 = 0;
@@ -24,46 +29,69 @@ class AroundTryHookTests {
 	@Property(tries = 10)
 	@AddLifecycleHook(IncrementCount2.class)
 	@AddLifecycleHook(IncrementCount2.class)
+	@PerProperty(AssertCount2.class)
 	void sameHookTwiceIsIgnored() {
 		PropertyLifecycle.onSuccess(() -> {
 			assertThat(count2).isEqualTo(10);
 		});
 	}
 
+	class AssertCount2 implements PerProperty.PerPropertyLifecycle {
+		@Override
+		public void onSuccess() {
+			assertThat(count2).isEqualTo(10);
+		}
+	}
+
 	static int count3 = 0;
 
 	@Property(tries = 10)
 	@AddLifecycleHook(SwallowFailure.class)
+	@PerProperty(AssertCount3.class)
 	void hookCanSwallowFailures() {
 		count3++;
 		if (count3 > 5) {
 			fail("Should be swallowed");
 		}
-		PropertyLifecycle.onSuccess(() -> {
+	}
+
+	class AssertCount3 implements PerProperty.PerPropertyLifecycle {
+		@Override
+		public void onSuccess() {
 			assertThat(count3).isEqualTo(10);
-		});
+		}
 	}
 
 	static int sum = 0;
 
 	@Property(tries = 10)
 	@AddLifecycleHook(ChangeParamTo1.class)
+	@PerProperty(AssertSum.class)
 	void hookCanChangeParameters(@ForAll int anInt) {
 		sum += anInt;
-		PropertyLifecycle.onSuccess(() -> {
+	}
+
+	class AssertSum implements PerProperty.PerPropertyLifecycle {
+		@Override
+		public void onSuccess() {
 			assertThat(sum).isEqualTo(10);
-		});
+		}
 	}
 
 	static int finishEarlyTries = 0;
 
 	@Property(tries = 10)
 	@AddLifecycleHook(FinishAfter5Tries.class)
+	@PerProperty(AssertFinishEarlyTries.class)
 	void hookCanFinishEarly(@ForAll int anInt) {
 		finishEarlyTries += 1;
-		PropertyLifecycle.onSuccess(() -> {
+	}
+
+	class AssertFinishEarlyTries implements PerProperty.PerPropertyLifecycle {
+		@Override
+		public void onSuccess() {
 			assertThat(finishEarlyTries).isEqualTo(5);
-		});
+		}
 	}
 
 }

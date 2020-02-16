@@ -44,10 +44,6 @@ public class PropertyLifecycle {
 		onSuccess(runnable.getClass(), runnable);
 	}
 
-	public static void after(AfterPropertyExecutor afterPropertyExecutor) {
-		after(null, afterPropertyExecutor);
-	}
-
 	private static void after(Object identifier, AfterPropertyExecutor afterPropertyExecutor) {
 		PropertyLifecycleFacade.implementation.after(identifier, afterPropertyExecutor);
 	}
