@@ -99,7 +99,10 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	@Override
 	public void coverage(Consumer<StatisticsCoverage> checker) {
-		coverageCheckers.add(checker);
+		// The same checker shall only be used once
+		if (!coverageCheckers.contains(checker)) {
+			coverageCheckers.add(checker);
+		}
 	}
 
 	public void checkCoverage() {

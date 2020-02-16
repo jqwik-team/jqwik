@@ -9,8 +9,8 @@ import org.assertj.core.data.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.Statistics;
+import net.jqwik.api.statistics.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -27,6 +27,42 @@ class StatisticsCoverageTests {
 
 		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(true).count(c -> true));
 		Statistics.coverage(statisticsCoverage -> statisticsCoverage.check(false).count(c -> false));
+	}
+
+	@Property(tries = 50)
+	@AddLifecycleHook(CheckCountIsExactly1.class)
+	void coverageCheckersAreCalledExactlyOnce(@ForAll int anInt) {
+		Statistics.collect(anInt > 0);
+
+		Statistics.coverage(statisticsCoverage -> {
+			Store<Integer> count = Store.get("countCheckTrue");
+			count.update(i -> i + 1);
+			statisticsCoverage.check(true).count(c -> true);
+		});
+		Statistics.coverage(statisticsCoverage -> {
+			Store<Integer> count = Store.get("countCheckFalse");
+			count.update(i -> i + 1);
+			statisticsCoverage.check(false).count(c -> true);
+		});
+	}
+
+	static class CheckCountIsExactly1 implements AroundPropertyHook {
+		@Override
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
+			Store<Integer> countCheckTrue = Store.create("countCheckTrue", Lifespan.PROPERTY, () -> 0);
+			Store<Integer> countCheckFalse = Store.create("countCheckFalse", Lifespan.PROPERTY, () -> 0);
+			try {
+				return property.execute();
+			} finally {
+				assertThat(countCheckTrue.get()).isEqualTo(1);
+				assertThat(countCheckFalse.get()).isEqualTo(1);
+			}
+		}
+
+		@Override
+		public int aroundPropertyProximity() {
+			return -90;
+		}
 	}
 
 	@Group
