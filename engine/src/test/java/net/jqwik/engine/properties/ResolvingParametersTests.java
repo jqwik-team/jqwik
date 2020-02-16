@@ -7,6 +7,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.PerProperty.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.execution.*;
 import net.jqwik.engine.support.*;
@@ -113,16 +114,30 @@ class ResolvingParametersTests {
 
 	@Property(tries = 10)
 	@AddLifecycleHook(CreateAString.class)
+	@PerProperty(Assert1InjectorCalls.class)
 	void resolverIsCalledOnce(@ForAll int ignore, String aString) {
 		assertThat(aString).isEqualTo("aString");
-		PropertyLifecycle.onSuccess(() -> assertThat(CreateAString.countInjectorCalls.get()).isEqualTo(1));
+	}
+
+	class Assert1InjectorCalls implements PerPropertyLifecycle {
+		@Override
+		public void onSuccess() {
+			assertThat(CreateAString.countInjectorCalls.get()).isEqualTo(1);
+		}
 	}
 
 	@Property(tries = 10)
 	@AddLifecycleHook(CreateAString.class)
+	@PerProperty(Assert10SupplierCalls.class)
 	void supplierIsCalledOncePerTry(@ForAll int ignore, String aString) {
 		assertThat(aString).isEqualTo("aString");
-		PropertyLifecycle.onSuccess(() -> assertThat(CreateAString.countSupplierCalls.get()).isEqualTo(10));
+	}
+
+	class Assert10SupplierCalls implements PerPropertyLifecycle {
+		@Override
+		public void onSuccess() {
+			assertThat(CreateAString.countSupplierCalls.get()).isEqualTo(10);
+		}
 	}
 
 	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
@@ -195,6 +210,7 @@ class ResolvingParametersTests {
 		@Property
 		void stringIntStringInt(String s1, @ForAll int i1, String s2, @ForAll int i2) {}
 	}
+
 }
 
 class CreateAlwaysAString implements ResolveParameterHook {
