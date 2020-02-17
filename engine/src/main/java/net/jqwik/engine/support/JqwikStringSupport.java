@@ -77,7 +77,6 @@ public class JqwikStringSupport {
 		}
 		catch (Throwable throwable) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-
 			return defaultToString(obj);
 		}
 	}

@@ -119,7 +119,7 @@ class ResolvingParametersTests {
 		assertThat(aString).isEqualTo("aString");
 	}
 
-	class Assert1InjectorCalls implements PerPropertyLifecycle {
+	class Assert1InjectorCalls implements Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(CreateAString.countInjectorCalls.get()).isEqualTo(1);
@@ -133,7 +133,7 @@ class ResolvingParametersTests {
 		assertThat(aString).isEqualTo("aString");
 	}
 
-	class Assert10SupplierCalls implements PerPropertyLifecycle {
+	class Assert10SupplierCalls implements Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(CreateAString.countSupplierCalls.get()).isEqualTo(10);

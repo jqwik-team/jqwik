@@ -19,8 +19,6 @@ public interface TestingFalsifier<T> extends Falsifier<T>, Predicate<T> {
 			return TryExecutionResult.invalid();
 		} catch (AssertionError | Exception e) {
 			return TryExecutionResult.falsified(e);
-		} catch (Throwable throwable) {
-			return JqwikExceptionSupport.throwAsUncheckedException(throwable);
 		}
 	}
 

@@ -19,7 +19,7 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.2.4")
 public @interface PerProperty {
 
-	interface PerPropertyLifecycle extends ResolveParameterHook{
+	interface Lifecycle extends ResolveParameterHook {
 		@Override
 		default Optional<Supplier<Object>> resolve(
 			ParameterResolutionContext parameterContext,
@@ -28,13 +28,9 @@ public @interface PerProperty {
 			return Optional.empty();
 		}
 
-		default void before(PropertyLifecycleContext context) {
-			before();
-		}
+		default void before(PropertyLifecycleContext context) {}
 
-		default void before() {}
-
-		default void after() {}
+		default void after(PropertyExecutionResult propertyExecutionResult) {}
 
 		default void onSuccess() {}
 
@@ -43,5 +39,5 @@ public @interface PerProperty {
 		}
 	}
 
-	Class<? extends PerPropertyLifecycle> value();
+	Class<? extends Lifecycle> value();
 }

@@ -16,7 +16,7 @@ class PerPropertyTests {
 		fail("should be covered by onFailure");
 	}
 
-	class CoverFailure implements PerPropertyLifecycle {
+	class CoverFailure implements Lifecycle {
 		@Override
 		public PropertyExecutionResult onFailure(PropertyExecutionResult propertyExecutionResult) {
 			return propertyExecutionResult.mapToSuccessful();
@@ -29,7 +29,7 @@ class PerPropertyTests {
 	void fail_in_onSuccess(@ForAll @Positive int anInt) {
 	}
 
-	class FailInOnSuccess implements PerPropertyLifecycle {
+	class FailInOnSuccess implements Lifecycle {
 		@Override
 		public void onSuccess() {
 			fail("failing in onSuccess");
@@ -43,7 +43,7 @@ class PerPropertyTests {
 
 	}
 
-	class CheckCallToBefore implements PerPropertyLifecycle {
+	class CheckCallToBefore implements Lifecycle {
 		@Override
 		public void before(PropertyLifecycleContext context) {
 			assertThat(context.testInstance()).isInstanceOf(PerPropertyTests.class);
@@ -73,7 +73,7 @@ class PerPropertyTests {
 		afterCalled = false;
 	}
 
-	private class CallAfter implements PerPropertyLifecycle {
+	private class CallAfter implements Lifecycle {
 
 		@Override
 		public PropertyExecutionResult onFailure(PropertyExecutionResult propertyExecutionResult) {
@@ -81,7 +81,7 @@ class PerPropertyTests {
 		}
 
 		@Override
-		public void after() {
+		public void after(PropertyExecutionResult result) {
 			afterCalled = true;
 		}
 	}

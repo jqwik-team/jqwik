@@ -9,10 +9,6 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 
 	boolean isExtended();
 
-	int countChecks();
-
-	int countTries();
-
 	String randomSeed();
 
 	Optional<List<Object>> originalSample();

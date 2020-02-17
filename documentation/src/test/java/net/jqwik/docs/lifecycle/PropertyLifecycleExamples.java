@@ -1,10 +1,8 @@
 package net.jqwik.docs.lifecycle;
 
 import net.jqwik.api.*;
-import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PerProperty.*;
-import net.jqwik.api.statistics.Statistics;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -18,7 +16,7 @@ public class PropertyLifecycleExamples {
 		maxLength = Math.max(maxLength, aString.length());
 	}
 
-	private class CheckMaxLength implements PerPropertyLifecycle {
+	private class CheckMaxLength implements Lifecycle {
 		@Override
 		public void onSuccess() {
 			assertThat(maxLength)

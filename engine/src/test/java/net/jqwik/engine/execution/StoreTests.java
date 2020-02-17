@@ -29,7 +29,7 @@ class StoreTests {
 		counter.update(i -> i + 1);
 	}
 
-	class AssertCounter110 implements PerPropertyLifecycle {
+	class AssertCounter110 implements Lifecycle {
 		@Override
 		public void onSuccess() {
 			Store<Integer> counter = Store.get("counter");

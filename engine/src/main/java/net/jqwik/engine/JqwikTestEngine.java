@@ -42,7 +42,7 @@ public class JqwikTestEngine implements TestEngine {
 	public TestDescriptor discover(EngineDiscoveryRequest request, UniqueId uniqueId) {
 		// Throw exception caught during startup otherwise JUnit platform message hides original exception
 		if (startupThrowable != null) {
-			JqwikExceptionSupport.throwAsUncheckedException(startupThrowable);
+			return JqwikExceptionSupport.throwAsUncheckedException(startupThrowable);
 		}
 
 		TestDescriptor engineDescriptor = new JqwikEngineDescriptor(uniqueId);

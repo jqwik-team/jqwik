@@ -10,11 +10,11 @@ public class PerPropertyHook implements AroundPropertyHook {
 	@Override
 	public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
 		Optional<PerProperty> perProperty = context.findAnnotation(PerProperty.class);
-		Class<? extends PerPropertyLifecycle> lifecycleClass = perProperty.map(pp -> pp.value()).orElseThrow(() -> {
+		Class<? extends Lifecycle> lifecycleClass = perProperty.map(pp -> pp.value()).orElseThrow(() -> {
 			String message = "@PerProperty annotation MUST have a value() attribute";
 			return new JqwikException(message);
 		});
-		PerPropertyLifecycle lifecycle = context.newInstance(lifecycleClass);
+		Lifecycle lifecycle = context.newInstance(lifecycleClass);
 
 		runBeforeExecutionLifecycles(context, lifecycle);
 
@@ -22,12 +22,12 @@ public class PerPropertyHook implements AroundPropertyHook {
 		return runAfterExecutionLifecycles(lifecycle, executionResult);
 	}
 
-	private void runBeforeExecutionLifecycles(PropertyLifecycleContext context, PerPropertyLifecycle lifecycle) {
+	private void runBeforeExecutionLifecycles(PropertyLifecycleContext context, Lifecycle lifecycle) {
 		lifecycle.before(context);
 	}
 
 	private PropertyExecutionResult runAfterExecutionLifecycles(
-		PerPropertyLifecycle lifecycle,
+		Lifecycle lifecycle,
 		PropertyExecutionResult executionResult
 	) {
 		try {
@@ -42,7 +42,7 @@ public class PerPropertyHook implements AroundPropertyHook {
 			}
 			return executionResult;
 		} finally {
-			lifecycle.after();
+			lifecycle.after(executionResult);
 		}
 	}
 

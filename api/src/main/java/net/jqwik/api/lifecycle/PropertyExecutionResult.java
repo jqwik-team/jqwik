@@ -50,6 +50,12 @@ public interface PropertyExecutionResult {
 	Optional<Throwable> throwable();
 
 	@API(status = EXPERIMENTAL, since = "1.2.4")
+	int countChecks();
+
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	int countTries();
+
+	@API(status = EXPERIMENTAL, since = "1.2.4")
 	PropertyExecutionResult mapTo(Status newStatus, Throwable throwable);
 
 	@API(status = EXPERIMENTAL, since = "1.2.4")

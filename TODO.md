@@ -23,6 +23,8 @@
 
 - 1.2.x
 
+    - `@Report(reportOnlyFailures = false)`
+
     - Somehow allow to parameterize hook registrations, e.g.
       @AddLifecycleHook(MyHook.class, configuration = { })
 
