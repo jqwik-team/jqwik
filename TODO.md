@@ -1,8 +1,5 @@
 - 1.2.4
 
-    - Somehow allow to parameterize hook registrations, e.g.
-      @AddLifecycleHook(MyHook.class, configuration = { })
-
     - Container lifecycle
         - @BeforeContainer methods
         - @AfterContainer methods
