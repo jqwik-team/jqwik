@@ -1,7 +1,9 @@
 - 1.2.4
 
-    - Get rid of static PropertyLifecycle methods
-        - PerPropertyLifecycle.resolveParameter()
+    - PerProperty.Lifecycle
+        - resolveParameter()
+        - beforeTry(TryContext, parameters)
+        - afterTry(TryExecutionResult)
 
     - Store.onChange()
     
@@ -17,12 +19,12 @@
     - Around try lifecycle
         - @BeforeTry methods
         - @AfterTry methods
-        - TryLifecycle objects
-            try(TryLifecycle lc = new ...) {...}
 
 
 - 1.2.x
 
+    - Spring/Boot Testing in its own module
+    
     - `@Report(reportOnlyFailures = false)`
 
     - Somehow allow to parameterize hook registrations, e.g.
@@ -43,9 +45,7 @@
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
 
-    - Spring/Boot Testing in its own module
-    
     
 - 1.3.0
 
-    - Documentation for lifecycle API in user guide
+    - Documentation for lifecycle hooks API in user guide
