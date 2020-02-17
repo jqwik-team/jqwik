@@ -1,5 +1,8 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import java.util.*;
+import java.util.function.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
@@ -73,7 +76,7 @@ class PerPropertyTests {
 		afterCalled = false;
 	}
 
-	private class CallAfter implements Lifecycle {
+	class CallAfter implements Lifecycle {
 
 		@Override
 		public PropertyExecutionResult onFailure(PropertyExecutionResult propertyExecutionResult) {
@@ -86,7 +89,7 @@ class PerPropertyTests {
 		}
 	}
 
-	private static class AssertAfterCalled implements AroundPropertyHook {
+	static class AssertAfterCalled implements AroundPropertyHook {
 		@Override
 		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
 			try {
@@ -94,6 +97,25 @@ class PerPropertyTests {
 			} finally {
 				assertThat(afterCalled).describedAs("after should have been called").isTrue();
 			}
+		}
+	}
+
+	@Property(tries = 10)
+	@PerProperty(ResolveStringToAString.class)
+	void resolveParameters(@ForAll int anInt, String aString) {
+		assertThat(aString).isEqualTo("a string");
+	}
+
+	private class ResolveStringToAString implements Lifecycle {
+		@Override
+		public Optional<Supplier<Object>> resolve(
+			ParameterResolutionContext parameterContext,
+			PropertyLifecycleContext propertyContext
+		) {
+			if (parameterContext.typeUsage().isOfType(String.class)) {
+				return Optional.of(() -> "a string");
+			}
+			return Optional.empty();
 		}
 	}
 }

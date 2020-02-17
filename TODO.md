@@ -1,7 +1,6 @@
 - 1.2.4
 
     - PerProperty.Lifecycle
-        - resolveParameter()
         - beforeTry(TryContext, parameters)
         - afterTry(TryExecutionResult)
 
