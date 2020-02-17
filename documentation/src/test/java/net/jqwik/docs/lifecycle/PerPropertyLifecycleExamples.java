@@ -6,7 +6,7 @@ import net.jqwik.api.lifecycle.PerProperty.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class PropertyLifecycleExamples {
+public class PerPropertyLifecycleExamples {
 
 	int maxLength = 0;
 
