@@ -42,6 +42,9 @@
         - void onSatisfiedTry()
         - TryExecutionResult onFalsifiedTry(TrExecutionResult)
 
+    - Around property hooks
+        - Get and set random seed
+
     - Store
         - onUpdate()
     
