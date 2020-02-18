@@ -1,13 +1,8 @@
 - 1.2.4
 
-    - Container lifecycle
-        - @BeforeContainer methods
-        - @AfterContainer methods
-
     - Around property lifecycle
         - @BeforeProperty methods
         - @AfterProperty methods
-        - Get and set random seed
 
     - Around try lifecycle
         - @BeforeTry methods
@@ -17,6 +12,10 @@
 
     - Spring/Boot Testing in its own module
     
+    - Support resolved parameters in:
+      - `@BeforeProperty` and `@AfterProperty` methods
+      - `@BeforeTry` and `@AfterTry` methods
+
     - ProvideArbitraryHook
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
@@ -25,7 +24,7 @@
       https://github.com/jlink/jqwik/issues/84
       
     - ResolveReporterHook: Inject Reporter instance into property methods
-
+    
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
 
