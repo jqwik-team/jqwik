@@ -113,17 +113,30 @@ public class JqwikReflectionSupport {
 	 * @return List of found methods
 	 */
 	public static List<Method> findMethodsPotentiallyOuter(
-		Class<?> clazz, Predicate<Method> predicate,
+		Class<?> clazz,
+		Predicate<Method> predicate,
 		HierarchyTraversalMode traversalMode
 	) {
+		List<Class<?>> searchClasses = getDeclaringClasses(clazz, traversalMode);
 		List<Method> foundMethods = new ArrayList<>();
-		foundMethods.addAll(ReflectionSupport.findMethods(clazz, predicate, traversalMode));
-		Class<?> searchClass = clazz;
-		while (searchClass.getDeclaringClass() != null) {
-			searchClass = searchClass.getDeclaringClass();
+		for (Class<?> searchClass : searchClasses) {
 			foundMethods.addAll(ReflectionSupport.findMethods(searchClass, predicate, traversalMode));
 		}
 		return foundMethods;
+	}
+
+	private static List<Class<?>> getDeclaringClasses(Class<?> clazz, HierarchyTraversalMode traversalMode) {
+		List<Class<?>> declaringClasses = new ArrayList<>();
+		Class<?> nextClass = clazz;
+		while (nextClass != null) {
+			if (traversalMode == HierarchyTraversalMode.BOTTOM_UP) {
+				declaringClasses.add(nextClass);
+			} else {
+				declaringClasses.add(0, nextClass);
+			}
+			nextClass = nextClass.getDeclaringClass();
+		}
+		return declaringClasses;
 	}
 
 	/**

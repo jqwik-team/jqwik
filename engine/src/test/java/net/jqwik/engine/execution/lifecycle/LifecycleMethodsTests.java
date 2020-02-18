@@ -17,8 +17,27 @@ class LifecycleMethodsTests extends LifecycleMethodsTestsSuper {
 	}
 
 	@BeforeProperty
-	static void beforeProperty() {
+	void beforeProperty() {
 		calls.add("before property");
+	}
+
+	@Group
+	class Inner {
+		@BeforeProperty
+		void beforeInnerProperty() {
+			calls.add("before inner property");
+		}
+
+		@Property(tries = 1)
+		void innerProperty() {
+			calls.add("inner try");
+		}
+
+		@AfterProperty
+		void afterInnerProperty() {
+			calls.add("after inner property");
+		}
+
 	}
 
 	@Property(tries = 2)
@@ -32,7 +51,7 @@ class LifecycleMethodsTests extends LifecycleMethodsTestsSuper {
 	}
 
 	@AfterProperty
-	static void afterProperty() {
+	void afterProperty() {
 		calls.add("after property");
 	}
 
@@ -49,6 +68,16 @@ class LifecycleMethodsTestsSuper {
 		LifecycleMethodsTests.calls.add("before container super");
 	}
 
+	@BeforeProperty
+	void beforePropertySuper() {
+		LifecycleMethodsTests.calls.add("before property super");
+	}
+
+	@AfterProperty
+	void afterPropertySuper() {
+		LifecycleMethodsTests.calls.add("after property super");
+	}
+
 	@AfterContainer
 	static void afterContainerSuper() {
 		LifecycleMethodsTests.calls.add("after container super");
@@ -63,10 +92,25 @@ class AssertCalls implements AfterContainerHook {
 		Assertions.assertThat(LifecycleMethodsTests.calls).containsExactly(
 			"before container super",
 			"before container",
+			"before property super",
+			"before property",
+			"before inner property",
+			"inner try",
+			"after inner property",
+			"after property",
+			"after property super",
+			"before property super",
+			"before property",
 			"try 1",
 			"try 1",
+			"after property",
+			"after property super",
+			"before property super",
+			"before property",
 			"try 2",
 			"try 2",
+			"after property",
+			"after property super",
 			"after container",
 			"after container super"
 		);

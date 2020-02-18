@@ -15,6 +15,9 @@ import static org.apiguardian.api.API.Status.*;
  * and implemented interfaces as long as they are not <em>hidden</em>
  * or <em>overridden</em>.
  *
+ * <p>In embedded container classes the {@code @BeforeProperty} methods
+ * from the inner container are run after the outer container's methods.
+ *
  * <p>The execution order of multiple {@code @BeforeProperty} methods
  * within the same container is not guaranteed and might change.
  *
