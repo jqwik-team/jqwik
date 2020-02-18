@@ -21,6 +21,11 @@ class LifecycleMethodsTests extends LifecycleMethodsTestsSuper {
 		calls.add("before property");
 	}
 
+	@BeforeTry
+	void beforeTry() {
+		calls.add("before try");
+	}
+
 	@Group
 	class Inner {
 		@BeforeProperty
@@ -48,6 +53,11 @@ class LifecycleMethodsTests extends LifecycleMethodsTestsSuper {
 	@Property(tries = 2)
 	void property2(@ForAll int anInt) {
 		calls.add("try 2");
+	}
+
+	@AfterTry
+	void afterTry() {
+		calls.add("after try");
 	}
 
 	@AfterProperty
@@ -95,20 +105,30 @@ class AssertCalls implements AfterContainerHook {
 			"before property super",
 			"before property",
 			"before inner property",
+			"before try",
 			"inner try",
+			"after try",
 			"after inner property",
 			"after property",
 			"after property super",
 			"before property super",
 			"before property",
+			"before try",
 			"try 1",
+			"after try",
+			"before try",
 			"try 1",
+			"after try",
 			"after property",
 			"after property super",
 			"before property super",
 			"before property",
+			"before try",
 			"try 2",
+			"after try",
+			"before try",
 			"try 2",
+			"after try",
 			"after property",
 			"after property super",
 			"after container",

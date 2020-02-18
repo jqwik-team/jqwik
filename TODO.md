@@ -1,8 +1,6 @@
 - 1.2.4
 
-    - Around try lifecycle
-        - @BeforeTry methods
-        - @AfterTry methods
+    - Document Lifecycle Methods
 
 - 1.2.x
 

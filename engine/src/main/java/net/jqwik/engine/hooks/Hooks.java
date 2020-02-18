@@ -12,7 +12,6 @@ public class Hooks {
 	}
 
 	public static class AroundProperty {
-
 		// AutoCloseable.close() should usually be the last thing in the hook chain
 		public static final int AUTO_CLOSEABLE_PROXIMITY = -100;
 
@@ -27,11 +26,14 @@ public class Hooks {
 
 		// Should run close to property method
 		public static final int SUPPRESS_LOGGING_PROXIMITY = 50;
+	}
 
+	public static class AroundTry {
+		// Should run close to property method
+		public static final int TRY_LIFECYCLE_METHODS_PROXIMITY = -10;
 	}
 
 	public static class SkipExecution {
-
 		// `@Disable` annotation
 		public static final int DISABLED_ORDER = 0;
 

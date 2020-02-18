@@ -35,6 +35,14 @@ class LifecycleMethods {
 		return findMethods(testClass, false, false, AfterProperty.class, HierarchyTraversalMode.BOTTOM_UP);
 	}
 
+	static List<Method> findBeforeTryMethods(Class<?> testClass) {
+		return findMethods(testClass, false, false, BeforeTry.class, HierarchyTraversalMode.TOP_DOWN);
+	}
+
+	static List<Method> findAfterTryMethods(Class<?> testClass) {
+		return findMethods(testClass, false, false, AfterTry.class, HierarchyTraversalMode.BOTTOM_UP);
+	}
+
 	private static void assertStatic(Class<? extends Annotation> annotationType, Method method) {
 		if (JqwikReflectionSupport.isNotStatic(method)) {
 			throw new JqwikException(String.format(
