@@ -22,6 +22,9 @@ public interface Store<T> {
 
 	void reset();
 
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	Store<T> onClose(Consumer<T> onCloseCallback);
+
 	@API(status = INTERNAL)
 	abstract class StoreFacade {
 		private static Store.StoreFacade implementation;

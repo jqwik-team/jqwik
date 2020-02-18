@@ -16,6 +16,9 @@ public class Hooks {
 		// Should run inside auto closeable
 		public static final int EXPECT_FAILURE_PROXIMITY = -95;
 
+		// Should run close to property method
+		public static final int SUPPRESS_LOGGING_PROXIMITY = 50;
+
 	}
 
 	public static class SkipExecution {

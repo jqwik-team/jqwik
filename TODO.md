@@ -44,7 +44,6 @@
 
     - Store
         - onUpdate()
-        - onClose()
     
     - `@Report(reportOnlyFailures = false)`
 

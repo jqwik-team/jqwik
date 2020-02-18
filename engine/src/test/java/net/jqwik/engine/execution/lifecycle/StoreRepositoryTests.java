@@ -12,53 +12,14 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 
+@Group
 class StoreRepositoryTests {
 
 	private final TestDescriptor engine = TestDescriptorBuilder.forEngine(new JqwikTestEngine()).build();
 
 	private StoreRepository repository = new StoreRepository();
-
-	@Example
-	void storeValueIsInitializedOnFirstAccess() {
-		ScopedStore<String> store = repository.create(engine, "aString", Lifespan.PROPERTY, () -> "initial value");
-		assertThat(store.get()).isEqualTo("initial value");
-	}
-
-	@Example
-	void storeValueCanBeUpdated() {
-		ScopedStore<String> store = repository.create(engine, "aString", Lifespan.PROPERTY, () -> "old");
-		store.update((old) -> old + ":" + old);
-		assertThat(store.get()).isEqualTo("old:old");
-	}
-
-	@Example
-	void storeValueCanBeReset() {
-		ScopedStore<String> store = repository.create(engine, "aString", Lifespan.PROPERTY, () -> "initial");
-		store.update((old) -> "updated");
-		store.reset();
-		assertThat(store.get()).isEqualTo("initial");
-	}
-
-	@Example
-	void resettingStoreCallsCloseOnAutoCloseableValue() throws Exception {
-		AutoCloseable value = Mockito.mock(AutoCloseable.class);
-		ScopedStore<AutoCloseable> store = repository.create(engine, "aString", Lifespan.PROPERTY, () -> value);
-		store.get(); // to invoke initialization
-		store.reset();
-
-		Mockito.verify(value, Mockito.times(1)).close();
-	}
-
-	@Example
-	void nullValuesAreAllowed() {
-		ScopedStore<String> store = repository.create(engine, "aString", Lifespan.PROPERTY, () -> null);
-		assertThat(store.get()).isEqualTo(null);
-		store.update((old) -> "updated");
-		assertThat(store.get()).isEqualTo("updated");
-		store.update((old) -> null);
-		assertThat(store.get()).isEqualTo(null);
-	}
 
 	@Group
 	class Creation {
@@ -269,33 +230,40 @@ class StoreRepositoryTests {
 			assertThat(repository.get(container2, "container2store")).isPresent();
 		}
 
+		@SuppressWarnings("unchecked")
 		@Example
-		void finishScope_callsCloseOnAllRemovedStoreValues() throws Exception {
-			AutoCloseable valueContainerStore = Mockito.mock(AutoCloseable.class);
-			AutoCloseable valueMethodStore = Mockito.mock(AutoCloseable.class);
-			AutoCloseable valueOtherMethodStore = Mockito.mock(AutoCloseable.class);
+		void finishScope_callsCloseOnAllRemovedStoreValues() {
+			Consumer<String> onCloseContainerStore = Mockito.mock(Consumer.class);
+			Consumer<String> onCloseMethodStore = Mockito.mock(Consumer.class);
+			Consumer<String> onCloseUninitializedMethodStore = Mockito.mock(Consumer.class);
 
 			TestDescriptor container = TestDescriptorBuilder.forClass(Container1.class, "method1", "method2").build();
 			Iterator<? extends TestDescriptor> methods = container.getChildren().iterator();
 			TestDescriptor method = methods.next();
 			TestDescriptor otherMethod = methods.next();
 
-			ScopedStore<AutoCloseable> containerStore =
-				repository.create(container, "containerStore", Lifespan.PROPERTY, () -> valueContainerStore);
+			ScopedStore<String> containerStore =
+				repository
+					.create(container, "containerStore", Lifespan.PROPERTY, () -> "container value")
+					.onClose(onCloseContainerStore);
 			containerStore.get(); // to invoke initialization
 
-			ScopedStore<AutoCloseable> methodStore =
-				repository.create(method, "methodStore", Lifespan.PROPERTY, () -> valueMethodStore);
+			ScopedStore<String> methodStore =
+				repository
+					.create(method, "methodStore", Lifespan.PROPERTY, () -> "method value")
+					.onClose(onCloseMethodStore);
 			methodStore.get(); // to invoke initialization
 
-			ScopedStore<AutoCloseable> otherMethodStore =
-				repository.create(otherMethod, "otherMethodStore", Lifespan.PROPERTY, () -> valueMethodStore);
+			ScopedStore<String> uninitializedMethodStore =
+				repository
+					.create(otherMethod, "uninitializedMethodStore", Lifespan.PROPERTY, () -> "other method value")
+					.onClose(onCloseUninitializedMethodStore);
 
 			repository.finishScope(container);
 
-			Mockito.verify(valueContainerStore, Mockito.times(1)).close();
-			Mockito.verify(valueMethodStore, Mockito.times(1)).close();
-			Mockito.verify(valueOtherMethodStore, Mockito.never()).close();
+			Mockito.verify(onCloseContainerStore, Mockito.times(1)).accept(anyString());
+			Mockito.verify(onCloseMethodStore, Mockito.times(1)).accept(anyString());
+			Mockito.verify(onCloseUninitializedMethodStore, Mockito.never()).accept(anyString());
 		}
 
 	}

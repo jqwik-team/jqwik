@@ -1,11 +1,13 @@
 package net.jqwik.engine.execution.lifecycle;
 
+import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
 
 import org.junit.platform.engine.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.support.JqwikStringSupport.*;
 
@@ -18,6 +20,7 @@ public class ScopedStore<T> implements Store<T> {
 	private final TestDescriptor scope;
 	private final Supplier<T> initializer;
 
+	private final Set<Consumer<T>> onCloseCallbacks = new HashSet<>();
 	private T value;
 	private boolean initialized = false;
 
@@ -53,6 +56,12 @@ public class ScopedStore<T> implements Store<T> {
 		initialized = false;
 	}
 
+	@Override
+	public ScopedStore<T> onClose(Consumer<T> onCloseCallback) {
+		onCloseCallbacks.add(onCloseCallback);
+		return this;
+	}
+
 	public Object getIdentifier() {
 		return identifier;
 	}
@@ -84,14 +93,17 @@ public class ScopedStore<T> implements Store<T> {
 	}
 
 	public void close() {
-		if (value instanceof AutoCloseable) {
+		if (!initialized) {
+			return;
+		}
+		for (Consumer<T> onCloseCallback : onCloseCallbacks) {
 			try {
-				((AutoCloseable) value).close();
-			} catch (Exception e) {
-				String message = String.format("Exception while closing [%s] in store [%s]", value, this);
-				LOG.log(Level.SEVERE, message, e);
+				onCloseCallback.accept(value);
+			} catch (Throwable throwable) {
+				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+				String message = String.format("Exception while closing store [%s]", this);
+				LOG.log(Level.SEVERE, message, throwable);
 			}
-
 		}
 	}
 }
