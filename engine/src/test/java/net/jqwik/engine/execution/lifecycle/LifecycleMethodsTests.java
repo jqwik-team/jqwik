@@ -51,9 +51,9 @@ class AssertCalls implements AfterContainerHook {
 			"try",
 			"try",
 			"try",
-			"try"
-//			"after container",
-//			"after container super"
+			"try",
+			"after container",
+			"after container super"
 		);
 
 	}

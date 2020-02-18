@@ -11,6 +11,9 @@ import static org.apiguardian.api.API.Status.*;
  * to have them run exactly once before any of its properties or any lifecycle
  * methods from embedded containers will be run.
  *
+ * <p>{@code @BeforeContainer} methods must be {@code static void}
+ * and they cannot have parameters.
+ *
  * <p>{@code @BeforeContainer} methods are inherited from superclasses
  * and implemented interfaces as long as they are not <em>hidden</em>
  * or <em>overridden</em>.

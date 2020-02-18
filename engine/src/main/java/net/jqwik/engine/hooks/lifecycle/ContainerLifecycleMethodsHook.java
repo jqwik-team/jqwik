@@ -35,6 +35,7 @@ public class ContainerLifecycleMethodsHook implements AroundContainerHook {
 	public void afterContainer(ContainerLifecycleContext context) {
 		context.containerClass().ifPresent(containerClass -> {
 			List<Method> afterContainerMethods = LifecycleMethods.findAfterContainerMethods(containerClass);
+			callContainerMethods(afterContainerMethods);
 		});
 	}
 
