@@ -9,6 +9,7 @@ class JqwikPropertiesTests {
 	private JqwikProperties properties;
 
 	@Example
+	@SuppressLogging
 	void defaultValues() {
 		properties = new JqwikProperties("nosuchfile.properties");
 

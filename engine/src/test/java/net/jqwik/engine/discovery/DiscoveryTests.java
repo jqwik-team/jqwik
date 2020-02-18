@@ -198,6 +198,7 @@ class DiscoveryTests {
 	}
 
 	@Example
+	@SuppressLogging
 	void discoverClassById() {
 		UniqueId uniqueId = uniqueIdForClassContainer(SimpleExampleTests.class);
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectUniqueId(uniqueId)).build();
@@ -240,6 +241,7 @@ class DiscoveryTests {
 		}
 
 		@Example
+		@SuppressLogging
 		void methodWithJupiterAnnotationIsSkipped() {
 			LauncherDiscoveryRequest discoveryRequest =
 				request()

@@ -80,6 +80,7 @@ class JqwikIntegrationTests {
 	}
 
 	@Example
+	@SuppressLogging
 	void runTestsFromRootDir() {
 		Set<Path> classpathRoots = JqwikReflectionSupport.getAllClasspathRootDirectories();
 		ClasspathRootSelector[] classpathRootSelectors = selectClasspathRoots(classpathRoots)
@@ -95,6 +96,7 @@ class JqwikIntegrationTests {
 	}
 
 	@Example
+	@SuppressLogging
 	void runTestsFromPackage() {
 		Events events = EngineTestKit
 							.engine(createTestEngine())
@@ -106,6 +108,7 @@ class JqwikIntegrationTests {
 	}
 
 	@Example
+	@SuppressLogging
 	void runTestsFromClass() {
 		Events events = EngineTestKit
 							.engine(createTestEngine())

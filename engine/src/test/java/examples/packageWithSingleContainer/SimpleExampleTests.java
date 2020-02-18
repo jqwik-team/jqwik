@@ -1,6 +1,8 @@
 package examples.packageWithSingleContainer;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.*;
+
 import org.junit.jupiter.api.*;
 
 import static org.assertj.core.api.Assertions.*;
