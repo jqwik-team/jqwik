@@ -17,7 +17,11 @@
 <li><a href="net/jqwik/api/stateful/ActionSequence.RunState.html" title="enum in net.jqwik.api.stateful" target="classFrame">ActionSequence.RunState</a></li>
 <li><a href="net/jqwik/api/stateful/ActionSequenceArbitrary.html" title="interface in net.jqwik.api.stateful" target="classFrame"><span class="interfaceName">ActionSequenceArbitrary</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">AddLifecycleHook</a></li>
+<li><a href="net/jqwik/api/lifecycle/AfterContainer.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">AfterContainer</a></li>
+<li><a href="net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">AfterContainerHook</span></a></li>
 <li><a href="net/jqwik/api/AfterFailureMode.html" title="enum in net.jqwik.api" target="classFrame">AfterFailureMode</a></li>
+<li><a href="net/jqwik/api/lifecycle/AfterProperty.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">AfterProperty</a></li>
+<li><a href="net/jqwik/api/lifecycle/AfterTry.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">AfterTry</a></li>
 <li><a href="net/jqwik/api/constraints/AlphaChars.html" title="annotation in net.jqwik.api.constraints" target="classFrame">AlphaChars</a></li>
 <li><a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api" target="classFrame">Arbitraries</a></li>
 <li><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api" target="classFrame">Arbitraries.ArbitrariesFacade</a></li>
@@ -28,9 +32,14 @@
 <li><a href="net/jqwik/api/configurators/ArbitraryConfiguratorBase.html" title="class in net.jqwik.api.configurators" target="classFrame">ArbitraryConfiguratorBase</a></li>
 <li><a href="net/jqwik/api/providers/ArbitraryProvider.html" title="interface in net.jqwik.api.providers" target="classFrame"><span class="interfaceName">ArbitraryProvider</span></a></li>
 <li><a href="net/jqwik/api/providers/ArbitraryProvider.SubtypeProvider.html" title="interface in net.jqwik.api.providers" target="classFrame"><span class="interfaceName">ArbitraryProvider.SubtypeProvider</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">AroundContainerHook</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">AroundPropertyHook</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">AroundTryHook</span></a></li>
 <li><a href="net/jqwik/api/Assume.html" title="class in net.jqwik.api" target="classFrame">Assume</a></li>
+<li><a href="net/jqwik/api/lifecycle/BeforeContainer.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">BeforeContainer</a></li>
+<li><a href="net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">BeforeContainerHook</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/BeforeProperty.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">BeforeProperty</a></li>
+<li><a href="net/jqwik/api/lifecycle/BeforeTry.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">BeforeTry</a></li>
 <li><a href="net/jqwik/api/arbitraries/BigDecimalArbitrary.html" title="interface in net.jqwik.api.arbitraries" target="classFrame"><span class="interfaceName">BigDecimalArbitrary</span></a></li>
 <li><a href="net/jqwik/api/arbitraries/BigIntegerArbitrary.html" title="interface in net.jqwik.api.arbitraries" target="classFrame"><span class="interfaceName">BigIntegerArbitrary</span></a></li>
 <li><a href="net/jqwik/api/constraints/BigRange.html" title="annotation in net.jqwik.api.constraints" target="classFrame">BigRange</a></li>
@@ -38,6 +47,7 @@
 <li><a href="net/jqwik/api/constraints/ByteRange.html" title="annotation in net.jqwik.api.constraints" target="classFrame">ByteRange</a></li>
 <li><a href="net/jqwik/api/CannotFindArbitraryException.html" title="class in net.jqwik.api" target="classFrame">CannotFindArbitraryException</a></li>
 <li><a href="net/jqwik/api/lifecycle/CannotFindStoreException.html" title="class in net.jqwik.api.lifecycle" target="classFrame">CannotFindStoreException</a></li>
+<li><a href="net/jqwik/api/lifecycle/CannotResolveParameterException.html" title="class in net.jqwik.api.lifecycle" target="classFrame">CannotResolveParameterException</a></li>
 <li><a href="net/jqwik/api/arbitraries/CharacterArbitrary.html" title="interface in net.jqwik.api.arbitraries" target="classFrame"><span class="interfaceName">CharacterArbitrary</span></a></li>
 <li><a href="net/jqwik/api/constraints/CharRange.html" title="annotation in net.jqwik.api.constraints" target="classFrame">CharRange</a></li>
 <li><a href="net/jqwik/api/constraints/CharRangeList.html" title="annotation in net.jqwik.api.constraints" target="classFrame">CharRangeList</a></li>
@@ -97,23 +107,24 @@
 <li><a href="net/jqwik/api/Label.html" title="annotation in net.jqwik.api" target="classFrame">Label</a></li>
 <li><a href="net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">LifecycleContext</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">LifecycleHook</span></a></li>
-<li><a href="net/jqwik/api/lifecycle/LifecycleHook.Configurable.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">LifecycleHook.Configurable</span></a></li>
-<li><a href="net/jqwik/api/lifecycle/LifecycleHook.PropagateToChildren.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">LifecycleHook.PropagateToChildren</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">LifecycleHooks</a></li>
+<li><a href="net/jqwik/api/lifecycle/Lifespan.html" title="enum in net.jqwik.api.lifecycle" target="classFrame">Lifespan</a></li>
 <li><a href="net/jqwik/api/arbitraries/LongArbitrary.html" title="interface in net.jqwik.api.arbitraries" target="classFrame"><span class="interfaceName">LongArbitrary</span></a></li>
 <li><a href="net/jqwik/api/constraints/LongRange.html" title="annotation in net.jqwik.api.constraints" target="classFrame">LongRange</a></li>
 <li><a href="net/jqwik/api/constraints/LowerChars.html" title="annotation in net.jqwik.api.constraints" target="classFrame">LowerChars</a></li>
 <li><a href="net/jqwik/api/constraints/Negative.html" title="annotation in net.jqwik.api.constraints" target="classFrame">Negative</a></li>
 <li><a href="net/jqwik/api/constraints/NotEmpty.html" title="annotation in net.jqwik.api.constraints" target="classFrame">NotEmpty</a></li>
 <li><a href="net/jqwik/api/constraints/NumericChars.html" title="annotation in net.jqwik.api.constraints" target="classFrame">NumericChars</a></li>
+<li><a href="net/jqwik/api/lifecycle/ParameterResolutionContext.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">ParameterResolutionContext</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/PerProperty.html" title="annotation in net.jqwik.api.lifecycle" target="classFrame">PerProperty</a></li>
+<li><a href="net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">PerProperty.Lifecycle</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/PerProperty.PerPropertyHook.html" title="class in net.jqwik.api.lifecycle" target="classFrame">PerProperty.PerPropertyHook</a></li>
 <li><a href="net/jqwik/api/constraints/Positive.html" title="annotation in net.jqwik.api.constraints" target="classFrame">Positive</a></li>
+<li><a href="net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle" target="classFrame">PropagationMode</a></li>
 <li><a href="net/jqwik/api/Property.html" title="annotation in net.jqwik.api" target="classFrame">Property</a></li>
 <li><a href="net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">PropertyExecutionResult</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle" target="classFrame">PropertyExecutionResult.Status</a></li>
 <li><a href="net/jqwik/api/lifecycle/PropertyExecutor.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">PropertyExecutor</span></a></li>
-<li><a href="net/jqwik/api/lifecycle/PropertyLifecycle.html" title="class in net.jqwik.api.lifecycle" target="classFrame">PropertyLifecycle</a></li>
-<li><a href="net/jqwik/api/lifecycle/PropertyLifecycle.AfterPropertyExecutor.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">PropertyLifecycle.AfterPropertyExecutor</span></a></li>
-<li><a href="net/jqwik/api/lifecycle/PropertyLifecycle.PropertyLifecycleFacade.html" title="class in net.jqwik.api.lifecycle" target="classFrame">PropertyLifecycle.PropertyLifecycleFacade</a></li>
 <li><a href="net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">PropertyLifecycleContext</span></a></li>
 <li><a href="net/jqwik/api/Provide.html" title="annotation in net.jqwik.api" target="classFrame">Provide</a></li>
 <li><a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api" target="classFrame"><span class="interfaceName">RandomGenerator</span></a></li>
@@ -121,6 +132,7 @@
 <li><a href="net/jqwik/api/Report.html" title="annotation in net.jqwik.api" target="classFrame">Report</a></li>
 <li><a href="net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">Reporter</span></a></li>
 <li><a href="net/jqwik/api/Reporting.html" title="enum in net.jqwik.api" target="classFrame">Reporting</a></li>
+<li><a href="net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">ResolveParameterHook</span></a></li>
 <li><a href="net/jqwik/api/constraints/Scale.html" title="annotation in net.jqwik.api.constraints" target="classFrame">Scale</a></li>
 <li><a href="net/jqwik/api/configurators/SelfConfiguringArbitrary.html" title="interface in net.jqwik.api.configurators" target="classFrame"><span class="interfaceName">SelfConfiguringArbitrary</span></a></li>
 <li><a href="net/jqwik/api/arbitraries/ShortArbitrary.html" title="interface in net.jqwik.api.arbitraries" target="classFrame"><span class="interfaceName">ShortArbitrary</span></a></li>
@@ -147,7 +159,6 @@
 <li><a href="net/jqwik/api/statistics/StatisticsReport.StatisticsReportMode.html" title="enum in net.jqwik.api.statistics" target="classFrame">StatisticsReport.StatisticsReportMode</a></li>
 <li><a href="net/jqwik/api/statistics/StatisticsReportFormat.html" title="interface in net.jqwik.api.statistics" target="classFrame"><span class="interfaceName">StatisticsReportFormat</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">Store</span></a></li>
-<li><a href="net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle" target="classFrame">Store.Lifespan</a></li>
 <li><a href="net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle" target="classFrame">Store.StoreFacade</a></li>
 <li><a href="net/jqwik/api/arbitraries/StreamableArbitrary.html" title="interface in net.jqwik.api.arbitraries" target="classFrame"><span class="interfaceName">StreamableArbitrary</span></a></li>
 <li><a href="net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries" target="classFrame"><span class="interfaceName">StringArbitrary</span></a></li>
@@ -156,6 +167,8 @@
 <li><a href="net/jqwik/api/Tag.html" title="annotation in net.jqwik.api" target="classFrame">Tag</a></li>
 <li><a href="net/jqwik/api/TagList.html" title="annotation in net.jqwik.api" target="classFrame">TagList</a></li>
 <li><a href="net/jqwik/api/TooManyFilterMissesException.html" title="class in net.jqwik.api" target="classFrame">TooManyFilterMissesException</a></li>
+<li><a href="net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">TryExecutionResult</span></a></li>
+<li><a href="net/jqwik/api/lifecycle/TryExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle" target="classFrame">TryExecutionResult.Status</a></li>
 <li><a href="net/jqwik/api/lifecycle/TryExecutor.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">TryExecutor</span></a></li>
 <li><a href="net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle" target="classFrame"><span class="interfaceName">TryLifecycleContext</span></a></li>
 <li><a href="net/jqwik/api/Tuple.html" title="interface in net.jqwik.api" target="classFrame"><span class="interfaceName">Tuple</span></a></li>

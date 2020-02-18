@@ -224,7 +224,7 @@ extends java.lang.Object</pre>
         Statistics.label("range").collect(range);
         Statistics.label("value").collect(anInt);
 
-        Statistics.label("range").coverage(
+        Statistics.label("range).coverage(
                 coverage -&gt; coverage.check("small").percentage(p -&gt; p &gt; 20.0)
          );
         Statistics.label("value").coverage(

@@ -17,6 +17,12 @@
     catch(err) {
     }
 //-->
+var methods = {"i0":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -41,7 +47,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/CannotFindStoreException.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/CannotResolveParameterException.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -69,13 +75,13 @@
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -114,12 +120,46 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 <!--   -->
 </a>
 <h3>Method Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr id="i0" class="altColor">
+<td class="colFirst"><code>java.util.Optional&lt;java.lang.Class&lt;?&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html#containerClass--">containerClass</a></span>()</code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.net.jqwik.api.lifecycle.LifecycleContext">
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;net.jqwik.api.lifecycle.<a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a></h3>
-<code><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#annotatedElement--">annotatedElement</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#label--">label</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#reporter--">reporter</a></code></li>
+<code><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#annotatedElement--">annotatedElement</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#findAnnotation-java.lang.Class-">findAnnotation</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#label--">label</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#newInstance-java.lang.Class-">newInstance</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#reporter--">reporter</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="containerClass--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>containerClass</h4>
+<pre>java.util.Optional&lt;java.lang.Class&lt;?&gt;&gt;&nbsp;containerClass()</pre>
+</li>
 </ul>
 </li>
 </ul>
@@ -148,7 +188,7 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/CannotFindStoreException.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/CannotResolveParameterException.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -176,13 +216,13 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">

@@ -32,6 +32,14 @@ and
 
 #### New and Enhanced Features
 
+- Annotated lifecycle methods have been implemented
+  - `@BeforeContainer`
+  - `@AfterContainer`
+  - `@BeforeProperty`
+  - `@AfterProperty`
+  - `@BeforeTry`
+  - `@AfterTry`
+
 - `@StatisticsReport` can now also be used on container classes
 
 - Statistical coverage checking can now be done in a fluent API style

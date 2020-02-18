@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -130,10 +130,18 @@ public interface <span class="typeNameLabel">LifecycleContext</span></pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#annotatedElement--">annotatedElement</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>&lt;T extends java.lang.annotation.Annotation&gt;<br>java.util.Optional&lt;T&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#findAnnotation-java.lang.Class-">findAnnotation</a></span>(java.lang.Class&lt;T&gt;&nbsp;annotationClass)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#label--">label</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#newInstance-java.lang.Class-">newInstance</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle">Reporter</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#reporter--">reporter</a></span>()</code>&nbsp;</td>
 </tr>
@@ -173,12 +181,34 @@ public interface <span class="typeNameLabel">LifecycleContext</span></pre>
 <a name="reporter--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>reporter</h4>
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.3")
 <a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle">Reporter</a>&nbsp;reporter()</pre>
+</li>
+</ul>
+<a name="findAnnotation-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findAnnotation</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+&lt;T extends java.lang.annotation.Annotation&gt;&nbsp;java.util.Optional&lt;T&gt;&nbsp;findAnnotation(java.lang.Class&lt;T&gt;&nbsp;annotationClass)</pre>
+</li>
+</ul>
+<a name="newInstance-java.lang.Class-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>newInstance</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+&lt;T&gt;&nbsp;T&nbsp;newInstance(java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
 </li>
 </ul>
 </li>

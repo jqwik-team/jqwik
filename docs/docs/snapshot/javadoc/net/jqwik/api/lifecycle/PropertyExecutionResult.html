@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":18,"i5":18,"i6":18,"i7":18,"i8":6,"i9":6,"i10":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -143,32 +143,51 @@ public interface <span class="typeNameLabel">PropertyExecutionResult</span></pre
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#changeToFailed-java.lang.String-">changeToFailed</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#countChecks--">countChecks</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#changeToFailed-java.lang.Throwable-">changeToFailed</a></span>(java.lang.Throwable&nbsp;throwable)</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#countTries--">countTries</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#changeToSuccessful--">changeToSuccessful</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.Optional&lt;java.util.List&lt;java.lang.Object&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#falsifiedSample--">falsifiedSample</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.util.Optional&lt;java.util.List&lt;java.lang.Object&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getFalsifiedSample--">getFalsifiedSample</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#mapTo-net.jqwik.api.lifecycle.PropertyExecutionResult.Status-java.lang.Throwable-">mapTo</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a>&nbsp;newStatus,
+     java.lang.Throwable&nbsp;throwable)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>java.util.Optional&lt;java.lang.String&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getSeed--">getSeed</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#mapToAborted-java.lang.Throwable-">mapToAborted</a></span>(java.lang.Throwable&nbsp;throwable)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#mapToFailed-java.lang.String-">mapToFailed</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#mapToFailed-java.lang.Throwable-">mapToFailed</a></span>(java.lang.Throwable&nbsp;throwable)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#mapToSuccessful--">mapToSuccessful</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.util.Optional&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#seed--">seed</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#status--">status</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.lang.Throwable&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#getThrowable--">getThrowable</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html#throwable--">throwable</a></span>()</code>
+<div class="block">Will return <code>Optional.empty()</code> if status is anything but FAILED.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -185,73 +204,120 @@ public interface <span class="typeNameLabel">PropertyExecutionResult</span></pre
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getSeed--">
+<a name="seed--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSeed</h4>
-<pre>java.util.Optional&lt;java.lang.String&gt;&nbsp;getSeed()</pre>
+<h4>seed</h4>
+<pre>java.util.Optional&lt;java.lang.String&gt;&nbsp;seed()</pre>
 </li>
 </ul>
-<a name="getFalsifiedSample--">
+<a name="falsifiedSample--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getFalsifiedSample</h4>
-<pre>java.util.Optional&lt;java.util.List&lt;java.lang.Object&gt;&gt;&nbsp;getFalsifiedSample()</pre>
+<h4>falsifiedSample</h4>
+<pre>java.util.Optional&lt;java.util.List&lt;java.lang.Object&gt;&gt;&nbsp;falsifiedSample()</pre>
 </li>
 </ul>
-<a name="getStatus--">
+<a name="status--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getStatus</h4>
-<pre><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a>&nbsp;getStatus()</pre>
+<h4>status</h4>
+<pre><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a>&nbsp;status()</pre>
 </li>
 </ul>
-<a name="getThrowable--">
+<a name="throwable--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getThrowable</h4>
-<pre>java.util.Optional&lt;java.lang.Throwable&gt;&nbsp;getThrowable()</pre>
+<h4>throwable</h4>
+<pre>java.util.Optional&lt;java.lang.Throwable&gt;&nbsp;throwable()</pre>
+<div class="block">Will return <code>Optional.empty()</code> if status is anything but FAILED.
+ If FAILED the optional MUST contain a throwable.</div>
 </li>
 </ul>
-<a name="changeToSuccessful--">
+<a name="countChecks--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>changeToSuccessful</h4>
+<h4>countChecks</h4>
 <pre>@API(status=EXPERIMENTAL,
-     since="1.2.3")
-<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;changeToSuccessful()</pre>
+     since="1.2.4")
+int&nbsp;countChecks()</pre>
 </li>
 </ul>
-<a name="changeToFailed-java.lang.Throwable-">
+<a name="countTries--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>changeToFailed</h4>
+<h4>countTries</h4>
 <pre>@API(status=EXPERIMENTAL,
-     since="1.2.3")
-<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;changeToFailed(java.lang.Throwable&nbsp;throwable)</pre>
+     since="1.2.4")
+int&nbsp;countTries()</pre>
 </li>
 </ul>
-<a name="changeToFailed-java.lang.String-">
+<a name="mapTo-net.jqwik.api.lifecycle.PropertyExecutionResult.Status-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mapTo</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;mapTo(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a>&nbsp;newStatus,
+                                                                            java.lang.Throwable&nbsp;throwable)</pre>
+</li>
+</ul>
+<a name="mapToSuccessful--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mapToSuccessful</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;mapToSuccessful()</pre>
+</li>
+</ul>
+<a name="mapToFailed-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mapToFailed</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;mapToFailed(java.lang.Throwable&nbsp;throwable)</pre>
+</li>
+</ul>
+<a name="mapToFailed-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mapToFailed</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;mapToFailed(java.lang.String&nbsp;message)</pre>
+</li>
+</ul>
+<a name="mapToAborted-java.lang.Throwable-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>changeToFailed</h4>
+<h4>mapToAborted</h4>
 <pre>@API(status=EXPERIMENTAL,
-     since="1.2.3")
-default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;changeToFailed(java.lang.String&nbsp;message)</pre>
+     since="1.2.4")
+default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;mapToAborted(java.lang.Throwable&nbsp;throwable)</pre>
 </li>
 </ul>
 </li>
@@ -281,7 +347,7 @@ default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResul
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

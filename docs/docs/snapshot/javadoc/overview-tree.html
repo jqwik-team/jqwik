@@ -113,8 +113,7 @@
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Functions.html" title="class in net.jqwik.api"><span class="typeNameLink">Functions</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionsFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">Functions.FunctionsFacade</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionWrapper.html" title="class in net.jqwik.api"><span class="typeNameLink">Functions.FunctionWrapper</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyLifecycle.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">PropertyLifecycle</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyLifecycle.PropertyLifecycleFacade.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">PropertyLifecycle.PropertyLifecycleFacade</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PerProperty.PerPropertyHook.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">PerProperty.PerPropertyHook</span></a> (implements net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>, net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook</a>)</li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">RandomGenerator.RandomGeneratorFacade</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Shrinkable.ShrinkableFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">Shrinkable.ShrinkableFacade</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/ShrinkingDistance.html" title="class in net.jqwik.api"><span class="typeNameLink">ShrinkingDistance</span></a> (implements java.lang.Comparable&lt;T&gt;)</li>
@@ -137,6 +136,7 @@
 <li type="circle">net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/ArbitraryConfigurationException.html" title="class in net.jqwik.api.configurators"><span class="typeNameLink">ArbitraryConfigurationException</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/CannotFindArbitraryException.html" title="class in net.jqwik.api"><span class="typeNameLink">CannotFindArbitraryException</span></a></li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/CannotFindStoreException.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">CannotFindStoreException</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/CannotResolveParameterException.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">CannotResolveParameterException</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/TooManyFilterMissesException.html" title="class in net.jqwik.api"><span class="typeNameLink">TooManyFilterMissesException</span></a></li>
 </ul>
 </li>
@@ -223,17 +223,11 @@
 <li type="circle">java.lang.Comparable&lt;T&gt;
 <ul>
 <li type="circle">net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators"><span class="typeNameLink">ArbitraryConfigurator</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">LifecycleHook</span></a>&lt;T&gt;
-<ul>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AroundPropertyHook</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AroundTryHook</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">SkipExecutionHook</span></a></li>
-</ul>
-</li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api"><span class="typeNameLink">Shrinkable</span></a>&lt;T&gt;</li>
 </ul>
 </li>
 <li type="circle">net.jqwik.api.domains.<a href="net/jqwik/api/domains/DomainContext.html" title="interface in net.jqwik.api.domains"><span class="typeNameLink">DomainContext</span></a></li>
+<li type="circle">net.jqwik.api.<a href="net/jqwik/api/Falsifier.html" title="interface in net.jqwik.api"><span class="typeNameLink">Falsifier</span></a>&lt;T&gt;</li>
 <li type="circle">java.util.function.Function&lt;T,R&gt;
 <ul>
 <li type="circle">net.jqwik.api.providers.<a href="net/jqwik/api/providers/ArbitraryProvider.SubtypeProvider.html" title="interface in net.jqwik.api.providers"><span class="typeNameLink">ArbitraryProvider.SubtypeProvider</span></a></li>
@@ -252,16 +246,33 @@
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">TryLifecycleContext</span></a></li>
 </ul>
 </li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleHook.Configurable.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">LifecycleHook.Configurable</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleHook.PropagateToChildren.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">LifecycleHook.PropagateToChildren</span></a></li>
-<li type="circle">java.util.function.Predicate&lt;T&gt;
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">LifecycleHook</span></a>
 <ul>
-<li type="circle">net.jqwik.api.<a href="net/jqwik/api/Falsifier.html" title="interface in net.jqwik.api"><span class="typeNameLink">Falsifier</span></a>&lt;T&gt;</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AfterContainerHook</span></a>
+<ul>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AroundContainerHook</span></a> (also extends net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a>)</li>
 </ul>
 </li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AroundContainerHook</span></a> (also extends net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a>, net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a>)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AroundPropertyHook</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AroundTryHook</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">BeforeContainerHook</span></a>
+<ul>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">AroundContainerHook</span></a> (also extends net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a>)</li>
+</ul>
+</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">PerProperty.Lifecycle</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">ResolveParameterHook</span></a>
+<ul>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">PerProperty.Lifecycle</span></a></li>
+</ul>
+</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">SkipExecutionHook</span></a></li>
+</ul>
+</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/ParameterResolutionContext.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">ParameterResolutionContext</span></a></li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">PropertyExecutionResult</span></a></li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyExecutor.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">PropertyExecutor</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyLifecycle.AfterPropertyExecutor.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">PropertyLifecycle.AfterPropertyExecutor</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api"><span class="typeNameLink">RandomGenerator</span></a>&lt;T&gt;</li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Reporter</span></a></li>
 <li type="circle">net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/SelfConfiguringArbitrary.html" title="interface in net.jqwik.api.configurators"><span class="typeNameLink">SelfConfiguringArbitrary</span></a>&lt;T&gt;</li>
@@ -277,6 +288,7 @@
 <li type="circle">net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsEntry.html" title="interface in net.jqwik.api.statistics"><span class="typeNameLink">StatisticsEntry</span></a></li>
 <li type="circle">net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsReportFormat.html" title="interface in net.jqwik.api.statistics"><span class="typeNameLink">StatisticsReportFormat</span></a></li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Store</span></a>&lt;T&gt;</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">TryExecutionResult</span></a></li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/TryExecutor.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">TryExecutor</span></a></li>
 <li type="circle">net.jqwik.api.providers.<a href="net/jqwik/api/providers/TypeUsage.html" title="interface in net.jqwik.api.providers"><span class="typeNameLink">TypeUsage</span></a></li>
 </ul>
@@ -317,7 +329,14 @@
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Provide.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Provide</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Tag.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Tag</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/FromData.html" title="annotation in net.jqwik.api"><span class="typeNameLink">FromData</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PerProperty.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">PerProperty</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/BeforeContainer.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">BeforeContainer</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AfterTry.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">AfterTry</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AfterContainer.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">AfterContainer</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AfterProperty.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">AfterProperty</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">AddLifecycleHook</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/BeforeTry.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">BeforeTry</span></a> (implements java.lang.annotation.Annotation)</li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/BeforeProperty.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">BeforeProperty</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">LifecycleHooks</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Data.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Data</span></a> (implements java.lang.annotation.Annotation)</li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Example.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Example</span></a> (implements java.lang.annotation.Annotation)</li>
@@ -337,7 +356,9 @@
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/GenerationMode.html" title="enum in net.jqwik.api"><span class="typeNameLink">GenerationMode</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/Reporting.html" title="enum in net.jqwik.api"><span class="typeNameLink">Reporting</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/FalsificationResult.Status.html" title="enum in net.jqwik.api"><span class="typeNameLink">FalsificationResult.Status</span></a></li>
-<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.Lifespan.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">Store.Lifespan</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">PropagationMode</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/TryExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">TryExecutionResult.Status</span></a></li>
+<li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Lifespan.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">Lifespan</span></a></li>
 <li type="circle">net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle"><span class="typeNameLink">PropertyExecutionResult.Status</span></a></li>
 <li type="circle">net.jqwik.api.stateful.<a href="net/jqwik/api/stateful/ActionSequence.RunState.html" title="enum in net.jqwik.api.stateful"><span class="typeNameLink">ActionSequence.RunState</span></a></li>
 <li type="circle">net.jqwik.api.<a href="net/jqwik/api/ShrinkingMode.html" title="enum in net.jqwik.api"><span class="typeNameLink">ShrinkingMode</span></a></li>

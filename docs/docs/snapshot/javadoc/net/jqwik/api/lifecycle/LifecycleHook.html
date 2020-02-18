@@ -17,6 +17,12 @@
     catch(err) {
     }
 //-->
+var methods = {"i0":18,"i1":18,"i2":18};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],16:["t5","Default Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -42,7 +48,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.Configurable.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?net/jqwik/api/lifecycle/LifecycleHook.html" target="_top">Frames</a></li>
@@ -66,16 +72,16 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -85,26 +91,25 @@
 <!-- ======== START OF CLASS DATA ======== -->
 <div class="header">
 <div class="subTitle">net.jqwik.api.lifecycle</div>
-<h2 title="Interface LifecycleHook" class="title">Interface LifecycleHook&lt;T extends LifecycleHook&lt;?&gt;&gt;</h2>
+<h2 title="Interface LifecycleHook" class="title">Interface LifecycleHook</h2>
 </div>
 <div class="contentContainer">
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
 <dl>
-<dt>All Superinterfaces:</dt>
-<dd>java.lang.Comparable&lt;T&gt;</dd>
+<dt>All Known Subinterfaces:</dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a>, <a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle">AroundContainerHook</a>, <a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>, <a href="../../../../net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle">AroundTryHook</a>, <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a>, <a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle">PerProperty.Lifecycle</a>, <a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook</a>, <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a></dd>
 </dl>
 <dl>
-<dt>All Known Subinterfaces:</dt>
-<dd><a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>, <a href="../../../../net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle">AroundTryHook</a>, <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a></dd>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/PerProperty.PerPropertyHook.html" title="class in net.jqwik.api.lifecycle">PerProperty.PerPropertyHook</a></dd>
 </dl>
 <hr>
 <br>
 <pre>@API(status=EXPERIMENTAL,
      since="1.0")
-public interface <span class="typeNameLabel">LifecycleHook&lt;T extends LifecycleHook&lt;?&gt;&gt;</span>
-extends java.lang.Comparable&lt;T&gt;</pre>
+public interface <span class="typeNameLabel">LifecycleHook</span></pre>
 <div class="block">Experimental feature. Not ready for public usage yet.</div>
 </li>
 </ul>
@@ -112,45 +117,97 @@ extends java.lang.Comparable&lt;T&gt;</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested.class.summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
-<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Interface and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static interface&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.Configurable.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook.Configurable</a></span></code>
-<div class="block">Experimental feature.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static interface&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.PropagateToChildren.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook.PropagateToChildren</a></span></code>
-<div class="block">Marker interface.</div>
-</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.summary">
 <!--   -->
 </a>
 <h3>Method Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr id="i0" class="altColor">
+<td class="colFirst"><code>default boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo-java.util.Optional-">appliesTo</a></span>(java.util.Optional&lt;java.lang.reflect.AnnotatedElement&gt;&nbsp;element)</code>
+<div class="block">This method is called once per hook and potential element during lifecycle hooks registration.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#prepareFor-net.jqwik.api.lifecycle.LifecycleContext-">prepareFor</a></span>(<a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a>&nbsp;context)</code>
+<div class="block">This method is called when an element, container class or property method,
+ is found with this hook directly attached or applied to through a parent element.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">propagateTo</a></span>()</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.java.lang.Comparable">
+<li class="blockList">
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.detail">
 <!--   -->
 </a>
-<h3>Methods inherited from interface&nbsp;java.lang.Comparable</h3>
-<code>compareTo</code></li>
+<h3>Method Detail</h3>
+<a name="appliesTo-java.util.Optional-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>appliesTo</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+default&nbsp;boolean&nbsp;appliesTo(java.util.Optional&lt;java.lang.reflect.AnnotatedElement&gt;&nbsp;element)</pre>
+<div class="block">This method is called once per hook and potential element during lifecycle hooks registration.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>element</code> - The Optional instance contains element for container classes
+                or method but is empty for the engine</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if a hook shall be applied to this element</dd>
+</dl>
+</li>
+</ul>
+<a name="propagateTo--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>propagateTo</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>&nbsp;propagateTo()</pre>
+</li>
+</ul>
+<a name="prepareFor-net.jqwik.api.lifecycle.LifecycleContext-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>prepareFor</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.4")
+default&nbsp;void&nbsp;prepareFor(<a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a>&nbsp;context)</pre>
+<div class="block">This method is called when an element, container class or property method,
+ is found with this hook directly attached or applied to through a parent element.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - The context can be a <a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>
+                or a <a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a></dd>
+</dl>
+</li>
 </ul>
 </li>
 </ul>
@@ -180,7 +237,7 @@ extends java.lang.Comparable&lt;T&gt;</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.Configurable.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/LifecycleHooks.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?net/jqwik/api/lifecycle/LifecycleHook.html" target="_top">Frames</a></li>
@@ -204,16 +261,16 @@ extends java.lang.Comparable&lt;T&gt;</pre>
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":18,"i2":6};
+var methods = {"i0":18,"i1":6,"i2":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Superinterfaces:</dt>
-<dd>java.lang.Comparable&lt;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&gt;, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&lt;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&gt;</dd>
+<dd><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></dd>
 </dl>
 <dl>
 <dt>Functional Interface:</dt>
@@ -111,7 +111,7 @@ var activeTableTab = "activeTableTab";
      since="1.0")
  @FunctionalInterface
 public interface <span class="typeNameLabel">SkipExecutionHook</span>
-extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&lt;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&gt;</pre>
+extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></pre>
 <div class="block">Experimental feature. Not ready for public usage yet.</div>
 </li>
 </ul>
@@ -136,13 +136,25 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></span></code>&nbsp;</td>
 </tr>
 </table>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
-<li class="blockList"><a name="nested.classes.inherited.from.class.net.jqwik.api.lifecycle.LifecycleHook">
+<li class="blockList"><a name="field.summary">
 <!--   -->
 </a>
-<h3>Nested classes/interfaces inherited from interface&nbsp;net.jqwik.api.lifecycle.<a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></h3>
-<code><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.Configurable.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook.Configurable</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.PropagateToChildren.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook.PropagateToChildren</a></code></li>
-</ul>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#DO_NOT_SKIP">DO_NOT_SKIP</a></span></code>&nbsp;</td>
+</tr>
+</table>
 </li>
 </ul>
 <!-- ========== METHOD SUMMARY =========== -->
@@ -162,16 +174,23 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#compareTo-net.jqwik.api.lifecycle.SkipExecutionHook-">compareTo</a></span>(<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&nbsp;other)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#order--">order</a></span>()</code>
-<div class="block">Lower order value means earlier evaluation</div>
-</td>
-</tr>
-<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#shouldBeSkipped-net.jqwik.api.lifecycle.LifecycleContext-">shouldBeSkipped</a></span>(<a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a>&nbsp;context)</code>&nbsp;</td>
 </tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>default int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#skipExecutionOrder--">skipExecutionOrder</a></span>()</code>
+<div class="block">Lower order value means earlier evaluation</div>
+</td>
+</tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.net.jqwik.api.lifecycle.LifecycleHook">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;net.jqwik.api.lifecycle.<a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></h3>
+<code><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo-java.util.Optional-">appliesTo</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#prepareFor-net.jqwik.api.lifecycle.LifecycleContext-">prepareFor</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">propagateTo</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -180,6 +199,23 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="DO_NOT_SKIP">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>DO_NOT_SKIP</h4>
+<pre>static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a> DO_NOT_SKIP</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.detail">
@@ -202,19 +238,15 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <li class="blockList">
 <h4>compareTo</h4>
 <pre>default&nbsp;int&nbsp;compareTo(<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&nbsp;other)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&gt;</code></dd>
-</dl>
 </li>
 </ul>
-<a name="order--">
+<a name="skipExecutionOrder--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>order</h4>
-<pre>default&nbsp;int&nbsp;order()</pre>
+<h4>skipExecutionOrder</h4>
+<pre>default&nbsp;int&nbsp;skipExecutionOrder()</pre>
 <div class="block">Lower order value means earlier evaluation</div>
 </li>
 </ul>
@@ -245,7 +277,7 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -271,13 +303,13 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

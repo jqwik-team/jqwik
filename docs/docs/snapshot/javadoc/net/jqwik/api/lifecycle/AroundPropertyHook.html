@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -99,14 +99,23 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Superinterfaces:</dt>
-<dd>java.lang.Comparable&lt;<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&gt;, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&lt;<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&gt;</dd>
+<dd><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></dd>
+</dl>
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/PerProperty.PerPropertyHook.html" title="class in net.jqwik.api.lifecycle">PerProperty.PerPropertyHook</a></dd>
+</dl>
+<dl>
+<dt>Functional Interface:</dt>
+<dd>This is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.</dd>
 </dl>
 <hr>
 <br>
 <pre>@API(status=EXPERIMENTAL,
      since="1.0")
+ @FunctionalInterface
 public interface <span class="typeNameLabel">AroundPropertyHook</span>
-extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&lt;<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&gt;</pre>
+extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></pre>
 <div class="block">Experimental feature. Not ready for public usage yet.</div>
 </li>
 </ul>
@@ -114,21 +123,6 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested.class.summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<ul class="blockList">
-<li class="blockList"><a name="nested.classes.inherited.from.class.net.jqwik.api.lifecycle.LifecycleHook">
-<!--   -->
-</a>
-<h3>Nested classes/interfaces inherited from interface&nbsp;net.jqwik.api.lifecycle.<a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></h3>
-<code><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.Configurable.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook.Configurable</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.PropagateToChildren.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook.PropagateToChildren</a></code></li>
-</ul>
-</li>
-</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -174,6 +168,13 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html#compareTo-net.jqwik.api.lifecycle.AroundPropertyHook-">compareTo</a></span>(<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&nbsp;other)</code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.net.jqwik.api.lifecycle.LifecycleHook">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;net.jqwik.api.lifecycle.<a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></h3>
+<code><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo-java.util.Optional-">appliesTo</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#prepareFor-net.jqwik.api.lifecycle.LifecycleContext-">prepareFor</a>, <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">propagateTo</a></code></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -227,10 +228,6 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <li class="blockList">
 <h4>compareTo</h4>
 <pre>default&nbsp;int&nbsp;compareTo(<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&nbsp;other)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&gt;</code></dd>
-</dl>
 </li>
 </ul>
 <a name="aroundPropertyProximity--">
@@ -269,7 +266,7 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

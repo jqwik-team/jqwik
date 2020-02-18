@@ -91,18 +91,30 @@
 <li class="blockList">
 <hr>
 <br>
-<pre>@Target(value={ANNOTATION_TYPE,METHOD})
+<pre>@Target(value={ANNOTATION_TYPE,METHOD,TYPE})
  @Retention(value=RUNTIME)
  @Documented
  @API(status=EXPERIMENTAL,
      since="1.2.3")
 public @interface <span class="memberNameLabel">StatisticsReport</span></pre>
-<div class="block">Use <code>@StatisticsReport(OFF)</code> to disable statistics reporting.
+<div class="block">This annotation can be used to influence statistics reporting. You can either
+ annotate a property method to change reporting for this property only
+ or a container class to change reporting for all properties in this class
+ or nested subclasses.
  <p>
- Use <code>@StatisticsReport(STANDARD)</code> to enable the standard reporting.
- This is the default anyway.
- <p>
- Use <code>@StatisticsReport(format = YourReportFormat.class)</code> to plug in your own format.</div>
+ There are three usage scenarios:
+ <ul>
+     <li>
+          Use <code>@StatisticsReport(STANDARD)</code> to enable the standard reporting.
+                This is the default anyway.
+        </li>
+        <li>
+                        Use <code>@StatisticsReport(OFF)</code> to disable statistics reporting.
+        </li>
+        <li>
+                        Use <code>@StatisticsReport(format = YourReportFormat.class)</code> to plug in your own format.
+        </li>
+ </ul></div>
 </li>
 </ul>
 </div>
