@@ -1,9 +1,5 @@
 - 1.2.4
 
-    - Around property lifecycle
-        - @BeforeProperty methods
-        - @AfterProperty methods
-
     - Around try lifecycle
         - @BeforeTry methods
         - @AfterTry methods
