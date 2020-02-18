@@ -5,6 +5,12 @@ package net.jqwik.engine.hooks;
  */
 public class Hooks {
 
+	public static class AroundContainer {
+		// Should run outside of standard hooks
+		public static final int CONTAINER_LIFECYCLE_METHODS_PROXIMITY = -10;
+
+	}
+
 	public static class AroundProperty {
 
 		// AutoCloseable.close() should usually be the last thing in the hook chain

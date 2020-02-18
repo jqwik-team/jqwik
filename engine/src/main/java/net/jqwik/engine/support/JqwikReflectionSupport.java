@@ -253,4 +253,25 @@ public class JqwikReflectionSupport {
 			return false;
 		}
 	}
+
+	public static boolean isStatic(Class<?> clazz) {
+		return Modifier.isStatic(clazz.getModifiers());
+	}
+
+	public static boolean isNotStatic(Class<?> clazz) {
+		return !isStatic(clazz);
+	}
+
+	public static boolean isStatic(Member member) {
+		return Modifier.isStatic(member.getModifiers());
+	}
+
+	public static boolean isNotStatic(Member member) {
+		return !isStatic(member);
+	}
+
+	public static boolean returnsVoid(Method method) {
+		return method.getReturnType().equals(Void.TYPE);
+	}
+
 }

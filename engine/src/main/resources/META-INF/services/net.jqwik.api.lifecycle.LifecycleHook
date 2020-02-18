@@ -1,3 +1,4 @@
 net.jqwik.engine.hooks.lifecycle.AutoCloseableHook
+net.jqwik.engine.hooks.lifecycle.ContainerLifecycleMethodsHook
 net.jqwik.engine.hooks.DisabledHook
 net.jqwik.engine.hooks.statistics.StatisticsHook
