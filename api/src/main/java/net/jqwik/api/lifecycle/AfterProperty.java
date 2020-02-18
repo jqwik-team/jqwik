@@ -7,7 +7,7 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Annotate methods of a container class with {@linkplain @AfterProperty}
+ * Annotate methods of a container class with {@code @AfterProperty}
  * to have them run once after each property including properties of
  * embedded containers.
  *

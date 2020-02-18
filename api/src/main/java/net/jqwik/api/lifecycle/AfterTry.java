@@ -7,7 +7,7 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Annotate methods of a container class with {@linkplain @AfterTry}
+ * Annotate methods of a container class with {@code @AfterTry}
  * to have them run once after each try - the actual invocation of the property
  * method with generated parameters - including properties of
  * embedded containers.

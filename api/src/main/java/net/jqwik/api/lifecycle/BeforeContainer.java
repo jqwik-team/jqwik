@@ -7,7 +7,7 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Annotate static methods of a container class with {@linkplain @BeforeContainer}
+ * Annotate static methods of a container class with {@code @BeforeContainer}
  * to have them run exactly once before any of its properties or any lifecycle
  * methods from embedded containers will be run.
  *
