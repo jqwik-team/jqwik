@@ -1,12 +1,13 @@
-- 1.2.4
-
-- 1.2.x
+- 1.2.5
 
     - Spring/Boot Testing in its own module
     
     - Support resolved parameters in:
       - `@BeforeProperty` and `@AfterProperty` methods
       - `@BeforeTry` and `@AfterTry` methods
+
+    - ResolveParameterHook
+        - @ResolveParameter method
 
     - ProvideArbitraryHook
         - Let domains use that hook
@@ -23,9 +24,6 @@
 - 1.3.0
 
     - Documentation for lifecycle hooks API in user guide
-
-    - ResolveParameterHook
-        - @ResolveParameter method
 
     - PerProperty.Lifecycle
         - void beforeTry(TryContext, parameters)

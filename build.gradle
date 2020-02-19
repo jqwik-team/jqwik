@@ -8,10 +8,10 @@ ext {
 	apiGuardianVersion = '1.1.0'
 	opentest4jVersion = '1.2.0'
 	archunitVersion = '0.11.0'
-	assertJVersion = '3.13.2'
-	mockitoVersion = '3.1.0'
+	assertJVersion = '3.15.0'
+	mockitoVersion = '3.2.4'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.2.4'
+	jqwikVersion = '1.2.5-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 
