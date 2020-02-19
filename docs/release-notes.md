@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.2.4-SNAPSHOT](#124-snapshot)
+- [1.2.4](#124)
 - [1.2.3](#123)
 - [1.2.2](#122)
 - [1.2.1](#121)
@@ -21,18 +21,18 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.2.4-SNAPSHOT
+## 1.2.4
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.2.4/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.2.4/javadoc/index.html">javadoc</a>
 </p>
 
 
 #### New and Enhanced Features
 
-- [Annotated lifecycle methods](/docs/snapshot/user-guide.html#annotated-lifecycle-methods) 
+- [Annotated lifecycle methods](/docs/1.2.4/user-guide.html#annotated-lifecycle-methods) 
   have been implemented:
   - `@BeforeContainer`
   - `@AfterContainer`
