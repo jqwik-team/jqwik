@@ -1,7 +1,5 @@
 - 1.2.4
 
-    - Document Lifecycle Methods
-
 - 1.2.x
 
     - Spring/Boot Testing in its own module

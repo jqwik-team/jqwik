@@ -32,7 +32,8 @@ and
 
 #### New and Enhanced Features
 
-- Annotated lifecycle methods have been implemented
+- [Annotated lifecycle methods](/docs/snapshot/user-guide.html#annotated-lifecycle-methods) 
+  have been implemented:
   - `@BeforeContainer`
   - `@AfterContainer`
   - `@BeforeProperty`

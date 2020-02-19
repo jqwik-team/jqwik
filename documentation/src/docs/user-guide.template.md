@@ -329,27 +329,61 @@ static methods in `org.junit.jupiter.api.Assertions`.
 
 ## Lifecycle
 
-### Method Lifecycle
+To understand the lifecycle it is important to know that _the tree of test elements_
+consists of two main types of elements:
 
-The current lifecycle of jqwik test methods is rather simple:
+- __Containers__: The root engine container, container classes 
+  and embedded container classes (those annotated with `@Group`)
+- __Properties__: Methods annotated with 
+  [`@Property`](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html) or 
+  [`@Example`](/docs/${docsVersion}/javadoc/net/jqwik/api/Example.html).
+  An _example_ is just a property with a single _try_ (see below).
 
-- For each method, annotated with 
-  [`@Property`](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html) 
-  or [`@Example`](/docs/${docsVersion}/javadoc/net/jqwik/api/Example.html), 
-  a new instance of the containing test class is created
-  in order to keep the individual tests isolated from each other.
-- If you have preparatory work to do for each method, 
-  create a constructor without parameters and do the work there.
-- If you have cleanup work to do for each method, 
-  the containing test class can implement `java.lang.AutoCloseable`.
+So a typical tree might look like:
+
+```
+Jqwik Engine
+    class MyFooTests
+        @Property fooProperty1()
+        @Property fooProperty2()
+        @Example fooExample()
+    class MyBarTests
+        @Property barProperty()
+        @Group class Group1 
+            @Property group1Property()
+        @Group class Group2 
+            @Example group2Example()
+```   
+
+Mind that packages do not show up as in-between containers!
+
+When running your whole test suite there are additional things happening:
+
+- For each property or example a new instance of the containing class
+  will be created.
+- Each property will have 1 to n _tries_. Usually each try gets its own
+  set of generated arguments which are bound to parameters annotated
+  with `@ForAll`.
+
+_jqwik_ gives you more than one way to hook into the lifecycle of containers,
+properties and tries.
+
+### Simple Property Lifecycle
+
+If you need nothing but some initialization and cleanup of the container instance
+per property or example:
+
+- Do the initialization work in a constructor without parameters.
+- If you have cleanup work to do for each property method, 
+  the container class can implement `java.lang.AutoCloseable`.
   The `close`-Method will be called after each test method execution.
   
 ```java
 import net.jqwik.api.*;
 
-class TestsWithLifecycle implements AutoCloseable {
+class SimpleLifecycleTests implements AutoCloseable {
 
-	TestsWithLifecycle() {
+	SimpleLifecycleTests() {
 		System.out.println("Before each");
 	}
 
@@ -359,7 +393,7 @@ class TestsWithLifecycle implements AutoCloseable {
 
 	@Property(tries = 5)
 	void aProperty(@ForAll String aString) {
-		System.out.println("anProperty: " + aString);
+		System.out.println("aProperty: " + aString);
 	}
 
 	@Override
@@ -369,17 +403,99 @@ class TestsWithLifecycle implements AutoCloseable {
 }
 ```
 
-[In this example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/TestsWithLifecycle.java)
-both the constructor and `close()` will be called twice times: 
-Once for `anExample()` and once for `aProperty(...)`.
+In this example both the constructor and `close()` will be called twice times: 
+Once for `anExample()` and once for `aProperty(...)`. However, all five calls
+to `aProperty(..)` will share the same instance of `SimpleLifecycleTests`.
 
-### Other Lifecycles
+### Annotated Lifecycle Methods
 
-Currently _jqwik_ does not have special support for a lifecycle per test container,
-per test try or even package. Later versions of _jqwik_ might possible bring
-more features in that field. 
-[Create an issue on github](https://github.com/jlink/jqwik/issues) with your concrete needs.
+The other way to influence all elements of a test run is through annotated lifecycle
+methods, which you might already know from JUnit 4 and 5. _jqwik_ currently has
+eight annotations:
 
+- [`@BeforeContainer`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainer.html):
+  _Static_ methods with this annotation will run exactly once before any property
+  will be executed, even before the first instance of this class will be created.
+- [`@AfterContainer`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterContainer.html):
+  _Static_ methods with this annotation will run exactly once before any property
+  will be executed, even before the first instance of this class will be created.
+- [`@BeforeProperty`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeProperty.html):
+  Methods with this annotation will run once before each property or example.
+- [`@AfterProperty`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterProperty.html):
+  Methods with this annotation will run once after each property or example.
+- [`@BeforeTry`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeTry.html):
+  Methods with this annotation will run once before each try, i.e. execution
+  of a property or example method.
+- [`@AfterTry`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterTry.html):
+  Methods with this annotation will run once after each try, i.e. execution
+  of a property or example method.
+
+Given the following container class:
+
+```java
+class FullLifecycleExamples {
+
+	@BeforeContainer
+	static void beforeContainer() {
+		System.out.println("before container");
+	}
+
+	@AfterContainer
+	static void afterContainer() {
+		System.out.println("after container");
+	}
+
+	@BeforeProperty
+	void beforeProperty() {
+		System.out.println("before property");
+	}
+
+	@AfterProperty
+	void afterProperty() {
+		System.out.println("after property");
+	}
+
+	@BeforeTry
+	void beforeTry() {
+		System.out.println("before try");
+	}
+
+	@AfterTry
+	void afterTry() {
+		System.out.println("after try");
+	}
+
+	@Property(tries = 3)
+	void property(@ForAll @IntRange(min = -5, max = 5) int anInt) {
+		System.out.println("property: " + anInt);
+	}
+}
+```
+
+Running this test container should produce something like the following output
+(maybe with your test report in-between):
+
+```
+before container
+
+before property
+before try
+property: 3
+after try
+before try
+property: 1
+after try
+before try
+property: 4
+after try
+after property
+
+after container
+```
+
+All those lifecycle methods are being run through _jqwik_'s mechanism for
+writing _lifecycle hooks_ under the hood. This mechanism is not yet published and
+not ready for external usage yet.
 
 ## Grouping Tests
 
