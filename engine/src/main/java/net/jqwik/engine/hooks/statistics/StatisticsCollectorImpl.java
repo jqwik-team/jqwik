@@ -71,11 +71,12 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	}
 
 	private StatisticsEntry statisticsEntry(Object[] values) {
+		List<Object> key = keyFrom(values);
 		return statisticsEntries()
 				   .stream()
-				   .filter(entry -> entry.key.equals(keyFrom(values)))
+				   .filter(entry -> entry.key.equals(key))
 				   .findFirst()
-				   .orElse(StatisticsEntryImpl.NULL);
+				   .orElse(StatisticsEntryImpl.nullFor(key));
 	}
 
 	private StatisticsEntry query(Predicate<List<Object>> query) {
@@ -159,7 +160,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 	}
 
 	private static String statisticsLabel(String label) {
-		return label.equals(StatisticsFacadeImpl.DEFAULT_LABEL) ? "" : String.format(" for [%s]", label);
+		return label.equals(StatisticsFacadeImpl.DEFAULT_LABEL) ? "" : String.format(" for label \"%s\"", label);
 	}
 
 	private class StatisticsCoverageImpl implements StatisticsCoverage {
@@ -240,8 +241,9 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 		private void failCondition(String condition) {
 			String message = String.format(
-				"%s does not fulfill condition%s",
+				"%s for [%s] does not fulfill condition%s",
 				condition,
+				entry.name(),
 				statisticsLabel(label)
 			);
 			fail(message);

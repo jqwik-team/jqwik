@@ -1,8 +1,5 @@
 - 1.2.5
 
-    - Report checked value for failing statistics coverage check, e.g.
-      "Count of 0 _for value ["abc"]_ does not fulfill condition"
-
     - Spring/Boot Testing in its own module
     
     - Support resolved parameters in:

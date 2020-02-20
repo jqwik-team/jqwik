@@ -3,9 +3,14 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 
 import net.jqwik.api.statistics.*;
+import net.jqwik.engine.support.*;
 
 class StatisticsEntryImpl implements StatisticsEntry {
 	public static final StatisticsEntryImpl NULL = new StatisticsEntryImpl(null, null, 0, 0.0);
+
+	public static StatisticsEntryImpl nullFor(List<Object> key) {
+		return new StatisticsEntryImpl(key, JqwikStringSupport.displayString(key), 0 , 0.0);
+	}
 
 	final List<Object> key;
 	private final String name;
@@ -22,7 +27,7 @@ class StatisticsEntryImpl implements StatisticsEntry {
 	public StatisticsEntryImpl plus(StatisticsEntryImpl other) {
 		int newCount = count + other.count;
 		double newPercentage = percentage + other.percentage;
-		return new StatisticsEntryImpl(Collections.emptyList(), "adhoc query", newCount, newPercentage);
+		return new StatisticsEntryImpl(Collections.emptyList(), "<adhoc query>", newCount, newPercentage);
 	}
 
 	@Override

@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.2.5](#125-snapshot)
 - [1.2.4](#124)
 - [1.2.3](#123)
 - [1.2.2](#122)
@@ -20,6 +21,18 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.2.5-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Reporting text on failed statistics coverage check improved.
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+No open bugs had been reported.
 
 ## 1.2.4
 
