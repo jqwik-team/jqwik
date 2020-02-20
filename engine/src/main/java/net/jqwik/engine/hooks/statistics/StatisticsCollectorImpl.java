@@ -241,7 +241,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 		private void failCondition(String condition) {
 			String message = String.format(
-				"%s for [%s] does not fulfill condition%s",
+				"%s for %s does not fulfill condition%s",
 				condition,
 				entry.name(),
 				statisticsLabel(label)
