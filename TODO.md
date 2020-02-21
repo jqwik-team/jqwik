@@ -2,6 +2,8 @@
 
     - Spring/Boot Testing in its own module
     
+    - Aliases `@BeforeExample` and `@AfterExample`
+    
     - Support resolved parameters in:
       - `@BeforeProperty` and `@AfterProperty` methods
       - `@BeforeTry` and `@AfterTry` methods
