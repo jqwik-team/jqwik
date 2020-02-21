@@ -23,6 +23,10 @@
 
 - 1.3.0
 
+    - Remove deprecated APIs
+    
+    - Make some experimental API "maintained"
+
     - Documentation for lifecycle hooks API in user guide
 
     - PerProperty.Lifecycle

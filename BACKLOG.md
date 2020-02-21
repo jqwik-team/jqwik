@@ -125,12 +125,18 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Properties
 
-- Duplicate Shrinking
+- Multi element Shrinking
   - Implement CombinedShrinkable.shrinkingSuggestions()
+  - Also shrink pairs that are not equal but have a correlation
+    e.g. https://johanneslink.net/model-based-testing/
+    sequence of counter actions should be shrunk to (raise by 99, countUp, countUpAtMax)
   - Also shrink triplets, quadruplets etc.
 
 - Allow specification of provider class in `@ForAll` and `@From`
   see https://github.com/jlink/jqwik/issues/91
+
+- Lib to generate Json from JsonSchema as in
+  https://github.com/Zac-HD/hypothesis-jsonschema
 
 - Generator / value sharing:
     - `Arbitrary.shareGenerator()`:
