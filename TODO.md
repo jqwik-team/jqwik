@@ -1,5 +1,7 @@
 - 1.2.5
 
+    - Provide hook for ActionSequence to collect statistics on action (types)
+
     - Spring/Boot Testing in its own module
     
     - Aliases `@BeforeExample` and `@AfterExample`
