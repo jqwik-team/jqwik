@@ -1,7 +1,5 @@
 - 1.2.5
 
-    - Statistic reports should be displayed in order of creation
-
     - Arbitraries.sequence should allow subtypes of Action<M>
 
     - Provide hook for ActionSequence to collect statistics on action (types)

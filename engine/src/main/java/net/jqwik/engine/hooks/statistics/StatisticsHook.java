@@ -12,7 +12,7 @@ import net.jqwik.engine.support.*;
 public class StatisticsHook implements AroundPropertyHook {
 
 	private static final Supplier<Map<String, StatisticsCollectorImpl>> STATISTICS_MAP_SUPPLIER =
-		() -> new HashMap<String, StatisticsCollectorImpl>() {
+		() -> new LinkedHashMap<String, StatisticsCollectorImpl>() {
 			@Override
 			public StatisticsCollectorImpl get(Object key) {
 				return this.computeIfAbsent((String) key, StatisticsCollectorImpl::new);

@@ -32,7 +32,8 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
-No open bugs had been reported.
+- Labelled statistics reports should now reliably being reported 
+  in order of first usage.
 
 ## 1.2.4
 
