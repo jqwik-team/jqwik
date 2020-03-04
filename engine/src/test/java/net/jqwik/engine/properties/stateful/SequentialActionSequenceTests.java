@@ -1,9 +1,11 @@
 package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import org.assertj.core.api.*;
+import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
@@ -12,7 +14,6 @@ import static org.assertj.core.api.Assertions.*;
 
 class SequentialActionSequenceTests {
 
-
 	@Example
 	void run() {
 		SequentialActionSequence<Integer> sequence = createSequence(
@@ -20,7 +21,6 @@ class SequentialActionSequenceTests {
 			plus10(),
 			square()
 		);
-
 
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.NOT_RUN);
 		int result = sequence.run(1);
@@ -73,10 +73,11 @@ class SequentialActionSequenceTests {
 
 	@Example
 	void stopSequenceIfGeneratorThrowsNoSuchElementException() {
-		SequentialActionSequence<Integer> sequence = createSequence(10,
-																	plus10(),
-																	square(),
-																	plus10()
+		SequentialActionSequence<Integer> sequence = createSequence(
+			10,
+			plus10(),
+			square(),
+			plus10()
 		);
 
 		sequence.run(1);
@@ -96,11 +97,43 @@ class SequentialActionSequenceTests {
 
 		Assertions.assertThatThrownBy(
 			() -> sequence.run(0)
-		).isInstanceOf(AssertionError.class);
+		).isInstanceOf(InvariantFailedError.class);
 
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
 		assertThat(sequence.finalModel()).isEqualTo(100);
 		assertThat(sequence.runActions()).hasSize(2);
+	}
+
+	@Example
+	void peekModel() {
+		AtomicInteger countPeeks = new AtomicInteger(0);
+
+		ActionSequence<Integer> sequence = createSequence(
+			plus10(),
+			square(),
+			plus10()
+		).peek(state -> {
+			assertThat(state).isIn(10, 100, 110);
+			countPeeks.incrementAndGet();
+		});
+
+		sequence.run(0);
+		assertThat(countPeeks).hasValue(3);
+	}
+
+	@Example
+	void exceptionWhilePeeping() {
+		ActionSequence<Integer> sequence = createSequence(
+			plus10(),
+			square(),
+			plus10()
+		).peek(state -> {
+			throw new RuntimeException("oops");
+		});
+
+		Assertions.assertThatThrownBy(
+			() -> sequence.run(0)
+		).isInstanceOf(AssertionFailedError.class);
 	}
 
 	private Function<Integer, Action<Integer>> preconditionBelow10() {

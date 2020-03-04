@@ -1,6 +1,7 @@
 package net.jqwik.api.stateful;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.apiguardian.api.*;
 
@@ -27,4 +28,16 @@ public interface ActionSequence<M> {
 	M finalModel();
 
 	RunState runState();
+
+	/**
+	 * Peek into the model of a running sequence.
+	 * The {@code modelPeeker} will be called after each successful
+	 * invocation of {@linkplain #run(Object)} but before checking invariants.
+	 *
+	 * @param modelPeeker
+	 * @return the same sequence instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.5")
+	ActionSequence<M> peek(Consumer<M> modelPeeker);
+
 }

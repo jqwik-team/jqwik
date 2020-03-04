@@ -2,8 +2,6 @@
 
     - Arbitraries.sequence should allow subtypes of Action<M>
 
-    - Provide hook for ActionSequence to collect statistics on action (types)
-
     - Spring/Boot Testing in its own module
     
     - Aliases `@BeforeExample` and `@AfterExample`

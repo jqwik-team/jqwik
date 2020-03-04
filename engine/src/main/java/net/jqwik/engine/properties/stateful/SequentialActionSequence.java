@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import org.opentest4j.*;
@@ -15,6 +16,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 	protected int intendedSize;
 	protected final List<Action<M>> sequence = new ArrayList<>();
 	private final List<Invariant<M>> invariants = new ArrayList<>();
+	private final List<Consumer<M>> peekers = new ArrayList<>();
 
 	protected RunState runState = RunState.NOT_RUN;
 	private M currentModel = null;
@@ -49,6 +51,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 			sequence.add(action);
 			try {
 				currentModel = action.run(currentModel);
+				callModelPeekers();
 				checkInvariants();
 			} catch (InvariantFailedError ife) {
 				runState = RunState.FAILED;
@@ -65,6 +68,12 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 		}
 		runState = RunState.SUCCEEDED;
 		return currentModel;
+	}
+
+	private void callModelPeekers() {
+		for (Consumer<M> peeker : peekers) {
+			peeker.accept(currentModel);
+		}
 	}
 
 	private void checkInvariants() {
@@ -95,6 +104,12 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 	@Override
 	public synchronized ActionSequence<M> withInvariant(Invariant<M> invariant) {
 		invariants.add(invariant);
+		return this;
+	}
+
+	@Override
+	public ActionSequence<M> peek(Consumer<M> modelPeeker) {
+		peekers.add(modelPeeker);
 		return this;
 	}
 

@@ -26,6 +26,8 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Added `ActionSequence.peek(Consumer<M> modelPeeker)`.
+
 - Reporting text on failed statistics coverage check improved.
 
 #### Breaking Changes
