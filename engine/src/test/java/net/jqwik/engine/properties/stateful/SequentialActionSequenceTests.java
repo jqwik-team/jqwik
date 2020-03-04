@@ -105,6 +105,24 @@ class SequentialActionSequenceTests {
 	}
 
 	@Example
+	void failInvariantWithLabel() {
+		ActionSequence<Integer> sequence = createSequence(
+			plus10(),
+			square(),
+			plus10()
+		).withInvariant("my invariant", anInt -> assertThat(anInt).isLessThan(100));
+
+		Assertions.assertThatThrownBy(
+			() -> sequence.run(0)
+		).isInstanceOf(InvariantFailedError.class)
+				  .hasMessageContaining("my invariant");
+
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.FAILED);
+		assertThat(sequence.finalModel()).isEqualTo(100);
+		assertThat(sequence.runActions()).hasSize(2);
+	}
+
+	@Example
 	void peekModel() {
 		AtomicInteger countPeeks = new AtomicInteger(0);
 

@@ -30,11 +30,11 @@ class MyStringStackProperties {
 	}
 
 
-	@Property @Report(Reporting.FALSIFIED)
+	@Property
 	void checkMyStackWithInvariant(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
 		actions
-			.withInvariant(stack -> Assertions.assertThat(stack.size()).isGreaterThanOrEqualTo(0))
-			.withInvariant(stack -> Assertions.assertThat(stack.size()).isLessThan(5))
+			.withInvariant("greater", stack -> Assertions.assertThat(stack.size()).isGreaterThanOrEqualTo(0))
+			.withInvariant("less", stack -> Assertions.assertThat(stack.size()).isLessThan(5))
 			.run(new MyStringStack());
 	}
 }

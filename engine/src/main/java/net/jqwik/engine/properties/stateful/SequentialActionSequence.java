@@ -7,6 +7,7 @@ import java.util.stream.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.support.*;
 
@@ -15,7 +16,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 	protected ActionGenerator<M> actionGenerator;
 	protected int intendedSize;
 	protected final List<Action<M>> sequence = new ArrayList<>();
-	private final List<Invariant<M>> invariants = new ArrayList<>();
+	private final List<Tuple2<String, Invariant<M>>> invariants = new ArrayList<>();
 	private final List<Consumer<M>> peekers = new ArrayList<>();
 
 	protected RunState runState = RunState.NOT_RUN;
@@ -77,20 +78,23 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 	}
 
 	private void checkInvariants() {
-		try {
-			for (Invariant<M> invariant : invariants) {
+		for (Tuple2<String, Invariant<M>> tuple : invariants) {
+			String label = tuple.get1();
+			Invariant<M> invariant = tuple.get2();
+			try {
 				invariant.check(currentModel);
+			} catch (Throwable t) {
+				String invariantLabel = label == null ? "Invariant" : String.format("Invariant '%s'", label);
+				throw new InvariantFailedError(createErrorMessage(invariantLabel, t.getMessage()), t);
 			}
-		} catch (Throwable t) {
-			throw new InvariantFailedError(createErrorMessage("Invariant", t.getMessage()), t);
 		}
 	}
 
 	private String createErrorMessage(String name, String causeMessage) {
 		String actionsString = sequence
-			.stream() //
-			.map(aTry -> "    " + aTry.toString()) //
-			.collect(Collectors.joining(System.lineSeparator()));
+								   .stream() //
+								   .map(aTry -> "    " + aTry.toString()) //
+								   .collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
 			"%s failed after following actions:%n%s%n  final currentModel: %s%n%s",
 			name,
@@ -100,15 +104,14 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 		);
 	}
 
-
 	@Override
-	public synchronized ActionSequence<M> withInvariant(Invariant<M> invariant) {
-		invariants.add(invariant);
+	public synchronized ActionSequence<M> withInvariant(String label, Invariant<M> invariant) {
+		invariants.add(Tuple.of(label, invariant));
 		return this;
 	}
 
 	@Override
-	public ActionSequence<M> peek(Consumer<M> modelPeeker) {
+	public synchronized ActionSequence<M> peek(Consumer<M> modelPeeker) {
 		peekers.add(modelPeeker);
 		return this;
 	}

@@ -26,10 +26,12 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
-- `Arbitraries.sequences(Arbitrary<? extends Action<M>> actionArbitrary)` does now accept
-  covariant subtypes and still returns type `Arbitrary<Action<M>>`.
+- Added `ActionSequence.withInvariant(String label, Invariant<M> invariant);`.
 
 - Added `ActionSequence.peek(Consumer<M> modelPeeker)`.
+
+- `Arbitraries.sequences(Arbitrary<? extends Action<M>> actionArbitrary)` does now accept
+  covariant subtypes and still returns type `Arbitrary<Action<M>>`.
 
 - Reporting text on failed statistics coverage check improved.
 

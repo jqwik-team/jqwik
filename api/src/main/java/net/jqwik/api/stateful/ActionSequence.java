@@ -23,7 +23,29 @@ public interface ActionSequence<M> {
 
 	M run(M model);
 
-	ActionSequence<M> withInvariant(Invariant<M> invariant);
+	/**
+	 * Add an unlabelled invariant to a sequence.
+	 *
+	 * @param invariant will be checked after each successful invocation of {@linkplain #run(Object)}
+	 * @return the same sequence instance
+	 *
+	 * @see	#withInvariant(String, Invariant)
+	 */
+	default ActionSequence<M> withInvariant(Invariant<M> invariant) {
+		return withInvariant(null, invariant);
+	}
+
+	/**
+	 * Add a labelled invariant to a sequence.
+	 *
+	 * @param label will show up in error messages when the invariant fails
+	 * @param invariant will be checked after each successful invocation of {@linkplain #run(Object)}
+	 * @return the same sequence instance
+	 *
+	 * @see	#withInvariant(Invariant)
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.5")
+	ActionSequence<M> withInvariant(String label, Invariant<M> invariant);
 
 	M finalModel();
 
