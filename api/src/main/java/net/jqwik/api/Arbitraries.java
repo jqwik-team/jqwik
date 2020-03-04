@@ -48,7 +48,7 @@ public class Arbitraries {
 
 		public abstract <T> RandomGenerator<List<T>> randomShuffle(List<T> values);
 
-		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary);
+		public abstract <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary);
 
 		public abstract <T> Arbitrary<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies);
 
@@ -556,7 +556,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.0")
-	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<Action<M>> actionArbitrary) {
+	public static <M> ActionSequenceArbitrary<M> sequences(Arbitrary<? extends Action<M>> actionArbitrary) {
 		return ArbitrariesFacade.implementation.sequences(actionArbitrary);
 	}
 

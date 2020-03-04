@@ -1,6 +1,6 @@
 - 1.2.5
 
-    - Arbitraries.sequence should allow subtypes of Action<M>
+    - Invariants for ActionSequence can take a describing name
 
     - Spring/Boot Testing in its own module
     

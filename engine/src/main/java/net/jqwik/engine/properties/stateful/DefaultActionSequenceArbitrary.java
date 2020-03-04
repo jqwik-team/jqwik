@@ -11,8 +11,9 @@ public class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase imp
 	private int minSize = 1;
 	private int maxSize = 0;
 
-	public DefaultActionSequenceArbitrary(Arbitrary<Action<M>> actionArbitrary) {
-		this.actionArbitrary = actionArbitrary;
+	public DefaultActionSequenceArbitrary(Arbitrary<? extends Action<M>> actionArbitrary) {
+		//noinspection unchecked
+		this.actionArbitrary = (Arbitrary<Action<M>>) actionArbitrary;
 	}
 
 	@Override

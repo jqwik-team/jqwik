@@ -7,7 +7,7 @@ import org.assertj.core.api.*;
 
 class MyStringStackProperties {
 
-	@Property(tries = 20, afterFailure = AfterFailureMode.SAMPLE_FIRST) @Report(Reporting.GENERATED)
+	@Property(tries = 20, afterFailure = AfterFailureMode.SAMPLE_FIRST)
 	void checkMyStack(@ForAll("sequences") @Size(max = 10) ActionSequence<MyStringStack> actions) {
 		actions.run(new MyStringStack());
 	}
@@ -17,7 +17,7 @@ class MyStringStackProperties {
 		return Arbitraries.sequences(Arbitraries.oneOf(push(), pop(), clear()));
 	}
 
-	private Arbitrary<Action<MyStringStack>> push() {
+	private Arbitrary<PushAction> push() {
 		return Arbitraries.strings().alpha().ofLength(5).map(PushAction::new);
 	}
 
