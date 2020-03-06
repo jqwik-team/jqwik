@@ -1,7 +1,5 @@
 - 1.2.5
 
-    - Invariants for ActionSequence can take a describing name
-
     - Spring/Boot Testing in its own module
     
     - Aliases `@BeforeExample` and `@AfterExample`
