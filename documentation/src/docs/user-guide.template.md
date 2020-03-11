@@ -53,7 +53,10 @@ ext.jqwikVersion = '${version}'
 
 test {
 	useJUnitPlatform {
-		includeEngines "jqwik"
+		includeEngines("jqwik")
+        
+        // Or other Junit engines if you use them
+        // includeEngines("jqwik", "junit-jupiter", "junit-vintage")
 
 		// includeTags "fast", "medium"
 		// excludeTags "slow"
