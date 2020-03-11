@@ -31,6 +31,10 @@
 
     - Documentation for lifecycle hooks API in user guide
 
+    - Allow include/exclude for decimal ranges, e.g.
+      - BigDecimalArbitrary.within(Range.from(0.1, true, 10.0, false))
+      - `BigRange.min/maxIncluded`
+    
     - PerProperty.Lifecycle
         - void beforeTry(TryContext, parameters)
         - void afterTry(TryExecutionResult)
