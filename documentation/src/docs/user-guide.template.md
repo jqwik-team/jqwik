@@ -53,13 +53,13 @@ ext.jqwikVersion = '${version}'
 
 test {
 	useJUnitPlatform {
-		includeEngines("jqwik")
+		includeEngines 'jqwik'
         
-        // Or other Junit engines if you use them
-        // includeEngines("jqwik", "junit-jupiter", "junit-vintage")
+        // Or include several Junit engines if you use them
+        // includeEngines 'jqwik', 'junit-jupiter', 'junit-vintage'
 
-		// includeTags "fast", "medium"
-		// excludeTags "slow"
+		// includeTags 'fast', 'medium'
+		// excludeTags 'slow'
 	}
 
 	include '**/*Properties.class'
@@ -74,10 +74,10 @@ dependencies {
     testImplementation "net.jqwik:jqwik:\${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVersion}"
 
     // Add any other test library you need...
-    testImplementation("org.assertj:assertj-core:3.12.2")
+    testImplementation "org.assertj:assertj-core:3.12.2"
 
 }
 ```
