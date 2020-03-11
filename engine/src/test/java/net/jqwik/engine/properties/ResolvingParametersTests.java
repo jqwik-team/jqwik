@@ -43,8 +43,8 @@ class ResolvingParametersTests {
 		PropertyLifecycleContext propertyLifecycleContext =
 			TestHelper.propertyLifecycleContextFor(TestContainer.class, "forAllIntAndString", int.class, String.class);
 		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1), asList(2));
-		ResolveParameterHook stringInjector = (parameterContext, propertyContext) -> {
-			assertThat(propertyContext).isSameAs(propertyLifecycleContext);
+		ResolveParameterHook stringInjector = (parameterContext, lifecycleContext) -> {
+			assertThat(lifecycleContext).isSameAs(propertyLifecycleContext);
 			assertThat(parameterContext.index()).isEqualTo(1);
 			if (parameterContext.typeUsage().isOfType(String.class)) {
 				return Optional.of(() -> "aString");
@@ -91,7 +91,7 @@ class ResolvingParametersTests {
 			TestHelper
 				.propertyLifecycleContextFor(TestContainer.class, "stringIntStringInt", String.class, int.class, String.class, int.class);
 		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1, 2), asList(3, 4));
-		ResolveParameterHook stringInjector = (parameterContext, propertyContext) -> {
+		ResolveParameterHook stringInjector = (parameterContext, lifecycleContext) -> {
 			assertThat(parameterContext.index()).isIn(0, 2);
 			if (parameterContext.typeUsage().isOfType(String.class)) {
 				return Optional.of(() -> "aString");
@@ -217,7 +217,7 @@ class CreateAlwaysAString implements ResolveParameterHook {
 	@Override
 	public Optional<Supplier<Object>> resolve(
 		ParameterResolutionContext parameterContext,
-		PropertyLifecycleContext propertyContext
+		LifecycleContext lifecycleContext
 	) {
 		return Optional.of(() -> "a string");
 	}
@@ -230,8 +230,9 @@ class CreateAString implements ResolveParameterHook {
 	static Store<Integer> countSupplierCalls;
 
 	@Override
-	public Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, PropertyLifecycleContext propertyContext) {
-		assertThat(propertyContext.containerClass()).isEqualTo(ResolvingParametersTests.class);
+	public Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
+		assertThat(lifecycleContext).isInstanceOf(PropertyLifecycleContext.class);
+		assertThat(((PropertyLifecycleContext) lifecycleContext).containerClass()).isEqualTo(ResolvingParametersTests.class);
 
 		countInjectorCalls = Store.getOrCreate("injectorCalls", Lifespan.PROPERTY, () -> 0);
 		countSupplierCalls = Store.getOrCreate("supplierCalls", Lifespan.PROPERTY, () -> 0);

@@ -15,16 +15,18 @@ import static org.apiguardian.api.API.Status.*;
 public interface ResolveParameterHook extends LifecycleHook {
 
 	/**
-	 * This method will be called only once per property, whereas the returned
-	 * supplier is usually called for each try - and potentially more often during shrinking.
+	 * This method will be called only once per property, whereas the returned supplier's get method
+	 * is usually invoked for each try - and potentially more often during shrinking or when resolving
+	 * parameters in before/after methods.
 	 *
 	 * @param parameterContext
-	 * @param propertyContext
+	 * @param lifecycleContext
 	 * @return a supplier function that should always return an equivalent object,
 	 * i.e. an object that behaves the same when used in the same way.
 	 */
-	Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, PropertyLifecycleContext propertyContext);
+	@API(status = EXPERIMENTAL, since = "1.2.5")
+	Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext);
 
-	ResolveParameterHook DO_NOT_RESOLVE = ((parameterContext, propertyContext) -> Optional.empty());
+	ResolveParameterHook DO_NOT_RESOLVE = ((parameterContext, lifecycleContext) -> Optional.empty());
 
 }

@@ -48,8 +48,8 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	}
 
 	@Override
-	public ResolveParameterHook resolveParameterHook(PropertyMethodDescriptor propertyMethodDescriptor) {
-		List<ResolveParameterHook> resolveParameterHooks = findHooks(propertyMethodDescriptor, ResolveParameterHook.class, dontCompare());
+	public ResolveParameterHook resolveParameterHook(TestDescriptor descriptor) {
+		List<ResolveParameterHook> resolveParameterHooks = findHooks(descriptor, ResolveParameterHook.class, dontCompare());
 		return HookSupport.combineResolveParameterHooks(resolveParameterHooks);
 	}
 

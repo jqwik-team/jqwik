@@ -7,6 +7,10 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
+/**
+ * This test class makes only sense as a whole. Running individual methods
+ * will fail in the after container hook.
+ */
 @AddLifecycleHook(AssertCalls.class)
 class LifecycleMethodsTests extends LifecycleMethodsTestsSuper {
 	static List<String> calls = new ArrayList<>();
