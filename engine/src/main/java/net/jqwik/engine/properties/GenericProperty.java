@@ -9,6 +9,7 @@ import org.junit.platform.engine.reporting.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
@@ -16,13 +17,13 @@ public class GenericProperty {
 
 	private final String name;
 	private final PropertyConfiguration configuration;
-	private final Iterator<List<Shrinkable<Object>>> parametersGenerator;
+	private final ParametersGenerator parametersGenerator;
 	private final TryExecutor tryExecutor;
 
 	public GenericProperty(
 		String name,
 		PropertyConfiguration configuration,
-		Iterator<List<Shrinkable<Object>>> parametersGenerator,
+		ParametersGenerator parametersGenerator,
 		TryExecutor tryExecutor
 	) {
 		this.name = name;

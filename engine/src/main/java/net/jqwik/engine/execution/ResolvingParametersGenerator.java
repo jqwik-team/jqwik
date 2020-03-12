@@ -8,7 +8,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Object>>> {
+public class ResolvingParametersGenerator implements ParametersGenerator {
 	private final Map<Parameter, Shrinkable<Object>> resolvedShrinkables = new HashMap<>();
 	private final List<MethodParameter> propertyParameters;
 	private final Iterator<List<Shrinkable<Object>>> forAllParametersGenerator;
@@ -54,43 +54,50 @@ public class ResolvingParametersGenerator implements Iterator<List<Shrinkable<Ob
 	private Shrinkable<Object> resolveShrinkable(MethodParameter parameter) {
 		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(parameter);
 		Optional<Supplier<Object>> optionalSupplier = resolveParameterHook.resolve(parameterContext, propertyLifecycleContext);
-		return optionalSupplier.map(supplier -> createShrinkable(supplier, parameterContext)).orElseThrow(
+		return optionalSupplier.map(supplier -> new ShrinkableResolvedParameter(supplier, parameterContext)).orElseThrow(
 			() -> {
 				String info = "No matching resolver could be found";
 				return new CannotResolveParameterException(parameterContext, info);
 			});
 	}
 
-	private Shrinkable<Object> createShrinkable(Supplier<Object> supplier, ParameterResolutionContext context) {
-		return new Shrinkable<Object>() {
-			@Override
-			public Object value() {
-				Object value = supplier.get();
-				if (!context.typeUsage().isAssignableFrom(value.getClass())) {
-					String info = String.format(
-						"Type [%s] of resolved value does not fit parameter type [%s]",
-						value.getClass().getName(),
-						context.parameter().getParameterizedType().getTypeName()
-					);
-					throw new CannotResolveParameterException(context, info);
-				}
-				return value;
-			}
+	private static class ShrinkableResolvedParameter implements Shrinkable<Object> {
+		private Supplier<Object> supplier;
+		private ParameterResolutionContext context;
 
-			@Override
-			public ShrinkingSequence<Object> shrink(Falsifier<Object> falsifier) {
-				return ShrinkingSequence.dontShrink(this);
-			}
+		public ShrinkableResolvedParameter(Supplier<Object> supplier, ParameterResolutionContext context) {
+			this.supplier = supplier;
+			this.context = context;
+		}
 
-			@Override
-			public ShrinkingDistance distance() {
-				return ShrinkingDistance.of(0);
+		@Override
+		public Object value() {
+			Object value = supplier.get();
+			if (!context.typeUsage().isAssignableFrom(value.getClass())) {
+				String info = String.format(
+					"Type [%s] of resolved value does not fit parameter type [%s]",
+					value.getClass().getName(),
+					context.parameter().getParameterizedType().getTypeName()
+				);
+				throw new CannotResolveParameterException(context, info);
 			}
+			return value;
+		}
 
-			@Override
-			public String toString() {
-				return String.format("Unshrinkable injected parameter for [%s]", context.parameter());
-			}
-		};
+		@Override
+		public ShrinkingSequence<Object> shrink(Falsifier<Object> falsifier) {
+			return ShrinkingSequence.dontShrink(this);
+		}
+
+		@Override
+		public ShrinkingDistance distance() {
+			return ShrinkingDistance.of(0);
+		}
+
+		@Override
+		public String toString() {
+			return String.format("Unshrinkable resolved parameter for [%s]", context.parameter());
+		}
+
 	}
 }
