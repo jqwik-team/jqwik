@@ -19,17 +19,20 @@ public class GenericProperty {
 	private final PropertyConfiguration configuration;
 	private final ParametersGenerator parametersGenerator;
 	private final TryExecutor tryExecutor;
+	private final Supplier<TryLifecycleContext> tryLifecycleContextSupplier;
 
 	public GenericProperty(
 		String name,
 		PropertyConfiguration configuration,
 		ParametersGenerator parametersGenerator,
-		TryExecutor tryExecutor
+		TryExecutor tryExecutor,
+		Supplier<TryLifecycleContext> tryLifecycleContextSupplier
 	) {
 		this.name = name;
 		this.configuration = configuration;
 		this.parametersGenerator = parametersGenerator;
 		this.tryExecutor = tryExecutor;
+		this.tryLifecycleContextSupplier = tryLifecycleContextSupplier;
 	}
 
 	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting) {
@@ -46,7 +49,8 @@ public class GenericProperty {
 			}
 			countTries++;
 
-			List<Shrinkable<Object>> shrinkableParams = parametersGenerator.next();
+			TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
+			List<Shrinkable<Object>> shrinkableParams = parametersGenerator.next(tryLifecycleContext);
 			List<Object> sample = extractParams(shrinkableParams);
 
 			try {
@@ -141,6 +145,7 @@ public class GenericProperty {
 		List<Shrinkable<Object>> shrinkables,
 		Throwable exceptionOrAssertionError
 	) {
+		// TODO: Make sure that resolved parameter shrinkable get new TryLifecycleContext in each step
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting);
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryExecutor);
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);

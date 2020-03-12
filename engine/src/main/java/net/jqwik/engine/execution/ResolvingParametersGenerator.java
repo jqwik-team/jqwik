@@ -13,25 +13,24 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	private final List<MethodParameter> propertyParameters;
 	private final Iterator<List<Shrinkable<Object>>> forAllParametersGenerator;
 	private final ResolveParameterHook resolveParameterHook;
-	private final PropertyLifecycleContext propertyLifecycleContext;
 
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
 		Iterator<List<Shrinkable<Object>>> forAllParametersGenerator,
-		ResolveParameterHook resolveParameterHook,
-		PropertyLifecycleContext propertyLifecycleContext
+		ResolveParameterHook resolveParameterHook
 	) {
 		this.propertyParameters = propertyParameters;
 		this.forAllParametersGenerator = forAllParametersGenerator;
 		this.resolveParameterHook = resolveParameterHook;
-		this.propertyLifecycleContext = propertyLifecycleContext;
 	}
 
+	@Override
 	public boolean hasNext() {
 		return forAllParametersGenerator.hasNext();
 	}
 
-	public List<Shrinkable<Object>> next() {
+	@Override
+	public List<Shrinkable<Object>> next(TryLifecycleContext tryLifecycleContext) {
 		List<Shrinkable<Object>> next = new ArrayList<>();
 		List<Shrinkable<Object>> forAllShrinkables = new ArrayList<>(forAllParametersGenerator.next());
 
@@ -40,25 +39,22 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 				next.add(forAllShrinkables.get(0));
 				forAllShrinkables.remove(0);
 			} else {
-				next.add(findResolvableParameter(parameter));
+				next.add(findResolvableParameter(parameter, tryLifecycleContext));
 			}
 		}
 
 		return next;
 	}
 
-	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter) {
-		return resolvedShrinkables.computeIfAbsent(parameter.getRawParameter(), ignore -> resolveShrinkable(parameter));
+	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {
+		return resolvedShrinkables.computeIfAbsent(parameter.getRawParameter(), ignore -> resolveParameter(parameter, tryLifecycleContext));
 	}
 
-	private Shrinkable<Object> resolveShrinkable(MethodParameter parameter) {
+	private Shrinkable<Object> resolveParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {
 		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(parameter);
 		Optional<ParameterSupplier> optionalGenerator = resolveParameterHook.resolve(parameterContext);
 
-		// TODO: Replace with actual tryLifecycleContext from outside:
-		LifecycleContext lifecycleContext = new DefaultTryLifecycleContext(propertyLifecycleContext);
-
-		return optionalGenerator.map(generator -> new ShrinkableResolvedParameter(generator, parameterContext, lifecycleContext)).orElseThrow(
+		return optionalGenerator.map(generator -> new ShrinkableResolvedParameter(generator, parameterContext, tryLifecycleContext)).orElseThrow(
 			() -> {
 				String info = "No matching resolver could be found";
 				return new CannotResolveParameterException(parameterContext, info);

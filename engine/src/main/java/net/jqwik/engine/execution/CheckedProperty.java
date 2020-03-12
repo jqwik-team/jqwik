@@ -91,10 +91,10 @@ public class CheckedProperty {
 		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(
 			propertyParameters,
 			shrinkablesGenerator,
-			parameterResolver,
-			propertyLifecycleContext
+			parameterResolver
 		);
-		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor);
+		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext);
+		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor, tryLifecycleContextSupplier);
 	}
 
 	private ForAllParametersGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {
