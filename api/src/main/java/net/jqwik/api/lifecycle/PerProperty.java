@@ -2,11 +2,11 @@ package net.jqwik.api.lifecycle;
 
 import java.lang.annotation.*;
 import java.util.*;
-import java.util.function.*;
 
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -20,10 +20,7 @@ import static org.apiguardian.api.API.Status.*;
 public @interface PerProperty {
 
 	interface Lifecycle {
-		default Optional<Supplier<Object>> resolve(
-			ParameterResolutionContext parameterContext,
-			PropertyLifecycleContext propertyContext
-		) {
+		default Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
 			return Optional.empty();
 		}
 
@@ -93,15 +90,8 @@ public @interface PerProperty {
 		}
 
 		@Override
-		public Optional<Supplier<Object>> resolve(
-			ParameterResolutionContext parameterContext,
-			LifecycleContext lifecycleContext
-		) {
-			if (!(lifecycleContext instanceof PropertyLifecycleContext)) {
-				return Optional.empty();
-			}
-			PropertyLifecycleContext propertyContext = (PropertyLifecycleContext) lifecycleContext;
-			return lifecycle.get().resolve(parameterContext, propertyContext);
+		public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+			return lifecycle.get().resolve(parameterContext);
 		}
 	}
 }

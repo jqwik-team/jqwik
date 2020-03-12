@@ -1,10 +1,10 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
@@ -17,10 +17,10 @@ class CombinedResolveParameterHook implements ResolveParameterHook {
 	}
 
 	@Override
-	public Optional<Supplier<Object>> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
-		List<Tuple.Tuple2<ResolveParameterHook, Optional<Supplier<Object>>>> resolvers =
+	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+		List<Tuple2<ResolveParameterHook, Optional<ParameterSupplier>>> resolvers =
 			resolveParameterHooks.stream()
-								 .map(hook -> Tuple.of(hook, hook.resolve(parameterContext, lifecycleContext)))
+								 .map(hook -> Tuple.of(hook, hook.resolve(parameterContext)))
 								 .filter(tuple -> tuple.get2().isPresent())
 								 .collect(Collectors.toList());
 		if (resolvers.isEmpty()) {

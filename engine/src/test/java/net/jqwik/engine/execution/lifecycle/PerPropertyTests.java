@@ -1,7 +1,6 @@
 package net.jqwik.engine.execution.lifecycle;
 
 import java.util.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
@@ -107,13 +106,9 @@ class PerPropertyTests {
 	}
 
 	private class ResolveStringToAString implements Lifecycle {
-		@Override
-		public Optional<Supplier<Object>> resolve(
-			ParameterResolutionContext parameterContext,
-			PropertyLifecycleContext propertyContext
-		) {
+		@Override public Optional<ResolveParameterHook.ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
 			if (parameterContext.typeUsage().isOfType(String.class)) {
-				return Optional.of(() -> "a string");
+				return Optional.of(lifecycleContext -> "a string");
 			}
 			return Optional.empty();
 		}
