@@ -1,7 +1,5 @@
 package net.jqwik.engine.properties;
 
-import java.lang.annotation.*;
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -11,6 +9,7 @@ import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.*;
 
@@ -25,37 +24,7 @@ class GenericPropertyTests {
 
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> { };
 
-	private Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new TryLifecycleContext() {
-		@Override
-		public PropertyLifecycleContext propertyContext() {
-			return null;
-		}
-
-		@Override
-		public String label() {
-			return null;
-		}
-
-		@Override
-		public Optional<AnnotatedElement> annotatedElement() {
-			return Optional.empty();
-		}
-
-		@Override
-		public Reporter reporter() {
-			return null;
-		}
-
-		@Override
-		public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
-			return Optional.empty();
-		}
-
-		@Override
-		public <T> T newInstance(Class<T> clazz) {
-			return null;
-		}
-	};
+	private Supplier<TryLifecycleContext> tryLifecycleContextSupplier = TestHelper.tryLifecycleContextSupplier();
 
 	@Group
 	class OneParameter {

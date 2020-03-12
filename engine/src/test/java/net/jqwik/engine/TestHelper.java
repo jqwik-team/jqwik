@@ -1,7 +1,9 @@
 package net.jqwik.engine;
 
+import java.lang.annotation.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
@@ -94,4 +96,37 @@ public class TestHelper {
 		return getParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass());
 	}
 
+	public static Supplier<TryLifecycleContext> tryLifecycleContextSupplier() {
+		return () -> new TryLifecycleContext() {
+			@Override
+			public PropertyLifecycleContext propertyContext() {
+				return null;
+			}
+
+			@Override
+			public String label() {
+				return null;
+			}
+
+			@Override
+			public Optional<AnnotatedElement> annotatedElement() {
+				return Optional.empty();
+			}
+
+			@Override
+			public Reporter reporter() {
+				return null;
+			}
+
+			@Override
+			public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
+				return Optional.empty();
+			}
+
+			@Override
+			public <T> T newInstance(Class<T> clazz) {
+				return null;
+			}
+		};
+	}
 }
