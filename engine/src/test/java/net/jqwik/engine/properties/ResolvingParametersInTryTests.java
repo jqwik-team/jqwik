@@ -189,6 +189,27 @@ class ResolvingParametersInTryTests {
 		}
 	}
 
+	@Property(tries = 5)
+	@PerProperty(Insert42Lifecycle.class)
+	void check42(int shouldBe42) {
+		assertThat(shouldBe42).isEqualTo(42);
+	}
+
+	private class Insert42Lifecycle implements Lifecycle {
+
+		Store<LifecycleContext> lifecycleStore = Store.create(this, Lifespan.PROPERTY, () -> null);
+
+		@Override
+		public Optional<ResolveParameterHook.ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+			return Optional.of(lifecycleContext -> {
+				assertThat(lifecycleContext).isInstanceOf(TryLifecycleContext.class);
+				assertThat(lifecycleStore.get()).isNotSameAs(lifecycleContext);
+				lifecycleStore.update(ignore -> lifecycleContext);
+				return 42;
+			});
+		}
+	}
+
 	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
