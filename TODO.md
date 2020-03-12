@@ -1,8 +1,8 @@
 - 1.2.5
 
     - Support resolved parameters in:
-      - `@BeforeProperty` and `@AfterProperty` methods
       - `@BeforeTry` and `@AfterTry` methods
+      - `@BeforeProperty` and `@AfterProperty` methods
       - `@BeforeContainer` and `@AfterContainer` methods
 
     - Spring/Boot Testing in its own module
