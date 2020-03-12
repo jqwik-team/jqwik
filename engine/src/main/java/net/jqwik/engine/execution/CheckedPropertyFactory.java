@@ -29,7 +29,7 @@ public class CheckedPropertyFactory {
 		Method propertyMethod = propertyMethodDescriptor.getTargetMethod();
 		PropertyConfiguration configuration = propertyMethodDescriptor.getConfiguration();
 
-		AroundTryLifecycle tryExecutor = createTryExecutor(propertyMethodDescriptor, propertyLifecycleContext, aroundTry);
+		TryLifecycleExecutor tryLifecycleExecutor = createTryExecutor(propertyMethodDescriptor, propertyLifecycleContext, aroundTry);
 		List<MethodParameter> propertyParameters = extractParameters(propertyMethod, propertyMethodDescriptor.getContainerClass());
 
 		PropertyMethodArbitraryResolver arbitraryResolver = new PropertyMethodArbitraryResolver(
@@ -44,7 +44,7 @@ public class CheckedPropertyFactory {
 
 		return new CheckedProperty(
 			propertyName,
-			tryExecutor,
+			tryLifecycleExecutor,
 			propertyParameters,
 			new CachingArbitraryResolver(arbitraryResolver),
 			parameterResolver,
@@ -54,7 +54,7 @@ public class CheckedPropertyFactory {
 		);
 	}
 
-	private AroundTryLifecycle createTryExecutor(
+	private TryLifecycleExecutor createTryExecutor(
 		PropertyMethodDescriptor propertyMethodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
 		AroundTryHook aroundTry
@@ -68,7 +68,7 @@ public class CheckedPropertyFactory {
 		};
 
 		TryExecutor rawExecutor = createRawExecutor(propertyMethodDescriptor, propertyLifecycleContext.testInstance());
-		return new AroundTryLifecycle(rawExecutor, propertyLifecycleContext, aroundTryWithFinishing);
+		return new AroundTryLifecycle(rawExecutor, aroundTryWithFinishing);
 	}
 
 	private TryExecutor createRawExecutor(PropertyMethodDescriptor propertyMethodDescriptor, Object testInstance) {

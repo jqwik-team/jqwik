@@ -7,8 +7,9 @@ import java.util.function.Function;
 import org.assertj.core.api.Assertions;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.lifecycle.*;
 
-class ForAllSpy implements TryExecutor {
+class ForAllSpy implements TryLifecycleExecutor {
 
 	private final Function<Integer, Boolean> returnFunc;
 	private final Function<List<Object>, Boolean> argumentsVerifier;
@@ -34,7 +35,7 @@ class ForAllSpy implements TryExecutor {
 	}
 
 	@Override
-	public TryExecutionResult execute(List<Object> parameters) {
+	public TryExecutionResult execute(TryLifecycleContext tryLifecycleContext, List<Object> parameters) {
 		CheckedFunction checkedFunction = this::test;
 		return checkedFunction.execute(parameters);
 	}

@@ -10,6 +10,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
@@ -18,20 +19,20 @@ public class GenericProperty {
 	private final String name;
 	private final PropertyConfiguration configuration;
 	private final ParametersGenerator parametersGenerator;
-	private final TryExecutor tryExecutor;
+	private final TryLifecycleExecutor tryLifecycleExecutor;
 	private final Supplier<TryLifecycleContext> tryLifecycleContextSupplier;
 
 	public GenericProperty(
 		String name,
 		PropertyConfiguration configuration,
 		ParametersGenerator parametersGenerator,
-		TryExecutor tryExecutor,
+		TryLifecycleExecutor tryLifecycleExecutor,
 		Supplier<TryLifecycleContext> tryLifecycleContextSupplier
 	) {
 		this.name = name;
 		this.configuration = configuration;
 		this.parametersGenerator = parametersGenerator;
-		this.tryExecutor = tryExecutor;
+		this.tryLifecycleExecutor = tryLifecycleExecutor;
 		this.tryLifecycleContextSupplier = tryLifecycleContextSupplier;
 	}
 
@@ -55,7 +56,7 @@ public class GenericProperty {
 
 			try {
 				countChecks++;
-				TryExecutionResult tryExecutionResult = testPredicate(sample, reporter, reporting);
+				TryExecutionResult tryExecutionResult = testPredicate(tryLifecycleContext, sample, reporter, reporting);
 				switch (tryExecutionResult.status()) {
 					case SATISFIED:
 						finishEarly = tryExecutionResult.shouldPropertyFinishEarly();
@@ -107,6 +108,7 @@ public class GenericProperty {
 	}
 
 	private TryExecutionResult testPredicate(
+		TryLifecycleContext tryLifecycleContext,
 		List<Object> sample,
 		Consumer<ReportEntry> reporter,
 		Reporting[] reporting
@@ -114,7 +116,7 @@ public class GenericProperty {
 		if (Reporting.GENERATED.containedIn(reporting)) {
 			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(sample)));
 		}
-		return tryExecutor.execute(sample);
+		return tryLifecycleExecutor.execute(tryLifecycleContext, sample);
 	}
 
 	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {
@@ -146,13 +148,18 @@ public class GenericProperty {
 		Throwable exceptionOrAssertionError
 	) {
 		// TODO: Make sure that resolved parameter shrinkable get new TryLifecycleContext in each step
+		//  and that the same is being used in the falsifier
+		TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting);
-		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryExecutor);
+		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContext, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
 	}
 
-	private Falsifier<List<Object>> createFalsifier(TryExecutor tryExecutor) {
-		return tryExecutor::execute;
+	private Falsifier<List<Object>> createFalsifier(
+		TryLifecycleContext tryLifecycleContext,
+		TryLifecycleExecutor tryExecutor
+	) {
+		return params -> tryExecutor.execute(tryLifecycleContext, params);
 	}
 
 }

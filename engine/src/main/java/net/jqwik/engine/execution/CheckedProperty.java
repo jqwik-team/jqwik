@@ -9,13 +9,14 @@ import org.junit.platform.engine.reporting.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 public class CheckedProperty {
 
 	public final String propertyName;
-	public final TryExecutor tryExecutor;
+	public final TryLifecycleExecutor tryLifecycleExecutor;
 	public final List<MethodParameter> propertyParameters;
 	public final List<MethodParameter> forAllParameters;
 	public final PropertyConfiguration configuration;
@@ -28,7 +29,7 @@ public class CheckedProperty {
 
 	public CheckedProperty(
 		String propertyName,
-		TryExecutor tryExecutor,
+		TryLifecycleExecutor tryLifecycleExecutor,
 		List<MethodParameter> propertyParameters,
 		ArbitraryResolver arbitraryResolver,
 		ResolveParameterHook parameterResolver,
@@ -37,7 +38,7 @@ public class CheckedProperty {
 		PropertyConfiguration configuration
 	) {
 		this.propertyName = propertyName;
-		this.tryExecutor = tryExecutor;
+		this.tryLifecycleExecutor = tryLifecycleExecutor;
 		this.propertyParameters = propertyParameters;
 		this.forAllParameters = selectForAllParameters(propertyParameters);
 		this.arbitraryResolver = arbitraryResolver;
@@ -94,7 +95,7 @@ public class CheckedProperty {
 			parameterResolver
 		);
 		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext);
-		return new GenericProperty(propertyName, configuration, parametersGenerator, tryExecutor, tryLifecycleContextSupplier);
+		return new GenericProperty(propertyName, configuration, parametersGenerator, tryLifecycleExecutor, tryLifecycleContextSupplier);
 	}
 
 	private ForAllParametersGenerator createShrinkablesGenerator(PropertyConfiguration configuration) {

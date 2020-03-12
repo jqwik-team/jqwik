@@ -6,9 +6,10 @@ import java.util.function.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.execution.lifecycle.*;
 
 @FunctionalInterface
-public interface CheckedFunction extends Predicate<List<Object>>, TryExecutor {
+public interface CheckedFunction extends Predicate<List<Object>>, TryExecutor, TryLifecycleExecutor {
 
 	@Override
 	default TryExecutionResult execute(List<Object> parameters) {
@@ -23,4 +24,11 @@ public interface CheckedFunction extends Predicate<List<Object>>, TryExecutor {
 		}
 	}
 
+	/**
+	 * Only needed to simplify some tests
+	 */
+	@Override
+	default TryExecutionResult execute(TryLifecycleContext tryLifecycleContext, List<Object> parameters) {
+		return execute(parameters);
+	}
 }

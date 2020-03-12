@@ -35,8 +35,8 @@ public class CheckedPropertyFactoryTests {
 
 		List<Object> argsTrue = Arrays.asList(1, "test");
 		List<Object> argsFalse = Arrays.asList(2, "test");
-		assertThat(property.tryExecutor.execute(argsTrue).status()).isEqualTo(SATISFIED);
-		assertThat(property.tryExecutor.execute(argsFalse).status()).isEqualTo(FALSIFIED);
+		assertThat(property.tryLifecycleExecutor.execute(null, argsTrue).status()).isEqualTo(SATISFIED);
+		assertThat(property.tryLifecycleExecutor.execute(null, argsFalse).status()).isEqualTo(FALSIFIED);
 
 		assertThat(property.configuration.getStereotype()).isEqualTo("Property");
 		assertThat(property.configuration.getSeed()).isEqualTo("42");
@@ -83,7 +83,7 @@ public class CheckedPropertyFactoryTests {
 		assertThat(property.propertyParameters).size().isEqualTo(0);
 
 		List<Object> noArgs = Arrays.asList();
-		assertThat(property.tryExecutor.execute(noArgs).status()).isEqualTo(SATISFIED);
+		assertThat(property.tryLifecycleExecutor.execute(null, noArgs).status()).isEqualTo(SATISFIED);
 	}
 
 	private PropertyMethodDescriptor createDescriptor(
