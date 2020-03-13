@@ -7,6 +7,7 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
+@Disabled("Implementation deferred until restructuring is over")
 @AddLifecycleHook(ResolveIntsTo42.class)
 class ResolvingParametersEverywhereTests {
 
