@@ -17,131 +17,59 @@ import static org.assertj.core.api.Assertions.*;
 
 class ResolvingParametersInTryTests {
 
-	@Example
-	void nothingToResolve() {
-		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "nothingToResolve");
-		PropertyLifecycleContext propertyLifecycleContext =
-			TestHelper.propertyLifecycleContextFor(TestContainer.class, "nothingToResolve", int.class);
-		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1), asList(2));
-		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
-			propertyParameters,
-			forAllGenerator,
-			ResolveParameterHook.DO_NOT_RESOLVE
-		);
-
-		assertThat(generator.hasNext()).isTrue();
-		assertThat(toValues(generator.next(tryLifecycle(propertyLifecycleContext)))).containsExactly(1);
-		assertThat(generator.hasNext()).isTrue();
-		assertThat(toValues(generator.next(tryLifecycle(propertyLifecycleContext)))).containsExactly(2);
-		assertThat(generator.hasNext()).isFalse();
-	}
-
-	private TryLifecycleContext tryLifecycle(PropertyLifecycleContext propertyLifecycleContext) {
-		return new DefaultTryLifecycleContext(propertyLifecycleContext);
-	}
-
-	@Example
-	void resolveLastPosition() {
-		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "forAllIntAndString");
-		PropertyLifecycleContext propertyLifecycleContext =
-			TestHelper.propertyLifecycleContextFor(TestContainer.class, "forAllIntAndString", int.class, String.class);
-		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1), asList(2));
-		ResolveParameterHook stringInjector = (parameterContext) -> {
-			assertThat(parameterContext.index()).isEqualTo(1);
-			if (parameterContext.typeUsage().isOfType(String.class)) {
-				return Optional.of(lifecycleContext -> {
-					TryLifecycleContext tryLifecycleContext = (TryLifecycleContext) lifecycleContext;
-					assertThat(tryLifecycleContext.propertyContext()).isSameAs(propertyLifecycleContext);
-					return "aString";
-				});
-			}
-			return Optional.empty();
-		};
-		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
-			propertyParameters,
-			forAllGenerator,
-			stringInjector
-		);
-
-		assertThat(generator.hasNext()).isTrue();
-		assertThat(toValues(generator.next(tryLifecycle(propertyLifecycleContext)))).containsExactly(1, "aString");
-		assertThat(generator.hasNext()).isTrue();
-		assertThat(toValues(generator.next(tryLifecycle(propertyLifecycleContext)))).containsExactly(2, "aString");
-		assertThat(generator.hasNext()).isFalse();
-	}
-
-	@Example
-	void failIfParameterCannotBeResolved() {
-		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "forAllIntAndString");
-		PropertyLifecycleContext propertyLifecycleContext =
-			TestHelper.propertyLifecycleContextFor(TestContainer.class, "forAllIntAndString", int.class, String.class);
-		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1), asList(2));
-		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
-			propertyParameters,
-			forAllGenerator,
-			ResolveParameterHook.DO_NOT_RESOLVE
-		);
-
-		assertThat(generator.hasNext()).isTrue();
-		assertThatThrownBy(() -> {
-			generator.next(tryLifecycle(propertyLifecycleContext));
-		}).isInstanceOf(CannotResolveParameterException.class);
-	}
-
-	@Example
-	void resolveSeveralPositions() {
-		List<MethodParameter> propertyParameters = TestHelper.getParametersFor(TestContainer.class, "stringIntStringInt");
-		PropertyLifecycleContext propertyLifecycleContext =
-			TestHelper.propertyLifecycleContextFor(
-				TestContainer.class,
-				"stringIntStringInt",
-				String.class,
-				int.class,
-				String.class,
-				int.class
-			);
-		Iterator<List<Shrinkable<Object>>> forAllGenerator = shrinkablesIterator(asList(1, 2), asList(3, 4));
-		ResolveParameterHook stringInjector = (parameterContext) -> {
-			assertThat(parameterContext.index()).isIn(0, 2);
-			if (parameterContext.typeUsage().isOfType(String.class)) {
-				return Optional.of(lifecycleContext -> "aString");
-			}
-			return Optional.empty();
-		};
-		ResolvingParametersGenerator generator = new ResolvingParametersGenerator(
-			propertyParameters,
-			forAllGenerator,
-			stringInjector
-		);
-
-		assertThat(generator.hasNext()).isTrue();
-		assertThat(toValues(generator.next(tryLifecycle(propertyLifecycleContext))))
-			.containsExactly("aString", 1, "aString", 2);
-		assertThat(generator.hasNext()).isTrue();
-		assertThat(toValues(generator.next(tryLifecycle(propertyLifecycleContext))))
-			.containsExactly("aString", 3, "aString", 4);
-		assertThat(generator.hasNext()).isFalse();
+	@Property(tries = 10)
+	@AddLifecycleHook(CreateAString.class)
+	void resolveLastPosition(@ForAll @IntRange(min = 3, max = 3) int anInt, String aString) {
+		assertThat(anInt).isEqualTo(3);
+		assertThat(aString).isEqualTo("aString");
 	}
 
 	@Property(tries = 10)
 	@AddLifecycleHook(CreateAString.class)
-	@PerProperty(Assert1InjectorCalls.class)
+	void resolveFirstPosition(String aString, @ForAll @IntRange(min = 3, max = 3) int anInt) {
+		assertThat(anInt).isEqualTo(3);
+		assertThat(aString).isEqualTo("aString");
+	}
+
+	@Property(tries = 10)
+	@AddLifecycleHook(CreateAString.class)
+	@AddLifecycleHook(Create42.class)
+	@PerProperty(Assert20Supplier2InjectorCalls.class)
+	void resolveSeveralPositions(String aString1, int fourtytwo1, String aString2, int fourtytwo2) {
+		assertThat(fourtytwo1).isEqualTo(42);
+		assertThat(fourtytwo2).isEqualTo(42);
+		assertThat(aString1).isEqualTo("aString");
+		assertThat(aString2).isEqualTo("aString");
+	}
+
+	class Assert20Supplier2InjectorCalls implements Lifecycle {
+		@Override
+		public void onSuccess() {
+			assertThat(CreateAString.countSupplierCalls.get()).isEqualTo(20);
+			assertThat(CreateAString.countResolveCalls.get()).isEqualTo(2);
+		}
+	}
+
+
+	@Property(tries = 10)
+	@AddLifecycleHook(CreateAString.class)
+	@PerProperty(Assert1ResolveCalls.class)
 	void resolverIsCalledOnce(@ForAll int ignore, String aString) {
 		assertThat(aString).isEqualTo("aString");
 	}
 
-	class Assert1InjectorCalls implements Lifecycle {
+	class Assert1ResolveCalls implements Lifecycle {
 		@Override
 		public void onSuccess() {
-			assertThat(CreateAString.countInjectorCalls.get()).isEqualTo(1);
+			assertThat(CreateAString.countResolveCalls.get()).isEqualTo(1);
 		}
 	}
+
 
 	@Property(tries = 10)
 	@AddLifecycleHook(CreateAString.class)
 	@PerProperty(Assert10SupplierCalls.class)
 	void supplierIsCalledOncePerTry(@ForAll int ignore, String aString) {
-		assertThat(aString).isEqualTo("aString");
 	}
 
 	class Assert10SupplierCalls implements Lifecycle {
@@ -164,6 +92,12 @@ class ResolvingParametersInTryTests {
 		public Iterable<?> shrunkValues() {
 			return Arrays.asList(7, "aString");
 		}
+	}
+
+	@Example
+	@AddLifecycleHook(CreateAString.class)
+	@ExpectFailure(checkResult = HasCannotResolveException.class)
+	void shouldFailWithCannotResolveException(@ForAll int generated, int notResolved) {
 	}
 
 	@Example
@@ -210,39 +144,6 @@ class ResolvingParametersInTryTests {
 		}
 	}
 
-	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
-	}
-
-	@SafeVarargs
-	private final Iterator<List<Shrinkable<Object>>> shrinkablesIterator(List<Object>... lists) {
-		Iterator<List<Object>> valuesIterator = Arrays.stream(lists).iterator();
-
-		return new Iterator<List<Shrinkable<Object>>>() {
-			@Override
-			public boolean hasNext() {
-				return valuesIterator.hasNext();
-			}
-
-			@Override
-			public List<Shrinkable<Object>> next() {
-				List<Object> values = valuesIterator.next();
-				return values.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());
-			}
-		};
-	}
-
-	private static class TestContainer {
-		@Property
-		void nothingToResolve(@ForAll int anInt) {}
-
-		@Property
-		void forAllIntAndString(@ForAll int anInt, String aString) {}
-
-		@Property
-		void stringIntStringInt(String s1, @ForAll int i1, String s2, @ForAll int i2) {}
-	}
-
 }
 
 class CreateAlwaysAString implements ResolveParameterHook {
@@ -256,18 +157,17 @@ class CreateAlwaysAString implements ResolveParameterHook {
 
 class CreateAString implements ResolveParameterHook {
 
-	static Store<Integer> countInjectorCalls;
+	static Store<Integer> countResolveCalls;
 
 	static Store<Integer> countSupplierCalls;
 
 	@Override
 	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
-		countInjectorCalls = Store.getOrCreate("injectorCalls", Lifespan.PROPERTY, () -> 0);
+		countResolveCalls = Store.getOrCreate("injectorCalls", Lifespan.PROPERTY, () -> 0);
 		countSupplierCalls = Store.getOrCreate("supplierCalls", Lifespan.PROPERTY, () -> 0);
 
-		countInjectorCalls.update(i -> i + 1);
-
 		if (parameterContext.typeUsage().isOfType(String.class)) {
+			countResolveCalls.update(i -> i + 1);
 			return Optional.of(lifecycleContext -> {
 				assertThat(lifecycleContext).isInstanceOf(TryLifecycleContext.class);
 				assertThat(((TryLifecycleContext) lifecycleContext).propertyContext().containerClass())
@@ -275,6 +175,18 @@ class CreateAString implements ResolveParameterHook {
 				countSupplierCalls.update(i -> i + 1);
 				return "aString";
 			});
+		}
+		return Optional.empty();
+	}
+}
+
+class Create42 implements ResolveParameterHook {
+
+	@Override
+	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+		assertThat(parameterContext.index()).isBetween(0, 3);
+		if (parameterContext.typeUsage().isOfType(int.class)) {
+			return Optional.of(lifecycleContext -> 42);
 		}
 		return Optional.empty();
 	}
