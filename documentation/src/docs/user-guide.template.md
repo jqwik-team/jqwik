@@ -23,7 +23,7 @@ That means that you can use it either stand-alone or combine it with any other J
 All you have to do is add all needed engines to your `testCompile` dependencies as shown in the
 [gradle file](#gradle) below.
 
-The latest release of __jqwik__ is deployed to [Maven Central](https://mvnrepository.com/).
+The latest release of __jqwik__ is deployed to [Maven Central](https://search.maven.org/search?q=g:net.jqwik).
 
 Snapshot releases can be fetched from https://oss.sonatype.org/content/repositories/snapshots.
 
