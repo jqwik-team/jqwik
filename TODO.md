@@ -1,7 +1,6 @@
 - 1.2.5
 
     - Support resolved parameters in:
-      - `@BeforeTry` and `@AfterTry` methods
       - `@BeforeProperty` and `@AfterProperty` methods
       - `@BeforeContainer` and `@AfterContainer` methods
 

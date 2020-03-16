@@ -15,6 +15,16 @@ class ResolvingParametersEverywhereTests {
 		Assertions.assertThat(shouldBe42).isEqualTo(42);
 	}
 
+	@BeforeTry
+	void otherBeforeTry(int shouldBe42) {
+		Assertions.assertThat(shouldBe42).isEqualTo(42);
+	}
+
+	@AfterTry
+	void afterTry(int shouldBe42) {
+		Assertions.assertThat(shouldBe42).isEqualTo(42);
+	}
+
 	@Property(tries = 5)
 	void inProperty(int shouldBe42) {
 		Assertions.assertThat(shouldBe42).isEqualTo(42);

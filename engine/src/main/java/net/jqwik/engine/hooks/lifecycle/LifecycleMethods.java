@@ -40,7 +40,7 @@ class LifecycleMethods {
 	}
 
 	static List<Method> findAfterTryMethods(Class<?> testClass) {
-		return findMethods(testClass, false, false, AfterTry.class, HierarchyTraversalMode.BOTTOM_UP);
+		return findMethods(testClass, false, true, AfterTry.class, HierarchyTraversalMode.BOTTOM_UP);
 	}
 
 	private static void assertStatic(Class<? extends Annotation> annotationType, Method method) {
@@ -81,6 +81,15 @@ class LifecycleMethods {
 		}
 	}
 
+	private static void assertNoAddLifecycleHookAnnotations(Class<? extends Annotation> annotationType, Method method) {
+			AnnotationSupport.findAnnotation(method, AddLifecycleHook.class).ifPresent(annotation -> {
+				throw new JqwikException(String.format(
+					"@%s method '%s' does not support lifecycle hook annotation: [%s].",
+					annotationType.getSimpleName(), method.toGenericString(), annotation
+				));
+			});
+	}
+
 	private static void assertNoParams(Class<? extends Annotation> annotationType, Method method) {
 		if (method.getParameterCount() > 0) {
 			throw new JqwikException(String.format(
@@ -104,6 +113,7 @@ class LifecycleMethods {
 			methods.forEach(method -> assertNonStatic(annotationType, method));
 		}
 		methods.forEach(method -> assertNoForAllParams(annotationType, method));
+		methods.forEach(method -> assertNoAddLifecycleHookAnnotations(annotationType, method));
 		if (!canHaveParameters) {
 			methods.forEach(method -> assertNoParams(annotationType, method));
 		}
