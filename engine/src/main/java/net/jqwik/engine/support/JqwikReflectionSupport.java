@@ -185,6 +185,12 @@ public class JqwikReflectionSupport {
 		return list;
 	}
 
+	public static MethodParameter getMethodParameter(Parameter parameter, int index, Class<?> containerClass) {
+		GenericsClassContext containerClassContext = GenericsSupport.contextFor(containerClass);
+		TypeResolution resolution = containerClassContext.resolveParameter(parameter);
+		return new MethodParameter(parameter, resolution, index);
+	}
+
 	public static Optional<Method> findGeneratorMethod(
 		String generatorToFind,
 		Class<?> containerClass,

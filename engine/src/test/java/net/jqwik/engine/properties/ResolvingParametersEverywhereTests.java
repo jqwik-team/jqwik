@@ -7,12 +7,11 @@ import org.assertj.core.api.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
-@Disabled("Implementation deferred until restructuring is over")
 @AddLifecycleHook(ResolveIntsTo42.class)
 class ResolvingParametersEverywhereTests {
 
 	@BeforeTry
-	void beforeProperty(int shouldBe42) {
+	void beforeTry(int shouldBe42) {
 		Assertions.assertThat(shouldBe42).isEqualTo(42);
 	}
 

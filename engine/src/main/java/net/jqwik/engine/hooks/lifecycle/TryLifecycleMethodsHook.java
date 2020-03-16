@@ -6,6 +6,7 @@ import java.util.*;
 import org.junit.platform.engine.support.hierarchical.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
@@ -13,24 +14,40 @@ public class TryLifecycleMethodsHook implements AroundTryHook {
 
 	private void beforeTry(TryLifecycleContext context) {
 		List<Method> beforeTryMethods = LifecycleMethods.findBeforeTryMethods(context.propertyContext().containerClass());
-		callPropertyMethods(beforeTryMethods, context.propertyContext().testInstance());
+		callTryMethods(beforeTryMethods, context);
 	}
 
-	private void callPropertyMethods(List<Method> methods, Object testInstance) {
+	private void callTryMethods(List<Method> methods, TryLifecycleContext context) {
+		Object testInstance = context.propertyContext().testInstance();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
-			throwableCollector.execute(() -> callMethod(method, testInstance));
+			Object[] parameters = resolveParameters(method, context);
+			throwableCollector.execute(() -> callMethod(method, testInstance, parameters));
 		}
 		throwableCollector.assertEmpty();
 	}
 
-	private void callMethod(Method method, Object target) {
-		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target);
+	private Object[] resolveParameters(Method method, TryLifecycleContext context) {
+		List<Object> parameters = new ArrayList<>();
+		for (int i = 0; i < method.getParameters().length; i++) {
+			final int index = i;
+			ParameterSupplier supplier = context.resolveParameter(method, index)
+												.orElseThrow(() -> {
+				String info = "No matching resolver could be found";
+				return new CannotResolveParameterException(method.getParameters()[index], info);
+			});
+			parameters.add(supplier.get(context));
+		}
+		return parameters.toArray();
+	}
+
+	private void callMethod(Method method, Object target, Object[] parameters) {
+		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target, parameters);
 	}
 
 	private void afterTry(TryLifecycleContext context) {
 		List<Method> afterTryMethods = LifecycleMethods.findAfterTryMethods(context.propertyContext().containerClass());
-		callPropertyMethods(afterTryMethods, context.propertyContext().testInstance());
+		callTryMethods(afterTryMethods, context);
 	}
 
 	@Override

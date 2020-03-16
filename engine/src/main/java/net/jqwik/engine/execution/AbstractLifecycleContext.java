@@ -6,14 +6,15 @@ import java.util.*;
 import org.junit.platform.commons.support.*;
 
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.support.*;
 
 abstract class AbstractLifecycleContext implements LifecycleContext {
 
 	private final Reporter reporter;
+	protected final ResolveParameterHook resolveParameterHook;
 
-	public AbstractLifecycleContext(Reporter reporter) {
+	protected AbstractLifecycleContext(Reporter reporter, ResolveParameterHook resolveParameterHook) {
 		this.reporter = reporter;
+		this.resolveParameterHook = resolveParameterHook;
 	}
 
 	@Override

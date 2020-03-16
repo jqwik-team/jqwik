@@ -1,5 +1,7 @@
 package net.jqwik.api.lifecycle;
 
+import java.lang.reflect.*;
+
 import org.apiguardian.api.*;
 
 import net.jqwik.api.*;
@@ -12,10 +14,15 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.2.4")
 public class CannotResolveParameterException extends JqwikException {
 	public CannotResolveParameterException(ParameterResolutionContext context, String info) {
-		super(createMessage(context, info));
+		this(context.parameter(), info);
 	}
 
-	private static String createMessage(ParameterResolutionContext context, String info) {
-		return String.format("Parameter [%s] without @ForAll cannot be resolved:%n\t%s", context.parameter(), info);
+	@API(status = EXPERIMENTAL, since = "1.2.5")
+	public CannotResolveParameterException(Parameter parameter, String info) {
+		super(createMessage(parameter, info));
+	}
+
+	private static String createMessage(Parameter parameter, String info) {
+		return String.format("Parameter [%s] cannot be resolved:%n\t%s", parameter, info);
 	}
 }

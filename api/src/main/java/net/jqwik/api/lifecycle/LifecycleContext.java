@@ -26,4 +26,16 @@ public interface LifecycleContext {
 
 	@API(status = EXPERIMENTAL, since = "1.2.4")
 	<T> T newInstance(Class<T> clazz);
+
+	/**
+	 * Resolve a parameter from a method in the context of property in which it
+	 * is running.
+	 *
+	 * @param method The method of the test container the parameter of which should be resolved
+	 * @param index The parameter's position in a method - starting with 0.
+	 * @return supplier instance
+	 * @throws CannotResolveParameterException
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.5")
+	Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index);
 }

@@ -112,7 +112,7 @@ class LifecycleRegistryTests {
 
 				@Override
 				public Reporter reporter() {
-					return null;
+					return ((key, value) -> {});
 				}
 
 				@Override
@@ -123,6 +123,11 @@ class LifecycleRegistryTests {
 				@Override
 				public <T> T newInstance(Class<T> clazz) {
 					return JqwikReflectionSupport.newInstanceWithDefaultConstructor(clazz);
+				}
+
+				@Override
+				public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index) {
+					return Optional.empty();
 				}
 			};
 		}

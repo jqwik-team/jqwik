@@ -26,7 +26,7 @@ public class TestHelper {
 		PropertyMethodDescriptor methodDescriptor =
 			(PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(containerClass, methodName, parameterTypes).build();
 		Object instance = JqwikReflectionSupport.newInstanceWithDefaultConstructor(containerClass);
-		return new DefaultPropertyLifecycleContext(methodDescriptor, instance, (key, value) -> {});
+		return new DefaultPropertyLifecycleContext(methodDescriptor, instance, (key, value) -> {}, ResolveParameterHook.DO_NOT_RESOLVE);
 	}
 
 	public static List<MethodParameter> getParametersFor(Class<?> aClass, String methodName) {
@@ -115,7 +115,7 @@ public class TestHelper {
 
 			@Override
 			public Reporter reporter() {
-				return null;
+				return ((key, value) -> {});
 			}
 
 			@Override
@@ -126,6 +126,11 @@ public class TestHelper {
 			@Override
 			public <T> T newInstance(Class<T> clazz) {
 				return null;
+			}
+
+			@Override
+			public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index) {
+				return Optional.empty();
 			}
 		};
 	}

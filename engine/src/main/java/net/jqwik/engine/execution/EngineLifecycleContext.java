@@ -12,8 +12,8 @@ public class EngineLifecycleContext extends AbstractLifecycleContext implements 
 
 	private TestDescriptor engineDescriptor;
 
-	public EngineLifecycleContext(TestDescriptor engineDescriptor, Reporter reporter) {
-		super(reporter);
+	public EngineLifecycleContext(TestDescriptor engineDescriptor, Reporter reporter, ResolveParameterHook resolveParameterHook) {
+		super(reporter, resolveParameterHook);
 		this.engineDescriptor = engineDescriptor;
 	}
 
@@ -35,6 +35,11 @@ public class EngineLifecycleContext extends AbstractLifecycleContext implements 
 	@Override
 	public <T> T newInstance(Class<T> clazz) {
 		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(clazz);
+	}
+
+	@Override
+	public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index) {
+		return Optional.empty();
 	}
 
 }

@@ -25,7 +25,7 @@ class ContainerTaskCreator {
 		Reporter reporter = (key, value) -> propertyExecutionListener
 												.reportingEntryPublished(containerDescriptor, ReportEntry.from(key, value));
 
-		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter);
+		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter, lifecycleSupplier);
 
 		SkipExecutionHook.SkipResult skipResult = CurrentTestDescriptor.runWithDescriptor(containerDescriptor, () -> {
 			lifecycleSupplier.prepareHooks(containerDescriptor, containerLifecycleContext);
@@ -105,13 +105,18 @@ class ContainerTaskCreator {
 		return prepareContainerTask;
 	}
 
-	private ContainerLifecycleContext createLifecycleContext(TestDescriptor containerDescriptor, Reporter reporter) {
+	private ContainerLifecycleContext createLifecycleContext(
+		TestDescriptor containerDescriptor,
+		Reporter reporter,
+		LifecycleHooksSupplier lifecycleSupplier
+	) {
+		ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(containerDescriptor);
 		if (containerDescriptor instanceof ContainerClassDescriptor) {
 			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) containerDescriptor;
-			return new DefaultContainerLifecycleContext(classDescriptor, reporter);
+			return new DefaultContainerLifecycleContext(classDescriptor, reporter, resolveParameterHook);
 		}
 		// TODO: Check if it really is an engine
-		return new EngineLifecycleContext(containerDescriptor, reporter);
+		return new EngineLifecycleContext(containerDescriptor, reporter, resolveParameterHook);
 	}
 
 	private ExecutionTask[] createChildren(

@@ -70,7 +70,7 @@ class CheckedPropertyTests {
 		}
 
 		private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
-			return new DefaultPropertyLifecycleContext(descriptor, new Object(), ((key, value) -> {}));
+			return new DefaultPropertyLifecycleContext(descriptor, new Object(), ((key, value) -> {}), ResolveParameterHook.DO_NOT_RESOLVE);
 		}
 
 	}

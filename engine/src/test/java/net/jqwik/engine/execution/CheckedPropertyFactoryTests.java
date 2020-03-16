@@ -45,7 +45,7 @@ public class CheckedPropertyFactoryTests {
 	}
 
 	private PropertyLifecycleContext createPropertyContext(PropertyMethodDescriptor descriptor) {
-		return new DefaultPropertyLifecycleContext(descriptor, new PropertyExamples(), ((key, value) -> {}));
+		return new DefaultPropertyLifecycleContext(descriptor, new PropertyExamples(), ((key, value) -> {}), ResolveParameterHook.DO_NOT_RESOLVE);
 	}
 
 	@Example

@@ -22,7 +22,7 @@ public class CheckedProperty {
 	public final PropertyConfiguration configuration;
 
 	private final ArbitraryResolver arbitraryResolver;
-	private final ResolveParameterHook parameterResolver;
+	private final ResolveParameterHook resolveParameterHook;
 	private final PropertyLifecycleContext propertyLifecycleContext;
 	private final Optional<Iterable<? extends Tuple>> optionalData;
 	private Optional<ExhaustiveShrinkablesGenerator> optionalExhaustive;
@@ -32,7 +32,7 @@ public class CheckedProperty {
 		TryLifecycleExecutor tryLifecycleExecutor,
 		List<MethodParameter> propertyParameters,
 		ArbitraryResolver arbitraryResolver,
-		ResolveParameterHook parameterResolver,
+		ResolveParameterHook resolveParameterHook,
 		PropertyLifecycleContext propertyLifecycleContext,
 		Optional<Iterable<? extends Tuple>> optionalData,
 		PropertyConfiguration configuration
@@ -42,7 +42,7 @@ public class CheckedProperty {
 		this.propertyParameters = propertyParameters;
 		this.forAllParameters = selectForAllParameters(propertyParameters);
 		this.arbitraryResolver = arbitraryResolver;
-		this.parameterResolver = parameterResolver;
+		this.resolveParameterHook = resolveParameterHook;
 		this.propertyLifecycleContext = propertyLifecycleContext;
 		this.optionalData = optionalData;
 		this.configuration = configuration;
@@ -92,9 +92,9 @@ public class CheckedProperty {
 		ResolvingParametersGenerator parametersGenerator = new ResolvingParametersGenerator(
 			propertyParameters,
 			shrinkablesGenerator,
-			parameterResolver
+			resolveParameterHook
 		);
-		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext);
+		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext, resolveParameterHook);
 		return new GenericProperty(propertyName, configuration, parametersGenerator, tryLifecycleExecutor, tryLifecycleContextSupplier);
 	}
 

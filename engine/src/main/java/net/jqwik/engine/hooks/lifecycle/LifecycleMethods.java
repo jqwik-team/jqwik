@@ -36,7 +36,7 @@ class LifecycleMethods {
 	}
 
 	static List<Method> findBeforeTryMethods(Class<?> testClass) {
-		return findMethods(testClass, false, false, BeforeTry.class, HierarchyTraversalMode.TOP_DOWN);
+		return findMethods(testClass, false, true, BeforeTry.class, HierarchyTraversalMode.TOP_DOWN);
 	}
 
 	static List<Method> findAfterTryMethods(Class<?> testClass) {
@@ -70,6 +70,17 @@ class LifecycleMethods {
 		}
 	}
 
+	private static void assertNoForAllParams(Class<? extends Annotation> annotationType, Method method) {
+		for (Parameter parameter : method.getParameters()) {
+			AnnotationSupport.findAnnotation(parameter, ForAll.class).ifPresent(ignore -> {
+				throw new JqwikException(String.format(
+					"@%s method '%s' must not have parameters annotated with @ForAll.",
+					annotationType.getSimpleName(), method.toGenericString()
+				));
+			});
+		}
+	}
+
 	private static void assertNoParams(Class<? extends Annotation> annotationType, Method method) {
 		if (method.getParameterCount() > 0) {
 			throw new JqwikException(String.format(
@@ -92,6 +103,7 @@ class LifecycleMethods {
 		} else {
 			methods.forEach(method -> assertNonStatic(annotationType, method));
 		}
+		methods.forEach(method -> assertNoForAllParams(annotationType, method));
 		if (!canHaveParameters) {
 			methods.forEach(method -> assertNoParams(annotationType, method));
 		}
