@@ -2,17 +2,13 @@ package net.jqwik.engine.properties;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PerProperty.*;
 import net.jqwik.engine.*;
-import net.jqwik.engine.execution.*;
-import net.jqwik.engine.support.*;
 
-import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 class ResolvingParametersInTryTests {
@@ -50,7 +46,6 @@ class ResolvingParametersInTryTests {
 		}
 	}
 
-
 	@Property(tries = 10)
 	@AddLifecycleHook(CreateAString.class)
 	@PerProperty(Assert1ResolveCalls.class)
@@ -64,7 +59,6 @@ class ResolvingParametersInTryTests {
 			assertThat(CreateAString.countResolveCalls.get()).isEqualTo(1);
 		}
 	}
-
 
 	@Property(tries = 10)
 	@AddLifecycleHook(CreateAString.class)
