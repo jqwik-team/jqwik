@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
@@ -43,7 +44,7 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 	}
 
 	@Override
-	public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index) {
+	public Optional<ParameterSupplier> resolveParameter(Method method, int index) {
 		return containerClass().flatMap(containerClass -> parameterSupplierResolver.resolveParameter(method, index, containerClass));
 	}
 

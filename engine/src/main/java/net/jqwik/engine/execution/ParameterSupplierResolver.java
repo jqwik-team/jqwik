@@ -4,32 +4,33 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.support.*;
 
 class ParameterSupplierResolver {
-	private final Map<Parameter, Optional<ResolveParameterHook.ParameterSupplier>> resolvedSuppliers = new HashMap<>();
+	private final Map<Parameter, Optional<ParameterSupplier>> resolvedSuppliers = new HashMap<>();
 	private final ResolveParameterHook resolveParameterHook;
 
 	ParameterSupplierResolver(ResolveParameterHook resolveParameterHook) {
 		this.resolveParameterHook = resolveParameterHook;
 	}
 
-	Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index, Class<?> containerClass) {
+	Optional<ParameterSupplier> resolveParameter(Method method, int index, Class<?> containerClass) {
 		Parameter[] parameters = method.getParameters();
 		if (index >= 0 && index < parameters.length) {
 			Parameter parameter = parameters[index];
-			return resolvedSuppliers.computeIfAbsent(parameter, ignore -> resolveSupplier(parameter, index, containerClass));
+			MethodParameter methodParameter = JqwikReflectionSupport.getMethodParameter(parameter, index, containerClass);
+			return resolveParameter(methodParameter);
 		} else {
 			return Optional.empty();
 		}
 	}
 
-	private Optional<ResolveParameterHook.ParameterSupplier> resolveSupplier(
-		Parameter parameter,
-		int index,
-		Class<?> containerClass
-	) {
-		MethodParameter methodParameter = JqwikReflectionSupport.getMethodParameter(parameter, index, containerClass);
+	Optional<ParameterSupplier> resolveParameter(MethodParameter methodParameter) {
+		return resolvedSuppliers.computeIfAbsent(methodParameter.getRawParameter(), ignore -> computeSupplier(methodParameter));
+	}
+
+	private Optional<ParameterSupplier> computeSupplier(MethodParameter methodParameter) {
 		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(methodParameter);
 		return resolveParameterHook.resolve(parameterContext);
 	}

@@ -1,6 +1,5 @@
 package net.jqwik.engine.execution;
 
-import java.lang.reflect.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -9,10 +8,9 @@ import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.support.*;
 
 public class ResolvingParametersGenerator implements ParametersGenerator {
-	private final Map<Parameter, ParameterSupplier> resolvedSuppliers = new HashMap<>();
 	private final List<MethodParameter> propertyParameters;
 	private final Iterator<List<Shrinkable<Object>>> forAllParametersGenerator;
-	private final ResolveParameterHook resolveParameterHook;
+	private final ParameterSupplierResolver parameterSupplierResolver;
 
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
@@ -21,7 +19,7 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	) {
 		this.propertyParameters = propertyParameters;
 		this.forAllParametersGenerator = forAllParametersGenerator;
-		this.resolveParameterHook = resolveParameterHook;
+		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook);
 	}
 
 	@Override
@@ -48,20 +46,12 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 
 	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {
 		ParameterSupplier parameterSupplier =
-			resolvedSuppliers.computeIfAbsent(parameter.getRawParameter(), ignore -> resolveSupplier(parameter));
-
+			parameterSupplierResolver.resolveParameter(parameter).orElseThrow(() -> {
+				String info = "No matching resolver could be found";
+				return new CannotResolveParameterException(parameter.getRawParameter(), info);
+			});
 		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(parameter);
 		return new ShrinkableResolvedParameter(parameterSupplier, parameterContext, tryLifecycleContext);
-	}
-
-	private ParameterSupplier resolveSupplier(MethodParameter parameter) {
-		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(parameter);
-		Optional<ParameterSupplier> optionalSupplier = resolveParameterHook.resolve(parameterContext);
-		return optionalSupplier.orElseThrow(
-			() -> {
-				String info = "No matching resolver could be found";
-				return new CannotResolveParameterException(parameterContext, info);
-			});
 	}
 
 }
