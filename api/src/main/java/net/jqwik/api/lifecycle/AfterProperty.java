@@ -21,6 +21,10 @@ import static org.apiguardian.api.API.Status.*;
  * <p>The execution order of multiple {@code @AfterProperty} methods
  * within the same container is not guaranteed and might change.
  *
+ * <p>Parameters of this method will be resolved using registered instances
+ * of {@linkplain ResolveParameterHook}. Parameters with annotation
+ * {@linkplain net.jqwik.api.ForAll} are not allowed.
+ *
  * @see BeforeProperty
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD})

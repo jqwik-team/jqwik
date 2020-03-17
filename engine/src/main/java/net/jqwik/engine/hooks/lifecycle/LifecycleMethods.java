@@ -28,11 +28,11 @@ class LifecycleMethods {
 	}
 
 	static List<Method> findBeforePropertyMethods(Class<?> testClass) {
-		return findMethods(testClass, false, false, BeforeProperty.class, HierarchyTraversalMode.TOP_DOWN);
+		return findMethods(testClass, false, true, BeforeProperty.class, HierarchyTraversalMode.TOP_DOWN);
 	}
 
 	static List<Method> findAfterPropertyMethods(Class<?> testClass) {
-		return findMethods(testClass, false, false, AfterProperty.class, HierarchyTraversalMode.BOTTOM_UP);
+		return findMethods(testClass, false, true, AfterProperty.class, HierarchyTraversalMode.BOTTOM_UP);
 	}
 
 	static List<Method> findBeforeTryMethods(Class<?> testClass) {

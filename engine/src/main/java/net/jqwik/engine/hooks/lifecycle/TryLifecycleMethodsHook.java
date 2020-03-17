@@ -21,24 +21,10 @@ public class TryLifecycleMethodsHook implements AroundTryHook {
 		Object testInstance = context.propertyContext().testInstance();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
-			Object[] parameters = resolveParameters(method, context);
+			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
 			throwableCollector.execute(() -> callMethod(method, testInstance, parameters));
 		}
 		throwableCollector.assertEmpty();
-	}
-
-	private Object[] resolveParameters(Method method, TryLifecycleContext context) {
-		List<Object> parameters = new ArrayList<>();
-		for (int i = 0; i < method.getParameters().length; i++) {
-			final int index = i;
-			ParameterSupplier supplier = context.resolveParameter(method, index)
-												.orElseThrow(() -> {
-				String info = "No matching resolver could be found";
-				return new CannotResolveParameterException(method.getParameters()[index], info);
-			});
-			parameters.add(supplier.get(context));
-		}
-		return parameters.toArray();
 	}
 
 	private void callMethod(Method method, Object target, Object[] parameters) {

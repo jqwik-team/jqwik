@@ -26,6 +26,10 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Lifecycle methods annotated with `@BeforeTry`, `@AfterTry`, `@BeforeProperty`, 
+  `@AfterProperty` can now have parameters that will be resolved using registered
+  `ResolveParameterHook` instances.
+
 - Added `ActionSequence.withInvariant(String label, Invariant<M> invariant);`.
 
 - Added `ActionSequence.peek(Consumer<M> modelPeeker)`.

@@ -13,24 +13,26 @@ public class PropertyLifecycleMethodsHook implements AroundPropertyHook {
 
 	private void beforeProperty(PropertyLifecycleContext context) {
 		List<Method> beforeContainerMethods = LifecycleMethods.findBeforePropertyMethods(context.containerClass());
-		callPropertyMethods(beforeContainerMethods, context.testInstance());
+		callPropertyMethods(beforeContainerMethods, context);
 	}
 
-	private void callPropertyMethods(List<Method> methods, Object testInstance) {
+	private void callPropertyMethods(List<Method> methods, PropertyLifecycleContext context) {
+		Object testInstance = context.testInstance();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
-			throwableCollector.execute(() -> callMethod(method, testInstance));
+			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
+			throwableCollector.execute(() -> callMethod(method, testInstance, parameters));
 		}
 		throwableCollector.assertEmpty();
 	}
 
-	private void callMethod(Method method, Object target) {
-		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target);
+	private void callMethod(Method method, Object target, Object[] parameters) {
+		JqwikReflectionSupport.invokeMethodPotentiallyOuter(method, target, parameters);
 	}
 
 	private void afterProperty(PropertyLifecycleContext context) {
 		List<Method> afterContainerMethods = LifecycleMethods.findAfterPropertyMethods(context.containerClass());
-		callPropertyMethods(afterContainerMethods, context.testInstance());
+		callPropertyMethods(afterContainerMethods, context);
 	}
 
 	@Override

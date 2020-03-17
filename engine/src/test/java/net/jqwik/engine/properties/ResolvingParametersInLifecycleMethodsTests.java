@@ -8,7 +8,17 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
 @AddLifecycleHook(ResolveIntsTo42.class)
-class ResolvingParametersEverywhereTests {
+class ResolvingParametersInLifecycleMethodsTests {
+
+	@BeforeProperty
+	void beforeProperty(int shouldBe42) {
+		Assertions.assertThat(shouldBe42).isEqualTo(42);
+	}
+
+	@AfterProperty
+	void afterProperty(int shouldBe42) {
+		Assertions.assertThat(shouldBe42).isEqualTo(42);
+	}
 
 	@BeforeTry
 	void beforeTry(int shouldBe42) {
