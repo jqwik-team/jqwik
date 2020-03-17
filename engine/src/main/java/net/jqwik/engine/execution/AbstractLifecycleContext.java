@@ -10,11 +10,9 @@ import net.jqwik.api.lifecycle.*;
 abstract class AbstractLifecycleContext implements LifecycleContext {
 
 	private final Reporter reporter;
-	protected final ResolveParameterHook resolveParameterHook;
 
-	protected AbstractLifecycleContext(Reporter reporter, ResolveParameterHook resolveParameterHook) {
+	protected AbstractLifecycleContext(Reporter reporter) {
 		this.reporter = reporter;
-		this.resolveParameterHook = resolveParameterHook;
 	}
 
 	@Override

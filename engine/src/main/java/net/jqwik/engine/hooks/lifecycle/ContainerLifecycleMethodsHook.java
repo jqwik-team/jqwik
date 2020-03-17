@@ -15,27 +15,28 @@ public class ContainerLifecycleMethodsHook implements AroundContainerHook {
 	public void beforeContainer(ContainerLifecycleContext context) {
 		context.containerClass().ifPresent(containerClass -> {
 			List<Method> beforeContainerMethods = LifecycleMethods.findBeforeContainerMethods(containerClass);
-			callContainerMethods(beforeContainerMethods);
+			callContainerMethods(beforeContainerMethods, context);
 		});
 	}
 
-	private void callContainerMethods(List<Method> methods) {
+	private void callContainerMethods(List<Method> methods, ContainerLifecycleContext context) {
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
-			throwableCollector.execute(() -> callStaticMethod(method));
+			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
+			throwableCollector.execute(() -> callStaticMethod(method, parameters));
 		}
 		throwableCollector.assertEmpty();
 	}
 
-	private void callStaticMethod(Method method) {
-		ReflectionSupport.invokeMethod(method, null);
+	private void callStaticMethod(Method method, Object[] parameters) {
+		ReflectionSupport.invokeMethod(method, null, parameters);
 	}
 
 	@Override
 	public void afterContainer(ContainerLifecycleContext context) {
 		context.containerClass().ifPresent(containerClass -> {
 			List<Method> afterContainerMethods = LifecycleMethods.findAfterContainerMethods(containerClass);
-			callContainerMethods(afterContainerMethods);
+			callContainerMethods(afterContainerMethods, context);
 		});
 	}
 

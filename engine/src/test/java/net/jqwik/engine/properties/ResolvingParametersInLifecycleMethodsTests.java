@@ -10,6 +10,16 @@ import net.jqwik.api.lifecycle.*;
 @AddLifecycleHook(ResolveIntsTo42.class)
 class ResolvingParametersInLifecycleMethodsTests {
 
+	@BeforeContainer
+	static void beforeContainer(int shouldBe42) {
+		Assertions.assertThat(shouldBe42).isEqualTo(42);
+	}
+
+	@AfterContainer
+	static void afterContainer(int shouldBe42) {
+		Assertions.assertThat(shouldBe42).isEqualTo(42);
+	}
+
 	@BeforeProperty
 	void beforeProperty(int shouldBe42) {
 		Assertions.assertThat(shouldBe42).isEqualTo(42);
@@ -46,9 +56,7 @@ class ResolveIntsTo42 implements ResolveParameterHook {
 	@Override
 	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
 		if (parameterContext.typeUsage().isOfType(int.class)) {
-			return Optional.of(lifecycleContext -> {
-				return 42;
-			});
+			return Optional.of(lifecycleContext -> 42);
 		}
 		return Optional.empty();
 	}

@@ -9,7 +9,7 @@ public class DefaultTryLifecycleContext extends AbstractLifecycleContext impleme
 	private final PropertyLifecycleContext propertyContext;
 
 	public DefaultTryLifecycleContext(PropertyLifecycleContext propertyContext, ResolveParameterHook resolveParameterHook) {
-		super(propertyContext.reporter(), resolveParameterHook);
+		super(propertyContext.reporter());
 		this.propertyContext = propertyContext;
 	}
 

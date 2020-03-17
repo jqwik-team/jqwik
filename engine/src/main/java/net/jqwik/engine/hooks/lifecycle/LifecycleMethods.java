@@ -20,11 +20,11 @@ class LifecycleMethods {
 	private LifecycleMethods() { }
 
 	static List<Method> findBeforeContainerMethods(Class<?> testClass) {
-		return findMethods(testClass, true, false, BeforeContainer.class, HierarchyTraversalMode.TOP_DOWN);
+		return findMethods(testClass, true, true, BeforeContainer.class, HierarchyTraversalMode.TOP_DOWN);
 	}
 
 	static List<Method> findAfterContainerMethods(Class<?> testClass) {
-		return findMethods(testClass, true, false, AfterContainer.class, HierarchyTraversalMode.BOTTOM_UP);
+		return findMethods(testClass, true, true, AfterContainer.class, HierarchyTraversalMode.BOTTOM_UP);
 	}
 
 	static List<Method> findBeforePropertyMethods(Class<?> testClass) {

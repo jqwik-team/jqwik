@@ -13,7 +13,7 @@ public class EngineLifecycleContext extends AbstractLifecycleContext implements 
 	private TestDescriptor engineDescriptor;
 
 	public EngineLifecycleContext(TestDescriptor engineDescriptor, Reporter reporter, ResolveParameterHook resolveParameterHook) {
-		super(reporter, resolveParameterHook);
+		super(reporter);
 		this.engineDescriptor = engineDescriptor;
 	}
 

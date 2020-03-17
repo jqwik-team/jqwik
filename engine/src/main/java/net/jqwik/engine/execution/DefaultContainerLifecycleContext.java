@@ -8,15 +8,18 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.support.*;
 
 public class DefaultContainerLifecycleContext extends AbstractLifecycleContext implements ContainerLifecycleContext {
+
 	private final ContainerClassDescriptor classDescriptor;
+	private final ParameterSupplierResolver parameterSupplierResolver;
 
 	public DefaultContainerLifecycleContext(
 		ContainerClassDescriptor classDescriptor,
 		Reporter reporter,
 		ResolveParameterHook resolveParameterHook
 	) {
-		super(reporter, resolveParameterHook);
+		super(reporter);
 		this.classDescriptor = classDescriptor;
+		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook);
 	}
 
 	@Override
@@ -41,7 +44,7 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 
 	@Override
 	public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index) {
-		return Optional.empty();
+		return containerClass().flatMap(containerClass -> parameterSupplierResolver.resolveParameter(method, index, containerClass));
 	}
 
 }
