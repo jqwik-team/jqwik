@@ -106,7 +106,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 	private <T extends LifecycleHook> List<Class<T>> findHookClasses(TestDescriptor descriptor, Class<T> hookType) {
 		return registrations
 				   .stream()
-				   .filter(registration -> registration.match(descriptor, false))
+				   .filter(registration -> registration.match(descriptor))
 				   .filter(registration -> registration.match(hookType))
 				   .map(registration -> (Class<T>) registration.hookClass)
 				   .distinct()
@@ -170,25 +170,35 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			Class<? extends LifecycleHook> hookClass,
 			PropagationMode propagationMode
 		) {
+			if (propagationMode == NOT_SET) {
+				throw new IllegalArgumentException("propagation mode must be set by caller");
+			}
 			this.descriptor = descriptor;
 			this.hookClass = hookClass;
 			this.propagationMode = propagationMode;
 		}
 
-		boolean match(TestDescriptor descriptor, boolean fromChild) {
+		boolean match(TestDescriptor descriptor) {
+			return match(descriptor, 0);
+		}
+
+		private boolean match(TestDescriptor descriptor, int nesting) {
 			if (descriptor == null) {
 				return false;
 			}
-			if (fromChild && (propagationMode != ALL_DESCENDANTS)) {
+			if (nesting > 0 && (propagationMode == NO_ONE)) {
+				return false;
+			}
+			if (nesting > 1 && (propagationMode != ALL_DESCENDANTS)) {
 				return false;
 			}
 			if (this.descriptor.equals(descriptor)) {
 				return true;
 			}
-			return match(descriptor.getParent().orElse(null), true);
+			return match(descriptor.getParent().orElse(null), nesting + 1);
 		}
 
-		<T extends LifecycleHook> boolean match(Class<? extends LifecycleHook> hookType) {
+		boolean match(Class<? extends LifecycleHook> hookType) {
 			return hookType.isAssignableFrom(hookClass);
 		}
 

@@ -64,11 +64,22 @@ class LifecycleRegistryTests {
 
 	@Group
 	@AddLifecycleHook(value = ChangeFirstParamTo42.class, propagateTo = ALL_DESCENDANTS)
-	class ApplyToDescendants {
+	@AddLifecycleHook(value = ChangeSecondParamToAAA.class, propagateTo = DIRECT_DESCENDANTS)
+	class Propagation {
 
 		@Example
-		void exampleInDescendant(@ForAll int anInt) {
+		void exampleInDirectDescendant(@ForAll int anInt, @ForAll String aString) {
 			assertThat(anInt).isEqualTo(42);
+			assertThat(aString).isEqualTo("AAA");
+		}
+
+		@Group
+		class NestedPropagation {
+			@Example
+			void exampleInNestedDescendant(@ForAll int anInt, @ForAll String aString) {
+				assertThat(anInt).isEqualTo(42);
+				assertThat(aString).isNotEqualTo("AAA");
+			}
 		}
 	}
 
@@ -243,7 +254,20 @@ class LifecycleRegistryTests {
 
 		@Override
 		public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
-			parameters.set(0, 42);
+			if (parameters.size() >= 1) {
+				parameters.set(0, 42);
+			}
+			return aTry.execute(parameters);
+		}
+	}
+
+	static class ChangeSecondParamToAAA implements AroundTryHook {
+
+		@Override
+		public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
+			if (parameters.size() >= 2) {
+				parameters.set(1, "AAA");
+			}
 			return aTry.execute(parameters);
 		}
 	}
