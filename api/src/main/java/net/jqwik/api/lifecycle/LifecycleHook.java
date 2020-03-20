@@ -27,7 +27,7 @@ public interface LifecycleHook {
 
 	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default PropagationMode propagateTo() {
-		return PropagationMode.NO_ONE;
+		return PropagationMode.NO_DESCENDANTS;
 	}
 
 	/**

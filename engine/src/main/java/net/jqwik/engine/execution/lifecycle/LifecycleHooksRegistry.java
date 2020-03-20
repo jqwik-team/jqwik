@@ -186,7 +186,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			if (descriptor == null) {
 				return false;
 			}
-			if (nesting > 0 && (propagationMode == NO_ONE)) {
+			if (nesting > 0 && (propagationMode == NO_DESCENDANTS)) {
 				return false;
 			}
 			if (nesting > 1 && (propagationMode != ALL_DESCENDANTS)) {
