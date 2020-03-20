@@ -63,6 +63,25 @@ class LifecycleRegistryTests {
 	}
 
 	@Group
+	class UsingRegistrar {
+		@Example
+		void registerThroughRegistrar() {
+			TestDescriptor container1 = forClass(Container1.class, "method1_1", "method1_2").build();
+			registry.registerLifecycleHook(container1, RegisterGlobalHook.class, NO_DESCENDANTS);
+			assertThat(registry.hasHook(container1, GlobalHook.class));
+			assertThat(container1.getDescendants()).allMatch(child -> registry.hasHook(child, GlobalHook.class));
+		}
+
+		@Example
+		void registerThroughRegistrar_withExplicitPropagation() {
+			TestDescriptor container1 = forClass(Container1.class, "method1_1", "method1_2").build();
+			registry.registerLifecycleHook(container1, RegisterGlobalHookNoDescendants.class, NO_DESCENDANTS);
+			assertThat(registry.hasHook(container1, GlobalHook.class));
+			assertThat(container1.getDescendants()).allMatch(child -> !registry.hasHook(child, GlobalHook.class));
+		}
+	}
+
+	@Group
 	@AddLifecycleHook(value = ChangeFirstParamTo42.class, propagateTo = ALL_DESCENDANTS)
 	@AddLifecycleHook(value = ChangeSecondParamToAAA.class, propagateTo = DIRECT_DESCENDANTS)
 	class Propagation {
@@ -178,7 +197,7 @@ class LifecycleRegistryTests {
 		public void method2_2() {}
 	}
 
-	class GlobalHook implements LifecycleHook {
+	private static class GlobalHook implements LifecycleHook {
 		List<LifecycleContext> preparedContexts = new ArrayList<>();
 
 		@Override
@@ -192,7 +211,21 @@ class LifecycleRegistryTests {
 		}
 	}
 
-	class GlobalHookForMethodsOnly implements LifecycleHook {
+	private static class RegisterGlobalHook implements RegistrarHook {
+		@Override
+		public void registerHooks(Registrar registrar) {
+			registrar.register(GlobalHook.class);
+		}
+	}
+
+	private static class RegisterGlobalHookNoDescendants implements RegistrarHook {
+		@Override
+		public void registerHooks(Registrar registrar) {
+			registrar.register(GlobalHook.class, NO_DESCENDANTS);
+		}
+	}
+
+	private static class GlobalHookForMethodsOnly implements LifecycleHook {
 		@Override
 		public boolean appliesTo(Optional<AnnotatedElement> optionalElement) {
 			return optionalElement.map(element -> element instanceof Method).orElse(false);

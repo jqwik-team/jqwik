@@ -2,6 +2,7 @@ package net.jqwik.engine.execution.lifecycle;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
@@ -15,6 +16,8 @@ import net.jqwik.engine.support.*;
 import static net.jqwik.api.lifecycle.PropagationMode.*;
 
 public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
+
+	private static final Logger LOG = Logger.getLogger(LifecycleHooksRegistry.class.getName());
 
 	private static <T extends LifecycleHook> Comparator<T> dontCompare() {
 		return (a, b) -> 0;
@@ -122,6 +125,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		if (!instances.containsKey(hookClass)) {
 			instances.put(hookClass, hookInstance);
 		}
+		registerRegistrarHooks(descriptor, hookInstance);
 	}
 
 	private void createAndRegisterHook(
@@ -158,6 +162,24 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 			propagateTo = hookInstance.propagateTo();
 		}
 		createAndRegisterHook(descriptor, hookClass, propagateTo);
+		registerRegistrarHooks(descriptor, hookInstance);
+	}
+
+	private void registerRegistrarHooks(TestDescriptor descriptor, LifecycleHook hookInstance) {
+		if (hookInstance instanceof RegistrarHook) {
+			if (hookInstance.propagateTo() != NO_DESCENDANTS) {
+				String warnAboutPropagationMode =
+					String.format(
+						"RegistrarHook [%s] is propagated to descendants.%nThis does not work for registerHooks()!",
+						hookInstance.getClass()
+					);
+				LOG.warning(warnAboutPropagationMode);
+			}
+			RegistrarHook.Registrar registrar = (hookClass, propagationMode) -> {
+				registerLifecycleHook(descriptor, hookClass, propagationMode);
+			};
+			((RegistrarHook) hookInstance).registerHooks(registrar);
+		}
 	}
 
 	private static class HookRegistration {
