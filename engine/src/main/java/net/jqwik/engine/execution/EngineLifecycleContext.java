@@ -18,7 +18,7 @@ public class EngineLifecycleContext extends AbstractLifecycleContext implements 
 	}
 
 	@Override
-	public Optional<Class<?>> containerClass() {
+	public Optional<Class<?>> optionalContainerClass() {
 		return Optional.empty();
 	}
 
@@ -28,7 +28,7 @@ public class EngineLifecycleContext extends AbstractLifecycleContext implements 
 	}
 
 	@Override
-	public Optional<AnnotatedElement> annotatedElement() {
+	public Optional<AnnotatedElement> optionalElement() {
 		return Optional.empty();
 	}
 

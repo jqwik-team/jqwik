@@ -109,7 +109,12 @@ public class TestHelper {
 			}
 
 			@Override
-			public Optional<AnnotatedElement> annotatedElement() {
+			public Optional<AnnotatedElement> optionalElement() {
+				return Optional.empty();
+			}
+
+			@Override
+			public Optional<Class<?>> optionalContainerClass() {
 				return Optional.empty();
 			}
 

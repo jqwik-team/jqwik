@@ -22,7 +22,7 @@ abstract class AbstractLifecycleContext implements LifecycleContext {
 
 	@Override
 	public <T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass) {
-		return annotatedElement()
+		return optionalElement()
 				   .flatMap(element -> AnnotationSupport.findAnnotation(element, annotationClass));
 	}
 

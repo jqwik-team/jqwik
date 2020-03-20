@@ -16,7 +16,23 @@ public interface LifecycleContext {
 
 	String label();
 
-	Optional<AnnotatedElement> annotatedElement();
+	/**
+	 * If the context refers to a class or a method the class or method
+	 * is returned, otherwise {@code Optional.empty()}
+	 *
+	 * @return an optional annotated element
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.5")
+	Optional<AnnotatedElement> optionalElement();
+
+	/**
+	 * If the context refers to a class or a method the class or the method's class
+	 * is returned, otherwise {@code Optional.empty()}
+	 *
+	 * @return an optional annotated element
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.5")
+	Optional<Class<?>> optionalContainerClass();
 
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	Reporter reporter();

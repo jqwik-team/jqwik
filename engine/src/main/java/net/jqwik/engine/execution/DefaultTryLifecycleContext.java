@@ -24,8 +24,13 @@ public class DefaultTryLifecycleContext extends AbstractLifecycleContext impleme
 	}
 
 	@Override
-	public Optional<AnnotatedElement> annotatedElement() {
-		return propertyContext.annotatedElement();
+	public Optional<AnnotatedElement> optionalElement() {
+		return propertyContext.optionalElement();
+	}
+
+	@Override
+	public Optional<Class<?>> optionalContainerClass() {
+		return Optional.of(propertyContext.containerClass());
 	}
 
 	@Override

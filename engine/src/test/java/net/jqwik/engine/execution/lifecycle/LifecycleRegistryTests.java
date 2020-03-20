@@ -117,7 +117,12 @@ class LifecycleRegistryTests {
 				}
 
 				@Override
-				public Optional<AnnotatedElement> annotatedElement() {
+				public Optional<AnnotatedElement> optionalElement() {
+					return Optional.empty();
+				}
+
+				@Override
+				public Optional<Class<?>> optionalContainerClass() {
 					return Optional.empty();
 				}
 
@@ -240,7 +245,7 @@ class LifecycleRegistryTests {
 		public void prepareFor(LifecycleContext lifecycleContext) {
 			assertThat(CurrentTestDescriptor.get()).isInstanceOf(TestDescriptor.class);
 			assertThat(lifecycleContext).isInstanceOf(ContainerLifecycleContext.class);
-			assertThat(lifecycleContext.annotatedElement().get()).isInstanceOf(Class.class);
+			assertThat(lifecycleContext.optionalElement().get()).isInstanceOf(Class.class);
 			prepareHasBeenCalled = true;
 		}
 

@@ -29,12 +29,12 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 	}
 
 	@Override
-	public Optional<AnnotatedElement> annotatedElement() {
+	public Optional<AnnotatedElement> optionalElement() {
 		return Optional.of(classDescriptor.getContainerClass());
 	}
 
 	@Override
-	public Optional<Class<?>> containerClass() {
+	public Optional<Class<?>> optionalContainerClass() {
 		return Optional.of(classDescriptor.getContainerClass());
 	}
 
@@ -45,7 +45,7 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 
 	@Override
 	public Optional<ParameterSupplier> resolveParameter(Method method, int index) {
-		return containerClass().flatMap(containerClass -> parameterSupplierResolver.resolveParameter(method, index, containerClass));
+		return optionalContainerClass().flatMap(containerClass -> parameterSupplierResolver.resolveParameter(method, index, containerClass));
 	}
 
 }

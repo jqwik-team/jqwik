@@ -9,11 +9,11 @@ public class DisabledHook implements SkipExecutionHook {
 
 	@Override
 	public SkipResult shouldBeSkipped(LifecycleContext context) {
-		return context.annotatedElement()
+		return context.optionalElement()
 					  .flatMap(element -> AnnotationSupport.findAnnotation(element, Disabled.class))
 					  .map(disabled -> {
 						  String reason = disabled.value().isEmpty() ?
-											  String.format("@Disabled: %s", context.annotatedElement().get())
+											  String.format("@Disabled: %s", context.optionalElement().get())
 											  : disabled.value();
 						  return SkipResult.skip(reason);
 					  })

@@ -13,7 +13,7 @@ public class ContainerLifecycleMethodsHook implements AroundContainerHook {
 
 	@Override
 	public void beforeContainer(ContainerLifecycleContext context) {
-		context.containerClass().ifPresent(containerClass -> {
+		context.optionalContainerClass().ifPresent(containerClass -> {
 			List<Method> beforeContainerMethods = LifecycleMethods.findBeforeContainerMethods(containerClass);
 			callContainerMethods(beforeContainerMethods, context);
 		});
@@ -34,7 +34,7 @@ public class ContainerLifecycleMethodsHook implements AroundContainerHook {
 
 	@Override
 	public void afterContainer(ContainerLifecycleContext context) {
-		context.containerClass().ifPresent(containerClass -> {
+		context.optionalContainerClass().ifPresent(containerClass -> {
 			List<Method> afterContainerMethods = LifecycleMethods.findAfterContainerMethods(containerClass);
 			callContainerMethods(afterContainerMethods, context);
 		});

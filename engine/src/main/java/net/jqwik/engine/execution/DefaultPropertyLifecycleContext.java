@@ -44,8 +44,13 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 	}
 
 	@Override
-	public Optional<AnnotatedElement> annotatedElement() {
+	public Optional<AnnotatedElement> optionalElement() {
 		return Optional.of(targetMethod());
+	}
+
+	@Override
+	public Optional<Class<?>> optionalContainerClass() {
+		return Optional.of(containerClass());
 	}
 
 	@Override

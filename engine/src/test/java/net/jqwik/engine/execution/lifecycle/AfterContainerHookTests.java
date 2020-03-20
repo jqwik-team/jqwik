@@ -35,8 +35,8 @@ class CheckAfter implements AfterContainerHook {
 	public void afterContainer(ContainerLifecycleContext context) {
 		assertThat(CurrentTestDescriptor.get()).isInstanceOf(TestDescriptor.class);
 		assertThat(AfterContainerHookTests.after).isEqualTo(1);
-		assertThat(context.containerClass()).isPresent();
-		assertThat(context.containerClass().get()).isEqualTo(AfterContainerHookTests.class);
+		assertThat(context.optionalContainerClass()).isPresent();
+		assertThat(context.optionalContainerClass().get()).isEqualTo(AfterContainerHookTests.class);
 	}
 }
 
@@ -45,8 +45,8 @@ class IncrementAfter implements AfterContainerHook {
 	@Override
 	public void afterContainer(ContainerLifecycleContext context) {
 		AfterContainerHookTests.after++;
-		assertThat(context.containerClass()).isPresent();
-		assertThat(context.containerClass().get())
+		assertThat(context.optionalContainerClass()).isPresent();
+		assertThat(context.optionalContainerClass().get())
 			.isIn(AfterContainerHookTests.class, AfterContainerHookTests.NestedTests.class);
 	}
 

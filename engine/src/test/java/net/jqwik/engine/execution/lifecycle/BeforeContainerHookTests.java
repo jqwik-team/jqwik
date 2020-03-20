@@ -45,8 +45,8 @@ class IncrementBefore implements BeforeContainerHook {
 	public void beforeContainer(ContainerLifecycleContext context) {
 		assertThat(CurrentTestDescriptor.get()).isInstanceOf(TestDescriptor.class);
 		BeforeContainerHookTests.before++;
-		assertThat(context.containerClass()).isPresent();
-		assertThat(context.containerClass().get()).isEqualTo(BeforeContainerHookTests.class);
+		assertThat(context.optionalContainerClass()).isPresent();
+		assertThat(context.optionalContainerClass().get()).isEqualTo(BeforeContainerHookTests.class);
 	}
 }
 
@@ -55,8 +55,8 @@ class IncrementPropagatedBefore implements BeforeContainerHook {
 	@Override
 	public void beforeContainer(ContainerLifecycleContext context) {
 		BeforeContainerHookTests.propagatedBefore++;
-		assertThat(context.containerClass()).isPresent();
-		assertThat(context.containerClass().get())
+		assertThat(context.optionalContainerClass()).isPresent();
+		assertThat(context.optionalContainerClass().get())
 			.isIn(BeforeContainerHookTests.class, BeforeContainerHookTests.NestedTests.class);
 	}
 
