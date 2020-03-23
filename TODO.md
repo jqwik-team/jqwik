@@ -1,6 +1,8 @@
 - 1.2.5
 
     - Spring/Boot Testing in its own module
+
+- 1.2.6
     
     - Aliases `@BeforeExample` and `@AfterExample`
     
