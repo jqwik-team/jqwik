@@ -66,9 +66,24 @@ public class JqwikReflectionSupport {
 	 * @return the newly created instance
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
-		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz))
-			return ReflectionSupport.newInstance(clazz);
-		Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
+		Function<Class<?>, Object> parentCreator = JqwikReflectionSupport::newInstanceWithDefaultConstructor;
+		return newInstance(clazz, new Object[0], parentCreator);
+	}
+
+	/**
+	 * Create instance of a class that can potentially be a non static inner class
+	 *
+	 * @param <T>   The type of the instance to create
+	 * @param clazz The class to instantiate
+	 * @param args The arguments for the constructor
+	 * @param parentCreator A function to create a parent instance for non static inner classes
+	 * @return the newly created instance
+	 */
+	public static <T> T newInstance(Class<T> clazz, Object[] args, Function<Class<?>, Object> parentCreator) {
+		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz)) {
+			return ReflectionSupport.newInstance(clazz, args);
+		}
+		Object parentInstance = parentCreator.apply(clazz.getDeclaringClass());
 		return ReflectionSupport.newInstance(clazz, parentInstance);
 	}
 

@@ -15,8 +15,8 @@ class ParameterSupplierResolver {
 		this.resolveParameterHook = resolveParameterHook;
 	}
 
-	Optional<ParameterSupplier> resolveParameter(Method method, int index, Class<?> containerClass) {
-		Parameter[] parameters = method.getParameters();
+	Optional<ParameterSupplier> resolveParameter(Executable executable, int index, Class<?> containerClass) {
+		Parameter[] parameters = executable.getParameters();
 		if (index >= 0 && index < parameters.length) {
 			Parameter parameter = parameters[index];
 			MethodParameter methodParameter = JqwikReflectionSupport.getMethodParameter(parameter, index, containerClass);

@@ -1,5 +1,7 @@
 package net.jqwik.engine.execution;
 
+import java.util.*;
+
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
@@ -30,9 +32,9 @@ class PropertyTaskCreator {
 				PropertyLifecycleContext propertyLifecycleContext;
 
 				try {
-					Object testInstance = createTestInstance(methodDescriptor);
-					Reporter reporter = (key, value) -> listener.reportingEntryPublished(methodDescriptor, ReportEntry.from(key, value));
 					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
+					Object testInstance = createTestInstance(methodDescriptor, resolveParameterHook);
+					Reporter reporter = (key, value) -> listener.reportingEntryPublished(methodDescriptor, ReportEntry.from(key, value));
 					propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
 
 					lifecycleSupplier.prepareHooks(methodDescriptor, propertyLifecycleContext);
@@ -73,27 +75,42 @@ class PropertyTaskCreator {
 		listener.executionFinished(methodDescriptor, executionResult);
 	}
 
-	private Object createTestInstance(PropertyMethodDescriptor methodDescriptor) {
+	private Object createTestInstance(
+		PropertyMethodDescriptor methodDescriptor,
+		ResolveParameterHook resolveParameterHook
+	) {
 		try {
 			if (methodDescriptor.getParent().isPresent()) {
 				TestDescriptor container = methodDescriptor.getParent().get();
 				return CurrentTestDescriptor.runWithDescriptor(
 					container,
-					() -> JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass())
+					() -> createTestInstanceWithResolvedParameters(methodDescriptor.getContainerClass(), resolveParameterHook)
 				);
 			} else {
 				// Should only occur in tests
-				return JqwikReflectionSupport.newInstanceWithDefaultConstructor(methodDescriptor.getContainerClass());
+				return createTestInstanceWithResolvedParameters(methodDescriptor.getContainerClass(), resolveParameterHook);
 			}
-
+		} catch (JqwikException jqwikException) {
+			throw jqwikException;
 		} catch (Throwable throwable) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 			String message = String.format(
-				"Cannot create instance of class '%s'. Maybe it has no default constructor?",
+				"Cannot create instance of class '%s'. Maybe it has no accessible constructor?",
 				methodDescriptor.getContainerClass()
 			);
 			throw new JqwikException(message, throwable);
 		}
+	}
+
+	private Object createTestInstanceWithResolvedParameters(
+		Class<?> containerClass,
+		ResolveParameterHook resolveParameterHook
+	) {
+		if (containerClass.getConstructors().length > 1) {
+			String message = String.format("Test container class [%s] has more than one potential constructor", containerClass.getName());
+			throw new JqwikException(message);
+		}
+		return JqwikReflectionSupport.newInstanceWithDefaultConstructor(containerClass);
 	}
 
 	private PropertyExecutionResult executeTestMethod(
