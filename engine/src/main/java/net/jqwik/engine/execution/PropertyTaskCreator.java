@@ -1,5 +1,7 @@
 package net.jqwik.engine.execution;
 
+import java.lang.reflect.*;
+
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
@@ -31,7 +33,7 @@ class PropertyTaskCreator {
 				try {
 					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
 					Reporter reporter = (key, value) -> listener.reportingEntryPublished(methodDescriptor, ReportEntry.from(key, value));
-					Object testInstance = createTestInstance(methodDescriptor, resolveParameterHook, reporter);
+					Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
 					propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
 
 					lifecycleSupplier.prepareHooks(methodDescriptor, propertyLifecycleContext);
@@ -74,13 +76,14 @@ class PropertyTaskCreator {
 
 	private Object createTestInstance(
 		PropertyMethodDescriptor methodDescriptor,
-		ResolveParameterHook resolveParameterHook,
+		LifecycleHooksSupplier lifecycleSupplier,
 		Reporter reporter
 	) {
 		try {
 			return methodDescriptor.getParent().map(
 				container -> {
 					//TODO: Hand context in from outside to always have the same instance
+					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(container);
 					ContainerLifecycleContext containerLifecycleContext = new DefaultContainerLifecycleContext(
 						(ContainerClassDescriptor) container,
 						reporter,
@@ -96,9 +99,12 @@ class PropertyTaskCreator {
 		} catch (Throwable throwable) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 			String message = String.format(
-				"Cannot create instance of class '%s'. Maybe it has no accessible constructor?",
+				"Cannot create instance of class '%s'",
 				methodDescriptor.getContainerClass()
 			);
+			if (throwable instanceof InvocationTargetException) {
+				throwable = ((InvocationTargetException) throwable).getTargetException();
+			}
 			throw new JqwikException(message, throwable);
 		}
 	}

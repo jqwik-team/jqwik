@@ -22,6 +22,7 @@ class ResolvingParametersInConstructorTests {
 	}
 
 	@Group
+	@AddLifecycleHook(ResolveIntsTo41.class)
 	class Inner {
 		private int inner41;
 
@@ -48,11 +49,6 @@ class ResolveIntsTo41 implements ResolveParameterHook {
 			});
 		}
 		return Optional.empty();
-	}
-
-	@Override
-	public PropagationMode propagateTo() {
-		return PropagationMode.ALL_DESCENDANTS;
 	}
 }
 
