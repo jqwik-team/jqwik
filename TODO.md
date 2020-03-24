@@ -1,7 +1,5 @@
 - 1.2.5
 
-    - Allow parameter injection to test container constructor
-
     - Spring/Boot Testing in its own module
 
 - 1.2.6

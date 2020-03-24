@@ -1,9 +1,5 @@
 package net.jqwik.engine.execution;
 
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.function.*;
-
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
@@ -84,6 +80,7 @@ class PropertyTaskCreator {
 		try {
 			return methodDescriptor.getParent().map(
 				container -> {
+					//TODO: Hand context in from outside to always have the same instance
 					ContainerLifecycleContext containerLifecycleContext = new DefaultContainerLifecycleContext(
 						(ContainerClassDescriptor) container,
 						reporter,
@@ -91,7 +88,7 @@ class PropertyTaskCreator {
 					);
 					return CurrentTestDescriptor.runWithDescriptor(
 						container,
-						() -> createTestInstanceWithResolvedParameters(methodDescriptor.getContainerClass(), containerLifecycleContext)
+						() -> createTestInstanceWithResolvedParameters(containerLifecycleContext)
 					);
 				}).orElseThrow(() -> new JqwikException("Method descriptors must have a parent"));
 		} catch (JqwikException jqwikException) {
@@ -106,54 +103,9 @@ class PropertyTaskCreator {
 		}
 	}
 
-	private Object createTestInstanceWithResolvedParameters(
-		Class<?> containerClass,
-		ContainerLifecycleContext containerLifecycleContext
-	) {
-		List<Constructor<?>> constructors = allAccessibleConstructors(containerClass);
-		if (constructors.size() > 1) {
-			String message = String.format("Test container class [%s] has more than one potential constructor", containerClass.getName());
-			throw new JqwikException(message);
-		}
-		Function<Object, Object[]> argsResolver = noParent -> new Object[0];
-		if (constructors.size() == 1) {
-			argsResolver = parent -> resolveParameters(constructors.get(0), parent, containerLifecycleContext);
-		}
-		Function<Class<?>, Object> parentCreator = parentClass -> createTestInstanceWithResolvedParameters(parentClass, containerLifecycleContext);
-		return JqwikReflectionSupport.newInstance(containerClass, argsResolver, parentCreator);
-	}
-
-	private List<Constructor<?>> allAccessibleConstructors(Class<?> containerClass) {
-		List<Constructor<?>> constructors = new ArrayList<>(Arrays.asList(containerClass.getConstructors()));
-		for (Constructor<?> declaredConstructor : containerClass.getDeclaredConstructors()) {
-			if (!constructors.contains(declaredConstructor)) {
-				constructors.add(declaredConstructor);
-			}
-		}
-		return constructors;
-	}
-
-	private Object[] resolveParameters(
-		Constructor<?> constructor,
-		Object parent,
-		ContainerLifecycleContext containerLifecycleContext
-	) {
-		Object[] args = new Object[constructor.getParameterCount()];
-		for (int i = 0; i < args.length; i++) {
-			final int index = i;
-			if (index == 0 && parent != null) {
-				args[index] = parent;
-			} else {
-				args[index] = containerLifecycleContext
-								  .resolveParameter(constructor, index)
-								  .map(parameterSupplier -> parameterSupplier.get(containerLifecycleContext))
-								  .orElseThrow(() -> {
-									  String info = "No matching resolver could be found";
-									  return new CannotResolveParameterException(constructor.getParameters()[index], info);
-								  });
-			}
-		}
-		return args;
+	private Object createTestInstanceWithResolvedParameters(ContainerLifecycleContext containerLifecycleContext) {
+		TestInstanceCreator testInstanceCreator = new TestInstanceCreator(containerLifecycleContext);
+		return testInstanceCreator.create();
 	}
 
 	private PropertyExecutionResult executeTestMethod(

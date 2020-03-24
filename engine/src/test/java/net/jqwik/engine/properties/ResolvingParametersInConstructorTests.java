@@ -2,12 +2,11 @@ package net.jqwik.engine.properties;
 
 import java.util.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
-@Disabled("Not implemented yet")
+import static org.assertj.core.api.Assertions.*;
+
 @AddLifecycleHook(ResolveIntsTo41.class)
 class ResolvingParametersInConstructorTests {
 
@@ -19,7 +18,7 @@ class ResolvingParametersInConstructorTests {
 
 	@Example
 	void example() {
-		Assertions.assertThat(shouldBe41).isEqualTo(41);
+		assertThat(shouldBe41).isEqualTo(41);
 	}
 
 	@Group
@@ -32,8 +31,8 @@ class ResolvingParametersInConstructorTests {
 
 		@Example
 		void innerExample() {
-			Assertions.assertThat(shouldBe41).isEqualTo(41);
-			Assertions.assertThat(inner41).isEqualTo(41);
+			assertThat(shouldBe41).isEqualTo(41);
+			assertThat(inner41).isEqualTo(41);
 		}
 	}
 }
@@ -43,7 +42,10 @@ class ResolveIntsTo41 implements ResolveParameterHook {
 	@Override
 	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
 		if (parameterContext.typeUsage().isOfType(int.class)) {
-			return Optional.of(lifecycleContext -> 42);
+			return Optional.of(lifecycleContext -> {
+				assertThat(lifecycleContext).isInstanceOf(ContainerLifecycleContext.class);
+				return 41;
+			});
 		}
 		return Optional.empty();
 	}

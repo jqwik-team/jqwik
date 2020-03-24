@@ -10,17 +10,13 @@ import java.util.stream.*;
 
 import org.junit.platform.commons.support.*;
 
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.providers.*;
-import net.jqwik.engine.discovery.predicates.*;
 
 import static java.util.stream.Collectors.*;
 
 import static net.jqwik.engine.support.OverriddenMethodAnnotationSupport.*;
 
 public class JqwikReflectionSupport {
-
-	private final static IsTopLevelClass isTopLevelClass = new IsTopLevelClass();
 
 	public static Stream<Object> streamInstancesFromInside(Object inner) {
 		//noinspection RedundantOperationOnEmptyContainer
@@ -66,26 +62,12 @@ public class JqwikReflectionSupport {
 	 * @return the newly created instance
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
-		Function<Class<?>, Object> parentCreator = JqwikReflectionSupport::newInstanceWithDefaultConstructor;
-		Function<Object, Object[]> argsResolver = parent -> parent == null ? new Object[0] : new Object[]{parent};
-		return newInstance(clazz, argsResolver, parentCreator);
-	}
-
-	/**
-	 * Create instance of a class that can potentially be a non static inner class
-	 *
-	 * @param <T>   The type of the instance to create
-	 * @param clazz The class to instantiate
-	 * @param argsResolver Supply the arguments for the constructor
-	 * @param parentCreator A function to create a parent instance for non static inner classes
-	 * @return the newly created instance
-	 */
-	public static <T> T newInstance(Class<T> clazz, Function<Object, Object[]> argsResolver, Function<Class<?>, Object> parentCreator) {
-		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz)) {
-			return ReflectionSupport.newInstance(clazz, argsResolver.apply(null));
+		if (isInnerClass(clazz)) {
+			Object parentInstance = newInstanceWithDefaultConstructor(clazz.getDeclaringClass());
+			return ReflectionSupport.newInstance(clazz, parentInstance);
+		} else {
+			return ReflectionSupport.newInstance(clazz);
 		}
-		Object parentInstance = parentCreator.apply(clazz.getDeclaringClass());
-		return ReflectionSupport.newInstance(clazz, argsResolver.apply(parentInstance));
 	}
 
 	/**
@@ -98,8 +80,9 @@ public class JqwikReflectionSupport {
 	 * @return the newly created instance
 	 */
 	public static <T> T newInstanceInTestContext(Class<T> clazz, Object context) {
-		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz))
+		if (!isInnerClass(clazz)) {
 			return ReflectionSupport.newInstance(clazz);
+		}
 		Class<?> outerClass = clazz.getDeclaringClass();
 		Object parentInstance = outerClass.isAssignableFrom(context.getClass()) ?
 									context : newInstanceWithDefaultConstructor(outerClass);
@@ -111,7 +94,7 @@ public class JqwikReflectionSupport {
 		}
 	}
 
-	private static <T> T newInstance(Constructor<T> constructor, Object... args) {
+	public static <T> T newInstance(Constructor<T> constructor, Object... args) {
 		try {
 			return makeAccessible(constructor).newInstance(args);
 		} catch (Throwable t) {
@@ -240,8 +223,8 @@ public class JqwikReflectionSupport {
 		};
 	}
 
-	public static boolean isInnerClass(Class<? extends LifecycleHook> hookClass) {
-		return hookClass.isMemberClass() && !ModifierSupport.isStatic(hookClass);
+	public static boolean isInnerClass(Class<?> clazz) {
+		return clazz.isMemberClass() && !ModifierSupport.isStatic(clazz);
 	}
 
 	public static boolean isFunctionalType(Class<?> candidateType) {
