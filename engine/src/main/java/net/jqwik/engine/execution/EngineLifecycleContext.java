@@ -38,7 +38,7 @@ public class EngineLifecycleContext extends AbstractLifecycleContext implements 
 	}
 
 	@Override
-	public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index) {
+	public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Executable executable, int index) {
 		return Optional.empty();
 	}
 

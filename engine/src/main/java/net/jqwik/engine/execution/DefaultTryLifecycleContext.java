@@ -39,7 +39,7 @@ public class DefaultTryLifecycleContext extends AbstractLifecycleContext impleme
 	}
 
 	@Override
-	public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Method method, int index) {
-		return propertyContext.resolveParameter(method, index);
+	public Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Executable executable, int index) {
+		return propertyContext.resolveParameter(executable, index);
 	}
 }

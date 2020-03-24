@@ -67,7 +67,8 @@ public class JqwikReflectionSupport {
 	 */
 	public static <T> T newInstanceWithDefaultConstructor(Class<T> clazz) {
 		Function<Class<?>, Object> parentCreator = JqwikReflectionSupport::newInstanceWithDefaultConstructor;
-		return newInstance(clazz, new Object[0], parentCreator);
+		Function<Object, Object[]> argsResolver = parent -> parent == null ? new Object[0] : new Object[]{parent};
+		return newInstance(clazz, argsResolver, parentCreator);
 	}
 
 	/**
@@ -75,16 +76,16 @@ public class JqwikReflectionSupport {
 	 *
 	 * @param <T>   The type of the instance to create
 	 * @param clazz The class to instantiate
-	 * @param args The arguments for the constructor
+	 * @param argsResolver Supply the arguments for the constructor
 	 * @param parentCreator A function to create a parent instance for non static inner classes
 	 * @return the newly created instance
 	 */
-	public static <T> T newInstance(Class<T> clazz, Object[] args, Function<Class<?>, Object> parentCreator) {
+	public static <T> T newInstance(Class<T> clazz, Function<Object, Object[]> argsResolver, Function<Class<?>, Object> parentCreator) {
 		if (isTopLevelClass.test(clazz) || ModifierSupport.isStatic(clazz)) {
-			return ReflectionSupport.newInstance(clazz, args);
+			return ReflectionSupport.newInstance(clazz, argsResolver.apply(null));
 		}
 		Object parentInstance = parentCreator.apply(clazz.getDeclaringClass());
-		return ReflectionSupport.newInstance(clazz, parentInstance);
+		return ReflectionSupport.newInstance(clazz, argsResolver.apply(parentInstance));
 	}
 
 	/**

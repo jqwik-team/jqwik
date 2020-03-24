@@ -74,8 +74,8 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 	}
 
 	@Override
-	public Optional<ParameterSupplier> resolveParameter(Method method, int index) {
-		return parameterSupplierResolver.resolveParameter(method, index, containerClass());
+	public Optional<ParameterSupplier> resolveParameter(Executable executable, int index) {
+		return parameterSupplierResolver.resolveParameter(executable, index, containerClass());
 	}
 
 }

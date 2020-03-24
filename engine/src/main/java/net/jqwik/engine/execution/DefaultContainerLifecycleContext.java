@@ -44,8 +44,8 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 	}
 
 	@Override
-	public Optional<ParameterSupplier> resolveParameter(Method method, int index) {
-		return optionalContainerClass().flatMap(containerClass -> parameterSupplierResolver.resolveParameter(method, index, containerClass));
+	public Optional<ParameterSupplier> resolveParameter(Executable executable, int index) {
+		return optionalContainerClass().flatMap(containerClass -> parameterSupplierResolver.resolveParameter(executable, index, containerClass));
 	}
 
 }

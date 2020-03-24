@@ -1,18 +1,18 @@
 package net.jqwik.engine;
 
-import static net.jqwik.engine.JqwikUniqueIdBuilder.*;
-
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.junit.platform.commons.support.*;
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.support.descriptor.AbstractTestDescriptor;
+import org.junit.platform.engine.support.descriptor.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.descriptor.*;
-import net.jqwik.engine.discovery.JqwikUniqueIDs;
-import net.jqwik.engine.support.JqwikStringSupport;
+import net.jqwik.engine.discovery.*;
+import net.jqwik.engine.support.*;
+
+import static net.jqwik.engine.JqwikUniqueIdBuilder.*;
 
 /**
  * For testing purposes
@@ -24,12 +24,17 @@ public class TestDescriptorBuilder {
 	public static final AfterFailureMode AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
 	public static final GenerationMode GENERATION = GenerationMode.AUTO;
 
+	private TestDescriptorBuilder parentBuilder = null;
+
 	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes) {
 		Optional<Method> optionalMethod = ReflectionSupport.findMethod(containerClass, methodName, parameterTypes);
 		if (!optionalMethod.isPresent())
 			throw new JqwikException(String.format("Class [%s] has no method with name [%s] and parameters [%s]", containerClass,
-					methodName, JqwikStringSupport.parameterTypesToString(parameterTypes)));
-		return new TestDescriptorBuilder(optionalMethod.get());
+												   methodName, JqwikStringSupport.parameterTypesToString(parameterTypes)
+			));
+		TestDescriptorBuilder methodDescriptorBuilder = new TestDescriptorBuilder(optionalMethod.get());
+		methodDescriptorBuilder.parentBuilder = forClass(containerClass);
+		return methodDescriptorBuilder;
 	}
 
 	public static TestDescriptorBuilder forEngine(JqwikTestEngine engine) {
@@ -65,16 +70,23 @@ public class TestDescriptorBuilder {
 	}
 
 	public TestDescriptor build() {
-		return build(new AbstractTestDescriptor(UniqueId.root("root", "test"), "test root") {
-			@Override
-			public Type getType() {
-				return Type.CONTAINER;
-			}
-		});
+		TestDescriptor parent =
+			parentBuilder == null ?
+				new AbstractTestDescriptor(UniqueId.root("root", "test"), "test root") {
+					@Override
+					public Type getType() {
+						return Type.CONTAINER;
+					}
+				}
+				: parentBuilder.build();
+		return build(parent);
 	}
 
 	public TestDescriptor build(TestDescriptor parent) {
 		TestDescriptor descriptor = createDescriptor(parent);
+		if (!(descriptor instanceof JqwikTestEngine)) {
+			parent.addChild(descriptor);
+		}
 		for (TestDescriptorBuilder child : children) {
 			descriptor.addChild(child.build(descriptor));
 		}

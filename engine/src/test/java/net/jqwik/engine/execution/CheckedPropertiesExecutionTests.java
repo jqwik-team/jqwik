@@ -1,5 +1,7 @@
 package net.jqwik.engine.execution;
 
+import java.util.*;
+
 import org.assertj.core.api.*;
 import org.junit.platform.engine.reporting.*;
 import org.mockito.*;
@@ -36,7 +38,19 @@ class CheckedPropertiesExecutionTests {
 			reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "failWithANumber"), isFailed());
 
-		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("failWithANumber");
+		reportHasEntryWithKey("failWithANumber");
+	}
+
+	private void reportHasEntryWithKey(String stringInKey) {
+		Map<String, String> keyValuePairs = reportEntryCaptor.getValue().getKeyValuePairs();
+		for (String key : keyValuePairs.keySet()) {
+			if (key.contains(stringInKey)) {
+				return;
+			}
+		}
+
+		String message = String.format("Report [%s] has no key that contains '%s'", keyValuePairs, stringInKey);
+		Assertions.fail(message);
 	}
 
 	@Example
@@ -52,7 +66,7 @@ class CheckedPropertiesExecutionTests {
 			reportEntryCaptor.capture());
 		events.verify(eventRecorder).executionFinished(isPropertyDescriptorFor(ContainerClass.class, "succeedWithANumber"), isSuccessful());
 
-		Assertions.assertThat(reportEntryCaptor.getValue().getKeyValuePairs()).containsKey("succeedWithANumber");
+		reportHasEntryWithKey("succeedWithANumber");
 	}
 
 	@Example
