@@ -11,7 +11,7 @@ ext {
 	assertJVersion = '3.15.0'
 	mockitoVersion = '3.3.3'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.2.5-SNAPSHOT'
+	jqwikVersion = '1.2.5'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 
@@ -70,6 +70,6 @@ allprojects {
 
 wrapper {
 	description = 'Generates gradlew[.bat] scripts'
-	gradleVersion = '6.1.1'
+	gradleVersion = '6.3'
 }
 
