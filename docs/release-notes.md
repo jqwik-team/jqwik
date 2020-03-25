@@ -48,7 +48,8 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-- Some fundamental changes to Lifecycle Hooks API in order to support Spring extension 
+- Some fundamental changes to Lifecycle Hooks API in order to support a 
+  [jqwik Spring extension](https://github.com/jlink/jqwik-spring) 
 
 
 #### Bug Fixes
