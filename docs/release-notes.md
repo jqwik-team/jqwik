@@ -39,7 +39,13 @@ title: jqwik Release Notes
 
 - Reporting text on failed statistics coverage check improved.
 
+- Upgrade to JUnit Platform 1.6.1
+
+
 #### Breaking Changes
+
+- Some fundamental changes to Lifecycle Hooks API in order to support Spring extension 
+
 
 #### Bug Fixes
 

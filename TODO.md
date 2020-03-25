@@ -1,10 +1,10 @@
 - 1.2.5
 
+    - Aliases `@BeforeExample` and `@AfterExample`
+    
     - Spring/Boot Testing in its own module
 
 - 1.2.6
-    
-    - Aliases `@BeforeExample` and `@AfterExample`
     
     - ResolveParameterHook
         - @ResolveParameter method
