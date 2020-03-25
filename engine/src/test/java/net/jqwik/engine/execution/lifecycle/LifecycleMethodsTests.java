@@ -25,6 +25,11 @@ class LifecycleMethodsTests extends LifecycleMethodsTestsSuper {
 		calls.add("before property");
 	}
 
+	@BeforeExample
+	void beforeExample() {
+		calls.add("before example");
+	}
+
 	@BeforeTry
 	void beforeTry() {
 		calls.add("before try");
@@ -62,6 +67,11 @@ class LifecycleMethodsTests extends LifecycleMethodsTestsSuper {
 	@AfterTry
 	void afterTry() {
 		calls.add("after try");
+	}
+
+	@AfterExample
+	void afterExample() {
+		calls.add("after example");
 	}
 
 	@AfterProperty
@@ -107,15 +117,18 @@ class AssertCalls implements AfterContainerHook {
 			"before container super",
 			"before container",
 			"before property super",
+			"before example",
 			"before property",
 			"before inner property",
 			"before try",
 			"inner try",
 			"after try",
 			"after inner property",
+			"after example",
 			"after property",
 			"after property super",
 			"before property super",
+			"before example",
 			"before property",
 			"before try",
 			"try 1",
@@ -123,9 +136,11 @@ class AssertCalls implements AfterContainerHook {
 			"before try",
 			"try 1",
 			"after try",
+			"after example",
 			"after property",
 			"after property super",
 			"before property super",
+			"before example",
 			"before property",
 			"before try",
 			"try 2",
@@ -133,6 +148,7 @@ class AssertCalls implements AfterContainerHook {
 			"before try",
 			"try 2",
 			"after try",
+			"after example",
 			"after property",
 			"after property super",
 			"after container",

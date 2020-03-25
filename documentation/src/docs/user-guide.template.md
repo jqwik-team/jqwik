@@ -424,8 +424,10 @@ eight annotations:
   will be executed, even before the first instance of this class will be created.
 - [`@BeforeProperty`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeProperty.html):
   Methods with this annotation will run once before each property or example.
+  `@BeforeExample` is an alias with the same functionality.
 - [`@AfterProperty`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterProperty.html):
   Methods with this annotation will run once after each property or example.
+  `@AfterExample` is an alias with the same functionality.
 - [`@BeforeTry`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeTry.html):
   Methods with this annotation will run once before each try, i.e. execution
   of a property or example method.

@@ -8,8 +8,8 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Annotate methods of a container class with {@code @BeforeProperty}
- * to have them run once before each property including properties of
- * embedded containers.
+ * to have them run once before each property (or example)
+ * including properties (or examples) of embedded containers.
  *
  * <p>{@code @BeforeProperty} methods are inherited from superclasses
  * and implemented interfaces as long as they are not <em>hidden</em>

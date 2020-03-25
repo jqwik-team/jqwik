@@ -26,6 +26,10 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Added `@BeforeExample` as an alias of `@BeforeProperty`
+
+- Added `@AfterExample` as an alias of `@AfterProperty`
+
 - Lifecycle methods annotated with `@BeforeTry`, `@AfterTry`, `@BeforeProperty`, 
   `@AfterProperty`, `@BeforeContainer` and `@AfterContainer` can now have 
   parameters that will be resolved using registered `ResolveParameterHook` instances.
