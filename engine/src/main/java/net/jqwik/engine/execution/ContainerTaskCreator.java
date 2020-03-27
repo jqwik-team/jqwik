@@ -28,8 +28,6 @@ class ContainerTaskCreator {
 		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter, lifecycleSupplier);
 
 		SkipExecutionHook.SkipResult skipResult = CurrentTestDescriptor.runWithDescriptor(containerDescriptor, () -> {
-			lifecycleSupplier.prepareHooks(containerDescriptor, containerLifecycleContext);
-
 			// If SkipExecutionHook ran in task skipping of children wouldn't work
 			SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(containerDescriptor);
 			return skipExecutionHook.shouldBeSkipped(containerLifecycleContext);

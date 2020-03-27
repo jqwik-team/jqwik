@@ -13,7 +13,7 @@ class ResolvingParametersInConstructorTests {
 	private int shouldBe41;
 
 	public ResolvingParametersInConstructorTests(int shouldBe41) {
-		assertThat(ResolveIntsTo41.currentContext.optionalContainerClass().get())
+		assertThat(ResolveIntsTo41.lastContext.optionalContainerClass().get())
 			.isIn(
 				ResolvingParametersInConstructorTests.class,
 				ResolvingParametersInConstructorTests.Inner.class
@@ -32,7 +32,7 @@ class ResolvingParametersInConstructorTests {
 		private int inner41;
 
 		public Inner(int inner41) {
-			assertThat(ResolveIntsTo41.currentContext.optionalContainerClass().get())
+			assertThat(ResolveIntsTo41.lastContext.optionalContainerClass().get())
 				.isEqualTo(ResolvingParametersInConstructorTests.Inner.class);
 			this.inner41 = inner41;
 		}
@@ -47,16 +47,12 @@ class ResolvingParametersInConstructorTests {
 
 class ResolveIntsTo41 implements ResolveParameterHook {
 
-	static LifecycleContext currentContext;
-
-	@Override
-	public void prepareFor(LifecycleContext context) {
-		currentContext = context;
-	}
+	static LifecycleContext lastContext;
 
 	@Override
 	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext context) {
 		assertThat(context).isInstanceOf(ContainerLifecycleContext.class);
+		lastContext = context;
 		if (parameterContext.typeUsage().isOfType(int.class)) {
 			return Optional.of(optionalTry -> {
 				assertThat(optionalTry).isNotPresent();

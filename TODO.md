@@ -1,8 +1,7 @@
 - 1.2.6
 
-    - Get rid of LifecycleHook.prepareFor() or make sure it's always called
-      - LifecycleContext.optionalParent() might be necessary
-    
+    - Move calls to CurrentDescriptor.withDescriptor to better place, 
+      e.g. LifecycleHooksRegistry    
 
 - 1.2.7
 

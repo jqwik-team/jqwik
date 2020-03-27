@@ -2,7 +2,6 @@ package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
 
 import org.junit.platform.engine.*;
 
@@ -14,12 +13,10 @@ class TestInstanceCreator {
 	private final LifecycleContext containerLifecycleContext;
 	private final Class<?> containerClass;
 	private final TestDescriptor containerDescriptor;
-	private final BiConsumer<TestDescriptor, LifecycleContext> preparer;
 
 	TestInstanceCreator(
 		LifecycleContext containerLifecycleContext,
-		TestDescriptor containerDescriptor,
-		BiConsumer<TestDescriptor, LifecycleContext> preparer
+		TestDescriptor containerDescriptor
 	) {
 		this.containerLifecycleContext = containerLifecycleContext;
 		this.containerClass = containerLifecycleContext.optionalContainerClass().orElseThrow(
@@ -29,7 +26,6 @@ class TestInstanceCreator {
 			}
 		);
 		this.containerDescriptor = containerDescriptor;
-		this.preparer = preparer;
 	}
 
 	Object create() {
@@ -49,7 +45,6 @@ class TestInstanceCreator {
 			String message = String.format("Test container class [%s] has more than one accessible constructor", instanceClass.getName());
 			throw new JqwikException(message);
 		}
-		preparer.accept(descriptor, containerLifecycleContext);
 		Constructor<?> constructor = constructors.get(0);
 		return newInstance(instanceClass, constructor, descriptor);
 	}

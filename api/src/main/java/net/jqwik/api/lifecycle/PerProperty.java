@@ -39,24 +39,25 @@ public @interface PerProperty {
 
 	class PerPropertyHook implements AroundPropertyHook, ResolveParameterHook {
 
-		Store<Lifecycle> lifecycle;
+		private Lifecycle lifecycle(LifecycleContext context) {
+			return Store.getOrCreate("lifecycle", Lifespan.PROPERTY, () -> createLifecycleInstance(context)).get();
+		}
 
-		@Override
-		public void prepareFor(LifecycleContext context) {
+		private Lifecycle createLifecycleInstance(LifecycleContext context) {
 			Optional<PerProperty> perProperty = context.findAnnotation(PerProperty.class);
 			Class<? extends Lifecycle> lifecycleClass = perProperty.map(PerProperty::value).orElseThrow(() -> {
 				String message = "@PerProperty annotation MUST have a value() attribute";
 				return new JqwikException(message);
 			});
-
-			lifecycle = Store.create("lifecycle", Lifespan.PROPERTY, () -> context.newInstance(lifecycleClass));
+			return context.newInstance(lifecycleClass);
 		}
 
 		@Override
 		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
-			runBeforeExecutionLifecycles(context, lifecycle.get());
+			Lifecycle lifecycle = lifecycle(context);
+			runBeforeExecutionLifecycles(context, lifecycle);
 			PropertyExecutionResult executionResult = property.execute();
-			return runAfterExecutionLifecycles(lifecycle.get(), executionResult);
+			return runAfterExecutionLifecycles(lifecycle, executionResult);
 		}
 
 		private void runBeforeExecutionLifecycles(PropertyLifecycleContext context, Lifecycle lifecycle) {
@@ -91,7 +92,7 @@ public @interface PerProperty {
 
 		@Override
 		public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
-			return lifecycle.get().resolve(parameterContext);
+			return lifecycle(lifecycleContext).resolve(parameterContext);
 		}
 	}
 }

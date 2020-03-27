@@ -62,13 +62,6 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 		return HookSupport.combineSkipExecutionHooks(skipExecutionHooks);
 	}
 
-	@Override
-	public void prepareHooks(TestDescriptor descriptor, LifecycleContext lifecycleContext) {
-		for (LifecycleHook hook : findHooks(descriptor, LifecycleHook.class, dontCompare())) {
-			hook.prepareFor(lifecycleContext);
-		}
-	}
-
 	private <T extends LifecycleHook> List<T> findHooks(TestDescriptor descriptor, Class<T> hookType, Comparator<T> comparator) {
 		List<Class<T>> hookClasses = findHookClasses(descriptor, hookType);
 		return hookClasses

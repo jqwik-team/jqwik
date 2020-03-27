@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.2.6-SNAPSHOT](#126-snapshot)
 - [1.2.5](#125)
 - [1.2.4](#124)
 - [1.2.3](#123)
@@ -21,6 +22,20 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.2.6-SNAPSHOT
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.2.6/user-guide.html">User guide</a>
+and
+<a href="/docs/1.2.6/javadoc/index.html">javadoc</a>
+</p>
+
+#### Breaking Changes
+
+- More changes to Lifecycle Hooks API in order to support a 
+  [jqwik Spring extension](https://github.com/jlink/jqwik-spring) 
+
 
 ## 1.2.5
 
