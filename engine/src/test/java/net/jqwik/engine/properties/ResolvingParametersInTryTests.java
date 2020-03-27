@@ -129,10 +129,10 @@ class ResolvingParametersInTryTests {
 
 		@Override
 		public Optional<ResolveParameterHook.ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
-			return Optional.of(lifecycleContext -> {
-				assertThat(lifecycleContext).isInstanceOf(TryLifecycleContext.class);
-				assertThat(lifecycleStore.get()).isNotSameAs(lifecycleContext);
-				lifecycleStore.update(ignore -> lifecycleContext);
+			return Optional.of(optionalTry -> {
+				assertThat(optionalTry).isPresent();
+				assertThat(lifecycleStore.get()).isNotSameAs(optionalTry.get());
+				lifecycleStore.update(ignore -> optionalTry.get());
 				return 42;
 			});
 		}
@@ -165,13 +165,12 @@ class CreateAString implements ResolveParameterHook {
 		countSupplierCalls = Store.getOrCreate("supplierCalls", Lifespan.PROPERTY, () -> 0);
 
 		assertThat(context).isInstanceOf(PropertyLifecycleContext.class);
+		assertThat(context.optionalContainerClass().get()).isEqualTo(ResolvingParametersInTryTests.class);
 
 		if (parameterContext.typeUsage().isOfType(String.class)) {
 			countResolveCalls.update(i -> i + 1);
-			return Optional.of(lifecycleContext -> {
-				assertThat(lifecycleContext).isInstanceOf(TryLifecycleContext.class);
-				assertThat(((TryLifecycleContext) lifecycleContext).propertyContext().containerClass())
-					.isEqualTo(ResolvingParametersInTryTests.class);
+			return Optional.of(optionalTry -> {
+				assertThat(optionalTry).isPresent();
 				countSupplierCalls.update(i -> i + 1);
 				return "aString";
 			});

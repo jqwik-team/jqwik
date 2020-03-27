@@ -108,7 +108,7 @@ class PerPropertyTests {
 	private class ResolveStringToAString implements Lifecycle {
 		@Override public Optional<ResolveParameterHook.ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
 			if (parameterContext.typeUsage().isOfType(String.class)) {
-				return Optional.of(lifecycleContext -> "a string");
+				return Optional.of(ignore -> "a string");
 			}
 			return Optional.empty();
 		}

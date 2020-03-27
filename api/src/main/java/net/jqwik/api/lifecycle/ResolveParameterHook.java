@@ -17,13 +17,14 @@ public interface ResolveParameterHook extends LifecycleHook {
 	@FunctionalInterface
 	interface ParameterSupplier {
 		/**
-		 * Supply the requested parameter. For the <em>same</em> lifecycleContext object the <em>same</em>
+		 * Supply the requested parameter. For the <em>same</em> {@code optionalTry} the <em>same</em>
 		 * object must be returned if this object has state that could change its behaviour.
 		 *
-		 * @param lifecycleContext Is of type {@linkplain TryLifecycleContext} if used for a property parameter
+		 * @param optionalTry Contains a {@linkplain TryLifecycleContext} instance if used to supply a property's parameter.
+		 *                    Otherwise it's empty.
 		 * @return the freshly generated object or one stored for the same context
 		 */
-		Object get(LifecycleContext lifecycleContext);
+		Object get(Optional<TryLifecycleContext> optionalTry);
 	}
 
 	/**

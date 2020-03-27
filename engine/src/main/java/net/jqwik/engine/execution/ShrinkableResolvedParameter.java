@@ -1,26 +1,29 @@
 package net.jqwik.engine.execution;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
 public class ShrinkableResolvedParameter implements Shrinkable<Object> {
 	private final ResolveParameterHook.ParameterSupplier supplier;
 	private final ParameterResolutionContext context;
-	private LifecycleContext lifecycleContext;
+	private final TryLifecycleContext tryLifecycleContext;
 
 	public ShrinkableResolvedParameter(
 		ResolveParameterHook.ParameterSupplier supplier,
 		ParameterResolutionContext context,
-		LifecycleContext lifecycleContext
+		TryLifecycleContext tryLifecycleContext
 	) {
 		this.supplier = supplier;
 		this.context = context;
-		this.lifecycleContext = lifecycleContext;
+		this.tryLifecycleContext = tryLifecycleContext;
 	}
 
 	@Override
 	public Object value() {
-		Object value = supplier.get(lifecycleContext);
+		Optional<TryLifecycleContext> optionalTry = Optional.of(tryLifecycleContext);
+		Object value = supplier.get(optionalTry);
 		if (!context.typeUsage().isAssignableFrom(value.getClass())) {
 			String info = String.format(
 				"Type [%s] of resolved value does not fit parameter type [%s]",

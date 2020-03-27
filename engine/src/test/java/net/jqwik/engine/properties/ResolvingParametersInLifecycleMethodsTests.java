@@ -57,7 +57,7 @@ class ResolveIntsTo42 implements ResolveParameterHook {
 	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext context) {
 		assertThat(context).isInstanceOfAny(PropertyLifecycleContext.class, ContainerLifecycleContext.class);
 		if (parameterContext.typeUsage().isOfType(int.class)) {
-			return Optional.of(lifecycleContext -> 42);
+			return Optional.of(ignore -> 42);
 		}
 		return Optional.empty();
 	}

@@ -96,7 +96,7 @@ class TestInstanceCreator {
 			} else {
 				args[index] = containerLifecycleContext
 								  .resolveParameter(constructor, index)
-								  .map(parameterSupplier -> parameterSupplier.get(containerLifecycleContext))
+								  .map(parameterSupplier -> parameterSupplier.get(Optional.empty()))
 								  .orElseThrow(() -> {
 									  String info = "No matching resolver could be found";
 									  return new CannotResolveParameterException(constructor.getParameters()[index], info);
