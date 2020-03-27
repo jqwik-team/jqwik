@@ -22,7 +22,7 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 		ResolveParameterHook resolveParameterHook
 	) {
 		super(reporter);
-		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook);
+		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook, this);
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
 		this.reporter = reporter;

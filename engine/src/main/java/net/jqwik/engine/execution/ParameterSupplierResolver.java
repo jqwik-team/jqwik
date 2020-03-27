@@ -10,9 +10,11 @@ import net.jqwik.engine.support.*;
 class ParameterSupplierResolver {
 	private final Map<Parameter, Optional<ParameterSupplier>> resolvedSuppliers = new HashMap<>();
 	private final ResolveParameterHook resolveParameterHook;
+	private final LifecycleContext lifecycleContext;
 
-	ParameterSupplierResolver(ResolveParameterHook resolveParameterHook) {
+	ParameterSupplierResolver(ResolveParameterHook resolveParameterHook, LifecycleContext lifecycleContext) {
 		this.resolveParameterHook = resolveParameterHook;
+		this.lifecycleContext = lifecycleContext;
 	}
 
 	Optional<ParameterSupplier> resolveParameter(Executable executable, int index, Class<?> containerClass) {
@@ -32,7 +34,7 @@ class ParameterSupplierResolver {
 
 	private Optional<ParameterSupplier> computeSupplier(MethodParameter methodParameter) {
 		ParameterResolutionContext parameterContext = new DefaultParameterInjectionContext(methodParameter);
-		return resolveParameterHook.resolve(parameterContext);
+		return resolveParameterHook.resolve(parameterContext, lifecycleContext);
 	}
 
 }

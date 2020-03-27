@@ -53,7 +53,7 @@ public @interface PerProperty {
 		}
 
 		@Override
-		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
 			runBeforeExecutionLifecycles(context, lifecycle.get());
 			PropertyExecutionResult executionResult = property.execute();
 			return runAfterExecutionLifecycles(lifecycle.get(), executionResult);
@@ -90,7 +90,7 @@ public @interface PerProperty {
 		}
 
 		@Override
-		public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+		public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
 			return lifecycle.get().resolve(parameterContext);
 		}
 	}

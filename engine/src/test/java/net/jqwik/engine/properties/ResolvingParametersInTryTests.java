@@ -143,9 +143,10 @@ class ResolvingParametersInTryTests {
 class CreateAlwaysAString implements ResolveParameterHook {
 	@Override
 	public Optional<ParameterSupplier> resolve(
-		ParameterResolutionContext parameterContext
+		ParameterResolutionContext parameterContext,
+		LifecycleContext lifecycleContext
 	) {
-		return Optional.of(lifecycleContext -> "a string");
+		return Optional.of(ignore -> "a string");
 	}
 }
 
@@ -156,9 +157,14 @@ class CreateAString implements ResolveParameterHook {
 	static Store<Integer> countSupplierCalls;
 
 	@Override
-	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+	public Optional<ParameterSupplier> resolve(
+		ParameterResolutionContext parameterContext,
+		LifecycleContext context
+	) {
 		countResolveCalls = Store.getOrCreate("injectorCalls", Lifespan.PROPERTY, () -> 0);
 		countSupplierCalls = Store.getOrCreate("supplierCalls", Lifespan.PROPERTY, () -> 0);
+
+		assertThat(context).isInstanceOf(PropertyLifecycleContext.class);
 
 		if (parameterContext.typeUsage().isOfType(String.class)) {
 			countResolveCalls.update(i -> i + 1);
@@ -177,10 +183,13 @@ class CreateAString implements ResolveParameterHook {
 class Create42 implements ResolveParameterHook {
 
 	@Override
-	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+	public Optional<ParameterSupplier> resolve(
+		ParameterResolutionContext parameterContext,
+		LifecycleContext lifecycleContext
+	) {
 		assertThat(parameterContext.index()).isBetween(0, 3);
 		if (parameterContext.typeUsage().isOfType(int.class)) {
-			return Optional.of(lifecycleContext -> 42);
+			return Optional.of(ignore -> 42);
 		}
 		return Optional.empty();
 	}

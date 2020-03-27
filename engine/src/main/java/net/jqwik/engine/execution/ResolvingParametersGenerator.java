@@ -15,11 +15,12 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
 		Iterator<List<Shrinkable<Object>>> forAllParametersGenerator,
-		ResolveParameterHook resolveParameterHook
+		ResolveParameterHook resolveParameterHook,
+		PropertyLifecycleContext propertyLifecycleContext
 	) {
 		this.propertyParameters = propertyParameters;
 		this.forAllParametersGenerator = forAllParametersGenerator;
-		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook);
+		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook, propertyLifecycleContext);
 	}
 
 	@Override

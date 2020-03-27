@@ -31,13 +31,14 @@ public interface ResolveParameterHook extends LifecycleHook {
 	 * is usually invoked for each try - and potentially more often during shrinking or when resolving
 	 * parameters in before/after methods.
 	 *
-	 * @param parameterContext
+	 * @param parameterContext Contains information of parameter to resolve
+	 * @param lifecycleContext Is never of type {@linkplain TryLifecycleContext} at resolution time
 	 * @return a supplier that should always return an equivalent object,
 	 * i.e. an object that behaves the same when used in the same way.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.5")
-	Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext);
+	Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext);
 
-	ResolveParameterHook DO_NOT_RESOLVE = ((parameterContext) -> Optional.empty());
+	ResolveParameterHook DO_NOT_RESOLVE = ((parameterContext, lifecycleContext) -> Optional.empty());
 
 }

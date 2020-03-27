@@ -1,10 +1,13 @@
 - 1.2.6
 
-- 1.2.7
-
+    - Change ParameterSupplier.get(Optional<TryLifecycleContext> optionalContext)
+    
     - Get rid of LifecycleHook.prepareFor() or make sure it's always called
       - LifecycleContext.optionalParent() might be necessary
     
+
+- 1.2.7
+
     - ResolveParameterHook
         - @ResolveParameter method
 

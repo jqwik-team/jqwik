@@ -20,7 +20,7 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 	) {
 		super(reporter);
 		this.classDescriptor = classDescriptor;
-		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook);
+		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook, this);
 	}
 
 	@Override

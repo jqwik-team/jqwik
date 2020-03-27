@@ -17,10 +17,10 @@ class CombinedResolveParameterHook implements ResolveParameterHook {
 	}
 
 	@Override
-	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {
+	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
 		List<Tuple2<ResolveParameterHook, Optional<ParameterSupplier>>> resolvers =
 			resolveParameterHooks.stream()
-								 .map(hook -> Tuple.of(hook, hook.resolve(parameterContext)))
+								 .map(hook -> Tuple.of(hook, hook.resolve(parameterContext, lifecycleContext)))
 								 .filter(tuple -> tuple.get2().isPresent())
 								 .collect(Collectors.toList());
 		if (resolvers.isEmpty()) {
