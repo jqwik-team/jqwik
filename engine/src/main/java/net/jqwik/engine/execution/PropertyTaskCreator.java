@@ -1,7 +1,9 @@
 package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
+import java.util.function.*;
 
+import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
@@ -36,10 +38,12 @@ class PropertyTaskCreator {
 					Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
 					propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
 
-					lifecycleSupplier.prepareHooks(methodDescriptor, propertyLifecycleContext);
 
-					SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(methodDescriptor);
-					SkipResult skipResult = skipExecutionHook.shouldBeSkipped(propertyLifecycleContext);
+					SkipResult skipResult = CurrentTestDescriptor.runWithDescriptor(methodDescriptor, () -> {
+						lifecycleSupplier.prepareHooks(methodDescriptor, propertyLifecycleContext);
+						SkipExecutionHook skipExecutionHook = lifecycleSupplier.skipExecutionHook(methodDescriptor);
+						return skipExecutionHook.shouldBeSkipped(propertyLifecycleContext);
+					});
 
 					if (skipResult.isSkipped()) {
 						listener.executionSkipped(methodDescriptor, skipResult.reason().orElse(null));
@@ -81,17 +85,17 @@ class PropertyTaskCreator {
 	) {
 		try {
 			return methodDescriptor.getParent().map(
-				container -> {
+				containerDescriptor -> {
 					//TODO: Hand context in from outside to always have the same instance
-					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(container);
+					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(containerDescriptor);
 					ContainerLifecycleContext containerLifecycleContext = new DefaultContainerLifecycleContext(
-						(ContainerClassDescriptor) container,
+						(ContainerClassDescriptor) containerDescriptor,
 						reporter,
 						resolveParameterHook
 					);
 					return CurrentTestDescriptor.runWithDescriptor(
-						container,
-						() -> createTestInstanceWithResolvedParameters(containerLifecycleContext)
+						containerDescriptor,
+						() -> createTestInstanceWithResolvedParameters(containerLifecycleContext, containerDescriptor, lifecycleSupplier)
 					);
 				}).orElseThrow(() -> new JqwikException("Method descriptors must have a parent"));
 		} catch (JqwikException jqwikException) {
@@ -109,8 +113,13 @@ class PropertyTaskCreator {
 		}
 	}
 
-	private Object createTestInstanceWithResolvedParameters(ContainerLifecycleContext containerLifecycleContext) {
-		TestInstanceCreator testInstanceCreator = new TestInstanceCreator(containerLifecycleContext);
+	private Object createTestInstanceWithResolvedParameters(
+		ContainerLifecycleContext containerLifecycleContext,
+		TestDescriptor containerDescriptor,
+		LifecycleHooksSupplier lifecycleSupplier
+	) {
+		BiConsumer<TestDescriptor, LifecycleContext> preparer = lifecycleSupplier::prepareHooks;
+		TestInstanceCreator testInstanceCreator = new TestInstanceCreator(containerLifecycleContext, containerDescriptor, preparer);
 		return testInstanceCreator.create();
 	}
 

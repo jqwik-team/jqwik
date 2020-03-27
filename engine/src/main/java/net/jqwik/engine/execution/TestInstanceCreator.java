@@ -2,16 +2,25 @@ package net.jqwik.engine.execution;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.*;
+
+import org.junit.platform.engine.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
 class TestInstanceCreator {
-	private final ContainerLifecycleContext containerLifecycleContext;
+	private final LifecycleContext containerLifecycleContext;
 	private final Class<?> containerClass;
+	private final TestDescriptor containerDescriptor;
+	private final BiConsumer<TestDescriptor, LifecycleContext> preparer;
 
-	TestInstanceCreator(ContainerLifecycleContext containerLifecycleContext) {
+	TestInstanceCreator(
+		LifecycleContext containerLifecycleContext,
+		TestDescriptor containerDescriptor,
+		BiConsumer<TestDescriptor, LifecycleContext> preparer
+	) {
 		this.containerLifecycleContext = containerLifecycleContext;
 		this.containerClass = containerLifecycleContext.optionalContainerClass().orElseThrow(
 			() -> {
@@ -19,13 +28,18 @@ class TestInstanceCreator {
 				return new JqwikException(message);
 			}
 		);
+		this.containerDescriptor = containerDescriptor;
+		this.preparer = preparer;
 	}
 
 	Object create() {
-		return create(containerClass);
+		return create(containerClass, containerDescriptor);
 	}
 
-	private Object create(Class<?> instanceClass) {
+	private Object create(
+		Class<?> instanceClass,
+		TestDescriptor descriptor
+	) {
 		List<Constructor<?>> constructors = allAccessibleConstructors(instanceClass);
 		if (constructors.size() == 0) {
 			String message = String.format("Test container class [%s] has no accessible constructor", instanceClass.getName());
@@ -35,16 +49,28 @@ class TestInstanceCreator {
 			String message = String.format("Test container class [%s] has more than one accessible constructor", instanceClass.getName());
 			throw new JqwikException(message);
 		}
+		preparer.accept(descriptor, containerLifecycleContext);
 		Constructor<?> constructor = constructors.get(0);
-		return newInstance(instanceClass, constructor);
+		return newInstance(instanceClass, constructor, descriptor);
 	}
 
-	private Object newInstance(Class<?> instanceClass, Constructor<?> constructor) {
+	private Object newInstance(
+		Class<?> instanceClass,
+		Constructor<?> constructor,
+		TestDescriptor descriptor
+	) {
 		if (JqwikReflectionSupport.isInnerClass(instanceClass)) {
-			Object parentInstance = create(instanceClass.getDeclaringClass());
-			return JqwikReflectionSupport.newInstance(constructor, resolveParameters(constructor, parentInstance));
+			TestDescriptor parentDescriptor = descriptor.getParent().orElse(descriptor);
+			Object parentInstance = create(instanceClass.getDeclaringClass(), parentDescriptor);
+			return JqwikReflectionSupport.newInstance(
+				constructor,
+				resolveParameters(constructor, parentInstance)
+			);
 		} else {
-			return JqwikReflectionSupport.newInstance(constructor, resolveParameters(constructor, null));
+			return JqwikReflectionSupport.newInstance(
+				constructor,
+				resolveParameters(constructor, null)
+			);
 		}
 	}
 

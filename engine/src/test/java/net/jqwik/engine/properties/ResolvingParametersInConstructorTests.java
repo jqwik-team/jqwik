@@ -13,6 +13,11 @@ class ResolvingParametersInConstructorTests {
 	private int shouldBe41;
 
 	public ResolvingParametersInConstructorTests(int shouldBe41) {
+		assertThat(ResolveIntsTo41.currentContext.optionalContainerClass().get())
+			.isIn(
+				ResolvingParametersInConstructorTests.class,
+				ResolvingParametersInConstructorTests.Inner.class
+			);
 		this.shouldBe41 = shouldBe41;
 	}
 
@@ -27,6 +32,8 @@ class ResolvingParametersInConstructorTests {
 		private int inner41;
 
 		public Inner(int inner41) {
+			assertThat(ResolveIntsTo41.currentContext.optionalContainerClass().get())
+				.isEqualTo(ResolvingParametersInConstructorTests.Inner.class);
 			this.inner41 = inner41;
 		}
 
@@ -39,6 +46,13 @@ class ResolvingParametersInConstructorTests {
 }
 
 class ResolveIntsTo41 implements ResolveParameterHook {
+
+	static LifecycleContext currentContext;
+
+	@Override
+	public void prepareFor(LifecycleContext context) {
+		currentContext = context;
+	}
 
 	@Override
 	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext) {

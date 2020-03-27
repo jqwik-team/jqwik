@@ -1,4 +1,9 @@
 - 1.2.6
+
+- 1.2.7
+
+    - Get rid of LifecycleHook.prepareFor() or make sure it's always called
+      - LifecycleContext.optionalParent() might be necessary
     
     - ResolveParameterHook
         - @ResolveParameter method
