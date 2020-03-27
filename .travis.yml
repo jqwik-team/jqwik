@@ -9,7 +9,7 @@ matrix:
       install: true
     - jdk: openjdk11
       install: true
-    - jdk: openjdk13
+    - jdk: openjdk14
       install: true
 
 script: ./gradlew clean test --info
