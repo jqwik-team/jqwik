@@ -23,7 +23,7 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.2.6-SNAPSHOT
+## 1.2.6
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.6/user-guide.html">User guide</a>
