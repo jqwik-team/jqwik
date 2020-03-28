@@ -1,8 +1,5 @@
 - 1.2.6
 
-    - Move calls to CurrentDescriptor.withDescriptor to better place, 
-      e.g. LifecycleHooksRegistry    
-
 - 1.2.7
 
     - ResolveParameterHook

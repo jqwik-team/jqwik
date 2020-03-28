@@ -15,7 +15,7 @@ public interface ExecutionTask {
 	TaskExecutionResult execute(PropertyExecutionListener listener, TaskExecutionResult predecessorResult);
 
 	static ExecutionTask from(
-		BiFunction<PropertyExecutionListener, TaskExecutionResult, TaskExecutionResult> consumer,
+		BiFunction<PropertyExecutionListener, TaskExecutionResult, TaskExecutionResult> executor,
 		TestDescriptor owner,
 		String description
 	) {
@@ -28,9 +28,7 @@ public interface ExecutionTask {
 			@Override
 			public TaskExecutionResult execute(PropertyExecutionListener listener, TaskExecutionResult predecessorResult) {
 				try {
-					TaskExecutionResult result =
-						CurrentTestDescriptor.runWithDescriptor(owner, () -> consumer.apply(listener, predecessorResult));
-					return result;
+					return CurrentTestDescriptor.runWithDescriptor(owner, () -> executor.apply(listener, predecessorResult));
 				} catch (Throwable throwable) {
 					JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 					return TaskExecutionResult.failure(throwable);
