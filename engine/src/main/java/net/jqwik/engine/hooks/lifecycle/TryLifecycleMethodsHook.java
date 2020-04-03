@@ -6,19 +6,18 @@ import java.util.*;
 import org.junit.platform.engine.support.hierarchical.*;
 
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.hooks.*;
 import net.jqwik.engine.support.*;
 
 public class TryLifecycleMethodsHook implements AroundTryHook {
 
 	private void beforeTry(TryLifecycleContext context) {
-		List<Method> beforeTryMethods = LifecycleMethods.findBeforeTryMethods(context.propertyContext().containerClass());
+		List<Method> beforeTryMethods = LifecycleMethods.findBeforeTryMethods(context.containerClass());
 		callTryMethods(beforeTryMethods, context);
 	}
 
 	private void callTryMethods(List<Method> methods, TryLifecycleContext context) {
-		Object testInstance = context.propertyContext().testInstance();
+		Object testInstance = context.testInstance();
 		ThrowableCollector throwableCollector = new ThrowableCollector(ignore -> false);
 		for (Method method : methods) {
 			Object[] parameters = MethodParameterResolver.resolveParameters(method, context);
@@ -32,7 +31,7 @@ public class TryLifecycleMethodsHook implements AroundTryHook {
 	}
 
 	private void afterTry(TryLifecycleContext context) {
-		List<Method> afterTryMethods = LifecycleMethods.findAfterTryMethods(context.propertyContext().containerClass());
+		List<Method> afterTryMethods = LifecycleMethods.findAfterTryMethods(context.containerClass());
 		callTryMethods(afterTryMethods, context);
 	}
 

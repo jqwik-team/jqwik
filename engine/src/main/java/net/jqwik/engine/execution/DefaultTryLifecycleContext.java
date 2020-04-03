@@ -14,6 +14,22 @@ public class DefaultTryLifecycleContext extends AbstractLifecycleContext impleme
 	}
 
 	@Override
+	public Method targetMethod() {
+		return propertyContext.targetMethod();
+	}
+
+	@Override
+	public Class<?> containerClass() {
+		return propertyContext.containerClass();
+	}
+
+	@Override
+	public Object testInstance() {
+		return propertyContext.testInstance();
+	}
+
+	@Override
+	@Deprecated
 	public PropertyLifecycleContext propertyContext() {
 		return propertyContext;
 	}

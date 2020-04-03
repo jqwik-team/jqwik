@@ -95,6 +95,21 @@ public class TestHelper {
 	public static Supplier<TryLifecycleContext> tryLifecycleContextSupplier() {
 		return () -> new TryLifecycleContext() {
 			@Override
+			public Method targetMethod() {
+				return null;
+			}
+
+			@Override
+			public Class<?> containerClass() {
+				return null;
+			}
+
+			@Override
+			public Object testInstance() {
+				return null;
+			}
+
+			@Override
 			public PropertyLifecycleContext propertyContext() {
 				return null;
 			}
