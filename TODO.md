@@ -1,17 +1,13 @@
 - 1.2.7
 
-    - ResolveParameterHook
-        - @ResolveParameter method
-
     - ProvideArbitraryHook
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
     
     - Guided Generation
       https://github.com/jlink/jqwik/issues/84
+      - Maybe change AroundTryHook to allow replacement of `Random` source
       
-    - ResolveReporterHook: Inject Reporter instance into property methods
-    
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
 
@@ -27,17 +23,19 @@
       - BigDecimalArbitrary.within(Range.from(0.1, true, 10.0, false))
       - `BigRange.min/maxIncluded`
     
+    - @ResolveParameter method
+        - Returns `Optional<MyType>` | `Optional<ParameterSupplier<MyType>>`
+        - Optional Parameters: TypeUsage, LifecycleContext
+        - static and non-static
+
     - PerProperty.Lifecycle
-        - void beforeTry(TryContext, parameters)
-        - void afterTry(TryExecutionResult)
+        - void beforeTry(TryLifecycleContext, parameters)
+        - void afterTry(TryLifecycleContext, TryExecutionResult)
         - void onSatisfiedTry()
         - TryExecutionResult onFalsifiedTry(TrExecutionResult)
 
     - Around property hooks
         - Get and set random seed
 
-    - Store
-        - onUpdate()
-    
     - `@Report(reportOnlyFailures = false)`
 
