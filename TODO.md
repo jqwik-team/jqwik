@@ -1,5 +1,11 @@
 - 1.2.7
 
+    - Allow switching off of warning in a Hook
+    [class net.jqwik.spring.SimpleSpringJupiterTests] has annotation [@org.junit.jupiter.api.extension.ExtendWith(value=[class org.springframework.test.context.junit.jupiter.SpringExtension])] from JUnit which cannot be processed by jqwik
+
+    - Improve Sample Reporting
+      https://github.com/jlink/jqwik/issues/85
+
     - ProvideArbitraryHook
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
@@ -8,10 +14,9 @@
       https://github.com/jlink/jqwik/issues/84
       - Maybe change AroundTryHook to allow replacement of `Random` source
       
-    - Improve Sample Reporting
-      https://github.com/jlink/jqwik/issues/85
-
 - 1.3.0
+
+    - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
 
     - Remove deprecated APIs
     
