@@ -38,6 +38,7 @@ class HierarchicalJavaResolver {
 		return resolveSafely(() -> {
 			Set<TestDescriptor> resolvedDescriptors = resolveContainerWithParents(testClass);
 			resolvedDescriptors.forEach(this::resolveChildren);
+			warnWhenJUnitAnnotationsArePresent(resolvedDescriptors);
 
 			if (resolvedDescriptors.isEmpty()) {
 				return SelectorResolutionResult.unresolved();
@@ -45,6 +46,15 @@ class HierarchicalJavaResolver {
 
 			return SelectorResolutionResult.resolved();
 		});
+	}
+
+	private void warnWhenJUnitAnnotationsArePresent(Set<TestDescriptor> resolvedDescriptors) {
+		resolvedDescriptors
+			.stream()
+			.filter(d -> !d.getChildren().isEmpty())
+			.filter(d -> d instanceof ContainerClassDescriptor)
+			.map(d -> (ContainerClassDescriptor) d)
+			.forEach(d -> DiscoverySupport.warnWhenJunitAnnotationsArePresent(d.getContainerClass()));
 	}
 
 	SelectorResolutionResult resolveMethod(Class<?> testClass, Method testMethod) {

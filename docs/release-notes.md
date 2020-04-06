@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.2.7-SNAPSHOT](#127-snapshot)
 - [1.2.6](#126)
 - [1.2.5](#125)
 - [1.2.4](#124)
@@ -22,6 +23,17 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.2.7-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Warning about JUnit annotations only shows up when test container class has
+  jqwik property or example methods.
+
+#### Breaking Changes
+
+- Minor changes to Lifecycle Hooks API
 
 ## 1.2.6
 

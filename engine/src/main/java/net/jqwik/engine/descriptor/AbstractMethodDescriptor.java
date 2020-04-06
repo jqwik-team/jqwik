@@ -14,21 +14,16 @@ import static net.jqwik.engine.descriptor.DiscoverySupport.*;
 
 abstract class AbstractMethodDescriptor extends AbstractTestDescriptor implements JqwikDescriptor {
 	private final Method targetMethod;
-	private final Class containerClass;
+	private final Class<?> containerClass;
 	private final Set<TestTag> tags;
 	private final Set<Domain> domains;
 
-	AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class containerClass) {
+	AbstractMethodDescriptor(UniqueId uniqueId, Method targetMethod, Class<?> containerClass) {
 		super(uniqueId, determineDisplayName(targetMethod), MethodSource.from(targetMethod));
-		warnWhenJunitAnnotationsArePresent(targetMethod);
 		this.tags = findTestTags(targetMethod);
 		this.domains = findDomains(targetMethod);
 		this.containerClass = containerClass;
 		this.targetMethod = targetMethod;
-	}
-
-	private void warnWhenJunitAnnotationsArePresent(Method targetMethod) {
-		DiscoverySupport.warnWhenJunitAnnotationsArePresent(targetMethod);
 	}
 
 	private static String determineDisplayName(Method targetMethod) {

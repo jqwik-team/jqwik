@@ -5,6 +5,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.logging.*;
+import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 
@@ -56,17 +57,24 @@ public class DiscoverySupport {
 	}
 
 	public static void warnWhenJunitAnnotationsArePresent(AnnotatedElement element) {
-		Annotation[] directAnnotations = element.getDeclaredAnnotations();
-		for (Annotation annotation : directAnnotations) {
-			if (annotation.annotationType().getPackage().getName().startsWith("org.junit")) {
-				String message = String.format(
-					"[%s] has annotation [%s] from JUnit which cannot be processed by jqwik",
-					element,
-					annotation
-				);
-				LOG.warning(message);
-			}
+		List<Annotation> junitAnnotations = findJUnitAnnotations(element);
+		for (Annotation annotation : junitAnnotations) {
+			String message = String.format(
+				"[%s] has annotation [%s] from JUnit which cannot be processed by jqwik",
+				element,
+				annotation
+			);
+			LOG.warning(message);
 		}
+	}
+
+	public static List<Annotation> findJUnitAnnotations(AnnotatedElement candidate) {
+		return Arrays.stream(candidate.getDeclaredAnnotations())
+					 .filter(annotation -> annotation.annotationType()
+													 .getPackage()
+													 .getName()
+													 .startsWith("org.junit"))
+					 .collect(Collectors.toList());
 	}
 
 	public static Set<TestTag> getTags(Optional<TestDescriptor> parent, Set<TestTag> tags) {

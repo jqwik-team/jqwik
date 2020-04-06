@@ -20,19 +20,14 @@ public class ContainerClassDescriptor extends AbstractTestDescriptor implements 
 	private final Class<?> containerClass;
 	private final boolean isGroup;
 	private final Set<TestTag> tags;
-	private Set<Domain> domains;
+	private final Set<Domain> domains;
 
 	public ContainerClassDescriptor(UniqueId uniqueId, Class<?> containerClass, boolean isGroup) {
 		super(uniqueId, determineDisplayName(containerClass), ClassSource.from(containerClass));
-		warnWhenJunitAnnotationsArePresent(containerClass);
 		this.tags = findTestTags(containerClass);
 		this.domains = findDomains(containerClass);
 		this.containerClass = containerClass;
 		this.isGroup = isGroup;
-	}
-
-	private void warnWhenJunitAnnotationsArePresent(Class<?> containerClass) {
-		DiscoverySupport.warnWhenJunitAnnotationsArePresent(containerClass);
 	}
 
 	private static String determineDisplayName(Class<?> containerClass) {
