@@ -1,6 +1,6 @@
 - 1.2.7
 
-    - Allow switching off of warning in a Hook
+    - Switching off warning when container is not a jqwik container:
     [class net.jqwik.spring.SimpleSpringJupiterTests] has annotation [@org.junit.jupiter.api.extension.ExtendWith(value=[class org.springframework.test.context.junit.jupiter.SpringExtension])] from JUnit which cannot be processed by jqwik
 
     - Improve Sample Reporting
