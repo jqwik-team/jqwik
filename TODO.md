@@ -3,14 +3,6 @@
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
 
-    - ProvideArbitraryHook
-        - Let domains use that hook
-        - Let ArbitraryProviders use that hook
-    
-    - Guided Generation
-      https://github.com/jlink/jqwik/issues/84
-      - Maybe change AroundTryHook to allow replacement of `Random` source
-      
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
@@ -21,6 +13,15 @@
 
     - Documentation for lifecycle hooks API in user guide
 
+    - ProvideArbitraryHook
+        - Let domains use that hook
+        - Let ArbitraryProviders use that hook
+    
+    - Guided Generation
+      https://github.com/jlink/jqwik/issues/84
+      - Maybe change AroundTryHook to allow replacement of `Random` source
+      - Or: Introduce ProvideGenerationSourceHook
+      
     - Allow include/exclude for decimal ranges, e.g.
       - BigDecimalArbitrary.within(Range.from(0.1, true, 10.0, false))
       - `BigRange.min/maxIncluded`
