@@ -1,7 +1,8 @@
 - 1.2.7
 
-    - Improve Sample Reporting
-      https://github.com/jlink/jqwik/issues/85
+    - Allow include/exclude for decimal ranges, e.g.
+      - BigDecimalArbitrary.within(Range.from(0.1, true, 10.0, false))
+      - `BigRange.min/maxIncluded`
 
 - 1.3.0
 
@@ -12,6 +13,9 @@
     - Make some experimental API "maintained"
 
     - Documentation for lifecycle hooks API in user guide
+    
+    - Improve Sample Reporting
+      https://github.com/jlink/jqwik/issues/85
 
     - ProvideArbitraryHook
         - Let domains use that hook
@@ -22,10 +26,6 @@
       - Maybe change AroundTryHook to allow replacement of `Random` source
       - Or: Introduce ProvideGenerationSourceHook
       
-    - Allow include/exclude for decimal ranges, e.g.
-      - BigDecimalArbitrary.within(Range.from(0.1, true, 10.0, false))
-      - `BigRange.min/maxIncluded`
-    
     - @ResolveParameter method
         - Returns `Optional<MyType>` | `Optional<ParameterSupplier<MyType>>`
         - Optional Parameters: TypeUsage, LifecycleContext
