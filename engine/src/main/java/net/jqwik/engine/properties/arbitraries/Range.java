@@ -4,10 +4,9 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 
-@SuppressWarnings("unchecked")
-public class Range<T extends Comparable> {
+public class Range<T extends Comparable<T>> {
 
-	public static <T extends Comparable> Range<T> of(T min, T max) {
+	public static <T extends Comparable<T>> Range<T> of(T min, T max) {
 		if (min.compareTo(max) > 0)
 			throw new JqwikException(String.format("Min value [%s] must not be greater that max value [%s].", min, max));
 		return new Range<>(min, max);
@@ -35,12 +34,12 @@ public class Range<T extends Comparable> {
 		}
 	}
 
-	public <U extends Comparable> Range<U> map(Function<T, U> mapper) {
+	public <U extends Comparable<U>> Range<U> map(Function<T, U> mapper) {
 		return Range.of(mapper.apply(min), mapper.apply(max));
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s..%s", min, max);
+		return String.format("[%s..%s]", min, max);
 	}
 }

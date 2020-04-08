@@ -1,7 +1,7 @@
 - 1.2.7
 
     - Allow include/exclude for decimal ranges, e.g.
-      - BigDecimalArbitrary.within(Range.from(0.1, true, 10.0, false))
+      - BigDecimalArbitrary.between(0.1, false, 10.0, false))
       - `BigRange.min/maxIncluded`
 
 - 1.3.0
