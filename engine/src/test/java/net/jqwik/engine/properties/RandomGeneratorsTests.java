@@ -131,17 +131,17 @@ class RandomGeneratorsTests {
 	}
 
 	@Group
-	class DecimalGeneration {
+	class BigDecimalGeneration {
 
 		@Example
-		void smallBigDecimals() {
+		void smalls() {
 			BigDecimal min = new BigDecimal(-10);
 			BigDecimal max = new BigDecimal(10);
 			Range<BigDecimal> range = Range.of(min, max);
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 2,
-					RandomGenerators.defaultShrinkingTargetCalculator(range)
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 2)
 				);
 			ArbitraryTestHelper.assertAllGenerated(
 				generator, //
@@ -150,14 +150,91 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
+		void bordersExcluded() {
+			BigDecimal min = new BigDecimal(-10);
+			BigDecimal max = new BigDecimal(10);
+			Range<BigDecimal> range = Range.of(min, false, max, false);
+			RandomGenerator<BigDecimal> generator =
+				RandomGenerators.bigDecimals(
+					range, 1,
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 1)
+				);
+			ArbitraryTestHelper.assertAllGenerated(
+				generator,
+				decimal -> decimal.compareTo(min) > 0 && decimal.compareTo(max) < 0 && decimal.scale() == 1
+			);
+		}
+
+		@Example
+		void bordersExcludedAllPositive() {
+			BigDecimal min = new BigDecimal(1);
+			BigDecimal max = new BigDecimal(10);
+			Range<BigDecimal> range = Range.of(min, false, max, false);
+			RandomGenerator<BigDecimal> generator =
+				RandomGenerators.bigDecimals(
+					range, 1,
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 1)
+				);
+			ArbitraryTestHelper.assertAllGenerated(
+				generator,
+				decimal -> decimal.compareTo(min) > 0 && decimal.compareTo(max) < 0 && decimal.scale() == 1
+			);
+		}
+
+		@Example
+		void bordersExcludedAllNegative() {
+			BigDecimal min = new BigDecimal(-10);
+			BigDecimal max = new BigDecimal(-1);
+			Range<BigDecimal> range = Range.of(min, false, max, false);
+			RandomGenerator<BigDecimal> generator =
+				RandomGenerators.bigDecimals(
+					range, 1,
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 1)
+				);
+			ArbitraryTestHelper.assertAllGenerated(
+				generator,
+				decimal -> decimal.compareTo(min) > 0 && decimal.compareTo(max) < 0 && decimal.scale() == 1
+			);
+		}
+
+		@Example
+		void smallRange() {
+			BigDecimal min = new BigDecimal("0.01");
+			BigDecimal max = new BigDecimal("0.03");
+			Range<BigDecimal> range = Range.of(min, false, max, false);
+			RandomGenerator<BigDecimal> generator =
+				RandomGenerators.bigDecimals(
+					range, 2,
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 2)
+				);
+			ArbitraryTestHelper.assertAllGenerated(
+				generator,
+				decimal -> { return decimal.equals(new BigDecimal("0.02"));}
+			);
+		}
+
+		@Example
+		void impossibleRange() {
+			BigDecimal min = new BigDecimal(0);
+			BigDecimal max = new BigDecimal(1);
+			Range<BigDecimal> range = Range.of(min, false, max, false);
+			assertThatThrownBy(
+				() -> RandomGenerators.bigDecimals(
+					range, 0,
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 0)
+				)
+			).isInstanceOf(IllegalArgumentException.class);
+		}
+
+		@Example
 		void bigBigDecimals() {
-			BigDecimal min = new BigDecimal(-Double.MAX_VALUE);
-			BigDecimal max = new BigDecimal(Double.MAX_VALUE);
+			BigDecimal min = BigDecimal.valueOf(-Double.MAX_VALUE);
+			BigDecimal max = BigDecimal.valueOf(Double.MAX_VALUE);
 			Range<BigDecimal> range = Range.of(min, max);
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
-					RandomGenerators.defaultShrinkingTargetCalculator(range)
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 0)
 				);
 			ArbitraryTestHelper.assertAllGenerated(generator, decimal -> {
 				assertThat(decimal).isBetween(min, max);
@@ -172,7 +249,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
-					RandomGenerators.defaultShrinkingTargetCalculator(range),
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 0),
 					partitionPoints
 				).map(BigDecimal::toBigInteger);
 
@@ -189,11 +266,12 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
-					RandomGenerators.defaultShrinkingTargetCalculator(range),
+					RandomGenerators.defaultShrinkingTargetCalculator(range, 0),
 					partitionPoints
 				).map(BigDecimal::toBigInteger);
 
-			assertAllWithinRange(generator, BigDecimal.valueOf(Long.MIN_VALUE).toBigInteger(), BigDecimal.valueOf(Long.MAX_VALUE).toBigInteger());
+			assertAllWithinRange(generator, BigDecimal.valueOf(Long.MIN_VALUE).toBigInteger(), BigDecimal.valueOf(Long.MAX_VALUE)
+																										 .toBigInteger());
 			assertAllPartitionsAreCovered(generator, BigDecimal.valueOf(Long.MIN_VALUE).toBigInteger(), BigDecimal.valueOf(Long.MAX_VALUE)
 																												  .toBigInteger(), //
 										  new BigInteger[]{BigInteger.ZERO, valueOf(-10000), valueOf(10000)} //
@@ -204,7 +282,7 @@ class RandomGeneratorsTests {
 		void minGreaterThanMaxFails() {
 			assertThatThrownBy(() -> {
 				Range<BigDecimal> range = Range.of(BigDecimal.valueOf(1), BigDecimal.valueOf(-1));
-				RandomGenerators.bigDecimals(range, 2, RandomGenerators.defaultShrinkingTargetCalculator(range));
+				RandomGenerators.bigDecimals(range, 2, RandomGenerators.defaultShrinkingTargetCalculator(range, 2));
 			}).isInstanceOf(IllegalArgumentException.class);
 		}
 	}

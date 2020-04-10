@@ -94,7 +94,19 @@ public class RandomGenerators {
 		Function<BigDecimal, BigDecimal> shrinkingTargetCalculator,
 		BigDecimal... partitionPoints
 	) {
+		checkRangeIsSound(range, scale);
 		return RandomDecimalGenerators.bigDecimals(range, scale, partitionPoints, shrinkingTargetCalculator);
+	}
+
+	private static void checkRangeIsSound(Range<BigDecimal> range, int scale) {
+		if (range.minIncluded || range.maxIncluded) {
+			return;
+		}
+		BigDecimal minimumDifference = BigDecimal.ONE.movePointLeft(scale);
+		if (range.min.add(minimumDifference).compareTo(range.max) >= 0) {
+			String message = String.format("No number with scale <%s> can be generated in %s", scale, range);
+			throw new IllegalArgumentException(message);
+		}
 	}
 
 	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
@@ -270,8 +282,8 @@ public class RandomGenerators {
 		return value -> ShrinkableBigInteger.defaultShrinkingTarget(value, Range.of(min, max));
 	}
 
-	public static Function<BigDecimal, BigDecimal> defaultShrinkingTargetCalculator(Range<BigDecimal> range) {
-		return value -> ShrinkableBigDecimal.defaultShrinkingTarget(value, range);
+	public static Function<BigDecimal, BigDecimal> defaultShrinkingTargetCalculator(Range<BigDecimal> range, int scale) {
+		return value -> ShrinkableBigDecimal.defaultShrinkingTarget(value, range, scale);
 	}
 
 	// TODO: This could be way more sophisticated

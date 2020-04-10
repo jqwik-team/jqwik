@@ -83,21 +83,21 @@ class ShrinkableBigDecimalTests {
 		assertThat(
 			new ShrinkableBigDecimal(
 				new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0,
-				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("99999999999999999999.11"), bigDecimalRange)
+				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0)
 			).distance())
 			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
 
 		assertThat(
 			new ShrinkableBigDecimal(
 				new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0,
-				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("-99999999999999999999.11"), bigDecimalRange)
+				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0)
 			).distance())
 			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
 
 		assertThat(
 			new ShrinkableBigDecimal(
 				new BigDecimal("99.11"), bigDecimalRange, 22,
-				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("99.11"), bigDecimalRange)
+				ShrinkableBigDecimal.defaultShrinkingTarget(new BigDecimal("99.11"), bigDecimalRange, 22)
 			).distance())
 			.isEqualTo(ShrinkingDistance.of(99, Long.MAX_VALUE));
 	}
@@ -138,7 +138,27 @@ class ShrinkableBigDecimalTests {
 		assertThat(counter.get()).isEqualTo(6);
 	}
 
-	@Property
+	@Property(tries = 100)
+	void shrinkingToClosestPossibleIntegralWhenMinimumIsNotIncluded(@ForAll @BigRange(min = "1.01", max = "1000000000") @Scale(2) BigDecimal value) {
+		Range<Double> doubleRange = Range.of(1.0, false, 1000000000.0, true);
+		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(value.toPlainString(), doubleRange, 2);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
+		while (sequence.next(count, reporter)) ;
+		BigDecimal shrunkValue = sequence.current().value();
+		assertThat(shrunkValue).isEqualByComparingTo("2");
+	}
+
+	@Property(tries = 100)
+	void shrinkingToClosestPossibleIntegralWhenMaximumIsNotIncluded(@ForAll @BigRange(min = "-1000000", max = "-1.01") @Scale(2) BigDecimal value) {
+		Range<Double> doubleRange = Range.of(-1000000.0, true, -1.0, false);
+		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(value.toPlainString(), doubleRange, 2);
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
+		while (sequence.next(count, reporter)) ;
+		BigDecimal shrunkValue = sequence.current().value();
+		assertThat(shrunkValue).isEqualByComparingTo("-2.0");
+	}
+
+	@Property(tries = 100)
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-1000000000", max = "1000000000") @Scale(15) BigDecimal aValue) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
@@ -148,7 +168,7 @@ class ShrinkableBigDecimalTests {
 		assertThat(shrunkValue).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.ZERO));
 	}
 
-	@Property
+	@Property(tries = 100)
 	void shrinkToExplicitShrinkingTarget(
 		@ForAll @BigRange(min = "-1000", max = "1000") BigDecimal aValue,
 		@ForAll @BigRange(min = "-100", max = "100") BigDecimal shrinkingTarget
@@ -165,8 +185,23 @@ class ShrinkableBigDecimalTests {
 	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange) {
 		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
 		BigDecimal value = new BigDecimal(numberString);
-		return new ShrinkableBigDecimal(value, bigDecimalRange, value.scale(), ShrinkableBigDecimal
-																				   .defaultShrinkingTarget(value, bigDecimalRange));
+		return new ShrinkableBigDecimal(
+			value,
+			bigDecimalRange,
+			value.scale(),
+			ShrinkableBigDecimal.defaultShrinkingTarget(value, bigDecimalRange, value.scale())
+		);
+	}
+
+	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange, int scale) {
+		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
+		BigDecimal value = new BigDecimal(numberString);
+		return new ShrinkableBigDecimal(
+			value,
+			bigDecimalRange,
+			scale,
+			ShrinkableBigDecimal.defaultShrinkingTarget(value, bigDecimalRange, scale)
+		);
 	}
 
 	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange, BigDecimal shrinkingTarget) {

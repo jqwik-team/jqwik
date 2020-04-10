@@ -14,14 +14,26 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 	private final BigDecimal target;
 	private final BigDecimalShrinkingCandidates shrinkingCandidates;
 
-	public static BigDecimal defaultShrinkingTarget(BigDecimal value, Range<BigDecimal> range) {
+	public static BigDecimal defaultShrinkingTarget(BigDecimal value, Range<BigDecimal> range, int scale) {
 		if (range.includes(BigDecimal.ZERO))
 			return BigDecimal.ZERO;
 		else {
-			if (value.compareTo(BigDecimal.ZERO) < 0)
-				return range.max;
-			if (value.compareTo(BigDecimal.ZERO) > 0)
-				return range.min;
+			if (value.compareTo(BigDecimal.ZERO) < 0) {
+				if (range.maxIncluded) {
+					return range.max;
+				} else {
+					BigDecimal minimumDifference = BigDecimal.ONE.movePointLeft(scale);
+					return range.max.subtract(minimumDifference);
+				}
+			}
+			if (value.compareTo(BigDecimal.ZERO) > 0) {
+				if (range.minIncluded) {
+					return range.min;
+				} else {
+					BigDecimal minimumDifference = BigDecimal.ONE.movePointLeft(scale);
+					return range.min.add(minimumDifference);
+				}
+			}
 		}
 		return value; // Should never get here
 	}
@@ -40,7 +52,7 @@ public class ShrinkableBigDecimal extends AbstractShrinkable<BigDecimal> {
 	public Set<Shrinkable<BigDecimal>> shrinkCandidatesFor(Shrinkable<BigDecimal> shrinkable) {
 		return shrinkingCandidates.candidatesFor(shrinkable.value())
 								  .stream() //
-								  .map(aBigDecimal -> new ShrinkableBigDecimal(aBigDecimal, range, scale, defaultShrinkingTarget(aBigDecimal, range))) //
+								  .map(aBigDecimal -> new ShrinkableBigDecimal(aBigDecimal, range, scale, defaultShrinkingTarget(aBigDecimal, range, scale))) //
 								  .collect(Collectors.toSet());
 	}
 

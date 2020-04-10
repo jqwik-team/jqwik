@@ -74,18 +74,31 @@ public class RandomDecimalGenerators {
 	) {
 		BigInteger scaledMinTry = minGenerate.scaleByPowerOfTen(scale).toBigInteger();
 		BigInteger scaledMin = new BigDecimal(scaledMinTry, scale).compareTo(minGenerate) >= 0 ?
-			scaledMinTry : scaledMinTry.add(BigInteger.ONE);
+								   scaledMinTry : scaledMinTry.add(BigInteger.ONE);
 		BigInteger scaledMaxTry = maxGenerate.scaleByPowerOfTen(scale).toBigInteger();
 		BigInteger scaledMax = new BigDecimal(scaledMaxTry, scale).compareTo(maxGenerate) <= 0 ?
-			scaledMaxTry : scaledMaxTry.subtract(BigInteger.ONE);
+								   scaledMaxTry : scaledMaxTry.subtract(BigInteger.ONE);
 		return random -> {
-			if (scaledMin.compareTo(scaledMax) >= 0) {
-				return new ShrinkableBigDecimal(minGenerate, range, scale, shrinkingTargetCalculator.apply(minGenerate));
+			BigDecimal randomDecimal = generate(random, minGenerate, scale, scaledMin, scaledMax);
+			while (!range.includes(randomDecimal)) {
+				randomDecimal = generate(random, minGenerate, scale, scaledMin, scaledMax);
 			}
-			BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
-			BigDecimal randomDecimal = new BigDecimal(randomIntegral, scale);
 			return new ShrinkableBigDecimal(randomDecimal, range, scale, shrinkingTargetCalculator.apply(randomDecimal));
 		};
+	}
+
+	private static BigDecimal generate(
+		Random random,
+		BigDecimal minGenerate,
+		int scale,
+		BigInteger scaledMin,
+		BigInteger scaledMax
+	) {
+		if (scaledMin.compareTo(scaledMax) >= 0) {
+			return minGenerate;
+		}
+		BigInteger randomIntegral = randomIntegral(random, scaledMin, scaledMax);
+		return new BigDecimal(randomIntegral, scale);
 	}
 
 	private static BigInteger randomIntegral(Random random, BigInteger min, BigInteger max) {
