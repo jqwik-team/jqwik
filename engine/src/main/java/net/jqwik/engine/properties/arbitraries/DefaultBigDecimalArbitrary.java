@@ -10,12 +10,12 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 
 	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-Double.MAX_VALUE);
 	private static final BigDecimal DEFAULT_MAX = new BigDecimal(Double.MAX_VALUE);
-
+	private static final Range<BigDecimal> DEFAULT_RANGE = Range.of(DEFAULT_MIN, DEFAULT_MAX);
 
 	private final DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultBigDecimalArbitrary() {
-		this.generatingArbitrary = new DecimalGeneratingArbitrary(DEFAULT_MIN, DEFAULT_MAX);
+		this.generatingArbitrary = new DecimalGeneratingArbitrary(DEFAULT_RANGE);
 	}
 
 	@Override

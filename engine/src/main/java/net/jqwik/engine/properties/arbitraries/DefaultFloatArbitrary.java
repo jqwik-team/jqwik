@@ -14,7 +14,7 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 	private final DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultFloatArbitrary() {
-		this.generatingArbitrary = new DecimalGeneratingArbitrary(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX));
+		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));
 	}
 
 	@Override

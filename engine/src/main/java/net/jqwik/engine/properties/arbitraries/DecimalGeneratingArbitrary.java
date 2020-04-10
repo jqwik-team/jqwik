@@ -14,21 +14,27 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	private static final int DEFAULT_SCALE = 2;
 
+	//Range<BigDecimal> range;
 	BigDecimal min;
 	BigDecimal max;
 	int scale = DEFAULT_SCALE;
 	BigDecimal shrinkingTarget;
 
-	DecimalGeneratingArbitrary(BigDecimal defaultMin, BigDecimal defaultMax) {
-		this.min = defaultMin;
-		this.max = defaultMax;
+	DecimalGeneratingArbitrary(Range<BigDecimal> defaultRange) {
+		//this.range = defaultRange;
+		this.min = defaultRange.min;
+		this.max = defaultRange.max;
 		this.shrinkingTarget = null;
 	}
 
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
-		BigDecimal[] partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max);
+		BigDecimal[] partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, getRange());
 		return decimalGenerator(partitionPoints, genSize);
+	}
+
+	public Range<BigDecimal> getRange() {
+		return Range.of(this.min, this.max);
 	}
 
 	@Override
@@ -42,10 +48,11 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
 		List<Shrinkable<BigDecimal>> edgeCases =
 			streamEdgeCases() //
-				  .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
-				  .map(value -> new ShrinkableBigDecimal(value, Range.of(min, max), scale, shrinkingTarget(value))) //
-				  .collect(Collectors.toList());
-		return RandomGenerators.bigDecimals(min, max, scale, shrinkingTargetCalculator(), partitionPoints).withEdgeCases(genSize, edgeCases);
+							  .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
+							  .map(value -> new ShrinkableBigDecimal(value, getRange(), scale, shrinkingTarget(value))) //
+							  .collect(Collectors.toList());
+		return RandomGenerators.bigDecimals(getRange(), scale, shrinkingTargetCalculator(), partitionPoints)
+							   .withEdgeCases(genSize, edgeCases);
 	}
 
 	private Stream<BigDecimal> streamEdgeCases() {
@@ -63,7 +70,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	private Function<BigDecimal, BigDecimal> shrinkingTargetCalculator() {
 		if (shrinkingTarget == null) {
-			return RandomGenerators.defaultShrinkingTargetCalculator(min, max);
+			return RandomGenerators.defaultShrinkingTargetCalculator(getRange());
 		} else {
 			return ignore -> shrinkingTarget;
 		}

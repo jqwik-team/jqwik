@@ -14,7 +14,7 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 	private final DecimalGeneratingArbitrary generatingArbitrary;
 
 	public DefaultDoubleArbitrary() {
-		this.generatingArbitrary = new DecimalGeneratingArbitrary(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX));
+		this.generatingArbitrary = new DecimalGeneratingArbitrary(Range.of(toBigDecimal(DEFAULT_MIN), toBigDecimal(DEFAULT_MAX)));
 	}
 
 	@Override

@@ -89,30 +89,13 @@ public class RandomGenerators {
 		return RandomIntegralGenerators.bigIntegers(range, partitionPoints, shrinkingTargetCalculator);
 	}
 
-	public static RandomGenerator<Double> doubles(double min, double max, int scale) {
-		return bigDecimals(
-			BigDecimal.valueOf(min),
-			BigDecimal.valueOf(max), scale,
-			defaultShrinkingTargetCalculator(BigDecimal.valueOf(min), BigDecimal.valueOf(max))
-		).map(BigDecimal::doubleValue);
-	}
-
-	public static RandomGenerator<Float> floats(float min, float max, int scale) {
-		return bigDecimals(
-			BigDecimal.valueOf(min),
-			BigDecimal.valueOf(max), scale,
-			defaultShrinkingTargetCalculator(BigDecimal.valueOf(min), BigDecimal.valueOf(max))
-		).map(BigDecimal::floatValue);
-	}
-
 	public static RandomGenerator<BigDecimal> bigDecimals(
-		BigDecimal min,
-		BigDecimal max,
+		Range<BigDecimal> range,
 		int scale,
 		Function<BigDecimal, BigDecimal> shrinkingTargetCalculator,
 		BigDecimal... partitionPoints
 	) {
-		return RandomDecimalGenerators.bigDecimals(Range.of(min, max), scale, partitionPoints, shrinkingTargetCalculator);
+		return RandomDecimalGenerators.bigDecimals(range, scale, partitionPoints, shrinkingTargetCalculator);
 	}
 
 	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
@@ -288,8 +271,8 @@ public class RandomGenerators {
 		return value -> ShrinkableBigInteger.defaultShrinkingTarget(value, Range.of(min, max));
 	}
 
-	public static Function<BigDecimal, BigDecimal> defaultShrinkingTargetCalculator(BigDecimal min, BigDecimal max) {
-		return value -> ShrinkableBigDecimal.defaultShrinkingTarget(value, Range.of(min, max));
+	public static Function<BigDecimal, BigDecimal> defaultShrinkingTargetCalculator(Range<BigDecimal> range) {
+		return value -> ShrinkableBigDecimal.defaultShrinkingTarget(value, range);
 	}
 
 	// TODO: This could be way more sophisticated
@@ -300,8 +283,8 @@ public class RandomGenerators {
 		return new BigInteger[]{lowerPartitionPoint, upperPartitionPoint};
 	}
 
-	public static BigDecimal[] calculateDefaultPartitionPoints(int genSize, BigDecimal min, BigDecimal max) {
-		BigInteger[] partitionPoints = calculateDefaultPartitionPoints(genSize, min.toBigInteger(), max.toBigInteger());
+	public static BigDecimal[] calculateDefaultPartitionPoints(int genSize, Range<BigDecimal> range) {
+		BigInteger[] partitionPoints = calculateDefaultPartitionPoints(genSize, range.min.toBigInteger(), range.max.toBigInteger());
 		return Arrays.stream(partitionPoints)
 					 .map(BigDecimal::new)
 					 .toArray(BigDecimal[]::new);
