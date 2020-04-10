@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 
 public class DefaultFloatArbitrary extends AbstractArbitraryBase implements FloatArbitrary {
 
@@ -30,14 +31,14 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 	@Override
 	public FloatArbitrary greaterOrEqual(float min) {
 		DefaultFloatArbitrary clone = typedClone();
-		clone.generatingArbitrary.min = toBigDecimal(min);
+		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMin(toBigDecimal(min), true);
 		return clone;
 	}
 
 	@Override
 	public FloatArbitrary lessOrEqual(float max) {
 		DefaultFloatArbitrary clone = typedClone();
-		clone.generatingArbitrary.max = toBigDecimal(max);
+		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMax(toBigDecimal(max), true);
 		return clone;
 	}
 

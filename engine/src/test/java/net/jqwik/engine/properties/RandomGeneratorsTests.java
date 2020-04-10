@@ -6,7 +6,6 @@ import java.util.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 

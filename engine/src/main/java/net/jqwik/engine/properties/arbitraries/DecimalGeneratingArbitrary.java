@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
@@ -14,16 +15,12 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	private static final int DEFAULT_SCALE = 2;
 
-	//Range<BigDecimal> range;
-	BigDecimal min;
-	BigDecimal max;
+	Range<BigDecimal> range;
 	int scale = DEFAULT_SCALE;
 	BigDecimal shrinkingTarget;
 
 	DecimalGeneratingArbitrary(Range<BigDecimal> defaultRange) {
-		//this.range = defaultRange;
-		this.min = defaultRange.min;
-		this.max = defaultRange.max;
+		this.range = defaultRange;
 		this.shrinkingTarget = null;
 	}
 
@@ -33,14 +30,14 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 		return decimalGenerator(partitionPoints, genSize);
 	}
 
-	public Range<BigDecimal> getRange() {
-		return Range.of(this.min, this.max);
+	private Range<BigDecimal> getRange() {
+		return range;
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<BigDecimal>> exhaustive(long maxNumberOfSamples) {
-		if (min.compareTo(max) == 0) {
-			return ExhaustiveGenerators.choose(Collections.singletonList(min), maxNumberOfSamples);
+		if (range.isSingular()) {
+			return ExhaustiveGenerators.choose(Collections.singletonList(range.min), maxNumberOfSamples);
 		}
 		return Optional.empty();
 	}
@@ -48,7 +45,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
 		List<Shrinkable<BigDecimal>> edgeCases =
 			streamEdgeCases() //
-							  .filter(aDecimal -> aDecimal.compareTo(min) >= 0 && aDecimal.compareTo(max) <= 0) //
+							  .filter(aDecimal -> aDecimal.compareTo(range.min) >= 0 && aDecimal.compareTo(range.max) <= 0) //
 							  .map(value -> new ShrinkableBigDecimal(value, getRange(), scale, shrinkingTarget(value))) //
 							  .collect(Collectors.toList());
 		return RandomGenerators.bigDecimals(getRange(), scale, shrinkingTargetCalculator(), partitionPoints)
@@ -61,7 +58,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 		BigDecimal[] literalEdgeCases = {
 			zeroScaled, zeroScaled, zeroScaled, // raise probability for zero
 			BigDecimal.ONE, BigDecimal.ONE.negate(),
-			smallest, smallest.negate(), min, max};
+			smallest, smallest.negate(), range.min, range.max};
 
 		return shrinkingTarget == null
 			? Arrays.stream(literalEdgeCases)

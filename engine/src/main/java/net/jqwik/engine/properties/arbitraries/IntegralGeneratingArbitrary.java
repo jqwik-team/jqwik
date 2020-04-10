@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
@@ -45,9 +46,9 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
 		List<Shrinkable<BigInteger>> edgeCases =
 			streamEdgeCases()
-				.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
-				.map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt))) //
-				.collect(Collectors.toList());
+					.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
+					.map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt))) //
+					.collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, shrinkingTargetCalculator(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases);
 	}

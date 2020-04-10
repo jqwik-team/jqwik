@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 
 public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements BigDecimalArbitrary {
 
@@ -31,14 +32,14 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 	@Override
 	public BigDecimalArbitrary greaterOrEqual(BigDecimal min) {
 		DefaultBigDecimalArbitrary clone = typedClone();
-		clone.generatingArbitrary.min = (min != null ? min : DEFAULT_MIN);
+		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMin(min != null ? min : DEFAULT_MIN, true);
 		return clone;
 	}
 
 	@Override
 	public BigDecimalArbitrary lessOrEqual(BigDecimal max) {
 		DefaultBigDecimalArbitrary clone = typedClone();
-		clone.generatingArbitrary.max = (max != null ? max : DEFAULT_MAX);
+		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMax(max != null ? max : DEFAULT_MAX, true);
 		return clone;
 	}
 

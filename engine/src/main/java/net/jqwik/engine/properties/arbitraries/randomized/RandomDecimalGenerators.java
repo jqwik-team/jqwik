@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 // TODO: Remove duplication with RandomIntegralGenerators

@@ -6,7 +6,6 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -15,12 +14,12 @@ import static org.mockito.Mockito.*;
 @Label("ShrinkableBigInteger")
 class ShrinkableBigIntegerTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final Runnable count = counter::incrementAndGet;
 
 	@SuppressWarnings("unchecked")
-	private Consumer<BigInteger> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<BigInteger>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<BigInteger> valueReporter = mock(Consumer.class);
+	private final Consumer<FalsificationResult<BigInteger>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {

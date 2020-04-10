@@ -4,7 +4,7 @@ import java.math.*;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 

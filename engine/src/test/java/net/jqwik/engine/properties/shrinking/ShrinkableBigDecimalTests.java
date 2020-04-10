@@ -9,19 +9,18 @@ import org.assertj.core.data.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ShrinkableBigDecimalTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final Runnable count = counter::incrementAndGet;
 
 	@SuppressWarnings("unchecked")
-	private Consumer<BigDecimal> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<BigDecimal>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<BigDecimal> valueReporter = mock(Consumer.class);
+	private final Consumer<FalsificationResult<BigDecimal>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {

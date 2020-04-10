@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties.arbitraries;
+package net.jqwik.engine.properties;
 
 import java.util.function.*;
 
@@ -36,6 +36,14 @@ public class Range<T extends Comparable<T>> {
 
 	public <U extends Comparable<U>> Range<U> map(Function<T, U> mapper) {
 		return Range.of(mapper.apply(min), mapper.apply(max));
+	}
+
+	public Range<T> withMin(T newMin, boolean minIncluded) {
+		return new Range<>(newMin, max);
+	}
+
+	public Range<T> withMax(T newMax, boolean maxIncluded) {
+		return new Range<>(min, newMax);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.engine.properties.*;
 
 public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements DoubleArbitrary {
 
@@ -30,14 +31,14 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 	@Override
 	public DoubleArbitrary greaterOrEqual(double min) {
 		DefaultDoubleArbitrary clone = typedClone();
-		clone.generatingArbitrary.min = toBigDecimal(min);
+		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMin(toBigDecimal(min), true);
 		return clone;
 	}
 
 	@Override
 	public DoubleArbitrary lessOrEqual(double max) {
 		DefaultDoubleArbitrary clone = typedClone();
-		clone.generatingArbitrary.max = toBigDecimal(max);
+		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMax(toBigDecimal(max), true);
 		return clone;
 	}
 

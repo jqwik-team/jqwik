@@ -4,7 +4,7 @@ import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.engine.properties.arbitraries.*;
+import net.jqwik.engine.properties.*;
 
 public class BigDecimalShrinkingCandidates implements ShrinkingCandidates<BigDecimal> {
 	private final Range<BigDecimal> range;
