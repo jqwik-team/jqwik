@@ -125,7 +125,7 @@ class RandomGeneratorsTests {
 				BigInteger min = valueOf(1);
 				BigInteger max = valueOf(-1);
 				RandomGenerators.bigIntegers(min, max, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
-			}).isInstanceOf(JqwikException.class);
+			}).isInstanceOf(IllegalArgumentException.class);
 		}
 
 	}
@@ -205,7 +205,7 @@ class RandomGeneratorsTests {
 			assertThatThrownBy(() -> {
 				Range<BigDecimal> range = Range.of(BigDecimal.valueOf(1), BigDecimal.valueOf(-1));
 				RandomGenerators.bigDecimals(range, 2, RandomGenerators.defaultShrinkingTargetCalculator(range));
-			}).isInstanceOf(JqwikException.class);
+			}).isInstanceOf(IllegalArgumentException.class);
 		}
 	}
 
