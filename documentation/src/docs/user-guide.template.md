@@ -27,7 +27,9 @@ The latest release of __jqwik__ is deployed to [Maven Central](https://search.ma
 
 Snapshot releases can be fetched from https://oss.sonatype.org/content/repositories/snapshots.
 
+### Required Version of JUnit Platform
 
+The minimum required version of the JUnit platform is `${junitPlatformVersion}`.
 
 ### Gradle
 
@@ -2929,7 +2931,7 @@ Consider a simple `Person` class:
 ```java
 public class Person {
 
-	private String name;
+	private final String name;
 	private final int age;
 
 	public Person(String name, int age) {

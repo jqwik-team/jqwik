@@ -11,6 +11,7 @@ title: jqwik User Guide - 1.2.6
 ### Table of Contents  
 
 - [How to Use](#how-to-use)
+  - [Required Version of JUnit Platform](#required-version-of-junit-platform)
   - [Gradle](#gradle)
     - [Seeing jqwik Reporting in Gradle Output](#seeing-jqwik-reporting-in-gradle-output)
   - [Maven](#maven)
@@ -134,7 +135,9 @@ The latest release of __jqwik__ is deployed to [Maven Central](https://search.ma
 
 Snapshot releases can be fetched from https://oss.sonatype.org/content/repositories/snapshots.
 
+### Required Version of JUnit Platform
 
+The minimum required version of the JUnit platform is `1.6.1`.
 
 ### Gradle
 
@@ -3036,7 +3039,7 @@ Consider a simple `Person` class:
 ```java
 public class Person {
 
-	private String name;
+	private final String name;
 	private final int age;
 
 	public Person(String name, int age) {
