@@ -31,6 +31,8 @@ title: jqwik Release Notes
 - Warning about JUnit annotations only shows up when test container class has
   jqwik property or example methods.
 
+- Upgrade to JUnit Platform 1.6.2
+
 #### Breaking Changes
 
 - Minor changes to Lifecycle Hooks API

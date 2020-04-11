@@ -3,8 +3,8 @@ static isSnapshotRelease(versionString) {
 }
 
 ext {
-	junitPlatformVersion = '1.6.1'
-	junitJupiterVersion = '5.6.1'
+	junitPlatformVersion = '1.6.2'
+	junitJupiterVersion = '5.6.2'
 	apiGuardianVersion = '1.1.0'
 	opentest4jVersion = '1.2.0'
 	archunitVersion = '0.13.1'
