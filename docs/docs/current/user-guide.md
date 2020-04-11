@@ -528,10 +528,10 @@ eight annotations:
 
 - [`@BeforeContainer`](/docs/1.2.6/javadoc/net/jqwik/api/lifecycle/BeforeContainer.html):
   _Static_ methods with this annotation will run exactly once before any property
-  will be executed, even before the first instance of this class will be created.
+  of a container class will be executed, even before the first instance of this class will be created.
 - [`@AfterContainer`](/docs/1.2.6/javadoc/net/jqwik/api/lifecycle/AfterContainer.html):
-  _Static_ methods with this annotation will run exactly once before any property
-  will be executed, even before the first instance of this class will be created.
+  _Static_ methods with this annotation will run exactly once after all properties
+  of a container class have run.
 - [`@BeforeProperty`](/docs/1.2.6/javadoc/net/jqwik/api/lifecycle/BeforeProperty.html):
   Methods with this annotation will run once before each property or example.
   `@BeforeExample` is an alias with the same functionality.
