@@ -783,7 +783,7 @@ They work for generated `String`s and `Character`s.
   For `Float` and `float` only.
 - [`@DoubleRange(double min = 0.0, double max = Double.MAX_VALUE)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/DoubleRange.html):
   For `Double` and `double` only.
-- [`@BigRange(String min = "", String max = "")`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/BigRange.html):
+- [`@BigRange(String min = "", minIncluded = true, String max = "", maxIncluded = true)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigDecimal` generation.
 - [`@Scale(int value)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/Scale.html):
   Specify the maximum number of decimal places. For all decimal types.

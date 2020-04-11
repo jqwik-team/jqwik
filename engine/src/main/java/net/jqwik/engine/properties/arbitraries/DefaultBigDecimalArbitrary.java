@@ -9,8 +9,8 @@ import net.jqwik.engine.properties.*;
 
 public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements BigDecimalArbitrary {
 
-	private static final BigDecimal DEFAULT_MIN = new BigDecimal(-Double.MAX_VALUE);
-	private static final BigDecimal DEFAULT_MAX = new BigDecimal(Double.MAX_VALUE);
+	private static final BigDecimal DEFAULT_MIN = BigDecimal.valueOf(-Double.MAX_VALUE);
+	private static final BigDecimal DEFAULT_MAX = BigDecimal.valueOf(Double.MAX_VALUE);
 	private static final Range<BigDecimal> DEFAULT_RANGE = Range.of(DEFAULT_MIN, DEFAULT_MAX);
 
 	private final DecimalGeneratingArbitrary generatingArbitrary;
@@ -30,17 +30,32 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
-	public BigDecimalArbitrary greaterOrEqual(BigDecimal min) {
+	public BigDecimalArbitrary between(BigDecimal min, boolean minIncluded, BigDecimal max, boolean maxIncluded) {
+		min = (min == null) ? DEFAULT_MIN : min;
+		max = (max == null) ? DEFAULT_MAX : max;
 		DefaultBigDecimalArbitrary clone = typedClone();
-		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMin(min != null ? min : DEFAULT_MIN, true);
+		clone.generatingArbitrary.range = Range.of(min, minIncluded, max, maxIncluded);
 		return clone;
 	}
 
 	@Override
+	public BigDecimalArbitrary lessThan(BigDecimal max) {
+		return between(generatingArbitrary.range.min, generatingArbitrary.range.minIncluded, max, false);
+	}
+
+	@Override
 	public BigDecimalArbitrary lessOrEqual(BigDecimal max) {
-		DefaultBigDecimalArbitrary clone = typedClone();
-		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMax(max != null ? max : DEFAULT_MAX, true);
-		return clone;
+		return between(generatingArbitrary.range.min, generatingArbitrary.range.minIncluded, max, true);
+	}
+
+	@Override
+	public BigDecimalArbitrary greaterOrEqual(BigDecimal min) {
+		return between(min, true, generatingArbitrary.range.max, generatingArbitrary.range.maxIncluded);
+	}
+
+	@Override
+	public BigDecimalArbitrary greaterThan(BigDecimal min) {
+		return between(min, false, generatingArbitrary.range.max, generatingArbitrary.range.maxIncluded);
 	}
 
 	@Override

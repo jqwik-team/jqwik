@@ -3,6 +3,7 @@ package net.jqwik.api.constraints;
 import java.math.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.*;
 
 class RangeProperties {
 
@@ -89,9 +90,26 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean bigDecimalsMaxOnly(@ForAll @BigRange(max = "-20") BigDecimal value) {
+		return value.compareTo(new BigDecimal("-20")) <= 0 //
+			&& value.compareTo(BigDecimal.valueOf(-Double.MAX_VALUE)) >= 0;
+	}
+
+	@Property
+	boolean bigDecimalsBordersExcluded(@ForAll @Scale(0) @BigRange(min = "-10", minIncluded = false, max = "10", maxIncluded = false) BigDecimal value) {
+		return value.compareTo(new BigDecimal("-10")) > 0 //
+			&& value.compareTo(new BigDecimal("10")) < 0;
+	}
+
+	@Property
 	boolean bigIntegers(@ForAll @BigRange(min = "2.0", max = "7") BigInteger value) {
 		return value.compareTo(new BigInteger("2")) >= 0 //
 			&& value.compareTo(new BigInteger("7")) <= 0;
+	}
+
+	@Property
+	@ExpectFailure
+	void bigIntegersWithIncludedFails(@ForAll @BigRange(minIncluded = false, maxIncluded = false) BigInteger value) {
 	}
 
 	@Property

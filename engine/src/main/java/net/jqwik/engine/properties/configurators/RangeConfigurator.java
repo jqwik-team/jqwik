@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.configurators;
 
+import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.constraints.*;
@@ -12,12 +13,16 @@ public class RangeConfigurator extends ArbitraryConfiguratorBase {
 	public BigDecimalArbitrary configure(BigDecimalArbitrary arbitrary, BigRange range) {
 		BigDecimal min = evaluate(range.min(), BigDecimal::new);
 		BigDecimal max = evaluate(range.max(), BigDecimal::new);
-		return arbitrary.greaterOrEqual(min).lessOrEqual(max);
+		return arbitrary.between(min, range.minIncluded(), max, range.maxIncluded());
 	}
 
 	public BigIntegerArbitrary configure(BigIntegerArbitrary arbitrary, BigRange range) {
 		BigInteger min = evaluate(range.min(), val -> new BigDecimal(val).toBigIntegerExact());
 		BigInteger max = evaluate(range.max(), val -> new BigDecimal(val).toBigIntegerExact());
+		if (!range.minIncluded() || !range.maxIncluded()) {
+			String message = "minIncluded and maxIncluded are only allowed for parameters of type java.math.BigDecimal";
+			throw new JqwikException(message);
+		}
 		return arbitrary.greaterOrEqual(min).lessOrEqual(max);
 	}
 

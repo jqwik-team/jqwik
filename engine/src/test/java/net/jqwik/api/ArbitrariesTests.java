@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+import net.jqwik.engine.properties.*;
 
 import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
@@ -569,7 +570,7 @@ class ArbitrariesTests {
 		@Example
 		void bigDecimals() {
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
-														 .between(new BigDecimal(-100.0), new BigDecimal(100.0))
+														 .between(BigDecimal.valueOf(-100.0), BigDecimal.valueOf(100.0))
 														 .ofScale(2)
 														 .shrinkTowards(BigDecimal.valueOf(4.2));
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
@@ -583,6 +584,61 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() < -1.0 && value.doubleValue() > -9.0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.doubleValue() > 1.0 && value.doubleValue() < 9.0);
 			assertAllGenerated(generator, value -> value.scale() <= 2);
+		}
+
+		@Example
+		void bigDecimalsLessOrEqual() {
+			BigDecimal max = BigDecimal.valueOf(10);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().lessOrEqual(max);
+			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
+			assertAllGenerated(generator, value -> value.compareTo(max) <= 0);
+		}
+
+		@Example
+		void bigDecimalsLessThan() {
+			BigDecimal max = BigDecimal.valueOf(10);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().lessThan(max).ofScale(1);
+			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
+			assertAllGenerated(generator, value -> value.compareTo(max) < 0);
+		}
+
+		@Example
+		void bigDecimalsGreaterOrEqual() {
+			BigDecimal min = BigDecimal.valueOf(10);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().greaterOrEqual(min);
+			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
+			assertAllGenerated(generator, value -> value.compareTo(min) >= 0);
+		}
+
+		@Example
+		void bigDecimalsGreaterThan() {
+			BigDecimal min = BigDecimal.valueOf(10);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals().greaterThan(min).ofScale(1);
+			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
+			assertAllGenerated(generator, value -> value.compareTo(min) > 0);
+		}
+
+		@Example
+		void bigDecimalsWithShrinkingTargetOutsideBorders() {
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
+														 .between(BigDecimal.ONE, BigDecimal.TEN)
+														 .shrinkTowards(BigDecimal.valueOf(-1));
+			assertThatThrownBy( () -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
+		}
+
+		@Example
+		void bigDecimalsWithBordersExcluded() {
+			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(-10.0), false, BigDecimal.valueOf(10.0), false);
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
+														 .between(range.min, range.minIncluded, range.max, range.maxIncluded)
+														 .ofScale(1);
+			RandomGenerator<BigDecimal> generator = arbitrary.generator(1000);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ZERO) == 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE) == 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.valueOf(-1)) == 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
+			assertAllGenerated(generator, range::includes);
 		}
 
 	}

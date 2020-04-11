@@ -9,7 +9,9 @@ import static org.apiguardian.api.API.Status.*;
 /**
  * Constrain the range of a generated "Big" number.
  * <p>
- * Applies to BigInteger and BigDecimal parameters which are also annotated with {@code @ForAll}.
+ * Applies to {@linkplain java.math.BigInteger} and {@linkplain java.math.BigDecimal} parameters which are also annotated with {@code @ForAll}.
+ * <p>
+ * {@code minIncluded()} and {@code maxIncluded()} only work for {@linkplain java.math.BigDecimal}.
  *
  * @see net.jqwik.api.ForAll
  * @see ByteRange
@@ -26,5 +28,11 @@ import static org.apiguardian.api.API.Status.*;
 public @interface BigRange {
 	String min() default "";
 
+	@API(status = MAINTAINED, since = "1.2.7")
+	boolean minIncluded() default true;
+
 	String max() default "";
+
+	@API(status = MAINTAINED, since = "1.2.7")
+	boolean maxIncluded() default true;
 }

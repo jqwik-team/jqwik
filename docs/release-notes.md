@@ -28,6 +28,13 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- `BigDecimalArbitrary` now allows specifying _excluded_ min and max values:
+    - `BigDecimalArbitrary.between(BigDecimal min, boolean minIncluded, BigDecimal max, boolean maxIncluded)`
+    - `BigDecimalArbitrary.lessThan(BigDecimal max)`
+    - `BigDecimalArbitrary.greaterThan(BigDecimal min)`
+
+- Annotation `@BigRange` has two new optional attributes `minIncluded` and `maxIncluded`
+
 - Warning about JUnit annotations only shows up when test container class has
   jqwik property or example methods.
 

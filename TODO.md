@@ -1,8 +1,8 @@
 - 1.2.7
 
-    - Allow include/exclude for decimal ranges, e.g.
-      - BigDecimalArbitrary.between(0.1, false, 10.0, false))
-      - `BigRange.min/maxIncluded`
+    - Allow include/exclude for decimal ranges
+        - Float/DoubleArbitrary.between(0.1, false, 10.0, false))
+        - Float/DoubleRange.min/maxIncluded
 
 - 1.3.0
 
