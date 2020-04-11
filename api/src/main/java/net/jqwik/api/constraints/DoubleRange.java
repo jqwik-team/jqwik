@@ -26,5 +26,11 @@ import static org.apiguardian.api.API.Status.*;
 public @interface DoubleRange {
 	double min() default 0.0;
 
+	@API(status = MAINTAINED, since = "1.2.7")
+	boolean minIncluded() default true;
+
 	double max() default Double.MAX_VALUE;
+
+	@API(status = MAINTAINED, since = "1.2.7")
+	boolean maxIncluded() default true;
 }

@@ -781,7 +781,7 @@ They work for generated `String`s and `Character`s.
 
 - [`@FloatRange(float min = 0.0f, float max = Float.MAX_VALUE)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/FloatRange.html):
   For `Float` and `float` only.
-- [`@DoubleRange(double min = 0.0, double max = Double.MAX_VALUE)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/DoubleRange.html):
+- [`@DoubleRange(double min = 0.0, minIncluded = true, double max = Double.MAX_VALUE, boolean maxIncluded = true)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/DoubleRange.html):
   For `Double` and `double` only.
 - [`@BigRange(String min = "", minIncluded = true, String max = "", maxIncluded = true)`](/docs/${docsVersion}/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigDecimal` generation.

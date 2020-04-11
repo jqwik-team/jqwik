@@ -35,6 +35,13 @@ title: jqwik Release Notes
 
 - Annotation `@BigRange` has two new optional attributes `minIncluded` and `maxIncluded`
 
+- `DoubleArbitrary` now allows specifying _excluded_ min and max values:
+    - `DoubleArbitrary.between(double min, boolean minIncluded, double max, boolean maxIncluded)`
+    - `DoubleArbitrary.lessThan(double max)`
+    - `DoubleArbitrary.greaterThan(double min)`
+
+- Annotation `@DoubleRange` has two new optional attributes `minIncluded` and `maxIncluded`
+
 - Warning about JUnit annotations only shows up when test container class has
   jqwik property or example methods.
 

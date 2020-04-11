@@ -1,8 +1,8 @@
 - 1.2.7
 
     - Allow include/exclude for decimal ranges
-        - Float/DoubleArbitrary.between(0.1, false, 10.0, false))
-        - Float/DoubleRange.min/maxIncluded
+        - FloatArbitrary.between(0.1f, false, 10.0f, false))
+        - FloatRange.min/maxIncluded
 
 - 1.3.0
 

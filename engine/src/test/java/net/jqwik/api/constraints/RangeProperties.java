@@ -73,38 +73,43 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean doublesBordersExcluded(@ForAll @Scale(0) @DoubleRange(min = -10.0, minIncluded = false, max = 10.0, maxIncluded = false) double value) {
+		return value > -10.0 && value < 10.0;
+	}
+
+	@Property
 	boolean scaledDoubles(@ForAll @DoubleRange(min = 2.01d, max = 2.03d) double value) {
 		return value >= 2.01d && value <= 2.03d;
 	}
 
 	@Property
 	boolean bigDecimals(@ForAll @BigRange(min = "2.1", max = "7.77") BigDecimal value) {
-		return value.compareTo(new BigDecimal("2.1")) >= 0 //
-			&& value.compareTo(new BigDecimal("7.77")) <= 0;
+		return value.compareTo(new BigDecimal("2.1")) >= 0
+				   && value.compareTo(new BigDecimal("7.77")) <= 0;
 	}
 
 	@Property
 	boolean bigDecimalsMinOnly(@ForAll @BigRange(min = "200000.5") BigDecimal value) {
-		return value.compareTo(new BigDecimal("200000.5")) >= 0 //
-			&& value.compareTo(new BigDecimal(Double.MAX_VALUE)) <= 0;
+		return value.compareTo(new BigDecimal("200000.5")) >= 0
+				   && value.compareTo(new BigDecimal(Double.MAX_VALUE)) <= 0;
 	}
 
 	@Property
 	boolean bigDecimalsMaxOnly(@ForAll @BigRange(max = "-20") BigDecimal value) {
-		return value.compareTo(new BigDecimal("-20")) <= 0 //
-			&& value.compareTo(BigDecimal.valueOf(-Double.MAX_VALUE)) >= 0;
+		return value.compareTo(new BigDecimal("-20")) <= 0
+				   && value.compareTo(BigDecimal.valueOf(-Double.MAX_VALUE)) >= 0;
 	}
 
 	@Property
 	boolean bigDecimalsBordersExcluded(@ForAll @Scale(0) @BigRange(min = "-10", minIncluded = false, max = "10", maxIncluded = false) BigDecimal value) {
-		return value.compareTo(new BigDecimal("-10")) > 0 //
-			&& value.compareTo(new BigDecimal("10")) < 0;
+		return value.compareTo(new BigDecimal("-10")) > 0
+				   && value.compareTo(new BigDecimal("10")) < 0;
 	}
 
 	@Property
 	boolean bigIntegers(@ForAll @BigRange(min = "2.0", max = "7") BigInteger value) {
-		return value.compareTo(new BigInteger("2")) >= 0 //
-			&& value.compareTo(new BigInteger("7")) <= 0;
+		return value.compareTo(new BigInteger("2")) >= 0
+				   && value.compareTo(new BigInteger("7")) <= 0;
 	}
 
 	@Property
@@ -114,7 +119,7 @@ class RangeProperties {
 
 	@Property
 	boolean bigIntegersMinOnly(@ForAll @BigRange(min = "1000") BigInteger value) {
-		return value.compareTo(new BigInteger("1000")) >= 0 //
-			&& value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0;
+		return value.compareTo(new BigInteger("1000")) >= 0
+				   && value.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0;
 	}
 }

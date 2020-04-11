@@ -35,7 +35,7 @@ public class RangeConfigurator extends ArbitraryConfiguratorBase {
 	}
 
 	public DoubleArbitrary configure(DoubleArbitrary arbitrary, DoubleRange range) {
-		return arbitrary.greaterOrEqual(range.min()).lessOrEqual(range.max());
+		return arbitrary.between(range.min(), range.minIncluded(), range.max(), range.maxIncluded());
 	}
 
 	public FloatArbitrary configure(FloatArbitrary arbitrary, FloatRange range) {

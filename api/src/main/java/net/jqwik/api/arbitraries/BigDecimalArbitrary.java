@@ -33,21 +33,28 @@ public interface BigDecimalArbitrary extends Arbitrary<BigDecimal> {
 	 * @param max         The upper border of possible values
 	 * @param maxIncluded Should the upper border be included
 	 */
+	@API(status = MAINTAINED, since = "1.2.7")
 	BigDecimalArbitrary between(BigDecimal min, boolean minIncluded, BigDecimal max, boolean maxIncluded);
 
 	/**
 	 * Set the allowed lower {@code min} (included) border of generated numbers.
+	 *
+	 * @param min The lower border of possible values
 	 */
 	BigDecimalArbitrary greaterOrEqual(BigDecimal min);
 
 	/**
 	 * Set the allowed lower {@code min} (excluded) border of generated numbers.
+	 *
+	 * @param min The lower border of possible values
 	 */
 	@API(status = MAINTAINED, since = "1.2.7")
 	BigDecimalArbitrary greaterThan(BigDecimal min);
 
 	/**
 	 * Set the allowed upper {@code max} (included) bounder of generated numbers.
+	 *
+	 * @param max The upper border of possible values
 	 */
 	BigDecimalArbitrary lessOrEqual(BigDecimal max);
 
@@ -66,6 +73,8 @@ public interface BigDecimalArbitrary extends Arbitrary<BigDecimal> {
 
 	/**
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
+	 *
+	 * @param target The value which is considered to be the most simple value for shrinking
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.5")
 	BigDecimalArbitrary shrinkTowards(BigDecimal target);

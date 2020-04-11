@@ -8,7 +8,7 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Use to constrain the maximum number of decimal places when generating decimal numbers.
- * If not specified the scale is 2 by default.
+ * If this annotation is not present the scale is 2 by default.
  *
  * Applies to Float, Double and BigDecimal parameters which are also annotated with {@code @ForAll}.
  *

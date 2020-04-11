@@ -500,8 +500,9 @@ class ArbitrariesTests {
 	}
 
 	@Group
-	@Label("doubles(), floats()")
-	class DecimalNumbers {
+	@Label("doubles()")
+	class Doubles {
+
 		@Example
 		void doubleMinsAndMaxes() {
 			RandomGenerator<Double> generator = Arbitraries.doubles().generator(1);
@@ -555,6 +556,61 @@ class ArbitrariesTests {
 
 			assertAllGenerated(generator, value -> value >= min && value <= max);
 		}
+
+		@Example
+		void doublesWithBordersExcluded() {
+			double min = 1.0;
+			double max = 2.0;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, false, max, false).ofScale(1);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value > min && value < max);
+		}
+
+		@Example
+		void doublesLessThan() {
+			double max = 2.0;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().lessThan(max).ofScale(0);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value < max);
+		}
+
+		@Example
+		void doublesLessOrEqual() {
+			double max = 2.0;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().lessOrEqual(max).ofScale(0);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value <= max);
+		}
+
+		@Example
+		void doublesGreaterThan() {
+			double min = 2.0;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().greaterThan(min).ofScale(0);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value > min);
+		}
+
+		@Example
+		void doublesGreaterOrEqual() {
+			double min = 2.0;
+			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().greaterOrEqual(min).ofScale(0);
+			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value >= min);
+		}
+
+		@Example
+		void doublesWithShrinkingTargetOutsideBorders() {
+			Arbitrary<Double> arbitrary = Arbitraries.doubles()
+														 .between(1.0, 10.0)
+														 .shrinkTowards(-1.0);
+			assertThatThrownBy( () -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
+		}
+
+	}
+
+	@Group
+	@Label("floats()")
+	class Floats {
 
 		@Example
 		void floatMinsAndMaxes() {

@@ -29,17 +29,30 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 	}
 
 	@Override
-	public DoubleArbitrary greaterOrEqual(double min) {
+	public DoubleArbitrary between(double min, boolean minIncluded, double max, boolean maxIncluded) {
 		DefaultDoubleArbitrary clone = typedClone();
-		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMin(toBigDecimal(min), true);
+		clone.generatingArbitrary.range = Range.of(toBigDecimal(min), minIncluded, toBigDecimal(max), maxIncluded);
 		return clone;
 	}
 
 	@Override
+	public DoubleArbitrary greaterOrEqual(double min) {
+		return between(min, true, generatingArbitrary.range.max.doubleValue(), generatingArbitrary.range.maxIncluded);
+	}
+
+	@Override
+	public DoubleArbitrary greaterThan(double min) {
+		return between(min, false, generatingArbitrary.range.max.doubleValue(), generatingArbitrary.range.maxIncluded);
+	}
+
+	@Override
 	public DoubleArbitrary lessOrEqual(double max) {
-		DefaultDoubleArbitrary clone = typedClone();
-		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMax(toBigDecimal(max), true);
-		return clone;
+		return between(generatingArbitrary.range.min.doubleValue(), generatingArbitrary.range.minIncluded, max, true);
+	}
+
+	@Override
+	public DoubleArbitrary lessThan(double max) {
+		return between(generatingArbitrary.range.min.doubleValue(), generatingArbitrary.range.minIncluded, max, false);
 	}
 
 	@Override
