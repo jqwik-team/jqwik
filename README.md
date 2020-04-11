@@ -5,7 +5,7 @@
 # jqwik
 
 An alternative test engine for the 
-[JUnit 5 platform](http://junit.org/junit5/docs/current/api/org/junit/platform/engine/TestEngine.html)
+[JUnit 5 platform](https://junit.org/junit5/docs/current/user-guide/#launcher-api-engines-custom)
 that focuses on Property-Based Testing.
 
-## See the [Jqwik website](http://jqwik.net) for further details.
+## See the [jqwik website](http://jqwik.net) for further details and documentation.
