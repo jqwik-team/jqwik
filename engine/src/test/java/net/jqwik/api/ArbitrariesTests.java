@@ -111,6 +111,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	@Label("shuffle(..)")
 	class Shuffle {
 		@Example
 		void varArgsValues() {
@@ -149,6 +150,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	@Label("oneOf(..)")
 	class OneOf {
 
 		@Example
@@ -198,6 +200,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	@Label("frequencyOf(..)")
 	class FrequencyOf {
 
 		@Example
@@ -236,6 +239,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	@Label("recursive(..)")
 	class Recursion {
 
 		@Example
@@ -257,7 +261,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
-	@Label("frequency")
+	@Label("frequency(..)")
 	class Frequency {
 
 		@Example
@@ -303,7 +307,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
-	@Label("defaultFor")
+	@Label("defaultFor(..)")
 	class DefaultFor {
 		@Example
 		void simpleType() {
@@ -340,7 +344,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
-	@Label("chars")
+	@Label("chars()")
 	class Chars {
 		@Example
 		void charsDefault() {
@@ -359,6 +363,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
+	@Label("strings()")
 	class Strings {
 		@Example
 		void string() {
@@ -388,11 +393,11 @@ class ArbitrariesTests {
 			RandomGenerator<String> generator = stringArbitrary.generator(1);
 			assertGeneratedString(generator, 2, 5);
 		}
-
 	}
 
 	@Group
-	class Numbers {
+	@Label("shorts(), bytes(), integers(), longs(), bigIntegers()")
+	class IntegralNumbers {
 
 		@Example
 		void shorts() {
@@ -492,7 +497,11 @@ class ArbitrariesTests {
 				min, max
 			);
 		}
+	}
 
+	@Group
+	@Label("doubles(), floats()")
+	class DecimalNumbers {
 		@Example
 		void doubleMinsAndMaxes() {
 			RandomGenerator<Double> generator = Arbitraries.doubles().generator(1);
@@ -566,7 +575,11 @@ class ArbitrariesTests {
 				return value >= -10.0 && value <= 10.0 && value == rounded;
 			});
 		}
+	}
 
+	@Group
+	@Label("bigDecimals()")
+	class BigDecimals {
 		@Example
 		void bigDecimals() {
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
@@ -640,7 +653,6 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
 			assertAllGenerated(generator, range::includes);
 		}
-
 	}
 
 	@Group
@@ -823,7 +835,6 @@ class ArbitrariesTests {
 				assertThat(entry.getValue()).isEqualTo("fortytwo");
 			});
 		}
-
 	}
 
 	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
