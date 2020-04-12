@@ -1,9 +1,5 @@
 - 1.2.7
 
-    - Allow include/exclude for decimal ranges
-        - FloatArbitrary.between(0.1f, false, 10.0f, false))
-        - FloatRange.min/maxIncluded
-
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases

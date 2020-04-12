@@ -58,6 +58,11 @@ class RangeProperties {
 	}
 
 	@Property
+	boolean floatsBordersExcluded(@ForAll @Scale(0) @FloatRange(min = -10.0f, minIncluded = false, max = 10.0f, maxIncluded = false) float value) {
+		return value > -10.0f && value < 10.0f;
+	}
+
+	@Property
 	boolean scaledFloats(@ForAll @FloatRange(min = 2.01f, max = 2.03f) float value) {
 		return value >= 2.01f && value <= 2.03f;
 	}

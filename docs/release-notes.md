@@ -42,6 +42,13 @@ title: jqwik Release Notes
 
 - Annotation `@DoubleRange` has two new optional attributes `minIncluded` and `maxIncluded`
 
+- `FloatArbitrary` now allows specifying _excluded_ min and max values:
+    - `FloatArbitrary.between(float min, boolean minIncluded, float max, boolean maxIncluded)`
+    - `FloatArbitrary.lessThan(float max)`
+    - `FloatArbitrary.greaterThan(float min)`
+
+- Annotation `@DoubleRange` has two new optional attributes `minIncluded` and `maxIncluded`
+
 - Warning about JUnit annotations only shows up when test container class has
   jqwik property or example methods.
 
@@ -49,7 +56,7 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-- Minor changes to Lifecycle Hooks API
+- Minor changes to yet undocumented Lifecycle Hooks API
 
 ## 1.2.6
 

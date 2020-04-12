@@ -29,17 +29,30 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 	}
 
 	@Override
-	public FloatArbitrary greaterOrEqual(float min) {
+	public FloatArbitrary between(float min, boolean minIncluded, float max, boolean maxIncluded) {
 		DefaultFloatArbitrary clone = typedClone();
-		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMin(toBigDecimal(min), true);
+		clone.generatingArbitrary.range = Range.of(toBigDecimal(min), minIncluded, toBigDecimal(max), maxIncluded);
 		return clone;
 	}
 
 	@Override
+	public FloatArbitrary greaterOrEqual(float min) {
+		return between(min, true, generatingArbitrary.range.max.floatValue(), generatingArbitrary.range.maxIncluded);
+	}
+
+	@Override
+	public FloatArbitrary greaterThan(float min) {
+		return between(min, false, generatingArbitrary.range.max.floatValue(), generatingArbitrary.range.maxIncluded);
+	}
+
+	@Override
 	public FloatArbitrary lessOrEqual(float max) {
-		DefaultFloatArbitrary clone = typedClone();
-		clone.generatingArbitrary.range = clone.generatingArbitrary.range.withMax(toBigDecimal(max), true);
-		return clone;
+		return between(generatingArbitrary.range.min.floatValue(), generatingArbitrary.range.minIncluded, max, true);
+	}
+
+	@Override
+	public FloatArbitrary lessThan(float max) {
+		return between(generatingArbitrary.range.min.floatValue(), generatingArbitrary.range.minIncluded, max, false);
 	}
 
 	@Override

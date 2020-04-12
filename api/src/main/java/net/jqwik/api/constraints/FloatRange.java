@@ -26,5 +26,9 @@ import static org.apiguardian.api.API.Status.*;
 public @interface FloatRange {
 	float min() default 0.0f;
 
+	boolean minIncluded() default true;
+
 	float max() default Float.MAX_VALUE;
+
+	boolean maxIncluded() default true;
 }

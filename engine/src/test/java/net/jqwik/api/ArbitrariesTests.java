@@ -631,6 +631,56 @@ class ArbitrariesTests {
 				return value >= -10.0 && value <= 10.0 && value == rounded;
 			});
 		}
+
+		@Example
+		void floatsWithBordersExcluded() {
+			float min = 1.0f;
+			float max = 2.0f;
+			Arbitrary<Float> floatArbitrary = Arbitraries.floats().between(min, false, max, false).ofScale(1);
+			RandomGenerator<Float> generator = floatArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value > min && value < max);
+		}
+
+		@Example
+		void floatsLessThan() {
+			float max = 2.0f;
+			Arbitrary<Float> floatArbitrary = Arbitraries.floats().lessThan(max).ofScale(0);
+			RandomGenerator<Float> generator = floatArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value < max);
+		}
+
+		@Example
+		void floatsLessOrEqual() {
+			float max = 2.0f;
+			Arbitrary<Float> floatArbitrary = Arbitraries.floats().lessOrEqual(max).ofScale(0);
+			RandomGenerator<Float> generator = floatArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value <= max);
+		}
+
+		@Example
+		void floatsGreaterThan() {
+			float min = 2.0f;
+			Arbitrary<Float> floatArbitrary = Arbitraries.floats().greaterThan(min).ofScale(0);
+			RandomGenerator<Float> generator = floatArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value > min);
+		}
+
+		@Example
+		void floatsGreaterOrEqual() {
+			float min = 2.0f;
+			Arbitrary<Float> floatArbitrary = Arbitraries.floats().greaterOrEqual(min).ofScale(0);
+			RandomGenerator<Float> generator = floatArbitrary.generator(100);
+			assertAllGenerated(generator, value -> value >= min);
+		}
+
+		@Example
+		void floatsWithShrinkingTargetOutsideBorders() {
+			Arbitrary<Float> arbitrary = Arbitraries.floats()
+													 .between(1.0f, 10.0f)
+													 .shrinkTowards(-1.0f);
+			assertThatThrownBy( () -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
+		}
+
 	}
 
 	@Group
