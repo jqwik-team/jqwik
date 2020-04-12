@@ -16,6 +16,15 @@
     - ProvideArbitraryHook
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
+        
+    - AroundPropertyHook
+        - Add parameter PropertyConfiguration
+            - tries()
+            - afterFailureMode()
+            - generationMode()
+            - shrinkingMode()
+        - Allow configuration attributes to be changed
+        - Alternative: Introduce PropertyConfigurationHook
     
     - Guided Generation
       https://github.com/jlink/jqwik/issues/84
