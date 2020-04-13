@@ -1,5 +1,3 @@
-- 1.2.7
-
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases

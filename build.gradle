@@ -11,7 +11,7 @@ ext {
 	assertJVersion = '3.15.0'
 	mockitoVersion = '3.3.3'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.2.7-SNAPSHOT'
+	jqwikVersion = '1.2.7'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 
