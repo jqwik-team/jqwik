@@ -28,6 +28,7 @@ title: jqwik Release Notes
     - `Arbitrary.withSamples(T... samples)`
     - `RandomGenerator.withSamples(T... samples)`
     - `TryLifecycleContext.propertyContext()`
+    - `net.jqwik.api.Statistics`: Replaced by `net.jqwik.api.statistics.Statistics` 
 
 #### Bug Fixes
 

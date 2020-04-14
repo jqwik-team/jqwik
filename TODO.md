@@ -2,8 +2,6 @@
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
 
-    - Remove deprecated APIs
-    
     - Make some experimental API "maintained"
 
     - Documentation for lifecycle hooks API in user guide
