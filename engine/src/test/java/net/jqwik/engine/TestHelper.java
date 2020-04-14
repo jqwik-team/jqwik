@@ -110,11 +110,6 @@ public class TestHelper {
 			}
 
 			@Override
-			public PropertyLifecycleContext propertyContext() {
-				return null;
-			}
-
-			@Override
 			public String label() {
 				return null;
 			}

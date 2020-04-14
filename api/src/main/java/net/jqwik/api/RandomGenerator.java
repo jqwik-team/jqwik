@@ -13,7 +13,7 @@ public interface RandomGenerator<T> {
 
 	@API(status = INTERNAL)
 	abstract class RandomGeneratorFacade {
-		private static RandomGeneratorFacade implementation;
+		private static final RandomGeneratorFacade implementation;
 
 		static  {
 			implementation = FacadeLoader.load(RandomGeneratorFacade.class);
@@ -26,9 +26,6 @@ public interface RandomGenerator<T> {
 		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate);
 
 		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases);
-
-		@Deprecated
-		public abstract <T> RandomGenerator<T> withSamples(RandomGenerator<T> self, T[] samples);
 
 		public abstract <T> RandomGenerator<T> unique(RandomGenerator<T> self);
 
@@ -75,12 +72,6 @@ public interface RandomGenerator<T> {
 
 	default RandomGenerator<T> withEdgeCases(int genSize, List<Shrinkable<T>> edgeCases) {
 		return RandomGeneratorFacade.implementation.withEdgeCases(this, genSize, edgeCases);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	default RandomGenerator<T> withSamples(T... samples) {
-		return RandomGeneratorFacade.implementation.withSamples(this, samples);
 	}
 
 	default RandomGenerator<T> unique() {

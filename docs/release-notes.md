@@ -24,7 +24,10 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-- Removed deprecated API `Arbitrary.withSamples(T... samples)`
+- Removed deprecated APIs
+    - `Arbitrary.withSamples(T... samples)`
+    - `RandomGenerator.withSamples(T... samples)`
+    - `TryLifecycleContext.propertyContext()`
 
 #### Bug Fixes
 

@@ -21,8 +21,4 @@ public interface TryLifecycleContext extends LifecycleContext {
 	@API(status = EXPERIMENTAL, since = "1.2.7")
 	Object testInstance();
 
-	@API(status = DEPRECATED, since = "1.2.7")
-	@Deprecated
-	PropertyLifecycleContext propertyContext();
-
 }

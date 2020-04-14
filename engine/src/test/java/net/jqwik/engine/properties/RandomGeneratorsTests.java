@@ -32,16 +32,6 @@ class RandomGeneratorsTests {
 				  .isInstanceOf(JqwikException.class);
 	}
 
-	@Example
-	void samplesAreGeneratedFirst(@ForAll Random random) {
-		RandomGenerator<Integer> generator = RandomGenerators.integers(1, 10).withSamples(-1, -2);
-
-		Assertions.assertThat(generator.next(random).value()).isEqualTo(-1);
-		Assertions.assertThat(generator.next(random).value()).isEqualTo(-2);
-
-		ArbitraryTestHelper.assertAllGenerated(generator, anInt -> anInt >= 1 && anInt <= 10);
-	}
-
 	@Group
 	class IntegralGeneration {
 

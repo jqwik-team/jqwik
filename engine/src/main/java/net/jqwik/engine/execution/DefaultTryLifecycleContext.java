@@ -29,12 +29,6 @@ public class DefaultTryLifecycleContext extends AbstractLifecycleContext impleme
 	}
 
 	@Override
-	@Deprecated
-	public PropertyLifecycleContext propertyContext() {
-		return propertyContext;
-	}
-
-	@Override
 	public String label() {
 		return propertyContext.label();
 	}
