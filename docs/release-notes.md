@@ -9,14 +9,8 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.2.7](#127)
-- [1.2.6](#126)
-- [1.2.5](#125)
-- [1.2.4](#124)
-- [1.2.3](#123)
-- [1.2.2](#122)
-- [1.2.1](#121)
-- [1.2.0](#120)
+- [1.3.0-SNAPSHOT](#130-snapshot)
+- [1.2.x](#12x)
 - [1.1.x](#11x)
 - [1.0.0](#100)
 - [0.9.x](#09x)
@@ -24,7 +18,19 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.2.7
+## 1.3.0-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+- Removed deprecated API `Arbitrary.withSamples(T... samples)`
+
+#### Bug Fixes
+
+## 1.2.x
+
+### 1.2.7
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.7/user-guide.html">User guide</a>
@@ -65,7 +71,7 @@ and
 
 - Minor changes to yet undocumented Lifecycle Hooks API
 
-## 1.2.6
+### 1.2.6
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.6/user-guide.html">User guide</a>
@@ -79,7 +85,7 @@ and
   [jqwik Spring extension](https://github.com/jlink/jqwik-spring) 
 
 
-## 1.2.5
+### 1.2.5
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.5/user-guide.html">User guide</a>
@@ -121,7 +127,7 @@ and
 - Labelled statistics reports should now reliably being reported 
   in order of first usage.
 
-## 1.2.4
+### 1.2.4
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.4/user-guide.html">User guide</a>
@@ -162,7 +168,7 @@ and
 
 No open bugs had been reported.
 
-## 1.2.3
+### 1.2.3
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.3/user-guide.html">User guide</a>
@@ -209,7 +215,7 @@ and
 
 No open bugs had been reported.
 
-## 1.2.2
+### 1.2.2
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.2/user-guide.html">User guide</a>
@@ -241,7 +247,7 @@ and
 - [Exhaustive generation bug](https://github.com/jlink/jqwik/issues/77)
 - [Using Arbitraries.forType() outside property bug](https://github.com/jlink/jqwik/issues/79)
 
-## 1.2.1
+### 1.2.1
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.1/user-guide.html">User guide</a>
@@ -279,7 +285,7 @@ and
 - Annotations in type parameters of bounds of wildcards 
   are now correctly recognized.
 
-## 1.2.0
+### 1.2.0
 
 <p style="padding-left:1em;font-size:larger">
 <a href="/docs/1.2.0/user-guide.html">User guide</a>

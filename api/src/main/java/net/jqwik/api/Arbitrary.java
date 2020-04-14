@@ -21,7 +21,7 @@ public interface Arbitrary<T> {
 
 	@API(status = INTERNAL)
 	abstract class ArbitraryFacade {
-		private static ArbitraryFacade implementation;
+		private static final ArbitraryFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(ArbitraryFacade.class);
@@ -242,29 +242,6 @@ public interface Arbitrary<T> {
 			@Override
 			public <A> StreamableArbitrary<T, A> array(Class<A> arrayClass) {
 				return ArbitraryFacade.implementation.arrayOfUnique(this, arrayClass);
-			}
-		};
-	}
-
-	/**
-	 * Create a new arbitrary of the same type but inject values in {@code samples} first before continuing with standard
-	 * value generation.
-	 *
-	 * @deprecated Use something like {@code Arbitraries.oneOf(myArbitrary, Arbitraries.of(samples))}. Will be removed in version 1.3.
-	 */
-	@SuppressWarnings("unchecked")
-	@Deprecated
-	@API(status = DEPRECATED, since = "1.2.2")
-	default Arbitrary<T> withSamples(T... samples) {
-		return new Arbitrary<T>() {
-			@Override
-			public RandomGenerator<T> generator(int genSize) {
-				return Arbitrary.this.generator(genSize).withSamples(samples);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(exhaustive -> exhaustive.withSamples(samples));
 			}
 		};
 	}

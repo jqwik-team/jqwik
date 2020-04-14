@@ -62,19 +62,6 @@ class ExhaustiveGenerationTests {
 	}
 
 	@Example
-	@Label("Arbitrary.withSamples(): samples are prepended")
-	void withSamples() {
-		Optional<ExhaustiveGenerator<String>> optionalGenerator =
-			Arbitraries.of("abc", "def")
-					   .withSamples("s1", "s2").exhaustive();
-		assertThat(optionalGenerator).isPresent();
-
-		ExhaustiveGenerator<String> generator = optionalGenerator.get();
-		assertThat(generator.maxCount()).isEqualTo(4);
-		assertThat(generator).containsExactly("s1", "s2", "abc", "def");
-	}
-
-	@Example
 	@Label("Arbitrary.fixGenSize() has no influence on exhaustive generation")
 	void fixGenSize() {
 		int doesNotMatter = 42;
@@ -1040,7 +1027,7 @@ class ExhaustiveGenerationTests {
 
 	static class AdditionBuilder {
 
-		private List<Integer> numbers = new ArrayList<>();
+		private final List<Integer> numbers = new ArrayList<>();
 
 		AdditionBuilder addNumber(int number) {
 			numbers.add(number);
