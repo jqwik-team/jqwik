@@ -332,7 +332,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.4")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
 		return genSize -> Arbitrary.this.generator(genSize).collect(until);
 	}
@@ -359,7 +359,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a stream of newly generated values
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.2")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default Stream<T> sampleStream() {
 		return ArbitraryFacade.implementation.sampleStream(this);
 	}
@@ -391,7 +391,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a newly generated value
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.2")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default T sample() {
 		return this.sampleStream()
 				   .findFirst()
@@ -411,7 +411,7 @@ public interface Arbitrary<T> {
 	 * @param duplicateProbability The probability with which a previous value will be generated
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<T> injectDuplicates(double duplicateProbability) {
 		return new Arbitrary<T>() {
 			@Override
@@ -432,7 +432,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<Tuple.Tuple1<T>> tuple1() {
 		return Arbitrary.this.map(Tuple::of);
 	}
@@ -443,7 +443,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<Tuple.Tuple2<T, T>> tuple2() {
 		return Arbitrary.this.list().ofSize(2).map(l -> Tuple.of(l.get(0), l.get(1)));
 	}
@@ -454,7 +454,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<Tuple.Tuple3<T, T, T>> tuple3() {
 		return Arbitrary.this.list().ofSize(3).map(l -> Tuple.of(l.get(0), l.get(1), l.get(2)));
 	}
@@ -465,7 +465,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<Tuple.Tuple4<T, T, T, T>> tuple4() {
 		return Arbitrary.this.list().ofSize(4).map(l -> Tuple.of(l.get(0), l.get(1), l.get(2), l.get(3)));
 	}

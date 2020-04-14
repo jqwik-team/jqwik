@@ -18,7 +18,7 @@ public class Arbitraries {
 
 	@API(status = INTERNAL)
 	public static abstract class ArbitrariesFacade {
-		private static ArbitrariesFacade implementation;
+		private static final ArbitrariesFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(ArbitrariesFacade.class);
@@ -592,7 +592,7 @@ public class Arbitraries {
 	 *
 	 * @return arbitrary instance that will generate nothing
 	 */
-	@API(status = EXPERIMENTAL, since = "1.1.6")
+	@API(status = MAINTAINED, since = "1.3.0")
 	public static Arbitrary<Void> nothing() {
 		return constant(null);
 	}

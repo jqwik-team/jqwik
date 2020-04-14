@@ -2,8 +2,6 @@
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
 
-    - Make some experimental API "maintained"
-
     - Documentation for lifecycle hooks API in user guide
     
     - Improve Sample Reporting
@@ -19,6 +17,7 @@
             - afterFailureMode()
             - generationMode()
             - shrinkingMode()
+            - randomSeed()
         - Allow configuration attributes to be changed
         - Alternative: Introduce PropertyConfigurationHook
     
@@ -36,10 +35,7 @@
         - void beforeTry(TryLifecycleContext, parameters)
         - void afterTry(TryLifecycleContext, TryExecutionResult)
         - void onSatisfiedTry()
-        - TryExecutionResult onFalsifiedTry(TrExecutionResult)
-
-    - Around property hooks
-        - Get and set random seed
+        - TryExecutionResult onFalsifiedTry(TryExecutionResult)
 
     - `@Report(reportOnlyFailures = false)`
 

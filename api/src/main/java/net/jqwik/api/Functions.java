@@ -7,12 +7,12 @@ import net.jqwik.api.arbitraries.*;
 import static org.apiguardian.api.API.Status.*;
 
 
-@API(status = EXPERIMENTAL, since = "1.2.0")
+@API(status = MAINTAINED, since = "1.3.0")
 public class Functions {
 
 	@API(status = INTERNAL)
 	public static abstract class FunctionsFacade {
-		private static Functions.FunctionsFacade implementation;
+		private static final Functions.FunctionsFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(Functions.FunctionsFacade.class);
@@ -43,7 +43,7 @@ public class Functions {
 	}
 
 	public static class FunctionWrapper {
-		private Class<?> functionalType;
+		private final Class<?> functionalType;
 
 		private FunctionWrapper(Class<?> functionalType) {
 			this.functionalType = functionalType;

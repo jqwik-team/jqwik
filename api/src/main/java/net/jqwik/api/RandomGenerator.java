@@ -82,12 +82,12 @@ public interface RandomGenerator<T> {
 		return Stream.generate(() -> this.next(random));
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.1.4")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default RandomGenerator<List<T>> collect(Predicate<List<T>> until) {
 		return RandomGeneratorFacade.implementation.collect(this, until);
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.2.3")
+	@API(status = MAINTAINED, since = "1.3.0")
 	default RandomGenerator<T> injectDuplicates(double duplicateProbability) {
 		return RandomGeneratorFacade.implementation.injectDuplicates(this, duplicateProbability);
 	}

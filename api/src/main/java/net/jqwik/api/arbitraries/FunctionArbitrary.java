@@ -15,7 +15,7 @@ import static org.apiguardian.api.API.Status.*;
  * @param <F> The exact functional type to generate
  * @param <R> The return type of the functional interface
  */
-@API(status = EXPERIMENTAL, since = "1.2.0")
+@API(status = MAINTAINED, since = "1.3.0")
 public interface FunctionArbitrary<F, R> extends Arbitrary<F> {
 
 	/**

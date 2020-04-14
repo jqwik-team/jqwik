@@ -22,6 +22,20 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
+    - `Arbitraries.nothing()`
+    - `Arbitrary.collect(Predicate<List<T>> until)`
+    - `Arbitrary.sample()`
+    - `Arbitrary.sampleStream()`
+    - `Arbitrary.injectDuplicates(double duplicateProbability)`
+    - `Arbitrary.tuple1()`
+    - `Arbitrary.tuple2()`
+    - `Arbitrary.tuple3()`
+    - `Arbitrary.tuple4()`
+    - Annotation `net.jqwik.api.From`
+    - Class `net.jqwik.api.Functions`
+    - Class `net.jqwik.api.arbitraries.FunctionArbitrary`
+
 #### Breaking Changes
 
 - Removed deprecated APIs
@@ -31,6 +45,8 @@ title: jqwik Release Notes
     - `net.jqwik.api.Statistics`: Replaced by `net.jqwik.api.statistics.Statistics` 
 
 #### Bug Fixes
+
+No known open bugs.
 
 ## 1.2.x
 

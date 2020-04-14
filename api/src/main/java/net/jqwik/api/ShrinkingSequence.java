@@ -11,7 +11,7 @@ public interface ShrinkingSequence<T> {
 
 	@API(status = INTERNAL)
 	abstract class ShrinkingSequenceFacade {
-		private static ShrinkingSequenceFacade implementation;
+		private static final ShrinkingSequenceFacade implementation;
 
 		static  {
 			implementation = FacadeLoader.load(ShrinkingSequenceFacade.class);
@@ -28,7 +28,7 @@ public interface ShrinkingSequence<T> {
 		return ShrinkingSequenceFacade.implementation.dontShrink(shrinkable);
 	}
 
-	@API(status = EXPERIMENTAL, since = "1.2.0")
+	@API(status = INTERNAL)
 	static <T> ShrinkingSequence<T> startWith(Shrinkable<T> startingShrinkable, Falsifier<T> falsifier) {
 		return ShrinkingSequenceFacade.implementation.startWith(startingShrinkable, falsifier);
 	}
