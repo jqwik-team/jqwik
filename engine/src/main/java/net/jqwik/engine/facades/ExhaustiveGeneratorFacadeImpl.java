@@ -28,9 +28,4 @@ public class ExhaustiveGeneratorFacadeImpl extends ExhaustiveGenerator.Exhaustiv
 	public <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self) {
 		return new WithNullExhaustiveGenerator<>(self);
 	}
-
-	@Override
-	public <T> ExhaustiveGenerator<T> withSamples(ExhaustiveGenerator<T> self, T[] samples) {
-		return new WithSamplesExhaustiveGenerator<>(self, samples);
-	}
 }

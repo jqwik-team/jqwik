@@ -14,7 +14,7 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 	@API(status = INTERNAL)
 	abstract class ExhaustiveGeneratorFacade {
-		private static ExhaustiveGeneratorFacade implementation;
+		private static final ExhaustiveGeneratorFacade implementation;
 
 		static  {
 			implementation = FacadeLoader.load(ExhaustiveGeneratorFacade.class);
@@ -27,8 +27,6 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		public abstract <T> ExhaustiveGenerator<T> unique(ExhaustiveGenerator<T> self);
 
 		public abstract <T> ExhaustiveGenerator<T> injectNull(ExhaustiveGenerator<T> self);
-
-		public abstract <T> ExhaustiveGenerator<T> withSamples(ExhaustiveGenerator<T> self, T[] samples);
 	}
 
 	/**
@@ -59,9 +57,4 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	default ExhaustiveGenerator<T> injectNull() {
 		return ExhaustiveGeneratorFacade.implementation.injectNull(this);
 	}
-
-	default ExhaustiveGenerator<T> withSamples(T[] samples) {
-		return ExhaustiveGeneratorFacade.implementation.withSamples(this, samples);
-	}
-
 }
