@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
@@ -28,16 +27,17 @@ public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
 		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples);
 	}
 
-//	@Override
-//	public EdgeCases<List<T>> edgeCases() {
-//		Set<Shrinkable<List<T>>> set = new HashSet<>();
-//		set.add(new ShrinkableList<>(new ArrayList<>(), minSize));
-//		Stream<Shrinkable<List<T>>> stream =
-//			elementArbitrary.edgeCases()
-//							.mapShrinkable((Shrinkable<T> shrinkableT) -> {
-//								List<Shrinkable<T>> elements = Collections.singletonList(shrinkableT);
-//								return new ShrinkableList<>(elements, minSize);
-//							});
-//		return EdgeCases.fromStream(stream);
-//	}
+	@Override
+	public EdgeCases<List<T>> edgeCases() {
+		EdgeCases<List<T>> emptyEdgeCases = EdgeCases.fromSupplier(
+			() -> new ShrinkableList<T>(Collections.emptyList(), minSize)
+		);
+		EdgeCases<List<T>> edgeCasesWithElements =
+			elementArbitrary.edgeCases()
+							.mapShrinkable((Shrinkable<T> shrinkableT) -> {
+								List<Shrinkable<T>> elements = Collections.singletonList(shrinkableT);
+								return new ShrinkableList<>(elements, minSize);
+							});
+		return EdgeCases.concat(emptyEdgeCases, edgeCasesWithElements);
+	}
 }
