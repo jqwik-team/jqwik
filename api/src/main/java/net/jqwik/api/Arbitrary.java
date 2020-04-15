@@ -101,6 +101,11 @@ public interface Arbitrary<T> {
 		return Optional.empty();
 	}
 
+	@API(status = EXPERIMENTAL, since = "1.3.0")
+	default EdgeCases<T> edgeCases() {
+		return EdgeCases.none();
+	}
+
 	/**
 	 * Create optional stream of all possible values this arbitrary could generate.
 	 * This is only possible if the arbitrary is available for exhaustive generation.

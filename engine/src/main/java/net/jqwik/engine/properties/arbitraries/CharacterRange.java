@@ -21,12 +21,12 @@ public class CharacterRange implements Arbitrary<Character> {
 
 	@Override
 	public RandomGenerator<Character> generator(int genSize) {
-		List<Shrinkable<Character>> edgeCases = edgeCases();
+		List<Shrinkable<Character>> edgeCases = listOfEdgeCases();
 		return RandomGenerators.chars(min, max)
 							   .withEdgeCases(genSize, edgeCases);
 	}
 
-	private List<Shrinkable<Character>> edgeCases() {
+	private List<Shrinkable<Character>> listOfEdgeCases() {
 		return Stream.of(min, max)
 					 .map(aCharacter -> new ShrinkableBigInteger(
 							 BigInteger.valueOf(aCharacter),
