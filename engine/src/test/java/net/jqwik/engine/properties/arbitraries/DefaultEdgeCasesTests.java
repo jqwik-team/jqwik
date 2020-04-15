@@ -17,8 +17,31 @@ class DefaultEdgeCasesTests {
 		@Example
 		void intEdgeCases() {
 			IntegerArbitrary arbitrary = new DefaultIntegerArbitrary().between(-10, 10);
-			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
 				-10, -2, -1, 0, 1, 2, 10
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				-10, -2, -1, 0, 1, 2, 10
+			);
+		}
+
+		@Example
+		void intOnlyPositive() {
+			IntegerArbitrary arbitrary = new DefaultIntegerArbitrary().between(5, 100);
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				5, 100
+			);
+		}
+
+		@Example
+		void intWithShrinkTarget() {
+			IntegerArbitrary arbitrary = new DefaultIntegerArbitrary().between(5, 100).shrinkTowards(42);
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				5, 42, 100
 			);
 		}
 
@@ -40,6 +63,35 @@ class DefaultEdgeCasesTests {
 				Collections.singletonList(1),
 				Collections.singletonList(2),
 				Collections.singletonList(10)
+			);
+			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+				Collections.emptyList(),
+				Collections.singletonList(-10),
+				Collections.singletonList(-2),
+				Collections.singletonList(-1),
+				Collections.singletonList(0),
+				Collections.singletonList(1),
+				Collections.singletonList(2),
+				Collections.singletonList(10)
+			);
+		}
+
+		@Example
+		void listEdgeCasesAreGeneratedFreshlyOnEachCallToIterator() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-1, 1);
+			Arbitrary<List<Integer>> arbitrary = ints.list();
+			EdgeCases<List<Integer>> edgeCases = arbitrary.edgeCases();
+
+			for (Shrinkable<List<Integer>> listShrinkable : edgeCases) {
+				listShrinkable.value().add(42);
+			}
+
+			Set<List<Integer>> values = values(edgeCases);
+			assertThat(values).containsExactlyInAnyOrder(
+				Collections.emptyList(),
+				Collections.singletonList(-1),
+				Collections.singletonList(0),
+				Collections.singletonList(1)
 			);
 		}
 

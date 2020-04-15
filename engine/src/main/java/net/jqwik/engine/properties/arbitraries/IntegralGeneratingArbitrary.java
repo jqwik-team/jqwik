@@ -45,30 +45,31 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public EdgeCases<BigInteger> edgeCases() {
-		return EdgeCases.fromStream(streamEdgeCaseShrinkables());
-//		return () -> streamEdgeCaseShrinkables().iterator();
+		Set<Supplier<Shrinkable<BigInteger>>> suppliers =
+			streamEdgeCases()
+				.map(value -> (Supplier<Shrinkable<BigInteger>>) () -> new ShrinkableBigInteger(value, Range.of(min, max), shrinkingTarget(value)))
+				.collect(Collectors.toSet());
+		return EdgeCases.fromSuppliers(suppliers);
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
-		List<Shrinkable<BigInteger>> edgeCases = streamEdgeCaseShrinkables().collect(Collectors.toList());
+		List<Shrinkable<BigInteger>> edgeCases =
+			streamEdgeCases()
+				.map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt)))
+				.collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, shrinkingTargetCalculator(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases);
 	}
 
-	private Stream<Shrinkable<BigInteger>> streamEdgeCaseShrinkables() {
-		return streamEdgeCases()
-				   .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
-				   .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt)));
+	private Stream<BigInteger> streamEdgeCases() {
+		return streamRawEdgeCases()
+			.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0);
 	}
 
-	private Stream<BigInteger> streamEdgeCases() {
+	private Stream<BigInteger> streamRawEdgeCases() {
 		BigInteger[] literalEdgeCases = new BigInteger[]{
-			valueOf(-10),
-//			valueOf(-5), valueOf(-4), valueOf(-3),
 			valueOf(-2), valueOf(-1),
 			BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, // more weight for 0
-			valueOf(10),
-//			valueOf(5), valueOf(4), valueOf(3),
 			valueOf(2), valueOf(1),
 			min, max
 		};

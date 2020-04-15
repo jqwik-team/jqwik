@@ -33,5 +33,5 @@ public interface IntegerArbitrary extends Arbitrary<Integer> {
 	 * Set shrinking target to {@code target} which must be between the allowed bounds.
 	 */
 	@API(status = EXPERIMENTAL, since = "1.1.4")
-	Arbitrary<Integer> shrinkTowards(int target);
+	IntegerArbitrary shrinkTowards(int target);
 }
