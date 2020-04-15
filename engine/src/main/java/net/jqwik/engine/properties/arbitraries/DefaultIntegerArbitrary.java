@@ -28,6 +28,11 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 	}
 
 	@Override
+	public EdgeCases<Integer> edgeCases() {
+		return generatingArbitrary.edgeCases().map(BigInteger::intValueExact);
+	}
+
+	@Override
 	public IntegerArbitrary greaterOrEqual(int min) {
 		DefaultIntegerArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);

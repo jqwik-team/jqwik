@@ -43,21 +43,33 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 		}
 	}
 
+	@Override
+	public EdgeCases<BigInteger> edgeCases() {
+		return EdgeCases.fromStream(streamEdgeCaseShrinkables());
+//		return () -> streamEdgeCaseShrinkables().iterator();
+	}
+
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
-		List<Shrinkable<BigInteger>> edgeCases =
-			streamEdgeCases()
-					.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
-					.map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt))) //
-					.collect(Collectors.toList());
+		List<Shrinkable<BigInteger>> edgeCases = streamEdgeCaseShrinkables().collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, shrinkingTargetCalculator(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases);
 	}
 
+	private Stream<Shrinkable<BigInteger>> streamEdgeCaseShrinkables() {
+		return streamEdgeCases()
+				   .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0) //
+				   .map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt)));
+	}
+
 	private Stream<BigInteger> streamEdgeCases() {
 		BigInteger[] literalEdgeCases = new BigInteger[]{
-			valueOf(-10), valueOf(-5), valueOf(-4), valueOf(-3), valueOf(-2), valueOf(-1),
+			valueOf(-10),
+//			valueOf(-5), valueOf(-4), valueOf(-3),
+			valueOf(-2), valueOf(-1),
 			BigInteger.ZERO, BigInteger.ZERO, BigInteger.ZERO, // more weight for 0
-			valueOf(10), valueOf(5), valueOf(4), valueOf(3), valueOf(2), valueOf(1),
+			valueOf(10),
+//			valueOf(5), valueOf(4), valueOf(3),
+			valueOf(2), valueOf(1),
 			min, max
 		};
 		return shrinkingTarget == null

@@ -491,9 +491,13 @@ class ArbitrariesTests {
 			assertAtLeastOneGeneratedOf(
 				generator,
 				shrinkingTarget,
-				valueOf(-10), valueOf(-5), valueOf(-4), valueOf(-3), valueOf(-2), valueOf(-1),
+				valueOf(-10),
+//				valueOf(-5), valueOf(-4), valueOf(-3),
+				valueOf(-2), valueOf(-1),
 				valueOf(0),
-				valueOf(1), valueOf(2), valueOf(3), valueOf(4), valueOf(5), valueOf(10),
+				valueOf(1), valueOf(2),
+//				valueOf(3), valueOf(4), valueOf(5),
+				valueOf(10),
 				min, max
 			);
 		}
