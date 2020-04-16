@@ -64,6 +64,7 @@ class DefaultEdgeCasesTests {
 				Collections.singletonList(2),
 				Collections.singletonList(10)
 			);
+			// make sure edge cases can be repeatedly generated
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				Collections.emptyList(),
 				Collections.singletonList(-10),
@@ -74,6 +75,28 @@ class DefaultEdgeCasesTests {
 				Collections.singletonList(2),
 				Collections.singletonList(10)
 			);
+		}
+
+		@Example
+		void listEdgeCasesWhenMinSize1() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(1);
+			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+				Collections.singletonList(-10),
+				Collections.singletonList(-2),
+				Collections.singletonList(-1),
+				Collections.singletonList(0),
+				Collections.singletonList(1),
+				Collections.singletonList(2),
+				Collections.singletonList(10)
+			);
+		}
+
+		@Example
+		void listEdgeCasesWhenMinSizeGreaterThan1() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(2);
+			assertThat(values(arbitrary.edgeCases())).isEmpty();
 		}
 
 		@Example
