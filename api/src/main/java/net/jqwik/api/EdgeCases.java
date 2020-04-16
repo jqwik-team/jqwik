@@ -22,7 +22,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	}
 
 	@API(status = INTERNAL)
-	static <T> EdgeCases<List<T>> concat(EdgeCases<List<T>> first, EdgeCases<List<T>> second) {
+	static <T> EdgeCases<T> concat(EdgeCases<T> first, EdgeCases<T> second) {
 		return () -> Stream.concat(first.toStream(), second.toStream()).iterator();
 	}
 

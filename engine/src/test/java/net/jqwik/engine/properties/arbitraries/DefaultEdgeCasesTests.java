@@ -118,6 +118,32 @@ class DefaultEdgeCasesTests {
 			);
 		}
 
+		@Example
+		void setEdgeCases() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			Arbitrary<Set<Integer>> arbitrary = ints.set();
+			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+				Collections.emptySet(),
+				Collections.singleton(-10),
+				Collections.singleton(-2),
+				Collections.singleton(-1),
+				Collections.singleton(0),
+				Collections.singleton(1),
+				Collections.singleton(2),
+				Collections.singleton(10)
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+				Collections.emptySet(),
+				Collections.singleton(-10),
+				Collections.singleton(-2),
+				Collections.singleton(-1),
+				Collections.singleton(0),
+				Collections.singleton(1),
+				Collections.singleton(2),
+				Collections.singleton(10)
+			);
+		}
 	}
 
 	private <T> Set<T> values(EdgeCases<T> edgeCases) {
