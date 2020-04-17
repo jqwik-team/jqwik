@@ -35,9 +35,8 @@ class EdgeCasesGenerationTests {
 		}
 	}
 
-	@Property(tries = 1000, afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.MIXIN)
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.MIXIN)
 	@PerProperty(CheckIntEdgeCasesMixedIn.class)
-	@Report(Reporting.GENERATED)
 	void intPropertyEdgeCasesMixedIn(@ForAll @IntRange(min = -100, max = 100) int anInt) {
 		generated.add(asList(anInt));
 	}
@@ -57,9 +56,65 @@ class EdgeCasesGenerationTests {
 		}
 	}
 
-	protected List<List<Object>> generated(int toIndex) {
+	@Property(tries = 5, afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.FIRST)
+	@PerProperty(Check5Tries.class)
+	void moreEdgeCasesThanTries(@ForAll @IntRange(min = -100, max = 100) int anInt) {
+		generated.add(asList(anInt));
+	}
+
+	private class Check5Tries implements PerProperty.Lifecycle {
+		@Override
+		public void onSuccess() {
+			Assertions.assertThat(generated).hasSize(5);
+		}
+	}
+
+	@Property(tries = 100, generation = GenerationMode.RANDOMIZED, afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.FIRST)
+	@PerProperty(CheckCombinedIntEdgeCasesFirst.class)
+	void twoInts(
+		@ForAll @IntRange(min = -2, max = 2) int int1,
+		@ForAll @IntRange(min = -2, max = 2) int int2
+	) {
+		generated.add(asList(int1, int2));
+	}
+
+	private class CheckCombinedIntEdgeCasesFirst implements PerProperty.Lifecycle {
+		@Override
+		public void onSuccess() {
+			Assertions.assertThat(generated(25)).contains(
+				asList(-2, -2),
+				asList(-2, -1),
+				asList(-2, -0),
+				asList(-2, 1),
+				asList(-2, 2),
+				asList(-1, -2),
+				asList(-1, -1),
+				asList(-1, -0),
+				asList(-1, 1),
+				asList(-1, 2),
+				asList(0, -2),
+				asList(0, -1),
+				asList(0, -0),
+				asList(0, 1),
+				asList(0, 2),
+				asList(1, -2),
+				asList(1, -1),
+				asList(1, -0),
+				asList(1, 1),
+				asList(1, 2),
+				asList(2, -2),
+				asList(2, -1),
+				asList(2, -0),
+				asList(2, 1),
+				asList(2, 2)
+			);
+		}
+	}
+
+	private List<List<Object>> generated(int toIndex) {
 		return generated.subList(0, toIndex);
 	}
+
 
 }
 
