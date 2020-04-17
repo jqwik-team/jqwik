@@ -8,34 +8,23 @@ import net.jqwik.engine.support.*;
 
 class EdgeCasesGenerator implements Iterator<List<Shrinkable<Object>>> {
 	private final List<EdgeCases<Object>> edgeCases;
-	private Iterator<List<Shrinkable<Object>>> iterator;
-	private boolean isEmpty;
+	private final Iterator<List<Shrinkable<Object>>> iterator;
 
 	EdgeCasesGenerator(List<EdgeCases<Object>> edgeCases) {
 		this.edgeCases = edgeCases;
-		reset();
+		this.iterator = createIterator();
 	}
 
-	public void reset() {
-		if (edgeCases.isEmpty()) {
-			this.iterator = Collections.emptyIterator();
-		} else {
-			this.iterator = createIterator();
+	private Iterator<List<Shrinkable<Object>>> createIterator() {
+		if (this.edgeCases.isEmpty()) {
+			return Collections.emptyIterator();
 		}
-		this.isEmpty = !this.iterator.hasNext();
-	}
-
-	protected Iterator<List<Shrinkable<Object>>> createIterator() {
 		List<Iterable<Shrinkable<Object>>> iterables =
 			edgeCases
 				.stream()
 				.map(edge -> (Iterable<Shrinkable<Object>>) edge)
 				.collect(Collectors.toList());
 		return Combinatorics.combine(iterables);
-	}
-
-	public boolean isEmpty() {
-		return isEmpty;
 	}
 
 	@Override

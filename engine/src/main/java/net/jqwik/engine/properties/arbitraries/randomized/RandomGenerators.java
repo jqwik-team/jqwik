@@ -4,7 +4,6 @@ import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -218,6 +217,7 @@ public class RandomGenerators {
 		};
 	}
 
+	@Deprecated
 	public static <T> RandomGenerator<T> chooseShrinkable(List<Shrinkable<T>> shrinkables) {
 		if (shrinkables.size() == 0) {
 			return fail("empty set of shrinkables");
@@ -243,7 +243,7 @@ public class RandomGenerators {
 		return new FrequencyGenerator<>(frequencies);
 	}
 
-	// TODO: Make private
+	@Deprecated
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases) {
 		if (edgeCases.isEmpty()) {
 			return self;
@@ -267,9 +267,31 @@ public class RandomGenerators {
 	}
 
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases) {
-		// TODO: Make generator that generates edge cases freshly if one iterator has been used up
-		List<Shrinkable<T>> cases = edgeCases.stream().collect(Collectors.toList());
-		return withEdgeCases(self, genSize, cases);
+		if (edgeCases.isEmpty()) {
+			return self;
+		}
+
+		int baseToEdgeCaseRatio = Math.min(Math.max(genSize / 5, 1), 50) + 1;
+		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseEdgeCase(edgeCases);
+
+		return random -> {
+			if (random.nextInt(baseToEdgeCaseRatio) == 0) {
+				return edgeCasesGenerator.next(random);
+			} else {
+				return self.next(random);
+			}
+		};
+	}
+
+	private static <T> RandomGenerator<T> chooseEdgeCase(EdgeCases<T> edgeCases) {
+		@SuppressWarnings("unchecked")
+		Iterator<Shrinkable<T>>[] iterator = new Iterator[]{edgeCases.iterator()};
+		return random -> {
+			if (!iterator[0].hasNext()) {
+				iterator[0] = edgeCases.iterator();
+			}
+			return iterator[0].next();
+		};
 	}
 
 	public static <T> RandomGenerator<T> fail(String message) {

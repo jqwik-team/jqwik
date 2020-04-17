@@ -11,19 +11,49 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.3.0")
 public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
+	boolean isEmpty();
+
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> none() {
-		return Collections::emptyIterator;
+		Iterable<Shrinkable<T>> iterable = Collections::emptyIterator;
+		return fromIterable(true, iterable);
+	}
+
+	@API(status = INTERNAL)
+	static <T> EdgeCases<T> fromIterable(boolean empty, Iterable<Shrinkable<T>> iterable) {
+		return new EdgeCases<T>() {
+			@Override
+			public boolean isEmpty() {
+				return empty;
+			}
+
+			@Override
+			public Iterator<Shrinkable<T>> iterator() {
+				return iterable.iterator();
+			}
+		};
 	}
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> fromSupplier(Supplier<Shrinkable<T>> supplier) {
-		return () -> Stream.of(supplier.get()).iterator();
+		return fromIterable(false, () -> Stream.of(supplier.get()).iterator());
 	}
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> concat(EdgeCases<T> first, EdgeCases<T> second) {
-		return () -> Stream.concat(first.stream(), second.stream()).iterator();
+		if (first.isEmpty()) {
+			if (second.isEmpty()) {
+				return none();
+			} else {
+				return second;
+			}
+		} else {
+			if (second.isEmpty()) {
+				return first;
+			} else {
+				return fromIterable(false, () -> Stream.concat(first.stream(), second.stream()).iterator());
+			}
+		}
 	}
 
 	@API(status = INTERNAL)
@@ -44,15 +74,21 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers) {
-		return () -> suppliers.stream().map(Supplier::get).iterator();
+		if (suppliers.isEmpty()) {
+			return none();
+		}
+		return fromIterable(false, () -> suppliers.stream().map(Supplier::get).iterator());
 	}
 
 	@API(status = INTERNAL)
 	default <U> EdgeCases<U> map(Function<T, U> mapper) {
-		return () -> {
+		if (isEmpty()) {
+			return none();
+		}
+		return fromIterable(false, () -> {
 			Stream<Shrinkable<T>> stream = stream();
 			return stream.map(shrinkable -> shrinkable.map(mapper)).iterator();
-		};
+		});
 	}
 
 	@API(status = INTERNAL)
@@ -62,10 +98,13 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	default <U> EdgeCases<U> mapShrinkable(Function<Shrinkable<T>, Shrinkable<U>> mapper) {
-		return () -> {
+		if (isEmpty()) {
+			return none();
+		}
+		return fromIterable(false, () -> {
 			Stream<Shrinkable<T>> stream = EdgeCases.this.stream();
 			return stream.map(mapper).iterator();
-		};
+		});
 	}
 
 }
