@@ -163,7 +163,7 @@ class CheckedPropertyTests {
 
 			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 			assertThat(allGeneratedInts)
-				.containsExactly(38, 74, -2, -1, 6, 19, -75, 34, -1, 40, 0, 12, 2, -86, 0, -10, 2, 0, -13, -31);
+				.containsExactly(38, 74, -2, -1, 6, 19, -75, 34, -2, -77, 89, 12, 2, -86, 0, -10, 2, -2, 38, -5);
 		}
 
 		@Example

@@ -39,11 +39,14 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		return new RandomizedShrinkablesGenerator(randomShrinkablesGenerator, edgeCasesGenerator, edgeCasesMode, baseToEdgeCaseRatio, random);
 	}
 
-	private static EdgeCases<Object> resolveEdgeCases(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
+	private static EdgeCases<Object> resolveEdgeCases(
+		ArbitraryResolver arbitraryResolver,
+		MethodParameter parameter
+	) {
 		List<EdgeCases<Object>> edgeCases = resolveArbitraries(arbitraryResolver, parameter)
-											   .stream()
-											   .map(Arbitrary::edgeCases)
-											   .collect(Collectors.toList());
+												.stream()
+												.map(Arbitrary::edgeCases)
+												.collect(Collectors.toList());
 		return EdgeCases.concat(edgeCases);
 	}
 
@@ -97,8 +100,8 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 
 	@Override
 	public List<Shrinkable<Object>> next() {
-		if (!edgeCasesGenerator.isEmpty()) {
-			if (edgeCasesMode.generateFirst() && !edgeCasesGenerated) {
+		if (!edgeCasesGenerated) {
+			if (edgeCasesMode.generateFirst()) {
 				if (edgeCasesGenerator.hasNext()) {
 					return edgeCasesGenerator.next();
 				} else {
@@ -108,10 +111,11 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 			if (edgeCasesMode.mixIn()) {
 				boolean chooseEdgeCase = random.nextInt(baseToEdgeCaseRatio) == 0;
 				if (chooseEdgeCase) {
-					if (!edgeCasesGenerator.hasNext()) {
-						edgeCasesGenerator.reset();
+					if (edgeCasesGenerator.hasNext()) {
+						return edgeCasesGenerator.next();
+					} else {
+						edgeCasesGenerated = true;
 					}
-					return edgeCasesGenerator.next();
 				}
 			}
 		}

@@ -278,7 +278,7 @@ class RandomGeneratorsTests {
 	}
 
 	@Group
-	class EdgeCases {
+	class EdgeCasesGeneration {
 
 		@Example
 		void withEdgeCasesInjectsEdgeCasesIntoGeneratedValues() {
