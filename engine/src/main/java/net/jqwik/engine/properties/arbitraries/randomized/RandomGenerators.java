@@ -4,6 +4,7 @@ import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -242,6 +243,7 @@ public class RandomGenerators {
 		return new FrequencyGenerator<>(frequencies);
 	}
 
+	// TODO: Make private
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases) {
 		if (edgeCases.isEmpty()) {
 			return self;
@@ -262,6 +264,12 @@ public class RandomGenerators {
 				return self.next(random);
 			}
 		};
+	}
+
+	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases) {
+		// TODO: Make generator that generates edge cases freshly if one iterator has been used up
+		List<Shrinkable<T>> cases = edgeCases.stream().collect(Collectors.toList());
+		return withEdgeCases(self, genSize, cases);
 	}
 
 	public static <T> RandomGenerator<T> fail(String message) {

@@ -25,7 +25,10 @@ public interface RandomGenerator<T> {
 
 		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate);
 
+		@Deprecated
 		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases);
+
+		public abstract <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases);
 
 		public abstract <T> RandomGenerator<T> unique(RandomGenerator<T> self);
 
@@ -70,7 +73,12 @@ public interface RandomGenerator<T> {
 		};
 	}
 
+	@Deprecated
 	default RandomGenerator<T> withEdgeCases(int genSize, List<Shrinkable<T>> edgeCases) {
+		return RandomGeneratorFacade.implementation.withEdgeCases(this, genSize, edgeCases);
+	}
+
+	default RandomGenerator<T> withEdgeCases(int genSize, EdgeCases<T> edgeCases) {
 		return RandomGeneratorFacade.implementation.withEdgeCases(this, genSize, edgeCases);
 	}
 

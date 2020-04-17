@@ -57,12 +57,8 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
-		List<Shrinkable<BigInteger>> edgeCases =
-			streamEdgeCases()
-				.map(anInt -> new ShrinkableBigInteger(anInt, Range.of(min, max), shrinkingTarget(anInt)))
-				.collect(Collectors.toList());
 		return RandomGenerators.bigIntegers(min, max, shrinkingTargetCalculator(), partitionPoints)
-							   .withEdgeCases(genSize, edgeCases);
+							   .withEdgeCases(genSize, edgeCases());
 	}
 
 	private Stream<BigInteger> streamEdgeCases() {
