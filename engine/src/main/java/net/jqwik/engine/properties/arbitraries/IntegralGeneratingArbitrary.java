@@ -47,7 +47,11 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	public EdgeCases<BigInteger> edgeCases() {
 		List<Supplier<Shrinkable<BigInteger>>> suppliers =
 			streamEdgeCases()
-				.map(value -> (Supplier<Shrinkable<BigInteger>>) () -> new ShrinkableBigInteger(value, Range.of(min, max), shrinkingTarget(value)))
+				.map(value -> (Supplier<Shrinkable<BigInteger>>) () -> new ShrinkableBigInteger(
+					value,
+					Range.of(min, max),
+					shrinkingTarget(value)
+				))
 				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(suppliers);
 	}
@@ -63,7 +67,8 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	private Stream<BigInteger> streamEdgeCases() {
 		return streamRawEdgeCases()
-			.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0);
+				   .distinct()
+				   .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0);
 	}
 
 	private Stream<BigInteger> streamRawEdgeCases() {

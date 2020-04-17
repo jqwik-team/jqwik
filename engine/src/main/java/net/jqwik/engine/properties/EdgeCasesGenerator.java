@@ -1,8 +1,10 @@
 package net.jqwik.engine.properties;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 class EdgeCasesGenerator implements Iterator<List<Shrinkable<Object>>> {
 	private final List<EdgeCases<Object>> edgeCases;
@@ -15,12 +17,21 @@ class EdgeCasesGenerator implements Iterator<List<Shrinkable<Object>>> {
 	}
 
 	public void reset() {
-		if (edgeCases.size() != 1) {
+		if (edgeCases.isEmpty()) {
 			this.iterator = Collections.emptyIterator();
 		} else {
-			this.iterator = edgeCases.get(0).stream().map(Collections::singletonList).iterator();
+			this.iterator = createIterator();
 		}
 		this.isEmpty = !this.iterator.hasNext();
+	}
+
+	protected Iterator<List<Shrinkable<Object>>> createIterator() {
+		List<Iterable<Shrinkable<Object>>> iterables =
+			edgeCases
+				.stream()
+				.map(edge -> (Iterable<Shrinkable<Object>>) edge)
+				.collect(Collectors.toList());
+		return Combinatorics.combine(iterables);
 	}
 
 	public boolean isEmpty() {
