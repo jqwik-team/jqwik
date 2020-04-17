@@ -26,8 +26,8 @@ public class PropertyConfiguration {
 											: property.afterFailure();
 
 		GenerationMode generation = property.generation() == GenerationMode.NOT_SET
-			? propertyDefaultValues.generation()
-			: property.generation();
+										? propertyDefaultValues.generation()
+										: property.generation();
 
 		return new PropertyConfiguration(
 			property.stereotype(),
@@ -38,7 +38,8 @@ public class PropertyConfiguration {
 			maxDiscardRatio,
 			property.shrinking(),
 			generation,
-			afterFailure
+			afterFailure,
+			property.edgeCases()
 		);
 	}
 
@@ -51,6 +52,7 @@ public class PropertyConfiguration {
 	private final ShrinkingMode shrinkingMode;
 	private final GenerationMode generationMode;
 	private final AfterFailureMode afterFailureMode;
+	private final EdgeCasesMode edgeCasesMode;
 
 	public PropertyConfiguration(
 		String stereotype,
@@ -61,7 +63,8 @@ public class PropertyConfiguration {
 		int maxDiscardRatio,
 		ShrinkingMode shrinkingMode,
 		GenerationMode generationMode,
-		AfterFailureMode afterFailureMode
+		AfterFailureMode afterFailureMode,
+		EdgeCasesMode edgeCasesMode
 	) {
 		this.stereotype = stereotype;
 		this.seed = seed;
@@ -72,18 +75,52 @@ public class PropertyConfiguration {
 		this.shrinkingMode = shrinkingMode;
 		this.generationMode = generationMode;
 		this.afterFailureMode = afterFailureMode;
+		this.edgeCasesMode = edgeCasesMode;
 	}
 
 	public PropertyConfiguration withSeed(String changedSeed) {
-		return new PropertyConfiguration(this.stereotype, changedSeed, this.previousSeed, this.falsifiedSample, this.tries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode, this.afterFailureMode);
+		return new PropertyConfiguration(
+			this.stereotype,
+			changedSeed,
+			this.previousSeed,
+			this.falsifiedSample,
+			this.tries,
+			this.maxDiscardRatio,
+			this.shrinkingMode,
+			this.generationMode,
+			this.afterFailureMode,
+			this.edgeCasesMode
+		);
 	}
 
 	public PropertyConfiguration withGenerationMode(GenerationMode changedGenerationMode) {
-		return new PropertyConfiguration(this.stereotype, this.seed, this.previousSeed, this.falsifiedSample, this.tries, this.maxDiscardRatio, this.shrinkingMode, changedGenerationMode, this.afterFailureMode);
+		return new PropertyConfiguration(
+			this.stereotype,
+			this.seed,
+			this.previousSeed,
+			this.falsifiedSample,
+			this.tries,
+			this.maxDiscardRatio,
+			this.shrinkingMode,
+			changedGenerationMode,
+			this.afterFailureMode,
+			this.edgeCasesMode
+		);
 	}
 
 	public PropertyConfiguration withTries(int changedTries) {
-		return new PropertyConfiguration(this.stereotype, this.seed, this.previousSeed, this.falsifiedSample, changedTries, this.maxDiscardRatio, this.shrinkingMode, this.generationMode, this.afterFailureMode);
+		return new PropertyConfiguration(
+			this.stereotype,
+			this.seed,
+			this.previousSeed,
+			this.falsifiedSample,
+			changedTries,
+			this.maxDiscardRatio,
+			this.shrinkingMode,
+			this.generationMode,
+			this.afterFailureMode,
+			this.edgeCasesMode
+		);
 	}
 
 	public String getSeed() {
@@ -122,4 +159,7 @@ public class PropertyConfiguration {
 		return afterFailureMode;
 	}
 
+	public EdgeCasesMode getEdgeCasesMode() {
+		return edgeCasesMode;
+	}
 }

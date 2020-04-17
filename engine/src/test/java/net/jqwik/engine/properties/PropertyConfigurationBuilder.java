@@ -19,6 +19,7 @@ class PropertyConfigurationBuilder {
 	private ShrinkingMode shrinkingMode = ShrinkingMode.FULL;
 	private GenerationMode generationMode = GenerationMode.AUTO;
 	private AfterFailureMode afterFailureMode = AfterFailureMode.PREVIOUS_SEED;
+	private EdgeCasesMode edgeCasesMode = EdgeCasesMode.MIXIN;
 
 
 	PropertyConfigurationBuilder withSeed(String seed) {
@@ -60,6 +61,11 @@ class PropertyConfigurationBuilder {
 		this.afterFailureMode = afterFailureMode;
 		return this;
 	}
+	public PropertyConfigurationBuilder withEdgeCases(EdgeCasesMode edgeCasesMode) {
+		this.edgeCasesMode = edgeCasesMode;
+		return this;
+	}
+
 
 	PropertyConfiguration build() {
 		return new PropertyConfiguration(
@@ -71,7 +77,8 @@ class PropertyConfigurationBuilder {
 			maxDiscardRatio,
 			shrinkingMode,
 			generationMode,
-			afterFailureMode
+			afterFailureMode,
+			edgeCasesMode
 		);
 
 	}
