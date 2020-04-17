@@ -154,7 +154,7 @@ class CheckedPropertyTests {
 				"prop1", addIntToList, getParametersForMethod("prop1"),
 				p -> Collections.singleton(new GenericArbitrary(Arbitraries.integers().between(-100, 100))),
 				Optional.empty(),
-				aConfig().withSeed("414243").withTries(20).build(),
+				aConfig().withSeed("414243").withTries(20).withEdgeCases(EdgeCasesMode.MIXIN).build(),
 				lifecycleContextForMethod("prop1", int.class)
 			);
 
@@ -163,7 +163,7 @@ class CheckedPropertyTests {
 
 			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 			assertThat(allGeneratedInts)
-				.containsExactly(5, 22, 0, -2, 43, 70, -66, -75, -11, -65, 93, -61, 0, 37, -2, -9, -86, 1, -10, 0);
+				.containsExactly(38, 74, -2, -1, 6, 19, -75, 34, -1, 40, 0, 12, 2, -86, 0, -10, 2, 0, -13, -31);
 		}
 
 		@Example

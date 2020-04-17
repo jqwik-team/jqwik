@@ -6,7 +6,7 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * The edge-cases mode determines if and when edge-cases will be explicitly generated.
- * It can be set in {@linkplain Property#edgeCases()} for any property method; default is {@linkplain #FIRST_AND_MIXIN}.
+ * It can be set in {@linkplain Property#edgeCases()} for any property method; default is {@linkplain #MIXIN}.
  *
  * @see Property
  */
@@ -24,13 +24,17 @@ public enum EdgeCasesMode {
 	MIXIN,
 
 	/**
-	 * Generate edge cases first then mix them into random generation.
-	 */
-	FIRST_AND_MIXIN,
-
-	/**
 	 * Do not _explicitly_ generate edge cases. They might be generated randomly though.
 	 */
-	NONE
+	NONE;
 
+	@API(status = INTERNAL)
+	public boolean generateFirst() {
+		return this == FIRST;
+	}
+
+	@API(status = INTERNAL)
+	public boolean mixIn() {
+		return this == MIXIN;
+	}
 }

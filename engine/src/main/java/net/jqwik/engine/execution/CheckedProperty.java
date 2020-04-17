@@ -179,7 +179,13 @@ public class CheckedProperty {
 
 	private ForAllParametersGenerator createRandomizedShrinkablesGenerator(PropertyConfiguration configuration) {
 		Random random = SourceOfRandomness.create(configuration.getSeed());
-		return RandomizedShrinkablesGenerator.forParameters(forAllParameters, arbitraryResolver, random, configuration.getTries());
+		return RandomizedShrinkablesGenerator.forParameters(
+			forAllParameters,
+			arbitraryResolver,
+			random,
+			configuration.getTries(),
+			configuration.getEdgeCasesMode()
+		);
 	}
 
 	private ForAllParametersGenerator createSampleOnlyShrinkableGenerator(PropertyConfiguration configuration) {

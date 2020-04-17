@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.providers.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
@@ -14,14 +13,38 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		List<MethodParameter> parameters,
 		ArbitraryResolver arbitraryResolver,
 		Random random,
-		int genSize
+		int genSize,
+		EdgeCasesMode edgeCasesMode
 	) {
+		List<EdgeCases<Object>> edgeCases =
+			parameters.stream()
+					  .map(parameter -> resolveEdgeCases(arbitraryResolver, parameter))
+					  .collect(Collectors.toList());
+
+		EdgeCasesGenerator edgeCasesGenerator = new EdgeCasesGenerator(edgeCases);
+
 		List<RandomizedParameterGenerator> parameterGenerators =
 			parameters.stream()
 					  .map(parameter -> resolveParameter(arbitraryResolver, parameter, genSize))
 					  .collect(Collectors.toList());
 
-		return new RandomizedShrinkablesGenerator(parameterGenerators, random);
+		PurelyRandomShrinkablesGenerator randomShrinkablesGenerator = new PurelyRandomShrinkablesGenerator(parameterGenerators);
+
+		int baseToEdgeCaseRatio =
+			Math.min(
+				Math.max(Math.round(genSize / 5), 1),
+				100
+			) + 1;
+
+		return new RandomizedShrinkablesGenerator(randomShrinkablesGenerator, edgeCasesGenerator, edgeCasesMode, baseToEdgeCaseRatio, random);
+	}
+
+	private static EdgeCases<Object> resolveEdgeCases(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
+		List<EdgeCases<Object>> edgeCases = resolveArbitraries(arbitraryResolver, parameter)
+											   .stream()
+											   .map(Arbitrary::edgeCases)
+											   .collect(Collectors.toList());
+		return EdgeCases.concat(edgeCases);
 	}
 
 	private static RandomizedParameterGenerator resolveParameter(
@@ -29,6 +52,11 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		MethodParameter parameter,
 		int genSize
 	) {
+		Set<Arbitrary<Object>> arbitraries = resolveArbitraries(arbitraryResolver, parameter);
+		return new RandomizedParameterGenerator(parameter, arbitraries, genSize);
+	}
+
+	private static Set<Arbitrary<Object>> resolveArbitraries(ArbitraryResolver arbitraryResolver, MethodParameter parameter) {
 		Set<Arbitrary<Object>> arbitraries =
 			arbitraryResolver.forParameter(parameter).stream()
 							 .map(GenericArbitrary::new)
@@ -36,14 +64,28 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		if (arbitraries.isEmpty()) {
 			throw new CannotFindArbitraryException(TypeUsageImpl.forParameter(parameter), parameter.getAnnotation(ForAll.class));
 		}
-		return new RandomizedParameterGenerator(parameter, arbitraries, genSize);
+		return arbitraries;
 	}
 
-	private final List<RandomizedParameterGenerator> parameterGenerators;
+	private final PurelyRandomShrinkablesGenerator randomGenerator;
+	private final EdgeCasesGenerator edgeCasesGenerator;
+	private final EdgeCasesMode edgeCasesMode;
+	private final int baseToEdgeCaseRatio;
 	private final Random random;
 
-	private RandomizedShrinkablesGenerator(List<RandomizedParameterGenerator> parameterGenerators, Random random) {
-		this.parameterGenerators = parameterGenerators;
+	private boolean edgeCasesGenerated = false;
+
+	private RandomizedShrinkablesGenerator(
+		PurelyRandomShrinkablesGenerator randomGenerator,
+		EdgeCasesGenerator edgeCasesGenerator,
+		EdgeCasesMode edgeCasesMode,
+		int baseToEdgeCaseRatio,
+		Random random
+	) {
+		this.randomGenerator = randomGenerator;
+		this.edgeCasesGenerator = edgeCasesGenerator;
+		this.edgeCasesMode = edgeCasesMode;
+		this.baseToEdgeCaseRatio = baseToEdgeCaseRatio;
 		this.random = random;
 	}
 
@@ -55,37 +97,25 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 
 	@Override
 	public List<Shrinkable<Object>> next() {
-		Map<TypeUsage, Arbitrary<Object>> generatorsCache = new HashMap<>();
-		return parameterGenerators
-				   .stream()
-				   .map(generator -> generator.next(random, generatorsCache))
-				   .collect(Collectors.toList());
-	}
-
-	private static class RandomizedParameterGenerator {
-		private final TypeUsage typeUsage;
-		private final List<Arbitrary<Object>> arbitraries;
-		private final int genSize;
-
-		private RandomizedParameterGenerator(MethodParameter parameter, Set<Arbitrary<Object>> arbitraries, int genSize) {
-			this.typeUsage = TypeUsageImpl.forParameter(parameter);
-			this.arbitraries = new ArrayList<>(arbitraries);
-			this.genSize = genSize;
-		}
-
-		private Shrinkable<Object> next(Random random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
-			RandomGenerator<Object> selectedGenerator = selectGenerator(random, arbitrariesCache);
-			return selectedGenerator.next(random);
-		}
-
-		private RandomGenerator<Object> selectGenerator(Random random, Map<TypeUsage, Arbitrary<Object>> arbitrariesCache) {
-			if (arbitrariesCache.containsKey(typeUsage)) {
-				return arbitrariesCache.get(typeUsage).generator(genSize);
+		if (!edgeCasesGenerator.isEmpty()) {
+			if (edgeCasesMode.generateFirst() && !edgeCasesGenerated) {
+				if (edgeCasesGenerator.hasNext()) {
+					return edgeCasesGenerator.next();
+				} else {
+					edgeCasesGenerated = true;
+				}
 			}
-			int index = arbitraries.size() == 1 ? 0 : random.nextInt(arbitraries.size());
-			Arbitrary<Object> selectedArbitrary = arbitraries.get(index);
-			arbitrariesCache.put(typeUsage, selectedArbitrary);
-			return selectedArbitrary.generator(genSize);
+			if (edgeCasesMode.mixIn()) {
+				boolean chooseEdgeCase = random.nextInt(baseToEdgeCaseRatio) == 0;
+				if (chooseEdgeCase) {
+					if (!edgeCasesGenerator.hasNext()) {
+						edgeCasesGenerator.reset();
+					}
+					return edgeCasesGenerator.next();
+				}
+			}
 		}
+		return randomGenerator.generateNext(random);
 	}
+
 }

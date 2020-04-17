@@ -6,21 +6,25 @@ import net.jqwik.api.*;
 
 class GenericArbitrary implements Arbitrary<Object> {
 
-	private final Arbitrary wrapped;
-
-	GenericArbitrary(Arbitrary<?> wrapped) {
-		this.wrapped = wrapped;
-	}
+	private final Arbitrary<Object> wrapped;
 
 	@SuppressWarnings("unchecked")
+	GenericArbitrary(Arbitrary<?> wrapped) {
+		this.wrapped = (Arbitrary<Object>) wrapped;
+	}
+
 	@Override
 	public RandomGenerator<Object> generator(int genSize) {
 		return wrapped.generator(genSize);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Optional<ExhaustiveGenerator<Object>> exhaustive(long maxNumberOfSamples) {
 		return wrapped.exhaustive(maxNumberOfSamples);
+	}
+
+	@Override
+	public EdgeCases<Object> edgeCases() {
+		return wrapped.edgeCases();
 	}
 }

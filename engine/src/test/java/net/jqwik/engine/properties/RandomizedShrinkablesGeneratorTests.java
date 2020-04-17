@@ -140,7 +140,7 @@ class RandomizedShrinkablesGeneratorTests {
 		PropertyMethodDescriptor methodDescriptor = createDescriptor(methodName);
 		List<MethodParameter> parameters = TestHelper.getParameters(methodDescriptor);
 
-		return RandomizedShrinkablesGenerator.forParameters(parameters, arbitraryResolver, random, 1000);
+		return RandomizedShrinkablesGenerator.forParameters(parameters, arbitraryResolver, random, 1000, EdgeCasesMode.NONE);
 	}
 
 	private PropertyMethodDescriptor createDescriptor(String methodName) {
