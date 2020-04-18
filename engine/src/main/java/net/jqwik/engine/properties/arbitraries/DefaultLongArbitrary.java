@@ -28,6 +28,11 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 	}
 
 	@Override
+	public EdgeCases<Long> edgeCases() {
+		return generatingArbitrary.edgeCases().map(BigInteger::longValueExact);
+	}
+
+	@Override
 	public LongArbitrary greaterOrEqual(long min) {
 		DefaultLongArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);

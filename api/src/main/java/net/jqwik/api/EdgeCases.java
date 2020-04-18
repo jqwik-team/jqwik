@@ -63,6 +63,17 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		return () -> suppliers;
 	}
 
+	/**
+	 * Only use for immutable values
+	 */
+	@API(status = INTERNAL)
+	static <T> EdgeCases<T> fromShrinkables(List<Shrinkable<T>> shrinkables) {
+		return () -> shrinkables
+						 .stream()
+						 .map(shrinkable -> (Supplier<Shrinkable<T>>) () -> shrinkable)
+						 .collect(Collectors.toList());
+	}
+
 	@API(status = INTERNAL)
 	default <U> EdgeCases<U> map(Function<T, U> mapper) {
 		return mapShrinkable(tShrinkable -> tShrinkable.map(mapper));

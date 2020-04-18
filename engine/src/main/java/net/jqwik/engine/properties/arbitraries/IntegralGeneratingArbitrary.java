@@ -45,15 +45,15 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public EdgeCases<BigInteger> edgeCases() {
-		List<Supplier<Shrinkable<BigInteger>>> suppliers =
+		List<Shrinkable<BigInteger>> shrinkables =
 			streamEdgeCases()
-				.map(value -> (Supplier<Shrinkable<BigInteger>>) () -> new ShrinkableBigInteger(
+				.map(value -> new ShrinkableBigInteger(
 					value,
 					Range.of(min, max),
 					shrinkingTarget(value)
 				))
 				.collect(Collectors.toList());
-		return EdgeCases.fromSuppliers(suppliers);
+		return EdgeCases.fromShrinkables(shrinkables);
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {

@@ -28,6 +28,11 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 	}
 
 	@Override
+	public EdgeCases<Byte> edgeCases() {
+		return generatingArbitrary.edgeCases().map(BigInteger::byteValueExact);
+	}
+
+	@Override
 	public ByteArbitrary greaterOrEqual(byte min) {
 		DefaultByteArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);
