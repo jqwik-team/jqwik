@@ -1,6 +1,8 @@
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
+      - Switch legacy edgeCases to new edgeCases
+      - Configure default in jqwik.properties
 
     - Documentation for lifecycle hooks API in user guide
     

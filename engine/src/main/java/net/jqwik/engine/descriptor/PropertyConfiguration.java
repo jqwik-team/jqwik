@@ -29,6 +29,10 @@ public class PropertyConfiguration {
 										? propertyDefaultValues.generation()
 										: property.generation();
 
+		EdgeCasesMode edgeCasesMode = property.edgeCases() == EdgeCasesMode.NOT_SET
+			? EdgeCasesMode.MIXIN
+			: property.edgeCases();
+
 		return new PropertyConfiguration(
 			property.stereotype(),
 			property.seed(),
@@ -39,7 +43,7 @@ public class PropertyConfiguration {
 			property.shrinking(),
 			generation,
 			afterFailure,
-			property.edgeCases()
+			edgeCasesMode
 		);
 	}
 

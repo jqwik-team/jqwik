@@ -5,8 +5,12 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * The edge-cases mode determines if and when edge-cases will be explicitly generated.
- * It can be set in {@linkplain Property#edgeCases()} for any property method; default is {@linkplain #MIXIN}.
+ * The edge-cases mode determines if and when combined edge-cases of all parameters will be explicitly generated.
+ * It can be set in {@linkplain Property#edgeCases()} for any property method.
+ *
+ * <p>
+ * If it is not set explicitly mode {@linkplain #MIXIN} will be used unless the property has
+ * only a single parameter. Then {@linkplain #NONE} applies.
  *
  * @see Property
  */
@@ -26,7 +30,9 @@ public enum EdgeCasesMode {
 	/**
 	 * Do not _explicitly_ generate edge cases. They might be generated randomly though.
 	 */
-	NONE;
+	NONE,
+
+	NOT_SET;
 
 	@API(status = INTERNAL)
 	public boolean generateFirst() {

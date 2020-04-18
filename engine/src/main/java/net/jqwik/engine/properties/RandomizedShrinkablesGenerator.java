@@ -7,6 +7,8 @@ import net.jqwik.api.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.support.*;
 
+import static java.lang.Math.*;
+
 public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator {
 
 	public static RandomizedShrinkablesGenerator forParameters(
@@ -30,13 +32,17 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 
 		PurelyRandomShrinkablesGenerator randomShrinkablesGenerator = new PurelyRandomShrinkablesGenerator(parameterGenerators);
 
-		int baseToEdgeCaseRatio =
-			Math.min(
-				Math.max(Math.round(genSize / 5), 1),
-				100
-			) + 1;
+		int baseToEdgeCaseRatio = calculateBaseToEdgeCaseRatio(edgeCases, genSize);
 
 		return new RandomizedShrinkablesGenerator(randomShrinkablesGenerator, edgeCasesGenerator, edgeCasesMode, baseToEdgeCaseRatio, random);
+	}
+
+	private static int calculateBaseToEdgeCaseRatio(List<EdgeCases<Object>> edgeCases, int genSize) {
+		int countEdgeCases = edgeCases.stream().mapToInt(EdgeCases::size).reduce(1, (a, b) -> max(a * b, 1));
+		return min(
+			max(genSize / countEdgeCases, 3) - 1,
+			10
+		);
 	}
 
 	private static EdgeCases<Object> resolveEdgeCases(

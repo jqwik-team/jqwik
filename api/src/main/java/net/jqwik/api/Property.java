@@ -52,5 +52,5 @@ public @interface Property {
 	AfterFailureMode afterFailure() default AfterFailureMode.NOT_SET;
 
 	@API(status = EXPERIMENTAL, since = "1.3.0")
-	EdgeCasesMode edgeCases() default EdgeCasesMode.MIXIN;
+	EdgeCasesMode edgeCases() default EdgeCasesMode.NOT_SET;
 }

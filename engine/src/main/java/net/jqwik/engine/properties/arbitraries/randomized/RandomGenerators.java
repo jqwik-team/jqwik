@@ -218,7 +218,7 @@ public class RandomGenerators {
 	}
 
 	@Deprecated
-	public static <T> RandomGenerator<T> chooseShrinkable(List<Shrinkable<T>> shrinkables) {
+	private static <T> RandomGenerator<T> chooseShrinkable(List<Shrinkable<T>> shrinkables) {
 		if (shrinkables.size() == 0) {
 			return fail("empty set of shrinkables");
 		}
@@ -251,7 +251,7 @@ public class RandomGenerators {
 
 		int baseToEdgeCaseRatio =
 			Math.min(
-				Math.max(Math.round(genSize / 5), 1),
+				Math.max(genSize / 5, 1),
 				100 / edgeCases.size()
 			) + 1;
 
@@ -271,7 +271,7 @@ public class RandomGenerators {
 			return self;
 		}
 
-		int baseToEdgeCaseRatio = Math.min(Math.max(genSize / 5, 1), 50) + 1;
+		int baseToEdgeCaseRatio = Math.min(Math.max(genSize / 5, 1), 100 / edgeCases.size()) + 1;
 		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseEdgeCase(edgeCases);
 
 		return random -> {
@@ -284,14 +284,8 @@ public class RandomGenerators {
 	}
 
 	private static <T> RandomGenerator<T> chooseEdgeCase(EdgeCases<T> edgeCases) {
-		@SuppressWarnings("unchecked")
-		Iterator<Shrinkable<T>>[] iterator = new Iterator[]{edgeCases.iterator()};
-		return random -> {
-			if (!iterator[0].hasNext()) {
-				iterator[0] = edgeCases.iterator();
-			}
-			return iterator[0].next();
-		};
+		final List<Supplier<Shrinkable<T>>> suppliers = edgeCases.suppliers();
+		return random -> chooseValue(suppliers, random).get();
 	}
 
 	public static <T> RandomGenerator<T> fail(String message) {
