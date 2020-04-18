@@ -2,10 +2,10 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 
@@ -19,22 +19,14 @@ abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
-		List<Shrinkable<List<T>>> samples = deprecatedEdgeCases(new ArrayList<>());
+		EdgeCases<List<T>> edgeCases = edgeCases(ShrinkableList::new);
 		return RandomGenerators
 				   .list(elementGenerator, minSize, maxSize, cutoffSize(genSize)) //
-				   .withEdgeCases(genSize, samples);
+				   .withEdgeCases(genSize, edgeCases);
 	}
 
 	protected int cutoffSize(int genSize) {
 		return RandomGenerators.defaultCutoffSize(minSize, maxSize, genSize);
-	}
-
-	protected <C extends Collection<?>> List<Shrinkable<C>> deprecatedEdgeCases(C sample) {
-		return Stream.of(sample)
-					 .filter(l -> l.size() >= minSize)
-					 .filter(l -> maxSize == 0 || l.size() <= maxSize)
-					 .map(Shrinkable::unshrinkable)
-					 .collect(Collectors.toList());
 	}
 
 	protected RandomGenerator<T> elementGenerator(Arbitrary<T> elementArbitrary, int genSize) {

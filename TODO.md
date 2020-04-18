@@ -3,6 +3,7 @@
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
       - Switch legacy edgeCases to new edgeCases
       - Configure default in jqwik.properties
+      - Document edge cases
 
     - Documentation for lifecycle hooks API in user guide
     

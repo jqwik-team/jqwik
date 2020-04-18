@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 public class IteratorArbitrary<T> extends DefaultCollectionArbitrary<T, Iterator<T>> {
 
@@ -25,5 +26,10 @@ public class IteratorArbitrary<T> extends DefaultCollectionArbitrary<T, Iterator
 	public Optional<ExhaustiveGenerator<Iterator<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
 								   .map(generator -> generator.map(List::iterator));
+	}
+
+	@Override
+	public EdgeCases<Iterator<T>> edgeCases() {
+		return edgeCases(ShrinkableList::new).map(List::iterator);
 	}
 }
