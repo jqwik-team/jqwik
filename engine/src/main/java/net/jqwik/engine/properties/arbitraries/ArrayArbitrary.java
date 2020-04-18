@@ -9,6 +9,7 @@ import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements StreamableArbitrary<T, A>, SelfConfiguringArbitrary<A> {
 
@@ -29,6 +30,11 @@ public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements 
 		return ExhaustiveGenerators
 			.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
 			.map(generator -> generator.map(this::toArray));
+	}
+
+	@Override
+	public EdgeCases<A> edgeCases() {
+		return edgeCases(ShrinkableList::new).map(this::toArray);
 	}
 
 	@SuppressWarnings("unchecked")

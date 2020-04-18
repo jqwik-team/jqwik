@@ -230,6 +230,23 @@ class DefaultEdgeCasesTests {
 			assertThat(values(arbitrary.edgeCases())).hasSize(8);
 		}
 
+		@Example
+		void arraysAreCombinationsOfElementsUpToMaxLength() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			StreamableArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
+			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+				new Integer[]{},
+				new Integer[]{-10},
+				new Integer[]{-2},
+				new Integer[]{-1},
+				new Integer[]{0},
+				new Integer[]{1},
+				new Integer[]{2},
+				new Integer[]{10}
+			);
+			assertThat(values(arbitrary.edgeCases())).hasSize(8);
+		}
+
 	}
 
 	private <T> Set<T> values(EdgeCases<T> edgeCases) {
