@@ -160,10 +160,15 @@ class CheckedPropertyTests {
 
 			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
 			assertThat(check.randomSeed()).isEqualTo("414243");
-
 			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
-			assertThat(allGeneratedInts)
-				.containsExactly(38, -2, -1, -100, 0, 2, 70, 1, 17, -11, 60, 40, -100, -59, 100, 18, -3, 0, -15, -61);
+
+			ArrayList<Integer> generatedAtFirstAttempt = new ArrayList<>(allGeneratedInts);
+
+			// Generate once more
+			allGeneratedInts.clear();
+			checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+
+			assertThat(allGeneratedInts).isEqualTo(generatedAtFirstAttempt);
 		}
 
 		@Example

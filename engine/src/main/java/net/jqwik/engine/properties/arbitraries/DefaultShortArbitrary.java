@@ -28,6 +28,11 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 	}
 
 	@Override
+	public EdgeCases<Short> edgeCases() {
+		return generatingArbitrary.edgeCases().map(BigInteger::shortValueExact);
+	}
+
+	@Override
 	public ShortArbitrary greaterOrEqual(short min) {
 		DefaultShortArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);

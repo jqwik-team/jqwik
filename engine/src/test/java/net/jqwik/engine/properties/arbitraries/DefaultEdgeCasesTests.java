@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.arbitraries;
 
+import java.math.*;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -42,6 +43,48 @@ class DefaultEdgeCasesTests {
 			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
 				5, 42, 100
+			);
+		}
+
+		@Example
+		void shorts() {
+			ShortArbitrary arbitrary = new DefaultShortArbitrary().between((short) -5, (short) 5);
+			EdgeCases<Short> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				(short) -5, (short) -2, (short) -1, (short) 0, (short) 1, (short) 2, (short) 5
+			);
+		}
+
+		@Example
+		void bytes() {
+			ByteArbitrary arbitrary = new DefaultByteArbitrary().between((byte) -5, (byte) 5);
+			EdgeCases<Byte> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				(byte) -5, (byte) -2, (byte) -1, (byte) 0, (byte) 1, (byte) 2, (byte) 5
+			);
+		}
+
+		@Example
+		void longs() {
+			LongArbitrary arbitrary = new DefaultLongArbitrary().between(-5, 5);
+			EdgeCases<Long> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				(long) -5, (long) -2, (long) -1, (long) 0, (long) 1, (long) 2, (long) 5
+			);
+		}
+
+		@Example
+		void bigIntegers() {
+			BigIntegerArbitrary arbitrary = new DefaultBigIntegerArbitrary().between(BigInteger.valueOf(-5), BigInteger.valueOf(5));
+			EdgeCases<BigInteger> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				BigInteger.valueOf(-5),
+				BigInteger.valueOf(-2),
+				BigInteger.valueOf(-1),
+				BigInteger.valueOf(0),
+				BigInteger.valueOf(1),
+				BigInteger.valueOf(2),
+				BigInteger.valueOf(5)
 			);
 		}
 

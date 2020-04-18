@@ -115,8 +115,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 				}
 			}
 			if (edgeCasesMode.mixIn()) {
-				boolean chooseEdgeCase = random.nextInt(baseToEdgeCaseRatio) == 0;
-				if (chooseEdgeCase) {
+				if (shouldGenerateEdgeCase(random)) {
 					if (edgeCasesGenerator.hasNext()) {
 						return edgeCasesGenerator.next();
 					} else {
@@ -126,6 +125,10 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 			}
 		}
 		return randomGenerator.generateNext(random);
+	}
+
+	private boolean shouldGenerateEdgeCase(Random localRandom) {
+		return localRandom.nextInt(baseToEdgeCaseRatio + 1) == 0;
 	}
 
 }

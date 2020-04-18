@@ -28,6 +28,11 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
+	public EdgeCases<BigInteger> edgeCases() {
+		return generatingArbitrary.edgeCases();
+	}
+
+	@Override
 	public BigIntegerArbitrary greaterOrEqual(BigInteger min) {
 		DefaultBigIntegerArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = (min == null ? DEFAULT_MIN : min);

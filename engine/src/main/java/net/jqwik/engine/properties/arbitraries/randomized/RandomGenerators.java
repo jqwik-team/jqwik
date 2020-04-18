@@ -249,16 +249,12 @@ public class RandomGenerators {
 			return self;
 		}
 
-		int baseToEdgeCaseRatio =
-			Math.min(
-				Math.max(genSize / 5, 1),
-				100 / edgeCases.size()
-			) + 1;
+		int baseToEdgeCaseRatio = calculateBaseToEdgeCaseRatio(genSize, edgeCases.size());
 
 		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseShrinkable(edgeCases);
 
 		return random -> {
-			if (random.nextInt(baseToEdgeCaseRatio) == 0) {
+			if (random.nextInt(baseToEdgeCaseRatio + 1) == 0) {
 				return edgeCasesGenerator.next(random);
 			} else {
 				return self.next(random);
@@ -266,12 +262,19 @@ public class RandomGenerators {
 		};
 	}
 
+	private static int calculateBaseToEdgeCaseRatio(int genSize, int size) {
+		return Math.min(
+			Math.max(genSize / 5, 1),
+			100 / size
+		) + 1;
+	}
+
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases) {
 		if (edgeCases.isEmpty()) {
 			return self;
 		}
 
-		int baseToEdgeCaseRatio = Math.min(Math.max(genSize / 5, 1), 100 / edgeCases.size()) + 1;
+		int baseToEdgeCaseRatio = calculateBaseToEdgeCaseRatio(genSize, edgeCases.size());
 		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseEdgeCase(edgeCases);
 
 		return random -> {
