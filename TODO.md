@@ -1,9 +1,14 @@
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
-      - Switch legacy edgeCases to new edgeCases
-      - Configure default in jqwik.properties
-      - Document edge cases
+        - Switch legacy edgeCases to new edgeCases
+        - Implement edgeCases() for
+            - Optional, Map 
+            - Arbitrary.map(), filter(), flatMap() etc
+            - Combinators
+            - Functions
+        - Configure default in jqwik.properties
+        - Document edge cases
 
     - Documentation for lifecycle hooks API in user guide
     
