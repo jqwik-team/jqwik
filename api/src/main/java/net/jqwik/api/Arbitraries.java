@@ -80,9 +80,9 @@ public class Arbitraries {
 
 		public abstract <T> TypeArbitrary<T> forType(Class<T> targetType);
 
-		public abstract <K, V> SizableArbitrary<Map<K,V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
+		public abstract <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 
-		public abstract <K, V> Arbitrary<Map.Entry<K,V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
+		public abstract <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 	}
 
 	private Arbitraries() {
@@ -366,15 +366,18 @@ public class Arbitraries {
 	 * towards the start of the samples.
 	 *
 	 * <p>
-	 *     Attention: If you want to randomly choose between {@code samples}
-	 *     you must use {@link Arbitraries#of(Object[])}
+	 * Attention: If you want to randomly choose between {@code samples}
+	 * you must use {@link Arbitraries#of(Object[])}
 	 * </p>
 	 *
 	 * @param samples The array of sample values
 	 * @param <T>     The type of values to generate
 	 * @return a new arbitrary instance
+	 * @deprecated Use {@link Arbitraries#of(Object[])} or move to data-driven properties if order is important. Will be removed in version 1.4.0
 	 */
 	@SafeVarargs
+	@Deprecated
+	@API(status = DEPRECATED, since = "1.3.0")
 	public static <T> Arbitrary<T> samples(T... samples) {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomSamples(samples),
@@ -400,12 +403,12 @@ public class Arbitraries {
 	 * Create an arbitrary that will use a supplier to generate a value.
 	 * The difference to {@linkplain Arbitraries#constant(Object)} is that the value
 	 * is freshly generated for each try of a property.
-	 *
+	 * <p>
 	 * For exhaustive shrinking all generated values are supposed to have identical behaviour,
 	 * i.e. that means that only one value is generated per combination.
 	 *
 	 * @param supplier The supplier use to generate a value
-	 * @param <T>   The type of values to generate
+	 * @param <T>      The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.1.1")
@@ -468,8 +471,8 @@ public class Arbitraries {
 	 * This is more or less the same mechanism that jqwik uses to find arbitraries for
 	 * property method parameters.
 	 *
-	 * @param typeUsage      The type of the value to find an arbitrary for
-	 * @param <T>            The type of values to generate
+	 * @param typeUsage The type of the value to find an arbitrary for
+	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 * @throws CannotFindArbitraryException if there is no registered arbitrary provider to serve this type
 	 */
@@ -482,17 +485,15 @@ public class Arbitraries {
 	 * Create an arbitrary for type {@code T} that will by default use the type's
 	 * public constructors and public factory methods.
 	 *
-	 * @param targetType     The class of the type to create an arbitrary for
-	 * @param <T>            The type of values to generate
+	 * @param targetType The class of the type to create an arbitrary for
+	 * @param <T>        The type of values to generate
 	 * @return a new arbitrary instance
-	 *
 	 * @see TypeArbitrary
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")
 	public static <T> TypeArbitrary<T> forType(Class<T> targetType) {
 		return ArbitrariesFacade.implementation.forType(targetType);
 	}
-
 
 	private static <T> Arbitrary<T> fromGenerators(
 		RandomGenerator<T> randomGenerator,
@@ -564,12 +565,12 @@ public class Arbitraries {
 	 * Create an arbitrary to create instances of {@linkplain Map}.
 	 * The generated maps are mutable.
 	 *
-	 * @param keysArbitrary The arbitrary to generate the keys
+	 * @param keysArbitrary   The arbitrary to generate the keys
 	 * @param valuesArbitrary The arbitrary to generate the values
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.1.6")
-	public static <K,V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+	public static <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		return ArbitrariesFacade.implementation.maps(keysArbitrary, valuesArbitrary);
 	}
 
@@ -577,12 +578,12 @@ public class Arbitraries {
 	 * Create an arbitrary to create instances of {@linkplain Map.Entry}.
 	 * The generated entries are mutable.
 	 *
-	 * @param keysArbitrary The arbitrary to generate the keys
+	 * @param keysArbitrary   The arbitrary to generate the keys
 	 * @param valuesArbitrary The arbitrary to generate the values
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")
-	public static <K,V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+	public static <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		return ArbitrariesFacade.implementation.entries(keysArbitrary, valuesArbitrary);
 	}
 
@@ -596,6 +597,5 @@ public class Arbitraries {
 	public static Arbitrary<Void> nothing() {
 		return constant(null);
 	}
-
 
 }

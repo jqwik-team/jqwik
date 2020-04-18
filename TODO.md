@@ -11,6 +11,10 @@
         - Move internals from EdgeCases class to EdgeCasesFacade or to engine module
         - Document edge cases
 
+    - Get rid of Arbitraries.samples()
+
+    - Check TODOs in code
+    
     - Documentation for lifecycle hooks API in user guide
     
     - Improve Sample Reporting
