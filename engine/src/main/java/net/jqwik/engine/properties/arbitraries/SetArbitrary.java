@@ -22,8 +22,7 @@ public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 	public RandomGenerator<Set<T>> generator(int genSize) {
 		int cutoffSize = cutoffSize(genSize);
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
-		List<Shrinkable<Set<T>>> samples = deprecatedEdgeCases(new HashSet<>());
-		return RandomGenerators.set(elementGenerator, minSize, maxSize, cutoffSize).withEdgeCases(genSize, samples);
+		return RandomGenerators.set(elementGenerator, minSize, maxSize, cutoffSize).withEdgeCases(genSize, edgeCases());
 	}
 
 	@Override

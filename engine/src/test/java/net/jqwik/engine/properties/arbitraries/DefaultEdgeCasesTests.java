@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -108,16 +109,7 @@ class DefaultEdgeCasesTests {
 				Collections.singletonList(10)
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				Collections.emptyList(),
-				Collections.singletonList(-10),
-				Collections.singletonList(-2),
-				Collections.singletonList(-1),
-				Collections.singletonList(0),
-				Collections.singletonList(1),
-				Collections.singletonList(2),
-				Collections.singletonList(10)
-			);
+			assertThat(values(arbitrary.edgeCases())).hasSize(8);
 		}
 
 		@Example
@@ -175,9 +167,14 @@ class DefaultEdgeCasesTests {
 				Collections.singleton(2),
 				Collections.singleton(10)
 			);
-			// make sure edge cases can be repeatedly generated
+			assertThat(values(arbitrary.edgeCases())).hasSize(8);
+		}
+
+		@Example
+		void setEdgeCasesWithMinSize1() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			Arbitrary<Set<Integer>> arbitrary = ints.set().ofMinSize(1);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
-				Collections.emptySet(),
 				Collections.singleton(-10),
 				Collections.singleton(-2),
 				Collections.singleton(-1),
@@ -187,6 +184,52 @@ class DefaultEdgeCasesTests {
 				Collections.singleton(10)
 			);
 		}
+
+		@Example
+		void streamEdgeCases() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			Arbitrary<Stream<Integer>> arbitrary = ints.stream();
+			Set<Stream<Integer>> streams = values(arbitrary.edgeCases());
+			Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(Collectors.toSet());
+			assertThat(lists).containsExactlyInAnyOrder(
+				Collections.emptyList(),
+				Collections.singletonList(-10),
+				Collections.singletonList(-2),
+				Collections.singletonList(-1),
+				Collections.singletonList(0),
+				Collections.singletonList(1),
+				Collections.singletonList(2),
+				Collections.singletonList(10)
+			);
+			assertThat(values(arbitrary.edgeCases())).hasSize(8);
+		}
+
+		@Example
+		void iteratorEdgeCases() {
+			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			Arbitrary<Iterator<Integer>> arbitrary = ints.iterator();
+			Set<Iterator<Integer>> iterators = values(arbitrary.edgeCases());
+			Set<List<Integer>> lists =
+				iterators.stream()
+						 .map(iterator -> {
+							 List<Integer> list = new ArrayList<>();
+							 while (iterator.hasNext()) { list.add(iterator.next()); }
+							 return list;
+						 })
+						 .collect(Collectors.toSet());
+			assertThat(lists).containsExactlyInAnyOrder(
+				Collections.emptyList(),
+				Collections.singletonList(-10),
+				Collections.singletonList(-2),
+				Collections.singletonList(-1),
+				Collections.singletonList(0),
+				Collections.singletonList(1),
+				Collections.singletonList(2),
+				Collections.singletonList(10)
+			);
+			assertThat(values(arbitrary.edgeCases())).hasSize(8);
+		}
+
 	}
 
 	private <T> Set<T> values(EdgeCases<T> edgeCases) {
