@@ -8,6 +8,7 @@
             - Combinators
             - Functions
         - Configure default in jqwik.properties
+        - Move internals from EdgeCases class to EdgeCasesFacade or to engine module
         - Document edge cases
 
     - Documentation for lifecycle hooks API in user guide

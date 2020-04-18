@@ -1,17 +1,304 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
+import java.util.ArrayList;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
 @Label("Default Edge Cases")
 class DefaultEdgeCasesTests {
+
+	@Example
+	@Disabled
+	void mapping() {
+	}
+
+	@Example
+	@Disabled
+	void filtering() {
+	}
+
+	@Example
+	@Disabled
+	void withNull() {
+	}
+
+	@Example
+	@Disabled
+	void fixGenSize() {
+	}
+
+	@Example
+	@Disabled
+	void flatMapping() {
+	}
+
+	@Example
+	@Disabled
+	void unique() {
+	}
+
+	@Example
+	@Disabled
+	@Label("Arbitrary.optional()")
+	void optionals() {
+	}
+
+	@Example
+	@Disabled
+	@Label("Arbitraries.map()")
+	void maps() {
+	}
+
+	@Example
+	@Disabled
+	@Label("Arbitraries.constant() returns the constant once")
+	void constant() {
+		Arbitraries.constant("abc");
+	}
+
+	@Example
+	@Disabled
+	@Label("Arbitraries.create() returns the created value once")
+	void create() {
+		Arbitraries.create(() -> new Object());
+	}
+
+	@Example
+	@Disabled
+	@Label("Arbitraries.shuffle() returns all permutations")
+	void shuffle() {
+		Arbitraries.shuffle(1, 2, 3);
+	}
+
+	@Example
+	@Disabled
+	@Label("Arbitraries.oneOf()")
+	void oneOf() {
+		Arbitraries.oneOf(
+			Arbitraries.of("a", "b"),
+			Arbitraries.of("c", "d"),
+			Arbitraries.constant("e")
+		);
+	}
+
+	@Example
+	@Disabled
+	@Label("Arbitraries.frequencyOf()")
+	void frequencyOf() {
+		Arbitraries.frequencyOf(
+			Tuple.of(1, Arbitraries.of("a", "b")),
+			Tuple.of(2, Arbitraries.of("c", "d")),
+			Tuple.of(3, Arbitraries.constant("e"))
+		);
+	}
+
+	@Group
+	@Disabled
+	@Label("Arbitraries.strings()")
+	class Strings {
+		@Example
+		void generateAllPossibleStrings() {
+			Arbitraries.strings().withChars('a', 'b').ofMinLength(0).ofMaxLength(2);
+		}
+
+		@Example
+		void allNumberStringsWith5Digits() {
+			Arbitraries.strings().numeric().ofLength(5);
+		}
+
+	}
+
+	@Group
+	@Disabled
+	class OfValues {
+
+		@Example
+		void booleans() {
+		}
+
+		@Example
+		void values() {
+		}
+
+		@Example
+		@Label("Arbitraries.samples() returns all samples in row")
+		void samples() {
+		}
+
+		@Example
+		@Label("Arbitraries.frequency() returns all in row")
+		void frequency() {
+		}
+
+		@Example
+		void enums() {
+		}
+
+		@Example
+		void withNulls() {
+			Arbitraries.of("string1", null, "string3");
+		}
+	}
+
+	@Group
+	@Disabled
+	class FloatsAndDecimals {
+
+		@Example
+		void bigDecimals() {
+		}
+
+		@Example
+		void bigDecimalsWithExcludedBorders() {
+		}
+
+		@Example
+		void doubles() {
+		}
+
+		@Example
+		void floats() {
+		}
+
+	}
+
+	@Group
+	@Disabled
+	@Label("Combinators")
+	class CombinatorsTests {
+
+		@Example
+		void combine2arbitraries() {
+			Arbitrary<Integer> a1020 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a12 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(a1020, a12)
+										  .as((i1, i2) -> i1 + i2);
+		}
+
+		@Example
+		void combine3arbitraries() {
+			Arbitrary<Integer> a100200 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a1020 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a12 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(a100200, a1020, a12)
+										  .as((i1, i2, i3) -> i1 + i2 + i3);
+		}
+
+		@Example
+		void combine4arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(a1, a2, a3, a4)
+										  .as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
+		}
+
+		@Example
+		void combine5arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(a1, a2, a3, a4, a5)
+										  .as((i1, i2, i3, i4, i5) -> i1 + i2 + i3 + i4 + i5);
+		}
+
+		@Example
+		void combine6arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(a1, a2, a3, a4, a5, a6)
+										  .as((i1, i2, i3, i4, i5, i6) -> i1 + i2 + i3 + i4 + i5 + i6);
+		}
+
+		@Example
+		void combine7arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
+			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(a1, a2, a3, a4, a5, a6, a7)
+										  .as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
+		}
+
+		@Example
+		void combine8arbitraries() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> a4 = Arbitraries.of(1000, 2000);
+			Arbitrary<Integer> a5 = Arbitraries.of(10000, 20000);
+			Arbitrary<Integer> a6 = Arbitraries.of(100000, 200000);
+			Arbitrary<Integer> a7 = Arbitraries.of(1000000, 2000000);
+			Arbitrary<Integer> a8 = Arbitraries.of(10000000, 20000000);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(a1, a2, a3, a4, a5, a6, a7, a8)
+										  .as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
+		}
+
+		@Example
+		void combineArbitraryList() {
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2, 3);
+			Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
+			Arbitrary<Integer> a3 = Arbitraries.of(100, 200);
+			Arbitrary<Integer> plus = Combinators
+										  .combine(asList(a1, a2, a3))
+										  .as(params -> params.stream().mapToInt(i -> i).sum());
+
+			assertThat(plus.exhaustive()).isPresent();
+		}
+
+		@Example
+		void combineWithBuilder() {
+			Arbitrary<Integer> numbers = Arbitraries.integers().between(1, 4);
+
+			Supplier<AdditionBuilder> additionBuilderSupplier = AdditionBuilder::new;
+			Arbitrary<Integer> sum = Combinators
+										 .withBuilder(additionBuilderSupplier)
+										 .use(numbers).in((b, n) -> b.addNumber(n))
+										 .use(numbers).in((b, n) -> b.addNumber(n))
+										 .build(AdditionBuilder::sum);
+		}
+
+		class AdditionBuilder {
+
+			private final List<Integer> numbers = new ArrayList<>();
+
+			AdditionBuilder addNumber(int number) {
+				numbers.add(number);
+				return this;
+			}
+
+			int sum() {
+				return numbers.stream().mapToInt(n -> n).sum();
+			}
+		}
+
+	}
 
 	@Group
 	class Integrals {
