@@ -30,6 +30,11 @@ public class DefaultBigDecimalArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
+	public EdgeCases<BigDecimal> edgeCases() {
+		return generatingArbitrary.edgeCases();
+	}
+
+	@Override
 	public BigDecimalArbitrary between(BigDecimal min, boolean minIncluded, BigDecimal max, boolean maxIncluded) {
 		min = (min == null) ? DEFAULT_MIN : min;
 		max = (max == null) ? DEFAULT_MAX : max;

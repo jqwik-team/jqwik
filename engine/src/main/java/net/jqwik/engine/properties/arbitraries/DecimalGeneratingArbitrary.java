@@ -38,27 +38,33 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 		return Optional.empty();
 	}
 
-	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
-		List<Shrinkable<BigDecimal>> edgeCases =
-			streamEdgeCases()
-				.map(value -> new ShrinkableBigDecimal(value, range, scale, shrinkingTarget(value)))
-				.collect(Collectors.toList());
-		return RandomGenerators.bigDecimals(range, scale, shrinkingTargetCalculator(), partitionPoints)
-							   .withEdgeCases(genSize, edgeCases);
+	@Override
+	public EdgeCases<BigDecimal> edgeCases() {
+		return EdgeCases.fromShrinkables(edgeCaseShrinkables());
 	}
 
-	private Stream<BigDecimal> streamEdgeCases() {
+	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
+		List<Shrinkable<BigDecimal>> edgeCases = edgeCaseShrinkables();
+		return RandomGenerators.bigDecimals(range, scale, shrinkingTargetCalculator(), partitionPoints)
+							   .withEdgeCases(genSize, edgeCases());
+	}
+
+	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables() {
 		return streamRawEdgeCases()
-			.filter(aDecimal -> range.includes(aDecimal));
+				   .filter(aDecimal -> range.includes(aDecimal))
+				   .map(value -> new ShrinkableBigDecimal(value, range, scale, shrinkingTarget(value)))
+				   .collect(Collectors.toList());
 	}
 
 	private Stream<BigDecimal> streamRawEdgeCases() {
 		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
+		BigDecimal minBorder = range.minIncluded ? range.min : range.min.add(smallest);
+		BigDecimal maxBorder = range.maxIncluded ? range.max : range.max.subtract(smallest);
 		BigDecimal[] literalEdgeCases = {
 			BigDecimal.ZERO.movePointLeft(scale),
 			BigDecimal.ONE, BigDecimal.ONE.negate(),
 			smallest, smallest.negate(),
-			range.min, range.max
+			minBorder, maxBorder
 		};
 
 		if (shrinkingTarget == null) {
