@@ -103,8 +103,17 @@ class DefaultEdgeCasesTests {
 
 	@Group
 	@Disabled
-	@Label("Arbitraries.strings()")
-	class Strings {
+	@Label("Arbitraries.strings()|chars()")
+	class StringsAndChars {
+		@Example
+		void singleRangeChars() {
+		}
+
+
+		@Example
+		void multiRangeChars() {
+		}
+
 		@Example
 		void generateAllPossibleStrings() {
 			Arbitraries.strings().withChars('a', 'b').ofMinLength(0).ofMaxLength(2);
@@ -150,22 +159,70 @@ class DefaultEdgeCasesTests {
 	}
 
 	@Group
-	@Disabled
 	class FloatsAndDecimals {
 
 		@Example
 		void bigDecimals() {
+			int scale = 2;
+			BigDecimalArbitrary arbitrary = new DefaultBigDecimalArbitrary()
+												.between(BigDecimal.valueOf(-10), BigDecimal.valueOf(10))
+												.ofScale(scale);
+			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				BigDecimal.valueOf(-10),
+				BigDecimal.valueOf(-1),
+				BigDecimal.valueOf(-0.01),
+				BigDecimal.ZERO.movePointLeft(scale),
+				BigDecimal.valueOf(0.01),
+				BigDecimal.valueOf(1),
+				BigDecimal.valueOf(10)
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(7);
 		}
 
 		@Example
 		void bigDecimalsWithExcludedBorders() {
+			int scale = 1;
+			BigDecimalArbitrary arbitrary = new DefaultBigDecimalArbitrary()
+												.between(BigDecimal.valueOf(-10), false, BigDecimal.valueOf(10), false)
+												.ofScale(scale);
+			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				BigDecimal.valueOf(-9.9),
+				BigDecimal.valueOf(-1),
+				BigDecimal.valueOf(-0.1),
+				BigDecimal.ZERO.movePointLeft(scale),
+				BigDecimal.valueOf(0.1),
+				BigDecimal.valueOf(1),
+				BigDecimal.valueOf(9.9)
+			);
 		}
 
 		@Example
+		void bigDecimalsWithShrinkingTarget() {
+			int scale = 1;
+			BigDecimalArbitrary arbitrary = new DefaultBigDecimalArbitrary()
+												.between(BigDecimal.valueOf(1), BigDecimal.valueOf(10))
+												.ofScale(scale)
+												.shrinkTowards(BigDecimal.valueOf(5));
+			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				BigDecimal.valueOf(1),
+				BigDecimal.valueOf(4.9),
+				BigDecimal.valueOf(5),
+				BigDecimal.valueOf(5.1),
+				BigDecimal.valueOf(10)
+			);
+		}
+
+		@Example
+		@Disabled
 		void doubles() {
 		}
 
 		@Example
+		@Disabled
 		void floats() {
 		}
 
