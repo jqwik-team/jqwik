@@ -11,100 +11,69 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.3.0")
 public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
-	boolean isEmpty();
+	List<Supplier<Shrinkable<T>>> suppliers();
 
-	@API(status = INTERNAL)
-	static <T> EdgeCases<T> none() {
-		Iterable<Shrinkable<T>> iterable = Collections::emptyIterator;
-		return fromIterable(true, iterable);
+	default int size() {
+		return suppliers().size();
+	}
+
+	default boolean isEmpty() {
+		return size() == 0;
+	}
+
+	default Iterator<Shrinkable<T>> iterator() {
+		return suppliers().stream().map(Supplier::get).iterator();
 	}
 
 	@API(status = INTERNAL)
-	static <T> EdgeCases<T> fromIterable(boolean empty, Iterable<Shrinkable<T>> iterable) {
-		return new EdgeCases<T>() {
-			@Override
-			public boolean isEmpty() {
-				return empty;
-			}
-
-			@Override
-			public Iterator<Shrinkable<T>> iterator() {
-				return iterable.iterator();
-			}
-		};
+	static <T> EdgeCases<T> none() {
+		return fromSuppliers(Collections.emptyList());
 	}
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> fromSupplier(Supplier<Shrinkable<T>> supplier) {
-		return fromIterable(false, () -> Stream.of(supplier.get()).iterator());
+		return fromSuppliers(Collections.singletonList(supplier));
 	}
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> concat(EdgeCases<T> first, EdgeCases<T> second) {
-		if (first.isEmpty()) {
-			if (second.isEmpty()) {
-				return none();
-			} else {
-				return second;
-			}
-		} else {
-			if (second.isEmpty()) {
-				return first;
-			} else {
-				return fromIterable(false, () -> Stream.concat(first.stream(), second.stream()).iterator());
-			}
-		}
+		List<EdgeCases<T>> edgeCases = new ArrayList<>();
+		edgeCases.add(first);
+		edgeCases.add(second);
+		return concat(edgeCases);
 	}
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
 		if (edgeCases.isEmpty()) {
-			throw new IllegalArgumentException("There must be at least one edgeCases object");
+			return none();
 		}
-		EdgeCases<T> result = null;
+		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
 		for (EdgeCases<T> edgeCase : edgeCases) {
-			if (result == null) {
-				result = edgeCase;
-			} else {
-				result = EdgeCases.concat(result, edgeCase);
+			if (edgeCase.isEmpty()) {
+				continue;
 			}
+			concatenatedSuppliers.addAll(edgeCase.suppliers());
 		}
-		return result;
+		return fromSuppliers(concatenatedSuppliers);
 	}
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers) {
-		if (suppliers.isEmpty()) {
-			return none();
-		}
-		return fromIterable(false, () -> suppliers.stream().map(Supplier::get).iterator());
+		return () -> suppliers;
 	}
 
 	@API(status = INTERNAL)
 	default <U> EdgeCases<U> map(Function<T, U> mapper) {
-		if (isEmpty()) {
-			return none();
-		}
-		return fromIterable(false, () -> {
-			Stream<Shrinkable<T>> stream = stream();
-			return stream.map(shrinkable -> shrinkable.map(mapper)).iterator();
-		});
-	}
-
-	@API(status = INTERNAL)
-	default Stream<Shrinkable<T>> stream() {
-		return StreamSupport.stream(this.spliterator(), false);
+		return mapShrinkable(tShrinkable -> tShrinkable.map(mapper));
 	}
 
 	@API(status = INTERNAL)
 	default <U> EdgeCases<U> mapShrinkable(Function<Shrinkable<T>, Shrinkable<U>> mapper) {
-		if (isEmpty()) {
-			return none();
-		}
-		return fromIterable(false, () -> {
-			Stream<Shrinkable<T>> stream = EdgeCases.this.stream();
-			return stream.map(mapper).iterator();
-		});
+		List<Supplier<Shrinkable<U>>> mappedSuppliers =
+			suppliers().stream()
+					   .map(tSupplier -> (Supplier<Shrinkable<U>>) () -> mapper.apply(tSupplier.get()))
+					   .collect(Collectors.toList());
+		return fromSuppliers(mappedSuppliers);
 	}
-
 }
