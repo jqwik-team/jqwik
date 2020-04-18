@@ -41,7 +41,6 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
 		List<Shrinkable<BigDecimal>> edgeCases =
 			streamEdgeCases()
-				.filter(aDecimal -> range.includes(aDecimal))
 				.map(value -> new ShrinkableBigDecimal(value, range, scale, shrinkingTarget(value)))
 				.collect(Collectors.toList());
 		return RandomGenerators.bigDecimals(range, scale, shrinkingTargetCalculator(), partitionPoints)
@@ -49,16 +48,27 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	private Stream<BigDecimal> streamEdgeCases() {
-		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
-		BigDecimal zeroScaled = BigDecimal.ZERO.movePointLeft(scale);
-		BigDecimal[] literalEdgeCases = {
-			zeroScaled, zeroScaled, zeroScaled, // raise probability for zero
-			BigDecimal.ONE, BigDecimal.ONE.negate(),
-			smallest, smallest.negate(), range.min, range.max};
+		return streamRawEdgeCases()
+			.filter(aDecimal -> range.includes(aDecimal));
+	}
 
-		return shrinkingTarget == null
-				   ? Arrays.stream(literalEdgeCases)
-				   : Stream.concat(Stream.of(shrinkingTarget), Arrays.stream(literalEdgeCases));
+	private Stream<BigDecimal> streamRawEdgeCases() {
+		BigDecimal smallest = BigDecimal.ONE.movePointLeft(scale);
+		BigDecimal[] literalEdgeCases = {
+			BigDecimal.ZERO.movePointLeft(scale),
+			BigDecimal.ONE, BigDecimal.ONE.negate(),
+			smallest, smallest.negate(),
+			range.min, range.max
+		};
+
+		if (shrinkingTarget == null) {
+			return Arrays.stream(literalEdgeCases);
+		} else {
+			return Stream.concat(
+				Stream.of(shrinkingTarget, shrinkingTarget.add(smallest), shrinkingTarget.subtract(smallest)),
+				Arrays.stream(literalEdgeCases)
+			);
+		}
 	}
 
 	private Function<BigDecimal, BigDecimal> shrinkingTargetCalculator() {
