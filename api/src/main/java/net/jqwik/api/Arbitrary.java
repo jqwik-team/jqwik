@@ -224,7 +224,13 @@ public interface Arbitrary<T> {
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ts -> ts.injectNull());
+				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ExhaustiveGenerator::injectNull);
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				EdgeCases<T> nullSupplier = EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(null));
+				return EdgeCases.concat(Arbitrary.this.edgeCases(), nullSupplier);
 			}
 		};
 	}
