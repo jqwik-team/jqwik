@@ -72,8 +72,17 @@ class DefaultEdgeCasesTests {
 	}
 
 	@Example
-	@Disabled
 	void flatMapping() {
+		Arbitrary<Integer> arbitrary = Arbitraries.integers()
+												  .between(5, 10)
+												  .flatMap(i -> Arbitraries.integers().between(i, i * 10));
+
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			5, 50, 10, 100
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(4);
 	}
 
 	@Example
