@@ -1,14 +1,14 @@
 package net.jqwik.engine.properties;
 
+import java.util.ArrayList;
 import java.util.*;
-
-import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 
 import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 
 class EdgeCasesGenerationTests {
 
@@ -23,7 +23,7 @@ class EdgeCasesGenerationTests {
 	private class CheckIntEdgeCasesGeneratedFirst implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
-			Assertions.assertThat(generated(7)).containsExactlyInAnyOrder(
+			assertThat(generated(7)).containsExactlyInAnyOrder(
 				asList(-2),
 				asList(-1),
 				asList(0),
@@ -44,7 +44,7 @@ class EdgeCasesGenerationTests {
 	private class CheckIntEdgeCasesMixedIn implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
-			Assertions.assertThat(generated).contains(
+			assertThat(generated).contains(
 				asList(-2),
 				asList(-1),
 				asList(0),
@@ -56,7 +56,7 @@ class EdgeCasesGenerationTests {
 		}
 	}
 
-	@Property(tries = 5, afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.FIRST)
+	@Property(tries = 5, edgeCases = EdgeCasesMode.FIRST)
 	@PerProperty(Check5Tries.class)
 	void moreEdgeCasesThanTries(@ForAll @IntRange(min = -100, max = 100) int anInt) {
 		generated.add(asList(anInt));
@@ -65,11 +65,11 @@ class EdgeCasesGenerationTests {
 	private class Check5Tries implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
-			Assertions.assertThat(generated).hasSize(5);
+			assertThat(generated).hasSize(5);
 		}
 	}
 
-	@Property(tries = 100, generation = GenerationMode.RANDOMIZED, afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.FIRST)
+	@Property(tries = 100, generation = GenerationMode.RANDOMIZED, edgeCases = EdgeCasesMode.FIRST)
 	@PerProperty(CheckCombinedIntEdgeCasesFirst.class)
 	void twoInts(
 		@ForAll @IntRange(min = -2, max = 2) int int1,
@@ -81,7 +81,7 @@ class EdgeCasesGenerationTests {
 	private class CheckCombinedIntEdgeCasesFirst implements PerProperty.Lifecycle {
 		@Override
 		public void onSuccess() {
-			Assertions.assertThat(generated(25)).contains(
+			assertThat(generated(25)).contains(
 				asList(-2, -2),
 				asList(-2, -1),
 				asList(-2, -0),
@@ -110,6 +110,43 @@ class EdgeCasesGenerationTests {
 			);
 		}
 	}
+
+	@Property(tries = 1000, edgeCases = EdgeCasesMode.MIXIN)
+	@PerProperty(CheckCombinationsIntOddInt.class)
+	void edgeCasesFromFilteredInt(
+		@ForAll @IntRange(min = -100, max = 100) int anInt,
+		@ForAll("oddNumbers") int oddInt
+	) {
+		generated.add(asList(anInt, oddInt));
+	}
+
+	@Provide
+	Arbitrary<Integer> oddNumbers() {
+		return Arbitraries.integers().between(-100, 100).filter(i -> i % 2 != 0);
+	}
+
+	private class CheckCombinationsIntOddInt implements PerProperty.Lifecycle {
+		@Override
+		public void onSuccess() {
+			assertThat(generated).contains(
+				asList(-100, -1),
+				asList(-2, -1),
+				asList(-1, -1),
+				asList(0, -1),
+				asList(1, -1),
+				asList(2, -1),
+				asList(100, -1),
+				asList(-100, 1),
+				asList(-2, 1),
+				asList(-1, 1),
+				asList(0, 1),
+				asList(1, 1),
+				asList(2, 1),
+				asList(100, 1)
+			);
+		}
+	}
+
 
 	private List<List<Object>> generated(int toIndex) {
 		return generated.subList(0, toIndex);
