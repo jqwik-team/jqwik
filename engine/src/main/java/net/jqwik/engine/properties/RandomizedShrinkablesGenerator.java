@@ -18,23 +18,50 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		int genSize,
 		EdgeCasesMode edgeCasesMode
 	) {
-		List<EdgeCases<Object>> edgeCases =
-			parameters.stream()
-					  .map(parameter -> resolveEdgeCases(arbitraryResolver, parameter))
-					  .collect(Collectors.toList());
 
-		EdgeCasesGenerator edgeCasesGenerator = new EdgeCasesGenerator(edgeCases);
+		List<EdgeCases<Object>> listOfEdgeCases = listOfEdgeCases(parameters, arbitraryResolver, edgeCasesMode);
 
-		List<RandomizedParameterGenerator> parameterGenerators =
-			parameters.stream()
-					  .map(parameter -> resolveParameter(arbitraryResolver, parameter, genSize))
-					  .collect(Collectors.toList());
+		return new RandomizedShrinkablesGenerator(
+			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize),
+			new EdgeCasesGenerator(listOfEdgeCases),
+			edgeCasesMode,
+			calculateBaseToEdgeCaseRatio(listOfEdgeCases, genSize),
+			random
+		);
+	}
 
-		PurelyRandomShrinkablesGenerator randomShrinkablesGenerator = new PurelyRandomShrinkablesGenerator(parameterGenerators);
+	private static PurelyRandomShrinkablesGenerator randomShrinkablesGenerator(
+		List<MethodParameter> parameters,
+		ArbitraryResolver arbitraryResolver,
+		int genSize
+	) {
+		List<RandomizedParameterGenerator> parameterGenerators = parameterGenerators(parameters, arbitraryResolver, genSize);
+		return new PurelyRandomShrinkablesGenerator(parameterGenerators);
+	}
 
-		int baseToEdgeCaseRatio = calculateBaseToEdgeCaseRatio(edgeCases, genSize);
+	private static List<RandomizedParameterGenerator> parameterGenerators(
+		List<MethodParameter> parameters,
+		ArbitraryResolver arbitraryResolver,
+		int genSize
+	) {
+		return parameters.stream()
+						 .map(parameter -> resolveParameter(arbitraryResolver, parameter, genSize))
+						 .collect(Collectors.toList());
+	}
 
-		return new RandomizedShrinkablesGenerator(randomShrinkablesGenerator, edgeCasesGenerator, edgeCasesMode, baseToEdgeCaseRatio, random);
+	private static List<EdgeCases<Object>> listOfEdgeCases(
+		List<MethodParameter> parameters,
+		ArbitraryResolver arbitraryResolver,
+		EdgeCasesMode edgeCasesMode
+	) {
+		List<EdgeCases<Object>> listOfEdgeCases = Collections.emptyList();
+		if (edgeCasesMode != EdgeCasesMode.NONE) {
+			listOfEdgeCases = parameters
+				.stream()
+				.map(parameter -> resolveEdgeCases(arbitraryResolver, parameter))
+				.collect(Collectors.toList());
+		}
+		return listOfEdgeCases;
 	}
 
 	private static int calculateBaseToEdgeCaseRatio(List<EdgeCases<Object>> edgeCases, int genSize) {
