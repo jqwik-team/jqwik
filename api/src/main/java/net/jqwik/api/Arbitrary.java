@@ -152,6 +152,10 @@ public interface Arbitrary<T> {
 									 .map(generator -> generator.filter(filterPredicate));
 			}
 
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return Arbitrary.this.edgeCases().filter(filterPredicate);
+			}
 		};
 	}
 

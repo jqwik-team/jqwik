@@ -87,4 +87,13 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 					   .collect(Collectors.toList());
 		return fromSuppliers(mappedSuppliers);
 	}
+
+	@API(status = INTERNAL)
+	default EdgeCases<T> filter(Predicate<T> filterPredicate) {
+		List<Supplier<Shrinkable<T>>> filteredSuppliers =
+			suppliers().stream()
+					   .filter(supplier -> filterPredicate.test(supplier.get().value()))
+					   .collect(Collectors.toList());
+		return fromSuppliers(filteredSuppliers);
+	}
 }
