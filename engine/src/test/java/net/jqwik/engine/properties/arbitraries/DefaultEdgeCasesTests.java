@@ -217,13 +217,31 @@ class DefaultEdgeCasesTests {
 		}
 
 		@Example
-		@Disabled
 		void doubles() {
+			int scale = 2;
+			DoubleArbitrary arbitrary = new DefaultDoubleArbitrary()
+				.between(-10.0, 10.0)
+				.ofScale(scale);
+			EdgeCases<Double> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				-10.0, -1.0, -0.01, 0.0, 0.01, 1.0, 10.0
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(7);
 		}
 
 		@Example
-		@Disabled
 		void floats() {
+			int scale = 2;
+			FloatArbitrary arbitrary = new DefaultFloatArbitrary()
+				.between(-10.0f, 10.0f)
+				.ofScale(scale);
+			EdgeCases<Float> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				-10.0f, -1.0f, -0.01f, 0.0f, 0.01f, 1.0f, 10.0f
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(7);
 		}
 
 	}
