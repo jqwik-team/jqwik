@@ -283,6 +283,11 @@ public interface Arbitrary<T> {
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples);
 			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return Arbitrary.this.edgeCases();
+			}
 		};
 	}
 
