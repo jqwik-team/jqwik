@@ -277,44 +277,6 @@ class RandomGeneratorsTests {
 		}
 	}
 
-	@Group
-	class EdgeCasesGeneration {
-
-		@Example
-		void withEdgeCasesInjectsEdgeCasesIntoGeneratedValues() {
-			Shrinkable<Integer> zero = createShrinkableInt(0);
-			Shrinkable<Integer> thousand = createShrinkableInt(1000);
-			List<Shrinkable<Integer>> edgeCases = Arrays.asList(zero, thousand);
-			RandomGenerator<Integer> generator = RandomGenerators.integers(0, 1000).withEdgeCases(100, edgeCases);
-
-			assertAtLeastOneGenerated(generator, i -> i.equals(0));
-			assertAtLeastOneGenerated(generator, i -> i.equals(1000));
-		}
-
-		@Example
-		void edgeCaseIsAlsoShrunkToNonEdgeCase(@ForAll Random random) {
-			Shrinkable<Integer> zero = createShrinkableInt(0);
-			Shrinkable<Integer> thousand = createShrinkableInt(1000);
-			List<Shrinkable<Integer>> edgeCases = Arrays.asList(zero, thousand);
-			RandomGenerator<Integer> generator = RandomGenerators.integers(0, 1000).withEdgeCases(10, edgeCases);
-
-			Shrinkable<Integer> thousandGenerated = generateUntil(generator, random, i -> i.equals(1000));
-
-			assertThat(thousandGenerated.value()).isEqualTo(1000);
-			ShrinkingSequence<Integer> sequence = thousandGenerated.shrink((TestingFalsifier<Integer>) i -> i < 5);
-			while (sequence.next(() -> {}, ignore -> {})) { }
-			assertThat(sequence.current().value()).isEqualTo(5);
-		}
-
-		private Shrinkable<Integer> createShrinkableInt(int value) {
-			return new ShrinkableBigInteger(
-				valueOf(value),
-				Range.of(valueOf(0), valueOf(1000)),
-				BigInteger.ZERO
-			).map(BigInteger::intValueExact);
-		}
-	}
-
 	private void assertAllPartitionsAreCovered(
 		RandomGenerator<BigInteger> generator, BigInteger min, BigInteger max,
 		BigInteger[] partitionPoints

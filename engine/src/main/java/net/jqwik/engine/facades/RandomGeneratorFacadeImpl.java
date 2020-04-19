@@ -27,12 +27,6 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	}
 
 	@Override
-	@Deprecated
-	public <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases) {
-		return RandomGenerators.withEdgeCases(self, genSize, edgeCases);
-	}
-
-	@Override
 	public <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases) {
 		return RandomGenerators.withEdgeCases(self, genSize, edgeCases);
 	}

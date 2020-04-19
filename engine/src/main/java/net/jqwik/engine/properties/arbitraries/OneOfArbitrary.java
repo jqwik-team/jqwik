@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.configurators.*;
@@ -24,6 +25,12 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 		return ExhaustiveGenerators.choose(all, maxNumberOfSamples)
 								   .flatMap(generator -> ExhaustiveGenerators
 									   .flatMap(generator, Function.identity(), maxNumberOfSamples));
+	}
+
+	@Override
+	public EdgeCases<T> edgeCases() {
+		List<EdgeCases<T>> allEdgeCases = all.stream().map(Arbitrary::edgeCases).collect(Collectors.toList());
+		return EdgeCases.concat(allEdgeCases);
 	}
 
 	@Override
