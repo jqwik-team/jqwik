@@ -173,6 +173,11 @@ public interface Arbitrary<T> {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples)
 									 .map(generator -> generator.map(mapper));
 			}
+
+			@Override
+			public EdgeCases<U> edgeCases() {
+				return Arbitrary.this.edgeCases().map(mapper);
+			}
 		};
 	}
 

@@ -17,8 +17,14 @@ import static org.assertj.core.api.Assertions.*;
 class DefaultEdgeCasesTests {
 
 	@Example
-	@Disabled
 	void mapping() {
+		Arbitrary<String> arbitrary = Arbitraries.integers().between(-10, 10).map(i -> Integer.toString(i));
+		EdgeCases<String> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			"-10", "-2", "-1", "0", "1", "2", "10"
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(7);
 	}
 
 	@Example
@@ -386,9 +392,7 @@ class DefaultEdgeCasesTests {
 				-10, -2, -1, 0, 1, 2, 10
 			);
 			// make sure edge cases can be repeatedly generated
-			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-				-10, -2, -1, 0, 1, 2, 10
-			);
+			assertThat(values(edgeCases)).hasSize(7);
 		}
 
 		@Example
