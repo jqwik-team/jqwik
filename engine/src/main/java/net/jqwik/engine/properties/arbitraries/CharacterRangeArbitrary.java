@@ -10,20 +10,18 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class CharacterRange implements Arbitrary<Character> {
+public class CharacterRangeArbitrary implements Arbitrary<Character> {
 	private final char min;
 	private final char max;
 
-	public CharacterRange(char min, char max) {
+	public CharacterRangeArbitrary(char min, char max) {
 		this.min = min;
 		this.max = max;
 	}
 
 	@Override
 	public RandomGenerator<Character> generator(int genSize) {
-		List<Shrinkable<Character>> edgeCases = listOfEdgeCases();
-		return RandomGenerators.chars(min, max)
-							   .withEdgeCases(genSize, edgeCases);
+		return RandomGenerators.chars(min, max).withEdgeCases(genSize, edgeCases());
 	}
 
 	private List<Shrinkable<Character>> listOfEdgeCases() {
@@ -44,5 +42,10 @@ public class CharacterRange implements Arbitrary<Character> {
 		return ExhaustiveGenerators
 				   .fromIterable(() -> IntStream.range(min, max + 1).iterator(), maxCount, maxNumberOfSamples)
 				   .map(optionalGenerator -> optionalGenerator.map(anInt -> (char) (int) anInt));
+	}
+
+	@Override
+	public EdgeCases<Character> edgeCases() {
+		return EdgeCases.fromShrinkables(listOfEdgeCases());
 	}
 }

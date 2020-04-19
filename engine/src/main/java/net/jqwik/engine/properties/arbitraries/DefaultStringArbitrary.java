@@ -19,10 +19,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	@Override
 	public RandomGenerator<String> generator(int genSize) {
 		final int cutoffLength = RandomGenerators.defaultCutoffSize(minLength, maxLength, genSize);
-		List<Shrinkable<String>> samples = Arrays.stream(new String[] { "" })
-												 .filter(s -> s.length() >= minLength && s.length() <= maxLength).map(Shrinkable::unshrinkable)
-												 .collect(Collectors.toList());
-		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, cutoffLength).withEdgeCases(genSize, samples);
+		return RandomGenerators.strings(randomCharacterGenerator(), minLength, maxLength, cutoffLength).withEdgeCases(genSize, edgeCases());
 	}
 
 	@Override
@@ -33,6 +30,14 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 			maxLength,
 			maxNumberOfSamples
 		);
+	}
+
+	@Override
+	public EdgeCases<String> edgeCases() {
+		EdgeCases<String> singleCharEdgeCases = effectiveCharacterArbitrary().edgeCases().map(String::valueOf);
+		EdgeCases<String> emptyStringEdgeCases = EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(""));
+		return EdgeCases.concat(singleCharEdgeCases, emptyStringEdgeCases)
+						.filter(s -> s.length() >= minLength && s.length() <= maxLength);
 	}
 
 	@Override

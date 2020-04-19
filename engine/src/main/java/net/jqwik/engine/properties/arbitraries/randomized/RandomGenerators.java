@@ -243,25 +243,6 @@ public class RandomGenerators {
 		return new FrequencyGenerator<>(frequencies);
 	}
 
-	@Deprecated
-	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, List<Shrinkable<T>> edgeCases) {
-		if (edgeCases.isEmpty()) {
-			return self;
-		}
-
-		int baseToEdgeCaseRatio = calculateBaseToEdgeCaseRatio(genSize, edgeCases.size());
-
-		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseShrinkable(edgeCases);
-
-		return random -> {
-			if (random.nextInt(baseToEdgeCaseRatio + 1) == 0) {
-				return edgeCasesGenerator.next(random);
-			} else {
-				return self.next(random);
-			}
-		};
-	}
-
 	private static int calculateBaseToEdgeCaseRatio(int genSize, int size) {
 		return Math.min(
 			Math.max(genSize / 5, 1),

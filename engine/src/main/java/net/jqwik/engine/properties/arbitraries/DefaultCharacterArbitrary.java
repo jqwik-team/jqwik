@@ -70,6 +70,11 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	@Override
+	public EdgeCases<Character> edgeCases() {
+		return arbitrary().edgeCases();
+	}
+
+	@Override
 	public CharacterArbitrary range(char min, char max) {
 		return cloneWith(rangeArbitrary(min, max));
 	}
@@ -116,7 +121,7 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	private Arbitrary<Character> rangeArbitrary(char min, char max) {
-		return new CharacterRange(min, max);
+		return new CharacterRangeArbitrary(min, max);
 	}
 
 }

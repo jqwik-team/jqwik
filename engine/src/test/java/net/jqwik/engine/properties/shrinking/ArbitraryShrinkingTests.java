@@ -110,7 +110,7 @@ class ArbitraryShrinkingTests {
 		@Property(tries = 10)
 		void mapIsShrunkToSmallestValue(@ForAll Random random) {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(-10, 10);
-			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(1);
+			Arbitrary<String> values = Arbitraries.strings().withCharRange('A', 'Z').ofLength(1);
 
 			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
 

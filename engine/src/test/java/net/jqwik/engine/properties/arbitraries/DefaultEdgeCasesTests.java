@@ -110,14 +110,18 @@ class DefaultEdgeCasesTests {
 	}
 
 	@Example
-	@Disabled
 	@Label("Arbitraries.oneOf()")
 	void oneOf() {
-		Arbitraries.oneOf(
-			Arbitraries.of("a", "b"),
-			Arbitraries.of("c", "d"),
-			Arbitraries.constant("e")
+		Arbitrary<Integer> arbitrary = Arbitraries.oneOf(
+			Arbitraries.integers().between(-1, 1),
+			Arbitraries.integers().greaterOrEqual(100)
 		);
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			-1, 0, 1, 100, Integer.MAX_VALUE
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(5);
 	}
 
 	@Example
@@ -132,26 +136,40 @@ class DefaultEdgeCasesTests {
 	}
 
 	@Group
-	@Disabled
 	@Label("Arbitraries.strings()|chars()")
 	class StringsAndChars {
 		@Example
 		void singleRangeChars() {
+			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z');
+			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				'a', 'z'
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(2);
 		}
 
 
 		@Example
 		void multiRangeChars() {
+			CharacterArbitrary arbitrary = Arbitraries.chars().range('a', 'z').digit();
+			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				'a', 'z', '0', '9'
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(4);
 		}
 
 		@Example
-		void generateAllPossibleStrings() {
-			Arbitraries.strings().withChars('a', 'b').ofMinLength(0).ofMaxLength(2);
-		}
-
-		@Example
-		void allNumberStringsWith5Digits() {
-			Arbitraries.strings().numeric().ofLength(5);
+		void strings() {
+			StringArbitrary arbitrary = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(0);
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				"", "a", "z"
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(3);
 		}
 
 	}

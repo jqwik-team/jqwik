@@ -48,6 +48,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		if (edgeCases.isEmpty()) {
 			return none();
 		}
+		// TODO: Filter out duplicate edge cases
 		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
 		for (EdgeCases<T> edgeCase : edgeCases) {
 			if (edgeCase.isEmpty()) {
