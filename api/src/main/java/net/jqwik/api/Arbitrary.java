@@ -102,6 +102,7 @@ public interface Arbitrary<T> {
 	}
 
 	@API(status = EXPERIMENTAL, since = "1.3.0")
+	// TODO: Remove default implementation
 	default EdgeCases<T> edgeCases() {
 		return EdgeCases.none();
 	}
@@ -216,6 +217,9 @@ public interface Arbitrary<T> {
 		if (nullProbability <= 0.0) {
 			return this;
 		}
+		if (nullProbability >= 1.0) {
+			return Arbitraries.constant(null);
+		}
 		return new Arbitrary<T>() {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
@@ -252,6 +256,11 @@ public interface Arbitrary<T> {
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ExhaustiveGenerator::unique);
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return Arbitrary.this.edgeCases();
 			}
 
 			@Override
