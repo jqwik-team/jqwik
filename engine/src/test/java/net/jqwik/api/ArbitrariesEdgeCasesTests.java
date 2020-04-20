@@ -17,17 +17,23 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Example
-	@Disabled
-	@Label("Arbitraries.constant() returns the constant once")
+	@Label("Arbitraries.constant(value)")
 	void constant() {
-		Arbitraries.constant("abc");
+		Arbitrary<String> arbitrary = Arbitraries.constant("abc");
+		EdgeCases<String> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactly("abc");
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(1);
 	}
 
 	@Example
-	@Disabled
-	@Label("Arbitraries.create() returns the created value once")
+	@Label("Arbitraries.create(supplier)")
 	void create() {
-		Arbitraries.create(() -> new Object());
+		Arbitrary<String> arbitrary = Arbitraries.create(() -> "new string");
+		EdgeCases<String> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactly("new string");
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(1);
 	}
 
 	@Example
