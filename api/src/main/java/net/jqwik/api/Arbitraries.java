@@ -453,7 +453,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomShuffle(values),
 			max -> ArbitrariesFacade.implementation.exhaustiveShuffle(values, max),
-			EdgeCases.none()
+			EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(values))
 		);
 	}
 
