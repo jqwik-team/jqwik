@@ -48,7 +48,7 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Example
-	@Label("Arbitraries.oneOf()")
+	@Label("Arbitraries.oneOf(values)")
 	void oneOf() {
 		Arbitrary<Integer> arbitrary = Arbitraries.oneOf(
 			Arbitraries.integers().between(-1, 1),
@@ -63,14 +63,18 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Example
-	@Disabled
-	@Label("Arbitraries.frequencyOf()")
+	@Label("Arbitraries.frequencyOf(tuples)")
 	void frequencyOf() {
-		Arbitraries.frequencyOf(
-			Tuple.of(1, Arbitraries.of("a", "b")),
-			Tuple.of(2, Arbitraries.of("c", "d")),
-			Tuple.of(3, Arbitraries.constant("e"))
+		Arbitrary<Integer> arbitrary = Arbitraries.frequencyOf(
+			Tuple.of(1, Arbitraries.integers().between(-1, 1)),
+			Tuple.of(2, Arbitraries.integers().greaterOrEqual(100))
 		);
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			-1, 0, 1, 100, Integer.MAX_VALUE
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(5);
 	}
 
 	@Group

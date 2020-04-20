@@ -32,9 +32,20 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 	@Override
 	public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
-			.choose(allArbitraries(), maxNumberOfSamples)
-			.flatMap(generator -> ExhaustiveGenerators
-				.flatMap(generator, Function.identity(), maxNumberOfSamples));
+				   .choose(allArbitraries(), maxNumberOfSamples)
+				   .flatMap(generator -> ExhaustiveGenerators
+											 .flatMap(generator, Function.identity(), maxNumberOfSamples));
+	}
+
+	@Override
+	public EdgeCases<T> edgeCases() {
+		List<EdgeCases<T>> allEdgeCases =
+			frequencies
+				.stream()
+				.map(Tuple2::get2)
+				.map(Arbitrary::edgeCases)
+				.collect(Collectors.toList());
+		return EdgeCases.concat(allEdgeCases);
 	}
 
 	private List<Arbitrary<T>> allArbitraries() {
