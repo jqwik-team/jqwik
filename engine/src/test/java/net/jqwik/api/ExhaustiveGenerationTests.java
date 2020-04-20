@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties;
+package net.jqwik.api;
 
 import java.math.*;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 import static java.util.Arrays.*;
@@ -280,7 +279,7 @@ class ExhaustiveGenerationTests {
 						   .exhaustive();
 			assertThat(optionalGenerator).isEmpty();
 		}
-		
+
 		@Example
 		void singleDouble() {
 			Optional<ExhaustiveGenerator<Double>> optionalGenerator =
