@@ -10,7 +10,7 @@ import net.jqwik.engine.properties.shrinking.*;
 public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
 
 	public SetArbitrary(Arbitrary<T> elementArbitrary) {
-		super(elementArbitrary);
+		super(elementArbitrary, true);
 	}
 
 	@Override

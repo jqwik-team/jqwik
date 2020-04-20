@@ -29,12 +29,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> StreamableArbitrary<T, List<T>> list(Arbitrary<T> elementArbitrary) {
-		return new ListArbitrary<>(elementArbitrary);
+		return new ListArbitrary<>(elementArbitrary, false);
 	}
 
 	@Override
 	public <T> StreamableArbitrary<T, List<T>> listOfUnique(Arbitrary<T> uniqueArbitrary) {
-		return new ListArbitrary<>(uniqueArbitrary)
+		return new ListArbitrary<>(uniqueArbitrary, true)
 				   .ofMaxSize(maxNumberOfElements(uniqueArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
@@ -57,12 +57,12 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
-		return new ArrayArbitrary<>(elementArbitrary, arrayClass);
+		return new ArrayArbitrary<>(elementArbitrary, arrayClass, false);
 	}
 
 	@Override
 	public <T, A> StreamableArbitrary<T, A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass) {
-		return new ArrayArbitrary<>(uniqueArbitrary, arrayClass)
+		return new ArrayArbitrary<>(uniqueArbitrary, arrayClass, true)
 				   .ofMaxSize(maxNumberOfElements(uniqueArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
