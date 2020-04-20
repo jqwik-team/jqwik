@@ -1,16 +1,15 @@
-package net.jqwik.engine.properties;
+package net.jqwik.api;
 
 import java.util.ArrayList;
 import java.util.*;
 
-import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-class EdgeCasesGenerationTests {
+class EdgeCasesGenerationProperties {
 
 	private final List<List<Object>> generated = new ArrayList<>();
 
@@ -146,7 +145,6 @@ class EdgeCasesGenerationTests {
 			);
 		}
 	}
-
 
 	private List<List<Object>> generated(int toIndex) {
 		return generated.subList(0, toIndex);

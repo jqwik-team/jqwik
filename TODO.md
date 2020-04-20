@@ -3,7 +3,6 @@
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
         - Implement edgeCases() for
             - Optional, Map 
-            - Arbitrary.flatMap() etc
             - Combinators
             - Functions
         - Configure default in jqwik.properties
