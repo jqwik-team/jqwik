@@ -58,4 +58,27 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 		return mapArbitrary().exhaustive(maxNumberOfSamples);
 	}
 
+	@Override
+	public EdgeCases<Map<K, V>> edgeCases() {
+		EdgeCases<Map<K, V>> emptyMapEdgeCase =
+			minSize == 0
+				? EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(new HashMap<>()))
+				: EdgeCases.none();
+		EdgeCases<Map<K, V>> singleEntryEdgeCases =
+			minSize <= 1
+				? singleEntryEdgeCases()
+				: EdgeCases.none();
+		return EdgeCases.concat(emptyMapEdgeCase, singleEntryEdgeCases);
+	}
+
+	private EdgeCases<Map<K, V>> singleEntryEdgeCases() {
+		return keysArbitrary.edgeCases().flatMap(
+			key ->
+				valuesArbitrary.edgeCases().map(value -> {
+					HashMap<K, V> map = new HashMap<>();
+					map.put(key, value);
+					return map;
+				})
+		);
+	}
 }
