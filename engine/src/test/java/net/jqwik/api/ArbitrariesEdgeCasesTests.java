@@ -12,9 +12,27 @@ import static org.assertj.core.api.Assertions.*;
 class ArbitrariesEdgeCasesTests {
 
 	@Example
-	@Disabled
 	@Label("Arbitraries.map(key, value)")
 	void maps() {
+		StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
+		IntegerArbitrary values = Arbitraries.integers().between(10, 100);
+		Arbitrary<Map<String, Integer>> arbitrary = Arbitraries.maps(keys, values);
+		EdgeCases<Map<String, Integer>> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			Collections.emptyMap(),
+			Collections.singletonMap("a", 10),
+			Collections.singletonMap("a", 100),
+			Collections.singletonMap("z", 10),
+			Collections.singletonMap("z", 100)
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(5);
+	}
+
+	@Example
+	@Disabled
+	void tuples() {
+
 	}
 
 	@Example
@@ -78,6 +96,38 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Group
+	@Disabled
+	class OfValues {
+
+		@Example
+		void booleans() {
+		}
+
+		@Example
+		void values() {
+		}
+
+		@Example
+		@Label("Arbitraries.samples() returns all samples in row")
+		void samples() {
+		}
+
+		@Example
+		@Label("Arbitraries.frequency() returns all in row")
+		void frequency() {
+		}
+
+		@Example
+		void enums() {
+		}
+
+		@Example
+		void withNulls() {
+			Arbitraries.of("string1", null, "string3");
+		}
+	}
+
+	@Group
 	@Label("Arbitraries.strings()|chars()")
 	class StringsAndChars {
 		@Example
@@ -113,38 +163,6 @@ class ArbitrariesEdgeCasesTests {
 			assertThat(values(edgeCases)).hasSize(3);
 		}
 
-	}
-
-	@Group
-	@Disabled
-	class OfValues {
-
-		@Example
-		void booleans() {
-		}
-
-		@Example
-		void values() {
-		}
-
-		@Example
-		@Label("Arbitraries.samples() returns all samples in row")
-		void samples() {
-		}
-
-		@Example
-		@Label("Arbitraries.frequency() returns all in row")
-		void frequency() {
-		}
-
-		@Example
-		void enums() {
-		}
-
-		@Example
-		void withNulls() {
-			Arbitraries.of("string1", null, "string3");
-		}
 	}
 
 	@Group
