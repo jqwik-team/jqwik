@@ -5,6 +5,7 @@ import java.util.*;
 
 import net.jqwik.api.arbitraries.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -37,10 +38,13 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Example
-	@Disabled
-	@Label("Arbitraries.shuffle() returns all permutations")
+	@Label("Arbitraries.shuffle()")
 	void shuffle() {
-		Arbitraries.shuffle(1, 2, 3);
+		Arbitrary<List<Integer>> arbitrary = Arbitraries.shuffle(1, 2, 3);
+		EdgeCases<List<Integer>> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactly(asList(1, 2, 3));
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(1);
 	}
 
 	@Example
