@@ -41,10 +41,12 @@ public interface RandomGenerator<T> {
 	 */
 	Shrinkable<T> next(Random random);
 
+	@API(status = INTERNAL)
 	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
 		return random -> RandomGenerator.this.next(random).map(mapper);
 	}
 
+	@API(status = INTERNAL)
 	default <U> RandomGenerator<U> flatMap(Function<T, RandomGenerator<U>> mapper) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
@@ -52,6 +54,7 @@ public interface RandomGenerator<T> {
 		};
 	}
 
+	@API(status = INTERNAL)
 	default <U> RandomGenerator<U> flatMap(Function<T, Arbitrary<U>> mapper, int genSize) {
 		return random -> {
 			Shrinkable<T> wrappedShrinkable = RandomGenerator.this.next(random);
@@ -59,10 +62,12 @@ public interface RandomGenerator<T> {
 		};
 	}
 
+	@API(status = INTERNAL)
 	default RandomGenerator<T> filter(Predicate<T> filterPredicate) {
 		return RandomGeneratorFacade.implementation.filter(this, filterPredicate);
 	}
 
+	@API(status = INTERNAL)
 	default RandomGenerator<T> injectNull(double nullProbability) {
 		return random -> {
 			if (random.nextDouble() <= nullProbability) return Shrinkable.unshrinkable(null);
@@ -70,24 +75,27 @@ public interface RandomGenerator<T> {
 		};
 	}
 
+	@API(status = INTERNAL)
 	default RandomGenerator<T> withEdgeCases(int genSize, EdgeCases<T> edgeCases) {
 		return RandomGeneratorFacade.implementation.withEdgeCases(this, genSize, edgeCases);
 	}
 
+	@API(status = INTERNAL)
 	default RandomGenerator<T> unique() {
 		return RandomGeneratorFacade.implementation.unique(this);
 	}
 
+	@API(status = INTERNAL)
 	default Stream<Shrinkable<T>> stream(Random random) {
 		return Stream.generate(() -> this.next(random));
 	}
 
-	@API(status = MAINTAINED, since = "1.3.0")
+	@API(status = INTERNAL)
 	default RandomGenerator<List<T>> collect(Predicate<List<T>> until) {
 		return RandomGeneratorFacade.implementation.collect(this, until);
 	}
 
-	@API(status = MAINTAINED, since = "1.3.0")
+	@API(status = INTERNAL)
 	default RandomGenerator<T> injectDuplicates(double duplicateProbability) {
 		return RandomGeneratorFacade.implementation.injectDuplicates(this, duplicateProbability);
 	}

@@ -51,15 +51,6 @@ public interface Arbitrary<T> {
 	}
 
 	/**
-	 * Sometimes simplifies test writing
-	 */
-	@SuppressWarnings("unchecked")
-	@API(status = INTERNAL, since = "1.2.4")
-	default Arbitrary<Object> asGeneric() {
-		return (Arbitrary<Object>) this;
-	}
-
-	/**
 	 * Create the random generator for an arbitrary
 	 *
 	 * @param genSize a very unspecific configuration parameter that can be used
@@ -75,12 +66,22 @@ public interface Arbitrary<T> {
 	RandomGenerator<T> generator(int genSize);
 
 	/**
+	 * Sometimes simplifies test writing
+	 */
+	@SuppressWarnings("unchecked")
+	@API(status = INTERNAL, since = "1.2.4")
+	default Arbitrary<Object> asGeneric() {
+		return (Arbitrary<Object>) this;
+	}
+
+	/**
 	 * Create the exhaustive generator for an arbitrary using the maximum allowed
 	 * number of generated samples. Just trying to find out if such a generator
 	 * exists might take a long time. This method should never be overridden.
 	 *
 	 * @return a new exhaustive generator or Optional.empty() if it cannot be created.
 	 */
+	@API(status = INTERNAL)
 	default Optional<ExhaustiveGenerator<T>> exhaustive() {
 		return exhaustive(ExhaustiveGenerator.MAXIMUM_SAMPLES_TO_GENERATE);
 	}
@@ -96,7 +97,7 @@ public interface Arbitrary<T> {
 	 *                           number will be exceeded generation stops.
 	 * @return a new exhaustive generator or Optional.empty() if it cannot be created.
 	 */
-	@API(status = MAINTAINED, since = "1.2.1")
+	@API(status = INTERNAL)
 	default Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 		return Optional.empty();
 	}
@@ -204,6 +205,12 @@ public interface Arbitrary<T> {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples)
 									 .flatMap(generator -> ArbitraryFacade.implementation
 															   .flatMapExhaustiveGenerator(generator, mapper, maxNumberOfSamples));
+			}
+
+			@Override
+			public EdgeCases<U> edgeCases() {
+				Function<T, EdgeCases<U>> edgeCasesMapper = t -> mapper.apply(t).edgeCases();
+				return Arbitrary.this.edgeCases().flatMap(edgeCasesMapper);
 			}
 		};
 	}
