@@ -12,9 +12,11 @@ abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 	protected Arbitrary<T> elementArbitrary;
 	protected int minSize = 0;
 	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
+	private final boolean elementsUnique;
 
-	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary) {
+	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary, final boolean elementsUnique) {
 		this.elementArbitrary = elementArbitrary;
+		this.elementsUnique = elementsUnique;
 	}
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
@@ -34,16 +36,27 @@ abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 	}
 
 	protected <C extends Collection<?>> EdgeCases<C> edgeCases(BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator) {
-		EdgeCases<C> emptyEdgeCases = (minSize == 0) ? emptyListEdgeCase(shrinkableCreator) : EdgeCases.none();
-		EdgeCases<C> edgeCasesWithElements = (minSize <= 1) ? singleElementEdgeCases(shrinkableCreator) : EdgeCases.none();
-		return EdgeCases.concat(emptyEdgeCases, edgeCasesWithElements);
+		EdgeCases<C> emptyListEdgeCase = (minSize == 0) ? emptyListEdgeCase(shrinkableCreator) : EdgeCases.none();
+		EdgeCases<C> singleElementEdgeCases = (minSize <= 1) ? fixedSizeEdgeCases(1, shrinkableCreator) : EdgeCases.none();
+		EdgeCases<C> fixedSizeEdgeCases = generateFixedSizeEdgeCases() ? fixedSizeEdgeCases(minSize, shrinkableCreator) : EdgeCases.none();
+		return EdgeCases.concat(Arrays.asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases));
 	}
 
-	private <C extends Collection<?>> EdgeCases<C> singleElementEdgeCases(BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator) {
+	private boolean generateFixedSizeEdgeCases() {
+		if (elementsUnique) {
+			return false;
+		}
+		return minSize == maxSize && minSize > 1;
+	}
+
+	private <C extends Collection<?>> EdgeCases<C> fixedSizeEdgeCases(
+		final int fixedSize,
+		final BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator
+	) {
 		return elementArbitrary
 				   .edgeCases()
 				   .mapShrinkable((Shrinkable<T> shrinkableT) -> {
-					   List<Shrinkable<T>> elements = Collections.singletonList(shrinkableT);
+					   List<Shrinkable<T>> elements = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableT));
 					   return shrinkableCreator.apply(elements, minSize);
 				   });
 	}

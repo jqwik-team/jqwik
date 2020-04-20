@@ -1,11 +1,12 @@
 package net.jqwik.api;
 
+import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.engine.properties.arbitraries.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 @Group
@@ -97,7 +98,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void listEdgeCases() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list();
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				Collections.emptyList(),
@@ -115,7 +116,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void listEdgeCasesWhenMinSize1() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(1);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				Collections.singletonList(-10),
@@ -130,14 +131,24 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void listEdgeCasesWhenMinSizeGreaterThan1() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<List<Integer>> arbitrary = ints.list().ofMinSize(2);
 			assertThat(values(arbitrary.edgeCases())).isEmpty();
 		}
 
 		@Example
+		void listEdgeCasesWhenFixedSize() {
+			IntegerArbitrary ints = Arbitraries.integers().between(10, 100);
+			Arbitrary<List<Integer>> arbitrary = ints.list().ofSize(3);
+			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
+				asList(10, 10, 10),
+				asList(100, 100, 100)
+			);
+		}
+
+		@Example
 		void listEdgeCasesAreGeneratedFreshlyOnEachCallToIterator() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-1, 1);
+			IntegerArbitrary ints = Arbitraries.integers().between(-1, 1);
 			Arbitrary<List<Integer>> arbitrary = ints.list();
 			EdgeCases<List<Integer>> edgeCases = arbitrary.edgeCases();
 
@@ -156,7 +167,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void setEdgeCases() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set();
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				Collections.emptySet(),
@@ -173,7 +184,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void setEdgeCasesWithMinSize1() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Set<Integer>> arbitrary = ints.set().ofMinSize(1);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				Collections.singleton(-10),
@@ -188,7 +199,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void streamEdgeCases() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Stream<Integer>> arbitrary = ints.stream();
 			Set<Stream<Integer>> streams = values(arbitrary.edgeCases());
 			Set<List<Integer>> lists = streams.stream().map(stream -> stream.collect(Collectors.toList())).collect(Collectors.toSet());
@@ -207,7 +218,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void iteratorEdgeCases() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			Arbitrary<Iterator<Integer>> arbitrary = ints.iterator();
 			Set<Iterator<Integer>> iterators = values(arbitrary.edgeCases());
 			Set<List<Integer>> lists =
@@ -233,7 +244,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void arraysAreCombinationsOfElementsUpToMaxLength() {
-			IntegerArbitrary ints = new DefaultIntegerArbitrary().between(-10, 10);
+			IntegerArbitrary ints = Arbitraries.integers().between(-10, 10);
 			StreamableArbitrary<Integer, Integer[]> arbitrary = ints.array(Integer[].class);
 			assertThat(values(arbitrary.edgeCases())).containsExactlyInAnyOrder(
 				new Integer[]{},
@@ -246,6 +257,19 @@ class ArbitraryEdgeCasesTests {
 				new Integer[]{10}
 			);
 			assertThat(values(arbitrary.edgeCases())).hasSize(8);
+		}
+
+		@Example
+		void tupleEdgeCases() {
+			Arbitrary<Integer> ints = Arbitraries.constant(42);
+			assertThat(values(ints.tuple1().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42));
+			assertThat(values(ints.tuple2().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42, 42));
+			assertThat(values(ints.tuple3().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42, 42, 42));
+			assertThat(values(ints.tuple4().edgeCases()))
+				.containsExactlyInAnyOrder(Tuple.of(42, 42, 42, 42));
 		}
 
 	}

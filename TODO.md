@@ -2,7 +2,6 @@
 
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
         - Implement edgeCases() for
-            - Optional, Map 
             - Combinators
             - Functions
         - Configure default in jqwik.properties
@@ -10,6 +9,9 @@
         - Document edge cases
 
     - Get rid of Arbitraries.samples()
+
+    - Scrutinize unique() behaviour of IteratorArbitrary, StreamArbitrary, ArrayArbitrary
+      - When @Unique is a constraint
 
     - Check TODOs in code
     

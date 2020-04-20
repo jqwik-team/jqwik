@@ -7,8 +7,8 @@ import net.jqwik.api.arbitraries.*;
 
 abstract class DefaultCollectionArbitrary<T, U> extends MultivalueArbitraryBase<T> implements StreamableArbitrary<T, U> {
 
-	DefaultCollectionArbitrary(Arbitrary<T> elementArbitrary) {
-		super(elementArbitrary);
+	DefaultCollectionArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
+		super(elementArbitrary, elementsUnique);
 	}
 
 	@Override

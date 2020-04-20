@@ -15,8 +15,8 @@ public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements 
 
 	private final Class<A> arrayClass;
 
-	public ArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
-		super(elementArbitrary);
+	public ArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass, boolean elementsUnique) {
+		super(elementArbitrary, elementsUnique);
 		this.arrayClass = arrayClass;
 	}
 

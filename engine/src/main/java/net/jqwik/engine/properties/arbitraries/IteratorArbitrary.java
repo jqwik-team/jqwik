@@ -9,7 +9,7 @@ import net.jqwik.engine.properties.shrinking.*;
 public class IteratorArbitrary<T> extends DefaultCollectionArbitrary<T, Iterator<T>> {
 
 	public IteratorArbitrary(Arbitrary<T> elementArbitrary) {
-		super(elementArbitrary);
+		super(elementArbitrary, false);
 	}
 
 	@Override
