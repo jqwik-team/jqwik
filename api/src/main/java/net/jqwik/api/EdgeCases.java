@@ -97,4 +97,13 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 					   .collect(Collectors.toList());
 		return fromSuppliers(filteredSuppliers);
 	}
+
+	@API(status = INTERNAL)
+	default <U> EdgeCases<U> flatMap(Function<T, EdgeCases<U>> mapper) {
+		List<Supplier<Shrinkable<U>>> flatMappedSuppliers =
+			suppliers().stream()
+					   .flatMap(supplier -> mapper.apply(supplier.get().value()).suppliers().stream())
+					   .collect(Collectors.toList());
+		return fromSuppliers(flatMappedSuppliers);
+	}
 }

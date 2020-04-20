@@ -6,17 +6,19 @@ import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@API(status = MAINTAINED, since = "1.0")
+/**
+ * Used only internally to run and compute exhaustive generation of parameters
+ */
+@API(status = INTERNAL)
 public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
-	@API(status = INTERNAL, since = "1.2.1")
 	long MAXIMUM_SAMPLES_TO_GENERATE = Integer.MAX_VALUE;
 
 	@API(status = INTERNAL)
 	abstract class ExhaustiveGeneratorFacade {
 		private static final ExhaustiveGeneratorFacade implementation;
 
-		static  {
+		static {
 			implementation = FacadeLoader.load(ExhaustiveGeneratorFacade.class);
 		}
 
@@ -45,7 +47,6 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 	/**
 	 * This is a hack to make unique work for exhaustive generation
 	 */
-	@API(status = INTERNAL)
 	default boolean isUnique() {
 		return false;
 	}

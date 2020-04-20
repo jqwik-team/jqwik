@@ -44,6 +44,12 @@ title: jqwik Release Notes
     - `TryLifecycleContext.propertyContext()`
     - `net.jqwik.api.Statistics`: Replaced by `net.jqwik.api.statistics.Statistics` 
 
+- Set most public methods of `RandomGenerator` to API status `INTERNAL`
+
+- Set `Arbitrary.exhaustive()` to API status `INTERNAL`
+
+- Set `ExhaustiveGenerator` and all its methods to API status `INTERNAL`
+
 #### Bug Fixes
 
 No known open bugs.
