@@ -110,32 +110,37 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Group
-	@Disabled
 	class OfValues {
 
 		@Example
+		@Disabled
 		void booleans() {
 		}
 
 		@Example
+		@Disabled
 		void values() {
 		}
 
 		@Example
 		@Label("Arbitraries.samples() returns all samples in row")
+		@Disabled
 		void samples() {
 		}
 
 		@Example
 		@Label("Arbitraries.frequency() returns all in row")
+		@Disabled
 		void frequency() {
 		}
 
 		@Example
+		@Disabled
 		void enums() {
 		}
 
 		@Example
+		@Disabled
 		void withNulls() {
 			Arbitraries.of("string1", null, "string3");
 		}
