@@ -11,12 +11,12 @@ import net.jqwik.engine.support.*;
 abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 	final Class<F> functionalType;
 	final RandomGenerator<R> resultGenerator;
-	final List<Tuple2<Predicate<List>, Function<List, R>>> conditions;
+	final List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> conditions;
 
 	AbstractFunctionGenerator(
 		Class<F> functionalType,
 		RandomGenerator<R> resultGenerator,
-		List<Tuple2<Predicate<List>, Function<List, R>>> conditions
+		List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> conditions
 	) {
 		this.functionalType = functionalType;
 		this.resultGenerator = resultGenerator;
@@ -48,9 +48,9 @@ abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 	}
 
 	// Returns result wrapped in array to allow null as result
-	Optional<Object[]> conditionalResult(Object[] args) {
+	protected Optional<Object[]> conditionalResult(Object[] args) {
 		Optional<Object[]> conditionalResult = Optional.empty();
-		for (Tuple2<Predicate<List>, Function<List, R>> condition : conditions) {
+		for (Tuple2<Predicate<List<Object>>, Function<List<Object>, R>> condition : conditions) {
 			List<Object> params = Arrays.asList(args);
 			if (condition.get1().test(params)) {
 				Object[] result = new Object[]{condition.get2().apply(params)};

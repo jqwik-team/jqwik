@@ -12,7 +12,7 @@ public class DefaultFunctionArbitrary<F, R> extends AbstractArbitraryBase implem
 
 	private final Class<F> functionalType;
 	private final Arbitrary<R> resultArbitrary;
-	private final List<Tuple2<Predicate<List>, Function<List, R>>> conditions = new ArrayList<>();
+	private final List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> conditions = new ArrayList<>();
 
 	public DefaultFunctionArbitrary(Class<F> functionalType, Arbitrary<R> resultArbitrary) {
 		this.functionalType = functionalType;
@@ -24,9 +24,15 @@ public class DefaultFunctionArbitrary<F, R> extends AbstractArbitraryBase implem
 		return RandomGenerators.oneOf(createGenerators(genSize));
 	}
 
+	@Override
+	public EdgeCases<F> edgeCases() {
+		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(1000);
+		return resultArbitrary.edgeCases()
+							  .mapShrinkable(constantFunctionGenerator::createConstantFunction);
+	}
+
 	private List<RandomGenerator<F>> createGenerators(int genSize) {
-		ConstantFunctionGenerator<F, R> constantFunctionGenerator =
-			new ConstantFunctionGenerator<>(functionalType, resultArbitrary.generator(genSize), conditions);
+		ConstantFunctionGenerator<F, R> constantFunctionGenerator = createConstantFunctionGenerator(genSize);
 		FunctionGenerator<F, R> functionGenerator =
 			new FunctionGenerator<>(functionalType, resultArbitrary.generator(genSize), conditions);
 		return Arrays.asList(
@@ -38,16 +44,20 @@ public class DefaultFunctionArbitrary<F, R> extends AbstractArbitraryBase implem
 		);
 	}
 
+	private ConstantFunctionGenerator<F, R> createConstantFunctionGenerator(final int genSize) {
+		return new ConstantFunctionGenerator<>(functionalType, resultArbitrary.generator(genSize), conditions);
+	}
+
 	@Override
 	// TODO: Is there a way to map F on F_ safely?
-	public <F_> FunctionArbitrary<F_, R> when(Predicate<List> parameterCondition, Function<List, R> answer) {
+	public <F_> FunctionArbitrary<F_, R> when(Predicate<List<Object>> parameterCondition, Function<List<Object>, R> answer) {
 		DefaultFunctionArbitrary<F_, R> clone = typedClone();
 		clone.conditions.addAll(this.conditions);
 		clone.addCondition(Tuple.of(parameterCondition, answer));
 		return clone;
 	}
 
-	private void addCondition(Tuple2<Predicate<List>, Function<List, R>> condition) {
+	private void addCondition(Tuple2<Predicate<List<Object>>, Function<List<Object>, R>> condition) {
 		conditions.add(condition);
 	}
 }

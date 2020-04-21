@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.arbitraries.*;
 
@@ -27,12 +28,6 @@ class ArbitrariesEdgeCasesTests {
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(5);
-	}
-
-	@Example
-	@Disabled
-	void tuples() {
-
 	}
 
 	@Example
@@ -93,6 +88,25 @@ class ArbitrariesEdgeCasesTests {
 		);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(5);
+	}
+
+	@Example
+	@Label("Functions.function(type, returnArbitrary)")
+	void functionHasConstantFunctionsAsEdgeCases() {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(10, 100);
+		Arbitrary<Function<String, Integer>> arbitrary =
+			Functions.function(Function.class).returns(integers);
+
+		EdgeCases<Function<String, Integer>> edgeCases = arbitrary.edgeCases();
+		Set<Function<String, Integer>> functions = values(edgeCases);
+		assertThat(functions).hasSize(2);
+
+		for (Function<String, Integer> function : functions) {
+			assertThat(function.apply("any string")).isIn(10, 100);
+		}
+
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(2);
 	}
 
 	@Group
