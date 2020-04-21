@@ -12,6 +12,8 @@ import static org.assertj.core.api.Assertions.*;
 @Group
 class ArbitrariesEdgeCasesTests {
 
+	enum MyEnum {FIRST, B, C, LAST}
+
 	@Example
 	@Label("Arbitraries.map(key, value)")
 	void maps() {
@@ -113,36 +115,76 @@ class ArbitrariesEdgeCasesTests {
 	class OfValues {
 
 		@Example
-		@Disabled
-		void booleans() {
+		@Label("Arbitraries.of(true, false)")
+		void ofBooleans() {
+			Arbitrary<Boolean> arbitrary = Arbitraries.of(true, false);
+			EdgeCases<Boolean> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases))
+				.containsExactlyInAnyOrder(true, false);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(2);
 		}
 
 		@Example
-		@Disabled
-		void values() {
+		@Label("Arbitraries.of(...)")
+		void ofValues() {
+			Arbitrary<Integer> arbitrary = Arbitraries.of(4, 9, 2, 1, 66, 2);
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases))
+				.containsExactlyInAnyOrder(4, 2);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(2);
 		}
 
 		@Example
-		@Label("Arbitraries.samples() returns all samples in row")
-		@Disabled
-		void samples() {
+		void ofValuesWithNulls() {
+			Arbitrary<String> arbitrary = Arbitraries.of("first", "other", null, "last");
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases))
+				.containsExactlyInAnyOrder("first", "last", null);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(3);
+		}
+
+
+		@Example
+		@Label("Arbitraries.of(char[] chars)")
+		void ofChars() {
+			char[] chars = {'x', 'a', 'b', 'c'};
+			Arbitrary<Character> arbitrary = Arbitraries.of(chars);
+			EdgeCases<Character> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases))
+				.containsExactlyInAnyOrder('x', 'c');
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(2);
 		}
 
 		@Example
-		@Label("Arbitraries.frequency() returns all in row")
-		@Disabled
+		@Label("Arbitraries.frequency()")
 		void frequency() {
+			Arbitrary<Integer> arbitrary = Arbitraries.frequency(
+				Tuple.of(1, 4),
+				Tuple.of(1, 9),
+				Tuple.of(1, 2),
+				Tuple.of(1, 1),
+				Tuple.of(1, 66),
+				Tuple.of(1, 2)
+			);
+			EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases))
+				.containsExactlyInAnyOrder(4, 2);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(2);
 		}
 
 		@Example
-		@Disabled
 		void enums() {
-		}
-
-		@Example
-		@Disabled
-		void withNulls() {
-			Arbitraries.of("string1", null, "string3");
+			Arbitrary<MyEnum> arbitrary = Arbitraries.of(MyEnum.class);
+			EdgeCases<MyEnum> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases))
+				.containsExactlyInAnyOrder(MyEnum.FIRST, MyEnum.LAST);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(2);
 		}
 	}
 

@@ -55,7 +55,7 @@ class ArbitraryTests {
 		listWithNulls.removeIf(Objects::isNull);
 
 		// Might very rarely fail
-		assertThat(listWithNulls).hasSizeLessThanOrEqualTo(70);
+		assertThat(listWithNulls).hasSizeLessThanOrEqualTo(75);
 	}
 
 	@Group

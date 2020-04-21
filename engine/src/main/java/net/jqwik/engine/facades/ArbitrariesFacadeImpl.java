@@ -12,6 +12,7 @@ import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
+import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.properties.stateful.*;
 
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
@@ -23,6 +24,32 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	@Override
 	public <T> RandomGenerator<T> randomChoose(List<T> values) {
 		return RandomGenerators.choose(values);
+	}
+
+	@Override
+	public <T> EdgeCases<T> edgeCasesChoose(final List<T> values) {
+		List<Shrinkable<T>> shrinkables = new ArrayList<>();
+		if (values.size() > 0) {
+			shrinkables.add(new ChooseValueShrinkable<>(values.get(0), values));
+		}
+		if (values.size() > 1) {
+			int lastIndex = values.size() - 1;
+			shrinkables.add(new ChooseValueShrinkable<>(values.get(lastIndex), values));
+		}
+		if (values.contains(null)) {
+			shrinkables.add(Shrinkable.unshrinkable(null));
+		}
+		return EdgeCases.fromShrinkables(shrinkables);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public EdgeCases<Character> edgeCasesChoose(final char[] characters) {
+		List<Character> validCharacters = new ArrayList<>(characters.length);
+		for (char character : characters) {
+			validCharacters.add(character);
+		}
+		return edgeCasesChoose(validCharacters);
 	}
 
 	@Override
@@ -45,15 +72,13 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return ExhaustiveGenerators.create(supplier, maxNumberOfSamples);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Enum> RandomGenerator<T> randomChoose(Class<T> enumClass) {
+	public <T extends Enum<T>> RandomGenerator<T> randomChoose(Class<T> enumClass) {
 		return RandomGenerators.choose(enumClass);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends Enum> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples) {
+	public <T extends Enum<T>> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples) {
 		return ExhaustiveGenerators.choose(enumClass, maxNumberOfSamples);
 	}
 
