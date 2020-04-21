@@ -59,6 +59,7 @@ test {
 	useJUnitPlatform {
 		includeEngines 'jqwik'
 		includeEngines 'archunit'
+		includeEngines 'junit-jupiter'
 	}
 
 	include 'net/**/*Properties.class'
