@@ -13,7 +13,7 @@ class EdgeCasesGenerationProperties {
 
 	private final List<List<Object>> generated = new ArrayList<>();
 
-	@Property(tries = 20, afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.FIRST)
+	@Property(tries = 20, generation = GenerationMode.RANDOMIZED, edgeCases = EdgeCasesMode.FIRST)
 	@PerProperty(CheckIntEdgeCasesGeneratedFirst.class)
 	void intPropertyEdgeCasesFirst(@ForAll @IntRange(min = -100, max = 100) int anInt) {
 		generated.add(asList(anInt));
@@ -34,7 +34,7 @@ class EdgeCasesGenerationProperties {
 		}
 	}
 
-	@Property(afterFailure = AfterFailureMode.RANDOM_SEED, edgeCases = EdgeCasesMode.MIXIN)
+	@Property(generation = GenerationMode.RANDOMIZED, edgeCases = EdgeCasesMode.MIXIN)
 	@PerProperty(CheckIntEdgeCasesMixedIn.class)
 	void intPropertyEdgeCasesMixedIn(@ForAll @IntRange(min = -100, max = 100) int anInt) {
 		generated.add(asList(anInt));
@@ -55,7 +55,7 @@ class EdgeCasesGenerationProperties {
 		}
 	}
 
-	@Property(tries = 5, edgeCases = EdgeCasesMode.FIRST)
+	@Property(tries = 5, generation = GenerationMode.RANDOMIZED, edgeCases = EdgeCasesMode.FIRST)
 	@PerProperty(Check5Tries.class)
 	void moreEdgeCasesThanTries(@ForAll @IntRange(min = -100, max = 100) int anInt) {
 		generated.add(asList(anInt));
@@ -65,6 +65,16 @@ class EdgeCasesGenerationProperties {
 		@Override
 		public void onSuccess() {
 			assertThat(generated).hasSize(5);
+			assertThat(generated).doesNotHaveDuplicates();
+			assertThat(generated).isSubsetOf(
+				asList(-100),
+				asList(-2),
+				asList(-1),
+				asList(0),
+				asList(1),
+				asList(2),
+				asList(100)
+			);
 		}
 	}
 
