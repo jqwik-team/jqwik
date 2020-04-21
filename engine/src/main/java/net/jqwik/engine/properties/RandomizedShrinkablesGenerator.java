@@ -55,7 +55,7 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		EdgeCasesMode edgeCasesMode
 	) {
 		List<EdgeCases<Object>> listOfEdgeCases = Collections.emptyList();
-		if (edgeCasesMode != EdgeCasesMode.NONE) {
+		if (edgeCasesMode.generateFirst() || (edgeCasesMode.mixIn() && parameters.size() > 1)) {
 			listOfEdgeCases = parameters
 				.stream()
 				.map(parameter -> resolveEdgeCases(arbitraryResolver, parameter))
