@@ -24,6 +24,10 @@ public class Arbitraries {
 			implementation = FacadeLoader.load(ArbitrariesFacade.class);
 		}
 
+		public abstract <T> EdgeCases<T> edgeCasesChoose(List<T> values);
+
+		public abstract <T> EdgeCases<T> edgeCasesChoose(char[] validChars);
+
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(List<T> values, long maxNumberOfSamples);
 
 		public abstract <T> Optional<ExhaustiveGenerator<T>> exhaustiveCreate(Supplier<T> supplier, long maxNumberOfSamples);
@@ -32,13 +36,13 @@ public class Arbitraries {
 
 		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples);
 
-		public abstract <T extends Enum> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples);
+		public abstract <T extends Enum<T>> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples);
 
 		public abstract <T> RandomGenerator<T> randomChoose(List<T> values);
 
 		public abstract RandomGenerator<Character> randomChoose(char[] values);
 
-		public abstract <T extends Enum> RandomGenerator<T> randomChoose(Class<T> enumClass);
+		public abstract <T extends Enum<T>> RandomGenerator<T> randomChoose(Class<T> enumClass);
 
 		public abstract <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all);
 
@@ -145,7 +149,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(values),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			EdgeCases.none()
+			ArbitrariesFacade.implementation.edgeCasesChoose(values)
 		);
 	}
 
@@ -159,7 +163,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(values),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			EdgeCases.none()
+			ArbitrariesFacade.implementation.edgeCasesChoose(values)
 		);
 	}
 
@@ -170,12 +174,12 @@ public class Arbitraries {
 	 * @param <T>       The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	@SuppressWarnings("unchecked")
-	public static <T extends Enum> Arbitrary<T> of(Class<T> enumClass) {
+	public static <T extends Enum<T>> Arbitrary<T> of(Class<T> enumClass) {
+		List<T> values = Arrays.asList(enumClass.getEnumConstants());
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(enumClass),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(enumClass, max),
-			EdgeCases.none()
+			ArbitrariesFacade.implementation.edgeCasesChoose(values)
 		);
 	}
 
@@ -243,7 +247,7 @@ public class Arbitraries {
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomFrequency(frequencies),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			EdgeCases.none()
+			ArbitrariesFacade.implementation.edgeCasesChoose(values)
 		);
 
 	}
