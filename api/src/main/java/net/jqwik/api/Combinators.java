@@ -140,7 +140,6 @@ public class Combinators {
 	 *
 	 * @param builderArbitrary The arbitrary is used to generate a builder object
 	 *                         as starting point for building on each value generation.
-	 *
 	 * @return BuilderCombinator instance
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")
@@ -148,68 +147,67 @@ public class Combinators {
 		return new BuilderCombinator<>(builderArbitrary);
 	}
 
-
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, R> Function<List<Object>, R> combineFunction(F2<T1, T2, R> combinator2) {
 		return params -> combinator2
-							 .apply((T1) params.get(0), (T2) params.get(1));
+			.apply((T1) params.get(0), (T2) params.get(1));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, R> Function<List<Object>, R> combineFunction(F3<T1, T2, T3, R> combinator3) {
 		return params -> combinator3
-							 .apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
+			.apply((T1) params.get(0), (T2) params.get(1), (T3) params.get(2));
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, R> Function<List<Object>, R> combineFunction(F4<T1, T2, T3, T4, R> combinator4) {
 		return params -> combinator4
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, R> Function<List<Object>, R> combineFunction(F5<T1, T2, T3, T4, T5, R> combinator5) {
 		return params -> combinator5
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, R> Function<List<Object>, R> combineFunction(F6<T1, T2, T3, T4, T5, T6, R> combinator6) {
 		return params -> combinator6
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4), (T6) params.get(5)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, R> Function<List<Object>, R> combineFunction(F7<T1, T2, T3, T4, T5, T6, T7, R> combinator7) {
 		return params -> combinator7
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5),
-								 (T7) params.get(6)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4), (T6) params.get(5),
+				(T7) params.get(6)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static <T1, T2, T3, T4, T5, T6, T7, T8, R> Function<List<Object>, R> combineFunction(F8<T1, T2, T3, T4, T5, T6, T7, T8, R> combinator8) {
 		return params -> combinator8
-							 .apply(
-								 (T1) params.get(0), (T2) params.get(1),
-								 (T3) params.get(2), (T4) params.get(3),
-								 (T5) params.get(4), (T6) params.get(5),
-								 (T7) params.get(6), (T8) params.get(7)
-							 );
+			.apply(
+				(T1) params.get(0), (T2) params.get(1),
+				(T3) params.get(2), (T4) params.get(3),
+				(T5) params.get(4), (T6) params.get(5),
+				(T7) params.get(6), (T8) params.get(7)
+			);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -254,6 +252,13 @@ public class Combinators {
 						combineFunction(combinator),
 						maxNumberOfSamples
 					);
+				}
+
+				@Override
+				public EdgeCases<R> edgeCases() {
+					return a1.edgeCases().flatMap(
+						v1 -> a2.edgeCases().map(
+							v2 -> combinator.apply(v1, v2)));
 				}
 			};
 		}
@@ -300,6 +305,14 @@ public class Combinators {
 					);
 				}
 
+				@Override
+				public EdgeCases<R> edgeCases() {
+					return a1.edgeCases().flatMap(
+						v1 -> a2.edgeCases().flatMap(
+							v2 -> a3.edgeCases().map(
+								v3 -> combinator.apply(v1, v2, v3))));
+				}
+
 			};
 		}
 
@@ -343,10 +356,10 @@ public class Combinators {
 							g4.next(random)
 						);
 						Function<List<Object>, R> combineFunction = params ->
-																		combinator.apply(
-																			(T1) params.get(0), (T2) params.get(1),
-																			(T3) params.get(2), (T4) params.get(3)
-																		);
+							combinator.apply(
+								(T1) params.get(0), (T2) params.get(1),
+								(T3) params.get(2), (T4) params.get(3)
+							);
 
 						return CombinatorsFacade.implementation.combineShrinkables(shrinkables, combineFunction);
 					};
@@ -360,6 +373,16 @@ public class Combinators {
 						maxNumberOfSamples
 					);
 				}
+
+				@Override
+				public EdgeCases<R> edgeCases() {
+					return a1.edgeCases().flatMap(
+						v1 -> a2.edgeCases().flatMap(
+							v2 -> a3.edgeCases().flatMap(
+								v3 -> a4.edgeCases().map(
+									v4-> combinator.apply(v1, v2, v3, v4)))));
+				}
+
 			};
 		}
 
@@ -424,8 +447,20 @@ public class Combinators {
 					return CombinatorsFacade.implementation.combineExhaustive(
 						asTypedList(a1, a2, a3, a4, a5),
 						combineFunction(combinator),
-						maxNumberOfSamples);
+						maxNumberOfSamples
+					);
 				}
+
+				@Override
+				public EdgeCases<R> edgeCases() {
+					return a1.edgeCases().flatMap(
+						v1 -> a2.edgeCases().flatMap(
+							v2 -> a3.edgeCases().flatMap(
+								v3 -> a4.edgeCases().flatMap(
+									v4-> a5.edgeCases().map(
+										v5 -> combinator.apply(v1, v2, v3, v4, v5))))));
+				}
+
 			};
 		}
 
@@ -495,8 +530,21 @@ public class Combinators {
 					return CombinatorsFacade.implementation.combineExhaustive(
 						asTypedList(a1, a2, a3, a4, a5, a6),
 						combineFunction(combinator),
-						maxNumberOfSamples);
+						maxNumberOfSamples
+					);
 				}
+
+				@Override
+				public EdgeCases<R> edgeCases() {
+					return a1.edgeCases().flatMap(
+						v1 -> a2.edgeCases().flatMap(
+							v2 -> a3.edgeCases().flatMap(
+								v3 -> a4.edgeCases().flatMap(
+									v4-> a5.edgeCases().flatMap(
+										v5 -> a6.edgeCases().map(
+											v6 -> combinator.apply(v1, v2, v3, v4, v5, v6)))))));
+				}
+
 			};
 		}
 
