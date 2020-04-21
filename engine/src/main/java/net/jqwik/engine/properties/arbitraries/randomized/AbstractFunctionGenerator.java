@@ -29,7 +29,7 @@ abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 	}
 
 
-	Shrinkable<F> createConstantFunction(Shrinkable<R> shrinkableConstant) {
+	public Shrinkable<F> createConstantFunction(Shrinkable<R> shrinkableConstant) {
 		return shrinkableConstant.map(this::constantFunction);
 	}
 
