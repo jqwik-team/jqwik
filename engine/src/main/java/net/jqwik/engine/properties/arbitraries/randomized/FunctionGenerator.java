@@ -16,7 +16,7 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 	public FunctionGenerator(
 		Class<F> functionalType,
 		RandomGenerator<R> resultGenerator,
-		List<Tuple2<Predicate<List>, Function<List, R>>> conditions
+		List<Tuple2<Predicate<List<Object>>, Function<List<Object>, R>>> conditions
 	) {
 		super(functionalType, resultGenerator, conditions);
 	}
