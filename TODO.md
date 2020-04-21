@@ -3,15 +3,18 @@
     - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
         - Implement edgeCases() for
             - Combinators
-            - Functions
         - Configure default in jqwik.properties
         - Move internals from EdgeCases class to EdgeCasesFacade or to engine module
         - Document edge cases
 
-    - Get rid of Arbitraries.samples()
+    - Get rid of Arbitraries.samples() in jqwik code
+    
+    - Unify all Arbitraries.of() implementations
 
     - Scrutinize unique() behaviour of IteratorArbitrary, StreamArbitrary, ArrayArbitrary
-      - When @Unique is a constraint
+        - When @Unique is a constraint
+      
+    - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
 
     - Check TODOs in code
     
