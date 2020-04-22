@@ -61,7 +61,7 @@ class ActionSequenceShrinkingTests {
 		while(sequence.next(() -> {}, ignore -> {}));
 		ActionSequence<String> shrunkValue = sequence.current().value();
 		Assertions.assertThat(shrunkValue.runActions()).hasSize(1);
-		Assertions.assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("AA");
+		Assertions.assertThat(shrunkValue.runActions().get(0).run("")).isIn("aa", "AA");
 	}
 
 	private Arbitrary<Action<String>> addStringOfLength2() {

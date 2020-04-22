@@ -8,33 +8,34 @@ import net.jqwik.api.*;
 public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private final Shrinkable<T> toMap;
-	private final Function<T, RandomGenerator<U>> mapper;
-	private final long randomSeed;
+	private final Function<T, Shrinkable<U>> mapper;
 	private final Shrinkable<U> shrinkable;
 	private final U value;
 
-	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> mapper, int genSize, long randomSeed) {
-		this(toMap, value -> mapper.apply(value).generator(genSize), randomSeed);
+	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> toArbitraryMapper, int genSize, long randomSeed) {
+		this(toMap, value -> toArbitraryMapper.apply(value).generator(genSize), randomSeed);
 	}
 
-	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, RandomGenerator<U>> mapper, long randomSeed) {
+	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, RandomGenerator<U>> toGeneratorMapper, long randomSeed) {
+		this(toMap, t -> toGeneratorMapper.apply(t).next(new Random(randomSeed)));
+	}
+
+	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Shrinkable<U>> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
-		this.randomSeed = randomSeed;
 		this.shrinkable = generateShrinkable(toMap.value());
 		this.value = shrinkable.value();
 	}
 
 	private Shrinkable<U> generateShrinkable(T value) {
-		RandomGenerator<U> generator = mapper.apply(value);
-		return generator.next(new Random(randomSeed));
+		return mapper.apply(value);
 	}
 
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
 		Falsifier<T> toMapFalsifier = aT -> falsifier.execute(generateShrinkable(aT).value());
 		return toMap.shrink(toMapFalsifier)
-					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper, randomSeed)))
+					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper)))
 					.andThen(aShrinkable -> {
 						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
 						return flatMappedShrinkable.shrinkable.shrink(falsifier);
@@ -46,7 +47,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		List<Shrinkable<U>> suggestions = new ArrayList<>();
 		suggestions.addAll(shrinkable.shrinkingSuggestions());
 		for (Shrinkable<T> tShrinkable : toMap.shrinkingSuggestions()) {
-			FlatMappedShrinkable<T, U> flatMappedShrinkable = new FlatMappedShrinkable<>(tShrinkable, mapper, randomSeed);
+			FlatMappedShrinkable<T, U> flatMappedShrinkable = new FlatMappedShrinkable<>(tShrinkable, mapper);
 			suggestions.add(flatMappedShrinkable.shrinkable);
 			suggestions.addAll(flatMappedShrinkable.shrinkingSuggestions());
 		}

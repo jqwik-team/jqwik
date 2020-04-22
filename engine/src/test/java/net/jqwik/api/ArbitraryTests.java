@@ -51,7 +51,9 @@ class ArbitraryTests {
 		Arbitrary<Integer> ints = Arbitraries.integers().between(-1000, 1000);
 		Arbitrary<Integer> intsWithNulls = ints.injectNull(0.5);
 
-		List<Integer> listWithNulls = intsWithNulls.list().ofSize(100).sample();
+		List<Integer> listWithNulls = intsWithNulls.list()
+												   .ofMinSize(99) // Fixed size lists create edge case
+												   .ofMaxSize(100).sample();
 		listWithNulls.removeIf(Objects::isNull);
 
 		// Might very rarely fail
