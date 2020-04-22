@@ -224,6 +224,17 @@ class ArbitrariesEdgeCasesTests {
 			assertThat(values(edgeCases)).hasSize(3);
 		}
 
+		@Example
+		void stringsOfFixedLength() {
+			StringArbitrary arbitrary = Arbitraries.strings().withCharRange('a', 'z').ofLength(3);
+			EdgeCases<String> edgeCases = arbitrary.edgeCases();
+			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+				"aaa", "zzz"
+			);
+			// make sure edge cases can be repeatedly generated
+			assertThat(values(edgeCases)).hasSize(2);
+		}
+
 	}
 
 	@Group
