@@ -1,15 +1,14 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 public class DefaultStringArbitrary extends AbstractArbitraryBase implements StringArbitrary {
-
 
 	private CharacterArbitrary characterArbitrary = new DefaultCharacterArbitrary();
 
@@ -34,10 +33,27 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 
 	@Override
 	public EdgeCases<String> edgeCases() {
-		EdgeCases<String> singleCharEdgeCases = effectiveCharacterArbitrary().edgeCases().map(String::valueOf);
-		EdgeCases<String> emptyStringEdgeCases = EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(""));
-		return EdgeCases.concat(singleCharEdgeCases, emptyStringEdgeCases)
-						.filter(s -> s.length() >= minLength && s.length() <= maxLength);
+
+		EdgeCases<String> emptyStringEdgeCases =
+			minLength != 0 ? EdgeCases.none()
+				: EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(""));
+		EdgeCases<String> singleCharEdgeCases =
+			minLength > 1 ? EdgeCases.none() : fixedSizedEdgeCases(1);
+
+		// TODO: What if character arbitrary is unique? Can that happen?
+		EdgeCases<String> fixedSizeEdgeCases =
+			minLength == maxLength && minLength > 1 ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
+
+		return EdgeCases.concat(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases);
+	}
+
+	protected EdgeCases<String> fixedSizedEdgeCases(int fixedSize) {
+		return effectiveCharacterArbitrary()
+				   .edgeCases()
+				   .mapShrinkable(shrinkableChar -> {
+					   List<Shrinkable<Character>> chars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
+					   return new ShrinkableString(chars, minLength);
+				   });
 	}
 
 	@Override
