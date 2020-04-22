@@ -6,6 +6,7 @@ import java.util.function.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
@@ -16,12 +17,12 @@ import static org.mockito.Mockito.*;
 @Label("FlatMappedShrinkable")
 class FlatMappedShrinkableTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final Runnable count = counter::incrementAndGet;
 
 	@SuppressWarnings("unchecked")
-	private Consumer<String> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<String>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<String> valueReporter = mock(Consumer.class);
+	private final Consumer<FalsificationResult<String>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation(@ForAll long seed) {
@@ -33,17 +34,17 @@ class FlatMappedShrinkableTests {
 		assertThat(shrinkable.value()).hasSize(3);
 	}
 
-	@Property(tries = 50)
+	@Property(tries = 50, afterFailure = AfterFailureMode.PREVIOUS_SEED, shrinking = ShrinkingMode.OFF)
 	void shrinkingEmbeddedShrinkable(@ForAll long seed) {
 		//noinspection unchecked
 		Mockito.reset(valueReporter);
 		counter.set(0);
 
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(4);
-		Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().alpha().ofLength(anInt);
+		Function<Integer, Arbitrary<String>> flatMapper = anInt -> Arbitraries.strings().withCharRange('a', 'z').ofLength(anInt);
 		Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
 
-		ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) ignore -> false);
+		ShrinkingSequence<String> sequence = shrinkable.shrink(ignore -> TryExecutionResult.falsified(null));
 
 		assertThat(sequence.next(count, reporter)).isTrue();
 		assertThat(sequence.current().value()).hasSize(3);

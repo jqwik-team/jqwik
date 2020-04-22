@@ -42,11 +42,15 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 		List<Supplier<Shrinkable<U>>> flatMappedSuppliers =
 			self.suppliers().stream()
 				.flatMap(tSupplier -> {
-					return mapper.apply(tSupplier.get().value()).suppliers().stream();
+					T t = tSupplier.get().value();
+					return mapper.apply(t).suppliers()
+								 .stream()
+								 .map(uSupplier -> {
+									 Function<T, RandomGenerator<U>> generatorMapper = ignoreT -> ignoreRandom -> uSupplier.get();
+									 return (Supplier<Shrinkable<U>>) () -> new FlatMappedShrinkable<>(tSupplier.get(), generatorMapper, 42L);
+								 });
 				})
 				// .map(supplier -> (Supplier<Shrinkable<U>>) () -> {
-				// 	Function<T, RandomGenerator<U>> generatorMapper = ignoreT -> ignoreRandom -> supplier.get();
-				// 	return new FlatMappedShrinkable<T, U>(supplier.get(), generatorMapper, 42L);
 				// })
 				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(flatMappedSuppliers);
