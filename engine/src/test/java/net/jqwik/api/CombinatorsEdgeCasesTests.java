@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.api.lifecycle.*;
+
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -22,6 +24,24 @@ class CombinatorsEdgeCasesTests {
 			.containsExactlyInAnyOrder(11, 21, 12, 22);
 		// make sure edge cases can be repeatedly generated
 		assertThat(values(edgeCases)).hasSize(4);
+
+	}
+
+	@Example
+	void combinationCanBeShrunk() {
+		Arbitrary<Integer> a1 = Arbitraries.integers().between(-10, 10);
+		Arbitrary<Integer> a2 = Arbitraries.integers().between(-100, 100);
+		Arbitrary<Integer> plus = Combinators
+									  .combine(a1, a2)
+									  .as((i1, i2) -> i1 + i2);
+		EdgeCases<Integer> edgeCases = plus.edgeCases();
+
+		Shrinkable<Integer> firstEdgeCase = edgeCases.iterator().next();
+
+		ShrinkingSequence<Integer> sequence = firstEdgeCase.shrink(ignore -> TryExecutionResult.falsified(null));
+		while (sequence.next(() -> {}, ignore -> { }));
+
+		assertThat(sequence.current().value()).isEqualTo(0);
 	}
 
 	@Example

@@ -26,4 +26,21 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 	) {
 		return ExhaustiveGenerators.combine(arbitraries, combineFunction, maxNumberOfSamples);
 	}
+
+	@Override
+	public <R> EdgeCases<R> combineEdgeCases(
+		final List<EdgeCases<Object>> listOfEdgeCases,
+		final Function<List<Object>, R> combineFunction
+	) {
+		// TODO: This should also be possible with a stream().reduce() over listOfEdgeCases
+		EdgeCases<List<Object>>[] combinedEdgeCases =
+			new EdgeCases[]{EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(new ArrayList<>()))};
+		for (EdgeCases<Object> current : listOfEdgeCases) {
+			combinedEdgeCases[0] = current.flatMap(value -> combinedEdgeCases[0].map(list -> {
+				list.add(value);
+				return list;
+			}));
+		}
+		return combinedEdgeCases[0].map(combineFunction);
+	}
 }

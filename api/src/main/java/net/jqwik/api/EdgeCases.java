@@ -35,12 +35,10 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		return fromSuppliers(Collections.singletonList(supplier));
 	}
 
+	@SafeVarargs
 	@API(status = INTERNAL)
-	static <T> EdgeCases<T> concat(EdgeCases<T> first, EdgeCases<T> second) {
-		List<EdgeCases<T>> edgeCases = new ArrayList<>();
-		edgeCases.add(first);
-		edgeCases.add(second);
-		return concat(edgeCases);
+	static <T> EdgeCases<T> concat(EdgeCases<T>... rest) {
+		return concat(Arrays.asList(rest));
 	}
 
 	@API(status = INTERNAL)
@@ -94,6 +92,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		List<Supplier<Shrinkable<T>>> filteredSuppliers =
 			suppliers().stream()
 					   .filter(supplier -> filterPredicate.test(supplier.get().value()))
+					   // .map(supplier -> t -> )
 					   .collect(Collectors.toList());
 		return fromSuppliers(filteredSuppliers);
 	}
