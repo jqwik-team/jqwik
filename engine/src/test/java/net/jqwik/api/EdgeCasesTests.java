@@ -60,19 +60,21 @@ class EdgeCasesTests {
 
 	@Example
 	void flatMappedEdgeCasesCanBeShrunk() {
-		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 10).shrinkTowards(5);
+		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 10);
 
 		EdgeCases<String> edgeCases =
 			arbitrary.edgeCases().flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i).edgeCases());
 
-		assertThat(edgeCases).hasSize(8);
+		assertThat(edgeCases).hasSize(6);
 
 		Falsifier<String> falsifier = ignore -> TryExecutionResult.falsified(null);
 		for (Shrinkable<String> edgeCase : edgeCases) {
 			ShrinkingSequence<String> sequence = edgeCase.shrink(falsifier);
-			while (sequence.next(() -> {}, ignore1 -> { })) ;
+			while (sequence.next(() -> {}, ignore -> { })) {
+				System.out.println(sequence.current());
+			}
 			String shrunkValue = sequence.current().value();
-			assertThat(shrunkValue).isEqualTo("aaaaa");
+			assertThat(shrunkValue).isEqualTo("a");
 		}
 	}
 }
