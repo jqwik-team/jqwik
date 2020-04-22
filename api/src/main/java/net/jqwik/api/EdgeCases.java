@@ -11,6 +11,23 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.3.0")
 public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
+	@API(status = INTERNAL)
+	abstract class EdgeCasesFacade {
+		private static final EdgeCases.EdgeCasesFacade implementation;
+
+		static {
+			implementation = FacadeLoader.load(EdgeCases.EdgeCasesFacade.class);
+		}
+
+		public abstract <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases);
+
+		public abstract <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper);
+
+		public abstract <T, U> EdgeCases<U> flatMap(EdgeCases<T> self, Function<T, EdgeCases<U>> mapper);
+
+		public abstract <T> EdgeCases<T> filter(EdgeCases<T> self, Predicate<T> filterPredicate);
+	}
+
 	List<Supplier<Shrinkable<T>>> suppliers();
 
 	default int size() {
@@ -43,18 +60,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
-		if (edgeCases.isEmpty()) {
-			return none();
-		}
-		// TODO: Filter out duplicate edge cases
-		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
-		for (EdgeCases<T> edgeCase : edgeCases) {
-			if (edgeCase.isEmpty()) {
-				continue;
-			}
-			concatenatedSuppliers.addAll(edgeCase.suppliers());
-		}
-		return fromSuppliers(concatenatedSuppliers);
+		return EdgeCasesFacade.implementation.concat(edgeCases);
 	}
 
 	@API(status = INTERNAL)
@@ -80,29 +86,16 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	default <U> EdgeCases<U> mapShrinkable(Function<Shrinkable<T>, Shrinkable<U>> mapper) {
-		List<Supplier<Shrinkable<U>>> mappedSuppliers =
-			suppliers().stream()
-					   .map(tSupplier -> (Supplier<Shrinkable<U>>) () -> mapper.apply(tSupplier.get()))
-					   .collect(Collectors.toList());
-		return fromSuppliers(mappedSuppliers);
+		return EdgeCasesFacade.implementation.mapShrinkable(this, mapper);
 	}
 
 	@API(status = INTERNAL)
 	default EdgeCases<T> filter(Predicate<T> filterPredicate) {
-		List<Supplier<Shrinkable<T>>> filteredSuppliers =
-			suppliers().stream()
-					   .filter(supplier -> filterPredicate.test(supplier.get().value()))
-					   // .map(supplier -> t -> )
-					   .collect(Collectors.toList());
-		return fromSuppliers(filteredSuppliers);
+		return EdgeCasesFacade.implementation.filter(this, filterPredicate);
 	}
 
 	@API(status = INTERNAL)
 	default <U> EdgeCases<U> flatMap(Function<T, EdgeCases<U>> mapper) {
-		List<Supplier<Shrinkable<U>>> flatMappedSuppliers =
-			suppliers().stream()
-					   .flatMap(supplier -> mapper.apply(supplier.get().value()).suppliers().stream())
-					   .collect(Collectors.toList());
-		return fromSuppliers(flatMappedSuppliers);
+		return EdgeCasesFacade.implementation.flatMap(this, mapper);
 	}
 }
