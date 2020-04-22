@@ -36,7 +36,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 
 		EdgeCases<String> emptyStringEdgeCases =
 			minLength != 0 ? EdgeCases.none()
-				: EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(""));
+				: EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength));
 		EdgeCases<String> singleCharEdgeCases =
 			minLength > 1 ? EdgeCases.none() : fixedSizedEdgeCases(1);
 
