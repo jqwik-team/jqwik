@@ -13,7 +13,7 @@ public class Combinators {
 
 	@API(status = INTERNAL)
 	public static abstract class CombinatorsFacade {
-		private static CombinatorsFacade implementation;
+		private static final CombinatorsFacade implementation;
 
 		static {
 			implementation = FacadeLoader.load(CombinatorsFacade.class);
@@ -28,6 +28,11 @@ public class Combinators {
 			List<Arbitrary<Object>> arbitraries,
 			Function<List<Object>, R> combineFunction,
 			long maxNumberOfSamples
+		);
+
+		public abstract <R> EdgeCases<R> combineEdgeCases(
+			List<EdgeCases<Object>> listOfEdgeCases,
+			Function<List<Object>,R> combineFunction
 		);
 	}
 
@@ -256,9 +261,13 @@ public class Combinators {
 
 				@Override
 				public EdgeCases<R> edgeCases() {
-					return a1.edgeCases().flatMap(
-						v1 -> a2.edgeCases().map(
-							v2 -> combinator.apply(v1, v2)));
+					return CombinatorsFacade.implementation.combineEdgeCases(
+						asTypedList(a1.edgeCases(), a2.edgeCases()),
+						combineFunction(combinator)
+					);
+					// return a1.edgeCases().flatMap(
+					// 	v1 -> a2.edgeCases().map(
+					// 		v2 -> combinator.apply(v1, v2)));
 				}
 			};
 		}
@@ -795,7 +804,7 @@ public class Combinators {
 
 	@API(status = MAINTAINED, since = "1.2.0")
 	public static class BuilderCombinator<B> {
-		private Arbitrary<B> builder;
+		private final Arbitrary<B> builder;
 
 		private BuilderCombinator(Arbitrary<B> delegate) {
 			this.builder = delegate;
