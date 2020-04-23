@@ -63,7 +63,7 @@ class EdgeCasesTests {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(1, 10);
 
 		EdgeCases<String> edgeCases =
-			arbitrary.edgeCases().flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i).edgeCases());
+			arbitrary.edgeCases().flatMapArbitrary(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
 
 		assertThat(edgeCases).hasSize(6);
 

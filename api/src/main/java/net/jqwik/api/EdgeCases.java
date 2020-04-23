@@ -23,7 +23,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 
 		public abstract <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper);
 
-		public abstract <T, U> EdgeCases<U> flatMap(EdgeCases<T> self, Function<T, EdgeCases<U>> mapper);
+		public abstract <T, U> EdgeCases<U> flatMapArbitrary(EdgeCases<T> self, Function<T, Arbitrary<U>> mapper);
 
 		public abstract <T> EdgeCases<T> filter(EdgeCases<T> self, Predicate<T> filterPredicate);
 	}
@@ -95,7 +95,7 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	}
 
 	@API(status = INTERNAL)
-	default <U> EdgeCases<U> flatMap(Function<T, EdgeCases<U>> mapper) {
-		return EdgeCasesFacade.implementation.flatMap(this, mapper);
+	default <U> EdgeCases<U> flatMapArbitrary(Function<T, Arbitrary<U>> mapper) {
+		return EdgeCasesFacade.implementation.flatMapArbitrary(this, mapper);
 	}
 }

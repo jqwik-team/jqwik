@@ -37,7 +37,7 @@ abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 
 	protected <C extends Collection<?>> EdgeCases<C> edgeCases(BiFunction<List<Shrinkable<T>>, Integer, Shrinkable<C>> shrinkableCreator) {
 		EdgeCases<C> emptyListEdgeCase = (minSize == 0) ? emptyListEdgeCase(shrinkableCreator) : EdgeCases.none();
-		EdgeCases<C> singleElementEdgeCases = (minSize <= 1) ? fixedSizeEdgeCases(1, shrinkableCreator) : EdgeCases.none();
+		EdgeCases<C> singleElementEdgeCases = (minSize <= 1 && maxSize >= 1) ? fixedSizeEdgeCases(1, shrinkableCreator) : EdgeCases.none();
 		EdgeCases<C> fixedSizeEdgeCases = generateFixedSizeEdgeCases() ? fixedSizeEdgeCases(minSize, shrinkableCreator) : EdgeCases.none();
 		return EdgeCases.concat(Arrays.asList(emptyListEdgeCase, singleElementEdgeCases, fixedSizeEdgeCases));
 	}

@@ -9,7 +9,7 @@ import net.jqwik.api.providers.*;
 
 public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<T> {
 	private final Supplier<Arbitrary<T>> arbitrarySupplier;
-	private List<Tuple.Tuple2<ArbitraryConfigurator, TypeUsage>> configurations = new ArrayList<>();
+	private final List<Tuple.Tuple2<ArbitraryConfigurator, TypeUsage>> configurations = new ArrayList<>();
 
 	public LazyArbitrary(Supplier<Arbitrary<T>> arbitrarySupplier) {this.arbitrarySupplier = arbitrarySupplier;}
 
@@ -26,9 +26,13 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 			} else {
 				arbitrary = configurator.configure(arbitrary, targetType);
 			}
-
 		}
 		return arbitrary.generator(genSize);
+	}
+
+	@Override
+	public EdgeCases<T> edgeCases() {
+		return EdgeCases.none();
 	}
 
 	@Override

@@ -21,10 +21,14 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	}
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Shrinkable<U>> mapper) {
+		this(toMap, mapper.apply(toMap.value()), mapper);
+	}
+
+	public FlatMappedShrinkable(Shrinkable<T> toMap, Shrinkable<U> initialShrinkable, Function<T, Shrinkable<U>> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
-		this.shrinkable = generateShrinkable(toMap.value());
-		this.value = shrinkable.value();
+		this.shrinkable = initialShrinkable;
+		this.value = initialShrinkable.value();
 	}
 
 	private Shrinkable<U> generateShrinkable(T value) {

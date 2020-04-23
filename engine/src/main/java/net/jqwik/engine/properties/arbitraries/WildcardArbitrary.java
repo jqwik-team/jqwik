@@ -12,6 +12,11 @@ public class WildcardArbitrary implements Arbitrary<Object> {
 		return RandomGenerators.integers(0, genSize/2).map(WildcardObject::new);
 	}
 
+	@Override
+	public EdgeCases<Object> edgeCases() {
+		return EdgeCases.none();
+	}
+
 	public static class WildcardObject implements Comparable<WildcardObject>, Serializable {
 		private final Integer index;
 

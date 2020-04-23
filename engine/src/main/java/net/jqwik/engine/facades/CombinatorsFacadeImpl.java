@@ -29,18 +29,23 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 
 	@Override
 	public <R> EdgeCases<R> combineEdgeCases(
-		final List<EdgeCases<Object>> listOfEdgeCases,
+		final List<Arbitrary<Object>> arbitraries,
 		final Function<List<Object>, R> combineFunction
 	) {
 		// TODO: This should also be possible with a stream().reduce() over listOfEdgeCases
-		EdgeCases<List<Object>>[] combinedEdgeCases =
-			new EdgeCases[]{EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(new ArrayList<>()))};
-		for (EdgeCases<Object> current : listOfEdgeCases) {
-			combinedEdgeCases[0] = current.flatMap(value -> combinedEdgeCases[0].map(list -> {
-				list.add(value);
-				return list;
-			}));
+		Arbitrary<List<Object>>[] combinedArbitrary = new Arbitrary[1];
+		for (int i = 0; i < arbitraries.size(); i++) {
+			Arbitrary<Object> current = arbitraries.get(i);
+			if (i == 0) {
+				combinedArbitrary[0] = current.map(Collections::singletonList);
+			} else {
+				combinedArbitrary[0] = combinedArbitrary[0].flatMap(list -> current.map(value -> {
+					ArrayList<Object> result = new ArrayList<>(list);
+					result.add(value);
+					return result;
+				}));
+			}
 		}
-		return combinedEdgeCases[0].map(combineFunction);
+		return combinedArbitrary[0].map(combineFunction).edgeCases();
 	}
 }

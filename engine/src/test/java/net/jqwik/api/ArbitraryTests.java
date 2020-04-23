@@ -24,10 +24,19 @@ class ArbitraryTests {
 	void fixGenSize() {
 		int[] injectedGenSize = {0};
 
-		Arbitrary<Integer> arbitrary = genSize -> {
-			injectedGenSize[0] = genSize;
-			return ignore -> Shrinkable.unshrinkable(0);
-		};
+		Arbitrary<Integer> arbitrary =
+			new Arbitrary<Integer>() {
+				@Override
+				public RandomGenerator<Integer> generator(final int genSize) {
+					injectedGenSize[0] = genSize;
+					return ignore -> Shrinkable.unshrinkable(0);
+				}
+
+				@Override
+				public EdgeCases<Integer> edgeCases() {
+					return EdgeCases.none();
+				}
+			};
 
 		RandomGenerator<Integer> notUsed = arbitrary.fixGenSize(42).generator(1000);
 		assertThat(injectedGenSize[0]).isEqualTo(42);

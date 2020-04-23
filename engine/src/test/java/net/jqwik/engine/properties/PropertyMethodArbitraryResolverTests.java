@@ -50,7 +50,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void useNextRegisteredProviderIfFirstDoesNotProvideAnArbitrary() {
-			Arbitrary<String> secondArbitrary = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> secondArbitrary = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
 			List<ArbitraryProvider> registeredProviders = Arrays.asList(
 				createProvider(String.class),
 				createProvider(String.class, secondArbitrary)
@@ -66,10 +66,10 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void resolveSeveralFittingArbitraries() {
-			Arbitrary<String> doesNotFitFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
-			Arbitrary<String> firstFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
-			Arbitrary<String> secondFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
-			Arbitrary<String> thirdFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> doesNotFitFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
+			Arbitrary<String> firstFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
+			Arbitrary<String> secondFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
+			Arbitrary<String> thirdFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
 			List<ArbitraryProvider> registeredProviders = Arrays.asList(
 				createProvider(String.class, firstFit),
 				createProvider(Integer.class, doesNotFitFit),
@@ -96,8 +96,8 @@ class PropertyMethodArbitraryResolverTests {
 				}
 			};
 
-			Arbitrary<String> firstFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
-			Arbitrary<String> secondFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
+			Arbitrary<String> firstFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
+			Arbitrary<String> secondFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
 			List<ArbitraryProvider> registeredProviders = Arrays.asList(
 				createProvider(String.class, firstFit),
 				createProvider(String.class, secondFit)
@@ -126,9 +126,9 @@ class PropertyMethodArbitraryResolverTests {
 				}
 			};
 
-			Arbitrary<String> firstFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
-			Arbitrary<String> secondFit = tries -> random -> Shrinkable.unshrinkable("an arbitrary string");
-			Arbitrary<String> filterOut = tries -> random -> Shrinkable.unshrinkable("filter out");
+			Arbitrary<String> firstFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
+			Arbitrary<String> secondFit = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("an arbitrary string"));
+			Arbitrary<String> filterOut = Arbitraries.fromGenerator(random -> Shrinkable.unshrinkable("filter out"));
 
 			List<ArbitraryProvider> registeredProviders = Arrays.asList(
 				createProvider(String.class, firstFit),
