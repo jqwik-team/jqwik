@@ -32,10 +32,11 @@ public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 
 	@Override
 	public Set<Shrinkable<BigInteger>> shrinkCandidatesFor(Shrinkable<BigInteger> shrinkable) {
-		return shrinkingCandidates.candidatesFor(shrinkable.value()) //
-			.stream() //
-			.map(aBigInteger -> new ShrinkableBigInteger(aBigInteger, range, shrinkingTarget)) //
-			.collect(Collectors.toSet());
+		return shrinkingCandidates
+				   .candidatesFor(shrinkable.value())
+				   .stream()
+				   .map(aBigInteger -> new ShrinkableBigInteger(aBigInteger, range, shrinkingTarget))
+				   .collect(Collectors.toSet());
 	}
 
 	@Override

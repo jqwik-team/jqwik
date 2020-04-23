@@ -13,7 +13,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	private final U value;
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> toArbitraryMapper, int genSize, long randomSeed) {
-		this(toMap, value -> toArbitraryMapper.apply(value).generator(genSize), randomSeed);
+		this(toMap, t -> toArbitraryMapper.apply(t).generator(genSize), randomSeed);
 	}
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, RandomGenerator<U>> toGeneratorMapper, long randomSeed) {
@@ -35,11 +35,17 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
 		Falsifier<T> toMapFalsifier = aT -> falsifier.execute(generateShrinkable(aT).value());
 		return toMap.shrink(toMapFalsifier)
-					.map(result -> result.map(shrinkableT -> new FlatMappedShrinkable<>(result.shrinkable(), mapper)))
+					.map(resultMapperToU(mapper))
 					.andThen(aShrinkable -> {
 						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
 						return flatMappedShrinkable.shrinkable.shrink(falsifier);
 					});
+	}
+
+	private static <T, U> Function<FalsificationResult<T>, FalsificationResult<U>> resultMapperToU(Function<T, Shrinkable<U>> mapper) {
+		return result -> result.map(shrinkableT -> {
+			return new FlatMappedShrinkable<>(shrinkableT, mapper);
+		});
 	}
 
 	@Override
