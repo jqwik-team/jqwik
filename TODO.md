@@ -1,11 +1,15 @@
 - 1.3.0
 
-    - Introduce Arbitrary.edgeCases() and combinatorial execution of edge cases
-        - Implement edgeCases() for
-            - Combinators
+    - Introduce Arbitrary.edgeCases()
+        - LazyArbitrary?
+        - DefaultActionSequenceArbitrary?
         - Configure default in jqwik.properties
-        - Move internals from EdgeCases class to EdgeCasesFacade or to engine module
         - Document edge cases
+
+    - Offer Arbitrary.addEdgeCase(value)|.clearEdgeCases() for 
+        - Numeric Arbitraries
+        - CharacterArbitrary
+        - Arbitrary.of() arbitraries
 
     - Get rid of Arbitraries.samples() in jqwik code
     

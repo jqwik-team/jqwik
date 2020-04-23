@@ -19,6 +19,7 @@ class CombinatorsEdgeCasesTests {
 		Arbitrary<Integer> plus = Combinators
 									  .combine(a1, a2)
 									  .as((i1, i2) -> i1 + i2);
+
 		EdgeCases<Integer> edgeCases = plus.edgeCases();
 		assertThat(values(edgeCases))
 			.containsExactlyInAnyOrder(11, 21, 12, 22);
@@ -52,6 +53,7 @@ class CombinatorsEdgeCasesTests {
 		Arbitrary<Integer> plus = Combinators
 									  .combine(a1, a2, a3)
 									  .as((i1, i2, i3) -> i1 + i2 + i3);
+
 		EdgeCases<Integer> edgeCases = plus.edgeCases();
 		assertThat(values(edgeCases))
 			.containsExactlyInAnyOrder(111, 112, 211, 121, 221, 212, 122, 222);
@@ -68,6 +70,7 @@ class CombinatorsEdgeCasesTests {
 		Arbitrary<Integer> plus = Combinators
 									  .combine(a1, a2, a3, a4)
 									  .as((i1, i2, i3, i4) -> i1 + i2 + i3 + i4);
+
 		EdgeCases<Integer> edgeCases = plus.edgeCases();
 		assertThat(values(edgeCases))
 			.contains(1111, 1112, 1121, 1211, 2111, 2222);
@@ -113,7 +116,6 @@ class CombinatorsEdgeCasesTests {
 	}
 
 	@Example
-	@Disabled
 	void combine7arbitraries() {
 		Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
 		Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
@@ -125,10 +127,15 @@ class CombinatorsEdgeCasesTests {
 		Arbitrary<Integer> plus = Combinators
 									  .combine(a1, a2, a3, a4, a5, a6, a7)
 									  .as((i1, i2, i3, i4, i5, i6, i7) -> i1 + i2 + i3 + i4 + i5 + i6 + i7);
+
+		EdgeCases<Integer> edgeCases = plus.edgeCases();
+		assertThat(values(edgeCases))
+			.contains(1111111, 1111112, 1111121, 1111211, 1112111, 1121111, 1211111, 2111111, 2222222);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(128);
 	}
 
 	@Example
-	@Disabled
 	void combine8arbitraries() {
 		Arbitrary<Integer> a1 = Arbitraries.of(1, 2);
 		Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
@@ -141,10 +148,15 @@ class CombinatorsEdgeCasesTests {
 		Arbitrary<Integer> plus = Combinators
 									  .combine(a1, a2, a3, a4, a5, a6, a7, a8)
 									  .as((i1, i2, i3, i4, i5, i6, i7, i8) -> i1 + i2 + i3 + i4 + i5 + i6 + i7 + i8);
+
+		EdgeCases<Integer> edgeCases = plus.edgeCases();
+		assertThat(values(edgeCases))
+			.contains(11111111, 11111112, 11111121, 11111211, 11112111, 11121111, 11211111, 12111111, 21111111, 22222222);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(256);
 	}
 
 	@Example
-	@Disabled
 	void combineArbitraryList() {
 		Arbitrary<Integer> a1 = Arbitraries.of(1, 2, 3);
 		Arbitrary<Integer> a2 = Arbitraries.of(10, 20);
@@ -153,13 +165,16 @@ class CombinatorsEdgeCasesTests {
 									  .combine(asList(a1, a2, a3))
 									  .as(params -> params.stream().mapToInt(i -> i).sum());
 
-		assertThat(plus.exhaustive()).isPresent();
+		EdgeCases<Integer> edgeCases = plus.edgeCases();
+		assertThat(values(edgeCases))
+			.containsExactlyInAnyOrder(111, 113, 121, 123, 211, 213, 221, 223);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(8);
 	}
 
 	@Example
-	@Disabled
 	void combineWithBuilder() {
-		Arbitrary<Integer> numbers = Arbitraries.integers().between(1, 4);
+		Arbitrary<Integer> numbers = Arbitraries.integers().between(10, 100);
 
 		Supplier<AdditionBuilder> additionBuilderSupplier = AdditionBuilder::new;
 		Arbitrary<Integer> sum = Combinators
@@ -167,6 +182,12 @@ class CombinatorsEdgeCasesTests {
 									 .use(numbers).in((b, n) -> b.addNumber(n))
 									 .use(numbers).in((b, n) -> b.addNumber(n))
 									 .build(AdditionBuilder::sum);
+
+		EdgeCases<Integer> edgeCases = sum.edgeCases();
+		assertThat(values(edgeCases))
+			.containsExactlyInAnyOrder(20, 110, 200);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(3);
 	}
 
 	class AdditionBuilder {

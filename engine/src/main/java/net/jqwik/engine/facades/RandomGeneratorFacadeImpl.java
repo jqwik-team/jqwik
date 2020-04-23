@@ -43,6 +43,6 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 
 	@Override
 	public <T> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability) {
-		return new InjectDuplicatesGenerator(self, duplicateProbability);
+		return new InjectDuplicatesGenerator<>(self, duplicateProbability);
 	}
 }

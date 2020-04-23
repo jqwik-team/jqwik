@@ -38,4 +38,9 @@ public class DefaultActionSequenceArbitrary<M> extends AbstractArbitraryBase imp
 		return new ActionSequenceGenerator<>(actionArbitrary, genSize, minSize, effectiveMaxSize);
 	}
 
+	@Override
+	public EdgeCases<ActionSequence<M>> edgeCases() {
+		return EdgeCases.none();
+	}
+
 }

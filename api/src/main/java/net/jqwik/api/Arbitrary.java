@@ -103,10 +103,7 @@ public interface Arbitrary<T> {
 	}
 
 	@API(status = EXPERIMENTAL, since = "1.3.0")
-	// TODO: Remove default implementation
-	default EdgeCases<T> edgeCases() {
-		return EdgeCases.none();
-	}
+	EdgeCases<T> edgeCases();
 
 	/**
 	 * Create optional stream of all possible values this arbitrary could generate.
@@ -209,8 +206,7 @@ public interface Arbitrary<T> {
 
 			@Override
 			public EdgeCases<U> edgeCases() {
-				Function<T, EdgeCases<U>> edgeCasesMapper = t -> mapper.apply(t).edgeCases();
-				return Arbitrary.this.edgeCases().flatMap(edgeCasesMapper);
+				return Arbitrary.this.edgeCases().flatMapArbitrary(mapper);
 			}
 		};
 	}
@@ -375,7 +371,17 @@ public interface Arbitrary<T> {
 	 */
 	@API(status = MAINTAINED, since = "1.3.0")
 	default Arbitrary<List<T>> collect(Predicate<List<T>> until) {
-		return genSize -> Arbitrary.this.generator(genSize).collect(until);
+		return new Arbitrary<List<T>>() {
+			@Override
+			public RandomGenerator<List<T>> generator(final int genSize) {
+				return Arbitrary.this.generator(genSize).collect(until);
+			}
+
+			@Override
+			public EdgeCases<List<T>> edgeCases() {
+				return EdgeCases.none();
+			}
+		};
 	}
 
 	/**
@@ -463,6 +469,11 @@ public interface Arbitrary<T> {
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples);
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return Arbitrary.this.edgeCases();
 			}
 		};
 	}

@@ -38,20 +38,23 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 	}
 
 	@Override
-	public <T, U> EdgeCases<U> flatMap(EdgeCases<T> self, Function<T, EdgeCases<U>> mapper) {
+	public <T, U> EdgeCases<U> flatMapArbitrary(EdgeCases<T> self, Function<T, Arbitrary<U>> mapper) {
 		List<Supplier<Shrinkable<U>>> flatMappedSuppliers =
 			self.suppliers().stream()
 				.flatMap(tSupplier -> {
 					T t = tSupplier.get().value();
-					return mapper.apply(t).suppliers()
+					return mapper.apply(t).edgeCases().suppliers()
 								 .stream()
 								 .map(uSupplier -> {
-									 Function<T, Shrinkable<U>> shrinkableMapper = ignoreT -> uSupplier.get();
-									 return (Supplier<Shrinkable<U>>) () -> new FlatMappedShrinkable<>(tSupplier.get(), shrinkableMapper);
+									 Function<T, Shrinkable<U>> shrinkableMapper =
+										 newT -> mapper.apply(newT).generator(1000).next(new Random(42L));
+									 return (Supplier<Shrinkable<U>>) () -> new FlatMappedShrinkable<>(
+									 	tSupplier.get(),
+										uSupplier.get(),
+										shrinkableMapper
+									 );
 								 });
 				})
-				// .map(supplier -> (Supplier<Shrinkable<U>>) () -> {
-				// })
 				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(flatMappedSuppliers);
 	}

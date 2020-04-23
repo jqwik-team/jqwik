@@ -72,9 +72,9 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 	}
 
 	private EdgeCases<Map<K, V>> singleEntryEdgeCases() {
-		return keysArbitrary.edgeCases().flatMap(
+		return keysArbitrary.edgeCases().flatMapArbitrary(
 			key ->
-				valuesArbitrary.edgeCases().map(value -> {
+				valuesArbitrary.map(value -> {
 					HashMap<K, V> map = new HashMap<>();
 					map.put(key, value);
 					return map;

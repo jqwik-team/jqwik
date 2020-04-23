@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 //Currently only used in DefaultTypeArbitrary
 //Support configurators if this class is used somewhere else
 class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
-	private Arbitrary<T> arbitrary;
+	private final Arbitrary<T> arbitrary;
 
 	IgnoreGenerationErrorArbitrary(Arbitrary<T> arbitrary) {
 		this.arbitrary = arbitrary;
@@ -37,4 +37,8 @@ class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 		return Optional.empty();
 	}
 
+	@Override
+	public EdgeCases<T> edgeCases() {
+		return EdgeCases.none();
+	}
 }
