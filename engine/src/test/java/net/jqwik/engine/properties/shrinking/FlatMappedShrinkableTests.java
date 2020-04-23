@@ -59,13 +59,12 @@ class FlatMappedShrinkableTests {
 		assertThat(sequence.current().value()).hasSize(1);
 		verify(valueReporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 1));
 
-		while (sequence.next(count, reporter)) {}
+		assertThat(sequence.next(count, reporter)).isTrue();
 
 		assertThat(sequence.current().value()).hasSize(0);
 		verify(valueReporter).accept(ArgumentMatchers.argThat(aString -> aString.length() == 0));
 
-		// TODO: Still not sure why it requires an extra shrink step sometimes
-		assertThat(counter.get()).isBetween(4, 5);
+		assertThat(counter.get()).isEqualTo(4);
 	}
 
 	@Example
@@ -98,7 +97,7 @@ class FlatMappedShrinkableTests {
 
 		while(sequence.next(count, reporter));
 
-		assertThat(sequence.current().value()).isEqualTo("a");
+		assertThat(sequence.current().value()).isEqualTo("aaa");
 	}
 
 }

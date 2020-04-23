@@ -33,12 +33,11 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 
 	@Override
 	public EdgeCases<String> edgeCases() {
-
 		EdgeCases<String> emptyStringEdgeCases =
-			minLength != 0 ? EdgeCases.none()
+			minLength > 0 ? EdgeCases.none()
 				: EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength));
 		EdgeCases<String> singleCharEdgeCases =
-			minLength > 1 ? EdgeCases.none() : fixedSizedEdgeCases(1);
+			minLength <= 1 && maxLength >= 1 ? fixedSizedEdgeCases(1) : EdgeCases.none();
 
 		// TODO: What if character arbitrary is unique? Can that happen?
 		EdgeCases<String> fixedSizeEdgeCases =

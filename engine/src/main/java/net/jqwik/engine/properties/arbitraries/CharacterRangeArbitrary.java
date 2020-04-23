@@ -27,12 +27,13 @@ public class CharacterRangeArbitrary implements Arbitrary<Character> {
 	private List<Shrinkable<Character>> listOfEdgeCases() {
 		return Stream.of(min, max)
 					 .map(aCharacter -> new ShrinkableBigInteger(
-							 BigInteger.valueOf(aCharacter),
+							 BigInteger.valueOf((int) aCharacter),
 							 Range.of(BigInteger.valueOf(min), BigInteger.valueOf(max)),
 							 BigInteger.valueOf(min)
 						  )
 					 )
-					 .map(shrinkableBigInteger -> shrinkableBigInteger.map(bi -> (char) bi.intValueExact()))
+					 .map(shrinkableBigInteger -> shrinkableBigInteger.map(BigInteger::intValueExact))
+					 .map(shrinkableInteger -> shrinkableInteger.map(anInt -> ((char) (int) anInt)))
 					 .collect(Collectors.toList());
 	}
 

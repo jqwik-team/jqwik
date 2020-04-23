@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.constraints.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -146,7 +147,6 @@ class ArbitrariesEdgeCasesTests {
 			assertThat(values(edgeCases)).hasSize(3);
 		}
 
-
 		@Example
 		@Label("Arbitraries.of(char[] chars)")
 		void ofChars() {
@@ -224,15 +224,17 @@ class ArbitrariesEdgeCasesTests {
 			assertThat(values(edgeCases)).hasSize(3);
 		}
 
-		@Example
-		void stringsOfFixedLength() {
-			StringArbitrary arbitrary = Arbitraries.strings().withCharRange('a', 'z').ofLength(3);
+		@Property
+		void stringsOfFixedLength(@ForAll @IntRange(min = 0, max = 10) int stringLength) {
+			StringArbitrary arbitrary = Arbitraries.strings().withCharRange('a', 'z').ofLength(stringLength);
 			EdgeCases<String> edgeCases = arbitrary.edgeCases();
-			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-				"aaa", "zzz"
-			);
-			// make sure edge cases can be repeatedly generated
-			assertThat(values(edgeCases)).hasSize(2);
+			if (stringLength == 0) {
+				assertThat(values(edgeCases)).containsExactly("");
+			} else {
+				assertThat(values(edgeCases)).hasSize(2);
+				assertThat(values(edgeCases)).allMatch(aString -> aString.length() == stringLength);
+				assertThat(values(edgeCases)).allMatch(aString -> aString.chars().allMatch(c -> c == 'a' || c == 'z'));
+			}
 		}
 
 	}
