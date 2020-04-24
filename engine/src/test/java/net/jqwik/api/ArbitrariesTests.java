@@ -253,10 +253,12 @@ class ArbitrariesTests {
 
 		@Example
 		void recursive() {
-			Arbitrary<Integer> base = Arbitraries.constant(0);
+			Arbitrary<Integer> base = Arbitraries.integers().between(0, 5);
 			Arbitrary<Integer> integer = Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
 
-			ArbitraryTestHelper.assertGeneratedExactly(integer.generator(1000), 3);
+			ArbitraryTestHelper.assertAllGenerated(integer.generator(1000), result -> {
+				assertThat(result).isBetween(3, 8);
+			});
 		}
 
 	}
@@ -602,9 +604,9 @@ class ArbitrariesTests {
 		@Example
 		void doublesWithShrinkingTargetOutsideBorders() {
 			Arbitrary<Double> arbitrary = Arbitraries.doubles()
-														 .between(1.0, 10.0)
-														 .shrinkTowards(-1.0);
-			assertThatThrownBy( () -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
+													 .between(1.0, 10.0)
+													 .shrinkTowards(-1.0);
+			assertThatThrownBy(() -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
 		}
 
 	}
@@ -677,9 +679,9 @@ class ArbitrariesTests {
 		@Example
 		void floatsWithShrinkingTargetOutsideBorders() {
 			Arbitrary<Float> arbitrary = Arbitraries.floats()
-													 .between(1.0f, 10.0f)
-													 .shrinkTowards(-1.0f);
-			assertThatThrownBy( () -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
+													.between(1.0f, 10.0f)
+													.shrinkTowards(-1.0f);
+			assertThatThrownBy(() -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
 		}
 
 	}
@@ -743,7 +745,7 @@ class ArbitrariesTests {
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
 														 .between(BigDecimal.ONE, BigDecimal.TEN)
 														 .shrinkTowards(BigDecimal.valueOf(-1));
-			assertThatThrownBy( () -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
+			assertThatThrownBy(() -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
 		}
 
 		@Example
