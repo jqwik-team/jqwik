@@ -16,7 +16,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
 	@API(status = INTERNAL)
 	abstract class ShrinkableFacade {
-		private static ShrinkableFacade implementation;
+		private static final ShrinkableFacade implementation;
 
 		static  {
 			implementation = FacadeLoader.load(ShrinkableFacade.class);
@@ -44,6 +44,8 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 
 	/**
 	 * Sometimes simplifies test writing
+	 *
+	 * @return generic version of a shrinkable
 	 */
 	@SuppressWarnings("unchecked")
 	@API(status = INTERNAL, since = "1.2.4")

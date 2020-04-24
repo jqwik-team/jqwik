@@ -68,9 +68,6 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		return () -> suppliers;
 	}
 
-	/**
-	 * Only use for immutable values
-	 */
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> fromShrinkables(List<Shrinkable<T>> shrinkables) {
 		return () -> shrinkables

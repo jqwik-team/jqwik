@@ -18,8 +18,8 @@ public class FacadeLoader {
 	 * one facade registered otherwise null will be returned and a severe error
 	 * is logged.
 	 *
-	 * @param facadeClass
-	 * @param <T>
+	 * @param facadeClass The facade type to load
+	 * @param <T> the facade type
 	 * @return instance of facade
 	 */
 	public static <T> T load(Class<T> facadeClass) {

@@ -46,6 +46,8 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 
 	/**
 	 * This is a hack to make unique work for exhaustive generation
+	 *
+	 * @return true if this generator refers to an arbitrary that returns unique values
 	 */
 	default boolean isUnique() {
 		return false;

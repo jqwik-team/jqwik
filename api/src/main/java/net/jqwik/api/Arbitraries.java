@@ -599,6 +599,8 @@ public class Arbitraries {
 	 *
 	 * @param keysArbitrary   The arbitrary to generate the keys
 	 * @param valuesArbitrary The arbitrary to generate the values
+	 * @param <K> type of keys
+	 * @param <V> type of values
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.1.6")
@@ -612,6 +614,8 @@ public class Arbitraries {
 	 *
 	 * @param keysArbitrary   The arbitrary to generate the keys
 	 * @param valuesArbitrary The arbitrary to generate the values
+	 * @param <K> type of keys
+	 * @param <V> type of values
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")

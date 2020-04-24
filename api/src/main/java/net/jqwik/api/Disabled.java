@@ -18,6 +18,8 @@ public @interface Disabled {
 
 	/**
 	 * The reason this annotated test container or test method is disabled.
+	 *
+	 * @return reason for disabling test or test container
 	 */
 	String value() default "";
 

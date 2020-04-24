@@ -17,10 +17,10 @@ public class Assume {
 	 * If condition does not hold, the current property method will be aborted,
 	 * i.e., it will not be executed but not counted as a try.
 	 *
+	 * <p>
 	 * Assumptions are typically positioned at the beginning of a property method.
 	 *
-	 *
-	 * @param condition
+	 * @param condition Condition to make the assumption true
 	 */
 	public static void that(boolean condition) {
 		if (!condition) {
@@ -32,9 +32,10 @@ public class Assume {
 	 * If condition provided by conditionSupplier does not hold, the current property method will be aborted,
 	 * i.e., it will not be executed but not counted as a try.
 	 *
+	 * <p>
 	 * Assumptions are typically positioned at the beginning of a property method.
 	 *
-	 * @param conditionSupplier
+	 * @param conditionSupplier supplier for condition to make assumption true
 	 */
 	public static void that(Supplier<Boolean> conditionSupplier) {
 		that(conditionSupplier.get());
