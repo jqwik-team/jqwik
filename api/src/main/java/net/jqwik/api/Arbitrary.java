@@ -106,6 +106,32 @@ public interface Arbitrary<T> {
 	EdgeCases<T> edgeCases();
 
 	/**
+	 * Do not give edge cases a higher probability when generating values.
+	 *
+	 * @return new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.0")
+	default Arbitrary<T> withoutEdgeCases() {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples);
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return EdgeCases.none();
+			}
+		};
+	}
+
+
+	/**
 	 * Create optional stream of all possible values this arbitrary could generate.
 	 * This is only possible if the arbitrary is available for exhaustive generation.
 	 *

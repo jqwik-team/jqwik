@@ -1,14 +1,9 @@
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases()
-        - Arbitrary.withoutEdgeCases()
         - Configure default in jqwik.properties
         - Document edge cases
-        - Offer Arbitrary.addEdgeCase(value)|.clearEdgeCases() for 
-            - Numeric Arbitraries
-            - CharacterArbitrary
-            - Arbitrary.of() arbitraries
-
+        
     - Get rid of Arbitraries.samples() in jqwik code. 
       Use OrderedArbitraryForTesting where necessary.
     
@@ -25,6 +20,12 @@
     
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
+
+    - Arbitrary.withEdgeCase(value) 
+        - Make shrinkable variants for
+            - Numeric Arbitraries
+            - CharacterArbitrary
+            - Arbitrary.of() arbitraries
 
     - ProvideArbitraryHook
         - Let domains use that hook

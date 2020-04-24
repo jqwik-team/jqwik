@@ -13,6 +13,13 @@ import static org.assertj.core.api.Assertions.*;
 class ArbitraryEdgeCasesTests {
 
 	@Example
+	void withoutEdgeCases() {
+		Arbitrary<Integer> arbitrary = Arbitraries.integers().withoutEdgeCases();
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).isEmpty();
+	}
+
+	@Example
 	void mapping() {
 		Arbitrary<String> arbitrary = Arbitraries.integers().between(-10, 10).map(i -> Integer.toString(i));
 		EdgeCases<String> edgeCases = arbitrary.edgeCases();
