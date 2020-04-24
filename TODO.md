@@ -1,7 +1,6 @@
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases()
-        - Arbitraries.lazy()
         - Arbitraries.recur()
         - Arbitrary.withoutEdgeCases()
         - Configure default in jqwik.properties
