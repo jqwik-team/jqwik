@@ -32,7 +32,7 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 
 	@Override
 	public EdgeCases<T> edgeCases() {
-		return EdgeCases.none();
+		return arbitrarySupplier.get().edgeCases();
 	}
 
 	@Override

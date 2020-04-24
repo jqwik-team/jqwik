@@ -4,6 +4,7 @@ import java.math.*;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
@@ -244,7 +245,7 @@ class ArbitrariesTests {
 
 		@Example
 		void lazy() {
-			Arbitrary<Integer> samples = Arbitraries.lazy(() -> Arbitraries.samples(1, 2, 3));
+			Arbitrary<Integer> samples = Arbitraries.lazy(() -> new OrderedArbitraryForTesting<>(1, 2, 3));
 
 			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
 			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
