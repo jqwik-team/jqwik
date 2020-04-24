@@ -30,7 +30,8 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			properties.defaultTries(),
 			properties.defaultMaxDiscardRatio(),
 			properties.defaultAfterFailure(),
-			properties.defaultGeneration()
+			properties.defaultGeneration(),
+			properties.defaultEdgeCases()
 		);
 	}
 

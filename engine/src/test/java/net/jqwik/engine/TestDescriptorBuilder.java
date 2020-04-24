@@ -23,6 +23,7 @@ public class TestDescriptorBuilder {
 	public static final int MAX_DISCARD_RATIO = 5;
 	public static final AfterFailureMode AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
 	public static final GenerationMode GENERATION = GenerationMode.AUTO;
+	public static final EdgeCasesMode EDGE_CASES = EdgeCasesMode.MIXIN;
 
 	private TestDescriptorBuilder parentBuilder = null;
 
@@ -49,9 +50,9 @@ public class TestDescriptorBuilder {
 		return testDescriptorBuilder;
 	}
 
-	private Object element;
+	private final Object element;
 
-	private List<TestDescriptorBuilder> children = new ArrayList<>();
+	private final List<TestDescriptorBuilder> children = new ArrayList<>();
 
 	private TestDescriptorBuilder(Object element) {
 		this.element = element;
@@ -109,7 +110,7 @@ public class TestDescriptorBuilder {
 				PropertyConfiguration propertyConfig =
 					PropertyConfiguration.from(
 						property,
-						PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE, GENERATION),
+						PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE, GENERATION, EDGE_CASES),
 						null,
 						null
 					);

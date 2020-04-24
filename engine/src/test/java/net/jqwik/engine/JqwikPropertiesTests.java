@@ -27,5 +27,6 @@ class JqwikPropertiesTests {
 
 		assertThat(properties.defaultGeneration()).isEqualTo(GenerationMode.AUTO);
 
+		assertThat(properties.defaultEdgeCases()).isEqualTo(EdgeCasesMode.MIXIN);
 	}
 }

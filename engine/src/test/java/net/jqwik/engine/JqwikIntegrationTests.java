@@ -33,7 +33,8 @@ class JqwikIntegrationTests {
 					1000,
 					5,
 					AfterFailureMode.PREVIOUS_SEED,
-					GenerationMode.AUTO
+					GenerationMode.AUTO,
+					EdgeCasesMode.MIXIN
 				);
 			}
 

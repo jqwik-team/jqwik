@@ -8,12 +8,14 @@ public interface PropertyDefaultValues {
 
 	AfterFailureMode afterFailure();
 	GenerationMode generation();
+	EdgeCasesMode edgeCases();
 
 	static PropertyDefaultValues with(
 		int tries,
 		int maxDiscardRatio,
 		AfterFailureMode afterFailureMode,
-		GenerationMode generationMode
+		GenerationMode generationMode,
+		final EdgeCasesMode edgeCasesMode
 	) {
 		return new PropertyDefaultValues() {
 			@Override
@@ -34,6 +36,11 @@ public interface PropertyDefaultValues {
 			@Override
 			public GenerationMode generation() {
 				return generationMode;
+			}
+
+			@Override
+			public EdgeCasesMode edgeCases() {
+				return edgeCasesMode;
 			}
 		};
 	}

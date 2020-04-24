@@ -22,16 +22,18 @@ class PropertyMethodResolverTest {
 	private static final int DEFAULT_MAX_DISCARD_RATIO = 4;
 	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
 	private static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
+	private static final EdgeCasesMode DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN;
 
-	private TestRunData testRunData = new TestRunData();
-	private PropertyDefaultValues propertyDefaultValues =
+	private final TestRunData testRunData = new TestRunData();
+	private final PropertyDefaultValues propertyDefaultValues =
 		PropertyDefaultValues.with(
 			DEFAULT_TRIES,
 			DEFAULT_MAX_DISCARD_RATIO,
 			DEFAULT_AFTER_FAILURE,
-			DEFAULT_GENERATION
+			DEFAULT_GENERATION,
+			DEFAULT_EDGE_CASES
 		);
-	private PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
+	private final PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
 
 	@Group
 	class ResolveElement {

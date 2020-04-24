@@ -1,8 +1,8 @@
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases()
-        - Configure default in jqwik.properties
         - Document edge cases
+        - Document jqwik.properties: defaultEdgeCases
         
     - Get rid of Arbitraries.samples() in jqwik code. 
       Use OrderedArbitraryForTesting where necessary.

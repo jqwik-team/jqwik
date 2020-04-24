@@ -32,7 +32,8 @@ class DiscoveryTests {
 			1000,
 			5,
 			AfterFailureMode.PREVIOUS_SEED,
-			GenerationMode.AUTO
+			GenerationMode.AUTO,
+			EdgeCasesMode.MIXIN
 		);
 	private final UniqueId engineId = UniqueId.forEngine(testEngine.getId());
 

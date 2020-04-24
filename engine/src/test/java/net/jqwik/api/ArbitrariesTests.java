@@ -333,7 +333,7 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(collections.generator(1000), Set.class::isInstance);
 		}
 
-		@Property
+		@Property(tries = 100)
 		void defaultForParameterizedType(@ForAll("stringLists") @Size(10) List<?> stringList) {
 			assertThat(stringList).hasSize(10);
 			assertThat(stringList).allMatch(element -> element instanceof String);
