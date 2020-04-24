@@ -30,7 +30,7 @@ public class PropertyConfiguration {
 										: property.generation();
 
 		EdgeCasesMode edgeCasesMode = property.edgeCases() == EdgeCasesMode.NOT_SET
-			? EdgeCasesMode.MIXIN
+			? propertyDefaultValues.edgeCases()
 			: property.edgeCases();
 
 		return new PropertyConfiguration(

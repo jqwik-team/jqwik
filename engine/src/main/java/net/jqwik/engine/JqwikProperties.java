@@ -18,7 +18,8 @@ public class JqwikProperties {
 		"useJunitPlatformReporter",
 		"defaultAfterFailure",
 		"reportOnlyFailures",
-		"defaultGeneration"
+		"defaultGeneration",
+		"defaultEdgeCases"
 	};
 
 	private static final String PROPERTIES_FILE_NAME = "jqwik.properties";
@@ -31,6 +32,7 @@ public class JqwikProperties {
 	private static final String DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED.name();
 	private static final String DEFAULT_REPORT_ONLY_FAILURES = "false";
 	private static final String DEFAULT_GENERATION = GenerationMode.AUTO.name();
+	private static final String DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN.name();
 
 	// TODO: Change default to true as soon as Gradle has support for platform reporter
 	// see https://github.com/gradle/gradle/issues/4605
@@ -44,6 +46,7 @@ public class JqwikProperties {
 	private AfterFailureMode defaultAfterFailure;
 	private boolean reportOnlyFailures;
 	private GenerationMode defaultGeneration;
+	private EdgeCasesMode defaultEdgeCases;
 
 	public String databasePath() {
 		return databasePath;
@@ -77,6 +80,10 @@ public class JqwikProperties {
 		return defaultGeneration;
 	}
 
+	public EdgeCasesMode defaultEdgeCases() {
+		return defaultEdgeCases;
+	}
+
 	JqwikProperties() {
 		this(PROPERTIES_FILE_NAME);
 	}
@@ -105,6 +112,7 @@ public class JqwikProperties {
 			defaultAfterFailure = AfterFailureMode.valueOf(properties.getProperty("defaultAfterFailure", DEFAULT_AFTER_FAILURE));
 			reportOnlyFailures = Boolean.parseBoolean(properties.getProperty("reportOnlyFailures", DEFAULT_REPORT_ONLY_FAILURES));
 			defaultGeneration = GenerationMode.valueOf(properties.getProperty("defaultGeneration", DEFAULT_GENERATION));
+			defaultEdgeCases = EdgeCasesMode.valueOf(properties.getProperty("defaultEdgeCases", DEFAULT_EDGE_CASES));
 		} catch (Throwable throwable) {
 			String message = String.format("Error while reading properties file [%s]", propertiesFileName);
 			throw new JqwikException(message, throwable);
