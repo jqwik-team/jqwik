@@ -1,15 +1,15 @@
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases()
-        - LazyArbitrary?
-        - DefaultActionSequenceArbitrary?
+        - Arbitraries.lazy()
+        - Arbitraries.recur()
+        - Arbitrary.withoutEdgeCases()
         - Configure default in jqwik.properties
         - Document edge cases
-
-    - Offer Arbitrary.addEdgeCase(value)|.clearEdgeCases() for 
-        - Numeric Arbitraries
-        - CharacterArbitrary
-        - Arbitrary.of() arbitraries
+        - Offer Arbitrary.addEdgeCase(value)|.clearEdgeCases() for 
+            - Numeric Arbitraries
+            - CharacterArbitrary
+            - Arbitrary.of() arbitraries
 
     - Get rid of Arbitraries.samples() in jqwik code
     

@@ -34,6 +34,42 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Example
+	@Label("Arbitraries.entries(key, value)")
+	void entries() {
+		StringArbitrary keys = Arbitraries.strings().withCharRange('a', 'z').ofMinLength(1);
+		IntegerArbitrary values = Arbitraries.integers().between(10, 100);
+		Arbitrary<Map.Entry<String, Integer>> arbitrary = Arbitraries.entries(keys, values);
+		EdgeCases<Map.Entry<String, Integer>> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			mapEntry("a", 10),
+			mapEntry("a", 100),
+			mapEntry("z", 10),
+			mapEntry("z", 100)
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(4);
+	}
+
+	private <K, V> Map.Entry<K, V> mapEntry(K key, V value) {
+		return new Map.Entry<K, V>() {
+			@Override
+			public K getKey() {
+				return key;
+			}
+
+			@Override
+			public V getValue() {
+				return value;
+			}
+
+			@Override
+			public V setValue(final V value) {
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+
+	@Example
 	@Label("Arbitraries.constant(value)")
 	void constant() {
 		Arbitrary<String> arbitrary = Arbitraries.constant("abc");
