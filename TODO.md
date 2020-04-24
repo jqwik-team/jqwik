@@ -1,7 +1,6 @@
 - 1.3.0
 
     - Introduce Arbitrary.edgeCases()
-        - Arbitraries.recur()
         - Arbitrary.withoutEdgeCases()
         - Configure default in jqwik.properties
         - Document edge cases
@@ -10,7 +9,8 @@
             - CharacterArbitrary
             - Arbitrary.of() arbitraries
 
-    - Get rid of Arbitraries.samples() in jqwik code
+    - Get rid of Arbitraries.samples() in jqwik code. 
+      Use OrderedArbitraryForTesting where necessary.
     
     - Unify all Arbitraries.of() implementations
 

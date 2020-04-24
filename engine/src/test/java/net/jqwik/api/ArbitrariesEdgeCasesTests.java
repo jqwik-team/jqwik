@@ -100,6 +100,17 @@ class ArbitrariesEdgeCasesTests {
 	}
 
 	@Example
+	@Label("Arbitraries.recursive()")
+	void recursive() {
+		Arbitrary<Integer> base = Arbitraries.integers().between(5, 10);
+		Arbitrary<Integer> arbitrary = Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactly(8, 13);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(2);
+	}
+
+	@Example
 	@Label("Arbitraries.shuffle()")
 	void shuffle() {
 		Arbitrary<List<Integer>> arbitrary = Arbitraries.shuffle(1, 2, 3);

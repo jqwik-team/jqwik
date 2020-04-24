@@ -549,6 +549,8 @@ public class Arbitraries {
 	 * @param arbitrarySupplier The supplier function being used to generate an arbitrary
 	 * @param <T>               The type of values to generate
 	 * @return a new arbitrary instance
+	 * 
+	 * @see #recursive(Supplier, Function, int)
 	 */
 	public static <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
 		return ArbitrariesFacade.implementation.lazy(arbitrarySupplier);
@@ -557,14 +559,16 @@ public class Arbitraries {
 	/**
 	 * Create an arbitrary by deterministic recursion.
 	 * <p>
-	 * This is useful (and necessary) when arbitrary providing functions use other arbitrary providing functions
-	 * in a recursive way. Without the use of lazy() this would result in a stack overflow.
+	 * Mind that the arbitrary will be created by invoking recursion at arbitrary creation time.
+	 * Using {@linkplain #lazy(Supplier)} instead will recur at value generation time.
 	 *
 	 * @param base  The supplier returning the recursion's base case
 	 * @param recur The function to extend the base case
 	 * @param depth The number of times to invoke recursion
 	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
+	 * 
+	 * @see #lazy(Supplier) 
 	 */
 	public static <T> Arbitrary<T> recursive(
 		Supplier<Arbitrary<T>> base,
