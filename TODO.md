@@ -4,11 +4,11 @@
         - Document edge cases
         - Document jqwik.properties: defaultEdgeCases
         
+    - Unify all Arbitraries.of() implementations
+
     - Get rid of Arbitraries.samples() in jqwik code. 
       Use OrderedArbitraryForTesting where necessary.
     
-    - Unify all Arbitraries.of() implementations
-
     - Scrutinize unique() behaviour of IteratorArbitrary, StreamArbitrary, ArrayArbitrary
         - When @Unique is a constraint
       

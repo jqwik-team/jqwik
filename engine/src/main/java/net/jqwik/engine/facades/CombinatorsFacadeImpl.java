@@ -32,6 +32,9 @@ public class CombinatorsFacadeImpl extends Combinators.CombinatorsFacade {
 		final List<Arbitrary<Object>> arbitraries,
 		final Function<List<Object>, R> combineFunction
 	) {
+		if (arbitraries.isEmpty()) {
+			return EdgeCases.none();
+		}
 		// TODO: This should also be possible with a stream().reduce() over listOfEdgeCases
 		Arbitrary<List<Object>>[] combinedArbitrary = new Arbitrary[1];
 		for (int i = 0; i < arbitraries.size(); i++) {
