@@ -40,8 +40,6 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 	@Override
 	public EdgeCases<T> edgeCases() {
 		return EdgeCases.none();
-		// TODO: With recursive arbitrary evaluation this results in a stack overflow
-		// return getArbitrary().edgeCases();
 	}
 
 	@Override

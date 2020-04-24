@@ -244,14 +244,6 @@ class ArbitrariesTests {
 	class Recursion {
 
 		@Example
-		void lazy() {
-			Arbitrary<Integer> samples = Arbitraries.lazy(() -> new OrderedArbitraryForTesting<>(1, 2, 3));
-
-			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
-			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
-		}
-
-		@Example
 		void recursive() {
 			Arbitrary<Integer> base = Arbitraries.integers().between(0, 5);
 			Arbitrary<Integer> integer = Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
@@ -261,6 +253,67 @@ class ArbitrariesTests {
 			});
 		}
 
+		@Example
+		void lazy() {
+			Arbitrary<Integer> samples = Arbitraries.lazy(() -> new OrderedArbitraryForTesting<>(1, 2, 3));
+
+			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
+			ArbitraryTestHelper.assertGeneratedExactly(samples.generator(1000), 1, 2, 3, 1);
+		}
+
+		@Example
+		void recursiveLazy() {
+			Arbitrary<Tree> trees = trees();
+			ArbitraryTestHelper.assertAllGenerated(
+				trees.generator(1000),
+				tree -> {
+					//System.out.println(tree);
+					return tree != null;
+				}
+			);
+		}
+
+		private Arbitrary<Tree> trees() {
+			return Combinators.combine(aName(), aBranch(), aBranch()).as(Tree::new);
+		}
+
+		private Arbitrary<String> aName() {
+			return Arbitraries.strings().alpha().ofLength(3);
+		}
+
+		private Arbitrary<Tree> aBranch() {
+			return Arbitraries.lazy(() -> Arbitraries.frequencyOf(
+				Tuple.of(2, Arbitraries.constant(null)),
+				Tuple.of(1, trees())
+			));
+		}
+
+		class Tree {
+			final String name;
+			final Tree left;
+			final Tree right;
+
+			public Tree(final String name, final Tree left, final Tree right) {
+				this.name = name;
+				this.left = left;
+				this.right = right;
+			}
+
+			@Override
+			public String toString() {
+				return String.format("%s[%s]", name, depth()) ;
+			}
+
+			private int depth() {
+				if (left == null && right == null) {
+					return 0;
+				}
+				return Math.max(
+					left == null ? 0 : left.depth() + 1,
+					right == null ? 0 : right.depth() + 1
+				);
+			}
+		}
 	}
 
 	@Group
