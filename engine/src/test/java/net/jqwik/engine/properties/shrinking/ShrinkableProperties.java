@@ -18,7 +18,7 @@ class ShrinkableProperties {
 		return true;
 	}
 
-	@Property
+	@Property(tries = 100)
 	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
 		ShrinkingSequence<?> sequence = shrinkable.shrink(ignore -> TryExecutionResult.falsified(null));
 		FalsificationResult<?> current = sequence.current();

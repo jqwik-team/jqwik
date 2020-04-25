@@ -175,7 +175,7 @@ class ArbitraryTests {
 		}
 
 		// There's a small chance that this test fails if 10000 tries won't pick the missing value out of 500 possibilities
-		@Property(generation = RANDOMIZED)
+		@Property(tries = 100, generation = RANDOMIZED)
 		void listOfAllUniqueValuesCanBeGeneratedRandomly(
 			@ForAll("listOfUniqueIntegerPairs") List<Tuple3<Integer, Integer, Integer>> aList
 		) {

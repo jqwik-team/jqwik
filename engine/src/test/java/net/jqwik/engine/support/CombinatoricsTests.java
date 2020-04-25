@@ -377,7 +377,7 @@ class CombinatoricsTests {
 			assertThat(iterator).toIterable().isEmpty();
 		}
 
-		@Property
+		@Property(tries = 100)
 		@Label("all combinations produce product of individual iterators")
 		void productOfIterables(@ForAll("iterables") @Size(min = 0, max = 4) List<List<Integer>> listOfLists) {
 

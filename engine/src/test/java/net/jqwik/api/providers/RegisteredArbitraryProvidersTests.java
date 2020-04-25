@@ -249,17 +249,17 @@ class RegisteredArbitraryProvidersTests {
 			return aValue != null;
 		}
 
-		@Property
+		@Property(tries = 10)
 		boolean mapsOfIntegerAndString(@ForAll Map<Integer, String> aValue) {
 			return aValue != null;
 		}
 
-		@Property
+		@Property(tries = 10)
 		void mapsAreMutable(@ForAll Map<Integer, String> aValue) {
 			aValue.put(42, "forty two");
 		}
 
-		@Property
+		@Property(tries = 10)
 		void hashMaps(@ForAll HashMap<Integer, String> aValue) {
 			assertThat(aValue).isInstanceOf(HashMap.class);
 		}
