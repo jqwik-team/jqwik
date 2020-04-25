@@ -26,6 +26,9 @@ title: jqwik Release Notes
 
 - Edge Cases Mode is now being reported per property
 
+- Added `Arbitrary.withoutEdgeCases()` to switch off 
+  preferred edge case generation for individual arbitraries. 
+
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
     - `Arbitraries.nothing()`
     - `Arbitrary.collect(Predicate<List<T>> until)`
