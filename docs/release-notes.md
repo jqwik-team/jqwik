@@ -22,6 +22,10 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Enhanced generation of edge cases
+
+- Edge Cases Mode is now being reported per property
+
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
     - `Arbitraries.nothing()`
     - `Arbitrary.collect(Predicate<List<T>> until)`

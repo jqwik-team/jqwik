@@ -83,7 +83,8 @@ public class GenericProperty {
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-					configuration.getGenerationMode(), sample, null, throwable
+					configuration.getGenerationMode(), configuration.getEdgeCasesMode(),
+					sample, null, throwable
 				);
 			}
 		}
@@ -94,7 +95,8 @@ public class GenericProperty {
 				maxTries,
 				countChecks,
 				configuration.getSeed(),
-				configuration.getGenerationMode()
+				configuration.getGenerationMode(),
+				configuration.getEdgeCasesMode()
 			);
 		}
 		return PropertyCheckResult.successful(
@@ -103,7 +105,8 @@ public class GenericProperty {
 			countTries,
 			countChecks,
 			configuration.getSeed(),
-			configuration.getGenerationMode()
+			configuration.getGenerationMode(),
+			configuration.getEdgeCasesMode()
 		);
 	}
 
@@ -137,7 +140,8 @@ public class GenericProperty {
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-			configuration.getGenerationMode(), shrunkParams, originalSample, throwable
+			configuration.getGenerationMode(), configuration.getEdgeCasesMode(),
+			shrunkParams, originalSample, throwable
 		);
 	}
 

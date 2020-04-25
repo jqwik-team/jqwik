@@ -90,6 +90,11 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
+	public EdgeCasesMode edgeCases() {
+		return EdgeCasesMode.NOT_SET;
+	}
+
+	@Override
 	public String randomSeed() {
 		return Long.toString(0L);
 	}

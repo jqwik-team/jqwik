@@ -23,7 +23,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		int tries,
 		int checks,
 		String randomSeed,
-		GenerationMode generation
+		GenerationMode generation,
+		EdgeCasesMode edgeCases
 	) {
 		return new PropertyCheckResult(
 			CheckStatus.SUCCESSFUL, stereotype,
@@ -32,6 +33,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			checks,
 			randomSeed,
 			generation,
+			edgeCases,
 			null,
 			null,
 			null
@@ -45,6 +47,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		int checks,
 		String randomSeed,
 		GenerationMode generation,
+		EdgeCasesMode edgeCases,
 		List<Object> sample,
 		List<Object> originalSample,
 		Throwable throwable
@@ -56,6 +59,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			checks,
 			randomSeed,
 			generation,
+			edgeCases,
 			sample,
 			originalSample,
 			throwable
@@ -68,15 +72,18 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		int tries,
 		int checks,
 		String randomSeed,
-		GenerationMode generation
+		GenerationMode generation,
+		EdgeCasesMode edgeCases
 	) {
 		return new PropertyCheckResult(
-			CheckStatus.EXHAUSTED, stereotype,
+			CheckStatus.EXHAUSTED,
+			stereotype,
 			propertyName,
 			tries,
 			checks,
 			randomSeed,
 			generation,
+			edgeCases,
 			null,
 			null,
 			null
@@ -90,6 +97,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final int checks;
 	private final String randomSeed;
 	private final GenerationMode generation;
+	private final EdgeCasesMode edgeCases;
 	private final List<Object> sample;
 	private final List<Object> originalSample;
 	private final Throwable throwable;
@@ -101,6 +109,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		int checks,
 		String randomSeed,
 		GenerationMode generation,
+		EdgeCasesMode edgeCases,
 		List<Object> sample,
 		List<Object> originalSample,
 		Throwable throwable
@@ -112,6 +121,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		this.checks = checks;
 		this.randomSeed = randomSeed;
 		this.generation = generation;
+		this.edgeCases = edgeCases;
 		this.sample = sample;
 		this.originalSample = originalSample;
 		this.throwable = determineThrowable(status, throwable);
@@ -161,6 +171,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					checks,
 					randomSeed,
 					generation,
+					edgeCases,
 					sample,
 					originalSample,
 					throwable
@@ -174,6 +185,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					checks,
 					randomSeed,
 					generation,
+					edgeCases,
 					sample,
 					originalSample,
 					throwable
@@ -214,6 +226,10 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	public GenerationMode generation() {
 		return generation;
+	}
+
+	public EdgeCasesMode edgeCases() {
+		return edgeCases;
 	}
 
 	@Override

@@ -15,4 +15,6 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 
 	GenerationMode generation();
 
+	EdgeCasesMode edgeCases();
+
 }

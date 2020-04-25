@@ -14,7 +14,8 @@ public class ExecutionResultReportEntry {
 
 	private static final String TRIES_KEY = "tries";
 	private static final String CHECKS_KEY = "checks";
-	private static final String GENERATION_KEY = "generation-mode";
+	private static final String GENERATION_KEY = "generation";
+	private static final String EDGE_CASES_KEY = "edge-cases";
 	private static final String AFTER_FAILURE_KEY = "after-failure";
 	private static final String SEED_KEY = "seed";
 	private static final String SAMPLE_KEY = "sample";
@@ -74,15 +75,19 @@ public class ExecutionResultReportEntry {
 		int countTries = 0;
 		int countChecks = 0;
 		String generationMode = "<none>";
+		String edgeCasesMode = "<none>";
 		String randomSeed = "<none>";
 		String helpGenerationMode = "";
+		String helpEdgeCasesMode = "";
 
 		if (executionResult.isExtended()) {
 			countTries = executionResult.countTries();
 			countChecks = executionResult.countChecks();
 			generationMode = executionResult.generation().name();
+			edgeCasesMode = executionResult.edgeCases().name();
 			randomSeed = executionResult.randomSeed();
 			helpGenerationMode = helpGenerationMode(executionResult.generation());
+			helpEdgeCasesMode = helpEdgeCasesMode(executionResult.edgeCases());
 		}
 
 		appendProperty(propertiesLines, TRIES_KEY, Integer.toString(countTries), "# of calls to property");
@@ -91,6 +96,7 @@ public class ExecutionResultReportEntry {
 		if (afterFailureMode != AfterFailureMode.NOT_SET) {
 			appendProperty(propertiesLines, AFTER_FAILURE_KEY, afterFailureMode.name(), helpAfterFailureMode(afterFailureMode));
 		}
+		appendProperty(propertiesLines, EDGE_CASES_KEY, edgeCasesMode, helpEdgeCasesMode);
 		appendProperty(propertiesLines, SEED_KEY, randomSeed, "random seed to reproduce generated values");
 
 		int halfBorderLength =
@@ -138,6 +144,19 @@ public class ExecutionResultReportEntry {
 				return "parameters are taken from data provider";
 			default:
 				return "RANDOMIZED, EXHAUSTIVE or DATA_DRIVEN";
+		}
+	}
+
+	private static String helpEdgeCasesMode(EdgeCasesMode edgeCases) {
+		switch (edgeCases) {
+			case FIRST:
+				return "edge cases are generated first";
+			case MIXIN:
+				return "edge cases are mixed in";
+			case NONE:
+				return "edge cases are not explicitly generated";
+			default:
+				return "FIRST, MIXIN or NONE";
 		}
 	}
 

@@ -114,7 +114,9 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
                                   |-----------------------jqwik-----------------------
     tries = 1000                  | # of calls to property
     checks = 1000                 | # of not rejected calls
-    generation-mode = RANDOMIZED  | parameters are randomly generated
+    generation = RANDOMIZED       | parameters are randomly generated
+    after-failure = PREVIOUS_SEED | use the previous seed
+    edge-cases = MIXIN            | edge cases are generated first
     seed = 1685744359484719817    | random seed to reproduce generated values
 ```
 
@@ -306,7 +308,9 @@ annotation has a few optional values:
   ```
   tries = 10 
   checks = 10 
-  generation-mode = EXHAUSTIVE 
+  generation = EXHAUSTIVE
+  after-failure = PREVIOUS_SEED
+  edge-cases = MIXIN 
   seed = 42859154278924201
   ```
   
@@ -2187,6 +2191,9 @@ org.opentest4j.AssertionFailedError:
 
 tries = 1000 
 checks = 20 
+generation = RANDOMIZED
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
 seed = 1066117555581106850
 ```
 
@@ -2240,6 +2247,9 @@ AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample 
 
 tries = 38 
 checks = 38 
+generation = RANDOMIZED
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
 seed = -633877439388930932 
 sample = ["AA"]
 original-sample ["LVtyB"] 
@@ -2289,6 +2299,9 @@ AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h"
 
 checks = 20 
 tries = 20 
+generation = RANDOMIZED
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
 seed = -5596810132893895291 
 sample = ["h", "0"]
 original-sample ["gh", "774"] 

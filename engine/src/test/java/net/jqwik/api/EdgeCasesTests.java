@@ -71,7 +71,7 @@ class EdgeCasesTests {
 		for (Shrinkable<String> edgeCase : edgeCases) {
 			ShrinkingSequence<String> sequence = edgeCase.shrink(falsifier);
 			while (sequence.next(() -> {}, ignore -> { })) {
-				System.out.println(sequence.current());
+				// System.out.println(sequence.current());
 			}
 			String shrunkValue = sequence.current().value();
 			assertThat(shrunkValue).isEqualTo("a");
