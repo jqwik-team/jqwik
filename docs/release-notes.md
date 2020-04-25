@@ -22,7 +22,8 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
-- Enhanced generation of edge cases
+- Massively improved and enhanced 
+  [generation of edge cases](/docs/snapshot/user-guide.html#generation-of-edge-cases)
 
 - Edge Cases Mode is now being reported per property
 

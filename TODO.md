@@ -2,7 +2,6 @@
 
     - Introduce Arbitrary.edgeCases()
         - Document edge cases
-        - Document jqwik.properties: defaultEdgeCases
         
     - Unify all Arbitraries.of() implementations
 

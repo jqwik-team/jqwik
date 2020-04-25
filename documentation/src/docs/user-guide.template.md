@@ -275,7 +275,7 @@ annotation has a few optional values:
   
   The default is `5` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
 
-- `ShrinkingMode shrinking`: You can influence the way shrinking is done
+- `ShrinkingMode shrinking`: You can influence the way [shrinking](#result-shrinking) is done
   - `ShrinkingMode.OFF`: No shrinking at all
   - `ShrinkingMode.FULL`: Shrinking continues until no smaller value can
     be found that also falsifies the property.
@@ -301,18 +301,40 @@ annotation has a few optional values:
   - `GenerationMode.DATA_DRIVEN` directs _jqwik_ to feed values from a data provider
     specified with `@FromData`. See [data-driven properties](#data-driven-properties) 
     for more information.
+    
+- `AfterFailureMode afterFailure`: Determines how jqwik will generate values of a property 
+  that has failed in the previous run.
   
-  The actual generation mode being used is reported for each property 
-  together with the other information:
+  - `AfterFailureMode.PREVIOUS_SEED` is the default. jqwik will use the same seed and thereby generate
+    the same sequence of parameters as in the previous, failing run.
+  - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last shrunk example of parameters.
+    This requires that all parameters can be serialized.
+  - `AfterFailureMode.SAMPLE_FIRST` means that jqwik will use the last shrunk example of parameters first
+    and then, if successful, go for a new randomly generated set of parameters.
+  - `AfterFailureMode.RANDOM_SEED` makes jqwik use a new random seed even directly after a failure.
+    This might lead to a "flaky" property that sometimes fails and sometimes succeeds.
+
+- `EdgeCasesMode edgeCases`: Determines if and when jqwik will generate 
+  the permutation of [edge cases](#generation-of-edge-cases).
   
-  ```
-  tries = 10 
-  checks = 10 
-  generation = EXHAUSTIVE
-  after-failure = PREVIOUS_SEED
-  edge-cases = MIXIN 
-  seed = 42859154278924201
-  ```
+  - `EdgeCasesMode.MIXIN` is the default. Edge cases will be mixed with randomly generated parameter sets
+    until all known permutations have been mixed in.
+  - `EdgeCasesMode.FIRST` results in all edge cases being generated before jqwik starts with randomly
+    generated samples.
+  - `EdgeCasesMode.NONE` will not generate edge cases for the full parameter set at all. However,
+    edge cases for individual parameters are still being mixed into the set from time to time.
+  
+The effective values for tries, seed, after-failure mode, generation mode and edge-cases mode 
+are reported after each run property:
+
+```
+tries = 10 
+checks = 10 
+generation = EXHAUSTIVE
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
+seed = 42859154278924201
+```
   
     
 ### Additional Reporting
@@ -3023,6 +3045,9 @@ to figure out how they work.
 Since the topic is rather complicated, a detailed example will one day be published 
 in a separate article...
 
+## Generation of Edge Cases
+
+It's a well-known fact among testers...
 
 ## Exhaustive Generation
 
@@ -3051,6 +3076,7 @@ This is exactly what _jqwik_ will do:
   all combinations will be generated.
 - You can also enforce an exhaustive or randomized generation mode by using the
   [Property.generation attribute](#optional-property-parameters).
+  The default generation mode can be set in the [configuration file](jqwik-configuration).
 - If _jqwik_ cannot figure out how to do exhaustive generation for one of the 
   participating arbitraries it will switch to randomized generation if in auto mode
   or throw an exception if in exhaustive mode.
@@ -3180,6 +3206,8 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 reportOnlyFailures = false          # Set to true if only falsified properties should be reported
 defaultGeneration = AUTO            # Set default behaviour for generation:
                                     # AUTO, RANDOMIZED, or EXHAUSTIVE
+defaultEdgeCases = AUTO             # Set default behaviour for edge cases generation:
+                                    # FIRST, MIXIN, or NONE
 ```
 
 ## Release Notes

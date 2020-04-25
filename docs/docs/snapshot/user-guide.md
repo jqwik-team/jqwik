@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.2.4-SNAPSHOT
+title: jqwik User Guide - 1.3.0-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.2.4-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.3.0-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -11,6 +11,7 @@ title: jqwik User Guide - 1.2.4-SNAPSHOT
 ### Table of Contents  
 
 - [How to Use](#how-to-use)
+  - [Required Version of JUnit Platform](#required-version-of-junit-platform)
   - [Gradle](#gradle)
     - [Seeing jqwik Reporting in Gradle Output](#seeing-jqwik-reporting-in-gradle-output)
   - [Maven](#maven)
@@ -112,6 +113,7 @@ title: jqwik User Guide - 1.2.4-SNAPSHOT
   - [Domain example: American Addresses](#domain-example-american-addresses)
 - [Generation from a Type's Interface](#generation-from-a-types-interface)
 - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
+- [Generation of Edge Cases](#generation-of-edge-cases)
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
@@ -130,11 +132,13 @@ That means that you can use it either stand-alone or combine it with any other J
 All you have to do is add all needed engines to your `testCompile` dependencies as shown in the
 [gradle file](#gradle) below.
 
-The latest release of __jqwik__ is deployed to [Maven Central](https://mvnrepository.com/).
+The latest release of __jqwik__ is deployed to [Maven Central](https://search.maven.org/search?q=g:net.jqwik).
 
 Snapshot releases can be fetched from https://oss.sonatype.org/content/repositories/snapshots.
 
+### Required Version of JUnit Platform
 
+The minimum required version of the JUnit platform is `1.6.2`.
 
 ### Gradle
 
@@ -153,17 +157,20 @@ repositories {
 
 }
 
-ext.junitPlatformVersion = '1.6.0'
-ext.junitJupiterVersion = '5.6.0'
+ext.junitPlatformVersion = '1.6.2'
+ext.junitJupiterVersion = '5.6.2'
 
-ext.jqwikVersion = '1.2.4-SNAPSHOT'
+ext.jqwikVersion = '1.3.0-SNAPSHOT'
 
 test {
 	useJUnitPlatform {
-		includeEngines "jqwik"
+		includeEngines 'jqwik'
+        
+        // Or include several Junit engines if you use them
+        // includeEngines 'jqwik', 'junit-jupiter', 'junit-vintage'
 
-		// includeTags "fast", "medium"
-		// excludeTags "slow"
+		// includeTags 'fast', 'medium'
+		// excludeTags 'slow'
 	}
 
 	include '**/*Properties.class'
@@ -178,10 +185,10 @@ dependencies {
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
     // Add if you also want to use the Jupiter engine or Assertions from it
-    testImplementation("org.junit.jupiter:junit-jupiter:5.6.0")
+    testImplementation "org.junit.jupiter:junit-jupiter:5.6.2"
 
     // Add any other test library you need...
-    testImplementation("org.assertj:assertj-core:3.12.2")
+    testImplementation "org.assertj:assertj-core:3.12.2"
 
 }
 ```
@@ -216,7 +223,9 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
                                   |-----------------------jqwik-----------------------
     tries = 1000                  | # of calls to property
     checks = 1000                 | # of not rejected calls
-    generation-mode = RANDOMIZED  | parameters are randomly generated
+    generation = RANDOMIZED       | parameters are randomly generated
+    after-failure = PREVIOUS_SEED | use the previous seed
+    edge-cases = MIXIN            | edge cases are generated first
     seed = 1685744359484719817    | random seed to reproduce generated values
 ```
 
@@ -232,7 +241,7 @@ and add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.2.4-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -258,9 +267,9 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.2.4-SNAPSHOT.jar`
-- `junit-platform-engine-1.6.0.jar`
-- `junit-platform-commons-1.6.0.jar`
+- `jqwik-1.3.0-SNAPSHOT.jar`
+- `junit-platform-engine-1.6.2.jar`
+- `junit-platform-commons-1.6.2.jar`
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
@@ -309,7 +318,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.2.4-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.3.0-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -375,7 +384,7 @@ annotation has a few optional values:
   
   The default is `5` which can be overridden in [`jqwik.properties`](#jqwik-configuration).
 
-- `ShrinkingMode shrinking`: You can influence the way shrinking is done
+- `ShrinkingMode shrinking`: You can influence the way [shrinking](#result-shrinking) is done
   - `ShrinkingMode.OFF`: No shrinking at all
   - `ShrinkingMode.FULL`: Shrinking continues until no smaller value can
     be found that also falsifies the property.
@@ -401,16 +410,40 @@ annotation has a few optional values:
   - `GenerationMode.DATA_DRIVEN` directs _jqwik_ to feed values from a data provider
     specified with `@FromData`. See [data-driven properties](#data-driven-properties) 
     for more information.
+    
+- `AfterFailureMode afterFailure`: Determines how jqwik will generate values of a property 
+  that has failed in the previous run.
   
-  The actual generation mode being used is reported for each property 
-  together with the other information:
+  - `AfterFailureMode.PREVIOUS_SEED` is the default. jqwik will use the same seed and thereby generate
+    the same sequence of parameters as in the previous, failing run.
+  - `AfterFailureMode.SAMPLE_ONLY` means that jqwik will only use the last shrunk example of parameters.
+    This requires that all parameters can be serialized.
+  - `AfterFailureMode.SAMPLE_FIRST` means that jqwik will use the last shrunk example of parameters first
+    and then, if successful, go for a new randomly generated set of parameters.
+  - `AfterFailureMode.RANDOM_SEED` makes jqwik use a new random seed even directly after a failure.
+    This might lead to a "flaky" property that sometimes fails and sometimes succeeds.
+
+- `EdgeCasesMode edgeCases`: Determines if and when jqwik will generate 
+  the permutation of [edge cases](#generation-of-edge-cases).
   
-  ```
-  tries = 10 
-  checks = 10 
-  generation-mode = EXHAUSTIVE 
-  seed = 42859154278924201
-  ```
+  - `EdgeCasesMode.MIXIN` is the default. Edge cases will be mixed with randomly generated parameter sets
+    until all known permutations have been mixed in.
+  - `EdgeCasesMode.FIRST` results in all edge cases being generated before jqwik starts with randomly
+    generated samples.
+  - `EdgeCasesMode.NONE` will not generate edge cases for the full parameter set at all. However,
+    edge cases for individual parameters are still being mixed into the set from time to time.
+  
+The effective values for tries, seed, after-failure mode, generation mode and edge-cases mode 
+are reported after each run property:
+
+```
+tries = 10 
+checks = 10 
+generation = EXHAUSTIVE
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
+seed = 42859154278924201
+```
   
     
 ### Additional Reporting
@@ -522,14 +555,16 @@ eight annotations:
 
 - [`@BeforeContainer`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeContainer.html):
   _Static_ methods with this annotation will run exactly once before any property
-  will be executed, even before the first instance of this class will be created.
+  of a container class will be executed, even before the first instance of this class will be created.
 - [`@AfterContainer`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AfterContainer.html):
-  _Static_ methods with this annotation will run exactly once before any property
-  will be executed, even before the first instance of this class will be created.
+  _Static_ methods with this annotation will run exactly once after all properties
+  of a container class have run.
 - [`@BeforeProperty`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeProperty.html):
   Methods with this annotation will run once before each property or example.
+  `@BeforeExample` is an alias with the same functionality.
 - [`@AfterProperty`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AfterProperty.html):
   Methods with this annotation will run once after each property or example.
+  `@AfterExample` is an alias with the same functionality.
 - [`@BeforeTry`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeTry.html):
   Methods with this annotation will run once before each try, i.e. execution
   of a property or example method.
@@ -879,11 +914,11 @@ They work for generated `String`s and `Character`s.
 
 #### Decimal Constraints
 
-- [`@FloatRange(float min = 0.0f, float max = Float.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/FloatRange.html):
+- [`@FloatRange(float min = 0.0f, minIncluded = true, float max = Float.MAX_VALUE, maxIncluded = true)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/FloatRange.html):
   For `Float` and `float` only.
-- [`@DoubleRange(double min = 0.0, double max = Double.MAX_VALUE)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/DoubleRange.html):
+- [`@DoubleRange(double min = 0.0, minIncluded = true, double max = Double.MAX_VALUE, boolean maxIncluded = true)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/DoubleRange.html):
   For `Double` and `double` only.
-- [`@BigRange(String min = "", String max = "")`](/docs/snapshot/javadoc/net/jqwik/api/constraints/BigRange.html):
+- [`@BigRange(String min = "", minIncluded = true, String max = "", maxIncluded = true)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/BigRange.html):
   For `BigDecimal` generation.
 - [`@Scale(int value)`](/docs/snapshot/javadoc/net/jqwik/api/constraints/Scale.html):
   Specify the maximum number of decimal places. For all decimal types.
@@ -2287,6 +2322,9 @@ org.opentest4j.AssertionFailedError:
 
 tries = 1000 
 checks = 20 
+generation = RANDOMIZED
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
 seed = 1066117555581106850
 ```
 
@@ -2340,6 +2378,9 @@ AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample 
 
 tries = 38 
 checks = 38 
+generation = RANDOMIZED
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
 seed = -633877439388930932 
 sample = ["AA"]
 original-sample ["LVtyB"] 
@@ -2389,6 +2430,9 @@ AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h"
 
 checks = 20 
 tries = 20 
+generation = RANDOMIZED
+after-failure = PREVIOUS_SEED
+edge-cases = MIXIN 
 seed = -5596810132893895291 
 sample = ["h", "0"]
 original-sample ["gh", "774"] 
@@ -3031,7 +3075,7 @@ Consider a simple `Person` class:
 ```java
 public class Person {
 
-	private String name;
+	private final String name;
 	private final int age;
 
 	public Person(String name, int age) {
@@ -3110,6 +3154,9 @@ to figure out how they work.
 Since the topic is rather complicated, a detailed example will one day be published 
 in a separate article...
 
+## Generation of Edge Cases
+
+It's a well-known fact among testers...
 
 ## Exhaustive Generation
 
@@ -3138,6 +3185,7 @@ This is exactly what _jqwik_ will do:
   all combinations will be generated.
 - You can also enforce an exhaustive or randomized generation mode by using the
   [Property.generation attribute](#optional-property-parameters).
+  The default generation mode can be set in the [configuration file](jqwik-configuration).
 - If _jqwik_ cannot figure out how to do exhaustive generation for one of the 
   participating arbitraries it will switch to randomized generation if in auto mode
   or throw an exception if in exhaustive mode.
@@ -3267,8 +3315,10 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 reportOnlyFailures = false          # Set to true if only falsified properties should be reported
 defaultGeneration = AUTO            # Set default behaviour for generation:
                                     # AUTO, RANDOMIZED, or EXHAUSTIVE
+defaultEdgeCases = AUTO             # Set default behaviour for edge cases generation:
+                                    # FIRST, MIXIN, or NONE
 ```
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#124-snapshot).
+Read this version's [release notes](/release-notes.html#130-snapshot).
