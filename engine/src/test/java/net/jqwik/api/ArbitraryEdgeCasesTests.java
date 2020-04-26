@@ -14,9 +14,14 @@ class ArbitraryEdgeCasesTests {
 
 	@Example
 	void withoutEdgeCases() {
-		Arbitrary<Integer> arbitrary = Arbitraries.integers().withoutEdgeCases();
+		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-100, 100).withoutEdgeCases();
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).isEmpty();
+
+		// Random value generation still works
+		ArbitraryTestHelper.assertAllGenerated(arbitrary.generator(1000), i -> {
+			assertThat(i).isBetween(-100, 100);
+		});
 	}
 
 	@Example

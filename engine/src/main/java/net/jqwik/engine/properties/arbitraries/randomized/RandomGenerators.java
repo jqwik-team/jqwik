@@ -23,7 +23,7 @@ public class RandomGenerators {
 		};
 	}
 
-	private static <U> U chooseValue(List<U> values, Random random) {
+	public static <U> U chooseValue(List<U> values, Random random) {
 		int index = random.nextInt(values.size());
 		return values.get(index);
 	}
@@ -217,14 +217,6 @@ public class RandomGenerators {
 		};
 	}
 
-	@Deprecated
-	private static <T> RandomGenerator<T> chooseShrinkable(List<Shrinkable<T>> shrinkables) {
-		if (shrinkables.size() == 0) {
-			return fail("empty set of shrinkables");
-		}
-		return random -> chooseValue(shrinkables, random);
-	}
-
 	public static <T> RandomGenerator<T> samplesFromShrinkables(List<Shrinkable<T>> samples) {
 		AtomicInteger tryCount = new AtomicInteger(0);
 		return ignored -> {
@@ -243,33 +235,11 @@ public class RandomGenerators {
 		return new FrequencyGenerator<>(frequencies);
 	}
 
-	private static int calculateBaseToEdgeCaseRatio(int genSize, int size) {
-		return Math.min(
-			Math.max(genSize / 5, 1),
-			100 / size
-		) + 1;
-	}
-
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases) {
 		if (edgeCases.isEmpty()) {
 			return self;
 		}
-
-		int baseToEdgeCaseRatio = calculateBaseToEdgeCaseRatio(genSize, edgeCases.size());
-		RandomGenerator<T> edgeCasesGenerator = RandomGenerators.chooseEdgeCase(edgeCases);
-
-		return random -> {
-			if (random.nextInt(baseToEdgeCaseRatio) == 0) {
-				return edgeCasesGenerator.next(random);
-			} else {
-				return self.next(random);
-			}
-		};
-	}
-
-	private static <T> RandomGenerator<T> chooseEdgeCase(EdgeCases<T> edgeCases) {
-		final List<Supplier<Shrinkable<T>>> suppliers = edgeCases.suppliers();
-		return random -> chooseValue(suppliers, random).get();
+		return new WithEdgeCasesGenerator<>(self, edgeCases, genSize);
 	}
 
 	public static <T> RandomGenerator<T> fail(String message) {
