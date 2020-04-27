@@ -10,6 +10,7 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 public class OrderedArbitraryForTesting<T> implements Arbitrary<T> {
 	private final T[] elements;
 
+	@SafeVarargs
 	public OrderedArbitraryForTesting(T ... elements) {
 		this.elements = elements;
 	}

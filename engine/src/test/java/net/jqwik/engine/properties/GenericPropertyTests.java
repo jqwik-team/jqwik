@@ -7,6 +7,7 @@ import java.util.stream.*;
 
 import org.junit.platform.engine.reporting.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
@@ -24,7 +25,7 @@ class GenericPropertyTests {
 
 	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> { };
 
-	private Supplier<TryLifecycleContext> tryLifecycleContextSupplier = TestHelper.tryLifecycleContextSupplier();
+	private final Supplier<TryLifecycleContext> tryLifecycleContextSupplier = TestHelper.tryLifecycleContextSupplier();
 
 	@Group
 	class OneParameter {
@@ -35,7 +36,7 @@ class GenericPropertyTests {
 		void satisfied() {
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> true, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(2).build();
@@ -75,7 +76,7 @@ class GenericPropertyTests {
 
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie != failingTry, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8, 9);
+			Arbitrary<Object> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5, 6, 7, 8, 9);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property =
@@ -102,7 +103,7 @@ class GenericPropertyTests {
 
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> trie < failingTry, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
+			Arbitrary<Object> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5, 6, 7, 8);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withShrinking(OFF).build();
@@ -122,7 +123,7 @@ class GenericPropertyTests {
 			};
 			ForAllSpy forAllSpy = new ForAllSpy(throwErrorOnFifthAttempt);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5, 6, 7, 8);
+			Arbitrary<Object> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5, 6, 7, 8);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
@@ -143,7 +144,7 @@ class GenericPropertyTests {
 				throw assertionError;
 			}, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
@@ -173,7 +174,7 @@ class GenericPropertyTests {
 				throw runtimeException;
 			}, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
@@ -206,7 +207,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(10).build();
@@ -228,7 +229,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(10).build();
@@ -255,7 +256,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().withTries(20).withMaxDiscardRatio(maxDiscardRatio).build();
@@ -278,7 +279,7 @@ class GenericPropertyTests {
 				return true;
 			}, exactlyOneInteger);
 
-			Arbitrary<Object> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			PropertyConfiguration configuration = aConfig().build();
@@ -398,8 +399,8 @@ class GenericPropertyTests {
 				return true;
 			};
 
-			Arbitrary<Object> arbitrary1 = Arbitraries.samples(1, 2, 3, 4, 5);
-			Arbitrary<Object> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary1 = Arbitraries.of(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary2 = Arbitraries.of(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2);
 
 			PropertyConfiguration configuration = aConfig().withTries(5).build();
@@ -425,10 +426,10 @@ class GenericPropertyTests {
 				return ((int) args.get(0)) < failingTry;
 			};
 
-			Arbitrary<Object> arbitrary1 = Arbitraries.samples(1, 2, 3, 4, 5);
-			Arbitrary<Object> arbitrary2 = Arbitraries.samples(1, 2, 3, 4, 5);
-			Arbitrary<Object> arbitrary3 = Arbitraries.samples(1, 2, 3, 4, 5);
-			Arbitrary<Object> arbitrary4 = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary1 = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary2 = Arbitraries.of(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary3 = Arbitraries.of(1, 2, 3, 4, 5);
+			Arbitrary<Object> arbitrary4 = Arbitraries.of(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2, arbitrary3, arbitrary4);
 
 			PropertyConfiguration configuration = aConfig().build();

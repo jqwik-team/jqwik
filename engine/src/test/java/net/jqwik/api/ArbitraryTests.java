@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import org.assertj.core.api.*;
 
+import net.jqwik.*;
 import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
@@ -44,7 +45,7 @@ class ArbitraryTests {
 
 	@Example
 	void generateInteger(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+		Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 		RandomGenerator<Integer> generator = arbitrary.generator(10);
 
 		assertThat(generator.next(random).value()).isEqualTo(1);
@@ -73,7 +74,7 @@ class ArbitraryTests {
 	class Filtering {
 		@Example
 		void filterInteger(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> anInt % 2 != 0);
 			RandomGenerator<Integer> generator = filtered.generator(10);
 
@@ -85,7 +86,7 @@ class ArbitraryTests {
 
 		@Example
 		void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
 			RandomGenerator<Integer> generator = filtered.generator(10);
 
@@ -198,7 +199,7 @@ class ArbitraryTests {
 
 		@Example
 		void generateAllValues() {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			assertThat(arbitrary.allValues()).isPresent();
 			assertThat(arbitrary.allValues().get()).containsExactlyInAnyOrder(1, 2, 3, 4, 5);
 		}
@@ -215,7 +216,7 @@ class ArbitraryTests {
 
 		@Example
 		void iterateThroughEachValue() {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
 			AtomicInteger count = new AtomicInteger(0);
 			arbitrary.forEachValue(i -> {
 				count.incrementAndGet();
@@ -237,7 +238,7 @@ class ArbitraryTests {
 
 		@Example
 		void mapIntegerToString(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.map(anInt -> "value=" + anInt);
 			RandomGenerator<String> generator = mapped.generator(10);
 
@@ -256,7 +257,7 @@ class ArbitraryTests {
 
 		@Example
 		void flatMapIntegerToString(@ForAll Random random) {
-			Arbitrary<Integer> arbitrary = Arbitraries.samples(1, 2, 3, 4, 5);
+			Arbitrary<Integer> arbitrary = new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5);
 			Arbitrary<String> mapped = arbitrary.flatMap(anInt -> Arbitraries.strings() //
 																			 .withCharRange('a', 'e') //
 																			 .ofMinLength(anInt).ofMaxLength(anInt));
@@ -283,8 +284,8 @@ class ArbitraryTests {
 
 		@Example
 		void generateCombination(@ForAll Random random) {
-			Arbitrary<Integer> a1 = Arbitraries.samples(1, 2, 3);
-			Arbitrary<Integer> a2 = Arbitraries.samples(4, 5, 6);
+			Arbitrary<Integer> a1 = new OrderedArbitraryForTesting<>(1, 2, 3);
+			Arbitrary<Integer> a2 = new OrderedArbitraryForTesting<>(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
 			RandomGenerator<String> generator = combined.generator(10);
 
@@ -296,13 +297,10 @@ class ArbitraryTests {
 
 		@Example
 		void shrinkCombination(@ForAll Random random) {
-			Arbitrary<Integer> a1 = Arbitraries.samples(1, 2, 3);
-			Arbitrary<Integer> a2 = Arbitraries.samples(4, 5, 6);
+			Arbitrary<Integer> a1 = Arbitraries.of(1, 2, 3);
+			Arbitrary<Integer> a2 = Arbitraries.of(4, 5, 6);
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
-			RandomGenerator<String> generator = combined.generator(10);
-
-			Shrinkable<String> value3to6 = generateNth(generator, 3, random);
-			assertThat(value3to6.value()).isEqualTo("3:6");
+			Shrinkable<String> value3to6 = combined.generator(10).next(random);
 
 			ShrinkingSequence<String> sequence = value3to6.shrink(ignore1 -> TryExecutionResult.falsified(null));
 			while (sequence.next(() -> {}, ignore -> {})) ;
@@ -410,7 +408,7 @@ class ArbitraryTests {
 
 		@Example
 		void tuple1() {
-			Arbitrary<Integer> integers = Arbitraries.samples(1);
+			Arbitrary<Integer> integers = Arbitraries.constant(1);
 			Arbitrary<Tuple1<Integer>> tuple = integers.tuple1();
 
 			assertThat(tuple.sample()).isEqualTo(Tuple.of(1));
@@ -418,36 +416,37 @@ class ArbitraryTests {
 
 		@Example
 		void tuple2() {
-			Arbitrary<Integer> integers = Arbitraries.samples(1, 2);
+			Arbitrary<Integer> integers = Arbitraries.of(1, 2);
 			Arbitrary<Tuple2<Integer, Integer>> tuple = integers.tuple2();
 
-			assertThat(tuple.sample()).isEqualTo(Tuple.of(1, 2));
+			Tuple2<Integer, Integer> sample = tuple.sample();
+			assertThat(sample.v1).isIn(1, 2);
+			assertThat(sample.v2).isIn(1, 2);
 		}
 
 		@Example
 		void tuple3() {
-			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3);
+			Arbitrary<Integer> integers = Arbitraries.of(1, 2);
 			Arbitrary<Tuple3<Integer, Integer, Integer>> tuple = integers.tuple3();
 
-			assertThat(tuple.sample()).isEqualTo(Tuple.of(1, 2, 3));
+			Tuple3<Integer, Integer, Integer> sample = tuple.sample();
+			assertThat(sample.v1).isIn(1, 2);
+			assertThat(sample.v2).isIn(1, 2);
+			assertThat(sample.v3).isIn(1, 2);
 		}
 
 		@Example
 		void tuple4() {
-			Arbitrary<Integer> integers = Arbitraries.samples(1, 2, 3, 4);
+			Arbitrary<Integer> integers = Arbitraries.of(1, 2);
 			Arbitrary<Tuple4<Integer, Integer, Integer, Integer>> tuple = integers.tuple4();
 
-			assertThat(tuple.sample()).isEqualTo(Tuple.of(1, 2, 3, 4));
+			Tuple4<Integer, Integer, Integer, Integer> sample = tuple.sample();
+			assertThat(sample.v1).isIn(1, 2);
+			assertThat(sample.v2).isIn(1, 2);
+			assertThat(sample.v3).isIn(1, 2);
+			assertThat(sample.v4).isIn(1, 2);
 		}
 
-	}
-
-	private <T> Shrinkable<T> generateNth(RandomGenerator<T> generator, int n, Random random) {
-		Shrinkable<T> generated = null;
-		for (int i = 0; i < n; i++) {
-			generated = generator.next(random);
-		}
-		return generated;
 	}
 
 }

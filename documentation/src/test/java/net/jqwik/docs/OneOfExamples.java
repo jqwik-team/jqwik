@@ -21,7 +21,7 @@ class OneOfExamples {
 	Arbitrary<Integer> oneOfThree() {
 		IntegerArbitrary below1000 = Arbitraries.integers().between(-2000, -1001);
 		IntegerArbitrary above1000 = Arbitraries.integers().between(1001, 2000);
-		Arbitrary<Integer> oneOrMinusOne = Arbitraries.samples(-1, 1);
+		Arbitrary<Integer> oneOrMinusOne = Arbitraries.of(-1, 1);
 
 		return Arbitraries.oneOf(below1000, above1000, oneOrMinusOne);
 	}

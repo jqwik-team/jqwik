@@ -21,7 +21,7 @@ class FrequencyOfExamples {
 	Arbitrary<Integer> oneOfThree() {
 		IntegerArbitrary below1000 = Arbitraries.integers().between(-1050, -1001);
 		IntegerArbitrary above1000 = Arbitraries.integers().between(1001, 1050);
-		Arbitrary<Integer> oneOrMinusOne = Arbitraries.samples(-1, 1);
+		Arbitrary<Integer> oneOrMinusOne = Arbitraries.of(-1, 1);
 
 		return Arbitraries.frequencyOf(
 			Tuple.of(1, below1000),

@@ -1,8 +1,5 @@
 - 1.3.0
 
-    - Get rid of Arbitraries.samples() in jqwik code. 
-      Use OrderedArbitraryForTesting where necessary.
-    
     - Scrutinize unique() behaviour of IteratorArbitrary, StreamArbitrary, ArrayArbitrary
         - When @Unique is a constraint
       

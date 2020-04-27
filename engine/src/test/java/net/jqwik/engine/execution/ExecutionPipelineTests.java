@@ -5,6 +5,7 @@ import java.util.*;
 import org.junit.platform.engine.*;
 import org.mockito.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.execution.pipeline.*;
@@ -13,8 +14,8 @@ import static org.assertj.core.api.Assertions.*;
 
 class ExecutionPipelineTests {
 
-	private PropertyExecutionListener listener = Mockito.mock(PropertyExecutionListener.class);
-	private ExecutionPipeline pipeline = new ExecutionPipeline(listener);
+	private final PropertyExecutionListener listener = Mockito.mock(PropertyExecutionListener.class);
+	private final ExecutionPipeline pipeline = new ExecutionPipeline(listener);
 
 	@Example
 	void withNoTasksPipelineTerminatesAtOnce() {
@@ -42,7 +43,7 @@ class ExecutionPipelineTests {
 
 	@Provide
 	Arbitrary<ExecutionTask> task() {
-		return Arbitraries.samples(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
+		return new OrderedArbitraryForTesting<>(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
 	}
 
 	@Example

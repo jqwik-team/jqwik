@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
 
+import net.jqwik.*;
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
 
@@ -39,7 +40,7 @@ class ActionGeneratorTests {
 
 		@Example
 		void generatesActionsFromArbitrary(@ForAll Random random) {
-			Arbitrary<Action<Integer>> samples = Arbitraries.samples(plus1(), plus2());
+			Arbitrary<Action<Integer>> samples = new OrderedArbitraryForTesting<>(plus1(), plus2());
 
 			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
 
@@ -55,7 +56,7 @@ class ActionGeneratorTests {
 
 		@Example
 		void ignoresActionsWithFailingPrecondition(@ForAll Random random) {
-			Arbitrary<Action<Integer>> samples = Arbitraries.samples(plus1(), plus2(), failedPrecondition());
+			Arbitrary<Action<Integer>> samples = new OrderedArbitraryForTesting<>(plus1(), plus2(), failedPrecondition());
 
 			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
 
@@ -69,7 +70,7 @@ class ActionGeneratorTests {
 
 		@Example
 		void stopsSearchingForActionsAfter1000Tries(@ForAll Random random) {
-			Arbitrary<Action<Integer>> samples = Arbitraries.samples(failedPrecondition());
+			Arbitrary<Action<Integer>> samples = Arbitraries.of(failedPrecondition());
 
 			RandomActionGenerator<Integer> actionGenerator = new RandomActionGenerator<>(samples, 1000, random);
 

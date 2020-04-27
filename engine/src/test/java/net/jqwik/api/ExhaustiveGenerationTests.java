@@ -205,6 +205,7 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
+		@Deprecated
 		@Label("Arbitraries.samples() returns all samples in row")
 		void samples() {
 			Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.samples("a", "b", "c").exhaustive();
