@@ -32,10 +32,6 @@ public class RandomGenerators {
 		return choose(Arrays.asList(values));
 	}
 
-	public static <T extends Enum<T>> RandomGenerator<T> choose(Class<T> enumClass) {
-		return choose(enumClass.getEnumConstants());
-	}
-
 	public static RandomGenerator<Character> choose(char[] characters) {
 		List<Character> validCharacters = new ArrayList<>(characters.length);
 		for (char character : characters) {

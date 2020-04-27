@@ -36,13 +36,9 @@ public class Arbitraries {
 
 		public abstract <T> Optional<ExhaustiveGenerator<List<T>>> exhaustiveShuffle(List<T> values, long maxNumberOfSamples);
 
-		public abstract <T extends Enum<T>> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples);
-
 		public abstract <T> RandomGenerator<T> randomChoose(List<T> values);
 
 		public abstract RandomGenerator<Character> randomChoose(char[] values);
-
-		public abstract <T extends Enum<T>> RandomGenerator<T> randomChoose(Class<T> enumClass);
 
 		public abstract <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all);
 
@@ -186,11 +182,7 @@ public class Arbitraries {
 	 */
 	public static <T extends Enum<T>> Arbitrary<T> of(Class<T> enumClass) {
 		List<T> values = Arrays.asList(enumClass.getEnumConstants());
-		return fromGenerators(
-			ArbitrariesFacade.implementation.randomChoose(enumClass),
-			max -> ArbitrariesFacade.implementation.exhaustiveChoose(enumClass, max),
-			ArbitrariesFacade.implementation.edgeCasesChoose(values)
-		);
+		return of(values);
 	}
 
 	/**

@@ -1,7 +1,5 @@
 - 1.3.0
 
-    - Unify all Arbitraries.of() implementations
-
     - Get rid of Arbitraries.samples() in jqwik code. 
       Use OrderedArbitraryForTesting where necessary.
     

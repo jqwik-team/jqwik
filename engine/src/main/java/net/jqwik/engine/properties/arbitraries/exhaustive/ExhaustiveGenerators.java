@@ -24,10 +24,6 @@ public class ExhaustiveGenerators {
 		return choose(validCharacters, maxNumberOfSamples);
 	}
 
-	public static <T extends Enum<T>> Optional<ExhaustiveGenerator<T>> choose(Class<T> enumClass, long maxNumberOfSamples) {
-		return choose(Arrays.asList(enumClass.getEnumConstants()), maxNumberOfSamples);
-	}
-
 	public static <T> Optional<ExhaustiveGenerator<T>> fromIterable(Iterable<T> iterator, long maxCount, long maxNumberOfSamples) {
 		if (maxCount > maxNumberOfSamples) {
 			return Optional.empty();

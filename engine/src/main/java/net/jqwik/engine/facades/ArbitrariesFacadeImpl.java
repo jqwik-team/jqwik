@@ -73,16 +73,6 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <T extends Enum<T>> RandomGenerator<T> randomChoose(Class<T> enumClass) {
-		return RandomGenerators.choose(enumClass);
-	}
-
-	@Override
-	public <T extends Enum<T>> Optional<ExhaustiveGenerator<T>> exhaustiveChoose(Class<T> enumClass, long maxNumberOfSamples) {
-		return ExhaustiveGenerators.choose(enumClass, maxNumberOfSamples);
-	}
-
-	@Override
 	public <T> Arbitrary<T> oneOf(List<Arbitrary<T>> all) {
 		return new OneOfArbitrary<>(all);
 	}
