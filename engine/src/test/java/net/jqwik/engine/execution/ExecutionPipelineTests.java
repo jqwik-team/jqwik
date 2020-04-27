@@ -43,7 +43,7 @@ class ExecutionPipelineTests {
 
 	@Provide
 	Arbitrary<ExecutionTask> task() {
-		return new OrderedArbitraryForTesting<>(1, 2, 3).map(i -> new MockExecutionTask(Integer.toString(i)));
+		return OrderedArbitraryForTesting.between(1, 100).map(i -> new MockExecutionTask(Integer.toString(i)));
 	}
 
 	@Example

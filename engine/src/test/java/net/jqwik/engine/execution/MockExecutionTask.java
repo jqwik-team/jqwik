@@ -30,4 +30,5 @@ class MockExecutionTask extends AbstractTestDescriptor implements ExecutionTask 
 	public Type getType() {
 		return Type.TEST;
 	}
+
 }
