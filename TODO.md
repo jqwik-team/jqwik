@@ -1,8 +1,5 @@
 - 1.3.0
 
-    - Introduce Arbitrary.edgeCases()
-        - Document edge cases
-        
     - Unify all Arbitraries.of() implementations
 
     - Get rid of Arbitraries.samples() in jqwik code. 
@@ -20,11 +17,13 @@
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
 
-    - Arbitrary.withEdgeCase(value) 
+    - Arbitrary.addEdgeCase(value) 
         - Make shrinkable variants for
             - Numeric Arbitraries
             - CharacterArbitrary
             - Arbitrary.of() arbitraries
+            - Collections
+            - Combinators
 
     - ProvideArbitraryHook
         - Let domains use that hook
