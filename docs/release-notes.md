@@ -20,6 +20,12 @@ title: jqwik Release Notes
 
 ## 1.3.0-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
 #### New and Enhanced Features
 
 - Massively improved and enhanced 
