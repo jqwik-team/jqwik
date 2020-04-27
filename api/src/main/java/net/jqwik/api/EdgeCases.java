@@ -19,6 +19,8 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 			implementation = FacadeLoader.load(EdgeCases.EdgeCasesFacade.class);
 		}
 
+		public abstract <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers);
+
 		public abstract <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases);
 
 		public abstract <T, U> EdgeCases<U> mapShrinkable(EdgeCases<T> self, Function<Shrinkable<T>, Shrinkable<U>> mapper);
@@ -43,6 +45,11 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	}
 
 	@API(status = INTERNAL)
+	static <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers) {
+		return EdgeCasesFacade.implementation.fromSuppliers(suppliers);
+	}
+
+	@API(status = INTERNAL)
 	static <T> EdgeCases<T> none() {
 		return fromSuppliers(Collections.emptyList());
 	}
@@ -61,11 +68,6 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	@API(status = INTERNAL)
 	static <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
 		return EdgeCasesFacade.implementation.concat(edgeCases);
-	}
-
-	@API(status = INTERNAL)
-	static <T> EdgeCases<T> fromSuppliers(List<Supplier<Shrinkable<T>>> suppliers) {
-		return () -> suppliers;
 	}
 
 	@API(status = INTERNAL)
@@ -95,4 +97,5 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	default <U> EdgeCases<U> flatMapArbitrary(Function<T, Arbitrary<U>> mapper) {
 		return EdgeCasesFacade.implementation.flatMapArbitrary(this, mapper);
 	}
+
 }

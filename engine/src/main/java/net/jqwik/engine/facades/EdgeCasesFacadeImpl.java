@@ -6,11 +6,34 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.shrinking.*;
+import net.jqwik.engine.support.*;
 
 /**
  * Is loaded through reflection in api module
  */
 public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
+
+	@Override
+	public <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
+		return new EdgeCases<T>() {
+			@Override
+			public List<Supplier<Shrinkable<T>>> suppliers() {
+				return suppliers;
+			}
+
+			@Override
+			public String toString() {
+				String edgeCases =
+					suppliers
+						.stream()
+						.map(Supplier::get)
+						.map(Shrinkable::value)
+						.map(JqwikStringSupport::displayString)
+						.collect(Collectors.joining(", "));
+				return String.format("EdgeCases[%s]", edgeCases);
+			}
+		};
+	}
 
 	@Override
 	public <T> EdgeCases<T> concat(List<EdgeCases<T>> edgeCases) {
