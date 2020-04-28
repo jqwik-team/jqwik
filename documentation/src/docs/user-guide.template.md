@@ -3274,7 +3274,7 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 reportOnlyFailures = false          # Set to true if only falsified properties should be reported
 defaultGeneration = AUTO            # Set default behaviour for generation:
                                     # AUTO, RANDOMIZED, or EXHAUSTIVE
-defaultEdgeCases = AUTO             # Set default behaviour for edge cases generation:
+defaultEdgeCases = MIXIN            # Set default behaviour for edge cases generation:
                                     # FIRST, MIXIN, or NONE
 ```
 
