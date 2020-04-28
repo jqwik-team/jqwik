@@ -155,6 +155,25 @@ class ExhaustiveGenerationTests {
 		}
 
 		@Example
+		@Label("uniqueness within array")
+		void uniqueWithinArray() {
+			Optional<ExhaustiveGenerator<Integer[]>> optionalGenerator = Arbitraries.of(1, 2, 3).unique().array(Integer[].class).ofSize(3)
+																					.exhaustive();
+			assertThat(optionalGenerator).isPresent();
+
+			ExhaustiveGenerator<Integer[]> generator = optionalGenerator.get();
+			assertThat(generator.maxCount()).isEqualTo(27); // Cannot know the number of unique elements in advance
+			assertThat(generator).containsOnly(
+				new Integer[]{1, 2, 3},
+				new Integer[]{2, 3, 1},
+				new Integer[]{3, 1, 2},
+				new Integer[]{1, 3, 2},
+				new Integer[]{2, 1, 3},
+				new Integer[]{3, 2, 1}
+			);
+		}
+
+		@Example
 		@Label("uniqueness within list can miss too often")
 		void uniqueListSearchMissesTooOften() {
 			Optional<ExhaustiveGenerator<List<Integer>>> optionalGenerator =

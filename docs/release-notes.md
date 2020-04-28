@@ -66,7 +66,7 @@ and
 
 #### Bug Fixes
 
-No known open bugs.
+- Generation of unique values for nullable arbitraries works now.
 
 ## 1.2.x
 

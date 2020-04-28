@@ -9,8 +9,8 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class StreamArbitrary<T> extends DefaultCollectionArbitrary<T, Stream<T>> {
 
-	public StreamArbitrary(Arbitrary<T> elementArbitrary) {
-		super(elementArbitrary, false);
+	public StreamArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
+		super(elementArbitrary, elementsUnique);
 	}
 
 	@Override

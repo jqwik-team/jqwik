@@ -1,8 +1,7 @@
 - 1.3.0
 
-    - Scrutinize unique() behaviour of IteratorArbitrary, StreamArbitrary, ArrayArbitrary
-        - When @Unique is a constraint
-      
+    - Can Streams be shrunk?
+    
     - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
 
     - Check TODOs in code

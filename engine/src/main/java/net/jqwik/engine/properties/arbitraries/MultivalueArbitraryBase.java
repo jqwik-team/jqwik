@@ -7,6 +7,8 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
+
 abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 
 	protected Arbitrary<T> elementArbitrary;
@@ -14,9 +16,12 @@ abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 	protected int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 	private final boolean elementsUnique;
 
-	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary, final boolean elementsUnique) {
+	protected MultivalueArbitraryBase(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
 		this.elementArbitrary = elementArbitrary;
 		this.elementsUnique = elementsUnique;
+		if (elementsUnique) {
+			this.maxSize = maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE);
+		}
 	}
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {

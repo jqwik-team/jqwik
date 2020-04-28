@@ -35,8 +35,6 @@ public interface Arbitrary<T> {
 
 		public abstract <T> StreamableArbitrary<T, List<T>> list(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> StreamableArbitrary<T, List<T>> listOfUnique(Arbitrary<T> uniqueArbitrary);
-
 		public abstract <T> StreamableArbitrary<T, Set<T>> set(Arbitrary<T> elementArbitrary);
 
 		public abstract <T> StreamableArbitrary<T, Stream<T>> stream(Arbitrary<T> elementArbitrary);
@@ -44,8 +42,6 @@ public interface Arbitrary<T> {
 		public abstract <T> StreamableArbitrary<T, Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
 
 		public abstract <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
-
-		public abstract <T, A> StreamableArbitrary<T, A> arrayOfUnique(Arbitrary<T> uniqueArbitrary, Class<A> arrayClass);
 
 		public abstract <T> Stream<T> sampleStream(Arbitrary<T> arbitrary);
 	}
@@ -69,9 +65,20 @@ public interface Arbitrary<T> {
 	 * Sometimes simplifies test writing
 	 */
 	@SuppressWarnings("unchecked")
-	@API(status = INTERNAL, since = "1.2.4")
+	@API(status = INTERNAL)
 	default Arbitrary<Object> asGeneric() {
 		return (Arbitrary<Object>) this;
+	}
+
+	/**
+	 * All arbitraries whose base generator is supposed to produce no duplicates
+	 * should return true.
+	 *
+	 * @return true if base genator is supposed to produce no duplicates
+	 */
+	@API(status = INTERNAL)
+	default boolean isUnique() {
+		return false;
 	}
 
 	/**
@@ -172,6 +179,12 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
+			public boolean isUnique() {
+				return Arbitrary.this.isUnique();
+			}
+
+
+			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples)
 									 .map(generator -> generator.filter(filterPredicate));
@@ -195,6 +208,11 @@ public interface Arbitrary<T> {
 			@Override
 			public RandomGenerator<U> generator(int genSize) {
 				return Arbitrary.this.generator(genSize).map(mapper);
+			}
+
+			@Override
+			public boolean isUnique() {
+				return Arbitrary.this.isUnique();
 			}
 
 			@Override
@@ -256,6 +274,11 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
+			public boolean isUnique() {
+				return Arbitrary.this.isUnique();
+			}
+
+			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ExhaustiveGenerator::injectNull);
 			}
@@ -283,6 +306,11 @@ public interface Arbitrary<T> {
 			}
 
 			@Override
+			public boolean isUnique() {
+				return true;
+			}
+
+			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
 				return Arbitrary.this.exhaustive(maxNumberOfSamples).map(ExhaustiveGenerator::unique);
 			}
@@ -292,15 +320,6 @@ public interface Arbitrary<T> {
 				return Arbitrary.this.edgeCases();
 			}
 
-			@Override
-			public StreamableArbitrary<T, List<T>> list() {
-				return ArbitraryFacade.implementation.listOfUnique(this);
-			}
-
-			@Override
-			public <A> StreamableArbitrary<T, A> array(Class<A> arrayClass) {
-				return ArbitraryFacade.implementation.arrayOfUnique(this, arrayClass);
-			}
 		};
 	}
 

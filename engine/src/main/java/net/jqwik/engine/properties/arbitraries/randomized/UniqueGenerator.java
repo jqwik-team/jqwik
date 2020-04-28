@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -10,7 +9,7 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class UniqueGenerator<T> implements RandomGenerator<T> {
 	private final RandomGenerator<T> toFilter;
-	private final Set<T> usedValues = ConcurrentHashMap.newKeySet();
+	private final Set<T> usedValues = Collections.synchronizedSet(new HashSet<>());
 
 	public UniqueGenerator(RandomGenerator<T> toFilter) {
 		this.toFilter = toFilter;
@@ -34,10 +33,11 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 			() -> true,
 			next -> {
 				next = fetchShrinkable.apply(random);
-				if (usedValues.contains(next.value())) {
+				T value = next.value();
+				if (usedValues.contains(value)) {
 					return Tuple.of(false, next);
 				}
-				usedValues.add(next.value());
+				usedValues.add(value);
 				return Tuple.of(true, next);
 			},
 			maxMisses -> {
