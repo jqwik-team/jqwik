@@ -1,7 +1,5 @@
 - 1.3.0
 
-    - Can Streams be shrunk?
-    
     - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
 
     - Check TODOs in code
@@ -10,6 +8,8 @@
     
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
+      - Extract description before running the property?
+        e.g. to be able to display a generated Stream
 
     - Arbitrary.addEdgeCase(value) 
         - Make shrinkable variants for
