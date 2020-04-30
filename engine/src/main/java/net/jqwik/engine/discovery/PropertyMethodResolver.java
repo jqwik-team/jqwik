@@ -67,11 +67,6 @@ class PropertyMethodResolver implements ElementResolver {
 	}
 
 	private TestDescriptor createTestDescriptor(TestDescriptor parent, Method method) {
-
-		// TODO: When an exception occurs during creation of descriptor
-		// a descriptor should be created that will execute as error for this method only
-		// Now, an exception will stop discovery of tests altogether
-
 		UniqueId uniqueId = createUniqueId(method, parent);
 		Class<?> testClass = ((ContainerClassDescriptor) parent).getContainerClass();
 		TestDescriptor newDescriptor = createTestDescriptor(uniqueId, testClass, method);

@@ -5,7 +5,9 @@ import java.util.stream.*;
 
 import org.junit.platform.engine.*;
 import org.junit.platform.engine.reporting.*;
+import org.junit.platform.engine.support.descriptor.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
@@ -112,9 +114,12 @@ class ContainerTaskCreator {
 		if (containerDescriptor instanceof ContainerClassDescriptor) {
 			ContainerClassDescriptor classDescriptor = (ContainerClassDescriptor) containerDescriptor;
 			return new DefaultContainerLifecycleContext(classDescriptor, reporter, resolveParameterHook);
+		} else if (containerDescriptor instanceof EngineDescriptor) {
+			return new EngineLifecycleContext(containerDescriptor, reporter, resolveParameterHook);
+		} else {
+			String message = String.format("Unknown descriptor type for [%s]", containerDescriptor.getUniqueId());
+			throw new JqwikException(message);
 		}
-		// TODO: Check if it really is an engine
-		return new EngineLifecycleContext(containerDescriptor, reporter, resolveParameterHook);
 	}
 
 	private ExecutionTask[] createChildren(
