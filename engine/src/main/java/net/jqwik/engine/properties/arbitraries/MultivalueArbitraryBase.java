@@ -4,12 +4,13 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 import static net.jqwik.engine.properties.arbitraries.ArbitrariesSupport.*;
 
-abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
+abstract class MultivalueArbitraryBase<T, U> extends AbstractArbitraryBase implements StreamableArbitrary<T, U> {
 
 	protected Arbitrary<T> elementArbitrary;
 	protected int minSize = 0;
@@ -23,6 +24,36 @@ abstract class MultivalueArbitraryBase<T> extends AbstractArbitraryBase {
 			this.maxSize = maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE);
 		}
 	}
+
+	@Override
+	public StreamableArbitrary<T, U> ofMinSize(int minSize) {
+		MultivalueArbitraryBase<T, U> clone = typedClone();
+		clone.minSize = minSize;
+		return clone;
+	}
+
+	@Override
+	public StreamableArbitrary<T, U> ofMaxSize(int maxSize) {
+		MultivalueArbitraryBase<T, U> clone = typedClone();
+		clone.maxSize = maxSize;
+		return clone;
+	}
+
+	@Override
+	public <R> Arbitrary<R> reduce(R initial, BiFunction<R, T, R> accumulator) {
+		return this.map(streamable -> {
+			// Couldn't find a way to use Stream.reduce since it requires a combinator
+			@SuppressWarnings("unchecked")
+			R[] result = (R[]) new Object[]{initial};
+			Iterable<T> iterable = toIterable(streamable);
+			for (T each : iterable) {
+				result[0] = accumulator.apply(result[0], each);
+			}
+			return result[0];
+		});
+	}
+
+	protected abstract Iterable<T> toIterable(U streamable);
 
 	protected RandomGenerator<List<T>> createListGenerator(int genSize) {
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);

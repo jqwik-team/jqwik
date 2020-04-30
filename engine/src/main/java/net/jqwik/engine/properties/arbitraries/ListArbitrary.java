@@ -6,7 +6,7 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class ListArbitrary<T> extends DefaultCollectionArbitrary<T, List<T>> {
+public class ListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>> {
 
 	public ListArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
 		super(elementArbitrary, elementsUnique);

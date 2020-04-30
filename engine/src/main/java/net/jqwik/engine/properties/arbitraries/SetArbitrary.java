@@ -7,7 +7,7 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class SetArbitrary<T> extends DefaultCollectionArbitrary<T, Set<T>> {
+public class SetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> {
 
 	public SetArbitrary(Arbitrary<T> elementArbitrary) {
 		super(elementArbitrary, true);

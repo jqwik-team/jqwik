@@ -2,16 +2,14 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements StreamableArbitrary<T, A>, SelfConfiguringArbitrary<A> {
+public class ArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements SelfConfiguringArbitrary<A> {
 
 	private final Class<A> arrayClass;
 
@@ -28,8 +26,8 @@ public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements 
 	@Override
 	public Optional<ExhaustiveGenerator<A>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
-			.list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
-			.map(generator -> generator.map(this::toArray));
+				   .list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
+				   .map(generator -> generator.map(this::toArray));
 	}
 
 	@Override
@@ -47,33 +45,9 @@ public class ArrayArbitrary<A, T> extends MultivalueArbitraryBase<T> implements 
 	}
 
 	@Override
-	public <R> Arbitrary<R> reduce(R initial, BiFunction<R, T, R> accumulator) {
-		// TODO: Remove duplication with DefaultCollectionArbitrary.reduce
-		return this.map(streamable -> {
-			// Couldn't find a way to use Stream.reduce since it requires a combinator
-			@SuppressWarnings("unchecked")
-			R[] result = (R[]) new Object[]{initial};
-			@SuppressWarnings("unchecked")
-			T[] array = (T[]) streamable;
-			for (T each : array) {
-				result[0] = accumulator.apply(result[0], each);
-			}
-			return result[0];
-		});
-	}
-
-	@Override
-	public StreamableArbitrary<T, A> ofMinSize(int minSize) {
-		ArrayArbitrary<A, T> clone = typedClone();
-		clone.minSize = minSize;
-		return clone;
-	}
-
-	@Override
-	public StreamableArbitrary<T, A> ofMaxSize(int maxSize) {
-		ArrayArbitrary<A, T> clone = typedClone();
-		clone.maxSize = maxSize;
-		return clone;
+	protected Iterable<T> toIterable(A array) {
+		//noinspection unchecked
+		return () -> Arrays.stream((T[]) array).iterator();
 	}
 
 	@Override
