@@ -40,7 +40,7 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 		if (edgeCases.isEmpty()) {
 			return EdgeCases.none();
 		}
-		// TODO: Filter out duplicate edge cases
+		// TODO: Should duplicate edge cases be filtered out?
 		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
 		for (EdgeCases<T> edgeCase : edgeCases) {
 			if (edgeCase.isEmpty()) {
