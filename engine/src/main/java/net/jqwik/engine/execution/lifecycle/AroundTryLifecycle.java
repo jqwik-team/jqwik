@@ -19,7 +19,6 @@ public class AroundTryLifecycle implements TryLifecycleExecutor {
 
 	@Override
 	public TryExecutionResult execute(TryLifecycleContext tryLifecycleContext, List<Object> parameters) {
-		// TODO: Remove duplication with CheckedFunction.execute()
 		try {
 			return aroundTry.aroundTry(tryLifecycleContext, tryExecutor, parameters);
 		} catch (TestAbortedException exception) {

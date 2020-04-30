@@ -13,7 +13,6 @@ public interface CheckedFunction extends Predicate<List<Object>>, TryExecutor, T
 
 	@Override
 	default TryExecutionResult execute(List<Object> parameters) {
-		// TODO: Remove duplication with AroundTryLifecycle.execute()
 		try {
 			boolean result = this.test(parameters);
 			return result ? TryExecutionResult.satisfied() : TryExecutionResult.falsified(null);
