@@ -75,6 +75,11 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	}
 
 	@Override
+	public boolean isUnique() {
+		return parts.stream().allMatch(Arbitrary::isUnique);
+	}
+
+	@Override
 	public CharacterArbitrary range(char min, char max) {
 		return cloneWith(rangeArbitrary(min, max));
 	}
@@ -87,6 +92,11 @@ public class DefaultCharacterArbitrary extends AbstractArbitraryBase implements 
 	@Override
 	public CharacterArbitrary with(CharSequence allowedChars) {
 		return cloneWith(charsArbitrary(allowedChars.toString().toCharArray()));
+	}
+
+	@Override
+	public CharacterArbitrary with(final Arbitrary<Character> characterArbitrary) {
+		return cloneWith(characterArbitrary);
 	}
 
 	private Arbitrary<Character> charsArbitrary(char[] allowedChars) {

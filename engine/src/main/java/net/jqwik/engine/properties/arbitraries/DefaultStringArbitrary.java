@@ -24,7 +24,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	@Override
 	public Optional<ExhaustiveGenerator<String>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators.strings(
-			effectiveCharacterArbitrary(),
+			characterArbitrary,
 			minLength,
 			maxLength,
 			maxNumberOfSamples
@@ -34,20 +34,33 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	@Override
 	public EdgeCases<String> edgeCases() {
 		EdgeCases<String> emptyStringEdgeCases =
-			minLength > 0 ? EdgeCases.none()
-				: EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength));
+			hasEmptyStringEdgeCase() ? emptyStringEdgeCase() : EdgeCases.none();
 		EdgeCases<String> singleCharEdgeCases =
-			minLength <= 1 && maxLength >= 1 ? fixedSizedEdgeCases(1) : EdgeCases.none();
-
-		// TODO: What if character arbitrary is unique? Can that happen?
+			hasSingleCharEdgeCases() ? fixedSizedEdgeCases(1) : EdgeCases.none();
 		EdgeCases<String> fixedSizeEdgeCases =
-			minLength == maxLength && minLength > 1 ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
+			hasMultiCharEdgeCases() ? fixedSizedEdgeCases(minLength) : EdgeCases.none();
 
 		return EdgeCases.concat(singleCharEdgeCases, emptyStringEdgeCases, fixedSizeEdgeCases);
 	}
 
-	protected EdgeCases<String> fixedSizedEdgeCases(int fixedSize) {
-		return effectiveCharacterArbitrary()
+	private boolean hasEmptyStringEdgeCase() {
+		return minLength <= 0;
+	}
+
+	private boolean hasMultiCharEdgeCases() {
+		return minLength == maxLength && minLength > 1 && !characterArbitrary.isUnique();
+	}
+
+	private boolean hasSingleCharEdgeCases() {
+		return minLength <= 1 && maxLength >= 1;
+	}
+
+	private EdgeCases<String> emptyStringEdgeCase() {
+		return EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength));
+	}
+
+	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize) {
+		return characterArbitrary
 				   .edgeCases()
 				   .mapShrinkable(shrinkableChar -> {
 					   List<Shrinkable<Character>> chars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
@@ -80,6 +93,13 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	public StringArbitrary withChars(CharSequence chars) {
 		DefaultStringArbitrary clone = typedClone();
 		clone.characterArbitrary = clone.characterArbitrary.with(chars);
+		return clone;
+	}
+
+	@Override
+	public StringArbitrary withChars(final Arbitrary<Character> characterArbitrary) {
+		DefaultStringArbitrary clone = typedClone();
+		clone.characterArbitrary = clone.characterArbitrary.with(characterArbitrary);
 		return clone;
 	}
 
@@ -126,11 +146,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	}
 
 	private RandomGenerator<Character> randomCharacterGenerator() {
-		return effectiveCharacterArbitrary().generator(1);
-	}
-
-	private Arbitrary<Character> effectiveCharacterArbitrary() {
-		return characterArbitrary;
+		return characterArbitrary.generator(1);
 	}
 
 }

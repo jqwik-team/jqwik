@@ -36,6 +36,10 @@ and
 - Added `Arbitrary.withoutEdgeCases()` to switch off 
   preferred edge case generation for individual arbitraries. 
 
+- Added `StringArbitrary.withChars(Arbitrary<Character> characterArbitrary)`
+
+- Added `CharacterArbitrary.with(Arbitrary<Character> characterArbitrary)`
+
 - Promoted APIs from `EXPERIMENTAL` to `MAINTAINED`
     - `Arbitraries.nothing()`
     - `Arbitrary.collect(Predicate<List<T>> until)`
