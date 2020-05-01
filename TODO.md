@@ -2,8 +2,6 @@
 
     - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
 
-    - Check TODOs in code
-    
     - Documentation for lifecycle hooks API in user guide
     
     - Improve Sample Reporting
