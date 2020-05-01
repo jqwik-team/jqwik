@@ -49,7 +49,7 @@ public interface StringArbitrary extends Arbitrary<String> {
 	 *
 	 * Can be combined with other methods that allow chars.
 	 */
-	@API(status = MAINTAINED, since = "1.3.0")
+	@API(status = EXPERIMENTAL, since = "1.3.0")
 	StringArbitrary withChars(Arbitrary<Character> characterArbitrary);
 
 	/**

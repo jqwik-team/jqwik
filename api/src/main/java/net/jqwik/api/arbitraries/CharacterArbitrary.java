@@ -32,7 +32,7 @@ public interface CharacterArbitrary extends Arbitrary<Character> {
 	 *
 	 * Adds to all already allowed chars.
 	 */
-	@API(status = MAINTAINED, since = "1.3.0")
+	@API(status = EXPERIMENTAL, since = "1.3.0")
 	CharacterArbitrary with(Arbitrary<Character> characterArbitrary);
 
 	/**
