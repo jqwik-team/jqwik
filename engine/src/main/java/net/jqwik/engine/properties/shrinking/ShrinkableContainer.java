@@ -55,7 +55,6 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	private Shrinkable<C> toContainerShrinkable(Shrinkable<List<E>> listOfShrinkable) {
 		List<Shrinkable<E>> shrinkableElements =
 			listOfShrinkable.value().stream()
-							// TODO: Can the distance of these unshrinkables be computed?
 							.map(Shrinkable::unshrinkable)
 							.collect(Collectors.toList());
 		return createShrinkable(shrinkableElements);
