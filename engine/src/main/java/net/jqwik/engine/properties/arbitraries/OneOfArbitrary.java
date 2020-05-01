@@ -35,15 +35,7 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public Arbitrary<T> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
-		all.replaceAll(a -> {
-			if (a instanceof SelfConfiguringArbitrary) {
-				// TODO: This condition exists 3 times
-				//noinspection unchecked
-				return ((SelfConfiguringArbitrary) a).configure(configurator, targetType);
-			} else {
-				return configurator.configure(a, targetType);
-			}
-		});
+		all.replaceAll(arbitrary -> SelfConfiguringArbitrary.configure(arbitrary, configurator, targetType));
 		return this;
 	}
 

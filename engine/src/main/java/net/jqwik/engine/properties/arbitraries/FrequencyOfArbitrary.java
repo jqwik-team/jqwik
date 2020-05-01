@@ -55,14 +55,14 @@ public class FrequencyOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArb
 	@Override
 	public Arbitrary<T> configure(ArbitraryConfigurator configurator, TypeUsage targetType) {
 		frequencies.replaceAll(f -> {
-			Arbitrary<T> configuredArbitrary;
-			if (f.get2() instanceof SelfConfiguringArbitrary) {
-				// TODO: This condition exists 3 times
-				//noinspection unchecked
-				configuredArbitrary = ((SelfConfiguringArbitrary) f.get2()).configure(configurator, targetType);
-			} else {
-				configuredArbitrary = configurator.configure(f.get2(), targetType);
-			}
+			Arbitrary<T> configuredArbitrary = SelfConfiguringArbitrary.configure(f.get2(), configurator, targetType);
+			// if (a instanceof SelfConfiguringArbitrary) {
+			// 	// TODO: This condition exists 3 times
+			// 	//noinspection unchecked
+			// 	configuredArbitrary = ((SelfConfiguringArbitrary) a).configure(configurator, targetType);
+			// } else {
+			// 	configuredArbitrary = configurator.configure(a, targetType);
+			// }
 			return Tuple.of(f.get1(), configuredArbitrary);
 		});
 		return this;

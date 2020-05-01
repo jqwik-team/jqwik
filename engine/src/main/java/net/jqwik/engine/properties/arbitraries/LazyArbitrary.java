@@ -21,18 +21,13 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 
 	private Arbitrary<T> getArbitrary() {
 		if (this.arbitrary == null) {
-			this.arbitrary = arbitrarySupplier.get();
+			Arbitrary<T> rawArbitrary = arbitrarySupplier.get();
 			for (Tuple.Tuple2<ArbitraryConfigurator, TypeUsage> configuration : configurations) {
 				ArbitraryConfigurator configurator = configuration.get1();
 				TypeUsage targetType = configuration.get2();
-				if (arbitrary instanceof SelfConfiguringArbitrary) {
-					// TODO: This condition exists 3 times
-					//noinspection unchecked
-					arbitrary = ((SelfConfiguringArbitrary) arbitrary).configure(configurator, targetType);
-				} else {
-					arbitrary = configurator.configure(arbitrary, targetType);
-				}
+				rawArbitrary = SelfConfiguringArbitrary.configure(rawArbitrary, configurator, targetType);
 			}
+			this.arbitrary = rawArbitrary;
 		}
 		return this.arbitrary;
 	}

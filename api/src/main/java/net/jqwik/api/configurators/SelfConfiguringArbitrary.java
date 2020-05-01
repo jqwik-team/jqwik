@@ -28,6 +28,19 @@ import static org.apiguardian.api.API.Status.*;
 public interface SelfConfiguringArbitrary<T> {
 
 	/**
+	 * If an arbitrary is self configuring use it, otherwise use default configurator
+	 */
+	@API(status = INTERNAL)
+	static <T> Arbitrary<T> configure(Arbitrary<T> self, ArbitraryConfigurator configurator, TypeUsage targetType) {
+		if (self instanceof SelfConfiguringArbitrary) {
+			//noinspection unchecked
+			return ((SelfConfiguringArbitrary<T>) self).configure(configurator, targetType);
+		} else {
+			return configurator.configure(self, targetType);
+		}
+	}
+
+	/**
 	 * Do all configuration yourself or delegate to {@link ArbitraryConfigurator#configure(Arbitrary, TypeUsage)}
 	 * of the {@code configurator} that's being handed in.
 	 *
