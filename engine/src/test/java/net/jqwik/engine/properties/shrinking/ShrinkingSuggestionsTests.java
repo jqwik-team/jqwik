@@ -142,6 +142,7 @@ class ShrinkingSuggestionsTests {
 		//			Tuple.of(1, 2),
 		//			Tuple.of(2, 2)
 		//		);
+		// But maybe this will all be unnecessary when shrinking is redone :-/
 
 	}
 

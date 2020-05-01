@@ -103,8 +103,8 @@ class RandomizedShrinkablesGeneratorTests {
 		assertAtLeastOneGenerated(shrinkablesGenerator, asList("b", asList("b")));
 
 		// TODO: This is really hard to implement and probably requires core changes in Arbitrary/RandomGenerator
-		//assertNeverGenerated(shrinkablesGenerator, random, asList("a", asList("b")));
-		//assertNeverGenerated(shrinkablesGenerator, random, asList("b", asList("a")));
+		// assertNeverGenerated(shrinkablesGenerator, asList("a", asList("b")));
+		// assertNeverGenerated(shrinkablesGenerator, asList("b", asList("a")));
 	}
 
 	private void assertAtLeastOneGenerated(ForAllParametersGenerator generator, List<Object> expected) {
