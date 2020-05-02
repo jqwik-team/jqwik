@@ -77,35 +77,6 @@ class BigDecimalShrinkingTests {
 	}
 
 	@Example
-	void shrinkingDistanceOutsideLongRange() {
-		Range<BigDecimal> bigDecimalRange = Range.of(
-			new BigDecimal("-1000000000000000000000"),
-			new BigDecimal("1000000000000000000000")
-		);
-
-		assertThat(
-			new ShrinkableBigDecimal(
-				new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0,
-				defaultShrinkingTarget(new BigDecimal("99999999999999999999.11"), bigDecimalRange, 0)
-			).distance())
-			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
-
-		assertThat(
-			new ShrinkableBigDecimal(
-				new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0,
-				defaultShrinkingTarget(new BigDecimal("-99999999999999999999.11"), bigDecimalRange, 0)
-			).distance())
-			.isEqualTo(ShrinkingDistance.of(Long.MAX_VALUE, 0));
-
-		assertThat(
-			new ShrinkableBigDecimal(
-				new BigDecimal("99.11"), bigDecimalRange, 22,
-				defaultShrinkingTarget(new BigDecimal("99.11"), bigDecimalRange, 22)
-			).distance())
-			.isEqualTo(ShrinkingDistance.of(99, Long.MAX_VALUE));
-	}
-
-	@Example
 	@Label("report all falsified")
 	void reportFalsified() {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
@@ -158,8 +129,7 @@ class BigDecimalShrinkingTests {
 		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
 		while (sequence.next(count, reporter)) ;
 		BigDecimal shrunkValue = sequence.current().value();
-		// can be + or - 0.0:
-		assertThat(shrunkValue).isCloseTo(BigDecimal.ZERO, Offset.offset(BigDecimal.ZERO));
+		assertThat(shrunkValue).isEqualByComparingTo(BigDecimal.ZERO);
 	}
 
 	@Property(tries = 100)
