@@ -598,20 +598,16 @@ class ArbitrariesTests {
 		void doublesBorderIsMorePreciseThanScale() {
 			double min = 0.001;
 			double max = 0.199;
-			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, max).ofScale(2);
-			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
-
-			assertAllGenerated(generator, value -> value >= min && value <= max);
+			Arbitrary<Double> arbitrary = Arbitraries.doubles().between(min, max).ofScale(2);
+			assertThatThrownBy(() -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
 		}
 
 		@Example
-		void doublesBordersAreCloserThanScale() {
-			double min = 0.001;
-			double max = 0.002;
-			Arbitrary<Double> doubleArbitrary = Arbitraries.doubles().between(min, max).ofScale(2);
-			RandomGenerator<Double> generator = doubleArbitrary.generator(100);
-
-			assertAllGenerated(generator, value -> value >= min && value <= max);
+		void excludedBordersDontAllowValueCreation() {
+			double min = 0.01;
+			double max = 0.02;
+			Arbitrary<Double> arbitrary = Arbitraries.doubles().between(min, false, max, false).ofScale(2);
+			assertThatThrownBy(() -> arbitrary.generator(1)).isInstanceOf(JqwikException.class);
 		}
 
 		@Example

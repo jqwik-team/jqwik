@@ -101,7 +101,7 @@ public class RandomGenerators {
 		BigDecimal minimumDifference = BigDecimal.ONE.movePointLeft(scale);
 		if (range.min.add(minimumDifference).compareTo(range.max) >= 0) {
 			String message = String.format("No number with scale <%s> can be generated in %s", scale, range);
-			throw new IllegalArgumentException(message);
+			throw new JqwikException(message);
 		}
 	}
 

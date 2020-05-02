@@ -56,6 +56,9 @@ and
 
 #### Breaking Changes
 
+- Decimal Generation: Min and max values are now rejected if they have more decimal places
+  than the generator's scale allows. 
+
 - Removed deprecated APIs
     - `Arbitrary.withSamples(T... samples)`
     - `RandomGenerator.withSamples(T... samples)`

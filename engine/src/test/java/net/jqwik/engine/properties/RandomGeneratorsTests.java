@@ -213,7 +213,7 @@ class RandomGeneratorsTests {
 					range, 0,
 					RandomGenerators.defaultShrinkingTargetCalculator(range, 0)
 				)
-			).isInstanceOf(IllegalArgumentException.class);
+			).isInstanceOf(JqwikException.class);
 		}
 
 		@Example

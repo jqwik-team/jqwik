@@ -26,8 +26,23 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
+		checkRange();
 		BigDecimal[] partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, range);
 		return decimalGenerator(partitionPoints, genSize);
+	}
+
+	private void checkRange() {
+		checkScale(range.min);
+		checkScale(range.max);
+	}
+
+	private void checkScale(final BigDecimal value) {
+		try {
+			value.setScale(scale);
+		} catch (ArithmeticException arithmeticException) {
+			String message = String.format("Decimal value %s cannot be represented with scale %s.%nYou may want to use a higher scale", value, scale);
+			throw new JqwikException(message);
+		}
 	}
 
 	@Override
@@ -44,7 +59,6 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
-		List<Shrinkable<BigDecimal>> edgeCases = edgeCaseShrinkables();
 		return RandomGenerators.bigDecimals(range, scale, shrinkingTargetCalculator(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases());
 	}
