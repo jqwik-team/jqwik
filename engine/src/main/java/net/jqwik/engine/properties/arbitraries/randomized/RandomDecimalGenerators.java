@@ -58,7 +58,7 @@ public class RandomDecimalGenerators {
 	}
 
 	public static BigInteger scaleToBigInteger(final BigDecimal bigDecimal, final int scale) {
-		return bigDecimal.movePointRight(scale).toBigInteger();
+		return bigDecimal.setScale(scale).unscaledValue();
 	}
 
 	public static BigDecimal defaultShrinkingTarget(BigDecimal value, Range<BigDecimal> range, int scale) {

@@ -11,6 +11,8 @@ import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
+import static net.jqwik.engine.properties.arbitraries.randomized.RandomDecimalGenerators.*;
+
 class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 
 	private static final int DEFAULT_SCALE = 2;
@@ -64,9 +66,15 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables() {
+		Range<BigInteger> bigIntegerRange = scaleToBigIntegerRange(range, scale);
 		return streamRawEdgeCases()
 				   .filter(aDecimal -> range.includes(aDecimal))
-				   .map(value -> new ShrinkableBigDecimal(value, range, scale, shrinkingTarget(value)))
+				   .map(value -> {
+					   BigInteger bigIntegerValue = scaleToBigInteger(value, scale);
+					   BigInteger shrinkingTarget = scaleToBigInteger(shrinkingTarget(value), scale);
+					   return new ShrinkableBigInteger(bigIntegerValue, bigIntegerRange, shrinkingTarget);
+				   })
+				   .map(shrinkableBigInteger -> shrinkableBigInteger.map(bigInteger -> unscaleFromBigInteger(bigInteger, scale)))
 				   .collect(Collectors.toList());
 	}
 

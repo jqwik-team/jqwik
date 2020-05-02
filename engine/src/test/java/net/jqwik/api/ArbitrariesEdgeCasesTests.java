@@ -305,13 +305,13 @@ class ArbitrariesEdgeCasesTests {
 													   .ofScale(scale);
 			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-				BigDecimal.valueOf(-10),
-				BigDecimal.valueOf(-1),
+				BigDecimal.valueOf(-10).setScale(2),
+				BigDecimal.valueOf(-1).setScale(2),
 				BigDecimal.valueOf(-0.01),
-				BigDecimal.ZERO.movePointLeft(scale),
+				BigDecimal.ZERO.setScale(2),
 				BigDecimal.valueOf(0.01),
-				BigDecimal.valueOf(1),
-				BigDecimal.valueOf(10)
+				BigDecimal.valueOf(1).setScale(2),
+				BigDecimal.valueOf(10).setScale(2)
 			);
 			// make sure edge cases can be repeatedly generated
 			assertThat(values(edgeCases)).hasSize(7);
@@ -326,11 +326,11 @@ class ArbitrariesEdgeCasesTests {
 			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
 				BigDecimal.valueOf(-9.9),
-				BigDecimal.valueOf(-1),
+				BigDecimal.valueOf(-1).setScale(1),
 				BigDecimal.valueOf(-0.1),
-				BigDecimal.ZERO.movePointLeft(scale),
+				BigDecimal.ZERO.setScale(1),
 				BigDecimal.valueOf(0.1),
-				BigDecimal.valueOf(1),
+				BigDecimal.valueOf(1).setScale(1),
 				BigDecimal.valueOf(9.9)
 			);
 		}
@@ -344,11 +344,11 @@ class ArbitrariesEdgeCasesTests {
 													   .shrinkTowards(BigDecimal.valueOf(5));
 			EdgeCases<BigDecimal> edgeCases = arbitrary.edgeCases();
 			assertThat(values(edgeCases)).containsExactlyInAnyOrder(
-				BigDecimal.valueOf(1),
+				BigDecimal.valueOf(1).setScale(1),
 				BigDecimal.valueOf(4.9),
-				BigDecimal.valueOf(5),
+				BigDecimal.valueOf(5).setScale(1),
 				BigDecimal.valueOf(5.1),
-				BigDecimal.valueOf(10)
+				BigDecimal.valueOf(10).setScale(1)
 			);
 		}
 
