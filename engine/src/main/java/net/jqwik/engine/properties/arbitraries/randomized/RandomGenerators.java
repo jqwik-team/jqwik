@@ -257,7 +257,7 @@ public class RandomGenerators {
 	}
 
 	public static Function<BigDecimal, BigDecimal> defaultShrinkingTargetCalculator(Range<BigDecimal> range, int scale) {
-		return value -> ShrinkableBigDecimal.defaultShrinkingTarget(value, range, scale);
+		return value -> RandomDecimalGenerators.defaultShrinkingTarget(value, range, scale);
 	}
 
 	// TODO: This could be way more sophisticated
