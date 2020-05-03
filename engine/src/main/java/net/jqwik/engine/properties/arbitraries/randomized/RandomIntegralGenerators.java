@@ -8,7 +8,6 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-// TODO: Remove duplication with RandomDecimalGenerators
 public class RandomIntegralGenerators {
 
 	public static RandomGenerator<BigInteger> bigIntegers(
@@ -20,6 +19,15 @@ public class RandomIntegralGenerators {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 		return partitionedGenerator(range, partitionPoints, shrinkingTargetCalculator);
+	}
+
+	public static BigInteger defaultShrinkingTarget(BigInteger value, Range<BigInteger> range) {
+		if (range.includes(BigInteger.ZERO)) {
+			return BigInteger.ZERO;
+		}
+		if (value.compareTo(BigInteger.ZERO) < 0) return range.max;
+		if (value.compareTo(BigInteger.ZERO) > 0) return range.min;
+		return value; // Should never get here
 	}
 
 	private static RandomGenerator<BigInteger> partitionedGenerator(

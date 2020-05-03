@@ -253,7 +253,7 @@ public class RandomGenerators {
 	}
 
 	public static Function<BigInteger, BigInteger> defaultShrinkingTargetCalculator(BigInteger min, BigInteger max) {
-		return value -> ShrinkableBigInteger.defaultShrinkingTarget(value, Range.of(min, max));
+		return value -> RandomIntegralGenerators.defaultShrinkingTarget(value, Range.of(min, max));
 	}
 
 	public static Function<BigDecimal, BigDecimal> defaultShrinkingTargetCalculator(Range<BigDecimal> range, int scale) {

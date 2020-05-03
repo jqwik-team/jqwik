@@ -12,15 +12,6 @@ public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 	private final BigInteger shrinkingTarget;
 	private final BigIntegerShrinkingCandidates shrinkingCandidates;
 
-	public static BigInteger defaultShrinkingTarget(BigInteger value, Range<BigInteger> range) {
-		if (range.includes(BigInteger.ZERO)) {
-			return BigInteger.ZERO;
-		}
-		if (value.compareTo(BigInteger.ZERO) < 0) return range.max;
-		if (value.compareTo(BigInteger.ZERO) > 0) return range.min;
-		return value; // Should never get here
-	}
-
 	public ShrinkableBigInteger(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
 		super(value);
 		this.range = range;
