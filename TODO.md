@@ -21,6 +21,10 @@
             - Collections
             - Combinators
 
+- 1.3.1
+
+    - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
+
     - ProvideArbitraryHook
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
@@ -35,6 +39,11 @@
         - Allow configuration attributes to be changed
         - Alternative: Introduce PropertyConfigurationHook
     
+    - Support more RandomDistribution modes, e.g. Gaussian, Log, PowerLaw
+        https://en.wikipedia.org/wiki/Inverse_transform_sampling
+        https://en.wikipedia.org/wiki/Ziggurat_algorithm
+        https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
+
     - Guided Generation
       https://github.com/jlink/jqwik/issues/84
       - Maybe change AroundTryHook to allow replacement of `Random` source
@@ -52,8 +61,4 @@
         - TryExecutionResult onFalsifiedTry(TryExecutionResult)
 
     - `@Report(reportOnlyFailures = false)`
-
-1.3.1
-
-    - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
 
