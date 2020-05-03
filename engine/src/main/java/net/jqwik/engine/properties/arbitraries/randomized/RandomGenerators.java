@@ -44,34 +44,12 @@ public class RandomGenerators {
 		return integers(min, max).map(anInt -> ((char) (int) anInt));
 	}
 
-	public static RandomGenerator<Byte> bytes(byte min, byte max) {
-		return bigIntegers(
-			BigInteger.valueOf(min),
-			BigInteger.valueOf(max),
-			defaultShrinkingTargetCalculator(BigInteger.valueOf(min), BigInteger.valueOf(max))
-		).map(BigInteger::byteValueExact);
-	}
-
-	public static RandomGenerator<Short> shorts(short min, short max) {
-		return bigIntegers(
-			BigInteger.valueOf(min),
-			BigInteger.valueOf(max),
-			defaultShrinkingTargetCalculator(BigInteger.valueOf(min), BigInteger.valueOf(max))
-		).map(BigInteger::shortValueExact);
-	}
-
 	public static RandomGenerator<Integer> integers(int min, int max) {
 		return bigIntegers(
 			BigInteger.valueOf(min),
 			BigInteger.valueOf(max),
 			defaultShrinkingTargetCalculator(BigInteger.valueOf(min), BigInteger.valueOf(max))
 		).map(BigInteger::intValueExact);
-	}
-
-	public static RandomGenerator<Long> longs(long min, long max) {
-		BigInteger min1 = BigInteger.valueOf(min);
-		BigInteger max1 = BigInteger.valueOf(max);
-		return bigIntegers(min1, max1, defaultShrinkingTargetCalculator(min1, max1)).map(BigInteger::longValueExact);
 	}
 
 	public static RandomGenerator<BigInteger> bigIntegers(

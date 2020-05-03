@@ -1,6 +1,10 @@
 - 1.3.0
 
-    - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
+    - Introduce XORShiftRandom
+    
+    - Introduce enum RandomDistribution { WEIGHTED, UNIFORM }
+      - All number arbitraries
+      - Constraint Annotation 
 
     - Documentation for lifecycle hooks API in user guide
     
@@ -48,4 +52,8 @@
         - TryExecutionResult onFalsifiedTry(TryExecutionResult)
 
     - `@Report(reportOnlyFailures = false)`
+
+1.3.1
+
+    - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
 
