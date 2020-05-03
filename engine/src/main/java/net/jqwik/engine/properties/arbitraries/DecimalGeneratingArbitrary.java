@@ -66,15 +66,15 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables() {
-		Range<BigInteger> bigIntegerRange = scaleToBigIntegerRange(range, scale);
+		Range<BigInteger> bigIntegerRange = unscaledBigIntegerRange(range, scale);
 		return streamRawEdgeCases()
 				   .filter(aDecimal -> range.includes(aDecimal))
 				   .map(value -> {
-					   BigInteger bigIntegerValue = scaleToBigInteger(value, scale);
-					   BigInteger shrinkingTarget = scaleToBigInteger(shrinkingTarget(value), scale);
+					   BigInteger bigIntegerValue = unscaledBigInteger(value, scale);
+					   BigInteger shrinkingTarget = unscaledBigInteger(shrinkingTarget(value), scale);
 					   return new ShrinkableBigInteger(bigIntegerValue, bigIntegerRange, shrinkingTarget);
 				   })
-				   .map(shrinkableBigInteger -> shrinkableBigInteger.map(bigInteger -> unscaleFromBigInteger(bigInteger, scale)))
+				   .map(shrinkableBigInteger -> shrinkableBigInteger.map(bigInteger -> scaledBigDecimal(bigInteger, scale)))
 				   .collect(Collectors.toList());
 	}
 

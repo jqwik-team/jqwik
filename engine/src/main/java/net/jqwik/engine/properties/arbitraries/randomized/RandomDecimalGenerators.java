@@ -23,41 +23,41 @@ public class RandomDecimalGenerators {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 
-		Range<BigInteger> scaledRange = scaleToBigIntegerRange(range, scale);
-		BigInteger[] scaledPartitionPoints = scaleToBigIntegerPartitions(partitionPoints, scale);
+		Range<BigInteger> scaledRange = unscaledBigIntegerRange(range, scale);
+		BigInteger[] scaledPartitionPoints = unscaledBigIntegerPartitions(partitionPoints, scale);
 		Function<BigInteger, BigInteger> scaledTargetCalculator = value -> {
-			BigDecimal bigDecimalResult = shrinkingTargetCalculator.apply(unscaleFromBigInteger(value, scale));
-			return scaleToBigInteger(bigDecimalResult, scale);
+			BigDecimal bigDecimalResult = shrinkingTargetCalculator.apply(scaledBigDecimal(value, scale));
+			return unscaledBigInteger(bigDecimalResult, scale);
 		};
 		RandomGenerator<BigInteger> scaledBigIntegerGenerator =
 			RandomIntegralGenerators.bigIntegers(scaledRange, scaledPartitionPoints, scaledTargetCalculator);
 
-		return unscaleFromBigIntegerGenerator(scaledBigIntegerGenerator, scale);
+		return scaledBigDecimalGenerator(scaledBigIntegerGenerator, scale);
 	}
 
-	private static BigInteger[] scaleToBigIntegerPartitions(final BigDecimal[] partitionPoints, final int scale) {
-		return Arrays.stream(partitionPoints).map(bigDecimal -> scaleToBigInteger(bigDecimal, scale))
+	private static BigInteger[] unscaledBigIntegerPartitions(final BigDecimal[] partitionPoints, final int scale) {
+		return Arrays.stream(partitionPoints).map(bigDecimal -> unscaledBigInteger(bigDecimal, scale))
 					 .toArray(BigInteger[]::new);
 	}
 
-	private static RandomGenerator<BigDecimal> unscaleFromBigIntegerGenerator(
+	private static RandomGenerator<BigDecimal> scaledBigDecimalGenerator(
 		final RandomGenerator<BigInteger> scaledBigIntegerGenerator,
 		final int scale
 	) {
-		return scaledBigIntegerGenerator.map(value -> unscaleFromBigInteger(value, scale));
+		return scaledBigIntegerGenerator.map(value -> scaledBigDecimal(value, scale));
 	}
 
-	public static Range<BigInteger> scaleToBigIntegerRange(final Range<BigDecimal> range, final int scale) {
-		BigInteger minScaled = range.minIncluded ? scaleToBigInteger(range.min, scale) : scaleToBigInteger(range.min, scale).add(BigInteger.ONE);
-		BigInteger maxScaled = range.maxIncluded ? scaleToBigInteger(range.max, scale) : scaleToBigInteger(range.max, scale).subtract(BigInteger.ONE);
+	public static Range<BigInteger> unscaledBigIntegerRange(final Range<BigDecimal> range, final int scale) {
+		BigInteger minScaled = range.minIncluded ? unscaledBigInteger(range.min, scale) : unscaledBigInteger(range.min, scale).add(BigInteger.ONE);
+		BigInteger maxScaled = range.maxIncluded ? unscaledBigInteger(range.max, scale) : unscaledBigInteger(range.max, scale).subtract(BigInteger.ONE);
 		return Range.of(minScaled, true, maxScaled, true);
 	}
 
-	public static BigDecimal unscaleFromBigInteger(final BigInteger value, final int scale) {
+	public static BigDecimal scaledBigDecimal(final BigInteger value, final int scale) {
 		return new BigDecimal(value, scale);
 	}
 
-	public static BigInteger scaleToBigInteger(final BigDecimal bigDecimal, final int scale) {
+	public static BigInteger unscaledBigInteger(final BigDecimal bigDecimal, final int scale) {
 		return bigDecimal.setScale(scale).unscaledValue();
 	}
 

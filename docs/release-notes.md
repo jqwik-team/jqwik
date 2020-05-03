@@ -56,8 +56,10 @@ and
 
 #### Breaking Changes
 
-- Decimal Generation: Min and max values are now rejected if they have more decimal places
-  than the generator's scale allows. 
+- Decimal Generation: `min` and `max` values are now rejected if they have more decimal places
+  than the generator's `scale` allows. 
+  
+- Decimal Shrinking: Values without decimal places are no longer preferred while shrinking.
 
 - Removed deprecated APIs
     - `Arbitrary.withSamples(T... samples)`

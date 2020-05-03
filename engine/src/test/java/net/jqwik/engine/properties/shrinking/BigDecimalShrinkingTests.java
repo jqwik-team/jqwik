@@ -173,15 +173,15 @@ class BigDecimalShrinkingTests {
 		final int scale,
 		final BigDecimal bigDecimalShrinkingTarget
 	) {
-		BigInteger shrinkingTarget = scaleToBigInteger(bigDecimalShrinkingTarget, scale);
-		Range<BigInteger> bigIntegerRange = RandomDecimalGenerators.scaleToBigIntegerRange(bigDecimalRange, scale);
-		BigInteger bigIntegerValue = scaleToBigInteger(bigDecimalValue, scale);
+		BigInteger shrinkingTarget = unscaledBigInteger(bigDecimalShrinkingTarget, scale);
+		Range<BigInteger> bigIntegerRange = unscaledBigIntegerRange(bigDecimalRange, scale);
+		BigInteger bigIntegerValue = unscaledBigInteger(bigDecimalValue, scale);
 		ShrinkableBigInteger shrinkableBigInteger = new ShrinkableBigInteger(
 			bigIntegerValue,
 			bigIntegerRange,
 			shrinkingTarget
 		);
-		return shrinkableBigInteger.map(bigInteger -> unscaleFromBigInteger(bigInteger, scale));
+		return shrinkableBigInteger.map(bigInteger -> scaledBigDecimal(bigInteger, scale));
 	}
 
 
