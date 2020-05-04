@@ -37,6 +37,8 @@ class FlatMappedShrinkableTests {
 
 	@Property(tries = 50, shrinking = ShrinkingMode.OFF)
 	void shrinkingEmbeddedShrinkable(@ForAll long seed) {
+		Assume.that(seed != 0L);
+
 		//noinspection unchecked
 		Mockito.reset(valueReporter);
 		counter.set(0);

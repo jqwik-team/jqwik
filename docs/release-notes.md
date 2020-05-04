@@ -28,6 +28,8 @@ and
 
 #### New and Enhanced Features
 
+- Using a faster implementation of `java.util.Random` under the hood
+
 - Massively improved and enhanced 
   [generation of edge cases](/docs/snapshot/user-guide.html#generation-of-edge-cases)
 

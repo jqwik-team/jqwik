@@ -30,15 +30,62 @@ public class SourceOfRandomness {
 	}
 
 	public static Random newRandom() {
-		return new Random();
+		return new XORShiftRandom();
 	}
 
 	public static Random newRandom(final long seed) {
-		return new Random(seed);
+		return new XORShiftRandom(seed);
 	}
 
 	public static Random current() {
 		return current.get();
 	}
 
+	/**
+	 * A faster but not thread safe implementation of {@linkplain java.util.Random}.
+	 * It also has a period of 2^n - 1 and better statistical randomness.
+	 *
+	 * See for details: https://www.javamex.com/tutorials/random_numbers/xorshift.shtml
+	 *
+	 * <p>
+	 * For further performance improvements within jqwik, consider to override:
+	 * <ul>
+	 *     <li>nextDouble()</li>
+	 *     <li>nextBytes(int)</li>
+	 * </ul>
+	 */
+	private static class XORShiftRandom extends Random {
+		private long seed;
+
+		private XORShiftRandom() {
+			this(System.nanoTime());
+		}
+
+		private XORShiftRandom(long seed) {
+			if (seed == 0l) {
+				throw new IllegalArgumentException("0L is not an allowed seed value");
+			}
+			this.seed = seed;
+		}
+
+		@Override
+		protected int next(int nbits) {
+			long x = nextLong();
+			x &= ((1L << nbits) - 1);
+			return (int) x;
+		}
+
+		/**
+		 * Will never generate 0L
+		 */
+		@Override
+		public long nextLong() {
+			long x = this.seed;
+			x ^= (x << 21);
+			x ^= (x >>> 35);
+			x ^= (x << 4);
+			this.seed = x;
+			return x;
+		}
+	}
 }

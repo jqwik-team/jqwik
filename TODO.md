@@ -1,7 +1,5 @@
 - 1.3.0
 
-    - Introduce XORShiftRandom
-    
     - Introduce enum RandomDistribution { WEIGHTED, UNIFORM }
       - All number arbitraries
       - Constraint Annotation 
