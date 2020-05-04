@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
@@ -70,7 +71,7 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 								 .stream()
 								 .map(uSupplier -> {
 									 Function<T, Shrinkable<U>> shrinkableMapper =
-										 newT -> mapper.apply(newT).generator(1000).next(new Random(42L));
+										 newT -> mapper.apply(newT).generator(1000).next(SourceOfRandomness.newRandom(42L));
 									 return (Supplier<Shrinkable<U>>) () -> new FlatMappedShrinkable<>(
 									 	tSupplier.get(),
 										uSupplier.get(),

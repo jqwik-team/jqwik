@@ -7,6 +7,7 @@ import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.support.*;
 
 public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
@@ -37,7 +38,7 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 				);
 			}
 			return conditionalResult(args).orElseGet(() -> {
-				Random randomForArgs = new Random(seedForArgs(baseSeed, args));
+				Random randomForArgs = SourceOfRandomness.newRandom(seedForArgs(baseSeed, args));
 				Shrinkable<R> shrinkableResult = resultGenerator.next(randomForArgs);
 				storeLastResult(shrinkableResult);
 				return new Object[]{shrinkableResult.value()};

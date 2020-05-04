@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
-import net.jqwik.engine.properties.*;
+import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 

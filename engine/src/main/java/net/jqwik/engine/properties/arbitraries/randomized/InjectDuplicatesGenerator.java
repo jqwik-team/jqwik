@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.*;
 
 public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 
@@ -17,7 +18,7 @@ public class InjectDuplicatesGenerator<T> implements RandomGenerator<T> {
 	@Override
 	public Shrinkable<T> next(Random random) {
 		long seed = chooseSeed(random);
-		return base.next(new Random(seed));
+		return base.next(SourceOfRandomness.newRandom(seed));
 	}
 
 	long chooseSeed(Random random) {

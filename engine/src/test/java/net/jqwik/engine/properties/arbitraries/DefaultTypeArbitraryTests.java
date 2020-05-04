@@ -4,7 +4,7 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.engine.properties.*;
+import net.jqwik.engine.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
 
@@ -412,7 +412,7 @@ class DefaultTypeArbitraryTests {
 			return new Object();
 		}
 
-		private String name;
+		private final String name;
 
 		public Animal(String name) {
 			this.name = name;

@@ -2,13 +2,13 @@ package net.jqwik.api;
 
 import java.util.*;
 
-import net.jqwik.engine.properties.*;
+import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 class FlatCombinatorsTests {
 
-	private Random random = SourceOfRandomness.current();
+	private final Random random = SourceOfRandomness.current();
 
 	@Example
 	void twoArbitrariesCanBeCombined() {

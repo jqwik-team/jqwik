@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.*;
 
 public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
@@ -17,7 +18,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	}
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, RandomGenerator<U>> toGeneratorMapper, long randomSeed) {
-		this(toMap, t -> toGeneratorMapper.apply(t).next(new Random(randomSeed)));
+		this(toMap, t -> toGeneratorMapper.apply(t).next(SourceOfRandomness.newRandom(randomSeed)));
 	}
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Shrinkable<U>> mapper) {
