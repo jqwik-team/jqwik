@@ -4,6 +4,7 @@ import java.nio.file.*;
 import java.util.*;
 
 import examples.packageWithDisabledTests.*;
+import examples.packageWithErrors.*;
 import examples.packageWithFailings.*;
 import examples.packageWithSeveralContainers.*;
 import examples.packageWithSingleContainer.*;
@@ -255,6 +256,16 @@ class JqwikIntegrationTests {
 			event(container(ContainerWithStatistics.class), finishedSuccessfully())
 		);
 
+	}
+
+	@Example
+	void outOfMemoryErrorIsPropagatedToTop() {
+		Assertions.assertThatThrownBy(
+			() -> EngineTestKit
+					  .engine(createTestEngine(true))
+					  .selectors(selectClass(ContainerWithOOME.class))
+					  .execute()
+		).isInstanceOf(OutOfMemoryError.class);
 	}
 
 	private Condition<Event> reported(String key) {

@@ -92,6 +92,7 @@ public class PropertyMethodExecutor {
 				}
 			);
 		} catch (Throwable throwable) {
+			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 			propertyExecutionResult = PlainExecutionResult.failed(
 				throwable,
 				methodDescriptor.getConfiguration().getSeed()

@@ -77,7 +77,8 @@ and
 
 #### Bug Fixes
 
-- Generation of unique values for nullable arbitraries works now.
+- An `OutOfMemoryError` will go through to the top. Fix for
+  [bug report from jqwik-spring](https://github.com/jlink/jqwik-spring/issues/5). 
 
 ## 1.2.x
 
