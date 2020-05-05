@@ -6,6 +6,8 @@
 
     - Documentation for lifecycle hooks API in user guide
     
+    - Edge Case number reporting (https://github.com/jlink/jqwik/issues/101)
+    
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
       - Extract description before running the property?
@@ -18,10 +20,13 @@
             - Arbitrary.of() arbitraries
             - Collections
             - Combinators
+        - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
 
 - 1.3.1
 
     - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
+    
+    - Property runtime statistics (https://github.com/jlink/jqwik/issues/100)
 
     - ProvideArbitraryHook
         - Let domains use that hook
