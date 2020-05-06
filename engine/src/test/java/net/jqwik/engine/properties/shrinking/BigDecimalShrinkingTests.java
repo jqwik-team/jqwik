@@ -9,7 +9,6 @@ import org.assertj.core.data.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -150,14 +149,14 @@ class BigDecimalShrinkingTests {
 		BigDecimal bigDecimalValue = new BigDecimal(numberString);
 		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
 		int scale = bigDecimalValue.scale();
-		BigDecimal bigDecimalShrinkingTarget = defaultShrinkingTarget(bigDecimalValue, bigDecimalRange, scale);
+		BigDecimal bigDecimalShrinkingTarget = defaultShrinkingTarget(bigDecimalRange, scale);
 		return createShrinkable(bigDecimalValue, bigDecimalRange, scale, bigDecimalShrinkingTarget);
 	}
 
 	private Shrinkable<BigDecimal> createShrinkableBigDecimal(String numberString, Range<Double> doubleRange, int scale) {
 		BigDecimal bigDecimalValue = new BigDecimal(numberString);
 		Range<BigDecimal> bigDecimalRange = doubleRange.map(BigDecimal::new);
-		BigDecimal bigDecimalShrinkingTarget = defaultShrinkingTarget(bigDecimalValue, bigDecimalRange, scale);
+		BigDecimal bigDecimalShrinkingTarget = defaultShrinkingTarget(bigDecimalRange, scale);
 		return createShrinkable(bigDecimalValue, bigDecimalRange, scale, bigDecimalShrinkingTarget);
 	}
 

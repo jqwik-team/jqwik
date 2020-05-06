@@ -13,29 +13,40 @@ public class RandomIntegralGenerators {
 	public static RandomGenerator<BigInteger> bigIntegers(
 		Range<BigInteger> range,
 		BigInteger[] partitionPoints,
+		BigInteger shrinkingTarget
+	) {
+		if (range.isSingular()) {
+			return ignored -> Shrinkable.unshrinkable(range.min);
+		}
+		return partitionedGenerator(range, partitionPoints, shrinkingTarget);
+	}
+
+	public static RandomGenerator<BigInteger> bigIntegers(
+		Range<BigInteger> range,
+		BigInteger[] partitionPoints,
 		Function<BigInteger, BigInteger> shrinkingTargetCalculator
 	) {
 		if (range.isSingular()) {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
-		return partitionedGenerator(range, partitionPoints, shrinkingTargetCalculator);
+		return partitionedGenerator(range, partitionPoints, shrinkingTargetCalculator.apply(BigInteger.ZERO));
 	}
 
-	public static BigInteger defaultShrinkingTarget(BigInteger value, Range<BigInteger> range) {
+	public static BigInteger defaultShrinkingTarget(Range<BigInteger> range) {
 		if (range.includes(BigInteger.ZERO)) {
 			return BigInteger.ZERO;
 		}
-		if (value.compareTo(BigInteger.ZERO) < 0) return range.max;
-		if (value.compareTo(BigInteger.ZERO) > 0) return range.min;
-		return value; // Should never get here
+		if (range.max.compareTo(BigInteger.ZERO) < 0) return range.max;
+		if (range.min.compareTo(BigInteger.ZERO) > 0) return range.min;
+		throw new RuntimeException("This should not be possible");
 	}
 
 	private static RandomGenerator<BigInteger> partitionedGenerator(
 		Range<BigInteger> range,
 		BigInteger[] partitionPoints,
-		Function<BigInteger, BigInteger> shrinkingTargetCalculator
+		BigInteger shrinkingTarget
 	) {
-		List<RandomGenerator<BigInteger>> generators = createPartitions(range, partitionPoints, shrinkingTargetCalculator);
+		List<RandomGenerator<BigInteger>> generators = createPartitions(range, partitionPoints, shrinkingTarget);
 		if (generators.size() == 1) {
 			return generators.get(0);
 		}
@@ -44,7 +55,7 @@ public class RandomIntegralGenerators {
 
 	private static List<RandomGenerator<BigInteger>> createPartitions(
 		Range<BigInteger> range, BigInteger[] partitionPoints,
-		Function<BigInteger, BigInteger> shrinkingTargetCalculator
+		BigInteger shrinkingTarget
 	) {
 		List<RandomGenerator<BigInteger>> partitions = new ArrayList<>();
 		Arrays.sort(partitionPoints);
@@ -57,10 +68,10 @@ public class RandomIntegralGenerators {
 			if (upper.compareTo(range.max) >= 0) {
 				break;
 			}
-			partitions.add(createBaseGenerator(lower, upper.subtract(BigInteger.ONE), range, shrinkingTargetCalculator));
+			partitions.add(createBaseGenerator(lower, upper.subtract(BigInteger.ONE), range, shrinkingTarget));
 			lower = upper;
 		}
-		partitions.add(createBaseGenerator(lower, range.max, range, shrinkingTargetCalculator));
+		partitions.add(createBaseGenerator(lower, range.max, range, shrinkingTarget));
 		return partitions;
 	}
 
@@ -68,12 +79,12 @@ public class RandomIntegralGenerators {
 		BigInteger minGenerate,
 		BigInteger maxGenerate,
 		Range<BigInteger> shrinkingRange,
-		Function<BigInteger, BigInteger> shrinkingTargetCalculator
+		BigInteger shrinkingTarget
 	) {
 		if (isWithinIntegerRange(minGenerate, maxGenerate)) {
-			return createIntegerGenerator(minGenerate, maxGenerate, shrinkingRange, shrinkingTargetCalculator);
+			return createIntegerGenerator(minGenerate, maxGenerate, shrinkingRange, shrinkingTarget);
 		} else {
-			return createBigIntegerGenerator(minGenerate, maxGenerate, shrinkingRange, shrinkingTargetCalculator);
+			return createBigIntegerGenerator(minGenerate, maxGenerate, shrinkingRange, shrinkingTarget);
 		}
 	}
 
@@ -81,7 +92,7 @@ public class RandomIntegralGenerators {
 		BigInteger minGenerate,
 		BigInteger maxGenerate,
 		Range<BigInteger> shrinkingRange,
-		Function<BigInteger, BigInteger> shrinkingTargetCalculator
+		BigInteger shrinkingTarget
 	) {
 		BigInteger range = maxGenerate.subtract(minGenerate);
 		int bits = range.bitLength();
@@ -93,7 +104,7 @@ public class RandomIntegralGenerators {
 					return new ShrinkableBigInteger(
 						value,
 						shrinkingRange,
-						shrinkingTargetCalculator.apply(value)
+						shrinkingTarget
 					);
 				}
 			}
@@ -104,7 +115,7 @@ public class RandomIntegralGenerators {
 		BigInteger min,
 		BigInteger max,
 		Range<BigInteger> shrinkingRange,
-		Function<BigInteger, BigInteger> shrinkingTargetCalculator
+		BigInteger shrinkingTarget
 	) {
 		final int _min = Math.min(min.intValue(), max.intValue());
 		final int _max = Math.max(min.intValue(), max.intValue());
@@ -115,7 +126,7 @@ public class RandomIntegralGenerators {
 			return new ShrinkableBigInteger(
 				bigIntegerValue,
 				shrinkingRange,
-				shrinkingTargetCalculator.apply(bigIntegerValue)
+				shrinkingTarget
 			);
 		};
 	}

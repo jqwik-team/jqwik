@@ -2,7 +2,6 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -42,7 +41,8 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 		try {
 			value.setScale(scale);
 		} catch (ArithmeticException arithmeticException) {
-			String message = String.format("Decimal value %s cannot be represented with scale %s.%nYou may want to use a higher scale", value, scale);
+			String message = String
+								 .format("Decimal value %s cannot be represented with scale %s.%nYou may want to use a higher scale", value, scale);
 			throw new JqwikException(message);
 		}
 	}
@@ -61,7 +61,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	}
 
 	private RandomGenerator<BigDecimal> decimalGenerator(BigDecimal[] partitionPoints, int genSize) {
-		return RandomGenerators.bigDecimals(range, scale, shrinkingTargetCalculator(), partitionPoints)
+		return RandomGenerators.bigDecimals(range, scale, shrinkingTarget(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases());
 	}
 
@@ -71,7 +71,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 				   .filter(aDecimal -> range.includes(aDecimal))
 				   .map(value -> {
 					   BigInteger bigIntegerValue = unscaledBigInteger(value, scale);
-					   BigInteger shrinkingTarget = unscaledBigInteger(shrinkingTarget(value), scale);
+					   BigInteger shrinkingTarget = unscaledBigInteger(shrinkingTarget(), scale);
 					   return new ShrinkableBigInteger(bigIntegerValue, bigIntegerRange, shrinkingTarget);
 				   })
 				   .map(shrinkableBigInteger -> shrinkableBigInteger.map(bigInteger -> scaledBigDecimal(bigInteger, scale)))
@@ -99,16 +99,11 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 		}
 	}
 
-	private Function<BigDecimal, BigDecimal> shrinkingTargetCalculator() {
+	private BigDecimal shrinkingTarget() {
 		if (shrinkingTarget == null) {
-			return RandomGenerators.defaultShrinkingTargetCalculator(range, scale);
+			return RandomDecimalGenerators.defaultShrinkingTarget(range, scale);
 		} else {
-			return ignore -> shrinkingTarget;
+			return shrinkingTarget;
 		}
 	}
-
-	private BigDecimal shrinkingTarget(BigDecimal aDecimal) {
-		return shrinkingTargetCalculator().apply(aDecimal);
-	}
-
 }

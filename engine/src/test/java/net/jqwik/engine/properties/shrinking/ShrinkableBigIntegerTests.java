@@ -152,7 +152,7 @@ class ShrinkableBigIntegerTests {
 		return new ShrinkableBigInteger(
 			BigInteger.valueOf(number),
 			bigIntegerRange,
-			RandomIntegralGenerators.defaultShrinkingTarget(BigInteger.valueOf(number), bigIntegerRange)
+			RandomIntegralGenerators.defaultShrinkingTarget(bigIntegerRange)
 		);
 	}
 

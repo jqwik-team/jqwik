@@ -45,31 +45,33 @@ public class RandomGenerators {
 	}
 
 	public static RandomGenerator<Integer> integers(int min, int max) {
+		BigInteger minBig = BigInteger.valueOf(min);
+		BigInteger maxBig = BigInteger.valueOf(max);
 		return bigIntegers(
-			BigInteger.valueOf(min),
-			BigInteger.valueOf(max),
-			defaultShrinkingTargetCalculator(BigInteger.valueOf(min), BigInteger.valueOf(max))
+			minBig,
+			maxBig,
+			RandomIntegralGenerators.defaultShrinkingTarget(Range.of(minBig, maxBig))
 		).map(BigInteger::intValueExact);
 	}
 
 	public static RandomGenerator<BigInteger> bigIntegers(
 		BigInteger min,
 		BigInteger max,
-		Function<BigInteger, BigInteger> shrinkingTargetCalculator,
+		BigInteger shrinkingTarget,
 		BigInteger... partitionPoints
 	) {
 		Range<BigInteger> range = Range.of(min, max);
-		return RandomIntegralGenerators.bigIntegers(range, partitionPoints, shrinkingTargetCalculator);
+		return RandomIntegralGenerators.bigIntegers(range, partitionPoints, shrinkingTarget);
 	}
 
 	public static RandomGenerator<BigDecimal> bigDecimals(
 		Range<BigDecimal> range,
 		int scale,
-		Function<BigDecimal, BigDecimal> shrinkingTargetCalculator,
+		BigDecimal shrinkingTarget,
 		BigDecimal... partitionPoints
 	) {
 		checkRangeIsSound(range, scale);
-		return RandomDecimalGenerators.bigDecimals(range, scale, partitionPoints, shrinkingTargetCalculator);
+		return RandomDecimalGenerators.bigDecimals(range, scale, partitionPoints, shrinkingTarget);
 	}
 
 	private static void checkRangeIsSound(Range<BigDecimal> range, int scale) {
@@ -228,14 +230,6 @@ public class RandomGenerators {
 		if (range <= offset)
 			return maxSize;
 		return Math.min(offset + minSize, maxSize);
-	}
-
-	public static Function<BigInteger, BigInteger> defaultShrinkingTargetCalculator(BigInteger min, BigInteger max) {
-		return value -> RandomIntegralGenerators.defaultShrinkingTarget(value, Range.of(min, max));
-	}
-
-	public static Function<BigDecimal, BigDecimal> defaultShrinkingTargetCalculator(Range<BigDecimal> range, int scale) {
-		return value -> RandomDecimalGenerators.defaultShrinkingTarget(value, range, scale);
 	}
 
 	// TODO: This could be way more sophisticated

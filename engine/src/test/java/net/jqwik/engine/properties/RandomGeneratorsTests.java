@@ -7,7 +7,6 @@ import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
-import net.jqwik.engine.properties.shrinking.*;
 
 import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
@@ -40,7 +39,7 @@ class RandomGeneratorsTests {
 			BigInteger min = valueOf(Integer.MIN_VALUE);
 			BigInteger max = valueOf(Integer.MAX_VALUE);
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
+				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 		}
 
@@ -49,7 +48,7 @@ class RandomGeneratorsTests {
 			BigInteger min = valueOf(-100);
 			BigInteger max = valueOf(10000);
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
+				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 		}
 
@@ -58,7 +57,7 @@ class RandomGeneratorsTests {
 			BigInteger min = valueOf(-100_000_000_000L);
 			BigInteger max = valueOf(100_000_000_000L);
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
+				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 		}
 
@@ -70,7 +69,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
 				min,
 				max,
-				RandomGenerators.defaultShrinkingTargetCalculator(min, max), partitionPoints
+				RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)), partitionPoints
 			);
 
 			assertAllWithinRange(generator, min, max);
@@ -85,7 +84,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
 				min,
 				max,
-				RandomGenerators.defaultShrinkingTargetCalculator(min, max), partitionPoints
+				RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)), partitionPoints
 			);
 
 			assertAllWithinRange(generator, min, max);
@@ -97,7 +96,7 @@ class RandomGeneratorsTests {
 			BigInteger min = new BigInteger("-10000000000000000000");
 			BigInteger max = new BigInteger("10000000000000000000");
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
+				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 			assertAtLeastOneGenerated(
 				generator,
@@ -114,7 +113,7 @@ class RandomGeneratorsTests {
 			assertThatThrownBy(() -> {
 				BigInteger min = valueOf(1);
 				BigInteger max = valueOf(-1);
-				RandomGenerators.bigIntegers(min, max, RandomGenerators.defaultShrinkingTargetCalculator(min, max));
+				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			}).isInstanceOf(IllegalArgumentException.class);
 		}
 
@@ -131,7 +130,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 2,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 2)
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 2)
 				);
 			ArbitraryTestHelper.assertAllGenerated(
 				generator, //
@@ -147,7 +146,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 1,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 1)
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 1)
 				);
 			ArbitraryTestHelper.assertAllGenerated(
 				generator,
@@ -163,7 +162,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 1,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 1)
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 1)
 				);
 			ArbitraryTestHelper.assertAllGenerated(
 				generator,
@@ -179,7 +178,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 1,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 1)
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 1)
 				);
 			ArbitraryTestHelper.assertAllGenerated(
 				generator,
@@ -195,7 +194,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 2,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 2)
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 2)
 				);
 			ArbitraryTestHelper.assertAllGenerated(
 				generator,
@@ -211,7 +210,7 @@ class RandomGeneratorsTests {
 			assertThatThrownBy(
 				() -> RandomGenerators.bigDecimals(
 					range, 0,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 0)
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 0)
 				)
 			).isInstanceOf(JqwikException.class);
 		}
@@ -224,7 +223,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigDecimal> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 0)
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 0)
 				);
 			ArbitraryTestHelper.assertAllGenerated(generator, decimal -> {
 				assertThat(decimal).isBetween(min, max);
@@ -239,7 +238,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 0),
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 0),
 					partitionPoints
 				).map(BigDecimal::toBigInteger);
 
@@ -256,7 +255,7 @@ class RandomGeneratorsTests {
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
-					RandomGenerators.defaultShrinkingTargetCalculator(range, 0),
+					RandomDecimalGenerators.defaultShrinkingTarget(range, 0),
 					partitionPoints
 				).map(BigDecimal::toBigInteger);
 
@@ -272,7 +271,7 @@ class RandomGeneratorsTests {
 		void minGreaterThanMaxFails() {
 			assertThatThrownBy(() -> {
 				Range<BigDecimal> range = Range.of(BigDecimal.valueOf(1), BigDecimal.valueOf(-1));
-				RandomGenerators.bigDecimals(range, 2, RandomGenerators.defaultShrinkingTargetCalculator(range, 2));
+				RandomGenerators.bigDecimals(range, 2, RandomDecimalGenerators.defaultShrinkingTarget(range, 2));
 			}).isInstanceOf(IllegalArgumentException.class);
 		}
 	}

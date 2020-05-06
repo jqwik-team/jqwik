@@ -2,7 +2,6 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.math.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -50,14 +49,14 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 				.map(value -> new ShrinkableBigInteger(
 					value,
 					Range.of(min, max),
-					shrinkingTarget(value)
+					shrinkingTarget()
 				))
 				.collect(Collectors.toList());
 		return EdgeCases.fromShrinkables(shrinkables);
 	}
 
 	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
-		return RandomGenerators.bigIntegers(min, max, shrinkingTargetCalculator(), partitionPoints)
+		return RandomGenerators.bigIntegers(min, max, shrinkingTarget(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases());
 	}
 
@@ -77,16 +76,12 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 				   : Stream.concat(Stream.of(shrinkingTarget), Arrays.stream(literalEdgeCases));
 	}
 
-	private Function<BigInteger, BigInteger> shrinkingTargetCalculator() {
+	private BigInteger shrinkingTarget() {
 		if (shrinkingTarget == null) {
-			return RandomGenerators.defaultShrinkingTargetCalculator(min, max);
+			return RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max));
 		} else {
-			return ignore -> shrinkingTarget;
+			return shrinkingTarget;
 		}
-	}
-
-	private BigInteger shrinkingTarget(BigInteger anInt) {
-		return shrinkingTargetCalculator().apply(anInt);
 	}
 
 	class RangeIterator implements Iterator<BigInteger> {
