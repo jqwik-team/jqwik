@@ -8,15 +8,18 @@ import org.junit.platform.commons.annotation.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Use {@code @Property} to mark methods that serve as properties.
- * Those methods usually have or more parameters annotated with {@linkplain ForAll}.
- *
+ * Use {@code @Property} to mark methods that serve as properties.
+ * Those methods usually have one or more parameters annotated with {@linkplain ForAll}.
+ * <p>
  * They are executed (tried) several times,
- * either until they fail or until the configured number of {@code tries()} has been reached.
- *
+ * either until they fail or until the configured number of {@code tries()} has been reached.
+ * <p>
  * Just like methods annotated with {@linkplain Example} example, annotated methods
  * must not be private. They can either return {@code Boolean}, {@code boolean}
  * or {@code void}.
+ * <p>
+ * For more info, you can have a look at user guide,
+ * <a href="https://jqwik.net/docs/current/user-guide.html#optional-property-parameters">optional-property-parameters</a>.
  *
  * @see Example
  * @see ShrinkingMode
@@ -24,7 +27,7 @@ import static org.apiguardian.api.API.Status.*;
  * @see AfterFailureMode
  * @see Data
  */
-@Target({ ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Testable
@@ -35,12 +38,28 @@ public @interface Property {
 	String SEED_NOT_SET = "";
 	String DEFAULT_STEREOTYPE = "Property";
 
+	/**
+	 * Number of tries (test runs with different parameters). By default it is 1000. You can override globally in the property file
+	 * (see <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">jqwik.properties</a>, or here, in {@link Property}
+	 * annotation.
+	 */
 	int tries() default TRIES_NOT_SET;
 
+	/**
+	 * The maximal number of tried versus actually checked property runs in case you are using Assumptions. If the ratio is exceeded jqwik
+	 * will report this property as a failure.
+	 * <p>
+	 * The default is 5 which can be overridden in <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">jqwik.properties</a>.
+	 */
 	int maxDiscardRatio() default MAX_DISCARD_RATIO_NOT_SET;
 
 	String seed() default SEED_NOT_SET;
 
+	/**
+	 * Controls how shrinking is done when falsified property is found.
+	 * <p>
+	 * Default value is {@link ShrinkingMode#BOUNDED}, i.e. shrinking is tried to a depth of 1000 steps maximum per value.
+	 */
 	ShrinkingMode shrinking() default ShrinkingMode.BOUNDED;
 
 	String stereotype() default DEFAULT_STEREOTYPE;
