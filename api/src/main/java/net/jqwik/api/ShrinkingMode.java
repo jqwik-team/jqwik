@@ -5,8 +5,8 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * The shrinking mode defines the shrinking behaviour of a property.
- * It can be set in {@linkplain Property#shrinking()} for any property method; default is {@linkplain #BOUNDED}.
+ * The shrinking mode defines the shrinking behaviour of a property.
+ * It can be set in {@linkplain Property#shrinking()} for any property method; default is {@linkplain #BOUNDED}.
  *
  * @see Property
  *
