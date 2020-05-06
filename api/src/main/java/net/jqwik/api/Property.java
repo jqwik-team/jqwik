@@ -18,13 +18,14 @@ import static org.apiguardian.api.API.Status.*;
  * must not be private. They can either return {@code Boolean}, {@code boolean}
  * or {@code void}.
  * <p>
- * For more info, you can have a look at user guide,
+ * For more info, you can have a look at the user guide,
  * <a href="https://jqwik.net/docs/current/user-guide.html#optional-property-parameters">optional-property-parameters</a>.
  *
  * @see Example
  * @see ShrinkingMode
  * @see GenerationMode
  * @see AfterFailureMode
+ * @see EdgeCasesMode
  * @see Data
  */
 @Target({ElementType.METHOD, ElementType.ANNOTATION_TYPE})
