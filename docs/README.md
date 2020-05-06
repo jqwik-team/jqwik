@@ -1,3 +1,36 @@
+[//]: # (TODO remove comments like this before merging)
+[//]: # (I do like to write each sentense to separate line. It plays nice when doing diffs. I bring this habit from asciidoc format of documentation)
+
+Do you write tests?
+[**Don't write tests!**](https://www.youtube.com/watch?v=hXnS_Xjwk2Y)
+This is __jqwik__, [Property-Based Testing](/property-based-testing.html) (PBT) library for JVM languages.
+
+[//]: # (is jqwik library, framework, execution engine to JUnit5, or something else?)
+
+## Brief introduction to PBT
+
+[Property-Based Testing](/property-based-testing.html) (PBT) is a way when you test some assumptions on all (randomly chosen subset) possible inputs.
+Perhaps you want to test if newly registered user is able to do password reset in your newly developed e-shop.
+Why to hardcode email address, name, password, sex and other attributes of the user registration?
+You only need an arbitrary (random) user data with valid email address to run your test.
+This way, you can use your resources when running test more effectively.
+Also, your code will examine (stress) more of your code.
+
+## References, Inspiration and Supporting Materials
+
+## Target Audience & Personas
+
+## Project goals
+
+## Competitor / Comparators
+
+
+
+
+
+
+
+
 The main purpose of __jqwik__ is to bring [Property-Based Testing](/property-based-testing.html) (PBT) 
 to the JVM. _Property-Based Testing_ tries to combine the intuitiveness of 
 [Microtests](https://www.industriallogic.com/blog/history-microtests/) with the
