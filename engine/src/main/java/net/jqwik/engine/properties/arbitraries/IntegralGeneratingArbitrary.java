@@ -26,7 +26,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public RandomGenerator<BigInteger> generator(int genSize) {
-		List<BigInteger> partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max, shrinkingTarget());
+		List<BigInteger> partitionPoints = RandomGenerators.calculateBiasedPartitionPoints(genSize, this.min, this.max, shrinkingTarget());
 		return createGenerator(partitionPoints, genSize);
 	}
 

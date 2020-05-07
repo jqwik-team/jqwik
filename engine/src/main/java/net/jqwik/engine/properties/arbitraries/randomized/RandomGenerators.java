@@ -250,25 +250,59 @@ public class RandomGenerators {
 		return Math.min(offset + minSize, maxSize);
 	}
 
-	// TODO: This could be way more sophisticated
-	public static List<BigInteger> calculateDefaultPartitionPoints(
-		int genSize,
+	public static List<BigInteger> calculateBiasedPartitionPoints(
+		int genSize, // currently ignored but that may change one day
 		BigInteger min,
 		BigInteger max,
 		BigInteger shrinkingTarget
 	) {
-		int partitionPoint = Math.max(genSize / 2, 10);
-		BigInteger upperPartitionPoint = BigInteger.valueOf(partitionPoint).min(max);
-		BigInteger lowerPartitionPoint = BigInteger.valueOf(partitionPoint).negate().max(min);
-		return Arrays.asList(lowerPartitionPoint, upperPartitionPoint);
+		List<BigInteger> partitions = new ArrayList<>();
+		if (shrinkingTarget.compareTo(max) >= 0) {
+			partitions.addAll(partitions(min, max, BigInteger.ONE.negate()));
+		} else if (shrinkingTarget.compareTo(min) <= 0) {
+			partitions.addAll(partitions(max, min, BigInteger.ONE));
+		} else {
+			partitions.addAll(partitions(min, shrinkingTarget, BigInteger.ONE.negate()));
+			partitions.addAll(partitions(max, shrinkingTarget, BigInteger.ONE));
+			if (partitions.size() > 0) {
+				partitions.add(shrinkingTarget);
+			}
+		}
+		return partitions;
 	}
 
-	public static List<BigDecimal> calculateDefaultPartitionPoints(
+	private static List<BigInteger> partitions(BigInteger from, BigInteger to, BigInteger step) {
+		List<BigInteger> partitions = new ArrayList<>();
+		BigInteger partitionPoint = from;
+		while (true) {
+			BigInteger range = to.subtract(partitionPoint).abs();
+			if (range.compareTo(BigInteger.valueOf(20)) <= 0) {
+				return partitions;
+			}
+			BigInteger partitionRatio = partitionRatio(range);
+			BigInteger distance = range.divide(partitionRatio);
+			BigInteger nextPartitionPoint = to.add(step.multiply(distance));
+			if (distance.compareTo(BigInteger.ZERO) == 0) {
+				break;
+			}
+			partitions.add(nextPartitionPoint);
+			partitionPoint = nextPartitionPoint;
+		}
+		return partitions;
+	}
+
+	private static BigInteger partitionRatio(BigInteger range) {
+		int approximatedDecimals = range.bitLength() / 10 * 3;
+		long ratio = Math.max((long) Math.pow(approximatedDecimals / 5.0, 10), 3);
+		return BigInteger.valueOf(ratio);
+	}
+
+	public static List<BigDecimal> calculateBiasedPartitionPoints(
 		int genSize,
 		Range<BigDecimal> range,
 		BigDecimal shrinkingTarget
 	) {
-		List<BigInteger> integerPartitionPoints = calculateDefaultPartitionPoints(
+		List<BigInteger> integerPartitionPoints = calculateBiasedPartitionPoints(
 			genSize,
 			range.min.toBigInteger(),
 			range.max.toBigInteger(),

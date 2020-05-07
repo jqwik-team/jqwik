@@ -28,7 +28,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
 		checkRange();
-		List<BigDecimal> partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, range, shrinkingTarget());
+		List<BigDecimal> partitionPoints = RandomGenerators.calculateBiasedPartitionPoints(genSize, range, shrinkingTarget());
 		return decimalGenerator(partitionPoints, genSize);
 	}
 

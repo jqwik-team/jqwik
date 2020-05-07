@@ -28,6 +28,9 @@ and
 
 #### New and Enhanced Features
 
+- Number Generation: Probability distribution is now much more biased towards numbers
+  that are closer to the shrinking target of a number range.
+
 - Using a faster implementation of `java.util.Random` under the hood
 
 - Massively improved and enhanced 
