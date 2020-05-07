@@ -26,7 +26,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public RandomGenerator<BigInteger> generator(int genSize) {
-		BigInteger[] partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max);
+		List<BigInteger> partitionPoints = RandomGenerators.calculateDefaultPartitionPoints(genSize, this.min, this.max, shrinkingTarget());
 		return createGenerator(partitionPoints, genSize);
 	}
 
@@ -55,7 +55,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 		return EdgeCases.fromShrinkables(shrinkables);
 	}
 
-	private RandomGenerator<BigInteger> createGenerator(BigInteger[] partitionPoints, int genSize) {
+	private RandomGenerator<BigInteger> createGenerator(List<BigInteger> partitionPoints, int genSize) {
 		return RandomGenerators.bigIntegers(min, max, shrinkingTarget(), partitionPoints)
 							   .withEdgeCases(genSize, edgeCases());
 	}

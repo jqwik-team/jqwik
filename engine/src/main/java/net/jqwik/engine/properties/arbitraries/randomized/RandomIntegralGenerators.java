@@ -12,24 +12,13 @@ public class RandomIntegralGenerators {
 
 	public static RandomGenerator<BigInteger> bigIntegers(
 		Range<BigInteger> range,
-		BigInteger[] partitionPoints,
+		List<BigInteger> partitionPoints,
 		BigInteger shrinkingTarget
 	) {
 		if (range.isSingular()) {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 		return partitionedGenerator(range, partitionPoints, shrinkingTarget);
-	}
-
-	public static RandomGenerator<BigInteger> bigIntegers(
-		Range<BigInteger> range,
-		BigInteger[] partitionPoints,
-		Function<BigInteger, BigInteger> shrinkingTargetCalculator
-	) {
-		if (range.isSingular()) {
-			return ignored -> Shrinkable.unshrinkable(range.min);
-		}
-		return partitionedGenerator(range, partitionPoints, shrinkingTargetCalculator.apply(BigInteger.ZERO));
 	}
 
 	public static BigInteger defaultShrinkingTarget(Range<BigInteger> range) {
@@ -43,7 +32,7 @@ public class RandomIntegralGenerators {
 
 	private static RandomGenerator<BigInteger> partitionedGenerator(
 		Range<BigInteger> range,
-		BigInteger[] partitionPoints,
+		List<BigInteger> partitionPoints,
 		BigInteger shrinkingTarget
 	) {
 		List<RandomGenerator<BigInteger>> generators = createPartitions(range, partitionPoints, shrinkingTarget);
@@ -54,11 +43,11 @@ public class RandomIntegralGenerators {
 	}
 
 	private static List<RandomGenerator<BigInteger>> createPartitions(
-		Range<BigInteger> range, BigInteger[] partitionPoints,
+		Range<BigInteger> range, List<BigInteger> partitionPoints,
 		BigInteger shrinkingTarget
 	) {
 		List<RandomGenerator<BigInteger>> partitions = new ArrayList<>();
-		Arrays.sort(partitionPoints);
+		Collections.sort(partitionPoints);
 		BigInteger lower = range.min;
 		for (BigInteger partitionPoint : partitionPoints) {
 			BigInteger upper = partitionPoint;

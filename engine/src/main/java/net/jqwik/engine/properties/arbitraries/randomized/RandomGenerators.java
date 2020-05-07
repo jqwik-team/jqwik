@@ -4,6 +4,7 @@ import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -50,15 +51,24 @@ public class RandomGenerators {
 		return bigIntegers(
 			minBig,
 			maxBig,
-			RandomIntegralGenerators.defaultShrinkingTarget(Range.of(minBig, maxBig))
+			RandomIntegralGenerators.defaultShrinkingTarget(Range.of(minBig, maxBig)),
+			Collections.emptyList()
 		).map(BigInteger::intValueExact);
 	}
 
 	public static RandomGenerator<BigInteger> bigIntegers(
 		BigInteger min,
 		BigInteger max,
+		BigInteger shrinkingTarget
+	) {
+		return bigIntegers(min, max, shrinkingTarget, Collections.emptyList());
+	}
+
+	public static RandomGenerator<BigInteger> bigIntegers(
+		BigInteger min,
+		BigInteger max,
 		BigInteger shrinkingTarget,
-		BigInteger... partitionPoints
+		List<BigInteger> partitionPoints
 	) {
 		Range<BigInteger> range = Range.of(min, max);
 		return RandomIntegralGenerators.bigIntegers(range, partitionPoints, shrinkingTarget);
@@ -67,8 +77,16 @@ public class RandomGenerators {
 	public static RandomGenerator<BigDecimal> bigDecimals(
 		Range<BigDecimal> range,
 		int scale,
+		BigDecimal shrinkingTarget
+	) {
+		return bigDecimals(range, scale, shrinkingTarget, Collections.emptyList());
+	}
+
+	public static RandomGenerator<BigDecimal> bigDecimals(
+		Range<BigDecimal> range,
+		int scale,
 		BigDecimal shrinkingTarget,
-		BigDecimal... partitionPoints
+		List<BigDecimal> partitionPoints
 	) {
 		checkRangeIsSound(range, scale);
 		return RandomDecimalGenerators.bigDecimals(range, scale, partitionPoints, shrinkingTarget);
@@ -233,17 +251,31 @@ public class RandomGenerators {
 	}
 
 	// TODO: This could be way more sophisticated
-	public static BigInteger[] calculateDefaultPartitionPoints(int genSize, BigInteger min, BigInteger max) {
+	public static List<BigInteger> calculateDefaultPartitionPoints(
+		int genSize,
+		BigInteger min,
+		BigInteger max,
+		BigInteger shrinkingTarget
+	) {
 		int partitionPoint = Math.max(genSize / 2, 10);
 		BigInteger upperPartitionPoint = BigInteger.valueOf(partitionPoint).min(max);
 		BigInteger lowerPartitionPoint = BigInteger.valueOf(partitionPoint).negate().max(min);
-		return new BigInteger[]{lowerPartitionPoint, upperPartitionPoint};
+		return Arrays.asList(lowerPartitionPoint, upperPartitionPoint);
 	}
 
-	public static BigDecimal[] calculateDefaultPartitionPoints(int genSize, Range<BigDecimal> range) {
-		BigInteger[] partitionPoints = calculateDefaultPartitionPoints(genSize, range.min.toBigInteger(), range.max.toBigInteger());
-		return Arrays.stream(partitionPoints)
-					 .map(BigDecimal::new)
-					 .toArray(BigDecimal[]::new);
+	public static List<BigDecimal> calculateDefaultPartitionPoints(
+		int genSize,
+		Range<BigDecimal> range,
+		BigDecimal shrinkingTarget
+	) {
+		List<BigInteger> integerPartitionPoints = calculateDefaultPartitionPoints(
+			genSize,
+			range.min.toBigInteger(),
+			range.max.toBigInteger(),
+			shrinkingTarget.toBigInteger()
+		);
+		return integerPartitionPoints.stream()
+									 .map(BigDecimal::new)
+									 .collect(Collectors.toList());
 	}
 }

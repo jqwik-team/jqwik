@@ -65,7 +65,7 @@ class RandomGeneratorsTests {
 		void smallRangeWithPartitions() {
 			BigInteger min = valueOf(-100);
 			BigInteger max = valueOf(100000);
-			BigInteger[] partitionPoints = new BigInteger[]{BigInteger.ZERO, valueOf(100), valueOf(1000)};
+			List<BigInteger> partitionPoints = Arrays.asList(BigInteger.ZERO, valueOf(100), valueOf(1000));
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
 				min,
 				max,
@@ -80,7 +80,7 @@ class RandomGeneratorsTests {
 		void greaterRangeWithPartitions() {
 			BigInteger min = valueOf(Long.MIN_VALUE);
 			BigInteger max = valueOf(Long.MAX_VALUE);
-			BigInteger[] partitionPoints = new BigInteger[]{BigInteger.ZERO, valueOf(-10000), valueOf(10000)};
+			List<BigInteger> partitionPoints = Arrays.asList(BigInteger.ZERO, valueOf(-10000), valueOf(10000));
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
 				min,
 				max,
@@ -234,7 +234,7 @@ class RandomGeneratorsTests {
 		@Example
 		void smallRangeWithPartitions() {
 			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(-100), BigDecimal.valueOf(100000));
-			BigDecimal[] partitionPoints = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.valueOf(100), BigDecimal.valueOf(1000)};
+			List<BigDecimal> partitionPoints = Arrays.asList(BigDecimal.ZERO, BigDecimal.valueOf(100), BigDecimal.valueOf(1000));
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
@@ -243,15 +243,15 @@ class RandomGeneratorsTests {
 				).map(BigDecimal::toBigInteger);
 
 			assertAllWithinRange(generator, BigDecimal.valueOf(-100).toBigInteger(), BigDecimal.valueOf(100000).toBigInteger());
-			assertAllPartitionsAreCovered(generator, BigDecimal.valueOf(-100).toBigInteger(), BigDecimal.valueOf(100000).toBigInteger(), //
-										  new BigInteger[]{BigInteger.ZERO, valueOf(100), valueOf(1000)} //
+			assertAllPartitionsAreCovered(generator, BigDecimal.valueOf(-100).toBigInteger(), BigDecimal.valueOf(100000).toBigInteger(),
+										  Arrays.asList(BigInteger.ZERO, valueOf(100), valueOf(1000))
 			);
 		}
 
 		@Example
 		void greaterRangeWithPartitions() {
 			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(Long.MIN_VALUE), BigDecimal.valueOf(Long.MAX_VALUE));
-			BigDecimal[] partitionPoints = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.valueOf(-10000), BigDecimal.valueOf(10000)};
+			List<BigDecimal> partitionPoints = Arrays.asList(BigDecimal.ZERO, BigDecimal.valueOf(-10000), BigDecimal.valueOf(10000));
 			RandomGenerator<BigInteger> generator =
 				RandomGenerators.bigDecimals(
 					range, 0,
@@ -259,11 +259,16 @@ class RandomGeneratorsTests {
 					partitionPoints
 				).map(BigDecimal::toBigInteger);
 
-			assertAllWithinRange(generator, BigDecimal.valueOf(Long.MIN_VALUE).toBigInteger(), BigDecimal.valueOf(Long.MAX_VALUE)
-																										 .toBigInteger());
-			assertAllPartitionsAreCovered(generator, BigDecimal.valueOf(Long.MIN_VALUE).toBigInteger(), BigDecimal.valueOf(Long.MAX_VALUE)
-																												  .toBigInteger(), //
-										  new BigInteger[]{BigInteger.ZERO, valueOf(-10000), valueOf(10000)} //
+			assertAllWithinRange(
+				generator,
+				BigDecimal.valueOf(Long.MIN_VALUE).toBigInteger(),
+				BigDecimal.valueOf(Long.MAX_VALUE).toBigInteger()
+			);
+			assertAllPartitionsAreCovered(
+				generator,
+				BigDecimal.valueOf(Long.MIN_VALUE).toBigInteger(),
+				BigDecimal.valueOf(Long.MAX_VALUE).toBigInteger(),
+				Arrays.asList(BigInteger.ZERO, valueOf(-10000), valueOf(10000))
 			);
 		}
 
@@ -278,9 +283,9 @@ class RandomGeneratorsTests {
 
 	private void assertAllPartitionsAreCovered(
 		RandomGenerator<BigInteger> generator, BigInteger min, BigInteger max,
-		BigInteger[] partitionPoints
+		List<BigInteger> partitionPoints
 	) {
-		Arrays.sort(partitionPoints);
+		Collections.sort(partitionPoints);
 		BigInteger lower = min;
 		for (BigInteger partitionPoint : partitionPoints) {
 			BigInteger l = lower;

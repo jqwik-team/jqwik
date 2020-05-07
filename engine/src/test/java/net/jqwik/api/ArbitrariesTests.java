@@ -453,7 +453,7 @@ class ArbitrariesTests {
 	}
 
 	@Group
-	@Label("shorts(), bytes(), integers(), longs(), bigIntegers()")
+	@Label("Integrals")
 	class IntegralNumbers {
 
 		@Example

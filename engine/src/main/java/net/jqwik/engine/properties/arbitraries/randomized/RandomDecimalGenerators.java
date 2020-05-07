@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -11,7 +12,7 @@ public class RandomDecimalGenerators {
 	public static RandomGenerator<BigDecimal> bigDecimals(
 		Range<BigDecimal> range,
 		int scale,
-		BigDecimal[] partitionPoints,
+		List<BigDecimal> partitionPoints,
 		BigDecimal shrinkingTarget
 	) {
 		if (scale < 0) {
@@ -23,7 +24,7 @@ public class RandomDecimalGenerators {
 		}
 
 		Range<BigInteger> unscaledRange = unscaledBigIntegerRange(range, scale);
-		BigInteger[] unscaledPartitionPoints = unscaledBigIntegerPartitions(partitionPoints, scale);
+		List<BigInteger> unscaledPartitionPoints = unscaledBigIntegerPartitions(partitionPoints, scale);
 		BigInteger unscaledShrinkingTarget = unscaledBigInteger(shrinkingTarget, scale);
 		RandomGenerator<BigInteger> unscaledBigIntegerGenerator =
 			RandomIntegralGenerators.bigIntegers(unscaledRange, unscaledPartitionPoints, unscaledShrinkingTarget);
@@ -31,9 +32,9 @@ public class RandomDecimalGenerators {
 		return scaledBigDecimalGenerator(unscaledBigIntegerGenerator, scale);
 	}
 
-	private static BigInteger[] unscaledBigIntegerPartitions(final BigDecimal[] partitionPoints, final int scale) {
-		return Arrays.stream(partitionPoints).map(bigDecimal -> unscaledBigInteger(bigDecimal, scale))
-					 .toArray(BigInteger[]::new);
+	private static List<BigInteger> unscaledBigIntegerPartitions(final List<BigDecimal> partitionPoints, final int scale) {
+		return partitionPoints.stream().map(bigDecimal -> unscaledBigInteger(bigDecimal, scale))
+					 .collect(Collectors.toList());
 	}
 
 	private static RandomGenerator<BigDecimal> scaledBigDecimalGenerator(
