@@ -65,7 +65,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 			}
 		}
 		if (sequence.isEmpty()) {
-			throw new JqwikException("Could not generated a single action. At least 1 is required.");
+			throw new TestAbortedException("Sequences without actions are invalid");
 		}
 		runState = RunState.SUCCEEDED;
 		return currentModel;
