@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure the generation of Short and short values.
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface ShortArbitrary extends Arbitrary<Short> {
+public interface ShortArbitrary extends NumericalArbitrary<Short, ShortArbitrary> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

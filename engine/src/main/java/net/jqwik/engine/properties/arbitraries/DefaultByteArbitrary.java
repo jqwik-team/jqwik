@@ -33,6 +33,13 @@ public class DefaultByteArbitrary extends AbstractArbitraryBase implements ByteA
 	}
 
 	@Override
+	public ByteArbitrary withDistribution(final RandomDistribution distribution) {
+		DefaultByteArbitrary clone = typedClone();
+		clone.generatingArbitrary.distribution = distribution;
+		return clone;
+	}
+
+	@Override
 	public ByteArbitrary greaterOrEqual(byte min) {
 		DefaultByteArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);

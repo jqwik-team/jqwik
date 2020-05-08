@@ -34,6 +34,13 @@ public class DefaultFloatArbitrary extends AbstractArbitraryBase implements Floa
 	}
 
 	@Override
+	public FloatArbitrary withDistribution(final RandomDistribution distribution) {
+		DefaultFloatArbitrary clone = typedClone();
+		clone.generatingArbitrary.distribution = distribution;
+		return clone;
+	}
+
+	@Override
 	public FloatArbitrary between(float min, boolean minIncluded, float max, boolean maxIncluded) {
 		DefaultFloatArbitrary clone = typedClone();
 		clone.generatingArbitrary.range = Range.of(toBigDecimal(min), minIncluded, toBigDecimal(max), maxIncluded);

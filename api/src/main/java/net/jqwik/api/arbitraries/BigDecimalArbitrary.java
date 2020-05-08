@@ -12,7 +12,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure the generation of BigDecimal values.
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface BigDecimalArbitrary extends Arbitrary<BigDecimal> {
+public interface BigDecimalArbitrary extends NumericalArbitrary<BigDecimal, BigDecimalArbitrary> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) border of generated numbers.

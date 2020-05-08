@@ -17,6 +17,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	BigInteger min;
 	BigInteger max;
 	BigInteger shrinkingTarget;
+	RandomDistribution distribution = RandomDistribution.BIASED;
 
 	IntegralGeneratingArbitrary(BigInteger defaultMin, BigInteger defaultMax) {
 		this.min = defaultMin;
@@ -26,7 +27,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public RandomGenerator<BigInteger> generator(int genSize) {
-		List<BigInteger> partitionPoints = RandomGenerators.calculateBiasedPartitionPoints(genSize, this.min, this.max, shrinkingTarget());
+		List<BigInteger> partitionPoints = RandomGenerators.calculatePartitionPoints(distribution, genSize, this.min, this.max, shrinkingTarget());
 		return createGenerator(partitionPoints, genSize);
 	}
 

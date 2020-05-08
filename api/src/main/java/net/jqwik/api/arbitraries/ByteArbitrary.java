@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure the generation of Byte and byte values.
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface ByteArbitrary extends Arbitrary<Byte> {
+public interface ByteArbitrary extends NumericalArbitrary<Byte, ByteArbitrary> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounds of generated numbers.

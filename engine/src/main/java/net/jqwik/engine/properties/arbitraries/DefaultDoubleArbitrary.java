@@ -34,6 +34,13 @@ public class DefaultDoubleArbitrary extends AbstractArbitraryBase implements Dou
 	}
 
 	@Override
+	public DoubleArbitrary withDistribution(final RandomDistribution distribution) {
+		DefaultDoubleArbitrary clone = typedClone();
+		clone.generatingArbitrary.distribution = distribution;
+		return clone;
+	}
+
+	@Override
 	public DoubleArbitrary between(double min, boolean minIncluded, double max, boolean maxIncluded) {
 		DefaultDoubleArbitrary clone = typedClone();
 		clone.generatingArbitrary.range = Range.of(toBigDecimal(min), minIncluded, toBigDecimal(max), maxIncluded);

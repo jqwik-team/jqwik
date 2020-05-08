@@ -33,6 +33,13 @@ public class DefaultIntegerArbitrary extends AbstractArbitraryBase implements In
 	}
 
 	@Override
+	public IntegerArbitrary withDistribution(final RandomDistribution distribution) {
+		DefaultIntegerArbitrary clone = typedClone();
+		clone.generatingArbitrary.distribution = distribution;
+		return clone;
+	}
+
+	@Override
 	public IntegerArbitrary greaterOrEqual(int min) {
 		DefaultIntegerArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);

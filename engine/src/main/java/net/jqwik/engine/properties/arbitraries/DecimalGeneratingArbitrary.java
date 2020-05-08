@@ -19,6 +19,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	Range<BigDecimal> range;
 	int scale = DEFAULT_SCALE;
 	BigDecimal shrinkingTarget;
+	RandomDistribution distribution = RandomDistribution.BIASED;
 
 	DecimalGeneratingArbitrary(Range<BigDecimal> defaultRange) {
 		this.range = defaultRange;
@@ -28,7 +29,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
 		checkRange();
-		List<BigDecimal> partitionPoints = RandomGenerators.calculateBiasedPartitionPoints(genSize, range, shrinkingTarget());
+		List<BigDecimal> partitionPoints = RandomGenerators.calculatePartitionPoints(distribution, genSize, range, shrinkingTarget());
 		return decimalGenerator(partitionPoints, genSize);
 	}
 

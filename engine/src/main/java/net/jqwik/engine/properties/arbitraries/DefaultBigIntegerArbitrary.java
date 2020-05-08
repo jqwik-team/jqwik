@@ -33,6 +33,13 @@ public class DefaultBigIntegerArbitrary extends AbstractArbitraryBase implements
 	}
 
 	@Override
+	public BigIntegerArbitrary withDistribution(final RandomDistribution distribution) {
+		DefaultBigIntegerArbitrary clone = typedClone();
+		clone.generatingArbitrary.distribution = distribution;
+		return clone;
+	}
+
+	@Override
 	public BigIntegerArbitrary greaterOrEqual(BigInteger min) {
 		DefaultBigIntegerArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = (min == null ? DEFAULT_MIN : min);

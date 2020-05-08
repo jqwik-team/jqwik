@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure the generation of Double and double values.
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface DoubleArbitrary extends Arbitrary<Double> {
+public interface DoubleArbitrary extends NumericalArbitrary<Double, DoubleArbitrary> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) border of generated numbers.

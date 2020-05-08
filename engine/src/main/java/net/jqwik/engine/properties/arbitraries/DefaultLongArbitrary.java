@@ -33,6 +33,13 @@ public class DefaultLongArbitrary extends AbstractArbitraryBase implements LongA
 	}
 
 	@Override
+	public LongArbitrary withDistribution(final RandomDistribution distribution) {
+		DefaultLongArbitrary clone = typedClone();
+		clone.generatingArbitrary.distribution = distribution;
+		return clone;
+	}
+
+	@Override
 	public LongArbitrary greaterOrEqual(long min) {
 		DefaultLongArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);

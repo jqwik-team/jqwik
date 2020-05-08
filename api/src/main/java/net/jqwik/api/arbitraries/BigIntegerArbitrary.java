@@ -12,7 +12,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure the generation of BigInteger values.
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface BigIntegerArbitrary extends Arbitrary<BigInteger> {
+public interface BigIntegerArbitrary extends NumericalArbitrary<BigInteger, BigIntegerArbitrary> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

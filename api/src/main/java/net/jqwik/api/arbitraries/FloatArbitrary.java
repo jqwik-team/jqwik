@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure the generation of Float and float values.
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface FloatArbitrary extends Arbitrary<Float> {
+public interface FloatArbitrary extends NumericalArbitrary<Float, FloatArbitrary> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) border of generated numbers.

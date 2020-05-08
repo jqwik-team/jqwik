@@ -10,7 +10,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to configure the generation of Integer and int values.
  */
 @API(status = MAINTAINED, since = "1.0")
-public interface IntegerArbitrary extends Arbitrary<Integer> {
+public interface IntegerArbitrary extends NumericalArbitrary<Integer, IntegerArbitrary> {
 
 	/**
 	 * Set the allowed lower {@code min} (included) and upper {@code max} (included) bounder of generated numbers.

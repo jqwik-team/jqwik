@@ -1,8 +1,8 @@
 - 1.3.0
 
     - Introduce enum RandomDistribution { BIASED, UNIFORM }
-      - All number arbitraries
-      - Constraint Annotation 
+      - Constraint Annotation `@Distribution`
+      - Document in user-guide
 
     - Documentation for lifecycle hooks API in user guide
     

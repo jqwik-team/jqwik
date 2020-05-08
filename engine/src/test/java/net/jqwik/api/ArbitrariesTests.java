@@ -302,7 +302,7 @@ class ArbitrariesTests {
 
 			@Override
 			public String toString() {
-				return String.format("%s[%s]", name, depth()) ;
+				return String.format("%s[%s]", name, depth());
 			}
 
 			private int depth() {
@@ -529,12 +529,29 @@ class ArbitrariesTests {
 			Arbitrary<BigInteger> bigIntegerArbitrary = Arbitraries.bigIntegers().between(valueOf(-100L), valueOf(100L));
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(valueOf(50L)) < 0);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(valueOf(-50L)) < 0);
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(valueOf(50L)) > 0);
 			assertAllGenerated(
-				generator, //
-				value -> value.compareTo(valueOf(-100L)) >= 0 //
+				generator,
+				value -> value.compareTo(valueOf(-100L)) >= 0
 							 && value.compareTo(valueOf(100L)) <= 0
+			);
+		}
+
+		@Property(tries = 10)
+		void bigIntegersWithUniformDistribution() {
+			Arbitrary<BigInteger> bigIntegerArbitrary =
+				Arbitraries.bigIntegers()
+						   .between(valueOf(-1000L), valueOf(1000L))
+						   .withDistribution(RandomDistribution.UNIFORM);
+			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -990);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 990);
+			assertAllGenerated(
+				generator,
+				value -> value.compareTo(valueOf(-1000L)) >= 0
+							 && value.compareTo(valueOf(1000L)) <= 0
 			);
 		}
 
@@ -812,6 +829,25 @@ class ArbitrariesTests {
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.compareTo(BigDecimal.ONE.negate()) == 0);
 			assertAllGenerated(generator, range::includes);
 		}
+
+		@Property(tries = 10)
+		void bigDecimalsWithUniformDistribution() {
+			Range<BigDecimal> range = Range.of(BigDecimal.valueOf(-1000.0), BigDecimal.valueOf(1000.0));
+			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
+														 .between(range.min, range.max)
+														 .ofScale(0)
+														 .withDistribution(RandomDistribution.UNIFORM);
+			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
+
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -990);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 990);
+			assertAllGenerated(
+				generator,
+				value -> value.compareTo(BigDecimal.valueOf(-1000L)) >= 0
+							 && value.compareTo(BigDecimal.valueOf(1000L)) <= 0
+			);
+		}
+
 	}
 
 	@Group

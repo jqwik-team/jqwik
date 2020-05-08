@@ -250,29 +250,38 @@ public class RandomGenerators {
 		return Math.min(offset + minSize, maxSize);
 	}
 
-	public static List<BigInteger> calculateBiasedPartitionPoints(
+	public static List<BigDecimal> calculatePartitionPoints(
+		RandomDistribution distribution,
+		int genSize,
+		Range<BigDecimal> range,
+		BigDecimal shrinkingTarget
+	) {
+		List<BigInteger> integerPartitionPoints =
+			calculatePartitionPoints(
+				distribution,
+				genSize,
+				range.min.toBigInteger(),
+				range.max.toBigInteger(),
+				shrinkingTarget.toBigInteger()
+			);
+		return integerPartitionPoints
+				   .stream()
+				   .map(BigDecimal::new)
+				   .collect(Collectors.toList());
+	}
+
+	public static List<BigInteger> calculatePartitionPoints(
+		RandomDistribution distribution,
 		int genSize,
 		BigInteger min,
 		BigInteger max,
 		BigInteger shrinkingTarget
 	) {
-		return BiasedPartitionPointsCalculator.calculatePartitionPoints(genSize, min, max, shrinkingTarget);
-	}
-
-	public static List<BigDecimal> calculateBiasedPartitionPoints(
-		int genSize,
-		Range<BigDecimal> range,
-		BigDecimal shrinkingTarget
-	) {
-		List<BigInteger> integerPartitionPoints = calculateBiasedPartitionPoints(
-			genSize,
-			range.min.toBigInteger(),
-			range.max.toBigInteger(),
-			shrinkingTarget.toBigInteger()
-		);
-		return integerPartitionPoints
-				   .stream()
-				   .map(BigDecimal::new)
-				   .collect(Collectors.toList());
+		switch (distribution) {
+			case UNIFORM:
+				return Collections.emptyList();
+			default:
+				return BiasedPartitionPointsCalculator.calculatePartitionPoints(genSize, min, max, shrinkingTarget);
+		}
 	}
 }

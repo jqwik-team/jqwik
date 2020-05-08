@@ -33,6 +33,13 @@ public class DefaultShortArbitrary extends AbstractArbitraryBase implements Shor
 	}
 
 	@Override
+	public ShortArbitrary withDistribution(final RandomDistribution distribution) {
+		DefaultShortArbitrary clone = typedClone();
+		clone.generatingArbitrary.distribution = distribution;
+		return clone;
+	}
+
+	@Override
 	public ShortArbitrary greaterOrEqual(short min) {
 		DefaultShortArbitrary clone = typedClone();
 		clone.generatingArbitrary.min = BigInteger.valueOf(min);
