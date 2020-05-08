@@ -1,6 +1,6 @@
 - 1.3.0
 
-    - Introduce enum RandomDistribution { WEIGHTED, UNIFORM }
+    - Introduce enum RandomDistribution { BIASED, UNIFORM }
       - All number arbitraries
       - Constraint Annotation 
 
