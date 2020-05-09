@@ -10,8 +10,15 @@ import static org.apiguardian.api.API.Status.*;
 public interface NumericalArbitrary<T, A extends NumericalArbitrary<T, A>> extends Arbitrary<T> {
 
 	/**
-	 * Set the {@code distribution} to use when generating random values.
-	 * Default is {@linkplain RandomDistribution#BIASED}.
+	 * Set the {@linkplain RandomDistribution distribution} to use when generating random numerical values.
+	 *
+	 * <p>
+	 *     jqwik currently offers two built-in distributions:
+	 *     <ul>
+	 *         <li>{@linkplain RandomDistribution#biased()} is the default</li>
+	 *         <li>{@linkplain RandomDistribution#uniform()} creates a uniform probability distribution</li>
+	 *     </ul>
+	 * </p>
 	 *
 	 * @param distribution The distribution to use when generating random values
 	 */

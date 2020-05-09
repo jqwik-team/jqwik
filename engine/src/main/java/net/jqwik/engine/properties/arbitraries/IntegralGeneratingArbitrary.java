@@ -17,7 +17,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 	BigInteger min;
 	BigInteger max;
 	BigInteger shrinkingTarget;
-	RandomDistribution distribution = RandomDistribution.BIASED;
+	RandomDistribution distribution = RandomDistribution.biased();
 
 	IntegralGeneratingArbitrary(BigInteger defaultMin, BigInteger defaultMax) {
 		this.min = defaultMin;

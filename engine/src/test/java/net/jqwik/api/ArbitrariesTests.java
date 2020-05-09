@@ -543,7 +543,7 @@ class ArbitrariesTests {
 			Arbitrary<BigInteger> bigIntegerArbitrary =
 				Arbitraries.bigIntegers()
 						   .between(valueOf(-1000L), valueOf(1000L))
-						   .withDistribution(RandomDistribution.UNIFORM);
+						   .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -990);
@@ -836,7 +836,7 @@ class ArbitrariesTests {
 			Arbitrary<BigDecimal> arbitrary = Arbitraries.bigDecimals()
 														 .between(range.min, range.max)
 														 .ofScale(0)
-														 .withDistribution(RandomDistribution.UNIFORM);
+														 .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -990);

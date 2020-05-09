@@ -277,11 +277,10 @@ public class RandomGenerators {
 		BigInteger max,
 		BigInteger shrinkingTarget
 	) {
-		switch (distribution) {
-			case UNIFORM:
-				return Collections.emptyList();
-			default:
-				return BiasedPartitionPointsCalculator.calculatePartitionPoints(genSize, min, max, shrinkingTarget);
+		// TODO: Replace with using distribution generators directly
+		if (distribution.hashCode() == 42) {
+			return Collections.emptyList();
 		}
+		return BiasedPartitionPointsCalculator.calculatePartitionPoints(genSize, min, max, shrinkingTarget);
 	}
 }

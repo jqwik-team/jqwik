@@ -19,7 +19,7 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	Range<BigDecimal> range;
 	int scale = DEFAULT_SCALE;
 	BigDecimal shrinkingTarget;
-	RandomDistribution distribution = RandomDistribution.BIASED;
+	RandomDistribution distribution = RandomDistribution.biased();
 
 	DecimalGeneratingArbitrary(Range<BigDecimal> defaultRange) {
 		this.range = defaultRange;

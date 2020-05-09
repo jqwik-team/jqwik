@@ -1,12 +1,20 @@
 package net.jqwik.api;
 
+import java.math.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Determines a numerical arbitrary's distribution of randomly generated values
- * across the allowed range.
+ * Determines how generated numerical values are generated and distributed
+ * across the allowed range and a center withing this range.
+ *
+ * <p>
+ * Since all random numeric value generation is going back to
+ * {@linkplain BigDecimal} generation this interfaces uses only values
+ * of type {@linkplain BigDecimal}.
+ * </p>
  *
  * <p>
  *     The generation of an arbitrary's edge cases is not influenced by this parameter.
@@ -22,16 +30,32 @@ import static org.apiguardian.api.API.Status.*;
  * @see net.jqwik.api.arbitraries.FloatArbitrary
  */
 @API(status = EXPERIMENTAL, since = "1.3.0")
-public enum RandomDistribution {
+public interface RandomDistribution {
 
 	/**
-	 * Values closer to the shrinking target of a numerical range have higher
-	 * probability of being generated.
+	 * A distribution that generates values closer to the center of a numerical range
+	 * with a higher probability. The bigger the range the stronger the bias.
 	 */
-	BIASED,
+	static RandomDistribution biased() {
+		return new RandomDistribution() {
+			@Override
+			public int hashCode() {
+				return 0;
+			}
+		};
+	}
 
 	/**
-	 * All values within the allowed range have the same probability of being generated.
+	 * A distribution that generates values across the allowed range
+	 * with a uniform probability distribution.
 	 */
-	UNIFORM
+	static RandomDistribution uniform() {
+		return new RandomDistribution() {
+			@Override
+			public int hashCode() {
+				return 42;
+			}
+		};
+	}
+
 }
