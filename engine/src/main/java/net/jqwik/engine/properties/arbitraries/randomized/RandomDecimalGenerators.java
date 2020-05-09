@@ -1,8 +1,6 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
-import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -10,11 +8,14 @@ import net.jqwik.engine.properties.*;
 public class RandomDecimalGenerators {
 
 	public static RandomGenerator<BigDecimal> bigDecimals(
+		int genSize,
 		Range<BigDecimal> range,
 		int scale,
-		List<BigDecimal> partitionPoints,
+		RandomDistribution distribution,
 		BigDecimal shrinkingTarget
 	) {
+		checkRangeIsSound(range, scale);
+
 		if (scale < 0) {
 			throw new JqwikException(String.format("Scale [%s] must be positive.", scale));
 		}
@@ -24,17 +25,22 @@ public class RandomDecimalGenerators {
 		}
 
 		Range<BigInteger> unscaledRange = unscaledBigIntegerRange(range, scale);
-		List<BigInteger> unscaledPartitionPoints = unscaledBigIntegerPartitions(partitionPoints, scale);
 		BigInteger unscaledShrinkingTarget = unscaledBigInteger(shrinkingTarget, scale);
 		RandomGenerator<BigInteger> unscaledBigIntegerGenerator =
-			RandomIntegralGenerators.bigIntegers(unscaledRange, unscaledPartitionPoints, unscaledShrinkingTarget);
+			RandomIntegralGenerators.bigIntegers(genSize, unscaledRange.min, unscaledRange.max, unscaledShrinkingTarget, distribution);
 
 		return scaledBigDecimalGenerator(unscaledBigIntegerGenerator, scale);
 	}
 
-	private static List<BigInteger> unscaledBigIntegerPartitions(final List<BigDecimal> partitionPoints, final int scale) {
-		return partitionPoints.stream().map(bigDecimal -> unscaledBigInteger(bigDecimal, scale))
-					 .collect(Collectors.toList());
+	private static void checkRangeIsSound(Range<BigDecimal> range, int scale) {
+		if (range.minIncluded || range.maxIncluded) {
+			return;
+		}
+		BigDecimal minimumDifference = BigDecimal.ONE.movePointLeft(scale);
+		if (range.min.add(minimumDifference).compareTo(range.max) >= 0) {
+			String message = String.format("No number with scale <%s> can be generated in %s", scale, range);
+			throw new JqwikException(message);
+		}
 	}
 
 	private static RandomGenerator<BigDecimal> scaledBigDecimalGenerator(

@@ -7,7 +7,6 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.RandomDistribution.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -52,8 +51,8 @@ public class RandomGenerators {
 		return bigIntegers(
 			minBig,
 			maxBig,
-			defaultShrinkingTarget(Range.of(minBig, maxBig)),
-			new SmallUniformNumericGenerator(minBig, maxBig)
+			RandomIntegralGenerators.defaultShrinkingTarget(Range.of(minBig, maxBig)),
+			RandomDistribution.uniform()
 		).map(BigInteger::intValueExact);
 	}
 
@@ -62,58 +61,33 @@ public class RandomGenerators {
 		BigInteger max,
 		BigInteger shrinkingTarget
 	) {
-		RandomNumericGenerator uniformGenerator =
-			RandomDistribution.uniform().createGenerator(1000, min, max, shrinkingTarget);
-		return bigIntegers(min, max, shrinkingTarget, uniformGenerator);
+		return bigIntegers(min, max, shrinkingTarget, RandomDistribution.uniform());
 	}
 
 	public static RandomGenerator<BigInteger> bigIntegers(
 		BigInteger min,
 		BigInteger max,
 		BigInteger shrinkingTarget,
-		RandomNumericGenerator numericGenerator
+		RandomDistribution distribution
 	) {
-		Range<BigInteger> range = Range.of(min, max);
-		if (range.isSingular()) {
-			return ignored -> Shrinkable.unshrinkable(range.min);
-		}
-		return random -> {
-			BigInteger value = numericGenerator.next(random);
-			return new ShrinkableBigInteger(
-				value,
-				range,
-				shrinkingTarget
-			);
-		};
+		return RandomIntegralGenerators.bigIntegers(1000, min, max, shrinkingTarget, distribution);
 	}
 
-	public static RandomGenerator<BigDecimal> bigDecimals(
+	public static RandomGenerator<BigDecimal> uniformBigDecimals(
 		Range<BigDecimal> range,
 		int scale,
 		BigDecimal shrinkingTarget
 	) {
-		return bigDecimals(range, scale, shrinkingTarget, Collections.emptyList());
+		return bigDecimals(range, scale, shrinkingTarget, RandomDistribution.uniform());
 	}
 
 	public static RandomGenerator<BigDecimal> bigDecimals(
 		Range<BigDecimal> range,
 		int scale,
 		BigDecimal shrinkingTarget,
-		List<BigDecimal> partitionPoints
+		RandomDistribution distribution
 	) {
-		checkRangeIsSound(range, scale);
-		return RandomDecimalGenerators.bigDecimals(range, scale, partitionPoints, shrinkingTarget);
-	}
-
-	private static void checkRangeIsSound(Range<BigDecimal> range, int scale) {
-		if (range.minIncluded || range.maxIncluded) {
-			return;
-		}
-		BigDecimal minimumDifference = BigDecimal.ONE.movePointLeft(scale);
-		if (range.min.add(minimumDifference).compareTo(range.max) >= 0) {
-			String message = String.format("No number with scale <%s> can be generated in %s", scale, range);
-			throw new JqwikException(message);
-		}
+		return RandomDecimalGenerators.bigDecimals(1000, range, scale, distribution, shrinkingTarget);
 	}
 
 	public static <T> RandomGenerator<List<T>> list(RandomGenerator<T> elementGenerator, int minSize, int maxSize) {
@@ -297,12 +271,4 @@ public class RandomGenerators {
 		return BiasedPartitionPointsCalculator.calculatePartitionPoints(genSize, min, max, shrinkingTarget);
 	}
 
-	public static BigInteger defaultShrinkingTarget(Range<BigInteger> range) {
-		if (range.includes(BigInteger.ZERO)) {
-			return BigInteger.ZERO;
-		}
-		if (range.max.compareTo(BigInteger.ZERO) < 0) return range.max;
-		if (range.min.compareTo(BigInteger.ZERO) > 0) return range.min;
-		throw new RuntimeException("This should not be possible");
-	}
 }

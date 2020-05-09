@@ -29,8 +29,9 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	@Override
 	public RandomGenerator<BigDecimal> generator(int genSize) {
 		checkRange();
-		List<BigDecimal> partitionPoints = RandomGenerators.calculatePartitionPoints(distribution, genSize, range, shrinkingTarget());
-		return decimalGenerator(partitionPoints, genSize);
+		return RandomDecimalGenerators
+			.bigDecimals(genSize, range, scale, distribution, shrinkingTarget())
+			.withEdgeCases(genSize, edgeCases());
 	}
 
 	private void checkRange() {
@@ -42,8 +43,11 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 		try {
 			value.setScale(scale);
 		} catch (ArithmeticException arithmeticException) {
-			String message = String
-								 .format("Decimal value %s cannot be represented with scale %s.%nYou may want to use a higher scale", value, scale);
+			String message = String.format(
+				"Decimal value %s cannot be represented with scale %s.%nYou may want to use a higher scale",
+				value,
+				scale
+			);
 			throw new JqwikException(message);
 		}
 	}
@@ -59,11 +63,6 @@ class DecimalGeneratingArbitrary implements Arbitrary<BigDecimal> {
 	@Override
 	public EdgeCases<BigDecimal> edgeCases() {
 		return EdgeCases.fromShrinkables(edgeCaseShrinkables());
-	}
-
-	private RandomGenerator<BigDecimal> decimalGenerator(List<BigDecimal> partitionPoints, int genSize) {
-		return RandomGenerators.bigDecimals(range, scale, shrinkingTarget(), partitionPoints)
-							   .withEdgeCases(genSize, edgeCases());
 	}
 
 	private List<Shrinkable<BigDecimal>> edgeCaseShrinkables() {
