@@ -150,9 +150,9 @@ class ShrinkableBigIntegerTests {
 	private Shrinkable<BigInteger> createShrinkableBigInteger(long number, Range<Long> longRange) {
 		Range<BigInteger> bigIntegerRange = longRange.map(BigInteger::valueOf);
 		return new ShrinkableBigInteger(
-			BigInteger.valueOf(number),
-			bigIntegerRange,
-			RandomIntegralGenerators.defaultShrinkingTarget(bigIntegerRange)
+				BigInteger.valueOf(number),
+				bigIntegerRange,
+				RandomGenerators.defaultShrinkingTarget(bigIntegerRange)
 		);
 	}
 

@@ -7,6 +7,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.RandomDistribution.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -51,27 +52,39 @@ public class RandomGenerators {
 		return bigIntegers(
 			minBig,
 			maxBig,
-			RandomIntegralGenerators.defaultShrinkingTarget(Range.of(minBig, maxBig)),
-			Collections.emptyList()
+			defaultShrinkingTarget(Range.of(minBig, maxBig)),
+			new SmallUniformNumericGenerator(minBig, maxBig)
 		).map(BigInteger::intValueExact);
 	}
 
-	public static RandomGenerator<BigInteger> bigIntegers(
+	public static RandomGenerator<BigInteger> uniformBigIntegers(
 		BigInteger min,
 		BigInteger max,
 		BigInteger shrinkingTarget
 	) {
-		return bigIntegers(min, max, shrinkingTarget, Collections.emptyList());
+		RandomNumericGenerator uniformGenerator =
+			RandomDistribution.uniform().createGenerator(1000, min, max, shrinkingTarget);
+		return bigIntegers(min, max, shrinkingTarget, uniformGenerator);
 	}
 
 	public static RandomGenerator<BigInteger> bigIntegers(
 		BigInteger min,
 		BigInteger max,
 		BigInteger shrinkingTarget,
-		List<BigInteger> partitionPoints
+		RandomNumericGenerator numericGenerator
 	) {
 		Range<BigInteger> range = Range.of(min, max);
-		return RandomIntegralGenerators.bigIntegers(range, partitionPoints, shrinkingTarget);
+		if (range.isSingular()) {
+			return ignored -> Shrinkable.unshrinkable(range.min);
+		}
+		return random -> {
+			BigInteger value = numericGenerator.next(random);
+			return new ShrinkableBigInteger(
+				value,
+				range,
+				shrinkingTarget
+			);
+		};
 	}
 
 	public static RandomGenerator<BigDecimal> bigDecimals(
@@ -278,9 +291,18 @@ public class RandomGenerators {
 		BigInteger shrinkingTarget
 	) {
 		// TODO: Replace with using distribution generators directly
-		if (distribution.hashCode() == 42) {
+		if (distribution instanceof UniformRandomDistribution) {
 			return Collections.emptyList();
 		}
 		return BiasedPartitionPointsCalculator.calculatePartitionPoints(genSize, min, max, shrinkingTarget);
+	}
+
+	public static BigInteger defaultShrinkingTarget(Range<BigInteger> range) {
+		if (range.includes(BigInteger.ZERO)) {
+			return BigInteger.ZERO;
+		}
+		if (range.max.compareTo(BigInteger.ZERO) < 0) return range.max;
+		if (range.min.compareTo(BigInteger.ZERO) > 0) return range.min;
+		throw new RuntimeException("This should not be possible");
 	}
 }

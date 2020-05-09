@@ -546,12 +546,11 @@ class ArbitrariesTests {
 						   .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigInteger> generator = bigIntegerArbitrary.generator(1);
 
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -990);
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 990);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -980);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 980);
 			assertAllGenerated(
 				generator,
-				value -> value.compareTo(valueOf(-1000L)) >= 0
-							 && value.compareTo(valueOf(1000L)) <= 0
+				value -> value.compareTo(valueOf(-1000L)) >= 0 && value.compareTo(valueOf(1000L)) <= 0
 			);
 		}
 

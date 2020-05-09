@@ -2,7 +2,6 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
 import java.util.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -19,15 +18,6 @@ public class RandomIntegralGenerators {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
 		return partitionedGenerator(range, partitionPoints, shrinkingTarget);
-	}
-
-	public static BigInteger defaultShrinkingTarget(Range<BigInteger> range) {
-		if (range.includes(BigInteger.ZERO)) {
-			return BigInteger.ZERO;
-		}
-		if (range.max.compareTo(BigInteger.ZERO) < 0) return range.max;
-		if (range.min.compareTo(BigInteger.ZERO) > 0) return range.min;
-		throw new RuntimeException("This should not be possible");
 	}
 
 	private static RandomGenerator<BigInteger> partitionedGenerator(

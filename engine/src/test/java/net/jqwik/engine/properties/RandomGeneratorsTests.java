@@ -6,6 +6,7 @@ import java.util.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.RandomDistribution.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
 import static java.math.BigInteger.*;
@@ -39,7 +40,7 @@ class RandomGeneratorsTests {
 			BigInteger min = valueOf(Integer.MIN_VALUE);
 			BigInteger max = valueOf(Integer.MAX_VALUE);
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
+				RandomGenerators.uniformBigIntegers(min, max, RandomGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 		}
 
@@ -48,7 +49,7 @@ class RandomGeneratorsTests {
 			BigInteger min = valueOf(-100);
 			BigInteger max = valueOf(10000);
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
+				RandomGenerators.uniformBigIntegers(min, max, RandomGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 		}
 
@@ -57,38 +58,39 @@ class RandomGeneratorsTests {
 			BigInteger min = valueOf(-100_000_000_000L);
 			BigInteger max = valueOf(100_000_000_000L);
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
+				RandomGenerators.uniformBigIntegers(min, max, RandomGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 		}
 
 		@Example
-		void smallRangeWithPartitions() {
+		void smallRangeWithBiasedDistribution() {
 			BigInteger min = valueOf(-100);
 			BigInteger max = valueOf(100000);
-			List<BigInteger> partitionPoints = Arrays.asList(BigInteger.ZERO, valueOf(100), valueOf(1000));
+			RandomNumericGenerator distribution =
+				RandomDistribution.biased().createGenerator(1000, min, max, ZERO);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
 				min,
 				max,
-				RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)), partitionPoints
+				RandomGenerators.defaultShrinkingTarget(Range.of(min, max)),
+				distribution
 			);
 
 			assertAllWithinRange(generator, min, max);
-			assertAllPartitionsAreCovered(generator, min, max, partitionPoints);
 		}
 
 		@Example
 		void greaterRangeWithPartitions() {
 			BigInteger min = valueOf(Long.MIN_VALUE);
 			BigInteger max = valueOf(Long.MAX_VALUE);
-			List<BigInteger> partitionPoints = Arrays.asList(BigInteger.ZERO, valueOf(-10000), valueOf(10000));
+			RandomNumericGenerator distribution =
+				RandomDistribution.biased().createGenerator(1000, min, max, ZERO);
 			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
 				min,
 				max,
-				RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)), partitionPoints
+				RandomGenerators.defaultShrinkingTarget(Range.of(min, max)),
+				distribution
 			);
-
 			assertAllWithinRange(generator, min, max);
-			assertAllPartitionsAreCovered(generator, min, max, partitionPoints);
 		}
 
 		@Example
@@ -96,7 +98,7 @@ class RandomGeneratorsTests {
 			BigInteger min = new BigInteger("-10000000000000000000");
 			BigInteger max = new BigInteger("10000000000000000000");
 			RandomGenerator<BigInteger> generator =
-				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
+				RandomGenerators.uniformBigIntegers(min, max, RandomGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			assertAllWithinRange(generator, min, max);
 			assertAtLeastOneGenerated(
 				generator,
@@ -113,7 +115,7 @@ class RandomGeneratorsTests {
 			assertThatThrownBy(() -> {
 				BigInteger min = valueOf(1);
 				BigInteger max = valueOf(-1);
-				RandomGenerators.bigIntegers(min, max, RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)));
+				RandomGenerators.uniformBigIntegers(min, max, RandomGenerators.defaultShrinkingTarget(Range.of(min, max)));
 			}).isInstanceOf(IllegalArgumentException.class);
 		}
 

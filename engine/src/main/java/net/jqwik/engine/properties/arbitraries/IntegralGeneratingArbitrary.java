@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.RandomDistribution.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
@@ -27,8 +28,9 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	@Override
 	public RandomGenerator<BigInteger> generator(int genSize) {
-		List<BigInteger> partitionPoints = RandomGenerators.calculatePartitionPoints(distribution, genSize, this.min, this.max, shrinkingTarget());
-		return createGenerator(partitionPoints, genSize);
+		RandomNumericGenerator numericGenerator = distribution
+			.createGenerator(genSize, this.min, this.max, shrinkingTarget());
+		return createGenerator(numericGenerator, genSize);
 	}
 
 	@Override
@@ -56,15 +58,15 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 		return EdgeCases.fromShrinkables(shrinkables);
 	}
 
-	private RandomGenerator<BigInteger> createGenerator(List<BigInteger> partitionPoints, int genSize) {
-		return RandomGenerators.bigIntegers(min, max, shrinkingTarget(), partitionPoints)
+	private RandomGenerator<BigInteger> createGenerator(RandomNumericGenerator numericGenerator, int genSize) {
+		return RandomGenerators.bigIntegers(min, max, shrinkingTarget(), numericGenerator)
 							   .withEdgeCases(genSize, edgeCases());
 	}
 
 	private Stream<BigInteger> streamEdgeCases() {
 		return streamRawEdgeCases()
-				   .distinct()
-				   .filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0);
+			.distinct()
+			.filter(aBigInt -> aBigInt.compareTo(min) >= 0 && aBigInt.compareTo(max) <= 0);
 	}
 
 	private Stream<BigInteger> streamRawEdgeCases() {
@@ -79,7 +81,7 @@ class IntegralGeneratingArbitrary implements Arbitrary<BigInteger> {
 
 	private BigInteger shrinkingTarget() {
 		if (shrinkingTarget == null) {
-			return RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max));
+			return RandomGenerators.defaultShrinkingTarget(Range.of(min, max));
 		} else {
 			return shrinkingTarget;
 		}
