@@ -151,7 +151,7 @@ class TypeUsageTests {
 	@Label("TypeUsageImpl.forParameter()")
 	class ForParameter {
 		@Example
-		void genericParameter() throws NoSuchMethodException {
+		void twoGenericParameters() throws NoSuchMethodException {
 			class LocalClass {
 				@SuppressWarnings("WeakerAccess")
 				public void withParameter(Tuple2<String, Integer> tuple) {}
@@ -168,6 +168,20 @@ class TypeUsageTests {
 			assertThat(tupleType.isEnum()).isFalse();
 
 			assertThat(tupleType.toString()).isEqualTo("Tuple2<String, Integer>");
+		}
+
+		@Example
+		void threeGenericParametersAndAnnotation() throws NoSuchMethodException {
+			class LocalClass {
+				@SuppressWarnings("WeakerAccess")
+				public void withParameters(@ForAll Tuple3<BigInteger, BigInteger, BigInteger> tuple) {}
+			}
+
+			Method method = LocalClass.class.getMethod("withParameters", Tuple3.class);
+			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
+			TypeUsage tupleType = TypeUsageImpl.forParameter(parameter);
+			assertThat(tupleType.isOfType(Tuple3.class)).isTrue();
+			assertThat(tupleType.toString()).isEqualTo("@net.jqwik.api.ForAll(value=) Tuple3<BigInteger, BigInteger, BigInteger>");
 		}
 
 		@Example

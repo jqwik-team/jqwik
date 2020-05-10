@@ -12,7 +12,7 @@ import net.jqwik.engine.support.*;
 
 public class TypeUsageImpl implements TypeUsage {
 
-	private static Map<TypeVariable<?>, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
+	private static final Map<TypeVariable<?>, TypeUsageImpl> resolved = new ConcurrentHashMap<>();
 
 	static final String WILDCARD = "?";
 
@@ -258,7 +258,7 @@ public class TypeUsageImpl implements TypeUsage {
 
 	private final Class<?> rawType;
 	private final Type type;
-	private AnnotatedType annotatedType;
+	private final AnnotatedType annotatedType;
 	private final String typeVariable;
 	private final List<Annotation> annotations;
 	private final List<TypeUsage> typeArguments = new ArrayList<>();
@@ -589,15 +589,16 @@ public class TypeUsageImpl implements TypeUsage {
 	}
 
 	private String toString(Set<TypeUsage> touchedTypes) {
+		String representation = getRawType().getSimpleName();
+
 		if (touchedTypes.contains(this)) {
 			if (isTypeVariableOrWildcard()) {
 				return typeVariable;
 			}
-			return "";
+			return representation;
 		}
 		touchedTypes.add(this);
 
-		String representation = getRawType().getSimpleName();
 		if (isGeneric()) {
 			representation = String.format("%s<%s>", representation, toStringTypeArguments(touchedTypes));
 		}
