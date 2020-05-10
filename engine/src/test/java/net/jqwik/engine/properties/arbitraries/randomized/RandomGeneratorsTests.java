@@ -107,6 +107,20 @@ class RandomGeneratorsTests {
 		}
 
 		@Example
+		void rangeWithGaussianDistribution() {
+			BigInteger min = valueOf(-1000);
+			BigInteger max = valueOf(1000);
+			RandomGenerator<BigInteger> generator = RandomGenerators.bigIntegers(
+				min,
+				max,
+				RandomIntegralGenerators.defaultShrinkingTarget(Range.of(min, max)),
+				RandomDistribution.gaussian()
+			);
+
+			assertAllWithinRange(generator, min, max);
+		}
+
+		@Example
 		void outsideLongRange() {
 			BigInteger min = new BigInteger("-10000000000000000000");
 			BigInteger max = new BigInteger("10000000000000000000");
@@ -319,7 +333,10 @@ class RandomGeneratorsTests {
 	private void assertAllWithinRange(RandomGenerator<BigInteger> generator, BigInteger min, BigInteger max) {
 		ArbitraryTestHelper.assertAllGenerated(
 			generator,
-			integral -> integral.compareTo(min) >= 0 && integral.compareTo(max) <= 0
+			integral -> {
+				// System.out.println(integral);
+				return integral.compareTo(min) >= 0 && integral.compareTo(max) <= 0;
+			}
 		);
 	}
 

@@ -27,4 +27,9 @@ public class UniformRandomDistribution implements RandomDistribution {
 			&& max.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0;
 	}
 
+	@Override
+	public String toString() {
+		return "UniformDistribution";
+	}
+
 }

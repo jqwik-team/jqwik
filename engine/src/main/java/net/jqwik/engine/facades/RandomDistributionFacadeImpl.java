@@ -13,4 +13,9 @@ public class RandomDistributionFacadeImpl extends RandomDistribution.RandomDistr
 	public RandomDistribution uniform() {
 		return new UniformRandomDistribution();
 	}
+
+	@Override
+	public RandomDistribution gaussian(double borderSigma) {
+		return new GaussianRandomDistribution(borderSigma);
+	}
 }

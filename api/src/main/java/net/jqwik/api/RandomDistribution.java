@@ -44,6 +44,8 @@ public interface RandomDistribution {
 		public abstract RandomDistribution biased();
 
 		public abstract RandomDistribution uniform();
+
+		public abstract RandomDistribution gaussian(double borderSigma);
 	}
 
 	/**
@@ -75,6 +77,27 @@ public interface RandomDistribution {
 	 */
 	static RandomDistribution uniform() {
 		return RandomDistributionFacade.implementation.uniform();
+	}
+
+	/**
+	 * A distribution that generates values with (potentially asymmetric) gaussian distribution
+	 * the mean of which is the specified center and the probability at the borders is
+	 * approximately {@code borderSigma} times standard deviation.
+	 *
+	 * @param borderSigma The approximate factor of standard deviation at the border(s)
+	 */
+	static RandomDistribution gaussian(double borderSigma) {
+		return RandomDistributionFacade.implementation.gaussian(borderSigma);
+	}
+
+	/**
+	 * A gaussian distribution with {@code borderSigma} of 3,
+	 * i.e. approximately 99.7% of values are within the borders.
+	 *
+	 * @see #gaussian(double)
+	 */
+	static RandomDistribution gaussian() {
+		return RandomDistributionFacade.implementation.gaussian(3);
 	}
 
 	/**

@@ -9,4 +9,10 @@ public class BiasedRandomDistribution implements RandomDistribution {
 	public RandomNumericGenerator createGenerator(int genSize, BigInteger min, BigInteger max, BigInteger center) {
 		return new BiasedNumericGenerator(genSize, min, max, center);
 	}
+
+	@Override
+	public String toString() {
+		return "BiasedDistribution";
+	}
+
 }

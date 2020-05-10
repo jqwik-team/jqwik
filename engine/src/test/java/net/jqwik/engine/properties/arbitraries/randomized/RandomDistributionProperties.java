@@ -13,6 +13,7 @@ import net.jqwik.api.constraints.*;
 public class RandomDistributionProperties {
 
 	@Property(edgeCases = EdgeCasesMode.MIXIN)
+	@Report(Reporting.GENERATED)
 	void onlyGenerateValuesWithinRange(
 		@ForAll("distributions") RandomDistribution distribution,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,
@@ -53,9 +54,10 @@ public class RandomDistributionProperties {
 
 	@Provide
 	Arbitrary<RandomDistribution> distributions() {
-		return Arbitraries.of(
-			RandomDistribution.uniform(),
-			RandomDistribution.biased()
+		return Arbitraries.oneOf(
+			Arbitraries.constant(RandomDistribution.uniform()),
+			Arbitraries.constant(RandomDistribution.biased()),
+			Arbitraries.doubles().between(0.1, 5.0).ofScale(1).map(RandomDistribution::gaussian)
 		);
 	}
 

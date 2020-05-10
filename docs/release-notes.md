@@ -29,8 +29,10 @@ and
 #### New and Enhanced Features
 
 - Number Generation: All numeric arbitraries now support `withDistribution(RandomDistribution)`
-  to choose between `BIASED` (default) and `UNIFORM`. 
-  Biased distribution has now a much higher bias towards numbers
+  to choose between `RandomDistribution.biased()` (default),
+   `RandomDistribution.uniform()` and `RandomDistribution.gaussian(borderSigma)`. 
+  
+- Default number generation has now a much higher bias towards numbers
   that are closer to the shrinking target of a number range.
 
 - Using a faster implementation of `java.util.Random` under the hood
