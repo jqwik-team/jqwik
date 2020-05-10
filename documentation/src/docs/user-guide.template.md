@@ -93,8 +93,13 @@ about the real dependencies you can replace this dependency with
     testRuntime "net.jqwik:jqwik-engine:\${jqwikVersion}"
 ```
 
+In jqwik's samples repository you can find a rather minimal 
+[starter example for jqwik with Gradle](https://github.com/jlink/jqwik-samples/tree/master/jqwik-starter-gradle).
+
 See [the Gradle section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
-for more details on how to configure Gradle for the JUnit 5 platform.
+for more details on how to configure Gradle for the JUnit 5 platform. 
+There is also a comprehensive 
+[list of options for Gradle's `test` task](https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_test).
 
 #### Seeing jqwik Reporting in Gradle Output
 
@@ -122,9 +127,12 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
 
 ### Maven
 
-Configure the surefire plugin as described in 
-[the Maven section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
-and add the following dependency to your `pom.xml` file:
+Starting with version 2.22.0, Maven Surefire and Maven Failsafe provide native support 
+for executing tests on the JUnit Platform and thus for running _jqwik_ properties.
+The configuration of Maven Surefire is described in 
+[the Maven section of JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven).
+
+Additionally you have to add the following dependency to your `pom.xml` file:
 
 ```
 <dependencies>
@@ -138,6 +146,8 @@ and add the following dependency to your `pom.xml` file:
 </dependencies>
 ```
 
+In jqwik's samples repository you can find a rather minimal 
+[starter example for jqwik with Maven](https://github.com/jlink/jqwik-samples/tree/master/jqwik-starter-maven).
 
 ### Snapshot Releases
 

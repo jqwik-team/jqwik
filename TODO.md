@@ -1,17 +1,7 @@
 - 1.3.0
 
-    - Introduce enum RandomDistribution { BIASED, UNIFORM }
-      - Constraint Annotation `@Distribution`
+    - Introduce interface RandomDistribution
       - Document in user-guide
-
-    - Documentation for lifecycle hooks API in user guide
-    
-    - Edge Case number reporting (https://github.com/jlink/jqwik/issues/101)
-    
-    - Improve Sample Reporting
-      https://github.com/jlink/jqwik/issues/85
-      - Extract description before running the property?
-        e.g. to be able to display a generated Stream
 
     - Arbitrary.addEdgeCase(value) 
         - Make shrinkable variants for
@@ -21,6 +11,15 @@
             - Collections
             - Combinators
         - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+
+    - Documentation for lifecycle hooks API in user guide
+    
+    - Edge Case number reporting (https://github.com/jlink/jqwik/issues/101)
+    
+    - Improve Sample Reporting
+      https://github.com/jlink/jqwik/issues/85
+      - Extract description before running the property?
+        e.g. to be able to display a generated Stream
 
 - 1.3.1
 

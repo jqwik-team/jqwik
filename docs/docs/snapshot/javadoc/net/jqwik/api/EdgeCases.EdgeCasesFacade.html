@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -164,6 +164,10 @@ extends java.lang.Object</pre>
                 java.util.function.Function&lt;T,<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;U&gt;&gt;&nbsp;mapper)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCases.EdgeCasesFacade.html#fromSuppliers-java.util.List-">fromSuppliers</a></span>(java.util.List&lt;java.util.function.Supplier&lt;<a href="../../../net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&gt;&gt;&nbsp;suppliers)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>abstract &lt;T,U&gt;&nbsp;<a href="../../../net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;U&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCases.EdgeCasesFacade.html#mapShrinkable-net.jqwik.api.EdgeCases-java.util.function.Function-">mapShrinkable</a></span>(<a href="../../../net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;&nbsp;self,
              java.util.function.Function&lt;<a href="../../../net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;,<a href="../../../net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;U&gt;&gt;&nbsp;mapper)</code>&nbsp;</td>
@@ -207,6 +211,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="fromSuppliers-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fromSuppliers</h4>
+<pre>public abstract&nbsp;&lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;T&gt;&nbsp;fromSuppliers(java.util.List&lt;java.util.function.Supplier&lt;<a href="../../../net/jqwik/api/Shrinkable.html" title="interface in net.jqwik.api">Shrinkable</a>&lt;T&gt;&gt;&gt;&nbsp;suppliers)</pre>
+</li>
+</ul>
 <a name="concat-java.util.List-">
 <!--   -->
 </a>
