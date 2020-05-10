@@ -1,4 +1,4 @@
-package net.jqwik.engine.properties;
+package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.math.*;
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.arbitraries.randomized.*;
+import net.jqwik.engine.properties.*;
 
 import static java.math.BigInteger.*;
 import static org.assertj.core.api.Assertions.*;
