@@ -56,14 +56,6 @@ public class RandomGenerators {
 		).map(BigInteger::intValueExact);
 	}
 
-	public static RandomGenerator<BigInteger> uniformBigIntegers(
-		BigInteger min,
-		BigInteger max,
-		BigInteger shrinkingTarget
-	) {
-		return bigIntegers(min, max, shrinkingTarget, RandomDistribution.uniform());
-	}
-
 	public static RandomGenerator<BigInteger> bigIntegers(
 		BigInteger min,
 		BigInteger max,
@@ -71,14 +63,6 @@ public class RandomGenerators {
 		RandomDistribution distribution
 	) {
 		return RandomIntegralGenerators.bigIntegers(1000, min, max, shrinkingTarget, distribution);
-	}
-
-	public static RandomGenerator<BigDecimal> uniformBigDecimals(
-		Range<BigDecimal> range,
-		int scale,
-		BigDecimal shrinkingTarget
-	) {
-		return bigDecimals(range, scale, shrinkingTarget, RandomDistribution.uniform());
 	}
 
 	public static RandomGenerator<BigDecimal> bigDecimals(
@@ -235,40 +219,6 @@ public class RandomGenerators {
 		if (range <= offset)
 			return maxSize;
 		return Math.min(offset + minSize, maxSize);
-	}
-
-	public static List<BigDecimal> calculatePartitionPoints(
-		RandomDistribution distribution,
-		int genSize,
-		Range<BigDecimal> range,
-		BigDecimal shrinkingTarget
-	) {
-		List<BigInteger> integerPartitionPoints =
-			calculatePartitionPoints(
-				distribution,
-				genSize,
-				range.min.toBigInteger(),
-				range.max.toBigInteger(),
-				shrinkingTarget.toBigInteger()
-			);
-		return integerPartitionPoints
-				   .stream()
-				   .map(BigDecimal::new)
-				   .collect(Collectors.toList());
-	}
-
-	public static List<BigInteger> calculatePartitionPoints(
-		RandomDistribution distribution,
-		int genSize,
-		BigInteger min,
-		BigInteger max,
-		BigInteger shrinkingTarget
-	) {
-		// TODO: Replace with using distribution generators directly
-		if (distribution instanceof UniformRandomDistribution) {
-			return Collections.emptyList();
-		}
-		return BiasedPartitionPointsCalculator.calculatePartitionPoints(genSize, min, max, shrinkingTarget);
 	}
 
 }
