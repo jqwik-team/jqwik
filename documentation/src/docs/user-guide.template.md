@@ -1158,19 +1158,73 @@ of randomly generated numbers. The way to do that is by calling
 [`withDistribution(distribution)`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution-net.jqwik.api.RandomDistribution-).
 Currently three different distributions are supported:
 
-- [`RandomDistribution.biased()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#biased--): This is the default. 
+- [`RandomDistribution.biased()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#biased--): 
+  This is the default. 
   It generates values closer to the center of a numerical range with a higher probability. 
   The bigger the range the stronger the bias.
 
-- [`RandomDistribution.uniform()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#uniform--): This distribution will generate values across the allowed range 
+- [`RandomDistribution.uniform()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#uniform--): 
+  This distribution will generate values across the allowed range 
   with a uniform probability distribution.
   
-- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian--): A gaussian distribution with borderSigma of 3, 
-  i.e. approximately 99.7% of values are within the borders.
-  Gaussian generation is approximately 10 times slower than biased or uniform generation;
-  use it only if it reflects your domain distribution better.
+- [`RandomDistribution.gaussian(borderSigma)`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian-double-): 
+  A (potentially asymmetric) gaussian distribution -- 
+  aka "normal distribution" -- the mean of which is the specified center 
+  and the probability at the borders is `borderSigma` times _standard deviation_.
+  Gaussian generation is approximately 10 times slower than biased or uniform generation.
 
-You can - if need be - provide your own implementation of `RandomDistribution`.
+- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian--): 
+  A gaussian distribution with `borderSigma` of 3, i.e. approximately 99.7% of values are within the borders.
+
+The specified distribution does not influence the generation of [edge cases](#generation-of-edge-cases).
+
+The following example generates numbers between 0 and 20 using a gaussian probability distribution
+with its mean at 10 and a standard deviation of about 3.3:
+
+```java
+@Property(generation = GenerationMode.RANDOMIZED)
+void gaussianDistributedIntegers(@ForAll("gaussians") int aNumber) {
+    Statistics.collect(aNumber);
+}
+
+@Provide
+Arbitrary<Integer> gaussians() {
+    return Arbitraries
+               .integers()
+               .between(0, 20)
+               .shrinkTowards(10)
+               .withDistribution(RandomDistribution.gaussian());
+}
+```
+
+Look at the statistics to see if it fits your expectation:
+```
+[RandomDistributionExamples:gaussianDistributedIntegers] (1000) statistics = 
+    10 (262) : 26.20 %
+    9  (110) : 11.00 %
+    12 ( 93) :  9.30 %
+    8  ( 88) :  8.80 %
+    11 ( 80) :  8.00 %
+    13 ( 62) :  6.20 %
+    7  ( 57) :  5.70 %
+    14 ( 44) :  4.40 %
+    6  ( 39) :  3.90 %
+    5  ( 32) :  3.20 %
+    15 ( 27) :  2.70 %
+    16 ( 21) :  2.10 %
+    2  ( 16) :  1.60 %
+    4  ( 13) :  1.30 %
+    17 ( 13) :  1.30 %
+    0  ( 12) :  1.20 %
+    3  ( 11) :  1.10 %
+    20 (  9) :  0.90 %
+    1  (  5) :  0.50 %
+    18 (  5) :  0.50 %
+    19 (  1) :  0.10 %
+```
+
+You can notice that values `0` and `20` should have the lowest probability but they do not.
+This is because they will be generated a few times as edge cases.
 
 ### Collections, Streams, Arrays and Optional
 

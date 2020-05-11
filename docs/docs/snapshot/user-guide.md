@@ -10,6 +10,116 @@ title: jqwik User Guide - 1.3.0-SNAPSHOT
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [How to Use](#how-to-use)
+  - [Required Version of JUnit Platform](#required-version-of-junit-platform)
+  - [Gradle](#gradle)
+    - [Seeing jqwik Reporting in Gradle Output](#seeing-jqwik-reporting-in-gradle-output)
+  - [Maven](#maven)
+  - [Snapshot Releases](#snapshot-releases)
+  - [Project without Build Tool](#project-without-build-tool)
+- [Creating an Example-based Test](#creating-an-example-based-test)
+- [Creating a Property](#creating-a-property)
+  - [Optional `@Property` Parameters](#optional-property-parameters)
+  - [Additional Reporting](#additional-reporting)
+- [Assertions](#assertions)
+- [Lifecycle](#lifecycle)
+  - [Simple Property Lifecycle](#simple-property-lifecycle)
+  - [Annotated Lifecycle Methods](#annotated-lifecycle-methods)
+- [Grouping Tests](#grouping-tests)
+- [Naming and Labeling Tests](#naming-and-labeling-tests)
+- [Tagging Tests](#tagging-tests)
+- [Disabling Tests](#disabling-tests)
+- [Default Parameter Generation](#default-parameter-generation)
+  - [Constraining Default Generation](#constraining-default-generation)
+    - [Allow Null Values](#allow-null-values)
+    - [Unique Values](#unique-values)
+    - [String Length](#string-length)
+    - [Character Sets](#character-sets)
+    - [List, Set, Stream, Map and Array Size](#list-set-stream-map-and-array-size)
+    - [Integer Constraints](#integer-constraints)
+    - [Decimal Constraints](#decimal-constraints)
+  - [Constraining parameterized types](#constraining-parameterized-types)
+  - [Providing variable types](#providing-variable-types)
+- [Self-Made Annotations](#self-made-annotations)
+- [Customized Parameter Generation](#customized-parameter-generation)
+  - [Parameter Provider Methods](#parameter-provider-methods)
+  - [Providing Arbitraries for Embedded Types](#providing-arbitraries-for-embedded-types)
+  - [Static `Arbitraries` methods](#static-arbitraries-methods)
+    - [Generate values yourself](#generate-values-yourself)
+    - [Select or generate values randomly](#select-or-generate-values-randomly)
+    - [Select randomly with Weights](#select-randomly-with-weights)
+    - [Characters and Strings](#characters-and-strings)
+    - [java.util.Random](#javautilrandom)
+    - [Shuffling Permutations](#shuffling-permutations)
+    - [Default Types](#default-types)
+  - [Numeric Arbitrary Types](#numeric-arbitrary-types)
+    - [Integrals](#integrals)
+    - [Decimals](#decimals)
+    - [Random Numeric Distribution](#random-numeric-distribution)
+  - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
+  - [Collecting Values in a List](#collecting-values-in-a-list)
+  - [Tuples of same base type](#tuples-of-same-base-type)
+  - [Maps](#maps)
+  - [Functional Types](#functional-types)
+  - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
+  - [Generate `null` values](#generate-null-values)
+  - [Inject duplicate values](#inject-duplicate-values)
+  - [Filtering](#filtering)
+  - [Creating unique values](#creating-unique-values)
+  - [Mapping](#mapping)
+  - [Flat Mapping](#flat-mapping)
+  - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
+  - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
+  - [Combining Arbitraries](#combining-arbitraries)
+  - [Combining Arbitraries with Builder](#combining-arbitraries-with-builder)
+    - [Flat Combination](#flat-combination)
+  - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
+- [Recursive Arbitraries](#recursive-arbitraries)
+  - [Probabilistic Recursion](#probabilistic-recursion)
+  - [Deterministic Recursion](#deterministic-recursion)
+  - [Deterministic Recursion with `recursive()`](#deterministic-recursion-with-recursive)
+- [Using Arbitraries Directly](#using-arbitraries-directly)
+  - [Generating a Single Value](#generating-a-single-value)
+  - [Generating a Stream of Values](#generating-a-stream-of-values)
+  - [Generating all possible values](#generating-all-possible-values)
+  - [Iterating through all possible values](#iterating-through-all-possible-values)
+- [Contract Tests](#contract-tests)
+- [Stateful Testing](#stateful-testing)
+  - [Specify Actions](#specify-actions)
+  - [Check Postconditions](#check-postconditions)
+  - [Number of actions](#number-of-actions)
+  - [Check Invariants](#check-invariants)
+- [Assumptions](#assumptions)
+- [Result Shrinking](#result-shrinking)
+  - [Integrated Shrinking](#integrated-shrinking)
+  - [Switch Shrinking Off](#switch-shrinking-off)
+  - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
+  - [Change the Shrinking Target](#change-the-shrinking-target)
+- [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
+  - [Labeled Statistics](#labeled-statistics)
+  - [Statistics Report Formatting](#statistics-report-formatting)
+    - [Switch Statistics Reporting Off](#switch-statistics-reporting-off)
+    - [Plug in Your Own Statistics Report Format](#plug-in-your-own-statistics-report-format)
+  - [Checking Coverage of Collected Statistics](#checking-coverage-of-collected-statistics)
+    - [Check Percentages and Counts](#check-percentages-and-counts)
+    - [Check Ad-hoc Query Coverage](#check-ad-hoc-query-coverage)
+- [Providing Default Arbitraries](#providing-default-arbitraries)
+  - [Simple Arbitrary Providers](#simple-arbitrary-providers)
+  - [Arbitrary Providers for Parameterized Types](#arbitrary-providers-for-parameterized-types)
+  - [Arbitrary Provider Priority](#arbitrary-provider-priority)
+- [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
+  - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
+- [Domain and Domain Context](#domain-and-domain-context)
+  - [Domain example: American Addresses](#domain-example-american-addresses)
+- [Generation from a Type's Interface](#generation-from-a-types-interface)
+- [Generation of Edge Cases](#generation-of-edge-cases)
+  - [Tuning Edge Cases](#tuning-edge-cases)
+- [Exhaustive Generation](#exhaustive-generation)
+- [Data-Driven Properties](#data-driven-properties)
+- [Rerunning Falsified Properties](#rerunning-falsified-properties)
+- [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
+- [jqwik Configuration](#jqwik-configuration)
+- [Release Notes](#release-notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -1158,19 +1268,73 @@ of randomly generated numbers. The way to do that is by calling
 [`withDistribution(distribution)`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution-net.jqwik.api.RandomDistribution-).
 Currently three different distributions are supported:
 
-- [`RandomDistribution.biased()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#biased--): This is the default. 
+- [`RandomDistribution.biased()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#biased--): 
+  This is the default. 
   It generates values closer to the center of a numerical range with a higher probability. 
   The bigger the range the stronger the bias.
 
-- [`RandomDistribution.uniform()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#uniform--): This distribution will generate values across the allowed range 
+- [`RandomDistribution.uniform()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#uniform--): 
+  This distribution will generate values across the allowed range 
   with a uniform probability distribution.
   
-- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian--): A gaussian distribution with borderSigma of 3, 
-  i.e. approximately 99.7% of values are within the borders.
-  Gaussian generation is approximately 10 times slower than biased or uniform generation;
-  use it only if it reflects your domain distribution better.
+- [`RandomDistribution.gaussian(borderSigma)`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian-double-): 
+  A (potentially asymmetric) gaussian distribution -- 
+  aka "normal distribution" -- the mean of which is the specified center 
+  and the probability at the borders is `borderSigma` times _standard deviation_.
+  Gaussian generation is approximately 10 times slower than biased or uniform generation.
 
-You can - if need be - provide your own implementation of `RandomDistribution`.
+- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian--): 
+  A gaussian distribution with `borderSigma` of 3, i.e. approximately 99.7% of values are within the borders.
+
+The specified distribution does not influence the generation of [edge cases](#generation-of-edge-cases).
+
+The following example generates numbers between 0 and 20 using a gaussian probability distribution
+with its mean at 10 and a standard deviation of about 3.3:
+
+```java
+@Property(generation = GenerationMode.RANDOMIZED)
+void gaussianDistributedIntegers(@ForAll("gaussians") int aNumber) {
+    Statistics.collect(aNumber);
+}
+
+@Provide
+Arbitrary<Integer> gaussians() {
+    return Arbitraries
+               .integers()
+               .between(0, 20)
+               .shrinkTowards(10)
+               .withDistribution(RandomDistribution.gaussian());
+}
+```
+
+Look at the statistics to see if it fits your expectation:
+```
+[RandomDistributionExamples:gaussianDistributedIntegers] (1000) statistics = 
+    10 (262) : 26.20 %
+    9  (110) : 11.00 %
+    12 ( 93) :  9.30 %
+    8  ( 88) :  8.80 %
+    11 ( 80) :  8.00 %
+    13 ( 62) :  6.20 %
+    7  ( 57) :  5.70 %
+    14 ( 44) :  4.40 %
+    6  ( 39) :  3.90 %
+    5  ( 32) :  3.20 %
+    15 ( 27) :  2.70 %
+    16 ( 21) :  2.10 %
+    2  ( 16) :  1.60 %
+    4  ( 13) :  1.30 %
+    17 ( 13) :  1.30 %
+    0  ( 12) :  1.20 %
+    3  ( 11) :  1.10 %
+    20 (  9) :  0.90 %
+    1  (  5) :  0.50 %
+    18 (  5) :  0.50 %
+    19 (  1) :  0.10 %
+```
+
+You can notice that values `0` and `20` should have the lowest probability but they do not.
+This is because they will be generated a few times as edge cases.
 
 ### Collections, Streams, Arrays and Optional
 
