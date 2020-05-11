@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":9,"i25":9,"i26":9,"i27":9,"i28":9,"i29":9,"i30":9,"i31":41,"i32":9,"i33":9,"i34":9,"i35":9,"i36":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9,"i8":9,"i9":9,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":9,"i16":9,"i17":9,"i18":9,"i19":9,"i20":9,"i21":9,"i22":9,"i23":9,"i24":9,"i25":9,"i26":9,"i27":9,"i28":9,"i29":9,"i30":9,"i31":9,"i32":9,"i33":41,"i34":9,"i35":9,"i36":9,"i37":9,"i38":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -310,30 +310,44 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i26" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.List-">ofSuppliers</a></span>(java.util.List&lt;java.util.function.Supplier&lt;T&gt;&gt;&nbsp;valueSuppliers)</code>
+<div class="block">Create an arbitrary that will randomly choose from a given array of value suppliers
+ and then get the value from the supplier.</div>
+</td>
+</tr>
+<tr id="i27" class="rowColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.function.Supplier...-">ofSuppliers</a></span>(java.util.function.Supplier&lt;T&gt;...&nbsp;valueSuppliers)</code>
+<div class="block">Create an arbitrary that will randomly choose from a given array of value suppliers
+ and then get the value from the supplier.</div>
+</td>
+</tr>
+<tr id="i28" class="altColor">
+<td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#oneOf-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary...-">oneOf</a></span>(<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;&nbsp;first,
      <a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends T&gt;...&nbsp;rest)</code>
 <div class="block">Create an arbitrary that will randomly choose between all given arbitraries of the same type T.</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#oneOf-java.util.List-">oneOf</a></span>(java.util.List&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&nbsp;all)</code>
 <div class="block">Create an arbitrary that will randomly choose between all given arbitraries of the same type T.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>static <a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.util.Random&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#randoms--">randoms</a></span>()</code>
 <div class="block">Create an arbitrary for Random objects.</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#randomValue-java.util.function.Function-">randomValue</a></span>(java.util.function.Function&lt;java.util.Random,T&gt;&nbsp;generator)</code>
 <div class="block">Create an arbitrary that will generate values of type T using a generator function.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#recursive-java.util.function.Supplier-java.util.function.Function-int-">recursive</a></span>(java.util.function.Supplier&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&nbsp;base,
          java.util.function.Function&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;,<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&nbsp;recur,
@@ -341,7 +355,7 @@ extends java.lang.Object</pre>
 <div class="block">Create an arbitrary by deterministic recursion.</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#samples-T...-">samples</a></span>(T...&nbsp;samples)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
@@ -349,33 +363,33 @@ extends java.lang.Object</pre>
 </div>
 </td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>static &lt;M&gt;&nbsp;<a href="../../../net/jqwik/api/stateful/ActionSequenceArbitrary.html" title="interface in net.jqwik.api.stateful">ActionSequenceArbitrary</a>&lt;M&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#sequences-net.jqwik.api.Arbitrary-">sequences</a></span>(<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends <a href="../../../net/jqwik/api/stateful/Action.html" title="interface in net.jqwik.api.stateful">Action</a>&lt;M&gt;&gt;&nbsp;actionArbitrary)</code>
 <div class="block">Create an arbitrary to create a sequence of actions.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../net/jqwik/api/arbitraries/ShortArbitrary.html" title="interface in net.jqwik.api.arbitraries">ShortArbitrary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#shorts--">shorts</a></span>()</code>
 <div class="block">Create an arbitrary that generates values of type Short.</div>
 </td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.util.List&lt;T&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#shuffle-java.util.List-">shuffle</a></span>(java.util.List&lt;T&gt;&nbsp;values)</code>
 <div class="block">Create an arbitrary that will always generate a list which is a
  permutation of the values handed to it.</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;java.util.List&lt;T&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#shuffle-T...-">shuffle</a></span>(T...&nbsp;values)</code>
 <div class="block">Create an arbitrary that will always generate a list which is a
  permutation of the values handed to it.</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>static <a href="../../../net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries">StringArbitrary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.html#strings--">strings</a></span>()</code>
 <div class="block">Create an arbitrary that generates values of type String.</div>
@@ -465,7 +479,12 @@ extends java.lang.Object</pre>
 <pre>@SafeVarargs
 public static&nbsp;&lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;of(T...&nbsp;values)</pre>
 <div class="block">Create an arbitrary that will randomly choose from a given array of values.
- A generated value will be shrunk towards the start of the array.</div>
+ A generated value will be shrunk towards the start of the array.
+
+ <p>
+ Use this method only for immutable values, because changing the value will change
+ subsequent generated values as well.
+ For mutable values use <a href="../../../net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.function.Supplier...-">ofSuppliers(Supplier[])</a> instead.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - The type of values to generate</dd>
@@ -484,12 +503,72 @@ public static&nbsp;&lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html
 <h4>of</h4>
 <pre>public static&nbsp;&lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;of(java.util.List&lt;T&gt;&nbsp;values)</pre>
 <div class="block">Create an arbitrary that will randomly choose from a given list of values.
- A generated value will be shrunk towards the start of the list.</div>
+ A generated value will be shrunk towards the start of the list.
+
+ <p>
+ Use this method only for immutable values, because changing the value will change
+ subsequent generated values as well.
+ For mutable values use <a href="../../../net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.List-">ofSuppliers(List)</a> instead.</div>
 <dl>
 <dt><span class="paramLabel">Type Parameters:</span></dt>
 <dd><code>T</code> - The type of values to generate</dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>values</code> - The list of values to choose from</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a name="ofSuppliers-java.util.function.Supplier...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ofSuppliers</h4>
+<pre>@API(status=MAINTAINED,
+     since="1.3.0")
+ @SafeVarargs
+public static&nbsp;&lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;ofSuppliers(java.util.function.Supplier&lt;T&gt;...&nbsp;valueSuppliers)</pre>
+<div class="block">Create an arbitrary that will randomly choose from a given array of value suppliers
+ and then get the value from the supplier.
+ A generated value will be shrunk towards the start of the array.
+
+ <p>
+ Use this method instead of <a href="../../../net/jqwik/api/Arbitraries.html#of-T...-">of(Object[])</a> for mutable objects
+ to make sure that changing a generated object will not influence other generated
+ objects.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - The type of values to generate</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>valueSuppliers</code> - The array of values to choose from</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a new arbitrary instance</dd>
+</dl>
+</li>
+</ul>
+<a name="ofSuppliers-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ofSuppliers</h4>
+<pre>@API(status=MAINTAINED,
+     since="1.3.0")
+public static&nbsp;&lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&nbsp;ofSuppliers(java.util.List&lt;java.util.function.Supplier&lt;T&gt;&gt;&nbsp;valueSuppliers)</pre>
+<div class="block">Create an arbitrary that will randomly choose from a given array of value suppliers
+ and then get the value from the supplier.
+ A generated value will be shrunk towards the start of the array.
+
+ <p>
+ Use this method instead of <a href="../../../net/jqwik/api/Arbitraries.html#of-java.util.List-">of(List)</a> for mutable objects
+ to make sure that changing a generated object will not influence other generated
+ objects.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - The type of values to generate</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>valueSuppliers</code> - The list of values to choose from</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a new arbitrary instance</dd>
 </dl>

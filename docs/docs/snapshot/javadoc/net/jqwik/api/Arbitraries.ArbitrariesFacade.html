@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -197,91 +197,82 @@ extends java.lang.Object</pre>
                 long&nbsp;maxNumberOfSamples)</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>abstract &lt;T extends java.lang.Enum&lt;T&gt;&gt;<br>java.util.Optional&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;T&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveChoose-java.lang.Class-long-">exhaustiveChoose</a></span>(java.lang.Class&lt;T&gt;&nbsp;enumClass,
-                long&nbsp;maxNumberOfSamples)</code>&nbsp;</td>
-</tr>
-<tr id="i12" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;java.util.Optional&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;T&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveChoose-java.util.List-long-">exhaustiveChoose</a></span>(java.util.List&lt;T&gt;&nbsp;values,
                 long&nbsp;maxNumberOfSamples)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;java.util.Optional&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;T&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveCreate-java.util.function.Supplier-long-">exhaustiveCreate</a></span>(java.util.function.Supplier&lt;T&gt;&nbsp;supplier,
                 long&nbsp;maxNumberOfSamples)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;java.util.Optional&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;java.util.List&lt;T&gt;&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveShuffle-java.util.List-long-">exhaustiveShuffle</a></span>(java.util.List&lt;T&gt;&nbsp;values,
                  long&nbsp;maxNumberOfSamples)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../net/jqwik/api/arbitraries/FloatArbitrary.html" title="interface in net.jqwik.api.arbitraries">FloatArbitrary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#floats--">floats</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/arbitraries/TypeArbitrary.html" title="interface in net.jqwik.api.arbitraries">TypeArbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#forType-java.lang.Class-">forType</a></span>(java.lang.Class&lt;T&gt;&nbsp;targetType)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#frequencyOf-java.util.List-">frequencyOf</a></span>(java.util.List&lt;<a href="../../../net/jqwik/api/Tuple.Tuple2.html" title="class in net.jqwik.api">Tuple.Tuple2</a>&lt;java.lang.Integer,<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&gt;&nbsp;frequencies)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../net/jqwik/api/arbitraries/IntegerArbitrary.html" title="interface in net.jqwik.api.arbitraries">IntegerArbitrary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#integers--">integers</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#lazy-java.util.function.Supplier-">lazy</a></span>(java.util.function.Supplier&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&nbsp;arbitrarySupplier)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../net/jqwik/api/arbitraries/LongArbitrary.html" title="interface in net.jqwik.api.arbitraries">LongArbitrary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#longs--">longs</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>abstract &lt;K,V&gt;&nbsp;<a href="../../../net/jqwik/api/arbitraries/SizableArbitrary.html" title="interface in net.jqwik.api.arbitraries">SizableArbitrary</a>&lt;java.util.Map&lt;K,V&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#maps-net.jqwik.api.Arbitrary-net.jqwik.api.Arbitrary-">maps</a></span>(<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;K&gt;&nbsp;keysArbitrary,
     <a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;V&gt;&nbsp;valuesArbitrary)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#oneOf-java.util.List-">oneOf</a></span>(java.util.List&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;T&gt;&gt;&nbsp;all)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;java.lang.Character&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomChoose-char:A-">randomChoose</a></span>(char[]&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
-<td class="colFirst"><code>abstract &lt;T extends java.lang.Enum&lt;T&gt;&gt;<br><a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;T&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomChoose-java.lang.Class-">randomChoose</a></span>(java.lang.Class&lt;T&gt;&nbsp;enumClass)</code>&nbsp;</td>
-</tr>
-<tr id="i25" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomChoose-java.util.List-">randomChoose</a></span>(java.util.List&lt;T&gt;&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomFrequency-java.util.List-">randomFrequency</a></span>(java.util.List&lt;<a href="../../../net/jqwik/api/Tuple.Tuple2.html" title="class in net.jqwik.api">Tuple.Tuple2</a>&lt;java.lang.Integer,T&gt;&gt;&nbsp;frequencies)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;T&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomSamples-T:A-">randomSamples</a></span>(T[]&nbsp;samples)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code>abstract &lt;T&gt;&nbsp;<a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;java.util.List&lt;T&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomShuffle-java.util.List-">randomShuffle</a></span>(java.util.List&lt;T&gt;&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>abstract &lt;M&gt;&nbsp;<a href="../../../net/jqwik/api/stateful/ActionSequenceArbitrary.html" title="interface in net.jqwik.api.stateful">ActionSequenceArbitrary</a>&lt;M&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#sequences-net.jqwik.api.Arbitrary-">sequences</a></span>(<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;? extends <a href="../../../net/jqwik/api/stateful/Action.html" title="interface in net.jqwik.api.stateful">Action</a>&lt;M&gt;&gt;&nbsp;actionArbitrary)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../net/jqwik/api/arbitraries/ShortArbitrary.html" title="interface in net.jqwik.api.arbitraries">ShortArbitrary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#shorts--">shorts</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries">StringArbitrary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitraries.ArbitrariesFacade.html#strings--">strings</a></span>()</code>&nbsp;</td>
 </tr>
@@ -382,16 +373,6 @@ extends java.lang.Object</pre>
                                                                                                  long&nbsp;maxNumberOfSamples)</pre>
 </li>
 </ul>
-<a name="exhaustiveChoose-java.lang.Class-long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>exhaustiveChoose</h4>
-<pre>public abstract&nbsp;&lt;T extends java.lang.Enum&lt;T&gt;&gt;&nbsp;java.util.Optional&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;T&gt;&gt;&nbsp;exhaustiveChoose(java.lang.Class&lt;T&gt;&nbsp;enumClass,
-                                                                                                          long&nbsp;maxNumberOfSamples)</pre>
-</li>
-</ul>
 <a name="randomChoose-java.util.List-">
 <!--   -->
 </a>
@@ -408,15 +389,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>randomChoose</h4>
 <pre>public abstract&nbsp;<a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;java.lang.Character&gt;&nbsp;randomChoose(char[]&nbsp;values)</pre>
-</li>
-</ul>
-<a name="randomChoose-java.lang.Class-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>randomChoose</h4>
-<pre>public abstract&nbsp;&lt;T extends java.lang.Enum&lt;T&gt;&gt;&nbsp;<a href="../../../net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a>&lt;T&gt;&nbsp;randomChoose(java.lang.Class&lt;T&gt;&nbsp;enumClass)</pre>
 </li>
 </ul>
 <a name="oneOf-java.util.List-">

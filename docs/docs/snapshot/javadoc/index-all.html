@@ -253,8 +253,6 @@
 <dd>
 <div class="block">Create a new arbitrary of type <code>T[]</code> using the existing arbitrary for generating the elements of the array.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#arrayOfUnique-net.jqwik.api.Arbitrary-java.lang.Class-">arrayOfUnique(Arbitrary&lt;T&gt;, Class&lt;A&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.Combinator2.html#as-net.jqwik.api.Combinators.F2-">as(Combinators.F2&lt;T1, T2, R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.Combinator2.html" title="class in net.jqwik.api">Combinators.Combinator2</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.Combinator3.html#as-net.jqwik.api.Combinators.F3-">as(Combinators.F3&lt;T1, T2, T3, R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.Combinator3.html" title="class in net.jqwik.api">Combinators.Combinator3</a></dt>
@@ -380,6 +378,13 @@
 <dd>
 <div class="block">Set the allowed lower <code>min</code> (included) and upper <code>max</code> (included) bounder of generated numbers.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.html#biased--">biased()</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.html" title="interface in net.jqwik.api">RandomDistribution</a></dt>
+<dd>
+<div class="block">A distribution that generates values closer to the center of a numerical range
+ with a higher probability.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html#biased--">biased()</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html" title="class in net.jqwik.api">RandomDistribution.RandomDistributionFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/arbitraries/BigDecimalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">BigDecimalArbitrary</span></a> - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
 <dd>
 <div class="block">Fluent interface to configure the generation of BigDecimal values.</div>
@@ -616,6 +621,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/configurators/ArbitraryConfiguratorBase.html#configure-net.jqwik.api.Arbitrary-net.jqwik.api.providers.TypeUsage-">configure(Arbitrary&lt;T&gt;, TypeUsage)</a></span> - Method in class net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/ArbitraryConfiguratorBase.html" title="class in net.jqwik.api.configurators">ArbitraryConfiguratorBase</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/configurators/SelfConfiguringArbitrary.html#configure-net.jqwik.api.Arbitrary-net.jqwik.api.configurators.ArbitraryConfigurator-net.jqwik.api.providers.TypeUsage-">configure(Arbitrary&lt;T&gt;, ArbitraryConfigurator, TypeUsage)</a></span> - Static method in interface net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/SelfConfiguringArbitrary.html" title="interface in net.jqwik.api.configurators">SelfConfiguringArbitrary</a></dt>
+<dd>
+<div class="block">If an arbitrary is self configuring use it, otherwise use default configurator</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/configurators/SelfConfiguringArbitrary.html#configure-net.jqwik.api.configurators.ArbitraryConfigurator-net.jqwik.api.providers.TypeUsage-">configure(ArbitraryConfigurator, TypeUsage)</a></span> - Method in interface net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/SelfConfiguringArbitrary.html" title="interface in net.jqwik.api.configurators">SelfConfiguringArbitrary</a></dt>
 <dd>
 <div class="block">Do all configuration yourself or delegate to <a href="net/jqwik/api/configurators/ArbitraryConfigurator.html#configure-net.jqwik.api.Arbitrary-net.jqwik.api.providers.TypeUsage-"><code>ArbitraryConfigurator.configure(Arbitrary, TypeUsage)</code></a>
@@ -679,6 +688,10 @@
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.StoreFacade.html#create-java.lang.Object-net.jqwik.api.lifecycle.Lifespan-java.util.function.Supplier-">create(Object, Lifespan, Supplier&lt;T&gt;)</a></span> - Method in class net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.StoreFacade.html" title="class in net.jqwik.api.lifecycle">Store.StoreFacade</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.html#createGenerator-int-java.math.BigInteger-java.math.BigInteger-java.math.BigInteger-">createGenerator(int, BigInteger, BigInteger, BigInteger)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.html" title="interface in net.jqwik.api">RandomDistribution</a></dt>
+<dd>
+<div class="block">Return a generator that will generate value with the desired distribution</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ShrinkingSequence.html#current--">current()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ShrinkingSequence.html" title="interface in net.jqwik.api">ShrinkingSequence</a></dt>
 <dd>&nbsp;</dd>
 </dl>
@@ -843,8 +856,6 @@
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveChoose-java.util.List-long-">exhaustiveChoose(List&lt;T&gt;, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveChoose-char:A-long-">exhaustiveChoose(char[], long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveChoose-java.lang.Class-long-">exhaustiveChoose(Class&lt;T&gt;, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#exhaustiveCreate-java.util.function.Supplier-long-">exhaustiveCreate(Supplier&lt;T&gt;, long)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -1069,6 +1080,19 @@
 </a>
 <h2 class="title">G</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.html#gaussian-double-">gaussian(double)</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.html" title="interface in net.jqwik.api">RandomDistribution</a></dt>
+<dd>
+<div class="block">A distribution that generates values with (potentially asymmetric) gaussian distribution
+ the mean of which is the specified center and the probability at the borders is
+ approximately <code>borderSigma</code> times standard deviation.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.html#gaussian--">gaussian()</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.html" title="interface in net.jqwik.api">RandomDistribution</a></dt>
+<dd>
+<div class="block">A gaussian distribution with <code>borderSigma</code> of 3,
+ i.e. approximately 99.7% of values are within the borders.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html#gaussian-double-">gaussian(double)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html" title="class in net.jqwik.api">RandomDistribution.RandomDistributionFacade</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCasesMode.html#generateFirst--">generateFirst()</a></span> - Method in enum net.jqwik.api.<a href="net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/GenerationMode.html" title="enum in net.jqwik.api"><span class="typeNameLink">GenerationMode</span></a> - Enum in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
@@ -1335,6 +1359,11 @@
 <dd>
 <div class="block">Return true if a generic type is a type variable or a wildcard.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#isUnique--">isUnique()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
+<dd>
+<div class="block">All arbitraries whose base generator is supposed to produce no duplicates
+ should return true.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.html#isUnique--">isUnique()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a></dt>
 <dd>
 <div class="block">This is a hack to make unique work for exhaustive generation</div>
@@ -1491,8 +1520,6 @@
 <dd>
 <div class="block">Create a new arbitrary of type <code>List&lt;T&gt;</code> using the existing arbitrary for generating the elements of the list.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html#listOfUnique-net.jqwik.api.Arbitrary-">listOfUnique(Arbitrary&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitrary.ArbitraryFacade.html" title="class in net.jqwik.api">Arbitrary.ArbitraryFacade</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/FacadeLoader.html#load-java.lang.Class-">load(Class&lt;T&gt;)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/FacadeLoader.html" title="class in net.jqwik.api">FacadeLoader</a></dt>
 <dd>
 <div class="block">Load single implementation of an API facade.</div>
@@ -1614,6 +1641,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/LifecycleContext.html#newInstance-java.lang.Class-">newInstance(Class&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.RandomNumericGenerator.html#next-java.util.Random-">next(Random)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.RandomNumericGenerator.html" title="interface in net.jqwik.api">RandomDistribution.RandomNumericGenerator</a></dt>
+<dd>
+<div class="block">Generate next random number within the specified range given on creation of the generator.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.html#next-java.util.Random-">next(Random)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.html" title="interface in net.jqwik.api">RandomGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ShrinkingSequence.html#next-java.lang.Runnable-java.util.function.Consumer-">next(Runnable, Consumer&lt;FalsificationResult&lt;T&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ShrinkingSequence.html" title="interface in net.jqwik.api">ShrinkingSequence</a></dt>
@@ -1638,6 +1669,8 @@
 <dd>
 <div class="block">Allow all numeric chars (digits) to show up in generated strings.</div>
 </dd>
+<dt><a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">NumericalArbitrary</span></a>&lt;<a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="type parameter in NumericalArbitrary">T</a>,<a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="type parameter in NumericalArbitrary">A</a> extends <a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="interface in net.jqwik.api.arbitraries">NumericalArbitrary</a>&lt;<a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="type parameter in NumericalArbitrary">T</a>,<a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="type parameter in NumericalArbitrary">A</a>&gt;&gt; - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/constraints/NumericChars.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">NumericChars</span></a> - Annotation Type in <a href="net/jqwik/api/constraints/package-summary.html">net.jqwik.api.constraints</a></dt>
 <dd>
 <div class="block">Constrain the chars used to generate Strings or Characters to digits.</div>
@@ -1758,6 +1791,16 @@
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/stateful/ActionSequenceArbitrary.html#ofSize-int-">ofSize(int)</a></span> - Method in interface net.jqwik.api.stateful.<a href="net/jqwik/api/stateful/ActionSequenceArbitrary.html" title="interface in net.jqwik.api.stateful">ActionSequenceArbitrary</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.function.Supplier...-">ofSuppliers(Supplier&lt;T&gt;...)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
+<dd>
+<div class="block">Create an arbitrary that will randomly choose from a given array of value suppliers
+ and then get the value from the supplier.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.List-">ofSuppliers(List&lt;Supplier&lt;T&gt;&gt;)</a></span> - Static method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.html" title="class in net.jqwik.api">Arbitraries</a></dt>
+<dd>
+<div class="block">Create an arbitrary that will randomly choose from a given array of value suppliers
+ and then get the value from the supplier.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/Store.html#onClose-java.util.function.Consumer-">onClose(Consumer&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/Store.html" title="interface in net.jqwik.api.lifecycle">Store</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#oneOf-java.util.List-">oneOf(List&lt;Arbitrary&lt;T&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
@@ -1853,7 +1896,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/Property.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Property</span></a> - Annotation Type in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>
-<div class="block">Use <code>@Property</code> to mark methods that serve as properties.</div>
+<div class="block">Use <code>@Property</code> to mark methods that serve as properties.</div>
 </dd>
 <dt><a href="net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">PropertyExecutionResult</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
@@ -1893,7 +1936,18 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomChoose-char:A-">randomChoose(char[])</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomChoose-java.lang.Class-">randomChoose(Class&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
+<dt><a href="net/jqwik/api/RandomDistribution.html" title="interface in net.jqwik.api"><span class="typeNameLink">RandomDistribution</span></a> - Interface in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
+<dd>
+<div class="block">Determines how generated numerical values are generated and distributed
+ across the allowed range and a center withing this range.</div>
+</dd>
+<dt><a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html" title="class in net.jqwik.api"><span class="typeNameLink">RandomDistribution.RandomDistributionFacade</span></a> - Class in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/jqwik/api/RandomDistribution.RandomNumericGenerator.html" title="interface in net.jqwik.api"><span class="typeNameLink">RandomDistribution.RandomNumericGenerator</span></a> - Interface in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
+<dd>
+<div class="block">Generator for BigInteger values which are behind all generated numeric values in jqwik.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html#RandomDistributionFacade--">RandomDistributionFacade()</a></span> - Constructor for class net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html" title="class in net.jqwik.api">RandomDistribution.RandomDistributionFacade</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html#randomFrequency-java.util.List-">randomFrequency(List&lt;Tuple.Tuple2&lt;Integer, T&gt;&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Arbitraries.ArbitrariesFacade.html" title="class in net.jqwik.api">Arbitraries.ArbitrariesFacade</a></dt>
 <dd>&nbsp;</dd>
@@ -2097,7 +2151,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/ShrinkingMode.html" title="enum in net.jqwik.api"><span class="typeNameLink">ShrinkingMode</span></a> - Enum in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>
-<div class="block">The shrinking mode defines the shrinking behaviour of a property.</div>
+<div class="block">The shrinking mode defines the shrinking behaviour of a property.</div>
 </dd>
 <dt><a href="net/jqwik/api/ShrinkingSequence.html" title="interface in net.jqwik.api"><span class="typeNameLink">ShrinkingSequence</span></a>&lt;<a href="net/jqwik/api/ShrinkingSequence.html" title="type parameter in ShrinkingSequence">T</a>&gt; - Interface in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>&nbsp;</dd>
@@ -2421,6 +2475,13 @@
 </a>
 <h2 class="title">U</h2>
 <dl>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html#uniform--">uniform()</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.RandomDistributionFacade.html" title="class in net.jqwik.api">RandomDistribution.RandomDistributionFacade</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/RandomDistribution.html#uniform--">uniform()</a></span> - Static method in interface net.jqwik.api.<a href="net/jqwik/api/RandomDistribution.html" title="interface in net.jqwik.api">RandomDistribution</a></dt>
+<dd>
+<div class="block">A distribution that generates values across the allowed range
+ with a uniform probability distribution.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#unique--">unique()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
 <div class="block">Create a new arbitrary of the same type <code>T</code> that creates and shrinks the original arbitrary but will
@@ -2650,6 +2711,10 @@ the order they are declared.</div>
 <dd>
 <div class="block">Allow all chars in <code>allowedChars</code> show up in generated values.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/CharacterArbitrary.html#with-net.jqwik.api.Arbitrary-">with(Arbitrary&lt;Character&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/CharacterArbitrary.html" title="interface in net.jqwik.api.arbitraries">CharacterArbitrary</a></dt>
+<dd>
+<div class="block">Allow all chars generated by <code>characterArbitrary</code>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/CharacterArbitrary.html#with-java.lang.CharSequence-">with(CharSequence)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/CharacterArbitrary.html" title="interface in net.jqwik.api.arbitraries">CharacterArbitrary</a></dt>
 <dd>
 <div class="block">Allow all chars in <code>allowedChars</code> show up in generated values.</div>
@@ -2673,6 +2738,14 @@ the order they are declared.</div>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/StringArbitrary.html#withChars-java.lang.CharSequence-">withChars(CharSequence)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries">StringArbitrary</a></dt>
 <dd>
 <div class="block">Allow all chars in <code>chars</code> to show up in generated strings.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/StringArbitrary.html#withChars-net.jqwik.api.Arbitrary-">withChars(Arbitrary&lt;Character&gt;)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries">StringArbitrary</a></dt>
+<dd>
+<div class="block">Allow all chars generated by <code>characterArbitrary</code>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution-net.jqwik.api.RandomDistribution-">withDistribution(RandomDistribution)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/NumericalArbitrary.html" title="interface in net.jqwik.api.arbitraries">NumericalArbitrary</a></dt>
+<dd>
+<div class="block">Set the <a href="net/jqwik/api/RandomDistribution.html" title="interface in net.jqwik.api">distribution</a> to use when generating random numerical values.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html#withEdgeCases-net.jqwik.api.RandomGenerator-int-net.jqwik.api.EdgeCases-">withEdgeCases(RandomGenerator&lt;T&gt;, int, EdgeCases&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/RandomGenerator.RandomGeneratorFacade.html" title="class in net.jqwik.api">RandomGenerator.RandomGeneratorFacade</a></dt>
 <dd>&nbsp;</dd>

@@ -98,21 +98,25 @@
  @API(status=STABLE,
      since="1.0")
 public @interface <span class="memberNameLabel">Property</span></pre>
-<div class="block">Use <code>@Property</code> to mark methods that serve as properties.
- Those methods usually have or more parameters annotated with <a href="../../../net/jqwik/api/ForAll.html" title="annotation in net.jqwik.api">ForAll</a>.
-
+<div class="block">Use <code>@Property</code> to mark methods that serve as properties.
+ Those methods usually have one or more parameters annotated with <a href="../../../net/jqwik/api/ForAll.html" title="annotation in net.jqwik.api">ForAll</a>.
+ <p>
  They are executed (tried) several times,
- either until they fail or until the configured number of <code>tries()</code> has been reached.
-
+ either until they fail or until the configured number of <code>tries()</code> has been reached.
+ <p>
  Just like methods annotated with <a href="../../../net/jqwik/api/Example.html" title="annotation in net.jqwik.api">Example</a> example, annotated methods
  must not be private. They can either return <code>Boolean</code>, <code>boolean</code>
- or <code>void</code>.</div>
+ or <code>void</code>.
+ <p>
+ For more info, you can have a look at the user guide,
+ <a href="https://jqwik.net/docs/current/user-guide.html#optional-property-parameters">optional-property-parameters</a>.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../net/jqwik/api/Example.html" title="annotation in net.jqwik.api"><code>Example</code></a>, 
 <a href="../../../net/jqwik/api/ShrinkingMode.html" title="enum in net.jqwik.api"><code>ShrinkingMode</code></a>, 
 <a href="../../../net/jqwik/api/GenerationMode.html" title="enum in net.jqwik.api"><code>GenerationMode</code></a>, 
 <a href="../../../net/jqwik/api/AfterFailureMode.html" title="enum in net.jqwik.api"><code>AfterFailureMode</code></a>, 
+<a href="../../../net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api"><code>EdgeCasesMode</code></a>, 
 <a href="../../../net/jqwik/api/Data.html" title="annotation in net.jqwik.api"><code>Data</code></a></dd>
 </dl>
 </li>
@@ -178,7 +182,9 @@ public @interface <span class="memberNameLabel">Property</span></pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Property.html#maxDiscardRatio--">maxDiscardRatio</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Property.html#maxDiscardRatio--">maxDiscardRatio</a></span></code>
+<div class="block">The maximal number of tried versus actually checked property runs in case you are using Assumptions.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -186,7 +192,9 @@ public @interface <span class="memberNameLabel">Property</span></pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../net/jqwik/api/ShrinkingMode.html" title="enum in net.jqwik.api">ShrinkingMode</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Property.html#shrinking--">shrinking</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Property.html#shrinking--">shrinking</a></span></code>
+<div class="block">Controls how shrinking is done when falsified property is found.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -194,7 +202,9 @@ public @interface <span class="memberNameLabel">Property</span></pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Property.html#tries--">tries</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Property.html#tries--">tries</a></span></code>
+<div class="block">Number of tries (test runs with different parameters).</div>
+</td>
 </tr>
 </table>
 </li>
@@ -271,6 +281,9 @@ public @interface <span class="memberNameLabel">Property</span></pre>
 <li class="blockList">
 <h4>tries</h4>
 <pre>public abstract&nbsp;int&nbsp;tries</pre>
+<div class="block">Number of tries (test runs with different parameters). By default it is 1000. You can override globally in the property file
+ (see <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">jqwik.properties</a>, or here, in <a href="../../../net/jqwik/api/Property.html" title="annotation in net.jqwik.api"><code>Property</code></a>
+ annotation.</div>
 <dl>
 <dt>Default:</dt>
 <dd>0</dd>
@@ -287,6 +300,10 @@ public @interface <span class="memberNameLabel">Property</span></pre>
 <li class="blockList">
 <h4>maxDiscardRatio</h4>
 <pre>public abstract&nbsp;int&nbsp;maxDiscardRatio</pre>
+<div class="block">The maximal number of tried versus actually checked property runs in case you are using Assumptions. If the ratio is exceeded jqwik
+ will report this property as a failure.
+ <p>
+ The default is 5 which can be overridden in <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">jqwik.properties</a>.</div>
 <dl>
 <dt>Default:</dt>
 <dd>0</dd>
@@ -319,6 +336,9 @@ public @interface <span class="memberNameLabel">Property</span></pre>
 <li class="blockList">
 <h4>shrinking</h4>
 <pre>public abstract&nbsp;<a href="../../../net/jqwik/api/ShrinkingMode.html" title="enum in net.jqwik.api">ShrinkingMode</a>&nbsp;shrinking</pre>
+<div class="block">Controls how shrinking is done when falsified property is found.
+ <p>
+ Default value is <a href="../../../net/jqwik/api/ShrinkingMode.html#BOUNDED"><code>ShrinkingMode.BOUNDED</code></a>, i.e. shrinking is tried to a depth of 1000 steps maximum per value.</div>
 <dl>
 <dt>Default:</dt>
 <dd>net.jqwik.api.ShrinkingMode.BOUNDED</dd>

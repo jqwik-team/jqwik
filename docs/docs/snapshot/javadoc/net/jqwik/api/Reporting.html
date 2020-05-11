@@ -138,10 +138,14 @@ extends java.lang.Enum&lt;<a href="../../../net/jqwik/api/Reporting.html" title=
 <th class="colOne" scope="col">Enum Constant and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Reporting.html#FALSIFIED">FALSIFIED</a></span></code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Reporting.html#FALSIFIED">FALSIFIED</a></span></code>
+<div class="block"><a href="../../../net/jqwik/api/Reporting.html#FALSIFIED"><code>FALSIFIED</code></a> will report each set of parameters that is falsified during shrinking.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Reporting.html#GENERATED">GENERATED</a></span></code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Reporting.html#GENERATED">GENERATED</a></span></code>
+<div class="block"><a href="../../../net/jqwik/api/Reporting.html#GENERATED"><code>GENERATED</code></a> will report each generated set of the parameters.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -211,6 +215,8 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>GENERATED</h4>
 <pre>public static final&nbsp;<a href="../../../net/jqwik/api/Reporting.html" title="enum in net.jqwik.api">Reporting</a> GENERATED</pre>
+<div class="block"><a href="../../../net/jqwik/api/Reporting.html#GENERATED"><code>GENERATED</code></a> will report each generated set of the parameters.
+ This means that after each property test, summary table will be printed.</div>
 </li>
 </ul>
 <a name="FALSIFIED">
@@ -220,6 +226,8 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>FALSIFIED</h4>
 <pre>public static final&nbsp;<a href="../../../net/jqwik/api/Reporting.html" title="enum in net.jqwik.api">Reporting</a> FALSIFIED</pre>
+<div class="block"><a href="../../../net/jqwik/api/Reporting.html#FALSIFIED"><code>FALSIFIED</code></a> will report each set of parameters that is falsified during shrinking.
+ i.e., report "table" will be printed only when some test fails.</div>
 </li>
 </ul>
 </li>
