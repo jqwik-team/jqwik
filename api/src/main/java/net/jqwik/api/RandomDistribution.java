@@ -84,6 +84,11 @@ public interface RandomDistribution {
 	 * the mean of which is the specified center and the probability at the borders is
 	 * approximately {@code borderSigma} times standard deviation.
 	 *
+	 * <p>
+	 * Gaussian generation is approximately 10 times slower than {@linkplain #biased()} or {@linkplain #uniform()}
+	 * generation. But still, except in rare cases this will not make a noticeable difference in the runtime
+	 * of your properties.
+	 *
 	 * @param borderSigma The approximate factor of standard deviation at the border(s)
 	 */
 	static RandomDistribution gaussian(double borderSigma) {
