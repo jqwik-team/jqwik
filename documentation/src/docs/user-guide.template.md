@@ -1026,30 +1026,24 @@ The starting point for generation usually is a static method call on class
   to allow for [shrinking](#result-shrinking) you have to provide 
   your own `RandomGenerator` implementation. 
   
-#### Select values randomly
+#### Select or generate values randomly
 
 - [`Arbitrary<U> of(U... values)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of-U...-):
   Choose randomly from a list of values. Shrink towards the first one.
   
-- [`Arbitrary<T> samples(T... samples)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#samples-T...-):
-  Go through samples from first to last. Shrink towards the first sample.
+- [`Arbitrary<U> ofSuppliers(Supplier<U>... valueSuppliers)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.function.Supplier...-):
+  Choose randomly from a list of value suppliers and get the object from this supplier.
+  This is useful when dealing with mutable objects where `Arbitrary.of(..)` would reuse a potentially changed object.
   
-  If instead you want to _add_ samples to an existing arbitrary you'd rather use 
-  [`Arbitrary.withSamples(T... samples)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#withSamples-T...-).
-  The following arbitrary:
-  
-  ```java
-  @Provide 
-  Arbitrary<Integer> integersWithPrimes() {
-	  return Arbitraries.integers(- 1000, 1000).withSamples(2,3,5,7,11,13,17);
-  }
-  ```
-  
-  will first generate the 7 enumerated prime numbers and only then generate random 
-  integers between -1000 and +1000.
-  
+- [`Arbitrary<T> constant(T constantValue)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-T-):
+  Always provide the same constant value in each try. Mostly useful to combine with other arbitraries.
+    
 - [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
+
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
+  In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
+  This is useful when dealing with mutable objects where `Arbitrary.constant()` may reuse a changed object.
 
 #### Select randomly with Weights
 
@@ -1081,20 +1075,6 @@ whereas `"d"` has a generation probability of `20/36` (= `5/9`).
 
 Shrinking moves towards the start of the frequency list.
 
-#### Integers
-
-- [`ByteArbitrary bytes()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
-- [`ShortArbitrary shorts()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
-- [`IntegerArbitrary integers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#integers--)
-- [`LongArbitrary longs()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#longs--)
-- [`BigIntegerArbitrary bigIntegers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
-
-#### Decimals
-
-- [`FloatArbitrary floats()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#floats--)
-- [`DoubleArbitrary doubles()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
-- [`BigDecimalArbitrary bigDecimals()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
-
 #### Characters and Strings
 
 - [`StringArbitrary strings()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#strings--)
@@ -1104,16 +1084,6 @@ Shrinking moves towards the start of the frequency list.
 
 - [`Arbitrary<Random> randoms()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#randoms--): 
   Random instances will never be shrunk
-
-#### Constants
-
-- [`Arbitrary<T> constant(T value)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
-  In each try use the same unshrinkable `value` of type `T`.
-
-#### Create
-
-- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
-  In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
 
 #### Shuffling Permutations
 
@@ -1144,6 +1114,63 @@ Shrinking moves towards the start of the frequency list.
       return Arbitraries.defaultFor(List.class, String.class);
   }
   ```
+
+### Numeric Arbitrary Types
+
+Creating an arbitrary for numeric values also starts by calling a static method
+on class `Arbitraries`. There are two fundamental types of numbers: _integral_ numbers
+and _decimal_ numbers. _jqwik_ supports all of Java's built-in number types.
+
+Each type has its own [fluent interface](https://en.wikipedia.org/wiki/Fluent_interface)
+but all numeric arbitrary types share some things:
+
+- You can constrain their minimum and maximum values using `between(min, max)`, 
+  `greaterOrEqual(min)` and `lessOrEqual(max)`.
+- You can determine the _target value_ through `shrinkTowards(target)`. 
+  This value is supposed to be the "center" of all possible values used for shrinking
+  and as a mean for [random distributions](random-numeric-distribution). 
+
+#### Integrals
+
+- [`ByteArbitrary bytes()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
+- [`ShortArbitrary shorts()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
+- [`IntegerArbitrary integers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#integers--)
+- [`LongArbitrary longs()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#longs--)
+- [`BigIntegerArbitrary bigIntegers()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
+
+#### Decimals
+
+- [`FloatArbitrary floats()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#floats--)
+- [`DoubleArbitrary doubles()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
+- [`BigDecimalArbitrary bigDecimals()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
+
+Decimal arbitrary types come with a few additional capabilities:
+
+- You can include or exclude the borders using `between(min, minIncluded, max, maxIncluded)`, 
+  `greaterThan(minExcluded)` and `lessThan(maxExclude)`.
+- You can set the _scale_, i.e. number of significant decimal places with `ofScale(scale)`.
+  The default scale is `2`.
+
+#### Random Numeric Distribution 
+
+With release `1.3.0` jqwik provides you with a means to influence the probability distribution
+of randomly generated numbers. The way to do that is by calling 
+[`withDistribution(distribution)`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution-net.jqwik.api.RandomDistribution-).
+Currently three different distributions are supported:
+
+- [`RandomDistribution.biased()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#biased--): This is the default. 
+  It generates values closer to the center of a numerical range with a higher probability. 
+  The bigger the range the stronger the bias.
+
+- [`RandomDistribution.uniform()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#uniform--): This distribution will generate values across the allowed range 
+  with a uniform probability distribution.
+  
+- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/${docsVersion}/javadoc/net/jqwik/api/RandomDistribution.html#gaussian--): A gaussian distribution with borderSigma of 3, 
+  i.e. approximately 99.7% of values are within the borders.
+  Gaussian generation is approximately 10 times slower than biased or uniform generation;
+  use it only if it reflects your domain distribution better.
+
+You can - if need be - provide your own implementation of `RandomDistribution`.
 
 ### Collections, Streams, Arrays and Optional
 

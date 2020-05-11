@@ -30,7 +30,9 @@ and
 
 - Added `Arbitraries.ofSuppliers(..)` to choose among a set of mutable objects.
 
-- Number Generation: All numeric arbitraries now support `withDistribution(RandomDistribution)`
+- You can now influence the 
+  [distribution of random number generation](/docs/snapshot/user-guide.html#random-numeric-distribution): 
+  All numeric arbitraries now support `withDistribution(RandomDistribution)`
   to choose between `RandomDistribution.biased()` (default),
    `RandomDistribution.uniform()` and `RandomDistribution.gaussian(borderSigma)`. 
   

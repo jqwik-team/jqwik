@@ -10,116 +10,6 @@ title: jqwik User Guide - 1.3.0-SNAPSHOT
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [How to Use](#how-to-use)
-  - [Required Version of JUnit Platform](#required-version-of-junit-platform)
-  - [Gradle](#gradle)
-    - [Seeing jqwik Reporting in Gradle Output](#seeing-jqwik-reporting-in-gradle-output)
-  - [Maven](#maven)
-  - [Snapshot Releases](#snapshot-releases)
-  - [Project without Build Tool](#project-without-build-tool)
-- [Creating an Example-based Test](#creating-an-example-based-test)
-- [Creating a Property](#creating-a-property)
-  - [Optional `@Property` Parameters](#optional-property-parameters)
-  - [Additional Reporting](#additional-reporting)
-- [Assertions](#assertions)
-- [Lifecycle](#lifecycle)
-  - [Simple Property Lifecycle](#simple-property-lifecycle)
-  - [Annotated Lifecycle Methods](#annotated-lifecycle-methods)
-- [Grouping Tests](#grouping-tests)
-- [Naming and Labeling Tests](#naming-and-labeling-tests)
-- [Tagging Tests](#tagging-tests)
-- [Disabling Tests](#disabling-tests)
-- [Default Parameter Generation](#default-parameter-generation)
-  - [Constraining Default Generation](#constraining-default-generation)
-    - [Allow Null Values](#allow-null-values)
-    - [Unique Values](#unique-values)
-    - [String Length](#string-length)
-    - [Character Sets](#character-sets)
-    - [List, Set, Stream, Map and Array Size](#list-set-stream-map-and-array-size)
-    - [Integer Constraints](#integer-constraints)
-    - [Decimal Constraints](#decimal-constraints)
-  - [Constraining parameterized types](#constraining-parameterized-types)
-  - [Providing variable types](#providing-variable-types)
-- [Self-Made Annotations](#self-made-annotations)
-- [Customized Parameter Generation](#customized-parameter-generation)
-  - [Parameter Provider Methods](#parameter-provider-methods)
-  - [Providing Arbitraries for Embedded Types](#providing-arbitraries-for-embedded-types)
-  - [Static `Arbitraries` methods](#static-arbitraries-methods)
-    - [Generate values yourself](#generate-values-yourself)
-    - [Select values randomly](#select-values-randomly)
-    - [Select randomly with Weights](#select-randomly-with-weights)
-    - [Integers](#integers)
-    - [Decimals](#decimals)
-    - [Characters and Strings](#characters-and-strings)
-    - [java.util.Random](#javautilrandom)
-    - [Constants](#constants)
-    - [Create](#create)
-    - [Shuffling Permutations](#shuffling-permutations)
-    - [Default Types](#default-types)
-  - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
-  - [Collecting Values in a List](#collecting-values-in-a-list)
-  - [Tuples of same base type](#tuples-of-same-base-type)
-  - [Maps](#maps)
-  - [Functional Types](#functional-types)
-  - [Fluent Configuration Interfaces](#fluent-configuration-interfaces)
-  - [Generate `null` values](#generate-null-values)
-  - [Inject duplicate values](#inject-duplicate-values)
-  - [Filtering](#filtering)
-  - [Creating unique values](#creating-unique-values)
-  - [Mapping](#mapping)
-  - [Flat Mapping](#flat-mapping)
-  - [Flat Mapping with Tuple Types](#flat-mapping-with-tuple-types)
-  - [Randomly Choosing among Arbitraries](#randomly-choosing-among-arbitraries)
-  - [Combining Arbitraries](#combining-arbitraries)
-  - [Combining Arbitraries with Builder](#combining-arbitraries-with-builder)
-    - [Flat Combination](#flat-combination)
-  - [Fix an Arbitrary's `genSize`](#fix-an-arbitrarys-gensize)
-- [Recursive Arbitraries](#recursive-arbitraries)
-  - [Probabilistic Recursion](#probabilistic-recursion)
-  - [Deterministic Recursion](#deterministic-recursion)
-  - [Deterministic Recursion with `recursive()`](#deterministic-recursion-with-recursive)
-- [Using Arbitraries Directly](#using-arbitraries-directly)
-  - [Generating a Single Value](#generating-a-single-value)
-  - [Generating a Stream of Values](#generating-a-stream-of-values)
-  - [Generating all possible values](#generating-all-possible-values)
-  - [Iterating through all possible values](#iterating-through-all-possible-values)
-- [Contract Tests](#contract-tests)
-- [Stateful Testing](#stateful-testing)
-  - [Specify Actions](#specify-actions)
-  - [Check Postconditions](#check-postconditions)
-  - [Number of actions](#number-of-actions)
-  - [Check Invariants](#check-invariants)
-- [Assumptions](#assumptions)
-- [Result Shrinking](#result-shrinking)
-  - [Integrated Shrinking](#integrated-shrinking)
-  - [Switch Shrinking Off](#switch-shrinking-off)
-  - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
-  - [Change the Shrinking Target](#change-the-shrinking-target)
-- [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
-  - [Labeled Statistics](#labeled-statistics)
-  - [Statistics Report Formatting](#statistics-report-formatting)
-    - [Switch Statistics Reporting Off](#switch-statistics-reporting-off)
-    - [Plug in Your Own Statistics Report Format](#plug-in-your-own-statistics-report-format)
-  - [Checking Coverage of Collected Statistics](#checking-coverage-of-collected-statistics)
-    - [Check Percentages and Counts](#check-percentages-and-counts)
-    - [Check Ad-hoc Query Coverage](#check-ad-hoc-query-coverage)
-- [Providing Default Arbitraries](#providing-default-arbitraries)
-  - [Simple Arbitrary Providers](#simple-arbitrary-providers)
-  - [Arbitrary Providers for Parameterized Types](#arbitrary-providers-for-parameterized-types)
-  - [Arbitrary Provider Priority](#arbitrary-provider-priority)
-- [Create your own Annotations for Arbitrary Configuration](#create-your-own-annotations-for-arbitrary-configuration)
-  - [Arbitrary Configuration Example: `@Odd`](#arbitrary-configuration-example-odd)
-- [Domain and Domain Context](#domain-and-domain-context)
-  - [Domain example: American Addresses](#domain-example-american-addresses)
-- [Generation from a Type's Interface](#generation-from-a-types-interface)
-- [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
-- [Generation of Edge Cases](#generation-of-edge-cases)
-  - [Tuning Edge Cases](#tuning-edge-cases)
-- [Exhaustive Generation](#exhaustive-generation)
-- [Data-Driven Properties](#data-driven-properties)
-- [Rerunning Falsified Properties](#rerunning-falsified-properties)
-- [jqwik Configuration](#jqwik-configuration)
-- [Release Notes](#release-notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -203,8 +93,13 @@ about the real dependencies you can replace this dependency with
     testRuntime "net.jqwik:jqwik-engine:${jqwikVersion}"
 ```
 
+In jqwik's samples repository you can find a rather minimal 
+[starter example for jqwik with Gradle](https://github.com/jlink/jqwik-samples/tree/master/jqwik-starter-gradle).
+
 See [the Gradle section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
-for more details on how to configure Gradle for the JUnit 5 platform.
+for more details on how to configure Gradle for the JUnit 5 platform. 
+There is also a comprehensive 
+[list of options for Gradle's `test` task](https://docs.gradle.org/current/userguide/java_plugin.html#sec:java_test).
 
 #### Seeing jqwik Reporting in Gradle Output
 
@@ -232,9 +127,12 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
 
 ### Maven
 
-Configure the surefire plugin as described in 
-[the Maven section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven)
-and add the following dependency to your `pom.xml` file:
+Starting with version 2.22.0, Maven Surefire and Maven Failsafe provide native support 
+for executing tests on the JUnit Platform and thus for running _jqwik_ properties.
+The configuration of Maven Surefire is described in 
+[the Maven section of JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-maven).
+
+Additionally you have to add the following dependency to your `pom.xml` file:
 
 ```
 <dependencies>
@@ -248,6 +146,8 @@ and add the following dependency to your `pom.xml` file:
 </dependencies>
 ```
 
+In jqwik's samples repository you can find a rather minimal 
+[starter example for jqwik with Maven](https://github.com/jlink/jqwik-samples/tree/master/jqwik-starter-maven).
 
 ### Snapshot Releases
 
@@ -1126,30 +1026,24 @@ The starting point for generation usually is a static method call on class
   to allow for [shrinking](#result-shrinking) you have to provide 
   your own `RandomGenerator` implementation. 
   
-#### Select values randomly
+#### Select or generate values randomly
 
 - [`Arbitrary<U> of(U... values)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#of-U...-):
   Choose randomly from a list of values. Shrink towards the first one.
   
-- [`Arbitrary<T> samples(T... samples)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#samples-T...-):
-  Go through samples from first to last. Shrink towards the first sample.
+- [`Arbitrary<U> ofSuppliers(Supplier<U>... valueSuppliers)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#ofSuppliers-java.util.function.Supplier...-):
+  Choose randomly from a list of value suppliers and get the object from this supplier.
+  This is useful when dealing with mutable objects where `Arbitrary.of(..)` would reuse a potentially changed object.
   
-  If instead you want to _add_ samples to an existing arbitrary you'd rather use 
-  [`Arbitrary.withSamples(T... samples)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#withSamples-T...-).
-  The following arbitrary:
-  
-  ```java
-  @Provide 
-  Arbitrary<Integer> integersWithPrimes() {
-	  return Arbitraries.integers(- 1000, 1000).withSamples(2,3,5,7,11,13,17);
-  }
-  ```
-  
-  will first generate the 7 enumerated prime numbers and only then generate random 
-  integers between -1000 and +1000.
-  
+- [`Arbitrary<T> constant(T constantValue)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-T-):
+  Always provide the same constant value in each try. Mostly useful to combine with other arbitraries.
+    
 - [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
+
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
+  In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
+  This is useful when dealing with mutable objects where `Arbitrary.constant()` may reuse a changed object.
 
 #### Select randomly with Weights
 
@@ -1181,20 +1075,6 @@ whereas `"d"` has a generation probability of `20/36` (= `5/9`).
 
 Shrinking moves towards the start of the frequency list.
 
-#### Integers
-
-- [`ByteArbitrary bytes()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
-- [`ShortArbitrary shorts()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
-- [`IntegerArbitrary integers()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#integers--)
-- [`LongArbitrary longs()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#longs--)
-- [`BigIntegerArbitrary bigIntegers()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
-
-#### Decimals
-
-- [`FloatArbitrary floats()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#floats--)
-- [`DoubleArbitrary doubles()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
-- [`BigDecimalArbitrary bigDecimals()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
-
 #### Characters and Strings
 
 - [`StringArbitrary strings()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#strings--)
@@ -1204,16 +1084,6 @@ Shrinking moves towards the start of the frequency list.
 
 - [`Arbitrary<Random> randoms()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#randoms--): 
   Random instances will never be shrunk
-
-#### Constants
-
-- [`Arbitrary<T> constant(T value)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-T-): 
-  In each try use the same unshrinkable `value` of type `T`.
-
-#### Create
-
-- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
-  In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
 
 #### Shuffling Permutations
 
@@ -1244,6 +1114,63 @@ Shrinking moves towards the start of the frequency list.
       return Arbitraries.defaultFor(List.class, String.class);
   }
   ```
+
+### Numeric Arbitrary Types
+
+Creating an arbitrary for numeric values also starts by calling a static method
+on class `Arbitraries`. There are two fundamental types of numbers: _integral_ numbers
+and _decimal_ numbers. _jqwik_ supports all of Java's built-in number types.
+
+Each type has its own [fluent interface](https://en.wikipedia.org/wiki/Fluent_interface)
+but all numeric arbitrary types share some things:
+
+- You can constrain their minimum and maximum values using `between(min, max)`, 
+  `greaterOrEqual(min)` and `lessOrEqual(max)`.
+- You can determine the _target value_ through `shrinkTowards(target)`. 
+  This value is supposed to be the "center" of all possible values used for shrinking
+  and as a mean for [random distributions](random-numeric-distribution). 
+
+#### Integrals
+
+- [`ByteArbitrary bytes()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bytes--)
+- [`ShortArbitrary shorts()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#shorts--)
+- [`IntegerArbitrary integers()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#integers--)
+- [`LongArbitrary longs()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#longs--)
+- [`BigIntegerArbitrary bigIntegers()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bigIntegers--)
+
+#### Decimals
+
+- [`FloatArbitrary floats()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#floats--)
+- [`DoubleArbitrary doubles()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#doubles--)
+- [`BigDecimalArbitrary bigDecimals()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#bigDecimals--)
+
+Decimal arbitrary types come with a few additional capabilities:
+
+- You can include or exclude the borders using `between(min, minIncluded, max, maxIncluded)`, 
+  `greaterThan(minExcluded)` and `lessThan(maxExclude)`.
+- You can set the _scale_, i.e. number of significant decimal places with `ofScale(scale)`.
+  The default scale is `2`.
+
+#### Random Numeric Distribution 
+
+With release `1.3.0` jqwik provides you with a means to influence the probability distribution
+of randomly generated numbers. The way to do that is by calling 
+[`withDistribution(distribution)`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/arbitraries/NumericalArbitrary.html#withDistribution-net.jqwik.api.RandomDistribution-).
+Currently three different distributions are supported:
+
+- [`RandomDistribution.biased()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#biased--): This is the default. 
+  It generates values closer to the center of a numerical range with a higher probability. 
+  The bigger the range the stronger the bias.
+
+- [`RandomDistribution.uniform()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#uniform--): This distribution will generate values across the allowed range 
+  with a uniform probability distribution.
+  
+- [`RandomDistribution.gaussian()`](https://jqwik.net/docs/snapshot/javadoc/net/jqwik/api/RandomDistribution.html#gaussian--): A gaussian distribution with borderSigma of 3, 
+  i.e. approximately 99.7% of values are within the borders.
+  Gaussian generation is approximately 10 times slower than biased or uniform generation;
+  use it only if it reflects your domain distribution better.
+
+You can - if need be - provide your own implementation of `RandomDistribution`.
 
 ### Collections, Streams, Arrays and Optional
 
@@ -3122,39 +3049,6 @@ and check the following api entry points:
 - [Arbitraries.forType()](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#forType-java.lang.Class-)
 - [TypeArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
 
-## Implement your own Arbitraries and Generators
-
-In your everyday property testing you will often get along without ever implementing
-an arbitrary yourself. In cases where 
-[constraining default generation through annotations](#constraining-default-generation)
-does not cut it, you can use all the mechanisms to configure, (flat-)map, filter and combine
-the pre-implemented arbitraries.
-
-However, there are a few circumstances when you should think about rolling your own
-implementation. The most important of which are:
-
-- You want to expand the fluent API for configuration purposes.
-- The (randomized) generation of values needs different qualities than can easily be
-  derived by reusing existing arbitraries.
-- Standard shrinking attempts do not come up with simple enough examples.
-  
-In those - and maybe a few other cases - you can implement your own arbitrary.
-To get a feel for what a usable implementation looks like, you might start with
-having a look at some of the internal arbitraries:
-
-- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultBigDecimalArbitrary.java)
-- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultStringArbitrary.java)
-
-Under the hood, most arbitraries use `RandomGenerator`s for the final value generation. Since
-[`RandomGenerator`](/docs/snapshot/javadoc/net/jqwik/api/RandomGenerator.html) 
-is a SAM type, most implementations are just lambda expression. 
-Start with the methods on
-[`RandomGenerators`](https://github.com/jlink/jqwik/blob/master/engine/src/main/java/net/jqwik/engine/properties/arbitraries/randomized/RandomGenerators.java)
-to figure out how they work.
-
-Since the topic is rather complicated, a detailed example will one day be published 
-in a separate article...
-
 ## Generation of Edge Cases
 
 It's well-known that many programming bugs and specification gaps happen at the border
@@ -3368,6 +3262,19 @@ You can also determine the default behaviour of all properties by setting
 the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
 to one of those enum values.
 
+## Implement your own Arbitraries and Generators
+
+Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerator` -- you might
+think that rolling your own implementations can be a reasonable thing to do.
+I'd like to tell you that it _never_ is but I've learned that "never" is a word you should never use.
+There's just too many things to consider when implementing a new type of `Arbitrary`
+to make it work smoothly with the rest of the framework. 
+
+Therefore, use the innumerable features to combine existing arbitraries into your special one.
+If you cannot figure out how to create an arbitrary with the desired behaviour
+either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
+or [open a Github issue](https://github.com/jlink/jqwik/issues). 
+
 ## jqwik Configuration
 
 _jqwik_ will look for a file `jqwik.properties` in your classpath in which you can configure
@@ -3384,7 +3291,7 @@ defaultAfterFailure = PREVIOUS_SEED # Set default behaviour for falsified proper
 reportOnlyFailures = false          # Set to true if only falsified properties should be reported
 defaultGeneration = AUTO            # Set default behaviour for generation:
                                     # AUTO, RANDOMIZED, or EXHAUSTIVE
-defaultEdgeCases = AUTO             # Set default behaviour for edge cases generation:
+defaultEdgeCases = MIXIN            # Set default behaviour for edge cases generation:
                                     # FIRST, MIXIN, or NONE
 ```
 

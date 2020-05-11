@@ -1,8 +1,5 @@
 - 1.3.0
 
-    - Introduce interface RandomDistribution
-      - Document in user-guide
-
     - Arbitrary.addEdgeCase(value) 
         - Make shrinkable variants for
             - Numeric Arbitraries
