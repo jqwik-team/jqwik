@@ -3022,39 +3022,6 @@ and check the following api entry points:
 - [Arbitraries.forType()](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#forType-java.lang.Class-)
 - [TypeArbitrary](/docs/${docsVersion}/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
 
-## Implement your own Arbitraries and Generators
-
-In your everyday property testing you will often get along without ever implementing
-an arbitrary yourself. In cases where 
-[constraining default generation through annotations](#constraining-default-generation)
-does not cut it, you can use all the mechanisms to configure, (flat-)map, filter and combine
-the pre-implemented arbitraries.
-
-However, there are a few circumstances when you should think about rolling your own
-implementation. The most important of which are:
-
-- You want to expand the fluent API for configuration purposes.
-- The (randomized) generation of values needs different qualities than can easily be
-  derived by reusing existing arbitraries.
-- Standard shrinking attempts do not come up with simple enough examples.
-  
-In those - and maybe a few other cases - you can implement your own arbitrary.
-To get a feel for what a usable implementation looks like, you might start with
-having a look at some of the internal arbitraries:
-
-- [DefaultBigDecimalArbitrary](https://github.com/jlink/jqwik/blob/${gitVersion}/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultBigDecimalArbitrary.java)
-- [DefaultStringArbitrary](https://github.com/jlink/jqwik/blob/${gitVersion}/engine/src/main/java/net/jqwik/engine/properties/arbitraries/DefaultStringArbitrary.java)
-
-Under the hood, most arbitraries use `RandomGenerator`s for the final value generation. Since
-[`RandomGenerator`](/docs/${docsVersion}/javadoc/net/jqwik/api/RandomGenerator.html) 
-is a SAM type, most implementations are just lambda expression. 
-Start with the methods on
-[`RandomGenerators`](https://github.com/jlink/jqwik/blob/${gitVersion}/engine/src/main/java/net/jqwik/engine/properties/arbitraries/randomized/RandomGenerators.java)
-to figure out how they work.
-
-Since the topic is rather complicated, a detailed example will one day be published 
-in a separate article...
-
 ## Generation of Edge Cases
 
 It's well-known that many programming bugs and specification gaps happen at the border
@@ -3267,6 +3234,19 @@ The `afterFailure` property can have one of four values:
 You can also determine the default behaviour of all properties by setting
 the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
 to one of those enum values.
+
+## Implement your own Arbitraries and Generators
+
+Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerator` -- you might
+think that rolling your own implementations can be a reasonable thing to do.
+I'd like to tell you that it _never_ is but I've learned that "never" is a word you should never use.
+There's just too many things to consider when implementing a new type of `Arbitrary`
+to make it work smoothly with the rest of the framework. 
+
+Therefore, use the innumerable features to combine existing arbitraries into your special one.
+If you cannot figure out how to create an arbitrary with the desired behaviour
+either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
+or [open a Github issue](https://github.com/jlink/jqwik/issues). 
 
 ## jqwik Configuration
 
