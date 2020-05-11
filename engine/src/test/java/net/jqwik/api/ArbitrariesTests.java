@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.math.*;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.*;
@@ -54,6 +55,29 @@ class ArbitrariesTests {
 		RandomGenerator<String> generator = stringArbitrary.generator(1);
 		assertAllGenerated(generator, (String value) -> Arrays.asList("1", "hallo", "test").contains(value));
 		assertAtLeastOneGeneratedOf(generator, "1", "hallo", "test");
+	}
+
+	@Example
+	void ofSuppliers() {
+		Arbitrary<List<String>> listArbitrary = Arbitraries.ofSuppliers(ArrayList::new, ArrayList::new);
+		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
+		assertAllGenerated(generator, (List<String> value) -> {
+			assertThat(value).isEmpty();
+			value.add("aString");
+		});
+	}
+
+	@Example
+	void ofSupplierList() {
+		@SuppressWarnings("unchecked")
+		Supplier<List<String>>[] suppliers = new Supplier[]{ArrayList::new, ArrayList::new};
+		List<Supplier<List<String>>> supplierList = Arrays.asList(suppliers);
+		Arbitrary<List<String>> listArbitrary = Arbitraries.ofSuppliers(supplierList);
+		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
+		assertAllGenerated(generator, (List<String> value) -> {
+			assertThat(value).isEmpty();
+			value.add("aString");
+		});
 	}
 
 	@Example

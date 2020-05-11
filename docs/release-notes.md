@@ -28,6 +28,8 @@ and
 
 #### New and Enhanced Features
 
+- Added `Arbitraries.ofSuppliers(..)` to choose among a set of mutable objects.
+
 - Number Generation: All numeric arbitraries now support `withDistribution(RandomDistribution)`
   to choose between `RandomDistribution.biased()` (default),
    `RandomDistribution.uniform()` and `RandomDistribution.gaussian(borderSigma)`. 

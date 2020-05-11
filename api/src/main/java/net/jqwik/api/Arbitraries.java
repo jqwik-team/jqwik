@@ -134,6 +134,11 @@ public class Arbitraries {
 	 * Create an arbitrary that will randomly choose from a given array of values.
 	 * A generated value will be shrunk towards the start of the array.
 	 *
+	 * <p>
+	 * Use this method only for immutable values, because changing the value will change
+	 * subsequent generated values as well.
+	 * For mutable values use {@linkplain #ofSuppliers(Supplier[])} instead.
+	 *
 	 * @param values The array of values to choose from
 	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
@@ -147,6 +152,11 @@ public class Arbitraries {
 	 * Create an arbitrary that will randomly choose from a given list of values.
 	 * A generated value will be shrunk towards the start of the list.
 	 *
+	 * <p>
+	 * Use this method only for immutable values, because changing the value will change
+	 * subsequent generated values as well.
+	 * For mutable values use {@linkplain #ofSuppliers(List)} instead.
+	 * 
 	 * @param values The list of values to choose from
 	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
@@ -157,6 +167,45 @@ public class Arbitraries {
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
 			ArbitrariesFacade.implementation.edgeCasesChoose(values)
 		);
+	}
+
+	/**
+	 * Create an arbitrary that will randomly choose from a given array of value suppliers
+	 * and then get the value from the supplier.
+	 * A generated value will be shrunk towards the start of the array.
+	 *
+	 * <p>
+	 * Use this method instead of {@linkplain #of(Object[])} for mutable objects
+	 * to make sure that changing a generated object will not influence other generated
+	 * objects.
+	 *
+	 * @param valueSuppliers The array of values to choose from
+	 * @param <T>    The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.3.0")
+	@SafeVarargs
+	public static <T> Arbitrary<T> ofSuppliers(Supplier<T>... valueSuppliers) {
+		return of(valueSuppliers).map(Supplier::get);
+	}
+
+	/**
+	 * Create an arbitrary that will randomly choose from a given array of value suppliers
+	 * and then get the value from the supplier.
+	 * A generated value will be shrunk towards the start of the array.
+	 *
+	 * <p>
+	 * Use this method instead of {@linkplain #of(List)} for mutable objects
+	 * to make sure that changing a generated object will not influence other generated
+	 * objects.
+	 *
+	 * @param valueSuppliers The list of values to choose from
+	 * @param <T>    The type of values to generate
+	 * @return a new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.3.0")
+	public static <T> Arbitrary<T> ofSuppliers(List<Supplier<T>> valueSuppliers) {
+		return of(valueSuppliers).map(Supplier::get);
 	}
 
 	/**

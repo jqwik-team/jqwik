@@ -23,6 +23,9 @@
 
 - 1.3.1
 
+    - Does exhaustive generation for mutable objects work or will muted objects be injected
+      in other parameter sets?
+
     - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
     
     - Property runtime statistics (https://github.com/jlink/jqwik/issues/100)
