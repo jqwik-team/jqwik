@@ -37,9 +37,21 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	@Override
 	public synchronized M run(M model) {
-		sequence.clear();
-		runState = RunState.RUNNING;
 		currentModel = model;
+		if (runState == RunState.NOT_RUN) {
+			initialRun();
+		} else {
+			repeatedRun();
+		}
+		if (sequence.isEmpty()) {
+			throw new TestAbortedException("Sequences without actions are invalid");
+		}
+		runState = RunState.SUCCEEDED;
+		return currentModel;
+	}
+
+	private void initialRun() {
+		runState = RunState.RUNNING;
 		for (int i = 0; i < intendedSize; i++) {
 			Action<M> action;
 			try {
@@ -48,25 +60,35 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 				break;
 			}
 			sequence.add(action);
-			try {
-				currentModel = action.run(currentModel);
-				callModelPeekers();
-				checkInvariants();
-			} catch (InvariantFailedError ife) {
-				runState = RunState.FAILED;
-				throw ife;
-			} catch (Throwable t) {
-				runState = RunState.FAILED;
-				AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run", t.getMessage()), t);
-				assertionFailedError.setStackTrace(t.getStackTrace());
-				throw assertionFailedError;
+			runAction(action);
+		}
+	}
+
+	private void repeatedRun() {
+		runState = RunState.RUNNING;
+		for (Action<M> action : new ArrayList<>(sequence)) {
+			if (action.precondition(currentModel)) {
+				runAction(action);
+			} else {
+				throw new TestAbortedException("Precondition violated on repeated run");
 			}
 		}
-		if (sequence.isEmpty()) {
-			throw new TestAbortedException("Sequences without actions are invalid");
+	}
+
+	private void runAction(final Action<M> action) {
+		try {
+			currentModel = action.run(currentModel);
+			callModelPeekers();
+			checkInvariants();
+		} catch (InvariantFailedError ife) {
+			runState = RunState.FAILED;
+			throw ife;
+		} catch (Throwable t) {
+			runState = RunState.FAILED;
+			AssertionFailedError assertionFailedError = new AssertionFailedError(createErrorMessage("Run", t.getMessage()), t);
+			assertionFailedError.setStackTrace(t.getStackTrace());
+			throw assertionFailedError;
 		}
-		runState = RunState.SUCCEEDED;
-		return currentModel;
 	}
 
 	private void callModelPeekers() {

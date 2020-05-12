@@ -60,7 +60,7 @@ class SequentialActionSequenceTests {
 	}
 
 	@Example
-	void canRunTwice() {
+	void canRunAgainWithDifferentModel() {
 		SequentialActionSequence<Integer> sequence = createSequence(
 			plus1(),
 			plus10(),
@@ -68,9 +68,10 @@ class SequentialActionSequenceTests {
 		);
 
 		sequence.run(0);
-		int result = sequence.run(0);
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
-		assertThat(result).isEqualTo(121);
+		int result = sequence.run(1);
+		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+		assertThat(result).isEqualTo(144);
 		assertThat(result).isEqualTo(sequence.finalModel());
 		assertThat(sequence.runActions()).hasSize(3);
 	}
@@ -239,10 +240,10 @@ class SequentialActionSequenceTests {
 	}
 
 	private Function<Integer, Action<Integer>> square() {
-		return number -> new Action<Integer>() {
+		return ignore -> new Action<Integer>() {
 			@Override
 			public Integer run(Integer anInt) {
-				return anInt * number; // anInt should be number
+				return anInt * anInt;
 			}
 
 			@Override
