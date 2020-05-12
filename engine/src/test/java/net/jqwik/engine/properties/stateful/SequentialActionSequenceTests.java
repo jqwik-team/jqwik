@@ -60,7 +60,7 @@ class SequentialActionSequenceTests {
 	}
 
 	@Example
-	void wontRunTwice() {
+	void canRunTwice() {
 		SequentialActionSequence<Integer> sequence = createSequence(
 			plus1(),
 			plus10(),

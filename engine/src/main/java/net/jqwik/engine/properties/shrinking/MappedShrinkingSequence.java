@@ -8,7 +8,8 @@ public class MappedShrinkingSequence<T, U> implements ShrinkingSequence<U> {
 	private final ShrinkingSequence<T> toMap;
 	private final Function<FalsificationResult<T>, FalsificationResult<U>> mapper;
 
-	public MappedShrinkingSequence(ShrinkingSequence<T> toMap, Function<FalsificationResult<T>, FalsificationResult<U>> mapper) {this.toMap = toMap;
+	public MappedShrinkingSequence(ShrinkingSequence<T> toMap, Function<FalsificationResult<T>, FalsificationResult<U>> mapper) {
+		this.toMap = toMap;
 		this.mapper = mapper;
 	}
 

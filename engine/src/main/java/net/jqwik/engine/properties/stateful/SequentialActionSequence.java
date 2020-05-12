@@ -37,9 +37,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	@Override
 	public synchronized M run(M model) {
-		if (runState != RunState.NOT_RUN) {
-			return currentModel;
-		}
+		sequence.clear();
 		runState = RunState.RUNNING;
 		currentModel = model;
 		for (int i = 0; i < intendedSize; i++) {
