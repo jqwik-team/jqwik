@@ -1,5 +1,7 @@
 - 1.3.0
 
+    - Arbitrary.withoutEdgeCases() works for individual genertors
+    
     - Arbitrary.addEdgeCase(value) 
         - Make shrinkable variants for
             - Numeric Arbitraries
@@ -17,6 +19,8 @@
       https://github.com/jlink/jqwik/issues/85
       - Extract description before running the property?
         e.g. to be able to display a generated Stream
+        
+    - StatisticsReportFormat.histogram()
 
 - 1.3.1
 
