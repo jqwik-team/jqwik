@@ -10,17 +10,15 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private final Shrinkable<T> toMap;
 	private final Function<T, U> mapper;
-	private final U value;
 
 	public MappedShrinkable(Shrinkable<T> toMap, Function<T, U> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
-		this.value = mapper.apply(toMap.value());
 	}
 
 	@Override
 	public U value() {
-		return value;
+		return mapper.apply(toMap.value());
 	}
 
 	@Override

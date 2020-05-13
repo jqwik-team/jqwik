@@ -40,7 +40,7 @@ class CombinatorsEdgeCasesTests {
 		Shrinkable<Integer> firstEdgeCase = edgeCases.iterator().next();
 
 		ShrinkingSequence<Integer> sequence = firstEdgeCase.shrink(ignore -> TryExecutionResult.falsified(null));
-		while (sequence.next(() -> {}, ignore -> { }));
+		while (sequence.next(() -> {}, ignore -> { })) ;
 
 		assertThat(sequence.current().value()).isEqualTo(0);
 	}
@@ -174,7 +174,7 @@ class CombinatorsEdgeCasesTests {
 
 	@Example
 	void combineWithBuilder() {
-		Arbitrary<Integer> numbers = Arbitraries.integers().between(10, 100);
+		Arbitrary<Integer> numbers = Arbitraries.integers().between(10, 100).withDistribution(RandomDistribution.uniform());
 
 		Supplier<AdditionBuilder> additionBuilderSupplier = AdditionBuilder::new;
 		Arbitrary<Integer> sum = Combinators

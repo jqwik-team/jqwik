@@ -22,6 +22,7 @@ class IgnoreGenerationErrorArbitrary<T> implements Arbitrary<T> {
 			while (count++ < 1000) {
 				try {
 					Shrinkable<T> next = generator.next(random);
+					next.value(); // Might throw an exception
 					return next;
 				} catch (GenerationError ignore) {
 				}
