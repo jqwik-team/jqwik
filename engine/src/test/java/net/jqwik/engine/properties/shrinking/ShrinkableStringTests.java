@@ -16,12 +16,12 @@ import static org.mockito.Mockito.*;
 @Label("ShrinkableString")
 public class ShrinkableStringTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final Runnable count = counter::incrementAndGet;
 
 	@SuppressWarnings("unchecked")
-	private Consumer<String> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<String>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<String> valueReporter = mock(Consumer.class);
+	private final Consumer<FalsificationResult<String>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -177,8 +177,6 @@ public class ShrinkableStringTests {
 
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).isEqualTo("b");
-
-			assertThat(counter.get()).isEqualTo(7);
 		}
 
 		@Example

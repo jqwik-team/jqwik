@@ -28,6 +28,8 @@ and
 
 #### New and Enhanced Features
 
+- Improved shrinking of dependent parameters.
+
 - Added `Arbitraries.ofSuppliers(..)` to choose among a set of mutable objects.
 
 - You can now influence the 

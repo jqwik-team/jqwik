@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 class PropertyShrinkerTests {
 
 	@SuppressWarnings("unchecked")
-	private Consumer<ReportEntry> reporter = Mockito.mock(Consumer.class);
+	private final Consumer<ReportEntry> reporter = Mockito.mock(Consumer.class);
 
 	@Example
 	void ifThereIsNothingToShrinkReturnOriginalValue() {
@@ -73,6 +73,22 @@ class PropertyShrinkerTests {
 		assertThat(result.steps()).isEqualTo(12);
 
 		verifyNoInteractions(reporter);
+	}
+
+	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
+	@ExpectFailure(checkResult = ShrinkTo11.class)
+	boolean shrinkTwoDependentParameters(
+		@ForAll @IntRange(min = 1, max = 100) int int1,
+		@ForAll @IntRange(min = 1, max = 100) int int2
+	) {
+		return int2 < int1;
+	}
+
+	private class ShrinkTo11 extends ShrinkToChecker {
+		@Override
+		public Iterable<?> shrunkValues() {
+			return Arrays.asList(1, 1);
+		}
 	}
 
 	@Property(tries = 10000)

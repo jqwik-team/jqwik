@@ -15,6 +15,13 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	private ShrinkingSequence<T> currentShrinkingSequence = null;
 	private Throwable currentThrowable;
 
+	/**
+	 * Determines how often jqwik tries to shrink all elements individually.
+	 * This is important if parameters depend on each other, e.g. shrinking
+	 * the second param allows the first param to be further shrinked.
+	 */
+	private int additionalRounds = 1;
+
 	ShrinkOneElementAfterTheOtherSequence(
 		List<Shrinkable<T>> currentElements,
 		Falsifier<List<T>> listFalsifier,
@@ -47,7 +54,7 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	}
 
 	private boolean isShrinkingDone() {
-		return currentShrinkingPosition >= currentResults.size();
+		return currentResults.isEmpty() || (currentShrinkingPosition >= currentResults.size() && additionalRounds == 0);
 	}
 
 	private boolean shrinkCurrentPosition(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
@@ -66,6 +73,10 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	) {
 		currentShrinkingSequence = null;
 		currentShrinkingPosition++;
+		if (currentShrinkingPosition >= currentResults.size() && additionalRounds > 0) {
+			additionalRounds -= 1;
+			currentShrinkingPosition = 0;
+		}
 		return next(count, falsifiedReporter);
 	}
 

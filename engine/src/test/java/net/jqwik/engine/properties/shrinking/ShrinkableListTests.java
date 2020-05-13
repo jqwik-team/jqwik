@@ -19,12 +19,12 @@ import static org.mockito.Mockito.*;
 @Label("ShrinkableList")
 class ShrinkableListTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final Runnable count = counter::incrementAndGet;
 
 	@SuppressWarnings("unchecked")
-	private Consumer<List<Integer>> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<List<Integer>>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<List<Integer>> valueReporter = mock(Consumer.class);
+	private final Consumer<FalsificationResult<List<Integer>>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -240,9 +240,10 @@ class ShrinkableListTests {
 			assertThat(sequence.current().value()).isEqualTo(asList(1));
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).isEqualTo(asList(1));
-			assertThat(sequence.next(count, reporter)).isFalse();
 
-			Assertions.assertThat(counter.get()).isEqualTo(5);
+			while(sequence.next(count, reporter));
+
+			assertThat(sequence.current().value()).isEqualTo(asList(1));
 		}
 
 		@Example

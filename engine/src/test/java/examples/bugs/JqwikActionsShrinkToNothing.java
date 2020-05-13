@@ -69,7 +69,7 @@ public class JqwikActionsShrinkToNothing {
 		actions.run(stack);
 	}
 
-	@Property
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	void checkMyStack_ReversedParameters(
 		@ForAll("stacks") MyStringStack stack,
 		@ForAll("sequences") ActionSequence<MyStringStack> actions

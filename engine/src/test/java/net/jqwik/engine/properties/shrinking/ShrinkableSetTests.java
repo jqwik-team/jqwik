@@ -19,12 +19,12 @@ import static org.mockito.Mockito.*;
 @Label("ShrinkableSet")
 class ShrinkableSetTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
+	private final AtomicInteger counter = new AtomicInteger(0);
+	private final Runnable count = counter::incrementAndGet;
 
 	@SuppressWarnings("unchecked")
-	private Consumer<Set<Integer>> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<Set<Integer>>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<Set<Integer>> valueReporter = mock(Consumer.class);
+	private final Consumer<FalsificationResult<Set<Integer>>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -101,9 +101,9 @@ class ShrinkableSetTests {
 			assertThat(sequence.current().value()).containsExactly(0, 1);
 			assertThat(sequence.next(count, reporter)).isTrue();
 			assertThat(sequence.current().value()).containsExactly(0, 1);
-			assertThat(sequence.next(count, reporter)).isFalse();
 
-			assertThat(counter.get()).isEqualTo(4);
+			while(sequence.next(count, reporter));
+			assertThat(sequence.current().value()).containsExactly(0, 1);
 		}
 
 		@Example
@@ -182,8 +182,6 @@ class ShrinkableSetTests {
 
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).containsExactly(2);
-
-			assertThat(counter.get()).isEqualTo(6);
 		}
 
 		@Example
@@ -195,8 +193,6 @@ class ShrinkableSetTests {
 
 			while (sequence.next(count, reporter));
 			assertThat(sequence.current().value()).hasSize(5);
-
-			assertThat(counter.get()).isEqualTo(21);
 		}
 
 	}

@@ -80,11 +80,16 @@ class GenericPropertyTests {
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary);
 
 			GenericProperty property =
-				new GenericProperty("falsified property", aConfig()
-															  .build(), shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
+				new GenericProperty(
+					"falsified property",
+					aConfig().withShrinking(OFF).build(),
+					shrinkablesGenerator,
+					forAllFunction,
+					tryLifecycleContextSupplier
+				);
 			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
 
-			assertThat(forAllFunction.countCalls()).isEqualTo(6);
+			assertThat(forAllFunction.countCalls()).isEqualTo(5);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
