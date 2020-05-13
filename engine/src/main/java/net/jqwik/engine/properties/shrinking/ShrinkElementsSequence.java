@@ -112,10 +112,7 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 		if (pair1.get2().equals(pair2.get1())) {
 			return true;
 		}
-		if (pair1.get2().equals(pair2.get2())) {
-			return true;
-		}
-		return false;
+		return pair1.get2().equals(pair2.get2());
 	}
 
 	private boolean shrinkPair(
@@ -187,11 +184,9 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 
 	private Shrinkable<List<T>> toShrinkableList(List<Shrinkable<T>> shrinkables) {
 		return new Shrinkable<List<T>>() {
-			final List<T> value = toValueList(shrinkables);
-
 			@Override
 			public List<T> value() {
-				return value;
+				return toValueList(shrinkables);
 			}
 
 			@Override

@@ -10,17 +10,15 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	private final Shrinkable<T> toFilter;
 	private final Predicate<T> filter;
-	private final T value;
 
 	public FilteredShrinkable(Shrinkable<T> toFilter, Predicate<T> filter) {
 		this.toFilter = toFilter;
 		this.filter = filter;
-		this.value = toFilter.value();
 	}
 
 	@Override
 	public T value() {
-		return value;
+		return toFilter.value();
 	}
 
 	@Override

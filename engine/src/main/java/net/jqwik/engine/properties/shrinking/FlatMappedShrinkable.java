@@ -11,7 +11,6 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	private final Shrinkable<T> toMap;
 	private final Function<T, Shrinkable<U>> mapper;
 	private final Shrinkable<U> shrinkable;
-	private final U value;
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> toArbitraryMapper, int genSize, long randomSeed) {
 		this(toMap, t -> toArbitraryMapper.apply(t).generator(genSize), randomSeed);
@@ -29,7 +28,6 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		this.toMap = toMap;
 		this.mapper = mapper;
 		this.shrinkable = initialShrinkable;
-		this.value = initialShrinkable.value();
 	}
 
 	private Shrinkable<U> generateShrinkable(T value) {
@@ -68,7 +66,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public U value() {
-		return value;
+		return shrinkable.value();
 	}
 
 	@Override
