@@ -1,9 +1,10 @@
-package net.jqwik.api;
+package net.jqwik.api.edgeCases;
 
 import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 
 import static java.util.Arrays.*;
