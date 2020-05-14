@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -16,11 +17,15 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	private Throwable currentThrowable;
 
 	/**
-	 * Determines how often jqwik tries to shrink all elements individually.
+	 * Determines if jqwik tries to shrink all elements individually once more.
 	 * This is important if parameters depend on each other, e.g. shrinking
 	 * the second param allows the first param to be further shrinked.
+	 *
+	 * <p>
+	 * Initial value is set to true so that shrinking of elements is tried at least once.
+	 *
 	 */
-	private int additionalRounds = 1;
+	private final AtomicBoolean shrinkingOccurredInPreviousRound = new AtomicBoolean(true);
 
 	ShrinkOneElementAfterTheOtherSequence(
 		List<Shrinkable<T>> currentElements,
@@ -50,11 +55,15 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	public boolean next(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
 		if (isShrinkingDone())
 			return false;
-		return shrinkCurrentPosition(count, falsifiedReporter);
+		Consumer<FalsificationResult<List<T>>> trackShrinkingReporter = result -> {
+			shrinkingOccurredInPreviousRound.set(true);
+			falsifiedReporter.accept(result);
+		};
+		return shrinkCurrentPosition(count, trackShrinkingReporter);
 	}
 
 	private boolean isShrinkingDone() {
-		return currentResults.isEmpty() || (currentShrinkingPosition >= currentResults.size() && additionalRounds == 0);
+		return currentResults.isEmpty() || (currentShrinkingPosition >= currentResults.size() && !shrinkingOccurredInPreviousRound.get());
 	}
 
 	private boolean shrinkCurrentPosition(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
@@ -73,9 +82,11 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	) {
 		currentShrinkingSequence = null;
 		currentShrinkingPosition++;
-		if (currentShrinkingPosition >= currentResults.size() && additionalRounds > 0) {
-			additionalRounds -= 1;
-			currentShrinkingPosition = 0;
+		if (currentShrinkingPosition >= currentResults.size()) {
+			if (shrinkingOccurredInPreviousRound.get()) {
+				currentShrinkingPosition = 0;
+				shrinkingOccurredInPreviousRound.set(false);
+			}
 		}
 		return next(count, falsifiedReporter);
 	}

@@ -76,18 +76,19 @@ class PropertyShrinkerTests {
 	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
-	@ExpectFailure(checkResult = ShrinkTo11.class)
-	boolean shrinkTwoDependentParameters(
-		@ForAll @IntRange(min = 1, max = 100) int int1,
-		@ForAll @IntRange(min = 1, max = 100) int int2
+	@Report(Reporting.FALSIFIED)
+	@ExpectFailure(checkResult = ShrinkToEmptyList0.class)
+	boolean shrinkDependentParameters(
+		@ForAll @Size(min = 0, max = 10) List<Integer> list,
+		@ForAll @IntRange(min = 0, max = 100) int size
 	) {
-		return int2 < int1;
+		return list.size() < size;
 	}
 
-	private class ShrinkTo11 extends ShrinkToChecker {
+	private class ShrinkToEmptyList0 extends ShrinkToChecker {
 		@Override
 		public Iterable<?> shrunkValues() {
-			return Arrays.asList(1, 1);
+			return Arrays.asList(Collections.emptyList(), 0);
 		}
 	}
 
