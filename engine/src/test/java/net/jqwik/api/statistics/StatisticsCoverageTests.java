@@ -1,4 +1,4 @@
-package net.jqwik.engine.statistics;
+package net.jqwik.api.statistics;
 
 import java.util.*;
 import java.util.function.*;
@@ -9,8 +9,6 @@ import org.assertj.core.data.*;
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.api.statistics.Statistics;
-import net.jqwik.api.statistics.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;

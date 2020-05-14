@@ -6,6 +6,7 @@ import net.jqwik.api.statistics.*;
 class RandomDistributionExamples {
 
 	@Property(generation = GenerationMode.RANDOMIZED)
+	@StatisticsReport(format = Histogram.class)
 	void gaussianDistributedIntegers(@ForAll("gaussians") int aNumber) {
 		Statistics.collect(aNumber);
 	}

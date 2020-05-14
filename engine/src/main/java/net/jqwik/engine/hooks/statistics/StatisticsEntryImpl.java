@@ -5,10 +5,10 @@ import java.util.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.engine.support.*;
 
-class StatisticsEntryImpl implements StatisticsEntry {
+public class StatisticsEntryImpl implements StatisticsEntry {
 	public static final StatisticsEntryImpl NULL = new StatisticsEntryImpl(null, null, 0, 0.0);
 
-	public static StatisticsEntryImpl nullFor(List<Object> values) {
+	static StatisticsEntryImpl nullFor(List<Object> values) {
 		return new StatisticsEntryImpl(values, JqwikStringSupport.displayString(values), 0 , 0.0);
 	}
 
@@ -17,14 +17,14 @@ class StatisticsEntryImpl implements StatisticsEntry {
 	private final int count;
 	private final double percentage;
 
-	StatisticsEntryImpl(List<Object> values, String name, int count, double percentage) {
+	public StatisticsEntryImpl(List<Object> values, String name, int count, double percentage) {
 		this.values = values;
 		this.name = name;
 		this.count = count;
 		this.percentage = percentage;
 	}
 
-	public StatisticsEntryImpl plus(StatisticsEntryImpl other) {
+	StatisticsEntryImpl plus(StatisticsEntryImpl other) {
 		int newCount = count + other.count;
 		double newPercentage = percentage + other.percentage;
 		return new StatisticsEntryImpl(Collections.emptyList(), "<adhoc query>", newCount, newPercentage);
