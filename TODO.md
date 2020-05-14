@@ -1,15 +1,6 @@
 - 1.3.0
 
-    - Arbitrary.withoutEdgeCases() works for individual generators
-    
-    - Arbitrary.addEdgeCase(value) 
-        - Make shrinkable variants for
-            - Numeric Arbitraries
-            - CharacterArbitrary
-            - Arbitrary.of() arbitraries
-            - Collections
-            - Combinators
-        - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+    - StatisticsReportFormat.histogram()
 
     - Documentation for lifecycle hooks API in user guide
     
@@ -20,12 +11,24 @@
       - Extract description before running the property?
         e.g. to be able to display a generated Stream
         
-    - StatisticsReportFormat.histogram()
-
 - 1.3.1
 
     - Does exhaustive generation for mutable objects work or will muted objects be injected
       in other parameter sets?
+
+    - Edge Cases
+        - Arbitrary.withoutEdgeCases() 
+            - should also work for individual generators
+            - Maybe introduce ArbitraryDecorator or something like that
+        
+        - Arbitrary.addEdgeCase(value) 
+            - Make shrinkable variants for
+                - Numeric Arbitraries
+                - CharacterArbitrary
+                - Arbitrary.of() arbitraries
+                - Collections
+                - Combinators
+            - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
 
     - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
     

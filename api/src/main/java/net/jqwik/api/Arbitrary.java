@@ -117,25 +117,29 @@ public interface Arbitrary<T> {
 	 *
 	 * @return new arbitrary instance
 	 */
-	@API(status = EXPERIMENTAL, since = "1.3.0")
-	default Arbitrary<T> withoutEdgeCases() {
-		return new Arbitrary<T>() {
-			@Override
-			public RandomGenerator<T> generator(int genSize) {
-				return Arbitrary.this.generator(genSize);
-			}
-
-			@Override
-			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return Arbitrary.this.exhaustive(maxNumberOfSamples);
-			}
-
-			@Override
-			public EdgeCases<T> edgeCases() {
-				return EdgeCases.none();
-			}
-		};
-	}
+	// Currently that does not make any sense. It requires:
+	// - either the possibility to add other edge cases
+	// - or: use the actual edge cases in individual generators
+	//
+	// @API(status = EXPERIMENTAL, since = "1.3.0")
+	// default Arbitrary<T> withoutEdgeCases() {
+	// 	return new Arbitrary<T>() {
+	// 		@Override
+	// 		public RandomGenerator<T> generator(int genSize) {
+	// 			return Arbitrary.this.generator(genSize);
+	// 		}
+	//
+	// 		@Override
+	// 		public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+	// 			return Arbitrary.this.exhaustive(maxNumberOfSamples);
+	// 		}
+	//
+	// 		@Override
+	// 		public EdgeCases<T> edgeCases() {
+	// 			return EdgeCases.none();
+	// 		}
+	// 	};
+	// }
 
 
 	/**

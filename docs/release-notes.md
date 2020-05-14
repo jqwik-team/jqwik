@@ -48,9 +48,6 @@ and
 
 - Edge Cases Mode is now being reported per property
 
-- Added `Arbitrary.withoutEdgeCases()` to switch off 
-  preferred edge case generation for individual arbitraries. 
-
 - Added `StringArbitrary.withChars(Arbitrary<Character> characterArbitrary)`
 
 - Added `CharacterArbitrary.with(Arbitrary<Character> characterArbitrary)`
