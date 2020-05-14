@@ -36,9 +36,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 			int lastIndex = values.size() - 1;
 			shrinkables.add(new ChooseValueShrinkable<>(values.get(lastIndex), values));
 		}
-		if (values.contains(null)) {
-			shrinkables.add(Shrinkable.unshrinkable(null));
-		}
+		try {
+			if (values.contains(null)) {
+				shrinkables.add(Shrinkable.unshrinkable(null));
+			}
+		} catch (NullPointerException someListsDoNotAllowNullValues) { }
 		return EdgeCases.fromShrinkables(shrinkables);
 	}
 

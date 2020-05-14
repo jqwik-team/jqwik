@@ -58,6 +58,26 @@ class ArbitrariesTests {
 	}
 
 	@Example
+	void ofNonNullableValueList() {
+		// TODO: Replace with List.of("a", "b") when moving to JDK >= 11
+		List<String> valueList = new ArrayList<String>() {
+			@Override
+			public boolean contains(final Object o) {
+				if (o == null) {
+					throw new NullPointerException();
+				}
+				return super.contains(o);
+			}
+		};
+		valueList.add("a");
+		valueList.add("b");
+
+		Arbitrary<String> stringArbitrary = Arbitraries.of(valueList);
+		RandomGenerator<String> generator = stringArbitrary.generator(1);
+		assertAllGenerated(generator, (String value) -> Arrays.asList("a", "b").contains(value));
+	}
+
+	@Example
 	void ofSuppliers() {
 		Arbitrary<List<String>> listArbitrary = Arbitraries.ofSuppliers(ArrayList::new, ArrayList::new);
 		RandomGenerator<List<String>> generator = listArbitrary.generator(1);
@@ -156,10 +176,8 @@ class ArbitrariesTests {
 
 		@Example
 		void listOfValues() {
-
 			Arbitrary<List<Integer>> shuffled = Arbitraries.shuffle(Arrays.asList(1, 2, 3));
 			assertPermutations(shuffled);
-
 		}
 
 		private void assertPermutations(Arbitrary<List<Integer>> shuffled) {
