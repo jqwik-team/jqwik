@@ -1,6 +1,6 @@
 - 1.3.0
 
-    - Arbitrary.withoutEdgeCases() works for individual genertors
+    - Arbitrary.withoutEdgeCases() works for individual generators
     
     - Arbitrary.addEdgeCase(value) 
         - Make shrinkable variants for

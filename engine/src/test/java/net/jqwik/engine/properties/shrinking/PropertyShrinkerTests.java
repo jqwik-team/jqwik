@@ -76,7 +76,6 @@ class PropertyShrinkerTests {
 	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
-	@Report(Reporting.FALSIFIED)
 	@ExpectFailure(checkResult = ShrinkToEmptyList0.class)
 	boolean shrinkDependentParameters(
 		@ForAll @Size(min = 0, max = 10) List<Integer> list,
