@@ -74,7 +74,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		List<Object> key = keyFrom(values);
 		return statisticsEntries()
 				   .stream()
-				   .filter(entry -> entry.key.equals(key))
+				   .filter(entry -> entry.values().equals(key))
 				   .findFirst()
 				   .orElse(StatisticsEntryImpl.nullFor(key));
 	}
@@ -83,7 +83,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 		return statisticsEntries()
 				   .stream()
 				   .filter(entry -> {
-					   List<Object> values = entry.key;
+					   List<Object> values = entry.values();
 					   return query.test(values);
 				   })
 				   .reduce(StatisticsEntryImpl.NULL, StatisticsEntryImpl::plus);
@@ -181,7 +181,7 @@ public class StatisticsCollectorImpl implements StatisticsCollector {
 
 	private static class CoverageCheckerImpl implements CoverageChecker {
 
-		private String label;
+		private final String label;
 		private final StatisticsEntry entry;
 		private final int countAll;
 

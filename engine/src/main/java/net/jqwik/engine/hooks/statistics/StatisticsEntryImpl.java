@@ -8,17 +8,17 @@ import net.jqwik.engine.support.*;
 class StatisticsEntryImpl implements StatisticsEntry {
 	public static final StatisticsEntryImpl NULL = new StatisticsEntryImpl(null, null, 0, 0.0);
 
-	public static StatisticsEntryImpl nullFor(List<Object> key) {
-		return new StatisticsEntryImpl(key, JqwikStringSupport.displayString(key), 0 , 0.0);
+	public static StatisticsEntryImpl nullFor(List<Object> values) {
+		return new StatisticsEntryImpl(values, JqwikStringSupport.displayString(values), 0 , 0.0);
 	}
 
-	final List<Object> key;
+	private final List<Object> values;
 	private final String name;
 	private final int count;
 	private final double percentage;
 
-	StatisticsEntryImpl(List<Object> key, String name, int count, double percentage) {
-		this.key = key;
+	StatisticsEntryImpl(List<Object> values, String name, int count, double percentage) {
+		this.values = values;
 		this.name = name;
 		this.count = count;
 		this.percentage = percentage;
@@ -43,5 +43,10 @@ class StatisticsEntryImpl implements StatisticsEntry {
 	@Override
 	public double percentage() {
 		return percentage;
+	}
+
+	@Override
+	public List<Object> values() {
+		return values;
 	}
 }
