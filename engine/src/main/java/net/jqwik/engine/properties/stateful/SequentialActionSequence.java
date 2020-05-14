@@ -44,7 +44,7 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 			repeatedRun();
 		}
 		if (sequence.isEmpty()) {
-			throw new TestAbortedException("Sequences without actions are invalid");
+			throw new JqwikException("Sequences without actions are invalid");
 		}
 		runState = RunState.SUCCEEDED;
 		return currentModel;

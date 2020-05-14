@@ -1,17 +1,17 @@
 package examples.bugs;
 
-import java.math.*;
 import java.util.*;
-
-import org.assertj.core.api.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.engine.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * https://github.com/jlink/jqwik/issues/104
- * <p>
- * checkMyStack() should reveal the bug in line 26
  */
 public class JqwikActionsShrinkToNothing {
 
@@ -62,6 +62,8 @@ public class JqwikActionsShrinkToNothing {
 	}
 
 	@Property
+	@Report(Reporting.FALSIFIED)
+	@ExpectFailure(checkResult = ShrinkToOneActionEmptyStack.class)
 	void checkMyStack(
 		@ForAll("sequences") ActionSequence<MyStringStack> actions,
 		@ForAll("stacks") MyStringStack stack
@@ -69,7 +71,20 @@ public class JqwikActionsShrinkToNothing {
 		actions.run(stack);
 	}
 
-	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	private class ShrinkToOneActionEmptyStack implements Consumer<PropertyExecutionResult> {
+		@Override
+		public void accept(final PropertyExecutionResult propertyExecutionResult) {
+			List<Object> shrunkExample = propertyExecutionResult.falsifiedSample().get();
+			ActionSequence shrunkSequence = (ActionSequence) shrunkExample.get(0);
+			assertThat(shrunkSequence.runActions()).hasSize(1);
+			MyStringStack shrunkStack = (MyStringStack) shrunkExample.get(1);
+			assertThat(shrunkStack.size()).isEqualTo(0);
+		}
+	}
+
+	@Property
+	@Report(Reporting.FALSIFIED)
+	@ExpectFailure(checkResult = ShrinkToEmptyStackOneAction.class)
 	void checkMyStack_ReversedParameters(
 		@ForAll("stacks") MyStringStack stack,
 		@ForAll("sequences") ActionSequence<MyStringStack> actions
@@ -77,12 +92,15 @@ public class JqwikActionsShrinkToNothing {
 		actions.run(stack);
 	}
 
-	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
-	void checkMyStackInitialEmpty(
-		@ForAll("stacks") MyStringStack stack,
-		@ForAll("sequences") ActionSequence<MyStringStack> actions
-	) {
-		actions.run(new MyStringStack(Collections.emptyList()));
+	private class ShrinkToEmptyStackOneAction implements Consumer<PropertyExecutionResult> {
+		@Override
+		public void accept(final PropertyExecutionResult propertyExecutionResult) {
+			List<Object> shrunkExample = propertyExecutionResult.falsifiedSample().get();
+			MyStringStack shrunkStack = (MyStringStack) shrunkExample.get(0);
+			assertThat(shrunkStack.size()).isEqualTo(0);
+			ActionSequence shrunkSequence = (ActionSequence) shrunkExample.get(1);
+			assertThat(shrunkSequence.runActions()).hasSize(1);
+		}
 	}
 
 	@Provide
@@ -108,7 +126,7 @@ public class JqwikActionsShrinkToNothing {
 				final int beforeSize = stack.size();
 				stack.push(stringToPush);
 				// Bug should be found during post-condition check.
-				Assertions.assertThat(stack.size()).isEqualTo(beforeSize + 1);
+				assertThat(stack.size()).isEqualTo(beforeSize + 1);
 				return stack;
 			}
 
@@ -118,4 +136,5 @@ public class JqwikActionsShrinkToNothing {
 			}
 		});
 	}
+
 }

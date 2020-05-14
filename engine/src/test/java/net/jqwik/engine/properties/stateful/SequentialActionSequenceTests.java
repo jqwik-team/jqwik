@@ -32,7 +32,7 @@ class SequentialActionSequenceTests {
 	}
 
 	@Example
-	void runFailsAssumptionWhenAllActionsHaveFailingPreconditions(@ForAll Random random) {
+	void runFailsWhenAllActionsHaveFailingPreconditions(@ForAll Random random) {
 		Action<Integer> actionWithFailingPrecondition = new Action<Integer>() {
 			@Override
 			public boolean precondition(final Integer state) {
@@ -49,14 +49,14 @@ class SequentialActionSequenceTests {
 		Shrinkable<ActionSequence<Integer>> shrinkable = arbitrary.generator(1000).next(random);
 		ActionSequence<Integer> sequence = shrinkable.value();
 
-		assertThatThrownBy(() -> sequence.run(42)).isInstanceOf(TestAbortedException.class);
+		assertThatThrownBy(() -> sequence.run(42)).isInstanceOf(JqwikException.class);
 	}
 
 
 	@Example
 	void runThrowsExceptionIfNotAtLeastOneActionCanBeGenerated() {
 		SequentialActionSequence<Integer> sequence = createSequence(10);
-		assertThatThrownBy(() -> sequence.run(42)).isInstanceOf(TestAbortedException.class);
+		assertThatThrownBy(() -> sequence.run(42)).isInstanceOf(JqwikException.class);
 	}
 
 	@Example
