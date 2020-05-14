@@ -17,7 +17,6 @@ public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 		this.range = range;
 		this.shrinkingTarget = shrinkingTarget;
 		this.shrinkingCandidates = new BigIntegerShrinkingCandidates(this.shrinkingTarget);
-		checkTargetInRange(shrinkingTarget);
 		checkValueInRange(value);
 	}
 
@@ -39,13 +38,6 @@ public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 		BigInteger distance = value.subtract(target).abs();
 		if (distance.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) >= 0) return ShrinkingDistance.of(Long.MAX_VALUE);
 		return ShrinkingDistance.of(distance.longValueExact());
-	}
-
-	private void checkTargetInRange(BigInteger value) {
-		if (!range.includes(value)) {
-			String message = String.format("Shrinking target <%s> is outside allowed range %s", value, range);
-			throw new JqwikException(message);
-		}
 	}
 
 	private void checkValueInRange(BigInteger value) {

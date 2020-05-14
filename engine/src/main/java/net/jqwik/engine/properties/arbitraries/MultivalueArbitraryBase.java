@@ -59,7 +59,7 @@ abstract class MultivalueArbitraryBase<T, U> extends AbstractArbitraryBase imple
 		RandomGenerator<T> elementGenerator = elementGenerator(elementArbitrary, genSize);
 		EdgeCases<List<T>> edgeCases = edgeCases(ShrinkableList::new);
 		return RandomGenerators
-				   .list(elementGenerator, minSize, maxSize, cutoffSize(genSize)) //
+				   .list(elementGenerator, minSize, maxSize, cutoffSize(genSize))
 				   .withEdgeCases(genSize, edgeCases);
 	}
 

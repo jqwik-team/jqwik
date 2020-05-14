@@ -17,6 +17,9 @@ public class RandomIntegralGenerators {
 		RandomDistribution distribution
 	) {
 		Range<BigInteger> range = Range.of(min, max);
+
+		checkTargetInRange(range, shrinkingTarget);
+
 		if (range.isSingular()) {
 			return ignored -> Shrinkable.unshrinkable(range.min);
 		}
@@ -32,6 +35,13 @@ public class RandomIntegralGenerators {
 				shrinkingTarget
 			);
 		};
+	}
+
+	private static void checkTargetInRange(Range<BigInteger> range, BigInteger value) {
+		if (!range.includes(value)) {
+			String message = String.format("Shrinking target <%s> is outside allowed range %s", value, range);
+			throw new JqwikException(message);
+		}
 	}
 
 	public static BigInteger defaultShrinkingTarget(Range<BigInteger> range) {
