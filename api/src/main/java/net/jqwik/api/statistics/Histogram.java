@@ -19,8 +19,9 @@ public class Histogram implements StatisticsReportFormat {
 			entries.sort(comparator());
 			List<Bucket> buckets = collectBuckets(entries);
 			return generateHistogram(entries, buckets);
-		} catch (Exception exception) {
-			return Collections.singletonList("Cannot draw histogram: " + exception.toString());
+		} catch (Throwable throwable) {
+			LOG.log(Level.WARNING, "Cannot draw histogram", throwable);
+			return Collections.singletonList("Cannot draw histogram: " + throwable.toString());
 		}
 	}
 
