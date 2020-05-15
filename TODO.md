@@ -1,6 +1,8 @@
 - 1.3.0
 
-    - StatisticsReportFormat.histogram()
+    - Histogram()
+        - Statistics.collect(): Simple way to group collected values
+        - Document Histogram class
 
     - Documentation for lifecycle hooks API in user guide
     

@@ -1,9 +1,15 @@
 package net.jqwik.api.statistics;
 
 import java.util.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
+
 public class Histogram implements StatisticsReportFormat {
+
+	private static final Logger LOG = Logger.getLogger(Histogram.class.getName());
+
 	@Override
 	public List<String> formatReport(List<StatisticsEntry> entries) {
 		if (entries.isEmpty()) {
@@ -17,7 +23,6 @@ public class Histogram implements StatisticsReportFormat {
 			return Collections.singletonList("Cannot draw histogram: " + exception.toString());
 		}
 	}
-
 
 	/**
 	 * Determine how many block characters are maximally used to draw the distribution.
@@ -42,11 +47,16 @@ public class Histogram implements StatisticsReportFormat {
 	 *
 	 * @return A comparator instance.
 	 */
+	@SuppressWarnings("unchecked")
 	protected Comparator<? super StatisticsEntry> comparator() {
 		return (left, right) -> {
-			Comparable leftFirst = (Comparable) left.values().get(0);
-			Comparable rightFirst = (Comparable) right.values().get(0);
-			return leftFirst.compareTo(rightFirst);
+			try {
+				Comparable<Object> leftFirst = (Comparable<Object>) left.values().get(0);
+				Comparable<Object> rightFirst = (Comparable<Object>) right.values().get(0);
+				return leftFirst.compareTo(rightFirst);
+			} catch (ClassCastException castException) {
+				throw new JqwikException("Collected values must be of Comparable type");
+			}
 		};
 	}
 
@@ -106,10 +116,14 @@ public class Histogram implements StatisticsReportFormat {
 	}
 
 	private String bars(int num, double scale) {
-		StringBuilder builder = new StringBuilder();
 		int weight = (int) (num / scale);
-		for (int j = 0; j < weight; j++) {
-			builder.append('■');
+		return multiply('■', weight);
+	}
+
+	private String multiply(final char c, final int times) {
+		StringBuilder builder = new StringBuilder();
+		for (int j = 0; j < times; j++) {
+			builder.append(c);
 		}
 		return builder.toString();
 	}
@@ -119,12 +133,13 @@ public class Histogram implements StatisticsReportFormat {
 	}
 
 	private String ruler(String format) {
+		String barRuler = multiply('-', maxDrawRange());
 		return String.format(
 			format,
 			"",
 			"",
 			"",
-			"--------------------------------------------------------------------------------"
+			barRuler
 		).replace(" ", "-");
 	}
 
