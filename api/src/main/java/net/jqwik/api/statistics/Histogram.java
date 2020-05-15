@@ -143,7 +143,7 @@ public class Histogram implements StatisticsReportFormat {
 		).replace(" ", "-");
 	}
 
-	static public class Bucket {
+	private static class Bucket {
 		private final String label;
 		private final int count;
 
