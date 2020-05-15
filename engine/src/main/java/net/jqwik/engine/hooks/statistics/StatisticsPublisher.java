@@ -51,10 +51,13 @@ public class StatisticsPublisher {
 		List<String> reportLines = statisticsReportFormat.formatReport(entries);
 		StringBuilder report = new StringBuilder();
 		for (String reportLine : reportLines) {
-			report.append(String.format("%n    "));
-			report.append(reportLine);
+			report.append(formatReportLine(reportLine));
 		}
 		return report.toString();
+	}
+
+	private String formatReportLine(final String line) {
+		return String.format("%n    %s", line);
 	}
 
 	private String createReportEntryKey(String propertyName) {

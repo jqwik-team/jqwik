@@ -9,7 +9,7 @@ public class StandardStatisticsReportFormat implements StatisticsReportFormat {
 
 	public List<String> formatReport(List<StatisticsEntry> entries) {
 		if (entries.isEmpty()) {
-			return Collections.singletonList("no data collected");
+			throw new IllegalArgumentException("Entries must not be empty");
 		}
 
 		int maxKeyLength = entries.stream().mapToInt(entry -> entry.name().length()).max().orElse(0);

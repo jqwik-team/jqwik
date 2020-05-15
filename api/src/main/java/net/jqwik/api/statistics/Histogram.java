@@ -3,23 +3,76 @@ package net.jqwik.api.statistics;
 import java.util.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
-
 public class Histogram implements StatisticsReportFormat {
 	@Override
-	public List<String> formatReport(final List<StatisticsEntry> entries) {
-		Tuple3<List<Bucket>, Integer, Integer> bucketsLabelWidthDecimals = calculateBuckets(entries);
+	public List<String> formatReport(List<StatisticsEntry> entries) {
+		if (entries.isEmpty()) {
+			throw new IllegalArgumentException("Entries must not be empty");
+		}
+		try {
+			entries.sort(comparator());
+			List<Bucket> buckets = collectBuckets(entries);
+			return generateHistogram(entries, buckets);
+		} catch (Exception exception) {
+			return Collections.singletonList("Cannot draw histogram: " + exception.toString());
+		}
+	}
 
-		List<Bucket> buckets = bucketsLabelWidthDecimals.get1();
-		int labelWidth = Math.max(5, bucketsLabelWidthDecimals.get2());
-		int decimals = Math.max(5, bucketsLabelWidthDecimals.get3());
-		int maxCount = buckets.stream().mapToInt(Bucket::count).max().orElse(0);
+
+	/**
+	 * Determine how many block characters are maximally used to draw the distribution.
+	 * The more you have the further the histogram extends to the right.
+	 *
+	 * <p>
+	 * Can be overridden.
+	 * </p>
+	 *
+	 * @return A positive number. Default is 80.
+	 */
+	protected int maxDrawRange() {
+		return 80;
+	}
+
+	/**
+	 * Determine how entries are being sorted from top to bottom.
+	 *
+	 * <p>
+	 * Can be overridden.
+	 * </p>
+	 *
+	 * @return A comparator instance.
+	 */
+	protected Comparator<? super StatisticsEntry> comparator() {
+		return (left, right) -> {
+			Comparable leftFirst = (Comparable) left.values().get(0);
+			Comparable rightFirst = (Comparable) right.values().get(0);
+			return leftFirst.compareTo(rightFirst);
+		};
+	}
+
+	/**
+	 * Determine how entries are being labelled in the histogram.
+	 *
+	 * <p>
+	 * Can be overridden.
+	 * </p>
+	 *
+	 * @param entry
+	 * @return A non-null string
+	 */
+	protected String label(final StatisticsEntry entry) {
+		return entry.name();
+	}
+
+	private List<String> generateHistogram(final List<StatisticsEntry> entries, final List<Bucket> buckets) {
+		int labelWidth = calculateLabelWidth(entries);
+		int maxCount = buckets.stream().mapToInt(bucket1 -> bucket1.count).max().orElse(0);
+		int countWidth = calculateCountWidth(maxCount);
+		double scale = Math.max(1.0, maxCount / (double) maxDrawRange());
 
 		List<String> lines = new ArrayList<>();
-		String headerFormat = "%1$4s | %2$" + labelWidth + "s | %3$" + decimals + "s | %4$s";
-		String bucketFormat = "%1$4s | %2$" + labelWidth + "s | %3$" + decimals + "d | %4$s";
-		double scale = Math.max(1.0, maxCount / 80.0);
+		String headerFormat = "%1$4s | %2$" + labelWidth + "s | %3$" + countWidth + "s | %4$s";
+		String bucketFormat = "%1$4s | %2$" + labelWidth + "s | %3$" + countWidth + "d | %4$s";
 
 		lines.add(header(headerFormat));
 		lines.add(ruler(headerFormat));
@@ -30,9 +83,26 @@ public class Histogram implements StatisticsReportFormat {
 		return lines;
 	}
 
+	private int calculateCountWidth(final int maxCount) {
+		int decimals = (int) Math.max(1, Math.floor(Math.log10(maxCount)) + 1);
+		return Math.max(5, decimals);
+	}
+
+	private int calculateLabelWidth(final List<StatisticsEntry> entries) {
+		int maxLabelLength = entries.stream().mapToInt(entry -> label(entry).length()).max().orElse(0);
+		return Math.max(5, maxLabelLength);
+	}
+
+	private List<Bucket> collectBuckets(final List<StatisticsEntry> entries) {
+		return entries
+				   .stream()
+				   .map(entry -> new Bucket(label(entry), entry.count()))
+				   .collect(Collectors.toList());
+	}
+
 	private String bucketLine(String format, int index, final double scale, Bucket bucket) {
-		String bars = bars(bucket.count(), scale);
-		return String.format(format, index, bucket.label(), bucket.count(), bars);
+		String bars = bars(bucket.count, scale);
+		return String.format(format, index, bucket.label, bucket.count, bars);
 	}
 
 	private String bars(int num, double scale) {
@@ -58,47 +128,16 @@ public class Histogram implements StatisticsReportFormat {
 		).replace(" ", "-");
 	}
 
-	private Tuple3<List<Bucket>, Integer, Integer> calculateBuckets(final List<StatisticsEntry> entries) {
-		OptionalInt optionalMaxNameLength = entries.stream().mapToInt(entry -> entry.name().length()).max();
-		int maxNameLength = optionalMaxNameLength.orElse(0);
-		Comparator<? super StatisticsEntry> comparator = (left, right) -> {
-			String leftName = padLeft(left.name(), maxNameLength);
-			String rightName = padLeft(right.name(), maxNameLength);
-			return leftName.compareTo(rightName);
-		};
-		entries.sort(comparator);
-
-		int maxCount = entries.stream().mapToInt(StatisticsEntry::count).max().orElse(0);
-		int decimals = (int) Math.max(1, Math.floor(Math.log10(maxCount)) + 1);
-
-		List<Bucket> buckets = entries
-								   .stream()
-								   .map(entry -> new Bucket(padLeft(entry.name(), maxNameLength), entry.count()))
-								   .collect(Collectors.toList());
-
-		return Tuple.of(buckets, maxNameLength, decimals);
-	}
-
-	private String padLeft(String name, int length) {
-		return String.format("%1$" + length + "s", name);
-	}
-
 	static public class Bucket {
 		private final String label;
 		private final int count;
 
 		public Bucket(String label, int count) {
+			if (label == null) {
+				throw new IllegalArgumentException("label must not be null");
+			}
 			this.label = label;
 			this.count = count;
 		}
-
-		public String label() {
-			return label;
-		}
-
-		public int count() {
-			return count;
-		}
-
 	}
 }

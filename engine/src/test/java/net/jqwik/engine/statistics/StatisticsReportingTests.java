@@ -38,6 +38,8 @@ class StatisticsReportingTests {
 
 		@Example
 		void each_published_report_line_is_indented_by_4_spaces() {
+			collector.collect(1);
+			collector.collect(2);
 			StatisticsReportFormat format = entries -> Arrays.asList("line1", "line2");
 			StatisticsPublisher reportGenerator = new StatisticsPublisher(collector, format);
 			reportGenerator.publish(this, "myProperty");
@@ -58,16 +60,6 @@ class StatisticsReportingTests {
 	class StandardFormat {
 
 		private final StatisticsReportFormat standardFormat = new StandardStatisticsReportFormat();
-
-		@Example
-		void report_no_data_collected() {
-			List<StatisticsEntry> entries = getStatisticsEntries();
-			List<String> stats = standardFormat.formatReport(entries);
-
-			assertThat(stats).containsExactly(
-				"no data collected"
-			);
-		}
 
 		@Example
 		void report_collected_percentages_in_decreasing_order() {
