@@ -1,5 +1,6 @@
 package net.jqwik.api.statistics;
 
+import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
 
@@ -106,6 +107,45 @@ class HistogramTests {
 	}
 
 	@Example
+	void clusterTwoValuesIntoOne() {
+		Histogram histogram = new Histogram() {
+			@Override
+			protected List<Bucket> cluster(final List<StatisticsEntry> entries) {
+				List<Bucket> buckets = new ArrayList<>();
+				buckets.add(new Bucket("[1..2]"));
+				buckets.add(new Bucket("[3..4]"));
+
+				for (int i = 0; i < entries.size(); i++) {
+					StatisticsEntry entry = entries.get(i);
+					if ((int) entry.values().get(0) < 3) {
+						buckets.get(0).addCount(entry.count());
+					} else {
+						buckets.get(1).addCount(entry.count());
+					}
+				}
+
+				return buckets;
+			}
+		};
+
+		List<StatisticsEntry> entries = asList(
+			createEntry(asList(1), 500),
+			createEntry(asList(2), 100),
+			createEntry(asList(3), 200),
+			createEntry(asList(4), 10)
+		);
+
+		List<String> report = histogram.formatReport(entries);
+
+		Assertions.assertThat(report).containsExactly(
+			"   # | label | count | ",
+			"-----|-------|-------|---------------------------------------------------------------------------------",
+			"   0 | [1..2] |   600 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
+			"   1 | [3..4] |   210 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
+		);
+	}
+
+	@Example
 	void multiValues() {
 		Histogram histogram = new Histogram();
 
@@ -131,27 +171,36 @@ class HistogramTests {
 	}
 
 	@Example
-	void complainsOnEmptyValueList() {
+	void uncomparableValuesAreComparedByTheirNameString() {
 		Histogram histogram = new Histogram();
 
+		Object uncomparable = new Object() {
+			@Override
+			public String toString() {
+				return "0 uncomparable";
+			}
+		};
 		List<StatisticsEntry> entries = asList(
-			createEntry(asList(), 1),
+			createEntry(asList(uncomparable), 1),
 			createEntry(asList(1), 5)
 		);
 
 		List<String> report = histogram.formatReport(entries);
 
-		Assertions.assertThat(report.get(0)).startsWith(
-			"Cannot draw histogram: "
+		Assertions.assertThat(report).containsExactly(
+			"   # |          label | count | ",
+			"-----|----------------|-------|---------------------------------------------------------------------------------",
+			"   0 | 0 uncomparable |     1 | ■",
+			"   1 |              1 |     5 | ■■■■■"
 		);
 	}
 
 	@Example
-	void complainsOnUncomparableValues() {
+	void complainsOnEmptyValueList() {
 		Histogram histogram = new Histogram();
 
 		List<StatisticsEntry> entries = asList(
-			createEntry(asList(new Object()), 1),
+			createEntry(asList(), 1),
 			createEntry(asList(1), 5)
 		);
 

@@ -4,8 +4,6 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
-import net.jqwik.api.*;
-
 public class Histogram implements StatisticsReportFormat {
 
 	private static final Logger LOG = Logger.getLogger(Histogram.class.getName());
@@ -17,7 +15,7 @@ public class Histogram implements StatisticsReportFormat {
 		}
 		try {
 			entries.sort(comparator());
-			List<Bucket> buckets = collectBuckets(entries);
+			List<Bucket> buckets = cluster(entries);
 			return generateHistogram(entries, buckets);
 		} catch (Throwable throwable) {
 			LOG.log(Level.WARNING, "Cannot draw histogram", throwable);
@@ -56,7 +54,7 @@ public class Histogram implements StatisticsReportFormat {
 				Comparable<Object> rightFirst = (Comparable<Object>) right.values().get(0);
 				return leftFirst.compareTo(rightFirst);
 			} catch (ClassCastException castException) {
-				throw new JqwikException("Collected values must be of Comparable type");
+				return left.name().compareTo(right.name());
 			}
 		};
 	}
@@ -73,6 +71,23 @@ public class Histogram implements StatisticsReportFormat {
 	 */
 	protected String label(final StatisticsEntry entry) {
 		return entry.name();
+	}
+
+	/**
+	 * Cluster entries into {@linkplain Bucket buckets}.
+	 *
+	 * <p>
+	 *     Override if entries should be aggregated into buckets to display in histogram.
+	 * </p>
+	 *
+	 * @param entries An already sorted list of entries
+	 * @return A sorted list of buckets
+	 */
+	protected List<Bucket> cluster(final List<StatisticsEntry> entries) {
+		return entries
+				   .stream()
+				   .map(entry -> new Bucket(label(entry), entry.count()))
+				   .collect(Collectors.toList());
 	}
 
 	private List<String> generateHistogram(final List<StatisticsEntry> entries, final List<Bucket> buckets) {
@@ -102,13 +117,6 @@ public class Histogram implements StatisticsReportFormat {
 	private int calculateLabelWidth(final List<StatisticsEntry> entries) {
 		int maxLabelLength = entries.stream().mapToInt(entry -> label(entry).length()).max().orElse(0);
 		return Math.max(5, maxLabelLength);
-	}
-
-	private List<Bucket> collectBuckets(final List<StatisticsEntry> entries) {
-		return entries
-				   .stream()
-				   .map(entry -> new Bucket(label(entry), entry.count()))
-				   .collect(Collectors.toList());
 	}
 
 	private String bucketLine(String format, int index, final double scale, Bucket bucket) {
@@ -144,16 +152,24 @@ public class Histogram implements StatisticsReportFormat {
 		).replace(" ", "-");
 	}
 
-	private static class Bucket {
+	public static class Bucket {
 		private final String label;
-		private final int count;
+		private int count = 0;
 
-		public Bucket(String label, int count) {
+		public Bucket(String label) {
+			this(label, 0);
+		}
+
+		public Bucket(String label, final int initialCount) {
 			if (label == null) {
 				throw new IllegalArgumentException("label must not be null");
 			}
 			this.label = label;
-			this.count = count;
+			this.count = initialCount;
+		}
+
+		void addCount(int count) {
+			this.count += count;
 		}
 	}
 }
