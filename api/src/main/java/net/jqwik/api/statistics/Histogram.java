@@ -4,6 +4,14 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
+import org.apiguardian.api.*;
+
+import static org.apiguardian.api.API.Status.*;
+
+/**
+ * A statistics report format to display collected statistics entries as a histogram
+ */
+@API(status = EXPERIMENTAL, since = "1.3.0")
 public class Histogram implements StatisticsReportFormat {
 
 	private static final Logger LOG = Logger.getLogger(Histogram.class.getName());
@@ -91,7 +99,7 @@ public class Histogram implements StatisticsReportFormat {
 	}
 
 	private List<String> generateHistogram(final List<StatisticsEntry> entries, final List<Bucket> buckets) {
-		int labelWidth = calculateLabelWidth(entries);
+		int labelWidth = calculateLabelWidth(buckets);
 		int maxCount = buckets.stream().mapToInt(bucket1 -> bucket1.count).max().orElse(0);
 		int countWidth = calculateCountWidth(maxCount);
 		double scale = Math.max(1.0, maxCount / (double) maxDrawRange());
@@ -114,8 +122,8 @@ public class Histogram implements StatisticsReportFormat {
 		return Math.max(5, decimals);
 	}
 
-	private int calculateLabelWidth(final List<StatisticsEntry> entries) {
-		int maxLabelLength = entries.stream().mapToInt(entry -> label(entry).length()).max().orElse(0);
+	private int calculateLabelWidth(final List<Bucket> buckets) {
+		int maxLabelLength = buckets.stream().mapToInt(bucket -> bucket.label.length()).max().orElse(0);
 		return Math.max(5, maxLabelLength);
 	}
 

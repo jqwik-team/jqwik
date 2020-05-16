@@ -1,6 +1,7 @@
 package net.jqwik.docs;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.statistics.*;
 
 class HistogramExamples {
@@ -11,12 +12,6 @@ class HistogramExamples {
 		Statistics.collect(aNumber);
 	}
 
-	@Property(generation = GenerationMode.RANDOMIZED)
-	@StatisticsReport(format = Histogram.class)
-	void groupedIntegers(@ForAll("gaussians") int aNumber) {
-		// Statistics.collect(bucket);
-	}
-
 	@Provide
 	Arbitrary<Integer> gaussians() {
 		return Arbitraries
@@ -24,6 +19,12 @@ class HistogramExamples {
 				   .between(0, 20)
 				   .shrinkTowards(10)
 				   .withDistribution(RandomDistribution.gaussian());
+	}
+
+	@Property(generation = GenerationMode.RANDOMIZED)
+	@StatisticsReport(format = NumberRangeHistogram.class)
+	void integersInRanges(@ForAll @IntRange(min = -1000, max = 1000) int aNumber) {
+		Statistics.collect(aNumber);
 	}
 
 }

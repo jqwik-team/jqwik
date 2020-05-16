@@ -138,8 +138,8 @@ class HistogramTests {
 		List<String> report = histogram.formatReport(entries);
 
 		Assertions.assertThat(report).containsExactly(
-			"   # | label | count | ",
-			"-----|-------|-------|---------------------------------------------------------------------------------",
+			"   # |  label | count | ",
+			"-----|--------|-------|---------------------------------------------------------------------------------",
 			"   0 | [1..2] |   600 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■",
 			"   1 | [3..4] |   210 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■"
 		);
@@ -209,6 +209,96 @@ class HistogramTests {
 		Assertions.assertThat(report.get(0)).startsWith(
 			"Cannot draw histogram: "
 		);
+	}
+
+	@Group
+	class RangeHistograms {
+
+		@Example
+		void integerRanges() {
+			Histogram histogram = new NumberRangeHistogram() {
+				@Override
+				protected int buckets() {
+					return 5;
+				}
+
+				@Override
+				protected int maxDrawRange() {
+					return 10;
+				}
+			};
+
+			List<StatisticsEntry> entries = asList(
+				createEntry(asList(1), 10),
+				createEntry(asList(2), 10),
+				createEntry(asList(3), 10),
+				createEntry(asList(4), 10),
+				createEntry(asList(5), 10),
+				createEntry(asList(6), 10),
+				createEntry(asList(7), 10),
+				createEntry(asList(8), 10),
+				createEntry(asList(9), 10),
+				createEntry(asList(10), 10)
+			);
+
+			List<String> report = histogram.formatReport(entries);
+
+			Assertions.assertThat(report).containsExactly(
+				"   # |   label | count | ",
+				"-----|---------|-------|-----------",
+				"   0 |  [1..3[ |    20 | ■■■■■■■■■■",
+				"   1 |  [3..5[ |    20 | ■■■■■■■■■■",
+				"   2 |  [5..7[ |    20 | ■■■■■■■■■■",
+				"   3 |  [7..9[ |    20 | ■■■■■■■■■■",
+				"   4 | [9..10] |    20 | ■■■■■■■■■■"
+			);
+		}
+
+		@Example
+		void doubleRanges() {
+			Histogram histogram = new NumberRangeHistogram() {
+				@Override
+				protected int buckets() {
+					return 5;
+				}
+
+				@Override
+				protected int maxDrawRange() {
+					return 10;
+				}
+			};
+
+			List<StatisticsEntry> entries = asList(
+				createEntry(asList(1.0), 10),
+				createEntry(asList(1.5), 10),
+				createEntry(asList(2.0), 10),
+				createEntry(asList(3.0), 10),
+				createEntry(asList(3.5), 10),
+				createEntry(asList(4.0), 10),
+				createEntry(asList(5.0), 10),
+				createEntry(asList(5.5), 10),
+				createEntry(asList(6.0), 10),
+				createEntry(asList(7.0), 10),
+				createEntry(asList(7.5), 10),
+				createEntry(asList(8.0), 10),
+				createEntry(asList(9.0), 10),
+				createEntry(asList(9.5), 10),
+				createEntry(asList(10.0), 10)
+			);
+
+			List<String> report = histogram.formatReport(entries);
+
+			Assertions.assertThat(report).containsExactly(
+				"   # |   label | count | ",
+				"-----|---------|-------|-----------",
+				"   0 |  [1..3[ |    30 | ■■■■■■■■■■",
+				"   1 |  [3..5[ |    30 | ■■■■■■■■■■",
+				"   2 |  [5..7[ |    30 | ■■■■■■■■■■",
+				"   3 |  [7..9[ |    30 | ■■■■■■■■■■",
+				"   4 | [9..10] |    30 | ■■■■■■■■■■"
+			);
+		}
+
 	}
 
 	private String displayKey(List<Object> key) {

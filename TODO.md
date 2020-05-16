@@ -1,7 +1,9 @@
 - 1.3.0
 
     - Histogram()
-        - Statistics.collect(): Simple way to group collected values
+        - @StatisticsReportFormat
+            - label=<statistics label> to specify for which statistics to use
+            - Make it repeatable
         - Document Histogram class
 
     - Documentation for lifecycle hooks API in user guide
