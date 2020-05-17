@@ -1,9 +1,15 @@
 - 1.3.0
 
     - Histogram()
-        - Document Histogram class
+        - Document Histogram/NumericRangeHistogram classes
 
     - Documentation for lifecycle hooks API in user guide
+        - Section Advanced Topics
+            - Implement your own...
+            - Extend jqwik through lifecycle hooks
+    
+    - Documentation API evolution
+        see https://junit.org/junit5/docs/current/user-guide/#api-evolution
     
     - Edge Case number reporting (https://github.com/jlink/jqwik/issues/101)
     
@@ -12,7 +18,7 @@
       - Extract description before running the property?
         e.g. to be able to display a generated Stream
         
-- 1.3.1
+- 1.3.x
 
     - Does exhaustive generation for mutable objects work or will muted objects be injected
       in other parameter sets?
