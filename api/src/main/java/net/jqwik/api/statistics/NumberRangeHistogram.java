@@ -102,8 +102,8 @@ public class NumberRangeHistogram extends Histogram {
 		BigDecimal min = null;
 		BigDecimal max = null;
 
-		try {
-			for (StatisticsEntry entry : entries) {
+		for (StatisticsEntry entry : entries) {
+			try {
 				BigDecimal value = value(entry);
 				if (min == null || value.compareTo(min) < 0) {
 					min = value;
@@ -111,10 +111,10 @@ public class NumberRangeHistogram extends Histogram {
 				if (max == null || value.compareTo(max) > 0) {
 					max = value;
 				}
+			} catch (NumberFormatException numberFormatException) {
+				String message = String.format("NumberRangeHistogram instances only accept numeric values. [%s] is not numeric.", entry.values().get(0));
+				throw new JqwikException(message);
 			}
-		} catch (NumberFormatException numberFormatException) {
-			String message = "In number range histograms each entry must have exactly one number value";
-			throw new JqwikException(message);
 		}
 
 		BigInteger maxBigInteger = max.setScale(0, BigDecimal.ROUND_UP).toBigInteger();
@@ -122,7 +122,12 @@ public class NumberRangeHistogram extends Histogram {
 	}
 
 	private BigDecimal value(final StatisticsEntry entry) {
-		return new BigDecimal(entry.name());
+		if (entry.values().size() != 1) {
+			String message = String.format("NumberRangeHistogram instances only single value. Wrong value: %s.", entry.values());
+			throw new JqwikException(message);
+
+		}
+		return new BigDecimal(entry.values().get(0).toString());
 	}
 
 }

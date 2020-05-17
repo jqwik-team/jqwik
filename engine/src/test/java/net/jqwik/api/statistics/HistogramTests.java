@@ -1,5 +1,6 @@
 package net.jqwik.api.statistics;
 
+import java.math.*;
 import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
@@ -255,6 +256,46 @@ class HistogramTests {
 		}
 
 		@Example
+		void bigIntegerRanges() {
+			Histogram histogram = new NumberRangeHistogram() {
+				@Override
+				protected int buckets() {
+					return 5;
+				}
+
+				@Override
+				protected int maxDrawRange() {
+					return 10;
+				}
+			};
+
+			List<StatisticsEntry> entries = asList(
+				createEntry(asList(new BigInteger("1000000000000")), 10),
+				createEntry(asList(new BigInteger("2000000000000")), 20),
+				createEntry(asList(new BigInteger("3000000000000")), 30),
+				createEntry(asList(new BigInteger("4000000000000")), 40),
+				createEntry(asList(new BigInteger("5000000000000")), 50),
+				createEntry(asList(new BigInteger("6000000000000")), 60),
+				createEntry(asList(new BigInteger("7000000000000")), 70),
+				createEntry(asList(new BigInteger("8000000000000")), 80),
+				createEntry(asList(new BigInteger("9000000000000")), 90),
+				createEntry(asList(new BigInteger("10000000000000")), 100)
+			);
+
+			List<String> report = histogram.formatReport(entries);
+
+			Assertions.assertThat(report).containsExactly(
+				"   # |                           label | count | ",
+				"-----|---------------------------------|-------|-----------",
+				"   0 |  [1000000000000..2800000000000[ |    30 | ■",
+				"   1 |  [2800000000000..4600000000000[ |    70 | ■■■",
+				"   2 |  [4600000000000..6400000000000[ |   110 | ■■■■■",
+				"   3 |  [6400000000000..8200000000000[ |   150 | ■■■■■■■",
+				"   4 | [8200000000000..10000000000000] |   190 | ■■■■■■■■■■"
+			);
+		}
+
+		@Example
 		void doubleRanges() {
 			Histogram histogram = new NumberRangeHistogram() {
 				@Override
@@ -297,6 +338,50 @@ class HistogramTests {
 				"   3 |  [7..9[ |    30 | ■■■■■■■■■■",
 				"   4 | [9..10] |    30 | ■■■■■■■■■■"
 			);
+		}
+
+		@Example
+		@StatisticsReport(format = NumberRangeHistogram.class)
+		void nonNumericValues() {
+			Arbitrary<String> strings = Arbitraries.strings().ofMinLength(1).ofMaxLength(5);
+			List<StatisticsEntry> entries =
+				strings
+					.sampleStream()
+					.limit(100)
+					.map(v -> new StatisticsEntryImpl(asList(v), v, 1, 0.0))
+					.collect(Collectors.toList());
+
+			Histogram histogram = new NumberRangeHistogram();
+
+			List<String> report = histogram.formatReport(entries);
+			Assertions.assertThat(report.get(0)).startsWith(
+				"Cannot draw histogram: net.jqwik.api.JqwikException: NumberRangeHistogram instances only accept numeric values."
+			);
+		}
+
+		// Most histograms should be generated in 20ms or less
+		// @Property(tries = 100)
+		@StatisticsReport(format = NumberRangeHistogram.class)
+		void performance() {
+			Arbitrary<BigDecimal> bigDecimals =
+				Arbitraries.bigDecimals()
+						   .between(new BigDecimal("-1000000000000"), new BigDecimal("-1000000000000"));
+
+			List<StatisticsEntry> entries =
+				bigDecimals
+					.sampleStream()
+					.limit(100000)
+					.map(v -> new StatisticsEntryImpl(asList(v), v.toString(), 1, 0.0))
+					.collect(Collectors.toList());
+
+			Histogram histogram = new NumberRangeHistogram();
+
+			long before = System.currentTimeMillis();
+			histogram.formatReport(entries);
+			long after = System.currentTimeMillis();
+
+			Statistics.collect(after - before);
+
 		}
 
 	}
