@@ -62,7 +62,7 @@ public class Histogram implements StatisticsReportFormat {
 				Comparable<Object> rightFirst = (Comparable<Object>) right.values().get(0);
 				return leftFirst.compareTo(rightFirst);
 			} catch (ClassCastException castException) {
-				return left.name().compareTo(right.name());
+				return -Integer.compare(left.count(), right.count());
 			}
 		};
 	}

@@ -5,11 +5,12 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.statistics.Statistics;
+import net.jqwik.api.statistics.*;
 
 class StatisticsExamples {
 
-	@Property(tries = 10, generation = GenerationMode.RANDOMIZED)
+	@Property(generation = GenerationMode.RANDOMIZED)
+	// @StatisticsReport(format = Histogram.class)
 	void simpleStats(@ForAll RoundingMode mode) {
 		Statistics.collect(mode);
 	}

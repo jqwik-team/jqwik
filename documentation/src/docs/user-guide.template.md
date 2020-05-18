@@ -2462,8 +2462,8 @@ even if it never ends...
 ### Change the Shrinking Target
 
 By default shrinking of numbers will move towards zero (0). 
-If zero is outside the bounds of generation the closest number to zero 
-- either the min or max value - is used as a target for shrinking.
+If zero is outside the bounds of generation the closest number to zero - 
+either the min or max value - is used as a target for shrinking.
 There are cases, however, when you'd like _jqwik_ to choose a different 
 shrinking target, usually when the default value of a number is not 0. 
 
@@ -2484,8 +2484,7 @@ Arbitrary<List<Signal>> signals() {
 }
 ```
 
-Currently shrinking targets are supported for integral numbers and decimal numbers, i.e.,
-bytes, shorts, integers, longs, floats, doubles, BigIntegers and BigDecimals.
+Currently shrinking targets are supported for all [number types](#numeric-arbitrary-types).
 
 
 ## Collecting and Reporting Statistics
