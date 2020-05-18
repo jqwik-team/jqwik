@@ -1,8 +1,5 @@
 - 1.3.0
 
-    - Histogram()
-        - Document Histogram/NumericRangeHistogram classes
-
     - Documentation for lifecycle hooks API in user guide
         - Section Advanced Topics
             - Implement your own...

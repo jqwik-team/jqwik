@@ -28,6 +28,9 @@ and
 
 #### New and Enhanced Features
 
+- Added new statistics report formats: 
+  [Histogram and NumberRangeHistogram](/docs/snapshot/user-guide.html#histograms)
+
 - Improved shrinking of dependent parameters.
 
 - Added `Arbitraries.ofSuppliers(..)` to choose among a set of mutable objects.
