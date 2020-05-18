@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -99,7 +99,9 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">StatisticsEntry</span></pre>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.3")
+public interface <span class="typeNameLabel">StatisticsEntry</span></pre>
 <div class="block">Describes an entry for a given statistics selector.
  This is used when plugging in your own statistics report formats.</div>
 <dl>
@@ -142,6 +144,12 @@ var activeTableTab = "activeTableTab";
 <div class="block">The percentage of times a certain value (set) has been collected</div>
 </td>
 </tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.Object&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/statistics/StatisticsEntry.html#values--">values</a></span>()</code>
+<div class="block">The values collected during <a href="../../../../net/jqwik/api/statistics/Statistics.html#collect-java.lang.Object...-">Statistics.collect(Object...)</a></div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -180,11 +188,23 @@ var activeTableTab = "activeTableTab";
 <a name="percentage--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>percentage</h4>
 <pre>double&nbsp;percentage()</pre>
 <div class="block">The percentage of times a certain value (set) has been collected</div>
+</li>
+</ul>
+<a name="values--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>values</h4>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.3.0")
+java.util.List&lt;java.lang.Object&gt;&nbsp;values()</pre>
+<div class="block">The values collected during <a href="../../../../net/jqwik/api/statistics/Statistics.html#collect-java.lang.Object...-">Statistics.collect(Object...)</a></div>
 </li>
 </ul>
 </li>

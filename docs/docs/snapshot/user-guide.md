@@ -99,7 +99,8 @@ title: jqwik User Guide - 1.3.0-SNAPSHOT
   - [Labeled Statistics](#labeled-statistics)
   - [Statistics Report Formatting](#statistics-report-formatting)
     - [Switch Statistics Reporting Off](#switch-statistics-reporting-off)
-    - [Plug in Your Own Statistics Report Format](#plug-in-your-own-statistics-report-format)
+    - [Histograms](#histograms)
+    - [Make Your Own Statistics Report Format](#make-your-own-statistics-report-format)
   - [Checking Coverage of Collected Statistics](#checking-coverage-of-collected-statistics)
     - [Check Percentages and Counts](#check-percentages-and-counts)
     - [Check Ad-hoc Query Coverage](#check-ad-hoc-query-coverage)
@@ -1293,6 +1294,7 @@ with its mean at 10 and a standard deviation of about 3.3:
 
 ```java
 @Property(generation = GenerationMode.RANDOMIZED)
+@StatisticsReport(format = Histogram.class)
 void gaussianDistributedIntegers(@ForAll("gaussians") int aNumber) {
     Statistics.collect(aNumber);
 }
@@ -1310,27 +1312,29 @@ Arbitrary<Integer> gaussians() {
 Look at the statistics to see if it fits your expectation:
 ```
 [RandomDistributionExamples:gaussianDistributedIntegers] (1000) statistics = 
-    10 (262) : 26.20 %
-    9  (110) : 11.00 %
-    12 ( 93) :  9.30 %
-    8  ( 88) :  8.80 %
-    11 ( 80) :  8.00 %
-    13 ( 62) :  6.20 %
-    7  ( 57) :  5.70 %
-    14 ( 44) :  4.40 %
-    6  ( 39) :  3.90 %
-    5  ( 32) :  3.20 %
-    15 ( 27) :  2.70 %
-    16 ( 21) :  2.10 %
-    2  ( 16) :  1.60 %
-    4  ( 13) :  1.30 %
-    17 ( 13) :  1.30 %
-    0  ( 12) :  1.20 %
-    3  ( 11) :  1.10 %
-    20 (  9) :  0.90 %
-    1  (  5) :  0.50 %
-    18 (  5) :  0.50 %
-    19 (  1) :  0.10 %
+       # | label | count | 
+    -----|-------|-------|---------------------------------------------------------------------------------
+       0 |     0 |    15 | ■■■■■
+       1 |     1 |     8 | ■■
+       2 |     2 |    12 | ■■■■
+       3 |     3 |     9 | ■■■
+       4 |     4 |    14 | ■■■■
+       5 |     5 |    28 | ■■■■■■■■■
+       6 |     6 |    38 | ■■■■■■■■■■■■■
+       7 |     7 |    67 | ■■■■■■■■■■■■■■■■■■■■■■■
+       8 |     8 |    77 | ■■■■■■■■■■■■■■■■■■■■■■■■■■
+       9 |     9 |   116 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      10 |    10 |   231 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      11 |    11 |   101 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      12 |    12 |    91 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      13 |    13 |    60 | ■■■■■■■■■■■■■■■■■■■■
+      14 |    14 |    45 | ■■■■■■■■■■■■■■■
+      15 |    15 |    36 | ■■■■■■■■■■■■
+      16 |    16 |    19 | ■■■■■■
+      17 |    17 |    10 | ■■■
+      18 |    18 |     7 | ■■
+      19 |    19 |     1 | 
+      20 |    20 |    15 | ■■■■■
 ```
 
 You can notice that values `0` and `20` should have the lowest probability but they do not.
@@ -2755,7 +2759,97 @@ void queryStatistics(@ForAll int anInt) {
 }
 ```
 
-#### Plug in Your Own Statistics Report Format
+#### Histograms
+
+_jqwik_ comes with two report formats to display collected data as histograms:
+[`Histogram`](/docs/snapshot/javadoc/net/jqwik/api/statistics/Histogram.html)
+and [`NumberRangeHistogram`](/docs/snapshot/javadoc/net/jqwik/api/statistics/NumberRangeHistogram.html).
+
+`Histogram` displays the collected raw data as a histogram:
+
+```java
+@Property(generation = GenerationMode.RANDOMIZED)
+@StatisticsReport(format = Histogram.class)
+void integers(@ForAll("gaussians") int aNumber) {
+    Statistics.collect(aNumber);
+}
+
+@Provide
+Arbitrary<Integer> gaussians() {
+    return Arbitraries
+               .integers()
+               .between(0, 20)
+               .shrinkTowards(10)
+               .withDistribution(RandomDistribution.gaussian());
+}
+```
+
+```
+[HistogramExamples:integers] (1000) statistics = 
+       # | label | count | 
+    -----|-------|-------|---------------------------------------------------------------------------------
+       0 |     0 |    13 | ■■■■
+       1 |     1 |    13 | ■■■■
+       2 |     2 |    15 | ■■■■■
+       3 |     3 |     6 | ■■
+       4 |     4 |    10 | ■■■
+       5 |     5 |    22 | ■■■■■■■
+       6 |     6 |    49 | ■■■■■■■■■■■■■■■■
+       7 |     7 |    60 | ■■■■■■■■■■■■■■■■■■■■
+       8 |     8 |   102 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+       9 |     9 |   100 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      10 |    10 |   233 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      11 |    11 |   114 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      12 |    12 |    74 | ■■■■■■■■■■■■■■■■■■■■■■■■■
+      13 |    13 |    64 | ■■■■■■■■■■■■■■■■■■■■■
+      14 |    14 |    43 | ■■■■■■■■■■■■■■
+      15 |    15 |    32 | ■■■■■■■■■■
+      16 |    16 |    16 | ■■■■■
+      17 |    17 |     8 | ■■
+      18 |    18 |     7 | ■■
+      19 |    20 |    19 | ■■■■■■
+```
+
+`NumberRangeHistogram` clusters the collected raw data into ranges:
+
+```java
+@Property(generation = GenerationMode.RANDOMIZED)
+@StatisticsReport(format = NumberRangeHistogram.class)
+void integersInRanges(@ForAll @IntRange(min = -1000, max = 1000) int aNumber) {
+    Statistics.collect(aNumber);
+}
+```
+
+```
+[HistogramExamples:integersInRanges] (1000) statistics = 
+       # |         label | count | 
+    -----|---------------|-------|---------------------------------------------------------------------------------
+       0 | [-1000..-900[ |    20 | ■■■■■
+       1 |  [-900..-800[ |    17 | ■■■■
+       2 |  [-800..-700[ |    16 | ■■■■
+       3 |  [-700..-600[ |     8 | ■■
+       4 |  [-600..-500[ |    12 | ■■■
+       5 |  [-500..-400[ |    14 | ■■■
+       6 |  [-400..-300[ |    17 | ■■■■
+       7 |  [-300..-200[ |    46 | ■■■■■■■■■■■
+       8 |  [-200..-100[ |    59 | ■■■■■■■■■■■■■■
+       9 |     [-100..0[ |   315 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      10 |      [0..100[ |   276 | ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+      11 |    [100..200[ |    47 | ■■■■■■■■■■■
+      12 |    [200..300[ |    49 | ■■■■■■■■■■■■
+      13 |    [300..400[ |    25 | ■■■■■■
+      14 |    [400..500[ |    14 | ■■■
+      15 |    [500..600[ |    13 | ■■■
+      16 |    [600..700[ |    15 | ■■■
+      17 |    [700..800[ |    14 | ■■■
+      18 |    [800..900[ |    11 | ■■
+      19 |   [900..1000] |    12 | ■■■
+```
+
+Both types can be subclassed to override behaviour like the number of buckets,
+the maximum drawing range of the bar, the order of elements and the label of a bucket. 
+
+#### Make Your Own Statistics Report Format
 
 In order to format statistics to your own liking you have to create an
 implementation of type

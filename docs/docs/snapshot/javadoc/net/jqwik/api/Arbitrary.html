@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":18,"i2":18,"i3":18,"i4":6,"i5":18,"i6":18,"i7":18,"i8":18,"i9":18,"i10":18,"i11":6,"i12":18,"i13":18,"i14":18,"i15":18,"i16":18,"i17":18,"i18":18,"i19":18,"i20":18,"i21":18,"i22":18,"i23":18,"i24":18,"i25":18,"i26":18,"i27":18,"i28":18};
+var methods = {"i0":18,"i1":18,"i2":18,"i3":18,"i4":6,"i5":18,"i6":18,"i7":18,"i8":18,"i9":18,"i10":18,"i11":6,"i12":18,"i13":18,"i14":18,"i15":18,"i16":18,"i17":18,"i18":18,"i19":18,"i20":18,"i21":18,"i22":18,"i23":18,"i24":18,"i25":18,"i26":18,"i27":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -330,12 +330,6 @@ public interface <span class="typeNameLabel">Arbitrary&lt;T&gt;</span></pre>
  never generate the same value twice.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
-<td class="colFirst"><code>default <a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/Arbitrary.html#withoutEdgeCases--">withoutEdgeCases</a></span>()</code>
-<div class="block">Do not give edge cases a higher probability when generating values.</div>
-</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -449,22 +443,6 @@ default&nbsp;java.util.Optional&lt;<a href="../../../net/jqwik/api/ExhaustiveGen
 <pre>@API(status=EXPERIMENTAL,
      since="1.3.0")
 <a href="../../../net/jqwik/api/EdgeCases.html" title="interface in net.jqwik.api">EdgeCases</a>&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&nbsp;edgeCases()</pre>
-</li>
-</ul>
-<a name="withoutEdgeCases--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>withoutEdgeCases</h4>
-<pre>@API(status=EXPERIMENTAL,
-     since="1.3.0")
-default&nbsp;<a href="../../../net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a>&lt;<a href="../../../net/jqwik/api/Arbitrary.html" title="type parameter in Arbitrary">T</a>&gt;&nbsp;withoutEdgeCases()</pre>
-<div class="block">Do not give edge cases a higher probability when generating values.</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>new arbitrary instance</dd>
-</dl>
 </li>
 </ul>
 <a name="allValues--">

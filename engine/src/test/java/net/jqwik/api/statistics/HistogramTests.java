@@ -267,6 +267,11 @@ class HistogramTests {
 				protected int maxDrawRange() {
 					return 10;
 				}
+
+				@Override
+				protected String rangeLabel(final BigInteger min, final BigInteger max, final boolean maxIncluded) {
+					return "Bigs: " + super.rangeLabel(min, max, maxIncluded);
+				}
 			};
 
 			List<StatisticsEntry> entries = asList(
@@ -285,13 +290,13 @@ class HistogramTests {
 			List<String> report = histogram.formatReport(entries);
 
 			Assertions.assertThat(report).containsExactly(
-				"   # |                           label | count | ",
-				"-----|---------------------------------|-------|-----------",
-				"   0 |  [1000000000000..2800000000000[ |    30 | ■",
-				"   1 |  [2800000000000..4600000000000[ |    70 | ■■■",
-				"   2 |  [4600000000000..6400000000000[ |   110 | ■■■■■",
-				"   3 |  [6400000000000..8200000000000[ |   150 | ■■■■■■■",
-				"   4 | [8200000000000..10000000000000] |   190 | ■■■■■■■■■■"
+				"   # |                                 label | count | ",
+				"-----|---------------------------------------|-------|-----------",
+				"   0 |  Bigs: [1000000000000..2800000000000[ |    30 | ■",
+				"   1 |  Bigs: [2800000000000..4600000000000[ |    70 | ■■■",
+				"   2 |  Bigs: [4600000000000..6400000000000[ |   110 | ■■■■■",
+				"   3 |  Bigs: [6400000000000..8200000000000[ |   150 | ■■■■■■■",
+				"   4 | Bigs: [8200000000000..10000000000000] |   190 | ■■■■■■■■■■"
 			);
 		}
 

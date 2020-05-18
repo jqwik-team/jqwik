@@ -29,6 +29,18 @@ public class NumberRangeHistogram extends Histogram {
 	}
 
 	/**
+	 * Determines how a range of numbers is being displayed.
+	 *
+	 * @param min The minimum value of the range (included)
+	 * @param max The maximum value of the range
+	 * @param maxIncluded If the maximum value is included in the range
+	 * @return A string to describe the range
+	 */
+	protected String rangeLabel(BigInteger min, BigInteger max, boolean maxIncluded) {
+		return String.format("[%s..%s", min, max) + (maxIncluded ? ']' : '[');
+	}
+
+	/**
 	 * Does not make sense to override since these labels won't be used anyway
 	 */
 	@Override
@@ -43,6 +55,7 @@ public class NumberRangeHistogram extends Histogram {
 	final protected Comparator<? super StatisticsEntry> comparator() {
 		return (left, right) -> 0;
 	}
+
 
 	/**
 	 * Does not make sense to override because this has the number range functionality
@@ -89,11 +102,11 @@ public class NumberRangeHistogram extends Histogram {
 		List<Tuple2<BigInteger, Bucket>> topsAndBuckets = new ArrayList<>();
 		BigInteger left = min;
 		for (BigInteger index = min.add(step); index.compareTo(max) < 0; index = index.add(step)) {
-			String label = String.format("[%s..%s[", left, index);
+			String label = rangeLabel(left, index, false);
 			topsAndBuckets.add(Tuple.of(index, new Bucket(label)));
 			left = index;
 		}
-		String label = String.format("[%s..%s]", left, max);
+		String label = rangeLabel(left, max, true);
 		topsAndBuckets.add(Tuple.of(max, new Bucket(label)));
 		return topsAndBuckets;
 	}

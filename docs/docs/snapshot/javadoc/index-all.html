@@ -409,6 +409,15 @@
 <dd>
 <div class="block">Constrain the range of a generated "Big" number.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.Bucket.html#Bucket-java.lang.String-">Bucket(String)</a></span> - Constructor for class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.Bucket.html" title="class in net.jqwik.api.statistics">Histogram.Bucket</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.Bucket.html#Bucket-java.lang.String-int-">Bucket(String, int)</a></span> - Constructor for class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.Bucket.html" title="class in net.jqwik.api.statistics">Histogram.Bucket</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/NumberRangeHistogram.html#buckets--">buckets()</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/NumberRangeHistogram.html" title="class in net.jqwik.api.statistics">NumberRangeHistogram</a></dt>
+<dd>
+<div class="block">Determines the number of buckets into which the full range of collected
+ numbers will be clustered.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.BuilderCombinator.html#build-java.util.function.Function-">build(Function&lt;B, T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.BuilderCombinator.html" title="class in net.jqwik.api">Combinators.BuilderCombinator</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/arbitraries/ByteArbitrary.html" title="interface in net.jqwik.api.arbitraries"><span class="typeNameLink">ByteArbitrary</span></a> - Interface in <a href="net/jqwik/api/arbitraries/package-summary.html">net.jqwik.api.arbitraries</a></dt>
@@ -492,6 +501,14 @@
 <dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/StatisticsCoverage.html#checkQuery-java.util.function.Predicate-">checkQuery(Predicate&lt;? extends List&lt;?&gt;&gt;)</a></span> - Method in interface net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsCoverage.html" title="interface in net.jqwik.api.statistics">StatisticsCoverage</a></dt>
 <dd>
 <div class="block">Execute a query for coverage checking.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.html#cluster-java.util.List-">cluster(List&lt;StatisticsEntry&gt;)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a></dt>
+<dd>
+<div class="block">Cluster entries into <a href="net/jqwik/api/statistics/Histogram.Bucket.html" title="class in net.jqwik.api.statistics">buckets</a>.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/NumberRangeHistogram.html#cluster-java.util.List-">cluster(List&lt;StatisticsEntry&gt;)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/NumberRangeHistogram.html" title="class in net.jqwik.api.statistics">NumberRangeHistogram</a></dt>
+<dd>
+<div class="block">Does not make sense to override because this has the number range functionality</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#collect-java.util.function.Predicate-">collect(Predicate&lt;List&lt;T&gt;&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
 <dd>
@@ -591,6 +608,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Combinators.CombinatorsFacade.html#combineShrinkables-java.util.List-java.util.function.Function-">combineShrinkables(List&lt;Shrinkable&lt;Object&gt;&gt;, Function&lt;List&lt;Object&gt;, R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Combinators.CombinatorsFacade.html" title="class in net.jqwik.api">Combinators.CombinatorsFacade</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.html#comparator--">comparator()</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a></dt>
+<dd>
+<div class="block">Determine how entries are being sorted from top to bottom.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/NumberRangeHistogram.html#comparator--">comparator()</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/NumberRangeHistogram.html" title="class in net.jqwik.api.statistics">NumberRangeHistogram</a></dt>
+<dd>
+<div class="block">Does not make sense to override since order does not matter for clustering anyway</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/configurators/ArbitraryConfigurator.html#compareTo-net.jqwik.api.configurators.ArbitraryConfigurator-">compareTo(ArbitraryConfigurator)</a></span> - Method in interface net.jqwik.api.configurators.<a href="net/jqwik/api/configurators/ArbitraryConfigurator.html" title="interface in net.jqwik.api.configurators">ArbitraryConfigurator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/FalsificationResult.html#compareTo-net.jqwik.api.FalsificationResult-">compareTo(FalsificationResult&lt;T&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/FalsificationResult.html" title="class in net.jqwik.api">FalsificationResult</a></dt>
@@ -999,6 +1024,8 @@
 <div class="block">Iterate through each value this arbitrary can generate if - and only if -
  exhaustive generation is possible.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.html#formatReport-java.util.List-">formatReport(List&lt;StatisticsEntry&gt;)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/StatisticsReport.None.html#formatReport-java.util.List-">formatReport(List&lt;StatisticsEntry&gt;)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsReport.None.html" title="class in net.jqwik.api.statistics">StatisticsReport.None</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/StatisticsReportFormat.html#formatReport-java.util.List-">formatReport(List&lt;StatisticsEntry&gt;)</a></span> - Method in interface net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsReportFormat.html" title="interface in net.jqwik.api.statistics">StatisticsReportFormat</a></dt>
@@ -1264,6 +1291,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Tuple.Tuple8.html#hashCode--">hashCode()</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Tuple.Tuple8.html" title="class in net.jqwik.api">Tuple.Tuple8</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics"><span class="typeNameLink">Histogram</span></a> - Class in <a href="net/jqwik/api/statistics/package-summary.html">net.jqwik.api.statistics</a></dt>
+<dd>
+<div class="block">A statistics report format to display collected statistics entries as a histogram</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.html#Histogram--">Histogram()</a></span> - Constructor for class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="net/jqwik/api/statistics/Histogram.Bucket.html" title="class in net.jqwik.api.statistics"><span class="typeNameLink">Histogram.Bucket</span></a> - Class in <a href="net/jqwik/api/statistics/package-summary.html">net.jqwik.api.statistics</a></dt>
+<dd>&nbsp;</dd>
 </dl>
 <a name="I:I">
 <!--   -->
@@ -1431,6 +1466,14 @@
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/LifecycleContext.html#label--">label()</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.html#label-net.jqwik.api.statistics.StatisticsEntry-">label(StatisticsEntry)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a></dt>
+<dd>
+<div class="block">Determine how entries are being labelled in the histogram.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/NumberRangeHistogram.html#label-net.jqwik.api.statistics.StatisticsEntry-">label(StatisticsEntry)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/NumberRangeHistogram.html" title="class in net.jqwik.api.statistics">NumberRangeHistogram</a></dt>
+<dd>
+<div class="block">Does not make sense to override since these labels won't be used anyway</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Statistics.html#label-java.lang.String-">label(String)</a></span> - Static method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Statistics.html" title="class in net.jqwik.api.statistics">Statistics</a></dt>
 <dd>
 <div class="block">Call this method to get a labeled instance of <a href="net/jqwik/api/statistics/StatisticsCollector.html" title="interface in net.jqwik.api.statistics">StatisticsCollector</a>.</div>
@@ -1601,6 +1644,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.html#maxCount--">maxCount()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/Histogram.html#maxDrawRange--">maxDrawRange()</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a></dt>
+<dd>
+<div class="block">Determine how many block characters are maximally used to draw the distribution.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/ExhaustiveGenerator.html#MAXIMUM_SAMPLES_TO_GENERATE">MAXIMUM_SAMPLES_TO_GENERATE</a></span> - Static variable in interface net.jqwik.api.<a href="net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/EdgeCasesMode.html#mixIn--">mixIn()</a></span> - Method in enum net.jqwik.api.<a href="net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a></dt>
@@ -1665,6 +1712,13 @@
 <dd>
 <div class="block">Create an arbitrary that never creates anything.</div>
 </dd>
+<dt><a href="net/jqwik/api/statistics/NumberRangeHistogram.html" title="class in net.jqwik.api.statistics"><span class="typeNameLink">NumberRangeHistogram</span></a> - Class in <a href="net/jqwik/api/statistics/package-summary.html">net.jqwik.api.statistics</a></dt>
+<dd>
+<div class="block">A specialized type of <a href="net/jqwik/api/statistics/Histogram.html" title="class in net.jqwik.api.statistics">Histogram</a> to divide collected numbers
+ into range-based clusters for display in a histogram.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/NumberRangeHistogram.html#NumberRangeHistogram--">NumberRangeHistogram()</a></span> - Constructor for class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/NumberRangeHistogram.html" title="class in net.jqwik.api.statistics">NumberRangeHistogram</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/StringArbitrary.html#numeric--">numeric()</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/StringArbitrary.html" title="interface in net.jqwik.api.arbitraries">StringArbitrary</a></dt>
 <dd>
 <div class="block">Allow all numeric chars (digits) to show up in generated strings.</div>
@@ -1972,6 +2026,10 @@
 <dt><span class="memberNameLink"><a href="net/jqwik/api/arbitraries/CharacterArbitrary.html#range-char-char-">range(char, char)</a></span> - Method in interface net.jqwik.api.arbitraries.<a href="net/jqwik/api/arbitraries/CharacterArbitrary.html" title="interface in net.jqwik.api.arbitraries">CharacterArbitrary</a></dt>
 <dd>
 <div class="block">Allow all chars within <code>min</code> (included) and <code>max</code> (included) to show up in generated values.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/NumberRangeHistogram.html#rangeLabel-java.math.BigInteger-java.math.BigInteger-boolean-">rangeLabel(BigInteger, BigInteger, boolean)</a></span> - Method in class net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/NumberRangeHistogram.html" title="class in net.jqwik.api.statistics">NumberRangeHistogram</a></dt>
+<dd>
+<div class="block">Determines how a range of numbers is being displayed.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#reason--">reason()</a></span> - Method in class net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></dt>
 <dd>
@@ -2676,6 +2734,10 @@ the order they are declared.</div>
 <div class="block">Returns an array containing the constants of this enum type, in
 the order they are declared.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/StatisticsEntry.html#values--">values()</a></span> - Method in interface net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsEntry.html" title="interface in net.jqwik.api.statistics">StatisticsEntry</a></dt>
+<dd>
+<div class="block">The values collected during <a href="net/jqwik/api/statistics/Statistics.html#collect-java.lang.Object...-">Statistics.collect(Object...)</a></div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/statistics/StatisticsReport.StatisticsReportMode.html#values--">values()</a></span> - Static method in enum net.jqwik.api.statistics.<a href="net/jqwik/api/statistics/StatisticsReport.StatisticsReportMode.html" title="enum in net.jqwik.api.statistics">StatisticsReport.StatisticsReportMode</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum type, in
@@ -2764,10 +2826,6 @@ the order they are declared.</div>
 <dt><a href="net/jqwik/api/constraints/WithNull.html" title="annotation in net.jqwik.api.constraints"><span class="typeNameLink">WithNull</span></a> - Annotation Type in <a href="net/jqwik/api/constraints/package-summary.html">net.jqwik.api.constraints</a></dt>
 <dd>
 <div class="block">Allows jqwik to inject null parameters into generated values.</div>
-</dd>
-<dt><span class="memberNameLink"><a href="net/jqwik/api/Arbitrary.html#withoutEdgeCases--">withoutEdgeCases()</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Arbitrary.html" title="interface in net.jqwik.api">Arbitrary</a></dt>
-<dd>
-<div class="block">Do not give edge cases a higher probability when generating values.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Falsifier.html#withPostFilter-java.util.function.Predicate-">withPostFilter(Predicate&lt;T&gt;)</a></span> - Method in interface net.jqwik.api.<a href="net/jqwik/api/Falsifier.html" title="interface in net.jqwik.api">Falsifier</a></dt>
 <dd>&nbsp;</dd>
