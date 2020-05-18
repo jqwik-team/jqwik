@@ -3408,19 +3408,6 @@ You can also determine the default behaviour of all properties by setting
 the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
 to one of those enum values.
 
-## Implement your own Arbitraries and Generators
-
-Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerator` -- you might
-think that rolling your own implementations can be a reasonable thing to do.
-I'd like to tell you that it _never_ is but I've learned that "never" is a word you should never use.
-There's just too many things to consider when implementing a new type of `Arbitrary`
-to make it work smoothly with the rest of the framework. 
-
-Therefore, use the innumerable features to combine existing arbitraries into your special one.
-If you cannot figure out how to create an arbitrary with the desired behaviour
-either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
-or [open a Github issue](https://github.com/jlink/jqwik/issues). 
-
 ## jqwik Configuration
 
 _jqwik_ will look for a file `jqwik.properties` in your classpath in which you can configure
@@ -3440,6 +3427,53 @@ defaultGeneration = AUTO            # Set default behaviour for generation:
 defaultEdgeCases = MIXIN            # Set default behaviour for edge cases generation:
                                     # FIRST, MIXIN, or NONE
 ```
+
+## Advanced Topics
+
+### Implement your own Arbitraries and Generators
+
+Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerator` -- you might
+think that rolling your own implementations is a reasonable thing to do.
+I'd like to tell you that it _never_ is, but I've learned that "never" is a word you should never use.
+There's just too many things to consider when implementing a new type of `Arbitrary`
+to make it work smoothly with the rest of the framework. 
+
+Therefore, use the innumerable features to combine existing arbitraries into your special one.
+If you cannot figure out how to create an arbitrary with the desired behaviour
+either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
+or [open a Github issue](https://github.com/jlink/jqwik/issues). 
+
+### Lifecycle Hooks
+
+Similar to [Jupiter's Extension Model](https://junit.org/junit5/docs/current/user-guide/#extensions)
+_jqwik_ provides a means to extend and change the way how properties and containers are being
+configured, run and reported on. The API -- interfaces, classes and annotations -- for accessing 
+those _lifecycle hooks_ lives in the package `net.jqwik.api.lifecycle` and is -- as of release 1.3.0 --
+still in the [API evolution status](#api-evolution) `EXPERIMENTAL`.
+
+_tbd_
+
+## API Evolution
+
+In agreement with the JUnit 5 platform _jqwik_ uses the 
+[@API Guardian project](https://github.com/apiguardian-team/apiguardian)
+to communicate version and status of all parts of its API. 
+The different types of status are:
+
+-`STABLE`: Intended for features that will not be changed in a backwards-incompatible way in the current major version (1.*).
+
+-`MAINTAINED`: Intended for features that will not be changed in a backwards-incompatible way for at least the current minor release of the current major version. If scheduled for removal, it will be demoted to `DEPRECATED` first.
+
+-`EXPERIMENTAL`: Intended for new, experimental features where we are looking for feedback. Use this element with caution; it might be promoted to `MAINTAINED` or `STABLE` in the future, but might also be removed without prior notice, even in a patch.
+
+-`DEPRECATED`: Should no longer be used; might disappear in the next minor release.
+
+-`INTERNAL`: Must not be used by any code other than _jqwik_ itself. Might be removed without prior notice.
+
+Since annotation `@API` has runtime retention you find the actual API status in an elements source code,
+its [Javadoc](/docs/${docsVersion}/javadoc) but also through reflection. 
+If a certain element, e.g. a method, is not annotated itself, then it carries the status of its containing class.
+
 
 ## Release Notes
 
