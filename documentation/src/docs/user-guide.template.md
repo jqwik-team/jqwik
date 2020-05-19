@@ -121,7 +121,9 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
     checks = 1000                 | # of not rejected calls
     generation = RANDOMIZED       | parameters are randomly generated
     after-failure = PREVIOUS_SEED | use the previous seed
-    edge-cases = MIXIN            | edge cases are generated first
+    edge-cases#mode = MIXIN       | edge cases are generated first
+    edge-cases#total = 0          | # of all combined edge cases
+    edge-cases#tried = 0          | # of edge cases tried in current run
     seed = 1685744359484719817    | random seed to reproduce generated values
 ```
 
@@ -334,15 +336,17 @@ annotation has a few optional values:
   - `EdgeCasesMode.NONE` will not generate edge cases for the full parameter set at all. However,
     edge cases for individual parameters are still being mixed into the set from time to time.
   
-The effective values for tries, seed, after-failure mode, generation mode and edge-cases mode 
-are reported after each run property:
+The effective values for tries, seed, after-failure mode, generation mode edge-cases mode 
+and edge cases numbers are reported after each run property:
 
 ```
 tries = 10 
 checks = 10 
 generation = EXHAUSTIVE
 after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
+edge-cases#mode = MIXIN 
+edge-cases#total = 2 
+edge-cases#tried = 2 
 seed = 42859154278924201
 ```
   
@@ -2309,7 +2313,7 @@ tries = 1000
 checks = 20 
 generation = RANDOMIZED
 after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
+edge-cases#mode = MIXIN 
 seed = 1066117555581106850
 ```
 
@@ -2363,10 +2367,7 @@ AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample 
 
 tries = 38 
 checks = 38 
-generation = RANDOMIZED
-after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
-seed = -633877439388930932 
+...
 sample = ["AA"]
 original-sample ["LVtyB"] 
 ```
@@ -2415,10 +2416,7 @@ AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h"
 
 checks = 20 
 tries = 20 
-generation = RANDOMIZED
-after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
-seed = -5596810132893895291 
+...
 sample = ["h", "0"]
 original-sample ["gh", "774"] 
 ```
