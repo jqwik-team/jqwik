@@ -15,7 +15,9 @@ public class ExecutionResultReportEntry {
 	private static final String TRIES_KEY = "tries";
 	private static final String CHECKS_KEY = "checks";
 	private static final String GENERATION_KEY = "generation";
-	private static final String EDGE_CASES_KEY = "edge-cases";
+	private static final String EDGE_CASES_MODE_KEY = "edge-cases#mode";
+	private static final String EDGE_CASES_TOTAL_KEY = "edge-cases#total";
+	private static final String EDGE_CASES_TRIED_KEY = "edge-cases#tried";
 	private static final String AFTER_FAILURE_KEY = "after-failure";
 	private static final String SEED_KEY = "seed";
 	private static final String SAMPLE_KEY = "sample";
@@ -84,10 +86,10 @@ public class ExecutionResultReportEntry {
 			countTries = executionResult.countTries();
 			countChecks = executionResult.countChecks();
 			generationMode = executionResult.generation().name();
-			edgeCasesMode = executionResult.edgeCases().name();
+			edgeCasesMode = executionResult.edgeCases().mode().name();
 			randomSeed = executionResult.randomSeed();
 			helpGenerationMode = helpGenerationMode(executionResult.generation());
-			helpEdgeCasesMode = helpEdgeCasesMode(executionResult.edgeCases());
+			helpEdgeCasesMode = helpEdgeCasesMode(executionResult.edgeCases().mode());
 		}
 
 		appendProperty(propertiesLines, TRIES_KEY, Integer.toString(countTries), "# of calls to property");
@@ -96,7 +98,11 @@ public class ExecutionResultReportEntry {
 		if (afterFailureMode != AfterFailureMode.NOT_SET) {
 			appendProperty(propertiesLines, AFTER_FAILURE_KEY, afterFailureMode.name(), helpAfterFailureMode(afterFailureMode));
 		}
-		appendProperty(propertiesLines, EDGE_CASES_KEY, edgeCasesMode, helpEdgeCasesMode);
+		appendProperty(propertiesLines, EDGE_CASES_MODE_KEY, edgeCasesMode, helpEdgeCasesMode);
+		if (executionResult.edgeCases().mode().activated()) {
+			appendProperty(propertiesLines, EDGE_CASES_TOTAL_KEY, executionResult.edgeCases().total(), "# of all combined edge cases");
+			appendProperty(propertiesLines, EDGE_CASES_TRIED_KEY, executionResult.edgeCases().tried(), "# of edge cases tried in current run");
+		}
 		appendProperty(propertiesLines, SEED_KEY, randomSeed, "random seed to reproduce generated values");
 
 		int halfBorderLength =
@@ -160,8 +166,8 @@ public class ExecutionResultReportEntry {
 		}
 	}
 
-	private static void appendProperty(List<String> propertiesLines, String triesKey, String value, String comment) {
-		propertiesLines.add(buildPropertyLine(triesKey, value, comment));
+	private static void appendProperty(List<String> propertiesLines, String triesKey, Object value, String comment) {
+		propertiesLines.add(buildPropertyLine(triesKey, value.toString(), comment));
 	}
 
 	private static String buildPropertyLine(String key, String value, String help) {

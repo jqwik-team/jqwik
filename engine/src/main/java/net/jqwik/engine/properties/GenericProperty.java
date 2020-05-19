@@ -83,7 +83,8 @@ public class GenericProperty {
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
 				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-					configuration.getGenerationMode(), configuration.getEdgeCasesMode(),
+					configuration.getGenerationMode(),
+					configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
 					sample, null, throwable
 				);
 			}
@@ -96,7 +97,9 @@ public class GenericProperty {
 				countChecks,
 				configuration.getSeed(),
 				configuration.getGenerationMode(),
-				configuration.getEdgeCasesMode()
+				configuration.getEdgeCasesMode(),
+				parametersGenerator.edgeCasesTotal(),
+				parametersGenerator.edgeCasesTried()
 			);
 		}
 		return PropertyCheckResult.successful(
@@ -106,7 +109,9 @@ public class GenericProperty {
 			countChecks,
 			configuration.getSeed(),
 			configuration.getGenerationMode(),
-			configuration.getEdgeCasesMode()
+			configuration.getEdgeCasesMode(),
+			parametersGenerator.edgeCasesTotal(),
+			parametersGenerator.edgeCasesTried()
 		);
 	}
 
@@ -139,8 +144,8 @@ public class GenericProperty {
 		List<Object> shrunkParams = shrinkingResult.values();
 		Throwable throwable = shrinkingResult.throwable().orElse(null);
 		return PropertyCheckResult.failed(
-			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
-			configuration.getGenerationMode(), configuration.getEdgeCasesMode(),
+			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
+			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
 			shrunkParams, originalSample, throwable
 		);
 	}

@@ -45,6 +45,16 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 		return next;
 	}
 
+	@Override
+	public int edgeCasesTotal() {
+		return 42; // TODO
+	}
+
+	@Override
+	public int edgeCasesTried() {
+		return 17; // TODO
+	}
+
 	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {
 		ParameterSupplier parameterSupplier =
 			parameterSupplierResolver.resolveParameter(parameter).orElseThrow(() -> {

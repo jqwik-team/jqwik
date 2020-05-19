@@ -10,4 +10,8 @@ public interface ParametersGenerator {
 	boolean hasNext();
 
 	List<Shrinkable<Object>> next(TryLifecycleContext context);
+
+	int edgeCasesTotal();
+
+	int edgeCasesTried();
 }

@@ -476,6 +476,16 @@ class GenericPropertyTests {
 						   .map(generator -> generator.next(random))
 						   .collect(Collectors.toList());
 			}
+
+			@Override
+			public int edgeCasesTotal() {
+				return 0;
+			}
+
+			@Override
+			public int edgeCasesTried() {
+				return 0;
+			}
 		};
 	}
 
@@ -489,6 +499,16 @@ class GenericPropertyTests {
 			@Override
 			public List<Shrinkable<Object>> next(TryLifecycleContext tryLifecycleContext) {
 				return new ArrayList<>();
+			}
+
+			@Override
+			public int edgeCasesTotal() {
+				return 0;
+			}
+
+			@Override
+			public int edgeCasesTried() {
+				return 0;
 			}
 		};
 	}
@@ -506,6 +526,16 @@ class GenericPropertyTests {
 			public List<Shrinkable<Object>> next(TryLifecycleContext tryLifecycleContext) {
 				Shrinkable<Object> shrinkable = Shrinkable.unshrinkable(valuesIterator.next());
 				return Collections.singletonList(shrinkable);
+			}
+
+			@Override
+			public int edgeCasesTotal() {
+				return 0;
+			}
+
+			@Override
+			public int edgeCasesTried() {
+				return 0;
 			}
 		};
 	}

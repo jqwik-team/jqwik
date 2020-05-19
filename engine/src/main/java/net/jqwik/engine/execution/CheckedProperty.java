@@ -60,7 +60,8 @@ public class CheckedProperty {
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.failed(
 				effectiveConfiguration.getStereotype(), propertyName, 0, 0,
-				effectiveConfiguration.getSeed(), configuration.getGenerationMode(), configuration.getEdgeCasesMode(),
+				effectiveConfiguration.getSeed(), configuration.getGenerationMode(),
+				configuration.getEdgeCasesMode(), 0, 0,
 				null, null, cannotFindArbitraryException
 			);
 		}
