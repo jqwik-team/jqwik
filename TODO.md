@@ -2,8 +2,6 @@
 
     - Documentation for lifecycle hooks API in user guide
     
-    - Edge Case number reporting (https://github.com/jlink/jqwik/issues/101)
-    
 - 1.3.x
 
     - Improve Sample Reporting

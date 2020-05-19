@@ -20,14 +20,20 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	) {
 
 		List<EdgeCases<Object>> listOfEdgeCases = listOfEdgeCases(parameters, arbitraryResolver, edgeCasesMode);
+		int edgeCasesTotal = calculateEdgeCasesTotal(listOfEdgeCases);
 
 		return new RandomizedShrinkablesGenerator(
 			randomShrinkablesGenerator(parameters, arbitraryResolver, genSize),
 			new EdgeCasesGenerator(listOfEdgeCases),
 			edgeCasesMode,
+			edgeCasesTotal,
 			calculateBaseToEdgeCaseRatio(listOfEdgeCases, genSize),
 			random
 		);
+	}
+
+	private static int calculateEdgeCasesTotal(final List<EdgeCases<Object>> listOfEdgeCases) {
+		return listOfEdgeCases.stream().mapToInt(EdgeCases::size).reduce(1, (a, b) -> a * b);
 	}
 
 	private static PurelyRandomShrinkablesGenerator randomShrinkablesGenerator(
@@ -106,21 +112,25 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 	private final PurelyRandomShrinkablesGenerator randomGenerator;
 	private final EdgeCasesGenerator edgeCasesGenerator;
 	private final EdgeCasesMode edgeCasesMode;
+	private final int edgeCasesTotal;
 	private final int baseToEdgeCaseRatio;
 	private final Random random;
 
-	private boolean edgeCasesGenerated = false;
+	private boolean allEdgeCasesGenerated = false;
+	private int edgeCasesTried = 0;
 
 	private RandomizedShrinkablesGenerator(
 		PurelyRandomShrinkablesGenerator randomGenerator,
 		EdgeCasesGenerator edgeCasesGenerator,
 		EdgeCasesMode edgeCasesMode,
+		int edgeCasesTotal,
 		int baseToEdgeCaseRatio,
 		Random random
 	) {
 		this.randomGenerator = randomGenerator;
 		this.edgeCasesGenerator = edgeCasesGenerator;
 		this.edgeCasesMode = edgeCasesMode;
+		this.edgeCasesTotal = edgeCasesTotal;
 		this.baseToEdgeCaseRatio = baseToEdgeCaseRatio;
 		this.random = random;
 	}
@@ -133,25 +143,37 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 
 	@Override
 	public List<Shrinkable<Object>> next() {
-		if (!edgeCasesGenerated) {
+		if (!allEdgeCasesGenerated) {
 			if (edgeCasesMode.generateFirst()) {
 				if (edgeCasesGenerator.hasNext()) {
+					edgeCasesTried++;
 					return edgeCasesGenerator.next();
 				} else {
-					edgeCasesGenerated = true;
+					allEdgeCasesGenerated = true;
 				}
 			}
 			if (edgeCasesMode.mixIn()) {
 				if (shouldGenerateEdgeCase(random)) {
 					if (edgeCasesGenerator.hasNext()) {
+						edgeCasesTried++;
 						return edgeCasesGenerator.next();
 					} else {
-						edgeCasesGenerated = true;
+						allEdgeCasesGenerated = true;
 					}
 				}
 			}
 		}
 		return randomGenerator.generateNext(random);
+	}
+
+	@Override
+	public int edgeCasesTotal() {
+		return edgeCasesTotal;
+	}
+
+	@Override
+	public int edgeCasesTried() {
+		return edgeCasesTried;
 	}
 
 	private boolean shouldGenerateEdgeCase(Random localRandom) {

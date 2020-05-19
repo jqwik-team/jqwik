@@ -172,7 +172,7 @@ class HistogramTests {
 	}
 
 	@Example
-	void uncomparableValuesAreComparedByTheirNameString() {
+	void uncomparableValuesAreSortedFromHigherToLowerCounts() {
 		Histogram histogram = new Histogram();
 
 		Object uncomparable = new Object() {
@@ -191,8 +191,8 @@ class HistogramTests {
 		Assertions.assertThat(report).containsExactly(
 			"   # |          label | count | ",
 			"-----|----------------|-------|---------------------------------------------------------------------------------",
-			"   0 | 0 uncomparable |     1 | ■",
-			"   1 |              1 |     5 | ■■■■■"
+			"   0 |              1 |     5 | ■■■■■",
+			"   1 | 0 uncomparable |     1 | ■"
 		);
 	}
 
