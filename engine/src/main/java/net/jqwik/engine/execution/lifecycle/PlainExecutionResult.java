@@ -90,8 +90,8 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public EdgeCasesMode edgeCases() {
-		return EdgeCasesMode.NOT_SET;
+	public EdgeCasesExecutionResult edgeCases() {
+		return new EdgeCasesExecutionResult(EdgeCasesMode.NOT_SET, 0, 0);
 	}
 
 	@Override

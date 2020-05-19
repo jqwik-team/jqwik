@@ -43,4 +43,9 @@ public enum EdgeCasesMode {
 	public boolean mixIn() {
 		return this == MIXIN;
 	}
+
+	@API(status = INTERNAL)
+	public boolean activated() {
+		return mixIn() || generateFirst();
+	}
 }
