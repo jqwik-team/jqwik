@@ -5,16 +5,17 @@ import java.util.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.ResolveParameterHook.*;
+import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 public class ResolvingParametersGenerator implements ParametersGenerator {
 	private final List<MethodParameter> propertyParameters;
-	private final Iterator<List<Shrinkable<Object>>> forAllParametersGenerator;
+	private final ForAllParametersGenerator forAllParametersGenerator;
 	private final ParameterSupplierResolver parameterSupplierResolver;
 
 	public ResolvingParametersGenerator(
 		List<MethodParameter> propertyParameters,
-		Iterator<List<Shrinkable<Object>>> forAllParametersGenerator,
+		ForAllParametersGenerator forAllParametersGenerator,
 		ResolveParameterHook resolveParameterHook,
 		PropertyLifecycleContext propertyLifecycleContext
 	) {
@@ -47,12 +48,12 @@ public class ResolvingParametersGenerator implements ParametersGenerator {
 
 	@Override
 	public int edgeCasesTotal() {
-		return 42; // TODO
+		return forAllParametersGenerator.edgeCasesTotal();
 	}
 
 	@Override
 	public int edgeCasesTried() {
-		return 17; // TODO
+		return forAllParametersGenerator.edgeCasesTried();
 	}
 
 	private Shrinkable<Object> findResolvableParameter(MethodParameter parameter, TryLifecycleContext tryLifecycleContext) {

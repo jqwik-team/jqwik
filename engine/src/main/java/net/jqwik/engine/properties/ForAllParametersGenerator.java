@@ -26,6 +26,31 @@ public interface ForAllParametersGenerator extends Iterator<List<Shrinkable<Obje
 				}
 				return afterSuccessGenerator.next();
 			}
+
+			@Override
+			public int edgeCasesTotal() {
+				if (first.hasNext()) {
+					return first.edgeCasesTotal();
+				}
+				return afterSuccessGenerator.edgeCasesTotal();
+			}
+
+			@Override
+			public int edgeCasesTried() {
+				if (first.hasNext()) {
+					return first.edgeCasesTried();
+				}
+				return afterSuccessGenerator.edgeCasesTried();
+			}
 		};
 	}
+
+	default int edgeCasesTotal() {
+		return 0;
+	}
+
+	default int edgeCasesTried() {
+		return 0;
+	}
+
 }
