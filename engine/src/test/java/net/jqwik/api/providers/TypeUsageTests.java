@@ -181,7 +181,18 @@ class TypeUsageTests {
 			MethodParameter parameter = JqwikReflectionSupport.getMethodParameters(method, LocalClass.class).get(0);
 			TypeUsage tupleType = TypeUsageImpl.forParameter(parameter);
 			assertThat(tupleType.isOfType(Tuple3.class)).isTrue();
-			assertThat(tupleType.toString()).isEqualTo("@net.jqwik.api.ForAll(value=) Tuple3<BigInteger, BigInteger, BigInteger>");
+
+			// TODO: annotations are differently toStringed in JDKs >= 11
+			assertThat(tupleType.toString()).contains(
+				"@net.jqwik.api.ForAll",
+				"Tuple3<BigInteger, BigInteger, BigInteger>"
+			);
+			// JDK8:
+			// assertThat(tupleType.toString())
+			// 	.isEqualTo("@net.jqwik.api.ForAll(value=) Tuple3<BigInteger, BigInteger, BigInteger>");
+			// JDK11:
+			// assertThat(tupleType.toString())
+			// 	.isEqualTo("@net.jqwik.api.ForAll(value=\"\") Tuple3<BigInteger, BigInteger, BigInteger>");
 		}
 
 		@Example
@@ -205,7 +216,15 @@ class TypeUsageTests {
 			assertThat(parameterType.isAnnotated(Size.class)).isTrue();
 			assertThat(parameterType.isAnnotated(WithNull.class)).isFalse();
 
-			assertThat(parameterType.toString()).isEqualTo("@net.jqwik.api.constraints.Size(value=0, max=2, min=0) List");
+			// JDK 8
+			// assertThat(parameterType.toString()).isEqualTo("@net.jqwik.api.constraints.Size(value=0, max=2, min=0) List");
+			assertThat(parameterType.toString()).contains(
+				"@net.jqwik.api.constraints.Size",
+				"value=0",
+				"max=2",
+				"min=0",
+				"List"
+			);
 
 			TypeUsage equalParameterType = TypeUsageImpl.forParameter(parameter);
 			assertThat(parameterType.equals(equalParameterType)).isTrue();
