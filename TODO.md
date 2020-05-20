@@ -41,10 +41,11 @@
             - generationMode()
             - shrinkingMode()
             - randomSeed()
+        - Allow label to be set, alternative ChangeLabelHook
         - Allow configuration attributes to be changed
         - Alternative: Introduce PropertyConfigurationHook
     
-    - Support more RandomDistribution modes, e.g. Gaussian, Log, PowerLaw
+    - Support more RandomDistribution modes, e.g. Log, PowerLaw
         https://en.wikipedia.org/wiki/Inverse_transform_sampling
         https://en.wikipedia.org/wiki/Ziggurat_algorithm
         https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
