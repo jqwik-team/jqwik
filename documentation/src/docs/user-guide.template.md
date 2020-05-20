@@ -541,8 +541,41 @@ after container
 ```
 
 All those lifecycle methods are being run through _jqwik_'s mechanism for
-writing _lifecycle hooks_ under the hood. This mechanism is not yet published and
-not ready for external usage yet.
+writing [_lifecycle hooks_](#lifecycle-hooks) under the hood.
+
+
+### Single Property Lifecycle
+
+All [lifecycle methods](#annotated-lifecycle-methods) described in the previous section
+apply to all property methods of a container class. 
+In rare cases, however, you may feel the need to hook into the lifecycle of a single property,
+for example when you expect a property to fail. 
+
+Here is one example that checks that a property will fail with an `AssertionError`
+and succeed in that case:
+
+```java
+@Property
+@PerProperty(SucceedIfThrowsAssertionError.class)
+void expectToFail(@ForAll int aNumber) {
+    Assertions.assertThat(aNumber).isNotEqualTo(1);
+}
+
+private class SucceedIfThrowsAssertionError implements PerProperty.Lifecycle {
+    @Override
+    public PropertyExecutionResult onFailure(PropertyExecutionResult propertyExecutionResult) {
+        if (propertyExecutionResult.throwable().isPresent() &&
+                propertyExecutionResult.throwable().get() instanceof AssertionError) {
+            return propertyExecutionResult.mapToSuccessful();
+        }
+        return propertyExecutionResult;
+    }
+}
+```
+
+Have a look at [`PerProperty.Lifecycle`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/PerProperty.Lifecycle.html)
+to find out which aspects of a property's lifecycle you can control.
+
 
 ## Grouping Tests
 

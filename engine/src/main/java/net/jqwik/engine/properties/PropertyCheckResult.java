@@ -208,8 +208,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					edgeCasesMode,
 					edgeCasesTotal,
 					edgeCasesTried,
-					sample,
-					originalSample,
+					null,
+					null,
 					throwable
 				);
 			default:

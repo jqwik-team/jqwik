@@ -1,5 +1,7 @@
 package net.jqwik.docs.lifecycle;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PerProperty.*;
@@ -25,4 +27,20 @@ public class PerPropertyLifecycleExamples {
 		}
 	}
 
+	@Property
+	@PerProperty(SucceedIfThrowsAssertionError.class)
+	void expectToFail(@ForAll int aNumber) {
+		Assertions.assertThat(aNumber).isNotEqualTo(1);
+	}
+
+	private class SucceedIfThrowsAssertionError implements PerProperty.Lifecycle {
+		@Override
+		public PropertyExecutionResult onFailure(PropertyExecutionResult propertyExecutionResult) {
+			if (propertyExecutionResult.throwable().isPresent() &&
+					propertyExecutionResult.throwable().get() instanceof AssertionError) {
+				return propertyExecutionResult.mapToSuccessful();
+			}
+			return propertyExecutionResult;
+		}
+	}
 }
