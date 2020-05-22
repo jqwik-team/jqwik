@@ -95,6 +95,8 @@ and
   
 - `Arbitraries.of(listOfValues)` would break when list does not allow null values. 
 
+- Generated functions now handle default methods correctly
+
 ## 1.2.x
 
 ### 1.2.7
