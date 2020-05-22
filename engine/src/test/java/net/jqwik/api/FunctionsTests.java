@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.*;
 
 class FunctionsTests {
 
-	@Property
+	@Property(tries = 100)
 	void manyCallsToFunction(@ForAll("stringToIntegerFunctions") Function<String, Integer> function, @ForAll @AlphaChars String aString) {
 		Integer valueForHello = function.apply(aString);
 		assertThat(valueForHello).isBetween(-100, 100);
