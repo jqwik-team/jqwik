@@ -2,6 +2,7 @@ package net.jqwik.engine.support;
 
 import java.io.*;
 import java.lang.annotation.*;
+import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.nio.file.*;
 import java.util.*;
@@ -211,6 +212,17 @@ public class JqwikReflectionSupport {
 		}).findFirst();
 	}
 
+	public static <T> Constructor<T> findConstructor(Class<T> type, Class<?>... parameterTypes) {
+		try {
+			Constructor<T> ctor = type.getDeclaredConstructor(parameterTypes);
+			// Constructor<T> ctor = type.getConstructor(parameterTypes);
+			ctor.setAccessible(true);
+			return ctor;
+		} catch (Throwable t) {
+			return JqwikExceptionSupport.throwAsUncheckedException(t);
+		}
+	}
+
 	public static Predicate<Method> isGeneratorMethod(TypeUsage targetType, Class<? extends Annotation> requiredAnnotation) {
 		return method -> {
 			if (!findDeclaredOrInheritedAnnotation(method, requiredAnnotation).isPresent()) {
@@ -255,6 +267,14 @@ public class JqwikReflectionSupport {
 		return Optional.of(candidates.get(0));
 	}
 
+	public static boolean isEqualsMethod(Method method) {
+		try {
+			return method.equals(Object.class.getDeclaredMethod("equals", Object.class));
+		} catch (NoSuchMethodException shouldNeverHappen) {
+			return false;
+		}
+	}
+
 	public static boolean isToStringMethod(Method method) {
 		try {
 			return method.equals(Object.class.getDeclaredMethod("toString"));
@@ -282,6 +302,7 @@ public class JqwikReflectionSupport {
 
 	public static boolean isJava9orAbove() {
 		try {
+			//noinspection JavaReflectionMemberAccess
 			Runtime.class.getMethod("version");
 			return true;
 		} catch (NoSuchMethodException e) {

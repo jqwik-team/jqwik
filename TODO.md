@@ -1,7 +1,5 @@
 - 1.3.0
 
-    - Fix bug revealed in FunctionsTests.default_methods_of_functions_can_be_called()
-
     - Documentation for lifecycle hooks API in user guide
     
 - 1.3.x

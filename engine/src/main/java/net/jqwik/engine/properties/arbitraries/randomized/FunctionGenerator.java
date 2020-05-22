@@ -30,11 +30,14 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 	private F createFunction(Random random) {
 		long baseSeed = random.nextLong();
 		InvocationHandler handler = (proxy, method, args) -> {
+			if (JqwikReflectionSupport.isEqualsMethod(method)) {
+				return handleEqualsMethod(proxy, args);
+			}
 			if (JqwikReflectionSupport.isToStringMethod(method)) {
 				return handleToString(baseSeed);
 			}
 			if (JqwikReflectionSupport.isHashCodeMethod(method)) {
-				return (int) baseSeed;
+				return handleHashCode((int) baseSeed);
 			}
 			if (method.isDefault()) {
 				return handleDefaultMethod(proxy, method, args);
@@ -49,34 +52,16 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 		return createFunctionProxy(handler);
 	}
 
+	private int handleHashCode(final int baseSeed) {
+		return baseSeed;
+	}
+
 	private Object handleToString(final long baseSeed) {
 		return String.format(
 			"Function<%s>(baseSeed: %s)",
 			functionalType.getSimpleName(),
 			baseSeed
 		);
-	}
-
-	private Object handleDefaultMethod(Object proxy, Method method, Object[] args) throws Throwable {
-
-		throw new RuntimeException("Cannot (yet) handle default methods");
-
-		// see: https://github.com/pholser/junit-quickcheck/pull/265/files
-		// for potential solution
-
-		// Constructor<MethodHandles.Lookup> METHOD_LOOKUP_CTOR =
-		// 	JqwikReflectionSupport.findDeclaredConstructor(
-		// 		MethodHandles.Lookup.class,
-		// 		Class.class,
-		// 		int.class);
-		//
-		// MethodHandles.Lookup lookup =
-		// 	METHOD_LOOKUP_CTOR.newInstance(
-		// 		method.getDeclaringClass(),
-		// 		MethodHandles.Lookup.PRIVATE);
-		// return lookup.unreflectSpecial(method, method.getDeclaringClass())
-		// 			 .bindTo(proxy)
-		// 			 .invokeWithArguments(args);
 	}
 
 	private void storeLastResult(Shrinkable<R> result) {

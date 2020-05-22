@@ -5,11 +5,28 @@ import java.util.function.*;
 
 import org.assertj.core.api.*;
 
+import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
 class FunctionsTests {
+
+	@Property
+	void manyCallsToFunction(@ForAll("stringToIntegerFunctions") Function<String, Integer> function, @ForAll @AlphaChars String aString) {
+		Integer valueForHello = function.apply(aString);
+		assertThat(valueForHello).isBetween(-100, 100);
+		assertThat(function.apply(aString)).isEqualTo(valueForHello);
+
+		int valueForHelloPlus1 = function.andThen(i -> i + 1).apply(aString);
+		assertThat(valueForHelloPlus1).isEqualTo(valueForHello + 1);
+	}
+
+	@Provide
+	Arbitrary<Function<String, Integer>> stringToIntegerFunctions() {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(-100, 100);
+		return Functions.function(Function.class).returns(integers);
+	}
 
 	@Example
 	void function_creates_same_result_for_same_input(@ForAll Random random) {
@@ -48,7 +65,7 @@ class FunctionsTests {
 
 	@Example
 	void hashCode_of_functions_can_be_called(@ForAll Random random) {
-		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10000);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
@@ -60,7 +77,19 @@ class FunctionsTests {
 	}
 
 	@Example
-	@Disabled("Cannot handle default methods yet")
+	void equals_of_functions_can_be_called(@ForAll Random random) {
+		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10000);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
+
+		RandomGenerator<Function<String, Integer>> generator = functions.generator(10);
+		Function<String, Integer> function1 = generator.next(random).value();
+
+		assertThat(function1.equals(function1)).isTrue();
+		assertThat(function1.equals(generator.next(random).value())).isFalse();
+	}
+
+	@Example
 	void default_methods_of_functions_can_be_called(@ForAll Random random) {
 		Arbitrary<Integer> integers = Arbitraries.constant(42);
 		Arbitrary<Function<String, Integer>> functions =
@@ -68,10 +97,19 @@ class FunctionsTests {
 
 		Function<String, Integer> function = functions.generator(10).next(random).value();
 
-		// TODO: Implement FunctionGenerator.handleDefaultMethod()
-		// Function<String, Integer> andThenFunction = function.andThen(value -> value - 1);
-		// assertThat(function.apply("any")).isEqualTo(42);
-		// assertThat(andThenFunction.apply("any")).isEqualTo(41);
+		Function<String, Integer> andThenFunction = function.andThen(value -> value - 1);
+		assertThat(function.apply("any")).isEqualTo(42);
+		assertThat(andThenFunction.apply("any")).isEqualTo(41);
+	}
+
+	@Example
+	void default_methods_of_self_made_functional_interface_can_be_called(@ForAll Random random) {
+		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<MyFunctionalInterface<String, String, Integer>> functions =
+			Functions.function(MyFunctionalInterface.class).returns(integers);
+
+		MyFunctionalInterface<String, String, Integer> function = functions.generator(10).next(random).value();
+		assertThat(function.hello()).isEqualTo("hello");
 	}
 
 	@Example
@@ -248,9 +286,10 @@ class FunctionsTests {
 	}
 
 	@FunctionalInterface
-	interface MyFunctionalInterface<P1, P2, R> {
+	public interface MyFunctionalInterface<P1, P2, R> {
 		R take(P1 p1, P2 p2);
 
+		// Default method invocation only works for public interfaces
 		default String hello() {
 			return "hello";
 		}

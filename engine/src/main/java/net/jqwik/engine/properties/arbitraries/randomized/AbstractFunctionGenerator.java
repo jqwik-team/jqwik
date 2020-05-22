@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.arbitraries.randomized;
 
+import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
@@ -35,16 +36,34 @@ abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 
 	private F constantFunction(R constant) {
 		InvocationHandler handler = (proxy, method, args) -> {
-			if (JqwikReflectionSupport.isToStringMethod(method)) {
-				return String.format(
-					"Constant Function<%s>(%s)",
-					functionalType.getSimpleName(),
-					JqwikStringSupport.displayString(constant)
-				);
+			if (JqwikReflectionSupport.isEqualsMethod(method)) {
+				return handleEqualsMethod(proxy, args);
 			}
+			if (JqwikReflectionSupport.isToStringMethod(method)) {
+				return handleToStringOfConstantMethod(constant);
+			}
+			if (JqwikReflectionSupport.isHashCodeMethod(method)) {
+				return constant.hashCode() + constant.hashCode();
+			}
+			if (method.isDefault()) {
+				return handleDefaultMethod(proxy, method, args);
+			}
+
 			return conditionalResult(args).orElse(new Object[]{constant})[0];
 		};
 		return createFunctionProxy(handler);
+	}
+
+	protected Object handleEqualsMethod(final Object proxy, Object[] args) {
+		return proxy == args[0];
+	}
+
+	private Object handleToStringOfConstantMethod(final R constant) {
+		return String.format(
+			"Constant Function<%s>(%s)",
+			functionalType.getSimpleName(),
+			JqwikStringSupport.displayString(constant)
+		);
 	}
 
 	// Returns result wrapped in array to allow null as result
@@ -60,4 +79,14 @@ abstract class AbstractFunctionGenerator<F, R> implements RandomGenerator<F> {
 		}
 		return conditionalResult;
 	}
+
+	protected Object handleDefaultMethod(Object proxy, Method method, Object[] args) throws Throwable {
+		MethodHandle handle = handleForDefaultMethod(method);
+		return handle.bindTo(proxy).invokeWithArguments(args);
+	}
+
+	protected MethodHandle handleForDefaultMethod(Method method) throws Throwable {
+		return new DefaultMethodHandleFactory().create(method);
+	}
+
 }
