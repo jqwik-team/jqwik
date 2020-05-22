@@ -37,6 +37,44 @@ class FunctionsTests {
 	}
 
 	@Example
+	void toString_of_functions_can_be_called(@ForAll Random random) {
+		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
+
+		Function<String, Integer> function = functions.generator(10).next(random).value();
+		assertThat(function.toString()).contains("Function");
+	}
+
+	@Example
+	void hashCode_of_functions_can_be_called(@ForAll Random random) {
+		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
+
+		RandomGenerator<Function<String, Integer>> generator = functions.generator(10);
+		Function<String, Integer> function1 = generator.next(random).value();
+
+		assertThat(function1.hashCode()).isEqualTo(function1.hashCode());
+		assertThat(function1.hashCode()).isNotEqualTo(generator.next(random).value().hashCode());
+	}
+
+	@Example
+	@Disabled("Cannot handle default methods yet")
+	void default_methods_of_functions_can_be_called(@ForAll Random random) {
+		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<Function<String, Integer>> functions =
+			Functions.function(Function.class).returns(integers);
+
+		Function<String, Integer> function = functions.generator(10).next(random).value();
+
+		// TODO: Implement FunctionGenerator.handleDefaultMethod()
+		// Function<String, Integer> andThenFunction = function.andThen(value -> value - 1);
+		// assertThat(function.apply("any")).isEqualTo(42);
+		// assertThat(andThenFunction.apply("any")).isEqualTo(41);
+	}
+
+	@Example
 	void null_value_is_accepted_as_input() {
 		Arbitrary<Integer> integers = Arbitraries.integers().between(1, 10);
 		Arbitrary<Function<String, Integer>> functions =
@@ -212,6 +250,10 @@ class FunctionsTests {
 	@FunctionalInterface
 	interface MyFunctionalInterface<P1, P2, R> {
 		R take(P1 p1, P2 p2);
+
+		default String hello() {
+			return "hello";
+		}
 	}
 
 	interface MyInheritedFunctionalInterface<P1, P2, R> extends MyFunctionalInterface {

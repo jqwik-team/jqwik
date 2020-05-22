@@ -263,9 +263,26 @@ public class JqwikReflectionSupport {
 		}
 	}
 
+	public static boolean isHashCodeMethod(Method method) {
+		try {
+			return method.equals(Object.class.getDeclaredMethod("hashCode"));
+		} catch (NoSuchMethodException shouldNeverHappen) {
+			return false;
+		}
+	}
+
 	public static boolean hasDefaultConstructor(Class<?> aClass) {
 		try {
 			aClass.getDeclaredConstructor();
+			return true;
+		} catch (NoSuchMethodException e) {
+			return false;
+		}
+	}
+
+	public static boolean isJava9orAbove() {
+		try {
+			Runtime.class.getMethod("version");
 			return true;
 		} catch (NoSuchMethodException e) {
 			return false;
