@@ -9,9 +9,6 @@
       - Extract description before running the property?
         e.g. to be able to display a generated Stream
         
-    - Does exhaustive generation for mutable objects work or will muted objects be injected
-      in other parameter sets?
-
     - Edge Cases
         - Arbitrary.withoutEdgeCases() 
             - should also work for individual generators
