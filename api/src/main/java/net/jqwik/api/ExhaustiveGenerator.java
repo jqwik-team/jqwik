@@ -44,15 +44,6 @@ public interface ExhaustiveGenerator<T> extends Iterable<T> {
 		return ExhaustiveGeneratorFacade.implementation.filter(this, filterPredicate);
 	}
 
-	/**
-	 * This is a hack to make unique work for exhaustive generation
-	 *
-	 * @return true if this generator refers to an arbitrary that returns unique values
-	 */
-	default boolean isUnique() {
-		return false;
-	}
-
 	default ExhaustiveGenerator<T> unique() {
 		return ExhaustiveGeneratorFacade.implementation.unique(this);
 	}

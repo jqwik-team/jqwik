@@ -39,8 +39,7 @@ public class ExhaustiveGenerators {
 				ListExhaustiveGenerator<T> exhaustiveGenerator = new ListExhaustiveGenerator<>(elementArbitrary, maxCount, minSize, maxSize);
 
 				// A hack to accommodate missing design idea for handling unique exhaustive generation:
-				Optional<ExhaustiveGenerator<T>> exhaustive = elementArbitrary.exhaustive(maxNumberOfSamples);
-				if (exhaustive.isPresent() && exhaustive.get().isUnique()) {
+				if (elementArbitrary.isUnique()) {
 					Predicate<List<T>> allElementsUnique = list -> list.size() == new HashSet<>(list).size();
 					return exhaustiveGenerator.filter(allElementsUnique);
 				} else {

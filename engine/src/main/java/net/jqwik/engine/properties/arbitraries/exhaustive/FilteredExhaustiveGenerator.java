@@ -16,11 +16,6 @@ public class FilteredExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	}
 
 	@Override
-	public boolean isUnique() {
-		return toFilter.isUnique();
-	}
-
-	@Override
 	public long maxCount() {
 		return toFilter.maxCount();
 	}
