@@ -14,11 +14,6 @@ public class UniqueExhaustiveGenerator<T> implements ExhaustiveGenerator<T> {
 	}
 
 	@Override
-	public boolean isUnique() {
-		return true;
-	}
-
-	@Override
 	public long maxCount() {
 		return base.maxCount();
 	}
