@@ -8,7 +8,17 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Experimental feature. Not ready for public usage yet.
+ * This is the supertype of all lifecycle hook interfaces.
+ * You can register a concrete implementation of a hook interface using
+ * {@linkplain AddLifecycleHook}.
+ *
+ * @see SkipExecutionHook
+ * @see ResolveParameterHook
+ * @see RegistrarHook
+ * @see BeforeContainerHook
+ * @see AfterContainerHook
+ * @see AroundPropertyHook
+ * @see AroundTryHook
  */
 @API(status = EXPERIMENTAL, since = "1.0")
 public interface LifecycleHook {
@@ -25,6 +35,12 @@ public interface LifecycleHook {
 		return true;
 	}
 
+	/**
+	 * Override this method if you want to change a concrete hook implementation's default
+	 * propagation behaviour: Do not use hook in child elements -- sub containers or properties.
+	 *
+	 * @return propagation mode enum
+	 */
 	@API(status = EXPERIMENTAL, since = "1.2.4")
 	default PropagationMode propagateTo() {
 		return PropagationMode.NO_DESCENDANTS;

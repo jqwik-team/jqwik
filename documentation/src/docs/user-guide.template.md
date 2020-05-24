@@ -3479,8 +3479,36 @@ or [open a Github issue](https://github.com/jlink/jqwik/issues).
 Similar to [Jupiter's Extension Model](https://junit.org/junit5/docs/current/user-guide/#extensions)
 _jqwik_ provides a means to extend and change the way how properties and containers are being
 configured, run and reported on. The API -- interfaces, classes and annotations -- for accessing 
-those _lifecycle hooks_ lives in the package `net.jqwik.api.lifecycle` and is -- as of release 1.3.0 --
-still in the [API evolution status](#api-evolution) `EXPERIMENTAL`.
+those _lifecycle hooks_ lives in the package `net.jqwik.api.lifecycle` and is -- as of this release --
+still in the [API evolution status](#api-evolution) `EXPERIMENTAL`: Some parts of it will probably 
+change without notice in later versions.
+
+#### Principles
+
+There are a few fundamental principles that determine the lifecycle hook API:
+
+1. There are several [types of lifecycle hooks](#lifecycle-hook-types), 
+   each of which is an interface that extends 
+   [`net.jqwik.api.lifecycle.LifecycleHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html).
+2. A concrete lifecycle hook is an implementation of one or more lifecycle hook interfaces.
+3. You can add a concrete lifecycle hook to a container class or a property method with the annotation
+   [`@AddLifecycleHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AddLifecycleHook.html).
+   By default, a lifecycle hook is only added to the annotated element, not to its children. 
+   However, you can override this behaviour by either:
+   - Override `LifecycleHook.propagateTo()`
+   - Use the annotation attribute `@AddLifecycleHook.propagateTo()`
+4. To add a global lifecycle use Java’s `java.util.ServiceLoader` mechanism and add the concrete lifecylcle hook
+   class to file `META-INF/services/net.jqwik.api.lifecycle.LifecycleHook`. 
+   Do not forget to override `LifecycleHook.propagateTo()` if the global hook should be applied to all test elements.
+5. In a single test run there will only be a single instance of each concrete lifecycle hook implementation.
+   That's why you have to use jqwik's [lifecycle storage](#lifecycle-storage) mechanism if shared state 
+   across several calls to lifecycle methods is necessary.
+   
+#### Lifecycle Hook Types
+
+_tbd_
+
+#### Lifecycle Storage
 
 _tbd_
 

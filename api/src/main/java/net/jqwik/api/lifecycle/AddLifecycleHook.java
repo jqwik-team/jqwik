@@ -7,7 +7,13 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Experimental feature. Not ready for public usage yet.
+ * Use to register a concrete {@linkplain LifecycleHook lifecycle hook implementation}
+ * for a test element -- a container class or a property method. More than one
+ * hook can be registered.
+ *
+ * <p>
+ *     This annotation can be used as meta annotation for self-made ones.
+ * </p>
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -15,8 +21,16 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.0")
 public @interface AddLifecycleHook {
 
+	/**
+	 * @return Concrete lifecycle hook implementation class
+	 */
 	Class<? extends LifecycleHook> value();
 
+	/**
+	 * Override the propagation mode specified in {@linkplain LifecycleHook#propagateTo()}.
+	 *
+	 * @return Propagation mode enum value
+	 */
 	@API(status = EXPERIMENTAL, since = "1.0")
 	PropagationMode propagateTo() default PropagationMode.NOT_SET;
 }
