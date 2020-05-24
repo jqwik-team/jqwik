@@ -25,6 +25,7 @@ title: jqwik User Guide - 1.3.0-SNAPSHOT
 - [Lifecycle](#lifecycle)
   - [Simple Property Lifecycle](#simple-property-lifecycle)
   - [Annotated Lifecycle Methods](#annotated-lifecycle-methods)
+  - [Single Property Lifecycle](#single-property-lifecycle)
 - [Grouping Tests](#grouping-tests)
 - [Naming and Labeling Tests](#naming-and-labeling-tests)
 - [Tagging Tests](#tagging-tests)
@@ -118,8 +119,14 @@ title: jqwik User Guide - 1.3.0-SNAPSHOT
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
-- [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
 - [jqwik Configuration](#jqwik-configuration)
+- [Advanced Topics](#advanced-topics)
+  - [Implement your own Arbitraries and Generators](#implement-your-own-arbitraries-and-generators)
+  - [Lifecycle Hooks](#lifecycle-hooks)
+    - [Principles](#principles)
+    - [Lifecycle Hook Types](#lifecycle-hook-types)
+    - [Lifecycle Storage](#lifecycle-storage)
+- [API Evolution](#api-evolution)
 - [Release Notes](#release-notes)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -232,7 +239,9 @@ mypackage.MyClassProperties > myPropertyMethod STANDARD_OUT
     checks = 1000                 | # of not rejected calls
     generation = RANDOMIZED       | parameters are randomly generated
     after-failure = PREVIOUS_SEED | use the previous seed
-    edge-cases = MIXIN            | edge cases are generated first
+    edge-cases#mode = MIXIN       | edge cases are generated first
+    edge-cases#total = 0          | # of all combined edge cases
+    edge-cases#tried = 0          | # of edge cases tried in current run
     seed = 1685744359484719817    | random seed to reproduce generated values
 ```
 
@@ -445,15 +454,17 @@ annotation has a few optional values:
   - `EdgeCasesMode.NONE` will not generate edge cases for the full parameter set at all. However,
     edge cases for individual parameters are still being mixed into the set from time to time.
   
-The effective values for tries, seed, after-failure mode, generation mode and edge-cases mode 
-are reported after each run property:
+The effective values for tries, seed, after-failure mode, generation mode edge-cases mode 
+and edge cases numbers are reported after each run property:
 
 ```
 tries = 10 
 checks = 10 
 generation = EXHAUSTIVE
 after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
+edge-cases#mode = MIXIN 
+edge-cases#total = 2 
+edge-cases#tried = 2 
 seed = 42859154278924201
 ```
   
@@ -648,8 +659,41 @@ after container
 ```
 
 All those lifecycle methods are being run through _jqwik_'s mechanism for
-writing _lifecycle hooks_ under the hood. This mechanism is not yet published and
-not ready for external usage yet.
+writing [_lifecycle hooks_](#lifecycle-hooks) under the hood.
+
+
+### Single Property Lifecycle
+
+All [lifecycle methods](#annotated-lifecycle-methods) described in the previous section
+apply to all property methods of a container class. 
+In rare cases, however, you may feel the need to hook into the lifecycle of a single property,
+for example when you expect a property to fail. 
+
+Here is one example that checks that a property will fail with an `AssertionError`
+and succeed in that case:
+
+```java
+@Property
+@PerProperty(SucceedIfThrowsAssertionError.class)
+void expectToFail(@ForAll int aNumber) {
+    Assertions.assertThat(aNumber).isNotEqualTo(1);
+}
+
+private class SucceedIfThrowsAssertionError implements PerProperty.Lifecycle {
+    @Override
+    public PropertyExecutionResult onFailure(PropertyExecutionResult propertyExecutionResult) {
+        if (propertyExecutionResult.throwable().isPresent() &&
+                propertyExecutionResult.throwable().get() instanceof AssertionError) {
+            return propertyExecutionResult.mapToSuccessful();
+        }
+        return propertyExecutionResult;
+    }
+}
+```
+
+Have a look at [`PerProperty.Lifecycle`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/PerProperty.Lifecycle.html)
+to find out which aspects of a property's lifecycle you can control.
+
 
 ## Grouping Tests
 
@@ -2420,7 +2464,7 @@ tries = 1000
 checks = 20 
 generation = RANDOMIZED
 after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
+edge-cases#mode = MIXIN 
 seed = 1066117555581106850
 ```
 
@@ -2474,10 +2518,7 @@ AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample 
 
 tries = 38 
 checks = 38 
-generation = RANDOMIZED
-after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
-seed = -633877439388930932 
+...
 sample = ["AA"]
 original-sample ["LVtyB"] 
 ```
@@ -2526,10 +2567,7 @@ AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h"
 
 checks = 20 
 tries = 20 
-generation = RANDOMIZED
-after-failure = PREVIOUS_SEED
-edge-cases = MIXIN 
-seed = -5596810132893895291 
+...
 sample = ["h", "0"]
 original-sample ["gh", "774"] 
 ```
@@ -2573,8 +2611,8 @@ even if it never ends...
 ### Change the Shrinking Target
 
 By default shrinking of numbers will move towards zero (0). 
-If zero is outside the bounds of generation the closest number to zero 
-- either the min or max value - is used as a target for shrinking.
+If zero is outside the bounds of generation the closest number to zero - 
+either the min or max value - is used as a target for shrinking.
 There are cases, however, when you'd like _jqwik_ to choose a different 
 shrinking target, usually when the default value of a number is not 0. 
 
@@ -2595,8 +2633,7 @@ Arbitrary<List<Signal>> signals() {
 }
 ```
 
-Currently shrinking targets are supported for integral numbers and decimal numbers, i.e.,
-bytes, shorts, integers, longs, floats, doubles, BigIntegers and BigDecimals.
+Currently shrinking targets are supported for all [number types](#numeric-arbitrary-types).
 
 
 ## Collecting and Reporting Statistics
@@ -3520,19 +3557,6 @@ You can also determine the default behaviour of all properties by setting
 the `defaultAfterFailure` property in the [configuration file](jqwik-configuration)
 to one of those enum values.
 
-## Implement your own Arbitraries and Generators
-
-Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerator` -- you might
-think that rolling your own implementations can be a reasonable thing to do.
-I'd like to tell you that it _never_ is but I've learned that "never" is a word you should never use.
-There's just too many things to consider when implementing a new type of `Arbitrary`
-to make it work smoothly with the rest of the framework. 
-
-Therefore, use the innumerable features to combine existing arbitraries into your special one.
-If you cannot figure out how to create an arbitrary with the desired behaviour
-either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
-or [open a Github issue](https://github.com/jlink/jqwik/issues). 
-
 ## jqwik Configuration
 
 _jqwik_ will look for a file `jqwik.properties` in your classpath in which you can configure
@@ -3552,6 +3576,81 @@ defaultGeneration = AUTO            # Set default behaviour for generation:
 defaultEdgeCases = MIXIN            # Set default behaviour for edge cases generation:
                                     # FIRST, MIXIN, or NONE
 ```
+
+## Advanced Topics
+
+### Implement your own Arbitraries and Generators
+
+Looking at _jqwik_'s most prominent interfaces -- `Arbitrary` and `RandomGenerator` -- you might
+think that rolling your own implementations is a reasonable thing to do.
+I'd like to tell you that it _never_ is, but I've learned that "never" is a word you should never use.
+There's just too many things to consider when implementing a new type of `Arbitrary`
+to make it work smoothly with the rest of the framework. 
+
+Therefore, use the innumerable features to combine existing arbitraries into your special one.
+If you cannot figure out how to create an arbitrary with the desired behaviour
+either [ask on stack overflow](https://stackoverflow.com/questions/tagged/jqwik)
+or [open a Github issue](https://github.com/jlink/jqwik/issues). 
+
+### Lifecycle Hooks
+
+Similar to [Jupiter's Extension Model](https://junit.org/junit5/docs/current/user-guide/#extensions)
+_jqwik_ provides a means to extend and change the way how properties and containers are being
+configured, run and reported on. The API -- interfaces, classes and annotations -- for accessing 
+those _lifecycle hooks_ lives in the package `net.jqwik.api.lifecycle` and is -- as of this release --
+still in the [API evolution status](#api-evolution) `EXPERIMENTAL`: Some parts of it will probably 
+change without notice in later versions.
+
+#### Principles
+
+There are a few fundamental principles that determine the lifecycle hook API:
+
+1. There are several [types of lifecycle hooks](#lifecycle-hook-types), 
+   each of which is an interface that extends 
+   [`net.jqwik.api.lifecycle.LifecycleHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html).
+2. A concrete lifecycle hook is an implementation of one or more lifecycle hook interfaces.
+3. You can add a concrete lifecycle hook to a container class or a property method with the annotation
+   [`@AddLifecycleHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AddLifecycleHook.html).
+   By default, a lifecycle hook is only added to the annotated element, not to its children. 
+   However, you can override this behaviour by either:
+   - Override `LifecycleHook.propagateTo()`
+   - Use the annotation attribute `@AddLifecycleHook.propagateTo()`
+4. To add a global lifecycle use Java’s `java.util.ServiceLoader` mechanism and add the concrete lifecylcle hook
+   class to file `META-INF/services/net.jqwik.api.lifecycle.LifecycleHook`. 
+   Do not forget to override `LifecycleHook.propagateTo()` if the global hook should be applied to all test elements.
+5. In a single test run there will only be a single instance of each concrete lifecycle hook implementation.
+   That's why you have to use jqwik's [lifecycle storage](#lifecycle-storage) mechanism if shared state 
+   across several calls to lifecycle methods is necessary.
+   
+#### Lifecycle Hook Types
+
+_tbd_
+
+#### Lifecycle Storage
+
+_tbd_
+
+## API Evolution
+
+In agreement with the JUnit 5 platform _jqwik_ uses the 
+[@API Guardian project](https://github.com/apiguardian-team/apiguardian)
+to communicate version and status of all parts of its API. 
+The different types of status are:
+
+-`STABLE`: Intended for features that will not be changed in a backwards-incompatible way in the current major version (1.*).
+
+-`MAINTAINED`: Intended for features that will not be changed in a backwards-incompatible way for at least the current minor release of the current major version. If scheduled for removal, it will be demoted to `DEPRECATED` first.
+
+-`EXPERIMENTAL`: Intended for new, experimental features where we are looking for feedback. Use this element with caution; it might be promoted to `MAINTAINED` or `STABLE` in the future, but might also be removed without prior notice, even in a patch.
+
+-`DEPRECATED`: Should no longer be used; might disappear in the next minor release.
+
+-`INTERNAL`: Must not be used by any code other than _jqwik_ itself. Might be removed without prior notice.
+
+Since annotation `@API` has runtime retention you find the actual API status in an elements source code,
+its [Javadoc](/docs/snapshot/javadoc) but also through reflection. 
+If a certain element, e.g. a method, is not annotated itself, then it carries the status of its containing class.
+
 
 ## Release Notes
 
