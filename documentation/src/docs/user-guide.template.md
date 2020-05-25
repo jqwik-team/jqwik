@@ -3506,7 +3506,60 @@ There are a few fundamental principles that determine the lifecycle hook API:
    
 #### Lifecycle Hook Types
 
-_tbd_
+All lifecycle hook interfaces extend `net.jqwik.api.lifecycle.LifecycleHook` which
+has two methods that may be overridden:
+
+- [`propagateTo()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--):
+  Determine if and how a hook will be propagated to an element's children.
+
+- [`appliesTo(Optional<AnnotatedElement>)`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo-java.util.Optional-):
+  Determine if a hook will be applied to a concrete element. For example, you might want to constrain a certain hook
+  to apply only to property methods and not to containers:
+  
+  ```java
+  @Override
+  public boolean appliesTo(final Optional<AnnotatedElement> element) {
+  	return element
+      .map(annotatedElement -> annotatedElement instanceof Method)
+      .orElse(false);
+  }
+  ```
+
+_jqwik_ currently supports seven types of lifecycle hooks:
+
+- `SkipExecutionHook`
+- `BeforeContainerHook`
+- `AfterContainerHook`
+- `AroundPropertyHook`
+- `AroundTryHook`
+- `ResolveParameterHook`
+- `RegistrarHook`
+
+The first five form a category of their own; 
+they are [lifecycle execution hooks](#lifecycle-execution-hooks). 
+
+#### Lifecycle Execution Hooks
+
+With these hooks you can determine if a test element will be run at all,
+and what potential actions should be done before or after running it.
+
+##### `SkipExecutionHook`
+
+##### `BeforeContainerHook`
+
+##### `AfterContainerHook`
+
+##### `AroundPropertyHook`
+
+##### `AroundTryHook`
+
+
+#### Other Hooks
+
+##### `ResolveParameterHook`
+
+##### `RegistrarHook`
+
 
 #### Lifecycle Storage
 

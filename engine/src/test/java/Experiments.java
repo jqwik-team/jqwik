@@ -1,3 +1,4 @@
+import java.lang.reflect.*;
 import java.math.*;
 import java.util.*;
 import java.util.stream.*;
@@ -24,6 +25,13 @@ class Experiments {
 		long after = System.currentTimeMillis();
 
 		System.out.println("TIME: " + (after - before)/100.0 + " secs");
+	}
+}
+
+class MyMethodHook implements LifecycleHook {
+	@Override
+	public boolean appliesTo(final Optional<AnnotatedElement> element) {
+		return element.map(annotatedElement -> annotatedElement instanceof Method).orElse(false);
 	}
 }
 
