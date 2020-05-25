@@ -3485,7 +3485,7 @@ change without notice in later versions.
 
 #### Principles
 
-There are a few fundamental principles that determine the lifecycle hook API:
+There are a few fundamental principles that determine and constrain the lifecycle hook API:
 
 1. There are several [types of lifecycle hooks](#lifecycle-hook-types), 
    each of which is an interface that extends 
@@ -3503,6 +3503,12 @@ There are a few fundamental principles that determine the lifecycle hook API:
 5. In a single test run there will only be a single instance of each concrete lifecycle hook implementation.
    That's why you have to use jqwik's [lifecycle storage](#lifecycle-storage) mechanism if shared state 
    across several calls to lifecycle methods is necessary.
+6. Since all instances of lifecycle hooks are created before the whole test run is started,
+   you cannot use non-static inner classes to implement lifecycle interfaces.
+7. If relevant, the order in which hook methods are being applied is determined by dedicated methods
+   in the hook interface, e.g. 
+   [`SkipExecutionHook.skipExecutionOrder()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html#skipExecutionOrder--) or
+   [`AroundPropertyHook.aroundPropertyProximity()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html#aroundPropertyProximity--).
    
 #### Lifecycle Hook Types
 
@@ -3525,17 +3531,18 @@ has two methods that may be overridden:
   }
   ```
 
-_jqwik_ currently supports seven types of lifecycle hooks:
+_jqwik_ currently supports eight types of lifecycle hooks:
 
 - `SkipExecutionHook`
 - `BeforeContainerHook`
 - `AfterContainerHook`
+- `AroundContainerHook`
 - `AroundPropertyHook`
 - `AroundTryHook`
 - `ResolveParameterHook`
 - `RegistrarHook`
 
-The first five form a category of their own; 
+The first six form a category of their own; 
 they are [lifecycle execution hooks](#lifecycle-execution-hooks). 
 
 #### Lifecycle Execution Hooks
@@ -3543,23 +3550,51 @@ they are [lifecycle execution hooks](#lifecycle-execution-hooks).
 With these hooks you can determine if a test element will be run at all,
 and what potential actions should be done before or after running it.
 
-##### `SkipExecutionHook`
+##### [`SkipExecutionHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html)
 
-##### `BeforeContainerHook`
+Implement `SkipExecutionHook` to filter out a test container or test method depending on some runtime condition.
 
-##### `AfterContainerHook`
+Given this hook implementation:
 
-##### `AroundPropertyHook`
+```java
+public class OnMacOnly implements SkipExecutionHook {
+	@Override
+	public SkipResult shouldBeSkipped(final LifecycleContext context) {
+		if (System.getProperty("os.name").equals("Mac OS X")) {
+			return SkipResult.doNotSkip();
+		}
+		return SkipResult.skip("Only on Mac");
+	}
+}
+```
 
-##### `AroundTryHook`
+The following property will only run on a Mac:
+
+```java
+@Property
+@AddLifecycleHook(OnMacOnly.class)
+void macSpecificProperty(@ForAll int anInt) {
+}
+```
+
+##### [`BeforeContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html)
+
+##### [`AfterContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterContainerHook.html)
+
+##### [`AroundContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
+
+A convenience interface to implement both `BeforeContainerHook` and `AfterContainerHook` in one go.
+
+##### [`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
+
+##### [`AroundTryHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html)
 
 
 #### Other Hooks
 
-##### `ResolveParameterHook`
+##### [`ResolveParameterHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html)
 
-##### `RegistrarHook`
-
+##### [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
 
 #### Lifecycle Storage
 

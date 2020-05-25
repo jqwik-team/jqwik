@@ -13,12 +13,13 @@ import static org.apiguardian.api.API.Status.*;
  * {@linkplain AddLifecycleHook}.
  *
  * @see SkipExecutionHook
- * @see ResolveParameterHook
- * @see RegistrarHook
  * @see BeforeContainerHook
  * @see AfterContainerHook
+ * @see AroundContainerHook
  * @see AroundPropertyHook
  * @see AroundTryHook
+ * @see ResolveParameterHook
+ * @see RegistrarHook
  */
 @API(status = EXPERIMENTAL, since = "1.0")
 public interface LifecycleHook {

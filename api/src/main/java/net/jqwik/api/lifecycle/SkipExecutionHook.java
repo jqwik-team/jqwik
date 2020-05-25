@@ -7,33 +7,58 @@ import org.apiguardian.api.*;
 import static org.apiguardian.api.API.Status.*;
 
 /**
- * Experimental feature. Not ready for public usage yet.
+ * Use this hook to determine if an annotated element should be skipped during
+ * a test run or not. Evaluation of hooks is stopped
+ * as soon as a single hook returns {@linkplain SkipResult#skip(String)}.
  */
 @API(status = EXPERIMENTAL, since = "1.0")
 @FunctionalInterface
 public interface SkipExecutionHook extends LifecycleHook {
 
+	/**
+	 * Determine if an annotated element should be skipped or not.
+	 * In order to decide an implementor can use all information from {@code context}.
+	 * Use {@linkplain SkipResult#doNotSkip()} or {@linkplain SkipResult#skip(String)} as return value.
+	 *
+	 * @param context An instance of {@linkplain ContainerLifecycleContext} or {@linkplain PropertyLifecycleContext}
+	 *
+	 * @return an instance of {@linkplain SkipResult}
+	 */
 	SkipResult shouldBeSkipped(LifecycleContext context);
 
-	default int compareTo(SkipExecutionHook other) {
-		return Integer.compare(this.skipExecutionOrder(), other.skipExecutionOrder());
-	}
-
-	SkipExecutionHook DO_NOT_SKIP = descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
-
 	/**
-	 * Lower order value means earlier evaluation
+	 * Determine the order in which all applicable {@linkplain SkipExecutionHook}s will be applied.
+	 * A lower number means earlier evaluation.
 	 */
 	default int skipExecutionOrder() {
 		return 0;
 	}
 
+	@API(status = INTERNAL)
+	default int compareTo(SkipExecutionHook other) {
+		return Integer.compare(this.skipExecutionOrder(), other.skipExecutionOrder());
+	}
+
+	@API(status = INTERNAL)
+	SkipExecutionHook DO_NOT_SKIP = descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
+
 	class SkipResult {
 
+		/**
+		 * Create instance of {@linkplain SkipResult} to make the current element being skipped.
+		 *
+		 * @param reason String to describe why the element will be skipped
+		 * @return instance of {@linkplain SkipResult}
+		 */
 		public static SkipResult skip(String reason) {
 			return new SkipResult(true, reason);
 		}
 
+		/**
+		 * Create instance of {@linkplain SkipResult} to make the current element not being skipped.
+		 *
+		 * @return instance of {@linkplain SkipResult}
+		 */
 		public static SkipResult doNotSkip() {
 			return new SkipResult(false, null);
 		}
@@ -57,7 +82,9 @@ public interface SkipExecutionHook extends LifecycleHook {
 
 		/**
 		 * Get the reason that execution of the context should be skipped,
-		 * if available.
+		 * if available. Might not be present, especially when using {@linkplain #doNotSkip()}.
+		 *
+		 * @return instance of {@linkplain Optional<SkipResult>}
 		 */
 		public Optional<String> reason() {
 			return Optional.ofNullable(reason);
