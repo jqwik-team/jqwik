@@ -84,7 +84,7 @@ public interface SkipExecutionHook extends LifecycleHook {
 		 * Get the reason that execution of the context should be skipped,
 		 * if available. Might not be present, especially when using {@linkplain #doNotSkip()}.
 		 *
-		 * @return instance of {@linkplain Optional<SkipResult>}
+		 * @return instance of {@linkplain Optional}&lt;{@linkplain SkipResult}&gt;
 		 */
 		public Optional<String> reason() {
 			return Optional.ofNullable(reason);

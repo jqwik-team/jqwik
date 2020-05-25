@@ -3550,9 +3550,10 @@ they are [lifecycle execution hooks](#lifecycle-execution-hooks).
 With these hooks you can determine if a test element will be run at all,
 and what potential actions should be done before or after running it.
 
-##### [`SkipExecutionHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html)
+##### `SkipExecutionHook`
 
-Implement `SkipExecutionHook` to filter out a test container or test method depending on some runtime condition.
+Implement [`SkipExecutionHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html) 
+to filter out a test container or property method depending on some runtime condition.
 
 Given this hook implementation:
 
