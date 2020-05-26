@@ -26,19 +26,6 @@ public interface SkipExecutionHook extends LifecycleHook {
 	 */
 	SkipResult shouldBeSkipped(LifecycleContext context);
 
-	/**
-	 * Determine the order in which all applicable {@linkplain SkipExecutionHook}s will be applied.
-	 * A lower number means earlier evaluation.
-	 */
-	default int skipExecutionOrder() {
-		return 0;
-	}
-
-	@API(status = INTERNAL)
-	default int compareTo(SkipExecutionHook other) {
-		return Integer.compare(this.skipExecutionOrder(), other.skipExecutionOrder());
-	}
-
 	@API(status = INTERNAL)
 	SkipExecutionHook DO_NOT_SKIP = descriptor -> SkipExecutionHook.SkipResult.doNotSkip();
 

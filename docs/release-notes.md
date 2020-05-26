@@ -88,6 +88,8 @@ and
 
 - Set `ExhaustiveGenerator` and all its methods to API status `INTERNAL`
 
+- The evaluation order of `SkipExecutionHook` hooks can no longer be influenced.
+
 #### Bug Fixes
 
 - An `OutOfMemoryError` will go through to the top. Fix for

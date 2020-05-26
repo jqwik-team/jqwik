@@ -44,7 +44,7 @@ public interface Store<T> {
 	 *
 	 * @param <T>         The type of object to store
 	 * @param identifier  Any object to identify a store. Must be globally unique.
-	 * @param lifespan
+	 * @param lifespan    A stored object's lifespan
 	 * @param initializer Supplies the value to be used for initializing the store depending on its lifespan
 	 * @return New store instance
 	 */

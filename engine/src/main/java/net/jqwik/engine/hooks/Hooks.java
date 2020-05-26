@@ -8,7 +8,6 @@ public class Hooks {
 	public static class AroundContainer {
 		// Should run outside of standard hooks
 		public static final int CONTAINER_LIFECYCLE_METHODS_PROXIMITY = -10;
-
 	}
 
 	public static class AroundProperty {
@@ -33,9 +32,4 @@ public class Hooks {
 		public static final int TRY_LIFECYCLE_METHODS_PROXIMITY = -10;
 	}
 
-	public static class SkipExecution {
-		// `@Disable` annotation
-		public static final int DISABLED_ORDER = 0;
-
-	}
 }

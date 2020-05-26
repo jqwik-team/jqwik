@@ -21,11 +21,6 @@ public class DisabledHook implements SkipExecutionHook {
 	}
 
 	@Override
-	public int skipExecutionOrder() {
-		return Hooks.SkipExecution.DISABLED_ORDER;
-	}
-
-	@Override
 	public PropagationMode propagateTo() {
 		return PropagationMode.ALL_DESCENDANTS;
 	}

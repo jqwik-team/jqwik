@@ -58,7 +58,7 @@ public class LifecycleHooksRegistry implements LifecycleHooksSupplier {
 
 	@Override
 	public SkipExecutionHook skipExecutionHook(TestDescriptor testDescriptor) {
-		List<SkipExecutionHook> skipExecutionHooks = findHooks(testDescriptor, SkipExecutionHook.class, SkipExecutionHook::compareTo);
+		List<SkipExecutionHook> skipExecutionHooks = findHooks(testDescriptor, SkipExecutionHook.class, dontCompare());
 		return HookSupport.combineSkipExecutionHooks(skipExecutionHooks);
 	}
 

@@ -3507,8 +3507,7 @@ There are a few fundamental principles that determine and constrain the lifecycl
    you cannot use non-static inner classes to implement lifecycle interfaces.
 7. If relevant, the order in which hook methods are being applied is determined by dedicated methods
    in the hook interface, e.g. 
-   [`SkipExecutionHook.skipExecutionOrder()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html#skipExecutionOrder--) or
-   [`AroundPropertyHook.aroundPropertyProximity()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html#aroundPropertyProximity--).
+   [`BeforeContainerHook.beforeContainerProximity()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--).
    
 #### Lifecycle Hook Types
 
@@ -3578,13 +3577,66 @@ void macSpecificProperty(@ForAll int anInt) {
 }
 ```
 
-##### [`BeforeContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html)
+##### `BeforeContainerHook`
 
-##### [`AfterContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterContainerHook.html)
+Implement [`BeforeContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html)
+for a hook that's supposed to do some work exactly once before any of its property methods and child containers
+will be run. 
+This is typically used to set up a resource to share among all properties within this container.
+
+##### `AfterContainerHook`
+
+Implement [`AfterContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterContainerHook.html)
+for a hook that's supposed to do some work exactly once after all of its property methods and child containers
+have been run. 
+This is typically used to tear down a resource that has been shared among all properties within this container.
 
 ##### [`AroundContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
 
-A convenience interface to implement both `BeforeContainerHook` and `AfterContainerHook` in one go.
+A convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and 
+[`AfterContainerHook`](#aftercontainerhook) in one go. 
+This is typically used to set up and tear down a resource that should be shared across all the container's children.
+
+Here's an example that shows how to start and stop an external server once for all
+properties of a test container:
+
+```java
+@AddLifecycleHook(ExternalServerResource.class)
+class AroundContainerHookExamples {
+	@Example
+	void example1() {
+		System.out.println("Running example 1");
+	}
+	@Example
+	void example2() {
+		System.out.println("Running example 2");
+	}
+}
+
+class ExternalServerResource implements AroundContainerHook {
+	@Override
+	public void beforeContainer(final ContainerLifecycleContext context) {
+		System.out.println("Starting server...");
+	}
+
+	@Override
+	public void afterContainer(final ContainerLifecycleContext context) {
+		System.out.println("Stopping server...");
+	}
+}
+```
+
+Running this example should output
+
+```
+Starting server...
+
+Running example 1
+
+Running example 2
+
+Stopping server...
+```
 
 ##### [`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
 

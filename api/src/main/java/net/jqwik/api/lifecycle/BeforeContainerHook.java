@@ -6,7 +6,7 @@ import static org.apiguardian.api.API.Status.*;
 
 /**
  * Implement this hook to define behaviour for a container (class or whole test suite)
- * that should be run exactly once before any of its property methods or child containers.
+ * that should be run exactly once before any of its property methods and child containers.
  */
 @API(status = EXPERIMENTAL, since = "1.2.4")
 @FunctionalInterface
@@ -21,7 +21,12 @@ public interface BeforeContainerHook extends LifecycleHook {
 
 	/**
 	 * The higher value, the closer to the actual property methods, i.e. the later it will be run.
-	 * Values above 0 will make it run after methods annotated with {@linkplain BeforeContainer}.
+	 * Default value is 0.
+	 *
+	 * <p>
+	 * Values greater than -10 will make it run after methods annotated with {@linkplain BeforeContainer},
+	 * values smaller than -10 will make it run before.
+	 * </p>
 	 *
 	 * @return an integer value
 	 */
