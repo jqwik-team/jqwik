@@ -3509,6 +3509,13 @@ There are a few fundamental principles that determine and constrain the lifecycl
    in the hook interface, e.g. 
    [`BeforeContainerHook.beforeContainerProximity()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--).
    
+Mind that much of what you can do with hooks can also be done using the simpler
+mechanisms of [annotated lifecycle methods](#annotated-lifecycle-methods) or
+a [property lifecycle class](#single-property-lifecycle). 
+You usually start to consider using lifecycle hooks when you want to 
+reuse generic behaviour in many places or even across projects. 
+
+
 #### Lifecycle Hook Types
 
 All lifecycle hook interfaces extend `net.jqwik.api.lifecycle.LifecycleHook` which
@@ -3549,7 +3556,7 @@ they are [lifecycle execution hooks](#lifecycle-execution-hooks).
 With these hooks you can determine if a test element will be run at all,
 and what potential actions should be done before or after running it.
 
-##### `SkipExecutionHook`
+##### SkipExecutionHook
 
 Implement [`SkipExecutionHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html) 
 to filter out a test container or property method depending on some runtime condition.
@@ -3577,21 +3584,21 @@ void macSpecificProperty(@ForAll int anInt) {
 }
 ```
 
-##### `BeforeContainerHook`
+##### BeforeContainerHook
 
 Implement [`BeforeContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html)
 for a hook that's supposed to do some work exactly once before any of its property methods and child containers
 will be run. 
 This is typically used to set up a resource to share among all properties within this container.
 
-##### `AfterContainerHook`
+##### AfterContainerHook
 
 Implement [`AfterContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AfterContainerHook.html)
 for a hook that's supposed to do some work exactly once after all of its property methods and child containers
 have been run. 
 This is typically used to tear down a resource that has been shared among all properties within this container.
 
-##### `AroundContainerHook`
+##### AroundContainerHook
 
 [`AroundContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
 is a convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and 
@@ -3639,7 +3646,7 @@ Running example 2
 Stopping server...
 ```
 
-##### `AroundPropertyHook`
+##### AroundPropertyHook
 
 [`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
 comes in handy if you need to define behaviour that should "wrap" the execution of a property,
@@ -3675,7 +3682,7 @@ The additional output from reporting is concise:
 timestamp = ..., time = 2804 ms
 ```
 
-##### `AroundTryHook`
+##### AroundTryHook
 
 Wrapping the execution of a single try can be achieved by implementing 
 [`AroundTryHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html).
@@ -3725,12 +3732,12 @@ org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
 
 #### Other Hooks
 
-##### `ResolveParameterHook`
+##### ResolveParameterHook
 
 Implement [`ResolveParameterHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html)
 if you...
 
-##### `RegistrarHook`
+##### RegistrarHook
 
 Implement [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
 if you...
@@ -3742,10 +3749,8 @@ _tbd_
 
 #### Composite Hook Example
 
-In this section I'll demonstrate a hook that implements some of the [hook types](#lifecycle-hook-types) 
-you've seen above and that also makes use of [lifecycle storage](#lifecycle-storage).  
-
-_tbd_
+Have a look at [jqwik-spring](https://github.com/jlink/jqwik-spring) if you want to see
+a complex and composite hook implementation in action.
 
 ## API Evolution
 
