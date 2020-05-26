@@ -3641,14 +3641,14 @@ Stopping server...
 
 ##### `AroundPropertyHook`
 
-Implement [`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
-if you need to define behaviour that should "wrap" the execution of a property,
+[`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
+comes in handy if you need to define behaviour that should "wrap" the execution of a property,
 i.e., do something directly before or after running a property - or both. 
 Since you have access to an object that describes the final result of a property
 you can also change the result, e.g. make a failed property successful or vice versa.
 
-Here is a hook that measures the time spent on running a property and publishes it
-using a [`Reporter`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Reporter.html):
+Here is a hook implementation that will measure the time spent on running a property 
+and publish the result using a [`Reporter`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Reporter.html):
 
 ```java
 @Property(tries = 100)
