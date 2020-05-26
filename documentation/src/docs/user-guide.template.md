@@ -3642,7 +3642,38 @@ Stopping server...
 ##### `AroundPropertyHook`
 
 Implement [`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
-if you...
+if you need to define behaviour that should "wrap" the execution of a property,
+i.e., do something directly before or after running a property - or both. 
+Since you have access to an object that describes the final result of a property
+you can also change the result, e.g. make a failed property successful or vice versa.
+
+Here is a hook that measures the time spent on running a property and publishes it
+using a [`Reporter`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Reporter.html):
+
+```java
+@Property(tries = 100)
+@AddLifecycleHook(MeasureTime.class)
+void measureTimeSpent(@ForAll Random random) throws InterruptedException {
+    Thread.sleep(random.nextInt(50));
+}
+
+class MeasureTime implements AroundPropertyHook {
+    @Override
+    public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
+        long before = System.currentTimeMillis();
+        PropertyExecutionResult executionResult = property.execute();
+        long after = System.currentTimeMillis();
+        context.reporter().publish("time", String.format("%d ms", after - before));
+        return executionResult;
+    }
+}
+```
+
+The additional output from reporting is concise:
+
+```
+timestamp = ..., time = 2804 ms
+```
 
 ##### `AroundTryHook`
 

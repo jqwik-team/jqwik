@@ -1,5 +1,6 @@
 package net.jqwik.docs.lifecycle;
 
+import java.util.*;
 import java.util.concurrent.atomic.*;
 
 import net.jqwik.api.*;
@@ -35,10 +36,10 @@ class AroundPropertyHookExamples implements AutoCloseable {
 		counter.incrementAndGet();
 	}
 
-	@Example
-	@AddLifecycleHook(ReportingAround.class)
-	void justForReporting() {
-		System.out.println("just for reporting");
+	@Property(tries = 100)
+	@AddLifecycleHook(MeasureTime.class)
+	void measureTimeSpent(@ForAll Random random) throws InterruptedException {
+		Thread.sleep(random.nextInt(50));
 	}
 
 	@Override
@@ -86,13 +87,14 @@ class AroundPropertyHookExamples implements AutoCloseable {
 		}
 	}
 
-	static class ReportingAround implements AroundPropertyHook {
+	static class MeasureTime implements AroundPropertyHook {
 
 		@Override
-		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
-			context.reporter().publish("before", String.format("%d", System.currentTimeMillis()));
+		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
+			long before = System.currentTimeMillis();
 			PropertyExecutionResult executionResult = property.execute();
-			context.reporter().publish("after", String.format("%d", System.currentTimeMillis()));
+			long after = System.currentTimeMillis();
+			context.reporter().publish("time", String.format("%d ms", after - before));
 			return executionResult;
 		}
 	}
