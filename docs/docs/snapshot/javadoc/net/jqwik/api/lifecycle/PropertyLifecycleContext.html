@@ -107,7 +107,7 @@ var activeTableTab = "activeTableTab";
      since="1.0")
 public interface <span class="typeNameLabel">PropertyLifecycleContext</span>
 extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">The context information of a property or example.</div>
 </li>
 </ul>
 </div>
@@ -128,19 +128,27 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.Class&lt;?&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#containerClass--">containerClass</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#containerClass--">containerClass</a></span>()</code>
+<div class="block">The container class in which the current property method is running.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#extendedLabel--">extendedLabel</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#extendedLabel--">extendedLabel</a></span>()</code>
+<div class="block">The extended label contains additional information about the current container class.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.reflect.Method</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#targetMethod--">targetMethod</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#targetMethod--">targetMethod</a></span>()</code>
+<div class="block">The method that defines the current property or example.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#testInstance--">testInstance</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html#testInstance--">testInstance</a></span>()</code>
+<div class="block">The current instance of the property's container class.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -171,6 +179,11 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 <li class="blockList">
 <h4>targetMethod</h4>
 <pre>java.lang.reflect.Method&nbsp;targetMethod()</pre>
+<div class="block">The method that defines the current property or example.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a Method instance</dd>
+</dl>
 </li>
 </ul>
 <a name="containerClass--">
@@ -180,6 +193,16 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 <li class="blockList">
 <h4>containerClass</h4>
 <pre>java.lang.Class&lt;?&gt;&nbsp;containerClass()</pre>
+<div class="block">The container class in which the current property method is running.
+
+ <p>
+     Most of the time that's also the defining class. It differs when
+     running properties that are defined in a super class or an implemented interface.
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a Class instance</dd>
+</dl>
 </li>
 </ul>
 <a name="testInstance--">
@@ -189,6 +212,12 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 <li class="blockList">
 <h4>testInstance</h4>
 <pre>java.lang.Object&nbsp;testInstance()</pre>
+<div class="block">The current instance of the property's container class.
+ There is exactly one instance per property method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an instance of the container class in which the current property method is running</dd>
+</dl>
 </li>
 </ul>
 <a name="extendedLabel--">
@@ -200,6 +229,11 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.3")
 java.lang.String&nbsp;extendedLabel()</pre>
+<div class="block">The extended label contains additional information about the current container class.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a String</dd>
+</dl>
 </li>
 </ul>
 </li>

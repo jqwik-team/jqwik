@@ -110,7 +110,20 @@ var activeTableTab = "activeTableTab";
 <pre>@API(status=EXPERIMENTAL,
      since="1.0")
 public interface <span class="typeNameLabel">LifecycleHook</span></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">This is the supertype of all lifecycle hook interfaces.
+ You can register a concrete implementation of a hook interface using
+ <a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle">AddLifecycleHook</a>.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle"><code>SkipExecutionHook</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle"><code>BeforeContainerHook</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle"><code>AfterContainerHook</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle"><code>AroundContainerHook</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle"><code>AroundPropertyHook</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle"><code>AroundTryHook</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle"><code>ResolveParameterHook</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/RegistrarHook.html" title="interface in net.jqwik.api.lifecycle"><code>RegistrarHook</code></a></dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -137,7 +150,10 @@ public interface <span class="typeNameLabel">LifecycleHook</span></pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">propagateTo</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">propagateTo</a></span>()</code>
+<div class="block">Override this method if you want to change a concrete hook implementation's default
+ propagation behaviour: Do not use hook in child elements -- sub containers or properties.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -182,6 +198,12 @@ default&nbsp;boolean&nbsp;appliesTo(java.util.Optional&lt;java.lang.reflect.Anno
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.4")
 default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>&nbsp;propagateTo()</pre>
+<div class="block">Override this method if you want to change a concrete hook implementation's default
+ propagation behaviour: Do not use hook in child elements -- sub containers or properties.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>propagation mode enum</dd>
+</dl>
 </li>
 </ul>
 </li>

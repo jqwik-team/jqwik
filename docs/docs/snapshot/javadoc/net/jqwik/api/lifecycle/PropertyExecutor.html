@@ -102,7 +102,8 @@ var activeTableTab = "activeTableTab";
 <pre>@API(status=EXPERIMENTAL,
      since="1.0")
 public interface <span class="typeNameLabel">PropertyExecutor</span></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">Objects of this class represent a property's execution.
+ This is used in <a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>.</div>
 </li>
 </ul>
 </div>
@@ -123,7 +124,10 @@ public interface <span class="typeNameLabel">PropertyExecutor</span></pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutor.html#execute--">execute</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutor.html#execute--">execute</a></span>()</code>
+<div class="block">Call to actually run the property, including all hooks that are "closer"
+ (have a higher proximity) than the current hook.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -147,6 +151,12 @@ public interface <span class="typeNameLabel">PropertyExecutor</span></pre>
 <li class="blockList">
 <h4>execute</h4>
 <pre><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;execute()</pre>
+<div class="block">Call to actually run the property, including all hooks that are "closer"
+ (have a higher proximity) than the current hook.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>The execution result</dd>
+</dl>
 </li>
 </ul>
 </li>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":9,"i4":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -182,19 +182,23 @@ extends java.lang.Enum&lt;<a href="../../../net/jqwik/api/EdgeCasesMode.html" ti
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCasesMode.html#generateFirst--">generateFirst</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCasesMode.html#activated--">activated</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCasesMode.html#mixIn--">mixIn</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCasesMode.html#generateFirst--">generateFirst</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCasesMode.html#mixIn--">mixIn</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCasesMode.html#valueOf-java.lang.String-">valueOf</a></span>(java.lang.String&nbsp;name)</code>
 <div class="block">Returns the enum constant of this type with the specified name.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../../net/jqwik/api/EdgeCasesMode.html" title="enum in net.jqwik.api">EdgeCasesMode</a>[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/EdgeCasesMode.html#values--">values</a></span>()</code>
 <div class="block">Returns an array containing the constants of this enum type, in
@@ -332,11 +336,21 @@ public&nbsp;boolean&nbsp;generateFirst()</pre>
 <a name="mixIn--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>mixIn</h4>
 <pre>@API(status=INTERNAL)
 public&nbsp;boolean&nbsp;mixIn()</pre>
+</li>
+</ul>
+<a name="activated--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>activated</h4>
+<pre>@API(status=INTERNAL)
+public&nbsp;boolean&nbsp;activated()</pre>
 </li>
 </ul>
 </li>

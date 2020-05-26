@@ -107,7 +107,8 @@ var activeTableTab = "activeTableTab";
      since="1.2.4")
 public interface <span class="typeNameLabel">AroundContainerHook</span>
 extends <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a>, <a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">An aggregate interface of <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a> and <a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a>
+ for convenience.</div>
 </li>
 </ul>
 </div>
@@ -150,23 +151,34 @@ extends <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" t
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>default void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">afterContainer</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">afterContainer</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</code>
+<div class="block">The code of this method will be run exactly once after all property methods and child containers.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#afterContainerProximity--">afterContainerProximity</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#afterContainerProximity--">afterContainerProximity</a></span>()</code>
+<div class="block">The higher the value, the closer to the actual property methods, i.e. the earlier it will be run.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>default void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#beforeContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">beforeContainer</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#beforeContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">beforeContainer</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</code>
+<div class="block">The code of this method will be run exactly once before any property method or child container.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#beforeContainerProximity--">beforeContainerProximity</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#beforeContainerProximity--">beforeContainerProximity</a></span>()</code>
+<div class="block">The higher the value, the closer to the actual property methods, i.e. the later it will be run.</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#proximity--">proximity</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#proximity--">proximity</a></span>()</code>
+<div class="block">Determine both <a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#beforeContainerProximity--">beforeContainerProximity()</a> and <a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#afterContainerProximity--">afterContainerProximity()</a>
+ in one go.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -211,35 +223,15 @@ extends <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" t
 <li class="blockList">
 <h4>beforeContainer</h4>
 <pre>default&nbsp;void&nbsp;beforeContainer(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">BeforeContainerHook</a></code></span></div>
+<div class="block">The code of this method will be run exactly once before any property method or child container.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">beforeContainer</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>afterContainer</h4>
-<pre>default&nbsp;void&nbsp;afterContainer(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">afterContainer</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="afterContainerProximity--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>afterContainerProximity</h4>
-<pre>default&nbsp;int&nbsp;afterContainerProximity()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainerProximity--">afterContainerProximity</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - The container's context object</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-"><code>BeforeContainerHook.beforeContainer(ContainerLifecycleContext)</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -250,9 +242,65 @@ extends <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" t
 <li class="blockList">
 <h4>beforeContainerProximity</h4>
 <pre>default&nbsp;int&nbsp;beforeContainerProximity()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--">BeforeContainerHook</a></code></span></div>
+<div class="block">The higher the value, the closer to the actual property methods, i.e. the later it will be run.
+ Default value is 0.
+
+ <p>
+ Values greater than -10 will make it run after methods annotated with <a href="../../../../net/jqwik/api/lifecycle/BeforeContainer.html" title="annotation in net.jqwik.api.lifecycle">BeforeContainer</a>,
+ values smaller than -10 will make it run before.
+ </p></div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--">beforeContainerProximity</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an integer value</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--"><code>BeforeContainerHook.beforeContainerProximity()</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>afterContainer</h4>
+<pre>default&nbsp;void&nbsp;afterContainer(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">AfterContainerHook</a></code></span></div>
+<div class="block">The code of this method will be run exactly once after all property methods and child containers.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">afterContainer</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a></code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - The container's context object</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-"><code>AfterContainerHook.afterContainer(ContainerLifecycleContext)</code></a></dd>
+</dl>
+</li>
+</ul>
+<a name="afterContainerProximity--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>afterContainerProximity</h4>
+<pre>default&nbsp;int&nbsp;afterContainerProximity()</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainerProximity--">AfterContainerHook</a></code></span></div>
+<div class="block">The higher the value, the closer to the actual property methods, i.e. the earlier it will be run.
+ Default value is 0.
+
+ <p>
+ Values greater than -10 will make it run before methods annotated with <a href="../../../../net/jqwik/api/lifecycle/AfterContainer.html" title="annotation in net.jqwik.api.lifecycle">AfterContainer</a>,
+ values smaller than -10 will make it run after.
+ </p></div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainerProximity--">afterContainerProximity</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an integer value</dd>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html#afterContainerProximity--"><code>AfterContainerHook.afterContainerProximity()</code></a></dd>
 </dl>
 </li>
 </ul>
@@ -263,6 +311,8 @@ extends <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" t
 <li class="blockList">
 <h4>proximity</h4>
 <pre>default&nbsp;int&nbsp;proximity()</pre>
+<div class="block">Determine both <a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#beforeContainerProximity--">beforeContainerProximity()</a> and <a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html#afterContainerProximity--">afterContainerProximity()</a>
+ in one go.</div>
 </li>
 </ul>
 </li>

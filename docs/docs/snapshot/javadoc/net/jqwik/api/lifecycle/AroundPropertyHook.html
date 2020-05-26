@@ -116,7 +116,9 @@ var activeTableTab = "activeTableTab";
  @FunctionalInterface
 public interface <span class="typeNameLabel">AroundPropertyHook</span>
 extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">Implement this hook to define behaviour that should "wrap" the execution of a property,
+ i.e., do something directly before or after running a property - or both.
+ You can even change the result of a property from successful to failed or the other way round.</div>
 </li>
 </ul>
 </div>
@@ -157,11 +159,15 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <tr id="i0" class="altColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html#aroundProperty-net.jqwik.api.lifecycle.PropertyLifecycleContext-net.jqwik.api.lifecycle.PropertyExecutor-">aroundProperty</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a>&nbsp;context,
-              <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutor.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutor</a>&nbsp;property)</code>&nbsp;</td>
+              <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutor.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutor</a>&nbsp;property)</code>
+<div class="block">When you wrap a property you can do stuff before and/or after its execution.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html#aroundPropertyProximity--">aroundPropertyProximity</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html#aroundPropertyProximity--">aroundPropertyProximity</a></span>()</code>
+<div class="block">The higher the value, the closer to the actual property method.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>default int</code></td>
@@ -195,7 +201,8 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <ul class="blockListLast">
 <li class="blockList">
 <h4>BASE</h4>
-<pre>static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a> BASE</pre>
+<pre>@API(status=INTERNAL)
+static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a> BASE</pre>
 </li>
 </ul>
 </li>
@@ -215,28 +222,48 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <pre><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;aroundProperty(<a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a>&nbsp;context,
                                        <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutor.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutor</a>&nbsp;property)
                                 throws java.lang.Throwable</pre>
+<div class="block">When you wrap a property you can do stuff before and/or after its execution.
+ All implementors should invoke the property with <code>property.execute()</code>
+ and either return the result of this call or map it to another result.</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - The property's context object</dd>
+<dd><code>property</code> - An executor to run the property</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>The result of running the property</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Throwable</code></dd>
+</dl>
+</li>
+</ul>
+<a name="aroundPropertyProximity--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>aroundPropertyProximity</h4>
+<pre>default&nbsp;int&nbsp;aroundPropertyProximity()</pre>
+<div class="block">The higher the value, the closer to the actual property method.
+ Default value is 0.
+
+ <p>
+ Values greater than -10 will make it run "inside"
+ annotated lifecycle methods (<a href="../../../../net/jqwik/api/lifecycle/BeforeProperty.html" title="annotation in net.jqwik.api.lifecycle">BeforeProperty</a> and <a href="../../../../net/jqwik/api/lifecycle/AfterProperty.html" title="annotation in net.jqwik.api.lifecycle">AfterProperty</a>).
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an integer value</dd>
 </dl>
 </li>
 </ul>
 <a name="compareTo-net.jqwik.api.lifecycle.AroundPropertyHook-">
 <!--   -->
 </a>
-<ul class="blockList">
-<li class="blockList">
-<h4>compareTo</h4>
-<pre>default&nbsp;int&nbsp;compareTo(<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&nbsp;other)</pre>
-</li>
-</ul>
-<a name="aroundPropertyProximity--">
-<!--   -->
-</a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>aroundPropertyProximity</h4>
-<pre>default&nbsp;int&nbsp;aroundPropertyProximity()</pre>
+<h4>compareTo</h4>
+<pre>@API(status=INTERNAL)
+default&nbsp;int&nbsp;compareTo(<a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a>&nbsp;other)</pre>
 </li>
 </ul>
 </li>

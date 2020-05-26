@@ -96,7 +96,13 @@
  @API(status=EXPERIMENTAL,
      since="1.2.4")
 public @interface <span class="memberNameLabel">PerProperty</span></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">Annotate property methods of a container class with <code>@PerProperty</code>
+ if you want to have some lifecycle control over this property alone.
+
+ <p>
+     If you want to control the lifecycle of all property methods use
+     <a href="../../../../net/jqwik/api/lifecycle/BeforeProperty.html" title="annotation in net.jqwik.api.lifecycle">BeforeProperty</a> or <a href="../../../../net/jqwik/api/lifecycle/AfterProperty.html" title="annotation in net.jqwik.api.lifecycle">AfterProperty</a>.
+ </p></div>
 </li>
 </ul>
 </div>
@@ -117,7 +123,9 @@ public @interface <span class="memberNameLabel">PerProperty</span></pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle">PerProperty.Lifecycle</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.html#value--">value</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.html#value--">value</a></span></code>
+<div class="block">Return a class that implements <a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle">PerProperty.Lifecycle</a></div>
+</td>
 </tr>
 </table>
 </li>
@@ -141,6 +149,11 @@ public @interface <span class="memberNameLabel">PerProperty</span></pre>
 <li class="blockList">
 <h4>value</h4>
 <pre>public abstract&nbsp;java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle">PerProperty.Lifecycle</a>&gt;&nbsp;value</pre>
+<div class="block">Return a class that implements <a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle">PerProperty.Lifecycle</a></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>An implementation of <a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html" title="interface in net.jqwik.api.lifecycle">PerProperty.Lifecycle</a></dd>
+</dl>
 </li>
 </ul>
 </li>

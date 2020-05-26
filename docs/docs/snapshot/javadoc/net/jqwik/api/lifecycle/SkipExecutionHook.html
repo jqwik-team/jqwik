@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":6,"i2":18};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
+var methods = {"i0":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -112,7 +112,9 @@ var activeTableTab = "activeTableTab";
  @FunctionalInterface
 public interface <span class="typeNameLabel">SkipExecutionHook</span>
 extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">Use this hook to determine if an annotated element should be skipped during
+ a test run or not. Evaluation of hooks is stopped
+ as soon as a single hook returns <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#skip-java.lang.String-">SkipExecutionHook.SkipResult.skip(String)</a>.</div>
 </li>
 </ul>
 </div>
@@ -164,23 +166,15 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#compareTo-net.jqwik.api.lifecycle.SkipExecutionHook-">compareTo</a></span>(<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&nbsp;other)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#shouldBeSkipped-net.jqwik.api.lifecycle.LifecycleContext-">shouldBeSkipped</a></span>(<a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a>&nbsp;context)</code>&nbsp;</td>
-</tr>
-<tr id="i2" class="altColor">
-<td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#skipExecutionOrder--">skipExecutionOrder</a></span>()</code>
-<div class="block">Lower order value means earlier evaluation</div>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html#shouldBeSkipped-net.jqwik.api.lifecycle.LifecycleContext-">shouldBeSkipped</a></span>(<a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a>&nbsp;context)</code>
+<div class="block">Determine if an annotated element should be skipped or not.</div>
 </td>
 </tr>
 </table>
@@ -211,7 +205,8 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DO_NOT_SKIP</h4>
-<pre>static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a> DO_NOT_SKIP</pre>
+<pre>@API(status=INTERNAL)
+static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a> DO_NOT_SKIP</pre>
 </li>
 </ul>
 </li>
@@ -225,29 +220,19 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <a name="shouldBeSkipped-net.jqwik.api.lifecycle.LifecycleContext-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>shouldBeSkipped</h4>
 <pre><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a>&nbsp;shouldBeSkipped(<a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a>&nbsp;context)</pre>
-</li>
-</ul>
-<a name="compareTo-net.jqwik.api.lifecycle.SkipExecutionHook-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>compareTo</h4>
-<pre>default&nbsp;int&nbsp;compareTo(<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a>&nbsp;other)</pre>
-</li>
-</ul>
-<a name="skipExecutionOrder--">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>skipExecutionOrder</h4>
-<pre>default&nbsp;int&nbsp;skipExecutionOrder()</pre>
-<div class="block">Lower order value means earlier evaluation</div>
+<div class="block">Determine if an annotated element should be skipped or not.
+ In order to decide an implementor can use all information from <code>context</code>.
+ Use <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#doNotSkip--">SkipExecutionHook.SkipResult.doNotSkip()</a> or <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#skip-java.lang.String-">SkipExecutionHook.SkipResult.skip(String)</a> as return value.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - An instance of <a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a> or <a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an instance of <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></dd>
+</dl>
 </li>
 </ul>
 </li>

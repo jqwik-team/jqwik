@@ -125,7 +125,10 @@ title: jqwik User Guide - 1.3.0-SNAPSHOT
   - [Lifecycle Hooks](#lifecycle-hooks)
     - [Principles](#principles)
     - [Lifecycle Hook Types](#lifecycle-hook-types)
+    - [Lifecycle Execution Hooks](#lifecycle-execution-hooks)
+    - [Other Hooks](#other-hooks)
     - [Lifecycle Storage](#lifecycle-storage)
+    - [Composite Hook Example](#composite-hook-example)
 - [API Evolution](#api-evolution)
 - [Release Notes](#release-notes)
 
@@ -3603,7 +3606,7 @@ change without notice in later versions.
 
 #### Principles
 
-There are a few fundamental principles that determine the lifecycle hook API:
+There are a few fundamental principles that determine and constrain the lifecycle hook API:
 
 1. There are several [types of lifecycle hooks](#lifecycle-hook-types), 
    each of which is an interface that extends 
@@ -3621,12 +3624,247 @@ There are a few fundamental principles that determine the lifecycle hook API:
 5. In a single test run there will only be a single instance of each concrete lifecycle hook implementation.
    That's why you have to use jqwik's [lifecycle storage](#lifecycle-storage) mechanism if shared state 
    across several calls to lifecycle methods is necessary.
+6. Since all instances of lifecycle hooks are created before the whole test run is started,
+   you cannot use non-static inner classes to implement lifecycle interfaces.
+7. If relevant, the order in which hook methods are being applied is determined by dedicated methods
+   in the hook interface, e.g. 
+   [`BeforeContainerHook.beforeContainerProximity()`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--).
    
 #### Lifecycle Hook Types
 
-_tbd_
+All lifecycle hook interfaces extend `net.jqwik.api.lifecycle.LifecycleHook` which
+has two methods that may be overridden:
+
+- [`propagateTo()`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--):
+  Determine if and how a hook will be propagated to an element's children.
+
+- [`appliesTo(Optional<AnnotatedElement>)`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/LifecycleHook.html#appliesTo-java.util.Optional-):
+  Determine if a hook will be applied to a concrete element. For example, you might want to constrain a certain hook
+  to apply only to property methods and not to containers:
+  
+  ```java
+  @Override
+  public boolean appliesTo(final Optional<AnnotatedElement> element) {
+  	return element
+      .map(annotatedElement -> annotatedElement instanceof Method)
+      .orElse(false);
+  }
+  ```
+
+_jqwik_ currently supports eight types of lifecycle hooks:
+
+- `SkipExecutionHook`
+- `BeforeContainerHook`
+- `AfterContainerHook`
+- `AroundContainerHook`
+- `AroundPropertyHook`
+- `AroundTryHook`
+- `ResolveParameterHook`
+- `RegistrarHook`
+
+The first six form a category of their own; 
+they are [lifecycle execution hooks](#lifecycle-execution-hooks). 
+
+#### Lifecycle Execution Hooks
+
+With these hooks you can determine if a test element will be run at all,
+and what potential actions should be done before or after running it.
+
+##### `SkipExecutionHook`
+
+Implement [`SkipExecutionHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html) 
+to filter out a test container or property method depending on some runtime condition.
+
+Given this hook implementation:
+
+```java
+public class OnMacOnly implements SkipExecutionHook {
+	@Override
+	public SkipResult shouldBeSkipped(final LifecycleContext context) {
+		if (System.getProperty("os.name").equals("Mac OS X")) {
+			return SkipResult.doNotSkip();
+		}
+		return SkipResult.skip("Only on Mac");
+	}
+}
+```
+
+The following property will only run on a Mac:
+
+```java
+@Property
+@AddLifecycleHook(OnMacOnly.class)
+void macSpecificProperty(@ForAll int anInt) {
+}
+```
+
+##### `BeforeContainerHook`
+
+Implement [`BeforeContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html)
+for a hook that's supposed to do some work exactly once before any of its property methods and child containers
+will be run. 
+This is typically used to set up a resource to share among all properties within this container.
+
+##### `AfterContainerHook`
+
+Implement [`AfterContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AfterContainerHook.html)
+for a hook that's supposed to do some work exactly once after all of its property methods and child containers
+have been run. 
+This is typically used to tear down a resource that has been shared among all properties within this container.
+
+##### `AroundContainerHook`
+
+[`AroundContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
+is a convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and 
+[`AfterContainerHook`](#aftercontainerhook) in one go. 
+This is typically used to set up and tear down a resource that is intended to be shared across all the container's children.
+
+Here's an example that shows how to start and stop an external server once for all
+properties of a test container:
+
+```java
+@AddLifecycleHook(ExternalServerResource.class)
+class AroundContainerHookExamples {
+	@Example
+	void example1() {
+		System.out.println("Running example 1");
+	}
+	@Example
+	void example2() {
+		System.out.println("Running example 2");
+	}
+}
+
+class ExternalServerResource implements AroundContainerHook {
+	@Override
+	public void beforeContainer(final ContainerLifecycleContext context) {
+		System.out.println("Starting server...");
+	}
+
+	@Override
+	public void afterContainer(final ContainerLifecycleContext context) {
+		System.out.println("Stopping server...");
+	}
+}
+```
+
+Running this example should output
+
+```
+Starting server...
+
+Running example 1
+
+Running example 2
+
+Stopping server...
+```
+
+##### `AroundPropertyHook`
+
+[`AroundPropertyHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
+comes in handy if you need to define behaviour that should "wrap" the execution of a property,
+i.e., do something directly before or after running a property - or both. 
+Since you have access to an object that describes the final result of a property
+you can also change the result, e.g. make a failed property successful or vice versa.
+
+Here is a hook implementation that will measure the time spent on running a property 
+and publish the result using a [`Reporter`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/Reporter.html):
+
+```java
+@Property(tries = 100)
+@AddLifecycleHook(MeasureTime.class)
+void measureTimeSpent(@ForAll Random random) throws InterruptedException {
+    Thread.sleep(random.nextInt(50));
+}
+
+class MeasureTime implements AroundPropertyHook {
+    @Override
+    public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
+        long before = System.currentTimeMillis();
+        PropertyExecutionResult executionResult = property.execute();
+        long after = System.currentTimeMillis();
+        context.reporter().publish("time", String.format("%d ms", after - before));
+        return executionResult;
+    }
+}
+```
+
+The additional output from reporting is concise:
+
+```
+timestamp = ..., time = 2804 ms
+```
+
+##### `AroundTryHook`
+
+Wrapping the execution of a single try can be achieved by implementing 
+[`AroundTryHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html).
+This hook can be used for a lot of things. An incomplete list:
+
+- Closely watch each execution of a property method
+- Reset a resource for each call
+- Swallow certain exceptions 
+- Filter out a tricky parameters constellation
+- Let a try fail depending on external circumstances
+
+The following example shows how to fail if a single try will take longer than 100 ms:
+
+```java
+@Property(tries = 10)
+@AddLifecycleHook(FailIfTooSlow.class)
+void sleepingProperty(@ForAll Random random) throws InterruptedException {
+    Thread.sleep(random.nextInt(101));
+}
+
+class FailIfTooSlow implements AroundTryHook {
+	@Override
+	public TryExecutionResult aroundTry(
+		final TryLifecycleContext context,
+		final TryExecutor aTry,
+		final List<Object> parameters
+	) {
+		long before = System.currentTimeMillis();
+		TryExecutionResult result = aTry.execute(parameters);
+		long after = System.currentTimeMillis();
+		long time = after - before;
+		if (time >= 100) {
+			String message = String.format("%s was too slow: %s ms", context.label(), time);
+			return TryExecutionResult.falsified(new AssertionFailedError(message));
+		}
+		return result;
+	}
+}
+```
+
+Since the sleep time is chosen randomly the property will fail from time to time
+with the following error:
+
+```
+org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
+```
+
+#### Other Hooks
+
+##### `ResolveParameterHook`
+
+Implement [`ResolveParameterHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html)
+if you...
+
+##### `RegistrarHook`
+
+Implement [`RegistrarHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
+if you...
 
 #### Lifecycle Storage
+
+_tbd_
+
+
+#### Composite Hook Example
+
+In this section I'll demonstrate a hook that implements some of the [hook types](#lifecycle-hook-types) 
+you've seen above and that also makes use of [lifecycle storage](#lifecycle-storage).  
 
 _tbd_
 

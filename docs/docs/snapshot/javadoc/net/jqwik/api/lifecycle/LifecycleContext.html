@@ -106,7 +106,13 @@ var activeTableTab = "activeTableTab";
 <pre>@API(status=EXPERIMENTAL,
      since="1.0")
 public interface <span class="typeNameLabel">LifecycleContext</span></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">Supertype of all lifecycle context interfaces.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><code>ContainerLifecycleContext</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><code>PropertyLifecycleContext</code></a>, 
+<a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle"><code>TryLifecycleContext</code></a></dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -127,15 +133,22 @@ public interface <span class="typeNameLabel">LifecycleContext</span></pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>&lt;T extends java.lang.annotation.Annotation&gt;<br>java.util.Optional&lt;T&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#findAnnotation-java.lang.Class-">findAnnotation</a></span>(java.lang.Class&lt;T&gt;&nbsp;annotationClass)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#findAnnotation-java.lang.Class-">findAnnotation</a></span>(java.lang.Class&lt;T&gt;&nbsp;annotationClass)</code>
+<div class="block">Retrieve an annotation if present at the current test element.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#label--">label</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#label--">label</a></span>()</code>
+<div class="block">The elements label under which it shows up in test reports and IDEs.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;T</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#newInstance-java.lang.Class-">newInstance</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#newInstance-java.lang.Class-">newInstance</a></span>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
+<div class="block">Create a new instance of a <code>clazz</code> in the context of the property in which it
+ is running.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.lang.Class&lt;?&gt;&gt;</code></td>
@@ -153,13 +166,15 @@ public interface <span class="typeNameLabel">LifecycleContext</span></pre>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle">Reporter</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#reporter--">reporter</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#reporter--">reporter</a></span>()</code>
+<div class="block">Get hold of test reporter for publishing additional information on a test container or method.</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.Optional&lt;<a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook.ParameterSupplier</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html#resolveParameter-java.lang.reflect.Executable-int-">resolveParameter</a></span>(java.lang.reflect.Executable&nbsp;executable,
                 int&nbsp;index)</code>
-<div class="block">Resolve a parameter from a method in the context of property in which it
+<div class="block">Resolve a parameter from a method in the context of the property in which it
  is running.</div>
 </td>
 </tr>
@@ -185,6 +200,11 @@ public interface <span class="typeNameLabel">LifecycleContext</span></pre>
 <li class="blockList">
 <h4>label</h4>
 <pre>java.lang.String&nbsp;label()</pre>
+<div class="block">The elements label under which it shows up in test reports and IDEs.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a String</dd>
+</dl>
 </li>
 </ul>
 <a name="optionalElement--">
@@ -230,6 +250,11 @@ java.util.Optional&lt;java.lang.Class&lt;?&gt;&gt;&nbsp;optionalContainerClass()
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.3")
 <a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle">Reporter</a>&nbsp;reporter()</pre>
+<div class="block">Get hold of test reporter for publishing additional information on a test container or method.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>Current instance to test reporter</dd>
+</dl>
 </li>
 </ul>
 <a name="findAnnotation-java.lang.Class-">
@@ -241,6 +266,15 @@ java.util.Optional&lt;java.lang.Class&lt;?&gt;&gt;&nbsp;optionalContainerClass()
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.4")
 &lt;T extends java.lang.annotation.Annotation&gt;&nbsp;java.util.Optional&lt;T&gt;&nbsp;findAnnotation(java.lang.Class&lt;T&gt;&nbsp;annotationClass)</pre>
+<div class="block">Retrieve an annotation if present at the current test element.</div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - The annotation type</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>annotationClass</code> - The annotation type</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>instance of annotation type</dd>
+</dl>
 </li>
 </ul>
 <a name="newInstance-java.lang.Class-">
@@ -252,6 +286,23 @@ java.util.Optional&lt;java.lang.Class&lt;?&gt;&gt;&nbsp;optionalContainerClass()
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.4")
 &lt;T&gt;&nbsp;T&nbsp;newInstance(java.lang.Class&lt;T&gt;&nbsp;clazz)</pre>
+<div class="block">Create a new instance of a <code>clazz</code> in the context of the property in which it
+ is running. Use this method for instance when trying to instantiate a class
+ retrieved from an annotation's attribute.
+
+ <p>
+ The behaviour of this method differs from <code>Class.newInstance()</code> if
+ the class to instantiate is a non-static member of the container class or even
+ a nested container class.
+ </p></div>
+<dl>
+<dt><span class="paramLabel">Type Parameters:</span></dt>
+<dd><code>T</code> - The type to instantiate</dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>clazz</code> - The class to instantiate</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a freshly created instance of class <code>clazz</code></dd>
+</dl>
 </li>
 </ul>
 <a name="resolveParameter-java.lang.reflect.Executable-int-">
@@ -264,7 +315,7 @@ java.util.Optional&lt;java.lang.Class&lt;?&gt;&gt;&nbsp;optionalContainerClass()
      since="1.2.5")
 java.util.Optional&lt;<a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook.ParameterSupplier</a>&gt;&nbsp;resolveParameter(java.lang.reflect.Executable&nbsp;executable,
                                                                                                                           int&nbsp;index)</pre>
-<div class="block">Resolve a parameter from a method in the context of property in which it
+<div class="block">Resolve a parameter from a method in the context of the property in which it
  is running.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>

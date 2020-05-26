@@ -97,7 +97,13 @@
  @API(status=EXPERIMENTAL,
      since="1.0")
 public @interface <span class="memberNameLabel">AddLifecycleHook</span></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">Use to register a concrete <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">lifecycle hook implementation</a>
+ for a test element -- a container class or a property method. More than one
+ hook can be registered.
+
+ <p>
+     This annotation can be used as meta annotation for self-made ones.
+ </p></div>
 </li>
 </ul>
 </div>
@@ -137,7 +143,9 @@ public @interface <span class="memberNameLabel">AddLifecycleHook</span></pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html#propagateTo--">propagateTo</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html#propagateTo--">propagateTo</a></span></code>
+<div class="block">Override the propagation mode specified in <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">LifecycleHook.propagateTo()</a>.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -161,6 +169,10 @@ public @interface <span class="memberNameLabel">AddLifecycleHook</span></pre>
 <li class="blockList">
 <h4>value</h4>
 <pre>public abstract&nbsp;java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&gt;&nbsp;value</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>Concrete lifecycle hook implementation class</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -176,6 +188,11 @@ public @interface <span class="memberNameLabel">AddLifecycleHook</span></pre>
 <pre>@API(status=EXPERIMENTAL,
      since="1.0")
 public abstract&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>&nbsp;propagateTo</pre>
+<div class="block">Override the propagation mode specified in <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">LifecycleHook.propagateTo()</a>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>Propagation mode enum value</dd>
+</dl>
 <dl>
 <dt>Default:</dt>
 <dd>net.jqwik.api.lifecycle.PropagationMode.NOT_SET</dd>

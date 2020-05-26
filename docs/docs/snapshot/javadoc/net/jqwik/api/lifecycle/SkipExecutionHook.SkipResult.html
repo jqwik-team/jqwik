@@ -133,7 +133,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#doNotSkip--">doNotSkip</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#doNotSkip--">doNotSkip</a></span>()</code>
+<div class="block">Create instance of <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a> to make the current element not being skipped.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -150,7 +152,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#skip-java.lang.String-">skip</a></span>(java.lang.String&nbsp;reason)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#skip-java.lang.String-">skip</a></span>(java.lang.String&nbsp;reason)</code>
+<div class="block">Create instance of <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a> to make the current element being skipped.</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -185,6 +189,13 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>skip</h4>
 <pre>public static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a>&nbsp;skip(java.lang.String&nbsp;reason)</pre>
+<div class="block">Create instance of <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a> to make the current element being skipped.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>reason</code> - String to describe why the element will be skipped</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>instance of <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></dd>
+</dl>
 </li>
 </ul>
 <a name="doNotSkip--">
@@ -194,6 +205,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>doNotSkip</h4>
 <pre>public static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a>&nbsp;doNotSkip()</pre>
+<div class="block">Create instance of <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a> to make the current element not being skipped.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>instance of <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a></dd>
+</dl>
 </li>
 </ul>
 <a name="isSkipped--">
@@ -218,7 +234,11 @@ extends java.lang.Object</pre>
 <h4>reason</h4>
 <pre>public&nbsp;java.util.Optional&lt;java.lang.String&gt;&nbsp;reason()</pre>
 <div class="block">Get the reason that execution of the context should be skipped,
- if available.</div>
+ if available. Might not be present, especially when using <a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html#doNotSkip--">doNotSkip()</a>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>instance of Optional&lt;<a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.SkipResult.html" title="class in net.jqwik.api.lifecycle">SkipExecutionHook.SkipResult</a>&gt;</dd>
+</dl>
 </li>
 </ul>
 <a name="toString--">

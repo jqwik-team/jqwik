@@ -83,49 +83,54 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Implement this hook to define behaviour for a container (class or whole test suite)
+ that should be run exactly once after of its property methods and child containers.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/AroundContainerHook.html" title="interface in net.jqwik.api.lifecycle">AroundContainerHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">An aggregate interface of <a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a> and <a href="../../../../net/jqwik/api/lifecycle/AfterContainerHook.html" title="interface in net.jqwik.api.lifecycle">AfterContainerHook</a>
+ for convenience.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html" title="interface in net.jqwik.api.lifecycle">AroundPropertyHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Implement this hook to define behaviour that should "wrap" the execution of a property,
+ i.e., do something directly before or after running a property - or both.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/AroundTryHook.html" title="interface in net.jqwik.api.lifecycle">AroundTryHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Implement this hook to define behaviour that should "wrap" the execution of a single try,
+ i.e., do something directly before or after executing a property method with a given list of parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Implement this hook to define behaviour for a container (class or whole test suite)
+ that should be run exactly once before any of its property methods and child containers.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">The context of a test container (a container class or the whole jqwik suite).</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Supertype of all lifecycle context interfaces.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">This is the supertype of all lifecycle hook interfaces.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -141,19 +146,19 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Represents the result of running a property.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutor.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutor</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Objects of this class represent a property's execution.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">The context information of a property or example.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -169,7 +174,8 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle">Reporter</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">An interface that can be used to report additional information for a test element,
+ i.e. a test container or property.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -185,7 +191,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Use this hook to determine if an annotated element should be skipped during
+ a test run or not.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -196,7 +203,9 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Represents the result of calling a property method with a list of parameters.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/TryExecutor.html" title="interface in net.jqwik.api.lifecycle">TryExecutor</a></td>
@@ -207,7 +216,7 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">TryLifecycleContext</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">The context information of a single try of a property.</div>
 </td>
 </tr>
 </tbody>
@@ -263,7 +272,10 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Describes if and how a concrete registered hook is propagated to children of
+ the element where the hook has been registered.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">PropertyExecutionResult.Status</a></td>
@@ -273,7 +285,9 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">TryExecutionResult.Status</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">Status of running a single try.</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -312,7 +326,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html" title="annotation in net.jqwik.api.lifecycle">AddLifecycleHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Use to register a concrete <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">lifecycle hook implementation</a>
+ for a test element -- a container class or a property method.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -386,7 +401,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.html" title="annotation in net.jqwik.api.lifecycle">PerProperty</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Annotate property methods of a container class with <code>@PerProperty</code>
+ if you want to have some lifecycle control over this property alone.</div>
 </td>
 </tr>
 </tbody>

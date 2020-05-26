@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":18,"i2":18,"i3":18,"i4":6,"i5":18};
+var methods = {"i0":18,"i1":18,"i2":18,"i3":6,"i4":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -172,20 +172,14 @@ extends java.lang.Iterable&lt;T&gt;</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/ExhaustiveGenerator.html#injectNull--">injectNull</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>default boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/ExhaustiveGenerator.html#isUnique--">isUnique</a></span>()</code>
-<div class="block">This is a hack to make unique work for exhaustive generation</div>
-</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>default &lt;U&gt;&nbsp;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;U&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/ExhaustiveGenerator.html#map-java.util.function.Function-">map</a></span>(java.util.function.Function&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="type parameter in ExhaustiveGenerator">T</a>,U&gt;&nbsp;mapper)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/ExhaustiveGenerator.html#maxCount--">maxCount</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>default <a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="type parameter in ExhaustiveGenerator">T</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../net/jqwik/api/ExhaustiveGenerator.html#unique--">unique</a></span>()</code>&nbsp;</td>
 </tr>
@@ -261,20 +255,6 @@ extends java.lang.Iterable&lt;T&gt;</pre>
 <li class="blockList">
 <h4>filter</h4>
 <pre>default&nbsp;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="interface in net.jqwik.api">ExhaustiveGenerator</a>&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="type parameter in ExhaustiveGenerator">T</a>&gt;&nbsp;filter(java.util.function.Predicate&lt;<a href="../../../net/jqwik/api/ExhaustiveGenerator.html" title="type parameter in ExhaustiveGenerator">T</a>&gt;&nbsp;filterPredicate)</pre>
-</li>
-</ul>
-<a name="isUnique--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isUnique</h4>
-<pre>default&nbsp;boolean&nbsp;isUnique()</pre>
-<div class="block">This is a hack to make unique work for exhaustive generation</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>true if this generator refers to an arbitrary that returns unique values</dd>
-</dl>
 </li>
 </ul>
 <a name="unique--">

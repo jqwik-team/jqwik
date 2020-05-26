@@ -124,23 +124,33 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>default void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#after-net.jqwik.api.lifecycle.PropertyExecutionResult-">after</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;propertyExecutionResult)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#after-net.jqwik.api.lifecycle.PropertyExecutionResult-">after</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;propertyExecutionResult)</code>
+<div class="block">Override if you want to perform some work once after the annotated property (or example).</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>default void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#before-net.jqwik.api.lifecycle.PropertyLifecycleContext-">before</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a>&nbsp;context)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#before-net.jqwik.api.lifecycle.PropertyLifecycleContext-">before</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a>&nbsp;context)</code>
+<div class="block">Override if you want to perform some work once before the annotated property (or example).</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>default <a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#onFailure-net.jqwik.api.lifecycle.PropertyExecutionResult-">onFailure</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;propertyExecutionResult)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#onFailure-net.jqwik.api.lifecycle.PropertyExecutionResult-">onFailure</a></span>(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;propertyExecutionResult)</code>
+<div class="block">Override if you want to perform some work or run assertions if - and only if - the property failed.</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>default void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#onSuccess--">onSuccess</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#onSuccess--">onSuccess</a></span>()</code>
+<div class="block">Override if you want to perform some work or run assertions if - and only if - the property succeeded.</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>default java.util.Optional&lt;<a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook.ParameterSupplier</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#resolve-net.jqwik.api.lifecycle.ParameterResolutionContext-">resolve</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ParameterResolutionContext.html" title="interface in net.jqwik.api.lifecycle">ParameterResolutionContext</a>&nbsp;parameterContext)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PerProperty.Lifecycle.html#resolve-net.jqwik.api.lifecycle.ParameterResolutionContext-">resolve</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ParameterResolutionContext.html" title="interface in net.jqwik.api.lifecycle">ParameterResolutionContext</a>&nbsp;parameterContext)</code>
+<div class="block">Override if you want to provide parameters for this property.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -164,6 +174,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>resolve</h4>
 <pre>default&nbsp;java.util.Optional&lt;<a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook.ParameterSupplier</a>&gt;&nbsp;resolve(<a href="../../../../net/jqwik/api/lifecycle/ParameterResolutionContext.html" title="interface in net.jqwik.api.lifecycle">ParameterResolutionContext</a>&nbsp;parameterContext)</pre>
+<div class="block">Override if you want to provide parameters for this property.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>parameterContext</code> - The object to retrieve information about the parameter to resolve</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a supplier wrapped in <code>Optional.of()</code></dd>
+</dl>
 </li>
 </ul>
 <a name="before-net.jqwik.api.lifecycle.PropertyLifecycleContext-">
@@ -173,6 +190,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>before</h4>
 <pre>default&nbsp;void&nbsp;before(<a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a>&nbsp;context)</pre>
+<div class="block">Override if you want to perform some work once before the annotated property (or example).</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - The object to retrieve information about the current property</dd>
+</dl>
 </li>
 </ul>
 <a name="after-net.jqwik.api.lifecycle.PropertyExecutionResult-">
@@ -182,6 +204,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>after</h4>
 <pre>default&nbsp;void&nbsp;after(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;propertyExecutionResult)</pre>
+<div class="block">Override if you want to perform some work once after the annotated property (or example).</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>propertyExecutionResult</code> - The object to retrieve information about the property's execution result</dd>
+</dl>
 </li>
 </ul>
 <a name="onSuccess--">
@@ -191,6 +218,8 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>onSuccess</h4>
 <pre>default&nbsp;void&nbsp;onSuccess()</pre>
+<div class="block">Override if you want to perform some work or run assertions if - and only if - the property succeeded.
+ If you want to make the property fail just use an appropriate assertion methods or throw an exception.</div>
 </li>
 </ul>
 <a name="onFailure-net.jqwik.api.lifecycle.PropertyExecutionResult-">
@@ -200,6 +229,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>onFailure</h4>
 <pre>default&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;onFailure(<a href="../../../../net/jqwik/api/lifecycle/PropertyExecutionResult.html" title="interface in net.jqwik.api.lifecycle">PropertyExecutionResult</a>&nbsp;propertyExecutionResult)</pre>
+<div class="block">Override if you want to perform some work or run assertions if - and only if - the property failed.
+ You have to return the original <code>propertyExecutionResult</code> or transform it into another result.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>propertyExecutionResult</code> - The object that represents the property's execution result</dd>
+</dl>
 </li>
 </ul>
 </li>

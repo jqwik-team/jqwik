@@ -116,7 +116,8 @@ var activeTableTab = "activeTableTab";
  @FunctionalInterface
 public interface <span class="typeNameLabel">BeforeContainerHook</span>
 extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">Implement this hook to define behaviour for a container (class or whole test suite)
+ that should be run exactly once before any of its property methods and child containers.</div>
 </li>
 </ul>
 </div>
@@ -156,11 +157,15 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">beforeContainer</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainer-net.jqwik.api.lifecycle.ContainerLifecycleContext-">beforeContainer</a></span>(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)</code>
+<div class="block">The code of this method will be run exactly once before any property method or child container.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>default int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--">beforeContainerProximity</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--">beforeContainerProximity</a></span>()</code>
+<div class="block">The higher the value, the closer to the actual property methods, i.e. the later it will be run.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>default int</code></td>
@@ -194,7 +199,8 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DO_NOTHING</h4>
-<pre>static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a> DO_NOTHING</pre>
+<pre>@API(status=INTERNAL)
+static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a> DO_NOTHING</pre>
 </li>
 </ul>
 </li>
@@ -213,28 +219,43 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <h4>beforeContainer</h4>
 <pre>void&nbsp;beforeContainer(<a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a>&nbsp;context)
               throws java.lang.Throwable</pre>
+<div class="block">The code of this method will be run exactly once before any property method or child container.</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>context</code> - The container's context object</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Throwable</code></dd>
+</dl>
+</li>
+</ul>
+<a name="beforeContainerProximity--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>beforeContainerProximity</h4>
+<pre>default&nbsp;int&nbsp;beforeContainerProximity()</pre>
+<div class="block">The higher the value, the closer to the actual property methods, i.e. the later it will be run.
+ Default value is 0.
+
+ <p>
+ Values greater than -10 will make it run after methods annotated with <a href="../../../../net/jqwik/api/lifecycle/BeforeContainer.html" title="annotation in net.jqwik.api.lifecycle">BeforeContainer</a>,
+ values smaller than -10 will make it run before.
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an integer value</dd>
 </dl>
 </li>
 </ul>
 <a name="compareTo-net.jqwik.api.lifecycle.BeforeContainerHook-">
 <!--   -->
 </a>
-<ul class="blockList">
-<li class="blockList">
-<h4>compareTo</h4>
-<pre>default&nbsp;int&nbsp;compareTo(<a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a>&nbsp;other)</pre>
-</li>
-</ul>
-<a name="beforeContainerProximity--">
-<!--   -->
-</a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>beforeContainerProximity</h4>
-<pre>default&nbsp;int&nbsp;beforeContainerProximity()</pre>
+<h4>compareTo</h4>
+<pre>@API(status=INTERNAL)
+default&nbsp;int&nbsp;compareTo(<a href="../../../../net/jqwik/api/lifecycle/BeforeContainerHook.html" title="interface in net.jqwik.api.lifecycle">BeforeContainerHook</a>&nbsp;other)</pre>
 </li>
 </ul>
 </li>

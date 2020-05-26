@@ -120,6 +120,14 @@ var activeTableTab = "activeTableTab";
      since="1.2.4")
 public enum <span class="typeNameLabel">PropagationMode</span>
 extends java.lang.Enum&lt;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>&gt;</pre>
+<div class="block">Describes if and how a concrete registered hook is propagated to children of
+ the element where the hook has been registered. The default behaviour
+ can be changed by:
+
+ <ul>
+     <li>Override <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html#propagateTo--">LifecycleHook.propagateTo()</a></li>
+     <li>Use annotation attribute <a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html#propagateTo--">AddLifecycleHook.propagateTo()</a></li>
+ </ul></div>
 </li>
 </ul>
 </div>
@@ -138,16 +146,24 @@ extends java.lang.Enum&lt;<a href="../../../../net/jqwik/api/lifecycle/Propagati
 <th class="colOne" scope="col">Enum Constant and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#ALL_DESCENDANTS">ALL_DESCENDANTS</a></span></code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#ALL_DESCENDANTS">ALL_DESCENDANTS</a></span></code>
+<div class="block">Propagate to all children and their children</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#DIRECT_DESCENDANTS">DIRECT_DESCENDANTS</a></span></code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#DIRECT_DESCENDANTS">DIRECT_DESCENDANTS</a></span></code>
+<div class="block">Propagate only to direct children</div>
+</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#NO_DESCENDANTS">NO_DESCENDANTS</a></span></code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#NO_DESCENDANTS">NO_DESCENDANTS</a></span></code>
+<div class="block">Do not propagate to any children</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#NOT_SET">NOT_SET</a></span></code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html#NOT_SET">NOT_SET</a></span></code>
+<div class="block">Default of <a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html#propagateTo--">AddLifecycleHook.propagateTo()</a>.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -213,6 +229,7 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>NOT_SET</h4>
 <pre>public static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a> NOT_SET</pre>
+<div class="block">Default of <a href="../../../../net/jqwik/api/lifecycle/AddLifecycleHook.html#propagateTo--">AddLifecycleHook.propagateTo()</a>. Never use yourself.</div>
 </li>
 </ul>
 <a name="ALL_DESCENDANTS">
@@ -222,6 +239,7 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>ALL_DESCENDANTS</h4>
 <pre>public static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a> ALL_DESCENDANTS</pre>
+<div class="block">Propagate to all children and their children</div>
 </li>
 </ul>
 <a name="DIRECT_DESCENDANTS">
@@ -231,6 +249,7 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>DIRECT_DESCENDANTS</h4>
 <pre>public static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a> DIRECT_DESCENDANTS</pre>
+<div class="block">Propagate only to direct children</div>
 </li>
 </ul>
 <a name="NO_DESCENDANTS">
@@ -240,6 +259,7 @@ the order they are declared.</div>
 <li class="blockList">
 <h4>NO_DESCENDANTS</h4>
 <pre>public static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a> NO_DESCENDANTS</pre>
+<div class="block">Do not propagate to any children</div>
 </li>
 </ul>
 </li>

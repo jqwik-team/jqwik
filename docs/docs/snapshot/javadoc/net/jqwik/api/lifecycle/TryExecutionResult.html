@@ -99,7 +99,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">TryExecutionResult</span></pre>
+<pre>@API(status=EXPERIMENTAL,
+     since="1.2.3")
+public interface <span class="typeNameLabel">TryExecutionResult</span></pre>
+<div class="block">Represents the result of calling a property method with a list of parameters.</div>
 </li>
 </ul>
 </div>
@@ -120,7 +123,9 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">TryExecutionResult.Status</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">TryExecutionResult.Status</a></span></code>
+<div class="block">Status of running a single try.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -139,11 +144,16 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#falsified-java.lang.Throwable-">falsified</a></span>(java.lang.Throwable&nbsp;throwable)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#falsified-java.lang.Throwable-">falsified</a></span>(java.lang.Throwable&nbsp;throwable)</code>
+<div class="block">Create a result that falsified the current property and will immediately
+ finish this property as failed.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#invalid--">invalid</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#invalid--">invalid</a></span>()</code>
+<div class="block">Create a result that calls out the current parameter list as invalid.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>default boolean</code></td>
@@ -151,11 +161,16 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#satisfied--">satisfied</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#satisfied--">satisfied</a></span>()</code>
+<div class="block">Create a result that satisfies the current property with the current parameter set.</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#satisfied-boolean-">satisfied</a></span>(boolean&nbsp;shouldPropertyFinishEarly)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#satisfied-boolean-">satisfied</a></span>(boolean&nbsp;shouldPropertyFinishEarly)</code>
+<div class="block">Create a result that satisfies the current property and will immediately
+ finish this property as successful.</div>
+</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -167,7 +182,9 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.Optional&lt;java.lang.Throwable&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#throwable--">throwable</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html#throwable--">throwable</a></span>()</code>
+<div class="block">Will return <code>Optional.empty()</code> if status is anything but <a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.Status.html#FALSIFIED">TryExecutionResult.Status.FALSIFIED</a>.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -191,6 +208,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>satisfied</h4>
 <pre>static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a>&nbsp;satisfied()</pre>
+<div class="block">Create a result that satisfies the current property with the current parameter set.
+ All remaining tries to be executed.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>result instance</dd>
+</dl>
 </li>
 </ul>
 <a name="satisfied-boolean-">
@@ -200,6 +223,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>satisfied</h4>
 <pre>static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a>&nbsp;satisfied(boolean&nbsp;shouldPropertyFinishEarly)</pre>
+<div class="block">Create a result that satisfies the current property and will immediately
+ finish this property as successful.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>result instance</dd>
+</dl>
 </li>
 </ul>
 <a name="falsified-java.lang.Throwable-">
@@ -209,6 +238,14 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>falsified</h4>
 <pre>static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a>&nbsp;falsified(java.lang.Throwable&nbsp;throwable)</pre>
+<div class="block">Create a result that falsified the current property and will immediately
+ finish this property as failed.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>throwable</code> - The throwable to describe the reason of falsification</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>result instance</dd>
+</dl>
 </li>
 </ul>
 <a name="invalid--">
@@ -218,6 +255,12 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>invalid</h4>
 <pre>static&nbsp;<a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.html" title="interface in net.jqwik.api.lifecycle">TryExecutionResult</a>&nbsp;invalid()</pre>
+<div class="block">Create a result that calls out the current parameter list as invalid.
+ All remaining tries will be executed.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>result instance</dd>
+</dl>
 </li>
 </ul>
 <a name="isSatisfied--">
@@ -227,6 +270,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>isSatisfied</h4>
 <pre>default&nbsp;boolean&nbsp;isSatisfied()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if status is satisfied</dd>
+</dl>
 </li>
 </ul>
 <a name="status--">
@@ -236,6 +283,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>status</h4>
 <pre><a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.Status.html" title="enum in net.jqwik.api.lifecycle">TryExecutionResult.Status</a>&nbsp;status()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>Status enum</dd>
+</dl>
 </li>
 </ul>
 <a name="throwable--">
@@ -245,6 +296,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>throwable</h4>
 <pre>java.util.Optional&lt;java.lang.Throwable&gt;&nbsp;throwable()</pre>
+<div class="block">Will return <code>Optional.empty()</code> if status is anything but <a href="../../../../net/jqwik/api/lifecycle/TryExecutionResult.Status.html#FALSIFIED">TryExecutionResult.Status.FALSIFIED</a>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>instance of Throwable or subtype</dd>
+</dl>
 </li>
 </ul>
 <a name="shouldPropertyFinishEarly--">
@@ -254,6 +310,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>shouldPropertyFinishEarly</h4>
 <pre>boolean&nbsp;shouldPropertyFinishEarly()</pre>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>true if status is satisfied and remaining tries shall be skipped</dd>
+</dl>
 </li>
 </ul>
 </li>

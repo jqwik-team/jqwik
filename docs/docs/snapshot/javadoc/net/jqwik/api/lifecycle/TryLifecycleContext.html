@@ -107,7 +107,7 @@ var activeTableTab = "activeTableTab";
      since="1.2.3")
 public interface <span class="typeNameLabel">TryLifecycleContext</span>
 extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">The context information of a single try of a property.</div>
 </li>
 </ul>
 </div>
@@ -128,15 +128,21 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.Class&lt;?&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html#containerClass--">containerClass</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html#containerClass--">containerClass</a></span>()</code>
+<div class="block">The container class in which the current property method is running.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.reflect.Method</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html#targetMethod--">targetMethod</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html#targetMethod--">targetMethod</a></span>()</code>
+<div class="block">The method that defines the current property or example.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html#testInstance--">testInstance</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html#testInstance--">testInstance</a></span>()</code>
+<div class="block">The current instance of the property's container class.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -169,6 +175,11 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" titl
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.7")
 java.lang.reflect.Method&nbsp;targetMethod()</pre>
+<div class="block">The method that defines the current property or example.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a Method instance</dd>
+</dl>
 </li>
 </ul>
 <a name="containerClass--">
@@ -180,6 +191,16 @@ java.lang.reflect.Method&nbsp;targetMethod()</pre>
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.7")
 java.lang.Class&lt;?&gt;&nbsp;containerClass()</pre>
+<div class="block">The container class in which the current property method is running.
+
+ <p>
+ Most of the time that's also the defining class. It differs when
+ running properties that are defined in a super class or an implemented interface.
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a Class instance</dd>
+</dl>
 </li>
 </ul>
 <a name="testInstance--">
@@ -191,6 +212,16 @@ java.lang.Class&lt;?&gt;&nbsp;containerClass()</pre>
 <pre>@API(status=EXPERIMENTAL,
      since="1.2.7")
 java.lang.Object&nbsp;testInstance()</pre>
+<div class="block">The current instance of the property's container class.
+ There is exactly one instance per property method.
+
+ <p>
+ Mind that all tries of a property <em>share the same test instance</em>.
+ </p></div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an instance of the container class in which the current property method is running</dd>
+</dl>
 </li>
 </ul>
 </li>
