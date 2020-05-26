@@ -880,8 +880,8 @@ class ArbitrariesTests {
 														 .withDistribution(RandomDistribution.uniform());
 			RandomGenerator<BigDecimal> generator = arbitrary.generator(1);
 
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -990);
-			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 990);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() > -1000 && value.longValue() < -980);
+			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, value -> value.longValue() < 1000 && value.longValue() > 980);
 			assertAllGenerated(
 				generator,
 				value -> value.compareTo(BigDecimal.valueOf(-1000L)) >= 0

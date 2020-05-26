@@ -3591,11 +3591,12 @@ for a hook that's supposed to do some work exactly once after all of its propert
 have been run. 
 This is typically used to tear down a resource that has been shared among all properties within this container.
 
-##### [`AroundContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
+##### `AroundContainerHook`
 
-A convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and 
+[`AroundContainerHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
+is a convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and 
 [`AfterContainerHook`](#aftercontainerhook) in one go. 
-This is typically used to set up and tear down a resource that should be shared across all the container's children.
+This is typically used to set up and tear down a resource that is intended to be shared across all the container's children.
 
 Here's an example that shows how to start and stop an external server once for all
 properties of a test container:
