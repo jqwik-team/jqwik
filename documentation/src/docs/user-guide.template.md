@@ -3677,8 +3677,51 @@ timestamp = ..., time = 2804 ms
 
 ##### `AroundTryHook`
 
-Implement [`AroundTryHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html)
-if you...
+Wrapping the execution of a single try can be achieved by implementing 
+[`AroundTryHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html).
+This hook can be used for a lot of things. An incomplete list:
+
+- Closely watch each execution of a property method
+- Reset a resource for each call
+- Swallow certain exceptions 
+- Filter out a tricky parameters constellation
+- Let a try fail depending on external circumstances
+
+The following example shows how to fail if a single try will take longer than 100 ms:
+
+```java
+@Property(tries = 10)
+@AddLifecycleHook(FailIfTooSlow.class)
+void sleepingProperty(@ForAll Random random) throws InterruptedException {
+    Thread.sleep(random.nextInt(101));
+}
+
+class FailIfTooSlow implements AroundTryHook {
+	@Override
+	public TryExecutionResult aroundTry(
+		final TryLifecycleContext context,
+		final TryExecutor aTry,
+		final List<Object> parameters
+	) {
+		long before = System.currentTimeMillis();
+		TryExecutionResult result = aTry.execute(parameters);
+		long after = System.currentTimeMillis();
+		long time = after - before;
+		if (time >= 100) {
+			String message = String.format("%s was too slow: %s ms", context.label(), time);
+			return TryExecutionResult.falsified(new AssertionFailedError(message));
+		}
+		return result;
+	}
+}
+```
+
+Since the sleep time is chosen randomly the property will fail from time to time
+with the following error:
+
+```
+org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
+```
 
 #### Other Hooks
 
@@ -3693,6 +3736,14 @@ Implement [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle
 if you...
 
 #### Lifecycle Storage
+
+_tbd_
+
+
+#### Composite Hook Example
+
+In this section I'll demonstrate a hook that implements some of the [hook types](#lifecycle-hook-types) 
+you've seen above and that also makes use of [lifecycle storage](#lifecycle-storage).  
 
 _tbd_
 
