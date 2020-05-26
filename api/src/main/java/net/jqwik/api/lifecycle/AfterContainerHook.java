@@ -19,7 +19,7 @@ public interface AfterContainerHook extends LifecycleHook {
 	void afterContainer(ContainerLifecycleContext context) throws Throwable;
 
 	/**
-	 * The higher value, the closer to the actual property methods, i.e. the earlier it will be run.
+	 * The higher the value, the closer to the actual property methods, i.e. the earlier it will be run.
 	 * Default value is 0.
 	 *
 	 * <p>

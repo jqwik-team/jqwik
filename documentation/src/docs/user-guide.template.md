@@ -3639,16 +3639,27 @@ Running example 2
 Stopping server...
 ```
 
-##### [`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
+##### `AroundPropertyHook`
 
-##### [`AroundTryHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html)
+Implement [`AroundPropertyHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
+if you...
 
+##### `AroundTryHook`
+
+Implement [`AroundTryHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html)
+if you...
 
 #### Other Hooks
 
-##### [`ResolveParameterHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html)
+##### `ResolveParameterHook`
 
-##### [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
+Implement [`ResolveParameterHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html)
+if you...
+
+##### `RegistrarHook`
+
+Implement [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
+if you...
 
 #### Lifecycle Storage
 
