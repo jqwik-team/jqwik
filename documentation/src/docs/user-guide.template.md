@@ -3739,8 +3739,15 @@ if you...
 
 ##### RegistrarHook
 
-Implement [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
-if you...
+Use [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html) 
+if you need to apply several hook implementations that implement the desired behaviour together 
+but that cannot be implemented in a single class. 
+For example, more than one implementation of the same hook type id needed,
+but those implementations have different proximity or require different propagation to child elements.
+
+This is really advanced stuff, the mechanism of which will probably evolve or change in the future.
+If you really really want to see an example, look at
+[`JqwikSpringExtension`](#https://github.com/jlink/jqwik-spring/blob/master/src/main/java/net/jqwik/spring/JqwikSpringExtension.java) 
 
 #### Lifecycle Storage
 
@@ -3750,7 +3757,7 @@ _tbd_
 #### Composite Hook Example
 
 Have a look at [jqwik-spring](https://github.com/jlink/jqwik-spring) if you want to see
-a complex and composite hook implementation in action.
+a complicated and composite hook implementation in action.
 
 ## API Evolution
 
