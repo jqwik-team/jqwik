@@ -176,42 +176,6 @@ You will have to add _at least_ the following jars to your classpath:
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
-## Creating an Example-based Test
-
-Just annotate a `public`, `protected` or package-scoped method with
-[`@Example`](/docs/${docsVersion}/javadoc/net/jqwik/api/Example.html).
-Example-based tests work just like plain JUnit-style test cases and
-are not supposed to take any parameters.
-
-A test case method must
-- either return a `boolean` value that signifies success (`true`)
-  or failure (`false`) of this test case.
-- or return nothing (`void`) in which case you will probably
-  use [assertions](#assertions) in order to verify the test condition.
-  
-[Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ExampleBasedTests.java)
-is a test class with two example-based tests:
-
-```java
-import static org.assertj.core.api.Assertions.*;
-
-import net.jqwik.api.*;
-import org.assertj.core.data.*;
-
-class ExampleBasedTests {
-	
-	@Example
-	void squareRootOf16is4() { 
-		assertThat(Math.sqrt(16)).isCloseTo(4.0, Offset.offset(0.01));
-	}
-
-	@Example
-	boolean add1plu3is4() {
-		return (1 + 3) == 4;
-	}
-}
-```
-
 ## Creating a Property
 
 _Properties_ are the core concept of [property-based testing](/#properties).
@@ -362,6 +326,46 @@ The following reporting aspects are available:
 - `Reporting.GENERATED` will report each generated set of parameters.
 - `Reporting.FALSIFIED` will report each set of parameters
   that is falsified during shrinking.
+
+## Creating an Example-based Test
+
+_jqwik_ also supports example-based testing.
+In order to write an example test annotate a `public`, `protected` or package-scoped method with
+[`@Example`](/docs/${docsVersion}/javadoc/net/jqwik/api/Example.html).
+Example-based tests work just like plain JUnit-style test cases.
+
+A test case method must
+- either return a `boolean` value that signifies success (`true`)
+  or failure (`false`) of this test case.
+- or return nothing (`void`) in which case you will probably
+  use [assertions](#assertions) in order to verify the test condition.
+  
+[Here](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ExampleBasedTests.java)
+is a test class with two example-based tests:
+
+```java
+import static org.assertj.core.api.Assertions.*;
+
+import net.jqwik.api.*;
+import org.assertj.core.data.*;
+
+class ExampleBasedTests {
+	
+	@Example
+	void squareRootOf16is4() { 
+		assertThat(Math.sqrt(16)).isCloseTo(4.0, Offset.offset(0.01));
+	}
+
+	@Example
+	boolean add1plu3is4() {
+		return (1 + 3) == 4;
+	}
+}
+```
+
+Internally _jqwik_ treats examples as properties with the number of tries hardcoded to `1`.
+Thus, everything that works for property methods also works for example methods --
+including random generation of parameters annotated with `@ForAll`.
 
 ## Assertions
 
@@ -3734,8 +3738,72 @@ org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
 
 ##### ResolveParameterHook
 
-Implement [`ResolveParameterHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html)
-if you...
+Besides the well-known ForAll-parameters, property methods and [annotated lifecycle methods](#annotated-lifecycle-methods)
+can take other parameters as well. These parameters can be injected by concrete implementations of 
+[`ResolveParameterHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html).
+
+Consider this stateful `Calculator`:
+
+```java
+public class Calculator {
+	private int result = 0;
+
+	public int result() {
+		return result;
+	}
+
+	public void plus(int addend) {
+		result += addend;
+	}
+}
+```
+
+When going to check its behaviour with properties you'll need a fresh calculator instance
+in each try. This can be achieved by adding a resolver hook that creates a freshly
+instantiated calculator per try.
+
+```java
+@AddLifecycleHook(CalculatorResolver.class)
+class CalculatorProperties {
+	@Property
+	void addingANumberTwice(@ForAll int aNumber, Calculator calculator) {
+		calculator.plus(aNumber);
+		calculator.plus(aNumber);
+		Assertions.assertThat(calculator.result()).isEqualTo(aNumber * 2);
+	}
+}
+
+class CalculatorResolver implements ResolveParameterHook {
+	@Override
+	public Optional<ParameterSupplier> resolve(
+		final ParameterResolutionContext parameterContext,
+		final LifecycleContext lifecycleContext
+	) {
+		return Optional.of(optionalTry -> new Calculator());
+	}
+	@Override
+	public PropagationMode propagateTo() {
+		return PropagationMode.ALL_DESCENDANTS;
+	}
+}
+```
+
+To be able to add the hook to the container class -- instead of the property method itself --
+`CalculatorResolver` must override `propagateTo()`. Alternatively the propagation mode
+could have been set in the annotation:
+`@AddLifecycleHook(value = CalculatorResolver.class, propagateTo = PropagationMode.ALL_DESCENDANTS)`
+
+There are a few constraints regarding parameter resolution of which you should be aware:
+
+- Parameters annotated with `@ForAll` or with `@ForAll` present as a meta annotation
+  (see [Self-Made Annotations](#self-made-annotations)) cannot be resolved. For these,
+  _jqwik's_ pseudo-randomized generation takes over.
+- If more than one applicable hook returns a non-empty instance of `Optional<ParameterSupplier>`
+  the property will throw an instance of `CannotResolveParameterException`.
+- If you want to keep the same object around to inject it in more than a single method invocation,
+  e.g. for setting it up in a `@BeforeTry`-method, you are supposed to use jqwik's 
+  [lifecycle storage mechanism](#lifecycle-storage).
+
 
 ##### RegistrarHook
 
