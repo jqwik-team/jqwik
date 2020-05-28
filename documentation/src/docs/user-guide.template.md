@@ -3909,14 +3909,40 @@ class TemporaryFileHook implements ResolveParameterHook {
 }
 ```
 
-There are a few interesting things going on:
+There are a few interesting things going to note:
 
-- ...
+- The identifier is a tuple of the hook class object and a string.
+  This makes sure that no other hook will use the same identifier accidentally.
+- The create temporary file is created only once per try. 
+  That means that all parameters in the scope of this try will see _the same file_.
+- A callback is added through `onClose(..)` which takes care of deleting the file
+  as soon as the try (and all its lifecycle) is done.
+  
+With this information you can probably figure out how the following test container works -- 
+especially why the assertion in `@AfterTry`-method `assertFileNotEmpty()` succeeds. 
 
-#### Composite Hook Example
+```java
+@AddLifecycleHook(value = TemporaryFileHook.class, propagateTo = PropagationMode.ALL_DESCENDANTS)
+class TemporaryFilesExample {
+	@Property(tries = 10)
+	void canWriteToFile(File anyFile, @ForAll @AlphaChars @StringLength(min = 1) String fileContents) throws Exception {
+		assertThat(anyFile).isEmpty();
+		writeToFile(anyFile, fileContents);
+		assertThat(anyFile).isNotEmpty();
+	}
 
-Have a look at [jqwik-spring](https://github.com/jlink/jqwik-spring) if you want to see
-a complicated and composite hook implementation in action.
+	@AfterTry
+	void assertFileNotEmpty(File anyFile) {
+		assertThat(anyFile).isNotEmpty();
+	}
+
+	private void writeToFile(File anyFile, String contents) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(anyFile));
+		writer.write(contents);
+		writer.close();
+	}
+}
+```
 
 ## API Evolution
 

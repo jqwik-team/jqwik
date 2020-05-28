@@ -21,7 +21,6 @@ class LifecycleStorageExamples {
 
 	@AfterTry
 	void assertFileNotEmpty(File anyFile) {
-		System.out.println(anyFile);
 		assertThat(anyFile).isNotEmpty();
 	}
 
