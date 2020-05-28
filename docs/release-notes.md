@@ -28,6 +28,8 @@ and
 
 #### New and Enhanced Features
 
+- Added user-guide documentation for [Lifecycle Hooks](/docs/snapshot/user-guide.html#lifecycle-hooks)
+
 - Added new statistics report formats: 
   [Histogram and NumberRangeHistogram](/docs/snapshot/user-guide.html#histograms)
 

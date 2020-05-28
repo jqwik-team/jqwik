@@ -322,16 +322,17 @@ implements <a href="../../../../net/jqwik/api/lifecycle/AroundPropertyHook.html"
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html#resolve-net.jqwik.api.lifecycle.ParameterResolutionContext-net.jqwik.api.lifecycle.LifecycleContext-">ResolveParameterHook</a></code></span></div>
 <div class="block">This method will be called only once per property, whereas the returned supplier's get method
  is usually invoked for each try - and potentially more often during shrinking or when resolving
- parameters in before/after methods.</div>
+ parameters in before/after methods.
+ The returned supplier should always return an equivalent object,
+ i.e. an object that behaves the same when used in the same way.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html#resolve-net.jqwik.api.lifecycle.ParameterResolutionContext-net.jqwik.api.lifecycle.LifecycleContext-">resolve</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameterContext</code> - Contains information of parameter to resolve</dd>
-<dd><code>lifecycleContext</code> - Is never of type <a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">TryLifecycleContext</a> at resolution time</dd>
+<dd><code>lifecycleContext</code> - Can be of type <a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a> or <a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a supplier that should always return an equivalent object,
- i.e. an object that behaves the same when used in the same way.</dd>
+<dd>supplier instance wrapped in Optional or Optional.empty() if it cannot be resolved</dd>
 </dl>
 </li>
 </ul>

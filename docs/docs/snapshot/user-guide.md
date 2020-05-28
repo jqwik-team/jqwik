@@ -17,10 +17,10 @@ title: jqwik User Guide - 1.3.0-SNAPSHOT
   - [Maven](#maven)
   - [Snapshot Releases](#snapshot-releases)
   - [Project without Build Tool](#project-without-build-tool)
-- [Creating an Example-based Test](#creating-an-example-based-test)
 - [Creating a Property](#creating-a-property)
   - [Optional `@Property` Parameters](#optional-property-parameters)
   - [Additional Reporting](#additional-reporting)
+- [Creating an Example-based Test](#creating-an-example-based-test)
 - [Assertions](#assertions)
 - [Lifecycle](#lifecycle)
   - [Simple Property Lifecycle](#simple-property-lifecycle)
@@ -297,42 +297,6 @@ You will have to add _at least_ the following jars to your classpath:
 - `opentest4j-1.1.1.jar`
 - `assertj-core-3.11.x.jar` in case you need assertion support
 
-## Creating an Example-based Test
-
-Just annotate a `public`, `protected` or package-scoped method with
-[`@Example`](/docs/snapshot/javadoc/net/jqwik/api/Example.html).
-Example-based tests work just like plain JUnit-style test cases and
-are not supposed to take any parameters.
-
-A test case method must
-- either return a `boolean` value that signifies success (`true`)
-  or failure (`false`) of this test case.
-- or return nothing (`void`) in which case you will probably
-  use [assertions](#assertions) in order to verify the test condition.
-  
-[Here](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/ExampleBasedTests.java)
-is a test class with two example-based tests:
-
-```java
-import static org.assertj.core.api.Assertions.*;
-
-import net.jqwik.api.*;
-import org.assertj.core.data.*;
-
-class ExampleBasedTests {
-	
-	@Example
-	void squareRootOf16is4() { 
-		assertThat(Math.sqrt(16)).isCloseTo(4.0, Offset.offset(0.01));
-	}
-
-	@Example
-	boolean add1plu3is4() {
-		return (1 + 3) == 4;
-	}
-}
-```
-
 ## Creating a Property
 
 _Properties_ are the core concept of [property-based testing](/#properties).
@@ -483,6 +447,46 @@ The following reporting aspects are available:
 - `Reporting.GENERATED` will report each generated set of parameters.
 - `Reporting.FALSIFIED` will report each set of parameters
   that is falsified during shrinking.
+
+## Creating an Example-based Test
+
+_jqwik_ also supports example-based testing.
+In order to write an example test annotate a `public`, `protected` or package-scoped method with
+[`@Example`](/docs/snapshot/javadoc/net/jqwik/api/Example.html).
+Example-based tests work just like plain JUnit-style test cases.
+
+A test case method must
+- either return a `boolean` value that signifies success (`true`)
+  or failure (`false`) of this test case.
+- or return nothing (`void`) in which case you will probably
+  use [assertions](#assertions) in order to verify the test condition.
+  
+[Here](https://github.com/jlink/jqwik/blob/master/documentation/src/test/java/net/jqwik/docs/ExampleBasedTests.java)
+is a test class with two example-based tests:
+
+```java
+import static org.assertj.core.api.Assertions.*;
+
+import net.jqwik.api.*;
+import org.assertj.core.data.*;
+
+class ExampleBasedTests {
+	
+	@Example
+	void squareRootOf16is4() { 
+		assertThat(Math.sqrt(16)).isCloseTo(4.0, Offset.offset(0.01));
+	}
+
+	@Example
+	boolean add1plu3is4() {
+		return (1 + 3) == 4;
+	}
+}
+```
+
+Internally _jqwik_ treats examples as properties with the number of tries hardcoded to `1`.
+Thus, everything that works for property methods also works for example methods --
+including random generation of parameters annotated with `@ForAll`.
 
 ## Assertions
 
@@ -3630,6 +3634,13 @@ There are a few fundamental principles that determine and constrain the lifecycl
    in the hook interface, e.g. 
    [`BeforeContainerHook.beforeContainerProximity()`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--).
    
+Mind that much of what you can do with hooks can also be done using the simpler
+mechanisms of [annotated lifecycle methods](#annotated-lifecycle-methods) or
+a [property lifecycle class](#single-property-lifecycle). 
+You usually start to consider using lifecycle hooks when you want to 
+reuse generic behaviour in many places or even across projects. 
+
+
 #### Lifecycle Hook Types
 
 All lifecycle hook interfaces extend `net.jqwik.api.lifecycle.LifecycleHook` which
@@ -3670,7 +3681,7 @@ they are [lifecycle execution hooks](#lifecycle-execution-hooks).
 With these hooks you can determine if a test element will be run at all,
 and what potential actions should be done before or after running it.
 
-##### `SkipExecutionHook`
+##### SkipExecutionHook
 
 Implement [`SkipExecutionHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/SkipExecutionHook.html) 
 to filter out a test container or property method depending on some runtime condition.
@@ -3698,21 +3709,21 @@ void macSpecificProperty(@ForAll int anInt) {
 }
 ```
 
-##### `BeforeContainerHook`
+##### BeforeContainerHook
 
 Implement [`BeforeContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html)
 for a hook that's supposed to do some work exactly once before any of its property methods and child containers
 will be run. 
 This is typically used to set up a resource to share among all properties within this container.
 
-##### `AfterContainerHook`
+##### AfterContainerHook
 
 Implement [`AfterContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AfterContainerHook.html)
 for a hook that's supposed to do some work exactly once after all of its property methods and child containers
 have been run. 
 This is typically used to tear down a resource that has been shared among all properties within this container.
 
-##### `AroundContainerHook`
+##### AroundContainerHook
 
 [`AroundContainerHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundContainerHook.html)
 is a convenience interface to implement both [`BeforeContainerHook`](#beforecontainerhook) and 
@@ -3760,7 +3771,7 @@ Running example 2
 Stopping server...
 ```
 
-##### `AroundPropertyHook`
+##### AroundPropertyHook
 
 [`AroundPropertyHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundPropertyHook.html)
 comes in handy if you need to define behaviour that should "wrap" the execution of a property,
@@ -3796,7 +3807,7 @@ The additional output from reporting is concise:
 timestamp = ..., time = 2804 ms
 ```
 
-##### `AroundTryHook`
+##### AroundTryHook
 
 Wrapping the execution of a single try can be achieved by implementing 
 [`AroundTryHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/AroundTryHook.html).
@@ -3846,15 +3857,86 @@ org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
 
 #### Other Hooks
 
-##### `ResolveParameterHook`
+##### ResolveParameterHook
 
-Implement [`ResolveParameterHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html)
-if you...
+Besides the well-known ForAll-parameters, property methods and [annotated lifecycle methods](#annotated-lifecycle-methods)
+can take other parameters as well. These parameters can be injected by concrete implementations of 
+[`ResolveParameterHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html).
 
-##### `RegistrarHook`
+Consider this stateful `Calculator`:
 
-Implement [`RegistrarHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html)
-if you...
+```java
+public class Calculator {
+	private int result = 0;
+
+	public int result() {
+		return result;
+	}
+
+	public void plus(int addend) {
+		result += addend;
+	}
+}
+```
+
+When going to check its behaviour with properties you'll need a fresh calculator instance
+in each try. This can be achieved by adding a resolver hook that creates a freshly
+instantiated calculator per try.
+
+```java
+@AddLifecycleHook(CalculatorResolver.class)
+class CalculatorProperties {
+	@Property
+	void addingANumberTwice(@ForAll int aNumber, Calculator calculator) {
+		calculator.plus(aNumber);
+		calculator.plus(aNumber);
+		Assertions.assertThat(calculator.result()).isEqualTo(aNumber * 2);
+	}
+}
+
+class CalculatorResolver implements ResolveParameterHook {
+	@Override
+	public Optional<ParameterSupplier> resolve(
+		final ParameterResolutionContext parameterContext,
+		final LifecycleContext lifecycleContext
+	) {
+		return Optional.of(optionalTry -> new Calculator());
+	}
+	@Override
+	public PropagationMode propagateTo() {
+		return PropagationMode.ALL_DESCENDANTS;
+	}
+}
+```
+
+To be able to add the hook to the container class -- instead of the property method itself --
+`CalculatorResolver` must override `propagateTo()`. Alternatively the propagation mode
+could have been set in the annotation:
+`@AddLifecycleHook(value = CalculatorResolver.class, propagateTo = PropagationMode.ALL_DESCENDANTS)`
+
+There are a few constraints regarding parameter resolution of which you should be aware:
+
+- Parameters annotated with `@ForAll` or with `@ForAll` present as a meta annotation
+  (see [Self-Made Annotations](#self-made-annotations)) cannot be resolved. For these,
+  _jqwik's_ pseudo-randomized generation takes over.
+- If more than one applicable hook returns a non-empty instance of `Optional<ParameterSupplier>`
+  the property will throw an instance of `CannotResolveParameterException`.
+- If you want to keep the same object around to inject it in more than a single method invocation,
+  e.g. for setting it up in a `@BeforeTry`-method, you are supposed to use jqwik's 
+  [lifecycle storage mechanism](#lifecycle-storage).
+
+
+##### RegistrarHook
+
+Use [`RegistrarHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html) 
+if you need to apply several hook implementations that implement the desired behaviour together 
+but that cannot be implemented in a single class. 
+For example, more than one implementation of the same hook type id needed,
+but those implementations have different proximity or require different propagation to child elements.
+
+This is really advanced stuff, the mechanism of which will probably evolve or change in the future.
+If you really really want to see an example, look at
+[`JqwikSpringExtension`](#https://github.com/jlink/jqwik-spring/blob/master/src/main/java/net/jqwik/spring/JqwikSpringExtension.java) 
 
 #### Lifecycle Storage
 
@@ -3863,10 +3945,8 @@ _tbd_
 
 #### Composite Hook Example
 
-In this section I'll demonstrate a hook that implements some of the [hook types](#lifecycle-hook-types) 
-you've seen above and that also makes use of [lifecycle storage](#lifecycle-storage).  
-
-_tbd_
+Have a look at [jqwik-spring](https://github.com/jlink/jqwik-spring) if you want to see
+a complicated and composite hook implementation in action.
 
 ## API Evolution
 

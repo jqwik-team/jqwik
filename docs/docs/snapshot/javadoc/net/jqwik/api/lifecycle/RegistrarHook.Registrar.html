@@ -104,6 +104,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public static interface <span class="typeNameLabel">RegistrarHook.Registrar</span></pre>
+<div class="block">A short-lived object used for registering concrete hook implementation classes.</div>
 </li>
 </ul>
 </div>
@@ -124,12 +125,16 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>default void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/RegistrarHook.Registrar.html#register-java.lang.Class-">register</a></span>(java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&gt;&nbsp;hook)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/RegistrarHook.Registrar.html#register-java.lang.Class-">register</a></span>(java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&gt;&nbsp;hook)</code>
+<div class="block">Register a concrete hook implementation with its default <a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/RegistrarHook.Registrar.html#register-java.lang.Class-net.jqwik.api.lifecycle.PropagationMode-">register</a></span>(java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&gt;&nbsp;hook,
-        <a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>&nbsp;propagationMode)</code>&nbsp;</td>
+        <a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>&nbsp;propagationMode)</code>
+<div class="block">Register a concrete hook implementation.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -154,6 +159,12 @@ var activeTableTab = "activeTableTab";
 <h4>register</h4>
 <pre>void&nbsp;register(java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&gt;&nbsp;hook,
               <a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>&nbsp;propagationMode)</pre>
+<div class="block">Register a concrete hook implementation.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>hook</code> - a concrete hook implementation class</dd>
+<dd><code>propagationMode</code> - propagation enum</dd>
+</dl>
 </li>
 </ul>
 <a name="register-java.lang.Class-">
@@ -163,6 +174,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>register</h4>
 <pre>default&nbsp;void&nbsp;register(java.lang.Class&lt;? extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a>&gt;&nbsp;hook)</pre>
+<div class="block">Register a concrete hook implementation with its default <a href="../../../../net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>hook</code> - a concrete hook implementation class</dd>
+</dl>
 </li>
 </ul>
 </li>

@@ -116,7 +116,8 @@ var activeTableTab = "activeTableTab";
  @FunctionalInterface
 public interface <span class="typeNameLabel">ResolveParameterHook</span>
 extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="interface in net.jqwik.api.lifecycle">LifecycleHook</a></pre>
-<div class="block">Experimental feature. Not ready for public usage yet.</div>
+<div class="block">This hook type allows to provide parameters for property methods
+ but also to annotated lifecycle methods.</div>
 </li>
 </ul>
 </div>
@@ -137,7 +138,10 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook.ParameterSupplier</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook.ParameterSupplier</a></span></code>
+<div class="block">A functional interface specialized on providing parameters to property methods
+ and to annotated lifecycle methods.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -210,7 +214,8 @@ extends <a href="../../../../net/jqwik/api/lifecycle/LifecycleHook.html" title="
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DO_NOT_RESOLVE</h4>
-<pre>static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook</a> DO_NOT_RESOLVE</pre>
+<pre>@API(status=INTERNAL)
+static final&nbsp;<a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook</a> DO_NOT_RESOLVE</pre>
 </li>
 </ul>
 </li>
@@ -233,14 +238,15 @@ java.util.Optional&lt;<a href="../../../../net/jqwik/api/lifecycle/ResolveParame
                                                                                                                  <a href="../../../../net/jqwik/api/lifecycle/LifecycleContext.html" title="interface in net.jqwik.api.lifecycle">LifecycleContext</a>&nbsp;lifecycleContext)</pre>
 <div class="block">This method will be called only once per property, whereas the returned supplier's get method
  is usually invoked for each try - and potentially more often during shrinking or when resolving
- parameters in before/after methods.</div>
+ parameters in before/after methods.
+ The returned supplier should always return an equivalent object,
+ i.e. an object that behaves the same when used in the same way.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>parameterContext</code> - Contains information of parameter to resolve</dd>
-<dd><code>lifecycleContext</code> - Is never of type <a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">TryLifecycleContext</a> at resolution time</dd>
+<dd><code>lifecycleContext</code> - Can be of type <a href="../../../../net/jqwik/api/lifecycle/ContainerLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">ContainerLifecycleContext</a> or <a href="../../../../net/jqwik/api/lifecycle/PropertyLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">PropertyLifecycleContext</a></dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a supplier that should always return an equivalent object,
- i.e. an object that behaves the same when used in the same way.</dd>
+<dd>supplier instance wrapped in Optional or Optional.empty() if it cannot be resolved</dd>
 </dl>
 </li>
 </ul>

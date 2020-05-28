@@ -164,12 +164,16 @@
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/RegistrarHook.html" title="interface in net.jqwik.api.lifecycle">RegistrarHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">Use this hook if you want to apply several hook implementations that belong
+ together but that cannot be implemented in a single class, e.g. because
+ the same hook type must be added with different proximity or different propagation.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/RegistrarHook.Registrar.html" title="interface in net.jqwik.api.lifecycle">RegistrarHook.Registrar</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">A short-lived object used for registering concrete hook implementation classes.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/Reporter.html" title="interface in net.jqwik.api.lifecycle">Reporter</a></td>
@@ -181,12 +185,16 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook</a></td>
 <td class="colLast">
-<div class="block">Experimental feature.</div>
+<div class="block">This hook type allows to provide parameters for property methods
+ but also to annotated lifecycle methods.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle">ResolveParameterHook.ParameterSupplier</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">A functional interface specialized on providing parameters to property methods
+ and to annotated lifecycle methods.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a href="../../../../net/jqwik/api/lifecycle/SkipExecutionHook.html" title="interface in net.jqwik.api.lifecycle">SkipExecutionHook</a></td>

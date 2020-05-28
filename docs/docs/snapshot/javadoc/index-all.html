@@ -2130,9 +2130,13 @@
  the final result.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/RegistrarHook.Registrar.html#register-java.lang.Class-net.jqwik.api.lifecycle.PropagationMode-">register(Class&lt;? extends LifecycleHook&gt;, PropagationMode)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/RegistrarHook.Registrar.html" title="interface in net.jqwik.api.lifecycle">RegistrarHook.Registrar</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register a concrete hook implementation.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/RegistrarHook.Registrar.html#register-java.lang.Class-">register(Class&lt;? extends LifecycleHook&gt;)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/RegistrarHook.Registrar.html" title="interface in net.jqwik.api.lifecycle">RegistrarHook.Registrar</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Register a concrete hook implementation with its default <a href="net/jqwik/api/lifecycle/PropagationMode.html" title="enum in net.jqwik.api.lifecycle">PropagationMode</a>.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerArbitrary-net.jqwik.api.providers.TypeUsage-net.jqwik.api.Arbitrary-">registerArbitrary(TypeUsage, Arbitrary&lt;?&gt;)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerArbitrary-java.lang.Class-net.jqwik.api.Arbitrary-">registerArbitrary(Class&lt;T&gt;, Arbitrary&lt;T&gt;)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
@@ -2140,15 +2144,21 @@
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerConfigurator-net.jqwik.api.configurators.ArbitraryConfigurator-">registerConfigurator(ArbitraryConfigurator)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/lifecycle/RegistrarHook.html#registerHooks-net.jqwik.api.lifecycle.RegistrarHook.Registrar-">registerHooks(RegistrarHook.Registrar)</a></span> - Method in interface net.jqwik.api.lifecycle.<a href="net/jqwik/api/lifecycle/RegistrarHook.html" title="interface in net.jqwik.api.lifecycle">RegistrarHook</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">This method will be called during hook registration, i.e. before any test has been started.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/domains/AbstractDomainContextBase.html#registerProvider-net.jqwik.api.providers.ArbitraryProvider-">registerProvider(ArbitraryProvider)</a></span> - Method in class net.jqwik.api.domains.<a href="net/jqwik/api/domains/AbstractDomainContextBase.html" title="class in net.jqwik.api.domains">AbstractDomainContextBase</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="net/jqwik/api/lifecycle/RegistrarHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">RegistrarHook</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
-<div class="block">Experimental feature.</div>
+<div class="block">Use this hook if you want to apply several hook implementations that belong
+ together but that cannot be implemented in a single class, e.g. because
+ the same hook type must be added with different proximity or different propagation.</div>
 </dd>
 <dt><a href="net/jqwik/api/lifecycle/RegistrarHook.Registrar.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">RegistrarHook.Registrar</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A short-lived object used for registering concrete hook implementation classes.</div>
+</dd>
 <dt><a href="net/jqwik/api/Report.html" title="annotation in net.jqwik.api"><span class="typeNameLink">Report</span></a> - Annotation Type in <a href="net/jqwik/api/package-summary.html">net.jqwik.api</a></dt>
 <dd>
 <div class="block">Use <code>@Report</code> to specify what additional things should be reported
@@ -2191,10 +2201,14 @@
 </dd>
 <dt><a href="net/jqwik/api/lifecycle/ResolveParameterHook.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">ResolveParameterHook</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
 <dd>
-<div class="block">Experimental feature.</div>
+<div class="block">This hook type allows to provide parameters for property methods
+ but also to annotated lifecycle methods.</div>
 </dd>
 <dt><a href="net/jqwik/api/lifecycle/ResolveParameterHook.ParameterSupplier.html" title="interface in net.jqwik.api.lifecycle"><span class="typeNameLink">ResolveParameterHook.ParameterSupplier</span></a> - Interface in <a href="net/jqwik/api/lifecycle/package-summary.html">net.jqwik.api.lifecycle</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">A functional interface specialized on providing parameters to property methods
+ and to annotated lifecycle methods.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="net/jqwik/api/Functions.FunctionWrapper.html#returns-net.jqwik.api.Arbitrary-">returns(Arbitrary&lt;R&gt;)</a></span> - Method in class net.jqwik.api.<a href="net/jqwik/api/Functions.FunctionWrapper.html" title="class in net.jqwik.api">Functions.FunctionWrapper</a></dt>
 <dd>
 <div class="block">Create an arbitrary to create instances of functions represented by this wrapper.</div>

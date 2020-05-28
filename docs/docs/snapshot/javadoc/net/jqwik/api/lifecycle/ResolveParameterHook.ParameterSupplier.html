@@ -111,6 +111,8 @@ var activeTableTab = "activeTableTab";
      since="1.2.5")
  @FunctionalInterface
 public static interface <span class="typeNameLabel">ResolveParameterHook.ParameterSupplier</span></pre>
+<div class="block">A functional interface specialized on providing parameters to property methods
+ and to annotated lifecycle methods.</div>
 </li>
 </ul>
 </div>
@@ -161,7 +163,7 @@ public static interface <span class="typeNameLabel">ResolveParameterHook.Paramet
  object must be returned if this object has state that could change its behaviour.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>optionalTry</code> - Contains a <a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">TryLifecycleContext</a> instance if used to supply a property's parameter.
+<dd><code>optionalTry</code> - Contains a <a href="../../../../net/jqwik/api/lifecycle/TryLifecycleContext.html" title="interface in net.jqwik.api.lifecycle">TryLifecycleContext</a> instance if used to supply a property method's parameter.
                     Otherwise it's empty.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the freshly generated object or one stored for the same context</dd>
