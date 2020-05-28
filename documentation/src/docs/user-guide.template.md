@@ -3487,7 +3487,7 @@ those _lifecycle hooks_ lives in the package `net.jqwik.api.lifecycle` and is --
 still in the [API evolution status](#api-evolution) `EXPERIMENTAL`: Some parts of it will probably 
 change without notice in later versions.
 
-#### Principles
+#### Principles of Lifecycle Hooks
 
 There are a few fundamental principles that determine and constrain the lifecycle hook API:
 
@@ -3820,8 +3820,98 @@ If you really really want to see an example, look at
 
 #### Lifecycle Storage
 
-_tbd_
+As [described above](#principles-of-lifecycle-hooks) one of the fundamental principles
+is that there will be only a single instance of any lifecycle hook implementation 
+during runtime. 
+Since -- depending on configuration and previous rung -- containers and properties are
+not run in a strict sequential order there is a clear drawback:
+You cannot use a hook instance's member variables to hold state that should be shared
+across all tries of a property or across all properties of a container or across
+different lifecycle phases of a single try. 
+That's when lifecycle storage management enters the stage in the form of type 
+[`net.jqwik.api.lifecycle.Store`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Store.html).
 
+A store object:
+
+- holds a single piece of shared state
+- has a _globally unique identifier_ of your choice. 
+  The identifier can be just a string or you compose whatever you deem necessary to identify a store.
+- has a [lifespan](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Lifespan.html).
+  The lifespan determines when the initializer of a store will be called:
+  - `Lifespan.RUN`: Only on first access
+  - `Lifespan.PROPERTY`: On first access of each single property method (or one of its lifecycle hook methods)
+  - `Lifespan.TRY`: On first access of each single try (or one of its lifecycle hook methods)
+
+You create a store like this:
+
+```java
+Store<MyObject> myObjectStore = Store.create("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
+```
+
+And you retrieve a store similarly:
+
+```java
+Store<MyObject> myObjectStore = Store.get("myObjectStore");
+```
+
+A store with the same identifier can only be created once, that's why there is also a convenience
+method for creating or retrieving it:
+
+```java
+Store<MyObject> myObjectStore = Store.create("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
+```
+
+You now have the choice to use or update the shared state:
+
+```java
+Store<MyObject> myObjectStore = ...;
+
+myObjectStore.get().doSomethingWithMyObject();
+myObjectStore.update(old -> {
+    old.changeState();
+    return old;
+});
+```
+
+Let's look at an example...
+
+##### TemporaryFileHook
+
+The following hook implementation gives you the possibility to access _one_ (and only one) temporary
+file per try using parameter injection:
+
+```java
+class TemporaryFileHook implements ResolveParameterHook {
+
+	public static final Tuple.Tuple2 STORE_IDENTIFIER = Tuple.of(TemporaryFileHook.class, "temporary files");
+
+	@Override
+	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
+		if (parameterContext.typeUsage().isOfType(File.class)) {
+			return Optional.of(ignoreTry -> getTemporaryFileForTry());
+		}
+		return Optional.empty();
+	}
+
+	private File getTemporaryFileForTry() {
+		Store<File> tempFileStore = Store.getOrCreate(STORE_IDENTIFIER, Lifespan.TRY, this::createTempFile);
+		tempFileStore.onClose(file -> file.delete());
+		return tempFileStore.get();
+	}
+
+	private File createTempFile() {
+		try {
+			return File.createTempFile("temp", ".txt");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+}
+```
+
+There are a few interesting things going on:
+
+- ...
 
 #### Composite Hook Example
 
