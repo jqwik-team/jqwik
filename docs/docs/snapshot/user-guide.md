@@ -3664,17 +3664,17 @@ has two methods that may be overridden:
 
 _jqwik_ currently supports eight types of lifecycle hooks:
 
-- `SkipExecutionHook`
-- `BeforeContainerHook`
-- `AfterContainerHook`
-- `AroundContainerHook`
-- `AroundPropertyHook`
-- `AroundTryHook`
-- `ResolveParameterHook`
-- `RegistrarHook`
-
-The first six form a category of their own; 
-they are [lifecycle execution hooks](#lifecycle-execution-hooks). 
+- [Lifecycle execution hooks](#lifecycle-execution-hooks):
+    - `SkipExecutionHook`
+    - `BeforeContainerHook`
+    - `AfterContainerHook`
+    - `AroundContainerHook`
+    - `AroundPropertyHook`
+    - `AroundTryHook`
+    
+- [Other hooks](#other-hooks)    
+    - `ResolveParameterHook`
+    - `RegistrarHook`
 
 #### Lifecycle Execution Hooks
 
@@ -3859,8 +3859,8 @@ org.opentest4j.AssertionFailedError: sleepingProperty was too slow: 100 ms
 
 ##### ResolveParameterHook
 
-Besides the well-known ForAll-parameters, property methods and [annotated lifecycle methods](#annotated-lifecycle-methods)
-can take other parameters as well. These parameters can be injected by concrete implementations of 
+Besides the well-known `@ForAll`-parameters, property methods and [annotated lifecycle methods](#annotated-lifecycle-methods)
+can take other parameters as well. These can be injected by concrete implementations of 
 [`ResolveParameterHook`](/docs/snapshot/javadoc/net/jqwik/api/lifecycle/ResolveParameterHook.html).
 
 Consider this stateful `Calculator`:
@@ -3912,6 +3912,7 @@ class CalculatorResolver implements ResolveParameterHook {
 To be able to add the hook to the container class -- instead of the property method itself --
 `CalculatorResolver` must override `propagateTo()`. Alternatively the propagation mode
 could have been set in the annotation:
+
 `@AddLifecycleHook(value = CalculatorResolver.class, propagateTo = PropagationMode.ALL_DESCENDANTS)`
 
 There are a few constraints regarding parameter resolution of which you should be aware:
