@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.3.0-SNAPSHOT](#130-snapshot)
+- [1.3.0](#130)
 - [1.2.x](#12x)
 - [1.1.x](#11x)
 - [1.0.0](#100)
@@ -18,27 +18,27 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.3.0-SNAPSHOT
+## 1.3.0
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.3.0/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.3.0/javadoc/index.html">javadoc</a>
 </p>
 
 #### New and Enhanced Features
 
-- Added user-guide documentation for [Lifecycle Hooks](/docs/snapshot/user-guide.html#lifecycle-hooks)
+- Added user-guide documentation for [Lifecycle Hooks](/docs/1.3.0/user-guide.html#lifecycle-hooks)
 
 - Added new statistics report formats: 
-  [Histogram and NumberRangeHistogram](/docs/snapshot/user-guide.html#histograms)
+  [Histogram and NumberRangeHistogram](/docs/1.3.0/user-guide.html#histograms)
 
 - Improved shrinking of dependent parameters.
 
 - Added `Arbitraries.ofSuppliers(..)` to choose among a set of mutable objects.
 
 - You can now influence the 
-  [distribution of random number generation](/docs/snapshot/user-guide.html#random-numeric-distribution): 
+  [distribution of random number generation](/docs/1.3.0/user-guide.html#random-numeric-distribution): 
   All numeric arbitraries now support `withDistribution(RandomDistribution)`
   to choose between `RandomDistribution.biased()` (default),
    `RandomDistribution.uniform()` and `RandomDistribution.gaussian(borderSigma)`. 
@@ -49,7 +49,7 @@ and
 - Using a faster implementation of `java.util.Random` under the hood
 
 - Massively improved and enhanced 
-  [generation of edge cases](/docs/snapshot/user-guide.html#generation-of-edge-cases)
+  [generation of edge cases](/docs/1.3.0/user-guide.html#generation-of-edge-cases)
 
 - Edge Cases Mode is now being reported per property
 

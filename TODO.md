@@ -1,7 +1,3 @@
-- 1.3.0
-
-    - Documentation for lifecycle hooks API in user guide
-    
 - 1.3.x
 
     - Improve Sample Reporting

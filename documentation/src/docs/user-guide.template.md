@@ -3960,7 +3960,7 @@ The different types of status are:
 
 -`INTERNAL`: Must not be used by any code other than _jqwik_ itself. Might be removed without prior notice.
 
-Since annotation `@API` has runtime retention you find the actual API status in an elements source code,
+Since annotation `@API` has runtime retention you find the actual API status in an element's source code,
 its [Javadoc](/docs/${docsVersion}/javadoc) but also through reflection. 
 If a certain element, e.g. a method, is not annotated itself, then it carries the status of its containing class.
 
