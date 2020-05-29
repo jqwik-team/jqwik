@@ -3508,7 +3508,7 @@ There are a few fundamental principles that determine and constrain the lifecycl
    That's why you have to use jqwik's [lifecycle storage](#lifecycle-storage) mechanism if shared state 
    across several calls to lifecycle methods is necessary.
 6. Since all instances of lifecycle hooks are created before the whole test run is started,
-   you cannot use non-static inner classes to implement lifecycle interfaces.
+   you cannot use non-static inner classes of test containers to implement lifecycle interfaces.
 7. If relevant, the order in which hook methods are being applied is determined by dedicated methods
    in the hook interface, e.g. 
    [`BeforeContainerHook.beforeContainerProximity()`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/BeforeContainerHook.html#beforeContainerProximity--).
@@ -3535,9 +3535,9 @@ has two methods that may be overridden:
   ```java
   @Override
   public boolean appliesTo(final Optional<AnnotatedElement> element) {
-  	return element
-      .map(annotatedElement -> annotatedElement instanceof Method)
-      .orElse(false);
+      return element
+          .map(annotatedElement -> annotatedElement instanceof Method)
+          .orElse(false);
   }
   ```
 
@@ -3569,13 +3569,13 @@ Given this hook implementation:
 
 ```java
 public class OnMacOnly implements SkipExecutionHook {
-	@Override
-	public SkipResult shouldBeSkipped(final LifecycleContext context) {
-		if (System.getProperty("os.name").equals("Mac OS X")) {
-			return SkipResult.doNotSkip();
-		}
-		return SkipResult.skip("Only on Mac");
-	}
+    @Override
+    public SkipResult shouldBeSkipped(final LifecycleContext context) {
+        if (System.getProperty("os.name").equals("Mac OS X")) {
+            return SkipResult.doNotSkip();
+        }
+        return SkipResult.skip("Only on Mac");
+    }
 }
 ```
 
@@ -3615,26 +3615,26 @@ properties of a test container:
 ```java
 @AddLifecycleHook(ExternalServerResource.class)
 class AroundContainerHookExamples {
-	@Example
-	void example1() {
-		System.out.println("Running example 1");
-	}
-	@Example
-	void example2() {
-		System.out.println("Running example 2");
-	}
+    @Example
+    void example1() {
+        System.out.println("Running example 1");
+    }
+    @Example
+    void example2() {
+        System.out.println("Running example 2");
+    }
 }
 
 class ExternalServerResource implements AroundContainerHook {
-	@Override
-	public void beforeContainer(final ContainerLifecycleContext context) {
-		System.out.println("Starting server...");
-	}
-
-	@Override
-	public void afterContainer(final ContainerLifecycleContext context) {
-		System.out.println("Stopping server...");
-	}
+    @Override
+    public void beforeContainer(final ContainerLifecycleContext context) {
+        System.out.println("Starting server...");
+    }
+  
+    @Override
+    public void afterContainer(final ContainerLifecycleContext context) {
+        System.out.println("Stopping server...");
+    }
 }
 ```
 
@@ -3649,6 +3649,9 @@ Running example 2
 
 Stopping server...
 ```
+
+If you wanted to do something before and/or after _the whole jqwik test run_,
+using a container hook and registering it globally is probably the easiest way.
 
 ##### AroundPropertyHook
 
@@ -3695,7 +3698,7 @@ This hook can be used for a lot of things. An incomplete list:
 - Closely watch each execution of a property method
 - Reset a resource for each call
 - Swallow certain exceptions 
-- Filter out a tricky parameters constellation
+- Filter out tricky (and invalid) parameter constellations
 - Let a try fail depending on external circumstances
 
 The following example shows how to fail if a single try will take longer than 100 ms:
@@ -3708,22 +3711,22 @@ void sleepingProperty(@ForAll Random random) throws InterruptedException {
 }
 
 class FailIfTooSlow implements AroundTryHook {
-	@Override
-	public TryExecutionResult aroundTry(
-		final TryLifecycleContext context,
-		final TryExecutor aTry,
-		final List<Object> parameters
-	) {
-		long before = System.currentTimeMillis();
-		TryExecutionResult result = aTry.execute(parameters);
-		long after = System.currentTimeMillis();
-		long time = after - before;
-		if (time >= 100) {
-			String message = String.format("%s was too slow: %s ms", context.label(), time);
-			return TryExecutionResult.falsified(new AssertionFailedError(message));
-		}
-		return result;
-	}
+    @Override
+    public TryExecutionResult aroundTry(
+        final TryLifecycleContext context,
+        final TryExecutor aTry,
+        final List<Object> parameters
+    ) {
+        long before = System.currentTimeMillis();
+        TryExecutionResult result = aTry.execute(parameters);
+        long after = System.currentTimeMillis();
+        long time = after - before;
+        if (time >= 100) {
+            String message = String.format("%s was too slow: %s ms", context.label(), time);
+            return TryExecutionResult.falsified(new AssertionFailedError(message));
+        }
+        return result;
+    }
 }
 ```
 
@@ -3746,15 +3749,15 @@ Consider this stateful `Calculator`:
 
 ```java
 public class Calculator {
-	private int result = 0;
-
-	public int result() {
-		return result;
-	}
-
-	public void plus(int addend) {
-		result += addend;
-	}
+    private int result = 0;
+  
+    public int result() {
+        return result;
+    }
+  
+    public void plus(int addend) {
+        result += addend;
+    }
 }
 ```
 
@@ -3765,40 +3768,35 @@ instantiated calculator per try.
 ```java
 @AddLifecycleHook(CalculatorResolver.class)
 class CalculatorProperties {
-	@Property
-	void addingANumberTwice(@ForAll int aNumber, Calculator calculator) {
-		calculator.plus(aNumber);
-		calculator.plus(aNumber);
-		Assertions.assertThat(calculator.result()).isEqualTo(aNumber * 2);
-	}
+    @Property
+    void addingANumberTwice(@ForAll int aNumber, Calculator calculator) {
+        calculator.plus(aNumber);
+        calculator.plus(aNumber);
+        Assertions.assertThat(calculator.result()).isEqualTo(aNumber * 2);
+    }
 }
 
 class CalculatorResolver implements ResolveParameterHook {
-	@Override
-	public Optional<ParameterSupplier> resolve(
-		final ParameterResolutionContext parameterContext,
-		final LifecycleContext lifecycleContext
-	) {
-		return Optional.of(optionalTry -> new Calculator());
-	}
-	@Override
-	public PropagationMode propagateTo() {
-		return PropagationMode.ALL_DESCENDANTS;
-	}
+    @Override
+    public Optional<ParameterSupplier> resolve(
+        final ParameterResolutionContext parameterContext,
+        final LifecycleContext lifecycleContext
+    ) {
+        return Optional.of(optionalTry -> new Calculator());
+    }
+    @Override
+    public PropagationMode propagateTo() {
+        // Allow annotation on container level
+        return PropagationMode.ALL_DESCENDANTS;
+    }
 }
 ```
-
-To be able to add the hook to the container class -- instead of the property method itself --
-`CalculatorResolver` must override `propagateTo()`. Alternatively the propagation mode
-could have been set in the annotation:
-
-`@AddLifecycleHook(value = CalculatorResolver.class, propagateTo = PropagationMode.ALL_DESCENDANTS)`
 
 There are a few constraints regarding parameter resolution of which you should be aware:
 
 - Parameters annotated with `@ForAll` or with `@ForAll` present as a meta annotation
-  (see [Self-Made Annotations](#self-made-annotations)) cannot be resolved. For these,
-  _jqwik's_ pseudo-randomized generation takes over.
+  (see [Self-Made Annotations](#self-made-annotations)) cannot be resolved; 
+  they are fully controlled by jqwik's arbitrary-based generation mechanism.
 - If more than one applicable hook returns a non-empty instance of `Optional<ParameterSupplier>`
   the property will throw an instance of `CannotResolveParameterException`.
 - If you want to keep the same object around to inject it in more than a single method invocation,
@@ -3810,9 +3808,9 @@ There are a few constraints regarding parameter resolution of which you should b
 
 Use [`RegistrarHook`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/RegistrarHook.html) 
 if you need to apply several hook implementations that implement the desired behaviour together 
-but that cannot be implemented in a single class. 
-For example, more than one implementation of the same hook type id needed,
-but those implementations have different proximity or require different propagation to child elements.
+but cannot be implemented in a single class. 
+For example, more than one implementation of the same hook type is needed,
+but those implementations have a different proximity or require a different propagation mode.
 
 This is really advanced stuff, the mechanism of which will probably evolve or change in the future.
 If you really really want to see an example, look at
@@ -3824,19 +3822,19 @@ As [described above](#principles-of-lifecycle-hooks) one of the fundamental prin
 is that there will be only a single instance of any lifecycle hook implementation 
 during runtime. 
 Since -- depending on configuration and previous rung -- containers and properties are
-not run in a strict sequential order there is a clear drawback:
+not run in a strict sequential order this guarantee comes with a drawback:
 You cannot use a hook instance's member variables to hold state that should be shared
 across all tries of a property or across all properties of a container or across
 different lifecycle phases of a single try. 
 That's when lifecycle storage management enters the stage in the form of type 
 [`net.jqwik.api.lifecycle.Store`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Store.html).
 
-A store object:
+A `Store` object...
 
 - holds a single piece of shared state
 - has a _globally unique identifier_ of your choice. 
-  The identifier can be just a string or you compose whatever you deem necessary to identify a store.
-- has a [lifespan](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Lifespan.html).
+  The identifier can be just a string or you compose whatever you deem necessary to make it unique.
+- has a [`Lifespan`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Lifespan.html).
   The lifespan determines when the initializer of a store will be called:
   - `Lifespan.RUN`: Only on first access
   - `Lifespan.PROPERTY`: On first access of each single property method (or one of its lifecycle hook methods)
@@ -3858,7 +3856,7 @@ A store with the same identifier can only be created once, that's why there is a
 method for creating or retrieving it:
 
 ```java
-Store<MyObject> myObjectStore = Store.create("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
+Store<MyObject> myObjectStore = Store.getOrCreate("myObjectStore", Lifespan.PROPERTY, () -> new MyObject());
 ```
 
 You now have the choice to use or update the shared state:
@@ -3877,46 +3875,47 @@ Let's look at an example...
 
 ##### TemporaryFileHook
 
-The following hook implementation gives you the possibility to access _one_ (and only one) temporary
-file per try using parameter injection:
+The following hook implementation gives you the capability to access _one_ (and only one) 
+temporary file per try using [parameter resolution](#resolveparameterhook):
 
 ```java
 class TemporaryFileHook implements ResolveParameterHook {
 
-	public static final Tuple.Tuple2 STORE_IDENTIFIER = Tuple.of(TemporaryFileHook.class, "temporary files");
-
-	@Override
-	public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
-		if (parameterContext.typeUsage().isOfType(File.class)) {
-			return Optional.of(ignoreTry -> getTemporaryFileForTry());
-		}
-		return Optional.empty();
-	}
-
-	private File getTemporaryFileForTry() {
-		Store<File> tempFileStore = Store.getOrCreate(STORE_IDENTIFIER, Lifespan.TRY, this::createTempFile);
-		tempFileStore.onClose(file -> file.delete());
-		return tempFileStore.get();
-	}
-
-	private File createTempFile() {
-		try {
-			return File.createTempFile("temp", ".txt");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public static final Tuple.Tuple2 STORE_IDENTIFIER = Tuple.of(TemporaryFileHook.class, "temporary files");
+  
+    @Override
+    public Optional<ParameterSupplier> resolve(ParameterResolutionContext parameterContext, LifecycleContext lifecycleContext) {
+        if (parameterContext.typeUsage().isOfType(File.class)) {
+            return Optional.of(ignoreTry -> getTemporaryFileForTry());
+        }
+        return Optional.empty();
+    }
+  
+    private File getTemporaryFileForTry() {
+        Store<File> tempFileStore = Store.getOrCreate(STORE_IDENTIFIER, Lifespan.TRY, this::createTempFile);
+        tempFileStore.onClose(file -> file.delete());
+        return tempFileStore.get();
+    }
+  
+    private File createTempFile() {
+        try {
+            return File.createTempFile("temp", ".txt");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
 ```
 
-There are a few interesting things going to note:
+There are a few interesting things going on:
 
-- The identifier is a tuple of the hook class object and a string.
+- The identifier is a tuple of the `TemporaryFileHook.class` object and a string.
   This makes sure that no other hook will use the same identifier accidentally.
-- The create temporary file is created only once per try. 
-  That means that all parameters in the scope of this try will see _the same file_.
-- A callback is added through `onClose(..)` which takes care of deleting the file
-  as soon as the try (and all its lifecycle) is done.
+- The temporary file is created only once per try. 
+  That means that all parameters in the scope of this try will contain _the same file_.
+- A callback is added through 
+  [`onClose(..)`](/docs/${docsVersion}/javadoc/net/jqwik/api/lifecycle/Store.html#onClose-java.util.function.Consumer-) 
+  which takes care of deleting the file as soon as the lifespan's scope (the try) is finished.
   
 With this information you can probably figure out how the following test container works -- 
 especially why the assertion in `@AfterTry`-method `assertFileNotEmpty()` succeeds. 
@@ -3924,23 +3923,23 @@ especially why the assertion in `@AfterTry`-method `assertFileNotEmpty()` succee
 ```java
 @AddLifecycleHook(value = TemporaryFileHook.class, propagateTo = PropagationMode.ALL_DESCENDANTS)
 class TemporaryFilesExample {
-	@Property(tries = 10)
-	void canWriteToFile(File anyFile, @ForAll @AlphaChars @StringLength(min = 1) String fileContents) throws Exception {
-		assertThat(anyFile).isEmpty();
-		writeToFile(anyFile, fileContents);
-		assertThat(anyFile).isNotEmpty();
-	}
-
-	@AfterTry
-	void assertFileNotEmpty(File anyFile) {
-		assertThat(anyFile).isNotEmpty();
-	}
-
-	private void writeToFile(File anyFile, String contents) throws IOException {
-		BufferedWriter writer = new BufferedWriter(new FileWriter(anyFile));
-		writer.write(contents);
-		writer.close();
-	}
+    @Property(tries = 10)
+    void canWriteToFile(File anyFile, @ForAll @AlphaChars @StringLength(min = 1) String fileContents) throws Exception {
+        assertThat(anyFile).isEmpty();
+        writeToFile(anyFile, fileContents);
+        assertThat(anyFile).isNotEmpty();
+    }
+  
+    @AfterTry
+    void assertFileNotEmpty(File anyFile) {
+        assertThat(anyFile).isNotEmpty();
+    }
+  
+    private void writeToFile(File anyFile, String contents) throws IOException {
+        BufferedWriter writer = new BufferedWriter(new FileWriter(anyFile));
+        writer.write(contents);
+        writer.close();
+    }
 }
 ```
 

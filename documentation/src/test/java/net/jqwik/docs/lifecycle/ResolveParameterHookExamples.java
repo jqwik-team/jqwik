@@ -29,6 +29,7 @@ class CalculatorResolver implements ResolveParameterHook {
 
 	@Override
 	public PropagationMode propagateTo() {
+		// Allow annotation on container level
 		return PropagationMode.ALL_DESCENDANTS;
 	}
 }
