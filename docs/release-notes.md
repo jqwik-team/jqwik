@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.3.1-SNAPSHOT](#131-snapshot)
 - [1.3.0](#130)
 - [1.2.x](#12x)
 - [1.1.x](#11x)
@@ -17,6 +18,20 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.3.1-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+- `Arbitraries.of(List<T>)` replaced with `Arbitraries.of(Collection<T>)`
+
+- `Arbitraries.ofSuppliers(List<Supplier<T>>)` replaced with `Arbitraries.of(Collection<Supplier<T>>)`
+
+#### Bug Fixes
+
+No open bugs had been reported.
 
 ## 1.3.0
 

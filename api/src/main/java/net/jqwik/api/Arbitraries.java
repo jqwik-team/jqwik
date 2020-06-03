@@ -149,23 +149,25 @@ public class Arbitraries {
 	}
 
 	/**
-	 * Create an arbitrary that will randomly choose from a given list of values.
-	 * A generated value will be shrunk towards the start of the list.
+	 * Create an arbitrary that will randomly choose from a given collection of values.
+	 * A generated value will be shrunk towards the start of the collection.
 	 *
 	 * <p>
 	 * Use this method only for immutable values, because changing the value will change
 	 * subsequent generated values as well.
-	 * For mutable values use {@linkplain #ofSuppliers(List)} instead.
+	 * For mutable values use {@linkplain #ofSuppliers(Collection)} instead.
 	 * 
-	 * @param values The list of values to choose from
+	 * @param values The collection of values to choose from
 	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> of(List<T> values) {
+	@API(status = MAINTAINED, since = "1.3.1")
+	public static <T> Arbitrary<T> of(Collection<T> values) {
+		List<T> valueList = values instanceof List ? (List<T>) values :  new ArrayList<>(values);
 		return fromGenerators(
-			ArbitrariesFacade.implementation.randomChoose(values),
-			max -> ArbitrariesFacade.implementation.exhaustiveChoose(values, max),
-			ArbitrariesFacade.implementation.edgeCasesChoose(values)
+			ArbitrariesFacade.implementation.randomChoose(valueList),
+			max -> ArbitrariesFacade.implementation.exhaustiveChoose(valueList, max),
+			ArbitrariesFacade.implementation.edgeCasesChoose(valueList)
 		);
 	}
 
@@ -190,21 +192,21 @@ public class Arbitraries {
 	}
 
 	/**
-	 * Create an arbitrary that will randomly choose from a given array of value suppliers
+	 * Create an arbitrary that will randomly choose from a given collection of value suppliers
 	 * and then get the value from the supplier.
-	 * A generated value will be shrunk towards the start of the array.
+	 * A generated value will be shrunk towards the start of the collection.
 	 *
 	 * <p>
-	 * Use this method instead of {@linkplain #of(List)} for mutable objects
+	 * Use this method instead of {@linkplain #of(Collection)} for mutable objects
 	 * to make sure that changing a generated object will not influence other generated
 	 * objects.
 	 *
-	 * @param valueSuppliers The list of values to choose from
+	 * @param valueSuppliers The collection of values to choose from
 	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	@API(status = MAINTAINED, since = "1.3.0")
-	public static <T> Arbitrary<T> ofSuppliers(List<Supplier<T>> valueSuppliers) {
+	@API(status = MAINTAINED, since = "1.3.1")
+	public static <T> Arbitrary<T> ofSuppliers(Collection<Supplier<T>> valueSuppliers) {
 		return of(valueSuppliers).map(Supplier::get);
 	}
 

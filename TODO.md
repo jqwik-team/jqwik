@@ -1,9 +1,14 @@
-- 1.3.x
+- 1.3.1
 
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
       - Extract description before running the property?
         e.g. to be able to display a generated Stream
+
+    - Allow specification of provider class in `@ForAll` and `@From`
+      see https://github.com/jlink/jqwik/issues/91
+
+- 1.3.x
         
     - Edge Cases
         - Arbitrary.withoutEdgeCases() 
@@ -23,21 +28,6 @@
     
     - Property runtime statistics (https://github.com/jlink/jqwik/issues/100)
 
-    - ProvideArbitraryHook
-        - Let domains use that hook
-        - Let ArbitraryProviders use that hook
-        
-    - AroundPropertyHook
-        - Add parameter PropertyConfiguration
-            - tries()
-            - afterFailureMode()
-            - generationMode()
-            - shrinkingMode()
-            - randomSeed()
-        - Allow label to be set, alternative ChangeLabelHook
-        - Allow configuration attributes to be changed
-        - Alternative: Introduce PropertyConfigurationHook
-    
     - Support more RandomDistribution modes, e.g. Log, PowerLaw
         https://en.wikipedia.org/wiki/Inverse_transform_sampling
         https://en.wikipedia.org/wiki/Ziggurat_algorithm

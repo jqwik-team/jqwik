@@ -2,7 +2,6 @@
 
 ### Missing Tests
 
-- Add tests for RandomGenerators
 - Tests for TestRunDatabase
 - Tests for TestRunData
 - Tests for JqwikProperties and its use in JqwikTestEngine
@@ -78,18 +77,27 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Allow Fixture parameters to examples and properties
 
 - Lifecycle Hooks
-  - AroundAllHook
-  - AroundTryHook
-  - AroundContainerHook
-  - Tests for AroundPropertyHook
-
+    - ProvideArbitraryHook
+        - Let domains use that hook
+        - Let ArbitraryProviders use that hook
+        
+    - AroundPropertyHook
+        - Add parameter PropertyConfiguration
+            - tries()
+            - afterFailureMode()
+            - generationMode()
+            - shrinkingMode()
+            - randomSeed()
+        - Allow label to be set, alternative ChangeLabelHook
+        - Allow configuration attributes to be changed
+        - Alternative: Introduce PropertyConfigurationHook
+    
 - Parallel test execution:
   - Across single property with annotation @Parallel 
   - Across Properties: Does it make sense with non working IntelliJ support?
   - For ActionSequences
 
 - Configuration:
-  - `defaultStatisticsReportFormat`=OFF|STANDARD|<MyReportFormatClass>, default = STANDARD
   - Switch to JUnit platform configuration
   - Find a way to set config params through command line or env variable
 
@@ -131,9 +139,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
     e.g. https://johanneslink.net/model-based-testing/
     sequence of counter actions should be shrunk to (raise by 99, countUp, countUpAtMax)
   - Also shrink triplets, quadruplets etc.
-
-- Allow specification of provider class in `@ForAll` and `@From`
-  see https://github.com/jlink/jqwik/issues/91
 
 - Lib to generate Json from JsonSchema as in
   https://github.com/Zac-HD/hypothesis-jsonschema
