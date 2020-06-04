@@ -8,7 +8,6 @@ import org.opentest4j.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
-import net.jqwik.engine.support.*;
 
 public class ExecutionResultReportEntry {
 
@@ -20,8 +19,8 @@ public class ExecutionResultReportEntry {
 	private static final String EDGE_CASES_TRIED_KEY = "edge-cases#tried";
 	private static final String AFTER_FAILURE_KEY = "after-failure";
 	private static final String SEED_KEY = "seed";
-	private static final String SAMPLE_KEY = "sample";
-	private static final String ORIGINAL_SAMPLE_KEY = "original-sample";
+	private static final String SAMPLE_HEADLINE = "Sample";
+	private static final String ORIGINAL_SAMPLE_HEADLINE = "Original Sample";
 
 	public static ReportEntry from(
 		String propertyName,
@@ -48,24 +47,22 @@ public class ExecutionResultReportEntry {
 	private static void appendSamples(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
 		executionResult.falsifiedSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
-				reportLines.append(String.format("%s%n", buildProperty(
-					SAMPLE_KEY,
-					JqwikStringSupport.displayString(shrunkSample)
-				)));
+				reportSample(reportLines, shrunkSample, SAMPLE_HEADLINE);
 			}
 		});
 
 		if (executionResult.isExtended()) {
 			executionResult.originalSample().ifPresent(originalSample -> {
 				if (!originalSample.isEmpty()) {
-					reportLines
-						.append(String.format("%s%n", buildProperty(
-							ORIGINAL_SAMPLE_KEY,
-							JqwikStringSupport.displayString(originalSample)
-						)));
+					reportSample(reportLines, originalSample, ORIGINAL_SAMPLE_HEADLINE);
 				}
 			});
 		}
+	}
+
+	private static void reportSample(final StringBuilder reportLines, final List<Object> sample, final String headline) {
+		SampleReporter sampleReporter = new SampleReporter(headline, sample);
+		sampleReporter.reportTo(reportLines);
 	}
 
 	private static void appendFixedSizedProperties(
