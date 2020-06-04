@@ -1,7 +1,7 @@
 ---
 title: jqwik Release Notes
 ---
-
+ 
 # Release Notes
 
 <!-- use `doctoc --maxlevel 2 release-notes.md` to recreate the TOC -->
