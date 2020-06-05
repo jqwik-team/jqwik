@@ -1,12 +1,15 @@
 package net.jqwik.engine.execution;
 
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 
 public class ExecutionResultReportEntry {
@@ -23,45 +26,62 @@ public class ExecutionResultReportEntry {
 	private static final String ORIGINAL_SAMPLE_HEADLINE = "Original Sample";
 
 	public static ReportEntry from(
-		String propertyName,
-		ExtendedPropertyExecutionResult executionResult,
-		AfterFailureMode afterFailureMode
+		PropertyMethodDescriptor methodDescriptor,
+		ExtendedPropertyExecutionResult executionResult
 	) {
-		return buildJqwikReport(propertyName, executionResult, afterFailureMode);
+		return buildJqwikReport(
+			methodDescriptor.extendedLabel(),
+			methodDescriptor.getConfiguration().getAfterFailureMode(),
+			methodDescriptor.getTargetMethod(),
+			executionResult
+		);
 	}
 
 	private static ReportEntry buildJqwikReport(
 		String propertyName,
-		ExtendedPropertyExecutionResult executionResult,
-		AfterFailureMode afterFailureMode
+		AfterFailureMode afterFailureMode,
+		Method propertyMethod,
+		ExtendedPropertyExecutionResult executionResult
 	) {
 		StringBuilder reportLines = new StringBuilder();
 
 		appendThrowableMessage(reportLines, executionResult);
 		appendFixedSizedProperties(reportLines, executionResult, afterFailureMode);
-		appendSamples(reportLines, executionResult);
+		appendSamples(reportLines, propertyMethod, executionResult);
 
 		return ReportEntry.from(propertyName, reportLines.toString());
 	}
 
-	private static void appendSamples(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
+	private static void appendSamples(
+		StringBuilder reportLines,
+		final Method propertyMethod,
+		ExtendedPropertyExecutionResult executionResult
+	) {
 		executionResult.falsifiedSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
-				reportSample(reportLines, shrunkSample, SAMPLE_HEADLINE);
+				reportSample(reportLines, propertyMethod, shrunkSample, SAMPLE_HEADLINE);
 			}
 		});
 
 		if (executionResult.isExtended()) {
 			executionResult.originalSample().ifPresent(originalSample -> {
 				if (!originalSample.isEmpty()) {
-					reportSample(reportLines, originalSample, ORIGINAL_SAMPLE_HEADLINE);
+					reportSample(reportLines, propertyMethod, originalSample, ORIGINAL_SAMPLE_HEADLINE);
 				}
 			});
 		}
 	}
 
-	private static void reportSample(final StringBuilder reportLines, final List<Object> sample, final String headline) {
-		SampleReporter sampleReporter = new SampleReporter(headline, sample);
+	private static void reportSample(
+		StringBuilder reportLines,
+		Method propertyMethod,
+		List<Object> sample,
+		String headline
+	) {
+		List<String> parameterNames = Arrays.stream(propertyMethod.getParameters())
+											.map(Parameter::getName)
+											.collect(Collectors.toList());
+		SampleReporter sampleReporter = new SampleReporter(headline, sample, parameterNames);
 		sampleReporter.reportTo(reportLines);
 	}
 
@@ -98,7 +118,8 @@ public class ExecutionResultReportEntry {
 		appendProperty(propertiesLines, EDGE_CASES_MODE_KEY, edgeCasesMode, helpEdgeCasesMode);
 		if (executionResult.edgeCases().mode().activated()) {
 			appendProperty(propertiesLines, EDGE_CASES_TOTAL_KEY, executionResult.edgeCases().total(), "# of all combined edge cases");
-			appendProperty(propertiesLines, EDGE_CASES_TRIED_KEY, executionResult.edgeCases().tried(), "# of edge cases tried in current run");
+			appendProperty(propertiesLines, EDGE_CASES_TRIED_KEY, executionResult.edgeCases()
+																				 .tried(), "# of edge cases tried in current run");
 		}
 		appendProperty(propertiesLines, SEED_KEY, randomSeed, "random seed to reproduce generated values");
 
