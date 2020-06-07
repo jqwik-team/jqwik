@@ -13,6 +13,7 @@ import net.jqwik.api.domains.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.execution.reporting.*;
 import net.jqwik.engine.facades.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;

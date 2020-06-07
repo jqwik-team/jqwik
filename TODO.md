@@ -2,6 +2,7 @@
 
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
+      - Use sample reporting for reporting generated values
       - Extract description before running the property?
         e.g. to be able to display a generated Stream
 

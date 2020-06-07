@@ -1,4 +1,4 @@
-package net.jqwik.engine.execution;
+package net.jqwik.engine.execution.reporting;
 
 import java.lang.reflect.*;
 import java.util.*;
