@@ -1,23 +1,14 @@
 package net.jqwik.engine.execution.reporting;
 
-import net.jqwik.engine.support.*;
+public interface ValueReport {
 
-class ValueReport {
-	private Object value;
-
-	public ValueReport(final Object value) {
-		this.value = value;
+	static ValueReport of(Object value, int maxLineLength) {
+		return new ObjectValueReport(value);
 	}
 
-	public int compactLength() {
-		return compactString().length();
-	}
+	int compactLength();
 
-	public String compactString() {
-		return JqwikStringSupport.displayString(value);
-	}
+	String compactString();
 
-	public void report(LineReporter lineReporter, int indent) {
-		lineReporter.addLine(indent, compactString());
-	}
+	void report(LineReporter lineReporter, int indentLevel);
 }

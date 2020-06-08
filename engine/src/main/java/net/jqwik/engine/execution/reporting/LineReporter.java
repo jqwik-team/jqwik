@@ -1,19 +1,10 @@
 package net.jqwik.engine.execution.reporting;
 
-public class LineReporter {
+public interface LineReporter {
 
-	private final StringBuilder builder;
+	void addLine(int indentLevel, String line);
 
-	public LineReporter(StringBuilder builder) {
-		this.builder = builder;
-	}
-
-	public void addLine(int indent, String line) {
-		String indentation = multiply(' ', indent * 2);
-		builder.append(String.format("%s%s%n", indentation, line));
-	}
-
-	private String multiply(char c, int times) {
+	static String multiply(char c, int times) {
 		StringBuilder builder = new StringBuilder();
 		for (int j = 0; j < times; j++) {
 			builder.append(c);
@@ -21,8 +12,9 @@ public class LineReporter {
 		return builder.toString();
 	}
 
-	public void addUnderline(int indent, int length) {
-		String underline = multiply('-', length);
-		addLine(indent, underline);
+	default void addUnderline(int indentLevel, int length) {
+		String underline = LineReporter.multiply('-', length);
+		addLine(indentLevel, underline);
 	}
+
 }

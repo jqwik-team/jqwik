@@ -3,6 +3,8 @@ package net.jqwik.engine.execution.reporting;
 import java.util.*;
 
 public class SampleReporter {
+	private static final int MAX_LINE_LENGTH = 100;
+
 	private final String headline;
 	private final List<Object> sample;
 	private final List<String> parameterNames;
@@ -16,19 +18,18 @@ public class SampleReporter {
 		this.parameterNames = parameterNames;
 	}
 
-	public void reportTo(StringBuilder builder) {
-		LineReporter lineReporter = new LineReporter(builder);
+	public void reportTo(LineReporter lineReporter) {
 		lineReporter.addLine(0, "");
 		reportHeadline(lineReporter);
 		reportParameters(lineReporter);
 	}
 
-	private void reportParameters(final LineReporter lineReporter) {
+	private void reportParameters(LineReporter lineReporter) {
 		for (int i = 0; i < parameterNames.size(); i++) {
 			String parameterName = parameterNames.get(i);
 			Object parameterValue = sample.get(i);
 			ValueReport sampleReport = createReport(parameterValue);
-			if (sampleReport.compactLength() + parameterName.length() < 100) {
+			if (sampleReport.compactLength() + parameterName.length() < MAX_LINE_LENGTH) {
 				String line = String.format("%s: %s", parameterName, sampleReport.compactString());
 				lineReporter.addLine(1, line);
 			} else {
@@ -40,10 +41,13 @@ public class SampleReporter {
 	}
 
 	private ValueReport createReport(Object value) {
-		return new ValueReport(value);
+		return ValueReport.of(value, MAX_LINE_LENGTH);
 	}
 
 	private void reportHeadline(LineReporter lineReporter) {
+		if (headline == null) {
+			return;
+		}
 		lineReporter.addLine(0, headline);
 		lineReporter.addUnderline(0, headline.length());
 	}

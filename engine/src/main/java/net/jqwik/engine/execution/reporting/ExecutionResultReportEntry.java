@@ -82,7 +82,8 @@ public class ExecutionResultReportEntry {
 											.map(Parameter::getName)
 											.collect(Collectors.toList());
 		SampleReporter sampleReporter = new SampleReporter(headline, sample, parameterNames);
-		sampleReporter.reportTo(reportLines);
+		LineReporter lineReporter = new LineReporterImpl(reportLines);
+		sampleReporter.reportTo(lineReporter);
 	}
 
 	private static void appendFixedSizedProperties(
