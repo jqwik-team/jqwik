@@ -4,6 +4,9 @@ import java.util.*;
 import java.util.stream.*;
 
 class MapValueReport extends ValueReport {
+
+	private static final int MAX_LINE_LENGTH = 100;
+
 	private final List<Map.Entry<ValueReport, ValueReport>> reportEntries;
 
 	MapValueReport(final Optional<String> header, final List<Map.Entry<ValueReport, ValueReport>> reportEntries) {
@@ -36,7 +39,13 @@ class MapValueReport extends ValueReport {
 			boolean isNotLast = i < reportEntries.size() - 1;
 			Map.Entry<ValueReport, ValueReport> reportEntry = reportEntries.get(i);
 			String optionalComma = isNotLast ? ", " : "";
-			lineReporter.addLine(indentLevel, compactEntry(reportEntry) + optionalComma);
+			String compactEntry = compactEntry(reportEntry);
+			if (compactEntry.length() + indentLevel * 2 <= MAX_LINE_LENGTH) {
+				lineReporter.addLine(indentLevel, compactEntry + optionalComma);
+			} else {
+				lineReporter.addLine(indentLevel, String.format("%s=", reportEntry.getKey().compactString()));
+				reportEntry.getValue().report(lineReporter, indentLevel + 1, optionalComma);
+			}
 		}
 	}
 }

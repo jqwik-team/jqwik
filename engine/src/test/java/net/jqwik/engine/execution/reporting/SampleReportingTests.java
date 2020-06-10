@@ -179,7 +179,7 @@ class SampleReportingTests {
 			void listOfLists() {
 				List<List<String>> list = asList(
 					asList("string 1", "string 2", "string 3", "string 4"),
-					asList("string 5", "string 6", "string 7", "string 8"),
+					asList("string 5", "string 6", "string 7"),
 					asList(
 						"a long string a long string a long string a long string a long string a long string",
 						"a long string a long string a long string a long string a long string a long string"
@@ -190,7 +190,7 @@ class SampleReportingTests {
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
 					"    [",
-					"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\", \"string 8\"],",
+					"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
 					"      [",
 					"        \"a long string a long string a long string a long string a long string a long string\",",
 					"        \"a long string a long string a long string a long string a long string a long string\"",
@@ -275,7 +275,7 @@ class SampleReportingTests {
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
 					"    {",
-					"      \"list1\"=]",
+					"      \"list1\"=",
 					"        [",
 					"          \"a long string a long string a long string a long string a long string a long string\",",
 					"          \"a long string a long string a long string a long string a long string a long string\"",

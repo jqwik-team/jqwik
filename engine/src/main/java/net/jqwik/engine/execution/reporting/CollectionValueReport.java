@@ -36,7 +36,7 @@ class CollectionValueReport extends ValueReport {
 			ValueReport elementReport = collection.get(i);
 			boolean isNotLastElement = i < collection.size() - 1;
 			String compactElement = elementReport.compactString();
-			if (currentLine.length() + compactElement.length() <= MAX_LINE_LENGTH) {
+			if (currentLine.length() + compactElement.length() + indentLevel * 2 <= MAX_LINE_LENGTH) {
 				currentLine += compactElement;
 				if (isNotLastElement) {
 					currentLine += ", ";
