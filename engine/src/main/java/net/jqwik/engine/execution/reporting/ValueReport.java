@@ -18,16 +18,59 @@ public abstract class ValueReport {
 		SampleReportingFormat format = formatFinder.find(value);
 		Object reportedValue = format.report(value);
 		if (reportedValue instanceof Collection) {
-			@SuppressWarnings("unchecked")
-			Collection<Object> collection = (Collection<Object>) reportedValue;
-			List<ValueReport> reportCollection =
-				collection
-					.stream()
-					.map(element -> of(element, formatFinder))
-					.collect(Collectors.toList());
-			return new CollectionValueReport(format.sampleTypeHeader(), reportCollection);
+			//noinspection unchecked
+			return createCollectionReport(format, (Collection<Object>) reportedValue, formatFinder);
+		}
+		if (reportedValue instanceof Map) {
+			//noinspection unchecked
+			return createMapReport(format, (Map<Object, Object>) reportedValue, formatFinder);
 		}
 		return new ObjectValueReport(format.sampleTypeHeader(), reportedValue);
+	}
+
+	private static ValueReport createMapReport(
+		final SampleReportingFormat format,
+		final Map<Object, Object> map,
+		final ReportingFormatFinder formatFinder
+	) {
+		List<Map.Entry<ValueReport, ValueReport>> reportEntries =
+			map.entrySet()
+				.stream()
+				.map(entry -> {
+					ValueReport keyReport = of(entry.getKey(), formatFinder);
+					ValueReport valueReport = of(entry.getValue(), formatFinder);
+					return new Map.Entry<ValueReport, ValueReport>() {
+						@Override
+						public ValueReport getKey() {
+							return keyReport;
+						}
+
+						@Override
+						public ValueReport getValue() {
+							return valueReport;
+						}
+
+						@Override
+						public ValueReport setValue(ValueReport value) {
+							throw new UnsupportedOperationException();
+						}
+					};
+				})
+				.collect(Collectors.toList());
+		return new MapValueReport(format.sampleTypeHeader(), reportEntries);
+	}
+
+	private static ValueReport createCollectionReport(
+		SampleReportingFormat format,
+		Collection<Object> collection,
+		ReportingFormatFinder formatFinder
+	) {
+		List<ValueReport> reportCollection =
+			collection
+				.stream()
+				.map(element -> of(element, formatFinder))
+				.collect(Collectors.toList());
+		return new CollectionValueReport(format.sampleTypeHeader(), reportCollection);
 	}
 
 	private static ReportingFormatFinder reportingFormatFinder() {

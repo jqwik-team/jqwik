@@ -9,6 +9,6 @@ public class LineReporterStub implements LineReporter {
 	@Override
 	public void addLine(int indentLevel, String line) {
 		String indentation = LineReporter.multiply(' ', indentLevel * 2);
-		this.lines.add(indentation + line);
+		this.lines.add(indentation + line.trim());
 	}
 }

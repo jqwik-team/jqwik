@@ -190,12 +190,98 @@ class SampleReportingTests {
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
 					"    [",
-					"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\", \"string 8\"], ",
+					"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\", \"string 8\"],",
 					"      [",
-					"        \"a long string a long string a long string a long string a long string a long string\", ",
+					"        \"a long string a long string a long string a long string a long string a long string\",",
 					"        \"a long string a long string a long string a long string a long string a long string\"",
 					"      ]",
 					"    ]"
+				);
+			}
+
+		}
+
+		@Group
+		class Maps {
+			@Example
+			void fitsInOneLine() {
+				Map<String, Integer> map = new HashMap<>();
+				map.put("key1", 1);
+				map.put("key2", 2);
+				map.put("key3", 3);
+				ValueReport report = ValueReport.of(map);
+
+				String expectedCompact = "{\"key1\"=1, \"key2\"=2, \"key3\"=3}";
+				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    {",
+					"      \"key1\"=1,",
+					"      \"key2\"=2,",
+					"      \"key3\"=3",
+					"    }"
+				);
+			}
+
+			@Example
+			void withHeaderAndAppendix() {
+				NullReportingFormat collectionFormat = new NullReportingFormat() {
+					@Override
+					public boolean applyToType(final Class<?> valueClass) {
+						return Map.class.isAssignableFrom(valueClass);
+					}
+
+					@Override
+					public Optional<String> sampleTypeHeader() {
+						return Optional.of("java.lang.Map");
+					}
+				};
+				ValueReport.ReportingFormatFinder finder = formatFinder(collectionFormat);
+
+				Map<String, Integer> map = new HashMap<>();
+				map.put("key1", 1);
+				ValueReport report = ValueReport.of(map, finder);
+
+				String expectedCompact = "java.lang.Map{\"key1\"=1}";
+				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+
+				report.report(lineReporter, 2, ",");
+				assertThat(lineReporter.lines).containsSequence(
+					"    java.lang.Map{",
+					"      \"key1\"=1",
+					"    },"
+				);
+			}
+
+			@Example
+			void mapOfLists() {
+				Map<String, List<String>> map = new HashMap<>();
+				map.put(
+					"list1",
+					asList(
+						"a long string a long string a long string a long string a long string a long string",
+						"a long string a long string a long string a long string a long string a long string"
+					)
+				);
+				map.put(
+					"list2",
+					asList("1", "2")
+				);
+				ValueReport report = ValueReport.of(map);
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    {",
+					"      \"list1\"=]",
+					"        [",
+					"          \"a long string a long string a long string a long string a long string a long string\",",
+					"          \"a long string a long string a long string a long string a long string a long string\"",
+					"        ],",
+					"      \"list2\"=[\"1\", \"2\"]",
+					"    }"
 				);
 			}
 

@@ -3,13 +3,13 @@ package net.jqwik.engine.execution.reporting;
 import java.util.*;
 import java.util.stream.*;
 
-public class CollectionValueReport extends ValueReport {
+class CollectionValueReport extends ValueReport {
 
 	private static final int MAX_LINE_LENGTH = 100;
 
 	private final List<ValueReport> collection;
 
-	public CollectionValueReport(Optional<String> header, List<ValueReport> collection) {
+	CollectionValueReport(Optional<String> header, List<ValueReport> collection) {
 		super(header);
 		this.collection = collection;
 	}
