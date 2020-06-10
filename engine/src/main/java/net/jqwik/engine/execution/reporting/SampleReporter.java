@@ -35,13 +35,13 @@ public class SampleReporter {
 			} else {
 				String line = String.format("%s:", parameterName);
 				lineReporter.addLine(1, line);
-				sampleReport.report(lineReporter, 2);
+				sampleReport.report(lineReporter, 2, "");
 			}
 		}
 	}
 
 	private ValueReport createReport(Object value) {
-		return ValueReport.of(value, MAX_LINE_LENGTH);
+		return ValueReport.of(value);
 	}
 
 	private void reportHeadline(LineReporter lineReporter) {

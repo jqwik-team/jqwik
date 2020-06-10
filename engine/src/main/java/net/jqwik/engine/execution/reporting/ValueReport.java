@@ -1,14 +1,54 @@
 package net.jqwik.engine.execution.reporting;
 
-public interface ValueReport {
+import java.util.*;
+import java.util.stream.*;
 
-	static ValueReport of(Object value, int maxLineLength) {
-		return new ObjectValueReport(value);
+public abstract class ValueReport {
+
+	interface ReportingFormatFinder {
+		SampleReportingFormat find(Object value);
 	}
 
-	int compactLength();
+	static ValueReport of(Object value) {
+		ReportingFormatFinder formatFinder = reportingFormatFinder();
+		return of(value, formatFinder);
+	}
 
-	String compactString();
+	static ValueReport of(Object value, ReportingFormatFinder formatFinder) {
+		SampleReportingFormat format = formatFinder.find(value);
+		Object reportedValue = format.report(value);
+		if (reportedValue instanceof Collection) {
+			@SuppressWarnings("unchecked")
+			Collection<Object> collection = (Collection<Object>) reportedValue;
+			List<ValueReport> reportCollection =
+				collection
+					.stream()
+					.map(element -> of(element, formatFinder))
+					.collect(Collectors.toList());
+			return new CollectionValueReport(format.sampleTypeHeader(), reportCollection);
+		}
+		return new ObjectValueReport(format.sampleTypeHeader(), reportedValue);
+	}
 
-	void report(LineReporter lineReporter, int indentLevel);
+	private static ReportingFormatFinder reportingFormatFinder() {
+		List<SampleReportingFormat> formats = new ArrayList<>(RegisteredSampleReportingFormats.getReportingFormats());
+		Collections.sort(formats);
+		return targetValue -> formats.stream()
+									 .filter(format -> format.applyToType(targetValue.getClass()))
+									 .findFirst().orElse(new NullReportingFormat());
+	}
+
+	final Optional<String> header;
+
+	protected ValueReport(Optional<String> header) {
+		this.header = header;
+	}
+
+	int compactLength() {
+		return compactString().length();
+	}
+
+	abstract String compactString();
+
+	abstract void report(LineReporter lineReporter, int indentLevel, String appendix);
 }

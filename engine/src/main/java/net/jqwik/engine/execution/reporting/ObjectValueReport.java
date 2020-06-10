@@ -1,27 +1,25 @@
 package net.jqwik.engine.execution.reporting;
 
+import java.util.*;
+
 import net.jqwik.engine.support.*;
 
-class ObjectValueReport implements ValueReport {
+class ObjectValueReport extends ValueReport {
 
 	private Object value;
 
-	ObjectValueReport(final Object value) {
+	ObjectValueReport(Optional<String> header, Object value) {
+		super(header);
 		this.value = value;
 	}
 
 	@Override
-	public int compactLength() {
-		return compactString().length();
-	}
-
-	@Override
 	public String compactString() {
-		return JqwikStringSupport.displayString(value);
+		return header.orElse("") + JqwikStringSupport.displayString(value);
 	}
 
 	@Override
-	public void report(LineReporter lineReporter, int indentLevel) {
-		lineReporter.addLine(indentLevel, compactString());
+	public void report(LineReporter lineReporter, int indentLevel, String appendix) {
+		lineReporter.addLine(indentLevel, compactString() + appendix);
 	}
 }
