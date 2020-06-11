@@ -13,7 +13,7 @@ public interface SampleReportingFormat extends Comparable<SampleReportingFormat>
 
 	Object report(Object value);
 
-	Optional<String> header(Object value);
+	Optional<String> label(Object value);
 
 	default int priority() {
 		return 0;

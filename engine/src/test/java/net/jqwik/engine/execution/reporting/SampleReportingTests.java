@@ -107,10 +107,10 @@ class SampleReportingTests {
 		}
 
 		@Example
-		void stringWithHeaderAndAppendix() {
+		void stringWithLabelAndAppendix() {
 			ValueReport.ReportingFormatFinder finder = value -> new NullReportingFormat() {
 				@Override
-				public Optional<String> header(Object value) {
+				public Optional<String> label(Object value) {
 					return Optional.of("java.lang.String:");
 				}
 			};
@@ -146,7 +146,7 @@ class SampleReportingTests {
 			}
 
 			@Example
-			void withHeaderAndAppendix() {
+			void withLabelAndAppendix() {
 				NullReportingFormat collectionFormat = new NullReportingFormat() {
 					@Override
 					public boolean appliesTo(final Object value) {
@@ -154,7 +154,7 @@ class SampleReportingTests {
 					}
 
 					@Override
-					public Optional<String> header(Object value) {
+					public Optional<String> label(Object value) {
 						return Optional.of("java.lang.List");
 					}
 				};
@@ -226,7 +226,7 @@ class SampleReportingTests {
 			}
 
 			@Example
-			void withHeaderAndAppendix() {
+			void withLabelAndAppendix() {
 				NullReportingFormat collectionFormat = new NullReportingFormat() {
 					@Override
 					public boolean appliesTo(final Object value) {
@@ -234,7 +234,7 @@ class SampleReportingTests {
 					}
 
 					@Override
-					public Optional<String> header(Object value) {
+					public Optional<String> label(Object value) {
 						return Optional.of("java.lang.Map");
 					}
 				};

@@ -25,7 +25,7 @@ public abstract class ValueReport {
 			//noinspection unchecked
 			return createMapReport(format, (Map<Object, Object>) reportedValue, formatFinder);
 		}
-		return new ObjectValueReport(format.header(value), reportedValue);
+		return new ObjectValueReport(format.label(value), reportedValue);
 	}
 
 	private static ValueReport createMapReport(
@@ -57,7 +57,7 @@ public abstract class ValueReport {
 					};
 				})
 				.collect(Collectors.toList());
-		return new MapValueReport(format.header(map), reportEntries);
+		return new MapValueReport(format.label(map), reportEntries);
 	}
 
 	private static ValueReport createCollectionReport(
@@ -70,7 +70,7 @@ public abstract class ValueReport {
 				.stream()
 				.map(element -> of(element, formatFinder))
 				.collect(Collectors.toList());
-		return new CollectionValueReport(format.header(collection), reportCollection);
+		return new CollectionValueReport(format.label(collection), reportCollection);
 	}
 
 	private static ReportingFormatFinder reportingFormatFinder() {

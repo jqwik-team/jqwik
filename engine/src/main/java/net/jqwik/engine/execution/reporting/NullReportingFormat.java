@@ -15,7 +15,7 @@ public class NullReportingFormat implements SampleReportingFormat {
 	}
 
 	@Override
-	public Optional<String> header(Object value) {
+	public Optional<String> label(Object value) {
 		return Optional.empty();
 	}
 }
