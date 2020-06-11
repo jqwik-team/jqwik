@@ -25,7 +25,7 @@ public abstract class ValueReport {
 			//noinspection unchecked
 			return createMapReport(format, (Map<Object, Object>) reportedValue, formatFinder);
 		}
-		return new ObjectValueReport(format.sampleTypeHeader(), reportedValue);
+		return new ObjectValueReport(format.header(value), reportedValue);
 	}
 
 	private static ValueReport createMapReport(
@@ -57,7 +57,7 @@ public abstract class ValueReport {
 					};
 				})
 				.collect(Collectors.toList());
-		return new MapValueReport(format.sampleTypeHeader(), reportEntries);
+		return new MapValueReport(format.header(map), reportEntries);
 	}
 
 	private static ValueReport createCollectionReport(
@@ -70,14 +70,14 @@ public abstract class ValueReport {
 				.stream()
 				.map(element -> of(element, formatFinder))
 				.collect(Collectors.toList());
-		return new CollectionValueReport(format.sampleTypeHeader(), reportCollection);
+		return new CollectionValueReport(format.header(collection), reportCollection);
 	}
 
 	private static ReportingFormatFinder reportingFormatFinder() {
 		List<SampleReportingFormat> formats = new ArrayList<>(RegisteredSampleReportingFormats.getReportingFormats());
 		Collections.sort(formats);
 		return targetValue -> formats.stream()
-									 .filter(format -> format.applyToType(targetValue.getClass()))
+									 .filter(format -> format.appliesTo(targetValue))
 									 .findFirst().orElse(new NullReportingFormat());
 	}
 

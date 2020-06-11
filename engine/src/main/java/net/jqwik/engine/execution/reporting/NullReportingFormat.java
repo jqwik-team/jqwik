@@ -5,17 +5,17 @@ import java.util.*;
 public class NullReportingFormat implements SampleReportingFormat {
 	@Override
 	// Never used
-	public boolean applyToType(final Class<?> valueClass) {
+	public boolean appliesTo(Object value) {
 		return true;
 	}
 
 	@Override
-	public Object report(final Object value) {
+	public Object report(Object value) {
 		return value;
 	}
 
 	@Override
-	public Optional<String> sampleTypeHeader() {
+	public Optional<String> header(Object value) {
 		return Optional.empty();
 	}
 }

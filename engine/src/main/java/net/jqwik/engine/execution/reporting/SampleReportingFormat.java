@@ -9,11 +9,11 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.3.1")
 public interface SampleReportingFormat extends Comparable<SampleReportingFormat> {
 
-	boolean applyToType(Class<?> valueClass);
+	boolean appliesTo(Object value);
 
 	Object report(Object value);
 
-	Optional<String> sampleTypeHeader();
+	Optional<String> header(Object value);
 
 	default int priority() {
 		return 0;

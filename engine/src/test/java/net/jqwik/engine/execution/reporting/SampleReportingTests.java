@@ -110,7 +110,7 @@ class SampleReportingTests {
 		void stringWithHeaderAndAppendix() {
 			ValueReport.ReportingFormatFinder finder = value -> new NullReportingFormat() {
 				@Override
-				public Optional<String> sampleTypeHeader() {
+				public Optional<String> header(Object value) {
 					return Optional.of("java.lang.String:");
 				}
 			};
@@ -149,12 +149,12 @@ class SampleReportingTests {
 			void withHeaderAndAppendix() {
 				NullReportingFormat collectionFormat = new NullReportingFormat() {
 					@Override
-					public boolean applyToType(final Class<?> valueClass) {
-						return List.class.isAssignableFrom(valueClass);
+					public boolean appliesTo(final Object value) {
+						return value instanceof List;
 					}
 
 					@Override
-					public Optional<String> sampleTypeHeader() {
+					public Optional<String> header(Object value) {
 						return Optional.of("java.lang.List");
 					}
 				};
@@ -229,12 +229,12 @@ class SampleReportingTests {
 			void withHeaderAndAppendix() {
 				NullReportingFormat collectionFormat = new NullReportingFormat() {
 					@Override
-					public boolean applyToType(final Class<?> valueClass) {
-						return Map.class.isAssignableFrom(valueClass);
+					public boolean appliesTo(final Object value) {
+						return value instanceof Map;
 					}
 
 					@Override
-					public Optional<String> sampleTypeHeader() {
+					public Optional<String> header(Object value) {
 						return Optional.of("java.lang.Map");
 					}
 				};
@@ -289,7 +289,7 @@ class SampleReportingTests {
 
 		private ValueReport.ReportingFormatFinder formatFinder(SampleReportingFormat... formats) {
 			return value -> Arrays.stream(formats)
-								  .filter(format -> format.applyToType(value.getClass()))
+								  .filter(format -> format.appliesTo(value))
 								  .findFirst().orElse(new NullReportingFormat());
 		}
 
