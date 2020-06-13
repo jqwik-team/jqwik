@@ -107,6 +107,40 @@ class SampleReportingTests {
 		}
 
 		@Example
+		void objectWithMultilineToString() {
+			Object object = new Object() {
+				@Override
+				public String toString() {
+					return String.format("line1%nline2%nline3%n");
+				}
+			};
+			ValueReport report = ValueReport.of(object);
+
+			String expectedCompact = "line1 line2 line3";
+			Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+			Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+			report.report(lineReporter, 2, "");
+			assertThat(lineReporter.lines).containsSequence(
+				"    line1",
+				"    line2",
+				"    line3"
+			);
+		}
+
+		@Example
+		void nullObject() {
+			ValueReport report = ValueReport.of(null);
+
+			String expectedCompact = "null";
+			Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+			Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+			report.report(lineReporter, 2, "");
+			assertThat(lineReporter.lines).containsSequence(
+				"    null"
+			);
+		}
+
+		@Example
 		void stringWithLabelAndAppendix() {
 			ValueReport.ReportingFormatFinder finder = value -> new NullReportingFormat() {
 				@Override
@@ -121,7 +155,8 @@ class SampleReportingTests {
 			Assertions.assertThat(report.compactString()).isEqualTo("java.lang.String:\"this is a string\"");
 			report.report(lineReporter, 2, "#");
 			assertThat(lineReporter.lines).containsSequence(
-				"    java.lang.String:\"this is a string\"#"
+				"    java.lang.String:",
+				"      \"this is a string\"#"
 			);
 		}
 
@@ -284,6 +319,82 @@ class SampleReportingTests {
 					"    }"
 				);
 			}
+
+		}
+
+		@Group
+		class ArraysOfDifferentTypes {
+
+			// @Example
+			// void fitsInOneLine() {
+			// 	List<String> list = asList("string 1", "string 2", "string 3", "string 4");
+			// 	ValueReport report = ValueReport.of(list);
+			//
+			// 	String expectedCompact = "[\"string 1\", \"string 2\", \"string 3\", \"string 4\"]";
+			// 	Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+			// 	Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+			//
+			// 	report.report(lineReporter, 2, "");
+			// 	assertThat(lineReporter.lines).containsSequence(
+			// 		"    [",
+			// 		"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
+			// 		"    ]"
+			// 	);
+			// }
+			//
+			// @Example
+			// void withLabelAndAppendix() {
+			// 	NullReportingFormat collectionFormat = new NullReportingFormat() {
+			// 		@Override
+			// 		public boolean appliesTo(final Object value) {
+			// 			return value instanceof List;
+			// 		}
+			//
+			// 		@Override
+			// 		public Optional<String> label(Object value) {
+			// 			return Optional.of("java.lang.List");
+			// 		}
+			// 	};
+			// 	ValueReport.ReportingFormatFinder finder = formatFinder(collectionFormat);
+			//
+			// 	List<String> list = asList("string 1", "string 2");
+			// 	ValueReport report = ValueReport.of(list, finder);
+			//
+			// 	String expectedCompact = "java.lang.List[\"string 1\", \"string 2\"]";
+			// 	Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+			// 	Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+			//
+			// 	report.report(lineReporter, 2, ",");
+			// 	assertThat(lineReporter.lines).containsSequence(
+			// 		"    java.lang.List[",
+			// 		"      \"string 1\", \"string 2\"",
+			// 		"    ],"
+			// 	);
+			// }
+			//
+			// @Example
+			// void listOfLists() {
+			// 	List<List<String>> list = asList(
+			// 		asList("string 1", "string 2", "string 3", "string 4"),
+			// 		asList("string 5", "string 6", "string 7"),
+			// 		asList(
+			// 			"a long string a long string a long string a long string a long string a long string",
+			// 			"a long string a long string a long string a long string a long string a long string"
+			// 		)
+			// 	);
+			// 	ValueReport report = ValueReport.of(list);
+			//
+			// 	report.report(lineReporter, 2, "");
+			// 	assertThat(lineReporter.lines).containsSequence(
+			// 		"    [",
+			// 		"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
+			// 		"      [",
+			// 		"        \"a long string a long string a long string a long string a long string a long string\",",
+			// 		"        \"a long string a long string a long string a long string a long string a long string\"",
+			// 		"      ]",
+			// 		"    ]"
+			// 	);
+			// }
 
 		}
 
