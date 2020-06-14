@@ -17,4 +17,13 @@ class SampleReportingExamples {
 	) {
 		Assertions.assertThat(anInt).isLessThan(10);
 	}
+
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	void reportFalsifiedArrays(
+		@ForAll int anInt,
+		@ForAll int[] arrayOfInts,
+		@ForAll @Size(min = 2) @AlphaChars @StringLength(3) String[] arrayOfStrings
+	) {
+		Assertions.assertThat(anInt).isLessThan(10);
+	}
 }
