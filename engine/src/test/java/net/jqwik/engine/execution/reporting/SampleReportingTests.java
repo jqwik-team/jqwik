@@ -325,76 +325,76 @@ class SampleReportingTests {
 		@Group
 		class ArraysOfDifferentTypes {
 
-			// @Example
-			// void fitsInOneLine() {
-			// 	List<String> list = asList("string 1", "string 2", "string 3", "string 4");
-			// 	ValueReport report = ValueReport.of(list);
-			//
-			// 	String expectedCompact = "[\"string 1\", \"string 2\", \"string 3\", \"string 4\"]";
-			// 	Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-			// 	Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
-			//
-			// 	report.report(lineReporter, 2, "");
-			// 	assertThat(lineReporter.lines).containsSequence(
-			// 		"    [",
-			// 		"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
-			// 		"    ]"
-			// 	);
-			// }
-			//
-			// @Example
-			// void withLabelAndAppendix() {
-			// 	NullReportingFormat collectionFormat = new NullReportingFormat() {
-			// 		@Override
-			// 		public boolean appliesTo(final Object value) {
-			// 			return value instanceof List;
-			// 		}
-			//
-			// 		@Override
-			// 		public Optional<String> label(Object value) {
-			// 			return Optional.of("java.lang.List");
-			// 		}
-			// 	};
-			// 	ValueReport.ReportingFormatFinder finder = formatFinder(collectionFormat);
-			//
-			// 	List<String> list = asList("string 1", "string 2");
-			// 	ValueReport report = ValueReport.of(list, finder);
-			//
-			// 	String expectedCompact = "java.lang.List[\"string 1\", \"string 2\"]";
-			// 	Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-			// 	Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
-			//
-			// 	report.report(lineReporter, 2, ",");
-			// 	assertThat(lineReporter.lines).containsSequence(
-			// 		"    java.lang.List[",
-			// 		"      \"string 1\", \"string 2\"",
-			// 		"    ],"
-			// 	);
-			// }
-			//
-			// @Example
-			// void listOfLists() {
-			// 	List<List<String>> list = asList(
-			// 		asList("string 1", "string 2", "string 3", "string 4"),
-			// 		asList("string 5", "string 6", "string 7"),
-			// 		asList(
-			// 			"a long string a long string a long string a long string a long string a long string",
-			// 			"a long string a long string a long string a long string a long string a long string"
-			// 		)
-			// 	);
-			// 	ValueReport report = ValueReport.of(list);
-			//
-			// 	report.report(lineReporter, 2, "");
-			// 	assertThat(lineReporter.lines).containsSequence(
-			// 		"    [",
-			// 		"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
-			// 		"      [",
-			// 		"        \"a long string a long string a long string a long string a long string a long string\",",
-			// 		"        \"a long string a long string a long string a long string a long string a long string\"",
-			// 		"      ]",
-			// 		"    ]"
-			// 	);
-			// }
+			@Example
+			void fitsInOneLine() {
+				String[] array = new String[]{"string 1", "string 2", "string 3", "string 4"};
+				ValueReport report = ValueReport.of(array);
+
+				String expectedCompact = "String[] [\"string 1\", \"string 2\", \"string 3\", \"string 4\"]";
+				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    String[] [",
+					"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
+					"    ]"
+				);
+			}
+
+			@Example
+			void primitiveArray() {
+				int[] array = new int[]{1, 2, 3, 4};
+				ValueReport report = ValueReport.of(array);
+
+				String expectedCompact = "int[] [1, 2, 3, 4]";
+				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    int[] [",
+					"      1, 2, 3, 4",
+					"    ]"
+				);
+			}
+
+			@Example
+			void withAppendix() {
+				String[] array = new String[]{"string 1", "string 2", "string 3", "string 4"};
+				ValueReport report = ValueReport.of(array);
+
+				report.report(lineReporter, 2, ",");
+				assertThat(lineReporter.lines).containsSequence(
+					"    String[] [",
+					"      \"string 1\", \"string 2\", \"string 3\", \"string 4\"",
+					"    ],"
+				);
+			}
+
+			@Example
+			void arrayOfLists() {
+				List<String>[] list = new List[]{
+					asList("string 1", "string 2", "string 3", "string 4"),
+					asList("string 5", "string 6", "string 7"),
+					asList(
+						"a long string a long string a long string a long string a long string a long string",
+						"a long string a long string a long string a long string a long string a long string"
+					)
+				};
+				ValueReport report = ValueReport.of(list);
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    java.util.List[] [",
+					"      [\"string 1\", \"string 2\", \"string 3\", \"string 4\"], [\"string 5\", \"string 6\", \"string 7\"],",
+					"      [",
+					"        \"a long string a long string a long string a long string a long string a long string\",",
+					"        \"a long string a long string a long string a long string a long string a long string\"",
+					"      ]",
+					"    ]"
+				);
+			}
 
 		}
 

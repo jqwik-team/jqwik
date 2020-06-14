@@ -3,6 +3,8 @@ package net.jqwik.engine.execution.reporting;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
+
 public abstract class ValueReport {
 
 	interface ReportingFormatFinder {
@@ -19,17 +21,17 @@ public abstract class ValueReport {
 		Object reportedValue = format.report(value);
 		if (reportedValue instanceof Collection) {
 			//noinspection unchecked
-			return createCollectionReport(format, (Collection<Object>) reportedValue, formatFinder);
+			return createCollectionReport(format.label(value), (Collection<Object>) reportedValue, formatFinder);
 		}
 		if (reportedValue instanceof Map) {
 			//noinspection unchecked
-			return createMapReport(format, (Map<Object, Object>) reportedValue, formatFinder);
+			return createMapReport(format.label(value), (Map<Object, Object>) reportedValue, formatFinder);
 		}
 		return new ObjectValueReport(format.label(value), reportedValue);
 	}
 
 	private static ValueReport createMapReport(
-		final SampleReportingFormat format,
+		final Optional<String> label,
 		final Map<Object, Object> map,
 		final ReportingFormatFinder formatFinder
 	) {
@@ -56,12 +58,12 @@ public abstract class ValueReport {
 						}
 					};
 				})
-				.collect(Collectors.toList());
-		return new MapValueReport(format.label(map), reportEntries);
+			   .collect(Collectors.toList());
+		return new MapValueReport(label, reportEntries);
 	}
 
 	private static ValueReport createCollectionReport(
-		SampleReportingFormat format,
+		Optional<String> label,
 		Collection<Object> collection,
 		ReportingFormatFinder formatFinder
 	) {
@@ -70,21 +72,28 @@ public abstract class ValueReport {
 				.stream()
 				.map(element -> of(element, formatFinder))
 				.collect(Collectors.toList());
-		return new CollectionValueReport(format.label(collection), reportCollection);
+		return new CollectionValueReport(label, reportCollection);
 	}
 
 	private static ReportingFormatFinder reportingFormatFinder() {
 		List<SampleReportingFormat> formats = new ArrayList<>(RegisteredSampleReportingFormats.getReportingFormats());
 		Collections.sort(formats);
-		return targetValue -> formats.stream()
-									 .filter(format -> format.appliesTo(targetValue))
-									 .findFirst().orElse(new NullReportingFormat());
+		return targetValue ->
+			formats.stream()
+				   .filter(format -> {
+					   try {
+						   return format.appliesTo(targetValue);
+					   } catch (NullPointerException npe) {
+						   return false;
+					   }
+				   })
+				   .findFirst().orElse(new NullReportingFormat());
 	}
 
-	final Optional<String> header;
+	final Optional<String> label;
 
-	protected ValueReport(Optional<String> header) {
-		this.header = header;
+	protected ValueReport(Optional<String> label) {
+		this.label = label;
 	}
 
 	int compactLength() {

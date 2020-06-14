@@ -9,14 +9,14 @@ class CollectionValueReport extends ValueReport {
 
 	private final List<ValueReport> collection;
 
-	CollectionValueReport(Optional<String> header, List<ValueReport> collection) {
-		super(header);
+	CollectionValueReport(Optional<String> label, List<ValueReport> collection) {
+		super(label);
 		this.collection = collection;
 	}
 
 	@Override
 	String compactString() {
-		return header.orElse("") + "[" + compactCollection() + "]";
+		return label.orElse("") + "[" + compactCollection() + "]";
 	}
 
 	private String compactCollection() {
@@ -25,7 +25,7 @@ class CollectionValueReport extends ValueReport {
 
 	@Override
 	void report(LineReporter lineReporter, int indentLevel, String appendix) {
-		lineReporter.addLine(indentLevel, header.orElse("") + "[");
+		lineReporter.addLine(indentLevel, label.orElse("") + "[");
 		reportCollection(lineReporter, indentLevel + 1);
 		lineReporter.addLine(indentLevel, "]" + appendix);
 	}

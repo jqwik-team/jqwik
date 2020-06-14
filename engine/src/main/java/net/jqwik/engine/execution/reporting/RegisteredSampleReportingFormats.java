@@ -2,6 +2,8 @@ package net.jqwik.engine.execution.reporting;
 
 import java.util.*;
 
+import net.jqwik.api.*;
+
 public class RegisteredSampleReportingFormats {
 
 	private static List<SampleReportingFormat> registeredFormats;

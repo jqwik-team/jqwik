@@ -9,14 +9,14 @@ class MapValueReport extends ValueReport {
 
 	private final List<Map.Entry<ValueReport, ValueReport>> reportEntries;
 
-	MapValueReport(final Optional<String> header, final List<Map.Entry<ValueReport, ValueReport>> reportEntries) {
-		super(header);
+	MapValueReport(final Optional<String> label, final List<Map.Entry<ValueReport, ValueReport>> reportEntries) {
+		super(label);
 		this.reportEntries = reportEntries;
 	}
 
 	@Override
 	String compactString() {
-		return header.orElse("") + "{" + compactEntries() + "}";
+		return label.orElse("") + "{" + compactEntries() + "}";
 	}
 
 	private String compactEntries() {
@@ -29,7 +29,7 @@ class MapValueReport extends ValueReport {
 
 	@Override
 	void report(LineReporter lineReporter, int indentLevel, String appendix) {
-		lineReporter.addLine(indentLevel, header.orElse("") + "{");
+		lineReporter.addLine(indentLevel, label.orElse("") + "{");
 		reportEntries(lineReporter, indentLevel + 1);
 		lineReporter.addLine(indentLevel, "}" + appendix);
 	}
