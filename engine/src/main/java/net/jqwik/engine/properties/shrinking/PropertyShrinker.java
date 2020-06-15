@@ -8,7 +8,6 @@ import java.util.stream.*;
 import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.support.*;
 
 public class PropertyShrinker {
 
@@ -17,18 +16,23 @@ public class PropertyShrinker {
 	private final List<Shrinkable<Object>> parameters;
 	private final ShrinkingMode shrinkingMode;
 	private final Consumer<ReportEntry> reporter;
+
+	// TODO Refactoring: Combine last two parameters into one
 	private final Reporting[] reporting;
+	private final Function<List<Object>, String> sampleReportCreator;
 
 	public PropertyShrinker(
 		List<Shrinkable<Object>> parameters,
 		ShrinkingMode shrinkingMode,
 		Consumer<ReportEntry> reporter,
-		Reporting[] reporting
+		Reporting[] reporting,
+		Function<List<Object>, String> sampleReportCreator
 	) {
 		this.parameters = parameters;
 		this.shrinkingMode = shrinkingMode;
 		this.reporter = reporter;
 		this.reporting = reporting;
+		this.sampleReportCreator = sampleReportCreator;
 	}
 
 	public PropertyShrinkingResult shrink(Falsifier<List<Object>> forAllFalsifier, Throwable originalError) {
@@ -45,7 +49,7 @@ public class PropertyShrinker {
 		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
 		while (sequence.next(shrinkingStepsCounter::incrementAndGet, falsifiedReporter)) {
 			if (shrinkingMode == ShrinkingMode.BOUNDED && shrinkingStepsCounter.get() >= BOUNDED_SHRINK_STEPS) {
-				reportShrinkingBoundReached(shrinkingStepsCounter.get(), toValues(this.parameters), sequence.current().value());
+				reportShrinkingBoundReached(shrinkingStepsCounter.get());
 				break;
 			}
 		}
@@ -62,19 +66,16 @@ public class PropertyShrinker {
 	}
 
 	private void reportFalsifiedParams(FalsificationResult<List<Object>> result) {
-		ReportEntry falsifiedEntry = ReportEntry.from("falsified", JqwikStringSupport.displayString(result.value()));
+		String sampleReport = sampleReportCreator.apply(result.value());
+		ReportEntry falsifiedEntry = ReportEntry.from("falsified", sampleReport);
 		reporter.accept(falsifiedEntry);
 	}
 
-	private void reportShrinkingBoundReached(int steps, Object originalValue, Object bestShrunkValue) {
+	private void reportShrinkingBoundReached(int steps) {
 		String value = String.format(
-			"%n    steps : %s" +
-				"%n    original parameters : %s" +
-				"%n    shrunk parameters   : %s" +
-				"%nYou can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
-			steps,
-			JqwikStringSupport.displayString(originalValue),
-			JqwikStringSupport.displayString(bestShrunkValue)
+			"after %s steps." +
+				"%n  You can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
+			steps
 		);
 		reporter.accept(ReportEntry.from("shrinking bound reached", value));
 	}

@@ -1,6 +1,8 @@
 package net.jqwik.engine.execution.reporting;
 
+import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class SampleReporter {
 	private static final int MAX_LINE_LENGTH = 100;
@@ -18,7 +20,21 @@ public class SampleReporter {
 		this.parameterNames = parameterNames;
 	}
 
-	public void reportTo(LineReporter lineReporter) {
+	public static void reportSample(
+		StringBuilder reportLines,
+		Method propertyMethod,
+		List<Object> sample,
+		String headline
+	) {
+		List<String> parameterNames = Arrays.stream(propertyMethod.getParameters())
+											.map(Parameter::getName)
+											.collect(Collectors.toList());
+		SampleReporter sampleReporter = new SampleReporter(headline, sample, parameterNames);
+		LineReporter lineReporter = new LineReporterImpl(reportLines);
+		sampleReporter.reportTo(lineReporter);
+	}
+
+	void reportTo(LineReporter lineReporter) {
 		lineReporter.addLine(0, "");
 		reportHeadline(lineReporter);
 		reportParameters(lineReporter);

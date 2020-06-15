@@ -2,7 +2,6 @@ package net.jqwik.engine.execution.reporting;
 
 import java.lang.reflect.*;
 import java.util.*;
-import java.util.stream.*;
 
 import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
@@ -59,31 +58,17 @@ public class ExecutionResultReportEntry {
 	) {
 		executionResult.falsifiedSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
-				reportSample(reportLines, propertyMethod, shrunkSample, SAMPLE_HEADLINE);
+				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample, SAMPLE_HEADLINE);
 			}
 		});
 
 		if (executionResult.isExtended()) {
 			executionResult.originalSample().ifPresent(originalSample -> {
 				if (!originalSample.isEmpty()) {
-					reportSample(reportLines, propertyMethod, originalSample, ORIGINAL_SAMPLE_HEADLINE);
+					SampleReporter.reportSample(reportLines, propertyMethod, originalSample, ORIGINAL_SAMPLE_HEADLINE);
 				}
 			});
 		}
-	}
-
-	private static void reportSample(
-		StringBuilder reportLines,
-		Method propertyMethod,
-		List<Object> sample,
-		String headline
-	) {
-		List<String> parameterNames = Arrays.stream(propertyMethod.getParameters())
-											.map(Parameter::getName)
-											.collect(Collectors.toList());
-		SampleReporter sampleReporter = new SampleReporter(headline, sample, parameterNames);
-		LineReporter lineReporter = new LineReporterImpl(reportLines);
-		sampleReporter.reportTo(lineReporter);
 	}
 
 	private static void appendFixedSizedProperties(

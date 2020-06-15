@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -11,6 +12,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.execution.reporting.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
@@ -122,9 +124,24 @@ public class GenericProperty {
 		Reporting[] reporting
 	) {
 		if (Reporting.GENERATED.containedIn(reporting)) {
-			reporter.accept(ReportEntry.from("generated", JqwikStringSupport.displayString(sample)));
+			String sampleReport = sampleReport(tryLifecycleContext.targetMethod(), sample);
+			reporter.accept(ReportEntry.from("generated", sampleReport));
 		}
 		return tryLifecycleExecutor.execute(tryLifecycleContext, sample);
+	}
+
+	private String sampleReport(Method method, List<Object> sample) {
+		StringBuilder stringBuilder = new StringBuilder();
+		SampleReporter.reportSample(stringBuilder, method, sample, null);
+		removeTrailingNewLine(stringBuilder);
+		return stringBuilder.toString();
+	}
+
+	private void removeTrailingNewLine(final StringBuilder stringBuilder) {
+		int lastNewLine = stringBuilder.lastIndexOf(String.format("%n"));
+		if (lastNewLine + 1 == stringBuilder.length()) {
+			stringBuilder.replace(lastNewLine, lastNewLine + 1, "");
+		}
 	}
 
 	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {
@@ -159,7 +176,12 @@ public class GenericProperty {
 		// TODO: Find a way that falsifier and resolved ParameterSupplier get the same instance of tryLifecycleContext during shrinking.
 		//       This will probably require some major modification to shrinking / shrinking API.
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
-		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting);
+		Function<List<Object>, String> sampleReportCreator = sample -> {
+			TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
+			String sampleReport = sampleReport(tryLifecycleContext.targetMethod(), sample);
+			return sampleReport;
+		};
+		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting, sampleReportCreator);
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
 	}
