@@ -88,9 +88,7 @@ public class PropertyMethodExecutor {
 		try {
 			propertyExecutionResult = aroundProperty.aroundProperty(
 				propertyLifecycleContext,
-				() -> {
-					return executeMethod(publisher, aroundTry, resolveParameter);
-				}
+				() -> executeMethod(publisher, aroundTry, resolveParameter)
 			);
 		} catch (Throwable throwable) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);

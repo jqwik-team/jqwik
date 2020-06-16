@@ -224,9 +224,12 @@ class RegisteredArbitraryProvidersTests {
 			return (aCollections instanceof Set) || (aCollections instanceof List);
 		}
 
-		@Property
+		@Property(tries = 10)
 		boolean integerStream(@ForAll Stream<Integer> aValue) {
-			return aValue != null;
+			assertThat(aValue).isNotNull();
+			// Force stream to evaluate
+			//noinspection ConstantConditions
+			return aValue.count() >= 0;
 		}
 
 		@Property

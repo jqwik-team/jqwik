@@ -20,14 +20,14 @@ public class StreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream<T>> {
 
 	@Override
 	public RandomGenerator<Stream<T>> generator(int genSize) {
-		return createListGenerator(genSize).map(Collection::stream);
+		return createListGenerator(genSize).map(ReportableStream::new);
 	}
 
 	@Override
 	public Optional<ExhaustiveGenerator<Stream<T>>> exhaustive(long maxNumberOfSamples) {
 		return ExhaustiveGenerators
 				   .list(elementArbitrary, minSize, maxSize, maxNumberOfSamples)
-				   .map(generator -> generator.map(Collection::stream));
+				   .map(generator -> generator.map(ReportableStream::new));
 	}
 
 	@Override

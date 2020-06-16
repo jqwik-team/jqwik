@@ -1,1 +1,2 @@
 net.jqwik.engine.execution.reporting.ArrayReportingFormat
+net.jqwik.engine.execution.reporting.StreamReportingFormat

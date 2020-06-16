@@ -3,8 +3,7 @@
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
       - Change user guide to reflect changed reporting
-      - Extract description before running the property?
-        e.g. to be able to display a generated Stream
+      - Release notes
 
     - Arbitrary.invalidOnException(Throwable)
       see IgnoreGenerationErrorArbitrary
