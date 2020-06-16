@@ -33,7 +33,11 @@ public class JqwikStringSupport {
 		if (String.class.isAssignableFrom(object.getClass())) {
 			return String.format("\"%s\"", object.toString());
 		}
-		return object.toString();
+		return replaceUnrepresentableCharacters(object.toString());
+	}
+
+	private static String replaceUnrepresentableCharacters(String aString) {
+		return aString.replace('\u0000', '\ufffd');
 	}
 
 	private static String nullSafeToString(Object obj) {
