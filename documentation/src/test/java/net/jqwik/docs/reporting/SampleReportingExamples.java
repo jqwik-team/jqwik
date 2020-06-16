@@ -26,4 +26,35 @@ class SampleReportingExamples {
 	) {
 		Assertions.assertThat(anInt).isLessThan(10);
 	}
+
+	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Report(Reporting.GENERATED)
+	void reportMultilineToString(@ForAll @UseType Person person) {
+		//Assertions.assertThat(person.firstName).hasSizeLessThan(10);
+	}
+
+	static class Person {
+		private final String firstName;
+		private final String lastName;
+		private final String cv;
+
+		public Person(String firstName, String lastName, String cv) {
+			if (cv.length() < 20) {
+				throw new IllegalArgumentException();
+			}
+			this.firstName = firstName;
+			this.lastName = lastName;
+			this.cv = cv;
+		}
+
+		@Override
+		public String toString() {
+			return String.format(
+				"Person{%n  firstName: '%s'%n  lastName: '%s'%n  cv: %s%n}",
+				firstName,
+				lastName,
+				cv
+			);
+		}
+	}
 }
