@@ -28,9 +28,9 @@ class SampleReportingExamples {
 	}
 
 	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
-	@Report(Reporting.GENERATED)
+	// @Report(Reporting.GENERATED)
 	void reportMultilineToString(@ForAll @UseType Person person) {
-		//Assertions.assertThat(person.firstName).hasSizeLessThan(10);
+		Assertions.assertThat(person.firstName).hasSizeLessThan(10);
 	}
 
 	static class Person {

@@ -112,7 +112,9 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	private ShrinkingSequence<T> createShrinkingSequence(int position) {
 		FalsificationResult<T> positionResult = currentResults.get(position);
 		Falsifier<T> positionFalsifier = falsifierForPosition(position, currentResults);
-		return positionResult.shrinkable().shrink(positionFalsifier);
+		ShrinkingSequence<T> newSequence = positionResult.shrinkable().shrink(positionFalsifier);
+		newSequence.init(positionResult);
+		return newSequence;
 	}
 
 	private Falsifier<T> falsifierForPosition(int position, List<FalsificationResult<T>> falsificationResults) {
