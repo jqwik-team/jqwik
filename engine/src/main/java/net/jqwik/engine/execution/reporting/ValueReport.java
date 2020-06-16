@@ -96,11 +96,11 @@ public abstract class ValueReport {
 		this.label = label;
 	}
 
-	int compactLength() {
-		return compactString().length();
+	int singleLineLength() {
+		return singleLineReport().length();
 	}
 
-	abstract String compactString();
+	abstract String singleLineReport();
 
 	abstract void report(LineReporter lineReporter, int indentLevel, String appendix);
 }

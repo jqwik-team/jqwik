@@ -73,8 +73,8 @@ class SampleReportingTests {
 		void strings() {
 			ValueReport report = ValueReport.of("this is a string");
 
-			Assertions.assertThat(report.compactLength()).isEqualTo(18);
-			Assertions.assertThat(report.compactString()).isEqualTo("\"this is a string\"");
+			Assertions.assertThat(report.singleLineLength()).isEqualTo(18);
+			Assertions.assertThat(report.singleLineReport()).isEqualTo("\"this is a string\"");
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
 				"    \"this is a string\""
@@ -85,8 +85,8 @@ class SampleReportingTests {
 		void number() {
 			ValueReport report = ValueReport.of(BigDecimal.valueOf(2.5));
 
-			Assertions.assertThat(report.compactLength()).isEqualTo(3);
-			Assertions.assertThat(report.compactString()).isEqualTo("2.5");
+			Assertions.assertThat(report.singleLineLength()).isEqualTo(3);
+			Assertions.assertThat(report.singleLineReport()).isEqualTo("2.5");
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
 				"    2.5"
@@ -98,8 +98,8 @@ class SampleReportingTests {
 			Object object = new Object();
 			ValueReport report = ValueReport.of(object);
 
-			Assertions.assertThat(report.compactLength()).isEqualTo(object.toString().length());
-			Assertions.assertThat(report.compactString()).isEqualTo(object.toString());
+			Assertions.assertThat(report.singleLineLength()).isEqualTo(object.toString().length());
+			Assertions.assertThat(report.singleLineReport()).isEqualTo(object.toString());
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
 				"    " + object.toString()
@@ -117,8 +117,8 @@ class SampleReportingTests {
 			ValueReport report = ValueReport.of(object);
 
 			String expectedCompact = "line1 line2 line3";
-			Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-			Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+			Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+			Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
 				"    line1",
@@ -132,8 +132,8 @@ class SampleReportingTests {
 			ValueReport report = ValueReport.of(null);
 
 			String expectedCompact = "null";
-			Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-			Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+			Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+			Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 			report.report(lineReporter, 2, "");
 			assertThat(lineReporter.lines).containsSequence(
 				"    null"
@@ -151,8 +151,8 @@ class SampleReportingTests {
 
 			ValueReport report = ValueReport.of("this is a string", finder);
 
-			Assertions.assertThat(report.compactLength()).isEqualTo(17 + 18);
-			Assertions.assertThat(report.compactString()).isEqualTo("java.lang.String:\"this is a string\"");
+			Assertions.assertThat(report.singleLineLength()).isEqualTo(17 + 18);
+			Assertions.assertThat(report.singleLineReport()).isEqualTo("java.lang.String:\"this is a string\"");
 			report.report(lineReporter, 2, "#");
 			assertThat(lineReporter.lines).containsSequence(
 				"    java.lang.String:",
@@ -169,8 +169,8 @@ class SampleReportingTests {
 				ValueReport report = ValueReport.of(list);
 
 				String expectedCompact = "[\"string 1\", \"string 2\", \"string 3\", \"string 4\"]";
-				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
@@ -199,8 +199,8 @@ class SampleReportingTests {
 				ValueReport report = ValueReport.of(list, finder);
 
 				String expectedCompact = "java.lang.List[\"string 1\", \"string 2\"]";
-				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 
 				report.report(lineReporter, 2, ",");
 				assertThat(lineReporter.lines).containsSequence(
@@ -247,8 +247,8 @@ class SampleReportingTests {
 				ValueReport report = ValueReport.of(map);
 
 				String expectedCompact = "{\"key1\"=1, \"key2\"=2, \"key3\"=3}";
-				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
@@ -280,8 +280,8 @@ class SampleReportingTests {
 				ValueReport report = ValueReport.of(map, finder);
 
 				String expectedCompact = "java.lang.Map{\"key1\"=1}";
-				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 
 				report.report(lineReporter, 2, ",");
 				assertThat(lineReporter.lines).containsSequence(
@@ -331,8 +331,8 @@ class SampleReportingTests {
 				ValueReport report = ValueReport.of(array);
 
 				String expectedCompact = "String[] [\"string 1\", \"string 2\", \"string 3\", \"string 4\"]";
-				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(
@@ -348,8 +348,8 @@ class SampleReportingTests {
 				ValueReport report = ValueReport.of(array);
 
 				String expectedCompact = "int[] [1, 2, 3, 4]";
-				Assertions.assertThat(report.compactLength()).isEqualTo(expectedCompact.length());
-				Assertions.assertThat(report.compactString()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
 
 				report.report(lineReporter, 2, "");
 				assertThat(lineReporter.lines).containsSequence(

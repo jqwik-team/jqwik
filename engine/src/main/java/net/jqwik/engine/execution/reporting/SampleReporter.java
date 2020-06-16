@@ -45,8 +45,8 @@ public class SampleReporter {
 			String parameterName = parameterNames.get(i);
 			Object parameterValue = sample.get(i);
 			ValueReport sampleReport = createReport(parameterValue);
-			if (sampleReport.compactLength() + parameterName.length() < MAX_LINE_LENGTH) {
-				String line = String.format("%s: %s", parameterName, sampleReport.compactString());
+			if (sampleReport.singleLineLength() + parameterName.length() < MAX_LINE_LENGTH) {
+				String line = String.format("%s: %s", parameterName, sampleReport.singleLineReport());
 				lineReporter.addLine(1, line);
 			} else {
 				String line = String.format("%s:", parameterName);

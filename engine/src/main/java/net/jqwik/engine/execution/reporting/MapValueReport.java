@@ -15,16 +15,16 @@ class MapValueReport extends ValueReport {
 	}
 
 	@Override
-	String compactString() {
-		return label.orElse("") + "{" + compactEntries() + "}";
+	String singleLineReport() {
+		return label.orElse("") + "{" + singleLineEntries() + "}";
 	}
 
-	private String compactEntries() {
-		return reportEntries.stream().map(this::compactEntry).collect(Collectors.joining(", "));
+	private String singleLineEntries() {
+		return reportEntries.stream().map(this::singleLineEntry).collect(Collectors.joining(", "));
 	}
 
-	private String compactEntry(final Map.Entry<ValueReport, ValueReport> entry) {
-		return String.format("%s=%s", entry.getKey().compactString(), entry.getValue().compactString());
+	private String singleLineEntry(final Map.Entry<ValueReport, ValueReport> entry) {
+		return String.format("%s=%s", entry.getKey().singleLineReport(), entry.getValue().singleLineReport());
 	}
 
 	@Override
@@ -39,11 +39,11 @@ class MapValueReport extends ValueReport {
 			boolean isNotLast = i < reportEntries.size() - 1;
 			Map.Entry<ValueReport, ValueReport> reportEntry = reportEntries.get(i);
 			String optionalComma = isNotLast ? ", " : "";
-			String compactEntry = compactEntry(reportEntry);
-			if (compactEntry.length() + indentLevel * 2 <= MAX_LINE_LENGTH) {
-				lineReporter.addLine(indentLevel, compactEntry + optionalComma);
+			String singleLineEntry = singleLineEntry(reportEntry);
+			if (singleLineEntry.length() + indentLevel * 2 <= MAX_LINE_LENGTH) {
+				lineReporter.addLine(indentLevel, singleLineEntry + optionalComma);
 			} else {
-				lineReporter.addLine(indentLevel, String.format("%s=", reportEntry.getKey().compactString()));
+				lineReporter.addLine(indentLevel, String.format("%s=", reportEntry.getKey().singleLineReport()));
 				reportEntry.getValue().report(lineReporter, indentLevel + 1, optionalComma);
 			}
 		}

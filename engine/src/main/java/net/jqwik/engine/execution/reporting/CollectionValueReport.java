@@ -15,12 +15,12 @@ class CollectionValueReport extends ValueReport {
 	}
 
 	@Override
-	String compactString() {
-		return label.orElse("") + "[" + compactCollection() + "]";
+	String singleLineReport() {
+		return label.orElse("") + "[" + singleLineCollection() + "]";
 	}
 
-	private String compactCollection() {
-		return collection.stream().map(ValueReport::compactString).collect(Collectors.joining(", "));
+	private String singleLineCollection() {
+		return collection.stream().map(ValueReport::singleLineReport).collect(Collectors.joining(", "));
 	}
 
 	@Override
@@ -35,9 +35,9 @@ class CollectionValueReport extends ValueReport {
 		for (int i = 0; i < collection.size(); i++) {
 			ValueReport elementReport = collection.get(i);
 			boolean isNotLastElement = i < collection.size() - 1;
-			String compactElement = elementReport.compactString();
-			if (currentLine.length() + compactElement.length() + indentLevel * 2 <= MAX_LINE_LENGTH) {
-				currentLine += compactElement;
+			String singleLineElement = elementReport.singleLineReport();
+			if (currentLine.length() + singleLineElement.length() + indentLevel * 2 <= MAX_LINE_LENGTH) {
+				currentLine += singleLineElement;
 				if (isNotLastElement) {
 					currentLine += ", ";
 				}

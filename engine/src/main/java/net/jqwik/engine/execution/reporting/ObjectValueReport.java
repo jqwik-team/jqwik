@@ -32,7 +32,7 @@ class ObjectValueReport extends ValueReport {
 	}
 
 	@Override
-	public String compactString() {
+	public String singleLineReport() {
 		return label.orElse("") + String.join(" ", lines);
 	}
 
