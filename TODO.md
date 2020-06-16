@@ -6,6 +6,9 @@
       - Extract description before running the property?
         e.g. to be able to display a generated Stream
 
+    - Arbitrary.invalidOnException(Throwable)
+      see IgnoreGenerationErrorArbitrary
+
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 

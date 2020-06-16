@@ -28,7 +28,9 @@ public interface SampleReportingFormat extends Comparable<SampleReportingFormat>
 	 * @param value the value to format
 	 * @return an optional label prepended to a value's report
 	 */
-	Optional<String> label(Object value);
+	default Optional<String> label(Object value) {
+		return Optional.empty();
+	}
 
 	/**
 	 * @return priority with which to apply this format

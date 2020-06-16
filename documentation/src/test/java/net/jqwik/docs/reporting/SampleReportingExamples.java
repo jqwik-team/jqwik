@@ -1,13 +1,15 @@
 package net.jqwik.docs.reporting;
 
+import java.time.*;
 import java.util.*;
 
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 
-class SampleReportingExamples {
+public class SampleReportingExamples {
 
 	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	void reportFalsifiedSamples(
@@ -34,6 +36,7 @@ class SampleReportingExamples {
 	}
 
 	static class Person {
+
 		private final String firstName;
 		private final String lastName;
 		private final String cv;
@@ -55,6 +58,43 @@ class SampleReportingExamples {
 				lastName,
 				cv
 			);
+		}
+	}
+
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Report(Reporting.GENERATED)
+	void reportWithFormat(@ForAll("dates") LocalDate localDate) {
+	}
+
+	@Provide
+	Arbitrary<LocalDate> dates() {
+		Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2100);
+		Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
+		Arbitrary<Integer> days = Arbitraries.integers().between(1, 28);
+
+		return Combinators.combine(years, months, days).as(LocalDate::of);
+	}
+
+	public static class LocalDateFormat implements SampleReportingFormat {
+
+		@Override
+		public boolean appliesTo(final Object value) {
+			return value instanceof LocalDate;
+		}
+
+		@Override
+		public Object report(final Object value) {
+			LocalDate date = (LocalDate) value;
+			Map<String, Object> valueMap = new HashMap<>();
+			valueMap.put("year", date.getYear());
+			valueMap.put("month", date.getMonth());
+			valueMap.put("day", date.getDayOfMonth());
+			return valueMap;
+		}
+
+		@Override
+		public Optional<String> label(final Object value) {
+			return Optional.of("LocalDate ");
 		}
 	}
 }
