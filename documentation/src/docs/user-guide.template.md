@@ -178,8 +178,7 @@ You will have to add _at least_ the following jars to your classpath:
 - `jqwik-${version}.jar`
 - `junit-platform-engine-${junitPlatformVersion}.jar`
 - `junit-platform-commons-${junitPlatformVersion}.jar`
-- `opentest4j-1.1.1.jar`
-- `assertj-core-3.11.x.jar` in case you need assertion support
+- `opentest4j-${opentest4jVersion}.jar`
 
 ## Creating a Property
 

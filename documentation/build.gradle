@@ -35,6 +35,7 @@ task expandUserGuide(type: Copy) {
 		releaseNotesVersion: releaseNotesVersion(jqwikVersion),
 		junitPlatformVersion: junitPlatformVersion,
 		junitJupiterVersion: junitJupiterVersion,
+		opentest4jVersion: opentest4jVersion,
 	)
 }
 
