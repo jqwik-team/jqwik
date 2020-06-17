@@ -15,7 +15,7 @@ class CollectionValueReport extends ValueReport {
 	}
 
 	@Override
-	String singleLineReport() {
+	public String singleLineReport() {
 		return label.orElse("") + "[" + singleLineCollection() + "]";
 	}
 
@@ -24,7 +24,7 @@ class CollectionValueReport extends ValueReport {
 	}
 
 	@Override
-	void report(LineReporter lineReporter, int indentLevel, String appendix) {
+	public void report(LineReporter lineReporter, int indentLevel, String appendix) {
 		lineReporter.addLine(indentLevel, label.orElse("") + "[");
 		reportCollection(lineReporter, indentLevel + 1);
 		lineReporter.addLine(indentLevel, "]" + appendix);

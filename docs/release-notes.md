@@ -21,7 +21,18 @@ title: jqwik Release Notes
 
 ## 1.3.1-SNAPSHOT
 
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/snapshot/user-guide.html">User guide</a>
+and
+<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+</p>
+
+
 #### New and Enhanced Features
+
+- Reporting of falsified, shrunk and  generated samples 
+  [has been completely reworked](/docs/snapshot/user-guide.html#failure-reporting).
+  See [this issue](https://github.com/jlink/jqwik/issues/85) for more details.
 
 #### Breaking Changes
 

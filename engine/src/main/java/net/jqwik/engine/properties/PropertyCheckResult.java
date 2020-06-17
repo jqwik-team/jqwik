@@ -7,6 +7,7 @@ import org.opentest4j.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.execution.reporting.*;
 import net.jqwik.engine.support.*;
 
 public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
@@ -260,8 +261,14 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		String header = String.format("%s [%s] failed", stereotype, propertyName);
 		switch (checkStatus()) {
 			case FAILED:
-				String sampleString = sample.isEmpty() ? "" : String.format(" with sample %s", JqwikStringSupport.displayString(sample));
-				return String.format("%s%s", header, sampleString);
+				Map<Integer, Object> sampleMap = new HashMap<>();
+				for (int i = 0; i < sample.size(); i++) {
+					Object parameter = sample.get(i);
+					sampleMap.put(i, parameter);
+				}
+				String sampleString = ValueReport.of(sampleMap).singleLineReport();
+				String failedMessage = sample.isEmpty() ? "" : String.format(" with sample %s", sampleString);
+				return String.format("%s%s", header, failedMessage);
 			case EXHAUSTED:
 				int rejections = tries - checks;
 				return String.format("%s after [%d] tries and [%d] rejections", header, tries, rejections);

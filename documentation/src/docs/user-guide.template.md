@@ -53,6 +53,11 @@ ext.junitJupiterVersion = '${junitJupiterVersion}'
 
 ext.jqwikVersion = '${version}'
 
+compileTestJava {
+    // To enable argument names in reporting and debugging
+	options.compilerArgs += '-parameters'
+}
+
 test {
 	useJUnitPlatform {
 		includeEngines 'jqwik'
@@ -94,7 +99,7 @@ about the real dependencies you can replace this dependency with
 ```
 
 In jqwik's samples repository you can find a rather minimal 
-[starter example for jqwik with Gradle](https://github.com/jlink/jqwik-samples/tree/master/jqwik-starter-gradle).
+[starter example for jqwik with Gradle](https://github.com/jlink/jqwik-samples/tree/main/jqwik-starter-gradle).
 
 See [the Gradle section in JUnit 5's user guide](https://junit.org/junit5/docs/current/user-guide/#running-tests-build-gradle)
 for more details on how to configure Gradle for the JUnit 5 platform. 
@@ -149,7 +154,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
 ```
 
 In jqwik's samples repository you can find a rather minimal 
-[starter example for jqwik with Maven](https://github.com/jlink/jqwik-samples/tree/master/jqwik-starter-maven).
+[starter example for jqwik with Maven](https://github.com/jlink/jqwik-samples/tree/main/jqwik-starter-maven).
 
 ### Snapshot Releases
 
@@ -228,9 +233,69 @@ class PropertyBasedTests {
 }
 ```
 
-Currently _jqwik_ cannot deal with parameters that are not
-annotated with '@ForAll'. However, this might change
-in future versions.
+Mind that only parameters that are annotated with '@ForAll' are considered for value generation. 
+Other kinds of parameters can be injected through the [resolve parameter hook](#resolveparameterhook).
+
+### Failure Reporting
+
+If a property fails then jqwik's reporting is more thorough:
+- Report the relevant exception, usually a subtype of `AssertionError`
+- Report the property's base parameters
+- Report both the original failing sample and the shrunk sample
+
+In the case of `lengthOfConcatenatedStringIsGreaterThanLengthOfEach`
+from above the report looks like that:
+
+```
+PropertyBasedTests:lengthOfConcatenatedStringIsGreaterThanLengthOfEach = 
+  java.lang.AssertionError: 
+    Expecting:
+     <0>
+    to be greater than:
+     <0> 
+                              |-----------------------jqwik-----------------------
+tries = 16                    | # of calls to property
+checks = 16                   | # of not rejected calls
+generation = RANDOMIZED       | parameters are randomly generated
+after-failure = SAMPLE_FIRST  | try previously failed sample, then previous seed
+edge-cases#mode = MIXIN       | edge cases are mixed in
+edge-cases#total = 4          | # of all combined edge cases
+edge-cases#tried = 0          | # of edge cases tried in current run
+seed = -2370223836245802816   | random seed to reproduce generated values
+
+Sample
+------
+  string1: ""
+  string2: ""
+
+Original Sample
+---------------
+  string1: "乮��깼뷼檹瀶�������የ뷯����ঘ꼝���焗봢牠"
+  string2: ""
+```
+
+The source code names of property method parameters can only be reported when compiler argument
+`-parameters` is used. 
+_jqwik_ goes for structured reporting with collections, arrays and maps.
+If you want to provide nice reporting for your own domain classes you can either
+
+- implement a potentially multiline `toString()` method or
+- register an implementation of [`net.jqwik.api.SampleReportingFormat`]()
+  through Java’s `java.util.ServiceLoader` mechanism. 
+    
+    
+### Additional Reporting
+
+You can switch on additional reporting aspects by adding a
+[`@Report(Reporting[])` annotation](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html)
+to a property method.
+
+The following reporting aspects are available:
+
+- `Reporting.GENERATED` will report each generated set of parameters.
+- `Reporting.FALSIFIED` will report each set of parameters
+  that is falsified during shrinking.
+
 
 ### Optional `@Property` Parameters
 
@@ -313,20 +378,7 @@ edge-cases#total = 2
 edge-cases#tried = 2 
 seed = 42859154278924201
 ```
-  
-    
-### Additional Reporting
-
-You can switch on additional reporting aspects by adding a
-[`@Report(Reporting[])` annotation](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html)
-to a property method.
-
-The following reporting aspects are available:
-
-- `Reporting.GENERATED` will report each generated set of parameters.
-- `Reporting.FALSIFIED` will report each set of parameters
-  that is falsified during shrinking.
-
+      
 ## Creating an Example-based Test
 
 _jqwik_ also supports example-based testing.
@@ -1749,7 +1801,11 @@ class Person {
 ```
 
 The property should fail, thereby shrinking the falsified Person instance to
-`[aaaaaaaaaaaaaaaaaaaaa:100]`.
+```
+Sample
+------
+  aPerson: aaaaaaaaaaaaaaaaaaaaa:100
+```
 
 The `Combinators.combine` method accepts up to 8 parameters of type Arbitrary.
 If you need more you have a few options:
@@ -2246,12 +2302,13 @@ public void clear() {
 Running the property should now produce a result similar to:
 
 ```
-org.opentest4j.AssertionFailedError: Run failed after following actions:
-    push(AAAAA)
-    push(AAAAA)
-    push(AAAAA)
-    clear
-  final state: ["AAAAA", "AAAAA"]
+org.opentest4j.AssertionFailedError: 
+  Run failed after following actions:
+      push(AAAAA)
+      push(AAAAA)
+      push(AAAAA)
+      clear
+    final state: ["AAAAA", "AAAAA"]
 ```
 
 ### Number of actions
@@ -2290,13 +2347,14 @@ If we first fix the bug in `MyStringStack.clear()` our property should eventuall
 with the following result:
 
 ```
-org.opentest4j.AssertionFailedError: Run failed after following actions:
-    push(AAAAA)
-    push(AAAAA)
-    push(AAAAA)
-    push(AAAAA)
-    push(AAAAA)
-  final state: ["AAAAA", "AAAAA", "AAAAA", "AAAAA", "AAAAA"]
+org.opentest4j.AssertionFailedError: 
+  Run failed after following actions:
+      push(AAAAA)
+      push(AAAAA)
+      push(AAAAA)
+      push(AAAAA)
+      push(AAAAA)
+    final state: ["AAAAA", "AAAAA", "AAAAA", "AAAAA", "AAAAA"]
 ```
 
 
@@ -2400,18 +2458,23 @@ boolean stringShouldBeShrunkToAA(@ForAll @AlphaChars String aString) {
 The test run result should look something like:
 
 ```
-AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample ["AA"]
+AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample {0="aa"}
 
 tries = 38 
 checks = 38 
 ...
-sample = ["AA"]
-original-sample ["LVtyB"] 
+Sample
+------
+  aString: "aa"
+
+Original Sample
+---------------
+  aString: "AoFI"
 ```
 
-In this case the _originalSample_ could be any string between 2 and 5 chars, whereas the final _sample_
-should be exactly `AA` since this is the shortest failing string and `A` has the lowest numeric value
-of all allowed characters.
+In this case the _original sample_ could be any string between 2 and 5 chars, 
+whereas the final _sample_ should be exactly `AA` since this is the shortest 
+failing string and `A` has the lowest numeric value of all allowed characters.
 
 ### Integrated Shrinking
 
@@ -2449,13 +2512,20 @@ Arbitrary<String> second() {
 
 Shrinking still works, although there's quite a bit of filtering and string concatenation happening:
 ```
-AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample ["h", "0"]
+AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample {0="h", 1="0"}
 
 checks = 20 
 tries = 20 
 ...
-sample = ["h", "0"]
-original-sample ["gh", "774"] 
+Sample
+------
+  first: "h" 
+  second: "0"
+
+Original Sample
+---------------
+  first: "gh" 
+  second: "774"
 ```
 
 ### Switch Shrinking Off
@@ -2476,10 +2546,7 @@ void aPropertyWithLongShrinkingTimes(
 Sometimes you can find a message like
 
 ```
-shrinking bound reached =
-    steps : 1000
-    original value : [blah blah blah ...]
-    shrunk value   : [bl bl bl ...]
+shrinking bound reached = after 1000 steps.
 ```
 
 in your testrun's output.
@@ -3814,7 +3881,7 @@ but those implementations have a different proximity or require a different prop
 
 This is really advanced stuff, the mechanism of which will probably evolve or change in the future.
 If you really really want to see an example, look at
-[`JqwikSpringExtension`](#https://github.com/jlink/jqwik-spring/blob/master/src/main/java/net/jqwik/spring/JqwikSpringExtension.java) 
+[`JqwikSpringExtension`](#https://github.com/jlink/jqwik-spring/blob/main/src/main/java/net/jqwik/spring/JqwikSpringExtension.java) 
 
 #### Lifecycle Storage
 

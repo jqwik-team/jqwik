@@ -1,6 +1,5 @@
 package net.jqwik.engine.execution.reporting;
 
-import java.io.*;
 import java.util.*;
 
 import net.jqwik.engine.support.*;
@@ -15,20 +14,8 @@ class ObjectValueReport extends ValueReport {
 	}
 
 	private List<String> toStringLines(Object value) {
-		List<String> lines = new ArrayList<>();
-		BufferedReader reader = new BufferedReader(new StringReader(JqwikStringSupport.displayString(value)));
-		try {
-			String line = reader.readLine();
-			while (line != null) {
-				if (!line.isEmpty()) {
-					lines.add(line);
-				}
-				line = reader.readLine();
-			}
-		} catch (IOException cannotHappen) {
-			throw new RuntimeException(cannotHappen);
-		}
-		return lines;
+		String s = JqwikStringSupport.displayString(value);
+		return JqwikStringSupport.toLines(s);
 	}
 
 	@Override

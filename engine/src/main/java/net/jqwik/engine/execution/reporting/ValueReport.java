@@ -11,7 +11,7 @@ public abstract class ValueReport {
 		SampleReportingFormat find(Object value);
 	}
 
-	static ValueReport of(Object value) {
+	public static ValueReport of(Object value) {
 		ReportingFormatFinder formatFinder = reportingFormatFinder();
 		return of(value, formatFinder);
 	}
@@ -100,7 +100,7 @@ public abstract class ValueReport {
 		return singleLineReport().length();
 	}
 
-	abstract String singleLineReport();
+	public abstract String singleLineReport();
 
-	abstract void report(LineReporter lineReporter, int indentLevel, String appendix);
+	public abstract void report(LineReporter lineReporter, int indentLevel, String appendix);
 }

@@ -2,17 +2,16 @@
 
     - Improve Sample Reporting
       https://github.com/jlink/jqwik/issues/85
-      - Change user guide to reflect changed reporting
       - Release notes
 
     - Arbitrary.invalidOnException(Throwable)
       see IgnoreGenerationErrorArbitrary
 
+- 1.3.x
+        
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
-- 1.3.x
-        
     - Edge Cases
         - Arbitrary.withoutEdgeCases() 
             - should also work for individual generators

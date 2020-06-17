@@ -1,5 +1,6 @@
 package net.jqwik.engine.support;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -31,7 +32,7 @@ public class JqwikStringSupport {
 			return String.format("%s{%s}", object.getClass().getSimpleName(), elements);
 		}
 		if (String.class.isAssignableFrom(object.getClass())) {
-			return String.format("\"%s\"", object.toString());
+			return String.format("\"%s\"", replaceUnrepresentableCharacters(object.toString()));
 		}
 		return replaceUnrepresentableCharacters(object.toString());
 	}
@@ -93,5 +94,20 @@ public class JqwikStringSupport {
 		return obj.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(obj));
 	}
 
-
+	public static List<String> toLines(String string) {
+		List<String> lines = new ArrayList<>();
+		BufferedReader reader = new BufferedReader(new StringReader(string));
+		try {
+			String line = reader.readLine();
+			while (line != null) {
+				if (!line.isEmpty()) {
+					lines.add(line);
+				}
+				line = reader.readLine();
+			}
+		} catch (IOException cannotHappen) {
+			throw new RuntimeException(cannotHappen);
+		}
+		return lines;
+	}
 }

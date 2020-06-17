@@ -10,6 +10,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.support.*;
 
 public class ExecutionResultReportEntry {
 
@@ -123,9 +124,11 @@ public class ExecutionResultReportEntry {
 		if (executionResult.status() != PropertyExecutionResult.Status.SUCCESSFUL) {
 			Throwable throwable = executionResult.throwable().orElse(new AssertionFailedError(null));
 			String assertionClass = throwable.getClass().getName();
-			String assertionMessage = throwable.getMessage();
-			reportLines.append(String.format("%n%n%s: ", assertionClass));
-			reportLines.append(String.format("%s%n", assertionMessage));
+			reportLines.append(String.format("%n  %s: ", assertionClass));
+			List<String> assertionMessageLines = JqwikStringSupport.toLines(throwable.getMessage());
+			for (String line : assertionMessageLines) {
+				reportLines.append(String.format("%n    %s", line));
+			}
 		}
 	}
 
