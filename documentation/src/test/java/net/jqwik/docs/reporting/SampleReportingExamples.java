@@ -64,6 +64,7 @@ public class SampleReportingExamples {
 	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	@Report(Reporting.GENERATED)
 	void reportWithFormat(@ForAll("dates") LocalDate localDate) {
+		Assertions.assertThat(localDate).isBefore(LocalDate.of(2000, 1, 1));
 	}
 
 	@Provide

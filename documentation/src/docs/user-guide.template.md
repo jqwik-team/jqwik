@@ -280,7 +280,7 @@ _jqwik_ goes for structured reporting with collections, arrays and maps.
 If you want to provide nice reporting for your own domain classes you can either
 
 - implement a potentially multiline `toString()` method or
-- register an implementation of [`net.jqwik.api.SampleReportingFormat`]()
+- register an implementation of [`net.jqwik.api.SampleReportingFormat`](/docs/${docsVersion}/javadoc/net/jqwik/api/SampleReportingFormat.html)
   through Java’s `java.util.ServiceLoader` mechanism. 
     
     
