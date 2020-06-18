@@ -1,7 +1,6 @@
 - 1.3.1
 
     - Arbitrary.ignoreException(Throwable)
-      - Remove IgnoreGenerationErrorArbitrary
       - User guide
 
 - 1.3.x

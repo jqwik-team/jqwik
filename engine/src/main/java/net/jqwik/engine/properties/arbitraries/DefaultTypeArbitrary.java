@@ -98,7 +98,8 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		}
 
 		if (creator instanceof Constructor) {
-			checkConstructor((Constructor) creator);
+			//noinspection unchecked
+			checkConstructor((Constructor<T>) creator);
 		}
 	}
 
@@ -123,7 +124,8 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		}
 	}
 
-	private void checkConstructor(Constructor method) {
+	private void checkConstructor(Constructor<T> constructor) {
+		// All constructors are fine
 	}
 
 	@Override
@@ -155,7 +157,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 
 		Function<List<Object>, T> combinator = paramList -> combinator(creator).apply(paramList.toArray());
 		Arbitrary<T> arbitrary = Combinators.combine(parameterArbitraries).as(combinator);
-		return new IgnoreGenerationErrorArbitrary<>(arbitrary);
+		return arbitrary.ignoreException(GenerationError.class);
 	}
 
 	private Function<Object[], T> combinator(Executable creator) {
@@ -163,7 +165,8 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 			return combinatorForMethod((Method) creator);
 		}
 		if (creator instanceof Constructor) {
-			return combinatorForConstructor((Constructor) creator);
+			//noinspection unchecked
+			return combinatorForConstructor((Constructor<T>) creator);
 		}
 		throw new JqwikException(String.format("Creator %s is not supported", creator));
 	}
@@ -173,7 +176,7 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 		return params -> generateNext(params, p -> method.invoke(null, p));
 	}
 
-	private Function<Object[], T> combinatorForConstructor(Constructor constructor) {
+	private Function<Object[], T> combinatorForConstructor(Constructor<T> constructor) {
 		constructor.setAccessible(true);
 		return params -> generateNext(params, constructor::newInstance);
 	}
@@ -194,6 +197,12 @@ public class DefaultTypeArbitrary<T> extends OneOfArbitrary<T> implements TypeAr
 	@FunctionalInterface
 	private interface Combinator {
 		Object combine(Object[] params) throws Throwable;
+	}
+
+	private static class GenerationError extends RuntimeException {
+		GenerationError(Throwable throwable) {
+			super(throwable);
+		}
 	}
 
 }
