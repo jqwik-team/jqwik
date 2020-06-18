@@ -45,4 +45,9 @@ public class RandomGeneratorFacadeImpl extends RandomGenerator.RandomGeneratorFa
 	public <T> RandomGenerator<T> injectDuplicates(RandomGenerator<T> self, double duplicateProbability) {
 		return new InjectDuplicatesGenerator<>(self, duplicateProbability);
 	}
+
+	@Override
+	public <T> RandomGenerator<T> ignoreException(RandomGenerator<T> self, Class<? extends Throwable> exceptionType) {
+		return new IgnoreExceptionGenerator<>(self, exceptionType);
+	}
 }

@@ -585,12 +585,18 @@ public interface Arbitrary<T> {
 		return new Arbitrary<T>() {
 			@Override
 			public RandomGenerator<T> generator(int genSize) {
-				return Arbitrary.this.generator(genSize);
+				return Arbitrary.this.generator(genSize).ignoreException(exceptionType);
+			}
+
+			@Override
+			public boolean isUnique() {
+				return Arbitrary.this.isUnique();
 			}
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
-				return Optional.empty();
+				return Arbitrary.this.exhaustive(maxNumberOfSamples)
+									 .map(generator -> generator.ignoreException(exceptionType));
 			}
 
 			@Override
