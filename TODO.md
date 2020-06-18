@@ -1,10 +1,6 @@
 - 1.3.1
 
-    - Improve Sample Reporting
-      https://github.com/jlink/jqwik/issues/85
-      - Release notes
-
-    - Arbitrary.invalidOnException(Throwable)
+    - Arbitrary.ignoreException(Throwable)
       see IgnoreGenerationErrorArbitrary
 
 - 1.3.x

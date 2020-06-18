@@ -176,19 +176,26 @@ public class GenericProperty {
 		// TODO: Find a way that falsifier and resolved ParameterSupplier get the same instance of tryLifecycleContext during shrinking.
 		//       This will probably require some major modification to shrinking / shrinking API.
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
-		Function<List<Object>, String> sampleReportCreator = sample -> {
-			TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
-			return sampleReport(tryLifecycleContext.targetMethod(), sample);
-		};
-		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, reporting, sampleReportCreator);
+
+		Consumer<List<Object>> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
+		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, falsifiedSampleReporter);
+
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
 	}
 
-	private Falsifier<List<Object>> createFalsifier(
-		Supplier<TryLifecycleContext> tryLifecycleContext,
-		TryLifecycleExecutor tryExecutor
-	) {
+	private Consumer<List<Object>> createFalsifiedSampleReporter(Consumer<ReportEntry> reporter, Reporting[] reporting) {
+		return sample -> {
+				if (Reporting.FALSIFIED.containedIn(reporting)) {
+					TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
+					String sampleReport = sampleReport(tryLifecycleContext.targetMethod(), sample);
+					ReportEntry falsifiedEntry = ReportEntry.from("falsified", sampleReport);
+					reporter.accept(falsifiedEntry);
+				}
+			};
+	}
+
+	private Falsifier<List<Object>> createFalsifier(Supplier<TryLifecycleContext> tryLifecycleContext, TryLifecycleExecutor tryExecutor) {
 		return params -> tryExecutor.execute(tryLifecycleContext.get(), params);
 	}
 

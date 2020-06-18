@@ -5,20 +5,8 @@ import java.util.*;
 import java.util.stream.*;
 
 public class SampleReporter {
+
 	private static final int MAX_LINE_LENGTH = 100;
-
-	private final String headline;
-	private final List<Object> sample;
-	private final List<String> parameterNames;
-
-	public SampleReporter(String headline, List<Object> sample, List<String> parameterNames) {
-		if (sample.size() != parameterNames.size()) {
-			throw new IllegalArgumentException("Number of sample parameters must be equal to number of parameter names");
-		}
-		this.headline = headline;
-		this.sample = sample;
-		this.parameterNames = parameterNames;
-	}
 
 	public static void reportSample(
 		StringBuilder reportLines,
@@ -32,6 +20,20 @@ public class SampleReporter {
 		SampleReporter sampleReporter = new SampleReporter(headline, sample, parameterNames);
 		LineReporter lineReporter = new LineReporterImpl(reportLines);
 		sampleReporter.reportTo(lineReporter);
+	}
+
+	private final String headline;
+	private final List<Object> sample;
+
+	private final List<String> parameterNames;
+
+	public SampleReporter(String headline, List<Object> sample, List<String> parameterNames) {
+		if (sample.size() != parameterNames.size()) {
+			throw new IllegalArgumentException("Number of sample parameters must be equal to number of parameter names");
+		}
+		this.headline = headline;
+		this.sample = sample;
+		this.parameterNames = parameterNames;
 	}
 
 	void reportTo(LineReporter lineReporter) {

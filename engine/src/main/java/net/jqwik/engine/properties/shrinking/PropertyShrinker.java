@@ -16,23 +16,18 @@ public class PropertyShrinker {
 	private final List<Shrinkable<Object>> parameters;
 	private final ShrinkingMode shrinkingMode;
 	private final Consumer<ReportEntry> reporter;
-
-	// TODO Refactoring: Combine last two parameters into one
-	private final Reporting[] reporting;
-	private final Function<List<Object>, String> sampleReportCreator;
+	private final Consumer<List<Object>> falsifiedSampleReporter;
 
 	public PropertyShrinker(
 		List<Shrinkable<Object>> parameters,
 		ShrinkingMode shrinkingMode,
 		Consumer<ReportEntry> reporter,
-		Reporting[] reporting,
-		Function<List<Object>, String> sampleReportCreator
+		Consumer<List<Object>> falsifiedSampleReporter
 	) {
 		this.parameters = parameters;
 		this.shrinkingMode = shrinkingMode;
 		this.reporter = reporter;
-		this.reporting = reporting;
-		this.sampleReportCreator = sampleReportCreator;
+		this.falsifiedSampleReporter = falsifiedSampleReporter;
 	}
 
 	public PropertyShrinkingResult shrink(Falsifier<List<Object>> forAllFalsifier, Throwable originalError) {
@@ -44,7 +39,7 @@ public class PropertyShrinker {
 		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(parameters, forAllFalsifier, distanceFunction);
 		sequence.init(FalsificationResult.falsified(Shrinkable.unshrinkable(toValues(parameters)), originalError));
 
-		Consumer<FalsificationResult<List<Object>>> falsifiedReporter = isFalsifiedReportingOn() ? this::reportFalsifiedParams : ignore -> {};
+		Consumer<FalsificationResult<List<Object>>> falsifiedReporter = result -> falsifiedSampleReporter.accept(result.value());
 
 		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
 		while (sequence.next(shrinkingStepsCounter::incrementAndGet, falsifiedReporter)) {
@@ -57,18 +52,8 @@ public class PropertyShrinker {
 		return new PropertyShrinkingResult(current.value(), shrinkingStepsCounter.get(), current.throwable().orElse(null));
 	}
 
-	private boolean isFalsifiedReportingOn() {
-		return Reporting.FALSIFIED.containedIn(reporting);
-	}
-
 	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
-	}
-
-	private void reportFalsifiedParams(FalsificationResult<List<Object>> result) {
-		String sampleReport = sampleReportCreator.apply(result.value());
-		ReportEntry falsifiedEntry = ReportEntry.from("falsified", sampleReport);
-		reporter.accept(falsifiedEntry);
 	}
 
 	private void reportShrinkingBoundReached(int steps) {

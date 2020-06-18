@@ -21,11 +21,13 @@ class PropertyShrinkerTests {
 
 	@SuppressWarnings("unchecked")
 	private final Consumer<ReportEntry> reporter = Mockito.mock(Consumer.class);
+	@SuppressWarnings("unchecked")
+	private final Consumer<List<Object>> falsifiedSampleReporter = Mockito.mock(Consumer.class);
 
 	@Example
 	void ifThereIsNothingToShrinkReturnOriginalValue() {
 		List<Shrinkable<Object>> unshrinkableParameters = asList(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable("hello"));
-		PropertyShrinker shrinker = new PropertyShrinker(unshrinkableParameters, ShrinkingMode.FULL, reporter, new Reporting[0], null);
+		PropertyShrinker shrinker = new PropertyShrinker(unshrinkableParameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
 		Throwable originalError = new RuntimeException("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
@@ -35,14 +37,14 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
 
-		verifyNoInteractions(reporter);
+		verifyNoInteractions(falsifiedSampleReporter);
 	}
 
 	@Example
 	void ifShrinkingIsOffReturnOriginalValue() {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
 
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.OFF, reporter, new Reporting[0], null);
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.OFF, reporter, falsifiedSampleReporter);
 
 		Throwable originalError = new RuntimeException("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
@@ -52,14 +54,14 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
 
-		verifyNoInteractions(reporter);
+		verifyNoInteractions(falsifiedSampleReporter);
 	}
 
 	@Example
 	void shrinkAllParameters() {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
 
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0], null);
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
 		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			if (((int) params.get(0)) == 0) return true;
@@ -71,8 +73,6 @@ class PropertyShrinkerTests {
 		assertThat(result.throwable()).isNotPresent();
 
 		assertThat(result.steps()).isEqualTo(12);
-
-		verifyNoInteractions(reporter);
 	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
@@ -129,17 +129,17 @@ class PropertyShrinkerTests {
 	void reportFalsifiedParameters() {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
 
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[]{Reporting.FALSIFIED}, sample -> "sample report");
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 		shrinker.shrink(ignore -> TryExecutionResult.falsified(null), null);
 
-		verify(reporter, times(15)).accept(any(ReportEntry.class));
+		verify(falsifiedSampleReporter, times(15)).accept(any(List.class));
 	}
 
 	@Example
 	void resultThrowableComesFromActualShrinkedValue() {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
 
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, new Reporting[0], null);
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
 		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			if (((int) params.get(0)) == 0) return true;
@@ -156,7 +156,7 @@ class PropertyShrinkerTests {
 	void withBoundedShrinkingBreakOffAfter1000Steps() {
 		List<Shrinkable<Object>> parameters = toList(900, 1000);
 
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.BOUNDED, reporter, new Reporting[0], null);
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.BOUNDED, reporter, falsifiedSampleReporter);
 
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), null);
 
