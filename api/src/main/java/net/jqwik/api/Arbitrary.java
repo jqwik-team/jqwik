@@ -601,7 +601,7 @@ public interface Arbitrary<T> {
 
 			@Override
 			public EdgeCases<T> edgeCases() {
-				return EdgeCases.none();
+				return Arbitrary.this.edgeCases().ignoreException(exceptionType);
 			}
 		};
 	}

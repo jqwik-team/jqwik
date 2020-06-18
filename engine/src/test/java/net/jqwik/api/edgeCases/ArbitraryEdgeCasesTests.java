@@ -48,6 +48,25 @@ class ArbitraryEdgeCasesTests {
 	}
 
 	@Example
+	void ignoringExceptions() {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.integers().between(-10, 10)
+					   .map(i -> {
+						   if (i % 2 != 0) {
+							   throw new IllegalArgumentException("Only even numbers");
+						   }
+						   return i;
+					   })
+					   .ignoreException(IllegalArgumentException.class);
+		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();
+		assertThat(values(edgeCases)).containsExactlyInAnyOrder(
+			-10, -2, 0, 2, 10
+		);
+		// make sure edge cases can be repeatedly generated
+		assertThat(values(edgeCases)).hasSize(5);
+	}
+
+	@Example
 	void injectNull() {
 		Arbitrary<Integer> arbitrary = Arbitraries.integers().between(-10, 10).injectNull(0.1);
 		EdgeCases<Integer> edgeCases = arbitrary.edgeCases();

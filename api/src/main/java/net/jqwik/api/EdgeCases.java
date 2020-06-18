@@ -28,6 +28,8 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		public abstract <T, U> EdgeCases<U> flatMapArbitrary(EdgeCases<T> self, Function<T, Arbitrary<U>> mapper);
 
 		public abstract <T> EdgeCases<T> filter(EdgeCases<T> self, Predicate<T> filterPredicate);
+
+		public abstract <T> EdgeCases<T> ignoreException(EdgeCases<T> self, Class<? extends Throwable> exceptionType);
 	}
 
 	List<Supplier<Shrinkable<T>>> suppliers();
@@ -97,5 +99,11 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 	default <U> EdgeCases<U> flatMapArbitrary(Function<T, Arbitrary<U>> mapper) {
 		return EdgeCasesFacade.implementation.flatMapArbitrary(this, mapper);
 	}
+
+	@API(status = INTERNAL)
+	default EdgeCases<T> ignoreException(Class<? extends Throwable> exceptionType) {
+		return EdgeCasesFacade.implementation.ignoreException(this, exceptionType);
+	}
+
 
 }

@@ -92,4 +92,23 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 				.collect(Collectors.toList());
 		return EdgeCases.fromSuppliers(filteredSuppliers);
 	}
+
+	@Override
+	public <T> EdgeCases<T> ignoreException(final EdgeCases<T> self, final Class<? extends Throwable> exceptionType) {
+		List<Supplier<Shrinkable<T>>> filteredSuppliers =
+			self.suppliers().stream()
+				.filter(supplier -> {
+					try {
+						supplier.get().value();
+						return true;
+					} catch (Throwable throwable) {
+						if (exceptionType.isAssignableFrom(throwable.getClass())) {
+							return false;
+						}
+						throw throwable;
+					}
+				})
+				.collect(Collectors.toList());
+		return EdgeCases.fromSuppliers(filteredSuppliers);
+	}
 }

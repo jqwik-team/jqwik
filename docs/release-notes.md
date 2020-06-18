@@ -34,6 +34,8 @@ and
   [has been completely reworked](/docs/snapshot/user-guide.html#failure-reporting).
   See [this issue](https://github.com/jlink/jqwik/issues/85) for more details.
 
+- Added `Arbitrary.ignoreException(exceptionType)`
+
 #### Breaking Changes
 
 - `Arbitraries.of(List<T>)` replaced with `Arbitraries.of(Collection<T>)`

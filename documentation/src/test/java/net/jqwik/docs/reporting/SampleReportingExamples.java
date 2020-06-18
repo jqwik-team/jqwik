@@ -71,9 +71,11 @@ public class SampleReportingExamples {
 	Arbitrary<LocalDate> dates() {
 		Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2100);
 		Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
-		Arbitrary<Integer> days = Arbitraries.integers().between(1, 28);
+		Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
 
-		return Combinators.combine(years, months, days).as(LocalDate::of);
+		return Combinators.combine(years, months, days)
+						  .as(LocalDate::of)
+						  .ignoreException(DateTimeException.class);
 	}
 
 	public static class LocalDateFormat implements SampleReportingFormat {
