@@ -73,7 +73,11 @@ class FunctionsTests {
 		Function<String, Integer> function1 = generator.next(random).value();
 
 		assertThat(function1.hashCode()).isEqualTo(function1.hashCode());
-		assertThat(function1.hashCode()).isNotEqualTo(generator.next(random).value().hashCode());
+		Function<String, Integer> function2 = generator.next(random).value();
+		while (function2.apply("a") == function1.apply("a")) {
+			function2 = generator.next(random).value();
+		}
+		assertThat(function1.hashCode()).isNotEqualTo(function2.hashCode());
 	}
 
 	@Example
