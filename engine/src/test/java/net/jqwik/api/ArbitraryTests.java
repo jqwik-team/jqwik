@@ -95,6 +95,37 @@ class ArbitraryTests {
 	}
 
 	@Group
+	class IgnoreException {
+		@Example
+		void ignoreIllegalArgumentException(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary =
+				new OrderedArbitraryForTesting<>(1, 2, 3, 4, 5)
+					.map(anInt -> {
+						if (anInt % 2 == 0) {
+							throw new IllegalArgumentException("No even numbers");
+						}
+						return anInt;
+					});
+			Arbitrary<Integer> filtered = arbitrary.ignoreException(IllegalArgumentException.class);
+			RandomGenerator<Integer> generator = filtered.generator(10);
+
+			assertThat(generator.next(random).value()).isEqualTo(1);
+			assertThat(generator.next(random).value()).isEqualTo(3);
+			assertThat(generator.next(random).value()).isEqualTo(5);
+			assertThat(generator.next(random).value()).isEqualTo(1);
+		}
+
+		// @Example
+		// void failIfFilterWillDiscard10000ValuesInARow(@ForAll Random random) {
+		// 	Arbitrary<Integer> arbitrary = Arbitraries.of(1, 2, 3, 4, 5);
+		// 	Arbitrary<Integer> filtered = arbitrary.filter(anInt -> false);
+		// 	RandomGenerator<Integer> generator = filtered.generator(10);
+		//
+		// 	assertThatThrownBy(() -> generator.next(random).value()).isInstanceOf(JqwikException.class);
+		// }
+	}
+
+	@Group
 	@Label("Unique")
 	class UniqueMethod {
 		@Example

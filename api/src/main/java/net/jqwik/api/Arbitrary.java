@@ -571,4 +571,34 @@ public interface Arbitrary<T> {
 		return Arbitrary.this.list().ofSize(4).map(l -> Tuple.of(l.get(0), l.get(1), l.get(2), l.get(3)));
 	}
 
+	/**
+	 * Create a new arbitrary of type {@code T} that will use the underlying
+	 * arbitrary to create the tuple values but will ignore any raised exception of
+	 * type {@code exceptionType} during generation.
+	 *
+	 * @param exceptionType The exception type to ignore
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.1")
+	default Arbitrary<T> ignoreException(Class<? extends Throwable> exceptionType) {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize);
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Optional.empty();
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return EdgeCases.none();
+			}
+		};
+	}
+
+
 }
