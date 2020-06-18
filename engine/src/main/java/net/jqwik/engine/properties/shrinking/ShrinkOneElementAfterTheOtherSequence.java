@@ -118,11 +118,11 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	}
 
 	private Falsifier<T> falsifierForPosition(int position, List<FalsificationResult<T>> falsificationResults) {
-		return elementValue -> {
+		return listFalsifier.map(elementValue -> {
 			List<T> effectiveParams = toValueList(falsificationResults);
 			effectiveParams.set(position, elementValue);
-			return listFalsifier.execute(effectiveParams);
-		};
+			return effectiveParams;
+		});
 	}
 
 	@Override

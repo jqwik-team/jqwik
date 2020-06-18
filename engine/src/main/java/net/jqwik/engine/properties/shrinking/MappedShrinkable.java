@@ -23,8 +23,8 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
-		Falsifier<T> toMapFalsifier = aT -> falsifier.execute(mapper.apply(aT));
-		return toMap.shrink(toMapFalsifier) //
+		Falsifier<T> toMapFalsifier = falsifier.map(mapper);
+		return toMap.shrink(toMapFalsifier)
 					.map(result -> result.map(shrinkable -> shrinkable.map(mapper)));
 	}
 

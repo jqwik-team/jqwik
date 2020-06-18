@@ -43,16 +43,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 		final private ShrinkingSequence<List<Object>> elementsSequence;
 
 		private CombinedShrinkingSequence(Falsifier<T> falsifier) {
-			Falsifier<List<Object>> combinedFalsifier = elements -> {
-				try {
-					T value = combinator.apply(elements);
-					return falsifier.execute(value);
-				} catch (Throwable throwable) {
-					// Ignore exceptions raised on combination during shrinking
-					JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-					return TryExecutionResult.invalid();
-				}
-			};
+			Falsifier<List<Object>> combinedFalsifier = falsifier.map(combinator);
 			elementsSequence = new ShrinkElementsSequence<>(
 				shrinkables,
 				combinedFalsifier,

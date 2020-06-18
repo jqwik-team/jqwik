@@ -55,4 +55,20 @@ public interface Falsifier<T> {
 		};
 	}
 
+	@API(status = INTERNAL)
+	default <U> Falsifier<U> map(Function<U, T> mapper) {
+		return value -> {
+			try {
+				T other = mapper.apply(value);
+				return Falsifier.this.execute(other);
+			} catch (Throwable throwable) {
+				// Ignore exceptions during shrinking
+				if (throwable instanceof OutOfMemoryError) {
+					throw throwable;
+				}
+				return TryExecutionResult.invalid();
+			}
+		};
+	}
+
 }

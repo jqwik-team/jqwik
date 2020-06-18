@@ -23,10 +23,7 @@ class CollectShrinkingSequence<T> implements ShrinkingSequence<List<T>> {
 	}
 
 	private ShrinkingSequence<T> getShrinkingSequence(int shrinkingPosition) {
-		Falsifier<T> elementFalsifier = value -> {
-			List<T> currentValues = collectValues(shrinkingPosition, value);
-			return falsifier.execute(currentValues);
-		};
+		Falsifier<T> elementFalsifier = falsifier.map(value -> collectValues(shrinkingPosition, value));
 		return elements.get(shrinkingPosition).shrink(elementFalsifier);
 	}
 
