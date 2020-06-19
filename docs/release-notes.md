@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.3.1-SNAPSHOT](#131-snapshot)
+- [1.3.1](#131)
 - [1.3.0](#130)
 - [1.2.x](#12x)
 - [1.1.x](#11x)
@@ -19,23 +19,23 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.3.1-SNAPSHOT
+## 1.3.1
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.3.1/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.3.1/javadoc/index.html">javadoc</a>
 </p>
 
 
 #### New and Enhanced Features
 
 - Reporting of falsified, shrunk and  generated samples 
-  [has been completely reworked](/docs/snapshot/user-guide.html#failure-reporting).
+  [has been completely reworked](/docs/1.3.1/user-guide.html#failure-reporting).
   See [this issue](https://github.com/jlink/jqwik/issues/85) for more details.
 
 - Added `Arbitrary.ignoreException(exceptionType)` which allows to
-  [ignore exceptions during value generation](/docs/snapshot/user-guide.html#ignoring-exceptions-during-generation).
+  [ignore exceptions during value generation](/docs/1.3.1/user-guide.html#ignoring-exceptions-during-generation).
 
 #### Breaking Changes
 
