@@ -69,7 +69,7 @@ public class SampleReportingExamples {
 
 	@Provide
 	Arbitrary<LocalDate> dates() {
-		Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2100);
+		Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2099);
 		Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
 		Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
 

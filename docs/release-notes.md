@@ -34,7 +34,8 @@ and
   [has been completely reworked](/docs/snapshot/user-guide.html#failure-reporting).
   See [this issue](https://github.com/jlink/jqwik/issues/85) for more details.
 
-- Added `Arbitrary.ignoreException(exceptionType)`
+- Added `Arbitrary.ignoreException(exceptionType)` which allows to
+  [ignore exceptions during value generation](/docs/snapshot/user-guide.html#ignoring-exceptions-during-generation).
 
 #### Breaking Changes
 

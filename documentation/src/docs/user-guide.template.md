@@ -1815,7 +1815,7 @@ If you need more you have a few options:
   [in this way](#combining-arbitraries-with-builder)
 
 
-### Combining Arbitraries with Builder
+#### Combining Arbitraries with Builder
 
 There's an alternative way to combine arbitraries to create an aggregated object
 by using a builder for the aggregated object. Consider the example from
@@ -1901,6 +1901,39 @@ Arbitrary<String> fullName2() {
 
 This is not only easier to understand but it usually improves shrinking.
 
+### Ignoring Exceptions During Generation
+
+Once in a while, usually when [combining generated values](#combining-arbitraries),
+it's difficult to figure out in advance all the constraints that make the generation of objects
+valid. In a good object-oriented model, however, the objects themselves -- 
+i.e. their constructors or factory methods -- take care that only valid objects
+can be created. The attempt to create an invalid value will be rejected with an
+exception. 
+
+As a good example have a look at JDK's `LocalDate` class, which allows to instantiate dates
+using `LocalDate.of(int year, int month, int dayOfMonth)`. 
+In general `dayOfMonth` can be between `1` and `31` but trying to generate a 
+"February 31" will throw a `DateTimeException`. Therefore, when you want to randomly
+generated dates between "January 1 1900" and "December 31 2099" you have two choices: 
+
+- Integrate all rules about valid dates -- including leap years! -- into your generator.
+  This will probably require a cascade of flat-mapping `years` to `months` to `days`.
+- Rely on the factory method's built-in validation and just ignore thrown 
+  `DateTimeException` instances:
+  
+```java
+@Provide
+Arbitrary<LocalDate> datesBetween1900and2099() {
+	Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2099);
+	Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
+	Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
+
+	return Combinators.combine(years, months, days)
+					  .as(LocalDate::of)
+					  .ignoreException(DateTimeException.class);
+}
+```
+ 
 ### Fix an Arbitrary's `genSize`
 
 Some generators (e.g. most number generators) are sensitive to the 

@@ -1,8 +1,8 @@
 - 1.3.1
 
-    - Arbitrary.ignoreException(Throwable)
-      - User guide
-
+    - Generate documentation
+    - Release
+    
 - 1.3.x
         
     - Allow specification of provider class in `@ForAll` and `@From`
