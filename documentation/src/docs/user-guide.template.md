@@ -1924,13 +1924,13 @@ generated dates between "January 1 1900" and "December 31 2099" you have two cho
 ```java
 @Provide
 Arbitrary<LocalDate> datesBetween1900and2099() {
-	Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2099);
-	Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
-	Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
-
-	return Combinators.combine(years, months, days)
-					  .as(LocalDate::of)
-					  .ignoreException(DateTimeException.class);
+  Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2099);
+  Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
+  Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
+  
+  return Combinators.combine(years, months, days)
+  	  .as(LocalDate::of)
+  	  .ignoreException(DateTimeException.class);
 }
 ```
  
@@ -1963,15 +1963,15 @@ boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
 
 @Provide
 Arbitrary<String> sentences() {
-    Arbitrary<String> sentence = Combinators.combine( //
-        Arbitraries.lazy(this::sentences), //
-        word() //
+    Arbitrary<String> sentence = Combinators.combine(
+        Arbitraries.lazy(this::sentences),
+        word()
     ).as((s, w) -> w + " " + s);
-    return Arbitraries.oneOf( //
-        word().map(w -> w + "."), //
-        sentence, //
-        sentence, //
-        sentence //
+    return Arbitraries.oneOf(
+        word().map(w -> w + "."),
+        sentence,
+        sentence,
+        sentence
     );
 }
 
@@ -2401,9 +2401,9 @@ works only on strings that are not equal:
 
 ```java
 @Property
-boolean comparingUnequalStrings( //
-        @ForAll @StringLength(min = 1, max = 10) String string1, //
-        @ForAll @StringLength(min = 1, max = 10) String string2 //
+boolean comparingUnequalStrings(
+        @ForAll @StringLength(min = 1, max = 10) String string1,
+        @ForAll @StringLength(min = 1, max = 10) String string2
 ) {
     Assume.that(!string1.equals(string2));
 
@@ -2419,9 +2419,9 @@ Have a look at a seemingly similar example:
 
 ```java
 @Property
-boolean findingContainedStrings( //
-        @ForAll @StringLength(min = 1, max = 10) String container, //
-        @ForAll @StringLength(min = 1, max = 5) String contained //
+boolean findingContainedStrings(
+        @ForAll @StringLength(min = 1, max = 10) String container,
+        @ForAll @StringLength(min = 1, max = 5) String contained
 ) {
     Assume.that(container.contains(contained));
 
@@ -2461,10 +2461,10 @@ but with a much lower discard ratio:
 
 ```java
 @Property
-boolean findingContainedStrings_variant( //
-        @ForAll @StringLength(min = 5, max = 10) String container, //
-        @ForAll @IntRange(min = 1, max = 5) int length, //
-        @ForAll @IntRange(min = 0, max = 9) int startIndex //
+boolean findingContainedStrings_variant(
+        @ForAll @StringLength(min = 5, max = 10) String container,
+        @ForAll @IntRange(min = 1, max = 5) int length,
+        @ForAll @IntRange(min = 0, max = 9) int startIndex
 ) {
     Assume.that((length + startIndex) <= container.length());
 
@@ -2700,8 +2700,8 @@ one statistical group:
 ```java
 @Property
 void twoParameterStats(
-    @ForAll @Size(min = 1, max = 10) List<Integer> aList, //
-    @ForAll @IntRange(min = 0, max = 10) int index //
+    @ForAll @Size(min = 1, max = 10) List<Integer> aList,
+    @ForAll @IntRange(min = 0, max = 10) int index
 ) {
     Statistics.collect(aList.size() > index ? "index within size" : null);
 }
@@ -3035,8 +3035,8 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
-				  .between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
+		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals()
+				  .between(BigDecimal.ZERO, new BigDecimal(1_000_000_000))
 				  .ofScale(2);
 		Arbitrary<String> currency = Arbitraries.of("EUR", "USD", "CHF");
 		return Collections.singleton(Combinators.combine(amount, currency).as(Money::new));
@@ -3082,7 +3082,7 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage innerType = targetType.getTypeArguments().get(0);
-		return subtypeProvider.apply(innerType).stream() //
+		return subtypeProvider.apply(innerType).stream()
 			.map(Arbitrary::optional)
 			.collect(Collectors.toSet());
 	}
