@@ -1,13 +1,18 @@
-- 1.3.1
+- 1.3.2
 
-    - Generate documentation
-    - Release
-    
-- 1.3.x
-        
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
+    - `@Report(reportOnlyFailures = false)`
+
+    - Guided Generation
+      https://github.com/jlink/jqwik/issues/84
+      - Maybe change AroundTryHook to allow replacement of `Random` source
+      - Or: Introduce ProvideGenerationSourceHook
+      
+    
+- 1.3.x
+        
     - Edge Cases
         - Arbitrary.withoutEdgeCases() 
             - should also work for individual generators
@@ -31,11 +36,6 @@
         https://en.wikipedia.org/wiki/Ziggurat_algorithm
         https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
 
-    - Guided Generation
-      https://github.com/jlink/jqwik/issues/84
-      - Maybe change AroundTryHook to allow replacement of `Random` source
-      - Or: Introduce ProvideGenerationSourceHook
-      
     - @ResolveParameter method
         - Returns `Optional<MyType>` | `Optional<ParameterSupplier<MyType>>`
         - Optional Parameters: TypeUsage, LifecycleContext
@@ -46,8 +46,6 @@
         - void afterTry(TryLifecycleContext, TryExecutionResult)
         - void onSatisfiedTry()
         - TryExecutionResult onFalsifiedTry(TryExecutionResult)
-
-    - `@Report(reportOnlyFailures = false)`
 
     - @StatisticsReportFormat
         - label=<statistics label> to specify for which statistics to use
