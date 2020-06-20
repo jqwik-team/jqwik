@@ -324,6 +324,83 @@ class SampleReportingTests {
 		}
 
 		@Group
+		class Tuples {
+			@Example
+			void fitsInOneLine() {
+				Tuple.Tuple2<String, Integer> tuple = Tuple.of("one", 2);
+				ValueReport report = ValueReport.of(tuple);
+
+				String expectedCompact = "(\"one\", 2)";
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    (",
+					"      \"one\",",
+					"      2",
+					"    )"
+				);
+			}
+
+			@Example
+			void withLabelAndAppendix() {
+				NullReportingFormat tupleFormat = new NullReportingFormat() {
+					@Override
+					public boolean appliesTo(final Object value) {
+						return value instanceof Tuple;
+					}
+
+					@Override
+					public Optional<String> label(Object value) {
+						return Optional.of("Tuple");
+					}
+				};
+				ValueReport.ReportingFormatFinder finder = formatFinder(tupleFormat);
+
+				Tuple.Tuple2<String, Integer> tuple = Tuple.of("one", 2, 3.0);
+				ValueReport report = ValueReport.of(tuple, finder);
+
+				String expectedCompact = "Tuple(\"one\", 2, 3.0)";
+				Assertions.assertThat(report.singleLineReport()).isEqualTo(expectedCompact);
+				Assertions.assertThat(report.singleLineLength()).isEqualTo(expectedCompact.length());
+
+				report.report(lineReporter, 2, ",");
+				assertThat(lineReporter.lines).containsSequence(
+					"    Tuple(",
+					"      \"one\",",
+					"      2,",
+					"      3.0",
+					"    ),"
+				);
+			}
+
+			@Example
+			void tupleOfLists() {
+				Tuple.Tuple2<String, List<String>> tuple = Tuple.of(
+					"string",
+					asList(
+						"a long string a long string a long string a long string a long string a long string",
+						"a long string a long string a long string a long string a long string a long string"
+					)
+				);
+				ValueReport report = ValueReport.of(tuple);
+
+				report.report(lineReporter, 2, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"    (",
+					"      \"string\",",
+					"      [",
+					"        \"a long string a long string a long string a long string a long string a long string\",",
+					"        \"a long string a long string a long string a long string a long string a long string\"",
+					"      ]",
+					"    )"
+				);
+			}
+
+		}
+
+		@Group
 		class ArraysOfDifferentTypes {
 
 			@Example

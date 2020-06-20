@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
 
@@ -13,6 +14,11 @@ public interface Tuple extends Serializable, Cloneable {
 	int size();
 
 	default List<Object> items() {return Collections.emptyList();}
+
+	default String itemsToString() {
+		String items = items().stream().map(Object::toString).collect(Collectors.joining(", "));
+		return String.format("(%s)", items);
+	}
 
 	static <T1> Tuple1<T1> of(T1 v1) {
 		return new Tuple1<>(v1);
@@ -91,7 +97,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s)", v1);
+			return itemsToString();
 		}
 	}
 
@@ -133,7 +139,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s)", v1, v2);
+			return itemsToString();
 		}
 	}
 
@@ -176,7 +182,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s)", v1, v2, v3);
+			return itemsToString();
 		}
 	}
 
@@ -220,7 +226,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s)", v1, v2, v3, v4);
+			return itemsToString();
 		}
 	}
 
@@ -265,8 +271,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String
-				.format("(%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5);
+			return itemsToString();
 		}
 	}
 
@@ -312,8 +317,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String
-				.format("(%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6);
+			return itemsToString();
 		}
 	}
 
@@ -360,7 +364,7 @@ public interface Tuple extends Serializable, Cloneable {
 
 		@Override
 		public String toString() {
-			return String.format("(%s,%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6, v7);
+			return itemsToString();
 		}
 	}
 
@@ -387,6 +391,11 @@ public interface Tuple extends Serializable, Cloneable {
 		}
 
 		@Override
+		public String toString() {
+			return itemsToString();
+		}
+
+		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
@@ -406,10 +415,6 @@ public interface Tuple extends Serializable, Cloneable {
 			return Objects.hash(v1, v2, v3, v4, v5, v6, v7, v8);
 		}
 
-		@Override
-		public String toString() {
-			return String.format("(%s,%s,%s,%s,%s,%s,%s,%s)", v1, v2, v3, v4, v5, v6, v7, v8);
-		}
 	}
 }
 

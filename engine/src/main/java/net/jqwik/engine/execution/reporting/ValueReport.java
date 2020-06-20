@@ -27,7 +27,25 @@ public abstract class ValueReport {
 			//noinspection unchecked
 			return createMapReport(format.label(value), (Map<Object, Object>) reportedValue, formatFinder);
 		}
+		if (reportedValue instanceof Tuple) {
+			//noinspection unchecked
+			return createTupleReport(format.label(value), (Tuple) reportedValue, formatFinder);
+		}
 		return new ObjectValueReport(format.label(value), reportedValue);
+	}
+
+	private static ValueReport createTupleReport(
+		Optional<String> label,
+		Tuple tuple,
+		ReportingFormatFinder formatFinder
+	) {
+		List<ValueReport> tupleReports =
+			tuple.items()
+				 .stream()
+				 .map(value -> of(value, formatFinder))
+				 .collect(Collectors.toList());
+
+		return new TupleValueReport(label, tupleReports);
 	}
 
 	private static ValueReport createMapReport(
@@ -37,26 +55,26 @@ public abstract class ValueReport {
 	) {
 		List<Map.Entry<ValueReport, ValueReport>> reportEntries =
 			map.entrySet()
-				.stream()
-				.map(entry -> {
-					ValueReport keyReport = of(entry.getKey(), formatFinder);
-					ValueReport valueReport = of(entry.getValue(), formatFinder);
-					return new Map.Entry<ValueReport, ValueReport>() {
-						@Override
-						public ValueReport getKey() {
-							return keyReport;
-						}
+			   .stream()
+			   .map(entry -> {
+				   ValueReport keyReport = of(entry.getKey(), formatFinder);
+				   ValueReport valueReport = of(entry.getValue(), formatFinder);
+				   return new Map.Entry<ValueReport, ValueReport>() {
+					   @Override
+					   public ValueReport getKey() {
+						   return keyReport;
+					   }
 
-						@Override
-						public ValueReport getValue() {
-							return valueReport;
-						}
+					   @Override
+					   public ValueReport getValue() {
+						   return valueReport;
+					   }
 
-						@Override
-						public ValueReport setValue(ValueReport value) {
-							throw new UnsupportedOperationException();
-						}
-					};
+					   @Override
+					   public ValueReport setValue(ValueReport value) {
+						   throw new UnsupportedOperationException();
+					   }
+				   };
 				})
 			   .collect(Collectors.toList());
 		return new MapValueReport(label, reportEntries);
