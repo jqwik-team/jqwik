@@ -1,5 +1,7 @@
 - 1.3.2
 
+    - Handle sample reporting of objects with cyclic dependency
+
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
