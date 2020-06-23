@@ -19,6 +19,17 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.3.2-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- Reporting samples with circular dependencies does no longer throw
+  an exception (see https://github.com/jlink/jqwik/issues/111)
+
 ## 1.3.1
 
 <p style="padding-left:1em;font-size:larger">

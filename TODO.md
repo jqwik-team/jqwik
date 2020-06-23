@@ -1,7 +1,5 @@
 - 1.3.2
 
-    - Handle sample reporting of objects with cyclic dependency
-
     - Arbitraries.subset(Collection values)
     
     - Specify size distribution of collection arbitraries

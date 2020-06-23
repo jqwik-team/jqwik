@@ -161,15 +161,15 @@ class SampleReportingTests {
 			);
 		}
 
-		// @Example
-		// void objectWithCyclicDependency() {
-		// 	List<Object> aList = new ArrayList<>();
-		// 	aList.add(42);
-		// 	aList.add(aList);
-		//
-		// 	ValueReport report = ValueReport.of(aList);
-		// 	Assertions.assertThat(report.singleLineReport()).isEqualTo("[42, (..)]");
-		// }
+		@Example
+		void listWithCircularDependency() {
+			List<Object> aList = new ArrayList<>();
+			aList.add(42);
+			aList.add(aList);
+
+			ValueReport report = ValueReport.of(aList);
+			Assertions.assertThat(report.singleLineReport()).startsWith("[42, circular-dependency<java.util.ArrayList@");
+		}
 
 		@Group
 		class Collections {

@@ -17,32 +17,44 @@ public abstract class ValueReport {
 	}
 
 	static ValueReport of(Object value, ReportingFormatFinder formatFinder) {
+		final Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+		return of(value, formatFinder, visited);
+	}
+
+	private static ValueReport of(Object value, ReportingFormatFinder formatFinder, Set<Object> visited) {
 		SampleReportingFormat format = formatFinder.find(value);
+		if (visited.contains(value)) {
+			return new CircularDependencyReport(format.label(value), value);
+		} else {
+			visited.add(value);
+		}
 		Object reportedValue = format.report(value);
 		if (reportedValue instanceof Collection) {
 			//noinspection unchecked
-			return createCollectionReport(format.label(value), (Collection<Object>) reportedValue, formatFinder);
+			return createCollectionReport(format.label(value), (Collection<Object>) reportedValue, formatFinder, visited);
 		}
 		if (reportedValue instanceof Map) {
 			//noinspection unchecked
-			return createMapReport(format.label(value), (Map<Object, Object>) reportedValue, formatFinder);
+			return createMapReport(format.label(value), (Map<Object, Object>) reportedValue, formatFinder, visited);
 		}
 		if (reportedValue instanceof Tuple) {
 			//noinspection unchecked
-			return createTupleReport(format.label(value), (Tuple) reportedValue, formatFinder);
+			return createTupleReport(format.label(value), (Tuple) reportedValue, formatFinder, visited);
 		}
+		visited.remove(value);
 		return new ObjectValueReport(format.label(value), reportedValue);
 	}
 
 	private static ValueReport createTupleReport(
 		Optional<String> label,
 		Tuple tuple,
-		ReportingFormatFinder formatFinder
+		ReportingFormatFinder formatFinder,
+		final Set<Object> visited
 	) {
 		List<ValueReport> tupleReports =
 			tuple.items()
 				 .stream()
-				 .map(value -> of(value, formatFinder))
+				 .map(value -> of(value, formatFinder, visited))
 				 .collect(Collectors.toList());
 
 		return new TupleValueReport(label, tupleReports);
@@ -51,14 +63,15 @@ public abstract class ValueReport {
 	private static ValueReport createMapReport(
 		final Optional<String> label,
 		final Map<Object, Object> map,
-		final ReportingFormatFinder formatFinder
+		final ReportingFormatFinder formatFinder,
+		final Set<Object> visited
 	) {
 		List<Map.Entry<ValueReport, ValueReport>> reportEntries =
 			map.entrySet()
 			   .stream()
 			   .map(entry -> {
-				   ValueReport keyReport = of(entry.getKey(), formatFinder);
-				   ValueReport valueReport = of(entry.getValue(), formatFinder);
+				   ValueReport keyReport = of(entry.getKey(), formatFinder, visited);
+				   ValueReport valueReport = of(entry.getValue(), formatFinder, visited);
 				   return new Map.Entry<ValueReport, ValueReport>() {
 					   @Override
 					   public ValueReport getKey() {
@@ -75,7 +88,7 @@ public abstract class ValueReport {
 						   throw new UnsupportedOperationException();
 					   }
 				   };
-				})
+			   })
 			   .collect(Collectors.toList());
 		return new MapValueReport(label, reportEntries);
 	}
@@ -83,12 +96,13 @@ public abstract class ValueReport {
 	private static ValueReport createCollectionReport(
 		Optional<String> label,
 		Collection<Object> collection,
-		ReportingFormatFinder formatFinder
+		ReportingFormatFinder formatFinder,
+		final Set<Object> visited
 	) {
 		List<ValueReport> reportCollection =
 			collection
 				.stream()
-				.map(element -> of(element, formatFinder))
+				.map(element -> of(element, formatFinder, visited))
 				.collect(Collectors.toList());
 		return new CollectionValueReport(label, reportCollection);
 	}
@@ -97,15 +111,15 @@ public abstract class ValueReport {
 		List<SampleReportingFormat> formats = new ArrayList<>(RegisteredSampleReportingFormats.getReportingFormats());
 		Collections.sort(formats);
 		return targetValue ->
-			formats.stream()
-				   .filter(format -> {
-					   try {
-						   return format.appliesTo(targetValue);
-					   } catch (NullPointerException npe) {
-						   return false;
-					   }
-				   })
-				   .findFirst().orElse(new NullReportingFormat());
+				   formats.stream()
+						  .filter(format -> {
+							  try {
+								  return format.appliesTo(targetValue);
+							  } catch (NullPointerException npe) {
+								  return false;
+							  }
+						  })
+						  .findFirst().orElse(new NullReportingFormat());
 	}
 
 	final Optional<String> label;
