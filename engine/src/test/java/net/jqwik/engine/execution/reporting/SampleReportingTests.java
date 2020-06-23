@@ -161,6 +161,16 @@ class SampleReportingTests {
 			);
 		}
 
+		// @Example
+		// void objectWithCyclicDependency() {
+		// 	List<Object> aList = new ArrayList<>();
+		// 	aList.add(42);
+		// 	aList.add(aList);
+		//
+		// 	ValueReport report = ValueReport.of(aList);
+		// 	Assertions.assertThat(report.singleLineReport()).isEqualTo("[42, (..)]");
+		// }
+
 		@Group
 		class Collections {
 
