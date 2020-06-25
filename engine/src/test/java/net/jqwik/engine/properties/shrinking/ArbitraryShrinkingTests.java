@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -37,6 +38,18 @@ class ArbitraryShrinkingTests {
 					   })
 					   .ignoreException(IllegalArgumentException.class);
 		assertAllValuesAreShrunkTo(2, arbitrary, random);
+	}
+
+	@Property(tries = 10)
+	void dontShrink(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).dontShrink();
+
+		Shrinkable<Integer> shrinkable = arbitrary.generator(10).next(random);
+		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
+		ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier);
+		while (sequence.next(() -> {}, ignore -> { })) ;
+		assertThat(sequence.current().value()).isEqualTo(shrinkable.value());
 	}
 
 	@Property(tries = 10)

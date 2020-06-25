@@ -1,21 +1,23 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
 public class Unshrinkable<T> implements Shrinkable<T> {
-	private final T value;
 	private final ShrinkingDistance distance;
+	private final Supplier<T> valueSupplier;
 
-	public Unshrinkable(T value, ShrinkingDistance distance) {this.value = value;
+	public Unshrinkable(Supplier<T> valueSupplier, ShrinkingDistance distance) {
+		this.valueSupplier = valueSupplier;
 		this.distance = distance;
 	}
 
 	@Override
 	public T value() {
-		return value;
+		return valueSupplier.get();
 	}
 
 	@Override
@@ -30,7 +32,7 @@ public class Unshrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public String toString() {
-		return JqwikStringSupport.displayString(value);
+		return JqwikStringSupport.displayString(value());
 	}
 
 	@Override
@@ -40,11 +42,11 @@ public class Unshrinkable<T> implements Shrinkable<T> {
 
 		Unshrinkable<?> that = (Unshrinkable<?>) o;
 
-		return Objects.equals(value, that.value);
+		return Objects.equals(value(), that.value());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(value);
+		return Objects.hashCode(value());
 	}
 }

@@ -22,7 +22,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 			implementation = FacadeLoader.load(ShrinkableFacade.class);
 		}
 
-		public abstract <T> Shrinkable<T> unshrinkable(T value, ShrinkingDistance distance);
+		public abstract <T> Shrinkable<T> unshrinkable(Supplier<T> valueSupplier, ShrinkingDistance distance);
 		public abstract <T, U> Shrinkable<U> map(Shrinkable<T> self, Function<T, U> mapper);
 		public abstract <T> Shrinkable<T> filter(Shrinkable<T> self, Predicate<T> filter);
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed);
@@ -33,7 +33,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	static <T> Shrinkable<T> unshrinkable(T value, ShrinkingDistance distance) {
-		return ShrinkableFacade.implementation.unshrinkable(value, distance);
+		return ShrinkableFacade.implementation.unshrinkable(() -> value, distance);
 	}
 
 	T value();
@@ -100,5 +100,9 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return suggestions;
 	}
 
+	@API(status = INTERNAL)
+	default Shrinkable<T> makeUnshrinkable() {
+		return ShrinkableFacade.implementation.unshrinkable(this::value, this.distance());
+	}
 
 }

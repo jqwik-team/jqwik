@@ -23,6 +23,8 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Added `Arbitrary.dontShrink()`
+
 #### Breaking Changes
 
 #### Bug Fixes

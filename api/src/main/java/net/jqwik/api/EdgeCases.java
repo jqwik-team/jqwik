@@ -105,5 +105,13 @@ public interface EdgeCases<T> extends Iterable<Shrinkable<T>> {
 		return EdgeCasesFacade.implementation.ignoreException(this, exceptionType);
 	}
 
+	@API(status = INTERNAL)
+	default EdgeCases<T> dontShrink() {
+		return () -> EdgeCases.this.suppliers()
+								   .stream()
+								   .map(supplier -> (Supplier<Shrinkable<T>>) () -> supplier.get().makeUnshrinkable())
+								   .collect(Collectors.toList());
+	}
+
 
 }

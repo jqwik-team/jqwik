@@ -107,4 +107,13 @@ public interface RandomGenerator<T> {
 		return RandomGeneratorFacade.implementation.ignoreException(this, exceptionType);
 	}
 
+	@API(status = INTERNAL)
+	default RandomGenerator<T> dontShrink() {
+		return random -> {
+			Shrinkable<T> shrinkable = RandomGenerator.this.next(random).makeUnshrinkable();
+			return shrinkable.makeUnshrinkable();
+		};
+	}
+
+
 }

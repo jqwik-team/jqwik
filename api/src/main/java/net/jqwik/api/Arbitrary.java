@@ -577,7 +577,6 @@ public interface Arbitrary<T> {
 	 * type {@code exceptionType} during generation.
 	 *
 	 * @param exceptionType The exception type to ignore
-	 *
 	 * @return a new arbitrary instance
 	 */
 	@API(status = EXPERIMENTAL, since = "1.3.1")
@@ -606,5 +605,41 @@ public interface Arbitrary<T> {
 		};
 	}
 
+	/**
+	 * Create a new arbitrary of type {@code T} that will use the underlying
+	 * arbitrary to create the tuple values but will return unshrinkable values.
+	 * This might be necessary if values are being mutated during a property run
+	 * and the mutated state would make a shrunk value invalid.
+	 *
+	 * <p>
+	 *     This is a hack to get around a weakness in jqwik's shrinking mechanism
+	 * </p>
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.2")
+	default Arbitrary<T> dontShrink() {
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return Arbitrary.this.generator(genSize).dontShrink();
+			}
+
+			@Override
+			public boolean isUnique() {
+				return Arbitrary.this.isUnique();
+			}
+
+			@Override
+			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
+				return Arbitrary.this.exhaustive(maxNumberOfSamples);
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				return Arbitrary.this.edgeCases().dontShrink();
+			}
+		};
+	}
 
 }

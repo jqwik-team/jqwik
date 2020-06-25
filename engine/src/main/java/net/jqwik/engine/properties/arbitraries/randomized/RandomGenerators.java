@@ -4,7 +4,6 @@ import java.math.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -121,8 +120,8 @@ public class RandomGenerators {
 	}
 
 	private static <T, C> RandomGenerator<C> container(
-		RandomGenerator<T> elementGenerator, //
-		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,//
+		RandomGenerator<T> elementGenerator,
+		Function<List<Shrinkable<T>>, Shrinkable<C>> createShrinkable,
 		int minSize, int maxSize, int cutoffSize
 	) {
 		Function<Random, Integer> sizeGenerator = sizeGenerator(minSize, maxSize, cutoffSize);
