@@ -7,9 +7,9 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class StreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream<T>> {
+public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream<T>> {
 
-	public StreamArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
+	public DefaultStreamArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
 		super(elementArbitrary, elementsUnique);
 	}
 

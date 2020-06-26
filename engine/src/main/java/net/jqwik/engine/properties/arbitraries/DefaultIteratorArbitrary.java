@@ -6,9 +6,9 @@ import net.jqwik.api.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class IteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iterator<T>> {
+public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iterator<T>> {
 
-	public IteratorArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
+	public DefaultIteratorArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
 		super(elementArbitrary, elementsUnique);
 	}
 

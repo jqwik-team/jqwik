@@ -9,11 +9,11 @@ import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class ArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements SelfConfiguringArbitrary<A> {
+public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> implements SelfConfiguringArbitrary<A> {
 
 	private final Class<A> arrayClass;
 
-	public ArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass, boolean elementsUnique) {
+	public DefaultArrayArbitrary(Arbitrary<T> elementArbitrary, Class<A> arrayClass, boolean elementsUnique) {
 		super(elementArbitrary, elementsUnique);
 		this.arrayClass = arrayClass;
 	}

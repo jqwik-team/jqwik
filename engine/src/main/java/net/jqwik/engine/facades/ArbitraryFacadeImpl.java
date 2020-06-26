@@ -28,29 +28,29 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 
 	@Override
 	public <T> StreamableArbitrary<T, List<T>> list(Arbitrary<T> elementArbitrary) {
-		return new ListArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
+		return new DefaultListArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
 	}
 
 	@Override
 	public <T> StreamableArbitrary<T, Set<T>> set(Arbitrary<T> elementArbitrary) {
 		// The set cannot be larger than the max number of possible elements
-		return new SetArbitrary<>(elementArbitrary)
+		return new DefaultSetArbitrary<>(elementArbitrary)
 				   .ofMaxSize(maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 
 	@Override
 	public <T> StreamableArbitrary<T, Stream<T>> stream(Arbitrary<T> elementArbitrary) {
-		return new StreamArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
+		return new DefaultStreamArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
 	}
 
 	@Override
 	public <T> StreamableArbitrary<T, Iterator<T>> iterator(Arbitrary<T> elementArbitrary) {
-		return new IteratorArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
+		return new DefaultIteratorArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
 	}
 
 	@Override
 	public <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass) {
-		return new ArrayArbitrary<>(elementArbitrary, arrayClass, elementArbitrary.isUnique());
+		return new DefaultArrayArbitrary<>(elementArbitrary, arrayClass, elementArbitrary.isUnique());
 	}
 
 	@Override

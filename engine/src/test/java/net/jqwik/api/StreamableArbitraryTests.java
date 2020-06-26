@@ -3,6 +3,7 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.arbitraries.*;
 
 import static org.assertj.core.api.Assertions.*;
@@ -90,6 +91,21 @@ class StreamableArbitraryTests {
 
 			assertGeneratedSet(generator, 2, 5);
 		}
+
+		// @Example
+		// void mapEach() {
+		// 	Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+		// 	Arbitrary<Set<Tuple2<Integer, Set<Integer>>>> setArbitrary = integerArbitrary
+		// 																	 .set().ofSize(5)
+		// 																	 .mapEach((all, each) -> Tuple.of(each, all));
+		//
+		// 	RandomGenerator<Set<Tuple2<Integer, Set<Integer>>>> generator = setArbitrary.generator(1);
+		//
+		// 	assertAllGenerated(generator, set -> {
+		// 		assertThat(set).hasSize(5);
+		// 		assertThat(set).allMatch(tuple -> tuple.get2().size() == 5);
+		// 	});
+		// }
 
 		private void assertGeneratedSet(RandomGenerator<Set<Integer>> generator, int minSize, int maxSize) {
 			assertAllGenerated(generator, set -> {
