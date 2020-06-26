@@ -1,12 +1,15 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
@@ -63,7 +66,7 @@ class ArbitraryShrinkingTests {
 	void uniqueInSet(@ForAll Random random) {
 		Arbitrary<Set<Integer>> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique().set().ofSize(3);
-		assertAllValuesAreShrunkTo(new HashSet<>(Arrays.asList(1, 2, 3)), arbitrary, random);
+		assertAllValuesAreShrunkTo(new HashSet<>(asList(1, 2, 3)), arbitrary, random);
 	}
 
 	@Property(tries = 10)
@@ -149,6 +152,112 @@ class ArbitraryShrinkingTests {
 			assertThat(map.values()).containsOnly("A");
 		}
 
+	}
+
+	@Group
+	class MutableObjectShrinking {
+
+		@Property
+		@ExpectFailure(checkResult = ShrinkToMutable10.class)
+		void mutableIsReset(
+			@ForAll int before,
+			@ForAll("mutable") Mutable mutable,
+			@ForAll int after
+		) {
+			assertThat(mutable.otherValues()).isEmpty();
+			mutable.addOtherValue(42);
+
+			// Fails and invokes shrinking process
+			assertThat(mutable.initValue).isLessThan(10);
+		}
+
+		private class ShrinkToMutable10 extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return asList(0, new Mutable(10), 0);
+			}
+		}
+
+		@Disabled
+		@Property(edgeCases = EdgeCasesMode.NONE)
+		// @ExpectFailure(checkResult = ShrinkToListOfMutable10.class)
+		@Report(Reporting.FALSIFIED)
+		void mutablesInListAreReset(
+			@ForAll int before,
+			@ForAll("listOfMutables") List<Mutable> list,
+			@ForAll int after
+		) {
+			List<Integer> allInitValues = list.stream().map(m -> m.initValue).collect(Collectors.toList());
+			assertThat(list)
+				.describedAs("Only one other value")
+				.allMatch(mutable -> mutable.otherValues().size() == 1);
+			list.forEach(mutable -> mutable.addOtherValue(mutable.initValue));
+
+			// Fails and invokes shrinking process
+			assertThat(list).allMatch(mutable -> mutable.initValue < 10);
+		}
+
+		private class ShrinkToListOfMutable10 extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return asList(0, asList(new Mutable(10)), 0);
+			}
+		}
+
+		@Provide
+		Arbitrary<List<Mutable>> listOfMutables() {
+			return mutable()
+					   .list().ofMinSize(1)
+					   .flatMapEach((all, each) -> {
+						   return Arbitraries.of(all)
+											 .map(other -> {
+												 each.addOtherValue(other.initValue);
+												 return each;
+											 });
+					   });
+		}
+
+		@Provide
+		Arbitrary<Mutable> mutable() {
+			return Arbitraries.integers().between(1, 10000).map(Mutable::new);
+		}
+
+	}
+
+	private static class Mutable {
+		final int initValue;
+		private final List<Integer> otherValues = new ArrayList<>();
+
+		Mutable(int initValue) {
+			this.initValue = initValue;
+		}
+
+		void addOtherValue(int otherValue) {
+			this.otherValues.add(otherValue);
+		}
+
+		List<Integer> otherValues() {
+			return otherValues;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("Mutable(%s, %s)", initValue, otherValues);
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Mutable mutable = (Mutable) o;
+			return initValue == mutable.initValue;
+		}
+
+		@Override
+		public int hashCode() {
+			return initValue;
+		}
 	}
 
 	private static class Counter {
