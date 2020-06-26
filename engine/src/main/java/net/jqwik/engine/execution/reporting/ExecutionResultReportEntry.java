@@ -124,11 +124,15 @@ public class ExecutionResultReportEntry {
 		if (executionResult.status() != PropertyExecutionResult.Status.SUCCESSFUL) {
 			Throwable throwable = executionResult.throwable().orElse(new AssertionFailedError(null));
 			String assertionClass = throwable.getClass().getName();
-			reportLines.append(String.format("%n  %s: ", assertionClass));
+			reportLines.append(String.format("%n  %s", assertionClass));
 			List<String> assertionMessageLines = JqwikStringSupport.toLines(throwable.getMessage());
-			for (String line : assertionMessageLines) {
-				reportLines.append(String.format("%n    %s", line));
+			if (!assertionMessageLines.isEmpty()) {
+				reportLines.append(":");
+				for (String line : assertionMessageLines) {
+					reportLines.append(String.format("%n    %s", line));
+				}
 			}
+			reportLines.append(String.format("%n"));
 		}
 	}
 

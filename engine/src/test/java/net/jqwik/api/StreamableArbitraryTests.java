@@ -75,7 +75,7 @@ class StreamableArbitraryTests {
 		@Example
 		void set() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
-			Arbitrary<Set<Integer>> setArbitrary = integerArbitrary.set().ofMinSize(2).ofMaxSize(7);
+			SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2).ofMaxSize(7);
 
 			RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1);
 
@@ -85,27 +85,46 @@ class StreamableArbitraryTests {
 		@Example
 		void setWithLessElementsThanMaxSize() {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.of(1, 2, 3, 4, 5);
-			Arbitrary<Set<Integer>> setArbitrary = integerArbitrary.set().ofMinSize(2);
+			SetArbitrary<Integer> setArbitrary = integerArbitrary.set().ofMinSize(2);
 
 			RandomGenerator<Set<Integer>> generator = setArbitrary.generator(1);
 
 			assertGeneratedSet(generator, 2, 5);
 		}
 
-		// @Example
-		// void mapEach() {
-		// 	Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
-		// 	Arbitrary<Set<Tuple2<Integer, Set<Integer>>>> setArbitrary = integerArbitrary
-		// 																	 .set().ofSize(5)
-		// 																	 .mapEach((all, each) -> Tuple.of(each, all));
-		//
-		// 	RandomGenerator<Set<Tuple2<Integer, Set<Integer>>>> generator = setArbitrary.generator(1);
-		//
-		// 	assertAllGenerated(generator, set -> {
-		// 		assertThat(set).hasSize(5);
-		// 		assertThat(set).allMatch(tuple -> tuple.get2().size() == 5);
-		// 	});
-		// }
+		@Example
+		void mapEach() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<Set<Tuple2<Integer, Set<Integer>>>> setArbitrary =
+				integerArbitrary
+					.set().ofSize(5)
+					.mapEach((all, each) -> Tuple.of(each, all));
+
+			RandomGenerator<Set<Tuple2<Integer, Set<Integer>>>> generator = setArbitrary.generator(1);
+
+			assertAllGenerated(generator, set -> {
+				assertThat(set).hasSize(5);
+				assertThat(set).allMatch(tuple -> tuple.get2().size() == 5);
+			});
+		}
+
+		@Example
+		void flatMapEach() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<Set<Tuple2<Integer, Integer>>> setArbitrary =
+				integerArbitrary
+					.set().ofSize(5)
+					.flatMapEach((all, each) ->
+									 Arbitraries.of(all).map(friend -> Tuple.of(each, friend))
+					);
+
+			RandomGenerator<Set<Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1);
+
+			assertAllGenerated(generator, set -> {
+				assertThat(set).hasSize(5);
+				assertThat(set).allMatch(tuple -> tuple.get2() <= 10);
+			});
+		}
 
 		private void assertGeneratedSet(RandomGenerator<Set<Integer>> generator, int minSize, int maxSize) {
 			assertAllGenerated(generator, set -> {

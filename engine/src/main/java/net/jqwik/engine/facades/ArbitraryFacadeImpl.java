@@ -32,8 +32,8 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> StreamableArbitrary<T, Set<T>> set(Arbitrary<T> elementArbitrary) {
-		// The set cannot be larger than the max number of possible elements
+	public <T> SetArbitrary<T> set(Arbitrary<T> elementArbitrary) {
+		// The set can never be larger than the max number of possible elements
 		return new DefaultSetArbitrary<>(elementArbitrary)
 				   .ofMaxSize(maxNumberOfElements(elementArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}

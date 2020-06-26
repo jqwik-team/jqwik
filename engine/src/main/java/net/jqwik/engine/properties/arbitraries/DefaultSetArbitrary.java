@@ -1,13 +1,16 @@
 package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
+import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> {
+public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> implements SetArbitrary<T> {
 
 	public DefaultSetArbitrary(Arbitrary<T> elementArbitrary) {
 		super(elementArbitrary, true);
@@ -38,4 +41,36 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> {
 		});
 	}
 
+	@Override
+	public SetArbitrary<T> ofMaxSize(final int maxSize) {
+		return (SetArbitrary<T>) super.ofMaxSize(maxSize);
+	}
+
+	@Override
+	public SetArbitrary<T> ofMinSize(final int minSize) {
+		return (SetArbitrary<T>) super.ofMinSize(minSize);
+	}
+
+	@Override
+	public SetArbitrary<T> ofSize(final int size) {
+		return this.ofMinSize(size).ofMaxSize(size);
+	}
+
+	@Override
+	public <U> Arbitrary<Set<U>> mapEach(final BiFunction<Set<T>, T, U> mapper) {
+		return this.map(elements -> elements.stream()
+									.map(e -> mapper.apply(elements, e))
+									.collect(Collectors.toSet()));
+	}
+
+	@Override
+	public <U> Arbitrary<Set<U>> flatMapEach(final BiFunction<Set<T>, T, Arbitrary<U>> flatMapper) {
+		return this.flatMap(elements -> {
+			List<Arbitrary<U>> arbitraries =
+				elements.stream()
+						.map(e -> flatMapper.apply(elements, e))
+						.collect(Collectors.toList());
+			return Combinators.combine(arbitraries).as(HashSet::new);
+		});
+	}
 }

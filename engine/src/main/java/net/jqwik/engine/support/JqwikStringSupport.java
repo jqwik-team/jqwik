@@ -95,6 +95,9 @@ public class JqwikStringSupport {
 	}
 
 	public static List<String> toLines(String string) {
+		if (string == null) {
+			return Collections.emptyList();
+		}
 		List<String> lines = new ArrayList<>();
 		BufferedReader reader = new BufferedReader(new StringReader(string));
 		try {
