@@ -36,6 +36,9 @@ title: jqwik Release Notes
 - Reporting samples with circular dependencies does no longer throw
   an exception (see https://github.com/jlink/jqwik/issues/111)
 
+- Reporting test failure due to exception without message 
+  no longer leads to ignored test
+
 ## 1.3.1
 
 <p style="padding-left:1em;font-size:larger">
