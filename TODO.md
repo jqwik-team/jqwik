@@ -14,6 +14,8 @@
       
     - Give all implementors of StreamableArbitrary their own arbitrary type
     
+    - Document Streamable arbitraries in user guide
+    
 - 1.3.x
         
     - Edge Cases

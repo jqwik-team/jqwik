@@ -25,6 +25,14 @@ title: jqwik Release Notes
 
 - Added `Arbitrary.dontShrink()`
 
+- Added `SetArbitrary.mapEach()`
+
+- Added `SetArbitrary.flatMapEach()`
+
+- Added `ListArbitrary.mapEach()`
+
+- Added `ListArbitrary.flatMapEach()`
+
 #### Breaking Changes
 
 - `Arbitrary.set()` now has return type `net.jqwik.api.arbitraries.SetArbitrary`
