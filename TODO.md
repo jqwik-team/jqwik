@@ -1,7 +1,5 @@
 - 1.3.2
 
-    - Arbitraries.subset(Collection values)
-    
     - Specify size distribution of collection arbitraries
     
     - Allow specification of provider class in `@ForAll` and `@From`
@@ -14,6 +12,7 @@
       - Maybe change AroundTryHook to allow replacement of `Random` source
       - Or: Introduce ProvideGenerationSourceHook
       
+    - Give all implementors of StreamableArbitrary their own arbitrary type
     
 - 1.3.x
         

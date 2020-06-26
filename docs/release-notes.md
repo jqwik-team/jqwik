@@ -27,6 +27,10 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- `Arbitrary.set()` now has return type `net.jqwik.api.arbitraries.SetArbitrary`
+
+- `Arbitrary.list()` now has return type `net.jqwik.api.arbitraries.ListArbitrary`
+
 #### Bug Fixes
 
 - Reporting samples with circular dependencies does no longer throw

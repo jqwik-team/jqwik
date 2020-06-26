@@ -33,7 +33,7 @@ public interface Arbitrary<T> {
 			long maxNumberOfSamples
 		);
 
-		public abstract <T> StreamableArbitrary<T, List<T>> list(Arbitrary<T> elementArbitrary);
+		public abstract <T> ListArbitrary<T> list(Arbitrary<T> elementArbitrary);
 
 		public abstract <T> SetArbitrary<T> set(Arbitrary<T> elementArbitrary);
 
@@ -325,7 +325,7 @@ public interface Arbitrary<T> {
 	/**
 	 * Create a new arbitrary of type {@code List<T>} using the existing arbitrary for generating the elements of the list.
 	 */
-	default StreamableArbitrary<T, List<T>> list() {
+	default ListArbitrary<T> list() {
 		return ArbitraryFacade.implementation.list(this);
 	}
 

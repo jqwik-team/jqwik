@@ -27,7 +27,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> StreamableArbitrary<T, List<T>> list(Arbitrary<T> elementArbitrary) {
+	public <T> ListArbitrary<T> list(Arbitrary<T> elementArbitrary) {
 		return new DefaultListArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
 	}
 

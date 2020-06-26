@@ -60,6 +60,40 @@ class StreamableArbitraryTests {
 			assertAtLeastOneGenerated(generator, sum -> sum > 30);
 		}
 
+		@Example
+		void mapEach() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<List<Tuple2<Integer, List<Integer>>>> setArbitrary =
+				integerArbitrary
+					.list().ofSize(5)
+					.mapEach((all, each) -> Tuple.of(each, all));
+
+			RandomGenerator<List<Tuple2<Integer, List<Integer>>>> generator = setArbitrary.generator(1);
+
+			assertAllGenerated(generator, set -> {
+				assertThat(set).hasSize(5);
+				assertThat(set).allMatch(tuple -> tuple.get2().size() == 5);
+			});
+		}
+
+		@Example
+		void flatMapEach() {
+			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
+			Arbitrary<List<Tuple2<Integer, Integer>>> setArbitrary =
+				integerArbitrary
+					.list().ofSize(5)
+					.flatMapEach((all, each) ->
+									 Arbitraries.of(all).map(friend -> Tuple.of(each, friend))
+					);
+
+			RandomGenerator<List<Tuple2<Integer, Integer>>> generator = setArbitrary.generator(1);
+
+			assertAllGenerated(generator, set -> {
+				assertThat(set).hasSize(5);
+				assertThat(set).allMatch(tuple -> tuple.get2() <= 10);
+			});
+		}
+
 		private void assertGeneratedLists(RandomGenerator<List<String>> generator, int minSize, int maxSize) {
 			assertAllGenerated(generator, list -> {
 				assertThat(list.size()).isBetween(minSize, maxSize);
