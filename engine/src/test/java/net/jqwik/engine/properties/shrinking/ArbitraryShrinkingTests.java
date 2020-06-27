@@ -177,8 +177,9 @@ class ArbitraryShrinkingTests {
 			}
 		}
 
+		// TODO: Reimplement shrinking so that it handles mutable objects correctly
 		@Disabled("Requires that shrinkables are properly reset before reuse during shrinking")
-		@Property(edgeCases = EdgeCasesMode.NONE)
+		//@Property(edgeCases = EdgeCasesMode.NONE)
 		@ExpectFailure(failureType = AssertionError.class, checkResult = ShrinkToListOfMutable10.class)
 		@Report(Reporting.FALSIFIED)
 		void mutablesInListAreReset(
@@ -211,6 +212,7 @@ class ArbitraryShrinkingTests {
 					   .flatMapEach((all, each) -> {
 						   return Arbitraries.of(all)
 											 .map(other -> {
+											 	 // each.otherValues.clear();
 												 each.addOtherValue(other.initValue);
 												 return each;
 											 });

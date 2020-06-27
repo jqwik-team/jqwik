@@ -352,14 +352,14 @@ class DefaultTypeArbitraryTests {
 		}
 
 		@Example
-		void creatorWithParameterThatHasNoDefaultArbitraryWillThrowOnCreation() throws NoSuchMethodException {
+		void creatorWithParameterThatHasNoDefaultArbitrary_willThrowException_whenGeneratedValueIsRequests() throws NoSuchMethodException {
 			TypeArbitrary<Customer> typeArbitrary =
 				new DefaultTypeArbitrary<>(Customer.class)
 					.use(Customer.class.getConstructor(Person.class));
 
 			RandomGenerator<Customer> generator = typeArbitrary.generator(1000);
 			Assertions.assertThatThrownBy(
-				() -> generator.next(SourceOfRandomness.current())
+				() -> generator.next(SourceOfRandomness.current()).value()
 			).isInstanceOf(JqwikException.class);
 		}
 

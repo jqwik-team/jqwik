@@ -18,6 +18,8 @@
     
 - 1.3.x
         
+    - Re-implement shrinking so that it handles mutable objects correctly
+    
     - Edge Cases
         - Arbitrary.withoutEdgeCases() 
             - should also work for individual generators
