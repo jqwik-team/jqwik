@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -158,7 +157,7 @@ class ArbitraryShrinkingTests {
 	class MutableObjectShrinking {
 
 		@Property
-		@ExpectFailure(checkResult = ShrinkToMutable10.class)
+		@ExpectFailure(failureType = AssertionError.class, checkResult = ShrinkToMutable10.class)
 		void mutableIsReset(
 			@ForAll int before,
 			@ForAll("mutable") Mutable mutable,
@@ -178,19 +177,20 @@ class ArbitraryShrinkingTests {
 			}
 		}
 
-		@Disabled
+		@Disabled("Requires that shrinkables are properly reset before reuse during shrinking")
 		@Property(edgeCases = EdgeCasesMode.NONE)
-		// @ExpectFailure(checkResult = ShrinkToListOfMutable10.class)
+		@ExpectFailure(failureType = AssertionError.class, checkResult = ShrinkToListOfMutable10.class)
 		@Report(Reporting.FALSIFIED)
 		void mutablesInListAreReset(
 			@ForAll int before,
 			@ForAll("listOfMutables") List<Mutable> list,
 			@ForAll int after
 		) {
-			List<Integer> allInitValues = list.stream().map(m -> m.initValue).collect(Collectors.toList());
-			assertThat(list)
-				.describedAs("Only one other value")
-				.allMatch(mutable -> mutable.otherValues().size() == 1);
+			list.forEach(mutable -> {
+				if (mutable.otherValues.size() != 1) {
+					System.out.println("Wrong number of other values: " + mutable);
+				}
+			});
 			list.forEach(mutable -> mutable.addOtherValue(mutable.initValue));
 
 			// Fails and invokes shrinking process
@@ -200,7 +200,7 @@ class ArbitraryShrinkingTests {
 		private class ShrinkToListOfMutable10 extends ShrinkToChecker {
 			@Override
 			public Iterable<?> shrunkValues() {
-				return asList(0, asList(new Mutable(10)), 0);
+				return asList(0, asList(new Mutable(10, asList(10, 10))), 0);
 			}
 		}
 
@@ -226,10 +226,15 @@ class ArbitraryShrinkingTests {
 
 	private static class Mutable {
 		final int initValue;
-		private final List<Integer> otherValues = new ArrayList<>();
+		private final List<Integer> otherValues;
 
 		Mutable(int initValue) {
+			this(initValue, new ArrayList<>());
+		}
+
+		Mutable(int initValue, List<Integer> otherValues) {
 			this.initValue = initValue;
+			this.otherValues = otherValues;
 		}
 
 		void addOtherValue(int otherValue) {
@@ -251,12 +256,16 @@ class ArbitraryShrinkingTests {
 			if (o == null || getClass() != o.getClass()) return false;
 
 			Mutable mutable = (Mutable) o;
-			return initValue == mutable.initValue;
+
+			if (initValue != mutable.initValue) return false;
+			return otherValues.equals(mutable.otherValues);
 		}
 
 		@Override
 		public int hashCode() {
-			return initValue;
+			int result = initValue;
+			result = 31 * result + otherValues.hashCode();
+			return result;
 		}
 	}
 

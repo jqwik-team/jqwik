@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.function.*;
 
 import org.junit.platform.commons.support.*;
+import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.hooks.*;
@@ -29,12 +30,17 @@ public @interface ExpectFailure {
 		}
 	}
 
+	class NoFailure extends Throwable {
+	}
+
 	/**
 	 * Optionally specify a checker
 	 */
 	Class<? extends Consumer<PropertyExecutionResult>> checkResult() default NullChecker.class;
 
 	String value() default "";
+
+	Class<? extends Throwable> failureType() default NoFailure.class;
 
 	class Hook implements AroundPropertyHook {
 
@@ -43,9 +49,11 @@ public @interface ExpectFailure {
 			PropertyExecutionResult testExecutionResult = property.execute();
 			Consumer<PropertyExecutionResult> resultChecker = getResultChecker(context.targetMethod(), context.testInstance());
 			String messageFromAnnotation = getMessage(context.targetMethod());
+			Class<? extends Throwable> expectedFailureType = getFailureType(context.targetMethod());
 
 			try {
 				if (testExecutionResult.status() == FAILED) {
+					checkFailureType(expectedFailureType, testExecutionResult);
 					resultChecker.accept(testExecutionResult);
 					return testExecutionResult.mapToSuccessful();
 				}
@@ -58,12 +66,27 @@ public @interface ExpectFailure {
 											   .map(throwable -> String.format("it failed with [%s]", throwable))
 											   .orElse("it did not fail at all");
 			String message = String.format(
-				"%sProperty [%s] should have failed, but %s",
+				"%sProperty [%s] should have failed with failure of type %s, but %s",
 				headerText,
 				context.label(),
+
 				reason
 			);
 			return testExecutionResult.mapToFailed(message);
+		}
+
+		private void checkFailureType(Class<? extends Throwable> expectedFailureType, PropertyExecutionResult testExecutionResult) {
+			if (expectedFailureType.equals(NoFailure.class)) {
+				return;
+			}
+			testExecutionResult.throwable().ifPresent(throwable -> {
+				if (!expectedFailureType.isAssignableFrom(throwable.getClass())) {
+					throw new AssertionFailedError("Wrong failure type: " + throwable);
+				}
+			});
+			if (!testExecutionResult.throwable().isPresent()) {
+				throw new AssertionFailedError("No failure exception");
+			}
 		}
 
 		private String getMessage(Method method) {
@@ -72,6 +95,15 @@ public @interface ExpectFailure {
 				String message = expectFailure.value();
 				return message.isEmpty() ? null : message;
 			}).orElse(null);
+		}
+
+		private Class<? extends Throwable> getFailureType(Method method) {
+			Optional<ExpectFailure> annotation = AnnotationSupport.findAnnotation(method, ExpectFailure.class);
+			if (annotation.isPresent()) {
+				return annotation.get().failureType();
+			} else {
+				return Throwable.class;
+			}
 		}
 
 		private Consumer<PropertyExecutionResult> getResultChecker(Method method, Object testInstance) {

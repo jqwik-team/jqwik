@@ -90,31 +90,21 @@ class ResolvingParametersInTryTests {
 
 	@Example
 	@AddLifecycleHook(CreateAString.class)
-	@ExpectFailure(checkResult = HasCannotResolveException.class)
+	@ExpectFailure(failureType = CannotResolveParameterException.class)
 	void shouldFailWithCannotResolveException(@ForAll int generated, int notResolved) {
 	}
 
 	@Example
 	@AddLifecycleHook(CreateAlwaysAString.class)
-	@ExpectFailure(checkResult = HasCannotResolveException.class)
+	@ExpectFailure(failureType = CannotResolveParameterException.class)
 	void shouldFailWithWrongParameterValueType(List<Integer> aList) {
 	}
 
 	@Example
 	@AddLifecycleHook(CreateAString.class)
 	@AddLifecycleHook(CreateAlwaysAString.class)
-	@ExpectFailure(checkResult = HasCannotResolveException.class)
+	@ExpectFailure(failureType = CannotResolveParameterException.class)
 	void shouldFailWithDuplicateResolution(String aString) {
-	}
-
-	private class HasCannotResolveException implements Consumer<PropertyExecutionResult> {
-		@Override
-		public void accept(PropertyExecutionResult propertyExecutionResult) {
-			assertThat(propertyExecutionResult.throwable().isPresent());
-			propertyExecutionResult.throwable().ifPresent(throwable -> {
-				assertThat(throwable).isInstanceOf(CannotResolveParameterException.class);
-			});
-		}
 	}
 
 	@Property(tries = 5)

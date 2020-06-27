@@ -58,9 +58,9 @@ public interface Falsifier<T> {
 	@API(status = INTERNAL)
 	default <U> Falsifier<U> map(Function<U, T> mapper) {
 		return value -> {
+			T other = null;
 			try {
-				T other = mapper.apply(value);
-				return Falsifier.this.execute(other);
+				other = mapper.apply(value);
 			} catch (Throwable throwable) {
 				// Ignore exceptions during shrinking
 				if (throwable instanceof OutOfMemoryError) {
@@ -68,6 +68,7 @@ public interface Falsifier<T> {
 				}
 				return TryExecutionResult.invalid();
 			}
+			return Falsifier.this.execute(other);
 		};
 	}
 
