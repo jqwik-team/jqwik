@@ -11,44 +11,13 @@
 - Use TestDiscovery from JUnit platform 1.5:
 https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discovery/package-summary.html
 
-- Class-based Property like this:
-  
-  ```
-	@Property/Group/PropertyGroup?
-	class NewBoard {
-
-		private final Board board;
-
-		public NewBoard(@ForAll Board board) {
-			this.board = board;
-		}
-
-		@Property
-		void all_holes_of_new_board_contain_pegs_except_center(
-				@ForAll("validCoordinate")  int x,
-				@ForAll("validCoordinate") int y
-		) {
-			Assume.that(x != board.center() || y != board.center());
-			assertThat(board.hole(x, y)).isEqualTo(Hole.PEG);
-		}
-
-		@Provide
-		Arbitrary<Integer> validCoordinate() {
-			return Arbitraries.integers().between(1, board.size());
-		}
-
-	}
-  ```
-
-- Statistics.keyFigures(String label, Number variable)
-
 - PackageDescriptor e.g.
   @Group
   @Label("mypackage")
   @AddHook(...)
   in package-info.java
 
-- Classifiers as in John Hughes' talk: 
+- Classifiers as in John Hughes' talk:
   https://www.youtube.com/watch?v=NcJOiQlzlXQ&list=PLvL2NEhYV4ZvCRCVlXTfB6-d09K3r0Sxa
 
   - Classifiers.label(boolean condition, String label)
@@ -62,10 +31,10 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
       .match(condition1, "label1", () -> {})
       .match(condition2, "label2", () -> {})
       .noMatch();
-    ``` 
+    ```
 
     - specify minimum coverage for each case
-  
+
 - @AddExample[s] annotation like @FromData but additional to generated data
 
 - Store regressions (samples once failed) in dedicated database
@@ -74,13 +43,11 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Automatically generate nulls for types annotated as nullable
   See https://github.com/pholser/junit-quickcheck/pull/210
 
-- Allow Fixture parameters to examples and properties
-
 - Lifecycle Hooks
     - ProvideArbitraryHook
         - Let domains use that hook
         - Let ArbitraryProviders use that hook
-        
+
     - AroundPropertyHook
         - Add parameter PropertyConfiguration
             - tries()
@@ -91,9 +58,9 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
         - Allow label to be set, alternative ChangeLabelHook
         - Allow configuration attributes to be changed
         - Alternative: Introduce PropertyConfigurationHook
-    
+
 - Parallel test execution:
-  - Across single property with annotation @Parallel 
+  - Across single property with annotation @Parallel
   - Across Properties: Does it make sense with non working IntelliJ support?
   - For ActionSequences
 
@@ -118,6 +85,8 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Reporting
 
+- Report before/after state of samples
+
 - Reporting.ARBITRARIES|GENERATORS: report for each property which arbitraries are used.
   - Requires Arbitrary.describe() or something similar
 
@@ -128,12 +97,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Properties
 
-- Multi element Shrinking
-  - Implement CombinedShrinkable.shrinkingSuggestions()
-  - Also shrink pairs that are not equal but have a correlation
-    e.g. https://johanneslink.net/model-based-testing/
-    sequence of counter actions should be shrunk to (raise by 99, countUp, countUpAtMax)
-  - Also shrink triplets, quadruplets etc.
+- New shrinking based on shrinkingSuggestions and a general shrinking policy
 
 - Lib to generate Json from JsonSchema as in
   https://github.com/Zac-HD/hypothesis-jsonschema
@@ -148,7 +112,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Probabilistic assertions
   see experiments.ProbabilisticExperiments
 
-- Stateless Properties:
+- Statefull Properties:
   - see https://github.com/jlink/jqwik/issues/80
   - Let action generation access the model state?
     E.g. to use a name that’s already been added to a store.
@@ -176,10 +140,8 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
     function in property (see Proper book)
 
 - Shrinking targets
-    - Provide multiple shrinking targets for number arbitraries,
-    eg Arbitraries.integers().shrinkTowards(42, 110, 1000000)
     - @[Number]Range(shrinkingTarget=target)
-  
+
 - Reimplement String generation based on Unicode codepoints, not on characters
   Maybe consider this: https://github.com/quicktheories/QuickTheories/issues/54
 
@@ -215,7 +177,7 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
     - forType(Class<T> targetType, int depth)
     - @UseType(depth = 1)
-    
+
 
 ### Contracts / Specifications / Domain objects
 
@@ -224,4 +186,4 @@ see example in package `net.jqwik.docs.contracts.eurocalc`
 - Allow specification of consumer and provider contract in test class
 - Allow spec annotations in domain classes a la clojure-spec
 - Support domain object generation guided by spec annotations
-  Have a look at https://github.com/benas/random-beans for inspiration 
+  Have a look at https://github.com/benas/random-beans for inspiration
