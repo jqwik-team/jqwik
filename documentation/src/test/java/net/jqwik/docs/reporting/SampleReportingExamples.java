@@ -6,8 +6,9 @@ import java.util.*;
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
+
+import static net.jqwik.api.SampleReportingFormat.*;
 
 public class SampleReportingExamples {
 
@@ -30,7 +31,7 @@ public class SampleReportingExamples {
 	}
 
 	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
-	// @Report(Reporting.GENERATED)
+		// @Report(Reporting.GENERATED)
 	void reportMultilineToString(@ForAll @UseType Person person) {
 		Assertions.assertThat(person.firstName).hasSizeLessThan(10);
 	}
@@ -88,10 +89,10 @@ public class SampleReportingExamples {
 		@Override
 		public Object report(final Object value) {
 			LocalDate date = (LocalDate) value;
-			Map<String, Object> valueMap = new HashMap<>();
-			valueMap.put("year", date.getYear());
-			valueMap.put("month", date.getMonth());
-			valueMap.put("day", date.getDayOfMonth());
+			Map<Object, Object> valueMap = new LinkedHashMap<>();
+			valueMap.put(plainLabel("year"), date.getYear());
+			valueMap.put(plainLabel("month"), date.getMonth());
+			valueMap.put(plainLabel("day"), date.getDayOfMonth());
 			return valueMap;
 		}
 

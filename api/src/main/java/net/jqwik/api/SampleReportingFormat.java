@@ -10,6 +10,22 @@ import static org.apiguardian.api.API.Status.*;
 public interface SampleReportingFormat extends Comparable<SampleReportingFormat> {
 
 	/**
+	 * Use in {@linkplain SampleReportingFormat#report(Object)}
+	 * if you just want to report a plain label and not a String in quotes.
+	 *
+	 * @param plain String to report
+	 * @return an object that will be reported as a plain label
+	 */
+	static Object plainLabel(String plain) {
+		return new Object() {
+			@Override
+			public String toString() {
+				return plain;
+			}
+		};
+	}
+
+	/**
 	 * @param value the value to format
 	 * @return true if this format applies
 	 */
