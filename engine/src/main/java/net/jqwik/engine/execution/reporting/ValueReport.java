@@ -17,8 +17,14 @@ public abstract class ValueReport {
 	}
 
 	static ValueReport of(Object value, ReportingFormatFinder formatFinder) {
-		final Set<Object> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+		final Set<Object> visited = visitedSet(Collections.emptySet());
 		return of(value, formatFinder, visited);
+	}
+
+	private static Set<Object> visitedSet(Set<Object> from) {
+		Set<Object> objects = Collections.newSetFromMap(new IdentityHashMap<>());
+		objects.addAll(from);
+		return objects;
 	}
 
 	private static ValueReport of(Object value, ReportingFormatFinder formatFinder, Set<Object> visited) {
@@ -54,7 +60,7 @@ public abstract class ValueReport {
 		List<ValueReport> tupleReports =
 			tuple.items()
 				 .stream()
-				 .map(value -> of(value, formatFinder, visited))
+				 .map(value -> of(value, formatFinder, visitedSet(visited)))
 				 .collect(Collectors.toList());
 
 		return new TupleValueReport(label, tupleReports);
@@ -70,8 +76,8 @@ public abstract class ValueReport {
 			map.entrySet()
 			   .stream()
 			   .map(entry -> {
-				   ValueReport keyReport = of(entry.getKey(), formatFinder, visited);
-				   ValueReport valueReport = of(entry.getValue(), formatFinder, visited);
+				   ValueReport keyReport = of(entry.getKey(), formatFinder, visitedSet(visited));
+				   ValueReport valueReport = of(entry.getValue(), formatFinder, visitedSet(visited));
 				   return new Map.Entry<ValueReport, ValueReport>() {
 					   @Override
 					   public ValueReport getKey() {
@@ -102,7 +108,7 @@ public abstract class ValueReport {
 		List<ValueReport> reportCollection =
 			collection
 				.stream()
-				.map(element -> of(element, formatFinder, visited))
+				.map(element -> of(element, formatFinder, visitedSet(visited)))
 				.collect(Collectors.toList());
 		return new CollectionValueReport(label, reportCollection);
 	}

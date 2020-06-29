@@ -46,6 +46,8 @@ title: jqwik Release Notes
 
 - Reporting test failure due to exception without message 
   no longer leads to ignored test
+  
+- Reporting shrunk samples now report the actual sample and not a freshly generated one
 
 ## 1.3.1
 

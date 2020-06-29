@@ -65,6 +65,33 @@ class SampleReportingTests {
 				String.format("    \"%s\"", parameterValue)
 			);
 		}
+
+		@Example
+		void sameObjectDifferentParameter() {
+
+			Object anObject = new Object() {
+				@Override
+				public String toString() {
+					return "an object";
+				}
+			};
+
+			List<Object> listOfObject = asList(anObject);
+
+			List<Object> sample = asList(listOfObject, listOfObject);
+			List<String> parameterNames = asList("list1", "list2");
+			SampleReporter sampleReporter = new SampleReporter("Headline", sample, parameterNames);
+
+			sampleReporter.reportTo(lineReporter);
+
+			assertThat(lineReporter.lines).containsSequence(
+				"Headline",
+				"--------",
+				"  list1: [an object]",
+				"  list2: [an object]"
+			);
+		}
+
 	}
 
 	@Group
@@ -161,14 +188,41 @@ class SampleReportingTests {
 			);
 		}
 
-		@Example
-		void listWithCircularDependency() {
-			List<Object> aList = new ArrayList<>();
-			aList.add(42);
-			aList.add(aList);
+		@Group
+		class CircularDependencies {
 
-			ValueReport report = ValueReport.of(aList);
-			Assertions.assertThat(report.singleLineReport()).startsWith("[42, circular-dependency<java.util.ArrayList@");
+			@Example
+			void listWithItselfInIt() {
+				List<Object> aList = new ArrayList<>();
+				aList.add(42);
+				aList.add(aList);
+
+				ValueReport report = ValueReport.of(aList);
+				Assertions.assertThat(report.singleLineReport()).startsWith("[42, circular-dependency<java.util.ArrayList@");
+			}
+
+			@Example
+			void doNotReportCircularDependencyIfObjectIsNotContainedInItself() {
+				List<Object> list42 = new ArrayList<>();
+				list42.add(42);
+
+				List<List<Object>> listOfList = new ArrayList<>();
+				listOfList.add(list42);
+
+				Map<String, Object> map = new LinkedHashMap<>();
+				map.put("list1", listOfList);
+				map.put("list2", list42);
+
+				ValueReport report = ValueReport.of(map);
+				report.report(lineReporter, 0, "");
+				assertThat(lineReporter.lines).containsSequence(
+					"{",
+					"  \"list1\"=[[42]],",
+					"  \"list2\"=[42]",
+					"}"
+				);
+			}
+
 		}
 
 		@Group
