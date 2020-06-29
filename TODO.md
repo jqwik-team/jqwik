@@ -8,6 +8,7 @@
       see https://github.com/jlink/jqwik/issues/91
 
     - Give all implementors of StreamableArbitrary their own arbitrary type
+        - StreamArbitrary, IteratorArbitrary, ArrayArbitrary
         - Document Streamable arbitraries in user guide
         
 - 1.3.x

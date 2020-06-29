@@ -59,6 +59,10 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		List<Object> originalSample,
 		Throwable throwable
 	) {
+		// If no shrinking was possible report only sample
+		if (originalSample == sample) {
+			originalSample = null;
+		}
 		return new PropertyCheckResult(
 			CheckStatus.FAILED, stereotype,
 			propertyName,

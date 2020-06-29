@@ -164,7 +164,6 @@ class GenericPropertyTests {
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 
-			assertThat(result.originalSample()).isPresent();
 			assertThat(result.falsifiedSample()).isPresent();
 			assertThat(result.falsifiedSample().get()).containsExactly(1);
 
@@ -194,7 +193,6 @@ class GenericPropertyTests {
 			assertThat(result.countTries()).isEqualTo(1);
 			assertThat(result.countChecks()).isEqualTo(1);
 
-			assertThat(result.originalSample()).isPresent();
 			assertThat(result.falsifiedSample()).isPresent();
 			assertThat(result.falsifiedSample().get()).containsExactly(1);
 
