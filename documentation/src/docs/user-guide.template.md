@@ -240,7 +240,11 @@ Other kinds of parameters can be injected through the [resolve parameter hook](#
 If a property fails then jqwik's reporting is more thorough:
 - Report the relevant exception, usually a subtype of `AssertionError`
 - Report the property's base parameters
-- Report both the original failing sample and the shrunk sample
+- Report both the original failing sample and the shrunk sample.
+  
+  **Caveat**: The samples are reported _after their use_ in the property method.
+  That means that mutable objects that are being changed during a property show
+  their final state, not the state in which the arbitrary generated them. 
 
 In the case of `lengthOfConcatenatedStringIsGreaterThanLengthOfEach`
 from above the report looks like that:
@@ -295,6 +299,8 @@ The following reporting aspects are available:
 - `Reporting.FALSIFIED` will report each set of parameters
   that is falsified during shrinking.
 
+Unlike sample reporting these reports will show _the freshly generated parameters_,
+i.e. potential changes to mutable objects during property execution cannot be seen here.
 
 ### Optional `@Property` Parameters
 

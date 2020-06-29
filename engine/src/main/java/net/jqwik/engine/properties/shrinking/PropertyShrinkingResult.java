@@ -13,7 +13,7 @@ public class PropertyShrinkingResult {
 		this.throwable = throwable;
 	}
 
-	public List<Object> values() {
+	public List<Object> sample() {
 		return values;
 	}
 

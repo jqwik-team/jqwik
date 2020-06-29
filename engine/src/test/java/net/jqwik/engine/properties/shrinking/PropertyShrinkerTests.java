@@ -32,7 +32,7 @@ class PropertyShrinkerTests {
 		Throwable originalError = new RuntimeException("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
-		assertThat(result.values()).isEqualTo(asList(1, "hello"));
+		assertThat(result.sample()).isEqualTo(asList(1, "hello"));
 		assertThat(result.steps()).isEqualTo(0);
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
@@ -49,7 +49,7 @@ class PropertyShrinkerTests {
 		Throwable originalError = new RuntimeException("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
-		assertThat(result.values()).isEqualTo(asList(5, 10));
+		assertThat(result.sample()).isEqualTo(asList(5, 10));
 		assertThat(result.steps()).isEqualTo(0);
 		assertThat(result.throwable()).isPresent();
 		assertThat(result.throwable().get()).isSameAs(originalError);
@@ -69,7 +69,7 @@ class PropertyShrinkerTests {
 		};
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
 
-		assertThat(result.values()).isEqualTo(asList(1, 2));
+		assertThat(result.sample()).isEqualTo(asList(1, 2));
 		assertThat(result.throwable()).isNotPresent();
 
 		assertThat(result.steps()).isEqualTo(12);
@@ -91,40 +91,6 @@ class PropertyShrinkerTests {
 		}
 	}
 
-	@Property(tries = 10000)
-	@ExpectFailure(checkResult = ShrinkTo77.class)
-	boolean shrinkDuplicateIntegersTogether(
-		@ForAll @IntRange(min = 1, max = 100) int int1,
-		@ForAll @IntRange(min = 1, max = 100) int int2
-	) {
-		return int1 < 7 || int1 != int2;
-	}
-
-	private class ShrinkTo77 extends ShrinkToChecker {
-		@Override
-		public Iterable<?> shrunkValues() {
-			return Arrays.asList(7, 7);
-		}
-	}
-
-	@Property(tries = 10000)
-	@ExpectFailure(checkResult = ShrunkToAA.class)
-	void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
-		assertThat(first).isNotEqualTo(second);
-	}
-
-	private class ShrunkToAA extends ShrinkToChecker {
-		@Override
-		public Iterable<?> shrunkValues() {
-			return Arrays.asList("aa", "aa");
-		}
-	}
-
-	@Provide
-	Arbitrary<String> aString() {
-		return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
-	}
-
 	@Example
 	void reportFalsifiedParameters() {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
@@ -136,7 +102,7 @@ class PropertyShrinkerTests {
 	}
 
 	@Example
-	void resultThrowableComesFromActualShrinkedValue() {
+	void resultThrowableComesFromActualShrunkValue() {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
@@ -148,8 +114,25 @@ class PropertyShrinkerTests {
 		};
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
 
-		assertThat(result.values()).isEqualTo(asList(1, 2));
+		assertThat(result.sample()).isEqualTo(asList(1, 2));
 		assertThat(result.throwable()).isPresent();
+	}
+
+	@Example
+	void resultSampleConsistsOfActualUsedObjects_notOfValuesGeneratedByShrinkable() {
+		List<Shrinkable<Object>> parameters = toList(5, 10);
+
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
+
+		Falsifier<List<Object>> listFalsifier = params -> {
+			params.add(42);
+			if (((int) params.get(0)) == 0) return TryExecutionResult.satisfied();
+			if (((int) params.get(1)) <= 1) return TryExecutionResult.satisfied();
+			return TryExecutionResult.falsified(null);
+		};
+		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
+
+		assertThat(result.sample()).isEqualTo(asList(1, 2, 42));
 	}
 
 	@Example
@@ -160,7 +143,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), null);
 
-		assertThat(result.values()).isEqualTo(asList(0, 900));
+		assertThat(result.sample()).isEqualTo(asList(0, 900));
 
 		ArgumentCaptor<ReportEntry> entryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
 		verify(reporter, times(1)).accept(entryCaptor.capture());
@@ -174,5 +157,44 @@ class PropertyShrinkerTests {
 			new OneStepShrinkable(i2).asGeneric()
 		);
 	}
+
+	@Group
+	class Duplicates {
+
+		@Property(tries = 10000)
+		@ExpectFailure(checkResult = ShrinkTo77.class)
+		boolean shrinkDuplicateIntegersTogether(
+			@ForAll @IntRange(min = 1, max = 100) int int1,
+			@ForAll @IntRange(min = 1, max = 100) int int2
+		) {
+			return int1 < 7 || int1 != int2;
+		}
+
+		private class ShrinkTo77 extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return Arrays.asList(7, 7);
+			}
+		}
+
+		@Property(tries = 10000)
+		@ExpectFailure(checkResult = ShrunkToAA.class)
+		void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
+			assertThat(first).isNotEqualTo(second);
+		}
+
+		private class ShrunkToAA extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return Arrays.asList("aa", "aa");
+			}
+		}
+
+		@Provide
+		Arbitrary<String> aString() {
+			return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
+		}
+	}
+
 
 }

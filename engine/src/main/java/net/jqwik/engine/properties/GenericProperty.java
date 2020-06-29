@@ -158,8 +158,8 @@ public class GenericProperty {
 		int countTries, List<Shrinkable<Object>> shrinkables, List<Object> originalSample, Optional<Throwable> optionalThrowable
 	) {
 		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, optionalThrowable.orElse(null));
-		List<Object> shrunkSample = shrinkingResult.values();
-		Throwable throwable = shrinkingResult.throwable().orElse(null);
+		List<Object> shrunkSample = shrinkingResult.steps() > 0 ? shrinkingResult.sample() : originalSample;
+		Throwable throwable = shrinkingResult.steps() > 0 ? shrinkingResult.throwable().orElse(null): optionalThrowable.orElse(null);
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),

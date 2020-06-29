@@ -48,8 +48,31 @@ public class PropertyShrinker {
 				break;
 			}
 		}
-		FalsificationResult<List<Object>> current = sequence.current();
-		return new PropertyShrinkingResult(current.value(), shrinkingStepsCounter.get(), current.throwable().orElse(null));
+
+		if (shrinkingStepsCounter.get() == 0) {
+			return new PropertyShrinkingResult(toValues(parameters), 0, originalError);
+		}
+
+		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get());
+	}
+
+	private PropertyShrinkingResult createShrinkingResult(
+		final Falsifier<List<Object>> forAllFalsifier,
+		final FalsificationResult<List<Object>> current,
+		final int steps
+	) {
+		// TODO: Remove this hack by a new decent implementation of shrinking
+
+		// Capture the real sample not just what the final shrinking result shrinkable generates
+		@SuppressWarnings("unchecked")
+		List<Object>[] sampleCapture = new List[1];
+		Falsifier<List<Object>> captureSampleFalsifier = sample -> {
+			sampleCapture[0] = sample;
+			return forAllFalsifier.execute(sample);
+		};
+		FalsificationResult<List<Object>> capturingResult = captureSampleFalsifier.falsify(current.shrinkable());
+
+		return new PropertyShrinkingResult(sampleCapture[0], steps, capturingResult.throwable().orElse(null));
 	}
 
 	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {

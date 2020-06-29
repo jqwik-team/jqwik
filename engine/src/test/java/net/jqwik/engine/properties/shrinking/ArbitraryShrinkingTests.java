@@ -173,7 +173,7 @@ class ArbitraryShrinkingTests {
 		private class ShrinkToMutable10 extends ShrinkToChecker {
 			@Override
 			public Iterable<?> shrunkValues() {
-				return asList(0, new Mutable(10), 0);
+				return asList(0, new Mutable(10, asList(42)), 0);
 			}
 		}
 
