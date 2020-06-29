@@ -1,8 +1,8 @@
 ---
-title: jqwik User Guide - 1.3.1-SNAPSHOT
+title: jqwik User Guide - 1.3.2-SNAPSHOT
 ---
 <h1>The jqwik User Guide
-<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.3.1-SNAPSHOT</span>
+<span style="padding-left:1em;font-size:50%;font-weight:lighter">1.3.2-SNAPSHOT</span>
 </h1>
 
 <!-- use `doctoc --maxlevel 4 user-guide.md` to recreate the TOC -->
@@ -173,7 +173,7 @@ repositories {
 ext.junitPlatformVersion = '1.6.2'
 ext.junitJupiterVersion = '5.6.2'
 
-ext.jqwikVersion = '1.3.1-SNAPSHOT'
+ext.jqwikVersion = '1.3.2-SNAPSHOT'
 
 compileTestJava {
     // To enable argument names in reporting and debugging
@@ -269,7 +269,7 @@ Additionally you have to add the following dependency to your `pom.xml` file:
     <dependency>
         <groupId>net.jqwik</groupId>
         <artifactId>jqwik</artifactId>
-        <version>1.3.1-SNAPSHOT</version>
+        <version>1.3.2-SNAPSHOT</version>
         <scope>test</scope>
     </dependency>
 </dependencies>
@@ -297,7 +297,7 @@ will allow you to use _jqwik_'s snapshot release which contains all the latest f
 I've never tried it but using jqwik without gradle or some other tool to manage dependencies should also work.
 You will have to add _at least_ the following jars to your classpath:
 
-- `jqwik-1.3.1-SNAPSHOT.jar`
+- `jqwik-1.3.2-SNAPSHOT.jar`
 - `junit-platform-engine-1.6.2.jar`
 - `junit-platform-commons-1.6.2.jar`
 - `opentest4j-1.2.0.jar`
@@ -311,7 +311,7 @@ or package-scoped method with
 [`@Property`](/docs/snapshot/javadoc/net/jqwik/api/Property.html). 
 In contrast to examples a property method is supposed to have one or
 more parameters, all of which must be annotated with 
-[`@ForAll`](/docs/1.3.1-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
+[`@ForAll`](/docs/1.3.2-SNAPSHOT/javadoc/net/jqwik/api/ForAll.html).
 
 At test runtime the exact parameter values of the property method
 will be filled in by _jqwik_.
@@ -362,7 +362,11 @@ Other kinds of parameters can be injected through the [resolve parameter hook](#
 If a property fails then jqwik's reporting is more thorough:
 - Report the relevant exception, usually a subtype of `AssertionError`
 - Report the property's base parameters
-- Report both the original failing sample and the shrunk sample
+- Report both the original failing sample and the shrunk sample.
+  
+  **Caveat**: The samples are reported _after their use_ in the property method.
+  That means that mutable objects that are being changed during a property show
+  their final state, not the state in which the arbitrary generated them. 
 
 In the case of `lengthOfConcatenatedStringIsGreaterThanLengthOfEach`
 from above the report looks like that:
@@ -417,6 +421,8 @@ The following reporting aspects are available:
 - `Reporting.FALSIFIED` will report each set of parameters
   that is falsified during shrinking.
 
+Unlike sample reporting these reports will show _the freshly generated parameters_,
+i.e. potential changes to mutable objects during property execution cannot be seen here.
 
 ### Optional `@Property` Parameters
 
@@ -1249,15 +1255,15 @@ The starting point for generation usually is a static method call on class
   Choose randomly from a list of value suppliers and get the object from this supplier.
   This is useful when dealing with mutable objects where `Arbitrary.of(..)` would reuse a potentially changed object.
   
-- [`Arbitrary<T> constant(T constantValue)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-T-):
+- [`Arbitrary<T> just(T constantValue)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#just-T-):
   Always provide the same constant value in each try. Mostly useful to combine with other arbitraries.
     
 - [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
 
-- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitraries.html#create-java.util.function.Supplier-): 
   In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
-  This is useful when dealing with mutable objects where `Arbitrary.constant()` may reuse a changed object.
+  This is useful when dealing with mutable objects where `Arbitrary.just()` may reuse a changed object.
 
 #### Select randomly with Weights
 
@@ -2046,13 +2052,13 @@ generated dates between "January 1 1900" and "December 31 2099" you have two cho
 ```java
 @Provide
 Arbitrary<LocalDate> datesBetween1900and2099() {
-	Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2099);
-	Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
-	Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
-
-	return Combinators.combine(years, months, days)
-					  .as(LocalDate::of)
-					  .ignoreException(DateTimeException.class);
+  Arbitrary<Integer> years = Arbitraries.integers().between(1900, 2099);
+  Arbitrary<Integer> months = Arbitraries.integers().between(1, 12);
+  Arbitrary<Integer> days = Arbitraries.integers().between(1, 31);
+  
+  return Combinators.combine(years, months, days)
+  	  .as(LocalDate::of)
+  	  .ignoreException(DateTimeException.class);
 }
 ```
  
@@ -2085,15 +2091,15 @@ boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
 
 @Provide
 Arbitrary<String> sentences() {
-    Arbitrary<String> sentence = Combinators.combine( //
-        Arbitraries.lazy(this::sentences), //
-        word() //
+    Arbitrary<String> sentence = Combinators.combine(
+        Arbitraries.lazy(this::sentences),
+        word()
     ).as((s, w) -> w + " " + s);
-    return Arbitraries.oneOf( //
-        word().map(w -> w + "."), //
-        sentence, //
-        sentence, //
-        sentence //
+    return Arbitraries.oneOf(
+        word().map(w -> w + "."),
+        sentence,
+        sentence,
+        sentence
     );
 }
 
@@ -2421,11 +2427,11 @@ class MyStringStackProperties {
 	}
 
 	private Arbitrary<Action<MyStringStack>> clear() {
-		return Arbitraries.constant(new ClearAction());
+		return Arbitraries.just(new ClearAction());
 	}
 
 	private Arbitrary<Action<MyStringStack>> pop() {
-		return Arbitraries.constant(new PopAction());
+		return Arbitraries.just(new PopAction());
 	}
 }
 ```
@@ -2523,9 +2529,9 @@ works only on strings that are not equal:
 
 ```java
 @Property
-boolean comparingUnequalStrings( //
-        @ForAll @StringLength(min = 1, max = 10) String string1, //
-        @ForAll @StringLength(min = 1, max = 10) String string2 //
+boolean comparingUnequalStrings(
+        @ForAll @StringLength(min = 1, max = 10) String string1,
+        @ForAll @StringLength(min = 1, max = 10) String string2
 ) {
     Assume.that(!string1.equals(string2));
 
@@ -2541,9 +2547,9 @@ Have a look at a seemingly similar example:
 
 ```java
 @Property
-boolean findingContainedStrings( //
-        @ForAll @StringLength(min = 1, max = 10) String container, //
-        @ForAll @StringLength(min = 1, max = 5) String contained //
+boolean findingContainedStrings(
+        @ForAll @StringLength(min = 1, max = 10) String container,
+        @ForAll @StringLength(min = 1, max = 5) String contained
 ) {
     Assume.that(container.contains(contained));
 
@@ -2583,10 +2589,10 @@ but with a much lower discard ratio:
 
 ```java
 @Property
-boolean findingContainedStrings_variant( //
-        @ForAll @StringLength(min = 5, max = 10) String container, //
-        @ForAll @IntRange(min = 1, max = 5) int length, //
-        @ForAll @IntRange(min = 0, max = 9) int startIndex //
+boolean findingContainedStrings_variant(
+        @ForAll @StringLength(min = 5, max = 10) String container,
+        @ForAll @IntRange(min = 1, max = 5) int length,
+        @ForAll @IntRange(min = 0, max = 9) int startIndex
 ) {
     Assume.that((length + startIndex) <= container.length());
 
@@ -2822,8 +2828,8 @@ one statistical group:
 ```java
 @Property
 void twoParameterStats(
-    @ForAll @Size(min = 1, max = 10) List<Integer> aList, //
-    @ForAll @IntRange(min = 0, max = 10) int index //
+    @ForAll @Size(min = 1, max = 10) List<Integer> aList,
+    @ForAll @IntRange(min = 0, max = 10) int index
 ) {
     Statistics.collect(aList.size() > index ? "index within size" : null);
 }
@@ -3157,8 +3163,8 @@ public class MoneyArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals() //
-				  .between(BigDecimal.ZERO, new BigDecimal(1_000_000_000)) //
+		Arbitrary<BigDecimal> amount = Arbitraries.bigDecimals()
+				  .between(BigDecimal.ZERO, new BigDecimal(1_000_000_000))
 				  .ofScale(2);
 		Arbitrary<String> currency = Arbitraries.of("EUR", "USD", "CHF");
 		return Collections.singleton(Combinators.combine(amount, currency).as(Money::new));
@@ -3204,7 +3210,7 @@ public class OptionalArbitraryProvider implements ArbitraryProvider {
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
 		TypeUsage innerType = targetType.getTypeArguments().get(0);
-		return subtypeProvider.apply(innerType).stream() //
+		return subtypeProvider.apply(innerType).stream()
 			.map(Arbitrary::optional)
 			.collect(Collectors.toSet());
 	}
@@ -3237,7 +3243,7 @@ public class AlternativeStringArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		return Collections.singleton(Arbitraries.constant("A String"));
+		return Collections.singleton(Arbitraries.just("A String"));
 	}
 }
 ```
@@ -4188,4 +4194,4 @@ If a certain element, e.g. a method, is not annotated itself, then it carries th
 
 ## Release Notes
 
-Read this version's [release notes](/release-notes.html#131-snapshot).
+Read this version's [release notes](/release-notes.html#132-snapshot).
