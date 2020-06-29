@@ -109,13 +109,13 @@ public class GeneratorsExamples {
 	}
 
 	@Property
-	boolean aConstantString(@ForAll("constantHello") String aString) {
+	boolean aConstantString(@ForAll("justHello") String aString) {
 		return aString.equals("hello");
 	}
 
 	@Provide
-	Arbitrary<String> constantHello() {
-		return Arbitraries.constant("hello");
+	Arbitrary<String> justHello() {
+		return Arbitraries.just("hello");
 	}
 
 	@Property(tries = 10) @Report(Reporting.GENERATED)

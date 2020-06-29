@@ -1133,15 +1133,15 @@ The starting point for generation usually is a static method call on class
   Choose randomly from a list of value suppliers and get the object from this supplier.
   This is useful when dealing with mutable objects where `Arbitrary.of(..)` would reuse a potentially changed object.
   
-- [`Arbitrary<T> constant(T constantValue)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-T-):
+- [`Arbitrary<T> just(T constantValue)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#just-T-):
   Always provide the same constant value in each try. Mostly useful to combine with other arbitraries.
     
 - [`Arbitrary<T> of(Class<T  extends Enum> enumClass)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#of-java.lang.Class-):
   Choose randomly from all values of an `enum`. Shrink towards first enum value.
 
-- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#constant-java.util.function.Supplier-): 
+- [`Arbitrary<T> create(Supplier<T> supplier)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#create-java.util.function.Supplier-): 
   In each try use a new unshrinkable instance of type `T` using `supplier` to freshly create it.
-  This is useful when dealing with mutable objects where `Arbitrary.constant()` may reuse a changed object.
+  This is useful when dealing with mutable objects where `Arbitrary.just()` may reuse a changed object.
 
 #### Select randomly with Weights
 
@@ -2305,11 +2305,11 @@ class MyStringStackProperties {
 	}
 
 	private Arbitrary<Action<MyStringStack>> clear() {
-		return Arbitraries.constant(new ClearAction());
+		return Arbitraries.just(new ClearAction());
 	}
 
 	private Arbitrary<Action<MyStringStack>> pop() {
-		return Arbitraries.constant(new PopAction());
+		return Arbitraries.just(new PopAction());
 	}
 }
 ```
@@ -3121,7 +3121,7 @@ public class AlternativeStringArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		return Collections.singleton(Arbitraries.constant("A String"));
+		return Collections.singleton(Arbitraries.just("A String"));
 	}
 }
 ```

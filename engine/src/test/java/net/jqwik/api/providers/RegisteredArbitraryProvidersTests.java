@@ -313,7 +313,7 @@ class RegisteredArbitraryProvidersTests {
 
 				@Override
 				public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-					Arbitrary<MySpecial<Integer, String>> constant = Arbitraries.constant(integer -> "special");
+					Arbitrary<MySpecial<Integer, String>> constant = Arbitraries.just(integer -> "special");
 					return Collections.singleton(constant);
 				}
 			};

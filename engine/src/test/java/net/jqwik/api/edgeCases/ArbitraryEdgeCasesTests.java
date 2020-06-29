@@ -293,7 +293,7 @@ class ArbitraryEdgeCasesTests {
 
 		@Example
 		void tupleEdgeCases() {
-			Arbitrary<Integer> ints = Arbitraries.constant(42);
+			Arbitrary<Integer> ints = Arbitraries.just(42);
 			assertThat(values(ints.tuple1().edgeCases()))
 				.containsExactlyInAnyOrder(Tuple.of(42));
 			assertThat(values(ints.tuple2().edgeCases()))

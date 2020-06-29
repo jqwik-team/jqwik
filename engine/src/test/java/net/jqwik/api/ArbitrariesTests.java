@@ -145,9 +145,21 @@ class ArbitrariesTests {
 		assertAllGenerated(generator, (Random value) -> value.nextInt(100) < 100);
 	}
 
+	/**
+	 * Remove this test as soon as Arbitraries.constant(value) is removed
+	 */
 	@Example
+	@SuppressWarnings("deprecation")
 	void constant() {
 		Arbitrary<String> constant = Arbitraries.constant("hello");
+		assertAllGenerated(constant.generator(1000), value -> {
+			assertThat(value).isEqualTo("hello");
+		});
+	}
+
+	@Example
+	void just() {
+		Arbitrary<String> constant = Arbitraries.just("hello");
 		assertAllGenerated(constant.generator(1000), value -> {
 			assertThat(value).isEqualTo("hello");
 		});
@@ -348,7 +360,7 @@ class ArbitrariesTests {
 
 		private Arbitrary<Tree> aBranch() {
 			return Arbitraries.lazy(() -> Arbitraries.frequencyOf(
-				Tuple.of(2, Arbitraries.constant(null)),
+				Tuple.of(2, Arbitraries.just(null)),
 				Tuple.of(1, trees())
 			));
 		}

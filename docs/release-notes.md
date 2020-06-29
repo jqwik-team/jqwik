@@ -33,6 +33,9 @@ title: jqwik Release Notes
 
 - Added `ListArbitrary.flatMapEach()`
 
+- Added `Arbitraries.just(aConstant)` and deprecated `Arbitraries.constant(aConstant)`.
+  Most other PBT libraries seem to use `just` for this functionality. 
+
 #### Breaking Changes
 
 - `Arbitrary.set()` now has return type `net.jqwik.api.arbitraries.SetArbitrary`

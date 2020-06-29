@@ -121,8 +121,8 @@ class ShrinkingSequenceAndThenTests {
 
 	@Provide
 	Arbitrary<ShrinkingSequence<Integer>> nestedSequence() {
-		Arbitrary<ShrinkingSequence<Integer>> start = Arbitraries
-														  .constant(new ShrinkingSequenceStub(asList(1000), AssertionFailedError::new));
+		Arbitrary<ShrinkingSequence<Integer>> start =
+			Arbitraries.just(new ShrinkingSequenceStub(asList(1000), AssertionFailedError::new));
 		Arbitrary<ShrinkingSequence<Integer>> next = recursiveSequence();
 		return Combinators.combine(start, next).as((s, n) -> s.andThen(ignore -> n));
 	}

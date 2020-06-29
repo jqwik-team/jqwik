@@ -55,7 +55,7 @@ class FunctionsTests {
 
 	@Example
 	void toString_of_functions_can_be_called(@ForAll Random random) {
-		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
@@ -95,7 +95,7 @@ class FunctionsTests {
 
 	@Example
 	void default_methods_of_functions_can_be_called(@ForAll Random random) {
-		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<Function<String, Integer>> functions =
 			Functions.function(Function.class).returns(integers);
 
@@ -108,7 +108,7 @@ class FunctionsTests {
 
 	@Example
 	void default_methods_of_self_made_functional_interface_can_be_called(@ForAll Random random) {
-		Arbitrary<Integer> integers = Arbitraries.constant(42);
+		Arbitrary<Integer> integers = Arbitraries.just(42);
 		Arbitrary<MyFunctionalInterface<String, String, Integer>> functions =
 			Functions.function(MyFunctionalInterface.class).returns(integers);
 
@@ -154,7 +154,7 @@ class FunctionsTests {
 
 	@Example
 	void functional_interfaces_and_SAM_types_are_accepted() {
-		Arbitrary<Integer> any = Arbitraries.constant(1);
+		Arbitrary<Integer> any = Arbitraries.just(1);
 
 		assertThat(Functions.function(Function.class).returns(any)).isNotNull();
 		assertThat(Functions.function(Supplier.class).returns(any)).isNotNull();
@@ -168,7 +168,7 @@ class FunctionsTests {
 
 	@Example
 	void non_functional_interfaces_are_not_accepted() {
-		Arbitrary<Integer> any = Arbitraries.constant(1);
+		Arbitrary<Integer> any = Arbitraries.just(1);
 
 		assertThatThrownBy(
 			() -> Functions.function(NotAFunctionalInterface.class).returns(any))

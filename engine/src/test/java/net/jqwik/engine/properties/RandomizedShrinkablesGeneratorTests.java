@@ -34,13 +34,13 @@ class RandomizedShrinkablesGeneratorTests {
 			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
 				Set<Arbitrary<?>> arbitraries = new HashSet<>();
 				if (parameter.getType().equals(String.class)) {
-					arbitraries.add(Arbitraries.constant("a"));
-					arbitraries.add(Arbitraries.constant("b"));
+					arbitraries.add(Arbitraries.just("a"));
+					arbitraries.add(Arbitraries.just("b"));
 				}
 				if (parameter.getType().equals(int.class)) {
-					arbitraries.add(Arbitraries.constant(1));
-					arbitraries.add(Arbitraries.constant(2));
-					arbitraries.add(Arbitraries.constant(3));
+					arbitraries.add(Arbitraries.just(1));
+					arbitraries.add(Arbitraries.just(2));
+					arbitraries.add(Arbitraries.just(3));
 				}
 				return arbitraries;
 			}
@@ -63,8 +63,8 @@ class RandomizedShrinkablesGeneratorTests {
 			@Override
 			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
 				Set<Arbitrary<?>> arbitraries = new HashSet<>();
-				arbitraries.add(Arbitraries.constant("a"));
-				arbitraries.add(Arbitraries.constant("b"));
+				arbitraries.add(Arbitraries.just("a"));
+				arbitraries.add(Arbitraries.just("b"));
 				return arbitraries;
 			}
 		};
@@ -84,8 +84,8 @@ class RandomizedShrinkablesGeneratorTests {
 			@Override
 			public Set<Arbitrary<?>> forParameter(MethodParameter parameter) {
 				Set<Arbitrary<?>> arbitraries = new HashSet<>();
-				Arbitrary<String> a = Arbitraries.constant("a");
-				Arbitrary<String> b = Arbitraries.constant("b");
+				Arbitrary<String> a = Arbitraries.just("a");
+				Arbitrary<String> b = Arbitraries.just("b");
 				if (parameter.getType() instanceof TypeVariable) {
 					arbitraries.add(a);
 					arbitraries.add(b);

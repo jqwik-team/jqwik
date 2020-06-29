@@ -58,7 +58,7 @@ class SizeProperties {
 
 	@Provide
 	Arbitrary<ActionSequence<Integer>> actions() {
-		return Arbitraries.sequences(Arbitraries.constant(model -> model + 1));
+		return Arbitraries.sequences(Arbitraries.just(model -> model + 1));
 	}
 
 }

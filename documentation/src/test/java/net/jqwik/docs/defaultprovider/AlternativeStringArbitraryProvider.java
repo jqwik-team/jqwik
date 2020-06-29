@@ -19,6 +19,6 @@ public class AlternativeStringArbitraryProvider implements ArbitraryProvider {
 
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		return Collections.singleton(Arbitraries.constant("A String"));
+		return Collections.singleton(Arbitraries.just("A String"));
 	}
 }

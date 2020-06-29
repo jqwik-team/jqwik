@@ -10,8 +10,6 @@
     - Give all implementors of StreamableArbitrary their own arbitrary type
         - Document Streamable arbitraries in user guide
         
-    - Deprecate Arbitraries.constant() for Arbitraries.just()
-    
 - 1.3.x
         
     - `@Report(reportOnlyFailures = false)`

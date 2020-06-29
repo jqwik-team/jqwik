@@ -96,7 +96,7 @@ class ActionSequenceShrinkingTests {
 	}
 
 	private Arbitrary<Action<String>> addX() {
-		return Arbitraries.constant(new Action<String>() {
+		return Arbitraries.just(new Action<String>() {
 			@Override
 			public String run(final String model) {
 				return model + "x";
@@ -110,7 +110,7 @@ class ActionSequenceShrinkingTests {
 	}
 
 	private Arbitrary<Action<String>> addYIfNotEmpty() {
-		return Arbitraries.constant(new Action<String>() {
+		return Arbitraries.just(new Action<String>() {
 			@Override
 			public boolean precondition(final String state) {
 				return !state.isEmpty();

@@ -105,7 +105,11 @@ public class JqwikActionsShrinkToNothing {
 
 	@Provide
 	Arbitrary<ActionSequence<MyStringStack>> sequences() {
-		return Arbitraries.sequences(Arbitraries.oneOf(push(), Arbitraries.constant(new PopAction())));
+		return Arbitraries.sequences(
+			Arbitraries.oneOf(
+				push(),
+				Arbitraries.just(new PopAction())
+			));
 	}
 
 	@Provide

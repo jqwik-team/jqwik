@@ -325,7 +325,7 @@ class PropertyMethodArbitraryResolverTests {
 			@Provide
 			Arbitrary<Thing> thingProviderWithTypeUsage(TypeUsage parameter) {
 				assertThat(parameter.isOfType(Thing.class));
-				return Arbitraries.constant(new Thing());
+				return Arbitraries.just(new Thing());
 			}
 
 			@Property
@@ -340,7 +340,7 @@ class PropertyMethodArbitraryResolverTests {
 			) {
 				assertThat(parameter.isOfType(Thing.class));
 				assertThat(SubtypeProvider.class.isAssignableFrom(subtypeProvider.getClass()));
-				return Arbitraries.constant(new Thing());
+				return Arbitraries.just(new Thing());
 			}
 
 			@Property
@@ -350,7 +350,7 @@ class PropertyMethodArbitraryResolverTests {
 
 			@Provide("aThingByValue")
 			Arbitrary<Thing> aThingy() {
-				return Arbitraries.constant(new Thing());
+				return Arbitraries.just(new Thing());
 			}
 
 			@Property
@@ -370,7 +370,7 @@ class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<Thing> byMethodName() {
-				return Arbitraries.constant(new Thing());
+				return Arbitraries.just(new Thing());
 			}
 
 			@Property
@@ -390,7 +390,7 @@ class PropertyMethodArbitraryResolverTests {
 
 			@Override
 			Arbitrary<Thing> thingFromSuper() {
-				return Arbitraries.constant(new Thing());
+				return Arbitraries.just(new Thing());
 			}
 
 			@Property
@@ -400,7 +400,7 @@ class PropertyMethodArbitraryResolverTests {
 
 			@MyProvide
 			Arbitrary<Thing> thingWithMetaAnnotation() {
-				return Arbitraries.constant(new Thing());
+				return Arbitraries.just(new Thing());
 			}
 
 			@Property
@@ -415,7 +415,7 @@ class PropertyMethodArbitraryResolverTests {
 
 			@Provide
 			Arbitrary<Thing> aThing() {
-				return Arbitraries.constant(new Thing());
+				return Arbitraries.just(new Thing());
 			}
 
 			@Group

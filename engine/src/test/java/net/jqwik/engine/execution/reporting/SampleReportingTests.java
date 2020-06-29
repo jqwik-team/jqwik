@@ -546,7 +546,7 @@ class SampleReportingTests {
 
 			@Example
 			void generatedStreamsCanBeReportedBeforeEvaluation(@ForAll Random random) {
-				Arbitrary<Stream<Integer>> streams = Arbitraries.constant(1).stream().ofSize(3);
+				Arbitrary<Stream<Integer>> streams = Arbitraries.just(1).stream().ofSize(3);
 				Stream<Integer> stream = streams.generator(10).next(random).value();
 
 				ValueReport report = ValueReport.of(stream);
@@ -555,7 +555,7 @@ class SampleReportingTests {
 
 			@Example
 			void generatedStreamsCanBeReportedWithoutEvaluation(@ForAll Random random) {
-				Arbitrary<Stream<Integer>> streams = Arbitraries.constant(1).stream().ofSize(3);
+				Arbitrary<Stream<Integer>> streams = Arbitraries.just(1).stream().ofSize(3);
 				Stream<Integer> stream = streams.generator(10).next(random).value();
 
 				ValueReport report = ValueReport.of(stream);

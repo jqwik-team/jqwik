@@ -93,12 +93,12 @@ class RateProviderContractProperties {
 	class SimpleRateProviderTests implements RateProviderContractTests<SimpleRateProvider> {
 		@Provide
 		Arbitrary<SimpleRateProvider> rateProvider() {
-			return Arbitraries.constant(new SimpleRateProvider());
+			return Arbitraries.just(new SimpleRateProvider());
 		}
 
 		class SimpleRateProviderDomain extends AbstractDomainContextBase {
 			public SimpleRateProviderDomain() {
-				registerArbitrary(SimpleRateProvider.class, Arbitraries.constant(new SimpleRateProvider()));
+				registerArbitrary(SimpleRateProvider.class, Arbitraries.just(new SimpleRateProvider()));
 			}
 		}
 

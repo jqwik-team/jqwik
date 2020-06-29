@@ -239,7 +239,7 @@ public interface Arbitrary<T> {
 			return this;
 		}
 		if (nullProbability >= 1.0) {
-			return Arbitraries.constant(null);
+			return Arbitraries.just(null);
 		}
 		return new Arbitrary<T>() {
 			@Override

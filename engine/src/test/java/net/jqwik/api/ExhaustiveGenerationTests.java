@@ -6,7 +6,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.*;
 import net.jqwik.api.arbitraries.*;
 
 import static java.util.Arrays.*;
@@ -961,7 +960,7 @@ class ExhaustiveGenerationTests {
 	@Example
 	@Label("Arbitraries.constant() returns the constant once")
 	void constant() {
-		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.constant("abc").exhaustive();
+		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.just("abc").exhaustive();
 		assertThat(optionalGenerator).isPresent();
 
 		ExhaustiveGenerator<String> generator = optionalGenerator.get();
@@ -1007,7 +1006,7 @@ class ExhaustiveGenerationTests {
 		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.oneOf(
 			Arbitraries.of("a", "b"),
 			Arbitraries.of("c", "d"),
-			Arbitraries.constant("e")
+			Arbitraries.just("e")
 		).exhaustive();
 		assertThat(optionalGenerator).isPresent();
 
@@ -1022,7 +1021,7 @@ class ExhaustiveGenerationTests {
 		Optional<ExhaustiveGenerator<String>> optionalGenerator = Arbitraries.frequencyOf(
 			Tuple.of(1, Arbitraries.of("a", "b")),
 			Tuple.of(2, Arbitraries.of("c", "d")),
-			Tuple.of(3, Arbitraries.constant("e"))
+			Tuple.of(3, Arbitraries.just("e"))
 		).exhaustive();
 		assertThat(optionalGenerator).isPresent();
 

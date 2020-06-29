@@ -462,7 +462,7 @@ class ArbitraryTests {
 
 		@Example
 		void tuple1() {
-			Arbitrary<Integer> integers = Arbitraries.constant(1);
+			Arbitrary<Integer> integers = Arbitraries.just(1);
 			Arbitrary<Tuple1<Integer>> tuple = integers.tuple1();
 
 			assertThat(tuple.sample()).isEqualTo(Tuple.of(1));

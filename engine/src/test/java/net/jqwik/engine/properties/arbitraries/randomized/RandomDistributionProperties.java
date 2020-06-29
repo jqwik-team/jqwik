@@ -55,8 +55,8 @@ public class RandomDistributionProperties {
 	@Provide
 	Arbitrary<RandomDistribution> distributions() {
 		return Arbitraries.oneOf(
-			Arbitraries.constant(RandomDistribution.uniform()),
-			Arbitraries.constant(RandomDistribution.biased()),
+				Arbitraries.just(RandomDistribution.uniform()),
+				Arbitraries.just(RandomDistribution.biased()),
 			Arbitraries.doubles().between(0.1, 5.0).ofScale(1).map(RandomDistribution::gaussian)
 		);
 	}

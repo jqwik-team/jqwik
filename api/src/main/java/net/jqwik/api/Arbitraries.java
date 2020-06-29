@@ -449,12 +449,26 @@ public class Arbitraries {
 
 	/**
 	 * Create an arbitrary that will always generate the same value.
+	 * 
+	 * @see #just(Object)
+	 *
+	 * @deprecated Use {@linkplain Arbitraries#just(Object)} instead. To be removed in version 2.0.
+	 *
+	 **/
+	@API(status = DEPRECATED, since = "1.3.2")
+	public static <T> Arbitrary<T> constant(T value) {
+		return just(value);
+	}
+
+	/**
+	 * Create an arbitrary that will always generate the same value.
 	 *
 	 * @param value The value to "generate"
 	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
 	 */
-	public static <T> Arbitrary<T> constant(T value) {
+	@API(status = MAINTAINED, since = "1.3.2")
+	public static <T> Arbitrary<T> just(T value) {
 		return fromGenerators(
 			random -> Shrinkable.unshrinkable(value),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(Arrays.asList(value), max),
@@ -464,7 +478,7 @@ public class Arbitraries {
 
 	/**
 	 * Create an arbitrary that will use a supplier to generate a value.
-	 * The difference to {@linkplain Arbitraries#constant(Object)} is that the value
+	 * The difference to {@linkplain Arbitraries#just(Object)} is that the value
 	 * is freshly generated for each try of a property.
 	 * <p>
 	 * For exhaustive shrinking all generated values are supposed to have identical behaviour,
@@ -477,9 +491,9 @@ public class Arbitraries {
 	@API(status = MAINTAINED, since = "1.1.1")
 	public static <T> Arbitrary<T> create(Supplier<T> supplier) {
 		return fromGenerators(
-			random -> Shrinkable.unshrinkable(supplier.get()),
+			random -> Shrinkable.supplyUnshrinkable(supplier),
 			max -> ArbitrariesFacade.implementation.exhaustiveCreate(supplier, max),
-			EdgeCases.fromSupplier(() -> Shrinkable.unshrinkable(supplier.get()))
+			EdgeCases.fromSupplier(() -> Shrinkable.supplyUnshrinkable(supplier))
 		);
 	}
 
@@ -674,7 +688,7 @@ public class Arbitraries {
 	 */
 	@API(status = MAINTAINED, since = "1.3.0")
 	public static Arbitrary<Void> nothing() {
-		return constant(null);
+		return just(null);
 	}
 
 }

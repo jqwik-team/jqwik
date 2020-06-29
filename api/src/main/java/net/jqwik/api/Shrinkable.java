@@ -36,6 +36,11 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return ShrinkableFacade.implementation.unshrinkable(() -> value, distance);
 	}
 
+	@API(status = INTERNAL)
+	static <T> Shrinkable<T> supplyUnshrinkable(Supplier<T> supplier) {
+		return ShrinkableFacade.implementation.unshrinkable(supplier, ShrinkingDistance.of(0));
+	}
+
 	T value();
 
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);

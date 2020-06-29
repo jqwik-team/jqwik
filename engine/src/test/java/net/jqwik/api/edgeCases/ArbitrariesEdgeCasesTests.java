@@ -73,7 +73,7 @@ class ArbitrariesEdgeCasesTests {
 	@Example
 	@Label("Arbitraries.constant(value)")
 	void constant() {
-		Arbitrary<String> arbitrary = Arbitraries.constant("abc");
+		Arbitrary<String> arbitrary = Arbitraries.just("abc");
 		EdgeCases<String> edgeCases = arbitrary.edgeCases();
 		assertThat(values(edgeCases)).containsExactly("abc");
 		// make sure edge cases can be repeatedly generated

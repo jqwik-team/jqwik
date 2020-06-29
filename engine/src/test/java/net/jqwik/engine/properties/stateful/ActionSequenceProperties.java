@@ -61,15 +61,15 @@ class ActionSequenceProperties {
 	}
 
 	private Arbitrary<Action<String>> addX() {
-		return Arbitraries.constant(model -> model + "x");
+		return Arbitraries.just(model -> model + "x");
 	}
 
 	private Arbitrary<Action<String>> addY() {
-		return Arbitraries.constant(model -> model + "y");
+		return Arbitraries.just(model -> model + "y");
 	}
 
 	private Arbitrary<Action<String>> addZ() {
-		return Arbitraries.constant(new Action<String>() {
+		return Arbitraries.just(new Action<String>() {
 			@Override
 			public boolean precondition(String state) {
 				return false;
@@ -81,7 +81,7 @@ class ActionSequenceProperties {
 	}
 
 	private Arbitrary<Action<String>> error() {
-		return Arbitraries.constant(model -> {
+		return Arbitraries.just(model -> {
 			throw new AssertionError("test");
 		});
 	}

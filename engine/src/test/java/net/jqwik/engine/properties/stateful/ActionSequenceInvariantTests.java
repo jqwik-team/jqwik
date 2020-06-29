@@ -35,7 +35,7 @@ class ActionSequenceInvariantTests {
 	}
 
 	private Arbitrary<Action<MyModel>> nullify() {
-		return Arbitraries.constant(model -> model.setValue(null));
+		return Arbitraries.just(model -> model.setValue(null));
 	}
 
 	static class MyModel {

@@ -22,11 +22,11 @@ class MyStringStackProperties {
 	}
 
 	private Arbitrary<Action<MyStringStack>> clear() {
-		return Arbitraries.constant(new ClearAction());
+		return Arbitraries.just(new ClearAction());
 	}
 
 	private Arbitrary<Action<MyStringStack>> pop() {
-		return Arbitraries.constant(new PopAction());
+		return Arbitraries.just(new PopAction());
 	}
 
 
