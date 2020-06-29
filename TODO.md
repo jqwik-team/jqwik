@@ -1,10 +1,17 @@
 - 1.3.2
 
-    - Specify size distribution of collection arbitraries
-    
+    - Inject parameter of type Reporter (move to net.jqwik.api)
+        - Reporter.void publishReport(String key, Object objectToReport);
+        - Document reporter in user guide
+
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
+    - Give all implementors of StreamableArbitrary their own arbitrary type
+        - Document Streamable arbitraries in user guide
+    
+- 1.3.x
+        
     - `@Report(reportOnlyFailures = false)`
 
     - Guided Generation
@@ -12,12 +19,6 @@
       - Maybe change AroundTryHook to allow replacement of `Random` source
       - Or: Introduce ProvideGenerationSourceHook
       
-    - Give all implementors of StreamableArbitrary their own arbitrary type
-    
-    - Document Streamable arbitraries in user guide
-    
-- 1.3.x
-        
     - Re-implement shrinking so that it handles mutable objects correctly
     
     - Edge Cases

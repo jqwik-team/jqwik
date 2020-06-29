@@ -121,14 +121,9 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Reporting.ARBITRARIES|GENERATORS: report for each property which arbitraries are used.
   - Requires Arbitrary.describe() or something similar
 
-- Reporter.report(key, value)
-
 - Additional reporting data, e.g.
   - Typical runtimes: ~ 1m
   - Fraction of time spent in data generation: ~ 12%
-
-- Record/report generated values by parameter name,
-  plus allow label for generated parameter like that: @ForAll(label = "first“)
 
 
 ### Properties

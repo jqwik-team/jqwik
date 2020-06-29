@@ -191,6 +191,7 @@ class SampleReportingTests {
 		@Group
 		class CircularDependencies {
 
+			@SuppressWarnings("CollectionAddedToSelf")
 			@Example
 			void listWithItselfInIt() {
 				List<Object> aList = new ArrayList<>();
