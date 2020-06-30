@@ -50,6 +50,8 @@ and
 
 - `Arbitrary.list()` now has return type `net.jqwik.api.arbitraries.ListArbitrary`
 
+- `net.jqwik.api.lifecycle.Reporter` moved to `net.jqwik.api.Reporter`
+
 #### Bug Fixes
 
 - Reporting samples with circular dependencies [does no longer throw

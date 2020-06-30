@@ -145,7 +145,7 @@ class CheckedPropertyTests {
 				lifecycleContextForMethod("stringProp", String.class)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 			assertThat(check.checkStatus()).isEqualTo(FAILED);
 			assertThat(check.throwable()).isPresent();
 			assertThat(check.throwable().get()).isInstanceOf(CannotFindArbitraryException.class);
@@ -163,7 +163,7 @@ class CheckedPropertyTests {
 				lifecycleContextForMethod("prop1", int.class)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 			assertThat(check.randomSeed()).isEqualTo("414243");
 			assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 
@@ -171,7 +171,7 @@ class CheckedPropertyTests {
 
 			// Generate once more
 			allGeneratedInts.clear();
-			checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			checkedProperty.check(new Reporting[0]);
 
 			assertThat(allGeneratedInts).isEqualTo(generatedAtFirstAttempt);
 		}
@@ -192,7 +192,7 @@ class CheckedPropertyTests {
 				lifecycleContextForMethod("prop1", int.class)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 			assertThat(check.randomSeed()).isEqualTo("101010");
 		}
 
@@ -212,7 +212,7 @@ class CheckedPropertyTests {
 				lifecycleContextForMethod("prop1", int.class)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 			assertThat(check.randomSeed()).isNotEqualTo("101010");
 		}
 
@@ -232,7 +232,7 @@ class CheckedPropertyTests {
 				lifecycleContextForMethod("prop1", int.class)
 			);
 
-			PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 			assertThat(check.randomSeed()).isEqualTo("4242");
 		}
 
@@ -253,7 +253,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
@@ -274,7 +274,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.DATA_DRIVEN);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
@@ -292,7 +292,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(new Reporting[0])).isInstanceOf(JqwikException.class);
 			}
 
 			@Example
@@ -306,7 +306,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(new Reporting[0])).isInstanceOf(JqwikException.class);
 			}
 
 			@Example
@@ -320,7 +320,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("dataDrivenProperty", int.class, String.class)
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(new Reporting[0])).isInstanceOf(JqwikException.class);
 			}
 		}
 
@@ -340,7 +340,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
@@ -358,7 +358,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(99);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
@@ -377,7 +377,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.EXHAUSTIVE);
 				assertThat(check.countTries()).isEqualTo(3);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
@@ -395,7 +395,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
-				assertThatThrownBy(() -> checkedProperty.check(NULL_PUBLISHER, new Reporting[0])).isInstanceOf(JqwikException.class);
+				assertThatThrownBy(() -> checkedProperty.check(new Reporting[0])).isInstanceOf(JqwikException.class);
 			}
 
 			@Example
@@ -409,7 +409,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
 				assertThat(check.countTries()).isEqualTo(20);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
@@ -426,7 +426,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("exhaustiveProperty", int.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.generation()).isEqualTo(GenerationMode.RANDOMIZED);
 				assertThat(check.countTries()).isEqualTo(20);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
@@ -450,7 +450,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("sampleProperty", int.class, int.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.countTries()).isEqualTo(1);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(check.falsifiedSample()).isEmpty();
@@ -469,7 +469,7 @@ class CheckedPropertyTests {
 					lifecycleContextForMethod("sampleProperty", int.class, int.class)
 				);
 
-				PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+				PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 				assertThat(check.countTries()).isEqualTo(10);
 				assertThat(check.checkStatus()).isEqualTo(SUCCESSFUL);
 				assertThat(check.falsifiedSample()).isEmpty();
@@ -512,7 +512,7 @@ class CheckedPropertyTests {
 			aConfig().build(),
 			lifecycleContextForMethod(methodName, parameterTypes)
 		);
-		PropertyCheckResult check = checkedProperty.check(NULL_PUBLISHER, new Reporting[0]);
+		PropertyCheckResult check = checkedProperty.check(new Reporting[0]);
 		assertThat(check.checkStatus()).isEqualTo(expectedStatus);
 	}
 

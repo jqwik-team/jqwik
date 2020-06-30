@@ -3,7 +3,6 @@ package net.jqwik.engine.execution.reporting;
 import java.lang.reflect.*;
 import java.util.*;
 
-import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -12,7 +11,7 @@ import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.support.*;
 
-public class ExecutionResultReportEntry {
+public class ExecutionResultReport {
 
 	private static final String TRIES_KEY = "tries";
 	private static final String CHECKS_KEY = "checks";
@@ -25,20 +24,18 @@ public class ExecutionResultReportEntry {
 	private static final String SAMPLE_HEADLINE = "Sample";
 	private static final String ORIGINAL_SAMPLE_HEADLINE = "Original Sample";
 
-	public static ReportEntry from(
+	public static String from(
 		PropertyMethodDescriptor methodDescriptor,
 		ExtendedPropertyExecutionResult executionResult
 	) {
 		return buildJqwikReport(
-			methodDescriptor.extendedLabel(),
 			methodDescriptor.getConfiguration().getAfterFailureMode(),
 			methodDescriptor.getTargetMethod(),
 			executionResult
 		);
 	}
 
-	private static ReportEntry buildJqwikReport(
-		String propertyName,
+	private static String buildJqwikReport(
 		AfterFailureMode afterFailureMode,
 		Method propertyMethod,
 		ExtendedPropertyExecutionResult executionResult
@@ -49,7 +46,7 @@ public class ExecutionResultReportEntry {
 		appendFixedSizedProperties(reportLines, executionResult, afterFailureMode);
 		appendSamples(reportLines, propertyMethod, executionResult);
 
-		return ReportEntry.from(propertyName, reportLines.toString());
+		return reportLines.toString();
 	}
 
 	private static void appendSamples(

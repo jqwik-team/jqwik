@@ -8,26 +8,31 @@ public class SampleReporter {
 
 	private static final int MAX_LINE_LENGTH = 100;
 
-	public static void reportSample(
+	static void reportSample(
 		StringBuilder reportLines,
 		Method propertyMethod,
 		List<Object> sample,
 		String headline
 	) {
-		List<String> parameterNames = Arrays.stream(propertyMethod.getParameters())
-											.map(Parameter::getName)
-											.collect(Collectors.toList());
-
-		Map<String, Object> reports = createReports(sample, parameterNames);
+		Map<String, Object> reports = createSampleReports(propertyMethod, sample);
 		SampleReporter sampleReporter = new SampleReporter(headline, reports);
 		LineReporter lineReporter = new LineReporterImpl(reportLines);
 		sampleReporter.reportTo(lineReporter);
 	}
 
-	private static Map<String, Object> createReports(final List<Object> sample, final List<String> parameterNames) {
-		if (sample.size() != parameterNames.size()) {
+	public static Map<String, Object> createSampleReports(Method propertyMethod, List<Object> sample) {
+		if (sample.size() != propertyMethod.getParameters().length) {
 			throw new IllegalArgumentException("Number of sample parameters must be equal to number of parameter names");
 		}
+
+		List<String> parameterNames = Arrays.stream(propertyMethod.getParameters())
+											.map(Parameter::getName)
+											.collect(Collectors.toList());
+
+		return createReports(sample, parameterNames);
+	}
+
+	private static Map<String, Object> createReports(List<Object> sample, List<String> parameterNames) {
 		LinkedHashMap<String, Object> samples = new LinkedHashMap<>();
 		for (int i = 0; i < sample.size(); i++) {
 			String parameterName = parameterNames.get(i);

@@ -4,8 +4,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.engine.reporting.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
@@ -53,10 +51,11 @@ public class CheckedProperty {
 		return propertyParameters.stream().filter(parameter -> parameter.isAnnotated(ForAll.class)).collect(Collectors.toList());
 	}
 
-	public PropertyCheckResult check(Consumer<ReportEntry> publisher, Reporting[] reporting) {
+	public PropertyCheckResult check(Reporting[] reporting) {
 		PropertyConfiguration effectiveConfiguration = configurationWithEffectiveSeed();
 		try {
-			return createGenericProperty(effectiveConfiguration).check(publisher, reporting);
+			Reporter reporter = propertyLifecycleContext.reporter();
+			return createGenericProperty(effectiveConfiguration).check(reporter, reporting);
 		} catch (CannotFindArbitraryException cannotFindArbitraryException) {
 			return PropertyCheckResult.failed(
 				effectiveConfiguration.getStereotype(), propertyName, 0, 0,

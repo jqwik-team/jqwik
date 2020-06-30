@@ -1,11 +1,9 @@
 package net.jqwik.engine.execution;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
-import org.junit.platform.engine.reporting.*;
 import org.opentest4j.*;
 
 import net.jqwik.api.*;
@@ -37,11 +35,11 @@ public class PropertyMethodExecutor {
 		this.reportOnlyFailures = reportOnlyFailures;
 	}
 
-	public PropertyExecutionResult execute(LifecycleHooksSupplier lifecycleSupplier, PropertyExecutionListener listener) {
+	public PropertyExecutionResult execute(LifecycleHooksSupplier lifecycleSupplier) {
 		try {
 			DomainContext domainContext = combineDomainContexts(methodDescriptor.getDomains());
 			DomainContextFacadeImpl.setCurrentContext(domainContext);
-			return executePropertyMethod(lifecycleSupplier, listener);
+			return executePropertyMethod(lifecycleSupplier);
 		} finally {
 			DomainContextFacadeImpl.removeCurrentContext();
 		}
@@ -78,8 +76,7 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private PropertyExecutionResult executePropertyMethod(LifecycleHooksSupplier lifecycleSupplier, PropertyExecutionListener listener) {
-		Consumer<ReportEntry> publisher = (ReportEntry entry) -> listener.reportingEntryPublished(methodDescriptor, entry);
+	private PropertyExecutionResult executePropertyMethod(LifecycleHooksSupplier lifecycleSupplier) {
 		AroundPropertyHook aroundProperty = lifecycleSupplier.aroundPropertyHook(methodDescriptor);
 		AroundTryHook aroundTry = lifecycleSupplier.aroundTryHook(methodDescriptor);
 		ResolveParameterHook resolveParameter = lifecycleSupplier.resolveParameterHook(methodDescriptor);
@@ -88,7 +85,7 @@ public class PropertyMethodExecutor {
 		try {
 			propertyExecutionResult = aroundProperty.aroundProperty(
 				propertyLifecycleContext,
-				() -> executeMethod(publisher, aroundTry, resolveParameter)
+				() -> executeMethod(aroundTry, resolveParameter)
 			);
 		} catch (Throwable throwable) {
 			JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
@@ -99,17 +96,16 @@ public class PropertyMethodExecutor {
 		}
 		StoreRepository.getCurrent().finishProperty(methodDescriptor);
 		StoreRepository.getCurrent().finishScope(methodDescriptor);
-		reportResult(publisher, propertyExecutionResult);
+		reportResult(propertyLifecycleContext.reporter(), propertyExecutionResult);
 		return propertyExecutionResult;
 	}
 
 	private ExtendedPropertyExecutionResult executeMethod(
-		Consumer<ReportEntry> publisher,
 		AroundTryHook aroundTry,
 		ResolveParameterHook resolveParameter
 	) {
 		try {
-			return executeProperty(publisher, aroundTry, resolveParameter);
+			return executeProperty(aroundTry, resolveParameter);
 		} catch (TestAbortedException e) {
 			return PlainExecutionResult.aborted(e, methodDescriptor.getConfiguration().getSeed());
 		} catch (Throwable t) {
@@ -118,32 +114,28 @@ public class PropertyMethodExecutor {
 		}
 	}
 
-	private PropertyCheckResult executeProperty(
-		Consumer<ReportEntry> publisher,
-		AroundTryHook aroundTry,
-		ResolveParameterHook resolveParameter
-	) {
+	private PropertyCheckResult executeProperty(AroundTryHook aroundTry, ResolveParameterHook resolveParameter) {
 		CheckedProperty property = checkedPropertyFactory.fromDescriptor(
 			methodDescriptor,
 			propertyLifecycleContext,
 			aroundTry,
 			resolveParameter
 		);
-		return property.check(publisher, methodDescriptor.getReporting());
+		return property.check(methodDescriptor.getReporting());
 	}
 
-	private void reportResult(Consumer<ReportEntry> publisher, PropertyExecutionResult executionResult) {
+	private void reportResult(Reporter reporter, PropertyExecutionResult executionResult) {
 		if (executionResult.status() == PropertyExecutionResult.Status.SUCCESSFUL && reportOnlyFailures) {
 			return;
 		}
 
 		if (executionResult instanceof ExtendedPropertyExecutionResult) {
 			if (isReportWorthy((ExtendedPropertyExecutionResult) executionResult)) {
-				ReportEntry reportEntry = ExecutionResultReportEntry.from(
+				String reportEntry = ExecutionResultReport.from(
 					methodDescriptor,
 					(ExtendedPropertyExecutionResult) executionResult
 				);
-				publisher.accept(reportEntry);
+				reporter.publishValue(methodDescriptor.extendedLabel(), reportEntry);
 			}
 		} else {
 			String message = String.format("Unknown PropertyExecutionResult implementation: %s", executionResult.getClass());

@@ -41,7 +41,7 @@ class GenericPropertyTests {
 
 			PropertyConfiguration configuration = aConfig().withTries(2).build();
 			GenericProperty property = new GenericProperty("satisfied property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(2);
 
@@ -60,7 +60,7 @@ class GenericPropertyTests {
 			GenericProperty property =
 				new GenericProperty("finite property", aConfig()
 														   .build(), shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(3);
 
@@ -87,7 +87,7 @@ class GenericPropertyTests {
 					forAllFunction,
 					tryLifecycleContextSupplier
 				);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(5);
 
@@ -114,7 +114,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().withShrinking(OFF).build();
 			GenericProperty property =
 				new GenericProperty("falsified property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry); // If shrunk number would be higher
 			assertThat(result.falsifiedSample().get()).containsExactly(failingTry);
@@ -134,7 +134,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
 				new GenericProperty("falsified property", configuration, shrinkablesGenerator, forAllSpy, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllSpy.countCalls()).isEqualTo(5);
 			assertThat(result.falsifiedSample()).isPresent();
@@ -155,7 +155,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
 				new GenericProperty("falsified property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(1);
 
@@ -184,7 +184,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
 				new GenericProperty("erroneous property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(1);
 
@@ -216,7 +216,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().withTries(10).build();
 			GenericProperty property =
 				new GenericProperty("satisfied property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
 
@@ -238,7 +238,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().withTries(10).build();
 			GenericProperty property =
 				new GenericProperty("exhausted property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(10);
 
@@ -265,7 +265,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().withTries(20).withMaxDiscardRatio(maxDiscardRatio).build();
 			GenericProperty property =
 				new GenericProperty("exhausted property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.EXHAUSTED);
 			assertThat(result.countTries()).isEqualTo(20);
@@ -288,7 +288,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
 				new GenericProperty("erroneous property", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
 			assertThat(result.countTries()).isEqualTo(erroneousTry);
@@ -310,7 +310,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
 				new GenericProperty("falsified property", configuration, shrinkablesGenerator, checkedFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("falsified property");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
@@ -334,7 +334,7 @@ class GenericPropertyTests {
 			GenericProperty property =
 				new GenericProperty("satisfied property", configuration, emptyShrinkablesGenerator(), forAllFunction, tryLifecycleContextSupplier);
 
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("satisfied property");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
@@ -352,7 +352,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
 				new GenericProperty("failing property", configuration, emptyShrinkablesGenerator(), forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
@@ -374,7 +374,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().build();
 			GenericProperty property =
 				new GenericProperty("failing property", configuration, emptyShrinkablesGenerator(), forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("failing property");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);
@@ -409,7 +409,7 @@ class GenericPropertyTests {
 			PropertyConfiguration configuration = aConfig().withTries(5).build();
 			GenericProperty property =
 				new GenericProperty("property with 2", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("property with 2");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
@@ -439,7 +439,7 @@ class GenericPropertyTests {
 			GenericProperty property =
 				new GenericProperty("property with 4", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
 
-			PropertyCheckResult result = property.check(NULL_PUBLISHER, new Reporting[0]);
+			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
 
 			assertThat(result.propertyName()).isEqualTo("property with 4");
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.FAILED);

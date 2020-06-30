@@ -1,11 +1,8 @@
 package net.jqwik.engine.properties;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
-
-import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -38,7 +35,7 @@ public class GenericProperty {
 		this.tryLifecycleContextSupplier = tryLifecycleContextSupplier;
 	}
 
-	public PropertyCheckResult check(Consumer<ReportEntry> reporter, Reporting[] reporting) {
+	public PropertyCheckResult check(Reporter reporter, Reporting[] reporting) {
 		int maxTries = configuration.getTries();
 		int countChecks = 0;
 		int countTries = 0;
@@ -120,28 +117,14 @@ public class GenericProperty {
 	private TryExecutionResult testPredicate(
 		TryLifecycleContext tryLifecycleContext,
 		List<Object> sample,
-		Consumer<ReportEntry> reporter,
+		Reporter reporter,
 		Reporting[] reporting
 	) {
 		if (Reporting.GENERATED.containedIn(reporting)) {
-			String sampleReport = sampleReport(tryLifecycleContext.targetMethod(), sample);
-			reporter.accept(ReportEntry.from("generated", sampleReport));
+			Map<String, Object> reports = SampleReporter.createSampleReports(tryLifecycleContext.targetMethod(), sample);
+			reporter.publishReports("generated", reports);
 		}
 		return tryLifecycleExecutor.execute(tryLifecycleContext, sample);
-	}
-
-	private String sampleReport(Method method, List<Object> sample) {
-		StringBuilder stringBuilder = new StringBuilder();
-		SampleReporter.reportSample(stringBuilder, method, sample, null);
-		removeTrailingNewLine(stringBuilder);
-		return stringBuilder.toString();
-	}
-
-	private void removeTrailingNewLine(final StringBuilder stringBuilder) {
-		int lastNewLine = stringBuilder.lastIndexOf(String.format("%n"));
-		if (lastNewLine + 1 == stringBuilder.length()) {
-			stringBuilder.replace(lastNewLine, lastNewLine + 1, "");
-		}
 	}
 
 	private boolean maxDiscardRatioExceeded(int countChecks, int countTries, int maxDiscardRatio) {
@@ -154,12 +137,12 @@ public class GenericProperty {
 	}
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
-		Consumer<ReportEntry> reporter, Reporting[] reporting, int countChecks,
+		Reporter reporter, Reporting[] reporting, int countChecks,
 		int countTries, List<Shrinkable<Object>> shrinkables, List<Object> originalSample, Optional<Throwable> optionalThrowable
 	) {
 		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, optionalThrowable.orElse(null));
 		List<Object> shrunkSample = shrinkingResult.steps() > 0 ? shrinkingResult.sample() : originalSample;
-		Throwable throwable = shrinkingResult.steps() > 0 ? shrinkingResult.throwable().orElse(null): optionalThrowable.orElse(null);
+		Throwable throwable = shrinkingResult.steps() > 0 ? shrinkingResult.throwable().orElse(null) : optionalThrowable.orElse(null);
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
@@ -168,7 +151,7 @@ public class GenericProperty {
 	}
 
 	private PropertyShrinkingResult shrink(
-		Consumer<ReportEntry> reporter,
+		Reporter reporter,
 		Reporting[] reporting,
 		List<Shrinkable<Object>> shrinkables,
 		Throwable exceptionOrAssertionError
@@ -184,15 +167,14 @@ public class GenericProperty {
 		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
 	}
 
-	private Consumer<List<Object>> createFalsifiedSampleReporter(Consumer<ReportEntry> reporter, Reporting[] reporting) {
+	private Consumer<List<Object>> createFalsifiedSampleReporter(Reporter reporter, Reporting[] reporting) {
 		return sample -> {
-				if (Reporting.FALSIFIED.containedIn(reporting)) {
-					TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
-					String sampleReport = sampleReport(tryLifecycleContext.targetMethod(), sample);
-					ReportEntry falsifiedEntry = ReportEntry.from("falsified", sampleReport);
-					reporter.accept(falsifiedEntry);
-				}
-			};
+			if (Reporting.FALSIFIED.containedIn(reporting)) {
+				TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
+				Map<String, Object> reports = SampleReporter.createSampleReports(tryLifecycleContext.targetMethod(), sample);
+				reporter.publishReports("falsified", reports);
+			}
+		};
 	}
 
 	private Falsifier<List<Object>> createFalsifier(Supplier<TryLifecycleContext> tryLifecycleContext, TryLifecycleExecutor tryExecutor) {

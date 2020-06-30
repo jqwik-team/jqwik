@@ -5,8 +5,6 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.engine.reporting.*;
-
 import net.jqwik.api.*;
 
 public class PropertyShrinker {
@@ -15,13 +13,13 @@ public class PropertyShrinker {
 
 	private final List<Shrinkable<Object>> parameters;
 	private final ShrinkingMode shrinkingMode;
-	private final Consumer<ReportEntry> reporter;
+	private final Reporter reporter;
 	private final Consumer<List<Object>> falsifiedSampleReporter;
 
 	public PropertyShrinker(
 		List<Shrinkable<Object>> parameters,
 		ShrinkingMode shrinkingMode,
-		Consumer<ReportEntry> reporter,
+		Reporter reporter,
 		Consumer<List<Object>> falsifiedSampleReporter
 	) {
 		this.parameters = parameters;
@@ -85,7 +83,7 @@ public class PropertyShrinker {
 				"%n  You can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
 			steps
 		);
-		reporter.accept(ReportEntry.from("shrinking bound reached", value));
+		reporter.publishValue("shrinking bound reached", value);
 	}
 
 }

@@ -3,7 +3,6 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.function.*;
 
-import org.junit.platform.engine.reporting.*;
 import org.mockito.*;
 
 import net.jqwik.api.*;
@@ -20,7 +19,7 @@ import static org.mockito.Mockito.*;
 class PropertyShrinkerTests {
 
 	@SuppressWarnings("unchecked")
-	private final Consumer<ReportEntry> reporter = Mockito.mock(Consumer.class);
+	private final Reporter reporter = Mockito.mock(Reporter.class);
 	@SuppressWarnings("unchecked")
 	private final Consumer<List<Object>> falsifiedSampleReporter = Mockito.mock(Consumer.class);
 
@@ -145,10 +144,7 @@ class PropertyShrinkerTests {
 
 		assertThat(result.sample()).isEqualTo(asList(0, 900));
 
-		ArgumentCaptor<ReportEntry> entryCaptor = ArgumentCaptor.forClass(ReportEntry.class);
-		verify(reporter, times(1)).accept(entryCaptor.capture());
-
-		assertThat(entryCaptor.getValue().getKeyValuePairs()).containsKeys("shrinking bound reached");
+		verify(reporter, times(1)).publishValue(eq("shrinking bound reached"), anyString());
 	}
 
 	private List<Shrinkable<Object>> toList(int i, int i2) {

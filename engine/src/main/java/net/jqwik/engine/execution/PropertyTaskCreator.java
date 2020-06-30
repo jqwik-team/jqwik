@@ -53,7 +53,7 @@ class PropertyTaskCreator {
 
 				listener.executionStarted(methodDescriptor);
 				PropertyExecutionResult executionResult = executeTestMethod(
-					methodDescriptor, propertyLifecycleContext, lifecycleSupplier, listener, reportOnlyFailures
+					methodDescriptor, propertyLifecycleContext, lifecycleSupplier, reportOnlyFailures
 				);
 				listener.executionFinished(methodDescriptor, executionResult);
 
@@ -122,11 +122,10 @@ class PropertyTaskCreator {
 		PropertyMethodDescriptor methodDescriptor,
 		PropertyLifecycleContext propertyLifecycleContext,
 		LifecycleHooksSupplier lifecycleSupplier,
-		PropertyExecutionListener listener,
 		boolean reportOnlyFailures
 	) {
 		PropertyMethodExecutor executor = new PropertyMethodExecutor(methodDescriptor, propertyLifecycleContext, reportOnlyFailures);
-		return executor.execute(lifecycleSupplier, listener);
+		return executor.execute(lifecycleSupplier);
 	}
 
 }
