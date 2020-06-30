@@ -94,7 +94,7 @@ class AroundPropertyHookExamples implements AutoCloseable {
 			long before = System.currentTimeMillis();
 			PropertyExecutionResult executionResult = property.execute();
 			long after = System.currentTimeMillis();
-			context.reporter().publish("time", String.format("%d ms", after - before));
+			context.reporter().publishValue("time", String.format("%d ms", after - before));
 			return executionResult;
 		}
 	}

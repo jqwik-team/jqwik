@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.apiguardian.api.*;
 
+import net.jqwik.api.*;
+
 import static org.apiguardian.api.API.Status.*;
 
 /**
@@ -86,7 +88,7 @@ public interface LifecycleContext {
 	 * @param executable The executable of the test container the parameter of which should be resolved
 	 * @param index      The parameter's position in a method - starting with 0.
 	 * @return supplier instance
-	 * @throws CannotResolveParameterException
+	 * @throws CannotResolveParameterException if parameter cannot be resolved
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.5")
 	Optional<ResolveParameterHook.ParameterSupplier> resolveParameter(Executable executable, int index);

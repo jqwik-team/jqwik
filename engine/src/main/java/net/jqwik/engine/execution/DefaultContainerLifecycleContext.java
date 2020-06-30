@@ -3,6 +3,7 @@ package net.jqwik.engine.execution;
 import java.lang.reflect.*;
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.ResolveParameterHook.*;
 import net.jqwik.engine.descriptor.*;

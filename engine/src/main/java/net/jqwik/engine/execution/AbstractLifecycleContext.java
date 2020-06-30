@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.junit.platform.commons.support.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
 abstract class AbstractLifecycleContext implements LifecycleContext {

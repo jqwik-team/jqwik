@@ -3,6 +3,7 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.api.statistics.StatisticsReport.*;

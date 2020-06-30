@@ -3,7 +3,6 @@ package net.jqwik.engine.hooks.statistics;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 
 public class StatisticsPublisher {
@@ -44,7 +43,7 @@ public class StatisticsPublisher {
 		if (report.isEmpty()) {
 			return;
 		}
-		reporter.publish(reportEntry.get1(), reportEntry.get2());
+		reporter.publishValue(reportEntry.get1(), reportEntry.get2());
 	}
 
 	private String createReport() {

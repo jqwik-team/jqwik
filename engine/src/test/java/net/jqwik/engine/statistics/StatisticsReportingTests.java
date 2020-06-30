@@ -3,7 +3,6 @@ package net.jqwik.engine.statistics;
 import java.util.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.statistics.*;
 import net.jqwik.engine.hooks.statistics.*;
 
@@ -21,9 +20,14 @@ class StatisticsReportingTests {
 		private String publishedReport;
 
 		@Override
-		public void publish(String key, String value) {
+		public void publishValue(String key, String value) {
 			this.publishedKey = key;
 			this.publishedReport = value;
+		}
+
+		@Override
+		public void publishReport(String key, Object object) {
+			throw new UnsupportedOperationException();
 		}
 
 		@Example

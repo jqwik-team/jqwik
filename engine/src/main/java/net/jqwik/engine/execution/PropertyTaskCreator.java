@@ -3,7 +3,6 @@ package net.jqwik.engine.execution;
 import java.lang.reflect.*;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.reporting.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -11,6 +10,7 @@ import net.jqwik.api.lifecycle.SkipExecutionHook.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
+import net.jqwik.engine.execution.reporting.*;
 import net.jqwik.engine.support.*;
 
 class PropertyTaskCreator {
@@ -33,7 +33,7 @@ class PropertyTaskCreator {
 
 				try {
 					ResolveParameterHook resolveParameterHook = lifecycleSupplier.resolveParameterHook(methodDescriptor);
-					Reporter reporter = (key, value) -> listener.reportingEntryPublished(methodDescriptor, ReportEntry.from(key, value));
+					Reporter reporter = new DefaultReporter(listener::reportingEntryPublished, methodDescriptor);
 					Object testInstance = createTestInstance(methodDescriptor, lifecycleSupplier, reporter);
 					propertyLifecycleContext = new DefaultPropertyLifecycleContext(methodDescriptor, testInstance, reporter, resolveParameterHook);
 

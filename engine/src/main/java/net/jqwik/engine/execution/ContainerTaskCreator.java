@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.stream.*;
 
 import org.junit.platform.engine.*;
-import org.junit.platform.engine.reporting.*;
 import org.junit.platform.engine.support.descriptor.*;
 
 import net.jqwik.api.*;
@@ -12,6 +11,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.pipeline.*;
+import net.jqwik.engine.execution.reporting.*;
 import net.jqwik.engine.support.*;
 
 class ContainerTaskCreator {
@@ -24,8 +24,7 @@ class ContainerTaskCreator {
 		PropertyExecutionListener propertyExecutionListener
 	) {
 
-		Reporter reporter = (key, value) -> propertyExecutionListener
-												.reportingEntryPublished(containerDescriptor, ReportEntry.from(key, value));
+		Reporter reporter = new DefaultReporter(propertyExecutionListener::reportingEntryPublished, containerDescriptor);
 
 		ContainerLifecycleContext containerLifecycleContext = createLifecycleContext(containerDescriptor, reporter, lifecycleSupplier);
 

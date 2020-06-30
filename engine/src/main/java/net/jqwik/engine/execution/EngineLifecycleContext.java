@@ -5,12 +5,13 @@ import java.util.*;
 
 import org.junit.platform.engine.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
 public class EngineLifecycleContext extends AbstractLifecycleContext implements ContainerLifecycleContext {
 
-	private TestDescriptor engineDescriptor;
+	private final TestDescriptor engineDescriptor;
 
 	public EngineLifecycleContext(TestDescriptor engineDescriptor, Reporter reporter, ResolveParameterHook resolveParameterHook) {
 		super(reporter);

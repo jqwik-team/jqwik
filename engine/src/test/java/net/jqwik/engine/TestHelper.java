@@ -12,6 +12,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.execution.*;
 import net.jqwik.engine.execution.lifecycle.*;
+import net.jqwik.engine.execution.reporting.*;
 import net.jqwik.engine.support.*;
 
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
@@ -26,7 +27,12 @@ public class TestHelper {
 		PropertyMethodDescriptor methodDescriptor =
 			(PropertyMethodDescriptor) TestDescriptorBuilder.forMethod(containerClass, methodName, parameterTypes).build();
 		Object instance = JqwikReflectionSupport.newInstanceWithDefaultConstructor(containerClass);
-		return new DefaultPropertyLifecycleContext(methodDescriptor, instance, (key, value) -> {}, ResolveParameterHook.DO_NOT_RESOLVE);
+		return new DefaultPropertyLifecycleContext(
+			methodDescriptor,
+			instance,
+			new DefaultReporter((key, value) -> {}, methodDescriptor),
+			ResolveParameterHook.DO_NOT_RESOLVE
+		);
 	}
 
 	public static List<MethodParameter> getParametersFor(Class<?> aClass, String methodName) {
@@ -103,6 +109,18 @@ public class TestHelper {
 		return getParameters(methodDescriptor.getTargetMethod(), methodDescriptor.getContainerClass());
 	}
 
+	public static Reporter reporter() {
+		return new Reporter() {
+			@Override
+			public void publishValue(final String key, final String value) {
+			}
+
+			@Override
+			public void publishReport(final String key, final Object object) {
+			}
+		};
+	}
+
 	public static Supplier<TryLifecycleContext> tryLifecycleContextSupplier() {
 		return () -> new TryLifecycleContext() {
 			@Override
@@ -137,7 +155,7 @@ public class TestHelper {
 
 			@Override
 			public Reporter reporter() {
-				return ((key, value) -> {});
+				return TestHelper.reporter();
 			}
 
 			@Override

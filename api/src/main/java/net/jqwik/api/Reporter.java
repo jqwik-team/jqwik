@@ -1,4 +1,4 @@
-package net.jqwik.api.lifecycle;
+package net.jqwik.api;
 
 import org.apiguardian.api.*;
 
@@ -16,8 +16,7 @@ import static org.apiguardian.api.API.Status.*;
  * unless <a href="https://jqwik.net/docs/current/user-guide.html#jqwik-configuration">told otherwise</a>.
  * </p>
  */
-@API(status = EXPERIMENTAL, since = "1.2.3")
-@FunctionalInterface
+@API(status = EXPERIMENTAL, since = "1.3.2")
 public interface Reporter {
 
 	/**
@@ -26,5 +25,18 @@ public interface Reporter {
 	 * @param key   a String
 	 * @param value a String
 	 */
-	void publish(String key, String value);
+	void publishValue(String key, String value);
+
+	/**
+	 * Publish a report about {@code object} under a given {@code key}.
+	 *
+	 * <p>
+	 * This uses the same mechanism used for jqwik's
+	 * <a href="https://jqwik.net/docs/current/user-guide.html#failure-reporting">failure reporting</a>.
+	 * </p>
+	 *
+	 * @param key    a String
+	 * @param object any object
+	 */
+	void publishReport(String key, Object object);
 }

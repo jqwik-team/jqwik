@@ -3,6 +3,7 @@ package net.jqwik.docs.lifecycle;
 import java.lang.annotation.*;
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 
 @Target({ElementType.METHOD})
@@ -28,7 +29,7 @@ public @interface Timing {
 			long averageTryTime = sumOfTriesTiming.get() / tries;
 			String key = String.format("timing of %s", label);
 			String report = String.format("%n\toverall: %d ms%n\taverage try: %d ms", overallTime, averageTryTime);
-			reporter.publish(key, report);
+			reporter.publishValue(key, report);
 		}
 
 		@Override
