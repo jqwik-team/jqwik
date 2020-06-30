@@ -30,6 +30,10 @@ class StatisticsReportingTests {
 			throw new UnsupportedOperationException();
 		}
 
+		@Override
+		public void publishReports(final String key, final Map<String, Object> objects) {
+		}
+
 		@Example
 		void published_key_is_created_from_label_fullCount_and_propertyName() {
 			collector.collect(1);

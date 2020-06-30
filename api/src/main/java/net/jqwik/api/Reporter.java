@@ -1,5 +1,7 @@
 package net.jqwik.api;
 
+import java.util.*;
+
 import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
@@ -39,4 +41,17 @@ public interface Reporter {
 	 * @param object any object
 	 */
 	void publishReport(String key, Object object);
+
+	/**
+	 * Publish reports about {@code objects} under a given {@code key}.
+	 *
+	 * <p>
+	 * This uses the same mechanism used for jqwik's
+	 * <a href="https://jqwik.net/docs/current/user-guide.html#failure-reporting">failure reporting</a>.
+	 * </p>
+	 *
+	 * @param key    a String
+	 * @param objects a map of objects the key of which is used to enumerate them
+	 */
+	void publishReports(String key, Map<String, Object> objects);
 }

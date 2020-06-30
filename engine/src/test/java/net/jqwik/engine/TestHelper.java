@@ -118,6 +118,10 @@ public class TestHelper {
 			@Override
 			public void publishReport(final String key, final Object object) {
 			}
+
+			@Override
+			public void publishReports(final String key, final Map<String, Object> objects) {
+			}
 		};
 	}
 

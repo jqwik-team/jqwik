@@ -20,9 +20,10 @@ class SampleReportingTests {
 	class SampleReporterTests {
 		@Example
 		void sampleReporterReportsParametersIndividually() {
-			List<Object> sample = asList("this is a string", 42);
-			List<String> parameterNames = asList("aString", "aNumber");
-			SampleReporter sampleReporter = new SampleReporter("Headline", sample, parameterNames);
+			Map<String, Object> reports = new LinkedHashMap<>();
+			reports.put("aString", "this is a string");
+			reports.put("aNumber", 42);
+			SampleReporter sampleReporter = new SampleReporter("Headline", reports);
 
 			sampleReporter.reportTo(lineReporter);
 
@@ -36,9 +37,9 @@ class SampleReportingTests {
 
 		@Example
 		void headlineCanBeSkipped() {
-			List<Object> sample = asList("this is a string");
-			List<String> parameterNames = asList("aString");
-			SampleReporter sampleReporter = new SampleReporter(null, sample, parameterNames);
+			Map<String, Object> reports = new LinkedHashMap<>();
+			reports.put("aString", "this is a string");
+			SampleReporter sampleReporter = new SampleReporter(null, reports);
 
 			sampleReporter.reportTo(lineReporter);
 
@@ -52,9 +53,9 @@ class SampleReportingTests {
 		void whenLineLongerThan100charsParamIsReportedOnNextLineWithIndent() {
 			String parameterValue = "This is a long string. This is a long string. This is a long string. This is a long string. " +
 										"This is a long string. This is a long string. This is a long string. This is a long string.";
-			List<Object> sample = asList(parameterValue);
-			List<String> parameterNames = asList("aVeryLongString");
-			SampleReporter sampleReporter = new SampleReporter("Headline", sample, parameterNames);
+			Map<String, Object> reports = new LinkedHashMap<>();
+			reports.put("aVeryLongString", parameterValue);
+			SampleReporter sampleReporter = new SampleReporter("Headline", reports);
 
 			sampleReporter.reportTo(lineReporter);
 
@@ -78,9 +79,11 @@ class SampleReportingTests {
 
 			List<Object> listOfObject = asList(anObject);
 
-			List<Object> sample = asList(listOfObject, listOfObject);
-			List<String> parameterNames = asList("list1", "list2");
-			SampleReporter sampleReporter = new SampleReporter("Headline", sample, parameterNames);
+			Map<String, Object> reports = new LinkedHashMap<>();
+			reports.put("list1", listOfObject);
+			reports.put("list2", listOfObject);
+
+			SampleReporter sampleReporter = new SampleReporter("Headline", reports);
 
 			sampleReporter.reportTo(lineReporter);
 

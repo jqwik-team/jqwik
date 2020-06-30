@@ -17,23 +17,33 @@ public class SampleReporter {
 		List<String> parameterNames = Arrays.stream(propertyMethod.getParameters())
 											.map(Parameter::getName)
 											.collect(Collectors.toList());
-		SampleReporter sampleReporter = new SampleReporter(headline, sample, parameterNames);
+
+		Map<String, Object> reports = createReports(sample, parameterNames);
+		SampleReporter sampleReporter = new SampleReporter(headline, reports);
 		LineReporter lineReporter = new LineReporterImpl(reportLines);
 		sampleReporter.reportTo(lineReporter);
 	}
 
-	private final String headline;
-	private final List<Object> sample;
-
-	private final List<String> parameterNames;
-
-	public SampleReporter(String headline, List<Object> sample, List<String> parameterNames) {
+	private static Map<String, Object> createReports(final List<Object> sample, final List<String> parameterNames) {
 		if (sample.size() != parameterNames.size()) {
 			throw new IllegalArgumentException("Number of sample parameters must be equal to number of parameter names");
 		}
+		LinkedHashMap<String, Object> samples = new LinkedHashMap<>();
+		for (int i = 0; i < sample.size(); i++) {
+			String parameterName = parameterNames.get(i);
+			Object parameter = sample.get(i);
+			samples.put(parameterName, parameter);
+		}
+		return samples;
+	}
+
+
+	private final String headline;
+	private final Map<String, Object> reports;
+
+	public SampleReporter(String headline, Map<String, Object> reports) {
+		this.reports = reports;
 		this.headline = headline;
-		this.sample = sample;
-		this.parameterNames = parameterNames;
 	}
 
 	void reportTo(LineReporter lineReporter) {
@@ -43,9 +53,9 @@ public class SampleReporter {
 	}
 
 	private void reportParameters(LineReporter lineReporter) {
-		for (int i = 0; i < parameterNames.size(); i++) {
-			String parameterName = parameterNames.get(i);
-			Object parameterValue = sample.get(i);
+		for (Map.Entry<String, Object> nameAndValue : reports.entrySet()) {
+			String parameterName = nameAndValue.getKey();
+			Object parameterValue = nameAndValue.getValue();
 			ValueReport sampleReport = createReport(parameterValue);
 			if (sampleReport.singleLineLength() + parameterName.length() < MAX_LINE_LENGTH) {
 				String line = String.format("%s: %s", parameterName, sampleReport.singleLineReport());
