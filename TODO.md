@@ -1,7 +1,5 @@
 - 1.3.2
 
-    - Document Reporterxo in user guide
-
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 

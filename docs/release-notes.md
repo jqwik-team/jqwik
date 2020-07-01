@@ -43,6 +43,9 @@ and
 
 - Added `Arbitraries.just(aConstant)` and deprecated `Arbitraries.constant(aConstant)`.
   Most other PBT libraries seem to use `just` for this functionality. 
+  
+- Added programmatic access to 
+  [JUnit 5 platform reporting](/docs/snapshot/user-guide.html#platform-reporting-with-reporter-object)
 
 #### Breaking Changes
 

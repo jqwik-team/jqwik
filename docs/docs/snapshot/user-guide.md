@@ -19,7 +19,7 @@ title: jqwik User Guide - 1.3.2-SNAPSHOT
   - [Project without Build Tool](#project-without-build-tool)
 - [Creating a Property](#creating-a-property)
   - [Failure Reporting](#failure-reporting)
-  - [Additional Reporting](#additional-reporting)
+  - [Additional Reporting Options](#additional-reporting-options)
   - [Optional `@Property` Parameters](#optional-property-parameters)
 - [Creating an Example-based Test](#creating-an-example-based-test)
 - [Assertions](#assertions)
@@ -98,6 +98,7 @@ title: jqwik User Guide - 1.3.2-SNAPSHOT
   - [Switch Shrinking Off](#switch-shrinking-off)
   - [Switch Shrinking to Full Mode](#switch-shrinking-to-full-mode)
   - [Change the Shrinking Target](#change-the-shrinking-target)
+- [Platform Reporting with Reporter Object](#platform-reporting-with-reporter-object)
 - [Collecting and Reporting Statistics](#collecting-and-reporting-statistics)
   - [Labeled Statistics](#labeled-statistics)
   - [Statistics Report Formatting](#statistics-report-formatting)
@@ -409,7 +410,7 @@ If you want to provide nice reporting for your own domain classes you can either
   through Java’s `java.util.ServiceLoader` mechanism. 
     
     
-### Additional Reporting
+### Additional Reporting Options
 
 You can switch on additional reporting aspects by adding a
 [`@Report(Reporting[])` annotation](/docs/snapshot/javadoc/net/jqwik/api/Property.html)
@@ -2747,6 +2748,34 @@ Arbitrary<List<Signal>> signals() {
 ```
 
 Currently shrinking targets are supported for all [number types](#numeric-arbitrary-types).
+
+
+
+## Platform Reporting with Reporter Object
+
+If you want to provide additional information during a test or a property using
+`System.out.println()` is a common choice. The JUnit platform, however, provides
+a better mechanism to publish additional information in the form of key-value pairs.
+Those pairs will not only printed to stdout but are also available to downstream
+tools like test report generators in continue integration.
+
+You can hook into this reporting mechanism through jqwik's `Reporter` object. 
+This object is available in [lifecycle hooks](#lifecycle-hooks) but you can
+also have it injected as a parameter into your test method:
+
+```java
+@Example
+void reportInCode(Reporter reporter, @ForAll List<@AlphaChars String> aList) {
+	reporter.publishReport("listOfStrings", aList);
+	reporter.publishValue("birthday", LocalDate.of(1969, 1, 20).toString());
+}
+```
+
+[net.jqwik.api.Reporter](/docs/snapshot/javadoc/net/jqwik/api/Reporter.html) 
+has different publishing methods. 
+Those with `report` in their name use jqwik's reporting mechanism and formats
+described [above](#failure-reporting).
+
 
 
 ## Collecting and Reporting Statistics
