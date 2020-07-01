@@ -1,8 +1,6 @@
 - 1.3.2
 
-    - Inject parameter of type Reporter (move to net.jqwik.api)
-        - Reporter.void publishReport(String key, Object objectToReport);
-        - Document reporter in user guide
+    - Document Reporterxo in user guide
 
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91

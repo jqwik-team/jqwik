@@ -6,7 +6,7 @@ import java.util.stream.*;
 
 public class SampleReporter {
 
-	private static final int MAX_LINE_LENGTH = 100;
+	public static final int MAX_LINE_LENGTH = 100;
 
 	static void reportSample(
 		StringBuilder reportLines,
@@ -61,7 +61,7 @@ public class SampleReporter {
 		for (Map.Entry<String, Object> nameAndValue : reports.entrySet()) {
 			String parameterName = nameAndValue.getKey();
 			Object parameterValue = nameAndValue.getValue();
-			ValueReport sampleReport = createReport(parameterValue);
+			ValueReport sampleReport = ValueReport.of(parameterValue);
 			if (sampleReport.singleLineLength() + parameterName.length() < MAX_LINE_LENGTH) {
 				String line = String.format("%s: %s", parameterName, sampleReport.singleLineReport());
 				lineReporter.addLine(1, line);
@@ -71,10 +71,6 @@ public class SampleReporter {
 				sampleReport.report(lineReporter, 2, "");
 			}
 		}
-	}
-
-	private ValueReport createReport(Object value) {
-		return ValueReport.of(value);
 	}
 
 	private void reportHeadline(LineReporter lineReporter) {

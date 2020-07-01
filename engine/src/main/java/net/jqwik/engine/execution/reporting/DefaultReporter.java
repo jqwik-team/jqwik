@@ -1,6 +1,5 @@
 package net.jqwik.engine.execution.reporting;
 
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -26,16 +25,33 @@ public class DefaultReporter implements Reporter {
 
 	@Override
 	public void publishReport(String key, Object object) {
-		throw new UnsupportedOperationException("Not yet implemented");
+		publish(ReportEntry.from(key, buildReport(object)));
+	}
+
+	private String buildReport(Object object) {
+		StringBuilder stringBuilder = new StringBuilder();
+
+		ValueReport sampleReport = ValueReport.of(object);
+		int lengthOfTimestamp = 35;
+		if (sampleReport.singleLineLength() < SampleReporter.MAX_LINE_LENGTH - lengthOfTimestamp) {
+			String line = sampleReport.singleLineReport();
+			stringBuilder.append(line);
+		} else {
+			stringBuilder.append(String.format("%n"));
+			LineReporter lineReporter = new LineReporterImpl(stringBuilder);
+			sampleReport.report(lineReporter, 1, "");
+		}
+		removeTrailingNewLine(stringBuilder);
+		return stringBuilder.toString();
 	}
 
 	@Override
 	public void publishReports(String key, Map<String, Object> objects) {
-		publish(ReportEntry.from(key, buildReport(objects)));
+		publish(ReportEntry.from(key, buildReports(objects)));
 	}
 
-	private String buildReport(Map<String, Object> objects) {
-		SampleReporter sampleReporter = new SampleReporter(null, objects);
+	private String buildReports(Map<String, Object> reports) {
+		SampleReporter sampleReporter = new SampleReporter(null, reports);
 		StringBuilder stringBuilder = new StringBuilder();
 		LineReporter lineReporter = new LineReporterImpl(stringBuilder);
 		sampleReporter.reportTo(lineReporter);
@@ -47,7 +63,7 @@ public class DefaultReporter implements Reporter {
 		listener.accept(descriptor, entry);
 	}
 
-	private void removeTrailingNewLine(final StringBuilder stringBuilder) {
+	private void removeTrailingNewLine(StringBuilder stringBuilder) {
 		int lastNewLine = stringBuilder.lastIndexOf(String.format("%n"));
 		if (lastNewLine + 1 == stringBuilder.length()) {
 			stringBuilder.replace(lastNewLine, lastNewLine + 1, "");

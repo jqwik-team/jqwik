@@ -79,6 +79,13 @@ public class SampleReportingExamples {
 						  .ignoreException(DateTimeException.class);
 	}
 
+	@Example
+	void reportInCode(Reporter reporter) {
+		LocalDate myBirthday = LocalDate.of(1969, 1, 20);
+		reporter.publishReport("birthdayReport", myBirthday);
+		reporter.publishValue("birthdayValue", myBirthday.toString());
+	}
+
 	public static class LocalDateFormat implements SampleReportingFormat {
 
 		@Override

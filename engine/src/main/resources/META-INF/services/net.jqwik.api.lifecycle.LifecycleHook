@@ -4,3 +4,4 @@ net.jqwik.engine.hooks.lifecycle.PropertyLifecycleMethodsHook
 net.jqwik.engine.hooks.lifecycle.TryLifecycleMethodsHook
 net.jqwik.engine.hooks.DisabledHook
 net.jqwik.engine.hooks.statistics.StatisticsHook
+net.jqwik.engine.hooks.ResolveReporterHook
