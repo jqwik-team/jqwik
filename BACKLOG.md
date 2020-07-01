@@ -102,6 +102,11 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 - Lib to generate Json from JsonSchema as in
   https://github.com/Zac-HD/hypothesis-jsonschema
 
+- Arbitraries.random(): Generate an  instrumentalized Random subclass which uses
+  jqwik generators for methods like Random.nextDouble() etc. 
+  This will allow shrinking of provided pseudo-random values.
+  See PR for this feature in Hypothesis: https://github.com/HypothesisWorks/hypothesis/pull/2472
+
 - Generator / value sharing:
     - `Arbitrary.shareGenerator()`:
       To share same generator across multiple usages of an arbitrary. Important
