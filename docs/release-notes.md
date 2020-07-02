@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.3.2-SNAPSHOT](#132-snapshot)
+- [1.3.2](#132)
 - [1.3.1](#131)
 - [1.3.0](#130)
 - [1.2.x](#12x)
@@ -20,12 +20,12 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.3.2-SNAPSHOT
+## 1.3.2
 
 <p style="padding-left:1em;font-size:larger">
-<a href="/docs/snapshot/user-guide.html">User guide</a>
+<a href="/docs/1.3.2/user-guide.html">User guide</a>
 and
-<a href="/docs/snapshot/javadoc/index.html">javadoc</a>
+<a href="/docs/1.3.2/javadoc/index.html">javadoc</a>
 </p>
 
 
@@ -45,7 +45,7 @@ and
   Most other PBT libraries seem to use `just` for this functionality. 
   
 - Added programmatic access to 
-  [JUnit 5 platform reporting](/docs/snapshot/user-guide.html#platform-reporting-with-reporter-object)
+  [JUnit 5 platform reporting](/docs/1.3.2/user-guide.html#platform-reporting-with-reporter-object)
 
 #### Breaking Changes
 

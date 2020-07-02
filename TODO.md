@@ -1,9 +1,5 @@
 - 1.3.2
 
-    - Push version number
-    
-    - Generate documentation
-    
     - Release
     
 - 1.3.x
