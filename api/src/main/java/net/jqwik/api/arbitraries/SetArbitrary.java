@@ -13,7 +13,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to add functionality to arbitraries that generate instances
  * of type {@linkplain Set}
  */
-@API(status = EXPERIMENTAL, since = "1.3.2")
+@API(status = MAINTAINED, since = "1.3.2")
 public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
 
 	/**
@@ -51,6 +51,7 @@ public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
 	 * @param mapper Mapper function to element type U
 	 * @return arbitrary of a set of Us
 	 */
+	@API(status = EXPERIMENTAL, since = "1.2.1")
 	<U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper);
 
 	/**
@@ -61,5 +62,6 @@ public interface SetArbitrary<T> extends StreamableArbitrary<T, Set<T>> {
 	 * @param flatMapper Mapper function to arbitrary of element type U
 	 * @return arbitrary of a set of Us
 	 */
+	@API(status = EXPERIMENTAL, since = "1.2.1")
 	<U> Arbitrary<Set<U>> flatMapEach(BiFunction<Set<T>, T, Arbitrary<U>> flatMapper);
 }

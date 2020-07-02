@@ -14,7 +14,7 @@ import static org.apiguardian.api.API.Status.*;
  * Fluent interface to add functionality to arbitraries whose generation artefacts
  * can be streamed, e.g. {@link List}, {@link Set}, {@link Stream} and Arrays
  */
-@API(status = EXPERIMENTAL, since = "1.2.1")
+@API(status = MAINTAINED, since = "1.2.1")
 public interface StreamableArbitrary<T, U> extends SizableArbitrary<U> {
 
 	/**
