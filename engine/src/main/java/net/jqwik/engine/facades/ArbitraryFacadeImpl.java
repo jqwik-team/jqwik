@@ -39,7 +39,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> StreamableArbitrary<T, Stream<T>> stream(Arbitrary<T> elementArbitrary) {
+	public <T> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary) {
 		return new DefaultStreamArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
 	}
 

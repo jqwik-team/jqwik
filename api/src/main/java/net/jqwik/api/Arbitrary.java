@@ -37,7 +37,7 @@ public interface Arbitrary<T> {
 
 		public abstract <T> SetArbitrary<T> set(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> StreamableArbitrary<T, Stream<T>> stream(Arbitrary<T> elementArbitrary);
+		public abstract <T> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary);
 
 		public abstract <T> StreamableArbitrary<T, Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
 
@@ -156,7 +156,6 @@ public interface Arbitrary<T> {
 			public boolean isUnique() {
 				return Arbitrary.this.isUnique();
 			}
-
 
 			@Override
 			public Optional<ExhaustiveGenerator<T>> exhaustive(long maxNumberOfSamples) {
@@ -339,12 +338,12 @@ public interface Arbitrary<T> {
 	}
 
 	/**
-	 * Create a new arbitrary of type {@code Stream<T>} using the existing arbitrary for generating the elements of the
-	 * stream.
+	 * Create a new arbitrary of type {@code Stream<T>} using the existing arbitrary
+	 * for generating the elements of the stream.
 	 *
 	 * @return a new arbitrary instance
 	 */
-	default StreamableArbitrary<T, Stream<T>> stream() {
+	default StreamArbitrary<T> stream() {
 		return ArbitraryFacade.implementation.stream(this);
 	}
 
@@ -582,7 +581,7 @@ public interface Arbitrary<T> {
 	 * and the mutated state would make a shrunk value invalid.
 	 *
 	 * <p>
-	 *     This is a hack to get around a weakness in jqwik's shrinking mechanism
+	 * This is a hack to get around a weakness in jqwik's shrinking mechanism
 	 * </p>
 	 *
 	 * @return a new arbitrary instance

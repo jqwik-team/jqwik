@@ -1,14 +1,14 @@
 - 1.3.2
 
-    - Allow specification of provider class in `@ForAll` and `@From`
-      see https://github.com/jlink/jqwik/issues/91
-
     - Give all implementors of StreamableArbitrary their own arbitrary type
-        - StreamArbitrary, IteratorArbitrary, ArrayArbitrary
+        - IteratorArbitrary, ArrayArbitrary
         - Document Streamable arbitraries in user guide
         
 - 1.3.x
         
+    - Allow specification of provider class in `@ForAll` and `@From`
+      see https://github.com/jlink/jqwik/issues/91
+
     - `@Report(reportOnlyFailures = false)`
 
     - Guided Generation

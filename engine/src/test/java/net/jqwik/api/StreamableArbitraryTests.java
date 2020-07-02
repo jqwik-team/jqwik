@@ -175,7 +175,7 @@ class StreamableArbitraryTests {
 		@Example
 		void stream(@ForAll Random random) {
 			Arbitrary<Integer> integerArbitrary = Arbitraries.integers().between(1, 10);
-			Arbitrary<Stream<Integer>> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);
+			StreamArbitrary<Integer> streamArbitrary = integerArbitrary.stream().ofMinSize(0).ofMaxSize(5);
 
 			RandomGenerator<Stream<Integer>> generator = streamArbitrary.generator(1);
 

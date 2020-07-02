@@ -49,9 +49,10 @@ and
 
 #### Breaking Changes
 
-- `Arbitrary.set()` now has return type `net.jqwik.api.arbitraries.SetArbitrary`
-
-- `Arbitrary.list()` now has return type `net.jqwik.api.arbitraries.ListArbitrary`
+- Introduced `StreamableArbitrary` hierarchy:
+    - `Arbitrary.set()` now has return type `net.jqwik.api.arbitraries.SetArbitrary`
+    - `Arbitrary.list()` now has return type `net.jqwik.api.arbitraries.ListArbitrary`
+    - `Arbitrary.stream()` now has return type `net.jqwik.api.arbitraries.StreamArbitrary`
 
 - `net.jqwik.api.lifecycle.Reporter` moved to `net.jqwik.api.Reporter`
 

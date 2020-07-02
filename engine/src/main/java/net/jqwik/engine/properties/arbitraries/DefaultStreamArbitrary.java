@@ -4,10 +4,11 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream<T>> {
+public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream<T>> implements StreamArbitrary<T> {
 
 	public DefaultStreamArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
 		super(elementArbitrary, elementsUnique);
@@ -35,4 +36,18 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 		return edgeCases(ShrinkableList::new).map(Collection::stream);
 	}
 
+	@Override
+	public StreamArbitrary<T> ofMaxSize(int maxSize) {
+		return (StreamArbitrary<T>) super.ofMaxSize(maxSize);
+	}
+
+	@Override
+	public StreamArbitrary<T> ofMinSize(int minSize) {
+		return (StreamArbitrary<T>) super.ofMinSize(minSize);
+	}
+
+	@Override
+	public StreamArbitrary<T> ofSize(int size) {
+		return ofMinSize(size).ofMaxSize(size);
+	}
 }
