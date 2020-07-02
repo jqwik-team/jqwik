@@ -58,8 +58,9 @@ title: jqwik User Guide - 1.3.2-SNAPSHOT
     - [Integrals](#integrals)
     - [Decimals](#decimals)
     - [Random Numeric Distribution](#random-numeric-distribution)
-  - [Collections, Streams, Arrays and Optional](#collections-streams-arrays-and-optional)
+  - [Collections, Streams, Iterators and Arrays](#collections-streams-iterators-and-arrays)
   - [Collecting Values in a List](#collecting-values-in-a-list)
+  - [Optional](#optional)
   - [Tuples of same base type](#tuples-of-same-base-type)
   - [Maps](#maps)
   - [Functional Types](#functional-types)
@@ -1450,16 +1451,16 @@ Look at the statistics to see if it fits your expectation:
 You can notice that values `0` and `20` should have the lowest probability but they do not.
 This is because they will be generated a few times as edge cases.
 
-### Collections, Streams, Arrays and Optional
+### Collections, Streams, Iterators and Arrays
 
-Generating types who have generic type parameters, requires to start with 
-an `Arbitrary` instance for the generic type. You can create the corresponding collection arbitrary from there:
+Arbitraries for multi value types require to start with an `Arbitrary` instance for the element type. 
+You can then create the corresponding multi value arbitrary from there:
 
-- [`Arbitrary.list()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#list--)
-- [`Arbitrary.set()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#set--)
-- [`Arbitrary.streamOf()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#stream--)
-- [`Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
-- [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional--)
+- [`ListArbitrary<T> Arbitrary.list()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#list--)
+- [`SetArbitrary<T> Arbitrary.set()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#set--)
+- [`StreamArbitrary<T> Arbitrary.streamOf()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#stream--)
+- [`IteratorArbitrary<T> Arbitrary.iterator()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#iterator--)
+- [`StreamableArbitrary<T, A> Arbitrary.array(Class<A> arrayClass)`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#array-java.lang.Class-)
 
 ### Collecting Values in a List
 
@@ -1477,6 +1478,12 @@ Arbitrary<Integer> integers = Arbitraries.integers().between(1, 100);
 Arbitrary<List<Integer>> collected = integers.collect(list -> sum(list) >= 1000);
 ```
 
+### Optional
+
+Using [`Arbitrary.optional()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#optional--)
+allows to generate an optional of any type. 
+`Optional.empty()` values are injected with a probability of `0.05`, i.e. 1 in 20.
+
 ### Tuples of same base type
 
 If you want to generate tuples of the same base types that also use the same generator, that's how you can do it:
@@ -1491,9 +1498,6 @@ There's a method for tuples of length 1 to 4:
 - [`Arbitrary.tuple2()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#tuple2--)
 - [`Arbitrary.tuple3()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#tuple3--)
 - [`Arbitrary.tuple4()`](/docs/snapshot/javadoc/net/jqwik/api/Arbitrary.html#tuple4--)
-
-
-
 
 ### Maps
 
@@ -1576,21 +1580,29 @@ all other cases.
 ### Fluent Configuration Interfaces
 
 Most specialized arbitrary interfaces provide special methods to configure things
-like size, length, boundaries etc. Have a look at the Java doc for the following types:
+like size, length, boundaries etc. Have a look at the Java doc for the following types,
+which are organized in a flat hierarchy:
 
-- [BigDecimalArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/BigDecimalArbitrary.html)
-- [BigIntegerArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/BigIntegerArbitrary.html)
-- [ByteArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ByteArbitrary.html)
-- [CharacterArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/CharacterArbitrary.html)
-- [DoubleArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/DoubleArbitrary.html)
-- [FloatArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FloatArbitrary.html)
-- [IntegerArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/IntegerArbitrary.html)
-- [LongArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
-- [ShortArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
+- [NumericalArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/BigDecimalArbitrary.html)
+    - [BigDecimalArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/BigDecimalArbitrary.html)
+    - [BigIntegerArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/BigIntegerArbitrary.html)
+    - [ByteArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ByteArbitrary.html)
+    - [CharacterArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/CharacterArbitrary.html)
+    - [DoubleArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/DoubleArbitrary.html)
+    - [FloatArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FloatArbitrary.html)
+    - [IntegerArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/IntegerArbitrary.html)
+    - [LongArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/LongArbitrary.html)
+    - [ShortArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ShortArbitrary.html)
 - [SizableArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/SizableArbitrary.html)
-- [StreamableArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StreamableArbitrary.html)
+    - [MapArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/MapArbitrary.html)
+    - [StreamableArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StreamableArbitrary.html)
+        - [SetArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/SetArbitrary.html)
+        - [ListArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/ListArbitrary.html)
+        - [StreamArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StreamArbitrary.html)
+        - [IteratorArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/IteratorArbitrary.html)
 - [StringArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/StringArbitrary.html)
 - [FunctionArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/FunctionArbitrary.html)
+- [TypeArbitrary](/docs/snapshot/javadoc/net/jqwik/api/arbitraries/TypeArbitrary.html)
 
 
 Here are a 

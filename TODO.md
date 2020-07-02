@@ -1,9 +1,11 @@
 - 1.3.2
 
-    - Give all implementors of StreamableArbitrary their own arbitrary type
-        - ArrayArbitrary
-        - Document Streamable arbitraries in user guide
-        
+    - Push version number
+    
+    - Generate documentation
+    
+    - Release
+    
 - 1.3.x
         
     - Allow specification of provider class in `@ForAll` and `@From`
