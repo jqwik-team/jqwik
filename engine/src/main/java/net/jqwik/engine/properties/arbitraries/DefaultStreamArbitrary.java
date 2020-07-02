@@ -45,9 +45,4 @@ public class DefaultStreamArbitrary<T> extends MultivalueArbitraryBase<T, Stream
 	public StreamArbitrary<T> ofMinSize(int minSize) {
 		return (StreamArbitrary<T>) super.ofMinSize(minSize);
 	}
-
-	@Override
-	public StreamArbitrary<T> ofSize(int size) {
-		return ofMinSize(size).ofMaxSize(size);
-	}
 }

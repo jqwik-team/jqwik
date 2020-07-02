@@ -3,10 +3,11 @@ package net.jqwik.engine.properties.arbitraries;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
 import net.jqwik.engine.properties.shrinking.*;
 
-public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iterator<T>> {
+public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iterator<T>> implements IteratorArbitrary<T> {
 
 	public DefaultIteratorArbitrary(Arbitrary<T> elementArbitrary, boolean elementsUnique) {
 		super(elementArbitrary, elementsUnique);
@@ -32,4 +33,15 @@ public class DefaultIteratorArbitrary<T> extends MultivalueArbitraryBase<T, Iter
 	public EdgeCases<Iterator<T>> edgeCases() {
 		return edgeCases(ShrinkableList::new).map(List::iterator);
 	}
+
+	@Override
+	public IteratorArbitrary<T> ofMaxSize(int maxSize) {
+		return (IteratorArbitrary<T>) super.ofMaxSize(maxSize);
+	}
+
+	@Override
+	public IteratorArbitrary<T> ofMinSize(int minSize) {
+		return (IteratorArbitrary<T>) super.ofMinSize(minSize);
+	}
+
 }

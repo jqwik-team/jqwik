@@ -51,11 +51,6 @@ public class DefaultSetArbitrary<T> extends MultivalueArbitraryBase<T, Set<T>> i
 		return (SetArbitrary<T>) super.ofMinSize(minSize);
 	}
 
-	@Override
-	public SetArbitrary<T> ofSize(int size) {
-		return this.ofMinSize(size).ofMaxSize(size);
-	}
-
 	// TODO: Remove duplication with DefaultListArbitrary.mapEach()
 	@Override
 	public <U> Arbitrary<Set<U>> mapEach(BiFunction<Set<T>, T, U> mapper) {

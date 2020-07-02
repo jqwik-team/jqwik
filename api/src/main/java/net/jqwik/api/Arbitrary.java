@@ -39,7 +39,7 @@ public interface Arbitrary<T> {
 
 		public abstract <T> StreamArbitrary<T> stream(Arbitrary<T> elementArbitrary);
 
-		public abstract <T> StreamableArbitrary<T, Iterator<T>> iterator(Arbitrary<T> elementArbitrary);
+		public abstract <T> IteratorArbitrary<T> iterator(Arbitrary<T> elementArbitrary);
 
 		public abstract <T, A> StreamableArbitrary<T, A> array(Arbitrary<T> elementArbitrary, Class<A> arrayClass);
 
@@ -353,7 +353,7 @@ public interface Arbitrary<T> {
 	 *
 	 * @return a new arbitrary instance
 	 */
-	default StreamableArbitrary<T, Iterator<T>> iterator() {
+	default IteratorArbitrary<T> iterator() {
 		return ArbitraryFacade.implementation.iterator(this);
 	}
 

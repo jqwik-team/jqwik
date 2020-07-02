@@ -1,7 +1,7 @@
 - 1.3.2
 
     - Give all implementors of StreamableArbitrary their own arbitrary type
-        - IteratorArbitrary, ArrayArbitrary
+        - ArrayArbitrary
         - Document Streamable arbitraries in user guide
         
 - 1.3.x

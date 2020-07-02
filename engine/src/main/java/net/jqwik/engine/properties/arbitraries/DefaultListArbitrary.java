@@ -45,11 +45,6 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 		return (ListArbitrary<T>) super.ofMinSize(minSize);
 	}
 
-	@Override
-	public ListArbitrary<T> ofSize(int size) {
-		return ofMinSize(size).ofMaxSize(size);
-	}
-
 	// TODO: Remove duplication with DefaultSetArbitrary.mapEach()
 	@Override
 	public <U> Arbitrary<List<U>> mapEach(BiFunction<List<T>, T, U> mapper) {

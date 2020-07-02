@@ -44,7 +44,7 @@ public class ArbitraryFacadeImpl extends Arbitrary.ArbitraryFacade {
 	}
 
 	@Override
-	public <T> StreamableArbitrary<T, Iterator<T>> iterator(Arbitrary<T> elementArbitrary) {
+	public <T> IteratorArbitrary<T> iterator(Arbitrary<T> elementArbitrary) {
 		return new DefaultIteratorArbitrary<>(elementArbitrary, elementArbitrary.isUnique());
 	}
 
