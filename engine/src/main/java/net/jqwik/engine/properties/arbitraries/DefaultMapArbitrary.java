@@ -6,7 +6,7 @@ import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
 import net.jqwik.engine.properties.arbitraries.randomized.*;
 
-public class MapArbitrary<K, V> extends AbstractArbitraryBase implements SizableArbitrary<Map<K, V>> {
+public class DefaultMapArbitrary<K, V> extends AbstractArbitraryBase implements MapArbitrary<K, V> {
 
 	private final Arbitrary<K> keysArbitrary;
 	private final Arbitrary<V> valuesArbitrary;
@@ -14,21 +14,21 @@ public class MapArbitrary<K, V> extends AbstractArbitraryBase implements Sizable
 	private int minSize = 0;
 	private int maxSize = RandomGenerators.DEFAULT_COLLECTION_SIZE;
 
-	public MapArbitrary(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+	public DefaultMapArbitrary(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		this.keysArbitrary = keysArbitrary;
 		this.valuesArbitrary = valuesArbitrary;
 	}
 
 	@Override
-	public SizableArbitrary<Map<K, V>> ofMinSize(int minSize) {
-		MapArbitrary<K, V> clone = typedClone();
+	public MapArbitrary<K, V> ofMinSize(int minSize) {
+		DefaultMapArbitrary<K, V> clone = typedClone();
 		clone.minSize = minSize;
 		return clone;
 	}
 
 	@Override
-	public SizableArbitrary<Map<K, V>> ofMaxSize(int maxSize) {
-		MapArbitrary<K, V> clone = typedClone();
+	public MapArbitrary<K, V> ofMaxSize(int maxSize) {
+		DefaultMapArbitrary<K, V> clone = typedClone();
 		clone.maxSize = maxSize;
 		return clone;
 	}

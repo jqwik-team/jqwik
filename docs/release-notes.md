@@ -54,6 +54,8 @@ and
     - `Arbitrary.list()` now has return type `net.jqwik.api.arbitraries.ListArbitrary`
     - `Arbitrary.stream()` now has return type `net.jqwik.api.arbitraries.StreamArbitrary`
     - `Arbitrary.iterator()` now has return type `net.jqwik.api.arbitraries.IteratorArbitrary`
+    
+- `Arbitraries.maps(...)` now has return type `net.jqwik.api.arbitraries.MapArbitrary`
 
 - `net.jqwik.api.lifecycle.Reporter` moved to `net.jqwik.api.Reporter`
 

@@ -945,7 +945,7 @@ class ArbitrariesTests {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 10);
 			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
-			SizableArbitrary<Map<Integer, String>> mapArbitrary = Arbitraries.maps(keys, values).ofMinSize(0).ofMaxSize(10);
+			MapArbitrary<Integer, String> mapArbitrary = Arbitraries.maps(keys, values).ofMinSize(0).ofMaxSize(10);
 
 			RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1);
 
@@ -972,7 +972,7 @@ class ArbitrariesTests {
 			Arbitrary<Integer> keys = Arbitraries.integers().between(1, 3);
 			Arbitrary<String> values = Arbitraries.strings().alpha().ofLength(5);
 
-			SizableArbitrary<Map<Integer, String>> mapArbitrary = Arbitraries.maps(keys, values);
+			MapArbitrary<Integer, String> mapArbitrary = Arbitraries.maps(keys, values);
 			RandomGenerator<Map<Integer, String>> generator = mapArbitrary.generator(1);
 
 			assertAllGenerated(generator, map -> {

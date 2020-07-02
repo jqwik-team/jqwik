@@ -196,9 +196,9 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	}
 
 	@Override
-	public <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+	public <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		// The map cannot be larger than the max number of possible keys
-		return new MapArbitrary<>(keysArbitrary, valuesArbitrary)
+		return new DefaultMapArbitrary<>(keysArbitrary, valuesArbitrary)
 				   .ofMaxSize(maxNumberOfElements(keysArbitrary, RandomGenerators.DEFAULT_COLLECTION_SIZE));
 	}
 

@@ -80,7 +80,7 @@ public class Arbitraries {
 
 		public abstract <T> TypeArbitrary<T> forType(Class<T> targetType);
 
-		public abstract <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
+		public abstract <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 
 		public abstract <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 	}
@@ -661,7 +661,7 @@ public class Arbitraries {
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.1.6")
-	public static <K, V> SizableArbitrary<Map<K, V>> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
+	public static <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary) {
 		return ArbitrariesFacade.implementation.maps(keysArbitrary, valuesArbitrary);
 	}
 
