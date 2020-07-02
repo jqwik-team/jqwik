@@ -70,7 +70,6 @@ allprojects {
 }
 
 wrapper {
-	description = 'Generates gradlew[.bat] scripts'
-	gradleVersion = '6.5'
+	gradleVersion = '6.5.1'
 }
 
