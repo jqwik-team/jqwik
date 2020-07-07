@@ -1,11 +1,11 @@
-- 1.3.2
-
-    - Release
-    
-- 1.3.x
+- 1.3.3
         
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
+
+    - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
+
+- 1.3.x
 
     - `@Report(reportOnlyFailures = false)`
 
@@ -30,8 +30,6 @@
                 - Combinators
             - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
 
-    - Change signature Arbitrary.exhaustive() -> ExhaustiveGenerator
-    
     - Property runtime statistics (https://github.com/jlink/jqwik/issues/100)
 
     - Support more RandomDistribution modes, e.g. Log, PowerLaw
