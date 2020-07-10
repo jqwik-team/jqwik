@@ -154,7 +154,7 @@ public class GenericProperty {
 		Reporter reporter,
 		Reporting[] reporting,
 		List<Shrinkable<Object>> shrinkables,
-		Throwable exceptionOrAssertionError
+		Throwable originalError
 	) {
 		// TODO: Find a way that falsifier and resolved ParameterSupplier get the same instance of tryLifecycleContext during shrinking.
 		//       This will probably require some major modification to shrinking / shrinking API.
@@ -164,7 +164,7 @@ public class GenericProperty {
 		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, falsifiedSampleReporter);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
-		return shrinker.shrink(forAllFalsifier, exceptionOrAssertionError);
+		return shrinker.shrink(forAllFalsifier, originalError);
 	}
 
 	private Consumer<List<Object>> createFalsifiedSampleReporter(Reporter reporter, Reporting[] reporting) {

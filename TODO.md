@@ -1,13 +1,13 @@
 - 1.3.3
         
+    - Make sure that shrinking only shrinks on same exception and stacktrace
+    
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
     - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
     
     - Add abstract method DomainContextBase.registrations()
-    
-    - Make sure that shrinking only shrinks on same exception
     
     - Use derived Random object for generation of each parameter.
       Will that somehow break a random byte provider in guided generation?

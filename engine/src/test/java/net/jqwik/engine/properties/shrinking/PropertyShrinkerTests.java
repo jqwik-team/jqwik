@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.mockito.*;
 
@@ -118,6 +119,28 @@ class PropertyShrinkerTests {
 	}
 
 	@Example
+	void differentThrowableDoesNotCountAsSameError() {
+		List<Shrinkable<Object>> parameters = toList(50);
+
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
+		RuntimeException originalError = new RuntimeException("original error");
+
+		Falsifier<List<Object>> listFalsifier = params -> {
+			int integer = (int) params.get(0);
+			if (integer <= 10) return TryExecutionResult.satisfied();
+			if (integer % 2 == 0) {
+				throw originalError;
+			} else {
+				throw new IllegalArgumentException();
+			}
+		};
+		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, originalError);
+
+		assertThat(result.sample()).isEqualTo(asList(12));
+		assertThat(result.throwable().get()).isEqualTo(originalError);
+	}
+
+	@Example
 	void resultSampleConsistsOfActualUsedObjects_notOfValuesGeneratedByShrinkable() {
 		List<Shrinkable<Object>> parameters = toList(5, 10);
 
@@ -147,11 +170,8 @@ class PropertyShrinkerTests {
 		verify(reporter, times(1)).publishValue(eq("shrinking bound reached"), anyString());
 	}
 
-	private List<Shrinkable<Object>> toList(int i, int i2) {
-		return asList(
-			new OneStepShrinkable(i).asGeneric(),
-			new OneStepShrinkable(i2).asGeneric()
-		);
+	private List<Shrinkable<Object>> toList(int ... args) {
+		return Arrays.stream(args).mapToObj(i -> new OneStepShrinkable(i).asGeneric()).collect(Collectors.toList());
 	}
 
 	@Group

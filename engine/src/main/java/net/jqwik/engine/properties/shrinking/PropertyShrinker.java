@@ -6,6 +6,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 
 public class PropertyShrinker {
 
@@ -33,8 +34,19 @@ public class PropertyShrinker {
 			return new PropertyShrinkingResult(toValues(parameters), 0, originalError);
 		}
 
+		Falsifier<List<Object>> allowOnlySameErrorsFalsifier = sample -> {
+			TryExecutionResult result = forAllFalsifier.execute(sample);
+			Throwable currentError = result.throwable().orElse(null);
+			if (!currentError.equals(originalError)) {
+				System.out.println(">>>>>>>>> Throwable: " + currentError);
+				System.out.println(">>>>>>>>> Original:  " + originalError);
+			}
+			return result;
+		};
+
+
 		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
-		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(parameters, forAllFalsifier, distanceFunction);
+		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(parameters, allowOnlySameErrorsFalsifier, distanceFunction);
 		sequence.init(FalsificationResult.falsified(Shrinkable.unshrinkable(toValues(parameters)), originalError));
 
 		Consumer<FalsificationResult<List<Object>>> falsifiedReporter = result -> falsifiedSampleReporter.accept(result.value());
