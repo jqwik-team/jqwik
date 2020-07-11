@@ -7,8 +7,8 @@ import net.jqwik.api.statistics.Statistics;
 
 class ShrinkingTargetExamples {
 
-	@Property
-	boolean shrinkAllSignalsToFrequency50(@ForAll("signals") List<Signal> signalStream) {
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	boolean shrinkTo10SignalsWithFrequency50(@ForAll("signals") List<Signal> signalStream) {
 		Statistics.collect(signalStream.size());
 		return signalStream.size() < 10;
 	}

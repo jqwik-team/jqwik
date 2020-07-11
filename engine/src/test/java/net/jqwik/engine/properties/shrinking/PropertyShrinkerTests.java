@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
 
 class PropertyShrinkerTests {
 
-	@SuppressWarnings("unchecked")
 	private final Reporter reporter = Mockito.mock(Reporter.class);
 	@SuppressWarnings("unchecked")
 	private final Consumer<List<Object>> falsifiedSampleReporter = Mockito.mock(Consumer.class);
@@ -29,7 +28,7 @@ class PropertyShrinkerTests {
 		List<Shrinkable<Object>> unshrinkableParameters = asList(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable("hello"));
 		PropertyShrinker shrinker = new PropertyShrinker(unshrinkableParameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		Throwable originalError = new RuntimeException("original error");
+		Throwable originalError = throwAndCatch("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
 		assertThat(result.sample()).isEqualTo(asList(1, "hello"));
@@ -46,7 +45,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.OFF, reporter, falsifiedSampleReporter);
 
-		Throwable originalError = new RuntimeException("original error");
+		Throwable originalError = throwAndCatch("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
 		assertThat(result.sample()).isEqualTo(asList(5, 10));
@@ -110,34 +109,65 @@ class PropertyShrinkerTests {
 		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			if (((int) params.get(0)) == 0) return true;
 			if (((int) params.get(1)) <= 1) return true;
-			throw new RuntimeException(String.format("%s:%s", params.get(0), params.get(1)));
+			throw throwAndCatch("shrinking");
 		};
-		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
+		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, throwAndCatch("original"));
 
 		assertThat(result.sample()).isEqualTo(asList(1, 2));
 		assertThat(result.throwable()).isPresent();
+		assertThat(result.throwable().get()).hasMessage("shrinking");
 	}
 
 	@Example
-	void differentThrowableDoesNotCountAsSameError() {
+	void differentErrorTypeDoesNotCountAsSameError() {
 		List<Shrinkable<Object>> parameters = toList(50);
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
-		RuntimeException originalError = new RuntimeException("original error");
+		RuntimeException originalError = throwAndCatch("original error");
 
 		Falsifier<List<Object>> listFalsifier = params -> {
 			int integer = (int) params.get(0);
 			if (integer <= 10) return TryExecutionResult.satisfied();
 			if (integer % 2 == 0) {
-				throw originalError;
+				return TryExecutionResult.falsified(throwAndCatch("shrinking"));
 			} else {
-				throw new IllegalArgumentException();
+				return TryExecutionResult.falsified(new IllegalArgumentException());
 			}
 		};
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, originalError);
 
 		assertThat(result.sample()).isEqualTo(asList(12));
-		assertThat(result.throwable().get()).isEqualTo(originalError);
+		assertThat(result.throwable().get()).hasMessage("shrinking");
+	}
+
+	@Example
+	void differentErrorStackTraceDoesNotCountAsSameError() {
+		List<Shrinkable<Object>> parameters = toList(50);
+
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
+		RuntimeException originalError = throwAndCatch("original error");
+
+		Falsifier<List<Object>> listFalsifier = params -> {
+			int integer = (int) params.get(0);
+			if (integer <= 10) return TryExecutionResult.satisfied();
+			if (integer % 2 == 0) {
+				return TryExecutionResult.falsified(throwAndCatch("shrinking"));
+			} else {
+				return TryExecutionResult.falsified(new RuntimeException("different"));
+			}
+		};
+		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, originalError);
+
+		assertThat(result.sample()).isEqualTo(asList(12));
+		assertThat(result.throwable().get()).hasMessage("shrinking");
+	}
+
+	private RuntimeException throwAndCatch(String message) {
+		try {
+			throw new RuntimeException(message);
+		} catch (RuntimeException rte) {
+			return rte;
+		}
 	}
 
 	@Example

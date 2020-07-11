@@ -142,6 +142,14 @@ public interface TryExecutionResult {
 	}
 
 	/**
+	 * @return true if status is falsified
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.3")
+	default boolean isFalsified() {
+		return this.status() == Status.FALSIFIED;
+	}
+
+	/**
 	 * @return Status enum
 	 */
 	Status status();

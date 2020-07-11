@@ -34,19 +34,16 @@ public class PropertyShrinker {
 			return new PropertyShrinkingResult(toValues(parameters), 0, originalError);
 		}
 
-		Falsifier<List<Object>> allowOnlySameErrorsFalsifier = sample -> {
+		Falsifier<List<Object>> allowOnlyEquivalentErrorsFalsifier = sample -> {
 			TryExecutionResult result = forAllFalsifier.execute(sample);
-			Throwable currentError = result.throwable().orElse(null);
-			if (!currentError.equals(originalError)) {
-				System.out.println(">>>>>>>>> Throwable: " + currentError);
-				System.out.println(">>>>>>>>> Original:  " + originalError);
+			if (isFalsifiedButErrorIsNotEquivalent(result, originalError)) {
+				return TryExecutionResult.invalid();
 			}
 			return result;
 		};
 
-
 		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
-		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(parameters, allowOnlySameErrorsFalsifier, distanceFunction);
+		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(parameters, allowOnlyEquivalentErrorsFalsifier, distanceFunction);
 		sequence.init(FalsificationResult.falsified(Shrinkable.unshrinkable(toValues(parameters)), originalError));
 
 		Consumer<FalsificationResult<List<Object>>> falsifiedReporter = result -> falsifiedSampleReporter.accept(result.value());
@@ -64,6 +61,39 @@ public class PropertyShrinker {
 		}
 
 		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get());
+	}
+
+	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Throwable originalError) {
+		Throwable currentError = result.throwable().orElse(null);
+		return result.isFalsified() && !areEquivalent(originalError, currentError);
+	}
+
+	/**
+	 * Equivalence of falsified property:
+	 * - Either both exceptions are null
+	 * - Or both exceptions have the same type and their stack trace ended in same location
+	 */
+	private boolean areEquivalent(Throwable originalError, Throwable currentError) {
+		if (originalError == null) {
+			return currentError == null;
+		}
+		if (currentError == null) {
+			return false;
+		}
+		if (!originalError.getClass().equals(currentError.getClass())) {
+			return false;
+		}
+		Optional<StackTraceElement> firstOriginal = firstStackTraceElement(originalError);
+		Optional<StackTraceElement> firstCurrent = firstStackTraceElement(currentError);
+		return firstOriginal.equals(firstCurrent);
+	}
+
+	private Optional<StackTraceElement> firstStackTraceElement(Throwable error) {
+		StackTraceElement[] stackTrace = error.getStackTrace();
+		if (stackTrace.length == 0) {
+			return Optional.empty();
+		}
+		return Optional.of(stackTrace[0]);
 	}
 
 	private PropertyShrinkingResult createShrinkingResult(

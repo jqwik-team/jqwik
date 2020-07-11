@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.3.3-SNAPSHOT](#133-snapshot)
 - [1.3.2](#132)
 - [1.3.1](#131)
 - [1.3.0](#130)
@@ -19,6 +20,19 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.3.3-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Shrinking now has stronger equivalence requirements for falsification:
+  - Same type of assertion error or other exception
+  - Assertion error or exception thrown from the same code location
+
+
+#### Breaking Changes
+
+#### Bug Fixes
 
 ## 1.3.2
 

@@ -4,7 +4,7 @@ import net.jqwik.api.*;
 
 class ShrinkingFilterExamples {
 
-	@Property(seed = "2")
+	@Property(seed = "42128376158237")
 	// Different seeds result in different shrinking results
 	boolean shrinkingCanTakeAVeryLongTime(@ForAll("first") String first, @ForAll("second") String second) {
 		String aString = first + second;
@@ -13,10 +13,10 @@ class ShrinkingFilterExamples {
 
 	@Provide
 	Arbitrary<String> first() {
-		return Arbitraries.strings() //
-						  .withCharRange('a', 'z') //
-						  .ofMinLength(1) //
-						  .ofMaxLength(10) //
+		return Arbitraries.strings()
+						  .withCharRange('a', 'z')
+						  .ofMinLength(1)
+						  .ofMaxLength(10)
 						  .filter(string -> string.endsWith("h"));
 	}
 
@@ -29,23 +29,24 @@ class ShrinkingFilterExamples {
 						  .filter(string -> string.length() >= 1);
 	}
 
-	@Property @Report(Reporting.GENERATED)
-	boolean shouldShrinkToBAH_butDoesNot(@ForAll("aVariableString") String aString) {
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Report(Reporting.GENERATED)
+	boolean shouldShrinkToBAH(@ForAll("aVariableString") String aString) {
 		return aString.length() > 4 || aString.length() < 3;
 	}
 
 	@Provide()
 	Arbitrary<String> aVariableString() {
-		return Arbitraries.strings() //
-						  .withCharRange('a', 'z') //
-						  .ofMinLength(1) //
-						  .ofMaxLength(10) //
+		return Arbitraries.strings()
+						  .withCharRange('a', 'z')
+						  .ofMinLength(1)
+						  .ofMaxLength(10)
 						  .filter(string -> string.endsWith("h"))
 						  .filter(string -> string.charAt(0) > 'a');
 	}
 
-	@Property
-	boolean withAssumption_shouldShrinkToCCH_butDoesNot(@ForAll("aVariableString") String aString) {
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	boolean withAssumption_shouldShrinkToCCH(@ForAll("aVariableString") String aString) {
 		Assume.that(!aString.contains("a") && !aString.contains("b"));
 		return aString.length() > 4 || aString.length() < 3;
 	}

@@ -1,7 +1,5 @@
 - 1.3.3
         
-    - Make sure that shrinking only shrinks on same exception and stacktrace
-    
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
