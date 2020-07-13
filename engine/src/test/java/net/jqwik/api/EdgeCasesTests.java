@@ -35,9 +35,7 @@ class EdgeCasesTests {
 
 		Falsifier<String> falsifier = ignore -> TryExecutionResult.falsified(null);
 		for (Shrinkable<String> edgeCase : edgeCases) {
-			ShrinkingSequence<String> sequence = edgeCase.shrink(falsifier);
-			while (sequence.next(() -> {}, ignore1 -> { })) ;
-			String shrunkValue = sequence.current().value();
+			String shrunkValue = ArbitraryTestHelper.shrinkToEnd(edgeCase, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("25");
 		}
 	}
@@ -51,9 +49,7 @@ class EdgeCasesTests {
 
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
 		for (Shrinkable<Integer> edgeCase : edgeCases) {
-			ShrinkingSequence<Integer> sequence = edgeCase.shrink(falsifier);
-			while (sequence.next(() -> {}, ignore1 -> { })) ;
-			int shrunkValue = sequence.current().value();
+			int shrunkValue = ArbitraryTestHelper.shrinkToEnd(edgeCase, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(1);
 		}
 	}
@@ -69,9 +65,10 @@ class EdgeCasesTests {
 
 		Falsifier<String> falsifier = ignore -> TryExecutionResult.falsified(null);
 		for (Shrinkable<String> edgeCase : edgeCases) {
+			// String shrunkValue = ArbitraryTestHelper.shrinkToEnd(edgeCase, falsifier, null);
 			ShrinkingSequence<String> sequence = edgeCase.shrink(falsifier);
 			while (sequence.next(() -> {}, ignore -> { })) {
-				// System.out.println(sequence.current());
+				System.out.println(sequence.current());
 			}
 			String shrunkValue = sequence.current().value();
 			assertThat(shrunkValue).isEqualTo("a");
