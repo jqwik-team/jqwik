@@ -122,10 +122,15 @@ public class ArbitraryTestHelper {
 				return result.isFalsified();
 			});
 
+		return shrinkToEnd(falsifiedShrinkable, falsifier, originalError[0]);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T shrinkToEnd(Shrinkable<T> falsifiedShrinkable, Falsifier<T> falsifier, Throwable originalError) {
 		List<Shrinkable<Object>> parameters = toListOfShrinkables(falsifiedShrinkable);
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedReporter);
 
-		PropertyShrinkingResult result = shrinker.shrink(parameterFalsifier(falsifier), originalError[0]);
+		PropertyShrinkingResult result = shrinker.shrink(parameterFalsifier(falsifier), originalError);
 		return (T) result.sample().get(0);
 	}
 

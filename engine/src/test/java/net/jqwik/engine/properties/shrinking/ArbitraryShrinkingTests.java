@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.ArrayList;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -81,6 +82,21 @@ class ArbitraryShrinkingTests {
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 					   .flatMap(i -> Arbitraries.of(i));
 		assertAllValuesAreShrunkTo(1, arbitrary, random);
+	}
+
+	@Property(tries = 10)
+	void flatMappedToString(@ForAll Random random) {
+		Arbitrary<String> arbitrary =
+			Arbitraries.integers().between(1, 10)
+					   .flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
+		assertAllValuesAreShrunkTo("a", arbitrary, random);
+	}
+
+	@Provide
+	Arbitrary<String> stringsOfLength1to10() {
+		return Arbitraries.integers().between(1, 10)
+						  .flatMap(i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i));
+
 	}
 
 	@Property(tries = 10)
@@ -212,7 +228,7 @@ class ArbitraryShrinkingTests {
 					   .flatMapEach((all, each) -> {
 						   return Arbitraries.of(all)
 											 .map(other -> {
-											 	 // each.otherValues.clear();
+												 // each.otherValues.clear();
 												 each.addOtherValue(other.initValue);
 												 return each;
 											 });

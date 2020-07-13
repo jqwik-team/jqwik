@@ -356,9 +356,8 @@ class ArbitraryTests {
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
 			Shrinkable<String> value3to6 = combined.generator(10).next(random);
 
-			ShrinkingSequence<String> sequence = value3to6.shrink(ignore1 -> TryExecutionResult.falsified(null));
-			while (sequence.next(() -> {}, ignore -> {})) ;
-			assertThat(sequence.current().value()).isEqualTo("1:4");
+			String shrunkValue = shrinkToEnd(value3to6, ignore -> TryExecutionResult.falsified(null), null);
+			assertThat(shrunkValue).isEqualTo("1:4");
 		}
 
 	}
