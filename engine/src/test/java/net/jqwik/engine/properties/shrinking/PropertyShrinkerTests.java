@@ -17,7 +17,7 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class PropertyShrinkerTests {
+class PropertyShrinkerTests extends ShrinkingTestsBase {
 
 	private final Reporter reporter = Mockito.mock(Reporter.class);
 	@SuppressWarnings("unchecked")
@@ -28,7 +28,7 @@ class PropertyShrinkerTests {
 		List<Shrinkable<Object>> unshrinkableParameters = asList(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable("hello"));
 		PropertyShrinker shrinker = new PropertyShrinker(unshrinkableParameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		Throwable originalError = throwAndCatch("original error");
+		Throwable originalError = failAndCatch("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
 		assertThat(result.sample()).isEqualTo(asList(1, "hello"));
@@ -45,7 +45,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.OFF, reporter, falsifiedSampleReporter);
 
-		Throwable originalError = throwAndCatch("original error");
+		Throwable originalError = failAndCatch("original error");
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null), originalError);
 
 		assertThat(result.sample()).isEqualTo(asList(5, 10));
@@ -62,11 +62,11 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		TestingFalsifier<List<Object>> listFalsifier = params -> {
-			if (((int) params.get(0)) == 0) return true;
-			return ((int) params.get(1)) <= 1;
-		};
-		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
+		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer1, Integer integer2) -> {
+			if (integer1 == 0) return true;
+			return integer2 <= 1;
+		});
+		PropertyShrinkingResult result = shrinker.shrink(falsifier, null);
 
 		assertThat(result.sample()).isEqualTo(asList(1, 2));
 		assertThat(result.throwable()).isNotPresent();
@@ -106,12 +106,12 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		TestingFalsifier<List<Object>> listFalsifier = params -> {
-			if (((int) params.get(0)) == 0) return true;
-			if (((int) params.get(1)) <= 1) return true;
-			throw throwAndCatch("shrinking");
-		};
-		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, throwAndCatch("original"));
+		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer1, Integer integer2) -> {
+			if (integer1 == 0) return true;
+			if (integer2 <= 1) return true;
+			throw failAndCatch("shrinking");
+		});
+		PropertyShrinkingResult result = shrinker.shrink(falsifier, failAndCatch("original"));
 
 		assertThat(result.sample()).isEqualTo(asList(1, 2));
 		assertThat(result.throwable()).isPresent();
@@ -123,18 +123,18 @@ class PropertyShrinkerTests {
 		List<Shrinkable<Object>> parameters = toList(50);
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
-		RuntimeException originalError = throwAndCatch("original error");
+		AssertionError originalError = failAndCatch("original error");
 
-		TestingFalsifier<List<Object>> listFalsifier = params -> {
-			int integer = (int) params.get(0);
+		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer) -> {
 			if (integer <= 10) return true;
 			if (integer % 2 == 0) {
-				throw throwAndCatch("shrinking");
+				throw failAndCatch("shrinking");
 			} else {
 				throw new IllegalArgumentException();
 			}
-		};
-		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, originalError);
+		});
+
+		PropertyShrinkingResult result = shrinker.shrink(falsifier, originalError);
 
 		assertThat(result.sample()).isEqualTo(asList(12));
 		assertThat(result.throwable().get()).hasMessage("shrinking");
@@ -145,29 +145,21 @@ class PropertyShrinkerTests {
 		List<Shrinkable<Object>> parameters = toList(50);
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
-		RuntimeException originalError = throwAndCatch("original error");
+		AssertionError originalError = failAndCatch("original error");
 
-		TestingFalsifier<List<Object>> listFalsifier = params -> {
-			int integer = (int) params.get(0);
+		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer) -> {
 			if (integer <= 10) return true;
 			if (integer % 2 == 0) {
-				throw throwAndCatch("shrinking");
+				throw failAndCatch("shrinking");
 			} else {
 				throw new RuntimeException("different location");
 			}
-		};
-		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, originalError);
+		});
+
+		PropertyShrinkingResult result = shrinker.shrink(falsifier, originalError);
 
 		assertThat(result.sample()).isEqualTo(asList(12));
 		assertThat(result.throwable().get()).hasMessage("shrinking");
-	}
-
-	private RuntimeException throwAndCatch(String message) {
-		try {
-			throw new RuntimeException(message);
-		} catch (RuntimeException rte) {
-			return rte;
-		}
 	}
 
 	@Example
@@ -176,13 +168,13 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		TestingFalsifier<List<Object>> listFalsifier = params -> {
+		TestingFalsifier<List<Object>> falsifier = params -> {
 			params.add(42);
 			if (((int) params.get(0)) == 0) return true;
 			if (((int) params.get(1)) <= 1) return true;
 			return false;
 		};
-		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
+		PropertyShrinkingResult result = shrinker.shrink(falsifier, null);
 
 		assertThat(result.sample()).isEqualTo(asList(1, 2, 42));
 	}
