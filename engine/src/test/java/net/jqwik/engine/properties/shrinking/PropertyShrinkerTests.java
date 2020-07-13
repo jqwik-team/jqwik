@@ -125,13 +125,13 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 		RuntimeException originalError = throwAndCatch("original error");
 
-		Falsifier<List<Object>> listFalsifier = params -> {
+		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			int integer = (int) params.get(0);
-			if (integer <= 10) return TryExecutionResult.satisfied();
+			if (integer <= 10) return true;
 			if (integer % 2 == 0) {
-				return TryExecutionResult.falsified(throwAndCatch("shrinking"));
+				throw throwAndCatch("shrinking");
 			} else {
-				return TryExecutionResult.falsified(new IllegalArgumentException());
+				throw new IllegalArgumentException();
 			}
 		};
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, originalError);
@@ -147,13 +147,13 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 		RuntimeException originalError = throwAndCatch("original error");
 
-		Falsifier<List<Object>> listFalsifier = params -> {
+		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			int integer = (int) params.get(0);
-			if (integer <= 10) return TryExecutionResult.satisfied();
+			if (integer <= 10) return true;
 			if (integer % 2 == 0) {
-				return TryExecutionResult.falsified(throwAndCatch("shrinking"));
+				throw throwAndCatch("shrinking");
 			} else {
-				return TryExecutionResult.falsified(new RuntimeException("different"));
+				throw new RuntimeException("different location");
 			}
 		};
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, originalError);
@@ -176,11 +176,11 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		Falsifier<List<Object>> listFalsifier = params -> {
+		TestingFalsifier<List<Object>> listFalsifier = params -> {
 			params.add(42);
-			if (((int) params.get(0)) == 0) return TryExecutionResult.satisfied();
-			if (((int) params.get(1)) <= 1) return TryExecutionResult.satisfied();
-			return TryExecutionResult.falsified(null);
+			if (((int) params.get(0)) == 0) return true;
+			if (((int) params.get(1)) <= 1) return true;
+			return false;
 		};
 		PropertyShrinkingResult result = shrinker.shrink(listFalsifier, null);
 
