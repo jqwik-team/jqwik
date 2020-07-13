@@ -65,6 +65,7 @@ class EdgeCasesTests {
 
 		Falsifier<String> falsifier = ignore -> TryExecutionResult.falsified(null);
 		for (Shrinkable<String> edgeCase : edgeCases) {
+			// TODO: Find out why ArbitraryTestHelper.shrinkToEnd does not work for one of the edge cases ("z")
 			// String shrunkValue = ArbitraryTestHelper.shrinkToEnd(edgeCase, falsifier, null);
 			ShrinkingSequence<String> sequence = edgeCase.shrink(falsifier);
 			while (sequence.next(() -> {}, ignore -> { })) {
