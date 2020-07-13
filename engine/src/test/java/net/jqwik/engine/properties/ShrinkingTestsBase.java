@@ -9,12 +9,12 @@ import net.jqwik.api.*;
 
 public class ShrinkingTestsBase {
 
-	protected final Consumer<List<Object>> falsifiedReporter = ignore -> {};
+	public static final Consumer<List<Object>> falsifiedReporter = ignore -> {};
 
-	protected final Reporter reporter = Mockito.mock(Reporter.class);
+	public static final Reporter reporter = Mockito.mock(Reporter.class);
 
 	@SuppressWarnings("unchecked")
-	protected <T> List<Shrinkable<Object>> toListOfShrinkables(Shrinkable<T>... shrinkables) {
+	public static <T> List<Shrinkable<Object>> toListOfShrinkables(Shrinkable<T>... shrinkables) {
 		ArrayList<Shrinkable<Object>> parameterList = new ArrayList<>();
 		for (Shrinkable<T> shrinkable : shrinkables) {
 			parameterList.add((Shrinkable<Object>) shrinkable);
@@ -23,7 +23,15 @@ public class ShrinkingTestsBase {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> TestingFalsifier<List<Object>> falsifier(Predicate<T> tFalsifier) {
+	public static <T> Falsifier<List<Object>> parameterFalsifier(Falsifier<T> tFalsifier) {
+		return params -> {
+			T t = (T) params.get(0);
+			return tFalsifier.execute(t);
+		};
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> TestingFalsifier<List<Object>> falsifier(Predicate<T> tFalsifier) {
 		return params -> {
 			T seq = (T) params.get(0);
 			return tFalsifier.test(seq);
@@ -31,7 +39,7 @@ public class ShrinkingTestsBase {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T1, T2> TestingFalsifier<List<Object>> falsifier(BiPredicate<T1, T2> t1t2Falsifier) {
+	public static <T1, T2> TestingFalsifier<List<Object>> falsifier(BiPredicate<T1, T2> t1t2Falsifier) {
 		return params -> {
 			T1 t1 = (T1) params.get(0);
 			T2 t2 = (T2) params.get(1);
@@ -39,7 +47,7 @@ public class ShrinkingTestsBase {
 		};
 	}
 
-	protected AssertionError failAndCatch(String message) {
+	public static AssertionError failAndCatch(String message) {
 		try {
 			throw new AssertionError(message);
 		} catch (AssertionError error) {

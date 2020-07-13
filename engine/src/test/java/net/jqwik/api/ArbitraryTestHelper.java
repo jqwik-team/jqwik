@@ -6,8 +6,11 @@ import java.util.stream.*;
 
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.properties.shrinking.*;
 
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.engine.properties.ShrinkingTestsBase.*;
 
 public class ArbitraryTestHelper {
 
@@ -109,12 +112,21 @@ public class ArbitraryTestHelper {
 	@SuppressWarnings("unchecked")
 	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
 		RandomGenerator<? extends T> generator = arbitrary.generator(10);
+		Throwable[] originalError = new Throwable[1];
 		Shrinkable<T> falsifiedShrinkable =
-			(Shrinkable<T>) generateUntil(generator, random, value -> !falsifier.execute(value).isSatisfied());
+			(Shrinkable<T>) generateUntil(generator, random, value -> {
+				TryExecutionResult result = falsifier.execute(value);
+				if (result.isFalsified()) {
+					originalError[0] = result.throwable().orElse(null);
+				}
+				return result.isFalsified();
+			});
 
-		ShrinkingSequence<T> sequence = falsifiedShrinkable.shrink(falsifier);
-		while (sequence.next(() -> {}, ignore -> { })) ;
-		return sequence.current().value();
+		List<Shrinkable<Object>> parameters = toListOfShrinkables(falsifiedShrinkable);
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedReporter);
+
+		PropertyShrinkingResult result = shrinker.shrink(parameterFalsifier(falsifier), originalError[0]);
+		return (T) result.sample().get(0);
 	}
 
 	public static <T> T generateFirst(Arbitrary<T> arbitrary, Random random) {
