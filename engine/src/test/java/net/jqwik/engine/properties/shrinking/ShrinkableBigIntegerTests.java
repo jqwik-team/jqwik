@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.math.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -11,16 +10,14 @@ import net.jqwik.engine.properties.arbitraries.randomized.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 @Group
 @Label("ShrinkableBigInteger")
 class ShrinkableBigIntegerTests {
 
-	private final AtomicInteger counter = new AtomicInteger(0);
-	private final Runnable count = counter::incrementAndGet;
-
 	@SuppressWarnings("unchecked")
 	private final Consumer<BigInteger> valueReporter = mock(Consumer.class);
-	private final Consumer<FalsificationResult<BigInteger>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -86,18 +83,12 @@ class ShrinkableBigIntegerTests {
 	void reportFalsified() {
 		Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(30, Range.of(-100L, 100L));
 
-		ShrinkingSequence<BigInteger> sequence =
-			shrinkable.shrink((TestingFalsifier<BigInteger>) aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(10)) < 0);
+		TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(10)) < 0;
+		BigInteger shrunkValue = shrinkToEnd(shrinkable, falsifier, valueReporter, null);
+		assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(10));
 
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(13));
 		verify(valueReporter).accept(BigInteger.valueOf(13));
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(10));
 		verify(valueReporter).accept(BigInteger.valueOf(10));
-
-		assertThat(sequence.next(count, reporter)).isFalse();
 		verifyNoMoreInteractions(valueReporter);
 	}
 
@@ -108,13 +99,9 @@ class ShrinkableBigIntegerTests {
 		void downAllTheWay() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
 
-			ShrinkingSequence<BigInteger> sequence =
-				shrinkable.shrink((TestingFalsifier<BigInteger>) aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0);
-
-			while (sequence.next(count, reporter)) ;
-
-			assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(1001));
-			assertThat(counter.get()).isEqualTo(7);
+			TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(1000)) <= 0;
+			BigInteger shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(1001));
 		}
 
 		@Example
@@ -124,25 +111,17 @@ class ShrinkableBigIntegerTests {
 			TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.intValueExact() < 99;
 			Falsifier<BigInteger> filteredFalsifier = falsifier.withFilter(aBigInteger -> aBigInteger.intValueExact() % 2 == 0);
 
-			ShrinkingSequence<BigInteger> sequence = shrinkable.shrink(filteredFalsifier);
-
-			while (sequence.next(count, reporter)) ;
-
-			assertThat(sequence.current().value()).isEqualTo(100);
-			assertThat(counter.get()).isEqualTo(8);
+			BigInteger shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(100));
 		}
 
 		@Example
 		void upToExplicitShrinkingTarget() {
 			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(1000, Range.of(5L, 500000L), 5000L);
 
-			ShrinkingSequence<BigInteger> sequence =
-				shrinkable.shrink((TestingFalsifier<BigInteger>) aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(5000)) >= 0);
-
-			while (sequence.next(count, reporter)) ;
-
-			assertThat(sequence.current().value()).isEqualTo(BigInteger.valueOf(4999));
-			assertThat(counter.get()).isEqualTo(1);
+			TestingFalsifier<BigInteger> falsifier = aBigInteger -> aBigInteger.compareTo(BigInteger.valueOf(5000)) >= 0;
+			BigInteger shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(4999));
 		}
 
 	}
