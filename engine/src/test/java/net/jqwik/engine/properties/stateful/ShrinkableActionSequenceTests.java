@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -18,11 +17,8 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 class ShrinkableActionSequenceTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
 	@SuppressWarnings("unchecked")
 	private Consumer<ActionSequence<String>> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<ActionSequence<String>>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void createNotRunSequence() {
@@ -58,6 +54,7 @@ class ShrinkableActionSequenceTests {
 	@SuppressWarnings("unchecked")
 	@Example
 	void shrinkToSequenceWithFirstActionOnly() {
+
 		List<Shrinkable<Action<String>>> actions = asList(
 			shrinkableAddCC(),
 			shrinkableAddX(),
@@ -65,23 +62,15 @@ class ShrinkableActionSequenceTests {
 			shrinkableAddX()
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
-
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) seq -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = seq -> {
 			seq.run("");
 			return false;
-		});
-		assertThat(sequence.next(count, reporter)).isTrue();
-		verify(valueReporter).accept(any(ActionSequence.class));
-		assertThat(sequence.next(count, reporter)).isTrue();
-		verify(valueReporter, times(2)).accept(any(ActionSequence.class));
-		assertThat(sequence.next(count, reporter)).isTrue();
+		};
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, valueReporter, null);
+		assertThat(shrunkValue.runActions()).hasSize(1);
+		assertThat(shrunkValue.run("")).isEqualTo("x");
+
 		verify(valueReporter, times(3)).accept(any(ActionSequence.class));
-		assertThat(sequence.next(count, reporter)).isFalse();
-
-		assertThat(sequence.current().value().runActions()).hasSize(1);
-		assertThat(sequence.current().value().run("")).isEqualTo("x");
-
-		assertThat(counter.get()).isEqualTo(3);
 		verifyNoMoreInteractions(valueReporter);
 	}
 
