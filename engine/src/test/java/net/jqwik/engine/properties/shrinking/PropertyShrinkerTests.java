@@ -64,7 +64,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer1, Integer integer2) -> {
+		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer1, Integer integer2) -> {
 			if (integer1 == 0) return true;
 			return integer2 <= 1;
 		});
@@ -108,7 +108,7 @@ class PropertyShrinkerTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 
-		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer1, Integer integer2) -> {
+		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer1, Integer integer2) -> {
 			if (integer1 == 0) return true;
 			if (integer2 <= 1) return true;
 			throw failAndCatch("shrinking");
@@ -127,7 +127,7 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 		AssertionError originalError = failAndCatch("original error");
 
-		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer) -> {
+		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
 			if (integer <= 10) return true;
 			if (integer % 2 == 0) {
 				throw failAndCatch("shrinking");
@@ -149,7 +149,7 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedSampleReporter);
 		AssertionError originalError = failAndCatch("original error");
 
-		TestingFalsifier<List<Object>> falsifier = falsifier((Integer integer) -> {
+		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
 			if (integer <= 10) return true;
 			if (integer % 2 == 0) {
 				throw failAndCatch("shrinking");

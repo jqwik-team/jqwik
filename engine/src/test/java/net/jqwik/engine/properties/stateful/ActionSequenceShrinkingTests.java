@@ -26,7 +26,7 @@ class ActionSequenceShrinkingTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
 
-		TestingFalsifier<List<Object>> falsifier = falsifier((ActionSequence<String> seq) -> {
+		TestingFalsifier<List<Object>> falsifier = paramFalsifier((ActionSequence<String> seq) -> {
 			seq.run("");
 			return false;
 		});
@@ -76,7 +76,7 @@ class ActionSequenceShrinkingTests {
 
 		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
 
-		TestingFalsifier<List<Object>> falsifier = falsifier((ActionSequence<String> seq) -> {
+		TestingFalsifier<List<Object>> falsifier = paramFalsifier((ActionSequence<String> seq) -> {
 			seq.run("");
 			throw failAndCatch(null);
 		});

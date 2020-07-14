@@ -27,7 +27,16 @@ public class ShrinkingTestHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Falsifier<List<Object>> parameterFalsifier(Falsifier<T> tFalsifier) {
+	public static <T> Falsifier<T> alwaysFalsify() {
+		return ignore -> TryExecutionResult.falsified(null);
+	}
+
+	public static <T> TestingFalsifier<T> falsifier(Predicate<T> predicate) {
+		return predicate::test;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> Falsifier<List<Object>> toParmaFalsifier(Falsifier<T> tFalsifier) {
 		return params -> {
 			T t = (T) params.get(0);
 			return tFalsifier.execute(t);
@@ -35,7 +44,7 @@ public class ShrinkingTestHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> TestingFalsifier<List<Object>> falsifier(Predicate<T> tFalsifier) {
+	public static <T> TestingFalsifier<List<Object>> paramFalsifier(Predicate<T> tFalsifier) {
 		return params -> {
 			T seq = (T) params.get(0);
 			return tFalsifier.test(seq);
@@ -43,7 +52,7 @@ public class ShrinkingTestHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T1, T2> TestingFalsifier<List<Object>> falsifier(BiPredicate<T1, T2> t1t2Falsifier) {
+	public static <T1, T2> TestingFalsifier<List<Object>> paramFalsifier(BiPredicate<T1, T2> t1t2Falsifier) {
 		return params -> {
 			T1 t1 = (T1) params.get(0);
 			T2 t2 = (T2) params.get(1);
@@ -114,6 +123,6 @@ public class ShrinkingTestHelper {
 		Consumer<List<Object>> parametersReporter = params -> falsifiedReporter.accept((T) params.get(0));
 		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporterStub, parametersReporter);
 
-		return shrinker.shrink(parameterFalsifier(falsifier), originalError);
+		return shrinker.shrink(toParmaFalsifier(falsifier), originalError);
 	}
 }

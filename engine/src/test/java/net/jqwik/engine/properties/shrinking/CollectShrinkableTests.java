@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -11,16 +10,14 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 @Group
 @Label("CollectShrinkable")
 class CollectShrinkableTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
-
 	@SuppressWarnings("unchecked")
-	private Consumer<List<Integer>> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<List<Integer>>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<List<Integer>> valueReporter = mock(Consumer.class);
 
 	@Example
 	void creation() {
@@ -47,19 +44,8 @@ class CollectShrinkableTests {
 		Predicate<List<Integer>> untilSizeAtLeast2 = l -> l.size() >= 2;
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilSizeAtLeast2);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore -> false);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(2, 1);
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(1, 1);
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(0, 1);
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(0, 0);
-		assertThat(sequence.next(count, reporter)).isFalse();
-
-		assertThat(counter.get()).isEqualTo(4);
+		List<Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+		assertThat(shrunkValue).containsExactly(0, 0);
 	}
 
 	@Example
@@ -76,13 +62,8 @@ class CollectShrinkableTests {
 			int sum = listOfInts.stream().mapToInt(i -> i).sum();
 			return sum % 2 != 0;
 		};
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink(sumMustNotBeEven);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(1, 1);
-		assertThat(sequence.next(count, reporter)).isFalse();
-
-		assertThat(counter.get()).isEqualTo(1);
+		List<Integer> shrunkValue = shrinkToEnd(shrinkable, sumMustNotBeEven, null);
+		assertThat(shrunkValue).containsExactly(1, 1);
 	}
 
 	@Example
@@ -96,22 +77,9 @@ class CollectShrinkableTests {
 			return sum >= 6;
 		};
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, sumAtLeast6);
-
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore -> false);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(2, 1, 1, 1, 1);
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(3, 1, 1, 1);
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(3, 2, 1);
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(3, 3);
-		assertThat(sequence.next(count, reporter)).isFalse();
-
-		assertThat(counter.get()).isEqualTo(4);
+		List<Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+		assertThat(shrunkValue).containsExactly(3, 3);
 	}
-
 
 	@Example
 	void reportFalsifier() {
@@ -121,20 +89,12 @@ class CollectShrinkableTests {
 
 		Predicate<List<Integer>> untilNotEmpty = l -> !l.isEmpty();
 		Shrinkable<List<Integer>> shrinkable = new CollectShrinkable<>(shrinkables, untilNotEmpty);
+		List<Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), valueReporter, null);
+		assertThat(shrunkValue).containsExactly(0);
 
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore -> false);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(2);
 		verify(valueReporter).accept(Arrays.asList(2));
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(1);
 		verify(valueReporter).accept(Arrays.asList(1));
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).containsExactly(0);
 		verify(valueReporter).accept(Arrays.asList(0));
-		assertThat(sequence.next(count, reporter)).isFalse();
-
 		verifyNoMoreInteractions(valueReporter);
 	}
 
