@@ -17,7 +17,9 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class PropertyShrinkerTests extends ShrinkingTestsBase {
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
+class PropertyShrinkerTests {
 
 	private final Reporter reporter = Mockito.mock(Reporter.class);
 	@SuppressWarnings("unchecked")
@@ -192,7 +194,7 @@ class PropertyShrinkerTests extends ShrinkingTestsBase {
 		verify(reporter, times(1)).publishValue(eq("shrinking bound reached"), anyString());
 	}
 
-	private List<Shrinkable<Object>> toList(int ... args) {
+	private List<Shrinkable<Object>> toList(int... args) {
 		return Arrays.stream(args).mapToObj(i -> new OneStepShrinkable(i).asGeneric()).collect(Collectors.toList());
 	}
 
@@ -233,6 +235,5 @@ class PropertyShrinkerTests extends ShrinkingTestsBase {
 			return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
 		}
 	}
-
 
 }

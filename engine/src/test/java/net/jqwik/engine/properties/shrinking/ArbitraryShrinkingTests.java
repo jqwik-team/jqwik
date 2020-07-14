@@ -12,7 +12,7 @@ import net.jqwik.engine.properties.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 class ArbitraryShrinkingTests {
 
@@ -50,7 +50,7 @@ class ArbitraryShrinkingTests {
 
 		Shrinkable<Integer> shrinkable = arbitrary.generator(10).next(random);
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
-		int shrunkValue = ArbitraryTestHelper.shrinkToEnd(shrinkable, falsifier, null);
+		int shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
 		assertThat(shrunkValue).isEqualTo(shrinkable.value());
 	}
 
@@ -156,7 +156,7 @@ class ArbitraryShrinkingTests {
 			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
 
 			TestingFalsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
-			Map<Integer, String> map = falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
+			Map<Integer, String> map = ShrinkingTestHelper.falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
 
 			assertThat(map).hasSize(2);
 			assertThat(map.keySet()).containsAnyOf(0, 1, -1);

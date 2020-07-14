@@ -13,8 +13,10 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 @SuppressWarnings("unchecked")
-class ActionSequenceShrinkingTests extends ShrinkingTestsBase {
+class ActionSequenceShrinkingTests {
 
 	@Example
 	void sequencesAreShrunkToSingleAction(@ForAll Random random) {
@@ -22,7 +24,7 @@ class ActionSequenceShrinkingTests extends ShrinkingTestsBase {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporter, falsifiedReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
 
 		TestingFalsifier<List<Object>> falsifier = falsifier((ActionSequence<String> seq) -> {
 			seq.run("");
@@ -72,7 +74,7 @@ class ActionSequenceShrinkingTests extends ShrinkingTestsBase {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporter, falsifiedReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
 
 		TestingFalsifier<List<Object>> falsifier = falsifier((ActionSequence<String> seq) -> {
 			seq.run("");
@@ -91,7 +93,7 @@ class ActionSequenceShrinkingTests extends ShrinkingTestsBase {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporter, falsifiedReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
 
 		TestingFalsifier<List<Object>> falsifier = params -> {
 			ActionSequence<String> seq = (ActionSequence<String>) params.get(0);

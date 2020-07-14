@@ -3,13 +3,13 @@ package net.jqwik.api;
 import java.util.*;
 import java.util.function.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 class FunctionsTests {
 
@@ -189,9 +189,8 @@ class FunctionsTests {
 			f -> (f.apply("value1") < 11) ?
 					 TryExecutionResult.satisfied() :
 					 TryExecutionResult.falsified(null);
-		Function<String, Integer> shrunkFunction =
-			ArbitraryTestHelper.falsifyThenShrink(functions, random, falsifier);
 
+		Function<String, Integer> shrunkFunction = falsifyThenShrink(functions, random, falsifier);
 		assertThat(shrunkFunction.apply("value1")).isEqualTo(11);
 
 		// TODO: Back in the days those assertions also were true:
@@ -218,7 +217,6 @@ class FunctionsTests {
 			assertThat(function.apply(string)).isEqualTo(11);
 		}
 	}
-
 
 	@Group
 	class Conditional_results {
@@ -294,7 +292,7 @@ class FunctionsTests {
 					.function(Function.class).returns(integers)
 					.when(params -> params.get(0).equals("three"), params -> 3);
 
-			Function<String, Integer> shrunkFunction = ArbitraryTestHelper.shrinkToEnd(functions, random);
+			Function<String, Integer> shrunkFunction = ShrinkingTestHelper.shrinkToEnd(functions, random);
 
 			assertThat(shrunkFunction.apply("three")).isEqualTo(3);
 		}

@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ArbitraryTestHelper.*;
 import static net.jqwik.api.GenerationMode.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("Arbitrary")

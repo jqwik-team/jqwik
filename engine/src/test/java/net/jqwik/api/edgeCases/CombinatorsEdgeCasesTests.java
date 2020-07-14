@@ -41,7 +41,7 @@ class CombinatorsEdgeCasesTests {
 		Shrinkable<Integer> firstEdgeCase = edgeCases.iterator().next();
 
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
-		int shrunkValue = ArbitraryTestHelper.shrinkToEnd(firstEdgeCase, falsifier, null);
+		int shrunkValue = ShrinkingTestHelper.shrinkToEnd(firstEdgeCase, falsifier, null);
 		assertThat(shrunkValue).isEqualTo(0);
 	}
 

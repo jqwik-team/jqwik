@@ -10,6 +10,8 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 class EdgeCasesTests {
 
 	@Example
@@ -35,7 +37,7 @@ class EdgeCasesTests {
 
 		Falsifier<String> falsifier = ignore -> TryExecutionResult.falsified(null);
 		for (Shrinkable<String> edgeCase : edgeCases) {
-			String shrunkValue = ArbitraryTestHelper.shrinkToEnd(edgeCase, falsifier, null);
+			String shrunkValue = shrinkToEnd(edgeCase, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("25");
 		}
 	}
@@ -49,7 +51,7 @@ class EdgeCasesTests {
 
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
 		for (Shrinkable<Integer> edgeCase : edgeCases) {
-			int shrunkValue = ArbitraryTestHelper.shrinkToEnd(edgeCase, falsifier, null);
+			int shrunkValue = shrinkToEnd(edgeCase, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(1);
 		}
 	}

@@ -80,9 +80,9 @@ class BigDecimalShrinkingTests {
 	void reportFalsified() {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
 
-		ShrinkingSequence<BigDecimal> sequence =
-			shrinkable.shrink((TestingFalsifier<BigDecimal>) aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0);
+		TestingFalsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0;
 
+		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(falsifier);
 		while (sequence.next(count, reporter)) {}
 		assertThat(sequence.current().value()).isEqualByComparingTo(new BigDecimal("10"));
 		verify(valueReporter).accept(new BigDecimal("10.00"));
@@ -182,6 +182,5 @@ class BigDecimalShrinkingTests {
 		);
 		return shrinkableBigInteger.map(bigInteger -> scaledBigDecimal(bigInteger, scale));
 	}
-
 
 }

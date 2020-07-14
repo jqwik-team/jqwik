@@ -8,12 +8,14 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 class UnshrinkableTests {
 
 	@Example
 	void unshrinkableAreNotBeingShrunk() {
 		Shrinkable<String> unshrinkableString = Shrinkable.unshrinkable("a string");
-		String shrunkString = ArbitraryTestHelper.shrinkToEnd(unshrinkableString, ignore -> TryExecutionResult.falsified(null), null);
+		String shrunkString = shrinkToEnd(unshrinkableString, ignore -> TryExecutionResult.falsified(null), null);
 		assertThat(shrunkString).isEqualTo("a string");
 	}
 

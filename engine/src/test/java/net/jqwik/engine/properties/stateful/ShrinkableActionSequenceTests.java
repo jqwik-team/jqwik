@@ -14,7 +14,7 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import static net.jqwik.api.ArbitraryTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 class ShrinkableActionSequenceTests {
 

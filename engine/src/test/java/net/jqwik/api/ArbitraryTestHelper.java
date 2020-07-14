@@ -4,13 +4,9 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
-import net.jqwik.engine.properties.shrinking.*;
 
 import static org.assertj.core.api.Assertions.*;
-
-import static net.jqwik.engine.properties.ShrinkingTestsBase.*;
 
 public class ArbitraryTestHelper {
 
@@ -98,40 +94,6 @@ public class ArbitraryTestHelper {
 								.collect(Collectors.toList());
 
 		assertThat(generated).containsExactly(expectedValues);
-	}
-
-	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
-		T value = shrinkToEnd(arbitrary, random);
-		assertThat(value).isEqualTo(expectedShrunkValue);
-	}
-
-	public static <T> T shrinkToEnd(Arbitrary<? extends T> arbitrary, Random random) {
-		return falsifyThenShrink(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T falsifyThenShrink(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
-		RandomGenerator<? extends T> generator = arbitrary.generator(10);
-		Throwable[] originalError = new Throwable[1];
-		Shrinkable<T> falsifiedShrinkable =
-			(Shrinkable<T>) generateUntil(generator, random, value -> {
-				TryExecutionResult result = falsifier.execute(value);
-				if (result.isFalsified()) {
-					originalError[0] = result.throwable().orElse(null);
-				}
-				return result.isFalsified();
-			});
-
-		return shrinkToEnd(falsifiedShrinkable, falsifier, originalError[0]);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T> T shrinkToEnd(Shrinkable<T> falsifiedShrinkable, Falsifier<T> falsifier, Throwable originalError) {
-		List<Shrinkable<Object>> parameters = toListOfShrinkables(falsifiedShrinkable);
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporter, falsifiedReporter);
-
-		PropertyShrinkingResult result = shrinker.shrink(parameterFalsifier(falsifier), originalError);
-		return (T) result.sample().get(0);
 	}
 
 	public static <T> T generateFirst(Arbitrary<T> arbitrary, Random random) {
