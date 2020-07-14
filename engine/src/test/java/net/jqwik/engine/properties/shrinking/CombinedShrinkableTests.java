@@ -1,27 +1,24 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 @Group
 @Label("CombinedShrinkable")
 class CombinedShrinkableTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
-
 	@SuppressWarnings("unchecked")
-	private Consumer<Integer> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<Integer>> reporter = result -> valueReporter.accept(result.value());
+	private final Consumer<Integer> valueReporter = mock(Consumer.class);
 
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Example
 	void creation() {
 		Shrinkable three = new OneStepShrinkable(3);
@@ -32,7 +29,6 @@ class CombinedShrinkableTests {
 			return aString + anInt;
 		};
 
-		@SuppressWarnings("unchecked")
 		List<Shrinkable<Object>> shrinkables = Arrays.asList(three, hello);
 		Shrinkable<String> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
@@ -40,6 +36,7 @@ class CombinedShrinkableTests {
 		assertThat(shrinkable.value()).isEqualTo("hello3");
 	}
 
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Example
 	void shrinking() {
 		Shrinkable three = new OneStepShrinkable(3);
@@ -50,20 +47,14 @@ class CombinedShrinkableTests {
 			return first + second;
 		};
 
-		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
+		List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
 		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) result -> result < 4);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.next(count, reporter)).isTrue();
-
-		assertThat(sequence.current().value()).isEqualTo(4);
-		assertThat(sequence.current().distance()).isEqualTo(ShrinkingDistance.of(0, 4));
+		Integer shrunkValue = shrinkToEnd(shrinkable, falsifier(result -> result < 4), null);
+		assertThat(shrunkValue).isEqualTo(4);
 	}
 
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Example
 	void reportFalsifier() {
 
@@ -75,25 +66,15 @@ class CombinedShrinkableTests {
 			return first + second;
 		};
 
-		@SuppressWarnings("unchecked") List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
+		List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
 		Shrinkable<Integer> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) result -> result < 4);
+		Integer shrunkValue = shrinkToEnd(shrinkable, falsifier(result -> result < 4), valueReporter, null);
+		assertThat(shrunkValue).isEqualTo(4);
 
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).isEqualTo(7);
 		verify(valueReporter).accept(7);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).isEqualTo(6);
 		verify(valueReporter).accept(6);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).isEqualTo(5);
 		verify(valueReporter).accept(5);
-
-		assertThat(sequence.next(count, reporter)).isTrue();
-		assertThat(sequence.current().value()).isEqualTo(4);
 		verify(valueReporter).accept(4);
 
 		verifyNoMoreInteractions(valueReporter);
