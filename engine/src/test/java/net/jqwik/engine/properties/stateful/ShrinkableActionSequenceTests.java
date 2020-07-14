@@ -14,6 +14,8 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import static net.jqwik.api.ArbitraryTestHelper.*;
+
 class ShrinkableActionSequenceTests {
 
 	private AtomicInteger counter = new AtomicInteger(0);
@@ -93,14 +95,12 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) seq -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = seq -> {
 			String result = seq.run("");
 			return result.length() < 2;
-		});
+		};
 
-		while (sequence.next(count, reporter)) ;
-
-		ActionSequence<String> shrunkValue = sequence.current().value();
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -115,17 +115,15 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) seq -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = seq -> {
 			String result = seq.run("");
 			if (result.contains("c"))
 				return result.length() < 4;
 			else
 				return result.length() < 2;
-		});
+		};
 
-		while (sequence.next(count, reporter)) ;
-
-		ActionSequence<String> shrunkValue = sequence.current().value();
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -144,14 +142,12 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) seq -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = seq -> {
 			String result = seq.run("");
 			return result.length() < 2;
-		});
+		};
 
-		while (sequence.next(count, reporter)) ;
-
-		ActionSequence<String> shrunkValue = sequence.current().value();
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -161,14 +157,12 @@ class ShrinkableActionSequenceTests {
 		actions.add(shrinkableAddX()); // to ensure that at least one action is valid
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		ShrinkingSequence<ActionSequence<String>> sequence = shrinkable.shrink((TestingFalsifier<ActionSequence<String>>) seq -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = seq -> {
 			String result = seq.run("");
 			return !result.contains("x");
-		});
-
-		while (sequence.next(count, reporter)) ;
-
-		assertThat(sequence.current().value().run("")).isEqualTo("x");
+		};
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		assertThat(shrunkValue.run("")).isEqualTo("x");
 	}
 
 	@Provide

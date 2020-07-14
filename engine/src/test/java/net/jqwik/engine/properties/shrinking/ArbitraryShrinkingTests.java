@@ -50,9 +50,8 @@ class ArbitraryShrinkingTests {
 
 		Shrinkable<Integer> shrinkable = arbitrary.generator(10).next(random);
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
-		ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier);
-		while (sequence.next(() -> {}, ignore -> { })) ;
-		assertThat(sequence.current().value()).isEqualTo(shrinkable.value());
+		int shrunkValue = ArbitraryTestHelper.shrinkToEnd(shrinkable, falsifier, null);
+		assertThat(shrunkValue).isEqualTo(shrinkable.value());
 	}
 
 	@Property(tries = 10)
@@ -127,12 +126,9 @@ class ArbitraryShrinkingTests {
 		RandomGenerator<List<Integer>> generator = collected.generator(10);
 
 		Shrinkable<List<Integer>> shrinkable = generator.next(random);
-
-		ShrinkingSequence<List<Integer>> sequence = shrinkable.shrink((TestingFalsifier<List<Integer>>) ignore1 -> false);
-		sequence.init(FalsificationResult.falsified(shrinkable));
-
-		while (sequence.next(() -> {}, ignore -> {})) ;
-		assertThat(sequence.current().value()).containsExactly(3, 3, 3, 3);
+		TestingFalsifier<List<Integer>> falsifier = ignore1 -> false;
+		List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		assertThat(shrunkValue).containsExactly(3, 3, 3, 3);
 	}
 
 	private int sum(List<Integer> list) {

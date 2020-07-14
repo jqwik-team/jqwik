@@ -12,6 +12,8 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import static net.jqwik.api.ArbitraryTestHelper.*;
+
 @Group
 @Label("ShrinkableString")
 public class ShrinkableStringTests {
@@ -29,7 +31,6 @@ public class ShrinkableStringTests {
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
 		assertThat(shrinkable.value()).isEqualTo("abcd");
 	}
-
 
 	@Example
 	@Label("report all falsified on the way")
@@ -53,7 +54,6 @@ public class ShrinkableStringTests {
 		assertThat(sequence.next(count, reporter)).isFalse();
 		verifyNoMoreInteractions(valueReporter);
 	}
-
 
 	@Group
 	class Shrinking {
@@ -110,39 +110,12 @@ public class ShrinkableStringTests {
 		}
 
 		@Example
-		void alsoShrinkElements() {
-
+		void alsoShrinkCharacters() {
 			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
-
-			ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) aString -> aString.length() <= 1);
-
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo("bb");
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value().length()).isEqualTo(2);
-			assertThat(sequence.next(count, reporter)).isFalse();
-			assertThat(sequence.current().value()).isEqualTo("aa");
-
-			assertThat(counter.get()).isEqualTo(2);
+			TestingFalsifier<String> falsifier = aString -> aString.length() <= 1;
+			String shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo("aa");
 		}
-
-		@Example
-		void shrinkingResultHasValueAndThrowable() {
-			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
-
-			ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) string -> {
-				if (string.length() > 1) throw new IllegalArgumentException("my reason");
-				return true;
-			});
-
-			while(sequence.next(count, reporter)) {}
-
-			assertThat(sequence.current().value()).isEqualTo("aa");
-			assertThat(sequence.current().throwable()).isPresent();
-			assertThat(sequence.current().throwable().get()).isInstanceOf(IllegalArgumentException.class);
-			assertThat(sequence.current().throwable().get()).hasMessage("my reason");
-		}
-
 
 		@Example
 		void withFilterOnStringLength() {
@@ -172,11 +145,10 @@ public class ShrinkableStringTests {
 
 			TestingFalsifier<String> falsifier = String::isEmpty;
 			Falsifier<String> filteredFalsifier = falsifier //
-				.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
-			ShrinkingSequence<String> sequence = shrinkable.shrink(filteredFalsifier);
+															.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
 
-			while (sequence.next(count, reporter));
-			assertThat(sequence.current().value()).isEqualTo("b");
+			String shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			assertThat(shrunkValue).isEqualTo("b");
 		}
 
 		@Example
@@ -188,17 +160,11 @@ public class ShrinkableStringTests {
 						 .collect(Collectors.toList());
 
 			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5);
-
-			ShrinkingSequence<String> sequence = shrinkable.shrink((TestingFalsifier<String>) String::isEmpty);
-
-			while (sequence.next(count, reporter));
-			assertThat(sequence.current().value()).hasSize(5);
-
-			assertThat(counter.get()).isEqualTo(21);
+			String shrunkValue = shrinkToEnd(shrinkable, (TestingFalsifier<String>) String::isEmpty, null);
+			assertThat(shrunkValue).hasSize(5);
 		}
 
 	}
-
 
 	public static Shrinkable<String> createShrinkableString(String aString, int minSize) {
 		List<Shrinkable<Character>> elementShrinkables = aString //

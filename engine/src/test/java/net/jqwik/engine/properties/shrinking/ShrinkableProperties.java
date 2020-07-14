@@ -8,18 +8,19 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.ArbitraryTestHelper.*;
+
 @Group
 class ShrinkableProperties {
 
 	@Property
-	boolean allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
-		ShrinkingSequence<?> sequence = shrinkable.shrink(ignore -> TryExecutionResult.falsified(null));
-		while (sequence.next(() -> {}, ignore -> {})) ;
-		return true;
+	void allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
+		shrinkToEnd(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
 	}
 
 	@Property(tries = 100)
 	boolean allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
+		// TODO: Replace with test to show that all shrinking suggestions are "smaller" than value to shrink
 		ShrinkingSequence<?> sequence = shrinkable.shrink(ignore -> TryExecutionResult.falsified(null));
 		FalsificationResult<?> current = sequence.current();
 		while (sequence.next(() -> {}, ignore -> {})) {
