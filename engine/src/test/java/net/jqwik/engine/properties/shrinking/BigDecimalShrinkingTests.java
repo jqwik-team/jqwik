@@ -13,16 +13,15 @@ import net.jqwik.engine.properties.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.engine.properties.arbitraries.randomized.RandomDecimalGenerators.*;
 
 class BigDecimalShrinkingTests {
 
 	private final AtomicInteger counter = new AtomicInteger(0);
-	private final Runnable count = counter::incrementAndGet;
 
 	@SuppressWarnings("unchecked")
 	private final Consumer<BigDecimal> valueReporter = mock(Consumer.class);
-	private final Consumer<FalsificationResult<BigDecimal>> reporter = result -> valueReporter.accept(result.value());
 
 	@Example
 	void creation() {
@@ -81,10 +80,8 @@ class BigDecimalShrinkingTests {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal("30.55", Range.of(-100.0, 100.0));
 
 		TestingFalsifier<BigDecimal> falsifier = aBigDecimal -> aBigDecimal.compareTo(BigDecimal.valueOf(10)) < 0;
-
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(falsifier);
-		while (sequence.next(count, reporter)) {}
-		assertThat(sequence.current().value()).isEqualByComparingTo(new BigDecimal("10"));
+		BigDecimal shrunkValue = shrinkToEnd(shrinkable, falsifier, valueReporter, null);
+		assertThat(shrunkValue).isEqualByComparingTo(new BigDecimal("10"));
 		verify(valueReporter).accept(new BigDecimal("10.00"));
 	}
 
@@ -96,19 +93,15 @@ class BigDecimalShrinkingTests {
 		Falsifier<BigDecimal> filteredFalsifier =
 			falsifier.withFilter(aBigDecimal -> aBigDecimal.remainder(BigDecimal.valueOf(2)).longValue() == 1);
 
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink(filteredFalsifier);
-		while (sequence.next(count, reporter)) ;
-
-		assertThat(sequence.current().value().longValueExact()).isEqualTo(25);
+		BigDecimal shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+		assertThat(shrunkValue.longValueExact()).isEqualTo(25);
 	}
 
 	@Property(tries = 100)
 	void shrinkingToClosestDecimalWhenMinimumIsNotIncluded(@ForAll @BigRange(min = "1.01", max = "1000000000") @Scale(2) BigDecimal value) {
 		Range<Double> doubleRange = Range.of(1.0, false, 1000000000.0, true);
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(value.toPlainString(), doubleRange, 2);
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
-		while (sequence.next(count, reporter)) ;
-		BigDecimal shrunkValue = sequence.current().value();
+		BigDecimal shrunkValue = shrinkToEnd(shrinkable, (TestingFalsifier<BigDecimal>) ignore -> false, null);
 		assertThat(shrunkValue).isEqualByComparingTo("1.01");
 	}
 
@@ -116,18 +109,14 @@ class BigDecimalShrinkingTests {
 	void shrinkingToClosestDecimalWhenMaximumIsNotIncluded(@ForAll @BigRange(min = "-1000000", max = "-1.01") @Scale(2) BigDecimal value) {
 		Range<Double> doubleRange = Range.of(-1000000.0, true, -1.0, false);
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(value.toPlainString(), doubleRange, 2);
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
-		while (sequence.next(count, reporter)) ;
-		BigDecimal shrunkValue = sequence.current().value();
+		BigDecimal shrunkValue = shrinkToEnd(shrinkable, (TestingFalsifier<BigDecimal>) ignore -> false, null);
 		assertThat(shrunkValue).isEqualByComparingTo("-1.01");
 	}
 
 	@Property(tries = 100)
 	void shrinkingWillAlwaysConvergeToZero(@ForAll @BigRange(min = "-1000000000", max = "1000000000") @Scale(15) BigDecimal aValue) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000000000.0, 1000000000.0));
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
-		while (sequence.next(count, reporter)) ;
-		BigDecimal shrunkValue = sequence.current().value();
+		BigDecimal shrunkValue = shrinkToEnd(shrinkable, (TestingFalsifier<BigDecimal>) ignore -> false, null);
 		assertThat(shrunkValue).isEqualByComparingTo(BigDecimal.ZERO);
 	}
 
@@ -137,9 +126,8 @@ class BigDecimalShrinkingTests {
 		@ForAll @BigRange(min = "-100", max = "100") BigDecimal shrinkingTarget
 	) {
 		Shrinkable<BigDecimal> shrinkable = createShrinkableBigDecimal(aValue.toPlainString(), Range.of(-1000.0, 1000.0), shrinkingTarget);
-		ShrinkingSequence<BigDecimal> sequence = shrinkable.shrink((TestingFalsifier<BigDecimal>) ignore -> false);
-		while (sequence.next(count, reporter)) ;
-		BigDecimal shrunkValue = sequence.current().value();
+		BigDecimal shrunkValue = shrinkToEnd(shrinkable, (TestingFalsifier<BigDecimal>) ignore -> false, null);
+
 		// Allow offset to max 1.0 because decimals are shrunk away if possible
 		Offset<BigDecimal> allowedOffset = Offset.offset(new BigDecimal(1));
 		assertThat(shrunkValue).isCloseTo(shrinkingTarget, allowedOffset);

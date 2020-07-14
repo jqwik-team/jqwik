@@ -84,20 +84,35 @@ public class ShrinkingTestHelper {
 		return shrinkToEnd(falsifiedShrinkable, falsifier, originalError[0]);
 	}
 
+	public static <T> T shrinkToEnd(
+		Shrinkable<T> falsifiedShrinkable,
+		Falsifier<T> falsifier,
+		Throwable originalError
+	) {
+		return shrinkToEnd(falsifiedShrinkable, falsifier, t -> {}, originalError);
+	}
+
 	@SuppressWarnings("unchecked")
-	public static <T> T shrinkToEnd(Shrinkable<T> falsifiedShrinkable, Falsifier<T> falsifier, Throwable originalError) {
-		PropertyShrinkingResult result = shrink(falsifiedShrinkable, falsifier, originalError);
+	public static <T> T shrinkToEnd(
+		Shrinkable<T> falsifiedShrinkable,
+		Falsifier<T> falsifier,
+		Consumer<T> falsifiedReporter,
+		Throwable originalError
+	) {
+		PropertyShrinkingResult result = shrink(falsifiedShrinkable, falsifier, falsifiedReporter, originalError);
 		return (T) result.sample().get(0);
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> PropertyShrinkingResult shrink(
-		final Shrinkable<T> falsifiedShrinkable,
-		final Falsifier<T> falsifier,
-		final Throwable originalError
+		Shrinkable<T> falsifiedShrinkable,
+		Falsifier<T> falsifier,
+		Consumer<T> falsifiedReporter,
+		Throwable originalError
 	) {
 		List<Shrinkable<Object>> parameters = toListOfShrinkables(falsifiedShrinkable);
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
+		Consumer<List<Object>> parametersReporter = params -> falsifiedReporter.accept((T) params.get(0));
+		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporterStub, parametersReporter);
 
 		return shrinker.shrink(parameterFalsifier(falsifier), originalError);
 	}
