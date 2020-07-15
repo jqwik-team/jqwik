@@ -23,7 +23,6 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	 *
 	 * <p>
 	 * Initial value is set to true so that shrinking of elements is tried at least once.
-	 *
 	 */
 	private final AtomicBoolean shrinkingOccurredInPreviousRound = new AtomicBoolean(true);
 
@@ -69,6 +68,7 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 	private boolean shrinkCurrentPosition(Runnable count, Consumer<FalsificationResult<List<T>>> falsifiedReporter) {
 		if (currentShrinkingSequence == null) {
 			currentShrinkingSequence = createShrinkingSequence(currentShrinkingPosition);
+			replaceCurrentPosition(currentShrinkingSequence.current());
 		}
 		if (!currentShrinkingSequence.next(count, currentFalsifiedReporter(falsifiedReporter))) {
 			return advanceToNextShrinkingPosition(count, falsifiedReporter);

@@ -12,26 +12,28 @@ public class PropertyShrinker {
 
 	private final static int BOUNDED_SHRINK_STEPS = 1000;
 
-	private final List<Shrinkable<Object>> parameters;
+	private final List<Shrinkable<Object>> shrinkableParameters;
 	private final ShrinkingMode shrinkingMode;
 	private final Reporter reporter;
 	private final Consumer<List<Object>> falsifiedSampleReporter;
 
 	public PropertyShrinker(
-		List<Shrinkable<Object>> parameters,
+		List<Shrinkable<Object>> shrinkableParameters,
 		ShrinkingMode shrinkingMode,
 		Reporter reporter,
 		Consumer<List<Object>> falsifiedSampleReporter
 	) {
-		this.parameters = parameters;
+		this.shrinkableParameters = shrinkableParameters;
 		this.shrinkingMode = shrinkingMode;
 		this.reporter = reporter;
 		this.falsifiedSampleReporter = falsifiedSampleReporter;
 	}
 
 	public PropertyShrinkingResult shrink(Falsifier<List<Object>> forAllFalsifier, Throwable originalError) {
+		List<Object> originalParameters = toValues(shrinkableParameters);
+
 		if (shrinkingMode == ShrinkingMode.OFF) {
-			return new PropertyShrinkingResult(toValues(parameters), 0, originalError);
+			return new PropertyShrinkingResult(originalParameters, 0, originalError);
 		}
 
 		Falsifier<List<Object>> allowOnlyEquivalentErrorsFalsifier = sample -> {
@@ -43,8 +45,8 @@ public class PropertyShrinker {
 		};
 
 		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
-		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(parameters, allowOnlyEquivalentErrorsFalsifier, distanceFunction);
-		sequence.init(FalsificationResult.falsified(Shrinkable.unshrinkable(toValues(parameters)), originalError));
+		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(shrinkableParameters, allowOnlyEquivalentErrorsFalsifier, distanceFunction);
+		sequence.init(FalsificationResult.falsified(Shrinkable.unshrinkable(originalParameters), originalError));
 
 		Consumer<FalsificationResult<List<Object>>> falsifiedReporter = result -> falsifiedSampleReporter.accept(result.value());
 
@@ -56,8 +58,8 @@ public class PropertyShrinker {
 			}
 		}
 
-		if (shrinkingStepsCounter.get() == 0) {
-			return new PropertyShrinkingResult(toValues(parameters), 0, originalError);
+		if (shrinkingStepsCounter.get() == 0 && sequence.current().value().equals(originalParameters)) {
+			return new PropertyShrinkingResult(originalParameters, 0, originalError);
 		}
 
 		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get());
