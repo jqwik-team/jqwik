@@ -1,6 +1,5 @@
 package net.jqwik.engine.properties.shrinking;
 
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
@@ -10,16 +9,14 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import static net.jqwik.api.ShrinkingTestHelper.*;
+
 @Group
 @Label("Deep Search Shrinking")
 class DeepSearchShrinkingTests {
 
-	private AtomicInteger counter = new AtomicInteger(0);
-	private Runnable count = counter::incrementAndGet;
-
 	@SuppressWarnings("unchecked")
 	private Consumer<Integer> valueReporter = mock(Consumer.class);
-	private Consumer<FalsificationResult<Integer>> reporter = result -> valueReporter.accept(result.value());
 
 	@Group
 	class ReportFalsified {
@@ -29,18 +26,12 @@ class DeepSearchShrinkingTests {
 		void withoutFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(4);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 2;
+			Integer shrunkValue = shrinkToEnd(shrinkable, falsifier, valueReporter, null);
+			assertThat(shrunkValue).isEqualTo(2);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(3);
 			verify(valueReporter).accept(3);
-
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(2);
 			verify(valueReporter).accept(2);
-
-			assertThat(sequence.next(count, reporter)).isFalse();
-			assertThat(sequence.current().value()).isEqualTo(2);
 			verifyNoMoreInteractions(valueReporter);
 		}
 
@@ -50,29 +41,15 @@ class DeepSearchShrinkingTests {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
 			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
-			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
+			Falsifier<Integer> filteredFalsifier = falsifier.withFilter(anInt -> anInt % 2 == 0);
+			Integer shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, valueReporter, null);
+			assertThat(shrunkValue).isEqualTo(6);
 
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(10);
 			// 10 is not a new value
 			verify(valueReporter, never()).accept(10);
-
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(8);
 			verify(valueReporter, times(1)).accept(8);
-
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, reporter)).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(6);
 			verify(valueReporter, times(1)).accept(6);
-
-			assertThat(sequence.next(count, reporter)).isFalse();
 			verifyNoMoreInteractions(valueReporter);
-
 		}
 
 	}
@@ -86,66 +63,26 @@ class DeepSearchShrinkingTests {
 			assertThat(shrinkable.value()).isEqualTo(5);
 			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> false);
-			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(4);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(1);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(0);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-			assertThat(sequence.current().value()).isEqualTo(0);
-
-			assertThat(counter.get()).isEqualTo(5);
+			Integer shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			assertThat(shrunkValue).isEqualTo(0);
 		}
 
 		@Example
 		void shrinkDownSomeWay() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(5);
-			assertThat(shrinkable.value()).isEqualTo(5);
-			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
-
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(4);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-			assertThat(sequence.current().value()).isEqualTo(2);
-
-			assertThat(counter.get()).isEqualTo(3);
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 2;
+			Integer shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(2);
 		}
 
 		@Example
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new OneStepShrinkable(10);
 
-			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
-			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(10);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-
-			assertThat(counter.get()).isEqualTo(5);
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 5;
+			Falsifier<Integer> filteredFalsifier = falsifier.withFilter(anInt -> anInt % 2 == 0);
+			Integer shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			assertThat(shrunkValue).isEqualTo(6);
 		}
 
 	}
@@ -155,47 +92,27 @@ class DeepSearchShrinkingTests {
 		@Example
 		void shrinkDownAllTheWay() {
 			Shrinkable<Integer> shrinkable = new FullShrinkable(5);
-
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> false);
-			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(0);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-			assertThat(sequence.current().value()).isEqualTo(0);
-
-			assertThat(counter.get()).isEqualTo(1);
+			Integer shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			assertThat(shrunkValue).isEqualTo(0);
 		}
 
 		@Example
 		void shrinkDownSomeWay() {
 			Shrinkable<Integer> shrinkable = new FullShrinkable(5);
-			assertThat(shrinkable.value()).isEqualTo(5);
-			assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(5));
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 2;
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-			assertThat(sequence.current().value()).isEqualTo(2);
-
-			assertThat(counter.get()).isEqualTo(1);
+			Integer shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(2);
 		}
 
 		@Example
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new FullShrinkable(10);
 
-			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
-			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-
-			assertThat(counter.get()).isEqualTo(2);
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 5;
+			Falsifier<Integer> filteredFalsifier = falsifier.withFilter(anInt -> anInt % 2 == 0);
+			Integer shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			assertThat(shrunkValue).isEqualTo(6);
 		}
 
 	}
@@ -206,56 +123,28 @@ class DeepSearchShrinkingTests {
 		void shrinkDownAllTheWay() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> false);
-			assertThat(sequence.current().shrinkable()).isEqualTo(shrinkable);
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(1);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(0);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-			assertThat(sequence.current().value()).isEqualTo(0);
-
-			assertThat(counter.get()).isEqualTo(3);
+			TestingFalsifier<Integer> falsifier = anInt -> false;
+			Integer shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(0);
 		}
 
 		@Example
 		void shrinkDownSomeWay() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(5);
 
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink((TestingFalsifier<Integer>) anInt -> anInt < 2);
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(3);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(2);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-			assertThat(sequence.current().value()).isEqualTo(2);
-
-			assertThat(counter.get()).isEqualTo(2);
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 2;
+			Integer shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(2);
 		}
 
 		@Example
 		void shrinkDownWithFilter() {
 			Shrinkable<Integer> shrinkable = new PartialShrinkable(10);
 
-			TestingFalsifier<Integer> falsifier = anInt -> anInt < 6;
-			Predicate<Integer> onlyEvenNumbers = anInt -> anInt % 2 == 0;
-			ShrinkingSequence<Integer> sequence = shrinkable.shrink(falsifier.withFilter(onlyEvenNumbers));
-
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(8);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.next(count, ignore -> {})).isTrue();
-			assertThat(sequence.current().value()).isEqualTo(6);
-			assertThat(sequence.next(count, ignore -> {})).isFalse();
-
-			assertThat(counter.get()).isEqualTo(5);
+			TestingFalsifier<Integer> falsifier = anInt -> anInt < 5;
+			Falsifier<Integer> filteredFalsifier = falsifier.withFilter(anInt -> anInt % 2 == 0);
+			Integer shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			assertThat(shrunkValue).isEqualTo(6);
 		}
 
 	}
