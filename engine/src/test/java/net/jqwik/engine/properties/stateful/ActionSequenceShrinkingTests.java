@@ -9,7 +9,6 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.stateful.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
-import net.jqwik.engine.properties.shrinking.*;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -17,25 +16,6 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @SuppressWarnings("unchecked")
 class ActionSequenceShrinkingTests {
-
-	@Example
-	void sequencesAreShrunkToSingleAction(@ForAll Random random) {
-		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX());
-		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
-		shrinkable.value().run(""); // to setup sequence
-
-		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
-
-		TestingFalsifier<List<Object>> falsifier = paramFalsifier((ActionSequence<String> seq) -> {
-			seq.run("");
-			return false;
-		});
-		PropertyShrinkingResult result = shrinker.shrink(falsifier, null);
-
-		ActionSequence<String> shrunkSequence = (ActionSequence<String>) result.sample().get(0);
-		assertThat(shrunkSequence.runActions()).hasSize(1);
-		assertThat(shrunkSequence.run("")).isEqualTo("x");
-	}
 
 	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	@ExpectFailure(checkResult = FailedAndShrunkToAddX.class, failureType = AssertionError.class)
@@ -69,21 +49,35 @@ class ActionSequenceShrinkingTests {
 	}
 
 	@Example
+	void sequencesAreShrunkToSingleAction(@ForAll Random random) {
+		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX());
+		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
+		shrinkable.value().run(""); // to setup sequence
+
+		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
+			seq.run("");
+			return false;
+		});
+
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+
+		assertThat(shrunkValue.runActions()).hasSize(1);
+		assertThat(shrunkValue.run("")).isEqualTo("x");
+	}
+
+	@Example
 	void dontShrinkUnderMinSize(@ForAll Random random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX()).ofMinSize(3);
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
-
-		TestingFalsifier<List<Object>> falsifier = paramFalsifier((ActionSequence<String> seq) -> {
+		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
 			seq.run("");
 			throw failAndCatch(null);
 		});
 
-		PropertyShrinkingResult result = shrinker.shrink(falsifier, failAndCatch(null));
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, failAndCatch(null));
 
-		ActionSequence<String> shrunkValue = (ActionSequence<String>) result.sample().get(0);
 		assertThat(shrunkValue.runActions()).hasSize(3);
 	}
 
@@ -93,16 +87,13 @@ class ActionSequenceShrinkingTests {
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
 		shrinkable.value().run(""); // to setup sequence
 
-		PropertyShrinker shrinker = new PropertyShrinker(toListOfShrinkables(shrinkable), ShrinkingMode.FULL, reporterStub, falsifiedReporterStub);
-
-		TestingFalsifier<List<Object>> falsifier = params -> {
-			ActionSequence<String> seq = (ActionSequence<String>) params.get(0);
+		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
 			seq.run("");
 			return false;
-		};
-		PropertyShrinkingResult result = shrinker.shrink(falsifier, null);
+		});
 
-		ActionSequence<String> shrunkValue = (ActionSequence<String>) result.sample().get(0);
+		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isIn("aa", "AA");
 	}

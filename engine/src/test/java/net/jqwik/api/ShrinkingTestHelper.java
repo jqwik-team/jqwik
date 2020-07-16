@@ -2,6 +2,7 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import org.mockito.*;
 
@@ -17,16 +18,6 @@ public class ShrinkingTestHelper {
 
 	public static final Reporter reporterStub = Mockito.mock(Reporter.class);
 
-	@SuppressWarnings("unchecked")
-	public static <T> List<Shrinkable<Object>> toListOfShrinkables(Shrinkable<T>... shrinkables) {
-		ArrayList<Shrinkable<Object>> parameterList = new ArrayList<>();
-		for (Shrinkable<T> shrinkable : shrinkables) {
-			parameterList.add((Shrinkable<Object>) shrinkable);
-		}
-		return parameterList;
-	}
-
-	@SuppressWarnings("unchecked")
 	public static <T> Falsifier<T> alwaysFalsify() {
 		return ignore -> TryExecutionResult.falsified(null);
 	}
@@ -109,7 +100,7 @@ public class ShrinkingTestHelper {
 		Throwable originalError
 	) {
 		PropertyShrinkingResult result = shrink(falsifiedShrinkable, falsifier, falsifiedReporter, originalError);
-		return (T) result.sample().get(0);
+		return (T) result.sample().parameters().get(0);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -119,10 +110,21 @@ public class ShrinkingTestHelper {
 		Consumer<T> falsifiedReporter,
 		Throwable originalError
 	) {
-		List<Shrinkable<Object>> parameters = toListOfShrinkables(falsifiedShrinkable);
+		FalsifiedSample sample = toFalsifiedSample(falsifiedShrinkable, originalError);
 		Consumer<List<Object>> parametersReporter = params -> falsifiedReporter.accept((T) params.get(0));
-		PropertyShrinker shrinker = new PropertyShrinker(parameters, ShrinkingMode.FULL, reporterStub, parametersReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(sample, ShrinkingMode.FULL, reporterStub, parametersReporter);
 
-		return shrinker.shrink(toParmaFalsifier(falsifier), originalError);
+		return shrinker.shrink(toParmaFalsifier(falsifier));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> FalsifiedSample toFalsifiedSample(Shrinkable<T> falsifiedShrinkable, Throwable originalError) {
+		List<Shrinkable<Object>> shrinkables = Collections.singletonList((Shrinkable<Object>) falsifiedShrinkable);
+		return toFalsifiedSample(shrinkables, originalError);
+	}
+
+	public static FalsifiedSample toFalsifiedSample(List<Shrinkable<Object>> shrinkables, Throwable originalError) {
+		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		return new FalsifiedSample(parameters, shrinkables, Optional.ofNullable(originalError));
 	}
 }

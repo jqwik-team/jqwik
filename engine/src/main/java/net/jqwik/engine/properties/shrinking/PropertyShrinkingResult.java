@@ -1,24 +1,18 @@
 package net.jqwik.engine.properties.shrinking;
 
-import java.util.*;
+import net.jqwik.engine.properties.*;
 
 public class PropertyShrinkingResult {
-	private final List<Object> values;
+	private final FalsifiedSample sample;
 	private final int steps;
-	private final Throwable throwable;
 
-	public PropertyShrinkingResult(List<Object> values, int steps, Throwable throwable) {
-		this.values = values;
+	public PropertyShrinkingResult(FalsifiedSample sample, int steps) {
+		this.sample = sample;
 		this.steps = steps;
-		this.throwable = throwable;
 	}
 
-	public List<Object> sample() {
-		return values;
-	}
-
-	public Optional<Throwable> throwable() {
-		return Optional.ofNullable(throwable);
+	public FalsifiedSample sample() {
+		return sample;
 	}
 
 	public int steps() {

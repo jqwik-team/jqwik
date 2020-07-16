@@ -61,14 +61,17 @@ public class GenericProperty {
 						finishEarly = tryExecutionResult.shouldPropertyFinishEarly();
 						continue;
 					case FALSIFIED:
+						FalsifiedSample falsifiedSample = new FalsifiedSample(
+							sample,
+							shrinkableParams,
+							tryExecutionResult.throwable()
+						);
 						return shrinkAndCreateCheckResult(
 							reporter,
 							reporting,
 							countChecks,
 							countTries,
-							shrinkableParams,
-							sample,
-							tryExecutionResult.throwable()
+							falsifiedSample
 						);
 					case INVALID:
 						countChecks--;
@@ -138,33 +141,31 @@ public class GenericProperty {
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
 		Reporter reporter, Reporting[] reporting, int countChecks,
-		int countTries, List<Shrinkable<Object>> shrinkables, List<Object> originalSample, Optional<Throwable> optionalThrowable
+		int countTries, FalsifiedSample originalSample
 	) {
-		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, shrinkables, optionalThrowable.orElse(null));
-		List<Object> shrunkSample = shrinkingResult.steps() > 0 ? shrinkingResult.sample() : originalSample;
-		Throwable throwable = shrinkingResult.steps() > 0 ? shrinkingResult.throwable().orElse(null) : optionalThrowable.orElse(null);
+		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, originalSample);
+		FalsifiedSample shrunkSample = shrinkingResult.steps() > 0 ? shrinkingResult.sample() : originalSample;
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
-			shrunkSample, originalSample, throwable
+			shrunkSample.parameters(), originalSample.parameters(), shrunkSample.falsifyingError().orElse(null)
 		);
 	}
 
 	private PropertyShrinkingResult shrink(
 		Reporter reporter,
 		Reporting[] reporting,
-		List<Shrinkable<Object>> shrinkables,
-		Throwable originalError
+		FalsifiedSample originalSample
 	) {
 		// TODO: Find a way that falsifier and resolved ParameterSupplier get the same instance of tryLifecycleContext during shrinking.
 		//       This will probably require some major modification to shrinking / shrinking API.
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
 
 		Consumer<List<Object>> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
-		PropertyShrinker shrinker = new PropertyShrinker(shrinkables, configuration.getShrinkingMode(), reporter, falsifiedSampleReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), reporter, falsifiedSampleReporter);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
-		return shrinker.shrink(forAllFalsifier, originalError);
+		return shrinker.shrink(forAllFalsifier);
 	}
 
 	private Consumer<List<Object>> createFalsifiedSampleReporter(Reporter reporter, Reporting[] reporting) {

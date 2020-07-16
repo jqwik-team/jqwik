@@ -7,46 +7,49 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.properties.*;
 
 public class PropertyShrinker {
 
 	private final static int BOUNDED_SHRINK_STEPS = 1000;
 
-	private final List<Shrinkable<Object>> shrinkableParameters;
+	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;
 	private final Reporter reporter;
 	private final Consumer<List<Object>> falsifiedSampleReporter;
 
 	public PropertyShrinker(
-		List<Shrinkable<Object>> shrinkableParameters,
+		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
 		Reporter reporter,
 		Consumer<List<Object>> falsifiedSampleReporter
 	) {
-		this.shrinkableParameters = shrinkableParameters;
+		this.originalSample = originalSample;
 		this.shrinkingMode = shrinkingMode;
 		this.reporter = reporter;
 		this.falsifiedSampleReporter = falsifiedSampleReporter;
 	}
 
-	public PropertyShrinkingResult shrink(Falsifier<List<Object>> forAllFalsifier, Throwable originalError) {
-		List<Object> originalParameters = toValues(shrinkableParameters);
-
+	public PropertyShrinkingResult shrink(Falsifier<List<Object>> forAllFalsifier) {
 		if (shrinkingMode == ShrinkingMode.OFF) {
-			return new PropertyShrinkingResult(originalParameters, 0, originalError);
+			return new PropertyShrinkingResult(originalSample, 0);
 		}
 
 		Falsifier<List<Object>> allowOnlyEquivalentErrorsFalsifier = sample -> {
 			TryExecutionResult result = forAllFalsifier.execute(sample);
-			if (isFalsifiedButErrorIsNotEquivalent(result, originalError)) {
+			if (isFalsifiedButErrorIsNotEquivalent(result, originalSample.falsifyingError())) {
 				return TryExecutionResult.invalid();
 			}
 			return result;
 		};
 
 		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
-		ShrinkingSequence<List<Object>> sequence = new ShrinkElementsSequence<>(shrinkableParameters, allowOnlyEquivalentErrorsFalsifier, distanceFunction);
-		sequence.init(FalsificationResult.falsified(Shrinkable.unshrinkable(originalParameters), originalError));
+		ShrinkingSequence<List<Object>> sequence =
+			new ShrinkElementsSequence<>(originalSample.shrinkables(), allowOnlyEquivalentErrorsFalsifier, distanceFunction);
+		sequence.init(FalsificationResult.falsified(
+			Shrinkable.unshrinkable(originalSample.parameters()),
+			originalSample.falsifyingError().orElse(null)
+		));
 
 		Consumer<FalsificationResult<List<Object>>> falsifiedReporter = result -> falsifiedSampleReporter.accept(result.value());
 
@@ -58,16 +61,15 @@ public class PropertyShrinker {
 			}
 		}
 
-		if (shrinkingStepsCounter.get() == 0 && sequence.current().value().equals(originalParameters)) {
-			return new PropertyShrinkingResult(originalParameters, 0, originalError);
+		if (shrinkingStepsCounter.get() == 0 && sequence.current().value().equals(originalSample.parameters())) {
+			return new PropertyShrinkingResult(originalSample, 0);
 		}
 
-		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get());
+		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get(), originalSample.shrinkables());
 	}
 
-	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Throwable originalError) {
-		Throwable currentError = result.throwable().orElse(null);
-		return result.isFalsified() && !areEquivalent(originalError, currentError);
+	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Optional<Throwable> originalError) {
+		return result.isFalsified() && !areEquivalent(originalError, result.throwable());
 	}
 
 	/**
@@ -75,13 +77,15 @@ public class PropertyShrinker {
 	 * - Either both exceptions are null
 	 * - Or both exceptions have the same type and their stack trace ended in same location
 	 */
-	private boolean areEquivalent(Throwable originalError, Throwable currentError) {
-		if (originalError == null) {
-			return currentError == null;
+	private boolean areEquivalent(Optional<Throwable> optionalOriginal, Optional<Throwable> optionalCurrent) {
+		if (!optionalOriginal.isPresent()) {
+			return !optionalCurrent.isPresent();
 		}
-		if (currentError == null) {
+		if (!optionalCurrent.isPresent()) {
 			return false;
 		}
+		Throwable originalError = optionalOriginal.get();
+		Throwable currentError = optionalCurrent.get();
 		if (!originalError.getClass().equals(currentError.getClass())) {
 			return false;
 		}
@@ -101,7 +105,8 @@ public class PropertyShrinker {
 	private PropertyShrinkingResult createShrinkingResult(
 		final Falsifier<List<Object>> forAllFalsifier,
 		final FalsificationResult<List<Object>> current,
-		final int steps
+		final int steps,
+		final List<Shrinkable<Object>> shrinkables
 	) {
 		// TODO: Remove this hack by a new decent implementation of shrinking
 
@@ -116,10 +121,12 @@ public class PropertyShrinker {
 
 		// Sometimes, in the context of mutable objects the capturing result is not equivalent to the shrunk result
 		// but this is all terrible hack for the drawbacks of current shrinking implementation
-		if (areEquivalent(capturingResult.throwable().orElse(null), current.throwable().orElse(null))) {
-			return new PropertyShrinkingResult(sampleCapture[0], steps, capturingResult.throwable().orElse(null));
+		if (areEquivalent(capturingResult.throwable(), current.throwable())) {
+			FalsifiedSample shrunkSample = new FalsifiedSample(sampleCapture[0], shrinkables, capturingResult.throwable());
+			return new PropertyShrinkingResult(shrunkSample, steps);
 		} else {
-			return new PropertyShrinkingResult(current.value(), steps, current.throwable().orElse(null));
+			FalsifiedSample shrunkSample = new FalsifiedSample(current.value(), shrinkables, current.throwable());
+			return new PropertyShrinkingResult(shrunkSample, steps);
 		}
 	}
 
