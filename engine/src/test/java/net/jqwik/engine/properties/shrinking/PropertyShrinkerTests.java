@@ -29,48 +29,46 @@ class PropertyShrinkerTests {
 	void ifThereIsNothingToShrinkReturnOriginalValue() {
 		List<Shrinkable<Object>> unshrinkableParameters = asList(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable("hello"));
 		Throwable originalError = failAndCatch("original error");
+		FalsifiedSample originalSample = toFalsifiedSample(unshrinkableParameters, originalError);
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(unshrinkableParameters, originalError),
+			originalSample,
 			ShrinkingMode.FULL,
 			reporter,
 			falsifiedSampleReporter
 		);
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(1, "hello"));
+		assertThat(result.sample()).isEqualTo(originalSample);
 		assertThat(result.steps()).isEqualTo(0);
-		assertThat(result.sample().falsifyingError()).isPresent();
-		assertThat(result.sample().falsifyingError().get()).isSameAs(originalError);
 
 		verifyNoInteractions(falsifiedSampleReporter);
 	}
 
 	@Example
 	void ifShrinkingIsOffReturnOriginalValue() {
-		List<Shrinkable<Object>> parameters = toList(5, 10);
+		List<Shrinkable<Object>> parameters = toListOfShrinkables(5, 10);
 		Throwable originalError = failAndCatch("original error");
+		FalsifiedSample originalSample = toFalsifiedSample(parameters, originalError);
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, originalError),
+			originalSample,
 			ShrinkingMode.OFF,
 			reporter,
 			falsifiedSampleReporter
 		);
 		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(5, 10));
+		assertThat(result.sample()).isEqualTo(originalSample);
 		assertThat(result.steps()).isEqualTo(0);
-		assertThat(result.sample().falsifyingError()).isPresent();
-		assertThat(result.sample().falsifyingError().get()).isSameAs(originalError);
 
 		verifyNoInteractions(falsifiedSampleReporter);
 	}
 
 	@Example
 	void shrinkAllParameters() {
-		List<Shrinkable<Object>> parameters = toList(5, 10);
+		List<Shrinkable<Object>> shrinkables = toListOfShrinkables(5, 10);
 
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, null),
+			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.FULL,
 			reporter,
 			falsifiedSampleReporter
@@ -83,9 +81,10 @@ class PropertyShrinkerTests {
 		PropertyShrinkingResult result = shrinker.shrink(falsifier);
 
 		assertThat(result.sample().parameters()).isEqualTo(asList(1, 2));
+		// assertThat(result.sample().shrinkables()).hasSize(2);
 		assertThat(result.sample().falsifyingError()).isNotPresent();
 
-		assertThat(result.steps()).isEqualTo(12);
+		assertThat(result.steps()).isGreaterThan(0);
 	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
@@ -106,9 +105,9 @@ class PropertyShrinkerTests {
 
 	@Example
 	void reportFalsifiedParameters() {
-		List<Shrinkable<Object>> parameters = toList(5, 10);
+		List<Shrinkable<Object>> shrinkables = toListOfShrinkables(5, 10);
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, null),
+			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.FULL,
 			reporter,
 			falsifiedSampleReporter
@@ -119,11 +118,11 @@ class PropertyShrinkerTests {
 	}
 
 	@Example
-	void resultThrowableComesFromActualShrunkValue() {
-		List<Shrinkable<Object>> parameters = toList(5, 10);
+	void falsifyingErrorComesFromActualShrunkValue() {
+		List<Shrinkable<Object>> shrinkables = toListOfShrinkables(5, 10);
 
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, failAndCatch("original")),
+			toFalsifiedSample(shrinkables, failAndCatch("original")),
 			ShrinkingMode.FULL,
 			reporter,
 			falsifiedSampleReporter
@@ -142,12 +141,39 @@ class PropertyShrinkerTests {
 	}
 
 	@Example
+	void sampleParametersAreTheRealOnes() {
+		List<Shrinkable<Object>> shrinkables = asList(
+			new ShrinkableList<>(asList(new OneStepShrinkable(42)), 1).asGeneric()
+		);
+
+		PropertyShrinker shrinker = new PropertyShrinker(
+			toFalsifiedSample(shrinkables, null),
+			ShrinkingMode.FULL,
+			reporter,
+			falsifiedSampleReporter
+		);
+
+		TestingFalsifier<List<Object>> falsifier = paramFalsifier((List<Integer> list) -> {
+			list.add(101);
+			return list.get(0) <= 1;
+		});
+		PropertyShrinkingResult result = shrinker.shrink(falsifier);
+
+		List<Object> actualParameters = result.sample().parameters();
+		// List<Object> freshParameters = result.sample().shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
+
+		assertThat(actualParameters).containsExactly(asList(2, 101));
+		//TODO:
+		// assertThat(freshParameters).containsExactly(asList(2));
+	}
+
+	@Example
 	void differentErrorTypeDoesNotCountAsSameError() {
-		List<Shrinkable<Object>> parameters = toList(50);
+		List<Shrinkable<Object>> shrinkables = toListOfShrinkables(50);
 
 		AssertionError originalError = failAndCatch("original error");
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, originalError),
+			toFalsifiedSample(shrinkables, originalError),
 			ShrinkingMode.FULL,
 			reporter,
 			falsifiedSampleReporter
@@ -170,10 +196,10 @@ class PropertyShrinkerTests {
 
 	@Example
 	void differentErrorStackTraceDoesNotCountAsSameError() {
-		List<Shrinkable<Object>> parameters = toList(50);
+		List<Shrinkable<Object>> shrinkables = toListOfShrinkables(50);
 		AssertionError originalError = failAndCatch("original error");
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, originalError),
+			toFalsifiedSample(shrinkables, originalError),
 			ShrinkingMode.FULL,
 			reporter,
 			falsifiedSampleReporter
@@ -196,10 +222,10 @@ class PropertyShrinkerTests {
 
 	@Example
 	void resultSampleConsistsOfActualUsedObjects_notOfValuesGeneratedByShrinkable() {
-		List<Shrinkable<Object>> parameters = toList(5, 10);
+		List<Shrinkable<Object>> shrinkables = toListOfShrinkables(5, 10);
 
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, null),
+			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.FULL,
 			reporter,
 			falsifiedSampleReporter
@@ -218,10 +244,10 @@ class PropertyShrinkerTests {
 
 	@Example
 	void withBoundedShrinkingBreakOffAfter1000Steps() {
-		List<Shrinkable<Object>> parameters = toList(900, 1000);
+		List<Shrinkable<Object>> shrinkables = toListOfShrinkables(900, 1000);
 
 		PropertyShrinker shrinker = new PropertyShrinker(
-			toFalsifiedSample(parameters, null),
+			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.BOUNDED,
 			reporter,
 			falsifiedSampleReporter
@@ -234,7 +260,7 @@ class PropertyShrinkerTests {
 		verify(reporter, times(1)).publishValue(eq("shrinking bound reached"), anyString());
 	}
 
-	private List<Shrinkable<Object>> toList(int... args) {
+	private List<Shrinkable<Object>> toListOfShrinkables(int... args) {
 		return Arrays.stream(args).mapToObj(i -> new OneStepShrinkable(i).asGeneric()).collect(Collectors.toList());
 	}
 

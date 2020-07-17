@@ -31,4 +31,19 @@ public class FalsifiedSample {
 	public Optional<Throwable> falsifyingError() {
 		return falsifyingError;
 	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		FalsifiedSample that = (FalsifiedSample) o;
+		return parameters.equals(that.parameters) &&
+				   shrinkables.equals(that.shrinkables) &&
+				   falsifyingError.equals(that.falsifyingError);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(parameters);
+	}
 }

@@ -44,7 +44,7 @@ public class PropertyShrinker {
 		};
 
 		Function<List<Shrinkable<Object>>, ShrinkingDistance> distanceFunction = ShrinkingDistance::combine;
-		ShrinkingSequence<List<Object>> sequence =
+		ShrinkElementsSequence<Object> sequence =
 			new ShrinkElementsSequence<>(originalSample.shrinkables(), allowOnlyEquivalentErrorsFalsifier, distanceFunction);
 		sequence.init(FalsificationResult.falsified(
 			Shrinkable.unshrinkable(originalSample.parameters()),
@@ -65,7 +65,7 @@ public class PropertyShrinker {
 			return new PropertyShrinkingResult(originalSample, 0);
 		}
 
-		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get(), originalSample.shrinkables());
+		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get());
 	}
 
 	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Optional<Throwable> originalError) {
@@ -105,8 +105,7 @@ public class PropertyShrinker {
 	private PropertyShrinkingResult createShrinkingResult(
 		final Falsifier<List<Object>> forAllFalsifier,
 		final FalsificationResult<List<Object>> current,
-		final int steps,
-		final List<Shrinkable<Object>> shrinkables
+		final int steps
 	) {
 		// TODO: Remove this hack by a new decent implementation of shrinking
 
@@ -122,10 +121,10 @@ public class PropertyShrinker {
 		// Sometimes, in the context of mutable objects the capturing result is not equivalent to the shrunk result
 		// but this is all terrible hack for the drawbacks of current shrinking implementation
 		if (areEquivalent(capturingResult.throwable(), current.throwable())) {
-			FalsifiedSample shrunkSample = new FalsifiedSample(sampleCapture[0], shrinkables, capturingResult.throwable());
+			FalsifiedSample shrunkSample = new FalsifiedSample(sampleCapture[0], null, capturingResult.throwable());
 			return new PropertyShrinkingResult(shrunkSample, steps);
 		} else {
-			FalsifiedSample shrunkSample = new FalsifiedSample(current.value(), shrinkables, current.throwable());
+			FalsifiedSample shrunkSample = new FalsifiedSample(current.value(), null, current.throwable());
 			return new PropertyShrinkingResult(shrunkSample, steps);
 		}
 	}
