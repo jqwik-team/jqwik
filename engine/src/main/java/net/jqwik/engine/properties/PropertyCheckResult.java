@@ -41,6 +41,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesTried,
 			null,
 			null,
+			0,
 			null
 		);
 	}
@@ -75,8 +76,9 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesMode,
 			edgeCasesTotal,
 			edgeCasesTried,
-			shrunkSample == null ? null : shrunkSample.parameters(),
 			originalSample == null ? null : originalSample.parameters(),
+			shrunkSample == null ? null : shrunkSample.parameters(),
+			shrinkingSteps,
 			throwable
 		);
 	}
@@ -105,6 +107,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesTried,
 			null,
 			null,
+			0,
 			null
 		);
 	}
@@ -122,6 +125,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final List<Object> shrunkSample;
 	private final List<Object> originalSample;
 	private final Throwable throwable;
+	private final int shrinkingSteps;
 
 	private PropertyCheckResult(
 		CheckStatus status, String stereotype,
@@ -133,8 +137,9 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int edgeCasesTried,
-		List<Object> shrunkSample,
 		List<Object> originalSample,
+		List<Object> shrunkSample,
+		int shrinkingSteps,
 		Throwable throwable
 	) {
 		this.stereotype = stereotype;
@@ -149,6 +154,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		this.edgeCasesTried = edgeCasesTried;
 		this.shrunkSample = shrunkSample;
 		this.originalSample = originalSample;
+		this.shrinkingSteps = shrinkingSteps;
 		this.throwable = determineThrowable(status, throwable);
 	}
 
@@ -203,8 +209,9 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					edgeCasesMode,
 					edgeCasesTotal,
 					edgeCasesTried,
-					shrunkSample,
 					originalSample,
+					shrunkSample,
+					0,
 					throwable
 				);
 			case SUCCESSFUL:
@@ -221,6 +228,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					edgeCasesTried,
 					null,
 					null,
+					0,
 					throwable
 				);
 			default:
@@ -253,12 +261,16 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		return randomSeed;
 	}
 
+	public Optional<List<Object>> originalSample() {
+		return Optional.ofNullable(originalSample);
+	}
+
 	public Optional<List<Object>> shrunkSample() {
 		return Optional.ofNullable(shrunkSample);
 	}
 
-	public Optional<List<Object>> originalSample() {
-		return Optional.ofNullable(originalSample);
+	public int countShrinkingSteps() {
+		return shrinkingSteps;
 	}
 
 	public GenerationMode generation() {

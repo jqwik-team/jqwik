@@ -30,7 +30,7 @@ title: jqwik Release Notes
   - Assertion error or exception thrown from the same code location
 
 - Changes in property result reporting: 
-    - Shrunk samples have now header line "Shrunk Sample"
+    - Shrunk samples have now header line "Shrunk Sample (<n> steps)"
     - If no shrinking took place samples have header line "Sample"
 
 #### Breaking Changes

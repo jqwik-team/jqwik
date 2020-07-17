@@ -266,8 +266,8 @@ edge-cases#total = 4          | # of all combined edge cases
 edge-cases#tried = 0          | # of edge cases tried in current run
 seed = -2370223836245802816   | random seed to reproduce generated values
 
-Shrunk Sample
-------
+Shrunk Sample (<n> steps)
+-------------------------
   string1: ""
   string2: ""
 
@@ -1818,8 +1818,8 @@ class Person {
 
 The property should fail, thereby shrinking the falsified Person instance to
 ```
-Shrunk Sample
-------
+Shrunk Sample (<n> steps)
+-------------------------
   aPerson: aaaaaaaaaaaaaaaaaaaaa:100
 ```
 
@@ -2512,8 +2512,8 @@ AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample 
 tries = 38 
 checks = 38 
 ...
-Shrunk Sample
-------
+Shrunk Sample (<n> steps)
+-------------------------
   aString: "aa"
 
 Original Sample
@@ -2566,8 +2566,8 @@ AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample {0="
 checks = 20 
 tries = 20 
 ...
-Shrunk Sample
-------
+Shrunk Sample (<n> steps)
+-------------------------
   first: "h" 
   second: "0"
 

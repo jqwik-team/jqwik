@@ -57,7 +57,8 @@ public class ExecutionResultReport {
 	) {
 		executionResult.shrunkSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
-				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample, SHRUNK_SAMPLE_HEADLINE);
+				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, executionResult.countShrinkingSteps());
+				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample, shrunkSampleHeadline);
 			}
 		});
 

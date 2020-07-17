@@ -15,6 +15,8 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 
 	Optional<List<Object>> shrunkSample();
 
+	int countShrinkingSteps();
+
 	GenerationMode generation();
 
 	EdgeCasesExecutionResult edgeCases();

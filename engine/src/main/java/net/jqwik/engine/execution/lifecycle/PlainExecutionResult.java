@@ -80,6 +80,11 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
+	public int countShrinkingSteps() {
+		return 0;
+	}
+
+	@Override
 	public Optional<List<Object>> originalSample() {
 		return Optional.empty();
 	}
