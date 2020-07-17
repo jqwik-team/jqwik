@@ -13,6 +13,8 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 
 	Optional<List<Object>> originalSample();
 
+	Optional<List<Object>> shrunkSample();
+
 	GenerationMode generation();
 
 	EdgeCasesExecutionResult edgeCases();

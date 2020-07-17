@@ -61,7 +61,7 @@ public class CheckedProperty {
 				effectiveConfiguration.getStereotype(), propertyName, 0, 0,
 				effectiveConfiguration.getSeed(), configuration.getGenerationMode(),
 				configuration.getEdgeCasesMode(), 0, 0,
-				null, null, cannotFindArbitraryException
+				null, null, 0, cannotFindArbitraryException
 			);
 		}
 	}

@@ -83,11 +83,16 @@ public class GenericProperty {
 			} catch (Throwable throwable) {
 				// Only not AssertionErrors and non Exceptions get here
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
+				FalsifiedSample falsifiedSample = new FalsifiedSample(
+					sample,
+					shrinkableParams,
+					Optional.of(throwable)
+				);
 				return PropertyCheckResult.failed(
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
 					configuration.getGenerationMode(),
 					configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
-					sample, null, throwable
+					falsifiedSample, null, 0, throwable
 				);
 			}
 		}
@@ -144,11 +149,12 @@ public class GenericProperty {
 		int countTries, FalsifiedSample originalSample
 	) {
 		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, originalSample);
-		FalsifiedSample shrunkSample = shrinkingResult.steps() > 0 ? shrinkingResult.sample() : originalSample;
+		FalsifiedSample shrunkSample = shrinkingResult.sample();
+		int shrinkingSteps = shrinkingResult.steps();
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
-			shrunkSample.parameters(), originalSample.parameters(), shrunkSample.falsifyingError().orElse(null)
+			originalSample, shrunkSample, shrinkingSteps, shrunkSample.falsifyingError().orElse(null)
 		);
 	}
 
@@ -162,7 +168,8 @@ public class GenericProperty {
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
 
 		Consumer<List<Object>> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
-		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), reporter, falsifiedSampleReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration
+																			 .getShrinkingMode(), reporter, falsifiedSampleReporter);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier);

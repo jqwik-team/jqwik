@@ -8,8 +8,8 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.reporting.*;
-import net.jqwik.engine.support.*;
 
+// TODO: Use and report FalsifiedSample types and shrinking steps
 public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	enum CheckStatus {
@@ -55,16 +55,18 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int edgeCasesTried,
-		List<Object> sample,
-		List<Object> originalSample,
+		FalsifiedSample originalSample,
+		FalsifiedSample shrunkSample,
+		int shrinkingSteps,
 		Throwable throwable
 	) {
 		// If no shrinking was possible report only sample
-		if (originalSample == sample) {
-			originalSample = null;
+		if (originalSample == shrunkSample) {
+			shrunkSample = null;
 		}
 		return new PropertyCheckResult(
-			CheckStatus.FAILED, stereotype,
+			CheckStatus.FAILED,
+			stereotype,
 			propertyName,
 			tries,
 			checks,
@@ -73,8 +75,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesMode,
 			edgeCasesTotal,
 			edgeCasesTried,
-			sample,
-			originalSample,
+			shrunkSample == null ? null : shrunkSample.parameters(),
+			originalSample == null ? null : originalSample.parameters(),
 			throwable
 		);
 	}
@@ -117,7 +119,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final EdgeCasesMode edgeCasesMode;
 	private final int edgeCasesTotal;
 	private final int edgeCasesTried;
-	private final List<Object> sample;
+	private final List<Object> shrunkSample;
 	private final List<Object> originalSample;
 	private final Throwable throwable;
 
@@ -131,7 +133,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int edgeCasesTried,
-		List<Object> sample,
+		List<Object> shrunkSample,
 		List<Object> originalSample,
 		Throwable throwable
 	) {
@@ -145,7 +147,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		this.edgeCasesMode = edgeCasesMode;
 		this.edgeCasesTotal = edgeCasesTotal;
 		this.edgeCasesTried = edgeCasesTried;
-		this.sample = sample;
+		this.shrunkSample = shrunkSample;
 		this.originalSample = originalSample;
 		this.throwable = determineThrowable(status, throwable);
 	}
@@ -162,7 +164,11 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	@Override
 	public Optional<List<Object>> falsifiedSample() {
-		return Optional.ofNullable(sample);
+		if (shrunkSample != null) {
+			return Optional.of(shrunkSample);
+		} else {
+			return Optional.ofNullable(originalSample);
+		}
 	}
 
 	@Override
@@ -197,7 +203,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					edgeCasesMode,
 					edgeCasesTotal,
 					edgeCasesTried,
-					sample,
+					shrunkSample,
 					originalSample,
 					throwable
 				);
@@ -247,6 +253,10 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		return randomSeed;
 	}
 
+	public Optional<List<Object>> shrunkSample() {
+		return Optional.ofNullable(shrunkSample);
+	}
+
 	public Optional<List<Object>> originalSample() {
 		return Optional.ofNullable(originalSample);
 	}
@@ -265,13 +275,15 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		String header = String.format("%s [%s] failed", stereotype, propertyName);
 		switch (checkStatus()) {
 			case FAILED:
-				Map<Integer, Object> sampleMap = new HashMap<>();
-				for (int i = 0; i < sample.size(); i++) {
-					Object parameter = sample.get(i);
-					sampleMap.put(i, parameter);
-				}
-				String sampleString = ValueReport.of(sampleMap).singleLineReport();
-				String failedMessage = sample.isEmpty() ? "" : String.format(" with sample %s", sampleString);
+				String failedMessage = falsifiedSample().map(sample -> {
+					Map<Integer, Object> sampleMap = new HashMap<>();
+					for (int i = 0; i < sample.size(); i++) {
+						Object parameter = sample.get(i);
+						sampleMap.put(i, parameter);
+					}
+					String sampleString = ValueReport.of(sampleMap).singleLineReport();
+					return shrunkSample.isEmpty() ? "" : String.format(" with sample %s", sampleString);
+				}).orElse("");
 				return String.format("%s%s", header, failedMessage);
 			case EXHAUSTED:
 				int rejections = tries - checks;

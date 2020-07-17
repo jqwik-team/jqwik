@@ -29,6 +29,9 @@ title: jqwik Release Notes
   - Same type of assertion error or other exception
   - Assertion error or exception thrown from the same code location
 
+- Changes in property result reporting: 
+    - Shrunk samples have now header line "Shrunk Sample"
+    - If no shrinking took place samples have header line "Sample"
 
 #### Breaking Changes
 

@@ -22,6 +22,7 @@ public class ExecutionResultReport {
 	private static final String AFTER_FAILURE_KEY = "after-failure";
 	private static final String SEED_KEY = "seed";
 	private static final String SAMPLE_HEADLINE = "Sample";
+	private static final String SHRUNK_SAMPLE_HEADLINE = "Shrunk Sample";
 	private static final String ORIGINAL_SAMPLE_HEADLINE = "Original Sample";
 
 	public static String from(
@@ -54,19 +55,18 @@ public class ExecutionResultReport {
 		final Method propertyMethod,
 		ExtendedPropertyExecutionResult executionResult
 	) {
-		executionResult.falsifiedSample().ifPresent(shrunkSample -> {
+		executionResult.shrunkSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.isEmpty()) {
-				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample, SAMPLE_HEADLINE);
+				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample, SHRUNK_SAMPLE_HEADLINE);
 			}
 		});
 
-		if (executionResult.isExtended()) {
-			executionResult.originalSample().ifPresent(originalSample -> {
-				if (!originalSample.isEmpty()) {
-					SampleReporter.reportSample(reportLines, propertyMethod, originalSample, ORIGINAL_SAMPLE_HEADLINE);
-				}
-			});
-		}
+		executionResult.originalSample().ifPresent(originalSample -> {
+			String originalSampleHeadline = executionResult.shrunkSample().isPresent() ? ORIGINAL_SAMPLE_HEADLINE : SAMPLE_HEADLINE;
+			if (!originalSample.isEmpty()) {
+				SampleReporter.reportSample(reportLines, propertyMethod, originalSample, originalSampleHeadline);
+			}
+		});
 	}
 
 	private static void appendFixedSizedProperties(

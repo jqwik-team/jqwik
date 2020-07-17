@@ -85,6 +85,11 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
+	public Optional<List<Object>> shrunkSample() {
+		return Optional.empty();
+	}
+
+	@Override
 	public GenerationMode generation() {
 		return GenerationMode.NOT_SET;
 	}

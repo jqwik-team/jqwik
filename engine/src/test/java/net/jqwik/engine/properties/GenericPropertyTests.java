@@ -139,7 +139,8 @@ class GenericPropertyTests {
 			assertThat(forAllSpy.countCalls()).isEqualTo(5);
 			assertThat(result.falsifiedSample()).isPresent();
 			assertThat(result.falsifiedSample().get()).containsExactly(5);
-			assertThat(result.originalSample()).isNotPresent();
+			assertThat(result.shrunkSample()).isNotPresent();
+			assertThat(result.originalSample().get()).containsExactly(5);
 		}
 
 		@Example
