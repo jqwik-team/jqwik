@@ -81,8 +81,10 @@ class PropertyShrinkerTests {
 		PropertyShrinkingResult result = shrinker.shrink(falsifier);
 
 		assertThat(result.sample().parameters()).isEqualTo(asList(1, 2));
-		// assertThat(result.sample().shrinkables()).hasSize(2);
 		assertThat(result.sample().falsifyingError()).isNotPresent();
+
+		List<Object> freshParameters = result.sample().shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
+		assertThat(freshParameters).containsExactly(1, 2);
 
 		assertThat(result.steps()).isGreaterThan(0);
 	}
@@ -160,10 +162,11 @@ class PropertyShrinkerTests {
 		PropertyShrinkingResult result = shrinker.shrink(falsifier);
 
 		List<Object> actualParameters = result.sample().parameters();
-		// List<Object> freshParameters = result.sample().shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 
 		assertThat(actualParameters).containsExactly(asList(2, 101));
-		//TODO:
+
+		// TODO: This should be true but is not with current shrinking. Enable after shrinking reimplementation
+		// List<Object> freshParameters = result.sample().shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 		// assertThat(freshParameters).containsExactly(asList(2));
 	}
 

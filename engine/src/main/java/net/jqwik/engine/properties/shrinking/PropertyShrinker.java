@@ -120,11 +120,12 @@ public class PropertyShrinker {
 
 		// Sometimes, in the context of mutable objects the capturing result is not equivalent to the shrunk result
 		// but this is all terrible hack for the drawbacks of current shrinking implementation
+		List<Shrinkable<Object>> shrinkables = current.shrinkable().value().stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());
 		if (areEquivalent(capturingResult.throwable(), current.throwable())) {
-			FalsifiedSample shrunkSample = new FalsifiedSample(sampleCapture[0], null, capturingResult.throwable());
+			FalsifiedSample shrunkSample = new FalsifiedSample(sampleCapture[0], shrinkables, capturingResult.throwable());
 			return new PropertyShrinkingResult(shrunkSample, steps);
 		} else {
-			FalsifiedSample shrunkSample = new FalsifiedSample(current.value(), null, current.throwable());
+			FalsifiedSample shrunkSample = new FalsifiedSample(current.value(), shrinkables, current.throwable());
 			return new PropertyShrinkingResult(shrunkSample, steps);
 		}
 	}
