@@ -45,11 +45,12 @@ public interface PropertyExecutionResult {
 	Optional<String> seed();
 
 	/**
-	 * The potentially shrunk set of parameters that falsified this property.
+	 * The potentially shrunk list of parameters that falsified this property.
 	 *
 	 * @return an optional list of parameters
 	 */
-	Optional<List<Object>> falsifiedSample();
+	@API(status = EXPERIMENTAL, since = "1.3.3")
+	Optional<List<Object>> falsifiedParameters();
 
 	/**
 	 * The final status of this property

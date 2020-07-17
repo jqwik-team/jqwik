@@ -56,16 +56,16 @@ public class ExecutionResultReport {
 		ExtendedPropertyExecutionResult executionResult
 	) {
 		executionResult.shrunkSample().ifPresent(shrunkSample -> {
-			if (!shrunkSample.isEmpty()) {
+			if (!shrunkSample.parameters().isEmpty()) {
 				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, executionResult.countShrinkingSteps());
-				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample, shrunkSampleHeadline);
+				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample.parameters(), shrunkSampleHeadline);
 			}
 		});
 
 		executionResult.originalSample().ifPresent(originalSample -> {
 			String originalSampleHeadline = executionResult.shrunkSample().isPresent() ? ORIGINAL_SAMPLE_HEADLINE : SAMPLE_HEADLINE;
-			if (!originalSample.isEmpty()) {
-				SampleReporter.reportSample(reportLines, propertyMethod, originalSample, originalSampleHeadline);
+			if (!originalSample.parameters().isEmpty()) {
+				SampleReporter.reportSample(reportLines, propertyMethod, originalSample.parameters(), originalSampleHeadline);
 			}
 		});
 	}

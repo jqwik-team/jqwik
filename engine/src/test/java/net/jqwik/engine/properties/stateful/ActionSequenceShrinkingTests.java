@@ -28,11 +28,11 @@ class ActionSequenceShrinkingTests {
 		@SuppressWarnings({"unchecked", "OptionalGetWithoutIsPresent"})
 		@Override
 		public void accept(PropertyExecutionResult result) {
-			assertThat(result.falsifiedSample()).isPresent();
+			assertThat(result.falsifiedParameters()).isPresent();
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isInstanceOf(AssertionError.class);
 
-			List<Object> sample = result.falsifiedSample().get();
+			List<Object> sample = result.falsifiedParameters().get();
 			assertThat(sample).hasSize(1);
 
 			ActionSequence<String> sequence = (ActionSequence<String>) sample.get(0);

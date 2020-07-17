@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.properties.*;
 
 public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult {
 
@@ -11,9 +12,9 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 
 	String randomSeed();
 
-	Optional<List<Object>> originalSample();
+	Optional<FalsifiedSample> originalSample();
 
-	Optional<List<Object>> shrunkSample();
+	Optional<FalsifiedSample> shrunkSample();
 
 	int countShrinkingSteps();
 

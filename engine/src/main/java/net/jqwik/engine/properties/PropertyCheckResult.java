@@ -76,8 +76,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesMode,
 			edgeCasesTotal,
 			edgeCasesTried,
-			originalSample == null ? null : originalSample.parameters(),
-			shrunkSample == null ? null : shrunkSample.parameters(),
+			originalSample,
+			shrunkSample,
 			shrinkingSteps,
 			throwable
 		);
@@ -122,8 +122,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final EdgeCasesMode edgeCasesMode;
 	private final int edgeCasesTotal;
 	private final int edgeCasesTried;
-	private final List<Object> shrunkSample;
-	private final List<Object> originalSample;
+	private final FalsifiedSample shrunkSample;
+	private final FalsifiedSample originalSample;
 	private final Throwable throwable;
 	private final int shrinkingSteps;
 
@@ -137,8 +137,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		EdgeCasesMode edgeCasesMode,
 		int edgeCasesTotal,
 		int edgeCasesTried,
-		List<Object> originalSample,
-		List<Object> shrunkSample,
+		FalsifiedSample originalSample,
+		FalsifiedSample shrunkSample,
 		int shrinkingSteps,
 		Throwable throwable
 	) {
@@ -169,11 +169,11 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public Optional<List<Object>> falsifiedSample() {
+	public Optional<List<Object>> falsifiedParameters() {
 		if (shrunkSample != null) {
-			return Optional.of(shrunkSample);
+			return Optional.of(shrunkSample.parameters());
 		} else {
-			return Optional.ofNullable(originalSample);
+			return Optional.ofNullable(originalSample).map(FalsifiedSample::parameters);
 		}
 	}
 
@@ -261,11 +261,11 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		return randomSeed;
 	}
 
-	public Optional<List<Object>> originalSample() {
+	public Optional<FalsifiedSample> originalSample() {
 		return Optional.ofNullable(originalSample);
 	}
 
-	public Optional<List<Object>> shrunkSample() {
+	public Optional<FalsifiedSample> shrunkSample() {
 		return Optional.ofNullable(shrunkSample);
 	}
 
@@ -287,14 +287,14 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		String header = String.format("%s [%s] failed", stereotype, propertyName);
 		switch (checkStatus()) {
 			case FAILED:
-				String failedMessage = falsifiedSample().map(sample -> {
+				String failedMessage = falsifiedParameters().map(sample -> {
 					Map<Integer, Object> sampleMap = new HashMap<>();
 					for (int i = 0; i < sample.size(); i++) {
 						Object parameter = sample.get(i);
 						sampleMap.put(i, parameter);
 					}
 					String sampleString = ValueReport.of(sampleMap).singleLineReport();
-					return shrunkSample.isEmpty() ? "" : String.format(" with sample %s", sampleString);
+					return shrunkSample.parameters().isEmpty() ? "" : String.format(" with sample %s", sampleString);
 				}).orElse("");
 				return String.format("%s%s", header, failedMessage);
 			case EXHAUSTED:

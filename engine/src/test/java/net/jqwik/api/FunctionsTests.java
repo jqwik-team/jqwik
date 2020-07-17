@@ -212,8 +212,8 @@ class FunctionsTests {
 	private class ShrinkToConstantFunction implements Consumer<PropertyExecutionResult> {
 		@Override
 		public void accept(PropertyExecutionResult result) {
-			Function<String, Integer> function = (Function<String, Integer>) result.falsifiedSample().get().get(0);
-			String string = (String) result.falsifiedSample().get().get(1);
+			Function<String, Integer> function = (Function<String, Integer>) result.falsifiedParameters().get().get(0);
+			String string = (String) result.falsifiedParameters().get().get(1);
 			assertThat(function.apply(string)).isEqualTo(11);
 		}
 	}

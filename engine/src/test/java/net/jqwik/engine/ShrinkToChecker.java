@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 public abstract class ShrinkToChecker implements Consumer<PropertyExecutionResult> {
 	@Override
 	public void accept(PropertyExecutionResult propertyExecutionResult) {
-		Optional<List<Object>> falsifiedSample = propertyExecutionResult.falsifiedSample();
+		Optional<List<Object>> falsifiedSample = propertyExecutionResult.falsifiedParameters();
 		assertThat(falsifiedSample).isPresent();
 		assertThat(falsifiedSample.get()).containsExactlyElementsOf(shrunkValues());
 	}

@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.properties.*;
 
 public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 
@@ -45,7 +46,7 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public Optional<List<Object>> falsifiedSample() {
+	public Optional<List<Object>> falsifiedParameters() {
 		return Optional.empty();
 	}
 
@@ -85,12 +86,12 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public Optional<List<Object>> originalSample() {
+	public Optional<FalsifiedSample> originalSample() {
 		return Optional.empty();
 	}
 
 	@Override
-	public Optional<List<Object>> shrunkSample() {
+	public Optional<FalsifiedSample> shrunkSample() {
 		return Optional.empty();
 	}
 

@@ -103,8 +103,8 @@ class AroundTryHookTests {
 		@Override
 		public void accept(PropertyExecutionResult result) {
 			assertThat(result.countTries()).isEqualTo(3);
-			assertThat(result.falsifiedSample()).isPresent();
-			assertThat(result.falsifiedSample().get()).containsExactly(0);
+			assertThat(result.falsifiedParameters()).isPresent();
+			assertThat(result.falsifiedParameters().get()).containsExactly(0);
 		}
 	}
 

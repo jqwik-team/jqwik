@@ -74,7 +74,7 @@ public class JqwikActionsShrinkToNothing {
 	private class ShrinkToOneActionEmptyStack implements Consumer<PropertyExecutionResult> {
 		@Override
 		public void accept(final PropertyExecutionResult propertyExecutionResult) {
-			List<Object> shrunkExample = propertyExecutionResult.falsifiedSample().get();
+			List<Object> shrunkExample = propertyExecutionResult.falsifiedParameters().get();
 			ActionSequence shrunkSequence = (ActionSequence) shrunkExample.get(0);
 			assertThat(shrunkSequence.runActions()).hasSize(1);
 			MyStringStack shrunkStack = (MyStringStack) shrunkExample.get(1);
@@ -95,7 +95,7 @@ public class JqwikActionsShrinkToNothing {
 	private class ShrinkToEmptyStackOneAction implements Consumer<PropertyExecutionResult> {
 		@Override
 		public void accept(final PropertyExecutionResult propertyExecutionResult) {
-			List<Object> shrunkExample = propertyExecutionResult.falsifiedSample().get();
+			List<Object> shrunkExample = propertyExecutionResult.falsifiedParameters().get();
 			MyStringStack shrunkStack = (MyStringStack) shrunkExample.get(0);
 			assertThat(shrunkStack.size()).isEqualTo(0);
 			ActionSequence shrunkSequence = (ActionSequence) shrunkExample.get(1);
