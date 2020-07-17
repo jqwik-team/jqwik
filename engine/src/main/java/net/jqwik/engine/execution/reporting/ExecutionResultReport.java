@@ -66,8 +66,18 @@ public class ExecutionResultReport {
 			String originalSampleHeadline = executionResult.shrunkSample().isPresent() ? ORIGINAL_SAMPLE_HEADLINE : SAMPLE_HEADLINE;
 			if (!originalSample.parameters().isEmpty()) {
 				SampleReporter.reportSample(reportLines, propertyMethod, originalSample.parameters(), originalSampleHeadline);
+				if (executionResult.shrunkSample().isPresent()) {
+					originalSample.falsifyingError().ifPresent(error -> {
+						appendOriginalError(reportLines, error);
+					});
+				}
 			}
 		});
+	}
+
+	private static void appendOriginalError(StringBuilder reportLines, Throwable error) {
+		reportLines.append(String.format("%n  Original Error%n  --------------"));
+		appendThrowable(reportLines, error);
 	}
 
 	private static void appendFixedSizedProperties(
@@ -121,17 +131,21 @@ public class ExecutionResultReport {
 	private static void appendThrowableMessage(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {
 		if (executionResult.status() != PropertyExecutionResult.Status.SUCCESSFUL) {
 			Throwable throwable = executionResult.throwable().orElse(new AssertionFailedError(null));
-			String assertionClass = throwable.getClass().getName();
-			reportLines.append(String.format("%n  %s", assertionClass));
-			List<String> assertionMessageLines = JqwikStringSupport.toLines(throwable.getMessage());
-			if (!assertionMessageLines.isEmpty()) {
-				reportLines.append(":");
-				for (String line : assertionMessageLines) {
-					reportLines.append(String.format("%n    %s", line));
-				}
-			}
-			reportLines.append(String.format("%n"));
+			appendThrowable(reportLines, throwable);
 		}
+	}
+
+	private static void appendThrowable(StringBuilder reportLines, Throwable throwable) {
+		String assertionClass = throwable.getClass().getName();
+		reportLines.append(String.format("%n  %s", assertionClass));
+		List<String> assertionMessageLines = JqwikStringSupport.toLines(throwable.getMessage());
+		if (!assertionMessageLines.isEmpty()) {
+			reportLines.append(":");
+			for (String line : assertionMessageLines) {
+				reportLines.append(String.format("%n    %s", line));
+			}
+		}
+		reportLines.append(String.format("%n"));
 	}
 
 	private static String helpAfterFailureMode(AfterFailureMode afterFailureMode) {

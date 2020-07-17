@@ -275,6 +275,14 @@ Original Sample
 ---------------
   string1: "乮��깼뷼檹瀶�������የ뷯����ঘ꼝���焗봢牠"
   string2: ""
+
+  Original Error
+  --------------
+  java.lang.AssertionError: 
+    Expecting:
+     <29>
+    to be greater than:
+     <29> 
 ```
 
 The source code names of property method parameters can only be reported when compiler argument

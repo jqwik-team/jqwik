@@ -32,6 +32,7 @@ title: jqwik Release Notes
 - Changes in property result reporting: 
     - Shrunk samples have now header line "Shrunk Sample (<n> steps)"
     - If no shrinking took place samples have header line "Sample"
+    - Original samples now also report the original error
 
 #### Breaking Changes
 
