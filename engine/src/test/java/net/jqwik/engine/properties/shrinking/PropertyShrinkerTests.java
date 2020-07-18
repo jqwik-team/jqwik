@@ -35,10 +35,10 @@ class PropertyShrinkerTests {
 			ShrinkingMode.FULL,
 			falsifiedSampleReporter
 		);
-		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-		assertThat(result.sample()).isEqualTo(originalSample);
-		assertThat(result.steps()).isEqualTo(0);
+		assertThat(sample.equivalentTo(originalSample)).isTrue();
+		assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 		verifyNoInteractions(falsifiedSampleReporter);
 	}
@@ -53,10 +53,10 @@ class PropertyShrinkerTests {
 			ShrinkingMode.OFF,
 			falsifiedSampleReporter
 		);
-		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-		assertThat(result.sample()).isEqualTo(originalSample);
-		assertThat(result.steps()).isEqualTo(0);
+		assertThat(sample.equivalentTo(originalSample)).isTrue();
+		assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 		verifyNoInteractions(falsifiedSampleReporter);
 	}
@@ -75,15 +75,14 @@ class PropertyShrinkerTests {
 			if (integer1 == 0) return true;
 			return integer2 <= 1;
 		});
-		PropertyShrinkingResult result = shrinker.shrink(falsifier);
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(1, 2));
-		assertThat(result.sample().falsifyingError()).isNotPresent();
+		assertThat(sample.parameters()).isEqualTo(asList(1, 2));
+		assertThat(sample.falsifyingError()).isNotPresent();
+		assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 
-		List<Object> freshParameters = result.sample().shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
+		List<Object> freshParameters = sample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 		assertThat(freshParameters).containsExactly(1, 2);
-
-		assertThat(result.steps()).isGreaterThan(0);
 	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
@@ -130,11 +129,11 @@ class PropertyShrinkerTests {
 			if (integer2 <= 1) return true;
 			throw failAndCatch("shrinking");
 		});
-		PropertyShrinkingResult result = shrinker.shrink(falsifier);
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(1, 2));
-		assertThat(result.sample().falsifyingError()).isPresent();
-		assertThat(result.sample().falsifyingError().get()).hasMessage("shrinking");
+		assertThat(sample.parameters()).isEqualTo(asList(1, 2));
+		assertThat(sample.falsifyingError()).isPresent();
+		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
 	}
 
 	@Example
@@ -153,14 +152,14 @@ class PropertyShrinkerTests {
 			list.add(101);
 			return list.get(0) <= 1;
 		});
-		PropertyShrinkingResult result = shrinker.shrink(falsifier);
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		List<Object> actualParameters = result.sample().parameters();
+		List<Object> actualParameters = sample.parameters();
 
 		assertThat(actualParameters).containsExactly(asList(2, 101));
 
 		// TODO: This should be true but is not with current shrinking. Enable after shrinking reimplementation
-		// List<Object> freshParameters = result.sample().shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
+		// List<Object> freshParameters = sample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 		// assertThat(freshParameters).containsExactly(asList(2));
 	}
 
@@ -184,10 +183,10 @@ class PropertyShrinkerTests {
 			}
 		});
 
-		PropertyShrinkingResult result = shrinker.shrink(falsifier);
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(12));
-		assertThat(result.sample().falsifyingError().get()).hasMessage("shrinking");
+		assertThat(sample.parameters()).isEqualTo(asList(12));
+		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
 	}
 
 	@Example
@@ -209,10 +208,10 @@ class PropertyShrinkerTests {
 			}
 		});
 
-		PropertyShrinkingResult result = shrinker.shrink(falsifier);
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(12));
-		assertThat(result.sample().falsifyingError().get()).hasMessage("shrinking");
+		assertThat(sample.parameters()).isEqualTo(asList(12));
+		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
 	}
 
 	@Example
@@ -231,9 +230,9 @@ class PropertyShrinkerTests {
 			if (((int) params.get(1)) <= 1) return true;
 			return false;
 		};
-		PropertyShrinkingResult result = shrinker.shrink(falsifier);
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(1, 2, 42));
+		assertThat(sample.parameters()).isEqualTo(asList(1, 2, 42));
 	}
 
 	@Example
@@ -246,9 +245,9 @@ class PropertyShrinkerTests {
 			falsifiedSampleReporter
 		);
 
-		PropertyShrinkingResult result = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-		assertThat(result.sample().parameters()).isEqualTo(asList(0, 900));
+		assertThat(sample.parameters()).isEqualTo(asList(0, 900));
 
 		// TODO: Test that logging shrinking bound reached has happended
 	}

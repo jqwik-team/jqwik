@@ -81,17 +81,12 @@ public class PlainExecutionResult implements ExtendedPropertyExecutionResult {
 	}
 
 	@Override
-	public int countShrinkingSteps() {
-		return 0;
-	}
-
-	@Override
 	public Optional<FalsifiedSample> originalSample() {
 		return Optional.empty();
 	}
 
 	@Override
-	public Optional<FalsifiedSample> shrunkSample() {
+	public Optional<ShrunkFalsifiedSample> shrunkSample() {
 		return Optional.empty();
 	}
 

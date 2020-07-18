@@ -93,12 +93,12 @@ public class ShrinkingTestHelper {
 		Consumer<T> falsifiedReporter,
 		Throwable originalError
 	) {
-		PropertyShrinkingResult result = shrink(falsifiedShrinkable, falsifier, falsifiedReporter, originalError);
-		return (T) result.sample().parameters().get(0);
+		ShrunkFalsifiedSample sample = shrink(falsifiedShrinkable, falsifier, falsifiedReporter, originalError);
+		return (T) sample.parameters().get(0);
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> PropertyShrinkingResult shrink(
+	public static <T> ShrunkFalsifiedSample shrink(
 		Shrinkable<T> falsifiedShrinkable,
 		Falsifier<T> falsifier,
 		Consumer<T> falsifiedReporter,

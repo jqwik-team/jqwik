@@ -30,9 +30,9 @@ public class PropertyShrinker {
 		this.falsifiedSampleReporter = falsifiedSampleReporter;
 	}
 
-	public PropertyShrinkingResult shrink(Falsifier<List<Object>> forAllFalsifier) {
+	public ShrunkFalsifiedSample shrink(Falsifier<List<Object>> forAllFalsifier) {
 		if (shrinkingMode == ShrinkingMode.OFF) {
-			return new PropertyShrinkingResult(originalSample, 0);
+			return unshrunkOriginalSample();
 		}
 
 		Falsifier<List<Object>> allowOnlyEquivalentErrorsFalsifier = sample -> {
@@ -62,10 +62,19 @@ public class PropertyShrinker {
 		}
 
 		if (shrinkingStepsCounter.get() == 0 && sequence.current().value().equals(originalSample.parameters())) {
-			return new PropertyShrinkingResult(originalSample, 0);
+			return unshrunkOriginalSample();
 		}
 
 		return createShrinkingResult(forAllFalsifier, sequence.current(), shrinkingStepsCounter.get());
+	}
+
+	public ShrunkFalsifiedSample unshrunkOriginalSample() {
+		return new ShrunkFalsifiedSample(
+			originalSample.parameters(),
+			originalSample.shrinkables(),
+			originalSample.falsifyingError(),
+			0
+		);
 	}
 
 	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Optional<Throwable> originalError) {
@@ -102,10 +111,10 @@ public class PropertyShrinker {
 		return Optional.of(stackTrace[0]);
 	}
 
-	private PropertyShrinkingResult createShrinkingResult(
-		final Falsifier<List<Object>> forAllFalsifier,
-		final FalsificationResult<List<Object>> current,
-		final int steps
+	private ShrunkFalsifiedSample createShrinkingResult(
+		Falsifier<List<Object>> forAllFalsifier,
+		FalsificationResult<List<Object>> current,
+		int steps
 	) {
 		// TODO: Remove this hack by a new decent implementation of shrinking
 
@@ -120,13 +129,12 @@ public class PropertyShrinker {
 
 		// Sometimes, in the context of mutable objects the capturing result is not equivalent to the shrunk result
 		// but this is all terrible hack for the drawbacks of current shrinking implementation
-		List<Shrinkable<Object>> shrinkables = current.shrinkable().value().stream().map(Shrinkable::unshrinkable).collect(Collectors.toList());
+		List<Shrinkable<Object>> shrinkables = current.shrinkable().value().stream().map(Shrinkable::unshrinkable)
+													  .collect(Collectors.toList());
 		if (areEquivalent(capturingResult.throwable(), current.throwable())) {
-			FalsifiedSample shrunkSample = new FalsifiedSample(sampleCapture[0], shrinkables, capturingResult.throwable());
-			return new PropertyShrinkingResult(shrunkSample, steps);
+			return new ShrunkFalsifiedSample(sampleCapture[0], shrinkables, capturingResult.throwable(), steps);
 		} else {
-			FalsifiedSample shrunkSample = new FalsifiedSample(current.value(), shrinkables, current.throwable());
-			return new PropertyShrinkingResult(shrunkSample, steps);
+			return new ShrunkFalsifiedSample(current.value(), shrinkables, current.throwable(), steps);
 		}
 	}
 

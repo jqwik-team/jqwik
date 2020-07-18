@@ -103,13 +103,13 @@ class ShrinkableSetTests {
 				if (integers.size() > 1) throw failAndCatch("my reason");
 				return true;
 			};
-			PropertyShrinkingResult result = shrink(shrinkable, falsifier, valueReporter, failAndCatch("original"));
+			ShrunkFalsifiedSample sample = shrink(shrinkable, falsifier, valueReporter, failAndCatch("original"));
 
 			//noinspection unchecked
-			assertThat((Set<Integer>) result.sample().parameters().get(0)).containsExactly(0, 1);
-			assertThat(result.sample().falsifyingError()).isPresent();
-			assertThat(result.sample().falsifyingError().get()).isInstanceOf(AssertionError.class);
-			assertThat(result.sample().falsifyingError().get()).hasMessage("my reason");
+			assertThat((Set<Integer>) sample.parameters().get(0)).containsExactly(0, 1);
+			assertThat(sample.falsifyingError()).isPresent();
+			assertThat(sample.falsifyingError().get()).isInstanceOf(AssertionError.class);
+			assertThat(sample.falsifyingError().get()).hasMessage("my reason");
 		}
 
 		@Example

@@ -92,7 +92,7 @@ public class GenericProperty {
 					configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(),
 					configuration.getGenerationMode(),
 					configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
-					falsifiedSample, null, 0, throwable
+					falsifiedSample, null, throwable
 				);
 			}
 		}
@@ -148,17 +148,15 @@ public class GenericProperty {
 		Reporter reporter, Reporting[] reporting, int countChecks,
 		int countTries, FalsifiedSample originalSample
 	) {
-		PropertyShrinkingResult shrinkingResult = shrink(reporter, reporting, originalSample);
-		FalsifiedSample shrunkSample = shrinkingResult.sample();
-		int shrinkingSteps = shrinkingResult.steps();
+		ShrunkFalsifiedSample shrunkSample =  shrink(reporter, reporting, originalSample);
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
-			originalSample, shrunkSample, shrinkingSteps, shrunkSample.falsifyingError().orElse(null)
+			originalSample, shrunkSample, shrunkSample.falsifyingError().orElse(null)
 		);
 	}
 
-	private PropertyShrinkingResult shrink(
+	private ShrunkFalsifiedSample shrink(
 		Reporter reporter,
 		Reporting[] reporting,
 		FalsifiedSample originalSample

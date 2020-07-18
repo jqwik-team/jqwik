@@ -52,12 +52,12 @@ public class ExecutionResultReport {
 
 	private static void appendSamples(
 		StringBuilder reportLines,
-		final Method propertyMethod,
+		Method propertyMethod,
 		ExtendedPropertyExecutionResult executionResult
 	) {
 		executionResult.shrunkSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.parameters().isEmpty()) {
-				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, executionResult.countShrinkingSteps());
+				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, shrunkSample.countShrinkingSteps());
 				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample.parameters(), shrunkSampleHeadline);
 			}
 		});

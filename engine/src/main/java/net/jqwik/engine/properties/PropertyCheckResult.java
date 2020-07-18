@@ -9,7 +9,6 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.reporting.*;
 
-// TODO: Use and report FalsifiedSample types and shrinking steps
 public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	enum CheckStatus {
@@ -41,7 +40,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesTried,
 			null,
 			null,
-			0,
 			null
 		);
 	}
@@ -57,12 +55,11 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		int edgeCasesTotal,
 		int edgeCasesTried,
 		FalsifiedSample originalSample,
-		FalsifiedSample shrunkSample,
-		int shrinkingSteps,
+		ShrunkFalsifiedSample shrunkSample,
 		Throwable throwable
 	) {
 		// If no shrinking was possible report only sample
-		if (originalSample == shrunkSample) {
+		if (shrunkSample != null && shrunkSample.equivalentTo(originalSample)) {
 			shrunkSample = null;
 		}
 		return new PropertyCheckResult(
@@ -78,7 +75,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesTried,
 			originalSample,
 			shrunkSample,
-			shrinkingSteps,
 			throwable
 		);
 	}
@@ -107,7 +103,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			edgeCasesTried,
 			null,
 			null,
-			0,
 			null
 		);
 	}
@@ -122,10 +117,9 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	private final EdgeCasesMode edgeCasesMode;
 	private final int edgeCasesTotal;
 	private final int edgeCasesTried;
-	private final FalsifiedSample shrunkSample;
 	private final FalsifiedSample originalSample;
+	private final ShrunkFalsifiedSample shrunkSample;
 	private final Throwable throwable;
-	private final int shrinkingSteps;
 
 	private PropertyCheckResult(
 		CheckStatus status, String stereotype,
@@ -138,8 +132,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		int edgeCasesTotal,
 		int edgeCasesTried,
 		FalsifiedSample originalSample,
-		FalsifiedSample shrunkSample,
-		int shrinkingSteps,
+		ShrunkFalsifiedSample shrunkSample,
 		Throwable throwable
 	) {
 		this.stereotype = stereotype;
@@ -154,7 +147,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		this.edgeCasesTried = edgeCasesTried;
 		this.shrunkSample = shrunkSample;
 		this.originalSample = originalSample;
-		this.shrinkingSteps = shrinkingSteps;
 		this.throwable = determineThrowable(status, throwable);
 	}
 
@@ -211,7 +203,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					edgeCasesTried,
 					originalSample,
 					shrunkSample,
-					0,
 					throwable
 				);
 			case SUCCESSFUL:
@@ -228,7 +219,6 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					edgeCasesTried,
 					null,
 					null,
-					0,
 					throwable
 				);
 			default:
@@ -265,12 +255,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		return Optional.ofNullable(originalSample);
 	}
 
-	public Optional<FalsifiedSample> shrunkSample() {
+	public Optional<ShrunkFalsifiedSample> shrunkSample() {
 		return Optional.ofNullable(shrunkSample);
-	}
-
-	public int countShrinkingSteps() {
-		return shrinkingSteps;
 	}
 
 	public GenerationMode generation() {

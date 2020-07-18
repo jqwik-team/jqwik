@@ -120,12 +120,12 @@ class ShrinkableListTests {
 				return true;
 			};
 
-			PropertyShrinkingResult result = shrink(shrinkable, falsifier, ignore -> {}, failAndCatch("original reason"));
+			ShrunkFalsifiedSample sample = shrink(shrinkable, falsifier, ignore -> {}, failAndCatch("original reason"));
 
-			assertThat(result.sample().parameters()).containsExactly(asList(0, 0));
-			assertThat(result.sample().falsifyingError()).isPresent();
-			assertThat(result.sample().falsifyingError().get()).isInstanceOf(AssertionError.class);
-			assertThat(result.sample().falsifyingError().get()).hasMessage("my reason");
+			assertThat(sample.parameters()).containsExactly(asList(0, 0));
+			assertThat(sample.falsifyingError()).isPresent();
+			assertThat(sample.falsifyingError().get()).isInstanceOf(AssertionError.class);
+			assertThat(sample.falsifyingError().get()).hasMessage("my reason");
 		}
 
 		@Example

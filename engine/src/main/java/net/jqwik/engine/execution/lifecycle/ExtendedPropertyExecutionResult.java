@@ -14,9 +14,7 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 
 	Optional<FalsifiedSample> originalSample();
 
-	Optional<FalsifiedSample> shrunkSample();
-
-	int countShrinkingSteps();
+	Optional<ShrunkFalsifiedSample> shrunkSample();
 
 	GenerationMode generation();
 
