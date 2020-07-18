@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -11,22 +12,21 @@ import net.jqwik.engine.properties.*;
 
 public class PropertyShrinker {
 
+	private static final Logger LOG = Logger.getLogger(PropertyShrinker.class.getName());
+
 	private final static int BOUNDED_SHRINK_STEPS = 1000;
 
 	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;
-	private final Reporter reporter;
 	private final Consumer<List<Object>> falsifiedSampleReporter;
 
 	public PropertyShrinker(
 		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
-		Reporter reporter,
 		Consumer<List<Object>> falsifiedSampleReporter
 	) {
 		this.originalSample = originalSample;
 		this.shrinkingMode = shrinkingMode;
-		this.reporter = reporter;
 		this.falsifiedSampleReporter = falsifiedSampleReporter;
 	}
 
@@ -56,7 +56,7 @@ public class PropertyShrinker {
 		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
 		while (sequence.next(shrinkingStepsCounter::incrementAndGet, falsifiedReporter)) {
 			if (shrinkingMode == ShrinkingMode.BOUNDED && shrinkingStepsCounter.get() >= BOUNDED_SHRINK_STEPS) {
-				reportShrinkingBoundReached(shrinkingStepsCounter.get());
+				logShrinkingBoundReached(shrinkingStepsCounter.get());
 				break;
 			}
 		}
@@ -130,17 +130,13 @@ public class PropertyShrinker {
 		}
 	}
 
-	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
-	}
-
-	private void reportShrinkingBoundReached(int steps) {
+	private void logShrinkingBoundReached(int steps) {
 		String value = String.format(
-			"after %s steps." +
+			"Shrinking bound reached after %s steps." +
 				"%n  You can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
 			steps
 		);
-		reporter.publishValue("shrinking bound reached", value);
+		LOG.warning(value);
 	}
 
 }

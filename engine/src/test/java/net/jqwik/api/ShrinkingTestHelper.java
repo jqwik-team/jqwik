@@ -4,8 +4,6 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.mockito.*;
-
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
@@ -13,10 +11,6 @@ import net.jqwik.engine.properties.shrinking.*;
 import static org.assertj.core.api.Assertions.*;
 
 public class ShrinkingTestHelper {
-
-	public static final Consumer<List<Object>> falsifiedReporterStub = ignore -> {};
-
-	public static final Reporter reporterStub = Mockito.mock(Reporter.class);
 
 	public static <T> Falsifier<T> alwaysFalsify() {
 		return ignore -> TryExecutionResult.falsified(null);
@@ -112,7 +106,7 @@ public class ShrinkingTestHelper {
 	) {
 		FalsifiedSample sample = toFalsifiedSample(falsifiedShrinkable, originalError);
 		Consumer<List<Object>> parametersReporter = params -> falsifiedReporter.accept((T) params.get(0));
-		PropertyShrinker shrinker = new PropertyShrinker(sample, ShrinkingMode.FULL, reporterStub, parametersReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(sample, ShrinkingMode.FULL, parametersReporter);
 
 		return shrinker.shrink(toParmaFalsifier(falsifier));
 	}

@@ -36,6 +36,9 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
+- Exceeding shrinking bound is now logged as warning instead of being reported
+  through JUnit platform reporting
+
 #### Bug Fixes
 
 ## 1.3.2
