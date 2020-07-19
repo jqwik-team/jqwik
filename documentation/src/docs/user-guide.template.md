@@ -1382,6 +1382,7 @@ There's a method for tuples of length 1 to 4:
 - [`Arbitrary.tuple2()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple2--)
 - [`Arbitrary.tuple3()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple3--)
 - [`Arbitrary.tuple4()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple4--)
+- [`Arbitrary.tuple5()`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitrary.html#tuple5--)
 
 ### Maps
 

@@ -501,6 +501,19 @@ class ArbitraryTests {
 			assertThat(sample.v4).isIn(1, 2);
 		}
 
+		@Example
+		void tuple5() {
+			Arbitrary<Integer> integers = Arbitraries.of(1, 2);
+			Arbitrary<Tuple5<Integer, Integer, Integer, Integer, Integer>> tuple = integers.tuple5();
+
+			Tuple5<Integer, Integer, Integer, Integer, Integer> sample = tuple.sample();
+			assertThat(sample.v1).isIn(1, 2);
+			assertThat(sample.v2).isIn(1, 2);
+			assertThat(sample.v3).isIn(1, 2);
+			assertThat(sample.v4).isIn(1, 2);
+			assertThat(sample.v5).isIn(1, 2);
+		}
+
 	}
 
 }

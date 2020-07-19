@@ -68,6 +68,8 @@ and
 - Added programmatic access to 
   [JUnit 5 platform reporting](/docs/1.3.2/user-guide.html#platform-reporting-with-reporter-object)
 
+- Added `Tuple.Tuple5<T,T,T,T,T> Arbitrary.tuple5()`
+
 #### Breaking Changes
 
 - Introduced `StreamableArbitrary` hierarchy:

@@ -541,6 +541,17 @@ public interface Arbitrary<T> {
 	}
 
 	/**
+	 * Create a new arbitrary of type {@code Tuple.Tuple5<T, T, T, T, T>} that will use the underlying
+	 * arbitrary to create the tuple values;
+	 *
+	 * @return a new arbitrary instance
+	 */
+	@API(status = MAINTAINED, since = "1.3.3")
+	default Arbitrary<Tuple.Tuple5<T, T, T, T, T>> tuple5() {
+		return Arbitrary.this.list().ofSize(5).map(l -> Tuple.of(l.get(0), l.get(1), l.get(2), l.get(3), l.get(4)));
+	}
+
+	/**
 	 * Create a new arbitrary of type {@code T} that will use the underlying
 	 * arbitrary to create the tuple values but will ignore any raised exception of
 	 * type {@code exceptionType} during generation.
