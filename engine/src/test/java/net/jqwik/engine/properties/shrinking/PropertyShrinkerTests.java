@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -33,7 +34,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			originalSample,
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
@@ -51,7 +53,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			originalSample,
 			ShrinkingMode.OFF,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
@@ -68,7 +71,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 
 		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer1, Integer integer2) -> {
@@ -107,7 +111,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 		shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
@@ -121,7 +126,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, failAndCatch("original")),
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 
 		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer1, Integer integer2) -> {
@@ -145,7 +151,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 
 		TestingFalsifier<List<Object>> falsifier = paramFalsifier((List<Integer> list) -> {
@@ -171,7 +178,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, originalError),
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 
 		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
@@ -196,7 +204,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, originalError),
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 
 		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
@@ -221,7 +230,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.FULL,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 
 		TestingFalsifier<List<Object>> falsifier = params -> {
@@ -242,7 +252,8 @@ class PropertyShrinkerTests {
 		PropertyShrinker shrinker = new PropertyShrinker(
 			toFalsifiedSample(shrinkables, null),
 			ShrinkingMode.BOUNDED,
-			falsifiedSampleReporter
+			falsifiedSampleReporter,
+			null
 		);
 
 		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));

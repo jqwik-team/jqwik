@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -19,15 +20,18 @@ public class PropertyShrinker {
 	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;
 	private final Consumer<List<Object>> falsifiedSampleReporter;
+	private final Method targetMethod;
 
 	public PropertyShrinker(
 		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
-		Consumer<List<Object>> falsifiedSampleReporter
+		Consumer<List<Object>> falsifiedSampleReporter,
+		Method targetMethod
 	) {
 		this.originalSample = originalSample;
 		this.shrinkingMode = shrinkingMode;
 		this.falsifiedSampleReporter = falsifiedSampleReporter;
+		this.targetMethod = targetMethod;
 	}
 
 	public ShrunkFalsifiedSample shrink(Falsifier<List<Object>> forAllFalsifier) {
@@ -78,7 +82,8 @@ public class PropertyShrinker {
 	}
 
 	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Optional<Throwable> originalError) {
-		return result.isFalsified() && !areEquivalent(originalError, result.throwable());
+		boolean areEquivalent = areEquivalent(originalError, result.throwable());
+		return result.isFalsified() && !areEquivalent;
 	}
 
 	/**
@@ -98,17 +103,25 @@ public class PropertyShrinker {
 		if (!originalError.getClass().equals(currentError.getClass())) {
 			return false;
 		}
-		Optional<StackTraceElement> firstOriginal = firstStackTraceElement(originalError);
-		Optional<StackTraceElement> firstCurrent = firstStackTraceElement(currentError);
+		Optional<StackTraceElement> firstOriginal = firstRelevantStackTraceElement(originalError);
+		Optional<StackTraceElement> firstCurrent = firstRelevantStackTraceElement(currentError);
 		return firstOriginal.equals(firstCurrent);
 	}
 
-	private Optional<StackTraceElement> firstStackTraceElement(Throwable error) {
+	private Optional<StackTraceElement> firstRelevantStackTraceElement(Throwable error) {
 		StackTraceElement[] stackTrace = error.getStackTrace();
-		if (stackTrace.length == 0) {
-			return Optional.empty();
+		return Arrays.stream(stackTrace)
+			.filter(this::belongsToTargetPropertyMethod)
+			.findFirst();
+	}
+
+	private boolean belongsToTargetPropertyMethod(StackTraceElement stackTraceElement) {
+		if (targetMethod == null) {
+			// Should only happen when shrinking is done outside normal property lifecycle
+			return true;
 		}
-		return Optional.of(stackTrace[0]);
+		return stackTraceElement.getClassName().equals(targetMethod.getDeclaringClass().getName())
+			&& stackTraceElement.getMethodName().equals(targetMethod.getName());
 	}
 
 	private ShrunkFalsifiedSample createShrinkingResult(

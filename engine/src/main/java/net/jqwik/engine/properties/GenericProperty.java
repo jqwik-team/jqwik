@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -71,7 +72,8 @@ public class GenericProperty {
 							reporting,
 							countChecks,
 							countTries,
-							falsifiedSample
+							falsifiedSample,
+							tryLifecycleContext.targetMethod()
 						);
 					case INVALID:
 						countChecks--;
@@ -146,9 +148,10 @@ public class GenericProperty {
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
 		Reporter reporter, Reporting[] reporting, int countChecks,
-		int countTries, FalsifiedSample originalSample
+		int countTries, FalsifiedSample originalSample,
+		Method targetMethod
 	) {
-		ShrunkFalsifiedSample shrunkSample =  shrink(reporter, reporting, originalSample);
+		ShrunkFalsifiedSample shrunkSample =  shrink(reporter, reporting, originalSample, targetMethod);
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
@@ -159,14 +162,15 @@ public class GenericProperty {
 	private ShrunkFalsifiedSample shrink(
 		Reporter reporter,
 		Reporting[] reporting,
-		FalsifiedSample originalSample
+		FalsifiedSample originalSample,
+		Method targetMethod
 	) {
 		// TODO: Find a way that falsifier and resolved ParameterSupplier get the same instance of tryLifecycleContext during shrinking.
 		//       This will probably require some major modification to shrinking / shrinking API.
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
 
 		Consumer<List<Object>> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
-		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter, targetMethod);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier);

@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -74,7 +75,6 @@ public class ShrinkingTestHelper {
 				}
 				return result.isFalsified();
 			});
-
 		return shrinkToEnd(falsifiedShrinkable, falsifier, originalError[0]);
 	}
 
@@ -106,7 +106,7 @@ public class ShrinkingTestHelper {
 	) {
 		FalsifiedSample sample = toFalsifiedSample(falsifiedShrinkable, originalError);
 		Consumer<List<Object>> parametersReporter = params -> falsifiedReporter.accept((T) params.get(0));
-		PropertyShrinker shrinker = new PropertyShrinker(sample, ShrinkingMode.FULL, parametersReporter);
+		PropertyShrinker shrinker = new PropertyShrinker(sample, ShrinkingMode.FULL, parametersReporter, null);
 
 		return shrinker.shrink(toParmaFalsifier(falsifier));
 	}
