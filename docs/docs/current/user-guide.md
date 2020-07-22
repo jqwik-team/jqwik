@@ -119,7 +119,7 @@ title: jqwik User Guide - 1.3.2
   - [Domain example: American Addresses](#domain-example-american-addresses)
 - [Generation from a Type's Interface](#generation-from-a-types-interface)
 - [Generation of Edge Cases](#generation-of-edge-cases)
-  - [Tuning Edge Cases](#tuning-edge-cases)
+  - [Configuring Edge Case Injection](#configuring-edge-case-injection)
 - [Exhaustive Generation](#exhaustive-generation)
 - [Data-Driven Properties](#data-driven-properties)
 - [Rerunning Falsified Properties](#rerunning-falsified-properties)
@@ -3558,17 +3558,23 @@ void combinedEdgeCasesOfTwoParameters(
 
 Run it and have a look at the output.
 
+### Configuring Edge Case Injection
+
 How jqwik handles edge cases generation can be controlled with 
 [an annotation property](#optional-property-parameters) and
 [a configuration parameter](#jqwik-configuration).
 
+To switch it off for a single property, use:
 
-### Tuning Edge Cases
-
-Currently there is only one way to change which edge cases a specific arbitrary generates:
-You can switch them off with `Arbitrary.withoutEdgeCases()`. 
-It would be desirable, though, to optimize edge cases for your domain. 
-Stay tuned for enhancements!
+```java
+@Property(edgeCases = EdgeCasesMode.NONE)
+void combinedEdgeCasesOfTwoParameters(
+    @ForAll List<Integer> intList,
+    @ForAll @IntRange(min = -100, max = 0) int anInt
+) {
+    // whatever you do   
+}
+```
 
 ## Exhaustive Generation
 
