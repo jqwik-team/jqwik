@@ -22,6 +22,10 @@
     - Re-implement shrinking so that it handles mutable objects correctly
     
     - Edge Cases
+        - Stream edge cases on the fly instead of creating all upfront:
+           - https://github.com/jlink/jqwik/issues/114
+           - examples.bugs.JqwikHeapBust as test case
+    
         - Arbitrary.withoutEdgeCases() 
             - should also work for individual generators
             - Maybe introduce ArbitraryDecorator or something like that

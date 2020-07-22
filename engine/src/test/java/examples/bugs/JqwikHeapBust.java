@@ -2,7 +2,8 @@ package examples.bugs;
 
 import net.jqwik.api.*;
 
-// see https://github.com/jlink/jqwik/issues/113
+// see problem in https://github.com/jlink/jqwik/issues/113
+// feature issue: https://github.com/jlink/jqwik/issues/114
 class JqwikHeapBust {
 
 	@Property//(edgeCases = EdgeCasesMode.NONE)
@@ -19,9 +20,10 @@ class JqwikHeapBust {
 						  .use(Arbitraries.integers()).in(Thing.Builder::setD)
 						  .use(Arbitraries.integers()).in(Thing.Builder::setE)
 						  .use(Arbitraries.integers()).in(Thing.Builder::setF)
-						  .use(Arbitraries.integers()).in(Thing.Builder::setG)
-						  .use(Arbitraries.integers()).in(Thing.Builder::setH)
-						  .use(Arbitraries.integers()).in(Thing.Builder::setI)
+						  // Starting to get slowly with 7th building step
+						  // .use(Arbitraries.integers()).in(Thing.Builder::setG)
+						  // .use(Arbitraries.integers()).in(Thing.Builder::setH)
+						  // .use(Arbitraries.integers()).in(Thing.Builder::setI)
 						  .build(Thing.Builder::build);
 	}
 }
