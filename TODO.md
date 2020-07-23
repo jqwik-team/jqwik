@@ -1,4 +1,14 @@
 - 1.3.3
+
+    - Re-implement shrinking
+      - Based solely on shrinking suggestions from Shrinkables
+      - Shrinkables.create() will _always_ freshly create values 
+        to prevent mutable state problems
+      - All shrinking strategies are controlled from new PropertyShrinker implementation
+        - Optimization for synchronized shrinking
+        - Possibility of shrinking one element and growing another
+        - Sorting of shrinkables in lists
+
         
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
@@ -19,8 +29,6 @@
       - Maybe change AroundTryHook to allow replacement of `Random` source
       - Or: Introduce ProvideGenerationSourceHook
       
-    - Re-implement shrinking so that it handles mutable objects correctly
-    
     - Edge Cases
         - Stream edge cases on the fly instead of creating all upfront:
            - https://github.com/jlink/jqwik/issues/114

@@ -11,6 +11,7 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 	private final Shrinkable<T> toFilter;
 	private final Set<T> usedValues;
 
+	// TODO: Collect set of used shrinkables instead of used values to prevent probs with mutable state
 	public UniqueShrinkable(Shrinkable<T> toFilter, Set<T> usedValues) {
 		this.toFilter = toFilter;
 		this.usedValues = usedValues;
