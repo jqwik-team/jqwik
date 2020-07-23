@@ -13,6 +13,10 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
+/**
+ * Inspired by https://github.com/HypothesisWorks/hypothesis/blob/master/hypothesis-python/tests/quality/test_shrink_quality.py
+ * but still a lot of that missing
+ */
 class ShrinkingQualityProperties {
 
 	@Property
@@ -74,4 +78,19 @@ class ShrinkingQualityProperties {
 		assertThat(numberOfElements).isLessThanOrEqualTo(10);
 	}
 
+	@Property(tries = 100)
+	void flatMapRectangles(@ForAll Random random) {
+		Arbitrary<Integer> lengths = Arbitraries.integers().between(0, 10);
+		List<String> shrunkResult = falsifyThenShrink(
+			lengths.flatMap(this::listsOfLength),
+			random,
+			falsifier(x -> !x.equals(Arrays.asList("a", "b")))
+		);
+
+		assertThat(shrunkResult).containsExactly("a", "b");
+	}
+
+	private ListArbitrary<String> listsOfLength(int n) {
+		return Arbitraries.of("a", "b").list().ofSize(n);
+	}
 }
