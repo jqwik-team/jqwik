@@ -21,6 +21,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public T value() {
+		// TODO: Compute lazy. Requires change of FlatMappedShrinkable
 		return value;
 	}
 

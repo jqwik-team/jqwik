@@ -10,17 +10,15 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 
 	private final Shrinkable<T> toFilter;
 	private final Set<T> usedValues;
-	private final T value;
 
 	public UniqueShrinkable(Shrinkable<T> toFilter, Set<T> usedValues) {
 		this.toFilter = toFilter;
 		this.usedValues = usedValues;
-		this.value = toFilter.value();
 	}
 
 	@Override
 	public T value() {
-		return value;
+		return toFilter.value();
 	}
 
 	@Override

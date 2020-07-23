@@ -26,6 +26,7 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 
 	@Override
 	public ActionSequence<T> value() {
+		// TODO: Can it be generated lazily?
 		return value;
 	}
 

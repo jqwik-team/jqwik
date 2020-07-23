@@ -24,6 +24,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		this(toMap, mapper.apply(toMap.value()), mapper);
 	}
 
+	// TODO: Don't take initialShrinkable because it destroys lazy value generation.
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Shrinkable<U> initialShrinkable, Function<T, Shrinkable<U>> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
