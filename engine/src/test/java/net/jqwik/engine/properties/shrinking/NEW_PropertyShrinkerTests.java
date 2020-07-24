@@ -53,7 +53,7 @@ class NEW_PropertyShrinkerTests {
 	}
 
 	@Example
-	void shrinkSingleParameter() {
+	void shrinkSingleParameterStepByStep() {
 		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10);
 
 		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
@@ -64,6 +64,20 @@ class NEW_PropertyShrinkerTests {
 		assertThat(sample.parameters()).isEqualTo(asList(2));
 		assertThat(sample.falsifyingError()).isNotPresent();
 		assertThat(sample.countShrinkingSteps()).isEqualTo(8);
+	}
+
+	@Example
+	void shrinkSingleParameterInOneStep() {
+		List<Shrinkable<Object>> shrinkables = listOfFullShrinkables(10);
+
+		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 1);
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+		assertThat(sample.parameters()).isEqualTo(asList(2));
+		assertThat(sample.falsifyingError()).isNotPresent();
+		assertThat(sample.countShrinkingSteps()).isEqualTo(1);
 	}
 
 	@Example
@@ -236,6 +250,10 @@ class NEW_PropertyShrinkerTests {
 
 	private List<Shrinkable<Object>> listOfOneStepShrinkables(int... args) {
 		return Arrays.stream(args).mapToObj(i -> new OneStepShrinkable(i).asGeneric()).collect(Collectors.toList());
+	}
+
+	private List<Shrinkable<Object>> listOfFullShrinkables(int... args) {
+		return Arrays.stream(args).mapToObj(i -> new FullShrinkable(i).asGeneric()).collect(Collectors.toList());
 	}
 
 	private NEW_PropertyShrinker createShrinker(final FalsifiedSample originalSample, final ShrinkingMode full) {

@@ -38,11 +38,7 @@ public class ShrinkableTypesForTest {
 
 		@Override
 		public Stream<Shrinkable<Integer>> shrink() {
-			Integer value = createValue();
-			if (value.equals(minimum)) {
-				return Stream.empty();
-			}
-			return Stream.of(new OneStepShrinkable(value - 1, minimum));
+			return shrinkCandidatesFor(this).stream();
 		}
 	}
 
@@ -60,6 +56,17 @@ public class ShrinkableTypesForTest {
 		public ShrinkingDistance distance() {
 			return ShrinkingDistance.of(value());
 		}
+
+		@Override
+		public Integer createValue() {
+			return value();
+		}
+
+		@Override
+		public Stream<Shrinkable<Integer>> shrink() {
+			return shrinkCandidatesFor(this).stream().sorted(Comparator.comparing(Shrinkable::distance));
+		}
+
 	}
 
 	public static class PartialShrinkable extends AbstractShrinkable<Integer> {
