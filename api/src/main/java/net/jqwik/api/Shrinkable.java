@@ -2,10 +2,9 @@ package net.jqwik.api;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.logging.*;
+import java.util.stream.*;
 
 import org.apiguardian.api.*;
-import org.opentest4j.*;
 
 import net.jqwik.api.lifecycle.*;
 
@@ -18,13 +17,16 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	abstract class ShrinkableFacade {
 		private static final ShrinkableFacade implementation;
 
-		static  {
+		static {
 			implementation = FacadeLoader.load(ShrinkableFacade.class);
 		}
 
 		public abstract <T> Shrinkable<T> unshrinkable(Supplier<T> valueSupplier, ShrinkingDistance distance);
+
 		public abstract <T, U> Shrinkable<U> map(Shrinkable<T> self, Function<T, U> mapper);
+
 		public abstract <T> Shrinkable<T> filter(Shrinkable<T> self, Predicate<T> filter);
+
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, Arbitrary<U>> flatMapper, int tries, long randomSeed);
 	}
 
@@ -42,6 +44,23 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	T value();
+
+	/**
+	 * Create value freshly, so that in case of mutable objects shrinking (and reporting)
+	 * can rely on untouched values.
+	 *
+	 * @return An un-changed instance of the value represented by this shrinkable
+	 */
+	default T createValue() {
+		throw new UnsupportedOperationException("Yet to be implemented");
+	}
+
+	/**
+	 * Create a potentially never ending stream of "smaller" shrinkables.
+	 */
+	default Stream<Shrinkable<T>> shrink() {
+		throw new UnsupportedOperationException("Yet to be implemented");
+	}
 
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);
 
@@ -98,7 +117,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		Falsifier<T> falsifier = ignore -> TryExecutionResult.falsified(null);
 		ShrinkingSequence<T> allDown = shrink(falsifier);
 		List<Shrinkable<T>> suggestions = new ArrayList<>();
-		while(allDown.next(() -> {}, result -> {})) {
+		while (allDown.next(() -> {}, result -> {})) {
 			suggestions.add(allDown.current().shrinkable());
 		}
 		suggestions.sort(null);
