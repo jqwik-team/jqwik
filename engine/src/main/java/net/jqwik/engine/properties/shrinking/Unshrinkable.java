@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
@@ -18,6 +19,16 @@ public class Unshrinkable<T> implements Shrinkable<T> {
 	@Override
 	public T value() {
 		return valueSupplier.get();
+	}
+
+	@Override
+	public T createValue() {
+		return value();
+	}
+
+	@Override
+	public Stream<Shrinkable<T>> shrink() {
+		return Stream.empty();
 	}
 
 	@Override

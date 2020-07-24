@@ -9,6 +9,12 @@ public class ShrunkFalsifiedSample extends FalsifiedSample {
 	private final int shrinkingSteps;
 
 	public ShrunkFalsifiedSample(
+		FalsifiedSample falsifiedSample,
+		int shrinkingSteps
+	) {
+		this(falsifiedSample.parameters(), falsifiedSample.shrinkables(), falsifiedSample.falsifyingError(), shrinkingSteps);
+	}
+	public ShrunkFalsifiedSample(
 		List<Object> parameters,
 		List<Shrinkable<Object>> shrinkables,
 		Optional<Throwable> falsifyingError,
