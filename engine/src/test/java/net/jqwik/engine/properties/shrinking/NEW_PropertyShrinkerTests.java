@@ -81,8 +81,7 @@ class NEW_PropertyShrinkerTests {
 	}
 
 	@Example
-	@Disabled("new shrinking")
-	void shrinkAllParameters() {
+	void shrinkAllParametersOneAfterTheOther() {
 		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
 
 		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
