@@ -46,4 +46,8 @@ public class FalsifiedSample {
 	public int hashCode() {
 		return Objects.hash(parameters);
 	}
+
+	public int size() {
+		return shrinkables.size();
+	}
 }
