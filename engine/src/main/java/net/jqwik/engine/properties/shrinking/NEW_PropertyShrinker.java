@@ -51,23 +51,33 @@ public class NEW_PropertyShrinker {
 		FalsifiedSample sample,
 		AtomicInteger shrinkingStepsCounter
 	) {
-		Shrinkable<Object> currentShrinkable = sample.shrinkables().get(0);
+		return shrinkSingleParameter(falsifier, sample, shrinkingStepsCounter, 0);
+	}
+
+	private FalsifiedSample shrinkSingleParameter(
+		Falsifier<List<Object>> falsifier,
+		FalsifiedSample sample,
+		AtomicInteger shrinkingStepsCounter,
+		int parameterIndex
+	) {
+		Shrinkable<Object> currentShrinkable = sample.shrinkables().get(parameterIndex);
 		Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> shrinkingResult = Optional.empty();
 
 		while (true) {
 			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> last =
 				currentShrinkable.shrink()
 								 .map(s -> {
-									 List<Object> params = asList(s.createValue());
+									 List<Object> params = replaceIn(s.createValue(), parameterIndex, sample.parameters());
+									 List<Shrinkable<Object>> shrinkables = replaceIn(s, parameterIndex, sample.shrinkables());
 									 TryExecutionResult result = falsifier.execute(params);
-									 return Tuple.of(params, asList(s), result);
+									 return Tuple.of(params, shrinkables, result);
 								 })
 								 .filter(t -> t.get3().isFalsified())
 								 .findFirst();
 			if (last.isPresent()) {
 				shrinkingStepsCounter.incrementAndGet();
 				shrinkingResult = last;
-				currentShrinkable = shrinkingResult.get().get2().get(0);
+				currentShrinkable = shrinkingResult.get().get2().get(parameterIndex);
 			} else {
 				break;
 			}
@@ -78,7 +88,11 @@ public class NEW_PropertyShrinker {
 				   .orElse(sample);
 	}
 
-	public ShrunkFalsifiedSample unshrunkOriginalSample() {
+	private <T> List<T> replaceIn(T shrinkable, int index, List<T> shrinkables) {
+		return asList(shrinkable);
+	}
+
+	private ShrunkFalsifiedSample unshrunkOriginalSample() {
 		return new ShrunkFalsifiedSample(originalSample, 0);
 	}
 
