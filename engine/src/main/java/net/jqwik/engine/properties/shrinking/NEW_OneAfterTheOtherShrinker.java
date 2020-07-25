@@ -32,8 +32,10 @@ public class NEW_OneAfterTheOtherShrinker {
 		Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> shrinkingResult = Optional.empty();
 
 		while (true) {
+			ShrinkingDistance currentDistance = currentShrinkable.distance();
 			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> last =
 				currentShrinkable.shrink()
+								 .filter(s -> s.distance().compareTo(currentDistance) < 0)
 								 .map(s -> {
 									 List<Object> params = replaceIn(s.createValue(), parameterIndex, sample.parameters());
 									 List<Shrinkable<Object>> shrinkables = replaceIn(s, parameterIndex, sample.shrinkables());

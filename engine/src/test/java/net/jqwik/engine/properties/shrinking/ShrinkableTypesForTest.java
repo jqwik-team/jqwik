@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -66,7 +67,6 @@ public class ShrinkableTypesForTest {
 		public Stream<Shrinkable<Integer>> shrink() {
 			return shrinkCandidatesFor(this).stream().sorted(Comparator.comparing(Shrinkable::distance));
 		}
-
 	}
 
 	public static class PartialShrinkable extends AbstractShrinkable<Integer> {
@@ -86,6 +86,36 @@ public class ShrinkableTypesForTest {
 		@Override
 		public ShrinkingDistance distance() {
 			return ShrinkingDistance.of(value());
+		}
+	}
+
+
+	public static class ShrinkableWithCandidates extends AbstractShrinkable<Integer> {
+		private final Function<Shrinkable<Integer>, Set<Shrinkable<Integer>>> candidates;
+
+		ShrinkableWithCandidates(int integer, Function<Shrinkable<Integer>, Set<Shrinkable<Integer>>> candidates) {
+			super(integer);
+			this.candidates = candidates;
+		}
+
+		@Override
+		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
+			return candidates.apply(shrinkable);
+		}
+
+		@Override
+		public ShrinkingDistance distance() {
+			return ShrinkingDistance.of(value());
+		}
+
+		@Override
+		public Integer createValue() {
+			return value();
+		}
+
+		@Override
+		public Stream<Shrinkable<Integer>> shrink() {
+			return shrinkCandidatesFor(this).stream().sorted(Comparator.comparing(Shrinkable::distance));
 		}
 	}
 }
