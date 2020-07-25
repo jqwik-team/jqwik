@@ -28,13 +28,16 @@ public class NEW_OneAfterTheOtherShrinker {
 		AtomicInteger shrinkingStepsCounter,
 		int parameterIndex
 	) {
-		Shrinkable<Object> currentShrinkable = sample.shrinkables().get(parameterIndex);
-		Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> shrinkingResult = Optional.empty();
+		Shrinkable<Object> currentShrinkBase = sample.shrinkables().get(parameterIndex);
+		Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> bestResult = Optional.empty();
 
 		while (true) {
-			ShrinkingDistance currentDistance = currentShrinkable.distance();
-			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> last =
-				currentShrinkable.shrink()
+			@SuppressWarnings("unchecked")
+			Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>[] filteredResult = new Tuple3[]{null};
+			ShrinkingDistance currentDistance = currentShrinkBase.distance();
+
+			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> newShrinkingResult =
+				currentShrinkBase.shrink()
 								 .filter(s -> s.distance().compareTo(currentDistance) < 0)
 								 .map(s -> {
 									 List<Object> params = replaceIn(s.createValue(), parameterIndex, sample.parameters());
@@ -42,18 +45,27 @@ public class NEW_OneAfterTheOtherShrinker {
 									 TryExecutionResult result = falsifier.execute(params);
 									 return Tuple.of(params, shrinkables, result);
 								 })
+								 .peek(t -> {
+									 // Remember best invalid result in case no  falsified shrink is found
+									 if (t.get3().isInvalid() && filteredResult[0] == null) {
+										 filteredResult[0] = t;
+									 }
+								 })
 								 .filter(t -> t.get3().isFalsified())
 								 .findFirst();
-			if (last.isPresent()) {
+
+			if (newShrinkingResult.isPresent()) {
 				shrinkingStepsCounter.incrementAndGet();
-				shrinkingResult = last;
-				currentShrinkable = shrinkingResult.get().get2().get(parameterIndex);
+				bestResult = newShrinkingResult;
+				currentShrinkBase = bestResult.get().get2().get(parameterIndex);
+			} else if (filteredResult[0] != null) {
+				currentShrinkBase = filteredResult[0].get2().get(parameterIndex);
 			} else {
 				break;
 			}
 		}
 
-		return shrinkingResult
+		return bestResult
 				   .map(t -> new FalsifiedSample(t.get1(), t.get2(), t.get3().throwable()))
 				   .orElse(sample);
 	}
