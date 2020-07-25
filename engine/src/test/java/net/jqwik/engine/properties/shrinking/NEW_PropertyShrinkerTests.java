@@ -118,6 +118,25 @@ class NEW_PropertyShrinkerTests {
 			assertThat(sample.falsifyingError()).isNotPresent();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(1);
 		}
+
+		@Example
+		void stepByStepWithFilter() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10);
+
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+			Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> {
+				Assume.that(i % 2 == 0);
+				return i <= 1;
+			});
+
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(2));
+			assertThat(sample.falsifyingError()).isNotPresent();
+			assertThat(sample.countShrinkingSteps()).isEqualTo(4);
+		}
+
 	}
 
 	@Example
