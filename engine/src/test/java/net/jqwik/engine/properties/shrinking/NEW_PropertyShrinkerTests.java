@@ -24,76 +24,100 @@ class NEW_PropertyShrinkerTests {
 	@SuppressWarnings("unchecked")
 	private final Consumer<List<Object>> falsifiedSampleReporter = Mockito.mock(Consumer.class);
 
-	@Example
-	void ifParametersAreUnshrinkableReturnOriginalValue() {
-		List<Shrinkable<Object>> unshrinkableParameters = asList(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable("hello"));
-		Throwable originalError = failAndCatch("original error");
-		FalsifiedSample originalSample = toFalsifiedSample(unshrinkableParameters, originalError);
-		NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
-		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+	@Group
+	class NoShrinking {
+		@Example
+		void ifParametersAreUnshrinkableReturnOriginalValue() {
+			List<Shrinkable<Object>> unshrinkableParameters = asList(Shrinkable.unshrinkable(1), Shrinkable.unshrinkable("hello"));
+			Throwable originalError = failAndCatch("original error");
+			FalsifiedSample originalSample = toFalsifiedSample(unshrinkableParameters, originalError);
+			NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
+			ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-		assertThat(sample.equivalentTo(originalSample)).isTrue();
-		assertThat(sample.countShrinkingSteps()).isEqualTo(0);
+			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
-		verifyNoInteractions(falsifiedSampleReporter);
+			verifyNoInteractions(falsifiedSampleReporter);
+		}
+
+		@Example
+		void ifShrinkingIsOffReturnOriginalValue() {
+			List<Shrinkable<Object>> parameters = listOfOneStepShrinkables(5, 10);
+			Throwable originalError = failAndCatch("original error");
+			FalsifiedSample originalSample = toFalsifiedSample(parameters, originalError);
+			NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.OFF);
+			ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+
+			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
+
+			verifyNoInteractions(falsifiedSampleReporter);
+		}
+
+		@Example
+		void ifNothingCanBeShrunkReturnOriginalValue() {
+			List<Shrinkable<Object>> parameters = listOfOneStepShrinkables(10);
+			Throwable originalError = failAndCatch("original error");
+			FalsifiedSample originalSample = toFalsifiedSample(parameters, originalError);
+			NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
+
+			Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 9);
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
+
+			verifyNoInteractions(falsifiedSampleReporter);
+		}
+
+		@Example
+		void ignoreShrinkingSuggestionsWithShrinkingDistanceNotBelowCurrentBest() {
+			ShrinkableWithCandidates shrinkableWithCandidates = new ShrinkableWithCandidates(10, Collections::singleton);
+			List<Shrinkable<Object>> parameters = asList(shrinkableWithCandidates.asGeneric());
+			Throwable originalError = failAndCatch("original error");
+			FalsifiedSample originalSample = toFalsifiedSample(parameters, originalError);
+			NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
+
+			Falsifier<List<Object>> falsifier = ignore -> TryExecutionResult.falsified(null);
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
+
+			verifyNoInteractions(falsifiedSampleReporter);
+		}
 	}
 
-	@Example
-	void ifShrinkingIsOffReturnOriginalValue() {
-		List<Shrinkable<Object>> parameters = listOfOneStepShrinkables(5, 10);
-		Throwable originalError = failAndCatch("original error");
-		FalsifiedSample originalSample = toFalsifiedSample(parameters, originalError);
-		NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.OFF);
-		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+	@Group
+	class ShrinkSingleParameter {
 
-		assertThat(sample.equivalentTo(originalSample)).isTrue();
-		assertThat(sample.countShrinkingSteps()).isEqualTo(0);
+		@Example
+		void stepByStep() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10);
 
-		verifyNoInteractions(falsifiedSampleReporter);
-	}
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
 
-	@Example
-	void ifNothingCanBeShrunkReturnOriginalValue() {
-		List<Shrinkable<Object>> parameters = listOfOneStepShrinkables(10);
-		Throwable originalError = failAndCatch("original error");
-		FalsifiedSample originalSample = toFalsifiedSample(parameters, originalError);
-		NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.OFF);
+			Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 1);
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 9);
-		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+			assertThat(sample.parameters()).isEqualTo(asList(2));
+			assertThat(sample.falsifyingError()).isNotPresent();
+			assertThat(sample.countShrinkingSteps()).isEqualTo(8);
+		}
 
-		assertThat(sample.equivalentTo(originalSample)).isTrue();
-		assertThat(sample.countShrinkingSteps()).isEqualTo(0);
+		@Example
+		void inOneStep() {
+			List<Shrinkable<Object>> shrinkables = listOfFullShrinkables(10);
 
-		verifyNoInteractions(falsifiedSampleReporter);
-	}
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
 
-	@Example
-	void shrinkSingleParameterStepByStep() {
-		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10);
+			Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 1);
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
-
-		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 1);
-		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
-
-		assertThat(sample.parameters()).isEqualTo(asList(2));
-		assertThat(sample.falsifyingError()).isNotPresent();
-		assertThat(sample.countShrinkingSteps()).isEqualTo(8);
-	}
-
-	@Example
-	void shrinkSingleParameterInOneStep() {
-		List<Shrinkable<Object>> shrinkables = listOfFullShrinkables(10);
-
-		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
-
-		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 1);
-		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
-
-		assertThat(sample.parameters()).isEqualTo(asList(2));
-		assertThat(sample.falsifyingError()).isNotPresent();
-		assertThat(sample.countShrinkingSteps()).isEqualTo(1);
+			assertThat(sample.parameters()).isEqualTo(asList(2));
+			assertThat(sample.falsifyingError()).isNotPresent();
+			assertThat(sample.countShrinkingSteps()).isEqualTo(1);
+		}
 	}
 
 	@Example
