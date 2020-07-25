@@ -149,6 +149,15 @@ public interface TryExecutionResult {
 		return this.status() == Status.FALSIFIED;
 	}
 
+
+	/**
+	 * @return true if status is invalid
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.3")
+	default boolean isInvalid() {
+		return this.status() == Status.INVALID;
+	}
+
 	/**
 	 * @return Status enum
 	 */
@@ -165,5 +174,4 @@ public interface TryExecutionResult {
 	 * @return true if status is satisfied and remaining tries shall be skipped
 	 */
 	boolean shouldPropertyFinishEarly();
-
 }
