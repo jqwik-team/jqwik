@@ -3,6 +3,7 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
@@ -47,8 +48,8 @@ public class NEW_OneAfterTheOtherShrinker {
 				currentShrinkBase.shrink()
 								 .filter(s -> s.distance().compareTo(currentDistance) < 0)
 								 .map(s -> {
-									 List<Object> params = replaceIn(s.createValue(), parameterIndex, sample.parameters());
 									 List<Shrinkable<Object>> shrinkables = replaceIn(s, parameterIndex, sample.shrinkables());
+									 List<Object> params = createValues(shrinkables).collect(Collectors.toList());
 									 TryExecutionResult result = falsifier.execute(params);
 									 return Tuple.of(params, shrinkables, result);
 								 })
@@ -80,6 +81,10 @@ public class NEW_OneAfterTheOtherShrinker {
 		}
 
 		return bestResult.orElse(sample);
+	}
+
+	private Stream<Object> createValues(List<Shrinkable<Object>> shrinkables) {
+		return shrinkables.stream().map(Shrinkable::createValue);
 	}
 
 	private <T> List<T> replaceIn(T object, int index, List<T> old) {
