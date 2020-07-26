@@ -204,6 +204,23 @@ class NEW_PropertyShrinkerTests {
 		assertThat(createValues(sample)).containsExactly(asList(0));
 	}
 
+	@Example
+	void resultSampleConsistsOfActualUsedObjects_notOfValuesGeneratedByShrinkable() {
+		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
+
+		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+		TestingFalsifier<List<Object>> falsifier = params -> {
+			params.add(42);
+			if (((int) params.get(0)) == 0) return true;
+			if (((int) params.get(1)) <= 1) return true;
+			return false;
+		};
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+		assertThat(sample.parameters()).isEqualTo(asList(1, 2, 42));
+	}
+
+
 	private List<Object> createValues(FalsifiedSample sample) {
 		return sample.shrinkables().stream().map(Shrinkable::createValue).collect(Collectors.toList());
 	}
@@ -251,24 +268,6 @@ class NEW_PropertyShrinkerTests {
 
 		assertThat(sample.parameters()).isEqualTo(asList(12));
 		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
-	}
-
-	@Disabled("new shrinking")
-	@Example
-	void resultSampleConsistsOfActualUsedObjects_notOfValuesGeneratedByShrinkable() {
-		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
-
-		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
-
-		TestingFalsifier<List<Object>> falsifier = params -> {
-			params.add(42);
-			if (((int) params.get(0)) == 0) return true;
-			if (((int) params.get(1)) <= 1) return true;
-			return false;
-		};
-		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
-
-		assertThat(sample.parameters()).isEqualTo(asList(1, 2, 42));
 	}
 
 	@Disabled("new shrinking")
