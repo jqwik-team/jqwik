@@ -22,7 +22,7 @@ import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
 class NEW_PropertyShrinkerTests {
 
 	@SuppressWarnings("unchecked")
-	private final Consumer<List<Object>> falsifiedSampleReporter = Mockito.mock(Consumer.class);
+	private final Consumer<FalsifiedSample> falsifiedSampleReporter = Mockito.mock(Consumer.class);
 
 	@Group
 	class NoShrinking {
@@ -159,31 +159,13 @@ class NEW_PropertyShrinkerTests {
 		assertThat(freshParameters).containsExactly(1, 2);
 	}
 
-	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
-	@Disabled("new shrinking")
-	@ExpectFailure(checkResult = ShrinkToEmptyList0.class)
-	boolean shrinkDependentParameters(
-		@ForAll @Size(min = 0, max = 10) List<Integer> list,
-		@ForAll @IntRange(min = 0, max = 100) int size
-	) {
-		return list.size() < size;
-	}
-
-	private class ShrinkToEmptyList0 extends ShrinkToChecker {
-		@Override
-		public Iterable<?> shrunkValues() {
-			return Arrays.asList(Collections.emptyList(), 0);
-		}
-	}
-
-	@Disabled("new shrinking")
 	@Example
 	void reportFalsifiedParameters() {
 		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
 		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
 		shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-		verify(falsifiedSampleReporter, times(15)).accept(any(List.class));
+		verify(falsifiedSampleReporter, times(15)).accept(any(FalsifiedSample.class));
 	}
 
 	@Disabled("new shrinking")
@@ -304,6 +286,22 @@ class NEW_PropertyShrinkerTests {
 		assertThat(sample.parameters()).isEqualTo(asList(0, 900));
 
 		// TODO: Test that logging shrinking bound reached has happended
+	}
+
+	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
+	@Disabled("new shrinking")
+	@ExpectFailure(checkResult = ShrinkToEmptyList0.class)
+	boolean shrinkDependentParameters(
+		@ForAll @Size(min = 0, max = 10) List<Integer> list,
+		@ForAll @IntRange(min = 0, max = 100) int size
+	) {
+		return list.size() < size;
+	}
+	private class ShrinkToEmptyList0 extends ShrinkToChecker {
+		@Override
+		public Iterable<?> shrunkValues() {
+			return Arrays.asList(Collections.emptyList(), 0);
+		}
 	}
 
 	private List<Shrinkable<Object>> listOfOneStepShrinkables(int... args) {
