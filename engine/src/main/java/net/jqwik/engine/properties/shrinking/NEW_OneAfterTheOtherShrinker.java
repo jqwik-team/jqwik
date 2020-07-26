@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
@@ -9,6 +10,12 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
 public class NEW_OneAfterTheOtherShrinker {
+
+	private final Consumer<FalsifiedSample> falsifiedSampleReporter;
+
+	public NEW_OneAfterTheOtherShrinker(Consumer<FalsifiedSample> falsifiedSampleReporter) {
+		this.falsifiedSampleReporter = falsifiedSampleReporter;
+	}
 
 	public FalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
@@ -29,7 +36,7 @@ public class NEW_OneAfterTheOtherShrinker {
 		int parameterIndex
 	) {
 		Shrinkable<Object> currentShrinkBase = sample.shrinkables().get(parameterIndex);
-		Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> bestResult = Optional.empty();
+		Optional<FalsifiedSample> bestResult = Optional.empty();
 
 		while (true) {
 			@SuppressWarnings("unchecked")
@@ -56,8 +63,15 @@ public class NEW_OneAfterTheOtherShrinker {
 
 			if (newShrinkingResult.isPresent()) {
 				shrinkingStepsCounter.incrementAndGet();
-				bestResult = newShrinkingResult;
-				currentShrinkBase = bestResult.get().get2().get(parameterIndex);
+				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> falsifiedTry = newShrinkingResult.get();
+				FalsifiedSample falsifiedSample = new FalsifiedSample(
+					falsifiedTry.get1(),
+					falsifiedTry.get2(),
+					falsifiedTry.get3().throwable()
+				);
+				falsifiedSampleReporter.accept(falsifiedSample);
+				bestResult = Optional.of(falsifiedSample);
+				currentShrinkBase = falsifiedTry.get2().get(parameterIndex);
 			} else if (filteredResult[0] != null) {
 				currentShrinkBase = filteredResult[0].get2().get(parameterIndex);
 			} else {
@@ -65,9 +79,7 @@ public class NEW_OneAfterTheOtherShrinker {
 			}
 		}
 
-		return bestResult
-				   .map(t -> new FalsifiedSample(t.get1(), t.get2(), t.get3().throwable()))
-				   .orElse(sample);
+		return bestResult.orElse(sample);
 	}
 
 	private <T> List<T> replaceIn(T object, int index, List<T> old) {

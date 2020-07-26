@@ -7,11 +7,8 @@ import java.util.function.*;
 import java.util.logging.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
-
-import static java.util.Arrays.*;
 
 public class NEW_PropertyShrinker {
 
@@ -21,13 +18,13 @@ public class NEW_PropertyShrinker {
 
 	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;
-	private final Consumer<List<Object>> falsifiedSampleReporter;
+	private final Consumer<FalsifiedSample> falsifiedSampleReporter;
 	private final Method targetMethod;
 
 	public NEW_PropertyShrinker(
 		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
-		Consumer<List<Object>> falsifiedSampleReporter,
+		Consumer<FalsifiedSample> falsifiedSampleReporter,
 		Method targetMethod
 	) {
 		this.originalSample = originalSample;
@@ -51,7 +48,7 @@ public class NEW_PropertyShrinker {
 		FalsifiedSample sample,
 		AtomicInteger shrinkingStepsCounter
 	) {
-		return new NEW_OneAfterTheOtherShrinker().shrink(falsifier, sample, shrinkingStepsCounter);
+		return new NEW_OneAfterTheOtherShrinker(falsifiedSampleReporter).shrink(falsifier, sample, shrinkingStepsCounter);
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {
