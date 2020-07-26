@@ -155,7 +155,7 @@ class NEW_PropertyShrinkerTests {
 		assertThat(sample.falsifyingError()).isNotPresent();
 		assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 
-		List<Object> freshParameters = sample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
+		List<Object> freshParameters = createValues(sample);
 		assertThat(freshParameters).containsExactly(1, 2);
 	}
 
@@ -220,6 +220,25 @@ class NEW_PropertyShrinkerTests {
 		assertThat(sample.parameters()).isEqualTo(asList(1, 2, 42));
 	}
 
+	@Example
+	@Disabled("new shrinking")
+	void withBoundedShrinkingBreakOffAfter10000Attempts() {
+		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(9900, 1000);
+
+		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED);
+
+		Falsifier<List<Object>> falsifier = paramFalsifier((Integer i1, Integer i2) -> {
+			Assume.that(i1 % 2 == 0);
+			return false;
+		});
+
+		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+		assertThat(sample.parameters()).isEqualTo(asList(0, 900));
+
+		// TODO: Test that logging shrinking bound reached has happended
+	}
+
 
 	private List<Object> createValues(FalsifiedSample sample) {
 		return sample.shrinkables().stream().map(Shrinkable::createValue).collect(Collectors.toList());
@@ -268,20 +287,6 @@ class NEW_PropertyShrinkerTests {
 
 		assertThat(sample.parameters()).isEqualTo(asList(12));
 		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
-	}
-
-	@Disabled("new shrinking")
-	@Example
-	void withBoundedShrinkingBreakOffAfter1000Steps() {
-		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(900, 1000);
-
-		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED);
-
-		ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
-
-		assertThat(sample.parameters()).isEqualTo(asList(0, 900));
-
-		// TODO: Test that logging shrinking bound reached has happended
 	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
