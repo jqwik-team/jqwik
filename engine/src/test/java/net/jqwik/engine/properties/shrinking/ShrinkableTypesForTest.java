@@ -15,6 +15,7 @@ public class ShrinkableTypesForTest {
 		public OneStepShrinkable(int integer) {
 			this(integer, 0);
 		}
+
 		OneStepShrinkable(int integer, int minimum) {
 			super(integer);
 			this.minimum = minimum;
