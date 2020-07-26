@@ -46,6 +46,18 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		return shrinkables;
 	}
 
+	@Override
+	public C createValue() {
+		// TODO: Check if the underlying elements are freshly created
+		return value();
+	}
+
+	@Override
+	public Stream<Shrinkable<C>> shrink() {
+		// TODO: This is not the real thing!!!!
+		return shrinkingSuggestions().stream();
+	}
+
 	private C toContainer(List<E> listOfE) {
 		return listOfE.stream().collect(containerCollector());
 	}

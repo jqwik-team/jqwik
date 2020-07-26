@@ -168,7 +168,6 @@ class NEW_PropertyShrinkerTests {
 		verify(falsifiedSampleReporter, times(15)).accept(any(FalsifiedSample.class));
 	}
 
-	@Disabled("new shrinking")
 	@Example
 	void falsifyingErrorComesFromActualShrunkValue() {
 		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
@@ -187,28 +186,26 @@ class NEW_PropertyShrinkerTests {
 		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
 	}
 
-	@Disabled("new shrinking")
 	@Example
 	void sampleParametersAreTheRealOnes() {
 		List<Shrinkable<Object>> shrinkables = asList(
-			new ShrinkableList<>(asList(new OneStepShrinkable(42)), 1).asGeneric()
+			new ShrinkableList<Integer>(asList(new FullShrinkable(42)), 1).asGeneric()
 		);
 
 		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
 
 		TestingFalsifier<List<Object>> falsifier = paramFalsifier((List<Integer> list) -> {
 			list.add(101);
-			return list.get(0) <= 1;
+			return false;
 		});
 		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-		List<Object> actualParameters = sample.parameters();
+		assertThat(sample.parameters()).containsExactly(asList(0, 101));
+		assertThat(createValues(sample)).containsExactly(asList(0));
+	}
 
-		assertThat(actualParameters).containsExactly(asList(2, 101));
-
-		// TODO: This should be true but is not with current shrinking. Enable after shrinking reimplementation
-		// List<Object> freshParameters = sample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
-		// assertThat(freshParameters).containsExactly(asList(2));
+	private List<Object> createValues(FalsifiedSample sample) {
+		return sample.shrinkables().stream().map(Shrinkable::createValue).collect(Collectors.toList());
 	}
 
 	@Disabled("new shrinking")
