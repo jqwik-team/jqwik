@@ -91,22 +91,50 @@ public class ShrinkableTypesForTest {
 	}
 
 
-	public static class ShrinkableWithCandidates extends AbstractShrinkable<Integer> {
-		private final Function<Shrinkable<Integer>, Set<Shrinkable<Integer>>> candidates;
+	public static class ShrinkToLarger extends AbstractShrinkable<Integer> {
 
-		ShrinkableWithCandidates(int integer, Function<Shrinkable<Integer>, Set<Shrinkable<Integer>>> candidates) {
+		ShrinkToLarger(int integer) {
 			super(integer);
-			this.candidates = candidates;
 		}
 
 		@Override
 		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
-			return candidates.apply(shrinkable);
+			return Collections.singleton(new ShrinkToLarger(shrinkable.createValue() + 1));
 		}
 
 		@Override
 		public ShrinkingDistance distance() {
 			return ShrinkingDistance.of(value());
+		}
+
+		@Override
+		public Integer createValue() {
+			return value();
+		}
+
+		@Override
+		public Stream<Shrinkable<Integer>> shrink() {
+			return shrinkCandidatesFor(this).stream().sorted(Comparator.comparing(Shrinkable::distance));
+		}
+	}
+
+	public static class ShrinkWithFixedDistance extends AbstractShrinkable<Integer> {
+
+		ShrinkWithFixedDistance(int integer) {
+			super(integer);
+		}
+
+		@Override
+		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
+			if (shrinkable.value() == 0) {
+				return Collections.emptySet();
+			}
+			return Collections.singleton(new ShrinkWithFixedDistance(shrinkable.createValue() - 1));
+		}
+
+		@Override
+		public ShrinkingDistance distance() {
+			return ShrinkingDistance.of(42);
 		}
 
 		@Override

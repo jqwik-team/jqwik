@@ -71,11 +71,10 @@ class NEW_PropertyShrinkerTests {
 		}
 
 		@Example
-		void ignoreShrinkingSuggestionsWithShrinkingDistanceNotBelowCurrentBest() {
-			ShrinkableWithCandidates shrinkableWithCandidates = new ShrinkableWithCandidates(10, Collections::singleton);
-			List<Shrinkable<Object>> parameters = asList(shrinkableWithCandidates.asGeneric());
-			Throwable originalError = failAndCatch("original error");
-			FalsifiedSample originalSample = toFalsifiedSample(parameters, originalError);
+		void ignoreShrinkingSuggestionsWithShrinkingDistanceAboveCurrentBest() {
+			ShrinkToLarger shrinkableToLarger = new ShrinkToLarger(10);
+			List<Shrinkable<Object>> parameters = asList(shrinkableToLarger.asGeneric());
+			FalsifiedSample originalSample = toFalsifiedSample(parameters, null);
 			NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
 
 			Falsifier<List<Object>> falsifier = ignore -> TryExecutionResult.falsified(null);
@@ -85,6 +84,20 @@ class NEW_PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
+		}
+
+		@Example
+		void allowShrinkingWithSameDistance() {
+			ShrinkWithFixedDistance shrinkableToLarger = new ShrinkWithFixedDistance(10);
+			List<Shrinkable<Object>> parameters = asList(shrinkableToLarger.asGeneric());
+			FalsifiedSample originalSample = toFalsifiedSample(parameters, null);
+			NEW_PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
+
+			Falsifier<List<Object>> falsifier = ignore -> TryExecutionResult.falsified(null);
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(0));
+			assertThat(sample.countShrinkingSteps()).isEqualTo(10);
 		}
 	}
 
