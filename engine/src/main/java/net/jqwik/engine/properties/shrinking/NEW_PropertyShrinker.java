@@ -14,7 +14,7 @@ public class NEW_PropertyShrinker {
 
 	private static final Logger LOG = Logger.getLogger(NEW_PropertyShrinker.class.getName());
 
-	private final static int BOUNDED_SHRINK_STEPS = 1000;
+	private final static int BOUNDED_SHRINK_ATTEMPTS = 10000;
 
 	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;
@@ -39,16 +39,35 @@ public class NEW_PropertyShrinker {
 		}
 
 		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
-		FalsifiedSample shrunkSample = shrinkOneParameterAfterTheOther(forAllFalsifier, originalSample, shrinkingStepsCounter);
-		return new ShrunkFalsifiedSample(shrunkSample, shrinkingStepsCounter.get());
+		Consumer<FalsifiedSample> shrinkSampleConsumer = sample -> {
+			shrinkingStepsCounter.incrementAndGet();
+			falsifiedSampleReporter.accept(sample);
+		};
+
+		AtomicInteger shrinkingAttemptCounter = new AtomicInteger(0);
+		Consumer<FalsifiedSample> shrinkAttemptConsumer = currentBest -> {
+			int numberOfAttempts = shrinkingAttemptCounter.getAndIncrement();
+			if (shrinkingMode == ShrinkingMode.BOUNDED && numberOfAttempts >= BOUNDED_SHRINK_ATTEMPTS) {
+				throw new ShrinkingBoundReached(numberOfAttempts, currentBest);
+			};
+		};
+
+		try {
+			FalsifiedSample shrunkSample = shrinkOneParameterAfterTheOther(forAllFalsifier, originalSample, shrinkSampleConsumer, shrinkAttemptConsumer);
+			return new ShrunkFalsifiedSample(shrunkSample, shrinkingStepsCounter.get());
+		} catch (ShrinkingBoundReached shrinkingBoundReached) {
+			logShrinkingBoundReached(shrinkingBoundReached.numberOfAttempts);
+			return new ShrunkFalsifiedSample(shrinkingBoundReached.currentBest.orElse(originalSample), shrinkingStepsCounter.get());
+		}
 	}
 
 	private FalsifiedSample shrinkOneParameterAfterTheOther(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		AtomicInteger shrinkingStepsCounter
+		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		final Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new NEW_OneAfterTheOtherShrinker(falsifiedSampleReporter).shrink(falsifier, sample, shrinkingStepsCounter);
+		return new NEW_OneAfterTheOtherShrinker().shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {
@@ -60,13 +79,23 @@ public class NEW_PropertyShrinker {
 		return result.isFalsified() && !areEquivalent;
 	}
 
-	private void logShrinkingBoundReached(int steps) {
+	private void logShrinkingBoundReached(int attempts) {
 		String value = String.format(
-			"Shrinking bound reached after %s steps." +
+			"Shrinking bound reached after %s attempts." +
 				"%n  You can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
-			steps
+			attempts
 		);
 		LOG.warning(value);
 	}
 
+	private class ShrinkingBoundReached extends RuntimeException {
+		private final int numberOfAttempts;
+		private final Optional<FalsifiedSample> currentBest;
+
+		private ShrinkingBoundReached(int numberOfAttempts, FalsifiedSample currentBest) {
+			super("Shrinking attempts bound reached");
+			this.numberOfAttempts = numberOfAttempts;
+			this.currentBest = Optional.ofNullable(currentBest);
+		}
+	}
 }

@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -12,20 +11,15 @@ import net.jqwik.engine.properties.*;
 
 public class NEW_OneAfterTheOtherShrinker {
 
-	private final Consumer<FalsifiedSample> falsifiedSampleReporter;
-
-	public NEW_OneAfterTheOtherShrinker(Consumer<FalsifiedSample> falsifiedSampleReporter) {
-		this.falsifiedSampleReporter = falsifiedSampleReporter;
-	}
-
 	public FalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		AtomicInteger shrinkingStepsCounter
+		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		FalsifiedSample current = sample;
 		for (int i = 0; i < sample.size(); i++) {
-			current = shrinkSingleParameter(falsifier, current, shrinkingStepsCounter, i);
+			current = shrinkSingleParameter(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, i);
 		}
 		return current;
 	}
@@ -33,7 +27,8 @@ public class NEW_OneAfterTheOtherShrinker {
 	private FalsifiedSample shrinkSingleParameter(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
-		AtomicInteger shrinkingStepsCounter,
+		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> shrinkAttemptConsumer,
 		int parameterIndex
 	) {
 		Shrinkable<Object> currentShrinkBase = sample.shrinkables().get(parameterIndex);
@@ -44,9 +39,12 @@ public class NEW_OneAfterTheOtherShrinker {
 			Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>[] filteredResult = new Tuple3[]{null};
 			ShrinkingDistance currentDistance = currentShrinkBase.distance();
 
+			FalsifiedSample currentBest = bestResult.orElse(null);
+
 			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> newShrinkingResult =
 				currentShrinkBase.shrink()
 								 .filter(s -> s.distance().compareTo(currentDistance) < 0)
+								 .peek(ignore -> shrinkAttemptConsumer.accept(currentBest))
 								 .map(s -> {
 									 List<Shrinkable<Object>> shrinkables = replaceIn(s, parameterIndex, sample.shrinkables());
 									 List<Object> params = createValues(shrinkables).collect(Collectors.toList());
@@ -63,14 +61,13 @@ public class NEW_OneAfterTheOtherShrinker {
 								 .findFirst();
 
 			if (newShrinkingResult.isPresent()) {
-				shrinkingStepsCounter.incrementAndGet();
 				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> falsifiedTry = newShrinkingResult.get();
 				FalsifiedSample falsifiedSample = new FalsifiedSample(
 					falsifiedTry.get1(),
 					falsifiedTry.get2(),
 					falsifiedTry.get3().throwable()
 				);
-				falsifiedSampleReporter.accept(falsifiedSample);
+				shrinkSampleConsumer.accept(falsifiedSample);
 				bestResult = Optional.of(falsifiedSample);
 				currentShrinkBase = falsifiedTry.get2().get(parameterIndex);
 			} else if (filteredResult[0] != null) {
