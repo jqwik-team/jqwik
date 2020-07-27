@@ -139,6 +139,54 @@ class NEW_PropertyShrinkerTests {
 
 	}
 
+	@Group
+	class ErrorTypeDifferentiation {
+
+		@Example
+		void differentErrorTypeDoesNotCountAsSameError() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(50);
+
+			AssertionError originalError = failAndCatch("original error");
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, originalError), ShrinkingMode.FULL);
+
+			TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
+				if (integer <= 10) return true;
+				if (integer % 2 == 0) {
+					throw failAndCatch("shrinking");
+				} else {
+					throw new IllegalArgumentException();
+				}
+			});
+
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(12));
+			assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
+		}
+
+		@Example
+		void differentErrorStackTraceDoesNotCountAsSameError() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(50);
+			AssertionError originalError = failAndCatch("original error");
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, originalError), ShrinkingMode.FULL);
+
+			TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
+				if (integer <= 10) return true;
+				if (integer % 2 == 0) {
+					throw failAndCatch("shrinking");
+				} else {
+					throw new RuntimeException("different location");
+				}
+			});
+
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(12));
+			assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
+		}
+	}
+
+
 	@Example
 	void shrinkAllParametersOneAfterTheOther() {
 		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
@@ -235,58 +283,9 @@ class NEW_PropertyShrinkerTests {
 
 		assertThat(sample.parameters()).isEqualTo(asList(0, 900));
 
-		// TODO: Test that logging shrinking bound reached has happended
+		// TODO: Test that logging shrinking bound reached has happened
 	}
 
-
-	private List<Object> createValues(FalsifiedSample sample) {
-		return sample.shrinkables().stream().map(Shrinkable::createValue).collect(Collectors.toList());
-	}
-
-	@Disabled("new shrinking")
-	@Example
-	void differentErrorTypeDoesNotCountAsSameError() {
-		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(50);
-
-		AssertionError originalError = failAndCatch("original error");
-		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, originalError), ShrinkingMode.FULL);
-
-		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
-			if (integer <= 10) return true;
-			if (integer % 2 == 0) {
-				throw failAndCatch("shrinking");
-			} else {
-				throw new IllegalArgumentException();
-			}
-		});
-
-		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
-
-		assertThat(sample.parameters()).isEqualTo(asList(12));
-		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
-	}
-
-	@Disabled("new shrinking")
-	@Example
-	void differentErrorStackTraceDoesNotCountAsSameError() {
-		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(50);
-		AssertionError originalError = failAndCatch("original error");
-		NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, originalError), ShrinkingMode.FULL);
-
-		TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer integer) -> {
-			if (integer <= 10) return true;
-			if (integer % 2 == 0) {
-				throw failAndCatch("shrinking");
-			} else {
-				throw new RuntimeException("different location");
-			}
-		});
-
-		ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
-
-		assertThat(sample.parameters()).isEqualTo(asList(12));
-		assertThat(sample.falsifyingError().get()).hasMessage("shrinking");
-	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
 	@Disabled("new shrinking")
@@ -297,11 +296,16 @@ class NEW_PropertyShrinkerTests {
 	) {
 		return list.size() < size;
 	}
+
 	private class ShrinkToEmptyList0 extends ShrinkToChecker {
 		@Override
 		public Iterable<?> shrunkValues() {
 			return Arrays.asList(Collections.emptyList(), 0);
 		}
+	}
+
+	private List<Object> createValues(FalsifiedSample sample) {
+		return sample.shrinkables().stream().map(Shrinkable::createValue).collect(Collectors.toList());
 	}
 
 	private List<Shrinkable<Object>> listOfOneStepShrinkables(int... args) {
