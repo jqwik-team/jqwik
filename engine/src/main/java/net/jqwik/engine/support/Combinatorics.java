@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.support.combinatorics.*;
 
 import static java.util.Arrays.*;
@@ -19,7 +21,7 @@ public class Combinatorics {
 
 	@SuppressWarnings("unchecked")
 	private static <T> Iterator<List<T>> emptyListSingleton() {
-		return asList((List<T>) new ArrayList()).iterator();
+		return asList((List<T>) new ArrayList<>()).iterator();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -75,5 +77,16 @@ public class Combinatorics {
 		return new ConcatIterator<>(iterators);
 	}
 
+	public static Iterable<Tuple2<Integer, Integer>> distinctPairs(int maxExclusive) {
+		List<Tuple2<Integer, Integer>> pairs = new ArrayList<>();
+		for (int i = 0; i < maxExclusive; i++) {
+			for (int j = i + 1; j < maxExclusive; j++) {
+				if (i != j) {
+					pairs.add(Tuple.of(i, j));
+				}
+			}
+		}
+		return pairs;
+	}
 }
 
