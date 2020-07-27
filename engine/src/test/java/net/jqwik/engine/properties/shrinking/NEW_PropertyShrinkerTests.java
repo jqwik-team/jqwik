@@ -221,7 +221,6 @@ class NEW_PropertyShrinkerTests {
 	}
 
 	@Example
-	@Disabled("new shrinking")
 	void withBoundedShrinkingBreakOffAfter10000Attempts() {
 		List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(9900, 1000);
 
