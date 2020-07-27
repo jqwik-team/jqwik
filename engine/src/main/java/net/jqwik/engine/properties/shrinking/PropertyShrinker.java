@@ -22,6 +22,8 @@ public class PropertyShrinker {
 	private final Consumer<List<Object>> falsifiedSampleReporter;
 	private final Method targetMethod;
 
+	private final AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
+
 	public PropertyShrinker(
 		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
@@ -57,7 +59,6 @@ public class PropertyShrinker {
 
 		Consumer<FalsificationResult<List<Object>>> falsifiedReporter = result -> falsifiedSampleReporter.accept(result.value());
 
-		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
 		while (sequence.next(shrinkingStepsCounter::incrementAndGet, falsifiedReporter)) {
 			if (shrinkingMode == ShrinkingMode.BOUNDED && shrinkingStepsCounter.get() >= BOUNDED_SHRINK_STEPS) {
 				logShrinkingBoundReached(shrinkingStepsCounter.get());

@@ -21,6 +21,9 @@ public class NEW_PropertyShrinker {
 	private final Consumer<FalsifiedSample> falsifiedSampleReporter;
 	private final Method targetMethod;
 
+	private final AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
+	private final AtomicInteger shrinkingAttemptsCounter = new AtomicInteger(0);
+
 	public NEW_PropertyShrinker(
 		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
@@ -38,22 +41,36 @@ public class NEW_PropertyShrinker {
 			return unshrunkOriginalSample();
 		}
 
-		AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
+		Falsifier<List<Object>> allowOnlyEquivalentErrorsFalsifier = sample -> {
+			TryExecutionResult result = forAllFalsifier.execute(sample);
+			if (isFalsifiedButErrorIsNotEquivalent(result, originalSample.falsifyingError())) {
+				return TryExecutionResult.invalid();
+			}
+			return result;
+		};
+
 		Consumer<FalsifiedSample> shrinkSampleConsumer = sample -> {
 			shrinkingStepsCounter.incrementAndGet();
 			falsifiedSampleReporter.accept(sample);
 		};
 
-		AtomicInteger shrinkingAttemptCounter = new AtomicInteger(0);
 		Consumer<FalsifiedSample> shrinkAttemptConsumer = currentBest -> {
-			int numberOfAttempts = shrinkingAttemptCounter.getAndIncrement();
+			int numberOfAttempts = shrinkingAttemptsCounter.getAndIncrement();
 			if (shrinkingMode == ShrinkingMode.BOUNDED && numberOfAttempts >= BOUNDED_SHRINK_ATTEMPTS) {
 				throw new ShrinkingBoundReached(numberOfAttempts, currentBest);
-			};
+			}
 		};
 
+		return shrink(allowOnlyEquivalentErrorsFalsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
+	}
+
+	public ShrunkFalsifiedSample shrink(
+		Falsifier<List<Object>> falsifier,
+		Consumer<FalsifiedSample> shrinkSampleConsumer,
+		Consumer<FalsifiedSample> shrinkAttemptConsumer
+	) {
 		try {
-			FalsifiedSample shrunkSample = shrinkOneParameterAfterTheOther(forAllFalsifier, originalSample, shrinkSampleConsumer, shrinkAttemptConsumer);
+			FalsifiedSample shrunkSample = shrinkOneParameterAfterTheOther(falsifier, originalSample, shrinkSampleConsumer, shrinkAttemptConsumer);
 			return new ShrunkFalsifiedSample(shrunkSample, shrinkingStepsCounter.get());
 		} catch (ShrinkingBoundReached shrinkingBoundReached) {
 			logShrinkingBoundReached(shrinkingBoundReached.numberOfAttempts);
