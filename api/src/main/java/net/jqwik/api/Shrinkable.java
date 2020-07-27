@@ -56,7 +56,10 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	/**
-	 * Create a potentially never ending stream of "smaller" shrinkables.
+	 * Create a new and finite stream of smaller or same size shrinkables; size is measured by {@linkplain #distance()}.
+	 *
+	 * Same size shrinkables are allowed but they have to iterate towards a single value to prevent endless shrinking.
+	 * This also means that a shrinkable must never be in its own shrink stream!
 	 */
 	default Stream<Shrinkable<T>> shrink() {
 		throw new UnsupportedOperationException("Yet to be implemented");

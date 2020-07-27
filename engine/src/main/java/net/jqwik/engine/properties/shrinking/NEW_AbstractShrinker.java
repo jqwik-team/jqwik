@@ -37,7 +37,7 @@ abstract class NEW_AbstractShrinker {
 
 			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> newShrinkingResult =
 				parameterShrinker.apply(currentShrinkBase)
-						.filter(shrinkables -> calculateDistance(shrinkables).compareTo(currentDistance) < 0)
+						.filter(shrinkables -> calculateDistance(shrinkables).compareTo(currentDistance) <= 0)
 						.peek(ignore -> shrinkAttemptConsumer.accept(currentBest))
 						.map(shrinkables -> {
 							List<Object> params = createValues(shrinkables).collect(Collectors.toList());
