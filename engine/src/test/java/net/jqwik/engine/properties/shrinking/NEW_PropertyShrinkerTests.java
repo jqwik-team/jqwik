@@ -168,8 +168,8 @@ class NEW_PropertyShrinkerTests {
 			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
 			assertThat(sample.parameters()).isEqualTo(asList(0, 0));
-			assertThat(sample.countShrinkingSteps()).isEqualTo(20);
 			assertThat(createValues(sample)).containsExactly(0, 0);
+			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 		}
 
 		@Example
@@ -276,7 +276,6 @@ class NEW_PropertyShrinkerTests {
 			verify(falsifiedSampleReporter, times(15)).accept(any(FalsifiedSample.class));
 		}
 
-
 	}
 
 	@Group
@@ -326,7 +325,85 @@ class NEW_PropertyShrinkerTests {
 		}
 	}
 
+	@Group
+	class ShrinkingPairs {
 
+		@Example
+		void shrinkTwoParametersTogether() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10, 10);
+
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+			TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer int1, Integer int2) -> {
+				return int1 < 7 || int1.compareTo(int2) != 0;
+			});
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(7, 7));
+			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
+			assertThat(createValues(sample)).containsExactly(7, 7);
+		}
+
+		@Property
+		void shrinkAnyPairTogether(
+			@ForAll @IntRange(min = 0, max = 3) int index1,
+			@ForAll @IntRange(min = 0, max = 3) int index2
+		) {
+			Assume.that(index1 != index2);
+
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10, 10, 10, 10);
+
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+			TestingFalsifier<List<Object>> falsifier = params -> {
+				int int1 = (int) params.get(index1);
+				int int2 = (int) params.get(index2);
+				return int1 < 7 || int1 != int2;
+			};
+
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+			List<Object> expectedList = asList(0, 0, 0, 0);
+			expectedList.set(index1, 7);
+			expectedList.set(index2, 7);
+
+			assertThat(sample.parameters()).isEqualTo(expectedList);
+			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
+		}
+
+		// 	@Property(tries = 10000)
+		// 	@ExpectFailure(checkResult = ShrinkTo77.class)
+		// 	boolean shrinkDuplicateIntegersTogether(
+		// 		@ForAll @IntRange(min = 1, max = 100) int int1,
+		// 		@ForAll @IntRange(min = 1, max = 100) int int2
+		// 	) {
+		// 		return int1 < 7 || int1 != int2;
+		// 	}
+		//
+		// 	private class ShrinkTo77 extends ShrinkToChecker {
+		// 		@Override
+		// 		public Iterable<?> shrunkValues() {
+		// 			return Arrays.asList(7, 7);
+		// 		}
+		// 	}
+		//
+		// 	@Property(tries = 10000)
+		// 	@ExpectFailure(checkResult = ShrunkToAA.class)
+		// 	void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
+		// 		assertThat(first).isNotEqualTo(second);
+		// 	}
+		//
+		// 	private class ShrunkToAA extends ShrinkToChecker {
+		// 		@Override
+		// 		public Iterable<?> shrunkValues() {
+		// 			return Arrays.asList("aa", "aa");
+		// 		}
+		// 	}
+		//
+		// 	@Provide
+		// 	Arbitrary<String> aString() {
+		// 		return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
+		// 	}
+	}
 
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
 	@Disabled("new shrinking")
@@ -365,43 +442,5 @@ class NEW_PropertyShrinkerTests {
 			null
 		);
 	}
-
-	// @Group
-	// class Duplicates {
-	//
-	// 	@Property(tries = 10000)
-	// 	@ExpectFailure(checkResult = ShrinkTo77.class)
-	// 	boolean shrinkDuplicateIntegersTogether(
-	// 		@ForAll @IntRange(min = 1, max = 100) int int1,
-	// 		@ForAll @IntRange(min = 1, max = 100) int int2
-	// 	) {
-	// 		return int1 < 7 || int1 != int2;
-	// 	}
-	//
-	// 	private class ShrinkTo77 extends ShrinkToChecker {
-	// 		@Override
-	// 		public Iterable<?> shrunkValues() {
-	// 			return Arrays.asList(7, 7);
-	// 		}
-	// 	}
-	//
-	// 	@Property(tries = 10000)
-	// 	@ExpectFailure(checkResult = ShrunkToAA.class)
-	// 	void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
-	// 		assertThat(first).isNotEqualTo(second);
-	// 	}
-	//
-	// 	private class ShrunkToAA extends ShrinkToChecker {
-	// 		@Override
-	// 		public Iterable<?> shrunkValues() {
-	// 			return Arrays.asList("aa", "aa");
-	// 		}
-	// 	}
-	//
-	// 	@Provide
-	// 	Arbitrary<String> aString() {
-	// 		return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
-	// 	}
-	// }
 
 }
