@@ -23,6 +23,7 @@ public class NEW_PropertyShrinker {
 
 	private final AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
 	private final AtomicInteger shrinkingAttemptsCounter = new AtomicInteger(0);
+	private final Map<List<Object>, TryExecutionResult> falsificationCache = new HashMap<>();
 
 	public NEW_PropertyShrinker(
 		FalsifiedSample originalSample,
@@ -99,7 +100,7 @@ public class NEW_PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new NEW_OneAfterTheOtherShrinker().shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return new NEW_OneAfterTheOtherShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
 	private FalsifiedSample shrinkParametersPairwise(
@@ -108,7 +109,7 @@ public class NEW_PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new NEW_PairwiseShrinker().shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return new NEW_PairwiseShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {

@@ -5,10 +5,15 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 class NEW_PairwiseShrinker extends NEW_AbstractShrinker {
+
+	public NEW_PairwiseShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+		super(falsificationCache);
+	}
 
 	@Override
 	public FalsifiedSample shrink(

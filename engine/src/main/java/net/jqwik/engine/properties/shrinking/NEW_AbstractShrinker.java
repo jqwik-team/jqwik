@@ -11,6 +11,12 @@ import net.jqwik.engine.properties.*;
 
 abstract class NEW_AbstractShrinker {
 
+	private final Map<List<Object>, TryExecutionResult> falsificationCache;
+
+	public NEW_AbstractShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+		this.falsificationCache = falsificationCache;
+	}
+
 	public abstract FalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		FalsifiedSample sample,
@@ -41,7 +47,7 @@ abstract class NEW_AbstractShrinker {
 						.peek(ignore -> shrinkAttemptConsumer.accept(currentBest))
 						.map(shrinkables -> {
 							List<Object> params = createValues(shrinkables).collect(Collectors.toList());
-							TryExecutionResult result = falsifier.execute(params);
+							TryExecutionResult result = falsify(falsifier, params);
 							return Tuple.of(params, shrinkables, result);
 						})
 						.peek(t -> {
@@ -71,6 +77,11 @@ abstract class NEW_AbstractShrinker {
 		}
 
 		return bestResult.orElse(sample);
+	}
+
+	private TryExecutionResult falsify(Falsifier<List<Object>> falsifier, List<Object> params) {
+		// I wonder in which cases this is really an optimization
+		return falsificationCache.computeIfAbsent(params, p -> falsifier.execute(params));
 	}
 
 	private ShrinkingDistance calculateDistance(List<Shrinkable<Object>> shrinkables) {
