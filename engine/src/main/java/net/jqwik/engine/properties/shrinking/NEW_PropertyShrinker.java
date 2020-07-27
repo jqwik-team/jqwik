@@ -70,12 +70,26 @@ public class NEW_PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		try {
-			FalsifiedSample shrunkSample = shrinkOneParameterAfterTheOther(falsifier, originalSample, shrinkSampleConsumer, shrinkAttemptConsumer);
-			return new ShrunkFalsifiedSample(shrunkSample, shrinkingStepsCounter.get());
+			FalsifiedSample fullyShrunkSample = shrinkAsLongAsSampleImproves(falsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
+			return new ShrunkFalsifiedSample(fullyShrunkSample, shrinkingStepsCounter.get());
 		} catch (ShrinkingBoundReached shrinkingBoundReached) {
 			logShrinkingBoundReached(shrinkingBoundReached.numberOfAttempts);
 			return new ShrunkFalsifiedSample(shrinkingBoundReached.currentBest.orElse(originalSample), shrinkingStepsCounter.get());
 		}
+	}
+
+	public FalsifiedSample shrinkAsLongAsSampleImproves(
+		final Falsifier<List<Object>> falsifier,
+		final Consumer<FalsifiedSample> shrinkSampleConsumer,
+		final Consumer<FalsifiedSample> shrinkAttemptConsumer
+	) {
+		FalsifiedSample after = originalSample;
+		FalsifiedSample before;
+		do {
+			before = after;
+			after = shrinkOneParameterAfterTheOther(falsifier, before, shrinkSampleConsumer, shrinkAttemptConsumer);
+		} while (!after.equals(before));
+		return before;
 	}
 
 	private FalsifiedSample shrinkOneParameterAfterTheOther(
