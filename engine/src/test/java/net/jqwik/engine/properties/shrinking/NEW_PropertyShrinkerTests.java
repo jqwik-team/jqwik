@@ -370,43 +370,45 @@ class NEW_PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 		}
 
-		// 	@Property(tries = 10000)
-		// 	@ExpectFailure(checkResult = ShrinkTo77.class)
-		// 	boolean shrinkDuplicateIntegersTogether(
-		// 		@ForAll @IntRange(min = 1, max = 100) int int1,
-		// 		@ForAll @IntRange(min = 1, max = 100) int int2
-		// 	) {
-		// 		return int1 < 7 || int1 != int2;
-		// 	}
-		//
-		// 	private class ShrinkTo77 extends ShrinkToChecker {
-		// 		@Override
-		// 		public Iterable<?> shrunkValues() {
-		// 			return Arrays.asList(7, 7);
-		// 		}
-		// 	}
-		//
-		// 	@Property(tries = 10000)
-		// 	@ExpectFailure(checkResult = ShrunkToAA.class)
-		// 	void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
-		// 		assertThat(first).isNotEqualTo(second);
-		// 	}
-		//
-		// 	private class ShrunkToAA extends ShrinkToChecker {
-		// 		@Override
-		// 		public Iterable<?> shrunkValues() {
-		// 			return Arrays.asList("aa", "aa");
-		// 		}
-		// 	}
-		//
-		// 	@Provide
-		// 	Arbitrary<String> aString() {
-		// 		return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
-		// 	}
+		@Disabled("new shrinking")
+		@Property(tries = 10000)
+		@ExpectFailure(checkResult = ShrinkTo77.class)
+		boolean shrinkDuplicateIntegersTogether(
+			@ForAll @IntRange(min = 1, max = 100) int int1,
+			@ForAll @IntRange(min = 1, max = 100) int int2
+		) {
+			return int1 < 7 || int1 != int2;
+		}
+
+		private class ShrinkTo77 extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return Arrays.asList(7, 7);
+			}
+		}
+
+		@Disabled("new shrinking")
+		@Property(tries = 10000)
+		@ExpectFailure(checkResult = ShrunkToAA.class)
+		void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
+			assertThat(first).isNotEqualTo(second);
+		}
+
+		private class ShrunkToAA extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return Arrays.asList("aa", "aa");
+			}
+		}
+
+		@Provide
+		Arbitrary<String> aString() {
+			return Arbitraries.strings().withCharRange('a', 'z').ofMinLength(2).ofMaxLength(5);
+		}
 	}
 
-	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
 	@Disabled("new shrinking")
+	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
 	@ExpectFailure(checkResult = ShrinkToEmptyList0.class)
 	boolean shrinkDependentParameters(
 		@ForAll @Size(min = 0, max = 10) List<Integer> list,

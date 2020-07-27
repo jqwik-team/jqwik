@@ -17,13 +17,13 @@ class NEW_PairwiseShrinker extends NEW_AbstractShrinker {
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		FalsifiedSample current = sample;
-		if (sample.size() == 2) {
-			current = shrinkPair(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, 0, 1);
+		if (sample.size() < 2) {
+			return sample;
 		}
-		// for (int i = 0; i < sample.size(); i++) {
-		// 	current = shrinkPair(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, i, j);
-		// }
+		FalsifiedSample current = sample;
+		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(sample.size())) {
+			current = shrinkPair(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, pair.get1(), pair.get2());
+		}
 		return current;
 	}
 
