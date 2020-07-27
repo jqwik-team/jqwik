@@ -155,18 +155,21 @@ class NEW_PropertyShrinkerTests {
 			assertThat(sample.parameters()).isEqualTo(asList(1, 2));
 			assertThat(sample.falsifyingError()).isNotPresent();
 			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
-
-			List<Object> freshParameters = createValues(sample);
-			assertThat(freshParameters).containsExactly(1, 2);
+			assertThat(createValues(sample)).containsExactly(1, 2);
 		}
 
 		@Example
-		void reportFalsifiedParameters() {
-			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
-			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
-			shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+		void goThroughShrinkingCycleAsOftenAsNeeded() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10, 10);
 
-			verify(falsifiedSampleReporter, times(15)).accept(any(FalsifiedSample.class));
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+			TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer i1, Integer i2) -> Math.abs(i2 - i1) > 1);
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(0, 0));
+			assertThat(sample.countShrinkingSteps()).isEqualTo(20);
+			assertThat(createValues(sample)).containsExactly(0, 0);
 		}
 
 		@Example
@@ -246,6 +249,34 @@ class NEW_PropertyShrinkerTests {
 
 			// TODO: Test that logging shrinking bound reached has happened
 		}
+	}
+
+	@Group
+	class FalsifiedSampleReporting {
+
+		@Example
+		void correctSampleIsReported() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(1);
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+			shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+
+			ArgumentCaptor<FalsifiedSample> sampleCaptor = ArgumentCaptor.forClass(FalsifiedSample.class);
+			verify(falsifiedSampleReporter, times(1)).accept(sampleCaptor.capture());
+
+			FalsifiedSample sample = sampleCaptor.getValue();
+			assertThat(sample.parameters()).isEqualTo(asList(0));
+		}
+
+		@Example
+		void allFalsifiedSamplesAreReported() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(5, 10);
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+			shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
+
+			verify(falsifiedSampleReporter, times(15)).accept(any(FalsifiedSample.class));
+		}
+
+
 	}
 
 	@Group
