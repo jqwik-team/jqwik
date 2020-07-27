@@ -11,6 +11,10 @@ import net.jqwik.engine.properties.*;
 
 class NEW_OneAfterTheOtherShrinker extends NEW_AbstractShrinker {
 
+	public NEW_OneAfterTheOtherShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+		super(falsificationCache);
+	}
+
 	@Override
 	public FalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
