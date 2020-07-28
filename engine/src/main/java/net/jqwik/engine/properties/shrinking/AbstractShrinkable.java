@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 
@@ -15,6 +16,16 @@ public abstract class AbstractShrinkable<T> implements Shrinkable<T> {
 	@Override
 	public T value() {
 		return value;
+	}
+
+	@Override
+	public T createValue() {
+		return value();
+	}
+
+	@Override
+	public Stream<Shrinkable<T>> shrink() {
+		return shrinkCandidatesFor(this).stream().sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
 	@Override
