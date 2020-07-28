@@ -12,7 +12,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
 
-@Disabled("new shrinking implementation")
 @Group
 @Label("ShrinkableList")
 class NEW_ShrinkableListTests {
@@ -61,6 +60,7 @@ class NEW_ShrinkableListTests {
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
 
+		@Disabled("new shrinking implementation")
 		@Example
 		void shrinkDuplicateElements() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3);

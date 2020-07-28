@@ -6,7 +6,7 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
-	private final List<Shrinkable<E>> elements;
+	protected final List<Shrinkable<E>> elements;
 	private final ListShrinkingCandidates<Shrinkable<E>> shrinkCandidates;
 
 	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize) {
