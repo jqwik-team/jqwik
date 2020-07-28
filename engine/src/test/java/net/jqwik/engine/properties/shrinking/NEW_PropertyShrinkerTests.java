@@ -383,6 +383,22 @@ class NEW_PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 		}
 
+		@Disabled("Later optimization")
+		// @Example
+		void shrinkingPairSumShiftsTowardsRight() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(10, 10);
+
+			NEW_PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+			TestingFalsifier<List<Object>> falsifier = paramFalsifier((Integer int1, Integer int2) -> {
+				return int1 + int2 < 20;
+			});
+			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
+
+			assertThat(sample.parameters()).isEqualTo(asList(0, 20));
+			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
+		}
+
 		@Disabled("new shrinking")
 		@Property(tries = 10000)
 		@ExpectFailure(checkResult = ShrinkTo77.class)
