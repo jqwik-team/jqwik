@@ -40,13 +40,13 @@ public class NEW_ShrinkingTestHelper {
 		};
 	}
 
-	// public static <T> Falsifier<T> alwaysFalsify() {
-	// 	return ignore -> TryExecutionResult.falsified(null);
-	// }
-	//
-	// public static <T> TestingFalsifier<T> falsifier(Predicate<T> predicate) {
-	// 	return predicate::test;
-	// }
+	public static <T> Falsifier<T> alwaysFalsify() {
+		return ignore -> TryExecutionResult.falsified(null);
+	}
+
+	public static <T> TestingFalsifier<T> falsifier(Predicate<T> predicate) {
+		return predicate::test;
+	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> Falsifier<List<Object>> toParmaFalsifier(Falsifier<T> tFalsifier) {

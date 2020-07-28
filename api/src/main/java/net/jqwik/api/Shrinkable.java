@@ -43,6 +43,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return ShrinkableFacade.implementation.unshrinkable(supplier, ShrinkingDistance.of(0));
 	}
 
+	@Deprecated
 	T value();
 
 	/**
@@ -65,6 +66,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		throw new UnsupportedOperationException("Yet to be implemented");
 	}
 
+	@Deprecated
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);
 
 	ShrinkingDistance distance();
@@ -116,6 +118,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	 * Override in mostly all implementations since the default produces only a few values.
 	 */
 	@API(status = INTERNAL)
+	@Deprecated
 	default List<Shrinkable<T>> shrinkingSuggestions() {
 		Falsifier<T> falsifier = ignore -> TryExecutionResult.falsified(null);
 		ShrinkingSequence<T> allDown = shrink(falsifier);
