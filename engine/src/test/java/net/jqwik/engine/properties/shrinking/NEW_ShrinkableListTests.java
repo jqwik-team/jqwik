@@ -21,7 +21,7 @@ class NEW_ShrinkableListTests {
 	void creation() {
 		Shrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2, 3);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
-		assertThat(shrinkable.value()).isEqualTo(asList(0, 1, 2, 3));
+		assertThat(shrinkable.createValue()).isEqualTo(asList(0, 1, 2, 3));
 	}
 
 	@Group
@@ -74,8 +74,8 @@ class NEW_ShrinkableListTests {
 
 		@Property
 		void shrinkAnyPairTogether(
-			@ForAll @IntRange(min = 0, max = 5) int index1,
-			@ForAll @IntRange(min = 0, max = 5) int index2
+			@ForAll @IntRange(max = 5) int index1,
+			@ForAll @IntRange(max = 5) int index2
 		) {
 			Assume.that(index1 != index2);
 
@@ -98,9 +98,8 @@ class NEW_ShrinkableListTests {
 			assertThat(shrunkValue).isEqualTo(expectedList);
 		}
 
-		@Disabled("new shrinking optimization")
 		@Example
-		void shrinkToSortedIfPossible() {
+		void shrinkToFullSortedList() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(4, 3, 1, 2);
 
 			TestingFalsifier<List<Integer>> falsifier =
@@ -111,6 +110,20 @@ class NEW_ShrinkableListTests {
 
 			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(asList(1, 2, 3, 4));
+		}
+
+		@Example
+		void shrinkToPartiallySortedList() {
+			Shrinkable<List<Integer>> shrinkable = createShrinkableList(4, 3, 1, 2);
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 10 || integers.size() < 4 || integers.get(3) != 2;
+				};
+
+			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(asList(1, 3, 4, 2));
 		}
 
 		@Example

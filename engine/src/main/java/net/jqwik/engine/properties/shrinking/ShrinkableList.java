@@ -31,7 +31,8 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 		return JqwikStreamSupport.lazyConcat(
 			this::shrinkSizeOfList,
 			this::shrinkElementsOneAfterTheOther,
-			this::shrinkPairsOfElements
+			this::shrinkPairsOfElements,
+			this::sortElements
 		);
 	}
 
@@ -74,5 +75,38 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 			suppliers.add(zip);
 		}
 		return JqwikStreamSupport.lazyConcat(suppliers);
+	}
+
+	private Stream<Shrinkable<List<E>>> sortElements() {
+		List<Shrinkable<E>> sortedElements = new ArrayList<>(elements);
+		sortedElements.sort(Comparator.comparing(Shrinkable::distance));
+		if (elements.equals(sortedElements)) {
+			return Stream.empty();
+		}
+		return JqwikStreamSupport.lazyConcat(
+			() -> fullSort(sortedElements),
+			() -> pairwiseSort(elements)
+		);
+	}
+
+	private Stream<Shrinkable<List<E>>> fullSort(List<Shrinkable<E>> sortedElements) {
+		return Stream.of(createShrinkable(sortedElements));
+	}
+
+	private Stream<Shrinkable<List<E>>> pairwiseSort(List<Shrinkable<E>> elements) {
+		List<Shrinkable<List<E>>> swaps = new ArrayList<>();
+		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
+			int firstIndex = Math.min(pair.get1(), pair.get2());
+			int secondIndex = Math.max(pair.get1(), pair.get2());
+			Shrinkable<E> first = elements.get(firstIndex);
+			Shrinkable<E> second = elements.get(secondIndex);
+			if (first.compareTo(second) > 0) {
+				List<Shrinkable<E>> pairSwap = new ArrayList<>(elements);
+				pairSwap.set(firstIndex, second);
+				pairSwap.set(secondIndex, first);
+				swaps.add(createShrinkable(pairSwap));
+			}
+		}
+		return swaps.stream();
 	}
 }
