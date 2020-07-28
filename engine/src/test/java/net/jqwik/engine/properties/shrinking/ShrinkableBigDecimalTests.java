@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.math.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import org.assertj.core.data.*;
@@ -16,9 +15,7 @@ import static org.mockito.Mockito.*;
 import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.engine.properties.arbitraries.randomized.RandomDecimalGenerators.*;
 
-class BigDecimalShrinkingTests {
-
-	private final AtomicInteger counter = new AtomicInteger(0);
+class ShrinkableBigDecimalTests {
 
 	@SuppressWarnings("unchecked")
 	private final Consumer<BigDecimal> valueReporter = mock(Consumer.class);
