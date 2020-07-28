@@ -29,9 +29,11 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	public Stream<Shrinkable<List<E>>> shrink() {
 		Stream<Shrinkable<List<E>>> shrinkSizeOfList = shrinkSizeOfList();
 		Stream<Shrinkable<List<E>>> shrinkElementsOneAfterTheOther = shrinkElementsOneAfterTheOther();
+		// Stream<Shrinkable<List<E>>> shrinkPairsOfElements = shrinkPairsOfElements();
 
 		// TODO: Concatenation must be lazy, otherwise stream will explode
-		return JqwikStreamSupport.concat(shrinkSizeOfList, shrinkElementsOneAfterTheOther)
+		// TODO: stack overflow with long list, never ends with duplicates
+		return JqwikStreamSupport.concat(shrinkSizeOfList, shrinkElementsOneAfterTheOther) //, shrinkPairsOfElements)
 								 .sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
@@ -51,6 +53,27 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 				return Stream.of(createShrinkable(elementsCopy));
 			});
 			shrinkPerElementStreams.add(shrinkElement);
+		}
+		return JqwikStreamSupport.concat(shrinkPerElementStreams);
+	}
+
+	private Stream<Shrinkable<List<E>>> shrinkPairsOfElements() {
+		List<Stream<Shrinkable<List<E>>>> shrinkPerElementStreams = new ArrayList<>();
+
+		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
+			Shrinkable<E> left = elements.get(pair.get1());
+			Shrinkable<E> right = elements.get(pair.get2());
+			List<Shrinkable<E>> elementsCopy = new ArrayList<>(elements);
+
+			List<Stream<Shrinkable<List<E>>>> shrinkElementStreams =
+				JqwikStreamSupport.zip(left.shrink(), right.shrink(),
+									   (Shrinkable<E> l, Shrinkable<E> r) -> {
+										   elementsCopy.set(pair.get1(), left);
+										   elementsCopy.set(pair.get2(), right);
+										   return Stream.of(createShrinkable(elementsCopy));
+									   }
+				).collect(Collectors.toList());
+			shrinkPerElementStreams.addAll(shrinkElementStreams);
 		}
 		return JqwikStreamSupport.concat(shrinkPerElementStreams);
 	}
