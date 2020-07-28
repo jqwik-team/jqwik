@@ -90,7 +90,6 @@ public class NEW_ShrinkingTestHelper {
 		return (T) sample.parameters().get(0);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T> ShrunkFalsifiedSample shrink(
 		Shrinkable<T> falsifiedShrinkable,
 		Falsifier<T> falsifier,
