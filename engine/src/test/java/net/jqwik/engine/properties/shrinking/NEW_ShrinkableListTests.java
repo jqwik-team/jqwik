@@ -98,6 +98,21 @@ class NEW_ShrinkableListTests {
 			assertThat(shrunkValue).isEqualTo(expectedList);
 		}
 
+		@Disabled("new shrinking optimization")
+		@Example
+		void shrinkToSortedIfPossible() {
+			Shrinkable<List<Integer>> shrinkable = createShrinkableList(4, 3, 1, 2);
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 10 || integers.size() < 4;
+				};
+
+			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(asList(1, 2, 3, 4));
+		}
+
 		@Example
 		void shrinkingResultHasValueAndThrowable() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
