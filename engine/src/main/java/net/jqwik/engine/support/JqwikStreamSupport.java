@@ -12,19 +12,30 @@ public class JqwikStreamSupport {
 	public static <L, R, T> Stream<T> zip(Stream<L> leftStream, Stream<R> rightStream, BiFunction<L, R, T> combiner) {
 		Spliterator<L> lefts = leftStream.spliterator();
 		Spliterator<R> rights = rightStream.spliterator();
-		return StreamSupport.stream(new Spliterators.AbstractSpliterator<T>(Long.min(lefts.estimateSize(), rights.estimateSize()), lefts
-																																	   .characteristics() & rights
-																																								.characteristics()) {
-			@Override
-			public boolean tryAdvance(Consumer<? super T> action) {
-				return lefts.tryAdvance(left -> rights.tryAdvance(right -> action.accept(combiner.apply(left, right))));
-			}
-		}, leftStream.isParallel() || rightStream.isParallel());
+		return StreamSupport.stream(
+			new Spliterators.AbstractSpliterator<T>(
+				Long.min(lefts.estimateSize(), rights.estimateSize()),
+				lefts.characteristics() & rights.characteristics()
+			) {
+				@Override
+				public boolean tryAdvance(Consumer<? super T> action) {
+					return lefts.tryAdvance(left -> rights.tryAdvance(right -> action.accept(combiner.apply(left, right))));
+				}
+			}, leftStream.isParallel() || rightStream.isParallel());
 	}
 
 	@SafeVarargs
 	public static <T> Stream<T> concat(Stream<T>... streams) {
 		return concat(Arrays.asList(streams));
+	}
+
+	public static <T> Stream<T> lazyConcat(List<Supplier<Stream<T>>> suppliers) {
+		return suppliers.stream().flatMap(Supplier::get);
+	}
+
+	@SafeVarargs
+	public static <T> Stream<T> lazyConcat(Supplier<Stream<T>>... suppliers) {
+		return lazyConcat(Arrays.asList(suppliers));
 	}
 
 	public static <T> Stream<T> concat(List<Stream<T>> streams) {
