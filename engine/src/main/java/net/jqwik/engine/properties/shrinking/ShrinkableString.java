@@ -5,14 +5,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
-	private final int minSize;
-
 	public ShrinkableString(List<Shrinkable<Character>> elements, int minSize) {
 		super(elements, minSize);
-		this.minSize = minSize;
 	}
 
 	@Override
@@ -23,6 +21,16 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 	@Override
 	Shrinkable<String> createShrinkable(List<Shrinkable<Character>> shrunkElements) {
 		return new ShrinkableString(shrunkElements, minSize);
+	}
+
+	@Override
+	public Stream<Shrinkable<String>> shrink() {
+		return JqwikStreamSupport.lazyConcat(
+			this::shrinkSizeOfList,
+			this::shrinkElementsOneAfterTheOther,
+			this::shrinkPairsOfElements,
+			this::sortElements
+		);
 	}
 
 	private static class CharacterCollector implements Collector<Character, StringBuilder, String> {

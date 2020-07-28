@@ -65,7 +65,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		);
 	}
 
-	private Stream<Shrinkable<C>> shrinkSizeOfList() {
+	protected Stream<Shrinkable<C>> shrinkSizeOfList() {
 		Set<List<Shrinkable<E>>> shrinkSizeOfListElements = new NEW_ShrinkSizeOfListCandidates<E>(minSize).candidatesFor(elements);
 		return shrinkSizeOfListElements
 				   .stream()
@@ -73,7 +73,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 				   .sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
-	private Stream<Shrinkable<C>> shrinkElementsOneAfterTheOther() {
+	protected Stream<Shrinkable<C>> shrinkElementsOneAfterTheOther() {
 		List<Stream<Shrinkable<C>>> shrinkPerElementStreams = new ArrayList<>();
 		for (int i = 0; i < elements.size(); i++) {
 			int index = i;
@@ -88,7 +88,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		return JqwikStreamSupport.concat(shrinkPerElementStreams);
 	}
 
-	private Stream<Shrinkable<C>> shrinkPairsOfElements() {
+	protected Stream<Shrinkable<C>> shrinkPairsOfElements() {
 		if (elements.size() < 2) {
 			return Stream.empty();
 		}
@@ -107,6 +107,39 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 			suppliers.add(zip);
 		}
 		return JqwikStreamSupport.lazyConcat(suppliers);
+	}
+
+	protected Stream<Shrinkable<C>> sortElements() {
+		List<Shrinkable<E>> sortedElements = new ArrayList<>(elements);
+		sortedElements.sort(Comparator.comparing(Shrinkable::distance));
+		if (elements.equals(sortedElements)) {
+			return Stream.empty();
+		}
+		return JqwikStreamSupport.lazyConcat(
+			() -> fullSort(sortedElements),
+			() -> pairwiseSort(elements)
+		);
+	}
+
+	private Stream<Shrinkable<C>> fullSort(List<Shrinkable<E>> sortedElements) {
+		return Stream.of(createShrinkable(sortedElements));
+	}
+
+	private Stream<Shrinkable<C>> pairwiseSort(List<Shrinkable<E>> elements) {
+		List<Shrinkable<C>> swaps = new ArrayList<>();
+		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
+			int firstIndex = Math.min(pair.get1(), pair.get2());
+			int secondIndex = Math.max(pair.get1(), pair.get2());
+			Shrinkable<E> first = elements.get(firstIndex);
+			Shrinkable<E> second = elements.get(secondIndex);
+			if (first.compareTo(second) > 0) {
+				List<Shrinkable<E>> pairSwap = new ArrayList<>(elements);
+				pairSwap.set(firstIndex, second);
+				pairSwap.set(secondIndex, first);
+				swaps.add(createShrinkable(pairSwap));
+			}
+		}
+		return swaps.stream();
 	}
 
 	private C toContainer(List<E> listOfE) {

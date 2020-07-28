@@ -33,10 +33,9 @@ abstract class NEW_AbstractShrinker {
 	) {
 		List<Shrinkable<Object>> currentShrinkBase = sample.shrinkables();
 		Optional<FalsifiedSample> bestResult = Optional.empty();
+		Set<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> filteredResults = new HashSet<>();
 
 		while (true) {
-			@SuppressWarnings("unchecked")
-			Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>[] filteredResult = new Tuple3[]{null};
 			ShrinkingDistance currentDistance = calculateDistance(currentShrinkBase);
 
 			FalsifiedSample currentBest = bestResult.orElse(null);
@@ -51,9 +50,9 @@ abstract class NEW_AbstractShrinker {
 							return Tuple.of(params, shrinkables, result);
 						})
 						.peek(t -> {
-							// Remember best invalid result in case no  falsified shrink is found
-							if (t.get3().isInvalid() && filteredResult[0] == null) {
-								filteredResult[0] = t;
+							// Remember best 10 invalid results in case no  falsified shrink is found
+							if (t.get3().isInvalid() && filteredResults.size() < 10) {
+								filteredResults.add(t);
 							}
 						})
 						.filter(t -> t.get3().isFalsified())
@@ -69,8 +68,10 @@ abstract class NEW_AbstractShrinker {
 				shrinkSampleConsumer.accept(falsifiedSample);
 				bestResult = Optional.of(falsifiedSample);
 				currentShrinkBase = falsifiedTry.get2();
-			} else if (filteredResult[0] != null) {
-				currentShrinkBase = filteredResult[0].get2();
+			} else if (!filteredResults.isEmpty()) {
+				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> aFilteredResult = filteredResults.iterator().next();
+				filteredResults.remove(aFilteredResult);
+				currentShrinkBase = aFilteredResult.get2();
 			} else {
 				break;
 			}
