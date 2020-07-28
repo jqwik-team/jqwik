@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
@@ -60,9 +61,8 @@ class NEW_ShrinkableListTests {
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
 
-		@Disabled("new shrinking implementation")
 		@Example
-		void shrinkDuplicateElements() {
+		void shrinkPairsTogether() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(3, 3);
 
 			TestingFalsifier<List<Integer>> falsifier =
@@ -70,6 +70,32 @@ class NEW_ShrinkableListTests {
 
 			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 0);
+		}
+
+		@Property
+		void shrinkAnyPairTogether(
+			@ForAll @IntRange(min = 0, max = 5) int index1,
+			@ForAll @IntRange(min = 0, max = 5) int index2
+		) {
+			Assume.that(index1 != index2);
+
+			List<Shrinkable<Integer>> elementShrinkables =
+				Arrays.stream(new Integer[]{10, 10, 10, 10, 10, 10, 10, 10, 10}).map(OneStepShrinkable::new).collect(Collectors.toList());
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 6);
+
+			TestingFalsifier<List<Integer>> falsifier = integers -> {
+				int int1 = integers.get(index1);
+				int int2 = integers.get(index2);
+				return int1 < 7 || int1 != int2;
+			};
+
+			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+
+			List<Integer> expectedList = asList(0, 0, 0, 0, 0, 0);
+			expectedList.set(index1, 7);
+			expectedList.set(index2, 7);
+
+			assertThat(shrunkValue).isEqualTo(expectedList);
 		}
 
 		@Example

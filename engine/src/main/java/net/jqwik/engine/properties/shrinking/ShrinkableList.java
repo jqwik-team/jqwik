@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -27,19 +28,16 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
 	@Override
 	public Stream<Shrinkable<List<E>>> shrink() {
-		Stream<Shrinkable<List<E>>> shrinkSizeOfList = shrinkSizeOfList();
-		Stream<Shrinkable<List<E>>> shrinkElementsOneAfterTheOther = shrinkElementsOneAfterTheOther();
-		// Stream<Shrinkable<List<E>>> shrinkPairsOfElements = shrinkPairsOfElements();
-
-		// TODO: Concatenation must be lazy, otherwise stream will explode
-		// TODO: stack overflow with long list, never ends with duplicates
-		return JqwikStreamSupport.concat(shrinkSizeOfList, shrinkElementsOneAfterTheOther) //, shrinkPairsOfElements)
-								 .sorted(Comparator.comparing(Shrinkable::distance));
+		return JqwikStreamSupport.lazyConcat(
+			this::shrinkSizeOfList,
+			this::shrinkElementsOneAfterTheOther,
+			this::shrinkPairsOfElements
+		);
 	}
 
 	private Stream<Shrinkable<List<E>>> shrinkSizeOfList() {
 		Set<List<Shrinkable<E>>> shrinkSizeOfListElements = new NEW_ShrinkSizeOfListCandidates<E>(minSize).candidatesFor(elements);
-		return shrinkSizeOfListElements.stream().map(this::createShrinkable);
+		return shrinkSizeOfListElements.stream().map(this::createShrinkable).sorted(Comparator.comparing(Shrinkable::distance));
 	}
 
 	private Stream<Shrinkable<List<E>>> shrinkElementsOneAfterTheOther() {
@@ -58,23 +56,23 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	private Stream<Shrinkable<List<E>>> shrinkPairsOfElements() {
-		List<Stream<Shrinkable<List<E>>>> shrinkPerElementStreams = new ArrayList<>();
-
-		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
-			Shrinkable<E> left = elements.get(pair.get1());
-			Shrinkable<E> right = elements.get(pair.get2());
-			List<Shrinkable<E>> elementsCopy = new ArrayList<>(elements);
-
-			List<Stream<Shrinkable<List<E>>>> shrinkElementStreams =
-				JqwikStreamSupport.zip(left.shrink(), right.shrink(),
-									   (Shrinkable<E> l, Shrinkable<E> r) -> {
-										   elementsCopy.set(pair.get1(), left);
-										   elementsCopy.set(pair.get2(), right);
-										   return Stream.of(createShrinkable(elementsCopy));
-									   }
-				).collect(Collectors.toList());
-			shrinkPerElementStreams.addAll(shrinkElementStreams);
+		if (elements.size() < 2) {
+			return Stream.empty();
 		}
-		return JqwikStreamSupport.concat(shrinkPerElementStreams);
+		List<Supplier<Stream<Shrinkable<List<E>>>>> suppliers = new ArrayList<>();
+		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
+			Supplier<Stream<Shrinkable<List<E>>>> zip = () -> JqwikStreamSupport.zip(
+				elements.get(pair.get1()).shrink(),
+				elements.get(pair.get2()).shrink(),
+				(Shrinkable<E> s1, Shrinkable<E> s2) -> {
+					List<Shrinkable<E>> newElements = new ArrayList<>(elements);
+					newElements.set(pair.get1(), s1);
+					newElements.set(pair.get2(), s2);
+					return createShrinkable(newElements);
+				}
+			);
+			suppliers.add(zip);
+		}
+		return JqwikStreamSupport.lazyConcat(suppliers);
 	}
 }
