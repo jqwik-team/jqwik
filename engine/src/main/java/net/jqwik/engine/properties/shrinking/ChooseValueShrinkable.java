@@ -25,9 +25,9 @@ public class ChooseValueShrinkable<T> extends AbstractShrinkable<T> {
 		if (index == 0) {
 			return Collections.emptySet();
 		}
-		return values.subList(0, index) //
-					 .stream() //
-					 .map(value -> new ChooseValueShrinkable<>(value, values)) //
+		return values.subList(0, index)
+					 .stream()
+					 .map(value -> new ChooseValueShrinkable<>(value, values))
 					 .collect(Collectors.toSet());
 	}
 
