@@ -7,20 +7,22 @@ import net.jqwik.api.*;
 
 public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 
-	private final int minSize;
-
 	public ShrinkableSet(Set<Shrinkable<E>> elements, int minSize) {
 		this(new ArrayList<>(elements), minSize);
 	}
 
 	private ShrinkableSet(List<Shrinkable<E>> elements, int minSize) {
 		super(elements, minSize);
-		this.minSize = minSize;
 	}
 
 	@Override
 	public ShrinkingSequence<Set<E>> shrink(Falsifier<Set<E>> falsifier) {
 		return super.shrink(falsifier.withFilter(set -> set.size() >= minSize));
+	}
+
+	@Override
+	public Stream<Shrinkable<Set<E>>> shrink() {
+		return super.shrink().filter(shrinkableSet -> shrinkableSet.createValue().size() >= minSize);
 	}
 
 	@Override
