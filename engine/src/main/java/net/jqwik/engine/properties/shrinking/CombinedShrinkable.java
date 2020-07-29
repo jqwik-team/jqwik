@@ -5,18 +5,17 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.support.*;
 
 public class CombinedShrinkable<T> implements Shrinkable<T> {
-	private final List<Shrinkable<Object>> shrinkables;
+	private final List<Shrinkable<Object>> parts;
 	private final Function<List<Object>, T> combinator;
 	private final T value;
 
-	public CombinedShrinkable(List<Shrinkable<Object>> shrinkables, Function<List<Object>, T> combinator) {
-		this.shrinkables = shrinkables;
+	public CombinedShrinkable(List<Shrinkable<Object>> parts, Function<List<Object>, T> combinator) {
+		this.parts = parts;
 		this.combinator = combinator;
-		this.value = combinator.apply(toValues(shrinkables));
+		this.value = combinator.apply(toValues(parts));
 	}
 
 	@Override
@@ -27,6 +26,10 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public T createValue() {
+		return createValue(parts);
+	}
+
+	private T createValue(List<Shrinkable<Object>> shrinkables) {
 		return combinator.apply(toValues(shrinkables));
 	}
 
@@ -40,8 +43,28 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 	}
 
 	@Override
+	public Stream<Shrinkable<T>> shrink() {
+		return shrinkPartsOneAfterTheOther();
+	}
+
+	protected Stream<Shrinkable<T>> shrinkPartsOneAfterTheOther() {
+		List<Stream<Shrinkable<T>>> shrinkPerPartStreams = new ArrayList<>();
+		for (int i = 0; i < parts.size(); i++) {
+			int index = i;
+			Shrinkable<Object> part = parts.get(i);
+			List<Shrinkable<Object>> partsCopy = new ArrayList<>(parts);
+			Stream<Shrinkable<T>> shrinkElement = part.shrink().flatMap(shrunkElement -> {
+				partsCopy.set(index, shrunkElement);
+				return Stream.of(new CombinedShrinkable<>(partsCopy, combinator));
+			});
+			shrinkPerPartStreams.add(shrinkElement);
+		}
+		return JqwikStreamSupport.concat(shrinkPerPartStreams);
+	}
+
+	@Override
 	public ShrinkingDistance distance() {
-		return ShrinkingDistance.combine(shrinkables);
+		return ShrinkingDistance.combine(parts);
 	}
 
 	private class CombinedShrinkingSequence implements ShrinkingSequence<T> {
@@ -51,7 +74,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 		private CombinedShrinkingSequence(Falsifier<T> falsifier) {
 			Falsifier<List<Object>> combinedFalsifier = falsifier.map(combinator);
 			elementsSequence = new ShrinkElementsSequence<>(
-				shrinkables,
+				parts,
 				combinedFalsifier,
 				ShrinkingDistance::combine
 			);
