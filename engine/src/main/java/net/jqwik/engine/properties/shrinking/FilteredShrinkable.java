@@ -22,6 +22,33 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 	}
 
 	@Override
+	public T createValue() {
+		return toFilter.createValue();
+	}
+
+	@Override
+	public Stream<Shrinkable<T>> shrink() {
+		return shrinkToFirst();
+	}
+
+	private Stream<Shrinkable<T>> shrinkToFirst() {
+		return toFilter.shrink()
+					   .filter(shrinkable -> filter.test(shrinkable.createValue()))
+					   .findFirst()
+					   .map(t -> Stream.of((Shrinkable<T>) new FilteredShrinkable<>(t, filter)))
+			.orElse(deepSearchFirst());
+	}
+
+	private Stream<Shrinkable<T>> deepSearchFirst() {
+		return Stream.empty();
+		// return toFilter.shrink()
+		// 	.flatMap(tShrinkable -> tShrinkable.shrink().map(shrinkable -> new FilteredShrinkable<>(shrinkable, filter)))
+		// 	.peek(s -> System.out.println(s))
+		// 	.map(FilteredShrinkable::shrinkToFirst)
+		// 	.findFirst().orElse(Stream.empty());
+	}
+
+	@Override
 	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
 		return new FilteredShrinkingSequence(falsifier);
 	}
