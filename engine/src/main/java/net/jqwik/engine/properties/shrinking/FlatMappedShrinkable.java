@@ -10,7 +10,6 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	private final Shrinkable<T> toMap;
 	private final Function<T, Shrinkable<U>> mapper;
-	private final Shrinkable<U> shrinkable;
 
 	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Arbitrary<U>> toArbitraryMapper, int genSize, long randomSeed) {
 		this(toMap, t -> toArbitraryMapper.apply(t).generator(genSize), randomSeed);
@@ -20,15 +19,9 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		this(toMap, t -> toGeneratorMapper.apply(t).next(SourceOfRandomness.newRandom(randomSeed)));
 	}
 
-	public FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Shrinkable<U>> mapper) {
-		this(toMap, mapper.apply(toMap.value()), mapper);
-	}
-
-	// TODO: Don't take initialShrinkable because it destroys lazy value generation.
-	public FlatMappedShrinkable(Shrinkable<T> toMap, Shrinkable<U> initialShrinkable, Function<T, Shrinkable<U>> mapper) {
+	protected FlatMappedShrinkable(Shrinkable<T> toMap, Function<T, Shrinkable<U>> mapper) {
 		this.toMap = toMap;
 		this.mapper = mapper;
-		this.shrinkable = initialShrinkable;
 	}
 
 	private Shrinkable<U> generateShrinkable(T value) {
@@ -42,7 +35,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 					.map(resultMapperToU(mapper))
 					.andThen(aShrinkable -> {
 						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
-						return flatMappedShrinkable.shrinkable.shrink(falsifier);
+						return flatMappedShrinkable.shrinkable().shrink(falsifier);
 					});
 	}
 
@@ -55,10 +48,10 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	@Override
 	public List<Shrinkable<U>> shrinkingSuggestions() {
 		List<Shrinkable<U>> suggestions = new ArrayList<>();
-		suggestions.addAll(shrinkable.shrinkingSuggestions());
+		suggestions.addAll(shrinkable().shrinkingSuggestions());
 		for (Shrinkable<T> tShrinkable : toMap.shrinkingSuggestions()) {
 			FlatMappedShrinkable<T, U> flatMappedShrinkable = new FlatMappedShrinkable<>(tShrinkable, mapper);
-			suggestions.add(flatMappedShrinkable.shrinkable);
+			suggestions.add(flatMappedShrinkable.shrinkable());
 			suggestions.addAll(flatMappedShrinkable.shrinkingSuggestions());
 		}
 		suggestions.sort(null);
@@ -67,12 +60,16 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public U value() {
-		return shrinkable.value();
+		return shrinkable().value();
+	}
+
+	protected Shrinkable<U> shrinkable() {
+		return generateShrinkable(toMap.value());
 	}
 
 	@Override
 	public ShrinkingDistance distance() {
-		return toMap.distance().append(shrinkable.distance());
+		return toMap.distance().append(shrinkable().distance());
 	}
 
 	@Override
@@ -80,12 +77,12 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		if (this == o) return true;
 		if (!(o instanceof FlatMappedShrinkable)) return false;
 		FlatMappedShrinkable<?, ?> that = (FlatMappedShrinkable<?, ?>) o;
-		return Objects.equals(shrinkable.value(), that.value());
+		return Objects.equals(value(), that.value());
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(shrinkable.value());
+		return Objects.hash(value());
 	}
 
 	@Override

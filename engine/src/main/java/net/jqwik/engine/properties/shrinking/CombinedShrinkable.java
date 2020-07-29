@@ -10,18 +10,15 @@ import net.jqwik.engine.support.*;
 public class CombinedShrinkable<T> implements Shrinkable<T> {
 	private final List<Shrinkable<Object>> parts;
 	private final Function<List<Object>, T> combinator;
-	private final T value;
 
 	public CombinedShrinkable(List<Shrinkable<Object>> parts, Function<List<Object>, T> combinator) {
 		this.parts = parts;
 		this.combinator = combinator;
-		this.value = combinator.apply(toValues(parts));
 	}
 
 	@Override
 	public T value() {
-		// TODO: Compute lazy. Requires change of FlatMappedShrinkable
-		return value;
+		return combinator.apply(toValues(parts));
 	}
 
 	@Override
