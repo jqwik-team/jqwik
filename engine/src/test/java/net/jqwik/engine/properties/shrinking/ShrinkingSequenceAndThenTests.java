@@ -110,7 +110,7 @@ class ShrinkingSequenceAndThenTests {
 		assertThat(sequence.current().throwable().get()).isInstanceOf(IllegalArgumentException.class);
 	}
 
-	@Property
+	@Property(tries = 100)
 	void anyNestedSequencesShrinkToEnd(@ForAll("nestedSequence") ShrinkingSequence<Integer> sequence) {
 		while (sequence.next(counter, reporter)) { }
 

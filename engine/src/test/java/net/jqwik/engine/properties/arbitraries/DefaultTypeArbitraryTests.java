@@ -61,16 +61,16 @@ class DefaultTypeArbitraryTests {
 
 		@Example
 		void exceptionsDuringCreationAreIgnored() throws NoSuchMethodException {
-			TypeArbitrary<String> typeArbitrary =
-				new DefaultTypeArbitrary<>(String.class)
-					.use(Samples.class.getDeclaredMethod("stringWithRandomException"));
+			TypeArbitrary<Person> typeArbitrary =
+				new DefaultTypeArbitrary<>(Person.class)
+					.use(Samples.class.getDeclaredMethod("personFromAge", int.class));
 
-			RandomGenerator<String> generator = typeArbitrary.generator(1000);
+			RandomGenerator<Person> generator = typeArbitrary.generator(1000);
 
 			assertAllGenerated(
 				generator,
-				aString -> {
-					return aString.equals("a string");
+				aPerson -> {
+					return aPerson.age > 0;
 				}
 			);
 		}
@@ -367,18 +367,18 @@ class DefaultTypeArbitraryTests {
 
 	private static class Samples {
 
+		private static Person personFromAge(int age) {
+			if (age <= 0) {
+				throw new AssertionError("No negative age");
+			}
+			return Person.create(age, "a person");
+		}
+
 		private static Person personFromNoParams() {
 			return Person.create(42, "a person");
 		}
 
 		private static String stringFromNoParams() {
-			return "a string";
-		}
-
-		private static String stringWithRandomException() {
-			if (SourceOfRandomness.current().nextDouble() > 0.5) {
-				throw new AssertionError();
-			}
 			return "a string";
 		}
 
@@ -438,10 +438,12 @@ class DefaultTypeArbitraryTests {
 
 	private static class Person {
 		private final String name;
+		private final int age;
 
 		public static Person copy(Person person) {
 			return new Person(person);
 		}
+
 
 		public Person(Person person) {
 			this(person.name);
@@ -451,14 +453,15 @@ class DefaultTypeArbitraryTests {
 			return new Person(name, age);
 		}
 
-		public Person(String name, int age) {
-			this(name);
+		public Person(String name) {
+			this(name, 99);
 		}
 
-		public Person(String name) {
+		public Person(String name, int age) {
 			if (name.length() > 100)
 				throw new IllegalArgumentException();
 			this.name = name;
+			this.age = age;
 		}
 
 		@Override
