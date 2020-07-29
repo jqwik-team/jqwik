@@ -31,11 +31,10 @@ class NEW_CombinedShrinkableTests {
 		Shrinkable<String> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 0));
-		assertThat(shrinkable.value()).isEqualTo("hello3");
+		assertThat(shrinkable.createValue()).isEqualTo("hello3");
 	}
 
 	@Group
-	@Disabled("new shrinking implementation")
 	class Shrinking {
 
 		@SuppressWarnings({"rawtypes", "unchecked"})
@@ -71,7 +70,7 @@ class NEW_CombinedShrinkableTests {
 			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
 			Tuple2<Integer, Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(tuple -> tuple.get1() + tuple.get2() < 4), null);
-			assertThat(shrunkValue).isEqualTo(Tuple.of(1, 3));
+			assertThat(shrunkValue.get1() + shrunkValue.get2()).isEqualTo(4);
 		}
 
 		@SuppressWarnings({"rawtypes", "unchecked"})
