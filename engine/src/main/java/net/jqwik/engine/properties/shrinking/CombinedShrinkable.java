@@ -30,11 +30,15 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 	}
 
 	private T createValue(List<Shrinkable<Object>> shrinkables) {
-		return combinator.apply(toValues(shrinkables));
+		return combinator.apply(createValues(shrinkables));
+	}
+
+	private List<Object> createValues(List<Shrinkable<Object>> shrinkables) {
+		return shrinkables.stream().map(Shrinkable::createValue).collect(Collectors.toList());
 	}
 
 	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::createValue).collect(Collectors.toList());
+		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	@Override
