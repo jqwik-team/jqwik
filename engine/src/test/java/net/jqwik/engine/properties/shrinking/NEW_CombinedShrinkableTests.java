@@ -1,0 +1,104 @@
+package net.jqwik.engine.properties.shrinking;
+
+import java.util.*;
+import java.util.function.*;
+
+import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
+
+import static org.assertj.core.api.Assertions.*;
+
+import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+
+@Group
+@Label("CombinedShrinkable")
+class NEW_CombinedShrinkableTests {
+
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	@Example
+	void creation() {
+		Shrinkable three = new OneStepShrinkable(3);
+		Shrinkable hello = Shrinkable.unshrinkable("hello");
+		Function<List<Object>, String> combinator = shrinkables -> {
+			int anInt = (int) shrinkables.get(0);
+			String aString = (String) shrinkables.get(1);
+			return aString + anInt;
+		};
+
+		List<Shrinkable<Object>> shrinkables = Arrays.asList(three, hello);
+		Shrinkable<String> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
+
+		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 0));
+		assertThat(shrinkable.value()).isEqualTo("hello3");
+	}
+
+	@Group
+	@Disabled("new shrinking implementation")
+	class Shrinking {
+
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		@Example
+		void shrinkingToBottom() {
+			Shrinkable three = new OneStepShrinkable(3);
+			Shrinkable five = new OneStepShrinkable(5);
+			Function<List<Object>, Tuple2<Integer, Integer>> combinator = shrinkables -> {
+				int first = (int) shrinkables.get(0);
+				int second = (int) shrinkables.get(1);
+				return Tuple.of(first, second);
+			};
+
+			List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
+			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
+
+			Tuple2<Integer, Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			assertThat(shrunkValue).isEqualTo(Tuple.of(0, 0));
+		}
+
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		@Example
+		void shrinkToCondition() {
+			Shrinkable three = new OneStepShrinkable(3);
+			Shrinkable five = new OneStepShrinkable(5);
+			Function<List<Object>, Tuple2<Integer, Integer>> combinator = shrinkables -> {
+				int first = (int) shrinkables.get(0);
+				int second = (int) shrinkables.get(1);
+				return Tuple.of(first, second);
+			};
+
+			List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
+			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
+
+			Tuple2<Integer, Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(tuple -> tuple.get1() + tuple.get2() < 4), null);
+			assertThat(shrunkValue).isEqualTo(Tuple.of(1, 3));
+		}
+
+		@SuppressWarnings({"rawtypes", "unchecked"})
+		@Example
+		void shrinkingWithFilter() {
+			Shrinkable three = new OneStepShrinkable(3);
+			Shrinkable five = new OneStepShrinkable(5);
+			Function<List<Object>, Tuple2<Integer, Integer>> combinator = shrinkables -> {
+				int first = (int) shrinkables.get(0);
+				int second = (int) shrinkables.get(1);
+				return Tuple.of(first, second);
+			};
+
+			List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
+			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
+
+			Falsifier<Tuple2<Integer, Integer>> falsifier = tuple2 -> {
+				int sum = tuple2.get1() + tuple2.get2();
+				if (sum % 2 == 0) {
+					return TryExecutionResult.invalid();
+				}
+				return TryExecutionResult.falsified(null);
+			};
+			Tuple2<Integer, Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(Tuple.of(0, 1));
+		}
+
+	}
+
+}
