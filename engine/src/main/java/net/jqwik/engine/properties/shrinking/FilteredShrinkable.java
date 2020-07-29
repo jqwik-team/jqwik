@@ -33,19 +33,34 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	private Stream<Shrinkable<T>> shrinkToFirst() {
 		return toFilter.shrink()
-					   .filter(shrinkable -> filter.test(shrinkable.createValue()))
+					   .filter(this::isIncluded)
 					   .findFirst()
-					   .map(t -> Stream.of((Shrinkable<T>) new FilteredShrinkable<>(t, filter)))
-			.orElse(deepSearchFirst());
+					   .map(t -> Stream.of(toFiltered(t)))
+					   .orElse(deepSearchFirst());
 	}
 
 	private Stream<Shrinkable<T>> deepSearchFirst() {
-		return Stream.empty();
-		// return toFilter.shrink()
-		// 	.flatMap(tShrinkable -> tShrinkable.shrink().map(shrinkable -> new FilteredShrinkable<>(shrinkable, filter)))
-		// 	.peek(s -> System.out.println(s))
-		// 	.map(FilteredShrinkable::shrinkToFirst)
-		// 	.findFirst().orElse(Stream.empty());
+		return toFilter.shrink()
+					   .flatMap(Shrinkable::shrink)
+					   .flatMap(shrinkable -> {
+						   if (isIncluded(shrinkable)) {
+							   return Stream.of(shrinkable);
+						   } else {
+							   // Is the limit necessary?
+							   return shrinkable.shrink().limit(10);
+						   }
+					   })
+					   .findFirst()
+					   .map(t -> Stream.of(toFiltered(t)))
+					   .orElse(Stream.empty());
+	}
+
+	private boolean isIncluded(Shrinkable<T> shrinkable) {
+		return filter.test(shrinkable.createValue());
+	}
+
+	private Shrinkable<T> toFiltered(Shrinkable<T> t) {
+		return new FilteredShrinkable<>(t, filter);
 	}
 
 	@Override
