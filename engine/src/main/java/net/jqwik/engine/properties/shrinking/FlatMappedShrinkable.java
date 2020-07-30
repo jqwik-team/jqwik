@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.*;
@@ -39,6 +40,15 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 					});
 	}
 
+	@Override
+	public Stream<Shrinkable<U>> shrink() {
+		return shrinkRightSide();
+	}
+
+	private Stream<Shrinkable<U>> shrinkRightSide() {
+		return shrinkable().shrink().map(rightSide -> new FixedValueFlatMappedShrinkable<>(toMap, mapper, () -> rightSide));
+	}
+
 	private static <T, U> Function<FalsificationResult<T>, FalsificationResult<U>> resultMapperToU(Function<T, Shrinkable<U>> mapper) {
 		return result -> result.map(shrinkableT -> {
 			return new FlatMappedShrinkable<>(shrinkableT, mapper);
@@ -61,6 +71,11 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	@Override
 	public U value() {
 		return shrinkable().value();
+	}
+
+	@Override
+	public U createValue() {
+		return value();
 	}
 
 	protected Shrinkable<U> shrinkable() {
