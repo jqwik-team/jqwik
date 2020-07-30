@@ -10,6 +10,7 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
@@ -150,16 +151,40 @@ class NEW_FlatMappedShrinkableTests {
 				return TryExecutionResult.falsified(null);
 			};
 			List<Integer> shrunkValue = shrinkToEnd(shrinkable, onlyListsWithLessThan10Elements, null);
-			assertThat(shrunkValue).isEqualTo(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+			assertThat(shrunkValue).isEqualTo(asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 		}
 
+		@Example
+		void edgeCasesCanAlsoBeShrunk() {
+			Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
+			Arbitrary<List<String>> lists = length.flatMap(l -> Arbitraries.just("a").list().ofSize(l));
+
+			Iterator<Shrinkable<List<String>>> edgeCases = lists.edgeCases().iterator();
+			while (edgeCases.hasNext()) {
+				Shrinkable<List<String>> edgeCase = edgeCases.next();
+				if (edgeCase.createValue().isEmpty()) {
+					continue;
+				}
+
+				Falsifier<List<String>> onlyEmptyLists = aList -> {
+					if (aList.isEmpty()) {
+						return TryExecutionResult.satisfied();
+					}
+					return TryExecutionResult.falsified(null);
+				};
+				List<String> result = shrinkToEnd(edgeCase, onlyEmptyLists, null);
+				assertThat(result).isEqualTo(asList("a"));
+			}
+		}
+
+		// This test is duplicated in ShrinkingQualityProperties
 		@Property(tries = 100)
 		void flatMapRectangles(@ForAll Random random) {
 			Arbitrary<Integer> lengths = Arbitraries.integers().between(0, 10);
 			List<String> shrunkResult = falsifyThenShrink(
 				lengths.flatMap(this::listsOfLength),
 				random,
-				falsifier(x -> !x.equals(Arrays.asList("a", "b")))
+				falsifier(x -> !x.equals(asList("a", "b")))
 			);
 
 			assertThat(shrunkResult).containsExactly("a", "b");
