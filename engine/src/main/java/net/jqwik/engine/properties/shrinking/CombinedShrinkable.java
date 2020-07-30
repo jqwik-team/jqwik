@@ -53,8 +53,8 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 		for (int i = 0; i < parts.size(); i++) {
 			int index = i;
 			Shrinkable<Object> part = parts.get(i);
-			List<Shrinkable<Object>> partsCopy = new ArrayList<>(parts);
 			Stream<Shrinkable<T>> shrinkElement = part.shrink().flatMap(shrunkElement -> {
+				List<Shrinkable<Object>> partsCopy = new ArrayList<>(parts);
 				partsCopy.set(index, shrunkElement);
 				return Stream.of(new CombinedShrinkable<>(partsCopy, combinator));
 			});
