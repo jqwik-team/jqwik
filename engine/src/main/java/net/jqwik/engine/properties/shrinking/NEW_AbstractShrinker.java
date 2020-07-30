@@ -11,6 +11,10 @@ import net.jqwik.engine.properties.*;
 
 abstract class NEW_AbstractShrinker {
 
+	private static ShrinkingDistance calculateDistance(List<Shrinkable<Object>> shrinkables) {
+		return ShrinkingDistance.forCollection(shrinkables);
+	}
+
 	private final Map<List<Object>, TryExecutionResult> falsificationCache;
 
 	public NEW_AbstractShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
@@ -33,7 +37,7 @@ abstract class NEW_AbstractShrinker {
 	) {
 		List<Shrinkable<Object>> currentShrinkBase = sample.shrinkables();
 		Optional<FalsifiedSample> bestResult = Optional.empty();
-		Set<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> filteredResults = new HashSet<>();
+		FilteredResults filteredResults = new FilteredResults();
 
 		while (true) {
 			ShrinkingDistance currentDistance = calculateDistance(currentShrinkBase);
@@ -51,8 +55,8 @@ abstract class NEW_AbstractShrinker {
 						})
 						.peek(t -> {
 							// Remember best 10 invalid results in case no  falsified shrink is found
-							if (t.get3().isInvalid() && filteredResults.size() < 10) {
-								filteredResults.add(t);
+							if (t.get3().isInvalid() && calculateDistance(t.get2()).compareTo(currentDistance) < 0) {
+								filteredResults.push(t);
 							}
 						})
 						.filter(t -> t.get3().isFalsified())
@@ -68,9 +72,9 @@ abstract class NEW_AbstractShrinker {
 				shrinkSampleConsumer.accept(falsifiedSample);
 				bestResult = Optional.of(falsifiedSample);
 				currentShrinkBase = falsifiedTry.get2();
+				filteredResults.clear();
 			} else if (!filteredResults.isEmpty()) {
-				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> aFilteredResult = filteredResults.iterator().next();
-				filteredResults.remove(aFilteredResult);
+				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> aFilteredResult = filteredResults.pop();
 				currentShrinkBase = aFilteredResult.get2();
 			} else {
 				break;
@@ -85,12 +89,49 @@ abstract class NEW_AbstractShrinker {
 		return falsificationCache.computeIfAbsent(params, p -> falsifier.execute(params));
 	}
 
-	private ShrinkingDistance calculateDistance(List<Shrinkable<Object>> shrinkables) {
-		return ShrinkingDistance.forCollection(shrinkables);
-	}
-
 	private Stream<Object> createValues(List<Shrinkable<Object>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::createValue);
 	}
 
+	private static class FilteredResults {
+
+		public static final int MAX_SIZE = 100;
+
+		Comparator<? super Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> resultComparator =
+			Comparator.comparing(left -> calculateDistance(left.get2()));
+
+		PriorityQueue<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> prioritizedResults = new PriorityQueue<>(resultComparator);
+
+		Set<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> removedResults = new HashSet<>();
+
+		void push(Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> result) {
+			if (removedResults.contains(result)) {
+				return;
+			}
+			prioritizedResults.add(result);
+			if (prioritizedResults.size() > MAX_SIZE) {
+				prioritizedResults.poll();
+			}
+		}
+
+		int size() {
+			return prioritizedResults.size();
+		}
+
+		boolean isEmpty() {
+			return prioritizedResults.isEmpty();
+		}
+
+		Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> pop() {
+			Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> result = prioritizedResults.peek();
+			prioritizedResults.remove(result);
+			removedResults.add(result);
+			return result;
+		}
+
+		public void clear() {
+			prioritizedResults.clear();
+			removedResults.clear();
+		}
+	}
 }

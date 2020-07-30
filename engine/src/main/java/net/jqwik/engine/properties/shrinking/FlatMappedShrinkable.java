@@ -6,6 +6,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.*;
+import net.jqwik.engine.support.*;
 
 public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
@@ -42,11 +43,21 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public Stream<Shrinkable<U>> shrink() {
-		return shrinkRightSide();
+		return JqwikStreamSupport.lazyConcat(
+			() -> shrinkRightSide(),
+			() -> shrinkLeftSide()
+		);
 	}
 
 	private Stream<Shrinkable<U>> shrinkRightSide() {
 		return shrinkable().shrink().map(rightSide -> new FixedValueFlatMappedShrinkable<>(toMap, mapper, () -> rightSide));
+	}
+
+	private Stream<Shrinkable<U>> shrinkLeftSide() {
+		return toMap.shrink().map(shrunkLeftSide -> {
+			FlatMappedShrinkable<T, U> flatMappedShrinkable = new FlatMappedShrinkable<>(shrunkLeftSide, mapper);
+			return flatMappedShrinkable;
+		});
 	}
 
 	private static <T, U> Function<FalsificationResult<T>, FalsificationResult<U>> resultMapperToU(Function<T, Shrinkable<U>> mapper) {
@@ -102,7 +113,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public String toString() {
-		return String.format("FlatMapped<%s>(%s)|%s", value().getClass().getSimpleName(), value(), toMap);
+		return String.format("FlatMapped<%s>(%s:%s)|%s", value().getClass().getSimpleName(), value(), distance(), toMap);
 	}
 
 }
