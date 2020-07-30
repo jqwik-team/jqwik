@@ -72,10 +72,10 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 								 .map(uSupplier -> {
 									 Function<T, Shrinkable<U>> shrinkableMapper =
 										 newT -> mapper.apply(newT).generator(1000).next(SourceOfRandomness.newRandom(42L));
-									 return (Supplier<Shrinkable<U>>) () -> new FlatMappedEdgeCase<>(
+									 return (Supplier<Shrinkable<U>>) () -> new FixedValueFlatMappedShrinkable<>(
 										 tSupplier.get(),
 										 shrinkableMapper,
-										 uSupplier.get()
+										 uSupplier
 									 );
 								 });
 				})
