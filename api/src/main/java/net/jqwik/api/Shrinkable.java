@@ -101,7 +101,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		int comparison = this.distance().compareTo(other.distance());
 		if (comparison == 0) {
 			T value = value();
-			if (value instanceof Comparable) {
+			if (value instanceof Comparable && this.getClass().equals(other.getClass())) {
 				return ((Comparable<T>) value).compareTo(other.value());
 			}
 		}
