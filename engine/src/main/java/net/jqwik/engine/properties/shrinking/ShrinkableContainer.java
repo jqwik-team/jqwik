@@ -78,8 +78,8 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		for (int i = 0; i < elements.size(); i++) {
 			int index = i;
 			Shrinkable<E> element = elements.get(i);
-			List<Shrinkable<E>> elementsCopy = new ArrayList<>(elements);
 			Stream<Shrinkable<C>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
+				List<Shrinkable<E>> elementsCopy = new ArrayList<>(elements);
 				elementsCopy.set(index, shrunkElement);
 				return Stream.of(createShrinkable(elementsCopy));
 			});
