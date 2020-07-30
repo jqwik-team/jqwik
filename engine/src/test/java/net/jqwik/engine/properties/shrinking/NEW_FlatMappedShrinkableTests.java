@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
@@ -134,37 +135,39 @@ class NEW_FlatMappedShrinkableTests {
 			assertThat(shrunkValue).isEqualTo("aaa");
 		}
 
+		@Property(tries = 50)
+		void canSimplifyOnBothSides(@ForAll long seed, @ForAll Random random) {
+			Assume.that(seed != 0L);
+			Shrinkable<Integer> integerShrinkable = Arbitraries.integers().generator(42).next(random);
+			Function<Integer, Arbitrary<List<Integer>>> flatMapper = anInt -> Arbitraries.just(anInt).list();
+			Shrinkable<List<Integer>> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
+			Assume.that(shrinkable.createValue().size() > 10);
+
+			Falsifier<List<Integer>> onlyListsWithLessThan10Elements = aList -> {
+				if (aList.size() < 10) {
+					return TryExecutionResult.satisfied();
+				}
+				return TryExecutionResult.falsified(null);
+			};
+			List<Integer> shrunkValue = shrinkToEnd(shrinkable, onlyListsWithLessThan10Elements, null);
+			assertThat(shrunkValue).isEqualTo(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+		}
+
+		@Property(tries = 100)
+		void flatMapRectangles(@ForAll Random random) {
+			Arbitrary<Integer> lengths = Arbitraries.integers().between(0, 10);
+			List<String> shrunkResult = falsifyThenShrink(
+				lengths.flatMap(this::listsOfLength),
+				random,
+				falsifier(x -> !x.equals(Arrays.asList("a", "b")))
+			);
+
+			assertThat(shrunkResult).containsExactly("a", "b");
+		}
+
+		private ListArbitrary<String> listsOfLength(int n) {
+			return Arbitraries.of("a", "b").list().ofSize(n);
+		}
+
 	}
-
-	// def test_can_simplify_flatmap_with_bounded_left_hand_size():
-	//     assert (
-	//             minimal(booleans().flatmap(lambda x: lists(just(x))), lambda x: len(x) >= 10)
-	//             == [False] * 10
-	//     )
-	//
-	//
-	// def test_can_simplify_on_right_hand_strategy_of_flatmap():
-	//     assert minimal(integers().flatmap(lambda x: lists(just(x)))) == []
-	//
-	//
-	// def test_can_simplify_on_both_sides_of_flatmap():
-	//     assert (
-	//             minimal(integers().flatmap(lambda x: lists(just(x))), lambda x: len(x) >= 10)
-	//             == [0] * 10
-	//     )
-	//
-	//
-	// def test_flatmap_rectangles():
-	//     lengths = integers(min_value=0, max_value=10)
-	//
-	//     def lists_of_length(n):
-	//         return lists(sampled_from("ab"), min_size=n, max_size=n)
-	//
-	//     xs = minimal(
-	//         lengths.flatmap(lambda w: lists(lists_of_length(w))),
-	//         lambda x: ["a", "b"] in x,
-	//         settings=settings(database=None, max_examples=2000),
-	//     )
-	//     assert xs == [["a", "b"]]
-
 }
