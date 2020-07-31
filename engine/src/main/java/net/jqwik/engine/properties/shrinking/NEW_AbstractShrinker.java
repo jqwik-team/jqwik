@@ -46,21 +46,21 @@ abstract class NEW_AbstractShrinker {
 
 			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> newShrinkingResult =
 				parameterShrinker.apply(currentShrinkBase)
-						.filter(shrinkables -> calculateDistance(shrinkables).compareTo(currentDistance) <= 0)
-						.peek(ignore -> shrinkAttemptConsumer.accept(currentBest))
-						.map(shrinkables -> {
-							List<Object> params = createValues(shrinkables).collect(Collectors.toList());
-							TryExecutionResult result = falsify(falsifier, params);
-							return Tuple.of(params, shrinkables, result);
-						})
-						.peek(t -> {
-							// Remember best 10 invalid results in case no  falsified shrink is found
-							if (t.get3().isInvalid() && calculateDistance(t.get2()).compareTo(currentDistance) < 0) {
-								filteredResults.push(t);
-							}
-						})
-						.filter(t -> t.get3().isFalsified())
-						.findFirst();
+								 .filter(shrinkables -> calculateDistance(shrinkables).compareTo(currentDistance) <= 0)
+								 .peek(ignore -> shrinkAttemptConsumer.accept(currentBest))
+								 .map(shrinkables -> {
+									 List<Object> params = createValues(shrinkables).collect(Collectors.toList());
+									 TryExecutionResult result = falsify(falsifier, params);
+									 return Tuple.of(params, shrinkables, result);
+								 })
+								 .peek(t -> {
+									 // Remember best 10 invalid results in case no  falsified shrink is found
+									 if (t.get3().isInvalid() && calculateDistance(t.get2()).compareTo(currentDistance) < 0) {
+										 filteredResults.push(t);
+									 }
+								 })
+								 .filter(t -> t.get3().isFalsified())
+								 .findFirst();
 
 			if (newShrinkingResult.isPresent()) {
 				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> falsifiedTry = newShrinkingResult.get();
@@ -109,7 +109,7 @@ abstract class NEW_AbstractShrinker {
 				return;
 			}
 			prioritizedResults.add(result);
-			if (prioritizedResults.size() > MAX_SIZE) {
+			if (size() > MAX_SIZE) {
 				prioritizedResults.poll();
 			}
 		}
