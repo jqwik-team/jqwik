@@ -11,7 +11,7 @@ import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
 
 /**
  * Inspired by https://github.com/HypothesisWorks/hypothesis/blob/master/hypothesis-python/tests/quality/test_shrink_quality.py
@@ -19,10 +19,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
  */
 class ShrinkingQualityProperties {
 
-	// TODO: With other seeds this test can take very long and might even overflow
-	//       Repair Stream.lazyConcat() to work properly so that long stream are shortcut correctly
-	//       Relevant .findFirst() is in NEW_AbstractShrinker
-	@Property(seed = "424242")
+	@Property
 	@ExpectFailure(checkResult = ShrinkTo2Elements.class)
 	void reversingAList(@ForAll List<Integer> ls) {
 		assertThat(reversed(ls)).isEqualTo(ls);
@@ -51,7 +48,7 @@ class ShrinkingQualityProperties {
 		// result can be [0, 1] or [0, -1] or other way round
 		assertThat(shrunkResult).hasSize(2);
 		assertThat(shrunkResult).contains(0);
-		assertThat(shrunkResult).containsAnyOf(0, 1, -1);
+		assertThat(shrunkResult).containsAnyOf(0, 1);
 	}
 
 	private List<Integer> reversed(final List<Integer> ls) {

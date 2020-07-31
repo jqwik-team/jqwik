@@ -25,11 +25,11 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
 	@Override
 	public Stream<Shrinkable<String>> shrink() {
-		return JqwikStreamSupport.lazyConcat(
-			this::shrinkSizeOfList,
-			this::shrinkElementsOneAfterTheOther,
-			this::shrinkPairsOfElements,
-			this::sortElements
+		return JqwikStreamSupport.concat(
+			shrinkSizeOfList(),
+			shrinkElementsOneAfterTheOther(),
+			shrinkPairsOfElements(),
+			sortElements()
 		);
 	}
 

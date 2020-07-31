@@ -43,9 +43,9 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public Stream<Shrinkable<U>> shrink() {
-		return JqwikStreamSupport.lazyConcat(
-			() -> shrinkRightSide(),
-			() -> shrinkLeftSide()
+		return JqwikStreamSupport.concat(
+			shrinkRightSide(),
+			shrinkLeftSide()
 		);
 	}
 

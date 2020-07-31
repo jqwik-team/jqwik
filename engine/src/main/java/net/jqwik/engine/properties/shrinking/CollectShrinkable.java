@@ -40,9 +40,9 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 
 	@Override
 	public Stream<Shrinkable<List<T>>> shrink() {
-		return JqwikStreamSupport.lazyConcat(
-			this::shrinkElementsOneAfterTheOther,
-			this::sortElements
+		return JqwikStreamSupport.concat(
+			shrinkElementsOneAfterTheOther(),
+			sortElements()
 		).filter(s -> until.test(s.createValue()));
 	}
 
@@ -69,9 +69,9 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 		if (elements.equals(sortedElements)) {
 			return Stream.empty();
 		}
-		return JqwikStreamSupport.lazyConcat(
-			() -> fullSort(sortedElements),
-			() -> pairwiseSort(elements)
+		return JqwikStreamSupport.concat(
+			fullSort(sortedElements),
+			pairwiseSort(elements)
 		);
 	}
 
