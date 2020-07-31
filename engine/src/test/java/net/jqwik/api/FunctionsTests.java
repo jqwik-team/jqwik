@@ -291,7 +291,7 @@ class FunctionsTests {
 					.function(Function.class).returns(integers)
 					.when(params -> params.get(0).equals("three"), params -> 3);
 
-			Function<String, Integer> shrunkFunction = ShrinkingTestHelper.shrinkToEnd(functions, random);
+			Function<String, Integer> shrunkFunction = shrinkToMinimal(functions, random);
 
 			assertThat(shrunkFunction.apply("three")).isEqualTo(3);
 		}
