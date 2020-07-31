@@ -1,6 +1,7 @@
 package net.jqwik.engine.execution;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
@@ -33,6 +34,16 @@ public class ShrinkableResolvedParameter implements Shrinkable<Object> {
 			throw new CannotResolveParameterException(context, info);
 		}
 		return value;
+	}
+
+	@Override
+	public Object createValue() {
+		return value();
+	}
+
+	@Override
+	public Stream<Shrinkable<Object>> shrink() {
+		return Stream.empty();
 	}
 
 	@Override

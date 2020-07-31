@@ -190,8 +190,18 @@ public class ShrinkElementsSequence<T> implements ShrinkingSequence<List<T>> {
 			}
 
 			@Override
+			public List<T> createValue() {
+				return value();
+			}
+
+			@Override
 			public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
 				return new ShrinkElementsSequence<>(shrinkables, listFalsifier, distanceFunction);
+			}
+
+			@Override
+			public Stream<Shrinkable<List<T>>> shrink() {
+				return Stream.empty();
 			}
 
 			@Override

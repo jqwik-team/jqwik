@@ -143,7 +143,7 @@ public class GenericProperty {
 	}
 
 	private List<Object> extractParams(List<Shrinkable<Object>> shrinkableParams) {
-		return shrinkableParams.stream().map(Shrinkable::value).collect(Collectors.toList());
+		return shrinkableParams.stream().map(Shrinkable::createValue).collect(Collectors.toList());
 	}
 
 	private PropertyCheckResult shrinkAndCreateCheckResult(
@@ -169,18 +169,19 @@ public class GenericProperty {
 		//       This will probably require some major modification to shrinking / shrinking API.
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
 
-		Consumer<List<Object>> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
-		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter, targetMethod);
+		Consumer<FalsifiedSample> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
+		NEW_PropertyShrinker shrinker = new NEW_PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter, targetMethod);
+		// PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter, targetMethod);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier);
 	}
 
-	private Consumer<List<Object>> createFalsifiedSampleReporter(Reporter reporter, Reporting[] reporting) {
+	private Consumer<FalsifiedSample> createFalsifiedSampleReporter(Reporter reporter, Reporting[] reporting) {
 		return sample -> {
 			if (Reporting.FALSIFIED.containedIn(reporting)) {
 				TryLifecycleContext tryLifecycleContext = tryLifecycleContextSupplier.get();
-				Map<String, Object> reports = SampleReporter.createSampleReports(tryLifecycleContext.targetMethod(), sample);
+				Map<String, Object> reports = SampleReporter.createSampleReports(tryLifecycleContext.targetMethod(), sample.parameters());
 				reporter.publishReports("falsified", reports);
 			}
 		};

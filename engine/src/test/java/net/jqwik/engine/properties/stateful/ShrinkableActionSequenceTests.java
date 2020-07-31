@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
@@ -11,14 +10,10 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
 
 class ShrinkableActionSequenceTests {
-
-	@SuppressWarnings("unchecked")
-	private Consumer<ActionSequence<String>> valueReporter = mock(Consumer.class);
 
 	@Example
 	void createNotRunSequence() {
@@ -66,12 +61,9 @@ class ShrinkableActionSequenceTests {
 			seq.run("");
 			return false;
 		};
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, valueReporter, null);
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.run("")).isEqualTo("x");
-
-		verify(valueReporter, times(3)).accept(any(ActionSequence.class));
-		verifyNoMoreInteractions(valueReporter);
 	}
 
 	@Example
@@ -89,7 +81,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		};
 
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -112,7 +104,7 @@ class ShrinkableActionSequenceTests {
 				return result.length() < 2;
 		};
 
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -136,7 +128,7 @@ class ShrinkableActionSequenceTests {
 			return result.length() < 2;
 		};
 
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isEqualTo("aa");
 	}
@@ -150,7 +142,7 @@ class ShrinkableActionSequenceTests {
 			String result = seq.run("");
 			return !result.contains("x");
 		};
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 		assertThat(shrunkValue.run("")).isEqualTo("x");
 	}
 

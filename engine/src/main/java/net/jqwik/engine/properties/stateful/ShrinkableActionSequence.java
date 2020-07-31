@@ -31,6 +31,16 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 	}
 
 	@Override
+	public ActionSequence<T> createValue() {
+		return new SequentialActionSequence<>(actionGenerator, minSize);
+	}
+
+	@Override
+	public Stream<Shrinkable<ActionSequence<T>>> shrink() {
+		return Stream.empty();
+	}
+
+	@Override
 	public ShrinkingSequence<ActionSequence<T>> shrink(Falsifier<ActionSequence<T>> falsifier) {
 		Falsifier<ActionSequence<T>> minRespectingFalsifier =
 			falsifier.withPostFilter(actionSequence -> actionSequence.runActions().size() >= minSize);

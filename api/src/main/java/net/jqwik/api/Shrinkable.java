@@ -52,9 +52,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	 *
 	 * @return An un-changed instance of the value represented by this shrinkable
 	 */
-	default T createValue() {
-		throw new UnsupportedOperationException("Yet to be implemented");
-	}
+	T createValue();
 
 	/**
 	 * Create a new and finite stream of smaller or same size shrinkables; size is measured by {@linkplain #distance()}.
@@ -62,9 +60,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	 * Same size shrinkables are allowed but they have to iterate towards a single value to prevent endless shrinking.
 	 * This also means that a shrinkable must never be in its own shrink stream!
 	 */
-	default Stream<Shrinkable<T>> shrink() {
-		throw new UnsupportedOperationException("Yet to be implemented");
-	}
+	Stream<Shrinkable<T>> shrink();
 
 	@Deprecated
 	ShrinkingSequence<T> shrink(Falsifier<T> falsifier);

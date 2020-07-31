@@ -4,6 +4,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
@@ -95,12 +96,22 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 		}
 
 		@Override
+		public F createValue() {
+			return value();
+		}
+
+		@Override
 		public ShrinkingSequence<F> shrink(Falsifier<F> falsifier) {
 			if (lastResult.get() == null) {
 				return ShrinkingSequence.dontShrink(this);
 			}
 			Shrinkable<F> constantFunction = createConstantFunction(lastResult.get());
 			return ShrinkingSequence.startWith(constantFunction, falsifier);
+		}
+
+		@Override
+		public Stream<Shrinkable<F>> shrink() {
+			return Stream.empty();
 		}
 
 		@Override
