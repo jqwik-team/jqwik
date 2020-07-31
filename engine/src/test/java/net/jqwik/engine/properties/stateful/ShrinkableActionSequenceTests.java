@@ -28,7 +28,7 @@ class ShrinkableActionSequenceTests {
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2));
 
-		ActionSequence<String> sequence = shrinkable.value();
+		ActionSequence<String> sequence = shrinkable.createValue();
 		assertThat(sequence.runState()).isEqualTo(ActionSequence.RunState.NOT_RUN);
 		assertThat(sequence.toString()).contains("2 actions intended");
 	}
@@ -41,8 +41,8 @@ class ShrinkableActionSequenceTests {
 		);
 		Shrinkable<ActionSequence<String>> shrinkable = createAndRunShrinkableSequence(actions);
 
-		assertThat(shrinkable.value().finalModel()).isEqualTo("ccx");
-		assertThat(shrinkable.value().runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
+		assertThat(shrinkable.createValue().finalModel()).isEqualTo("ccx");
+		assertThat(shrinkable.createValue().runState()).isEqualTo(ActionSequence.RunState.SUCCEEDED);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(2, 2, 4));
 	}
 
@@ -184,7 +184,7 @@ class ShrinkableActionSequenceTests {
 		Shrinkable<ActionSequence<String>> shrinkable = new ShrinkableActionSequence<>(
 			actionGenerator, 1, actions.size(), ShrinkingDistance.of(2)
 		);
-		shrinkable.value().run("");
+		shrinkable.createValue().run("");
 		return shrinkable;
 	}
 
