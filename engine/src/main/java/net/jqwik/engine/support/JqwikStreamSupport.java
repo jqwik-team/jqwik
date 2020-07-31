@@ -29,13 +29,11 @@ public class JqwikStreamSupport {
 		return concat(Arrays.asList(streams));
 	}
 
+	/**
+	 * Use only if normal concatenating will overflow the stack with too many streams
+	 */
 	public static <T> Stream<T> lazyConcat(List<Supplier<Stream<T>>> suppliers) {
 		return suppliers.stream().flatMap(Supplier::get);
-	}
-
-	@SafeVarargs
-	public static <T> Stream<T> lazyConcat(Supplier<Stream<T>>... suppliers) {
-		return lazyConcat(Arrays.asList(suppliers));
 	}
 
 	public static <T> Stream<T> concat(List<Stream<T>> streams) {

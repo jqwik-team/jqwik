@@ -58,10 +58,10 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 
 	@Override
 	public Stream<Shrinkable<C>> shrink() {
-		return JqwikStreamSupport.lazyConcat(
-			this::shrinkSizeOfList,
-			this::shrinkElementsOneAfterTheOther,
-			this::shrinkPairsOfElements
+		return JqwikStreamSupport.concat(
+			shrinkSizeOfList(),
+			shrinkElementsOneAfterTheOther(),
+			shrinkPairsOfElements()
 		);
 	}
 
@@ -116,9 +116,9 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		if (elements.equals(sortedElements)) {
 			return Stream.empty();
 		}
-		return JqwikStreamSupport.lazyConcat(
-			() -> fullSort(sortedElements),
-			() -> pairwiseSort(elements)
+		return JqwikStreamSupport.concat(
+			fullSort(sortedElements),
+			pairwiseSort(elements)
 		);
 	}
 

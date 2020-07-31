@@ -24,9 +24,9 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
 	@Override
 	public Stream<Shrinkable<List<E>>> shrink() {
-		return JqwikStreamSupport.lazyConcat(
-			super::shrink,
-			this::sortElements
+		return JqwikStreamSupport.concat(
+			super.shrink(),
+			sortElements()
 		);
 	}
 }
