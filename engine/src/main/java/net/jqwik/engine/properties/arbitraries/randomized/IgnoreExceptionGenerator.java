@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -18,7 +19,7 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 
 	@Override
 	public Shrinkable<T> next(final Random random) {
-		return nextUntilAccepted(random, base::next);
+		return new IgnoreExceptionShrinkable(nextUntilAccepted(random, base::next));
 	}
 
 	private Shrinkable<T> nextUntilAccepted(Random random, Function<Random, Shrinkable<T>> fetchShrinkable) {
@@ -28,7 +29,7 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 				try {
 					next = fetchShrinkable.apply(random);
 					// Enforce value generation for possible exception raising
-					next.value();
+					next.createValue();
 					return Tuple.of(true, next);
 				} catch (Throwable throwable) {
 					if (exceptionType.isAssignableFrom(throwable.getClass())) {
@@ -44,4 +45,47 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 		);
 	}
 
+	private class IgnoreExceptionShrinkable implements Shrinkable<T> {
+
+		private final Shrinkable<T> shrinkable;
+
+		private IgnoreExceptionShrinkable(Shrinkable<T> shrinkable) {
+			this.shrinkable = shrinkable;
+		}
+
+		@Override
+		public T value() {
+			return shrinkable.value();
+		}
+
+		@Override
+		public T createValue() {
+			return value();
+		}
+
+		@Override
+		public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
+			return shrinkable.shrink(falsifier);
+		}
+
+		@Override
+		public Stream<Shrinkable<T>> shrink() {
+			return shrinkable.shrink().filter(s -> {
+				try {
+					s.createValue();
+					return true;
+				} catch (Throwable throwable) {
+					if (exceptionType.isAssignableFrom(throwable.getClass())) {
+						return false;
+					}
+					throw throwable;
+				}
+			}).map(IgnoreExceptionShrinkable::new);
+		}
+
+		@Override
+		public ShrinkingDistance distance() {
+			return shrinkable.distance();
+		}
+	}
 }
