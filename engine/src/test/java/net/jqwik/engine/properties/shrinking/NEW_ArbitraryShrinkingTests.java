@@ -162,7 +162,7 @@ class NEW_ArbitraryShrinkingTests {
 			SizableArbitrary<Map<Integer, String>> arbitrary = Arbitraries.maps(keys, values).ofMaxSize(10);
 
 			TestingFalsifier<Map<Integer, String>> sumOfKeysLessThan2 = map -> map.keySet().size() < 2;
-			Map<Integer, String> map = ShrinkingTestHelper.falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
+			Map<Integer, String> map = falsifyThenShrink(arbitrary, random, sumOfKeysLessThan2);
 
 			assertThat(map).hasSize(2);
 			assertThat(map.keySet()).containsAnyOf(0, 1, -1);

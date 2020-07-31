@@ -10,6 +10,8 @@ import net.jqwik.api.lifecycle.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+
 @SuppressWarnings("Convert2MethodRef")
 class CombinatorsEdgeCasesTests {
 
@@ -41,7 +43,7 @@ class CombinatorsEdgeCasesTests {
 		Shrinkable<Integer> firstEdgeCase = edgeCases.iterator().next();
 
 		Falsifier<Integer> falsifier = ignore -> TryExecutionResult.falsified(null);
-		int shrunkValue = ShrinkingTestHelper.shrinkToEnd(firstEdgeCase, falsifier, null);
+		int shrunkValue = shrinkToMinimal(firstEdgeCase, falsifier, null);
 		assertThat(shrunkValue).isEqualTo(0);
 	}
 
