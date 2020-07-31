@@ -37,7 +37,8 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 		return toFilter.shrink().filter(s -> {
 			return !usedValues.contains(s.createValue());
 		}).map(s -> {
-			usedValues.remove(this.createValue());
+			// TODO: In theory the set of used values should only contain those in the current try
+			// but currently it contains all values tried in this shrinking
 			usedValues.add(s.createValue());
 			return new UniqueShrinkable<>(s, usedValues);
 		});
