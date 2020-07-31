@@ -15,7 +15,7 @@ class NEW_UnshrinkableTests {
 	@Example
 	void unshrinkableAreNotBeingShrunk() {
 		Shrinkable<String> unshrinkableString = Shrinkable.unshrinkable("a string");
-		String shrunkString = shrinkToEnd(unshrinkableString, ignore -> TryExecutionResult.falsified(null), null);
+		String shrunkString = shrinkToMinimal(unshrinkableString, ignore -> TryExecutionResult.falsified(null), null);
 		assertThat(shrunkString).isEqualTo("a string");
 	}
 

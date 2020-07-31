@@ -15,8 +15,7 @@ class NEW_ShrinkableProperties {
 
 	@Property(tries = 100)
 	void allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
-		System.out.println(shrinkable);
-		shrinkToEnd(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
+		shrinkToMinimal(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
 	}
 
 	@Property(tries = 100)

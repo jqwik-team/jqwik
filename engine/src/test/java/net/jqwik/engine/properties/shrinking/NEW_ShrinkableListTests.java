@@ -31,7 +31,7 @@ class NEW_ShrinkableListTests {
 		void downAllTheWay() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEmpty();
 		}
 
@@ -41,7 +41,7 @@ class NEW_ShrinkableListTests {
 				Arrays.stream(new Integer[]{0, 1, 2, 3, 4}).map(Shrinkable::unshrinkable).collect(Collectors.toList());
 			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2);
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).hasSize(2);
 		}
 
@@ -49,7 +49,7 @@ class NEW_ShrinkableListTests {
 		void downToOneElement() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(0, 1, 2);
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(List::isEmpty), null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(List::isEmpty), null);
 			assertThat(shrunkValue).hasSize(1);
 		}
 
@@ -57,7 +57,7 @@ class NEW_ShrinkableListTests {
 		void alsoShrinkElements() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 2, 3);
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(integers -> integers.size() <= 1), null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(integers -> integers.size() <= 1), null);
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
 
@@ -68,7 +68,7 @@ class NEW_ShrinkableListTests {
 			TestingFalsifier<List<Integer>> falsifier =
 				integers -> integers.size() != 2 || !integers.get(0).equals(integers.get(1));
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
 
@@ -89,7 +89,7 @@ class NEW_ShrinkableListTests {
 				return int1 < 7 || int1 != int2;
 			};
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 
 			List<Integer> expectedList = asList(0, 0, 0, 0, 0, 0);
 			expectedList.set(index1, 7);
@@ -108,7 +108,7 @@ class NEW_ShrinkableListTests {
 					return sum < 10 || integers.size() < 4;
 				};
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(asList(1, 2, 3, 4));
 		}
 
@@ -122,7 +122,7 @@ class NEW_ShrinkableListTests {
 					return sum < 10 || integers.size() < 4 || integers.get(3) != 2;
 				};
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(asList(1, 3, 4, 2));
 		}
 
@@ -148,7 +148,7 @@ class NEW_ShrinkableListTests {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 0, 2, 1);
 
 			TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() == new HashSet<>(integers).size();
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 0);
 		}
 
@@ -161,7 +161,7 @@ class NEW_ShrinkableListTests {
 				elements -> elements.size() % 2 == 0
 			);
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).isEqualTo(asList());
 		}
 
@@ -174,7 +174,7 @@ class NEW_ShrinkableListTests {
 				elements -> elements.stream().allMatch(i -> i % 2 == 1)
 			);
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).isEqualTo(asList(1));
 		}
 
@@ -186,7 +186,7 @@ class NEW_ShrinkableListTests {
 						 .collect(Collectors.toList());
 			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
 
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(List::isEmpty), null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(List::isEmpty), null);
 			assertThat(shrunkValue).hasSize(1);
 		}
 	}

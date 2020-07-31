@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 
+@Deprecated
 public class ListShrinkingCandidates<T> implements ShrinkingCandidates<List<T>> {
 
 	private final int minSize;

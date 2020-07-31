@@ -30,7 +30,7 @@ class NEW_ShrinkableSetTests {
 		void downAllTheWay() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2), 0);
 
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).hasSize(0);
 		}
 
@@ -38,7 +38,7 @@ class NEW_ShrinkableSetTests {
 		void downToMinSize() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3, 4), 2);
 
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -46,7 +46,7 @@ class NEW_ShrinkableSetTests {
 		void downToNonEmpty() {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
 
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(Set::isEmpty), null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(Set::isEmpty), null);
 			assertThat(shrunkValue).containsExactly(0);
 		}
 
@@ -55,7 +55,7 @@ class NEW_ShrinkableSetTests {
 			Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(2, 3, 4), 0);
 
 			TestingFalsifier<Set<Integer>> falsifier = aSet -> aSet.size() <= 1;
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -83,7 +83,7 @@ class NEW_ShrinkableSetTests {
 			Falsifier<Set<Integer>> falsifier = falsifier(Set::isEmpty);
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.size() % 2 == 0);
 
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -93,7 +93,7 @@ class NEW_ShrinkableSetTests {
 
 			Falsifier<Set<Integer>> falsifier = falsifier(Set::isEmpty);
 			Falsifier<Set<Integer>> filteredFalsifier = falsifier.withFilter(aSet -> aSet.contains(2) || aSet.contains(4));
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).containsExactly(2);
 		}
 
@@ -109,7 +109,7 @@ class NEW_ShrinkableSetTests {
 					return integers.size() != 2 || Math.abs(first - second) > 1;
 				};
 
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1);
 		}
 
@@ -124,7 +124,7 @@ class NEW_ShrinkableSetTests {
 					return Math.abs(max.get() - min.get()) > 4;
 				};
 
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).containsExactly(0, 1, 2, 3);
 		}
 
@@ -134,7 +134,7 @@ class NEW_ShrinkableSetTests {
 																   .collect(Collectors.toSet());
 			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5);
 
-			Set<Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(Set::isEmpty), null);
+			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(Set::isEmpty), null);
 			assertThat(shrunkValue).containsExactly(0, 1, 2, 3, 4);
 		}
 

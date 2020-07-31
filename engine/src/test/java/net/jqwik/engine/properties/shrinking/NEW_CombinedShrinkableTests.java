@@ -51,7 +51,7 @@ class NEW_CombinedShrinkableTests {
 			List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
 			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-			Tuple2<Integer, Integer> shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			Tuple2<Integer, Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(Tuple.of(0, 0));
 		}
 
@@ -69,7 +69,7 @@ class NEW_CombinedShrinkableTests {
 			List<Shrinkable<Object>> shrinkables = Arrays.asList(three, five);
 			Shrinkable<Tuple2<Integer, Integer>> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
-			Tuple2<Integer, Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier(tuple -> tuple.get1() + tuple.get2() < 4), null);
+			Tuple2<Integer, Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(tuple -> tuple.get1() + tuple.get2() < 4), null);
 			assertThat(shrunkValue.get1() + shrunkValue.get2()).isEqualTo(4);
 		}
 
@@ -94,7 +94,7 @@ class NEW_CombinedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			Tuple2<Integer, Integer> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			Tuple2<Integer, Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(Tuple.of(0, 1));
 		}
 
