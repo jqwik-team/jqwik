@@ -52,7 +52,7 @@ class ActionSequenceShrinkingTests {
 	void sequencesAreShrunkToSingleAction(@ForAll Random random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX());
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
-		shrinkable.value().run(""); // to setup sequence
+		shrinkable.createValue().run(""); // to setup sequence
 
 		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
 			seq.run("");
@@ -69,7 +69,7 @@ class ActionSequenceShrinkingTests {
 	void dontShrinkUnderMinSize(@ForAll Random random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addX()).ofMinSize(3);
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
-		shrinkable.value().run(""); // to setup sequence
+		shrinkable.createValue().run(""); // to setup sequence
 
 		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
 			seq.run("");
@@ -85,7 +85,7 @@ class ActionSequenceShrinkingTests {
 	void remainingActionsAreShrunkThemselves(@ForAll Random random) {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(addStringOfLength2());
 		Shrinkable<ActionSequence<String>> shrinkable = arbitrary.generator(1000).next(random);
-		shrinkable.value().run(""); // to setup sequence
+		shrinkable.createValue().run(""); // to setup sequence
 
 		TestingFalsifier<ActionSequence<String>> falsifier = falsifier((ActionSequence<String> seq) -> {
 			seq.run("");
