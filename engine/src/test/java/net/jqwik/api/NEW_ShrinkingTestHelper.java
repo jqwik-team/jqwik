@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+import org.assertj.core.api.*;
+
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
@@ -49,20 +51,16 @@ public class NEW_ShrinkingTestHelper {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> Falsifier<List<Object>> toParmaFalsifier(Falsifier<T> tFalsifier) {
+	public static <T> Falsifier<List<Object>> toParamFalsifier(Falsifier<T> tFalsifier) {
 		return params -> {
 			T t = (T) params.get(0);
 			return tFalsifier.execute(t);
 		};
 	}
 
-	// public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
-	// 	T value = shrinkToEnd(arbitrary, random);
-	// 	assertThat(value).isEqualTo(expectedShrunkValue);
-	// }
-
-	public static <T> T shrinkToEnd(Arbitrary<? extends T> arbitrary, Random random) {
-		return falsifyThenShrink(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
+	public static <T> void assertAllValuesAreShrunkTo(T expectedShrunkValue, Arbitrary<? extends T> arbitrary, Random random) {
+		T value = shrinkToMinimal(arbitrary, random);
+		Assertions.assertThat(value).isEqualTo(expectedShrunkValue);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -77,11 +75,15 @@ public class NEW_ShrinkingTestHelper {
 				}
 				return result.isFalsified();
 			});
-		return shrinkToEnd(falsifiedShrinkable, falsifier, originalError[0]);
+		return shrinkToMinimal(falsifiedShrinkable, falsifier, originalError[0]);
+	}
+
+	public static <T> T shrinkToMinimal(Arbitrary<? extends T> arbitrary, Random random) {
+		return falsifyThenShrink(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T> T shrinkToEnd(
+	public static <T> T shrinkToMinimal(
 		Shrinkable<T> falsifiedShrinkable,
 		Falsifier<T> falsifier,
 		Throwable originalError
@@ -99,7 +101,7 @@ public class NEW_ShrinkingTestHelper {
 		Consumer<FalsifiedSample> parametersReporter = ignore -> {};
 		NEW_PropertyShrinker shrinker = new NEW_PropertyShrinker(sample, ShrinkingMode.FULL, parametersReporter, null);
 
-		return shrinker.shrink(toParmaFalsifier(falsifier));
+		return shrinker.shrink(toParamFalsifier(falsifier));
 	}
 
 	@SuppressWarnings("unchecked")

@@ -21,7 +21,7 @@ class NEW_ChooseValueShrinkableTests {
 	@Example
 	void shrinking() {
 		Shrinkable<Integer> shrinkable = new ChooseValueShrinkable<>(4, Arrays.asList(1, 2, 3, 4, 5));
-		Integer shrunkValue = shrinkToEnd(shrinkable, (TestingFalsifier<Integer>) ignore -> false, null);
+		Integer shrunkValue = shrinkToMinimal(shrinkable, (TestingFalsifier<Integer>) ignore -> false, null);
 		assertThat(shrunkValue).isEqualTo(1);
 	}
 }

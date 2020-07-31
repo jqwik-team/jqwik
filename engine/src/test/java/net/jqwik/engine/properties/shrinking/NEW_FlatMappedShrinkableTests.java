@@ -42,7 +42,7 @@ class NEW_FlatMappedShrinkableTests {
 			Assume.that(shrinkable.createValue() > 3);
 
 			TestingFalsifier<Integer> falsifier = anInt -> anInt < 3;
-			int shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			int shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(3);
 		}
 
@@ -55,7 +55,7 @@ class NEW_FlatMappedShrinkableTests {
 			Assume.that(shrinkable.createValue() >= 3); // depends on seed
 
 			TestingFalsifier<Integer> falsifier = anInt -> anInt < 3;
-			int shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			int shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(3);
 		}
 
@@ -73,7 +73,7 @@ class NEW_FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			String shrunkValue = shrinkToEnd(shrinkable, onlyEmptyStrings, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, onlyEmptyStrings, null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
@@ -94,7 +94,7 @@ class NEW_FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			String shrunkValue = shrinkToEnd(shrinkable, onlyEmptyStrings, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, onlyEmptyStrings, null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
@@ -115,7 +115,7 @@ class NEW_FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			String shrunkValue = shrinkToEnd(shrinkable, onlyEmptyStrings, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, onlyEmptyStrings, null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
@@ -132,7 +132,7 @@ class NEW_FlatMappedShrinkableTests {
 			assertThat(shrinkable.createValue()).hasSize(5);
 
 			TestingFalsifier<String> falsifier = aString -> aString.length() < 3;
-			String shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("aaa");
 		}
 
@@ -150,7 +150,7 @@ class NEW_FlatMappedShrinkableTests {
 				}
 				return TryExecutionResult.falsified(null);
 			};
-			List<Integer> shrunkValue = shrinkToEnd(shrinkable, onlyListsWithLessThan10Elements, null);
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, onlyListsWithLessThan10Elements, null);
 			assertThat(shrunkValue).isEqualTo(asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 		}
 
@@ -172,7 +172,7 @@ class NEW_FlatMappedShrinkableTests {
 					}
 					return TryExecutionResult.falsified(null);
 				};
-				List<String> result = shrinkToEnd(edgeCase, onlyEmptyLists, null);
+				List<String> result = shrinkToMinimal(edgeCase, onlyEmptyLists, null);
 				assertThat(result).isEqualTo(asList("a"));
 			}
 		}

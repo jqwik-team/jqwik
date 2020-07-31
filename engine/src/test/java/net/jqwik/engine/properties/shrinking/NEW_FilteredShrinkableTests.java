@@ -27,7 +27,7 @@ class NEW_FilteredShrinkableTests {
 			Shrinkable<Integer> integerShrinkable = new FullShrinkable(3);
 			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-			Integer shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(1);
 		}
 
@@ -36,7 +36,7 @@ class NEW_FilteredShrinkableTests {
 			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 
-			Integer shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(1);
 		}
 
@@ -45,7 +45,7 @@ class NEW_FilteredShrinkableTests {
 			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(40);
 			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 5 == 0);
 
-			Integer shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(0);
 		}
 	}

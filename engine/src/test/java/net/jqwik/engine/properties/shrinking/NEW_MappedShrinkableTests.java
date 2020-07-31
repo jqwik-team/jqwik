@@ -24,7 +24,7 @@ class NEW_MappedShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<String> shrinkable = integerShrinkable.map(i -> String.valueOf(i) + i);
 
-		String shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+		String shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 		assertThat(shrunkValue).isEqualTo("00");
 	}
 

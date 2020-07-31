@@ -28,21 +28,21 @@ public class NEW_ShrinkableStringTests {
 		@Example
 		void downAllTheWay() {
 			Shrinkable<String> shrinkable = createShrinkableString("abc", 0);
-			String shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			String shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEmpty();
 		}
 
 		@Example
 		void downToMinSize() {
 			Shrinkable<String> shrinkable = createShrinkableString("aaaaa", 2);
-			String shrunkValue = shrinkToEnd(shrinkable, alwaysFalsify(), null);
+			String shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo("aa");
 		}
 
 		@Example
 		void downToNonEmpty() {
 			Shrinkable<String> shrinkable = createShrinkableString("abcd", 0);
-			String shrunkValue = shrinkToEnd(shrinkable, falsifier(String::isEmpty), null);
+			String shrunkValue = shrinkToMinimal(shrinkable, falsifier(String::isEmpty), null);
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
@@ -50,7 +50,7 @@ public class NEW_ShrinkableStringTests {
 		void alsoShrinkCharacters() {
 			Shrinkable<String> shrinkable = createShrinkableString("bbb", 0);
 			TestingFalsifier<String> falsifier = aString -> aString.length() <= 1;
-			String shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("aa");
 		}
 
@@ -61,7 +61,7 @@ public class NEW_ShrinkableStringTests {
 			TestingFalsifier<String> falsifier = ignore -> false;
 			Falsifier<String> filteredFalsifier = falsifier.withFilter(aString -> aString.length() % 2 == 0);
 
-			String shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).isEqualTo("");
 		}
 
@@ -73,7 +73,7 @@ public class NEW_ShrinkableStringTests {
 			Falsifier<String> filteredFalsifier =
 				falsifier.withFilter(aString -> aString.startsWith("d") || aString.startsWith("b"));
 
-			String shrunkValue = shrinkToEnd(shrinkable, filteredFalsifier, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, filteredFalsifier, null);
 			assertThat(shrunkValue).isEqualTo("b");
 		}
 
@@ -87,7 +87,7 @@ public class NEW_ShrinkableStringTests {
 					return usedLetters.size() != 1;
 				};
 
-			String shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("aa");
 		}
 
@@ -101,7 +101,7 @@ public class NEW_ShrinkableStringTests {
 					return sum < 6;
 				};
 
-			String shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("abcd");
 		}
 
@@ -114,7 +114,7 @@ public class NEW_ShrinkableStringTests {
 						 .collect(Collectors.toList());
 
 			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5);
-			String shrunkValue = shrinkToEnd(shrinkable, (TestingFalsifier<String>) String::isEmpty, null);
+			String shrunkValue = shrinkToMinimal(shrinkable, (TestingFalsifier<String>) String::isEmpty, null);
 			assertThat(shrunkValue).hasSize(5);
 		}
 
