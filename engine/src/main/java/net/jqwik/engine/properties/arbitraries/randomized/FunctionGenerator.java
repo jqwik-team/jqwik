@@ -111,7 +111,11 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 
 		@Override
 		public Stream<Shrinkable<F>> shrink() {
-			return Stream.empty();
+			if (lastResult.get() == null) {
+				return Stream.empty();
+			}
+			Shrinkable<F> constantFunction = createConstantFunction(lastResult.get());
+			return Stream.of(constantFunction);
 		}
 
 		@Override

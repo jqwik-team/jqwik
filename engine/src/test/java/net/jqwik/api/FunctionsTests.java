@@ -9,7 +9,7 @@ import net.jqwik.engine.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
 
 class FunctionsTests {
 
@@ -193,9 +193,8 @@ class FunctionsTests {
 		Function<String, Integer> shrunkFunction = falsifyThenShrink(functions, random, falsifier);
 		assertThat(shrunkFunction.apply("value1")).isEqualTo(11);
 
-		// TODO: Back in the days those assertions also were true:
-		// Assertions.assertThat(shrunkFunction.apply("value2")).isEqualTo(11);
-		// Assertions.assertThat(shrunkFunction.apply("any")).isEqualTo(11);
+		assertThat(shrunkFunction.apply("value2")).isEqualTo(11);
+		assertThat(shrunkFunction.apply("any")).isEqualTo(11);
 	}
 
 	@Property(tries = 100)
