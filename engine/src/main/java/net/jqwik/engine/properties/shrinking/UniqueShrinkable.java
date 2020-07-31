@@ -34,7 +34,13 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Stream<Shrinkable<T>> shrink() {
-		return toFilter.shrink().filter(s -> !usedValues.contains(s.createValue()));
+		return toFilter.shrink().filter(s -> {
+			return !usedValues.contains(s.createValue());
+		}).map(s -> {
+			usedValues.remove(this.createValue());
+			usedValues.add(s.createValue());
+			return new UniqueShrinkable<>(s, usedValues);
+		});
 	}
 
 	@Override
