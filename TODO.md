@@ -1,9 +1,9 @@
 - 1.3.3
 
     - Re-implement shrinking
-      - All shrinking strategies are controlled from new PropertyShrinker implementation
         - Possibility of shrinking one element and growing another
-
+        - UniqueShrinkable should be able to shrink to previously tried values
+        
         
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91

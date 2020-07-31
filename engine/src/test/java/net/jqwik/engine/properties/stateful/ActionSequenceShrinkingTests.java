@@ -12,7 +12,7 @@ import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.ShrinkingTestHelper.*;
+import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
 
 @SuppressWarnings("unchecked")
 class ActionSequenceShrinkingTests {
@@ -59,7 +59,7 @@ class ActionSequenceShrinkingTests {
 			return false;
 		});
 
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.run("")).isEqualTo("x");
@@ -76,7 +76,7 @@ class ActionSequenceShrinkingTests {
 			throw failAndCatch(null);
 		});
 
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, failAndCatch(null));
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, failAndCatch(null));
 
 		assertThat(shrunkValue.runActions()).hasSize(3);
 	}
@@ -92,7 +92,7 @@ class ActionSequenceShrinkingTests {
 			return false;
 		});
 
-		ActionSequence<String> shrunkValue = shrinkToEnd(shrinkable, falsifier, null);
+		ActionSequence<String> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 
 		assertThat(shrunkValue.runActions()).hasSize(1);
 		assertThat(shrunkValue.runActions().get(0).run("")).isIn("aa", "AA");

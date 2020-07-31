@@ -140,8 +140,18 @@ class ShrinkOneElementAfterTheOtherSequence<T> implements ShrinkingSequence<List
 			}
 
 			@Override
+			public List<T> createValue() {
+				return value();
+			}
+
+			@Override
 			public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
 				return ShrinkOneElementAfterTheOtherSequence.this;
+			}
+
+			@Override
+			public Stream<Shrinkable<List<T>>> shrink() {
+				return Stream.empty();
 			}
 
 			@Override

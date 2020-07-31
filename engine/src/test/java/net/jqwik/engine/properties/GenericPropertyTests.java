@@ -23,8 +23,6 @@ import static net.jqwik.engine.properties.PropertyConfigurationBuilder.*;
 @SuppressWarnings("unchecked")
 class GenericPropertyTests {
 
-	private static final Consumer<ReportEntry> NULL_PUBLISHER = entry -> { };
-
 	private final Supplier<TryLifecycleContext> tryLifecycleContextSupplier = TestHelper.tryLifecycleContextSupplier();
 
 	@Group
