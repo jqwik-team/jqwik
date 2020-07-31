@@ -109,6 +109,7 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		return JqwikStreamSupport.lazyConcat(suppliers);
 	}
 
+	// TODO: Remove duplication with ShrinkableContainer.sortElements() and
 	protected Stream<Shrinkable<C>> sortElements() {
 		List<Shrinkable<E>> sortedElements = new ArrayList<>(elements);
 		sortedElements.sort(Comparator.comparing(Shrinkable::distance));

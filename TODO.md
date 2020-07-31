@@ -1,13 +1,8 @@
 - 1.3.3
 
     - Re-implement shrinking
-      - Based solely on shrinking suggestions from Shrinkables
-      - Shrinkables.create() will _always_ freshly create values 
-        to prevent mutable state problems
       - All shrinking strategies are controlled from new PropertyShrinker implementation
-        - Optimization for synchronized shrinking
         - Possibility of shrinking one element and growing another
-        - Sorting of shrinkables in lists
 
         
     - Allow specification of provider class in `@ForAll` and `@From`
