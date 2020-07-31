@@ -23,8 +23,18 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 	}
 
 	@Override
+	public T createValue() {
+		return value();
+	}
+
+	@Override
 	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
 		return new UniqueShrinkingSequence(falsifier);
+	}
+
+	@Override
+	public Stream<Shrinkable<T>> shrink() {
+		return toFilter.shrink().filter(s -> !usedValues.contains(s.createValue()));
 	}
 
 	@Override
