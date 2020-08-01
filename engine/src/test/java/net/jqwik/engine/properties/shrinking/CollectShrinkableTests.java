@@ -15,7 +15,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("CollectShrinkable")
-class NEW_CollectShrinkableTests {
+class CollectShrinkableTests {
 
 	@Example
 	void creation() {

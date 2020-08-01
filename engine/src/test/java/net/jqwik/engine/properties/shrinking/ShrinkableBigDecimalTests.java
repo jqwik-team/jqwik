@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.engine.properties.arbitraries.randomized.RandomDecimalGenerators.*;
 
-class NEW_ShrinkableBigDecimalTests {
+class ShrinkableBigDecimalTests {
 
 	@Example
 	void creation() {

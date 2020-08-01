@@ -3,11 +3,11 @@ package net.jqwik.engine.properties.shrinking;
 import java.lang.reflect.*;
 import java.util.*;
 
-class NEW_ErrorEquivalenceChecker {
+class ErrorEquivalenceChecker {
 
 	private final Method targetMethod;
 
-	NEW_ErrorEquivalenceChecker(final Method targetMethod) {
+	ErrorEquivalenceChecker(final Method targetMethod) {
 		this.targetMethod = targetMethod;
 	}
 

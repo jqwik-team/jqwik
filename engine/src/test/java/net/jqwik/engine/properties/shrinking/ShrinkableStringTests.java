@@ -13,7 +13,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("ShrinkableString")
-public class NEW_ShrinkableStringTests {
+public class ShrinkableStringTests {
 
 	@Example
 	void creation() {

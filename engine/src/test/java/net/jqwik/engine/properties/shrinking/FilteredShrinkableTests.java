@@ -9,7 +9,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("FilteredShrinkable")
-class NEW_FilteredShrinkableTests {
+class FilteredShrinkableTests {
 
 	@Example
 	void creation() {

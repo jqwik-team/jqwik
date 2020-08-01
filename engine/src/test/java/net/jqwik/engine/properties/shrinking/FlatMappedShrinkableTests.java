@@ -17,7 +17,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("FlatMappedShrinkable")
-class NEW_FlatMappedShrinkableTests {
+class FlatMappedShrinkableTests {
 
 	@Example
 	void creation(@ForAll long seed) {

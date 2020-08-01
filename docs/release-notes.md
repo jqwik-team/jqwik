@@ -25,6 +25,9 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Shrinking has been re-implemented from scratch. Should be more predictable and 
+  shrink to smaller samples in most cases.
+
 - Shrinking now has stronger equivalence requirements for falsification:
   - Same type of assertion error or other exception
   - Assertion error or exception thrown from the same code location
@@ -38,6 +41,11 @@ title: jqwik Release Notes
 
 - Exceeding shrinking bound is now logged as warning instead of being reported
   through JUnit platform reporting
+  
+- Deprecated interface `ShrinkingSequence`. Throw all your implementations away!
+
+- Deprecated method `Shrinkable.shrink(Falsifier<T> falsifier)`. 
+  It's no longer used anywhere.
 
 #### Bug Fixes
 

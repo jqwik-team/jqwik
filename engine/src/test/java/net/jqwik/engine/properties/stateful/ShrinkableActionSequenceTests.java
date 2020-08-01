@@ -173,7 +173,7 @@ class ShrinkableActionSequenceTests {
 	}
 
 	private Shrinkable<Action<String>> shrinkableAddCC() {
-		return NEW_ShrinkableStringTests
+		return ShrinkableStringTests
 				   .createShrinkableString("cc", 2)
 				   .map(aString -> model -> model + aString);
 	}

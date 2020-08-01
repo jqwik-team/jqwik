@@ -170,7 +170,7 @@ public class GenericProperty {
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
 
 		Consumer<FalsifiedSample> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
-		NEW_PropertyShrinker shrinker = new NEW_PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter, targetMethod);
+		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter, targetMethod);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier);
