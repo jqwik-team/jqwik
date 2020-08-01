@@ -2,7 +2,6 @@
 
     - Re-implement shrinking
         - Remove type variable from Falsifier<T>
-        - Make ShrinkingCandidates return Stream of shrinkables
         - Add sample reporter for ActionSequences
         - Review shrinking related TODOs
         - Let negative numbers try their positive counter part

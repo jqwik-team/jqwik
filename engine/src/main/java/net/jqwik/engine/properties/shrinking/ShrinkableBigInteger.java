@@ -10,21 +10,18 @@ import net.jqwik.engine.properties.*;
 public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 	private final Range<BigInteger> range;
 	private final BigInteger shrinkingTarget;
-	private final BigIntegerShrinkingCandidates shrinkingCandidates;
 
 	public ShrinkableBigInteger(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
 		super(value);
 		this.range = range;
 		this.shrinkingTarget = shrinkingTarget;
-		this.shrinkingCandidates = new BigIntegerShrinkingCandidates(this.shrinkingTarget);
 		checkValueInRange(value);
 	}
 
 	@Override
 	public Set<Shrinkable<BigInteger>> shrinkCandidatesFor(Shrinkable<BigInteger> shrinkable) {
-		return shrinkingCandidates
-				   .candidatesFor(shrinkable.value())
-				   .stream()
+		return new BigIntegerShrinker(shrinkingTarget)
+				   .shrink(shrinkable.value())
 				   .map(aBigInteger -> new ShrinkableBigInteger(aBigInteger, range, shrinkingTarget))
 				   .collect(Collectors.toSet());
 	}

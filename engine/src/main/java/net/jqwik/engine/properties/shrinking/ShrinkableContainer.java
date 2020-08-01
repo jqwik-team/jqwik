@@ -38,9 +38,8 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	}
 
 	protected Stream<Shrinkable<C>> shrinkSizeOfList() {
-		Set<List<Shrinkable<E>>> shrinkSizeOfListElements = new ShrinkSizeOfListCandidates<E>(minSize).candidatesFor(elements);
-		return shrinkSizeOfListElements
-				   .stream()
+		return new SizeOfListShrinker<Shrinkable<E>>(minSize)
+				   .shrink(elements)
 				   .map(this::createShrinkable)
 				   .sorted(Comparator.comparing(Shrinkable::distance));
 	}

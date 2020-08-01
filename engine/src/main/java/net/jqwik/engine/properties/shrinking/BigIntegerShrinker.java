@@ -2,17 +2,17 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
-public class BigIntegerShrinkingCandidates implements ShrinkingCandidates<BigInteger> {
+public class BigIntegerShrinker {
 
 	private final BigInteger shrinkingTarget;
 
-	public BigIntegerShrinkingCandidates(BigInteger shrinkingTarget) {
+	public BigIntegerShrinker(BigInteger shrinkingTarget) {
 		this.shrinkingTarget = shrinkingTarget;
 	}
 
-	@Override
-	public Set<BigInteger> candidatesFor(BigInteger value) {
+	public Stream<BigInteger> shrink(BigInteger value) {
 		Set<BigInteger> candidates = new HashSet<>();
 		BigInteger lower = shrinkingTarget.min(value);
 		BigInteger higher = shrinkingTarget.max(value);
@@ -20,7 +20,7 @@ public class BigIntegerShrinkingCandidates implements ShrinkingCandidates<BigInt
 		subFibbonaci(candidates, higher, BigInteger.valueOf(0), BigInteger.valueOf(1), lower);
 		candidates.add(shrinkingTarget);
 		candidates.remove(value);
-		return candidates;
+		return candidates.stream();
 	}
 
 	private void subFibbonaci(
