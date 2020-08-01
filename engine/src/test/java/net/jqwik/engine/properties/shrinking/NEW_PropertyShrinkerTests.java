@@ -399,7 +399,6 @@ class NEW_PropertyShrinkerTests {
 			assertThat(sample.countShrinkingSteps()).isGreaterThan(0);
 		}
 
-		@Disabled("new shrinking")
 		@Property(tries = 10000)
 		@ExpectFailure(checkResult = ShrinkTo77.class)
 		boolean shrinkDuplicateIntegersTogether(
@@ -416,7 +415,6 @@ class NEW_PropertyShrinkerTests {
 			}
 		}
 
-		@Disabled("new shrinking")
 		@Property(tries = 10000)
 		@ExpectFailure(checkResult = ShrunkToAA.class)
 		void shrinkingDuplicateStringsTogether(@ForAll("aString") String first, @ForAll("aString") String second) {
@@ -436,7 +434,6 @@ class NEW_PropertyShrinkerTests {
 		}
 	}
 
-	@Disabled("new shrinking")
 	@Property(tries = 100, edgeCases = EdgeCasesMode.NONE)
 	@ExpectFailure(checkResult = ShrinkToEmptyList0.class)
 	boolean shrinkDependentParameters(
