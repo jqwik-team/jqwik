@@ -1,24 +1,24 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.math.*;
-import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-class BigIntegerShrinkingCandidatesTests {
+class BigIntegerShrinkerTests {
 
 	@Example
 	void shrinkFrom0DoesNotShrink() {
-		ShrinkingCandidates<BigInteger> shrinker = new BigIntegerShrinkingCandidates(BigInteger.ZERO);
-		assertThat(shrinker.candidatesFor(BigInteger.ZERO)).isEmpty();
+		BigIntegerShrinker shrinker = new BigIntegerShrinker(BigInteger.ZERO);
+		assertThat(shrinker.shrink(BigInteger.ZERO)).isEmpty();
 	}
 
 	@Example
 	void shrinkPositiveValueTowards0If0isInRange() {
-		ShrinkingCandidates<BigInteger> shrinker = new BigIntegerShrinkingCandidates(BigInteger.ZERO);
-		Set<BigInteger> allShrunkValues = shrinker.candidatesFor(BigInteger.valueOf(10));
+		BigIntegerShrinker shrinker = new BigIntegerShrinker(BigInteger.ZERO);
+		Stream<BigInteger> allShrunkValues = shrinker.shrink(BigInteger.valueOf(10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
 				BigInteger.valueOf(9),
@@ -34,8 +34,8 @@ class BigIntegerShrinkingCandidatesTests {
 
 	@Example
 	void shrinkNegativeValueTowards0If0isInRange() {
-		ShrinkingCandidates<BigInteger> shrinker = new BigIntegerShrinkingCandidates(BigInteger.ZERO);
-		Set<BigInteger> allShrunkValues = shrinker.candidatesFor(BigInteger.valueOf(-10));
+		BigIntegerShrinker shrinker = new BigIntegerShrinker(BigInteger.ZERO);
+		Stream<BigInteger> allShrunkValues = shrinker.shrink(BigInteger.valueOf(-10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
 				BigInteger.valueOf(-9),
@@ -51,8 +51,8 @@ class BigIntegerShrinkingCandidatesTests {
 
 	@Example
 	void shrinkNegativeValueTowardMaxIf0IsOutsideRange() {
-		ShrinkingCandidates<BigInteger> shrinker = new BigIntegerShrinkingCandidates(BigInteger.valueOf(-5));
-		Set<BigInteger> allShrunkValues = shrinker.candidatesFor(BigInteger.valueOf(-10));
+		BigIntegerShrinker shrinker = new BigIntegerShrinker(BigInteger.valueOf(-5));
+		Stream<BigInteger> allShrunkValues = shrinker.shrink(BigInteger.valueOf(-10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
 				BigInteger.valueOf(-9),
@@ -65,8 +65,8 @@ class BigIntegerShrinkingCandidatesTests {
 
 	@Example
 	void shrinkPositiveValueTowardMinIf0IsOutsideRange() {
-		ShrinkingCandidates<BigInteger> shrinker = new BigIntegerShrinkingCandidates(BigInteger.valueOf(5));
-		Set<BigInteger> allShrunkValues = shrinker.candidatesFor(BigInteger.valueOf(10));
+		BigIntegerShrinker shrinker = new BigIntegerShrinker(BigInteger.valueOf(5));
+		Stream<BigInteger> allShrunkValues = shrinker.shrink(BigInteger.valueOf(10));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
 				BigInteger.valueOf(9),
@@ -79,8 +79,8 @@ class BigIntegerShrinkingCandidatesTests {
 
 	@Example
 	void shrinkCandidatesApproachTargetAndShrinkValueWithFibbonacciDistance() {
-		ShrinkingCandidates<BigInteger> shrinker = new BigIntegerShrinkingCandidates(BigInteger.ZERO);
-		Set<BigInteger> allShrunkValues = shrinker.candidatesFor(BigInteger.valueOf(90));
+		BigIntegerShrinker shrinker = new BigIntegerShrinker(BigInteger.ZERO);
+		Stream<BigInteger> allShrunkValues = shrinker.shrink(BigInteger.valueOf(90));
 		assertThat(allShrunkValues)
 			.containsExactlyInAnyOrder(
 				BigInteger.ZERO,

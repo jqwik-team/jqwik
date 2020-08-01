@@ -5,6 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
+import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
 class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
@@ -43,9 +44,8 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 	}
 
 	private Stream<Shrinkable<ActionSequence<T>>> shrinkSequenceOfActions() {
-		return new ComprehensiveSizeOfListShrinkingCandidates()
-				   .candidatesFor(actionGenerator.generated())
-				   .filter(listOfActions -> listOfActions.size() >= minSize)
+		return new ComprehensiveSizeOfListShrinker()
+				   .shrink(actionGenerator.generated(), minSize)
 				   .map(this::createShrinkableActionSequence);
 	}
 

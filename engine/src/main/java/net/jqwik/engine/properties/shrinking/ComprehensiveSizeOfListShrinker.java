@@ -1,13 +1,12 @@
-package net.jqwik.engine.properties.stateful;
+package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
 import java.util.stream.*;
 
-class ComprehensiveSizeOfListShrinkingCandidates {
+public class ComprehensiveSizeOfListShrinker {
 
-	public <T> Stream<List<T>> candidatesFor(List<T> toShrink) {
-		//At least one element will be kept
-		if (toShrink.size() <= 1) {
+	public <T> Stream<List<T>> shrink(List<T> toShrink, int minSize) {
+		if (toShrink.size() <= minSize) {
 			return Stream.empty();
 		}
 		Set<List<T>> setOfSequences = new HashSet<>();
