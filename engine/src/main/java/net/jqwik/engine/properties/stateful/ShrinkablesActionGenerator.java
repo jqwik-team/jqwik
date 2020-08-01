@@ -7,7 +7,7 @@ import net.jqwik.api.stateful.*;
 
 class ShrinkablesActionGenerator<T> implements ActionGenerator<T> {
 
-	private final Iterator<Shrinkable<Action<T>>> iterator;
+	private Iterator<Shrinkable<Action<T>>> iterator;
 	private List<Shrinkable<Action<T>>> shrinkables = new ArrayList<>();
 
 	ShrinkablesActionGenerator(List<Shrinkable<Action<T>>> shrinkables) {
@@ -18,11 +18,11 @@ class ShrinkablesActionGenerator<T> implements ActionGenerator<T> {
 	public Action<T> next(T model) {
 		while (iterator.hasNext()) {
 			Shrinkable<Action<T>> next = iterator.next();
-			if (!next.value().precondition(model)) {
+			if (!next.createValue().precondition(model)) {
 				continue;
 			}
 			shrinkables.add(next);
-			return next.value();
+			return next.createValue();
 		}
 		throw new NoSuchElementException("No more actions available");
 	}

@@ -117,45 +117,6 @@ class ActionGeneratorTests {
 		}
 	}
 
-	@Group
-	class FromListOfActions {
-		@Example
-		void generateActionsFromListOfShrinkables() {
-			List<Action<Integer>> listOfActions = Arrays.asList(
-				PLUS_1,
-				PLUS_2,
-				PLUS_1
-			);
-
-			ListActionGenerator<Integer> actionGenerator = new ListActionGenerator<>(listOfActions);
-
-			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
-			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
-			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
-			assertThat(actionGenerator.generated()).hasSize(3);
-
-			assertThatThrownBy(() -> actionGenerator.next(42)).isInstanceOf(NoSuchElementException.class);
-		}
-
-		@Example
-		void filterOutFailingPreconditions() {
-			List<Action<Integer>> listOfActions = Arrays.asList(
-				PLUS_1,
-				PLUS_2,
-				failedPrecondition(),
-				PLUS_1
-			);
-
-			ListActionGenerator<Integer> actionGenerator = new ListActionGenerator<>(listOfActions);
-
-			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
-			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_2);
-			assertThat(actionGenerator.next(42)).isEqualTo(PLUS_1);
-			assertThat(actionGenerator.generated()).hasSize(3);
-		}
-
-	}
-
 	private Action<Integer> plus1() {
 		return PLUS_1;
 	}

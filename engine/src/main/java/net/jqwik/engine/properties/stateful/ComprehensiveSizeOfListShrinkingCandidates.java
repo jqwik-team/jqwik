@@ -1,17 +1,14 @@
 package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
+import java.util.stream.*;
 
-/**
- * It no longer implements {@code ShrinkingCandidates<List<T>>} because its single use
- * in {@linkplain ShrinkableActionSequence} requires two different type signatures
- */
-class ComprehensiveListShrinkingCandidates {
+class ComprehensiveSizeOfListShrinkingCandidates {
 
-	public <T> Set<List<T>> candidatesFor(List<T> toShrink) {
+	public <T> Stream<List<T>> candidatesFor(List<T> toShrink) {
 		//At least one element will be kept
 		if (toShrink.size() <= 1) {
-			return Collections.emptySet();
+			return Stream.empty();
 		}
 		Set<List<T>> setOfSequences = new HashSet<>();
 		for (int i = 0; i < toShrink.size(); i++) {
@@ -19,6 +16,6 @@ class ComprehensiveListShrinkingCandidates {
 			newCandidate.remove(i);
 			setOfSequences.add(newCandidate);
 		}
-		return setOfSequences;
+		return setOfSequences.stream();
 	}
 }

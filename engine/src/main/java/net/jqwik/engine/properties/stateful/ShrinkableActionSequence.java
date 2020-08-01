@@ -1,119 +1,84 @@
 package net.jqwik.engine.properties.stateful;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.stateful.*;
-import net.jqwik.engine.properties.shrinking.*;
+import net.jqwik.engine.support.*;
 
 class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 
-	private final ComprehensiveListShrinkingCandidates listShrinkingCandidates = new ComprehensiveListShrinkingCandidates();
-
-	private final ActionSequence<T> value;
 	private final ActionGenerator<T> actionGenerator;
 	private final int minSize;
+	private final int maxSize;
 	private final ShrinkingDistance distance;
+
+	private SequentialActionSequence<T> generatedSequence = null;
 
 	ShrinkableActionSequence(ActionGenerator<T> actionGenerator, int minSize, int maxSize, ShrinkingDistance distance) {
 		this.actionGenerator = actionGenerator;
 		this.minSize = minSize;
+		this.maxSize = maxSize;
 		this.distance = distance;
-		this.value = new SequentialActionSequence<>(actionGenerator, maxSize);
 	}
 
 	@Override
 	public ActionSequence<T> value() {
-		// TODO: Find a way to generate a sequence lazily
-		return value;
+		throw new IllegalArgumentException();
 	}
 
 	@Override
 	public ActionSequence<T> createValue() {
-		return value();
+		if (generatedSequence == null) {
+			generatedSequence = new SequentialActionSequence<>(actionGenerator, maxSize);
+		}
+		return generatedSequence;
 	}
 
 	@Override
 	public Stream<Shrinkable<ActionSequence<T>>> shrink() {
-		return Stream.empty();
-	}
-
-	@Override
-	public ShrinkingSequence<ActionSequence<T>> shrink(Falsifier<ActionSequence<T>> falsifier) {
-		Falsifier<ActionSequence<T>> minRespectingFalsifier =
-			falsifier.withPostFilter(actionSequence -> actionSequence.runActions().size() >= minSize);
-
-		return shrinkSequenceOfActions(minRespectingFalsifier)
-				   .andThen(shrinkableList -> { //
-					   ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkableList;
-					   Falsifier<List<Action<T>>> listFalsifier = minRespectingFalsifier.map(this::toRunnableActionSequence);
-					   return shrinkIndividualActions(shrinkableSequence, listFalsifier)
-								  // Shrink list of actions again since element shrinking
-								  // might have made some actions unnecessary
-								  .andThen(shrinkListOfActions(listFalsifier))
-								  .mapValue(this::toDisplayOnlyActionSequence);
-				   });
-
-	}
-
-	private Function<Shrinkable<List<Action<T>>>, ShrinkingSequence<List<Action<T>>>> shrinkListOfActions(Falsifier<List<Action<T>>> listFalsifier) {
-		return shrinkableListOfActions ->
-				   new DeepSearchShrinkingSequence<>(shrinkableListOfActions, this::shrinkActionListCandidates, listFalsifier);
-	}
-
-	private Set<Shrinkable<List<Action<T>>>> shrinkActionListCandidates(Shrinkable<List<Action<T>>> shrinkableList) {
-		return listShrinkingCandidates
-				   .candidatesFor(shrinkableList.value())
-				   .stream()
-				   .map(elements -> elements.stream().map(Shrinkable::unshrinkable).collect(Collectors.toList()))
-				   .map((List<Shrinkable<Action<T>>> shrinkableElements) -> (Shrinkable<List<Action<T>>>) new ShrinkableList(shrinkableElements, 1))
-				   .collect(Collectors.toSet());
-	}
-
-	private ShrinkingSequence<List<Action<T>>> shrinkIndividualActions(
-		ShrinkableActionSequence<T> shrinkableActionSequence,
-		Falsifier<List<Action<T>>> listFalsifier
-	) {
-		return new ShrinkElementsSequence<>(
-			shrinkableActionSequence.actionGenerator.generated(),
-			listFalsifier,
-			ShrinkingDistance::forCollection
+		if (generatedSequence == null) {
+			return Stream.empty();
+		}
+		return JqwikStreamSupport.concat(
+			shrinkSequenceOfActions(),
+			shrinkActionsOneAfterTheOther()
 		);
 	}
 
-	private ActionSequence<T> toDisplayOnlyActionSequence(List<Action<T>> listOfActions) {
-		return new FixedActionsFailedActionSequence<>(listOfActions);
+	private Stream<Shrinkable<ActionSequence<T>>> shrinkSequenceOfActions() {
+		return new ComprehensiveSizeOfListShrinkingCandidates()
+				   .candidatesFor(actionGenerator.generated())
+				   .filter(listOfActions -> listOfActions.size() >= minSize)
+				   .map(this::createShrinkableActionSequence);
 	}
 
-	private ActionSequence<T> toRunnableActionSequence(List<Action<T>> listOfActions) {
-		ActionGenerator<T> newActionGenerator = new ListActionGenerator<>(listOfActions);
-		return new SequentialActionSequence<T>(newActionGenerator, listOfActions.size());
+	private Stream<Shrinkable<ActionSequence<T>>> shrinkActionsOneAfterTheOther() {
+		List<Shrinkable<Action<T>>> shrinkableActions = actionGenerator.generated();
+		List<Stream<Shrinkable<ActionSequence<T>>>> shrinkPerElementStreams = new ArrayList<>();
+		for (int i = 0; i < shrinkableActions.size(); i++) {
+			int index = i;
+			Shrinkable<Action<T>> element = shrinkableActions.get(i);
+			Stream<Shrinkable<ActionSequence<T>>> shrinkElement = element.shrink().flatMap(shrunkElement -> {
+				List<Shrinkable<Action<T>>> actionsCopy = new ArrayList<>(shrinkableActions);
+				actionsCopy.set(index, shrunkElement);
+				return Stream.of(createShrinkableActionSequence(actionsCopy));
+			});
+			shrinkPerElementStreams.add(shrinkElement);
+		}
+		return JqwikStreamSupport.concat(shrinkPerElementStreams);
 	}
 
-	private ShrinkableActionSequence<T> toShrinkableActionSequence(List<Shrinkable<Action<T>>> list) {
+	private ShrinkableActionSequence<T> createShrinkableActionSequence(List<Shrinkable<Action<T>>> list) {
 		ActionGenerator<T> newGenerator = new ShrinkablesActionGenerator<>(list);
 		ShrinkingDistance newDistance = ShrinkingDistance.forCollection(list);
-		return new ShrinkableActionSequence<>(newGenerator, 1, list.size(), newDistance);
-	}
-
-	private DeepSearchShrinkingSequence<ActionSequence<T>> shrinkSequenceOfActions(Falsifier<ActionSequence<T>> falsifier) {
-		return new DeepSearchShrinkingSequence<>(this, this::shrinkSequenceCandidates, falsifier);
-	}
-
-	private Set<Shrinkable<ActionSequence<T>>> shrinkSequenceCandidates(Shrinkable<ActionSequence<T>> shrinkable) {
-		ShrinkableActionSequence<T> shrinkableSequence = (ShrinkableActionSequence<T>) shrinkable;
-		return listShrinkingCandidates
-				   .candidatesFor(shrinkableSequence.actionGenerator.generated())
-				   .stream()
-				   .map(this::toShrinkableActionSequence)
-				   .collect(Collectors.toSet());
+		return new ShrinkableActionSequence<>(newGenerator, minSize, list.size(), newDistance);
 	}
 
 	@Override
 	public ShrinkingDistance distance() {
-		if (value.runState() == ActionSequence.RunState.NOT_RUN) {
+		if (generatedSequence == null) {
 			return distance;
 		}
 		return ShrinkingDistance.forCollection(actionGenerator.generated());
