@@ -4,11 +4,11 @@ import java.util.*;
 
 import net.jqwik.api.*;
 
-public class NEW_ShrinkSizeOfListCandidates<T> implements ShrinkingCandidates<List<Shrinkable<T>>> {
+public class ShrinkSizeOfListCandidates<T> implements ShrinkingCandidates<List<Shrinkable<T>>> {
 
 	private final int minSize;
 
-	public NEW_ShrinkSizeOfListCandidates(int minSize) {
+	public ShrinkSizeOfListCandidates(int minSize) {
 		this.minSize = minSize;
 	}
 

@@ -9,7 +9,7 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
-abstract class NEW_AbstractShrinker {
+abstract class AbstractShrinker {
 
 	private static ShrinkingDistance calculateDistance(List<Shrinkable<Object>> shrinkables) {
 		return ShrinkingDistance.forCollection(shrinkables);
@@ -17,7 +17,7 @@ abstract class NEW_AbstractShrinker {
 
 	private final Map<List<Object>, TryExecutionResult> falsificationCache;
 
-	public NEW_AbstractShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+	public AbstractShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
 		this.falsificationCache = falsificationCache;
 	}
 

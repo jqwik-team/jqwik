@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
-class NEW_ChooseValueShrinkableTests {
+class ChooseValueShrinkableTests {
 
 	@Example
 	void creation() {

@@ -99,7 +99,7 @@ public class ShrinkingTestHelper {
 	) {
 		FalsifiedSample sample = toFalsifiedSample(falsifiedShrinkable, originalError);
 		Consumer<FalsifiedSample> parametersReporter = ignore -> {};
-		NEW_PropertyShrinker shrinker = new NEW_PropertyShrinker(sample, ShrinkingMode.FULL, parametersReporter, null);
+		PropertyShrinker shrinker = new PropertyShrinker(sample, ShrinkingMode.FULL, parametersReporter, null);
 
 		return shrinker.shrink(toParamFalsifier(falsifier));
 	}

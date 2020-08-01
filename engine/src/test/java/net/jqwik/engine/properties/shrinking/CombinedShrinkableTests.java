@@ -14,7 +14,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("CombinedShrinkable")
-class NEW_CombinedShrinkableTests {
+class CombinedShrinkableTests {
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Example

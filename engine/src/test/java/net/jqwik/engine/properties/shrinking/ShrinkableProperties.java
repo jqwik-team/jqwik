@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
-class NEW_ShrinkableProperties {
+class ShrinkableProperties {
 
 	@Property(tries = 100)
 	void allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {

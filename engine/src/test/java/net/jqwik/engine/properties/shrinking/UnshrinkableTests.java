@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
-class NEW_UnshrinkableTests {
+class UnshrinkableTests {
 
 	@Example
 	void unshrinkableAreNotBeingShrunk() {

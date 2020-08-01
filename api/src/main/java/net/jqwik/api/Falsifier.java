@@ -43,19 +43,6 @@ public interface Falsifier<T> {
 	}
 
 	@API(status = INTERNAL)
-	default Falsifier<T> withPostFilter(Predicate<T> filter) {
-		return value -> {
-			try {
-				return Falsifier.this.execute(value);
-			} finally {
-				if (!filter.test(value)) {
-					return TryExecutionResult.invalid();
-				}
-			}
-		};
-	}
-
-	@API(status = INTERNAL)
 	default <U> Falsifier<U> map(Function<U, T> mapper) {
 		return value -> {
 			T other = null;

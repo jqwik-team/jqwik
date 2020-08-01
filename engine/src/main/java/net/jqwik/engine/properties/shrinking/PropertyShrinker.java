@@ -10,9 +10,9 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
-public class NEW_PropertyShrinker {
+public class PropertyShrinker {
 
-	private static final Logger LOG = Logger.getLogger(NEW_PropertyShrinker.class.getName());
+	private static final Logger LOG = Logger.getLogger(PropertyShrinker.class.getName());
 
 	private final static int BOUNDED_SHRINK_ATTEMPTS = 50000;
 
@@ -25,7 +25,7 @@ public class NEW_PropertyShrinker {
 	private final AtomicInteger shrinkingAttemptsCounter = new AtomicInteger(0);
 	private final Map<List<Object>, TryExecutionResult> falsificationCache = new HashMap<>();
 
-	public NEW_PropertyShrinker(
+	public PropertyShrinker(
 		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
 		Consumer<FalsifiedSample> falsifiedSampleReporter,
@@ -100,7 +100,7 @@ public class NEW_PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new NEW_OneAfterTheOtherShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return new OneAfterTheOtherShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
 	private FalsifiedSample shrinkParametersPairwise(
@@ -109,7 +109,7 @@ public class NEW_PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new NEW_PairwiseShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return new PairwiseShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {
@@ -117,7 +117,7 @@ public class NEW_PropertyShrinker {
 	}
 
 	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Optional<Throwable> originalError) {
-		boolean areEquivalent = new NEW_ErrorEquivalenceChecker(targetMethod).areEquivalent(originalError, result.throwable());
+		boolean areEquivalent = new ErrorEquivalenceChecker(targetMethod).areEquivalent(originalError, result.throwable());
 		return result.isFalsified() && !areEquivalent;
 	}
 

@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
-class NEW_ArbitraryShrinkingTests {
+class ArbitraryShrinkingTests {
 
 	@Property(tries = 10)
 	void values(@ForAll Random random) {

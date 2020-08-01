@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
-class NEW_ShrinkTowardsTests {
+class ShrinkTowardsTests {
 
 	@Property(tries = 50)
 	void bytes(@ForAll Random random, @ForAll byte target) {

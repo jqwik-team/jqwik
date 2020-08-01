@@ -1,10 +1,11 @@
 - 1.3.3
 
     - Re-implement shrinking
-        - Enable @Disabled tests
-        - Remove NEW_ prefix
+        - Remove type variable from Falsifier<T>
+        - Make ShrinkingCandidates return Stream of shrinkables
         - Add sample reporter for ActionSequences
         - Review shrinking related TODOs
+        - Let negative numbers try their positive counter part
         - Remove duplication in shrink methods (especially one-after-the-other)
         - Possibility of shrinking one element and growing another
         - UniqueShrinkable should be able to shrink to previously tried values

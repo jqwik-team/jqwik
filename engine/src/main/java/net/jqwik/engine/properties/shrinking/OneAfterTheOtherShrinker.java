@@ -5,13 +5,12 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
-class NEW_OneAfterTheOtherShrinker extends NEW_AbstractShrinker {
+class OneAfterTheOtherShrinker extends AbstractShrinker {
 
-	public NEW_OneAfterTheOtherShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+	public OneAfterTheOtherShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
 		super(falsificationCache);
 	}
 

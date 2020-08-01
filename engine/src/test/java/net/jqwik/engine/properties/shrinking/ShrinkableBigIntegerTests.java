@@ -12,7 +12,7 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("ShrinkableBigInteger")
-class NEW_ShrinkableBigIntegerTests {
+class ShrinkableBigIntegerTests {
 
 	@Example
 	void creation() {
