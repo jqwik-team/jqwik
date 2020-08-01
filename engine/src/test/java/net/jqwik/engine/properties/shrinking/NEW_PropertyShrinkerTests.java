@@ -17,7 +17,7 @@ import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 class NEW_PropertyShrinkerTests {
 
@@ -454,7 +454,7 @@ class NEW_PropertyShrinkerTests {
 	}
 
 	private List<Object> createValues(FalsifiedSample sample) {
-		return sample.shrinkables().stream().map(Shrinkable::createValue).collect(Collectors.toList());
+		return sample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
 	}
 
 	private List<Shrinkable<Object>> listOfOneStepShrinkables(int... args) {

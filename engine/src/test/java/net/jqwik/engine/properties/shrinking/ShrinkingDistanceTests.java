@@ -87,7 +87,7 @@ class ShrinkingDistanceTests {
 		void nonUniformCollection() {
 			Collection<Shrinkable<String>> elements = asList(
 				Shrinkable.unshrinkable("hello"), // [0]
-				ShrinkableStringTests.createShrinkableString("bcd", 0) // [3, 6]
+				NEW_ShrinkableStringTests.createShrinkableString("bcd", 0) // [3, 6]
 			);
 			ShrinkingDistance distance = ShrinkingDistance.forCollection(elements);
 			assertThat(distance).isEqualByComparingTo(ShrinkingDistance.of(2, 3, 6));

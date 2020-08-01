@@ -10,7 +10,7 @@ import net.jqwik.engine.properties.shrinking.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 class EdgeCasesTests {
 
@@ -23,8 +23,8 @@ class EdgeCasesTests {
 		EdgeCases<BigInteger> edgeCases = EdgeCases.fromSuppliers(suppliers);
 
 		Iterator<Shrinkable<BigInteger>> iterator = edgeCases.iterator();
-		assertThat(iterator.next().createValue()).isEqualTo(BigInteger.valueOf(42));
-		assertThat(iterator.next().createValue()).isEqualTo(BigInteger.valueOf(49));
+		assertThat(iterator.next().value()).isEqualTo(BigInteger.valueOf(42));
+		assertThat(iterator.next().value()).isEqualTo(BigInteger.valueOf(49));
 		assertThat(iterator.hasNext()).isFalse();
 	}
 

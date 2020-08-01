@@ -19,25 +19,8 @@ public abstract class AbstractShrinkable<T> implements Shrinkable<T> {
 	}
 
 	@Override
-	public T createValue() {
-		return value();
-	}
-
-	@Override
 	public Stream<Shrinkable<T>> shrink() {
 		return shrinkCandidatesFor(this).stream().sorted(Comparator.comparing(Shrinkable::distance));
-	}
-
-	@Override
-	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
-		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier);
-	}
-
-	@Override
-	public List<Shrinkable<T>> shrinkingSuggestions() {
-		ArrayList<Shrinkable<T>> shrinkables = new ArrayList<>(shrinkCandidatesFor(this));
-		shrinkables.sort(null);
-		return shrinkables;
 	}
 
 	public abstract Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable);
@@ -60,8 +43,8 @@ public abstract class AbstractShrinkable<T> implements Shrinkable<T> {
 	@Override
 	public String toString() {
 		return String.format("%s<%s>(%s:%s)", //
-			getClass().getSimpleName(), //
-			value().getClass().getSimpleName(), //
-			value(), distance());
+							 getClass().getSimpleName(), //
+							 value().getClass().getSimpleName(), //
+							 value(), distance());
 	}
 }

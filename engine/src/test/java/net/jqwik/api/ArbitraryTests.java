@@ -158,7 +158,7 @@ class ArbitraryTests {
 
 			Set<Integer> generatedValues =
 				generator.stream(random)
-						 .map(Shrinkable::createValue)
+						 .map(Shrinkable::value)
 						 .limit(5)
 						 .collect(Collectors.toSet());
 
@@ -174,7 +174,7 @@ class ArbitraryTests {
 
 			Set<Integer> generatedValues =
 				generator.stream(rand)
-						 .map(Shrinkable::createValue)
+						 .map(Shrinkable::value)
 						 .limit(4)
 						 .collect(Collectors.toSet());
 
@@ -317,11 +317,11 @@ class ArbitraryTests {
 
 			RandomGenerator<String> generator = mapped.generator(10);
 
-			assertThat(generator.next(random).createValue()).hasSize(1);
-			assertThat(generator.next(random).createValue()).hasSize(2);
-			assertThat(generator.next(random).createValue()).hasSize(3);
-			assertThat(generator.next(random).createValue()).hasSize(4);
-			assertThat(generator.next(random).createValue()).hasSize(5);
+			assertThat(generator.next(random).value()).hasSize(1);
+			assertThat(generator.next(random).value()).hasSize(2);
+			assertThat(generator.next(random).value()).hasSize(3);
+			assertThat(generator.next(random).value()).hasSize(4);
+			assertThat(generator.next(random).value()).hasSize(5);
 
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("a"));
 			ArbitraryTestHelper.assertAtLeastOneGenerated(generator, s -> s.startsWith("b"));
@@ -342,10 +342,10 @@ class ArbitraryTests {
 			Arbitrary<String> combined = Combinators.combine(a1, a2).as((i1, i2) -> i1 + ":" + i2);
 			RandomGenerator<String> generator = combined.generator(10);
 
-			assertThat(generator.next(random).createValue()).isEqualTo("1:4");
-			assertThat(generator.next(random).createValue()).isEqualTo("2:5");
-			assertThat(generator.next(random).createValue()).isEqualTo("3:6");
-			assertThat(generator.next(random).createValue()).isEqualTo("1:4");
+			assertThat(generator.next(random).value()).isEqualTo("1:4");
+			assertThat(generator.next(random).value()).isEqualTo("2:5");
+			assertThat(generator.next(random).value()).isEqualTo("3:6");
+			assertThat(generator.next(random).value()).isEqualTo("1:4");
 		}
 
 	}

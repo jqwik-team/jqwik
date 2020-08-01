@@ -11,7 +11,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("CollectShrinkable")
@@ -29,7 +29,7 @@ class NEW_CollectShrinkableTests {
 		CollectShrinkable<Integer> shrinkable = new CollectShrinkable<>(shrinkables, untilIsIgnoredHere);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 6));
-		assertThat(shrinkable.createValue()).containsExactly(3, 2, 1);
+		assertThat(shrinkable.value()).containsExactly(3, 2, 1);
 	}
 
 	@Group

@@ -18,11 +18,6 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public T value() {
-		return combinator.apply(toValues(parts));
-	}
-
-	@Override
-	public T createValue() {
 		return createValue(parts);
 	}
 
@@ -31,16 +26,7 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 	}
 
 	private List<Object> createValues(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::createValue).collect(Collectors.toList());
-	}
-
-	private List<Object> toValues(List<Shrinkable<Object>> shrinkables) {
 		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
-	}
-
-	@Override
-	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
-		return new CombinedShrinkingSequence(falsifier);
 	}
 
 	@Override
@@ -68,38 +54,4 @@ public class CombinedShrinkable<T> implements Shrinkable<T> {
 		return ShrinkingDistance.combine(parts);
 	}
 
-	private class CombinedShrinkingSequence implements ShrinkingSequence<T> {
-
-		final private ShrinkingSequence<List<Object>> elementsSequence;
-
-		private CombinedShrinkingSequence(Falsifier<T> falsifier) {
-			Falsifier<List<Object>> combinedFalsifier = falsifier.map(combinator);
-			elementsSequence = new ShrinkElementsSequence<>(
-				parts,
-				combinedFalsifier,
-				ShrinkingDistance::combine
-			);
-		}
-
-		@Override
-		public void init(FalsificationResult<T> initialCurrent) {
-			// Only throwable is used in elementsSequence
-			elementsSequence.init(FalsificationResult.falsified(
-				Shrinkable.unshrinkable(new ArrayList<>()),
-				initialCurrent.throwable().orElse(null)
-			));
-		}
-
-		@Override
-		public boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter) {
-			Consumer<FalsificationResult<List<Object>>> combinedReporter =
-				result -> falsifiedReporter.accept(result.map(shrinkable -> shrinkable.map(combinator)));
-			return elementsSequence.next(count, combinedReporter);
-		}
-
-		@Override
-		public FalsificationResult<T> current() {
-			return elementsSequence.current().map(shrinkable -> shrinkable.map(combinator));
-		}
-	}
 }

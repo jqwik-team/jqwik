@@ -25,11 +25,6 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 
 	@Override
 	public ActionSequence<T> value() {
-		throw new IllegalArgumentException();
-	}
-
-	@Override
-	public ActionSequence<T> createValue() {
 		if (generatedSequence == null) {
 			generatedSequence = new SequentialActionSequence<>(actionGenerator, maxSize);
 		}

@@ -56,7 +56,7 @@ class ActionSequenceProperties {
 		Arbitrary<ActionSequence<String>> arbitrary = Arbitraries.sequences(error());
 		Shrinkable<ActionSequence<String>> sequence = arbitrary.generator(10).next(random);
 
-		Assertions.assertThatThrownBy(() -> sequence.createValue().run(""))
+		Assertions.assertThatThrownBy(() -> sequence.value().run(""))
 				  .isInstanceOf(AssertionFailedError.class).hasCauseInstanceOf(AssertionError.class);
 	}
 

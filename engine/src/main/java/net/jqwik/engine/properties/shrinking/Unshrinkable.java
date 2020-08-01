@@ -22,18 +22,8 @@ public class Unshrinkable<T> implements Shrinkable<T> {
 	}
 
 	@Override
-	public T createValue() {
-		return value();
-	}
-
-	@Override
 	public Stream<Shrinkable<T>> shrink() {
 		return Stream.empty();
-	}
-
-	@Override
-	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
-		return ShrinkingSequence.dontShrink(this);
 	}
 
 	@Override

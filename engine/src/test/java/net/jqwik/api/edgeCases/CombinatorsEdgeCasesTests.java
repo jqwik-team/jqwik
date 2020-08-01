@@ -10,7 +10,7 @@ import net.jqwik.api.lifecycle.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @SuppressWarnings("Convert2MethodRef")
 class CombinatorsEdgeCasesTests {

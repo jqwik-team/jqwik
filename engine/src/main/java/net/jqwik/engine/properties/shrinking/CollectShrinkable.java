@@ -21,11 +21,6 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 		return createValue(elements);
 	}
 
-	@Override
-	public List<T> createValue() {
-		return value();
-	}
-
 	private List<T> createValue(List<Shrinkable<T>> elements) {
 		return elements
 				   .stream()
@@ -34,16 +29,11 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 	}
 
 	@Override
-	public ShrinkingSequence<List<T>> shrink(Falsifier<List<T>> falsifier) {
-		return new CollectShrinkingSequence<>(elements, until, falsifier);
-	}
-
-	@Override
 	public Stream<Shrinkable<List<T>>> shrink() {
 		return JqwikStreamSupport.concat(
 			shrinkElementsOneAfterTheOther(),
 			sortElements()
-		).filter(s -> until.test(s.createValue()));
+		).filter(s -> until.test(s.value()));
 	}
 
 	private Stream<Shrinkable<List<T>>> shrinkElementsOneAfterTheOther() {

@@ -18,11 +18,11 @@ class ShrinkablesActionGenerator<T> implements ActionGenerator<T> {
 	public Action<T> next(T model) {
 		while (iterator.hasNext()) {
 			Shrinkable<Action<T>> next = iterator.next();
-			if (!next.createValue().precondition(model)) {
+			if (!next.value().precondition(model)) {
 				continue;
 			}
 			shrinkables.add(next);
-			return next.createValue();
+			return next.value();
 		}
 		throw new NoSuchElementException("No more actions available");
 	}

@@ -5,7 +5,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("FilteredShrinkable")
@@ -16,7 +16,7 @@ class NEW_FilteredShrinkableTests {
 		Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3);
 		Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3));
-		assertThat(shrinkable.createValue()).isEqualTo(3);
+		assertThat(shrinkable.value()).isEqualTo(3);
 	}
 
 	@Group

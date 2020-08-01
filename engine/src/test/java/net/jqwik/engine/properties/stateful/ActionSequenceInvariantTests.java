@@ -14,7 +14,7 @@ class ActionSequenceInvariantTests {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(changeValue());
 		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(10).next(random);
 
-		ActionSequence<MyModel> sequenceWithInvariant = sequence.createValue().withInvariant(model -> Assertions.assertThat(true).isTrue());
+		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> Assertions.assertThat(true).isTrue());
 		MyModel result = sequenceWithInvariant.run(new MyModel());
 		return result.value.length() > 0;
 	}
@@ -28,7 +28,7 @@ class ActionSequenceInvariantTests {
 		Arbitrary<ActionSequence<MyModel>> arbitrary = Arbitraries.sequences(Arbitraries.oneOf(changeValue(), nullify())).ofMinSize(20);
 		Shrinkable<ActionSequence<MyModel>> sequence = arbitrary.generator(1000).next(random);
 
-		ActionSequence<MyModel> sequenceWithInvariant = sequence.createValue().withInvariant(model -> Assertions.assertThat(model.value).isNotNull());
+		ActionSequence<MyModel> sequenceWithInvariant = sequence.value().withInvariant(model -> Assertions.assertThat(model.value).isNotNull());
 
 		Assertions.assertThatThrownBy(() -> sequenceWithInvariant.run(new MyModel()))
 				  .isInstanceOf(InvariantFailedError.class);

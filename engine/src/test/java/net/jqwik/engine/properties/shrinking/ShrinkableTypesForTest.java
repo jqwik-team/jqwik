@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -81,7 +80,7 @@ public class ShrinkableTypesForTest {
 
 		@Override
 		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
-			return Collections.singleton(new ShrinkToLarger(shrinkable.createValue() + 1));
+			return Collections.singleton(new ShrinkToLarger(shrinkable.value() + 1));
 		}
 
 		@Override
@@ -102,7 +101,7 @@ public class ShrinkableTypesForTest {
 			if (shrinkable.value() == 0) {
 				return Collections.emptySet();
 			}
-			return Collections.singleton(new ShrinkWithFixedDistance(shrinkable.createValue() - 1));
+			return Collections.singleton(new ShrinkWithFixedDistance(shrinkable.value() - 1));
 		}
 
 		@Override

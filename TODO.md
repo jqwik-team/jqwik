@@ -1,6 +1,11 @@
 - 1.3.3
 
     - Re-implement shrinking
+        - Enable @Disabled tests
+        - Remove NEW_ prefix
+        - Add sample reporter for ActionSequences
+        - Review shrinking related TODOs
+        - Remove duplication in shrink methods (especially one-after-the-other)
         - Possibility of shrinking one element and growing another
         - UniqueShrinkable should be able to shrink to previously tried values
         

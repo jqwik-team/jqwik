@@ -10,11 +10,9 @@ import net.jqwik.engine.support.*;
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	protected final List<Shrinkable<E>> elements;
 	protected final int minSize;
-	private final ListShrinkingCandidates<Shrinkable<E>> shrinkCandidates;
 
 	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize) {
 		this.elements = elements;
-		this.shrinkCandidates = new ListShrinkingCandidates<>(minSize);
 		this.minSize = minSize;
 	}
 
@@ -28,32 +26,6 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	@Override
 	public C value() {
 		return createValue(elements);
-	}
-
-	@Override
-	public ShrinkingSequence<C> shrink(Falsifier<C> falsifier) {
-		return new DeepSearchShrinkingSequence<>(this, this::shrinkCandidatesFor, falsifier)
-				   .andThen(shrinkableList -> {
-					   List<Shrinkable<E>> elements = ((ShrinkableContainer<C, E>) shrinkableList).elements;
-					   Falsifier<List<E>> listFalsifier = falsifier.map(this::toContainer);
-					   return new ContainerShrinkingSequence<>(elements, listFalsifier, ShrinkingDistance::forCollection, this::toContainerShrinkable);
-				   }).andThen(shrinkableContainer ->
-								  new DeepSearchShrinkingSequence<>(shrinkableContainer, this::shrinkCandidatesFor, falsifier)
-			);
-	}
-
-	@Override
-	public List<Shrinkable<C>> shrinkingSuggestions() {
-		ArrayList<Shrinkable<C>> shrinkables = new ArrayList<>(shrinkCandidatesFor(this));
-		shrinkables.addAll(Shrinkable.super.shrinkingSuggestions());
-		shrinkables.sort(null);
-		return shrinkables;
-	}
-
-	@Override
-	public C createValue() {
-		// TODO: Check if the underlying elements are freshly created
-		return value();
 	}
 
 	@Override
@@ -141,26 +113,6 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 			}
 		}
 		return swaps.stream();
-	}
-
-	private C toContainer(List<E> listOfE) {
-		return listOfE.stream().collect(containerCollector());
-	}
-
-	private Shrinkable<C> toContainerShrinkable(Shrinkable<List<E>> listOfShrinkable) {
-		List<Shrinkable<E>> shrinkableElements =
-			listOfShrinkable.value().stream()
-							.map(Shrinkable::unshrinkable)
-							.collect(Collectors.toList());
-		return createShrinkable(shrinkableElements);
-	}
-
-	private Set<Shrinkable<C>> shrinkCandidatesFor(Shrinkable<C> shrinkable) {
-		ShrinkableContainer<C, E> listShrinkable = (ShrinkableContainer<C, E>) shrinkable;
-		return shrinkCandidates.candidatesFor(listShrinkable.elements)
-							   .stream()
-							   .map(this::createShrinkable)
-							   .collect(Collectors.toSet());
 	}
 
 	@Override

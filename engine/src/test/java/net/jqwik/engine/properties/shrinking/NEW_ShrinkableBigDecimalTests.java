@@ -10,7 +10,7 @@ import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.engine.properties.arbitraries.randomized.RandomDecimalGenerators.*;
 
 class NEW_ShrinkableBigDecimalTests {

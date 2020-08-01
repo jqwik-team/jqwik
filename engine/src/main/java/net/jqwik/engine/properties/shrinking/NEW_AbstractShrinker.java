@@ -90,7 +90,7 @@ abstract class NEW_AbstractShrinker {
 	}
 
 	private Stream<Object> createValues(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::createValue);
+		return shrinkables.stream().map(Shrinkable::value);
 	}
 
 	private static class FilteredResults {

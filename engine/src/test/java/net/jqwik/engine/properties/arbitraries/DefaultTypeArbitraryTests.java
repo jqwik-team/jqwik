@@ -359,7 +359,7 @@ class DefaultTypeArbitraryTests {
 
 			RandomGenerator<Customer> generator = typeArbitrary.generator(1000);
 			Assertions.assertThatThrownBy(
-				() -> generator.next(SourceOfRandomness.current()).value()
+					() -> generator.next(SourceOfRandomness.current()).value()
 			).isInstanceOf(JqwikException.class);
 		}
 
