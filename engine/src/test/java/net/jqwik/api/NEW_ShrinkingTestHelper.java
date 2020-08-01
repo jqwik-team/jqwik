@@ -21,7 +21,7 @@ public class NEW_ShrinkingTestHelper {
 	}
 
 	public static FalsifiedSample toFalsifiedSample(List<Shrinkable<Object>> shrinkables, Throwable originalError) {
-		List<Object> parameters = shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		List<Object> parameters = shrinkables.stream().map(Shrinkable::createValue).collect(Collectors.toList());
 		return new FalsifiedSample(parameters, shrinkables, Optional.ofNullable(originalError));
 	}
 

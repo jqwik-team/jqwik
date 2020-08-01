@@ -34,7 +34,7 @@ class MyStringStackProperties {
 	void checkMyStackWithInvariant(@ForAll("sequences") ActionSequence<MyStringStack> actions) {
 		actions
 			.withInvariant("greater", stack -> Assertions.assertThat(stack.size()).isGreaterThanOrEqualTo(0))
-			.withInvariant("less", stack -> Assertions.assertThat(stack.size()).isLessThan(5))
+			.withInvariant("less", stack -> Assertions.assertThat(stack.size()).isLessThan(5)) // Does not hold!
 			.run(new MyStringStack());
 	}
 }

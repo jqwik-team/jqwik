@@ -23,12 +23,12 @@ class RandomActionGenerator<T> implements ActionGenerator<T> {
 		int tries = 0;
 		while (tries++ < MAX_TRIES) {
 			Shrinkable<Action<T>> shrinkable = randomGenerator.next(random);
-			boolean precondition = shrinkable.value().precondition(model);
+			boolean precondition = shrinkable.createValue().precondition(model);
 			if (!precondition) {
 				continue;
 			}
 			shrinkableActions.add(shrinkable);
-			return shrinkable.value();
+			return shrinkable.createValue();
 		}
 		String message = String.format("Could not find action with succeeding precondition after %s tries", tries);
 		throw new NoSuchElementException(message);
