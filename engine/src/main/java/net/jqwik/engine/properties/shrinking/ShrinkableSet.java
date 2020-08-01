@@ -16,13 +16,8 @@ public class ShrinkableSet<E> extends ShrinkableContainer<Set<E>, E> {
 	}
 
 	@Override
-	public ShrinkingSequence<Set<E>> shrink(Falsifier<Set<E>> falsifier) {
-		return super.shrink(falsifier.withFilter(set -> set.size() >= minSize));
-	}
-
-	@Override
 	public Stream<Shrinkable<Set<E>>> shrink() {
-		return super.shrink().filter(shrinkableSet -> shrinkableSet.createValue().size() >= minSize);
+		return super.shrink().filter(shrinkableSet -> shrinkableSet.value().size() >= minSize);
 	}
 
 	@Override

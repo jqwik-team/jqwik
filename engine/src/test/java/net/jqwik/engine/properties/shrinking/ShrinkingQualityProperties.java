@@ -11,7 +11,7 @@ import net.jqwik.engine.properties.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 /**
  * Inspired by https://github.com/HypothesisWorks/hypothesis/blob/master/hypothesis-python/tests/quality/test_shrink_quality.py

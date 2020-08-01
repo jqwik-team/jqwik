@@ -29,7 +29,7 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 				try {
 					next = fetchShrinkable.apply(random);
 					// Enforce value generation for possible exception raising
-					next.createValue();
+					next.value();
 					return Tuple.of(true, next);
 				} catch (Throwable throwable) {
 					if (exceptionType.isAssignableFrom(throwable.getClass())) {
@@ -59,20 +59,10 @@ public class IgnoreExceptionGenerator<T> implements RandomGenerator<T> {
 		}
 
 		@Override
-		public T createValue() {
-			return value();
-		}
-
-		@Override
-		public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
-			return shrinkable.shrink(falsifier);
-		}
-
-		@Override
 		public Stream<Shrinkable<T>> shrink() {
 			return shrinkable.shrink().filter(s -> {
 				try {
-					s.createValue();
+					s.value();
 					return true;
 				} catch (Throwable throwable) {
 					if (exceptionType.isAssignableFrom(throwable.getClass())) {

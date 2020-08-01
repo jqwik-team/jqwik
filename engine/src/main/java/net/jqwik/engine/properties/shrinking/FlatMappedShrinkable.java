@@ -31,17 +31,6 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	}
 
 	@Override
-	public ShrinkingSequence<U> shrink(Falsifier<U> falsifier) {
-		Falsifier<T> toMapFalsifier = falsifier.map(at -> generateShrinkable(at).value());
-		return toMap.shrink(toMapFalsifier)
-					.map(resultMapperToU(mapper))
-					.andThen(aShrinkable -> {
-						FlatMappedShrinkable<T, U> flatMappedShrinkable = (FlatMappedShrinkable<T, U>) aShrinkable;
-						return flatMappedShrinkable.shrinkable().shrink(falsifier);
-					});
-	}
-
-	@Override
 	public Stream<Shrinkable<U>> shrink() {
 		return JqwikStreamSupport.concat(
 			shrinkRightSide(),
@@ -60,33 +49,9 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		});
 	}
 
-	private static <T, U> Function<FalsificationResult<T>, FalsificationResult<U>> resultMapperToU(Function<T, Shrinkable<U>> mapper) {
-		return result -> result.map(shrinkableT -> {
-			return new FlatMappedShrinkable<>(shrinkableT, mapper);
-		});
-	}
-
-	@Override
-	public List<Shrinkable<U>> shrinkingSuggestions() {
-		List<Shrinkable<U>> suggestions = new ArrayList<>();
-		suggestions.addAll(shrinkable().shrinkingSuggestions());
-		for (Shrinkable<T> tShrinkable : toMap.shrinkingSuggestions()) {
-			FlatMappedShrinkable<T, U> flatMappedShrinkable = new FlatMappedShrinkable<>(tShrinkable, mapper);
-			suggestions.add(flatMappedShrinkable.shrinkable());
-			suggestions.addAll(flatMappedShrinkable.shrinkingSuggestions());
-		}
-		suggestions.sort(null);
-		return suggestions;
-	}
-
 	@Override
 	public U value() {
 		return shrinkable().value();
-	}
-
-	@Override
-	public U createValue() {
-		return value();
 	}
 
 	protected Shrinkable<U> shrinkable() {

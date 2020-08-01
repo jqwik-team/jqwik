@@ -37,18 +37,8 @@ public class ShrinkableResolvedParameter implements Shrinkable<Object> {
 	}
 
 	@Override
-	public Object createValue() {
-		return value();
-	}
-
-	@Override
 	public Stream<Shrinkable<Object>> shrink() {
 		return Stream.empty();
-	}
-
-	@Override
-	public ShrinkingSequence<Object> shrink(Falsifier<Object> falsifier) {
-		return ShrinkingSequence.dontShrink(this);
 	}
 
 	@Override

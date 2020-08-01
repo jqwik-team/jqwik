@@ -5,7 +5,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("MappedShrinkable")

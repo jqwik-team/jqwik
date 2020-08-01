@@ -9,7 +9,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("ShrinkableString")
@@ -19,7 +19,7 @@ public class NEW_ShrinkableStringTests {
 	void creation() {
 		Shrinkable<String> shrinkable = createShrinkableString("abcd", 0);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
-		assertThat(shrinkable.createValue()).isEqualTo("abcd");
+		assertThat(shrinkable.value()).isEqualTo("abcd");
 	}
 
 	@Group

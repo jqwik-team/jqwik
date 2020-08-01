@@ -96,20 +96,6 @@ public class FunctionGenerator<F, R> extends AbstractFunctionGenerator<F, R> {
 		}
 
 		@Override
-		public F createValue() {
-			return value();
-		}
-
-		@Override
-		public ShrinkingSequence<F> shrink(Falsifier<F> falsifier) {
-			if (lastResult.get() == null) {
-				return ShrinkingSequence.dontShrink(this);
-			}
-			Shrinkable<F> constantFunction = createConstantFunction(lastResult.get());
-			return ShrinkingSequence.startWith(constantFunction, falsifier);
-		}
-
-		@Override
 		public Stream<Shrinkable<F>> shrink() {
 			if (lastResult.get() == null) {
 				return Stream.empty();

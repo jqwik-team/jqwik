@@ -13,7 +13,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("FlatMappedShrinkable")
@@ -26,7 +26,7 @@ class NEW_FlatMappedShrinkableTests {
 		Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
 
 		assertThat(shrinkable.distance().dimensions()).startsWith(ShrinkingDistance.of(3), ShrinkingDistance.of(3));
-		assertThat(shrinkable.createValue()).hasSize(3);
+		assertThat(shrinkable.value()).hasSize(3);
 	}
 
 	@Group
@@ -39,7 +39,7 @@ class NEW_FlatMappedShrinkableTests {
 			Shrinkable<Integer> left = new OneStepShrinkable(4);
 			Function<Integer, Arbitrary<Integer>> flatMapper = ignore -> Arbitraries.integers().between(0, 100);
 			Shrinkable<Integer> shrinkable = left.flatMap(flatMapper, 1000, seed);
-			Assume.that(shrinkable.createValue() > 3);
+			Assume.that(shrinkable.value() > 3);
 
 			TestingFalsifier<Integer> falsifier = anInt -> anInt < 3;
 			int shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
@@ -52,7 +52,7 @@ class NEW_FlatMappedShrinkableTests {
 			Function<Integer, Arbitrary<Integer>> flatMapper = Arbitraries::just;
 			Shrinkable<Integer> shrinkable = left.flatMap(flatMapper, 1000, 4142L);
 
-			Assume.that(shrinkable.createValue() >= 3); // depends on seed
+			Assume.that(shrinkable.value() >= 3); // depends on seed
 
 			TestingFalsifier<Integer> falsifier = anInt -> anInt < 3;
 			int shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
@@ -129,7 +129,7 @@ class NEW_FlatMappedShrinkableTests {
 
 			Function<Integer, Arbitrary<String>> flatMapper = i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i);
 			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, 42L);
-			assertThat(shrinkable.createValue()).hasSize(5);
+			assertThat(shrinkable.value()).hasSize(5);
 
 			TestingFalsifier<String> falsifier = aString -> aString.length() < 3;
 			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
@@ -142,7 +142,7 @@ class NEW_FlatMappedShrinkableTests {
 			Shrinkable<Integer> integerShrinkable = Arbitraries.integers().generator(42).next(random);
 			Function<Integer, Arbitrary<List<Integer>>> flatMapper = anInt -> Arbitraries.just(anInt).list();
 			Shrinkable<List<Integer>> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, seed);
-			Assume.that(shrinkable.createValue().size() > 10);
+			Assume.that(shrinkable.value().size() > 10);
 
 			Falsifier<List<Integer>> onlyListsWithLessThan10Elements = aList -> {
 				if (aList.size() < 10) {
@@ -162,7 +162,7 @@ class NEW_FlatMappedShrinkableTests {
 			Iterator<Shrinkable<List<String>>> edgeCases = lists.edgeCases().iterator();
 			while (edgeCases.hasNext()) {
 				Shrinkable<List<String>> edgeCase = edgeCases.next();
-				if (edgeCase.createValue().isEmpty()) {
+				if (edgeCase.value().isEmpty()) {
 					continue;
 				}
 

@@ -35,7 +35,7 @@ public class ArbitraryTestHelper {
 		return generator
 				   .stream(SourceOfRandomness.current())
 				   .limit(tries)
-				   .map(Shrinkable::value)
+				   .map(shrinkable -> shrinkable.value())
 				   .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 	}
 
@@ -90,7 +90,7 @@ public class ArbitraryTestHelper {
 		List<T> generated = generator
 								.stream(random)
 								.limit(expectedValues.length)
-								.map(Shrinkable::value)
+								.map(shrinkable -> shrinkable.value())
 								.collect(Collectors.toList());
 
 		assertThat(generated).containsExactly(expectedValues);

@@ -1,12 +1,9 @@
 package net.jqwik.api;
 
-import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import org.apiguardian.api.*;
-
-import net.jqwik.api.lifecycle.*;
 
 import static org.apiguardian.api.API.Status.*;
 
@@ -43,30 +40,28 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 		return ShrinkableFacade.implementation.unshrinkable(supplier, ShrinkingDistance.of(0));
 	}
 
-	@Deprecated
-	T value();
-
 	/**
 	 * Create value freshly, so that in case of mutable objects shrinking (and reporting)
 	 * can rely on untouched values.
 	 *
 	 * @return An un-changed instance of the value represented by this shrinkable
 	 */
-	T createValue();
+	T value();
 
 	/**
 	 * Create a new and finite stream of smaller or same size shrinkables; size is measured by {@linkplain #distance()}.
-	 *
+	 * <p>
 	 * Same size shrinkables are allowed but they have to iterate towards a single value to prevent endless shrinking.
 	 * This also means that a shrinkable must never be in its own shrink stream!
 	 */
+	@API(status = INTERNAL, since = "1.3.3")
 	Stream<Shrinkable<T>> shrink();
 
 	/**
-	 *
 	 * @deprecated Will be removed in version 1.4
 	 */
 	@Deprecated
+	@API(status = DEPRECATED, since = "1.3.3")
 	default ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
 		throw new JqwikException("This method must not be used any more");
 	}
@@ -108,28 +103,6 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 			}
 		}
 		return comparison;
-	}
-
-	@API(status = INTERNAL)
-	default boolean isSmallerThan(Shrinkable<T> other) {
-		return this.distance().compareTo(other.distance()) < 0;
-	}
-
-	/**
-	 * Used only when several shrinkables must be shrunk in synchronicity e.g. duplicate values.
-	 * Override in mostly all implementations since the default produces only a few values.
-	 */
-	@API(status = INTERNAL)
-	@Deprecated
-	default List<Shrinkable<T>> shrinkingSuggestions() {
-		Falsifier<T> falsifier = ignore -> TryExecutionResult.falsified(null);
-		ShrinkingSequence<T> allDown = shrink(falsifier);
-		List<Shrinkable<T>> suggestions = new ArrayList<>();
-		while (allDown.next(() -> {}, result -> {})) {
-			suggestions.add(allDown.current().shrinkable());
-		}
-		suggestions.sort(null);
-		return suggestions;
 	}
 
 	@API(status = INTERNAL)

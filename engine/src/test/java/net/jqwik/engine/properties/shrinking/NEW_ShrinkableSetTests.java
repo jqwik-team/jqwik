@@ -10,7 +10,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("ShrinkableSet")
@@ -20,7 +20,7 @@ class NEW_ShrinkableSetTests {
 	void creation() {
 		Shrinkable<Set<Integer>> shrinkable = createShrinkableSet(asList(0, 1, 2, 3), 0);
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(4, 6));
-		assertThat(shrinkable.createValue()).containsExactly(0, 1, 2, 3);
+		assertThat(shrinkable.value()).containsExactly(0, 1, 2, 3);
 	}
 
 	@Group

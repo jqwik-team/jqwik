@@ -8,7 +8,7 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 class NEW_ShrinkableProperties {

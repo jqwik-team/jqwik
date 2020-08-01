@@ -51,7 +51,7 @@ class DataBasedShrinkablesGeneratorTests {
 	}
 
 	private List<Object> values(List<Shrinkable<Object>> shrinkables) {
-		return shrinkables.stream().map(Shrinkable::value).collect(Collectors.toList());
+		return shrinkables.stream().map(objectShrinkable -> objectShrinkable.value()).collect(Collectors.toList());
 	}
 
 	private DataBasedShrinkablesGenerator generator(String methodName, Iterable<? extends Tuple> data) {

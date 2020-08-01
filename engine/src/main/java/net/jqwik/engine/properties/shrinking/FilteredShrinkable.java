@@ -1,6 +1,5 @@
 package net.jqwik.engine.properties.shrinking;
 
-import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -19,11 +18,6 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 	@Override
 	public T value() {
 		return toFilter.value();
-	}
-
-	@Override
-	public T createValue() {
-		return toFilter.createValue();
 	}
 
 	@Override
@@ -56,24 +50,11 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 	}
 
 	private boolean isIncluded(Shrinkable<T> shrinkable) {
-		return filter.test(shrinkable.createValue());
+		return filter.test(shrinkable.value());
 	}
 
 	private Shrinkable<T> toFiltered(Shrinkable<T> t) {
 		return new FilteredShrinkable<>(t, filter);
-	}
-
-	@Override
-	public ShrinkingSequence<T> shrink(Falsifier<T> falsifier) {
-		return new FilteredShrinkingSequence(falsifier);
-	}
-
-	@Override
-	public List<Shrinkable<T>> shrinkingSuggestions() {
-		return toFilter.shrinkingSuggestions()
-					   .stream()
-					   .filter(shrinkable -> filter.test(shrinkable.value()))
-					   .collect(Collectors.toList());
 	}
 
 	@Override
@@ -99,28 +80,4 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 		return String.format("Filtered|%s", toFilter);
 	}
 
-	private class FilteredShrinkingSequence implements ShrinkingSequence<T> {
-
-		private final ShrinkingSequence<T> toFilterSequence;
-
-		private FilteredShrinkingSequence(Falsifier<T> falsifier) {
-			Falsifier<T> filteredFalsifier = falsifier.withFilter(filter);
-			toFilterSequence = toFilter.shrink(filteredFalsifier);
-		}
-
-		@Override
-		public boolean next(Runnable count, Consumer<FalsificationResult<T>> falsifiedReporter) {
-			return toFilterSequence.next(count, falsifiedReporter);
-		}
-
-		@Override
-		public FalsificationResult<T> current() {
-			return toFilterSequence.current().filter(filter);
-		}
-
-		@Override
-		public void init(FalsificationResult<T> initialCurrent) {
-			toFilterSequence.init(initialCurrent);
-		}
-	}
 }

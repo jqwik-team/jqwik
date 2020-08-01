@@ -10,7 +10,7 @@ import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
 import static org.assertj.core.api.Assertions.*;
 
-import static net.jqwik.api.NEW_ShrinkingTestHelper.*;
+import static net.jqwik.api.ShrinkingTestHelper.*;
 
 @Group
 @Label("CombinedShrinkable")
@@ -31,7 +31,7 @@ class NEW_CombinedShrinkableTests {
 		Shrinkable<String> shrinkable = new CombinedShrinkable<>(shrinkables, combinator);
 
 		assertThat(shrinkable.distance()).isEqualTo(ShrinkingDistance.of(3, 0));
-		assertThat(shrinkable.createValue()).isEqualTo("hello3");
+		assertThat(shrinkable.value()).isEqualTo("hello3");
 	}
 
 	@Group
