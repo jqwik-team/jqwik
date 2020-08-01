@@ -7,7 +7,11 @@ import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
-@API(status = MAINTAINED, since = "1.0")
+/**
+ * @deprecated To be removed in 1.4
+ */
+@Deprecated
+@API(status = DEPRECATED, since = "1.3.3")
 public class FalsificationResult<T> implements Comparable<FalsificationResult<T>> {
 
 	private final Shrinkable<T> shrinkable;

@@ -42,7 +42,9 @@ title: jqwik Release Notes
 - Exceeding shrinking bound is now logged as warning instead of being reported
   through JUnit platform reporting
   
-- Deprecated interface `ShrinkingSequence`. Throw all your implementations away!
+- Deprecated interface `net.jqwik.api.ShrinkingSequence`. Throw all your implementations away!
+
+- Deprecated class `net.jqwik.api.FalsificationResult`. No longer used anywhere.
 
 - Deprecated method `Shrinkable.shrink(Falsifier<T> falsifier)`. 
   It's no longer used anywhere.
