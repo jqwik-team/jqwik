@@ -112,8 +112,8 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 
 	private String createErrorMessage(String name, String causeMessage) {
 		String actionsString = sequence
-								   .stream() //
-								   .map(aTry -> "    " + aTry.toString()) //
+								   .stream()
+								   .map(aTry -> "    " + aTry.toString())
 								   .collect(Collectors.joining(System.lineSeparator()));
 		return String.format(
 			"%s failed after following actions:%n%s%n  final currentModel: %s%n%s",
@@ -139,6 +139,15 @@ class SequentialActionSequence<M> implements ActionSequence<M> {
 	@Override
 	public RunState runState() {
 		return runState;
+	}
+
+	@Override
+	public int size() {
+		if (runState == RunState.NOT_RUN) {
+			return intendedSize;
+		} else {
+			return actionGenerator.generated().size();
+		}
 	}
 
 	@Override

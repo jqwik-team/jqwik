@@ -2,7 +2,6 @@
 
     - Re-implement shrinking
         - Remove type variable from Falsifier<T>
-        - Add sample reporter for ActionSequences
         - Review shrinking related TODOs
         - Let negative numbers try their positive counter part
         - Remove duplication in shrink methods (especially one-after-the-other)

@@ -23,6 +23,9 @@ public interface ActionSequence<M> {
 
 	M run(M model);
 
+	@API(status = EXPERIMENTAL, since = "1.3.3")
+	int size();
+
 	/**
 	 * Add an unlabelled invariant to a sequence.
 	 *
