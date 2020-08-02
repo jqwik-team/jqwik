@@ -72,10 +72,24 @@ class ShrinkingQualityProperties {
 
 		// e.g. [[1, 2, 3, 4, 5]]
 		int numberOfElements = shrunkResult.stream().mapToInt(List::size).sum();
-		// TODO: Better shrinking should certify that:
-		//assertThat(shrunkResult).hasSize(1);
-		//assertThat(numberOfElements).isEqualTo(5);
+		assertThat(numberOfElements).isEqualTo(5);
 		assertThat(numberOfElements).isLessThanOrEqualTo(10);
+
+		// TODO: Better shrinking should certify that:
+		// assertThat(shrunkResult).hasSize(1);
+	}
+
+	@Property
+	@ExpectFailure(checkResult = ShrinkTo3and3.class)
+	boolean notEqual(@ForAll int i1, @ForAll int i2) {
+		return i1 < 3 || i1 != i2;
+	}
+
+	private class ShrinkTo3and3 extends ShrinkToChecker {
+		@Override
+		public Iterable<?> shrunkValues() {
+			return Arrays.asList(3, 3);
+		}
 	}
 
 	@Property(tries = 100)
@@ -93,4 +107,5 @@ class ShrinkingQualityProperties {
 	private ListArbitrary<String> listsOfLength(int n) {
 		return Arbitraries.of("a", "b").list().ofSize(n);
 	}
+
 }

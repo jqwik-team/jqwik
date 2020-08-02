@@ -8,6 +8,13 @@ import net.jqwik.api.lifecycle.*;
 
 import static org.apiguardian.api.API.Status.*;
 
+/**
+ * This interface is no longer used anywhere in jqwik's public API
+ * and could therefore be deprecated and moved to engine implementation.
+ * But since it's declared to be stable it won't go away before version 2.0.
+ *
+ * @param <T> The type of
+ */
 @FunctionalInterface
 @API(status = STABLE, since = "1.0")
 public interface Falsifier<T> {

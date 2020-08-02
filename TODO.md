@@ -1,23 +1,26 @@
 - 1.3.3
 
     - Re-implement shrinking
-        - Remove type variable from Falsifier<T>
         - Review shrinking related TODOs
         - Let negative numbers try their positive counter part
         - Remove duplication in shrink methods (especially one-after-the-other)
         - Possibility of shrinking one element and growing another
-        - UniqueShrinkable should be able to shrink to previously tried values
         
         
+    - Add abstract method DomainContextBase.registrations()
+    
+- 1.3.4
+
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
+    - UniqueShrinkable should be able to shrink to previously tried values
+
     - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
-    
-    - Add abstract method DomainContextBase.registrations()
     
     - Use derived Random object for generation of each parameter.
       Will that somehow break a random byte provider in guided generation?
+      - Remember the random seed in Shrinkable
 
 - 1.3.x
 
