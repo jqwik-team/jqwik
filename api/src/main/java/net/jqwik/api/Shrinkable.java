@@ -58,6 +58,8 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	Stream<Shrinkable<T>> shrink();
 
 	/**
+	 * This method is no longer used anywhere within jqwik.
+	 *
 	 * @deprecated Will be removed in version 1.4
 	 */
 	@Deprecated
