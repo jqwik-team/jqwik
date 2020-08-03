@@ -1,15 +1,17 @@
 - 1.3.3
 
     - Re-implement shrinking
+        - Possibility of shrinking one element and growing another
+          - Allow numbers to grow
+          - Allow collections to grow
         - Review shrinking related TODOs
         - Remove duplication in shrink methods (especially one-after-the-other)
-        - Possibility of shrinking one element and growing another
         
         
-    - Add abstract method DomainContextBase.registrations()
-    
 - 1.3.4
 
+    - Add abstract method DomainContextBase.registrations()
+    
     - Hook: @PropertyDefaults(....)
 
     - Allow specification of provider class in `@ForAll` and `@From`

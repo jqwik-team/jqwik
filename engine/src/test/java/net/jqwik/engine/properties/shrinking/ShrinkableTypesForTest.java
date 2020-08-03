@@ -29,6 +29,17 @@ public class ShrinkableTypesForTest {
 		}
 
 		@Override
+		public Optional<Shrinkable<Integer>> grow(Shrinkable<Integer> before, Shrinkable<Integer> after) {
+			int diff = before.value() - (int) after.value();
+			int grownValue = value() + diff;
+			if (grownValue >= minimum) {
+				return Optional.of(new OneStepShrinkable(grownValue, minimum));
+			} else {
+				return Optional.empty();
+			}
+		}
+
+		@Override
 		public ShrinkingDistance distance() {
 			return ShrinkingDistance.of(value() - minimum);
 		}

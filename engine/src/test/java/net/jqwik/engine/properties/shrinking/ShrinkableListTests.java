@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.arbitraries.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
@@ -100,7 +101,13 @@ class ShrinkableListTests {
 
 		@Example
 		void shrinkToFullSortedList() {
-			Shrinkable<List<Integer>> shrinkable = createShrinkableList(4, 3, 1, 2);
+			List<Shrinkable<Integer>> elementShrinkables = asList(
+				Shrinkable.unshrinkable(4, ShrinkingDistance.of(4)),
+				Shrinkable.unshrinkable(3, ShrinkingDistance.of(3)),
+				Shrinkable.unshrinkable(1, ShrinkingDistance.of(1)),
+				Shrinkable.unshrinkable(2, ShrinkingDistance.of(2))
+			);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
 
 			TestingFalsifier<List<Integer>> falsifier =
 				integers -> {
@@ -114,7 +121,13 @@ class ShrinkableListTests {
 
 		@Example
 		void shrinkToPartiallySortedList() {
-			Shrinkable<List<Integer>> shrinkable = createShrinkableList(4, 3, 1, 2);
+			List<Shrinkable<Integer>> elementShrinkables = asList(
+				Shrinkable.unshrinkable(4, ShrinkingDistance.of(4)),
+				Shrinkable.unshrinkable(3, ShrinkingDistance.of(3)),
+				Shrinkable.unshrinkable(1, ShrinkingDistance.of(1)),
+				Shrinkable.unshrinkable(2, ShrinkingDistance.of(2))
+			);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
 
 			TestingFalsifier<List<Integer>> falsifier =
 				integers -> {
@@ -124,6 +137,53 @@ class ShrinkableListTests {
 
 			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(asList(1, 3, 4, 2));
+		}
+
+		@Example
+		void shrinkSumOfPairToLastValue() {
+			List<Shrinkable<Integer>> elementShrinkables =
+				Arrays.stream(new Integer[]{17, 8}).map(OneStepShrinkable::new).collect(Collectors.toList());
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2);
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 20;
+				};
+
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(asList(0, 20));
+		}
+
+		@Example
+		void shrinkSumOfListTowardsEnd() {
+			List<Shrinkable<Integer>> elementShrinkables =
+				Arrays.stream(new Integer[]{10, 8, 5, 9}).map(OneStepShrinkable::new).collect(Collectors.toList());
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4)
+													   .filter(list -> list.stream().allMatch(i -> i <= 10));
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(asList(0, 1, 10, 10));
+		}
+
+		@Property
+		void shrinkSumOfListTowardsEnd(@ForAll Random random) {
+			ListArbitrary<Integer> integerLists = Arbitraries.integers().between(0, 10).list().ofSize(4);
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Integer> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
+			assertThat(shrunkValue).isEqualTo(asList(0, 1, 10, 10));
 		}
 
 		@Example

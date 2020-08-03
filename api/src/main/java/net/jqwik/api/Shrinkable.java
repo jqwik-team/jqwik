@@ -1,5 +1,6 @@
 package net.jqwik.api;
 
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -56,6 +57,20 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	 */
 	@API(status = INTERNAL, since = "1.3.3")
 	Stream<Shrinkable<T>> shrink();
+
+	/**
+	 * To be able to "move" values towards the end of collections while keeping some constraint constant
+	 * it's necessary to grow a shrinkable by what another has been shrunk.
+	 * One example is keeping a sum of values and still shrinking to the same resulting list.
+	 *
+	 * @param before The other shrinkable before shrinking
+	 * @param after The other shrinkable after shrinking
+	 * @return this shrinkable grown by the difference of before and after
+	 */
+	@API(status = INTERNAL, since = "1.3.3")
+	default Optional<Shrinkable<T>> grow(Shrinkable<T> before, Shrinkable<T> after) {
+		return Optional.empty();
+	}
 
 	/**
 	 * This method is no longer used anywhere within jqwik.
