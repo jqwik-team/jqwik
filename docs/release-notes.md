@@ -32,6 +32,9 @@ title: jqwik Release Notes
   - Same type of assertion error or other exception
   - Assertion error or exception thrown from the same code location
 
+- Shrinking `@AlphaChars` will now shrink to uppercase letters (if possible)
+  since their Unicode codepoint is smaller.
+  
 - Negative numbers are shrunk to their positive counterpart if possible
 
 - Changes in property result reporting: 
