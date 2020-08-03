@@ -43,7 +43,8 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 							   return Stream.of(shrinkable);
 						   } else {
 							   // Is the limit necessary?
-							   return shrinkable.shrink().limit(100);
+							   return shrinkable.shrink()
+												.limit(100);
 						   }
 					   })
 					   .findFirst()
