@@ -1,14 +1,13 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.function.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
@@ -25,16 +24,10 @@ class ShrinkingQualityProperties {
 		assertThat(reversed(ls)).isEqualTo(ls);
 	}
 
-	private class ShrinkTo2Elements implements Consumer<PropertyExecutionResult> {
+	private class ShrinkTo2Elements extends ShrinkToChecker {
 		@Override
-		public void accept(final PropertyExecutionResult propertyExecutionResult) {
-			@SuppressWarnings("unchecked")
-			List<Integer> shrunkResult = (List<Integer>) propertyExecutionResult.falsifiedParameters().get().get(0);
-
-			// result can be [0, 1] or [0, -1] or other way round
-			assertThat(shrunkResult).hasSize(2);
-			assertThat(shrunkResult).contains(0);
-			assertThat(shrunkResult).containsAnyOf(0, 1, -1);
+		public Iterable<?> shrunkValues() {
+			return asList(asList(0, 1));
 		}
 	}
 
@@ -45,10 +38,7 @@ class ShrinkingQualityProperties {
 		TestingFalsifier<List<Integer>> reverseEqualsOriginal = falsifier((List<Integer> list) -> list.equals(reversed(list)));
 		List<Integer> shrunkResult = falsifyThenShrink(integerLists, random, reverseEqualsOriginal);
 
-		// result can be [0, 1] or [0, -1] or other way round
-		assertThat(shrunkResult).hasSize(2);
-		assertThat(shrunkResult).contains(0);
-		assertThat(shrunkResult).containsAnyOf(0, 1);
+		assertThat(shrunkResult).isEqualTo(asList(0, 1));
 	}
 
 	private List<Integer> reversed(final List<Integer> ls) {
@@ -88,7 +78,7 @@ class ShrinkingQualityProperties {
 	private class ShrinkTo3and3 extends ShrinkToChecker {
 		@Override
 		public Iterable<?> shrunkValues() {
-			return Arrays.asList(3, 3);
+			return asList(3, 3);
 		}
 	}
 
@@ -98,7 +88,7 @@ class ShrinkingQualityProperties {
 		List<String> shrunkResult = falsifyThenShrink(
 			lengths.flatMap(this::listsOfLength),
 			random,
-			falsifier(x -> !x.equals(Arrays.asList("a", "b")))
+			falsifier(x -> !x.equals(asList("a", "b")))
 		);
 
 		assertThat(shrunkResult).containsExactly("a", "b");

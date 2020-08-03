@@ -4,11 +4,12 @@ import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 @Group
 public class ShrinkableTypesForTest {
 
-	public static class OneStepShrinkable extends AbstractShrinkable<Integer> {
+	public static class OneStepShrinkable extends AbstractValueShrinkable<Integer> {
 		private final int minimum;
 
 		public OneStepShrinkable(int integer) {
@@ -21,10 +22,10 @@ public class ShrinkableTypesForTest {
 		}
 
 		@Override
-		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
-			if (shrinkable.value() == minimum)
-				return Collections.emptySet();
-			return Collections.singleton(new OneStepShrinkable(shrinkable.value() - 1, minimum));
+		public Stream<Shrinkable<Integer>> shrink() {
+			if (this.value() == minimum)
+				return Stream.empty();
+			return Stream.of(new OneStepShrinkable(this.value() - 1, minimum));
 		}
 
 		@Override
@@ -34,14 +35,14 @@ public class ShrinkableTypesForTest {
 
 	}
 
-	public static class FullShrinkable extends AbstractShrinkable<Integer> {
+	public static class FullShrinkable extends AbstractValueShrinkable<Integer> {
 		FullShrinkable(int integer) {
 			super(integer);
 		}
 
 		@Override
-		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
-			return IntStream.range(0, shrinkable.value()).mapToObj(FullShrinkable::new).collect(Collectors.toSet());
+		public Stream<Shrinkable<Integer>> shrink() {
+			return IntStream.range(0, this.value()).mapToObj(FullShrinkable::new);
 		}
 
 		@Override
@@ -51,18 +52,18 @@ public class ShrinkableTypesForTest {
 
 	}
 
-	public static class PartialShrinkable extends AbstractShrinkable<Integer> {
+	public static class PartialShrinkable extends AbstractValueShrinkable<Integer> {
 		PartialShrinkable(int integer) {
 			super(integer);
 		}
 
 		@Override
-		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
-			Integer value = shrinkable.value();
-			Set<Shrinkable<Integer>> shrinks = new HashSet<>();
-			if (value > 0) shrinks.add(new PartialShrinkable(value - 1));
-			if (value > 1) shrinks.add(new PartialShrinkable(value - 2));
-			return shrinks;
+		public Stream<Shrinkable<Integer>> shrink() {
+			Integer value = this.value();
+			List<Stream<Shrinkable<Integer>>> shrinks = new ArrayList<>();
+			if (value > 0) shrinks.add(Stream.of(new PartialShrinkable(value - 1)));
+			if (value > 1) shrinks.add(Stream.of(new PartialShrinkable(value - 2)));
+			return JqwikStreamSupport.concat(shrinks);
 		}
 
 		@Override
@@ -72,15 +73,15 @@ public class ShrinkableTypesForTest {
 	}
 
 
-	public static class ShrinkToLarger extends AbstractShrinkable<Integer> {
+	public static class ShrinkToLarger extends AbstractValueShrinkable<Integer> {
 
 		ShrinkToLarger(int integer) {
 			super(integer);
 		}
 
 		@Override
-		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
-			return Collections.singleton(new ShrinkToLarger(shrinkable.value() + 1));
+		public Stream<Shrinkable<Integer>> shrink() {
+			return Stream.of(new ShrinkToLarger(this.value() + 1));
 		}
 
 		@Override
@@ -90,18 +91,18 @@ public class ShrinkableTypesForTest {
 
 	}
 
-	public static class ShrinkWithFixedDistance extends AbstractShrinkable<Integer> {
+	public static class ShrinkWithFixedDistance extends AbstractValueShrinkable<Integer> {
 
 		ShrinkWithFixedDistance(int integer) {
 			super(integer);
 		}
 
 		@Override
-		public Set<Shrinkable<Integer>> shrinkCandidatesFor(Shrinkable<Integer> shrinkable) {
-			if (shrinkable.value() == 0) {
-				return Collections.emptySet();
+		public Stream<Shrinkable<Integer>> shrink() {
+			if (this.value() == 0) {
+				return Stream.empty();
 			}
-			return Collections.singleton(new ShrinkWithFixedDistance(shrinkable.value() - 1));
+			return Stream.of(new ShrinkWithFixedDistance(this.value() - 1));
 		}
 
 		@Override

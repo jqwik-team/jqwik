@@ -26,6 +26,7 @@ class ShrinkableActionSequence<T> implements Shrinkable<ActionSequence<T>> {
 
 	@Override
 	public ActionSequence<T> value() {
+		// Cannot be recreated on each access because creation takes place on first access and must be preserved for shrinking
 		if (generatedSequence == null) {
 			generatedSequence = new SequentialActionSequence<>(actionGenerator, maxSize);
 		}

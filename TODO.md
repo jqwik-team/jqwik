@@ -2,7 +2,6 @@
 
     - Re-implement shrinking
         - Review shrinking related TODOs
-        - Let negative numbers try their positive counter part
         - Remove duplication in shrink methods (especially one-after-the-other)
         - Possibility of shrinking one element and growing another
         

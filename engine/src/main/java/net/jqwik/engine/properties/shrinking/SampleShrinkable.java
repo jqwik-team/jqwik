@@ -1,10 +1,11 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 
-public class SampleShrinkable<T> extends AbstractShrinkable<T> {
+public class SampleShrinkable<T> extends AbstractValueShrinkable<T> {
 
 	private final List<T> samples;
 	private final int index;
@@ -26,11 +27,11 @@ public class SampleShrinkable<T> extends AbstractShrinkable<T> {
 	}
 
 	@Override
-	public Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable) {
-		int sampleIndex = ((SampleShrinkable<T>) shrinkable).index;
+	public Stream<Shrinkable<T>> shrink() {
+		int sampleIndex = this.index;
 		if (sampleIndex == 0)
-			return Collections.emptySet();
-		return Collections.singleton(new SampleShrinkable<>(samples, sampleIndex - 1));
+			return Stream.empty();
+		return Stream.of(new SampleShrinkable<>(samples, sampleIndex - 1));
 	}
 
 	@Override
