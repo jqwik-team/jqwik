@@ -4,9 +4,9 @@ import net.jqwik.api.*;
 
 class ShrinkingFilterExamples {
 
-	@Property(seed = "42128376158237")
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	// Different seeds result in different shrinking results
-	boolean shrinkingCanTakeAVeryLongTime(@ForAll("first") String first, @ForAll("second") String second) {
+	boolean shrinkingCanTakeAWhile(@ForAll("first") String first, @ForAll("second") String second) {
 		String aString = first + second;
 		return aString.length() > 5 || aString.length() < 4;
 	}
@@ -30,7 +30,6 @@ class ShrinkingFilterExamples {
 	}
 
 	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
-	@Report(Reporting.GENERATED)
 	boolean shouldShrinkToBAH(@ForAll("aVariableString") String aString) {
 		return aString.length() > 4 || aString.length() < 3;
 	}

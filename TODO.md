@@ -10,6 +10,8 @@
     
 - 1.3.4
 
+    - Hook: @PropertyDefaults(....)
+
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 

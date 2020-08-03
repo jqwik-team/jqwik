@@ -246,8 +246,8 @@ class PropertyShrinkerTests {
 		}
 
 		@Example
-		void withBoundedShrinkingBreakOffAfter50000Attempts() {
-			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(49900, 1000);
+		void withBoundedShrinkingBreakOffAfter10000Attempts() {
+			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(9900, 1000);
 
 			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED);
 

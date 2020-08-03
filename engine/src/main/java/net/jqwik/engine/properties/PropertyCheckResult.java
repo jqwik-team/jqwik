@@ -273,14 +273,14 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		String header = String.format("%s [%s] failed", stereotype, propertyName);
 		switch (checkStatus()) {
 			case FAILED:
-				String failedMessage = falsifiedParameters().map(sample -> {
+				String failedMessage = falsifiedParameters().map(sampleParams -> {
 					Map<Integer, Object> sampleMap = new HashMap<>();
-					for (int i = 0; i < sample.size(); i++) {
-						Object parameter = sample.get(i);
+					for (int i = 0; i < sampleParams.size(); i++) {
+						Object parameter = sampleParams.get(i);
 						sampleMap.put(i, parameter);
 					}
 					String sampleString = ValueReport.of(sampleMap).singleLineReport();
-					return shrunkSample.parameters().isEmpty() ? "" : String.format(" with sample %s", sampleString);
+					return sampleParams.isEmpty() ? "" : String.format(" with sample %s", sampleString);
 				}).orElse("");
 				return String.format("%s%s", header, failedMessage);
 			case EXHAUSTED:
