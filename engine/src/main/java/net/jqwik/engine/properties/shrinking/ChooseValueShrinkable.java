@@ -5,7 +5,7 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 
-public class ChooseValueShrinkable<T> extends AbstractShrinkable<T> {
+public class ChooseValueShrinkable<T> extends AbstractValueShrinkable<T> {
 
 	private final List<T> values;
 
@@ -20,15 +20,14 @@ public class ChooseValueShrinkable<T> extends AbstractShrinkable<T> {
 	}
 
 	@Override
-	public Set<Shrinkable<T>> shrinkCandidatesFor(Shrinkable<T> shrinkable) {
-		int index = values.indexOf(shrinkable.value());
+	public Stream<Shrinkable<T>> shrink() {
+		int index = values.indexOf(this.value());
 		if (index == 0) {
-			return Collections.emptySet();
+			return Stream.empty();
 		}
 		return values.subList(0, index)
 					 .stream()
-					 .map(value -> new ChooseValueShrinkable<>(value, values))
-					 .collect(Collectors.toSet());
+					 .map(value -> new ChooseValueShrinkable<>(value, values));
 	}
 
 }

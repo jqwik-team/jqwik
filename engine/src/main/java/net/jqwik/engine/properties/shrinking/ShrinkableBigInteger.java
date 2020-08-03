@@ -6,8 +6,9 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.support.*;
 
-public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
+public class ShrinkableBigInteger extends AbstractValueShrinkable<BigInteger> {
 	private final Range<BigInteger> range;
 	private final BigInteger shrinkingTarget;
 
@@ -19,11 +20,32 @@ public class ShrinkableBigInteger extends AbstractShrinkable<BigInteger> {
 	}
 
 	@Override
-	public Set<Shrinkable<BigInteger>> shrinkCandidatesFor(Shrinkable<BigInteger> shrinkable) {
+	public Stream<Shrinkable<BigInteger>> shrink() {
+		return JqwikStreamSupport.concat(
+			shrinkTowardsTarget(this),
+			shrinkNegativeToPositive(this)
+		);
+	}
+
+	private Stream<Shrinkable<BigInteger>> shrinkNegativeToPositive(Shrinkable<BigInteger> shrinkable) {
+		if (shrinkable.value().compareTo(BigInteger.ZERO) >= 0) {
+			return Stream.empty();
+		}
+		return Stream.of(shrinkable)
+					 .map(s -> shrinkable.value().negate())
+					 .filter(range::includes)
+					 .map(this::createShrinkable);
+	}
+
+	private Stream<Shrinkable<BigInteger>> shrinkTowardsTarget(Shrinkable<BigInteger> shrinkable) {
 		return new BigIntegerShrinker(shrinkingTarget)
 				   .shrink(shrinkable.value())
-				   .map(aBigInteger -> new ShrinkableBigInteger(aBigInteger, range, shrinkingTarget))
-				   .collect(Collectors.toSet());
+				   .map(this::createShrinkable)
+				   .sorted(Comparator.comparing(Shrinkable::distance));
+	}
+
+	private Shrinkable<BigInteger> createShrinkable(BigInteger aBigInteger) {
+		return new ShrinkableBigInteger(aBigInteger, range, shrinkingTarget);
 	}
 
 	@Override

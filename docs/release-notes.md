@@ -32,6 +32,8 @@ title: jqwik Release Notes
   - Same type of assertion error or other exception
   - Assertion error or exception thrown from the same code location
 
+- Negative numbers are shrunk to their positive counterpart if possible
+
 - Changes in property result reporting: 
     - Shrunk samples have now header line "Shrunk Sample (<n> steps)"
     - If no shrinking took place samples have header line "Sample"
