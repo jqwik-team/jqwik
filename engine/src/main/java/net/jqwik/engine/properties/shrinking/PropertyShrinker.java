@@ -14,7 +14,7 @@ public class PropertyShrinker {
 
 	private static final Logger LOG = Logger.getLogger(PropertyShrinker.class.getName());
 
-	private final static int BOUNDED_SHRINK_ATTEMPTS = 50000;
+	private final static int BOUNDED_SHRINK_ATTEMPTS = 10000;
 
 	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;

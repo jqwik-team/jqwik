@@ -334,8 +334,8 @@ annotation has a few optional values:
   - `ShrinkingMode.FULL`: Shrinking continues until no smaller value can
     be found that also falsifies the property.
     This might take very long or not end at all in rare cases.
-  - `ShrinkingMode.BOUNDED`: Shrinking is tried to a depth of 1000 steps
-    maximum per value. This is the default.
+  - `ShrinkingMode.BOUNDED`: Shrinking is tried to a depth of 10000 shrink attempts
+    maximum. This is the default.
 
   Most of the time you want to stick with the default. Only if
   bounded shrinking is reported - look at a falsified property's output! -
@@ -2521,13 +2521,13 @@ AssertionFailedError: Property [stringShouldBeShrunkToAA] falsified with sample 
 tries = 38 
 checks = 38 
 ...
-Shrunk Sample (<n> steps)
+Shrunk Sample (5 steps)
 -------------------------
-  aString: "aa"
+  aString: "AA"
 
 Original Sample
 ---------------
-  aString: "AoFI"
+  aString: "RzZ"
 ```
 
 In this case the _original sample_ could be any string between 2 and 5 chars, 
@@ -2541,12 +2541,11 @@ which most property-based testing tools use.
 The general idea and its advantages are explained 
 [here](http://hypothesis.works/articles/integrated-shrinking/).
 
-Consider a somewhat 
-[more complicated example](https://github.com/jlink/jqwik/blob/${gitVersion}/documentation/src/test/java/net/jqwik/docs/ShrinkingExamples.java#L15):
+Consider a somewhat more complicated example:
 
 ```java
 @Property
-boolean shrinkingCanTakeLong(@ForAll("first") String first, @ForAll("second") String second) {
+boolean shrinkingCanTakeAWhile(@ForAll("first") String first, @ForAll("second") String second) {
     String aString = first + second;
     return aString.length() > 5 || aString.length() < 2;
 }
@@ -2570,21 +2569,27 @@ Arbitrary<String> second() {
 
 Shrinking still works, although there's quite a bit of filtering and string concatenation happening:
 ```
-AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample {0="h", 1="0"}
+AssertionFailedError: Property [shrinkingCanTakeLong] falsified with sample {0="a", 1="000"}}
 
 checks = 20 
 tries = 20 
 ...
-Shrunk Sample (<n> steps)
--------------------------
-  first: "h" 
-  second: "0"
+Shrunk Sample (3 steps)
+-----------------------
+  first: "a"
+  second: "000"
 
 Original Sample
 ---------------
-  first: "gh" 
-  second: "774"
+  first: "h"
+  second: "901"
 ```
+
+This example also shows that sometimes there is no single "smallest example".
+Depending on the starting random seed, this property will shrink to either
+`{0="a", 1="000"}`, `{0="ah", 1="00"}` or `{0="aah", 1="0"}`, all of which
+are considered to be the smallest possible for jqwik's current way of
+measuring a sample's size.
 
 ### Switch Shrinking Off
 

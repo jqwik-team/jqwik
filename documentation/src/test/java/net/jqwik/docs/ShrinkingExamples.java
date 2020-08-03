@@ -1,21 +1,23 @@
 package net.jqwik.docs;
 
+import java.util.*;
+
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-
-import java.util.*;
 
 import static java.util.Collections.*;
 
 class ShrinkingExamples {
 
-	@Property @Report(Reporting.FALSIFIED)
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Report(Reporting.FALSIFIED)
 	boolean stringShouldBeShrunkToAA(@ForAll @AlphaChars String aString) {
 		return aString.length() > 5 || aString.length() < 2;
 	}
 
-	@Property(shrinking = ShrinkingMode.BOUNDED) @Report(Reporting.FALSIFIED)
-	// Should shrink to 46341 - the smallest number whose square is bigger than Integer.MAX_VALUE
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Report(Reporting.FALSIFIED)
+		// Should shrink to 46341 - the smallest number whose square is bigger than Integer.MAX_VALUE
 	boolean rootOfSquareShouldBeOriginalValue(@Positive @ForAll int anInt) {
 		Assume.that(anInt != Integer.MAX_VALUE);
 		int square = anInt * anInt;
@@ -30,21 +32,22 @@ class ShrinkingExamples {
 		return aList;
 	}
 
-	@Property
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	boolean reverseShouldSwapFirstAndLast(@ForAll List<Integer> aList) {
 		Assume.that(!aList.isEmpty());
 		List<Integer> reversed = brokenReverse(aList);
 		return aList.get(0).equals(reversed.get(aList.size() - 1));
 	}
 
-	@Property
+	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
 	boolean reverseShouldSwapFirstAndLast_Wildcard(@ForAll List<?> aList) {
 		Assume.that(!aList.isEmpty());
 		List<?> reversed = brokenReverse(aList);
 		return aList.get(0).equals(reversed.get(aList.size() - 1));
 	}
 
-	@Property(seed = "-6868766892804735822") @Report(Reporting.FALSIFIED)
+	@Property(generation = GenerationMode.RANDOMIZED)
+	@Report(Reporting.FALSIFIED)
 	boolean shouldShrinkTo101(@ForAll("numberStrings") String aNumberString) {
 		return Integer.parseInt(aNumberString) % 2 == 0;
 	}
@@ -53,6 +56,5 @@ class ShrinkingExamples {
 	Arbitrary<String> numberStrings() {
 		return Arbitraries.integers().between(100, 1000).map(String::valueOf);
 	}
-
 
 }

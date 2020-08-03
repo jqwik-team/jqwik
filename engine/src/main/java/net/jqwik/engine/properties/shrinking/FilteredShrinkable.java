@@ -4,6 +4,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 public class FilteredShrinkable<T> implements Shrinkable<T> {
 
@@ -22,15 +23,16 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Stream<Shrinkable<T>> shrink() {
-		return shrinkToFirst();
+		return JqwikStreamSupport.concat(
+			shrinkToFirst(),
+			deepSearchFirst()
+		);
 	}
 
 	private Stream<Shrinkable<T>> shrinkToFirst() {
 		return toFilter.shrink()
 					   .filter(this::isIncluded)
-					   .findFirst()
-					   .map(t -> Stream.of(toFiltered(t)))
-					   .orElse(deepSearchFirst());
+					   .map(this::toFiltered);
 	}
 
 	private Stream<Shrinkable<T>> deepSearchFirst() {
@@ -41,7 +43,7 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 							   return Stream.of(shrinkable);
 						   } else {
 							   // Is the limit necessary?
-							   return shrinkable.shrink().limit(10);
+							   return shrinkable.shrink().limit(100);
 						   }
 					   })
 					   .findFirst()
