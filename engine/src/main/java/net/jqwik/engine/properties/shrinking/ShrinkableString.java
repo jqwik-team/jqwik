@@ -9,8 +9,8 @@ import net.jqwik.engine.support.*;
 
 public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
-	public ShrinkableString(List<Shrinkable<Character>> elements, int minSize) {
-		super(elements, minSize);
+	public ShrinkableString(List<Shrinkable<Character>> elements, int minSize, int maxSize) {
+		super(elements, minSize, maxSize);
 	}
 
 	@Override
@@ -20,7 +20,7 @@ public class ShrinkableString extends ShrinkableContainer<String, Character> {
 
 	@Override
 	Shrinkable<String> createShrinkable(List<Shrinkable<Character>> shrunkElements) {
-		return new ShrinkableString(shrunkElements, minSize);
+		return new ShrinkableString(shrunkElements, minSize, maxSize);
 	}
 
 	@Override

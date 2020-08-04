@@ -113,7 +113,7 @@ public class ShrinkableStringTests {
 						 .map(shrinkableInt -> shrinkableInt.map(anInt -> (char) (int) anInt))
 						 .collect(Collectors.toList());
 
-			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5);
+			Shrinkable<String> shrinkable = new ShrinkableString(elementShrinkables, 5, 1000);
 			String shrunkValue = shrinkToMinimal(shrinkable, (TestingFalsifier<String>) String::isEmpty, null);
 			assertThat(shrunkValue).hasSize(5);
 		}
@@ -128,7 +128,7 @@ public class ShrinkableStringTests {
 				.map(shrinkable -> shrinkable.map(anInt -> (char) (int) anInt))
 				.collect(Collectors.toList());
 
-		return new ShrinkableString(elementShrinkables, minSize);
+		return new ShrinkableString(elementShrinkables, minSize, aString.length());
 	}
 
 }

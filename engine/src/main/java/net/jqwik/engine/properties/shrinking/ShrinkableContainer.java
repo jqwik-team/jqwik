@@ -10,10 +10,12 @@ import net.jqwik.engine.support.*;
 abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	protected final List<Shrinkable<E>> elements;
 	protected final int minSize;
+	protected final int maxSize;
 
-	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize) {
+	ShrinkableContainer(List<Shrinkable<E>> elements, int minSize, int maxSize) {
 		this.elements = elements;
 		this.minSize = minSize;
+		this.maxSize = maxSize;
 	}
 
 	private C createValue(List<Shrinkable<E>> shrinkables) {
@@ -35,6 +37,40 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 			shrinkElementsOneAfterTheOther(),
 			shrinkPairsOfElements()
 		);
+	}
+
+	@Override
+	public Optional<Shrinkable<C>> grow(Shrinkable<?> before, Shrinkable<?> after) {
+		if (before instanceof ShrinkableContainer && after instanceof ShrinkableContainer) {
+			List<Shrinkable<?>> removedShrinkables = new ArrayList<>(((ShrinkableContainer<?, ?>) before).elements);
+			removedShrinkables.removeAll(((ShrinkableContainer<?, ?>) after).elements);
+			return growBy(removedShrinkables);
+		}
+		return Optional.empty();
+	}
+
+	private Optional<Shrinkable<C>> growBy(List<Shrinkable<?>> shrinkables) {
+		if (elements.size() + shrinkables.size() <= maxSize) {
+			List<Shrinkable<E>> grownElements = new ArrayList<>(elements);
+			for (Shrinkable<?> shrinkable : shrinkables) {
+				try {
+					@SuppressWarnings("unchecked")
+					Shrinkable<E> castShrinkable = (Shrinkable<E>) shrinkable;
+					grownElements.add(0, castShrinkable);
+				} catch (Throwable classCastException) {
+					return Optional.empty();
+				}
+			}
+			Shrinkable<C> grownShrinkable = createShrinkable(grownElements);
+			if (hasReallyGrown(grownShrinkable)) {
+				return Optional.of(grownShrinkable);
+			}
+		}
+		return Optional.empty();
+	}
+
+	protected boolean hasReallyGrown(Shrinkable<C> grownShrinkable) {
+		return true;
 	}
 
 	protected Stream<Shrinkable<C>> shrinkSizeOfList() {

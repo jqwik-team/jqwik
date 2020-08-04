@@ -47,7 +47,7 @@ class ShrinkableProperties {
 				IntStream.range(0, size)
 						 .mapToObj(ignore -> Arbitraries.lazy(this::anyShrinkable))
 						 .collect(Collectors.toList());
-			return Combinators.combine(elementArbitraries).as(elements -> new ShrinkableList(elements, 0));
+			return Combinators.combine(elementArbitraries).as(elements -> new ShrinkableList(elements, 0, size));
 		});
 	}
 
@@ -60,7 +60,7 @@ class ShrinkableProperties {
 						 .collect(Collectors.toList());
 			return Combinators.combine(elementArbitraries).as(elements -> {
 				Set<Shrinkable> elementSet = new HashSet<>(elements);
-				return new ShrinkableSet(elementSet, 0);
+				return new ShrinkableSet(elementSet, 0, size);
 			});
 		});
 	}

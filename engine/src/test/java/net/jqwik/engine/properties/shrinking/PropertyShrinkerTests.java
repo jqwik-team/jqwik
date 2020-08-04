@@ -206,8 +206,8 @@ class PropertyShrinkerTests {
 		@Example
 		void shrunkSampleParametersAreTheRealOnes() {
 			List<Shrinkable<Object>> shrinkables = asList(
-				new ShrinkableList<>(asList(new FullShrinkable(42)), 1).asGeneric(),
-				new ShrinkableList<>(asList(new FullShrinkable(17)), 0).asGeneric()
+				new ShrinkableList<>(asList(new FullShrinkable(42)), 1, 5).asGeneric(),
+				new ShrinkableList<>(asList(new FullShrinkable(17)), 0, 5).asGeneric()
 			);
 
 			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);

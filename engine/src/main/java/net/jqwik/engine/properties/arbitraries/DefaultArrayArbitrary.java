@@ -32,7 +32,7 @@ public class DefaultArrayArbitrary<T, A> extends MultivalueArbitraryBase<T, A> i
 
 	@Override
 	public EdgeCases<A> edgeCases() {
-		return edgeCases(ShrinkableList::new).map(this::toArray);
+		return edgeCases((elements, minSize1) -> new ShrinkableList<>(elements, minSize1, maxSize)).map(this::toArray);
 	}
 
 	@SuppressWarnings("unchecked")

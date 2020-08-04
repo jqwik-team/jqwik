@@ -56,7 +56,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 	}
 
 	private EdgeCases<String> emptyStringEdgeCase() {
-		return EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength));
+		return EdgeCases.fromSupplier(() -> new ShrinkableString(Collections.emptyList(), minLength, maxLength));
 	}
 
 	private EdgeCases<String> fixedSizedEdgeCases(int fixedSize) {
@@ -64,7 +64,7 @@ public class DefaultStringArbitrary extends AbstractArbitraryBase implements Str
 				   .edgeCases()
 				   .mapShrinkable(shrinkableChar -> {
 					   List<Shrinkable<Character>> chars = new ArrayList<>(Collections.nCopies(fixedSize, shrinkableChar));
-					   return new ShrinkableString(chars, minLength);
+					   return new ShrinkableString(chars, minLength, maxLength);
 				   });
 	}
 
