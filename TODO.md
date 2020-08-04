@@ -3,7 +3,6 @@
     - Re-implement shrinking
         - Possibility of shrinking one element and growing another
           - Allow collections to grow
-          - Allow filtered values to grow
         - Review shrinking related TODOs
         - Remove duplication in shrink methods (especially one-after-the-other)
         

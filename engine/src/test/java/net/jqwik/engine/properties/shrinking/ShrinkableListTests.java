@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -237,6 +238,27 @@ class ShrinkableListTests {
 
 			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo(asList(0, 1, 10, 10));
+		}
+
+		@Example
+		void sumOfFilteredValues() {
+			Predicate<Integer> filter = i -> i % 2 == 0;
+			List<Shrinkable<Integer>> elementShrinkables =
+				Arrays.stream(new Integer[]{12, 8, 6, 4})
+					  .map(OneStepShrinkable::new)
+					  .map(s -> new FilteredShrinkable<>(s, filter))
+					  .collect(Collectors.toList());
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4)
+													   .filter(list -> list.stream().allMatch(i -> i <= 10));
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(asList(0, 2, 10, 10));
 		}
 
 		@Property(tries = 100)
