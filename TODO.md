@@ -1,11 +1,8 @@
 - 1.3.3
 
     - Re-implement shrinking
-        - Possibility of shrinking one element and growing another
-          - Allow collections to grow
         - Review shrinking related TODOs
         - Remove duplication in shrink methods (especially one-after-the-other)
-        
         
 - 1.3.4
 

@@ -81,7 +81,7 @@ public class RandomGenerators {
 	public static <T> RandomGenerator<List<T>> list(
 		RandomGenerator<T> elementGenerator, int minSize, int maxSize, int cutoffSize
 	) {
-		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable = elements -> new ShrinkableList<>(elements, minSize);
+		Function<List<Shrinkable<T>>, Shrinkable<List<T>>> createShrinkable = elements -> new ShrinkableList<>(elements, minSize, maxSize);
 		return container(elementGenerator, createShrinkable, minSize, maxSize, cutoffSize);
 	}
 
@@ -100,7 +100,7 @@ public class RandomGenerators {
 	public static RandomGenerator<String> strings(
 		RandomGenerator<Character> elementGenerator, int minLength, int maxLength, int cutoffLength
 	) {
-		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength);
+		Function<List<Shrinkable<Character>>, Shrinkable<String>> createShrinkable = elements -> new ShrinkableString(elements, minLength, maxLength);
 		return container(elementGenerator, createShrinkable, minLength, maxLength, cutoffLength);
 	}
 
@@ -177,7 +177,7 @@ public class RandomGenerators {
 					return new JqwikException(message);
 				}
 			);
-			return new ShrinkableSet<>(elements, minSize);
+			return new ShrinkableSet<>(elements, minSize, maxSize);
 		};
 	}
 

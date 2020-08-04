@@ -41,7 +41,7 @@ class ShrinkableListTests {
 		void downToMinSize() {
 			List<Shrinkable<Integer>> elementShrinkables =
 				Arrays.stream(new Integer[]{0, 1, 2, 3, 4}).map(Shrinkable::unshrinkable).collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2, 5);
 
 			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).hasSize(2);
@@ -83,7 +83,7 @@ class ShrinkableListTests {
 
 			List<Shrinkable<Integer>> elementShrinkables =
 				Arrays.stream(new Integer[]{10, 10, 10, 10, 10, 10, 10, 10, 10}).map(OneStepShrinkable::new).collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 6);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 6, 10);
 
 			TestingFalsifier<List<Integer>> falsifier = integers -> {
 				int int1 = integers.get(index1);
@@ -108,7 +108,7 @@ class ShrinkableListTests {
 				Shrinkable.unshrinkable(1, ShrinkingDistance.of(1)),
 				Shrinkable.unshrinkable(2, ShrinkingDistance.of(2))
 			);
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0, 4);
 
 			TestingFalsifier<List<Integer>> falsifier =
 				integers -> {
@@ -128,7 +128,7 @@ class ShrinkableListTests {
 				Shrinkable.unshrinkable(1, ShrinkingDistance.of(1)),
 				Shrinkable.unshrinkable(2, ShrinkingDistance.of(2))
 			);
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0, 4);
 
 			TestingFalsifier<List<Integer>> falsifier =
 				integers -> {
@@ -144,7 +144,7 @@ class ShrinkableListTests {
 		void shrinkSumOfPairToLastValue() {
 			List<Shrinkable<Integer>> elementShrinkables =
 				Arrays.stream(new Integer[]{17, 8}).map(OneStepShrinkable::new).collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2, 2);
 
 			TestingFalsifier<List<Integer>> falsifier =
 				integers -> {
@@ -214,7 +214,7 @@ class ShrinkableListTests {
 				IntStream.range(1, 200)
 						 .mapToObj(OneStepShrinkable::new)
 						 .collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0);
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 0, 200);
 
 			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(List::isEmpty), null);
 			assertThat(shrunkValue).hasSize(1);
@@ -227,7 +227,7 @@ class ShrinkableListTests {
 		void shrinkSumOfListTowardsEnd() {
 			List<Shrinkable<Integer>> elementShrinkables =
 				Arrays.stream(new Integer[]{10, 8, 5, 9}).map(OneStepShrinkable::new).collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4)
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4, 4)
 													   .filter(list -> list.stream().allMatch(i -> i <= 10));
 
 			TestingFalsifier<List<Integer>> falsifier =
@@ -248,7 +248,7 @@ class ShrinkableListTests {
 					  .map(OneStepShrinkable::new)
 					  .map(s -> new FilteredShrinkable<>(s, filter))
 					  .collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4)
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4, 4)
 													   .filter(list -> list.stream().allMatch(i -> i <= 10));
 
 			TestingFalsifier<List<Integer>> falsifier =
@@ -316,12 +316,57 @@ class ShrinkableListTests {
 			List<Long> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
 			assertThat(shrunkValue).isEqualTo(asList(0L, 1L, 10L, 10L));
 		}
+
+		@Property(tries = 100)
+		void sumOfIntegersAcrossLists(@ForAll Random random) {
+			ListArbitrary<List<Integer>> listOfLists =
+				Arbitraries.integers().between(0, 10)
+						   .list().ofMaxSize(5)
+						   .list().ofMaxSize(5);
+
+			TestingFalsifier<List<List<Integer>>> falsifier =
+				lol -> {
+					int sum = lol.stream()
+								 .flatMap(Collection::stream)
+								 .mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<List<Integer>> shrunkValue = falsifyThenShrink(listOfLists, random, falsifier);
+			assertThat(shrunkValue).isEqualTo(asList(asList(1, 10, 10)));
+		}
+
+		@Property(tries = 100)
+		void sumOfIntegersAcrossSets(@ForAll Random random) {
+			Arbitrary<List<Set<Integer>>> listOfSets =
+				Arbitraries.integers().between(0, 10)
+						   .set().ofMaxSize(10)
+						   .list().ofMaxSize(5)
+						   .filter(lol -> {
+							   List<Integer> allElements = lol.stream().flatMap(Collection::stream).collect(Collectors.toList());
+							   return (allElements.size() == new HashSet<>(allElements).size());
+						   });
+
+			TestingFalsifier<List<Set<Integer>>> falsifier =
+				lol -> {
+					int sum = lol.stream()
+								 .flatMap(Collection::stream)
+								 .mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Set<Integer>> shrunkValue = falsifyThenShrink(listOfSets, random, falsifier);
+			assertThat(shrunkValue).hasSize(1);
+			// TODO: An even better shrinker should result in:
+			// assertThat(shrunkValue).isEqualTo(asList(new HashSet<>(asList(2, 9, 10))));
+		}
+
 	}
 
 	private Shrinkable<List<Integer>> createShrinkableList(Integer... listValues) {
 		List<Shrinkable<Integer>> elementShrinkables =
 			Arrays.stream(listValues).map(OneStepShrinkable::new).collect(Collectors.toList());
-		return new ShrinkableList<>(elementShrinkables, 0);
+		return new ShrinkableList<>(elementShrinkables, 0, listValues.length);
 	}
 
 }

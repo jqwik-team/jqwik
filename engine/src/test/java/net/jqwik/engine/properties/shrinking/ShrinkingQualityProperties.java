@@ -52,8 +52,8 @@ class ShrinkingQualityProperties {
 	void largeUnionList(@ForAll Random random) {
 		ListArbitrary<List<Integer>> listOfLists =
 			Arbitraries.integers()
-					   .list().ofMaxSize(100)
-					   .list().ofMaxSize(100);
+					   .list().ofMaxSize(50)
+					   .list().ofMaxSize(50);
 
 		TestingFalsifier<List<List<Integer>>> containsLessThan5DistinctNumbers = falsifier((List<List<Integer>> ls) -> {
 			Set<Integer> allElements = new HashSet<>();

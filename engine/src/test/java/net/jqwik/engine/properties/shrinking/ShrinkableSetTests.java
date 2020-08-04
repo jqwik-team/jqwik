@@ -132,7 +132,7 @@ class ShrinkableSetTests {
 		void bigSet() {
 			Set<Shrinkable<Integer>> elementShrinkables = IntStream.range(0, 1000).mapToObj(OneStepShrinkable::new)
 																   .collect(Collectors.toSet());
-			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5);
+			Shrinkable<Set<Integer>> shrinkable = new ShrinkableSet<>(elementShrinkables, 5, 1000);
 
 			Set<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(Set::isEmpty), null);
 			assertThat(shrunkValue).containsExactly(0, 1, 2, 3, 4);
@@ -142,7 +142,7 @@ class ShrinkableSetTests {
 
 	private Shrinkable<Set<Integer>> createShrinkableSet(List<Integer> listValues, int minSize) {
 		Set<Shrinkable<Integer>> elementShrinkables = listValues.stream().map(OneStepShrinkable::new).collect(Collectors.toSet());
-		return new ShrinkableSet<>(elementShrinkables, minSize);
+		return new ShrinkableSet<>(elementShrinkables, minSize, listValues.size());
 	}
 
 }

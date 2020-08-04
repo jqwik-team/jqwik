@@ -32,7 +32,7 @@ public class DefaultListArbitrary<T> extends MultivalueArbitraryBase<T, List<T>>
 
 	@Override
 	public EdgeCases<List<T>> edgeCases() {
-		return edgeCases(ShrinkableList::new);
+		return edgeCases((elements, minSize1) -> new ShrinkableList<T>(elements, minSize1, maxSize));
 	}
 
 	@Override

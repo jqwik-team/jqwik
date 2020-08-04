@@ -8,8 +8,8 @@ import net.jqwik.engine.support.*;
 
 public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
-	public ShrinkableList(List<Shrinkable<E>> elements, int minSize) {
-		super(elements, minSize);
+	public ShrinkableList(List<Shrinkable<E>> elements, int minSize, int maxSize) {
+		super(elements, minSize, maxSize);
 	}
 
 	@Override
@@ -19,7 +19,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 
 	@Override
 	Shrinkable<List<E>> createShrinkable(List<Shrinkable<E>> shrunkElements) {
-		return new ShrinkableList<>(shrunkElements, minSize);
+		return new ShrinkableList<>(shrunkElements, minSize, maxSize);
 	}
 
 	@Override
