@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -26,6 +27,13 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 			shrinkToFirst(toFilter),
 			deepSearchFirst(toFilter)
 		);
+	}
+
+	@Override
+	public Optional<Shrinkable<T>> grow(Shrinkable<?> before, Shrinkable<?> after) {
+		return toFilter.grow(before, after)
+					   .filter(this::isIncluded)
+					   .map(this::toFiltered);
 	}
 
 	private Stream<Shrinkable<T>> shrinkToFirst(Shrinkable<T> base) {
