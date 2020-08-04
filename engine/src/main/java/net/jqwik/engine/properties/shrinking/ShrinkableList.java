@@ -38,7 +38,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 			int secondIndex = Math.max(pair.get1(), pair.get2());
 			Shrinkable<E> first = elements.get(firstIndex);
 			Shrinkable<E> second = elements.get(secondIndex);
-			if (first.compareTo(second) >= 0) {
+			if (first.compareTo(second) > 0) {
 				continue;
 			}
 			first.shrink()

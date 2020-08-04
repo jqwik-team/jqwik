@@ -29,14 +29,17 @@ public class ShrinkableTypesForTest {
 		}
 
 		@Override
-		public Optional<Shrinkable<Integer>> grow(Shrinkable<Integer> before, Shrinkable<Integer> after) {
-			int diff = before.value() - (int) after.value();
-			int grownValue = value() + diff;
-			if (grownValue >= minimum) {
-				return Optional.of(new OneStepShrinkable(grownValue, minimum));
-			} else {
-				return Optional.empty();
+		public Optional<Shrinkable<Integer>> grow(Shrinkable<?> before, Shrinkable<?> after) {
+			Object beforeValue = before.value();
+			Object afterValue = after.value();
+			if (beforeValue instanceof Integer && afterValue instanceof Integer) {
+				int diff = (int) beforeValue - (int) afterValue;
+				int grownValue = value() + diff;
+				if (grownValue >= minimum) {
+					return Optional.of(new OneStepShrinkable(grownValue, minimum));
+				}
 			}
+			return Optional.empty();
 		}
 
 		@Override

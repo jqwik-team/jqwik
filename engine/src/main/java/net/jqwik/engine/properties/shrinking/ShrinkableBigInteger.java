@@ -27,6 +27,36 @@ public class ShrinkableBigInteger extends AbstractValueShrinkable<BigInteger> {
 		);
 	}
 
+	@Override
+	public Optional<Shrinkable<BigInteger>> grow(Shrinkable<?> before, Shrinkable<?> after) {
+		Object beforeValue = before.value();
+		Object afterValue = after.value();
+		BigInteger diff = calculateDiff(beforeValue, afterValue);
+		if (diff.compareTo(BigInteger.ZERO) != 0) {
+			BigInteger grownValue = value().add(diff);
+			if (range.includes(grownValue)) {
+				return Optional.of(new ShrinkableBigInteger(grownValue, range, shrinkingTarget));
+			}
+		}
+		return Optional.empty();
+	}
+
+	private BigInteger calculateDiff(Object beforeValue, Object afterValue) {
+		if (beforeValue instanceof BigInteger && afterValue instanceof BigInteger) {
+			return ((BigInteger) beforeValue).subtract((BigInteger) afterValue);
+		}
+		try {
+			return BigInteger.valueOf(toLong(beforeValue) - toLong(afterValue));
+		} catch (ClassCastException notAnIntegral) {
+			return BigInteger.ZERO;
+		}
+	}
+
+	private long toLong(Object value) {
+		// TODO: Cover also Long, Short and Byte
+		return ((Integer) value).longValue();
+	}
+
 	private Stream<Shrinkable<BigInteger>> shrinkNegativeToPositive(Shrinkable<BigInteger> shrinkable) {
 		if (shrinkable.value().compareTo(BigInteger.ZERO) >= 0) {
 			return Stream.empty();

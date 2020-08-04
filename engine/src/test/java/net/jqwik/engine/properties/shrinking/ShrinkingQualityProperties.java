@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.ArrayList;
 import java.util.*;
 
 import net.jqwik.api.*;
@@ -49,7 +50,10 @@ class ShrinkingQualityProperties {
 
 	@Property(tries = 100)
 	void largeUnionList(@ForAll Random random) {
-		ListArbitrary<List<Integer>> listOfLists = Arbitraries.integers().list().list();
+		ListArbitrary<List<Integer>> listOfLists =
+			Arbitraries.integers()
+					   .list().ofMaxSize(100)
+					   .list().ofMaxSize(100);
 
 		TestingFalsifier<List<List<Integer>>> containsLessThan5DistinctNumbers = falsifier((List<List<Integer>> ls) -> {
 			Set<Integer> allElements = new HashSet<>();

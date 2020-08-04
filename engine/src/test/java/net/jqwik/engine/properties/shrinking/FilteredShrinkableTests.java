@@ -42,11 +42,11 @@ class FilteredShrinkableTests {
 
 		@Example
 		void manyStepsShrinking() {
-			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(40);
-			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 5 == 0);
+			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(49);
+			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i > 0 && i % 7 == 0);
 
 			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
-			assertThat(shrunkValue).isEqualTo(0);
+			assertThat(shrunkValue).isEqualTo(7);
 		}
 	}
 
