@@ -3,6 +3,8 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.stream.*;
 
+import net.jqwik.engine.support.*;
+
 public class SizeOfListShrinker<T> {
 
 	private final int minSize;
@@ -14,6 +16,17 @@ public class SizeOfListShrinker<T> {
 	public Stream<List<T>> shrink(List<T> toShrink) {
 		if (toShrink.size() <= minSize)
 			return Stream.empty();
+		return JqwikStreamSupport.concat(
+			emptyList(),
+			cuts(toShrink)
+		).filter(l -> l.size() >= minSize);
+	}
+
+	private Stream<List<T>> emptyList() {
+		return Stream.of(new ArrayList<>());
+	}
+
+	public Stream<List<T>> cuts(List<T> toShrink) {
 		Set<List<T>> lists = new HashSet<>();
 		appendRightCuts(toShrink, lists);
 		appendLeftCuts(toShrink, lists);

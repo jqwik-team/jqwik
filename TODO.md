@@ -1,7 +1,6 @@
 - 1.3.3
 
     - Re-implement shrinking
-        - Review shrinking related TODOs
         - Remove duplication in shrink methods (especially one-after-the-other)
         
 - 1.3.4
