@@ -75,6 +75,7 @@ public class ShrinkingTestHelper {
 				}
 				return result.isFalsified();
 			});
+		// System.out.println(falsifiedShrinkable.value());
 		return shrinkToMinimal(falsifiedShrinkable, falsifier, originalError[0]);
 	}
 

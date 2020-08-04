@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -22,7 +23,16 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public Stream<Shrinkable<U>> shrink() {
-		return toMap.shrink().map(shrinkable -> shrinkable.map(mapper));
+		return toMap.shrink().map(this::toMappedShrinkable);
+	}
+
+	public Shrinkable<U> toMappedShrinkable(Shrinkable<T> shrinkable) {
+		return shrinkable.map(mapper);
+	}
+
+	@Override
+	public Optional<Shrinkable<U>> grow(Shrinkable<?> before, Shrinkable<?> after) {
+		return toMap.grow(before, after).map(this::toMappedShrinkable);
 	}
 
 	@Override

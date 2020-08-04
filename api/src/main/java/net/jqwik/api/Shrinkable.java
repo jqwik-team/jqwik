@@ -68,7 +68,7 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	 * @return this shrinkable grown by the difference of before and after
 	 */
 	@API(status = INTERNAL, since = "1.3.3")
-	default Optional<Shrinkable<T>> grow(Shrinkable<T> before, Shrinkable<T> after) {
+	default Optional<Shrinkable<T>> grow(Shrinkable<?> before, Shrinkable<?> after) {
 		return Optional.empty();
 	}
 

@@ -4,7 +4,6 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.support.*;
 
 public class FilteredShrinkable<T> implements Shrinkable<T> {
 
@@ -23,33 +22,23 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Stream<Shrinkable<T>> shrink() {
-		return JqwikStreamSupport.concat(
-			shrinkToFirst(),
-			deepSearchFirst()
+		return Stream.concat(
+			shrinkToFirst(toFilter),
+			deepSearchFirst(toFilter)
 		);
 	}
 
-	private Stream<Shrinkable<T>> shrinkToFirst() {
-		return toFilter.shrink()
-					   .filter(this::isIncluded)
-					   .map(this::toFiltered);
+	private Stream<Shrinkable<T>> shrinkToFirst(Shrinkable<T> base) {
+		return base.shrink()
+				   .filter(this::isIncluded)
+				   .map(this::toFiltered);
 	}
 
-	private Stream<Shrinkable<T>> deepSearchFirst() {
-		return toFilter.shrink()
-					   .flatMap(Shrinkable::shrink)
-					   .flatMap(shrinkable -> {
-						   if (isIncluded(shrinkable)) {
-							   return Stream.of(shrinkable);
-						   } else {
-							   // Is the limit necessary?
-							   return shrinkable.shrink()
-												.limit(100);
-						   }
-					   })
-					   .findFirst()
-					   .map(t -> Stream.of(toFiltered(t)))
-					   .orElse(Stream.empty());
+	private Stream<Shrinkable<T>> deepSearchFirst(Shrinkable<T> base) {
+		return Stream.concat(
+			base.shrink().flatMap(this::shrinkToFirst),
+			base.shrink().flatMap(this::deepSearchFirst).limit(1)
+		);
 	}
 
 	private boolean isIncluded(Shrinkable<T> shrinkable) {
