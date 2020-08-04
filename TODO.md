@@ -2,6 +2,27 @@
 
     - Re-implement shrinking
         - Remove duplication in shrink methods (especially one-after-the-other)
+        - Shrink/growing in Property parameter shrinking
+        - Improve shrinking of recursive arbitraries
+        - Endless shrinking:
+        	@Property(afterFailure = AfterFailureMode.RANDOM_SEED)
+        	boolean test(@ForAll("boundedListTuples") List<List<Short>> p) {
+        		assertThat(p).hasSize(5);
+        		short sum = (short) p.stream()
+        				.flatMap(Collection::stream)
+        				.mapToInt(i -> i)
+        				.sum();
+        		return sum < 5 * 256;
+        	}
+        
+        	@Provide
+        	ListArbitrary<List<Short>> boundedListTuples() {
+        		return Arbitraries.shorts()
+        				.list()
+        				.filter(x -> x.stream().mapToInt(s -> s).sum() < 256)
+        				.list().ofSize(5);
+        	}
+
         
 - 1.3.4
 
