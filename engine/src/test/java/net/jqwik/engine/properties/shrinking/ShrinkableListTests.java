@@ -156,37 +156,6 @@ class ShrinkableListTests {
 		}
 
 		@Example
-		void shrinkSumOfListTowardsEnd() {
-			List<Shrinkable<Integer>> elementShrinkables =
-				Arrays.stream(new Integer[]{10, 8, 5, 9}).map(OneStepShrinkable::new).collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4)
-													   .filter(list -> list.stream().allMatch(i -> i <= 10));
-
-			TestingFalsifier<List<Integer>> falsifier =
-				integers -> {
-					int sum = integers.stream().mapToInt(i -> i).sum();
-					return sum < 21;
-				};
-
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
-			assertThat(shrunkValue).isEqualTo(asList(0, 1, 10, 10));
-		}
-
-		@Property
-		void shrinkSumOfListTowardsEnd(@ForAll Random random) {
-			ListArbitrary<Integer> integerLists = Arbitraries.integers().between(0, 10).list().ofSize(4);
-
-			TestingFalsifier<List<Integer>> falsifier =
-				integers -> {
-					int sum = integers.stream().mapToInt(i -> i).sum();
-					return sum < 21;
-				};
-
-			List<Integer> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
-			assertThat(shrunkValue).isEqualTo(asList(0, 1, 10, 10));
-		}
-
-		@Example
 		void shrinkingResultHasValueAndThrowable() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
 
@@ -248,6 +217,82 @@ class ShrinkableListTests {
 
 			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier(List::isEmpty), null);
 			assertThat(shrunkValue).hasSize(1);
+		}
+	}
+
+	@Group
+	class SumShrinking {
+		@Example
+		void shrinkSumOfListTowardsEnd() {
+			List<Shrinkable<Integer>> elementShrinkables =
+				Arrays.stream(new Integer[]{10, 8, 5, 9}).map(OneStepShrinkable::new).collect(Collectors.toList());
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 4)
+													   .filter(list -> list.stream().allMatch(i -> i <= 10));
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(asList(0, 1, 10, 10));
+		}
+
+		@Property(tries = 100)
+		void sumOfIntegers(@ForAll Random random) {
+			ListArbitrary<Integer> integerLists = Arbitraries.integers().between(0, 10).list().ofSize(4);
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Integer> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
+			assertThat(shrunkValue).isEqualTo(asList(0, 1, 10, 10));
+		}
+
+		@Property(tries = 100)
+		void sumOfShorts(@ForAll Random random) {
+			ListArbitrary<Short> integerLists = Arbitraries.shorts().between((short) 0, (short) 10).list().ofSize(4);
+
+			TestingFalsifier<List<Short>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Short> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
+			assertThat(shrunkValue).isEqualTo(asList((short) 0, (short) 1, (short) 10, (short) 10));
+		}
+
+		@Property(tries = 100)
+		void sumOfBytes(@ForAll Random random) {
+			ListArbitrary<Byte> integerLists = Arbitraries.bytes().between((byte) 0, (byte) 10).list().ofSize(4);
+
+			TestingFalsifier<List<Byte>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 21;
+				};
+
+			List<Byte> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
+			assertThat(shrunkValue).isEqualTo(asList((byte) 0, (byte) 1, (byte) 10, (byte) 10));
+		}
+
+		@Property(tries = 100)
+		void sumOfLongs(@ForAll Random random) {
+			ListArbitrary<Long> integerLists = Arbitraries.longs().between(0, 10).list().ofSize(4);
+
+			TestingFalsifier<List<Long>> falsifier =
+				integers -> {
+					long sum = integers.stream().mapToLong(i -> i).sum();
+					return sum < 21L;
+				};
+
+			List<Long> shrunkValue = falsifyThenShrink(integerLists, random, falsifier);
+			assertThat(shrunkValue).isEqualTo(asList(0L, 1L, 10L, 10L));
 		}
 	}
 
