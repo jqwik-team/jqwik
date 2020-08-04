@@ -195,21 +195,36 @@ class ArbitraryShrinkingTests {
 			}
 		}
 
-		// TODO: Reimplement shrinking so that it handles mutable objects correctly
-		@Disabled("Requires that shrinkables are properly reset before reuse during shrinking")
-		//@Property(edgeCases = EdgeCasesMode.NONE)
+		@Property
+		@ExpectFailure(failureType = AssertionError.class, checkResult = ShrinkTo424299.class)
+		void mutableListsAreAlwaysReset(@ForAll("listOfLists") List<List<Integer>> listOfLists) {
+			if (listOfLists.isEmpty()) {
+				return;
+			}
+			listOfLists.get(0).add(99);
+			assertThat(listOfLists).allMatch(list -> list.size() < 3);
+		}
+
+		private class ShrinkTo424299 extends ShrinkToChecker {
+			@Override
+			public Iterable<?> shrunkValues() {
+				return asList(asList(asList(42, 42, 99)));
+			}
+		}
+
+
+		@Provide
+		Arbitrary<List<List<Integer>>> listOfLists() {
+			return Arbitraries.just(42).list().list().ofMaxSize(10);
+		}
+
+		@Property(edgeCases = EdgeCasesMode.NONE)
 		@ExpectFailure(failureType = AssertionError.class, checkResult = ShrinkToListOfMutable10.class)
-		@Report(Reporting.FALSIFIED)
 		void mutablesInListAreReset(
 			@ForAll int before,
 			@ForAll("listOfMutables") List<Mutable> list,
 			@ForAll int after
 		) {
-			list.forEach(mutable -> {
-				if (mutable.otherValues.size() != 1) {
-					System.out.println("Wrong number of other values: " + mutable);
-				}
-			});
 			list.forEach(mutable -> mutable.addOtherValue(mutable.initValue));
 
 			// Fails and invokes shrinking process
@@ -230,7 +245,6 @@ class ArbitraryShrinkingTests {
 					   .flatMapEach((all, each) -> {
 						   return Arbitraries.of(all)
 											 .map(other -> {
-												 // each.otherValues.clear();
 												 each.addOtherValue(other.initValue);
 												 return each;
 											 });
