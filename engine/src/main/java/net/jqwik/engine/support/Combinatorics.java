@@ -77,7 +77,10 @@ public class Combinatorics {
 		return new ConcatIterator<>(iterators);
 	}
 
-	public static Iterable<Tuple2<Integer, Integer>> distinctPairs(int maxExclusive) {
+	public static Stream<Tuple2<Integer, Integer>> distinctPairs(int maxExclusive) {
+		if (maxExclusive < 2) {
+			return Stream.empty();
+		}
 		List<Tuple2<Integer, Integer>> pairs = new ArrayList<>();
 		for (int i = 0; i < maxExclusive; i++) {
 			for (int j = i + 1; j < maxExclusive; j++) {
@@ -86,7 +89,7 @@ public class Combinatorics {
 				}
 			}
 		}
-		return pairs;
+		return pairs.stream();
 	}
 }
 
