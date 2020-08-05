@@ -64,13 +64,11 @@ class ShrinkingQualityProperties {
 		});
 		List<List<Integer>> shrunkResult = falsifyThenShrink(listOfLists, random, containsLessThan5DistinctNumbers);
 
-		// e.g. [[1, 2, 3, 4, 5]]
+		// e.g. [[0, 1, -1, 2, -2]]
 		int numberOfElements = shrunkResult.stream().mapToInt(List::size).sum();
 		assertThat(numberOfElements).isEqualTo(5);
 		assertThat(numberOfElements).isLessThanOrEqualTo(10);
-
-		// TODO: Better shrinking should certify that:
-		// assertThat(shrunkResult).hasSize(1);
+		assertThat(shrunkResult).hasSize(1);
 	}
 
 	@Property
@@ -100,6 +98,38 @@ class ShrinkingQualityProperties {
 
 	private ListArbitrary<String> listsOfLength(int n) {
 		return Arbitraries.of("a", "b").list().ofSize(n);
+	}
+
+	@Property(seed="5353", tries = 10)
+	void bound5(@ForAll Random random) {
+		ListArbitrary<List<Short>> listOfLists = boundedListTuples();
+
+		TestingFalsifier<List<List<Short>>> falsifier = p -> {
+			short sum = (short) p.stream()
+								 .flatMap(Collection::stream)
+								 .mapToInt(i -> i)
+								 .sum();
+			return sum < 5 * 256;
+		};
+
+		List<List<Short>> shrunkResult = falsifyThenShrink(listOfLists, random, falsifier);
+
+		assertThat(shrunkResult).hasSize(5);
+		assertThat(shrunkResult).isEqualTo(asList(
+			asList(),
+			asList(),
+			asList(),
+			asList(),
+			asList((short) -1, (short) -32768)
+		));
+	}
+
+	@Provide
+	ListArbitrary<List<Short>> boundedListTuples() {
+		return Arbitraries.shorts()
+						  .list()
+						  .filter(x -> x.stream().mapToInt(s -> s).sum() < 256)
+						  .list().ofSize(5);
 	}
 
 }

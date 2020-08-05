@@ -31,6 +31,13 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Optional<Shrinkable<T>> grow(Shrinkable<?> before, Shrinkable<?> after) {
+		if (before instanceof FilteredShrinkable && after instanceof FilteredShrinkable) {
+			Shrinkable<?> beforeToFilter = ((FilteredShrinkable<?>) before).toFilter;
+			Shrinkable<?> afterToFilter = ((FilteredShrinkable<?>) after).toFilter;
+			return toFilter.grow(beforeToFilter, afterToFilter)
+						   .filter(this::isIncluded)
+						   .map(this::toFiltered);
+		}
 		return toFilter.grow(before, after)
 					   .filter(this::isIncluded)
 					   .map(this::toFiltered);

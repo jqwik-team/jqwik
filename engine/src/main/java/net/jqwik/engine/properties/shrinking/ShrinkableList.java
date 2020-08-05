@@ -32,28 +32,37 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	private Stream<Shrinkable<List<E>>> moveIndividualValuesTowardsEnd() {
-		List<Shrinkable<List<E>>> moves = new ArrayList<>();
-		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
-			int firstIndex = Math.min(pair.get1(), pair.get2());
-			int secondIndex = Math.max(pair.get1(), pair.get2());
-			Shrinkable<E> first = elements.get(firstIndex);
-			Shrinkable<E> second = elements.get(secondIndex);
-			if (first.compareTo(second) > 0) {
-				continue;
-			}
-			first.shrink()
-				 .map(after -> {
-					 Optional<Shrinkable<E>> grow = second.grow(first, after);
-					 return Tuple.of(after, grow);
-				 })
-				 .filter(tuple -> tuple.get2().isPresent())
-				 .forEach(tuple -> {
-					 List<Shrinkable<E>> pairMove = new ArrayList<>(elements);
-					 pairMove.set(firstIndex, tuple.get1());
-					 pairMove.set(secondIndex, tuple.get2().get());
-					 moves.add(createShrinkable(pairMove));
-				 });
-		}
-		return moves.stream();
+
+		Stream<Tuple.Tuple2<Integer, Integer>> pairStream =
+			StreamSupport.stream(Combinatorics.distinctPairs(elements.size()).spliterator(), false);
+
+		return pairStream
+				   .map(pair -> {
+					   int firstIndex = Math.min(pair.get1(), pair.get2());
+					   int secondIndex = Math.max(pair.get1(), pair.get2());
+					   Shrinkable<E> first = elements.get(firstIndex);
+					   Shrinkable<E> second = elements.get(secondIndex);
+					   return Tuple.of(firstIndex, first, secondIndex, second);
+				   })
+				   .filter(quadruple -> quadruple.get2().compareTo(quadruple.get4()) <= 0)
+				   .flatMap(quadruple -> {
+					   int firstIndex = quadruple.get1();
+					   Shrinkable<E> first = quadruple.get2();
+					   int secondIndex = quadruple.get3();
+					   Shrinkable<E> second = quadruple.get4();
+					   return first.shrink()
+								   .map(after -> {
+									   Optional<Shrinkable<E>> grow = second.grow(first, after);
+									   return Tuple.of(after, grow);
+								   })
+								   .filter(tuple -> tuple.get2().isPresent())
+								   .map(tuple -> {
+									   List<Shrinkable<E>> pairMove = new ArrayList<>(elements);
+									   pairMove.set(firstIndex, tuple.get1());
+									   pairMove.set(secondIndex, tuple.get2().get());
+									   return createShrinkable(pairMove);
+								   });
+
+				   });
 	}
 }
