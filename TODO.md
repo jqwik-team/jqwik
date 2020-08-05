@@ -1,9 +1,8 @@
 - 1.3.3
 
     - Re-implement shrinking
-        - Remove duplication in shrink methods (especially one-after-the-other)
-        - Shrink/growing in Property parameter shrinking
         - Improve shrinking of recursive arbitraries
+        - Shrink/growing in Property parameter shrinking
         
 - 1.3.4
 
