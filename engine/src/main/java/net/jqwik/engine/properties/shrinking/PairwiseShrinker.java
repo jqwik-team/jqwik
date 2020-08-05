@@ -22,11 +22,9 @@ class PairwiseShrinker extends AbstractShrinker {
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		if (sample.size() < 2) {
-			return sample;
-		}
 		FalsifiedSample current = sample;
-		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(sample.size())) {
+		List<Tuple.Tuple2<Integer, Integer>> allPairs = Combinatorics.distinctPairs(sample.size()).collect(Collectors.toList());
+		for (Tuple.Tuple2<Integer, Integer> pair : allPairs) {
 			current = shrinkPair(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, pair.get1(), pair.get2());
 		}
 		return current;

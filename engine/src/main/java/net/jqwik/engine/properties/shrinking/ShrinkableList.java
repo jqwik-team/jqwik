@@ -32,11 +32,8 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	private Stream<Shrinkable<List<E>>> moveIndividualValuesTowardsEnd() {
-
-		Stream<Tuple.Tuple2<Integer, Integer>> pairStream =
-			StreamSupport.stream(Combinatorics.distinctPairs(elements.size()).spliterator(), false);
-
-		return pairStream
+		return Combinatorics
+				   .distinctPairs(elements.size())
 				   .map(pair -> {
 					   int firstIndex = Math.min(pair.get1(), pair.get2());
 					   int secondIndex = Math.max(pair.get1(), pair.get2());

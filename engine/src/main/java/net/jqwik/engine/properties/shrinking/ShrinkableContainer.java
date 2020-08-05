@@ -1,7 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -96,24 +95,18 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 	}
 
 	protected Stream<Shrinkable<C>> shrinkPairsOfElements() {
-		if (elements.size() < 2) {
-			return Stream.empty();
-		}
-		List<Supplier<Stream<Shrinkable<C>>>> suppliers = new ArrayList<>();
-		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
-			Supplier<Stream<Shrinkable<C>>> zip = () -> JqwikStreamSupport.zip(
-				elements.get(pair.get1()).shrink(),
-				elements.get(pair.get2()).shrink(),
-				(Shrinkable<E> s1, Shrinkable<E> s2) -> {
-					List<Shrinkable<E>> newElements = new ArrayList<>(elements);
-					newElements.set(pair.get1(), s1);
-					newElements.set(pair.get2(), s2);
-					return createShrinkable(newElements);
-				}
-			);
-			suppliers.add(zip);
-		}
-		return JqwikStreamSupport.lazyConcat(suppliers);
+		return Combinatorics
+				   .distinctPairs(elements.size())
+				   .flatMap(pair -> JqwikStreamSupport.zip(
+					   elements.get(pair.get1()).shrink(),
+					   elements.get(pair.get2()).shrink(),
+					   (Shrinkable<E> s1, Shrinkable<E> s2) -> {
+						   List<Shrinkable<E>> newElements = new ArrayList<>(elements);
+						   newElements.set(pair.get1(), s1);
+						   newElements.set(pair.get2(), s2);
+						   return createShrinkable(newElements);
+					   }
+				   ));
 	}
 
 	// TODO: Remove duplication with ShrinkableContainer.sortElements() and
@@ -133,21 +126,23 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		return Stream.of(createShrinkable(sortedElements));
 	}
 
+	// TODO: Remove duplication with CollectShrinkable.pairwiseSort
 	private Stream<Shrinkable<C>> pairwiseSort(List<Shrinkable<E>> elements) {
-		List<Shrinkable<C>> swaps = new ArrayList<>();
-		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
-			int firstIndex = Math.min(pair.get1(), pair.get2());
-			int secondIndex = Math.max(pair.get1(), pair.get2());
-			Shrinkable<E> first = elements.get(firstIndex);
-			Shrinkable<E> second = elements.get(secondIndex);
-			if (first.compareTo(second) > 0) {
-				List<Shrinkable<E>> pairSwap = new ArrayList<>(elements);
-				pairSwap.set(firstIndex, second);
-				pairSwap.set(secondIndex, first);
-				swaps.add(createShrinkable(pairSwap));
-			}
-		}
-		return swaps.stream();
+		return Combinatorics.distinctPairs(elements.size())
+							.map(pair -> {
+								int firstIndex = Math.min(pair.get1(), pair.get2());
+								int secondIndex = Math.max(pair.get1(), pair.get2());
+								Shrinkable<E> first = elements.get(firstIndex);
+								Shrinkable<E> second = elements.get(secondIndex);
+								return Tuple.of(firstIndex, first, secondIndex, second);
+							})
+							.filter(quadruple -> quadruple.get2().compareTo(quadruple.get4()) > 0)
+							.map(quadruple -> {
+								List<Shrinkable<E>> pairSwap = new ArrayList<>(elements);
+								pairSwap.set(quadruple.get1(), quadruple.get4());
+								pairSwap.set(quadruple.get3(), quadruple.get2());
+								return createShrinkable(pairSwap);
+							});
 	}
 
 	@Override

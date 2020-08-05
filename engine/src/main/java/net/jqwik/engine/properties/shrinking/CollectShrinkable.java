@@ -69,21 +69,24 @@ public class CollectShrinkable<T> implements Shrinkable<List<T>> {
 		return Stream.of(createShrinkable(sortedElements));
 	}
 
+	// TODO: Remove duplication with ShrinkableContainer.pairwiseSort
 	private Stream<Shrinkable<List<T>>> pairwiseSort(List<Shrinkable<T>> elements) {
-		List<Shrinkable<List<T>>> swaps = new ArrayList<>();
-		for (Tuple.Tuple2<Integer, Integer> pair : Combinatorics.distinctPairs(elements.size())) {
-			int firstIndex = Math.min(pair.get1(), pair.get2());
-			int secondIndex = Math.max(pair.get1(), pair.get2());
-			Shrinkable<T> first = elements.get(firstIndex);
-			Shrinkable<T> second = elements.get(secondIndex);
-			if (first.compareTo(second) > 0) {
-				List<Shrinkable<T>> pairSwap = new ArrayList<>(elements);
-				pairSwap.set(firstIndex, second);
-				pairSwap.set(secondIndex, first);
-				swaps.add(createShrinkable(pairSwap));
-			}
-		}
-		return swaps.stream();
+		return Combinatorics
+				   .distinctPairs(elements.size())
+				   .map(pair -> {
+					   int firstIndex = Math.min(pair.get1(), pair.get2());
+					   int secondIndex = Math.max(pair.get1(), pair.get2());
+					   Shrinkable<T> first = elements.get(firstIndex);
+					   Shrinkable<T> second = elements.get(secondIndex);
+					   return Tuple.of(firstIndex, first, secondIndex, second);
+				   })
+				   .filter(quadruple -> quadruple.get2().compareTo(quadruple.get4()) > 0)
+				   .map(quadruple -> {
+					   List<Shrinkable<T>> pairSwap = new ArrayList<>(elements);
+					   pairSwap.set(quadruple.get1(), quadruple.get4());
+					   pairSwap.set(quadruple.get3(), quadruple.get2());
+					   return createShrinkable(pairSwap);
+				   });
 	}
 
 	private CollectShrinkable<T> createShrinkable(List<Shrinkable<T>> pairSwap) {
