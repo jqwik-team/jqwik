@@ -2,7 +2,6 @@
 
     - Re-implement shrinking
         - Improve shrinking of recursive arbitraries
-        - Shrink/growing in Property parameter shrinking
         
 - 1.3.4
 
