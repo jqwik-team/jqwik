@@ -60,7 +60,7 @@ abstract class AbstractShrinker {
 									 }
 								 })
 								 .filter(t -> t.get3().isFalsified())
-								 .findFirst();
+								 .findAny();
 
 			if (newShrinkingResult.isPresent()) {
 				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> falsifiedTry = newShrinkingResult.get();

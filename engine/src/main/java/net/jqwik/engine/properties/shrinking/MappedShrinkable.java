@@ -32,6 +32,11 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 
 	@Override
 	public Optional<Shrinkable<U>> grow(Shrinkable<?> before, Shrinkable<?> after) {
+		if (before instanceof MappedShrinkable && after instanceof MappedShrinkable) {
+			Shrinkable<?> beforeToMap = ((MappedShrinkable<?, ?>) before).toMap;
+			Shrinkable<?> afterToMap = ((MappedShrinkable<?, ?>) after).toMap;
+			return toMap.grow(beforeToMap, afterToMap).map(this::toMappedShrinkable);
+		}
 		return toMap.grow(before, after).map(this::toMappedShrinkable);
 	}
 

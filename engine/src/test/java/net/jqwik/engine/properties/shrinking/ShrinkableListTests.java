@@ -141,22 +141,6 @@ class ShrinkableListTests {
 		}
 
 		@Example
-		void shrinkSumOfPairToLastValue() {
-			List<Shrinkable<Integer>> elementShrinkables =
-				Arrays.stream(new Integer[]{17, 8}).map(OneStepShrinkable::new).collect(Collectors.toList());
-			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2, 2);
-
-			TestingFalsifier<List<Integer>> falsifier =
-				integers -> {
-					int sum = integers.stream().mapToInt(i -> i).sum();
-					return sum < 20;
-				};
-
-			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
-			assertThat(shrunkValue).isEqualTo(asList(0, 20));
-		}
-
-		@Example
 		void shrinkingResultHasValueAndThrowable() {
 			Shrinkable<List<Integer>> shrinkable = createShrinkableList(1, 1, 1);
 
@@ -223,6 +207,23 @@ class ShrinkableListTests {
 
 	@Group
 	class SumShrinking {
+
+		@Example
+		void shrinkSumOfPairToLastValue() {
+			List<Shrinkable<Integer>> elementShrinkables =
+				Arrays.stream(new Integer[]{17, 8}).map(OneStepShrinkable::new).collect(Collectors.toList());
+			Shrinkable<List<Integer>> shrinkable = new ShrinkableList<>(elementShrinkables, 2, 2);
+
+			TestingFalsifier<List<Integer>> falsifier =
+				integers -> {
+					int sum = integers.stream().mapToInt(i -> i).sum();
+					return sum < 20;
+				};
+
+			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo(asList(0, 20));
+		}
+
 		@Example
 		void shrinkSumOfListTowardsEnd() {
 			List<Shrinkable<Integer>> elementShrinkables =
