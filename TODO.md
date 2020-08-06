@@ -1,8 +1,5 @@
 - 1.3.3
 
-    - Re-implement shrinking
-        - Improve shrinking of recursive arbitraries
-        
 - 1.3.4
 
     - Add abstract method DomainContextBase.registrations()
