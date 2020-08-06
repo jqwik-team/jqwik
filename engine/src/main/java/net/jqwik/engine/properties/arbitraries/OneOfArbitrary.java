@@ -5,6 +5,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.api.configurators.*;
 import net.jqwik.api.providers.*;
 import net.jqwik.engine.properties.arbitraries.exhaustive.*;
@@ -17,7 +18,11 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
-		return RandomGenerators.choose(all).flatMap(Function.identity(), genSize);
+		List<Tuple2<Integer, Arbitrary<T>>> frequencies =
+			all.stream()
+			   .map(a -> Tuple.of(1, a))
+			   .collect(Collectors.toList());
+		return RandomGenerators.frequencyOf(frequencies, genSize);
 	}
 
 	@Override

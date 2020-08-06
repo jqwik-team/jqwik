@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.Tuple.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;
 
@@ -195,8 +196,12 @@ public class RandomGenerators {
 		return samplesFromShrinkables(shrinkables);
 	}
 
-	public static <T> RandomGenerator<T> frequency(List<Tuple.Tuple2<Integer, T>> frequencies) {
+	public static <T> RandomGenerator<T> frequency(List<Tuple2<Integer, T>> frequencies) {
 		return new FrequencyGenerator<>(frequencies);
+	}
+
+	public static <T> RandomGenerator<T> frequencyOf(List<Tuple2<Integer, Arbitrary<T>>> frequencies, int genSize) {
+		return frequency(frequencies).flatMap(Function.identity(), genSize);
 	}
 
 	public static <T> RandomGenerator<T> withEdgeCases(RandomGenerator<T> self, int genSize, EdgeCases<T> edgeCases) {
@@ -219,5 +224,4 @@ public class RandomGenerators {
 			return maxSize;
 		return Math.min(offset + minSize, maxSize);
 	}
-
 }
