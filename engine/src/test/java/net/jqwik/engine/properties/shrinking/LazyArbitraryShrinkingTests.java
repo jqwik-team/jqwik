@@ -1,11 +1,13 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.function.*;
 
 import org.assertj.core.api.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
@@ -76,13 +78,31 @@ class LazyArbitraryShrinkingTests {
 	}
 
 	@Group
-	@Disabled
+		// @Disabled
 	class Calculator {
 
 		@Property
-		void test(@ForAll("expression") Object expression) {
+		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
+		void shrinkExpressionTree(@ForAll("expression") Object expression) {
 			Assume.that(divSubterms(expression));
 			evaluate(expression);
+		}
+
+		private class ShrinkToSmallExpression implements Consumer<PropertyExecutionResult> {
+			@Override
+			public void accept(PropertyExecutionResult propertyExecutionResult) {
+				List<Object> actual = propertyExecutionResult.falsifiedParameters().get();
+				Assertions.assertThat(countNodes(actual.get(0)) < 10);
+			}
+		}
+
+		private int countNodes(Object expression) {
+			if (expression instanceof Integer) {
+				return 1;
+			};
+			@SuppressWarnings("rawtypes")
+			Tuple3 tupleExpression = (Tuple3) expression;
+			return countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
 		}
 
 		private boolean divSubterms(final Object expression) {
@@ -99,16 +119,18 @@ class LazyArbitraryShrinkingTests {
 
 		@Provide
 		Arbitrary<Object> expression() {
-			Arbitrary<Object> lazyExpression = Arbitraries.lazy(this::expression);
-
 			return Arbitraries.frequencyOf(
 				// Make integers more probable to prevent stack overflow
 				Tuple.of(3, Arbitraries.integers()),
-				Tuple.of(1, Combinators.combine(lazyExpression, lazyExpression)
+				Tuple.of(1, Combinators.combine(getLazy(), getLazy())
 									   .as((e1, e2) -> of("+", e1, e2))),
-				Tuple.of(1, Combinators.combine(lazyExpression, lazyExpression)
+				Tuple.of(1, Combinators.combine(getLazy(), getLazy())
 									   .as((e1, e2) -> of("/", e1, e2)))
 			);
+		}
+
+		private Arbitrary<Object> getLazy() {
+			return Arbitraries.lazy(this::expression);
 		}
 
 		int evaluate(Object expression) {
@@ -125,6 +147,7 @@ class LazyArbitraryShrinkingTests {
 			}
 			throw new IllegalArgumentException(String.format("%s is not a valid expression", expression));
 		}
+
 	}
 
 }
