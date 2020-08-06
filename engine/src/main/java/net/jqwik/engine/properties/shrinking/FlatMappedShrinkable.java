@@ -46,9 +46,10 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	}
 
 	private Stream<Shrinkable<U>> shrinkLeftSide() {
-		final ShrinkingDistance leftDistance = toMap.distance();
+		// final ShrinkingDistance leftDistance = toMap.distance();
 		return toMap.shrink()
-					.filter(s -> s.distance().size() <= leftDistance.size())
+					// Seems to make shrinking less effective in some cases:
+					// .filter(s -> s.distance().size() <= leftDistance.size())
 					.map(shrunkLeftSide -> new FlatMappedShrinkable<>(shrunkLeftSide, mapper));
 	}
 
