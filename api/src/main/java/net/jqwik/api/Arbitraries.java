@@ -313,9 +313,14 @@ public class Arbitraries {
 	 * @param <T>         The type of values to generate
 	 * @return a new arbitrary instance
 	 */
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	public static <T> Arbitrary<T> frequencyOf(Tuple2<Integer, Arbitrary<T>>... frequencies) {
-		return frequencyOf(Arrays.asList(frequencies));
+	public static <T> Arbitrary<T> frequencyOf(Tuple2<Integer, Arbitrary<? extends T>>... frequencies) {
+		List<Tuple2<Integer, Arbitrary<T>>> all = new ArrayList<>();
+		for (Tuple2<Integer, Arbitrary<? extends T>> frequency : frequencies) {
+			all.add(Tuple.of(frequency.get1(), (Arbitrary<T>) frequency.get2()));
+		}
+		return frequencyOf(all);
 	}
 
 	/**

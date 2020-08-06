@@ -43,6 +43,8 @@ title: jqwik Release Notes
     - Original samples now also report the original error
     - Action sequences in stateful properties got their own reporting format
 
+- Arbitraries.frequencyOf() now takes covariant arbitrary types
+
 #### Breaking Changes
 
 - Exceeding shrinking bound is now logged as warning instead of being reported
