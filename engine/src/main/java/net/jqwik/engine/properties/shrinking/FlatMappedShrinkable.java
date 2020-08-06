@@ -39,14 +39,17 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	}
 
 	private Stream<Shrinkable<U>> shrinkRightSide() {
-		return shrinkable().shrink().map(rightSide -> new FixedValueFlatMappedShrinkable<>(toMap, mapper, () -> rightSide));
+		final ShrinkingDistance rightDistance = shrinkable().distance();
+		return shrinkable().shrink()
+						   .filter(s -> s.distance().size() <= rightDistance.size())
+						   .map(rightSide -> new FixedValueFlatMappedShrinkable<>(toMap, mapper, () -> rightSide));
 	}
 
 	private Stream<Shrinkable<U>> shrinkLeftSide() {
-		return toMap.shrink().map(shrunkLeftSide -> {
-			FlatMappedShrinkable<T, U> flatMappedShrinkable = new FlatMappedShrinkable<>(shrunkLeftSide, mapper);
-			return flatMappedShrinkable;
-		});
+		final ShrinkingDistance leftDistance = toMap.distance();
+		return toMap.shrink()
+					.filter(s -> s.distance().size() <= leftDistance.size())
+					.map(shrunkLeftSide -> new FlatMappedShrinkable<>(shrunkLeftSide, mapper));
 	}
 
 	@Override

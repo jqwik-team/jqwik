@@ -12,6 +12,34 @@ import static org.assertj.core.api.Assertions.*;
 @Label("ShrinkingDistance")
 class ShrinkingDistanceTests {
 
+	@Example
+	void append() {
+		assertThat(ShrinkingDistance.of(1, 2).append(ShrinkingDistance.of(3, 4)))
+			.isEqualByComparingTo(ShrinkingDistance.of(1, 2, 3, 4));
+	}
+
+	@Example
+	void size() {
+		assertThat(ShrinkingDistance.of(1).size()).isEqualTo(1);
+		assertThat(ShrinkingDistance.of(1, 2, 3, 4).size()).isEqualTo(4);
+	}
+
+	@Example
+	@Label("ShrinkingDistance.MAX")
+	void maximumDistance() {
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.MAX)).isEqualTo(0);
+
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(1))).isEqualTo(1);
+		assertThat(ShrinkingDistance.of(1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
+
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(1, 1))).isEqualTo(1);
+		assertThat(ShrinkingDistance.of(1, 1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
+
+		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(Long.MAX_VALUE, 1))).isEqualTo(1);
+		assertThat(ShrinkingDistance.of(Long.MAX_VALUE, 1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
+	}
+
+
 	@Group
 	class Comparing {
 		@Example
@@ -41,21 +69,6 @@ class ShrinkingDistanceTests {
 			assertThat(ShrinkingDistance.of(2, 1).compareTo(ShrinkingDistance.of(2))).isGreaterThan(0);
 		}
 
-	}
-
-	@Example
-	@Label("ShrinkingDistance.MAX")
-	void compareDifferentDimensions() {
-		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.MAX)).isEqualTo(0);
-
-		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(1))).isEqualTo(1);
-		assertThat(ShrinkingDistance.of(1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
-
-		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(1, 1))).isEqualTo(1);
-		assertThat(ShrinkingDistance.of(1, 1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
-
-		assertThat(ShrinkingDistance.MAX.compareTo(ShrinkingDistance.of(Long.MAX_VALUE, 1))).isEqualTo(1);
-		assertThat(ShrinkingDistance.of(Long.MAX_VALUE, 1).compareTo(ShrinkingDistance.MAX)).isEqualTo(-1);
 	}
 
 	@Group
@@ -100,25 +113,19 @@ class ShrinkingDistanceTests {
 
 		@Example
 		void noOverflow() {
-			assertThat(ShrinkingDistance.of(2)
-										.plus(ShrinkingDistance.of(3))).isEqualByComparingTo(ShrinkingDistance.of(5));
-			assertThat(ShrinkingDistance.of(2, 3, 4)
-										.plus(ShrinkingDistance.of(3, 4, 5))).isEqualByComparingTo(ShrinkingDistance.of(5, 7, 9));
-			assertThat(ShrinkingDistance.of(2)
-										.plus(ShrinkingDistance.of(3, 4, 5))).isEqualByComparingTo(ShrinkingDistance.of(5, 4, 5));
+			assertThat(ShrinkingDistance.of(2).plus(ShrinkingDistance.of(3)))
+				.isEqualByComparingTo(ShrinkingDistance.of(5));
+			assertThat(ShrinkingDistance.of(2, 3, 4).plus(ShrinkingDistance.of(3, 4, 5)))
+				.isEqualByComparingTo(ShrinkingDistance.of(5, 7, 9));
+			assertThat(ShrinkingDistance.of(2).plus(ShrinkingDistance.of(3, 4, 5)))
+				.isEqualByComparingTo(ShrinkingDistance.of(5, 4, 5));
 		}
 
 		@Example
 		void overflow() {
-			assertThat(ShrinkingDistance.of(Long.MAX_VALUE)
-										.plus(ShrinkingDistance.of(1))).isEqualByComparingTo(ShrinkingDistance.of(Long.MAX_VALUE));
+			assertThat(ShrinkingDistance.of(Long.MAX_VALUE).plus(ShrinkingDistance.of(1)))
+				.isEqualByComparingTo(ShrinkingDistance.of(Long.MAX_VALUE));
 		}
 	}
 
-	@Example
-	void append() {
-		assertThat(ShrinkingDistance.of(1, 2)
-									.append(ShrinkingDistance.of(3, 4))).isEqualByComparingTo(ShrinkingDistance.of(1, 2, 3, 4));
-
-	}
 }
