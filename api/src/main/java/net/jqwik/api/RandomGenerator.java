@@ -15,13 +15,18 @@ public interface RandomGenerator<T> {
 	abstract class RandomGeneratorFacade {
 		private static final RandomGeneratorFacade implementation;
 
-		static  {
+		static {
 			implementation = FacadeLoader.load(RandomGeneratorFacade.class);
 		}
 
 		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> self, Function<T, RandomGenerator<U>> mapper, long nextLong);
 
-		public abstract <T, U> Shrinkable<U> flatMap(Shrinkable<T> wrappedShrinkable, Function<T, Arbitrary<U>> mapper, int genSize, long nextLong);
+		public abstract <T, U> Shrinkable<U> flatMap(
+			Shrinkable<T> wrappedShrinkable,
+			Function<T, Arbitrary<U>> mapper,
+			int genSize,
+			long nextLong
+		);
 
 		public abstract <T> RandomGenerator<T> filter(RandomGenerator<T> self, Predicate<T> filterPredicate);
 
@@ -38,14 +43,21 @@ public interface RandomGenerator<T> {
 
 	/**
 	 * @param random the source of randomness. Injected by jqwik itself.
-	 *
 	 * @return the next generated value wrapped within the Shrinkable interface. The method must ALWAYS return a next value.
 	 */
 	Shrinkable<T> next(Random random);
 
 	@API(status = INTERNAL)
 	default <U> RandomGenerator<U> map(Function<T, U> mapper) {
-		return random -> RandomGenerator.this.next(random).map(mapper);
+		return this.mapShrinkable(s -> s.map(mapper));
+	}
+
+	@API(status = INTERNAL)
+	default <U> RandomGenerator<U> mapShrinkable(Function<Shrinkable<T>, Shrinkable<U>> mapper) {
+		return random -> {
+			Shrinkable<T> tShrinkable = RandomGenerator.this.next(random);
+			return mapper.apply(tShrinkable);
+		};
 	}
 
 	@API(status = INTERNAL)
@@ -114,6 +126,5 @@ public interface RandomGenerator<T> {
 			return shrinkable.makeUnshrinkable();
 		};
 	}
-
 
 }
