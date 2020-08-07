@@ -34,7 +34,8 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 	public Stream<Shrinkable<U>> shrink() {
 		return JqwikStreamSupport.concat(
 			shrinkRightSide(),
-			shrinkLeftSide()
+			shrinkLeftSide(),
+			shrinkLeftSideGrowRight()
 		);
 	}
 
@@ -51,6 +52,17 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 					// Seems to make shrinking less effective in some cases:
 					// .filter(s -> s.distance().size() <= leftDistance.size())
 					.map(shrunkLeftSide -> new FlatMappedShrinkable<>(shrunkLeftSide, mapper));
+	}
+
+	private Stream<Shrinkable<U>> growRight() {
+		return shrinkable().grow()
+						   .map(rightSide -> new FixedValueFlatMappedShrinkable<>(toMap, mapper, () -> rightSide));
+	}
+
+	private Stream<Shrinkable<U>> shrinkLeftSideGrowRight() {
+		return toMap.shrink()
+					.map(shrunkLeftSide -> new FlatMappedShrinkable<>(shrunkLeftSide, mapper))
+					.flatMap(FlatMappedShrinkable::growRight);
 	}
 
 	@Override

@@ -1,21 +1,8 @@
 - 1.3.3
 
-    - Fix bad shrinking
-    
-      	@Property
-      	@Report(Reporting.GENERATED)
-      	void test(@ForAll("listOfIntegers") List<Integer> ls) {
-      		int max = ls.stream().mapToInt(i -> i).max().orElse(0);
-      		Assertions.assertThat(max).isLessThan(900);
-      	}
-      
-      	@Provide
-      	Arbitrary<List<Integer>> listOfIntegers() {
-      		return Arbitraries.integers().between(1, 100)
-      						  .flatMap(size -> Arbitraries.integers().between(0, 1000).list().ofSize(size));
-      	}
+    - Bug: Assume.that(false) no longer lets property fail
 
-      should shrink to [900] but does not always :-(
+    - Implement grow() for more shrinkables
       
         
 - 1.3.4

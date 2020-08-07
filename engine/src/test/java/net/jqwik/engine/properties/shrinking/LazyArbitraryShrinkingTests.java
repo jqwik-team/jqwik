@@ -92,7 +92,7 @@ class LazyArbitraryShrinkingTests {
 			@Override
 			public void accept(PropertyExecutionResult propertyExecutionResult) {
 				List<Object> actual = propertyExecutionResult.falsifiedParameters().get();
-				Assertions.assertThat(countNodes(actual.get(0)) < 10);
+				Assertions.assertThat(countNodes(actual.get(0)) < 8);
 			}
 		}
 

@@ -48,6 +48,26 @@ abstract class ShrinkableContainer<C, E> implements Shrinkable<C> {
 		return Optional.empty();
 	}
 
+	@Override
+	public Stream<Shrinkable<C>> grow() {
+		return growOneElementAfterTheOther();
+	}
+
+	private Stream<Shrinkable<C>> growOneElementAfterTheOther() {
+		List<Stream<Shrinkable<C>>> growPerElementStreams = new ArrayList<>();
+		for (int i = 0; i < elements.size(); i++) {
+			int index = i;
+			Shrinkable<E> element = elements.get(i);
+			Stream<Shrinkable<C>> shrinkElement = element.grow().flatMap(shrunkElement -> {
+				List<Shrinkable<E>> elementsCopy = new ArrayList<>(elements);
+				elementsCopy.set(index, shrunkElement);
+				return Stream.of(createShrinkable(elementsCopy));
+			});
+			growPerElementStreams.add(shrinkElement);
+		}
+		return JqwikStreamSupport.concat(growPerElementStreams);
+	}
+
 	private Optional<Shrinkable<C>> growBy(List<Shrinkable<?>> shrinkables) {
 		if (elements.size() + shrinkables.size() <= maxSize) {
 			List<Shrinkable<E>> grownElements = new ArrayList<>(elements);

@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.math.*;
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -54,4 +55,35 @@ class BigIntegerGrower {
 		}
 	}
 
+	public Stream<Shrinkable<BigInteger>> grow(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
+		if (value.compareTo(shrinkingTarget) < 0) {
+			return growLeft(value, range, shrinkingTarget);
+		} else {
+			return growRight(value, range, shrinkingTarget);
+		}
+	}
+
+	private Stream<Shrinkable<BigInteger>> growRight(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
+		return Stream
+				   .of(
+					   value.add(BigInteger.ONE),
+					   value.add(BigInteger.TEN),
+					   range.max.divide(BigInteger.valueOf(2)),
+					   range.max
+				   )
+				   .filter(range::includes)
+				   .map(grown -> new ShrinkableBigInteger(grown, range, shrinkingTarget));
+	}
+
+	private Stream<Shrinkable<BigInteger>> growLeft(BigInteger value, Range<BigInteger> range, BigInteger shrinkingTarget) {
+		return Stream
+				   .of(
+					   value.subtract(BigInteger.ONE),
+					   value.subtract(BigInteger.TEN),
+					   range.min.divide(BigInteger.valueOf(2)),
+					   range.min
+				   )
+				   .filter(range::includes)
+				   .map(grown -> new ShrinkableBigInteger(grown, range, shrinkingTarget));
+	}
 }

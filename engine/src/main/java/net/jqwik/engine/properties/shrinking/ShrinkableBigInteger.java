@@ -32,6 +32,11 @@ public class ShrinkableBigInteger extends AbstractValueShrinkable<BigInteger> {
 		return new BigIntegerGrower().grow(value(), range, shrinkingTarget, before, after);
 	}
 
+	@Override
+	public Stream<Shrinkable<BigInteger>> grow() {
+		return new BigIntegerGrower().grow(value(), range, shrinkingTarget);
+	}
+
 	private Stream<Shrinkable<BigInteger>> shrinkNegativeToPositive(Shrinkable<BigInteger> shrinkable) {
 		if (shrinkable.value().compareTo(BigInteger.ZERO) >= 0) {
 			return Stream.empty();

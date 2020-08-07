@@ -41,6 +41,11 @@ public class MappedShrinkable<T, U> implements Shrinkable<U> {
 	}
 
 	@Override
+	public Stream<Shrinkable<U>> grow() {
+		return toMap.grow().map(this::toMappedShrinkable);
+	}
+
+	@Override
 	public ShrinkingDistance distance() {
 		return toMap.distance();
 	}

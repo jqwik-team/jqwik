@@ -43,6 +43,11 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 					   .map(this::toFiltered);
 	}
 
+	@Override
+	public Stream<Shrinkable<T>> grow() {
+		return toFilter.grow().filter(this::isIncluded).map(this::toFiltered);
+	}
+
 	private Stream<Shrinkable<T>> shrinkToFirst(Shrinkable<T> base) {
 		return base.shrink()
 				   .filter(this::isIncluded)

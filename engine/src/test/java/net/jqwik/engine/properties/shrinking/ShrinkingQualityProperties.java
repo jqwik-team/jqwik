@@ -100,7 +100,7 @@ class ShrinkingQualityProperties {
 		return Arbitraries.of("a", "b").list().ofSize(n);
 	}
 
-	@Property(seed="5353", tries = 10)
+	@Property(seed = "5353", tries = 10)
 	void bound5(@ForAll Random random) {
 		ListArbitrary<List<Short>> listOfLists = boundedListTuples();
 
@@ -132,4 +132,23 @@ class ShrinkingQualityProperties {
 						  .list().ofSize(5);
 	}
 
+	@Property
+	@ExpectFailure(checkResult = ShrinkToList900.class)
+	void listLength(@ForAll("listOfIntegers") List<Integer> ls) {
+		int max = ls.stream().mapToInt(i -> i).max().orElse(0);
+		assertThat(max).isLessThan(900);
+	}
+
+	@Provide
+	Arbitrary<List<Integer>> listOfIntegers() {
+		return Arbitraries.integers().between(1, 100)
+						  .flatMap(size -> Arbitraries.integers().between(0, 1000).list().ofSize(size));
+	}
+
+	private class ShrinkToList900 extends ShrinkToChecker {
+		@Override
+		public Iterable<?> shrunkValues() {
+			return asList(asList(900));
+		}
+	}
 }

@@ -73,6 +73,16 @@ public interface Shrinkable<T> extends Comparable<Shrinkable<T>> {
 	}
 
 	/**
+	 * Grow a shrinkable to allow broader searching in flat mapped shrinkables
+	 *
+	 * @return a finite stream of grown values
+	 */
+	@API(status = INTERNAL, since = "1.3.3")
+	default Stream<Shrinkable<T>> grow() {
+		return Stream.empty();
+	}
+
+	/**
 	 * This method is no longer used anywhere within jqwik.
 	 *
 	 * @deprecated Will be removed in version 1.4

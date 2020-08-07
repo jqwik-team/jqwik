@@ -119,8 +119,8 @@ class FlatMappedShrinkableTests {
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
-		@Example
-		void innerShrinkableIsMoreImportantWhileShrinking() {
+		@Property
+		void innerShrinkableIsMoreImportantWhileShrinking(@ForAll Random random) {
 			Shrinkable<Integer> integerShrinkable = new ShrinkableBigInteger(
 				BigInteger.valueOf(5),
 				Range.of(BigInteger.ONE, BigInteger.TEN),
@@ -128,12 +128,32 @@ class FlatMappedShrinkableTests {
 			).map(BigInteger::intValueExact);
 
 			Function<Integer, Arbitrary<String>> flatMapper = i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i);
-			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, 42L);
+			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, random.nextLong());
 			assertThat(shrinkable.value()).hasSize(5);
 
 			TestingFalsifier<String> falsifier = aString -> aString.length() < 3;
 			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
 			assertThat(shrunkValue).isEqualTo("aaa");
+		}
+
+		@Property
+		void canGrowOnRightSide(@ForAll Random random) {
+			Shrinkable<Integer> integerShrinkable = new ShrinkableBigInteger(
+				BigInteger.valueOf(2),
+				Range.of(BigInteger.ONE, BigInteger.TEN),
+				BigInteger.ONE
+			).map(BigInteger::intValueExact);
+
+			Function<Integer, Arbitrary<String>> flatMapper = i -> Arbitraries.strings().withCharRange('a', 'z').ofLength(i);
+			Shrinkable<String> shrinkable = integerShrinkable.flatMap(flatMapper, 1000, random.nextLong());
+			assertThat(shrinkable.value()).hasSize(2);
+
+			// Only then the falsifier condition is fulfilled
+			Assume.that(shrinkable.value().chars().allMatch(c -> c >= 'f'));
+
+			TestingFalsifier<String> falsifier = aString -> aString.chars().allMatch(c -> c < 'f');
+			String shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+			assertThat(shrunkValue).isEqualTo("f");
 		}
 
 		@Property(tries = 50)
@@ -153,6 +173,7 @@ class FlatMappedShrinkableTests {
 			List<Integer> shrunkValue = shrinkToMinimal(shrinkable, onlyListsWithLessThan10Elements, null);
 			assertThat(shrunkValue).isEqualTo(asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
 		}
+
 
 		@Example
 		void edgeCasesCanAlsoBeShrunk() {
