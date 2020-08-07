@@ -151,13 +151,13 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 	}
 
 	private Throwable determineThrowable(CheckStatus status, Throwable throwable) {
-		if (status != CheckStatus.FAILED) {
+		if (status == CheckStatus.SUCCESSFUL) {
 			return null;
+		} else {
+			return throwable == null
+					   ? new AssertionFailedError(this.toString())
+					   : throwable;
 		}
-		if (throwable == null) {
-			return new AssertionFailedError(this.toString());
-		}
-		return throwable;
 	}
 
 	@Override
@@ -270,7 +270,7 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 
 	@Override
 	public String toString() {
-		String header = String.format("%s [%s] failed", stereotype, propertyName);
+		String header = String.format("%s [%s]", stereotype, propertyName);
 		switch (checkStatus()) {
 			case FAILED:
 				String failedMessage = falsifiedParameters().map(sampleParams -> {
@@ -282,10 +282,10 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 					String sampleString = ValueReport.of(sampleMap).singleLineReport();
 					return sampleParams.isEmpty() ? "" : String.format(" with sample %s", sampleString);
 				}).orElse("");
-				return String.format("%s%s", header, failedMessage);
+				return String.format("%s failed%s", header, failedMessage);
 			case EXHAUSTED:
 				int rejections = tries - checks;
-				return String.format("%s after [%d] tries and [%d] rejections", header, tries, rejections);
+				return String.format("%s exhausted after [%d] tries and [%d] rejections", header, tries, rejections);
 			default:
 				return header;
 		}

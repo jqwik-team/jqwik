@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import org.junit.platform.engine.reporting.*;
+import org.opentest4j.*;
 
 import net.jqwik.*;
 import net.jqwik.api.*;
@@ -244,7 +244,8 @@ class GenericPropertyTests {
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.EXHAUSTED);
 			assertThat(result.countTries()).isEqualTo(10);
 			assertThat(result.countChecks()).isEqualTo(0);
-			assertThat(result.throwable()).isNotPresent();
+			assertThat(result.throwable()).isPresent();
+			assertThat(result.throwable().get()).isInstanceOf(AssertionFailedError.class);
 			assertThat(result.falsifiedParameters()).isNotPresent();
 		}
 

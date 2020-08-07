@@ -59,6 +59,9 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
+- Reporting an exhausted property had been broken since `1.2.4` and nobody noticed.
+  Works again. 
+
 ## 1.3.2
 
 <p style="padding-left:1em;font-size:larger">

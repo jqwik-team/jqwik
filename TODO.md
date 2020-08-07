@@ -1,7 +1,5 @@
 - 1.3.3
 
-    - Bug: Assume.that(false) no longer lets property fail
-
     - Implement grow() for more shrinkables
       
         
