@@ -1,5 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.stream.*;
+
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.shrinking.ShrinkableTypesForTest.*;
 
@@ -48,6 +50,28 @@ class FilteredShrinkableTests {
 			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(7);
 		}
+	}
+
+	@Group
+	class Growing {
+		@Example
+		void noStepGrowing() {
+			Shrinkable<Integer> integerShrinkable = new FullShrinkable(3, 10);
+			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 2 == 1);
+
+			Stream<Integer> grownValues = shrinkable.grow().map(Shrinkable::value);
+			assertThat(grownValues).containsExactly(5, 7, 9);
+		}
+
+		@Example
+		void multiStepGrowing() {
+			Shrinkable<Integer> integerShrinkable = new OneStepShrinkable(3, 0, 15);
+			Shrinkable<Integer> shrinkable = integerShrinkable.filter(i -> i % 3 == 0);
+
+			Stream<Integer> grownValues = shrinkable.grow().map(Shrinkable::value);
+			assertThat(grownValues).containsExactly(6, 9, 12, 15);
+		}
+
 	}
 
 }

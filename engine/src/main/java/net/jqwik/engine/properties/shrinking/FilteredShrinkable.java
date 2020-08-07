@@ -25,7 +25,7 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 	public Stream<Shrinkable<T>> shrink() {
 		return Stream.concat(
 			shrinkToFirst(toFilter),
-			deepSearchFirst(toFilter)
+			shrinkDeep(toFilter)
 		);
 	}
 
@@ -43,21 +43,37 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 					   .map(this::toFiltered);
 	}
 
-	@Override
-	public Stream<Shrinkable<T>> grow() {
-		return toFilter.grow().filter(this::isIncluded).map(this::toFiltered);
-	}
-
 	private Stream<Shrinkable<T>> shrinkToFirst(Shrinkable<T> base) {
 		return base.shrink()
 				   .filter(this::isIncluded)
 				   .map(this::toFiltered);
 	}
 
-	private Stream<Shrinkable<T>> deepSearchFirst(Shrinkable<T> base) {
+	private Stream<Shrinkable<T>> shrinkDeep(Shrinkable<T> base) {
 		return Stream.concat(
 			base.shrink().flatMap(this::shrinkToFirst),
-			base.shrink().flatMap(this::deepSearchFirst).limit(1)
+			base.shrink().flatMap(this::shrinkDeep).limit(1)
+		);
+	}
+
+	@Override
+	public Stream<Shrinkable<T>> grow() {
+		return Stream.concat(
+			growToFirst(toFilter),
+			growDeep(toFilter)
+		).limit(50).distinct();
+	}
+
+	private Stream<Shrinkable<T>> growToFirst(Shrinkable<T> base) {
+		return base.grow()
+				   .filter(this::isIncluded)
+				   .map(this::toFiltered);
+	}
+
+	private Stream<Shrinkable<T>> growDeep(Shrinkable<T> base) {
+		return Stream.concat(
+			base.grow().flatMap(this::growToFirst),
+			base.grow().flatMap(this::growDeep)
 		);
 	}
 

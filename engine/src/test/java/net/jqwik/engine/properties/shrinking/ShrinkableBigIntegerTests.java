@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.math.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -105,6 +106,35 @@ class ShrinkableBigIntegerTests {
 			assertThat(shrunkValue).isEqualTo(BigInteger.valueOf(4999));
 		}
 
+	}
+
+	@Group
+	class Growing {
+		@Example
+		void upToMax() {
+			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(100000, Range.of(5L, 500000L));
+
+			Stream<BigInteger> grownValues = shrinkable.grow().map(Shrinkable::value);
+			assertThat(grownValues).containsExactly(
+				BigInteger.valueOf(100001),
+				BigInteger.valueOf(100010),
+				BigInteger.valueOf(250000),
+				BigInteger.valueOf(500000)
+			);
+		}
+
+		@Example
+		void downToMin() {
+			Shrinkable<BigInteger> shrinkable = createShrinkableBigInteger(-100000, Range.of(-500000L, -5L));
+
+			Stream<BigInteger> grownValues = shrinkable.grow().map(Shrinkable::value);
+			assertThat(grownValues).containsExactly(
+				BigInteger.valueOf(-100001),
+				BigInteger.valueOf(-100010),
+				BigInteger.valueOf(-250000),
+				BigInteger.valueOf(-500000)
+			);
+		}
 	}
 
 	private Shrinkable<BigInteger> createShrinkableBigInteger(long number, Range<Long> longRange) {

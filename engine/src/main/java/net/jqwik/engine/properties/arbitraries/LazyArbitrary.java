@@ -12,7 +12,9 @@ public class LazyArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary<
 	private final List<Tuple.Tuple2<ArbitraryConfigurator, TypeUsage>> configurations = new ArrayList<>();
 	private Arbitrary<T> arbitrary;
 
-	public LazyArbitrary(Supplier<Arbitrary<T>> arbitrarySupplier) {this.arbitrarySupplier = arbitrarySupplier;}
+	public LazyArbitrary(Supplier<Arbitrary<T>> arbitrarySupplier) {
+		this.arbitrarySupplier = arbitrarySupplier;
+	}
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {

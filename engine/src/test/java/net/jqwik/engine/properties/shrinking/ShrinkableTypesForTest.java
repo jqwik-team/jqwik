@@ -11,21 +11,31 @@ public class ShrinkableTypesForTest {
 
 	public static class OneStepShrinkable extends AbstractValueShrinkable<Integer> {
 		private final int minimum;
+		private final int maximum;
 
 		public OneStepShrinkable(int integer) {
-			this(integer, 0);
+			this(integer, 0, 100);
 		}
 
-		OneStepShrinkable(int integer, int minimum) {
+		public OneStepShrinkable(int integer, int minimum, int maximum) {
 			super(integer);
 			this.minimum = minimum;
+			this.maximum = maximum;
 		}
 
 		@Override
 		public Stream<Shrinkable<Integer>> shrink() {
 			if (this.value() == minimum)
 				return Stream.empty();
-			return Stream.of(new OneStepShrinkable(this.value() - 1, minimum));
+			return Stream.of(new OneStepShrinkable(this.value() - 1, minimum, maximum));
+		}
+
+		@Override
+		public Stream<Shrinkable<Integer>> grow() {
+			if (value() >= maximum) {
+				return Stream.empty();
+			}
+			return Stream.of(new OneStepShrinkable(this.value() + 1, minimum, maximum));
 		}
 
 		@Override
@@ -36,7 +46,7 @@ public class ShrinkableTypesForTest {
 				int diff = (int) beforeValue - (int) afterValue;
 				int grownValue = value() + diff;
 				if (grownValue >= minimum) {
-					return Optional.of(new OneStepShrinkable(grownValue, minimum));
+					return Optional.of(new OneStepShrinkable(grownValue, minimum, maximum));
 				}
 			}
 			return Optional.empty();
@@ -50,13 +60,25 @@ public class ShrinkableTypesForTest {
 	}
 
 	public static class FullShrinkable extends AbstractValueShrinkable<Integer> {
-		FullShrinkable(int integer) {
+		private final int max;
+
+		FullShrinkable(int integer, int max) {
 			super(integer);
+			this.max = max;
+		}
+
+		FullShrinkable(int integer) {
+			this(integer, 100);
 		}
 
 		@Override
 		public Stream<Shrinkable<Integer>> shrink() {
 			return IntStream.range(0, this.value()).mapToObj(FullShrinkable::new);
+		}
+
+		@Override
+		public Stream<Shrinkable<Integer>> grow() {
+			return IntStream.range(value() + 1, max).mapToObj(i -> new FullShrinkable(i, max));
 		}
 
 		@Override

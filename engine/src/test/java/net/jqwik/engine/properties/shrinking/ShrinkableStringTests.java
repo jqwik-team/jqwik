@@ -109,7 +109,7 @@ public class ShrinkableStringTests {
 		void longString() {
 			List<Shrinkable<Character>> elementShrinkables =
 				IntStream.range(0, 1000)
-						 .mapToObj(aChar -> new OneStepShrinkable(aChar, 0))
+						 .mapToObj(aChar -> new OneStepShrinkable(aChar, 0, 100))
 						 .map(shrinkableInt -> shrinkableInt.map(anInt -> (char) (int) anInt))
 						 .collect(Collectors.toList());
 
@@ -124,7 +124,7 @@ public class ShrinkableStringTests {
 		List<Shrinkable<Character>> elementShrinkables =
 			aString
 				.chars()
-				.mapToObj(aChar -> new OneStepShrinkable(aChar, 'a'))
+				.mapToObj(aChar -> new OneStepShrinkable(aChar, 'a', 'z'))
 				.map(shrinkable -> shrinkable.map(anInt -> (char) (int) anInt))
 				.collect(Collectors.toList());
 
