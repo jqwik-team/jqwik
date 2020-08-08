@@ -32,6 +32,7 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 	}
 
 	private Stream<Shrinkable<List<E>>> moveIndividualValuesTowardsEnd() {
+		ShrinkingDistance distance = distance();
 		return Combinatorics
 				   .distinctPairs(elements.size())
 				   .map(pair -> {
@@ -60,6 +61,8 @@ public class ShrinkableList<E> extends ShrinkableContainer<List<E>, E> {
 									   return createShrinkable(pairMove);
 								   });
 
-				   });
+				   })
+				   // In rare cases of nested lists shrinkGrow can increase the distance
+				   .filter(s -> s.distance().compareTo(distance) <= 0);
 	}
 }

@@ -18,7 +18,7 @@ class ShrinkableProperties {
 		shrinkToMinimal(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
 	}
 
-	@Property(tries = 100)
+	@Property(seed = "8139126337450627502", tries = 100)
 	void allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
 		shrinkable.shrink().forEach(shrunk -> {
 			assertThat(shrunk.distance().compareTo(shrinkable.distance())).isLessThanOrEqualTo(0);
