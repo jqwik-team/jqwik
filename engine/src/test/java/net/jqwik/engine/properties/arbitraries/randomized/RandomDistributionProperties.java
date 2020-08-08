@@ -13,7 +13,6 @@ import net.jqwik.api.constraints.*;
 public class RandomDistributionProperties {
 
 	@Property(edgeCases = EdgeCasesMode.MIXIN)
-	@Report(Reporting.GENERATED)
 	void onlyGenerateValuesWithinRange(
 		@ForAll("distributions") RandomDistribution distribution,
 		@ForAll @IntRange(min = 1, max = 10000) int genSize,
