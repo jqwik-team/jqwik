@@ -8,9 +8,9 @@ import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
-class OneAfterTheOtherShrinker extends AbstractShrinker {
+class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 
-	public OneAfterTheOtherShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+	public OneAfterTheOtherParameterShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
 		super(falsificationCache);
 	}
 

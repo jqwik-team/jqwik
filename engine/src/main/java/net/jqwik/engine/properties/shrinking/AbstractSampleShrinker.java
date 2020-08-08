@@ -9,7 +9,7 @@ import net.jqwik.api.Tuple.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 
-abstract class AbstractShrinker {
+abstract class AbstractSampleShrinker {
 
 	private static ShrinkingDistance calculateDistance(List<Shrinkable<Object>> shrinkables) {
 		return ShrinkingDistance.forCollection(shrinkables);
@@ -17,7 +17,7 @@ abstract class AbstractShrinker {
 
 	private final Map<List<Object>, TryExecutionResult> falsificationCache;
 
-	public AbstractShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+	public AbstractSampleShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
 		this.falsificationCache = falsificationCache;
 	}
 
@@ -33,7 +33,7 @@ abstract class AbstractShrinker {
 		FalsifiedSample sample,
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer,
-		Function<List<Shrinkable<Object>>, Stream<List<Shrinkable<Object>>>> parameterShrinker
+		Function<List<Shrinkable<Object>>, Stream<List<Shrinkable<Object>>>> supplyShrinkCandidates
 	) {
 		List<Shrinkable<Object>> currentShrinkBase = sample.shrinkables();
 		Optional<FalsifiedSample> bestResult = Optional.empty();
@@ -45,9 +45,9 @@ abstract class AbstractShrinker {
 			FalsifiedSample currentBest = bestResult.orElse(null);
 
 			Optional<Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult>> newShrinkingResult =
-				parameterShrinker.apply(currentShrinkBase)
-								 .filter(shrinkables -> calculateDistance(shrinkables).compareTo(currentDistance) <= 0)
+				supplyShrinkCandidates.apply(currentShrinkBase)
 								 .peek(ignore -> shrinkAttemptConsumer.accept(currentBest))
+								 .filter(shrinkables -> calculateDistance(shrinkables).compareTo(currentDistance) <= 0)
 								 .map(shrinkables -> {
 									 List<Object> params = createValues(shrinkables).collect(Collectors.toList());
 									 TryExecutionResult result = falsify(falsifier, params);

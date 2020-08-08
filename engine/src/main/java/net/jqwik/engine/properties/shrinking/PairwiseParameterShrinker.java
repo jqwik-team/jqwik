@@ -9,9 +9,9 @@ import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
-class PairwiseShrinker extends AbstractShrinker {
+class PairwiseParameterShrinker extends AbstractSampleShrinker {
 
-	public PairwiseShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
+	public PairwiseParameterShrinker(Map<List<Object>, TryExecutionResult> falsificationCache) {
 		super(falsificationCache);
 	}
 

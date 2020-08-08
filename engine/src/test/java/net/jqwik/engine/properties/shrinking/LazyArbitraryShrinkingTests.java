@@ -102,15 +102,15 @@ class LazyArbitraryShrinkingTests {
 				// The best shrinker should shrink to just 5 nodes
 				Assertions.assertThat(countNodes(actual.get(0))).isLessThanOrEqualTo(5);
 			}
-		}
 
-		private int countNodes(Object expression) {
-			if (expression instanceof Integer) {
-				return 1;
-			};
-			@SuppressWarnings("rawtypes")
-			Tuple3 tupleExpression = (Tuple3) expression;
-			return 1 + countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
+			private int countNodes(Object expression) {
+				if (expression instanceof Integer) {
+					return 1;
+				};
+				@SuppressWarnings("rawtypes")
+				Tuple3 tupleExpression = (Tuple3) expression;
+				return 1 + countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
+			}
 		}
 
 		private boolean divSubterms(final Object expression) {
