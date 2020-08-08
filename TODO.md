@@ -1,9 +1,7 @@
 - 1.3.3
 
-    - Implement grow() for more shrinkables
-        - CombinedShrinkable: grow each leg
-        - CollectShrinkable: grow each element
-        
+    - Release
+
 - 1.3.4
 
     - Add abstract method DomainContextBase.registrations()
@@ -14,6 +12,14 @@
       see https://github.com/jlink/jqwik/issues/91
 
     - UniqueShrinkable should be able to shrink to previously tried values
+
+    - Implement grow() for more shrinkables
+        - CombinedShrinkable: grow each leg
+        - CollectShrinkable: grow each element
+
+    - Arbitraries.lazyOf()|lazyFrequencyOf()
+      The goal is to allow better shrinking in recursive structures.
+      See LazyArbitraryShrinkingTests.Calculator.        
 
     - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
     
