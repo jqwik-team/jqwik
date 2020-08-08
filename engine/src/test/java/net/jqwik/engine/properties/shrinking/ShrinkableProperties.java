@@ -13,12 +13,12 @@ import static net.jqwik.api.ShrinkingTestHelper.*;
 @Group
 class ShrinkableProperties {
 
-	@Property(tries = 100)
+	@Property
 	void allShrinkingFinallyEnds(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
 		shrinkToMinimal(shrinkable, ignore -> TryExecutionResult.falsified(null), null);
 	}
 
-	@Property(seed = "8139126337450627502", tries = 100)
+	@Property(tries = 100)
 	void allShrinkingShrinksToSmallerValues(@ForAll("anyShrinkable") Shrinkable<?> shrinkable) {
 		shrinkable.shrink().forEach(shrunk -> {
 			assertThat(shrunk.distance().compareTo(shrinkable.distance())).isLessThanOrEqualTo(0);
@@ -29,10 +29,10 @@ class ShrinkableProperties {
 	Arbitrary<Shrinkable> anyShrinkable() {
 		// TODO: Enhance the list of shrinkables.
 		return Arbitraries.oneOf(
-			oneStepShrinkable(),
-			partialShrinkable(),
-			oneStepShrinkable(),
-			partialShrinkable(),
+			integerShrinkable(),
+			integerShrinkable(),
+			mapToNumberShrinkable(),
+			mapToNumberShrinkable(),
 			oneStepShrinkable(),
 			partialShrinkable(),
 			listShrinkable(),
@@ -41,6 +41,19 @@ class ShrinkableProperties {
 	}
 
 	@SuppressWarnings("unchecked")
+	private Arbitrary<Shrinkable> mapToNumberShrinkable() {
+		return Arbitraries.lazy(this::anyShrinkable)
+						  .map(s -> {
+							  if (s instanceof ShrinkableContainer) {
+								  return Shrinkable.unshrinkable(((ShrinkableContainer) s).elements.size());
+							  }
+							  if (s instanceof Number) {
+								  return Shrinkable.unshrinkable(((Number) s).intValue());
+							  }
+							  return Shrinkable.unshrinkable(42);
+						  });
+	}
+
 	private Arbitrary<Shrinkable> listShrinkable() {
 		return Arbitraries.integers().between(0, 5).flatMap(size -> {
 			List<Arbitrary<Shrinkable>> elementArbitraries =
@@ -63,6 +76,20 @@ class ShrinkableProperties {
 				return new ShrinkableSet(elementSet, 0, size);
 			});
 		});
+	}
+
+	private Arbitrary<Shrinkable> integerShrinkable() {
+		Arbitrary<Integer> firsts = Arbitraries.integers();
+		Arbitrary<Integer> seconds = Arbitraries.integers();
+		Arbitrary<Random> randoms = Arbitraries.randoms();
+		return Combinators.combine(firsts, seconds, randoms)
+						  .as((first, second, random) -> {
+							  int min = Math.min(first, second);
+							  int max = Math.max(first, second);
+							  return Arbitraries
+										 .integers().between(min, max)
+										 .generator(100).next(random);
+						  });
 	}
 
 	private Arbitrary<Shrinkable> oneStepShrinkable() {
