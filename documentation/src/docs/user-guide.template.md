@@ -2059,16 +2059,23 @@ boolean sentencesEndWithAPoint(@ForAll("deterministic") String aSentence) {
 
 @Provide
 Arbitrary<String> deterministic() {
-    Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
-    Arbitrary<String> lastWord = word().map(w -> w + ".");
+	Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
+	Arbitrary<String> lastWord = word().map(w -> w + ".");
 
-    return length.flatMap(l -> Arbitraries.recursive(() -> lastWord, s -> prependWord(s), l));
+	return length.flatMap(depth -> Arbitraries.recursive(
+		() -> lastWord,
+		this::prependWord,
+		depth
+	));
 }
 
 private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
     return Combinators.combine(word(), sentence).as((w, s) -> w + " " + s);
 }
 ```
+
+Mind that [edge cases](#generation-of-edge-cases) of `recursive` arbitraries 
+are only generated to a recursion depth of five in order to prevent combinatorial explosion.
 
 ## Using Arbitraries Directly
 

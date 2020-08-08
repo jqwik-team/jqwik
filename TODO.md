@@ -21,6 +21,8 @@
       The goal is to allow better shrinking in recursive structures.
       See LazyArbitraryShrinkingTests.Calculator.        
 
+        - Also consider Arbitraries.recursive()
+        
     - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
     
     - Use derived Random object for generation of each parameter.

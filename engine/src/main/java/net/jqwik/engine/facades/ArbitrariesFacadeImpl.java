@@ -215,4 +215,34 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 		return defaultArbitraryResolver.resolve(typeUsage, subtypeProvider);
 	}
 
+	@Override
+	public <T> Arbitrary<T> recursive(
+		Supplier<Arbitrary<T>> base,
+		Function<Arbitrary<T>, Arbitrary<T>> recur,
+		int depth
+	) {
+		if (depth <= 0) {
+			return base.get();
+		}
+		final Arbitrary<T> inner = recursive(base, recur, depth - 1);
+		final Arbitrary<T> outer = recur.apply(inner);
+
+		return new Arbitrary<T>() {
+			@Override
+			public RandomGenerator<T> generator(int genSize) {
+				return outer.generator(genSize);
+			}
+
+			@Override
+			public EdgeCases<T> edgeCases() {
+				// Due to combinatorial explosion
+				// TODO: remove as soon as edge cases are created on the fly
+				// see https://github.com/jlink/jqwik/issues/114
+				if (depth > 5) {
+					return EdgeCases.none();
+				}
+				return outer.edgeCases();
+			}
+		};
+	}
 }

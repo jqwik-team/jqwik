@@ -7,7 +7,8 @@ import static net.jqwik.api.Arbitraries.*;
 
 class RecursiveExamples {
 
-	@Property(tries = 10) @Report(Reporting.GENERATED)
+	@Property(tries = 10)
+	@Report(Reporting.GENERATED)
 	boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
 		return aSentence.endsWith(".");
 	}
@@ -29,7 +30,8 @@ class RecursiveExamples {
 	}
 
 
-	@Property(tries = 10) @Report(Reporting.GENERATED)
+	@Property
+	@Report(Reporting.GENERATED)
 	boolean sentencesEndWithAPoint_2(@ForAll("deterministic") String aSentence) {
 		return aSentence.endsWith(".");
 	}
@@ -39,7 +41,11 @@ class RecursiveExamples {
 		Arbitrary<Integer> length = Arbitraries.integers().between(0, 10);
 		Arbitrary<String> lastWord = word().map(w -> w + ".");
 
-		return length.flatMap(l -> Arbitraries.recursive(() -> lastWord, this::prependWord, l));
+		return length.flatMap(depth -> Arbitraries.recursive(
+			() -> lastWord,
+			this::prependWord,
+			depth
+		));
 	}
 
 	private Arbitrary<String> prependWord(Arbitrary<String> sentence) {

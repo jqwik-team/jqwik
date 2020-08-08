@@ -317,16 +317,20 @@ class ArbitrariesTests {
 	}
 
 	@Group
-	@Label("recursive(..)")
+	@Label("recursive() and lazy()")
 	class Recursion {
 
 		@Example
 		void recursive() {
 			Arbitrary<Integer> base = Arbitraries.integers().between(0, 5);
-			Arbitrary<Integer> integer = Arbitraries.recursive(() -> base, list -> list.map(i -> i + 1), 3);
+			Arbitrary<Integer> integer = Arbitraries.recursive(
+				() -> base,
+				list -> list.map(i -> i + 1),
+				10
+			);
 
 			ArbitraryTestHelper.assertAllGenerated(integer.generator(1000), result -> {
-				assertThat(result).isBetween(3, 8);
+				assertThat(result).isBetween(10, 15);
 			});
 		}
 

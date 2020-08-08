@@ -83,6 +83,8 @@ public class Arbitraries {
 		public abstract <K, V> MapArbitrary<K, V> maps(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 
 		public abstract <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
+
+		public abstract <T> Arbitrary<T> recursive(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int depth);
 	}
 
 	private Arbitraries() {
@@ -637,10 +639,7 @@ public class Arbitraries {
 		Function<Arbitrary<T>, Arbitrary<T>> recur,
 		int depth
 	) {
-		if (depth == 0) {
-			return base.get();
-		}
-		return recur.apply(recursive(base, recur, depth - 1));
+		return ArbitrariesFacade.implementation.recursive(base, recur, depth);
 	}
 
 	/**
