@@ -12,7 +12,7 @@ ext {
 	mockitoVersion = '3.3.3'
 	systemLambdaVersion = '1.0.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.3.3'
+	jqwikVersion = '1.3.4-SNAPSHOT'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 
