@@ -1,7 +1,6 @@
 - 1.3.3
 
     - Implement grow() for more shrinkables
-        - ChooseValueShrinkable: try bigger values
         - CombinedShrinkable: grow each leg
         - CollectShrinkable: grow each element
         

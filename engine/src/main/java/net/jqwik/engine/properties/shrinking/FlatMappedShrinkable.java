@@ -35,7 +35,7 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 		return JqwikStreamSupport.concat(
 			shrinkRightSide(),
 			shrinkLeftSide(),
-			shrinkLeftSideGrowRight()
+			shrinkLeftGrowRightSide()
 		);
 	}
 
@@ -54,15 +54,15 @@ public class FlatMappedShrinkable<T, U> implements Shrinkable<U> {
 					.map(shrunkLeftSide -> new FlatMappedShrinkable<>(shrunkLeftSide, mapper));
 	}
 
-	private Stream<Shrinkable<U>> growRight() {
+	private Stream<Shrinkable<U>> growRightSide() {
 		return shrinkable().grow()
 						   .map(rightSide -> new FixedValueFlatMappedShrinkable<>(toMap, mapper, () -> rightSide));
 	}
 
-	private Stream<Shrinkable<U>> shrinkLeftSideGrowRight() {
+	private Stream<Shrinkable<U>> shrinkLeftGrowRightSide() {
 		return toMap.shrink()
 					.map(shrunkLeftSide -> new FlatMappedShrinkable<>(shrunkLeftSide, mapper))
-					.flatMap(FlatMappedShrinkable::growRight);
+					.flatMap(FlatMappedShrinkable::growRightSide);
 	}
 
 	@Override

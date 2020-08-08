@@ -30,4 +30,15 @@ public class ChooseValueShrinkable<T> extends AbstractValueShrinkable<T> {
 					 .map(value -> new ChooseValueShrinkable<>(value, values));
 	}
 
+	@Override
+	public Stream<Shrinkable<T>> grow() {
+		int index = values.indexOf(this.value());
+		if (index == values.size() - 1) {
+			return Stream.empty();
+		}
+		return values.subList(index + 1, values.size())
+					 .stream()
+					 .map(value -> new ChooseValueShrinkable<>(value, values));
+	}
+
 }

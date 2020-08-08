@@ -1,6 +1,7 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -23,5 +24,13 @@ class ChooseValueShrinkableTests {
 		Shrinkable<Integer> shrinkable = new ChooseValueShrinkable<>(4, Arrays.asList(1, 2, 3, 4, 5));
 		Integer shrunkValue = shrinkToMinimal(shrinkable, (TestingFalsifier<Integer>) ignore -> false, null);
 		assertThat(shrunkValue).isEqualTo(1);
+	}
+
+	@Example
+	void growing() {
+		Shrinkable<Integer> shrinkable = new ChooseValueShrinkable<>(2, Arrays.asList(1, 2, 3, 4, 5));
+		Stream<Shrinkable<Integer>> grown = shrinkable.grow();
+		Stream<Integer> grownValues = grown.map(Shrinkable::value);
+		assertThat(grownValues).containsExactly(3, 4, 5);
 	}
 }

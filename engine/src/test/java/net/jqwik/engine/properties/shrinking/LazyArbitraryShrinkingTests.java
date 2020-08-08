@@ -78,7 +78,6 @@ class LazyArbitraryShrinkingTests {
 	}
 
 	@Group
-		// @Disabled
 	class Calculator {
 
 		@Property
@@ -92,7 +91,8 @@ class LazyArbitraryShrinkingTests {
 			@Override
 			public void accept(PropertyExecutionResult propertyExecutionResult) {
 				List<Object> actual = propertyExecutionResult.falsifiedParameters().get();
-				Assertions.assertThat(countNodes(actual.get(0)) < 8);
+				// The best shrinker should shrink to just 5 nodes
+				Assertions.assertThat(countNodes(actual.get(0))).isLessThanOrEqualTo(15);
 			}
 		}
 
@@ -102,7 +102,7 @@ class LazyArbitraryShrinkingTests {
 			};
 			@SuppressWarnings("rawtypes")
 			Tuple3 tupleExpression = (Tuple3) expression;
-			return countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
+			return 1 + countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
 		}
 
 		private boolean divSubterms(final Object expression) {
