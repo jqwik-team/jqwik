@@ -1,8 +1,11 @@
-- 1.3.3
-
-    - Release
-
 - 1.3.4
+
+    - Lifecycle
+        - PropertyLifecycleContext
+            seed(): The random seed
+        - PropertyExecutionResult
+            originalParams()
+            shrunkParams()
 
     - Add abstract method DomainContextBase.registrations()
     
