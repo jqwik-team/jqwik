@@ -8,6 +8,7 @@ import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.descriptor.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.*;
 import net.jqwik.engine.support.*;
@@ -107,9 +108,10 @@ public class TestDescriptorBuilder {
 			if (optionalProperty.isPresent()) {
 				Property property = optionalProperty.get();
 				UniqueId uniqueId = JqwikUniqueIDs.appendProperty(parent.getUniqueId(), targetMethod);
+				PropertyAttributes attributes = DefaultPropertyAttributes.from(property);
 				PropertyConfiguration propertyConfig =
 					PropertyConfiguration.from(
-						property,
+						attributes,
 						PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE, GENERATION, EDGE_CASES),
 						null,
 						null

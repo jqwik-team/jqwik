@@ -8,6 +8,7 @@ import org.junit.platform.engine.*;
 import org.junit.platform.engine.support.hierarchical.Node.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
 import net.jqwik.engine.discovery.specs.*;
@@ -85,7 +86,13 @@ class PropertyMethodResolver implements ElementResolver {
 		});
 		String previousSeed = previousSeed(uniqueId);
 		List<Object> falsifiedSample = falsifiedSample(uniqueId);
-		PropertyConfiguration propertyConfig = PropertyConfiguration.from(property, propertyDefaultValues, previousSeed, falsifiedSample);
+		PropertyAttributes attributes = DefaultPropertyAttributes.from(property);
+		PropertyConfiguration propertyConfig = PropertyConfiguration.from(
+			attributes,
+			propertyDefaultValues,
+			previousSeed,
+			falsifiedSample
+		);
 		return new PropertyMethodDescriptor(uniqueId, method, testClass, propertyConfig);
 	}
 

@@ -3,43 +3,29 @@ package net.jqwik.engine.descriptor;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 
 public class PropertyConfiguration {
 
 	public static PropertyConfiguration from(
-		Property property,
+		PropertyAttributes attributes,
 		PropertyDefaultValues propertyDefaultValues,
 		String previousSeed,
 		List<Object> falsifiedSample
 	) {
-		int tries = property.tries() == Property.TRIES_NOT_SET
-						? propertyDefaultValues.tries()
-						: property.tries();
-
-		int maxDiscardRatio = property.maxDiscardRatio() == Property.MAX_DISCARD_RATIO_NOT_SET
-								  ? propertyDefaultValues.maxDiscardRatio()
-								  : property.maxDiscardRatio();
-
-		ShrinkingMode shrinking = property.shrinking() == ShrinkingMode.NOT_SET
-										  ? propertyDefaultValues.shrinking()
-										  : property.shrinking();
-
-		AfterFailureMode afterFailure = property.afterFailure() == AfterFailureMode.NOT_SET
-											? propertyDefaultValues.afterFailure()
-											: property.afterFailure();
-
-		GenerationMode generation = property.generation() == GenerationMode.NOT_SET
-										? propertyDefaultValues.generation()
-										: property.generation();
-
-		EdgeCasesMode edgeCasesMode = property.edgeCases() == EdgeCasesMode.NOT_SET
-			? propertyDefaultValues.edgeCases()
-			: property.edgeCases();
+		int tries = attributes.tries().orElse(propertyDefaultValues.tries());
+		int maxDiscardRatio = attributes.maxDiscardRatio().orElse(propertyDefaultValues.maxDiscardRatio());
+		ShrinkingMode shrinking = attributes.shrinking().orElse(propertyDefaultValues.shrinking());
+		AfterFailureMode afterFailure = attributes.afterFailure().orElse(propertyDefaultValues.afterFailure());
+		GenerationMode generation = attributes.generation().orElse(propertyDefaultValues.generation());
+		EdgeCasesMode edgeCasesMode = attributes.edgeCases().orElse(propertyDefaultValues.edgeCases());
+		String stereotype = attributes.stereotype().orElse(propertyDefaultValues.stereotype());
+		String seed = attributes.seed().orElse(Property.SEED_NOT_SET);
 
 		return new PropertyConfiguration(
-			property.stereotype(),
-			property.seed(),
+			stereotype,
+			seed,
 			previousSeed,
 			falsifiedSample,
 			tries,

@@ -37,7 +37,7 @@ class CheckedPropertyTests {
 											   .build();
 			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
-			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(Property.DEFAULT_STEREOTYPE);
+			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(PropertyDefaultValues.DEFAULT_STEREOTYPE);
 			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
 			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
 			assertThat(checkedProperty.configuration.getAfterFailureMode()).isEqualTo(TestDescriptorBuilder.AFTER_FAILURE);

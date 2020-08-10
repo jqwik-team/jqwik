@@ -259,7 +259,7 @@ class PropertyMethodResolverTest {
 	}
 
 	private void assertDefaultConfigurationProperties(PropertyMethodDescriptor propertyMethodDescriptor) {
-		assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEqualTo(Property.SEED_NOT_SET);
+		assertThat(propertyMethodDescriptor.getConfiguration().getSeed()).isEmpty();
 		assertThat(propertyMethodDescriptor.getConfiguration().getPreviousSeed()).isNull();
 		assertThat(propertyMethodDescriptor.getConfiguration().getTries()).isEqualTo(DEFAULT_TRIES);
 		assertThat(propertyMethodDescriptor.getConfiguration().getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);

@@ -3,6 +3,9 @@ package net.jqwik.engine;
 import net.jqwik.api.*;
 
 public interface PropertyDefaultValues {
+
+	String DEFAULT_STEREOTYPE = "Property";
+
 	int tries();
 	int maxDiscardRatio();
 
@@ -10,6 +13,7 @@ public interface PropertyDefaultValues {
 	AfterFailureMode afterFailure();
 	GenerationMode generation();
 	EdgeCasesMode edgeCases();
+	String stereotype();
 
 	static PropertyDefaultValues with(
 		int tries,
@@ -48,6 +52,11 @@ public interface PropertyDefaultValues {
 			@Override
 			public EdgeCasesMode edgeCases() {
 				return edgeCasesMode;
+			}
+
+			@Override
+			public String stereotype() {
+				return DEFAULT_STEREOTYPE;
 			}
 		};
 	}

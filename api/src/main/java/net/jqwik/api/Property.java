@@ -37,7 +37,7 @@ public @interface Property {
 	int TRIES_NOT_SET = 0;
 	int MAX_DISCARD_RATIO_NOT_SET = 0;
 	String SEED_NOT_SET = "";
-	String DEFAULT_STEREOTYPE = "Property";
+	String STEREOTYPE_NOT_SET = "";
 
 	/**
 	 * Number of tries (test runs with different parameters). By default it is 1000. You can override globally in the property file
@@ -63,7 +63,7 @@ public @interface Property {
 	 */
 	ShrinkingMode shrinking() default ShrinkingMode.NOT_SET;
 
-	String stereotype() default DEFAULT_STEREOTYPE;
+	String stereotype() default STEREOTYPE_NOT_SET;
 
 	@API(status = MAINTAINED, since = "1.0")
 	GenerationMode generation() default GenerationMode.NOT_SET;

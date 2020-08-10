@@ -11,6 +11,7 @@
         - forType(Class<T> targetType, int depth)
         - @UseType(depth = 1)
 
+    - defaultShrinking = BOUND
 
 - 1.3.x
 
