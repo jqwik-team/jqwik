@@ -3,43 +3,34 @@ package net.jqwik.engine.providers;
 import java.util.*;
 
 import net.jqwik.api.providers.*;
+import net.jqwik.engine.LazyServiceLoaderCache;
 
 public class RegisteredArbitraryProviders {
 
-	private static List<ArbitraryProvider> registeredProviders;
+	private static final LazyServiceLoaderCache<ArbitraryProvider> serviceCache = new LazyServiceLoaderCache(ArbitraryProvider.class);
 
 	public static List<ArbitraryProvider> getProviders() {
-		if (null == registeredProviders) {
-			loadArbitraryProviders();
-		}
-		return Collections.unmodifiableList(new ArrayList<>(registeredProviders));
-	}
-
-	private static void loadArbitraryProviders() {
-		registeredProviders = new ArrayList<>();
-		Iterable<ArbitraryProvider> providers = ServiceLoader.load(ArbitraryProvider.class);
-		for (ArbitraryProvider provider : providers) {
-			register(provider);
-		}
+		return Collections.unmodifiableList(new ArrayList<>(serviceCache.getServices()));
 	}
 
 	public static void register(ArbitraryProvider provider) {
-		if (getProviders().contains(provider)) {
+		if (serviceCache.getServices().contains(provider)) {
 			return;
 		}
-		registeredProviders.add(0, provider);
+		serviceCache.getServices().add(0, provider);
 	}
 
 	public static void unregister(ArbitraryProvider providerToDelete) {
-		getProviders().stream() //
-				.filter(provider -> provider == providerToDelete) //
-				.forEach(provider -> registeredProviders.remove(provider));
+		List<ArbitraryProvider> services = serviceCache.getServices();
+		services.stream()
+			.filter(provider -> provider == providerToDelete)
+			.forEach(services::remove);
 	}
 
 	public static void unregister(Class<? extends ArbitraryProvider> providerClass) {
-		getProviders().stream() //
-				.filter(provider -> provider.getClass() == providerClass) //
-				.forEach(provider -> registeredProviders.remove(provider));
+		List<ArbitraryProvider> services = serviceCache.getServices();
+		services.stream()
+			.filter(provider -> provider.getClass() == providerClass)
+			.forEach(services::remove);
 	}
-
 }

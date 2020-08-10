@@ -1,21 +1,12 @@
 package net.jqwik.engine.execution.lifecycle;
 
-import java.util.*;
-
 import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.LazyServiceLoaderCache;
 
 public class RegisteredLifecycleHooks {
+	private static final LazyServiceLoaderCache<LifecycleHook> serviceCache = new LazyServiceLoaderCache(LifecycleHook.class);
 
-	private static List<LifecycleHook> registeredHooks = null;
-
-	public static synchronized Iterable<LifecycleHook> getRegisteredHooks() {
-		if (registeredHooks == null) {
-			registeredHooks = new ArrayList<>();
-			for (LifecycleHook lifecycleHook : ServiceLoader.load(LifecycleHook.class)) {
-				registeredHooks.add(lifecycleHook);
-			}
-		}
-		return registeredHooks;
+	public static Iterable<LifecycleHook> getRegisteredHooks() {
+		return serviceCache.getServices();
 	}
-
 }

@@ -3,32 +3,20 @@ package net.jqwik.engine.properties.configurators;
 import java.util.*;
 
 import net.jqwik.api.configurators.*;
+import net.jqwik.engine.LazyServiceLoaderCache;
 
 public class RegisteredArbitraryConfigurators {
 
-	private static List<ArbitraryConfigurator> registeredConfigurators;
+	private static final LazyServiceLoaderCache<ArbitraryConfigurator> serviceCache = new LazyServiceLoaderCache(ArbitraryConfigurator.class);
 
 	public static List<ArbitraryConfigurator> getConfigurators() {
-		if (null == registeredConfigurators) {
-			loadArbitraryConfigurators();
-		}
-		return Collections.unmodifiableList(registeredConfigurators);
-	}
-
-	private static void loadArbitraryConfigurators() {
-		registeredConfigurators = new ArrayList<>();
-		Iterable<ArbitraryConfigurator> providers = ServiceLoader.load(ArbitraryConfigurator.class);
-		for (ArbitraryConfigurator provider : providers) {
-			register(provider);
-		}
-		Collections.sort(registeredConfigurators);
+		return Collections.unmodifiableList(serviceCache.getServices());
 	}
 
 	public static void register(ArbitraryConfigurator configurator) {
-		if (getConfigurators().contains(configurator)) {
+		if (serviceCache.getServices().contains(configurator)) {
 			return;
 		}
-		registeredConfigurators.add(0, configurator);
+		serviceCache.getServices().add(0, configurator);
 	}
-
 }

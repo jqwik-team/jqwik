@@ -3,30 +3,20 @@ package net.jqwik.engine.execution.reporting;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.LazyServiceLoaderCache;
 
 public class RegisteredSampleReportingFormats {
 
-	private static List<SampleReportingFormat> registeredFormats;
+	private static final LazyServiceLoaderCache<SampleReportingFormat> serviceCache = new LazyServiceLoaderCache(SampleReportingFormat.class);
 
 	public static List<SampleReportingFormat> getReportingFormats() {
-		if (null == registeredFormats) {
-			loadSampleReportingFormats();
-		}
-		return Collections.unmodifiableList(new ArrayList<>(registeredFormats));
-	}
-
-	private static void loadSampleReportingFormats() {
-		registeredFormats = new ArrayList<>();
-		Iterable<SampleReportingFormat> providers = ServiceLoader.load(SampleReportingFormat.class);
-		for (SampleReportingFormat provider : providers) {
-			register(provider);
-		}
+		return Collections.unmodifiableList(new ArrayList<>(serviceCache.getServices()));
 	}
 
 	public static void register(SampleReportingFormat reportingFormat) {
-		if (getReportingFormats().contains(reportingFormat)) {
+		if (serviceCache.getServices().contains(reportingFormat)) {
 			return;
 		}
-		registeredFormats.add(0, reportingFormat);
+		serviceCache.getServices().add(0, reportingFormat);
 	}
 }
