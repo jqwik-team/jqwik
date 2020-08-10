@@ -59,6 +59,18 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
         - Allow configuration attributes to be changed
         - Alternative: Introduce PropertyConfigurationHook
 
+    - @ResolveParameter method
+        - Returns `Optional<MyType>` | `Optional<ParameterSupplier<MyType>>`
+        - Optional Parameters: TypeUsage, LifecycleContext
+        - static and non-static
+
+    - PerProperty.Lifecycle
+        - void beforeTry(TryLifecycleContext, parameters)
+        - void afterTry(TryLifecycleContext, TryExecutionResult)
+        - void onSatisfiedTry()
+        - TryExecutionResult onFalsifiedTry(TryExecutionResult)
+
+
 - Parallel test execution:
   - Across single property with annotation @Parallel
   - Across Properties: Does it make sense with non working IntelliJ support?
@@ -85,14 +97,22 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
 
 ### Reporting
 
+- @StatisticsReportFormat
+    - label=<statistics label> to specify for which statistics to use
+    - Make it repeatable
+
+- `@Report(reportOnlyFailures = false)`
+
 - Report before/after state of samples
 
 - Reporting.ARBITRARIES|GENERATORS: report for each property which arbitraries are used.
-  - Requires Arbitrary.describe() or something similar
+    - Requires Arbitrary.describe() or something similar
 
-- Additional reporting data, e.g.
-  - Typical runtimes: ~ 1m
-  - Fraction of time spent in data generation: ~ 12%
+- Property runtime statistics (https://github.com/jlink/jqwik/issues/100)
+
+    - Additional reporting data, e.g.
+      - Typical runtimes: ~ 1m
+      - Fraction of time spent in data generation: ~ 12%
 
 
 ### Properties
@@ -113,6 +133,11 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
       e.g. for `unique`
     - Arbitrary.shareValue(Arbitrary, String key)
       [see here](https://hypothesis.readthedocs.io/en/latest/data.html#hypothesis.strategies.shared)
+
+    - Support more RandomDistribution modes, e.g. Log, PowerLaw
+        https://en.wikipedia.org/wiki/Inverse_transform_sampling
+        https://en.wikipedia.org/wiki/Ziggurat_algorithm
+        https://github.com/jeffhain/jafaran/blob/master/src/main/java/net/jafaran/Ziggurat.java
 
 - Probabilistic assertions
   see experiments.ProbabilisticExperiments
@@ -178,10 +203,6 @@ https://junit.org/junit5/docs/5.5.0/api/org/junit/platform/engine/support/discov
   - @Regex(RegularExpression value) or composable RegexStringArbitrary
     see https://github.com/jlink/jqwik/issues/68
   - Constrain charset for String and Char generation through @Charset(String charset) constraint
-
-- Introduce recursive use of Arbitraries.forType(Class<T> targetType)
-    - forType(Class<T> targetType, int depth)
-    - @UseType(depth = 1)
 
 
 ### Contracts / Specifications / Domain objects
