@@ -29,5 +29,9 @@ public enum ShrinkingMode {
 	 * Shrinking continues until no smaller value can be found that also falsifies the property.
 	 * This might take very long or not end at all in rare cases.
 	 */
-	FULL
-}
+	FULL,
+
+	@API(status = INTERNAL)
+	NOT_SET
+
+	}

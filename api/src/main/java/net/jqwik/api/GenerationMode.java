@@ -44,5 +44,6 @@ public enum GenerationMode {
 	 */
 	AUTO,
 
+	@API(status = INTERNAL)
 	NOT_SET
 }

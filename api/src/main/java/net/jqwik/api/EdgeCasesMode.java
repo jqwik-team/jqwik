@@ -32,6 +32,7 @@ public enum EdgeCasesMode {
 	 */
 	NONE,
 
+	@API(status = INTERNAL)
 	NOT_SET;
 
 	@API(status = INTERNAL)

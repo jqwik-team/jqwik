@@ -61,7 +61,7 @@ public @interface Property {
 	 * <p>
 	 * Default value is {@link ShrinkingMode#BOUNDED}, i.e. shrinking is tried to a depth of 1000 steps maximum per value.
 	 */
-	ShrinkingMode shrinking() default ShrinkingMode.BOUNDED;
+	ShrinkingMode shrinking() default ShrinkingMode.NOT_SET;
 
 	String stereotype() default DEFAULT_STEREOTYPE;
 

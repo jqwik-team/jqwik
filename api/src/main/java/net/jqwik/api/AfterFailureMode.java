@@ -40,6 +40,7 @@ public enum AfterFailureMode {
 	 */
 	SAMPLE_FIRST,
 
+	@API(status = INTERNAL)
 	NOT_SET
 
 }

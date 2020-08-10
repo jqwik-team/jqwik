@@ -6,6 +6,7 @@ public interface PropertyDefaultValues {
 	int tries();
 	int maxDiscardRatio();
 
+	ShrinkingMode shrinking();
 	AfterFailureMode afterFailure();
 	GenerationMode generation();
 	EdgeCasesMode edgeCases();
@@ -15,7 +16,7 @@ public interface PropertyDefaultValues {
 		int maxDiscardRatio,
 		AfterFailureMode afterFailureMode,
 		GenerationMode generationMode,
-		final EdgeCasesMode edgeCasesMode
+		EdgeCasesMode edgeCasesMode
 	) {
 		return new PropertyDefaultValues() {
 			@Override
@@ -26,6 +27,12 @@ public interface PropertyDefaultValues {
 			@Override
 			public int maxDiscardRatio() {
 				return maxDiscardRatio;
+			}
+
+			@Override
+			public ShrinkingMode shrinking() {
+				// TODO: Fill from entry in config file
+				return ShrinkingMode.BOUNDED;
 			}
 
 			@Override

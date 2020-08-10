@@ -21,6 +21,10 @@ public class PropertyConfiguration {
 								  ? propertyDefaultValues.maxDiscardRatio()
 								  : property.maxDiscardRatio();
 
+		ShrinkingMode shrinking = property.shrinking() == ShrinkingMode.NOT_SET
+										  ? propertyDefaultValues.shrinking()
+										  : property.shrinking();
+
 		AfterFailureMode afterFailure = property.afterFailure() == AfterFailureMode.NOT_SET
 											? propertyDefaultValues.afterFailure()
 											: property.afterFailure();
@@ -40,7 +44,7 @@ public class PropertyConfiguration {
 			falsifiedSample,
 			tries,
 			maxDiscardRatio,
-			property.shrinking(),
+			shrinking,
 			generation,
 			afterFailure,
 			edgeCasesMode
