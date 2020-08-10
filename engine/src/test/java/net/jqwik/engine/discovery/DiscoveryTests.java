@@ -27,8 +27,8 @@ class DiscoveryTests {
 
 	private final JqwikTestEngine testEngine = new JqwikTestEngine();
 	private final TestRunData testRunData = new TestRunData();
-	private final PropertyDefaultValues propertyDefaultValues =
-		PropertyDefaultValues.with(
+	private final PropertyAttributesDefaults propertyDefaultValues =
+		PropertyAttributesDefaults.with(
 			1000,
 			5,
 			AfterFailureMode.PREVIOUS_SEED,

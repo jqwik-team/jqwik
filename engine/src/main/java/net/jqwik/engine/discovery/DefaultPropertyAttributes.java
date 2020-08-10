@@ -60,7 +60,8 @@ public class DefaultPropertyAttributes implements PropertyAttributes {
 	private String stereotype;
 	private String seed;
 
-	private DefaultPropertyAttributes(
+	// Only public for testing purposes
+	public DefaultPropertyAttributes(
 		Integer tries,
 		Integer maxDiscardRatio,
 		ShrinkingMode shrinkingMode,

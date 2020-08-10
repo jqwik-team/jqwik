@@ -9,116 +9,99 @@ import net.jqwik.engine.*;
 public class PropertyConfiguration {
 
 	public static PropertyConfiguration from(
-		PropertyAttributes attributes,
-		PropertyDefaultValues propertyDefaultValues,
+		PropertyAttributes propertyAttributes,
+		PropertyAttributesDefaults propertyAttributesDefaults,
 		String previousSeed,
 		List<Object> falsifiedSample
 	) {
-		int tries = attributes.tries().orElse(propertyDefaultValues.tries());
-		int maxDiscardRatio = attributes.maxDiscardRatio().orElse(propertyDefaultValues.maxDiscardRatio());
-		ShrinkingMode shrinking = attributes.shrinking().orElse(propertyDefaultValues.shrinking());
-		AfterFailureMode afterFailure = attributes.afterFailure().orElse(propertyDefaultValues.afterFailure());
-		GenerationMode generation = attributes.generation().orElse(propertyDefaultValues.generation());
-		EdgeCasesMode edgeCasesMode = attributes.edgeCases().orElse(propertyDefaultValues.edgeCases());
-		String stereotype = attributes.stereotype().orElse(propertyDefaultValues.stereotype());
-		String seed = attributes.seed().orElse(Property.SEED_NOT_SET);
-
 		return new PropertyConfiguration(
-			stereotype,
-			seed,
+			propertyAttributes,
+			propertyAttributesDefaults,
 			previousSeed,
 			falsifiedSample,
-			tries,
-			maxDiscardRatio,
-			shrinking,
-			generation,
-			afterFailure,
-			edgeCasesMode
+			null,
+			null,
+			null
 		);
 	}
 
-	private final String stereotype;
-	private final String seed;
+	private final PropertyAttributes propertyAttributes;
+	private final PropertyAttributesDefaults propertyAttributesDefaults;
 	private final String previousSeed;
 	private final List<Object> falsifiedSample;
-	private final int tries;
-	private final int maxDiscardRatio;
-	private final ShrinkingMode shrinkingMode;
-	private final GenerationMode generationMode;
-	private final AfterFailureMode afterFailureMode;
-	private final EdgeCasesMode edgeCasesMode;
+	private final String overriddenSeed;
+	private final Integer overriddenTries;
+	private final GenerationMode overriddenGenerationMode;
 
 	public PropertyConfiguration(
-		String stereotype,
-		String seed,
-		String previousSeed,
-		List<Object> falsifiedSample,
-		int tries,
-		int maxDiscardRatio,
-		ShrinkingMode shrinkingMode,
-		GenerationMode generationMode,
-		AfterFailureMode afterFailureMode,
-		EdgeCasesMode edgeCasesMode
+		PropertyAttributes propertyAttributes,
+		PropertyAttributesDefaults propertyAttributesDefaults,
+		String previousSeed, List<Object> falsifiedSample, String overriddenSeed,
+		Integer overriddenTries,
+		GenerationMode overriddenGenerationMode
 	) {
-		this.stereotype = stereotype;
-		this.seed = seed;
+		this.propertyAttributes = propertyAttributes;
+		this.propertyAttributesDefaults = propertyAttributesDefaults;
+		this.overriddenSeed = overriddenSeed;
 		this.previousSeed = previousSeed;
 		this.falsifiedSample = falsifiedSample;
-		this.tries = tries;
-		this.maxDiscardRatio = maxDiscardRatio;
-		this.shrinkingMode = shrinkingMode;
-		this.generationMode = generationMode;
-		this.afterFailureMode = afterFailureMode;
-		this.edgeCasesMode = edgeCasesMode;
+		this.overriddenTries = overriddenTries;
+		this.overriddenGenerationMode = overriddenGenerationMode;
 	}
 
 	public PropertyConfiguration withSeed(String changedSeed) {
 		return new PropertyConfiguration(
-			this.stereotype,
-			changedSeed,
-			this.previousSeed,
-			this.falsifiedSample,
-			this.tries,
-			this.maxDiscardRatio,
-			this.shrinkingMode,
-			this.generationMode,
-			this.afterFailureMode,
-			this.edgeCasesMode
+			this.propertyAttributes,
+			this.propertyAttributesDefaults,
+			this.previousSeed, this.falsifiedSample, changedSeed,
+			this.overriddenTries,
+			this.overriddenGenerationMode
 		);
 	}
 
 	public PropertyConfiguration withGenerationMode(GenerationMode changedGenerationMode) {
 		return new PropertyConfiguration(
-			this.stereotype,
-			this.seed,
-			this.previousSeed,
-			this.falsifiedSample,
-			this.tries,
-			this.maxDiscardRatio,
-			this.shrinkingMode,
-			changedGenerationMode,
-			this.afterFailureMode,
-			this.edgeCasesMode
+			this.propertyAttributes,
+			this.propertyAttributesDefaults,
+			this.previousSeed, this.falsifiedSample, this.overriddenSeed,
+			this.overriddenTries,
+			changedGenerationMode
 		);
 	}
 
 	public PropertyConfiguration withTries(int changedTries) {
 		return new PropertyConfiguration(
-			this.stereotype,
-			this.seed,
-			this.previousSeed,
-			this.falsifiedSample,
+			this.propertyAttributes,
+			this.propertyAttributesDefaults,
+			this.previousSeed, this.falsifiedSample, this.overriddenSeed,
 			changedTries,
-			this.maxDiscardRatio,
-			this.shrinkingMode,
-			this.generationMode,
-			this.afterFailureMode,
-			this.edgeCasesMode
+			this.overriddenGenerationMode
 		);
 	}
 
+	public PropertyAttributes getPropertyAttributes() {
+		return propertyAttributes;
+	}
+
+	public int getTries() {
+		if (overriddenTries != null) {
+			return overriddenTries;
+		}
+		return propertyAttributes.tries().orElse(propertyAttributesDefaults.tries());
+	}
+
 	public String getSeed() {
-		return seed;
+		if (overriddenSeed != null) {
+			return overriddenSeed;
+		}
+		return propertyAttributes.seed().orElse(Property.SEED_NOT_SET);
+	}
+
+	public GenerationMode getGenerationMode() {
+		if (overriddenGenerationMode != null) {
+			return overriddenGenerationMode;
+		}
+		return propertyAttributes.generation().orElse(propertyAttributesDefaults.generation());
 	}
 
 	public String getPreviousSeed() {
@@ -130,30 +113,22 @@ public class PropertyConfiguration {
 	}
 
 	public String getStereotype() {
-		return stereotype;
-	}
-
-	public int getTries() {
-		return tries;
+		return propertyAttributes.stereotype().orElse(propertyAttributesDefaults.stereotype());
 	}
 
 	public int getMaxDiscardRatio() {
-		return maxDiscardRatio;
+		return propertyAttributes.maxDiscardRatio().orElse(propertyAttributesDefaults.maxDiscardRatio());
 	}
 
 	public ShrinkingMode getShrinkingMode() {
-		return shrinkingMode;
-	}
-
-	public GenerationMode getGenerationMode() {
-		return generationMode;
+		return propertyAttributes.shrinking().orElse(propertyAttributesDefaults.shrinking());
 	}
 
 	public AfterFailureMode getAfterFailureMode() {
-		return afterFailureMode;
+		return propertyAttributes.afterFailure().orElse(propertyAttributesDefaults.afterFailure());
 	}
 
 	public EdgeCasesMode getEdgeCasesMode() {
-		return edgeCasesMode;
+		return propertyAttributes.edgeCases().orElse(propertyAttributesDefaults.edgeCases());
 	}
 }

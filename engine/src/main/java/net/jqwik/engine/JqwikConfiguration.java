@@ -1,7 +1,7 @@
 package net.jqwik.engine;
 
 public interface JqwikConfiguration {
-	PropertyDefaultValues propertyDefaultValues();
+	PropertyAttributesDefaults propertyDefaultValues();
 
 	TestEngineConfiguration testEngineConfiguration();
 

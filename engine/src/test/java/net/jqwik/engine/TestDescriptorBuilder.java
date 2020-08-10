@@ -112,7 +112,7 @@ public class TestDescriptorBuilder {
 				PropertyConfiguration propertyConfig =
 					PropertyConfiguration.from(
 						attributes,
-						PropertyDefaultValues.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE, GENERATION, EDGE_CASES),
+						PropertyAttributesDefaults.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE, GENERATION, EDGE_CASES),
 						null,
 						null
 					);

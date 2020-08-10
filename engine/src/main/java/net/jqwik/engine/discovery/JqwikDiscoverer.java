@@ -18,9 +18,9 @@ public class JqwikDiscoverer {
 	private static final IsScannableContainerClass isScannableTestClass = new IsScannableContainerClass();
 
 	private final TestRunData testRunData;
-	private final PropertyDefaultValues propertyDefaultValues;
+	private final PropertyAttributesDefaults propertyDefaultValues;
 
-	public JqwikDiscoverer(TestRunData testRunData, PropertyDefaultValues propertyDefaultValues) {
+	public JqwikDiscoverer(TestRunData testRunData, PropertyAttributesDefaults propertyDefaultValues) {
 		this.testRunData = testRunData;
 		this.propertyDefaultValues = propertyDefaultValues;
 	}

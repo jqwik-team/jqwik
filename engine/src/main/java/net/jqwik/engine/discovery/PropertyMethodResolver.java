@@ -18,9 +18,9 @@ class PropertyMethodResolver implements ElementResolver {
 
 	private final PropertyDiscoverySpec methodSpec = new PropertyDiscoverySpec();
 	private final TestRunData testRunData;
-	private final PropertyDefaultValues propertyDefaultValues;
+	private final PropertyAttributesDefaults propertyDefaultValues;
 
-	PropertyMethodResolver(TestRunData testRunData, PropertyDefaultValues propertyDefaultValues) {
+	PropertyMethodResolver(TestRunData testRunData, PropertyAttributesDefaults propertyDefaultValues) {
 		this.testRunData = testRunData;
 		this.propertyDefaultValues = propertyDefaultValues;
 	}

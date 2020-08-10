@@ -29,8 +29,8 @@ class JqwikIntegrationTests {
 	private JqwikConfiguration configuration(final boolean useJunitPlatformReporter) {
 		return new JqwikConfiguration() {
 			@Override
-			public PropertyDefaultValues propertyDefaultValues() {
-				return PropertyDefaultValues.with(
+			public PropertyAttributesDefaults propertyDefaultValues() {
+				return PropertyAttributesDefaults.with(
 					1000,
 					5,
 					AfterFailureMode.PREVIOUS_SEED,

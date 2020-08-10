@@ -10,6 +10,7 @@ import org.junit.platform.engine.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.discovery.*;
 import net.jqwik.engine.execution.*;
 import net.jqwik.engine.execution.lifecycle.*;
 import net.jqwik.engine.execution.reporting.*;
@@ -18,6 +19,16 @@ import net.jqwik.engine.support.*;
 import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 public class TestHelper {
+
+	public static PropertyAttributesDefaults propertyAttributesDefaults() {
+		return PropertyAttributesDefaults.with(
+			100,
+			5,
+			AfterFailureMode.PREVIOUS_SEED,
+			GenerationMode.AUTO,
+			EdgeCasesMode.MIXIN
+		);
+	}
 
 	public static PropertyLifecycleContext propertyLifecycleContextFor(
 		Class<?> containerClass,
@@ -52,17 +63,23 @@ public class TestHelper {
 	) {
 		UniqueId uniqueId = UniqueId.root("test", "i dont care");
 		Method method = getMethod(containerClass, methodName);
-		PropertyConfiguration propertyConfig = new PropertyConfiguration(
-			"Property",
-			seed,
-			null,
-			null,
+		PropertyAttributes propertyAttributes = new DefaultPropertyAttributes(
 			tries,
 			maxDiscardRatio,
 			shrinking,
-			GenerationMode.AUTO,
-			AfterFailureMode.PREVIOUS_SEED,
-			EdgeCasesMode.MIXIN
+			null,
+			null,
+			null,
+			null,
+			seed
+		);
+
+		PropertyConfiguration propertyConfig = new PropertyConfiguration(
+			propertyAttributes,
+			propertyAttributesDefaults(),
+			null, null, seed,
+			tries,
+			GenerationMode.AUTO
 		);
 		return new PropertyMethodDescriptor(uniqueId, method, containerClass, propertyConfig);
 	}

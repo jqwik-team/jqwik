@@ -25,8 +25,8 @@ class PropertyMethodResolverTest {
 	private static final EdgeCasesMode DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN;
 
 	private final TestRunData testRunData = new TestRunData();
-	private final PropertyDefaultValues propertyDefaultValues =
-		PropertyDefaultValues.with(
+	private final PropertyAttributesDefaults propertyDefaultValues =
+		PropertyAttributesDefaults.with(
 			DEFAULT_TRIES,
 			DEFAULT_MAX_DISCARD_RATIO,
 			DEFAULT_AFTER_FAILURE,

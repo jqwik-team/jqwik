@@ -2,7 +2,7 @@ package net.jqwik.engine;
 
 import net.jqwik.api.*;
 
-public interface PropertyDefaultValues {
+public interface PropertyAttributesDefaults {
 
 	String DEFAULT_STEREOTYPE = "Property";
 
@@ -15,14 +15,14 @@ public interface PropertyDefaultValues {
 	EdgeCasesMode edgeCases();
 	String stereotype();
 
-	static PropertyDefaultValues with(
+	static PropertyAttributesDefaults with(
 		int tries,
 		int maxDiscardRatio,
 		AfterFailureMode afterFailureMode,
 		GenerationMode generationMode,
 		EdgeCasesMode edgeCasesMode
 	) {
-		return new PropertyDefaultValues() {
+		return new PropertyAttributesDefaults() {
 			@Override
 			public int tries() {
 				return tries;
@@ -31,12 +31,6 @@ public interface PropertyDefaultValues {
 			@Override
 			public int maxDiscardRatio() {
 				return maxDiscardRatio;
-			}
-
-			@Override
-			public ShrinkingMode shrinking() {
-				// TODO: Fill from entry in config file
-				return ShrinkingMode.BOUNDED;
 			}
 
 			@Override
@@ -55,7 +49,14 @@ public interface PropertyDefaultValues {
 			}
 
 			@Override
+			public ShrinkingMode shrinking() {
+				// TODO: Fill from entry in config file
+				return ShrinkingMode.BOUNDED;
+			}
+
+			@Override
 			public String stereotype() {
+				// TODO: Fill from entry in config file
 				return DEFAULT_STEREOTYPE;
 			}
 		};

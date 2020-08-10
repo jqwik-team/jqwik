@@ -3,7 +3,10 @@ package net.jqwik.engine.properties;
 import java.util.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.descriptor.*;
+import net.jqwik.engine.discovery.*;
 
 class PropertyConfigurationBuilder {
 
@@ -11,15 +14,15 @@ class PropertyConfigurationBuilder {
 		return new PropertyConfigurationBuilder();
 	}
 
-	private String seed = "1000";
+	private String seed = null;
 	private String previousSeed = null;
 	private List<Object> falsifiedSample = null;
-	private int tries = 100;
-	private int maxDiscardRatio = 5;
-	private ShrinkingMode shrinkingMode = ShrinkingMode.FULL;
-	private GenerationMode generationMode = GenerationMode.AUTO;
-	private AfterFailureMode afterFailureMode = AfterFailureMode.PREVIOUS_SEED;
-	private EdgeCasesMode edgeCasesMode = EdgeCasesMode.MIXIN;
+	private Integer tries = null;
+	private Integer maxDiscardRatio = null;
+	private ShrinkingMode shrinkingMode = null;
+	private GenerationMode generationMode = null;
+	private AfterFailureMode afterFailureMode = null;
+	private EdgeCasesMode edgeCasesMode = null;
 
 
 	PropertyConfigurationBuilder withSeed(String seed) {
@@ -66,19 +69,24 @@ class PropertyConfigurationBuilder {
 		return this;
 	}
 
-
 	PropertyConfiguration build() {
-		return new PropertyConfiguration(
-			"Property",
-			seed,
-			previousSeed,
-			falsifiedSample,
+		PropertyAttributes propertyAttributes = new DefaultPropertyAttributes(
 			tries,
 			maxDiscardRatio,
 			shrinkingMode,
 			generationMode,
 			afterFailureMode,
-			edgeCasesMode
+			edgeCasesMode,
+			null,
+			seed
+		);
+
+		return new PropertyConfiguration(
+			propertyAttributes,
+			TestHelper.propertyAttributesDefaults(),
+			previousSeed, falsifiedSample, seed,
+			tries,
+			generationMode
 		);
 
 	}
