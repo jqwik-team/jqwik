@@ -1,9 +1,13 @@
 package net.jqwik.api.providers;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.providers.*;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Group
 class ProgrammaticArbitraryProviderRegistrationTests implements AutoCloseable {
@@ -45,6 +49,21 @@ class ProgrammaticArbitraryProviderRegistrationTests implements AutoCloseable {
 	boolean manuallyRegisteredProviderCanBeUnregisteredByClass() {
 		RegisteredArbitraryProviders.unregister(personProvider.getClass());
 		return !RegisteredArbitraryProviders.getProviders().contains(personProvider);
+	}
+
+	@Example
+	// only can fail if run as only/first test
+	void initIsSafe() throws Exception {
+		Callable<List<ArbitraryProvider>> lookup = RegisteredArbitraryProviders::getProviders;
+		ExecutorService exService = Executors.newFixedThreadPool(2);
+
+		Future<List<ArbitraryProvider>> f1 = exService.submit(lookup);
+		Future<List<ArbitraryProvider>> f2 = exService.submit(lookup);
+
+		exService.shutdown();
+		exService.awaitTermination(2, SECONDS);
+
+		assertThat(f1.get()).containsExactlyElementsOf(f2.get());
 	}
 
 	@Override
