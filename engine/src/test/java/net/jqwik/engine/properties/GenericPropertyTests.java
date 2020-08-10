@@ -406,7 +406,9 @@ class GenericPropertyTests {
 			Arbitrary<Object> arbitrary2 = Arbitraries.of(1, 2, 3, 4, 5);
 			ParametersGenerator shrinkablesGenerator = randomizedShrinkablesGenerator(arbitrary1, arbitrary2);
 
-			PropertyConfiguration configuration = aConfig().withTries(5).build();
+			PropertyConfiguration configuration = aConfig()
+													  .withSeed("1000")
+													  .withTries(5).build();
 			GenericProperty property =
 				new GenericProperty("property with 2", configuration, shrinkablesGenerator, forAllFunction, tryLifecycleContextSupplier);
 			PropertyCheckResult result = property.check(TestHelper.reporter(), new Reporting[0]);
