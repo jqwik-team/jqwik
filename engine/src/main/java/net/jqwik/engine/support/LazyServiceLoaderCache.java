@@ -1,8 +1,7 @@
-package net.jqwik.engine;
+package net.jqwik.engine.support;
 
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class LazyServiceLoaderCache<S> {
 	private final Class<S> clz;

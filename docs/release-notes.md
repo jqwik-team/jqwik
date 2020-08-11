@@ -52,6 +52,10 @@ and
 
 - `Arbitraries.frequencyOf() now takes covariant arbitrary types
 
+- Made loading of services thread-safe to allow use of jqwik generators 
+  in parallel JUnit runs: https://github.com/jlink/jqwik/pull/117.
+  Thank you to https://github.com/Danny02! 
+
 #### Breaking Changes
 
 - Exceeding shrinking bound is now logged as warning instead of being reported
