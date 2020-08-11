@@ -47,4 +47,12 @@ public interface PropertyLifecycleContext extends LifecycleContext {
 	@API(status = EXPERIMENTAL, since = "1.2.3")
 	String extendedLabel();
 
+	/**
+	 * An object to query, set or change a property method's attributes.
+	 *
+	 * @return the attributes holder
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.4")
+	PropertyAttributes attributes();
+
 }

@@ -79,4 +79,8 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 		return parameterSupplierResolver.resolveParameter(executable, index, containerClass());
 	}
 
+	@Override
+	public PropertyAttributes attributes() {
+		return methodDescriptor.getConfiguration().getPropertyAttributes();
+	}
 }

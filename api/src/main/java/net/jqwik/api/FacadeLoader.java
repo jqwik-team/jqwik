@@ -18,6 +18,8 @@ public class FacadeLoader {
 	 * one facade registered otherwise null will be returned and a severe error
 	 * is logged.
 	 *
+	 * This method need not be synchronized because it's only called from static initializers.
+	 *
 	 * @param facadeClass The facade type to load
 	 * @param <T> the facade type
 	 * @return instance of facade

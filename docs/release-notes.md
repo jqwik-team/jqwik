@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.3.4-SNAPSHOT](#134-snapshot)
 - [1.3.3](#133)
 - [1.3.2](#132)
 - [1.3.1](#131)
@@ -20,6 +21,25 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.3.4-SNAPSHOT
+
+#### New and Enhanced Features
+
+- Made loading of services thread-safe to allow use of jqwik generators 
+  in parallel JUnit runs: https://github.com/jlink/jqwik/pull/117.
+  Thank you, https://github.com/Danny02!
+  
+- Added `PropertyLifecycleContext.attributes()`, which allows to query, set and change
+  a property method's attributes like number of tries and seed within a
+ `AroundPropertyHook`  lifecycle hook.
+
+#### Breaking Changes
+
+#### Bug Fixes
+
+- No known open bugs 
+
 
 ## 1.3.3
 
@@ -54,7 +74,12 @@ and
 
 - Made loading of services thread-safe to allow use of jqwik generators 
   in parallel JUnit runs: https://github.com/jlink/jqwik/pull/117.
-  Thank you to https://github.com/Danny02! 
+  Thank you, https://github.com/Danny02!
+  
+- Added `PropertyLifecycleContext.attributes()`, which allows to query, set and change
+  a property method's attributes like number of tries and seed within a
+ `AroundPropertyHook`  lifecycle hook.
+
 
 #### Breaking Changes
 
