@@ -30,9 +30,10 @@ class FlatMappedShrinkableTests {
 	}
 
 	@Group
+	@PropertyDefaults(tries = 50, shrinking = ShrinkingMode.OFF)
 	class Shrinking {
 
-		@Property(tries = 50)
+		@Property
 		void canIgnoreLeftSide(@ForAll long seed) {
 			Assume.that(seed != 0L);
 
@@ -46,7 +47,7 @@ class FlatMappedShrinkableTests {
 			assertThat(shrunkValue).isEqualTo(3);
 		}
 
-		@Property(tries = 50)
+		@Property
 		void canFullyShrinkAcrossJustOnRightSide(@ForAll Random random) {
 			Shrinkable<Integer> left = Arbitraries.integers().between(0, 100).generator(10).next(random);
 			Function<Integer, Arbitrary<Integer>> flatMapper = Arbitraries::just;
@@ -59,7 +60,7 @@ class FlatMappedShrinkableTests {
 			assertThat(shrunkValue).isEqualTo(3);
 		}
 
-		@Property(tries = 50, shrinking = ShrinkingMode.OFF)
+		@Property
 		void shrinkingBothSidesToEnd(@ForAll long seed) {
 			Assume.that(seed != 0L);
 
@@ -77,7 +78,7 @@ class FlatMappedShrinkableTests {
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
-		@Property(tries = 50, shrinking = ShrinkingMode.OFF)
+		@Property
 		void filterLeftSide(@ForAll long seed) {
 			Assume.that(seed != 0L);
 
@@ -98,7 +99,7 @@ class FlatMappedShrinkableTests {
 			assertThat(shrunkValue).isEqualTo("a");
 		}
 
-		@Property(tries = 10, shrinking = ShrinkingMode.OFF)
+		@Property
 		void filterRightSide(@ForAll long seed) {
 			Assume.that(seed != 0L);
 
@@ -156,7 +157,7 @@ class FlatMappedShrinkableTests {
 			assertThat(shrunkValue).isEqualTo("f");
 		}
 
-		@Property(tries = 50)
+		@Property
 		void canSimplifyOnBothSides(@ForAll long seed, @ForAll Random random) {
 			Assume.that(seed != 0L);
 			Shrinkable<Integer> integerShrinkable = Arbitraries.integers().generator(42).next(random);
@@ -199,7 +200,7 @@ class FlatMappedShrinkableTests {
 		}
 
 		// This test is duplicated in ShrinkingQualityProperties
-		@Property(tries = 100)
+		@Property
 		void flatMapRectangles(@ForAll Random random) {
 			Arbitrary<Integer> lengths = Arbitraries.integers().between(0, 10);
 			List<String> shrunkResult = falsifyThenShrink(
