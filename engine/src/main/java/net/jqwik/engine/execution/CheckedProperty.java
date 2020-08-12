@@ -97,7 +97,7 @@ public class CheckedProperty {
 			resolveParameterHook,
 			propertyLifecycleContext
 		);
-		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext, resolveParameterHook);
+		Supplier<TryLifecycleContext> tryLifecycleContextSupplier = () -> new DefaultTryLifecycleContext(propertyLifecycleContext);
 		return new GenericProperty(propertyName, configuration, parametersGenerator, tryLifecycleExecutor, tryLifecycleContextSupplier);
 	}
 

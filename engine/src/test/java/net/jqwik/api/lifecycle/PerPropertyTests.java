@@ -1,10 +1,9 @@
-package net.jqwik.engine.execution.lifecycle;
+package net.jqwik.api.lifecycle;
 
 import java.util.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
-import net.jqwik.api.lifecycle.*;
 import net.jqwik.api.lifecycle.PerProperty.*;
 import net.jqwik.engine.*;
 

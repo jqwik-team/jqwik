@@ -22,7 +22,7 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 		Reporter reporter,
 		ResolveParameterHook resolveParameterHook
 	) {
-		super(reporter);
+		super(reporter, methodDescriptor);
 		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook, this);
 		this.methodDescriptor = methodDescriptor;
 		this.testInstance = testInstance;
@@ -37,11 +37,6 @@ public class DefaultPropertyLifecycleContext extends AbstractLifecycleContext im
 	@Override
 	public Class<?> containerClass() {
 		return methodDescriptor.getContainerClass();
-	}
-
-	@Override
-	public String label() {
-		return methodDescriptor.getLabel();
 	}
 
 	@Override

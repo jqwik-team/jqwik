@@ -1,6 +1,6 @@
 - 1.3.4
 
-    - Hook: @PropertyDefaults(tries=.., afterFailure=.., shrinking=.., generation=.., edgeCases=..)
+    - Hook: @PropertyDefaults(seed=.., afterFailure=.., shrinking=.., generation=.., edgeCases=..)
 
     - Lifecycle
         - PropertyExecutionResult

@@ -19,14 +19,9 @@ public class DefaultContainerLifecycleContext extends AbstractLifecycleContext i
 		Reporter reporter,
 		ResolveParameterHook resolveParameterHook
 	) {
-		super(reporter);
+		super(reporter, classDescriptor);
 		this.classDescriptor = classDescriptor;
 		this.parameterSupplierResolver = new ParameterSupplierResolver(resolveParameterHook, this);
-	}
-
-	@Override
-	public String label() {
-		return classDescriptor.getDisplayName();
 	}
 
 	@Override

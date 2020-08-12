@@ -64,6 +64,17 @@ public interface LifecycleContext {
 	<T extends Annotation> Optional<T> findAnnotation(Class<T> annotationClass);
 
 	/**
+	 * Retrieve an annotation if present in the current element's containers.
+	 * Search up the container stack. Closest container annotations come first in list.
+	 *
+	 * @param annotationClass The annotation type
+	 * @param <T>             The annotation type
+	 * @return list of annotation objects
+	 */
+	@API(status = EXPERIMENTAL, since = "1.2.4")
+	<T extends Annotation> List<T> findAnnotationsInContainer(Class<T> annotationClass);
+
+	/**
 	 * Create a new instance of a {@code clazz} in the context of the property in which it
 	 * is running. Use this method for instance when trying to instantiate a class
 	 * retrieved from an annotation's attribute.
