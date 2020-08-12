@@ -1,6 +1,20 @@
 - 1.3.4
 
-    - Hook: @PropertyDefaults(seed=.., afterFailure=.., shrinking=.., generation=.., edgeCases=..)
+    - @PropertyDefaults
+        - release notes
+        - user guide
+
+    - Configuration file
+        - defaultShrinking = BOUND
+        - defaultEdgeCases = MIXIN
+
+    - Arbitraries.lazyOf()|lazyFrequencyOf()
+      The goal is to allow better shrinking in recursive structures.
+      See LazyArbitraryShrinkingTests.Calculator.        
+
+        - Also consider Arbitraries.recursive()
+        
+- 1.3.x
 
     - Lifecycle
         - PropertyExecutionResult
@@ -11,16 +25,6 @@
         - forType(Class<T> targetType, int depth)
         - @UseType(depth = 1)
 
-    - defaultShrinking = BOUND
-
-- 1.3.x
-
-    - Arbitraries.lazyOf()|lazyFrequencyOf()
-      The goal is to allow better shrinking in recursive structures.
-      See LazyArbitraryShrinkingTests.Calculator.        
-
-        - Also consider Arbitraries.recursive()
-        
     - Implement grow() for more shrinkables
         - CombinedShrinkable: grow each leg
         - CollectShrinkable: grow each element

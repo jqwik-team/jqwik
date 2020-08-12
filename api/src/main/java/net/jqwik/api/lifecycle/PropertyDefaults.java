@@ -22,20 +22,51 @@ public @interface PropertyDefaults {
 
 	int tries() default Property.TRIES_NOT_SET;
 
+	AfterFailureMode afterFailure() default AfterFailureMode.NOT_SET;
+
+	ShrinkingMode shrinking() default ShrinkingMode.NOT_SET;
+
+	GenerationMode generation() default GenerationMode.NOT_SET;
+
+	EdgeCasesMode edgeCases() default EdgeCasesMode.NOT_SET;
+
 	class PropertyDefaultsHook implements AroundPropertyHook {
 
 		@Override
 		public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) {
 			List<PropertyDefaults> propertyDefaults = context.findAnnotationsInContainer(PropertyDefaults.class);
 
-			Optional<Integer> optionalTries = findTries(propertyDefaults);
-
-			optionalTries.ifPresent(tries -> {
+			findTries(propertyDefaults).ifPresent(tries -> {
 				PropertyAttributes attributes = context.attributes();
 				if (!attributes.tries().isPresent()) {
 					attributes.setTries(tries);
 				}
 			});
+			findAfterFailure(propertyDefaults).ifPresent(afterFailure -> {
+				PropertyAttributes attributes = context.attributes();
+				if (!attributes.afterFailure().isPresent()) {
+					attributes.setAfterFailure(afterFailure);
+				}
+			});
+			findShrinking(propertyDefaults).ifPresent(shrinking -> {
+				PropertyAttributes attributes = context.attributes();
+				if (!attributes.shrinking().isPresent()) {
+					attributes.setShrinking(shrinking);
+				}
+			});
+			findGeneration(propertyDefaults).ifPresent(generation -> {
+				PropertyAttributes attributes = context.attributes();
+				if (!attributes.generation().isPresent()) {
+					attributes.setGeneration(generation);
+				}
+			});
+			findEdgeCases(propertyDefaults).ifPresent(edgeCases -> {
+				PropertyAttributes attributes = context.attributes();
+				if (!attributes.edgeCases().isPresent()) {
+					attributes.setEdgeCases(edgeCases);
+				}
+			});
+
 			return property.execute();
 		}
 
@@ -43,6 +74,34 @@ public @interface PropertyDefaults {
 			return propertyDefaults.stream()
 								   .map(PropertyDefaults::tries)
 								   .filter(tries -> tries != Property.TRIES_NOT_SET)
+								   .findFirst();
+		}
+
+		private Optional<AfterFailureMode> findAfterFailure(List<PropertyDefaults> propertyDefaults) {
+			return propertyDefaults.stream()
+								   .map(PropertyDefaults::afterFailure)
+								   .filter(afterFailure -> afterFailure != AfterFailureMode.NOT_SET)
+								   .findFirst();
+		}
+
+		private Optional<ShrinkingMode> findShrinking(List<PropertyDefaults> propertyDefaults) {
+			return propertyDefaults.stream()
+								   .map(PropertyDefaults::shrinking)
+								   .filter(shrinking -> shrinking != ShrinkingMode.NOT_SET)
+								   .findFirst();
+		}
+
+		private Optional<GenerationMode> findGeneration(List<PropertyDefaults> propertyDefaults) {
+			return propertyDefaults.stream()
+								   .map(PropertyDefaults::generation)
+								   .filter(generation -> generation != GenerationMode.NOT_SET)
+								   .findFirst();
+		}
+
+		private Optional<EdgeCasesMode> findEdgeCases(List<PropertyDefaults> propertyDefaults) {
+			return propertyDefaults.stream()
+								   .map(PropertyDefaults::edgeCases)
+								   .filter(edgeCases -> edgeCases != EdgeCasesMode.NOT_SET)
 								   .findFirst();
 		}
 
