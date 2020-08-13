@@ -13,9 +13,10 @@ import net.jqwik.engine.properties.*;
 import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.api.Tuple.*;
 
+@PropertyDefaults(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
 class LazyOfArbitraryShrinkingTests {
 
-	@Property(tries = 10)
+	@Property
 	void oneStep(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazyOf(Arbitraries::integers);
@@ -23,7 +24,7 @@ class LazyOfArbitraryShrinkingTests {
 		Assertions.assertThat(value).isEqualTo(0);
 	}
 
-	@Property(tries = 10)
+	@Property
 	void severalStepsToList(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfInteger();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
@@ -44,7 +45,7 @@ class LazyOfArbitraryShrinkingTests {
 		);
 	}
 
-	@Property(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
+	@Property
 	void severalStepsToListReversedLazy(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
