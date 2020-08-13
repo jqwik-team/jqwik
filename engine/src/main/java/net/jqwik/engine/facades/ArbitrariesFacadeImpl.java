@@ -2,7 +2,6 @@ package net.jqwik.engine.facades;
 
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -167,9 +166,29 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers) {
-		return new LazyOfArbitrary<>(suppliers);
-		// List<Arbitrary<T>> arbitraries = suppliers.stream().map(Arbitraries::lazy).collect(Collectors.toList());
-		// return Arbitraries.oneOf(arbitraries);
+		int hashIdentifier = calculateIdentifier();
+		return LazyOfArbitrary.of(hashIdentifier, suppliers);
+	}
+
+	/**
+	 * The calculated cash is supposed to be the same for the same callers of Arbitraries.lazyOf()
+	 * This is important to have a single instance of LazyOfArbitrary for the same code.
+	 */
+	private static int calculateIdentifier() {
+		int hashIdentifier = 0;
+		try {
+			throw new RuntimeException();
+		} catch (RuntimeException rte) {
+			Optional<Integer> optionalHash =
+				Arrays.stream(rte.getStackTrace())
+					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(ArbitrariesFacadeImpl.class.getName()))
+					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(Arbitraries.class.getName()))
+					  .limit(2)
+					  .map(stackTraceElement -> Objects.hash(stackTraceElement.getClassName(), stackTraceElement.getFileName()))
+					  .reduce(Objects::hash);
+			hashIdentifier = optionalHash.orElse(0);
+		}
+		return hashIdentifier;
 	}
 
 	@Override

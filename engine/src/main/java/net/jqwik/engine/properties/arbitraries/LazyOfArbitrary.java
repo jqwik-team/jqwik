@@ -8,6 +8,17 @@ import net.jqwik.engine.properties.shrinking.*;
 
 public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
+	private static final Map<Integer, LazyOfArbitrary<?>> cachedArbitraries = new HashMap<>();
+
+	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
+		LazyOfArbitrary<?> arbitrary = cachedArbitraries.computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
+		if (arbitrary.size() == suppliers.size()) {
+			//noinspection unchecked
+			return (Arbitrary<T>) arbitrary;
+		}
+		return new LazyOfArbitrary<>(suppliers);
+	}
+
 	private final List<Supplier<Arbitrary<T>>> suppliers;
 	private final Arbitrary<T>[] arbitraries;
 
@@ -15,6 +26,10 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		this.suppliers = suppliers;
 		//noinspection unchecked
 		this.arbitraries = new Arbitrary[suppliers.size()];
+	}
+
+	private int size() {
+		return suppliers.size();
 	}
 
 	@Override
