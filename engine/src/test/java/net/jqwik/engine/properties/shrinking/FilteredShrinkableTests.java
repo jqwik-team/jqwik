@@ -1,5 +1,6 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -50,6 +51,17 @@ class FilteredShrinkableTests {
 			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 			assertThat(shrunkValue).isEqualTo(7);
 		}
+
+		@Disabled("bug! runs forever")
+		@Property(tries = 10)
+		void filteredIntegers(@ForAll Random random) {
+			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 40).filter(i -> i > 30);
+			Shrinkable<Integer> shrinkable = ArbitraryTestHelper.generateUntil(integers.generator(10), random, i -> true);
+
+			Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+			assertThat(shrunkValue).isEqualTo(31);
+		}
+
 	}
 
 	@Group
