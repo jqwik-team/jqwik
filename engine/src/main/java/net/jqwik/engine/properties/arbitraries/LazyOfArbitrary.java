@@ -2,8 +2,10 @@ package net.jqwik.engine.properties.arbitraries;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.*;
 
 public class LazyOfArbitrary<T> implements Arbitrary<T> {
@@ -37,9 +39,36 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 		return random -> {
 			int index = random.nextInt(suppliers.size());
+			long seed = random.nextLong();
+			Shrinkable<T> shrinkable = getArbitrary(index).generator(genSize).next(SourceOfRandomness.newRandom(seed));
 			return new LazyOfShrinkable<>(
-				getArbitrary(index).generator(genSize).next(random)
+				shrinkable, centralShrinker(shrinkable, genSize, seed, index)
 			);
+		};
+	}
+
+	Supplier<Stream<Shrinkable<T>>> centralShrinker(Shrinkable<T> toShrink, int genSize, long seed, int index) {
+		return () -> {
+			ShrinkingDistance distance = toShrink.distance();
+			List<Shrinkable<T>> shrinkables = new ArrayList<>();
+			for (int i = 0; i < suppliers.size(); i++) {
+				if (i == index) {
+					continue;
+				}
+				Shrinkable<T> next = getArbitrary(i).generator(genSize).next(SourceOfRandomness.newRandom(seed));
+				if (next.equals(toShrink)) {
+					continue;
+				}
+				if (next.distance().size() > distance.size()) {
+					continue;
+				}
+				shrinkables.add(
+					new LazyOfShrinkable<>(
+						next, centralShrinker(next, genSize, seed, index)
+					)
+				);
+			}
+			return shrinkables.stream();
 		};
 	}
 
