@@ -1,4 +1,4 @@
-package net.jqwik.api.lifecycle;
+package net.jqwik.api;
 
 import java.lang.annotation.*;
 import java.lang.reflect.*;
@@ -6,7 +6,7 @@ import java.util.*;
 
 import org.apiguardian.api.*;
 
-import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 
 import static org.apiguardian.api.API.Status.*;
 

@@ -1,9 +1,5 @@
 - 1.3.4
 
-    - @PropertyDefaults
-        - release notes
-        - user guide
-
     - Arbitraries.lazyOf()|lazyFrequencyOf()
       The goal is to allow better shrinking in recursive structures.
       See LazyArbitraryShrinkingTests.Calculator.        

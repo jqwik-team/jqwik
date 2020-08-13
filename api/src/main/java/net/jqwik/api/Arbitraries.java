@@ -456,7 +456,11 @@ public class Arbitraries {
 
 	/**
 	 * Create an arbitrary that will always generate the same value.
-	 * 
+	 *
+	 * @param value The value to "generate"
+	 * @param <T>   The type of the value
+	 * @return a new arbitrary instance
+	 *
 	 * @see #just(Object)
 	 *
 	 * @deprecated Use {@linkplain Arbitraries#just(Object)} instead. To be removed in version 2.0.
@@ -471,7 +475,7 @@ public class Arbitraries {
 	 * Create an arbitrary that will always generate the same value.
 	 *
 	 * @param value The value to "generate"
-	 * @param <T>   The type of values to generate
+	 * @param <T>   The type of the value
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.2")

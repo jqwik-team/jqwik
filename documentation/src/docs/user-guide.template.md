@@ -200,7 +200,7 @@ Just like an example test a property method has to
 - or return nothing (`void`). In that case you will probably
   use [assertions](#assertions) to check the property's invariant.
 
-If not [specified differently](#optional-property-parameters), 
+If not [specified differently](#optional-property-attributes), 
 _jqwik_ __will run 1000 tries__, i.e. a 1000 different sets of 
 parameter values and execute the property method with each of those parameter sets. 
 The first failed execution will stop value generation 
@@ -310,7 +310,7 @@ The following reporting aspects are available:
 Unlike sample reporting these reports will show _the freshly generated parameters_,
 i.e. potential changes to mutable objects during property execution cannot be seen here.
 
-### Optional `@Property` Parameters
+### Optional `@Property` Attributes
 
 The [`@Property`](/docs/${docsVersion}/javadoc/net/jqwik/api/Property.html) 
 annotation has a few optional values:
@@ -391,7 +391,36 @@ edge-cases#total = 2
 edge-cases#tried = 2 
 seed = 42859154278924201
 ```
-      
+   
+#### Setting Defaults for `@Property` Attributes
+
+If you want to set the defaults for all property methods in a container class 
+(and all the [groups](#grouping-tests) in it) you can use annotation
+[`@PropertyDefaults`](/docs/${docsVersion}/javadoc/net/jqwik/api/PropertyDefaults.html).
+
+In the following example both properties are tried 10 times.
+Shrinking mode is set for all but is overridden in the second property.
+
+```java
+@PropertyDefaults(tries = 10, shrinking = ShrinkingMode.FULL)
+class PropertyDefaultsExamples {
+
+	@Property
+	void aLongRunningProperty(@ForAll String aString) {}
+
+	@Property(shrinking = ShrinkingMode.OFF)
+	void anotherLongRunningProperty(@ForAll String aString) {}
+}
+```
+
+Thus, the order in which a property method's attributes are determined is:
+
+1. Use jqwik's built-in defaults 
+2. which can be overridden in the [configuration file](#jqwik-configuration) 
+3. which can be changed in a container class' `@PropertyDefaults` annotation
+4. which can be overridden by a method's
+   [`@Property` annotation attributes](#optional-property-attributes).
+   
 ## Creating an Example-based Test
 
 _jqwik_ also supports example-based testing.
@@ -3458,7 +3487,7 @@ Run it and have a look at the output.
 ### Configuring Edge Case Injection
 
 How jqwik handles edge cases generation can be controlled with 
-[an annotation property](#optional-property-parameters) and
+[an annotation property](#optional-property-attributes) and
 [a configuration parameter](#jqwik-configuration).
 
 To switch it off for a single property, use:
@@ -3499,7 +3528,7 @@ This is exactly what _jqwik_ will do:
   is equal or below a property's `tries` attribute (1000 by default), 
   all combinations will be generated.
 - You can also enforce an exhaustive or randomized generation mode by using the
-  [Property.generation attribute](#optional-property-parameters).
+  [Property.generation attribute](#optional-property-attributes).
   The default generation mode can be set in the [configuration file](jqwik-configuration).
 - If _jqwik_ cannot figure out how to do exhaustive generation for one of the 
   participating arbitraries it will switch to randomized generation if in auto mode
