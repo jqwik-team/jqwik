@@ -16,6 +16,19 @@ import static net.jqwik.api.Tuple.*;
 @PropertyDefaults(tries = 10, afterFailure = AfterFailureMode.RANDOM_SEED)
 class LazyOfArbitraryShrinkingTests {
 
+	@Property(seed = "42", tries = 1)
+	void shrinkToOtherSuppliers(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.lazyOf(
+				() -> Arbitraries.integers().between(1, 10),
+				() -> Arbitraries.integers().between(1, 20).filter(i -> i > 10),
+				() -> Arbitraries.integers().between(1, 30).filter(i -> i > 20),
+				() -> Arbitraries.integers().between(1, 40).filter(i -> i > 30)
+			);
+		Integer value = shrinkToMinimal(arbitrary, random);
+		Assertions.assertThat(value).isEqualTo(1);
+	}
+
 	@Property
 	void oneStep(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =

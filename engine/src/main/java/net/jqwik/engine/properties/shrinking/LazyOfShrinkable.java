@@ -22,10 +22,11 @@ public class LazyOfShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Stream<Shrinkable<T>> shrink() {
-		return JqwikStreamSupport.concat(
-			shrinkCurrent(),
-			centralShrinker.get()
-		);
+		return shrinkCurrent();
+		// return JqwikStreamSupport.concat(
+		// 	shrinkCurrent(),
+		// 	Stream.empty()
+		// );
 	}
 
 	public Stream<Shrinkable<T>> shrinkCurrent() {
