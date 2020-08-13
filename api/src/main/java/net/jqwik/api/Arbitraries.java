@@ -646,6 +646,14 @@ public class Arbitraries {
 		return ArbitrariesFacade.implementation.recursive(base, recur, depth);
 	}
 
+	@SafeVarargs
+	@API(status = EXPERIMENTAL, since = "1.3.4")
+	public static <T> Arbitrary<T> lazyOf(Supplier<Arbitrary<T>> ... arbitrarySuppliers) {
+		// TODO: Use your own implementation
+		List<Arbitrary<T>> arbitraries = Arrays.stream(arbitrarySuppliers).map(Arbitraries::lazy).collect(Collectors.toList());
+		return Arbitraries.oneOf(arbitraries);
+	}
+
 	/**
 	 * Create an arbitrary to create a sequence of actions. Useful for stateful testing.
 	 *

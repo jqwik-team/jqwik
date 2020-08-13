@@ -316,23 +316,22 @@ class ArbitrariesTests {
 		}
 	}
 
+	@Example
+	void recursive() {
+		Arbitrary<Integer> base = Arbitraries.integers().between(0, 5);
+		Arbitrary<Integer> integer = Arbitraries.recursive(
+			() -> base,
+			list -> list.map(i -> i + 1),
+			10
+		);
+
+		ArbitraryTestHelper.assertAllGenerated(integer.generator(1000), result -> {
+			assertThat(result).isBetween(10, 15);
+		});
+	}
+
 	@Group
-	@Label("recursive() and lazy()")
-	class Recursion {
-
-		@Example
-		void recursive() {
-			Arbitrary<Integer> base = Arbitraries.integers().between(0, 5);
-			Arbitrary<Integer> integer = Arbitraries.recursive(
-				() -> base,
-				list -> list.map(i -> i + 1),
-				10
-			);
-
-			ArbitraryTestHelper.assertAllGenerated(integer.generator(1000), result -> {
-				assertThat(result).isBetween(10, 15);
-			});
-		}
+	class Lazy {
 
 		@Example
 		void lazy() {
@@ -369,31 +368,63 @@ class ArbitrariesTests {
 			));
 		}
 
-		class Tree {
-			final String name;
-			final Tree left;
-			final Tree right;
+	}
 
-			public Tree(final String name, final Tree left, final Tree right) {
-				this.name = name;
-				this.left = left;
-				this.right = right;
-			}
-
-			@Override
-			public String toString() {
-				return String.format("%s[%s]", name, depth());
-			}
-
-			private int depth() {
-				if (left == null && right == null) {
-					return 0;
+	@Group
+	class LazyOf {
+		@Example
+		void lazyOf() {
+			ArbitraryTestHelper.assertAllGenerated(
+				trees().generator(1000),
+				tree -> {
+					//System.out.println(tree);
+					return tree != null;
 				}
-				return Math.max(
-					left == null ? 0 : left.depth() + 1,
-					right == null ? 0 : right.depth() + 1
-				);
+			);
+		}
+
+		private Arbitrary<Tree> trees() {
+			return Combinators.combine(aName(), aBranch(), aBranch()).as(Tree::new);
+		}
+
+		private Arbitrary<String> aName() {
+			return Arbitraries.strings().alpha().ofLength(3);
+		}
+
+		private Arbitrary<Tree> aBranch() {
+			return Arbitraries.lazyOf(
+				() -> Arbitraries.just(null),
+				() -> Arbitraries.just(null),
+				this::trees
+			);
+		}
+
+	}
+
+	class Tree {
+		final String name;
+		final Tree left;
+		final Tree right;
+
+		public Tree(final String name, final Tree left, final Tree right) {
+			this.name = name;
+			this.left = left;
+			this.right = right;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s[%s]", name, depth());
+		}
+
+		private int depth() {
+			if (left == null && right == null) {
+				return 0;
 			}
+			return Math.max(
+				left == null ? 0 : left.depth() + 1,
+				right == null ? 0 : right.depth() + 1
+			);
 		}
 	}
 
@@ -1007,6 +1038,7 @@ class ArbitrariesTests {
 				assertThat(entry.getValue()).isEqualTo("fortytwo");
 			});
 		}
+
 	}
 
 	private void assertGeneratedString(RandomGenerator<String> generator, int minLength, int maxLength) {
