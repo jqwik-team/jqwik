@@ -34,9 +34,12 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
+
 		return random -> {
 			int index = random.nextInt(suppliers.size());
-			return getArbitrary(index).generator(genSize).next(random);
+			return new LazyOfShrinkable<>(
+				getArbitrary(index).generator(genSize).next(random)
+			);
 		};
 	}
 
