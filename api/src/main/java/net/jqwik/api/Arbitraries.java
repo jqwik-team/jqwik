@@ -85,6 +85,8 @@ public class Arbitraries {
 		public abstract <K, V> Arbitrary<Map.Entry<K, V>> entries(Arbitrary<K> keysArbitrary, Arbitrary<V> valuesArbitrary);
 
 		public abstract <T> Arbitrary<T> recursive(Supplier<Arbitrary<T>> base, Function<Arbitrary<T>, Arbitrary<T>> recur, int depth);
+
+		public abstract <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers);
 	}
 
 	private Arbitraries() {
@@ -646,12 +648,17 @@ public class Arbitraries {
 		return ArbitrariesFacade.implementation.recursive(base, recur, depth);
 	}
 
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	@API(status = EXPERIMENTAL, since = "1.3.4")
-	public static <T> Arbitrary<T> lazyOf(Supplier<Arbitrary<T>> ... arbitrarySuppliers) {
-		// TODO: Use your own implementation
-		List<Arbitrary<T>> arbitraries = Arrays.stream(arbitrarySuppliers).map(Arbitraries::lazy).collect(Collectors.toList());
-		return Arbitraries.oneOf(arbitraries);
+	public static <T> Arbitrary<T> lazyOf(Supplier<Arbitrary<? extends T>> first, Supplier<Arbitrary<? extends T>> ... rest) {
+		List<Supplier<Arbitrary<T>>> all = new ArrayList<>();
+		all.add(() -> (Arbitrary<T>) first.get());
+		for (Supplier<Arbitrary<? extends T>> arbitrarySupplier : rest) {
+
+			all.add(() -> (Arbitrary<T>) arbitrarySupplier.get());
+		}
+		return ArbitrariesFacade.implementation.lazyOf(all);
 	}
 
 	/**
