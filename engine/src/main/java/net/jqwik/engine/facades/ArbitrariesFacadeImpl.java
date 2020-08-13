@@ -2,6 +2,7 @@ package net.jqwik.engine.facades;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.arbitraries.*;
@@ -162,6 +163,13 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	@Override
 	public <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
 		return new LazyArbitrary<>(arbitrarySupplier);
+	}
+
+	@Override
+	public <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers) {
+		return new LazyOfArbitrary<>(suppliers);
+		// List<Arbitrary<T>> arbitraries = suppliers.stream().map(Arbitraries::lazy).collect(Collectors.toList());
+		// return Arbitraries.oneOf(arbitraries);
 	}
 
 	@Override
