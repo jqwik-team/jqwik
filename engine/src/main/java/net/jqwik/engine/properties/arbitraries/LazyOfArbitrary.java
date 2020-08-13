@@ -36,39 +36,44 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	@Override
 	public RandomGenerator<T> generator(int genSize) {
-
 		return random -> {
 			int index = random.nextInt(suppliers.size());
 			long seed = random.nextLong();
 			Shrinkable<T> shrinkable = getArbitrary(index).generator(genSize).next(SourceOfRandomness.newRandom(seed));
+			List<Integer> usedIndexes = new ArrayList<>();
+			usedIndexes.add(index);
 			return new LazyOfShrinkable<>(
-				shrinkable, centralShrinker(shrinkable, genSize, seed, index)
+				shrinkable, centralShrinker(shrinkable, genSize, seed, usedIndexes)
 			);
 		};
 	}
 
-	Supplier<Stream<Shrinkable<T>>> centralShrinker(Shrinkable<T> toShrink, int genSize, long seed, int index) {
+	Supplier<Stream<Shrinkable<T>>> centralShrinker(Shrinkable<T> toShrink, int genSize, long seed, List<Integer> usedIndexes) {
 		return () -> {
-			ShrinkingDistance distance = toShrink.distance();
-			List<Shrinkable<T>> shrinkables = new ArrayList<>();
-			for (int i = 0; i < suppliers.size(); i++) {
-				if (i == index) {
-					continue;
-				}
-				Shrinkable<T> next = getArbitrary(i).generator(genSize).next(SourceOfRandomness.newRandom(seed));
-				if (next.equals(toShrink)) {
-					continue;
-				}
-				if (next.distance().size() > distance.size()) {
-					continue;
-				}
-				shrinkables.add(
-					new LazyOfShrinkable<>(
-						next, centralShrinker(next, genSize, seed, index)
-					)
-				);
-			}
-			return shrinkables.stream();
+			// ShrinkingDistance distance = toShrink.distance();
+			// List<Integer> newUsedIndexes = new ArrayList<>(usedIndexes);
+			// for (int i = 0; i < suppliers.size(); i++) {
+			// 	if (usedIndexes.contains(i)) {
+			// 		continue;
+			// 	}
+			// 	Shrinkable<T> next = getArbitrary(i).generator(genSize).next(SourceOfRandomness.newRandom(seed));
+			// 	newUsedIndexes.add(i);
+			// 	if (next.equals(toShrink)) {
+			// 		continue;
+			// 	}
+			// 	if (next.distance().size() > distance.size()) {
+			// 		continue;
+			// 	}
+			// 	if (next.distance().compareTo(distance) > 0) {
+			// 		continue;
+			// 	}
+			// 	return Stream.of(
+			// 		new LazyOfShrinkable<>(
+			// 			next, centralShrinker(next, genSize, seed, newUsedIndexes)
+			// 		)
+			// 	);
+			// }
+			return Stream.empty();
 		};
 	}
 
