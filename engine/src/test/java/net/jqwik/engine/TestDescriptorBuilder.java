@@ -20,12 +20,6 @@ import static net.jqwik.engine.JqwikUniqueIdBuilder.*;
  */
 public class TestDescriptorBuilder {
 
-	public static final int TRIES = 1000;
-	public static final int MAX_DISCARD_RATIO = 5;
-	public static final AfterFailureMode AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
-	public static final GenerationMode GENERATION = GenerationMode.AUTO;
-	public static final EdgeCasesMode EDGE_CASES = EdgeCasesMode.MIXIN;
-
 	private TestDescriptorBuilder parentBuilder = null;
 
 	public static TestDescriptorBuilder forMethod(Class<?> containerClass, String methodName, Class<?>... parameterTypes) {
@@ -112,7 +106,7 @@ public class TestDescriptorBuilder {
 				PropertyConfiguration propertyConfig =
 					PropertyConfiguration.from(
 						attributes,
-						PropertyAttributesDefaults.with(TRIES, MAX_DISCARD_RATIO, AFTER_FAILURE, GENERATION, EDGE_CASES),
+						TestHelper.propertyAttributesDefaults(),
 						null,
 						null
 					);

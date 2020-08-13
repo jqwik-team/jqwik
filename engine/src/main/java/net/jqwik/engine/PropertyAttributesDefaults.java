@@ -20,7 +20,8 @@ public interface PropertyAttributesDefaults {
 		int maxDiscardRatio,
 		AfterFailureMode afterFailureMode,
 		GenerationMode generationMode,
-		EdgeCasesMode edgeCasesMode
+		EdgeCasesMode edgeCasesMode,
+		ShrinkingMode shrinkingMode
 	) {
 		return new PropertyAttributesDefaults() {
 			@Override
@@ -50,13 +51,11 @@ public interface PropertyAttributesDefaults {
 
 			@Override
 			public ShrinkingMode shrinking() {
-				// TODO: Fill from entry in config file
-				return ShrinkingMode.BOUNDED;
+				return shrinkingMode;
 			}
 
 			@Override
 			public String stereotype() {
-				// TODO: Fill from entry in config file
 				return DEFAULT_STEREOTYPE;
 			}
 		};

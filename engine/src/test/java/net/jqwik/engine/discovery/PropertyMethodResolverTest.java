@@ -15,24 +15,13 @@ import net.jqwik.engine.recording.*;
 
 import static org.assertj.core.api.Assertions.*;
 
+import static net.jqwik.engine.TestHelper.*;
+
 @Group
 class PropertyMethodResolverTest {
 
-	private static final int DEFAULT_TRIES = 999;
-	private static final int DEFAULT_MAX_DISCARD_RATIO = 4;
-	private static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
-	private static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
-	private static final EdgeCasesMode DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN;
-
 	private final TestRunData testRunData = new TestRunData();
-	private final PropertyAttributesDefaults propertyDefaultValues =
-		PropertyAttributesDefaults.with(
-			DEFAULT_TRIES,
-			DEFAULT_MAX_DISCARD_RATIO,
-			DEFAULT_AFTER_FAILURE,
-			DEFAULT_GENERATION,
-			DEFAULT_EDGE_CASES
-		);
+	private final PropertyAttributesDefaults propertyDefaultValues = TestHelper.propertyAttributesDefaults();
 	private final PropertyMethodResolver resolver = new PropertyMethodResolver(testRunData, propertyDefaultValues);
 
 	@Group

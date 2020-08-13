@@ -20,13 +20,21 @@ import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 
 public class TestHelper {
 
+	public static final int DEFAULT_TRIES = 1000;
+	public static final int DEFAULT_MAX_DISCARD_RATIO = 5;
+	public static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
+	public static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
+	public static final EdgeCasesMode DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN;
+	public static final ShrinkingMode DEFAULT_SHRINKING = ShrinkingMode.BOUNDED;
+
 	public static PropertyAttributesDefaults propertyAttributesDefaults() {
 		return PropertyAttributesDefaults.with(
-			100,
-			5,
-			AfterFailureMode.PREVIOUS_SEED,
-			GenerationMode.AUTO,
-			EdgeCasesMode.MIXIN
+			DEFAULT_TRIES,
+			DEFAULT_MAX_DISCARD_RATIO,
+			DEFAULT_AFTER_FAILURE,
+			DEFAULT_GENERATION,
+			DEFAULT_EDGE_CASES,
+			DEFAULT_SHRINKING
 		);
 	}
 

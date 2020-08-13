@@ -31,7 +31,8 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			properties.defaultMaxDiscardRatio(),
 			properties.defaultAfterFailure(),
 			properties.defaultGeneration(),
-			properties.defaultEdgeCases()
+			properties.defaultEdgeCases(),
+			properties.defaultShrinking()
 		);
 	}
 

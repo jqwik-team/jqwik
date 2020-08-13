@@ -3632,6 +3632,8 @@ defaultGeneration = AUTO            # Set default behaviour for generation:
                                     # AUTO, RANDOMIZED, or EXHAUSTIVE
 defaultEdgeCases = MIXIN            # Set default behaviour for edge cases generation:
                                     # FIRST, MIXIN, or NONE
+defaultShrinking = BOUNDED          # Set default shrinking behaviour:
+                                    # BOUNDED, FULL, or OFF
 ```
 
 ## Advanced Topics

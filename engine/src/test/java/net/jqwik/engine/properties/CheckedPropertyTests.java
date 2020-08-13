@@ -38,10 +38,10 @@ class CheckedPropertyTests {
 			CheckedProperty checkedProperty = createCheckedProperty(descriptor);
 
 			assertThat(checkedProperty.configuration.getStereotype()).isEqualTo(PropertyAttributesDefaults.DEFAULT_STEREOTYPE);
-			assertThat(checkedProperty.configuration.getTries()).isEqualTo(TestDescriptorBuilder.TRIES);
-			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(TestDescriptorBuilder.MAX_DISCARD_RATIO);
-			assertThat(checkedProperty.configuration.getAfterFailureMode()).isEqualTo(TestDescriptorBuilder.AFTER_FAILURE);
-			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(ShrinkingMode.BOUNDED);
+			assertThat(checkedProperty.configuration.getTries()).isEqualTo(DEFAULT_TRIES);
+			assertThat(checkedProperty.configuration.getMaxDiscardRatio()).isEqualTo(DEFAULT_MAX_DISCARD_RATIO);
+			assertThat(checkedProperty.configuration.getAfterFailureMode()).isEqualTo(DEFAULT_AFTER_FAILURE);
+			assertThat(checkedProperty.configuration.getShrinkingMode()).isEqualTo(DEFAULT_SHRINKING);
 		}
 
 		@Example
