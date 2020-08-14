@@ -32,4 +32,13 @@ class JqwikStreamSupportTests {
 		assertThat(anInt.get()).isEqualTo(2);
 		assertThat(countCalls.get()).isEqualTo(2);
 	}
+
+	@Example
+	void takeWhile() {
+		Stream<Integer> s1 = Stream.of(1, 2, 3, 4, 5, 6, 7);
+
+		Stream<Integer> s2 = JqwikStreamSupport.takeWhile(s1, i -> i < 5);
+
+		assertThat(s2.collect(Collectors.toList())).containsExactly(1, 2, 3, 4);
+	}
 }

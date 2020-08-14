@@ -1,12 +1,17 @@
 package net.jqwik.engine.properties.shrinking;
 
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.support.*;
 
 public class FilteredShrinkable<T> implements Shrinkable<T> {
+
+	private static final int MAX_BASE_SHRINKS = 100;
+	private final AtomicInteger countBaseShrinks = new AtomicInteger(0);
 
 	private final Shrinkable<T> toFilter;
 	private final Predicate<T> filter;
@@ -45,14 +50,21 @@ public class FilteredShrinkable<T> implements Shrinkable<T> {
 
 	private Stream<Shrinkable<T>> shrinkToFirst(Shrinkable<T> base) {
 		return base.shrink()
+				   .peek(ignore -> countBaseShrinks.incrementAndGet())
 				   .filter(this::isIncluded)
 				   .map(this::toFiltered);
 	}
 
 	private Stream<Shrinkable<T>> shrinkDeep(Shrinkable<T> base) {
-		return Stream.concat(
+		// This is a terrible hack I will have to suffer for one day
+		Stream<Shrinkable<T>> constrainedBaseShrink =
+			JqwikStreamSupport.takeWhile(
+				base.shrink(),
+				ignore -> countBaseShrinks.get() < MAX_BASE_SHRINKS
+			);
+		return JqwikStreamSupport.concat(
 			base.shrink().flatMap(this::shrinkToFirst),
-			base.shrink().flatMap(this::shrinkDeep).limit(1)
+			constrainedBaseShrink.flatMap(this::shrinkDeep).limit(1)
 		);
 	}
 

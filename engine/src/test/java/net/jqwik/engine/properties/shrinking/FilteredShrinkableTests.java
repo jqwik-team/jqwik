@@ -52,7 +52,6 @@ class FilteredShrinkableTests {
 			assertThat(shrunkValue).isEqualTo(7);
 		}
 
-		@Disabled("bug! runs forever")
 		@Property(tries = 10)
 		void filteredIntegers(@ForAll Random random) {
 			Arbitrary<Integer> integers = Arbitraries.integers().between(1, 40).filter(i -> i > 30);
