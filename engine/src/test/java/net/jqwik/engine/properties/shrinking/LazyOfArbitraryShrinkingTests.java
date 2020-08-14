@@ -49,7 +49,7 @@ class LazyOfArbitraryShrinkingTests {
 	@Provide
 	Arbitrary<List<Integer>> listOfInteger() {
 		return Arbitraries.lazyOf(
-			() -> Arbitraries.of(1, 2, 3, 4, 5).list().ofSize(1),
+			() -> Arbitraries.integers().between(1, 5).list().ofSize(1),
 			() -> Combinators.combine(listOfInteger(), listOfInteger()).as((l1, l2) -> {
 				ArrayList<Integer> newList = new ArrayList<>(l1);
 				newList.addAll(l2);
@@ -82,7 +82,7 @@ class LazyOfArbitraryShrinkingTests {
 				newList.addAll(l2);
 				return newList;
 			}),
-			() -> Arbitraries.of(1, 2, 3, 4, 5).list().ofSize(1)
+			() -> Arbitraries.integers().between(1, 5).list().ofSize(1)
 		);
 	}
 
