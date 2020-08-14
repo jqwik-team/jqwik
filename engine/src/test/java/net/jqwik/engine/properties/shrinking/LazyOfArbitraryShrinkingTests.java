@@ -97,8 +97,9 @@ class LazyOfArbitraryShrinkingTests {
 		 * Moreover shrinking results are usually small (5 - 10 nodes) but
 		 * are sometimes very large (200 nodes and more)
 		 */
-		// @Property(seed="3404249936767611181") // This seed produces the desired result
+		//@Property(tries = 1000)//(seed="3404249936767611181") // This seed produces the desired result
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
+		// @Report(Reporting.GENERATED)
 		void shrinkExpressionTree(@ForAll("expression") Object expression) {
 			Assume.that(divSubterms(expression));
 			evaluate(expression);
@@ -136,13 +137,14 @@ class LazyOfArbitraryShrinkingTests {
 
 		@Provide
 		Arbitrary<Object> expression() {
-			return Arbitraries.frequencyOf(
-				// Make integers more probable to prevent stack overflow
-				Tuple.of(3, Arbitraries.integers()),
-				Tuple.of(1, Combinators.combine(getLazy(), getLazy())
-									   .as((e1, e2) -> of("+", e1, e2))),
-				Tuple.of(1, Combinators.combine(getLazy(), getLazy())
-									   .as((e1, e2) -> of("/", e1, e2)))
+			return Arbitraries.lazyOf(
+				() -> Arbitraries.integers(),
+				() -> Arbitraries.integers(),
+				() -> Arbitraries.integers(),
+				() -> Combinators.combine(getLazy(), getLazy())
+									   .as((e1, e2) -> of("+", e1, e2)),
+				() -> Combinators.combine(getLazy(), getLazy())
+									   .as((e1, e2) -> of("/", e1, e2))
 			);
 		}
 
