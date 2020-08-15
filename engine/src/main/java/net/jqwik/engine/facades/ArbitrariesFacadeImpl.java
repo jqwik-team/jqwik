@@ -184,7 +184,11 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(ArbitrariesFacadeImpl.class.getName()))
 					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(Arbitraries.class.getName()))
 					  .limit(2)
-					  .map(stackTraceElement -> Objects.hash(stackTraceElement.getClassName(), stackTraceElement.getFileName()))
+					  .map(stackTraceElement -> Objects.hash(
+						  stackTraceElement.getClassName(),
+						  stackTraceElement.getMethodName(),
+						  stackTraceElement.getLineNumber()
+					  ))
 					  .reduce(Objects::hash);
 			hashIdentifier = optionalHash.orElse(0);
 		}
