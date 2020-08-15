@@ -99,20 +99,18 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		Set<Integer> usedIndexes,
 		Set<LazyOfShrinkable<T>> parts
 	) {
-		return current.shrink().map(s -> new LazyOfShrinkable<>(s, () -> {
-			ShrinkingDistance distance = current.distance();
-			Set<LazyOfShrinkable<T>> shrunkParts =
-				parts.stream()
-					 .flatMap(sh ->
-								  sh.shrink()
-									.filter(shr -> shr instanceof LazyOfShrinkable)
-									.filter(shr -> shr.distance().compareTo(distance) <= 0)
-									.map(shr -> (LazyOfShrinkable<T>) shr)
-									.limit(10) // This can be tuned for better shrinking results or better performance
-					 )
-					 .collect(Collectors.toSet());
-			return shrink(s, genSize, seed, usedIndexes, shrunkParts);
-		}));
+		ShrinkingDistance distance = current.distance();
+		Set<LazyOfShrinkable<T>> shrunkParts =
+			parts.stream()
+				 .flatMap(sh ->
+							  sh.shrink()
+								.filter(shr -> shr instanceof LazyOfShrinkable)
+								.filter(shr -> shr.distance().compareTo(distance) <= 0)
+								.map(shr -> (LazyOfShrinkable<T>) shr)
+								.limit(10) // This can be tuned for better shrinking results or better performance
+				 )
+				 .collect(Collectors.toSet());
+		return current.shrink().map(s -> new LazyOfShrinkable<>(s, () -> shrink(s, genSize, seed, usedIndexes, shrunkParts)));
 	}
 
 	private Stream<Shrinkable<T>> shrinkToParts(
@@ -135,9 +133,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 			.filter(index -> !usedIndexes.contains(index))
 			.peek(newUsedIndexes::add)
 			.mapToObj(index -> generateCurrent(genSize, index, seed))
-			.filter(shrinkableAndParts -> {
-				return shrinkableAndParts.get1().distance().compareTo(distance) < 0;
-			})
+			.filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
 			.map(shrinkableAndParts -> createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
 	}
 

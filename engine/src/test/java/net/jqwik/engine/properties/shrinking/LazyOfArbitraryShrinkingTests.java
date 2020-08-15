@@ -37,7 +37,8 @@ class LazyOfArbitraryShrinkingTests {
 		Assertions.assertThat(value).isEqualTo(0);
 	}
 
-	@Property
+	@Disabled
+	@Property(seed = "-4759270301851429536")
 	void severalStepsToList(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfInteger();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
@@ -58,7 +59,8 @@ class LazyOfArbitraryShrinkingTests {
 		);
 	}
 
-	@Property
+	@Disabled
+	@Property(seed = "-1585665271736274201")
 	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
