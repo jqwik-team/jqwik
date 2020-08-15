@@ -36,7 +36,9 @@ public class PropertyConfiguration {
 	public PropertyConfiguration(
 		PropertyAttributes propertyAttributes,
 		PropertyAttributesDefaults propertyAttributesDefaults,
-		String previousSeed, List<Object> falsifiedSample, String overriddenSeed,
+		String previousSeed,
+		List<Object> falsifiedSample,
+		String overriddenSeed,
 		Integer overriddenTries,
 		GenerationMode overriddenGenerationMode
 	) {
@@ -53,7 +55,9 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.previousSeed, this.falsifiedSample, changedSeed,
+			this.previousSeed,
+			this.falsifiedSample,
+			changedSeed,
 			this.overriddenTries,
 			this.overriddenGenerationMode
 		);
@@ -63,7 +67,9 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.previousSeed, this.falsifiedSample, this.overriddenSeed,
+			this.previousSeed,
+			this.falsifiedSample,
+			this.overriddenSeed,
 			this.overriddenTries,
 			changedGenerationMode
 		);
@@ -73,7 +79,9 @@ public class PropertyConfiguration {
 		return new PropertyConfiguration(
 			this.propertyAttributes,
 			this.propertyAttributesDefaults,
-			this.previousSeed, this.falsifiedSample, this.overriddenSeed,
+			this.previousSeed,
+			this.falsifiedSample,
+			this.overriddenSeed,
 			changedTries,
 			this.overriddenGenerationMode
 		);
