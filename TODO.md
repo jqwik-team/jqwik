@@ -1,10 +1,9 @@
 - 1.3.4
 
-    - Arbitraries.lazyOf()|lazyFrequencyOf()
-      The goal is to allow better shrinking in recursive structures.
-      See LazyArbitraryShrinkingTests.Calculator.        
-
-        - Also consider Arbitraries.recursive()
+    - Arbitraries.lazyOf()
+        - Consider Arbitraries.recursive()
+        - Release notes
+        - User guide
         
 - 1.3.x
 
