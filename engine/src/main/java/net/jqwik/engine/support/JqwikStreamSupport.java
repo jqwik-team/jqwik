@@ -51,9 +51,9 @@ public class JqwikStreamSupport {
 
 	/**
 	 * Simulates Java 9's Stream.takeWhile()
-	 * Take from https://stackoverflow.com/a/46446546/32352
+	 * Taken from https://stackoverflow.com/a/46446546/32352
 	 *
-	 * TODO: Remove when moving to Java > 8
+	 * TODO: Remove when moving to Java &gt; 8
 	 */
 	public static <T> Stream<T> takeWhile(Stream<T> stream, Predicate<? super T> p) {
 		class Taking extends Spliterators.AbstractSpliterator<T> implements Consumer<T> {
