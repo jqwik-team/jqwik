@@ -108,7 +108,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 									.filter(shr -> shr instanceof LazyOfShrinkable)
 									.filter(shr -> shr.distance().compareTo(distance) <= 0)
 									.map(shr -> (LazyOfShrinkable<T>) shr)
-									.limit(5)
+									.limit(10) // This can be tuned for better shrinking results or better performance
 					 )
 					 .collect(Collectors.toSet());
 			return shrink(s, genSize, seed, usedIndexes, shrunkParts);
@@ -128,21 +128,17 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private Stream<Shrinkable<T>> shrinkToAlternatives(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
+		ShrinkingDistance distance = current.distance();
 		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
-		for (int i = 0; i < suppliers.size(); i++) {
-			if (usedIndexes.contains(i)) {
-				continue;
-			}
-			Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> shrinkableAndParts = generateCurrent(genSize, i, seed);
-			newUsedIndexes.add(i);
-			Shrinkable<T> next = shrinkableAndParts.get1();
-			if (next.equals(current)) {
-				// If identical suppliers are provided
-				continue;
-			}
-			return Stream.of(createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
-		}
-		return Stream.empty();
+		return IntStream
+			.range(0, suppliers.size())
+			.filter(index -> !usedIndexes.contains(index))
+			.peek(newUsedIndexes::add)
+			.mapToObj(index -> generateCurrent(genSize, index, seed))
+			.filter(shrinkableAndParts -> {
+				return shrinkableAndParts.get1().distance().compareTo(distance) < 0;
+			})
+			.map(shrinkableAndParts -> createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
 	}
 
 	private Arbitrary<T> getArbitrary(int index) {

@@ -80,7 +80,7 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	@Property
-	void withDuplicatedSuppliers(@ForAll Random random) {
+	void withDuplicateSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerWithDuplicateSuppliers();
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, alwaysFalsify());;
 		Assertions.assertThat(shrunkValue).isEqualTo(Collections.emptyList());
