@@ -58,7 +58,8 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		Shrinkable<T> shrinkable = shrinkableAndParts.get1();
 		LazyOfShrinkable<T> lazyOfShrinkable = new LazyOfShrinkable<>(
 			shrinkable,
-			() -> shrink(shrinkable, genSize, seed, usedIndices, shrinkableAndParts.get2())
+			shrinkableAndParts.get2(),
+			(LazyOfShrinkable<T> lazyOf) -> shrink(lazyOf, genSize, seed, usedIndices)
 		);
 		if (generatedParts.peekFirst() != null) {
 			generatedParts.peekFirst().add(lazyOfShrinkable);
@@ -79,16 +80,15 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private Stream<Shrinkable<T>> shrink(
-		Shrinkable<T> current,
+		LazyOfShrinkable<T> lazyOf,
 		int genSize,
 		long seed,
-		Set<Integer> usedIndexes,
-		Set<LazyOfShrinkable<T>> parts
+		Set<Integer> usedIndexes
 	) {
 		return JqwikStreamSupport.concat(
-			shrinkToParts(current, parts),
-			shrinkCurrent(current, genSize, seed, usedIndexes, parts),
-			shrinkToAlternatives(current, genSize, seed, usedIndexes)
+			shrinkToParts(lazyOf),
+			shrinkCurrent(lazyOf.current, genSize, seed, usedIndexes),
+			shrinkToAlternatives(lazyOf.current, genSize, seed, usedIndexes)
 		);
 	}
 
@@ -96,45 +96,34 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		Shrinkable<T> current,
 		int genSize,
 		long seed,
-		Set<Integer> usedIndexes,
-		Set<LazyOfShrinkable<T>> parts
+		Set<Integer> usedIndexes
 	) {
-		ShrinkingDistance distance = current.distance();
-		Set<LazyOfShrinkable<T>> shrunkParts =
-			parts.stream()
-				 .flatMap(sh ->
-							  sh.shrink()
-								.filter(shr -> shr instanceof LazyOfShrinkable)
-								.filter(shr -> shr.distance().compareTo(distance) <= 0)
-								.map(shr -> (LazyOfShrinkable<T>) shr)
-								.limit(10) // This can be tuned for better shrinking results or better performance
-				 )
-				 .collect(Collectors.toSet());
-		return current.shrink().map(s -> new LazyOfShrinkable<>(s, () -> shrink(s, genSize, seed, usedIndexes, shrunkParts)));
+		return current.shrink().map(shrinkable -> new LazyOfShrinkable<>(
+			shrinkable,
+			Collections.emptySet(),
+			(LazyOfShrinkable<T> lazyOf) -> shrink(lazyOf, genSize, seed, usedIndexes)
+		));
 	}
 
-	private Stream<Shrinkable<T>> shrinkToParts(
-		Shrinkable<T> current,
-		Set<LazyOfShrinkable<T>> parts
-	) {
-		ShrinkingDistance distance = current.distance();
-		return 	parts
-				.stream()
-				.filter(shrinkable -> shrinkable.distance().size() <= distance.size())
-				.filter(shrinkable -> shrinkable.distance().compareTo(distance) <= 0)
-				.map(s -> s);
+	private Stream<Shrinkable<T>> shrinkToParts(LazyOfShrinkable<T> lazyOf) {
+		ShrinkingDistance distance = lazyOf.current.distance();
+		return lazyOf.parts
+				   .stream()
+				   .filter(shrinkable -> shrinkable.distance().size() <= distance.size())
+				   // .filter(shrinkable -> shrinkable.distance().compareTo(distance) <= 0)
+				   .map(s -> s);
 	}
 
 	private Stream<Shrinkable<T>> shrinkToAlternatives(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
 		ShrinkingDistance distance = current.distance();
 		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
 		return IntStream
-			.range(0, suppliers.size())
-			.filter(index -> !usedIndexes.contains(index))
-			.peek(newUsedIndexes::add)
-			.mapToObj(index -> generateCurrent(genSize, index, seed))
-			.filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
-			.map(shrinkableAndParts -> createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
+				   .range(0, suppliers.size())
+				   .filter(index -> !usedIndexes.contains(index))
+				   .peek(newUsedIndexes::add)
+				   .mapToObj(index -> generateCurrent(genSize, index, seed))
+				   .filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
+				   .map(shrinkableAndParts -> createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
 	}
 
 	private Arbitrary<T> getArbitrary(int index) {
