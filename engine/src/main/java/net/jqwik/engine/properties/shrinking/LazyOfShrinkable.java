@@ -1,17 +1,23 @@
 package net.jqwik.engine.properties.shrinking;
 
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
-import net.jqwik.engine.support.*;
 
 public class LazyOfShrinkable<T> implements Shrinkable<T> {
 	public final Shrinkable<T> current;
-	private final Supplier<Stream<Shrinkable<T>>> shrinker;
+	public final Set<LazyOfShrinkable<T>> parts;
+	private final Function<LazyOfShrinkable<T>, Stream<Shrinkable<T>>> shrinker;
 
-	public LazyOfShrinkable(Shrinkable<T> current, Supplier<Stream<Shrinkable<T>>> shrinker) {
+	public LazyOfShrinkable(
+		Shrinkable<T> current,
+		Set<LazyOfShrinkable<T>> parts,
+		Function<LazyOfShrinkable<T>, Stream<Shrinkable<T>>> shrinker
+	) {
 		this.current = current;
+		this.parts = parts;
 		this.shrinker = shrinker;
 	}
 
@@ -22,7 +28,7 @@ public class LazyOfShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Stream<Shrinkable<T>> shrink() {
-		return shrinker.get();
+		return shrinker.apply(this);
 	}
 
 	@Override
