@@ -8,15 +8,18 @@ import net.jqwik.api.*;
 
 public class LazyOfShrinkable<T> implements Shrinkable<T> {
 	public final Shrinkable<T> current;
+	public final int depth;
 	public final Set<LazyOfShrinkable<T>> parts;
 	private final Function<LazyOfShrinkable<T>, Stream<Shrinkable<T>>> shrinker;
 
 	public LazyOfShrinkable(
 		Shrinkable<T> current,
+		int depth,
 		Set<LazyOfShrinkable<T>> parts,
 		Function<LazyOfShrinkable<T>, Stream<Shrinkable<T>>> shrinker
 	) {
 		this.current = current;
+		this.depth = depth;
 		this.parts = parts;
 		this.shrinker = shrinker;
 	}
@@ -33,6 +36,6 @@ public class LazyOfShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public ShrinkingDistance distance() {
-		return current.distance();
+		return ShrinkingDistance.of(depth).append(current.distance());
 	}
 }

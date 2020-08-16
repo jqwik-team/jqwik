@@ -3,18 +3,29 @@ package net.jqwik.engine.properties.shrinking;
 import java.util.*;
 import java.util.function.*;
 
-import org.assertj.core.api.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.*;
+
+import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.api.Tuple.*;
 
 @PropertyDefaults(tries = 100, afterFailure = AfterFailureMode.RANDOM_SEED)
 class LazyOfArbitraryShrinkingTests {
+
+	@Property
+	void distance(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.lazyOf(
+				() -> Arbitraries.integers().between(1, 10).filter(i -> i == 10)
+			);
+
+		Shrinkable<Integer> next = arbitrary.generator(10).next(random);
+		assertThat(next.distance()).isEqualTo(ShrinkingDistance.of(0, 9));
+	}
 
 	@Property
 	void shrinkToOtherSuppliers(@ForAll Random random) {
@@ -26,7 +37,7 @@ class LazyOfArbitraryShrinkingTests {
 				() -> Arbitraries.integers().between(1, 40).filter(i -> i > 30)
 			);
 		Integer value = shrinkToMinimal(arbitrary, random);
-		Assertions.assertThat(value).isEqualTo(1);
+		assertThat(value).isEqualTo(1);
 	}
 
 	@Property
@@ -34,7 +45,7 @@ class LazyOfArbitraryShrinkingTests {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazyOf(Arbitraries::integers);
 		Integer value = shrinkToMinimal(arbitrary, random);
-		Assertions.assertThat(value).isEqualTo(0);
+		assertThat(value).isEqualTo(0);
 	}
 
 	@Property
@@ -43,7 +54,7 @@ class LazyOfArbitraryShrinkingTests {
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, falsifier);
 
-		Assertions.assertThat(shrunkValue).isEqualTo(Arrays.asList(1, 1));
+		assertThat(shrunkValue).isEqualTo(Arrays.asList(1, 1));
 	}
 
 	@Provide
@@ -58,13 +69,14 @@ class LazyOfArbitraryShrinkingTests {
 		);
 	}
 
-	@Property(tries = 10) // Fewer tries to prevent occasional heap overflow in Travis build
+	@Property(tries = 10)
+		// Fewer tries to prevent occasional heap overflow in Travis build
 	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
 		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, falsifier);
 
-		Assertions.assertThat(shrunkValue).isEqualTo(Arrays.asList(1, 1));
+		assertThat(shrunkValue).isEqualTo(Arrays.asList(1, 1));
 	}
 
 	@Provide
@@ -82,8 +94,9 @@ class LazyOfArbitraryShrinkingTests {
 	@Property
 	void withDuplicateSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerWithDuplicateSuppliers();
-		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, alwaysFalsify());;
-		Assertions.assertThat(shrunkValue).isEqualTo(Collections.emptyList());
+		List<Integer> shrunkValue = falsifyThenShrink(arbitrary, random, alwaysFalsify());
+		;
+		assertThat(shrunkValue).isEqualTo(Collections.emptyList());
 	}
 
 	@Provide
@@ -109,14 +122,23 @@ class LazyOfArbitraryShrinkingTests {
 	@Group
 	class Calculator {
 
+		@Property(tries = 1000)
+		void depthIsBetweenZeroAndNumberOfNodes(@ForAll Random random) {
+			Arbitrary<Object> arbitrary = expression();
+			LazyOfShrinkable<Object> lazyOf = (LazyOfShrinkable<Object>) arbitrary.generator(10).next(random);
+
+			int numberOfNodes = countNodes(lazyOf.value());
+			assertThat(lazyOf.depth).isBetween(0, numberOfNodes);
+		}
+
 		/**
 		 * Not all shrinking attempts reach the shortest possible expression of 5 nodes
 		 * Moreover shrinking results are usually small (5 - 10 nodes) but
 		 * are sometimes considerably larger
 		 */
-		@Property(tries = 1000, seed="3404249936767611181") // This seed produces the desired result
+		@Property(tries = 1000)
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
-		// @Report(Reporting.FALSIFIED)
+		@Report(Reporting.FALSIFIED)
 		void shrinkExpressionTree(@ForAll("expression") Object expression) {
 			Assume.that(divSubterms(expression));
 			evaluate(expression);
@@ -126,18 +148,20 @@ class LazyOfArbitraryShrinkingTests {
 			@Override
 			public void accept(PropertyExecutionResult propertyExecutionResult) {
 				List<Object> actual = propertyExecutionResult.falsifiedParameters().get();
+				assertThat(countNodes(actual.get(0))).isLessThanOrEqualTo(7);
 				// The best shrinker should shrink to just 5 nodes
-				Assertions.assertThat(countNodes(actual.get(0))).isLessThanOrEqualTo(5);
+				// Assertions.assertThat(countNodes(actual.get(0))).isEqualTo(5);
 			}
+		}
 
-			private int countNodes(Object expression) {
-				if (expression instanceof Integer) {
-					return 1;
-				};
-				@SuppressWarnings("rawtypes")
-				Tuple3 tupleExpression = (Tuple3) expression;
-				return 1 + countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
+		private int countNodes(Object expression) {
+			if (expression instanceof Integer) {
+				return 1;
 			}
+			;
+			@SuppressWarnings("rawtypes")
+			Tuple3 tupleExpression = (Tuple3) expression;
+			return 1 + countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
 		}
 
 		private boolean divSubterms(final Object expression) {
@@ -159,9 +183,9 @@ class LazyOfArbitraryShrinkingTests {
 				Arbitraries::integers,
 				Arbitraries::integers,
 				() -> Combinators.combine(getLazy(), getLazy())
-									   .as((e1, e2) -> of("+", e1, e2)),
+								 .as((e1, e2) -> of("+", e1, e2)),
 				() -> Combinators.combine(getLazy(), getLazy())
-									   .as((e1, e2) -> of("/", e1, e2))
+								 .as((e1, e2) -> of("/", e1, e2))
 			);
 		}
 
