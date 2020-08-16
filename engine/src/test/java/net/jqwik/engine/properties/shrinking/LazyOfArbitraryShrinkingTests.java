@@ -58,7 +58,7 @@ class LazyOfArbitraryShrinkingTests {
 		);
 	}
 
-	@Property
+	@Property(tries = 10) // Fewer tries to prevent occasional heap overflow in Travis build
 	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
