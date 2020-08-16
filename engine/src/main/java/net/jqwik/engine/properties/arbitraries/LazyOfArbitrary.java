@@ -17,6 +17,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	private final Deque<Set<LazyOfShrinkable<T>>> generatedParts = new ArrayDeque<>();
 
 	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
+		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
 		LazyOfArbitrary<?> arbitrary = cachedArbitraries.computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
 		if (arbitrary.size() == suppliers.size()) {
 			//noinspection unchecked
@@ -56,15 +57,21 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		Set<Integer> usedIndices
 	) {
 		Shrinkable<T> shrinkable = shrinkableAndParts.get1();
+		Set<LazyOfShrinkable<T>> parts = shrinkableAndParts.get2();
 		LazyOfShrinkable<T> lazyOfShrinkable = new LazyOfShrinkable<>(
 			shrinkable,
-			shrinkableAndParts.get2(),
+			depth(parts),
+			parts,
 			(LazyOfShrinkable<T> lazyOf) -> shrink(lazyOf, genSize, seed, usedIndices)
 		);
 		if (generatedParts.peekFirst() != null) {
 			generatedParts.peekFirst().add(lazyOfShrinkable);
 		}
 		return lazyOfShrinkable;
+	}
+
+	private int depth(Set<LazyOfShrinkable<T>> parts) {
+		return parts.stream().mapToInt(p -> p.depth).map(depth -> depth + 1).max().orElse(0);
 	}
 
 	private Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> generateCurrent(int genSize, int index, long seed) {
@@ -87,23 +94,24 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	) {
 		return JqwikStreamSupport.concat(
 			shrinkToParts(lazyOf),
-			shrinkCurrent(lazyOf.current, genSize, seed, usedIndexes),
+			shrinkCurrent(lazyOf, genSize, seed, usedIndexes),
 			shrinkToAlternatives(lazyOf.current, genSize, seed, usedIndexes)
-			// Does that add value:
+			// I don't have an example to show that this adds shrinking quality:
 			//shrinkToAlternativesAndGrow(lazyOf.current, genSize, seed, usedIndexes)
 		);
 	}
 
 	private Stream<Shrinkable<T>> shrinkCurrent(
-		Shrinkable<T> current,
+		LazyOfShrinkable<T> lazyOf,
 		int genSize,
 		long seed,
 		Set<Integer> usedIndexes
 	) {
-		return current.shrink().map(shrinkable -> new LazyOfShrinkable<>(
+		return lazyOf.current.shrink().map(shrinkable -> new LazyOfShrinkable<>(
 			shrinkable,
+			lazyOf.depth,
 			Collections.emptySet(),
-			(LazyOfShrinkable<T> lazyOf) -> shrink(lazyOf, genSize, seed, usedIndexes)
+			(LazyOfShrinkable<T> lazy) -> shrink(lazy, genSize, seed, usedIndexes)
 		));
 	}
 
@@ -139,7 +147,8 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 				   .map(Tuple1::get1)
 				   .flatMap(Shrinkable::grow)
 				   .filter(shrinkable -> shrinkable.distance().compareTo(distance) < 0)
-				   .map(grownShrinkable -> createShrinkable(Tuple.of(grownShrinkable, Collections.emptySet()), genSize, seed, newUsedIndexes));
+				   .map(grownShrinkable -> createShrinkable(Tuple.of(grownShrinkable, Collections
+																						  .emptySet()), genSize, seed, newUsedIndexes));
 	}
 
 	private Arbitrary<T> getArbitrary(int index) {
@@ -151,7 +160,6 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	@Override
 	public EdgeCases<T> edgeCases() {
-		// TODO: Implement edge cases
 		return EdgeCases.none();
 	}
 
