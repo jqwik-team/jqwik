@@ -89,6 +89,8 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 			shrinkToParts(lazyOf),
 			shrinkCurrent(lazyOf.current, genSize, seed, usedIndexes),
 			shrinkToAlternatives(lazyOf.current, genSize, seed, usedIndexes)
+			// Does that add value:
+			//shrinkToAlternativesAndGrow(lazyOf.current, genSize, seed, usedIndexes)
 		);
 	}
 
@@ -106,12 +108,10 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private Stream<Shrinkable<T>> shrinkToParts(LazyOfShrinkable<T> lazyOf) {
-		ShrinkingDistance distance = lazyOf.current.distance();
-		return lazyOf.parts
-				   .stream()
-				   .filter(shrinkable -> shrinkable.distance().size() <= distance.size())
-				   // .filter(shrinkable -> shrinkable.distance().compareTo(distance) <= 0)
-				   .map(s -> s);
+		return JqwikStreamSupport.concat(
+			lazyOf.parts.stream().flatMap(this::shrinkToParts),
+			lazyOf.parts.stream().map(s -> s)
+		);
 	}
 
 	private Stream<Shrinkable<T>> shrinkToAlternatives(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
@@ -124,6 +124,22 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 				   .mapToObj(index -> generateCurrent(genSize, index, seed))
 				   .filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
 				   .map(shrinkableAndParts -> createShrinkable(shrinkableAndParts, genSize, seed, newUsedIndexes));
+	}
+
+	// Currently disabled since I'm not sure if it provides additional value
+	private Stream<Shrinkable<T>> shrinkToAlternativesAndGrow(Shrinkable<T> current, int genSize, long seed, Set<Integer> usedIndexes) {
+		ShrinkingDistance distance = current.distance();
+		Set<Integer> newUsedIndexes = new HashSet<>(usedIndexes);
+		return IntStream
+				   .range(0, suppliers.size())
+				   .filter(index -> !usedIndexes.contains(index))
+				   .peek(newUsedIndexes::add)
+				   .mapToObj(index -> generateCurrent(genSize, index, seed))
+				   .filter(shrinkableAndParts -> shrinkableAndParts.get1().distance().compareTo(distance) < 0)
+				   .map(Tuple1::get1)
+				   .flatMap(Shrinkable::grow)
+				   .filter(shrinkable -> shrinkable.distance().compareTo(distance) < 0)
+				   .map(grownShrinkable -> createShrinkable(Tuple.of(grownShrinkable, Collections.emptySet()), genSize, seed, newUsedIndexes));
 	}
 
 	private Arbitrary<T> getArbitrary(int index) {
