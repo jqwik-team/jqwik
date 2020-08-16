@@ -13,7 +13,7 @@ import net.jqwik.engine.properties.*;
 import static net.jqwik.api.ShrinkingTestHelper.*;
 import static net.jqwik.api.Tuple.*;
 
-@PropertyDefaults(tries = 20, afterFailure = AfterFailureMode.RANDOM_SEED)
+@PropertyDefaults(tries = 100, afterFailure = AfterFailureMode.RANDOM_SEED)
 class LazyOfArbitraryShrinkingTests {
 
 	@Property
@@ -37,8 +37,7 @@ class LazyOfArbitraryShrinkingTests {
 		Assertions.assertThat(value).isEqualTo(0);
 	}
 
-	@Disabled
-	@Property(seed = "-4759270301851429536")
+	@Property
 	void severalStepsToList(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfInteger();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
@@ -59,8 +58,7 @@ class LazyOfArbitraryShrinkingTests {
 		);
 	}
 
-	@Disabled
-	@Property(seed = "-1585665271736274201")
+	@Property
 	void severalStepsToList_withReversedOrderOfSuppliers(@ForAll Random random) {
 		Arbitrary<List<Integer>> arbitrary = listOfIntegerReversedLazy();
 		TestingFalsifier<List<Integer>> falsifier = integers -> integers.size() < 2;
@@ -114,7 +112,7 @@ class LazyOfArbitraryShrinkingTests {
 		/**
 		 * Not all shrinking attempts reach the shortest possible expression of 5 nodes
 		 * Moreover shrinking results are usually small (5 - 10 nodes) but
-		 * are sometimes very large (200 nodes and more)
+		 * are sometimes considerably larger
 		 */
 		@Property(tries = 1000, seed="3404249936767611181") // This seed produces the desired result
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
