@@ -406,23 +406,19 @@ class ArbitrariesTests {
 			);
 		}
 
-		@Example
-		void recursiveListWithUniqueIDs() {
-			ArbitraryTestHelper.assertAllGenerated(
-				list().generator(1000),
-				list -> {
-					// System.out.println(list);
-					assertThat(list).hasSizeGreaterThanOrEqualTo(0);
-					// TODO: ids in list are not unique
-				}
-			);
+		@Property(tries = 100)
+		void recursiveListWithUniqueIDs(@ForAll("listWithUniqueIds") List<Integer> list) {
+			assertThat(list).hasSizeGreaterThanOrEqualTo(0);
+			// No duplicate IDs
+			assertThat(list.size()).isEqualTo(new HashSet<>(list).size());
 		}
 
-		private Arbitrary<List<Integer>> list() {
-			Arbitrary<Integer> uniqueId = Arbitraries.integers().between(1, 10).unique();
+		@Provide
+		Arbitrary<List<Integer>> listWithUniqueIds() {
+			Arbitrary<Integer> uniqueId = Arbitraries.integers().between(1, 20).unique();
 			return Arbitraries.lazyOf(
 				() -> Arbitraries.just(new ArrayList<>()),
-				() -> Combinators.combine(list(), uniqueId)
+				() -> Combinators.combine(listWithUniqueIds(), uniqueId)
 								 .as((l, id) -> {
 									 ArrayList<Integer> list = new ArrayList<>(l);
 									 list.add(id);
