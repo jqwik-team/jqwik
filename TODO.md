@@ -1,7 +1,6 @@
 - 1.3.4
 
     - Arbitraries.lazyOf()
-        - Consider Arbitraries.recursive()
         - Release notes
         - User guide
         

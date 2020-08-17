@@ -125,13 +125,27 @@ class ArbitraryShrinkingTests {
 		RandomGenerator<List<Integer>> generator = collected.generator(10);
 
 		Shrinkable<List<Integer>> shrinkable = generator.next(random);
-		TestingFalsifier<List<Integer>> falsifier = ignore1 -> false;
-		List<Integer> shrunkValue = shrinkToMinimal(shrinkable, falsifier, null);
+		List<Integer> shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 		assertThat(shrunkValue).containsExactly(3, 3, 3, 3);
 	}
 
 	private int sum(List<Integer> list) {
 		return list.stream().mapToInt(i -> i).sum();
+	}
+
+	@Property(tries = 10)
+	void recursive(@ForAll Random random) {
+		Arbitrary<Integer> base = Arbitraries.integers().between(0, 10);
+		Arbitrary<Integer> integer = Arbitraries.recursive(
+			() -> base,
+			anInt -> Combinators.combine(anInt, base).as(Integer::sum),
+			10
+		);
+
+		RandomGenerator<Integer> generator = integer.generator(10);
+		Shrinkable<Integer> shrinkable = generator.next(random);
+		Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
+		assertThat(shrunkValue).isEqualTo(0);
 	}
 
 	@Group
