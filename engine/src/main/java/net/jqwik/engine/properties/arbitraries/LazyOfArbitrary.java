@@ -6,19 +6,20 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.Tuple.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
 
 public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
-	private static final Map<Integer, LazyOfArbitrary<?>> cachedArbitraries = new HashMap<>();
-
-	private final Deque<Set<LazyOfShrinkable<T>>> generatedParts = new ArrayDeque<>();
+	// Cached arbitraries only have to survive one property
+	private static final Store<Map<Integer, LazyOfArbitrary<?>>> cachedArbitraries =
+		Store.create(Tuple.of(LazyOfShrinkable.class, "arbitraries"), Lifespan.PROPERTY, HashMap::new);
 
 	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
-		LazyOfArbitrary<?> arbitrary = cachedArbitraries.computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
+		LazyOfArbitrary<?> arbitrary = cachedArbitraries.get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
 		if (arbitrary.size() == suppliers.size()) {
 			//noinspection unchecked
 			return (Arbitrary<T>) arbitrary;
@@ -27,12 +28,15 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 	}
 
 	private final List<Supplier<Arbitrary<T>>> suppliers;
-	private final Arbitrary<T>[] arbitraries;
+
+	private final Deque<Set<LazyOfShrinkable<T>>> generatedParts = new ArrayDeque<>();
+
+	// Remember generators during the same try. That way generators with state (e.g. unique()) work as expected
+	private final Store<Map<Integer, RandomGenerator<T>>> generators =
+		Store.getOrCreate(Tuple.of(LazyOfShrinkable.class, "generators"), Lifespan.TRY, HashMap::new);
 
 	public LazyOfArbitrary(List<Supplier<Arbitrary<T>>> suppliers) {
 		this.suppliers = suppliers;
-		//noinspection unchecked
-		this.arbitraries = new Arbitrary[suppliers.size()];
 	}
 
 	private int size() {
@@ -64,10 +68,26 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 			parts,
 			(LazyOfShrinkable<T> lazyOf) -> shrink(lazyOf, genSize, seed, usedIndices)
 		);
-		if (generatedParts.peekFirst() != null) {
-			generatedParts.peekFirst().add(lazyOfShrinkable);
-		}
+		addGenerated(lazyOfShrinkable);
 		return lazyOfShrinkable;
+	}
+
+	private void addGenerated(LazyOfShrinkable<T> lazyOfShrinkable) {
+		if (peekGenerated() != null) {
+			peekGenerated().add(lazyOfShrinkable);
+		}
+	}
+
+	private Set<LazyOfShrinkable<T>> peekGenerated() {
+		return generatedParts.peekFirst();
+	}
+
+	private void pushGeneratedLevel() {
+		generatedParts.addFirst(new HashSet<>());
+	}
+
+	private void popGeneratedLevel() {
+		generatedParts.removeFirst();
 	}
 
 	private int depth(Set<LazyOfShrinkable<T>> parts) {
@@ -76,13 +96,14 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	private Tuple2<Shrinkable<T>, Set<LazyOfShrinkable<T>>> generateCurrent(int genSize, int index, long seed) {
 		try {
-			generatedParts.addFirst(new HashSet<>());
+			pushGeneratedLevel();
 			return Tuple.of(
-				getArbitrary(index).generator(genSize).next(SourceOfRandomness.newRandom(seed)),
-				generatedParts.peekFirst()
+				getGenerator(index, genSize).next(SourceOfRandomness.newRandom(seed)),
+				peekGenerated()
 			);
 		} finally {
-			generatedParts.removeFirst();
+			// To clean up even if there's an exception during value generation
+			popGeneratedLevel();
 		}
 	}
 
@@ -147,15 +168,20 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 				   .map(Tuple1::get1)
 				   .flatMap(Shrinkable::grow)
 				   .filter(shrinkable -> shrinkable.distance().compareTo(distance) < 0)
-				   .map(grownShrinkable -> createShrinkable(Tuple.of(grownShrinkable, Collections
-																						  .emptySet()), genSize, seed, newUsedIndexes));
+				   .map(grownShrinkable -> createShrinkable(
+					   Tuple.of(grownShrinkable, Collections.emptySet()),
+					   genSize,
+					   seed,
+					   newUsedIndexes
+				   ));
 	}
 
-	private Arbitrary<T> getArbitrary(int index) {
-		if (this.arbitraries[index] == null) {
-			this.arbitraries[index] = suppliers.get(index).get();
+	private RandomGenerator<T> getGenerator(int index, int genSize) {
+		if (generators.get().get(index) == null) {
+			RandomGenerator<T> generator = suppliers.get(index).get().generator(genSize);
+			generators.get().put(index, generator);
 		}
-		return this.arbitraries[index];
+		return generators.get().get(index);
 	}
 
 	@Override
