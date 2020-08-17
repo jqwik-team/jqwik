@@ -7,6 +7,10 @@
         
 - 1.3.x
 
+    - Arbitrary.unique(): 
+      How to make sure it works over multiple uses of an arbitrary?
+      E.g. in lazyOf
+
     - Lifecycle
         - PropertyExecutionResult
             originalSample()
