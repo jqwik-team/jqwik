@@ -373,12 +373,19 @@ class ArbitrariesTests {
 	@Group
 	class LazyOf {
 		@Example
-		void lazyOf() {
+		void recursiveTree() {
 			ArbitraryTestHelper.assertAllGenerated(
 				trees().generator(1000),
 				tree -> {
-					//System.out.println(tree);
-					return tree != null;
+					assertThat(tree.name).hasSize(3);
+					assertThat(tree.left).satisfiesAnyOf(
+						branch -> assertThat(branch).isNull(),
+						branch -> assertThat(branch).isInstanceOf(Tree.class)
+					);
+					assertThat(tree.right).satisfiesAnyOf(
+						branch -> assertThat(branch).isNull(),
+						branch -> assertThat(branch).isInstanceOf(Tree.class)
+					);
 				}
 			);
 		}
@@ -396,6 +403,31 @@ class ArbitrariesTests {
 				() -> Arbitraries.just(null),
 				() -> Arbitraries.just(null),
 				this::trees
+			);
+		}
+
+		@Example
+		void recursiveListWithUniqueIDs() {
+			ArbitraryTestHelper.assertAllGenerated(
+				list().generator(1000),
+				list -> {
+					// System.out.println(list);
+					assertThat(list).hasSizeGreaterThanOrEqualTo(0);
+					// TODO: ids in list are not unique
+				}
+			);
+		}
+
+		private Arbitrary<List<Integer>> list() {
+			Arbitrary<Integer> uniqueId = Arbitraries.integers().between(1, 10).unique();
+			return Arbitraries.lazyOf(
+				() -> Arbitraries.just(new ArrayList<>()),
+				() -> Combinators.combine(list(), uniqueId)
+								 .as((l, id) -> {
+									 ArrayList<Integer> list = new ArrayList<>(l);
+									 list.add(id);
+									 return list;
+								 })
 			);
 		}
 
