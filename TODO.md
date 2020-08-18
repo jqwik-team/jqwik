@@ -1,8 +1,11 @@
 - 1.3.4
 
     - Release
+      - Generate documentation
     
 - 1.3.x
+
+    - Bound shrinking: Use time bound instead of shrinking attempts bound
 
     - `@Repeat(42)`: Repeat a property 42 times
 
