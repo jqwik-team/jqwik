@@ -1,8 +1,10 @@
-- 1.3.4
+- 1.3.5
 
-    - Release
-      - Generate documentation
+    - UniqueShrinkable should be able to shrink to previously tried values
+
+    - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
     
+
 - 1.3.x
 
     - Bound shrinking: Use time bound instead of shrinking attempts bound
@@ -27,10 +29,6 @@
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 
-    - UniqueShrinkable should be able to shrink to previously tried values
-
-    - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
-    
     - Use derived Random object for generation of each parameter.
       Will that somehow break a random byte provider in guided generation?
       - Remember the random seed in Shrinkable
