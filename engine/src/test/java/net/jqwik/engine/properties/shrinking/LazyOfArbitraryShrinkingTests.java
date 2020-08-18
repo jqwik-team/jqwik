@@ -41,6 +41,19 @@ class LazyOfArbitraryShrinkingTests {
 	}
 
 	@Property
+	void twoLazyOfArbitraries(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary1 =
+			Arbitraries.lazyOf(() -> Arbitraries.integers().between(1, 10));
+		Arbitrary<Integer> arbitrary2 =
+			Arbitraries.lazyOf(() -> Arbitraries.integers().between(11, 20));
+
+		Arbitrary<Integer> arbitrary = Combinators.combine(arbitrary1, arbitrary2).as(Integer::sum);
+
+		Integer value = shrinkToMinimal(arbitrary, random);
+		assertThat(value).isEqualTo(12);
+	}
+
+	@Property
 	void oneStep(@ForAll Random random) {
 		Arbitrary<Integer> arbitrary =
 			Arbitraries.lazyOf(Arbitraries::integers);
