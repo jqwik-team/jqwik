@@ -2173,7 +2173,7 @@ There are two things to which you must pay attention:
   Here, the base case is `() -> word().map(w -> w + ".")`.
   Base cases must have a high enough probability, 
   otherwise a stack overflow will get you during value generation.
-- The supplier `() -> sentence` is used four times to raise its probability 
+- The supplier `() -> sentence` is used three times to raise its probability 
   and thus create longer sentences.
 
 #### Using lazy() instead of lazyOf()
