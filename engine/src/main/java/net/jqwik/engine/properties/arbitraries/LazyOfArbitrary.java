@@ -19,6 +19,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	public static <T> Arbitrary<T> of(int hashIdentifier, List<Supplier<Arbitrary<T>>> suppliers) {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
+		// TODO: Make this a generic mechanism for arbitraries that require to hold state, e.g. unique()
 		LazyOfArbitrary<?> arbitrary = cachedArbitraries.get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
 		if (arbitrary.size() == suppliers.size()) {
 			//noinspection unchecked
@@ -33,7 +34,7 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 
 	// Remember generators during the same try. That way generators with state (e.g. unique()) work as expected
 	private final Store<Map<Integer, RandomGenerator<T>>> generators =
-		Store.getOrCreate(Tuple.of(LazyOfShrinkable.class, "generators"), Lifespan.TRY, HashMap::new);
+		Store.getOrCreate(Tuple.of(this, "generators"), Lifespan.TRY, HashMap::new);
 
 	public LazyOfArbitrary(List<Supplier<Arbitrary<T>>> suppliers) {
 		this.suppliers = suppliers;
