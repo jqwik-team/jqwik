@@ -146,12 +146,12 @@ class LazyOfArbitraryShrinkingTests {
 
 		/**
 		 * Not all shrinking attempts reach the shortest possible expression of 5 nodes,
-		 * a few (less than 10%) have larger results. That's why I fixed the seed to
+		 * a few (about 1% of cases) have larger results. That's why I fixed the seed to
 		 * prevent flaky builds.
 		 */
 		@Property(seed = "17", tries = 1000)
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
-		@Report(Reporting.FALSIFIED)
+		//@Report(Reporting.FALSIFIED)
 		void shrinkExpressionTree(@ForAll("expression") Object expression) {
 			Assume.that(noDivByZero(expression));
 			evaluate(expression);
@@ -195,15 +195,11 @@ class LazyOfArbitraryShrinkingTests {
 				Arbitraries::integers,
 				Arbitraries::integers,
 				Arbitraries::integers,
-				() -> Combinators.combine(getLazy(), getLazy())
+				() -> Combinators.combine(expression(), expression())
 								 .as((e1, e2) -> of("+", e1, e2)),
-				() -> Combinators.combine(getLazy(), getLazy())
+				() -> Combinators.combine(expression(), expression())
 								 .as((e1, e2) -> of("/", e1, e2))
 			);
-		}
-
-		private Arbitrary<Object> getLazy() {
-			return Arbitraries.lazy(this::expression);
 		}
 
 		int evaluate(Object expression) {
