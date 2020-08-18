@@ -160,14 +160,14 @@ public class Arbitraries {
 	 * Use this method only for immutable values, because changing the value will change
 	 * subsequent generated values as well.
 	 * For mutable values use {@linkplain #ofSuppliers(Collection)} instead.
-	 * 
+	 *
 	 * @param values The collection of values to choose from
 	 * @param <T>    The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.1")
 	public static <T> Arbitrary<T> of(Collection<T> values) {
-		List<T> valueList = values instanceof List ? (List<T>) values :  new ArrayList<>(values);
+		List<T> valueList = values instanceof List ? (List<T>) values : new ArrayList<>(values);
 		return fromGenerators(
 			ArbitrariesFacade.implementation.randomChoose(valueList),
 			max -> ArbitrariesFacade.implementation.exhaustiveChoose(valueList, max),
@@ -186,7 +186,7 @@ public class Arbitraries {
 	 * objects.
 	 *
 	 * @param valueSuppliers The array of values to choose from
-	 * @param <T>    The type of values to generate
+	 * @param <T>            The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.0")
@@ -206,7 +206,7 @@ public class Arbitraries {
 	 * objects.
 	 *
 	 * @param valueSuppliers The collection of values to choose from
-	 * @param <T>    The type of values to generate
+	 * @param <T>            The type of values to generate
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.3.1")
@@ -462,11 +462,8 @@ public class Arbitraries {
 	 * @param value The value to "generate"
 	 * @param <T>   The type of the value
 	 * @return a new arbitrary instance
-	 *
 	 * @see #just(Object)
-	 *
 	 * @deprecated Use {@linkplain Arbitraries#just(Object)} instead. To be removed in version 2.0.
-	 *
 	 **/
 	@API(status = DEPRECATED, since = "1.3.2")
 	public static <T> Arbitrary<T> constant(T value) {
@@ -615,12 +612,14 @@ public class Arbitraries {
 	 * <p>
 	 * This is useful (and necessary) when arbitrary providing functions use other arbitrary providing functions
 	 * in a recursive way. Without the use of lazy() this would result in a stack overflow.
+	 * Most of the time, however, using {@linkplain #lazyOf(Supplier, Supplier[])} is the better choice
+	 * because it has significantly better shrinking behaviour.
 	 *
 	 * @param arbitrarySupplier The supplier function being used to generate an arbitrary
 	 * @param <T>               The type of values to generate
 	 * @return a new arbitrary instance
-	 * 
 	 * @see #recursive(Supplier, Function, int)
+	 * @see #lazyOf(Supplier, Supplier[])
 	 */
 	public static <T> Arbitrary<T> lazy(Supplier<Arbitrary<T>> arbitrarySupplier) {
 		return ArbitrariesFacade.implementation.lazy(arbitrarySupplier);
@@ -630,15 +629,15 @@ public class Arbitraries {
 	 * Create an arbitrary by deterministic recursion.
 	 * <p>
 	 * Mind that the arbitrary will be created by invoking recursion at arbitrary creation time.
-	 * Using {@linkplain #lazy(Supplier)} instead will recur at value generation time.
+	 * Using {@linkplain #lazyOf(Supplier, Supplier[])} or {@linkplain #lazy(Supplier)} instead
+	 * will recur at value generation time.
 	 *
 	 * @param base  The supplier returning the recursion's base case
 	 * @param recur The function to extend the base case
 	 * @param depth The number of times to invoke recursion
 	 * @param <T>   The type of values to generate
 	 * @return a new arbitrary instance
-	 * 
-	 * @see #lazy(Supplier) 
+	 * @see #lazy(Supplier)
 	 */
 	public static <T> Arbitrary<T> recursive(
 		Supplier<Arbitrary<T>> base,
@@ -648,10 +647,29 @@ public class Arbitraries {
 		return ArbitrariesFacade.implementation.recursive(base, recur, depth);
 	}
 
+	/**
+	 * Create an arbitrary by lazy supplying one of several arbitraries.
+	 * The main use of this function is to allow recursive generation of structured
+	 * values without overflowing the stack.
+	 *
+	 * <p>
+	 * One alternative is to use {@linkplain #lazy(Supplier)} combined with
+	 * {@linkplain #oneOf(Arbitrary, Arbitrary[])} or {@linkplain #frequencyOf(Tuple2[])}.
+	 * But {@code lazyOf()} has considerably better shrinking behaviour with recursion.
+	 * </p>
+	 *
+	 * @param first The first supplier to choose from
+	 * @param rest  The rest of suppliers to choose from
+	 * @param <T>   The type of values to generate
+	 * @return a (potentially cached) arbitrary instance
+	 *
+	 * @see #lazy(Supplier)
+	 * @see #recursive(Supplier, Function, int)
+	 */
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	@API(status = EXPERIMENTAL, since = "1.3.4")
-	public static <T> Arbitrary<T> lazyOf(Supplier<Arbitrary<? extends T>> first, Supplier<Arbitrary<? extends T>> ... rest) {
+	public static <T> Arbitrary<T> lazyOf(Supplier<Arbitrary<? extends T>> first, Supplier<Arbitrary<? extends T>>... rest) {
 		List<Supplier<Arbitrary<T>>> all = new ArrayList<>();
 		all.add(() -> (Arbitrary<T>) first.get());
 		for (Supplier<Arbitrary<? extends T>> arbitrarySupplier : rest) {
@@ -679,8 +697,8 @@ public class Arbitraries {
 	 *
 	 * @param keysArbitrary   The arbitrary to generate the keys
 	 * @param valuesArbitrary The arbitrary to generate the values
-	 * @param <K> type of keys
-	 * @param <V> type of values
+	 * @param <K>             type of keys
+	 * @param <V>             type of values
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.1.6")
@@ -694,8 +712,8 @@ public class Arbitraries {
 	 *
 	 * @param keysArbitrary   The arbitrary to generate the keys
 	 * @param valuesArbitrary The arbitrary to generate the values
-	 * @param <K> type of keys
-	 * @param <V> type of values
+	 * @param <K>             type of keys
+	 * @param <V>             type of values
 	 * @return a new arbitrary instance
 	 */
 	@API(status = MAINTAINED, since = "1.2.0")

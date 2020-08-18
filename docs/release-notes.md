@@ -26,6 +26,12 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- `Arbitraries.lazyOf(Supplier<Arbitrary<T>> ...)` is now the method of choice for 
+  recursive value generation. It has much better shrinking behaviour than the
+  more generic `lazy()` combined with `oneOf()`. 
+  Consult [the user guide](/docs/1.3.4/user-guide.html#probabilistic-recursion)
+  for an example.
+
 - Added `PropertyLifecycleContext.attributes()`, which allows to query, set and change
   a property method's attributes like number of tries and seed within a
  `AroundPropertyHook`  lifecycle hook.
@@ -35,6 +41,8 @@ title: jqwik Release Notes
   of all property methods in a container.
 
 #### Breaking Changes
+
+- No known breaking changes
 
 #### Bug Fixes
 

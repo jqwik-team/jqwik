@@ -1,9 +1,7 @@
 - 1.3.4
 
-    - Arbitraries.lazyOf()
-        - Release notes
-        - User guide
-        
+    - Release
+    
 - 1.3.x
 
     - `@Repeat(42)`: Repeat a property 42 times
