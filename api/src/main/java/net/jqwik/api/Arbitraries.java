@@ -654,7 +654,8 @@ public class Arbitraries {
 	 *
 	 * <p>
 	 * One alternative is to use {@linkplain #lazy(Supplier)} combined with
-	 * {@linkplain #oneOf(Arbitrary, Arbitrary[])} or {@linkplain #frequencyOf(Tuple2[])}.
+	 * {@linkplain Arbitraries#oneOf(Arbitrary, Arbitrary[])}
+	 * or {@linkplain Arbitraries#frequencyOf(Tuple.Tuple2[])}.
 	 * But {@code lazyOf()} has considerably better shrinking behaviour with recursion.
 	 * </p>
 	 *

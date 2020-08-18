@@ -63,6 +63,7 @@ public interface Arbitrary<T> {
 
 	/**
 	 * Sometimes simplifies test writing
+	 * @return The same instance but with type Arbitrary&lt;Object&gt;
 	 */
 	@SuppressWarnings("unchecked")
 	@API(status = INTERNAL)
