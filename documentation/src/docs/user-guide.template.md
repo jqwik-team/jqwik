@@ -2012,6 +2012,50 @@ which generates sentences by recursively adding words to a sentence:
 
 ```java
 @Property
+@Report(Reporting.GENERATED)
+boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
+	return aSentence.endsWith(".");
+	// return !aSentence.contains("x"); // using this condition instead 
+	                                    // should shrink to "AAAAx."
+}
+
+@Provide
+Arbitrary<String> sentences() {
+	Arbitrary<String> sentence =
+		Combinators.combine(lazy(this::sentences), word())
+				   .as((s, w) -> w + " " + s);
+
+	return Arbitraries.lazyOf(
+		() -> word().map(w -> w + "."),
+		() -> sentence,
+		() -> sentence,
+		() -> sentence
+	);
+}
+
+private StringArbitrary word() {
+    return Arbitraries.strings().alpha().ofLength(5);
+}
+```
+
+There are two things to which you must pay attention:
+
+- Use [`Arbitraries.lazyOf(Supplier<Arbitrary<T>>...suppliers)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#lazyOf-java.util.function.Supplier-java.util.function.Supplier...-) 
+  to wrap the recursive call itself. 
+  Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
+- Every recursion needs one or more base cases in order to stop recursion at some point. 
+  Here, the base case is `() -> word().map(w -> w + ".")`.
+  Base cases must have a high enough probability, 
+  otherwise a stack overflow will get you during value generation.
+- The supplier `() -> sentence` is used four times to raise its probability 
+  and thus create longer sentences.
+
+#### Using lazy() instead of lazyOf()
+
+There is an _almost equivalent_ variant to the example above:
+
+```java
+@Property
 boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
     return aSentence.endsWith(".");
 }
@@ -2035,21 +2079,16 @@ private StringArbitrary word() {
 }
 ``` 
 
-There are two things to which you must pay attention:
-
-- Use [`Arbitraries.lazy(Supplier<Arbitrary<T>>)`](/docs/${docsVersion}/javadoc/net/jqwik/api/Arbitraries.html#lazy-java.util.function.Supplier-) 
-  to wrap the recursive call itself. 
-  Otherwise _jqwik_'s attempt to build the arbitrary will quickly result in a stack overflow.
-- Every recursion needs one or more base cases in order to stop recursion at some point. 
-  Base cases must have a high enough probability, 
-  otherwise a stack overflow will get you during value generation.
+The disadvantage of `lazy()` combined with `oneOf()` or `frequencyOf()` 
+is its worse shrinking behaviour compared to `lazyOf()`; 
+therefore, choose `lazyOf()` whenever you can. 
   
 ### Deterministic Recursion
 
-An alternative to the non-deterministic recursion shown above, is to use classical
+An alternative to probabilistic recursion shown above, is to use deterministic
 recursion with a counter to determine the base case. If you then use an arbitrary value
-for the counter, the generated sentences will be very similar, and there is _no need_
-for using `Arbitraries.lazy()` at all:
+for the counter, the generated sentences will be very similar, and you can often forgo
+using `Arbitraries.lazyOf()` or `Arbitraries.lazy()`:
 
 ```java
 @Property(tries = 10)
