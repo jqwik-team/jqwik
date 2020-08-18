@@ -21,11 +21,8 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		// It's important for good shrinking to work that the same arbitrary usage is handled by the same arbitrary instance
 		// TODO: Make this a generic mechanism for arbitraries that require to hold state, e.g. unique()
 		LazyOfArbitrary<?> arbitrary = cachedArbitraries.get().computeIfAbsent(hashIdentifier, ignore -> new LazyOfArbitrary<>(suppliers));
-		if (arbitrary.size() == suppliers.size()) {
-			//noinspection unchecked
-			return (Arbitrary<T>) arbitrary;
-		}
-		return new LazyOfArbitrary<>(suppliers);
+		//noinspection unchecked
+		return (Arbitrary<T>) arbitrary;
 	}
 
 	private final List<Supplier<Arbitrary<T>>> suppliers;
@@ -108,6 +105,14 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 		}
 	}
 
+	private RandomGenerator<T> getGenerator(int index, int genSize) {
+		if (generators.get().get(index) == null) {
+			RandomGenerator<T> generator = suppliers.get(index).get().generator(genSize);
+			generators.get().put(index, generator);
+		}
+		return generators.get().get(index);
+	}
+
 	private Stream<Shrinkable<T>> shrink(
 		LazyOfShrinkable<T> lazyOf,
 		int genSize,
@@ -175,14 +180,6 @@ public class LazyOfArbitrary<T> implements Arbitrary<T> {
 					   seed,
 					   newUsedIndexes
 				   ));
-	}
-
-	private RandomGenerator<T> getGenerator(int index, int genSize) {
-		if (generators.get().get(index) == null) {
-			RandomGenerator<T> generator = suppliers.get(index).get().generator(genSize);
-			generators.get().put(index, generator);
-		}
-		return generators.get().get(index);
 	}
 
 	@Override
