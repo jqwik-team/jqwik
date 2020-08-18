@@ -6,6 +6,8 @@
         
 - 1.3.x
 
+    - `@Repeat(42)`: Repeat a property 42 times
+
     - Lifecycle
         - PropertyExecutionResult
             originalSample()

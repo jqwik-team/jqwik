@@ -145,15 +145,15 @@ class LazyOfArbitraryShrinkingTests {
 		}
 
 		/**
-		 * Not all shrinking attempts reach the shortest possible expression of 5 nodes
-		 * Moreover shrinking results are usually small (5 - 10 nodes) but
-		 * are sometimes considerably larger
+		 * Not all shrinking attempts reach the shortest possible expression of 5 nodes,
+		 * a few (less than 10%) have larger results. That's why I fixed the seed to
+		 * prevent flaky builds.
 		 */
-		@Property(tries = 1000)
+		@Property(seed = "17", tries = 1000)
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
 		@Report(Reporting.FALSIFIED)
 		void shrinkExpressionTree(@ForAll("expression") Object expression) {
-			Assume.that(divSubterms(expression));
+			Assume.that(noDivByZero(expression));
 			evaluate(expression);
 		}
 
@@ -161,9 +161,9 @@ class LazyOfArbitraryShrinkingTests {
 			@Override
 			public void accept(PropertyExecutionResult propertyExecutionResult) {
 				List<Object> actual = propertyExecutionResult.falsifiedParameters().get();
-				assertThat(countNodes(actual.get(0))).isLessThanOrEqualTo(7);
-				// The best shrinker should shrink to just 5 nodes
-				// Assertions.assertThat(countNodes(actual.get(0))).isEqualTo(5);
+				// The best shrinker should shrink to just 5 nodes:
+				// ("/", 0, ("/", 0, 1)) or ("/", 0, ("+", 0, 0))
+				assertThat(countNodes(actual.get(0))).isEqualTo(5);
 			}
 		}
 
@@ -177,7 +177,7 @@ class LazyOfArbitraryShrinkingTests {
 			return 1 + countNodes(tupleExpression.get2()) + countNodes(tupleExpression.get3());
 		}
 
-		private boolean divSubterms(final Object expression) {
+		private boolean noDivByZero(final Object expression) {
 			if (expression instanceof Integer) {
 				return true;
 			}
@@ -186,7 +186,7 @@ class LazyOfArbitraryShrinkingTests {
 			if (tupleExpression.get1().equals("/") && tupleExpression.get3().equals(0)) {
 				return false;
 			}
-			return divSubterms(tupleExpression.get2()) && divSubterms(tupleExpression.get3());
+			return noDivByZero(tupleExpression.get2()) && noDivByZero(tupleExpression.get3());
 		}
 
 		@Provide

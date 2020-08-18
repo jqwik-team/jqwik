@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import static net.jqwik.api.ShrinkingTestHelper.*;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Group
 class ShrinkableProperties {
 
@@ -28,30 +29,28 @@ class ShrinkableProperties {
 	@Provide
 	Arbitrary<Shrinkable> anyShrinkable() {
 		// TODO: Enhance the list of shrinkables.
-		return Arbitraries.oneOf(
-			integerShrinkable(),
-			integerShrinkable(),
-			mapToNumberShrinkable(),
-			mapToNumberShrinkable(),
-			oneStepShrinkable(),
-			partialShrinkable(),
-			listShrinkable(),
-			setShrinkable()
+		return Arbitraries.lazyOf(
+			this::integerShrinkable,
+			this::integerShrinkable,
+			this::mapToNumberShrinkable,
+			this::mapToNumberShrinkable,
+			this::oneStepShrinkable,
+			this::partialShrinkable,
+			this::listShrinkable,
+			this::setShrinkable
 		);
 	}
 
-	@SuppressWarnings("unchecked")
 	private Arbitrary<Shrinkable> mapToNumberShrinkable() {
-		return Arbitraries.lazy(this::anyShrinkable)
-						  .map(s -> {
-							  if (s instanceof ShrinkableContainer) {
-								  return Shrinkable.unshrinkable(((ShrinkableContainer) s).elements.size());
-							  }
-							  if (s instanceof Number) {
-								  return Shrinkable.unshrinkable(((Number) s).intValue());
-							  }
-							  return Shrinkable.unshrinkable(42);
-						  });
+		return anyShrinkable().map(s -> {
+			if (s instanceof ShrinkableContainer) {
+				return Shrinkable.unshrinkable(((ShrinkableContainer) s).elements.size());
+			}
+			if (s instanceof Number) {
+				return Shrinkable.unshrinkable(((Number) s).intValue());
+			}
+			return Shrinkable.unshrinkable(42);
+		});
 	}
 
 	private Arbitrary<Shrinkable> listShrinkable() {
@@ -64,7 +63,6 @@ class ShrinkableProperties {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
 	private Arbitrary<Shrinkable> setShrinkable() {
 		return Arbitraries.integers().between(0, 5).flatMap(size -> {
 			List<Arbitrary<Shrinkable>> elementArbitraries =

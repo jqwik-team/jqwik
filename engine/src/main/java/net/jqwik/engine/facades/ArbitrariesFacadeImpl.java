@@ -166,7 +166,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 
 	@Override
 	public <T> Arbitrary<T> lazyOf(List<Supplier<Arbitrary<T>>> suppliers) {
-		int hashIdentifier = calculateIdentifier();
+		int hashIdentifier = calculateIdentifier(suppliers.size());
 		return LazyOfArbitrary.of(hashIdentifier, suppliers);
 	}
 
@@ -174,7 +174,7 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 	 * The calculated cash is supposed to be the same for the same callers of Arbitraries.lazyOf()
 	 * This is important to have a single instance of LazyOfArbitrary for the same code.
 	 */
-	private static int calculateIdentifier() {
+	private static int calculateIdentifier(int numberOfSuppliers) {
 		int hashIdentifier = 0;
 		try {
 			throw new RuntimeException();
@@ -183,13 +183,13 @@ public class ArbitrariesFacadeImpl extends Arbitraries.ArbitrariesFacade {
 				Arrays.stream(rte.getStackTrace())
 					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(ArbitrariesFacadeImpl.class.getName()))
 					  .filter(stackTraceElement -> !stackTraceElement.getClassName().equals(Arbitraries.class.getName()))
-					  .limit(2)
+					  .findFirst()
 					  .map(stackTraceElement -> Objects.hash(
 						  stackTraceElement.getClassName(),
 						  stackTraceElement.getMethodName(),
-						  stackTraceElement.getLineNumber()
-					  ))
-					  .reduce(Objects::hash);
+						  stackTraceElement.getLineNumber(),
+						  numberOfSuppliers
+					  ));
 			hashIdentifier = optionalHash.orElse(0);
 		}
 		return hashIdentifier;
