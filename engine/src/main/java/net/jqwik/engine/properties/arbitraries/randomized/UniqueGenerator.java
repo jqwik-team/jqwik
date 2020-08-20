@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.arbitraries.randomized;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.engine.properties.*;
@@ -19,7 +20,7 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 	public Shrinkable<T> next(Random random) {
 		return nextUntilAccepted(random, r -> {
 			Shrinkable<T> next = toFilter.next(r);
-			return new UniqueShrinkable<>(next, usedValues);
+			return new UniqueShrinkable<>(next, this::shrink);
 		});
 	}
 
@@ -45,6 +46,17 @@ public class UniqueGenerator<T> implements RandomGenerator<T> {
 				return new TooManyFilterMissesException(message);
 			}
 		);
+	}
+
+	private Stream<Shrinkable<T>> shrink(UniqueShrinkable<T> current) {
+		return current.toFilter.shrink().filter(s -> {
+			return !usedValues.contains(s.value());
+		}).map(s -> {
+			// TODO: In theory the set of used values should only contain those in the current try
+			// but currently it contains all values tried in this shrinking
+			usedValues.add(s.value());
+			return new UniqueShrinkable<>(s, this::shrink);
+		});
 	}
 
 }

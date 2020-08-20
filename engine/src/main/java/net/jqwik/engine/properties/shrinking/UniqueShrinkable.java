@@ -1,19 +1,18 @@
 package net.jqwik.engine.properties.shrinking;
 
-import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
 
 public class UniqueShrinkable<T> implements Shrinkable<T> {
 
-	private final Shrinkable<T> toFilter;
-	private final Set<T> usedValues;
+	public final Shrinkable<T> toFilter;
+	private final Function<UniqueShrinkable<T>, Stream<Shrinkable<T>>> shrinker;
 
-	// TODO: Collect set of used shrinkables instead of used values to prevent probs with mutable state
-	public UniqueShrinkable(Shrinkable<T> toFilter, Set<T> usedValues) {
+	public UniqueShrinkable(Shrinkable<T> toFilter, Function<UniqueShrinkable<T>, Stream<Shrinkable<T>>> shrinker) {
 		this.toFilter = toFilter;
-		this.usedValues = usedValues;
+		this.shrinker = shrinker;
 	}
 
 	@Override
@@ -23,14 +22,7 @@ public class UniqueShrinkable<T> implements Shrinkable<T> {
 
 	@Override
 	public Stream<Shrinkable<T>> shrink() {
-		return toFilter.shrink().filter(s -> {
-			return !usedValues.contains(s.value());
-		}).map(s -> {
-			// TODO: In theory the set of used values should only contain those in the current try
-			// but currently it contains all values tried in this shrinking
-			usedValues.add(s.value());
-			return new UniqueShrinkable<>(s, usedValues);
-		});
+		return shrinker.apply(this);
 	}
 
 	@Override

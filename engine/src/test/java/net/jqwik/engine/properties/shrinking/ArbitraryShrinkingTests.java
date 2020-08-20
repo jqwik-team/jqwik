@@ -55,26 +55,6 @@ class ArbitraryShrinkingTests {
 	}
 
 	@Property(tries = 10)
-	void unique(@ForAll Random random) {
-		Arbitrary<Integer> arbitrary =
-			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique();
-		assertAllValuesAreShrunkTo(1, arbitrary, random);
-	}
-
-	@Property(tries = 100)
-	void uniqueInList(@ForAll Random random) {
-		Arbitrary<List<Integer>> arbitrary =
-			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique().list().ofSize(3);
-
-		// TODO: This should be the assertion but I currently don't know how to make it work
-		// see UniqueShrinkable.shrink() for the relevant code
-		// assertAllValuesAreShrunkTo(asList(1, 2, 3), arbitrary, random);
-
-		List<Integer> value = shrinkToMinimal((Arbitrary<? extends List<Integer>>) arbitrary, random);
-		assertThat(new HashSet<>(value)).hasSize(3);
-	}
-
-	@Property(tries = 10)
 	void mapped(@ForAll Random random) {
 		Arbitrary<String> arbitrary =
 			Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map(String::valueOf);
@@ -146,6 +126,30 @@ class ArbitraryShrinkingTests {
 		Shrinkable<Integer> shrinkable = generator.next(random);
 		Integer shrunkValue = shrinkToMinimal(shrinkable, alwaysFalsify(), null);
 		assertThat(shrunkValue).isEqualTo(0);
+	}
+
+	@Group
+	class Uniqueness {
+
+		@Property(tries = 10)
+		void unique(@ForAll Random random) {
+			Arbitrary<Integer> arbitrary =
+				Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique();
+			assertAllValuesAreShrunkTo(1, arbitrary, random);
+		}
+
+		@Property(tries = 100)
+		void uniqueInList(@ForAll Random random) {
+			Arbitrary<List<Integer>> arbitrary =
+				Arbitraries.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).unique().list().ofSize(3);
+
+			// TODO: This should be the assertion but I currently don't know how to make it work
+			// see UniqueShrinkable.shrink() for the relevant code
+			// assertAllValuesAreShrunkTo(asList(1, 2, 3), arbitrary, random);
+
+			List<Integer> value = shrinkToMinimal((Arbitrary<? extends List<Integer>>) arbitrary, random);
+			assertThat(new HashSet<>(value)).hasSize(3);
+		}
 	}
 
 	@Group
