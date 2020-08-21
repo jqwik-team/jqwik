@@ -1,11 +1,8 @@
 - 1.3.5
 
-    - LazyOfArbitrary: Suppliers with bound variables should be reevaluated 
-      when variables change (see binheap in shrinking challenge)
+    - Bound shrinking: Use time bound instead of shrinking attempts bound
 
 - 1.3.x
-
-    - Bound shrinking: Use time bound instead of shrinking attempts bound
 
     - `@Repeat(42)`: Repeat a property 42 times
 

@@ -20,16 +20,17 @@ class RecursiveExamples {
 
 		@Provide
 		Arbitrary<String> sentences() {
-			Arbitrary<String> sentence =
-				Combinators.combine(lazy(this::sentences), word())
-						   .as((s, w) -> w + " " + s);
-
 			return Arbitraries.lazyOf(
 				() -> word().map(w -> w + "."),
-				() -> sentence,
-				() -> sentence,
-				() -> sentence
+				this::sentence,
+				this::sentence,
+				this::sentence
 			);
+		}
+
+		private Arbitrary<String> sentence() {
+			return Combinators.combine(sentences(), word())
+							  .as((s, w) -> w + " " + s);
 		}
 	}
 

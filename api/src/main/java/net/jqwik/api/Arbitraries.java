@@ -659,11 +659,17 @@ public class Arbitraries {
 	 * But {@code lazyOf()} has considerably better shrinking behaviour with recursion.
 	 * </p>
 	 *
+	 * <p>
+	 * <em>Caveat:</em>
+	 * Never use this construct if suppliers make use of variable state
+	 * like method parameters or changing instance members.
+	 * In those cases use {@linkplain #lazy(Supplier)} instead.
+	 * </p>
+	 *
 	 * @param first The first supplier to choose from
 	 * @param rest  The rest of suppliers to choose from
 	 * @param <T>   The type of values to generate
 	 * @return a (potentially cached) arbitrary instance
-	 *
 	 * @see #lazy(Supplier)
 	 * @see #recursive(Supplier, Function, int)
 	 */
@@ -674,7 +680,6 @@ public class Arbitraries {
 		List<Supplier<Arbitrary<T>>> all = new ArrayList<>();
 		all.add(() -> (Arbitrary<T>) first.get());
 		for (Supplier<Arbitrary<? extends T>> arbitrarySupplier : rest) {
-
 			all.add(() -> (Arbitrary<T>) arbitrarySupplier.get());
 		}
 		return ArbitrariesFacade.implementation.lazyOf(all);

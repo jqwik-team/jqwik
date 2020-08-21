@@ -2021,16 +2021,17 @@ boolean sentencesEndWithAPoint(@ForAll("sentences") String aSentence) {
 
 @Provide
 Arbitrary<String> sentences() {
-	Arbitrary<String> sentence =
-		Combinators.combine(lazy(this::sentences), word())
-				   .as((s, w) -> w + " " + s);
-
 	return Arbitraries.lazyOf(
 		() -> word().map(w -> w + "."),
-		() -> sentence,
-		() -> sentence,
-		() -> sentence
+		this::sentence,
+		this::sentence,
+		this::sentence
 	);
+}
+
+private Arbitrary<String> sentence() {
+	return Combinators.combine(sentences(), word())
+					  .as((s, w) -> w + " " + s);
 }
 
 private StringArbitrary word() {
@@ -2049,6 +2050,11 @@ There are two things to which you must pay attention:
   otherwise a stack overflow will get you during value generation.
 - The supplier `() -> sentence` is used three times to raise its probability 
   and thus create longer sentences.
+  
+There is also a caveat of which you should be aware:
+Never use this construct if suppliers make use of variable state
+like method parameters or changing instance members. 
+In those cases use [lazy()](#using-lazy-instead-of-lazyof) as explained below.
 
 #### Using lazy() instead of lazyOf()
 
@@ -2066,6 +2072,7 @@ Arbitrary<String> sentences() {
         Arbitraries.lazy(this::sentences),
         word()
     ).as((s, w) -> w + " " + s);
+
     return Arbitraries.oneOf(
         word().map(w -> w + "."),
         sentence,
@@ -2080,8 +2087,8 @@ private StringArbitrary word() {
 ``` 
 
 The disadvantage of `lazy()` combined with `oneOf()` or `frequencyOf()` 
-is its worse shrinking behaviour compared to `lazyOf()`; 
-therefore, choose `lazyOf()` whenever you can. 
+is its worse shrinking behaviour compared to `lazyOf()`. 
+Therefore, choose `lazyOf()` whenever you can. 
   
 ### Deterministic Recursion
 
