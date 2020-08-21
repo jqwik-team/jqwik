@@ -1,8 +1,5 @@
 - 1.3.5
 
-    - A shared .unique() arbitrary instance should create unique instances
-      across all usages.
-
     - LazyOfArbitrary: Suppliers with bound variables should be reevaluated 
       when variables change (see binheap in shrinking challenge)
 

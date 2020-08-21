@@ -22,6 +22,20 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+## 1.3.5-SNAPSHOT
+
+#### New and Enhanced Features
+
+- No new features yet
+
+#### Breaking Changes
+
+- No known breaking changes
+
+#### Bug Fixes
+
+- No known bugs
+
 ## 1.3.4
 
 <p style="padding-left:1em;font-size:larger">

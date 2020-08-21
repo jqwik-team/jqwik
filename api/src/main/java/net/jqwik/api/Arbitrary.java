@@ -269,6 +269,13 @@ public interface Arbitrary<T> {
 	 * Create a new arbitrary of the same type {@code T} that creates and shrinks the original arbitrary but will
 	 * never generate the same value twice.
 	 *
+	 * <p>
+	 *     Uniqueness is only held up for a single use of this arbitrary.
+	 *     If the same arbitrary instance is used in several places,
+	 *     e.g. for creating several lists, the different lists may share values
+	 *     between them.
+	 * </p>
+	 *
 	 * @return a new arbitrary instance
 	 * @throws JqwikException if filtering will fail to come up with a value after 10000 tries
 	 */
