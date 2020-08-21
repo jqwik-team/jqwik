@@ -1,7 +1,5 @@
 - 1.3.5
 
-    - UniqueShrinkable should be able to shrink to previously tried values
-    
     - A shared .unique() arbitrary instance should create unique instances
       across all usages.
 
