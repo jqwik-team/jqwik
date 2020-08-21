@@ -5,8 +5,8 @@
     - A shared .unique() arbitrary instance should create unique instances
       across all usages.
 
-    - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
-    
+    - LazyOfArbitrary: Suppliers with bound variables should be reevaluated 
+      when variables change (see binheap in shrinking challenge)
 
 - 1.3.x
 
@@ -58,4 +58,7 @@
                 - Collections
                 - Combinators
             - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+
+    - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
+    
 
