@@ -2,6 +2,7 @@ package net.jqwik.engine.properties.shrinking;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 import java.util.logging.*;
@@ -9,12 +10,13 @@ import java.util.logging.*;
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
+import net.jqwik.engine.support.*;
 
 public class PropertyShrinker {
 
 	private static final Logger LOG = Logger.getLogger(PropertyShrinker.class.getName());
 
-	private final static int BOUNDED_SHRINK_ATTEMPTS = 10000;
+	private int BOUNDED_SHRINK_SECONDS = 10;
 
 	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;
@@ -22,8 +24,9 @@ public class PropertyShrinker {
 	private final Method targetMethod;
 
 	private final AtomicInteger shrinkingStepsCounter = new AtomicInteger(0);
-	private final AtomicInteger shrinkingAttemptsCounter = new AtomicInteger(0);
 	private final Map<List<Object>, TryExecutionResult> falsificationCache = new HashMap<>();
+
+	private Optional<FalsifiedSample> currentBest = Optional.empty();
 
 	public PropertyShrinker(
 		FalsifiedSample originalSample,
@@ -56,13 +59,17 @@ public class PropertyShrinker {
 		};
 
 		Consumer<FalsifiedSample> shrinkAttemptConsumer = currentBest -> {
-			int numberOfAttempts = shrinkingAttemptsCounter.getAndIncrement();
-			if (shrinkingMode == ShrinkingMode.BOUNDED && numberOfAttempts >= BOUNDED_SHRINK_ATTEMPTS) {
-				throw new ShrinkingBoundReached(numberOfAttempts, currentBest);
+			if (currentBest != null) {
+				this.currentBest = Optional.of(currentBest);
 			}
 		};
 
 		return shrink(allowOnlyEquivalentErrorsFalsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
+	}
+
+	// Only use for testing purposes
+	public void setBoundedShrinkSecondsForTesting(int seconds) {
+		BOUNDED_SHRINK_SECONDS = seconds;
 	}
 
 	public ShrunkFalsifiedSample shrink(
@@ -71,11 +78,18 @@ public class PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		try {
-			FalsifiedSample fullyShrunkSample = shrinkAsLongAsSampleImproves(falsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
+			CompletableFuture<FalsifiedSample> falsifiedSampleFuture =
+				CompletableFuture.supplyAsync(() -> shrinkAsLongAsSampleImproves(falsifier, shrinkSampleConsumer, shrinkAttemptConsumer));
+
+			int boundedShrinkSeconds = shrinkingMode == ShrinkingMode.FULL ? 3600 : BOUNDED_SHRINK_SECONDS;
+			FalsifiedSample fullyShrunkSample = falsifiedSampleFuture.get(boundedShrinkSeconds, TimeUnit.SECONDS);
+
 			return new ShrunkFalsifiedSample(fullyShrunkSample, shrinkingStepsCounter.get());
-		} catch (ShrinkingBoundReached shrinkingBoundReached) {
-			logShrinkingBoundReached(shrinkingBoundReached.numberOfAttempts);
-			return new ShrunkFalsifiedSample(shrinkingBoundReached.currentBest.orElse(originalSample), shrinkingStepsCounter.get());
+		} catch (InterruptedException | ExecutionException e) {
+			return JqwikExceptionSupport.throwAsUncheckedException(e);
+		} catch (TimeoutException e) {
+			logShrinkingBoundReached();
+			return new ShrunkFalsifiedSample(currentBest.orElse(originalSample), shrinkingStepsCounter.get());
 		}
 	}
 
@@ -100,7 +114,8 @@ public class PropertyShrinker {
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
-		return new OneAfterTheOtherParameterShrinker(falsificationCache).shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
+		return new OneAfterTheOtherParameterShrinker(falsificationCache)
+				   .shrink(falsifier, sample, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
 	private FalsifiedSample shrinkParametersPairwise(
@@ -121,23 +136,13 @@ public class PropertyShrinker {
 		return result.isFalsified() && !areEquivalent;
 	}
 
-	private void logShrinkingBoundReached(int attempts) {
+	private void logShrinkingBoundReached() {
 		String value = String.format(
-			"Shrinking bound reached after %s attempts." +
+			"Shrinking timeout reached after %s seconds." +
 				"%n  You can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
-			attempts
+			BOUNDED_SHRINK_SECONDS
 		);
 		LOG.warning(value);
 	}
 
-	private class ShrinkingBoundReached extends RuntimeException {
-		private final int numberOfAttempts;
-		private final Optional<FalsifiedSample> currentBest;
-
-		private ShrinkingBoundReached(int numberOfAttempts, FalsifiedSample currentBest) {
-			super("Shrinking attempts bound reached");
-			this.numberOfAttempts = numberOfAttempts;
-			this.currentBest = Optional.ofNullable(currentBest);
-		}
-	}
 }

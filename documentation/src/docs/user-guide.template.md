@@ -334,8 +334,8 @@ annotation has a few optional values:
   - `ShrinkingMode.FULL`: Shrinking continues until no smaller value can
     be found that also falsifies the property.
     This might take very long or not end at all in rare cases.
-  - `ShrinkingMode.BOUNDED`: Shrinking is tried to a depth of 10000 shrink attempts
-    maximum. This is the default.
+  - `ShrinkingMode.BOUNDED`: Shrinking is tried for 10 seconds maximum and then times out.
+    The best shrunk sample at moment of time-out will be reported. This is the default.
 
   Most of the time you want to stick with the default. Only if
   bounded shrinking is reported - look at a falsified property's output! -

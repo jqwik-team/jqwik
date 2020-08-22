@@ -149,6 +149,32 @@ class PropertyShrinkerTests {
 			assertThat(sample.falsifyingError()).isNotPresent();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(4);
 		}
+
+		@Example
+		void withBoundedShrinkingBreakOffAfter2Seconds() {
+			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(10).asGeneric());
+			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED);
+			shrinker.setBoundedShrinkSecondsForTesting(2);
+
+			ShrunkFalsifiedSample sample = shrinker.shrink(alwaysFalsify());
+
+			assertThat((int) sample.parameters().get(0)).isLessThan(10);
+			assertThat((int) sample.parameters().get(0)).isGreaterThan(0);
+
+			// TODO: Test that logging shrinking bound reached has happened
+		}
+
+		@Example
+		void withUnboundedShrinkingDoNotBreakOff() {
+			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(6).asGeneric());
+			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
+
+			ShrunkFalsifiedSample sample = shrinker.shrink(alwaysFalsify());
+
+			assertThat(sample.parameters()).isEqualTo(asList(0));
+		}
+
+
 	}
 
 	@Group
@@ -243,24 +269,6 @@ class PropertyShrinkerTests {
 			};
 			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 			assertThat(sample.parameters()).isEqualTo(asList(1, 2, 42));
-		}
-
-		@Example
-		void withBoundedShrinkingBreakOffAfter10000Attempts() {
-			List<Shrinkable<Object>> shrinkables = listOfOneStepShrinkables(9900, 1000);
-
-			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED);
-
-			Falsifier<List<Object>> falsifier = paramFalsifier((Integer i1, Integer i2) -> {
-				Assume.that(i1 % 2 == 0);
-				return false;
-			});
-
-			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
-
-			assertThat(sample.parameters()).isEqualTo(asList(0, 900));
-
-			// TODO: Test that logging shrinking bound reached has happened
 		}
 	}
 

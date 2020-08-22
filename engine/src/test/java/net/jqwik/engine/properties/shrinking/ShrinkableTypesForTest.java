@@ -27,7 +27,12 @@ public class ShrinkableTypesForTest {
 		public Stream<Shrinkable<Integer>> shrink() {
 			if (this.value() == minimum)
 				return Stream.empty();
-			return Stream.of(new OneStepShrinkable(this.value() - 1, minimum, maximum));
+			int integer = this.value() - 1;
+			return Stream.of(createShrinkable(integer));
+		}
+
+		protected OneStepShrinkable createShrinkable(int integer) {
+			return new OneStepShrinkable(integer, minimum, maximum);
 		}
 
 		@Override
@@ -35,7 +40,7 @@ public class ShrinkableTypesForTest {
 			if (value() >= maximum) {
 				return Stream.empty();
 			}
-			return Stream.of(new OneStepShrinkable(this.value() + 1, minimum, maximum));
+			return Stream.of(createShrinkable(this.value() + 1));
 		}
 
 		@Override
@@ -46,7 +51,7 @@ public class ShrinkableTypesForTest {
 				int diff = (int) beforeValue - (int) afterValue;
 				int grownValue = value() + diff;
 				if (grownValue >= minimum) {
-					return Optional.of(new OneStepShrinkable(grownValue, minimum, maximum));
+					return Optional.of(createShrinkable(grownValue));
 				}
 			}
 			return Optional.empty();
@@ -55,6 +60,28 @@ public class ShrinkableTypesForTest {
 		@Override
 		public ShrinkingDistance distance() {
 			return ShrinkingDistance.of(value() - minimum);
+		}
+
+	}
+
+	public static class SlowShrinkable extends OneStepShrinkable {
+
+		public SlowShrinkable(int integer) {
+			super(integer);
+		}
+
+		@Override
+		public Stream<Shrinkable<Integer>> shrink() {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return super.shrink();
+		}
+
+		protected OneStepShrinkable createShrinkable(int integer) {
+			return new SlowShrinkable(integer);
 		}
 
 	}

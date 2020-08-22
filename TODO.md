@@ -1,7 +1,13 @@
 - 1.3.5
 
-    - Bound shrinking: Use time bound instead of shrinking attempts bound
+    - Make Shrinking BOUNDED seconds configurable in jqwik.properties file
+    
+    - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
+        - forType(Class<T> targetType, int depth)
+        - @UseType(depth = 1)
 
+    - Add abstract method DomainContextBase.registrations()
+    
 - 1.3.x
 
     - `@Repeat(42)`: Repeat a property 42 times
@@ -11,16 +17,10 @@
             originalSample()
             shrunkSample()
 
-    - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
-        - forType(Class<T> targetType, int depth)
-        - @UseType(depth = 1)
-
     - Implement grow() for more shrinkables
         - CombinedShrinkable: grow each leg
         - CollectShrinkable: grow each element
 
-    - Add abstract method DomainContextBase.registrations()
-    
     - Allow specification of provider class in `@ForAll` and `@From`
       see https://github.com/jlink/jqwik/issues/91
 

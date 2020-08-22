@@ -30,7 +30,9 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-- No known breaking changes
+- Shrinking is no longer bound by number of shrinking attempts, but by time with a 10 seconds default.
+  The reason is that counting shrinking attempts in a consistent manner was difficult, and
+  shrinking could take very very long despite being in `BOUNDED` mode.
 
 #### Bug Fixes
 
