@@ -8,6 +8,10 @@ import org.apiguardian.api.*;
 
 import static org.apiguardian.api.API.Status.*;
 
+/**
+ * Typed Tuples are very convenient containers to have, especially in the context of
+ * generating dependent values. It's a shame Java does not have them by default.
+ */
 @API(status = STABLE, since = "1.0")
 public interface Tuple extends Serializable, Cloneable {
 
@@ -18,6 +22,16 @@ public interface Tuple extends Serializable, Cloneable {
 	default String itemsToString() {
 		String items = items().stream().map(Object::toString).collect(Collectors.joining(", "));
 		return String.format("(%s)", items);
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.3.5")
+	static Tuple0 of() {
+		return new Tuple0();
+	}
+
+	@API(status = EXPERIMENTAL, since = "1.3.5")
+	static Tuple0 empty() {
+		return Tuple.of();
 	}
 
 	static <T1> Tuple1<T1> of(T1 v1) {
@@ -61,10 +75,35 @@ public interface Tuple extends Serializable, Cloneable {
 		return new Tuple8<>(v1, v2, v3, v4, v5, v6, v7, v8);
 	}
 
-	class Tuple1<T1> implements Tuple {
+	class Tuple0 implements Tuple {
+		@Override
+		public int size() {
+			return 0;
+		}
+
+		@Override
+		public int hashCode() {
+			return 42;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			return true;
+		}
+
+		@Override
+		public String toString() {
+			return itemsToString();
+		}
+	}
+
+	class Tuple1<T1> extends Tuple0 {
 		final T1 v1;
 
 		private Tuple1(T1 v1) {
+			super();
 			this.v1 = v1;
 		}
 

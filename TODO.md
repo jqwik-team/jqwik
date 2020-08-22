@@ -2,6 +2,12 @@
 
     - Make Shrinking BOUNDED seconds configurable in jqwik.properties file
     
+    - Lifecycle
+        - PropertyExecutionResult
+            originalSample()
+            shrunkSample()
+        - Public report should contain sample.shrinkables()*.value() instead of .parameters()
+
     - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
         - forType(Class<T> targetType, int depth)
         - @UseType(depth = 1)
@@ -11,11 +17,6 @@
 - 1.3.x
 
     - `@Repeat(42)`: Repeat a property 42 times
-
-    - Lifecycle
-        - PropertyExecutionResult
-            originalSample()
-            shrunkSample()
 
     - Implement grow() for more shrinkables
         - CombinedShrinkable: grow each leg

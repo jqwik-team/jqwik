@@ -26,7 +26,7 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
-- No new features yet
+- Added `Tuple.of()` and `Tuple.empty()` to create an empty tuple.
 
 #### Breaking Changes
 

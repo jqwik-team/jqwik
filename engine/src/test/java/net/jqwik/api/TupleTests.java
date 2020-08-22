@@ -9,6 +9,17 @@ import static org.assertj.core.api.Assertions.*;
 class TupleTests {
 
 	@Example
+	void tupleOfNone() {
+		Tuple0 tuple0 = Tuple.of();
+		assertThat(tuple0.size()).isEqualTo(0);
+		assertThat(tuple0.equals(Tuple.empty())).isTrue();
+
+		assertThat(tuple0.hashCode()).isEqualTo(Tuple.of().hashCode());
+
+		assertThat(tuple0.toString()).isEqualTo("()");
+	}
+
+	@Example
 	void tupleOfOne() {
 		Tuple1<String> tuple1 = Tuple.of("hallo");
 		assertThat(tuple1.size()).isEqualTo(1);
