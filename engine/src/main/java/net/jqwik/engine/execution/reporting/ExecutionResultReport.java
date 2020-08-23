@@ -2,6 +2,7 @@ package net.jqwik.engine.execution.reporting;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 import org.opentest4j.*;
 
@@ -56,16 +57,22 @@ public class ExecutionResultReport {
 		PropertyExecutionResult executionResult
 	) {
 		executionResult.shrunkSample().ifPresent(shrunkSample -> {
-			if (!shrunkSample.parameters().isEmpty()) {
+			List<Object> parameters = shrunkSample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
+			List<Object> parametersAfterRun = shrunkSample.parameters();
+			if (!parameters.isEmpty()) {
 				String shrunkSampleHeadline = String.format("%s (%s steps)", SHRUNK_SAMPLE_HEADLINE, shrunkSample.countShrinkingSteps());
-				SampleReporter.reportSample(reportLines, propertyMethod, shrunkSample.parameters(), shrunkSampleHeadline);
+				SampleReporter.reportSample(reportLines, propertyMethod, parameters, shrunkSampleHeadline);
+				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun);
 			}
 		});
 
 		executionResult.originalSample().ifPresent(originalSample -> {
 			String originalSampleHeadline = executionResult.shrunkSample().isPresent() ? ORIGINAL_SAMPLE_HEADLINE : SAMPLE_HEADLINE;
-			if (!originalSample.parameters().isEmpty()) {
-				SampleReporter.reportSample(reportLines, propertyMethod, originalSample.parameters(), originalSampleHeadline);
+			List<Object> parameters = originalSample.shrinkables().stream().map(Shrinkable::value).collect(Collectors.toList());
+			List<Object> parametersAfterRun = originalSample.parameters();
+			if (!parameters.isEmpty()) {
+				SampleReporter.reportSample(reportLines, propertyMethod, parameters, originalSampleHeadline);
+				reportParameterChanges(reportLines, propertyMethod, parameters, parametersAfterRun);
 				if (executionResult.shrunkSample().isPresent()) {
 					originalSample.falsifyingError().ifPresent(error -> {
 						appendOriginalError(reportLines, error);
@@ -73,6 +80,22 @@ public class ExecutionResultReport {
 				}
 			}
 		});
+	}
+
+	private static void reportParameterChanges(
+		StringBuilder reportLines,
+		Method propertyMethod,
+		List<Object> parameters,
+		List<Object> parametersAfterRun
+	) {
+		if (areThereChanges(parameters, parametersAfterRun)) {
+			String changesSampleHeadline = "After Execution";
+			SampleReporter.reportSample(reportLines, propertyMethod, parametersAfterRun, changesSampleHeadline, 1);
+		}
+	}
+
+	private static boolean areThereChanges(List<Object> after, List<Object> before) {
+		return !after.equals(before);
 	}
 
 	private static void appendOriginalError(StringBuilder reportLines, Throwable error) {
@@ -118,14 +141,18 @@ public class ExecutionResultReport {
 		}
 		appendProperty(propertiesLines, SEED_KEY, randomSeed, "random seed to reproduce generated values");
 
+		prependFixedSizedPropertiesHeader(reportLines, propertiesLines);
+		propertiesLines.forEach(reportLines::append);
+
+	}
+
+	private static void prependFixedSizedPropertiesHeader(StringBuilder reportLines, List<String> propertiesLines) {
 		int halfBorderLength =
 			(propertiesLines.stream().mapToInt(String::length).max().orElse(50) - 37) / 2 + 1;
 		String halfBorder = String.join("", Collections.nCopies(halfBorderLength, "-"));
 
 		reportLines.append(String.format("%n"));
 		reportLines.append(buildLine("", "|" + halfBorder + "jqwik" + halfBorder));
-		propertiesLines.forEach(reportLines::append);
-
 	}
 
 	private static void appendThrowableMessage(StringBuilder reportLines, ExtendedPropertyExecutionResult executionResult) {

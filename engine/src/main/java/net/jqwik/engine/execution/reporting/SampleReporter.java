@@ -14,9 +14,19 @@ public class SampleReporter {
 		List<Object> sample,
 		String headline
 	) {
+		reportSample(reportLines, propertyMethod, sample, headline, 0);
+	}
+
+	static void reportSample(
+		StringBuilder reportLines,
+		Method propertyMethod,
+		List<Object> sample,
+		String headline,
+		int indentLevel
+	) {
 		Map<String, Object> reports = createSampleReports(propertyMethod, sample);
 		SampleReporter sampleReporter = new SampleReporter(headline, reports);
-		LineReporter lineReporter = new LineReporterImpl(reportLines);
+		LineReporter lineReporter = new LineReporterImpl(reportLines, indentLevel);
 		sampleReporter.reportTo(lineReporter);
 	}
 

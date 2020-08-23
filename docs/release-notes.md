@@ -30,6 +30,8 @@ title: jqwik Release Notes
 
 - The time out for bounded shrinking can now be changed in `jqwik.properties`
 
+- Sample reporting will now report changes to parameters during property execution
+
 #### Breaking Changes
 
 - Shrinking is no longer bound by number of shrinking attempts, but by time with a 10 seconds default.

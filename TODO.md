@@ -1,10 +1,5 @@
 - 1.3.5
 
-    - Lifecycle
-        - Public report should show if sample parameters were changed during
-          property run.
-          see: sample.shrinkables()*.value() instead of .parameters()
-
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
             - forType(Class<T> targetType, int depth)
