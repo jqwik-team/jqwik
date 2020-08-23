@@ -336,6 +336,8 @@ annotation has a few optional values:
     This might take very long or not end at all in rare cases.
   - `ShrinkingMode.BOUNDED`: Shrinking is tried for 10 seconds maximum and then times out.
     The best shrunk sample at moment of time-out will be reported. This is the default.
+    The default time out of 10 seconds can be changed in 
+    [jqwik's configuration](#jqwik-configuration).
 
   Most of the time you want to stick with the default. Only if
   bounded shrinking is reported - look at a falsified property's output! -
@@ -3709,6 +3711,8 @@ defaultEdgeCases = MIXIN            # Set default behaviour for edge cases gener
                                     # FIRST, MIXIN, or NONE
 defaultShrinking = BOUNDED          # Set default shrinking behaviour:
                                     # BOUNDED, FULL, or OFF
+boundedShrinkingSeconds = 10        # The maximum number of seconds to shrink if
+                                    # shrinking behaviour is set to BOUNDED
 ```
 
 ## Advanced Topics

@@ -30,5 +30,7 @@ class JqwikPropertiesTests {
 		assertThat(properties.defaultEdgeCases()).isEqualTo(EdgeCasesMode.MIXIN);
 
 		assertThat(properties.defaultShrinking()).isEqualTo(ShrinkingMode.BOUNDED);
+
+		assertThat(properties.boundedShrinkingSeconds()).isEqualTo(10);
 	}
 }

@@ -32,7 +32,8 @@ public class DefaultJqwikConfiguration implements JqwikConfiguration {
 			properties.defaultAfterFailure(),
 			properties.defaultGeneration(),
 			properties.defaultEdgeCases(),
-			properties.defaultShrinking()
+			properties.defaultShrinking(),
+			properties.boundedShrinkingSeconds()
 		);
 	}
 

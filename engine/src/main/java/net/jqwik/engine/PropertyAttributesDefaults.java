@@ -15,13 +15,17 @@ public interface PropertyAttributesDefaults {
 	EdgeCasesMode edgeCases();
 	String stereotype();
 
+	// This is currently a global parameter
+	int boundedShrinkingSeconds();
+
 	static PropertyAttributesDefaults with(
 		int tries,
 		int maxDiscardRatio,
 		AfterFailureMode afterFailureMode,
 		GenerationMode generationMode,
 		EdgeCasesMode edgeCasesMode,
-		ShrinkingMode shrinkingMode
+		ShrinkingMode shrinkingMode,
+		int boundedShrinkingSeconds
 	) {
 		return new PropertyAttributesDefaults() {
 			@Override
@@ -57,6 +61,11 @@ public interface PropertyAttributesDefaults {
 			@Override
 			public String stereotype() {
 				return DEFAULT_STEREOTYPE;
+			}
+
+			@Override
+			public int boundedShrinkingSeconds() {
+				return boundedShrinkingSeconds;
 			}
 		};
 	}

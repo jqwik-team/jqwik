@@ -1,16 +1,16 @@
 - 1.3.5
 
-    - Make Shrinking BOUNDED seconds configurable in jqwik.properties file
-    
     - Lifecycle
         - PropertyExecutionResult
             originalSample()
             shrunkSample()
         - Public report should contain sample.shrinkables()*.value() instead of .parameters()
 
-    - Introduce recursive use of Arbitraries.forType(Class<T> targetType)
-        - forType(Class<T> targetType, int depth)
-        - @UseType(depth = 1)
+    - Arbitraries.forType(Class<T> targetType)
+        - Recursive use
+            - forType(Class<T> targetType, int depth)
+            - @UseType(depth = 1)
+        - Preconfigure certain params (by type, by name)
 
     - Add abstract method DomainContextBase.registrations()
     

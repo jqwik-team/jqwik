@@ -21,6 +21,7 @@ import static net.jqwik.engine.support.JqwikReflectionSupport.*;
 public class TestHelper {
 
 	public static final int DEFAULT_TRIES = 1000;
+	public static final int BOUNDED_SHRINKING_SECONDS = 10;
 	public static final int DEFAULT_MAX_DISCARD_RATIO = 5;
 	public static final AfterFailureMode DEFAULT_AFTER_FAILURE = AfterFailureMode.PREVIOUS_SEED;
 	public static final GenerationMode DEFAULT_GENERATION = GenerationMode.AUTO;
@@ -34,7 +35,8 @@ public class TestHelper {
 			DEFAULT_AFTER_FAILURE,
 			DEFAULT_GENERATION,
 			DEFAULT_EDGE_CASES,
-			DEFAULT_SHRINKING
+			DEFAULT_SHRINKING,
+			BOUNDED_SHRINKING_SECONDS
 		);
 	}
 

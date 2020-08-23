@@ -151,7 +151,7 @@ public class GenericProperty {
 		int countTries, FalsifiedSample originalSample,
 		Method targetMethod
 	) {
-		ShrunkFalsifiedSample shrunkSample =  shrink(reporter, reporting, originalSample, targetMethod);
+		ShrunkFalsifiedSample shrunkSample = shrink(reporter, reporting, originalSample, targetMethod);
 		return PropertyCheckResult.failed(
 			configuration.getStereotype(), name, countTries, countChecks, configuration.getSeed(), configuration.getGenerationMode(),
 			configuration.getEdgeCasesMode(), parametersGenerator.edgeCasesTotal(), parametersGenerator.edgeCasesTried(),
@@ -170,7 +170,13 @@ public class GenericProperty {
 		//       Maybe introduce some decorator for ShrinkingSequence(s)
 
 		Consumer<FalsifiedSample> falsifiedSampleReporter = createFalsifiedSampleReporter(reporter, reporting);
-		PropertyShrinker shrinker = new PropertyShrinker(originalSample, configuration.getShrinkingMode(), falsifiedSampleReporter, targetMethod);
+		PropertyShrinker shrinker = new PropertyShrinker(
+			originalSample,
+			configuration.getShrinkingMode(),
+			configuration.boundedShrinkingSeconds(),
+			falsifiedSampleReporter,
+			targetMethod
+		);
 
 		Falsifier<List<Object>> forAllFalsifier = createFalsifier(tryLifecycleContextSupplier, tryLifecycleExecutor);
 		return shrinker.shrink(forAllFalsifier);

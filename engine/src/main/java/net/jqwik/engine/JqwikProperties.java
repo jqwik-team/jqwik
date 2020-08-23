@@ -20,7 +20,8 @@ public class JqwikProperties {
 		"reportOnlyFailures",
 		"defaultGeneration",
 		"defaultEdgeCases",
-		"defaultShrinking"
+		"defaultShrinking",
+		"boundedShrinkingSeconds"
 	};
 
 	private static final String PROPERTIES_FILE_NAME = "jqwik.properties";
@@ -35,6 +36,7 @@ public class JqwikProperties {
 	private static final String DEFAULT_GENERATION = GenerationMode.AUTO.name();
 	private static final String DEFAULT_EDGE_CASES = EdgeCasesMode.MIXIN.name();
 	private static final String DEFAULT_SHRINKING = ShrinkingMode.BOUNDED.name();
+	private static final String DEFAULT_BOUNDED_SHRINKING_SECONDS = "10";
 
 	// TODO: Change default to true as soon as Gradle has support for platform reporter
 	// see https://github.com/gradle/gradle/issues/4605
@@ -50,6 +52,7 @@ public class JqwikProperties {
 	private GenerationMode defaultGeneration;
 	private EdgeCasesMode defaultEdgeCases;
 	private ShrinkingMode defaultShrinking;
+	private int boundedShrinkingSeconds;
 
 	public String databasePath() {
 		return databasePath;
@@ -91,6 +94,10 @@ public class JqwikProperties {
 		return defaultShrinking;
 	}
 
+	public int boundedShrinkingSeconds() {
+		return boundedShrinkingSeconds;
+	}
+
 	JqwikProperties() {
 		this(PROPERTIES_FILE_NAME);
 	}
@@ -121,6 +128,8 @@ public class JqwikProperties {
 			defaultGeneration = GenerationMode.valueOf(properties.getProperty("defaultGeneration", DEFAULT_GENERATION));
 			defaultEdgeCases = EdgeCasesMode.valueOf(properties.getProperty("defaultEdgeCases", DEFAULT_EDGE_CASES));
 			defaultShrinking = ShrinkingMode.valueOf(properties.getProperty("defaultShrinking", DEFAULT_SHRINKING));
+			boundedShrinkingSeconds =
+				Integer.parseInt(properties.getProperty("boundedShrinkingSeconds", DEFAULT_BOUNDED_SHRINKING_SECONDS));
 		} catch (Throwable throwable) {
 			String message = String.format("Error while reading properties file [%s]", propertiesFileName);
 			throw new JqwikException(message, throwable);

@@ -151,14 +151,13 @@ class PropertyShrinkerTests {
 		}
 
 		@Example
-		void withBoundedShrinkingBreakOffAfter2Seconds() {
-			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(10).asGeneric());
-			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED);
-			shrinker.setBoundedShrinkSecondsForTesting(2);
+		void withBoundedShrinkingBreakOffAfter1Second() {
+			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(20).asGeneric());
+			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.BOUNDED, 1);
 
 			ShrunkFalsifiedSample sample = shrinker.shrink(alwaysFalsify());
 
-			assertThat((int) sample.parameters().get(0)).isLessThan(10);
+			assertThat((int) sample.parameters().get(0)).isLessThan(20);
 			assertThat((int) sample.parameters().get(0)).isGreaterThan(0);
 
 			// TODO: Test that logging shrinking bound reached has happened
@@ -166,7 +165,7 @@ class PropertyShrinkerTests {
 
 		@Example
 		void withUnboundedShrinkingDoNotBreakOff() {
-			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(6).asGeneric());
+			List<Shrinkable<Object>> shrinkables = asList(new ShrinkableTypesForTest.SlowShrinkable(10).asGeneric());
 			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
 
 			ShrunkFalsifiedSample sample = shrinker.shrink(alwaysFalsify());
@@ -470,10 +469,15 @@ class PropertyShrinkerTests {
 		return Arrays.stream(args).mapToObj(i -> new FullShrinkable(i).asGeneric()).collect(Collectors.toList());
 	}
 
-	private PropertyShrinker createShrinker(final FalsifiedSample originalSample, final ShrinkingMode full) {
+	private PropertyShrinker createShrinker(FalsifiedSample originalSample, ShrinkingMode shrinkingMode) {
+		return createShrinker(originalSample, shrinkingMode, 10);
+	}
+
+	private PropertyShrinker createShrinker(FalsifiedSample originalSample, ShrinkingMode shrinkingMode, int boundedShrinkingSeconds) {
 		return new PropertyShrinker(
 			originalSample,
-			full,
+			shrinkingMode,
+			boundedShrinkingSeconds,
 			falsifiedSampleReporter,
 			null
 		);

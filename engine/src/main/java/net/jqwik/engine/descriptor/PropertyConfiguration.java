@@ -139,4 +139,9 @@ public class PropertyConfiguration {
 	public EdgeCasesMode getEdgeCasesMode() {
 		return propertyAttributes.edgeCases().orElse(propertyAttributesDefaults.edgeCases());
 	}
+
+	// This is currently a global value and not property specific
+	public int boundedShrinkingSeconds() {
+		return propertyAttributesDefaults.boundedShrinkingSeconds();
+	}
 }

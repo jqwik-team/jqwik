@@ -16,10 +16,9 @@ public class PropertyShrinker {
 
 	private static final Logger LOG = Logger.getLogger(PropertyShrinker.class.getName());
 
-	private int BOUNDED_SHRINK_SECONDS = 10;
-
 	private final FalsifiedSample originalSample;
 	private final ShrinkingMode shrinkingMode;
+	private final int boundedShrinkingSeconds;
 	private final Consumer<FalsifiedSample> falsifiedSampleReporter;
 	private final Method targetMethod;
 
@@ -31,11 +30,13 @@ public class PropertyShrinker {
 	public PropertyShrinker(
 		FalsifiedSample originalSample,
 		ShrinkingMode shrinkingMode,
+		int boundedShrinkingSeconds,
 		Consumer<FalsifiedSample> falsifiedSampleReporter,
 		Method targetMethod
 	) {
 		this.originalSample = originalSample;
 		this.shrinkingMode = shrinkingMode;
+		this.boundedShrinkingSeconds = boundedShrinkingSeconds;
 		this.falsifiedSampleReporter = falsifiedSampleReporter;
 		this.targetMethod = targetMethod;
 	}
@@ -67,29 +68,30 @@ public class PropertyShrinker {
 		return shrink(allowOnlyEquivalentErrorsFalsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
 	}
 
-	// Only use for testing purposes
-	public void setBoundedShrinkSecondsForTesting(int seconds) {
-		BOUNDED_SHRINK_SECONDS = seconds;
-	}
-
 	public ShrunkFalsifiedSample shrink(
 		Falsifier<List<Object>> falsifier,
 		Consumer<FalsifiedSample> shrinkSampleConsumer,
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
+		FalsifiedSample fullyShrunkSample;
+		Supplier<FalsifiedSample> shrinkUntilDone = () -> shrinkAsLongAsSampleImproves(falsifier, shrinkSampleConsumer, shrinkAttemptConsumer);
+		if (shrinkingMode == ShrinkingMode.FULL) {
+			fullyShrunkSample = shrinkUntilDone.get();
+		} else {
+			fullyShrunkSample = withTimeout(shrinkUntilDone);
+		}
+		return new ShrunkFalsifiedSample(fullyShrunkSample, shrinkingStepsCounter.get());
+	}
+
+	private FalsifiedSample withTimeout(Supplier<FalsifiedSample> shrinkUntilDone) {
 		try {
-			CompletableFuture<FalsifiedSample> falsifiedSampleFuture =
-				CompletableFuture.supplyAsync(() -> shrinkAsLongAsSampleImproves(falsifier, shrinkSampleConsumer, shrinkAttemptConsumer));
-
-			int boundedShrinkSeconds = shrinkingMode == ShrinkingMode.FULL ? 3600 : BOUNDED_SHRINK_SECONDS;
-			FalsifiedSample fullyShrunkSample = falsifiedSampleFuture.get(boundedShrinkSeconds, TimeUnit.SECONDS);
-
-			return new ShrunkFalsifiedSample(fullyShrunkSample, shrinkingStepsCounter.get());
+			CompletableFuture<FalsifiedSample> falsifiedSampleFuture = CompletableFuture.supplyAsync(shrinkUntilDone);
+			return falsifiedSampleFuture.get(boundedShrinkingSeconds, TimeUnit.SECONDS);
 		} catch (InterruptedException | ExecutionException e) {
 			return JqwikExceptionSupport.throwAsUncheckedException(e);
 		} catch (TimeoutException e) {
 			logShrinkingBoundReached();
-			return new ShrunkFalsifiedSample(currentBest.orElse(originalSample), shrinkingStepsCounter.get());
+			return currentBest.orElse(originalSample);
 		}
 	}
 
@@ -140,7 +142,7 @@ public class PropertyShrinker {
 		String value = String.format(
 			"Shrinking timeout reached after %s seconds." +
 				"%n  You can switch on full shrinking with '@Property(shrinking = ShrinkingMode.FULL)'",
-			BOUNDED_SHRINK_SECONDS
+			boundedShrinkingSeconds
 		);
 		LOG.warning(value);
 	}
