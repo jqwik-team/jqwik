@@ -1,10 +1,9 @@
 - 1.3.5
 
     - Lifecycle
-        - PropertyExecutionResult
-            originalSample()
-            shrunkSample()
-        - Public report should contain sample.shrinkables()*.value() instead of .parameters()
+        - Public report should show if sample parameters were changed during
+          property run.
+          see: sample.shrinkables()*.value() instead of .parameters()
 
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use

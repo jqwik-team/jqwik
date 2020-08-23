@@ -53,7 +53,7 @@ public class ExecutionResultReport {
 	private static void appendSamples(
 		StringBuilder reportLines,
 		Method propertyMethod,
-		ExtendedPropertyExecutionResult executionResult
+		PropertyExecutionResult executionResult
 	) {
 		executionResult.shrunkSample().ifPresent(shrunkSample -> {
 			if (!shrunkSample.parameters().isEmpty()) {
