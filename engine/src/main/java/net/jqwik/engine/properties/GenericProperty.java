@@ -62,7 +62,7 @@ public class GenericProperty {
 						finishEarly = tryExecutionResult.shouldPropertyFinishEarly();
 						continue;
 					case FALSIFIED:
-						FalsifiedSample falsifiedSample = new FalsifiedSample(
+						FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 							sample,
 							shrinkableParams,
 							tryExecutionResult.throwable()
@@ -85,7 +85,7 @@ public class GenericProperty {
 			} catch (Throwable throwable) {
 				// Only not AssertionErrors and non Exceptions get here
 				JqwikExceptionSupport.rethrowIfBlacklisted(throwable);
-				FalsifiedSample falsifiedSample = new FalsifiedSample(
+				FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 					sample,
 					shrinkableParams,
 					Optional.of(throwable)

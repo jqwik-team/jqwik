@@ -64,7 +64,7 @@ abstract class AbstractSampleShrinker {
 
 			if (newShrinkingResult.isPresent()) {
 				Tuple3<List<Object>, List<Shrinkable<Object>>, TryExecutionResult> falsifiedTry = newShrinkingResult.get();
-				FalsifiedSample falsifiedSample = new FalsifiedSample(
+				FalsifiedSample falsifiedSample = new FalsifiedSampleImpl(
 					falsifiedTry.get1(),
 					falsifiedTry.get2(),
 					falsifiedTry.get3().throwable()

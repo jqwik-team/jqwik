@@ -6,7 +6,6 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
 import net.jqwik.engine.support.*;
 
 class PairwiseParameterShrinker extends AbstractSampleShrinker {
@@ -23,7 +22,8 @@ class PairwiseParameterShrinker extends AbstractSampleShrinker {
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		FalsifiedSample current = sample;
-		List<Tuple.Tuple2<Integer, Integer>> allPairs = Combinatorics.distinctPairs(sample.size()).collect(Collectors.toList());
+		List<Tuple.Tuple2<Integer, Integer>> allPairs =
+			Combinatorics.distinctPairs(sample.shrinkables().size()).collect(Collectors.toList());
 		for (Tuple.Tuple2<Integer, Integer> pair : allPairs) {
 			current = shrinkPair(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, pair.get1(), pair.get2());
 		}

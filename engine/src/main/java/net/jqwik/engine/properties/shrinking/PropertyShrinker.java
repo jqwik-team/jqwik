@@ -80,7 +80,7 @@ public class PropertyShrinker {
 		} else {
 			fullyShrunkSample = withTimeout(shrinkUntilDone);
 		}
-		return new ShrunkFalsifiedSample(fullyShrunkSample, shrinkingStepsCounter.get());
+		return new ShrunkFalsifiedSampleImpl(fullyShrunkSample, shrinkingStepsCounter.get());
 	}
 
 	private FalsifiedSample withTimeout(Supplier<FalsifiedSample> shrinkUntilDone) {
@@ -130,7 +130,7 @@ public class PropertyShrinker {
 	}
 
 	private ShrunkFalsifiedSample unshrunkOriginalSample() {
-		return new ShrunkFalsifiedSample(originalSample, 0);
+		return new ShrunkFalsifiedSampleImpl(originalSample, 0);
 	}
 
 	private boolean isFalsifiedButErrorIsNotEquivalent(TryExecutionResult result, Optional<Throwable> originalError) {

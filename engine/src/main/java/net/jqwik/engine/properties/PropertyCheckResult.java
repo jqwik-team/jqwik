@@ -58,8 +58,8 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 		ShrunkFalsifiedSample shrunkSample,
 		Throwable throwable
 	) {
-		// If no shrinking was possible report only sample
-		if (shrunkSample != null && shrunkSample.equivalentTo(originalSample)) {
+		// If no shrinking was possible, report only original sample
+		if (shrunkSample != null && areEquivalent(originalSample, shrunkSample)) {
 			shrunkSample = null;
 		}
 		return new PropertyCheckResult(
@@ -77,6 +77,10 @@ public class PropertyCheckResult implements ExtendedPropertyExecutionResult {
 			shrunkSample,
 			throwable
 		);
+	}
+
+	private static boolean areEquivalent(FalsifiedSample originalSample, ShrunkFalsifiedSample shrunkSample) {
+		return originalSample.equals(shrunkSample) && shrunkSample.countShrinkingSteps() == 0;
 	}
 
 	public static PropertyCheckResult exhausted(

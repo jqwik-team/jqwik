@@ -34,7 +34,7 @@ class PropertyShrinkerTests {
 			PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.FULL);
 			ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(originalSample.equals(sample)).isTrue();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
@@ -48,7 +48,7 @@ class PropertyShrinkerTests {
 			PropertyShrinker shrinker = createShrinker(originalSample, ShrinkingMode.OFF);
 			ShrunkFalsifiedSample sample = shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(originalSample.equals(sample)).isTrue();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
@@ -64,7 +64,7 @@ class PropertyShrinkerTests {
 			Falsifier<List<Object>> falsifier = paramFalsifier((Integer i) -> i <= 9);
 			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(originalSample.equals(sample)).isTrue();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
@@ -80,7 +80,7 @@ class PropertyShrinkerTests {
 			Falsifier<List<Object>> falsifier = ignore -> TryExecutionResult.falsified(null);
 			ShrunkFalsifiedSample sample = shrinker.shrink(falsifier);
 
-			assertThat(sample.equivalentTo(originalSample)).isTrue();
+			assertThat(originalSample.equals(sample)).isTrue();
 			assertThat(sample.countShrinkingSteps()).isEqualTo(0);
 
 			verifyNoInteractions(falsifiedSampleReporter);
@@ -280,7 +280,7 @@ class PropertyShrinkerTests {
 			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
 			shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-			ArgumentCaptor<FalsifiedSample> sampleCaptor = ArgumentCaptor.forClass(FalsifiedSample.class);
+			ArgumentCaptor<FalsifiedSample> sampleCaptor = ArgumentCaptor.forClass(FalsifiedSampleImpl.class);
 			verify(falsifiedSampleReporter, times(1)).accept(sampleCaptor.capture());
 
 			FalsifiedSample sample = sampleCaptor.getValue();
@@ -293,7 +293,7 @@ class PropertyShrinkerTests {
 			PropertyShrinker shrinker = createShrinker(toFalsifiedSample(shrinkables, null), ShrinkingMode.FULL);
 			shrinker.shrink(ignore -> TryExecutionResult.falsified(null));
 
-			verify(falsifiedSampleReporter, times(15)).accept(any(FalsifiedSample.class));
+			verify(falsifiedSampleReporter, times(15)).accept(any(FalsifiedSampleImpl.class));
 		}
 
 	}

@@ -6,7 +6,6 @@ import java.util.stream.*;
 
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
 
 class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 
@@ -22,7 +21,7 @@ class OneAfterTheOtherParameterShrinker extends AbstractSampleShrinker {
 		Consumer<FalsifiedSample> shrinkAttemptConsumer
 	) {
 		FalsifiedSample current = sample;
-		for (int i = 0; i < sample.size(); i++) {
+		for (int i = 0; i < sample.shrinkables().size(); i++) {
 			current = shrinkSingleParameter(falsifier, current, shrinkSampleConsumer, shrinkAttemptConsumer, i);
 		}
 		return current;
