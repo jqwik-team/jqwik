@@ -47,6 +47,10 @@ class GenericPropertyTests {
 			assertThat(result.checkStatus()).isEqualTo(PropertyCheckResult.CheckStatus.SUCCESSFUL);
 			assertThat(result.countTries()).isEqualTo(2);
 			assertThat(result.countChecks()).isEqualTo(2);
+
+			assertThat(result.falsifiedParameters()).isEmpty();
+			assertThat(result.shrunkSample()).isEmpty();
+			assertThat(result.originalSample()).isEmpty();
 		}
 
 		@Example
@@ -98,6 +102,8 @@ class GenericPropertyTests {
 			assertThat(result.falsifiedParameters()).isPresent();
 			assertThat(result.falsifiedParameters().get()).containsExactly(failingTry);
 
+			assertThat(result.originalSample()).isPresent();
+			assertThat(result.shrunkSample()).isEmpty();
 		}
 
 		@Example
@@ -116,6 +122,9 @@ class GenericPropertyTests {
 
 			assertThat(forAllFunction.countCalls()).isEqualTo(failingTry); // If shrunk number would be higher
 			assertThat(result.falsifiedParameters().get()).containsExactly(failingTry);
+
+			assertThat(result.originalSample()).isPresent();
+			assertThat(result.shrunkSample()).isEmpty();
 		}
 
 		@Example
@@ -137,6 +146,7 @@ class GenericPropertyTests {
 			assertThat(forAllSpy.countCalls()).isEqualTo(5);
 			assertThat(result.falsifiedParameters()).isPresent();
 			assertThat(result.falsifiedParameters().get()).containsExactly(5);
+
 			assertThat(result.shrunkSample()).isNotPresent();
 			assertThat(result.originalSample().get().parameters()).containsExactly(5);
 		}
@@ -168,10 +178,13 @@ class GenericPropertyTests {
 
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isSameAs(assertionError);
+
+			assertThat(result.originalSample().get().falsifyingError()).isPresent();
+			assertThat(result.originalSample().get().falsifyingError().get()).isSameAs(assertionError);
 		}
 
 		@Example
-		void falsifiedAndShrunkThroughRuntimeException() {
+		void falsifiedThroughRuntimeException() {
 			RuntimeException runtimeException = new RuntimeException("test");
 			ForAllSpy forAllFunction = new ForAllSpy(trie -> {
 				throw runtimeException;
@@ -197,6 +210,9 @@ class GenericPropertyTests {
 
 			assertThat(result.throwable()).isPresent();
 			assertThat(result.throwable().get()).isSameAs(runtimeException);
+
+			assertThat(result.originalSample()).isPresent();
+			assertThat(result.originalSample().get().falsifyingError().get()).isSameAs(runtimeException);
 		}
 
 		@Example
@@ -317,6 +333,10 @@ class GenericPropertyTests {
 
 			assertThat(result.falsifiedParameters()).isPresent();
 			assertThat(result.falsifiedParameters().get()).containsExactly(5);
+
+			assertThat(result.originalSample()).isPresent();
+			assertThat(result.shrunkSample()).isPresent();
+			assertThat(result.shrunkSample().get().countShrinkingSteps()).isGreaterThan(0);
 		}
 
 	}
@@ -451,6 +471,8 @@ class GenericPropertyTests {
 
 			assertThat(result.falsifiedParameters()).isPresent();
 			assertThat(result.falsifiedParameters().get()).containsExactly(failingTry, 1, 1, 1);
+			assertThat(result.originalSample()).isPresent();
+			assertThat(result.originalSample().get().shrinkables()).hasSize(4);
 		}
 
 	}

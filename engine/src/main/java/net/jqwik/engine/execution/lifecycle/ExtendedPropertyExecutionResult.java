@@ -1,20 +1,13 @@
 package net.jqwik.engine.execution.lifecycle;
 
-import java.util.*;
-
 import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
-import net.jqwik.engine.properties.*;
 
 public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult {
 
 	boolean isExtended();
 
 	String randomSeed();
-
-	Optional<FalsifiedSample> originalSample();
-
-	Optional<ShrunkFalsifiedSample> shrunkSample();
 
 	GenerationMode generation();
 
@@ -44,6 +37,5 @@ public interface ExtendedPropertyExecutionResult extends PropertyExecutionResult
 			return tried;
 		}
 	}
-
 
 }

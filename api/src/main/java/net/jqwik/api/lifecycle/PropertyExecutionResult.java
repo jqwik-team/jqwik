@@ -47,6 +47,11 @@ public interface PropertyExecutionResult {
 	/**
 	 * The potentially shrunk list of parameters that falsified this property.
 	 *
+	 * <p>
+	 * The parameter list returned contains the actual parameters used during the property run.
+	 * If one or more parameters were changed during the run, this change is visible here.
+	 * </p>
+	 *
 	 * @return an optional list of parameters
 	 */
 	@API(status = EXPERIMENTAL, since = "1.3.3")
@@ -82,6 +87,22 @@ public interface PropertyExecutionResult {
 	 */
 	@API(status = EXPERIMENTAL, since = "1.2.4")
 	int countTries();
+
+	/**
+	 * Return the original falsified sample if there was one.
+	 *
+	 * @return an optional falsified sample
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.5")
+	Optional<FalsifiedSample> originalSample();
+
+	/**
+	 * Return the shrunk falsified sample if successful shrinking took place.
+	 *
+	 * @return an optional falsified sample
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.5")
+	Optional<ShrunkFalsifiedSample> shrunkSample();
 
 	/**
 	 * Use to change the {@linkplain Status status} of a property execution result in a

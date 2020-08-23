@@ -15,7 +15,7 @@ public class OrderedArbitraryForTesting<T> implements Arbitrary<T> {
 		for (int i = min; i <= max ; i++) {
 			values.add(i);
 		}
-		return new OrderedArbitraryForTesting<Integer>(values.toArray(new Integer[0]));
+		return new OrderedArbitraryForTesting<>(values.toArray(new Integer[0]));
 	}
 
 	@SafeVarargs
