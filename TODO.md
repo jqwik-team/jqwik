@@ -1,11 +1,6 @@
 - 1.3.5
     
     - Combinators.withBuilder(() -> new MyObject()
-        .use(arbitraryOfString).for(MyObject::setName)
-        .use(arbitraryOfData).for(MyObject::setDateOfBirth)
-        .build()
-
-    - Combinators.withBuilder(() -> new MyObject()
         .useDefaultFor(MyObject::setName)
         .useDefaultFor(MyObject::setDateOfBirth)
         .useDefaultsFor(MyObject::setFirstName, MyObject::setAge)

@@ -10,7 +10,6 @@ class CombinatorsBuilderTests {
 
 	@Example
 	void plainBuilder(@ForAll Random random) {
-
 		Arbitrary<Person> personArbitrary =
 			Combinators
 				.withBuilder(PersonBuilder::new)
@@ -23,7 +22,6 @@ class CombinatorsBuilderTests {
 
 	@Example
 	void useBuilderMethods(@ForAll Random random) {
-
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
 
@@ -41,7 +39,6 @@ class CombinatorsBuilderTests {
 
 	@Example
 	void startWithArbitrary() {
-
 		Arbitrary<Integer> digit = Arbitraries.of(1, 2, 3);
 		Arbitrary<StringBuilder> stringBuilders = Arbitraries.of("a", "b", "c").map(StringBuilder::new);
 
@@ -58,7 +55,6 @@ class CombinatorsBuilderTests {
 
 	@Example
 	void builderIsFreshlyCreatedForEachTry() {
-
 		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
 
 		Arbitrary<Person> personArbitrary =
@@ -86,14 +82,40 @@ class CombinatorsBuilderTests {
 		);
 	}
 
+	@Example
+	void useInSetter(@ForAll Random random) {
+		Arbitrary<String> name = Arbitraries.strings().alpha().ofLength(10);
+		Arbitrary<Integer> age = Arbitraries.integers().between(0, 15);
+
+		Arbitrary<Person> personArbitrary =
+			Combinators
+				.withBuilder(() -> new Person("", 0))
+				.use(name).inSetter(Person::setName)
+				.use(age).inSetter(Person::setAge)
+				.build();
+
+		Person value = generateFirst(personArbitrary, random);
+		assertThat(value.age).isBetween(0, 15);
+		assertThat(value.name).hasSize(10);
+	}
+
+
 	private static class Person {
 
-		private final String name;
-		private final int age;
+		private String name;
+		private int age;
 
 		Person(String name, int age) {
 			this.name = name;
 			this.age = age;
+		}
+
+		void setName(String newName) {
+			this.name = newName;
+		}
+
+		void setAge(int newAge) {
+			this.age = newAge;
 		}
 	}
 

@@ -835,7 +835,7 @@ public class Combinators {
 
 		@API(status = MAINTAINED, since = "1.3.5")
 		public Arbitrary<B> build() {
-			return builder.map(Function.identity());
+			return build(Function.identity());
 		}
 	}
 
@@ -852,6 +852,15 @@ public class Combinators {
 		public <C> BuilderCombinator<C> in(Combinators.F2<B, T, C> toFunction) {
 			Arbitrary<C> arbitraryOfC = arbitrary.flatMap(t -> builder.map(b -> toFunction.apply(b, t)));
 			return new BuilderCombinator<>(arbitraryOfC);
+		}
+
+		@API(status = EXPERIMENTAL, since = "1.3.5")
+		public BuilderCombinator<B> inSetter(BiConsumer<B, T> setter) {
+			F2<B, T, B> toFunction = (b, t) -> {
+				setter.accept(b, t);
+				return b;
+			};
+			return in(toFunction);
 		}
 	}
 
