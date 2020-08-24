@@ -1,11 +1,5 @@
 - 1.3.5
     
-    - Combinators.withBuilder(() -> new MyObject()
-        .useDefaultFor(MyObject::setName)
-        .useDefaultFor(MyObject::setDateOfBirth)
-        .useDefaultsFor(MyObject::setFirstName, MyObject::setAge)
-        .build()
-
     - MySampleFormat implements SampleReportFormat {
             Object report(value) {
                 return reportJavaBean(value);
