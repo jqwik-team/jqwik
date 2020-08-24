@@ -1,14 +1,31 @@
 - 1.3.5
+    
+    - Combinators.withBuilder(() -> new MyObject()
+        .use(arbitraryOfString).in(MyObject::setName)
+        .use(arbitraryOfData).in(MyObject::setDateOfBirth)
+        .build() // without Function.identity()
+
+    - Combinators.withBuilder(() -> new MyObject()
+        .useDefaultFor(MyObject::setName)
+        .useDefaultFor(MyObject::setDateOfBirth)
+        .useDefaultsFor(MyObject::setFirstName, MyObject::setAge)
+        .build()
+
+    - MySampleFormat implements SampleReportFormat {
+            Object report(value) {
+                return asBean(value);
+            }
+      }
+
+    - Add abstract method DomainContextBase.registrations()
+    
+- 1.3.x
 
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
             - forType(Class<T> targetType, int depth)
             - @UseType(depth = 1)
         - Preconfigure certain params (by type, by name)
-
-    - Add abstract method DomainContextBase.registrations()
-    
-- 1.3.x
 
     - `@Repeat(42)`: Repeat a property 42 times
 
