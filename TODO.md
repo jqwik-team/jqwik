@@ -1,9 +1,9 @@
 - 1.3.5
     
     - Combinators.withBuilder(() -> new MyObject()
-        .use(arbitraryOfString).in(MyObject::setName)
-        .use(arbitraryOfData).in(MyObject::setDateOfBirth)
-        .build() // without Function.identity()
+        .use(arbitraryOfString).for(MyObject::setName)
+        .use(arbitraryOfData).for(MyObject::setDateOfBirth)
+        .build()
 
     - Combinators.withBuilder(() -> new MyObject()
         .useDefaultFor(MyObject::setName)
@@ -13,7 +13,7 @@
 
     - MySampleFormat implements SampleReportFormat {
             Object report(value) {
-                return asBean(value);
+                return reportJavaBean(value);
             }
       }
 

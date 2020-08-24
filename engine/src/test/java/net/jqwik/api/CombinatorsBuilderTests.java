@@ -73,6 +73,19 @@ class CombinatorsBuilderTests {
 		);
 	}
 
+	@Example
+	void buildWithoutFunctionUsesIdentityAsDefault() {
+		Arbitrary<Person> personArbitrary =
+			Combinators
+				.withBuilder(() -> new Person("john", 42))
+				.build();
+
+		ArbitraryTestHelper.assertAllGenerated(
+			personArbitrary.generator(1),
+			person -> person.age == 42 && person.name.equals("john")
+		);
+	}
+
 	private static class Person {
 
 		private final String name;

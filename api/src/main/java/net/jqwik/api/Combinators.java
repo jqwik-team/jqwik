@@ -833,6 +833,10 @@ public class Combinators {
 			return builder.map(buildFunction);
 		}
 
+		@API(status = MAINTAINED, since = "1.3.5")
+		public Arbitrary<B> build() {
+			return builder.map(Function.identity());
+		}
 	}
 
 	@API(status = MAINTAINED, since = "1.2.0")
