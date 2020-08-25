@@ -9,6 +9,30 @@ import static org.apiguardian.api.API.Status.*;
 @API(status = EXPERIMENTAL, since = "1.3.1")
 public interface SampleReportingFormat extends Comparable<SampleReportingFormat> {
 
+	@API(status = INTERNAL)
+	abstract class SampleReportingFormatFacade {
+		private static final SampleReportingFormat.SampleReportingFormatFacade implementation;
+
+		static {
+			implementation = FacadeLoader.load(SampleReportingFormat.SampleReportingFormatFacade.class);
+		}
+
+		public abstract Object reportJavaBean(Object bean);
+	}
+
+	/**
+	 * Use in {@linkplain SampleReportingFormat#report(Object)}
+	 * if you just want to report all of an object's bean properties as
+	 * attributes.
+	 *
+	 * @param bean Java object with its properties following the bean convention
+	 * @return a map with all bean properties in alphabetical order
+	 */
+	@API(status = EXPERIMENTAL, since = "1.3.5")
+	static Object reportJavaBean(Object bean) {
+		return SampleReportingFormatFacade.implementation.reportJavaBean(bean);
+	}
+
 	/**
 	 * Use in {@linkplain SampleReportingFormat#report(Object)}
 	 * if you just want to report a plain label and not a String in quotes.

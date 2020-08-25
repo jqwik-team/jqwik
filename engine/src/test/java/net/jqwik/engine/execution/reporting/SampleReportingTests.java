@@ -303,6 +303,56 @@ class SampleReportingTests {
 				);
 			}
 
+			@Example
+			void javaBeanReport() {
+				class YourObject {
+					public String getHallo() {
+						return "hello";
+					}
+				}
+				class MyObject {
+					public int getAge() {
+						return 17;
+					}
+					public String getName() {
+						return "name";
+					}
+					public boolean isYoung() {
+						return true;
+					}
+					public String getDoNotShowNull() {
+						return null;
+					}
+					public List<YourObject> getYourObjects() {
+						return java.util.Collections.singletonList(new YourObject());
+					}
+				}
+				SampleReportingFormat myObjectFormat = new SampleReportingFormat() {
+					@Override
+					public boolean appliesTo(final Object value) {
+						return value instanceof MyObject || value instanceof YourObject;
+					}
+
+					@Override
+					public Object report(Object value) {
+						return SampleReportingFormat.reportJavaBean(value);
+					}
+				};
+				ValueReport.ReportingFormatFinder finder = formatFinder(myObjectFormat);
+
+				ValueReport report = ValueReport.of(new MyObject(), finder);
+
+				report.report(lineReporter, 2, ",");
+				assertThat(lineReporter.lines).containsSequence(
+					"    {",
+					"      age=17,",
+					"      isYoung=true,",
+					"      name=\"name\",",
+					"      yourObjects=[{hallo=\"hello\"}]",
+					"    },"
+				);
+			}
+
 		}
 
 		@Group

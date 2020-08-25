@@ -38,6 +38,8 @@ title: jqwik Release Notes
   - `BuilderCombinator.build()`: Return arbitrary of builder itself
   - `CombinableBuilder.inSetter(..)`: Set a builder's property and go on using it
 
+- Added `SampleReportingFormat.reportJavaBean(Object bean)`
+
 #### Breaking Changes
 
 - Shrinking is no longer bound by number of shrinking attempts, but by time with a 10 seconds default.

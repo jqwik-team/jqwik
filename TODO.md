@@ -1,11 +1,5 @@
 - 1.3.5
     
-    - MySampleFormat implements SampleReportFormat {
-            Object report(value) {
-                return reportJavaBean(value);
-            }
-      }
-
     - Stream edge cases on the fly instead of creating all upfront:
        - https://github.com/jlink/jqwik/issues/114
        - examples.bugs.JqwikHeapBust as test case
