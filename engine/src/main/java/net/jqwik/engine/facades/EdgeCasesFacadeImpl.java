@@ -2,6 +2,7 @@ package net.jqwik.engine.facades;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
@@ -13,6 +14,10 @@ import net.jqwik.engine.support.*;
  * Is loaded through reflection in api module
  */
 public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
+
+	private static final int MAX_NUMBER_OF_EDGE_CASES = 10000;
+
+	private static final Logger LOG = Logger.getLogger(EdgeCasesFacadeImpl.class.getName());
 
 	@Override
 	public <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
@@ -41,7 +46,6 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 		if (edgeCases.isEmpty()) {
 			return EdgeCases.none();
 		}
-		// TODO: Should duplicate edge cases be filtered out?
 		List<Supplier<Shrinkable<T>>> concatenatedSuppliers = new ArrayList<>();
 		for (EdgeCases<T> edgeCase : edgeCases) {
 			if (edgeCase.isEmpty()) {
@@ -79,8 +83,20 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 									 );
 								 });
 				})
+				.limit(MAX_NUMBER_OF_EDGE_CASES)
 				.collect(Collectors.toList());
+		if (flatMappedSuppliers.size() >= MAX_NUMBER_OF_EDGE_CASES) {
+			logTooManyEdgeCases(MAX_NUMBER_OF_EDGE_CASES);
+		}
 		return EdgeCases.fromSuppliers(flatMappedSuppliers);
+	}
+
+	private void logTooManyEdgeCases(int maxNumberOfEdgeCases) {
+		String message = String.format(
+			"Combinatorial explosion of edge case generation. Stopped creating more after %s generated cases.",
+			maxNumberOfEdgeCases
+		);
+		LOG.warning(message);
 	}
 
 	@Override

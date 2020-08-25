@@ -48,7 +48,7 @@ title: jqwik Release Notes
 
 #### Bug Fixes
 
-- No known bugs
+- edge cases generation will be stopped when 10000 edge cases have been found.
 
 ## 1.3.4
 

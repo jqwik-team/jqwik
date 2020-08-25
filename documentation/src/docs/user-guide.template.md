@@ -2151,9 +2151,6 @@ private Arbitrary<String> prependWord(Arbitrary<String> sentence) {
 }
 ```
 
-Mind that [edge cases](#generation-of-edge-cases) of `recursive` arbitraries 
-are only generated to a recursion depth of five in order to prevent combinatorial explosion.
-
 ## Using Arbitraries Directly
 
 Most of the time arbitraries are used indirectly, i.e. _jqwik_ uses them under
