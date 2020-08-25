@@ -1,8 +1,10 @@
 - 1.3.5
-    
-    - Stream edge cases on the fly instead of creating all upfront:
-       - https://github.com/jlink/jqwik/issues/114
-       - examples.bugs.JqwikHeapBust as test case
+
+    - Release
+        - Generate documentation
+        - Update website
+        - Update snapshot
+        - Push to Maven    
 
 - 1.3.x
 
