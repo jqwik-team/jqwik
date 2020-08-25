@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.3.5](#135-snapshot)
 - [1.3.4](#134)
 - [1.3.3](#133)
 - [1.3.2](#132)
@@ -31,6 +32,11 @@ title: jqwik Release Notes
 - The time out for bounded shrinking can now be changed in `jqwik.properties`
 
 - Sample reporting will now report changes to parameters during property execution
+
+- Added some convenience to use POJOs as builders:
+
+  - `BuilderCombinator.build()`: Return arbitrary of builder itself
+  - `CombinableBuilder.inSetter(..)`: Set a builder's property and go on using it
 
 #### Breaking Changes
 

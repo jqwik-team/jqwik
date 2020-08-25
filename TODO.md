@@ -6,10 +6,14 @@
             }
       }
 
-    - Add abstract method DomainContextBase.registrations()
-    
+    - Stream edge cases on the fly instead of creating all upfront:
+       - https://github.com/jlink/jqwik/issues/114
+       - examples.bugs.JqwikHeapBust as test case
+
 - 1.3.x
 
+    - Add abstract method DomainContextBase.registrations()
+    
     - Arbitraries.forType(Class<T> targetType)
         - Recursive use
             - forType(Class<T> targetType, int depth)
@@ -35,9 +39,6 @@
       - Or: Introduce ProvideGenerationSourceHook
       
     - Edge Cases
-        - Stream edge cases on the fly instead of creating all upfront:
-           - https://github.com/jlink/jqwik/issues/114
-           - examples.bugs.JqwikHeapBust as test case
     
         - Arbitrary.withoutEdgeCases() 
             - should also work for individual generators

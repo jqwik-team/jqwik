@@ -817,6 +817,13 @@ public class Combinators {
 		}
 	}
 
+	/**
+	 * Provide access to combinator's through builder functionality.
+	 * A builder is created through either {@linkplain #withBuilder(Supplier)}
+	 * or {@linkplain #withBuilder(Arbitrary)}.
+	 *
+	 * @param <B> The builder's type
+	 */
 	@API(status = MAINTAINED, since = "1.2.0")
 	public static class BuilderCombinator<B> {
 		private final Arbitrary<B> builder;
@@ -829,16 +836,34 @@ public class Combinators {
 			return new CombinableBuilder<>(builder, arbitrary);
 		}
 
+		/**
+		 * Create the final arbitrary.
+		 *
+		 * @param buildFunction Function to map a builder to an object
+		 * @param <T> the target object's type
+		 * @return arbitrary of target object
+		 */
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
 			return builder.map(buildFunction);
 		}
 
+		/**
+		 * Create the final arbitrary if it's the builder itself.
+		 *
+		 * @return arbitrary of builder
+		 */
 		@API(status = MAINTAINED, since = "1.3.5")
 		public Arbitrary<B> build() {
 			return build(Function.identity());
 		}
 	}
 
+	/**
+	 * Functionality to manipulate a builder. Instances are created through
+	 * {@link BuilderCombinator#use(Arbitrary)}.
+	 *
+	 * @param <B> The builder's type
+	 */
 	@API(status = MAINTAINED, since = "1.2.0")
 	public static class CombinableBuilder<B, T> {
 		private final Arbitrary<B> builder;
@@ -849,11 +874,28 @@ public class Combinators {
 			this.arbitrary = arbitrary;
 		}
 
+		/**
+		 * Use the last provided arbitrary to change the builder object.
+		 * Potentially create a different kind of builder.
+		 *
+		 * @param toFunction Use value provided by arbitrary to set current builder
+		 *                   and return (potentially a different) builder.
+		 * @param <C> Type of returned builder
+		 * @return new {@linkplain BuilderCombinator} instance
+		 */
 		public <C> BuilderCombinator<C> in(Combinators.F2<B, T, C> toFunction) {
 			Arbitrary<C> arbitraryOfC = arbitrary.flatMap(t -> builder.map(b -> toFunction.apply(b, t)));
 			return new BuilderCombinator<>(arbitraryOfC);
 		}
 
+		/**
+		 * Use the last provided arbitrary to change the builder object
+		 * and proceed with the same builder. The most common scenario is
+		 * a builder the methods of which do not return a new builder.
+		 *
+		 * @param setter Use value provided by arbitrary to change a builder's property.
+		 * @return new {@linkplain BuilderCombinator} instance with same embedded builder
+		 */
 		@API(status = EXPERIMENTAL, since = "1.3.5")
 		public BuilderCombinator<B> inSetter(BiConsumer<B, T> setter) {
 			F2<B, T, B> toFunction = (b, t) -> {
