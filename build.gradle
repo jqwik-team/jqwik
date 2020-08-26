@@ -12,7 +12,7 @@ ext {
 	mockitoVersion = '3.3.3'
 	systemLambdaVersion = '1.0.0'
 	moduleName = 'net.jqwik'
-	jqwikVersion = '1.3.5-SNAPSHOT'
+	jqwikVersion = '1.3.5'
 	isSnapshotRelease = isSnapshotRelease(jqwikVersion)
 }
 
@@ -34,7 +34,7 @@ allprojects {
 	publishing {
 		repositories {
 			maven {
-				// hint: password is in ~/.gradle/gradle.properties
+				// hint: credentials are in ~/.gradle/gradle.properties
 				def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
 				def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
 

@@ -1,11 +1,5 @@
 - 1.3.5
 
-    - Release
-        - Generate documentation
-        - Update website
-        - Update snapshot
-        - Push to Maven    
-
 - 1.3.x
 
     - Add abstract method DomainContextBase.registrations()
