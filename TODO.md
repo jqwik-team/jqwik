@@ -1,6 +1,9 @@
 - 1.3.6
 
-  - Shrink nullable fields to null
+  - Shrink nullable fields to null if possible
+  
+  - Does ComposableBuilder require flatMapping if same instance 
+    is returned in BuilderCombinator.in(...)? 
     
 - 1.3.x
 
