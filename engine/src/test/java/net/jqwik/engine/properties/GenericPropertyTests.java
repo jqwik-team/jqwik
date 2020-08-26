@@ -335,8 +335,10 @@ class GenericPropertyTests {
 			assertThat(result.falsifiedParameters().get()).containsExactly(5);
 
 			assertThat(result.originalSample()).isPresent();
-			assertThat(result.shrunkSample()).isPresent();
-			assertThat(result.shrunkSample().get().countShrinkingSteps()).isGreaterThan(0);
+			// If 5 is generated directly no shrinking has taken place
+			if (result.shrunkSample().isPresent()) {
+				assertThat(result.shrunkSample().get().countShrinkingSteps()).isGreaterThan(0);
+			}
 		}
 
 	}
