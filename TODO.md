@@ -1,5 +1,7 @@
-- 1.3.5
+- 1.3.6
 
+  - Shrink nullable fields to null
+    
 - 1.3.x
 
     - Add abstract method DomainContextBase.registrations()
