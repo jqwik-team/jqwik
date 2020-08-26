@@ -11,10 +11,13 @@
     - Add abstract method DomainContextBase.registrations()
     
     - Arbitraries.forType(Class<T> targetType)
+        - useBeanProperties()
+            - with optional spec: Map<String, Arbitrary> to map
+              a property to a certain arbitrary
+        - Preconfigure certain params (by type, by name)
         - Recursive use
             - forType(Class<T> targetType, int depth)
             - @UseType(depth = 1)
-        - Preconfigure certain params (by type, by name)
 
     - `@Repeat(42)`: Repeat a property 42 times
 

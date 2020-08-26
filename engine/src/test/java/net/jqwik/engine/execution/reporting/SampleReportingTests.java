@@ -346,8 +346,8 @@ class SampleReportingTests {
 				assertThat(lineReporter.lines).containsSequence(
 					"    {",
 					"      age=17,",
-					"      isYoung=true,",
 					"      name=\"name\",",
+					"      young=true,",
 					"      yourObjects=[{hallo=\"hello\"}]",
 					"    },"
 				);

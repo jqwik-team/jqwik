@@ -40,7 +40,9 @@ public class SampleReportingFormatFacadeImpl extends SampleReportingFormat.Sampl
 		String methodName = method.getName();
 		String name = methodName.startsWith("get")
 						  ? methodName.substring(3)
-						  : methodName;
+						  : methodName.startsWith("is")
+								? methodName.substring(2)
+								: methodName;
 		name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 		return name;
 	}
