@@ -8,6 +8,10 @@
     
     - Edge Cases
     
+        - Warning "WARNING: Combinatorial explosion of edge case generation. Stopped creating more after 10000 generated cases."
+          - should only appear ONCE per property run
+          - if possible contain more info about arbitrary/generator for which it occurs
+    
         - Arbitrary.withoutEdgeCases() 
             - should also work for individual generators
             - Maybe introduce ArbitraryDecorator or something like that
