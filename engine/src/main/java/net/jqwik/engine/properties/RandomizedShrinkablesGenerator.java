@@ -63,19 +63,16 @@ public class RandomizedShrinkablesGenerator implements ForAllParametersGenerator
 		List<EdgeCases<Object>> listOfEdgeCases = Collections.emptyList();
 		if (edgeCasesMode.generateFirst() || (edgeCasesMode.mixIn())) {
 			listOfEdgeCases = parameters
-				.stream()
-				.map(parameter -> resolveEdgeCases(arbitraryResolver, parameter))
-				.collect(Collectors.toList());
+								  .stream()
+								  .map(parameter -> resolveEdgeCases(arbitraryResolver, parameter))
+								  .collect(Collectors.toList());
 		}
 		return listOfEdgeCases;
 	}
 
 	private static int calculateBaseToEdgeCaseRatio(List<EdgeCases<Object>> edgeCases, int genSize) {
 		int countEdgeCases = edgeCases.stream().mapToInt(EdgeCases::size).reduce(1, (a, b) -> max(a * b, 1));
-		return min(
-			max(genSize / countEdgeCases, 3) - 1,
-			10
-		);
+		return EdgeCasesGenerator.calculateBaseToEdgeCaseRatio(genSize, countEdgeCases);
 	}
 
 	private static EdgeCases<Object> resolveEdgeCases(

@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 import net.jqwik.api.*;
+import net.jqwik.engine.properties.*;
 
 class WithEdgeCasesGenerator<T> implements RandomGenerator<T> {
 
@@ -31,11 +32,8 @@ class WithEdgeCasesGenerator<T> implements RandomGenerator<T> {
 		return random -> RandomGenerators.chooseValue(suppliers, random).get();
 	}
 
-	private static int calculateBaseToEdgeCaseRatio(int genSize, int size) {
-		return Math.min(
-			Math.max(genSize / 5, 1),
-			100 / size
-		) + 1;
+	private static int calculateBaseToEdgeCaseRatio(int genSize, int countEdgeCases) {
+		return EdgeCasesGenerator.calculateBaseToEdgeCaseRatio(genSize, countEdgeCases);
 	}
 
 }

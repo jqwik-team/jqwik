@@ -81,14 +81,12 @@ class LazyArbitraryShrinkingTests {
 	class Calculator {
 
 		/**
-		 * Shrinking can take very long here
-		 * - @Property(seed="1393175782937919151"): a few seconds
-		 * - @Property(seed="-8068746813971981237"): I didn't bother to wait
+		 * Shrinking can take very long here depending on initially found falsifying sample
 		 *
 		 * Moreover shrinking results are usually small (5 - 10 nodes) but
 		 * are sometimes very large (200 nodes and more)
 		 */
-		@Property(seed="3404249936767611181") // This seed produces the desired result
+		@Property(seed="340424993676761118") // This seed produces the desired result
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)
 		void shrinkExpressionTree(@ForAll("expression") Object expression) {
 			Assume.that(divSubterms(expression));

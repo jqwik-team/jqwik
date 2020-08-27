@@ -6,7 +6,21 @@ import java.util.stream.*;
 import net.jqwik.api.*;
 import net.jqwik.engine.support.*;
 
-class EdgeCasesGenerator implements Iterator<List<Shrinkable<Object>>> {
+import static java.lang.Math.*;
+
+public class EdgeCasesGenerator implements Iterator<List<Shrinkable<Object>>> {
+
+	// TODO: This may not be the best place for this shared functionality
+	// Caveat: Always make sure that the number is greater than 1.
+	// Otherwise only edge cases will be generated
+	public static int calculateBaseToEdgeCaseRatio(int genSize, int countEdgeCases) {
+		return min(
+			max(genSize / countEdgeCases, 3),
+			20
+		);
+	}
+
+
 	private final List<EdgeCases<Object>> edgeCases;
 	private final Iterator<List<Shrinkable<Object>>> iterator;
 

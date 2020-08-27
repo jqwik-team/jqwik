@@ -9,6 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
+- [1.3.6-SNAPSHOT](#136-snapshot)
 - [1.3.5](#135)
 - [1.3.4](#134)
 - [1.3.3](#133)
@@ -22,6 +23,19 @@ title: jqwik Release Notes
 - [0.8.x](#08x)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## 1.3.6-SNAPSHOT
+
+#### New and Enhanced Features
+
+#### Breaking Changes
+
+- No known breaking changes
+
+#### Bug Fixes
+
+- With a lot of edge cases sometimes _only_ edge cases were generated. 
+  Now the minimum ratio is 1 edge case in 3 generating steps.
 
 ## 1.3.5
 

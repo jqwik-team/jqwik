@@ -1,13 +1,27 @@
 - 1.3.6
 
-  - Bug: BuilderArbitrary.list() always creates one element list with edge cases fills
+    - Shrink nullable generators to null if possible
     
-  - Shrink nullable fields to null if possible
-  
-  - Does ComposableBuilder require flatMapping at all?
-    Why not use Combinators.combine(List<Arbitrary<T>> listOfArbitraries)
-    which would get rid of the combinatorial shrinking and edge case explosion. 
+    - Does ComposableBuilder require flatMapping at all?
+      Why not use Combinators.combine(List<Arbitrary<T>> listOfArbitraries)
+      which would get rid of the combinatorial shrinking and edge case explosion. 
     
+    - Edge Cases
+    
+        - Arbitrary.withoutEdgeCases() 
+            - should also work for individual generators
+            - Maybe introduce ArbitraryDecorator or something like that
+        
+        - Arbitrary.addEdgeCase(value) 
+            - Make shrinkable variants for
+                - Numeric Arbitraries
+                - CharacterArbitrary
+                - Arbitrary.of() arbitraries
+                - Collections
+                - Combinators
+            - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
+    
+
 - 1.3.x
 
     - Add abstract method DomainContextBase.registrations()
@@ -39,21 +53,6 @@
       - Maybe change AroundTryHook to allow replacement of `Random` source
       - Or: Introduce ProvideGenerationSourceHook
       
-    - Edge Cases
-    
-        - Arbitrary.withoutEdgeCases() 
-            - should also work for individual generators
-            - Maybe introduce ArbitraryDecorator or something like that
-        
-        - Arbitrary.addEdgeCase(value) 
-            - Make shrinkable variants for
-                - Numeric Arbitraries
-                - CharacterArbitrary
-                - Arbitrary.of() arbitraries
-                - Collections
-                - Combinators
-            - Mixin edge cases in random order (https://github.com/jlink/jqwik/issues/101)
-
     - Arbitrary.uniqueBy(Predicate<T> uniqueCondition)
     
 
