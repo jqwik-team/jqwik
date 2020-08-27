@@ -1,9 +1,12 @@
 - 1.3.6
 
+  - Bug: BuilderArbitrary.list() always creates one element list with edge cases fills
+    
   - Shrink nullable fields to null if possible
   
-  - Does ComposableBuilder require flatMapping if same instance 
-    is returned in BuilderCombinator.in(...)? 
+  - Does ComposableBuilder require flatMapping at all?
+    Why not use Combinators.combine(List<Arbitrary<T>> listOfArbitraries)
+    which would get rid of the combinatorial shrinking and edge case explosion. 
     
 - 1.3.x
 
