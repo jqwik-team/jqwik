@@ -2,10 +2,15 @@
 
     - Shrink nullable generators to null if possible
     
-    - Does ComposableBuilder require flatMapping at all?
-      Why not use Combinators.combine(List<Arbitrary<T>> listOfArbitraries)
-      which would get rid of the combinatorial shrinking and edge case explosion. 
+    - Shrink frequencyOf consistently to earlier parts, e.g.
+      Arbitraries.strings().alpha() should shrink towards "A" not "a"
     
+    - Arbitraries.forType(Class<T> targetType)
+        - useBeanProperties()
+            - are considered nullable
+            - with optional spec: Map<String, Arbitrary> to map
+              a property to a certain arbitrary
+
     - Edge Cases
     
         - Warning "WARNING: Combinatorial explosion of edge case generation. Stopped creating more after 10000 generated cases."
@@ -28,13 +33,14 @@
 
 - 1.3.x
 
-    - Add abstract method DomainContextBase.registrations()
+    - Domains
+        - Deprecate AbstractDomainContextBase
+            - Introduce DomainContextBase
+            - Allow @Provide methods in DomainContextBase subclasses
+            - Allow @ForAll parameters in @Provide methods
+            - Allow Arbitrary<T> parameters in @Provide methods 
     
     - Arbitraries.forType(Class<T> targetType)
-        - useBeanProperties()
-            - with optional spec: Map<String, Arbitrary> to map
-              a property to a certain arbitrary
-        - Preconfigure certain params (by type, by name)
         - Recursive use
             - forType(Class<T> targetType, int depth)
             - @UseType(depth = 1)

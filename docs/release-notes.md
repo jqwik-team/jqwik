@@ -28,6 +28,9 @@ title: jqwik Release Notes
 
 #### New and Enhanced Features
 
+- Shrinking behaviour of arbitraries created with
+  `Combinators.withBuilder(..)` is now _much_ better, especially _much_ faster.
+
 #### Breaking Changes
 
 - No known breaking changes

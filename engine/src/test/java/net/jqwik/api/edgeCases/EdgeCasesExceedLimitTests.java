@@ -24,7 +24,7 @@ class EdgeCasesExceedLimitTests {
 						  .build(Thing.Builder::build);
 	}
 
-	static class Thing {
+	private static class Thing {
 		private final int a;
 		private final int b;
 		private final int c;
@@ -49,21 +49,13 @@ class EdgeCasesExceedLimitTests {
 
 		@Override
 		public String toString() {
-			final StringBuffer sb = new StringBuffer("Thing{");
-			sb.append("a=").append(a);
-			sb.append(", b=").append(b);
-			sb.append(", c=").append(c);
-			sb.append(", d=").append(d);
-			sb.append(", e=").append(e);
-			sb.append(", f=").append(f);
-			sb.append(", g=").append(g);
-			sb.append(", h=").append(h);
-			sb.append(", i=").append(i);
-			sb.append('}');
-			return sb.toString();
+			return String.format(
+				"Thing{a=%d, b=%d, c=%d, d=%d, e=%d, f=%d, g=%d, h=%d, i=%d}",
+				a, b, c, d, e, f, g, h, i
+			);
 		}
 
-		public static class Builder {
+		private static class Builder {
 			private int a;
 			private int b;
 			private int c;
@@ -74,52 +66,52 @@ class EdgeCasesExceedLimitTests {
 			private int h;
 			private int i;
 
-			public Builder setA(final int a) {
+			Builder setA(final int a) {
 				this.a = a;
 				return this;
 			}
 
-			public Builder setB(final int b) {
+			Builder setB(final int b) {
 				this.b = b;
 				return this;
 			}
 
-			public Builder setC(final int c) {
+			 Builder setC(final int c) {
 				this.c = c;
 				return this;
 			}
 
-			public Builder setD(final int d) {
+			Builder setD(final int d) {
 				this.d = d;
 				return this;
 			}
 
-			public Builder setE(final int e) {
+			Builder setE(final int e) {
 				this.e = e;
 				return this;
 			}
 
-			public Builder setF(final int f) {
+			Builder setF(final int f) {
 				this.f = f;
 				return this;
 			}
 
-			public Builder setG(final int g) {
+			Builder setG(final int g) {
 				this.g = g;
 				return this;
 			}
 
-			public Builder setH(final int h) {
+			Builder setH(final int h) {
 				this.h = h;
 				return this;
 			}
 
-			public Builder setI(final int i) {
+			Builder setI(final int i) {
 				this.i = i;
 				return this;
 			}
 
-			public Thing build() {
+			Thing build() {
 				return new Thing(this);
 			}
 		}

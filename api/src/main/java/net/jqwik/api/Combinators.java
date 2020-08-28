@@ -840,7 +840,7 @@ public class Combinators {
 		 * Create the final arbitrary.
 		 *
 		 * @param buildFunction Function to map a builder to an object
-		 * @param <T> the target object's type
+		 * @param <T>           the target object's type
 		 * @return arbitrary of target object
 		 */
 		public <T> Arbitrary<T> build(Function<B, T> buildFunction) {
@@ -880,11 +880,13 @@ public class Combinators {
 		 *
 		 * @param toFunction Use value provided by arbitrary to set current builder
 		 *                   and return (potentially a different) builder.
-		 * @param <C> Type of returned builder
+		 * @param <C>        Type of returned builder
 		 * @return new {@linkplain BuilderCombinator} instance
 		 */
 		public <C> BuilderCombinator<C> in(Combinators.F2<B, T, C> toFunction) {
-			Arbitrary<C> arbitraryOfC = arbitrary.flatMap(t -> builder.map(b -> toFunction.apply(b, t)));
+			Arbitrary<C> arbitraryOfC =
+				Combinators.combine(arbitrary, builder)
+						   .as((t, b) -> toFunction.apply(b, t));
 			return new BuilderCombinator<>(arbitraryOfC);
 		}
 

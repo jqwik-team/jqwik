@@ -85,6 +85,8 @@ class LazyArbitraryShrinkingTests {
 		 *
 		 * Moreover shrinking results are usually small (5 - 10 nodes) but
 		 * are sometimes very large (200 nodes and more)
+		 *
+		 * @see LazyOfArbitraryShrinkingTests.Calculator
 		 */
 		@Property(seed="340424993676761118") // This seed produces the desired result
 		@ExpectFailure(checkResult = ShrinkToSmallExpression.class)

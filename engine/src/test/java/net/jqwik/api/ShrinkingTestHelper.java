@@ -80,7 +80,11 @@ public class ShrinkingTestHelper {
 	}
 
 	public static <T> T shrinkToMinimal(Arbitrary<? extends T> arbitrary, Random random) {
-		return falsifyThenShrink(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
+		return shrinkToMinimal(arbitrary, random, ignore -> TryExecutionResult.falsified(null));
+	}
+
+	public static <T> T shrinkToMinimal(Arbitrary<? extends T> arbitrary, Random random, Falsifier<T> falsifier) {
+		return falsifyThenShrink(arbitrary, random, falsifier);
 	}
 
 	@SuppressWarnings("unchecked")
