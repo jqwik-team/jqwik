@@ -4,6 +4,9 @@
     
         - https://github.com/junit-team/junit5/issues/1771 in JqwikIntegrationTests
         
+    - https://github.com/jlink/jqwik/issues/119
+      Minimize warning logs about combinatorial explosion to 1 
+    
     - Shrink nullable generators to null if possible
     
     - Shrink frequencyOf consistently to earlier parts, e.g.
