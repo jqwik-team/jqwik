@@ -7,7 +7,7 @@ import net.jqwik.api.*;
 // see https://github.com/jlink/jqwik/issues/119
 class JqwikLogExplosion {
 
-	@Property(edgeCases = EdgeCasesMode.NONE)
+	@Property(edgeCases = EdgeCasesMode.MIXIN)
 	public void my_property(@ForAll("things") final List<Thing2> thing) {
 		// Spams the following warning, despite "EdgeCasesMode.NONE"
 		//   Aug 30, 2020 2:23:01 PM net.jqwik.engine.facades.EdgeCasesFacadeImpl logTooManyEdgeCases

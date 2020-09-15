@@ -33,12 +33,16 @@ title: jqwik Release Notes
 
 #### Breaking Changes
 
-- No known breaking changes
+- A maximum of 1000 (instead of 10000) edge cases is generated _per arbitrary_.
 
 #### Bug Fixes
 
 - With a lot of edge cases sometimes _only_ edge cases were generated. 
   Now the minimum ratio is 1 edge case in 3 generating steps.
+
+- Warning about combinatorial explosion of edge cases generation is
+  now [logged only once](https://github.com/jlink/jqwik/issues/119). 
+
 
 ## 1.3.5
 

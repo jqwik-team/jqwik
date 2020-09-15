@@ -6,6 +6,7 @@ import java.util.logging.*;
 import java.util.stream.*;
 
 import net.jqwik.api.*;
+import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.*;
 import net.jqwik.engine.properties.shrinking.*;
 import net.jqwik.engine.support.*;
@@ -15,9 +16,16 @@ import net.jqwik.engine.support.*;
  */
 public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 
-	private static final int MAX_NUMBER_OF_EDGE_CASES = 10000;
+	private static final int MAX_NUMBER_OF_EDGE_CASES = 1000;
 
 	private static final Logger LOG = Logger.getLogger(EdgeCasesFacadeImpl.class.getName());
+
+	private Store<Boolean> warningAlreadyLogged =
+		Store.create(
+			Tuple.of(EdgeCasesFacadeImpl.class, "warning"),
+			Lifespan.PROPERTY,
+			() -> false
+		);
 
 	@Override
 	public <T> EdgeCases<T> fromSuppliers(final List<Supplier<Shrinkable<T>>> suppliers) {
@@ -92,11 +100,17 @@ public class EdgeCasesFacadeImpl extends EdgeCases.EdgeCasesFacade {
 	}
 
 	private void logTooManyEdgeCases(int maxNumberOfEdgeCases) {
+		if (warningAlreadyLogged.get()) {
+			// This is a terrible hack to suppress multiple logging
+			// TODO: Remove by properly implementing generation of edge cases
+			return;
+		}
 		String message = String.format(
 			"Combinatorial explosion of edge case generation. Stopped creating more after %s generated cases.",
 			maxNumberOfEdgeCases
 		);
 		LOG.warning(message);
+		warningAlreadyLogged.update(ignore -> true);
 	}
 
 	@Override

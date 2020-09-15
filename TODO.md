@@ -1,12 +1,8 @@
 - 1.3.6
 
-    - Update JUnit to https://junit.org/junit5/docs/5.7.0/release-notes/
-    
+    - Update JUnit to https://junit.org/junit5/docs/5.7.0/release-notes/    
         - https://github.com/junit-team/junit5/issues/1771 in JqwikIntegrationTests
         
-    - https://github.com/jlink/jqwik/issues/119
-      Minimize warning logs about combinatorial explosion to 1 
-    
     - Shrink nullable generators to null if possible
     
     - Shrink frequencyOf consistently to earlier parts, e.g.
@@ -20,12 +16,11 @@
 
     - Edge Cases
     
-        - Warning "WARNING: Combinatorial explosion of edge case generation. Stopped creating more after 10000 generated cases."
-          - should only appear ONCE per property run
-          - if possible contain more info about arbitrary/generator for which it occurs
-    
+        - Restrict number of generated edge cases to number of tries
+            - For embedded/individual use of generators only use a max of 100 edge cases
+        
         - Arbitrary.withoutEdgeCases() 
-            - should also work for individual generators
+            - should also work for embedded/individual generators
             - Maybe introduce ArbitraryDecorator or something like that
         
         - Arbitrary.addEdgeCase(value) 
