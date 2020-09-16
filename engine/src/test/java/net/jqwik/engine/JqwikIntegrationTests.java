@@ -175,7 +175,9 @@ class JqwikIntegrationTests {
 							.execute()
 							.allEvents();
 
-		events.assertEventsMatchLooselyInOrder(
+		// Order of classes is platform dependent :-(
+		// events.assertEventsMatchLooselyInOrder(
+		events.assertEventsMatchLoosely(
 			event(engine(), started()),
 
 			// ExampleTests
