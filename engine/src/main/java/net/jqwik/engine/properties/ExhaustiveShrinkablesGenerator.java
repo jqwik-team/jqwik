@@ -22,6 +22,7 @@ public class ExhaustiveShrinkablesGenerator implements ForAllParametersGenerator
 		return new ExhaustiveShrinkablesGenerator(exhaustiveGenerators);
 	}
 
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private static List<ExhaustiveGenerator<Object>> resolveParameter(
 		ArbitraryResolver arbitraryResolver,
 		MethodParameter parameter,
@@ -65,7 +66,7 @@ public class ExhaustiveShrinkablesGenerator implements ForAllParametersGenerator
 											   .collect(Collectors.toList());
 
 		return new Iterator<List<Shrinkable<Object>>>() {
-			Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
+			final Iterator<List<Object>> iterator = Combinatorics.combine(iterables);
 
 			@Override
 			public boolean hasNext() {

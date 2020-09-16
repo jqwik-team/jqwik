@@ -1,8 +1,5 @@
 - 1.3.6
 
-    - Update JUnit to https://junit.org/junit5/docs/5.7.0/release-notes/    
-        - https://github.com/junit-team/junit5/issues/1771 in JqwikIntegrationTests
-        
     - Shrink nullable generators to null if possible
     
     - Shrink frequencyOf consistently to earlier parts, e.g.

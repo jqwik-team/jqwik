@@ -140,7 +140,7 @@ class ExhaustiveGenerationTests {
 		assertThat(generator.maxCount()).isEqualTo(3);
 		assertThat(generator).containsOnly(1, 2, 3);
 
-		assertThat(dates.size()).isGreaterThanOrEqualTo(3); // maxCount() must also call base
+		assertThat(dates.size()).isGreaterThan(1);
 	}
 
 	@Group

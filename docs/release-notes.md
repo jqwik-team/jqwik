@@ -31,6 +31,8 @@ title: jqwik Release Notes
 - Shrinking behaviour of arbitraries created with
   `Combinators.withBuilder(..)` is now _much_ better, especially _much_ faster.
 
+- Upgrade to JUnit Platform 1.7.0
+
 #### Breaking Changes
 
 - A maximum of 1000 (instead of 10000) edge cases is generated _per arbitrary_.

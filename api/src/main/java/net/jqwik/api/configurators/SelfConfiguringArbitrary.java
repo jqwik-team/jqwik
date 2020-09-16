@@ -30,10 +30,10 @@ public interface SelfConfiguringArbitrary<T> {
 	/**
 	 * If an arbitrary is self configuring use it, otherwise use default configurator
 	 */
+	@SuppressWarnings("unchecked")
 	@API(status = INTERNAL)
 	static <T> Arbitrary<T> configure(Arbitrary<T> self, ArbitraryConfigurator configurator, TypeUsage targetType) {
 		if (self instanceof SelfConfiguringArbitrary) {
-			//noinspection unchecked
 			return ((SelfConfiguringArbitrary<T>) self).configure(configurator, targetType);
 		} else {
 			return configurator.configure(self, targetType);
@@ -44,9 +44,9 @@ public interface SelfConfiguringArbitrary<T> {
 	 * Do all configuration yourself or delegate to {@link ArbitraryConfigurator#configure(Arbitrary, TypeUsage)}
 	 * of the {@code configurator} that's being handed in.
 	 *
-	 * @param configurator
-	 * @param targetType
-	 * @return
+	 * @param configurator the configurator to use
+	 * @param targetType the target type of the arbitrary
+	 * @return the arbitrary instance or a new derived one
 	 */
 	Arbitrary<T> configure(ArbitraryConfigurator configurator, TypeUsage targetType);
 }

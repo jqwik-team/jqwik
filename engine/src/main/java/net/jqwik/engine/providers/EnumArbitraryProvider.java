@@ -12,9 +12,9 @@ public class EnumArbitraryProvider implements ArbitraryProvider {
 		return targetType.isEnum();
 	}
 
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public Set<Arbitrary<?>> provideFor(TypeUsage targetType, SubtypeProvider subtypeProvider) {
-		//noinspection unchecked
 		return Collections.singleton(Arbitraries.of((Class<? extends Enum>) targetType.getRawType()));
 	}
 

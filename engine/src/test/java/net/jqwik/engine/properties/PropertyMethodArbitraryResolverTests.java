@@ -232,8 +232,7 @@ class PropertyMethodArbitraryResolverTests {
 			MethodParameter parameter = getParameter(WithNamedProviders.class, "listOfThingFrom");
 			Set<Arbitrary<?>> arbitraries = provider.forParameter(parameter);
 			Arbitrary<?> listOfThingsArbitrary = arbitraries.iterator().next();
-			List listOfThings = (List) listOfThingsArbitrary.generator(10).next(random).value();
-			//noinspection unchecked
+			List<?> listOfThings = (List<?>) listOfThingsArbitrary.generator(10).next(random).value();
 			assertThat(listOfThings).allMatch(aThing -> aThing instanceof Thing);
 		}
 
@@ -247,7 +246,7 @@ class PropertyMethodArbitraryResolverTests {
 
 		@Example
 		void providedArbitraryIsConfigured() {
-			final List<Arbitrary> configured = new ArrayList<>();
+			final List<Arbitrary<?>> configured = new ArrayList<>();
 			RegisteredArbitraryConfigurer configurer = new RegisteredArbitraryConfigurer(Collections.emptyList()) {
 				@Override
 				public Arbitrary<?> configure(Arbitrary<?> arbitrary, TypeUsage targetType) {

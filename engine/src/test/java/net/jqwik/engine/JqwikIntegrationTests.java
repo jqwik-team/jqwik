@@ -84,7 +84,7 @@ class JqwikIntegrationTests {
 		Events events = EngineTestKit
 							.engine(createTestEngine())
 							.selectors(classpathRootSelectors)
-							.filters(PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
+							.filters((Filter<?>) PackageNameFilter.includePackageNames("examples.packageWithSingleContainer"))
 							.execute()
 							.allEvents();
 
@@ -175,8 +175,7 @@ class JqwikIntegrationTests {
 							.execute()
 							.allEvents();
 
-		assertAllEventsMatch(
-			events,
+		events.assertEventsMatchLooselyInOrder(
 			event(engine(), started()),
 
 			// ExampleTests
@@ -191,12 +190,12 @@ class JqwikIntegrationTests {
 			event(container(PropertyTests.class), started()),
 			event(test("isTrue"), started()),
 			event(test("isTrue"), finishedSuccessfully()),
-			event(test("isFalse"), started()),
-			event(test("isFalse"), finishedWithFailure()),
-			event(test("withEverything"), started()),
-			event(test("withEverything"), finishedSuccessfully()),
 			event(test("allNumbersAreZero"), started()),
 			event(test("allNumbersAreZero"), finishedWithFailure()),
+			event(test("withEverything"), started()),
+			event(test("withEverything"), finishedSuccessfully()),
+			event(test("isFalse"), started()),
+			event(test("isFalse"), finishedWithFailure()),
 			event(container(PropertyTests.class), finishedSuccessfully()),
 
 			// MixedTests
@@ -221,13 +220,12 @@ class JqwikIntegrationTests {
 							.execute()
 							.allEvents();
 
-		assertAllEventsMatch(
-			events,
+		events.assertEventsMatchLooselyInOrder(
 			event(container(DisabledTests.class), started()),
 			event(test("disabledSuccess"), skippedWithReason("a reason")),
 			event(test("disabledFailure"), skippedWithReason(r -> r.startsWith("@Disabled:"))),
-			event(container(DisabledTests.class), finishedSuccessfully()),
-			event(container(DisabledTests.DisabledGroup.class), skippedWithReason(r -> r.startsWith("@Disabled:")))
+			event(container(DisabledTests.DisabledGroup.class), skippedWithReason(r -> r.startsWith("@Disabled:"))),
+			event(container(DisabledTests.class), finishedSuccessfully())
 
 		);
 
@@ -242,11 +240,10 @@ class JqwikIntegrationTests {
 							.execute()
 							.allEvents();
 
-		assertAllEventsMatch(
-			events,
+		events.assertEventsMatchLooselyInOrder(
 			event(container(ContainerWithStatistics.class), started()),
-			event(test("propertyWithStatistics"), finishedSuccessfully()),
 			event(test("propertyWithStatistics"), reported("[ContainerWithStatistics:propertyWithStatistics] (100) statistics")),
+			event(test("propertyWithStatistics"), finishedSuccessfully()),
 			event(container(ContainerWithStatistics.class), finishedSuccessfully())
 		);
 
@@ -273,15 +270,6 @@ class JqwikIntegrationTests {
 			type(REPORTING_ENTRY_PUBLISHED),
 			new Condition<>(byPayload(ReportEntry.class, condition::matches), "event with result where %s", condition)
 		);
-	}
-
-	@SafeVarargs
-	// Order of events is ignored
-	// TODO: Remove as soon as https://github.com/junit-team/junit5/issues/1771 is implemented
-	private static void assertAllEventsMatch(Events events, Condition<? super Event>... conditions) {
-		for (Condition<? super Event> condition : conditions) {
-			events.assertThatEvents().haveExactly(1, condition);
-		}
 	}
 
 }
