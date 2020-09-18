@@ -1,9 +1,8 @@
 - 1.3.6
 
-    - Shrink nullable generators to null if possible
+    - Consolidate EdgeCases and EdgeCasesSupport
     
-    - Shrink frequencyOf consistently to earlier parts, e.g.
-      Arbitraries.strings().alpha() should shrink towards "A" not "a"
+    - Shrink nullable generators to null if possible
     
     - Arbitraries.forType(Class<T> targetType)
         - useBeanProperties()

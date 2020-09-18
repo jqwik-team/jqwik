@@ -34,8 +34,7 @@ public class OneOfArbitrary<T> implements Arbitrary<T>, SelfConfiguringArbitrary
 
 	@Override
 	public EdgeCases<T> edgeCases() {
-		List<EdgeCases<T>> allEdgeCases = all.stream().map(Arbitrary::edgeCases).collect(Collectors.toList());
-		return EdgeCases.concat(allEdgeCases);
+		return EdgeCasesSupport.choose(all).flatMapArbitrary(Function.identity());
 	}
 
 	@Override

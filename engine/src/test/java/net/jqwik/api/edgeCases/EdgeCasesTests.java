@@ -1,9 +1,10 @@
-package net.jqwik.api;
+package net.jqwik.api.edgeCases;
 
 import java.math.*;
 import java.util.*;
 import java.util.function.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.lifecycle.*;
 import net.jqwik.engine.properties.*;
 import net.jqwik.engine.properties.shrinking.*;

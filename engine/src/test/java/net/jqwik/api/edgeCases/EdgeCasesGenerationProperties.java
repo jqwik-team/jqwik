@@ -1,8 +1,9 @@
-package net.jqwik.api;
+package net.jqwik.api.edgeCases;
 
 import java.util.ArrayList;
 import java.util.*;
 
+import net.jqwik.api.*;
 import net.jqwik.api.constraints.*;
 import net.jqwik.api.lifecycle.*;
 

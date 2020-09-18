@@ -128,6 +128,42 @@ class ArbitraryShrinkingTests {
 		assertThat(shrunkValue).isEqualTo(0);
 	}
 
+	@Property(tries = 100)
+	void frequencyOf(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.frequencyOf(
+				Tuple.of(1, Arbitraries.of(1, 2, 3)),
+				Tuple.of(3, Arbitraries.of(4, 5, 6))
+			);
+		assertAllValuesAreShrunkTo(1, arbitrary, random);
+	}
+
+	@Property(tries = 100)
+	void oneOf(@ForAll Random random) {
+		Arbitrary<Integer> arbitrary =
+			Arbitraries.oneOf(
+				Arbitraries.of(1, 2, 3),
+				Arbitraries.of(4, 5, 6)
+			);
+		assertAllValuesAreShrunkTo(1, arbitrary, random);
+	}
+
+	@Property(tries = 100)
+	void charsAlpha(@ForAll Random random) {
+		Arbitrary<Character> arbitrary =
+			Arbitraries.chars()
+					   .range('A', 'Z')
+					   .range('a', 'z');
+		assertAllValuesAreShrunkTo('A', arbitrary, random);
+	}
+
+	@Property(tries = 100)
+	void stringsAlpha(@ForAll Random random) {
+		Arbitrary<String> arbitrary =
+			Arbitraries.strings().alpha().ofLength(1);
+		assertAllValuesAreShrunkTo("A", arbitrary, random);
+	}
+
 	@Group
 	class Uniqueness {
 
@@ -218,7 +254,6 @@ class ArbitraryShrinkingTests {
 				return asList(asList(asList(42, 42, 99)));
 			}
 		}
-
 
 		@Provide
 		Arbitrary<List<List<Integer>>> listOfLists() {
