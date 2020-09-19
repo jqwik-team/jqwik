@@ -260,6 +260,7 @@ class ArbitraryShrinkingTests {
 			return Arbitraries.just(42).list().list().ofMaxSize(10);
 		}
 
+		// Shrinking can sometimes take a few seconds
 		@Property(edgeCases = EdgeCasesMode.NONE)
 		@ExpectFailure(failureType = AssertionError.class, checkResult = ShrinkToListOfMutable10.class)
 		void mutablesInListAreReset(
