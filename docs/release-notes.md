@@ -45,6 +45,7 @@ title: jqwik Release Notes
 - Warning about combinatorial explosion of edge cases generation is
   now [logged only once](https://github.com/jlink/jqwik/issues/119). 
 
+- Edge cases for `oneOf(..)` and `frequencyOf(..)` generators are now correctly being shrunk.
 
 ## 1.3.5
 
