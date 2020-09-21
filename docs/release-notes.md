@@ -9,7 +9,7 @@ title: jqwik Release Notes
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ### Table of Contents  
 
-- [1.3.6-SNAPSHOT](#136-snapshot)
+- [1.3.6](#136)
 - [1.3.5](#135)
 - [1.3.4](#134)
 - [1.3.3](#133)
@@ -24,7 +24,14 @@ title: jqwik Release Notes
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## 1.3.6-SNAPSHOT
+## 1.3.6
+
+<p style="padding-left:1em;font-size:larger">
+<a href="/docs/1.3.6/user-guide.html">User guide</a>
+and
+<a href="/docs/1.3.6/javadoc/index.html">javadoc</a>
+</p>
+
 
 #### New and Enhanced Features
 
